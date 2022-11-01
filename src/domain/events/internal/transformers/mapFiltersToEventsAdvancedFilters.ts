@@ -19,7 +19,6 @@ export const mapFiltersToEventsAdvancedFilters = (
     type,
     subtype,
     metadata,
-    assetSubtreeIds,
     createdTime,
     lastUpdatedTime,
     startTime,
@@ -31,18 +30,18 @@ export const mapFiltersToEventsAdvancedFilters = (
   query?: string
 ): AdvancedFilter<EventsProperties> | undefined => {
   const filterBuilder = new AdvancedFilterBuilder<EventsProperties>()
-    .containsAny('assetIds', () => {
-      return assetSubtreeIds?.reduce((acc, item) => {
-        if ('id' in item) {
-          return [...acc, item.id];
-        }
-        return acc;
-      }, [] as number[]);
-    })
+    // .containsAny('assetIds', () => {
+    //   return assetSubtreeIds?.reduce((acc, { value }) => {
+    //     if () {
+    //       return [...acc, item.id];
+    //     }
+    //     return acc;
+    //   }, [] as number[]);
+    // })
     .containsAny('dataSetIds', () => {
-      return dataSetIds?.reduce((acc, item) => {
-        if ('id' in item) {
-          return [...acc, item.id];
+      return dataSetIds?.reduce((acc, { value }) => {
+        if (typeof value === 'number') {
+          return [...acc, value];
         }
         return acc;
       }, [] as number[]);

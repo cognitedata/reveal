@@ -1,12 +1,13 @@
 import React from 'react';
 
 import { Body } from '@cognite/cogs.js';
-import { EventFilter } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { aggregateKey } from '@cognite/sdk-react-query-hooks';
 import { useQuery } from 'react-query';
 
 import { Select } from 'components';
+import { InternalEventsFilters } from 'domain/events';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 type EventFieldForAggregate = 'type' | 'subtype' | 'dataSetId';
 
@@ -22,6 +23,8 @@ const useEventAggregate = (
   filter?: any
 ) => {
   const sdk = useSDK();
+  filter = transformNewFilterToOldFilter(filter);
+
   return useQuery(eventAggregateKey(aggregate, field, filter), async () =>
     sdk.events.aggregate.uniqueValues({
       filter,
@@ -38,7 +41,7 @@ export const AggregatedEventFilter = ({
   value,
 }: {
   field: EventFieldForAggregate;
-  filter: EventFilter;
+  filter: InternalEventsFilters;
   title: string;
   setValue: (newValue?: string) => void;
   value?: string;

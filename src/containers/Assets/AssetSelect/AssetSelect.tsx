@@ -9,11 +9,10 @@ import { useDebounce } from 'use-debounce';
 import { Select } from 'components';
 import { Props, OptionTypeBase } from 'react-select';
 import { Theme } from '@cognite/cogs.js';
-
-type AssetInfo = { value: number; name: string };
+import { OptionValue } from 'components/SearchNew/Filters/types';
 
 export type AssetSelectProps = Props<OptionTypeBase> & {
-  onAssetSelected?: (assetIds?: number[]) => void;
+  onAssetSelected?: (input?: OptionValue<number>[]) => void;
   selectedAssetIds?: number[];
   rootOnly?: boolean;
   cogsTheme?: Theme;
@@ -114,10 +113,10 @@ export const AssetSelect = ({
           if (selected.length === 0) {
             onAssetSelected(undefined);
           } else {
-            onAssetSelected(selected.map(({ value }: AssetInfo) => value));
+            onAssetSelected(selected as OptionValue<number>[]);
           }
         } else {
-          onAssetSelected(selected.map(({ value }: AssetInfo) => value));
+          onAssetSelected(selected as OptionValue<number>[]);
         }
       }}
     />

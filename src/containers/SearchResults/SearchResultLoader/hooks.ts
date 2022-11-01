@@ -18,6 +18,7 @@ import {
 import { useQueries } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { calculateGranularity } from 'containers';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -105,6 +106,8 @@ export const useResourceResults = <T extends ResourceType>(
   // hideEmptyData?: boolean
 ) => {
   const searchEnabled = !!query && query.length > 0;
+
+  filter = transformNewFilterToOldFilter(filter);
 
   const {
     data: listData,

@@ -1,22 +1,26 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { FileFilterProps } from '@cognite/sdk';
 import { LabelFilterV2 } from './LabelFilter/LabelFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { StringFilterV2 } from './StringFilter/StringFilter';
 import { DateFilterV2 } from './DateFilter/DateFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
+import { InternalFilesFilters } from 'domain/files';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const FileFilters = ({
   filter,
   setFilter,
   ...rest
 }: {
-  filter: FileFilterProps;
-  setFilter: (newFilter: FileFilterProps) => void;
+  filter: InternalFilesFilters;
+  setFilter: (newFilter: InternalFilesFilters) => void;
 }) => {
-  const { data: items = [] } = useList('files', { filter, limit: 1000 });
+  const { data: items = [] } = useList('files', {
+    filter: transformNewFilterToOldFilter(filter),
+    limit: 1000,
+  });
 
   return (
     <BaseFilterCollapse.Panel title="Files" {...rest}>
@@ -39,11 +43,11 @@ export const FileFilters = ({
       />
       <LabelFilterV2
         resourceType="file"
-        value={((filter as any).labels || { containsAny: [] }).containsAny}
+        value={filter.labels}
         setValue={newFilters =>
           setFilter({
             ...filter,
-            labels: newFilters ? { containsAny: newFilters } : undefined,
+            labels: newFilters,
           })
         }
       />

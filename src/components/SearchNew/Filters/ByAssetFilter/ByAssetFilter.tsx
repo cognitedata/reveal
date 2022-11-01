@@ -8,11 +8,11 @@ export const ByAssetFilterV2 = ({
   title = 'Asset',
 }: {
   value: number[] | undefined;
-  setValue: (newValue: number[] | undefined) => void;
+  setValue: (newValue?: { label?: string; value: number }[]) => void;
   title?: string;
 }) => {
-  const setFilterByAsset = (assetIds?: number[]) => {
-    setValue(assetIds);
+  const setFilterByAsset = (newValue?: { label?: string; value: number }[]) => {
+    setValue(newValue);
   };
 
   return (

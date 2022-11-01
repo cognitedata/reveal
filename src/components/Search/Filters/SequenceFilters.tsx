@@ -1,6 +1,5 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { SequenceFilter, InternalId } from '@cognite/sdk';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
@@ -8,26 +7,31 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
+import { InternalSequenceFilters } from 'domain/sequence';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const SequenceFilters = ({
   filter,
   setFilter,
 }: {
-  filter: Required<SequenceFilter>['filter'];
-  setFilter: (newFilter: Required<SequenceFilter>['filter']) => void;
+  filter: InternalSequenceFilters;
+  setFilter: (newFilter: InternalSequenceFilters) => void;
 }) => {
-  const { data: items = [] } = useList('sequences', { filter, limit: 1000 });
+  const { data: items = [] } = useList('sequences', {
+    filter: transformNewFilterToOldFilter(filter),
+    limit: 1000,
+  });
 
   return (
     <div>
       <ResetFiltersButton setFilter={setFilter} />
       <DataSetFilter
         resourceType="sequence"
-        value={filter.dataSetIds}
+        value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
         setValue={newIds =>
           setFilter({
             ...filter,
-            dataSetIds: newIds,
+            dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
           })
         }
       />
@@ -42,11 +46,11 @@ export const SequenceFilters = ({
         }
       />
       <ByAssetFilter
-        value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
+        value={filter.assetSubtreeIds?.map(({ value }) => value)}
         setValue={newValue =>
           setFilter({
             ...filter,
-            assetSubtreeIds: newValue?.map(id => ({ id })),
+            assetSubtreeIds: newValue?.map(id => ({ value: id })),
           })
         }
       />

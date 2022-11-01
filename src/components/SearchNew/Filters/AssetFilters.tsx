@@ -1,11 +1,12 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { AssetFilterProps } from '@cognite/sdk';
 import { useAssetMetadataKeys } from 'hooks/MetadataAggregateHooks';
 import { LabelFilterV2 } from './LabelFilter/LabelFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
+import { InternalAssetFilters } from 'domain/assets';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFiltersV2 = ({
@@ -13,10 +14,13 @@ export const AssetFiltersV2 = ({
   setFilter,
   ...rest
 }: {
-  filter: AssetFilterProps;
-  setFilter: (newFilter: AssetFilterProps) => void;
+  filter: InternalAssetFilters;
+  setFilter: (newFilter: InternalAssetFilters) => void;
 }) => {
-  const { data: items = [] } = useList('assets', { filter, limit: 1000 });
+  const { data: items = [] } = useList('assets', {
+    filter: transformNewFilterToOldFilter(filter),
+    limit: 1000,
+  });
 
   const { data: metadataKeys = [] } = useAssetMetadataKeys(filter);
 
@@ -24,11 +28,11 @@ export const AssetFiltersV2 = ({
     <BaseFilterCollapse.Panel title="Assets" {...rest}>
       <LabelFilterV2
         resourceType="asset"
-        value={((filter as any).labels || { containsAny: [] }).containsAny}
+        value={filter.labels}
         setValue={newFilters =>
           setFilter({
             ...filter,
-            labels: newFilters ? { containsAny: newFilters } : undefined,
+            labels: newFilters,
           })
         }
       />

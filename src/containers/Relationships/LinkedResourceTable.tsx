@@ -23,7 +23,7 @@ export const LinkedResourceTable = ({
   parentResource: ResourceItem;
   onItemClicked: (id: number) => void;
 } & SelectableItemsProps) => {
-  const filter = { assetSubtreeIds: [{ id: parentResource.id }] };
+  const filter = { assetSubtreeIds: [{ value: parentResource.id }] };
 
   switch (type) {
     case 'asset':

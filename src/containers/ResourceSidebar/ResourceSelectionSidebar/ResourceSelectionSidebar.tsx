@@ -13,13 +13,14 @@ import {
   SearchResults,
   ResourcePreviewSidebar,
 } from 'containers';
+
 import {
-  AssetFilterProps,
-  TimeseriesFilter,
-  FileFilterProps,
-  EventFilter,
-  SequenceFilter,
-} from '@cognite/sdk';
+  InternalAssetFilters,
+  InternalTimeseriesFilters,
+  InternalFilesFilters,
+  InternalEventsFilters,
+  InternalSequenceFilters,
+} from 'domain/index';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: absolute;
@@ -85,21 +86,20 @@ export const ResourceSelectionSidebar = ({
   children?: React.ReactNode;
 } & SelectableItemsProps &
   InitialResourceFilterProps) => {
-  const [assetFilter, setAssetFilter] = useState<AssetFilterProps>(
+  const [assetFilter, setAssetFilter] = useState<InternalAssetFilters>(
     initialAssetFilter || {}
   );
-  const [timeseriesFilter, setTimeseriesFilter] = useState<TimeseriesFilter>(
-    initialTimeseriesFilter || {}
-  );
-  const [fileFilter, setFileFilter] = useState<FileFilterProps>(
+  const [timeseriesFilter, setTimeseriesFilter] =
+    useState<InternalTimeseriesFilters>(initialTimeseriesFilter || {});
+  const [fileFilter, setFileFilter] = useState<InternalFilesFilters>(
     initialFileFilter || {}
   );
-  const [eventFilter, setEventFilter] = useState<EventFilter>(
+  const [eventFilter, setEventFilter] = useState<InternalEventsFilters>(
     initialEventFilter || {}
   );
-  const [sequenceFilter, setSequenceFilter] = useState<
-    Required<SequenceFilter>['filter']
-  >(initialSequenceFilter || {});
+  const [sequenceFilter, setSequenceFilter] = useState<InternalSequenceFilters>(
+    initialSequenceFilter || {}
+  );
   const [query, setQuery] = useState<string>('');
   const [activeKey, setActiveKey] = useState<ResourceType>(resourceTypes[0]);
   const [previewItem, setPreviewItem] = useState<ResourceItem | undefined>(

@@ -16,8 +16,8 @@ export default {
 };
 
 export const Example: ComponentStory<typeof DataSetFilter> = args => {
-  const [value, setValue] = useState<IdEither[] | undefined>(undefined);
-  return <DataSetFilterV2 {...args} value={value} setValue={setValue} />;
+  const [value, _setValue] = useState<IdEither[] | undefined>(undefined);
+  return <DataSetFilterV2 {...args} value={value} setValue={() => null} />;
 };
 
 Example.args = {

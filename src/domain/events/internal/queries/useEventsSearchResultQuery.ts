@@ -1,3 +1,4 @@
+import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from 'domain/constants';
 import { useMemo } from 'react';
 import { TableSortBy } from 'components/ReactTable/V2';
 import { useEventsListQuery } from '../../service/queries/useEventsListQuery';
@@ -35,5 +36,9 @@ export const useEventsSearchResultQuery = ({
     [eventsSortBy]
   );
 
-  return useEventsListQuery({ advancedFilter, sort, limit: 25 });
+  return useEventsListQuery({
+    advancedFilter,
+    sort,
+    limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
+  });
 };

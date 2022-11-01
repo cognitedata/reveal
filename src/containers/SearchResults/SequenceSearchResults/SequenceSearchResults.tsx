@@ -1,5 +1,5 @@
 import React from 'react';
-import { SequenceFilter, Sequence } from '@cognite/sdk';
+import { Sequence } from '@cognite/sdk';
 import { SearchResultToolbar } from 'containers/SearchResults';
 import { ResourceItem, convertResourceType } from 'types';
 import { SequenceNewTable } from 'containers/Sequences';
@@ -9,6 +9,7 @@ import { EnsureNonEmptyResource } from 'components';
 import { useResourceResults } from '../SearchResultLoader';
 import { Loader } from '@cognite/cogs.js';
 import { ColumnToggleProps } from 'components/ReactTable';
+import { InternalSequenceFilters } from 'domain/sequence';
 
 export const SequenceSearchResults = ({
   query = '',
@@ -22,7 +23,7 @@ export const SequenceSearchResults = ({
   ...rest
 }: {
   query?: string;
-  filter?: Required<SequenceFilter>['filter'];
+  filter?: InternalSequenceFilters;
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;

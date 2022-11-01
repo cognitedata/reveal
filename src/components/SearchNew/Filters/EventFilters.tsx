@@ -1,23 +1,26 @@
 import React from 'react';
 
-import { EventFilter, InternalId } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { AggregatedEventFilterV2 } from './AggregatedEventFilter/AggregatedEventFilter';
-import { ByAssetFilterV2 } from './ByAssetFilter/ByAssetFilter';
 import { DateFilterV2 } from './DateFilter/DateFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
+import { InternalEventsFilters } from 'domain/events';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const EventFilters = ({
   filter,
   setFilter,
   ...rest
 }: {
-  filter: EventFilter;
-  setFilter: (newFilter: EventFilter) => void;
+  filter: InternalEventsFilters;
+  setFilter: (newFilter: InternalEventsFilters) => void;
 }) => {
-  const { data: items = [] } = useList('events', { filter, limit: 1000 });
+  const { data: items = [] } = useList('events', {
+    filter: transformNewFilterToOldFilter(filter),
+    limit: 1000,
+  });
 
   return (
     <BaseFilterCollapse.Panel title="Events" {...rest}>
@@ -62,7 +65,7 @@ export const EventFilters = ({
         title="Sub-type"
         value={filter.subtype}
       />
-      <ByAssetFilterV2
+      {/* <ByAssetFilterV2
         value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
         setValue={newValue =>
           setFilter({
@@ -70,7 +73,7 @@ export const EventFilters = ({
             assetSubtreeIds: newValue?.map(id => ({ id })),
           })
         }
-      />
+      /> */}
       <AggregatedFilterV2
         title="Source"
         items={items}

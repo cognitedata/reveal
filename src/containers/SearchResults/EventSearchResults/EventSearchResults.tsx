@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EventFilter, CogniteEvent } from '@cognite/sdk';
+import { CogniteEvent } from '@cognite/sdk';
 import {
   SearchResultToolbar,
   useResourceResults,
@@ -12,6 +12,7 @@ import { EnsureNonEmptyResource } from 'components';
 import { Loader } from '@cognite/cogs.js';
 import { ColumnToggleProps } from 'components/ReactTable';
 import { useEventsSearchResultQuery } from 'domain/events/internal/queries/useEventsSearchResultQuery';
+import { InternalEventsFilters } from 'domain/events';
 import { TableSortBy } from 'components/ReactTable/V2';
 
 export const EventSearchResults = ({
@@ -23,7 +24,7 @@ export const EventSearchResults = ({
   enableAdvancedFilters,
 }: {
   query?: string;
-  filter?: EventFilter;
+  filter?: InternalEventsFilters;
   showCount?: boolean;
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;

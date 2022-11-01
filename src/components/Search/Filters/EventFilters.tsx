@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { EventFilter, InternalId } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
@@ -11,26 +10,31 @@ import { DateFilter } from './DateFilter/DateFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
+import { InternalEventsFilters } from 'domain/events';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const EventFilters = ({
   filter,
   setFilter,
 }: {
-  filter: EventFilter;
-  setFilter: (newFilter: EventFilter) => void;
+  filter: InternalEventsFilters;
+  setFilter: (newFilter: InternalEventsFilters) => void;
 }) => {
-  const { data: items = [] } = useList('events', { filter, limit: 1000 });
+  const { data: items = [] } = useList('events', {
+    filter: transformNewFilterToOldFilter(filter),
+    limit: 1000,
+  });
 
   return (
     <div>
       <ResetFiltersButton setFilter={setFilter} />
       <DataSetFilter
         resourceType="event"
-        value={filter.dataSetIds}
+        value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
         setValue={newIds =>
           setFilter({
             ...filter,
-            dataSetIds: newIds,
+            dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
           })
         }
       />
@@ -87,11 +91,11 @@ export const EventFilters = ({
           value={filter.subtype}
         />
         <ByAssetFilter
-          value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
+          value={filter.assetSubtreeIds?.map(({ value }) => value)}
           setValue={newValue =>
             setFilter({
               ...filter,
-              assetSubtreeIds: newValue?.map(id => ({ id })),
+              assetSubtreeIds: newValue?.map(id => ({ value: id })),
             })
           }
         />

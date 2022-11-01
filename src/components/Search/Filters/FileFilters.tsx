@@ -1,6 +1,5 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { FileFilterProps, InternalId } from '@cognite/sdk';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import { LabelFilter } from './LabelFilter/LabelFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
@@ -10,26 +9,31 @@ import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
+import { InternalFilesFilters } from 'domain/files';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const FileFilters = ({
   filter,
   setFilter,
 }: {
-  filter: FileFilterProps;
-  setFilter: (newFilter: FileFilterProps) => void;
+  filter: InternalFilesFilters;
+  setFilter: (newFilter: InternalFilesFilters) => void;
 }) => {
-  const { data: items = [] } = useList('files', { filter, limit: 1000 });
+  const { data: items = [] } = useList('files', {
+    filter: transformNewFilterToOldFilter(filter),
+    limit: 1000,
+  });
 
   return (
     <div>
       <ResetFiltersButton setFilter={setFilter} />
       <DataSetFilter
         resourceType="file"
-        value={filter.dataSetIds}
+        value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
         setValue={newIds =>
           setFilter({
             ...filter,
-            dataSetIds: newIds,
+            dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
           })
         }
       />
@@ -63,20 +67,22 @@ export const FileFilters = ({
       <AdvancedFiltersCollapse resourceType="file" filter={filter}>
         <LabelFilter
           resourceType="file"
-          value={((filter as any).labels || { containsAny: [] }).containsAny}
+          value={filter.labels?.map(({ value }) => ({ externalId: value }))}
           setValue={newFilters =>
             setFilter({
               ...filter,
-              labels: newFilters && { containsAny: newFilters },
+              labels: newFilters
+                ? newFilters?.map(({ externalId }) => ({ value: externalId }))
+                : undefined,
             })
           }
         />
         <ByAssetFilter
-          value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
+          value={filter.assetSubtreeIds?.map(({ value }) => value)}
           setValue={newValue =>
             setFilter({
               ...filter,
-              assetSubtreeIds: newValue?.map(id => ({ id })),
+              assetSubtreeIds: newValue?.map(id => ({ value: id })),
             })
           }
         />

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { AssetFilterProps, InternalId } from '@cognite/sdk';
 import { useAssetMetadataKeys } from 'hooks/MetadataAggregateHooks';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import { LabelFilter } from './LabelFilter/LabelFilter';
@@ -11,16 +10,21 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
+import { InternalAssetFilters } from 'domain/assets';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFilters = ({
   filter,
   setFilter,
 }: {
-  filter: AssetFilterProps;
-  setFilter: (newFilter: AssetFilterProps) => void;
+  filter: InternalAssetFilters;
+  setFilter: (newFilter: InternalAssetFilters) => void;
 }) => {
-  const { data: items = [] } = useList('assets', { filter, limit: 1000 });
+  const { data: items = [] } = useList('assets', {
+    filter: transformNewFilterToOldFilter(filter),
+    limit: 1000,
+  });
 
   const { data: metadataKeys = [] } = useAssetMetadataKeys(filter);
 
@@ -29,21 +33,23 @@ export const AssetFilters = ({
       <ResetFiltersButton setFilter={setFilter} />
       <LabelFilter
         resourceType="asset"
-        value={((filter as any).labels || { containsAny: [] }).containsAny}
+        value={filter.labels?.map(({ value }) => ({ externalId: value }))}
         setValue={newFilters =>
           setFilter({
             ...filter,
-            labels: newFilters ? { containsAny: newFilters } : undefined,
+            labels: newFilters?.map(({ externalId }) => ({
+              value: externalId,
+            })),
           })
         }
       />
       <DataSetFilter
         resourceType="asset"
-        value={filter.dataSetIds}
+        value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
         setValue={newIds =>
           setFilter({
             ...filter,
-            dataSetIds: newIds,
+            dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
           })
         }
       />
@@ -72,11 +78,11 @@ export const AssetFilters = ({
       <AdvancedFiltersCollapse resourceType="asset" filter={filter}>
         <ByAssetFilter
           title="Parent"
-          value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
+          value={filter.assetSubtreeIds?.map(({ value }) => value)}
           setValue={newAssetIds =>
             setFilter({
               ...filter,
-              assetSubtreeIds: newAssetIds?.map(id => ({ id })),
+              assetSubtreeIds: newAssetIds?.map(id => ({ value: id })),
             })
           }
         />

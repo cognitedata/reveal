@@ -1,5 +1,5 @@
 import React from 'react';
-import { TimeseriesFilter, Timeseries } from '@cognite/sdk';
+import { Timeseries } from '@cognite/sdk';
 import { ResourceItem, convertResourceType } from 'types';
 import { TimeseriesNewTable } from 'containers/Timeseries';
 import { EnsureNonEmptyResource } from 'components';
@@ -10,6 +10,7 @@ import { Flex, Loader } from '@cognite/cogs.js';
 
 import { SearchResultToolbar, useResourceResults } from '..';
 import { ColumnToggleProps } from 'components/ReactTable';
+import { InternalTimeseriesFilters } from 'domain/timeseries';
 
 export const TimeseriesSearchResults = ({
   query = '',
@@ -23,7 +24,7 @@ export const TimeseriesSearchResults = ({
   query?: string;
   showCount?: boolean;
   initialView?: string;
-  filter?: TimeseriesFilter;
+  filter?: InternalTimeseriesFilters;
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;

@@ -15,8 +15,16 @@ export default {
   },
 };
 export const Example: ComponentStory<typeof ByAssetFilterV2> = args => {
-  const [value, setValue] = useState<number[] | undefined>(undefined);
-  return <ByAssetFilterV2 {...args} value={value} setValue={setValue} />;
+  const [value, setValue] = useState<
+    { label?: string; value: number }[] | undefined
+  >(undefined);
+  return (
+    <ByAssetFilterV2
+      {...args}
+      value={value?.map(({ value }) => value)}
+      setValue={setValue}
+    />
+  );
 };
 
 Example.args = {

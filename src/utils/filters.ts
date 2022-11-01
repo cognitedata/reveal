@@ -6,14 +6,12 @@ import {
 import isBoolean from 'lodash/isBoolean';
 import isEmpty from 'lodash/isEmpty';
 import { ResourceType, ResourceFilterProps } from 'types';
+import { Metadata, IdEither, DateRange } from '@cognite/sdk';
 import {
-  FileFilterProps,
-  AssetFilterProps,
-  EventFilter,
-  Metadata,
-  IdEither,
-  DateRange,
-} from '@cognite/sdk';
+  InternalAssetFilters,
+  InternalEventsFilters,
+  InternalFilesFilters,
+} from 'domain/index';
 
 export const annotationInteralIdFilter = (
   fileId: number,
@@ -42,9 +40,9 @@ export type FiltersWithResourceType = Required<ResourceFilterProps> & {
 };
 
 export type FilterType =
-  | AssetFilterProps
-  | EventFilter
-  | FileFilterProps
+  | InternalAssetFilters
+  | InternalEventsFilters
+  | InternalFilesFilters
   | {
       name?: string | undefined;
       externalIdPrefix?: string | undefined;

@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
 import { useAssetsListQuery } from 'domain/assets/service/queries/useAssetsListQuery';
+import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from 'domain/constants';
+import { useMemo } from 'react';
 import { mapFiltersToAssetsAdvancedFilters } from '../transformers/mapFiltersToAssetsAdvancedFilters';
 import { mapInternalFilterToAssetFilter } from '../transformers/mapInternalFilterToAssetFilter';
 import { mapTableSortByToAssetSortFields } from '../transformers/mapTableSortByToAssetSortFields';
@@ -19,7 +20,10 @@ export const useAssetsFilteredListQuery = ({
     [assetFilter]
   );
 
-  const filter = mapInternalFilterToAssetFilter(assetFilter);
+  const filter = useMemo(
+    () => mapInternalFilterToAssetFilter(assetFilter),
+    [assetFilter]
+  );
 
   const sort = useMemo(() => mapTableSortByToAssetSortFields(sortBy), [sortBy]);
 
@@ -27,6 +31,6 @@ export const useAssetsFilteredListQuery = ({
     filter,
     advancedFilter,
     sortBy: sort,
-    limit: 25,
+    limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
   });
 };

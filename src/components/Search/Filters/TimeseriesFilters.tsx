@@ -1,9 +1,5 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import {
-  InternalId,
-  TimeseriesFilter as TimeseriesFilterProps,
-} from '@cognite/sdk';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
@@ -13,26 +9,31 @@ import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
+import { InternalTimeseriesFilters } from 'domain/timeseries';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const TimeseriesFilters = ({
   filter,
   setFilter,
 }: {
-  filter: TimeseriesFilterProps;
-  setFilter: (newFilter: TimeseriesFilterProps) => void;
+  filter: InternalTimeseriesFilters;
+  setFilter: (newFilter: InternalTimeseriesFilters) => void;
 }) => {
-  const { data: items = [] } = useList('timeseries', { filter, limit: 1000 });
+  const { data: items = [] } = useList('timeseries', {
+    filter: transformNewFilterToOldFilter(filter),
+    limit: 1000,
+  });
 
   return (
     <div>
       <ResetFiltersButton setFilter={setFilter} />
       <DataSetFilter
         resourceType="timeSeries"
-        value={filter.dataSetIds}
+        value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
         setValue={newIds =>
           setFilter({
             ...filter,
-            dataSetIds: newIds,
+            dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
           })
         }
       />
@@ -70,11 +71,11 @@ export const TimeseriesFilters = ({
 
       <AdvancedFiltersCollapse resourceType="timeSeries" filter={filter}>
         <ByAssetFilter
-          value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
+          value={filter.assetSubtreeIds?.map(({ value }) => value)}
           setValue={newValue =>
             setFilter({
               ...filter,
-              assetSubtreeIds: newValue?.map(id => ({ id })),
+              assetSubtreeIds: newValue?.map(id => ({ value: id })),
             })
           }
         />

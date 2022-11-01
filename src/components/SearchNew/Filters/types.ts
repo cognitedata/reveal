@@ -8,3 +8,8 @@ export type CommonFilterFacets = {
   metadata?: Metadata;
   externalIdPrefix?: string;
 };
+
+export type OptionValue<T extends string | number> = {
+  label?: string;
+  value: T;
+};

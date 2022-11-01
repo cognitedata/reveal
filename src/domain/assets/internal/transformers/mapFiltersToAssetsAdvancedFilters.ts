@@ -6,6 +6,7 @@ export type AssetsProperties = {
   dataSetIds: number[];
   source: string[];
   externalId: string;
+  labels: string[];
   [key: `metadata.${string}`]: string;
 };
 
@@ -18,11 +19,10 @@ export const mapFiltersToAssetsAdvancedFilters = ({
   dataSetIds,
 }: InternalAssetFilters): AdvancedFilter<AssetsProperties> | undefined => {
   const filterBuilder = new AdvancedFilterBuilder<AssetsProperties>()
-
     .containsAny('dataSetIds', () => {
-      return dataSetIds?.reduce((acc, item) => {
-        if ('id' in item) {
-          return [...acc, item.id];
+      return dataSetIds?.reduce((acc, { value }) => {
+        if (typeof value === 'number') {
+          return [...acc, value];
         }
         return acc;
       }, [] as number[]);
@@ -32,6 +32,9 @@ export const mapFiltersToAssetsAdvancedFilters = ({
         return [source];
       }
     })
+    // .containsAny('labels', () => {
+    //   return labels?.map(({ externalId }) => externalId);
+    // })
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,

@@ -1,0 +1,1 @@
+export const DEFAULT_GLOBAL_TABLE_RESULT_LIMIT = 20;

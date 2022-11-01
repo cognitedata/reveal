@@ -7,6 +7,13 @@ import {
   SequenceFilter,
 } from '@cognite/sdk';
 import { ResourceItem } from './Types';
+import {
+  InternalAssetFilters,
+  InternalTimeseriesFilters,
+  InternalFilesFilters,
+  InternalEventsFilters,
+  InternalSequenceFilters,
+} from 'domain/index';
 
 export type SmallPreviewProps = {
   actions?: React.ReactNode[];
@@ -29,11 +36,11 @@ export type SelectableItemProps = {
 };
 
 export type InitialResourceFilterProps = {
-  initialAssetFilter?: AssetFilterProps;
-  initialTimeseriesFilter?: TimeseriesFilter;
-  initialFileFilter?: FileFilterProps;
-  initialEventFilter?: EventFilter;
-  initialSequenceFilter?: Required<SequenceFilter>['filter'];
+  initialAssetFilter?: InternalAssetFilters;
+  initialTimeseriesFilter?: InternalTimeseriesFilters;
+  initialFileFilter?: InternalFilesFilters;
+  initialEventFilter?: InternalEventsFilters;
+  initialSequenceFilter?: InternalSequenceFilters;
 };
 
 export type FiltersType =
@@ -43,21 +50,30 @@ export type FiltersType =
   | EventFilter
   | Required<SequenceFilter>['filter'];
 
+export type NewFiltersType =
+  | InternalAssetFilters
+  | InternalTimeseriesFilters
+  | InternalFilesFilters
+  | InternalEventsFilters
+  | InternalSequenceFilters;
+
 export type ResourceFilterProps = {
-  assetFilter?: AssetFilterProps;
-  timeseriesFilter?: TimeseriesFilter;
-  fileFilter?: FileFilterProps;
-  eventFilter?: EventFilter;
-  sequenceFilter?: Required<SequenceFilter>['filter'];
+  assetFilter?: InternalAssetFilters;
+  timeseriesFilter?: InternalTimeseriesFilters;
+  fileFilter?: InternalFilesFilters;
+  eventFilter?: InternalEventsFilters;
+  sequenceFilter?: InternalSequenceFilters;
 };
 
 export type SetResourceFilterProps = {
-  setAssetFilter: React.Dispatch<React.SetStateAction<AssetFilterProps>>;
-  setTimeseriesFilter: React.Dispatch<React.SetStateAction<TimeseriesFilter>>;
-  setFileFilter: React.Dispatch<React.SetStateAction<FileFilterProps>>;
-  setEventFilter: React.Dispatch<React.SetStateAction<EventFilter>>;
+  setAssetFilter: React.Dispatch<React.SetStateAction<InternalAssetFilters>>;
+  setTimeseriesFilter: React.Dispatch<
+    React.SetStateAction<InternalTimeseriesFilters>
+  >;
+  setFileFilter: React.Dispatch<React.SetStateAction<InternalFilesFilters>>;
+  setEventFilter: React.Dispatch<React.SetStateAction<InternalEventsFilters>>;
   setSequenceFilter: React.Dispatch<
-    React.SetStateAction<Required<SequenceFilter>['filter']>
+    React.SetStateAction<InternalSequenceFilters>
   >;
 };
 

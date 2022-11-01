@@ -4,12 +4,17 @@ import { useDocumentSearch } from '@cognite/react-document-search';
 
 import { SearchResultToolbar } from 'containers/SearchResults';
 import { DocumentsTable } from 'containers/Documents';
-import { Document, DocumentSort, normalize } from 'domain/documents';
-import { useObserveDocumentSearchFilters } from 'domain/documents/internal/hook/useObserveDocumentSearchFilters';
+import {
+  Document,
+  DocumentSort,
+  InternalDocumentFilter,
+  normalize,
+  useObserveDocumentSearchFilters,
+} from 'domain/documents';
 
 export interface DocumentSearchResultsProps {
   query?: string;
-  filter: Record<string, unknown>;
+  filter: InternalDocumentFilter;
   onClick: (item: Document) => void;
 }
 

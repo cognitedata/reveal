@@ -1,13 +1,14 @@
 import React from 'react';
 import { Tooltip } from '@cognite/cogs.js';
-import { DataSet, IdEither } from '@cognite/sdk';
-import { OptionsType, OptionTypeBase } from 'react-select';
+import { DataSet } from '@cognite/sdk';
 import { Select } from 'components';
 import { ResourceType, convertResourceType } from 'types';
 import { DataSetWCount } from 'hooks/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { useResourceTypeDataSetAggregate } from 'domain/dataSets/internal/hooks/useResourceTypeDataSetAggregate';
 import { FilterFacetTitle } from '../FilterFacetTitle';
+import { isArray } from 'lodash';
+import { OptionValue } from '../types';
 
 const formatOption = (dataset: DataSetWCount) => {
   const name = dataset?.name || '';
@@ -24,22 +25,22 @@ export const DataSetFilterV2 = ({
   setValue,
 }: {
   resourceType: ResourceType;
-  value: IdEither[] | undefined;
-  setValue: (newValue: IdEither[] | undefined) => void;
+  value?: number[];
+  setValue: (newValue: OptionValue<number>[] | undefined) => void;
 }) => {
   const { data: currentDataSets } = useCdfItems<DataSet>(
     'datasets',
-    value || [],
+    (value || []).map(id => ({ id })),
     false,
     {
       enabled: value && value.length > 0,
     }
   );
 
-  const setDataSetFilter = (ids?: number[]) => {
-    const newFilters =
-      ids && ids.length > 0 ? ids?.map(id => ({ id })) : undefined;
-    setValue(newFilters);
+  const setDataSetFilter = (newValue?: OptionValue<number>[]) => {
+    // const newFilters =
+    //   ids && ids.length > 0 ? ids?.map(id => ({ id })) : undefined;
+    setValue(newValue);
   };
 
   const { data: datasetOptions, isError } = useResourceTypeDataSetAggregate(
@@ -61,11 +62,11 @@ export const DataSetFilterV2 = ({
           options={datasetOptions?.map(formatOption)}
           isDisabled={isError}
           onChange={newValue => {
-            setDataSetFilter(
-              newValue
-                ? (newValue as OptionsType<OptionTypeBase>).map(el => el.value)
-                : undefined
-            );
+            if (isArray(newValue)) {
+              setDataSetFilter(
+                newValue && newValue.length > 0 ? newValue : undefined
+              );
+            }
           }}
           value={currentDataSets?.map(el => ({ label: el.name, value: el.id }))}
           isMulti

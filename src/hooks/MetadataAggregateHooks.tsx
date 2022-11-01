@@ -1,17 +1,22 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { AssetFilterProps, AggregateResponse } from '@cognite/sdk';
+import { AggregateResponse } from '@cognite/sdk';
+import { InternalAssetFilters } from 'domain/assets';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const useAssetMetadataKeys = (
-  filter?: AssetFilterProps,
+  filter?: InternalAssetFilters,
   config?: UseQueryOptions<
     AggregateResponse[],
     unknown,
     AggregateResponse[],
-    (string | AssetFilterProps | undefined)[]
+    (string | InternalAssetFilters | undefined)[]
   >
 ) => {
   const sdk = useSDK();
+
+  filter = transformNewFilterToOldFilter(filter);
+
   const { data, ...rest } = useQuery(
     ['assets', 'aggregate', 'metadataKeys', filter],
     async () =>

@@ -15,8 +15,6 @@ import {
 } from 'types';
 import { FilterSection } from 'containers/SearchResults/SearchFiltersNew';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { CommonFilter } from './CommonFilter/CommonFilter';
-import { CommonFilterFacets } from './types';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import styled from 'styled-components';
 
@@ -41,11 +39,6 @@ export const Filters = ({
   setFileFilter,
   ...rest
 }: FilterProps) => {
-  // const commonFilter = React.useRef<CommonFilterFacets>({});
-  const [commonFilter, setCommonFilter] = React.useState<CommonFilterFacets>(
-    {}
-  );
-
   // const hasFiltersApplied = assetFilter.
   if (filterSection === FilterSection.AppliedFilters) {
     return <p>Coming soon</p>;
@@ -91,16 +84,6 @@ export const Filters = ({
     }
   };
 
-  const handleCommonChange = (updatingValue: CommonFilterFacets) => {
-    setAssetFilter(prevState => ({ ...prevState, ...updatingValue }));
-    setTimeseriesFilter(prevState => ({ ...prevState, ...updatingValue }));
-    setFileFilter(prevState => ({ ...prevState, ...updatingValue }));
-    setEventFilter(prevState => ({ ...prevState, ...updatingValue }));
-    setSequenceFilter(prevState => ({ ...prevState, ...updatingValue }));
-
-    setCommonFilter(prevFilter => ({ ...prevFilter, ...updatingValue }));
-  };
-
   // This function (and the above) will be greatly simplified with the new filter structure (coming soon)
   const handleClearClick = () => {
     setAssetFilter({});
@@ -108,18 +91,16 @@ export const Filters = ({
     setFileFilter({});
     setEventFilter({});
     setSequenceFilter({});
-
-    setCommonFilter({});
   };
 
   return (
     <Container>
       <BaseFilterCollapse>
-        <CommonFilter
+        {/* <CommonFilter
           resourceType={resourceType}
           commonFilter={commonFilter}
           onChange={handleCommonChange}
-        />
+        /> */}
         {renderCustomResourceTypeFilter()}
       </BaseFilterCollapse>
       <ResetFiltersButton setFilter={handleClearClick} />

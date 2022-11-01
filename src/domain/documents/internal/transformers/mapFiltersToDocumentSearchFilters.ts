@@ -20,9 +20,9 @@ export const mapFiltersToDocumentSearchFilters = ({
 }: InternalDocumentFilter): AdvancedFilter<DocumentProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<DocumentProperties>()
     .containsAny('sourceFile|assetIds', () => {
-      return assetSubtreeIds?.reduce((acc, item) => {
-        if ('id' in item) {
-          return [...acc, item.id];
+      return assetSubtreeIds?.reduce((acc, { value }) => {
+        if (typeof value === 'number') {
+          return [...acc, value];
         }
         return acc;
       }, [] as number[]);

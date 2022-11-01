@@ -1,20 +1,24 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { TimeseriesFilter as TimeseriesFilterProps } from '@cognite/sdk';
 import { BooleanFilter } from './BooleanFilter/BooleanFilter';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
+import { InternalTimeseriesFilters } from 'domain/timeseries';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const TimeseriesFilters = ({
   filter,
   setFilter,
   ...rest
 }: {
-  filter: TimeseriesFilterProps;
-  setFilter: (newFilter: TimeseriesFilterProps) => void;
+  filter: InternalTimeseriesFilters;
+  setFilter: (newFilter: InternalTimeseriesFilters) => void;
 }) => {
-  const { data: items = [] } = useList('timeseries', { filter, limit: 1000 });
+  const { data: items = [] } = useList('timeseries', {
+    filter: transformNewFilterToOldFilter(filter),
+    limit: 1000,
+  });
 
   return (
     <BaseFilterCollapse.Panel title="Time series" {...rest}>

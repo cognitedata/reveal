@@ -10,6 +10,7 @@ import { getTitle, ResourceType, convertResourceType } from 'types';
 import { ThreeDModelsResponse, useInfinite3DModels } from 'hooks';
 import { Model3D } from '@cognite/sdk';
 import { useDocumentFilteredAggregateCount } from '@cognite/react-document-search';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 type ResultProps = {
   api: 'list' | 'search';
@@ -46,6 +47,8 @@ export const useResultCount = ({
   label,
 }: ResultProps) => {
   const sdkType = convertResourceType(type);
+
+  filter = transformNewFilterToOldFilter(filter);
 
   const { data: search, isFetched: searchDone } = useSearch(
     sdkType,

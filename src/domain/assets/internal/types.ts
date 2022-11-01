@@ -1,12 +1,5 @@
-import {
-  AssetAggregateResult,
-  DateRange,
-  ExternalIdPrefix,
-  IdEither,
-  Label,
-  LabelFilter,
-  Metadata,
-} from '@cognite/sdk';
+import { AssetAggregateResult, Label, Metadata } from '@cognite/sdk';
+import { InternalCommonFilters } from '../../types';
 
 export type InternalAssetData = {
   id: number;
@@ -25,13 +18,8 @@ export type InternalAssetData = {
   aggregates?: AssetAggregateResult;
 };
 
-export type InternalAssetFilters = {
-  dataSetIds?: IdEither[];
-  assetSubtreeIds?: IdEither[];
-  labels?: LabelFilter;
+export interface InternalAssetFilters extends InternalCommonFilters {
+  labels?: { label?: string; value: string }[];
   metadata?: Metadata;
   source?: string;
-  createdTime?: DateRange;
-  lastUpdatedTime?: DateRange;
-  externalIdPrefix?: ExternalIdPrefix;
-};
+}

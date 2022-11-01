@@ -6,8 +6,9 @@ import {
   EpochTimestamp,
   LabelList,
   DocumentHighlight,
+  Metadata,
 } from '@cognite/sdk';
-import { IdEither, DateRange } from '@cognite/sdk';
+import { InternalCommonFilters, Order } from '../../types';
 
 // Flattened version of 'DocumentSearchItem' from cognite/sdk
 export interface Document {
@@ -32,17 +33,12 @@ export interface Document {
   highlight?: DocumentHighlight;
 }
 
-export type InternalDocumentFilter = {
+export interface InternalDocumentFilter extends InternalCommonFilters {
   author?: string[];
   source?: string[];
   mimeType?: string[];
-  externalIdPrefix?: string;
-  createdTime?: DateRange;
-  lastUpdatedTime?: DateRange;
-  assetSubtreeIds?: IdEither[];
-};
-
-export type Order = 'asc' | 'desc';
+  metadata?: Metadata;
+}
 
 export type DocumentSort = {
   column?: string;

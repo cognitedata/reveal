@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { Asset, AssetFilterProps } from '@cognite/sdk';
+import { Asset } from '@cognite/sdk';
 import styled from 'styled-components';
 import { usePrevious } from 'hooks/CustomHooks';
 import { Loader, Table } from 'components';
@@ -14,6 +14,7 @@ import {
 import { ThreeDAssetMappings, useThreeDAssetMappings } from 'hooks/threeDHooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import { ColumnShape } from 'react-base-table';
+import { InternalAssetFilters } from 'domain/assets';
 
 export const AssetTreeTable = ({
   filter = {},
@@ -25,7 +26,7 @@ export const AssetTreeTable = ({
   hierachyRootId,
   ...selectionProps
 }: {
-  filter: AssetFilterProps;
+  filter: InternalAssetFilters;
   query?: string;
   onAssetClicked: (item: Asset) => void;
   hierachyRootId?: number;

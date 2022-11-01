@@ -2,12 +2,12 @@ import {
   CogniteExternalId,
   CogniteInternalId,
   DateRange,
-  ExternalIdPrefix,
   IdEither,
   Metadata,
   NullableProperty,
   Timestamp,
 } from '@cognite/sdk';
+import { InternalCommonFilters } from '../../types';
 
 export interface InternalEventsData {
   id: number;
@@ -33,12 +33,4 @@ export interface InternalEventsFilters extends InternalCommonFilters {
   type?: string;
   subtype?: string;
   metadata?: Metadata;
-}
-
-interface InternalCommonFilters {
-  dataSetIds?: IdEither[];
-  assetSubtreeIds?: IdEither[];
-  createdTime?: DateRange;
-  lastUpdatedTime?: DateRange;
-  externalIdPrefix?: ExternalIdPrefix;
 }

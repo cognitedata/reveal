@@ -8,6 +8,8 @@ import {
   listKey,
   listApi,
 } from '@cognite/sdk-react-query-hooks';
+import { InternalAssetFilters } from 'domain/assets';
+import { transformNewFilterToOldFilter } from 'domain/transformers';
 import { useQueryClient, useQuery, UseQueryOptions } from 'react-query';
 
 export type ConstructedTreeAssetChildren =
@@ -21,11 +23,13 @@ export type ConstructedTreeAsset = Asset & {
 export type ConstructedTreeAssetMap = { [key in number]: ConstructedTreeAsset };
 
 export const useSearchTree = (
-  filter: AssetFilterProps,
+  filter: InternalAssetFilters,
   query?: string,
   config?: UseQueryOptions<ConstructedTreeAsset[]>
 ) => {
   const enableSearch = !!query;
+
+  filter = transformNewFilterToOldFilter(filter)!;
 
   const {
     data: searchData = [],

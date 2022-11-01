@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileFilterProps, FileInfo } from '@cognite/sdk';
+import { FileInfo } from '@cognite/sdk';
 import { FileNewTable } from 'containers/Files';
 import { ResourceItem, convertResourceType } from 'types';
 import { EnsureNonEmptyResource } from 'components';
@@ -11,6 +11,7 @@ import { EmptyState } from 'components/EmpyState/EmptyState';
 import styled from 'styled-components';
 import { Flex } from '@cognite/cogs.js';
 import { ColumnToggleProps } from 'components/ReactTable';
+import { InternalFilesFilters } from 'domain/files';
 
 export const FileSearchResults = ({
   query = '',
@@ -28,7 +29,7 @@ export const FileSearchResults = ({
   query?: string;
   items?: FileInfo[];
   showCount?: boolean;
-  filter?: FileFilterProps;
+  filter?: InternalFilesFilters;
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;
@@ -37,6 +38,16 @@ export const FileSearchResults = ({
   isGroupingFilesEnabled?: boolean;
   onClick: (item: FileInfo) => void;
 } & ColumnToggleProps<FileInfo>) => {
+  // TODO: Remove this when migrated
+  // if (filter.assetSubtreeIds) {
+  //   filter = {
+  //     ...filter,
+  //     assetSubtreeIds: filter?.assetSubtreeIds?.map(({ value }: any) => ({
+  //       id: value,
+  //     })),
+  //   };
+  // }
+
   const [currentView, setCurrentView] = useState<string>(() => {
     if (
       Boolean(parentResource) &&
