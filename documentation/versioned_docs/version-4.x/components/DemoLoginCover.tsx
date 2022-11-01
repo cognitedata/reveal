@@ -56,18 +56,17 @@ export default function DemoLoginCover(props: Props): ReactElement {
 
   const client = new CogniteClient({
     appId: 'reveal-docs-' + REVEAL_VERSION,
-    project: loginManager.project,
-    getToken: async () => loginManager.getToken()
+    project: 'publicdata',
+    getToken: () => loginManager.getToken()
   });
 
   if (loginManager.isLoggedIn) {
     client.authenticate();
   }
 
-  window.sdk = client;
+  (window as any).sdk = client;
 
   const coverUrl = useBaseUrl('/img/login_cover.png');
-  const visualInstructionUrl = useBaseUrl('img/publicdata_register.png')
 
   if (!loginManager.isLoggedIn) {
     return (
@@ -91,7 +90,7 @@ export default function DemoLoginCover(props: Props): ReactElement {
           <Section style={{ margin: '48px 0' }}>
             <button
               className="button button--primary button--lg"
-              onClick={() => loginManager.loginWithRedirect()}
+              onClick={() => loginManager.loginPopup()}
               type="button"
             >
               Sign in
@@ -101,23 +100,18 @@ export default function DemoLoginCover(props: Props): ReactElement {
           <Section>
             If you haven't registered yet, please navigate to{' '}
             <a
-              href="https://openindustrialdata.com/get-started/"
+              href="https://hub.cognite.com/"
               target="_blank"
             >
-              openindustrialdata.com
+              hub.cognite.com
             </a>{' '}
-            and register with your google account.
+            and register a new account.
           </Section>
         </CenteredContainer>
-
-        <Section style={{ marginTop: 'auto', textAlign: 'right' }}>
-          <a href={visualInstructionUrl} target="_blank">
-            visual instruction
-          </a>
-        </Section>
       </Root>
     );
   }
 
   return props.children(client);
 }
+
