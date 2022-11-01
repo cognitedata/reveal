@@ -73,9 +73,9 @@ export class LoginManager {
   private getRedirectUrl(): string {
     const subdomains = window.location.pathname.split('/').filter(p => p.length > 0);
     const primarySubDomain = subdomains[0];
-    if(primarySubDomain === 'reveal-docs'){
+    if (primarySubDomain === 'reveal-docs') {
       return `${window.location.origin}/reveal-docs`;
-    } else if(primarySubDomain === 'reveal-docs-preview'){
+    } else if (primarySubDomain === 'reveal-docs-preview') {
       return `${window.location.origin}/reveal-docs-preview/`;
     }
     throw new Error(`Unknown redirect URL: ${window.location.href}`);
