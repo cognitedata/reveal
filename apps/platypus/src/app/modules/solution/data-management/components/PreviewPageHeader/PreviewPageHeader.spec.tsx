@@ -6,6 +6,14 @@ import { DataModelTransformation } from '@platypus/platypus-core';
 import noop from 'lodash/noop';
 import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
 
+jest.mock('@platypus-app/flags', () => {
+  return {
+    useManualPopulationFeatureFlag: () => ({
+      isEnabled: true,
+    }),
+  };
+});
+
 jest.mock(
   '@platypus-app/modules/solution/data-management/hooks/useTransformations'
 );
