@@ -1,4 +1,5 @@
-import { Flex, Icon, Label } from '@cognite/cogs.js';
+import styled from 'styled-components';
+import { Body, Flex, Icon, Label, Tooltip } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/shared';
 import { getItemFromStorage } from 'utils/localStorage';
 import { DataSet, DataSetV3, Extpipe } from 'utils/types';
@@ -23,6 +24,7 @@ export type DataSetRow = {
 };
 
 const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
+  const { t } = useTranslation();
   const [
     { data: assets },
     { data: timeseries },
@@ -40,33 +42,74 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
   return (
     <Flex gap={8}>
       {assetCount > 0 && (
-        <Label size="small" icon="Assets" variant="unknown">
-          {assetCount.toLocaleString()}
-        </Label>
+        <Tooltip
+          content={`${assetCount.toLocaleString()} ${t('assets', {
+            postProcess: 'lowercase',
+          })}`}
+        >
+          <Label size="small" icon="Assets" variant="unknown">
+            {assetCount.toLocaleString()}
+          </Label>
+        </Tooltip>
       )}
       {timeseriesCount > 0 && (
-        <Label size="small" icon="Timeseries" variant="unknown">
-          {timeseriesCount.toLocaleString()}
-        </Label>
+        <Tooltip
+          content={`${timeseriesCount.toLocaleString()} ${t('time-series', {
+            postProcess: 'lowercase',
+          })}`}
+        >
+          <Label size="small" icon="Timeseries" variant="unknown">
+            {timeseriesCount.toLocaleString()}
+          </Label>
+        </Tooltip>
       )}
       {filesCount > 0 && (
-        <Label size="small" icon="Document" variant="unknown">
-          {filesCount.toLocaleString()}
-        </Label>
+        <Tooltip
+          content={`${filesCount.toLocaleString()} ${t('files', {
+            postProcess: 'lowercase',
+          })}`}
+        >
+          <Label size="small" icon="Document" variant="unknown">
+            {filesCount.toLocaleString()}
+          </Label>
+        </Tooltip>
       )}
       {eventsCount > 0 && (
-        <Label size="small" icon="Events" variant="unknown">
-          {eventsCount.toLocaleString()}
-        </Label>
+        <Tooltip
+          content={`${eventsCount.toLocaleString()} ${t('events', {
+            postProcess: 'lowercase',
+          })}`}
+        >
+          <Label size="small" icon="Events" variant="unknown">
+            {eventsCount.toLocaleString()}
+          </Label>
+        </Tooltip>
       )}
       {sequencesCount > 0 && (
-        <Label size="small" icon="Sequences" variant="unknown">
-          {sequencesCount.toLocaleString()}
-        </Label>
+        <Tooltip
+          content={`${sequencesCount.toLocaleString()} ${t('sequence_other', {
+            postProcess: 'lowercase',
+          })}`}
+        >
+          <Label size="small" icon="Sequences" variant="unknown">
+            {sequencesCount.toLocaleString()}
+          </Label>
+        </Tooltip>
       )}
+      {assetCount === 0 &&
+        timeseriesCount === 0 &&
+        filesCount === 0 &&
+        eventsCount === 0 &&
+        sequencesCount === 0 && (
+          <StyledEmptyText level={3}>{t('dataset-is-empty')}</StyledEmptyText>
+        )}
     </Flex>
   );
 };
+
+const StyledEmptyText = styled(Body)`
+  color: rgba(0, 0, 0, 0.55);
+`;
 
 export const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
   const labels: string[] = [];
