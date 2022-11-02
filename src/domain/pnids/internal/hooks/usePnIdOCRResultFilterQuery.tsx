@@ -8,10 +8,7 @@ export const usePnIdOCRResultFilterQuery = (
   containerId: string,
   file?: FileInfo
 ) => {
-  const { data } = usePnIdRawOCRResultQuery(
-    file,
-    Boolean(file) && query !== ''
-  );
+  const { data } = usePnIdRawOCRResultQuery(file, !!file && query !== '');
 
   const annotationSearchResult = useMemo(() => {
     if (data?.length) {

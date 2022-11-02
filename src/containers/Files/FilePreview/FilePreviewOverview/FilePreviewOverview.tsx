@@ -20,7 +20,6 @@ import {
   Sequence,
   CogniteEvent,
 } from '@cognite/sdk';
-import { useViewerQuery } from '@cognite/react-picture-annotation';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { DetailsItem, InfoGrid } from 'components';
 import { useResourcePreview } from 'context';
@@ -139,7 +138,7 @@ export const FilePreviewOverview = ({
   onEventClicked,
   onSequenceClicked,
 }: FilePreviewOverviewProps) => {
-  const { query, setQuery } = useViewerQuery();
+  const [query, setQuery] = useState<string>('');
   const { openPreview } = useResourcePreview();
   const [currentTab, setTab] = useState('resources');
   const [open, setOpen] = useState<string[]>([]);

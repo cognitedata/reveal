@@ -8,10 +8,13 @@ import {
   readablePreviewableFileTypes,
   removeSimilarAnnotations,
 } from 'utils';
-import { PendingCogniteAnnotation } from '@cognite/annotations';
+import {
+  CogniteAnnotation,
+  PendingCogniteAnnotation,
+} from '@cognite/annotations';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceItem } from 'types';
-import { AnnotationPreviewSidebar } from '../AnnotationPreviewSidebar';
+import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../../hooks';
 import { UnifiedFileViewerWrapper } from './UnifiedFileViewerWrapper';
 import { useSDK } from '@cognite/sdk-provider';
@@ -24,6 +27,7 @@ import {
 import {
   Annotation,
   getAnnotationsFromLegacyCogniteAnnotations,
+  UnifiedViewer,
 } from '@cognite/unified-file-viewer';
 import { applyStylesToUFVAnnotation, getContainerId } from './utils';
 import { DEFAULT_ZOOM_SCALE } from './constants';
@@ -46,7 +50,14 @@ export const FilePreviewUFV = ({
   fileIcon,
   showZoomControls = false,
 }: FilePreviewUFVProps) => {
+  // TODO: This is now duplicated in UnifiedFileViewerWrapper
+  // Later work includes merging the two components
+  const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
   const sdk = useSDK();
+
+  const [selectedAnnotations, setSelectedAnnotations] = useState<
+    (CogniteAnnotation | ProposedCogniteAnnotation)[]
+  >([]);
 
   const [pendingAnnotations, setPendingAnnotations] = useState<
     ProposedCogniteAnnotation[]
@@ -193,6 +204,7 @@ export const FilePreviewUFV = ({
           <AnnotationHoverPreview annotation={[annotation]} />
         )}
         renderAnnotation={renderAnnotationCallback}
+        onRef={setUnifiedViewerRef}
       />
       <SidebarWrapper>
         <AnnotationPreviewSidebar
@@ -205,6 +217,9 @@ export const FilePreviewUFV = ({
           onItemClicked={onItemClicked}
           annotations={allAnnotations}
           fileIcon={fileIcon}
+          reset={() => unifiedViewerRef?.zoomToFit()}
+          selectedAnnotations={selectedAnnotations}
+          setSelectedAnnotations={setSelectedAnnotations}
         />
       </SidebarWrapper>
     </FullHeightWrapper>

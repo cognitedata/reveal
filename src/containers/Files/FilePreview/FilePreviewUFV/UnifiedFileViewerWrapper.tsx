@@ -32,7 +32,7 @@ import { DocumentContainerProps } from '@cognite/unified-file-viewer/dist/core/c
 import { ActionTools } from './ActionTools';
 import { usePnIdOCRResultFilterQuery } from '../../../../domain/pnids/internal/hooks/usePnIdOCRResultFilterQuery';
 
-export type UnifiedFileViewerWrapperProps = {
+type UnifiedFileViewerWrapperProps = {
   file: FileInfo;
   sdk: CogniteClient;
   creatable?: boolean;
@@ -54,6 +54,7 @@ export type UnifiedFileViewerWrapperProps = {
     el: CommonLegacyCogniteAnnotation,
     isSelected: boolean
   ) => Annotation | undefined;
+  onRef?: (ref: UnifiedViewer | undefined) => void;
 };
 
 export const UnifiedFileViewerWrapper = ({
@@ -67,6 +68,7 @@ export const UnifiedFileViewerWrapper = ({
   onSelectAnnotations,
   renderAnnotation,
   renderItemPreview,
+  onRef,
 }: UnifiedFileViewerWrapperProps) => {
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
 
@@ -224,6 +226,14 @@ export const UnifiedFileViewerWrapper = ({
     ];
   }, [hoverId, annotations, renderItemPreview]);
 
+  const handleRef = (ref: UnifiedViewer) => {
+    if (onRef !== undefined) {
+      onRef(ref);
+    }
+
+    setUnifiedViewerRef(ref);
+  };
+
   if (!container) {
     return <Loader />;
   }
@@ -233,7 +243,7 @@ export const UnifiedFileViewerWrapper = ({
       <Pagination container={container} onPageChange={handlePageNumber}>
         <ReactUnifiedViewer
           id="ufv-1"
-          setRef={setUnifiedViewerRef}
+          setRef={handleRef}
           container={container}
           annotations={[...allConvertedAnnotations, ...annotationSearchResult]}
           tooltips={tooltips}

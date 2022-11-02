@@ -11,11 +11,7 @@ import {
 } from '@cognite/cogs.js';
 import { Breadcrumb } from 'antd';
 import { ResourceIcons } from 'components';
-import {
-  ProposedCogniteAnnotation,
-  useSelectedAnnotations,
-  useZoomControls,
-} from '@cognite/react-picture-annotation';
+import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import capitalize from 'lodash/capitalize';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
@@ -24,26 +20,27 @@ interface AnnotationsListProps {
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
   type: 'assets' | 'files';
   goBack: () => void;
+  reset: () => void;
   setZoomedAnnotation: (zoomedAnnotation: CogniteAnnotation) => void;
+  setSelectedAnnotations: (
+    annotations: (CogniteAnnotation | ProposedCogniteAnnotation)[]
+  ) => void;
 }
 
 type AnnotationType = 'pending' | 'approved' | 'all';
 
-/**
- * @deprecated This copy is left here until UFV migration is complete, upon which it can be deleted.
- * The UFV copy is in the UFV folder.
- */
 const AnnotationsList = ({
   annotations,
   type,
   goBack,
+  reset,
   setZoomedAnnotation,
+  setSelectedAnnotations,
 }: AnnotationsListProps) => {
   const [filterType, setFilterType] = useState<AnnotationType>('all');
   const [filteredList, setFilteredList] = useState<
     Array<CogniteAnnotation | ProposedCogniteAnnotation>
   >([]);
-  const { reset } = useZoomControls();
 
   const set = new Set<number>();
   filteredList.forEach(({ resourceId = 0 }) => {
@@ -70,8 +67,6 @@ const AnnotationsList = ({
       }),
     [assetsResources, filteredList]
   );
-
-  const { setSelectedAnnotations } = useSelectedAnnotations();
 
   useEffect(() => {
     if (filterType === 'all') {
