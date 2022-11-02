@@ -3,7 +3,7 @@ import { Button, Flex, Icon, Label, Title } from '@cognite/cogs.js';
 import { createLink, getProject } from '@cognite/cdf-utilities';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { DataSet, DATASET_HELP_DOC, getGovernedStatus } from 'utils';
 import styled from 'styled-components';
@@ -17,7 +17,6 @@ interface DatasetTopBarProps {
 const DatasetTopBar = ({ dataset, actions }: DatasetTopBarProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
   const { appPath } = useParams<{ appPath?: string }>();
 
   const { metadata } = dataset;
@@ -25,11 +24,7 @@ const DatasetTopBar = ({ dataset, actions }: DatasetTopBarProps) => {
   const { statusVariant, statusI18nKey } = getGovernedStatus(isGoverned);
 
   const handleGoToDatasets = () => {
-    if (location.key === 'default') {
-      navigate(createLink(`/${appPath}`));
-    } else {
-      navigate(-1);
-    }
+    navigate(createLink(`/${appPath}`));
   };
 
   return (

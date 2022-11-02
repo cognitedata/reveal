@@ -8,9 +8,9 @@ import {
   assetsCounter,
   sequenceCounter,
   ExploreViewConfig,
-  ContentView,
   DetailsPane,
   trackUsage,
+  ContentWrapper,
 } from 'utils';
 import { useUserInformation } from 'hooks/useUserInformation';
 import { useTranslation } from 'common/i18n';
@@ -227,7 +227,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
   if (dataSetContainsData()) {
     return (
       <Spin spinning={loading}>
-        <ContentView>
+        <ContentWrapper>
           <DetailsPane>
             {isEnabled && (
               <Flex direction="column" gap={8}>
@@ -388,7 +388,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
             </Tabs>
             {exploreView.visible && renderExploreView()}
           </DetailsPane>
-        </ContentView>
+        </ContentWrapper>
       </Spin>
     );
   }

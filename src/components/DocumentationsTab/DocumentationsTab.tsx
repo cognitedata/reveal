@@ -1,11 +1,8 @@
-import {
-  Documentation,
-  DataSet,
-  ContentView,
-  NoDataText,
-  isNotNilOrWhitespace,
-  OverviewWrapper,
-} from 'utils';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { trackEvent } from '@cognite/cdf-route-tracker';
+import sdk from '@cognite/cdf-sdk-singleton';
+
 import {
   Body,
   Colors,
@@ -17,11 +14,14 @@ import {
 } from '@cognite/cogs.js';
 import Card from 'antd/lib/card';
 
-import { trackEvent } from '@cognite/cdf-route-tracker';
-import sdk from '@cognite/cdf-sdk-singleton';
+import {
+  Documentation,
+  DataSet,
+  NoDataText,
+  isNotNilOrWhitespace,
+  ContentWrapper,
+} from 'utils';
 import { useTranslation } from 'common/i18n';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
 interface DocumentationsTabProps {
   dataSet?: DataSet;
@@ -36,10 +36,17 @@ const getDownloadUrl = async (fileId: number) => {
   return links[0].downloadUrl;
 };
 
-const fileIcon = (fileName: string) => {
+const getFileAttr = (fileName: string) => {
   const dotIndex = fileName.lastIndexOf('.');
-  const ext = fileName.substring(dotIndex);
-  switch (ext) {
+  return {
+    name: fileName.substring(0, dotIndex) || '',
+    extention: fileName.substring(dotIndex) || '',
+  };
+};
+
+const fileIcon = (fileName: string) => {
+  const { extention } = getFileAttr(fileName);
+  switch (extention) {
     case '.png' || '.jpg' || '.jpeg': {
       return <Graphic type="Image" />;
     }
@@ -101,7 +108,12 @@ const renderDocumenation = (documentation: Documentation) => {
         alignItems="center"
         className="file-name"
       >
-        {documentation.name || ''}
+        <Body level={2} strong className="name">
+          {getFileAttr(documentation.name).name}
+        </Body>
+        <Body level={2} strong className="extention">
+          {getFileAttr(documentation.name).extention}
+        </Body>
       </Flex>
     </StyledFileContainer>
   );
@@ -121,55 +133,38 @@ const DocumentationsTab = ({ dataSet }: DocumentationsTabProps) => {
     : [];
 
   return (
-    <OverviewWrapper className="overview-wrapper">
-      <ContentView>
-        {dataSet?.metadata && (
-          <Flex direction="column" gap={24}>
-            <Card>
-              <Flex
-                justifyContent="flex-start"
-                gap={24}
-                style={{ padding: 24 }}
-              >
-                <Title level={4}>{t('files')}</Title>
-                <Flex direction="row" gap={12} wrap="wrap">
-                  {files?.length ? (
-                    files.map((doc) => renderDocumenation(doc))
-                  ) : (
-                    <NoDataText>
-                      {t('no-documentation-files-uploaded')}
-                    </NoDataText>
-                  )}
-                  {files?.length ? (
-                    files.map((doc) => renderDocumenation(doc))
-                  ) : (
-                    <NoDataText>
-                      {t('no-documentation-files-uploaded')}
-                    </NoDataText>
-                  )}
-                </Flex>
+    <ContentWrapper $backgroundColor="#FAFAFA">
+      {dataSet?.metadata && (
+        <Flex direction="column" gap={24}>
+          <Card>
+            <Flex justifyContent="flex-start" gap={24} style={{ padding: 24 }}>
+              <Title level={4}>{t('files')}</Title>
+              <Flex direction="row" gap={12} wrap="wrap">
+                {files?.length ? (
+                  files.map((doc) => renderDocumenation(doc))
+                ) : (
+                  <NoDataText>
+                    {t('no-documentation-files-uploaded')}
+                  </NoDataText>
+                )}
               </Flex>
-            </Card>
-            <Card>
-              <Flex
-                justifyContent="flex-start"
-                gap={24}
-                style={{ padding: 24 }}
-              >
-                <Title level={4}>{t('links')}</Title>
-                <Flex gap={12} direction="column" style={{ width: '100%' }}>
-                  {links?.length ? (
-                    links.map((doc) => renderDocumenation(doc))
-                  ) : (
-                    <NoDataText>{t('no-documentation-links')}</NoDataText>
-                  )}
-                </Flex>
+            </Flex>
+          </Card>
+          <Card>
+            <Flex justifyContent="flex-start" gap={24} style={{ padding: 24 }}>
+              <Title level={4}>{t('links')}</Title>
+              <Flex gap={12} direction="column" style={{ width: '100%' }}>
+                {links?.length ? (
+                  links.map((doc) => renderDocumenation(doc))
+                ) : (
+                  <NoDataText>{t('no-documentation-links')}</NoDataText>
+                )}
               </Flex>
-            </Card>
-          </Flex>
-        )}
-      </ContentView>
-    </OverviewWrapper>
+            </Flex>
+          </Card>
+        </Flex>
+      )}
+    </ContentWrapper>
   );
 };
 
@@ -192,14 +187,12 @@ const StyledFileContainer = styled(Flex)`
   }
 
   .file-name {
-    width: inherit;
-    text-overflow: ellipsis;
-    overflow: hidden;
-
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    white-space: normal;
+    max-width: 179px;
+    .name {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
   }
 `;
 

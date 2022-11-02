@@ -422,7 +422,9 @@ export const SectionLine = styled.div`
   border: 6px solid rgba(83, 88, 127, 0.16);
 `;
 
-export const OverviewWrapper = styled.div`
-  background-color: #f5f5f5;
+export const ContentWrapper = styled.div<{ $backgroundColor?: string }>`
+  padding: 24px 32px;
+  min-height: 300px;
   height: 100%;
+  background-color: ${({ $backgroundColor }) => $backgroundColor || '#FFF'};
 `;
