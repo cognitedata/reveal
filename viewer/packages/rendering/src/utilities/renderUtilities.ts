@@ -64,7 +64,7 @@ export function getDepthBlendBlitMaterial(options: DepthBlendBlitOptions): THREE
     uniforms,
     glslVersion: THREE.GLSL3,
     defines,
-    depthTest: false
+    depthFunc: THREE.AlwaysDepth
   });
 }
 
