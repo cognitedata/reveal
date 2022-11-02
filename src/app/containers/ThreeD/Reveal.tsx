@@ -88,7 +88,7 @@ export function Reveal({
       domElement: revealContainer!,
       continuousModelStreaming: true,
       loadingIndicatorStyle: {
-        placement: 'topRight',
+        placement: 'bottomRight',
         opacity: 1,
       },
     });
