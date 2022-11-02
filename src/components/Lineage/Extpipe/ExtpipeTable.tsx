@@ -1,7 +1,6 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import Table from 'antd/lib/table';
-import Timeline from 'antd/lib/timeline';
 import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
@@ -10,8 +9,7 @@ import { getContainer } from 'utils/shared';
 import InfoTooltip from 'components/InfoTooltip';
 import { DataSetWithExtpipes } from 'actions';
 import {
-  EmptyLineageDot,
-  LineageDot,
+  LineageSection,
   LineageSubTitle,
   LineageTitle,
   NoDataText,
@@ -71,7 +69,7 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
   );
 
   return (
-    <Timeline.Item dot={extpipes.length ? <LineageDot /> : <EmptyLineageDot />}>
+    <LineageSection>
       <LineageTitle>
         {t('extpipe-extpipes-title', { postProcess: 'uppercase' })}
       </LineageTitle>
@@ -96,7 +94,7 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
           )}
         </>
       )}
-    </Timeline.Item>
+    </LineageSection>
   );
 };
 
