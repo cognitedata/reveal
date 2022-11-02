@@ -1,4 +1,11 @@
-import { Asset, CogniteClient, CursorResponse } from '@cognite/sdk';
+import {
+  Asset,
+  AssetFilterProps,
+  CogniteClient,
+  CursorResponse,
+} from '@cognite/sdk';
+import { AssetsProperties } from 'domain/assets';
+import { AdvancedFilter } from 'domain/builders';
 import { InternalSortBy } from 'domain/types';
 import { normalizeAssets } from '../transformers/normalize';
 
@@ -11,10 +18,10 @@ export const getAssetsList = (
     filter,
     sort,
   }: {
-    advancedFilter?: any;
+    advancedFilter?: AdvancedFilter<AssetsProperties>;
     cursor?: string;
     limit?: number;
-    filter?: Record<string, any>;
+    filter?: AssetFilterProps;
     sort?: InternalSortBy[];
   }
 ) => {

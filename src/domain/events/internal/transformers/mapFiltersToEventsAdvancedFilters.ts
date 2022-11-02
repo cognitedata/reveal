@@ -30,14 +30,6 @@ export const mapFiltersToEventsAdvancedFilters = (
   query?: string
 ): AdvancedFilter<EventsProperties> | undefined => {
   const filterBuilder = new AdvancedFilterBuilder<EventsProperties>()
-    // .containsAny('assetIds', () => {
-    //   return assetSubtreeIds?.reduce((acc, { value }) => {
-    //     if () {
-    //       return [...acc, item.id];
-    //     }
-    //     return acc;
-    //   }, [] as number[]);
-    // })
     .containsAny('dataSetIds', () => {
       return dataSetIds?.reduce((acc, { value }) => {
         if (typeof value === 'number') {

@@ -13,7 +13,7 @@ import { convertResourceType, SelectableItemsProps } from 'types';
 import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
 import styled from 'styled-components';
 import { EmptyState } from 'components/EmpyState/EmptyState';
-import { useAssetsFilteredListQuery } from 'domain/assets/internal/queries/useAssetsFilteredListQuery';
+import { useAssetsSearchResultQuery } from 'domain/assets/internal/queries/useAssetsFilteredListQuery';
 import { InternalAssetFilters } from 'domain/assets/internal/types';
 import { TableSortBy } from 'components/ReactTable/V2';
 
@@ -40,7 +40,7 @@ export const AssetSearchResults = ({
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, hasNextPage, fetchNextPage, isLoading } =
-    useAssetsFilteredListQuery({ assetFilter: filter, sortBy: sortBy });
+    useAssetsSearchResultQuery({ query, assetFilter: filter, sortBy: sortBy });
 
   const [currentView, setCurrentView] = useState<string>(() =>
     isTreeEnabled ? 'tree' : 'list'

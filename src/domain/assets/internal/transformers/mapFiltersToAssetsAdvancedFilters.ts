@@ -7,17 +7,22 @@ export type AssetsProperties = {
   source: string[];
   externalId: string;
   labels: string[];
-  [key: `metadata.${string}`]: string;
+  description: string;
+  [key: `metadata|${string}`]: string;
 };
 
-export const mapFiltersToAssetsAdvancedFilters = ({
-  source,
-  metadata,
-  createdTime,
-  lastUpdatedTime,
-  externalIdPrefix,
-  dataSetIds,
-}: InternalAssetFilters): AdvancedFilter<AssetsProperties> | undefined => {
+export const mapFiltersToAssetsAdvancedFilters = (
+  {
+    source,
+    metadata,
+    createdTime,
+    lastUpdatedTime,
+    externalIdPrefix,
+    dataSetIds,
+  }: InternalAssetFilters,
+  searchQueryMetadataKeys?: Record<string, string>,
+  query?: string
+): AdvancedFilter<AssetsProperties> | undefined => {
   const filterBuilder = new AdvancedFilterBuilder<AssetsProperties>()
     .containsAny('dataSetIds', () => {
       return dataSetIds?.reduce((acc, { value }) => {
@@ -32,9 +37,6 @@ export const mapFiltersToAssetsAdvancedFilters = ({
         return [source];
       }
     })
-    // .containsAny('labels', () => {
-    //   return labels?.map(({ externalId }) => externalId);
-    // })
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,
@@ -47,23 +49,25 @@ export const mapFiltersToAssetsAdvancedFilters = ({
 
   if (metadata) {
     for (const [key, value] of Object.entries(metadata)) {
-      filterBuilder.equals(`metadata.${key}`, value);
+      filterBuilder.equals(`metadata|${key}`, value);
     }
   }
 
-  // /**
-  //  * We want to filter all the metadata keys with the search query, to give a better result
-  //  * to the user when using our search.
-  //  */
-  // if (searchQueryMetadataKeys) {
-  //   const searchBuilder = new AdvancedFilterBuilder<EventsProperties>();
+  /**
+   * We want to filter all the metadata keys with the search query, to give a better result
+   * to the user when using our search.
+   */
+  if (searchQueryMetadataKeys) {
+    const searchBuilder = new AdvancedFilterBuilder<AssetsProperties>();
 
-  //   for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-  //     searchBuilder.prefix(`metadata.${key}`, value);
-  //   }
+    for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
+      searchBuilder.prefix(`metadata|${key}`, value);
+    }
 
-  //   filterBuilder.or(searchBuilder);
-  // }
+    searchBuilder.search('description', query);
+
+    filterBuilder.or(searchBuilder);
+  }
 
   return new AdvancedFilterBuilder<AssetsProperties>()
     .and(filterBuilder)

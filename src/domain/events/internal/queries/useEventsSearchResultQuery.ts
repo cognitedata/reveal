@@ -6,6 +6,7 @@ import { mapFiltersToEventsAdvancedFilters } from '../transformers/mapFiltersToE
 import { mapTableSortByToEventSortFields } from '../transformers/mapTableSortByToEventSortFields';
 import { InternalEventsFilters } from '../types';
 import { useEventsSearchQueryMetadataKeysQuery } from './useEventsMetadataKeysQuery';
+import { mapInternalFilterToEventsFilter } from '../transformers/mapInternalFilterToEventsFilter';
 
 export const useEventsSearchResultQuery = ({
   query,
@@ -19,6 +20,11 @@ export const useEventsSearchResultQuery = ({
   const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(
     query,
     eventsFilters
+  );
+
+  const filter = useMemo(
+    () => mapInternalFilterToEventsFilter(eventsFilters),
+    [eventsFilters]
   );
 
   const advancedFilter = useMemo(
@@ -37,6 +43,7 @@ export const useEventsSearchResultQuery = ({
   );
 
   return useEventsListQuery({
+    filter,
     advancedFilter,
     sort,
     limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,

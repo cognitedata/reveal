@@ -1,4 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
+import { EventFilter } from '@cognite/sdk/dist/src';
 import { AdvancedFilter } from 'domain/builders';
 import { EventsProperties } from 'domain/events/internal/transformers/mapFiltersToEventsAdvancedFilters';
 import { queryKeys } from 'domain/queryKeys';
@@ -9,10 +10,12 @@ import { getEventsList } from '../network/getEventsList';
 
 export const useEventsListQuery = (
   {
+    filter,
     advancedFilter,
     limit,
     sort,
   }: {
+    filter?: EventFilter;
     advancedFilter?: AdvancedFilter<EventsProperties>;
     limit?: number;
     sort?: InternalSortBy[];
@@ -22,10 +25,11 @@ export const useEventsListQuery = (
   const sdk = useSDK();
 
   const { data, ...rest } = useInfiniteQuery(
-    queryKeys.listEvents([advancedFilter, limit, sort]),
+    queryKeys.listEvents([advancedFilter, filter, limit, sort]),
     ({ pageParam }) => {
       return getEventsList(sdk, {
         cursor: pageParam,
+        filter,
         advancedFilter,
         sort,
         limit,

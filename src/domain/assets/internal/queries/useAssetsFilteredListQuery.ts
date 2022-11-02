@@ -6,8 +6,10 @@ import { mapInternalFilterToAssetFilter } from '../transformers/mapInternalFilte
 import { mapTableSortByToAssetSortFields } from '../transformers/mapTableSortByToAssetSortFields';
 import { InternalAssetFilters } from '../types';
 import { TableSortBy } from 'components/ReactTable/V2';
+import { useAssetsSearchQueryMetadataKeysQuery } from './useAssetsMetadataKeysQuery';
 
-export const useAssetsFilteredListQuery = ({
+export const useAssetsSearchResultQuery = ({
+  query,
   assetFilter,
   sortBy,
 }: {
@@ -15,9 +17,19 @@ export const useAssetsFilteredListQuery = ({
   assetFilter: InternalAssetFilters;
   sortBy: TableSortBy[];
 }) => {
+  const searchQueryMetadataKeys = useAssetsSearchQueryMetadataKeysQuery(
+    query,
+    assetFilter
+  );
+
   const advancedFilter = useMemo(
-    () => mapFiltersToAssetsAdvancedFilters(assetFilter),
-    [assetFilter]
+    () =>
+      mapFiltersToAssetsAdvancedFilters(
+        assetFilter,
+        searchQueryMetadataKeys,
+        query
+      ),
+    [assetFilter, searchQueryMetadataKeys, query]
   );
 
   const filter = useMemo(

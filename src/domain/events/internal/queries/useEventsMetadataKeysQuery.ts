@@ -1,7 +1,7 @@
 import { useEventsListQuery } from 'domain/events/service/queries/useEventsListQuery';
+import { mapMetadataKeysWithQuery } from 'domain/transformers';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
-import { mapEventsMetadataKeysWithQuery } from '../transformers/mapEventsMetadataKeysWithQuery';
 import { mapFiltersToEventsAdvancedFilters } from '../transformers/mapFiltersToEventsAdvancedFilters';
 import { InternalEventsFilters } from '../types';
 
@@ -19,8 +19,5 @@ export const useEventsSearchQueryMetadataKeysQuery = (
     { enabled: !isEmpty(query) }
   );
 
-  return useMemo(
-    () => mapEventsMetadataKeysWithQuery(data, query),
-    [data, query]
-  );
+  return useMemo(() => mapMetadataKeysWithQuery(data, query), [data, query]);
 };

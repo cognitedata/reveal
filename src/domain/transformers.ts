@@ -1,3 +1,8 @@
+import { isEmpty } from 'lodash';
+import { isObjectEmpty } from 'utils';
+import { InternalAssetData } from './assets';
+import { InternalEventsData } from './events';
+
 /**
  * Tech debt: Remove me once api is shifted over to latest
  */
@@ -39,4 +44,50 @@ export const transformNewFilterToOldFilter = <T>(
   }
 
   return filter as T;
+};
+
+type ResourceTypeData = InternalEventsData | InternalAssetData;
+
+export const mapMetadataKeysWithQuery = (
+  data: ResourceTypeData[],
+  query?: string
+): Record<string, string> | undefined => {
+  if (query === undefined || query === '') {
+    return undefined;
+  }
+
+  const getUniqueMetadataKeysFromData = (data: ResourceTypeData[]) => {
+    const metadataKeysSet = new Set<string>();
+
+    for (const { metadata } of data) {
+      if (isObjectEmpty(metadata)) {
+        continue;
+      }
+
+      const keys = Object.keys(metadata!);
+      keys.forEach(key => metadataKeysSet.add(key));
+    }
+
+    return [...metadataKeysSet];
+  };
+
+  const mergeMetadataKeysWithQuery = (
+    query: string,
+    metadataKeys: string[]
+  ) => {
+    if (isEmpty(metadataKeys)) {
+      return undefined;
+    }
+
+    return metadataKeys.reduce((accumulator, key) => {
+      return {
+        ...accumulator,
+        [key]: query,
+      };
+    }, {});
+  };
+
+  const metadataKeys = getUniqueMetadataKeysFromData(data);
+
+  return mergeMetadataKeysWithQuery(query, metadataKeys);
 };
