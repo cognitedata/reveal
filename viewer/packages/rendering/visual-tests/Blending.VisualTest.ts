@@ -11,19 +11,14 @@ import { NumericRange } from '@reveal/utilities';
 
 export default class BlendingTestFixture extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
-    const { cadMaterialManager, pcMaterialManager, sceneHandler, model } = testFixtureComponents;
+    const { cadMaterialManager, sceneHandler, model } = testFixtureComponents;
 
     if (model.geometryNode.type !== 'CadNode') {
       return Promise.resolve();
     }
 
     const renderOptions = { ...defaultRenderOptions, multiSampleCountHint: 4 } as RenderOptions;
-    this.pipelineProvider = new DefaultRenderPipelineProvider(
-      cadMaterialManager,
-      pcMaterialManager,
-      sceneHandler,
-      renderOptions
-    );
+    this.pipelineProvider = new DefaultRenderPipelineProvider(cadMaterialManager, sceneHandler, renderOptions);
 
     this.render();
 
