@@ -4,7 +4,7 @@ import Col from 'antd/lib/col';
 import Card from 'antd/lib/card';
 import BasicInfoCard from 'components/BasicInfoCard';
 import { Title, Flex, Body, Button, Icon } from '@cognite/cogs.js';
-import { ContentView, Divider, DataSet } from 'utils';
+import { ContentView, Divider, DataSet, ContentWrapper } from 'utils';
 import { useTranslation } from 'common/i18n';
 import UsersIcon from 'assets/Users.svg';
 import { useResourceAggregates } from 'hooks/useResourceAggregates';
@@ -63,8 +63,8 @@ const DatasetOverview = ({
   };
 
   return (
-    <OverviewWrapper className="overview-wrapper">
-      <Row style={{ padding: 12 }}>
+    <ContentWrapper $backgroundColor="#FAFAFA">
+      <Row>
         <Col span={15}>
           <Row>
             <Col span={24}>
@@ -157,13 +157,9 @@ const DatasetOverview = ({
           </StyledCard>
         </Col>
       </Row>
-    </OverviewWrapper>
+    </ContentWrapper>
   );
 };
-
-const OverviewWrapper = styled.div`
-  background-color: #f5f5f5;
-`;
 
 const StyledCard = styled(Card)`
   margin: 12px;

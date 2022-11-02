@@ -31,6 +31,7 @@ import {
 import { useSelectedDataSet } from '../../context/index';
 import TabTitle from './TabTitle';
 import DatasetOverview from 'components/Overview/DatasetOverview';
+import styled from 'styled-components';
 
 const { TabPane } = Tabs;
 
@@ -232,7 +233,7 @@ const DataSetDetails = (): JSX.Element => {
     );
 
     return (
-      <div>
+      <Wrapper>
         <DatasetTopBar dataset={dataSet} actions={actions} />
         <Divider />
         <DetailsPane>
@@ -246,6 +247,7 @@ const DataSetDetails = (): JSX.Element => {
             <TabPane
               tab={<TabTitle title={t('tab-overview')} iconType="Info" />}
               key="overview"
+              style={{ height: '100%' }}
             >
               <DatasetOverview
                 loading={loading}
@@ -282,7 +284,9 @@ const DataSetDetails = (): JSX.Element => {
               <DocumentationsTab dataSet={dataSet} />
             </TabPane>
             <TabPane
-              tab={<TabTitle title={t('tab-access-control')} iconType="Lock" />}
+              tab={
+                <TabTitle title={t('tab-access-control')} iconType="Users" />
+              }
               key="access-control"
             >
               <AccessControl
@@ -292,11 +296,20 @@ const DataSetDetails = (): JSX.Element => {
             </TabPane>
           </Tabs>
         </DetailsPane>
-      </div>
+      </Wrapper>
     );
   }
 
   return <div>{renderLoadingError(loading)}</div>;
 };
+
+const Wrapper = styled.div`
+  height: 100%;
+
+  .ant-tabs,
+  .ant-tabs-content {
+    height: 100%;
+  }
+`;
 
 export default DataSetDetails;

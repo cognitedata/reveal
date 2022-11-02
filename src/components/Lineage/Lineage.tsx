@@ -9,12 +9,12 @@ import { Flex } from '@cognite/cogs.js';
 import { getJetfireUrl, getContainer } from 'utils/shared';
 import { JetfireApi } from 'jetfire/JetfireApi';
 import {
-  ContentView,
   LineageSubTitle,
   LineageTitle,
   NoDataText,
   SectionLine,
   LineageSection,
+  ContentWrapper,
 } from 'utils/styledComponents';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -147,7 +147,7 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
     const hasExtractorAccounts =
       extractorAccounts != null && extractorAccounts.length >= 1;
     return (
-      <ContentView>
+      <ContentWrapper $backgroundColor="#FAFAFA">
         <Flex gap={10} direction="column">
           {hasSources ? (
             <>
@@ -224,14 +224,14 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
             </>
           )}
         </Flex>
-      </ContentView>
+      </ContentWrapper>
     );
   }
 
   return (
-    <ContentView>
+    <ContentWrapper>
       <Spin />
-    </ContentView>
+    </ContentWrapper>
   );
 };
 

@@ -1,16 +1,25 @@
-import {
-  LineageSubTitle,
-  ContentView,
-  NoDataText,
-} from 'utils/styledComponents';
-import { Button, Graphic, Icon } from '@cognite/cogs.js';
-import Spin from 'antd/lib/spin';
-
-import { Documentation, DataSet } from 'utils/types';
+import styled from 'styled-components';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { isNotNilOrWhitespace } from 'utils/shared';
-import { TitleOrnament, MiniInfoTitle } from '../../utils/styledComponents';
+
+import {
+  Body,
+  Colors,
+  Elevations,
+  Flex,
+  Graphic,
+  Icon,
+  Title,
+} from '@cognite/cogs.js';
+import Card from 'antd/lib/card';
+
+import {
+  Documentation,
+  DataSet,
+  NoDataText,
+  isNotNilOrWhitespace,
+  ContentWrapper,
+} from 'utils';
 import { useTranslation } from 'common/i18n';
 
 interface DocumentationsTabProps {
@@ -26,11 +35,18 @@ const getDownloadUrl = async (fileId: number) => {
   return links[0].downloadUrl;
 };
 
-const fileIcon = (fileName: string) => {
+const getFileAttr = (fileName: string) => {
   const dotIndex = fileName.lastIndexOf('.');
-  const ext = fileName.substring(dotIndex);
-  switch (ext) {
-    case '.png' || '.jpg': {
+  return {
+    name: fileName.substring(0, dotIndex) || '',
+    extention: fileName.substring(dotIndex) || '',
+  };
+};
+
+const fileIcon = (fileName: string) => {
+  const { extention } = getFileAttr(fileName);
+  switch (extention) {
+    case '.png' || '.jpg' || '.jpeg': {
       return <Graphic type="Image" />;
     }
     case '.7z' || '.zip' || '.rpm' || '.tar.gz' || '.z': {
@@ -38,6 +54,9 @@ const fileIcon = (fileName: string) => {
     }
     case '.csv': {
       return <Graphic type="CSV" />;
+    }
+    case '.pdf': {
+      return <Graphic type="PDF" />;
     }
     case '.exe' ||
       '.py' ||
@@ -58,31 +77,44 @@ const fileIcon = (fileName: string) => {
 const renderDocumenation = (documentation: Documentation) => {
   if (documentation.type === 'url') {
     return (
-      <LineageSubTitle>
-        <a
-          href={`${documentation.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Icon type="ExternalLink" /> {documentation.name || documentation.id}
-        </a>
-      </LineageSubTitle>
+      <StyledLinkContainer
+        href={documentation.id}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <StyledLink gap={12} justifyContent="space-between">
+          <Body level={5}>{documentation.name || documentation.id}</Body>
+          <Icon type="ExternalLink" />
+        </StyledLink>
+      </StyledLinkContainer>
     );
   }
+
   return (
-    <LineageSubTitle>
-      <Button
-        type="link"
-        onClick={async () => {
-          const url = await getDownloadUrl(Number(documentation.id));
-          if (url) {
-            window.open(url);
-          }
-        }}
+    <StyledFileContainer
+      direction="column"
+      justifyContent="space-between"
+      alignItems="flex-start"
+      role="button"
+      onClick={async () => {
+        const url = await getDownloadUrl(Number(documentation.id));
+        if (url) window.open(url);
+      }}
+    >
+      <Flex className="file-icon">{fileIcon(documentation.name)}</Flex>
+      <Flex
+        justifyContent="flex-start"
+        alignItems="center"
+        className="file-name"
       >
-        {fileIcon(documentation.name)} {documentation.name || ''}
-      </Button>
-    </LineageSubTitle>
+        <Body level={2} strong className="name">
+          {getFileAttr(documentation.name).name}
+        </Body>
+        <Body level={2} strong className="extention">
+          {getFileAttr(documentation.name).extention}
+        </Body>
+      </Flex>
+    </StyledFileContainer>
   );
 };
 
@@ -99,32 +131,89 @@ const DocumentationsTab = ({ dataSet }: DocumentationsTabProps) => {
       )
     : [];
 
-  if (dataSet?.metadata) {
-    return (
-      <ContentView>
-        <MiniInfoTitle>{t('files')}</MiniInfoTitle>
-        <TitleOrnament />
-        {files?.length ? (
-          files.map((doc) => renderDocumenation(doc))
-        ) : (
-          <NoDataText>{t('no-documentation-files-uploaded')}</NoDataText>
-        )}
-
-        <MiniInfoTitle>{t('links')}</MiniInfoTitle>
-        <TitleOrnament />
-        {links?.length ? (
-          links.map((doc) => renderDocumenation(doc))
-        ) : (
-          <NoDataText>{t('no-documentation-links')}</NoDataText>
-        )}
-      </ContentView>
-    );
-  }
   return (
-    <ContentView>
-      <Spin />
-    </ContentView>
+    <ContentWrapper $backgroundColor="#FAFAFA">
+      {dataSet?.metadata && (
+        <Flex direction="column" gap={24}>
+          <Card>
+            <Flex justifyContent="flex-start" gap={24} style={{ padding: 24 }}>
+              <Title level={4}>{t('files')}</Title>
+              <Flex direction="row" gap={12} wrap="wrap">
+                {files?.length ? (
+                  files.map((doc) => renderDocumenation(doc))
+                ) : (
+                  <NoDataText>
+                    {t('no-documentation-files-uploaded')}
+                  </NoDataText>
+                )}
+              </Flex>
+            </Flex>
+          </Card>
+          <Card>
+            <Flex justifyContent="flex-start" gap={24} style={{ padding: 24 }}>
+              <Title level={4}>{t('links')}</Title>
+              <Flex gap={12} direction="column" style={{ width: '100%' }}>
+                {links?.length ? (
+                  links.map((doc) => renderDocumenation(doc))
+                ) : (
+                  <NoDataText>{t('no-documentation-links')}</NoDataText>
+                )}
+              </Flex>
+            </Flex>
+          </Card>
+        </Flex>
+      )}
+    </ContentWrapper>
   );
 };
+
+const StyledFileContainer = styled(Flex)`
+  padding: 10px;
+  width: 200px;
+  height: 170px;
+  background: #f5f5f5;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: ${Elevations['elevation--surface--interactive--hover']};
+    transition: box-shadow 500ms ease;
+  }
+
+  .file-icon {
+    padding: 6px;
+  }
+
+  .file-name {
+    max-width: 179px;
+    .name {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+`;
+
+const StyledLinkContainer = styled.a`
+  height: 48px;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid ${Colors['border--interactive--default']};
+  border-radius: 6px;
+  cursor: pointer;
+  transition: box-shadow 500ms ease;
+
+  &:hover {
+    background-color: white;
+    box-shadow: ${Elevations['elevation--surface--interactive--hover']};
+    transition: box-shadow 500ms ease;
+  }
+`;
+
+const StyledLink = styled(Flex)`
+  padding: 12px 16px;
+`;
 
 export default DocumentationsTab;

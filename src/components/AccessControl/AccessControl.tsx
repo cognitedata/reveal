@@ -1,15 +1,11 @@
 import Spin from 'antd/lib/spin';
 import { isOidcEnv } from 'utils/shared';
 import { useCdfGroups } from 'actions';
-import {
-  TitleOrnament,
-  MiniInfoTitle,
-  ContentView,
-  CREATE_GROUP_ACCESS_DOC,
-} from 'utils';
+import { CREATE_GROUP_ACCESS_DOC, ContentWrapper } from 'utils';
 import Owners from './Owners';
 import GroupsWithAccess from './GroupsWithAccess';
 import { useTranslation } from 'common/i18n';
+import { Body, Title } from '@cognite/cogs.js';
 
 interface AccessControlProps {
   dataSetId: number;
@@ -23,28 +19,24 @@ const AccessControl = ({ dataSetId, writeProtected }: AccessControlProps) => {
   const { groups = [], isLoading } = useCdfGroups();
 
   return (
-    <ContentView>
+    <ContentWrapper>
       <Spin spinning={isLoading}>
         {writeProtected && (
           <>
-            <MiniInfoTitle style={{ marginTop: '20px' }}>
+            <Title level={4}>
               {t('access-control-owners-of-this-data-set')}
-            </MiniInfoTitle>
-            <TitleOrnament />
-            <p>{t('access-control-p1')}</p>
+            </Title>
+            <Body level={2}>{t('access-control-p1')}</Body>
             <Owners dataSetId={dataSetId} groups={groups} isOidcEnv={isOidc} />
           </>
         )}
-        <MiniInfoTitle style={{ marginTop: '20px' }}>
-          {t('access-control-groups-with-access-scoped')}
-        </MiniInfoTitle>
-        <TitleOrnament />
+        <Title level={4}>{t('access-control-groups-with-access-scoped')}</Title>
         <GroupsWithAccess
           dataSetId={dataSetId}
           groups={groups ?? []}
           isOidcEnv={isOidc}
         />
-        <p style={{ marginTop: '20px' }}>
+        <Body level={2}>
           {t('access-control-p2')}{' '}
           <a
             href={CREATE_GROUP_ACCESS_DOC}
@@ -53,9 +45,9 @@ const AccessControl = ({ dataSetId, writeProtected }: AccessControlProps) => {
           >
             {t('access-control-learn-more-about-scoping')}
           </a>
-        </p>
+        </Body>
       </Spin>
-    </ContentView>
+    </ContentWrapper>
   );
 };
 

@@ -415,8 +415,16 @@ export const LineageSection = styled(Card)`
   border: 1px solid #d9d9d9;
   padding: 24px;
 `;
+
 export const SectionLine = styled.div`
   transform: rotate(90deg);
   width: 32px;
   border: 6px solid rgba(83, 88, 127, 0.16);
+`;
+
+export const ContentWrapper = styled.div<{ $backgroundColor?: string }>`
+  padding: 24px 32px;
+  min-height: 300px;
+  height: 100%;
+  background-color: ${({ $backgroundColor }) => $backgroundColor || '#FFF'};
 `;
