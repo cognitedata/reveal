@@ -83,6 +83,8 @@ export class CadManager {
         sector.levelOfDetail === LevelOfDetail.Detailed
       ) {
         cadModel.batchGeometry(sector.geometryBatchingQueue, sector.metadata.id);
+      } else if (sector.levelOfDetail === LevelOfDetail.Discarded) {
+        cadModel.removeBatchedSectorGeometries(sector.metadata.id);
       }
 
       const sectorNodeParent = cadModel.rootSector;
