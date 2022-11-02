@@ -23,7 +23,13 @@ export async function createCognite3DViewer(onLoading: OnLoadingCallback = () =>
     getToken: async () => 'dummy'
   });
 
-  return new Cognite3DViewer({ sdk: client, _localModels: true, logMetrics: false, onLoading });
+  return new Cognite3DViewer({
+    sdk: client,
+    _localModels: true,
+    logMetrics: false,
+    onLoading,
+    pointCloudEffects: { edlOptions: 'disabled' }
+  });
 }
 
 export async function addModels(
