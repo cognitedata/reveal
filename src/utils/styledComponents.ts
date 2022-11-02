@@ -421,3 +421,8 @@ export const Divider = styled.div`
   height: 1px;
   width: 100%;
 `;
+
+export const OverviewWrapper = styled.div`
+  background-color: #f5f5f5;
+  height: 100%;
+`;
