@@ -12,6 +12,7 @@ import {
   AggregatedFilterV2,
   DateFilterV2,
   MetadataFilterV2,
+  transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
 import { CogniteEvent } from '@cognite/sdk/dist/src';
@@ -22,7 +23,7 @@ export const EventFilters = ({ ...rest }: {}) => {
   const isFiltersEmpty = useFilterEmptyState('event');
 
   const { data: items = [] } = useList<CogniteEvent>('events', {
-    filter: eventFilter,
+    filter: transformNewFilterToOldFilter(eventFilter),
     limit: 1000,
   });
 
