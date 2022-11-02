@@ -23,6 +23,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useOnPreviewTabChange } from 'app/hooks/hooks';
 import { DetailsTabWrapper } from 'app/containers/Common/element';
+import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -107,6 +108,7 @@ export const FilePreview = ({
             '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
         }}
       >
+        <Breadcrumbs currentResource={{ title: fileInfo.name }} />
         <ResourceTitleRow
           item={{ id: fileId!, type: 'file' }}
           beforeDefaultActions={
@@ -129,6 +131,7 @@ export const FilePreview = ({
             type: 'file',
             id: fileId,
             externalId: fileInfo.externalId,
+            title: fileInfo.name,
           }}
           tab={activeTab}
           onTabChange={onTabChange}

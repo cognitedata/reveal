@@ -18,6 +18,7 @@ import { useDateRange } from 'app/context/DateRangeContext';
 import { useOnPreviewTabChange } from 'app/hooks/hooks';
 import styled from 'styled-components';
 import { DetailsTabWrapper } from 'app/containers/Common/element';
+import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
 
 export type TimeseriesPreviewTabType =
   | 'details'
@@ -69,6 +70,12 @@ export const TimeseriesPreview = ({
 
   return (
     <>
+      <Breadcrumbs
+        currentResource={{
+          title:
+            timeseries.name || timeseries.externalId || String(timeseries.id),
+        }}
+      />
       <ResourceTitleRow
         datefilter={{
           start: dateRange[0],
@@ -93,6 +100,10 @@ export const TimeseriesPreview = ({
               type: 'timeSeries',
               id: timeseries.id,
               externalId: timeseries.externalId,
+              title:
+                timeseries.name ||
+                timeseries.externalId ||
+                String(timeseries.id),
             }}
             tab={activeTab}
             onTabChange={tabChange}

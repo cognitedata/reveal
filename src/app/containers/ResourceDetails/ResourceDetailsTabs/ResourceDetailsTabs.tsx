@@ -7,14 +7,14 @@ import {
   getTitle,
 } from '@cognite/data-exploration';
 import { Colors, Tabs, TabPaneProps, Label } from '@cognite/cogs.js';
-import { useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { RelatedResources } from 'app/containers/ResourceDetails/RelatedResources/RelatedResources';
 import { addPlusSignToCount } from 'app/utils/stringUtils';
+import { useNavigateWithHistory } from 'app/hooks/hooks';
 
 type ResouceDetailsTabsProps = {
-  parentResource: ResourceItem;
+  parentResource: ResourceItem & { title: string };
   tab: string;
   additionalTabs?: React.ReactElement<TabPaneProps>[];
   excludedTypes?: ResourceType[];
@@ -34,10 +34,10 @@ const ResourceDetailTabContent = ({
   resource,
   type,
 }: {
-  resource: ResourceItem;
+  resource: ResourceItem & { title: string };
   type: ResourceType;
 }) => {
-  const navigate = useNavigate();
+  const navigateWithHistory = useNavigateWithHistory(resource);
 
   const { mode, onSelect, resourcesState } = useContext(
     ResourceSelectionContext
@@ -55,7 +55,7 @@ const ResourceDetailTabContent = ({
       type={type}
       parentResource={resource}
       onItemClicked={(id: number) => {
-        navigate(createLink(`/explore/${type}/${id}`));
+        navigateWithHistory(createLink(`/explore/${type}/${id}`));
       }}
       selectionMode={mode}
       onSelect={onSelect}

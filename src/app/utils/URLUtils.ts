@@ -127,3 +127,7 @@ export const useSearchParamNumber = (
     },
   });
 };
+
+export const removeProjectFromPath = (path: string) => {
+  return `/${path.split('/').slice(2).join('/')}`;
+};

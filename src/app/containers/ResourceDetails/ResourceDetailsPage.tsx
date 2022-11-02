@@ -22,6 +22,7 @@ const resourcePageType = {
 export const ResourceDetailsPage = () => {
   const [currentResourceType] = useCurrentResourceType();
   const ResourcePage = resourcePageType[currentResourceType];
+
   return (
     <Wrapper>
       <ResourcePage />

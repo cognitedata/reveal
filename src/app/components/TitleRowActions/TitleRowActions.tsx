@@ -1,15 +1,17 @@
 import React from 'react';
 import { ResourceItem } from '@cognite/data-exploration';
-import DownloadButton from './DownloadButton';
-import { MoreButton } from './MoreButton';
-import styled from 'styled-components';
-import { DateFilter } from 'app/components/ResourceTitleRow';
-import { Button } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
-import { useCurrentResourceId, useQueryString } from 'app/hooks/hooks';
+import { Button } from '@cognite/cogs.js';
+import isArray from 'lodash/isArray';
 import { useLocation, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { DateFilter } from 'app/components/ResourceTitleRow';
+import { useCurrentResourceId, useQueryString } from 'app/hooks/hooks';
 import { SEARCH_KEY } from 'app/utils/constants';
 import { trackUsage } from 'app/utils/Metrics';
+import DownloadButton from './DownloadButton';
+import { MoreButton } from './MoreButton';
 
 type TitleRowActionsProps = {
   item: ResourceItem;
@@ -38,7 +40,11 @@ export const TitleRowActions = ({
       createLink(`/explore/search/${item.type}/${item.id}`, {
         [SEARCH_KEY]: query,
       }),
-      { state: { prevPath: location.pathname } }
+      {
+        state: {
+          history: location.state?.history,
+        },
+      }
     );
   };
 
@@ -47,7 +53,11 @@ export const TitleRowActions = ({
       createLink(`/explore/${item.type}/${item.id}`, {
         [SEARCH_KEY]: query,
       }),
-      { state: { prevPath: location.pathname } }
+      {
+        state: {
+          history: location.state?.history,
+        },
+      }
     );
     trackUsage('Exploration.FullPage', item);
   };
@@ -57,7 +67,7 @@ export const TitleRowActions = ({
   };
 
   const closeFullPagePreview = () => {
-    if ((location.state as any)?.prevPath.includes(item.id)) {
+    if (!location.state?.history || location.state?.history?.length === 0) {
       navigate(
         createLink(`/explore/search/${item.type}`, {
           [SEARCH_KEY]: query,
@@ -67,12 +77,17 @@ export const TitleRowActions = ({
       return;
     }
 
-    const isInitialPage = location.key === 'default';
-    const prevLinkDefault = location.pathname.replace(
-      'explore/',
-      'explore/search/'
+    navigate(
+      location.state.history[location.state.history.length - 1].path +
+        location.search,
+      {
+        state: {
+          history:
+            isArray(location.state?.history) &&
+            location.state.history.slice(0, -1),
+        },
+      }
     );
-    isInitialPage ? navigate(prevLinkDefault + location.search) : navigate(-1);
   };
 
   if (item.type === 'threeD') {

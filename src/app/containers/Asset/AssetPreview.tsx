@@ -18,6 +18,7 @@ import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { DetailsTabWrapper } from 'app/containers/Common/element';
+import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
 
 export type AssetPreviewTabType =
   | 'details'
@@ -86,6 +87,7 @@ export const AssetPreview = ({
 
   return (
     <>
+      <Breadcrumbs currentResource={{ title: asset.name }} />
       <ResourceTitleRow
         item={{ id: assetId, type: 'asset' }}
         afterDefaultActions={actions}
@@ -96,6 +98,7 @@ export const AssetPreview = ({
           type: 'asset',
           id: asset.id,
           externalId: asset.externalId,
+          title: asset.name,
         }}
         tab={activeTab}
         onTabChange={onTabChange}

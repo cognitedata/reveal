@@ -16,6 +16,7 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useOnPreviewTabChange } from 'app/hooks/hooks';
 import { DetailsTabWrapper } from 'app/containers/Common/element';
+import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
 
 export type SequencePreviewType =
   | 'details'
@@ -64,6 +65,11 @@ export const SequencePreview = ({
 
   return (
     <>
+      <Breadcrumbs
+        currentResource={{
+          title: sequence.name || sequence.externalId || String(sequence.id),
+        }}
+      />
       <ResourceTitleRow
         item={{ id: sequenceId, type: 'sequence' }}
         afterDefaultActions={actions}
@@ -73,6 +79,7 @@ export const SequencePreview = ({
           type: 'sequence',
           id: sequence.id,
           externalId: sequence.externalId,
+          title: sequence.name || sequence.externalId || String(sequence.id),
         }}
         tab={activeTab}
         onTabChange={onTabChange}

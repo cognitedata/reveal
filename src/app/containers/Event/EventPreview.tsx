@@ -17,6 +17,7 @@ import { CogniteEvent } from '@cognite/sdk';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useOnPreviewTabChange } from 'app/hooks/hooks';
 import { DetailsTabWrapper } from 'app/containers/Common/element';
+import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
 
 export type EventPreviewTabType =
   | 'details'
@@ -69,6 +70,7 @@ export const EventPreview = ({
 
   return (
     <>
+      <Breadcrumbs currentResource={{ title: renderTitle(event) }} />
       <ResourceTitleRow
         item={{ id: eventId, type: 'event' }}
         getTitle={renderTitle}
@@ -79,6 +81,7 @@ export const EventPreview = ({
           type: 'event',
           id: event.id,
           externalId: event.externalId,
+          title: renderTitle(event),
         }}
         tab={activeTab}
         onTabChange={onTabChange}

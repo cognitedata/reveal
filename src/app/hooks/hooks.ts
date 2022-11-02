@@ -6,11 +6,14 @@ import {
   useNavigate,
   Location,
   NavigateFunction,
+  NavigateOptions,
+  To,
 } from 'react-router-dom';
-import { ResourceType } from '@cognite/data-exploration';
+import { ResourceItem, ResourceType } from '@cognite/data-exploration';
 import { createLink } from '@cognite/cdf-utilities';
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { useQuery } from 'react-query';
+import isArray from 'lodash/isArray';
 
 import { trackUsage } from 'app/utils/Metrics';
 import { SEARCH_KEY } from '../utils/constants';
@@ -168,11 +171,34 @@ export const useOnPreviewTabChange = (tabType?: string, type?: string) => {
           .join('/')}/${newTab}`,
         qs.parse(location.search)
       ),
-      { replace: true }
+      { state: { history: location.state?.history }, replace: true }
     );
     trackUsage('Exploration.Details.TabChange', {
       type,
       tab: newTab,
+    });
+  };
+};
+
+/**
+ * Returns a navigate function that keeps track of location history
+ * The history array is used to populate breadcrumbs in the details view
+ */
+export const useNavigateWithHistory = (
+  resource: ResourceItem & { title: string }
+) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  return (to: To, options?: NavigateOptions) => {
+    navigate(to, {
+      ...options,
+      state: {
+        ...options?.state,
+        history: isArray(location.state?.history)
+          ? [...location.state.history, { path: location.pathname, resource }]
+          : [{ path: location.pathname, resource }],
+      },
     });
   };
 };
