@@ -25,9 +25,7 @@ describe('Application Framework', () => {
   });
 
   it('has correct project information in header', () => {
-    cy.get('.cogs-topbar header h6').contains(
-      'Cognite Simulator Configuration'
-    );
+    cy.get('.cogs-topbar header h6').contains('Cognite Simulator Configurator');
     cy.get('#project-name').invoke('text').should('eq', 'simconfig-e2e');
   });
 
