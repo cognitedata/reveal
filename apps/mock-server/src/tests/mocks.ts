@@ -131,7 +131,9 @@ input _PostSort {
   title: SortDirection
   views: SortDirection
 }
-
+type _PostAggregateCountResult {
+  externalId: Int!
+}
 type _PostAggregateFieldResult {
   views: Int!
 }
@@ -162,7 +164,9 @@ input _UserSort {
   externalId: SortDirection
   name: SortDirection
 }
-
+type _UserAggregateCountResult {
+  externalId: Int!
+}
 type _UserAggregateFieldResult {
   _empty: Int!
 }
@@ -196,7 +200,9 @@ input _CommentSort {
   body: SortDirection
   date: SortDirection
 }
-
+type _CommentAggregateCountResult {
+  externalId: Int!
+}
 type _CommentAggregateFieldResult {
   _empty: Int!
 }
@@ -228,7 +234,7 @@ type PostAggregateResult {
   avg: [_PostAggregateFieldResult]!
   min: [_PostAggregateFieldResult]!
   max: [_PostAggregateFieldResult]!
-  count: [_PostAggregateFieldResult]!
+  count: _PostAggregateCountResult!
   sum: [_PostAggregateFieldResult]!
 }
 
@@ -259,7 +265,7 @@ type UserAggregateResult {
   avg: [_UserAggregateFieldResult]!
   min: [_UserAggregateFieldResult]!
   max: [_UserAggregateFieldResult]!
-  count: [_UserAggregateFieldResult]!
+  count: _UserAggregateCountResult!
   sum: [_UserAggregateFieldResult]!
 }
 
@@ -290,7 +296,7 @@ type CommentAggregateResult {
   avg: [_CommentAggregateFieldResult]!
   min: [_CommentAggregateFieldResult]!
   max: [_CommentAggregateFieldResult]!
-  count: [_CommentAggregateFieldResult]!
+  count: _CommentAggregateCountResult!
   sum: [_CommentAggregateFieldResult]!
 }
 
@@ -379,6 +385,4 @@ type Query {
 schema {
   query: Query
 }
-
-
   `;

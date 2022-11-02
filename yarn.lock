@@ -22198,6 +22198,11 @@ unc-path-regex@^0.1.2:
   resolved "https://registry.npmjs.org/unc-path-regex/-/unc-path-regex-0.1.2.tgz"
   integrity sha1-5z3T17DXxe2G+6xrCufYxqadUPo=
 
+underscore-db@^0.12.2:
+  version "0.12.2"
+  resolved "https://registry.yarnpkg.com/underscore-db/-/underscore-db-0.12.2.tgz#d2f85c426ee3f9117d883f8b353b2098141093f3"
+  integrity sha512-iZ3Yi9q/Ucmw9xQnlwpdRWhRs9DS7FGrs29AE6GB4U+1UGPRUVTJqPblgUsntlF/oqtkL1ybs9skkNBQaeJ2Sw==
+
 unfetch@^4.2.0:
   version "4.2.0"
   resolved "https://registry.npmjs.org/unfetch/-/unfetch-4.2.0.tgz"

@@ -147,7 +147,7 @@ describe('SchemaService Solutions Test', () => {
     const qryResult = response.body;
     const expectedResponse = {
       name: 'John Doe',
-      externalId: '',
+      externalId: '123',
     };
     expect(response.statusCode).toEqual(200);
     expect(qryResult.data.listUser.edges.length).toEqual(2);
@@ -173,7 +173,7 @@ describe('SchemaService Solutions Test', () => {
     const qryResult = response.body;
     const expectedResponse = {
       name: 'John Doe',
-      externalId: '',
+      externalId: '123',
     };
     expect(response.statusCode).toEqual(200);
     expect(qryResult.data.listUser.items.length).toEqual(2);

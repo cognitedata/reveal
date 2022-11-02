@@ -82,6 +82,7 @@
     "styled-components": "^5.3.3",
     "systemjs-webpack-interop": "^2.3.7",
     "tslib": "^2.0.0",
+    "underscore-db": "^0.12.2",
     "update-notifier": "^5.1.0",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.1",

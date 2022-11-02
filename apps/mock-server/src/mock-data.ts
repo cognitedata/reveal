@@ -89,16 +89,19 @@ export const mockDataSample = {
     {
       model: 'UserTable',
       externalId: 'user_1',
+      id: 'user_1',
       name: 'John Doe',
     },
     {
       model: 'UserTable',
       externalId: 'user_2',
+      id: 'user_2',
       name: 'James Bond',
     },
     {
       model: 'PostTable',
       externalId: 'post_1',
+      id: 'post_1',
       title: 'Random post 1',
       views: 10,
       user: 'user_1',
@@ -106,6 +109,7 @@ export const mockDataSample = {
     {
       model: 'PostTable',
       externalId: 'post_2',
+      id: 'post_2',
       title: 'Random post 2',
       views: 12,
       user: 'user_2',
@@ -113,6 +117,7 @@ export const mockDataSample = {
     {
       model: 'CommentTable',
       externalId: 'comment_1',
+      id: 'comment_1',
       body: 'Random comment 1',
       date: 164744,
       post: 'post_1',

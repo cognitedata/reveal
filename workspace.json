@@ -211,6 +211,10 @@
                 {
                   "replace": "apps/platypus/src/environments/cogniteSdk.ts",
                   "with": "apps/platypus/src/environments/mock/cogniteSdk.ts"
+                },
+                {
+                  "replace": "apps/platypus/src/environments/useFlag.ts",
+                  "with": "apps/platypus/src/environments/mock/useFlag.ts"
                 }
               ],
               "optimization": false,

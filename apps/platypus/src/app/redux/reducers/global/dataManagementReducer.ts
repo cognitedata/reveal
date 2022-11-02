@@ -159,10 +159,12 @@ const dataManagementSlice = createSlice({
     },
     deleteSelectedDraftRows: (state) => {
       const selectedTypeName = state.selectedType?.name as string;
+      const draftRows = state.draftRows[selectedTypeName];
 
-      state.draftRows[selectedTypeName] = state.draftRows[
-        selectedTypeName
-      ].filter((row) => !row._isDraftSelected);
+      state.draftRows[selectedTypeName] =
+        draftRows && draftRows.length
+          ? draftRows.filter((row) => !row._isDraftSelected)
+          : [];
     },
     removeDraftRows: (state, action: PayloadAction<{ rows: string[] }>) => {
       const { rows } = action.payload;

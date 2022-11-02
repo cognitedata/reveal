@@ -230,7 +230,7 @@ describe('DataModelStorageAPI Test', () => {
     expect(response.statusCode).toEqual(200);
 
     response = await request(server)
-      .post('/datamodelstorage/spaces/byids')
+      .post('/datamodelstorage/models/byids')
       .set('Accept', 'application/json')
       .send({
         spaceExternalId: 'blog',
@@ -328,5 +328,30 @@ describe('DataModelStorageAPI Test', () => {
     qryResult = response.body;
     expect(qryResult.items.length).toBeGreaterThanOrEqual(1);
     expect(qryResult.items[0].externalId).toEqual('new_user');
+  });
+
+  it('Should delete nodes', async () => {
+    let response = await request(server)
+      .post('/datamodelstorage/nodes/delete')
+      .set('Accept', 'application/json')
+      .send({
+        spaceExternalId: 'blog',
+        items: [
+          {
+            externalId: 'post_2',
+          },
+        ],
+      });
+
+    let qryResult = response.body;
+    expect(response.statusCode).toEqual(200);
+
+    response = await request(server)
+      .get('/nodes?externalId=post_2')
+      .set('Accept', 'application/json')
+      .send({});
+    qryResult = response.body;
+
+    expect(qryResult.items.length).toEqual(0);
   });
 });

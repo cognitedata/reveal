@@ -6,6 +6,7 @@ import mixpanel, { Dict } from 'mixpanel-browser';
 import { useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouteMatch } from 'react-router-dom';
+import { environment } from '../../environments/environment';
 
 export type TRACKING_TOKENS =
   | 'UIEditor'
@@ -37,6 +38,8 @@ export const useMixpanel = () => {
     getUserInformation,
     {
       staleTime: Infinity,
+      enabled:
+        environment.APP_ENV !== 'development' && environment.APP_ENV !== 'mock',
       onSuccess: (user) => {
         if (process.env.NODE_ENV !== 'production') {
           return;

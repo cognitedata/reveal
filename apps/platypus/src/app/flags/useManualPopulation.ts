@@ -1,7 +1,7 @@
-import { useFlag } from '@cognite/react-feature-flags';
+import { useFlag } from '../../environments/useFlag';
 
 export const useManualPopulationFeatureFlag = () => {
   return useFlag('DEVX_MANUAL_POPULATION', {
-    fallback: false,
+    fallback: true,
   });
 };

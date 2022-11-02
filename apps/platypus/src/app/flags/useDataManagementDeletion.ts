@@ -1,7 +1,7 @@
-import { useFlag } from '@cognite/react-feature-flags';
+import { useFlag } from '../../environments/useFlag';
 
 export const useDataManagementDeletionFeatureFlag = () => {
   return useFlag('DEVX_DATA_MANAGEMENT_DELETION', {
-    fallback: false,
+    fallback: true,
   });
 };

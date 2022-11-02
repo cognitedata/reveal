@@ -49,6 +49,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
       );
     });
   });
+
   it('should update, remove, and then insert direct relationships', () => {
     cy.get('[data-testid="Post"]').click();
     cy.get('[data-testid="Post"]').should('have.class', 'active');
@@ -95,6 +96,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
       expect(interception.response.body.items[0].user[1]).to.equal('123');
     });
   });
+
   it('should handle row revert on server update error', () => {
     cy.get('[data-testid="User"]').click();
     cy.get('[data-testid="User"]').should('have.class', 'active');
@@ -121,58 +123,32 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
   });
 
   it('should delete published rows', () => {
-    cy.get('[data-testid="User"]').click();
-    cy.get('[data-testid="User"]').should('have.class', 'active');
+    cy.get('[data-testid="Comment"]').click();
+    cy.get('[data-testid="Comment"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
 
-    cy.intercept(
-      'POST',
-      'api/v1/projects/mock/datamodelstorage/nodes/delete'
-    ).as('deleteNodes');
-
     // Wait for row to be rendered
-    cy.get('div[role="gridcell"][col-id="name"]')
+    cy.get('div[role="gridcell"][col-id="body"]')
       .should('be.visible')
-      .should('contain', 'John Doe');
+      .should('contain', 'Consectetur adipiscing elit');
 
     cy.get('div[role="gridcell"][col-id="_isDraftSelected"]')
       .first()
       .should('be.visible')
       .click();
-    const response = {
-      data: {
-        listUser: {
-          items: [{ externalId: 456, name: 'Jane Doe' }],
-        },
-        aggregateUser: {
-          items: [
-            {
-              count: {
-                externalId: 1,
-              },
-            },
-          ],
-        },
-      },
-    };
 
-    cy.intercept(
-      'POST',
-      '/api/v1/projects/mock/schema/api/blog/1/graphql',
-      response
-    );
-    cy.on('window:confirm', () => true);
     cy.getBySel('btn-pagetoolbar-delete').click();
     cy.getBySel('data-row-confirm-deletion-checkbox').click();
     cy.getBySel('modal-ok-button').click();
 
-    cy.wait('@deleteNodes').then((interception) => {
-      expect(interception.response.statusCode).to.equal(200);
-    });
-    cy.get('div[role="gridcell"][col-id="name"]')
+    cy.get('div[role="gridcell"][col-id="body"]')
       .should('be.visible')
-      .should('not.contain', 'John Doe');
-    cy.get('[data-testid="User"] .cogs-detail').should('contain', '1 instance');
+      .should('not.contain', 'Consectetur adipiscing elit');
+
+    cy.get('[data-testid="Comment"] .cogs-detail').should(
+      'contain',
+      '3 instances'
+    );
   });
 
   it('should delete multiple draft rows in table', () => {
