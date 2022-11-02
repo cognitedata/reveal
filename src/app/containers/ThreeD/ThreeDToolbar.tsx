@@ -100,12 +100,12 @@ export const FocusAssetButton = ({
 
 export const PointToPointMeasurementButton = ({
   viewer,
-  nodesClickable,
-  setNodesClickable,
+  nodesSelectable,
+  setNodesSelectable,
 }: {
   viewer: Cognite3DViewer;
-  nodesClickable: boolean;
-  setNodesClickable: (clickable: boolean) => void;
+  nodesSelectable: boolean;
+  setNodesSelectable: (selectable: boolean) => void;
 }) => {
   const measurementTool = useMemo(() => {
     return new MeasurementTool(viewer);
@@ -122,7 +122,7 @@ export const PointToPointMeasurementButton = ({
     });
     viewer.domElement.style.cursor = 'crosshair';
     measurementTool.enterMeasurementMode();
-    setNodesClickable(false);
+    setNodesSelectable(false);
   };
 
   const exitMeasurementMode = () => {
@@ -132,11 +132,11 @@ export const PointToPointMeasurementButton = ({
     });
     viewer.domElement.style.cursor = 'default';
     measurementTool.exitMeasurementMode();
-    setNodesClickable(true);
+    setNodesSelectable(true);
   };
 
   const handleClick = () => {
-    if (!nodesClickable) {
+    if (!nodesSelectable) {
       exitMeasurementMode();
     } else {
       enterMeasurementMode();
@@ -148,7 +148,7 @@ export const PointToPointMeasurementButton = ({
       <Button
         icon="Ruler"
         onClick={handleClick}
-        toggled={!nodesClickable}
+        toggled={!nodesSelectable}
         type="ghost"
       />
     </Tooltip>

@@ -16,6 +16,8 @@ import { FetchQueryOptions, QueryClient } from 'react-query';
 
 const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
+export const MINIMUM_BOUNDINGBOX_SIZE = 0.001;
+export const CAMERA_ANIMATION_DURATION = 500;
 
 const getBoundingBoxByNodeIdQueryKey = (
   modelId: number,
@@ -83,7 +85,7 @@ export const fitCameraToAsset = async (
     return box ? accl.union(box) : accl;
   }, new THREE.Box3());
 
-  viewer.fitCameraToBoundingBox(boundingBox);
+  viewer.fitCameraToBoundingBox(boundingBox, CAMERA_ANIMATION_DURATION, 3);
 };
 
 export const highlightAsset = (

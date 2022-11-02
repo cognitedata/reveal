@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
@@ -30,6 +31,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import RevealErrorFeedback from './RevealErrorFeedback';
 import { PointerEventDelegate } from '@cognite/reveal';
 import { usePrevious } from '@cognite/data-exploration';
+import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
 import { StyledSplitter } from 'app/containers/elements';
 import { AssetPreviewSidebar } from 'app/containers/ThreeD/AssetPreviewSidebar';
 
@@ -43,7 +45,7 @@ type Props = {
   revisionId: number;
   focusAssetId?: number | null;
   setSelectedAssetId: Dispatch<SetStateAction<number | undefined>>;
-  nodesClickable: boolean;
+  nodesSelectable: boolean;
   children?: (opts: ChildProps) => JSX.Element;
   assetColumnVisible: boolean;
 };
@@ -53,10 +55,12 @@ export function Reveal({
   modelId,
   revisionId,
   setSelectedAssetId,
-  nodesClickable,
+  nodesSelectable,
   children,
   assetColumnVisible,
 }: Props) {
+  const numOfClicks = useRef<number>(0);
+  const clickTimer = useRef<NodeJS.Timeout>();
   const sdk = useSDK();
 
   const [revealContainer, setRevealContainer] = useState<HTMLDivElement | null>(
@@ -169,48 +173,59 @@ export function Reveal({
 
   const onViewerClick: PointerEventDelegate = useCallback(
     async ({ offsetX, offsetY }) => {
-      if (!threeDModel || !viewer || !nodesClickable) {
+      if (!threeDModel || !viewer || !nodesSelectable) {
         return;
       }
+      numOfClicks.current++;
+      if (numOfClicks.current === 1) {
+        clickTimer.current = setTimeout(async () => {
+          const intersection = await viewer.getIntersectionFromPixel(
+            offsetX,
+            offsetY
+          );
 
-      const intersection = await viewer.getIntersectionFromPixel(
-        offsetX,
-        offsetY
-      );
+          let closestAssetId: number | undefined;
+          if (intersection) {
+            closestAssetId = await findClosestAsset(
+              sdk,
+              queryClient,
+              threeDModel,
+              modelId,
+              revisionId,
+              intersection as CadIntersection
+            );
+          }
 
-      let closestAssetId: number | undefined;
-      if (intersection) {
-        closestAssetId = await findClosestAsset(
-          sdk,
-          queryClient,
-          threeDModel,
-          modelId,
-          revisionId,
-          intersection as CadIntersection
-        );
+          if (closestAssetId && closestAssetId !== focusAssetId) {
+            highlightAsset(sdk, threeDModel, closestAssetId);
+            fitCameraToAsset(
+              sdk,
+              queryClient,
+              viewer,
+              threeDModel,
+              modelId,
+              revisionId,
+              closestAssetId
+            );
+          } else if (!closestAssetId) {
+            removeAllStyles(threeDModel);
+          }
+
+          setSelectedAssetId(closestAssetId);
+          clearTimeout(clickTimer.current);
+          numOfClicks.current = 0;
+        }, 250);
       }
-
-      if (closestAssetId && closestAssetId !== focusAssetId) {
-        highlightAsset(sdk, threeDModel, closestAssetId);
-        fitCameraToAsset(
-          sdk,
-          queryClient,
-          viewer,
-          threeDModel,
-          modelId,
-          revisionId,
-          closestAssetId
-        );
-      } else if (!closestAssetId) {
-        removeAllStyles(threeDModel);
+      if (numOfClicks.current === 2) {
+        // it is the second click in double-click event
+        clearTimeout(clickTimer.current);
+        numOfClicks.current = 0;
       }
-
-      setSelectedAssetId(closestAssetId);
     },
     [
       focusAssetId,
       modelId,
-      nodesClickable,
+      nodesSelectable,
       queryClient,
       revisionId,
       sdk,
@@ -230,6 +245,12 @@ export function Reveal({
     }
     viewer.on('click', onViewerClick);
   }, [onViewerClick, previousClickHandler, viewer]);
+
+  useViewerDoubleClickListener({
+    viewer: viewer!,
+    model: threeDModel!,
+    nodesSelectable: nodesSelectable,
+  });
 
   if (isModelError || (isModelFetched && !apiThreeDModel) || !revisionId) {
     return (

@@ -32,7 +32,7 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
     !!selectedAssetId
   );
   const { data: revision } = useDefault3DModelRevision(modelId);
-  const [nodesClickable, setNodesClickable] = useState<boolean>(true);
+  const [nodesSelectable, setNodesSelectable] = useState<boolean>(true);
 
   useEffect(() => {
     if (selectedAssetId) {
@@ -51,7 +51,7 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
             revisionId={revision.id}
             focusAssetId={selectedAssetId}
             setSelectedAssetId={setSelectedAssetId}
-            nodesClickable={nodesClickable}
+            nodesSelectable={nodesSelectable}
             assetColumnVisible={assetColumnVisible}
           >
             {({ pointCloudModel, threeDModel, viewer }) => {
@@ -93,8 +93,8 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
                       )}
                       <PointToPointMeasurementButton
                         viewer={viewer}
-                        nodesClickable={nodesClickable}
-                        setNodesClickable={setNodesClickable}
+                        nodesSelectable={nodesSelectable}
+                        setNodesSelectable={setNodesSelectable}
                       />
                       <ShareButton
                         selectedAssetId={selectedAssetId}
