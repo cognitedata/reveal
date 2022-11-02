@@ -20,7 +20,7 @@ export const IdCellRenderer = React.memo((props: IdCellRendererProps) => {
     <Flex
       justifyContent="space-between"
       alignItems="center"
-      style={{ height: '100%' }}
+      style={{ height: '100%', userSelect: 'text' }}
     >
       <IdCellValueText>{props.value}</IdCellValueText>
       {isRowPinnedOnTop && !isDraftCompleted && (

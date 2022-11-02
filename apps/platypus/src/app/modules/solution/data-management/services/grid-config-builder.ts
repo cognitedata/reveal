@@ -27,7 +27,8 @@ export const buildGridConfig = (
   instanceIdCol: string,
   dataModelType: DataModelTypeDefsType,
   onRowAdd: (row: KeyValueMap) => void,
-  enableDeletion: boolean
+  enableDeletion: boolean,
+  enableManualPopulation: boolean
 ): GridConfig => {
   const columns: ColumnConfig[] = enableDeletion
     ? [
@@ -82,6 +83,7 @@ export const buildGridConfig = (
         colDef: {
           headerName: `${field.name}${field.type.nonNull ? '*' : ''}`,
           sortable: false,
+          editable: enableManualPopulation,
           cellEditorParams: {
             isRequired: field.nonNull || field.type.nonNull,
           },

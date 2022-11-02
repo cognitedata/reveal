@@ -194,7 +194,8 @@ export const DataPreviewTable = forwardRef<
         instanceIdCol,
         dataModelType,
         handleRowPublish,
-        enableDeletion
+        enableDeletion,
+        enableManualPopulation
       )
     );
     setIsGridInit(false);
@@ -202,7 +203,7 @@ export const DataPreviewTable = forwardRef<
 
     // re-init grid config only and only when another type is clicked
     // eslint-disable-next-line
-  }, [dataModelType.name]);
+  }, [dataModelType.name, enableManualPopulation]);
 
   useEffect(() => {
     if (!isGridInit) {
@@ -225,10 +226,6 @@ export const DataPreviewTable = forwardRef<
       return {
         purgeInfiniteCache: () => {
           gridRef.current?.api.purgeInfiniteCache();
-          console.log(
-            'gridRef.current?.api.purgeInfiniteCache',
-            gridRef.current?.api.purgeInfiniteCache
-          );
         },
       };
     },
