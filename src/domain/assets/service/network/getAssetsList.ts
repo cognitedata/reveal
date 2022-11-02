@@ -9,13 +9,13 @@ export const getAssetsList = (
     cursor,
     limit,
     filter,
-    sortBy,
+    sort,
   }: {
     advancedFilter?: any;
     cursor?: string;
     limit?: number;
     filter?: Record<string, any>;
-    sortBy?: InternalSortBy[];
+    sort?: InternalSortBy[];
   }
 ) => {
   return sdk
@@ -30,7 +30,7 @@ export const getAssetsList = (
           cursor,
           advancedFilter,
           filter,
-          sort: sortBy,
+          sort,
         },
       }
     )

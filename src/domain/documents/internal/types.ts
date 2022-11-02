@@ -8,7 +8,7 @@ import {
   DocumentHighlight,
   Metadata,
 } from '@cognite/sdk';
-import { InternalCommonFilters, Order } from '../../types';
+import { InternalCommonFilters } from '../../types';
 
 // Flattened version of 'DocumentSearchItem' from cognite/sdk
 export interface Document {
@@ -39,8 +39,3 @@ export interface InternalDocumentFilter extends InternalCommonFilters {
   mimeType?: string[];
   metadata?: Metadata;
 }
-
-export type DocumentSort = {
-  column?: string;
-  order?: Order;
-};

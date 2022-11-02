@@ -11,12 +11,12 @@ export const useAssetsListQuery = (
   {
     filter,
     advancedFilter,
-    sortBy,
+    sort,
     limit,
   }: {
     filter?: Record<string, any>;
     advancedFilter?: AdvancedFilter<AssetsProperties>;
-    sortBy?: InternalSortBy[];
+    sort?: InternalSortBy[];
     limit?: number;
   } = {},
   options?: UseInfiniteQueryOptions
@@ -24,13 +24,13 @@ export const useAssetsListQuery = (
   const sdk = useSDK();
 
   const { data, ...rest } = useInfiniteQuery(
-    queryKeys.listAssets([advancedFilter, filter, limit, sortBy]),
+    queryKeys.listAssets([advancedFilter, filter, limit, sort]),
     ({ pageParam }) => {
       return getAssetsList(sdk, {
         cursor: pageParam,
         filter,
         advancedFilter,
-        sortBy,
+        sort,
         limit,
       });
     },

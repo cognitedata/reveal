@@ -4,9 +4,9 @@ import { useDocumentSearch } from '@cognite/react-document-search';
 
 import { SearchResultToolbar } from 'containers/SearchResults';
 import { DocumentsTable } from 'containers/Documents';
+import { TableSortBy } from 'components/ReactTable/V2';
 import {
   Document,
-  DocumentSort,
   InternalDocumentFilter,
   normalize,
   useObserveDocumentSearchFilters,
@@ -24,7 +24,7 @@ export const DocumentSearchResults = ({
   filter,
   onClick,
 }: DocumentSearchResultsProps) => {
-  const [sortBy, setSortBy] = useState<DocumentSort[]>([]);
+  const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { results, isLoading, fetchNextPage, hasNextPage } =
     useDocumentSearch();
 
@@ -37,14 +37,7 @@ export const DocumentSearchResults = ({
       <DocumentsTable
         id="documents-search-results"
         enableSorting
-        onSort={props => {
-          if (props !== undefined && props.length > 0) {
-            const { id: columnName, desc } = props[0];
-            setSortBy([{ column: columnName, order: desc ? 'desc' : 'asc' }]);
-          } else {
-            setSortBy([]);
-          }
-        }}
+        onSort={props => setSortBy(props)}
         query={query}
         tableHeaders={
           <SearchResultToolbar

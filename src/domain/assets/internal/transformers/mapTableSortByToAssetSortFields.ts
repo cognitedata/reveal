@@ -5,14 +5,12 @@ export const mapTableSortByToAssetSortFields = (
   sortBy: TableSortBy[]
 ): InternalSortBy[] | undefined => {
   if (sortBy.length > 0) {
-    const { id, desc } = sortBy[0];
-
-    return [
-      {
-        property: id,
-        order: desc ? 'desc' : 'asc',
-      },
-    ];
+    return sortBy.map(tableSort => {
+      return {
+        property: tableSort.id,
+        order: tableSort.desc ? 'desc' : 'asc',
+      };
+    });
   }
 
   return undefined;

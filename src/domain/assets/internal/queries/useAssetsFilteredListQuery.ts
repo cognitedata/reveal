@@ -30,7 +30,7 @@ export const useAssetsFilteredListQuery = ({
   return useAssetsListQuery({
     filter,
     advancedFilter,
-    sortBy: sort,
+    sort,
     limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
   });
 };

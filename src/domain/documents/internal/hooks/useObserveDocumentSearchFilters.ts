@@ -1,37 +1,30 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDocumentFilters as useDocumentSearchFilters } from '@cognite/react-document-search';
-import { mapFiltersToDocumentSearchFilters } from '../transformers/mapFiltersToDocumentSearchFilters';
-import { mapColumnsToDocumentSortFields } from '../transformers/mapColumnsToDocumentSortFields';
-import { DocumentSort, InternalDocumentFilter } from '../types';
+import { TableSortBy } from 'components/ReactTable/V2';
+import {
+  mapTableSortByToDocumentSortFields,
+  mapFiltersToDocumentSearchFilters,
+  InternalDocumentFilter,
+} from 'domain/documents';
 
 export const useObserveDocumentSearchFilters = (
   query: string,
-  documentFilter: InternalDocumentFilter = {},
-  sortStateArr: DocumentSort[]
+  documentsFilters: InternalDocumentFilter = {},
+  sortBy: TableSortBy[]
 ) => {
   const { setAppliedFilters } = useDocumentSearchFilters();
   // const [query] = useQueryString(SEARCH_KEY);
   // const [documentFilter] = useDocumentFilters();
 
   const transformFilter = React.useMemo(
-    () => mapFiltersToDocumentSearchFilters(documentFilter),
-    [documentFilter]
+    () => mapFiltersToDocumentSearchFilters(documentsFilters),
+    [documentsFilters]
   );
 
-  const sort = useMemo(() => {
-    if (sortStateArr.length > 0) {
-      const { column, order } = sortStateArr[0];
-
-      return [
-        {
-          order: order,
-          property: mapColumnsToDocumentSortFields(column!),
-        },
-      ];
-    }
-
-    return undefined;
-  }, [sortStateArr]);
+  const sort = useMemo(
+    () => mapTableSortByToDocumentSortFields(sortBy),
+    [sortBy]
+  );
 
   useEffect(() => {
     setAppliedFilters({
@@ -39,7 +32,7 @@ export const useObserveDocumentSearchFilters = (
         query: query || '',
       },
       filter: transformFilter as any, // Fixme: Looking into it in future PRs
-      sort: sort,
+      sort,
     });
   }, [query, setAppliedFilters, transformFilter, sort]);
 };
