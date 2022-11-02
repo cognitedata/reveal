@@ -137,6 +137,17 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     return new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
   }
 
+  createDefaultRenderPipelineProvider(
+    materialManager: CadMaterialManager,
+    pointCloudMaterialManager: PointCloudMaterialManager,
+    sceneHandler: SceneHandler
+  ): DefaultRenderPipelineProvider {
+    return new DefaultRenderPipelineProvider(materialManager, pointCloudMaterialManager, sceneHandler, {
+      ...defaultRenderOptions,
+      pointCloudParameters: { pointBlending: false, edlOptions: { radius: 0, strength: 0 } }
+    });
+  }
+
   constructor(localModelUrl = 'primitives') {
     this._localModelUrl = localModelUrl;
 
@@ -154,11 +165,11 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._materialManager = new CadMaterialManager();
     this._pcMaterialManager = new PointCloudMaterialManager();
     this._pipelineExecutor = new BasicPipelineExecutor(this._renderer);
-    this._renderPipelineProvider = new DefaultRenderPipelineProvider(
+
+    this._renderPipelineProvider = this.createDefaultRenderPipelineProvider(
       this._materialManager,
       this._pcMaterialManager,
-      this._sceneHandler,
-      defaultRenderOptions
+      this._sceneHandler
     );
 
     this._depthRenderPipeline = new CadGeometryRenderModePipelineProvider(
