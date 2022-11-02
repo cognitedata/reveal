@@ -46,5 +46,5 @@ void main() {
   fragColor.a = alpha;
 #endif
 
-  gl_FragDepth = depth;
+  gl_FragDepth = min(depth, blendDepth);
 }
