@@ -15,7 +15,8 @@ import {
 import { FetchQueryOptions, QueryClient } from 'react-query';
 
 const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
-export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
+const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
+
 export const MINIMUM_BOUNDINGBOX_SIZE = 0.001;
 export const CAMERA_ANIMATION_DURATION = 500;
 
