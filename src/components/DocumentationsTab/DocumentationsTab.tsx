@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
 
@@ -79,9 +78,9 @@ const renderDocumenation = (documentation: Documentation) => {
   if (documentation.type === 'url') {
     return (
       <StyledLinkContainer
-        key={documentation.name}
-        to={documentation.id}
+        href={documentation.id}
         target="_blank"
+        rel="noopener noreferrer"
       >
         <StyledLink gap={12} justifyContent="space-between">
           <Body level={5}>{documentation.name || documentation.id}</Body>
@@ -196,7 +195,7 @@ const StyledFileContainer = styled(Flex)`
   }
 `;
 
-const StyledLinkContainer = styled(Link)`
+const StyledLinkContainer = styled.a`
   height: 48px;
   display: inline-flex;
   flex-direction: column;
