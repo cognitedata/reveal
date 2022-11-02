@@ -52,63 +52,20 @@ type Props = {
 
 export default function DemoLoginCover(props: Props): ReactElement {
   const isDarkTheme = useColorMode().colorMode === 'dark';
-  const [isLoggedIn, setIsLoggedIn] = React.useState(loginManager.isLoggedIn);
-  useEffect(() => {
-    return loginManager.onIsLoggedInChanged(setIsLoggedIn);
-  }, []);
 
   const coverUrl = useBaseUrl('/img/login_cover.png');
-  const visualInstructionUrl = useBaseUrl('img/publicdata_register.png')
 
-  if (!isLoggedIn) {
-    return (
-      <Root theme={{ isDarkTheme }}>
-        <ImageOverlay coverUrl={coverUrl} />
-
-        <CenteredContainer>
-          <Section>
-            This demo shows a real model from the{' '}
-            <a
-              href="https://openindustrialdata.com/get-started/"
-              target="_blank"
-            >
-              Open Industrial Data Project
-            </a>
-            .
-          </Section>
-
-          <Section>You need to sign in to view it.</Section>
-
-          <Section style={{ margin: '48px 0' }}>
-            <button
-              className="button button--primary button--lg"
-              onClick={() => loginManager.authenticate()}
-              type="button"
-            >
-              Sign in
-            </button>
-          </Section>
-
-          <Section>
-            If you haven't registered yet, please navigate to{' '}
-            <a
-              href="https://openindustrialdata.com/get-started/"
-              target="_blank"
-            >
-              openindustrialdata.com
-            </a>{' '}
-            and register with your google account.
-          </Section>
-        </CenteredContainer>
-
-        <Section style={{ marginTop: 'auto', textAlign: 'right' }}>
-          <a href={visualInstructionUrl} target="_blank">
-            visual instruction
-          </a>
+  return (
+    <Root theme={{ isDarkTheme }}>
+      <ImageOverlay coverUrl={coverUrl} />
+      <CenteredContainer>
+        <Section>
+          Live examples are not supported for this version.
         </Section>
-      </Root>
-    );
-  }
-
-  return props.children(loginManager.client);
+        <Section>
+          Please choose a newer version of the documentation to run live code examples.
+        </Section>
+      </CenteredContainer>
+    </Root>
+  );
 }
