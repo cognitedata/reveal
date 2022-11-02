@@ -14,8 +14,8 @@ const defaultCodeTheme = oceanicNext;
 const customScope =
   typeof window === 'undefined'
     ? {
-        urls: [],
-      }
+      urls: [],
+    }
     : require('./customScope').customScope;
 
 export type LiveCodeSnippetProps = {
@@ -62,7 +62,7 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
                 resetCognite3DModel(model);
               }
             } else {
-              alert('Login is required to run examples');
+              alert('Live code examples are not supported for this version of the documentation');
               return;
             }
             // User code starts here!
