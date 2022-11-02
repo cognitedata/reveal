@@ -11,9 +11,7 @@ import {
   useRootPath,
   ConstructedTreeAsset,
 } from './hooks';
-import { ThreeDAssetMappings, useThreeDAssetMappings } from 'hooks/threeDHooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
-import { ColumnShape } from 'react-base-table';
 import { InternalAssetFilters } from 'domain/assets';
 
 export const AssetTreeTable = ({
@@ -45,8 +43,6 @@ export const AssetTreeTable = ({
   const [searchExpandedKeys, setSearchExpandedKeys] = useState<number[]>([]);
   const [usedRootPath, setUsedRootPath] = useState(false);
 
-  const { data: threeDAssetMappings } = useThreeDAssetMappings();
-
   const startFromRoot =
     (!query || query === '') &&
     Object.values(filter).filter(Boolean).length === 0;
@@ -77,18 +73,8 @@ export const AssetTreeTable = ({
     {
       key: 'threeDModels',
       title: '3D availability',
-      threeDAssetMappings,
-      cellRenderer: ({
-        column,
-        rowData: asset,
-      }: {
-        column: ColumnShape<{ threeDAssetMappings: ThreeDAssetMappings }>;
-        rowData: Asset;
-      }) => (
-        <ThreeDModelCell
-          assetId={asset.id}
-          mappings={column.threeDAssetMappings[asset.id]}
-        />
+      cellRenderer: ({ rowData: asset }: { rowData: Asset }) => (
+        <ThreeDModelCell assetId={asset.id} />
       ),
       width: 300,
     },

@@ -7,7 +7,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { useClipboard } from 'hooks';
 import { DASH } from 'utils';
-import { ThreeDAssetMappingItem } from 'hooks/threeDHooks';
+import { DetailedMapping } from 'domain/threeD';
 import {
   ThreeDModelCellDropdown,
   ThreeDModelCellLink,
@@ -178,7 +178,7 @@ export const ThreeDModelItem = ({
   mappings,
 }: {
   assetId: number;
-  mappings: ThreeDAssetMappingItem[];
+  mappings: DetailedMapping[];
 }) => {
   return (
     <Flex>

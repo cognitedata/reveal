@@ -5,6 +5,7 @@ import { datasets } from 'stubs/datasets';
 import { events } from 'stubs/events';
 import { files } from 'stubs/files';
 import { documents } from 'stubs/documents';
+import { mappings } from 'stubs/mappings';
 import styled from 'styled-components';
 import { datapoints } from 'stubs/timeseriesDatapoints';
 import { AssetListScope, IdEither } from '@cognite/sdk';
@@ -123,6 +124,26 @@ export const sdkMock = {
     if (query.includes('events')) {
       return { data: { items: events } };
     }
+
+    if (query.includes('mappings')) {
+      const bodyItems = body.data.items;
+      return {
+        data: {
+          items: bodyItems
+            .map(({ id: assetId }: { id: number }) => {
+              const assetIndex = assets.findIndex(({ id }) => assetId === id);
+              return {
+                assetId,
+                mappings: assetIndex > 0 ? mappings.slice(0, assetIndex) : [],
+              };
+            })
+            .filter(
+              ({ mappings }: { mappings: unknown[] }) => mappings.length > 0
+            ),
+        },
+      };
+    }
+
     return { data: { items: [] } };
   },
   assets: {

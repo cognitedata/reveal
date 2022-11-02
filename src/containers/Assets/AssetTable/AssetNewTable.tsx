@@ -9,7 +9,6 @@ export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
 
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { StyledButton } from 'components/ReactTable';
-import { useThreeDAssetMappings } from 'hooks/threeDHooks';
 import { useGetHiddenColumns } from 'hooks';
 import { ThreeDModelCell } from './ThreeDModelCell';
 
@@ -56,8 +55,6 @@ export const AssetNewTable = (
 ) => {
   const { onRowClick = () => {}, data, ...rest } = props;
 
-  const { data: threeDAssetMappings } = useThreeDAssetMappings();
-
   const columns = useMemo(
     () => [
       {
@@ -80,10 +77,7 @@ export const AssetNewTable = (
         accessorKey: 'id',
         header: '3D availability',
         cell: ({ getValue }) => (
-          <ThreeDModelCell
-            assetId={getValue<number>()}
-            mappings={threeDAssetMappings[getValue<number>()]}
-          />
+          <ThreeDModelCell assetId={getValue<number>()} />
         ),
         size: 300,
         enableSorting: false,
@@ -95,7 +89,7 @@ export const AssetNewTable = (
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [threeDAssetMappings]
+    []
   ) as ColumnDef<AssetWithRelationshipLabels>[];
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);

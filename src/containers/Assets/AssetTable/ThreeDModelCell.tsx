@@ -5,7 +5,10 @@ import { RelationshipLabels } from 'types';
 
 export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
 
-import { ThreeDAssetMappingItem } from 'hooks/threeDHooks';
+import {
+  DetailedMapping,
+  useDetailedMappingsByAssetIdQuery,
+} from 'domain/threeD';
 import { createLink } from '@cognite/cdf-utilities';
 
 export const ThreeDModelCellLink = ({
@@ -13,7 +16,7 @@ export const ThreeDModelCellLink = ({
   mapping,
 }: {
   assetId: number;
-  mapping: ThreeDAssetMappingItem;
+  mapping: DetailedMapping;
 }) => {
   return (
     <A
@@ -34,7 +37,7 @@ export const ThreeDModelCellDropdown = ({
   mappings,
 }: {
   assetId: number;
-  mappings: ThreeDAssetMappingItem[];
+  mappings: DetailedMapping[];
 }) => {
   return (
     <Dropdown
@@ -65,14 +68,11 @@ export const ThreeDModelCellDropdown = ({
   );
 };
 
-export const ThreeDModelCell = ({
-  assetId,
-  mappings,
-}: {
-  assetId: number;
-  mappings: ThreeDAssetMappingItem[];
-}) => {
-  if (!mappings?.length) {
+export const ThreeDModelCell = ({ assetId }: { assetId: number }) => {
+  const { data: mappings, isFetched } =
+    useDetailedMappingsByAssetIdQuery(assetId);
+
+  if (!isFetched || !mappings?.length) {
     return null;
   }
 

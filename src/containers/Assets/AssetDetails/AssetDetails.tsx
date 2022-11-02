@@ -1,15 +1,16 @@
 import React from 'react';
 import { Asset } from '@cognite/sdk';
 import { TimeDisplay, GeneralDetails } from 'components';
-import { useThreeDAssetMappings } from 'hooks/threeDHooks';
+import { useDetailedMappingsByAssetIdQuery } from 'domain/threeD';
 
 type Props = {
   asset: Asset;
 };
 
 export const AssetDetails = ({ asset }: Props) => {
-  const { data: threeDAssetMappings } = useThreeDAssetMappings();
-  const mappings = threeDAssetMappings[asset.id];
+  const { data: mappings, isFetched } = useDetailedMappingsByAssetIdQuery(
+    asset.id
+  );
 
   return (
     <GeneralDetails>
@@ -30,7 +31,7 @@ export const AssetDetails = ({ asset }: Props) => {
         name="Updated at"
         value={<TimeDisplay value={asset.lastUpdatedTime} />}
       />
-      {!!mappings && (
+      {isFetched && !!mappings?.length && (
         <GeneralDetails.ThreeDModelItem
           assetId={asset.id}
           mappings={mappings}
