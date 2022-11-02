@@ -47,7 +47,7 @@
     "@azure/msal-browser": "2.30.0",
     "@cognite/reveal": "link:../viewer/dist",
     "@cognite/reveal-1.x": "npm:@cognite/reveal@1.x.x",
-    "@cognite/reveal-1.x/three": "npm:three@0.125.2",
+    "@cognite/reveal-1.x-three": "npm:three@0.125.2",
     "@cognite/reveal-2.x": "npm:@cognite/reveal@2.3",
     "@cognite/reveal-3.x": "npm:@cognite/reveal@3.x.x",
     "@cognite/reveal-4.x": "link:../viewer/dist",
