@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, AnnotationData, AnnotationsBoundingVolume, AnnotationsGeometry } from '@cognite/sdk';
 import { ModelIdentifier } from '../ModelIdentifier';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 import { IShape, Box, Cylinder } from '@reveal/utilities';
@@ -20,7 +20,7 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
     this._sdk = sdk;
   }
 
-  private annotationGeometryToRevealShapes(geometry: any): IShape {
+  private annotationGeometryToRevealShapes(geometry: AnnotationsGeometry): IShape {
     if (geometry.box) {
       return new Box(new THREE.Matrix4().fromArray(geometry.box.matrix).transpose());
     }
@@ -36,6 +36,10 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
     throw Error('Annotation geometry type not recognized');
   }
 
+  private is3dObjectAnnotation(annotationData: AnnotationData): annotationData is AnnotationsBoundingVolume {
+    return (annotationData as AnnotationsBoundingVolume).region !== undefined;
+  }
+
   private async fetchAnnotations(modelIdentifier: CdfModelIdentifier): Promise<CdfPointCloudObjectAnnotation[]> {
     const modelAnnotations = await this._sdk.annotations
       .list({
@@ -49,7 +53,9 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
       .autoPagingToArray({ limit: Infinity });
 
     const annotations = modelAnnotations.map(annotation => {
-      const region = (annotation.data as any).region.map((geometry: any) => {
+      assert(this.is3dObjectAnnotation(annotation.data));
+
+      const region = annotation.data.region.map(geometry => {
         return this.annotationGeometryToRevealShapes(geometry);
       });
 
