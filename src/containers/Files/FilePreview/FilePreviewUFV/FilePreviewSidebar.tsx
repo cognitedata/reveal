@@ -26,9 +26,6 @@ interface FilePreviewSidebarProps {
   approveAnnotations: (updatePatch: CogniteAnnotationPatch[]) => void;
   viewingAnnotations?: 'assets' | 'files';
   setViewingAnnotations: (type: 'assets' | 'files' | undefined) => void;
-  setZoomedAnnotation: (
-    zoomedAnnotation: CogniteAnnotation | undefined
-  ) => void;
   setIsAnnotationsShown: (isAnnotationsShown: boolean) => void;
   isAnnotationsShown: boolean;
   reset: () => void;
@@ -44,7 +41,6 @@ const FilePreviewSidebar = ({
   approveAnnotations,
   viewingAnnotations,
   setViewingAnnotations,
-  setZoomedAnnotation,
   setIsAnnotationsShown,
   isAnnotationsShown,
   reset,
@@ -83,7 +79,6 @@ const FilePreviewSidebar = ({
 
   const handleGoBack = () => {
     setViewingAnnotations(undefined);
-    setZoomedAnnotation(undefined);
     reset?.();
   };
 
@@ -97,12 +92,12 @@ const FilePreviewSidebar = ({
         )}
         type={viewingAnnotations}
         goBack={handleGoBack}
-        setZoomedAnnotation={setZoomedAnnotation}
         reset={reset}
         setSelectedAnnotations={setSelectedAnnotations}
       />
     );
   }
+
   return (
     <>
       <Modal

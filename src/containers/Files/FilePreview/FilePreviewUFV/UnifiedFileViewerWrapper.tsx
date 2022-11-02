@@ -36,16 +36,11 @@ type UnifiedFileViewerWrapperProps = {
   file: FileInfo;
   sdk: CogniteClient;
   creatable?: boolean;
-  hoverable?: boolean;
   hideControls?: boolean;
   hideDownload?: boolean;
   hideSearch?: boolean;
   annotations: CommonLegacyCogniteAnnotation[];
   onSelectAnnotations?: (annotation: CommonLegacyCogniteAnnotation[]) => void;
-  zoomOnAnnotation?: {
-    annotation: CommonLegacyCogniteAnnotation;
-    scale: number;
-  };
   onCreateAnnotation?: (annotation: PendingCogniteAnnotation) => {};
   renderItemPreview?: (
     annotation: CommonLegacyCogniteAnnotation
@@ -60,11 +55,9 @@ type UnifiedFileViewerWrapperProps = {
 export const UnifiedFileViewerWrapper = ({
   file,
   annotations,
-  hoverable = true,
   hideControls = false,
   hideDownload = false,
   hideSearch = false,
-  zoomOnAnnotation,
   onSelectAnnotations,
   renderAnnotation,
   renderItemPreview,
@@ -76,11 +69,7 @@ export const UnifiedFileViewerWrapper = ({
   const [container, setContainer] = useState<
     DocumentContainerProps | ImageContainerProps
   >();
-  const [selectedIds, setSelectedIds] = useState<string[]>(
-    zoomOnAnnotation?.annotation
-      ? [String(zoomOnAnnotation?.annotation.id)]
-      : []
-  );
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [hoverId, setHoverId] = useState<string | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -113,29 +102,6 @@ export const UnifiedFileViewerWrapper = ({
       }
     }
   }, [file.id, file.mimeType, fileUrl, page, containerId]);
-
-  const {
-    annotation: { id },
-    scale,
-  } = zoomOnAnnotation || { annotation: {} };
-
-  const zoomTo = useCallback(
-    (id: string, scale: number) => {
-      if (unifiedViewerRef) {
-        unifiedViewerRef.zoomToAnnotationById(id, {
-          scale,
-        });
-      }
-    },
-    [unifiedViewerRef]
-  );
-
-  // zoom to annotation when provided externally
-  useEffect(() => {
-    if (id && scale) {
-      zoomTo(String(id), scale);
-    }
-  }, [id, scale, zoomTo]);
 
   const renderStyledAnnotation = useCallback(
     (annotation: CommonLegacyCogniteAnnotation, isSelected: boolean) => {
@@ -198,7 +164,6 @@ export const UnifiedFileViewerWrapper = ({
     annotations,
     selectedIds,
     hoverId,
-    hoverable,
     onClick: onClickAnnotation,
     onMouseEnter: onMouseOver,
     onMouseLeave,

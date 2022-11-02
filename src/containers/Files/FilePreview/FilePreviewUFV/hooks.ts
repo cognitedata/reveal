@@ -9,7 +9,6 @@ type useUnifiedFileViewerAnnotationsProps = {
   annotations: CommonLegacyCogniteAnnotation[];
   selectedIds: string[];
   hoverId: string | undefined;
-  hoverable: boolean;
   onMouseEnter?: (annotation: Annotation) => void;
   onMouseLeave?: (annotation: Annotation) => void;
   onClick?: (annotation: Annotation) => void;
@@ -21,7 +20,6 @@ type useUnifiedFileViewerAnnotationsProps = {
 export const useUnifiedFileViewerAnnotations = ({
   annotations,
   selectedIds,
-  hoverable,
   hoverId,
   onClick,
   onMouseEnter,
@@ -30,7 +28,7 @@ export const useUnifiedFileViewerAnnotations = ({
 }: useUnifiedFileViewerAnnotationsProps) => {
   const getHoverStyles = useCallback(
     (annotation: RectangleAnnotation) => {
-      if (annotation && hoverable) {
+      if (annotation) {
         const isOnHover = hoverId == annotation.id;
         return {
           ...annotation,
@@ -44,7 +42,7 @@ export const useUnifiedFileViewerAnnotations = ({
       }
       return annotation;
     },
-    [hoverable, hoverId]
+    [hoverId]
   );
 
   const ufvAnnotations = useMemo(() => {

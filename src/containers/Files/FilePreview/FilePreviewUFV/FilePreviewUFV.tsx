@@ -59,13 +59,25 @@ export const FilePreviewUFV = ({
     (CogniteAnnotation | ProposedCogniteAnnotation)[]
   >([]);
 
+  const zoomToAnnotation = (
+    annotation: CogniteAnnotation | ProposedCogniteAnnotation
+  ) => {
+    unifiedViewerRef?.zoomToAnnotationById(String(annotation.id), {
+      scale: DEFAULT_ZOOM_SCALE,
+    });
+  };
+
+  useEffect(() => {
+    if (selectedAnnotations.length === 1) {
+      const [annotation] = selectedAnnotations;
+      zoomToAnnotation(annotation);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAnnotations]);
+
   const [pendingAnnotations, setPendingAnnotations] = useState<
     ProposedCogniteAnnotation[]
   >([]);
-
-  const [zoomedAnnotation, setZoomedAnnotation] = useState<
-    CommonLegacyCogniteAnnotation | undefined
-  >();
 
   const [isAnnotationsShown, setIsAnnotationsShown] = useState<boolean>(true);
 
@@ -167,16 +179,6 @@ export const FilePreviewUFV = ({
     );
   }
 
-  const handleAnnotationSelectedFromDoc = (
-    selectedAnnotations: CommonLegacyCogniteAnnotation[]
-  ) => {
-    setZoomedAnnotation(selectedAnnotations[0]);
-  };
-
-  const getAnnotations = () => {
-    return isAnnotationsShown ? allAnnotations : [];
-  };
-
   const handleCreateAnnotation = (item: PendingCogniteAnnotation) => {
     const newItem = { ...item, id: uuid() };
     setPendingAnnotations([newItem]);
@@ -189,17 +191,10 @@ export const FilePreviewUFV = ({
         file={file}
         sdk={sdk}
         hideControls={!showZoomControls}
-        annotations={getAnnotations()}
+        annotations={isAnnotationsShown ? allAnnotations : []}
         creatable
-        hoverable
         onCreateAnnotation={handleCreateAnnotation}
-        onSelectAnnotations={handleAnnotationSelectedFromDoc}
-        zoomOnAnnotation={
-          zoomedAnnotation && {
-            annotation: zoomedAnnotation,
-            scale: DEFAULT_ZOOM_SCALE,
-          }
-        }
+        onSelectAnnotations={setSelectedAnnotations}
         renderItemPreview={annotation => (
           <AnnotationHoverPreview annotation={[annotation]} />
         )}
@@ -212,7 +207,6 @@ export const FilePreviewUFV = ({
           setIsAnnotationsShown={setIsAnnotationsShown}
           isAnnotationsShown={isAnnotationsShown}
           setPendingAnnotations={setPendingAnnotations}
-          setZoomedAnnotation={setZoomedAnnotation}
           contextualization={contextualization}
           onItemClicked={onItemClicked}
           annotations={allAnnotations}

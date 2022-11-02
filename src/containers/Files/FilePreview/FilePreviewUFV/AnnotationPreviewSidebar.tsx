@@ -53,9 +53,6 @@ type Props = {
   setPendingAnnotations: React.Dispatch<
     React.SetStateAction<ProposedCogniteAnnotation[]>
   >;
-  setZoomedAnnotation: (
-    zoomedAnnotation: CogniteAnnotation | undefined
-  ) => void;
   setIsAnnotationsShown: (isAnnotationShown: boolean) => void;
   isAnnotationsShown: boolean;
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
@@ -79,7 +76,6 @@ const AnnotationPreviewSidebar = ({
   setIsAnnotationsShown,
   isAnnotationsShown,
   setPendingAnnotations,
-  setZoomedAnnotation,
   contextualization,
   onItemClicked,
   annotations,
@@ -576,7 +572,6 @@ const AnnotationPreviewSidebar = ({
       approveAnnotations={approveAnnotations}
       viewingAnnotations={viewingAnnotations}
       setViewingAnnotations={setViewingAnnotations}
-      setZoomedAnnotation={setZoomedAnnotation}
       setIsAnnotationsShown={setIsAnnotationsShown}
       isAnnotationsShown={isAnnotationsShown}
       reset={reset}

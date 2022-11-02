@@ -21,7 +21,6 @@ interface AnnotationsListProps {
   type: 'assets' | 'files';
   goBack: () => void;
   reset: () => void;
-  setZoomedAnnotation: (zoomedAnnotation: CogniteAnnotation) => void;
   setSelectedAnnotations: (
     annotations: (CogniteAnnotation | ProposedCogniteAnnotation)[]
   ) => void;
@@ -34,7 +33,6 @@ const AnnotationsList = ({
   type,
   goBack,
   reset,
-  setZoomedAnnotation,
   setSelectedAnnotations,
 }: AnnotationsListProps) => {
   const [filterType, setFilterType] = useState<AnnotationType>('all');
@@ -86,7 +84,6 @@ const AnnotationsList = ({
     annotation: CogniteAnnotation | ProposedCogniteAnnotation
   ) => {
     setSelectedAnnotations([annotation]);
-    setZoomedAnnotation(annotation as CogniteAnnotation);
   };
 
   const handleGoBack = () => {
