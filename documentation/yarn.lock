@@ -1454,36 +1454,10 @@
   dependencies:
     commander "^2.15.1"
 
-"@cognite/potree-core@^1.1.6":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.2.0.tgz#29d42606e2dd4b4ef0ad82c97c0a23ca94f0ff65"
-  integrity sha512-DoRe/U/12LjW09iR1VVK1WFTi/ZIeQw7k9yGHzMC4jhVgKuGiz0n8YkcQGZo4+KLULzvEW8zXz6Wqfo7BakVHA==
-
 "@cognite/potree-core@^1.5.1":
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.5.1.tgz#b61bc4ed905757701c8d2074b153890974857bb3"
   integrity sha512-T0+MIDd3ebZDjRbddiLF1KhMeW0JCunbvaxpseZdgAjXx6S/W4EiIFJqjP0g9KXOn09DLSAIS8DVtKKfKtyhAA==
-
-"@cognite/reveal-1.x@npm:@cognite/reveal@1.x.x":
-  version "1.5.5"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-1.5.5.tgz#712e710351f10b9e029438687524a2458c42b1a6"
-  integrity sha512-QzftiiYLdhCqr1cWW+Y6jg04sM+rq3Aev55A3JCl5/8N7bfY+5AMeZd7hlvYqZIMyMN2hlzKtExpdxZ56oxOJA==
-  dependencies:
-    "@cognite/potree-core" "^1.1.6"
-    "@cognite/reveal-parser-worker" "1.1.1"
-    "@cognite/sdk-core" "^1.0.0"
-    "@cognite/three-combo-controls" "^1.4.3"
-    "@tweenjs/tween.js" "^18.6.4"
-    "@types/lodash" "^4.14.162"
-    "@types/skmeans" "^0.11.0"
-    comlink "4.3.1"
-    gl-matrix "^3.3.0"
-    glslify "^7.1.1"
-    glslify-import "^3.1.0"
-    lodash "^4.17.20"
-    mixpanel-browser "^2.39.0"
-    rxjs "^6.6.3"
-    skmeans "^0.11.3"
 
 "@cognite/reveal-2.x@npm:@cognite/reveal@2.3":
   version "2.3.0"
@@ -1538,13 +1512,6 @@
   version "0.0.0"
   uid ""
 
-"@cognite/reveal-parser-worker@1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.1.1.tgz#49eabb2cafc8ebe53ac757b4be338e1745b1cb2d"
-  integrity sha512-AQvFY0EDNvEKxnEnrYWUldwzWhpbln9fTVH/gFGl8Mn4vJVmJCBlOwqRxLB0CZ8BJY8v99rROA9M67+6p2N99w==
-  dependencies:
-    comlink "4.3.1"
-
 "@cognite/reveal-parser-worker@1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.3.0.tgz#9910121ba90cad684a91b3b04e6df0528ea671f5"
@@ -1555,14 +1522,6 @@
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
   uid ""
-
-"@cognite/sdk-1.x@npm:@cognite/sdk@^3.4.0":
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-3.5.2.tgz#4a1f154c0b8ca29e2231d202ec1a279810328844"
-  integrity sha512-rK7IajwtSEg1DkuqZ88F7hvvZG8cG7bwQx8eN0uMJilNJNnWGqjnLyOJHsIlB/K0bkhbccur4GrPDPu3Fe1fjg==
-  dependencies:
-    "@cognite/sdk-core" "^1.2.2"
-    lodash "^4.17.11"
 
 "@cognite/sdk-2.x@npm:@cognite/sdk@^5.1.3":
   version "5.1.3"
@@ -1588,18 +1547,6 @@
     "@cognite/sdk-core" "^4.8.0"
     geojson "^0.5.0"
     lodash "^4.17.11"
-
-"@cognite/sdk-core@^1.0.0", "@cognite/sdk-core@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.2.2.tgz#be6378ffee45c5da6d0186ce97246eb19a9d9dd4"
-  integrity sha512-ePu4q1UGa4mIKDz0cxR2WzBjImtLlLQRwWY7R38IHfBXOFMJuFUxgHcKgoSP5bonGPGLHWP7UaTW+41+IsyGOw==
-  dependencies:
-    "@azure/msal-browser" "^2.11.0"
-    cross-fetch "^3.0.4"
-    is-buffer "^2.0.5"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
 
 "@cognite/sdk-core@^3.2.0":
   version "3.2.0"
@@ -1650,13 +1597,6 @@
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
   uid ""
-
-"@cognite/three-combo-controls@^1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@cognite/three-combo-controls/-/three-combo-controls-1.4.3.tgz#0850ec57035b3cf3f65ab5b619fcf9eee87646c8"
-  integrity sha512-wkUqf/TyRlHFbMqELzVjJM7M1HWDGSp1V1Bgo+WH3yefOQgcgYsb8kOyJhMPuL4i1BqtxAc9E48n9TDCDD3mYQ==
-  dependencies:
-    lodash "^4.17.15"
 
 "@colors/colors@1.5.0":
   version "1.5.0"
@@ -2556,11 +2496,6 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.11.tgz#d421b6c527a3037f7c84433fd2c4229e016863d3"
   integrity sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==
 
-"@types/lodash@^4.14.162":
-  version "4.14.170"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.170.tgz#0d67711d4bf7f4ca5147e9091b847479b87925d6"
-  integrity sha512-bpcvu/MKHHeYX+qeEN8GE7DIravODWdACVA1ctevD8CN24RhPZIKMn9ntfAsrvLfSX3cR5RrBKAbYm9bGs0A+Q==
-
 "@types/mdast@^3.0.0":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/mdast/-/mdast-3.0.3.tgz#2d7d671b1cd1ea3deb306ea75036c2a0407d2deb"
@@ -2695,11 +2630,6 @@
   dependencies:
     "@types/mime" "*"
     "@types/node" "*"
-
-"@types/skmeans@^0.11.0":
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/@types/skmeans/-/skmeans-0.11.1.tgz#77d4eab94b380111fc998057feea358fe1826fb6"
-  integrity sha512-N7Z03qVNPBHpXjNTzRS5fYX9jxKaW8ES++/2P4LElmQbMqGOBSwoQmzWtWHlX8Vq2OR81vvWR4qjvc9BUiX8wA==
 
 "@types/sockjs@^0.3.33":
   version "0.3.33"
@@ -4977,7 +4907,7 @@ github-slugger@^1.4.0:
   resolved "https://registry.yarnpkg.com/github-slugger/-/github-slugger-1.4.0.tgz#206eb96cdb22ee56fdc53a28d5a302338463444e"
   integrity sha512-w0dzqw/nt51xMVmlaV1+JRzN+oCa1KfcgGEWhxUG16wbdA+Xnt/yoFO8Z8x/V82ZcZ0wy6ln9QDup5avbhiDhQ==
 
-gl-matrix@^3.3.0, gl-matrix@~3.3.0:
+gl-matrix@~3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/gl-matrix/-/gl-matrix-3.3.0.tgz#232eef60b1c8b30a28cbbe75b2caf6c48fd6358b"
   integrity sha512-COb7LDz+SXaHtl/h4LeaFcNdJdAQSDeVqjiIihSXNrkWObZLhDI4hIkZC11Aeqp7bcE72clzB0BnDXr2SmslRA==
@@ -6210,7 +6140,7 @@ lodash.uniq@4.5.0, lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
 
-lodash@4.17.21, lodash@^4.17.11, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21:
+lodash@4.17.21, lodash@^4.17.11, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -8049,13 +7979,6 @@ rxjs@7.5.7:
   dependencies:
     tslib "^2.1.0"
 
-rxjs@^6.6.3:
-  version "6.6.7"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.7.tgz#90ac018acabf491bf65044235d5863c4dab804c9"
-  integrity sha512-hTdwr+7yYNIT5n4AMYp85KA6yw2Va0FLa3Rguvbpa4W3I5xynaBZo41cM3XM+4Q6fRMj3sBYIR1VAmZMXYJvRQ==
-  dependencies:
-    tslib "^1.9.0"
-
 rxjs@^7.1.0:
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.3.0.tgz#39fe4f3461dc1e50be1475b2b85a0a88c1e938c6"
@@ -8869,11 +8792,6 @@ trough@^1.0.0:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/trough/-/trough-1.0.5.tgz#b8b639cefad7d0bb2abd37d433ff8293efa5f406"
   integrity sha512-rvuRbTarPXmMb79SmzEp8aqXNKcK+y0XaB298IXueQ8I2PsrATcPBCSPyK/dDNa2iWOhKlfNnOjdAOTBU/nkFA==
-
-tslib@^1.9.0:
-  version "1.14.1"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
-  integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
 tslib@^2.0.3:
   version "2.2.0"
