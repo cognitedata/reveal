@@ -8,6 +8,7 @@ export type AssetsProperties = {
   externalId: string;
   labels: string[];
   description: string;
+  name: string;
   [key: `metadata|${string}`]: string;
 };
 
@@ -64,6 +65,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
       searchBuilder.prefix(`metadata|${key}`, value);
     }
 
+    searchBuilder.search('name', query);
     searchBuilder.search('description', query);
 
     filterBuilder.or(searchBuilder);
