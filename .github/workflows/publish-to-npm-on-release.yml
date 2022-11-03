@@ -1,0 +1,41 @@
+name: Publish Package to NPM
+on:
+  release:
+    types:
+      - published
+jobs:
+  deploy-to-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
+          always-auth: true
+
+      - name: Setup Cognite CICD
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+      - name: Install NPM dependencies
+        working-directory: viewer
+        run: yarn install --immutable
+
+      - name: Build production version
+        working-directory: viewer
+        run: yarn run build:prod
+
+      - name: Publish to NPM
+        working-directory: viewer/dist
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

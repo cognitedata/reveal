@@ -49,8 +49,8 @@ import { Spinner } from '../../utilities/Spinner';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { DefaultCameraManager, CameraManager, CameraChangeDelegate } from '@reveal/camera-manager';
-import { Cdf360ImageEventProvider, CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
+import { DefaultCameraManager, CameraManager, CameraChangeDelegate, ProxyCameraManager } from '@reveal/camera-manager';
+import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } from '@reveal/model-base';
 
@@ -61,7 +61,8 @@ import {
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
-import { Image360Entity, Image360EntityFactory, Image360Facade } from '@reveal/360-images';
+import { Image360Entity } from '@reveal/360-images';
+import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
@@ -77,7 +78,7 @@ type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRe
  */
 export class Cognite3DViewer {
   private readonly _domElementResizeObserver: ResizeObserver;
-  private readonly _image360Facade: Image360Facade<{ [key: string]: string }> | undefined;
+  private readonly _image360ApiHelper: Image360ApiHelper | undefined;
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
@@ -103,7 +104,7 @@ export class Cognite3DViewer {
   private readonly _dataSource: DataSource;
 
   private readonly _sceneHandler: SceneHandler;
-  private _cameraManager: CameraManager;
+  private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _subscription = new Subscription();
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
@@ -221,11 +222,13 @@ export class Cognite3DViewer {
 
     this._mouseHandler = new InputHandler(this.domElement);
 
-    this._cameraManager =
+    const initialActiveCameraManager =
       options.cameraManager ??
       new DefaultCameraManager(this._domElement, this._mouseHandler, this.modelIntersectionCallback.bind(this));
 
-    this._cameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
+    this._activeCameraManager = new ProxyCameraManager(initialActiveCameraManager);
+
+    this._activeCameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
     });
 
@@ -250,32 +253,19 @@ export class Cognite3DViewer {
       // CDF - default mode
       this._dataSource = new CdfDataSource(options.sdk);
       this._cdfSdkClient = options.sdk;
-      const image360DataProvider = new Cdf360ImageEventProvider(this._cdfSdkClient);
-      const image360EntityFactory = new Image360EntityFactory(image360DataProvider, this._sceneHandler);
-      this._image360Facade = new Image360Facade(image360EntityFactory);
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this._sceneHandler,
         revealOptions,
         options.sdk
       );
-
-      this.on('hover', event => {
-        if (!this._image360Facade) {
-          return;
-        }
-        this._image360Facade.allHoverIconsVisibility = false;
-        const { offsetX, offsetY } = event;
-        const normalizedCoords = {
-          x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
-          y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
-        };
-        const entity = this._image360Facade.intersect(normalizedCoords, this._cameraManager.getCamera());
-        if (!entity) {
-          return;
-        }
-        entity.icon.hoverSpriteVisible = true;
-      });
+      this._image360ApiHelper = new Image360ApiHelper(
+        options.sdk,
+        this._sceneHandler,
+        this._domElement,
+        this._activeCameraManager,
+        () => this.requestRedraw()
+      );
     }
 
     this.startPointerEventListeners();
@@ -370,8 +360,9 @@ export class Cognite3DViewer {
     }
 
     this._subscription.unsubscribe();
-    this._cameraManager.dispose();
+    this._activeCameraManager.dispose();
     this.revealManager.dispose();
+    this._image360ApiHelper?.dispose();
     this.domElement.removeChild(this.canvas);
     this._domElementResizeObserver.disconnect();
     this.renderer.dispose();
@@ -545,25 +536,16 @@ export class Cognite3DViewer {
   }
 
   get cameraManager(): CameraManager {
-    return this._cameraManager;
+    return this._activeCameraManager.innerCameraManager;
   }
 
   /**
-   * Sets camera manager instance for current Cognite3Dviewer.
+   * Sets the active camera manager instance for current Cognite3Dviewer.
    * @param cameraManager Camera manager instance.
-   * @param cameraStateUpdate Whether to set current camera state to new camera manager.
+   * @param preserveCameraState Whether to set current camera state to new camera manager.
    */
-  setCameraManager(cameraManager: CameraManager, cameraStateUpdate: boolean = true): void {
-    if (cameraStateUpdate) {
-      const currentState = this._cameraManager.getCameraState();
-      cameraManager.setCameraState({ position: currentState.position, target: currentState.target });
-    }
-    cameraManager.getCamera().aspect = this.getCamera().aspect;
-
-    this._cameraManager.enabled = false;
-    cameraManager.enabled = true;
-
-    this._cameraManager = cameraManager;
+  setCameraManager(cameraManager: CameraManager, preserveCameraState: boolean = true): void {
+    this._activeCameraManager.setActiveCameraManager(cameraManager, preserveCameraState);
     this.requestRedraw();
   }
 
@@ -703,14 +685,35 @@ export class Cognite3DViewer {
       throw new Error(`${datasource} is an unknown datasource from 360 images`);
     }
 
-    if (this._cdfSdkClient === undefined || this._image360Facade === undefined) {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
 
     const collectionTransform = add360ImageOptions?.collectionTransform ?? new THREE.Matrix4();
     const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
 
-    return this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
+    return this._image360ApiHelper.add360ImageSet(eventFilter, collectionTransform, preMultipliedRotation);
+  }
+
+  /**
+   * Enter visualization of a 360 image.
+   * @param image360
+   */
+  async enter360Image(image360: Image360Entity): Promise<void> {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+    }
+    return this._image360ApiHelper.enter360Image(image360);
+  }
+
+  /**
+   * Exit visualization of the 360 image.
+   */
+  exit360Image(): void {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+    }
+    this._image360ApiHelper.exit360Image();
   }
 
   /**
@@ -905,7 +908,7 @@ export class Cognite3DViewer {
    * @returns The THREE.Camera used for rendering.
    */
   getCamera(): THREE.PerspectiveCamera {
-    return this._cameraManager.getCamera();
+    return this._activeCameraManager.getCamera();
   }
 
   /**
@@ -929,7 +932,7 @@ export class Cognite3DViewer {
   loadCameraFromModel(model: CogniteModelBase): void {
     const config = model.getCameraConfiguration();
     if (config) {
-      this._cameraManager.setCameraState({ position: config.position, target: config.target });
+      this._activeCameraManager.setCameraState({ position: config.position, target: config.target });
     } else {
       this.fitCameraToModel(model, 0);
     }
@@ -956,7 +959,7 @@ export class Cognite3DViewer {
    */
   fitCameraToModel(model: CogniteModelBase, duration?: number): void {
     const bounds = model.getModelBoundingBox(new THREE.Box3(), true);
-    this._cameraManager.fitCameraToBoundingBox(bounds, duration);
+    this._activeCameraManager.fitCameraToBoundingBox(bounds, duration);
   }
 
   /**
@@ -979,7 +982,7 @@ export class Cognite3DViewer {
    * ```
    */
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    this._cameraManager.fitCameraToBoundingBox(box, duration, radiusFactor);
+    this._activeCameraManager.fitCameraToBoundingBox(box, duration, radiusFactor);
   }
 
   /**
@@ -1158,7 +1161,7 @@ export class Cognite3DViewer {
     if (isVisible) {
       TWEEN.update(time);
       this.recalculateBoundingBox();
-      this._cameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
+      this._activeCameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
       this.revealManager.update(this.getCamera());
 
       if (this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
@@ -1218,7 +1221,8 @@ export class Cognite3DViewer {
             model,
             point: result.point,
             pointIndex: result.pointIndex,
-            distanceToCamera: result.distance
+            distanceToCamera: result.distance,
+            annotationId: result.annotationId
           };
           intersections.push(intersection);
           break;

@@ -70,13 +70,19 @@ In case if you see an error like that:
 
 See the next steps in our [documentation](https://cognitedata.github.io/reveal-docs/docs/installation#installation-for-projects-with-content-security-policy).
 
+## Prerequisites
+
+For development, you will need to install [Node](https://nodejs.org/en/download/), [Yarn](https://yarnpkg.com/getting-started/install) and [Rust+Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html).
+
+Run `yarn` in the viewer
+
 ## Local Packages
 The Reveal viewer is structured using local packages.
 This allows you to test features in isolation and constrain the dependencies with logical barriers between features.
 Packages are located in the `/packages/` subfolder.
 There is no enforced structure of the packages and their layout and content will vary depending on what the package exposes to the rest of the system.
 Dependencies that are located in the `viewer/package.json` will be shared and are accessible by any package without having to explicitly declare a dependency in the respective package's `package.json`.
-Any external dependency (e.g. `lodash`, `threejs`, etc.) must be declared in the root `package.json` such that they will be properly installed by users that consume the `Reveal` NPM package. 
+Any external dependency (e.g. `lodash`, `threejs`, etc.) must be declared in the root `package.json` such that they will be properly installed by users that consume the `Reveal` NPM package.
 
 ### Creating a local package
 Create a new folder under the `/packages/` folder, e.g. `/packages/[MY-PACKAGE-NAME]` and include a package with the following structure:
@@ -106,6 +112,22 @@ If your package depends on another local package, it must be explicitly declared
 The `workspace` keyword declares that the dependency is a local package and should never be fetched from NPM.
 And the `':*'` syntax means that it should just grab any version available. See [this](https://yarnpkg.com/features/workspaces) for more documentation on yarn workspaces.
 
+If you want to add Rust/Webassembly code to a package, you can add the following script in `package.json`:
+
+```json
+{
+  "scripts": {
+    "run-wasm-pack": "yarn run ws:update-cargo-index && wasm-pack"
+  }
+}
+```
+and let the Cargo crate reside in `<package-name>/wasm`.
+Then the crate will automatically be built and tested by the `build` and `test` scripts in the workspace root respectively.
+The `ws:update-cargo-index` step ensures that the local `crates.io` index has been updated before running build.
+Otherwise, the index update will be executed in a quiet manner, and the command may appear to hang for several minutes.
+
+When writing tests in Rust, the tests must be annotated with the `#[wasm_bindgen_test]` attribute, instead of the conventional `#[test]`, and `wasm-bindgen-test` must be added as a (dev-)dependency. All tests are run as part of the normal `yarn test` script in the root folder, but can also be run manually with e.g. `wasm-pack test --chrome --headless` in the relevant `wasm` folder.
+
 It is also possible to run and test a local package in isolation from the rest of Reveal.
 Convenience functionality has been created to make this easy.
 Add the following script to your package's `package.json`:
@@ -131,6 +153,12 @@ Add the following script to your package's `package.json`:
 Running the command `yarn start` will host a localhost site with a template HTML that includes the `/app/index.ts` script that has been transpiled to javascript.
 To see an example of this check out the `packages/camera-manager` package.
 
+## Debugging
+
+### Worker source maps
+
+When bundling source maps with inlined web workers, the bundle size grows huge. Therefore source maps for workers are disabled by default. In order to add source maps to workers, pass `--env workerSourceMaps=true` to the `yarn build` script.
+
 ## Creating and running visual tests
 
 Visual test files must be on the format `visual-tests/SomeTest.VisualTest.ts`. See one of the existing tests
@@ -145,6 +173,7 @@ For more information about visual tests, see [visual-tests/README.md](visual-tes
     ├── app                   # Runnable app
       └──index.ts             # Entry point for runnable app
     ├── src                   # Source code for package
+    ├── wasm                  # Rust/Webassembly source code for package
     ├── test                  # Automated tests
     ├── package.json          # Package declaration
     ├── index.ts              # Entry point for package

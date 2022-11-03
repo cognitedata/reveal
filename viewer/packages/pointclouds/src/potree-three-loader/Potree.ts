@@ -1,5 +1,4 @@
 import {
-  Box3,
   Camera,
   Frustum,
   Matrix4,
@@ -19,7 +18,7 @@ import {
 } from '@reveal/rendering';
 import { EptLoader } from './loading/EptLoader';
 import { EptBinaryLoader } from './loading/EptBinaryLoader';
-import { ClipMode, OctreeMaterialParams } from '@reveal/rendering';
+import { OctreeMaterialParams } from '@reveal/rendering';
 import { PointCloudOctree } from './tree/PointCloudOctree';
 import { isGeometryNode, isTreeNode, isOptionalTreeNode } from './types/type-predicates';
 import { IPotree } from './types/IPotree';
@@ -30,7 +29,7 @@ import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryN
 import { BinaryHeap } from './utils/BinaryHeap';
 import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
-import { ModelDataProvider } from '@reveal/data-providers';
+import { ModelDataProvider, PointCloudObject } from '@reveal/data-providers';
 import throttle from 'lodash/throttle';
 import { createVisibilityTextureData } from './utils/utils';
 
@@ -84,14 +83,11 @@ export class Potree implements IPotree {
   async loadPointCloud(
     baseUrl: string,
     fileName: string,
-    modelIdentifier: symbol,
-    _xhrRequest = (input: RequestInfo, init?: RequestInit) => fetch(input, init)
+    pointCloudObjects: PointCloudObject[],
+    modelIdentifier: symbol
   ): Promise<PointCloudOctree> {
-    this._materialManager.addModelMaterial(modelIdentifier);
-
-    return EptLoader.load(baseUrl, fileName, this._modelDataProvider).then(
-      geometry => new PointCloudOctree(this, geometry, this._materialManager.getModelMaterial(modelIdentifier))
-    );
+    const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, pointCloudObjects);
+    return new PointCloudOctree(this, geometry, this._materialManager.getModelMaterial(modelIdentifier));
   }
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void {
@@ -162,11 +158,7 @@ export class Potree implements IPotree {
 
     const maxLevel = pointCloud.maxLevel !== undefined ? pointCloud.maxLevel : Infinity;
 
-    if (
-      node.level > maxLevel ||
-      !sceneParams.frustums[pointCloudIndex].intersectsBox(node.boundingBox) ||
-      this.shouldClip(pointCloud, node.boundingBox)
-    ) {
+    if (node.level > maxLevel || !sceneParams.frustums[pointCloudIndex].intersectsBox(node.boundingBox)) {
       return;
     }
 
@@ -359,31 +351,6 @@ export class Potree implements IPotree {
     } else if (!pointCloud.showBoundingBox && node.boundingBoxNode) {
       node.boundingBoxNode.visible = false;
     }
-  }
-
-  private shouldClip(pointCloud: PointCloudOctree, boundingBox: Box3): boolean {
-    const material = pointCloud.material;
-
-    if (material.numClipBoxes === 0 || material.clipMode !== ClipMode.CLIP_OUTSIDE) {
-      return false;
-    }
-
-    const box2 = boundingBox.clone();
-    pointCloud.updateMatrixWorld(true);
-    box2.applyMatrix4(pointCloud.matrixWorld);
-
-    const clipBoxes = material.clipBoxes;
-    for (let i = 0; i < clipBoxes.length; i++) {
-      const clipMatrixWorld = clipBoxes[i].matrix;
-      const clipBoxWorld = new Box3(new Vector3(-0.5, -0.5, -0.5), new Vector3(0.5, 0.5, 0.5)).applyMatrix4(
-        clipMatrixWorld
-      );
-      if (box2.intersectsBox(clipBoxWorld)) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
   private readonly updateVisibilityStructures = (() => {

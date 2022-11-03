@@ -15,13 +15,14 @@ on:
       - '**'
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build-viewer:
-    name: Build Reveal
-    runs-on: ubuntu-latest 
+  populate-caches:
+    name: Update NPM and Cargo caches
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
 
-    - uses: actions/cache@v3
+    - name: Cache NPM packages
+      uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -32,10 +33,51 @@ jobs:
       working-directory: viewer
       run: yarn install --immutable
 
+    - name: Cache cargo registry
+      uses: actions/cache@v3
+      id: cargo_cache
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Download cargo packages and ensure Cargo.lock up to date
+      if: steps.cargo_cache.outputs.cache-hit != 'true'
+      working-directory: viewer
+      continue-on-error: false
+      run: cargo update --locked
+
+  build-viewer:
+    name: Build Reveal
+    runs-on: ubuntu-latest
+    needs: populate-caches
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache NPM packages
+      uses: actions/cache@v3
+      id: npm_cache
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+    - name: Cache cargo registry
+      uses: actions/cache@v3
+      id: cargo_cache
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
     - name: Lint
       working-directory: viewer
       continue-on-error: false
       run: yarn run lint
+
+    - name: Rust fmt
+      working-directory: viewer
+      continue-on-error: false
+      run: |
+           rustup component add rustfmt
+           cargo fmt --check
 
     # Skip to save time - development version is enough
     # - name: Build prod version
@@ -54,7 +96,8 @@ jobs:
 
   run-coverage-tests:
     name: Run unit tests
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
+    needs: populate-caches
     steps:
     - uses: actions/checkout@v3
 
@@ -64,10 +107,12 @@ jobs:
         path: '**/node_modules'
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Install NPM dependencies
-      if: steps.npm_cache.outputs.cache-hit != 'true'
-      working-directory: viewer
-      run: yarn install --immutable
+    - name: Cache cargo registry
+      uses: actions/cache@v3
+      id: cargo_cache
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Setup tools for coverage tests
       working-directory: viewer
@@ -87,6 +132,7 @@ jobs:
   run-visual-tests:
     name: Visual Tests
     runs-on: ubuntu-latest
+    needs: populate-caches
     steps:
     - uses: actions/checkout@v3
 
@@ -96,10 +142,12 @@ jobs:
         path: '**/node_modules'
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Install NPM viewer dependencies
-      if: steps.npm_cache.outputs.cache-hit != 'true'
-      working-directory: viewer
-      run: yarn install --immutable
+    - name: Cache cargo registry
+      uses: actions/cache@v3
+      id: cargo_cache
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Execute visual tests
       id: viewerVisualTests
@@ -149,10 +197,12 @@ jobs:
         path: '**/node_modules'
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Install NPM viewer dependencies
-      if: steps.npm_cache.outputs.cache-hit != 'true'
-      working-directory: viewer
-      run: yarn install --immutable
+    - name: Cache cargo registry
+      uses: actions/cache@v3
+      id: cargo_cache
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install NPM examples dependencies
       # Note! react-app-rewired doesn't work when we get deps from cache for some reason,
@@ -168,6 +218,7 @@ jobs:
   build-preview-documentation:
     name: Build preview documentation
     runs-on: ubuntu-latest
+    needs: populate-caches
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
@@ -187,10 +238,12 @@ jobs:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Install NPM viewer dependencies
-        if: steps.npm_cache.outputs.cache-hit != 'true'
-        working-directory: viewer
-        run: yarn install --immutable
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        id: cargo_cache
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build production version
         working-directory: viewer
@@ -278,7 +331,7 @@ jobs:
     needs: [ci-examples, build-viewer, deploy-preview-documentation]
     if: always()
     steps:
-    - uses: geekyeggo/delete-artifact@v1
+    - uses: geekyeggo/delete-artifact@v2
       with:
         name: |
           viewer

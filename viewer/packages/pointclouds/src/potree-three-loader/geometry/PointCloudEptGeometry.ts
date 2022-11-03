@@ -6,23 +6,17 @@
 
 import * as THREE from 'three';
 
-import { ILoader } from '../loading/ILoader';
 import { EptBinaryLoader } from '../loading/EptBinaryLoader';
+import { EptJson, EptSchemaEntry } from '../loading/EptJson';
 
 import { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
 import { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
 
 import proj4 from 'proj4';
-import { ModelDataProvider } from '@reveal/data-providers';
+import { ModelDataProvider, StylableObject } from '@reveal/data-providers';
 import { toVector3, toBox3 } from './translationUtils';
 
-type SchemaEntry = {
-  name: string;
-  scale: number;
-  offset: number;
-};
-
-function findDim(schema: SchemaEntry[], name: string): SchemaEntry {
+function findDim(schema: EptSchemaEntry[], name: string): EptSchemaEntry {
   const dim = schema.find(dim => dim.name == name);
   if (!dim) throw new Error('Failed to find ' + name + ' in schema');
   return dim;
@@ -39,16 +33,20 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
 
   private readonly _offset: THREE.Vector3;
 
+  private readonly _loader: EptBinaryLoader;
+
   private readonly _span: number;
   private readonly _spacing: number;
 
-  private readonly _loader: ILoader;
-
-  private readonly _schema: SchemaEntry[];
+  private readonly _schema: EptSchemaEntry[];
 
   private _root: PointCloudEptGeometryNode | undefined;
 
   private readonly _projection: string | null;
+
+  get loader(): EptBinaryLoader {
+    return this._loader;
+  }
 
   get root(): PointCloudEptGeometryNode | undefined {
     return this._root;
@@ -78,7 +76,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     return this._url;
   }
 
-  get schema(): SchemaEntry[] {
+  get schema(): EptSchemaEntry[] {
     return this._schema;
   }
 
@@ -90,11 +88,11 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     return this._eptOffset;
   }
 
-  get loader(): ILoader {
-    return this._loader;
-  }
+  constructor(url: string, info: EptJson, dataLoader: ModelDataProvider, stylableObjects: StylableObject[]) {
+    if (info.dataType !== 'binary') {
+      throw new Error('Could not read data type: ' + info.dataType);
+    }
 
-  constructor(url: string, info: any, dataLoader: ModelDataProvider) {
     const schema = info.schema;
     const bounds = info.bounds;
     const boundsConforming = info.boundsConforming;
@@ -119,7 +117,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
       this._projection = info.srs.authority + ':' + info.srs.horizontal;
     }
 
-    if (info.srs.wkt) {
+    if (info.srs?.wkt) {
       if (!this._projection) this._projection = info.srs.wkt;
     }
 
@@ -136,11 +134,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
 
     this._spacing = (this._boundingBox.max.x - this._boundingBox.min.x) / this._span;
 
-    if (info.dataType !== 'binary') {
-      throw new Error('Could not read data type: ' + info.dataType);
-    }
-
-    this._loader = new EptBinaryLoader(dataLoader);
+    this._loader = new EptBinaryLoader(dataLoader, stylableObjects);
   }
 
   dispose(): void {}

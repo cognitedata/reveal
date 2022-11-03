@@ -22,7 +22,7 @@ uniform int renderMode;
 // Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
 #pragma glslify: import('../../base/updateFragmentDepth.glsl')
 
-in TreeIndexPacked  v_treeIndexPacked;
+in highp vec2  v_treeIndexPacked;
 in vec3 v_color;
 
 in vec3 v_viewPos;
@@ -47,11 +47,11 @@ void main()
     }
 
     vec4 color = determineColor(v_color, appearance);
-    
+
     vec3 rayTarget = v_viewPos;
     vec3 rayDirection = normalize(rayTarget); // rayOrigin is (0,0,0) in camera space
 
-    vec3 diff = rayTarget - v_centerB;
+    vec3 diff = - v_centerB;
     vec3 E = diff * v_modelBasis;
     vec3 D = rayDirection * v_modelBasis;
 
@@ -59,7 +59,7 @@ void main()
     float b = dot(E.xy, D.xy);
     float c = dot(E.xy, E.xy) - v_radius*v_radius;
 
-    // Calculate a dicriminant of the above quadratic equation
+    // Calculate a discriminant of the above quadratic equation
     float d = b*b - a*c;
 
     // d < 0.0 means the ray hits outside an infinitely long cone
@@ -76,36 +76,40 @@ void main()
     theta += theta < v_angles[0] ? 2.0 * PI : 0.0;
 
     // Intersection point in camera space
-    vec3 p = rayTarget + dist * rayDirection;
+    vec3 p = dist * rayDirection;
 
     vec3 planeACenter = vec3(0.0, 0.0, v_planeA.w);
     vec3 planeANormal = v_planeA.xyz;
     vec3 planeBCenter = vec3(0.0, 0.0, v_planeB.w);
     vec3 planeBNormal = v_planeB.xyz;
 
+    float normalFactor = 1.0;
+
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
         theta > v_angles[1] + v_angles[0] ||
-        isClipped(appearance, p)
+        isClipped(appearance, p) ||
+        dist < 0.0
        ) {
         // Missed the first point, check the other point
         dist = max(dist1, dist2);
         intersectionPoint = E + dist * D;
         theta = atan(intersectionPoint.y, intersectionPoint.x);
         theta += theta < v_angles[0] ? 2.0 * PI : 0.0;
-        p = rayTarget + dist*rayDirection;
+        p = dist * rayDirection;
         if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
             dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-            theta > v_angles[1] + v_angles[0] || isClipped(appearance, p)
+            theta > v_angles[1] + v_angles[0] || isClipped(appearance, p) ||
+            dist < 0.0
            ) {
             // Missed the other point too
             discard;
         }
+        normalFactor = -1.0;
     }
 
-    //TODO - christjt 2022/10/10: This seems wrong when hitting inner surface 
     vec3 p_local = p - v_centerB;
-    vec3 normal = normalize(p_local - v_modelBasis[2] * dot(p_local, v_modelBasis[2]));
+    vec3 normal = normalize(p_local - v_modelBasis[2] * dot(p_local, v_modelBasis[2])) * normalFactor;
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);

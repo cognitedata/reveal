@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 const path = require('path');
+const RemovePlugin = require('remove-files-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const copyPkgJsonPlugin = require('copy-pkg-json-webpack-plugin');
 const packageJSON = require('./package.json');
@@ -13,10 +14,10 @@ const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
 
 module.exports = env => {
   const development = env?.development ?? false;
+  const useWorkerSourceMaps = env?.workerSourceMaps === 'true';
 
   return {
     mode: development ? 'development' : 'production',
-    // Internals is not part of prod builds
     entry: {
       index: './index.ts',
       tools: './tools.ts',
@@ -35,9 +36,9 @@ module.exports = env => {
       rules: [
         {
           test: /\.worker\.ts$/,
-          loader: 'worker-loader',
+          loader: 'workerize-loader',
           options: {
-            inline: 'no-fallback'
+            inline: true
           }
         },
         {
@@ -72,6 +73,10 @@ module.exports = env => {
         {
           test: /\.css$/,
           use: ['raw-loader']
+        },
+        {
+          test: /\.wasm$/,
+          type: 'asset/inline'
         }
       ]
     },
@@ -90,12 +95,20 @@ module.exports = env => {
         type: 'umd'
       }
     },
-    devtool: development ? 'eval-source-map' : 'source-map',
+    devtool: false,
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: /node_modules/
     },
     plugins: [
+      development
+        ? new webpack.EvalSourceMapDevToolPlugin({
+            test: /\.ts$/,
+            exclude: useWorkerSourceMaps ? /^$/ : /\.worker\.ts$/
+          })
+        : new webpack.SourceMapDevToolPlugin({
+            filename: '[file].map'
+          }),
       new copyPkgJsonPlugin({
         remove: development
           ? ['devDependencies', 'scripts', 'workspaces', 'husky']
@@ -107,6 +120,18 @@ module.exports = env => {
           MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD,
           IS_DEVELOPMENT_MODE: development
         })
+      }),
+      new RemovePlugin({
+        after: {
+          test: [
+            {
+              folder: 'dist',
+              method: absoluteItemPath => {
+                return new RegExp(/\.worker\.js(\.map)?$/, 'm').test(absoluteItemPath);
+              }
+            }
+          ]
+        }
       }),
       {
         apply: compiler => {
