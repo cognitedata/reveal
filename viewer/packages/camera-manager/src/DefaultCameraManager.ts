@@ -598,7 +598,7 @@ export class DefaultCameraManager implements CameraManager {
             offsetY: e.clientY,
             button: e.button
           };
-          
+
           newTarget = await this.calculateNewTarget(pointerEventData);
         } finally {
           this._controls.enabled = this._enabledCopy;
