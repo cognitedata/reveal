@@ -28,10 +28,6 @@ const DepthTagLabelBase = styled(Flex)`
   font-size: 12px;
   line-height: ${sizes.normal};
   padding-top: 2px;
-  ${(props: PositionProps) => `
-    margin-left: -${props.left + 80}px;
-    margin-top: ${props.top}px;
-  `}
   &:hover {
     z-index: ${layers.TOOLTIP_HOVERED};
   }
@@ -40,6 +36,10 @@ const DepthTagLabelBase = styled(Flex)`
 export const CasingDepthTagLabel = styled(DepthTagLabelBase)`
   background-image: ${(props: OverlappingProps) =>
     props.$overlapping ? `url(${CasingsTagLight})` : `url(${CasingsTag})`};
+  ${(props: PositionProps) => `
+    margin-left: -${props.left + 84}px;
+    margin-top: ${props.top}px;
+  `}
   &:hover {
     background-image: ${`url(${CasingsTag})`};
   }
@@ -47,6 +47,10 @@ export const CasingDepthTagLabel = styled(DepthTagLabelBase)`
 
 export const DepthLimitTagLabel = styled(DepthTagLabelBase)`
   background-image: url(${DepthLimitTag});
+  margin-left: -81px;
+  ${(props: PositionProps) => `
+    margin-top: ${props.top}px;
+  `}
 `;
 
 export const DepthEndMarker = styled.div`

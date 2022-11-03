@@ -13,9 +13,7 @@ export const DepthLimitTag: React.FC<DepthLimitTagProps> = ({
 }) => {
   return (
     <>
-      <DepthLimitTagLabel left={0} top={scaledDepth}>
-        {content}
-      </DepthLimitTagLabel>
+      <DepthLimitTagLabel top={scaledDepth}>{content}</DepthLimitTagLabel>
       <DepthLimitMarker />
     </>
   );

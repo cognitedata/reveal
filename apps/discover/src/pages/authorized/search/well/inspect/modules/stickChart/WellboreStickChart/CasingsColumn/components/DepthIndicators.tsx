@@ -47,6 +47,7 @@ export const DepthIndicators = React.forwardRef<
         flip = false
       ) => {
         const {
+          id,
           measuredDepthTop,
           measuredDepthBase,
           trueVerticalDepthTop,
@@ -66,7 +67,7 @@ export const DepthIndicators = React.forwardRef<
         return [
           ...depthIndicators,
           <DepthIndicator
-            key={`casing-assembly-${depthTop.value}-${depthBase.value}`}
+            key={id}
             casingAssembly={casingAssembly}
             depthTopScaled={depthTopScaled}
             depthBase={depthBase.value}

@@ -55,7 +55,7 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
 
   const updateDepthMarkerWidth = useCallback(
     () => setDepthMarkerWidth(depthIndicatorRef.current?.offsetLeft),
-    [depthIndicatorRef.current?.offsetLeft]
+    [depthIndicatorRef.current?.offsetLeft, depthBase]
   );
 
   useEffect(() => updateDepthMarkerWidth(), [updateDepthMarkerWidth]);

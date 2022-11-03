@@ -19,6 +19,7 @@ export interface CasingSchematicInternalWithTvd
 
 export interface CasingAssemblyInternal
   extends Pick<CasingAssembly, 'type' | 'reportDescription'> {
+  id: string;
   minInsideDiameter: ConvertedDistance;
   minOutsideDiameter: ConvertedDistance;
   maxOutsideDiameter: ConvertedDistance;

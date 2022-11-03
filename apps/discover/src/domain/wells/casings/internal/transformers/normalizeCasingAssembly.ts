@@ -1,3 +1,4 @@
+import uniqueId from 'lodash/uniqueId';
 import { Fixed } from 'utils/number';
 import { convertDistance } from 'utils/units/convertDistance';
 
@@ -38,6 +39,7 @@ export const normalizeCasingAssembly = (
 
   return {
     ...rest,
+    id: uniqueId('casing-assembly-'),
     minInsideDiameter: minInsideDiameterConverted,
     minOutsideDiameter: minOutsideDiameterConverted,
     maxOutsideDiameter: convertDistance(
