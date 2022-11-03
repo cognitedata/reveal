@@ -20,7 +20,7 @@ import Keyboard from './Keyboard';
 
 const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 
-function getHTMLOffset(domElement: HTMLElement, clientX: number, clientY: number) {
+export function getHTMLOffset(domElement: HTMLElement, clientX: number, clientY: number) {
   return new Vector2(clientX - domElement.offsetLeft, clientY - domElement.offsetTop);
 }
 
@@ -350,9 +350,9 @@ export class ComboControls extends EventDispatcher {
       const factor = isFirefox ? 1 : 40;
       delta = event.deltaY / factor;
     }
+    const domElementRelativeOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
 
-    const { x, y } = this.convertPixelCoordinatesToNormalized(event.offsetX, event.offsetY);
-
+    const { x, y } = this.convertPixelCoordinatesToNormalized(domElementRelativeOffset.x, domElementRelativeOffset.y);
     const dollyIn = delta < 0;
     const deltaDistance =
       // @ts-ignore
