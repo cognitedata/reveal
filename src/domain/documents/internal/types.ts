@@ -36,6 +36,6 @@ export interface Document {
 export interface InternalDocumentFilter extends InternalCommonFilters {
   author?: string[];
   source?: string[];
-  mimeType?: string[];
+  type?: string[];
   metadata?: Metadata;
 }

@@ -9,7 +9,6 @@ import {
   flexRender,
   ColumnDef,
   getSortedRowModel,
-  SortingState,
 } from '@tanstack/react-table';
 import { DASH, useLocalStorageState } from '../../../utils';
 import { ColumnToggle } from './ColumnToggle';
@@ -116,7 +115,7 @@ export function TableV2<T extends TableData>({
     }
   };
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<TableSortingState>([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(
     id,
     (hiddenColumns || []).reduce((previousValue, currentValue) => {

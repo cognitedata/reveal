@@ -34,3 +34,4 @@ export * from './DataSetSelect';
 export * from './FileThumbnail';
 export * from './SearchQueryInfoPanel';
 export * from './FilesSyntaxButton';
+export * from './RootAsset';

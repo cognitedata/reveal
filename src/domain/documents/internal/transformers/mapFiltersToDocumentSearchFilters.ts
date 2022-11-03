@@ -5,7 +5,7 @@ type DocumentProperties = {
   'sourceFile|assetIds': number[];
   author: string[];
   'sourceFile|source': string[];
-  'sourceFile|mimeType': string[];
+  type: string[];
   externalId: string;
 };
 
@@ -13,7 +13,7 @@ export const mapFiltersToDocumentSearchFilters = ({
   externalIdPrefix,
   source,
   author,
-  mimeType,
+  type,
   createdTime,
   lastUpdatedTime,
   assetSubtreeIds,
@@ -29,7 +29,7 @@ export const mapFiltersToDocumentSearchFilters = ({
     })
     .in('author', author)
     .in('sourceFile|source', source)
-    .in('sourceFile|mimeType', mimeType)
+    .in('type', type)
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,

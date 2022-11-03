@@ -6,9 +6,10 @@ import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentContentPreview } from './DocumentContentPreview';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { Document } from 'domain/documents';
+import { DASH } from 'utils';
+import { useGetHiddenColumns } from 'hooks';
 import { Body } from '@cognite/cogs.js';
-import { TimeDisplay } from 'components';
-import { RootAsset } from 'components/RootAsset';
+import { TimeDisplay, RootAsset } from 'components';
 import { Asset } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
 
@@ -73,13 +74,14 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           },
         },
         {
-          // When accessor is given a function, do not forget to add an id right after it!
-          accessorFn: row => row.author,
+          accessorKey: 'author',
           id: 'author',
           header: 'Author',
           cell: ({ row }: { row: Row<Document> }) => {
-            return <Body level={2}>{row.original.author}</Body>;
+            return <Body level={2}>{row.original.author || DASH}</Body>;
           },
+          // Temp solution to the problem -> https://github.com/TanStack/table/issues/4289
+          sortDescFirst: false,
         },
         {
           // You do not have to add an id field if accessor is given a string.
@@ -122,19 +124,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
   //     relatedResourceType === 'relationship'
   //   );
 
-  // TODO: move this to common hooks while doing assets sorting?!
-  const hiddenColumns = useMemo(() => {
-    return (
-      columns
-        .filter(
-          column =>
-            // @ts-ignore Don't know why `accessorKey` is not recognized from the type -_-
-            !visibleColumns.includes(column.accessorKey || column?.id)
-        )
-        // @ts-ignore
-        .map(column => column.accessorKey || column.id)
-    );
-  }, [columns]);
+  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
     <Table
