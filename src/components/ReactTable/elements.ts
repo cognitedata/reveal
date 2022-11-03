@@ -30,7 +30,6 @@ export const StyledTable = styled.div`
   isolation: isolate;
   & > div {
     min-width: 100%;
-    width: fit-content;
   }
 `;
 
@@ -66,7 +65,7 @@ export const StyledFlex = styled.div`
 export const Thead = styled.div<{ isStickyHeader?: boolean }>`
   position: ${({ isStickyHeader }) => (isStickyHeader ? 'sticky' : 'relative')};
   top: 0;
-  background: white;
+  background: inherit;
   z-index: 1;
 `;
 
@@ -74,11 +73,12 @@ export const Tr = styled.div`
   color: inherit;
   border-bottom: 1px solid var(--cogs-border--muted);
   display: flex;
+  width: 100%;
   align-items: center;
   height: 100%;
   min-height: 48px;
 
-  background: white;
+  background: inherit;
 
   min-height: 42px;
 
