@@ -98,6 +98,10 @@ export function Viewer() {
         continuousModelStreaming: true,
         pointCloudEffects: {
           pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined)
+        },
+        loadingIndicatorStyle: {
+          placement: 'bottomLeft',
+          opacity: 1,
         }
       };
 

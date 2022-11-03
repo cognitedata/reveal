@@ -351,8 +351,7 @@ export class ComboControls extends EventDispatcher {
       delta = event.deltaY / factor;
     }
 
-    const { x, y } = this.convertPixelCoordinatesToNormalized(event.offsetX, event.offsetY);
-
+    const { x, y } = this.convertPixelCoordinatesToNormalized(event.clientX, event.clientY);
     const dollyIn = delta < 0;
     const deltaDistance =
       // @ts-ignore
