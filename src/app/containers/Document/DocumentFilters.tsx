@@ -7,7 +7,7 @@ import {
   useResetDocumentFilters,
 } from 'app/store/filter/selectors/documentSelectors';
 import { useDocumentAggregateAuthorQuery } from 'app/domain/document/service/queries/aggregates/useDocumentAggregateAuthorQuery';
-import { useDocumentAggregateMimeTypeQuery } from 'app/domain/document/service/queries/aggregates/useDocumentAggregateMimeTypeQuery';
+import { useDocumentAggregateFileTypeQuery } from 'app/domain/document/service/queries/aggregates/useDocumentAggregateFileTypeQuery';
 import { useDocumentAggregateSourceQuery } from 'app/domain/document/service/queries/aggregates/useDocumentAggregateSourceQuery';
 import { MultiSelectFilter } from 'app/components/Filters/MultiSelectFilter';
 import { useFilterEmptyState } from 'app/store';
@@ -31,8 +31,8 @@ export const DocumentFilter = ({ ...rest }) => {
 
   const { data: authorOptions, isError: isAuthorError } =
     useDocumentAggregateAuthorQuery();
-  const { data: mimeTypeItems, isError: isMimeTypeError } =
-    useDocumentAggregateMimeTypeQuery();
+  const { data: fileTypeItems, isError: isFileTypeError } =
+    useDocumentAggregateFileTypeQuery();
   const { data: sourceItems, isError: isSourceError } =
     useDocumentAggregateSourceQuery();
 
@@ -46,19 +46,19 @@ export const DocumentFilter = ({ ...rest }) => {
       <TempMultiSelectFix>
         <MultiSelectFilter
           title="File type"
-          options={mimeTypeItems}
-          isDisabled={isAuthorError}
+          options={fileTypeItems}
+          isDisabled={isFileTypeError}
           onChange={(newValue: string[]) => {
             setDocumentFilter({
-              mimeType: newValue && newValue.length > 0 ? newValue : undefined,
+              type: newValue && newValue.length > 0 ? newValue : undefined,
             });
           }}
-          values={documentFilter.mimeType}
+          values={documentFilter.type}
         />
         <MultiSelectFilter
           title="Author"
           options={authorOptions}
-          isDisabled={isMimeTypeError}
+          isDisabled={isAuthorError}
           onChange={(newValue: string[]) => {
             setDocumentFilter({
               author: newValue && newValue.length > 0 ? newValue : undefined,

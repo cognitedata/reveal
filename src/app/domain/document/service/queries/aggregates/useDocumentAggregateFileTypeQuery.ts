@@ -1,9 +1,9 @@
 import { useDocumentTotalAggregates } from '@cognite/react-document-search';
 import { mapAggregatesToFilters } from '../../transformers/mapAggregatesToFilters';
 
-export const useDocumentAggregateMimeTypeQuery = () => {
+export const useDocumentAggregateFileTypeQuery = () => {
   const { data, ...rest } = useDocumentTotalAggregates([
-    { property: ['sourceFile', 'mimeType'] },
+    { property: ['type'] },
   ]);
 
   return { data: mapAggregatesToFilters(data), ...rest };
