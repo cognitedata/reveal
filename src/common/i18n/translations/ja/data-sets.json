@@ -55,6 +55,7 @@
   "dataset-details-archived-data-tooltip": "アーカイブされたデータは削除されません。アーカイブされた Data set は、後で復元することができます。",
   "dataset-info-form-enter-labels": "Data set につける Label を入力してください",
   "dataset-info-form-permissions-tooltip": "明示的にアクセスを許可したグループのメンバーのみが、書き込み保護された Data set にデータを書き込むことができます。",
+  "dataset-is-empty": "This data set is empty.",
   "description": "説明",
   "discard-changes": "変更を破棄",
   "document-data-extraction": "データ取り込みを記述",

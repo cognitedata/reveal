@@ -100,6 +100,7 @@
   "dataset-info-form-permissions-tooltip": "Only members of groups that you explicitly grant access, can write data to a write-protected data set.",
   "dataset-info-form-too-long-description": "Description cannot exceed {{maxLength}} characters",
   "dataset-info-form-too-long-name": "Name cannot exceed {{maxLength}} characters",
+  "dataset-is-empty": "This data set is empty.",
   "description": "Description",
   "discard-changes": "Discard changes",
   "document-consumers": "Document consumers",
