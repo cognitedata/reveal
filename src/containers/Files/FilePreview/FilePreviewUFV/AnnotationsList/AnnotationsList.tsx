@@ -15,6 +15,7 @@ import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import capitalize from 'lodash/capitalize';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
+import { CommonLegacyCogniteAnnotation } from '../types';
 
 interface AnnotationsListProps {
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
@@ -22,7 +23,7 @@ interface AnnotationsListProps {
   goBack: () => void;
   reset: () => void;
   setSelectedAnnotations: (
-    annotations: (CogniteAnnotation | ProposedCogniteAnnotation)[]
+    annotations: CommonLegacyCogniteAnnotation[]
   ) => void;
 }
 

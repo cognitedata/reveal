@@ -18,6 +18,7 @@ import { useDisclosure } from 'hooks';
 import { useReviewFile } from '../../hooks';
 import DiagramReviewStatus from '../DiagramStatus';
 import FileReview from '../FileReview';
+import { CommonLegacyCogniteAnnotation } from './types';
 
 interface FilePreviewSidebarProps {
   fileIcon?: React.ReactNode;
@@ -30,7 +31,7 @@ interface FilePreviewSidebarProps {
   isAnnotationsShown: boolean;
   reset: () => void;
   setSelectedAnnotations: (
-    annotations: (CogniteAnnotation | ProposedCogniteAnnotation)[]
+    annotations: CommonLegacyCogniteAnnotation[]
   ) => void;
 }
 

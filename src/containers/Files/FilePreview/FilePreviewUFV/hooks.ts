@@ -7,7 +7,7 @@ import { useSDK } from '@cognite/sdk-provider';
 
 type useUnifiedFileViewerAnnotationsProps = {
   annotations: CommonLegacyCogniteAnnotation[];
-  selectedIds: string[];
+  selectedAnnotations: CommonLegacyCogniteAnnotation[];
   hoverId: string | undefined;
   onMouseEnter?: (annotation: Annotation) => void;
   onMouseLeave?: (annotation: Annotation) => void;
@@ -19,13 +19,13 @@ type useUnifiedFileViewerAnnotationsProps = {
 };
 export const useUnifiedFileViewerAnnotations = ({
   annotations,
-  selectedIds,
+  selectedAnnotations,
   hoverId,
   onClick,
   onMouseEnter,
   onMouseLeave,
   renderAnnotation,
-}: useUnifiedFileViewerAnnotationsProps) => {
+}: useUnifiedFileViewerAnnotationsProps): Annotation[] => {
   const getHoverStyles = useCallback(
     (annotation: RectangleAnnotation) => {
       if (annotation) {
@@ -48,7 +48,9 @@ export const useUnifiedFileViewerAnnotations = ({
   const ufvAnnotations = useMemo(() => {
     return annotations
       .map(cogniteAnnotation => {
-        const isSelected = selectedIds.includes(String(cogniteAnnotation.id));
+        const isSelected = selectedAnnotations.some(
+          selectedAnnotation => selectedAnnotation.id === cogniteAnnotation.id
+        );
         const styledUFVAnnotation = renderAnnotation(
           cogniteAnnotation,
           isSelected
@@ -62,7 +64,7 @@ export const useUnifiedFileViewerAnnotations = ({
       })
       .filter(Boolean)
       .map(annotation => getHoverStyles(annotation));
-  }, [annotations, renderAnnotation, selectedIds, getHoverStyles]);
+  }, [annotations, renderAnnotation, getHoverStyles, selectedAnnotations]);
 
   const ufvAnnotationsWithEvents = useMemo(() => {
     return ufvAnnotations.map(ufvAnnotation => {
@@ -92,12 +94,15 @@ export const useUnifiedFileViewerAnnotations = ({
   return ufvAnnotationsWithEvents as Annotation[];
 };
 
-export const useFileDownloadUrl = (fileId: number) => {
+export const useFileDownloadUrl = (fileId: number | undefined): string => {
   const sdk = useSDK();
 
   const { data } = useQuery(
     [...baseCacheKey('files'), 'downloadLink', fileId],
-    () => sdk.files.getDownloadUrls([{ id: fileId }]).then(r => r[0]),
+    () =>
+      fileId === undefined
+        ? undefined
+        : sdk.files.getDownloadUrls([{ id: fileId }]).then(r => r[0]),
     // The retrieved URL becomes invalid after 30 seconds
     { refetchInterval: 25000 }
   );

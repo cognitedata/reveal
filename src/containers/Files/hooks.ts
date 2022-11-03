@@ -14,6 +14,7 @@ import {
   getIdFilter,
   getExternalIdFilter,
   convertEventsToAnnotations,
+  CogniteAnnotation,
 } from '@cognite/annotations';
 import uniqBy from 'lodash/uniqBy';
 import { useMutation, useQueryClient } from 'react-query';
@@ -21,7 +22,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { sleep } from 'utils';
 import { notification } from 'antd';
 
-export const useAnnotations = (fileId: number) => {
+export const useAnnotations = (fileId: number): CogniteAnnotation[] => {
   const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
     id: fileId,
   });
@@ -75,12 +76,10 @@ export const useAnnotations = (fileId: number) => {
     return foundAssets?.name || '';
   });
 
-  const result = convertEventsToAnnotations(totalEvents).map((ev, idx) => ({
+  return convertEventsToAnnotations(totalEvents).map((ev, idx) => ({
     ...ev,
     label: ev.label ? ev.label : labels[idx],
   }));
-
-  return result;
 };
 
 export const isFileApproved = (file: FileInfo) =>

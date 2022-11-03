@@ -38,6 +38,33 @@ const testImage = {
   mimeType: 'image/png',
 };
 
+const unsupportedFileTypeFile = {
+  id: 444,
+  externalId: 'PH-ME-P-0153-001.random',
+  lastUpdatedTime: new Date(),
+  uploaded: false,
+  createdTime: new Date(),
+  name: 'Random File',
+  mimeType: 'random/random',
+};
+
+const fileWithoutMimeType = {
+  id: 555,
+  externalId: 'PH-ME-P-0153-001.random',
+  lastUpdatedTime: new Date(),
+  uploaded: false,
+  createdTime: new Date(),
+  name: 'Random File',
+};
+
+const ALL_FILES = [
+  pdfFile,
+  longPDF,
+  testImage,
+  unsupportedFileTypeFile,
+  fileWithoutMimeType,
+];
+
 const pdfSdkMock = {
   post: async (query: string, { data }: any) => {
     if (query.includes('aggregate')) {
@@ -47,9 +74,7 @@ const pdfSdkMock = {
       if (data?.items.length) {
         return {
           data: {
-            items: [pdfFile, longPDF, testImage].filter(
-              item => item.id === data.items[0].id
-            ),
+            items: ALL_FILES.filter(item => item.id === data.items[0].id),
           },
         };
       } else {
@@ -66,9 +91,7 @@ const pdfSdkMock = {
   },
   files: {
     retrieve: async (fileIds: { id: string }[]) => {
-      return fileIds.map(({ id }) =>
-        [pdfFile, longPDF, testImage].find(item => item.id === +id)
-      );
+      return fileIds.map(({ id }) => ALL_FILES.find(item => item.id === +id));
     },
     getDownloadUrls: async (files: { id: number }[]) => {
       return files.map(({ id }) => {
@@ -97,6 +120,20 @@ export const WithZoomControls: ComponentStory<typeof FilePreviewUFV> = args => (
 );
 WithZoomControls.args = {
   fileId: pdfFile.id,
+};
+
+export const UnsupportedFileType: ComponentStory<
+  typeof FilePreviewUFV
+> = args => <FilePreviewUFV {...args} />;
+UnsupportedFileType.args = {
+  fileId: unsupportedFileTypeFile.id,
+};
+
+export const FileWithoutMimeType: ComponentStory<
+  typeof FilePreviewUFV
+> = args => <FilePreviewUFV {...args} />;
+FileWithoutMimeType.args = {
+  fileId: fileWithoutMimeType.id,
 };
 
 export const WithPagination: ComponentStory<typeof FilePreviewUFV> = args => (

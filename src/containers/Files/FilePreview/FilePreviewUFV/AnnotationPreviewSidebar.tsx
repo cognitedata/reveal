@@ -45,6 +45,7 @@ import { ContextualizationData } from '../ContextualizationModule';
 import { CreateAnnotationForm } from '../CreateAnnotationForm/CreateAnnotationForm';
 import ReviewTagBar from '../ReviewTagBar';
 import FilePreviewSidebar from './FilePreviewSidebar';
+import { CommonLegacyCogniteAnnotation } from './types';
 
 type Props = {
   file?: FileInfo;
@@ -58,9 +59,9 @@ type Props = {
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
   fileIcon?: React.ReactNode;
   reset: () => void;
-  selectedAnnotations: (CogniteAnnotation | ProposedCogniteAnnotation)[];
+  selectedAnnotations: CommonLegacyCogniteAnnotation[];
   setSelectedAnnotations: (
-    annotations: (CogniteAnnotation | ProposedCogniteAnnotation)[]
+    annotations: CommonLegacyCogniteAnnotation[]
   ) => void;
 };
 

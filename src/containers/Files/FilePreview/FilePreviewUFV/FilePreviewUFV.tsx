@@ -1,3 +1,5 @@
+import { DocumentContainerProps } from '@cognite/unified-file-viewer/dist/core/containers/DocumentContainer';
+import { ImageContainerProps } from '@cognite/unified-file-viewer/dist/core/containers/ImageContainer';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FileInfo } from '@cognite/sdk';
 import { Loader } from 'components';
@@ -8,30 +10,35 @@ import {
   readablePreviewableFileTypes,
   removeSimilarAnnotations,
 } from 'utils';
-import {
-  CogniteAnnotation,
-  PendingCogniteAnnotation,
-} from '@cognite/annotations';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceItem } from 'types';
+import { usePnIdOCRResultFilterQuery } from '../../../../domain/pnids/internal/hooks/usePnIdOCRResultFilterQuery';
+import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../../hooks';
-import { UnifiedFileViewerWrapper } from './UnifiedFileViewerWrapper';
-import { useSDK } from '@cognite/sdk-provider';
-import { v4 as uuid } from 'uuid';
+import { useFileDownloadUrl, useUnifiedFileViewerAnnotations } from './hooks';
+import { Pagination } from './Pagination';
 import { AnnotationHoverPreview } from '../AnnotationHoverPreview';
 import {
   CommonLegacyCogniteAnnotation,
   ProposedCogniteAnnotation,
 } from './types';
-import {
+import ReactUnifiedViewer, {
   Annotation,
+  ContainerType,
   getAnnotationsFromLegacyCogniteAnnotations,
+  TooltipAnchorPosition,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
-import { applyStylesToUFVAnnotation, getContainerId } from './utils';
-import { DEFAULT_ZOOM_SCALE } from './constants';
+import { getStyledAnnotationFromAnnotation, getContainerId } from './utils';
+import {
+  DEFAULT_ZOOM_SCALE,
+  MAX_CONTAINER_HEIGHT,
+  MAX_CONTAINER_WIDTH,
+} from './constants';
 import { LegacyCogniteAnnotation } from '@cognite/unified-file-viewer/dist/core/utils/api';
+
+const UNIFIED_VIEWER_CONTAINER_ID = 'unified-viewer-container';
 
 export type FilePreviewUFVProps = {
   fileId: number;
@@ -50,22 +57,22 @@ export const FilePreviewUFV = ({
   fileIcon,
   showZoomControls = false,
 }: FilePreviewUFVProps) => {
-  // TODO: This is now duplicated in UnifiedFileViewerWrapper
   // Later work includes merging the two components
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
-  const sdk = useSDK();
-
-  const [selectedAnnotations, setSelectedAnnotations] = useState<
-    (CogniteAnnotation | ProposedCogniteAnnotation)[]
+  const [page, setPage] = useState(1);
+  const [container, setContainer] = useState<
+    DocumentContainerProps | ImageContainerProps
+  >();
+  const [hoverId, setHoverId] = useState<string | undefined>(undefined);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [pendingAnnotations, setPendingAnnotations] = useState<
+    ProposedCogniteAnnotation[]
   >([]);
 
-  const zoomToAnnotation = (
-    annotation: CogniteAnnotation | ProposedCogniteAnnotation
-  ) => {
-    unifiedViewerRef?.zoomToAnnotationById(String(annotation.id), {
-      scale: DEFAULT_ZOOM_SCALE,
-    });
-  };
+  const [isAnnotationsShown, setIsAnnotationsShown] = useState<boolean>(true);
+  const [selectedAnnotations, setSelectedAnnotations] = useState<
+    CommonLegacyCogniteAnnotation[]
+  >([]);
 
   useEffect(() => {
     if (selectedAnnotations.length === 1) {
@@ -74,12 +81,6 @@ export const FilePreviewUFV = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAnnotations]);
-
-  const [pendingAnnotations, setPendingAnnotations] = useState<
-    ProposedCogniteAnnotation[]
-  >([]);
-
-  const [isAnnotationsShown, setIsAnnotationsShown] = useState<boolean>(true);
 
   useEffect(() => {
     setPendingAnnotations([]);
@@ -99,62 +100,145 @@ export const FilePreviewUFV = ({
   const canPreviewFile = file && isFilePreviewable(file);
 
   const persistedAnnotations = useAnnotations(fileId);
-  const allAnnotations = useMemo(() => {
+  const annotations = useMemo(() => {
     return [
       ...persistedAnnotations,
       ...pendingAnnotations.filter(removeSimilarAnnotations),
     ];
   }, [pendingAnnotations, persistedAnnotations]);
 
-  // apply styles conditionally to ufv annotation
-  const getUFVAnnotationWithStyles = useCallback(
-    (
-      ufvAnnotation: Annotation,
-      cogniteAnnotation: CommonLegacyCogniteAnnotation,
-      isSelected: boolean
-    ): Annotation => {
-      const isPending = pendingAnnotations.some(
-        ({ id }) => id == cogniteAnnotation.id
-      );
-      const styledUfvAnnotation = applyStylesToUFVAnnotation(
-        ufvAnnotation,
-        isSelected,
-        isPending,
-        cogniteAnnotation.resourceType
-      );
-
-      if (cogniteAnnotation.metadata && cogniteAnnotation.metadata.color) {
-        styledUfvAnnotation.style.stroke = cogniteAnnotation.metadata.color;
-      }
-      return styledUfvAnnotation as Annotation;
-    },
-    [pendingAnnotations]
-  );
-
   // converts cognite annotations to UFV annotation and applies styles
 
-  const renderAnnotationCallback = useCallback(
+  // const handleCreateAnnotation = (item: PendingCogniteAnnotation) => {
+  //   const newItem = { ...item, id: uuid() };
+  //   setPendingAnnotations([newItem]);
+  //   return false;
+  // };
+
+  const fileUrl = useFileDownloadUrl(file?.id);
+
+  useEffect(() => {
+    if (file?.id && file?.mimeType && fileUrl) {
+      const containerId = getContainerId(file.id);
+      if (file.mimeType === 'application/pdf') {
+        setContainer({
+          type: ContainerType.DOCUMENT,
+          id: containerId,
+          url: fileUrl,
+          page,
+          maxWidth: MAX_CONTAINER_WIDTH,
+          maxHeight: MAX_CONTAINER_HEIGHT,
+        } as DocumentContainerProps);
+        return;
+      }
+
+      setContainer({
+        type: ContainerType.IMAGE,
+        id: containerId,
+        url: fileUrl,
+        page,
+        maxWidth: MAX_CONTAINER_WIDTH,
+        maxHeight: MAX_CONTAINER_HEIGHT,
+      } as ImageContainerProps);
+    }
+  }, [file, file?.id, file?.mimeType, fileUrl, page]);
+
+  const renderStyledAnnotation = useCallback(
     (annotation: CommonLegacyCogniteAnnotation, isSelected: boolean) => {
-      const [ufvAnnotation] = getAnnotationsFromLegacyCogniteAnnotations(
-        [annotation as LegacyCogniteAnnotation],
-        getContainerId(fileId)
+      const legacyCogniteAnnotation = annotations.find(
+        ({ id }) => String(id) === String(annotation.id)
       );
-      let renderAnnotation;
-      if (ufvAnnotation) {
-        renderAnnotation = getUFVAnnotationWithStyles(
+
+      if (legacyCogniteAnnotation) {
+        const [ufvAnnotation] = getAnnotationsFromLegacyCogniteAnnotations(
+          [annotation as LegacyCogniteAnnotation],
+          getContainerId(fileId)
+        );
+
+        if (ufvAnnotation === undefined) {
+          return undefined;
+        }
+
+        const isPending = pendingAnnotations.some(
+          ({ id }) => id == annotation.id
+        );
+
+        return getStyledAnnotationFromAnnotation(
           ufvAnnotation,
-          annotation,
-          isSelected
+          isSelected,
+          isPending,
+          annotation
         );
       }
-      return renderAnnotation;
+
+      const [ufvAnnotation] = getAnnotationsFromLegacyCogniteAnnotations([
+        annotation as LegacyCogniteAnnotation,
+      ]);
+      return ufvAnnotation;
     },
-    [getUFVAnnotationWithStyles, fileId]
+    [annotations, pendingAnnotations, fileId]
   );
 
-  if (!fileFetched) {
-    return <Loader />;
-  }
+  const tooltips = useMemo(() => {
+    const focusedAnnotation = annotations.find(
+      ({ id }) => String(id) === hoverId
+    );
+    if (!focusedAnnotation) {
+      return undefined;
+    }
+
+    return [
+      {
+        targetId: String(focusedAnnotation?.id),
+        content: <AnnotationHoverPreview annotation={[focusedAnnotation]} />,
+        anchorTo: TooltipAnchorPosition.BOTTOM,
+      },
+    ];
+  }, [hoverId, annotations]);
+
+  const onClickAnnotation = useCallback(
+    (annotation: Annotation) => {
+      const legacyCogniteAnnotations = annotations.filter(
+        cogniteAnn => String(cogniteAnn.id) === annotation.id
+      );
+      setSelectedAnnotations(legacyCogniteAnnotations || []);
+    },
+    [setSelectedAnnotations, annotations]
+  );
+
+  const onMouseOver = useCallback((annotation: Annotation) => {
+    setHoverId(annotation.id);
+  }, []);
+
+  const onMouseLeave = useCallback(() => {
+    setHoverId(undefined);
+  }, []);
+
+  const onStageClick = useCallback(() => {
+    setSelectedAnnotations([]);
+  }, [setSelectedAnnotations]);
+
+  const { annotationSearchResult } = usePnIdOCRResultFilterQuery(
+    searchQuery,
+    file
+  );
+
+  const allConvertedAnnotations = useUnifiedFileViewerAnnotations({
+    annotations: annotations,
+    selectedAnnotations,
+    hoverId,
+    onClick: onClickAnnotation,
+    onMouseEnter: onMouseOver,
+    onMouseLeave,
+    renderAnnotation: renderStyledAnnotation,
+  });
+
+  const zoomToAnnotation = (annotation: CommonLegacyCogniteAnnotation) =>
+    unifiedViewerRef?.zoomToAnnotationById(String(annotation.id), {
+      scale: DEFAULT_ZOOM_SCALE,
+    });
+
+  const handlePageChange = (pageNumber: number) => setPage(pageNumber);
 
   if (!isMimeTypeSet) {
     return (
@@ -179,28 +263,37 @@ export const FilePreviewUFV = ({
     );
   }
 
-  const handleCreateAnnotation = (item: PendingCogniteAnnotation) => {
-    const newItem = { ...item, id: uuid() };
-    setPendingAnnotations([newItem]);
-    return false;
-  };
+  if (!fileFetched || container === undefined) {
+    return <Loader />;
+  }
 
   return (
     <FullHeightWrapper>
-      <UnifiedFileViewerWrapper
-        file={file}
-        sdk={sdk}
-        hideControls={!showZoomControls}
-        annotations={isAnnotationsShown ? allAnnotations : []}
-        creatable
-        onCreateAnnotation={handleCreateAnnotation}
-        onSelectAnnotations={setSelectedAnnotations}
-        renderItemPreview={annotation => (
-          <AnnotationHoverPreview annotation={[annotation]} />
-        )}
-        renderAnnotation={renderAnnotationCallback}
-        onRef={setUnifiedViewerRef}
-      />
+      <FullHeightWrapper>
+        <Pagination container={container} onPageChange={handlePageChange}>
+          <ReactUnifiedViewer
+            id={UNIFIED_VIEWER_CONTAINER_ID}
+            setRef={ref => setUnifiedViewerRef(ref)}
+            container={container}
+            annotations={[
+              ...allConvertedAnnotations,
+              ...annotationSearchResult,
+            ]}
+            tooltips={tooltips}
+            onClick={onStageClick}
+            shouldShowZoomControls={showZoomControls}
+          />
+        </Pagination>
+        <ActionTools
+          file={file}
+          fileUrl={fileUrl}
+          fileViewerRef={unifiedViewerRef}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          enableDownload
+          enableSearch
+        />
+      </FullHeightWrapper>
       <SidebarWrapper>
         <AnnotationPreviewSidebar
           file={file}
@@ -209,7 +302,7 @@ export const FilePreviewUFV = ({
           setPendingAnnotations={setPendingAnnotations}
           contextualization={contextualization}
           onItemClicked={onItemClicked}
-          annotations={allAnnotations}
+          annotations={annotations}
           fileIcon={fileIcon}
           reset={() => unifiedViewerRef?.zoomToFit()}
           selectedAnnotations={selectedAnnotations}

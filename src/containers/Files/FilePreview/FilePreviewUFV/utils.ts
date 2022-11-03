@@ -1,13 +1,17 @@
-import { Annotation, RectangleAnnotation } from '@cognite/unified-file-viewer';
 import {
   AnnotationResourceType,
   CogniteAnnotation,
 } from '@cognite/annotations';
 import { Colors } from '@cognite/cogs.js';
-import { DEFAULT_CONTAINER_ID } from './constants';
+import {
+  Annotation,
+  AnnotationType,
+  RectangleAnnotation,
+} from '@cognite/unified-file-viewer';
+import { CommonLegacyCogniteAnnotation } from './types';
 
-export const getContainerId = (fileId?: number) => {
-  return String(fileId) || DEFAULT_CONTAINER_ID;
+export const getContainerId = (fileId: number) => {
+  return String(fileId);
 };
 export const convertUFVAnnotationToLegacyCogniteAnnotation = (
   annotation: RectangleAnnotation,
@@ -31,24 +35,29 @@ export const convertUFVAnnotationToLegacyCogniteAnnotation = (
   };
 };
 
-export const applyStylesToUFVAnnotation = (
+export const getStyledAnnotationFromAnnotation = (
   annotation: Annotation,
   isSelected = false,
   isPending: boolean,
-  resourceType?: AnnotationResourceType
-) => {
+  cogniteAnnotation: CommonLegacyCogniteAnnotation
+): Annotation => {
+  if (annotation.type !== AnnotationType.RECTANGLE) {
+    throw new Error('Unsupported annotation type');
+  }
+
   const colors = selectAnnotationColors(
     annotation,
     isSelected,
     isPending,
-    resourceType
+    cogniteAnnotation.resourceType
   );
+
   return {
     ...annotation,
     style: {
       ...(annotation.style || {}),
       strokeWidth: 2,
-      stroke: colors.strokeColor,
+      stroke: cogniteAnnotation.metadata?.color ?? colors.strokeColor,
       fill: colors.backgroundColor,
     },
   };
