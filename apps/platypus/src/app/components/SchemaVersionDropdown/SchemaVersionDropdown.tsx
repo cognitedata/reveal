@@ -43,11 +43,12 @@ export function SchemaVersionDropdown({
   const [isOpen, setOpen] = useState(false);
   const dateUtils = useInjection(TOKENS.dateUtils);
 
-  const latestVersion = versions
-    .filter((v) => v.status === DataModelVersionStatus.PUBLISHED)
-    .sort((a, b) => {
-      return Number(b.version) - Number(a.version);
-    })[0].version;
+  const latestVersion =
+    versions
+      .filter((v) => v.status === DataModelVersionStatus.PUBLISHED)
+      .sort((a, b) => {
+        return Number(b.version) - Number(a.version);
+      })[0]?.version || '99999';
 
   return (
     <div data-cy="schema-version-select">
