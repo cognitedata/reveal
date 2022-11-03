@@ -71,5 +71,10 @@
       // https://docs.renovatebot.com/configuration-options/#suppress-branchpr-creation-for-x-days
       "internalChecksFilter": "strict"
     }
-  ]
+  ],
+  "force": {
+    "constraints": {
+      "node": "< 17.0.0"
+    }
+  }
 }
