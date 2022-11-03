@@ -1,97 +1,113 @@
-import { useCallback, useMemo } from 'react';
-import { Annotation, RectangleAnnotation } from '@cognite/unified-file-viewer';
-import { CommonLegacyCogniteAnnotation } from './types';
-import { useQuery } from 'react-query';
-import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useSDK } from '@cognite/sdk-provider';
+import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
+import {
+  Annotation,
+  AnnotationType,
+  getAnnotationsFromLegacyCogniteAnnotations,
+} from '@cognite/unified-file-viewer';
+import { LegacyCogniteAnnotation } from '@cognite/unified-file-viewer/dist/core/utils/api';
+import { useMemo } from 'react';
+import { useQuery } from 'react-query';
+import { CommonLegacyCogniteAnnotation } from './types';
+import { getContainerId, getStyledAnnotationFromAnnotation } from './utils';
+
+const applyHoverStylesToAnnotation = (
+  annotation: Annotation,
+  hoverId: string | undefined
+): Annotation => {
+  if (annotation.type !== AnnotationType.RECTANGLE) {
+    return annotation;
+  }
+
+  const isOnHover = hoverId == annotation.id;
+  return {
+    ...annotation,
+    style: {
+      ...annotation.style,
+      fill: isOnHover
+        ? `${annotation.style?.stroke}22`
+        : `${annotation.style?.fill || 'transparent'}`,
+    },
+  };
+};
 
 type useUnifiedFileViewerAnnotationsProps = {
+  fileId: number;
   annotations: CommonLegacyCogniteAnnotation[];
   selectedAnnotations: CommonLegacyCogniteAnnotation[];
+  pendingAnnotations: CommonLegacyCogniteAnnotation[];
   hoverId: string | undefined;
-  onMouseEnter?: (annotation: Annotation) => void;
-  onMouseLeave?: (annotation: Annotation) => void;
+  onMouseOver?: (annotation: Annotation) => void;
+  onMouseOut?: (annotation: Annotation) => void;
   onClick?: (annotation: Annotation) => void;
-  renderAnnotation: (
-    annotation: CommonLegacyCogniteAnnotation,
-    isSelected: boolean
-  ) => Annotation | undefined;
 };
 export const useUnifiedFileViewerAnnotations = ({
+  fileId,
   annotations,
   selectedAnnotations,
+  pendingAnnotations,
   hoverId,
   onClick,
-  onMouseEnter,
-  onMouseLeave,
-  renderAnnotation,
+  onMouseOver,
+  onMouseOut,
 }: useUnifiedFileViewerAnnotationsProps): Annotation[] => {
-  const getHoverStyles = useCallback(
-    (annotation: RectangleAnnotation) => {
-      if (annotation) {
-        const isOnHover = hoverId == annotation.id;
-        return {
-          ...annotation,
-          style: {
-            ...annotation.style,
-            fill: isOnHover
-              ? `${annotation.style?.stroke}22`
-              : `${annotation.style?.fill || 'transparent'}`,
+  const ufvAnnotationsWithEvents = useMemo(
+    () =>
+      annotations
+        .map(annotation => {
+          const [ufvAnnotation] = getAnnotationsFromLegacyCogniteAnnotations(
+            [annotation as LegacyCogniteAnnotation],
+            getContainerId(fileId)
+          );
+
+          const isSelected = selectedAnnotations.some(
+            ({ id }) => id === annotation.id
+          );
+          const isPending = pendingAnnotations.some(
+            ({ id }) => id == annotation.id
+          );
+
+          return getStyledAnnotationFromAnnotation(
+            ufvAnnotation,
+            isSelected,
+            isPending,
+            annotation
+          );
+        })
+        .map(annotation => applyHoverStylesToAnnotation(annotation, hoverId))
+        .map(ufvAnnotation => ({
+          ...ufvAnnotation,
+          onClick: (e: any, annotation: Annotation) => {
+            e.cancelBubble = true;
+            if (onClick) {
+              onClick(annotation);
+            }
           },
-        };
-      }
-      return annotation;
-    },
-    [hoverId]
+          onMouseOver: (e: any, annotation: Annotation) => {
+            e.cancelBubble = true;
+            if (onMouseOver) {
+              onMouseOver(annotation);
+            }
+          },
+          onMouseOut: (e: any, annotation: Annotation) => {
+            e.cancelBubble = true;
+            if (onMouseOut) {
+              onMouseOut(annotation);
+            }
+          },
+        })),
+    [
+      onClick,
+      onMouseOver,
+      onMouseOut,
+      annotations,
+      selectedAnnotations,
+      fileId,
+      hoverId,
+      pendingAnnotations,
+    ]
   );
-
-  const ufvAnnotations = useMemo(() => {
-    return annotations
-      .map(cogniteAnnotation => {
-        const isSelected = selectedAnnotations.some(
-          selectedAnnotation => selectedAnnotation.id === cogniteAnnotation.id
-        );
-        const styledUFVAnnotation = renderAnnotation(
-          cogniteAnnotation,
-          isSelected
-        ) as RectangleAnnotation;
-        return (
-          styledUFVAnnotation || {
-            ...cogniteAnnotation,
-            id: String(cogniteAnnotation.id),
-          }
-        );
-      })
-      .filter(Boolean)
-      .map(annotation => getHoverStyles(annotation));
-  }, [annotations, renderAnnotation, getHoverStyles, selectedAnnotations]);
-
-  const ufvAnnotationsWithEvents = useMemo(() => {
-    return ufvAnnotations.map(ufvAnnotation => {
-      return {
-        ...ufvAnnotation,
-        onClick: (e: any, annotation: Annotation) => {
-          e.cancelBubble = true;
-          if (onClick) {
-            onClick(annotation);
-          }
-        },
-        onMouseOver: (e: any, annotation: Annotation) => {
-          e.cancelBubble = true;
-          if (onMouseEnter) {
-            onMouseEnter(annotation);
-          }
-        },
-        onMouseOut: (e: any, annotation: Annotation) => {
-          e.cancelBubble = true;
-          if (onMouseLeave) {
-            onMouseLeave(annotation);
-          }
-        },
-      };
-    });
-  }, [ufvAnnotations, onClick, onMouseEnter, onMouseLeave]);
-  return ufvAnnotationsWithEvents as Annotation[];
+  return ufvAnnotationsWithEvents;
 };
 
 export const useFileDownloadUrl = (fileId: number | undefined): string => {
