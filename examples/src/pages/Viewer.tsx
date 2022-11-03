@@ -161,6 +161,7 @@ export function Viewer() {
           ghostAllNodes: false,
           hideAllNodes: false
         },
+        viewerSize: 'fullScreen',
         showCameraTool: new DebugCameraTool(viewer),
         renderMode: 'Color',
         controls: {
@@ -228,6 +229,17 @@ export function Viewer() {
       debugStatsGui.add(guiState.debug.stats, 'geometries').name('Geometries');
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
+
+      const viewerSize = gui.addFolder('Viewer size');
+      viewerSize.add(guiState, 'viewerSize', ['fullScreen', 'halfScreen']).name('Size').onFinishChange(value => {
+        if (value === 'fullScreen') {
+          canvasWrapperRef.current!.style.width = '100%';
+          canvasWrapperRef.current!.style.left = '0px';
+        } else {
+          canvasWrapperRef.current!.style.width = '50%';
+          canvasWrapperRef.current!.style.left = '25%';
+        }
+      });
 
       viewer.on('sceneRendered', (sceneRenderedEventArgs) => {
         guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
