@@ -1,4 +1,5 @@
-#pragma glslify: import('../../base/determineMatrixOverride.glsl')
+#pragma glslify: import('../../base/determineMatrixOverride.glsl');
+#pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 modelMatrix;
@@ -18,12 +19,14 @@ in float a_arcAngle;
 in float a_radius;
 in float a_tubeRadius;
 
-flat out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
 
+out highp vec2 v_treeIndexPacked;
+
 void main() {
+    v_treeIndexPacked = packTreeIndex(a_treeIndex);
     // normalized theta and phi are packed into positions
     float theta = position.x * a_arcAngle;
     float phi = position.y;
@@ -49,7 +52,6 @@ void main() {
     vec3 center = (a_instanceMatrix * vec4(a_radius * cosTheta, a_radius * sinTheta, 0.0, 1.0)).xyz;
     vec3 objectNormal = normalize(transformed.xyz - center);
 
-    v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * normalize(inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(objectNormal, 0.0)).xyz;
 
