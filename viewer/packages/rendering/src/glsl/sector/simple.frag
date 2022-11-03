@@ -12,12 +12,14 @@ uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
 uniform int renderMode;
 
-flat in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 in vec3 vViewPosition;
+in highp vec2  v_treeIndexPacked;
 
-void main() {
+void main()
+{
+    highp float v_treeIndex = unpackTreeIndex(v_treeIndexPacked);
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
     if (!determineVisibility(appearance, renderMode)) {
         discard;

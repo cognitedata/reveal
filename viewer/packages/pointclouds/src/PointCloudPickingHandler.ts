@@ -37,7 +37,8 @@ export class PointCloudPickingHandler {
   private readonly _raycaster = new THREE.Raycaster();
   private readonly _picker: PointCloudOctreePicker;
 
-  private static readonly PickingWindowSize = 20;
+  // To solve https://cognitedata.atlassian.net/browse/REV-523
+  private static readonly PickingWindowSize = 5;
 
   constructor(renderer: THREE.WebGLRenderer) {
     this._picker = new PointCloudOctreePicker(renderer);
