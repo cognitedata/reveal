@@ -11,7 +11,7 @@ import { DataModelDetailModal } from '../../components/DataModelDetailModal/Data
 export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
   const [dataModelName, setDataModelName] = useState('');
   const [dataModelDescription, setDataModelDescription] = useState('');
-  const [inputError, setInputError] = useState(false);
+  const [hasInputError, setHasInputError] = useState(false);
   const [externalId, setExternalId] = useState('');
   const [isExternalIdDirty, setIsExternalIdDirty] = useState(false);
   const history = useHistory();
@@ -31,8 +31,8 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
       setExternalId(DataUtils.convertToCamelCase(value));
     }
 
-    if (inputError) {
-      setInputError(false);
+    if (hasInputError) {
+      setHasInputError(false);
     }
   };
 
@@ -49,7 +49,21 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
         description: dataModelDescription,
       },
       {
-        onSuccess: (result) => {
+        onSettled: (result) => {
+          if (!result) {
+            return;
+          }
+
+          if (result.isFailure) {
+            setHasInputError(true);
+            Notification({
+              type: 'error',
+              message: result.error.message,
+            });
+
+            return;
+          }
+
           Notification({
             type: 'success',
             message: t(
@@ -61,13 +75,6 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
             `data-models/${result.getValue().id}/${DEFAULT_VERSION_PATH}`
           );
         },
-        onError: (error) => {
-          setInputError(true);
-          Notification({
-            type: 'error',
-            message: error.message,
-          });
-        },
       }
     );
   };
@@ -77,6 +84,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
       dataSets={dataSets || []}
       description={dataModelDescription || ''}
       externalId={externalId}
+      hasInputError={hasInputError}
       isDataSetsFetchError={isDataSetsFetchError}
       isDataSetsLoading={isDataSetsLoading}
       isLoading={create.isLoading}

@@ -75,19 +75,17 @@ export class DataModelsHandler {
       return Promise.resolve(Result.fail(validationResult.errors));
     }
 
-    const externalId = dto.externalId
-      ? DataUtils.convertToCamelCase(dto.externalId)
-      : DataUtils.convertToCamelCase(dto.name);
+    const externalId = dto.externalId || DataUtils.convertToCamelCase(dto.name);
 
     try {
+      await this.dmsApiService.applySpaces([{ externalId }]);
+
       const createApiResponse = await this.mixerApiService.upsertApi({
         externalId,
         description: dto.description || '',
         name: dto.name,
         metadata: dto.metadata || {},
       });
-
-      await this.dmsApiService.applySpaces([{ externalId }]);
 
       const createdDataModel =
         this.dataModelDataMapper.deserialize(createApiResponse);

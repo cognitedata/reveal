@@ -21,6 +21,10 @@ export function useDataModelMutation() {
       },
       {
         onSuccess: (result) => {
+          if (result.isFailure) {
+            return;
+          }
+
           const dataModel = result.getValue();
 
           // update cached list

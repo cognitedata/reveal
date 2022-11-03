@@ -32,3 +32,29 @@ export const WithLongValue = () => (
 export const WithPlaceholder = () => (
   <EditableChip value={undefined} placeholder="Data model-ID" />
 );
+
+export const WithTooltip = () => (
+  <EditableChip
+    tooltip="Lorem ipsum"
+    value="my-movie-app"
+    placeholder="Data model-ID"
+  />
+);
+
+export const WithValidation = () => {
+  const [value, setValue] = useState<string>('my-movie-app');
+
+  return (
+    <div style={{ width: '200px' }}>
+      <p>Validate that the value does not include the character "1".</p>
+      <EditableChip
+        errorMessage='Cannot contain the character "1"'
+        onChange={(newValue) => {
+          setValue(newValue);
+        }}
+        validate={(v) => !v.includes('1')}
+        value={value}
+      />
+    </div>
+  );
+};

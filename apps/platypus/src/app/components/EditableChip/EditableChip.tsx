@@ -1,4 +1,4 @@
-import { Button, Icon, Input } from '@cognite/cogs.js';
+import { Button, Icon, Input, Tooltip } from '@cognite/cogs.js';
 import { HtmlElementProps } from '@platypus-app/types';
 import {
   ChangeEventHandler,
@@ -12,27 +12,38 @@ import styled from 'styled-components';
 export interface EditableChipProps
   extends Omit<HtmlElementProps<HTMLDivElement>, 'onChange'> {
   className?: string;
+  errorMessage?: string;
   isLocked?: boolean;
   label?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
+  tooltip?: string;
+  validate?: (value: string) => boolean;
   value?: string;
 }
 
 export const EditableChip = ({
+  errorMessage,
   isLocked,
   label,
   onChange,
   placeholder,
+  tooltip,
+  validate,
   value,
   ...rest
 }: EditableChipProps) => {
   const [isInEditMode, setIsInEditMode] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [internalValue, setInternalValue] = useState('');
+  const [isValid, setIsValid] = useState(true);
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     setInternalValue(event.target.value);
+
+    if (validate) {
+      setIsValid(validate(event.target.value));
+    }
   };
 
   const handleEditClick = () => {
@@ -44,6 +55,7 @@ export const EditableChip = ({
     switch (event.code) {
       case 'Escape':
         setIsInEditMode(false);
+        setIsValid(true);
         break;
       case 'Enter':
         submit();
@@ -56,9 +68,13 @@ export const EditableChip = ({
   };
 
   const submit = () => {
+    if (!isValid) {
+      return;
+    }
+
     setIsInEditMode(false);
 
-    if (internalValue && internalValue !== value) {
+    if (internalValue && internalValue !== value && isValid) {
       onChange!(internalValue);
     }
   };
@@ -73,7 +89,12 @@ export const EditableChip = ({
     <div {...rest}>
       {isInEditMode ? (
         <StyledInput
+          /*
+          using autoFocus because Cogs Input loses focus when the error prop is updated
+          */
+          autoFocus
           aria-label={label}
+          error={!isValid && errorMessage}
           ref={inputRef}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
@@ -81,17 +102,19 @@ export const EditableChip = ({
           value={internalValue}
         />
       ) : (
-        <Label hasValue={!!value} isLocked={!!isLocked}>
-          <ValueWrapper>{value || placeholder}</ValueWrapper>
-          {isLocked && <StyledIcon data-testid="icon-lock" type="Lock" />}
-          {!isLocked && value && (
-            <StyledButton
-              icon="Edit"
-              aria-label="Edit"
-              onClick={handleEditClick}
-            />
-          )}
-        </Label>
+        <Tooltip content={tooltip} disabled={!tooltip} placement="bottom">
+          <Label hasValue={!!value} isLocked={!!isLocked}>
+            <ValueWrapper>{value || placeholder}</ValueWrapper>
+            {isLocked && <StyledIcon data-testid="icon-lock" type="Lock" />}
+            {!isLocked && value && (
+              <StyledButton
+                icon="Edit"
+                aria-label="Edit"
+                onClick={handleEditClick}
+              />
+            )}
+          </Label>
+        </Tooltip>
       )}
     </div>
   );

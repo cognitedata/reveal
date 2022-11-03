@@ -1,4 +1,5 @@
 import { DataModelsHandler } from './data-models-handler';
+import { CreateDataModelDTO } from './dto';
 import { MixerApiService, DmsApiService } from './services';
 
 describe('DataModelsHandlerTest', () => {
@@ -28,9 +29,9 @@ describe('DataModelsHandlerTest', () => {
     expect(mixerApiMock.listApis).toBeCalled();
   });
 
-  it('should create data model', async () => {
+  it('should create data model with auto external ID', async () => {
     const service = createInstance();
-    const reqDto = {
+    const reqDto: CreateDataModelDTO = {
       name: 'test group',
       description: 'some random description',
       owner: 'test-user@cognite.com',
@@ -45,6 +46,27 @@ describe('DataModelsHandlerTest', () => {
     );
     expect(dmsApiMock.applySpaces).toBeCalledWith([
       { externalId: 'testGroup' },
+    ]);
+  });
+
+  it('should create data model with user-defined external ID', async () => {
+    const service = createInstance();
+    const reqDto: CreateDataModelDTO = {
+      externalId: 'test_data_model',
+      name: 'test group',
+      description: 'some random description',
+      owner: 'test-user@cognite.com',
+    };
+    await service.create(reqDto);
+    expect(mixerApiMock.upsertApi).toBeCalledWith(
+      expect.objectContaining({
+        name: reqDto.name,
+        externalId: 'test_data_model',
+        metadata: {},
+      })
+    );
+    expect(dmsApiMock.applySpaces).toBeCalledWith([
+      { externalId: 'test_data_model' },
     ]);
   });
 

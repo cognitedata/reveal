@@ -5,7 +5,6 @@ import {
   OptionType,
   Select,
   Textarea,
-  Tooltip,
 } from '@cognite/cogs.js';
 import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { useState } from 'react';
@@ -15,10 +14,13 @@ import {
   InputDetail,
   NameWrapper,
   StyledEditableChip,
-  StyledIcon,
 } from './elements';
 import { DataSet } from '@cognite/sdk';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import {
+  DataModelExternalIdValidator,
+  Validator,
+} from '@platypus/platypus-core';
 
 export type DataModelDetailModalProps = {
   dataSets: DataSet[];
@@ -39,7 +41,8 @@ export type DataModelDetailModalProps = {
 };
 
 export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
-  const { t } = useTranslation('CreateDataModelDialog');
+  const { t } = useTranslation('DataModelDetailModal');
+  const [externalIdErrorMessage, setExternalIdErrorMessage] = useState();
 
   const dataSetOptions = props.dataSets.map(
     (item: DataSet) =>
@@ -52,6 +55,24 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
   const [selectedDataSet, setSelectedDataSet] = useState<
     OptionType<unknown> | undefined
   >(undefined);
+
+  const validateExternalId = (value: string) => {
+    const validator = new Validator({ externalId: value });
+    validator.addRule(
+      'externalId',
+      new DataModelExternalIdValidator({
+        validationMessage: t(
+          'external_id_error_message',
+          'May only contain numbers, letters, hyphens and underscores'
+        ),
+      })
+    );
+    const result = validator.validate();
+
+    setExternalIdErrorMessage(result.valid ? null : result.errors.externalId);
+
+    return result.valid;
+  };
 
   return (
     <ModalDialog
@@ -87,19 +108,16 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
               }}
               error={props.hasInputError}
             />
-            <InputDetail>
-              {props.hasInputError && <StyledIcon type="Warning" size={12} />}
-              <Detail>
-                {t(
-                  'detail_data_model_name_unique',
-                  "Data Model's name should be unique"
-                )}
-              </Detail>
-            </InputDetail>
           </NameWrapper>
         </label>
-        <Tooltip
-          content={
+        <StyledEditableChip
+          data-testid="external-id-field"
+          errorMessage={externalIdErrorMessage}
+          isLocked={props.isExternalIdLocked}
+          label={t('external_id_label', 'External ID')}
+          onChange={props.onExternalIdChange}
+          placeholder="DataModel-ID"
+          tooltip={
             props.externalId
               ? t('tooltip_external_id_label', 'External ID')
               : t(
@@ -107,18 +125,9 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
                   'External ID automatically generated from [Name]'
                 )
           }
-          placement="bottom"
-        >
-          <StyledEditableChip
-            data-testid="external-id-field"
-            isLocked={props.isExternalIdLocked}
-            label="External ID"
-            onChange={props.onExternalIdChange}
-            placeholder="DataModel-ID"
-            value={props.externalId}
-          />
-        </Tooltip>
-
+          validate={validateExternalId}
+          value={props.externalId}
+        />
         <label>
           <FormLabel level={2} strong>
             {t('modal_description_title', 'Description')}
