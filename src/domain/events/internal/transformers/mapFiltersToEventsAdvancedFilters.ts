@@ -67,7 +67,8 @@ export const mapFiltersToEventsAdvancedFilters = (
         endTime && !('isNull' in endTime)
           ? (endTime?.min as number)
           : undefined,
-    });
+    })
+    .search('description', isEmpty(query) ? undefined : query);
 
   if (metadata) {
     for (const [key, value] of Object.entries(metadata)) {
@@ -79,14 +80,12 @@ export const mapFiltersToEventsAdvancedFilters = (
    * We want to filter all the metadata keys with the search query, to give a better result
    * to the user when using our search.
    */
-  if (searchQueryMetadataKeys && !isEmpty(query)) {
+  if (searchQueryMetadataKeys) {
     const searchBuilder = new AdvancedFilterBuilder<EventsProperties>();
 
     for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
       searchBuilder.prefix(`metadata|${key}`, value);
     }
-
-    searchBuilder.search('description', query);
 
     filterBuilder.or(searchBuilder);
   }

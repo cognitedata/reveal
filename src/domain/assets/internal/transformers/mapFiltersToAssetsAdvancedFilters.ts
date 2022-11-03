@@ -1,4 +1,5 @@
 import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
+import isEmpty from 'lodash/isEmpty';
 import { InternalAssetFilters } from '../types';
 
 export type AssetsProperties = {
@@ -46,7 +47,9 @@ export const mapFiltersToAssetsAdvancedFilters = (
     .range('lastUpdatedTime', {
       lte: lastUpdatedTime?.max as number,
       gte: lastUpdatedTime?.min as number,
-    });
+    })
+    .search('name', isEmpty(query) ? undefined : query)
+    .search('description', isEmpty(query) ? undefined : query);
 
   if (metadata) {
     for (const [key, value] of Object.entries(metadata)) {
@@ -64,9 +67,6 @@ export const mapFiltersToAssetsAdvancedFilters = (
     for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
       searchBuilder.prefix(`metadata|${key}`, value);
     }
-
-    searchBuilder.search('name', query);
-    searchBuilder.search('description', query);
 
     filterBuilder.or(searchBuilder);
   }
