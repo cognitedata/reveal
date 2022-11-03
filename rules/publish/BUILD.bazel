@@ -1,4 +1,5 @@
 exports_files([
+    "publish_chromatic.template.bash",
     "publish_fas.template.bash",
     "publish_storybook.template.bash",
 ])

@@ -23,7 +23,7 @@ const validateCode = (code: any): code is string => {
 export const WorkflowSchemaEditor = ({
   value,
   onSave,
-  height = '100vh',
+  height = 'calc(100vh - 36px)',
 }: Props) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor>();
 

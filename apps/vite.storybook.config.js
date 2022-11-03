@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const turbosnap = require('vite-plugin-turbosnap');
 const tsconfigPaths = require('vite-tsconfig-paths');
 const macrosPlugin = require('vite-plugin-babel-macros');
 const { loadEnv, mergeConfig } = require('vite');
@@ -25,12 +26,18 @@ module.exports = (appName, override) => {
     framework: '@storybook/react',
     core: { builder: '@storybook/builder-vite' },
     stories: ['../src/**/*.stories.tsx'],
-    addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
+    addons: [
+      '@storybook/addon-links',
+      '@storybook/addon-essentials',
+      '@storybook/addon-interactions',
+    ],
+    features: { interactionsDebugger: true },
     // https://storybook.js.org/docs/react/configure/typescript#mainjs-configuration
     typescript: {
       check: true, // type-check stories during Storybook build
       reactDocgen: 'none', // https://github.com/styleguidist/react-docgen-typescript/issues/356
     },
+    previewHead: (head) => `${head}<script>window.global = window;</script>`,
     viteFinal(config, { configType }) {
       config.plugins = [
         ...config.plugins,
@@ -41,6 +48,10 @@ module.exports = (appName, override) => {
         macrosPlugin.default(),
       ];
 
+      if (configType === 'PRODUCTION') {
+        config.plugins.push(turbosnap({ rootDir: config.root }));
+      }
+
       const NODE_ENV = configType.toLowerCase();
       const env = {
         NODE_ENV,
@@ -48,9 +59,7 @@ module.exports = (appName, override) => {
         ...loadEnv(NODE_ENV, process.cwd(), 'PUBLIC_URL'),
       };
 
-      config.define = {
-        'process.env': env,
-      };
+      config.define = { ...config.define, 'process.env': env };
 
       config.optimizeDeps = {
         ...config.optimizeDeps,

@@ -1,6 +1,7 @@
 import {
   PROCESS_TYPES,
   WorkflowSchemaWithProcesses,
+  WORKFLOW_TYPES,
 } from '@cognite/power-ops-api-types';
 
 export const mockWorkflowSchemas: WorkflowSchemaWithProcesses[] = [
@@ -8,7 +9,7 @@ export const mockWorkflowSchemas: WorkflowSchemaWithProcesses[] = [
     id: 1,
     name: 'Day-Ahead Bid Matrix Calculation',
     triggeredBy: ['POWEROPS_BID_PROCESS'],
-    workflowType: PROCESS_TYPES.DAY_AHEAD_BID_MATRIX_CALCULATION,
+    workflowType: WORKFLOW_TYPES.DAY_AHEAD_BID_MATRIX_CALCULATION,
     cdfProject: '',
     processes: [
       {

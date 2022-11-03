@@ -3,11 +3,14 @@
 STORYBOOK_DEPENDENCIES = [
     "@npm//@storybook/addon-essentials",
     "@npm//@storybook/addon-links",
+    "@npm//@storybook/addon-interactions",
     "@npm//@storybook/react",
+    "@npm//@storybook/jest",
+    "@npm//@storybook/testing-library",
     "@npm//@storybook/builder-vite",
     "@npm//vite-plugin-babel-macros",
     "@npm//vite-tsconfig-paths",
-    # "@npm//@vitejs/plugin-react",
+    "@npm//vite-plugin-turbosnap",
 ]
 
 VITE_DEPENDENCIES = [

@@ -59,6 +59,7 @@ export const Sidebar = ({
       <Header>
         {open ? (
           <StyledSearch
+            data-testid="plant-search-input"
             icon="Search"
             placeholder="Search plants"
             autoFocus={focused}

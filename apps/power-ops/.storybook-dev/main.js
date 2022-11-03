@@ -1,13 +1,18 @@
 const tsconfigPaths = require('vite-tsconfig-paths');
 const NodeGlobalsPolyfillPlugin = require('@esbuild-plugins/node-globals-polyfill');
 const macrosPlugin = require('vite-plugin-babel-macros');
-const { loadEnv } = require('vite');
+const { loadEnv, searchForWorkspaceRoot } = require('vite');
 
 module.exports = {
   framework: '@storybook/react',
   core: { builder: '@storybook/builder-vite' },
   stories: ['../src/**/*.stories.tsx'],
-  addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
+  addons: [
+    '@storybook/addon-links',
+    '@storybook/addon-essentials',
+    '@storybook/addon-interactions',
+  ],
+  features: { interactionsDebugger: true },
   // https://storybook.js.org/docs/react/configure/typescript#mainjs-configuration
   typescript: {
     check: true, // type-check stories during Storybook build
@@ -25,23 +30,17 @@ module.exports = {
 
     const NODE_ENV = configType.toLowerCase();
     const env = {
-      NODE_ENV: NODE_ENV,
+      NODE_ENV,
       ...loadEnv(NODE_ENV, process.cwd(), 'REACT_APP_'),
       ...loadEnv(NODE_ENV, process.cwd(), 'PUBLIC_URL'),
     };
 
     config.define = {
+      ...config.define,
       'process.env': env,
+      global: 'window',
     };
-    config.resolve = {
-      ...config.resolve,
-      dedupe: ['@storybook/client-api'],
-      alias: {
-        ...config.alias,
-        crypto: require.resolve('rollup-plugin-node-builtins'),
-        path: require.resolve('path-browserify'),
-      },
-    };
+
     config.optimizeDeps = {
       ...config.optimizeDeps,
       esbuildOptions: {
@@ -55,6 +54,23 @@ module.exports = {
             buffer: true,
           }),
         ],
+      },
+    };
+
+    config.resolve = {
+      ...config.resolve,
+      dedupe: ['@storybook/client-api'],
+      alias: {
+        ...config.alias,
+        crypto: require.resolve('rollup-plugin-node-builtins'),
+        path: require.resolve('path-browserify'),
+      },
+    };
+
+    config.server = {
+      ...config.server,
+      fs: {
+        allow: [searchForWorkspaceRoot(process.cwd()), '../../node_modules'],
       },
     };
     return config;

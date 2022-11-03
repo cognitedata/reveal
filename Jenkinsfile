@@ -38,6 +38,7 @@ void bazelPod(Map params = new HashMap(), body) {
               ttyEnabled: true,
               envVars: [
                 envVar(key: 'GOOGLE_APPLICATION_CREDENTIALS', value: '/inapp-ci-cd-service-account-credentials/credentials.json'),
+                envVar(key: 'CHROMATIC_PROJECT_KEYS', value: '/chromatic-project-keys'),
               ]
           ),
           containerTemplate(name: 'dockerd',
@@ -84,6 +85,10 @@ def pods = { body ->
       secretVolume(
         secretName: 'npm-credentials',
         mountPath: '/npm-credentials',
+      ),
+      secretVolume(
+        secretName: 'chromatic-project-keys',
+        mountPath: '/chromatic-project-keys',
       ),
       emptyDirVolume(
         mountPath: '/var/run/docker',
@@ -214,6 +219,7 @@ pods {
     def changedPackageInfos = [];
     def changedPublishFas = [];
     def changedPublishStorybook = [];
+    def changedPublishChromatic = [];
 
     stage('Snapshots') {
       container('bazel') {
@@ -238,6 +244,7 @@ pods {
           changedPackageInfos = changedOrAdded.findAll(changeHasTag('package_info'))
           changedPublishFas = changedOrAdded.findAll(changeHasTag('publish_fas'))
           changedPublishStorybook = changedOrAdded.findAll(changeHasTag('publish_storybook'))
+          changedPublishChromatic = changedOrAdded.findAll(changeHasTag('publish_chromatic'))
         } else {
           String branchName = env.BRANCH_NAME.substring(8)
           String versionRegex = ".\\d+\\.\\d+\\.\\d+.*"
@@ -317,6 +324,22 @@ pods {
                 prefix: 'storybook',
                 repo: params.sub_domain
               )
+            }
+          }
+        }
+      }
+    }
+
+    if (changedPublishChromatic.size() > 0) {
+      stageWithNotify('Publish chromatic', CONTEXTS.publishChromatic) {
+        container('bazel') {
+          changedPublishChromatic.each { change ->
+            change.run.each { cmd -> 
+              if (isPullRequest) {
+                sh(script: "bazel run ${cmd}")
+              } else {
+                sh(script: "bazel run ${cmd} -- --auto-accept-changes")
+              }
             }
           }
         }
