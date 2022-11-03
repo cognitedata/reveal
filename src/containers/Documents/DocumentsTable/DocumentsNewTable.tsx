@@ -9,9 +9,8 @@ import { Document } from 'domain/documents';
 import { DASH } from 'utils';
 import { useGetHiddenColumns } from 'hooks';
 import { Body } from '@cognite/cogs.js';
+
 import { TimeDisplay, RootAsset } from 'components';
-import { Asset } from '@cognite/sdk';
-import { createLink } from '@cognite/cdf-utilities';
 
 export type DocumentWithRelationshipLabels = Document;
 
@@ -32,10 +31,6 @@ const visibleColumns = [
   'rootAsset',
 ];
 
-const openRootAsset = (rootAsset: Asset) => {
-  window.open(createLink(`/explore/asset/${rootAsset.id}`), '_blank');
-};
-
 const RootAssetCell = ({ row }: { row: Row<Document> }) => {
   const assetId = row.original?.assetIds?.length && row.original.assetIds[0];
 
@@ -43,7 +38,7 @@ const RootAssetCell = ({ row }: { row: Row<Document> }) => {
     return null;
   }
 
-  return <RootAsset assetId={assetId} onClick={openRootAsset} maxWidth={300} />;
+  return <RootAsset assetId={assetId} maxWidth={300} />;
 };
 
 export const DocumentsTable = (props: DocumentTableProps) => {

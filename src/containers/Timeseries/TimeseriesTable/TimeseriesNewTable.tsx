@@ -7,6 +7,7 @@ import { TimeseriesChart } from '..';
 import { Body } from '@cognite/cogs.js';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from 'hooks';
+import { RootAsset } from 'components/RootAsset';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 
@@ -70,7 +71,11 @@ export const TimeseriesNewTable = ({
       Table.Columns.isString,
       Table.Columns.isStep,
       Table.Columns.dataSet,
-      Table.Columns.assets,
+      {
+        ...Table.Columns.rootAsset,
+        accessorKey: 'assetId',
+        cell: ({ getValue }) => <RootAsset assetId={getValue<number>()} />,
+      },
     ] as ColumnDef<Timeseries>[];
   }, [dateRange]);
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);

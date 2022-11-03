@@ -1,54 +1,17 @@
 import { ColumnDef } from '@tanstack/react-table';
 import React, { useMemo } from 'react';
 import { Asset } from '@cognite/sdk';
-import { Button } from '@cognite/cogs.js';
+
 import { TableV2 as Table, TableProps } from 'components/ReactTable/V2/TableV2';
 import { RelationshipLabels } from 'types';
 
 export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
 
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { StyledButton } from 'components/ReactTable';
 import { useGetHiddenColumns } from 'hooks';
 import { ThreeDModelCell } from './ThreeDModelCell';
+import { RootAsset } from 'components/RootAsset';
 
 const visibleColumns = ['name', 'rootId'];
-
-export const ParentCell = ({
-  rootId,
-  onClick,
-}: {
-  rootId: number;
-  onClick: (asset: Asset) => void;
-}) => {
-  const { data: rootAsset, isLoading } = useCdfItem<Asset>(
-    'assets',
-    { id: rootId },
-    {
-      enabled: Boolean(rootId),
-    }
-  );
-
-  return (
-    <Button
-      type="link"
-      iconPlacement="right"
-      icon="ArrowRight"
-      onClick={e => {
-        e.stopPropagation();
-        if (rootAsset) {
-          onClick(rootAsset);
-        }
-      }}
-    >
-      {isLoading ? (
-        'Loading...'
-      ) : (
-        <StyledButton>{rootAsset?.name}</StyledButton>
-      )}
-    </Button>
-  );
-};
 
 export const AssetNewTable = (
   props: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'>
@@ -66,9 +29,10 @@ export const AssetNewTable = (
       {
         ...Table.Columns.rootAsset,
         cell: ({ getValue }) => (
-          <ParentCell
-            rootId={getValue<number>()!}
-            onClick={onRowClick as any}
+          <RootAsset
+            externalLink={false}
+            assetId={getValue<number>()}
+            onClick={onRowClick}
           />
         ),
         enableSorting: false,

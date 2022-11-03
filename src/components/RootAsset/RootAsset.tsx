@@ -5,17 +5,20 @@ import { useCallback } from 'react';
 import { Asset } from '@cognite/sdk';
 import { useRootAssetQuery } from 'domain/assets/service/queries/useRootAssetQuery';
 import { LoadingState } from './LoadingState';
+import { openAssetInNewTab } from 'utils/assets';
 
 export interface RootAssetProps {
   assetId: number;
-  onClick: (rootAsset: Asset) => void;
+  onClick?: (rootAsset: Asset) => void;
   maxWidth?: number;
+  externalLink?: boolean;
 }
 
 export const RootAsset: React.FC<RootAssetProps> = ({
   assetId,
-  onClick,
+  onClick = openAssetInNewTab,
   maxWidth,
+  externalLink,
 }) => {
   const { data: rootAsset, isLoading } = useRootAssetQuery(assetId);
 
@@ -43,6 +46,7 @@ export const RootAsset: React.FC<RootAssetProps> = ({
       label={rootAsset.name}
       onClick={handleClick}
       maxWidth={maxWidth}
+      externalLink={externalLink}
     />
   );
 };

@@ -8,18 +8,20 @@ export interface RootAssetButtonProps {
   label: string;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   maxWidth?: number;
+  externalLink?: boolean;
 }
 
 export const RootAssetButton: React.FC<RootAssetButtonProps> = ({
   label,
   onClick,
   maxWidth,
+  externalLink = true,
 }) => {
   return (
     <Button
-      icon="ArrowRight"
+      icon={externalLink ? 'ArrowUpRight' : 'ArrowRight'}
       iconPlacement="right"
-      type="link"
+      type={externalLink ? 'link' : 'secondary'}
       onClick={onClick}
     >
       <RootAssetLabel maxwidth={maxWidth}>{label}</RootAssetLabel>
