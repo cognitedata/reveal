@@ -37,6 +37,6 @@ const testFixtureInstance = urlParams.get('testfixture');
 if (testFixtureInstance !== null) {
   (async function () {
     const testMap = await tests;
-    (new (testMap.get(testFixtureInstance)!)()).run();
+    new (testMap.get(testFixtureInstance)!)().run();
   })();
 }
