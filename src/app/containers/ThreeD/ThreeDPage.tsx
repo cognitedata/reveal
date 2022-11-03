@@ -12,5 +12,5 @@ export const ThreeDPage = () => {
     return null;
   }
 
-  return <ThreeDView modelId={threeDId} />;
+  return <ThreeDView key={threeDId} modelId={threeDId} />;
 };

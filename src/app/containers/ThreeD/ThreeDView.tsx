@@ -17,28 +17,35 @@ import { Flex, ToolBar } from '@cognite/cogs.js';
 import ThreeDTitle from './ThreeDTitle';
 import ShareButton from './share-button';
 import NodePreview from './NodePreview';
-import { removeAllStyles } from './utils';
+import { parseThreeDViewerStateFromURL, removeAllStyles } from './utils';
 
 export const ThreeDView = ({ modelId }: { modelId: number }) => {
+  const [urlState, setUrlState] =
+    useState<ReturnType<typeof parseThreeDViewerStateFromURL>>();
   useEffect(() => {
     trackUsage('3DPreview.Open', { modelId });
   }, [modelId]);
 
-  const [selectedAssetId, setSelectedAssetId] = useState<number | undefined>(
-    undefined
-  );
-  const [assetColumnVisible, setAssetColumnVisible] = useState(false);
-  const [nodePreviewVisible, setNodePreviewVisible] = useState(
-    !!selectedAssetId
-  );
-  const { data: revision } = useDefault3DModelRevision(modelId);
+  useEffect(() => {
+    setUrlState(parseThreeDViewerStateFromURL());
+  }, []);
+
+  const [selectedAssetId, setSelectedAssetId] = useState<number | undefined>();
   const [nodesSelectable, setNodesSelectable] = useState<boolean>(true);
 
   useEffect(() => {
-    if (selectedAssetId) {
-      setNodePreviewVisible(true);
+    setSelectedAssetId(urlState?.selectedAssetId);
+  }, [urlState?.selectedAssetId]);
+
+  const [assetDetailsExpanded, setAssetDetailsExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!selectedAssetId) {
+      setAssetDetailsExpanded(false);
     }
   }, [selectedAssetId]);
+
+  const { data: revision } = useDefault3DModelRevision(modelId);
 
   return (
     <>
@@ -49,10 +56,14 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
             key={`${modelId}.${revision.id}`}
             modelId={modelId}
             revisionId={revision.id}
-            focusAssetId={selectedAssetId}
             setSelectedAssetId={setSelectedAssetId}
-            nodesSelectable={nodesSelectable}
-            assetColumnVisible={assetColumnVisible}
+            nodesSelectable={nodesSelectable && !assetDetailsExpanded}
+            assetColumnVisible={
+              Number.isFinite(selectedAssetId) && assetDetailsExpanded
+            }
+            onAssetColumnClose={() => setAssetDetailsExpanded(false)}
+            selectedAsset={selectedAssetId}
+            initialViewerState={urlState?.viewerState}
           >
             {({ pointCloudModel, threeDModel, viewer }) => {
               const model = pointCloudModel || threeDModel;
@@ -103,20 +114,19 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
                       <HelpButton />
                     </StyledToolBar>
                   )}
-                  {nodePreviewVisible && !!selectedAssetId && (
+                  {!!selectedAssetId && !assetDetailsExpanded && (
                     <NodePreviewContainer>
                       <NodePreview
                         assetId={selectedAssetId}
                         closePreview={() => {
-                          setNodePreviewVisible(false);
+                          setAssetDetailsExpanded(false);
                           setSelectedAssetId(undefined);
                           if (threeDModel) {
                             removeAllStyles(threeDModel);
                           }
                         }}
                         openDetails={() => {
-                          setNodePreviewVisible(false);
-                          setAssetColumnVisible(true);
+                          setAssetDetailsExpanded(true);
                         }}
                       />
                     </NodePreviewContainer>

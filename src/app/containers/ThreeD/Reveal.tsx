@@ -16,6 +16,7 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
   DefaultCameraManager,
+  ViewerState,
 } from '@cognite/reveal';
 
 import { Alert } from 'antd';
@@ -25,7 +26,7 @@ import {
   highlightAsset,
   fitCameraToAsset,
   removeAllStyles,
-  parseThreeDViewerStateFromURL,
+  ghostAsset,
 } from './utils';
 import { ErrorBoundary } from 'react-error-boundary';
 import RevealErrorFeedback from './RevealErrorFeedback';
@@ -43,25 +44,31 @@ type ChildProps = {
 type Props = {
   modelId: number;
   revisionId: number;
-  focusAssetId?: number | null;
+
   setSelectedAssetId: Dispatch<SetStateAction<number | undefined>>;
   nodesSelectable: boolean;
   children?: (opts: ChildProps) => JSX.Element;
   assetColumnVisible: boolean;
+  initialViewerState?: ViewerState;
+  selectedAsset?: number;
+  onAssetColumnClose?: () => void;
 };
 
 export function Reveal({
-  focusAssetId,
   modelId,
   revisionId,
   setSelectedAssetId,
   nodesSelectable,
   children,
   assetColumnVisible,
+  initialViewerState,
+  selectedAsset,
+  onAssetColumnClose,
 }: Props) {
   const numOfClicks = useRef<number>(0);
   const clickTimer = useRef<NodeJS.Timeout>();
   const sdk = useSDK();
+  const queryClient = useQueryClient();
 
   const [revealContainer, setRevealContainer] = useState<HTMLDivElement | null>(
     null
@@ -94,17 +101,6 @@ export function Reveal({
     });
   }, [revealContainer, sdk]);
 
-  useEffect(() => {
-    if (!viewer) {
-      return;
-    }
-    const cameraManager = viewer.cameraManager as DefaultCameraManager;
-    cameraManager.setCameraControlsOptions({
-      mouseWheelAction: focusAssetId ? 'zoomToTarget' : 'zoomToCursor',
-    });
-  }, [focusAssetId, viewer]);
-
-  useEffect(() => () => viewer?.dispose(), [viewer]);
   const { data: models } = useQuery(
     ['reveal-model', modelId, revisionId],
     async () => {
@@ -117,6 +113,9 @@ export function Reveal({
       });
 
       viewer.loadCameraFromModel(model);
+      if (initialViewerState) {
+        viewer.setViewState(initialViewerState);
+      }
       const threeDModel = model instanceof Cognite3DModel ? model : undefined;
       const pointCloudModel =
         model instanceof CognitePointCloudModel ? model : undefined;
@@ -129,44 +128,55 @@ export function Reveal({
     }
   );
 
-  const queryClient = useQueryClient();
-
   const { threeDModel, pointCloudModel } = models || {
     threeDModel: undefined,
     pointCloudModel: undefined,
   };
 
+  useEffect(() => () => viewer?.dispose(), [viewer]);
+
   useEffect(() => {
-    if (viewer && threeDModel) {
-      const { selectedAssetId: paramAssetId, viewerState } =
-        parseThreeDViewerStateFromURL();
-      if (viewerState) {
-        viewer.setViewState(viewerState);
+    if (!viewer) {
+      return;
+    }
+    const cameraManager = viewer.cameraManager as DefaultCameraManager;
+    cameraManager.setCameraControlsOptions({
+      mouseWheelAction: selectedAsset ? 'zoomToTarget' : 'zoomToCursor',
+    });
+  }, [selectedAsset, viewer]);
+
+  useEffect(() => {
+    if (!viewer || !threeDModel) {
+      return;
+    }
+
+    if (
+      selectedAsset &&
+      !initialViewerState?.models?.some(({ styledSets }) => !!styledSets.length)
+    ) {
+      if (assetColumnVisible) {
+        ghostAsset(sdk, threeDModel, selectedAsset);
+      } else {
+        highlightAsset(sdk, threeDModel, selectedAsset);
       }
-      if (paramAssetId) {
-        setSelectedAssetId(paramAssetId);
-        if (
-          !viewerState?.models?.some(({ styledSets }) => !!styledSets.length)
-        ) {
-          highlightAsset(sdk, threeDModel, paramAssetId);
-          fitCameraToAsset(
-            sdk,
-            queryClient,
-            viewer,
-            threeDModel,
-            modelId,
-            revisionId,
-            paramAssetId
-          );
-        }
-      }
+      fitCameraToAsset(
+        sdk,
+        queryClient,
+        viewer,
+        threeDModel,
+        modelId,
+        revisionId,
+        selectedAsset
+      );
     }
   }, [
+    assetColumnVisible,
+    initialViewerState?.models,
     modelId,
     queryClient,
     revisionId,
     sdk,
-    setSelectedAssetId,
+    selectedAsset,
     threeDModel,
     viewer,
   ]);
@@ -196,7 +206,7 @@ export function Reveal({
             );
           }
 
-          if (closestAssetId && closestAssetId !== focusAssetId) {
+          if (closestAssetId && closestAssetId !== selectedAsset) {
             highlightAsset(sdk, threeDModel, closestAssetId);
             fitCameraToAsset(
               sdk,
@@ -223,7 +233,7 @@ export function Reveal({
       }
     },
     [
-      focusAssetId,
+      selectedAsset,
       modelId,
       nodesSelectable,
       queryClient,
@@ -275,12 +285,14 @@ export function Reveal({
             viewer,
           })}
       </>
-      {!!focusAssetId && threeDModel && assetColumnVisible && (
+      {!!selectedAsset && threeDModel && assetColumnVisible && (
         <AssetPreviewSidebar
-          assetId={focusAssetId}
+          assetId={selectedAsset}
           onClose={() => {
             removeAllStyles(threeDModel);
-            setSelectedAssetId(undefined);
+            if (onAssetColumnClose) {
+              onAssetColumnClose();
+            }
           }}
         />
       )}

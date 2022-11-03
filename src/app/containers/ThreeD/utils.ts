@@ -12,6 +12,7 @@ import {
   fetchAssetMappingsByAssetIdQuery,
   fetchClosestAssetIdQuery,
 } from 'app/containers/ThreeD/hooks';
+
 import { FetchQueryOptions, QueryClient } from 'react-query';
 
 const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
@@ -102,6 +103,22 @@ export const highlightAsset = (
   threeDModel.assignStyledNodeCollection(
     assetNodes,
     DefaultNodeAppearance.Highlighted
+  );
+};
+
+export const ghostAsset = (
+  sdk: CogniteClient,
+  threeDModel: Cognite3DModel,
+  assetId: number
+) => {
+  const assetNodes = new AssetNodeCollection(sdk, threeDModel);
+  assetNodes.executeFilter({ assetId });
+
+  threeDModel.removeAllStyledNodeCollections();
+  threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+  threeDModel.assignStyledNodeCollection(
+    assetNodes,
+    DefaultNodeAppearance.Default
   );
 };
 
