@@ -17,7 +17,7 @@ type SliderProps = {
 
 export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
   const [min, max] = useMemo(() => {
-    const bounds = viewerModel?.getModelBoundingBox(undefined, true);
+    const bounds = viewerModel?.getModelBoundingBox();
     return [bounds?.min.y, bounds?.max.y];
   }, [viewerModel]);
 
