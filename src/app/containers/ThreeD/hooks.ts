@@ -18,6 +18,8 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from 'react-query';
+import uniqWith from 'lodash/uniqWith';
+import isEqual from 'lodash/isEqual';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];
@@ -158,15 +160,21 @@ export const getAssetMappingsQueryFn = (
   sdk: CogniteClient,
   modelId?: number,
   revisionId?: number,
-  limit: number = -1
+  opts?: {
+    assetId?: number;
+    limit?: number;
+  }
 ) => {
   if (!modelId || !revisionId) {
     return [] as AssetMapping3D[];
   }
+  const request = opts?.assetId
+    ? sdk.assetMappings3D.list(modelId!, revisionId, { assetId: opts?.assetId })
+    : sdk.assetMappings3D.list(modelId!, revisionId);
 
-  return sdk.assetMappings3D
-    .list(modelId!, revisionId!)
-    .autoPagingToArray({ limit });
+  return request
+    .autoPagingToArray({ limit: opts?.limit || -1 })
+    .then(mappings => uniqWith(mappings, isEqual));
 };
 
 export const fetchAssetMappingsQuery = (
@@ -179,7 +187,7 @@ export const fetchAssetMappingsQuery = (
 ): Promise<AssetMapping3D[]> => {
   return queryClient.fetchQuery(
     getAssetMappingsQueryKey(modelId, revisionId),
-    () => getAssetMappingsQueryFn(sdk, modelId, revisionId, limit),
+    () => getAssetMappingsQueryFn(sdk, modelId, revisionId, { limit }),
     options
   );
 };
@@ -199,7 +207,7 @@ export const useAssetMappings = (
 
   return useQuery(
     getAssetMappingsQueryKey(modelId, revisionId),
-    () => getAssetMappingsQueryFn(sdk, modelId, revisionId, limit),
+    () => getAssetMappingsQueryFn(sdk, modelId, revisionId, { limit }),
     {
       ...options,
       enabled: !!modelId && !!revisionId && (options?.enabled ?? true),
@@ -238,7 +246,9 @@ export const useMappedAssets = (
       );
 
       return mappings?.length
-        ? sdk.assets.retrieve(mappings?.map(({ assetId }) => ({ id: assetId })))
+        ? sdk.assets
+            .retrieve(mappings?.map(({ assetId }) => ({ id: assetId })))
+            .then(stuff => stuff.sort((a, b) => a.name.localeCompare(b.name)))
         : [];
     },
     {
@@ -289,10 +299,7 @@ export const fetchAssetMappingsByAssetIdQuery = async (
 ): Promise<AssetMapping3D[]> => {
   return queryClient.fetchQuery(
     getAssetMappingsByAssetIdQueryKey(modelId, revisionId, assetId),
-    () =>
-      sdk.assetMappings3D
-        .list(modelId, revisionId, { assetId })
-        .autoPagingToArray({ limit }),
+    () => getAssetMappingsQueryFn(sdk, modelId, revisionId, { assetId, limit }),
     options
   );
 };
