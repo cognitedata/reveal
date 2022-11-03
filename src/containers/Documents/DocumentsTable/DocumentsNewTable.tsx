@@ -6,12 +6,11 @@ import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentContentPreview } from './DocumentContentPreview';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { Document } from 'domain/documents';
-import { Button, Body } from '@cognite/cogs.js';
-import { useQuery } from 'react-query';
-import { useSDK } from '@cognite/sdk-provider';
-import { getRootAsset } from 'utils';
-import { createLink } from '@cognite/cdf-utilities';
+import { Body } from '@cognite/cogs.js';
 import { TimeDisplay } from 'components';
+import { RootAsset } from 'components/RootAsset';
+import { Asset } from '@cognite/sdk';
+import { createLink } from '@cognite/cdf-utilities';
 
 export type DocumentWithRelationshipLabels = Document;
 
@@ -32,38 +31,18 @@ const visibleColumns = [
   'rootAsset',
 ];
 
-// TODO:DEGR-712 this is going to change with a task.
-const RootAssetCell = ({ row }: { row: Row<Document> }) => {
-  const sdk = useSDK();
-  // TODO: Move any kind of data fetching jobs/hooks to domain layer!
-  const { data: rootAsset } = useQuery(
-    ['document', row.original.id, 'rootAsset'],
-    () => {
-      if (row.original?.assetIds?.length) {
-        return getRootAsset(sdk, row.original.assetIds[0]);
-      }
+const openRootAsset = (rootAsset: Asset) => {
+  window.open(createLink(`/explore/asset/${rootAsset.id}`), '_blank');
+};
 
-      return undefined;
-    },
-    {
-      enabled: Boolean(row.original.assetIds?.length),
-    }
-  );
-  if (rootAsset) {
-    return (
-      <Button
-        href={createLink(`/explore/asset/${rootAsset.id}`)}
-        // rel="noopener noreferrer"
-        target="_blank"
-        type="link"
-        iconPlacement="right"
-        icon="ArrowUpRight"
-      >
-        {rootAsset?.name}
-      </Button>
-    );
+const RootAssetCell = ({ row }: { row: Row<Document> }) => {
+  const assetId = row.original?.assetIds?.length && row.original.assetIds[0];
+
+  if (!assetId) {
+    return null;
   }
-  return null;
+
+  return <RootAsset assetId={assetId} onClick={openRootAsset} maxWidth={300} />;
 };
 
 export const DocumentsTable = (props: DocumentTableProps) => {

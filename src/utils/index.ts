@@ -1,5 +1,4 @@
 export * from './annotations';
-export * from './assets';
 export * from './colors';
 export * from './common';
 export * from './compare';
