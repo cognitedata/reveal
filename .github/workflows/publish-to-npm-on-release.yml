@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        persist-credentials: false
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v1
