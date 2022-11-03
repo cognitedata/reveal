@@ -1,3 +1,7 @@
+## 7.0.1 November 02 2022
+
+- Fix bug that resulted in loading screen stuck after redirecting from login
+
 ## 7.0.0 October 05 2022
 
 - BREAKING: replaced `react-query` with `@tanstack/react-query`

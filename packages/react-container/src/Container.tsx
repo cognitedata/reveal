@@ -30,7 +30,7 @@ import { PROJECT_TO_LOGIN } from './components/AuthProvider/TokenFactory';
 import { getProjectSpecificFlow } from './components/AuthProvider/utils';
 import { createBrowserHistory } from './internal';
 import { ConditionalReduxProvider } from './providers';
-import { storage, getTenantInfo } from './utils';
+import { storage, getProjectInfo, setLastProject } from './utils';
 import { ProvideMetrics } from './providers/ProvideMetrics';
 import { ContainerSidecarConfig } from './types';
 
@@ -50,7 +50,9 @@ const RawContainer: React.FC<Props> = ({
   intercomSettings,
   sentrySettings,
 }) => {
-  const [_possibleTenant, initialTenant] = getTenantInfo(window.location);
+  const [_possibleTenant, sanitizedProject, getLastProject] = getProjectInfo(
+    window.location
+  );
 
   const {
     applicationId,
@@ -61,33 +63,30 @@ const RawContainer: React.FC<Props> = ({
     reactQueryDevtools,
   } = sidecar;
 
-  const [history] = React.useState(() => createBrowserHistory(initialTenant));
+  const [history] = React.useState(() =>
+    createBrowserHistory(sanitizedProject)
+  );
   const [redirectAuthResult, setRedirectAuthResult] =
     useState<AuthenticationResult | null>();
 
-  const initialTenantOrApiKeyTenant = project || initialTenant;
+  const projectOrApiKeyTenant = project || sanitizedProject || getLastProject;
 
   React.useEffect(() => {
-    storage.init({ tenant: initialTenant, appName: applicationId });
-  }, [initialTenant, applicationId]);
+    storage.init({ tenant: sanitizedProject, appName: applicationId });
+  }, [sanitizedProject, applicationId]);
 
   const refreshPage = () => {
     window.location.assign('/');
   };
 
-  if (!initialTenant) {
-    if (!initialTenantOrApiKeyTenant) {
+  if (!sanitizedProject) {
+    if (!projectOrApiKeyTenant) {
       return <TenantSelectorWrapper sidecar={sidecar} />;
     }
-
-    history.push(`/${initialTenantOrApiKeyTenant}/`);
-
-    // Don't know why we need to reload here, need to ask @Fran
-    // document.location.reload();
-    return <Loader />;
   }
+  setLastProject(sanitizedProject);
 
-  const projectFlow = getProjectSpecificFlow(initialTenantOrApiKeyTenant);
+  const projectFlow = getProjectSpecificFlow(sanitizedProject);
   const configuration: Configuration = {
     auth: {
       clientId: sidecar.aadApplicationId || '',
@@ -125,7 +124,7 @@ const RawContainer: React.FC<Props> = ({
   // Wait for the handleRedirectPromise to resolve.
   // we use it for the redirection on azure ad auth
   if (redirectAuthResult === undefined) {
-    return null;
+    return <Loader />;
   }
 
   return (
@@ -142,7 +141,7 @@ const RawContainer: React.FC<Props> = ({
           <AuthContainer
             sidecar={sidecar}
             authError={refreshPage}
-            project={initialTenant}
+            project={sanitizedProject}
           >
             <IntercomContainer
               intercomSettings={merge(
@@ -150,7 +149,7 @@ const RawContainer: React.FC<Props> = ({
                 intercomSettings,
                 sidecar.intercomSettings
               )}
-              project={initialTenantOrApiKeyTenant}
+              project={sanitizedProject}
               sidecar={sidecar}
               disabled={disableIntercom}
             >
