@@ -228,12 +228,15 @@ export function Viewer() {
 
       const viewerSize = gui.addFolder('Viewer size');
       viewerSize.add(guiState, 'viewerSize', ['fullScreen', 'halfScreen']).name('Size').onFinishChange(value => {
-        if (value === 'fullScreen') {
-          canvasWrapperRef.current!.style.width = '100%';
-          canvasWrapperRef.current!.style.left = '0px';
-        } else {
-          canvasWrapperRef.current!.style.width = '50%';
-          canvasWrapperRef.current!.style.left = '25%';
+        switch (value) {
+          case 'fullScreen':
+            canvasWrapperRef.current!.style.width = '100%';
+            canvasWrapperRef.current!.style.left = '0px';
+            break;
+          case 'halfScreen':
+            canvasWrapperRef.current!.style.width = '50%';
+            canvasWrapperRef.current!.style.left = '25%';
+            break;
         }
       });
 
