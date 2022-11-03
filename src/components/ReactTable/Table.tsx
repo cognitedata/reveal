@@ -38,7 +38,7 @@ import { ColumnToggle } from './ColumnToggle';
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from './LoadMore';
-// import { useLocalStorageState } from 'utils'
+
 import { EmptyState } from 'components/EmpyState/EmptyState';
 
 export interface ColumnToggleProps<T> {
