@@ -1,12 +1,11 @@
-import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { v4 as uuid } from 'uuid';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Table, Graphic } from '@cognite/cogs.js';
 import { useHistory, generatePath } from 'react-router-dom';
 import { getEquipmentList } from 'api';
 import { useApi, useHomePageContext } from 'hooks';
 import { PAGES } from 'pages/Menubar';
 
-import { ExportBar, ExportTools, TopBar, StatusBar } from '..';
+import { TopBar, StatusBar } from '..';
 import { EquipmentsFilter } from '../EquipmentsFilter';
 
 import * as Styled from './style';
@@ -14,7 +13,6 @@ import {
   ColumnAccessor,
   EquipmentListItem,
   EquipmentStatus,
-  EquipmentType,
   HomePageActionType,
 } from './types';
 import {
@@ -28,20 +26,19 @@ import {
 
 export type Filter = {
   search: string;
-  equipmentType: 'all' | EquipmentType;
+  equipmentTypeName: string;
   equipmentStatus: 'all' | EquipmentStatus;
 };
 
 const defaultFilter: Filter = {
   search: '',
-  equipmentType: 'all',
+  equipmentTypeName: 'all',
   equipmentStatus: 'all',
 };
 
 export const EquipmentList = () => {
   const history = useHistory();
   const TableContainerRef = useRef<HTMLDivElement>(null);
-  const [tableKeyToReset, setTableKeyToReset] = useState(uuid());
   const { homePageState, homePageDispatch } = useHomePageContext();
 
   const [filter, setFilter] = useState<Filter>(defaultFilter);
@@ -80,12 +77,17 @@ export const EquipmentList = () => {
       data?.filter(
         (item) =>
           transformSearchValue(item.id)?.includes(filter.search) &&
-          (filter.equipmentType === 'all' ||
-            item.type === filter.equipmentType) &&
+          (filter.equipmentTypeName === 'all' ||
+            item.typeName === filter.equipmentTypeName) &&
           (filter.equipmentStatus === 'all' ||
             item.status === filter.equipmentStatus)
       ),
     [data, filter]
+  );
+
+  const equipmentTypeNames: string[] = useMemo(
+    () => [...new Set(data?.map((item) => item.typeName))],
+    [data]
   );
 
   const pageSize = useMemo(() => {
@@ -108,21 +110,6 @@ export const EquipmentList = () => {
       id: key.toString(),
     }));
   }, []);
-
-  const onSelectionChange = useCallback((items: EquipmentListItem[]) => {
-    const selectedEquipmentIds = items.map((item) => item.id);
-
-    homePageDispatch({
-      type: HomePageActionType.SELECT_EQUIPMENTS,
-      selectedEquipmentIds,
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!homePageState.selectedEquipmentIds.length) {
-      setTableKeyToReset(uuid());
-    }
-  }, [homePageState.selectedEquipmentIds]);
 
   if (!facility) return null;
 
@@ -149,13 +136,13 @@ export const EquipmentList = () => {
               loading={loading}
               filter={filter}
               numberEquipments={equipmentList?.length || 0}
+              equipmentTypeNames={equipmentTypeNames}
               setFilter={setFilter}
             />
           )}
           <Styled.TableContainer isLoading={loading} ref={TableContainerRef}>
             {pageSize && (
               <Table<EquipmentListItem | any>
-                key={tableKeyToReset}
                 dataSource={loading ? skeletonList : equipmentList || []}
                 pageSize={pageSize}
                 columns={[
@@ -209,15 +196,11 @@ export const EquipmentList = () => {
                   width: 300,
                   maxWidth: 500,
                 }}
-                onSelectionChange={onSelectionChange}
-                defaultSelectedIds={{}}
               />
             )}
           </Styled.TableContainer>
-          {Boolean(homePageState.selectedEquipmentIds.length) && <ExportBar />}
         </Styled.ContentWrapper>
       )}
-      <ExportTools />
     </Styled.Container>
   );
 };

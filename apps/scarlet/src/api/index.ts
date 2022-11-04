@@ -1,4 +1,3 @@
-export * from './callEquipmentExportFunction';
 export * from './getEquipmentAnnotations';
 export * from './getEquipmentConfig';
 export * from './getEquipmentDocuments';
@@ -15,3 +14,4 @@ export * from './getUnitListByFacility';
 export * from './saveEquipment';
 export * from './getEquipmentAsset';
 export * from './getDocuments';
+export * from './saveEquipmentRaw';

@@ -12,7 +12,6 @@ import {
   getEquipmentPCMS,
   getEquipmentState,
 } from 'api';
-import { getEquipmentType } from 'utils';
 
 import { PageBody, ActionToastBody } from './components';
 import * as Styled from './style';
@@ -92,9 +91,6 @@ export const Equipment = () => {
             scannerDetections: scannerDetectionsQuery.data,
             equipmentState: equipmentStateQuery.data,
             pcms: pcmsQuery.data!,
-            type: getEquipmentType(
-              pcmsQuery.data?.equipment.metadata?._typeName ?? '' // eslint-disable-line no-underscore-dangle
-            ),
           });
 
     appDispatch({

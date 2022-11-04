@@ -1,4 +1,3 @@
-import { getEquipmentTypeLabel } from 'utils';
 import { EquipmentStatus, EquipmentType } from 'types';
 
 export type EquipmentTypeOption = {
@@ -11,26 +10,6 @@ export type EquipmentStatusOption = {
 };
 
 const allOption = { value: 'all', label: 'All' };
-
-export const equipmentTypeOptionsDictionary = {
-  all: allOption,
-  [EquipmentType.AIR_COOLER]: {
-    value: EquipmentType.AIR_COOLER,
-    label: getEquipmentTypeLabel(EquipmentType.AIR_COOLER)!,
-  },
-  [EquipmentType.EXCHANGER]: {
-    value: EquipmentType.EXCHANGER,
-    label: getEquipmentTypeLabel(EquipmentType.EXCHANGER)!,
-  },
-  [EquipmentType.VESSEL]: {
-    value: EquipmentType.VESSEL,
-    label: getEquipmentTypeLabel(EquipmentType.VESSEL)!,
-  },
-};
-
-export const equipmentTypeOptions = Object.values(
-  equipmentTypeOptionsDictionary
-);
 
 export const equipmentStatusOptionsDictionary = {
   all: allOption,

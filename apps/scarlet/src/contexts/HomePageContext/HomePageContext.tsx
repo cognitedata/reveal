@@ -5,8 +5,6 @@ import { HomePageAction, HomePageActionType, HomePageState } from './types';
 const initialUnitState = {
   unitId: undefined,
   equipmentListQuery: { loading: true },
-  selectedEquipmentIds: [],
-  exportEquipmentsModal: undefined,
 };
 
 const initialState: HomePageState = {
@@ -51,32 +49,6 @@ function reducer(state: HomePageState, action: HomePageAction) {
       return {
         ...state,
         equipmentListQuery: action.equipmentListQuery,
-      };
-    case HomePageActionType.SELECT_EQUIPMENTS:
-      if (
-        action.selectedEquipmentIds.length === state.selectedEquipmentIds.length
-      )
-        return state;
-
-      return {
-        ...state,
-        selectedEquipmentIds: action.selectedEquipmentIds,
-      };
-    case HomePageActionType.EXPORT_EQUIPMENTS:
-      return {
-        ...state,
-        exportEquipmentsModal: {
-          isExportSelectedEquipments: action.isExportSelectedEquipments,
-        },
-      };
-    case HomePageActionType.CLOSE_EXPORT_EQUIPMENTS:
-      return {
-        ...state,
-        exportEquipmentsModal: undefined,
-        selectedEquipmentIds: state.exportEquipmentsModal
-          ?.isExportSelectedEquipments
-          ? []
-          : state.selectedEquipmentIds,
       };
   }
 

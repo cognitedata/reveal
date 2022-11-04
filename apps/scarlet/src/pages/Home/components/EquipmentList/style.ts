@@ -51,9 +51,6 @@ export const TableContainer = styled.div<{ isLoading: boolean }>`
 
     &:first-child {
       padding-left: 16px;
-      flex: 50 0 auto !important;
-      min-width: 0 !important;
-      width: 48px !important;
     }
   }
 

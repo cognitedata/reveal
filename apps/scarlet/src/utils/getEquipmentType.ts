@@ -1,7 +1,7 @@
 import { EquipmentType } from 'types';
 
-export const getEquipmentType = (pcmsType: string) => {
-  switch (pcmsType.toLocaleLowerCase()) {
+export const getEquipmentType = (typeName: string) => {
+  switch (typeName.toLocaleLowerCase()) {
     case 'exchanger - air cooled':
       return EquipmentType.AIR_COOLER;
     case 'boiler - fired':
@@ -20,16 +20,4 @@ export const getEquipmentType = (pcmsType: string) => {
     default:
       return undefined;
   }
-};
-
-export const getEquipmentTypeLabel = (type: EquipmentType) => {
-  switch (type) {
-    case EquipmentType.AIR_COOLER:
-      return 'Air cooler';
-    case EquipmentType.EXCHANGER:
-      return 'Exchanger';
-    case EquipmentType.VESSEL:
-      return 'Vessel';
-  }
-  return undefined;
 };

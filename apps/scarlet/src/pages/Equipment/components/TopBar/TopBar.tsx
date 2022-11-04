@@ -1,7 +1,8 @@
 import { Button, Skeleton } from '@cognite/cogs.js';
 import { generatePath, useHistory } from 'react-router-dom';
-import { useAppState, useFacility } from 'hooks';
+import { useAppState, useFacility, useApi } from 'hooks';
 import { PAGES } from 'pages/Menubar';
+import { saveEquipmentRaw } from 'api';
 
 import { EquipmentStateBar } from '..';
 
@@ -13,13 +14,19 @@ type TopBarProps = {
 };
 
 export const TopBar = ({ unitId, equipmentId }: TopBarProps) => {
-  const { documents } = useAppState();
+  const { documents, equipment } = useAppState();
   const facility = useFacility();
   const history = useHistory();
   const equipmentListPath = generatePath(PAGES.UNIT, {
     facility: facility!.path,
     unitId,
   });
+
+  const { trigger: saveEquipmentToRaw } = useApi(
+    saveEquipmentRaw,
+    { facility, unitId, equipmentId, equipment: equipment.data },
+    { skip: true }
+  );
 
   return (
     <Styled.Container>
@@ -37,6 +44,7 @@ export const TopBar = ({ unitId, equipmentId }: TopBarProps) => {
       <Styled.StateContainer>
         <EquipmentStateBar />
       </Styled.StateContainer>
+      <Button onClick={saveEquipmentToRaw}>save</Button>
     </Styled.Container>
   );
 };

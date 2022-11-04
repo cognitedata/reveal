@@ -43,6 +43,7 @@ export const getEquipmentList = async (
       return {
         id: eq.id,
         type: getEquipmentType(eq.type),
+        typeName: eq.type,
         status,
         progress,
         modifiedBy: equipmentState?.modifiedBy,

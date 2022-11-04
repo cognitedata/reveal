@@ -3,6 +3,7 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import { Icon, Select } from '@cognite/cogs.js';
@@ -18,14 +19,13 @@ import {
   equipmentStatusOptions,
   equipmentStatusOptionsDictionary,
   EquipmentTypeOption,
-  equipmentTypeOptions,
-  equipmentTypeOptionsDictionary,
 } from './utils';
 
 type EquipmentsFilterProps = {
   loading: boolean;
   filter: Filter;
   numberEquipments: number;
+  equipmentTypeNames: string[];
   setFilter: Dispatch<SetStateAction<Filter>>;
 };
 
@@ -33,6 +33,7 @@ export const EquipmentsFilter = ({
   loading,
   filter,
   numberEquipments,
+  equipmentTypeNames,
   setFilter,
 }: EquipmentsFilterProps) => {
   const [search, setSearch] = useState('');
@@ -41,7 +42,7 @@ export const EquipmentsFilter = ({
     (equipmentTypeOption: EquipmentTypeOption) =>
       setFilter((filter) => ({
         ...filter,
-        equipmentType: equipmentTypeOption.value,
+        equipmentTypeName: equipmentTypeOption.value,
       })),
     []
   );
@@ -60,6 +61,17 @@ export const EquipmentsFilter = ({
       setFilter((filter) => ({ ...filter, search }));
     }, 300),
     []
+  );
+
+  const equipmentTypeNameOptions = useMemo(
+    () => [
+      { value: 'all', label: 'All' },
+      ...equipmentTypeNames.map((typeName) => ({
+        label: typeName,
+        value: typeName,
+      })),
+    ],
+    [equipmentTypeNames]
   );
 
   useEffect(
@@ -86,11 +98,15 @@ export const EquipmentsFilter = ({
         />
         <Select<EquipmentType | string>
           menuPlacement="bottom"
-          value={equipmentTypeOptionsDictionary[filter.equipmentType]}
-          options={equipmentTypeOptions}
+          value={equipmentTypeNameOptions.find(
+            (opt) => opt.value === filter.equipmentTypeName
+          )}
+          options={equipmentTypeNameOptions}
           width={220}
           onChange={onChangeEquipmentType}
-          title={filter.equipmentType === 'all' ? 'Equipment type' : undefined}
+          title={
+            filter.equipmentTypeName === 'all' ? 'Equipment type' : undefined
+          }
         />
         <Select<EquipmentStatus | string>
           menuPlacement="bottom"

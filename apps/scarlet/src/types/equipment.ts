@@ -2,6 +2,7 @@ import { EquipmentComponent, DataElement, EquipmentType } from '.';
 
 export type EquipmentData = {
   type: EquipmentType;
+  typeName: string;
   equipmentElements: DataElement[];
   components: EquipmentComponent[];
   created: number;

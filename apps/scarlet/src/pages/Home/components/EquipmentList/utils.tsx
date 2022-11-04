@@ -1,7 +1,6 @@
 import { Skeleton } from '@cognite/cogs.js';
 import { CellProps } from 'react-table';
 import { EquipmentListItem } from 'types';
-import { getEquipmentTypeLabel } from 'utils';
 
 import { ColumnAccessor, EquipmentStatus, EquipmentType } from './types';
 import * as Styled from './style';
@@ -40,7 +39,7 @@ export const getCellType = ({
   value,
   ...props
 }: CellProps<EquipmentListItem, EquipmentType>) =>
-  getCellValue({ ...props, value: getEquipmentTypeLabel(value) });
+  getCellValue({ ...props, value });
 
 export const getCellSkeleton = ({
   cell,

@@ -21,6 +21,7 @@ import {
   getDataElementConfig,
   parseDate,
   getComponentTypeOfPcmsType,
+  getEquipmentType,
 } from 'utils';
 
 const PCMS_TYPE_KEY = 'Component Type(API)';
@@ -30,15 +31,14 @@ export const transformEquipmentData = ({
   scannerDetections = [],
   equipmentState,
   pcms,
-
-  type,
 }: {
   config?: EquipmentConfig;
   scannerDetections?: ScannerDetection[];
   equipmentState?: EquipmentData;
   pcms?: PCMSData;
-  type?: EquipmentType;
 }): EquipmentData | undefined => {
+  const typeName = pcms?.equipment?.metadata?._typeName ?? ''; // eslint-disable-line no-underscore-dangle
+  const type = getEquipmentType(typeName);
   if (!type || !config || !config.equipmentTypes[type]) return undefined;
 
   const equipmentElements = getEquipmentElements(
@@ -62,6 +62,7 @@ export const transformEquipmentData = ({
   return {
     created,
     type,
+    typeName,
     equipmentElements,
     components: equipmentComponents,
   };
