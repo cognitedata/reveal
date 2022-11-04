@@ -37,6 +37,10 @@ const testFixtureInstance = urlParams.get('testfixture');
 if (testFixtureInstance !== null) {
   (async function () {
     const testMap = await tests;
-    new (testMap.get(testFixtureInstance)!)().run();
+    if (testMap.has(testFixtureInstance)) {
+      new (testMap.get(testFixtureInstance)!)().run();
+    } else {
+      alert('Unrecognized test name:' + testFixtureInstance);
+    }
   })();
 }
