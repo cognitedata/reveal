@@ -118,7 +118,7 @@ export const AssetPreview = ({
               activeIds={[asset.id]}
               filter={
                 asset.id === asset.rootId
-                  ? { assetSubtreeIds: [{ id: asset.rootId }] }
+                  ? { assetSubtreeIds: [{ value: asset.rootId }] }
                   : {}
               }
               hierachyRootId={asset.rootId}

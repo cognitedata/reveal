@@ -84,7 +84,7 @@ export function useQueryStringArray(
 
 export const useCurrentResourceType = (): [
   ResourceType,
-  (type: ResourceType) => void
+  (type?: string) => void
 ] => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -93,7 +93,7 @@ export const useCurrentResourceType = (): [
     resourceType: ResourceType;
   }>();
   const setCurrentResourceType = React.useCallback(
-    (newResourceType: ResourceType) => {
+    (newResourceType?: string) => {
       const { [SEARCH_KEY]: query, [FILTER]: filter } = qs.parse(
         location.search,
         opts
