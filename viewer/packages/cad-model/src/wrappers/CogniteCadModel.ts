@@ -22,7 +22,7 @@ import { WellKnownUnit } from '../types';
  * @noInheritDoc
  * @module @cognite/reveal
  */
-export class Cognite3DModel implements CdfModelNodeCollectionDataProvider {
+export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   public readonly type: SupportedModelTypes = 'cad';
 
   /**
@@ -85,7 +85,7 @@ export class Cognite3DModel implements CdfModelNodeCollectionDataProvider {
 
     // Note! As this is defined in ThreeJS we cannot override this using
     // regular TypeScript getters and setters.
-    // It's necessary to forward this setting to CadNode as Cognite3DModel is
+    // It's necessary to forward this setting to CadNode as CogniteCadModel is
     // just a wrapper around this and not part of the actual rendered scene.
     Object.defineProperty(this, 'visible', {
       get: () => this.cadNode.visible,
@@ -426,7 +426,7 @@ export class Cognite3DModel implements CdfModelNodeCollectionDataProvider {
       return box;
     } catch (error) {
       MetricsLogger.trackError(error as Error, {
-        moduleName: 'Cognite3DModel',
+        moduleName: 'CogniteCadModel',
         methodName: 'getBoundingBoxByNodeId'
       });
       throw error;
@@ -529,7 +529,7 @@ export class Cognite3DModel implements CdfModelNodeCollectionDataProvider {
   /**
    * Maps a list of tree indices to node IDs for use with the Cognite SDK.
    * This function is useful if you have a list of tree indices, e.g. from
-   * {@link Cognite3DModel.iterateSubtreeByTreeIndex}, and want to perform
+   * {@link CogniteCadModel.iterateSubtreeByTreeIndex}, and want to perform
    * some operations on these nodes using the SDK.
    *
    * @param treeIndices Tree indices to map to node IDs.

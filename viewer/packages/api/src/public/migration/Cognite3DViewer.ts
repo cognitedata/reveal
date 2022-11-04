@@ -25,7 +25,7 @@ import {
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
-import { PickingHandler, CadModelSectorLoadStatistics, Cognite3DModel } from '@reveal/cad-model';
+import { PickingHandler, CadModelSectorLoadStatistics, CogniteCadModel } from '@reveal/cad-model';
 import {
   PointCloudIntersection,
   PointCloudBudget,
@@ -42,7 +42,7 @@ import {
   CadIntersection
 } from './types';
 import { RevealManager } from '../RevealManager';
-import { RevealOptions } from '../types';
+import { CogniteModel, RevealOptions } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 
@@ -125,7 +125,7 @@ export class Cognite3DViewer {
   };
   private readonly _mouseHandler: InputHandler;
 
-  private readonly _models: (Cognite3DModel | CognitePointCloudModel)[] = [];
+  private readonly _models: CogniteModel[] = [];
   private readonly _extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
@@ -187,7 +187,7 @@ export class Cognite3DViewer {
   /**
    * Gets a list of models currently added to the viewer.
    */
-  public get models(): (Cognite3DModel | CognitePointCloudModel)[] {
+  public get models(): CogniteModel[] {
     return this._models.slice();
   }
 
@@ -567,8 +567,8 @@ export class Cognite3DViewer {
     const stateHelper = this.createViewStateHelper();
 
     this.models
-      .filter(model => model instanceof Cognite3DModel)
-      .map(model => model as Cognite3DModel)
+      .filter(model => model instanceof CogniteCadModel)
+      .map(model => model as CogniteCadModel)
       .forEach(model => model.removeAllStyledNodeCollections());
 
     return stateHelper.setState(state);
@@ -589,7 +589,7 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  async addModel(options: AddModelOptions): Promise<Cognite3DModel | CognitePointCloudModel> {
+  async addModel(options: AddModelOptions): Promise<CogniteModel> {
     if (options.localPath !== undefined) {
       throw new Error(
         'addModel() only supports CDF hosted models. Use addCadModel() and addPointCloudModel() to use self-hosted models'
@@ -622,13 +622,13 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  async addCadModel(options: AddModelOptions): Promise<Cognite3DModel> {
+  async addCadModel(options: AddModelOptions): Promise<CogniteCadModel> {
     const nodesApiClient = this._dataSource.getNodesApiClient();
 
     const { modelId, revisionId } = options;
     const cadNode = await this._revealManagerHelper.addCadModel(options);
 
-    const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
+    const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
     this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
 
@@ -722,7 +722,7 @@ export class Cognite3DViewer {
    * .
    * @param model
    */
-  removeModel(model: Cognite3DModel | CognitePointCloudModel): void {
+  removeModel(model: CogniteModel): void {
     const modelIdx = this._models.indexOf(model);
     if (modelIdx === -1) {
       throw new Error('Model is not added to viewer');
@@ -731,7 +731,7 @@ export class Cognite3DViewer {
 
     switch (model.type) {
       case 'cad':
-        const cadModel = model as Cognite3DModel;
+        const cadModel = model as CogniteCadModel;
         this._sceneHandler.removeCadModel(cadModel.cadNode);
         model.dispose();
         this.revealManager.removeModel(model.type, cadModel.cadNode);
@@ -766,7 +766,7 @@ export class Cognite3DViewer {
    * ```typescript
    * const viewer = new Cognite3DViewer(...);
    * const type = await viewer.determineModelType(options.modelId, options.revisionId)
-   * let model: Cognite3DModel | CognitePointCloudModel
+   * let model: CogniteModel
    * switch (type) {
    *   case 'cad':
    *     model = await viewer.addCadModel(options);
@@ -929,7 +929,7 @@ export class Cognite3DViewer {
    * is used as a fallback.
    * @param model The model to load camera settings from.
    */
-  loadCameraFromModel(model: Cognite3DModel | CognitePointCloudModel): void {
+  loadCameraFromModel(model: CogniteModel): void {
     const config = model.getCameraConfiguration();
     if (config) {
       this._activeCameraManager.setCameraState({ position: config.position, target: config.target });
@@ -957,7 +957,7 @@ export class Cognite3DViewer {
    * viewer.fitCameraToModel(model, 0);
    * ```
    */
-  fitCameraToModel(model: Cognite3DModel | CognitePointCloudModel, duration?: number): void {
+  fitCameraToModel(model: CogniteModel, duration?: number): void {
     const bounds = model.getModelBoundingBox(new THREE.Box3(), true);
     this._activeCameraManager.fitCameraToBoundingBox(bounds, duration);
   }
@@ -1130,11 +1130,11 @@ export class Cognite3DViewer {
   }
 
   /** @private */
-  private getModels(type: 'cad'): Cognite3DModel[];
+  private getModels(type: 'cad'): CogniteCadModel[];
   /** @private */
   private getModels(type: 'pointcloud'): CognitePointCloudModel[];
   /** @private */
-  private getModels(type: SupportedModelTypes): (Cognite3DModel | CognitePointCloudModel)[] {
+  private getModels(type: SupportedModelTypes): CogniteModel[] {
     return this._models.filter(x => x.type === type);
   }
 

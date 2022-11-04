@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { CadNode, Cognite3DModel } from '../../packages/cad-model';
+import { CadNode, CogniteCadModel } from '../../packages/cad-model';
 import { NodesApiClient, NodesLocalClient } from '../../packages/nodes-api';
 import { CadMaterialManager } from '../../packages/rendering';
 
@@ -17,7 +17,7 @@ export function createCadModel(
   depth: number = 3,
   children: number = 3,
   nodesApiClient?: NodesApiClient
-): Cognite3DModel {
+): CogniteCadModel {
   const materialManager = new CadMaterialManager();
   const cadRoot = generateV9SectorTree(depth, children);
   const cadMetadata = createCadModelMetadata(9, cadRoot);
@@ -27,7 +27,7 @@ export function createCadModel(
 
   const cadNode = new CadNode(cadMetadata, materialManager, mockSectorRepository.object());
   nodesApiClient = nodesApiClient ?? new NodesLocalClient();
-  const model = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
+  const model = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
 
   return model;
 }
