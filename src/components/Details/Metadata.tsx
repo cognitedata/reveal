@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { Button, Input, Table, Title } from '@cognite/cogs.js';
-import { Row } from 'react-table';
+import { Button, Input, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { TableV2 } from 'components/ReactTable/V2';
+import { ColumnDef } from '@tanstack/react-table';
 
 // TODO  Needs to be removed once implemented in our library
 interface DataSource {
@@ -10,25 +11,23 @@ interface DataSource {
   value: string;
 }
 
-const sortTypes = {
-  alphanumeric: (
-    row1: Row<DataSource>,
-    row2: Row<DataSource>,
-    columnName: string
-  ) => {
-    const value1 = row1.values[columnName];
-    const value2 = row2.values[columnName];
-    const string1 = value1.toLowerCase();
-    const string2 = value2.toLowerCase();
-    if (string1 < string2) return -1;
-    if (string1 > string2) return 1;
-    return 0;
-  },
-};
-
 export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
   const [query, setQuery] = useState('');
   const [hideEmpty, setHideEmpty] = useState(false);
+  const columns = useMemo(
+    () =>
+      [
+        {
+          header: 'Key',
+          accessorKey: 'key',
+        },
+        {
+          header: 'Value',
+          accessorKey: 'value',
+        },
+      ] as ColumnDef<DataSource>[],
+    []
+  );
 
   const filteredMetadata = useMemo(
     () =>
@@ -45,6 +44,11 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
               );
             })
             .map(([key, value]) => [key.trim(), value.trim()])
+            .map(item => ({
+              key: item[0],
+              id: item[0],
+              value: item[1],
+            }))
         : [],
     [metadata, query, hideEmpty]
   );
@@ -75,27 +79,11 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
         </FilterContainer>
       </MetadataHeader>
       <MetadataTableContainer>
-        <Table<DataSource>
-          dataSource={filteredMetadata.map(item => ({
-            key: item[0],
-            id: item[0],
-            value: item[1],
-          }))}
-          // @ts-ignore
-          tableConfig={{ sortTypes }}
-          columns={[
-            {
-              Header: 'Key',
-              accessor: 'key',
-              width: '50%',
-            },
-            {
-              Header: 'Value',
-              accessor: 'value',
-              width: '50%',
-            },
-          ]}
-          pagination={false}
+        <TableV2<DataSource>
+          id="metadata-table"
+          data={filteredMetadata}
+          enableSorting
+          columns={columns}
         />
       </MetadataTableContainer>
     </MetadataCard>
