@@ -87,11 +87,12 @@ void main() {
     vec3 cameraPosInCylinderSpace = inverseBillboardWorldRotation * (rayOrigin - center);
 
     mat3 billboardWorldScaleRotation = mat3(halfHeight * lDir, a_radius * left, a_radius * up);
-
     vec3 localBillboardPosition = center + billboardWorldScaleRotation * position;
     vec3 viewBillboardPosition = mul3(modelToView, localBillboardPosition);
 
-    float near = projectionMatrix[3][2] / (projectionMatrix[2][2] - 1.0);
+    // Due to numeric instability when near and far planes are relatively close to each other,
+    // we just clamp near to a relatively low constant when checking whether we're inside the cylinder
+    float near = min(1.0, projectionMatrix[3][2] / (projectionMatrix[2][2] - 1.0));
 
     // Check whether we are inside the primitive, in which case the quad must cover the entire screen
     if (isWithinSpan(cameraPosInCylinderSpace, cylinderAxisScales + vec3(near))) {
