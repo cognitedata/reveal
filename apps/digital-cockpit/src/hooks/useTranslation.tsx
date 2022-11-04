@@ -5,6 +5,7 @@ import {
   i18next,
   Trans,
 } from '@cognite/react-i18n';
+import noop from 'lodash/noop';
 
 export interface TransProps<E extends Element = HTMLDivElement>
   extends React.HTMLProps<E>,
@@ -33,9 +34,15 @@ export type TFunctionWrapper = (
 ) => string;
 
 export type TComponentWrapper = (props: TransProps) => React.ReactElement;
-
 const useTranslation = (namespace: string) => {
-  const { t, i18n } = useTranslationFromLibrary(namespace);
+  // TODO(CM-2134) Add i18n initialization. See https://react.i18next.com/latest/using-with-hooks#configure-i18next
+  // const { t, i18n } = useTranslationFromLibrary(namespace);
+  const t = (key: string, options: any = {}) => {
+    return options?.defaultValue;
+  };
+  const i18n = {
+    changeLanguage: (_: string) => new Promise(noop),
+  } as any;
 
   const availableLanguages = [{ name: 'English', code: 'en' }] as const;
 
@@ -45,7 +52,7 @@ const useTranslation = (namespace: string) => {
 
   const changeLanguage = (code: string) => {
     localStorage.setItem('DT_APP_LANG', code);
-    i18next.changeLanguage(code);
+    i18n.changeLanguage(code);
   };
 
   const tWrapper: TFunctionWrapper = (key, referenceValue, options = {}) =>
@@ -55,7 +62,7 @@ const useTranslation = (namespace: string) => {
     t: tWrapper,
     availableLanguages,
     currentLanguage: availableLanguages.find(
-      (lang) => lang.code === i18next.language
+      (lang) => lang.code === i18n.language
     ),
     changeLanguage,
     Trans: TransWrapperComponent,

@@ -14,28 +14,11 @@ type UserMenuProps = {
 
 const UserMenu = (props: UserMenuProps) => {
   const { email, openUploadLogoModal, openAppConfigModal, isAdmin } = props;
-  const { changeLanguage, availableLanguages, currentLanguage } =
-    useTranslation('UserMenu');
 
   return (
     <MenuItemWrapper>
       <Menu.Header>Settings</Menu.Header>
-      <Menu.Submenu
-        content={
-          <MenuItemWrapper>
-            {(availableLanguages || []).map((lang) => (
-              <Menu.Item
-                key={lang.code}
-                onClick={() => changeLanguage(lang.code)}
-              >
-                {lang.name}
-              </Menu.Item>
-            ))}
-          </MenuItemWrapper>
-        }
-      >
-        <span>{currentLanguage?.name}</span>
-      </Menu.Submenu>
+      <Menu.Item disabled>Change language</Menu.Item>
       <Menu.Item appendIcon="Logout" onClick={() => logout()}>
         Log out
       </Menu.Item>

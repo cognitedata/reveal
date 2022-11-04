@@ -68,9 +68,8 @@ const LeftSidebar: React.FC = () => {
   const { activeApplications: applications } = useCogniteApplications();
   const metrics = useMetrics('LeftSidebar');
   const admin = useSelector(isAdmin);
-  const location = useLocation();
   const sideBarState = JSON.parse(
-    localStorage.getItem('sideBarState') || 'true' // TODO(DTC-215) store in state
+    localStorage.getItem('sideBarState') || 'true'
   );
   const [isOpen, setOpen] = useState(sideBarState);
   const [suitesOrder, setSuitesOrder] = useState<string[]>([]);

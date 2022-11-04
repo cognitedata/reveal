@@ -85,6 +85,15 @@ export const NavigationItemContainer = styled.div<{ selected?: boolean }>`
 
 export const ItemsContainer = styled.div`
   padding-bottom: 22px;
+  .cogs-icon-ExternalLink {
+    display: none;
+  }
+  .cogs.cogs-anchor {
+    text-decoration: none;
+    button:hover {
+      text-decoration-line: none;
+    }
+  }
 `;
 
 export const LogoWrapper = styled.div`
