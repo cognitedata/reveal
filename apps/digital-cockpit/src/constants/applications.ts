@@ -31,7 +31,7 @@ export const allApplications: ApplicationItem[] = [
       return null;
     },
     installedCheckFunc: async () => true,
-    urlTemplate: `https://charts.cogniteapp.com/${tenantPlaceholder}?env=${clusterNoDotPlaceholder}`,
+    urlTemplate: `https://charts.cogniteapp.com/${tenantPlaceholder}?cluster=${clusterNoDotPlaceholder}`,
     viewLink: 'https://hub.cognite.com/groups/charts-early-adopter-164',
   },
   {
