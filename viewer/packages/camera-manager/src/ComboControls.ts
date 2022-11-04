@@ -4,6 +4,7 @@
 // TODO 2021-11-08 larsmoa: Enable explicit-module-boundary-types for ComboControls
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
+import { clickOrTouchEventOffset } from '@reveal/utilities';
 import {
   EventDispatcher,
   MOUSE,
@@ -350,9 +351,9 @@ export class ComboControls extends EventDispatcher {
       const factor = isFirefox ? 1 : 40;
       delta = event.deltaY / factor;
     }
-    const domElementRelativeOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
+    const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
 
-    const { x, y } = this.convertPixelCoordinatesToNormalized(domElementRelativeOffset.x, domElementRelativeOffset.y);
+    const { x, y } = this.convertPixelCoordinatesToNormalized(domElementRelativeOffset.offsetX, domElementRelativeOffset.offsetY);
     const dollyIn = delta < 0;
     const deltaDistance =
       // @ts-ignore

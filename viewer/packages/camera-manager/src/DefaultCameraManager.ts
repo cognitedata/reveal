@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
-import { ComboControls, getHTMLOffset } from './ComboControls';
+import { ComboControls } from './ComboControls';
 import { CameraManagerCallbackData, CameraControlsOptions, CameraState, CameraChangeDelegate } from './types';
 import { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
@@ -15,7 +15,8 @@ import {
   disposeOfAllEventListeners,
   PointerEventDelegate,
   PointerEventData,
-  fitCameraToBoundingBox
+  fitCameraToBoundingBox,
+  clickOrTouchEventOffset
 } from '@reveal/utilities';
 
 /**
@@ -560,10 +561,10 @@ export class DefaultCameraManager implements CameraManager {
       // Added because cameraControls are disabled when doing picking, so
       // preventDefault could be not called on wheel event and produce unwanted scrolling.
       e.preventDefault();
-      const domElementRelativeOffset = getHTMLOffset(this._domElement, e.clientX, e.clientY);
+      const domElementRelativeOffset = clickOrTouchEventOffset(e, this._domElement);
 
       const currentTime = performance.now();
-      const currentMousePosition = new THREE.Vector2(domElementRelativeOffset.x, domElementRelativeOffset.y);
+      const currentMousePosition = new THREE.Vector2(domElementRelativeOffset.offsetX, domElementRelativeOffset.offsetY);
 
       const onWheelTimeDelta = currentTime - lastWheelEventTime;
 
@@ -595,8 +596,8 @@ export class DefaultCameraManager implements CameraManager {
         try {
           this._controls.enabled = false;
           const pointerEventData = {
-            offsetX: domElementRelativeOffset.x,
-            offsetY: domElementRelativeOffset.y,
+            offsetX: domElementRelativeOffset.offsetX,
+            offsetY: domElementRelativeOffset.offsetY,
             button: e.button
           };
 

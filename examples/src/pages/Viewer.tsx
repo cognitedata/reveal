@@ -4,7 +4,7 @@
 
 import Stats from 'stats.js';
 import { useEffect, useRef } from 'react';
-import { CanvasWrapper } from '../components/styled';
+import { CanvasWrapper, NavBar, SimpleWrapper } from '../components/styled';
 import { THREE } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
@@ -227,15 +227,31 @@ export function Viewer() {
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
 
       const viewerSize = gui.addFolder('Viewer size');
-      viewerSize.add(guiState, 'viewerSize', ['fullScreen', 'halfScreen']).name('Size').onFinishChange(value => {
+      viewerSize.add(guiState, 'viewerSize', ['fullScreen', 'halfScreen', 'quarterScreen']).name('Size').onFinishChange(value => {
         switch (value) {
           case 'fullScreen':
+            canvasWrapperRef.current!.style.position = 'relative';
             canvasWrapperRef.current!.style.width = '100%';
+            canvasWrapperRef.current!.style.height = '100%';
+            canvasWrapperRef.current!.style.flexGrow = '1';
             canvasWrapperRef.current!.style.left = '0px';
+            canvasWrapperRef.current!.style.top = '0px';
             break;
           case 'halfScreen':
+            canvasWrapperRef.current!.style.position = 'relative';
             canvasWrapperRef.current!.style.width = '50%';
+            canvasWrapperRef.current!.style.height = '100%';
+            canvasWrapperRef.current!.style.flexGrow = '1';
             canvasWrapperRef.current!.style.left = '25%';
+            canvasWrapperRef.current!.style.top = '0px';
+            break;
+          case 'quarterScreen':
+            canvasWrapperRef.current!.style.position = 'absolute';
+            canvasWrapperRef.current!.style.flexGrow = '0.5';
+            canvasWrapperRef.current!.style.width = '50%';
+            canvasWrapperRef.current!.style.height = '50%';
+            canvasWrapperRef.current!.style.left = '25%';
+            canvasWrapperRef.current!.style.top = '25%';
             break;
         }
       });
@@ -386,5 +402,5 @@ export function Viewer() {
       viewer?.dispose();
     };
   }, []);
-  return <CanvasWrapper ref={canvasWrapperRef} />;
+  return <CanvasWrapper ref={canvasWrapperRef} />
 }
