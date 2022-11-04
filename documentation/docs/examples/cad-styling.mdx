@@ -48,7 +48,7 @@ identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCo
 It's also possible [implement custom node collections](cad-styling-custom). This can be useful for specialized queries or to load
 sets from custom data sources.
 
-`Cognite3DModel.assignStyledNodeCollection` and `unassignStyledNodeCollection` is used to manage styled set associated with a model:
+`CogniteCadModel.assignStyledNodeCollection` and `unassignStyledNodeCollection` is used to manage styled set associated with a model:
 
 ```js
 // import { TreeIndexNodeCollection, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
@@ -97,7 +97,7 @@ will require manual steps to implement styling.
 
 <DemoWrapper />
 
-To play around with the different styling options, we can use `Cognite3DModel.setDefaultNodeAppearance`.
+To play around with the different styling options, we can use `CogniteCadModel.setDefaultNodeAppearance`.
 A few example styles are shown below.
 
 ### Ghosted style
