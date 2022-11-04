@@ -21,7 +21,7 @@ serde-wasm-bindgen = "0.4.5"
 
 js-sys = "0.3.60"
 
-nalgebra = "0.31.2"
+nalgebra = "0.31.3"
 nalgebra-glm = "0.17.0"
 wasm-bindgen-test = "0.3.33"
 
