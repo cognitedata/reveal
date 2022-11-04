@@ -59,7 +59,7 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
    * @param propertyKey Node property key, e.g. `':FU'`.
    * @param propertyValues Lookup values, e.g. `["AR100APG539","AP500INF534","AP400INF553", ...]`
    */
-  executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[]): Promise<void> {
+  executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[], batchSize: number): Promise<void> {
     const { requestPartitions } = this._options;
 
     const outputsUrl = this.buildUrl();
@@ -77,7 +77,7 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
         const response = postAsListResponse<Node3D[]>(this._client, outputsUrl, {
           data: {
             filter,
-            limit: 1000,
+            limit: min(1000, batchSize),
             partition: `${p}/${requestPartitions}`
           }
         });
@@ -103,8 +103,8 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
   }
 }
 
-function splitQueryToBatches(propertyValues: string[]): string[][] {
-  return chunk(propertyValues, 1000);
+function splitQueryToBatches(propertyValues: string[], batchSize: number = 1000): string[][] {
+  return chunk(propertyValues, min(1000, batchSize));
 }
 
 type RawListResponse<T> = {
