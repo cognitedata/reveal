@@ -353,7 +353,10 @@ export class ComboControls extends EventDispatcher {
     }
     const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
 
-    const { x, y } = this.convertPixelCoordinatesToNormalized(domElementRelativeOffset.offsetX, domElementRelativeOffset.offsetY);
+    const { x, y } = this.convertPixelCoordinatesToNormalized(
+      domElementRelativeOffset.offsetX,
+      domElementRelativeOffset.offsetY
+    );
     const dollyIn = delta < 0;
     const deltaDistance =
       // @ts-ignore

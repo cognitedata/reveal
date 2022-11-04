@@ -564,7 +564,10 @@ export class DefaultCameraManager implements CameraManager {
       const domElementRelativeOffset = clickOrTouchEventOffset(e, this._domElement);
 
       const currentTime = performance.now();
-      const currentMousePosition = new THREE.Vector2(domElementRelativeOffset.offsetX, domElementRelativeOffset.offsetY);
+      const currentMousePosition = new THREE.Vector2(
+        domElementRelativeOffset.offsetX,
+        domElementRelativeOffset.offsetY
+      );
 
       const onWheelTimeDelta = currentTime - lastWheelEventTime;
 
