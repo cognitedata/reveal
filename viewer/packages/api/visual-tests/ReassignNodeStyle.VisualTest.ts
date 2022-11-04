@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { IndexSet } from '@reveal/utilities';
-import { Cognite3DModel } from '..';
+import { CogniteCadModel } from '..';
 import {
   ViewerTestFixtureComponents,
   ViewerVisualTestFixture
@@ -36,7 +36,7 @@ export default class ReassignNodeStyleVisualTest extends ViewerVisualTestFixture
     const { models } = testFixtureComponents;
 
     const model = models[0];
-    if (!(model instanceof Cognite3DModel)) {
+    if (!(model instanceof CogniteCadModel)) {
       return Promise.resolve();
     }
 

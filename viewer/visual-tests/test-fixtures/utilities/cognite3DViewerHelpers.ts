@@ -3,9 +3,8 @@
  */
 
 import { getApplicationSDK } from '../../../test-utilities/src/appUtils';
-import { AddModelOptions, Cognite3DModel, Cognite3DViewer, OnLoadingCallback } from '../../../packages/api';
+import { AddModelOptions, CogniteModel, Cognite3DViewer, OnLoadingCallback } from '../../../packages/api';
 import { CogniteClient } from '@cognite/sdk';
-import { CognitePointCloudModel } from '../../../packages/pointclouds';
 
 export async function createCognite3DViewer(onLoading: OnLoadingCallback = () => {}): Promise<Cognite3DViewer> {
   const queryString = window.location.search;
@@ -32,10 +31,7 @@ export async function createCognite3DViewer(onLoading: OnLoadingCallback = () =>
   });
 }
 
-export async function addModels(
-  viewer: Cognite3DViewer,
-  localModelUrls: string[]
-): Promise<(Cognite3DModel | CognitePointCloudModel)[]> {
+export async function addModels(viewer: Cognite3DViewer, localModelUrls: string[]): Promise<CogniteModel[]> {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
 
