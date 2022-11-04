@@ -289,8 +289,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   setMeasurementLabelsVisible(enable: boolean): void {
     if (this._showMeasurements) {
       this._htmlOverlay.visible(enable);
-      this._showLabels = enable;
     }
+    this._showLabels = enable;
   }
 
   /**
