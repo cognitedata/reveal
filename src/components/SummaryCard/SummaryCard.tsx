@@ -1,32 +1,31 @@
-import { TableV2 as Table, TableProps } from 'components/ReactTable/V2';
 import React from 'react';
 
 import styled from 'styled-components';
 import { Button, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
 import noop from 'lodash/noop';
+import { SummaryCardWrapper } from 'components/ReactTable/elements';
 
-interface SummaryCardProps<T> extends TableProps<T> {
-  iconType?: IconType;
+interface SummaryCardProps {
+  icon?: IconType;
   title: string;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
+  children?: React.ReactElement;
 }
-export function SummaryCard<T>({
-  iconType,
-  columns,
-  data,
+export function SummaryCard({
+  icon,
   title,
   onAllResultsClick = noop,
-  ...rest
-}: SummaryCardProps<T>) {
+  children,
+}: SummaryCardProps) {
   return (
-    <SequenceWrapper>
+    <SummaryCardWrapper>
       <StyledFlex justifyContent="space-between">
         <Flex gap={8}>
-          {iconType && (
+          {icon && (
             <IconWrapper>
-              <Icon type={iconType} />
+              <Icon type={icon} />
             </IconWrapper>
           )}
           <Title level={5}>{title}</Title>
@@ -40,19 +39,10 @@ export function SummaryCard<T>({
           All Results
         </Button>
       </StyledFlex>
-      <Table columns={columns} data={data.slice(0, 5)} {...rest} />
-    </SequenceWrapper>
+      {children}
+    </SummaryCardWrapper>
   );
 }
-
-const SequenceWrapper = styled.div`
-  border-radius: 8px;
-  width: 540px;
-  height: 384px;
-  border: 1px solid var(--cogs-border--muted);
-  padding: 18px 16px;
-  background-color: var(--cogs-surface--medium);
-`;
 
 const StyledFlex = styled(Flex)`
   border-bottom: 1px solid var(--cogs-border--muted);

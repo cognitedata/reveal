@@ -15,7 +15,7 @@ export const useEventsSearchResultQuery = ({
 }: {
   query?: string;
   eventsFilters: InternalEventsFilters;
-  eventsSortBy: TableSortBy[];
+  eventsSortBy?: TableSortBy[];
 }) => {
   const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(
     query,

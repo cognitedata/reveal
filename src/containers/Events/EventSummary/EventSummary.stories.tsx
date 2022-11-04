@@ -1,17 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ComponentStory } from '@storybook/react';
-import { SequenceSummary } from './SequenceSummary';
+import { EventSummary } from './EventSummary';
 
 export default {
-  title: 'Sequences/SequenceSummary',
-  component: SequenceSummary,
+  title: 'Events/EventSummary',
+  component: EventSummary,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example: ComponentStory<typeof SequenceSummary> = args => (
-  <SequenceSummary {...args} />
+export const Example: ComponentStory<typeof EventSummary> = args => (
+  <EventSummary {...args} />
 );
 
 const Container = styled.div`

@@ -7,7 +7,7 @@ import React, { useMemo } from 'react';
 import { convertResourceType } from 'types';
 
 import { EmptyState } from 'components/EmpyState/EmptyState';
-import { SummaryCard } from 'components/SummaryCard';
+import { SummaryCard } from 'components/SummaryCard/SummaryCard';
 
 export const SequenceSummary = ({
   query = '',
@@ -34,12 +34,16 @@ export const SequenceSummary = ({
   }
   return (
     <SummaryCard
-      data={items}
-      id="sequence-summary-table"
-      columns={columns}
-      iconType="Sequences"
+      icon="Sequences"
       title="Sequence"
       onAllResultsClick={onAllResultsClick}
-    />
+    >
+      <Table
+        data={items}
+        id="sequence-summary-table"
+        columns={columns}
+        enableColumnResizing={false}
+      />
+    </SummaryCard>
   );
 };

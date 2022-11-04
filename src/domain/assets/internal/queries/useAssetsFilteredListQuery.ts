@@ -15,7 +15,7 @@ export const useAssetsSearchResultQuery = ({
 }: {
   query?: string;
   assetFilter: InternalAssetFilters;
-  sortBy: TableSortBy[];
+  sortBy?: TableSortBy[];
 }) => {
   const searchQueryMetadataKeys = useAssetsSearchQueryMetadataKeysQuery(
     query,

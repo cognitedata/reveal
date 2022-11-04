@@ -15,6 +15,15 @@ export const TableContainer = styled.div`
   flex-direction: column;
 `;
 
+export const SummaryCardWrapper = styled.div`
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--cogs-border--muted);
+  padding: 18px 16px;
+  background-color: var(--cogs-surface--medium);
+`;
+
 export const ColumnSelectorWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -27,10 +36,19 @@ export const StyledTable = styled.div`
   color: var(--cogs-text-icon--medium);
   position: relative;
   width: 100%;
+  background: white;
   /* To isolate the z-index to the scope of the table */
   isolation: isolate;
   & > div {
     min-width: 100%;
+    width: fit-content;
+  }
+
+  ${SummaryCardWrapper} & {
+    background-color: var(--cogs-surface--medium);
+    & > div {
+      max-width: 100%;
+    }
   }
 `;
 
