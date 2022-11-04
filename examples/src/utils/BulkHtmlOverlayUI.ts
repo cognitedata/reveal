@@ -1,5 +1,5 @@
 import { THREE } from '@cognite/reveal';
-import { Cognite3DModel, Cognite3DViewer, DefaultNodeAppearance, IndexSet, NodeAppearance, NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
+import { CogniteCadModel, Cognite3DViewer, DefaultNodeAppearance, IndexSet, NodeAppearance, NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
 import { CogniteClient } from '@cognite/sdk/dist/src';
 import * as dat from 'dat.gui';
@@ -14,7 +14,7 @@ export class BulkHtmlOverlayUI {
   private readonly _activeElementsNodeAppearance: NodeAppearance = DefaultNodeAppearance.Highlighted;
 
   private readonly _viewer: Cognite3DViewer;
-  private readonly _model: Cognite3DModel;
+  private readonly _model: CogniteCadModel;
   private readonly _sdk: CogniteClient;
   private readonly _overlays: HtmlOverlayTool;
   private readonly _activeElements: TreeIndexNodeCollection;
@@ -24,7 +24,7 @@ export class BulkHtmlOverlayUI {
     filterValue: 'Tagged equipment'
   };
 
-  constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer, model: Cognite3DModel, sdk: CogniteClient) {
+  constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer, model: CogniteCadModel, sdk: CogniteClient) {
     this._viewer = viewer;
     this._model = model;
     this._sdk = sdk;
@@ -70,7 +70,7 @@ export class BulkHtmlOverlayUI {
         if (nodeToTag.boundingBox === undefined) {
           continue;
         }
-        const { boundingBox,name, treeIndex, subtreeSize } = nodeToTag;
+        const { boundingBox, name, treeIndex, subtreeSize } = nodeToTag;
 
         const bounds = new THREE.Box3();
         bounds.min.set(boundingBox.min[0], boundingBox.min[1], boundingBox.min[2]);
@@ -95,7 +95,7 @@ export class BulkHtmlOverlayUI {
     };
     return htmlElement;
   }
-  
+
   private createCompositeOverlay(text: string, elementData: OverlayUserdata[]): HTMLElement {
     const htmlElement = createOverlay(text);
     htmlElement.onclick = () => {

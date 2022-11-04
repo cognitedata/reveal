@@ -7,6 +7,8 @@ import * as THREE from 'three';
 import { LoadingState } from '@reveal/model-base';
 import { RenderOptions } from '@reveal/rendering';
 import { InternalRevealCadOptions } from '@reveal/cad-geometry-loaders';
+import { CogniteCadModel } from '@reveal/cad-model';
+import { CognitePointCloudModel } from '@reveal/pointclouds';
 
 /**
  * @property logMetrics Might be used to disable usage statistics.
@@ -23,6 +25,11 @@ export type RevealOptions = {
     cad?: InternalRevealCadOptions;
   };
 };
+
+/**
+ * Type abstraction for CogniteCadModel or CognitePointCloudModel;.
+ */
+export type CogniteModel = CogniteCadModel | CognitePointCloudModel;
 
 /**
  * Handler for events about data being loaded.

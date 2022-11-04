@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Cognite3DModel } from '..';
+import { CogniteCadModel } from '..';
 import * as THREE from 'three';
 
 import {
@@ -19,7 +19,7 @@ export default class TwoModelsVisualTest extends ViewerVisualTestFixture {
 
     const model = models[1];
 
-    if (!(model instanceof Cognite3DModel)) {
+    if (!(model instanceof CogniteCadModel)) {
       return Promise.resolve();
     }
 
