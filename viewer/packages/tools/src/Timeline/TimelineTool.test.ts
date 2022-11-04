@@ -9,10 +9,10 @@ import { TimelineTool } from './TimelineTool';
 import { MetricsLogger } from '@reveal/metrics';
 import { IndexSet } from '@reveal/utilities';
 import { NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { Cognite3DModel } from '@reveal/api';
+import { CogniteCadModel } from '@reveal/api';
 
 describe('TimelineTool', () => {
-  let model: Cognite3DModel;
+  let model: CogniteCadModel;
   let timelineTool: TimelineTool;
   let kf1Collection: TreeIndexNodeCollection;
   let kf2Collection: TreeIndexNodeCollection;

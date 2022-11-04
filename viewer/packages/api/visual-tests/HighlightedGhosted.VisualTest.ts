@@ -3,7 +3,7 @@
  */
 
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { Cognite3DModel } from '..';
+import { CogniteCadModel } from '..';
 import {
   ViewerTestFixtureComponents,
   ViewerVisualTestFixture
@@ -13,7 +13,7 @@ export default class HighlightWithDefaultGhostingTestPage extends ViewerVisualTe
   public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
     const { models } = testFixtureComponents;
 
-    if (models[0] instanceof Cognite3DModel) {
+    if (models[0] instanceof CogniteCadModel) {
       models[0].setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
       const nodes = new TreeIndexNodeCollection([...Array(15).keys()]);
       models[0].assignStyledNodeCollection(nodes, DefaultNodeAppearance.Highlighted);

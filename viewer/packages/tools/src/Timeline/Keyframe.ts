@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Cognite3DModel } from '@reveal/api';
+import { CogniteCadModel } from '@reveal/api';
 import { NodeAppearance, NodeCollection } from '@reveal/cad-styling';
 import { MetricsLogger } from '@reveal/metrics';
 
@@ -11,10 +11,10 @@ import { MetricsLogger } from '@reveal/metrics';
  */
 export class Keyframe {
   private readonly _date: Date;
-  private readonly _model: Cognite3DModel;
+  private readonly _model: CogniteCadModel;
   private readonly _nodeCollectionAndAppearance: { nodes: NodeCollection; nodeAppearance: NodeAppearance }[] = [];
 
-  constructor(model: Cognite3DModel, date: Date) {
+  constructor(model: CogniteCadModel, date: Date) {
     this._model = model;
     this._date = date;
   }

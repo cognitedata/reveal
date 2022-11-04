@@ -42,7 +42,7 @@ export {
   CdfModelNodeCollectionDataProvider
 } from './packages/cad-styling';
 
-export { CogniteModelBase, SupportedModelTypes } from './packages/model-base';
+export { SupportedModelTypes } from './packages/model-base';
 
 export {
   IndexSet,
@@ -55,7 +55,7 @@ export {
 
 export { PointCloudObjectMetadata } from './packages/data-providers';
 
-export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
+export { CogniteCadModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
 
 export { CognitePointCloudModel } from './packages/pointclouds';
 
