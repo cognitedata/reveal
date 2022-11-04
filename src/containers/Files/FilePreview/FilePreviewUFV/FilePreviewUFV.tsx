@@ -37,14 +37,17 @@ import {
 } from './constants';
 
 const UNIFIED_VIEWER_CONTAINER_ID = 'unified-viewer-container';
+const UNIFIED_VIEWER_APPLICATION_ID = 'data-exploration';
 
 export type FilePreviewUFVProps = {
   fileId: number;
   creatable: boolean;
   contextualization: boolean;
-  showZoomControls: boolean;
   onItemClicked?: (item: ResourceItem) => void;
   fileIcon?: React.ReactNode;
+  showControls?: boolean;
+  showDownload?: boolean;
+  showSideBar?: boolean;
 };
 
 export const FilePreviewUFV = ({
@@ -53,7 +56,9 @@ export const FilePreviewUFV = ({
   contextualization,
   onItemClicked,
   fileIcon,
-  showZoomControls = true,
+  showDownload = false,
+  showControls = true,
+  showSideBar = true,
 }: FilePreviewUFVProps) => {
   // Later work includes merging the two components
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
@@ -235,6 +240,7 @@ export const FilePreviewUFV = ({
       <FullHeightWrapper>
         <Pagination container={container} onPageChange={handlePageChange}>
           <ReactUnifiedViewer
+            applicationId={UNIFIED_VIEWER_APPLICATION_ID}
             id={UNIFIED_VIEWER_CONTAINER_ID}
             setRef={ref => setUnifiedViewerRef(ref)}
             container={container}
@@ -244,7 +250,7 @@ export const FilePreviewUFV = ({
             ]}
             tooltips={tooltips}
             onClick={onStageClick}
-            shouldShowZoomControls={showZoomControls}
+            shouldShowZoomControls={showControls}
           />
         </Pagination>
         <ActionTools
@@ -253,25 +259,27 @@ export const FilePreviewUFV = ({
           fileViewerRef={unifiedViewerRef}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          enableDownload
-          enableSearch
+          enableDownload={showDownload}
+          enableSearch={showControls}
         />
       </FullHeightWrapper>
-      <SidebarWrapper>
-        <AnnotationPreviewSidebar
-          file={file}
-          setIsAnnotationsShown={setIsAnnotationsShown}
-          isAnnotationsShown={isAnnotationsShown}
-          setPendingAnnotations={setPendingAnnotations}
-          contextualization={contextualization}
-          onItemClicked={onItemClicked}
-          annotations={annotations}
-          fileIcon={fileIcon}
-          reset={() => unifiedViewerRef?.zoomToFit()}
-          selectedAnnotations={selectedAnnotations}
-          setSelectedAnnotations={setSelectedAnnotations}
-        />
-      </SidebarWrapper>
+      {showSideBar && (
+        <SidebarWrapper>
+          <AnnotationPreviewSidebar
+            file={file}
+            setIsAnnotationsShown={setIsAnnotationsShown}
+            isAnnotationsShown={isAnnotationsShown}
+            setPendingAnnotations={setPendingAnnotations}
+            contextualization={contextualization}
+            onItemClicked={onItemClicked}
+            annotations={annotations}
+            fileIcon={fileIcon}
+            reset={() => unifiedViewerRef?.zoomToFit()}
+            selectedAnnotations={selectedAnnotations}
+            setSelectedAnnotations={setSelectedAnnotations}
+          />
+        </SidebarWrapper>
+      )}
     </FullHeightWrapper>
   );
 };

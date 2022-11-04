@@ -51,7 +51,7 @@ export const useAnnotations = (fileId: number): CogniteAnnotation[] => {
 
   // To Get only the annotation of resource type assets
   const eventsWithAsset = totalEvents.filter(
-    item => item.metadata?.CDF_ANNOTATION_resource_type === 'assets'
+    item => item.metadata?.CDF_ANNOTATION_resource_type === 'asset'
   );
 
   const uniqueAssetsIdSet = new Set<number>();
@@ -76,7 +76,13 @@ export const useAnnotations = (fileId: number): CogniteAnnotation[] => {
     return foundAssets?.name || '';
   });
 
-  return convertEventsToAnnotations(totalEvents).map((ev, idx) => ({
+  // filter out events without box property if not conversion will fail
+
+  const totalEventsWithBox = totalEvents.filter(ev =>
+    Boolean(ev?.metadata?.CDF_ANNOTATION_box)
+  );
+
+  return convertEventsToAnnotations(totalEventsWithBox).map((ev, idx) => ({
     ...ev,
     label: ev.label ? ev.label : labels[idx],
   }));

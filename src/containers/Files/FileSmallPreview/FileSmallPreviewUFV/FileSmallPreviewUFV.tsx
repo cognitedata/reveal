@@ -1,9 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { FileInfo, Asset } from '@cognite/sdk';
-import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { useSDK } from '@cognite/sdk-provider';
 import { Icon, Title, Badge, Body, Colors } from '@cognite/cogs.js';
 import uniq from 'lodash/uniq';
 import {
@@ -17,12 +15,11 @@ import {
 } from 'components';
 import { isFilePreviewable, getIdParam } from 'utils';
 import { SmallPreviewProps, SelectableItemProps } from 'types';
-import { FileDetails } from 'containers/Files';
-import { AppContext } from 'context/AppContext';
+import { FileDetails, FilePreviewUFV } from 'containers/Files';
 import { useSelectionButton } from 'hooks/useSelection';
-import { useAnnotations } from '../hooks';
+import { useAnnotations } from '../../hooks';
 
-export const FileSmallPreview = ({
+export const FileSmallPreviewUFV = ({
   fileId,
   actions,
   extras,
@@ -36,10 +33,6 @@ export const FileSmallPreview = ({
   fileId: number;
 } & SmallPreviewProps &
   Partial<SelectableItemProps>) => {
-  const sdk = useSDK();
-
-  const { overrideURLMap = {} } = useContext(AppContext) ?? {};
-
   const {
     data: file,
     isFetched,
@@ -152,20 +145,11 @@ export const FileSmallPreview = ({
       {hasPreview && (
         <InfoCell noBorders>
           <Preview>
-            <CogniteFileViewer
-              file={file}
-              sdk={sdk}
-              disableAutoFetch
-              hideControls
-              hideDownload
-              hideSearch
-              annotations={annotations}
-              pagination="small"
-              overrideURLMap={{
-                ...(overrideURLMap?.pdfjsWorkerSrc && {
-                  pdfjsWorkerSrc: overrideURLMap.pdfjsWorkerSrc,
-                }),
-              }}
+            <FilePreviewUFV
+              fileId={file.id}
+              creatable={false}
+              contextualization={false}
+              showSideBar={false}
             />
           </Preview>
         </InfoCell>

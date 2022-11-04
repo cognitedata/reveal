@@ -33,7 +33,7 @@ export const assets: Asset[] = [
       'Network Level': '["Facility - Sub-Level - PSH"]',
     },
     source: 'some source',
-    id: 354247832298988,
+    id: 560489721305992,
     labels: [
       { externalId: 'BEST_DAY_NETWORK_LEVEL_COUNTRY' },
       { externalId: 'SOME_LABEL' },
@@ -55,7 +55,7 @@ export const assets: Asset[] = [
       'Network Level': '["Facility - Sub-Level - PSH"]',
     },
     source: 'some source',
-    id: 8026188205449529,
+    id: 607065467418725,
   },
   {
     createdTime: new Date(1649079372960),
@@ -72,7 +72,7 @@ export const assets: Asset[] = [
       'Network Level': '["Facility - Sub-Level - PSH"]',
     },
     source: 'some source',
-    id: 4731838049650567,
+    id: 778676031640514,
   },
   {
     createdTime: new Date(1649079372960),

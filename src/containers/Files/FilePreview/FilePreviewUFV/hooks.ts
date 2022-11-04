@@ -60,6 +60,10 @@ export const useUnifiedFileViewerAnnotations = ({
             getContainerId(fileId)
           );
 
+          if (ufvAnnotation === undefined) {
+            return undefined;
+          }
+
           const isSelected = selectedAnnotations.some(
             ({ id }) => id === annotation.id
           );
@@ -74,6 +78,7 @@ export const useUnifiedFileViewerAnnotations = ({
             annotation
           );
         })
+        .filter((item): item is Annotation => Boolean(item))
         .map(annotation => applyHoverStylesToAnnotation(annotation, hoverId))
         .map(ufvAnnotation => ({
           ...ufvAnnotation,
