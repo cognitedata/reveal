@@ -59,7 +59,7 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
             if (viewer) {
               resetViewerEventHandlers(viewer);
               if (model instanceof CogniteCadModel) {
-                resetCognite3DModel(model);
+                resetCogniteCadModel(model);
               }
             } else {
               alert('Login is required to run examples');

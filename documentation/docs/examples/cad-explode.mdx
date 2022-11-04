@@ -8,7 +8,7 @@ import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 This section describes the exploded view tool, which contains helper functions and logic for inspecting and exploding a given asset.
-The constructor of this tool needs to be supplied with a [tree index](../concepts.md) which is the tree index of the root of the asset, and an instance of the `Cognite3DModel` that the asset belongs to.
+The constructor of this tool needs to be supplied with a [tree index](../concepts.md) which is the tree index of the root of the asset, and an instance of the `CogniteCadModel` that the asset belongs to.
 
 :::note
 For performance reasons, the root tree index must have a subtree size of less than 1000, else it will throw an error.
