@@ -63,6 +63,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _htmlOverlay: HtmlOverlayTool;
   private _measurementMode: boolean;
   private _showMeasurements: boolean;
+  private _showLabels: boolean;
 
   private readonly _handleLabelClustering = this.createCombineClusterElement.bind(this);
   private readonly _handlePointerClick = this.onPointerClick.bind(this);
@@ -95,7 +96,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     };
     this._measurements = [];
     this._measurementMode = false;
-    this._showMeasurements = true;
+    this._showMeasurements = this._showLabels = true;
     this._htmlOverlay = new HtmlOverlayTool(this._viewer, this._overlayOptions);
 
     this._geometryGroup.name = MeasurementTool.name;
@@ -237,6 +238,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._viewer.on('click', this._handlePointerClick);
     this._events.measurementStarted.fire();
     this._measurementMode = true;
+    this._showMeasurements = true;
   }
 
   /**
@@ -250,7 +252,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._viewer.off('click', this._handlePointerClick);
     this._events.measurementEnded.fire();
     this._measurementMode = false;
-    this._showMeasurements = true;
   }
 
   /**
@@ -288,6 +289,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   setMeasurementLabelsVisible(enable: boolean): void {
     if (this._showMeasurements) {
       this._htmlOverlay.visible(enable);
+      this._showLabels = enable;
     }
   }
 
@@ -350,7 +352,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._measurements.forEach(measurement => {
       measurement.visible(enable);
     });
-    this._htmlOverlay.visible(enable);
+    const showLabels = enable === false ? false : this._showLabels;
+    this._htmlOverlay.visible(showLabels);
     this._showMeasurements = enable;
     this._viewer.requestRedraw();
   }
