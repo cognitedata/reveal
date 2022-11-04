@@ -5,17 +5,16 @@
 import Stats from 'stats.js';
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import { THREE } from '@cognite/reveal';
+import { CogniteModel, THREE } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
   Cognite3DViewer,
   Cognite3DViewerOptions,
-  Cognite3DModel,
+  CogniteCadModel,
   CognitePointCloudModel,
   CameraControlsOptions,
   TreeIndexNodeCollection,
-  CogniteModelBase,
   DefaultCameraManager
 } from '@cognite/reveal';
 import { DebugCameraTool, ExplodedViewTool, AxisViewTool, Corner } from '@cognite/reveal/tools';
@@ -175,14 +174,14 @@ export function Viewer() {
 
 
       const totalBounds = new THREE.Box3();
-      function handleModelAdded(model: CogniteModelBase) {
+      function handleModelAdded(model: CogniteModel) {
         const bounds = model.getModelBoundingBox();
         totalBounds.expandByPoint(bounds.min);
         totalBounds.expandByPoint(bounds.max);
         clippingUi.updateWorldBounds(totalBounds);
 
         viewer.loadCameraFromModel(model);
-        if (model instanceof Cognite3DModel) {
+        if (model instanceof CogniteCadModel) {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, viewer, model);
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         } else if (model instanceof CognitePointCloudModel) {
