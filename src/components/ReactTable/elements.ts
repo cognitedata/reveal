@@ -20,6 +20,7 @@ export const ColumnSelectorWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  padding-bottom: 8px;
 `;
 
 export const StyledTable = styled.div`

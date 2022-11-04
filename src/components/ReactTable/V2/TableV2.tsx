@@ -47,6 +47,7 @@ export interface TableProps<T extends Record<string, any>>
   stickyHeader?: boolean;
   showLoadButton?: boolean;
   tableHeaders?: React.ReactElement;
+  tableSubHeaders?: React.ReactElement;
   enableColumnResizing?: boolean;
   hideColumnToggle?: boolean;
   hiddenColumns?: string[];
@@ -73,6 +74,7 @@ export function TableV2<T extends TableData>({
   hasNextPage,
   isLoadingMore,
   tableHeaders,
+  tableSubHeaders,
   fetchMore,
   id,
   hiddenColumns,
@@ -200,6 +202,8 @@ export function TableV2<T extends TableData>({
           )}
         </ColumnSelectorWrapper>
       ) : null}
+
+      {tableSubHeaders && tableSubHeaders}
 
       {!data || data.length === 0 ? (
         <EmptyState body="Please, refine your filters" />

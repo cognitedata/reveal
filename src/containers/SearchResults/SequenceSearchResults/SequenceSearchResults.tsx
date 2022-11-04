@@ -10,13 +10,13 @@ import { useResourceResults } from '../SearchResultLoader';
 import { Loader } from '@cognite/cogs.js';
 import { ColumnToggleProps } from 'components/ReactTable';
 import { InternalSequenceFilters } from 'domain/sequence';
+import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 
 export const SequenceSearchResults = ({
   query = '',
   filter = {},
-
   relatedResourceType,
-
+  onFilterChange,
   count,
   onClick,
   showCount = false,
@@ -30,6 +30,7 @@ export const SequenceSearchResults = ({
   count?: number;
   showCount?: boolean;
   onClick: (item: Sequence) => void;
+  onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & ColumnToggleProps<Sequence>) => {
   const api = convertResourceType('sequence');
   const { canFetchMore, fetchMore, isFetched, items } =
@@ -51,6 +52,9 @@ export const SequenceSearchResults = ({
             query={query}
             count={count}
           />
+        }
+        tableSubHeaders={
+          <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
         }
         data={items}
         fetchMore={fetchMore}

@@ -14,6 +14,7 @@ import { ColumnToggleProps } from 'components/ReactTable';
 import { useEventsSearchResultQuery } from 'domain/events/internal/queries/useEventsSearchResultQuery';
 import { InternalEventsFilters } from 'domain/events';
 import { TableSortBy } from 'components/ReactTable/V2';
+import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 
 export const EventSearchResults = ({
   query = '',
@@ -22,6 +23,7 @@ export const EventSearchResults = ({
   count,
   showCount = false,
   enableAdvancedFilters,
+  onFilterChange,
 }: {
   query?: string;
   filter?: InternalEventsFilters;
@@ -32,6 +34,7 @@ export const EventSearchResults = ({
   count?: number;
   enableAdvancedFilters?: boolean;
   onClick: (item: CogniteEvent) => void;
+  onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & ColumnToggleProps<CogniteEvent>) => {
   const api = convertResourceType('event');
   const { canFetchMore, fetchMore, isFetched, items } =
@@ -63,6 +66,9 @@ export const EventSearchResults = ({
             query={query}
             count={count}
           />
+        }
+        tableSubHeaders={
+          <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
         }
         data={enableAdvancedFilters ? data : items}
         enableSorting

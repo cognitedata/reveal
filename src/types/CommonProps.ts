@@ -13,6 +13,7 @@ import {
   InternalFilesFilters,
   InternalEventsFilters,
   InternalSequenceFilters,
+  InternalDocumentFilter,
 } from 'domain/index';
 
 export type SmallPreviewProps = {
@@ -54,6 +55,7 @@ export type NewFiltersType =
   | InternalAssetFilters
   | InternalTimeseriesFilters
   | InternalFilesFilters
+  | InternalDocumentFilter
   | InternalEventsFilters
   | InternalSequenceFilters;
 

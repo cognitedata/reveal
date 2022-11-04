@@ -11,6 +11,7 @@ import { Flex, Loader } from '@cognite/cogs.js';
 import { SearchResultToolbar, useResourceResults } from '..';
 import { ColumnToggleProps } from 'components/ReactTable';
 import { InternalTimeseriesFilters } from 'domain/timeseries';
+import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 
 export const TimeseriesSearchResults = ({
   query = '',
@@ -18,6 +19,7 @@ export const TimeseriesSearchResults = ({
   showCount = false,
   count,
   onClick,
+  onFilterChange,
   relatedResourceType,
   ...rest
 }: {
@@ -31,6 +33,7 @@ export const TimeseriesSearchResults = ({
   count?: number;
   showDatePicker?: boolean;
   onClick: (item: Timeseries) => void;
+  onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & ColumnToggleProps<Timeseries>) => {
   const api = convertResourceType('timeSeries');
 
@@ -57,6 +60,12 @@ export const TimeseriesSearchResults = ({
               filter={filter}
               count={count}
               query={query}
+            />
+          }
+          tableSubHeaders={
+            <AppliedFiltersTags
+              filter={filter}
+              onFilterChange={onFilterChange}
             />
           }
           data={items}

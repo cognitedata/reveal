@@ -8,3 +8,4 @@ export * from './sequence';
 export * from './timeseries';
 export * from './types';
 export * from './transformers';
+export * from './constants';

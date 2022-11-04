@@ -11,11 +11,13 @@ import {
   normalize,
   useObserveDocumentSearchFilters,
 } from 'domain/documents';
+import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 
 export interface DocumentSearchResultsProps {
   query?: string;
   filter: InternalDocumentFilter;
   onClick: (item: Document) => void;
+  onFilterChange?: (newValue: Record<string, unknown>) => void;
 }
 
 // When using this component do not forget to wrap it with DocumentSearchProvider.
@@ -23,6 +25,7 @@ export const DocumentSearchResults = ({
   query = '',
   filter,
   onClick,
+  onFilterChange,
 }: DocumentSearchResultsProps) => {
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { results, isLoading, fetchNextPage, hasNextPage } =
@@ -47,6 +50,9 @@ export const DocumentSearchResults = ({
             filter={filter}
             query={query}
           />
+        }
+        tableSubHeaders={
+          <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
         }
         data={normalizedDocuments}
         onRowClick={document => {

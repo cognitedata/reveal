@@ -12,11 +12,11 @@ import styled from 'styled-components';
 import { Flex } from '@cognite/cogs.js';
 import { ColumnToggleProps } from 'components/ReactTable';
 import { InternalFilesFilters } from 'domain/files';
+import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 
 export const FileSearchResults = ({
   query = '',
   filter = {},
-
   relatedResourceType,
   parentResource,
   count,
@@ -24,6 +24,7 @@ export const FileSearchResults = ({
   showCount = false,
   allowEdit = false,
   onClick,
+  onFilterChange,
   ...rest
 }: {
   query?: string;
@@ -37,6 +38,7 @@ export const FileSearchResults = ({
   allowEdit?: boolean;
   isGroupingFilesEnabled?: boolean;
   onClick: (item: FileInfo) => void;
+  onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & ColumnToggleProps<FileInfo>) => {
   // TODO: Remove this when migrated
   // if (filter.assetSubtreeIds) {
@@ -104,6 +106,12 @@ export const FileSearchResults = ({
               <StyledTableHeader justifyContent="flex-end">
                 {tableHeaders}
               </StyledTableHeader>
+            }
+            tableSubHeaders={
+              <AppliedFiltersTags
+                filter={filter}
+                onFilterChange={onFilterChange}
+              />
             }
             data={items}
             onRowClick={file => onClick(file)}
