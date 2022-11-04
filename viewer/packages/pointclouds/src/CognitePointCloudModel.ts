@@ -55,7 +55,7 @@ export class CognitePointCloudModel {
   /**
    * Used to clean up memory.
    */
-  dispose(): void { }
+  dispose(): void {}
 
   // eslint-disable-next-line jsdoc/require-description
   /**
