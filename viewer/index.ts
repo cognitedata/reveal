@@ -42,7 +42,7 @@ export {
   CdfModelNodeCollectionDataProvider
 } from './packages/cad-styling';
 
-export { CogniteModelBase, SupportedModelTypes } from './packages/model-base';
+export { SupportedModelTypes } from './packages/model-base';
 
 export {
   IndexSet,

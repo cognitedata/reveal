@@ -15,7 +15,6 @@ import {
   CognitePointCloudModel,
   CameraControlsOptions,
   TreeIndexNodeCollection,
-  CogniteModelBase,
   DefaultCameraManager
 } from '@cognite/reveal';
 import { DebugCameraTool, ExplodedViewTool, AxisViewTool, Corner } from '@cognite/reveal/tools';
@@ -174,7 +173,7 @@ export function Viewer() {
 
 
       const totalBounds = new THREE.Box3();
-      function handleModelAdded(model: CogniteModelBase) {
+      function handleModelAdded(model: Cognite3DModel | CognitePointCloudModel) {
         const bounds = model.getModelBoundingBox();
         totalBounds.expandByPoint(bounds.min);
         totalBounds.expandByPoint(bounds.max);

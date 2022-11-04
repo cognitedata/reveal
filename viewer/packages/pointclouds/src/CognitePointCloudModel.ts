@@ -9,7 +9,7 @@ import { PointCloudNode } from './PointCloudNode';
 
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
-import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
+import { SupportedModelTypes } from '@reveal/model-base';
 import { PointCloudObjectMetadata } from '@reveal/data-providers';
 
 import {
@@ -25,7 +25,7 @@ import {
  * @noInheritDoc
  * @module @cognite/reveal
  */
-export class CognitePointCloudModel implements CogniteModelBase {
+export class CognitePointCloudModel {
   public readonly type: SupportedModelTypes = 'pointcloud';
   public readonly modelId: number;
   /**
@@ -55,7 +55,7 @@ export class CognitePointCloudModel implements CogniteModelBase {
   /**
    * Used to clean up memory.
    */
-  dispose(): void {}
+  dispose(): void { }
 
   // eslint-disable-next-line jsdoc/require-description
   /**

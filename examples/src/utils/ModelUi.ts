@@ -1,12 +1,12 @@
 import { THREE } from '@cognite/reveal';
-import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CogniteModelBase, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
+import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
 
 import * as dat from 'dat.gui';
 import { isLocalUrlPointCloudModel } from './isLocalUrlPointCloudModel';
 
 export class ModelUi {
   private readonly _viewer: Cognite3DViewer;
-  private readonly _onModelAdded: (model: CogniteModelBase) => void;
+  private readonly _onModelAdded: (model: Cognite3DModel | CognitePointCloudModel) => void;
 
   private readonly _cadModels = new Array<Cognite3DModel>();
   private readonly _pointCloudModels = new Array<CognitePointCloudModel>();
@@ -21,7 +21,7 @@ export class ModelUi {
   private readonly _geometryFilterGui: dat.GUI;
 
   constructor(modelGui: dat.GUI, viewer: Cognite3DViewer,
-              onModelAdded: (model: CogniteModelBase) => void) {
+    onModelAdded: (model: Cognite3DModel | CognitePointCloudModel) => void) {
     this._viewer = viewer;
     this._onModelAdded = onModelAdded;
 
@@ -41,7 +41,7 @@ export class ModelUi {
     const guiActions = {
       removeLastModel: () => {
         viewer.removeModel(this._cadModels[0]);
-        this._cadModels.splice(0,1);
+        this._cadModels.splice(0, 1);
       },
       addModel: () =>
         this.addModel({
@@ -87,13 +87,13 @@ export class ModelUi {
     const modelState = urlParams.get('modelState');
     if (modelState !== null) {
       await this.restoreModelState(modelState);
-    } 
+    }
   }
 
   private saveModelStateToUrl() {
     const state = this._viewer.getViewState();
     const modelState = { models: state.models };
-    
+
     const url = new URL(window.location.href);
     url.searchParams.set('modelState', JSON.stringify(modelState));
     // Update URL without reloading

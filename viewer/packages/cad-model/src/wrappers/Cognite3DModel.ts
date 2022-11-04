@@ -6,7 +6,7 @@ import { CogniteInternalId } from '@cognite/sdk';
 
 import { callActionWithIndicesAsync } from '../utilities/callActionWithIndicesAsync';
 
-import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
+import { SupportedModelTypes } from '@reveal/model-base';
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, getDistanceToMeterConversionFactor } from '@reveal/cad-parsers';
 import { NumericRange, CameraConfiguration } from '@reveal/utilities';
@@ -22,7 +22,7 @@ import { WellKnownUnit } from '../types';
  * @noInheritDoc
  * @module @cognite/reveal
  */
-export class Cognite3DModel implements CogniteModelBase, CdfModelNodeCollectionDataProvider {
+export class Cognite3DModel implements CdfModelNodeCollectionDataProvider {
   public readonly type: SupportedModelTypes = 'cad';
 
   /**

@@ -52,7 +52,7 @@ import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 import { DefaultCameraManager, CameraManager, CameraChangeDelegate, ProxyCameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
-import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } from '@reveal/model-base';
+import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
@@ -125,7 +125,7 @@ export class Cognite3DViewer {
   };
   private readonly _mouseHandler: InputHandler;
 
-  private readonly _models: CogniteModelBase[] = [];
+  private readonly _models: (Cognite3DModel | CognitePointCloudModel)[] = [];
   private readonly _extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
@@ -187,7 +187,7 @@ export class Cognite3DViewer {
   /**
    * Gets a list of models currently added to the viewer.
    */
-  public get models(): CogniteModelBase[] {
+  public get models(): (Cognite3DModel | CognitePointCloudModel)[] {
     return this._models.slice();
   }
 
@@ -722,7 +722,7 @@ export class Cognite3DViewer {
    * .
    * @param model
    */
-  removeModel(model: CogniteModelBase): void {
+  removeModel(model: Cognite3DModel | CognitePointCloudModel): void {
     const modelIdx = this._models.indexOf(model);
     if (modelIdx === -1) {
       throw new Error('Model is not added to viewer');
@@ -929,7 +929,7 @@ export class Cognite3DViewer {
    * is used as a fallback.
    * @param model The model to load camera settings from.
    */
-  loadCameraFromModel(model: CogniteModelBase): void {
+  loadCameraFromModel(model: Cognite3DModel | CognitePointCloudModel): void {
     const config = model.getCameraConfiguration();
     if (config) {
       this._activeCameraManager.setCameraState({ position: config.position, target: config.target });
@@ -957,7 +957,7 @@ export class Cognite3DViewer {
    * viewer.fitCameraToModel(model, 0);
    * ```
    */
-  fitCameraToModel(model: CogniteModelBase, duration?: number): void {
+  fitCameraToModel(model: Cognite3DModel | CognitePointCloudModel, duration?: number): void {
     const bounds = model.getModelBoundingBox(new THREE.Box3(), true);
     this._activeCameraManager.fitCameraToBoundingBox(bounds, duration);
   }
@@ -1134,7 +1134,7 @@ export class Cognite3DViewer {
   /** @private */
   private getModels(type: 'pointcloud'): CognitePointCloudModel[];
   /** @private */
-  private getModels(type: SupportedModelTypes): CogniteModelBase[] {
+  private getModels(type: SupportedModelTypes): (Cognite3DModel | CognitePointCloudModel)[] {
     return this._models.filter(x => x.type === type);
   }
 
@@ -1330,9 +1330,9 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
   const customTarget = viewerOptions.renderTargetOptions?.target;
   const outputRenderTarget = customTarget
     ? {
-        target: customTarget,
-        autoSize: viewerOptions.renderTargetOptions?.autoSetSize
-      }
+      target: customTarget,
+      autoSize: viewerOptions.renderTargetOptions?.autoSetSize
+    }
     : undefined;
 
   const device = determineCurrentDevice();
