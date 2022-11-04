@@ -104,7 +104,7 @@ deserialization. This is done by calling the free-function `registerNodeCollecti
 defined by the custom `NodeCollection` and a lambda function which instantiates and restore the state of
 the `NodeCollection`. The lambda function has two parameters: the `descriptor` containing the state and
 options which should be applied to the `NodeCollection` and the context containing an instance of
-the [CogniteClient from the Cognite SDK](https://docs.cognite.com/dev/guides/sdk/js/) and the `Cognite3DModel`
+the [CogniteClient from the Cognite SDK](https://docs.cognite.com/dev/guides/sdk/js/) and the `CogniteCadModel`
 which the `NodeCollection` was originally applied to. It is up to the application developer how and if they
 want to use the context and/or descriptor, but it is provided as a convinience.
 
