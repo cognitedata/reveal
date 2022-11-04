@@ -15,3 +15,4 @@ export * from './saveEquipment';
 export * from './getEquipmentAsset';
 export * from './getDocuments';
 export * from './saveEquipmentRaw';
+export * from './callScarletScanner';

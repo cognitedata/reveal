@@ -21,7 +21,7 @@ export const useApi = <T>(
   const [state, setState] = useState<APIState<T>>({
     ...initialState,
     data: options?.data,
-    loading: !options?.data,
+    loading: !options?.skip && !options?.data,
   });
 
   const trigger = () => {
