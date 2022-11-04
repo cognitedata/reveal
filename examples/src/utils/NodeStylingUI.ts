@@ -1,7 +1,7 @@
 import { Cognite3DViewer, THREE } from '@cognite/reveal';
 import dat from 'dat.gui';
 
-import { Cognite3DModel, NodeAppearance, DefaultNodeAppearance, TreeIndexNodeCollection, NumericRange, NodeOutlineColor, PropertyFilterNodeCollection } from '@cognite/reveal';
+import { CogniteCadModel, NodeAppearance, DefaultNodeAppearance, TreeIndexNodeCollection, NumericRange, NodeOutlineColor, PropertyFilterNodeCollection } from '@cognite/reveal';
 import { CogniteClient, Viewer3DAPI } from '@cognite/sdk';
 
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };
@@ -22,11 +22,11 @@ const nodeOutlineColorValues = [
 
 export class NodeStylingUI {
   private readonly _client: CogniteClient;
-  private readonly _model: Cognite3DModel;
+  private readonly _model: CogniteCadModel;
   private readonly _viewer: Cognite3DViewer;
   private readonly _areaHelpers: THREE.Object3D[] = [];
 
-  constructor(uiFolder: dat.GUI, client: CogniteClient, viewer: Cognite3DViewer, model: Cognite3DModel) {
+  constructor(uiFolder: dat.GUI, client: CogniteClient, viewer: Cognite3DViewer, model: CogniteCadModel) {
     this._model = model;
     this._client = client;
     this._viewer = viewer;

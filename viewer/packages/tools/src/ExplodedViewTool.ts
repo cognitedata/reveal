@@ -4,10 +4,10 @@
 import * as THREE from 'three';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 import { MetricsLogger } from '@reveal/metrics';
-import { Cognite3DModel } from '@reveal/api';
+import { CogniteCadModel } from '@reveal/api';
 
 export class ExplodedViewTool extends Cognite3DViewerToolBase {
-  private readonly _cadModel: Cognite3DModel;
+  private readonly _cadModel: CogniteCadModel;
   private _treeBoundingBoxdata!: Promise<{ treeIndex: number; direction: THREE.Vector3; transform: THREE.Matrix4 }[]>;
   private readonly _rootTreeIndex: number;
 
@@ -15,7 +15,7 @@ export class ExplodedViewTool extends Cognite3DViewerToolBase {
     return this._treeBoundingBoxdata.then();
   }
 
-  constructor(treeIndex: number, cadModel: Cognite3DModel) {
+  constructor(treeIndex: number, cadModel: CogniteCadModel) {
     super();
 
     this._cadModel = cadModel;
@@ -47,7 +47,7 @@ export class ExplodedViewTool extends Cognite3DViewerToolBase {
     this._cadModel.resetNodeTransformByTreeIndex(this._rootTreeIndex, true);
   }
 
-  private preloadBoundingBoxData(cadModel: Cognite3DModel, treeIndex: number) {
+  private preloadBoundingBoxData(cadModel: CogniteCadModel, treeIndex: number) {
     const rootTreeIndexBoundingBox = cadModel
       .getBoundingBoxByTreeIndex(treeIndex)
       .then(rootBoundingBox => rootBoundingBox.getCenter(new THREE.Vector3()));
