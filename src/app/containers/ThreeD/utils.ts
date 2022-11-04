@@ -16,7 +16,7 @@ import {
 import { FetchQueryOptions, QueryClient } from 'react-query';
 
 const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
-const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
+export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
 
 export const MINIMUM_BOUNDINGBOX_SIZE = 0.001;
 export const CAMERA_ANIMATION_DURATION = 500;
@@ -190,19 +190,10 @@ export const findClosestAsset = async (
   return closestAssetId;
 };
 
-export const getURLWithThreeDViewerState = (
-  state: string,
-  selectedAssetId?: number
-): string => {
+export const getURLWithThreeDViewerState = (state: string): string => {
   const search = window.location.search;
   const params = new URLSearchParams(search);
   params.append(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY, state);
-  if (selectedAssetId) {
-    params.append(
-      THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY,
-      `${selectedAssetId}`
-    );
-  }
 
   return `${window.location.origin}${
     window.location.pathname
@@ -210,17 +201,12 @@ export const getURLWithThreeDViewerState = (
 };
 
 export const parseThreeDViewerStateFromURL = (): {
-  selectedAssetId?: number;
   viewerState?: ViewerState;
 } => {
   const search = window.location.search;
   const params = new URLSearchParams(search);
   const viewerStateParam = params.get(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY);
-  const selectedAssetIdParam = params.get(
-    THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY
-  );
   params.delete(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY);
-  params.delete(THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY);
 
   window.history.replaceState(
     null,
@@ -235,20 +221,7 @@ export const parseThreeDViewerStateFromURL = (): {
     viewerState = undefined;
   }
 
-  let selectedAssetId: number | undefined;
-  try {
-    const parsedNum = parseInt(selectedAssetIdParam ?? '', 10);
-    if (Number.isNaN(parsedNum)) {
-      selectedAssetId = undefined;
-    } else {
-      selectedAssetId = parsedNum;
-    }
-  } catch {
-    selectedAssetId = undefined;
-  }
-
   return {
     viewerState,
-    selectedAssetId,
   };
 };

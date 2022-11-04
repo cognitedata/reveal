@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  useMemo,
-  useState,
-  useEffect,
-} from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Button, Flex, Input } from '@cognite/cogs.js';
 import { AssetMappingsList } from 'app/containers/ThreeD/AssetMappingsList';
 import {
@@ -27,8 +21,8 @@ import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
 type ThreeDSidebarProps = {
   modelId: number;
   revisionId: number;
-  selectedAssetId?: number;
-  setSelectedAssetId: Dispatch<SetStateAction<number | undefined>>;
+  selectedAssetId: number | null;
+  setSelectedAssetId: (assetId: number | null) => void;
   viewer: Cognite3DViewer;
   threeDModel: Cognite3DModel;
 };
@@ -85,7 +79,7 @@ export const AssetMappingsSidebar = ({
       setSelectedAssetId(clickedAssetId);
     } else {
       removeAllStyles(threeDModel);
-      setSelectedAssetId(undefined);
+      setSelectedAssetId(null);
     }
   };
 

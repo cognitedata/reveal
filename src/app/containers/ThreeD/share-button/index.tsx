@@ -4,17 +4,13 @@ import { notification } from 'antd';
 import { getURLWithThreeDViewerState } from 'app/containers/ThreeD/utils';
 
 type ShareButtonProps = {
-  selectedAssetId?: number;
   viewer: Cognite3DViewer | null;
 };
 
-const ShareButton = ({
-  selectedAssetId,
-  viewer,
-}: ShareButtonProps): JSX.Element => {
+const ShareButton = ({ viewer }: ShareButtonProps): JSX.Element => {
   const handleShare = async () => {
     const stringifiedState = JSON.stringify(viewer?.getViewState());
-    const link = getURLWithThreeDViewerState(stringifiedState, selectedAssetId);
+    const link = getURLWithThreeDViewerState(stringifiedState);
     await navigator.clipboard.writeText(`${link}`);
     notification.info({
       key: 'clipboard',

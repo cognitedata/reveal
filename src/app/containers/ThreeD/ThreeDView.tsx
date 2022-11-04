@@ -17,7 +17,12 @@ import { Flex, ToolBar } from '@cognite/cogs.js';
 import ThreeDTitle from './ThreeDTitle';
 import ShareButton from './share-button';
 import NodePreview from './NodePreview';
-import { parseThreeDViewerStateFromURL, removeAllStyles } from './utils';
+import {
+  parseThreeDViewerStateFromURL,
+  removeAllStyles,
+  THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY,
+} from './utils';
+import { useSearchParamNumber } from 'app/utils/URLUtils';
 
 export const ThreeDView = ({ modelId }: { modelId: number }) => {
   const [urlState, setUrlState] =
@@ -30,12 +35,13 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
     setUrlState(parseThreeDViewerStateFromURL());
   }, []);
 
-  const [selectedAssetId, setSelectedAssetId] = useState<number | undefined>();
+  const [selectedAssetId, setSelectedAssetId] = useSearchParamNumber(
+    THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY,
+    {
+      replace: true,
+    }
+  );
   const [nodesSelectable, setNodesSelectable] = useState<boolean>(true);
-
-  useEffect(() => {
-    setSelectedAssetId(urlState?.selectedAssetId);
-  }, [urlState?.selectedAssetId]);
 
   const [assetDetailsExpanded, setAssetDetailsExpanded] = useState(false);
 
@@ -107,10 +113,7 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
                         nodesSelectable={nodesSelectable}
                         setNodesSelectable={setNodesSelectable}
                       />
-                      <ShareButton
-                        selectedAssetId={selectedAssetId}
-                        viewer={viewer}
-                      />
+                      <ShareButton viewer={viewer} />
                       <HelpButton />
                     </StyledToolBar>
                   )}
@@ -120,7 +123,7 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
                         assetId={selectedAssetId}
                         closePreview={() => {
                           setAssetDetailsExpanded(false);
-                          setSelectedAssetId(undefined);
+                          setSelectedAssetId(null);
                           if (threeDModel) {
                             removeAllStyles(threeDModel);
                           }

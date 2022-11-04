@@ -1,6 +1,4 @@
 import React, {
-  Dispatch,
-  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -45,12 +43,12 @@ type Props = {
   modelId: number;
   revisionId: number;
 
-  setSelectedAssetId: Dispatch<SetStateAction<number | undefined>>;
+  setSelectedAssetId: (assetId: number | null) => void;
   nodesSelectable: boolean;
   children?: (opts: ChildProps) => JSX.Element;
   assetColumnVisible: boolean;
   initialViewerState?: ViewerState;
-  selectedAsset?: number;
+  selectedAsset: number | null;
   onAssetColumnClose?: () => void;
 };
 
@@ -221,7 +219,7 @@ export function Reveal({
             removeAllStyles(threeDModel);
           }
 
-          setSelectedAssetId(closestAssetId);
+          setSelectedAssetId(closestAssetId ?? null);
           clearTimeout(clickTimer.current);
           numOfClicks.current = 0;
         }, 250);
