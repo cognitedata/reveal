@@ -21,7 +21,7 @@ import Keyboard from './Keyboard';
 
 const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 
-export function getHTMLOffset(domElement: HTMLElement, clientX: number, clientY: number) {
+function getHTMLOffset(domElement: HTMLElement, clientX: number, clientY: number) {
   return new Vector2(clientX - domElement.offsetLeft, clientY - domElement.offsetTop);
 }
 
