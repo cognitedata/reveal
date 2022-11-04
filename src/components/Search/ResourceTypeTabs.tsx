@@ -1,6 +1,6 @@
 import React from 'react';
 import { ResourceType } from 'types';
-import { Colors, Label, Tabs } from '@cognite/cogs.js';
+import { Colors, Label, TabPaneProps, Tabs } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { useResultCount } from 'components/ResultCount/ResultCount';
 
@@ -26,30 +26,34 @@ const defaultResourceTypes: ResourceType[] = [
 
 type Props = {
   resourceTypes?: ResourceType[];
-  currentResourceType: ResourceType;
+  currentResourceType?: string;
+  setCurrentResourceType: (tab?: string) => void;
   isDocumentEnabled?: boolean;
   query?: string;
   filter?: any;
   showCount?: boolean;
-  setCurrentResourceType: (newResourceType: ResourceType) => void;
+  additionalTabs?: React.ReactElement<TabPaneProps>[];
 };
 
 const ResourceTypeTab = ({
   currentResourceType,
   query,
   showCount = false,
-}: Omit<Props, 'setCurrentResourceType' | 'isDocumentEnabled'>) => {
+}: Omit<
+  Props,
+  'setCurrentResourceType' | 'isDocumentEnabled' | 'additionalTabs'
+>) => {
   const result = useResultCount({
     filter: {},
     query,
     api: query && query.length > 0 ? 'search' : 'list',
-    type: currentResourceType,
+    type: currentResourceType as ResourceType,
   });
 
   return (
     <TabContainer>
       <ResourceTypeTitle>
-        {resourceTypeMap[currentResourceType]}
+        {resourceTypeMap[currentResourceType as ResourceType]}
       </ResourceTypeTitle>
       {showCount && (
         <Label size="small" variant="unknown">
@@ -64,13 +68,15 @@ export const ResourceTypeTabs = ({
   setCurrentResourceType,
   resourceTypes = defaultResourceTypes,
   isDocumentEnabled = false,
+  additionalTabs = [],
   ...rest
 }: Props) => {
   return (
     <StyledTabs
       activeKey={currentResourceType}
-      onChange={tab => setCurrentResourceType(tab as ResourceType)}
+      onChange={tab => setCurrentResourceType(tab)}
     >
+      {additionalTabs}
       {resourceTypes.map(resourceType => {
         // This basically hides the 'Documents' tab with the help of a feature flag controlled from subapp.
         if (!isDocumentEnabled && resourceType === 'document') {

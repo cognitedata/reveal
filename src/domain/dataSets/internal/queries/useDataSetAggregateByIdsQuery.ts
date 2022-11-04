@@ -6,7 +6,7 @@ import { ONE_HOUR_IN_MS } from '../../service/constants';
 import { getAggregateByIds } from '../../service/network/getAggregateById';
 
 export const useDataSetAggregateByIdsQuery = (
-  type: SdkResourceType,
+  type: SdkResourceType | undefined,
   dataSets: DataSetInternal[]
 ) => {
   const sdk = useSDK();
@@ -14,7 +14,11 @@ export const useDataSetAggregateByIdsQuery = (
   return useQuery(
     ['dataset-counts', type, dataSets],
     () => {
-      return getAggregateByIds(sdk, type, dataSets);
+      if (type) {
+        return getAggregateByIds(sdk, type, dataSets);
+      }
+
+      return dataSets;
     },
     {
       enabled: dataSets?.length > 0,

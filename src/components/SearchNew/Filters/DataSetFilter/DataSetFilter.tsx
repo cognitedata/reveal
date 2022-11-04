@@ -24,7 +24,7 @@ export const DataSetFilterV2 = ({
   value,
   setValue,
 }: {
-  resourceType: ResourceType;
+  resourceType?: ResourceType;
   value?: number[];
   setValue: (newValue: OptionValue<number>[] | undefined) => void;
 }) => {
@@ -44,7 +44,7 @@ export const DataSetFilterV2 = ({
   };
 
   const { data: datasetOptions, isError } = useResourceTypeDataSetAggregate(
-    convertResourceType(resourceType)
+    resourceType ? convertResourceType(resourceType) : undefined
   );
 
   return (
