@@ -1330,9 +1330,9 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
   const customTarget = viewerOptions.renderTargetOptions?.target;
   const outputRenderTarget = customTarget
     ? {
-      target: customTarget,
-      autoSize: viewerOptions.renderTargetOptions?.autoSetSize
-    }
+        target: customTarget,
+        autoSize: viewerOptions.renderTargetOptions?.autoSetSize
+      }
     : undefined;
 
   const device = determineCurrentDevice();
