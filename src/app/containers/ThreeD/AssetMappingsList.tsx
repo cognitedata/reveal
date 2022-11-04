@@ -1,7 +1,6 @@
 import React from 'react';
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Flex, Graphic, Icon } from '@cognite/cogs.js';
-import { Asset } from '@cognite/sdk';
 import Highlighter from 'react-highlight-words';
 import { Link } from 'react-router-dom';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -9,6 +8,7 @@ import { FixedSizeList as List } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import styled from 'styled-components';
 import { trackUsage } from 'app/utils/Metrics';
+import { AugmentedMapping } from './hooks';
 
 const EmptyAssetMappingsList = () => {
   return (
@@ -31,13 +31,12 @@ const EmptyAssetMappingsList = () => {
 };
 
 type AssetMappingsListProps = {
-  assets: Asset[];
+  assets: AugmentedMapping[];
   query: string;
   selectedAssetId?: number;
   itemCount: number;
   onClick: (assetId: number) => void;
   isItemLoaded: (index: number) => boolean;
-  loadMoreItems: () => void;
 };
 
 export const AssetMappingsList = ({
@@ -47,14 +46,13 @@ export const AssetMappingsList = ({
   itemCount,
   onClick,
   isItemLoaded,
-  loadMoreItems,
 }: AssetMappingsListProps) => {
   const filteredAssets =
-    assets.filter(({ name, description }) => {
+    assets.filter(({ assetName, assetDescription }) => {
       const queryLower = query.toLowerCase();
       return (
-        name.toLowerCase().includes(queryLower) ||
-        description?.toLowerCase().includes(queryLower)
+        assetName.toLowerCase().includes(queryLower) ||
+        assetDescription?.toLowerCase().includes(queryLower)
       );
     }) || [];
 
@@ -68,7 +66,7 @@ export const AssetMappingsList = ({
           <InfiniteLoader
             isItemLoaded={isItemLoaded}
             itemCount={query ? filteredAssets.length : itemCount}
-            loadMoreItems={loadMoreItems}
+            loadMoreItems={() => {}}
           >
             {({ onItemsRendered, ref }) => (
               <List
@@ -86,16 +84,16 @@ export const AssetMappingsList = ({
 
                   return (
                     <AssetListItem
-                      key={filteredAssets[index].id}
+                      key={filteredAssets[index].assetId}
                       onClick={() => {
-                        onClick(filteredAssets[index].id);
+                        onClick(filteredAssets[index].assetId);
                         trackUsage('Exploration.Action.Select', {
                           selectedAssetId,
                         });
                       }}
-                      onKeyDown={() => onClick(filteredAssets[index].id)}
+                      onKeyDown={() => onClick(filteredAssets[index].assetId)}
                       className={
-                        selectedAssetId === filteredAssets[index].id
+                        selectedAssetId === filteredAssets[index].assetId
                           ? 'selected'
                           : ''
                       }
@@ -107,14 +105,14 @@ export const AssetMappingsList = ({
                         <Icon type="Assets" style={{ marginRight: 5 }} />
                         <Highlighter
                           searchWords={query.split(' ')}
-                          textToHighlight={filteredAssets[index].name}
+                          textToHighlight={filteredAssets[index].assetName}
                           autoEscape
                         />
                       </Flex>
                       <Highlighter
                         searchWords={query.split(' ')}
                         textToHighlight={
-                          filteredAssets[index].description || ''
+                          filteredAssets[index].assetDescription || ''
                         }
                         autoEscape
                       />

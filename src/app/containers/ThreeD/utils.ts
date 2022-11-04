@@ -67,11 +67,12 @@ export const fitCameraToAsset = async (
     queryClient,
     modelId,
     revisionId,
-    assetId
+    assetId,
+    100
   );
 
   const boundingBoxNodes = await Promise.all(
-    mappings.map(m =>
+    mappings.items.map(m =>
       fetchBoundingBoxByNodeIdQuery(
         sdk,
         queryClient,

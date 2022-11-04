@@ -1,7 +1,16 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Button, Flex, Input, Loader } from '@cognite/cogs.js';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useMemo,
+  useState,
+  useEffect,
+} from 'react';
+import { Button, Flex, Input } from '@cognite/cogs.js';
 import { AssetMappingsList } from 'app/containers/ThreeD/AssetMappingsList';
-import { useMappedAssets } from 'app/containers/ThreeD/hooks';
+import {
+  AugmentedMapping,
+  useInfiniteAssetMappings,
+} from 'app/containers/ThreeD/hooks';
 import styled from 'styled-components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
@@ -44,9 +53,21 @@ export const AssetMappingsSidebar = ({
   const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState(false);
 
-  const { data: mappedAssets, isFetched } = useMappedAssets(
-    modelId,
-    revisionId
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isFetching } =
+    useInfiniteAssetMappings(modelId, revisionId, 1000);
+
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  const items = useMemo(
+    () =>
+      data?.pages
+        .reduce((accl, p) => [...accl, ...p.items], [] as AugmentedMapping[])
+        .sort((a, b) => a.assetName.localeCompare(b.assetName)),
+    [data?.pages]
   );
 
   const handleAssetClick = async (clickedAssetId: number) => {
@@ -68,16 +89,6 @@ export const AssetMappingsSidebar = ({
     }
   };
 
-  const isItemLoaded = (index: number) => {
-    if (mappedAssets?.length) {
-      return Boolean(index < mappedAssets?.length);
-    }
-    return true;
-  };
-
-  if (!isFetched) {
-    return <Loader />;
-  }
   return (
     <SidebarContainer
       expanded={expanded}
@@ -96,6 +107,8 @@ export const AssetMappingsSidebar = ({
           }}
           placeholder={asset?.name || 'Search assets'}
           fullWidth
+          iconPlacement="right"
+          icon={isFetching || hasNextPage ? 'Loader' : undefined}
         />
         {expanded && (
           <Button
@@ -110,16 +123,15 @@ export const AssetMappingsSidebar = ({
       {expanded && (
         <AssetMappingsList
           query={query}
-          assets={mappedAssets ?? []}
+          assets={items ?? []}
           selectedAssetId={selectedAssetId}
           onClick={e => {
             handleAssetClick(e);
             setExpanded(false);
             trackUsage('Exploration.Action.Select', { selectedAssetId });
           }}
-          itemCount={mappedAssets?.length ?? 0}
-          isItemLoaded={isItemLoaded}
-          loadMoreItems={() => {}}
+          itemCount={items?.length ?? 0}
+          isItemLoaded={i => i < (items?.length || 0)}
         />
       )}
     </SidebarContainer>

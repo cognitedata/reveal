@@ -1,5 +1,4 @@
 import {
-  Asset,
   AssetMapping3D,
   CogniteClient,
   CogniteError,
@@ -9,25 +8,33 @@ import {
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import uniqBy from 'lodash/uniqBy';
+import uniqWith from 'lodash/uniqWith';
+import isEqual from 'lodash/isEqual';
+import keyBy from 'lodash/keyBy';
 import {
   FetchQueryOptions,
   QueryClient,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
-  useQueryClient,
   UseQueryOptions,
 } from 'react-query';
-import uniqWith from 'lodash/uniqWith';
-import isEqual from 'lodash/isEqual';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];
   nextCursor?: string;
 };
 
-export type AssetMappingResponse = {
-  items: Asset[];
+type MappingResponse = {
+  items: AssetMapping3D[];
+  nextCursor?: string;
+};
+export interface AugmentedMapping extends AssetMapping3D {
+  assetName: string;
+  assetDescription?: string;
+}
+export type AugmentedMappingResponse = {
+  items: AugmentedMapping[];
   nextCursor?: string;
 };
 
@@ -115,28 +122,37 @@ export const useInfiniteAssetMappings = (
   modelId?: number,
   revisionId?: number,
   limit?: number,
-  config?: UseInfiniteQueryOptions<AssetMappingResponse>
+  config?: UseInfiniteQueryOptions<AugmentedMappingResponse>
 ) => {
   const sdk = useSDK();
 
-  return useInfiniteQuery<AssetMappingResponse>(
+  return useInfiniteQuery<AugmentedMappingResponse>(
     ['cdf', 'infinite', '3d', 'asset-mapping', modelId, revisionId],
     async ({ pageParam }) => {
-      // Query asset mappings in the 3D model
-      const models = await sdk.get(
-        `/api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/mappings`,
-        { params: { limit: limit || 1000, cursor: pageParam } }
-      );
-      const assetMappings = models.data.items as AssetMapping3D[];
-      const uniqueAssetMappings = uniqBy(assetMappings, 'assetId');
+      const models = await getAssetMappingsQueryFn(sdk, modelId, revisionId, {
+        limit,
+        cursor: pageParam,
+      });
+      const assetMappings = uniqWith(models.items, isEqual);
+      const uniqueAssets = uniqBy(assetMappings, 'assetId');
 
       // Query assets corresponding to the asset mappings
-      const assets = await sdk.assets.retrieve(
-        uniqueAssetMappings.map(({ assetId }) => ({ id: assetId })),
-        { ignoreUnknownIds: true }
+      const assets = keyBy(
+        await sdk.assets.retrieve(
+          uniqueAssets.map(({ assetId }) => ({ id: assetId })),
+          { ignoreUnknownIds: true }
+        ),
+        'id'
       );
 
-      return { nextCursor: models.data.nextCursor, items: assets };
+      return {
+        nextCursor: models.nextCursor,
+        items: models.items.map(mapping => ({
+          ...mapping,
+          assetName: assets[mapping.assetId].name,
+          assetDescription: assets[mapping.assetId].description,
+        })),
+      };
     },
     {
       getNextPageParam: r => r.nextCursor,
@@ -146,7 +162,11 @@ export const useInfiniteAssetMappings = (
   );
 };
 
-const getAssetMappingsQueryKey = (modelId?: number, revisionId?: number) => [
+const getAssetMappingsQueryKey = (
+  modelId?: number,
+  revisionId?: number,
+  params?: any
+) => [
   'cdf',
   '3d',
   'model',
@@ -154,27 +174,29 @@ const getAssetMappingsQueryKey = (modelId?: number, revisionId?: number) => [
   'revision',
   revisionId,
   'asset-mappings',
+  params,
 ];
 
-export const getAssetMappingsQueryFn = (
+export const getAssetMappingsQueryFn = async (
   sdk: CogniteClient,
   modelId?: number,
   revisionId?: number,
   opts?: {
     assetId?: number;
+    nodeId?: number;
     limit?: number;
+    cursor?: string;
   }
 ) => {
   if (!modelId || !revisionId) {
-    return [] as AssetMapping3D[];
+    return Promise.reject('modelId or revisionId missing');
   }
-  const request = opts?.assetId
-    ? sdk.assetMappings3D.list(modelId!, revisionId, { assetId: opts?.assetId })
-    : sdk.assetMappings3D.list(modelId!, revisionId);
 
-  return request
-    .autoPagingToArray({ limit: opts?.limit || -1 })
-    .then(mappings => uniqWith(mappings, isEqual));
+  const r = await sdk.get<MappingResponse>(
+    `/api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/mappings`,
+    { params: opts }
+  );
+  return r.data;
 };
 
 export const fetchAssetMappingsQuery = (
@@ -182,12 +204,17 @@ export const fetchAssetMappingsQuery = (
   queryClient: QueryClient,
   modelId?: number,
   revisionId?: number,
-  limit: number = -1,
-  options?: FetchQueryOptions<AssetMapping3D[]>
-): Promise<AssetMapping3D[]> => {
+  queryParams?: {
+    cursor?: string;
+    limit?: number;
+    nodeId?: number;
+    assetId?: number;
+  },
+  options?: FetchQueryOptions<MappingResponse>
+): Promise<MappingResponse> => {
   return queryClient.fetchQuery(
-    getAssetMappingsQueryKey(modelId, revisionId),
-    () => getAssetMappingsQueryFn(sdk, modelId, revisionId, { limit }),
+    getAssetMappingsQueryKey(modelId, revisionId, queryParams),
+    () => getAssetMappingsQueryFn(sdk, modelId, revisionId, queryParams),
     options
   );
 };
@@ -196,64 +223,27 @@ export const useAssetMappings = (
   modelId?: number,
   revisionId?: number,
   limit?: number,
-  options?: UseQueryOptions<
-    AssetMapping3D[],
+  options?: UseInfiniteQueryOptions<
+    MappingResponse,
     CogniteError,
-    AssetMapping3D[],
+    MappingResponse,
+    MappingResponse,
     (string | number | undefined)[]
   >
 ) => {
   const sdk = useSDK();
 
-  return useQuery(
+  return useInfiniteQuery(
     getAssetMappingsQueryKey(modelId, revisionId),
-    () => getAssetMappingsQueryFn(sdk, modelId, revisionId, { limit }),
+    ({ pageParam }) =>
+      getAssetMappingsQueryFn(sdk, modelId, revisionId, {
+        limit,
+        cursor: pageParam,
+      }),
     {
       ...options,
       enabled: !!modelId && !!revisionId && (options?.enabled ?? true),
-    }
-  );
-};
-
-const getMappedAssetsQueryKey = (modelId: number, revisionId: number) => [
-  'cdf',
-  '3d',
-  'model',
-  modelId,
-  'revision',
-  revisionId,
-  'mapped-assets',
-];
-
-export const useMappedAssets = (
-  modelId?: number,
-  revisionId?: number,
-  limit: number = -1,
-  options?: UseQueryOptions<Asset[], CogniteError, Asset[], (string | number)[]>
-) => {
-  const sdk = useSDK();
-  const queryClient = useQueryClient();
-
-  return useQuery(
-    getMappedAssetsQueryKey(modelId!, revisionId!),
-    async () => {
-      const mappings = await fetchAssetMappingsQuery(
-        sdk,
-        queryClient,
-        modelId,
-        revisionId,
-        limit
-      );
-
-      return mappings?.length
-        ? sdk.assets
-            .retrieve(mappings?.map(({ assetId }) => ({ id: assetId })))
-            .then(stuff => stuff.sort((a, b) => a.name.localeCompare(b.name)))
-        : [];
-    },
-    {
-      ...options,
-      enabled: !!modelId && !!revisionId && (options?.enabled ?? true),
+      getNextPageParam: lastpage => lastpage.nextCursor,
     }
   );
 };
@@ -294,9 +284,9 @@ export const fetchAssetMappingsByAssetIdQuery = async (
   modelId: number,
   revisionId: number,
   assetId: number,
-  limit: number = -1,
-  options?: FetchQueryOptions<AssetMapping3D[]>
-): Promise<AssetMapping3D[]> => {
+  limit: number = 10,
+  options?: FetchQueryOptions<MappingResponse>
+) => {
   return queryClient.fetchQuery(
     getAssetMappingsByAssetIdQueryKey(modelId, revisionId, assetId),
     () => getAssetMappingsQueryFn(sdk, modelId, revisionId, { assetId, limit }),
@@ -310,7 +300,7 @@ export const fetchAncestorsByNodeIdQuery = async (
   modelId: number,
   revisionId: number,
   nodeId: number,
-  limit: number = -1,
+  limit: number = 1000,
   options?: FetchQueryOptions<Node3D[]>
 ): Promise<Node3D[]> => {
   return queryClient.fetchQuery(
@@ -345,42 +335,42 @@ export const fetchClosestAssetIdQuery = async (
   modelId: number,
   revisionId: number,
   nodeId: number,
-  limit: number = -1,
+  limit: number = 1000,
   options?: FetchQueryOptions<number | undefined>
 ): Promise<number | undefined> => {
   return queryClient.fetchQuery(
     getClosestAssetIdQueryKey(modelId, revisionId, nodeId),
     async () => {
-      const [ancestors, mappings] = await Promise.all([
-        fetchAncestorsByNodeIdQuery(
-          sdk,
-          queryClient,
-          modelId,
-          revisionId,
-          nodeId,
-          limit
-        ),
-        fetchAssetMappingsQuery(sdk, queryClient, modelId, revisionId, limit),
-      ]);
+      const ancestors = await fetchAncestorsByNodeIdQuery(
+        sdk,
+        queryClient,
+        modelId,
+        revisionId,
+        nodeId,
+        limit
+      );
 
-      const assetNodeIds = ancestors
+      const nodeIds = ancestors
         .filter(node => node.depth !== 0)
         .map(node => node.id)
         .reverse();
 
-      let closestAssetId: number | undefined;
-      for (const assetNodeId of assetNodeIds) {
-        const mapping = mappings.find(
-          ({ nodeId: mappingNodeId }) => mappingNodeId === assetNodeId
-        );
-
-        if (mapping) {
-          closestAssetId = mapping.assetId;
-          break;
+      for (let nodeId of nodeIds) {
+        const { assetId } = (await fetchAssetMappingsQuery(
+          sdk,
+          queryClient,
+          modelId,
+          revisionId,
+          {
+            nodeId,
+            // TODO: figure out what happens when a node maps to multiple assets
+            limit: 1,
+          }
+        ).then(r => r.items[0])) || { assetId: undefined };
+        if (assetId) {
+          return assetId;
         }
       }
-
-      return closestAssetId;
     },
     options
   );
