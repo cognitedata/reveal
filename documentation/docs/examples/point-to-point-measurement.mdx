@@ -53,11 +53,8 @@ measurementTool.on('added', (measurement) => {
 measurementTool.enterMeasurementMode();
 ```
 
-
-
 ### Mode of measurement
 To get the mode of measurement `MeasurementTool.isInMeasurementMode`. It returns `true` if the measurement is active else `false`.
-
 
 ## Set width, color & label units of the measuring line
 To change width, color of the line and label units, use `MeasurementTool.setLineOptions(options: MeasurementOptions)`. MeasurementOptions expects
@@ -149,10 +146,19 @@ setTimeout(() => {
 }, 6000);
 ```
 
+### Hide and show measurements
+It's possible to toggle between hide & show the measurements in the viewer.
+It can be useful to view the details of an object without measurements blocking the view.
+To do this, use `MeasurementTool.visible(enable: boolean)`.
+```jsx
+//Hide all measurements in the viewer
+measurementTool.visible(false);
+```
+
 To remove all measurement from the viewer, use `MeasurementTool.removeAllMeasurement()`
 
 ### Label visibility
-Measurement labels can be hidden/visible using `MeasurementTool.showMeasurementLabels(enable: boolean)`.
+It is also possible to hide/show only the labels of the measurement using `MeasurementTool.showMeasurementLabels(enable: boolean)`.
 ```jsx
 // Hide all measurement lables
 measurementTool.showMeasurementLabels(false);
