@@ -59,7 +59,7 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
    * @param propertyKey Node property key, e.g. `':FU'`.
    * @param propertyValues Lookup values, e.g. `["AR100APG539","AP500INF534","AP400INF553", ...]`
    */
-  executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[], batchSize: number): Promise<void> {
+  executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[], batchSize: number = 1000): Promise<void> {
     const { requestPartitions } = this._options;
 
     const outputsUrl = this.buildUrl();
