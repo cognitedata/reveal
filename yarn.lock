@@ -1705,10 +1705,10 @@
   dependencies:
     comlink "4.3.1"
 
-"@cognite/reveal@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-3.2.0.tgz#b1ec6f28643f55f346d595b88ad2010a7ad768c0"
-  integrity sha512-Vl3Hq0DpG7yN2lJAVc+W+IktLkraVzBlgFWLoWUJQ94dyzPFxbgFxn5b1exhl0Om5KZ1+gLSdW2NtUS+ynpdmA==
+"@cognite/reveal@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-3.2.1.tgz#7053f9988e279b24758125f51e96a6d6fed59be0"
+  integrity sha512-DaGXM3L0FcCYgSHsnYb2rvM+8ASdTupMS0XeuI8lw6pZtvNKFyi+a7zOdd5p6Hp7uLpvKOmI68W1nUP9pHDakg==
   dependencies:
     "@cognite/reveal-parser-worker" "1.3.0"
     "@tweenjs/tween.js" "18.6.4"
