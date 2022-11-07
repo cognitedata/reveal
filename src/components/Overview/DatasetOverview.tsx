@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { useState } from 'react';
 import styled from 'styled-components';
 import Row from 'antd/lib/row';
