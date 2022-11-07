@@ -23,9 +23,8 @@ export const ThreeDModelCellLink = ({
       href={createLink(`/explore/threeD/${mapping.model.id}`, {
         selectedAssetId: assetId,
       })}
-      onClick={e => {
-        e.stopPropagation();
-      }}
+      onClick={e => e.stopPropagation()}
+      as="a"
     >
       {mapping.model.name}
     </A>
