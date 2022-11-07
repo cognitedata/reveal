@@ -16,7 +16,6 @@ import { CreateExtpipe } from 'pages/create/CreateExtpipe';
 import { trackUsage } from 'utils/Metrics';
 import { useTranslation } from 'common';
 import ExtpipesTableSearch from 'components/table/ExtpipesTableSearch';
-import { createLink } from '@cognite/cdf-utilities';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html';
@@ -151,22 +150,7 @@ export default function CombinedComponent() {
     <div>
       <PageWrapperColumn>
         <CapabilityCheck requiredPermissions={EXTPIPES_READS}>
-          <Flex direction="row" justifyContent="space-between">
-            <Title level={3}>{t('extraction-pipeline', { count: 0 })}</Title>
-            <Flex gap={8}>
-              <Button href={createLink('/extractors')} type="link">
-                {t('download-extractors')}
-              </Button>
-              <Button
-                href={LEARNING_AND_RESOURCES_URL}
-                icon="ExternalLink"
-                iconPlacement="right"
-                type="link"
-              >
-                {t('learning-and-resources')}
-              </Button>
-            </Flex>
-          </Flex>
+          <Title level={3}>{t('extraction-pipeline', { count: 0 })}</Title>
           <Flex>
             <Extpipes />
           </Flex>
