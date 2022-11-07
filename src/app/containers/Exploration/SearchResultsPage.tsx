@@ -13,7 +13,7 @@ import {
   SearchFilters as OldSearchFilters,
 } from '@cognite/data-exploration';
 
-import { Colors, Flex } from '@cognite/cogs.js';
+import { Colors, Flex, Tabs } from '@cognite/cogs.js';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceSelectionContext, {
   useResourceFilter,
@@ -50,9 +50,12 @@ import { useDocumentFilters } from 'app/store/filter/selectors/documentSelectors
 import { CogniteEvent } from '@cognite/sdk';
 import { useNavigate } from 'react-router-dom';
 import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
+import { AllTab } from 'app/containers/All';
 
-const getPageTitle = (query: string, resourceType: ResourceType): string => {
-  return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
+const getPageTitle = (query: string, resourceType?: ResourceType): string => {
+  return `${query}${query ? ' in' : ''} ${
+    resourceType ? getTitle(resourceType, true) : 'All'
+  }`;
 };
 
 function SearchPage() {
@@ -143,9 +146,18 @@ function SearchPage() {
             <ResourceTypeTabs
               showCount
               query={query}
-              currentResourceType={currentResourceType}
-              setCurrentResourceType={setCurrentResourceType}
+              currentResourceType={currentResourceType || 'all'}
+              setCurrentResourceType={tab => {
+                setCurrentResourceType(
+                  tab === 'all' ? undefined : (tab as ResourceType)
+                );
+              }}
               isDocumentEnabled={isDocumentEnabled}
+              additionalTabs={[
+                <Tabs.TabPane tab="All" key="all">
+                  <AllTab />
+                </Tabs.TabPane>,
+              ]}
             />
           </TabsContainer>
 
@@ -250,14 +262,14 @@ function SearchPage() {
                   </SearchResultWrapper>
                 </Flex>
 
-                {active && activeId && (
+                {active && activeId && currentResourceType && (
                   <SearchResultWrapper>
                     <ResourcePreview
                       item={{ id: activeId, type: currentResourceType }}
                     />
                   </SearchResultWrapper>
                 )}
-                {!activeId && cart.length > 0 && (
+                {!activeId && currentResourceType && cart.length > 0 && (
                   <SelectedResults
                     ids={cart.map(id => ({ id }))}
                     resourceType={currentResourceType}
@@ -290,7 +302,9 @@ function SearchPage() {
           showCount
           query={query}
           currentResourceType={currentResourceType}
-          setCurrentResourceType={setCurrentResourceType}
+          setCurrentResourceType={tab =>
+            setCurrentResourceType(tab as ResourceType)
+          }
           isDocumentEnabled={isDocumentEnabled}
         />
       </TabsContainer>
@@ -411,14 +425,14 @@ function SearchPage() {
               </SearchResultWrapper>
             </Flex>
 
-            {active && activeId && (
+            {active && activeId && currentResourceType && (
               <SearchResultWrapper>
                 <ResourcePreview
                   item={{ id: activeId, type: currentResourceType }}
                 />
               </SearchResultWrapper>
             )}
-            {!activeId && cart.length > 0 && (
+            {!activeId && currentResourceType && cart.length > 0 && (
               <SelectedResults
                 ids={cart.map(id => ({ id }))}
                 resourceType={currentResourceType}

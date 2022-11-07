@@ -81,7 +81,7 @@ export const useResourcesState = () => {
   };
 };
 
-export const useResourceFilter = (type: ResourceType) => {
+export const useResourceFilter = (type?: ResourceType) => {
   const observer = useContext(ResourceSelectionContext);
   switch (type) {
     case 'asset': {
@@ -99,14 +99,10 @@ export const useResourceFilter = (type: ResourceType) => {
     case 'timeSeries': {
       return observer.timeseriesFilter;
     }
-    case 'threeD': {
-      return {};
-    }
-    case 'document': {
-      return {};
-    }
+    case 'threeD':
+    case 'document':
     default:
-      throw new Error('Unknown sdk type-filter');
+      return {};
   }
 };
 export const useSetResourceFilter = (type: ResourceType) => {

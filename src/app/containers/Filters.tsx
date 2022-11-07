@@ -12,7 +12,7 @@ import { SequenceFilters } from './Sequence/SequenceFilters';
 import { DocumentFilter } from 'app/containers/Document/DocumentFilters';
 
 export interface Props {
-  resourceType: ResourceType;
+  resourceType?: ResourceType;
 }
 
 export const Filters: React.FC<Props> = ({ resourceType }) => {

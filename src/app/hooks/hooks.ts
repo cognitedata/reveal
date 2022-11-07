@@ -83,17 +83,17 @@ export function useQueryStringArray(
 }
 
 export const useCurrentResourceType = (): [
-  ResourceType,
-  (type?: string) => void
+  ResourceType | undefined,
+  (type?: ResourceType) => void
 ] => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { resourceType = 'asset' } = useParams<{
+  const { resourceType } = useParams<{
     resourceType: ResourceType;
   }>();
   const setCurrentResourceType = React.useCallback(
-    (newResourceType?: string) => {
+    (newResourceType?: ResourceType) => {
       const { [SEARCH_KEY]: query, [FILTER]: filter } = qs.parse(
         location.search,
         opts
@@ -101,7 +101,9 @@ export const useCurrentResourceType = (): [
 
       navigate(
         createLink(
-          `/explore/search/${newResourceType}`,
+          newResourceType
+            ? `/explore/search/${newResourceType}`
+            : '/explore/search',
           {
             [SEARCH_KEY]: query,
             [FILTER]: filter,

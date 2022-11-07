@@ -15,7 +15,7 @@ import {
 import { TempCommonMultiSelectFix } from 'app/containers/elements';
 
 interface Props {
-  resourceType: ResourceType;
+  resourceType?: ResourceType;
 }
 export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
   const [commonFilter, setCommonFilter] = useCommonFilters();

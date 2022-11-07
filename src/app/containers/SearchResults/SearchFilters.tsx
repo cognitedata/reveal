@@ -27,7 +27,7 @@ export const SearchFilters = ({
   resourceType,
 }: // enableFilterFeature,
 {
-  resourceType: ResourceType;
+  resourceType?: ResourceType;
   visible?: boolean;
   allowHide?: boolean;
 }) => {

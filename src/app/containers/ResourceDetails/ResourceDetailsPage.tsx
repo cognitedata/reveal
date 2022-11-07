@@ -21,6 +21,10 @@ const resourcePageType = {
 
 export const ResourceDetailsPage = () => {
   const [currentResourceType] = useCurrentResourceType();
+  if (!currentResourceType) {
+    return null;
+  }
+
   const ResourcePage = resourcePageType[currentResourceType];
 
   return (

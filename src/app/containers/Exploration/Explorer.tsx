@@ -11,9 +11,11 @@ export const Explorer = () => {
     <AppWrapper>
       <ResourceSelectorProvider>
         <Routes>
-          <Route path="/search/:resourceType" element={<SearchResultsPage />}>
-            <Route path=":id" element={<SearchResultsPage />}>
-              <Route path=":tabType" element={<SearchResultsPage />} />
+          <Route path="/search" element={<SearchResultsPage />}>
+            <Route path=":resourceType" element={<SearchResultsPage />}>
+              <Route path=":id" element={<SearchResultsPage />}>
+                <Route path=":tabType" element={<SearchResultsPage />} />
+              </Route>
             </Route>
           </Route>
           <Route path="/:resourceType/:id" element={<ResourceDetailsPage />}>
