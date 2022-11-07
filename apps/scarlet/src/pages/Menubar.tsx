@@ -28,7 +28,7 @@ export const MenuBar = () => {
       <TopBar.Right>
         <TopBar.Action
           interactable={!state.loading}
-          text="Trigger Scarlet Scanner"
+          text="Scan Documents"
           onClick={triggerDocumentScans}
           icon={state.loading ? 'Loader' : 'Play'}
         />

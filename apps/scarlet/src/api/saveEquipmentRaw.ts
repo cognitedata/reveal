@@ -2,8 +2,7 @@ import { CogniteClient, RawDBRowInsert } from '@cognite/sdk';
 import { toast } from '@cognite/cogs.js';
 import { transformEquipmentToRaw } from 'transformations';
 import { EquipmentData, Facility } from 'types';
-
-const DB_NAME = 'Scarlet_Output';
+import config from 'utils/config';
 
 export const saveEquipmentRaw = async (
   client: CogniteClient,
@@ -19,12 +18,13 @@ export const saveEquipmentRaw = async (
     equipment: EquipmentData;
   }
 ) => {
+  const dbName = `Scarlet_Output_${config.env}`;
   const tableName = `U1_${facility?.name}_Unit${unitId}`;
 
-  const tableExist = await getExistingTable(client, tableName);
+  const tableExist = await getExistingTable(client, dbName, tableName);
   if (!tableExist) {
     try {
-      await client.raw.createTables(DB_NAME, [{ name: tableName }]);
+      await client.raw.createTables(dbName, [{ name: tableName }]);
     } catch (e) {
       console.error(`Failed to create table in RAW. table: ${tableName}`, e);
       toast.error('Failed to create table in RAW');
@@ -38,22 +38,26 @@ export const saveEquipmentRaw = async (
   );
 
   try {
-    await client.raw.insertRows(DB_NAME, tableName, nomralizedData);
+    await client.raw.insertRows(dbName, tableName, nomralizedData);
   } catch (e) {
     console.error(
-      `Failed to insert rows. DB Name: ${DB_NAME}, table: ${tableName}`,
+      `Failed to insert rows. DB Name: ${dbName}, table: ${tableName}`,
       e
     );
     toast.error('Failed to export data to RAW');
   }
   toast.success('Successfully exported data to RAW');
 
-  // await client.raw.deleteRows(DB_NAME, tableName, [{ key: '' }]);
+  // await client.raw.deleteRows(dbName, tableName, [{ key: '' }]);
 };
 
-const getExistingTable = async (client: CogniteClient, tableName: string) => {
+const getExistingTable = async (
+  client: CogniteClient,
+  dbName: string,
+  tableName: string
+) => {
   try {
-    const tables = await client.raw.listTables(DB_NAME);
+    const tables = await client.raw.listTables(dbName);
     return tables.items.some((table) => table.name === tableName);
   } catch (e) {
     console.error(`Failed to create table in RAW. table: ${tableName}`, e);
