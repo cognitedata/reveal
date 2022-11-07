@@ -1,22 +1,24 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import Row from 'antd/lib/row';
 import Col from 'antd/lib/col';
 import Card from 'antd/lib/card';
 import BasicInfoCard from 'components/BasicInfoCard';
-import { Title, Flex, Body, Button, Icon } from '@cognite/cogs.js';
+import { Title, Flex, Body, Button, Icon, Textarea } from '@cognite/cogs.js';
 import {
   ContentView,
   Divider,
   DataSet,
   ContentWrapper,
   isEmptyDataset,
-  ADD_DATA_INTO_DATASET,
+  EXPLORE_DATA_CATALOG,
 } from 'utils';
 import { useTranslation } from 'common/i18n';
 import UsersIcon from 'assets/Users.svg';
 import { useResourceAggregates } from 'hooks/useResourceAggregates';
 import { createLink } from '@cognite/cdf-utilities';
 import EmptyDatasetIcon from 'assets/EmptyDataset.svg';
+import { useUpdateDataSetMutation } from 'actions';
 
 type DatasetOverviewProps = {
   dataset: DataSet;
@@ -28,7 +30,10 @@ const DatasetOverview = ({
   onActiveTabChange,
 }: DatasetOverviewProps): JSX.Element => {
   const { t } = useTranslation();
-
+  const [isEditEnabled, setEdit] = useState(false);
+  const { isLoading: isUpdating, mutateAsync: updateDataSet } =
+    useUpdateDataSetMutation();
+  const [description, setDescription] = useState(dataset.description || '');
   const { id } = dataset;
   const [
     { data: assets, isLoading: isAssetsLoading },
@@ -95,6 +100,25 @@ const DatasetOverview = ({
     return 100;
   };
 
+  const handleEdit = () => {
+    updateDataSet({
+      ...dataset,
+      description,
+    }).then(() => {
+      setEdit(false);
+    });
+  };
+
+  const isDatasetResourceLoading = () => {
+    return (
+      isAssetsLoading ||
+      isEventsLoading ||
+      isFilesLoading ||
+      isSequencesLoading ||
+      isTimeseriesLoading
+    );
+  };
+
   return (
     <ContentWrapper $backgroundColor="#FAFAFA">
       <Row>
@@ -102,9 +126,58 @@ const DatasetOverview = ({
           <Row>
             <Col span={24}>
               <StyledCard className="margin-right-bottom">
-                <StyledCardTitle level={5}>{t('description')}</StyledCardTitle>
+                <StyledFlex justifyContent="space-between" alignItems="center">
+                  <Title level={5}>{t('description')}</Title>
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      setEdit(!isEditEnabled);
+                    }}
+                  >
+                    {t('edit')}
+                  </Button>
+                </StyledFlex>
                 <Divider />
-                <ContentView>{dataset?.description}</ContentView>
+                <ContentView>
+                  {isEditEnabled ? (
+                    <Flex
+                      direction="column"
+                      justifyContent="space-between"
+                      alignItems="stretch"
+                    >
+                      <Textarea
+                        style={{ width: '100%', minHeight: 100 }}
+                        placeholder={t('add-description')}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                      <Flex
+                        gap={8}
+                        style={{ alignSelf: 'flex-end', paddingTop: 16 }}
+                      >
+                        <Button
+                          icon="Checkmark"
+                          type="primary"
+                          onClick={handleEdit}
+                        >
+                          {isUpdating ? <Icon type="Loader" /> : t('save')}
+                        </Button>
+                        <Button
+                          icon="Close"
+                          type="secondary"
+                          onClick={() => {
+                            setEdit(false);
+                            setDescription(dataset.description || '');
+                          }}
+                        >
+                          {t('cancel')}
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  ) : (
+                    dataset?.description
+                  )}
+                </ContentView>
               </StyledCard>
             </Col>
           </Row>
@@ -126,13 +199,15 @@ const DatasetOverview = ({
                 <Divider />
                 <Row style={{ padding: 12 }}>
                   <Col span={24}>
-                    {isEmptyDataset(
-                      resourceAggregates.assets.value,
-                      resourceAggregates.events.value,
-                      resourceAggregates.files.value,
-                      resourceAggregates.sequences.value,
-                      resourceAggregates.timeseries.value
-                    ) ? (
+                    {isDatasetResourceLoading() ? (
+                      <Icon type="Loader" />
+                    ) : isEmptyDataset(
+                        resourceAggregates.assets.value,
+                        resourceAggregates.events.value,
+                        resourceAggregates.files.value,
+                        resourceAggregates.sequences.value,
+                        resourceAggregates.timeseries.value
+                      ) ? (
                       <Flex
                         alignItems="center"
                         direction="column"
@@ -151,7 +226,7 @@ const DatasetOverview = ({
                         >
                           {t('learn-how-to')}{' '}
                           <a
-                            href={ADD_DATA_INTO_DATASET}
+                            href={EXPLORE_DATA_CATALOG}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -288,6 +363,10 @@ const StyledCard = styled(Card)`
 `;
 
 const StyledCardTitle = styled(Title)`
+  padding: 16px 24px;
+`;
+
+const StyledFlex = styled(Flex)`
   padding: 16px 24px;
 `;
 

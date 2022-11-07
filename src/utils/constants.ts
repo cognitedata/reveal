@@ -8,8 +8,6 @@ export const EXPLORE_DATA_CATALOG =
   'https://docs.cognite.com/cdf/data_governance/guides/datasets/create_data_sets.html';
 export const CREATE_DATASET_DOC =
   'https://docs.cognite.com/cdf/data_governance/guides/datasets/create_data_sets.html#step-3a-ingest-new-data-into-the-data-set';
-export const ADD_DATA_INTO_DATASET =
-  'https://docs.cognite.com/cdf/data_governance/guides/datasets/create_data_sets/#step-3a-ingest-new-data-into-the-data-set';
 export const EDIT_DATASET_HELP_DOC =
   'https://docs.cognite.com/cdf/data_governance/guides/datasets/edit_explore_data_sets.html';
 export const EDIT_DATASET_DOC =
