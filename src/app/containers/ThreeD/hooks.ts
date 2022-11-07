@@ -19,6 +19,7 @@ import {
   useQuery,
   UseQueryOptions,
 } from 'react-query';
+import { prepareSearchString } from './utils';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];
@@ -32,6 +33,7 @@ type MappingResponse = {
 export interface AugmentedMapping extends AssetMapping3D {
   assetName: string;
   assetDescription?: string;
+  searchValue: Set<string>;
 }
 export type AugmentedMappingResponse = {
   items: AugmentedMapping[];
@@ -122,11 +124,11 @@ export const useInfiniteAssetMappings = (
   modelId?: number,
   revisionId?: number,
   limit?: number,
-  config?: UseInfiniteQueryOptions<AugmentedMappingResponse>
+  config?: UseInfiniteQueryOptions<AugmentedMappingResponse, CogniteError>
 ) => {
   const sdk = useSDK();
 
-  return useInfiniteQuery<AugmentedMappingResponse>(
+  return useInfiniteQuery<AugmentedMappingResponse, CogniteError>(
     ['cdf', 'infinite', '3d', 'asset-mapping', modelId, revisionId],
     async ({ pageParam }) => {
       const models = await getAssetMappingsQueryFn(sdk, modelId, revisionId, {
@@ -137,13 +139,16 @@ export const useInfiniteAssetMappings = (
       const uniqueAssets = uniqBy(assetMappings, 'assetId');
 
       // Query assets corresponding to the asset mappings
-      const assets = keyBy(
-        await sdk.assets.retrieve(
-          uniqueAssets.map(({ assetId }) => ({ id: assetId })),
-          { ignoreUnknownIds: true }
-        ),
-        'id'
-      );
+      const assets =
+        uniqueAssets.length > 0
+          ? keyBy(
+              await sdk.assets.retrieve(
+                uniqueAssets.map(({ assetId }) => ({ id: assetId })),
+                { ignoreUnknownIds: true }
+              ),
+              'id'
+            )
+          : {};
 
       return {
         nextCursor: models.nextCursor,
@@ -151,6 +156,11 @@ export const useInfiniteAssetMappings = (
           ...mapping,
           assetName: assets[mapping.assetId].name,
           assetDescription: assets[mapping.assetId].description,
+          searchValue: prepareSearchString(
+            `${assets[mapping.assetId].name} ${
+              assets[mapping.assetId].description
+            }`
+          ),
         })),
       };
     },

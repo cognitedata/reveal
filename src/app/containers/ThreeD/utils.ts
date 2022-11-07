@@ -225,3 +225,22 @@ export const parseThreeDViewerStateFromURL = (): {
     viewerState,
   };
 };
+
+const GREP_STRING_SPLITTER = /\s/;
+export function grepContains(contentSet: Set<string>, querySet: Set<string>) {
+  const content = [...contentSet];
+  const query = [...querySet];
+  return query.every(queryPart =>
+    content.find(content_part => content_part.includes(queryPart))
+  );
+}
+
+export function prepareSearchString(s: string): Set<string> {
+  return new Set(
+    s
+      .trim()
+      .toLocaleLowerCase()
+      .split(GREP_STRING_SPLITTER)
+      .filter(s => s.length > 0)
+  );
+}

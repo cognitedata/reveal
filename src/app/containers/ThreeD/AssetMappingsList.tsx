@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Flex, Graphic, Icon } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
@@ -9,37 +9,63 @@ import InfiniteLoader from 'react-window-infinite-loader';
 import styled from 'styled-components';
 import { trackUsage } from 'app/utils/Metrics';
 import { AugmentedMapping } from './hooks';
+import { prepareSearchString, grepContains } from './utils';
+import { CogniteError } from '@cognite/sdk';
 
-const EmptyAssetMappingsList = () => {
+const FeedbackFlex = styled(Flex)`
+  padding-top: 30px;
+`;
+const FeedbackContainer = ({ children }: { children?: React.ReactNode }) => (
+  <FeedbackFlex direction="column" justifyContent="center" alignItems="center">
+    {children}
+  </FeedbackFlex>
+);
+
+const EmptyAssetMappings = () => {
   return (
-    <Flex
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-      style={{ marginTop: 30 }}
-    >
+    <FeedbackContainer>
       <Graphic type="Search" />
-      <Body>No asset mapping found.</Body>
+      No results
+    </FeedbackContainer>
+  );
+};
+
+const MappingsMissing = () => {
+  return (
+    <FeedbackContainer>
+      <Graphic type="Search" />
+      <Body>No asset mapping found</Body>
       <Link
         to={createLink('/entity_matching/3d_matching')}
         style={{ color: 'var(--cogs-primary)' }}
       >
         Go to 3D entity matching
       </Link>
-    </Flex>
+    </FeedbackContainer>
+  );
+};
+
+const MappingsError = () => {
+  return (
+    <FeedbackContainer>
+      <Graphic type="Search" />
+      <Body>An error occured retriving masset mappings</Body>
+    </FeedbackContainer>
   );
 };
 
 type AssetMappingsListProps = {
-  assets: AugmentedMapping[];
+  error?: CogniteError | null;
   query: string;
-  selectedAssetId: number | null;
+  assets: AugmentedMapping[];
+  selectedAssetId?: number | null;
   itemCount: number;
   onClick: (assetId: number) => void;
   isItemLoaded: (index: number) => boolean;
 };
 
 export const AssetMappingsList = ({
+  error,
   assets,
   query,
   selectedAssetId,
@@ -47,18 +73,30 @@ export const AssetMappingsList = ({
   onClick,
   isItemLoaded,
 }: AssetMappingsListProps) => {
-  const filteredAssets =
-    assets.filter(({ assetName, assetDescription }) => {
-      const queryLower = query.toLowerCase();
-      return (
-        assetName.toLowerCase().includes(queryLower) ||
-        assetDescription?.toLowerCase().includes(queryLower)
-      );
-    }) || [];
+  const querySet = useMemo(() => prepareSearchString(query), [query]);
+
+  const filteredAssets = useMemo(
+    () =>
+      querySet.size > 0
+        ? assets.filter(({ searchValue }) =>
+            grepContains(searchValue, querySet)
+          )
+        : assets,
+    [assets, querySet]
+  );
+
+  if (error) {
+    return <MappingsError />;
+  }
+
+  if (!assets?.length) {
+    return <MappingsMissing />;
+  }
 
   if (filteredAssets.length === 0) {
-    return <EmptyAssetMappingsList />;
+    return <EmptyAssetMappings />;
   }
+
   return (
     <AssetList>
       <AutoSizer>

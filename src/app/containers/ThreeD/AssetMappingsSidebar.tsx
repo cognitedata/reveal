@@ -47,8 +47,14 @@ export const AssetMappingsSidebar = ({
   const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState(false);
 
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isFetching } =
-    useInfiniteAssetMappings(modelId, revisionId, 1000);
+  const {
+    error,
+    data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    isFetching,
+  } = useInfiniteAssetMappings(modelId, revisionId, 1000);
 
   useEffect(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -116,6 +122,7 @@ export const AssetMappingsSidebar = ({
       </Flex>
       {expanded && (
         <AssetMappingsList
+          error={error}
           query={query}
           assets={items ?? []}
           selectedAssetId={selectedAssetId}
