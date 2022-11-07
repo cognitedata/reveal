@@ -164,6 +164,7 @@
   "last-updated": "Last updated",
   "learn-more-how-to-add-data": "to learn more on how to add data to your data set",
   "learn-more-in-our-docs": "Learn more in our docs",
+  "learn-how-to": "Learn how to",
   "lineage-": "CDF SQL transformations",
   "lineage-data-consumers-subtitle": "The below information shows what system or project are data consumers using the data. For now this information needs to be manually registered.",
   "lineage-documentation": "External transformation documentation",

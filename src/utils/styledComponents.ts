@@ -423,8 +423,12 @@ export const SectionLine = styled.div`
 `;
 
 export const ContentWrapper = styled.div<{ $backgroundColor?: string }>`
-  padding: 24px 32px;
+  padding: 24px;
   min-height: 300px;
   height: 100%;
   background-color: ${({ $backgroundColor }) => $backgroundColor || '#FFF'};
+
+  .margin-right-bottom {
+    margin: 0 24px 24px 0;
+  }
 `;

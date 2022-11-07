@@ -431,3 +431,19 @@ export const createInternalLink = (path?: string | number) => {
   const mountPoint = window.location.pathname.split('/')[2];
   return createLink(`/${mountPoint}/${path || ''}`);
 };
+
+export const isEmptyDataset = (
+  assets: number,
+  events: number,
+  files: number,
+  sequences: number,
+  timeseries: number
+) => {
+  return (
+    assets === 0 &&
+    events === 0 &&
+    files === 0 &&
+    sequences === 0 &&
+    timeseries === 0
+  );
+};
