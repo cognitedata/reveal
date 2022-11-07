@@ -30,7 +30,7 @@ export const AppliedFiltersTags: React.FC<Props> = ({
 
             return (
               <FilterChip
-                key={`${value}-${displayValue}`}
+                key={`${key}-${value}-${displayValue}`}
                 name={key}
                 value={displayValue}
                 onClick={() => {

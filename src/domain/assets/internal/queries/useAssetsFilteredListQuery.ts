@@ -10,7 +10,7 @@ import { useAssetsSearchQueryMetadataKeysQuery } from './useAssetsMetadataKeysQu
 
 export const useAssetsSearchResultQuery = ({
   query,
-  assetFilter,
+  assetFilter = {},
   sortBy,
 }: {
   query?: string;

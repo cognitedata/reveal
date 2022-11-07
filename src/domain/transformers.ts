@@ -10,7 +10,7 @@ export const transformNewFilterToOldFilter = <T>(
   filter?: any
 ): T | undefined => {
   if (filter === undefined) {
-    return undefined;
+    return {} as T;
   }
 
   // TODO: Remove this when migrated

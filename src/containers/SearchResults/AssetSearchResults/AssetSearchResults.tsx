@@ -20,7 +20,7 @@ import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFilters
 
 export const AssetSearchResults = ({
   query = '',
-  filter,
+  filter = {},
   showCount = false,
   onClick,
   isTreeEnabled,

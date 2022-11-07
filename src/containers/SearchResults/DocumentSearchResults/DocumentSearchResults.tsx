@@ -23,7 +23,7 @@ export interface DocumentSearchResultsProps {
 // When using this component do not forget to wrap it with DocumentSearchProvider.
 export const DocumentSearchResults = ({
   query = '',
-  filter,
+  filter = {},
   onClick,
   onFilterChange,
 }: DocumentSearchResultsProps) => {
