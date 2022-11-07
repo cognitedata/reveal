@@ -912,14 +912,6 @@ export class Cognite3DViewer {
   }
 
   /**
-   * @obvious
-   * @returns The THREE.Scene used for rendering.
-   */
-  getScene(): THREE.Scene {
-    return this._sceneHandler.scene;
-  }
-
-  /**
    * Attempts to load the camera settings from the settings stored for the
    * provided model. See {@link https://docs.cognite.com/api/v1/#operation/get3DRevision}
    * and {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions} for
