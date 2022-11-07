@@ -862,7 +862,7 @@ export class Cognite3DViewer {
     const alpha = backgroundColor.alpha ?? this.renderer.getClearAlpha();
 
     this.renderer.setClearColor(color, alpha);
-    this.spinner.updateBackgroundColor(backgroundColor.color);
+    this.spinner.updateBackgroundColor(color);
     this.requestRedraw();
   }
 
