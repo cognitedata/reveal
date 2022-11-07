@@ -1349,10 +1349,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@7.16.0":
-  version "7.16.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.16.0.tgz#426b078a39d4af9c8bdadb1eec8c57b053200c5e"
-  integrity sha512-MwhjDCu/jUGM1cPdZG2TRi0ACQW30leuGB0yYUbVtBD6RqEKbkTFGjioAOcpg82wMXQ6I52UDJsqOHUx7qxdQA==
+"@cognite/cogs.js@7.17.0":
+  version "7.17.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.17.0.tgz#eb41af349ef72282e50e813243cc4378e975cfdf"
+  integrity sha512-I2QAiPDBQGSnQX6g8aUMjvR4xogU0WiVxg1kh6oFdo3qymJCXH22y1bIUJRMiXWmqpufLlKvC+wWOtjtAPhJYg==
   dependencies:
     "@emotion/react" "^11.9.3"
     "@emotion/styled" "^11.9.3"
@@ -1564,15 +1564,15 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/data-exploration@5.22.1":
-  version "5.22.1"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.22.1.tgz#e48f398cc430ee98012acf285a7d3044b12a3f09"
-  integrity sha512-3XKvgSwNXXUIG72PD7/8rYZsCiZLHCK7hGkEpm94jTOZAm0VLj4wSUj0W7ZfhupPSdw96F3ZhHAyhhgWuVRpsw==
+"@cognite/data-exploration@5.24.1":
+  version "5.24.1"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.24.1.tgz#b2c79aaf742c72aea91f24fd2b268d425881cc0a"
+  integrity sha512-Hv/NyoPjeGasDvSMD6u3tM5WHa9YwW81ncghIXtGsQW42qAmWWxX5NT6fQUFng8jSWrHncJPc+/uYxl5GaxsoQ==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
     "@cognite/cdf-utilities" "^0.14.4"
-    "@cognite/cogs.js" "7.16.0"
+    "@cognite/cogs.js" "7.17.0"
     "@cognite/gcs-browser-upload" cognitedata/gcs-browser-upload#mn/temporary-azure-fix
     "@cognite/react-document-search" "0.2.0"
     "@cognite/react-document-table" "^1.22.2"
