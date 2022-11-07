@@ -780,7 +780,7 @@ __metadata:
     "@tweenjs/tween.js": 18.6.4
     "@types/dat.gui": 0.7.7
     "@types/draco3dgltf": 1.4.0
-    "@types/expect-puppeteer": 5.0.1
+    "@types/expect-puppeteer": 5.0.2
     "@types/glob": 8.0.0
     "@types/jest": 29.2.0
     "@types/jest-environment-puppeteer": 5.0.2
@@ -1945,13 +1945,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/expect-puppeteer@npm:5.0.1":
-  version: 5.0.1
-  resolution: "@types/expect-puppeteer@npm:5.0.1"
+"@types/expect-puppeteer@npm:5.0.2":
+  version: 5.0.2
+  resolution: "@types/expect-puppeteer@npm:5.0.2"
   dependencies:
     "@types/jest": "*"
-    "@types/puppeteer": "*"
-  checksum: d86fddfb4447498f9673dd3707dbb91431086ac15d74a14ceb6854d8c0680722214549614f20985a4bd58ed87ee6c7dd0a1a616248817cdfb5af4d6755d96df1
+    "@types/puppeteer": ^5.4.0
+  checksum: 38d761afd82e20f96d8bc1e73752e093bc9df5d4a4f8f6dfd4e7baf30b976bfa11560a38fe7d36956ac08a10fd90f25e038422c3500cd20c17bf9c082821c2e8
   languageName: node
   linkType: hard
 
@@ -2190,6 +2190,15 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: b969230812e95fcc5eee83151731e51b287cc934169f552034d8eea58ce9b5beb4ba09b9ce05b75d9510241a85d244f28e8b0a0a4b9f7dffcad8c37a39288260
+  languageName: node
+  linkType: hard
+
+"@types/puppeteer@npm:^5.4.0":
+  version: 5.4.7
+  resolution: "@types/puppeteer@npm:5.4.7"
+  dependencies:
+    "@types/node": "*"
+  checksum: 491c0ca2d879b72e869f5152a9ea7de1356a66f44ef6210fdd5c5036d893b4ee2956212e2f3353c7045b9e56d1a4cea408f41a26d7cf3708774c4d6c19a7c654
   languageName: node
   linkType: hard
 
