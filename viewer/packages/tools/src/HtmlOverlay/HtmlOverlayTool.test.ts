@@ -48,7 +48,7 @@ describe(HtmlOverlayTool.name, () => {
     camera.updateMatrix();
 
     viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
-    jest.spyOn(viewer, 'getCamera').mockReturnValue(camera);
+    jest.spyOn(viewer.cameraManager, 'getCamera').mockReturnValue(camera);
 
     renderer.setSize(128, 128);
   });
