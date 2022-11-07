@@ -14,8 +14,8 @@ const defaultCodeTheme = oceanicNext;
 const customScope =
   typeof window === 'undefined'
     ? {
-        urls: [],
-      }
+      urls: [],
+    }
     : require('./customScope').customScope;
 
 export type LiveCodeSnippetProps = {
@@ -55,8 +55,8 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
 
             if (viewer) {
               resetViewerEventHandlers(viewer);
-              if (model instanceof Cognite3DModel) {
-                resetCognite3DModel(model);
+              if (model instanceof CogniteCadModel) {
+                resetCogniteCadModel(model);
               }
             } else {
               alert('Login is required to run examples');

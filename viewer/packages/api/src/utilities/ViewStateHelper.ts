@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { Cognite3DModel } from '@reveal/cad-model';
+import { CogniteCadModel } from '@reveal/cad-model';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 import { NodeCollectionDeserializer } from '@reveal/cad-styling';
 
@@ -76,8 +76,8 @@ export class ViewStateHelper {
 
   private getModelsState(): ModelState[] {
     return this._viewer.models
-      .filter(model => model instanceof Cognite3DModel)
-      .map(model => model as Cognite3DModel)
+      .filter(model => model instanceof CogniteCadModel)
+      .map(model => model as CogniteCadModel)
       .map(model => {
         const defaultNodeAppearance = model.getDefaultNodeAppearance();
         const modelId = model.modelId;
@@ -115,8 +115,8 @@ export class ViewStateHelper {
 
   private async setModelState(modelsState: ModelState[]) {
     const cadModels = this._viewer.models
-      .filter(model => model instanceof Cognite3DModel)
-      .map(model => model as Cognite3DModel);
+      .filter(model => model instanceof CogniteCadModel)
+      .map(model => model as CogniteCadModel);
 
     await Promise.all(
       modelsState

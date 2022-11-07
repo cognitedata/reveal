@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Cognite3DViewer, Cognite3DModel } from '../../packages/api';
+import { Cognite3DViewer, CogniteModel } from '../../packages/api';
 import { VisualTestFixture } from './VisualTestFixture';
 import { addModels, createCognite3DViewer } from './utilities/cognite3DViewerHelpers';
 import { DeferredPromise } from '../../packages/utilities';
@@ -10,7 +10,7 @@ import { AxisViewTool } from '../../packages/tools';
 
 export type ViewerTestFixtureComponents = {
   viewer: Cognite3DViewer;
-  models: (Cognite3DModel | CognitePointCloudModel)[];
+  models: CogniteModel[];
 };
 
 export abstract class ViewerVisualTestFixture implements VisualTestFixture {
@@ -42,10 +42,7 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
       }
     }
   }
-  private modelLoaded(
-    model: Cognite3DModel | CognitePointCloudModel,
-    modelLoadedPromise: DeferredPromise<void>
-  ): Promise<void> {
+  private modelLoaded(model: CogniteModel, modelLoadedPromise: DeferredPromise<void>): Promise<void> {
     // Model loading callback does not work as expected for Point clouds
     if (model instanceof CognitePointCloudModel) {
       return new Promise<void>(resolve => setTimeout(resolve, 5000));
