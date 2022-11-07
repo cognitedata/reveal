@@ -859,7 +859,7 @@ export class Cognite3DViewer {
     }
 
     const color = backgroundColor.color ?? this.renderer.getClearColor(new THREE.Color());
-    const alpha = backgroundColor.alpha ??  this.renderer.getClearAlpha();
+    const alpha = backgroundColor.alpha ?? this.renderer.getClearAlpha();
 
     this.renderer.setClearColor(color, alpha);
     this.spinner.updateBackgroundColor(backgroundColor.color);
