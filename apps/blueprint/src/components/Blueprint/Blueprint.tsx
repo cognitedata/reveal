@@ -82,6 +82,7 @@ const Blueprint = ({
 
   const queriesResults = useRuleSetEvaluation(
     blueprint,
+    disabledRulesets,
     (shapeKey, result) => {
       setErrors((prev) => ({
         ...prev,
