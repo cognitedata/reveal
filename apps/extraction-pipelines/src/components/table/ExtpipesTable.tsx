@@ -18,6 +18,7 @@ import Schedule from 'components/extpipes/cols/Schedule';
 import { DataSet } from 'components/extpipes/cols/DataSet';
 import { User } from 'model/User';
 import ExtractionPipelineName from 'components/extpipes/cols/ExtractionPipelineName';
+import { useDataSetList } from 'hooks/dataSet';
 
 export type ExtractionPipelineListTableRecord = {
   key: number;
@@ -37,6 +38,8 @@ const ExtpipesTable = ({ search }: ExtpipesTableProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { data, hasNextPage, isFetched } = useAllExtpipes();
+
+  const { data: dataSets } = useDataSetList();
 
   const extractionPipelines = useMemo(() => {
     const list = data?.pages
@@ -145,6 +148,17 @@ const ExtpipesTable = ({ search }: ExtpipesTableProps): JSX.Element => {
       dataIndex: 'dataSetId',
       key: 'data-set',
       render: (value: number) => <DataSet dataSetId={value} />,
+      sorter: (a, b) => {
+        const dataSetA = dataSets?.find(
+          ({ id: testId }) => a.dataSetId === testId
+        );
+        const identifierA = dataSetA?.name ?? dataSetA?.externalId ?? '';
+        const dataSetB = dataSets?.find(
+          ({ id: testId }) => b.dataSetId === testId
+        );
+        const identifierB = dataSetB?.name ?? dataSetB?.externalId ?? '';
+        return identifierA.localeCompare(identifierB);
+      },
     },
     {
       title: t('owner'),

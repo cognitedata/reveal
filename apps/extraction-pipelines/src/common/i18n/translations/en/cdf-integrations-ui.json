@@ -36,6 +36,8 @@
   "cron-learn-more": "How do I write a cron expression?",
   "cron-title": "Cron expression",
   "data-set": "Data set",
+  "data-set-403": "You do not have access to read data set details",
+  "data-set-generic-error": "An error occurred when fetching data set details",
   "data-set-id-hint": "Select the data set the extraction pipeline feeds data into.",
   "data-set-not-exist": "Data set with name/id: {{dataset}} does not exist",
   "data-sets": "Data sets",
