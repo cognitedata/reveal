@@ -77,7 +77,7 @@ jobs:
     - name: Check that Cargo.lock is up to date
       working-directory: viewer
       continue-on-error: false
-      run: cargo update --locked
+      run: cargo update --locked --offline
 
     - name: Lint
       working-directory: viewer
