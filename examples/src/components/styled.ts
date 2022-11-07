@@ -13,9 +13,9 @@ export const CanvasWrapper = styled(Container)`
   position: relative;
   overflow: hidden;
   & > canvas {
-    display: flex;
-    flex-grow: 1;
-    max-height: 100vh;
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    display: block;
   }
 `;
 
