@@ -13,23 +13,21 @@ vec2 calculateObscurance(float depth, float screenWidth, float screenHeight, vec
 	float minNeighbourDepth = MAX_FLOAT;
 	vec2 minNeighbourUv = vec2(0.0, 0.0);
 
+        bool thisOutside = depth == 0.0;
+
 	for(int i = 0; i < NEIGHBOUR_COUNT; i++){
 		vec2 uvNeighbor = vUv + uvRadius * neighbours[i];
 
 		float neighbourDepth = texture(colorTexture, uvNeighbor).a;
 
-		if (neighbourDepth < minNeighbourDepth) {
-			minNeighbourDepth = neighbourDepth;
-			minNeighbourUv = uvNeighbor;
-		}
+                bool smallestNeighbour = neighbourDepth < minNeighbourDepth;
+                minNeighbourDepth = smallestNeighbour ? neighbourDepth : minNeighbourDepth;
+                minNeighbourUv = smallestNeighbour ? uvNeighbour : minNeighbourUv;
 
-		if (neighbourDepth != 0.0){
-			if (depth == 0.0){
-				sum += 100.0;
-			} else {
-				sum += max(0.0, depth - neighbourDepth);
-			}
-		}
+                bool otherOutside = neighbourDepth == 0.0;
+
+                sum += otherOutside ? 0.0
+                    : (thisOutside ? 100.0 : max(0.0, depth - neighbourDepth));
 	}
 
 	// First component is the obscurance value, second component is the depth of the closest neighbour required to properly set depth on "glowing" part of the point.
