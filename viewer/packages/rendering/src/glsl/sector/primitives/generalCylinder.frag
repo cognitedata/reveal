@@ -50,6 +50,7 @@ void main()
 
     vec3 rayTarget = v_viewPos;
     vec3 rayDirection = normalize(rayTarget); // rayOrigin is (0,0,0) in camera space
+    float rayTargetDist = length(rayTarget);
 
     vec3 diff = rayTarget - v_centerB;
     vec3 E = diff * v_modelBasis;
@@ -88,8 +89,8 @@ void main()
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
         theta > v_angles[1] + v_angles[0] ||
-        isClipped(appearance, p) /* ||
-        dist < 0.0 */
+        isClipped(appearance, p) ||
+        rayTargetDist + dist < 0.0
        ) {
         // Missed the first point, check the other point
         dist = max(dist1, dist2);
@@ -99,8 +100,8 @@ void main()
         p = rayTarget + dist*rayDirection;
         if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
             dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-            theta > v_angles[1] + v_angles[0] || isClipped(appearance, p) /* ||
-            dist < 0.0 */
+            theta > v_angles[1] + v_angles[0] || isClipped(appearance, p) ||
+            rayTargetDist + dist < 0.0
            ) {
             // Missed the other point too
             discard;
