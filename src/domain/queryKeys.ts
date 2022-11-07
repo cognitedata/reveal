@@ -1,5 +1,8 @@
 export const queryKeys = {
   all: ['cdf'] as const,
+  timeseries: () => [...queryKeys.all, 'timeseries'] as const,
+  listTimeseries: (input?: any[]) =>
+    [...queryKeys.timeseries(), ...(input || [])] as const,
   events: () => [...queryKeys.all, 'events'] as const,
   listEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || [])] as const,

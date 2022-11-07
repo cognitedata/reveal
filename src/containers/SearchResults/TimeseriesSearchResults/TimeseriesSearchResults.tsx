@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Timeseries } from '@cognite/sdk';
 import { ResourceItem, convertResourceType } from 'types';
 import { TimeseriesNewTable } from 'containers/Timeseries';
@@ -10,7 +10,11 @@ import { Flex, Loader } from '@cognite/cogs.js';
 
 import { SearchResultToolbar, useResourceResults } from '..';
 import { ColumnToggleProps } from 'components/ReactTable';
-import { InternalTimeseriesFilters } from 'domain/timeseries';
+import {
+  InternalTimeseriesFilters,
+  useTimeseriesSearchResultQuery,
+} from 'domain/timeseries';
+import { TableSortBy } from 'components/ReactTable/V2';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 
 export const TimeseriesSearchResults = ({
@@ -21,10 +25,12 @@ export const TimeseriesSearchResults = ({
   onClick,
   onFilterChange,
   relatedResourceType,
+  enableAdvancedFilters,
   ...rest
 }: {
   query?: string;
   showCount?: boolean;
+  enableAdvancedFilters?: boolean;
   initialView?: string;
   filter?: InternalTimeseriesFilters;
   showRelatedResources?: boolean;
@@ -41,7 +47,16 @@ export const TimeseriesSearchResults = ({
     useResourceResults<Timeseries>(api, query, filter);
   // TODO Needs refactoring for hiding emppty datasets
 
-  if (!isFetched) {
+  const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const { data, isLoading, hasNextPage, fetchNextPage } =
+    useTimeseriesSearchResultQuery({
+      query,
+      timeseriesFilters: filter,
+      sortBy: sortBy,
+    });
+
+  const loading = enableAdvancedFilters ? isLoading : !isFetched;
+  if (loading) {
     return <Loader />;
   }
 
@@ -62,17 +77,21 @@ export const TimeseriesSearchResults = ({
               query={query}
             />
           }
+          data={enableAdvancedFilters ? data : items}
+          fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
+          hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
           tableSubHeaders={
             <AppliedFiltersTags
               filter={filter}
               onFilterChange={onFilterChange}
             />
           }
-          data={items}
-          fetchMore={fetchMore}
           showLoadButton
-          hasNextPage={canFetchMore}
           onRowClick={timseries => onClick(timseries)}
+          enableSorting
+          onSort={props => {
+            setSortBy(props);
+          }}
           relatedResourceType={relatedResourceType}
           {...rest}
         />

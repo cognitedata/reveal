@@ -35,6 +35,7 @@ export const TimeseriesNewTable = ({
       header: 'Preview',
       accessorKey: 'data',
       size: 400,
+      enableSorting: false,
       cell: ({ row }) => {
         const timeseries = row.original;
         if (timeseries.isString) {
@@ -68,13 +69,23 @@ export const TimeseriesNewTable = ({
       Table.Columns.lastUpdatedTime,
       Table.Columns.created,
       Table.Columns.id,
-      Table.Columns.isString,
-      Table.Columns.isStep,
-      Table.Columns.dataSet,
+      {
+        ...Table.Columns.isString,
+        enableSorting: false,
+      },
+      {
+        ...Table.Columns.isStep,
+        enableSorting: false,
+      },
+      {
+        ...Table.Columns.dataSet,
+        enableSorting: false,
+      },
       {
         ...Table.Columns.rootAsset,
         accessorKey: 'assetId',
         cell: ({ getValue }) => <RootAsset assetId={getValue<number>()} />,
+        enableSorting: false,
       },
     ] as ColumnDef<Timeseries>[];
   }, [dateRange]);
