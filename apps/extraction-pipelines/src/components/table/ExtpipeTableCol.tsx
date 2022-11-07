@@ -2,7 +2,7 @@ import React from 'react';
 import { Cell, CellProps, Column, HeaderProps } from 'react-table';
 import { addIfExist, calculateLatest } from 'utils/extpipeUtils';
 import { Extpipe } from 'model/Extpipe';
-import Name from 'components/extpipes/cols/Name';
+import Name from 'components/extpipes/cols/ExtractionPipelineName';
 import Schedule from 'components/extpipes/cols/Schedule';
 import { DataSet } from 'components/extpipes/cols/DataSet';
 import { LastRunStatusMarker } from 'components/extpipes/cols/StatusMarker';
@@ -49,7 +49,7 @@ export const getExtpipeTableColumns = (
       },
       accessor: 'name',
       Cell: ({ row }: CellProps<Extpipe>) => {
-        return <Name name={row.values.name} extpipeId={row.original.id} />;
+        return <Name name={row.values.name} id={row.original.id} />;
       },
       sortType: 'basic',
       disableFilters: true,

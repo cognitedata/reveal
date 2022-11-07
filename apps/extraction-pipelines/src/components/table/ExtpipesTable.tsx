@@ -11,13 +11,13 @@ import { useAllExtpipes } from 'hooks/useExtpipes';
 import { useTranslation } from 'common';
 import { dateSorter, getContainer, stringSorter } from 'utils/utils';
 
-import Name from 'components/extpipes/cols/Name';
 import { LastRunStatusMarker } from 'components/extpipes/cols/StatusMarker';
 import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
 import { addIfExist, calculateLatest } from 'utils/extpipeUtils';
 import Schedule from 'components/extpipes/cols/Schedule';
 import { DataSet } from 'components/extpipes/cols/DataSet';
 import { User } from 'model/User';
+import ExtractionPipelineName from 'components/extpipes/cols/ExtractionPipelineName';
 
 export type ExtractionPipelineListTableRecord = {
   key: number;
@@ -96,7 +96,7 @@ const ExtpipesTable = ({ search }: ExtpipesTableProps): JSX.Element => {
       dataIndex: 'name',
       key: 'name',
       render: (value: string, record) => (
-        <Name name={value} extpipeId={record.id} />
+        <ExtractionPipelineName name={value} id={record.id} />
       ),
       sorter: (recordA, recordB) => stringSorter(recordA.name, recordB.name),
     },
