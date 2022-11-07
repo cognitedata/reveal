@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { ids } from 'cogs-variables';
 import {
   Loader,
   FileContextualizationContextProvider,
@@ -37,6 +38,7 @@ export default function App() {
                 flow={flow}
                 sdk={sdk}
                 userInfo={userInfo}
+                styleScopeId={ids.styleScope}
                 overrideURLMap={{
                   pdfjsWorkerSrc:
                     '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
