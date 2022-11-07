@@ -2,7 +2,7 @@
 // Function calculating obscurance of specified fragment.
 // Passed colorTexture is assumed to have logarithmic depth value written to alpha channel.
 
-#define MAX_FLOAT 3.402823466e+38;
+#define MAX_FLOAT 3.402823466e+38
 
 vec2 calculateObscurance(float depth, float screenWidth, float screenHeight, vec2 neighbours[NEIGHBOUR_COUNT],
 	float radius, vec2 vUv, sampler2D depthTexture, sampler2D colorTexture) {
