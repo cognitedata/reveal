@@ -858,11 +858,10 @@ export class Cognite3DViewer {
       return;
     }
 
-    if (!backgroundColor.color) {
-      backgroundColor.color = this.renderer.getClearColor(new THREE.Color());
-    }
+    const color = backgroundColor.color ?? this.renderer.getClearColor(new THREE.Color());
+    const alpha = backgroundColor.alpha ??  this.renderer.getClearAlpha();
 
-    this.renderer.setClearColor(backgroundColor.color, backgroundColor.alpha);
+    this.renderer.setClearColor(color, alpha);
     this.spinner.updateBackgroundColor(backgroundColor.color);
     this.requestRedraw();
   }
