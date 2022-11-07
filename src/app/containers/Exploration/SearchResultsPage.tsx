@@ -226,6 +226,7 @@ function SearchPage() {
                     {currentResourceType === 'timeSeries' && (
                       <TimeseriesSearchResults
                         showCount
+                        enableAdvancedFilters={isAdvancedFiltersEnabled}
                         onClick={(item: ResourceItem) =>
                           openPreview(
                             item.id !== activeId ? item.id : undefined
@@ -395,6 +396,7 @@ function SearchPage() {
                 {currentResourceType === 'timeSeries' && (
                   <TimeseriesSearchResults
                     showCount
+                    enableAdvancedFilters={isAdvancedFiltersEnabled}
                     onClick={(item: ResourceItem) =>
                       openPreview(item.id !== activeId ? item.id : undefined)
                     }
