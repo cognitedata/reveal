@@ -18,17 +18,12 @@ export const StyledRouterLink = styled((props) => (
 `;
 interface OwnProps {
   name: string;
-  extpipeId: string;
-  selected: boolean;
+  extpipeId: number;
 }
 
 type Props = OwnProps;
 
-const Name: FunctionComponent<Props> = ({
-  name,
-  extpipeId,
-  selected,
-}: Props) => {
+const Name: FunctionComponent<Props> = ({ name, extpipeId }: Props) => {
   return (
     <StyledRouterLink
       id={`extpipe-${name}`}
@@ -37,7 +32,6 @@ const Name: FunctionComponent<Props> = ({
           `/${EXTRACTION_PIPELINES_PATH}/${EXT_PIPE_PATH}/${extpipeId}`
         ),
       }}
-      aria-selected={selected}
     >
       {name}
     </StyledRouterLink>

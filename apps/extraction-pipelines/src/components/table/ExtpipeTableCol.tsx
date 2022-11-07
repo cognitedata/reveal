@@ -49,13 +49,7 @@ export const getExtpipeTableColumns = (
       },
       accessor: 'name',
       Cell: ({ row }: CellProps<Extpipe>) => {
-        return (
-          <Name
-            name={row.values.name}
-            extpipeId={`${row.original.id}`}
-            selected={row.isSelected}
-          />
-        );
+        return <Name name={row.values.name} extpipeId={row.original.id} />;
       },
       sortType: 'basic',
       disableFilters: true,
