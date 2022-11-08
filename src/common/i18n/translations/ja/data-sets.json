@@ -96,6 +96,7 @@
   "last-updated": "最終更新",
   "learn-more-how-to-add-data": "Data set にデータを追加する方法についての詳細が表示されます",
   "learn-more-in-our-docs": "詳しくはドキュメントをご覧ください",
+  "learn-how-to": "Learn more on how to",
   "lineage-": "CDF SQL 変換",
   "lineage-extractor-text": "データ取り込みには、次のサービスアカウント/サービスアカウント ID を使用します。",
   "lineage-source-text": "Data set は、ソースシステム、ファイル、またはアプリケーションなどのデータソースから取得されます。",
