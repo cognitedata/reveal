@@ -1,10 +1,6 @@
 precision highp float;
 precision highp int;
 
-#if defined paraboloid_point_shape
-	#extension GL_EXT_frag_depth : enable
-#endif
-
 uniform mat4 viewMatrix;
 uniform vec3 cameraPosition;
 
@@ -55,7 +51,7 @@ void main() {
 		float v = 2.0 * gl_PointCoord.y - 1.0;
 	#endif
 
-	#if defined(circle_point_shape)
+	#if defined(circle_point_shape) || defined(paraboloid_point_shape)
 		float cc = u*u + v*v;
 		if(cc > 1.0){
 			discard;
@@ -77,7 +73,7 @@ void main() {
 		pos = pos / pos.w;
 		float expDepth = pos.z;
 		depth = (pos.z + 1.0) / 2.0;
-		gl_FragDepthEXT = depth;
+		gl_FragDepth = depth;
 
 		#if defined(color_type_depth)
 			outputColor.r = linearDepth;

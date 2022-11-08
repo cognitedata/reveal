@@ -17,6 +17,20 @@ export enum AntiAliasingMode {
 }
 
 /**
+ * Configuration parameters for Eye Dome Lighting (EDL) point cloud post-processing effect.
+ */
+export type EdlOptions = {
+  /**
+   * Determines how pronounced the effect is. Lower values result in more transparent edges.
+   */
+  strength: number;
+  /**
+   * Radius of sampled points in pixels. Determines thickness of edges addet on top of points.
+   */
+  radius: number;
+};
+
+/**
  * Options and hints for how the Reveal viewer applies rendering effects.
  */
 export type RenderOptions = {
@@ -62,7 +76,7 @@ export const defaultRenderOptions: Required<RenderOptions> = {
   multiSampleCountHint: 1,
   ssaoRenderParameters: { sampleSize: SsaoSampleQuality.Default, sampleRadius: 1.0, depthCheckBias: 0.0125 },
   edgeDetectionParameters: { enabled: true },
-  pointCloudParameters: { pointBlending: false }
+  pointCloudParameters: { pointBlending: false, edlOptions: { strength: 0.5, radius: 2.2 } }
 };
 
 /**
@@ -98,4 +112,8 @@ export type PointCloudParameters = {
    * Effect of blending close points together. Creates smoother texture on object surfaces.
    */
   pointBlending: boolean;
+  /**
+   * Eye Dome Lighting effect options. Considerably improves perception of depth within rendered point cloud.
+   */
+  edlOptions: EdlOptions;
 };

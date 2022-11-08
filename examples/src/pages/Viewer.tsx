@@ -88,6 +88,8 @@ export function Viewer() {
         });
       }
 
+      const edlEnabled = (urlParams.get('edl') ?? 'true') === 'true';
+
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,
@@ -97,7 +99,11 @@ export function Viewer() {
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         continuousModelStreaming: true,
         pointCloudEffects: {
-          pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined)
+          pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined),
+          edlOptions: edlEnabled ? {
+            strength: parseFloat(urlParams.get('edlStrength') ?? '0.5'),
+            radius: parseFloat(urlParams.get('edlRadius') ?? '2.2'),
+          } : 'disabled'
         }
       };
 
