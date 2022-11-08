@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@azure/msal-browser": "2.30.0",
-    "@cognite/sdk": "7.10.0",
+    "@cognite/sdk": "7.11.0",
     "@cognite/sdk-core": "4.4.0",
     "@types/dat.gui": "0.7.7",
     "@types/expect-puppeteer": "5.0.2",
@@ -149,7 +149,7 @@
     "workerize-loader": "2.0.2"
   },
   "peerDependencies": {
-    "@cognite/sdk": "7.10.0",
+    "@cognite/sdk": "7.11.0",
     "@cognite/sdk-core": "^4.1.0"
   },
   "glslify": {
