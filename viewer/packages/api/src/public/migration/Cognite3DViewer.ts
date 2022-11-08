@@ -909,14 +909,6 @@ export class Cognite3DViewer {
   }
 
   /**
-   * @obvious
-   * @returns The THREE.Camera used for rendering.
-   */
-  getCamera(): THREE.PerspectiveCamera {
-    return this._activeCameraManager.getCamera();
-  }
-
-  /**
    * Attempts to load the camera settings from the settings stored for the
    * provided model. See {@link https://docs.cognite.com/api/v1/#operation/get3DRevision}
    * and {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions} for
@@ -1024,12 +1016,13 @@ export class Cognite3DViewer {
    * ```
    */
   worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null {
-    this.getCamera().updateMatrixWorld();
+    const camera = this.cameraManager.getCamera();
+    camera.updateMatrixWorld();
     const screenPosition = new THREE.Vector3();
     if (normalize) {
-      worldToNormalizedViewportCoordinates(this.getCamera(), point, screenPosition);
+      worldToNormalizedViewportCoordinates(camera, point, screenPosition);
     } else {
-      worldToViewportCoordinates(this.renderer, this.getCamera(), point, screenPosition);
+      worldToViewportCoordinates(this.renderer, camera, point, screenPosition);
     }
 
     if (
@@ -1070,9 +1063,10 @@ export class Cognite3DViewer {
       throw new Error('Viewer is disposed');
     }
 
+    const camera = this.cameraManager.getCamera();
     const { width: originalWidth, height: originalHeight } = this.canvas;
 
-    const screenshotCamera = this.getCamera().clone() as THREE.PerspectiveCamera;
+    const screenshotCamera = camera.clone() as THREE.PerspectiveCamera;
     adjustCamera(screenshotCamera, width, height);
 
     this.renderer.setSize(width, height);
@@ -1081,7 +1075,7 @@ export class Cognite3DViewer {
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
-    this.renderer.render(this._sceneHandler.scene, this.getCamera());
+    this.renderer.render(this._sceneHandler.scene, camera);
 
     this.requestRedraw();
 
@@ -1156,15 +1150,15 @@ export class Cognite3DViewer {
     const isVisible = visibility === 'visible' && display !== 'none';
 
     if (isVisible) {
+      const camera = this.cameraManager.getCamera();
       TWEEN.update(time);
       this.recalculateBoundingBox();
       this._activeCameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
-      this.revealManager.update(this.getCamera());
+      this.revealManager.update(camera);
 
       if (this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
-        const camera = this.getCamera();
 
         this._events.beforeSceneRendered.fire({ frameNumber, renderer: this.renderer, camera });
 
@@ -1196,7 +1190,7 @@ export class Cognite3DViewer {
 
     const input: IntersectInput = {
       normalizedCoords,
-      camera: this.getCamera(),
+      camera: this.cameraManager.getCamera(),
       renderer: this.renderer,
       clippingPlanes: this.getClippingPlanes(),
       domElement: this.renderer.domElement
