@@ -1,7 +1,7 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Breadcrumb } from '@cognite/cogs.js';
 import { removeProjectFromPath } from 'app/utils/URLUtils';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 type BreadcrumbsProps = {
@@ -12,20 +12,35 @@ type BreadcrumbsProps = {
 
 export const Breadcrumbs = ({ currentResource }: BreadcrumbsProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleBreadcrumbClick = (path: string, index: number) => {
+    // Keep history until the clicked item
+    const history = [...location.state?.history];
+    history.splice(index, history.length - index);
+
+    navigate(createLink(removeProjectFromPath(path)), {
+      state: {
+        history,
+      },
+      replace: true,
+    });
+  };
 
   return (
     <BreadcrumbWrapper>
       <Breadcrumb>
-        <Breadcrumb.Item
-          title="Search"
-          link={createLink('/explore/search/asset')}
-        />
+        <Breadcrumb.Item title="Search" link={createLink('/explore/search')} />
         {location.state?.history?.map(
           ({ path, resource }: any, index: number) => (
             <Breadcrumb.Item
               key={`${path}-${index}`}
               title={resource.title}
-              link={createLink(removeProjectFromPath(path))}
+              onClick={e => {
+                e.preventDefault();
+                handleBreadcrumbClick(path, index);
+              }}
+              link=""
             />
           )
         )}

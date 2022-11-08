@@ -1349,7 +1349,7 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@7.17.0":
+"@cognite/cogs.js@7.17.0", "@cognite/cogs.js@^7.17.0":
   version "7.17.0"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.17.0.tgz#eb41af349ef72282e50e813243cc4378e975cfdf"
   integrity sha512-I2QAiPDBQGSnQX6g8aUMjvR4xogU0WiVxg1kh6oFdo3qymJCXH22y1bIUJRMiXWmqpufLlKvC+wWOtjtAPhJYg==
@@ -1628,7 +1628,7 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix", "@cognite/gcs-browser-upload@github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
+"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
   version "1.1.1"
   resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
   dependencies:
