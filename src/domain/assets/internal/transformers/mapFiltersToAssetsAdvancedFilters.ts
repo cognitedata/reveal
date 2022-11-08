@@ -3,7 +3,7 @@ import { InternalAssetFilters } from '../types';
 
 export type AssetsProperties = {
   assetSubtreeIds: number[];
-  dataSetIds: number[];
+  dataSetId: number[];
   source: string[];
   externalId: string;
   labels: string[];
@@ -27,7 +27,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
   const builder = new AdvancedFilterBuilder<AssetsProperties>();
 
   const filterBuilder = new AdvancedFilterBuilder<AssetsProperties>()
-    .containsAny('dataSetIds', () => {
+    .in('dataSetId', () => {
       return dataSetIds?.reduce((acc, { value }) => {
         if (typeof value === 'number') {
           return [...acc, value];

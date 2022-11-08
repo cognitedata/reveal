@@ -4,7 +4,7 @@ import { InternalEventsFilters } from '../types';
 
 export type EventsProperties = {
   assetIds: number[];
-  dataSetIds: number[];
+  dataSetId: number[];
   type: string;
   subtype: string;
   source: string[];
@@ -29,8 +29,10 @@ export const mapFiltersToEventsAdvancedFilters = (
   searchQueryMetadataKeys?: Record<string, string>,
   query?: string
 ): AdvancedFilter<EventsProperties> | undefined => {
+  const builder = new AdvancedFilterBuilder<EventsProperties>();
+
   const filterBuilder = new AdvancedFilterBuilder<EventsProperties>()
-    .containsAny('dataSetIds', () => {
+    .in('dataSetId', () => {
       return dataSetIds?.reduce((acc, { value }) => {
         if (typeof value === 'number') {
           return [...acc, value];
@@ -76,21 +78,21 @@ export const mapFiltersToEventsAdvancedFilters = (
     }
   }
 
+  builder.and(filterBuilder);
+
   /**
    * We want to filter all the metadata keys with the search query, to give a better result
    * to the user when using our search.
    */
   if (searchQueryMetadataKeys) {
-    const searchBuilder = new AdvancedFilterBuilder<EventsProperties>();
+    const searchMetadataBuilder = new AdvancedFilterBuilder<EventsProperties>();
 
     for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-      searchBuilder.prefix(`metadata|${key}`, value);
+      searchMetadataBuilder.prefix(`metadata|${key}`, value);
     }
 
-    filterBuilder.or(searchBuilder);
+    builder.or(searchMetadataBuilder);
   }
 
-  return new AdvancedFilterBuilder<EventsProperties>()
-    .and(filterBuilder)
-    .build();
+  return new AdvancedFilterBuilder<EventsProperties>().or(builder).build();
 };
