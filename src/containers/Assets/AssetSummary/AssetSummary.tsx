@@ -9,6 +9,7 @@ import { EmptyState } from 'components/EmpyState/EmptyState';
 import { SummaryCard } from 'components/SummaryCard/SummaryCard';
 
 import { useAssetsSearchResultQuery } from 'domain/assets';
+import { getSummaryCardItems } from 'components/SummaryCard/utils';
 
 export const AssetSummary = ({
   query = '',
@@ -40,7 +41,7 @@ export const AssetSummary = ({
       onAllResultsClick={onAllResultsClick}
     >
       <Table
-        data={data}
+        data={getSummaryCardItems(data)}
         id="assets-summary-table"
         columns={columns}
         enableColumnResizing={false}
