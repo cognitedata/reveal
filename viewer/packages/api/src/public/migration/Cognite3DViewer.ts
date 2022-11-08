@@ -79,7 +79,11 @@ type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRe
 export class Cognite3DViewer {
   private readonly _domElementResizeObserver: ResizeObserver;
   private readonly _image360ApiHelper: Image360ApiHelper | undefined;
-  private get canvas(): HTMLCanvasElement {
+
+  /**
+   * Returns the rendering canvas, the DOM element where the renderer draws its output.
+   */
+  get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
 
@@ -96,7 +100,7 @@ export class Cognite3DViewer {
   /**
    * Returns the renderer used to produce images from 3D geometry.
    */
-  get renderer(): THREE.WebGLRenderer {
+  private get renderer(): THREE.WebGLRenderer {
     return this._renderer;
   }
 
@@ -1029,7 +1033,7 @@ export class Cognite3DViewer {
     if (normalize) {
       worldToNormalizedViewportCoordinates(this.getCamera(), point, screenPosition);
     } else {
-      worldToViewportCoordinates(this.renderer, this.getCamera(), point, screenPosition);
+      worldToViewportCoordinates(this.canvas, this.getCamera(), point, screenPosition);
     }
 
     if (

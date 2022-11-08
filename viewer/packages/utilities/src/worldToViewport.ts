@@ -53,17 +53,13 @@ export function worldToNormalizedViewportCoordinates(
  * is within near/far of camera.
  */
 export function worldToViewportCoordinates(
-  renderer: THREE.WebGLRenderer,
+  canvas: HTMLCanvasElement,
   camera: THREE.PerspectiveCamera,
   position3D: THREE.Vector3,
   out: THREE.Vector3 = new THREE.Vector3()
 ): THREE.Vector3 {
   worldToNormalizedViewportCoordinates(camera, position3D, out);
 
-  const { renderSize } = worldToViewportVars;
-  renderer.getSize(renderSize);
-
-  const canvas = renderer.domElement;
   const { width: canvasWidth, height: canvasHeight } = canvas.getBoundingClientRect();
 
   out.x = Math.round(out.x * canvasWidth);

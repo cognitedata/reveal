@@ -119,21 +119,21 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
           this._screenPosition.y = position.padding.y;
 
           this._dynamicUpdatePosition = () => {
-            this._screenPosition.x = this._viewer.renderer.domElement.clientWidth - position.padding.x - size;
+            this._screenPosition.x = this._viewer.canvas.clientWidth - position.padding.x - size;
           };
           break;
 
         case Corner.TopRight:
           this._dynamicUpdatePosition = () => {
-            this._screenPosition.x = this._viewer.renderer.domElement.clientWidth - position.padding.x - size;
-            this._screenPosition.y = this._viewer.renderer.domElement.clientHeight - position.padding.y - size;
+            this._screenPosition.x = this._viewer.canvas.clientWidth - position.padding.x - size;
+            this._screenPosition.y = this._viewer.canvas.clientHeight - position.padding.y - size;
           };
           break;
 
         case Corner.TopLeft:
           this._screenPosition.x = position.padding.x;
           this._dynamicUpdatePosition = () => {
-            this._screenPosition.y = this._viewer.renderer.domElement.clientHeight - position.padding.y - size;
+            this._screenPosition.y = this._viewer.canvas.clientHeight - position.padding.y - size;
           };
           break;
 
