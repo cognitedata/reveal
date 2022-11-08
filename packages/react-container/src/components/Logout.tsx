@@ -5,7 +5,7 @@ import { getFlow, saveFlow } from '@cognite/auth-utils';
 
 import {
   AUTH_RESULT_STORAGE_KEY,
-  KEY_LAST_TENANT,
+  KEY_LAST_PROJECT,
   log,
   storage,
 } from '../utils';
@@ -17,7 +17,8 @@ export const Logout: React.FC = () => {
 
   React.useEffect(() => {
     storage.removeItem(AUTH_RESULT_STORAGE_KEY);
-    storage.removeItem(KEY_LAST_TENANT);
+    storage.removeItem(KEY_LAST_PROJECT);
+    storage.setRootItem(KEY_LAST_PROJECT, null);
     const flow = getFlow();
     saveFlow('UNKNOWN');
     // Avoid calling azure when using Fake Idp

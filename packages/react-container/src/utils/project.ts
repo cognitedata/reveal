@@ -29,7 +29,7 @@ export const sanitizeProject = (project: string): string =>
   (project || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
 
 export const getLastProject = (): string =>
-  storage.getRootString<string, string>(KEY_LAST_PROJECT, '') || '';
+  storage.getRootItem<string>(KEY_LAST_PROJECT) || '';
 
 export const setLastProject = (project: string) =>
   storage.setRootItem(KEY_LAST_PROJECT, project);
@@ -38,5 +38,5 @@ export const getProjectInfo = (location?: Location) => {
   const possibleProject = getProject(location);
   const sanitizedProject = sanitizeProject(possibleProject);
 
-  return [possibleProject, sanitizedProject, getLastProject()];
+  return [possibleProject, sanitizedProject];
 };

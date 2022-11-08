@@ -1,16 +1,7 @@
-import { Configuration, PublicClientApplication } from '@azure/msal-browser';
-import { AuthenticationResult } from '@azure/msal-common';
-import {
-  getFromLocalStorage,
-  saveToLocalStorage,
-  removeItem,
-} from '@cognite/storage';
-import { useState } from 'react';
 import * as React from 'react';
 import { Router } from 'react-router-dom';
 import merge from 'lodash/merge';
 import { Store } from 'redux';
-import { Loader } from '@cognite/cogs.js';
 import { IntercomBootSettings } from '@cognite/intercom-helper';
 import { ErrorBoundary } from '@cognite/react-errors';
 import { withI18nSuspense } from '@cognite/react-i18n';
@@ -26,11 +17,9 @@ import {
   AuthContainer,
   IntercomContainer,
 } from './components';
-import { PROJECT_TO_LOGIN } from './components/AuthProvider/TokenFactory';
-import { getProjectSpecificFlow } from './components/AuthProvider/utils';
 import { createBrowserHistory } from './internal';
 import { ConditionalReduxProvider } from './providers';
-import { storage, getProjectInfo, setLastProject } from './utils';
+import { storage, getProjectInfo } from './utils';
 import { ProvideMetrics } from './providers/ProvideMetrics';
 import { ContainerSidecarConfig } from './types';
 
@@ -50,10 +39,6 @@ const RawContainer: React.FC<Props> = ({
   intercomSettings,
   sentrySettings,
 }) => {
-  const [_possibleTenant, sanitizedProject, getLastProject] = getProjectInfo(
-    window.location
-  );
-
   const {
     applicationId,
     disableLoopDetector,
@@ -63,68 +48,23 @@ const RawContainer: React.FC<Props> = ({
     reactQueryDevtools,
   } = sidecar;
 
-  const [history] = React.useState(() =>
-    createBrowserHistory(sanitizedProject)
-  );
-  const [redirectAuthResult, setRedirectAuthResult] =
-    useState<AuthenticationResult | null>();
+  const [sanitizedProject] = getProjectInfo(window.location);
+  const projectOrApiKeyTenant = project || sanitizedProject;
 
-  const projectOrApiKeyTenant = project || sanitizedProject || getLastProject;
+  const [history] = React.useState(() =>
+    createBrowserHistory(projectOrApiKeyTenant)
+  );
 
   React.useEffect(() => {
-    storage.init({ tenant: sanitizedProject, appName: applicationId });
-  }, [sanitizedProject, applicationId]);
+    storage.init({ tenant: projectOrApiKeyTenant, appName: applicationId });
+  }, [projectOrApiKeyTenant, applicationId]);
 
   const refreshPage = () => {
     window.location.assign('/');
   };
 
-  if (!sanitizedProject) {
-    if (!projectOrApiKeyTenant) {
-      return <TenantSelectorWrapper sidecar={sidecar} />;
-    }
-  }
-  setLastProject(sanitizedProject);
-
-  const projectFlow = getProjectSpecificFlow(sanitizedProject);
-  const configuration: Configuration = {
-    auth: {
-      clientId: sidecar.aadApplicationId || '',
-      authority: `https://login.microsoftonline.com/${
-        projectFlow?.options?.directory || sidecar.AADTenantID || 'common'
-      }`,
-      redirectUri: `${window.location.origin}`,
-      navigateToLoginRequestUrl: true,
-    },
-  };
-
-  // This handles the login redirect from azure
-  const publicClientApplication = new PublicClientApplication(configuration);
-  publicClientApplication
-    .handleRedirectPromise()
-    .then((res) => {
-      const projectToLogin = getFromLocalStorage<string>(PROJECT_TO_LOGIN);
-      if (projectToLogin && res?.account?.localAccountId) {
-        saveToLocalStorage(
-          `${projectToLogin}_localAccountId`,
-          res.account.localAccountId
-        );
-
-        removeItem(PROJECT_TO_LOGIN);
-      }
-      setRedirectAuthResult(res);
-      return res;
-    })
-    .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error(err);
-      refreshPage();
-    });
-
-  // Wait for the handleRedirectPromise to resolve.
-  // we use it for the redirection on azure ad auth
-  if (redirectAuthResult === undefined) {
-    return <Loader />;
+  if (!projectOrApiKeyTenant) {
+    return <TenantSelectorWrapper sidecar={sidecar} />;
   }
 
   return (
@@ -141,7 +81,7 @@ const RawContainer: React.FC<Props> = ({
           <AuthContainer
             sidecar={sidecar}
             authError={refreshPage}
-            project={sanitizedProject}
+            project={projectOrApiKeyTenant}
           >
             <IntercomContainer
               intercomSettings={merge(
@@ -149,7 +89,7 @@ const RawContainer: React.FC<Props> = ({
                 intercomSettings,
                 sidecar.intercomSettings
               )}
-              project={sanitizedProject}
+              project={projectOrApiKeyTenant}
               sidecar={sidecar}
               disabled={disableIntercom}
             >

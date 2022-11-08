@@ -113,23 +113,27 @@ export class TokenFactory {
     const accountId = getFromLocalStorage<string>(
       `${this.project}_localAccountId`
     );
-    const account = publicClientApplication.getAccountByLocalId(
-      accountId || ''
-    );
+    let account = publicClientApplication.getAccountByLocalId(accountId || '');
+
+    // the handleRedirectPromise makes sure we come back at this page and set the authenticated user info
+    const res = await publicClientApplication.handleRedirectPromise();
+    if (res?.account) {
+      account = res?.account;
+      saveToLocalStorage(
+        `${this.project}_localAccountId`,
+        res.account.localAccountId
+      );
+    }
 
     // if account not found trigger login with redirect and handle redirect
-    // the handleRedirectPromise makes sure we come back at this page and set the authenticated user info
     if (!account) {
-      await publicClientApplication.handleRedirectPromise();
       saveToLocalStorage(PROJECT_TO_LOGIN, this.project);
       await publicClientApplication.acquireTokenRedirect({
         prompt: 'select_account',
         scopes: ['User.Read'],
         extraScopesToConsent: scopes,
       });
-
-      // don't want to return '' and trigger a different redirection in AuthContainer
-      return 'redirect';
+      return '';
     }
 
     // Get token information.
