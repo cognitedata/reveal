@@ -18,6 +18,8 @@ import {
 } from '../render-passes/types';
 import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
+import { DEFAULT_EDL_NEIGHBOURS_COUNT } from '../pointcloud-rendering/constants';
+import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
@@ -108,17 +110,31 @@ export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
 }
 
 export function getPointCloudPostProcessingMaterial(options: PointCloudPostProcessingOptions): THREE.RawShaderMaterial {
-  const { texture, depthTexture, pointBlending } = options;
+  const { texture, depthTexture, pointBlending, edlOptions } = options;
 
-  const uniforms: ThreeUniforms = {
+  let uniforms: ThreeUniforms = {
     tDiffuse: { value: texture },
     tDepth: { value: depthTexture }
   };
 
-  const defines: Record<string, boolean> = {};
+  const defines: Record<string, boolean | number> = {};
 
   if (pointBlending) {
     defines['points_blend'] = true;
+  }
+
+  if (shouldApplyEdl(edlOptions)) {
+    defines['use_edl'] = true;
+    defines['NEIGHBOUR_COUNT'] = DEFAULT_EDL_NEIGHBOURS_COUNT;
+
+    uniforms = {
+      ...uniforms,
+      radius: { value: edlOptions.radius },
+      edlStrength: { value: edlOptions.strength },
+      screenWidth: { value: 1 },
+      screeHeight: { value: 1 },
+      neighbours: { value: getEDLNeighbourPoints(DEFAULT_EDL_NEIGHBOURS_COUNT) }
+    };
   }
 
   return new THREE.RawShaderMaterial({
@@ -128,6 +144,15 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
     defines,
     glslVersion: THREE.GLSL3
   });
+}
+
+function getEDLNeighbourPoints(neighbourCount: number): Float32Array {
+  const neighbours = new Float32Array(neighbourCount * 2);
+  for (let neighbourIndex = 0; neighbourIndex < neighbourCount; neighbourIndex++) {
+    neighbours[2 * neighbourIndex + 0] = Math.cos((2 * neighbourIndex * Math.PI) / neighbourCount);
+    neighbours[2 * neighbourIndex + 1] = Math.sin((2 * neighbourIndex * Math.PI) / neighbourCount);
+  }
+  return neighbours;
 }
 
 function createOutlineColorTexture(): THREE.DataTexture {

@@ -240,7 +240,7 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 - Due to the way `@cognite/reveal` streams data, the `OnProgressData` is no longer exported, and the `addModel` function 
   no longer accepts an `onProgress` parameter. Because of this the `onComplete` option in `Cognite3DViewer.addModel` has 
   been deprecated. To monitor loading activity, use the `onLoading`-callback provided as an option when constructing `Cognite3DViewer`.
-- `Cognite3DViewer.getCamera()` can now be used to access the `THREE.Camera` of the viewer. Note that this camera shouldn't be
+- `Cognite3DViewer.cameraManager.getCamera()` can now be used to access the `THREE.Camera` of the viewer. Note that this camera shouldn't be
   modified.
 - `Cognite3DViewer.addModel` no longer supports options `localPath`, `orthographicCamera` and `onComplete`. Point clouds currently
   don't support `geometryFilter`.

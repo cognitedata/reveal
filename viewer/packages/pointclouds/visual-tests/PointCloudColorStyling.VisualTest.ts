@@ -22,6 +22,7 @@ import { ModelIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
 import * as THREE from 'three';
 import { LocalPointClassificationsProvider } from '../src/classificationsProviders/LocalPointClassificationsProvider';
+import { PointColorType } from '@reveal/rendering';
 
 class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
   async getPointCloudObjects(_modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]> {
@@ -72,6 +73,7 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
       new StyledPointCloudObjectCollection(objectCollection, appearance)
     );
     model.geometryNode.defaultAppearance = applyDefaultsToPointCloudAppearance({ visible: false });
+    model.geometryNode.pointColorType = PointColorType.Height;
 
     return Promise.resolve();
   }

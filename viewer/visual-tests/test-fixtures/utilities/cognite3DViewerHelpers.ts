@@ -31,9 +31,15 @@ export async function createCognite3DViewer(
 
   //This if might not be needed. Leaving it in for debug reasons
   if (renderer) {
-    return new Cognite3DViewer({ sdk: client, _localModels: true, logMetrics: false, onLoading, renderer: renderer });
+    return new Cognite3DViewer({ sdk: client, _localModels: true, logMetrics: false, onLoading, pointCloudEffects: { edlOptions: 'disabled' }, renderer: renderer });
   }
-  return new Cognite3DViewer({ sdk: client, _localModels: true, logMetrics: false, onLoading });
+  return new Cognite3DViewer({
+    sdk: client,
+    _localModels: true,
+    logMetrics: false,
+    onLoading,
+    pointCloudEffects: { edlOptions: 'disabled' }
+  });
 }
 
 export async function addModels(viewer: Cognite3DViewer, localModelUrls: string[]): Promise<CogniteModel[]> {

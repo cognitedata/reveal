@@ -242,7 +242,8 @@ void main() {
 	#endif
 
 	#if !defined(paraboloid_point_shape) && defined(use_edl)
-		vLogDepth = log2(-mvPosition.z);
+		// Division by 10 is added to make depth values more "flat" so that EDL effect is visible at distance.
+		vLogDepth = log2(-mvPosition.z)/10.0;
 	#endif
 
 	// ---------------------
