@@ -8,5 +8,5 @@ const path = require('path');
  */
 module.exports = {
   // Changes the cache location for Puppeteer.
-  cacheDirectory: path.join(__dirname, '.cache', 'puppeteer')
+  cacheDirectory: path.join(__dirname, 'node_modules', 'puppeteer', '.cache')
 };
