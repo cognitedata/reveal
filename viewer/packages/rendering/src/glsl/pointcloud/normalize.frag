@@ -23,7 +23,7 @@ out vec4 outputColor;
 void main() {
 
 	float depth = texture(tDepth, vUv).r;
-    vec4 color = texture(tDiffuse, vUv);
+	vec4 color = texture(tDiffuse, vUv);
 	bool shouldDiscard = depth >= 1.0;
 
 	#if defined(points_blend)

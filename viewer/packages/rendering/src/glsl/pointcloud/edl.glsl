@@ -13,16 +13,16 @@ vec2 calculateObscurance(float depth, float screenWidth, float screenHeight, vec
 	float minNeighbourDepth = MAX_FLOAT;
 	vec2 minNeighbourUv = vec2(0.0, 0.0);
 
-        bool thisOutside = depth == 0.0;
+	bool thisOutside = depth == 0.0;
 
 	for(int i = 0; i < NEIGHBOUR_COUNT; i++){
 		vec2 uvNeighbour = vUv + uvRadius * neighbours[i];
 
 		float neighbourDepth = texture(colorTexture, uvNeighbour).a;
 
-		bool isSmallestNeighbour = neighbourDepth < minNeighbourDepth;
-		minNeighbourDepth = isSmallestNeighbour ? neighbourDepth : minNeighbourDepth;
-		minNeighbourUv = isSmallestNeighbour ? uvNeighbour : minNeighbourUv;
+		bool isSmallestNeighbourDepth = neighbourDepth < minNeighbourDepth;
+		minNeighbourDepth = isSmallestNeighbourDepth ? neighbourDepth : minNeighbourDepth;
+		minNeighbourUv = isSmallestNeighbourDepth ? uvNeighbour : minNeighbourUv;
 
 		bool otherOutside = neighbourDepth == 0.0;
 
