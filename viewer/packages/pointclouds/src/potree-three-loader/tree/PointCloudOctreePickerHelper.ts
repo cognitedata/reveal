@@ -347,9 +347,6 @@ export class PointCloudOctreePickerHelper {
 
   public static getPickState(): IPickState {
     const scene = new Scene();
-    // @ts-expect-error
-    // Missing type definition for ThreeJS r144. When this fails,
-    // its most likely because the type definitions have been updated
     scene.matrixWorldAutoUpdate = false;
 
     const material = new PointCloudMaterial();

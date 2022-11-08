@@ -35,7 +35,7 @@
     "@types/react-router-dom": "^5.1.6",
     "@types/stats": "^0.16.30",
     "@types/styled-components": "^5.1.4",
-    "@types/three": "0.144.0",
+    "@types/three": "0.146.0",
     "css-loader": "^6.7.1",
     "dotenv-webpack": "^7.1.0",
     "html-webpack-plugin": "^5.5.0",

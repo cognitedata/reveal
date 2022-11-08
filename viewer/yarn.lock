@@ -780,10 +780,10 @@ __metadata:
     "@tweenjs/tween.js": 18.6.4
     "@types/dat.gui": 0.7.7
     "@types/draco3dgltf": 1.4.0
-    "@types/expect-puppeteer": 5.0.1
+    "@types/expect-puppeteer": 5.0.2
     "@types/glob": 8.0.0
     "@types/jest": 29.2.1
-    "@types/jest-environment-puppeteer": 5.0.2
+    "@types/jest-environment-puppeteer": 5.0.3
     "@types/jest-image-snapshot": 5.1.0
     "@types/jsdom": 20.0.0
     "@types/lodash": 4.14.187
@@ -794,7 +794,7 @@ __metadata:
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
     "@types/stats": 0.16.30
-    "@types/three": 0.144.0
+    "@types/three": 0.146.0
     "@types/tween.js": 18.5.1
     "@typescript-eslint/eslint-plugin": 5.41.0
     "@typescript-eslint/parser": 5.41.0
@@ -851,7 +851,7 @@ __metadata:
     shx: 0.3.4
     skmeans: 0.11.3
     stats.js: 0.17.0
-    three: 0.144.0
+    three: 0.146.0
     three-stdlib: 2.17.3
     ts-jest: 29.0.3
     ts-loader: 9.4.1
@@ -1946,13 +1946,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/expect-puppeteer@npm:5.0.1":
-  version: 5.0.1
-  resolution: "@types/expect-puppeteer@npm:5.0.1"
+"@types/expect-puppeteer@npm:5.0.2":
+  version: 5.0.2
+  resolution: "@types/expect-puppeteer@npm:5.0.2"
   dependencies:
     "@types/jest": "*"
-    "@types/puppeteer": "*"
-  checksum: d86fddfb4447498f9673dd3707dbb91431086ac15d74a14ceb6854d8c0680722214549614f20985a4bd58ed87ee6c7dd0a1a616248817cdfb5af4d6755d96df1
+    "@types/puppeteer": ^5.4.0
+  checksum: 38d761afd82e20f96d8bc1e73752e093bc9df5d4a4f8f6dfd4e7baf30b976bfa11560a38fe7d36956ac08a10fd90f25e038422c3500cd20c17bf9c082821c2e8
   languageName: node
   linkType: hard
 
@@ -2046,14 +2046,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest-environment-puppeteer@npm:5.0.2":
-  version: 5.0.2
-  resolution: "@types/jest-environment-puppeteer@npm:5.0.2"
+"@types/jest-environment-puppeteer@npm:5.0.3":
+  version: 5.0.3
+  resolution: "@types/jest-environment-puppeteer@npm:5.0.3"
   dependencies:
     "@jest/types": ">=24 <=27"
-    "@types/puppeteer": "*"
+    "@types/puppeteer": ^5.4.0
     jest-environment-node: ">=24 <=27"
-  checksum: bb3314a80f6d096ce0054ede7608f9f948884ef838b6d9d4b2502fa9d672ac6e36c123f6c25c085cdc85be7e4a273258d46926bd2cb6df2ba97c6c1dd1cebb8f
+  checksum: eb865f9ea9ee44587167fac1e3a0ecc56d09e20b8cf5200226ddd0b7d31a8cc38636045f6709be605d3730ba4002c1a87bc7749ee2bf8a96fbb709572d5176ae
   languageName: node
   linkType: hard
 
@@ -2192,12 +2192,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/puppeteer@npm:*":
-  version: 5.4.6
-  resolution: "@types/puppeteer@npm:5.4.6"
+"@types/puppeteer@npm:^5.4.0":
+  version: 5.4.7
+  resolution: "@types/puppeteer@npm:5.4.7"
   dependencies:
     "@types/node": "*"
-  checksum: b969230812e95fcc5eee83151731e51b287cc934169f552034d8eea58ce9b5beb4ba09b9ce05b75d9510241a85d244f28e8b0a0a4b9f7dffcad8c37a39288260
+  checksum: 491c0ca2d879b72e869f5152a9ea7de1356a66f44ef6210fdd5c5036d893b4ee2956212e2f3353c7045b9e56d1a4cea408f41a26d7cf3708774c4d6c19a7c654
   languageName: node
   linkType: hard
 
@@ -2285,12 +2285,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.144.0":
-  version: 0.144.0
-  resolution: "@types/three@npm:0.144.0"
+"@types/three@npm:0.146.0":
+  version: 0.146.0
+  resolution: "@types/three@npm:0.146.0"
   dependencies:
     "@types/webxr": "*"
-  checksum: 7ce69e1a48ba6d19dc9efb78c5c67a3e66c036f240386dd700eda7a5964e44550066ac45bc0997bd4fe7be446edae356313d992361c18415191468dfdbfb454d
+  checksum: f8ea5ba032f6aaa1cb5ad7dfbbd13851e8cba04365bc7fa9a5320ea7e9a2538ea5f2426391f690f0465347ade15cc145d5dc84b1730d8cceea89f746231f667c
   languageName: node
   linkType: hard
 
@@ -12365,10 +12365,10 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"three@npm:0.144.0":
-  version: 0.144.0
-  resolution: "three@npm:0.144.0"
-  checksum: 6fb1afb3d189fede913c17e05ad17f3e653370eb3f1030b94a1cc49e84be1e45ea50a340c87289ff30f9bf90a87d04fcdc507577c7c5b062ff730b942f8a16ea
+"three@npm:0.146.0":
+  version: 0.146.0
+  resolution: "three@npm:0.146.0"
+  checksum: c6eb2005d97c599de7f4eccf73c4b1e8731c353ca3e7b9bf9d3bc2b52a8e288c59c06c148fd93df16df323b28938947227a37e07cc6fbe04aa8f8725e49caa8a
   languageName: node
   linkType: hard
 
