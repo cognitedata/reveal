@@ -81,7 +81,7 @@
     "@types/jest-environment-puppeteer": "5.0.2",
     "@types/jest-image-snapshot": "5.1.0",
     "@types/jsdom": "20.0.0",
-    "@types/lodash": "4.14.186",
+    "@types/lodash": "4.14.187",
     "@types/mixpanel-browser": "2.38.0",
     "@types/node": "18.11.3",
     "@types/offscreencanvas": "2019.7.0",
