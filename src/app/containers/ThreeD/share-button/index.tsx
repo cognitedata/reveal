@@ -1,27 +1,40 @@
-import { Button, Tooltip } from '@cognite/cogs.js';
-import { Cognite3DViewer } from '@cognite/reveal';
-import { notification } from 'antd';
-import { getURLWithThreeDViewerState } from 'app/containers/ThreeD/utils';
+import { Button, Tooltip, toast } from '@cognite/cogs.js';
+import { ViewerState } from '@cognite/reveal';
+import { getStateUrl } from 'app/containers/ThreeD/utils';
 
 type ShareButtonProps = {
-  viewer: Cognite3DViewer | null;
+  viewState?: ViewerState;
+  selectedAssetId?: number;
+  assetDetailsExpanded?: boolean;
 };
 
-const ShareButton = ({ viewer }: ShareButtonProps): JSX.Element => {
+const ShareButton = ({
+  viewState,
+  selectedAssetId,
+  assetDetailsExpanded,
+}: ShareButtonProps): JSX.Element => {
   const handleShare = async () => {
-    const stringifiedState = JSON.stringify(viewer?.getViewState());
-    const link = getURLWithThreeDViewerState(stringifiedState);
-    await navigator.clipboard.writeText(`${link}`);
-    notification.info({
-      key: 'clipboard',
-      message: 'Clipboard updated',
-      description: `Sharable link with viewer state is now available in your clipboard.`,
+    const path = getStateUrl({
+      viewState,
+      selectedAssetId,
+      assetDetailsExpanded,
     });
+    const link = `${window.location.origin}${path}`;
+    await navigator.clipboard.writeText(`${link}`);
+    toast.info(
+      <div>
+        <h4>URL in clipboard</h4>
+        <p>
+          Sharable link with viewer state is now available in your clipboard.
+        </p>
+      </div>,
+      { toastId: 'url-state-clipboard' }
+    );
   };
 
   return (
-    <Tooltip content="Copy viewer state to clipboard">
-      <Button icon="Share" onClick={handleShare} type="ghost" />
+    <Tooltip content="Copy URL to current state" placement="right">
+      <Button icon="Link" onClick={handleShare} type="ghost" />
     </Tooltip>
   );
 };

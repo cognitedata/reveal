@@ -1,5 +1,6 @@
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -9,65 +10,44 @@ import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
 import { use3DModel } from './hooks';
 import {
-  CadIntersection,
   Cognite3DModel,
   Cognite3DViewer,
   CognitePointCloudModel,
   DefaultCameraManager,
+  Intersection,
   ViewerState,
 } from '@cognite/reveal';
-
 import { Alert } from 'antd';
-import { useQuery, useQueryClient } from 'react-query';
-import {
-  findClosestAsset,
-  highlightAsset,
-  fitCameraToAsset,
-  removeAllStyles,
-  ghostAsset,
-  outlineAssetMappedNodes,
-} from './utils';
+import { useQuery } from 'react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import RevealErrorFeedback from './RevealErrorFeedback';
 import { PointerEventDelegate } from '@cognite/reveal';
 import { usePrevious } from '@cognite/data-exploration';
 import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
-import { StyledSplitter } from 'app/containers/elements';
-import { AssetPreviewSidebar } from 'app/containers/ThreeD/AssetPreviewSidebar';
+import { ThreeDContext } from './ThreeDContext';
 
-type ChildProps = {
-  threeDModel?: Cognite3DModel;
-  pointCloudModel?: CognitePointCloudModel;
-  viewer: Cognite3DViewer;
-};
 type Props = {
   modelId: number;
   revisionId: number;
-
-  setSelectedAssetId: (assetId: number | null) => void;
   nodesSelectable: boolean;
-  children?: (opts: ChildProps) => JSX.Element;
-  assetColumnVisible: boolean;
   initialViewerState?: ViewerState;
-  selectedAsset: number | null;
-  onAssetColumnClose?: () => void;
+  selectedAsset?: number;
+  onViewerClick?: (intersection: Intersection | null) => void;
 };
 
 export function Reveal({
   modelId,
   revisionId,
-  setSelectedAssetId,
   nodesSelectable,
-  children,
-  assetColumnVisible,
   initialViewerState,
   selectedAsset,
-  onAssetColumnClose,
+  onViewerClick,
 }: Props) {
+  const context = useContext(ThreeDContext);
+  const { setViewer, set3DModel, setPointCloudModel } = context;
   const numOfClicks = useRef<number>(0);
   const clickTimer = useRef<NodeJS.Timeout>();
   const sdk = useSDK();
-  const queryClient = useQueryClient();
 
   const [revealContainer, setRevealContainer] = useState<HTMLDivElement | null>(
     null
@@ -100,6 +80,12 @@ export function Reveal({
     });
   }, [revealContainer, sdk]);
 
+  useEffect(() => {
+    if (setViewer) {
+      setViewer(viewer);
+    }
+  }, [setViewer, viewer]);
+
   const { data: models } = useQuery(
     ['reveal-model', modelId, revisionId],
     async () => {
@@ -118,6 +104,12 @@ export function Reveal({
       const threeDModel = model instanceof Cognite3DModel ? model : undefined;
       const pointCloudModel =
         model instanceof CognitePointCloudModel ? model : undefined;
+      if (set3DModel) {
+        set3DModel(threeDModel);
+      }
+      if (setPointCloudModel) {
+        setPointCloudModel(pointCloudModel);
+      }
 
       return { threeDModel, pointCloudModel };
     },
@@ -127,7 +119,7 @@ export function Reveal({
     }
   );
 
-  const { threeDModel, pointCloudModel } = models || {
+  const { threeDModel } = models || {
     threeDModel: undefined,
     pointCloudModel: undefined,
   };
@@ -144,45 +136,7 @@ export function Reveal({
     });
   }, [selectedAsset, viewer]);
 
-  useEffect(() => {
-    if (!viewer || !threeDModel) {
-      return;
-    }
-
-    if (
-      selectedAsset &&
-      !initialViewerState?.models?.some(({ styledSets }) => !!styledSets.length)
-    ) {
-      if (assetColumnVisible) {
-        ghostAsset(sdk, threeDModel, selectedAsset);
-      } else {
-        highlightAsset(sdk, threeDModel, selectedAsset);
-      }
-      fitCameraToAsset(
-        sdk,
-        queryClient,
-        viewer,
-        threeDModel,
-        modelId,
-        revisionId,
-        selectedAsset
-      );
-    } else {
-      outlineAssetMappedNodes(threeDModel!);
-    }
-  }, [
-    assetColumnVisible,
-    initialViewerState?.models,
-    modelId,
-    queryClient,
-    revisionId,
-    sdk,
-    selectedAsset,
-    threeDModel,
-    viewer,
-  ]);
-
-  const onViewerClick: PointerEventDelegate = useCallback(
+  const _onViewerClick: PointerEventDelegate = useCallback(
     async ({ offsetX, offsetY }) => {
       if (!threeDModel || !viewer || !nodesSelectable) {
         return;
@@ -194,35 +148,10 @@ export function Reveal({
             offsetX,
             offsetY
           );
-
-          let closestAssetId: number | undefined;
-          if (intersection) {
-            closestAssetId = await findClosestAsset(
-              sdk,
-              queryClient,
-              threeDModel,
-              modelId,
-              revisionId,
-              intersection as CadIntersection
-            );
+          if (onViewerClick) {
+            onViewerClick(intersection);
           }
 
-          if (closestAssetId && closestAssetId !== selectedAsset) {
-            highlightAsset(sdk, threeDModel, closestAssetId);
-            fitCameraToAsset(
-              sdk,
-              queryClient,
-              viewer,
-              threeDModel,
-              modelId,
-              revisionId,
-              closestAssetId
-            );
-          } else if (!closestAssetId) {
-            removeAllStyles(threeDModel);
-          }
-
-          setSelectedAssetId(closestAssetId ?? null);
           clearTimeout(clickTimer.current);
           numOfClicks.current = 0;
         }, 250);
@@ -233,19 +162,9 @@ export function Reveal({
         numOfClicks.current = 0;
       }
     },
-    [
-      selectedAsset,
-      modelId,
-      nodesSelectable,
-      queryClient,
-      revisionId,
-      sdk,
-      setSelectedAssetId,
-      threeDModel,
-      viewer,
-    ]
+    [nodesSelectable, onViewerClick, threeDModel, viewer]
   );
-  const previousClickHandler = usePrevious(onViewerClick);
+  const previousClickHandler = usePrevious(_onViewerClick);
 
   useEffect(() => {
     if (!viewer) {
@@ -254,8 +173,8 @@ export function Reveal({
     if (previousClickHandler) {
       viewer.off('click', previousClickHandler);
     }
-    viewer.on('click', onViewerClick);
-  }, [onViewerClick, previousClickHandler, viewer]);
+    viewer.on('click', _onViewerClick);
+  }, [_onViewerClick, previousClickHandler, viewer]);
 
   useViewerDoubleClickListener({
     viewer: viewer!,
@@ -274,31 +193,7 @@ export function Reveal({
     );
   }
 
-  return (
-    <StyledSplitter>
-      <>
-        <RevealContainer id="revealContainer" ref={handleMount} />
-        {children &&
-          viewer &&
-          children({
-            threeDModel,
-            pointCloudModel,
-            viewer,
-          })}
-      </>
-      {!!selectedAsset && threeDModel && assetColumnVisible && (
-        <AssetPreviewSidebar
-          assetId={selectedAsset}
-          onClose={() => {
-            removeAllStyles(threeDModel);
-            if (onAssetColumnClose) {
-              onAssetColumnClose();
-            }
-          }}
-        />
-      )}
-    </StyledSplitter>
-  );
+  return <RevealContainer id="revealContainer" ref={handleMount} />;
 }
 
 // This container has an inline style 'position: relative' given by @cognite/reveal.

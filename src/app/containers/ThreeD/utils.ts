@@ -17,8 +17,9 @@ import {
 
 import { FetchQueryOptions, QueryClient } from 'react-query';
 
-const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
+export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
+export const THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY = 'expanded';
 
 export const MINIMUM_BOUNDINGBOX_SIZE = 0.001;
 export const CAMERA_ANIMATION_DURATION = 500;
@@ -202,42 +203,6 @@ export const findClosestAsset = async (
   return closestAssetId;
 };
 
-export const getURLWithThreeDViewerState = (state: string): string => {
-  const search = window.location.search;
-  const params = new URLSearchParams(search);
-  params.append(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY, state);
-
-  return `${window.location.origin}${
-    window.location.pathname
-  }?${params.toString()}`;
-};
-
-export const parseThreeDViewerStateFromURL = (): {
-  viewerState?: ViewerState;
-} => {
-  const search = window.location.search;
-  const params = new URLSearchParams(search);
-  const viewerStateParam = params.get(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY);
-  params.delete(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY);
-
-  window.history.replaceState(
-    null,
-    '',
-    `${window.location.pathname}?${params.toString()}`
-  );
-
-  let viewerState: ViewerState | undefined;
-  try {
-    viewerState = JSON.parse(viewerStateParam ?? '');
-  } catch {
-    viewerState = undefined;
-  }
-
-  return {
-    viewerState,
-  };
-};
-
 const GREP_STRING_SPLITTER = /\s/;
 export function grepContains(contentSet: Set<string>, querySet: Set<string>) {
   const content = [...contentSet];
@@ -256,3 +221,41 @@ export function prepareSearchString(s: string): Set<string> {
       .filter(s => s.length > 0)
   );
 }
+
+export const getStateUrl = ({
+  viewState,
+  assetDetailsExpanded,
+  selectedAssetId,
+}: {
+  viewState?: ViewerState;
+  selectedAssetId?: number;
+  assetDetailsExpanded?: boolean;
+}) => {
+  const searchParams = new URLSearchParams(window.location.search);
+  if (viewState) {
+    searchParams.set(
+      THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY,
+      JSON.stringify(viewState)
+    );
+  } else {
+    searchParams.delete(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY);
+  }
+  if (selectedAssetId) {
+    searchParams.set(
+      THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY,
+      `${selectedAssetId}`
+    );
+  } else {
+    searchParams.delete(THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY);
+  }
+  if (assetDetailsExpanded) {
+    searchParams.set(
+      THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY,
+      'true'
+    );
+  } else {
+    searchParams.delete(THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY);
+  }
+
+  return `${window.location.pathname}?${searchParams}`;
+};

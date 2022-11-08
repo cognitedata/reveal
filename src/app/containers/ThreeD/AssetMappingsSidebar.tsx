@@ -21,8 +21,8 @@ import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
 type ThreeDSidebarProps = {
   modelId: number;
   revisionId: number;
-  selectedAssetId: number | null;
-  setSelectedAssetId: (assetId: number | null) => void;
+  selectedAssetId?: number;
+  setSelectedAssetId: (assetId?: number) => void;
   viewer: Cognite3DViewer;
   threeDModel: Cognite3DModel;
 };
@@ -85,7 +85,7 @@ export const AssetMappingsSidebar = ({
       setSelectedAssetId(clickedAssetId);
     } else {
       removeAllStyles(threeDModel);
-      setSelectedAssetId(null);
+      setSelectedAssetId(undefined);
     }
   };
 

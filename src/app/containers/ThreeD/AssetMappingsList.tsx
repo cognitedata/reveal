@@ -58,7 +58,7 @@ type AssetMappingsListProps = {
   error?: CogniteError | null;
   query: string;
   assets: AugmentedMapping[];
-  selectedAssetId?: number | null;
+  selectedAssetId?: number;
   itemCount: number;
   onClick: (assetId: number) => void;
   isItemLoaded: (index: number) => boolean;

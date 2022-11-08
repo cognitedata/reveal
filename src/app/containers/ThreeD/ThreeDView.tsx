@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useMemo,
+  useCallback,
+} from 'react';
 
-import { useDefault3DModelRevision } from './hooks';
 import { trackUsage } from 'app/utils/Metrics';
 import Reveal from './Reveal';
 import { AssetMappingsSidebar } from './AssetMappingsSidebar';
@@ -15,129 +20,227 @@ import HelpButton from './help-button';
 import styled from 'styled-components';
 import { Flex, ToolBar } from '@cognite/cogs.js';
 import ThreeDTitle from './ThreeDTitle';
-import ShareButton from './share-button';
 import NodePreview from './NodePreview';
 import {
-  parseThreeDViewerStateFromURL,
+  findClosestAsset,
+  fitCameraToAsset,
+  ghostAsset,
+  highlightAsset,
+  outlineAssetMappedNodes,
   removeAllStyles,
-  THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY,
 } from './utils';
-import { useSearchParamNumber } from 'app/utils/URLUtils';
 
-export const ThreeDView = ({ modelId }: { modelId: number }) => {
-  const [urlState, setUrlState] =
-    useState<ReturnType<typeof parseThreeDViewerStateFromURL>>();
+import { CadIntersection, Intersection } from '@cognite/reveal';
+import { AssetPreviewSidebar } from './AssetPreviewSidebar';
+import { StyledSplitter } from '../elements';
+import { useSDK } from '@cognite/sdk-provider';
+import { useQueryClient } from 'react-query';
+import { ThreeDContext } from './ThreeDContext';
+import debounce from 'lodash/debounce';
+import ShareButton from './share-button';
+
+type Props = {
+  modelId: number;
+  revisionId: number;
+};
+export const ThreeDView = ({ modelId, revisionId }: Props) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     trackUsage('3DPreview.Open', { modelId });
   }, [modelId]);
 
-  useEffect(() => {
-    setUrlState(parseThreeDViewerStateFromURL());
-  }, []);
+  const context = useContext(ThreeDContext);
+  const {
+    viewer,
+    threeDModel,
+    pointCloudModel,
+    assetDetailsExpanded,
+    setAssetDetailsExpanded,
+  } = context;
 
-  const [selectedAssetId, setSelectedAssetId] = useSearchParamNumber(
-    THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY,
-    {
-      replace: true,
-    }
-  );
+  const { viewState, setViewState, selectedAssetId, setSelectedAssetId } =
+    context;
+  // Changes to the view state in the url should not cause any updates
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const initialUrlViewState = useMemo(() => viewState, []);
+
   const [nodesSelectable, setNodesSelectable] = useState<boolean>(true);
 
-  const [assetDetailsExpanded, setAssetDetailsExpanded] = useState(false);
+  useEffect(() => {
+    if (viewer && setViewState) {
+      const fn = debounce(() => {
+        setViewState(viewer.getViewState());
+      }, 500);
+      viewer.on('sceneRendered', fn);
+      return () => viewer.off('sceneRendered', fn);
+    }
+  }, [setViewState, viewer]);
+
+  const onViewerClick = useCallback(
+    (intersection: Intersection | null) => {
+      (async () => {
+        let closestAssetId: number | undefined;
+        if (intersection) {
+          closestAssetId = await findClosestAsset(
+            sdk,
+            queryClient,
+            threeDModel!,
+            modelId,
+            revisionId,
+            intersection as CadIntersection
+          );
+        }
+
+        if (closestAssetId && closestAssetId !== selectedAssetId) {
+          setSelectedAssetId(closestAssetId);
+        } else if (!closestAssetId) {
+          setSelectedAssetId(undefined);
+        }
+      })();
+    },
+    [
+      modelId,
+      queryClient,
+      revisionId,
+      sdk,
+      selectedAssetId,
+      setSelectedAssetId,
+      threeDModel,
+    ]
+  );
 
   useEffect(() => {
     if (!selectedAssetId) {
       setAssetDetailsExpanded(false);
     }
-  }, [selectedAssetId]);
+  }, [selectedAssetId, setAssetDetailsExpanded]);
 
-  const { data: revision } = useDefault3DModelRevision(modelId);
+  // Hack to avoid having an initial selectedAssetId overwriting viewState
+  const [firstRender, setFirstRender] = useState(true);
+  useEffect(() => {
+    if (!viewer || !threeDModel) {
+      return;
+    }
+    if (firstRender && viewState) {
+      setFirstRender(false);
+      return;
+    }
+    setFirstRender(false);
+
+    if (selectedAssetId) {
+      if (assetDetailsExpanded) {
+        ghostAsset(sdk, threeDModel, selectedAssetId);
+      } else {
+        highlightAsset(sdk, threeDModel, selectedAssetId);
+      }
+      fitCameraToAsset(
+        sdk,
+        queryClient,
+        viewer,
+        threeDModel,
+        modelId,
+        revisionId,
+        selectedAssetId
+      );
+    } else {
+      removeAllStyles(threeDModel);
+      outlineAssetMappedNodes(threeDModel);
+    }
+    // Ignore changes to `viewState` and `firstRender`
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    assetDetailsExpanded,
+    modelId,
+    queryClient,
+    revisionId,
+    sdk,
+    selectedAssetId,
+    threeDModel,
+    viewer,
+  ]);
 
   return (
     <>
       <ThreeDTitle id={modelId} />
       <PreviewContainer>
-        {revision && (
+        <StyledSplitter>
           <Reveal
-            key={`${modelId}.${revision.id}`}
+            key={`${modelId}.${revisionId}`}
             modelId={modelId}
-            revisionId={revision.id}
-            setSelectedAssetId={setSelectedAssetId}
+            revisionId={revisionId}
             nodesSelectable={nodesSelectable && !assetDetailsExpanded}
-            assetColumnVisible={
-              Number.isFinite(selectedAssetId) && assetDetailsExpanded
-            }
-            onAssetColumnClose={() => setAssetDetailsExpanded(false)}
             selectedAsset={selectedAssetId}
-            initialViewerState={urlState?.viewerState}
-          >
-            {({ pointCloudModel, threeDModel, viewer }) => {
-              const model = pointCloudModel || threeDModel;
-              return (
-                <>
-                  <SidebarContainer gap={15}>
-                    {threeDModel && (
-                      <AssetMappingsSidebar
-                        modelId={modelId}
-                        revisionId={revision.id}
-                        selectedAssetId={selectedAssetId}
-                        setSelectedAssetId={setSelectedAssetId}
-                        viewer={viewer}
-                        threeDModel={threeDModel}
-                      />
-                    )}
-                  </SidebarContainer>
-                  {model && (
-                    <StyledToolBar>
-                      {threeDModel && (
-                        <ExpandButton
-                          viewer={viewer}
-                          viewerModel={threeDModel}
-                        />
-                      )}
-                      {threeDModel && selectedAssetId && (
-                        <FocusAssetButton
-                          modelId={modelId}
-                          revisionId={revision.id}
-                          selectedAssetId={selectedAssetId}
-                          viewer={viewer}
-                          threeDModel={threeDModel}
-                        />
-                      )}
-                      {model && <Slicer viewer={viewer} viewerModel={model} />}
-                      {pointCloudModel && (
-                        <PointSizeSlider model={pointCloudModel} />
-                      )}
-                      <PointToPointMeasurementButton
-                        viewer={viewer}
-                        nodesSelectable={nodesSelectable}
-                        setNodesSelectable={setNodesSelectable}
-                      />
-                      <ShareButton viewer={viewer} />
-                      <HelpButton />
-                    </StyledToolBar>
-                  )}
-                  {!!selectedAssetId && !assetDetailsExpanded && (
-                    <NodePreviewContainer>
-                      <NodePreview
-                        assetId={selectedAssetId}
-                        closePreview={() => {
-                          setAssetDetailsExpanded(false);
-                          setSelectedAssetId(null);
-                          if (threeDModel) {
-                            removeAllStyles(threeDModel);
-                          }
-                        }}
-                        openDetails={() => {
-                          setAssetDetailsExpanded(true);
-                        }}
-                      />
-                    </NodePreviewContainer>
-                  )}
-                </>
-              );
-            }}
-          </Reveal>
+            initialViewerState={initialUrlViewState}
+            onViewerClick={onViewerClick}
+          />
+          {!!selectedAssetId && threeDModel && assetDetailsExpanded && (
+            <AssetPreviewSidebar
+              assetId={selectedAssetId}
+              onClose={() => {
+                setAssetDetailsExpanded(false);
+              }}
+            />
+          )}
+        </StyledSplitter>
+        {viewer && (
+          <SidebarContainer gap={15}>
+            {threeDModel && (
+              <AssetMappingsSidebar
+                modelId={modelId}
+                revisionId={revisionId}
+                selectedAssetId={selectedAssetId}
+                setSelectedAssetId={setSelectedAssetId}
+                viewer={viewer}
+                threeDModel={threeDModel}
+              />
+            )}
+          </SidebarContainer>
+        )}
+        {threeDModel && viewer && (
+          <StyledToolBar>
+            {threeDModel && (
+              <ExpandButton viewer={viewer} viewerModel={threeDModel} />
+            )}
+            {threeDModel && selectedAssetId && (
+              <FocusAssetButton
+                modelId={modelId}
+                revisionId={revisionId}
+                selectedAssetId={selectedAssetId}
+                viewer={viewer}
+                threeDModel={threeDModel}
+              />
+            )}
+            {threeDModel && (
+              <Slicer viewer={viewer} viewerModel={threeDModel} />
+            )}
+            {pointCloudModel && <PointSizeSlider model={pointCloudModel} />}
+            <ShareButton
+              viewState={viewState}
+              selectedAssetId={selectedAssetId}
+              assetDetailsExpanded={assetDetailsExpanded}
+            />
+            <PointToPointMeasurementButton
+              viewer={viewer}
+              nodesSelectable={nodesSelectable}
+              setNodesSelectable={setNodesSelectable}
+            />
+            <HelpButton />
+          </StyledToolBar>
+        )}
+        {!!selectedAssetId && !assetDetailsExpanded && (
+          <NodePreviewContainer>
+            <NodePreview
+              assetId={selectedAssetId}
+              closePreview={() => {
+                setSelectedAssetId(undefined);
+              }}
+              openDetails={() => {
+                setAssetDetailsExpanded(true);
+              }}
+            />
+          </NodePreviewContainer>
         )}
       </PreviewContainer>
     </>
@@ -147,7 +250,7 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
 const NodePreviewContainer = styled.div`
   position: absolute;
   right: 30px;
-  top: 30px;
+  top: 90px;
   height: 400px;
   width: 300px;
 `;
@@ -165,7 +268,7 @@ const SidebarContainer = styled(Flex)`
   position: absolute;
   width: auto;
   height: auto;
-  top: 30px;
+  top: 90px;
   left: 30px;
   z-index: 100;
   overflow: hidden;
