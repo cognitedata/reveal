@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
 import assert from 'assert';
 import { CogniteClient } from '@cognite/sdk';
 import { NumericRange, IndexSet } from '@reveal/utilities';
@@ -104,7 +105,16 @@ export class NodeCollectionDeserializer {
       descriptor.state.forEach((range: NumericRange) => indexSet.addRange(new NumericRange(range.from, range.count)));
       const nodeCollection = new TreeIndexNodeCollection(indexSet);
       if (descriptor.options?.areas !== undefined) {
-        nodeCollection.addAreas(descriptor.options.areas);
+        const areas = descriptor.options?.areas as {
+          min: { x: number; y: number; z: number };
+          max: { x: number; y: number; z: number };
+        }[];
+        const areaBoxes = areas.map(area => {
+          const min = new THREE.Vector3(area.min.x, area.min.y, area.min.z);
+          const max = new THREE.Vector3(area.max.x, area.max.y, area.max.z);
+          return new THREE.Box3(min, max);
+        });
+        nodeCollection.addAreas(areaBoxes);
       }
 
       return Promise.resolve(nodeCollection);
