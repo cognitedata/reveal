@@ -849,14 +849,19 @@ export class Cognite3DViewer {
 
   /**
    * Sets the color used as the clear color of the renderer.
-   * @param color
+   * @param backgroundColor
+   * @param backgroundColor.color
+   * @param backgroundColor.alpha
    */
-  setBackgroundColor(color: THREE.Color): void {
+  setBackgroundColor(backgroundColor: { color?: THREE.Color; alpha?: number }): void {
     if (this.isDisposed) {
       return;
     }
 
-    this.renderer.setClearColor(color);
+    const color = backgroundColor.color ?? this.renderer.getClearColor(new THREE.Color());
+    const alpha = backgroundColor.alpha ?? this.renderer.getClearAlpha();
+
+    this.renderer.setClearColor(color, alpha);
     this.spinner.updateBackgroundColor(color);
     this.requestRedraw();
   }
