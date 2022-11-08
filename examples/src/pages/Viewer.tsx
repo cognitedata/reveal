@@ -15,7 +15,8 @@ import {
   CognitePointCloudModel,
   CameraControlsOptions,
   TreeIndexNodeCollection,
-  DefaultCameraManager
+  DefaultCameraManager,
+  CogniteModel
 } from '@cognite/reveal';
 import { DebugCameraTool, ExplodedViewTool, AxisViewTool, Corner } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';

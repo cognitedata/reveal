@@ -153,6 +153,9 @@
     "@cognite/sdk-core": "^4.1.0",
     "three": "^0.144.0"
   },
+  "resolutions": {
+    "three": "0.144.0"
+  },
   "glslify": {
     "transform": [
       "glslify-import"
