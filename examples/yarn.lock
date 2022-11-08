@@ -183,7 +183,7 @@
   dependencies:
     commander "^2.15.1"
 
-"@cognite/reveal@link:../viewer/dist":
+"@cognite/reveal@link:../viewer":
   version "0.0.0"
   uid ""
 

@@ -42,7 +42,7 @@ jobs:
         run: yarn run build:prod
 
       - name: Publish to NPM
-        working-directory: viewer/dist
+        working-directory: viewer
         run: npm publish --tag nightly
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}

@@ -1,7 +1,6 @@
 {
   "name": "@cognite/reveal",
   "version": "4.0.0-alpha.0",
-  "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "repository": {
@@ -17,8 +16,8 @@
     "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
   ],
   "sideEffects": false,
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "workspaces": [
     "packages/*"
   ],
@@ -28,8 +27,7 @@
     "build:wasm-test": "yarn workspaces foreach run run-wasm-pack build --target nodejs ./wasm",
     "build:watch": "yarn run clean && yarn run build:wasm && webpack --env development --watch",
     "build:prod": "yarn run clean && yarn run build:wasm && webpack --env production",
-    "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
-    "clean": "shx rm -rf dist/ && yarn run mkdist",
+    "clean": "shx rm -rf dist/ && shx mkdir -p dist",
     "clean:wasm": "cargo clean --manifest-path ./Cargo.toml",
     "retarget-types": "tsc-alias -p tsconfig.webpack.json -v true",
     "test": "yarn run test:wasm && yarn run test:ts",
@@ -161,5 +159,8 @@
     "hooks": {
       "pre-push": "yarn run lint"
     }
-  }
+  },
+  "files": [
+    "./dist/*"
+  ]
 }

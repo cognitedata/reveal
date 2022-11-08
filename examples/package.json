@@ -17,7 +17,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@azure/msal-browser": "^2.21.0",
-    "@cognite/reveal": "link:../viewer/dist",
+    "@cognite/reveal": "link:../viewer",
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "dat.gui": "^0.7.7",
     "hold-event": "^0.0.1",
