@@ -17,9 +17,15 @@ import {
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { SceneHandler } from '@reveal/utilities';
 
+import * as THREE from 'three';
+
 export default class EdlPointCloudVisualTest extends StreamingVisualTestFixture {
   constructor() {
     super('pointcloud-bunny');
+  }
+
+  override createCamera(): THREE.PerspectiveCamera {
+    return new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1.5);
   }
 
   createDefaultRenderPipelineProvider(
@@ -31,7 +37,7 @@ export default class EdlPointCloudVisualTest extends StreamingVisualTestFixture 
       materialManager,
       pointCloudMaterialManager,
       sceneHandler,
-      { ...defaultRenderOptions } // Default rendering options includes EDL turned on
+      { ...defaultRenderOptions, pointCloudParameters: { pointBlending: false, edlOptions: { radius: 5.0, strength: 2.0 } } } // Default rendering options includes EDL turned on
     );
   }
 
