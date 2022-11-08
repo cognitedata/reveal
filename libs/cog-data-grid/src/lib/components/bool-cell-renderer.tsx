@@ -30,7 +30,7 @@ export const BoolCellRenderer = React.memo((props: BoolCellRendererProps) => {
     <div
       style={{
         display: 'inline-block',
-        paddingTop: '7px',
+        paddingTop: '10px',
         textAlign: shouldRenderCheckbox ? 'center' : 'left',
         width: shouldRenderCheckbox ? '100%' : 'auto',
       }}
