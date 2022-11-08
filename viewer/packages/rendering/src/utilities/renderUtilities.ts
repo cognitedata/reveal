@@ -148,9 +148,9 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
 
 function getEDLNeighbourPoints(neighbourCount: number): Float32Array {
   const neighbours = new Float32Array(neighbourCount * 2);
-  for (let c = 0; c < neighbourCount; c++) {
-    neighbours[2 * c + 0] = Math.cos((2 * c * Math.PI) / neighbourCount);
-    neighbours[2 * c + 1] = Math.sin((2 * c * Math.PI) / neighbourCount);
+  for (let neighbourIndex = 0; neighbourIndex < neighbourCount; neighbourIndex++) {
+    neighbours[2 * neighbourIndex + 0] = Math.cos((2 * neighbourIndex * Math.PI) / neighbourCount);
+    neighbours[2 * neighbourIndex + 1] = Math.sin((2 * neighbourIndex * Math.PI) / neighbourCount);
   }
   return neighbours;
 }
