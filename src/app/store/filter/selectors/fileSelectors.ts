@@ -11,7 +11,7 @@ const globalFileFilters = selector<GlobalFilter['filters']['file']>({
       filters: { file, common },
     } = get(globalFilterAtom);
 
-    return { ...file, ...common };
+    return { ...common, ...file };
   },
   set: defaultFilterSetter('file'),
 });

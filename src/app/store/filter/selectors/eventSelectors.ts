@@ -11,7 +11,7 @@ const globalEventFilters = selector<GlobalFilter['filters']['event']>({
       filters: { event, common },
     } = get(globalFilterAtom);
 
-    return { ...event, ...common };
+    return { ...common, ...event };
   },
   set: defaultFilterSetter('event'),
 });

@@ -82,7 +82,7 @@ function SearchPage() {
 
   const [assetFilter, setAssetFilter] = useAssetFilters();
   const [fileFilter, setFileFilter] = useFileFilters();
-  const [documentFilter] = useDocumentFilters();
+  const [documentFilter, setDocumentFilter] = useDocumentFilters();
   const [eventFilter, setEventFilter] = useEventsFilters();
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
@@ -177,13 +177,16 @@ function SearchPage() {
                       <AssetSearchResults
                         isTreeEnabled
                         showCount
+                        filter={assetFilter}
                         enableAdvancedFilters={isAdvancedFiltersEnabled}
                         onClick={(item: ResourceItem) =>
                           openPreview(
                             item.id !== activeId ? item.id : undefined
                           )
                         }
-                        filter={assetFilter}
+                        onFilterChange={(newValue: Record<string, unknown>) =>
+                          setAssetFilter(newValue)
+                        }
                         {...commonProps}
                       />
                     )}
@@ -197,6 +200,9 @@ function SearchPage() {
                             item.id !== activeId ? item.id : undefined
                           )
                         }
+                        onFilterChange={(newValue: Record<string, unknown>) =>
+                          setFileFilter(newValue)
+                        }
                         {...commonProps}
                       />
                     )}
@@ -209,6 +215,9 @@ function SearchPage() {
                             item.id !== activeId ? item.id : undefined
                           );
                         }}
+                        onFilterChange={(newValue: Record<string, unknown>) =>
+                          setDocumentFilter(newValue)
+                        }
                       />
                     )}
                     {currentResourceType === 'sequence' && (
@@ -218,6 +227,9 @@ function SearchPage() {
                           openPreview(
                             item.id !== activeId ? item.id : undefined
                           )
+                        }
+                        onFilterChange={(newValue: Record<string, unknown>) =>
+                          setSequenceFilter(newValue)
                         }
                         filter={sequenceFilter}
                         {...commonProps}
@@ -232,6 +244,9 @@ function SearchPage() {
                             item.id !== activeId ? item.id : undefined
                           )
                         }
+                        onFilterChange={(newValue: Record<string, unknown>) =>
+                          setTimeseriesFilter(newValue)
+                        }
                         filter={timeseriesFilter}
                         showDatePicker={!activeId}
                         {...commonProps}
@@ -245,6 +260,9 @@ function SearchPage() {
                           openPreview(
                             item.id !== activeId ? item.id : undefined
                           )
+                        }
+                        onFilterChange={(newValue: Record<string, unknown>) =>
+                          setEventFilter(newValue)
                         }
                         filter={eventFilter}
                         {...commonProps}

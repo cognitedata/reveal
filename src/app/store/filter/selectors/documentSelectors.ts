@@ -11,7 +11,7 @@ const globalDocumentFilters = selector<GlobalFilter['filters']['document']>({
       filters: { document, common },
     } = get(globalFilterAtom);
 
-    return { ...document, ...common };
+    return { ...common, ...document };
   },
   set: defaultFilterSetter('document'),
 });

@@ -11,7 +11,7 @@ const globalSequenceFilters = selector<GlobalFilter['filters']['sequence']>({
       filters: { sequence, common },
     } = get(globalFilterAtom);
 
-    return { ...sequence, ...common };
+    return { ...common, ...sequence };
   },
   set: defaultFilterSetter('sequence'),
 });

@@ -12,7 +12,7 @@ const globalTimeseriesFilters = selector<GlobalFilter['filters']['timeseries']>(
         filters: { timeseries, common },
       } = get(globalFilterAtom);
 
-      return { ...timeseries, ...common };
+      return { ...common, ...timeseries };
     },
     set: defaultFilterSetter('timeseries'),
   }

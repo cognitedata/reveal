@@ -10,7 +10,7 @@ const globalAssetFilters = selector<GlobalFilter['filters']['asset']>({
       filters: { asset, common },
     } = get(globalFilterAtom);
 
-    return { ...asset, ...common };
+    return { ...common, ...asset };
   },
   set: defaultFilterSetter('asset'),
 });
