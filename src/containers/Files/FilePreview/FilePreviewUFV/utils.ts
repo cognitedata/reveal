@@ -39,6 +39,7 @@ export const getStyledAnnotationFromAnnotation = (
   annotation: Annotation,
   isSelected = false,
   isPending: boolean,
+  isHover: boolean,
   cogniteAnnotation: CommonLegacyCogniteAnnotation
 ): Annotation => {
   if (annotation.type !== AnnotationType.RECTANGLE) {
@@ -57,8 +58,9 @@ export const getStyledAnnotationFromAnnotation = (
     style: {
       ...(annotation.style || {}),
       strokeWidth: 2,
+      ...(isSelected && { dash: [4, 4] }),
       stroke: cogniteAnnotation.metadata?.color ?? colors.strokeColor,
-      fill: colors.backgroundColor,
+      fill: isHover ? colors.backgroundColor : 'transparent',
     },
   };
 };

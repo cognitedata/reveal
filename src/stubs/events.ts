@@ -23,6 +23,7 @@ export const events: CogniteEvent[] = [
       CDF_ANNOTATION_resource_type: 'asset',
       CDF_ANNOTATION_checked_by: 'UNKNOWN',
       CDF_ANNOTATION_resource_id: '560489721305992',
+      CDF_ANNOTATION_page: '1',
     },
     source: 'job:6257758094934739',
     id: 180038378217268,

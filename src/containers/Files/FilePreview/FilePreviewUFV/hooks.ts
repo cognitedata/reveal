@@ -2,7 +2,6 @@ import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import {
   Annotation,
-  AnnotationType,
   getAnnotationsFromLegacyCogniteAnnotations,
 } from '@cognite/unified-file-viewer';
 import { LegacyCogniteAnnotation } from '@cognite/unified-file-viewer/dist/core/utils/api';
@@ -10,26 +9,6 @@ import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { CommonLegacyCogniteAnnotation } from './types';
 import { getContainerId, getStyledAnnotationFromAnnotation } from './utils';
-
-const applyHoverStylesToAnnotation = (
-  annotation: Annotation,
-  hoverId: string | undefined
-): Annotation => {
-  if (annotation.type !== AnnotationType.RECTANGLE) {
-    return annotation;
-  }
-
-  const isOnHover = hoverId == annotation.id;
-  return {
-    ...annotation,
-    style: {
-      ...annotation.style,
-      fill: isOnHover
-        ? `${annotation.style?.stroke}22`
-        : `${annotation.style?.fill || 'transparent'}`,
-    },
-  };
-};
 
 type useUnifiedFileViewerAnnotationsProps = {
   fileId: number;
@@ -68,18 +47,20 @@ export const useUnifiedFileViewerAnnotations = ({
             ({ id }) => id === annotation.id
           );
           const isPending = pendingAnnotations.some(
-            ({ id }) => id == annotation.id
+            ({ id }) => id === annotation.id
           );
+
+          const isOnHover = hoverId === String(annotation.id);
 
           return getStyledAnnotationFromAnnotation(
             ufvAnnotation,
             isSelected,
             isPending,
+            isOnHover,
             annotation
           );
         })
         .filter((item): item is Annotation => Boolean(item))
-        .map(annotation => applyHoverStylesToAnnotation(annotation, hoverId))
         .map(ufvAnnotation => ({
           ...ufvAnnotation,
           onClick: (e: any, annotation: Annotation) => {

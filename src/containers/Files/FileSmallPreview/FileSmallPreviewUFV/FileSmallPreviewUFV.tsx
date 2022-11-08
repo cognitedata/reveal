@@ -150,6 +150,9 @@ export const FileSmallPreviewUFV = ({
               creatable={false}
               contextualization={false}
               showSideBar={false}
+              enableToolTips={false}
+              enableZoomToAnnotation={false}
+              showControls={false}
             />
           </Preview>
         </InfoCell>

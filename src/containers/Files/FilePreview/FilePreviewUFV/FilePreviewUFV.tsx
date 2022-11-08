@@ -48,6 +48,8 @@ export type FilePreviewUFVProps = {
   showControls?: boolean;
   showDownload?: boolean;
   showSideBar?: boolean;
+  enableZoomToAnnotation?: boolean;
+  enableToolTips?: boolean;
 };
 
 export const FilePreviewUFV = ({
@@ -59,6 +61,8 @@ export const FilePreviewUFV = ({
   showDownload = false,
   showControls = true,
   showSideBar = true,
+  enableZoomToAnnotation = true,
+  enableToolTips = true,
 }: FilePreviewUFVProps) => {
   // Later work includes merging the two components
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
@@ -80,10 +84,12 @@ export const FilePreviewUFV = ({
   useEffect(() => {
     if (selectedAnnotations.length === 1) {
       const [annotation] = selectedAnnotations;
-      zoomToAnnotation(annotation);
+      if (enableZoomToAnnotation) {
+        zoomToAnnotation(annotation);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAnnotations]);
+  }, [selectedAnnotations, enableZoomToAnnotation]);
 
   useEffect(() => {
     setPendingAnnotations([]);
@@ -104,11 +110,20 @@ export const FilePreviewUFV = ({
 
   const persistedAnnotations = useAnnotations(fileId);
   const annotations = useMemo(() => {
-    return [
+    const annotationsForFile = [
       ...persistedAnnotations,
       ...pendingAnnotations.filter(removeSimilarAnnotations),
     ];
-  }, [pendingAnnotations, persistedAnnotations]);
+    /** for the first page show annotations defined for first page or annotation without page property
+     for other pages only show annotations for that page **/
+    return annotationsForFile.filter(annotation => {
+      if (page > 1) {
+        return annotation.page === page;
+      } else {
+        return annotation.page === page || !annotation.page;
+      }
+    });
+  }, [pendingAnnotations, persistedAnnotations, page]);
 
   // converts cognite annotations to UFV annotation and applies styles
 
@@ -165,12 +180,23 @@ export const FilePreviewUFV = ({
 
   const onClickAnnotation = useCallback(
     (annotation: Annotation) => {
-      const legacyCogniteAnnotations = annotations.filter(
+      const currentSelectedAnnotation = annotations.find(
         cogniteAnn => String(cogniteAnn.id) === annotation.id
       );
-      setSelectedAnnotations(legacyCogniteAnnotations || []);
+      // remove current annotation if already selected
+      const isAlreadySelected = selectedAnnotations.some(
+        selectedAnnotation => String(selectedAnnotation.id) === annotation.id
+      );
+
+      if (isAlreadySelected) {
+        setSelectedAnnotations([]);
+      } else {
+        if (currentSelectedAnnotation) {
+          setSelectedAnnotations([currentSelectedAnnotation]);
+        }
+      }
     },
-    [setSelectedAnnotations, annotations]
+    [selectedAnnotations, annotations]
   );
 
   const onAnnotationMouseOver = useCallback((annotation: Annotation) => {
@@ -248,7 +274,7 @@ export const FilePreviewUFV = ({
               ...allConvertedAnnotations,
               ...annotationSearchResult,
             ]}
-            tooltips={tooltips}
+            tooltips={enableToolTips ? tooltips : undefined}
             onClick={onStageClick}
             shouldShowZoomControls={showControls}
           />
