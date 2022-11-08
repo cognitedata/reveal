@@ -1,9 +1,11 @@
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   AssetNodeCollection,
   CadIntersection,
   Cognite3DModel,
   Cognite3DViewer,
   DefaultNodeAppearance,
+  NodeOutlineColor,
   THREE,
   ViewerState,
 } from '@cognite/reveal';
@@ -121,6 +123,16 @@ export const ghostAsset = (
     assetNodes,
     DefaultNodeAppearance.Default
   );
+};
+
+export const outlineAssetMappedNodes = (threeDModel: Cognite3DModel) => {
+  const allAssetMappedNodes = new AssetNodeCollection(sdk, threeDModel!);
+  // When no asset ID is provided, all nodes mapped to assets are included
+  allAssetMappedNodes.executeFilter({});
+  threeDModel?.assignStyledNodeCollection(allAssetMappedNodes, {
+    renderGhosted: false,
+    outlineColor: NodeOutlineColor.Red,
+  });
 };
 
 export const removeAllStyles = (threeDModel: Cognite3DModel) => {

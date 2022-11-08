@@ -25,6 +25,7 @@ import {
   fitCameraToAsset,
   removeAllStyles,
   ghostAsset,
+  outlineAssetMappedNodes,
 } from './utils';
 import { ErrorBoundary } from 'react-error-boundary';
 import RevealErrorFeedback from './RevealErrorFeedback';
@@ -166,6 +167,8 @@ export function Reveal({
         revisionId,
         selectedAsset
       );
+    } else {
+      outlineAssetMappedNodes(threeDModel!);
     }
   }, [
     assetColumnVisible,
