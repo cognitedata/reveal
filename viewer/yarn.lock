@@ -851,7 +851,7 @@ __metadata:
     shx: 0.3.4
     skmeans: 0.11.3
     stats.js: 0.17.0
-    three: 0.144.0
+    three: 0.146.0
     three-stdlib: 2.17.3
     ts-jest: 29.0.3
     ts-loader: 9.4.1
@@ -12373,10 +12373,10 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"three@npm:0.144.0":
-  version: 0.144.0
-  resolution: "three@npm:0.144.0"
-  checksum: 6fb1afb3d189fede913c17e05ad17f3e653370eb3f1030b94a1cc49e84be1e45ea50a340c87289ff30f9bf90a87d04fcdc507577c7c5b062ff730b942f8a16ea
+"three@npm:0.146.0":
+  version: 0.146.0
+  resolution: "three@npm:0.146.0"
+  checksum: c6eb2005d97c599de7f4eccf73c4b1e8731c353ca3e7b9bf9d3bc2b52a8e288c59c06c148fd93df16df323b28938947227a37e07cc6fbe04aa8f8725e49caa8a
   languageName: node
   linkType: hard
 
