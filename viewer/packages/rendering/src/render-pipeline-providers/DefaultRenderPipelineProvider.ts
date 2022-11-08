@@ -17,6 +17,7 @@ import { blitShaders } from '../rendering/shaders';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
+import { shouldApplyEdl } from './pointCloudParameterUtils';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _viewerScene: THREE.Scene;
@@ -88,7 +89,11 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
 
     const ssaoParameters = renderOptions.ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
     const edges = renderOptions.edgeDetectionParameters ?? defaultRenderOptions.edgeDetectionParameters;
-    const pointCloudParameters = renderOptions?.pointCloudParameters ?? defaultRenderOptions.pointCloudParameters;
+    const pointCloudParameters = renderOptions.pointCloudParameters ?? defaultRenderOptions.pointCloudParameters;
+
+    if (pointCloudParameters.pointBlending === true && shouldApplyEdl(pointCloudParameters.edlOptions)) {
+      throw new Error('EDL and point blending cannot be enabled at the same time');
+    }
 
     this._cadGeometryRenderPipeline = new CadGeometryRenderPipelineProvider(
       sceneHandler,
@@ -110,6 +115,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
       edges: edges.enabled,
       pointBlending: pointCloudParameters.pointBlending,
+      edlOptions: pointCloudParameters.edlOptions,
       ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
       ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
     });
