@@ -59,12 +59,12 @@
     "react-dom": "18.2.0",
     "react-live": "3.1.1",
     "styled-components": "5.3.6",
-    "three": "0.125.2"
+    "three": "0.146.0"
   },
   "devDependencies": {
     "@types/react": "18.0.24",
     "@types/styled-components": "5.1.26",
-    "@types/three": "0.125.2",
+    "@types/three": "0.144.0",
     "docusaurus-plugin-typedoc": "0.17.5",
     "replace": "1.2.2",
     "rimraf": "3.0.2",
