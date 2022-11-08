@@ -7,8 +7,8 @@ import visualTestsFixtures from '**/*.VisualTest.ts';
 
 import { VisualTestFixture } from './test-fixtures/VisualTestFixture';
 
-async function testGenerator(): Promise<Map<string, any>> {
-  const testMap = new Map<string, VisualTestFixture>();
+async function testGenerator(): Promise<Map<string, new () => VisualTestFixture>> {
+  const testMap = new Map<string, new () => VisualTestFixture>();
 
   visualTestsFixtures.forEach((visualTestsFixture: any) => {
     testMap.set(visualTestsFixture.fileName, visualTestsFixture.module);
