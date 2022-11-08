@@ -384,7 +384,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     }
 
     if (!this._activeMeasurement) {
-      const camera = this._viewer.getCamera();
+      const camera = this._viewer.cameraManager.getCamera();
       const domElement = this._viewer.domElement;
       this._activeMeasurement = new MeasurementManager(
         domElement,
