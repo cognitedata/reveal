@@ -190,7 +190,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   private setupTransformOnRender(axisGroup: THREE.Group) {
     axisGroup.children[0].onBeforeRender = (renderer: THREE.WebGLRenderer) => {
       this._dynamicUpdatePosition();
-      axisGroup.quaternion.copy(this._viewer.getCamera().quaternion).invert();
+      axisGroup.quaternion.copy(this._viewer.cameraManager.getCamera().quaternion).invert();
       axisGroup.updateMatrixWorld();
       this._updateClickDiv();
 
