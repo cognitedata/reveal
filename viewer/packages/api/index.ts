@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 export { Cognite3DViewer } from './src/public/migration/Cognite3DViewer';
-export { Cognite3DModel } from '@reveal/cad-model';
+export { CogniteCadModel } from '@reveal/cad-model';
 
 export { ViewerState, ModelState } from './src/utilities/ViewStateHelper';
 

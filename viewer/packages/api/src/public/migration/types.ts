@@ -8,7 +8,7 @@ import { CadModelBudget, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { PointCloudBudget, PointCloudIntersection } from '@reveal/pointclouds';
 import { CameraManager } from '@reveal/camera-manager';
 
-import { GeometryFilter, Cognite3DModel } from '@reveal/cad-model';
+import { GeometryFilter, CogniteCadModel } from '@reveal/cad-model';
 import { DataSource } from '@reveal/data-source';
 
 /**
@@ -200,7 +200,7 @@ export type CadIntersection = {
   /**
    * The model that was intersected.
    */
-  model: Cognite3DModel;
+  model: CogniteCadModel;
   /**
    * Coordinate of the intersection.
    */

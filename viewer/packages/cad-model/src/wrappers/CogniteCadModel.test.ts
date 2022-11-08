@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DModel } from './Cognite3DModel';
+import { CogniteCadModel } from './CogniteCadModel';
 
 import { DefaultNodeAppearance, NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { NodesApiClient } from '@reveal/nodes-api';
@@ -12,8 +12,8 @@ import { MetricsLogger } from '@reveal/metrics';
 import { createCadModel } from '../../../../test-utilities';
 import { It, Mock } from 'moq.ts';
 
-describe(Cognite3DModel.name, () => {
-  let model: Cognite3DModel;
+describe(CogniteCadModel.name, () => {
+  let model: CogniteCadModel;
   let mockApiClient: Mock<NodesApiClient>;
 
   beforeAll(() => {

@@ -1,6 +1,6 @@
 import * as dat from 'dat.gui';
 import * as THREE from 'three';
-import { Cognite3DModel, Cognite3DViewer, DefaultCameraManager } from "@cognite/reveal";
+import { CogniteCadModel, Cognite3DViewer, DefaultCameraManager } from "@cognite/reveal";
 import { CogniteClient, Node3D } from "@cognite/sdk";
 import { TreeIndexNodeCollection } from '@cognite/reveal';
 import { NumericRange } from '@cognite/reveal';
@@ -19,7 +19,7 @@ export class InspectNodeUI {
     this._viewer = viewer;
   }
 
-  async inspectNode(model: Cognite3DModel, treeIndex: number): Promise<void> {
+  async inspectNode(model: CogniteCadModel, treeIndex: number): Promise<void> {
     this.clearUi();
     this.createLoadingIndicator();
 
@@ -27,7 +27,7 @@ export class InspectNodeUI {
     const nodes = await this._sdk.revisions3D.list3DNodeAncestors(model.modelId, model.revisionId, nodeId).autoPagingToArray();
 
     this.clearUi();
-    
+
     if (nodes.length === 0) {
       this.createNoNodes();
     }
@@ -43,8 +43,8 @@ export class InspectNodeUI {
     const loadingUi = this._uiFolder.addFolder('Loading...');
     this.registerUiFolder(loadingUi);
   }
-  
-  private createNodePropertiesFolder(model: Cognite3DModel, node: Node3D, nodeUi: dat.GUI) {
+
+  private createNodePropertiesFolder(model: CogniteCadModel, node: Node3D, nodeUi: dat.GUI) {
     nodeUi.add(node, 'treeIndex').name('Tree index');
     nodeUi.add(node, 'subtreeSize').name('Node count');
     const actions = {
@@ -66,7 +66,7 @@ export class InspectNodeUI {
         const startPosition = bbox.getCenter(new THREE.Vector3());
         const draggable = new THREE.Object3D();
         draggable.position.copy(startPosition);
-        
+
         const gizmo = new TransformControls(this._viewer.getCamera(), this._viewer.renderer.domElement);
         const offset = new THREE.Vector3();
         const transform = new THREE.Matrix4();
@@ -77,11 +77,11 @@ export class InspectNodeUI {
           model.setNodeTransformByTreeIndex(node.treeIndex, transform);
           this._viewer.requestRedraw();
         });
-				gizmo.addEventListener( 'dragging-changed', (event: any) =>  {
+        gizmo.addEventListener('dragging-changed', (event: any) => {
           const dragging: boolean = event.value;
-					const cameraManager: DefaultCameraManager = this._viewer.cameraManager as DefaultCameraManager;
+          const cameraManager: DefaultCameraManager = this._viewer.cameraManager as DefaultCameraManager;
           cameraManager.cameraControlsEnabled = !dragging;
-				} );
+        });
 
         this._viewer.addObject3D(gizmo);
         this._viewer.addObject3D(draggable);

@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { NodeOutlineColor, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { IndexSet, NumericRange } from '@reveal/utilities';
-import { Cognite3DModel } from '..';
+import { CogniteCadModel } from '..';
 
 import {
   ViewerTestFixtureComponents,
@@ -15,11 +15,11 @@ export default class OutlineVisualTest extends ViewerVisualTestFixture {
   public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
     const { viewer, models } = testFixtureComponents;
 
-    viewer.setBackgroundColor(new THREE.Color('lightGray'));
+    viewer.setBackgroundColor({ color: new THREE.Color('lightGray') });
 
     const model = models[0];
 
-    if (model instanceof Cognite3DModel) {
+    if (model instanceof CogniteCadModel) {
       const matrix = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(-Math.PI / 4, 0, 0));
       model.setModelTransformation(matrix);
 

@@ -14,27 +14,24 @@ const defaultCodeTheme = oceanicNext;
 const customScope =
   typeof window === 'undefined'
     ? {
-        urls: [],
-      }
+      urls: [],
+    }
     : require('./customScope').customScope;
 
 export type LiveCodeSnippetProps = {
   children: string;
-  theme: PrismTheme;
-  transformCode: (code: string) => string;
-  scope?: Record<string, any>;
 };
 
 export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
   const scope = {
     ...customScope,
     ...Object.keys(customScope.urls).reduce((acc, key) => {
-      acc[key] = useBaseUrl(customScope.urls[key]); // that's the hook I needed
+      acc[key] = useBaseUrl(customScope.urls[key]);
       return acc;
     }, {} as any),
   };
 
-  const { transformCode, children, theme } = props;
+  const { children } = props;
   return (
     <LiveProvider
       code={children}
@@ -58,15 +55,15 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
 
             if (viewer) {
               resetViewerEventHandlers(viewer);
-              if (model instanceof Cognite3DModel) {
-                resetCognite3DModel(model);
+              if (model instanceof CogniteCadModel) {
+                resetCogniteCadModel(model);
               }
             } else {
               alert('Login is required to run examples');
               return;
             }
             // User code starts here!
-            ${transformCode ? transformCode(code) : code}`;
+            ${code}`;
         return `
           <button
             type="button"
@@ -78,7 +75,7 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
         `;
       }}
       scope={{ ...scope }}
-      theme={theme || defaultCodeTheme}
+      theme={defaultCodeTheme}
     >
       <div
         className={clsx(
