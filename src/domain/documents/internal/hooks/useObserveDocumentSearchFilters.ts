@@ -10,7 +10,7 @@ import {
 export const useObserveDocumentSearchFilters = (
   query: string,
   documentsFilters: InternalDocumentFilter = {},
-  sortBy: TableSortBy[]
+  sortBy?: TableSortBy[]
 ) => {
   const { setAppliedFilters } = useDocumentSearchFilters();
   // const [query] = useQueryString(SEARCH_KEY);

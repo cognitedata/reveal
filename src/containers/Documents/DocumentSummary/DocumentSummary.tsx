@@ -1,40 +1,35 @@
-import { CogniteEvent } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
+import {
+  Document,
+  InternalDocumentFilter,
+  useObserveDocumentSearchFilters,
+  useDocumentSearchQuery,
+} from 'domain/documents';
 
-import { InternalSequenceFilters } from 'domain/sequence';
 import { TableV2 as Table } from 'components/ReactTable/V2';
 import React, { useMemo } from 'react';
 
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import { SummaryCard } from 'components/SummaryCard/SummaryCard';
-import { useEventsSearchResultQuery } from 'domain/events';
+
 import { getSummaryCardItems } from 'components/SummaryCard/utils';
 
-export const EventSummary = ({
+export const DocumentSummary = ({
   query = '',
   filter = {},
   onAllResultsClick,
 }: {
   query?: string;
-  filter: InternalSequenceFilters;
+  filter?: InternalDocumentFilter;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
 }) => {
-  const { data, isLoading } = useEventsSearchResultQuery({
-    query,
-    eventsFilters: filter,
-  });
+  const { results, isLoading } = useDocumentSearchQuery();
+  useObserveDocumentSearchFilters(query, filter);
 
   const columns = useMemo(
-    () =>
-      [
-        Table.Columns.type,
-        {
-          accessorKey: 'subtype',
-          header: () => 'Subtype',
-        },
-      ] as ColumnDef<CogniteEvent>[],
+    () => [Table.Columns.name, Table.Columns.type] as ColumnDef<Document>[],
     []
   );
 
@@ -43,13 +38,13 @@ export const EventSummary = ({
   }
   return (
     <SummaryCard
-      icon="Events"
-      title="Event"
+      icon="Document"
+      title="Documents"
       onAllResultsClick={onAllResultsClick}
     >
       <Table
-        data={getSummaryCardItems(data)}
-        id="events-summary-table"
+        data={getSummaryCardItems(results)}
+        id="document-summary-table"
         columns={columns}
         enableColumnResizing={false}
       />

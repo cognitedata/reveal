@@ -12,18 +12,16 @@ const columnToSortMap = new Map<string, DocumentFilterProperty>([
 ]);
 
 export const mapTableSortByToDocumentSortFields = (
-  sortBy: TableSortBy[]
+  sortBy?: TableSortBy[]
 ): DocumentSortItem[] | undefined => {
-  if (sortBy.length > 0) {
-    // Documents sort only supports for 1 property.
-    const { id, desc } = sortBy[0];
-    return [
-      {
-        order: desc ? 'desc' : 'asc',
-        property: columnToSortMap.get(id)!,
-      },
-    ];
-  }
+  if (!sortBy || sortBy.length === 0) return undefined;
 
-  return undefined;
+  // Documents sort only supports for 1 property.
+  const { id, desc } = sortBy[0];
+  return [
+    {
+      order: desc ? 'desc' : 'asc',
+      property: columnToSortMap.get(id)!,
+    },
+  ];
 };

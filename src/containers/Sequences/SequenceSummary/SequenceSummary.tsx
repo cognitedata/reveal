@@ -8,6 +8,7 @@ import { convertResourceType } from 'types';
 
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import { SummaryCard } from 'components/SummaryCard/SummaryCard';
+import { getSummaryCardItems } from 'components/SummaryCard/utils';
 
 export const SequenceSummary = ({
   query = '',
@@ -39,7 +40,7 @@ export const SequenceSummary = ({
       onAllResultsClick={onAllResultsClick}
     >
       <Table
-        data={items}
+        data={getSummaryCardItems(items)}
         id="sequence-summary-table"
         columns={columns}
         enableColumnResizing={false}

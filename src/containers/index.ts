@@ -6,3 +6,4 @@ export * from './Sequences';
 export * from './Timeseries';
 export * from './SearchResults';
 export * from './Relationships';
+export * from './Documents';

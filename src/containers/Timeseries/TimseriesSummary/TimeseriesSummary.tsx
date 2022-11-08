@@ -1,16 +1,16 @@
-import { CogniteEvent } from '@cognite/sdk';
+import { Timeseries } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
-
+import { useResourceResults } from 'containers';
 import { InternalSequenceFilters } from 'domain/sequence';
 import { TableV2 as Table } from 'components/ReactTable/V2';
 import React, { useMemo } from 'react';
+import { convertResourceType } from 'types';
 
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import { SummaryCard } from 'components/SummaryCard/SummaryCard';
-import { useEventsSearchResultQuery } from 'domain/events';
 import { getSummaryCardItems } from 'components/SummaryCard/utils';
 
-export const EventSummary = ({
+export const TimeseriesSummary = ({
   query = '',
   filter = {},
   onAllResultsClick,
@@ -21,35 +21,34 @@ export const EventSummary = ({
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
 }) => {
-  const { data, isLoading } = useEventsSearchResultQuery({
-    query,
-    eventsFilters: filter,
-  });
+  const api = convertResourceType('timeSeries');
 
+  const { isFetched, items } = useResourceResults<Timeseries>(
+    api,
+    query,
+    filter
+  );
   const columns = useMemo(
     () =>
       [
-        Table.Columns.type,
-        {
-          accessorKey: 'subtype',
-          header: () => 'Subtype',
-        },
-      ] as ColumnDef<CogniteEvent>[],
+        Table.Columns.name,
+        Table.Columns.description,
+      ] as ColumnDef<Timeseries>[],
     []
   );
 
-  if (isLoading) {
-    return <EmptyState isLoading={isLoading} />;
+  if (!isFetched) {
+    return <EmptyState isLoading={!isFetched} />;
   }
   return (
     <SummaryCard
-      icon="Events"
-      title="Event"
+      icon="Timeseries"
+      title="Timseries"
       onAllResultsClick={onAllResultsClick}
     >
       <Table
-        data={getSummaryCardItems(data)}
-        id="events-summary-table"
+        data={getSummaryCardItems(items)}
+        id="timseries-summary-table"
         columns={columns}
         enableColumnResizing={false}
       />

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components/macro';
-import { useDocumentSearch } from '@cognite/react-document-search';
 
 import { SearchResultToolbar } from 'containers/SearchResults';
 import { DocumentsTable } from 'containers/Documents';
@@ -8,7 +7,7 @@ import { TableSortBy } from 'components/ReactTable/V2';
 import {
   Document,
   InternalDocumentFilter,
-  normalize,
+  useDocumentSearchQuery,
   useObserveDocumentSearchFilters,
 } from 'domain/documents';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
@@ -29,11 +28,9 @@ export const DocumentSearchResults = ({
 }: DocumentSearchResultsProps) => {
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { results, isLoading, fetchNextPage, hasNextPage } =
-    useDocumentSearch();
+    useDocumentSearchQuery();
 
   useObserveDocumentSearchFilters(query, filter, sortBy);
-
-  const normalizedDocuments = normalize(results);
 
   return (
     <DocumentSearchResultWrapper>
@@ -54,7 +51,7 @@ export const DocumentSearchResults = ({
         tableSubHeaders={
           <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
         }
-        data={normalizedDocuments}
+        data={results}
         onRowClick={document => {
           if (document !== undefined) {
             onClick(document);
