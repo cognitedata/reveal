@@ -6,13 +6,20 @@ import { getApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { AddModelOptions, CogniteModel, Cognite3DViewer, OnLoadingCallback } from '../../../packages/api';
 import { CogniteClient } from '@cognite/sdk';
 
-export async function createCognite3DViewer(onLoading: OnLoadingCallback = () => {}): Promise<Cognite3DViewer> {
+export async function createCognite3DViewer(
+  onLoading: OnLoadingCallback = () => {},
+  renderer?: THREE.WebGLRenderer
+): Promise<Cognite3DViewer> {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
 
   if (urlParams.has('modelId') && urlParams.has('revisionId')) {
     const client = await getApplicationSDK(urlParams);
 
+    //This if might not be needed. Leaving it in for debug reasons
+    if (renderer) {
+      return new Cognite3DViewer({ sdk: client, logMetrics: false, onLoading, renderer: renderer });
+    }
     return new Cognite3DViewer({ sdk: client, logMetrics: false, onLoading });
   }
 
@@ -22,6 +29,10 @@ export async function createCognite3DViewer(onLoading: OnLoadingCallback = () =>
     getToken: async () => 'dummy'
   });
 
+  //This if might not be needed. Leaving it in for debug reasons
+  if (renderer) {
+    return new Cognite3DViewer({ sdk: client, _localModels: true, logMetrics: false, onLoading, renderer: renderer });
+  }
   return new Cognite3DViewer({ sdk: client, _localModels: true, logMetrics: false, onLoading });
 }
 
