@@ -37,7 +37,10 @@ export default class EdlPointCloudVisualTest extends StreamingVisualTestFixture 
       materialManager,
       pointCloudMaterialManager,
       sceneHandler,
-      { ...defaultRenderOptions, pointCloudParameters: { pointBlending: false, edlOptions: { radius: 5.0, strength: 2.0 } } } // Default rendering options includes EDL turned on
+      {
+        ...defaultRenderOptions,
+        pointCloudParameters: { pointBlending: false, edlOptions: { radius: 5.0, strength: 2.0 } }
+      } // Default rendering options includes EDL turned on
     );
   }
 
