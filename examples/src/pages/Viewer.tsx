@@ -17,7 +17,7 @@ import {
   TreeIndexNodeCollection,
   DefaultCameraManager
 } from '@cognite/reveal';
-import { DebugCameraTool, ExplodedViewTool, AxisViewTool, Corner } from '@cognite/reveal/tools';
+import { DebugCameraTool, ExplodedViewTool, AxisViewTool, Corner } from '@cognite/reveal';
 import * as reveal from '@cognite/reveal';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';

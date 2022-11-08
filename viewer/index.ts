@@ -69,3 +69,18 @@ export {
 } from './packages/pointcloud-styling';
 
 export { Image360Entity } from './packages/360-images';
+
+export * from './packages/tools';
+
+export { DataSource } from './packages/data-source';
+export { NodesApiClient } from './packages/nodes-api';
+export {
+  ModelIdentifier,
+  CdfModelIdentifier,
+  ModelMetadataProvider,
+  ModelDataProvider,
+  BlobOutputMetadata,
+  File3dFormat,
+  JsonFileProvider,
+  BinaryFileProvider
+} from './packages/data-providers';

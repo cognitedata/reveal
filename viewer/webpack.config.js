@@ -19,9 +19,7 @@ module.exports = env => {
   return {
     mode: development ? 'development' : 'production',
     entry: {
-      index: './index.ts',
-      tools: './tools.ts',
-      'extensions/datasource': './extensions/datasource.ts'
+      index: './index.ts'
     },
     target: 'web',
     resolve: {
