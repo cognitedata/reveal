@@ -1,5 +1,4 @@
 import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
-import isEmpty from 'lodash/isEmpty';
 import { InternalAssetFilters } from '../types';
 
 export type AssetsProperties = {
@@ -22,9 +21,11 @@ export const mapFiltersToAssetsAdvancedFilters = (
     externalIdPrefix,
     dataSetIds,
   }: InternalAssetFilters,
-  searchQueryMetadataKeys?: Record<string, string>,
-  query?: string
+  query?: string,
+  searchQueryMetadataKeys?: Record<string, string>
 ): AdvancedFilter<AssetsProperties> | undefined => {
+  const builder = new AdvancedFilterBuilder<AssetsProperties>();
+
   const filterBuilder = new AdvancedFilterBuilder<AssetsProperties>()
     .containsAny('dataSetIds', () => {
       return dataSetIds?.reduce((acc, { value }) => {
@@ -47,9 +48,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
     .range('lastUpdatedTime', {
       lte: lastUpdatedTime?.max as number,
       gte: lastUpdatedTime?.min as number,
-    })
-    .search('name', isEmpty(query) ? undefined : query)
-    .search('description', isEmpty(query) ? undefined : query);
+    });
 
   if (metadata) {
     for (const [key, value] of Object.entries(metadata)) {
@@ -57,21 +56,29 @@ export const mapFiltersToAssetsAdvancedFilters = (
     }
   }
 
+  if (query) {
+    const searchQueryBuilder = new AdvancedFilterBuilder<AssetsProperties>()
+      .search('name', query)
+      .search('description', query);
+
+    filterBuilder.or(searchQueryBuilder);
+  }
+
+  builder.and(filterBuilder);
+
   /**
    * We want to filter all the metadata keys with the search query, to give a better result
    * to the user when using our search.
    */
   if (searchQueryMetadataKeys) {
-    const searchBuilder = new AdvancedFilterBuilder<AssetsProperties>();
+    const searchMetadataBuilder = new AdvancedFilterBuilder<AssetsProperties>();
 
     for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-      searchBuilder.prefix(`metadata|${key}`, value);
+      searchMetadataBuilder.prefix(`metadata|${key}`, value);
     }
 
-    filterBuilder.or(searchBuilder);
+    builder.or(searchMetadataBuilder);
   }
 
-  return new AdvancedFilterBuilder<AssetsProperties>()
-    .and(filterBuilder)
-    .build();
+  return new AdvancedFilterBuilder<AssetsProperties>().or(builder).build();
 };

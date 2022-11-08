@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import { isObjectEmpty } from 'utils';
 
 export type AdvancedFilter<T> = LeafFilter<T> | BoolFilter<T>;
@@ -74,17 +75,31 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
   }
 
   build() {
-    if (isObjectEmpty(this.filters[0])) return undefined;
+    const filterValue = this.filters[0];
 
-    return this.filters[0];
+    if (isObjectEmpty(filterValue)) {
+      return undefined;
+    }
+
+    return filterValue;
   }
 
   and(builder: AdvancedFilterBuilder<T>) {
-    this.filters = [...this.filters, { and: builder.value() }];
+    const build = builder.value();
+
+    if (!isEmpty(build)) {
+      this.filters = [...this.filters, { and: builder.value() }];
+    }
+
     return this;
   }
   or(builder: AdvancedFilterBuilder<T>) {
-    this.filters = [...this.filters, { or: builder.value() }];
+    const build = builder.value();
+
+    if (!isEmpty(build)) {
+      this.filters = [...this.filters, { or: builder.value() }];
+    }
+
     return this;
   }
   not(builder: AdvancedFilterBuilder<T>) {

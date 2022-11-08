@@ -26,8 +26,8 @@ export const useAssetsSearchResultQuery = ({
     () =>
       mapFiltersToAssetsAdvancedFilters(
         assetFilter,
-        searchQueryMetadataKeys,
-        query
+        query,
+        searchQueryMetadataKeys
       ),
     [assetFilter, searchQueryMetadataKeys, query]
   );
