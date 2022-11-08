@@ -1,5 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
-import { DataSetId, UnitListByFacility, UnitListItem } from 'types';
+import { UnitListByFacility, UnitListItem } from 'types';
 import { facilityList } from 'config';
 
 export const getUnitListByFacility = async (
@@ -14,7 +14,7 @@ export const getUnitListByFacility = async (
   let list = await client.assets.list({
     filter: {
       parentExternalIds: facilityList.map((f) => f.id),
-      dataSetIds: [{ id: DataSetId.P66_PCMS }],
+      dataSetIds: facilityList.map((f) => ({ id: f.datasetId })),
       labels: { containsAll: [{ externalId: 'Unit' }] },
     },
     limit: 1000,

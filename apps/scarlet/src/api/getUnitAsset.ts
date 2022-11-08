@@ -1,5 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
-import { DataSetId, Facility } from 'types';
+import { Facility } from 'types';
 
 export const getUnitAsset = async (
   client: CogniteClient,
@@ -12,7 +12,7 @@ export const getUnitAsset = async (
       filter: {
         name: unitId,
         parentExternalIds: [facility.id],
-        dataSetIds: [{ id: DataSetId.P66_PCMS }],
+        dataSetIds: [{ id: facility.datasetId }],
       },
     })
     .then((result) =>

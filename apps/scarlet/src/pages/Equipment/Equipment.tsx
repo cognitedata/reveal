@@ -112,7 +112,7 @@ export const Equipment = () => {
 
   useEffect(() => {
     if (pcmsQuery.error) {
-      toast.error('Failed to load pcms data');
+      toast.error('Failed to load CDF data');
     }
   }, [pcmsQuery]);
 

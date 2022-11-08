@@ -1,5 +1,4 @@
 import { CogniteClient } from '@cognite/sdk';
-import { DataSetId } from 'types';
 import { isValidEquipment } from 'utils';
 
 export const getEquipmentsPerUnit = async (
@@ -15,7 +14,6 @@ export const getEquipmentsPerUnit = async (
 
   let list = await client.assets.list({
     filter: {
-      dataSetIds: [{ id: DataSetId.P66_PCMS }],
       parentExternalIds: externalIds.map((id) => `Equipments_${id}`),
       labels: { containsAll: [{ externalId: 'Equipment' }] },
     },

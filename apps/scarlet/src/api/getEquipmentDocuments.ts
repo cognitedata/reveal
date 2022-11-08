@@ -18,7 +18,7 @@ export const getEquipmentDocuments = async (
   const documentsResp = await getDocuments(client, {
     facility,
     unitId,
-    equipmentId,
+    prefix: `${equipmentId}_U1`,
   });
 
   if (!documentsResp.items.length) return Promise.resolve([]);

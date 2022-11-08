@@ -6,14 +6,14 @@ export const getDocuments = async (
   {
     facility,
     unitId,
-    equipmentId,
+    prefix,
   }: {
     facility: Facility;
     unitId: string;
-    equipmentId?: string;
+    prefix?: string;
   }
 ): Promise<ListResponse<FileInfo[]>> => {
-  const externalIdPrefix = [facility.name, unitId, equipmentId]
+  const externalIdPrefix = [facility.name, unitId, prefix]
     .filter(Boolean)
     .join('_');
   const resp = await client.files.list({

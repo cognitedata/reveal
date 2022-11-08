@@ -1,5 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
-import { DataSetId, Facility } from 'types';
+import { Facility } from 'types';
 
 import { getUnitAsset, getEquipmentAsset } from '.';
 
@@ -10,7 +10,7 @@ export const getEquipmentPCMS = async (
     unitId,
     equipmentId,
   }: {
-    facility?: Facility;
+    facility: Facility;
     unitId: string;
     equipmentId: string;
   }
@@ -32,7 +32,7 @@ export const getEquipmentPCMS = async (
   const componentAssets = await client.assets.list({
     filter: {
       parentExternalIds: [`Circuits_${equipment.externalId}`],
-      dataSetIds: [{ id: DataSetId.P66_PCMS }],
+      dataSetIds: [{ id: facility.datasetId }],
       labels: { containsAll: [{ externalId: 'Circuit' }] },
     },
   });

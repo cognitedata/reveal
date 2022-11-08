@@ -102,7 +102,7 @@ const getPCMSEquipmentList = async (
 
     let list = await client.assets.list({
       filter: {
-        dataSetIds: [{ id: DataSetId.P66_PCMS }],
+        dataSetIds: [{ id: facility.datasetId }],
         parentExternalIds: [`Equipments_${unitAsset.externalId}`],
         labels: { containsAll: [{ externalId: 'Equipment' }] },
       },

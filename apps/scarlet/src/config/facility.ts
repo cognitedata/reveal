@@ -7,6 +7,7 @@ export const facilityList: Facility[] = [
     path: 'borger',
     name: 'Borger',
     shortName: 'Borger',
+    datasetId: 4809044228760729,
     unitPattern: /^G(\d+(\.\d+)?)(.*)$/,
     env: ['development', 'staging', 'production'],
   },
@@ -15,6 +16,7 @@ export const facilityList: Facility[] = [
     path: 'sweeny',
     name: 'Sweeny',
     shortName: 'Sweeny',
+    datasetId: 2688254680312305,
     env: ['development', 'staging', 'production'],
   },
 ].filter((item) => item.env.includes(config.env));
