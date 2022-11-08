@@ -104,7 +104,7 @@ viewer.setClippingPlanes([plane]);
 
 
 // Handle drag events
-const controls = new DragControls([draggerMesh], viewer.getCamera(), viewer.domElement);
+const controls = new DragControls([draggerMesh], viewer.cameraManager.getCamera(), viewer.domElement);
 controls.addEventListener('drag', () => {
   // Fix XZ-poistion
   draggerMesh.position.set(initialDragPosition.x, draggerMesh.position.y, initialDragPosition.z);
