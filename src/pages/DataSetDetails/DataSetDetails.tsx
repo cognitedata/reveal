@@ -310,6 +310,9 @@ const Wrapper = styled.div`
   .ant-tabs-content {
     height: 100%;
   }
+  .ant-tabs-nav {
+    margin: 0 !important;
+  }
 `;
 
 export default DataSetDetails;
