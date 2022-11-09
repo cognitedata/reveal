@@ -122,6 +122,7 @@ export const PointToPointMeasurementButton = ({
     });
     viewer.domElement.style.cursor = 'crosshair';
     measurementTool.enterMeasurementMode();
+    measurementTool.visible(true);
     setNodesSelectable(false);
   };
 
@@ -131,6 +132,7 @@ export const PointToPointMeasurementButton = ({
       changeCameraTargetOnClick: true,
     });
     viewer.domElement.style.cursor = 'default';
+    measurementTool.visible(false);
     measurementTool.exitMeasurementMode();
     setNodesSelectable(true);
   };
