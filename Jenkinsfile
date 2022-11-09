@@ -7,7 +7,6 @@ static final String APPLICATION_REPO_ID = 'cdf-ui-extractor-downloads'
 static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
 
-
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
@@ -78,7 +77,7 @@ pods {
   def gitAuthor
   def getTitle
   def isPullRequest = !!env.CHANGE_ID
-  def isRelease = env.BRANCH_NAME == 'master'
+  def isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'release-1.0'
   def bucketBundles = "cdf-hub-bundles"
   def projectProduction = "cognitedata-production"
 
@@ -133,7 +132,7 @@ pods {
         }
         container('fas') {
           stageWithNotify('Build and deploy PR') {
-            def package_name = "@cognite/cdf-extractor-downloads";
+            def package_name = "@cognite/cdf-extractor-downloads-2";
             def prefix = jenkinsHelpersUtil.determineRepoName();
             def domain = "fusion-preview";
             previewServer(
