@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ThreeDModelsResponse } from 'app/containers/ThreeD/hooks';
 import { Loader } from '@cognite/cogs.js';
 import {
@@ -27,6 +27,12 @@ export const ThreeDSearchResults = ({
     hasNextPage: canFetchMore,
     isFetchingNextPage: isFetchingMore,
   } = useInfinite3DModels();
+
+  useEffect(() => {
+    if (canFetchMore && !isFetchingMore) {
+      fetchMore();
+    }
+  }, [canFetchMore, fetchMore, isFetchingMore]);
 
   const models = modelData.pages.reduce(
     (accl, t) => accl.concat(t.items),
