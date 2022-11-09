@@ -2,37 +2,32 @@
  * Copyright 2021 Cognite AS
  */
 
-import Stats from 'stats.js';
-import { useEffect, useRef } from 'react';
-import { CanvasWrapper } from '../components/styled';
-import { CogniteModel, THREE } from '@cognite/reveal';
+import * as reveal from '@cognite/reveal';
+import {
+  CameraControlsOptions, Cognite3DViewer,
+  Cognite3DViewerOptions,
+  CogniteCadModel, CogniteModel, CognitePointCloudModel, DefaultCameraManager, THREE, TreeIndexNodeCollection
+} from '@cognite/reveal';
+import { AxisViewTool, Corner, DebugCameraTool, ExplodedViewTool } from '@cognite/reveal/tools';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
-import {
-  Cognite3DViewer,
-  Cognite3DViewerOptions,
-  CogniteCadModel,
-  CognitePointCloudModel,
-  CameraControlsOptions,
-  TreeIndexNodeCollection,
-  DefaultCameraManager
-} from '@cognite/reveal';
-import { DebugCameraTool, ExplodedViewTool, AxisViewTool, Corner } from '@cognite/reveal/tools';
-import * as reveal from '@cognite/reveal';
-import { ClippingUI } from '../utils/ClippingUI';
-import { NodeStylingUI } from '../utils/NodeStylingUI';
+import { useEffect, useRef } from 'react';
+import Stats from 'stats.js';
+import { CanvasWrapper } from '../components/styled';
 import { BulkHtmlOverlayUI } from '../utils/BulkHtmlOverlayUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
-import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
-import { PointCloudUi } from '../utils/PointCloudUi';
-import { ModelUi } from '../utils/ModelUi';
+import { ClippingUI } from '../utils/ClippingUI';
+import { CustomCameraManager } from '../utils/CustomCameraManager';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
+import { Image360UI } from '../utils/Image360UI';
+import { InspectNodeUI } from '../utils/InspectNodeUi';
+import { MeasurementUi } from '../utils/MeasurementUi';
+import { ModelUi } from '../utils/ModelUi';
+import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
 import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
-import { CustomCameraManager } from '../utils/CustomCameraManager';
-import { MeasurementUi } from '../utils/MeasurementUi';
-import { Image360UI } from '../utils/Image360UI';
+import { PointCloudUi } from '../utils/PointCloudUi';
 
 
 window.THREE = THREE;
@@ -58,6 +53,14 @@ export function Viewer() {
     let cameraManagers: {
       Default: DefaultCameraManager;
       Custom: CustomCameraManager;
+    }
+
+    function DowloadScreenshot(url: string): void {
+      const filename = 'example_screenshot';
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
     }
 
     async function main() {
@@ -149,6 +152,14 @@ export function Viewer() {
       const guiState = {
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
+        screenshot: {
+          excludeUI: false,
+          resolution: {
+            override: false,
+            width: 1920,
+            height: 1080
+          }
+        },
         debug: {
           stats: {
             drawCalls: 0,
@@ -174,6 +185,14 @@ export function Viewer() {
       const guiActions = {
         showCameraHelper: () => {
           guiState.showCameraTool.showCameraHelper();
+        },
+        takeScreenshot: async () => {
+          const width = guiState.screenshot.resolution.override ? guiState.screenshot.resolution.width : undefined;
+          const height = guiState.screenshot.resolution.override ? guiState.screenshot.resolution.height : undefined;
+
+          const url = await viewer.getScreenshot(guiState.screenshot.excludeUI, width, height);
+          if (url)
+            DowloadScreenshot(url);
         }
       };
       initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
@@ -221,6 +240,14 @@ export function Viewer() {
           urlParams.set('ssao', v);
           window.location.href = url.toString();
         });
+
+      const screenshotGui = gui.addFolder('Screenshot');
+      screenshotGui.add(guiActions, 'takeScreenshot').name('Take screenshot');
+      screenshotGui.add(guiState.screenshot, 'excludeUI').name('Exclude UI elements from screenshot');
+      const resolutionGui = screenshotGui.addFolder('Resolution');
+      resolutionGui.add(guiState.screenshot.resolution, 'override').name('Override Resolution');
+      resolutionGui.add(guiState.screenshot.resolution, 'width').name('Width');
+      resolutionGui.add(guiState.screenshot.resolution, 'height').name('Height');
 
       const debugGui = gui.addFolder('Debug');
       const debugStatsGui = debugGui.addFolder('Statistics');

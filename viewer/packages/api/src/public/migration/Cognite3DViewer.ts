@@ -63,6 +63,7 @@ import {
 } from './renderOptionsHelpers';
 import { Image360Entity } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
+import html2canvas from 'html2canvas';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
@@ -1042,6 +1043,7 @@ export class Cognite3DViewer {
 
   /**
    * Take screenshot from the current camera position.
+   * @param excludeUI If true the screenshot will include only the rendered 3D.
    * @param width Width of the final image. Default is current canvas size.
    * @param height Height of the final image. Default is current canvas size.
    * @returns A {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs Data URL} of the image ('image/png').
@@ -1055,31 +1057,36 @@ export class Cognite3DViewer {
    * const url = await viewer.getScreenshot();
    * const image = document.createElement('img');
    * image.src = url;
-   * document.body.appendChild(url);
+   * document.body.appendChild(image);
    * ```
    */
-  async getScreenshot(width = this.canvas.width, height = this.canvas.height): Promise<string> {
+  async getScreenshot(excludeUI: boolean, width = this.canvas.width, height = this.canvas.height): Promise<string> {
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
     }
 
-    const camera = this.cameraManager.getCamera();
     const { width: originalWidth, height: originalHeight } = this.canvas;
+    const screenshotCamera = this.cameraManager.getCamera();
 
-    const screenshotCamera = camera.clone() as THREE.PerspectiveCamera;
-    adjustCamera(screenshotCamera, width, height);
+    try {
+      this.canvas.width = width;
+      this.canvas.height = height;
 
-    this.renderer.setSize(width, height);
-    this.renderer.render(this._sceneHandler.scene, screenshotCamera);
-    this.revealManager.render(screenshotCamera);
-    const url = this.renderer.domElement.toDataURL();
+      this.renderer.setSize(width, height);
+      this.renderer.render(this._sceneHandler.scene, screenshotCamera);
+      this.revealManager.render(screenshotCamera);
 
-    this.renderer.setSize(originalWidth, originalHeight);
-    this.renderer.render(this._sceneHandler.scene, camera);
+      const domCanvas = await html2canvas(excludeUI ? this.canvas : this.domElement, { backgroundColor: null });
+      return domCanvas.toDataURL();
+    } finally {
+      this.canvas.width = originalWidth;
+      this.canvas.height = originalHeight;
 
-    this.requestRedraw();
+      this.renderer.setSize(originalWidth, originalHeight);
+      this.renderer.render(this._sceneHandler.scene, screenshotCamera);
 
-    return url;
+      this.requestRedraw();
+    }
   }
 
   /**
