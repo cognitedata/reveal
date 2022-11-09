@@ -6,14 +6,17 @@ import { getApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { AddModelOptions, CogniteModel, Cognite3DViewer, OnLoadingCallback } from '../../../packages/api';
 import { CogniteClient } from '@cognite/sdk';
 
-export async function createCognite3DViewer(onLoading: OnLoadingCallback = () => {}): Promise<Cognite3DViewer> {
+export async function createCognite3DViewer(
+  onLoading: OnLoadingCallback = () => {},
+  renderer?: THREE.WebGLRenderer
+): Promise<Cognite3DViewer> {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
 
   if (urlParams.has('modelId') && urlParams.has('revisionId')) {
     const client = await getApplicationSDK(urlParams);
 
-    return new Cognite3DViewer({ sdk: client, logMetrics: false, onLoading });
+    return new Cognite3DViewer({ sdk: client, logMetrics: false, onLoading, renderer: renderer });
   }
 
   const client = new CogniteClient({
@@ -27,7 +30,8 @@ export async function createCognite3DViewer(onLoading: OnLoadingCallback = () =>
     _localModels: true,
     logMetrics: false,
     onLoading,
-    pointCloudEffects: { edlOptions: 'disabled' }
+    pointCloudEffects: { edlOptions: 'disabled' },
+    renderer: renderer
   });
 }
 
