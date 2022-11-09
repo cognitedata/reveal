@@ -25,13 +25,13 @@ import { ContainerSidecarConfig } from './types';
 
 const { REACT_APP_API_KEY_PROJECT: project } = process.env;
 
-type Props = {
+type Props = React.PropsWithChildren<{
   store?: Store;
-  children: React.ReactChild;
   intercomSettings?: IntercomBootSettings;
   sentrySettings?: SentryProps;
   sidecar: ContainerSidecarConfig;
-};
+}>;
+
 const RawContainer: React.FC<Props> = ({
   children,
   store,

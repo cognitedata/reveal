@@ -1,3 +1,5 @@
+import { PropsWithChildren, ReactNode } from 'react';
+
 import {
   Sidebar,
   SidebarContentWrapper,
@@ -6,13 +8,12 @@ import {
   SidebarInnerContentWrapper,
 } from './elements';
 
-type WorkSpaceSidebarProps = {
+type WorkSpaceSidebarProps = PropsWithChildren<{
   isOpen: boolean;
-  header?: React.ReactChild;
-  content?: React.ReactChild | React.ReactChild[];
-  footer?: React.ReactChild;
-  children?: React.ReactChild | React.ReactChild[];
-};
+  header?: ReactNode;
+  content?: ReactNode;
+  footer?: ReactNode;
+}>;
 
 const WorkSpaceSidebar = ({
   isOpen,

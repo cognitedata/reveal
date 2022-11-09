@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, PropsWithChildren, useCallback, useState } from 'react';
 import { Input, SegmentedControl } from '@cognite/cogs.js';
 import { Asset, FileInfo } from '@cognite/sdk';
 import { ListItem } from 'components/List';
@@ -10,13 +10,12 @@ import { Results, ResultsWrapper } from '../WorkSpaceSidebar/elements';
 
 import { WorkSpaceAssetListItem } from './WorkspaceAssetListItem';
 
-type WorkSpaceSearchProps = {
+type WorkSpaceSearchProps = PropsWithChildren<{
   onLoadFile: (
     fileReference: { id: number; externalId?: string },
     fileName: string
   ) => void;
-  children?: React.ReactChild | React.ReactChild[];
-};
+}>;
 
 type StateMachine<T> = {
   status: 'IDLE' | 'LOADING' | 'SUCCESS' | 'FAILED';

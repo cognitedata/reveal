@@ -1,4 +1,4 @@
-import { ReactChild, Component } from 'react';
+import { Component, PropsWithChildren } from 'react';
 
 import { Data } from '../context/Data';
 import { ScalerContext, DataContext, ScalerType } from '../context';
@@ -7,8 +7,7 @@ import { Domain, AxisDomainsByItemId, Item, UpdateState } from '../types';
 import { placeholder } from '../utils/placeholder';
 import { withDisplayName } from '../utils/displayName';
 
-export interface Props {
-  children?: ReactChild | ReactChild[];
+export interface Props extends PropsWithChildren {
   dataContext: Data;
 }
 

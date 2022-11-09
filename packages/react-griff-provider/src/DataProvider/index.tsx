@@ -1,6 +1,6 @@
 /* eslint-disable react/default-props-match-prop-types */
 /* eslint-disable react/no-unused-prop-types */
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import BluebirdPromise from 'bluebird';
 import * as d3 from 'd3';
 import isEqual from 'lodash/isEqual';
@@ -19,7 +19,7 @@ import {
   UpdateState,
 } from '../types';
 
-export type DataproviderProps = {
+export type DataproviderProps = PropsWithChildren<{
   /**
    * A custom renderer for data points.
    *
@@ -63,7 +63,7 @@ export type DataproviderProps = {
   yDomain: Domain;
   ySubDomain: Domain;
   pointsPerSeries?: number;
-  children: React.ReactChild | React.ReactChild[];
+  children: Exclude<PropsWithChildren['children'], undefined>;
   defaultLoader?: (params: LoaderParams) => Promise<Series> | Series;
   onTimeSubDomainChanged?: (domain: Domain) => void;
   onUpdateDomains?: () => void;
@@ -85,7 +85,7 @@ export type DataproviderProps = {
   // Callback when data loader throws an error
   onFetchDataError?: (e: Error, params: LoaderParams) => void;
   series: Array<{ id: string | number }>;
-};
+}>;
 
 export type DataProviderState = {
   timeSubDomain: Domain;
