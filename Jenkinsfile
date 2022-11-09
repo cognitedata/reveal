@@ -132,7 +132,7 @@ pods {
         }
         container('fas') {
           stageWithNotify('Build and deploy PR') {
-            def package_name = "@cognite/cdf-extractor-downloads-2";
+            def package_name = "@cognite/cdf-extractor-downloads";
             def prefix = jenkinsHelpersUtil.determineRepoName();
             def domain = "fusion-preview";
             previewServer(
