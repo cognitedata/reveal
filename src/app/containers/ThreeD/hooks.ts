@@ -158,7 +158,7 @@ export const useInfiniteAssetMappings = (
           assetDescription: assets[mapping.assetId].description,
           searchValue: prepareSearchString(
             `${assets[mapping.assetId].name} ${
-              assets[mapping.assetId].description
+              assets[mapping.assetId].description || ''
             }`
           ),
         })),
