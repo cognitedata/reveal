@@ -67,7 +67,7 @@ export class InspectNodeUI {
         const draggable = new THREE.Object3D();
         draggable.position.copy(startPosition);
 
-        const gizmo = new TransformControls(this._viewer.cameraManager.getCamera(), this._viewer.renderer.domElement);
+        const gizmo = new TransformControls(this._viewer.cameraManager.getCamera(), this._viewer.canvas);
         const offset = new THREE.Vector3();
         const transform = new THREE.Matrix4();
         gizmo.addEventListener('change', () => {

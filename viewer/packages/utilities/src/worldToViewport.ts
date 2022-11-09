@@ -45,7 +45,7 @@ export function worldToNormalizedViewportCoordinates(
  * coordinates (0,0 being the top left of the canvas). Z is
  * in range [-1, 1] if the coordinate
  * is inside the camera near and far planes.
- * @param renderer    Renderer used to render the "world"
+ * @param canvas      Renderer canvas used to render the "world"
  * @param camera      Camera used to project point from 3D to NDC coordinates
  * @param position3D  World position in 3D
  * @param out         Optionally pre-allocated THREE.Vector3
@@ -53,17 +53,13 @@ export function worldToNormalizedViewportCoordinates(
  * is within near/far of camera.
  */
 export function worldToViewportCoordinates(
-  renderer: THREE.WebGLRenderer,
+  canvas: HTMLCanvasElement,
   camera: THREE.PerspectiveCamera,
   position3D: THREE.Vector3,
   out: THREE.Vector3 = new THREE.Vector3()
 ): THREE.Vector3 {
   worldToNormalizedViewportCoordinates(camera, position3D, out);
 
-  const { renderSize } = worldToViewportVars;
-  renderer.getSize(renderSize);
-
-  const canvas = renderer.domElement;
   const { width: canvasWidth, height: canvasHeight } = canvas.getBoundingClientRect();
 
   out.x = Math.round(out.x * canvasWidth);
