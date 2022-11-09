@@ -8,7 +8,9 @@ export default {
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
-export const Example = () => <TimeseriesChart timeseriesId={18846745253145} />;
+export const Example = () => (
+  <TimeseriesChart timeseriesId={18846745253145} showCustomRangePicker />
+);
 
 const Container = styled.div`
   padding: 20px;

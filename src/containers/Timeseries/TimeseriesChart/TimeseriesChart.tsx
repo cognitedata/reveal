@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   LineChart,
   LineChartProps,
@@ -11,8 +11,9 @@ import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import dayjs from 'dayjs';
 import { DateRangeProps } from 'types';
-import { SegmentedControl } from '@cognite/cogs.js';
+import { OptionType, Select } from '@cognite/cogs.js';
 import { ParentSize } from '@visx/responsive';
+import styled from 'styled-components';
 
 export type TIME_OPTION_KEY =
   | '10Y'
@@ -160,6 +161,10 @@ export const TimeseriesChart = ({
       ].getTime()
   );
 
+  const timeSelectOptions = useMemo(() => {
+    return timeOptions.map(key => ({ label: key, value: key }));
+  }, [timeOptions]);
+
   useEffect(() => {
     if (dateRange) {
       setPresetZoomDomain(dateRange);
@@ -247,17 +252,17 @@ export const TimeseriesChart = ({
 
       <SpacedRow>
         {timeOptions.length > 1 && (
-          <SegmentedControl
-            variant="ghost"
-            currentKey={timePeriod}
-            onButtonClicked={key => setTimePeriod(key as TIME_OPTION_KEY)}
-          >
-            {timeOptions.map(key => (
-              <SegmentedControl.Button key={key}>
-                {TIME_SELECT[key].label}
-              </SegmentedControl.Button>
-            ))}
-          </SegmentedControl>
+          <StyledSelect
+            title="Step:"
+            value={{ label: timePeriod, value: timePeriod }}
+            options={timeSelectOptions}
+            onChange={({ value }: OptionType<TIME_OPTION_KEY>) => {
+              if (value) {
+                setTimePeriod(value);
+              }
+            }}
+            width={115}
+          />
         )}
         {showCustomRangePicker && (
           <RangePicker
@@ -311,3 +316,9 @@ export const calculateGranularity = (domain: number[], pps: number) => {
   }
   return 'day';
 };
+
+const StyledSelect = styled(Select)`
+  .cogs-select__menu {
+    height: 200px;
+  }
+`;
