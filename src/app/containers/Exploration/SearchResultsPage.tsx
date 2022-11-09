@@ -223,6 +223,7 @@ function SearchPage() {
                     {currentResourceType === 'sequence' && (
                       <SequenceSearchResults
                         showCount
+                        enableAdvancedFilters={isAdvancedFiltersEnabled}
                         onClick={(item: ResourceItem) =>
                           openPreview(
                             item.id !== activeId ? item.id : undefined
@@ -404,6 +405,7 @@ function SearchPage() {
                 {currentResourceType === 'sequence' && (
                   <SequenceSearchResults
                     showCount
+                    enableAdvancedFilters={isAdvancedFiltersEnabled}
                     onClick={(item: ResourceItem) =>
                       openPreview(item.id !== activeId ? item.id : undefined)
                     }
