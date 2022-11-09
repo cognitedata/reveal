@@ -77,7 +77,7 @@ pods {
   def gitAuthor
   def getTitle
   def isPullRequest = !!env.CHANGE_ID
-  def isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'release-1.0'
+  def isRelease = env.BRANCH_NAME == 'master'
   def bucketBundles = "cdf-hub-bundles"
   def projectProduction = "cognitedata-production"
 
