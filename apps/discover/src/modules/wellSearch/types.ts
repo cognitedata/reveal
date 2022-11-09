@@ -12,8 +12,6 @@ import { TableResults } from '../../components/Tablev3/resultTypes';
 import { UserPreferredUnit } from '../../constants/units';
 import { DocumentType } from '../documentSearch/types';
 
-import { FilterIDs } from './constants';
-
 export const TOGGLE_SELECTED_WELLS = 'WELL_TOGGLE_SELECTED_WELLS';
 export const TOGGLE_SELECTED_WELLBORE_OF_WELL =
   'WELL_TOGGLE_SELECTED_WELLBORE_OF_WELL';
@@ -290,18 +288,3 @@ export type ProcessedData = {
   chartData: MeasurementChartData[];
   errors: DataError[];
 };
-
-export type RegionFieldBlock =
-  | FilterIDs.REGION
-  | FilterIDs.FIELD
-  | FilterIDs.BLOCK;
-
-export type RegionFieldBlockHierarchy = {
-  [key in RegionFieldBlock]: {
-    parents: RegionFieldBlock[];
-    children: RegionFieldBlock[];
-    revalidate: { reference: RegionFieldBlock; filterId: RegionFieldBlock }[];
-  };
-};
-
-export type RegionFieldBlockResult = { [key in RegionFieldBlock]: string[] };

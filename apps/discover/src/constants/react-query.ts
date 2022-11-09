@@ -68,7 +68,6 @@ export const ONLY_FETCH_ONCE = {
 const WELLS_DISCOVER = 'wellsFromDiscoverApi';
 export const WELLS_DISCOVER_QUERY_KEY = {
   GEOMETRY: [WELLS_DISCOVER, 'geometry'],
-  GROUPS: [WELLS_DISCOVER, 'groups'],
 };
 
 const WELLS = 'wells';
@@ -112,6 +111,7 @@ export const WELL_QUERY_KEY = {
   HOLE_SECTIONS: [WELLS, 'holeSections'],
   HOLE_SECTIONS_WITH_TVD: [WELLS, 'holeSections', 'tvd'],
   RIG_OPERATIONS: [WELLS, 'rigOperations'],
+  WELL_PROPERTY_FILTERS: [WELLS, 'summaries', 'wellProperties', 'filter'],
 };
 
 const SEARCH_HISTORY = 'searchHistory';

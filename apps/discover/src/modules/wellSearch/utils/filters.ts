@@ -4,7 +4,6 @@ import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
 import { isValidDate, shortDate } from 'utils/date';
 
-import { FilterIDs } from 'modules/wellSearch/constants';
 import {
   WellFilterOptionValue,
   FilterTypes,
@@ -13,8 +12,6 @@ import {
   FilterCategoricalData,
 } from 'modules/wellSearch/types';
 import { filterConfigsById } from 'pages/authorized/search/search/SideBar/filters/well/filters';
-
-import { RegionFieldBlock } from '../types';
 
 export const removeAppliedFilterValue = (
   appliedFilters: WellFilterMap,
@@ -83,35 +80,3 @@ export const formatWellFilters = (
     });
     return [...result, ...list];
   }, []);
-
-export const parentAccessor = (type: RegionFieldBlock) => {
-  if (type === FilterIDs.REGION) {
-    return 'regions';
-  }
-  if (type === FilterIDs.FIELD) {
-    return 'fields';
-  }
-  if (type === FilterIDs.BLOCK) {
-    return 'blocks';
-  }
-
-  throw new Error(
-    `Invalid reference in region/field/block operator (parentAccessor): ${type}`
-  );
-};
-
-export const childAccessor = (type: RegionFieldBlock) => {
-  if (type === FilterIDs.REGION) {
-    return 'region';
-  }
-  if (type === FilterIDs.FIELD) {
-    return 'field';
-  }
-  if (type === FilterIDs.BLOCK) {
-    return 'block';
-  }
-
-  throw new Error(
-    `Invalid reference in region/field/block operator (childAccessor): ${type}`
-  );
-};
