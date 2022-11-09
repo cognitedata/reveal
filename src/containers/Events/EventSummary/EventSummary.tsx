@@ -9,17 +9,20 @@ import { EmptyState } from 'components/EmpyState/EmptyState';
 import { SummaryCard } from 'components/SummaryCard/SummaryCard';
 import { useEventsSearchResultQuery } from 'domain/events';
 import { getSummaryCardItems } from 'components/SummaryCard/utils';
+import { noop } from 'lodash';
 
 export const EventSummary = ({
   query = '',
   filter = {},
   onAllResultsClick,
+  onRowClick = noop,
 }: {
   query?: string;
   filter: InternalSequenceFilters;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
+  onRowClick?: (row: CogniteEvent) => void;
 }) => {
   const { data, isLoading } = useEventsSearchResultQuery({
     query,
@@ -48,6 +51,7 @@ export const EventSummary = ({
       onAllResultsClick={onAllResultsClick}
     >
       <Table
+        onRowClick={onRowClick}
         data={getSummaryCardItems(data)}
         id="events-summary-table"
         columns={columns}

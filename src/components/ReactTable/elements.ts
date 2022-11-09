@@ -20,7 +20,7 @@ export const SummaryCardWrapper = styled.div`
   width: 100%;
   height: 100%;
   border: 1px solid var(--cogs-border--muted);
-  padding: 18px 16px;
+
   background-color: var(--cogs-surface--medium);
 `;
 
@@ -98,8 +98,6 @@ export const Tr = styled.div`
   min-height: 48px;
 
   background: inherit;
-
-  min-height: 42px;
 
   &:hover {
     background: var(--cogs-surface--interactive--hover);

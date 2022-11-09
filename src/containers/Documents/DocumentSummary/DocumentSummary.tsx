@@ -18,12 +18,14 @@ export const DocumentSummary = ({
   query = '',
   filter = {},
   onAllResultsClick,
+  onRowClick,
 }: {
   query?: string;
   filter?: InternalDocumentFilter;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
+  onRowClick?: (row: Document) => void;
 }) => {
   const { results, isLoading } = useDocumentSearchQuery();
   useObserveDocumentSearchFilters(query, filter);
@@ -46,6 +48,7 @@ export const DocumentSummary = ({
         data={getSummaryCardItems(results)}
         id="document-summary-table"
         columns={columns}
+        onRowClick={onRowClick}
         enableColumnResizing={false}
       />
     </SummaryCard>

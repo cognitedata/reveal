@@ -10,13 +10,16 @@ import { SummaryCard } from 'components/SummaryCard/SummaryCard';
 
 import { useAssetsSearchResultQuery } from 'domain/assets';
 import { getSummaryCardItems } from 'components/SummaryCard/utils';
+import { noop } from 'lodash';
 
 export const AssetSummary = ({
   query = '',
   filter = {},
   onAllResultsClick,
+  onRowClick = noop,
 }: {
   query?: string;
+  onRowClick?: (row: Asset) => void;
   filter: InternalSequenceFilters;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -45,6 +48,7 @@ export const AssetSummary = ({
         id="assets-summary-table"
         columns={columns}
         enableColumnResizing={false}
+        onRowClick={onRowClick}
       />
     </SummaryCard>
   );

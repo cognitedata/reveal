@@ -14,12 +14,14 @@ export const TimeseriesSummary = ({
   query = '',
   filter = {},
   onAllResultsClick,
+  onRowClick,
 }: {
   query?: string;
   filter: InternalSequenceFilters;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
+  onRowClick?: (row: Timeseries) => void;
 }) => {
   const api = convertResourceType('timeSeries');
 
@@ -43,10 +45,11 @@ export const TimeseriesSummary = ({
   return (
     <SummaryCard
       icon="Timeseries"
-      title="Timseries"
+      title="Timeseries"
       onAllResultsClick={onAllResultsClick}
     >
       <Table
+        onRowClick={onRowClick}
         data={getSummaryCardItems(items)}
         id="timseries-summary-table"
         columns={columns}

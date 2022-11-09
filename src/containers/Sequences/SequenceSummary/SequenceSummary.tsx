@@ -14,12 +14,14 @@ export const SequenceSummary = ({
   query = '',
   filter = {},
   onAllResultsClick,
+  onRowClick,
 }: {
   query?: string;
   filter: InternalSequenceFilters;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
+  onRowClick?: (row: Sequence) => void;
 }) => {
   const api = convertResourceType('sequence');
 
@@ -40,6 +42,7 @@ export const SequenceSummary = ({
       onAllResultsClick={onAllResultsClick}
     >
       <Table
+        onRowClick={onRowClick}
         data={getSummaryCardItems(items)}
         id="sequence-summary-table"
         columns={columns}

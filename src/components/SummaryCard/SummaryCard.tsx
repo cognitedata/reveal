@@ -22,7 +22,7 @@ export function SummaryCard({
   return (
     <SummaryCardWrapper>
       <StyledFlex justifyContent="space-between">
-        <Flex gap={8}>
+        <Flex alignItems="center" gap={8}>
           {icon && (
             <IconWrapper>
               <Icon type={icon} />
@@ -47,7 +47,7 @@ export function SummaryCard({
 const StyledFlex = styled(Flex)`
   border-bottom: 1px solid var(--cogs-border--muted);
   align-items: center;
-  padding-bottom: 18px;
+  padding: 18px 16px;
 `;
 const IconWrapper = styled.div`
   padding: 12px;
