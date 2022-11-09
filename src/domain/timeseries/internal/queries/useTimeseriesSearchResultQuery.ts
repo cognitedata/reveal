@@ -9,26 +9,26 @@ import {
 } from 'domain/timeseries';
 
 export const useTimeseriesSearchResultQuery = ({
-  timeseriesFilters,
+  filter,
   sortBy,
 }: {
   query?: string;
-  timeseriesFilters: InternalTimeseriesFilters;
+  filter: InternalTimeseriesFilters;
   sortBy?: TableSortBy[];
 }) => {
-  const filter = useMemo(
-    () => mapInternalFilterToTimeseriesFilter(timeseriesFilters),
-    [timeseriesFilters]
+  const timeseriesFilter = useMemo(
+    () => mapInternalFilterToTimeseriesFilter(filter),
+    [filter]
   );
 
-  const sort = useMemo(
+  const timeseriesSort = useMemo(
     () => mapTableSortByToTimeseriesSortFields(sortBy),
     [sortBy]
   );
 
   return useTimeseriesListQuery({
-    filter,
-    sort,
+    filter: timeseriesFilter,
+    sort: timeseriesSort,
     limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
   });
 };

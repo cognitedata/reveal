@@ -28,11 +28,17 @@ export const SequenceNewTable = (
         { ...Table.Columns.name, enableHiding: false },
         Table.Columns.description,
         Table.Columns.externalId,
-        Table.Columns.columns,
+        {
+          ...Table.Columns.columns,
+          enableSorting: false,
+        },
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         Table.Columns.id,
-        Table.Columns.asset,
+        {
+          ...Table.Columns.asset,
+          enableSorting: false,
+        },
         Table.Columns.dataSet,
       ] as ColumnDef<Sequence>[],
     []

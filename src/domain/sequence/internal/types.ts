@@ -1,10 +1,28 @@
-import { SequenceFilter } from '@cognite/sdk';
+import { Metadata, SequenceColumn } from '@cognite/sdk';
+import { InternalCommonFilters, Order } from '../../types';
 
-// TODO: Remove the 'file filter props' and convert to internal types
-export type InternalSequenceFilters = Omit<
-  Required<SequenceFilter>['filter'],
-  'assetSubtreeIds' | 'dataSetIds'
-> & {
-  assetSubtreeIds?: { label?: string; value: number }[];
-  dataSetIds?: { label?: string; value: number }[];
+export interface InternalSequenceData {
+  id: number;
+  lastUpdatedTime: Date;
+  createdTime: Date;
+  name?: string;
+  description?: string;
+  /**
+   * Asset this sequence is associated with
+   */
+  assetId?: number;
+  dataSetId?: number;
+  externalId?: string;
+  metadata?: Metadata;
+  columns: SequenceColumn[];
+}
+
+export interface InternalSequenceFilters extends InternalCommonFilters {
+  metadata?: Metadata;
+}
+
+// We need this type instead of `InternalSortBy` becuase property is a string array for Sequence.
+export type InternalSequenceSortBy = {
+  property: string[];
+  order: Order;
 };

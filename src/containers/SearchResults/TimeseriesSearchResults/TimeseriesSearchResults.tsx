@@ -51,8 +51,8 @@ export const TimeseriesSearchResults = ({
   const { data, isLoading, hasNextPage, fetchNextPage } =
     useTimeseriesSearchResultQuery({
       query,
-      timeseriesFilters: filter,
-      sortBy: sortBy,
+      filter,
+      sortBy,
     });
 
   const loading = enableAdvancedFilters ? isLoading : !isFetched;

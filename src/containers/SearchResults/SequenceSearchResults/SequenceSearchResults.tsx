@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sequence } from '@cognite/sdk';
 import { SearchResultToolbar } from 'containers/SearchResults';
 import { ResourceItem, convertResourceType } from 'types';
@@ -9,8 +9,12 @@ import { EnsureNonEmptyResource } from 'components';
 import { useResourceResults } from '../SearchResultLoader';
 import { Loader } from '@cognite/cogs.js';
 import { ColumnToggleProps } from 'components/ReactTable';
-import { InternalSequenceFilters } from 'domain/sequence';
+import {
+  InternalSequenceFilters,
+  useSequenceSearchResultQuery,
+} from 'domain/sequence';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
+import { TableSortBy } from 'components/ReactTable/V2';
 
 export const SequenceSearchResults = ({
   query = '',
@@ -20,6 +24,7 @@ export const SequenceSearchResults = ({
   count,
   onClick,
   showCount = false,
+  enableAdvancedFilters,
   ...rest
 }: {
   query?: string;
@@ -29,6 +34,7 @@ export const SequenceSearchResults = ({
   parentResource?: ResourceItem;
   count?: number;
   showCount?: boolean;
+  enableAdvancedFilters?: boolean;
   onClick: (item: Sequence) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & ColumnToggleProps<Sequence>) => {
@@ -36,7 +42,17 @@ export const SequenceSearchResults = ({
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<Sequence>(api, query, filter);
 
-  if (!isFetched) {
+  const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const { data, isLoading, hasNextPage, fetchNextPage } =
+    useSequenceSearchResultQuery({
+      query,
+      filter,
+      sortBy,
+    });
+
+  const loading = enableAdvancedFilters ? isLoading : !isFetched;
+
+  if (loading) {
     return <Loader />;
   }
   return (
@@ -53,13 +69,17 @@ export const SequenceSearchResults = ({
             count={count}
           />
         }
+        data={enableAdvancedFilters ? data : items}
+        fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
+        hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
         tableSubHeaders={
           <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
         }
-        data={items}
-        fetchMore={fetchMore}
-        hasNextPage={canFetchMore}
         onRowClick={sequence => onClick(sequence)}
+        enableSorting
+        onSort={props => {
+          setSortBy(props);
+        }}
         relatedResourceType={relatedResourceType}
         {...rest}
       />
