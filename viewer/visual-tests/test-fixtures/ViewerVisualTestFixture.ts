@@ -7,6 +7,7 @@ import { addModels, createCognite3DViewer } from './utilities/cognite3DViewerHel
 import { DeferredPromise } from '../../packages/utilities';
 import { CognitePointCloudModel } from '../../packages/pointclouds';
 import { AxisViewTool } from '../../packages/tools';
+import * as THREE from 'three';
 
 export type ViewerTestFixtureComponents = {
   viewer: Cognite3DViewer;
@@ -16,14 +17,17 @@ export type ViewerTestFixtureComponents = {
 export abstract class ViewerVisualTestFixture implements VisualTestFixture {
   private readonly _localModelUrls: string[];
   private _viewer!: Cognite3DViewer;
+  private readonly _renderer: THREE.WebGLRenderer;
 
   constructor(...localModelUrls: string[]) {
     this._localModelUrls = localModelUrls.length > 0 ? localModelUrls : ['primitives'];
+    this._renderer = new THREE.WebGLRenderer({ powerPreference: 'high-performance' });
+    this._renderer.setPixelRatio(window.devicePixelRatio);
   }
 
   public async run(): Promise<void> {
     const modelLoadedPromise = new DeferredPromise<void>();
-    this._viewer = await createCognite3DViewer(modelLoadingCallback);
+    this._viewer = await createCognite3DViewer(modelLoadingCallback, this._renderer);
 
     this.setupDom(this._viewer);
 
@@ -60,7 +64,7 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
   public abstract setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void>;
 
   public dispose(): void {
-    this._viewer.renderer.forceContextLoss();
+    this._renderer.forceContextLoss();
     this._viewer.dispose();
   }
 }
