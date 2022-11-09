@@ -7,7 +7,6 @@ static final String APPLICATION_REPO_ID = 'cdf-ui-extractor-downloads'
 static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
 
-
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {

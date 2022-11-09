@@ -1,5 +1,4 @@
 import sdk from '@cognite/cdf-sdk-singleton';
-import { getEnv } from '@cognite/cdf-utilities';
 
 export type Artifact = {
   name: string;
@@ -14,14 +13,25 @@ export type Release = {
   artifacts: Artifact[];
   externalId: string;
   description: string;
+  changelog: { [key: string]: string[] };
+};
+
+export type ExtractorLink = {
+  type: 'generic' | 'externalDocumentation';
+  url: string;
+  name: string;
 };
 
 type Extractor = {
   externalId: string;
   name: string;
-  description: string | undefined;
+  description?: string;
   type: string;
   latestVersion: string | undefined;
+  documentation?: string;
+  imageUrl: string;
+  tags?: string[];
+  links?: ExtractorLink[];
 };
 
 type Items<T> = {
@@ -31,9 +41,13 @@ type Items<T> = {
 export type ExtractorWithRelease = {
   externalId: string;
   name: string;
-  description: string | undefined;
+  description?: string;
   type: string;
   releases: Release[];
+  documentation?: string;
+  imageUrl: string;
+  tags?: string[];
+  links?: ExtractorLink[];
 };
 
 type ExtractorDownload = {
@@ -41,15 +55,7 @@ type ExtractorDownload = {
 };
 
 export const getDownloadUrl = async (artifact: Artifact) => {
-  const cluster = getEnv() || 'api';
-  return (
-    await sdk.get<ExtractorDownload>(artifact.link, {
-      withCredentials: true,
-      headers: {
-        env: cluster as string,
-      },
-    })
-  ).data.downloadUrl;
+  return (await sdk.get<ExtractorDownload>(artifact.link)).data.downloadUrl;
 };
 
 export const getExtractorsWithReleases = async () => {
@@ -77,6 +83,7 @@ export const getExtractorsWithReleases = async () => {
 
   extractors.forEach((extractor) => {
     extractorMap[extractor.externalId] = {
+      ...extractor,
       externalId: extractor.externalId,
       name: extractor.name,
       description: extractor.description,
