@@ -61,7 +61,7 @@
     "styled-components": "5.3.6"
   },
   "devDependencies": {
-    "@types/react": "18.0.24",
+    "@types/react": "18.0.25",
     "@types/styled-components": "5.1.26",
     "@types/three": "0.144.0",
     "docusaurus-plugin-typedoc": "0.17.5",
