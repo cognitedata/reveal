@@ -5,9 +5,22 @@ import { isEmpty } from 'lodash';
 export const mapInternalFilterToSequenceFilter = ({
   assetSubtreeIds,
   dataSetIds,
+  metadata,
   ...rest
 }: InternalSequenceFilters): Required<SequenceFilter>['filter'] | undefined => {
   let filters: Required<SequenceFilter>['filter'] = { ...rest };
+
+  if (metadata && metadata.length > 0) {
+    filters = {
+      ...filters,
+      metadata: metadata.reduce((accumulator, { key, value }) => {
+        return {
+          ...accumulator,
+          [key]: value,
+        };
+      }, {}),
+    };
+  }
 
   if (assetSubtreeIds && assetSubtreeIds.length > 0) {
     filters = {

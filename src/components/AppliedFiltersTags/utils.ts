@@ -54,6 +54,10 @@ export const formatValue = (input?: FilterValues): string => {
     }
   }
 
+  if ('key' in input && 'value' in input) {
+    return `${input.key}=${input.value}`;
+  }
+
   if ('label' in input || 'value' in input) {
     return input.label || String(input.value);
   }

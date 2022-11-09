@@ -18,7 +18,7 @@ export interface InternalSequenceData {
 }
 
 export interface InternalSequenceFilters extends InternalCommonFilters {
-  metadata?: Metadata;
+  metadata?: { key: string; value: string }[];
 }
 
 // We need this type instead of `InternalSortBy` becuase property is a string array for Sequence.
@@ -26,3 +26,7 @@ export type InternalSequenceSortBy = {
   property: string[];
   order: Order;
 };
+export interface OldSequenceFilters
+  extends Omit<InternalSequenceFilters, 'metadata'> {
+  metadata?: Metadata;
+}

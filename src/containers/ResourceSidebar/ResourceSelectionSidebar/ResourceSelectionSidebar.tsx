@@ -4,8 +4,8 @@ import { Button, Input } from '@cognite/cogs.js';
 import {
   ResourceType,
   ResourceItem,
-  InitialResourceFilterProps,
   SelectableItemsProps,
+  InitialOldResourceFilterProps,
 } from 'types';
 import { Divider, SpacedRow, ResourceTypeTabs } from 'components';
 import {
@@ -15,11 +15,11 @@ import {
 } from 'containers';
 
 import {
-  InternalAssetFilters,
-  InternalTimeseriesFilters,
-  InternalFilesFilters,
-  InternalEventsFilters,
-  InternalSequenceFilters,
+  OldAssetFilters,
+  OldFilesFilters,
+  OldEventsFilters,
+  OldTimeseriesFilters,
+  OldSequenceFilters,
 } from 'domain/index';
 
 const Drawer = styled.div<{ visible: boolean }>`
@@ -85,19 +85,19 @@ export const ResourceSelectionSidebar = ({
   header?: React.ReactNode;
   children?: React.ReactNode;
 } & SelectableItemsProps &
-  InitialResourceFilterProps) => {
-  const [assetFilter, setAssetFilter] = useState<InternalAssetFilters>(
+  InitialOldResourceFilterProps) => {
+  const [assetFilter, setAssetFilter] = useState<OldAssetFilters>(
     initialAssetFilter || {}
   );
   const [timeseriesFilter, setTimeseriesFilter] =
-    useState<InternalTimeseriesFilters>(initialTimeseriesFilter || {});
-  const [fileFilter, setFileFilter] = useState<InternalFilesFilters>(
+    useState<OldTimeseriesFilters>(initialTimeseriesFilter || {});
+  const [fileFilter, setFileFilter] = useState<OldFilesFilters>(
     initialFileFilter || {}
   );
-  const [eventFilter, setEventFilter] = useState<InternalEventsFilters>(
+  const [eventFilter, setEventFilter] = useState<OldEventsFilters>(
     initialEventFilter || {}
   );
-  const [sequenceFilter, setSequenceFilter] = useState<InternalSequenceFilters>(
+  const [sequenceFilter, setSequenceFilter] = useState<OldSequenceFilters>(
     initialSequenceFilter || {}
   );
   const [query, setQuery] = useState<string>('');

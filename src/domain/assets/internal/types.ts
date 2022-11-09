@@ -20,6 +20,11 @@ export type InternalAssetData = {
 
 export interface InternalAssetFilters extends InternalCommonFilters {
   labels?: { label?: string; value: string }[];
-  metadata?: Metadata;
+  metadata?: { key: string; value: string }[];
   source?: string;
+}
+
+export interface OldAssetFilters
+  extends Omit<InternalAssetFilters, 'metadata'> {
+  metadata?: Metadata;
 }

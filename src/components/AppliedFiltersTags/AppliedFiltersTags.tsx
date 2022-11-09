@@ -30,7 +30,7 @@ export const AppliedFiltersTags: React.FC<Props> = ({
 
             return (
               <FilterChip
-                key={`${key}-${value}-${displayValue}`}
+                key={`${key}-${displayValue}`}
                 name={key}
                 value={displayValue}
                 onClick={() => {
@@ -38,7 +38,7 @@ export const AppliedFiltersTags: React.FC<Props> = ({
                     return undefined;
                   }
 
-                  const filtered = filterValues.filter(
+                  const filtered = (filterValues as any[]).filter(
                     item => !isEqual(item, value)
                   );
                   onFilterChange({ [key]: filtered });

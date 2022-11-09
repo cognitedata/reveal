@@ -9,15 +9,15 @@ import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { InternalFilesFilters } from 'domain/files';
+import { OldFilesFilters } from 'domain/files';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const FileFilters = ({
   filter,
   setFilter,
 }: {
-  filter: InternalFilesFilters;
-  setFilter: (newFilter: InternalFilesFilters) => void;
+  filter: OldFilesFilters;
+  setFilter: (newFilter: OldFilesFilters) => void;
 }) => {
   const { data: items = [] } = useList('files', {
     filter: transformNewFilterToOldFilter(filter),

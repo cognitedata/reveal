@@ -10,15 +10,15 @@ import { DateFilter } from './DateFilter/DateFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { InternalEventsFilters } from 'domain/events';
+import { OldEventsFilters } from 'domain/events';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const EventFilters = ({
   filter,
   setFilter,
 }: {
-  filter: InternalEventsFilters;
-  setFilter: (newFilter: InternalEventsFilters) => void;
+  filter: OldEventsFilters;
+  setFilter: (newFilter: OldEventsFilters) => void;
 }) => {
   const { data: items = [] } = useList('events', {
     filter: transformNewFilterToOldFilter(filter),

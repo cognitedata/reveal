@@ -11,6 +11,7 @@ import {
   InternalAssetFilters,
   InternalEventsFilters,
   InternalFilesFilters,
+  InternalSequenceFilters,
 } from 'domain/index';
 
 export const annotationInteralIdFilter = (
@@ -43,6 +44,7 @@ export type FilterType =
   | InternalAssetFilters
   | InternalEventsFilters
   | InternalFilesFilters
+  | InternalSequenceFilters
   | {
       name?: string | undefined;
       externalIdPrefix?: string | undefined;

@@ -20,6 +20,11 @@ export interface InternalTimeseriesFilters extends InternalCommonFilters {
   isStep?: boolean;
   isString?: boolean;
   unit?: string;
+  metadata?: { key: string; value: string }[];
+}
+
+export interface OldTimeseriesFilters
+  extends Omit<InternalTimeseriesFilters, 'metadata'> {
   metadata?: Metadata;
 }
 

@@ -14,6 +14,11 @@ import {
   InternalEventsFilters,
   InternalSequenceFilters,
   InternalDocumentFilter,
+  OldAssetFilters,
+  OldTimeseriesFilters,
+  OldFilesFilters,
+  OldEventsFilters,
+  OldSequenceFilters,
 } from 'domain/index';
 
 export type SmallPreviewProps = {
@@ -44,6 +49,14 @@ export type InitialResourceFilterProps = {
   initialSequenceFilter?: InternalSequenceFilters;
 };
 
+export type InitialOldResourceFilterProps = {
+  initialAssetFilter?: OldAssetFilters;
+  initialTimeseriesFilter?: OldTimeseriesFilters;
+  initialFileFilter?: OldFilesFilters;
+  initialEventFilter?: OldEventsFilters;
+  initialSequenceFilter?: OldSequenceFilters;
+};
+
 export type FiltersType =
   | AssetFilterProps
   | TimeseriesFilter
@@ -67,6 +80,14 @@ export type ResourceFilterProps = {
   sequenceFilter?: InternalSequenceFilters;
 };
 
+export type OldResourceFilterProps = {
+  assetFilter?: OldAssetFilters;
+  timeseriesFilter?: OldTimeseriesFilters;
+  fileFilter?: OldFilesFilters;
+  eventFilter?: OldEventsFilters;
+  sequenceFilter?: OldSequenceFilters;
+};
+
 export type SetResourceFilterProps = {
   setAssetFilter: React.Dispatch<React.SetStateAction<InternalAssetFilters>>;
   setTimeseriesFilter: React.Dispatch<
@@ -77,6 +98,16 @@ export type SetResourceFilterProps = {
   setSequenceFilter: React.Dispatch<
     React.SetStateAction<InternalSequenceFilters>
   >;
+};
+
+export type SetOldResourceFilterProps = {
+  setAssetFilter: React.Dispatch<React.SetStateAction<OldAssetFilters>>;
+  setTimeseriesFilter: React.Dispatch<
+    React.SetStateAction<OldTimeseriesFilters>
+  >;
+  setFileFilter: React.Dispatch<React.SetStateAction<OldFilesFilters>>;
+  setEventFilter: React.Dispatch<React.SetStateAction<OldEventsFilters>>;
+  setSequenceFilter: React.Dispatch<React.SetStateAction<OldSequenceFilters>>;
 };
 
 export type DateRangeProps = {

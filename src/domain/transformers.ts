@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isArray, isEmpty } from 'lodash';
 import { isObjectEmpty } from 'utils';
 import { InternalAssetData } from './assets';
 import { InternalEventsData } from './events';
@@ -11,6 +11,21 @@ export const transformNewFilterToOldFilter = <T>(
 ): T | undefined => {
   if (filter === undefined) {
     return {} as T;
+  }
+
+  if (filter.metadata && isArray(filter.metadata)) {
+    filter = {
+      ...filter,
+      metadata: (filter.metadata as { key: string; value: string }[]).reduce(
+        (accumulator, { key, value }) => {
+          return {
+            ...accumulator,
+            [key]: value,
+          };
+        },
+        {} as Record<string, unknown>
+      ),
+    };
   }
 
   // TODO: Remove this when migrated

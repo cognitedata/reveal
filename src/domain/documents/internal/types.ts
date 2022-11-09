@@ -6,7 +6,6 @@ import {
   EpochTimestamp,
   LabelList,
   DocumentHighlight,
-  Metadata,
 } from '@cognite/sdk';
 import { InternalCommonFilters } from '../../types';
 
@@ -37,5 +36,5 @@ export interface InternalDocumentFilter extends InternalCommonFilters {
   author?: string[];
   source?: string[];
   type?: string[];
-  metadata?: Metadata;
+  metadata?: { key: string; value: string }[];
 }

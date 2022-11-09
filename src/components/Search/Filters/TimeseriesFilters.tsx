@@ -9,15 +9,15 @@ import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { InternalTimeseriesFilters } from 'domain/timeseries';
+import { OldTimeseriesFilters } from 'domain/timeseries';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const TimeseriesFilters = ({
   filter,
   setFilter,
 }: {
-  filter: InternalTimeseriesFilters;
-  setFilter: (newFilter: InternalTimeseriesFilters) => void;
+  filter: OldTimeseriesFilters;
+  setFilter: (newFilter: OldTimeseriesFilters) => void;
 }) => {
   const { data: items = [] } = useList('timeseries', {
     filter: transformNewFilterToOldFilter(filter),

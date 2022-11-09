@@ -10,7 +10,7 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { InternalAssetFilters } from 'domain/assets';
+import { OldAssetFilters } from 'domain/assets';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
@@ -18,8 +18,8 @@ export const AssetFilters = ({
   filter,
   setFilter,
 }: {
-  filter: InternalAssetFilters;
-  setFilter: (newFilter: InternalAssetFilters) => void;
+  filter: OldAssetFilters;
+  setFilter: (newFilter: OldAssetFilters) => void;
 }) => {
   const { data: items = [] } = useList('assets', {
     filter: transformNewFilterToOldFilter(filter),

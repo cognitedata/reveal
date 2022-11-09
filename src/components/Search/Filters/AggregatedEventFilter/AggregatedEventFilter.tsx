@@ -6,7 +6,7 @@ import { aggregateKey } from '@cognite/sdk-react-query-hooks';
 import { useQuery } from 'react-query';
 
 import { Select } from 'components';
-import { InternalEventsFilters } from 'domain/events';
+import { InternalEventsFilters, OldEventsFilters } from 'domain/events';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 type EventFieldForAggregate = 'type' | 'subtype' | 'dataSetId';
@@ -41,7 +41,7 @@ export const AggregatedEventFilter = ({
   value,
 }: {
   field: EventFieldForAggregate;
-  filter: InternalEventsFilters;
+  filter: InternalEventsFilters | OldEventsFilters;
   title: string;
   setValue: (newValue?: string) => void;
   value?: string;

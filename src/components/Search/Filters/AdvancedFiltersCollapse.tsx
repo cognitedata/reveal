@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Colors, Icon } from '@cognite/cogs.js';
 import { Collapse } from 'antd';
 import styled from 'styled-components';
-import { NewFiltersType, ResourceType } from 'types';
+import { ResourceType } from 'types';
 import { countByFilter } from 'utils';
 
 const COLLAPSE_KEY = 'adavanced-filters-collapse';
@@ -66,7 +66,7 @@ export const AdvancedFiltersCollapse = ({
   children,
 }: {
   resourceType: ResourceType;
-  filter: NewFiltersType;
+  filter: any;
   children: React.ReactNode;
 }) => {
   const [activeCollapseKey, setActiveCollapseKey] = useState<

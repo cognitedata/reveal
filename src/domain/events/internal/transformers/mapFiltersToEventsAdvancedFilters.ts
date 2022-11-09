@@ -73,7 +73,7 @@ export const mapFiltersToEventsAdvancedFilters = (
     .search('description', isEmpty(query) ? undefined : query);
 
   if (metadata) {
-    for (const [key, value] of Object.entries(metadata)) {
+    for (const { key, value } of metadata) {
       filterBuilder.equals(`metadata|${key}`, value);
     }
   }

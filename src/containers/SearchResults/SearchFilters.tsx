@@ -3,8 +3,8 @@ import { Icon, Button, Tooltip } from '@cognite/cogs.js';
 import { Row, Col, Badge } from 'antd';
 import {
   ResourceType,
-  ResourceFilterProps,
-  SetResourceFilterProps,
+  OldResourceFilterProps,
+  SetOldResourceFilterProps,
 } from 'types';
 import {
   AssetFilters,
@@ -27,8 +27,8 @@ interface IFilterIcon {
   filter: FilterType;
 }
 
-export type FilterProps = Required<ResourceFilterProps> &
-  SetResourceFilterProps & {
+export type FilterProps = Required<OldResourceFilterProps> &
+  SetOldResourceFilterProps & {
     resourceType: ResourceType;
   };
 
@@ -111,8 +111,8 @@ export const SearchFilters = ({
   visible?: boolean;
   allowHide?: boolean;
   closeFilters?: () => void;
-} & Required<ResourceFilterProps> &
-  SetResourceFilterProps) => {
+} & Required<OldResourceFilterProps> &
+  SetOldResourceFilterProps) => {
   const selectedFilter = getSelectedFilter({
     resourceType,
     assetFilter,

@@ -102,7 +102,9 @@ const FilterItemWrapper = styled.div`
 `;
 
 const ButtonGroupWrapper = styled(SpacedRow)`
-  margin: 0 4px 8px auto;
+  margin: 0 0 8px auto;
+  padding-top: 8px;
+  gap: 8px !important;
 `;
 
 const FilterItem = ({
@@ -324,21 +326,23 @@ export type FilterFormProps = {
     count: number;
   }[];
   filters?: {
-    [key: string]: string;
-  };
+    key: string;
+    value: string;
+  }[];
   metadataCategory?: {
     [key: string]: string;
   };
   lockedFilters?: string[];
-  setFilters: (filter: { [key: string]: string }) => void;
+  setFilters: (filter: { key: string; value: string }[]) => void;
   useAggregates?: boolean;
 };
 
+// NOTE: This component is super confusing and complicated. Subject to refactoring.
 export const FilterFormV2 = ({
   metadata,
   keys,
   metadataCategory = {},
-  filters = {},
+  filters = [],
   lockedFilters = [],
   setFilters = () => {},
   useAggregates = false,
@@ -373,27 +377,42 @@ export const FilterFormV2 = ({
     }
   );
 
+  const handleSetMetadataFilter = (newKey: string, newValue: string) => {
+    const hasFilterApplied = filters.some(
+      ({ key, value }) => key === newKey && value === newValue
+    );
+
+    if (hasFilterApplied) {
+      return;
+    }
+
+    setFilters([...filters, { key: newKey, value: newValue }]);
+  };
+
+  const handleRemoveMetadataFilter = (key: string) => {
+    const newFilter = filters?.filter(filter => filter.key !== key);
+    setFilters(newFilter);
+  };
+
   return (
     <Wrapper>
-      {Object.keys(filters)
-        .filter(el => editingKeys.includes(el))
-        .map(key => (
+      {filters
+        .filter(({ key }) => editingKeys.includes(key))
+        .map(({ key, value }) => (
           <FilterItem
             key={key}
             categories={categories}
             lockedFilters={lockedFilters}
             metadata={metadata}
             initialKey={key}
-            initialValue={filters[key]}
+            initialValue={value}
             setFilter={(newKey, newValue) => {
-              setFilters({ ...filters, [newKey]: newValue });
+              handleSetMetadataFilter(newKey, newValue);
               setEditingKeys(editingKeys.filter(el => el !== key));
             }}
             onCancel={shouldDelete => {
               if (shouldDelete) {
-                const newFilter = { ...filters };
-                delete newFilter[key];
-                setFilters(newFilter);
+                handleRemoveMetadataFilter(key);
               }
               setEditingKeys(editingKeys.filter(el => el !== key));
             }}
@@ -405,23 +424,21 @@ export const FilterFormV2 = ({
         categories={categories}
         lockedFilters={lockedFilters}
         setFilter={(newKey, newValue) => {
-          setFilters({ ...filters, [newKey]: newValue });
+          handleSetMetadataFilter(newKey, newValue);
         }}
         useAggregates={useAggregates}
       />
       <Tags>
-        {Object.keys(filters).map(el => {
-          const isLocked = lockedFilters.some(filter => filter === el);
+        {filters.map(({ key, value }) => {
+          const isLocked = lockedFilters.some(filter => filter === key);
           return (
             <FilterTag
-              key={el}
+              key={key}
               isLocked={isLocked}
-              filter={el}
-              value={filters[el]}
+              filter={key}
+              value={value}
               onDeleteClicked={() => {
-                const newFilter = { ...filters };
-                delete newFilter[el];
-                setFilters(newFilter);
+                handleRemoveMetadataFilter(key);
               }}
             />
           );

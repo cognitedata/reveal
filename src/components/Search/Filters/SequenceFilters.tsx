@@ -7,15 +7,15 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { InternalSequenceFilters } from 'domain/sequence';
+import { OldSequenceFilters } from 'domain/sequence';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 
 export const SequenceFilters = ({
   filter,
   setFilter,
 }: {
-  filter: InternalSequenceFilters;
-  setFilter: (newFilter: InternalSequenceFilters) => void;
+  filter: OldSequenceFilters;
+  setFilter: (newFilter: OldSequenceFilters) => void;
 }) => {
   const { data: items = [] } = useList('sequences', {
     filter: transformNewFilterToOldFilter(filter),

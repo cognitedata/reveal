@@ -21,9 +21,12 @@ export default {
 };
 
 export const Example: ComponentStory<typeof FilterFormV2> = args => {
-  const [filters, setFilters] = useState<{
-    [key: string]: string;
-  }>({ testing: 'yay' });
+  const [filters, setFilters] = useState<
+    {
+      key: string;
+      value: string;
+    }[]
+  >([{ key: 'testing', value: 'yay' }]);
   return <FilterFormV2 {...args} filters={filters} setFilters={setFilters} />;
 };
 Example.args = {
@@ -38,9 +41,12 @@ Example.args = {
 export const ExampleWithCategories: ComponentStory<
   typeof FilterFormV2
 > = args => {
-  const [filters, setFilters] = useState<{
-    [key: string]: string;
-  }>({ testing: 'yay' });
+  const [filters, setFilters] = useState<
+    {
+      key: string;
+      value: string;
+    }[]
+  >([{ key: 'testing', value: 'yay' }]);
   return <FilterFormV2 {...args} filters={filters} setFilters={setFilters} />;
 };
 ExampleWithCategories.args = {
@@ -61,9 +67,12 @@ ExampleWithCategories.args = {
 export const ExampleWithLockedCategories: ComponentStory<
   typeof FilterFormV2
 > = args => {
-  const [filters, setFilters] = useState<{
-    [key: string]: string;
-  }>({ testing: 'yay' });
+  const [filters, setFilters] = useState<
+    {
+      key: string;
+      value: string;
+    }[]
+  >([{ key: 'testing', value: 'yay' }]);
   return <FilterFormV2 {...args} filters={filters} setFilters={setFilters} />;
 };
 ExampleWithLockedCategories.args = {

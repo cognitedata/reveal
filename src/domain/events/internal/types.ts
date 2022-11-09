@@ -32,5 +32,10 @@ export interface InternalEventsFilters extends InternalCommonFilters {
   source?: string;
   type?: string;
   subtype?: string;
+  metadata?: { key: string; value: string }[];
+}
+
+export interface OldEventsFilters
+  extends Omit<InternalEventsFilters, 'metadata'> {
   metadata?: Metadata;
 }

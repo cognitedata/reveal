@@ -22,8 +22,8 @@ export const MetadataFilterV2 = <
 }: {
   items: T[];
   keys?: { value: string; count: number }[];
-  value: { [key in string]: string } | undefined;
-  setValue: (newValue: { [key in string]: string } | undefined) => void;
+  value: { key: string; value: string }[] | undefined;
+  setValue: (newValue: { key: string; value: string }[] | undefined) => void;
   useAggregates?: boolean;
 }) => {
   const metadata = useMemo(() => {
@@ -33,15 +33,15 @@ export const MetadataFilterV2 = <
     return {};
   }, [useAggregates, items]);
 
-  const setFilter = (newFilters: { [key: string]: string }) => {
+  const setFilter = (newFilters: { key: string; value: string }[]) => {
     setValue(newFilters);
   };
 
   const clearFilters = () => {
-    setValue({});
+    setValue(undefined);
   };
 
-  const showClearFiltersButton = Object.keys(value || {}).length > 0;
+  const showClearFiltersButton = (value || []).length > 0;
 
   return (
     <>
