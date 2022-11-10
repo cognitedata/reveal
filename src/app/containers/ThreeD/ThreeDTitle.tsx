@@ -23,6 +23,8 @@ export default function ThreeDTitle({ id }: { id: number }) {
     enabled: !!revision?.id,
   });
 
+  const goBackFallback = createLink('/explore/search/threeD');
+
   const { data } = useInfiniteQuery(
     ['3d', 'model-list'],
     ({ pageParam }) =>
@@ -56,7 +58,10 @@ export default function ThreeDTitle({ id }: { id: number }) {
     return (
       <>
         <PageTitle title={id.toString()} />
-        <SecondaryTopbar title={id.toString()} />
+        <SecondaryTopbar
+          goBackFallback={goBackFallback}
+          title={id.toString()}
+        />
         <Alert type="error" message="Error" description={`${error}`} />
       </>
     );
@@ -66,6 +71,7 @@ export default function ThreeDTitle({ id }: { id: number }) {
     <>
       <PageTitle title={apiThreeDModel?.name} />
       <SecondaryTopbar
+        goBackFallback={goBackFallback}
         title={apiThreeDModel?.name || id.toString()}
         subtitle={
           revisionIndex && Number.isFinite(revisionIndex)
