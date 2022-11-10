@@ -13,7 +13,9 @@ import dayjs from 'dayjs';
 import { DateRangeProps } from 'types';
 import { OptionType, Select } from '@cognite/cogs.js';
 import { ParentSize } from '@visx/responsive';
+
 import styled from 'styled-components';
+import { DatapointAggregates, Datapoints } from '@cognite/sdk';
 
 export type TIME_OPTION_KEY =
   | '10Y'
@@ -124,6 +126,7 @@ export type TimeseriesChartProps = {
   showCustomRangePicker?: boolean;
   enableTooltipPreview?: boolean;
   disabled?: boolean;
+  onDataFetched?: (data?: DatapointAggregates | Datapoints) => void;
 } & Omit<
   LineChartProps,
   | 'values'
@@ -147,6 +150,7 @@ export const TimeseriesChart = ({
   dateRange,
   onDateRangeChange,
   disabled = false,
+  onDataFetched,
   ...otherProps
 }: TimeseriesChartProps) => {
   const sdk = useSDK();
@@ -221,8 +225,11 @@ export const TimeseriesChart = ({
     {
       staleTime: Infinity,
       enabled: !disabled,
+      onSuccess: data => onDataFetched?.(data),
+      onError: () => onDataFetched?.(undefined),
     }
   );
+
   return (
     <>
       <ParentSize>

@@ -28,6 +28,15 @@ ExampleSingleSelect.args = {
   onItemClicked: action('onItemClicked'),
 };
 
+export const HideEmpty: ComponentStory<typeof TimeseriesTable> = args => (
+  <TimeseriesTable {...args} />
+);
+HideEmpty.args = {
+  data: timeseries,
+  onItemClicked: action('onItemClicked'),
+  hideEmptyData: true,
+};
+
 const Container = styled.div`
   height: 600px;
 `;

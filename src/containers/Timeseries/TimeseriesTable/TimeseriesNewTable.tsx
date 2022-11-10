@@ -8,20 +8,32 @@ import { Body } from '@cognite/cogs.js';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from 'hooks';
 import { RootAsset } from 'components/RootAsset';
+import isEmpty from 'lodash/isEmpty';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
+
+export interface TimeseriesTableProps
+  extends Omit<TableProps<TimeseriesWithRelationshipLabels>, 'columns'>,
+    RelationshipLabels,
+    DateRangeProps {
+  hideEmptyData?: boolean;
+}
 
 const visibleColumns = ['name', 'description', 'data', 'lastUpdatedTime'];
 
 export const TimeseriesNewTable = ({
   dateRange: dateRangeProp,
+  hideEmptyData = false,
   ...props
-}: Omit<TableProps<TimeseriesWithRelationshipLabels>, 'columns'> &
-  RelationshipLabels &
-  DateRangeProps) => {
+}: TimeseriesTableProps) => {
+  const { data, ...rest } = props;
+
   const [dateRange, setDateRange] = useState(
     dateRangeProp || TIME_SELECT['1Y'].getTime()
   );
+  const [emptyTimeseriesMap, setEmptyTimeseriesMap] = useState<
+    Record<number, boolean>
+  >({});
 
   useEffect(() => {
     if (dateRangeProp) {
@@ -29,7 +41,17 @@ export const TimeseriesNewTable = ({
     }
   }, [dateRangeProp]);
 
-  const { data, ...rest } = props;
+  useEffect(() => {
+    const emptyTimeseriesMap = data.reduce(
+      (emptyTimeseriesMap, { id }) => ({
+        ...emptyTimeseriesMap,
+        [id]: false,
+      }),
+      {} as Record<number, boolean>
+    );
+    setEmptyTimeseriesMap(emptyTimeseriesMap);
+  }, [data]);
+
   const columns = useMemo(() => {
     const sparkLineColumn: ColumnDef<Timeseries & { data: any }> = {
       header: 'Preview',
@@ -57,6 +79,12 @@ export const TimeseriesNewTable = ({
             enableTooltipPreview
             dateRange={dateRange}
             onDateRangeChange={() => {}}
+            onDataFetched={data =>
+              setEmptyTimeseriesMap(emptyTimeseriesMap => ({
+                ...emptyTimeseriesMap,
+                [timeseries.id]: isEmpty(data?.datapoints),
+              }))
+            }
           />
         );
       },
@@ -89,12 +117,17 @@ export const TimeseriesNewTable = ({
       },
     ] as ColumnDef<Timeseries>[];
   }, [dateRange]);
+
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
+
+  const timeseriesWithDatapoints = useMemo(() => {
+    return data.filter(({ id }) => !emptyTimeseriesMap[id]);
+  }, [data, emptyTimeseriesMap]);
 
   return (
     <Table
       columns={columns}
-      data={data}
+      data={hideEmptyData ? timeseriesWithDatapoints : data}
       hiddenColumns={hiddenColumns}
       {...rest}
     />
