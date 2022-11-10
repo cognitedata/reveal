@@ -47,7 +47,6 @@ import {
 } from 'app/store/filter/selectors';
 import { StyledSplitter } from 'app/containers/elements';
 import { useDocumentFilters } from 'app/store/filter/selectors/documentSelectors';
-import { CogniteEvent } from '@cognite/sdk';
 import { useNavigate } from 'react-router-dom';
 import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
 import { AllTab } from 'app/containers/All';
@@ -117,6 +116,10 @@ function SearchPage() {
     setShowFilter(prevState => !prevState);
   }, []);
 
+  const handleRowClick = (item: ResourceItem) => {
+    openPreview(item.id !== activeId ? item.id : undefined);
+  };
+
   if (isFilterFeatureEnabled) {
     return (
       <RootHeightWrapperNew>
@@ -179,11 +182,7 @@ function SearchPage() {
                         showCount
                         filter={assetFilter}
                         enableAdvancedFilters={isAdvancedFiltersEnabled}
-                        onClick={(item: ResourceItem) =>
-                          openPreview(
-                            item.id !== activeId ? item.id : undefined
-                          )
-                        }
+                        onClick={handleRowClick}
                         onFilterChange={(newValue: Record<string, unknown>) =>
                           setAssetFilter(newValue)
                         }
@@ -195,11 +194,7 @@ function SearchPage() {
                         showCount
                         filter={fileFilter}
                         allowEdit={editable}
-                        onClick={(item: ResourceItem) =>
-                          openPreview(
-                            item.id !== activeId ? item.id : undefined
-                          )
-                        }
+                        onClick={handleRowClick}
                         onFilterChange={(newValue: Record<string, unknown>) =>
                           setFileFilter(newValue)
                         }
@@ -210,11 +205,7 @@ function SearchPage() {
                       <DocumentSearchResults
                         query={query}
                         filter={documentFilter}
-                        onClick={(item: ResourceItem) => {
-                          openPreview(
-                            item.id !== activeId ? item.id : undefined
-                          );
-                        }}
+                        onClick={handleRowClick}
                         onFilterChange={(newValue: Record<string, unknown>) =>
                           setDocumentFilter(newValue)
                         }
@@ -223,12 +214,9 @@ function SearchPage() {
                     {currentResourceType === 'sequence' && (
                       <SequenceSearchResults
                         showCount
+                        onClick={handleRowClick}
                         enableAdvancedFilters={isAdvancedFiltersEnabled}
-                        onClick={(item: ResourceItem) =>
-                          openPreview(
-                            item.id !== activeId ? item.id : undefined
-                          )
-                        }
+                        x
                         onFilterChange={(newValue: Record<string, unknown>) =>
                           setSequenceFilter(newValue)
                         }
@@ -240,11 +228,7 @@ function SearchPage() {
                       <TimeseriesSearchResults
                         showCount
                         enableAdvancedFilters={isAdvancedFiltersEnabled}
-                        onClick={(item: ResourceItem) =>
-                          openPreview(
-                            item.id !== activeId ? item.id : undefined
-                          )
-                        }
+                        onClick={handleRowClick}
                         onFilterChange={(newValue: Record<string, unknown>) =>
                           setTimeseriesFilter(newValue)
                         }
@@ -257,11 +241,7 @@ function SearchPage() {
                       <EventSearchResults
                         showCount
                         enableAdvancedFilters={isAdvancedFiltersEnabled}
-                        onClick={(item: CogniteEvent) =>
-                          openPreview(
-                            item.id !== activeId ? item.id : undefined
-                          )
-                        }
+                        onClick={handleRowClick}
                         onFilterChange={(newValue: Record<string, unknown>) =>
                           setEventFilter(newValue)
                         }
@@ -271,11 +251,7 @@ function SearchPage() {
                     )}
                     {currentResourceType === 'threeD' && (
                       <ThreeDSearchResults
-                        onClick={(item: ResourceItem) => {
-                          openPreview(
-                            item.id !== activeId ? item.id : undefined
-                          );
-                        }}
+                        onClick={handleRowClick}
                         query={query}
                       />
                     )}

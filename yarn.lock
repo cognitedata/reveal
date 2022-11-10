@@ -1564,10 +1564,10 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/data-exploration@5.28.0":
-  version "5.28.0"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.28.0.tgz#f95d9ab90f579c449e79dc405e7910dc2027605c"
-  integrity sha512-HmqicP2SGhE0Qp77P/x7NASr6vd+b9iT74V2OFMFgCel7UelJScH2q/VGqZgba502ylnU0TE/3rMKtINDtb5LA==
+"@cognite/data-exploration@5.29.1":
+  version "5.29.1"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.29.1.tgz#39fbf599111361e553c8b67a71f354ba74f724dc"
+  integrity sha512-Kyl7v7SnrRqlh5tLB0yQ7fHW0KoelMNYhcXp42HRNvv4PUM7SO7m2fygKLCiBvCRwpWpq+LxR2epCxKuxj5b1w==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
