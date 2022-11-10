@@ -23,6 +23,7 @@ export interface Viewer3DProps {
     index: number,
     value: string
   ) => void;
+  viewInfoBar: boolean;
 }
 
 // 3D Viewer
@@ -33,10 +34,11 @@ export const Viewer3D = (props: Viewer3DProps) => {
     toolbarConfig,
     onToolbarButtonClick,
     onToolbarSelectionChange,
+    viewInfoBar,
   } = props;
 
   return (
-    <VisualizerWrapper>
+    <VisualizerWrapper viewInfoBar={viewInfoBar}>
       <Toolbar
         visualizerId="3D"
         config={toolbarConfig}
@@ -48,9 +50,13 @@ export const Viewer3D = (props: Viewer3DProps) => {
   );
 };
 
-const VisualizerWrapper = styled.div`
+const VisualizerWrapper = styled.div<{
+  viewInfoBar: boolean;
+}>`
   width: 100%;
-  height: calc(100% - ${statusBarHeight});
+  height: calc(
+    100% - ${(props) => (props.viewInfoBar ? '40px' : statusBarHeight)}
+  );
 `;
 
 const Visualizer3D = styled.div`
