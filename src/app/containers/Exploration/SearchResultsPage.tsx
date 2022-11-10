@@ -166,7 +166,7 @@ function SearchPage() {
 
           <MainContainer $isFilterFeatureEnabled={isFilterFeatureEnabled}>
             <Wrapper>
-              <StyledSplitter secondaryMinSize={415} primaryIndex={1}>
+              <StyledSplitter secondaryInitialSize={560} primaryIndex={1}>
                 <Flex
                   direction="column"
                   style={{
