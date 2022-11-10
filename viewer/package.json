@@ -18,6 +18,38 @@
   "sideEffects": false,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    "./tools": {
+      "require": {
+        "types": "./dist/api-entry-points/tools.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/api-entry-points/tools.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./extensions/datasource": {
+      "require": {
+        "types": "./dist/api-entry-points/datasource.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/api-entry-points/datasource.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    ".": {
+      "require": {
+        "types": "./dist/api-entry-points/core.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/api-entry-points/core.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
   "workspaces": [
     "packages/*"
   ],

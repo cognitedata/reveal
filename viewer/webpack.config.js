@@ -117,8 +117,7 @@ module.exports = env => {
       new webpack.DefinePlugin({
         'process.env': JSON.stringify({
           VERSION: packageJSON.version,
-          MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD,
-          IS_DEVELOPMENT_MODE: development
+          MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD
         })
       }),
       new RemovePlugin({

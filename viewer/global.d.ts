@@ -12,7 +12,6 @@ declare global {
     interface ProcessEnv {
       VERSION: string;
       MIXPANEL_TOKEN: string;
-      IS_DEVELOPMENT_MODE: boolean;
     }
   }
 }

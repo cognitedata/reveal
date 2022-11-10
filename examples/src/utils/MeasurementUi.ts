@@ -1,6 +1,7 @@
-import { Cognite3DViewer, MeasurementTool } from "@cognite/reveal";
-import dat from "dat.gui";
 import { THREE } from '@cognite/reveal';
+import dat from "dat.gui";
+import { Cognite3DViewer } from "@cognite/reveal";
+import { MeasurementTool } from "@cognite/reveal/tools";
 
 export class MeasurementUi {
   private readonly _viewer: Cognite3DViewer;
