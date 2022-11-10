@@ -379,16 +379,6 @@ export const DataPreviewTable = forwardRef<
       return false;
     }
 
-    if (e.node?.rowPinned === 'top') {
-      // if draft row, update redux store and return true
-      updateRowData({
-        field: e.colDef.field,
-        newValue: e.newValue,
-        row: e.data as DraftRowData,
-      });
-      return true;
-    }
-
     let newValue = e.newValue;
     if (
       dataManagementHandler.isRelationshipField(
@@ -399,7 +389,17 @@ export const DataPreviewTable = forwardRef<
       e.newValue !== null
     ) {
       // Set to null if externalId is set to empty string
-      newValue = e.newValue === '' ? null : { externalId: e.newValue };
+      newValue = e.newValue === '' ? null : { externalId: e.newValue.trim() };
+    }
+
+    if (e.node?.rowPinned === 'top') {
+      // if draft row, update redux store and return true
+      updateRowData({
+        field: e.colDef.field,
+        newValue: newValue,
+        row: e.data as DraftRowData,
+      });
+      return true;
     }
 
     // update ag-grid cell data
