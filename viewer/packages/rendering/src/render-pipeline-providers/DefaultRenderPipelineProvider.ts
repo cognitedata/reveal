@@ -91,10 +91,6 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     const edges = renderOptions.edgeDetectionParameters ?? defaultRenderOptions.edgeDetectionParameters;
     const pointCloudParameters = renderOptions.pointCloudParameters ?? defaultRenderOptions.pointCloudParameters;
 
-    if (pointCloudParameters.pointBlending === true && shouldApplyEdl(pointCloudParameters.edlOptions)) {
-      throw new Error('EDL and point blending cannot be enabled at the same time');
-    }
-
     this._cadGeometryRenderPipeline = new CadGeometryRenderPipelineProvider(
       sceneHandler,
       materialManager,

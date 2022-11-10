@@ -19,6 +19,7 @@ export type CadGeometryRenderTargets = {
 };
 
 export type PointCloudRenderTargets = {
+  pointCloudLogDepth: THREE.WebGLRenderTarget;
   pointCloud: THREE.WebGLRenderTarget;
 };
 

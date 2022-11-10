@@ -57,6 +57,7 @@ export class PostProcessingPass implements RenderPass {
     backBlitObject.renderOrder = -1;
 
     const pointcloudBlitMaterial = getPointCloudPostProcessingMaterial({
+      logDepthTexture: postProcessingPipelineOptions.pointCloudLogDepth.texture,
       texture: postProcessingPipelineOptions.pointCloud.texture,
       depthTexture: postProcessingPipelineOptions.pointCloud.depthTexture,
       pointBlending: postProcessingPipelineOptions?.pointBlending ?? false,
