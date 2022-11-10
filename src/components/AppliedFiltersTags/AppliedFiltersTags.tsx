@@ -24,6 +24,10 @@ export const AppliedFiltersTags: React.FC<Props> = ({
       {filterKeys.map(key => {
         const filterValues = filter[key];
 
+        if (!filterValues) {
+          return null;
+        }
+
         if (isArray(filterValues)) {
           return filterValues.map(value => {
             const displayValue = formatValue(value);

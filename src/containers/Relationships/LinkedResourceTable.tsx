@@ -6,9 +6,9 @@ import {
   FileSearchResults,
   TimeseriesSearchResults,
   EventSearchResults,
-  AssetSearchResults,
   SequenceSearchResults,
 } from 'containers/SearchResults';
+import { AssetLinkedSearchResults } from 'containers/SearchResults/AssetSearchResults/AssetLinkedSearchResults';
 
 export const LinkedResourceTable = ({
   isGroupingFilesEnabled,
@@ -28,11 +28,9 @@ export const LinkedResourceTable = ({
   switch (type) {
     case 'asset':
       return (
-        <AssetSearchResults
+        <AssetLinkedSearchResults
+          defaultFilter={filter}
           onClick={row => onItemClicked(row.id)}
-          filter={filter}
-          {...selectionMode}
-          hideColumnToggle
         />
       );
     case 'event':
