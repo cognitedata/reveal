@@ -152,16 +152,18 @@ export const useInfiniteAssetMappings = (
 
       return {
         nextCursor: models.nextCursor,
-        items: models.items.map(mapping => ({
-          ...mapping,
-          assetName: assets[mapping.assetId].name,
-          assetDescription: assets[mapping.assetId].description,
-          searchValue: prepareSearchString(
-            `${assets[mapping.assetId].name} ${
-              assets[mapping.assetId].description || ''
-            }`
-          ),
-        })),
+        items: models.items
+          .filter(({ assetId }) => !!assets[assetId])
+          .map(mapping => ({
+            ...mapping,
+            assetName: assets[mapping.assetId].name,
+            assetDescription: assets[mapping.assetId].description,
+            searchValue: prepareSearchString(
+              `${assets[mapping.assetId].name} ${
+                assets[mapping.assetId].description || ''
+              }`
+            ),
+          })),
       };
     },
     {
@@ -202,11 +204,16 @@ export const getAssetMappingsQueryFn = async (
     return Promise.reject('modelId or revisionId missing');
   }
 
-  const r = await sdk.get<MappingResponse>(
-    `/api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/mappings`,
-    { params: opts }
-  );
-  return r.data;
+  const { nextCursor, items } = (
+    await sdk.get<MappingResponse>(
+      `/api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/mappings`,
+      { params: opts }
+    )
+  ).data;
+  return {
+    nextCursor,
+    items: items.filter(i => !!i.treeIndex),
+  };
 };
 
 export const fetchAssetMappingsQuery = (
