@@ -8,8 +8,6 @@ import {
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import uniqBy from 'lodash/uniqBy';
-import uniqWith from 'lodash/uniqWith';
-import isEqual from 'lodash/isEqual';
 import keyBy from 'lodash/keyBy';
 import {
   FetchQueryOptions,
@@ -135,8 +133,7 @@ export const useInfiniteAssetMappings = (
         limit,
         cursor: pageParam,
       });
-      const assetMappings = uniqWith(models.items, isEqual);
-      const uniqueAssets = uniqBy(assetMappings, 'assetId');
+      const uniqueAssets = uniqBy(models.items, 'assetId');
 
       // Query assets corresponding to the asset mappings
       const assets =
@@ -233,35 +230,6 @@ export const fetchAssetMappingsQuery = (
     getAssetMappingsQueryKey(modelId, revisionId, queryParams),
     () => getAssetMappingsQueryFn(sdk, modelId, revisionId, queryParams),
     options
-  );
-};
-
-export const useAssetMappings = (
-  modelId?: number,
-  revisionId?: number,
-  limit?: number,
-  options?: UseInfiniteQueryOptions<
-    MappingResponse,
-    CogniteError,
-    MappingResponse,
-    MappingResponse,
-    (string | number | undefined)[]
-  >
-) => {
-  const sdk = useSDK();
-
-  return useInfiniteQuery(
-    getAssetMappingsQueryKey(modelId, revisionId),
-    ({ pageParam }) =>
-      getAssetMappingsQueryFn(sdk, modelId, revisionId, {
-        limit,
-        cursor: pageParam,
-      }),
-    {
-      ...options,
-      enabled: !!modelId && !!revisionId && (options?.enabled ?? true),
-      getNextPageParam: lastpage => lastpage.nextCursor,
-    }
   );
 };
 
