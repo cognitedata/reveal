@@ -17,7 +17,6 @@ import { blitShaders } from '../rendering/shaders';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
-import { shouldApplyEdl } from './pointCloudParameterUtils';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _viewerScene: THREE.Scene;

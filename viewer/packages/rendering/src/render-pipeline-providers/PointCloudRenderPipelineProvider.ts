@@ -118,7 +118,6 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     this._sceneHandler.pointCloudModels.forEach(model => model.pointCloudNode.updateMatrixWorld(true));
 
     try {
-
       if (this._renderParameters.pointBlending) {
         renderer.setRenderTarget(this._renderTargetData.logDepthAndDepthOutput);
         yield this._depthPass;
