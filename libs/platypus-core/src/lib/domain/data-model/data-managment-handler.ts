@@ -108,6 +108,7 @@ export class DataManagementHandler {
       limit,
       dataModelType,
       dataModelTypeDefs,
+      relationshipFieldsLimit,
       dataModelId,
       version,
     } = dto;
@@ -118,6 +119,7 @@ export class DataManagementHandler {
       cursor,
       dataModelType,
       dataModelTypeDefs,
+      relationshipFieldsLimit,
       hasNextPage,
       limit,
     });

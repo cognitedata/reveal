@@ -64,6 +64,7 @@ import {
 } from '@platypus-app/flags';
 
 const pageSizeLimit = 100;
+const relationshipFieldsLimit = 3;
 
 export interface DataPreviewTableProps {
   dataModelType: DataModelTypeDefsType;
@@ -260,6 +261,7 @@ export const DataPreviewTable = forwardRef<
               hasNextPage,
               dataModelType,
               dataModelTypeDefs,
+              relationshipFieldsLimit,
               version,
               limit: pageSizeLimit,
             })

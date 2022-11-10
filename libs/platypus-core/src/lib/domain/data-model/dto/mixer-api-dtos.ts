@@ -70,6 +70,7 @@ export interface ApiVersionFromGraphQl {
 export interface BuildQueryDTO {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
+  relationshipFieldsLimit?: number;
   limit: number;
   cursor: string;
   hasNextPage: boolean;

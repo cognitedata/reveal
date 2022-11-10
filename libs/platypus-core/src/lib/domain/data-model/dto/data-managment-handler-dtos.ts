@@ -3,6 +3,7 @@ import { DataModelTypeDefs, DataModelTypeDefsType } from '../types';
 export interface FetchDataDTO {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
+  relationshipFieldsLimit: number;
   limit: number;
   cursor: string;
   hasNextPage: boolean;

@@ -86,6 +86,7 @@ describe('DataManagementHandlerTest', () => {
       limit: 100,
       dataModelId: 'testExternalId',
       version: '1',
+      relationshipFieldsLimit: 3,
     });
     expect(queryBuilderMock.buildQuery).toBeCalled();
     expect(mixerApiServiceMock.runQuery).toBeCalled();
