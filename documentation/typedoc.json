@@ -14,6 +14,8 @@
   "tsconfig": "../viewer/tsconfig.typedoc.json",
   "out": "./generated",
   "entryPoints": [
-    "../viewer/index.ts"
+    "../viewer/api-entry-points/core.ts",
+    "../viewer/api-entry-points/datasource.ts",
+    "../viewer/api-entry-points/tools.ts"
   ]
 }
