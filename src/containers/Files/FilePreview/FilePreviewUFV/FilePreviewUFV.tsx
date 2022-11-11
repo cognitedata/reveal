@@ -129,6 +129,9 @@ export const FilePreviewUFV = ({
 
   const persistedAnnotations = useAnnotations(fileId);
   const annotations = useMemo(() => {
+    if (!isAnnotationsShown) {
+      return [];
+    }
     const annotationsForFile = [
       ...persistedAnnotations,
       ...pendingAnnotations.filter(removeSimilarAnnotations),
@@ -142,7 +145,7 @@ export const FilePreviewUFV = ({
         return annotation.page === page || !annotation.page;
       }
     });
-  }, [pendingAnnotations, persistedAnnotations, page]);
+  }, [pendingAnnotations, persistedAnnotations, page, isAnnotationsShown]);
 
   const fileUrl = useFileDownloadUrl(file?.id);
 
@@ -266,6 +269,13 @@ export const FilePreviewUFV = ({
 
   const handlePageChange = (pageNumber: number) => setPage(pageNumber);
 
+  const displayAnnotations = useMemo(() => {
+    if (isAnnotationsShown) {
+      return [...allConvertedAnnotations, ...annotationSearchResult];
+    }
+    return [...annotationSearchResult];
+  }, [isAnnotationsShown, allConvertedAnnotations, annotationSearchResult]);
+
   if (!isMimeTypeSet) {
     return (
       <CenteredPlaceholder>
@@ -303,7 +313,7 @@ export const FilePreviewUFV = ({
           id={UNIFIED_VIEWER_CONTAINER_ID}
           setRef={ref => setUnifiedViewerRef(ref)}
           container={container}
-          annotations={[...allConvertedAnnotations, ...annotationSearchResult]}
+          annotations={displayAnnotations}
           tooltips={enableToolTips ? tooltips : undefined}
           onClick={onStageClick}
           shouldShowZoomControls={showControls}
