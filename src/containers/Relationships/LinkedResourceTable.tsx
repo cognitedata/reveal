@@ -2,19 +2,19 @@ import React from 'react';
 
 import { ResourceType, ResourceItem, SelectableItemsProps } from 'types';
 
-import { FileSearchResults } from 'containers/SearchResults';
 import { AssetLinkedSearchResults } from 'containers/SearchResults/AssetSearchResults/AssetLinkedSearchResults';
 import { TimeseriesLinkedSearchResults } from 'containers/SearchResults/TimeseriesSearchResults/TimeseriesLinkedSearchResults';
 import { EventLinkedSearchResults } from 'containers/SearchResults/EventSearchResults/EventLinkedSearchResults';
+import { FileLinkedSearchResults } from 'containers/SearchResults/FileSearchResults/FileLinkedSearchResults';
 import { SequenceLinkedSearchResults } from 'containers/SearchResults/SequenceSearchResults/SequenceLinkedSearchResults';
 
 export const LinkedResourceTable = ({
-  isGroupingFilesEnabled,
+  // isGroupingFilesEnabled,
   type,
   parentResource,
   onItemClicked,
-  ...selectionMode
-}: {
+}: // ...selectionMode
+{
   excludeParentResource?: boolean;
   type: ResourceType;
   isGroupingFilesEnabled?: boolean;
@@ -40,16 +40,23 @@ export const LinkedResourceTable = ({
       );
     case 'file':
       return (
-        <FileSearchResults
-          isGroupingFilesEnabled={isGroupingFilesEnabled}
-          relatedResourceType="linkedResource"
-          parentResource={parentResource}
-          filter={filter}
+        <FileLinkedSearchResults
+          defaultFilter={filter}
           onClick={el => onItemClicked(el.id)}
-          {...selectionMode}
-          hideColumnToggle
         />
       );
+    // Keeping this for now, as some features are gonna be re-worked on in the near future.
+    // return (
+    //   <FileSearchResults
+    //     isGroupingFilesEnabled={isGroupingFilesEnabled}
+    //     relatedResourceType="linkedResource"
+    //     parentResource={parentResource}
+    //     filter={filter}
+    //     onClick={el => onItemClicked(el.id)}
+    //     {...selectionMode}
+    //     hideColumnToggle
+    //   />
+    // );
     case 'sequence':
       return (
         <SequenceLinkedSearchResults
