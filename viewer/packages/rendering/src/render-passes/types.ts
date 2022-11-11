@@ -41,6 +41,7 @@ export type DepthBlendBlitOptions = {
 };
 
 export type PointCloudPostProcessingOptions = {
+  logDepthTexture: THREE.Texture;
   texture: THREE.Texture;
   depthTexture: THREE.DepthTexture;
   pointBlending: boolean;
