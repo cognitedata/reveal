@@ -22,7 +22,7 @@ import {
 } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { DetailsItem, InfoGrid } from 'components';
-import { useResourcePreview } from 'context';
+import { useResourcePreviewUFV } from 'context';
 import { FileDetails } from 'containers/Files';
 import { getIdParam, extractUniqueIds } from 'utils';
 import {
@@ -46,7 +46,7 @@ const Sidebar = styled.div`
   margin-right: 20px;
   overflow: auto;
   h1 {
-    margin-bottom: 0px;
+    margin-bottom: 0;
     flex: 1;
   }
   .input-wrapper {
@@ -68,7 +68,7 @@ const Sidebar = styled.div`
     outline: none;
   }
   &&& .rc-collapse-content > .rc-collapse-content-box {
-    margin-top: 0px;
+    margin-top: 0;
   }
 `;
 const SidebarHeader = styled.div`
@@ -139,7 +139,8 @@ export const FilePreviewOverview = ({
   onSequenceClicked,
 }: FilePreviewOverviewProps) => {
   const [query, setQuery] = useState<string>('');
-  const { openPreview } = useResourcePreview();
+  // This component is not used anywhere so will replace this directly without duplicating component
+  const { openPreview } = useResourcePreviewUFV();
   const [currentTab, setTab] = useState('resources');
   const [open, setOpen] = useState<string[]>([]);
 

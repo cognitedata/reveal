@@ -1,4 +1,4 @@
-import { ResourcePreviewSidebar } from 'containers';
+import { ResourcePreviewSidebarUFV } from 'containers';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
@@ -113,7 +113,7 @@ const FilePreviewSidebar = ({
           be saved to CDF.
         </span>
       </Modal>
-      <ResourcePreviewSidebar
+      <ResourcePreviewSidebarUFV
         hideTitle
         hideContent
         closable={false}

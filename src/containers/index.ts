@@ -2,6 +2,7 @@ export * from './Assets';
 export * from './Events';
 export * from './Files';
 export * from './ResourceSidebar';
+export * from './ResourceSidebarUFV';
 export * from './Sequences';
 export * from './Timeseries';
 export * from './SearchResults';

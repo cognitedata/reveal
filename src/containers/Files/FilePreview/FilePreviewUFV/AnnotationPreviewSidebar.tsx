@@ -23,7 +23,7 @@ import {
   AnnotationResourceType,
 } from '@cognite/annotations';
 import styled from 'styled-components';
-import { useResourceSelector } from 'context/ResourceSelectorContext';
+import { useResourceSelectorUFV } from 'context/ResourceSelectorContextUFV';
 import {
   ResourceItemState,
   ResourceItem,
@@ -35,7 +35,7 @@ import { useQueryClient, useMutation } from 'react-query';
 import { sleep, SIDEBAR_RESIZE_EVENT } from 'utils';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteEvent, EventChange, FileInfo } from '@cognite/sdk';
-import { ResourcePreviewSidebar } from 'containers';
+import { ResourcePreviewSidebarUFV } from 'containers';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from 'context/AppContext';
 import capitalize from 'lodash/capitalize';
@@ -108,7 +108,7 @@ const AnnotationPreviewSidebar = ({
     ? selectedAnnotations[currentIndex || 0]
     : undefined;
 
-  const { openResourceSelector } = useResourceSelector();
+  const { openResourceSelector } = useResourceSelectorUFV();
 
   const selectedAnnotationId = selectedAnnotation
     ? selectedAnnotation.id
@@ -492,7 +492,7 @@ const AnnotationPreviewSidebar = ({
         <Modal visible={isOpen} {...annotationModalState}>
           {annotationModalState.content}
         </Modal>
-        <ResourcePreviewSidebar
+        <ResourcePreviewSidebarUFV
           hideTitle
           closable={false}
           item={

@@ -6,4 +6,4 @@ export default {
   component: AssetSmallPreview,
 };
 
-export const Example = () => <AssetSmallPreview assetId={1} />;
+export const Example = () => <AssetSmallPreview assetId={560489721305992} />;

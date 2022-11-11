@@ -25,7 +25,7 @@ export const PreviewingResources = (args: ResourcePreviewProps) => {
   );
 };
 const Args: ResourcePreviewProps = {
-  item: { type: 'asset', id: 1 },
+  item: { type: 'asset', id: 560489721305992 },
 };
 PreviewingResources.args = Args;
 const ArgType: {

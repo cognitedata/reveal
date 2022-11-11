@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { ResourcePreviewProvider } from 'context/ResourcePreviewContext';
 import { ResourceSelectorProvider } from 'context/ResourceSelectorContext';
+import { ResourcePreviewProviderUFV } from 'context/ResourcePreviewContextUFV';
+import { ResourceSelectorProviderUFV } from 'context/ResourceSelectorContextUFV';
 import { FileContextualizationContextProvider } from 'context/FileContextualization';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
@@ -53,7 +55,13 @@ export const DataExplorationProvider = ({
         >
           <FileContextualizationContextProvider>
             <ResourcePreviewProvider>
-              <ResourceSelectorProvider>{children}</ResourceSelectorProvider>
+              <ResourceSelectorProvider>
+                <ResourcePreviewProviderUFV>
+                  <ResourceSelectorProviderUFV>
+                    {children}
+                  </ResourceSelectorProviderUFV>
+                </ResourcePreviewProviderUFV>
+              </ResourceSelectorProvider>
             </ResourcePreviewProvider>
           </FileContextualizationContextProvider>
         </AppContextProvider>

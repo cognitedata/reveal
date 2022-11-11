@@ -30,6 +30,7 @@ GeneralDetails.LabelsItem = LabelsItem;
 GeneralDetails.ThreeDModelItem = ThreeDModelItem;
 
 const GeneralDetailsCard = styled.div`
+  width: 100%;
   background-color: var(--cogs-surface--medium);
   border-radius: 8px;
 `;
