@@ -5,10 +5,10 @@ import { ResourceType, ResourceItem, SelectableItemsProps } from 'types';
 import {
   FileSearchResults,
   TimeseriesSearchResults,
-  EventSearchResults,
   SequenceSearchResults,
 } from 'containers/SearchResults';
 import { AssetLinkedSearchResults } from 'containers/SearchResults/AssetSearchResults/AssetLinkedSearchResults';
+import { EventLinkedSearchResults } from 'containers/SearchResults/EventSearchResults/EventLinkedSearchResults';
 
 export const LinkedResourceTable = ({
   isGroupingFilesEnabled,
@@ -35,11 +35,9 @@ export const LinkedResourceTable = ({
       );
     case 'event':
       return (
-        <EventSearchResults
-          filter={filter}
+        <EventLinkedSearchResults
+          defaultFilter={filter}
           onClick={el => onItemClicked(el.id)}
-          {...selectionMode}
-          hideColumnToggle
         />
       );
     case 'file':

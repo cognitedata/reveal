@@ -1,39 +1,57 @@
-import { Asset } from '@cognite/sdk';
+import { CogniteEvent } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { MetadataFilterV2 } from 'components';
+import { AggregatedEventFilterV2, MetadataFilterV2 } from 'components';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 import { TableSortBy } from 'components/ReactTable/V2';
-import { AssetNewTable } from 'containers/Assets';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
-import {
-  InternalAssetFilters,
-  useAssetsSearchResultQuery,
-} from 'domain/assets';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from 'components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from 'components/PreviewFilter/PreviewFilter';
 import { InternalCommonFilters } from 'domain/types';
 import { useDebounce } from 'use-debounce';
+import {
+  InternalEventsFilters,
+  useEventsSearchResultQuery,
+} from 'domain/events';
+import { EventNewTable } from 'containers';
 
 interface Props {
   defaultFilter: InternalCommonFilters;
-  onClick: (item: Asset) => void;
+  onClick: (item: CogniteEvent) => void;
 }
 
-const LinkedAssetFilter = ({
+const LinkedEventFilter = ({
   filter,
   onFilterChange,
 }: {
-  filter: InternalAssetFilters;
-  onFilterChange: (newValue: InternalAssetFilters) => void;
+  filter: InternalEventsFilters;
+  onFilterChange: (newValue: InternalEventsFilters) => void;
 }) => {
-  const { data: items = [] } = useList('assets', {
+  const { data: items = [] } = useList('events', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });
 
   return (
     <PreviewFilterDropdown>
+      <AggregatedEventFilterV2
+        field="type"
+        filter={filter}
+        setValue={newValue => {
+          onFilterChange({ type: newValue });
+        }}
+        title="Type"
+        value={filter.type}
+      />
+      <AggregatedEventFilterV2
+        field="subtype"
+        filter={filter}
+        setValue={newValue => {
+          onFilterChange({ subtype: newValue });
+        }}
+        title="Sub-type"
+        value={filter.subtype}
+      />
       <MetadataFilterV2
         items={items}
         value={filter.metadata}
@@ -43,34 +61,34 @@ const LinkedAssetFilter = ({
   );
 };
 
-export const AssetLinkedSearchResults: React.FC<Props> = ({
+export const EventLinkedSearchResults: React.FC<Props> = ({
   defaultFilter,
   onClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
   const [debouncedQuery] = useDebounce(query, 300);
-  const [filter, setFilter] = useState<InternalAssetFilters>({});
+  const [filter, setFilter] = useState<InternalEventsFilters>({});
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
 
-  const assetFilter = useMemo(() => {
+  const eventsFilters = useMemo(() => {
     return {
       ...filter,
       ...defaultFilter,
     };
   }, [filter, defaultFilter]);
 
-  const { data, hasNextPage, fetchNextPage } = useAssetsSearchResultQuery({
+  const { data, hasNextPage, fetchNextPage } = useEventsSearchResultQuery({
     query: debouncedQuery,
-    assetFilter,
-    sortBy,
+    eventsFilters,
+    eventsSortBy: sortBy,
   });
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
   return (
-    <AssetNewTable
-      id="asset-linked-search-results"
-      onRowClick={asset => onClick(asset)}
+    <EventNewTable
+      id="event-linked-search-results"
+      onRowClick={event => onClick(event)}
       data={data}
       enableSorting
       onSort={props => setSortBy(props)}
@@ -83,7 +101,7 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
-          <LinkedAssetFilter
+          <LinkedEventFilter
             filter={filter}
             onFilterChange={newValue =>
               setFilter(prevState => ({ ...prevState, ...newValue }))
