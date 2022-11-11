@@ -9,11 +9,9 @@ import { ImageContainerProps } from '@cognite/unified-file-viewer/dist/core/cont
 export const Pagination = ({
   container,
   onPageChange,
-  children,
 }: {
   container: DocumentContainerProps | ImageContainerProps;
   onPageChange: (pageNumber: number) => void;
-  children: any;
 }) => {
   const [numPages, setNumPages] = useState(0);
 
@@ -28,25 +26,25 @@ export const Pagination = ({
 
   if (numPages > 1) {
     return (
-      <>
-        {children}
-        <ToolBar>
-          <CogsPagination
-            totalPages={numPages}
-            onPageChange={onPageChange}
-            hideItemsPerPage
-            size="default"
-          />
-        </ToolBar>
-      </>
+      <ToolBar>
+        <CogsPagination
+          totalPages={numPages}
+          onPageChange={onPageChange}
+          hideItemsPerPage
+          size="small"
+          elevated
+        />
+      </ToolBar>
     );
   }
-  return <>{children}</>;
+  return <></>;
 };
 
 const ToolBar = styled.div`
   position: absolute;
-  z-index: 100;
+  isolation: isolate;
+  left: 50%;
+  -ms-transform: translate(-50%);
+  transform: translate(-50%);
   bottom: 10px;
-  right: 140px;
 `;

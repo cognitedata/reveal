@@ -298,23 +298,19 @@ export const FilePreviewUFV = ({
   return (
     <FullHeightWrapper>
       <FullHeightWrapper>
-        <Pagination container={container} onPageChange={handlePageChange}>
-          <ReactUnifiedViewer
-            applicationId={UNIFIED_VIEWER_APPLICATION_ID}
-            id={UNIFIED_VIEWER_CONTAINER_ID}
-            setRef={ref => setUnifiedViewerRef(ref)}
-            container={container}
-            annotations={[
-              ...allConvertedAnnotations,
-              ...annotationSearchResult,
-            ]}
-            tooltips={enableToolTips ? tooltips : undefined}
-            onClick={onStageClick}
-            shouldShowZoomControls={showControls}
-            onAnnotationsUpdateRequest={handleAnnotationsUpdateRequest}
-            {...toolProps}
-          />
-        </Pagination>
+        <ReactUnifiedViewer
+          applicationId={UNIFIED_VIEWER_APPLICATION_ID}
+          id={UNIFIED_VIEWER_CONTAINER_ID}
+          setRef={ref => setUnifiedViewerRef(ref)}
+          container={container}
+          annotations={[...allConvertedAnnotations, ...annotationSearchResult]}
+          tooltips={enableToolTips ? tooltips : undefined}
+          onClick={onStageClick}
+          shouldShowZoomControls={showControls}
+          onAnnotationsUpdateRequest={handleAnnotationsUpdateRequest}
+          {...toolProps}
+        />
+        <Pagination container={container} onPageChange={handlePageChange} />
         <ActionTools
           file={file}
           fileUrl={fileUrl}
