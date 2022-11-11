@@ -91,11 +91,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           header: 'Last updated',
           cell: ({ row }: { row: Row<Document> }) => (
             <Body level={2}>
-              <TimeDisplay
-                value={row.original.modifiedTime}
-                relative
-                withTooltip
-              />
+              <TimeDisplay value={row.original.modifiedTime} />
             </Body>
           ),
         },
