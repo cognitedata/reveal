@@ -48,6 +48,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
       entity.icon.hoverSpriteVisible = true;
+      facade.preload(entity);
       this.render();
     });
 
@@ -127,6 +128,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }>;
     entities: Image360Entity[];
   }> {
+    console.log('asd');
     const cdf360ImageProvider = new Cdf360ImageEventProvider(cogniteClient);
     const image360Factory = new Image360EntityFactory(cdf360ImageProvider, sceneHandler);
     const image360Facade = new Image360Facade(image360Factory);

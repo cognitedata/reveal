@@ -9,9 +9,10 @@ import { Image360EntityFactory } from './Image360EntityFactory';
 import { Image360Icon } from './Image360Icon';
 
 export class Image360Facade<T> {
-  private readonly _entityFactory: Image360EntityFactory<T>;
   private readonly _image360Entities: Image360Entity[];
   private readonly _rayCaster: THREE.Raycaster;
+  private readonly _loaded360Images: Image360Entity[];
+  private readonly _inFlightEntities: Set<Image360Entity>;
 
   set allIconsVisibility(visible: boolean) {
     this._image360Entities.forEach(entity => (entity.icon.visible = visible));
@@ -21,9 +22,10 @@ export class Image360Facade<T> {
     this._image360Entities.forEach(entity => (entity.icon.hoverSpriteVisible = visible));
   }
 
-  constructor(entityFactory: Image360EntityFactory<T>) {
-    this._entityFactory = entityFactory;
+  constructor(private readonly _entityFactory: Image360EntityFactory<T>, private readonly _cacheSize = 10) {
     this._image360Entities = [];
+    this._loaded360Images = [];
+    this._inFlightEntities = new Set();
     this._rayCaster = new THREE.Raycaster();
   }
 
@@ -37,8 +39,38 @@ export class Image360Facade<T> {
     return image360Entities;
   }
 
-  public delete(entity: Image360Entity): void {
+  public delete(entity: Image360Entity): Promise<void> {
     pull(this._image360Entities, entity);
+    pull(this._loaded360Images, entity);
+    return entity.unload360Image();
+  }
+
+  public async preload(entity: Image360Entity): Promise<void> {
+    if (this._loaded360Images.filter(preloadedEntity => preloadedEntity === entity).length > 0) {
+      console.log('cachehit!');
+      return;
+    }
+
+    const imageLoad = entity.load360Image();
+    if (this._inFlightEntities.has(entity)) {
+      console.log('Inflight!');
+      return entity.load360Image().then();
+    }
+
+    this._inFlightEntities.add(entity);
+
+    await imageLoad;
+
+    if (this._loaded360Images.length === this._cacheSize) {
+      console.log('purge');
+      const cachePurgedEntity = this._loaded360Images.pop();
+      await cachePurgedEntity?.dispose();
+    }
+
+    this._loaded360Images.unshift(entity);
+    this._inFlightEntities.delete(entity);
+    console.log('add');
+    console.log('number of entities in cache: ' + this._loaded360Images.length);
   }
 
   public intersect(

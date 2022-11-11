@@ -15,7 +15,7 @@ export class Image360Entity {
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
   private _faceMaterials: THREE.MeshBasicMaterial[] | undefined;
-  private _imageContainer: THREE.Mesh | undefined;
+  private _imageContainer: Promise<THREE.Mesh> | undefined;
 
   /**
    * Get the model-to-world transformation matrix
@@ -65,8 +65,11 @@ export class Image360Entity {
    * Enables a unit inverted cube which contains the 360 image.
    */
   public async activate360Image(): Promise<void> {
-    this._imageContainer = this._imageContainer ?? (await this.load360Image());
-    this._imageContainer.visible = true;
+    if (this._imageContainer === undefined) {
+      await this.load360Image();
+    }
+    const imageContainer = await this._imageContainer!;
+    imageContainer.visible = true;
   }
 
   /**
@@ -76,15 +79,51 @@ export class Image360Entity {
     if (this._imageContainer === undefined) {
       return;
     }
-    this._imageContainer.visible = false;
+    const imageContainer = await this._imageContainer;
+    imageContainer.visible = false;
   }
 
-  private async load360Image(): Promise<THREE.Mesh> {
-    const faces = await this._imageProvider.get360ImageFiles(this._image360Metadata);
-    const box = await this.createImage360VisualizationObject(faces);
-    box.applyMatrix4(this._transform);
-    this._sceneHandler.addCustomObject(box);
-    return box;
+  public async load360Image(): Promise<THREE.Mesh> {
+    if (this._imageContainer !== undefined) {
+      return this._imageContainer;
+    }
+
+    this._imageContainer = this._imageProvider
+      .get360ImageFiles(this._image360Metadata)
+      .then(faces => this.createImage360VisualizationObject(faces));
+    const imageContainer = await this._imageContainer;
+    imageContainer.applyMatrix4(this._transform);
+    this._sceneHandler.addCustomObject(imageContainer);
+    imageContainer.visible = false;
+    return this._imageContainer;
+  }
+
+  public async unload360Image(): Promise<void> {
+    if (this._imageContainer === undefined) {
+      return;
+    }
+
+    const imageContainer = await this._imageContainer;
+
+    this._sceneHandler.removeCustomObject(imageContainer);
+    const imageContainerMaterial = imageContainer.material;
+    const materials =
+      imageContainerMaterial instanceof THREE.Material ? [imageContainerMaterial] : imageContainerMaterial;
+
+    materials
+      .map(material => material as THREE.MeshBasicMaterial)
+      .forEach(material => {
+        material.map?.dispose();
+        material.dispose();
+      });
+
+    imageContainer.geometry.dispose();
+    this._imageContainer = undefined;
+  }
+
+  public async dispose(): Promise<void> {
+    await this.unload360Image();
+    //TODO: dispose icon
   }
 
   private async createImage360VisualizationObject(faces: Image360Face[]): Promise<THREE.Mesh> {
