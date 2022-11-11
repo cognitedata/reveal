@@ -59,7 +59,7 @@ Note that the dates doesn't need to match the keyframe dates - the playback will
 
 ```js runnable
 // import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
-// import { TimelineTool, Keyframe } from '@cognite/reveal/tools';
+// import { TimelineTool, Keyframe } from '@cognite/reveal';
 
 function createProgressBarContainer() {
   const container = document.createElement('div');
@@ -163,7 +163,7 @@ If we have subscribed to `dateChanged` event and if there are no active Keyframe
 :::
 
 ```jsx
-// import { TimelineDateUpdateDelegate } from '@cognite/reveal/tools';
+// import { TimelineDateUpdateDelegate } from '@cognite/reveal';
 
 timeline.subscribe('dateChanged', (data) => {
   const date = data.date;

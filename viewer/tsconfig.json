@@ -22,6 +22,7 @@
     "esModuleInterop": true,
     "declaration": true,
     "baseUrl": ".",
+    "outDir": "./build",
     "paths": {
       "@reveal/*": [
         "packages/*"
@@ -31,5 +32,15 @@
         "packages/api/src/@types/*"
       ]
     },
-  }
+  },
+  "include": [
+    "./**/*"
+  ],
+  "exclude": [
+    "coverage",
+    "node_modules",
+    "target",
+    "dist",
+    "./**/wasm/**/*"
+  ]
 }

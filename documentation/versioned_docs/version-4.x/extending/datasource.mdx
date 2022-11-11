@@ -18,7 +18,7 @@ Note that certain features relies on connectivity to CDF and won't work without 
 
 ## Overview
 
-To implement a custom data source, DataSource from `@cognite/reveal/extensions/datasource` must be implemented
+To implement a custom data source, DataSource from `@cognite/reveal` must be implemented
 and provided to `Cognite3DViewer` on construction using the `customDataSource`-option, which in turn
 provides instances of three interfaces:
 
@@ -97,7 +97,7 @@ import {
   CdfModelIdentifier, 
   ModelIdentifier,
   ModelMetaDataProvider
-} from '@cognite/reveal/extensions/datasource';
+} from '@cognite/reveal';
 
 class MyModelMetaDataProvider implements ModelMetaDataProvider {
   getModelUri(identifier: ModelIdentifier, formatMetadata: BlobOutputMetadata): Promise<string> {
@@ -159,7 +159,7 @@ it's up to the implementation to decide how to retrieve data, and that
 data doesn't necessarily need to be downloaded over HTTP.
 
 ```js
-import { ModelDataProvider } from '@cognite/reveal/extensions/datasource';
+import { ModelDataProvider } from '@cognite/reveal';
 
 class MyModelDataProvider implements ModelDataProvider {
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
