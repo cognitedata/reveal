@@ -1070,26 +1070,19 @@ export class Cognite3DViewer {
     }
 
     const { width: originalWidth, height: originalHeight } = this.canvas;
-    const screenshotCamera = this.cameraManager.getCamera();
 
     try {
-      this.canvas.width = width;
-      this.canvas.height = height;
-
       this.renderer.setSize(width, height);
-      this.renderer.render(this._sceneHandler.scene, screenshotCamera);
+      const screenshotCamera = this.cameraManager.getCamera().clone() as THREE.PerspectiveCamera;
+      if (!includeUI) adjustCamera(screenshotCamera, width, height);
       this.revealManager.render(screenshotCamera);
-
       if (!includeUI) return this.canvas.toDataURL();
 
       const domCanvas = await html2canvas(this.domElement);
       return domCanvas.toDataURL();
     } finally {
-      this.canvas.width = originalWidth;
-      this.canvas.height = originalHeight;
-
       this.renderer.setSize(originalWidth, originalHeight);
-      this.renderer.render(this._sceneHandler.scene, screenshotCamera);
+      this.revealManager.render(this.cameraManager.getCamera());
 
       this.requestRedraw();
     }
