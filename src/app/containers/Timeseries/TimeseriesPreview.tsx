@@ -127,12 +127,14 @@ const TimeseriesChartWrapper = styled.div`
   width: calc(100% - 16px);
   display: flex;
   flex-direction: column;
+  padding: 16px 16px 0 16px;
 `;
 
 const TimeseriesWrapper = styled.div`
   overflow: auto;
 
-  .rc-tabs {
+  .rc-tabs,
+  .rc-tabs-content-holder {
     overflow: unset;
   }
 `;
