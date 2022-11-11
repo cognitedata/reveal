@@ -5,9 +5,9 @@ import { ResourceType, ResourceItem, SelectableItemsProps } from 'types';
 import {
   FileSearchResults,
   TimeseriesSearchResults,
-  SequenceSearchResults,
 } from 'containers/SearchResults';
 import { AssetLinkedSearchResults } from 'containers/SearchResults/AssetSearchResults/AssetLinkedSearchResults';
+import { SequenceLinkedSearchResults } from 'containers/SearchResults/SequenceSearchResults/SequenceLinkedSearchResults';
 import { EventLinkedSearchResults } from 'containers/SearchResults/EventSearchResults/EventLinkedSearchResults';
 
 export const LinkedResourceTable = ({
@@ -54,11 +54,9 @@ export const LinkedResourceTable = ({
       );
     case 'sequence':
       return (
-        <SequenceSearchResults
-          filter={filter}
+        <SequenceLinkedSearchResults
+          defaultFilter={filter}
           onClick={el => onItemClicked(el.id)}
-          {...selectionMode}
-          hideColumnToggle
         />
       );
 
