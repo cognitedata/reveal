@@ -129,9 +129,6 @@ export const FilePreviewUFV = ({
 
   const persistedAnnotations = useAnnotations(fileId);
   const annotations = useMemo(() => {
-    if (!isAnnotationsShown) {
-      return [];
-    }
     const annotationsForFile = [
       ...persistedAnnotations,
       ...pendingAnnotations.filter(removeSimilarAnnotations),
@@ -145,7 +142,7 @@ export const FilePreviewUFV = ({
         return annotation.page === page || !annotation.page;
       }
     });
-  }, [pendingAnnotations, persistedAnnotations, page, isAnnotationsShown]);
+  }, [pendingAnnotations, persistedAnnotations, page]);
 
   const fileUrl = useFileDownloadUrl(file?.id);
 
