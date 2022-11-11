@@ -110,9 +110,10 @@ export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
 }
 
 export function getPointCloudPostProcessingMaterial(options: PointCloudPostProcessingOptions): THREE.RawShaderMaterial {
-  const { texture, depthTexture, pointBlending, edlOptions } = options;
+  const { logDepthTexture, texture, depthTexture, pointBlending, edlOptions } = options;
 
   let uniforms: ThreeUniforms = {
+    tLogDepth: { value: logDepthTexture },
     tDiffuse: { value: texture },
     tDepth: { value: depthTexture }
   };
