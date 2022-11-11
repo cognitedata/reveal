@@ -2,13 +2,11 @@ import React from 'react';
 
 import { ResourceType, ResourceItem, SelectableItemsProps } from 'types';
 
-import {
-  FileSearchResults,
-  TimeseriesSearchResults,
-} from 'containers/SearchResults';
+import { FileSearchResults } from 'containers/SearchResults';
 import { AssetLinkedSearchResults } from 'containers/SearchResults/AssetSearchResults/AssetLinkedSearchResults';
-import { SequenceLinkedSearchResults } from 'containers/SearchResults/SequenceSearchResults/SequenceLinkedSearchResults';
+import { TimeseriesLinkedSearchResults } from 'containers/SearchResults/TimeseriesSearchResults/TimeseriesLinkedSearchResults';
 import { EventLinkedSearchResults } from 'containers/SearchResults/EventSearchResults/EventLinkedSearchResults';
+import { SequenceLinkedSearchResults } from 'containers/SearchResults/SequenceSearchResults/SequenceLinkedSearchResults';
 
 export const LinkedResourceTable = ({
   isGroupingFilesEnabled,
@@ -62,11 +60,9 @@ export const LinkedResourceTable = ({
 
     case 'timeSeries':
       return (
-        <TimeseriesSearchResults
-          filter={filter}
+        <TimeseriesLinkedSearchResults
+          defaultFilter={filter}
           onClick={el => onItemClicked(el.id)}
-          initialView="grid"
-          {...selectionMode}
         />
       );
     default:
