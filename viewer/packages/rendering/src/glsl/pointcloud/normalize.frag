@@ -12,6 +12,9 @@ uniform sampler2D tDiffuse;
 	uniform float edlStrength;
 	uniform float radius;
 
+	#if defined(points_blend)
+		uniform sampler2D tLogDepth;
+	#endif
 #endif
 
 #define EDL_STRENGTH_FACTOR 300.0
@@ -34,10 +37,16 @@ void main() {
 	gl_FragDepth = depth;
 
 	#if defined(use_edl)
-		float edlDepth = color.a;
+		#if defined (points_blend)
+			float edlDepth = texture(tLogDepth, vUv).a;
+			vec2 obs = calculateObscurance(edlDepth, screenWidth, screenHeight,
+						       neighbours, radius, vUv, tDepth, tLogDepth);
+		#else
+			float edlDepth = color.a;
+			vec2 obs = calculateObscurance(edlDepth, screenWidth, screenHeight,
+						       neighbours, radius, vUv, tDepth, tDiffuse);
+		#endif
 
-		vec2 obs = calculateObscurance(edlDepth, screenWidth, screenHeight,
-			neighbours, radius, vUv, tDepth, tDiffuse);
 		float shade = exp(-obs.x * EDL_STRENGTH_FACTOR * edlStrength);
 
 		shouldDiscard = shouldDiscard && obs.x == 0.0;
