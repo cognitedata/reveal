@@ -19,6 +19,7 @@ export class NodeAppearanceTextureBuilder {
   private readonly _regularNodesTreeIndices: IndexSet;
   private readonly _ghostedNodesTreeIndices: IndexSet;
   private readonly _infrontNodesTreeIndices: IndexSet;
+  private readonly _visibleNodesTreeIndices: IndexSet;
 
   constructor(treeIndexCount: number, styleProvider: NodeAppearanceProvider) {
     this._allTreeIndices = new IndexSet();
@@ -33,6 +34,7 @@ export class NodeAppearanceTextureBuilder {
     this._regularNodesTreeIndices = new IndexSet();
     this._ghostedNodesTreeIndices = new IndexSet();
     this._infrontNodesTreeIndices = new IndexSet();
+    this._visibleNodesTreeIndices = new IndexSet();
 
     this.setDefaultAppearance(DefaultNodeAppearance.Default);
   }
@@ -68,6 +70,10 @@ export class NodeAppearanceTextureBuilder {
 
   get infrontNodeTreeIndices(): IndexSet {
     return this._infrontNodesTreeIndices;
+  }
+
+  get visibleNodeTreeIndices(): IndexSet {
+    return this._visibleNodesTreeIndices;
   }
 
   get needsUpdate(): boolean {
@@ -126,37 +132,57 @@ export class NodeAppearanceTextureBuilder {
     this._regularNodesTreeIndices.clear();
     this._infrontNodesTreeIndices.clear();
     this._ghostedNodesTreeIndices.clear();
+    this._visibleNodesTreeIndices.clear();
+    this._visibleNodesTreeIndices.addRange(new NumericRange(0, this._allTreeIndices.count));
+
+    enum RangeType {
+      invisible,
+      inFront,
+      ghosted,
+      regular
+    }
 
     const range = {
       rangeStart: -1,
-      inFront: false,
-      ghosted: false
+      type: RangeType.regular
     };
 
     const commitRange = (toExclusive: number) => {
       const treeIndexRange = NumericRange.createFromInterval(range.rangeStart, toExclusive - 1);
-      if (range.inFront) {
+      if (range.type === RangeType.invisible) {
+        this._visibleNodesTreeIndices.removeRange(treeIndexRange);
+      } else if (range.type === RangeType.inFront) {
         this._infrontNodesTreeIndices.addRange(treeIndexRange);
-      } else if (range.ghosted) {
+      } else if (range.type === RangeType.ghosted) {
         this._ghostedNodesTreeIndices.addRange(treeIndexRange);
-      } else {
+      } else if (range.type === RangeType.regular) {
         this._regularNodesTreeIndices.addRange(treeIndexRange);
       }
     };
 
-    // Loop over texture to determine if each node is "regular", "ghosted" or "in front"
+    // Loop over texture to determine if each node is "invisible", "regular", "ghosted" or "in front"
     for (let i = 0; i < this._allTreeIndices.count; ++i) {
-      const inFront = (rgbaBuffer[4 * i + 3] & 2) !== 0;
-      const ghosted = (rgbaBuffer[4 * i + 3] & 4) !== 0;
+      const visibleBit = (rgbaBuffer[4 * i + 3] & 1) !== 0;
+      const inFrontBit = (rgbaBuffer[4 * i + 3] & 2) !== 0;
+      const ghostedBit = (rgbaBuffer[4 * i + 3] & 4) !== 0;
+      let type: RangeType;
+      if (!visibleBit) {
+        type = RangeType.invisible;
+      } else if (inFrontBit) {
+        type = RangeType.inFront;
+      } else if (ghostedBit) {
+        type = RangeType.ghosted;
+      } else {
+        type = RangeType.regular;
+      }
+
       if (range.rangeStart === -1) {
         range.rangeStart = i;
-        range.inFront = inFront;
-        range.ghosted = ghosted;
-      } else if (range.inFront !== inFront || range.ghosted !== ghosted) {
+        range.type = type;
+      } else if (range.type !== type) {
         commitRange(i);
         range.rangeStart = i;
-        range.inFront = inFront;
-        range.ghosted = ghosted;
+        range.type = type;
       }
     }
     // Commit the last range
