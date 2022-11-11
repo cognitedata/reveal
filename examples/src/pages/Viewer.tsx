@@ -55,8 +55,7 @@ export function Viewer() {
       Custom: CustomCameraManager;
     }
 
-    function DowloadScreenshot(url: string): void {
-      const filename = 'example_screenshot';
+    function DowloadScreenshot(url: string, filename: string): void {
       const link = document.createElement('a');
       link.href = url;
       link.download = filename;
@@ -153,7 +152,7 @@ export function Viewer() {
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         screenshot: {
-          excludeUI: false,
+          includeUI: true,
           resolution: {
             override: false,
             width: 1920,
@@ -189,10 +188,11 @@ export function Viewer() {
         takeScreenshot: async () => {
           const width = guiState.screenshot.resolution.override ? guiState.screenshot.resolution.width : undefined;
           const height = guiState.screenshot.resolution.override ? guiState.screenshot.resolution.height : undefined;
+          const filename = 'example_screenshot' + (guiState.screenshot.resolution.override ? ('_' + width + 'x' + height) : '');
 
-          const url = await viewer.getScreenshot(guiState.screenshot.excludeUI, width, height);
+          const url = await viewer.getScreenshot(width, height, guiState.screenshot.includeUI);
           if (url)
-            DowloadScreenshot(url);
+            DowloadScreenshot(url, filename);
         }
       };
       initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
@@ -243,7 +243,7 @@ export function Viewer() {
 
       const screenshotGui = gui.addFolder('Screenshot');
       screenshotGui.add(guiActions, 'takeScreenshot').name('Take screenshot');
-      screenshotGui.add(guiState.screenshot, 'excludeUI').name('Exclude UI elements from screenshot');
+      screenshotGui.add(guiState.screenshot, 'includeUI').name('Include UI elements in the screenshot');
       const resolutionGui = screenshotGui.addFolder('Resolution');
       resolutionGui.add(guiState.screenshot.resolution, 'override').name('Override Resolution');
       resolutionGui.add(guiState.screenshot.resolution, 'width').name('Width');

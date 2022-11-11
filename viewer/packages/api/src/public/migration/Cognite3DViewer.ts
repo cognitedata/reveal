@@ -1047,9 +1047,9 @@ export class Cognite3DViewer {
 
   /**
    * Take screenshot from the current camera position.
-   * @param excludeUI If true the screenshot will include only the rendered 3D. Default is false.
    * @param width Width of the final image. Default is current canvas size.
    * @param height Height of the final image. Default is current canvas size.
+   * @param includeUI If false the screenshot will include only the rendered 3D. Default is true.
    * @returns A {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs Data URL} of the image ('image/png').
    * @example
    * ```js
@@ -1064,7 +1064,7 @@ export class Cognite3DViewer {
    * document.body.appendChild(image);
    * ```
    */
-  async getScreenshot(excludeUI = false, width = this.canvas.width, height = this.canvas.height): Promise<string> {
+  async getScreenshot(width = this.canvas.width, height = this.canvas.height, includeUI = false): Promise<string> {
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
     }
@@ -1080,7 +1080,7 @@ export class Cognite3DViewer {
       this.renderer.render(this._sceneHandler.scene, screenshotCamera);
       this.revealManager.render(screenshotCamera);
 
-      const domCanvas = await html2canvas(excludeUI ? this.canvas : this.domElement, { backgroundColor: null });
+      const domCanvas = await html2canvas(includeUI ? this.domElement : this.canvas, { backgroundColor: null });
       return domCanvas.toDataURL();
     } finally {
       this.canvas.width = originalWidth;
