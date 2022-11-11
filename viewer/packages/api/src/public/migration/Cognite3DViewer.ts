@@ -1080,7 +1080,9 @@ export class Cognite3DViewer {
       this.renderer.render(this._sceneHandler.scene, screenshotCamera);
       this.revealManager.render(screenshotCamera);
 
-      const domCanvas = await html2canvas(includeUI ? this.domElement : this.canvas, { backgroundColor: null });
+      if (!includeUI) return this.canvas.toDataURL();
+
+      const domCanvas = await html2canvas(this.domElement);
       return domCanvas.toDataURL();
     } finally {
       this.canvas.width = originalWidth;
