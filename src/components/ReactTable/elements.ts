@@ -9,7 +9,6 @@ export const ContainerInside = styled.div`
 export const TableContainer = styled.div`
   width: 100%;
   display: flex;
-  padding: 16px;
   padding-bottom: 0;
   height: 100%;
   flex-direction: column;
@@ -29,7 +28,12 @@ export const ColumnSelectorWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  padding: 16px;
   padding-bottom: 8px;
+`;
+
+export const SubTableWrapper = styled.span`
+  padding: 0 16px;
 `;
 
 export const StyledTable = styled.div`
@@ -96,6 +100,7 @@ export const Tr = styled.div`
   align-items: center;
   height: 100%;
   min-height: 48px;
+  padding: 0 8px;
 
   background: inherit;
 

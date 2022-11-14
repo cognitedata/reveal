@@ -268,7 +268,7 @@ export const TimeseriesChart = ({
                 setTimePeriod(value);
               }
             }}
-            width={115}
+            width={250}
           />
         )}
         {showCustomRangePicker && (

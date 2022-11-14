@@ -28,6 +28,7 @@ import {
   ContainerInside,
   StyledFlex,
   ResizerWrapper,
+  SubTableWrapper,
 } from '../elements';
 
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -199,7 +200,7 @@ export function TableV2<T extends TableData>({
         </ColumnSelectorWrapper>
       ) : null}
 
-      {tableSubHeaders && tableSubHeaders}
+      {tableSubHeaders && <SubTableWrapper>{tableSubHeaders}</SubTableWrapper>}
 
       {!data || data.length === 0 ? (
         <EmptyState body="Please, refine your filters" />

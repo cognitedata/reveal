@@ -10,6 +10,7 @@ export type onResourceSelectedParams = {
 export const SpacedRow = styled.div`
   display: flex;
   align-items: stretch;
+  padding-bottom: 8px;
 
   & > * {
     margin-right: 6px;

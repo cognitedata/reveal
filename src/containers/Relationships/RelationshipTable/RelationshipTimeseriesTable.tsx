@@ -8,7 +8,6 @@ import { ResultCount } from 'components';
 
 import { RelationshipTableProps } from './RelationshipTable';
 import { TimeseriesWithRelationshipLabels } from 'containers/Timeseries/TimeseriesTable/TimeseriesNewTable';
-import { RelationshipFilters } from './RelationshipFilters';
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import { ColumnDef } from '@tanstack/react-table';
 
@@ -40,42 +39,27 @@ export function RelationshipTimeseriesTable({
 }: Omit<RelationshipTableProps, 'type'>) {
   const { data: count } = useRelationshipCount(parentResource, 'timeSeries');
 
-  const {
-    hasNextPage,
-    fetchNextPage,
-    isLoading,
-    items,
-    relationshipLabelOptions,
-    onChangeLabelValue,
-    labelValue,
-  } = useRelatedResourceResults<TimeseriesWithRelationshipLabels>(
-    'relationship',
-    'timeSeries',
-    parentResource
-  );
+  const { hasNextPage, fetchNextPage, isLoading, items } =
+    useRelatedResourceResults<TimeseriesWithRelationshipLabels>(
+      'relationship',
+      'timeSeries',
+      parentResource
+    );
+
   if (isLoading) {
     return <EmptyState isLoading={isLoading} />;
   }
   return (
-    <>
-      <RelationshipFilters
-        options={relationshipLabelOptions}
-        onChange={onChangeLabelValue}
-        value={labelValue}
-      />
-      <Table
-        id="relationship-timeseries-table"
-        columns={columns}
-        tableHeaders={
-          <ResultCount api="list" type="timeSeries" count={count} />
-        }
-        data={items}
-        showLoadButton
-        fetchMore={fetchNextPage}
-        hasNextPage={hasNextPage}
-        isLoadingMore={isLoading}
-        onRowClick={row => onItemClicked(row.id)}
-      />
-    </>
+    <Table
+      id="relationship-timeseries-table"
+      columns={columns}
+      tableHeaders={<ResultCount api="list" type="timeSeries" count={count} />}
+      data={items}
+      showLoadButton
+      fetchMore={fetchNextPage}
+      hasNextPage={hasNextPage}
+      isLoadingMore={isLoading}
+      onRowClick={row => onItemClicked(row.id)}
+    />
   );
 }
