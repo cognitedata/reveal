@@ -9,6 +9,10 @@
     "Christopher Tannum <christopher.tannum@cognite.com>",
     "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
   ],
+  "workspaces": [
+    "versioned_docs/*",
+    "docs"
+  ],
   "scripts": {
     "start": "cross-env HTTPS=true NODE_OPTIONS=--max_old_space_size=8196 docusaurus start --port=9000",
     "build": "cross-env NODE_OPTIONS=--max_old_space_size=4096 docusaurus build",

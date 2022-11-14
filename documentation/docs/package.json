@@ -6,7 +6,7 @@
   "dependencies": {
     "@cognite/reveal": "link:../../viewer/dist",
     "@cognite/sdk": "link:../../viewer/node_modules/@cognite/sdk",
-    "three": "link:../../viewer/node_modules/three",
-    "@types/three": "link:../../viewer/node_modules/@types/three"
+    "@types/three": "link:../../viewer/node_modules/@types/three",
+    "three": "link:../../viewer/node_modules/three"
   }
 }
