@@ -53,8 +53,14 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
   }, [modelId]);
 
   const context = useContext(ThreeDContext);
-  const { viewer, threeDModel, assetDetailsExpanded, setAssetDetailsExpanded } =
-    context;
+  const {
+    viewer,
+    threeDModel,
+    assetDetailsExpanded,
+    setAssetDetailsExpanded,
+    splitterColumnWidth,
+    setSplitterColumnWidth,
+  } = context;
 
   const { viewState, setViewState, selectedAssetId, setSelectedAssetId } =
     context;
@@ -161,7 +167,11 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
     <>
       <ThreeDTitle id={modelId} />
       <PreviewContainer>
-        <StyledSplitter>
+        <StyledSplitter
+          secondaryInitialSize={splitterColumnWidth}
+          onSecondaryPaneSizeChange={setSplitterColumnWidth}
+          secondaryMinSize={200}
+        >
           <Reveal
             key={`${modelId}.${revisionId}`}
             modelId={modelId}

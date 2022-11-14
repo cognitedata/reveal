@@ -35,16 +35,23 @@ type ThreeDContext = {
   setSelectedAssetId: Dispatch<SetStateAction<number | undefined>>;
   assetDetailsExpanded: boolean;
   setAssetDetailsExpanded: Dispatch<SetStateAction<boolean>>;
+  splitterColumnWidth: number;
+  setSplitterColumnWidth: Dispatch<SetStateAction<number>>;
 };
+
+const DETAILS_COLUMN_WIDTH = '@cognite/3d-details-column-width';
+const DEFAULT_COLUMN_WIDTH = 400;
 
 export const ThreeDContext = createContext<ThreeDContext>({
   assetDetailsExpanded: false,
+  splitterColumnWidth: DEFAULT_COLUMN_WIDTH,
   setSelectedAssetId: () => {},
   setAssetDetailsExpanded: () => {},
   setViewState: () => {},
   setViewer: () => {},
   set3DModel: () => {},
   setPointCloudModel: () => {},
+  setSplitterColumnWidth: () => {},
 });
 ThreeDContext.displayName = 'ThreeDContext';
 
@@ -74,11 +81,24 @@ const getInitialState = () => {
     }
   })();
 
+  const splitterColumnWidth = (() => {
+    try {
+      const lsNumber = parseInt(
+        window.localStorage.getItem(DETAILS_COLUMN_WIDTH) || '',
+        10
+      );
+      return Number.isFinite(lsNumber) ? lsNumber : DEFAULT_COLUMN_WIDTH;
+    } catch {
+      return DEFAULT_COLUMN_WIDTH;
+    }
+  })();
+
   const expanded = initialParams.get(EXPANDED_KEY) === 'true';
   return {
     viewState,
     selectedAssetId,
     expanded,
+    splitterColumnWidth,
   };
 };
 
@@ -91,6 +111,7 @@ export const ThreeDContextProvider = ({
     expanded: initialExpanded,
     selectedAssetId: initialSelectedAssetId,
     viewState: initialViewState,
+    splitterColumnWidth: initialSplitterColumnWidth,
   } = useMemo(() => getInitialState(), []);
 
   const [viewer, setViewer] = useState<Cognite3DViewer | undefined>();
@@ -104,6 +125,9 @@ export const ThreeDContextProvider = ({
   const [selectedAssetId, setSelectedAssetId] = useState<number | undefined>(
     initialSelectedAssetId
   );
+  const [splitterColumnWidth, setSplitterColumnWidth] = useState(
+    initialSplitterColumnWidth
+  );
   const [assetDetailsExpanded, setAssetDetailsExpanded] =
     useState<boolean>(initialExpanded);
 
@@ -114,6 +138,15 @@ export const ThreeDContextProvider = ({
       getStateUrl({ selectedAssetId, viewState, assetDetailsExpanded })
     );
   }, [assetDetailsExpanded, selectedAssetId, viewState]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        DETAILS_COLUMN_WIDTH,
+        `${splitterColumnWidth}`
+      );
+    } catch {}
+  }, [splitterColumnWidth]);
 
   return (
     <ThreeDContext.Provider
@@ -130,6 +163,8 @@ export const ThreeDContextProvider = ({
         setSelectedAssetId,
         assetDetailsExpanded,
         setAssetDetailsExpanded,
+        splitterColumnWidth,
+        setSplitterColumnWidth,
       }}
     >
       {children}

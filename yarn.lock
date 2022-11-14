@@ -1571,10 +1571,10 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/data-exploration@5.41.3":
-  version "5.41.3"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.41.3.tgz#4f20cf8153552955d1f663c75559c2ea5a1688d1"
-  integrity sha512-kYgjCToWWLX3jxXUk5m/8mbAGsm9u3E4GufAIIQjqAGM8RoK6Iodq/AK8htxjcdyKeAZ3xv8qg6Bbp3E4u6vGQ==
+"@cognite/data-exploration@5.43.0":
+  version "5.43.0"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.43.0.tgz#c8cedb714efa07a5ef85b3483e6dae726cf1c71c"
+  integrity sha512-2PSFHs/JrRT0L1/TNDzWuSDOqfVPXJaafVqvUokN5tEIzvzIspidtFfJCtBSACqnRAmgtyRAonv/ntY0NayTKw==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
@@ -1844,9 +1844,9 @@
     uuid "^8.3.2"
 
 "@cognite/unified-file-viewer@^2.5.0":
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-2.5.2.tgz#2845c08f211e5b46aada189bcd900715e47b8bf5"
-  integrity sha512-Yv3f7yNHpA5akT1/vAyULPqQgw7tyrQODcRXDLQFGgPoVQfWJ6rPXa5iTeZLw5VTWu/ap2yxjQklhT+mzWKsjw==
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-2.7.1.tgz#bc1c1101718255892e7a6704335f8181e5c6f029"
+  integrity sha512-AcsqYvnCK8P0OiKobpTq349cKNnLIacczQlNw7AHRrpqcR2ljROb8oh+laFBSMJfekwzi2dsR1zRJpIS7Vd68Q==
   dependencies:
     "@cognite/cogs.js" "7.0.3"
     "@cognite/sdk" "^7.6.0"
@@ -3118,16 +3118,16 @@
     loader-utils "^2.0.0"
 
 "@tanstack/react-table@^8.5.15":
-  version "8.5.17"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.5.17.tgz#2cf86ae17474a007b611ef65b5f56f3b421a8207"
-  integrity sha512-QHCvxGk1fpdcH0XM5DL02broJ50UY6U04/rr0BTQnL6Tt7V4zdRfjHZB6sVHDwbUElJnL+xlfKPi1DNNEIQs8g==
+  version "8.5.27"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.5.27.tgz#3e69f9a25ea1a479a903d9c311ad46d2168ed640"
+  integrity sha512-dUl8qRGvWVaJkOk/goUxb3w675FtioY7uh6NalRG04dYBiwIpjHn8a1Jhmp9lE+Puk88GZ0OCF7svCVXIJviqQ==
   dependencies:
-    "@tanstack/table-core" "8.5.17"
+    "@tanstack/table-core" "8.5.27"
 
-"@tanstack/table-core@8.5.17":
-  version "8.5.17"
-  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.5.17.tgz#753f1aeda6df8a9225ace8cb9d6ec64e5f1f27b2"
-  integrity sha512-oKGg68v1E6UF2RNukSChwNX6W0ongM/QxbFPp+yW4SMOrciGNftG1XDF3dBCM/xbFpN7Pe+L880Evv6kVHrDXA==
+"@tanstack/table-core@8.5.27":
+  version "8.5.27"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.5.27.tgz#8b5167068637d67a585cfb844f233b52f6608a69"
+  integrity sha512-sxGZPV97bNYap+U/ZxYVmx3Uy872Fc/M0qjKl85PzMaqBgikosybtkOEEjLdeJlBthqG5G8VI6zN1/Pej9awWA==
 
 "@testing-library/cypress@^8.0.2":
   version "8.0.3"
