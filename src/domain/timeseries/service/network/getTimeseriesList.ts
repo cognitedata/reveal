@@ -4,19 +4,23 @@ import {
   TimeseriesFilter,
   Timeseries,
 } from '@cognite/sdk';
+import { AdvancedFilter } from 'domain/builders';
 import {
   InternalTimeseriesSortBy,
   normalizeTimeseries,
+  TimeseriesProperties,
 } from 'domain/timeseries';
 
 export const getTimeseriesList = (
   sdk: CogniteClient,
   {
+    advancedFilter,
     filter,
     cursor,
     limit,
     sort,
   }: {
+    advancedFilter?: AdvancedFilter<TimeseriesProperties>;
     filter?: TimeseriesFilter;
     cursor?: string;
     limit?: number;
@@ -34,7 +38,7 @@ export const getTimeseriesList = (
           limit: limit ?? 1000,
           cursor,
           filter,
-          // advancedFilter,
+          advancedFilter,
           sort,
         },
       }

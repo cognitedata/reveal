@@ -1,16 +1,23 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { TimeseriesFilter } from '@cognite/sdk/dist/src';
+import { AdvancedFilter } from 'domain/builders';
 import { queryKeys } from 'domain/queryKeys';
-import { getTimeseriesList, InternalTimeseriesSortBy } from 'domain/timeseries';
+import {
+  getTimeseriesList,
+  InternalTimeseriesSortBy,
+  TimeseriesProperties,
+} from 'domain/timeseries';
 import { useMemo } from 'react';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
 
 export const useTimeseriesListQuery = (
   {
+    advancedFilter,
     filter,
     limit,
     sort,
   }: {
+    advancedFilter?: AdvancedFilter<TimeseriesProperties>;
     filter?: TimeseriesFilter;
     limit?: number;
     sort?: InternalTimeseriesSortBy[];
@@ -24,7 +31,7 @@ export const useTimeseriesListQuery = (
       return getTimeseriesList(sdk, {
         cursor: pageParam,
         filter,
-        // advancedFilter,
+        advancedFilter,
         sort,
         limit,
       });

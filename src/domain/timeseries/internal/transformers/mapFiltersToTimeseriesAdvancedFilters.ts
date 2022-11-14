@@ -1,37 +1,31 @@
 import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
 import isEmpty from 'lodash/isEmpty';
-import { InternalEventsFilters } from '../types';
+import { InternalTimeseriesFilters } from '../types';
 
-export type EventsProperties = {
+export type TimeseriesProperties = {
   assetIds: number[];
   dataSetId: number[];
-  type: string;
-  subtype: string;
-  source: string[];
+  unit: string;
   externalId: string;
-  description: string;
+  name: string;
   [key: `metadata|${string}`]: string;
 };
 
-export const mapFiltersToEventsAdvancedFilters = (
+export const mapFiltersToTimeseriesAdvancedFilters = (
   {
     dataSetIds,
     createdTime,
     lastUpdatedTime,
     externalIdPrefix,
-    type,
-    startTime,
-    endTime,
-    subtype,
-    source,
+    unit,
     metadata,
-  }: InternalEventsFilters,
+  }: InternalTimeseriesFilters,
   searchQueryMetadataKeys?: Record<string, string>,
   query?: string
-): AdvancedFilter<EventsProperties> | undefined => {
-  const builder = new AdvancedFilterBuilder<EventsProperties>();
+): AdvancedFilter<TimeseriesProperties> | undefined => {
+  const builder = new AdvancedFilterBuilder<TimeseriesProperties>();
 
-  const filterBuilder = new AdvancedFilterBuilder<EventsProperties>()
+  const filterBuilder = new AdvancedFilterBuilder<TimeseriesProperties>()
     .in('dataSetId', () => {
       return dataSetIds?.reduce((acc, { value }) => {
         if (typeof value === 'number') {
@@ -40,13 +34,7 @@ export const mapFiltersToEventsAdvancedFilters = (
         return acc;
       }, [] as number[]);
     })
-    .equals('type', type)
-    .equals('subtype', subtype)
-    .in('source', () => {
-      if (source) {
-        return [source];
-      }
-    })
+    .equals('unit', unit)
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,
@@ -56,21 +44,7 @@ export const mapFiltersToEventsAdvancedFilters = (
       lte: lastUpdatedTime?.max as number,
       gte: lastUpdatedTime?.min as number,
     })
-    .range('startTime', {
-      lte: startTime?.max as number,
-      gte: startTime?.min as number,
-    })
-    .range('endTime', {
-      lte:
-        endTime && !('isNull' in endTime)
-          ? (endTime?.max as number)
-          : undefined,
-      gte:
-        endTime && !('isNull' in endTime)
-          ? (endTime?.min as number)
-          : undefined,
-    })
-    .search('description', isEmpty(query) ? undefined : query);
+    .search('name', isEmpty(query) ? undefined : query); // TODO? is name working for search??
 
   if (metadata) {
     for (const { key, value } of metadata) {
@@ -85,7 +59,8 @@ export const mapFiltersToEventsAdvancedFilters = (
    * to the user when using our search.
    */
   if (searchQueryMetadataKeys) {
-    const searchMetadataBuilder = new AdvancedFilterBuilder<EventsProperties>();
+    const searchMetadataBuilder =
+      new AdvancedFilterBuilder<TimeseriesProperties>();
 
     for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
       searchMetadataBuilder.prefix(`metadata|${key}`, value);
@@ -94,5 +69,5 @@ export const mapFiltersToEventsAdvancedFilters = (
     builder.or(searchMetadataBuilder);
   }
 
-  return new AdvancedFilterBuilder<EventsProperties>().or(builder).build();
+  return new AdvancedFilterBuilder<TimeseriesProperties>().or(builder).build();
 };

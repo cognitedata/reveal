@@ -3,12 +3,15 @@ import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from 'domain/constants';
 import { TableSortBy } from 'components/ReactTable/V2';
 import {
   InternalTimeseriesFilters,
+  mapFiltersToTimeseriesAdvancedFilters,
   mapInternalFilterToTimeseriesFilter,
   mapTableSortByToTimeseriesSortFields,
   useTimeseriesListQuery,
+  useTimeseriesSearchQueryMetadataKeysQuery,
 } from 'domain/timeseries';
 
 export const useTimeseriesSearchResultQuery = ({
+  query,
   filter,
   sortBy,
 }: {
@@ -16,6 +19,21 @@ export const useTimeseriesSearchResultQuery = ({
   filter: InternalTimeseriesFilters;
   sortBy?: TableSortBy[];
 }) => {
+  const searchQueryMetadataKeys = useTimeseriesSearchQueryMetadataKeysQuery(
+    query,
+    filter
+  );
+
+  const advancedFilter = useMemo(
+    () =>
+      mapFiltersToTimeseriesAdvancedFilters(
+        filter,
+        searchQueryMetadataKeys,
+        query
+      ),
+    [filter, searchQueryMetadataKeys, query]
+  );
+
   const timeseriesFilter = useMemo(
     () => mapInternalFilterToTimeseriesFilter(filter),
     [filter]
@@ -27,6 +45,7 @@ export const useTimeseriesSearchResultQuery = ({
   );
 
   return useTimeseriesListQuery({
+    advancedFilter,
     filter: timeseriesFilter,
     sort: timeseriesSort,
     limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,

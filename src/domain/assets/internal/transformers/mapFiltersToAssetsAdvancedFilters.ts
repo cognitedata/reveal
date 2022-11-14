@@ -14,12 +14,12 @@ export type AssetsProperties = {
 
 export const mapFiltersToAssetsAdvancedFilters = (
   {
-    source,
-    metadata,
+    dataSetIds,
     createdTime,
     lastUpdatedTime,
     externalIdPrefix,
-    dataSetIds,
+    source,
+    metadata,
   }: InternalAssetFilters,
   query?: string,
   searchQueryMetadataKeys?: Record<string, string>

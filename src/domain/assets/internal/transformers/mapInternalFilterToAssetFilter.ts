@@ -2,6 +2,7 @@ import { AssetFilterProps } from '@cognite/sdk/dist/src';
 import { isEmpty } from 'lodash';
 import { InternalAssetFilters } from '../types';
 
+// Here put the fields that are not existing/available in advanced filters!?
 export const mapInternalFilterToAssetFilter = ({
   assetSubtreeIds,
   labels,
@@ -17,6 +18,8 @@ export const mapInternalFilterToAssetFilter = ({
     };
   }
 
+  // Is labels supported by advanced filters?
+  // TODO Yes, we need to move this to advanced filters!
   if (labels && labels.length > 0) {
     filters = {
       ...filters,
