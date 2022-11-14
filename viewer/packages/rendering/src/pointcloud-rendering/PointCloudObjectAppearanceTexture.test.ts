@@ -5,8 +5,14 @@
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
 import { AnnotationIdPointCloudObjectCollection, StyledPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 
+import { Color } from 'three';
+
 const textureWidth = 10;
 const textureHeight = 10;
+
+function toByteTuple(color: Color): [number, number, number] {
+  return color.toArray().map(c => Math.round(c * 255)) as [number, number, number];
+}
 
 describe(PointCloudObjectAppearanceTexture.name, () => {
   let appearanceTexture: PointCloudObjectAppearanceTexture;
@@ -16,7 +22,8 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
   });
 
   test('color is correctly set for one object', () => {
-    const color: [number, number, number] = [128, 0, 255];
+    const color = new Color(0.5, 0.0, 1.0);
+    const colorBytes = toByteTuple(color);
 
     const annotationId = 1223423;
     const objectId = 5;
@@ -37,7 +44,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const rawTexture = appearanceTexture.objectStyleTexture;
     const resultRgb = rawTexture.image.data.slice(4 * objectId, 4 * (objectId + 1));
 
-    expect([...resultRgb.values()]).toEqual([...color, 1]);
+    expect([...resultRgb.values()]).toEqual([...colorBytes, 1]);
 
     // Check that all other objects are unchanged
     for (let i = 0; i < rawTexture.image.data.length; i += 4) {
@@ -56,7 +63,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const objectId = 89;
 
     const objectSet = new AnnotationIdPointCloudObjectCollection([annotationId]);
-    const stylableObjectSet = new StyledPointCloudObjectCollection(objectSet, { color: [0, 0, 0], visible: false });
+    const stylableObjectSet = new StyledPointCloudObjectCollection(objectSet, { color: new Color('black'), visible: false });
 
     const objectsMaps = {
       annotationToObjectIds: new Map<number, number>([[annotationId, objectId]]),
