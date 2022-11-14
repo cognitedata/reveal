@@ -6,7 +6,7 @@ import {
 } from '@cognite/unified-file-viewer';
 import { LegacyCogniteAnnotation } from '@cognite/unified-file-viewer/dist/core/utils/api';
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { CommonLegacyCogniteAnnotation } from './types';
 import { getContainerId, getStyledAnnotationFromAnnotation } from './utils';
 
@@ -96,17 +96,28 @@ export const useUnifiedFileViewerAnnotations = ({
   return ufvAnnotationsWithEvents;
 };
 
+const URL_EXPIRATION_TIME_MS = 28 * 1000;
+
 export const useFileDownloadUrl = (fileId: number | undefined): string => {
+  const queryClient = useQueryClient();
   const sdk = useSDK();
 
+  const queryKey = [...baseCacheKey('files'), 'downloadLink', fileId];
+
   const { data } = useQuery(
-    [...baseCacheKey('files'), 'downloadLink', fileId],
+    queryKey,
     () =>
       fileId === undefined
         ? undefined
         : sdk.files.getDownloadUrls([{ id: fileId }]).then(r => r[0]),
     // The retrieved URL becomes invalid after 30 seconds
-    { refetchInterval: 25000 }
+    {
+      onSuccess: () => {
+        setTimeout(() => {
+          queryClient.removeQueries(queryKey);
+        }, URL_EXPIRATION_TIME_MS);
+      },
+    }
   );
 
   return data?.downloadUrl || '';
