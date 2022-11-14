@@ -154,15 +154,12 @@ export const TimeseriesChart = ({
   ...otherProps
 }: TimeseriesChartProps) => {
   const sdk = useSDK();
-  const [timePeriod, setTimePeriod] = useState<TIME_OPTION_KEY | 'custom'>(
-    defaultOption || (dateRange ? 'custom' : timeOptions[0])
+  const [timePeriod, setTimePeriod] = useState<TIME_OPTION_KEY | undefined>(
+    defaultOption || (dateRange ? undefined : timeOptions[0])
   );
 
   const [presetZoom, setPresetZoomDomain] = useState<[Date, Date]>(
-    dateRange ||
-      TIME_SELECT[
-        timePeriod !== 'custom' ? timePeriod : timeOptions[0]
-      ].getTime()
+    dateRange || TIME_SELECT[timePeriod || timeOptions[0]].getTime()
   );
 
   const timeSelectOptions = useMemo(() => {
@@ -172,18 +169,18 @@ export const TimeseriesChart = ({
   useEffect(() => {
     if (dateRange) {
       setPresetZoomDomain(dateRange);
-      setTimePeriod('custom');
+      setTimePeriod(undefined);
     }
   }, [dateRange]);
 
   useEffect(() => {
-    if (timePeriod === 'custom' && onDateRangeChange) {
+    if (!timePeriod && onDateRangeChange) {
       onDateRangeChange(presetZoom);
     }
   }, [onDateRangeChange, presetZoom, timePeriod]);
 
   useEffect(() => {
-    if (timePeriod !== 'custom') {
+    if (timePeriod) {
       setPresetZoomDomain(TIME_SELECT[timePeriod].getTime());
     }
   }, [timePeriod, cacheToDate]);
@@ -261,7 +258,12 @@ export const TimeseriesChart = ({
         {timeOptions.length > 1 && (
           <StyledSelect
             title="Step:"
-            value={{ label: timePeriod, value: timePeriod }}
+            value={
+              timePeriod && {
+                label: timePeriod,
+                value: timePeriod,
+              }
+            }
             options={timeSelectOptions}
             onChange={({ value }: OptionType<TIME_OPTION_KEY>) => {
               if (value) {
@@ -274,12 +276,12 @@ export const TimeseriesChart = ({
         {showCustomRangePicker && (
           <RangePicker
             buttonProps={{
-              type: timePeriod === 'custom' ? 'primary' : 'secondary',
+              type: timePeriod ? 'secondary' : 'primary',
               variant: 'outline',
             }}
             initialRange={presetZoom}
             onRangeChanged={range => {
-              setTimePeriod('custom');
+              setTimePeriod(undefined);
               setPresetZoomDomain(range);
             }}
           />
