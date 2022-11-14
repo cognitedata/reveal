@@ -19,6 +19,7 @@ import { Select } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useFlag } from '@cognite/react-feature-flags';
 import { addPlusSignToCount } from 'app/utils/stringUtils';
+import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
 
 type TypeOption = {
   label: string;
@@ -43,6 +44,7 @@ export const RelatedResources = ({
       forceRerender: true,
     }
   );
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const {
     relationshipCount,
@@ -166,6 +168,7 @@ export const RelatedResources = ({
         {selectedType?.value === 'linkedResource' && (
           <LinkedResourceTable
             isGroupingFilesEnabled={isGroupingFilesEnabled}
+            enableAdvancedFilter={isAdvancedFiltersEnabled}
             excludeParentResource
             parentResource={parentResource}
             type={type}
