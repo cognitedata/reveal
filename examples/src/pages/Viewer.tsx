@@ -2,30 +2,38 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as reveal from '@cognite/reveal';
+import Stats from 'stats.js';
+import { useEffect, useRef } from 'react';
+import { CanvasWrapper } from '../components/styled';
+import { CogniteModel, THREE } from '@cognite/reveal';
+import { CogniteClient } from '@cognite/sdk';
+import dat from 'dat.gui';
 import {
-  CameraControlsOptions, Cognite3DViewer,
+  Cognite3DViewer,
   Cognite3DViewerOptions,
-  CogniteCadModel, CogniteModel, CognitePointCloudModel, DefaultCameraManager, THREE, TreeIndexNodeCollection
-} from '@cognite/reveal';
+  CogniteCadModel,
+  CognitePointCloudModel,
+  CameraControlsOptions,
+  TreeIndexNodeCollection,
+  DefaultCameraManager
+}
+  from '@cognite/reveal';
 import { DebugCameraTool, ExplodedViewTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { BulkHtmlOverlayUI } from '../utils/BulkHtmlOverlayUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
-import { CameraUI } from '../utils/CameraUI';
-import { ClippingUI } from '../utils/ClippingUI';
-import { CustomCameraManager } from '../utils/CustomCameraManager';
-import { createSDKFromEnvironment } from '../utils/example-helpers';
-import { Image360UI } from '../utils/Image360UI';
 import { InspectNodeUI } from '../utils/InspectNodeUi';
-import { MeasurementUi } from '../utils/MeasurementUi';
+import { CameraUI } from '../utils/CameraUI';
+import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
-import { NodeStylingUI } from '../utils/NodeStylingUI';
+import { createSDKFromEnvironment } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
 import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
-import { PointCloudUi } from '../utils/PointCloudUi';
+import { CustomCameraManager } from '../utils/CustomCameraManager';
+import { MeasurementUi } from '../utils/MeasurementUi';
+import { Image360UI } from '../utils/Image360UI';
 
 
 window.THREE = THREE;
