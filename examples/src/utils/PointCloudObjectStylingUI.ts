@@ -38,11 +38,11 @@ export class PointCloudObjectStylingUI {
       },
       randomColors: () => {
         model.traverseStylableObjects((object: PointCloudObjectMetadata) => {
-          const objectStyle: [number, number, number] = [
+          const objectStyle = new THREE.Color(
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255),
-          ];
+          );
 
           const stylableObject = new AnnotationIdPointCloudObjectCollection([
             object.annotationId,
@@ -86,7 +86,7 @@ export class PointCloudObjectStylingUI {
       appearance.visible = visibility;
     });
     uiFolder.addColor(state, 'color').name('Color').onFinishChange(color => {
-      appearance.color = hexStringToColor(color);
+      appearance.color = new THREE.Color(color);
     });
 
     return () => {
