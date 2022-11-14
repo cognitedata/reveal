@@ -16,8 +16,7 @@ import {
   CameraControlsOptions,
   TreeIndexNodeCollection,
   DefaultCameraManager
-}
-  from '@cognite/reveal';
+} from '@cognite/reveal';
 import { DebugCameraTool, ExplodedViewTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUI } from '../utils/ClippingUI';
