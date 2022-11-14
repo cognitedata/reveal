@@ -35,7 +35,7 @@ module.exports = () => {
       '!**/app/**'
     ],
     automock: false,
-    setupFiles: [path.resolve(__dirname, './test-utilities/src/setupJest.ts'), 'jest-canvas-mock', 'core-js'],
+    setupFiles: [path.resolve(__dirname, './test-utilities/src/setupJest.ts'), 'jest-canvas-mock'],
     setupFilesAfterEnv: ['jest-extended/all'],
     testEnvironment: 'jsdom'
   };
