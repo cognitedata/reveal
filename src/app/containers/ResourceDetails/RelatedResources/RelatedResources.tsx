@@ -194,8 +194,8 @@ export const RelatedResources = ({
 };
 
 const TableOffsetHeightWrapper = styled.div`
-  height: calc(100% - 170px);
   min-height: 200px;
+  flex: 1;
 `;
 const selectStyles = {
   option: (styles: any) => ({
@@ -209,17 +209,19 @@ const selectStyles = {
 };
 
 const RelatedResourcesContainer = styled.div`
-  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
   height: 100%;
 `;
 
 const FilterWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding: 20px 0;
+  padding: 16px;
+  padding-bottom: 0;
   gap: 10px;
 `;
 
 const SelectWrapper = styled.div`
-  width: 225px;
+  width: 300px;
 `;

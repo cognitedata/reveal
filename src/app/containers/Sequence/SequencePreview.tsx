@@ -84,11 +84,7 @@ export const SequencePreview = ({
         tab={activeTab}
         onTabChange={onTabChange}
         additionalTabs={[
-          <Tabs.TabPane
-            tab={<TabTitle>Preview</TabTitle>}
-            style={{ padding: '20px 16px' }}
-            key="preview"
-          >
+          <Tabs.TabPane tab={<TabTitle>Preview</TabTitle>} key="preview">
             <SequenceTabPreview sequence={sequence} />
           </Tabs.TabPane>,
           <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">

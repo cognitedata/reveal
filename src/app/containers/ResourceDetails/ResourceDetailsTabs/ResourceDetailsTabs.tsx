@@ -99,12 +99,12 @@ export const ResourceDetailsTabs = ({
       tab={
         <>
           <TabTitle>{getTitle(key)}</TabTitle>
-          <Label size="small" variant="unknown">
+          <StyledLabel size="small" variant="unknown">
             {addPlusSignToCount(
               key === 'asset' ? assetCount : counts[key]!,
               hasMoreRelationships[key]!
             )}
-          </Label>
+          </StyledLabel>
         </>
       }
     >
@@ -129,9 +129,6 @@ export const ResourceDetailsTabs = ({
 };
 
 const StyledTabs = styled(Tabs)`
-  padding-left: 16px;
-  padding-right: 16px;
-  margin-top: 8px;
   flex: 1;
   height: 100%;
 
@@ -146,6 +143,8 @@ const StyledTabs = styled(Tabs)`
   }
 `;
 
-export const TabTitle = styled.span`
-  margin-right: 8px;
+export const TabTitle = styled.span``;
+
+const StyledLabel = styled(Label)`
+  margin-left: 8px;
 `;

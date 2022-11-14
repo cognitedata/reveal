@@ -87,14 +87,6 @@ export const TimeseriesPreview = ({
 
       {timeseries && (
         <TimeseriesWrapper>
-          <TimeseriesChartWrapper>
-            <TimeseriesChart
-              timeseriesId={timeseries.id}
-              showCustomRangePicker
-              dateRange={dateRange}
-              onDateRangeChange={setDateRange}
-            />
-          </TimeseriesChartWrapper>
           <ResourceDetailsTabs
             parentResource={{
               type: 'timeSeries',
@@ -110,6 +102,14 @@ export const TimeseriesPreview = ({
             additionalTabs={[
               <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">
                 <DetailsTabWrapper>
+                  <TimeseriesChartWrapper>
+                    <TimeseriesChart
+                      timeseriesId={timeseries.id}
+                      showCustomRangePicker
+                      dateRange={dateRange}
+                      onDateRangeChange={setDateRange}
+                    />
+                  </TimeseriesChartWrapper>
                   <TimeseriesDetails timeseries={timeseries} />
                   <Metadata metadata={timeseries.metadata} />
                 </DetailsTabWrapper>
@@ -124,17 +124,12 @@ export const TimeseriesPreview = ({
 
 const TimeseriesChartWrapper = styled.div`
   height: 300px;
-  width: calc(100% - 16px);
+  width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 16px 16px 0 16px;
 `;
 
 const TimeseriesWrapper = styled.div`
   overflow: auto;
-
-  .rc-tabs,
-  .rc-tabs-content-holder {
-    overflow: unset;
-  }
+  height: 100%;
 `;
