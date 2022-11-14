@@ -62,7 +62,7 @@ describe('worldToViewport', () => {
 
   test('coordinate outside viewport', () => {
     const p = new THREE.Vector3(100, 100, 100);
-    const absolute = worldToViewportCoordinates(renderer, camera, p);
+    const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
     expect(absolute.x).not.toBeInRange(0, canvasRect.width);
@@ -76,7 +76,7 @@ describe('worldToViewport', () => {
 
   test('coordinate behind far plane', () => {
     const p = new THREE.Vector3(0, 0, 11);
-    const absolute = worldToViewportCoordinates(renderer, camera, p);
+    const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
     expect(absolute.x).toBeInRange(0, canvasRect.width);
@@ -90,7 +90,7 @@ describe('worldToViewport', () => {
 
   test('coordinate in front of near plane', () => {
     const p = new THREE.Vector3(0, 0, -2);
-    const absolute = worldToViewportCoordinates(renderer, camera, p);
+    const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
     expect(absolute.x).toBeInRange(0, canvasRect.width);
@@ -106,14 +106,14 @@ describe('worldToViewport', () => {
     const p = new THREE.Vector3(0.25, 1.25, 5);
 
     renderer.setPixelRatio(1.0);
-    const absoluteWithPixelRatio1 = worldToViewportCoordinates(renderer, camera, p, new THREE.Vector3());
+    const absoluteWithPixelRatio1 = worldToViewportCoordinates(renderer.domElement, camera, p, new THREE.Vector3());
     const normalizedWithPixelRatio1 = worldToNormalizedViewportCoordinates(camera, p, new THREE.Vector3());
 
     const pixelRatio = 2.5;
     renderer.setPixelRatio(pixelRatio);
     const scaledRenderer = renderer.getSize(new THREE.Vector2()).multiplyScalar(pixelRatio);
     renderer.setSize(scaledRenderer.x, scaledRenderer.y);
-    const absoluteWithPixelRatio2 = worldToViewportCoordinates(renderer, camera, p, new THREE.Vector3());
+    const absoluteWithPixelRatio2 = worldToViewportCoordinates(renderer.domElement, camera, p, new THREE.Vector3());
     const normalizedWithPixelRatio2 = worldToNormalizedViewportCoordinates(camera, p, new THREE.Vector3());
 
     expect(absoluteWithPixelRatio2).toEqual(absoluteWithPixelRatio1);
@@ -122,7 +122,7 @@ describe('worldToViewport', () => {
 
   test('far top-left corner of view frustum, returns top-left corner of canvas', () => {
     const p = ndcToWorld(new THREE.Vector3(-1, 1, 1), camera);
-    const absolute = worldToViewportCoordinates(renderer, camera, p);
+    const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
     expect(absolute.x).toBeCloseTo(0.0);
@@ -136,7 +136,7 @@ describe('worldToViewport', () => {
 
   test('near top-left corner of view frustum, returns top-left corner of canvas', () => {
     const p = ndcToWorld(new THREE.Vector3(-1, 1, -1), camera);
-    const absolute = worldToViewportCoordinates(renderer, camera, p);
+    const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
     expect(absolute.x).toBeCloseTo(0.0);
@@ -150,7 +150,7 @@ describe('worldToViewport', () => {
 
   test('far bottom-right corner of view frustum, returns bottom-right corner of canvas', () => {
     const p = ndcToWorld(new THREE.Vector3(1, -1, 1), camera);
-    const absolute = worldToViewportCoordinates(renderer, camera, p);
+    const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
     expect(absolute.x).toBeCloseTo(canvasRect.width);
@@ -164,7 +164,7 @@ describe('worldToViewport', () => {
 
   test('near bottom-right corner of view frustum, returns bottom-right corner of canvas', () => {
     const p = ndcToWorld(new THREE.Vector3(1, -1, -1), camera);
-    const absolute = worldToViewportCoordinates(renderer, camera, p);
+    const absolute = worldToViewportCoordinates(renderer.domElement, camera, p);
     const normalized = worldToNormalizedViewportCoordinates(camera, p);
 
     expect(absolute.x).toBeCloseTo(canvasRect.width);
