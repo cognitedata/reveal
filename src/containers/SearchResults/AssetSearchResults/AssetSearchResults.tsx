@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Flex, SegmentedControl } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
-import { EnsureNonEmptyResource } from 'components';
+
 import { ColumnToggleProps } from 'components/ReactTable/Table';
 import {
   AssetTreeTable,
@@ -94,38 +94,37 @@ export const AssetSearchResults = ({
 
   return (
     <>
-      <EnsureNonEmptyResource api="asset">
-        {currentView !== 'list' ? tableHeaders : null}
-        <KeepMounted isVisible={currentView === 'list'}>
-          <AssetNewTable
-            {...rest}
-            id="asset-search-results"
-            onRowClick={asset => onClick(asset)}
-            data={enableAdvancedFilters ? data : items}
-            enableSorting
-            onSort={props => setSortBy(props)}
-            showLoadButton
-            tableSubHeaders={
-              <AppliedFiltersTags
-                filter={filter}
-                onFilterChange={onFilterChange}
-              />
-            }
-            tableHeaders={tableHeaders}
-            hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
-            fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
-          />
-        </KeepMounted>
+      {currentView !== 'list' ? tableHeaders : null}
+      <KeepMounted isVisible={currentView === 'list'}>
+        <AssetNewTable
+          sorting={sortBy}
+          {...rest}
+          id="asset-search-results"
+          onRowClick={asset => onClick(asset)}
+          data={enableAdvancedFilters ? data : items}
+          enableSorting
+          onSort={setSortBy}
+          showLoadButton
+          tableSubHeaders={
+            <AppliedFiltersTags
+              filter={filter}
+              onFilterChange={onFilterChange}
+            />
+          }
+          tableHeaders={tableHeaders}
+          hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
+          fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
+        />
+      </KeepMounted>
 
-        <KeepMounted isVisible={currentView !== 'list'}>
-          <AssetTreeTable
-            filter={filter}
-            query={query}
-            onAssetClicked={asset => onClick(asset)}
-            {...treeProps}
-          />
-        </KeepMounted>
-      </EnsureNonEmptyResource>
+      <KeepMounted isVisible={currentView !== 'list'}>
+        <AssetTreeTable
+          filter={filter}
+          query={query}
+          onAssetClicked={asset => onClick(asset)}
+          {...treeProps}
+        />
+      </KeepMounted>
     </>
   );
 };

@@ -8,7 +8,6 @@ import { convertResourceType, ResourceItem } from 'types';
 import { EventNewTable } from 'containers/Events';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
-import { EnsureNonEmptyResource } from 'components';
 import { Loader } from '@cognite/cogs.js';
 import { ColumnToggleProps } from 'components/ReactTable';
 import { useEventsSearchResultQuery } from 'domain/events/internal/queries/useEventsSearchResultQuery';
@@ -54,32 +53,29 @@ export const EventSearchResults = ({
   }
 
   return (
-    <EnsureNonEmptyResource api="event">
-      <EventNewTable
-        id="event-search-results"
-        tableHeaders={
-          <SearchResultToolbar
-            api={query.length > 0 ? 'search' : 'list'}
-            type="event"
-            filter={filter}
-            showCount={showCount}
-            query={query}
-            count={count}
-          />
-        }
-        tableSubHeaders={
-          <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
-        }
-        data={enableAdvancedFilters ? data : items}
-        enableSorting
-        onSort={props => {
-          setSortBy(props);
-        }}
-        fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
-        showLoadButton
-        hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
-        onRowClick={(event: CogniteEvent) => onClick(event)}
-      />
-    </EnsureNonEmptyResource>
+    <EventNewTable
+      id="event-search-results"
+      tableHeaders={
+        <SearchResultToolbar
+          api={query.length > 0 ? 'search' : 'list'}
+          type="event"
+          filter={filter}
+          showCount={showCount}
+          query={query}
+          count={count}
+        />
+      }
+      tableSubHeaders={
+        <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
+      }
+      data={enableAdvancedFilters ? data : items}
+      enableSorting
+      sorting={sortBy}
+      onSort={setSortBy}
+      fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
+      showLoadButton
+      hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
+      onRowClick={(event: CogniteEvent) => onClick(event)}
+    />
   );
 };

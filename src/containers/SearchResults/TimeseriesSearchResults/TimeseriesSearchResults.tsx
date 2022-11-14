@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Timeseries } from '@cognite/sdk';
 import { ResourceItem, convertResourceType } from 'types';
 import { TimeseriesNewTable } from 'containers/Timeseries';
-import { EnsureNonEmptyResource } from 'components';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 
@@ -62,40 +61,34 @@ export const TimeseriesSearchResults = ({
 
   return (
     <>
-      <EnsureNonEmptyResource api="timeSeries">
-        <Flex justifyContent="space-between" alignItems="center"></Flex>
+      <Flex justifyContent="space-between" alignItems="center"></Flex>
 
-        <TimeseriesNewTable
-          id="timeseries-search-results"
-          tableHeaders={
-            <SearchResultToolbar
-              showCount={showCount}
-              api={query?.length > 0 ? 'search' : 'list'}
-              type="timeSeries"
-              filter={filter}
-              count={count}
-              query={query}
-            />
-          }
-          data={enableAdvancedFilters ? data : items}
-          fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
-          hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
-          tableSubHeaders={
-            <AppliedFiltersTags
-              filter={filter}
-              onFilterChange={onFilterChange}
-            />
-          }
-          showLoadButton
-          onRowClick={timseries => onClick(timseries)}
-          enableSorting
-          onSort={props => {
-            setSortBy(props);
-          }}
-          relatedResourceType={relatedResourceType}
-          {...rest}
-        />
-      </EnsureNonEmptyResource>
+      <TimeseriesNewTable
+        id="timeseries-search-results"
+        tableHeaders={
+          <SearchResultToolbar
+            showCount={showCount}
+            api={query?.length > 0 ? 'search' : 'list'}
+            type="timeSeries"
+            filter={filter}
+            count={count}
+            query={query}
+          />
+        }
+        sorting={sortBy}
+        data={enableAdvancedFilters ? data : items}
+        fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
+        hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
+        tableSubHeaders={
+          <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
+        }
+        showLoadButton
+        onRowClick={timseries => onClick(timseries)}
+        enableSorting
+        onSort={setSortBy}
+        relatedResourceType={relatedResourceType}
+        {...rest}
+      />
     </>
   );
 };

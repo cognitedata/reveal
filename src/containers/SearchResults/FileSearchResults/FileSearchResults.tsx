@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FileInfo } from '@cognite/sdk';
 import { FileNewTable } from 'containers/Files';
 import { ResourceItem, convertResourceType } from 'types';
-import { EnsureNonEmptyResource } from 'components';
+
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import FileGroupingTable from 'containers/Files/FileGroupingTable/FileGroupingTable';
 import { FileToolbar } from './FileToolbar';
@@ -88,40 +88,38 @@ export const FileSearchResults = ({
 
   return (
     <>
-      <EnsureNonEmptyResource api="file">
-        {currentView !== 'list' ? (
-          <StyledTableHeader>{tableHeaders}</StyledTableHeader>
-        ) : null}
-        {currentView === 'tree' && (
-          <FileGroupingTable
-            parentResource={parentResource}
-            onItemClicked={file => onClick(file)}
-          />
-        )}
+      {currentView !== 'list' ? (
+        <StyledTableHeader>{tableHeaders}</StyledTableHeader>
+      ) : null}
+      {currentView === 'tree' && (
+        <FileGroupingTable
+          parentResource={parentResource}
+          onItemClicked={file => onClick(file)}
+        />
+      )}
 
-        {currentView === 'list' && (
-          <FileNewTable
-            id="file-search-results"
-            tableHeaders={
-              <StyledTableHeader justifyContent="flex-end">
-                {tableHeaders}
-              </StyledTableHeader>
-            }
-            tableSubHeaders={
-              <AppliedFiltersTags
-                filter={filter}
-                onFilterChange={onFilterChange}
-              />
-            }
-            data={items}
-            onRowClick={file => onClick(file)}
-            fetchMore={fetchMore}
-            showLoadButton
-            hasNextPage={canFetchMore}
-            {...rest}
-          />
-        )}
-      </EnsureNonEmptyResource>
+      {currentView === 'list' && (
+        <FileNewTable
+          id="file-search-results"
+          tableHeaders={
+            <StyledTableHeader justifyContent="flex-end">
+              {tableHeaders}
+            </StyledTableHeader>
+          }
+          tableSubHeaders={
+            <AppliedFiltersTags
+              filter={filter}
+              onFilterChange={onFilterChange}
+            />
+          }
+          data={items}
+          onRowClick={file => onClick(file)}
+          fetchMore={fetchMore}
+          showLoadButton
+          hasNextPage={canFetchMore}
+          {...rest}
+        />
+      )}
     </>
   );
 };

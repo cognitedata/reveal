@@ -37,7 +37,7 @@ export const DocumentSearchResults = ({
       <DocumentsTable
         id="documents-search-results"
         enableSorting
-        onSort={props => setSortBy(props)}
+        onSort={setSortBy}
         query={query}
         tableHeaders={
           <SearchResultToolbar
@@ -48,6 +48,7 @@ export const DocumentSearchResults = ({
             query={query}
           />
         }
+        sorting={sortBy}
         tableSubHeaders={
           <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
         }

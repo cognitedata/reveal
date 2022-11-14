@@ -4,5 +4,3 @@ export type TableSortBy = {
   id: string;
   desc: boolean;
 };
-
-export type TableSortingState = TableSortBy[];

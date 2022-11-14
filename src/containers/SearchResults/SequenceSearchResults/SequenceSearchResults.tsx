@@ -5,7 +5,6 @@ import { ResourceItem, convertResourceType } from 'types';
 import { SequenceNewTable } from 'containers/Sequences';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
-import { EnsureNonEmptyResource } from 'components';
 import { useResourceResults } from '../SearchResultLoader';
 import { Loader } from '@cognite/cogs.js';
 import { ColumnToggleProps } from 'components/ReactTable';
@@ -56,33 +55,30 @@ export const SequenceSearchResults = ({
     return <Loader />;
   }
   return (
-    <EnsureNonEmptyResource api="sequence">
-      <SequenceNewTable
-        id="sequence-search-results"
-        tableHeaders={
-          <SearchResultToolbar
-            api={query.length > 0 ? 'search' : 'list'}
-            type="sequence"
-            filter={filter}
-            showCount={showCount}
-            query={query}
-            count={count}
-          />
-        }
-        data={enableAdvancedFilters ? data : items}
-        fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
-        hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
-        tableSubHeaders={
-          <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
-        }
-        onRowClick={sequence => onClick(sequence)}
-        enableSorting
-        onSort={props => {
-          setSortBy(props);
-        }}
-        relatedResourceType={relatedResourceType}
-        {...rest}
-      />
-    </EnsureNonEmptyResource>
+    <SequenceNewTable
+      id="sequence-search-results"
+      tableHeaders={
+        <SearchResultToolbar
+          api={query.length > 0 ? 'search' : 'list'}
+          type="sequence"
+          filter={filter}
+          showCount={showCount}
+          query={query}
+          count={count}
+        />
+      }
+      sorting={sortBy}
+      data={enableAdvancedFilters ? data : items}
+      fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
+      hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
+      tableSubHeaders={
+        <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
+      }
+      onRowClick={sequence => onClick(sequence)}
+      enableSorting
+      onSort={setSortBy}
+      relatedResourceType={relatedResourceType}
+      {...rest}
+    />
   );
 };

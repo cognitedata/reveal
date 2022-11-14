@@ -29,7 +29,7 @@ export * from './ResourceIcons/ResourceIcons';
 export * from './GridTable/GridTable';
 export * from './Details';
 export * from './FileDownloadAnchor';
-export * from './EnsureNonEmptyResource';
+
 export * from './DataSetSelect';
 export * from './FileThumbnail';
 export * from './SearchQueryInfoPanel';

@@ -1,6 +1,6 @@
 import update from 'immutability-helper';
 import isEmpty from 'lodash/isEmpty';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 
 import {
   Row,
@@ -9,6 +9,8 @@ import {
   flexRender,
   ColumnDef,
   getSortedRowModel,
+  SortingState,
+  OnChangeFn,
 } from '@tanstack/react-table';
 import { DASH, useLocalStorageState } from '../../../utils';
 import { ColumnToggle } from './ColumnToggle';
@@ -36,7 +38,6 @@ import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from '../LoadMore';
 import { EmptyState } from 'components/EmpyState/EmptyState';
-import { TableSortingState } from 'components/ReactTable/V2/types';
 
 export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {
@@ -51,7 +52,8 @@ export interface TableProps<T extends Record<string, any>>
   enableColumnResizing?: boolean;
   hideColumnToggle?: boolean;
   hiddenColumns?: string[];
-  onSort?: (props: TableSortingState) => void;
+  onSort?: OnChangeFn<SortingState>;
+  sorting?: SortingState;
   onRowClick?: (
     row: T,
     evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -70,6 +72,7 @@ export function TableV2<T extends TableData>({
   enableSorting = false,
   stickyHeader = true,
   enableColumnResizing = true,
+  sorting,
   showLoadButton = false,
   hasNextPage,
   isLoadingMore,
@@ -117,7 +120,6 @@ export function TableV2<T extends TableData>({
     }
   };
 
-  const [sorting, setSorting] = React.useState<TableSortingState>([]);
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(
     id,
     (hiddenColumns || []).reduce((previousValue, currentValue) => {
@@ -138,21 +140,15 @@ export function TableV2<T extends TableData>({
       },
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),
-      onSortingChange: setSorting,
+      onSortingChange: onSort,
       onColumnVisibilityChange: setColumnVisibility,
       enableSorting: enableSorting,
       manualSorting: !!onSort,
       columnResizeMode: 'onChange',
       enableHiding: true,
       defaultColumn: defaultColumn,
+      enableSortingRemoval: true,
     });
-
-  useEffect(() => {
-    if (onSort) {
-      onSort(sorting);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sorting]);
 
   // TODO: replace the drag library with a better one, we should update the order on dropEnd, not while ordering
   const moveCard = useCallback(
