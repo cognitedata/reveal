@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { styleScope } from 'styles/styleScope';
 
 export { styleScope } from 'styles/styleScope';
@@ -32,3 +33,11 @@ export const isForbidden = (statusCode: number) => statusCode === 403;
 
 export const MASTERING_MARKDOWN_LINK =
   'https://guides.github.com/features/mastering-markdown/';
+
+export const dateSorter = (dateA: number, dateB: number) => {
+  return moment(dateA).diff(dateB);
+};
+
+export const stringSorter = (strA: string, strB: string) => {
+  return strA.localeCompare(strB);
+};

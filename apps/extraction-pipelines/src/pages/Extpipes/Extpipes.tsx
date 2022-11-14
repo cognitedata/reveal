@@ -1,11 +1,9 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useExtpipes } from 'hooks/useExtpipes';
 import NoExtpipes from 'components/error/NoExtpipes';
-import { Button, Flex, Loader, Modal } from '@cognite/cogs.js';
+import { Button, Flex, Loader, Modal, Title } from '@cognite/cogs.js';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
-import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
-import { StyledTooltip, PageTitle, PageWrapperColumn } from 'components/styled';
-import { ExtPipesBreadcrumbs } from 'components/navigation/breadcrumbs/ExtPipesBreadcrumbs';
+import { StyledTooltip, PageWrapperColumn } from 'components/styled';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS, EXTPIPES_WRITES } from 'model/AclAction';
 import ExtpipesTable from 'components/table/ExtpipesTable';
@@ -17,6 +15,7 @@ import { CreateExtpipe } from 'pages/create/CreateExtpipe';
 
 import { trackUsage } from 'utils/Metrics';
 import { useTranslation } from 'common';
+import ExtpipesTableSearch from 'components/table/ExtpipesTableSearch';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html';
@@ -58,6 +57,8 @@ const Extpipes: FunctionComponent<Props> = () => {
   const permissions = useOneOfPermissions(EXTPIPES_WRITES);
   const canEdit = permissions.data;
   const [createModalOpen, setCreateModalOpen] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   const onClickCreateButton = () => {
     if (canEdit && !createModalOpen) {
@@ -118,39 +119,38 @@ const Extpipes: FunctionComponent<Props> = () => {
   }
 
   return (
-    <>
+    <StyledContainer>
       <CreateExtpipeModal
         visible={createModalOpen}
         close={closeCreateDialog}
         title={t('create-ext-pipeline')}
       />
-      <ExtpipesTable tableActionButtons={createExtpipeButton} />
-    </>
+      <StyledActionBar>
+        <ExtpipesTableSearch onChange={setSearchQuery} value={searchQuery} />
+        {createExtpipeButton}
+      </StyledActionBar>
+      <ExtpipesTable search={searchQuery} />
+    </StyledContainer>
   );
 };
+
+const StyledContainer = styled.div`
+  width: 100%;
+`;
+
+const StyledActionBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+`;
 
 export default function CombinedComponent() {
   const { t } = useTranslation();
   return (
     <div>
-      <ExtPipesBreadcrumbs />
       <PageWrapperColumn>
         <CapabilityCheck requiredPermissions={EXTPIPES_READS}>
-          <Flex direction="row" justifyContent="space-between">
-            <PageTitle>{t('extraction-pipeline', { count: 0 })}</PageTitle>
-            <Flex justifyContent="flex-end" alignItems="center">
-              <span style={{ margin: '0 2rem' }}>
-                <ExtractorDownloadsLink
-                  linkText={t('download-extractors')}
-                  link={{ path: '/extractors' }}
-                />
-              </span>
-              <ExtractorDownloadsLink
-                linkText={t('learning-and-resources')}
-                link={{ url: LEARNING_AND_RESOURCES_URL }}
-              />
-            </Flex>
-          </Flex>
+          <Title level={3}>{t('extraction-pipeline', { count: 0 })}</Title>
           <Flex>
             <Extpipes />
           </Flex>
