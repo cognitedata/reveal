@@ -9,6 +9,7 @@ export type SplitterProps = {
   primaryMinSize?: number;
   percentage?: boolean;
   primaryIndex?: 0 | 1;
+  onSecondaryPaneSizeChange?: (value: number) => void;
   children: React.ReactNode | React.ReactNode[];
   className?: string;
   secondaryInitialSize?: number;
@@ -21,18 +22,24 @@ export const Splitter = ({
   primaryMinSize,
   primaryIndex = 0,
   secondaryInitialSize,
+  onSecondaryPaneSizeChange,
   className,
 }: SplitterProps) => (
   <SplitterWrapper className={className}>
     <SplitterLayout
       secondaryMinSize={secondaryMinSize}
-      secondaryInitialSize={secondaryInitialSize || secondaryMinSize}
+      secondaryInitialSize={
+        Number.isFinite(secondaryInitialSize)
+          ? secondaryInitialSize
+          : secondaryMinSize
+      }
       primaryIndex={primaryIndex}
       primaryMinSize={primaryMinSize}
       onDragEnd={() => {
         window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT));
       }}
       percentage={percentage}
+      onSecondaryPaneSizeChange={onSecondaryPaneSizeChange}
     >
       {children}
     </SplitterLayout>
