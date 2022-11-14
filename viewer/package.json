@@ -124,7 +124,7 @@
     "glob": "8.0.3",
     "glslify-loader": "2.0.0",
     "html-webpack-plugin": "5.5.0",
-    "husky": "8.0.1",
+    "husky": "8.0.2",
     "jest": "29.2.2",
     "jest-canvas-mock": "2.4.0",
     "jest-environment-jsdom": "29.2.2",
