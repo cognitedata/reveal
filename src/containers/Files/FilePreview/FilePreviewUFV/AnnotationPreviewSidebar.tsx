@@ -5,13 +5,12 @@ import {
   Body,
   Menu,
   toast,
-  Modal,
   Detail,
   Flex,
 } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { Divider, InfoCell } from 'components';
-import { Dropdown, Pagination, Spin, Breadcrumb } from 'antd';
+import { Dropdown, Pagination, Spin, Breadcrumb, Modal } from 'antd';
 import {
   AnnotationStatus,
   CogniteAnnotation,
@@ -324,10 +323,16 @@ const AnnotationPreviewSidebar = ({
           }
           deleteAnnotations([annotation as CogniteAnnotation]);
           setSelectedAnnotations([]);
+          onModalClose();
         },
         onCancel: onModalClose,
       });
       onOpen();
+    } else {
+      // If annotation is not deleteable in the SDK, just deselect it in the viewer
+      setSelectedAnnotations(
+        selectedAnnotations.filter(el => el.id !== annotation.id)
+      );
     }
   };
 

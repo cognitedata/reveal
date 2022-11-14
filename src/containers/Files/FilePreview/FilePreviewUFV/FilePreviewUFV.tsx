@@ -112,11 +112,13 @@ export const FilePreviewUFV = ({
 
   useEffect(() => {
     setPendingAnnotations([]);
+    setSelectedAnnotations([]);
   }, [fileId]);
 
   useEffect(() => {
     if (!creatable) {
       setPendingAnnotations([]);
+      setSelectedAnnotations([]);
     }
   }, [creatable]);
 
