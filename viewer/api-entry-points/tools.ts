@@ -5,5 +5,4 @@
 /**
  * @module @cognite/reveal/tools
  */
-
-export * from './packages/tools';
+export * from '../packages/tools';

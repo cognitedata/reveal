@@ -8,12 +8,10 @@ import {
   Cognite3DViewerOptions,
   CogniteCadModel, CogniteModel, CognitePointCloudModel, DefaultCameraManager, THREE, TreeIndexNodeCollection
 } from '@cognite/reveal';
-import { AxisViewTool, Corner, DebugCameraTool, ExplodedViewTool } from '@cognite/reveal/tools';
-import { CogniteClient } from '@cognite/sdk';
-import dat from 'dat.gui';
-import { useEffect, useRef } from 'react';
-import Stats from 'stats.js';
-import { CanvasWrapper } from '../components/styled';
+import { DebugCameraTool, ExplodedViewTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
+import * as reveal from '@cognite/reveal';
+import { ClippingUI } from '../utils/ClippingUI';
+import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { BulkHtmlOverlayUI } from '../utils/BulkHtmlOverlayUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { CameraUI } from '../utils/CameraUI';
