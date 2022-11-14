@@ -4,9 +4,9 @@
   "private": true,
   "author": "Christopher Tannum <christopher.tannum@cognite.com>",
   "dependencies": {
-    "@cognite/reveal": "link:../../viewer",
+    "@cognite/reveal": "link:../../viewer/dist",
     "@cognite/sdk": "link:../../viewer/node_modules/@cognite/sdk",
-    "three-146": "npm:three@0.146.0",
-    "@types/three-146": "npm:@types/three@0.146.0"
+    "three": "link:../../viewer/node_modules/three",
+    "@types/three": "link:../../viewer/node_modules/@types/three"
   }
 }

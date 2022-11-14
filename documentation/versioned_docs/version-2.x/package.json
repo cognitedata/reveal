@@ -4,7 +4,7 @@
   "private": true,
   "author": "Christopher Tannum <christopher.tannum@cognite.com>",
   "dependencies": {
-    "@cognite/reveal-2.x": "npm:@cognite/reveal@2.3",
-    "@cognite/sdk-2.x": "npm:@cognite/sdk@^5.1.3"
+    "@cognite/reveal": "npm:@cognite/reveal@2.3",
+    "@cognite/sdk": "^5.1.3"
   }
 }
