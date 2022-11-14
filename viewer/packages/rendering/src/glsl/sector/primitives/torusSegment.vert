@@ -28,6 +28,7 @@ in float a_tubeRadius;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
+out vec4 v_nodeAppearanceTexel;
 
 out highp vec2 v_treeIndexPacked;
 
@@ -38,6 +39,7 @@ void main() {
         return;
     }
 
+    v_nodeAppearanceTexel = appearance.colorTexel;
     v_treeIndexPacked = packTreeIndex(a_treeIndex);
     // normalized theta and phi are packed into positions
     float theta = position.x * a_arcAngle;

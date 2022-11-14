@@ -21,6 +21,8 @@ in float treeIndex;
 
 out vec3 v_color;
 out vec3 v_viewPosition;
+out vec4 v_nodeAppearanceTexel;
+
 out highp vec2 v_treeIndexPacked;
 
 void main() {
@@ -30,6 +32,7 @@ void main() {
         return;
     }
 
+    v_nodeAppearanceTexel = appearance.colorTexel;
     v_treeIndexPacked = packTreeIndex(treeIndex);
     v_color = color;
 

@@ -27,6 +27,7 @@ out vec2 v_xy;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
+out vec4 v_nodeAppearanceTexel;
 
 out highp vec2 v_treeIndexPacked;
 
@@ -37,6 +38,7 @@ void main() {
         return;
     }
 
+    v_nodeAppearanceTexel = appearance.colorTexel;
     v_treeIndexPacked = packTreeIndex(a_treeIndex);
     v_xy = vec2(position.x, position.y);
 

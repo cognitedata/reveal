@@ -22,8 +22,8 @@ in vec3 a_color;
 
 out vec3 v_color;
 out vec3 v_viewPosition;
-
 out highp vec2 v_treeIndexPacked;
+out vec4 v_nodeAppearanceTexel;
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, a_treeIndex);
@@ -32,6 +32,7 @@ void main() {
         return;
     }
 
+    v_nodeAppearanceTexel = appearance.colorTexel;
     v_treeIndexPacked = packTreeIndex(a_treeIndex);
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
