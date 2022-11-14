@@ -3,7 +3,6 @@ precision highp float;
 #pragma glslify: import('../../base/nodeAppearance.glsl')
 #pragma glslify: import('../../base/updateFragmentColor.glsl')
 #pragma glslify: import('../../base/determineNodeAppearance.glsl');
-#pragma glslify: import('../../base/determineVisibility.glsl');
 #pragma glslify: import('../../base/determineColor.glsl');
 #pragma glslify: import('../../base/isClipped.glsl');
 #pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
@@ -13,7 +12,7 @@ uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
 uniform mat4 projectionMatrix;
-uniform int renderMode;
+uniform lowp int renderMode;
 
 // Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
 #pragma glslify: import('../../base/updateFragmentDepth.glsl')
@@ -33,9 +32,6 @@ void main()
 {
     highp float v_treeIndex = unpackTreeIndex(v_treeIndexPacked);
   NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
-  if (!determineVisibility(appearance, renderMode)) {
-      discard;
-  }
 
   vec3 normal = normalize( v_normal );
   vec4 color = determineColor(v_color, appearance);
