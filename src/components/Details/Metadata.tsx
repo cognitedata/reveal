@@ -113,13 +113,10 @@ const MetadataTableContainer = styled.div`
     padding: 0px;
   }
 
-  tr[role='row'],
-  tr[role='row'].cogs-table-row {
-    background: transparent;
-
-    th,
-    td {
-      border-bottom: 1px solid var(--cogs-border--muted);
+  .data-exploration-table {
+    background-color: var(--cogs-surface-medium);
+    & > div {
+      max-width: 100%;
     }
   }
 `;

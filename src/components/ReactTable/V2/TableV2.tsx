@@ -209,7 +209,7 @@ export function TableV2<T extends TableData>({
         <EmptyState body="Please, refine your filters" />
       ) : (
         <ContainerInside>
-          <StyledTable>
+          <StyledTable className="data-exploration-table">
             <Thead isStickyHeader={stickyHeader}>
               {getHeaderGroups().map(headerGroup => (
                 <Tr key={headerGroup.id}>
