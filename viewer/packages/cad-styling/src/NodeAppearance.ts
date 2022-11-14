@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import { Color } from 'three';
+
 export enum NodeOutlineColor {
   NoOutline = 0,
   White,
@@ -19,10 +21,10 @@ export enum NodeOutlineColor {
  */
 export type NodeAppearance = {
   /**
-   * Overrides the default color of the node in RGB. Each component
-   * is in range [0, 255]. `[0, 0, 0]` means no override.
+   * Overrides the default color of the node in RGB. Black,
+   * or `new Color(0, 0, 0)` means no override.
    */
-  readonly color?: [number, number, number];
+  readonly color?: Color;
   /**
    * Overrides the visibility of the node.
    */
@@ -86,7 +88,7 @@ const InFrontAppearance: NodeAppearance = {
 const HighlightedColorAppearance: NodeAppearance = {
   visible: true,
   renderGhosted: false,
-  color: [100, 100, 255]
+  color: new Color(0.392, 0.392, 1.0)
 };
 
 const GhostedAppearance: NodeAppearance = {
@@ -99,7 +101,7 @@ const DefaultAppearance: NodeAppearance = {
   renderGhosted: false,
   renderInFront: false,
   outlineColor: NodeOutlineColor.NoOutline,
-  color: [0, 0, 0] as [number, number, number],
+  color: new Color('black'),
   prioritizedForLoadingHint: 0
 };
 
