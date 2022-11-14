@@ -37,7 +37,7 @@ Feel free to add new calculation possibilities in charts through our [Industrial
 
 As long as you comply with the same OpenAPI definition for the [calculation backend](#calculation-backend), you can add the `backendServiceBaseUrl` query param to the URL to use a custom backend.
 
-Ex. `https://charts.staging.cogniteapp.com/fusion?backendServiceBaseUrl=http://localhost:5000/v2.1`
+Ex. `https://charts.staging.cogniteapp.com/{project}?backendServiceBaseUrl=http://localhost:5000/v2.1&cluster={cluster_name}`
 
 # Development
 
