@@ -37,8 +37,10 @@ ExampleFocusAsset.args = {
   selectionMode: 'single',
   activeIds: [asset.id],
   hierachyRootId: asset.rootId,
-  filter: asset.id === asset.rootId ? { parentIds: [asset.id] } : {},
-
+  filter:
+    asset.id === asset.rootId
+      ? { assetSubtreeIds: [{ label: asset.name, value: asset.id }] }
+      : {},
   onAssetClicked: action('onAssetClicked'),
   isSelected: () => false,
 };
