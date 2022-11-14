@@ -41,7 +41,7 @@ user-select: none;
 :::
 
 ```jsx runnable
-// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+// import { HtmlOverlayTool } from '@cognite/reveal';
 
 function createOverlay() {
   const element = document.createElement('div');
@@ -87,7 +87,7 @@ from the camera. To do this, provide an `options`-argument with a
 callback is triggered every time the HTML overlay is updated.
 
 ```js runnable
-// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+// import { HtmlOverlayTool } from '@cognite/reveal';
 
 function createOverlay(pressure) {
   const color = pressure < 30 ? '#fff' : (pressure > 80 ? '#aa1100' : '#aaaa00');
@@ -158,7 +158,7 @@ they are replaced with composite elements. `userData` is used to display a value
 of the underlying overlay elements.
 
 ```js runnable
-// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+// import { HtmlOverlayTool } from '@cognite/reveal';
 
 function createOverlay(text) {
   const element = document.createElement('div');
