@@ -41,7 +41,6 @@ export const TimeseriesSearchResults = ({
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & ColumnToggleProps<Timeseries>) => {
   const api = convertResourceType('timeSeries');
-
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<Timeseries>(api, query, filter);
   // TODO Needs refactoring for hiding emppty datasets
@@ -75,7 +74,6 @@ export const TimeseriesSearchResults = ({
             query={query}
           />
         }
-        sorting={sortBy}
         data={enableAdvancedFilters ? data : items}
         fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
         hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
@@ -85,6 +83,7 @@ export const TimeseriesSearchResults = ({
         showLoadButton
         onRowClick={timseries => onClick(timseries)}
         enableSorting
+        sorting={sortBy}
         onSort={setSortBy}
         relatedResourceType={relatedResourceType}
         {...rest}

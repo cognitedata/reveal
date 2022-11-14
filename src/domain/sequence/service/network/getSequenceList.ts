@@ -4,16 +4,23 @@ import {
   Sequence,
   SequenceFilter,
 } from '@cognite/sdk';
-import { InternalSequenceSortBy, normalizeSequence } from 'domain/sequence';
+import { AdvancedFilter } from 'domain/builders';
+import {
+  InternalSequenceSortBy,
+  normalizeSequence,
+  SequenceProperties,
+} from 'domain/sequence';
 
 export const getSequenceList = (
   sdk: CogniteClient,
   {
+    advancedFilter,
     filter,
     cursor,
     limit,
     sort,
   }: {
+    advancedFilter?: AdvancedFilter<SequenceProperties>;
     filter?: Required<SequenceFilter>['filter'];
     cursor?: string;
     limit?: number;
@@ -31,7 +38,7 @@ export const getSequenceList = (
           limit: limit ?? 1000,
           cursor,
           filter,
-          // advancedFilter,
+          advancedFilter,
           sort,
         },
       }

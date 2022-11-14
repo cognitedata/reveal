@@ -1,32 +1,30 @@
 import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
-import { InternalAssetFilters } from '../types';
+import isEmpty from 'lodash/isEmpty';
+import { InternalSequenceFilters } from '../types';
 
-export type AssetsProperties = {
-  assetSubtreeIds: number[];
+export type SequenceProperties = {
+  assetIds: number[];
   dataSetId: number[];
-  source: string[];
   externalId: string;
-  labels: string[];
-  description: string;
   name: string;
+  description: string;
   [key: `metadata|${string}`]: string;
 };
 
-export const mapFiltersToAssetsAdvancedFilters = (
+export const mapFiltersToSequenceAdvancedFilters = (
   {
     dataSetIds,
     createdTime,
     lastUpdatedTime,
     externalIdPrefix,
-    source,
     metadata,
-  }: InternalAssetFilters,
+  }: InternalSequenceFilters,
   searchQueryMetadataKeys?: Record<string, string>,
   query?: string
-): AdvancedFilter<AssetsProperties> | undefined => {
-  const builder = new AdvancedFilterBuilder<AssetsProperties>();
+): AdvancedFilter<SequenceProperties> | undefined => {
+  const builder = new AdvancedFilterBuilder<SequenceProperties>();
 
-  const filterBuilder = new AdvancedFilterBuilder<AssetsProperties>()
+  const filterBuilder = new AdvancedFilterBuilder<SequenceProperties>()
     .in('dataSetId', () => {
       return dataSetIds?.reduce((acc, { value }) => {
         if (typeof value === 'number') {
@@ -34,11 +32,6 @@ export const mapFiltersToAssetsAdvancedFilters = (
         }
         return acc;
       }, [] as number[]);
-    })
-    .in('source', () => {
-      if (source) {
-        return [source];
-      }
     })
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
@@ -50,18 +43,18 @@ export const mapFiltersToAssetsAdvancedFilters = (
       gte: lastUpdatedTime?.min as number,
     });
 
-  if (metadata) {
-    for (const { key, value } of metadata) {
-      filterBuilder.equals(`metadata|${key}`, value);
-    }
-  }
-
-  if (query) {
-    const searchQueryBuilder = new AdvancedFilterBuilder<AssetsProperties>()
+  if (!isEmpty(query)) {
+    const searchQueryBuilder = new AdvancedFilterBuilder<SequenceProperties>()
       .search('name', query)
       .search('description', query);
 
     filterBuilder.or(searchQueryBuilder);
+  }
+
+  if (metadata) {
+    for (const { key, value } of metadata) {
+      filterBuilder.equals(`metadata|${key}`, value);
+    }
   }
 
   builder.and(filterBuilder);
@@ -71,7 +64,8 @@ export const mapFiltersToAssetsAdvancedFilters = (
    * to the user when using our search.
    */
   if (searchQueryMetadataKeys) {
-    const searchMetadataBuilder = new AdvancedFilterBuilder<AssetsProperties>();
+    const searchMetadataBuilder =
+      new AdvancedFilterBuilder<SequenceProperties>();
 
     for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
       searchMetadataBuilder.prefix(`metadata|${key}`, value);
@@ -80,5 +74,5 @@ export const mapFiltersToAssetsAdvancedFilters = (
     builder.or(searchMetadataBuilder);
   }
 
-  return new AdvancedFilterBuilder<AssetsProperties>().or(builder).build();
+  return new AdvancedFilterBuilder<SequenceProperties>().or(builder).build();
 };

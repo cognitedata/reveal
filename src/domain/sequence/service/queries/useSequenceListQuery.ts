@@ -1,17 +1,23 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { SequenceFilter } from '@cognite/sdk/dist/src';
-import { queryKeys } from 'domain/queryKeys';
-import { InternalSequenceSortBy } from 'domain/sequence';
-import { getSequenceList } from 'domain/sequence';
 import { useMemo } from 'react';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
+import { useSDK } from '@cognite/sdk-provider';
+import { SequenceFilter } from '@cognite/sdk/dist/src';
+import { AdvancedFilter } from 'domain/builders';
+import { queryKeys } from 'domain/queryKeys';
+import {
+  InternalSequenceSortBy,
+  SequenceProperties,
+  getSequenceList,
+} from 'domain/sequence';
 
 export const useSequenceListQuery = (
   {
+    advancedFilter,
     filter,
     limit,
     sort,
   }: {
+    advancedFilter?: AdvancedFilter<SequenceProperties>;
     filter?: Required<SequenceFilter>['filter'];
     limit?: number;
     sort?: InternalSequenceSortBy[];
@@ -20,12 +26,12 @@ export const useSequenceListQuery = (
 ) => {
   const sdk = useSDK();
   const { data, ...rest } = useInfiniteQuery(
-    queryKeys.listSequence([filter, limit, sort]),
+    queryKeys.listSequence([advancedFilter, filter, limit, sort]),
     ({ pageParam }) => {
       return getSequenceList(sdk, {
         cursor: pageParam,
         filter,
-        // advancedFilter,
+        advancedFilter,
         sort,
         limit,
       });

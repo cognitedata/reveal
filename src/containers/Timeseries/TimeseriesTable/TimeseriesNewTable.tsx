@@ -92,7 +92,10 @@ export const TimeseriesNewTable = ({
     return [
       { ...Table.Columns.name, enableHiding: false },
       Table.Columns.description,
-      Table.Columns.unit,
+      {
+        ...Table.Columns.unit,
+        enableSorting: false,
+      },
       sparkLineColumn,
       Table.Columns.lastUpdatedTime,
       Table.Columns.created,

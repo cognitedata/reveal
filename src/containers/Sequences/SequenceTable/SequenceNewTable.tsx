@@ -34,7 +34,10 @@ export const SequenceNewTable = (
         },
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
-        Table.Columns.id,
+        {
+          ...Table.Columns.id,
+          enableSorting: false,
+        },
         {
           ...Table.Columns.asset,
           enableSorting: false,

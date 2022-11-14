@@ -74,6 +74,7 @@ export const SequenceSearchResults = ({
       tableSubHeaders={
         <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
       }
+      showLoadButton
       onRowClick={sequence => onClick(sequence)}
       enableSorting
       onSort={setSortBy}
