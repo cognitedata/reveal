@@ -13,11 +13,13 @@ export const LinkedResourceTable = ({
   type,
   parentResource,
   onItemClicked,
+  enableAdvancedFilter,
 }: // ...selectionMode
 {
   excludeParentResource?: boolean;
   type: ResourceType;
   isGroupingFilesEnabled?: boolean;
+  enableAdvancedFilter?: boolean;
   parentResource: ResourceItem;
   onItemClicked: (id: number) => void;
 } & SelectableItemsProps) => {
@@ -27,6 +29,7 @@ export const LinkedResourceTable = ({
     case 'asset':
       return (
         <AssetLinkedSearchResults
+          enableAdvancedFilter={enableAdvancedFilter}
           defaultFilter={filter}
           onClick={row => onItemClicked(row.id)}
         />
@@ -34,6 +37,7 @@ export const LinkedResourceTable = ({
     case 'event':
       return (
         <EventLinkedSearchResults
+          enableAdvancedFilter={enableAdvancedFilter}
           defaultFilter={filter}
           onClick={el => onItemClicked(el.id)}
         />

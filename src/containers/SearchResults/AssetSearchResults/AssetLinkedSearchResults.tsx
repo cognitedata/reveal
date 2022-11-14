@@ -14,8 +14,11 @@ import { PreviewFilterDropdown } from 'components/PreviewFilter/PreviewFilterDro
 import { DefaultPreviewFilter } from 'components/PreviewFilter/PreviewFilter';
 import { InternalCommonFilters } from 'domain/types';
 import { useDebounce } from 'use-debounce';
+import { convertResourceType } from 'types';
+import { useResourceResults } from '../SearchResultLoader';
 
 interface Props {
+  enableAdvancedFilter?: boolean;
   defaultFilter: InternalCommonFilters;
   onClick: (item: Asset) => void;
 }
@@ -44,6 +47,7 @@ const LinkedAssetFilter = ({
 };
 
 export const AssetLinkedSearchResults: React.FC<Props> = ({
+  enableAdvancedFilter,
   defaultFilter,
   onClick,
 }) => {
@@ -65,13 +69,20 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
     sortBy,
   });
 
+  const api = convertResourceType('asset');
+  const { canFetchMore, fetchMore, items } = useResourceResults<Asset>(
+    api,
+    debouncedQuery,
+    assetFilter
+  );
+
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
   return (
     <AssetNewTable
       id="asset-linked-search-results"
       onRowClick={asset => onClick(asset)}
-      data={data}
+      data={enableAdvancedFilter ? data : items}
       enableSorting
       onSort={props => setSortBy(props)}
       showLoadButton
@@ -91,8 +102,8 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
           />
         </DefaultPreviewFilter>
       }
-      hasNextPage={hasNextPage}
-      fetchMore={fetchNextPage}
+      hasNextPage={enableAdvancedFilter ? hasNextPage : canFetchMore}
+      fetchMore={enableAdvancedFilter ? fetchNextPage : fetchMore}
     />
   );
 };

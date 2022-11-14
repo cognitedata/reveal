@@ -15,6 +15,7 @@ import {
   useResourceResults,
 } from 'containers';
 import { convertResourceType } from 'types';
+import { useDebounce } from 'use-debounce';
 
 interface Props {
   defaultFilter: InternalCommonFilters;
@@ -49,7 +50,7 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
   onClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
-  // const [debouncedQuery] = useDebounce(query, 300);
+  const [debouncedQuery] = useDebounce(query, 300);
   const [filter, setFilter] = useState<InternalSequenceFilters>({});
   // const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
 
@@ -63,7 +64,7 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
   const api = convertResourceType('sequence');
   const { canFetchMore, fetchMore, items } = useResourceResults<Sequence>(
     api,
-    query,
+    debouncedQuery,
     sequenceFilter
   );
 

@@ -13,9 +13,11 @@ import {
   InternalEventsFilters,
   useEventsSearchResultQuery,
 } from 'domain/events';
-import { EventNewTable } from 'containers';
+import { EventNewTable, useResourceResults } from 'containers';
+import { convertResourceType } from 'types';
 
 interface Props {
+  enableAdvancedFilter?: boolean;
   defaultFilter: InternalCommonFilters;
   onClick: (item: CogniteEvent) => void;
 }
@@ -62,6 +64,7 @@ const LinkedEventFilter = ({
 };
 
 export const EventLinkedSearchResults: React.FC<Props> = ({
+  enableAdvancedFilter,
   defaultFilter,
   onClick,
 }) => {
@@ -82,6 +85,12 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
     eventsFilters,
     eventsSortBy: sortBy,
   });
+  const api = convertResourceType('event');
+  const { canFetchMore, fetchMore, items } = useResourceResults<CogniteEvent>(
+    api,
+    debouncedQuery,
+    eventsFilters
+  );
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
@@ -89,7 +98,7 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
     <EventNewTable
       id="event-linked-search-results"
       onRowClick={event => onClick(event)}
-      data={data}
+      data={enableAdvancedFilter ? data : items}
       enableSorting
       onSort={props => setSortBy(props)}
       showLoadButton
@@ -109,8 +118,8 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
           />
         </DefaultPreviewFilter>
       }
-      hasNextPage={hasNextPage}
-      fetchMore={fetchNextPage}
+      hasNextPage={enableAdvancedFilter ? hasNextPage : canFetchMore}
+      fetchMore={enableAdvancedFilter ? fetchNextPage : fetchMore}
     />
   );
 };
