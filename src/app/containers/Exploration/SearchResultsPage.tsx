@@ -251,7 +251,9 @@ function SearchPage() {
                     )}
                     {currentResourceType === 'threeD' && (
                       <ThreeDSearchResults
-                        onClick={handleRowClick}
+                        onClick={(item: ResourceItem) => {
+                          navigate(createLink(`/explore/threeD/${item.id}`));
+                        }}
                         query={query}
                       />
                     )}
