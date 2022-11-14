@@ -13,7 +13,6 @@ import {
   Cognite3DModel,
   Cognite3DViewer,
   CognitePointCloudModel,
-  DefaultCameraManager,
   Intersection,
   ViewerState,
 } from '@cognite/reveal';
@@ -26,21 +25,27 @@ import { usePrevious } from '@cognite/data-exploration';
 import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
 import { ThreeDContext } from './ThreeDContext';
 
+type ChildProps = {
+  threeDModel?: Cognite3DModel;
+  pointCloudModel?: CognitePointCloudModel;
+  viewer: Cognite3DViewer;
+};
+
 type Props = {
   modelId: number;
   revisionId: number;
   nodesSelectable: boolean;
   initialViewerState?: ViewerState;
-  selectedAsset?: number;
   onViewerClick?: (intersection: Intersection | null) => void;
+  children?: (childProps: ChildProps) => JSX.Element;
 };
 
 export function Reveal({
+  children,
   modelId,
   revisionId,
   nodesSelectable,
   initialViewerState,
-  selectedAsset,
   onViewerClick,
 }: Props) {
   const context = useContext(ThreeDContext);
@@ -126,16 +131,6 @@ export function Reveal({
 
   useEffect(() => () => viewer?.dispose(), [viewer]);
 
-  useEffect(() => {
-    if (!viewer) {
-      return;
-    }
-    const cameraManager = viewer.cameraManager as DefaultCameraManager;
-    cameraManager.setCameraControlsOptions({
-      mouseWheelAction: selectedAsset ? 'zoomToTarget' : 'zoomToCursor',
-    });
-  }, [selectedAsset, viewer]);
-
   const _onViewerClick: PointerEventDelegate = useCallback(
     async ({ offsetX, offsetY }) => {
       if (!threeDModel || !viewer || !nodesSelectable) {
@@ -193,7 +188,19 @@ export function Reveal({
     );
   }
 
-  return <RevealContainer id="revealContainer" ref={handleMount} />;
+  return (
+    <>
+      <RevealContainer id="revealContainer" ref={handleMount} />
+      {children &&
+        viewer &&
+        models &&
+        children({
+          pointCloudModel: models.pointCloudModel,
+          threeDModel: models.threeDModel,
+          viewer,
+        })}
+    </>
+  );
 }
 
 // This container has an inline style 'position: relative' given by @cognite/reveal.

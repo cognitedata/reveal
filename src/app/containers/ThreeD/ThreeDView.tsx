@@ -38,6 +38,7 @@ import { useQueryClient } from 'react-query';
 import { ThreeDContext } from './ThreeDContext';
 import debounce from 'lodash/debounce';
 import ShareButton from './share-button';
+import MouseWheelAction from 'app/containers/ThreeD/components/MouseWheelAction';
 
 type Props = {
   modelId: number;
@@ -52,13 +53,8 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
   }, [modelId]);
 
   const context = useContext(ThreeDContext);
-  const {
-    viewer,
-    threeDModel,
-    pointCloudModel,
-    assetDetailsExpanded,
-    setAssetDetailsExpanded,
-  } = context;
+  const { viewer, threeDModel, assetDetailsExpanded, setAssetDetailsExpanded } =
+    context;
 
   const { viewState, setViewState, selectedAssetId, setSelectedAssetId } =
     context;
@@ -171,10 +167,69 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
             modelId={modelId}
             revisionId={revisionId}
             nodesSelectable={nodesSelectable && !assetDetailsExpanded}
-            selectedAsset={selectedAssetId}
             initialViewerState={initialUrlViewState}
             onViewerClick={onViewerClick}
-          />
+          >
+            {({ pointCloudModel, threeDModel, viewer }) => (
+              <>
+                <MouseWheelAction
+                  isAssetSelected={!!selectedAssetId}
+                  viewer={viewer}
+                />
+                <StyledToolBar>
+                  <ExpandButton viewer={viewer} threeDModel={threeDModel} />
+                  <FocusAssetButton
+                    modelId={modelId}
+                    revisionId={revisionId}
+                    selectedAssetId={selectedAssetId}
+                    viewer={viewer}
+                    threeDModel={threeDModel}
+                  />
+                  <Slicer
+                    viewer={viewer}
+                    viewerModel={threeDModel || pointCloudModel}
+                  />
+                  <PointSizeSlider pointCloudModel={pointCloudModel} />
+                  <ShareButton
+                    viewState={viewState}
+                    selectedAssetId={selectedAssetId}
+                    assetDetailsExpanded={assetDetailsExpanded}
+                  />
+                  <PointToPointMeasurementButton
+                    viewer={viewer}
+                    nodesSelectable={nodesSelectable}
+                    setNodesSelectable={setNodesSelectable}
+                  />
+                  <HelpButton />
+                </StyledToolBar>
+                <SidebarContainer gap={15}>
+                  {threeDModel && (
+                    <AssetMappingsSidebar
+                      modelId={modelId}
+                      revisionId={revisionId}
+                      selectedAssetId={selectedAssetId}
+                      setSelectedAssetId={setSelectedAssetId}
+                      viewer={viewer}
+                      threeDModel={threeDModel}
+                    />
+                  )}
+                </SidebarContainer>
+                {!!selectedAssetId && !assetDetailsExpanded && (
+                  <NodePreviewContainer>
+                    <NodePreview
+                      assetId={selectedAssetId}
+                      closePreview={() => {
+                        setSelectedAssetId(undefined);
+                      }}
+                      openDetails={() => {
+                        setAssetDetailsExpanded(true);
+                      }}
+                    />
+                  </NodePreviewContainer>
+                )}
+              </>
+            )}
+          </Reveal>
           {!!selectedAssetId && threeDModel && assetDetailsExpanded && (
             <AssetPreviewSidebar
               assetId={selectedAssetId}
@@ -184,64 +239,6 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
             />
           )}
         </StyledSplitter>
-        {viewer && (
-          <SidebarContainer gap={15}>
-            {threeDModel && (
-              <AssetMappingsSidebar
-                modelId={modelId}
-                revisionId={revisionId}
-                selectedAssetId={selectedAssetId}
-                setSelectedAssetId={setSelectedAssetId}
-                viewer={viewer}
-                threeDModel={threeDModel}
-              />
-            )}
-          </SidebarContainer>
-        )}
-        {threeDModel && viewer && (
-          <StyledToolBar>
-            {threeDModel && (
-              <ExpandButton viewer={viewer} viewerModel={threeDModel} />
-            )}
-            {threeDModel && selectedAssetId && (
-              <FocusAssetButton
-                modelId={modelId}
-                revisionId={revisionId}
-                selectedAssetId={selectedAssetId}
-                viewer={viewer}
-                threeDModel={threeDModel}
-              />
-            )}
-            {threeDModel && (
-              <Slicer viewer={viewer} viewerModel={threeDModel} />
-            )}
-            {pointCloudModel && <PointSizeSlider model={pointCloudModel} />}
-            <ShareButton
-              viewState={viewState}
-              selectedAssetId={selectedAssetId}
-              assetDetailsExpanded={assetDetailsExpanded}
-            />
-            <PointToPointMeasurementButton
-              viewer={viewer}
-              nodesSelectable={nodesSelectable}
-              setNodesSelectable={setNodesSelectable}
-            />
-            <HelpButton />
-          </StyledToolBar>
-        )}
-        {!!selectedAssetId && !assetDetailsExpanded && (
-          <NodePreviewContainer>
-            <NodePreview
-              assetId={selectedAssetId}
-              closePreview={() => {
-                setSelectedAssetId(undefined);
-              }}
-              openDetails={() => {
-                setAssetDetailsExpanded(true);
-              }}
-            />
-          </NodePreviewContainer>
-        )}
       </PreviewContainer>
     </>
   );
@@ -250,7 +247,7 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
 const NodePreviewContainer = styled.div`
   position: absolute;
   right: 30px;
-  top: 90px;
+  top: 30px;
   height: 400px;
   width: 300px;
 `;
@@ -268,7 +265,7 @@ const SidebarContainer = styled(Flex)`
   position: absolute;
   width: auto;
   height: auto;
-  top: 90px;
+  top: 30px;
   left: 30px;
   z-index: 100;
   overflow: hidden;

@@ -14,13 +14,13 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 type SliderProps = {
-  model: CognitePointCloudModel;
+  pointCloudModel?: CognitePointCloudModel;
 };
 
-export default function PointSizeSlider({ model }: SliderProps) {
-  const [sliderValue, setSliderValue] = useState(model.pointSize);
+export default function PointSizeSlider({ pointCloudModel }: SliderProps) {
+  const [sliderValue, setSliderValue] = useState(pointCloudModel?.pointSize);
 
-  if (!model) {
+  if (!pointCloudModel) {
     return null;
   }
 
@@ -37,7 +37,7 @@ export default function PointSizeSlider({ model }: SliderProps) {
                 max={5}
                 step={0.1}
                 onChange={v => {
-                  model.pointSize = v;
+                  pointCloudModel.pointSize = v;
                   setSliderValue(v);
                 }}
                 value={sliderValue}

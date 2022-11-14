@@ -33,20 +33,22 @@ export const HomeButton = () => {
 
 export const ExpandButton = ({
   viewer,
-  viewerModel,
+  threeDModel,
 }: {
-  viewer: Cognite3DViewer | null;
-  viewerModel: Cognite3DModel | CognitePointCloudModel | null;
+  viewer: Cognite3DViewer;
+  threeDModel?: Cognite3DModel | CognitePointCloudModel;
 }) => {
+  if (!threeDModel) {
+    return <></>;
+  }
+
   return (
     <Tooltip content="Fit view">
       <Button
         icon="ExpandAlternative"
         aria-label="Fit to view"
         onClick={() => {
-          if (viewer && viewerModel) {
-            viewer.fitCameraToModel(viewerModel);
-          }
+          viewer.fitCameraToModel(threeDModel);
           trackUsage('Exploration.Preview.FitToView');
         }}
         type="ghost"
@@ -65,13 +67,13 @@ export const FocusAssetButton = ({
   modelId: number;
   revisionId: number;
   selectedAssetId?: number;
-  viewer: Cognite3DViewer | null;
-  threeDModel: Cognite3DModel | null;
+  viewer: Cognite3DViewer;
+  threeDModel?: Cognite3DModel;
 }) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
-  if (!selectedAssetId) {
+  if (!threeDModel || !selectedAssetId) {
     return <></>;
   }
 

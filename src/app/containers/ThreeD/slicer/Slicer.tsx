@@ -12,18 +12,18 @@ import styled from 'styled-components';
 
 type SliderProps = {
   viewer: Cognite3DViewer;
-  viewerModel: Cognite3DModel | CognitePointCloudModel;
+  viewerModel?: Cognite3DModel | CognitePointCloudModel;
 };
 
 export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
   const [min, max] = useMemo(() => {
     const bounds = viewerModel?.getModelBoundingBox();
-    return [bounds?.min.y, bounds?.max.y];
+    return [bounds?.min.y ?? 0, bounds?.max.y ?? 0];
   }, [viewerModel]);
 
   const [sliderValue, setSliderValue] = useState<[number, number]>([min, max]);
 
-  if (!viewer || !viewerModel || min === undefined || max === undefined) {
+  if (!viewerModel || min === undefined || max === undefined) {
     return <></>;
   }
 
