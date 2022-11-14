@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledCollapsablePanelContainer = styled.div`
+export const CollapsablePanelContainer = styled.div`
   height: 100%;
   .cp-right-panel .cp-panel-content {
     height: 100%;

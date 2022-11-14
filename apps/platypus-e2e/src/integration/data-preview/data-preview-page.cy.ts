@@ -65,6 +65,50 @@ describe('Platypus Data Preview Page - Preview', () => {
     ).should('have.text', '123');
   });
 
+  it('should search through primitive type list in the side panel', () => {
+    cy.get('[data-testid="Post"]').click();
+    cy.get('[data-testid="Post"]').should('have.class', 'active');
+    cy.getBySel('data-preview-table').should('be.visible');
+
+    // wait for rows to render
+    cy.get('.ag-center-cols-container .ag-row').should('have.length', 3);
+
+    // check if all fields are rendered as cols
+    cy.get('.ag-header .ag-header-cell[col-id="externalId"]').should(
+      'be.visible'
+    );
+    cy.get('.ag-header .ag-header-cell[col-id="title"]').should('be.visible');
+    cy.get('.ag-header .ag-header-cell[col-id="views"]').should('be.visible');
+
+    // last two should be rendered but not visible (scroller)
+    cy.get('.ag-header .ag-header-cell[col-id="user"]').should('exist');
+    cy.get('.ag-header .ag-header-cell[col-id="comments"]').should('exist');
+
+    // check strings
+    cy.get(
+      '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="title"]'
+    ).should('have.text', 'Lorem Ipsum');
+
+    // check custom col types
+    cy.contains(
+      '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="tags"]',
+      'Lorem'
+    ).dblclick();
+
+    // search for Lorem
+    cy.getBySel('side-panel-search-button').click();
+    cy.getBySel('side-panel-search-input').type('Lorem');
+
+    // check if other options are visible
+    cy.getBySel('data-preview-side-panel').should('not.contain.text', 'Ipsum');
+
+    // close panel
+    cy.getBySel('data-preview-side-panel')
+      .get('[aria-label="side-panel-close-button"]')
+      .click();
+    cy.getBySel('data-preview-side-panel').should('not.exist');
+  });
+
   it('should show the no rows overlay when the table is empty', () => {
     cy.get('[data-testid="TypeWithoutData"]').click();
     cy.get('[data-testid="TypeWithoutData"]').should('have.class', 'active');

@@ -1,6 +1,7 @@
 import { Body, Flex } from '@cognite/cogs.js';
 import { ColDef, ICellRendererParams } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
+import { ForwardedRef, forwardRef } from 'react';
 
 const CellRenderer = (params: ICellRendererParams<Row, string>) => (
   <Flex alignItems="center" style={{ height: '100%' }}>
@@ -37,18 +38,23 @@ type CogDataListProps = {
   listData: PrimitiveTypesListData;
 };
 
-export const CogDataList = (props: CogDataListProps) => {
-  const rowData = props.listData.map((value) => ({ value: value?.toString() }));
+export const CogDataList = forwardRef<AgGridReact, CogDataListProps>(
+  (props: CogDataListProps, ref: ForwardedRef<AgGridReact>) => {
+    const rowData = props.listData.map((value) => ({
+      value: value?.toString(),
+    }));
 
-  return (
-    <AgGridReact<Row>
-      columnDefs={columnDefs}
-      headerHeight={0}
-      rowData={rowData}
-      rowHeight={44}
-      rowStyle={{
-        borderBottom: '1px solid var(--cogs-border--muted)',
-      }}
-    />
-  );
-};
+    return (
+      <AgGridReact<Row>
+        ref={ref}
+        columnDefs={columnDefs}
+        headerHeight={0}
+        rowData={rowData}
+        rowHeight={44}
+        rowStyle={{
+          borderBottom: '1px solid var(--cogs-border--muted)',
+        }}
+      />
+    );
+  }
+);
