@@ -29,11 +29,7 @@ import {
 } from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
 
-import {
-  LocalPointClassificationsProvider,
-  PointCloudManager,
-  PointCloudNode
-} from '../../packages/pointclouds';
+import { LocalPointClassificationsProvider, PointCloudManager, PointCloudNode } from '../../packages/pointclouds';
 
 import { Potree } from '../../packages/pointclouds/src/potree-three-loader';
 
