@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { NamedProps } from 'react-select';
 import ReactSelectCreatable, {
@@ -12,22 +12,37 @@ import {
   Theme,
 } from '@cognite/cogs.js';
 
+const NIL_FILTER_OPTION: OptionType<null> = {
+  label: 'N/A',
+  value: null,
+};
 export interface BaseSelectProps<ValueType>
   extends CogsSelectProps<ValueType>,
     Pick<NamedProps, 'styles' | 'onInputChange'> {
   creatable?: boolean;
   cogsTheme?: Theme;
+  addNilOption?: boolean;
 }
 
 export const BaseSelect = <ValueType,>({
   creatable = false,
   cogsTheme,
+  addNilOption = false,
+  options: optionsOriginal,
   ...rest
 }: BaseSelectProps<ValueType>) => {
+  const options = useMemo(() => {
+    if (!addNilOption) {
+      return optionsOriginal;
+    }
+    return [...optionsOriginal, NIL_FILTER_OPTION] as OptionType<ValueType>[];
+  }, [optionsOriginal, addNilOption]);
+
   const props: BaseSelectProps<ValueType> = {
     isClearable: true,
     closeMenuOnSelect: true,
     theme: cogsTheme,
+    options,
     ...rest,
     styles: {
       ...rest.styles,

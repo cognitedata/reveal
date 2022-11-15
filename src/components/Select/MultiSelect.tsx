@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { ActionMeta } from 'react-select';
 
@@ -15,6 +15,23 @@ export interface MultiSelectProps<ValueType>
   ) => void;
 }
 
-export const MultiSelect = <ValueType,>(props: MultiSelectProps<ValueType>) => {
-  return <BaseSelect {...props} isMulti />;
+export const MultiSelect = <ValueType,>({
+  value: valueOriginal,
+  onChange,
+  ...rest
+}: MultiSelectProps<ValueType>) => {
+  const [value, setValue] = useState(valueOriginal);
+
+  const handleChange = useCallback(
+    (
+      value: OptionType<ValueType>[],
+      action: ActionMeta<OptionType<ValueType>>
+    ) => {
+      setValue(value);
+      onChange?.(value, action);
+    },
+    [onChange]
+  );
+
+  return <BaseSelect value={value} onChange={handleChange} {...rest} isMulti />;
 };

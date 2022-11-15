@@ -33,3 +33,11 @@ Example.args = {
   ],
   onChange: action('onChange'),
 };
+
+export const WithNilOption: ComponentStory<typeof Select> = args => (
+  <Select {...args} />
+);
+WithNilOption.args = {
+  ...Example.args,
+  addNilOption: true,
+};
