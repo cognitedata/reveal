@@ -10,6 +10,7 @@ import {
   useDetailedMappingsByAssetIdQuery,
 } from 'domain/threeD';
 import { createLink } from '@cognite/cdf-utilities';
+import { DASH } from '../../../utils';
 
 export const ThreeDModelCellLink = ({
   assetId,
@@ -72,7 +73,7 @@ export const ThreeDModelCell = ({ assetId }: { assetId: number }) => {
     useDetailedMappingsByAssetIdQuery(assetId);
 
   if (!isFetched || !mappings?.length) {
-    return null;
+    return <>{DASH}</>;
   }
 
   if (mappings.length === 1) {

@@ -1,79 +1,102 @@
 import { Asset } from '@cognite/sdk';
 
-export const rootAssets: Asset[] = [
-  {
-    createdTime: new Date(1649077497698),
-    lastUpdatedTime: new Date(1649077497698),
-    aggregates: {
-      childCount: 4,
-    },
-    rootId: 4002438896594549,
-    externalId: 'LOR_SWEDEN',
-    name: 'Sweden',
-    metadata: {
-      model_id: '7617970672125413',
-    },
-    id: 4002438896594549,
+export const rootAsset1 = {
+  createdTime: new Date(1649077497698),
+  lastUpdatedTime: new Date(1649077497698),
+  aggregates: {
+    childCount: 4,
   },
-];
+  rootId: 4002438896594549,
+  externalId: 'LOR_SWEDEN',
+  name: 'Sweden',
+  metadata: {
+    model_id: '7617970672125413',
+  },
+  id: 4002438896594549,
+};
+
+export const rootAssets: Asset[] = [rootAsset1];
+
+export const mockAsset = {
+  createdTime: new Date(1649079372960),
+  lastUpdatedTime: new Date(1649079372960),
+  rootId: 4002438896594549,
+  aggregates: {
+    childCount: 0,
+  },
+  parentId: 4002438896594549,
+  parentExternalId: 'LOR_SWEDEN',
+  externalId: 'LOR_GATHERING_POINT_D',
+  name: 'Gathering point D',
+  metadata: {
+    'Network Level': '["Facility - Sub-Level - PSH"]',
+  },
+  source: 'some source',
+  id: 560489721305992,
+  labels: [
+    { externalId: 'BEST_DAY_NETWORK_LEVEL_COUNTRY' },
+    { externalId: 'SOME_LABEL' },
+    { externalId: 'ANOTHER_VERY_VERY_VERY_VERY_VERY_LOOOOOOOOOONG_ONE' },
+  ],
+};
+
+export const mockAsset2 = {
+  createdTime: new Date(1649079372960),
+  lastUpdatedTime: new Date(1649079372960),
+  rootId: 4002438896594549,
+  aggregates: {
+    childCount: 0,
+  },
+  parentId: 560489721305992,
+  parentExternalId: 'LOR_SWEDEN',
+  externalId: 'LOR_GATHERING_POINT_E',
+  name: 'Gathering point E',
+  metadata: {
+    'Network Level': '["Facility - Sub-Level - PSH"]',
+  },
+  source: 'some source',
+  id: 607065467418725,
+};
+
+export const mockAsset3 = {
+  createdTime: new Date(1649079372960),
+  lastUpdatedTime: new Date(1649079372960),
+  rootId: 4002438896594549,
+  aggregates: {
+    childCount: 0,
+  },
+  parentId: 607065467418725,
+  parentExternalId: 'LOR_SWEDEN',
+  externalId: 'LOR_GATHERING_POINT_F',
+  name: 'Gathering point F',
+  metadata: {
+    'Network Level': '["Facility - Sub-Level - PSH"]',
+  },
+  source: 'some source',
+  id: 778676031640514,
+};
+
+export const mockAsset4 = {
+  createdTime: new Date(1649079372960),
+  lastUpdatedTime: new Date(1649079372960),
+  rootId: 4002438896594549,
+  aggregates: {
+    childCount: 1,
+  },
+  parentId: 4002438896594549,
+  parentExternalId: 'LOR_SWEDEN',
+  externalId: 'LOR_GOTHENBURG',
+  name: 'Gothenburg',
+  metadata: {},
+  source: 'some other source',
+  id: 8493722957009725,
+};
 
 export const assets: Asset[] = [
-  {
-    createdTime: new Date(1649079372960),
-    lastUpdatedTime: new Date(1649079372960),
-    rootId: 4002438896594549,
-    aggregates: {
-      childCount: 0,
-    },
-    parentId: 4002438896594549,
-    parentExternalId: 'LOR_SWEDEN',
-    externalId: 'LOR_GATHERING_POINT_D',
-    name: 'Gathering point D',
-    metadata: {
-      'Network Level': '["Facility - Sub-Level - PSH"]',
-    },
-    source: 'some source',
-    id: 560489721305992,
-    labels: [
-      { externalId: 'BEST_DAY_NETWORK_LEVEL_COUNTRY' },
-      { externalId: 'SOME_LABEL' },
-      { externalId: 'ANOTHER_VERY_VERY_VERY_VERY_VERY_LOOOOOOOOOONG_ONE' },
-    ],
-  },
-  {
-    createdTime: new Date(1649079372960),
-    lastUpdatedTime: new Date(1649079372960),
-    rootId: 4002438896594549,
-    aggregates: {
-      childCount: 0,
-    },
-    parentId: 4002438896594549,
-    parentExternalId: 'LOR_SWEDEN',
-    externalId: 'LOR_GATHERING_POINT_E',
-    name: 'Gathering point E',
-    metadata: {
-      'Network Level': '["Facility - Sub-Level - PSH"]',
-    },
-    source: 'some source',
-    id: 607065467418725,
-  },
-  {
-    createdTime: new Date(1649079372960),
-    lastUpdatedTime: new Date(1649079372960),
-    rootId: 4002438896594549,
-    aggregates: {
-      childCount: 0,
-    },
-    parentId: 4002438896594549,
-    parentExternalId: 'LOR_SWEDEN',
-    externalId: 'LOR_GATHERING_POINT_F',
-    name: 'Gathering point F',
-    metadata: {
-      'Network Level': '["Facility - Sub-Level - PSH"]',
-    },
-    source: 'some source',
-    id: 778676031640514,
-  },
+  mockAsset,
+  mockAsset2,
+  mockAsset3,
+  mockAsset4,
   {
     createdTime: new Date(1649079372960),
     lastUpdatedTime: new Date(1649079372960),
@@ -116,21 +139,6 @@ export const assets: Asset[] = [
     metadata: {},
     source: 'some other source',
     id: 4068389871948573,
-  },
-  {
-    createdTime: new Date(1649079372960),
-    lastUpdatedTime: new Date(1649079372960),
-    rootId: 4002438896594549,
-    aggregates: {
-      childCount: 1,
-    },
-    parentId: 4002438896594549,
-    parentExternalId: 'LOR_SWEDEN',
-    externalId: 'LOR_GOTHENBURG',
-    name: 'Gothenburg',
-    metadata: {},
-    source: 'some other source',
-    id: 8493722957009725,
   },
   {
     createdTime: new Date(1649079372960),

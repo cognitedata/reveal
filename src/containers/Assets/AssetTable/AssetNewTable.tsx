@@ -63,8 +63,8 @@ export const AssetNewTable = (
       data={data || []}
       columns={columns}
       onRowClick={onRowClick}
-      {...rest}
       hiddenColumns={hiddenColumns}
+      {...rest}
     />
   );
 };

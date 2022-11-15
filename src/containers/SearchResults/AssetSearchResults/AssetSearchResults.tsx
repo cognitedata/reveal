@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Flex, SegmentedControl } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 
@@ -12,7 +12,6 @@ import {
 import { convertResourceType, SelectableItemsProps } from 'types';
 import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
 import styled from 'styled-components';
-import { EmptyState } from 'components/EmpyState/EmptyState';
 import { useAssetsSearchResultQuery } from 'domain/assets/internal/queries/useAssetsFilteredListQuery';
 import { InternalAssetFilters } from 'domain/assets/internal/types';
 import { TableSortBy } from 'components/ReactTable/V2';
@@ -25,6 +24,7 @@ export const AssetSearchResults = ({
   onClick,
   isTreeEnabled,
   enableAdvancedFilters,
+  activeIds,
   onFilterChange,
   ...extraProps
 }: {
@@ -34,16 +34,23 @@ export const AssetSearchResults = ({
   showCount?: boolean;
   filter: InternalAssetFilters;
   onClick: (item: Asset) => void;
+  activeIds?: (string | number)[];
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & ColumnToggleProps<Asset> &
   SelectableItemsProps) => {
   const api = convertResourceType('asset');
-  const { canFetchMore, fetchMore, items, isFetched } =
-    useResourceResults<Asset>(api, query, filter);
+  const { canFetchMore, fetchMore, items } = useResourceResults<Asset>(
+    api,
+    query,
+    filter
+  );
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
-  const { data, hasNextPage, fetchNextPage, isLoading } =
-    useAssetsSearchResultQuery({ query, assetFilter: filter, sortBy: sortBy });
+  const { data, hasNextPage, fetchNextPage } = useAssetsSearchResultQuery({
+    query,
+    assetFilter: filter,
+    sortBy: sortBy,
+  });
 
   const [currentView, setCurrentView] = useState<string>(() =>
     isTreeEnabled ? 'tree' : 'list'
@@ -52,10 +59,16 @@ export const AssetSearchResults = ({
   const { onSelect, selectionMode, isSelected, ...rest } = extraProps;
   const treeProps = { onSelect, selectionMode, isSelected };
 
-  const loading = enableAdvancedFilters ? isLoading : !isFetched;
-  if (loading) {
-    return <EmptyState isLoading={loading} title="Loading Assets..." />;
-  }
+  const selectedRows = useMemo(() => {
+    if (activeIds) {
+      return activeIds.reduce((previousValue, currentValue) => {
+        return {
+          ...previousValue,
+          [currentValue]: true,
+        };
+      }, {});
+    }
+  }, [activeIds]);
 
   const tableHeaders = (
     <StyledTableHeader justifyContent="space-between" alignItems="center">
@@ -94,16 +107,19 @@ export const AssetSearchResults = ({
 
   return (
     <>
-      {currentView !== 'list' ? tableHeaders : null}
       <KeepMounted isVisible={currentView === 'list'}>
         <AssetNewTable
-          sorting={sortBy}
-          {...rest}
           id="asset-search-results"
           onRowClick={asset => onClick(asset)}
           data={enableAdvancedFilters ? data : items}
           enableSorting
-          onSort={setSortBy}
+          selectedRows={selectedRows}
+          scrollIntoViewRow={
+            activeIds?.length === 1 && currentView === 'list'
+              ? activeIds[0]
+              : undefined
+          }
+          onSort={props => setSortBy(props)}
           showLoadButton
           tableSubHeaders={
             <AppliedFiltersTags
@@ -111,9 +127,10 @@ export const AssetSearchResults = ({
               onFilterChange={onFilterChange}
             />
           }
-          tableHeaders={tableHeaders}
+          tableHeaders={currentView === 'list' ? tableHeaders : undefined}
           hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
           fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
+          {...rest}
         />
       </KeepMounted>
 
@@ -122,12 +139,27 @@ export const AssetSearchResults = ({
           filter={filter}
           query={query}
           onAssetClicked={asset => onClick(asset)}
+          tableHeaders={currentView !== 'list' ? tableHeaders : undefined}
+          enableAdvancedFilters={enableAdvancedFilters}
+          selectedRows={selectedRows}
+          tableSubHeaders={
+            <AppliedFiltersTags
+              filter={filter}
+              onFilterChange={onFilterChange}
+            />
+          }
+          scrollIntoViewRow={
+            activeIds?.length === 1 && currentView !== 'list'
+              ? activeIds[0]
+              : undefined
+          }
           {...treeProps}
         />
       </KeepMounted>
     </>
   );
 };
+
 const StyledTableHeader = styled(Flex)`
   flex: 1;
 `;

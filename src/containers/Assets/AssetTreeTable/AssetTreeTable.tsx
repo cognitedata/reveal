@@ -1,142 +1,184 @@
+import { ColumnDef } from '@tanstack/react-table';
+import { ExpandedState } from '@tanstack/table-core';
 import React, { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 import { Asset } from '@cognite/sdk';
-import styled from 'styled-components';
 import { usePrevious } from 'hooks/CustomHooks';
-import { Loader, Table } from 'components';
 import { SelectableItemsProps, TableStateProps } from 'types';
-import {
-  useRootTree,
-  useSearchTree,
-  useRootPath,
-  ConstructedTreeAsset,
-} from './hooks';
+import { HighlightCell } from '../../../components';
+import { TableV2 as Table } from '../../../components/ReactTable/V2';
+import { useSearchAssetTree } from '../../../domain/assets/service/queries/useSearchAssetTree';
+import { useRootAssetsQuery } from '../../../domain/assets/service/queries/useRootAssetsQuery';
+import { DASH } from '../../../utils';
+import { useRootTree, useSearchTree, useRootPath } from './hooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
-import { InternalAssetFilters } from 'domain/assets';
+import { InternalAssetFilters, InternalAssetTreeData } from 'domain/assets';
+import gt from 'lodash/gt';
+import { Icon } from '@cognite/cogs.js';
 
 export const AssetTreeTable = ({
   filter = {},
   query,
   onAssetClicked,
-  activeIds = [],
-  isSelected,
-  disableScroll,
+  selectedRows,
   hierachyRootId,
-  ...selectionProps
+  tableHeaders,
+  enableAdvancedFilters,
+  scrollIntoViewRow,
+  tableSubHeaders,
 }: {
   filter: InternalAssetFilters;
   query?: string;
   onAssetClicked: (item: Asset) => void;
   hierachyRootId?: number;
   disableScroll?: boolean;
+  tableHeaders?: React.ReactElement;
+  enableAdvancedFilters?: boolean;
+  selectedRows?: Record<string, boolean>;
+  scrollIntoViewRow?: string | number; //Scroll into center row when the selectedRows changes
+  tableSubHeaders?: React.ReactElement;
 } & SelectableItemsProps &
   TableStateProps) => {
-  const [previewId, setPreviewId] = useState<number | undefined>(undefined);
-  const onItemSelected = (asset: Asset) => {
-    onAssetClicked(asset);
-    setPreviewId(asset.id);
-  };
+  const [rootExpanded, setRootExpanded] = useState<ExpandedState>({});
+  const [searchExpanded, setSearchExpanded] = useState<ExpandedState>({});
 
-  // search* variables in this component refers to both /search with and without filter and /list
-  // with a filter. rootOnly is just for /list without filter.
-  const [rootExpandedKeys, setRootExpandedKeys] = useState<number[]>([]);
-  const [searchExpandedKeys, setSearchExpandedKeys] = useState<number[]>([]);
-  const [usedRootPath, setUsedRootPath] = useState(false);
+  const rootExpandedKeys = useMemo(() => {
+    return Object.keys(rootExpanded).reduce((previousValue, currentValue) => {
+      return [...previousValue, Number(currentValue)];
+    }, [] as number[]);
+  }, [rootExpanded]);
 
-  const startFromRoot =
-    (!query || query === '') &&
-    Object.values(filter).filter(Boolean).length === 0;
+  const rootAssetTree = useRootAssetsQuery(rootExpandedKeys);
+  const {
+    data: searchAssetTree,
+    fetchNextPage,
+    hasNextPage,
+  } = useSearchAssetTree({
+    query,
+    assetFilter: filter,
+    sortBy: [],
+  });
 
-  const expandCount = startFromRoot
-    ? rootExpandedKeys.length
-    : searchExpandedKeys.length;
+  const startFromRoot = useMemo(() => {
+    return (
+      (!query || query === '') &&
+      Object.values(filter).filter(Boolean).length === 0
+    );
+  }, [query, filter]);
 
   const columns = [
     {
-      ...Table.Columns.name,
-      width: expandCount > 0 ? 500 : Table.Columns.name.width,
+      header: 'Name',
+      accessorKey: 'name',
+      enableHiding: false,
+      cell: ({ row, getValue }) => (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            paddingLeft: `${row.depth * 2}rem`,
+          }}
+        >
+          {row.getCanExpand() && (
+            <Icon
+              type={row.getIsExpanded() ? 'ChevronUp' : 'ChevronDown'}
+              {...{
+                onClick: event => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  row.toggleExpanded();
+                },
+                style: {
+                  cursor: 'pointer',
+                  marginRight: '8px',
+                  height: '16px',
+                  flexShrink: 0,
+                },
+              }}
+            />
+          )}
+          <HighlightCell
+            text={getValue<string>() || DASH}
+            lines={1}
+            query={query}
+          />
+        </div>
+      ),
     },
     Table.Columns.description,
     Table.Columns.externalId,
     {
-      key: 'childCount',
-      title: startFromRoot ? 'Direct children' : 'Results under asset',
-      cellRenderer: ({ rowData: asset }: { rowData: Asset }) => (
-        <span>
-          {asset.aggregates && !!asset.aggregates.childCount
-            ? asset.aggregates.childCount
-            : 'N/A'}
-        </span>
-      ),
-      width: 300,
+      id: 'childCount',
+      header: startFromRoot ? 'Direct children' : 'Results under asset',
+      accessorKey: 'aggregates',
+      cell: ({ getValue }) => {
+        return (
+          <span>
+            {getValue() && getValue<{ childCount: number }>()?.childCount
+              ? getValue<{ childCount: number }>()?.childCount
+              : DASH}
+          </span>
+        );
+      },
+      size: 300,
     },
     {
-      key: 'threeDModels',
-      title: '3D availability',
-      cellRenderer: ({ rowData: asset }: { rowData: Asset }) => (
-        <ThreeDModelCell assetId={asset.id} />
-      ),
-      width: 300,
+      id: 'threeDModels',
+      header: '3D availability',
+      cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
+      size: 300,
     },
-  ];
+  ] as ColumnDef<InternalAssetTreeData>[];
 
   const previousRootExpandedKeys = usePrevious(rootExpandedKeys);
+
   const { data: rootItems, isFetched: rootFetched } = useRootTree(
     rootExpandedKeys,
     {
       enabled: startFromRoot,
     }
   );
+
   const { data: oldRootItems } = useRootTree(previousRootExpandedKeys, {
     enabled: startFromRoot,
   });
 
-  const { data: searchItems, isFetched: searchFetched } = useSearchTree(
-    filter,
-    query,
-    {
-      enabled: !startFromRoot,
-    }
-  );
-
-  const { id: assetIdString } = useParams<{
-    id: string;
-  }>();
-
-  const assetId = parseInt(assetIdString || '', 10);
-
-  const { data: rootPath, isFetched: rootPathFetched } = useRootPath(assetId, {
-    enabled: !!assetIdString && !!assetId,
+  const { data: searchItems } = useSearchTree(filter, query, {
+    enabled: !startFromRoot,
   });
 
-  // When navigating back to to the preview, or refreshing
-  // with preview open, expand the tree to show the selected asset.
-  useEffect(() => {
-    if (rootPath && rootPathFetched && !usedRootPath) {
-      setRootExpandedKeys(rootPath!);
-      setUsedRootPath(true);
+  const assetId = useMemo(() => {
+    if (selectedRows && Object.keys(selectedRows).length === 1) {
+      return Number(Object.keys(selectedRows)[0]);
     }
-  }, [rootPathFetched, usedRootPath, rootPath]);
+
+    return undefined;
+  }, [selectedRows]);
+
+  const { data: rootPath, isFetched: rootPathFetched } = useRootPath(assetId);
+
+  useEffect(() => {
+    if (startFromRoot && rootPath && rootPathFetched) {
+      setRootExpanded(
+        rootPath.reduce((previousValue, currentValue) => {
+          return {
+            ...previousValue,
+            [currentValue]: true,
+          };
+        }, {})
+      );
+    }
+  }, [rootPathFetched, rootPath, startFromRoot]);
 
   useEffect(() => {
     if (searchItems) {
-      const reducer = (prev: number[], el: ConstructedTreeAsset): number[] => {
-        if (el.children) {
-          const childrenIds = (
-            (el.children || []) as ConstructedTreeAsset[]
-          ).reduce(reducer, prev);
-          return childrenIds.concat([el.id]);
-        }
-        return prev;
-      };
-      const expandedSearchKeys = searchItems.reduce(reducer, [] as number[]);
-      setSearchExpandedKeys(expandedSearchKeys);
+      // this automatically expands all rows
+      setSearchExpanded(true);
     } else {
-      setSearchExpandedKeys([] as number[]);
+      setSearchExpanded({});
     }
-  }, [searchItems, setSearchExpandedKeys]);
+  }, [searchItems]);
 
-  const isLoading = startFromRoot ? !rootFetched : !searchFetched;
+  // const isLoading = startFromRoot ? !rootFetched : !searchFetched;
 
   const assets = useMemo(() => {
     if (startFromRoot) {
@@ -178,80 +220,50 @@ export const AssetTreeTable = ({
     rootItems,
   ]);
 
-  const selectedIds = useMemo(() => {
-    const mergeChildren = (
-      prev: number[],
-      asset: { loading?: boolean; id: number; children?: any[] }
-    ): number[] => {
-      if (asset.loading) {
-        return prev;
+  const getData = () => {
+    if (enableAdvancedFilters) {
+      if (startFromRoot) {
+        return rootAssetTree || [];
       }
-      if (!asset.children) {
-        return prev.concat([asset.id]);
-      }
-      return asset.children
-        .reduce((iter: number[], child) => mergeChildren(iter, child), prev)
-        .concat([asset.id]);
-    };
-    const ids = [...(assets || [])].reduce(mergeChildren, []);
-    return ids.filter(id => isSelected({ type: 'asset', id }));
-  }, [assets, isSelected]);
+
+      return searchAssetTree;
+    }
+
+    return assets as InternalAssetTreeData[];
+  };
 
   return (
-    <Table<Asset>
-      rowEventHandlers={{
-        onClick: ({ rowData: file, event }) => {
-          onItemSelected(file);
-          return event;
-        },
-      }}
-      query={query}
-      previewingIds={previewId ? [previewId] : undefined}
-      activeIds={activeIds}
+    <Table<InternalAssetTreeData>
+      id={'asset-tree-table'}
+      data={getData()}
       columns={columns}
-      fixed
-      expandColumnKey="name"
-      data={assets}
-      selectedIds={selectedIds}
-      expandedRowKeys={startFromRoot ? rootExpandedKeys : searchExpandedKeys}
-      onExpandedRowsChange={ids => {
-        if (startFromRoot) {
-          setRootExpandedKeys(ids as number[]);
-        } else {
-          setSearchExpandedKeys(ids as number[]);
-        }
-      }}
-      emptyRenderer={() => {
-        if (isLoading) {
-          return (
-            <LoaderWrapper>
-              <Loader />
-            </LoaderWrapper>
-          );
-        }
-        return null;
-      }}
-      rowRenderer={({ rowData, cells }) => {
-        // @ts-ignore
-        if (rowData.loading) {
-          return <Loader />;
-        }
-        return cells;
-      }}
-      disableScroll={disableScroll}
-      selectionMode={selectionProps.selectionMode}
-      onRowSelected={item =>
-        selectionProps.onSelect({ type: 'asset', id: item.id })
+      tableHeaders={tableHeaders}
+      enableExpanding
+      selectedRows={selectedRows}
+      showLoadButton={!startFromRoot}
+      scrollIntoViewRow={scrollIntoViewRow}
+      hasNextPage={hasNextPage}
+      fetchMore={fetchNextPage}
+      getCanRowExpand={
+        startFromRoot
+          ? row => {
+              return gt(row.original.aggregates?.childCount, 0);
+            }
+          : undefined
       }
+      getSubrowData={originalRow => {
+        return originalRow.children;
+      }}
+      expandedRows={startFromRoot ? rootExpanded : searchExpanded}
+      onRowClick={onAssetClicked}
+      tableSubHeaders={tableSubHeaders}
+      onRowExpanded={expanded => {
+        if (startFromRoot) {
+          setRootExpanded(expanded);
+        } else {
+          setSearchExpanded(expanded);
+        }
+      }}
     />
   );
 };
-
-const LoaderWrapper = styled.div`
-  display: flex;
-  height: 100%;
-  width: 100%;
-  background: rgba(256, 256, 256, 0.3);
-  align-items: center;
-  justify-content: center;
-`;

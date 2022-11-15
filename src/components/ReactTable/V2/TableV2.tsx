@@ -1,6 +1,7 @@
+import { ExpandedState } from '@tanstack/table-core';
 import update from 'immutability-helper';
 import isEmpty from 'lodash/isEmpty';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import {
   Row,
@@ -9,10 +10,12 @@ import {
   flexRender,
   ColumnDef,
   getSortedRowModel,
+  getExpandedRowModel,
   SortingState,
   OnChangeFn,
 } from '@tanstack/react-table';
 import { DASH, useLocalStorageState } from '../../../utils';
+import { isElementHorizontallyInViewport } from '../../../utils/isElementHorizontallyInViewport';
 import { ColumnToggle } from './ColumnToggle';
 
 import {
@@ -45,20 +48,27 @@ export interface TableProps<T extends Record<string, any>>
   id: string;
   data: T[];
   columns: ColumnDef<T>[];
+  selectedRows?: Record<string, boolean>;
+  expandedRows?: ExpandedState;
   enableSorting?: boolean;
   stickyHeader?: boolean;
   showLoadButton?: boolean;
+  enableExpanding?: boolean;
   tableHeaders?: React.ReactElement;
   tableSubHeaders?: React.ReactElement;
   enableColumnResizing?: boolean;
   hideColumnToggle?: boolean;
   hiddenColumns?: string[];
+  scrollIntoViewRow?: string | number; //Scroll into center row when the selectedRows changes
   onSort?: OnChangeFn<SortingState>;
   sorting?: SortingState;
   onRowClick?: (
     row: T,
     evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
+  getCanRowExpand?: (row: Row<T>) => boolean;
+  getSubrowData?: (originalRow: T, index: number) => undefined | T[];
+  onRowExpanded?: OnChangeFn<ExpandedState>;
 }
 
 export type TableData = Record<string, any>;
@@ -66,11 +76,15 @@ export type TableData = Record<string, any>;
 TableV2.Columns = ResourceTableColumns;
 
 export function TableV2<T extends TableData>({
+  id,
   data,
   columns,
   onRowClick = () => {},
   onSort,
   enableSorting = false,
+  expandedRows,
+  selectedRows,
+  scrollIntoViewRow,
   stickyHeader = true,
   enableColumnResizing = true,
   sorting,
@@ -80,9 +94,12 @@ export function TableV2<T extends TableData>({
   tableHeaders,
   tableSubHeaders,
   fetchMore,
-  id,
   hiddenColumns,
   hideColumnToggle,
+  getCanRowExpand,
+  getSubrowData,
+  enableExpanding,
+  onRowExpanded,
 }: TableProps<T>) {
   const defaultColumn: Partial<ColumnDef<T, unknown>> = useMemo(
     () => ({
@@ -131,6 +148,17 @@ export function TableV2<T extends TableData>({
     }, {})
   );
 
+  const getRowId = React.useCallback(
+    (originalRow: T, index: number, parent?: Row<T>) => {
+      return (
+        originalRow.id ||
+        originalRow.key ||
+        (parent ? [parent.id, index].join('.') : index)
+      );
+    },
+    []
+  );
+
   const { getHeaderGroups, getRowModel, getAllLeafColumns, setColumnOrder } =
     useReactTable<T>({
       data,
@@ -138,18 +166,42 @@ export function TableV2<T extends TableData>({
       state: {
         sorting,
         columnVisibility,
+        expanded: expandedRows,
+        rowSelection: selectedRows || {},
       },
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),
+      getExpandedRowModel: getExpandedRowModel(),
       onSortingChange: onSort,
       onColumnVisibilityChange: setColumnVisibility,
+      onExpandedChange: onRowExpanded,
       enableSorting: enableSorting,
       manualSorting: !!onSort,
       columnResizeMode: 'onChange',
       enableHiding: true,
+      enableExpanding: enableExpanding,
       defaultColumn: defaultColumn,
+      getRowCanExpand: getCanRowExpand,
+      getSubRows: getSubrowData,
+      getRowId: getRowId,
+      autoResetExpanded: false,
       enableSortingRemoval: true,
     });
+
+  useEffect(() => {
+    if (scrollIntoViewRow) {
+      const rowElement = document.querySelector(
+        `[id="${id}"] [id="${scrollIntoViewRow}"]`
+      );
+      if (rowElement && !isElementHorizontallyInViewport(rowElement)) {
+        rowElement.scrollIntoView({
+          behavior: 'auto',
+          block: 'center',
+          inline: 'center',
+        });
+      }
+    }
+  }, [id, scrollIntoViewRow]);
 
   // TODO: replace the drag library with a better one, we should update the order on dropEnd, not while ordering
   const moveCard = useCallback(
@@ -206,7 +258,7 @@ export function TableV2<T extends TableData>({
         <EmptyState body="Please, refine your filters" />
       ) : (
         <ContainerInside>
-          <StyledTable className="data-exploration-table">
+          <StyledTable id={id} className="data-exploration-table">
             <Thead isStickyHeader={stickyHeader}>
               {getHeaderGroups().map(headerGroup => (
                 <Tr key={headerGroup.id}>
@@ -260,6 +312,7 @@ export function TableV2<T extends TableData>({
                     tabIndex={0}
                     onClick={evt => onRowClick(row.original, evt)}
                     onKeyDown={evt => handleKeyDown(evt, row)}
+                    className={row.getIsSelected() ? 'selected' : ''}
                   >
                     {row.getVisibleCells().map(cell => {
                       return (

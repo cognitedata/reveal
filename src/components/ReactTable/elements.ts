@@ -1,9 +1,12 @@
 import { Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
+const defaultRowHeight = '48px';
+
 export const ContainerInside = styled.div`
   height: 100%;
   overflow-y: auto;
+  scroll-margin-top: ${defaultRowHeight};
 `;
 
 export const TableContainer = styled.div`
@@ -90,6 +93,7 @@ export const Thead = styled.div<{ isStickyHeader?: boolean }>`
   top: 0;
   background: inherit;
   z-index: 1;
+  height: ${defaultRowHeight};
 `;
 
 export const Tr = styled.div`
@@ -99,10 +103,22 @@ export const Tr = styled.div`
   width: 100%;
   align-items: center;
   height: 100%;
-  min-height: 48px;
+  min-height: ${defaultRowHeight};
   padding: 0 8px;
 
   background: inherit;
+
+  &.selected {
+    background-color: var(--cogs-surface--interactive--toggled-pressed);
+
+    &:hover {
+      background-color: var(--cogs-surface--interactive--toggled-pressed);
+    }
+
+    &:focus {
+      background-color: var(--cogs-surface--interactive--toggled-pressed);
+    }
+  }
 
   &:hover {
     background: var(--cogs-surface--interactive--hover);
@@ -115,7 +131,7 @@ export const Tr = styled.div`
 
   &:focus {
     outline: none;
-    background-color: var(--cogs-surface--interactive--toggled-pressed);
+    background: var(--cogs-surface--interactive--hover);
   }
 
   ${Thead} &:hover {

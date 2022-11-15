@@ -4,19 +4,19 @@ import {
   useSearch,
   useList,
   retrieveItemsKey,
-  byIdKey,
   listKey,
   listApi,
 } from '@cognite/sdk-react-query-hooks';
 import { InternalAssetFilters } from 'domain/assets';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 import { useQueryClient, useQuery, UseQueryOptions } from 'react-query';
+import { InternalAssetData } from '../../../domain';
 
 export type ConstructedTreeAssetChildren =
   | ConstructedTreeAsset
   | { loading?: boolean };
 
-export type ConstructedTreeAsset = Asset & {
+export type ConstructedTreeAsset = InternalAssetData & {
   children?: ConstructedTreeAssetChildren[];
 };
 
@@ -196,40 +196,21 @@ const constructTree = (
   }));
 };
 
-export const useRootPath = (
-  assetId: any,
-  config?: UseQueryOptions<number[], unknown, number[], (string | number)[]>
-) => {
+export const useRootPath = (assetId: number | undefined) => {
   const sdk = useSDK();
-  const client = useQueryClient();
   return useQuery(
     ['asset-root-path', assetId],
-    async () => {
-      const pathToRoot: number[] = [];
-      let curAssetId = assetId;
-
-      try {
-        while (curAssetId) {
-          // eslint-disable-next-line no-await-in-loop
-          const asset = await client.fetchQuery(
-            byIdKey('assets', curAssetId),
-            // eslint-disable-next-line no-loop-func
-            () => sdk.assets.retrieve([{ id: curAssetId }]),
-            {
-              staleTime: 60 * 1000,
-            }
-          );
-          if (asset[0].parentId) {
-            pathToRoot.push(asset[0].parentId);
-          }
-          curAssetId = asset[0].parentId;
-        }
-      } catch (error) {
-        throw new Error('Something went wrong while fetching assets.');
-      }
-      return pathToRoot;
+    () => {
+      return sdk.assets
+        .retrieve([{ id: assetId! }], {
+          aggregatedProperties: ['path'],
+        })
+        .then(res => {
+          // @ts-ignore
+          return res[0]?.aggregates?.path?.map(path => path?.id);
+        });
     },
-    { ...config }
+    { enabled: !!assetId }
   );
 };
 

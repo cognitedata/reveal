@@ -1,9 +1,11 @@
 import { useAssetsListQuery } from 'domain/assets/service/queries/useAssetsListQuery';
 import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from 'domain/constants';
 import { useMemo } from 'react';
-import { mapFiltersToAssetsAdvancedFilters } from '../transformers/mapFiltersToAssetsAdvancedFilters';
-import { mapInternalFilterToAssetFilter } from '../transformers/mapInternalFilterToAssetFilter';
-import { mapTableSortByToAssetSortFields } from '../transformers/mapTableSortByToAssetSortFields';
+import {
+  mapFiltersToAssetsAdvancedFilters,
+  mapInternalFilterToAssetFilter,
+  mapTableSortByToAssetSortFields,
+} from '../transformers';
 import { InternalAssetFilters } from '../types';
 import { TableSortBy } from 'components/ReactTable/V2';
 import { useAssetsSearchQueryMetadataKeysQuery } from './useAssetsMetadataKeysQuery';

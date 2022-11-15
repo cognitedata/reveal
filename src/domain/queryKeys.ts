@@ -12,6 +12,8 @@ export const queryKeys = {
   assets: () => [...queryKeys.all, 'assets'] as const,
   rootAsset: (assetId: number) =>
     [...queryKeys.assets(), assetId, 'rootParent'] as const,
+  rootAssets: () => [...queryKeys.all, 'rootAssets'],
+  assetChildren: (assetId: number) => [queryKeys.assets(), assetId, 'children'],
   listAssets: (input?: any[]) =>
     [...queryKeys.assets(), ...(input || [])] as const,
   retrieveAsset: (id: number) => [...queryKeys.assets(), 'asset', id] as const,

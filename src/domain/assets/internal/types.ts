@@ -18,6 +18,10 @@ export type InternalAssetData = {
   aggregates?: AssetAggregateResult;
 };
 
+export interface InternalAssetTreeData extends InternalAssetData {
+  children?: InternalAssetTreeData[];
+}
+
 export interface InternalAssetFilters extends InternalCommonFilters {
   labels?: { label?: string; value: string }[];
   metadata?: { key: string; value: string }[];

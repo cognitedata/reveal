@@ -1,4 +1,4 @@
-import { Asset } from '@cognite/sdk/dist/src';
+import { Asset } from '@cognite/sdk';
 import { InternalAssetData } from 'domain/assets/internal/types';
 
 export const normalizeAssets = (assets: Asset[]): InternalAssetData[] => {

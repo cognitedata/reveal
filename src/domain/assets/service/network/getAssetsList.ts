@@ -38,6 +38,7 @@ export const getAssetsList = (
           advancedFilter,
           filter,
           sort,
+          aggregatedProperties: ['path'],
         },
       }
     )
