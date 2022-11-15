@@ -22,7 +22,7 @@ export class Image360Facade<T> {
     this._image360Entities.forEach(entity => (entity.icon.hoverSpriteVisible = visible));
   }
 
-  constructor(private readonly _entityFactory: Image360EntityFactory<T>, private readonly _cacheSize = 10) {
+  constructor(private readonly _entityFactory: Image360EntityFactory<T>) {
     this._image360Entities = [];
     this._rayCaster = new THREE.Raycaster();
     this._image360Cache = new Image360LoadingCache();
