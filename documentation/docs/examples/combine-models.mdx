@@ -68,16 +68,16 @@ const sliceOffset = new THREE.Vector3(0, 20, 0);
 const sliceSize = new THREE.Vector3(100, 10, 100);
 
 const sliceColors = [
-  [200, 0, 0],
-  [0, 200, 0],
-  [0, 0, 200],
-  [200, 200, 0],
-  [200, 0, 200]
+  new THREE.Color(0.8, 0.0, 0.0),
+  new THREE.Color(0.0, 0.8, 0.0),
+  new THREE.Color(0.0, 0.0, 0.8),
+  new THREE.Color(0.8, 0.8, 0.0),
+  new THREE.Color(0.8, 0.0, 0.8)
 ]
 for (let i = 0; i < 5; i++) {
   const sliceCenter = sliceOffset.clone().multiplyScalar(i).add(center);
   const sliceBounds = new THREE.Box3().setFromCenterAndSize(sliceCenter, sliceSize);
-  const sliceColor = [...sliceColors[i]];
+  const sliceColor = sliceColors[i];
 
   addFilteredModel(sliceBounds).then(model => {
     model.setDefaultNodeAppearance({ color: sliceColor });

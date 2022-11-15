@@ -52,7 +52,8 @@ export class PointCloudObjectAppearanceTexture {
   private appearanceToRgba(appearance: CompletePointCloudAppearance): [number, number, number, number] {
     const realAppearance = { ...DefaultPointCloudAppearance, ...appearance };
     const alpha = appearance.visible ? 1 << 0 : 0;
-    return [realAppearance.color[0], realAppearance.color[1], realAppearance.color[2], alpha];
+    const colorBytes = realAppearance.color.toArray().map(c => Math.round(c * 255)) as [number, number, number];
+    return [...colorBytes, alpha];
   }
 
   private setObjectStyle(objectId: number, appearance: CompletePointCloudAppearance): void {

@@ -11,6 +11,12 @@ import { TreeIndexNodeCollection, NodeAppearanceProvider } from '@reveal/cad-sty
 
 import { IndexSet } from '@reveal/utilities';
 
+import { Color } from 'three';
+
+function toByteTuple(color: Color): [number, number, number] {
+  return color.toArray().map(c => Math.round(c * 255)) as [number, number, number];
+}
+
 describe('NodeAppearanceTextureBuilder', () => {
   let styleProvider: NodeAppearanceProvider;
   let builder: NodeAppearanceTextureBuilder;
@@ -44,7 +50,7 @@ describe('NodeAppearanceTextureBuilder', () => {
   });
 
   test('build() applies color override', () => {
-    styleProvider.assignStyledNodeCollection(nodeCollection, { color: [128, 255, 64] });
+    styleProvider.assignStyledNodeCollection(nodeCollection, { color: new Color(0.5, 1.0, 0.25) });
     jest.runAllTimers();
     builder.build();
 
@@ -145,7 +151,7 @@ describe('NodeAppearanceTextureBuilder', () => {
 
   test('add then remove index from set, resets styling', () => {
     const set = new TreeIndexNodeCollection(new IndexSet([0]));
-    const style: NodeAppearance = { color: [127, 128, 192], visible: false };
+    const style: NodeAppearance = { color: new Color(0.497, 0.5, 0.752), visible: false };
     styleProvider.assignStyledNodeCollection(set, style);
     jest.runAllTimers();
 
@@ -163,7 +169,8 @@ describe('NodeAppearanceTextureBuilder', () => {
     // Need to do this here, as we want two elements in our buffer
     const builder = new NodeAppearanceTextureBuilder(2, styleProvider);
 
-    const customColor: [number, number, number] = [127, 128, 129];
+    const customColor = new Color(0.496, 0.5, 0.504);
+    const expectedBytes = toByteTuple(customColor);
 
     const set = new TreeIndexNodeCollection(new IndexSet([0]));
     const style0: NodeAppearance = { color: customColor, visible: true };
@@ -179,14 +186,15 @@ describe('NodeAppearanceTextureBuilder', () => {
     jest.runAllTimers();
     builder.build();
 
-    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)!.slice(0, 4)).toEqual([...customColor, 1]);
+    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)!.slice(0, 4)).toEqual([...expectedBytes, 1]);
   });
 
   test('add custom color then updating superset with color 0, 0, 0 keeps color', () => {
     // Need to do this here, as we want two elements in our buffer
     const builder = new NodeAppearanceTextureBuilder(2, styleProvider);
 
-    const customColor: [number, number, number] = [127, 128, 129];
+    const customColor = new Color(0.496, 0.5, 0.504);
+    const expectedBytes = toByteTuple(customColor);
 
     const set = new TreeIndexNodeCollection(new IndexSet([0]));
     const style0: NodeAppearance = { color: customColor, visible: true };
@@ -196,13 +204,13 @@ describe('NodeAppearanceTextureBuilder', () => {
     builder.build();
 
     const superSet = new TreeIndexNodeCollection(new IndexSet([0, 1]));
-    const style1: NodeAppearance = { color: [0, 0, 0] };
+    const style1: NodeAppearance = { color: new Color(0, 0, 0) };
     styleProvider.assignStyledNodeCollection(superSet, style1);
 
     jest.runAllTimers();
     builder.build();
 
-    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)!.slice(0, 4)).toEqual([...customColor, 1]);
+    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)!.slice(0, 4)).toEqual([...expectedBytes, 1]);
   });
 
   test('setDefaultStyle() triggers needs update', () => {
@@ -214,14 +222,14 @@ describe('NodeAppearanceTextureBuilder', () => {
   });
 
   test('setDefaultStyle() causes computer recompute the next time build() is called', () => {
-    builder.setDefaultAppearance({ color: [244, 133, 66], visible: false });
+    builder.setDefaultAppearance({ color: new Color(0.955, 0.52, 0.26), visible: false });
     builder.build();
 
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([244, 133, 66, 0]);
   });
 
   test('setDefaultStyle() has effect for unset fields in styled sets', () => {
-    builder.setDefaultAppearance({ color: [1, 2, 3], renderGhosted: true });
+    builder.setDefaultAppearance({ color: new Color(0.004, 0.008, 0.011), renderGhosted: true });
     styleProvider.assignStyledNodeCollection(new TreeIndexNodeCollection([0]), { renderGhosted: false });
     jest.runAllTimers();
     builder.build();
