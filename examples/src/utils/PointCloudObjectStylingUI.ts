@@ -131,12 +131,3 @@ export class PointCloudObjectStylingUI {
     ui.add(actions, 'apply').name('Apply');
   }
 };
-
-
-function hexStringToColor(hexColor: string): [number, number, number] {
-  const threeColor = new THREE.Color(hexColor);
-  return [
-    Math.floor(threeColor.r * 255),
-    Math.floor(threeColor.g * 255),
-    Math.floor(threeColor.b * 255)];
-}
