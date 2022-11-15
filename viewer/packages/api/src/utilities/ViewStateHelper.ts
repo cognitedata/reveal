@@ -5,12 +5,16 @@ import * as THREE from 'three';
 
 import { CogniteCadModel } from '@reveal/cad-model';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
-import { NodeCollectionDeserializer } from '@reveal/cad-styling';
+import {
+  fromSerializableNodeAppearance,
+  NodeCollectionDeserializer,
+  toSerializableNodeAppearance
+} from '@reveal/cad-styling';
 
 import { CameraManager } from '@reveal/camera-manager';
-import { NodeAppearance } from '@reveal/cad-styling';
 
 import { CogniteClient } from '@cognite/sdk';
+import { SerializableNodeAppearance } from '@reveal/cad-styling/src/NodeAppearance';
 
 export type ViewerState = {
   camera?: {
@@ -29,10 +33,10 @@ export type ClippingPlanesState = {
 };
 
 export type ModelState = {
-  defaultNodeAppearance: NodeAppearance;
+  defaultNodeAppearance: SerializableNodeAppearance;
   modelId: number;
   revisionId: number;
-  styledSets: { token: string; state: any; options?: any; appearance: NodeAppearance }[];
+  styledSets: { token: string; state: any; options?: any; appearance: SerializableNodeAppearance }[];
 };
 
 export class ViewStateHelper {
@@ -79,13 +83,13 @@ export class ViewStateHelper {
       .filter(model => model instanceof CogniteCadModel)
       .map(model => model as CogniteCadModel)
       .map(model => {
-        const defaultNodeAppearance = model.getDefaultNodeAppearance();
+        const defaultNodeAppearance = toSerializableNodeAppearance(model.getDefaultNodeAppearance());
         const modelId = model.modelId;
         const revisionId = model.revisionId;
 
         const styledCollections = model.styledNodeCollections.map(styledNodeCollection => {
           const { nodeCollection, appearance } = styledNodeCollection;
-          return { ...nodeCollection.serialize(), appearance: appearance };
+          return { ...nodeCollection.serialize(), appearance: toSerializableNodeAppearance(appearance) };
         });
 
         return {
@@ -132,7 +136,7 @@ export class ViewStateHelper {
         })
         .map(async modelState => {
           const { model, state } = modelState;
-          model.setDefaultNodeAppearance(state.defaultNodeAppearance);
+          model.setDefaultNodeAppearance(fromSerializableNodeAppearance(state.defaultNodeAppearance));
 
           await Promise.all(
             state.styledSets.map(async styleFilter => {
@@ -142,7 +146,7 @@ export class ViewStateHelper {
                 options: styleFilter.options
               });
 
-              model.assignStyledNodeCollection(nodeCollection, styleFilter.appearance);
+              model.assignStyledNodeCollection(nodeCollection, fromSerializableNodeAppearance(styleFilter.appearance));
             })
           );
         })

@@ -2,15 +2,17 @@
  * Copyright 2022 Cognite AS
  */
 
+import { Color } from 'three';
+
 export type PointCloudAppearance = {
-  color?: [number, number, number];
+  color?: Color;
   visible?: boolean;
 };
 
 export type CompletePointCloudAppearance = Required<PointCloudAppearance>;
 
 export const DefaultPointCloudAppearance: CompletePointCloudAppearance = {
-  color: [0, 0, 0],
+  color: new Color(0, 0, 0),
   visible: true
 };
 
