@@ -50,6 +50,7 @@ void main()
 
     vec3 rayTarget = v_viewPos;
     vec3 rayDirection = normalize(rayTarget); // rayOrigin is (0,0,0) in camera space
+    float rayTargetDist = length(rayTarget);
 
     vec3 diff = rayTarget - v_centerB;
     vec3 E = diff * v_modelBasis;
@@ -59,7 +60,7 @@ void main()
     float b = dot(E.xy, D.xy);
     float c = dot(E.xy, E.xy) - v_radius*v_radius;
 
-    // Calculate a dicriminant of the above quadratic equation
+    // Calculate a discriminant of the above quadratic equation
     float d = b*b - a*c;
 
     // d < 0.0 means the ray hits outside an infinitely long cone
@@ -83,10 +84,13 @@ void main()
     vec3 planeBCenter = vec3(0.0, 0.0, v_planeB.w);
     vec3 planeBNormal = v_planeB.xyz;
 
+    float normalFactor = 1.0;
+
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
         theta > v_angles[1] + v_angles[0] ||
-        isClipped(appearance, p)
+        isClipped(appearance, p) ||
+        rayTargetDist + dist < 0.0
        ) {
         // Missed the first point, check the other point
         dist = max(dist1, dist2);
@@ -96,16 +100,17 @@ void main()
         p = rayTarget + dist*rayDirection;
         if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
             dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-            theta > v_angles[1] + v_angles[0] || isClipped(appearance, p)
+            theta > v_angles[1] + v_angles[0] || isClipped(appearance, p) ||
+            rayTargetDist + dist < 0.0
            ) {
             // Missed the other point too
             discard;
         }
+        normalFactor = -1.0;
     }
 
-    //TODO - christjt 2022/10/10: This seems wrong when hitting inner surface
     vec3 p_local = p - v_centerB;
-    vec3 normal = normalize(p_local - v_modelBasis[2] * dot(p_local, v_modelBasis[2]));
+    vec3 normal = normalize(p_local - v_modelBasis[2] * dot(p_local, v_modelBasis[2])) * normalFactor;
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);

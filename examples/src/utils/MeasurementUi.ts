@@ -1,7 +1,7 @@
+import { THREE } from '@cognite/reveal';
+import dat from "dat.gui";
 import { Cognite3DViewer } from "@cognite/reveal";
 import { MeasurementTool } from "@cognite/reveal/tools";
-import dat from "dat.gui";
-import { THREE } from '@cognite/reveal';
 
 export class MeasurementUi {
   private readonly _viewer: Cognite3DViewer;
@@ -13,7 +13,8 @@ export class MeasurementUi {
     lineWidth: 0.01,
     color: 0xff8746,
     allMeasurement: false,
-    showAllMeasurementLabels: true
+    showAllMeasurementLabels: true,
+    showAllMeasurements: true
   };
 
   private measurement = {
@@ -56,6 +57,10 @@ export class MeasurementUi {
       this.state.showAllMeasurementLabels = showAllMeasurementLabels;
       this._measurementTool.setMeasurementLabelsVisible(showAllMeasurementLabels);
     }));
+    this._guiController.push(this._gui.add(this.state, 'showAllMeasurements').name('Show Measurement').onChange(showAllMeasurements => {
+      this.state.showAllMeasurements = showAllMeasurements;
+      this._measurementTool.visible(showAllMeasurements);
+    }));
   }
 
   private removeGUI() {
@@ -72,7 +77,8 @@ export class MeasurementUi {
       lineWidth: this.state.lineWidth,
       color: new THREE.Color(this.state.color),
       allMeasurement: this.state.allMeasurement,
-      showAllMeasurementLabels: this.state.showAllMeasurementLabels
+      showAllMeasurementLabels: this.state.showAllMeasurementLabels,
+      showAllMeasurments: this.state.showAllMeasurements
     }
     this._measurementTool.setLineOptions(options);
   }

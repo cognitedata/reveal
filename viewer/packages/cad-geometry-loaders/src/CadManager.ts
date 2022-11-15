@@ -83,6 +83,8 @@ export class CadManager {
         sector.levelOfDetail === LevelOfDetail.Detailed
       ) {
         cadModel.batchGeometry(sector.geometryBatchingQueue, sector.metadata.id);
+      } else if (sector.levelOfDetail === LevelOfDetail.Discarded) {
+        cadModel.removeBatchedSectorGeometries(sector.metadata.id);
       }
 
       const sectorNodeParent = cadModel.rootSector;
@@ -130,9 +132,8 @@ export class CadManager {
     return this._needsRedraw;
   }
 
-  updateCamera(camera: THREE.PerspectiveCamera): void {
-    this._cadModelUpdateHandler.updateCamera(camera);
-    this._needsRedraw = true;
+  updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {
+    this._cadModelUpdateHandler.updateCamera(camera, cameraInMotion);
   }
 
   get clippingPlanes(): THREE.Plane[] {

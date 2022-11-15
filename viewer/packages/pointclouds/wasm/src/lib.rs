@@ -37,15 +37,15 @@ pub fn assign_points(
     init();
 
     let mut point_vec = parse_inputs::parse_points(&input_points, input_point_offset);
-    let bounding_box: BoundingBox = input_bounding_box
-        .into_serde::<InputBoundingBox>()
-        .map_err(|serde_error| {
-            format!(
-                "Got error while deserializing bounding box: {}",
-                serde_error
-            )
-        })?
-        .into();
+    let bounding_box: BoundingBox =
+        serde_wasm_bindgen::from_value::<InputBoundingBox>(input_bounding_box.into())
+            .map_err(|serde_error| {
+                format!(
+                    "Got error while deserializing bounding box: {}",
+                    serde_error
+                )
+            })?
+            .into();
 
     let shape_vec = parse_inputs::try_parse_objects(input_objects)?;
 

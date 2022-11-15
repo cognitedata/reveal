@@ -3,7 +3,7 @@
  */
 
 /**
- * Units supported by {@link Cognite3DModel}.
+ * Units supported by {@link CogniteCadModel}.
  */
 export type WellKnownUnit =
   | 'Meters'

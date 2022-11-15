@@ -4,23 +4,22 @@
 const path = require('path');
 const RemovePlugin = require('remove-files-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
-const copyPkgJsonPlugin = require('copy-pkg-json-webpack-plugin');
 const packageJSON = require('./package.json');
 const webpack = require('webpack');
 const exec = require('child_process').exec;
+const TerserPlugin = require('terser-webpack-plugin');
 
 const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
 const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
 
 module.exports = env => {
   const development = env?.development ?? false;
+  const useWorkerSourceMaps = env?.workerSourceMaps === 'true';
 
   return {
     mode: development ? 'development' : 'production',
     entry: {
-      index: './index.ts',
-      tools: './tools.ts',
-      'extensions/datasource': './extensions/datasource.ts'
+      index: './index.ts'
     },
     target: 'web',
     resolve: {
@@ -94,22 +93,31 @@ module.exports = env => {
         type: 'umd'
       }
     },
-    devtool: development ? 'eval-source-map' : 'source-map',
+    devtool: false,
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: /node_modules/
     },
+    optimization: {
+      minimizer: [
+        new TerserPlugin({
+          extractComments: false
+        })
+      ]
+    },
     plugins: [
-      new copyPkgJsonPlugin({
-        remove: development
-          ? ['devDependencies', 'scripts', 'workspaces', 'husky']
-          : ['devDependencies', 'scripts', 'private', 'workspaces', 'husky']
-      }),
+      development
+        ? new webpack.EvalSourceMapDevToolPlugin({
+            test: /\.ts$/,
+            exclude: useWorkerSourceMaps ? /^$/ : /\.worker\.ts$/
+          })
+        : new webpack.SourceMapDevToolPlugin({
+            filename: '[file].map'
+          }),
       new webpack.DefinePlugin({
         'process.env': JSON.stringify({
           VERSION: packageJSON.version,
-          MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD,
-          IS_DEVELOPMENT_MODE: development
+          MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD
         })
       }),
       new RemovePlugin({
@@ -118,7 +126,7 @@ module.exports = env => {
             {
               folder: 'dist',
               method: absoluteItemPath => {
-                return new RegExp(/\.worker.js$/, 'm').test(absoluteItemPath);
+                return new RegExp(/\.worker\.js(\.map)?$/, 'm').test(absoluteItemPath);
               }
             }
           ]

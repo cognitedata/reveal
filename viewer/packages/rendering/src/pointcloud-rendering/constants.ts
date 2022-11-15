@@ -14,5 +14,6 @@ export const UPDATE_THROTTLE_TIME_MS = 100;
 export const PERSPECTIVE_CAMERA = 'PerspectiveCamera';
 export const COLOR_BLACK = new Color(0, 0, 0);
 export const COLOR_WHITE = new Color(1, 1, 1);
+export const DEFAULT_EDL_NEIGHBOURS_COUNT = 8;
 export const OBJECT_STYLING_TEXTURE_WIDTH = 256;
 export const OBJECT_STYLING_TEXTURE_HEIGHT = 256;

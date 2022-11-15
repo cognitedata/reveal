@@ -1,7 +1,6 @@
 {
   "name": "@cognite/reveal",
   "version": "4.0.0-alpha.0",
-  "private": true,
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "repository": {
@@ -17,8 +16,22 @@
     "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
   ],
   "sideEffects": false,
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "./tools": {
+      "types": "./dist/api-entry-points/tools.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./extensions/datasource": {
+      "types": "./dist/api-entry-points/datasource.d.ts",
+      "default": "./dist/index.js"
+    },
+    ".": {
+      "types": "./dist/api-entry-points/core.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "workspaces": [
     "packages/*"
   ],
@@ -28,8 +41,7 @@
     "build:wasm-test": "yarn workspaces foreach run run-wasm-pack build --target nodejs ./wasm",
     "build:watch": "yarn run clean && yarn run build:wasm && webpack --env development --watch",
     "build:prod": "yarn run clean && yarn run build:wasm && webpack --env production",
-    "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
-    "clean": "shx rm -rf dist/ && yarn run mkdist",
+    "clean": "shx rm -rf dist/ && shx mkdir -p dist",
     "clean:wasm": "cargo clean --manifest-path ./Cargo.toml",
     "retarget-types": "tsc-alias -p tsconfig.webpack.json -v true",
     "test": "yarn run test:wasm && yarn run test:ts",
@@ -49,60 +61,57 @@
     "ws:serve": "yarn run build:wasm && webpack-dev-server --config packages/webpack.config.js",
     "ws:test": "cd $INIT_CWD && jest --runInBand",
     "ws:test:wasm": "cd $INIT_CWD && wasm-pack test --chrome --headless ./wasm",
+    "ws:update-cargo-index": "cargo update --dry-run",
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
     "@tweenjs/tween.js": "18.6.4",
     "@types/draco3dgltf": "1.4.0",
-    "@types/three": "0.144.0",
+    "@types/three": "0.146.0",
     "assert": "2.0.0",
     "async-mutex": "0.4.0",
     "comlink": "4.3.1",
     "glslify": "7.1.1",
     "glslify-import": "3.1.0",
     "lodash": "4.17.21",
-    "loglevel": "1.8.0",
+    "loglevel": "1.8.1",
     "mixpanel-browser": "2.45.0",
     "path-browserify": "1.0.1",
     "proj4": "2.8.0",
     "rxjs": "7.5.7",
     "skmeans": "0.11.3",
-    "three": "0.144.0",
+    "three": "0.146.0",
     "three-stdlib": "2.17.3"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.30.0",
-    "@cognite/sdk": "7.9.6",
+    "@cognite/sdk": "7.11.0",
     "@cognite/sdk-core": "4.4.0",
     "@types/dat.gui": "0.7.7",
-    "@types/expect-puppeteer": "5.0.1",
+    "@types/expect-puppeteer": "5.0.2",
     "@types/glob": "8.0.0",
-    "@types/jest": "29.1.2",
-    "@types/jest-environment-puppeteer": "5.0.2",
+    "@types/jest": "29.2.2",
+    "@types/jest-environment-puppeteer": "5.0.3",
     "@types/jest-image-snapshot": "5.1.0",
-    "@types/jsdom": "20.0.0",
-    "@types/lodash": "4.14.186",
+    "@types/jsdom": "20.0.1",
+    "@types/lodash": "4.14.188",
     "@types/mixpanel-browser": "2.38.0",
-    "@types/node": "16.11.68",
-    "@types/offscreencanvas": "2019.7.0",
+    "@types/node": "18.11.3",
     "@types/proj4": "2.5.2",
     "@types/random-seed": "0.3.3",
     "@types/skmeans": "0.11.3",
     "@types/stats": "0.16.30",
     "@types/tween.js": "18.5.1",
-    "@typescript-eslint/eslint-plugin": "5.40.1",
-    "@typescript-eslint/parser": "5.40.1",
-    "concurrently": "7.4.0",
-    "copy-pkg-json-webpack-plugin": "0.0.40",
-    "copy-webpack-plugin": "11.0.0",
-    "core-js": "3.25.5",
+    "@typescript-eslint/eslint-plugin": "5.42.1",
+    "@typescript-eslint/parser": "5.42.1",
+    "concurrently": "7.5.0",
     "cross-env": "7.0.3",
     "cross-var": "1.1.0",
     "dat.gui": "0.7.9",
-    "eslint": "8.25.0",
+    "eslint": "8.26.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-header": "3.1.1",
-    "eslint-plugin-jsdoc": "39.3.6",
+    "eslint-plugin-jsdoc": "39.3.13",
     "eslint-plugin-lodash": "7.4.0",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-unused-imports": "2.0.0",
@@ -111,44 +120,38 @@
     "glob": "8.0.3",
     "glslify-loader": "2.0.0",
     "html-webpack-plugin": "5.5.0",
-    "husky": "8.0.1",
-    "jest": "29.1.2",
+    "jest": "29.2.2",
     "jest-canvas-mock": "2.4.0",
-    "jest-environment-jsdom": "29.1.2",
+    "jest-environment-jsdom": "29.2.2",
     "jest-extended": "3.1.0",
     "jest-image-snapshot": "5.2.0",
     "jest-puppeteer": "6.1.1",
-    "jsdom": "20.0.1",
-    "lint-staged": "13.0.3",
+    "jsdom": "20.0.2",
     "moq.ts": "9.0.2",
     "nock": "13.2.9",
     "prettier": "2.7.1",
     "process": "0.11.10",
-    "puppeteer": "18.2.1",
+    "puppeteer": "19.2.2",
     "random-seed": "0.3.0",
     "raw-loader": "4.0.2",
     "remove-files-webpack-plugin": "1.5.0",
     "resize-observer-polyfill": "1.5.1",
-    "rimraf": "3.0.2",
-    "run-script-os": "1.1.6",
     "shx": "0.3.4",
     "stats.js": "0.17.0",
     "ts-jest": "29.0.3",
     "ts-loader": "9.4.1",
-    "tsc-alias": "1.7.0",
+    "tsc-alias": "1.7.1",
     "typescript": "4.8.4",
     "wasm-pack": "0.10.3",
     "webpack": "5.74.0",
-    "webpack-bundle-analyzer": "4.6.1",
     "webpack-cli": "4.10.0",
     "webpack-dev-server": "4.11.1",
-    "webpack-log": "3.0.2",
     "webpack-node-externals": "3.0.0",
     "whatwg-fetch": "3.6.2",
     "workerize-loader": "2.0.2"
   },
   "peerDependencies": {
-    "@cognite/sdk": "^7.7.0",
+    "@cognite/sdk": "7.11.0",
     "@cognite/sdk-core": "^4.1.0"
   },
   "glslify": {
@@ -156,9 +159,7 @@
       "glslify-import"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn run lint"
-    }
-  }
+  "files": [
+    "./dist/*"
+  ]
 }

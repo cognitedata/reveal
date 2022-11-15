@@ -5,20 +5,19 @@
 import Stats from 'stats.js';
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import { THREE } from '@cognite/reveal';
+import { CogniteModel, THREE } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
   Cognite3DViewer,
   Cognite3DViewerOptions,
-  Cognite3DModel,
+  CogniteCadModel,
   CognitePointCloudModel,
   CameraControlsOptions,
   TreeIndexNodeCollection,
-  CogniteModelBase,
   DefaultCameraManager
 } from '@cognite/reveal';
-import { DebugCameraTool, ExplodedViewTool, AxisViewTool, Corner } from '@cognite/reveal/tools';
+import { DebugCameraTool, ExplodedViewTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -88,6 +87,8 @@ export function Viewer() {
         });
       }
 
+      const edlEnabled = (urlParams.get('edl') ?? 'true') === 'true';
+
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,
@@ -97,7 +98,11 @@ export function Viewer() {
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         continuousModelStreaming: true,
         pointCloudEffects: {
-          pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined)
+          pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined),
+          edlOptions: edlEnabled ? {
+            strength: parseFloat(urlParams.get('edlStrength') ?? '0.5'),
+            radius: parseFloat(urlParams.get('edlRadius') ?? '2.2'),
+          } : 'disabled'
         }
       };
 
@@ -157,6 +162,7 @@ export function Viewer() {
           ghostAllNodes: false,
           hideAllNodes: false
         },
+        viewerSize: 'fullScreen',
         showCameraTool: new DebugCameraTool(viewer),
         renderMode: 'Color',
         controls: {
@@ -174,14 +180,14 @@ export function Viewer() {
 
 
       const totalBounds = new THREE.Box3();
-      function handleModelAdded(model: CogniteModelBase) {
+      function handleModelAdded(model: CogniteModel) {
         const bounds = model.getModelBoundingBox();
         totalBounds.expandByPoint(bounds.min);
         totalBounds.expandByPoint(bounds.max);
         clippingUi.updateWorldBounds(totalBounds);
 
         viewer.loadCameraFromModel(model);
-        if (model instanceof Cognite3DModel) {
+        if (model instanceof CogniteCadModel) {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, viewer, model);
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         } else if (model instanceof CognitePointCloudModel) {
@@ -224,6 +230,36 @@ export function Viewer() {
       debugStatsGui.add(guiState.debug.stats, 'geometries').name('Geometries');
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
+
+      const viewerSize = gui.addFolder('Viewer size');
+      viewerSize.add(guiState, 'viewerSize', ['fullScreen', 'halfScreen', 'quarterScreen']).name('Size').onFinishChange(value => {
+        switch (value) {
+          case 'fullScreen':
+            canvasWrapperRef.current!.style.position = 'relative';
+            canvasWrapperRef.current!.style.width = '100%';
+            canvasWrapperRef.current!.style.height = '100%';
+            canvasWrapperRef.current!.style.flexGrow = '1';
+            canvasWrapperRef.current!.style.left = '0px';
+            canvasWrapperRef.current!.style.top = '0px';
+            break;
+          case 'halfScreen':
+            canvasWrapperRef.current!.style.position = 'relative';
+            canvasWrapperRef.current!.style.width = '50%';
+            canvasWrapperRef.current!.style.height = '100%';
+            canvasWrapperRef.current!.style.flexGrow = '1';
+            canvasWrapperRef.current!.style.left = '25%';
+            canvasWrapperRef.current!.style.top = '0px';
+            break;
+          case 'quarterScreen':
+            canvasWrapperRef.current!.style.position = 'absolute';
+            canvasWrapperRef.current!.style.flexGrow = '0.5';
+            canvasWrapperRef.current!.style.width = '50%';
+            canvasWrapperRef.current!.style.height = '50%';
+            canvasWrapperRef.current!.style.left = '25%';
+            canvasWrapperRef.current!.style.top = '25%';
+            break;
+        }
+      });
 
       viewer.on('sceneRendered', (sceneRenderedEventArgs) => {
         guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
@@ -371,5 +407,5 @@ export function Viewer() {
       viewer?.dispose();
     };
   }, []);
-  return <CanvasWrapper ref={canvasWrapperRef} />;
+  return <CanvasWrapper ref={canvasWrapperRef} />
 }

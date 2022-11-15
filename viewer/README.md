@@ -112,16 +112,19 @@ If your package depends on another local package, it must be explicitly declared
 The `workspace` keyword declares that the dependency is a local package and should never be fetched from NPM.
 And the `':*'` syntax means that it should just grab any version available. See [this](https://yarnpkg.com/features/workspaces) for more documentation on yarn workspaces.
 
-If you want to add Rust/Webassembly code to a package, you should add the following script in `package.json`:
+If you want to add Rust/Webassembly code to a package, you can add the following script in `package.json`:
 
 ```json
 {
   "scripts": {
-    "run-wasm-pack": "wasm-pack"
+    "run-wasm-pack": "yarn run ws:update-cargo-index && wasm-pack"
   }
 }
 ```
-and let the Cargo crate reside in `<package-name>/wasm`. Then the crate will automatically be built and tested by the `build` and `test` scripts in the workspace root respectively.
+and let the Cargo crate reside in `<package-name>/wasm`.
+Then the crate will automatically be built and tested by the `build` and `test` scripts in the workspace root respectively.
+The `ws:update-cargo-index` step ensures that the local `crates.io` index has been updated before running build.
+Otherwise, the index update will be executed in a quiet manner, and the command may appear to hang for several minutes.
 
 When writing tests in Rust, the tests must be annotated with the `#[wasm_bindgen_test]` attribute, instead of the conventional `#[test]`, and `wasm-bindgen-test` must be added as a (dev-)dependency. All tests are run as part of the normal `yarn test` script in the root folder, but can also be run manually with e.g. `wasm-pack test --chrome --headless` in the relevant `wasm` folder.
 
@@ -149,6 +152,12 @@ Add the following script to your package's `package.json`:
 
 Running the command `yarn start` will host a localhost site with a template HTML that includes the `/app/index.ts` script that has been transpiled to javascript.
 To see an example of this check out the `packages/camera-manager` package.
+
+## Debugging
+
+### Worker source maps
+
+When bundling source maps with inlined web workers, the bundle size grows huge. Therefore source maps for workers are disabled by default. In order to add source maps to workers, pass `--env workerSourceMaps=true` to the `yarn build` script.
 
 ## Creating and running visual tests
 

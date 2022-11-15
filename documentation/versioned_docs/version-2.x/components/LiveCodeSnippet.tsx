@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
-import { PrismTheme } from 'prism-react-renderer';
 import clsx from 'clsx';
 
 import styles from './styles.module.css';
@@ -14,27 +13,24 @@ const defaultCodeTheme = oceanicNext;
 const customScope =
   typeof window === 'undefined'
     ? {
-        urls: [],
-      }
+      urls: [],
+    }
     : require('./customScope').customScope;
 
 export type LiveCodeSnippetProps = {
   children: string;
-  theme: PrismTheme;
-  transformCode: (code: string) => string;
-  scope?: Record<string, any>;
 };
 
 export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
   const scope = {
     ...customScope,
     ...Object.keys(customScope.urls).reduce((acc, key) => {
-      acc[key] = useBaseUrl(customScope.urls[key]); // that's the hook I needed
+      acc[key] = useBaseUrl(customScope.urls[key]);
       return acc;
     }, {} as any),
   };
 
-  const { transformCode, children, theme } = props;
+  const { children } = props;
   return (
     <LiveProvider
       code={children}
@@ -62,11 +58,11 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
                 resetCognite3DModel(model);
               }
             } else {
-              alert('Login is required to run examples');
+              alert('Live code examples are not supported for this version of the documentation');
               return;
             }
             // User code starts here!
-            ${transformCode ? transformCode(code) : code}`;
+            ${code}`;
         return `
           <button
             type="button"
@@ -78,7 +74,7 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
         `;
       }}
       scope={{ ...scope }}
-      theme={theme || defaultCodeTheme}
+      theme={defaultCodeTheme}
     >
       <div
         className={clsx(

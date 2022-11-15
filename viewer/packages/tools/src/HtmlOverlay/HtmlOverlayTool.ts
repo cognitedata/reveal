@@ -156,11 +156,11 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   }
 
   private get viewerCamera(): THREE.PerspectiveCamera {
-    return this._viewer.getCamera();
+    return this._viewer.cameraManager.getCamera();
   }
 
-  private get viewerRenderer(): THREE.WebGLRenderer {
-    return this._viewer.renderer;
+  private get viewerCanvas(): HTMLCanvasElement {
+    return this._viewer.canvas;
   }
 
   constructor(viewer: Cognite3DViewer, options?: HtmlOverlayToolOptions) {
@@ -302,7 +302,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this.updateNewElementSizes();
 
     const camera = this.viewerCamera;
-    const renderer = this.viewerRenderer;
+    const canvas = this._viewer.canvas;
     const { camPos, camNormal, point, nearPlane, farPlane, position2D } = this._preallocatedVariables;
 
     // Determine near/far plane to cull based on distance. Note! We don't cull outside the "walls"
@@ -324,10 +324,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
       const insideCameraPlanes =
         nearPlane.distanceToPoint(position3D) >= 0.0 && farPlane.distanceToPoint(position3D) <= 0.0;
-      // TODO 2021-11-19 larsmoa: Replace worldToViewportCoordinates() with something that doesn't cause
-      // canvas.getClientBoundingRect() to be called when PR #1700 is done.
-      // https://github.com/cognitedata/reveal/pull/1700
-      const { x, y } = worldToViewportCoordinates(renderer, camera, position3D);
+      const { x, y } = worldToViewportCoordinates(canvas, camera, position3D);
 
       if (insideCameraPlanes) {
         state.position2D.set(x, y);
@@ -362,7 +359,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   }
 
   private commitDOMChanges() {
-    const canvas = this.viewerRenderer.domElement;
+    const canvas = this.viewerCanvas;
     // Compute once as updating styles below will cause (unnecessary)
     // recomputation which slows down the process
     const offsetLeft = canvas.offsetLeft;
@@ -411,7 +408,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private clusterByOverlapInScreenSpace(createClusterElementCallback: HtmlOverlayCreateClusterDelegate) {
     type Element = HtmlOverlayElement & { htmlElement: HTMLElement };
 
-    const canvas = this.viewerRenderer.domElement;
+    const canvas = this.viewerCanvas;
     const canvasBounds = domRectToBox2(canvas.getBoundingClientRect());
     const canvasSize = canvasBounds.getSize(new THREE.Vector2());
     canvasBounds.set(new THREE.Vector2(0, 0), canvasSize);
@@ -454,7 +451,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   }
 
   private addComposite(htmlElement: HTMLElement, position: THREE.Vector2) {
-    const canvas = this.viewerRenderer.domElement;
+    const canvas = this.viewerCanvas;
     htmlElement.style.visibility = 'visible';
     htmlElement.style.left = `${position.x + canvas.offsetLeft}px`;
     htmlElement.style.top = `${position.y + canvas.offsetTop}px`;

@@ -15,7 +15,8 @@ import {
   disposeOfAllEventListeners,
   PointerEventDelegate,
   PointerEventData,
-  fitCameraToBoundingBox
+  fitCameraToBoundingBox,
+  clickOrTouchEventOffset
 } from '@reveal/utilities';
 
 /**
@@ -560,9 +561,13 @@ export class DefaultCameraManager implements CameraManager {
       // Added because cameraControls are disabled when doing picking, so
       // preventDefault could be not called on wheel event and produce unwanted scrolling.
       e.preventDefault();
+      const domElementRelativeOffset = clickOrTouchEventOffset(e, this._domElement);
 
       const currentTime = performance.now();
-      const currentMousePosition = new THREE.Vector2(e.offsetX, e.offsetY);
+      const currentMousePosition = new THREE.Vector2(
+        domElementRelativeOffset.offsetX,
+        domElementRelativeOffset.offsetY
+      );
 
       const onWheelTimeDelta = currentTime - lastWheelEventTime;
 
@@ -593,7 +598,13 @@ export class DefaultCameraManager implements CameraManager {
         // await is not working as expected because event itself is not awaited.
         try {
           this._controls.enabled = false;
-          newTarget = await this.calculateNewTarget(e);
+          const pointerEventData = {
+            offsetX: domElementRelativeOffset.offsetX,
+            offsetY: domElementRelativeOffset.offsetY,
+            button: e.button
+          };
+
+          newTarget = await this.calculateNewTarget(pointerEventData);
         } finally {
           this._controls.enabled = this._enabledCopy;
         }
