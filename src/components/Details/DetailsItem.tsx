@@ -40,11 +40,18 @@ export const DetailsItem = ({
 
         {Boolean(value) &&
           (link ? (
-            <A href={link} target="_blank" rel="noopener">
+            <A
+              href={link}
+              target="_blank"
+              rel="noopener"
+              className="details-item-value"
+            >
               {value}
             </A>
           ) : (
-            <Body level={2}>{value}</Body>
+            <Body level={2} className="details-item-value">
+              {value}
+            </Body>
           ))}
         {!Boolean(value) && <MutedBody level={2}>{DASH}</MutedBody>}
       </DetailsItemContainer>
@@ -159,7 +166,7 @@ export const LabelsItem = ({ labels = [] }: { labels?: string[] }) => {
       <DetailsItem
         name="Labels"
         value={
-          <Flex wrap="wrap" gap={8}>
+          <Flex wrap="wrap" gap={8} justifyContent="flex-end">
             {labels.map(label => (
               <Label variant="unknown" size="medium" key={label}>
                 {label}
@@ -208,6 +215,10 @@ const DetailsItemContainer = styled.div`
   margin-bottom: 16px;
   padding-top: 5px;
   align-items: flex-start;
+
+  .details-item-value {
+    word-break: break-word;
+  }
 `;
 
 const Spacer = styled.div`

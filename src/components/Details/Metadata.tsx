@@ -105,7 +105,6 @@ const MetadataHeader = styled.div`
 `;
 
 const MetadataTableContainer = styled.div`
-  max-width: 900px;
   white-space: pre;
   overflow: auto;
 
