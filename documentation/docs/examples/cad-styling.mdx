@@ -11,7 +11,7 @@ be compromised of several attributes to customize the visualization through the 
 
 | Field                       | Field type                  | Description                                           |
 | --------------------------- | --------------------------- | ----------------------------------------------------- |
-| `color`                     | `[number, number, number]?` | Override color by setting RGB values in range [0,255], e.g `[255, 0, 0]` (red). `[0, 0, 0]` means no override.  |
+| `color`                     | `THREE.Color?`              | Override color, e.g `new THREE.Color(1, 0, 0)` (red). All components set to zero means no override.  |
 | `visible`                   | `boolean?`                  | When false, the node(s) will be invisible             |
 | `renderInFront`             | `boolean?`                  | When true, the node(s) are rendered in front of other geometry |
 | `renderGhosted`             | `boolean?`                  | When true, the node(s) are rendered in transparent gray |
@@ -79,7 +79,7 @@ in the order the are added.
 
 // you can start from binding styles to an empty set and populate it later
 const set1 = new TreeIndexNodeCollection(NumericRange.createFromInterval(0, 100));
-model.assignStyledNodeCollection(set1, { color: [ 255, 0, 0 ] });
+model.assignStyledNodeCollection(set1, { color: new THREE.Color(1, 0, 0) });
 const set2 = new TreeIndexNodeCollection(NumericRange.createFromInterval(50, 150));
 model.assignStyledNodeCollection(set2, { outlineColor: NodeOutlineColor.White });
 
@@ -117,7 +117,7 @@ model.setDefaultNodeAppearance(DefaultNodeAppearance.Highlighted);
 By creating custom styles you have a powerful tool to customize how the model looks.
 
 ```js runnable
-model.setDefaultNodeAppearance({ color: [0, 200, 0], outlineColor: NodeOutlineColor.Orange });
+model.setDefaultNodeAppearance({ color: new THREE.Color(0, 0.8, 0), outlineColor: NodeOutlineColor.Orange });
 ```
 
 Note that `outlineColor` restricts the choice of color to a predefined set. This is
