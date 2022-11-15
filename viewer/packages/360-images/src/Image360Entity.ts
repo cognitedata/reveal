@@ -83,9 +83,9 @@ export class Image360Entity {
     imageContainer.visible = false;
   }
 
-  public async load360Image(): Promise<THREE.Mesh> {
+  public async load360Image(): Promise<void> {
     if (this._imageContainer !== undefined) {
-      return this._imageContainer;
+      return;
     }
 
     this._imageContainer = this._imageProvider
@@ -95,7 +95,6 @@ export class Image360Entity {
     imageContainer.applyMatrix4(this._transform);
     this._sceneHandler.addCustomObject(imageContainer);
     imageContainer.visible = false;
-    return this._imageContainer;
   }
 
   public async unload360Image(): Promise<void> {

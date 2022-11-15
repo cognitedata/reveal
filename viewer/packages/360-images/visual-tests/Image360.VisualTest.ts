@@ -27,7 +27,6 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     camera.updateProjectionMatrix();
 
     const { facade, entities } = await this.setup360Images(cogniteClient, sceneHandler);
-    const size = new THREE.Vector2(renderer.domElement.clientWidth, renderer.domElement.clientHeight);
 
     const guiData = {
       opacity: 1.0
@@ -40,8 +39,12 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     renderer.domElement.addEventListener('mousemove', event => {
       entities.forEach(p => (p.icon.hoverSpriteVisible = false));
       const { x, y } = event;
-      const { x: width, y: height } = size;
-      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(x, y, width, height);
+      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
+        x,
+        y,
+        renderer.domElement.clientWidth,
+        renderer.domElement.clientHeight
+      );
       const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
       if (entity === undefined) {
         this.render();
@@ -54,8 +57,12 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
-      const { x: width, y: height } = size;
-      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(x, y, width, height);
+      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
+        x,
+        y,
+        renderer.domElement.clientWidth,
+        renderer.domElement.clientHeight
+      );
       const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
       if (entity !== undefined) {
         await entity.activate360Image();
@@ -128,7 +135,6 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }>;
     entities: Image360Entity[];
   }> {
-    console.log('asd');
     const cdf360ImageProvider = new Cdf360ImageEventProvider(cogniteClient);
     const image360Factory = new Image360EntityFactory(cdf360ImageProvider, sceneHandler);
     const image360Facade = new Image360Facade(image360Factory);
