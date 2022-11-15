@@ -63,7 +63,10 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const objectId = 89;
 
     const objectSet = new AnnotationIdPointCloudObjectCollection([annotationId]);
-    const stylableObjectSet = new StyledPointCloudObjectCollection(objectSet, { color: new Color('black'), visible: false });
+    const stylableObjectSet = new StyledPointCloudObjectCollection(objectSet, {
+      color: new Color('black'),
+      visible: false
+    });
 
     const objectsMaps = {
       annotationToObjectIds: new Map<number, number>([[annotationId, objectId]]),

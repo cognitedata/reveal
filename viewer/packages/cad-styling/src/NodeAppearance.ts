@@ -71,6 +71,37 @@ export type NodeAppearance = {
   readonly prioritizedForLoadingHint?: number;
 };
 
+/**
+ * Type that represents a {@link NodeAppearance} in a serializable format
+ */
+export type SerializableNodeAppearance = {
+  /**
+   * Color as an RGB number tuple, with values in the range [0, 255]
+   */
+  readonly color?: [number, number, number];
+  /**
+   * Visibility, @see {@link NodeAppearance}
+   */
+  readonly visible?: boolean;
+  /**
+   * Whether to render in front, @see {@link NodeAppearance}
+   */
+  readonly renderInFront?: boolean;
+  /**
+   * Whether to render ghosted, @see {@link NodeAppearance}
+   */
+  readonly renderGhosted?: boolean;
+  /**
+   * Outline color, @see {@link NodeAppearance}
+   */
+  readonly outlineColor?: NodeOutlineColor;
+
+  /**
+   * Prioritized loading hint, @see {@link NodeAppearance}
+   */
+  readonly prioritizedForLoadingHint?: number;
+};
+
 const OutlinedAppearance: NodeAppearance = {
   visible: true,
   outlineColor: NodeOutlineColor.White
