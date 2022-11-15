@@ -358,6 +358,7 @@ function SearchPage() {
                     }
                     filter={assetFilter}
                     {...commonProps}
+                    isTreeEnabled
                   />
                 )}
                 {currentResourceType === 'file' && (
