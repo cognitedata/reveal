@@ -63,7 +63,7 @@
     "@tanstack/match-sorter-utils": "^8.1.1",
     "@tanstack/react-query": "^4.10.1",
     "@tanstack/react-query-devtools": "^4.10.1",
-    "@tanstack/react-table": "^8.5.13",
+    "@tanstack/react-table": "^8.5.24",
     "@turf/centroid": "6.0.2",
     "@turf/clean-coords": "^6.0.1",
     "@turf/helpers": "^6.1.4",
