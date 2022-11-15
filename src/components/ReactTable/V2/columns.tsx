@@ -3,8 +3,8 @@ import {
   Button,
   Dropdown,
   Flex,
+  Label,
   Menu,
-  Tag,
   Tooltip,
 } from '@cognite/cogs.js';
 import { DataSet, Asset } from '@cognite/sdk';
@@ -65,9 +65,9 @@ export const ResourceTableColumns: ResourceTableHashMap2 = {
       <Flex gap={2} wrap="wrap">
         {getValue<{ externalId: string }[]>()?.map(label => (
           <Tooltip content={label.externalId} key={uniqueId()}>
-            <StyledTag style={{ display: 'block' }}>
+            <StyledLabel variant="unknown" size="small">
               {label.externalId}
-            </StyledTag>
+            </StyledLabel>
           </Tooltip>
         ))}
       </Flex>
@@ -308,7 +308,9 @@ export const ResourceTableColumns: ResourceTableHashMap2 = {
       <Flex gap={2} wrap="wrap">
         {getValue<string[]>()?.map((label: string) => (
           <Tooltip content={label} key={uniqueId()}>
-            <StyledTag style={{ display: 'block' }}>{label}</StyledTag>
+            <StyledLabel variant="unknown" size="small">
+              {label}
+            </StyledLabel>
           </Tooltip>
         ))}
       </Flex>
@@ -323,7 +325,8 @@ const ellipsistyles = css`
   white-space: nowrap;
 `;
 
-const StyledTag = styled(Tag)`
+const StyledLabel = styled(Label)`
+  display: block;
   ${ellipsistyles};
 `;
 
