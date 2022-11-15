@@ -25,6 +25,7 @@ export class PointCloudManager {
   private readonly _pointCloudFactory: PointCloudFactory;
   private readonly _materialManager: PointCloudMaterialManager;
   private readonly _pointCloudGroupWrapper: PotreeGroupWrapper;
+  private readonly _potreeInstance: Potree;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _modelSubject: Subject<{ modelIdentifier: ModelIdentifier; operation: 'add' | 'remove' }> =
@@ -44,7 +45,8 @@ export class PointCloudManager {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
     this._materialManager = materialManager;
-    this._pointCloudGroupWrapper = new PotreeGroupWrapper(potreeInstance);
+    this._potreeInstance = potreeInstance
+    this._pointCloudGroupWrapper = new PotreeGroupWrapper();
 
     scene.add(this._pointCloudGroupWrapper);
 
@@ -54,7 +56,7 @@ export class PointCloudManager {
         this.updatePointClouds(cam);
       });
 
-    this._budgetSubject.next(this._pointCloudGroupWrapper.pointBudget);
+    this._budgetSubject.next(this._potreeInstance.pointBudget);
 
     this._renderer = renderer;
   }
@@ -72,11 +74,11 @@ export class PointCloudManager {
   }
 
   get pointBudget(): number {
-    return this._pointCloudGroupWrapper.pointBudget;
+    return this._potreeInstance.pointBudget;
   }
 
   set pointBudget(points: number) {
-    this._pointCloudGroupWrapper.pointBudget = points;
+    this._potreeInstance.pointBudget = points;
     this._budgetSubject.next(points);
   }
 
@@ -94,7 +96,7 @@ export class PointCloudManager {
   }
 
   updatePointClouds(camera: THREE.PerspectiveCamera): void {
-    this._pointCloudGroupWrapper.potreeInstance.updatePointClouds(
+    this._potreeInstance.updatePointClouds(
       this._pointCloudGroupWrapper.pointClouds,
       camera,
       this._renderer
