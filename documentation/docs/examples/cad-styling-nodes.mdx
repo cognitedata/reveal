@@ -56,7 +56,7 @@ retrieve nodes of a certain type. In the following example, only pipes are accep
 const allPipes = new PropertyFilterNodeCollection(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyledNodeCollection(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(allPipes, { renderGhosted: false, color: new THREE.Color(0.15, 0.8, 0.08) } );
 ```
 
 ## Partitioning requests
@@ -93,7 +93,7 @@ const stuMechNodes = new PropertyFilterNodeCollection(sdk, model);
 stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
 
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyledNodeCollection(stuMechNodes, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(stuMechNodes, { renderGhosted: false, color: new THREE.Color(0.15, 0.8, 0.08) } );
 ```
 
 Combining two separate queries requires the use of `IntersectionNodeCollection`:
@@ -112,7 +112,7 @@ combined.add(mechNodes);
 combined.add(stuNodes);
 
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyledNodeCollection(combined, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(combined, { renderGhosted: false, color: new THREE.Color(0.15, 0.8, 0.08) } );
 ```
 
 The two approaches has their pros and cons. Often it will be faster to combine the
