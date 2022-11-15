@@ -23,6 +23,7 @@ export {
   ClusteredAreaCollection,
   NodeAppearanceProvider,
   NodeAppearance,
+  SerializableNodeAppearance,
   NodeOutlineColor,
   DefaultNodeAppearance,
   NodeCollection,
