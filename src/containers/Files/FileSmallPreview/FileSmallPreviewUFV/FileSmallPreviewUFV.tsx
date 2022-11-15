@@ -146,6 +146,8 @@ export const FileSmallPreviewUFV = ({
         <InfoCell noBorders>
           <Preview>
             <FilePreviewUFV
+              applicationId={'FileSmallPreviewUFV'}
+              id={`file-small-preview-${file.id}`}
               fileId={file.id}
               creatable={false}
               contextualization={false}

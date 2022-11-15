@@ -48,6 +48,6 @@ const GeneralDetailsContent = styled.div`
   /* Adjusting for the 8px grid-gap as well */
   grid-template-columns: repeat(
     auto-fit,
-    minmax(max(500px, calc(100% / var(--max-columns) - 16px)), 1fr)
+    minmax(max(330px, calc(100% / var(--max-columns) - 16px)), 1fr)
   );
 `;

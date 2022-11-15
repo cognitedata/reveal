@@ -39,10 +39,9 @@ import {
 import getCogniteAnnotationFromUfvAnnotation from './getCogniteAnnotationFromUfvAnnotation';
 import { getContainerId } from './utils';
 
-const UNIFIED_VIEWER_CONTAINER_ID = 'unified-viewer-container';
-const UNIFIED_VIEWER_APPLICATION_ID = 'data-exploration';
-
 export type FilePreviewUFVProps = {
+  id: string;
+  applicationId: string;
   fileId: number;
   creatable: boolean;
   contextualization: boolean;
@@ -69,6 +68,8 @@ const NoopToolProps = {
 };
 
 export const FilePreviewUFV = ({
+  id,
+  applicationId,
   fileId,
   creatable,
   contextualization,
@@ -308,8 +309,8 @@ export const FilePreviewUFV = ({
     <FullHeightWrapper>
       <FullHeightWrapper>
         <ReactUnifiedViewer
-          applicationId={UNIFIED_VIEWER_APPLICATION_ID}
-          id={UNIFIED_VIEWER_CONTAINER_ID}
+          applicationId={applicationId}
+          id={id}
           setRef={ref => setUnifiedViewerRef(ref)}
           container={container}
           annotations={displayAnnotations}
@@ -359,6 +360,7 @@ const FullHeightWrapper = styled.div`
 `;
 
 const SidebarWrapper = styled.div`
+  box-sizing: content-box;
   height: 100%;
   max-width: 360px;
   overflow: auto;

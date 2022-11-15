@@ -101,7 +101,7 @@ export const response = [
         '{"xMin":0.6479739313649885,"yMin":0.28594249201277955,"xMax":0.689768095185634,"yMax":0.36741214057507987}',
       CDF_ANNOTATION_file_external_id: 'PH-ME-P-0153-001.pdf',
       CDF_ANNOTATION_resource_type: 'file',
-      // CDF_ANNOTATION_resource_type: 'asset',
+      CDF_ANNOTATION_resource_id: '333',
       CDF_ANNOTATION_status: 'verified',
       CDF_ANNOTATION_version: '5',
       CDF_ANNOTATION_page: '1',

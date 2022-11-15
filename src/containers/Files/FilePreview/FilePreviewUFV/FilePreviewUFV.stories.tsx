@@ -9,6 +9,9 @@ import pdfFileUrl from '../pnid.pdf';
 import longPdfFileUrl from '../multipageExample.pdf';
 import testImageUrl from './test-image.png';
 
+const VIEWER_ID = 'FilePreviewUFV-story';
+const APPLICATION_ID = 'data-exploration-components-storybook';
+
 const pdfFile = {
   id: 111,
   externalId: 'PH-ME-P-0153-001.pdf',
@@ -119,6 +122,8 @@ export const WithZoomControls: ComponentStory<typeof FilePreviewUFV> = args => (
   <FilePreviewUFV {...args} />
 );
 WithZoomControls.args = {
+  id: VIEWER_ID,
+  applicationId: APPLICATION_ID,
   fileId: pdfFile.id,
 };
 
@@ -126,6 +131,8 @@ export const UnsupportedFileType: ComponentStory<
   typeof FilePreviewUFV
 > = args => <FilePreviewUFV {...args} />;
 UnsupportedFileType.args = {
+  id: VIEWER_ID,
+  applicationId: APPLICATION_ID,
   fileId: unsupportedFileTypeFile.id,
 };
 
@@ -133,6 +140,8 @@ export const FileWithoutMimeType: ComponentStory<
   typeof FilePreviewUFV
 > = args => <FilePreviewUFV {...args} />;
 FileWithoutMimeType.args = {
+  id: VIEWER_ID,
+  applicationId: APPLICATION_ID,
   fileId: fileWithoutMimeType.id,
 };
 
@@ -140,6 +149,8 @@ export const WithPagination: ComponentStory<typeof FilePreviewUFV> = args => (
   <FilePreviewUFV {...args} />
 );
 WithPagination.args = {
+  id: VIEWER_ID,
+  applicationId: APPLICATION_ID,
   fileId: longPDF.id,
 };
 
@@ -147,5 +158,7 @@ export const Images: ComponentStory<typeof FilePreviewUFV> = args => (
   <FilePreviewUFV {...args} />
 );
 Images.args = {
+  id: VIEWER_ID,
+  applicationId: APPLICATION_ID,
   fileId: 333,
 };
