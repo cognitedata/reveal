@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Flex, Icon } from '@cognite/cogs.js';
-import { Loader, Select, SpacedRow, TableProps } from 'components';
+import { Loader, MultiSelect, SpacedRow, TableProps } from 'components';
 import { SelectableItemsProps, ResourceType, ResourceItem } from 'types';
 import {
   FileInfo,
@@ -67,7 +67,7 @@ export const RelatedResourcesLoader = <T extends Resource>({
       <Flex alignItems="center">
         <h4>Relationship Labels:</h4>
         <SelectWrapper>
-          <Select
+          <MultiSelect
             options={relationshipLabelOptions.map(option => ({
               label: option,
               value: option,

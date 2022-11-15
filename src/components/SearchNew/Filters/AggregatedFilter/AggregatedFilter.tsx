@@ -35,7 +35,7 @@ export const AggregatedFilterV2 = <T,>({
         creatable
         className="aggregated-filter-select"
         {...reactSelectCogsStylingProps}
-        value={value ? { value, label: value } : null}
+        value={value ? { value, label: value } : undefined}
         onChange={item => {
           if (item) {
             const tmpValue = (item as { value: string }).value;
@@ -46,7 +46,7 @@ export const AggregatedFilterV2 = <T,>({
         }}
         options={[...sources].map(el => ({
           value: el,
-          label: el,
+          label: String(el),
         }))}
       />
     </>

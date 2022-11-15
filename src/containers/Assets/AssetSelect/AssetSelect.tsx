@@ -6,12 +6,12 @@ import {
   useList,
 } from '@cognite/sdk-react-query-hooks';
 import { useDebounce } from 'use-debounce';
-import { Select } from 'components';
+import { MultiSelect } from 'components';
 import { Props, OptionTypeBase } from 'react-select';
 import { Theme } from '@cognite/cogs.js';
 import { OptionValue } from 'components/SearchNew/Filters/types';
 
-export type AssetSelectProps = Props<OptionTypeBase> & {
+export type AssetSelectProps = Omit<Props<OptionTypeBase>, 'theme'> & {
   onAssetSelected?: (input?: OptionValue<number>[]) => void;
   selectedAssetIds?: number[];
   rootOnly?: boolean;
@@ -92,7 +92,7 @@ export const AssetSelect = ({
   };
 
   return (
-    <Select
+    <MultiSelect
       isClearable
       styles={{
         container: style => ({

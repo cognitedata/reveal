@@ -1,12 +1,11 @@
 import React from 'react';
-import { Tooltip } from '@cognite/cogs.js';
+import { OptionType, Tooltip } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
-import { Select } from 'components';
+import { MultiSelect } from 'components';
 import { ResourceType } from 'types';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { OptionValue } from '../types';
-import { isArray } from 'lodash';
 
 export const LabelFilterV2 = ({
   resourceType,
@@ -29,9 +28,9 @@ export const LabelFilterV2 = ({
   //   .map(({ value }) => labels.find(el => el.externalId === value))
   //   .filter(el => !!el) as LabelDefinition[];
 
-  const setLabel = (newValue?: OptionValue<string>[]) => {
+  const setLabel = (newValue?: OptionType<string>[]) => {
     const newFilters = newValue && newValue.length > 0 ? newValue : undefined;
-    setValue(newFilters);
+    setValue(newFilters as OptionValue<string>[]);
   };
 
   return (
@@ -42,19 +41,15 @@ export const LabelFilterV2 = ({
     >
       <>
         <FilterFacetTitle>Labels</FilterFacetTitle>
-        <Select
+        <MultiSelect
           options={labels.map(el => ({
             label: el.name,
             value: el.externalId,
           }))}
           cogsTheme="grey"
           isDisabled={isError || !allowLabels}
-          onChange={newValue => {
-            if (isArray(newValue)) {
-              setLabel(newValue ? newValue : undefined);
-            }
-          }}
-          value={value}
+          onChange={setLabel}
+          value={value as OptionType<string>[]}
           isMulti
           isSearchable
           isClearable

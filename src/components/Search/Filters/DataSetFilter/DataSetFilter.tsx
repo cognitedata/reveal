@@ -2,7 +2,7 @@ import React from 'react';
 import { Body, Tooltip } from '@cognite/cogs.js';
 import { DataSet, IdEither } from '@cognite/sdk';
 import { OptionsType, OptionTypeBase } from 'react-select';
-import { Select } from 'components';
+import { MultiSelect } from 'components';
 import { ResourceType, convertResourceType } from 'types';
 import { useRelevantDatasets, DataSetWCount } from 'hooks/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
@@ -59,8 +59,8 @@ export const DataSetFilter = ({
         >
           Data set
         </Body>
-        <Select
-          options={validDatasets?.map(formatOption)}
+        <MultiSelect
+          options={validDatasets?.map(formatOption) || []}
           isDisabled={isError}
           onChange={newValue => {
             setDataSetFilter(
@@ -69,7 +69,10 @@ export const DataSetFilter = ({
                 : undefined
             );
           }}
-          value={currentDataSets?.map(el => ({ label: el.name, value: el.id }))}
+          value={currentDataSets?.map(el => ({
+            label: String(el.name),
+            value: el.id,
+          }))}
           isMulti
           isSearchable
           isClearable

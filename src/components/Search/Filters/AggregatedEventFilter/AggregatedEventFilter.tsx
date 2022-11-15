@@ -63,7 +63,7 @@ export const AggregatedEventFilter = ({
       </Body>
       <Select
         creatable
-        value={value ? { value, label: value } : null}
+        value={value ? { value, label: value } : undefined}
         onChange={item => {
           if (item) {
             handleUpdate((item as { value: string }).value);
@@ -73,7 +73,7 @@ export const AggregatedEventFilter = ({
         }}
         options={[...data].map(({ value: eventType }) => ({
           value: eventType,
-          label: eventType,
+          label: String(eventType),
         }))}
       />
     </>

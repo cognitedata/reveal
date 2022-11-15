@@ -6,15 +6,15 @@ import { OptionType } from '@cognite/cogs.js';
 
 import { BaseSelect, BaseSelectProps } from './BaseSelect';
 
-export interface SelectProps<ValueType>
+export interface MultiSelectProps<ValueType>
   extends Exclude<BaseSelectProps<ValueType>, 'isMulti'> {
-  value?: OptionType<ValueType>;
+  value?: OptionType<ValueType>[];
   onChange?: (
-    value: OptionType<ValueType>,
+    value: OptionType<ValueType>[],
     action: ActionMeta<OptionType<ValueType>>
   ) => void;
 }
 
-export const Select = <ValueType,>(props: SelectProps<ValueType>) => {
-  return <BaseSelect {...props} isMulti={false} />;
+export const MultiSelect = <ValueType,>(props: MultiSelectProps<ValueType>) => {
+  return <BaseSelect {...props} isMulti />;
 };

@@ -1,14 +1,15 @@
 import React from 'react';
-import { Tooltip } from '@cognite/cogs.js';
+import { OptionType, Tooltip } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
-import { Select } from 'components';
+import { MultiSelect } from 'components';
 import { ResourceType, convertResourceType } from 'types';
 import { DataSetWCount } from 'hooks/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { useResourceTypeDataSetAggregate } from 'domain/dataSets/internal/hooks/useResourceTypeDataSetAggregate';
 import { FilterFacetTitle } from '../FilterFacetTitle';
-import { isArray } from 'lodash';
+
 import { OptionValue } from '../types';
+import isEmpty from 'lodash/isEmpty';
 
 const formatOption = (dataset: DataSetWCount) => {
   const name = dataset?.name || '';
@@ -37,10 +38,10 @@ export const DataSetFilterV2 = ({
     }
   );
 
-  const setDataSetFilter = (newValue?: OptionValue<number>[]) => {
+  const setDataSetFilter = (newValue?: OptionType<number>[]) => {
     // const newFilters =
     //   ids && ids.length > 0 ? ids?.map(id => ({ id })) : undefined;
-    setValue(newValue);
+    setValue(newValue as OptionValue<number>[]);
   };
 
   const { data: datasetOptions, isError } = useResourceTypeDataSetAggregate(
@@ -58,17 +59,16 @@ export const DataSetFilterV2 = ({
     >
       <>
         <FilterFacetTitle>Data set</FilterFacetTitle>
-        <Select
-          options={datasetOptions?.map(formatOption)}
+        <MultiSelect
+          options={datasetOptions?.map(formatOption) || []}
           isDisabled={isError}
           onChange={newValue => {
-            if (isArray(newValue)) {
-              setDataSetFilter(
-                newValue && newValue.length > 0 ? newValue : undefined
-              );
-            }
+            setDataSetFilter(isEmpty(newValue) ? undefined : newValue);
           }}
-          value={currentDataSets?.map(el => ({ label: el.name, value: el.id }))}
+          value={currentDataSets?.map(el => ({
+            label: String(el.name),
+            value: el.id,
+          }))}
           isMulti
           isSearchable
           isClearable

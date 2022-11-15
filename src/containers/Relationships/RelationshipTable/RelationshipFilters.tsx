@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select } from 'components';
+import { MultiSelect } from 'components';
 import { OptionsType, OptionTypeBase } from 'react-select';
 import styled from 'styled-components';
 import { RelationshipTypeLabels } from 'hooks';
@@ -16,7 +16,7 @@ export function RelationshipFilters({
 }: RelationshipFiltersProps) {
   return (
     <SelectWrapper>
-      <Select
+      <MultiSelect
         options={options.map(option => ({
           label: option,
           value: option,

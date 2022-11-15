@@ -22,6 +22,7 @@ export * from './ListItem/ListItem';
 export * from './Loader/Loader';
 export * from './ResultCount/ResultCount';
 export * from './Select/Select';
+export * from './Select/MultiSelect';
 export * from './Table';
 export * from './TimeDisplay/TimeDisplay';
 export * from './ErrorFeedback/ErrorFeedback';

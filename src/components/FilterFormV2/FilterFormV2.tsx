@@ -191,11 +191,7 @@ const FilterItem = ({
     <>
       <FilterItemWrapper>
         <div className="key">
-          <Select<{
-            label: string;
-            value: string;
-            disabled?: boolean;
-          }>
+          <Select
             creatable
             {...reactSelectCogsStylingProps}
             styles={{
@@ -209,7 +205,9 @@ const FilterItem = ({
             placeholder="Key"
             disabled={!!initialKey}
             value={
-              selectedKey ? { label: selectedKey, value: selectedKey } : null
+              selectedKey
+                ? { label: selectedKey, value: selectedKey }
+                : undefined
             }
             onChange={item => {
               setSelectedKey(item ? (item as { value: string }).value : null);
@@ -220,11 +218,7 @@ const FilterItem = ({
           />
         </div>
         <div className="value">
-          <Select<{
-            label: string;
-            value: string;
-            disabled?: boolean;
-          }>
+          <Select
             creatable
             {...reactSelectCogsStylingProps}
             styles={{
@@ -240,14 +234,10 @@ const FilterItem = ({
             value={
               selectedValue
                 ? { label: selectedValue, value: selectedValue }
-                : null
+                : undefined
             }
             onChange={item => {
-              if (item === undefined) {
-                setSelectedValue(null);
-              } else {
-                setSelectedValue((item as { value: string })?.value);
-              }
+              setSelectedValue(item?.value || null);
             }}
             options={selectedKey ? getMetadataValues(selectedKey) : []}
             isLoading={isFetching}

@@ -57,7 +57,7 @@ export const AggregatedEventFilterV2 = ({
       <FilterFacetTitle>{title}</FilterFacetTitle>
       <Select
         creatable
-        value={value ? { value, label: value } : null}
+        value={value ? { value, label: value } : undefined}
         onChange={item => {
           if (item) {
             handleUpdate((item as { value: string }).value);
@@ -68,7 +68,7 @@ export const AggregatedEventFilterV2 = ({
         {...reactSelectCogsStylingProps}
         options={[...data].map(({ value: eventType }) => ({
           value: eventType,
-          label: eventType,
+          label: String(eventType),
         }))}
       />
     </>
