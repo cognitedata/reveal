@@ -67,6 +67,19 @@ export function worldToViewportCoordinates(
   return out;
 }
 
+export function worldToViewportCoordinatesfromRenderer(
+  canvas: HTMLCanvasElement,
+  camera: THREE.PerspectiveCamera,
+  position3D: THREE.Vector3,
+  out: THREE.Vector3 = new THREE.Vector3()
+): THREE.Vector3 {
+  worldToNormalizedViewportCoordinates(camera, position3D, out);
+
+  out.x = Math.round(out.x * (canvas.width / window.devicePixelRatio));
+  out.y = Math.round(out.y * (canvas.height / window.devicePixelRatio));
+  return out;
+}
+
 /**
  * Converts a pixel coordinate to normalized device coordinate (in range [-1, 1])
  */

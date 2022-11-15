@@ -1069,24 +1069,72 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
     }
+    console.log('image resolution: ' + width + ' x ' + height);
+    console.log('canvas: ' + this.canvas.width + ' x ' + this.canvas.height);
 
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new Vector2());
+    console.log('original: ' + originalWidth + ' x ' + originalHeight);
 
     try {
-      //Adjust for pixel ratio to compensate for adjustments done later in renderer.setSize
-      const pixelRatio = this._renderer.getPixelRatio();
-      if (pixelRatio > 0) {
-        width = width / pixelRatio;
-        height = height / pixelRatio;
-      }
-
-      this.renderer.setSize(width, height);
       const screenshotCamera = this.cameraManager.getCamera().clone() as THREE.PerspectiveCamera;
-      if (!includeUI) adjustCamera(screenshotCamera, width, height);
+      adjustCamera(screenshotCamera, width, height);
+
+      const pixelRatio = this._renderer.getPixelRatio();
+      console.log('pixelRatio: ' + pixelRatio);
+
+      //Adjust for pixel ratio to compensate for adjustments done later in renderer.setSize
+      //if this is not done this.canvas.toDataURL() will return an image with wrong resolution
+      const adjustedWidth = width / pixelRatio;
+      const adjustedHeight = height / pixelRatio;
+      console.log('adjusted: ' + adjustedWidth + ' x ' + adjustedHeight);
+
+      this.renderer.setSize(adjustedWidth, adjustedHeight);
       this.revealManager.render(screenshotCamera);
       if (!includeUI) return this.canvas.toDataURL();
 
-      const domCanvas = await html2canvas(this.domElement);
+      //Force update of overlay elements
+      this._events.sceneRendered.fire({
+        frameNumber: -1,
+        renderTime: -1,
+        renderer: this.renderer,
+        camera: screenshotCamera
+      });
+
+      //??? Debug stuff
+      const temp = this.renderer.getSize(new Vector2());
+      console.log('post getSize: ' + temp.x + ' x ' + temp.y);
+      console.log('inner: ' + innerWidth + '  x  ' + innerHeight);
+
+      //???
+      const pixelRatioWindow = window.devicePixelRatio;
+      console.log('pixelRatio: ' + pixelRatioWindow);
+
+      //??? Left and right padding * pixelRatioWindow
+      const paddingX = this.domElement.getBoundingClientRect().x * 2 * pixelRatioWindow;
+      console.log('paddingX: ' + paddingX);
+
+      //??? Still do not know where 0.05 comes from
+      const paddingY = height * 0.05;
+      console.log('paddingY: ' + paddingY);
+
+      console.log('windowWidth: ' + (width / pixelRatioWindow + paddingX));
+      console.log('windowHeight: ' + (height / pixelRatioWindow + paddingY));
+
+      //Create custom canvas to force correct size of result image
+      const drawCanvas = document.createElement('canvas');
+      drawCanvas.width = width;
+      drawCanvas.height = height;
+      console.log('drawCanvas: ' + width + ' x ' + height);
+      console.log('renderCanvas: ' + this.canvas.width + ' x ' + this.canvas.height);
+
+      //Draw screenshot
+      const domCanvas = await html2canvas(this.domElement, {
+        canvas: drawCanvas,
+        width: width, //The width of the canvas. This does nothing, but is nice for debuging as it will show background color in areas that are not filled by the domElement.
+        height: height, //The height of the canvas. This does nothing, but is nice for debuging as it will show background color in areas that are not filled by the domElement.
+        windowWidth: width / pixelRatioWindow + paddingX, //Window width to use when rendering Element. If not set innerWidth is used.
+        windowHeight: height / pixelRatioWindow + paddingY //Window height to use when rendering Element. If not set innerHeight is used.
+      });
       return domCanvas.toDataURL();
     } finally {
       this.renderer.setSize(originalWidth, originalHeight);
