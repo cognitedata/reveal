@@ -24,6 +24,8 @@ import { PointerEventDelegate } from '@cognite/reveal';
 import { usePrevious } from '@cognite/data-exploration';
 import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
 import { ThreeDContext } from './ThreeDContext';
+import { toast } from '@cognite/cogs.js';
+import RevealErrorToast from './RevealErrorToast';
 
 type ChildProps = {
   threeDModel?: Cognite3DModel;
@@ -91,16 +93,25 @@ export function Reveal({
     }
   }, [setViewer, viewer]);
 
-  const { data: models } = useQuery(
+  const { data: models, error } = useQuery(
     ['reveal-model', modelId, revisionId],
     async () => {
       if (!viewer) {
         return Promise.reject('Viewer missing');
       }
-      const model = await viewer.addModel({
-        modelId: modelId,
-        revisionId,
-      });
+      let model;
+
+      try {
+        model = await viewer.addModel({
+          modelId: modelId,
+          revisionId,
+        });
+      } catch {
+        return Promise.reject({
+          message:
+            'The selected 3D Model is not supported and can not be loaded.',
+        });
+      }
 
       viewer.loadCameraFromModel(model);
       if (initialViewerState) {
@@ -123,6 +134,15 @@ export function Reveal({
       cacheTime: 0,
     }
   );
+
+  useEffect(() => {
+    if (error) {
+      toast.error(<RevealErrorToast error={error as { message?: string }} />, {
+        toastId: 'reveal-model-load-error',
+        autoClose: false,
+      });
+    }
+  }, [error]);
 
   const { threeDModel } = models || {
     threeDModel: undefined,

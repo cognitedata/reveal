@@ -77,7 +77,7 @@ export const useDefault3DModelRevision = (
   >
 ) => {
   return useRevisions(modelId!, {
-    select: revisions =>
+    select: (revisions = []) =>
       revisions.find(r => r.published) ||
       revisions.reduce((prev, current) =>
         prev.createdTime > current.createdTime ? prev : current
@@ -95,7 +95,7 @@ export const useRevisionIndex = (
   >
 ) => {
   return useRevisions(modelId, {
-    select: revisions => revisions.findIndex(r => r.id === revisionId),
+    select: (revisions = []) => revisions.findIndex(r => r.id === revisionId),
     ...opts,
   });
 };

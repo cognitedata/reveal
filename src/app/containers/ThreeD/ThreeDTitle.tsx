@@ -17,10 +17,15 @@ const { Item } = Menu;
 export default function ThreeDTitle({ id }: { id: number }) {
   const navigate = useNavigate();
   const sdk = useSDK();
-  const { data: apiThreeDModel, error } = use3DModel(id);
-  const { data: revision } = useDefault3DModelRevision(id);
+  const { data: apiThreeDModel, error: modelError, isSuccess } = use3DModel(id);
+  const { data: revision, error: revisionError } = useDefault3DModelRevision(
+    id,
+    {
+      enabled: isSuccess,
+    }
+  );
   const { data: revisionIndex } = useRevisionIndex(id, revision?.id!, {
-    enabled: !!revision?.id,
+    enabled: !!revision?.id && isSuccess,
   });
 
   const goBackFallback = createLink('/explore/search/threeD');
@@ -37,6 +42,7 @@ export default function ThreeDTitle({ id }: { id: number }) {
         .then(r => r.data),
     {
       getNextPageParam: r => r.nextCursor,
+      enabled: isSuccess,
     }
   );
 
@@ -54,6 +60,7 @@ export default function ThreeDTitle({ id }: { id: number }) {
     [data]
   );
 
+  const error = modelError || revisionError;
   if (error) {
     return (
       <>
