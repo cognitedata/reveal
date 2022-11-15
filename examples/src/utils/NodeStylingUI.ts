@@ -126,7 +126,6 @@ export class NodeStylingUI {
     };
     function updateState() {
       state.color = colorToHexString(appearance.color);
-      console.log('State color = ', state.color);
       state.outlineColor = nodeOutlineColorToString(appearance.outlineColor);
       state.preset = '';
     }
