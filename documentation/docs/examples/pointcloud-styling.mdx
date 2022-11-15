@@ -38,7 +38,7 @@ Point cloud objects can be styled with a `PointCloudAppearance` object, containi
 
 | Field                      | Field type                      | Description                                                                           |
 |----------------------------|---------------------------------|---------------------------------------------------------------------------------------|
-| `color`                    | `[number, number, number]?`     | Override color by setting RGB values in range [0,255]. `[0, 0, 0]` means no override. |
+| `color`                    | `THREE.Color?`                  | Override color. If all components equal to zero, the override is unused.              |
 | `visible`                  | `boolean?`                      | When false, stylable object will be invisible. Default value is `true`.               |
 
 To assign a style to one or more stylable objects, you must first create an instance of the abstract class `PointCloudObjectCollection`. Currently, the only implementation of this class provided by Reveal is `AnnotationIdPointCloudObjectCollection`, which is initialized with a list of annotation IDs corresponding to stylable objects. To see all available annotation IDs associated with the model, you may use the method `model.traverseStylableObjects`.
@@ -51,7 +51,7 @@ const annotationIds = [];
 model.traverseStylableObjects(objectMetadata => annotationIds.push(objectMetadata.annotationId));
 
 const objectCollection = new AnnotationIdPointCloudObjectCollection(annotationIds);
-const appearance = { color: [0, 255, 0] };
+const appearance = { color: new THREE.Color(0, 1, 0) };
 
 model.assignStyledObjectCollection(objectCollection, appearance);
 ```
