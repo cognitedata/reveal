@@ -130,7 +130,7 @@ jobs:
       working-directory: viewer
       run: |
         sudo apt-get update
-        sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6 libxi-dev
+        sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6
         echo "DISPLAY=:99.0" >> $GITHUB_ENV
 
     - name: Run coverage tests
