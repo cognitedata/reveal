@@ -32,7 +32,7 @@ export const DEPTH_SCALE_LABEL_WIDTH = 59;
 export const DEPTH_SCALE_LABEL_HEIGHT = 17;
 
 export const EVENTS_COLUMN_WIDTH = 120;
-export const CHART_COLUMN_WIDTH = 312;
+export const DEFAULT_CHART_WIDTH = 312;
 export const CHART_COLUMN_WIDTH_COLLAPSED = 120;
 
 export const DEFAULT_DEPTH_MEASUREMENT_TYPE = DepthMeasurementUnit.MD;
@@ -47,10 +47,10 @@ export const DEFAULT_COLUMN_ORDER = [
   ChartColumn.FORMATION,
   ChartColumn.DEPTH,
   ChartColumn.CASINGS,
+  ChartColumn.MEASUREMENTS,
   ChartColumn.NDS,
   ChartColumn.NPT,
   // ChartColumn.SUMMARY,
-  ChartColumn.MEASUREMENTS,
   ChartColumn.TRAJECTORY,
 ];
 

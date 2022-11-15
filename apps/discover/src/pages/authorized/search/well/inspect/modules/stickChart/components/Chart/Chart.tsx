@@ -9,6 +9,7 @@ import { ChartV2 } from '../../../common/ChartV2';
 import { ChartProps as CommonChartProps } from '../../../common/ChartV2/ChartV2';
 import { SCALE_BLOCK_HEIGHT } from '../../../common/Events/constants';
 import { getNativeScaleBlocks } from '../../utils/scale/getNativeScaleBlocks';
+import { DEFAULT_CHART_WIDTH } from '../../WellboreStickChart/constants';
 import { DepthScaleLines } from '../DepthScaleLines';
 
 import {
@@ -27,6 +28,7 @@ export interface ChartProps
   header?: string | JSX.Element;
   reverseYAxis?: boolean;
   nativeScale?: boolean;
+  width?: number;
 }
 
 export const Chart: React.FC<ChartProps> = React.memo(
@@ -37,6 +39,7 @@ export const Chart: React.FC<ChartProps> = React.memo(
     header,
     reverseYAxis = false,
     nativeScale = false,
+    width = DEFAULT_CHART_WIDTH,
   }) => {
     const scaleBlocks = useDeepMemo(() => {
       const chartScaleBlocks = nativeScale
@@ -83,7 +86,7 @@ export const Chart: React.FC<ChartProps> = React.memo(
             </ChartNativeScaleContainer>
           )}
 
-          <ChartContentWrapper>
+          <ChartContentWrapper width={width}>
             <ChartV2
               autosize
               hideHeader

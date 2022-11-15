@@ -27,6 +27,7 @@ export interface PlotlyChartColumnProps
   actionButtonText?: string;
   reverseYAxis?: boolean;
   nativeScale?: boolean;
+  chartWidth?: number;
   onClickActionButton?: () => void;
 }
 
@@ -47,6 +48,7 @@ export const PlotlyChartColumn: React.FC<
     actionButtonText,
     reverseYAxis,
     nativeScale,
+    chartWidth,
     onClickActionButton,
     ...dragHandleProps
   }) => {
@@ -110,6 +112,7 @@ export const PlotlyChartColumn: React.FC<
             header={chartHeader}
             reverseYAxis={reverseYAxis}
             nativeScale={nativeScale}
+            width={chartWidth}
           />
         );
       }
@@ -122,6 +125,7 @@ export const PlotlyChartColumn: React.FC<
         isVisible={isVisible}
         id={id}
         expanded={expanded}
+        widthExpanded={chartWidth}
         header={header}
         disableExpandButton={isEmpty(data) || Boolean(actionMessage)}
         onToggleExpand={handleToggleExpand}

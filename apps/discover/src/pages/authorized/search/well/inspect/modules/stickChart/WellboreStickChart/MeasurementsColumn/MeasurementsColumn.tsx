@@ -19,6 +19,7 @@ import { PlotlyChartColumn } from '../../components/PlotlyChartColumn';
 import { ChartColumn, ColumnVisibilityProps } from '../../types';
 import { adaptMeasurementsDataToChart } from '../../utils/adaptMeasurementsDataToChart';
 import {
+  DEFAULT_CHART_WIDTH,
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
 } from '../constants';
@@ -103,6 +104,7 @@ export const MeasurementsColumn: React.FC<
         axisNames={axisNames}
         scaleBlocks={scaleBlocks}
         emptySubtitle={emptySubtitle}
+        chartWidth={DEFAULT_CHART_WIDTH / 2}
         {...dragHandleProps}
       />
     );

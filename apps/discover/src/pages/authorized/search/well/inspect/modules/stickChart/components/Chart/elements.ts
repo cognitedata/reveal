@@ -18,7 +18,6 @@ import {
   BodyColumnHeaderWrapper,
   BodyColumnMainHeader,
 } from '../../../common/Events/elements';
-import { CHART_COLUMN_WIDTH } from '../../WellboreStickChart/constants';
 
 export const ChartWrapper = styled(BodyColumnBody)`
   flex-direction: column;
@@ -59,7 +58,7 @@ export const ChartContentWrapper = styled.div`
     display: none;
   }
   & > div {
-    width: calc(${CHART_COLUMN_WIDTH}px - ${sizes.normal});
+    width: ${(props: { width: number }) => `calc(${props.width}px)`};
   }
 `;
 
