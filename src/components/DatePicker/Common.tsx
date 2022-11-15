@@ -1,13 +1,19 @@
 import React from 'react';
-import { Button, Colors, ButtonProps, Select } from '@cognite/cogs.js';
-import styled, { css } from 'styled-components';
+import { Button, ButtonProps } from '@cognite/cogs.js';
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
 /* eslint-disable no-nested-ternary */
 import dayjs from 'dayjs';
 
-import { SpacedRow } from 'components';
-
 import range from 'lodash/range';
+import {
+  DatePickerButtonWrapper,
+  MonthSelect,
+  MonthWrapper,
+  OptionStyle,
+  SpacedRowHeader,
+  YearSelect,
+  YearWrapper,
+} from './elements';
 
 export type StartEndRange = {
   type: 'StartEnd';
@@ -88,7 +94,7 @@ export const DatePickerInput = ({
   date: Date;
   onDateChange: (_date: Date) => void;
 } & Omit<ButtonProps, 'ref'>) => (
-  <ButtonWrapper icon="Calendar" variant="outline" {...props}>
+  <DatePickerButtonWrapper icon="Calendar" variant="outline" {...props}>
     <ReactDatePicker
       open={false}
       dateFormat="yyyy-MM-dd HH:mm"
@@ -96,21 +102,8 @@ export const DatePickerInput = ({
       selected={date}
       showTimeInput
     />
-  </ButtonWrapper>
+  </DatePickerButtonWrapper>
 );
-
-const ButtonWrapper = styled(Button)`
-  input {
-    background: none;
-    box-shadow: none;
-    border: none;
-  }
-  input:focus,
-  input:hover,
-  input:active {
-    outline: none;
-  }
-`;
 
 const years = range(dayjs(0).get('year'), dayjs().get('year') + 1, 1).reverse();
 const months = [
@@ -127,21 +120,6 @@ const months = [
   'November',
   'December',
 ];
-const colourStyles = {
-  option: (
-    styles: React.CSSProperties,
-    { isDisabled, isSelected }: { isDisabled: boolean; isSelected: boolean }
-  ) => ({
-    ...styles,
-    backgroundColor: isDisabled
-      ? null
-      : isSelected
-      ? Colors['midblue-6'].hex()
-      : 'inherit',
-    color: isDisabled ? '#ccc' : isSelected ? Colors.midblue.hex() : 'black',
-    cursor: isDisabled ? 'not-allowed' : 'default',
-  }),
-};
 
 export const renderCustomHeader = (
   isYearDisabled: (currYear: number) => boolean = () => false,
@@ -160,7 +138,7 @@ export const renderCustomHeader = (
     const year = dayjs(date).get('year');
     const month = dayjs(date).get('month');
     return (
-      <SpacedRow style={{ paddingLeft: 8, paddingRight: 8 }}>
+      <SpacedRowHeader>
         <Button
           type="ghost"
           size="small"
@@ -168,42 +146,39 @@ export const renderCustomHeader = (
           disabled={prevMonthButtonDisabled}
           icon="ArrowLeft"
         />
-        <div className="spacer" />
-        <div style={{ width: 80 }}>
-          <Select
-            value={{ label: String(year), value: year }}
-            onChange={(value: any) => {
-              changeYear((value as { value: number }).value);
+        <YearWrapper>
+          <YearSelect
+            onChange={value => {
+              changeYear(years[value.target.selectedIndex]);
             }}
-            options={years.map(option => ({
-              label: String(option),
-              value: option,
-              isDisabled: isYearDisabled(option),
-            }))}
-            isSearchable={false}
-            closeMenuOnSelect
-            isMulti={false}
-            styles={colourStyles}
-          />
-        </div>
-        <div style={{ width: 130 }}>
-          <Select
-            value={{ label: months[month], value: month }}
-            onChange={(value: any) => {
-              changeMonth((value as { value: number }).value);
+            value={year}
+            className="cogs-select__control"
+          >
+            {years.map(year => (
+              <OptionStyle value={year} disabled={isYearDisabled(year)}>
+                {year}
+              </OptionStyle>
+            ))}
+          </YearSelect>
+        </YearWrapper>
+        <MonthWrapper>
+          <MonthSelect
+            onChange={value => {
+              changeMonth(value.target.selectedIndex);
             }}
-            options={months.map((option, i) => ({
-              label: option,
-              value: i,
-              isDisabled: isMonthDisabled(year, i),
-            }))}
-            isSearchable={false}
-            closeMenuOnSelect
-            isMulti={false}
-            styles={colourStyles}
-          />
-        </div>
-        <div className="spacer" />
+            value={months[month]}
+            className="cogs-select__control"
+          >
+            {months.map((month, index) => (
+              <OptionStyle
+                value={month}
+                disabled={isMonthDisabled(year, index)}
+              >
+                {month}
+              </OptionStyle>
+            ))}
+          </MonthSelect>
+        </MonthWrapper>
         <Button
           type="ghost"
           size="small"
@@ -211,124 +186,6 @@ export const renderCustomHeader = (
           disabled={nextMonthButtonDisabled}
           icon="ArrowRight"
         />
-      </SpacedRow>
+      </SpacedRowHeader>
     );
   }) as ReactDatePickerProps['renderCustomHeader'];
-
-export const DatePickerWrapper = styled.div<{
-  mode: 'start' | 'end' | undefined;
-}>(
-  props => css`
-    font-family: 'Inter';
-    position: relative;
-
-    && > * {
-      width: 100%;
-    }
-    .cogs-select {
-      width: 100%;
-    }
-    .react-datepicker {
-      width: 100%;
-      border: none;
-      font-family: 'Inter';
-      display: flex;
-      flex-direction: column;
-    }
-    .react-datepicker__header {
-      border-radius: 0px;
-    }
-
-    .react-datepicker__time-container {
-      border: none;
-      border-radius: 0px;
-      height: 100%;
-      flex: 1;
-      align-self: stretch;
-      display: flex;
-      flex-direction: column;
-      .react-datepicker__time-box {
-        width: 100%;
-      }
-      li.react-datepicker__time-list-item--selected {
-        background-color: ${Colors.midblue.hex()} !important;
-      }
-    }
-
-    .react-datepicker__week {
-      display: flex;
-      flex-wrap: wrap;
-
-      > * {
-        flex: 1;
-        line-height: normal;
-        padding-top: 8px;
-        padding-bottom: 8px;
-      }
-    }
-    .react-datepicker__day--in-selecting-range {
-      background-color: ${Colors['midblue-7'].hex()};
-      color: ${Colors.midblue.hex()};
-    }
-    .react-datepicker__day--outside-month {
-      color: ${Colors['greyscale-grey6'].hex()};
-    }
-
-    .react-datepicker__day--selected,
-    .react-datepicker__day--in-range {
-      background-color: ${Colors['midblue-6'].hex()};
-      color: ${Colors.midblue.hex()};
-      margin: 0px;
-    }
-    .react-datepicker__day--selected:hover,
-    .react-datepicker__day--in-selecting-range:hover,
-    .react-datepicker__day--in-range:hover {
-      background-color: ${Colors['midblue-6'].hex()};
-    }
-
-    .react-datepicker__day--in-range.react-datepicker__day--outside-month {
-      color: ${Colors['midblue-5'].hex()};
-    }
-
-    .react-datepicker__day {
-      margin: 0px;
-      border-radius: 0px;
-    }
-
-    .react-datepicker__day--range-start:not(.react-datepicker__day--in-selecting-range),
-    .react-datepicker__day--selecting-range-start:not(.react-datepicker__day--in-range),
-    .react-datepicker__day--range-start.react-datepicker__day--selecting-range-start {
-      border-top-left-radius: 20px;
-      border-bottom-left-radius: 20px;
-    }
-    .react-datepicker__day--range-end:not(.react-datepicker__day--in-selecting-range),
-    .react-datepicker__day--selecting-range-end:not(.react-datepicker__day--in-range),
-    .react-datepicker__day--range-end.react-datepicker__day--selecting-range-end {
-      border-top-right-radius: 20px;
-      border-bottom-right-radius: 20px;
-    }
-    .react-datepicker__day--selected.react-datepicker__day--range-start.react-datepicker__day--range-end.react-datepicker__day--in-range {
-      background-color: ${Colors['midblue-5'].hex()};
-      font-weight: 800;
-    }
-    .react-datepicker__day-names {
-      display: flex;
-      justify-content: space-around;
-      margin: 0 9px;
-    }
-    ${props.mode === 'start' &&
-    css`
-      .react-datepicker__day--selecting-range-start {
-        background-color: ${Colors['midblue-5'].hex()};
-        font-weight: 800;
-      }
-    `}
-    ${props.mode === 'end' &&
-    css`
-      .react-datepicker__day--selecting-range-end {
-        background-color: ${Colors['midblue-5'].hex()};
-        font-weight: 800;
-      }
-    `}
-  `
-);

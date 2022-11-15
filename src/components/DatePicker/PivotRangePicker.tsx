@@ -4,12 +4,8 @@ import dayjs from 'dayjs';
 import { Body, Input, Select } from '@cognite/cogs.js';
 import { SpacedRow } from 'components';
 import ReactDatePicker from 'react-datepicker';
-import {
-  DatePickerInput,
-  PivotRange,
-  renderCustomHeader,
-  DatePickerWrapper,
-} from './Common';
+import { DatePickerInput, PivotRange, renderCustomHeader } from './Common';
+import { DatePickerWrapper } from './elements';
 
 const directions = [
   {
