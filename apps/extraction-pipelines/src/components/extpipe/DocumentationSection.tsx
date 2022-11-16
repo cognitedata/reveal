@@ -18,16 +18,13 @@ import {
   bottomSpacing,
   CountSpan,
   DivFlex,
-  EditButton,
   Hint,
   StyledTextArea,
 } from 'components/styled';
 import { MarkdownView } from 'components/markDown/MarkdownView';
-import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
-import { Button, Graphic } from '@cognite/cogs.js';
-import { Section } from 'components/extpipe/Section';
+import { A, Button, Flex, Graphic } from '@cognite/cogs.js';
+import Section from 'components/section';
 import { trackUsage } from 'utils/Metrics';
-import { ExternalLink } from 'components/links/ExternalLink';
 import { useTranslation } from 'common';
 import { MASTERING_MARKDOWN_LINK } from 'utils/utils';
 
@@ -111,21 +108,15 @@ export const DocumentationSection: FunctionComponent<
     <>
       <p style={{ margin: '3rem 0', textAlign: 'center' }}>
         {t('ext-pipeline-how-to-edit-info-1')}{' '}
-        <ExternalLink href={MASTERING_MARKDOWN_LINK}>
+        <A href={MASTERING_MARKDOWN_LINK}>
           {t('ext-pipeline-how-to-edit-info-2')}
-        </ExternalLink>{' '}
+        </A>
+        &nbsp;
         {t('ext-pipeline-how-to-edit-info-3')}
       </p>
-      <EditButton
-        showPencilIcon={false}
-        type="ghost"
-        onClick={onEditClick}
-        disabled={!canEdit}
-      >
-        <AddFieldInfoText dataTestId="add-documentation">
-          {t('documentation', { postProcess: 'lowercase' })}
-        </AddFieldInfoText>
-      </EditButton>
+      <Button onClick={onEditClick} disabled={!canEdit} icon="Add" type="link">
+        {t('add-documentation')}
+      </Button>
     </>
   );
   const infoNoDocumentation = (
@@ -146,9 +137,7 @@ export const DocumentationSection: FunctionComponent<
     <>
       <Hint className="hint">
         {t('ext-pipeline-edit-info-1')}{' '}
-        <ExternalLink href={MASTERING_MARKDOWN_LINK}>
-          {t('ext-pipeline-edit-info-2')}
-        </ExternalLink>
+        <A href={MASTERING_MARKDOWN_LINK}>{t('ext-pipeline-edit-info-2')}</A>
       </Hint>
       <ValidationError errors={errors as FieldErrors} name="documentation" />
       <StyledTextArea
@@ -168,7 +157,7 @@ export const DocumentationSection: FunctionComponent<
             </CountSpan>
           )}
         </div>
-        <div>
+        <Flex gap={8}>
           <Button
             type="ghost"
             onClick={onCancel}
@@ -192,26 +181,40 @@ export const DocumentationSection: FunctionComponent<
               {t('confirm')}
             </Button>
           </MessageDialog>
-        </div>
+        </Flex>
       </div>
     </>
   );
   return (
     <Section
       title={t('documentation')}
+      extra={
+        <Button
+          disabled={!canEdit}
+          onClick={onEditClick}
+          size="small"
+          type="ghost"
+        >
+          Edit
+        </Button>
+      }
       icon="Documentation"
-      titleButton={{ onClick: onEditClick, enabled: canEdit }}
-      dataTestId="documentation"
-    >
-      <DocumentationForm onSubmit={handleSubmit(onValid)}>
-        {isEdit ? whenEditing : whenNotEditing}
-      </DocumentationForm>
-    </Section>
+      data-testid="documentation"
+      items={[
+        {
+          key: 'documentation',
+          value: (
+            <DocumentationForm onSubmit={handleSubmit(onValid)}>
+              {isEdit ? whenEditing : whenNotEditing}
+            </DocumentationForm>
+          ),
+        },
+      ]}
+    />
   );
 };
 
 const DocumentationForm = styled.form`
-  padding: 0 1rem;
   .hint {
     grid-area: hint;
   }

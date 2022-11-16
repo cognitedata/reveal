@@ -106,7 +106,7 @@ const InlineEdit = <Fields extends FieldValues>({
         </StyledLabel>
       )}
       {isEdit ? (
-        <DivFlex direction="column" align="stretch" css="padding: 0 1rem">
+        <DivFlex direction="column" align="stretch">
           {hintText && (
             <Hint id="data-set-id-hint" className="input-hint">
               {hintText}

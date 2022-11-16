@@ -1,6 +1,6 @@
-import { IdEither } from '@cognite/sdk';
-import { useQuery } from 'react-query';
-import { DataSetError, SDKError } from 'model/SDKErrors';
+import { DataSet, IdEither } from '@cognite/sdk';
+import { useQuery, UseQueryOptions } from 'react-query';
+import { SDKError } from 'model/SDKErrors';
 import { DataSetModel } from 'model/DataSetModel';
 import { getDataSets } from 'utils/DataSetAPI';
 import { useSDK } from '@cognite/sdk-provider';
@@ -18,16 +18,24 @@ export const useDataSets = (dataSetIds: IdEither[]) => {
   );
 };
 
-export const useDataSet = (dataSetId?: number, retry?: number) => {
+export const useDataSet = (
+  dataSetId?: number,
+  options?: UseQueryOptions<DataSet, number | undefined>
+) => {
   const sdk = useSDK();
-  return useQuery<DataSetModel[], DataSetError>(
-    ['dataset', [{ id: dataSetId }]],
-    () => {
-      return getDataSets(sdk, [...(dataSetId ? [{ id: dataSetId }] : [])]);
-    },
+  return useQuery<DataSet, number | undefined>(
+    ['dataset', [{ id: dataSetId ?? 0 }]],
+    () =>
+      sdk.datasets
+        .retrieve([{ id: dataSetId! }])
+        .then((r) => r[0])
+        .catch((err: any) => {
+          const status: number | undefined = err?.errors[0]?.status;
+          return Promise.reject(status);
+        }),
     {
-      enabled: !!dataSetId,
-      retry,
+      ...options,
+      enabled: !!dataSetId && options?.enabled,
     }
   );
 };

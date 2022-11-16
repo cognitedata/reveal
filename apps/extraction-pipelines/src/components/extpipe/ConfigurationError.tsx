@@ -48,5 +48,5 @@ const ErrorFeedback = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin: 2rem 1rem;
+  padding: 2rem 1rem;
 `;

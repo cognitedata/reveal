@@ -3,25 +3,13 @@ import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { SupportedScheduleStrings } from 'components/extpipes/cols/Schedule';
 import { Extpipe } from 'model/Extpipe';
 import { OptionTypeBase } from 'react-select';
-import { CSSObject } from '@emotion/serialize';
 import { TranslationKeys, useTranslation } from 'common';
 
 type ScheduleValue = Pick<Extpipe, 'schedule'>;
 
 interface SelectorProps extends ScheduleValue {
-  inputId?: string;
-  autoFocus?: boolean;
   onSelectChange: (e: OptionTypeBase) => void;
-  handleOnBlur?: (e: React.FocusEvent) => void;
 }
-
-const customStyles = {
-  control: (styles: CSSObject) => ({
-    ...styles,
-    backgroundColor: 'white',
-    color: 'red',
-  }),
-};
 
 const getOptions = (_t: (key: TranslationKeys) => string) => {
   const options = [
@@ -46,11 +34,8 @@ const getOptions = (_t: (key: TranslationKeys) => string) => {
 };
 
 export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
-  inputId,
   schedule,
   onSelectChange,
-  handleOnBlur,
-  autoFocus = false,
 }: PropsWithChildren<SelectorProps>) => {
   const { t } = useTranslation();
   const { options } = getOptions(t);
@@ -67,14 +52,11 @@ export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
 
   return (
     <Select
-      inputId={inputId}
+      isClearable
       value={selectedValue(schedule)}
       options={options}
-      styles={customStyles}
       onChange={handleChange}
-      onBlur={handleOnBlur}
       menuPosition="fixed"
-      autoFocus={autoFocus}
       placeholderSelectText={t('select-schedule')}
     />
   );

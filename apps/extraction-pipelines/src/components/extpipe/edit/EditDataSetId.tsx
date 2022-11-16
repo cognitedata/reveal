@@ -103,10 +103,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
 
   return (
     <FormProvider {...methods}>
-      <ColumnForm onSubmit={handleSubmit(onSave)} marginBottom>
-        <StyledLabel id="data-set-id-label" htmlFor="data-set-id">
-          {t('data-set')}
-        </StyledLabel>
+      <ColumnForm onSubmit={handleSubmit(onSave)}>
         {isEdit ? (
           <Wrapper>
             <DataSetIdInput data={data} status={status} autoFocus />
@@ -153,7 +150,6 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-areas: 'hint hint' 'error error' 'input btns';
   grid-template-columns: 1fr auto;
-  padding: 0 1rem;
   grid-gap: 0.5rem;
   .input-hint {
     grid-area: hint;

@@ -1,52 +1,51 @@
 import React, { FunctionComponent, useState } from 'react';
-import { DetailFieldNames, Extpipe } from 'model/Extpipe';
+import { Extpipe } from 'model/Extpipe';
 import { RawEditModal } from 'components/modals/RawEditModal';
 import { TEST_ID_BTN_SAVE } from 'components/extpipe/DocumentationSection';
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
-import { Icon } from '@cognite/cogs.js';
+import { Body, Button, Colors, Flex, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
-import { Section } from 'components/extpipe/Section';
+import Section from 'components/section';
 import { createLink } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
 
 const RawTableWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 0 1rem;
 `;
 
 const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
   const [showRawModal, setShowRawModal] = useState(false);
   const { data: storedExtpipe } = useSelectedExtpipe();
 
+  const { t } = useTranslation();
+
   const openDialog = () => canEdit && setShowRawModal(true);
   const closeDialog = () => setShowRawModal(false);
   const renderRaw = (extpipe?: Extpipe) => {
     if (!extpipe?.rawTables?.length) {
-      return (
-        <AddFieldValueBtn canEdit={canEdit} onClick={openDialog}>
-          {DetailFieldNames.RAW_TABLE.toLowerCase()}
-        </AddFieldValueBtn>
-      );
+      return t('no-table-selected');
     }
     return (
       <RawTableWrapper>
         {extpipe.rawTables.map(({ dbName, tableName }) => {
           return (
-            <StyledLink
-              role="gridcell"
-              href={createLink(`/raw`, {
-                activeTable: `["${dbName}","${tableName}",null]`,
-                tabs: `[["${dbName}","${tableName}",null]]`,
-              })}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span>{dbName}</span>
-              <Icon type="Dot" aria-hidden />
-              <span>{tableName}</span>
-            </StyledLink>
+            <Flex alignItems="flex-end">
+              <StyledMutedBody level={3}>{dbName}</StyledMutedBody>
+              <StyledMutedIcon type="Dot" aria-hidden />
+              <StyledLink
+                role="gridcell"
+                href={createLink(`/raw`, {
+                  activeTable: `["${dbName}","${tableName}",null]`,
+                  tabs: `[["${dbName}","${tableName}",null]]`,
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>{tableName}</span>
+              </StyledLink>
+            </Flex>
           );
         })}
       </RawTableWrapper>
@@ -54,21 +53,44 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
   };
 
   return (
-    <Section
-      title="RAW tables"
-      icon="TableViewSmall"
-      titleButton={{ onClick: openDialog, enabled: canEdit }}
-      data-testid={`${TEST_ID_BTN_SAVE}rawTable`}
-    >
-      <div>{renderRaw(storedExtpipe)}</div>
+    <>
       <RawEditModal visible={showRawModal} close={closeDialog} />
-    </Section>
+      <Section
+        extra={
+          <Button
+            disabled={!canEdit}
+            onClick={openDialog}
+            size="small"
+            type="ghost"
+          >
+            {t('edit')}
+          </Button>
+        }
+        title="RAW tables"
+        icon="TableViewSmall"
+        data-testid={`${TEST_ID_BTN_SAVE}rawTable`}
+        items={[
+          {
+            key: 'raw-tables',
+            value: <div>{renderRaw(storedExtpipe)}</div>,
+          },
+        ]}
+      />
+    </>
   );
 };
 
 const StyledLink = styled.a`
   display: inline-flex;
   align-items: center;
+`;
+
+const StyledMutedBody = styled(Body)`
+  color: ${Colors['text-icon--muted']};
+`;
+
+const StyledMutedIcon = styled(Icon)`
+  color: ${Colors['text-icon--muted']};
 `;
 
 export default EditRawTable;

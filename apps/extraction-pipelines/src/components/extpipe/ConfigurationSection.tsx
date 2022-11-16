@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'common';
 import { useCreateConfigRevision, useExtpipeConfig } from 'hooks/config';
-import { Section } from './Section';
+import Section from 'components/section';
 import ConfigurationEditor from './ConfigurationEditor';
 import CreatedTime from './CreatedTime';
 import { useQueryClient } from 'react-query';
-import { Button, Flex, Icon, toast } from '@cognite/cogs.js';
+import { Body, Button, Flex, Icon, toast } from '@cognite/cogs.js';
 
 type Props = {
   externalId: string;
@@ -48,23 +48,26 @@ export default function ConfigurationSection({ externalId }: Props) {
       <Section
         title={t('configuration-file-for-extractor')}
         icon={isLoading ? 'Loader' : 'Document'}
-        dataTestId="configuration"
-        rightTitle={
+        data-testid="configuration"
+        extra={
           <Flex style={{ gap: 10 }} alignItems="center">
             {created && (
               <>
                 {isSaving && <Icon type="Loader" />}
-                <CreatedTime prefix={t('last-updated-at')} date={created} />
+                <Body level={3}>
+                  <CreatedTime prefix={t('last-updated-at')} date={created} />
+                </Body>
               </>
             )}
             {created || editMode ? (
               <>
                 {editMode ? (
                   <>
-                    <Button onClick={() => setEditMode(!editMode)}>
+                    <Button size="small" onClick={() => setEditMode(!editMode)}>
                       {t('discard-changes')}
                     </Button>
                     <Button
+                      size="small"
                       type="primary"
                       disabled={isSaving || configuration?.config === newConfig}
                       onClick={() => {
@@ -75,7 +78,11 @@ export default function ConfigurationSection({ externalId }: Props) {
                     </Button>
                   </>
                 ) : (
-                  <Button type="ghost" onClick={() => setEditMode(!editMode)}>
+                  <Button
+                    size="small"
+                    type="ghost"
+                    onClick={() => setEditMode(!editMode)}
+                  >
                     {t('edit')}
                   </Button>
                 )}
@@ -85,7 +92,6 @@ export default function ConfigurationSection({ externalId }: Props) {
             )}
           </Flex>
         }
-        hasPadding={false}
       >
         <ConfigurationEditor
           externalId={externalId}
