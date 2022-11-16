@@ -464,7 +464,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     renderer: THREE.WebGLRenderer;
     camera: THREE.PerspectiveCamera;
   }): void {
-    this.forceUpdate(event.camera, event.frameNumber);
+    this.forceUpdate(event.camera);
   }
 
   private onViewerDisposed(): void {
