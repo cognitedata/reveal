@@ -111,6 +111,7 @@ export const useResourceResults = <T extends ResourceType>(
 
   const {
     data: listData,
+    isLoading: isLoadingList,
     isFetched: listFetched,
     hasNextPage: listCanFetchMore,
     isFetchingNextPage: listIsFetchingMore,
@@ -126,6 +127,7 @@ export const useResourceResults = <T extends ResourceType>(
 
   const {
     data: searchData,
+    isLoading: isLoadingSearch,
     isFetched: searchFetched,
     isFetching: isSearching,
     isFetchingNextPage: searchIsFetchingMore,
@@ -143,6 +145,7 @@ export const useResourceResults = <T extends ResourceType>(
   const searchItems = useMemo(() => flatten(searchData?.pages), [searchData]);
 
   const isFetched = searchEnabled ? searchFetched : listFetched;
+  const isLoading = searchEnabled ? isLoadingSearch : isLoadingList;
   const isFetching = searchEnabled ? isSearching : isFetchingList;
   const fetchMore = searchEnabled ? searchFetchMore : listFetchMore;
   const isFetchingMore = searchEnabled
@@ -158,6 +161,7 @@ export const useResourceResults = <T extends ResourceType>(
     isFetchingMore,
     isFetched,
     isFetching,
+    isLoading,
     items,
     searchEnabled,
   };

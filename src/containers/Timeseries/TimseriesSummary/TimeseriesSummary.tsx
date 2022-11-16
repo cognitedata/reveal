@@ -25,7 +25,7 @@ export const TimeseriesSummary = ({
 }) => {
   const api = convertResourceType('timeSeries');
 
-  const { isFetched, items } = useResourceResults<Timeseries>(
+  const { isLoading, items } = useResourceResults<Timeseries>(
     api,
     query,
     filter
@@ -39,22 +39,23 @@ export const TimeseriesSummary = ({
     []
   );
 
-  if (!isFetched) {
-    return <EmptyState isLoading={!isFetched} />;
-  }
   return (
     <SummaryCard
       icon="Timeseries"
       title="Timeseries"
       onAllResultsClick={onAllResultsClick}
     >
-      <Table
-        onRowClick={onRowClick}
-        data={getSummaryCardItems(items)}
-        id="timseries-summary-table"
-        columns={columns}
-        enableColumnResizing={false}
-      />
+      {isLoading ? (
+        <EmptyState isLoading={isLoading} title="Loading results" />
+      ) : (
+        <Table
+          onRowClick={onRowClick}
+          data={getSummaryCardItems(items)}
+          id="timseries-summary-table"
+          columns={columns}
+          enableColumnResizing={false}
+        />
+      )}
     </SummaryCard>
   );
 };

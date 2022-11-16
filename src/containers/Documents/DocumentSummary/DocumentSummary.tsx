@@ -35,22 +35,23 @@ export const DocumentSummary = ({
     []
   );
 
-  if (isLoading) {
-    return <EmptyState isLoading={isLoading} />;
-  }
   return (
     <SummaryCard
       icon="Document"
       title="Documents"
       onAllResultsClick={onAllResultsClick}
     >
-      <Table
-        data={getSummaryCardItems(results)}
-        id="document-summary-table"
-        columns={columns}
-        onRowClick={onRowClick}
-        enableColumnResizing={false}
-      />
+      {isLoading ? (
+        <EmptyState isLoading={isLoading} title="Loading results" />
+      ) : (
+        <Table
+          data={getSummaryCardItems(results)}
+          id="document-summary-table"
+          columns={columns}
+          onRowClick={onRowClick}
+          enableColumnResizing={false}
+        />
+      )}
     </SummaryCard>
   );
 };

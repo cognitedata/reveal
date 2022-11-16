@@ -41,22 +41,23 @@ export const EventSummary = ({
     []
   );
 
-  if (isLoading) {
-    return <EmptyState isLoading={isLoading} />;
-  }
   return (
     <SummaryCard
       icon="Events"
       title="Event"
       onAllResultsClick={onAllResultsClick}
     >
-      <Table
-        onRowClick={onRowClick}
-        data={getSummaryCardItems(data)}
-        id="events-summary-table"
-        columns={columns}
-        enableColumnResizing={false}
-      />
+      {isLoading ? (
+        <EmptyState isLoading={isLoading} title="Loading results" />
+      ) : (
+        <Table
+          onRowClick={onRowClick}
+          data={getSummaryCardItems(data)}
+          id="events-summary-table"
+          columns={columns}
+          enableColumnResizing={false}
+        />
+      )}
     </SummaryCard>
   );
 };

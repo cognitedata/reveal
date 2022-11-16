@@ -25,29 +25,30 @@ export const SequenceSummary = ({
 }) => {
   const api = convertResourceType('sequence');
 
-  const { isFetched, items } = useResourceResults<Sequence>(api, query, filter);
+  const { isLoading, items } = useResourceResults<Sequence>(api, query, filter);
   const columns = useMemo(
     () =>
       [Table.Columns.name, Table.Columns.description] as ColumnDef<Sequence>[],
     []
   );
 
-  if (!isFetched) {
-    return <EmptyState isLoading={!isFetched} />;
-  }
   return (
     <SummaryCard
       icon="Sequences"
       title="Sequence"
       onAllResultsClick={onAllResultsClick}
     >
-      <Table
-        onRowClick={onRowClick}
-        data={getSummaryCardItems(items)}
-        id="sequence-summary-table"
-        columns={columns}
-        enableColumnResizing={false}
-      />
+      {isLoading ? (
+        <EmptyState isLoading={isLoading} title="Loading results" />
+      ) : (
+        <Table
+          onRowClick={onRowClick}
+          data={getSummaryCardItems(items)}
+          id="sequence-summary-table"
+          columns={columns}
+          enableColumnResizing={false}
+        />
+      )}
     </SummaryCard>
   );
 };

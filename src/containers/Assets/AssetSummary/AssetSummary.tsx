@@ -34,22 +34,23 @@ export const AssetSummary = ({
     []
   );
 
-  if (isLoading) {
-    return <EmptyState isLoading={isLoading} />;
-  }
   return (
     <SummaryCard
       icon="Assets"
       title="Assets"
       onAllResultsClick={onAllResultsClick}
     >
-      <Table
-        data={getSummaryCardItems(data)}
-        id="assets-summary-table"
-        columns={columns}
-        enableColumnResizing={false}
-        onRowClick={onRowClick}
-      />
+      {isLoading ? (
+        <EmptyState isLoading={isLoading} title="Loading results" />
+      ) : (
+        <Table
+          data={getSummaryCardItems(data)}
+          id="assets-summary-table"
+          columns={columns}
+          enableColumnResizing={false}
+          onRowClick={onRowClick}
+        />
+      )}
     </SummaryCard>
   );
 };
