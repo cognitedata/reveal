@@ -2051,15 +2051,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/reveal@link:../../../viewer/dist::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
-  version: 0.0.0-use.local
-  resolution: "@cognite/reveal@link:../../../viewer/dist::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
-  languageName: node
-  linkType: soft
-
 "@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
   resolution: "@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
+  languageName: node
+  linkType: soft
+
+"@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
+  version: 0.0.0-use.local
+  resolution: "@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
   languageName: node
   linkType: soft
 
@@ -2150,15 +2150,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk@link:../../../viewer/node_modules/sdk::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
-  version: 0.0.0-use.local
-  resolution: "@cognite/sdk@link:../../../viewer/node_modules/sdk::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
-  languageName: node
-  linkType: soft
-
 "@cognite/sdk@link:../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
   resolution: "@cognite/sdk@link:../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
+  languageName: node
+  linkType: soft
+
+"@cognite/sdk@link:../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
+  version: 0.0.0-use.local
+  resolution: "@cognite/sdk@link:../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
   languageName: node
   linkType: soft
 
@@ -2221,7 +2221,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/core@npm:2.2.0":
+"@docusaurus/core@npm:2.2.0, @docusaurus/core@npm:^2.2.0":
   version: 2.2.0
   resolution: "@docusaurus/core@npm:2.2.0"
   dependencies:
@@ -3031,10 +3031,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal-documentation/v4@workspace:versioned_docs/version-4.x"
   dependencies:
-    "@cognite/reveal": "link:../../../viewer/dist"
-    "@cognite/sdk": "link:../../../viewer/node_modules/sdk"
-    "@types/three": "link:../../../viewer/node_modules/@types/three"
-    three: "link:../../../viewer/node_modules/three"
+    "@cognite/reveal": "link:../../viewer/dist"
+    "@cognite/sdk": "link:../../viewer/node_modules/@cognite/sdk"
+    "@docusaurus/core": ^2.2.0
+    "@types/three": 0.146.0
+    copyfiles: 2.4.1
+    replace: 1.2.2
+    three: "link:../../viewer/node_modules/three"
   languageName: unknown
   linkType: soft
 
@@ -3636,12 +3639,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@link:../../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
-  version: 0.0.0-use.local
-  resolution: "@types/three@link:../../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
-  languageName: node
-  linkType: soft
-
 "@types/three@link:../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
   resolution: "@types/three@link:../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
@@ -3670,6 +3667,15 @@ __metadata:
   dependencies:
     "@types/webxr": "*"
   checksum: 7ce69e1a48ba6d19dc9efb78c5c67a3e66c036f240386dd700eda7a5964e44550066ac45bc0997bd4fe7be446edae356313d992361c18415191468dfdbfb454d
+  languageName: node
+  linkType: hard
+
+"@types/three@npm:0.146.0":
+  version: 0.146.0
+  resolution: "@types/three@npm:0.146.0"
+  dependencies:
+    "@types/webxr": "*"
+  checksum: f8ea5ba032f6aaa1cb5ad7dfbbd13851e8cba04365bc7fa9a5320ea7e9a2538ea5f2426391f690f0465347ade15cc145d5dc84b1730d8cceea89f746231f667c
   languageName: node
   linkType: hard
 
@@ -4899,6 +4905,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cliui@npm:^7.0.2":
+  version: 7.0.4
+  resolution: "cliui@npm:7.0.4"
+  dependencies:
+    string-width: ^4.2.0
+    strip-ansi: ^6.0.0
+    wrap-ansi: ^7.0.0
+  checksum: ce2e8f578a4813806788ac399b9e866297740eecd4ad1823c27fd344d78b22c5f8597d548adbcc46f0573e43e21e751f39446c5a5e804a12aace402b7a315d7f
+  languageName: node
+  linkType: hard
+
 "clone-deep@npm:^4.0.1":
   version: 4.0.1
   resolution: "clone-deep@npm:4.0.1"
@@ -5209,6 +5226,24 @@ __metadata:
   peerDependencies:
     webpack: ^5.1.0
   checksum: df4f8743f003a29ee7dd3d9b1789998a3a99051c92afb2ba2203d3dacfa696f4e757b275560fafb8f206e520a0aa78af34b990324a0e36c2326cefdeef3ca82e
+  languageName: node
+  linkType: hard
+
+"copyfiles@npm:2.4.1":
+  version: 2.4.1
+  resolution: "copyfiles@npm:2.4.1"
+  dependencies:
+    glob: ^7.0.5
+    minimatch: ^3.0.3
+    mkdirp: ^1.0.4
+    noms: 0.0.0
+    through2: ^2.0.1
+    untildify: ^4.0.0
+    yargs: ^16.1.0
+  bin:
+    copyfiles: copyfiles
+    copyup: copyfiles
+  checksum: aea69873bb99cc5f553967660cbfb70e4eeda198f572a36fb0f748b36877ff2c90fd906c58b1d540adbad8afa8ee82820172f1c18e69736f7ab52792c12745a7
   languageName: node
   linkType: hard
 
@@ -6688,7 +6723,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-caller-file@npm:^2.0.1":
+"get-caller-file@npm:^2.0.1, get-caller-file@npm:^2.0.5":
   version: 2.0.5
   resolution: "get-caller-file@npm:2.0.5"
   checksum: b9769a836d2a98c3ee734a88ba712e62703f1df31b94b784762c433c27a386dd6029ff55c2a920c392e33657d80191edbf18c61487e198844844516f843496b9
@@ -6802,7 +6837,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^7.0.0, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6":
+"glob@npm:^7.0.0, glob@npm:^7.0.5, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6":
   version: 7.2.3
   resolution: "glob@npm:7.2.3"
   dependencies:
@@ -8755,7 +8790,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^3.0.4, minimatch@npm:^3.1.1":
+"minimatch@npm:^3.0.3, minimatch@npm:^3.0.4, minimatch@npm:^3.1.1":
   version: 3.1.2
   resolution: "minimatch@npm:3.1.2"
   dependencies:
@@ -9018,6 +9053,16 @@ __metadata:
   version: 2.0.6
   resolution: "node-releases@npm:2.0.6"
   checksum: e86a926dc9fbb3b41b4c4a89d998afdf140e20a4e8dbe6c0a807f7b2948b42ea97d7fd3ad4868041487b6e9ee98409829c6e4d84a734a4215dff060a7fbeb4bf
+  languageName: node
+  linkType: hard
+
+"noms@npm:0.0.0":
+  version: 0.0.0
+  resolution: "noms@npm:0.0.0"
+  dependencies:
+    inherits: ^2.0.1
+    readable-stream: ~1.0.31
+  checksum: a05f056dabf764c86472b6b5aad10455f3adcb6971f366cdf36a72b559b29310a940e316bca30802f2804fdd41707941366224f4cba80c4f53071512245bf200
   languageName: node
   linkType: hard
 
@@ -10533,7 +10578,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:>=1.0.33-1 <1.1.0-0":
+"readable-stream@npm:>=1.0.33-1 <1.1.0-0, readable-stream@npm:~1.0.31":
   version: 1.0.34
   resolution: "readable-stream@npm:1.0.34"
   dependencies:
@@ -12088,15 +12133,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@link:../../../viewer/node_modules/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
-  version: 0.0.0-use.local
-  resolution: "three@link:../../../viewer/node_modules/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
-  languageName: node
-  linkType: soft
-
 "three@link:../../viewer/node_modules/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
   resolution: "three@link:../../viewer/node_modules/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
+  languageName: node
+  linkType: soft
+
+"three@link:../../viewer/node_modules/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
+  version: 0.0.0-use.local
+  resolution: "three@link:../../viewer/node_modules/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
   languageName: node
   linkType: soft
 
@@ -12599,6 +12644,13 @@ __metadata:
   version: 1.0.0
   resolution: "unpipe@npm:1.0.0"
   checksum: 4fa18d8d8d977c55cb09715385c203197105e10a6d220087ec819f50cb68870f02942244f1017565484237f1f8c5d3cd413631b1ae104d3096f24fdfde1b4aa2
+  languageName: node
+  linkType: hard
+
+"untildify@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "untildify@npm:4.0.0"
+  checksum: 39ced9c418a74f73f0a56e1ba4634b4d959422dff61f4c72a8e39f60b99380c1b45ed776fbaa0a4101b157e4310d873ad7d114e8534ca02609b4916bb4187fb9
   languageName: node
   linkType: hard
 
@@ -13282,6 +13334,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"y18n@npm:^5.0.5":
+  version: 5.0.8
+  resolution: "y18n@npm:5.0.8"
+  checksum: 54f0fb95621ee60898a38c572c515659e51cc9d9f787fb109cef6fde4befbe1c4602dc999d30110feee37456ad0f1660fa2edcfde6a9a740f86a290999550d30
+  languageName: node
+  linkType: hard
+
 "yallist@npm:^4.0.0":
   version: 4.0.0
   resolution: "yallist@npm:4.0.0"
@@ -13306,6 +13365,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"yargs-parser@npm:^20.2.2":
+  version: 20.2.9
+  resolution: "yargs-parser@npm:20.2.9"
+  checksum: 8bb69015f2b0ff9e17b2c8e6bfe224ab463dd00ca211eece72a4cd8a906224d2703fb8a326d36fdd0e68701e201b2a60ed7cf81ce0fd9b3799f9fe7745977ae3
+  languageName: node
+  linkType: hard
+
 "yargs@npm:^15.3.1":
   version: 15.4.1
   resolution: "yargs@npm:15.4.1"
@@ -13322,6 +13388,21 @@ __metadata:
     y18n: ^4.0.0
     yargs-parser: ^18.1.2
   checksum: 40b974f508d8aed28598087720e086ecd32a5fd3e945e95ea4457da04ee9bdb8bdd17fd91acff36dc5b7f0595a735929c514c40c402416bbb87c03f6fb782373
+  languageName: node
+  linkType: hard
+
+"yargs@npm:^16.1.0":
+  version: 16.2.0
+  resolution: "yargs@npm:16.2.0"
+  dependencies:
+    cliui: ^7.0.2
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.0
+    y18n: ^5.0.5
+    yargs-parser: ^20.2.2
+  checksum: b14afbb51e3251a204d81937c86a7e9d4bdbf9a2bcee38226c900d00f522969ab675703bee2a6f99f8e20103f608382936034e64d921b74df82b63c07c5e8f59
   languageName: node
   linkType: hard
 
