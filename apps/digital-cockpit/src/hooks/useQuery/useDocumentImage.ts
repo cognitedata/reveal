@@ -1,5 +1,3 @@
-import { Buffer } from 'buffer';
-
 import { FileInfo } from '@cognite/sdk';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import { useQuery } from '@tanstack/react-query';

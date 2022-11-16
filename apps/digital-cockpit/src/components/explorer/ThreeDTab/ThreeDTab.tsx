@@ -1,4 +1,4 @@
-import { CadIntersection } from '@cognite/reveal-v2';
+import { CadIntersection } from '@cognite/reveal';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 
 import ThreeDPreview from '../ThreeDPreview';

@@ -65,12 +65,12 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
-    "@npm//@cognite/reveal-v2",
+    "@npm//@cognite/reveal",
     "@npm//@cognite/sdk",
-    "@npm//@cognite/sdk-v5",
     "@npm//@dnd-kit/core",
     "@npm//@dnd-kit/sortable",
     "@npm//@sentry/browser",
+    "@npm//@tanstack/react-query",
     "@npm//dayjs",
     "@npm//formik",
     "@npm//gridstack",
@@ -83,8 +83,6 @@ DEPENDENCIES = [
     "@npm//react-dom",
     "@npm//react-glider",
     "@npm//react-modal",
-    "@npm//@tanstack/react-query",
-    "@npm//@tanstack/react-query-devtools",
     "@npm//react-redux",
     "@npm//react-router-dom",
     "@npm//react-virtualized",
@@ -101,8 +99,8 @@ DEPENDENCIES = [
     "//packages/z-index",
     "//packages/auth-utils",
     "//packages/react-container",
-    "//packages/react-i18n",
     "//packages/ornate",
+    "//packages/react-i18n",
 ]
 
 # Type dependencies from package.json
@@ -132,6 +130,7 @@ DEV_DEPENDENCIES = [
     "@npm//eslint-config-react-app",
     "@npm//redux-mock-store",
     "@npm//sinon",
+    "@npm//vite",
 ]
 
 # Mappings for absolute imports from baseUrl @unused

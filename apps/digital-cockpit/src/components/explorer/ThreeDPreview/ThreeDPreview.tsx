@@ -1,4 +1,3 @@
-import { CogniteClient } from '@cognite/sdk-v5';
 import useThreeDMappingsQuery from 'hooks/useQuery/useThreeDMappingsQuery';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -9,14 +8,11 @@ import {
   CadIntersection,
   NodeOutlineColor,
   THREE,
-} from '@cognite/reveal-v2';
+} from '@cognite/reveal';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import styled from 'styled-components';
 import StatusMessage from 'components/utils/StatusMessage';
 import uniqueId from 'lodash/uniqueId';
-
-import { usePossibleTenant } from '../../../hooks';
-import sidecar from '../../../utils/sidecar';
 
 export type ThreeDPreviewProps = {
   assetId: number;
@@ -50,13 +46,11 @@ const ThreeDPreview = ({
   applyGeometryFilter,
   onNodeClick,
 }: ThreeDPreviewProps) => {
-  const tenant = usePossibleTenant();
   const containerId = `reveal-container-${uniqueId()}`;
-  const { client, authState } = useCDFExplorerContext();
+  const { client } = useCDFExplorerContext();
   const { data: mappings, isLoading } = useThreeDMappingsQuery([assetId]);
   const revealViewer = useRef<Cognite3DViewer>();
   const [isRevealReady, setRevealReady] = useState(false);
-  const [sdkClient, setSdkClient] = useState<CogniteClient>();
 
   useEffect(() => {
     const domElement = document.getElementById(containerId);
@@ -65,27 +59,9 @@ const ThreeDPreview = ({
     }
     if (revealViewer.current) return;
 
-    // The 3D viewer uses the sdk v5 that's why we need this.
-    // the package should be updated to use sdk v7
-    const sdkClient = new CogniteClient({
-      appId: sidecar.applicationId,
-      baseUrl: sidecar.digitalCockpitApiBaseUrl,
-    });
-
-    sdkClient.loginWithOAuth({
-      type: 'CDF_OAUTH',
-      options: {
-        project: tenant,
-        accessToken: authState?.token,
-        onAuthenticate: (login) => {
-          login.skip();
-        },
-      },
-    });
-
-    setSdkClient(sdkClient);
     revealViewer.current = new Cognite3DViewer({
-      sdk: sdkClient,
+      // @ts-expect-error client needs updates
+      sdk: client,
       domElement,
     });
 
@@ -101,7 +77,7 @@ const ThreeDPreview = ({
   });
 
   const loadModel = async () => {
-    if (!sdkClient) {
+    if (!client) {
       return;
     }
     if (!revealViewer.current) {
@@ -135,7 +111,8 @@ const ThreeDPreview = ({
     )) as Cognite3DModel;
     revealViewer.current.setBackgroundColor(new THREE.Color(0xffffff));
 
-    const selectedAssetNode = new AssetNodeCollection(sdkClient, model);
+    // @ts-expect-error client needs updates
+    const selectedAssetNode = new AssetNodeCollection(client, model);
     selectedAssetNode.executeFilter({ assetId });
     model.setDefaultNodeAppearance({
       color: [10, 10, 10],

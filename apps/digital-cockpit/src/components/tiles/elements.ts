@@ -36,8 +36,25 @@ export const SubSuiteTileContainer = styled(SmallTileContainer)`
     align-items: center;
   }
   &.medium-tile {
-    height: 200px;
-    width: 200px;
+    height: 150px;
+    width: 150px;
+    @media (min-width: 600px) {
+      height: 180px;
+      width: 180px;
+    }
+    @media (min-width: 900px) {
+      height: 200px;
+      width: 200px;
+    }
+    @media (min-width: 1200px) {
+      height: 230px;
+      width: 230px;
+    }
+    @media (min-width: 1600px) {
+      height: 250px;
+      width: 250px;
+    }
+
     .flex-aligned-content {
       flex-direction: column;
     }
