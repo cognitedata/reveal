@@ -5,7 +5,7 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { PotreeGroupWrapper } from './PotreeGroupWrapper';
+import { PointCloudLoadingStateHandler } from './PointCloudLoadingStateHandler';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { yieldProcessing } from '../../../test-utilities';
 
@@ -13,11 +13,11 @@ import { PointCloudOctree } from './potree-three-loader';
 import { Mock } from 'moq.ts';
 import { PointCloudMaterial } from '@reveal/rendering';
 
-describe('PotreeGroupWrapper', () => {
+describe(PointCloudLoadingStateHandler.name, () => {
   const pollLoadingStatusInterval = 1;
 
   test('getLoadingStateObserver() triggers false initially', done => {
-    const manager = new PotreeGroupWrapper(
+    const manager = new PointCloudLoadingStateHandler(
       pollLoadingStatusInterval
     );
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
@@ -34,7 +34,7 @@ describe('PotreeGroupWrapper', () => {
       .returns(new PointCloudMaterial())
       .object();
     const model = new PotreeNodeWrapper(Symbol('dummy'), dummyNode, [], { classificationSets: [] });
-    const manager = new PotreeGroupWrapper(
+    const manager = new PointCloudLoadingStateHandler(
       pollLoadingStatusInterval
     );
 

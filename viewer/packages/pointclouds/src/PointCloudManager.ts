@@ -10,7 +10,7 @@ import { LoadingState } from '@reveal/model-base';
 import { PointCloudFactory } from './PointCloudFactory';
 import { PointCloudNode } from './PointCloudNode';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
-import { PotreeGroupWrapper } from './PotreeGroupWrapper';
+import { PointCloudLoadingStateHandler } from './PointCloudLoadingStateHandler';
 import { Potree } from './potree-three-loader';
 
 import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
@@ -19,13 +19,17 @@ import { ModelIdentifier } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
 import { PointCloudMaterialManager } from '@reveal/rendering';
+import { PotreeNodeWrapper } from './PotreeNodeWrapper';
+
+import { Mesh } from 'three';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
   private readonly _pointCloudFactory: PointCloudFactory;
   private readonly _materialManager: PointCloudMaterialManager;
-  private readonly _pointCloudGroupWrapper: PotreeGroupWrapper;
+  private readonly _loadingStateHandler: PointCloudLoadingStateHandler;
   private readonly _potreeInstance: Potree;
+  private readonly _pointCloudNodes: PotreeNodeWrapper[] = [];
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _modelSubject: Subject<{ modelIdentifier: ModelIdentifier; operation: 'add' | 'remove' }> =
@@ -46,9 +50,9 @@ export class PointCloudManager {
     this._pointCloudFactory = modelFactory;
     this._materialManager = materialManager;
     this._potreeInstance = potreeInstance
-    this._pointCloudGroupWrapper = new PotreeGroupWrapper();
+    this._loadingStateHandler = new PointCloudLoadingStateHandler();
 
-    scene.add(this._pointCloudGroupWrapper);
+    scene.add(this.createDrawResetTrigger());
 
     combineLatest([this._cameraSubject, this.loadedModelsObservable(), this._budgetSubject])
       .pipe(throttleTime(500, asyncScheduler, { leading: true, trailing: true }))
@@ -61,16 +65,16 @@ export class PointCloudManager {
     this._renderer = renderer;
   }
 
-  get pointCloudGroupWrapper(): PotreeGroupWrapper {
-    return this._pointCloudGroupWrapper;
+  get pointCloudGroupWrapper(): PointCloudLoadingStateHandler {
+    return this._loadingStateHandler;
   }
 
   requestRedraw(): void {
-    this._pointCloudGroupWrapper.requestRedraw();
+    this._loadingStateHandler.requestRedraw();
   }
 
   resetRedraw(): void {
-    this._pointCloudGroupWrapper.resetRedraw();
+    this._loadingStateHandler.resetRedraw();
   }
 
   get pointBudget(): number {
@@ -83,7 +87,7 @@ export class PointCloudManager {
   }
 
   get needsRedraw(): boolean {
-    return this._pointCloudGroupWrapper.needsRedraw;
+    return this._loadingStateHandler.needsRedraw;
   }
 
   set clippingPlanes(planes: THREE.Plane[]) {
@@ -92,12 +96,12 @@ export class PointCloudManager {
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
-    return this._pointCloudGroupWrapper.getLoadingStateObserver();
+    return this._loadingStateHandler.getLoadingStateObserver();
   }
 
   updatePointClouds(camera: THREE.PerspectiveCamera): void {
     this._potreeInstance.updatePointClouds(
-      this._pointCloudGroupWrapper.pointClouds,
+      this._loadingStateHandler.pointClouds,
       camera,
       this._renderer
     );
@@ -105,7 +109,7 @@ export class PointCloudManager {
 
   updateCamera(camera: THREE.PerspectiveCamera): void {
     this._cameraSubject.next(camera);
-    this._pointCloudGroupWrapper.requestRedraw();
+    this._loadingStateHandler.requestRedraw();
   }
 
   async addModel(modelIdentifier: ModelIdentifier): Promise<PointCloudNode> {
@@ -121,7 +125,8 @@ export class PointCloudManager {
     );
 
     const nodeWrapper = await this._pointCloudFactory.createModel(metadata);
-    this._pointCloudGroupWrapper.addPointCloud(nodeWrapper);
+    this._pointCloudNodes.push(nodeWrapper);
+    this._loadingStateHandler.addPointCloud(nodeWrapper);
     const node = new PointCloudNode(nodeWrapper, metadata.cameraConfiguration);
     node.setModelTransformation(metadata.modelMatrix);
 
@@ -132,7 +137,12 @@ export class PointCloudManager {
   }
 
   removeModel(node: PointCloudNode): void {
-    this._pointCloudGroupWrapper.removePointCloud(node.potreeNode);
+    const index = this._pointCloudNodes.indexOf(node.potreeNode);
+    if (index === -1) {
+      throw new Error('Point cloud is not added - cannot remove it');
+    }
+    this._pointCloudNodes.splice(index, 1);
+
     this._materialManager.removeModelMaterial(node.potreeNode.modelIdentifier);
   }
 
@@ -155,5 +165,20 @@ export class PointCloudManager {
         }
       }, [] as ModelIdentifier[])
     );
+  }
+
+  createDrawResetTrigger(): Mesh {
+    const drawResetTriggerMesh = new THREE.Mesh(new THREE.BufferGeometry());
+    drawResetTriggerMesh.name = 'onAfterRender trigger (no geometry)';
+    drawResetTriggerMesh.frustumCulled = false;
+    drawResetTriggerMesh.onAfterRender = () => {
+      this.resetRedraw();
+      // We only reset this when we actually redraw, not on resetRedraw. This is
+      // because there are times when this will onAfterRender is triggered
+      // just after buffers are uploaded but not visualized yet.
+      this._loadingStateHandler.updatePointBuffersHash();
+    };
+
+    return drawResetTriggerMesh;
   }
 }

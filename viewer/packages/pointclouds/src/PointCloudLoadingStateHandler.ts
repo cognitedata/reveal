@@ -9,13 +9,13 @@ import { delay, distinctUntilChanged, map, share, startWith, switchMap } from 'r
 import * as THREE from 'three';
 
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
-import { Potree, PointCloudOctree, numPointCloudNodesLoading } from './potree-three-loader';
+import { PointCloudOctree, numPointCloudNodesLoading } from './potree-three-loader';
 
 /**
  * Wrapper around Potree.Group with type information and
  * basic functionality.
  */
-export class PotreeGroupWrapper extends THREE.Object3D {
+export class PointCloudLoadingStateHandler {
   private _needsRedraw: boolean = false;
   private _lastDrawPointBuffersHash = 0;
   private readonly _forceLoadingSubject = new Subject<void>();
@@ -39,21 +39,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
    * @param pollLoadingStatusInterval Controls how often the wrapper checks for loading status. Used for testing.
    */
   constructor(pollLoadingStatusInterval: number = 200) {
-    super();
     this._pointClouds = [];
-    this.name = 'Potree point cloud wrapper';
-
-    const onAfterRenderTrigger = new THREE.Mesh(new THREE.BufferGeometry());
-    onAfterRenderTrigger.name = 'onAfterRender trigger (no geometry)';
-    onAfterRenderTrigger.frustumCulled = false;
-    onAfterRenderTrigger.onAfterRender = () => {
-      this.resetRedraw();
-      // We only reset this when we actually redraw, not on resetRedraw. This is
-      // because there are times when this will onAfterRender is triggered
-      // just after buffers are uploaded but not visualized yet.
-      this._lastDrawPointBuffersHash = this.pointBuffersHash;
-    };
-    this.add(onAfterRenderTrigger);
 
     this._loadingObservable = this.createLoadingStateObservable(pollLoadingStatusInterval);
     this._lastDrawPointBuffersHash = this.pointBuffersHash;
@@ -98,7 +84,7 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     const forceLoading$ = this._forceLoadingSubject.pipe(trueForDuration(pollLoadingStatusInterval * 5));
     return combineLatest([
       interval(pollLoadingStatusInterval).pipe(
-        map(() => getLoadingStateFromPotree(this.nodes)),
+        map(() => getLoadingStateFromPotree(this.nodes.length)),
         distinctUntilChanged((x, y) => {
           return (
             x.isLoading === y.isLoading && x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested
@@ -118,6 +104,10 @@ export class PotreeGroupWrapper extends THREE.Object3D {
       distinctUntilChanged(),
       share()
     );
+  }
+
+  updatePointBuffersHash() {
+    this._lastDrawPointBuffersHash = this.pointBuffersHash;
   }
 
   /**
@@ -150,12 +140,12 @@ function trueForDuration(milliseconds: number) {
   );
 }
 
-function getLoadingStateFromPotree(nodes: PotreeNodeWrapper[]): LoadingState {
+function getLoadingStateFromPotree(numPointClouds: number): LoadingState {
   const numNodesLoading: number = numPointCloudNodesLoading;
   return {
     isLoading: numNodesLoading > 0,
-    itemsLoaded: nodes.length - numNodesLoading,
-    itemsRequested: nodes.length,
+    itemsLoaded: numPointClouds - numNodesLoading,
+    itemsRequested: numPointClouds,
     itemsCulled: 0
   };
 }
