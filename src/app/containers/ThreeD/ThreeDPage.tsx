@@ -36,8 +36,8 @@ export const ThreeDPage = () => {
   }
 
   return (
-    <ThreeDContextProvider>
-      <ThreeDView key={threeDId} modelId={threeDId} revisionId={revision.id} />
+    <ThreeDContextProvider key={threeDId} modelId={threeDId}>
+      <ThreeDView key={threeDId} modelId={threeDId} />
     </ThreeDContextProvider>
   );
 };

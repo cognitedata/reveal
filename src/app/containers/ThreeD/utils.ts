@@ -20,6 +20,7 @@ import { FetchQueryOptions, QueryClient } from 'react-query';
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
 export const THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY = 'expanded';
+export const THREE_D_REVISION_ID_QUERY_PARAMETER_KEY = 'revisionId';
 
 export const MINIMUM_BOUNDINGBOX_SIZE = 0.001;
 export const CAMERA_ANIMATION_DURATION = 500;
@@ -223,23 +224,23 @@ export function prepareSearchString(s: string): Set<string> {
 }
 
 export const getStateUrl = ({
+  revisionId,
   viewState,
   assetDetailsExpanded,
   selectedAssetId,
 }: {
+  revisionId?: number;
   viewState?: ViewerState;
   selectedAssetId?: number;
   assetDetailsExpanded?: boolean;
 }) => {
   const searchParams = new URLSearchParams(window.location.search);
-  if (viewState) {
-    searchParams.set(
-      THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY,
-      JSON.stringify(viewState)
-    );
+  if (revisionId) {
+    searchParams.set(THREE_D_REVISION_ID_QUERY_PARAMETER_KEY, `${revisionId}`);
   } else {
-    searchParams.delete(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY);
+    searchParams.delete(THREE_D_REVISION_ID_QUERY_PARAMETER_KEY);
   }
+
   if (selectedAssetId) {
     searchParams.set(
       THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY,
@@ -255,6 +256,14 @@ export const getStateUrl = ({
     );
   } else {
     searchParams.delete(THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY);
+  }
+  if (viewState) {
+    searchParams.set(
+      THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY,
+      JSON.stringify(viewState)
+    );
+  } else {
+    searchParams.delete(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY);
   }
 
   return `${window.location.pathname}?${searchParams}`;

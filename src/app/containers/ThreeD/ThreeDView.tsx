@@ -42,10 +42,8 @@ import MouseWheelAction from 'app/containers/ThreeD/components/MouseWheelAction'
 
 type Props = {
   modelId: number;
-  revisionId: number;
 };
-
-export const ThreeDView = ({ modelId, revisionId }: Props) => {
+export const ThreeDView = ({ modelId }: Props) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
@@ -61,6 +59,7 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
     setAssetDetailsExpanded,
     splitterColumnWidth,
     setSplitterColumnWidth,
+    revisionId,
     tab,
     setTab,
   } = context;
@@ -93,7 +92,7 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
             queryClient,
             threeDModel!,
             modelId,
-            revisionId,
+            revisionId!,
             intersection as CadIntersection
           );
         }
@@ -146,7 +145,7 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
         viewer,
         threeDModel,
         modelId,
-        revisionId,
+        revisionId!,
         selectedAssetId
       );
     } else {
@@ -165,6 +164,10 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
     threeDModel,
     viewer,
   ]);
+
+  if (!revisionId) {
+    return null;
+  }
 
   return (
     <>

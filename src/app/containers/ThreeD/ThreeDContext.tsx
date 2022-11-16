@@ -18,7 +18,10 @@ import {
   THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY as EXPANDED_KEY,
   THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY as SELECTED_ASSET_KEY,
   THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY as VIEW_STATE_KEY,
+  THREE_D_REVISION_ID_QUERY_PARAMETER_KEY as REVISION_KEY,
 } from './utils';
+import { useDefault3DModelRevision } from './hooks';
+import { Loader } from '@cognite/cogs.js';
 import { ResourceTabType } from 'app/containers/ThreeD/NodePreview';
 
 type ThreeDContext = {
@@ -34,6 +37,8 @@ type ThreeDContext = {
   setViewState: Dispatch<SetStateAction<ViewerState | undefined>>;
   selectedAssetId?: number;
   setSelectedAssetId: Dispatch<SetStateAction<number | undefined>>;
+  revisionId?: number;
+  setRevisionId: Dispatch<SetStateAction<number | undefined>>;
   assetDetailsExpanded: boolean;
   setAssetDetailsExpanded: Dispatch<SetStateAction<boolean>>;
   splitterColumnWidth: number;
@@ -55,6 +60,7 @@ export const ThreeDContext = createContext<ThreeDContext>({
   set3DModel: () => {},
   setPointCloudModel: () => {},
   setSplitterColumnWidth: () => {},
+  setRevisionId: () => {},
   setTab: () => {},
 });
 ThreeDContext.displayName = 'ThreeDContext';
@@ -97,18 +103,27 @@ const getInitialState = () => {
     }
   })();
 
+  const revisionId = (() => {
+    const s = initialParams.get(REVISION_KEY);
+    const n = !!s ? parseInt(s, 10) : undefined;
+    return Number.isFinite(n) ? n : undefined;
+  })();
+
   const expanded = initialParams.get(EXPANDED_KEY) === 'true';
   return {
     viewState,
     selectedAssetId,
     expanded,
+    revisionId,
     splitterColumnWidth,
   };
 };
 
 export const ThreeDContextProvider = ({
+  modelId,
   children,
 }: {
+  modelId: number;
   children?: React.ReactNode;
 }) => {
   const {
@@ -116,6 +131,7 @@ export const ThreeDContextProvider = ({
     selectedAssetId: initialSelectedAssetId,
     viewState: initialViewState,
     splitterColumnWidth: initialSplitterColumnWidth,
+    revisionId: initialRevisionId,
   } = useMemo(() => getInitialState(), []);
 
   const [viewer, setViewer] = useState<Cognite3DViewer | undefined>();
@@ -129,21 +145,44 @@ export const ThreeDContextProvider = ({
   const [selectedAssetId, setSelectedAssetId] = useState<number | undefined>(
     initialSelectedAssetId
   );
+  const [revisionId, setRevisionId] = useState<number | undefined>(
+    initialRevisionId
+  );
   const [splitterColumnWidth, setSplitterColumnWidth] = useState(
     initialSplitterColumnWidth
   );
   const [assetDetailsExpanded, setAssetDetailsExpanded] =
     useState<boolean>(initialExpanded);
 
+  const {
+    isFetching: fetchingDefaultRevision,
+    error,
+    data: defaultRevision,
+  } = useDefault3DModelRevision(modelId, { enabled: !revisionId });
+
+  useEffect(() => {
+    if (
+      !revisionId &&
+      defaultRevision?.id &&
+      Number.isFinite(defaultRevision?.id)
+    ) {
+      setRevisionId(defaultRevision.id);
+    }
+  }, [defaultRevision?.id, revisionId]);
   const [tab, setTab] = useState<ResourceTabType | undefined>();
 
   useEffect(() => {
     window.history.replaceState(
       {},
       '',
-      getStateUrl({ selectedAssetId, viewState, assetDetailsExpanded })
+      getStateUrl({
+        revisionId,
+        selectedAssetId,
+        viewState,
+        assetDetailsExpanded,
+      })
     );
-  }, [assetDetailsExpanded, selectedAssetId, viewState]);
+  }, [assetDetailsExpanded, revisionId, selectedAssetId, viewState]);
 
   useEffect(() => {
     try {
@@ -153,6 +192,14 @@ export const ThreeDContextProvider = ({
       );
     } catch {}
   }, [splitterColumnWidth]);
+
+  if (error) {
+    return <>Could not find a revision for model id {modelId}</>;
+  }
+
+  if (fetchingDefaultRevision) {
+    return <Loader />;
+  }
 
   return (
     <ThreeDContext.Provider
@@ -171,6 +218,8 @@ export const ThreeDContextProvider = ({
         setAssetDetailsExpanded,
         splitterColumnWidth,
         setSplitterColumnWidth,
+        revisionId,
+        setRevisionId,
         tab,
         setTab,
       }}
