@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useDefault3DModelRevision } from './hooks';
 import { ThreeDContextProvider } from './ThreeDContext';
 import { ThreeDView } from './ThreeDView';
-import ThreeDTitle from './ThreeDTitle';
+import { ThreeDTitle } from 'app/containers/ThreeD/title/ThreeDTitle';
 
 export const ThreeDPage = () => {
   const { id: threeDIdString = '' } = useParams<{

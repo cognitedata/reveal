@@ -19,7 +19,7 @@ import PointSizeSlider from './point-size-slider/PointSizeSlider';
 import HelpButton from './help-button';
 import styled from 'styled-components';
 import { Flex, ToolBar } from '@cognite/cogs.js';
-import ThreeDTitle from './ThreeDTitle';
+import { ThreeDTitle } from './title/ThreeDTitle';
 import NodePreview, { ResourceTabType } from './NodePreview';
 import {
   findClosestAsset,

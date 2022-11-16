@@ -55,16 +55,24 @@ export const use3DModel = (id: number | undefined) => {
 
 const getRevisionKey = (id?: number) => ['cdf', '3d', 'model', id, 'revisions'];
 
-type RevisionOpts<T> = UseQueryOptions<Revision3D[], unknown, T>;
+export type Revision3DWithIndex = Revision3D & { index: number };
 
-export const useRevisions = <T = Revision3D[]>(
+type RevisionOpts<T> = UseQueryOptions<Revision3DWithIndex[], unknown, T>;
+
+export const useRevisions = <T = Revision3DWithIndex[]>(
   modelId: number,
   opts?: Omit<RevisionOpts<T>, 'queryKey' | 'queryFn'>
 ) => {
   const sdk = useSDK();
   return useQuery(
     getRevisionKey(modelId),
-    () => sdk.revisions3D.list(modelId, { limit: 1000 }).then(r => r.items),
+    () =>
+      sdk.revisions3D
+        .list(modelId)
+        .autoPagingToArray({ limit: -1 })
+        .then(res =>
+          res.map((r, rIndex) => ({ ...r, index: res.length - rIndex }))
+        ),
     opts
   );
 };
@@ -72,7 +80,7 @@ export const useRevisions = <T = Revision3D[]>(
 export const useDefault3DModelRevision = (
   modelId: number,
   opts?: Omit<
-    RevisionOpts<Revision3D | undefined>,
+    RevisionOpts<Revision3DWithIndex | undefined>,
     'queryKey' | 'queryFn' | 'select'
   >
 ) => {
@@ -95,7 +103,12 @@ export const useRevisionIndex = (
   >
 ) => {
   return useRevisions(modelId, {
-    select: (revisions = []) => revisions.findIndex(r => r.id === revisionId),
+    select: (revisions = []) => {
+      const index = [...revisions]
+        .reverse()
+        .findIndex(r => r.id === revisionId);
+      return index >= 0 ? index + 1 : index;
+    },
     ...opts,
   });
 };
