@@ -20,7 +20,7 @@ export class IndexSet {
    * The Version will update every time a item is added or removed, or when the set is cleared.
    */
   getSetVersion = (): number => {
-    return (this.indexSetId << 32) + this.setRevision;
+    return (this.indexSetId << 24) + this.setRevision;
   };
 
   constructor(values?: Iterable<number>);
