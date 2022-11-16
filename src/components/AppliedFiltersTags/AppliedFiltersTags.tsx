@@ -1,4 +1,4 @@
-import { Flex } from '@cognite/cogs.js';
+import { Flex, IconType } from '@cognite/cogs.js';
 import { isArray, isEqual } from 'lodash';
 import React from 'react';
 import styled from 'styled-components';
@@ -9,11 +9,13 @@ import { formatValue } from './utils';
 interface Props {
   filter: NewFiltersType;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
+  icon?: IconType;
 }
 
 export const AppliedFiltersTags: React.FC<Props> = ({
   filter,
   onFilterChange,
+  icon,
 }) => {
   const filterKeys = Object.keys(
     filter || {}
@@ -36,6 +38,7 @@ export const AppliedFiltersTags: React.FC<Props> = ({
               <FilterChip
                 key={`${key}-${displayValue}`}
                 name={key}
+                icon={icon}
                 value={displayValue}
                 onClick={() => {
                   if (!onFilterChange) {
@@ -57,6 +60,7 @@ export const AppliedFiltersTags: React.FC<Props> = ({
           <FilterChip
             key={`${key}-${displayValue}`}
             name={key}
+            icon={icon}
             value={displayValue}
             onClick={() => {
               if (!onFilterChange) {

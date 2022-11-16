@@ -1,4 +1,4 @@
-import { Button, Label, Tooltip } from '@cognite/cogs.js';
+import { Button, IconType, Label, Tooltip } from '@cognite/cogs.js';
 import { COMMON_FILTER_KEYS } from 'domain/constants';
 import includes from 'lodash/includes';
 import React from 'react';
@@ -8,10 +8,13 @@ import { getTitle } from './utils';
 interface Props {
   name: string;
   value: string;
+  icon?: IconType;
   onClick?: () => void;
 }
-export const FilterChip: React.FC<Props> = ({ name, value, onClick }) => {
-  const variant = includes(COMMON_FILTER_KEYS, name) ? 'normal' : 'success';
+export const FilterChip: React.FC<Props> = ({ name, value, icon, onClick }) => {
+  const isCommonKeyName = includes(COMMON_FILTER_KEYS, name);
+
+  const variant = isCommonKeyName ? 'normal' : 'success';
   const text = `${getTitle(name)}: ${value}`;
 
   return (
@@ -21,6 +24,7 @@ export const FilterChip: React.FC<Props> = ({ name, value, onClick }) => {
         onClick={onClick}
         selectable={Boolean(onClick)}
         size="medium"
+        icon={isCommonKeyName ? undefined : icon}
       >
         <Title>{text}</Title>
         {Boolean(onClick) && <CloseButton onClick={onClick} />}

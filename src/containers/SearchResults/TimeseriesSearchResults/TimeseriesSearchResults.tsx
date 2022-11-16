@@ -78,7 +78,11 @@ export const TimeseriesSearchResults = ({
         fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
         hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
         tableSubHeaders={
-          <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
+          <AppliedFiltersTags
+            filter={filter}
+            onFilterChange={onFilterChange}
+            icon="Timeseries"
+          />
         }
         showLoadButton
         onRowClick={timseries => onClick(timseries)}

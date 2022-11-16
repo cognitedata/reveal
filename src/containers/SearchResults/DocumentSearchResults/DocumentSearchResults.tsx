@@ -50,7 +50,11 @@ export const DocumentSearchResults = ({
         }
         sorting={sortBy}
         tableSubHeaders={
-          <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
+          <AppliedFiltersTags
+            filter={filter}
+            onFilterChange={onFilterChange}
+            icon="Document"
+          />
         }
         data={results}
         onRowClick={document => {

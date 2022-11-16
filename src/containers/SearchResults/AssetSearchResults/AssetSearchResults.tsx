@@ -125,6 +125,7 @@ export const AssetSearchResults = ({
             <AppliedFiltersTags
               filter={filter}
               onFilterChange={onFilterChange}
+              icon="Assets"
             />
           }
           tableHeaders={currentView === 'list' ? tableHeaders : undefined}
@@ -146,6 +147,7 @@ export const AssetSearchResults = ({
             <AppliedFiltersTags
               filter={filter}
               onFilterChange={onFilterChange}
+              icon="Assets"
             />
           }
           scrollIntoViewRow={

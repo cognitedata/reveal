@@ -66,7 +66,11 @@ export const EventSearchResults = ({
         />
       }
       tableSubHeaders={
-        <AppliedFiltersTags filter={filter} onFilterChange={onFilterChange} />
+        <AppliedFiltersTags
+          filter={filter}
+          onFilterChange={onFilterChange}
+          icon="Events"
+        />
       }
       data={enableAdvancedFilters ? data : items}
       enableSorting

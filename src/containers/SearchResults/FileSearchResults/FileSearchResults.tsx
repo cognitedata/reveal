@@ -110,6 +110,7 @@ export const FileSearchResults = ({
             <AppliedFiltersTags
               filter={filter}
               onFilterChange={onFilterChange}
+              icon="Document"
             />
           }
           data={items}
