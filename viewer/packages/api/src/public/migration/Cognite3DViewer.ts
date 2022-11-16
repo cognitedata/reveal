@@ -1077,6 +1077,7 @@ export class Cognite3DViewer {
       const screenshotCamera = this.cameraManager.getCamera().clone() as THREE.PerspectiveCamera;
       adjustCamera(screenshotCamera, width, height);
 
+      //Position and scale domElement to match requested resolution
       this.domElement.style.position = 'fixed';
       this.domElement.style.width = width + 'px';
       this.domElement.style.height = height + 'px';
@@ -1100,7 +1101,7 @@ export class Cognite3DViewer {
         camera: screenshotCamera
       });
 
-      //Draw screenshot
+      //Draw screenshot. Again disregarding pixel ratio
       const outCanvas = await html2canvas(this.domElement, { scale: pixelRatioOverride });
       return outCanvas.toDataURL();
     } finally {
