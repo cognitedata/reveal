@@ -1069,26 +1069,26 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
     }
-    console.log('image resolution: ' + width + ' x ' + height);
-    console.log('canvas: ' + this.canvas.width + ' x ' + this.canvas.height);
 
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new Vector2());
-    console.log('original: ' + originalWidth + ' x ' + originalHeight);
+    const originalDomeStyle = { ...this.domElement.style };
 
     try {
       const screenshotCamera = this.cameraManager.getCamera().clone() as THREE.PerspectiveCamera;
       adjustCamera(screenshotCamera, width, height);
 
-      const pixelRatio = this._renderer.getPixelRatio();
-      console.log('pixelRatio: ' + pixelRatio);
+      this.domElement.style.position = 'fixed';
+      this.domElement.style.width = width + 'px';
+      this.domElement.style.height = height + 'px';
+      this.domElement.style.flexGrow = '1';
+      this.domElement.style.margin = '0px';
+      this.domElement.style.padding = '0px';
+      this.domElement.style.left = '0px';
+      this.domElement.style.top = '0px';
 
-      //Adjust for pixel ratio to compensate for adjustments done later in renderer.setSize
-      //if this is not done this.canvas.toDataURL() will return an image with wrong resolution
-      const adjustedWidth = width / pixelRatio;
-      const adjustedHeight = height / pixelRatio;
-      console.log('adjusted: ' + adjustedWidth + ' x ' + adjustedHeight);
-
-      this.renderer.setSize(adjustedWidth, adjustedHeight);
+      //We disregard pixelRatio to get the screenshot in requested resolution
+      const pixelRatioOverride = 1;
+      this.renderer.setDrawingBufferSize(width, height, pixelRatioOverride);
       this.revealManager.render(screenshotCamera);
       if (!includeUI) return this.canvas.toDataURL();
 
@@ -1100,43 +1100,19 @@ export class Cognite3DViewer {
         camera: screenshotCamera
       });
 
-      //??? Debug stuff
-      const temp = this.renderer.getSize(new Vector2());
-      console.log('post getSize: ' + temp.x + ' x ' + temp.y);
-      console.log('inner: ' + innerWidth + '  x  ' + innerHeight);
-
-      //???
-      const pixelRatioWindow = window.devicePixelRatio;
-      console.log('pixelRatio: ' + pixelRatioWindow);
-
-      //??? Left and right padding * pixelRatioWindow
-      const paddingX = this.domElement.getBoundingClientRect().x * 2 * pixelRatioWindow;
-      console.log('paddingX: ' + paddingX);
-
-      //??? Still do not know where 0.05 comes from
-      const paddingY = height * 0.05;
-      console.log('paddingY: ' + paddingY);
-
-      console.log('windowWidth: ' + (width / pixelRatioWindow + paddingX));
-      console.log('windowHeight: ' + (height / pixelRatioWindow + paddingY));
-
-      //Create custom canvas to force correct size of result image
-      const drawCanvas = document.createElement('canvas');
-      drawCanvas.width = width;
-      drawCanvas.height = height;
-      console.log('drawCanvas: ' + width + ' x ' + height);
-      console.log('renderCanvas: ' + this.canvas.width + ' x ' + this.canvas.height);
-
       //Draw screenshot
-      const domCanvas = await html2canvas(this.domElement, {
-        canvas: drawCanvas,
-        width: width, //The width of the canvas. This does nothing, but is nice for debuging as it will show background color in areas that are not filled by the domElement.
-        height: height, //The height of the canvas. This does nothing, but is nice for debuging as it will show background color in areas that are not filled by the domElement.
-        windowWidth: width / pixelRatioWindow + paddingX, //Window width to use when rendering Element. If not set innerWidth is used.
-        windowHeight: height / pixelRatioWindow + paddingY //Window height to use when rendering Element. If not set innerHeight is used.
-      });
-      return domCanvas.toDataURL();
+      const outCanvas = await html2canvas(this.domElement, { scale: pixelRatioOverride });
+      return outCanvas.toDataURL();
     } finally {
+      this.domElement.style.position = originalDomeStyle.position;
+      this.domElement.style.width = originalDomeStyle.width;
+      this.domElement.style.height = originalDomeStyle.height;
+      this.domElement.style.flexGrow = originalDomeStyle.flexGrow;
+      this.domElement.style.margin = originalDomeStyle.margin;
+      this.domElement.style.padding = originalDomeStyle.padding;
+      this.domElement.style.left = originalDomeStyle.left;
+      this.domElement.style.top = originalDomeStyle.top;
+
       this.renderer.setSize(originalWidth, originalHeight);
       this.revealManager.render(this.cameraManager.getCamera());
 

@@ -12,8 +12,6 @@ import { DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { assertNever, worldToViewportCoordinates } from '@reveal/utilities';
 import debounce from 'lodash/debounce';
 import { Cognite3DViewer } from '@reveal/api';
-import { Vector2 } from 'three';
-import { worldToViewportCoordinatesfromRenderer } from '@reveal/utilities/src/worldToViewport';
 
 /**
  * Callback that is triggered whenever the 2D position of an overlay is updated
@@ -291,7 +289,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    *
    * Calling this function often might cause degraded performance.
    */
-  forceUpdate(customCamera?: THREE.PerspectiveCamera, temp?: number): void {
+  forceUpdate(customCamera?: THREE.PerspectiveCamera): void {
     // Do not update elements if overlay visibility is set to hidden/false.
     if (!this._visible) {
       return;
@@ -327,12 +325,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       const insideCameraPlanes =
         nearPlane.distanceToPoint(position3D) >= 0.0 && farPlane.distanceToPoint(position3D) <= 0.0;
 
-      // const { x, y } = worldToViewportCoordinates(canvas, camera, position3D);
-
-      const { x, y } =
-        temp && temp === -1
-          ? worldToViewportCoordinatesfromRenderer(canvas, camera, position3D)
-          : worldToViewportCoordinates(canvas, camera, position3D);
+      const { x, y } = worldToViewportCoordinates(canvas, camera, position3D);
 
       if (insideCameraPlanes) {
         state.position2D.set(x, y);
