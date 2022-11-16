@@ -31,7 +31,7 @@ Example.play = async ({ canvasElement }) => {
   await userEvent.click(select!);
   const option = canvas.getByText(assets[0].name!, {
     exact: false,
-    selector: '.cogs-select__option > span',
+    selector: '.cogs-tooltip__content',
   });
   await expect(option!).not.toBeNull();
   await expect(option!).toBeVisible();

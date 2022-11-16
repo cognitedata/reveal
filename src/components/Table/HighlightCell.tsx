@@ -22,26 +22,19 @@ export const HighlightCell = React.memo(
     return (
       <EllipsisText level={2} lines={lines} className={className}>
         <div ref={textWrapperRef}>
-          {isEllipsisActive ? (
-            <Tooltip
-              content={text}
-              placement="top-start"
-              arrow={false}
-              interactive
-            >
-              <Highlighter
-                searchWords={(query || '').split(' ')}
-                textToHighlight={text || ''}
-                autoEscape
-              />
-            </Tooltip>
-          ) : (
+          <Tooltip
+            content={text}
+            placement="top-start"
+            arrow={false}
+            interactive
+            disabled={!isEllipsisActive}
+          >
             <Highlighter
               searchWords={(query || '').split(' ')}
               textToHighlight={text || ''}
               autoEscape
             />
-          )}
+          </Tooltip>
         </div>
       </EllipsisText>
     );

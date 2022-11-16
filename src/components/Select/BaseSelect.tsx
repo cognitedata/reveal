@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { NamedProps } from 'react-select';
+import { components, NamedProps } from 'react-select';
 import ReactSelectCreatable, {
   Props as ReactSelectCreatableProps,
 } from 'react-select/creatable';
@@ -11,6 +11,7 @@ import {
   SelectProps as CogsSelectProps,
   Theme,
 } from '@cognite/cogs.js';
+import { Ellipsis } from 'components/Ellipsis/Ellipsis';
 
 const NIL_FILTER_OPTION: OptionType<null> = {
   label: 'N/A',
@@ -23,6 +24,14 @@ export interface BaseSelectProps<ValueType>
   cogsTheme?: Theme;
   addNilOption?: boolean;
 }
+
+const Option = ({ data, isSelected, ...props }: any) => {
+  return (
+    <components.Option {...props} data={data} isSelected={isSelected}>
+      <Ellipsis value={data.label} />
+    </components.Option>
+  );
+};
 
 export const BaseSelect = <ValueType,>({
   creatable = false,
@@ -72,5 +81,5 @@ export const BaseSelect = <ValueType,>({
     );
   }
 
-  return <CogsSelect {...props} />;
+  return <CogsSelect {...props} components={{ Option }} />;
 };
