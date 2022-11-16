@@ -1,17 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { FlexibleDataModelingClient } from './boundaries';
 import { DataManagementHandler } from './data-managment-handler';
-import { MixerQueryBuilder } from './services/mixer-api';
 
 describe('DataManagementHandlerTest', () => {
-  const queryBuilderMock = {
-    buildQuery: jest
-      .fn()
-      .mockImplementation(
-        () => 'query { listTestOperationName { externalId } }'
-      ),
-    getOperationName: jest.fn().mockImplementation(() => 'TestOperationName'),
-  } as any as MixerQueryBuilder;
-
   const fetchDataResponseMock = {
     items: [],
     pageInfo: {
@@ -19,16 +10,6 @@ describe('DataManagementHandlerTest', () => {
       hasNextPage: true,
     },
   };
-
-  const mixerApiServiceMock = {
-    runQuery: jest.fn().mockImplementation(() =>
-      Promise.resolve({
-        data: {
-          TestOperationName: fetchDataResponseMock,
-        },
-      })
-    ),
-  } as any;
 
   const mockTransformation = [
     {
@@ -44,26 +25,27 @@ describe('DataManagementHandlerTest', () => {
     },
   ];
 
-  const transformationApiServiceMock = {
+  const fdmClientMock = {
     createTransformation: jest
       .fn()
       .mockImplementation(() => Promise.resolve(mockTransformation[0])),
-    getTransformationsForType: jest
+    getTransformations: jest
       .fn()
       .mockImplementation(() => Promise.resolve(mockTransformation)),
-  } as any;
-
-  const dmsApiServiceMock = {
+    fetchData: jest
+      .fn()
+      .mockImplementation(() => Promise.resolve(fetchDataResponseMock)),
+    fetchPublishedRowsCount: jest.fn().mockImplementationOnce(() =>
+      Promise.resolve({
+        Person: 0,
+        Cars: 0,
+      })
+    ),
     ingestNodes: jest.fn().mockImplementation(() => Promise.resolve()),
-  } as any;
+  } as any as FlexibleDataModelingClient;
 
   const createInstance = () => {
-    return new DataManagementHandler(
-      queryBuilderMock,
-      mixerApiServiceMock,
-      transformationApiServiceMock,
-      dmsApiServiceMock
-    );
+    return new DataManagementHandler(fdmClientMock);
   };
 
   it('should work', () => {
@@ -88,27 +70,14 @@ describe('DataManagementHandlerTest', () => {
       version: '1',
       relationshipFieldsLimit: 3,
     });
-    expect(queryBuilderMock.buildQuery).toBeCalled();
-    expect(mixerApiServiceMock.runQuery).toBeCalled();
+
+    expect(fdmClientMock.fetchData).toBeCalled();
     expect(response.isSuccess).toBe(true);
     expect(response.getValue().items).toEqual(fetchDataResponseMock.items);
   });
 
   it('should fetch published rows count', async () => {
     const service = createInstance();
-
-    mixerApiServiceMock.runQuery.mockImplementationOnce(() =>
-      Promise.resolve({
-        data: {
-          aggregatePerson: {
-            items: [],
-          },
-          aggregateCars: {
-            items: [],
-          },
-        },
-      })
-    );
 
     const response = await service.fetchPublishedRowsCount({
       dataModelTypes: [],
@@ -144,7 +113,7 @@ describe('DataManagementHandlerTest', () => {
       typeName: 'Type',
       version: '1',
     });
-    expect(transformationApiServiceMock.getTransformationsForType).toBeCalled();
+    expect(fdmClientMock.getTransformations).toBeCalled();
     expect(response).toEqual(mockTransformation);
     expect(response.length).toEqual(1);
   });

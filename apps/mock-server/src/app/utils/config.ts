@@ -1,21 +1,29 @@
 import { config } from '../config';
 import { CdfApiConfig } from '../types';
 
-export function createConfigDefaults(cdfApiConfig: CdfApiConfig): CdfApiConfig {
-  const newConfig = { ...cdfApiConfig };
+export function mergeConfigs(
+  firstApiConfig: CdfApiConfig,
+  secondApiConfig: CdfApiConfig
+): CdfApiConfig {
+  const newConfig = { ...firstApiConfig };
 
   if (!newConfig.version) {
     newConfig.version = 1;
   }
 
-  newConfig.urlRewrites = Object.assign(
-    newConfig.urlRewrites || {},
-    config.urlRewrites
+  newConfig.ignoreUrlPatterns = (newConfig.ignoreUrlPatterns || []).concat(
+    secondApiConfig.ignoreUrlPatterns
   );
 
-  if (!newConfig.endpoints) {
-    newConfig.endpoints = {};
-  }
+  newConfig.urlRewrites = Object.assign(
+    newConfig.urlRewrites || {},
+    secondApiConfig.urlRewrites
+  );
+
+  newConfig.endpoints = Object.assign(
+    newConfig.endpoints || {},
+    secondApiConfig.endpoints
+  );
 
   return newConfig;
 }

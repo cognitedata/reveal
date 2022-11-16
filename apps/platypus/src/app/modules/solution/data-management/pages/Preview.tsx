@@ -5,6 +5,7 @@ import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import {
+  useDataModel,
   useDataModelTypeDefs,
   useDataModelVersions,
   useSelectedDataModelVersion,
@@ -39,11 +40,15 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
+
+  const { data: dataModel } = useDataModel(dataModelExternalId);
+
   const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    dataModel?.space || ''
   );
   const dataModelTypeDefs = useDataModelTypeDefs(
     dataModelExternalId,
@@ -161,6 +166,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
                 ref={dataPreviewTableRef}
                 // ensure we pass real version number and not "latest" here
                 version={selectedDataModelVersion.version}
+                space={selectedDataModelVersion.space}
               />
             </Flex>
           ) : (

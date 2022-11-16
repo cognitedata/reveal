@@ -36,6 +36,7 @@ describe('DataModelSettingsModal', () => {
       owners: [],
       updatedTime: 1635936707155,
       version: '',
+      space: 'testDataModel-1',
     };
     const newName = 'New name';
     const newDescription = 'New description';

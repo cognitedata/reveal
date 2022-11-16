@@ -113,7 +113,7 @@ export class GridConfigService {
               ],
             },
             cellEditorPopup: true,
-            cellStyle: { 'text-transform': 'capitalize' },
+            cellStyle: { textTransform: 'capitalize' },
           },
           customColTypes: {
             cellRenderer: 'customRendererComponent',

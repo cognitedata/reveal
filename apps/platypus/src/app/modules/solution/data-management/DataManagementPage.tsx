@@ -5,6 +5,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { StyledPage } from '../data-model/pages/elements';
 import {
+  useDataModel,
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
@@ -60,10 +61,13 @@ export const DataManagementPage = ({
     (state) => state.dataModel
   );
 
+  const { data: dataModel } = useDataModel(dataModelExternalId);
+
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    dataModel?.space || ''
   );
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {

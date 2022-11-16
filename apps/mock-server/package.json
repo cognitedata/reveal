@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-mock-server",
-  "version": "0.0.15",
+  "version": "1.0.3",
   "description": "Cdf Mock server",
   "repository": "https://github.com/cognitedata/platypus/apps/mock-server",
   "author": "Cognite",
@@ -10,7 +10,8 @@
     "cdf-mock-server": "./main.js"
   },
   "dependencies": {
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "spdy": "4.0.2"
   },
   "resolutions": {
     "graphql": "^15.6.1"

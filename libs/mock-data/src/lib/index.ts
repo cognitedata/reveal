@@ -8,4 +8,5 @@ export * from './templates';
 export * from './files';
 export * from './groups';
 export * from './transformations';
+export * from './data-modeling';
 // export * from './schema/office-explorer';

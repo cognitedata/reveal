@@ -79,6 +79,7 @@
     "regenerator-runtime": "0.13.7",
     "single-spa-react": "^5.0.0",
     "sinon": "^12.0.1",
+    "spdy": "^4.0.2",
     "styled-components": "^5.3.3",
     "systemjs-webpack-interop": "^2.3.7",
     "tslib": "^2.0.0",

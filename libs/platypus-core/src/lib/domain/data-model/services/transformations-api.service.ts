@@ -1,6 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
-import { DataModelTransformationCreateDTO } from '@platypus-core/domain/transformation/dto';
-import { DataModelTransformation } from '@platypus-core/domain/transformation/types';
+import { CreateDataModelTransformationDTO } from '../dto';
+import { DataModelTransformation } from '../types';
 
 export class TransformationApiService {
   private transformationsBaseUrl: string;
@@ -48,7 +48,7 @@ export class TransformationApiService {
 
   // https://docs.cognite.com/api/v1/#operation/createTransformations
   createTransformation(
-    transformation: DataModelTransformationCreateDTO
+    transformation: CreateDataModelTransformationDTO
   ): Promise<DataModelTransformation> {
     return new Promise((resolve, reject) => {
       this.cdfClient

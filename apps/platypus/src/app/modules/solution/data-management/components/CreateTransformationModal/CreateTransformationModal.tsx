@@ -20,7 +20,7 @@ import { generateId } from '@platypus-app/utils/uuid';
 import {
   getOneToManyModelName,
   getVersionedExternalId,
-} from '@platypus-core/domain/data-model/services/utils';
+} from '@platypus/platypus-core';
 
 type Option = OptionType<any>;
 

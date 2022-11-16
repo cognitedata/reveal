@@ -59,6 +59,7 @@ export const DataModel = () => {
   const [isReady, setIsReady] = useState(false);
 
   const {
+    data: dataModel,
     isLoading: isDataModelLoading,
     isError: hasDataModelError,
     isSuccess: isDataModelLoaded,
@@ -77,7 +78,8 @@ export const DataModel = () => {
   const selectedDataModelVersion = useSelectedDataModelVersion(
     version,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    dataModel?.space || ''
   );
 
   // Init livecycle hook, need to run first before everything else

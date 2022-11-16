@@ -6,6 +6,7 @@ import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentL
 import { QueryExplorer } from '../components/QueryExplorer';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import {
+  useDataModel,
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
@@ -31,10 +32,13 @@ export const QueryExplorerPage = ({
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
+  const { data: dataModel } = useDataModel(dataModelExternalId);
+
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    dataModel?.space || ''
   );
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {

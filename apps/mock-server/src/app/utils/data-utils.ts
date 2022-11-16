@@ -31,12 +31,18 @@ export const base64Decode = (input: string) =>
 export const flattenNestedObjArray = (reqBody: MockData[], asString = true) => {
   const body = {};
   reqBody.forEach((item) => {
-    const objKey = Object.keys(item)[0];
-    // eslint-disable-next-line no-prototype-builtins
-    if (!body.hasOwnProperty(objKey)) {
-      body[objKey] = [];
-    }
-    body[objKey].push(asString ? item[objKey].toString() : item[objKey]);
+    const objKeys = Object.keys(item);
+    objKeys.forEach((objKey) => {
+      // eslint-disable-next-line no-prototype-builtins
+      if (!body.hasOwnProperty(objKey)) {
+        body[objKey] = [];
+      }
+
+      const newValue = asString ? item[objKey].toString() : item[objKey];
+      if (!body[objKey].includes(newValue)) {
+        body[objKey].push(newValue);
+      }
+    });
   });
 
   return body;

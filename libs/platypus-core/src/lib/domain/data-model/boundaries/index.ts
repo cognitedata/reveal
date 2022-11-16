@@ -7,6 +7,8 @@ import {
   DataModelValidationError,
 } from '../types';
 
+export * from './fdm-client';
+
 export interface IGraphQlUtilsService {
   /**
    * Parse graphql schema string

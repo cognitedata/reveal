@@ -1,5 +1,6 @@
 export interface FetchDataModelDTO {
   dataModelId: string;
+  space?: string;
 }
 
 export interface CreateDataModelDTO {

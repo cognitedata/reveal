@@ -9,6 +9,7 @@ export const DataModels: DataModel[] = [
     updatedTime: 1636107405779,
     owners: ['Ola Nordmann'],
     version: '1.2',
+    space: '1-1',
   },
   {
     id: '2',
@@ -18,5 +19,6 @@ export const DataModels: DataModel[] = [
     updatedTime: 1636107405779,
     owners: [],
     version: '',
+    space: '2-1',
   },
 ];

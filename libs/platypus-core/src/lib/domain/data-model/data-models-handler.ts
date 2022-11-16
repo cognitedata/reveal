@@ -1,44 +1,28 @@
 import { PlatypusError } from '@platypus-core/boundaries/types';
-import { DataUtils } from '@platypus-core/boundaries/utils';
 import { Result } from '../../boundaries/types/result';
 import { Validator } from '../../boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
+import { FlexibleDataModelingClient } from './boundaries';
 
 import {
   CreateDataModelDTO,
-  DataModelApiOutputDTO,
   DeleteDataModelDTO,
   FetchDataModelDTO,
   UpdateDataModelDTO,
 } from './dto';
 
-import { MixerApiService, DmsApiService } from './services/';
-import { DataModelDataMapper } from './services/data-mappers/data-model-data-mapper';
 import { DataModel } from './types';
 
 export class DataModelsHandler {
-  private dataModelDataMapper: DataModelDataMapper;
-
-  constructor(
-    private mixerApiService: MixerApiService,
-    private dmsApiService: DmsApiService
-  ) {
-    // Internal services, no need to export to the outside world
-    this.dataModelDataMapper = new DataModelDataMapper();
-  }
+  constructor(private fdmClient: FlexibleDataModelingClient) {}
 
   /**
    * Lists the available Data Models
    * @returns
    */
   list(): Promise<Result<DataModel[]>> {
-    return this.mixerApiService
-      .listApis()
-      .then((results: DataModelApiOutputDTO[]) => {
-        return results.map((result) =>
-          this.dataModelDataMapper.deserialize(result)
-        );
-      })
+    return this.fdmClient
+      .listDataModels()
       .then((dataModels) => Result.ok(dataModels))
       .catch((err: PlatypusError) => Result.fail(err));
   }
@@ -49,19 +33,8 @@ export class DataModelsHandler {
    * @returns
    */
   fetch(dto: FetchDataModelDTO): Promise<Result<DataModel>> {
-    return this.mixerApiService
-      .getApisByIds(dto.dataModelId, false)
-      .then((results) => {
-        if (!results || !results.length || results.length > 1) {
-          return Promise.reject(
-            new PlatypusError(
-              `Specified version ${dto.dataModelId} does not exist!`,
-              'NOT_FOUND'
-            )
-          );
-        }
-        return this.dataModelDataMapper.deserialize(results[0]);
-      })
+    return this.fdmClient
+      .fetchDataModel(dto)
       .then((dataModel) => Result.ok(dataModel))
       .catch((err: PlatypusError) => Result.fail(err));
   }
@@ -75,20 +48,8 @@ export class DataModelsHandler {
       return Promise.resolve(Result.fail(validationResult.errors));
     }
 
-    const externalId = dto.externalId || DataUtils.convertToCamelCase(dto.name);
-
     try {
-      await this.dmsApiService.applySpaces([{ externalId }]);
-
-      const createApiResponse = await this.mixerApiService.upsertApi({
-        externalId,
-        description: dto.description || '',
-        name: dto.name,
-        metadata: dto.metadata || {},
-      });
-
-      const createdDataModel =
-        this.dataModelDataMapper.deserialize(createApiResponse);
+      const createdDataModel = await this.fdmClient.createDataModel(dto);
 
       return Result.ok(createdDataModel);
     } catch (err) {
@@ -112,15 +73,7 @@ export class DataModelsHandler {
     }
 
     try {
-      const updateApiResponse = await this.mixerApiService.upsertApi({
-        externalId: dto.externalId,
-        description: dto.description || '',
-        name: dto.name,
-        metadata: dto.metadata || {},
-      });
-
-      const updatedDataModel =
-        this.dataModelDataMapper.deserialize(updateApiResponse);
+      const updatedDataModel = await this.fdmClient.updateDataModel(dto);
 
       return Result.ok(updatedDataModel);
     } catch (err) {
@@ -139,8 +92,8 @@ export class DataModelsHandler {
    * And the data related with it.
    */
   delete(dto: DeleteDataModelDTO): Promise<Result<unknown>> {
-    return this.mixerApiService
-      .deleteApi(dto.id)
+    return this.fdmClient
+      .deleteDataModel(dto)
       .then((res) => Result.ok(res))
       .catch((err: PlatypusError) => {
         if (err.code === 403) {

@@ -1,4 +1,5 @@
-import { DataModelVersionStatus } from '../types';
+import { DataModelStorageBindingsDTO } from '../providers/fdm-current';
+import { DataModelVersion, DataModelVersionStatus } from '../types';
 
 export interface FetchDataModelVersionDTO {
   dataModelId: string;
@@ -17,8 +18,7 @@ export interface CreateDataModelVersionDTO {
   /** GraphQL schema as string */
   schema: string;
   version?: string;
-  // eslint-disable-next-line
-  bindings?: any;
+  bindings?: DataModelStorageBindingsDTO[];
   /**
    * When resource was created
    */
@@ -30,21 +30,6 @@ export interface CreateDataModelVersionDTO {
   status?: DataModelVersionStatus;
 }
 
-export interface GraphQlQueryParams {
-  query: string;
-  operationName?: string | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  variables?: any;
+export interface PublishDataModelVersionDTO extends DataModelVersion {
+  bindings?: DataModelStorageBindingsDTO[];
 }
-export interface RunQueryDTO {
-  graphQlParams: GraphQlQueryParams;
-  /** dataModelId (template group external id) */
-  dataModelId: string;
-  schemaVersion: string;
-  extras?: {
-    [key: string]: unknown;
-  };
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type GraphQLQueryResponse = { data?: any; errors?: Array<any> };

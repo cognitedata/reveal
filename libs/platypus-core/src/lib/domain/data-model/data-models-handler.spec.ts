@@ -1,21 +1,17 @@
+import { FlexibleDataModelingClient } from './boundaries';
 import { DataModelsHandler } from './data-models-handler';
 import { CreateDataModelDTO } from './dto';
-import { MixerApiService, DmsApiService } from './services';
 
 describe('DataModelsHandlerTest', () => {
-  const mixerApiMock = {
-    getApisByIds: jest.fn().mockImplementation(() => Promise.resolve([])),
-    listApis: jest.fn().mockImplementation(() => Promise.resolve([])),
-    upsertApi: jest.fn().mockImplementation(() => Promise.resolve([])),
-    deleteApi: jest.fn().mockImplementation(() => Promise.resolve([])),
-  } as any as MixerApiService;
-
-  const dmsApiMock = {
-    applySpaces: jest.fn().mockImplementation(() => Promise.resolve([])),
-  } as any as DmsApiService;
+  const fdmClientMock = {
+    createDataModel: jest.fn().mockImplementation(() => Promise.resolve([])),
+    listDataModels: jest.fn().mockImplementation(() => Promise.resolve([])),
+    updateDataModel: jest.fn().mockImplementation(() => Promise.resolve([])),
+    deleteDataModel: jest.fn().mockImplementation(() => Promise.resolve([])),
+  } as any as FlexibleDataModelingClient;
 
   const createInstance = () => {
-    return new DataModelsHandler(mixerApiMock, dmsApiMock);
+    return new DataModelsHandler(fdmClientMock);
   };
 
   it('should work', () => {
@@ -26,7 +22,7 @@ describe('DataModelsHandlerTest', () => {
   it('should fetch data models', async () => {
     const service = createInstance();
     await service.list();
-    expect(mixerApiMock.listApis).toBeCalled();
+    expect(fdmClientMock.listDataModels).toBeCalled();
   });
 
   it('should create data model with auto external ID', async () => {
@@ -37,16 +33,9 @@ describe('DataModelsHandlerTest', () => {
       owner: 'test-user@cognite.com',
     };
     await service.create(reqDto);
-    expect(mixerApiMock.upsertApi).toBeCalledWith(
-      expect.objectContaining({
-        name: reqDto.name,
-        externalId: 'testGroup',
-        metadata: {},
-      })
+    expect(fdmClientMock.createDataModel).toBeCalledWith(
+      expect.objectContaining(reqDto)
     );
-    expect(dmsApiMock.applySpaces).toBeCalledWith([
-      { externalId: 'testGroup' },
-    ]);
   });
 
   it('should create data model with user-defined external ID', async () => {
@@ -58,16 +47,9 @@ describe('DataModelsHandlerTest', () => {
       owner: 'test-user@cognite.com',
     };
     await service.create(reqDto);
-    expect(mixerApiMock.upsertApi).toBeCalledWith(
-      expect.objectContaining({
-        name: reqDto.name,
-        externalId: 'test_data_model',
-        metadata: {},
-      })
+    expect(fdmClientMock.createDataModel).toBeCalledWith(
+      expect.objectContaining(reqDto)
     );
-    expect(dmsApiMock.applySpaces).toBeCalledWith([
-      { externalId: 'test_data_model' },
-    ]);
   });
 
   it('should delete data model', async () => {
@@ -76,6 +58,6 @@ describe('DataModelsHandlerTest', () => {
       id: 'test group',
     };
     await service.delete(reqDto);
-    expect(mixerApiMock.deleteApi).toBeCalledWith(reqDto.id);
+    expect(fdmClientMock.deleteDataModel).toBeCalledWith(reqDto);
   });
 });

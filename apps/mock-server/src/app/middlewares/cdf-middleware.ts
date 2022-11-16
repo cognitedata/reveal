@@ -7,12 +7,14 @@ import {
 import createCdfRestRouter from './cdf-rest-middleware';
 import templatesMiddleware from './templates';
 import timeseriesMiddleware from './timeseries';
-import schemaServiceMiddleware from './schema/schema-service-middleware';
+import flexibleDataModelingMiddleware from './data-modeling/flexible-data-modeling-middleware';
+import { fdmConfigOverrides } from './data-modeling/config-overrides';
 import filesMiddleware from './files';
 import { router as jsonServerRouter, rewriter } from 'json-server';
-import { createConfigDefaults, createDefaultMockApiEndpoints } from '../utils';
+import { mergeConfigs, createDefaultMockApiEndpoints } from '../utils';
 import path = require('path');
 import { loadMiddlewares } from '../../cli/loader';
+import { config as mockServerConfig } from '../config';
 
 export default function (
   mockData: MockData,
@@ -33,13 +35,17 @@ export default function (
   // set json server id to be externalId because that is how cdf works
   (jsonServerDb._ as any).id = 'externalId';
 
-  const serverConfig = createConfigDefaults(config || ({} as CdfApiConfig));
+  let serverConfig = mergeConfigs(
+    config || ({} as CdfApiConfig),
+    mockServerConfig
+  );
+  serverConfig = mergeConfigs(fdmConfigOverrides, serverConfig);
 
   const templatesApiRouter = templatesMiddleware(jsonServerDb, serverConfig);
 
   const timeseriesApiRouter = timeseriesMiddleware(jsonServerDb, serverConfig);
 
-  const schemaServiceApiRouter = schemaServiceMiddleware(
+  const schemaServiceApiRouter = flexibleDataModelingMiddleware(
     jsonServerDb,
     serverConfig
   );
@@ -73,6 +79,8 @@ export default function (
     jsonServerApiRouter = jsonServerRouter(cdfMockData);
     jsonServerApiRouter.db.defaults(cdfMockData).write();
     jsonServerDb = jsonServerApiRouter.db as any as CdfMockDatabase;
+    // set json server id to be externalId because that is how cdf works
+    (jsonServerDb._ as any).id = 'externalId';
 
     templatesApiRouter.init(jsonServerDb);
     schemaServiceApiRouter.init(jsonServerDb);

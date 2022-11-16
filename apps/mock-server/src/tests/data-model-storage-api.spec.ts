@@ -212,7 +212,7 @@ describe('DataModelStorageAPI Test', () => {
     expect(qryResult.items[0].externalId).toEqual('UserTable_v2');
   });
 
-  it('Should delete models', async () => {
+  it.skip('Should delete models', async () => {
     // https://pr-ark-codegen-1692.specs.preview.cogniteapp.com/v1.json.html#operation/deleteModels
     let response = await request(server)
       .post('/datamodelstorage/models/delete')

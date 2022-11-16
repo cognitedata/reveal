@@ -4,7 +4,7 @@ import { PlatypusError } from '@platypus-app/types';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import {
   DataModelTypeDefsType,
-  DmsDeleteNodesRequestDTO,
+  DeleteInstancesDTO,
   Result,
 } from '@platypus/platypus-core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -22,7 +22,7 @@ export function useNodesDeleteMutation({
   );
   const queryClient = useQueryClient();
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
-  return useMutation<Result<boolean>, PlatypusError, DmsDeleteNodesRequestDTO>(
+  return useMutation<Result<boolean>, PlatypusError, DeleteInstancesDTO>(
     (dto) => {
       return dataManagementHandler.deleteData(dto);
     },

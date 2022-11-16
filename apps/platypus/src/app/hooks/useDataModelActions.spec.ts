@@ -15,6 +15,7 @@ describe('useDataModelActions', () => {
           schema: '',
           status: DataModelVersionStatus.PUBLISHED,
           version: '3',
+          space: '3',
         },
         {
           createdTime: 123,
@@ -23,6 +24,7 @@ describe('useDataModelActions', () => {
           schema: '',
           status: DataModelVersionStatus.PUBLISHED,
           version: '2',
+          space: '2',
         },
         {
           createdTime: 123,
@@ -31,13 +33,15 @@ describe('useDataModelActions', () => {
           schema: '',
           status: DataModelVersionStatus.PUBLISHED,
           version: '4',
+          space: '4',
         },
       ];
 
       const selectedDataModelVersion = useSelectedDataModelVersion(
         'latest',
         versions,
-        ''
+        '',
+        '4'
       );
 
       expect(selectedDataModelVersion.version).toBe('4');
@@ -47,7 +51,8 @@ describe('useDataModelActions', () => {
       const selectedDataModelVersion = useSelectedDataModelVersion(
         'latest',
         [],
-        ''
+        '',
+        '1'
       );
 
       expect(selectedDataModelVersion).toMatchObject(
@@ -67,6 +72,7 @@ describe('useDataModelActions', () => {
           schema: '',
           status: DataModelVersionStatus.PUBLISHED,
           version: '3',
+          space: '3',
         },
         {
           createdTime: 123,
@@ -75,6 +81,7 @@ describe('useDataModelActions', () => {
           schema: '',
           status: DataModelVersionStatus.PUBLISHED,
           version: '2',
+          space: '2',
         },
         {
           createdTime: 123,
@@ -83,13 +90,15 @@ describe('useDataModelActions', () => {
           schema: '',
           status: DataModelVersionStatus.PUBLISHED,
           version: '4',
+          space: '4',
         },
       ];
 
       const selectedDataModelVersion = useSelectedDataModelVersion(
         '2',
         versions,
-        ''
+        '',
+        '2'
       );
 
       expect(selectedDataModelVersion.version).toBe('2');

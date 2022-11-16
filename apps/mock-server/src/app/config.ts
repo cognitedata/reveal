@@ -1,3 +1,5 @@
+import { CdfApiConfig } from './types';
+
 export const config = {
   defaultApiEndpoints: [
     'assets',
@@ -22,6 +24,7 @@ export const config = {
     '/templategroups/.*/versions/.*/graphql',
     '/datamodelstorage/nodes/delete$',
     '/datamodelstorage/nodes$',
+    '/models/instances/ingest',
     '/schema/graphql',
     '/schema/api/.*/graphql',
     '/timeseries/data/list',
@@ -30,6 +33,7 @@ export const config = {
   ],
   urlRewrites: {
     '/api/v1/projects/:project/*': '/$2',
+    // DMS V2
     '/datamodelstorage/:resource/list': '/:resource',
     '/datamodelstorage/:resource/byids': '/:resource',
     '/datamodelstorage/:resource/search': '/:resource',
@@ -39,6 +43,7 @@ export const config = {
     '/datamodelstorage/spaces': '/spaces',
     '/datamodelstorage/models': '/models',
     '/datamodelstorage/edges': '/edges',
+
     '/:resource/list': '/:resource',
     '/:resource/search': '/:resource',
     '/:resource/byids': '/:resource',
@@ -46,4 +51,4 @@ export const config = {
     '/templategroups/:templategroups_id/versions/list':
       '/templates?templategroups_id=:templategroups_id&_sort=version&_order=desc',
   },
-};
+} as CdfApiConfig;

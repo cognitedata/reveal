@@ -10,6 +10,11 @@ import {
   filesMockData,
   groupsMockData,
   transformationsMockData,
+  fdmSpacesMockData,
+  fdmContainersMockData,
+  fdmViewsMockData,
+  fdmInstancesMockData,
+  fdmDataModelsMockData,
 } from '@platypus/mock-data';
 
 export const mockDataSample = {
@@ -274,4 +279,11 @@ export const mockDataSample = {
       },
     },
   ],
+
+  // dms v3 stuff
+  dmsV3Spaces: fdmSpacesMockData,
+  containers: fdmContainersMockData,
+  views: fdmViewsMockData,
+  instances: fdmInstancesMockData,
+  datamodels: fdmDataModelsMockData,
 } as MockData;

@@ -34,6 +34,7 @@ import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import {
+  useDataModel,
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
@@ -74,15 +75,19 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const { removeLocalDraft, getLocalDraft } =
     useLocalDraft(dataModelExternalId);
 
+  const { data: dataModel } = useDataModel(dataModelExternalId);
+
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    dataModel?.space || ''
   );
   const latestDataModelVersion = useSelectedDataModelVersion(
     DEFAULT_VERSION_PATH,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    dataModel?.space || ''
   );
   const localDraft = getLocalDraft(selectedDataModelVersion.version);
   const [saving, setSaving] = useState(false);

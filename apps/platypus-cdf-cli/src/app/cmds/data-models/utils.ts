@@ -4,6 +4,8 @@ import {
   DmsApiService,
   DataModelVersionHandler,
   MixerApiService,
+  TransformationApiService,
+  FdmV2Client,
 } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
@@ -17,17 +19,28 @@ export const getDataModelStorageApiService = () => {
   return new DmsApiService(client);
 };
 
-export const getDataModelsHandler = () => {
-  return new DataModelsHandler(
+export const getTransformationsApiService = () => {
+  const client = getCogniteSDKClient();
+  return new TransformationApiService(client);
+};
+
+export const getFlexibleDataModelingClient = () => {
+  // refactor this part after implementing client switching logic
+  return new FdmV2Client(
     getMixerApiService(),
-    getDataModelStorageApiService()
+    getDataModelStorageApiService(),
+    getTransformationsApiService(),
+    new GraphQlUtilsService()
   );
+};
+
+export const getDataModelsHandler = () => {
+  return new DataModelsHandler(getFlexibleDataModelingClient());
 };
 
 export const getDataModelVersionsHandler = () => {
   return new DataModelVersionHandler(
-    getMixerApiService(),
-    getDataModelStorageApiService(),
+    getFlexibleDataModelingClient(),
     new GraphQlUtilsService()
   );
 };

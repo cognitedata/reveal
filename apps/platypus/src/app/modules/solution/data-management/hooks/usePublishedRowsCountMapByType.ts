@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useInjection } from '../../../../hooks/useInjection';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import {
+  useDataModel,
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
@@ -24,11 +25,14 @@ export const usePublishedRowsCountMapByType = ({
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
+  const { data: dataModel } = useDataModel(dataModelExternalId);
+
   const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    dataModel?.space || ''
   );
   const dto: FetchPublishedRowsCountDTO = {
     dataModelId: dataModelExternalId,

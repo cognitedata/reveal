@@ -23,17 +23,19 @@ export function transformDeleteRequest(
   cdfDb: CdfMockDatabase
 ) {
   req.method = 'DELETE';
+
   req.url = req.url.substring(0, req.url.indexOf('/delete'));
   const storeKey = req.url.substring(req.url.lastIndexOf('/') + 1);
 
   if (storeKey && req.body && req.body.items.length) {
     // quick hack unitl I found a better solution
     const payload = req.body.items[0];
-
     const objToDelete = CdfDatabaseService.from(cdfDb, storeKey).find(payload);
 
     if (objToDelete && objToDelete.externalId) {
+      req.params = { ...req.params, id: objToDelete.externalId };
       req.url += `/${objToDelete.externalId}`;
+
       if (req.url.includes('datamodelstorage')) {
         req.url = req.url.replace('/datamodelstorage', '');
       }

@@ -68,12 +68,14 @@ return a default.
 export const useSelectedDataModelVersion = (
   selectedVersionNumber: string,
   dataModelVersions: DataModelVersion[],
-  dataModelExternalId: string
+  dataModelExternalId: string,
+  space: string
 ): DataModelVersion => {
   // if no published versions, return a default
   if (!dataModelVersions?.length) {
     return {
       schema: '',
+      space,
       // TODO do we really need dataModelExternalId here?
       externalId: dataModelExternalId,
       status: DataModelVersionStatus.DRAFT,
@@ -105,11 +107,13 @@ export const useDataModelTypeDefs = (
   );
   const errorLogger = useErrorLogger();
   const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
+  const { data: dataModel } = useDataModel(dataModelExternalId);
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
     dataModelVersions || [],
-    dataModelExternalId
+    dataModelExternalId,
+    dataModel?.space || ''
   );
 
   const memoizedDataModelTypeDefs = useMemo(() => {

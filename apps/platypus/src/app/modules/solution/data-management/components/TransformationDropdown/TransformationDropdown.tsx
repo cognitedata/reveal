@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 import styled from 'styled-components';
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import useTransformations from '../../hooks/useTransformations';
-import { groupTransformationsByTypes } from '@platypus-core/domain/transformation';
+import { groupTransformationsByTypes } from '@platypus/platypus-core';
 
 type Props = {
   dataModelExternalId: string;

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { KeyValueMap, ValidationError } from '../../../boundaries/types';
-export * from './data-model-storage-types';
+
 export * from './data-model-type-defs-types';
 export interface DataModel {
   id: string;
@@ -10,6 +10,8 @@ export interface DataModel {
   updatedTime: number;
   owners: string[];
   version: string;
+  /** DMS v3 requires space externalId */
+  space: string;
 }
 
 export enum DataModelVersionStatus {
@@ -31,6 +33,8 @@ export interface DataModelVersion {
    * When resource was last updated
    */
   lastUpdatedTime: number;
+  /** DMS v3 requires space externalId */
+  space: string;
 }
 
 export type BuiltInType = {
@@ -48,3 +52,15 @@ export interface DataModelValidationError extends ValidationError {
   typeName?: string;
   fieldName?: string;
 }
+
+export type DataModelTransformation = {
+  id: number;
+  name: string;
+  externalId: string;
+  destination: {
+    type: string;
+    modelExternalId: string;
+    spaceExternalId: string;
+    instanceSpaceExternalId: string;
+  };
+};

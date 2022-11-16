@@ -5,12 +5,13 @@ import { Notification } from '@platypus-app/components/Notification/Notification
 import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { DataModelTransformationCreateDTO } from '@platypus-core/domain/transformation/dto';
-import { DataModelTransformation } from '@platypus-core/domain/transformation/types';
+
 import {
   getOneToManyModelName,
   getVersionedExternalId,
-} from '@platypus-core/domain/data-model/services/utils';
+  DataModelTransformation,
+  CreateDataModelTransformationDTO,
+} from '@platypus/platypus-core';
 
 type TransformationCreateMutationDTO = {
   dataModelExternalId: string;
@@ -44,7 +45,7 @@ export default function useTransformationCreateMutation() {
         ? getOneToManyModelName(typeName, oneToManyFieldName, version)
         : getVersionedExternalId(typeName, version);
 
-      const createTransformationDTO: DataModelTransformationCreateDTO = {
+      const createTransformationDTO: CreateDataModelTransformationDTO = {
         destination: {
           instanceSpaceExternalId: dataModelExternalId,
           modelExternalId,

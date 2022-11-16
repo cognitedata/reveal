@@ -65,6 +65,7 @@ export interface DataPreviewTableProps {
   dataModelTypeDefs: DataModelTypeDefs;
   dataModelExternalId: string;
   version: string;
+  space: string;
 }
 
 export type DataPreviewTableRef = {
@@ -74,280 +75,289 @@ export type DataPreviewTableRef = {
 export const DataPreviewTable = forwardRef<
   DataPreviewTableRef,
   DataPreviewTableProps
->(({ dataModelType, dataModelTypeDefs, dataModelExternalId, version }, ref) => {
-  const instanceIdCol = 'externalId';
+>(
+  (
+    { dataModelType, dataModelTypeDefs, dataModelExternalId, version, space },
+    ref
+  ) => {
+    const instanceIdCol = 'externalId';
 
-  const { t } = useTranslation('DataPreviewTable');
-  const [isGridInit, setIsGridInit] = useState(false);
-  const [isTransformationModalVisible, setIsTransformationModalVisible] =
-    useState(false);
-  // This property is used to trigger a rerender when a selection occurs in the grid
-  const [, setSelectedPublishedRowsCount] = useState(0);
-  const gridRef = useRef<AgGridReact>(null);
-  const [fetchError, setFetchError] = useState(null);
-  const [gridConfig, setGridConfig] = useState<GridConfig>(
-    getInitialGridConfig()
-  );
-  const { isEnabled: enableManualPopulation } =
-    useManualPopulationFeatureFlag();
-  const { isEnabled: enableDeletion } = useDataManagementDeletionFeatureFlag();
+    const { t } = useTranslation('DataPreviewTable');
+    const [isGridInit, setIsGridInit] = useState(false);
+    const [isTransformationModalVisible, setIsTransformationModalVisible] =
+      useState(false);
+    // This property is used to trigger a rerender when a selection occurs in the grid
+    const [, setSelectedPublishedRowsCount] = useState(0);
+    const gridRef = useRef<AgGridReact>(null);
+    const [fetchError, setFetchError] = useState(null);
+    const [gridConfig, setGridConfig] = useState<GridConfig>(
+      getInitialGridConfig()
+    );
+    const { isEnabled: enableManualPopulation } =
+      useManualPopulationFeatureFlag();
+    const { isEnabled: enableDeletion } =
+      useDataManagementDeletionFeatureFlag();
 
-  const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
+    const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
 
-  const draftRowsData = useSelector(
-    (state) => state.dataManagement.draftRows[dataModelType.name] || []
-  );
+    const draftRowsData = useSelector(
+      (state) => state.dataManagement.draftRows[dataModelType.name] || []
+    );
 
-  const { shouldShowDraftRows, shouldShowPublishedRows } = useSelector(
-    (state) => ({
-      shouldShowDraftRows: state.dataManagement.shouldShowDraftRows,
-      shouldShowPublishedRows: state.dataManagement.shouldShowPublishedRows,
-    })
-  );
+    const { shouldShowDraftRows, shouldShowPublishedRows } = useSelector(
+      (state) => ({
+        shouldShowDraftRows: state.dataManagement.shouldShowDraftRows,
+        shouldShowPublishedRows: state.dataManagement.shouldShowPublishedRows,
+      })
+    );
 
-  const { updateRowData, removeDrafts, createNewDraftRow, deleteSelectedRows } =
-    useDraftRows();
+    const {
+      updateRowData,
+      removeDrafts,
+      createNewDraftRow,
+      deleteSelectedRows,
+    } = useDraftRows();
 
-  const {
-    toggleShouldShowDraftRows,
-    toggleShouldShowPublishedRows,
-    onShowNoRowsOverlay,
-    onHideOverlay,
-  } = useDataManagementPageUI();
-  const selectedDraftRows = draftRowsData.filter((row) => row._isDraftSelected);
-  const selectedPublishedRowsCount = gridRef.current?.api
-    ? gridRef.current?.api?.getSelectedRows().length
-    : 0;
-  const totalSelectedRowCount =
-    selectedDraftRows.length + selectedPublishedRowsCount;
-  let singleSelectedRowExternalId: string | undefined;
-  if (totalSelectedRowCount === 1) {
-    const selectedRow =
-      selectedDraftRows[0] || gridRef.current?.api?.getSelectedRows()[0];
-    singleSelectedRowExternalId = selectedRow.externalId;
-  }
+    const {
+      toggleShouldShowDraftRows,
+      toggleShouldShowPublishedRows,
+      onShowNoRowsOverlay,
+      onHideOverlay,
+    } = useDataManagementPageUI();
+    const selectedDraftRows = draftRowsData.filter(
+      (row) => row._isDraftSelected
+    );
+    const selectedPublishedRowsCount = gridRef.current?.api
+      ? gridRef.current?.api?.getSelectedRows().length
+      : 0;
+    const totalSelectedRowCount =
+      selectedDraftRows.length + selectedPublishedRowsCount;
+    let singleSelectedRowExternalId: string | undefined;
+    if (totalSelectedRowCount === 1) {
+      const selectedRow =
+        selectedDraftRows[0] || gridRef.current?.api?.getSelectedRows()[0];
+      singleSelectedRowExternalId = selectedRow.externalId;
+    }
 
-  const [isDeleteRowsModalVisible, setIsDeleteRowsModalVisible] =
-    useState(false);
+    const [isDeleteRowsModalVisible, setIsDeleteRowsModalVisible] =
+      useState(false);
 
-  const {
-    data: publishedRowsCountMap,
-    refetch: refetchPublishedRowsCountMap,
-    isFetched: isPublishedRowsCountMapFetched,
-  } = usePublishedRowsCountMapByType({
-    dataModelExternalId,
-    dataModelTypes: dataModelTypeDefs.types,
-  });
-  const deleteRowsMutation = useNodesDeleteMutation({
-    dataModelExternalId,
-    dataModelType,
-  });
+    const {
+      data: publishedRowsCountMap,
+      refetch: refetchPublishedRowsCountMap,
+      isFetched: isPublishedRowsCountMapFetched,
+    } = usePublishedRowsCountMapByType({
+      dataModelExternalId,
+      dataModelTypes: dataModelTypeDefs.types,
+    });
+    const deleteRowsMutation = useNodesDeleteMutation({
+      dataModelExternalId,
+      dataModelType,
+    });
 
-  const [listData, setListData] = useState<ListDataType>();
+    const [listData, setListData] = useState<ListDataType>();
 
-  const handleRowPublish = (row: KeyValueMap) => {
-    dataManagementHandler
-      .ingestNodes(
-        {
-          spaceExternalId: dataModelExternalId,
+    const handleRowPublish = (row: KeyValueMap) => {
+      dataManagementHandler
+        .ingestNodes({
+          space,
           model: [dataModelExternalId, `${dataModelType.name}_${version}`],
           items: [sanitizeRow(row)],
-        },
-        dataModelExternalId,
-        dataModelType,
-        dataModelTypeDefs
-      )
-      .then(({ items }) => {
-        removeDrafts(items.map((item) => item.externalId as string));
-        refetchPublishedRowsCountMap().then(() => {
-          gridRef.current?.api.refreshInfiniteCache();
+          dataModelExternalId,
+          dataModelType,
+          dataModelTypeDefs,
+        })
+        .then(({ items }) => {
+          removeDrafts(items.map((item) => item.externalId as string));
+          refetchPublishedRowsCountMap().then(() => {
+            gridRef.current?.api.refreshInfiniteCache();
+          });
+          Notification({
+            type: 'success',
+            message: t('ingest_success_title', 'Instance added'),
+          });
         });
-        Notification({
-          type: 'success',
-          message: t('ingest_success_title', 'Instance added'),
-        });
-      });
-  };
+    };
 
-  const isNoRowsOverlayVisible = useMemo(
-    () =>
-      draftRowsData.length === 0 &&
-      (publishedRowsCountMap?.[dataModelType.name] || 0) === 0,
-    [draftRowsData.length, publishedRowsCountMap, dataModelType]
-  );
-
-  useEffect(() => {
-    setGridConfig(
-      buildGridConfig(
-        instanceIdCol,
-        dataModelType,
-        handleRowPublish,
-        enableDeletion,
-        enableManualPopulation
-      )
+    const isNoRowsOverlayVisible = useMemo(
+      () =>
+        draftRowsData.length === 0 &&
+        (publishedRowsCountMap?.[dataModelType.name] || 0) === 0,
+      [draftRowsData.length, publishedRowsCountMap, dataModelType]
     );
-    setIsGridInit(false);
-    setFetchError(null);
 
-    // re-init grid config only and only when another type is clicked
-    // eslint-disable-next-line
-  }, [dataModelType.name, enableManualPopulation]);
+    useEffect(() => {
+      setGridConfig(
+        buildGridConfig(
+          instanceIdCol,
+          dataModelType,
+          handleRowPublish,
+          enableDeletion,
+          enableManualPopulation
+        )
+      );
+      setIsGridInit(false);
+      setFetchError(null);
 
-  useEffect(() => {
-    if (!isGridInit) {
-      setIsGridInit(true);
-    }
-  }, [isGridInit]);
+      // re-init grid config only and only when another type is clicked
+      // eslint-disable-next-line
+    }, [dataModelType.name, enableManualPopulation]);
 
-  useEffect(() => {
-    if (isNoRowsOverlayVisible && onShowNoRowsOverlay.current) {
-      onShowNoRowsOverlay.current();
-    } else if (onHideOverlay.current) {
-      onHideOverlay.current();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNoRowsOverlayVisible]);
+    useEffect(() => {
+      if (!isGridInit) {
+        setIsGridInit(true);
+      }
+    }, [isGridInit]);
 
-  useImperativeHandle(
-    ref,
-    () => {
-      return {
-        purgeInfiniteCache: () => {
-          gridRef.current?.api.purgeInfiniteCache();
-        },
-      };
-    },
-    [gridRef]
-  );
+    useEffect(() => {
+      if (isNoRowsOverlayVisible && onShowNoRowsOverlay.current) {
+        onShowNoRowsOverlay.current();
+      } else if (onHideOverlay.current) {
+        onHideOverlay.current();
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isNoRowsOverlayVisible]);
 
-  const onGridReady = useCallback(
-    (grid: GridReadyEvent) => {
-      let cursor: string;
-      let hasNextPage: boolean;
+    useImperativeHandle(
+      ref,
+      () => {
+        return {
+          purgeInfiniteCache: () => {
+            gridRef.current?.api.purgeInfiniteCache();
+          },
+        };
+      },
+      [gridRef]
+    );
 
-      onShowNoRowsOverlay.current = () => grid.api.showNoRowsOverlay();
-      onHideOverlay.current = () => grid.api.hideOverlay();
+    const onGridReady = useCallback(
+      (grid: GridReadyEvent) => {
+        let cursor: string;
+        let hasNextPage: boolean;
 
-      const dataSource = {
-        getRows: async (params: IGetRowsParams) => {
-          /*
+        onShowNoRowsOverlay.current = () => grid.api.showNoRowsOverlay();
+        onHideOverlay.current = () => grid.api.hideOverlay();
+
+        const dataSource = {
+          getRows: async (params: IGetRowsParams) => {
+            /*
           startRow will be 0 if we're fetching the first block of data or if we've
           already fetched blocks of data but the ag-grid cache is being refreshed
           or purged. We need to ensure the pagination properties are reset when
           fetching the first block of data.
           */
-          if (params.startRow === 0) {
-            cursor = '';
-            hasNextPage = false;
-          }
+            if (params.startRow === 0) {
+              cursor = '';
+              hasNextPage = false;
+            }
 
-          return dataManagementHandler
-            .fetchData({
-              dataModelId: dataModelExternalId,
-              cursor,
-              hasNextPage,
-              dataModelType,
-              dataModelTypeDefs,
-              relationshipFieldsLimit,
-              version,
-              limit: pageSizeLimit,
-            })
-            .then((response) => {
-              const result = response.getValue();
-              hasNextPage = result.pageInfo.hasNextPage;
-              cursor = result.pageInfo.cursor;
+            return dataManagementHandler
+              .fetchData({
+                dataModelId: dataModelExternalId,
+                cursor,
+                hasNextPage,
+                dataModelType,
+                dataModelTypeDefs,
+                relationshipFieldsLimit,
+                version,
+                limit: pageSizeLimit,
+              })
+              .then((response) => {
+                const result = response.getValue();
+                hasNextPage = result.pageInfo.hasNextPage;
+                cursor = result.pageInfo.cursor;
 
-              const lastRow = !result.pageInfo.hasNextPage
-                ? params.startRow + result.items.length
-                : -1;
+                const lastRow = !result.pageInfo.hasNextPage
+                  ? params.startRow + result.items.length
+                  : -1;
 
-              /*
+                /*
               This conditional is for the case where the aggregation
               is only returning 0s due to the syncer issue. Remove below code
               when the syncer issue is resolved.
               */
-              if (result.items.length > 0 && onHideOverlay.current) {
-                onHideOverlay.current();
-              }
+                if (result.items.length > 0 && onHideOverlay.current) {
+                  onHideOverlay.current();
+                }
 
-              params.successCallback(result.items, lastRow);
-            })
-            .catch((err) => {
-              setFetchError(err);
-            });
-        },
-      } as IDatasource;
+                params.successCallback(result.items, lastRow);
+              })
+              .catch((err) => {
+                setFetchError(err);
+              });
+          },
+        } as IDatasource;
 
-      grid.api.setDatasource(dataSource);
+        grid.api.setDatasource(dataSource);
 
-      if (isNoRowsOverlayVisible) {
-        onShowNoRowsOverlay.current();
-      } else {
-        onHideOverlay.current();
-      }
-    },
-    [
-      dataManagementHandler,
-      dataModelExternalId,
-      dataModelType,
-      dataModelTypeDefs,
-      isNoRowsOverlayVisible,
-      onHideOverlay,
-      onShowNoRowsOverlay,
-      version,
-    ]
-  );
-  const prevDraftRowsLength = useRef(draftRowsData.length);
-
-  const handlePinnedRowDataChanged = (event: RowDataUpdatedEvent) => {
-    if (draftRowsData.length > prevDraftRowsLength.current) {
-      const firstEditableColName = event.api
-        .getColumnDefs()
-        ?.filter((col: ColDef) => col.editable)
-        .map((col: ColDef) => col.field!)[0];
-      if (firstEditableColName) {
-        event.api.setFocusedCell(0, firstEditableColName, 'top');
-        event.api.startEditingCell({
-          rowPinned: 'top',
-          rowIndex: 0,
-          colKey: firstEditableColName,
-        });
-      }
-    }
-    prevDraftRowsLength.current = draftRowsData.length;
-  };
-
-  const handleCellEditingStarted = (e: CellEditingStartedEvent) => {
-    const fieldName = e.colDef.field || '';
-    const fieldType = dataModelType?.fields?.find(
-      (field) => field.name === fieldName
+        if (isNoRowsOverlayVisible) {
+          onShowNoRowsOverlay.current();
+        } else {
+          onHideOverlay.current();
+        }
+      },
+      [
+        dataManagementHandler,
+        dataModelExternalId,
+        dataModelType,
+        dataModelTypeDefs,
+        isNoRowsOverlayVisible,
+        onHideOverlay,
+        onShowNoRowsOverlay,
+        version,
+      ]
     );
-    const isListTypeCell = fieldType?.list || fieldType?.type.list;
-    const isCustomListTypeCell =
-      isListTypeCell && e.colDef.cellRendererParams.listDataType === 'CUSTOM';
+    const prevDraftRowsLength = useRef(draftRowsData.length);
 
-    if (!isListTypeCell || isCustomListTypeCell) {
-      setListData(undefined);
-      return;
-    }
+    const handlePinnedRowDataChanged = (event: RowDataUpdatedEvent) => {
+      if (draftRowsData.length > prevDraftRowsLength.current) {
+        const firstEditableColName = event.api
+          .getColumnDefs()
+          ?.filter((col: ColDef) => col.editable)
+          .map((col: ColDef) => col.field!)[0];
+        if (firstEditableColName) {
+          event.api.setFocusedCell(0, firstEditableColName, 'top');
+          event.api.startEditingCell({
+            rowPinned: 'top',
+            rowIndex: 0,
+            colKey: firstEditableColName,
+          });
+        }
+      }
+      prevDraftRowsLength.current = draftRowsData.length;
+    };
 
-    if (!e.colDef.field) {
-      throw Error('Attempting to edit cell without field value');
-    }
+    const handleCellEditingStarted = (e: CellEditingStartedEvent) => {
+      const fieldName = e.colDef.field || '';
+      const fieldType = dataModelType?.fields?.find(
+        (field) => field.name === fieldName
+      );
+      const isListTypeCell = fieldType?.list || fieldType?.type.list;
+      const isCustomListTypeCell =
+        isListTypeCell && e.colDef.cellRendererParams.listDataType === 'CUSTOM';
 
-    const cellData = e.data[e.colDef.field] || [];
+      if (!isListTypeCell || isCustomListTypeCell) {
+        setListData(undefined);
+        return;
+      }
 
-    setListData({
-      data: cellData,
-      fieldName: e.colDef.field,
-    });
-    e.api.stopEditing();
-    window.setTimeout(() => {
-      e.colDef.field && e.api.ensureColumnVisible(e.colDef.field);
-    }, 400);
-  };
+      if (!e.colDef.field) {
+        throw Error('Attempting to edit cell without field value');
+      }
 
-  /*
+      const cellData = e.data[e.colDef.field] || [];
+
+      setListData({
+        data: cellData,
+        fieldName: e.colDef.field,
+      });
+      e.api.stopEditing();
+      window.setTimeout(() => {
+        e.colDef.field && e.api.ensureColumnVisible(e.colDef.field);
+      }, 400);
+    };
+
+    /*
   We use this value-setter to handle editing of pinned draft rows and published rows.
   The alternative of using readOnlyEdit and onCellEditRequest doesn't give us a good
   way to handle editing of a published row without seeing the old value for a split
@@ -361,264 +371,266 @@ export const DataPreviewTable = forwardRef<
 
   Technique borrowed from https://stackoverflow.com/a/64294316
   */
-  const handleCellValueChanged = (e: ValueSetterParams) => {
-    if (!e.colDef.field || !enableManualPopulation) {
-      return false;
-    }
+    const handleCellValueChanged = (e: ValueSetterParams) => {
+      if (!e.colDef.field || !enableManualPopulation) {
+        return false;
+      }
 
-    let newValue = e.newValue;
-    if (
-      dataManagementHandler.isRelationshipField(
-        e.colDef.field!,
-        dataModelType,
-        dataModelTypeDefs
-      ) &&
-      e.newValue !== null
-    ) {
-      // Set to null if externalId is set to empty string
-      newValue = e.newValue === '' ? null : { externalId: e.newValue.trim() };
-    }
+      let newValue = e.newValue;
+      if (
+        dataManagementHandler.isRelationshipField(
+          e.colDef.field!,
+          dataModelType,
+          dataModelTypeDefs
+        ) &&
+        e.newValue !== null
+      ) {
+        // Set to null if externalId is set to empty string
+        newValue = e.newValue === '' ? null : { externalId: e.newValue.trim() };
+      }
 
-    if (e.node?.rowPinned === 'top') {
-      // if draft row, update redux store and return true
-      updateRowData({
-        field: e.colDef.field,
-        newValue: newValue,
-        row: e.data as DraftRowData,
-      });
-      return true;
-    }
+      if (e.node?.rowPinned === 'top') {
+        // if draft row, update redux store and return true
+        updateRowData({
+          field: e.colDef.field,
+          newValue: newValue,
+          row: e.data as DraftRowData,
+        });
+        return true;
+      }
 
-    // update ag-grid cell data
-    e.data[e.colDef.field] = newValue;
+      // update ag-grid cell data
+      e.data[e.colDef.field] = newValue;
 
-    const updatedRowData = {
-      ...e.data,
-    };
+      const updatedRowData = {
+        ...e.data,
+      };
 
-    dataManagementHandler
-      .ingestNodes(
-        {
+      dataManagementHandler
+        .ingestNodes({
           /*
         PG3 does not currently set a value to null if we pass null when doing a partial
         update (overwrite: false), but rather it will ignore that value. Therefore in
         order to be able to set values to null we need overwrite: true
         */
           overwrite: true,
-          spaceExternalId: dataModelExternalId,
+          space,
           model: [dataModelExternalId, `${dataModelType.name}_${version}`],
           items: [updatedRowData],
-        },
-        dataModelExternalId,
-        dataModelType,
-        dataModelTypeDefs
-      )
-      .then(() => {
-        gridRef.current?.api.refreshCells();
-        if (e.colDef.field) {
-          e.api.refreshCells({ columns: [e.column], rowNodes: [e.node!] });
-        }
-      })
-      .catch((error: PlatypusError) => {
-        Notification({
-          type: 'error',
-          message: error.message,
+          dataModelExternalId,
+          dataModelType,
+          dataModelTypeDefs,
+        })
+        .then(() => {
+          gridRef.current?.api.refreshCells();
+          if (e.colDef.field) {
+            e.api.refreshCells({ columns: [e.column], rowNodes: [e.node!] });
+          }
+        })
+        .catch((error: PlatypusError) => {
+          Notification({
+            type: 'error',
+            message: error.message,
+          });
+
+          if (e.colDef.field) {
+            // revert data and rerender cell
+            e.data[e.colDef.field] = e.oldValue;
+            e.api.refreshCells({ columns: [e.column], rowNodes: [e.node!] });
+          }
         });
 
-        if (e.colDef.field) {
-          // revert data and rerender cell
-          e.data[e.colDef.field] = e.oldValue;
-          e.api.refreshCells({ columns: [e.column], rowNodes: [e.node!] });
-        }
-      });
+      return true;
+    };
 
-    return true;
-  };
-
-  /*
+    /*
   Listen to selection changed event and keep the count in state so that we rerender
   when necessary to enable/disable the delete button
   */
-  const handleSelectionChanged = useCallback(() => {
-    setSelectedPublishedRowsCount(
-      gridRef.current?.api.getSelectedRows().length || 0
-    );
-  }, []);
+    const handleSelectionChanged = useCallback(() => {
+      setSelectedPublishedRowsCount(
+        gridRef.current?.api.getSelectedRows().length || 0
+      );
+    }, []);
 
-  const handleDeleteRows = useCallback(() => {
-    const selectedRows = gridRef.current?.api.getSelectedRows() || [];
-    const dto = {
-      spaceExternalId: dataModelExternalId,
-      items: selectedRows.map((row) => ({ externalId: row.externalId })),
-    };
+    const handleDeleteRows = useCallback(() => {
+      const selectedRows = gridRef.current?.api.getSelectedRows() || [];
+      const dto = {
+        dataModelExternalId,
+        space,
+        items: selectedRows.map((row) => ({ externalId: row.externalId })),
+      };
 
-    deleteRowsMutation.mutate(dto, {
-      onSettled: (result, error) => {
-        let isError = false;
-        let errorMessage = '';
+      deleteRowsMutation.mutate(dto, {
+        onSettled: (result, error) => {
+          let isError = false;
+          let errorMessage = '';
 
-        if (error) {
-          isError = true;
-          errorMessage = error.message;
-        }
+          if (error) {
+            isError = true;
+            errorMessage = error.message;
+          }
 
-        if (result?.isFailure) {
-          isError = true;
-          errorMessage = result.error.message;
-        }
+          if (result?.isFailure) {
+            isError = true;
+            errorMessage = result.error.message;
+          }
 
-        if (isError) {
+          if (isError) {
+            Notification({
+              type: 'error',
+              message: errorMessage,
+            });
+            setIsDeleteRowsModalVisible(false);
+            return;
+          }
+
+          gridRef.current?.api.refreshInfiniteCache();
+          // We have to manually deselect rows
+          // https://github.com/ag-grid/ag-grid/issues/4161
+          gridRef.current?.api.deselectAll();
+
+          // Delete draft rows
+          deleteSelectedRows();
+
+          let successNotificationMessage;
+
+          if (singleSelectedRowExternalId) {
+            successNotificationMessage = `${singleSelectedRowExternalId} ${t(
+              'row-deletion-success-msg',
+              'deleted'
+            )}`;
+          } else {
+            successNotificationMessage = t(
+              'row-deletion-success-msg',
+              'Instances deleted'
+            );
+          }
+
           Notification({
-            type: 'error',
-            message: errorMessage,
+            type: 'success',
+            message: successNotificationMessage,
           });
           setIsDeleteRowsModalVisible(false);
-          return;
-        }
+          refetchPublishedRowsCountMap({ exact: true, cancelRefetch: true });
+        },
+      });
+    }, [
+      dataModelExternalId,
+      deleteRowsMutation,
+      deleteSelectedRows,
+      singleSelectedRowExternalId,
+      refetchPublishedRowsCountMap,
+      t,
+    ]);
 
-        gridRef.current?.api.refreshInfiniteCache();
-        // We have to manually deselect rows
-        // https://github.com/ag-grid/ag-grid/issues/4161
-        gridRef.current?.api.deselectAll();
+    if (!isGridInit || !isPublishedRowsCountMapFetched) {
+      return <Spinner />;
+    }
 
-        // Delete draft rows
-        deleteSelectedRows();
-
-        let successNotificationMessage;
-
-        if (singleSelectedRowExternalId) {
-          successNotificationMessage = `${singleSelectedRowExternalId} ${t(
-            'row-deletion-success-msg',
-            'deleted'
-          )}`;
-        } else {
-          successNotificationMessage = t(
-            'row-deletion-success-msg',
-            'Instances deleted'
-          );
-        }
-
-        Notification({
-          type: 'success',
-          message: successNotificationMessage,
-        });
-        setIsDeleteRowsModalVisible(false);
-        refetchPublishedRowsCountMap({ exact: true, cancelRefetch: true });
-      },
-    });
-  }, [
-    dataModelExternalId,
-    deleteRowsMutation,
-    deleteSelectedRows,
-    singleSelectedRowExternalId,
-    refetchPublishedRowsCountMap,
-    t,
-  ]);
-
-  if (!isGridInit || !isPublishedRowsCountMapFetched) {
-    return <Spinner />;
-  }
-
-  if (fetchError) {
-    return (
-      <FlexPlaceholder
-        data-cy="data-preview-error"
-        title={t('error-loading-data-title', 'Unable to load the preview')}
-        description={t(
-          'error-loading-data-body',
-          'Something went wrong and we were notified about it. The data preview can not be created for this type. Please try to refresh the page or select another type.'
-        )}
-      />
-    );
-  }
-
-  return (
-    <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
-      {totalSelectedRowCount > 0 && (
-        <DeleteRowsModal
-          isVisible={isDeleteRowsModalVisible}
-          isDeleting={deleteRowsMutation.isLoading}
-          singleRowExternalId={singleSelectedRowExternalId}
-          onCancel={() => setIsDeleteRowsModalVisible(false)}
-          onDelete={handleDeleteRows}
+    if (fetchError) {
+      return (
+        <FlexPlaceholder
+          data-cy="data-preview-error"
+          title={t('error-loading-data-title', 'Unable to load the preview')}
+          description={t(
+            'error-loading-data-body',
+            'Something went wrong and we were notified about it. The data preview can not be created for this type. Please try to refresh the page or select another type.'
+          )}
         />
-      )}
-      {isTransformationModalVisible && (
-        <CreateTransformationModal
+      );
+    }
+
+    return (
+      <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
+        {totalSelectedRowCount > 0 && (
+          <DeleteRowsModal
+            isVisible={isDeleteRowsModalVisible}
+            isDeleting={deleteRowsMutation.isLoading}
+            singleRowExternalId={singleSelectedRowExternalId}
+            onCancel={() => setIsDeleteRowsModalVisible(false)}
+            onDelete={handleDeleteRows}
+          />
+        )}
+        {isTransformationModalVisible && (
+          <CreateTransformationModal
+            dataModelExternalId={dataModelExternalId}
+            dataModelType={dataModelType}
+            onRequestClose={() => setIsTransformationModalVisible(false)}
+            version={version}
+          />
+        )}
+
+        <PreviewPageHeader
+          title={dataModelType.name}
+          isDeleteButtonDisabled={
+            totalSelectedRowCount === 0 || deleteRowsMutation.isLoading
+          }
+          onAddTransformationClick={() => setIsTransformationModalVisible(true)}
+          onCreateClick={createNewDraftRow}
+          onDeleteClick={() => {
+            setIsDeleteRowsModalVisible(true);
+          }}
+          draftRowsCount={draftRowsData.length}
+          publishedRowsCount={publishedRowsCountMap?.[dataModelType.name] || 0}
+          shouldShowDraftRows={shouldShowDraftRows}
+          shouldShowPublishedRows={shouldShowPublishedRows}
+          onDraftRowsCountClick={toggleShouldShowDraftRows}
+          onPublishedRowsCountClick={toggleShouldShowPublishedRows}
+          typeName={dataModelType.name}
           dataModelExternalId={dataModelExternalId}
-          dataModelType={dataModelType}
-          onRequestClose={() => setIsTransformationModalVisible(false)}
           version={version}
         />
-      )}
-
-      <PreviewPageHeader
-        title={dataModelType.name}
-        isDeleteButtonDisabled={
-          totalSelectedRowCount === 0 || deleteRowsMutation.isLoading
-        }
-        onAddTransformationClick={() => setIsTransformationModalVisible(true)}
-        onCreateClick={createNewDraftRow}
-        onDeleteClick={() => {
-          setIsDeleteRowsModalVisible(true);
-        }}
-        draftRowsCount={draftRowsData.length}
-        publishedRowsCount={publishedRowsCountMap?.[dataModelType.name] || 0}
-        shouldShowDraftRows={shouldShowDraftRows}
-        shouldShowPublishedRows={shouldShowPublishedRows}
-        onDraftRowsCountClick={toggleShouldShowDraftRows}
-        onPublishedRowsCountClick={toggleShouldShowPublishedRows}
-        typeName={dataModelType.name}
-        dataModelExternalId={dataModelExternalId}
-        version={version}
-      />
-      <CollapsiblePanelContainer
-        listData={listData}
-        setListData={setListData}
-        dataModelTypeName={dataModelType.name}
-      >
-        <StyledDataPreviewTable data-cy="data-preview-table">
-          <CogDataGrid
-            ref={gridRef}
-            gridOptions={{
-              readOnlyEdit: !enableManualPopulation,
-              enableCellChangeFlash: true,
-              rowModelType: 'infinite',
-              rowBuffer: pageSizeLimit / 2,
-              // how big each page in our page cache will be, default is 100
-              cacheBlockSize: pageSizeLimit,
-              // this needs to be 1 since we use cursor-based pagination
-              maxConcurrentDatasourceRequests: 1,
-              noRowsOverlayComponent: () => (
-                <NoRowsOverlay
-                  dataModelExternalId={dataModelExternalId}
-                  onLoadDataClick={() => setIsTransformationModalVisible(true)}
-                  typeName={dataModelType.name}
-                  version={version}
-                />
-              ),
-              onCellEditingStarted: handleCellEditingStarted,
-            }}
-            defaultColDef={{
-              valueSetter: handleCellValueChanged,
-            }}
-            rowSelection="multiple"
-            rowNodeId={instanceIdCol}
-            config={gridConfig}
-            suppressRowClickSelection
-            rowMultiSelectWithClick={false}
-            rowClassRules={{
-              'ag-row-selected': (params) => params.data?._isDraftSelected,
-            }}
-            onGridReady={onGridReady}
-            pinnedTopRowData={draftRowsData}
-            onPinnedRowDataChanged={handlePinnedRowDataChanged}
-            onSelectionChanged={handleSelectionChanged}
-            shouldShowDraftRows={shouldShowDraftRows}
-            shouldShowPublishedRows={shouldShowPublishedRows}
-          />
-        </StyledDataPreviewTable>
-      </CollapsiblePanelContainer>
-    </ErrorBoundary>
-  );
-});
+        <CollapsiblePanelContainer
+          listData={listData}
+          setListData={setListData}
+          dataModelTypeName={dataModelType.name}
+        >
+          <StyledDataPreviewTable data-cy="data-preview-table">
+            <CogDataGrid
+              ref={gridRef}
+              gridOptions={{
+                readOnlyEdit: !enableManualPopulation,
+                enableCellChangeFlash: true,
+                rowModelType: 'infinite',
+                rowBuffer: pageSizeLimit / 2,
+                // how big each page in our page cache will be, default is 100
+                cacheBlockSize: pageSizeLimit,
+                // this needs to be 1 since we use cursor-based pagination
+                maxConcurrentDatasourceRequests: 1,
+                noRowsOverlayComponent: () => (
+                  <NoRowsOverlay
+                    dataModelExternalId={dataModelExternalId}
+                    onLoadDataClick={() =>
+                      setIsTransformationModalVisible(true)
+                    }
+                    typeName={dataModelType.name}
+                    version={version}
+                  />
+                ),
+                onCellEditingStarted: handleCellEditingStarted,
+              }}
+              defaultColDef={{
+                valueSetter: handleCellValueChanged,
+              }}
+              rowSelection="multiple"
+              rowNodeId={instanceIdCol}
+              config={gridConfig}
+              suppressRowClickSelection
+              rowMultiSelectWithClick={false}
+              rowClassRules={{
+                'ag-row-selected': (params) => params.data?._isDraftSelected,
+              }}
+              onGridReady={onGridReady}
+              pinnedTopRowData={draftRowsData}
+              onPinnedRowDataChanged={handlePinnedRowDataChanged}
+              onSelectionChanged={handleSelectionChanged}
+              shouldShowDraftRows={shouldShowDraftRows}
+              shouldShowPublishedRows={shouldShowPublishedRows}
+            />
+          </StyledDataPreviewTable>
+        </CollapsiblePanelContainer>
+      </ErrorBoundary>
+    );
+  }
+);

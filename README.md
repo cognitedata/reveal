@@ -106,6 +106,10 @@ How to use the mock environment:
 - Open app as regularly you do on [https://localhost:3000/platypus](https://localhost:3000/platypus)
 - Everything should be there and working
 
+## Toggling DMS versions
+
+The app will use the DMS V2 API by default. To use the DMS V3 API in local development, set the following in local storage: `ls.USE_FDM_V3: true`
+
 ## Additional commands
 
 To build:
