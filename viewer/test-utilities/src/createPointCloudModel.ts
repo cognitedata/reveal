@@ -14,9 +14,8 @@ import {
 
 import * as THREE from 'three';
 
-import { LocalModelDataProvider } from '../../packages/data-providers';
 import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
-import { DEFAULT_CLASSIFICATION, PointCloudMaterial, PointCloudMaterialManager } from '../../packages/rendering';
+import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../packages/rendering';
 import { PointCloudObjectAppearanceTexture } from '../../packages/rendering/src/pointcloud-rendering/PointCloudObjectAppearanceTexture';
 
 export function createPointCloudModel(modelId: number, revisionId: number): CognitePointCloudModel {
@@ -26,10 +25,7 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
 }
 
 export function createPointCloudNode(): PointCloudNode {
-  const modelDataProvider = new LocalModelDataProvider();
-  const potreeInstance = new Potree(modelDataProvider, new Mock<PointCloudMaterialManager>().object());
-
-  const potreeGroup = new PotreeGroupWrapper(potreeInstance);
+  const potreeGroup = new PotreeGroupWrapper();
 
   const pointCloudOctree = new PointCloudOctree(
     new Mock<Potree>().object(),
