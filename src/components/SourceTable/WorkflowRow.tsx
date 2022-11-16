@@ -32,7 +32,6 @@ type Props = {
   isSelected?: boolean;
   onRowClick?: (id?: string) => void;
   onInfoClick?: (id?: string) => void;
-  onThresholdClick?: (id?: string) => void;
   onErrorIconClick?: (id: string) => void;
   openNodeEditor?: () => void;
   mode: string;
@@ -74,7 +73,6 @@ function WorkflowRow({
   summary,
   onRowClick = () => {},
   onInfoClick = () => {},
-  onThresholdClick = () => {},
   onErrorIconClick = () => {},
   mode,
   openNodeEditor = () => {},
@@ -311,13 +309,6 @@ function WorkflowRow({
                   onClick: () => {
                     onDuplicateCalculation();
                     trackUsage('ChartView.DuplicateCalculation');
-                  },
-                },
-                {
-                  label: t.Threshold,
-                  icon: 'Threshold',
-                  onClick: () => {
-                    onThresholdClick(id);
                   },
                 },
               ]}

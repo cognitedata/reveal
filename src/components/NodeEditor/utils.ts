@@ -80,6 +80,11 @@ export const getOperationsGroupedByCategory = (
   ignoredCategories: string[] = []
 ) => {
   const categories = availableOperations
+    .filter((operation) =>
+      operation.versions.some(
+        (operationVersion) => !operationVersion.deprecated
+      )
+    )
     .reduce<string[]>(
       (result, operation) => uniq([...result, operation.category]),
       []
@@ -91,9 +96,13 @@ export const getOperationsGroupedByCategory = (
   }>((result, category) => {
     return {
       ...result,
-      [category]: availableOperations.filter(
-        (operation) => operation.category === category
-      ),
+      [category]: availableOperations
+        .filter((operation) => operation.category === category)
+        .filter((operation) =>
+          operation.versions.some(
+            (operationVersion) => !operationVersion.deprecated
+          )
+        ),
     };
   }, {});
 

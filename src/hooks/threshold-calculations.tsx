@@ -13,7 +13,7 @@ import { usePrevious } from 'react-use';
 import { milliseconds } from 'date-fns';
 import { omit } from 'lodash';
 import { CreateThresholdsParams } from '@cognite/calculation-backend';
-import { updateChartThresholdProperties } from 'models/chart/updates';
+import { updateChartThresholdProperties } from 'models/chart/updates-threshold';
 import { isThresholdValid } from 'utils/threshold';
 
 export const thresholdParameters = (

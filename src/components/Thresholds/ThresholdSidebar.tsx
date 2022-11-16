@@ -24,7 +24,7 @@ import {
   updateChartThresholdUpperLimit,
   updateChartThresholdVisibility,
   updateChartThresholdEventFilters,
-} from 'models/chart/updates';
+} from 'models/chart/updates-threshold';
 import Thresholds from 'components/Thresholds/Thresholds';
 import {
   Sidebar,
@@ -81,7 +81,7 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
     const thresholdCount = chart.thresholdCollection?.length || 0;
     const emptyThreshold: ChartThreshold = {
       id: uuidv4(),
-      name: `New threshold ${thresholdCount > 1 ? thresholdCount : ''}`,
+      name: `New threshold ${thresholdCount + 1}`,
       type: 'under',
       visible: true,
       filter: {

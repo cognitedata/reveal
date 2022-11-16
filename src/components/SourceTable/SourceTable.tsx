@@ -27,7 +27,6 @@ type Props = {
   openNodeEditor?: ComponentProps<typeof SourceRows>['openNodeEditor'];
   onRowClick?: ComponentProps<typeof SourceRows>['onRowClick'];
   onInfoClick?: ComponentProps<typeof SourceRows>['onInfoClick'];
-  onThresholdClick?: ComponentProps<typeof SourceRows>['onThresholdClick'];
   onErrorIconClick?: ComponentProps<typeof SourceRows>['onErrorIconClick'];
   onOverrideUnitClick?: ComponentProps<
     typeof SourceRows
@@ -63,7 +62,6 @@ const SourceTable = ({
   openNodeEditor = () => {},
   onRowClick = () => {},
   onInfoClick = () => {},
-  onThresholdClick = () => {},
   onErrorIconClick = () => {},
   onShowHideButtonClick = () => {},
   onOverrideUnitClick = () => () => {},
@@ -122,7 +120,6 @@ const SourceTable = ({
                       openNodeEditor={openNodeEditor}
                       onRowClick={onRowClick}
                       onInfoClick={onInfoClick}
-                      onThresholdClick={onThresholdClick}
                       onErrorIconClick={onErrorIconClick}
                       timeseriesData={timeseriesData}
                       calculationData={calculationData}

@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 import get from 'lodash/get';
-import { toast, Loader } from '@cognite/cogs.js';
+import { toast, Loader, Button, Tooltip } from '@cognite/cogs.js';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useIsChartOwner } from 'hooks/user';
 import { useParams } from 'react-router-dom';
@@ -71,6 +71,7 @@ import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
 import PageTitle from 'components/PageTitle/PageTitle';
 import ErrorSidebar from 'components/ErrorSidebar/ErrorSidebar';
 import { WorkflowState } from 'models/calculation-results/types';
+import { Toolbar } from 'components/Common/SidebarElements';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -91,6 +92,7 @@ type ChartViewProps = {
 };
 
 const defaultTranslations = makeDefaultTranslations(
+  'Threshold',
   'Chart could not be saved!',
   'Could not load chart',
   'This chart does not seem to exist. You might not have access',
@@ -289,17 +291,12 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
     [selectedSourceId, showContextMenu]
   );
 
-  const handleThresholdClick = useCallback(
-    (sourceId?: string) => {
-      const isSameSource = sourceId === selectedSourceId;
-      const showMenu = isSameSource ? !showThresholdMenu : true;
-      setShowContextMenu(false);
-      setShowErrorSidebar(false);
-      setShowThresholdMenu(showMenu);
-      setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
-    },
-    [selectedSourceId, showThresholdMenu]
-  );
+  const handleThresholdClick = useCallback(() => {
+    setShowContextMenu(false);
+    setShowErrorSidebar(false);
+    setShowThresholdMenu((prevState) => !prevState);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, []);
 
   const handleErrorIconClick = useCallback(
     (sourceId: string) => {
@@ -707,7 +704,6 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
                     openNodeEditor={openNodeEditor}
                     onRowClick={handleSourceClick}
                     onInfoClick={handleInfoClick}
-                    onThresholdClick={handleThresholdClick}
                     onErrorIconClick={handleErrorIconClick}
                     onShowHideButtonClick={handleShowHideButtonClick}
                     timeseriesData={timeseriesData}
@@ -766,6 +762,16 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
             )}
           />
         )}
+        <Toolbar>
+          <Tooltip content={t.Threshold} position="left">
+            <Button
+              icon="Threshold"
+              aria-label="Toggle threshold sidebar"
+              toggled={showThresholdMenu}
+              onClick={() => handleThresholdClick()}
+            />
+          </Tooltip>
+        </Toolbar>
       </ChartViewContainer>
     </>
   );

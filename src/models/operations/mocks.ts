@@ -58,6 +58,64 @@ export const fullListOfOperations: Operation[] = [
       },
     ],
   },
+
+  {
+    category: 'Data quality',
+    op: 'extreme-old',
+    versions: [
+      {
+        changelog: null,
+        deprecated: true,
+        description:
+          'Outlier detector and removal based on the [paper from Gustavo A. Zarruk](https://iopscience.iop.org/article/10.1088/0957-0233/16/10/012/meta). The procedure is as follows:\n\n * Fit a polynomial curve to the model using all of the data\n * Calculate the studentized deleted (or externally studentized) residuals\n * These residuals follow a t distribution with degrees of freedom n - p - 1\n * Bonferroni critical value can be computed using the significance level (alpha) and t distribution\n * Any values that fall outside of the critical value are treated as anomalies\n\nUse of the hat matrix diagonal allows for the rapid calculation of deleted residuals without having to refit\nthe predictor function each time.',
+        inputs: [
+          {
+            description: null,
+            name: 'Time series.',
+            param: 'data',
+            types: ['ts'],
+          },
+        ],
+        name: 'Extreme outliers removal (old)',
+        outputs: [
+          {
+            description: null,
+            name: 'Time series without outliers.',
+            types: ['ts', 'const'],
+          },
+        ],
+        parameters: [
+          {
+            default_value: 0.05,
+            description: null,
+            name: 'Significance level.',
+            options: null,
+            param: 'alpha',
+            type: 'float',
+          },
+          {
+            default_value: 1.0,
+            description:
+              'Relaxation factor for the Bonferroni critical value. Smaller values will make anomaly detection more\nconservative. Defaults to 1',
+            name: 'Factor.',
+            options: null,
+            param: 'bc_relaxation',
+            type: 'float',
+          },
+          {
+            default_value: 3,
+            description:
+              'Order of the polynomial used for the regression function',
+            name: 'Polynomial order.',
+            options: null,
+            param: 'poly_order',
+            type: 'int',
+          },
+        ],
+        version: '1.0',
+      },
+    ],
+  },
   {
     category: 'Data quality',
     op: 'gaps_identification_iqr',

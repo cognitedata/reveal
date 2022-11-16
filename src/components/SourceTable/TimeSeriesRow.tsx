@@ -13,7 +13,6 @@ import { StyleButton } from 'components/StyleButton/StyleButton';
 import { useComponentTranslations, useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
-import Dropdown from 'components/Dropdown/Dropdown';
 import { TimeseriesEntry } from 'models/timeseries-results/types';
 import {
   SourceItem,
@@ -33,7 +32,6 @@ type Props = {
   isSelected?: boolean;
   onRowClick?: (id?: string) => void;
   onInfoClick?: (id?: string) => void;
-  onThresholdClick?: (id?: string) => void;
   isWorkspaceMode?: boolean;
   isFileViewerMode?: boolean;
   provided?: DraggableProvided | undefined;
@@ -71,7 +69,6 @@ function TimeSeriesRow({
   summary,
   onRowClick = () => {},
   onInfoClick = () => {},
-  onThresholdClick = () => {},
   disabled = false,
   isSelected = false,
   isWorkspaceMode = false,
@@ -105,10 +102,6 @@ function TimeSeriesRow({
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
-  /**
-   * Translations
-   */
-  const t = { ...defaultTranslations, ...translations };
   /**
    * Unit Dropdown translations
    */
@@ -296,19 +289,7 @@ function TimeSeriesRow({
           <td
             style={{ textAlign: 'center', paddingLeft: 0 }}
             className="downloadChartHide col-action"
-          >
-            <Dropdown.Uncontrolled
-              options={[
-                {
-                  label: t.Threshold,
-                  icon: 'Threshold',
-                  onClick: () => {
-                    onThresholdClick(id);
-                  },
-                },
-              ]}
-            />
-          </td>
+          />
         </>
       )}
     </SourceRow>
