@@ -8,8 +8,8 @@ static final String APP_ID = 'cdf-data-exploration'
 static final String APPLICATION_REPO_ID = 'cdf-ui-data-exploration'
 static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
-static final String SENTRY_PROJECT_NAME = "watchtower"
-static final String SENTRY_DSN = "https://d09f6d3557114e6cbaa63b56d7ef86cc@o124058.ingest.sentry.io/1288725"
+static final String SENTRY_PROJECT_NAME = "data-explorer"
+static final String SENTRY_DSN = "https://813bcfd6e12f4c6c8559fc4eddbc4faa@o124058.ingest.sentry.io/4504167830913024"
 static final String LOCIZE_PROJECT_ID = "0774e318-387b-4e68-94cc-7b270321bbf1" // not used
 
 

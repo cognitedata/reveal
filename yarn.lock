@@ -1388,6 +1388,37 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
+"@cognite/cogs.js@7.8.3":
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.8.3.tgz#f4831516cc39463702dab520c0cf91a87ce771c8"
+  integrity sha512-E7NwW//8xXi8ru1YeVV6hEP7ca0iWzyIyl430JrXRbYMhjQZs6pndslihxDm770DSGAPsx9CSjRmOfCOzeSQtQ==
+  dependencies:
+    "@emotion/react" "^11.9.3"
+    "@emotion/styled" "^11.9.3"
+    "@mui/joy" "^5.0.0-alpha.36"
+    "@tippyjs/react" "4.2.3"
+    "@types/react-date-range" "^1.4.3"
+    axios "^0.21.2"
+    classnames "^2.3.1"
+    color "^3.1.2"
+    csstype "^2.6.7"
+    dayjs "^1.9.7"
+    deepdash "^5.3.9"
+    focus-visible "^5.1.0"
+    match-sorter "^6.3.0"
+    rc-collapse "^1.11.8"
+    rc-drawer "^4.1.0"
+    rc-slider "^9.5.4"
+    rc-tabs "^11.6.2"
+    react-date-range "^1.1.3"
+    react-modal "^3.11.2"
+    react-select "^3.1.0"
+    react-table "^7.6.0"
+    react-toastify "^6.0.9"
+    resize-observer-polyfill "^1.5.1"
+    tippy.js "6.2.0"
+    ts-dedent "^2.2.0"
+
 "@cognite/cogs.js@^3.13.0", "@cognite/cogs.js@^3.38.4":
   version "3.44.1"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.44.1.tgz#cab0b75fe199260531c3c650248122e77bfedf07"
@@ -1636,6 +1667,11 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
+"@cognite/frontend-metrics-types@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/frontend-metrics-types/-/frontend-metrics-types-0.0.2.tgz#b6684a39222194e8a2a5f4e372d84404edd881f2"
+  integrity sha512-i064sawWl1uKgfJ6QckXKutw3y+y8KpWuoerX3c/PlaEW/eC/gV6SHkK7q0ltxZcRxBZXhD8wlNMeh+vPxt1gA==
+
 "@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
   version "1.1.1"
   resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
@@ -1653,6 +1689,15 @@
     mixpanel-browser "2.41.0"
     react "17.0.2"
 
+"@cognite/metrics@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-1.3.0.tgz#f9c4a062c37e57ef211eea9248c5f60681517ca7"
+  integrity sha512-3Gf0hCfIsBdhsuefBeL2AjmveItXca6PX1JcvOnLXO7rySierJ+w6o5xgobvsQLTBBbAxwx6dnmc4i8oesrPLQ==
+  dependencies:
+    "@cognite/frontend-metrics-types" "0.0.2"
+    lodash "4.17.21"
+    mixpanel-browser "2.41.0"
+
 "@cognite/react-document-search@0.2.0", "@cognite/react-document-search@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@cognite/react-document-search/-/react-document-search-0.2.0.tgz#abd4cd7301dbbf54647265abddb554fc447faa96"
@@ -1666,6 +1711,19 @@
   integrity sha512-J93D9LcBCgbYIx/TbiQWvms7g/YqffHu2tqu8Piy47yLhfGX1m2iHWgOmzAnw74nXbfzBe18h8q5f15DkV1kiw==
   dependencies:
     tslib "^2.2.0"
+
+"@cognite/react-errors@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@cognite/react-errors/-/react-errors-1.0.4.tgz#02fecc42e97c2b208b32bea3590f5e6c98301212"
+  integrity sha512-sSF4sMg7EsIXKC5eR/qDQY0urGfaVPMW6463QfFPhK0KvNE2RPso4/bbCMn7l+BqJxuLpYcglxUcTM6iuXp7GQ==
+  dependencies:
+    "@cognite/cogs.js" "7.8.3"
+    "@cognite/metrics" "1.3.0"
+    "@cognite/sdk" "7.8.2"
+    "@sentry/browser" "6.19.7"
+    lodash "4.17.21"
+    react-i18next "11.18.4"
+    styled-components "5.3.5"
 
 "@cognite/react-feature-flags@^1.0.0", "@cognite/react-feature-flags@^1.0.1":
   version "1.0.1"
@@ -1751,10 +1809,10 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.6.2":
-  version "4.6.2"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.6.2.tgz#9d6fad52dd0b9eb9eef196b1bf68a707d3ef41a2"
-  integrity sha512-mbzPrPsv0xBodoKVfUDJniQK8T4fRpkFSgrGIkua/gPxeooqP875WFVfiXZgC2dAPLAm9Nr+xZBKx+0goJ7XkQ==
+"@cognite/sdk-core@^4.6.0", "@cognite/sdk-core@^4.8.1":
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.1.tgz#008c6d7e15393f3a840baf809a0037efa8266849"
+  integrity sha512-FEICothNg/aAHdAY84J/udt5NcPcoe8GlT+piFgpvV8zIFpFbUxU4oLVf20xl0AJX1xCO13iWrL/szf6BWqEcA==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -1762,10 +1820,10 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.8.1":
-  version "4.8.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.1.tgz#008c6d7e15393f3a840baf809a0037efa8266849"
-  integrity sha512-FEICothNg/aAHdAY84J/udt5NcPcoe8GlT+piFgpvV8zIFpFbUxU4oLVf20xl0AJX1xCO13iWrL/szf6BWqEcA==
+"@cognite/sdk-core@^4.6.2":
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.6.2.tgz#9d6fad52dd0b9eb9eef196b1bf68a707d3ef41a2"
+  integrity sha512-mbzPrPsv0xBodoKVfUDJniQK8T4fRpkFSgrGIkua/gPxeooqP875WFVfiXZgC2dAPLAm9Nr+xZBKx+0goJ7XkQ==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -1792,6 +1850,15 @@
   integrity sha512-yUFXC7EYS8fZ0PNdOEqNfNS+Jq90V8FqPc4eT6KE8X7JGv1CT0Ff6ONwIx5hiVC0WrVyrlSsAMqvKVt8NcfgXw==
   dependencies:
     "@cognite/sdk-core" "^2.1.2"
+    lodash "^4.17.11"
+
+"@cognite/sdk@7.8.2":
+  version "7.8.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.8.2.tgz#f862ba3c692dd284d58aa87ba7127ffb41e1f299"
+  integrity sha512-AWXieULf5+LlQfXLuu1Y1jGDpikn8GHtKhtd54sKbBGozcMFdwwxIGsyEF64XZ/Ojzgf0zpwpi87Fj3erDUXkQ==
+  dependencies:
+    "@cognite/sdk-core" "^4.6.0"
+    geojson "^0.5.0"
     lodash "^4.17.11"
 
 "@cognite/sdk@^7.6.0":
@@ -2931,6 +2998,90 @@
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.1.4.tgz#0c8b74c50f29ee44f423f7416829c0bf8bb5eb27"
   integrity sha512-LwzQKA4vzIct1zNZzBmRKI9QuNpLgTQMEjsQLf3BXuGYb3QPTP4Yjf6mkdX+X1mYttZ808QpOwAzZjv28kq7DA==
+
+"@sentry/browser@6.19.7":
+  version "6.19.7"
+  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-6.19.7.tgz#a40b6b72d911b5f1ed70ed3b4e7d4d4e625c0b5f"
+  integrity sha512-oDbklp4O3MtAM4mtuwyZLrgO1qDVYIujzNJQzXmi9YzymJCuzMLSRDvhY83NNDCRxf0pds4DShgYeZdbSyKraA==
+  dependencies:
+    "@sentry/core" "6.19.7"
+    "@sentry/types" "6.19.7"
+    "@sentry/utils" "6.19.7"
+    tslib "^1.9.3"
+
+"@sentry/browser@^7.19.0":
+  version "7.19.0"
+  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-7.19.0.tgz#ce21544b843d5c4d5dcb9fe9b7ee31c5c4e91f42"
+  integrity sha512-dWi5VjEwiLb4ofata0UCLdTbXLD1uDUebe9rNSBkHZ3fHF4eap4ZJlu3dYePKB0CKZhZrjzbydimMhaMUNdnug==
+  dependencies:
+    "@sentry/core" "7.19.0"
+    "@sentry/types" "7.19.0"
+    "@sentry/utils" "7.19.0"
+    tslib "^1.9.3"
+
+"@sentry/core@6.19.7":
+  version "6.19.7"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-6.19.7.tgz#156aaa56dd7fad8c89c145be6ad7a4f7209f9785"
+  integrity sha512-tOfZ/umqB2AcHPGbIrsFLcvApdTm9ggpi/kQZFkej7kMphjT+SGBiQfYtjyg9jcRW+ilAR4JXC9BGKsdEQ+8Vw==
+  dependencies:
+    "@sentry/hub" "6.19.7"
+    "@sentry/minimal" "6.19.7"
+    "@sentry/types" "6.19.7"
+    "@sentry/utils" "6.19.7"
+    tslib "^1.9.3"
+
+"@sentry/core@7.19.0":
+  version "7.19.0"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-7.19.0.tgz#74e0eaf4b9f42bb0290f4b3f3b0ea3e272dd693e"
+  integrity sha512-YF9cTBcAnO4R44092BJi5Wa2/EO02xn2ziCtmNgAVTN2LD31a/YVGxGBt/FDr4Y6yeuVehaqijVVvtpSmXrGJw==
+  dependencies:
+    "@sentry/types" "7.19.0"
+    "@sentry/utils" "7.19.0"
+    tslib "^1.9.3"
+
+"@sentry/hub@6.19.7":
+  version "6.19.7"
+  resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-6.19.7.tgz#58ad7776bbd31e9596a8ec46365b45cd8b9cfd11"
+  integrity sha512-y3OtbYFAqKHCWezF0EGGr5lcyI2KbaXW2Ik7Xp8Mu9TxbSTuwTe4rTntwg8ngPjUQU3SUHzgjqVB8qjiGqFXCA==
+  dependencies:
+    "@sentry/types" "6.19.7"
+    "@sentry/utils" "6.19.7"
+    tslib "^1.9.3"
+
+"@sentry/minimal@6.19.7":
+  version "6.19.7"
+  resolved "https://registry.yarnpkg.com/@sentry/minimal/-/minimal-6.19.7.tgz#b3ee46d6abef9ef3dd4837ebcb6bdfd01b9aa7b4"
+  integrity sha512-wcYmSJOdvk6VAPx8IcmZgN08XTXRwRtB1aOLZm+MVHjIZIhHoBGZJYTVQS/BWjldsamj2cX3YGbGXNunaCfYJQ==
+  dependencies:
+    "@sentry/hub" "6.19.7"
+    "@sentry/types" "6.19.7"
+    tslib "^1.9.3"
+
+"@sentry/types@6.19.7":
+  version "6.19.7"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-6.19.7.tgz#c6b337912e588083fc2896eb012526cf7cfec7c7"
+  integrity sha512-jH84pDYE+hHIbVnab3Hr+ZXr1v8QABfhx39KknxqKWr2l0oEItzepV0URvbEhB446lk/S/59230dlUUIBGsXbg==
+
+"@sentry/types@7.19.0":
+  version "7.19.0"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-7.19.0.tgz#3ebb96670399b637a945fa499fa7436f7b930147"
+  integrity sha512-oGRAT6lfzoKrxO1mvxiSj0XHxWPd6Gd1wpPGuu6iJo03xgWDS+MIlD1h2unqL4N5fAzLjzmbC2D2lUw50Kn2pA==
+
+"@sentry/utils@6.19.7":
+  version "6.19.7"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-6.19.7.tgz#6edd739f8185fd71afe49cbe351c1bbf5e7b7c79"
+  integrity sha512-z95ECmE3i9pbWoXQrD/7PgkBAzJYR+iXtPuTkpBjDKs86O3mT+PXOT3BAn79w2wkn7/i3vOGD2xVr1uiMl26dA==
+  dependencies:
+    "@sentry/types" "6.19.7"
+    tslib "^1.9.3"
+
+"@sentry/utils@7.19.0":
+  version "7.19.0"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-7.19.0.tgz#0e039fe57056074c3a5e47bd50d9cb4ac9a6e909"
+  integrity sha512-2L6lq+c9Ol2uiRxQDdcgoapmHJp24MhMN0gIkn2alSfMJ+ls6bGXzQHx6JAIdoOiwFQXRZHKL9ecfAc8O+vItA==
+  dependencies:
+    "@sentry/types" "7.19.0"
+    tslib "^1.9.3"
 
 "@sinclair/typebox@^0.24.1":
   version "0.24.20"
@@ -12958,10 +13109,18 @@ react-highlight-words@^0.18.0:
     memoize-one "^4.0.0"
     prop-types "^15.5.8"
 
+react-i18next@11.18.4:
+  version "11.18.4"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.18.4.tgz#b3c35ac4c4657b05d599b036536d7b2c0331e248"
+  integrity sha512-gK/AylAQC5DvCD5YLNCHW4PNzpCfrWIyVAXbSMl+/5QXzlDP8VdBoqE2s2niGHB+zIXwBV9hRXbDrVuupbgHcg==
+  dependencies:
+    "@babel/runtime" "^7.14.5"
+    html-parse-stringify "^3.0.1"
+
 react-i18next@^11.18.1:
-  version "11.18.1"
-  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.18.1.tgz#ba86ed09069e129b8623a28f2b9a03d7f105ea6f"
-  integrity sha512-S8cl4mvIOSA7OQCE5jNy2yhv705Vwi+7PinpqKIYcBmX/trJtHKqrf6CL67WJSA8crr2JU+oxE9jn9DQIrQezg==
+  version "11.18.6"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.18.6.tgz#e159c2960c718c1314f1e8fcaa282d1c8b167887"
+  integrity sha512-yHb2F9BiT0lqoQDt8loZ5gWP331GwctHz9tYQ8A2EIEUu+CcEdjBLQWli1USG3RdWQt3W+jqQLg/d4rrQR96LA==
   dependencies:
     "@babel/runtime" "^7.14.5"
     html-parse-stringify "^3.0.1"
@@ -14490,7 +14649,7 @@ style-search@^0.1.0:
   resolved "https://registry.yarnpkg.com/style-search/-/style-search-0.1.0.tgz#7958c793e47e32e07d2b5cafe5c0bf8e12e77902"
   integrity sha512-Dj1Okke1C3uKKwQcetra4jSuk0DqbzbYtXipzFlFMZtowbF1x7BKJwB9AayVMyFARvU8EDrZdcax4At/452cAg==
 
-styled-components@^5.2.0, styled-components@^5.2.3, styled-components@^5.3.1, styled-components@^5.3.3:
+styled-components@5.3.5, styled-components@^5.2.0, styled-components@^5.2.3, styled-components@^5.3.1, styled-components@^5.3.3:
   version "5.3.5"
   resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-5.3.5.tgz#a750a398d01f1ca73af16a241dec3da6deae5ec4"
   integrity sha512-ndETJ9RKaaL6q41B69WudeqLzOpY1A/ET/glXkNZ2T7dPjPqpPCXXQjDFYZWwNnE5co0wX+gTCqx9mfxTmSIPg==
@@ -15014,7 +15173,7 @@ tsconfig-paths@^3.14.1:
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
-tslib@^1.10.0, tslib@^1.11.1, tslib@^1.8.1:
+tslib@^1.10.0, tslib@^1.11.1, tslib@^1.8.1, tslib@^1.9.3:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==

@@ -25,6 +25,7 @@ import rootStyles from './styles/index.css';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 import { RecoilDevTools } from 'recoil-gear';
+import { ErrorBoundary } from '@cognite/react-errors';
 
 export default () => {
   const env = getEnv();
@@ -57,44 +58,46 @@ export default () => {
   }, []);
 
   return (
-    <SDKProvider sdk={sdk}>
-      <QueryClientProvider client={queryClient}>
-        <DocumentSearchProvider sdkClient={sdk}>
-          <AntStyles>
-            <SubAppWrapper title="Data Exploration">
-              <AuthWrapper
-                loadingScreen={<Loader darkMode={false} />}
-                login={() => loginAndAuthIfNeeded(project, env)}
-              >
-                <ThemeProvider theme={theme}>
-                  <FlagProvider
-                    apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-                    appName="data-exploration"
-                    projectName={project}
-                    remoteAddress={window.location.hostname}
-                    disableMetrics
-                    refreshInterval={86400}
-                  >
-                    <RecoilRoot>
-                      <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
-                        <BrowserRouter>
-                          <Routes>
-                            <Route path="/:tenant/*" element={<RootApp />} />
-                          </Routes>
-                        </BrowserRouter>
-                        <RecoilDevTools />
-                      </RecoilURLSyncJSON>
-                    </RecoilRoot>
-                  </FlagProvider>
-                </ThemeProvider>
-                <GlobalStyle theme={theme} />
-              </AuthWrapper>
-            </SubAppWrapper>
-            <ToastContainer />
-          </AntStyles>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </DocumentSearchProvider>
-      </QueryClientProvider>
-    </SDKProvider>
+    <AntStyles>
+      <SDKProvider sdk={sdk}>
+        <ErrorBoundary>
+          <QueryClientProvider client={queryClient}>
+            <DocumentSearchProvider sdkClient={sdk}>
+              <SubAppWrapper title="Data Exploration">
+                <AuthWrapper
+                  loadingScreen={<Loader darkMode={false} />}
+                  login={() => loginAndAuthIfNeeded(project, env)}
+                >
+                  <ThemeProvider theme={theme}>
+                    <FlagProvider
+                      apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                      appName="data-exploration"
+                      projectName={project}
+                      remoteAddress={window.location.hostname}
+                      disableMetrics
+                      refreshInterval={86400}
+                    >
+                      <RecoilRoot>
+                        <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
+                          <BrowserRouter>
+                            <Routes>
+                              <Route path="/:tenant/*" element={<RootApp />} />
+                            </Routes>
+                          </BrowserRouter>
+                          <RecoilDevTools />
+                        </RecoilURLSyncJSON>
+                      </RecoilRoot>
+                    </FlagProvider>
+                  </ThemeProvider>
+                  <GlobalStyle theme={theme} />
+                </AuthWrapper>
+              </SubAppWrapper>
+              <ToastContainer />
+              <ReactQueryDevtools initialIsOpen={false} />
+            </DocumentSearchProvider>
+          </QueryClientProvider>
+        </ErrorBoundary>
+      </SDKProvider>
+    </AntStyles>
   );
 };
