@@ -5,6 +5,7 @@ import {
   ByAssetFilterV2,
   DateFilterV2,
   StringFilterV2,
+  NumberFilter,
 } from '@cognite/data-exploration';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
@@ -13,6 +14,7 @@ import {
   useResetCommonFilters,
 } from 'app/store/filter';
 import { TempCommonMultiSelectFix } from 'app/containers/elements';
+import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
 
 interface Props {
   resourceType?: ResourceType;
@@ -21,6 +23,8 @@ export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
   const [commonFilter, setCommonFilter] = useCommonFilters();
   const resetCommonFilter = useResetCommonFilters();
   const isFiltersEmpty = useFilterEmptyState('common');
+
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   return (
     <BaseFilterCollapse.Panel
@@ -64,6 +68,17 @@ export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
           value={commonFilter.externalIdPrefix}
           setValue={newValue => setCommonFilter({ externalIdPrefix: newValue })}
         />
+        {isAdvancedFiltersEnabled && (
+          <NumberFilter
+            title="Internal ID"
+            value={commonFilter.internalId}
+            setValue={newValue =>
+              setCommonFilter({
+                internalId: newValue,
+              })
+            }
+          />
+        )}
       </TempCommonMultiSelectFix>
     </BaseFilterCollapse.Panel>
   );
