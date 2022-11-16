@@ -160,3 +160,21 @@ export const MonthSelect = styled.select`
 export const OptionStyle = styled.option`
   text-align: center;
 `;
+
+export const PivotRangePickerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const PivotRangeInput = styled.div`
+  flex: 1;
+`;
+
+export const PivotRangeUnit = styled.div`
+  flex: 1;
+  display: block;
+`;
+
+export const PivotRangeDirection = styled.div`
+  margin-bottom: 8px;
+`;

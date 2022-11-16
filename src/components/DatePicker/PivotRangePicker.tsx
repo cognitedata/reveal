@@ -1,11 +1,17 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import dayjs from 'dayjs';
-import { Body, Input, Select } from '@cognite/cogs.js';
+import { Body, Input } from '@cognite/cogs.js';
 import { SpacedRow } from 'components';
 import ReactDatePicker from 'react-datepicker';
 import { DatePickerInput, PivotRange, renderCustomHeader } from './Common';
-import { DatePickerWrapper } from './elements';
+import {
+  DatePickerWrapper,
+  PivotRangeDirection,
+  PivotRangeInput,
+  PivotRangePickerWrapper,
+  PivotRangeUnit,
+} from './elements';
 
 const directions = [
   {
@@ -43,15 +49,10 @@ export const PivotRangePicker = ({
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
+    <PivotRangePickerWrapper>
       <Body>Show me data from</Body>
       <SpacedRow style={{ marginBottom: 8, marginTop: 8 }}>
-        <div style={{ flex: 1 }}>
+        <PivotRangeInput>
           <Input
             type="tel"
             variant="noBorder"
@@ -70,34 +71,46 @@ export const PivotRangePicker = ({
               else onChange({ amount: Number(amount) });
             }}
           />
-        </div>
-        <div style={{ flex: 1, display: 'block' }}>
-          <Select
-            value={options.find(el => el.value === unit)!}
-            options={options}
-            isSearchable={false}
-            closeMenuOnSelect
-            isMulti={false}
-            onChange={(value: any) =>
-              onChange({ unit: (value as { value: PivotRange['unit'] }).value })
-            }
-          />
-        </div>
+        </PivotRangeInput>
+        <PivotRangeUnit>
+          <select
+            value={options.find(el => el.value === unit)?.value}
+            onChange={value => {
+              onChange({
+                unit: (
+                  options[value.target.selectedIndex] as {
+                    value: PivotRange['unit'];
+                  }
+                ).value,
+              });
+            }}
+            className="cogs-select__control"
+          >
+            {options.map(duration => (
+              <option value={duration.value}>{duration.label}</option>
+            ))}
+          </select>
+        </PivotRangeUnit>
       </SpacedRow>
-      <div style={{ marginBottom: 8 }}>
-        <Select
-          value={directions.find(el => el.value === direction)!}
-          options={directions}
-          isSearchable={false}
-          closeMenuOnSelect
-          isMulti={false}
-          onChange={(value: any) =>
+      <PivotRangeDirection>
+        <select
+          value={directions.find(el => el.value === direction)?.value}
+          onChange={value => {
             onChange({
-              direction: (value as { value: PivotRange['direction'] }).value,
-            })
-          }
-        />
-      </div>
+              direction: (
+                directions[value.target.selectedIndex] as {
+                  value: PivotRange['direction'];
+                }
+              ).value,
+            });
+          }}
+          className="cogs-select__control"
+        >
+          {directions.map(direction => (
+            <option value={direction.value}>{direction.label}</option>
+          ))}
+        </select>
+      </PivotRangeDirection>
       <DatePickerInput
         date={date}
         onDateChange={newDate => onChange({ date: newDate })}
@@ -111,6 +124,6 @@ export const PivotRangePicker = ({
           disabledKeyboardNavigation
         />
       </DatePickerWrapper>
-    </div>
+    </PivotRangePickerWrapper>
   );
 };
