@@ -29,12 +29,9 @@ import {
 } from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
 
-import {
-  LocalPointClassificationsProvider,
-  PointCloudManager,
-  PointCloudNode,
-  Potree
-} from '../../packages/pointclouds';
+import { LocalPointClassificationsProvider, PointCloudManager, PointCloudNode } from '../../packages/pointclouds';
+
+import { Potree } from '../../packages/pointclouds/src/potree-three-loader';
 
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';

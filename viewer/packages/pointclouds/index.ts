@@ -17,8 +17,6 @@ export { CognitePointCloudModel } from './src/CognitePointCloudModel';
 export { PotreeNodeWrapper } from './src/PotreeNodeWrapper';
 export { PotreeGroupWrapper } from './src/PotreeGroupWrapper';
 
-export { Potree, PointCloudOctree } from './src/PotreePnextLoader';
-
 export { PointCloudFactory } from './src/PointCloudFactory';
 
 export { IPointClassificationsProvider } from './src/classificationsProviders/IPointClassificationsProvider';
