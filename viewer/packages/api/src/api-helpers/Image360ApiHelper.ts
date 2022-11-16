@@ -131,13 +131,22 @@ export class Image360ApiHelper {
       { x: ndcCoordinates.x, y: ndcCoordinates.y },
       this._activeCameraManager.getCamera()
     );
+
     if (entity !== undefined) {
       entity.icon.hoverSpriteVisible = true;
     }
-    if (entity !== this._interactionState.lastHoveredState) {
-      this._requestRedraw();
-      this._interactionState.lastHoveredState = entity;
+
+    if (entity === this._interactionState.lastHoveredState) {
+      return;
     }
+
+    if (entity !== undefined) {
+      entity.icon.hoverSpriteVisible = true;
+      this._image360Facade.preload(entity);
+    }
+
+    this._requestRedraw();
+    this._interactionState.lastHoveredState = entity;
   }
 
   private exit360ImageOnEscape(event: KeyboardEvent) {
