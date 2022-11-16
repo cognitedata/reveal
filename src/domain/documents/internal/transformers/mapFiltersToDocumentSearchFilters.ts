@@ -7,6 +7,7 @@ type DocumentProperties = {
   'sourceFile|source': string[];
   type: string[];
   externalId: string;
+  id: number[];
 };
 
 export const mapFiltersToDocumentSearchFilters = ({
@@ -17,6 +18,7 @@ export const mapFiltersToDocumentSearchFilters = ({
   createdTime,
   lastUpdatedTime,
   assetSubtreeIds,
+  internalId,
 }: InternalDocumentFilter): AdvancedFilter<DocumentProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<DocumentProperties>()
     .containsAny('sourceFile|assetIds', () => {
@@ -30,6 +32,11 @@ export const mapFiltersToDocumentSearchFilters = ({
     .in('author', author)
     .in('sourceFile|source', source)
     .in('type', type)
+    .in('id', () => {
+      if (internalId) {
+        return [internalId];
+      }
+    })
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,

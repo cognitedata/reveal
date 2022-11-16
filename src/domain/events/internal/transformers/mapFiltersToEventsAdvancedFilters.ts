@@ -10,6 +10,7 @@ export type EventsProperties = {
   source: string[];
   externalId: string;
   description: string;
+  id: number[];
   [key: `metadata|${string}`]: string;
 };
 
@@ -25,6 +26,7 @@ export const mapFiltersToEventsAdvancedFilters = (
     subtype,
     source,
     metadata,
+    internalId,
   }: InternalEventsFilters,
   searchQueryMetadataKeys?: Record<string, string>,
   query?: string
@@ -45,6 +47,11 @@ export const mapFiltersToEventsAdvancedFilters = (
     .in('source', () => {
       if (source) {
         return [source];
+      }
+    })
+    .in('id', () => {
+      if (internalId) {
+        return [internalId];
       }
     })
     .prefix('externalId', externalIdPrefix)

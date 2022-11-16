@@ -8,4 +8,5 @@ export const COMMON_FILTER_KEYS: readonly (keyof InternalCommonFilters)[] = [
   'createdTime',
   'lastUpdatedTime',
   'externalIdPrefix',
+  'internalId',
 ] as const;

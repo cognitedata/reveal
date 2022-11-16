@@ -8,6 +8,7 @@ export type SequenceProperties = {
   externalId: string;
   name: string;
   description: string;
+  id: number[];
   [key: `metadata|${string}`]: string;
 };
 
@@ -18,6 +19,7 @@ export const mapFiltersToSequenceAdvancedFilters = (
     lastUpdatedTime,
     externalIdPrefix,
     metadata,
+    internalId,
   }: InternalSequenceFilters,
   searchQueryMetadataKeys?: Record<string, string>,
   query?: string
@@ -32,6 +34,11 @@ export const mapFiltersToSequenceAdvancedFilters = (
         }
         return acc;
       }, [] as number[]);
+    })
+    .in('id', () => {
+      if (internalId) {
+        return [internalId];
+      }
     })
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {

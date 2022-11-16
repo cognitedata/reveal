@@ -62,6 +62,7 @@ export const AppliedFiltersTags: React.FC<Props> = ({
               if (!onFilterChange) {
                 return undefined;
               }
+
               onFilterChange({ [key]: undefined });
             }}
           />

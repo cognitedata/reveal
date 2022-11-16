@@ -8,6 +8,7 @@ export type TimeseriesProperties = {
   unit: string;
   externalId: string;
   name: string;
+  id: number[];
   [key: `metadata|${string}`]: string;
 };
 
@@ -19,6 +20,7 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     externalIdPrefix,
     unit,
     metadata,
+    internalId,
   }: InternalTimeseriesFilters,
   searchQueryMetadataKeys?: Record<string, string>,
   query?: string
@@ -35,6 +37,11 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
       }, [] as number[]);
     })
     .equals('unit', unit)
+    .in('id', () => {
+      if (internalId) {
+        return [internalId];
+      }
+    })
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,

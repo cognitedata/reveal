@@ -12,5 +12,6 @@ export * from './DateFilter/DateFilter';
 export * from './LabelFilter/LabelFilter';
 export * from './MetadataFilter/MetadataFilter';
 export * from './StringFilter/StringFilter';
+export * from './NumberFilter/NumberFilter';
 
 export * from './Filters';

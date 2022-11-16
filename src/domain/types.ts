@@ -7,6 +7,7 @@ export type InternalCommonFilters = {
   createdTime?: DateRange;
   lastUpdatedTime?: DateRange;
   externalIdPrefix?: string;
+  internalId?: number;
 };
 
 export type Order = 'asc' | 'desc';

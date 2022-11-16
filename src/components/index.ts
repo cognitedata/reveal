@@ -11,6 +11,7 @@ export {
   ByAssetFilterV2,
   MetadataFilterV2,
   AggregatedEventFilterV2,
+  NumberFilter,
 } from './SearchNew';
 export * from './InfoGrid/InfoGrid';
 export * from './FilterForm/FilterForm';

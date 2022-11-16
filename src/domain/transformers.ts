@@ -13,6 +13,13 @@ export const transformNewFilterToOldFilter = <T>(
     return {} as T;
   }
 
+  if (filter.internalId) {
+    filter = {
+      ...filter,
+      internalId: undefined,
+    };
+  }
+
   if (filter.metadata && isArray(filter.metadata)) {
     filter = {
       ...filter,

@@ -9,6 +9,7 @@ export type AssetsProperties = {
   labels: string[];
   description: string;
   name: string;
+  id: number[];
   [key: `metadata|${string}`]: string;
 };
 
@@ -20,6 +21,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
     externalIdPrefix,
     source,
     metadata,
+    internalId,
   }: InternalAssetFilters,
   searchQueryMetadataKeys?: Record<string, string>,
   query?: string
@@ -38,6 +40,11 @@ export const mapFiltersToAssetsAdvancedFilters = (
     .in('source', () => {
       if (source) {
         return [source];
+      }
+    })
+    .in('id', () => {
+      if (internalId) {
+        return [internalId];
       }
     })
     .prefix('externalId', externalIdPrefix)
