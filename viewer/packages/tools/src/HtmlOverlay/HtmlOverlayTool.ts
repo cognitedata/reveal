@@ -324,7 +324,6 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
       const insideCameraPlanes =
         nearPlane.distanceToPoint(position3D) >= 0.0 && farPlane.distanceToPoint(position3D) <= 0.0;
-
       const { x, y } = worldToViewportCoordinates(canvas, camera, position3D);
 
       if (insideCameraPlanes) {
