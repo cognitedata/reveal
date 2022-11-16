@@ -14,11 +14,7 @@ import {
 
 import { UnnormalizedDmsIngestNodesItemDTO } from './providers/fdm-current';
 
-import {
-  DataModelTypeDefs,
-  DataModelTypeDefsType,
-  PaginatedResponse,
-} from './types';
+import { DataModelTypeDefsType, PaginatedResponse } from './types';
 
 export class DataManagementHandler {
   constructor(private fdmClient: FlexibleDataModelingClient) {}
@@ -69,28 +65,15 @@ export class DataManagementHandler {
   }
 
   ingestNodes(dto: IngestInstancesDTO): Promise<IngestInstancesResponseDTO> {
-    const { items, dataModelExternalId, dataModelType, dataModelTypeDefs } =
-      dto;
+    const { items, dataModelExternalId, dataModelType } = dto;
 
     dto.items = this.normalizeIngestionItem(
       items,
       dataModelExternalId,
-      dataModelType,
-      dataModelTypeDefs
+      dataModelType
     );
 
     return this.fdmClient.ingestInstances(dto);
-  }
-
-  isRelationshipField(
-    field: string,
-    dataModelType: DataModelTypeDefsType,
-    dataModelTypeDefs: DataModelTypeDefs
-  ): boolean {
-    return this.getRelationshipFields(
-      dataModelType,
-      dataModelTypeDefs
-    ).includes(field);
   }
 
   /*
@@ -100,17 +83,16 @@ Must be on the format [spaceExternalId, externalId] or null instead of {external
   private normalizeIngestionItem(
     items: UnnormalizedDmsIngestNodesItemDTO[],
     dataModelExternalId: string,
-    dataModelType: DataModelTypeDefsType,
-    dataModelTypeDefs: DataModelTypeDefs
+    dataModelType: DataModelTypeDefsType
   ): IngestInstanceDTO[] {
-    const relationshipFields = new Set(
-      this.getRelationshipFields(dataModelType, dataModelTypeDefs)
+    const relationshipFields = dataModelType.fields.filter(
+      (el) => el.type.custom
     );
     return items.map((item) =>
       Object.fromEntries(
         Object.entries(item).map(([key, value]) => {
           if (
-            relationshipFields.has(key) &&
+            relationshipFields.some((el) => el.name === key) &&
             value !== null &&
             typeof value === 'object'
           ) {
@@ -126,17 +108,5 @@ Must be on the format [spaceExternalId, externalId] or null instead of {external
         })
       )
     );
-  }
-
-  private getRelationshipFields(
-    dataModelType: DataModelTypeDefsType,
-    dataModelTypeDefs: DataModelTypeDefs
-  ): string[] {
-    const modelTypeNames = new Set(
-      dataModelTypeDefs.types.map((modelTypeDef) => modelTypeDef.name)
-    );
-    return dataModelType.fields
-      .filter((field) => modelTypeNames.has(field.type.name))
-      .map((field) => field.name);
   }
 }

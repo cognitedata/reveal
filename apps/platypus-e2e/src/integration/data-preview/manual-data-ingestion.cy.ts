@@ -57,12 +57,16 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.intercept('POST', 'api/v1/projects/mock/datamodelstorage/nodes').as(
       'ingestNodes'
     );
+
+    // first make sure table is rendered fully (all 3 rows)
     cy.get('div[role="gridcell"][col-id="user"]')
-      .should('be.visible')
       .should('contain', '123')
+      .should('contain', '456');
+
+    cy.get('div[role="gridcell"][col-id="user"]')
       .first()
-      .focus()
       .dblclick()
+      .should('have.class', 'ag-cell-inline-editing')
       .type('321{enter}');
 
     cy.wait('@ingestNodes').then((interception) => {

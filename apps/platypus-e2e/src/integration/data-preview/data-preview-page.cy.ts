@@ -37,6 +37,9 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.get('[data-testid="Post"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
 
+    // wait for rows to render
+    cy.get('.ag-center-cols-container .ag-row').should('have.length', 3);
+
     // check if all fields are rendered as cols
     cy.get('.ag-header .ag-header-cell[col-id="externalId"]').should(
       'be.visible'
@@ -63,6 +66,37 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.get(
       '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="user"] .cogs-tag'
     ).should('have.text', '123');
+
+    // click to open side panel with list of primitives
+    cy.contains(
+      '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="tags"]',
+      'Lorem'
+    ).dblclick();
+    ['tags (2) for Post', 'Lorem', 'Ipsum'].forEach((text) => {
+      cy.getBySel('data-preview-side-panel').contains(text);
+    });
+
+    // close panel
+    cy.getBySel('data-preview-side-panel')
+      .get('[aria-label="side-panel-close-button"]')
+      .click();
+    cy.get('data-preview-side-panel').should('not.exist');
+
+    // double click comments cell to show side panel
+    cy.get(
+      '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="comments"]'
+    )
+      .contains('987')
+      .dblclick();
+    ['comments (4) for Post', '987', '995', '996', '997'].forEach((text) => {
+      cy.getBySel('data-preview-side-panel').contains(text);
+    });
+
+    // double click non-list cell to close side panel
+    cy.get(
+      '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="title"]'
+    ).dblclick();
+    cy.get('data-preview-side-panel').should('not.exist');
   });
 
   it('should search through primitive type list in the side panel', () => {

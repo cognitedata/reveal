@@ -22,7 +22,7 @@ describe('GraphQlUtilsServiceTest', () => {
     expect(postType).toBeTruthy();
     expect(postType?.name).toEqual('Post');
     expect(postType?.directives?.length).toEqual(1);
-    expect(postType?.directives![0].name).toEqual('template');
+    expect(postType?.directives[0].name).toEqual('template');
 
     const idField = postType?.fields.find(
       (field) => field.name === 'id'
@@ -32,7 +32,7 @@ describe('GraphQlUtilsServiceTest', () => {
       expect.objectContaining({
         name: 'id',
         description: undefined,
-        type: { name: 'Int', list: false, nonNull: true },
+        type: { name: 'Int', list: false, nonNull: true, custom: false },
         nonNull: true,
       })
     );
@@ -45,7 +45,7 @@ describe('GraphQlUtilsServiceTest', () => {
       expect.objectContaining({
         name: 'comments',
         description: undefined,
-        type: { name: 'Comment', list: true, nonNull: false },
+        type: { name: 'Comment', list: true, nonNull: false, custom: true },
         nonNull: false,
       })
     );
@@ -66,9 +66,9 @@ describe('GraphQlUtilsServiceTest', () => {
 
     const nameField = parsedSchema.types[0].fields[0];
     expect(nameField.name).toEqual('name');
-    expect(nameField.directives![0].name).toEqual('searchable');
-    expect(nameField.arguments![0].name).toEqual('qry');
-    expect(nameField.arguments![0].type.name).toEqual('String');
+    expect(nameField.directives[0].name).toEqual('searchable');
+    expect(nameField.arguments[0].name).toEqual('qry');
+    expect(nameField.arguments[0].type.name).toEqual('String');
   });
 
   it('should convert SolutionDataModel into graphql schema string', () => {
@@ -149,7 +149,7 @@ describe('GraphQlUtilsServiceTest', () => {
       expect.objectContaining({
         name: 'test',
         description: undefined,
-        type: { name: 'String', list: false, nonNull: false },
+        type: { name: 'String', list: false, nonNull: false, custom: false },
         nonNull: false,
       })
     );
@@ -169,7 +169,7 @@ describe('GraphQlUtilsServiceTest', () => {
       expect.objectContaining({
         name: 'postTitle',
         nonNull: true,
-        type: { list: false, name: 'String', nonNull: true },
+        type: { list: false, name: 'String', nonNull: true, custom: false },
       })
     );
 
@@ -182,7 +182,7 @@ describe('GraphQlUtilsServiceTest', () => {
         description: undefined,
         name: 'postTitle',
         nonNull: true,
-        type: { list: false, name: 'Int', nonNull: true },
+        type: { list: false, name: 'Int', nonNull: true, custom: false },
       })
     );
   });

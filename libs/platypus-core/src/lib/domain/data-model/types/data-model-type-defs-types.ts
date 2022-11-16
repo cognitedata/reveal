@@ -25,6 +25,7 @@ export interface DataModelTypeDefsFieldType {
   name: BultinFieldTypeNames | string;
   list?: boolean;
   nonNull?: boolean;
+  custom?: boolean;
 }
 
 export type DataModelTypeDefsFieldArgument = {

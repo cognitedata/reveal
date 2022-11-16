@@ -12,6 +12,7 @@ import {
   ValueFormatterParams,
   ValueGetterParams,
 } from 'ag-grid-community';
+import merge from 'lodash/merge';
 import {
   GridConfig,
   ColumnDataType,
@@ -22,7 +23,7 @@ import { decimalValueFormatter } from '../utils';
 import SelectCellEditor from '../../components/select-cell-editor';
 
 const cellClassRules = {
-  'cog-table-cell-cell-empty': (params: any) =>
+  'cog-table-cell-cell-empty': (params: { value: unknown }) =>
     params.value === undefined || params.value === null || params.value === '',
 };
 export class GridConfigService {
@@ -30,9 +31,8 @@ export class GridConfigService {
 
   getDefaultColDefConfig(theme: string): ColDef {
     return {
-      ...this.getColTypeProps('String', theme),
+      ...this.getColTypeProps('Link', theme),
 
-      // make every column editable
       editable: false,
 
       resizable: true,
@@ -55,11 +55,7 @@ export class GridConfigService {
   /**
    * Loads default ag-grid gridOptions needed for grid to work
    */
-  getGridConfig(
-    theme: string,
-    columnTypes?: ColumnTypes,
-    rowNodeId?: string
-  ): GridOptions {
+  getGridConfig(theme: string, columnTypes?: ColumnTypes): GridOptions {
     const virtualizationDisabled = this.isVirtualizationModeDisabled();
 
     if (columnTypes) {
@@ -100,7 +96,7 @@ export class GridConfigService {
         cogCustomHeader: CustomHeader,
         selectCellEditor: SelectCellEditor,
       },
-      columnTypes: Object.assign(
+      columnTypes: merge(
         {
           booleanColType: {
             cellEditor: 'selectCellEditor',
@@ -115,7 +111,7 @@ export class GridConfigService {
             cellEditorPopup: true,
             cellStyle: { textTransform: 'capitalize' },
           },
-          customColTypes: {
+          customColType: {
             cellRenderer: 'customRendererComponent',
             valueGetter: (params: ValueGetterParams) => {
               if (
@@ -133,6 +129,10 @@ export class GridConfigService {
             },
             ...this.getColTypeProps('Link', theme),
           },
+          textColType: {
+            cellEditor: 'textCellEditor',
+            ...this.getColTypeProps('String', theme),
+          },
           largeTextColType: {
             cellEditor: 'textCellEditor',
             ...this.getColTypeProps('String', theme),
@@ -140,7 +140,28 @@ export class GridConfigService {
           listColType: {
             cellRenderer: 'listCellRendererComponent',
             cellEditor: 'listCellRendererComponent',
-            ...this.getColTypeProps('List', theme),
+            valueGetter: (params: ValueGetterParams) => {
+              if (
+                params.data === undefined ||
+                params.colDef.field === undefined
+              ) {
+                return [];
+              }
+              const value = params.data[params.colDef.field];
+
+              if (value === null) {
+                return [];
+              }
+
+              // normal array
+              if (Array.isArray(value)) {
+                return value;
+              } else if ('items' in value && Array.isArray(value.items)) {
+                // complex type array
+                return value.items;
+              }
+              return [];
+            },
           },
           numberColType: {
             cellEditor: 'numberCellEditor',
@@ -163,14 +184,14 @@ export class GridConfigService {
         columnTypes || {}
       ),
       context: {
-        sum: (...args: any[]) => args.reduce((sum, x) => +sum + +x),
+        sum: (...args: number[]) => args.reduce((sum, x) => +sum + +x),
         round: (value: number) => Math.round(value),
-        pow: (x: any, y: any) => Math.pow(x, y),
-        abs: (value: any) => Math.abs(value),
-        ceil: (value: any) => Math.ceil(value),
-        floor: (value: any) => Math.floor(value),
-        min: (...args: any) => Math.min(...args),
-        max: (...args: any) => Math.max(...args),
+        pow: (x: number, y: number) => Math.pow(x, y),
+        abs: (value: number) => Math.abs(value),
+        ceil: (value: number) => Math.ceil(value),
+        floor: (value: number) => Math.floor(value),
+        min: (...args: number[]) => Math.min(...args),
+        max: (...args: number[]) => Math.max(...args),
         gridConfig: {
           multiSortKey: 'ctrl',
         },
@@ -216,51 +237,48 @@ export class GridConfigService {
   private getColumnType({ dataType, isList }: ColumnConfig): string[] {
     //Handle here for now, untill we migrate all column types
     let dataTypeName = this.normalizeName(dataType);
-
-    if (isList) {
-      dataTypeName = 'list';
-      return ['listColType'];
-    }
+    const columnTypes: string[] = [];
 
     if (this.customColTypes.includes(dataType)) {
-      return [dataType];
-    }
-
-    if (dataType === ColumnDataType.Text) {
-      return [];
-    }
-
-    if (dataType === ColumnDataType.Boolean) {
-      dataTypeName = 'boolean';
-      return ['booleanColType'];
-    }
-
-    if (dataType === ColumnDataType.Custom) {
+      columnTypes.push(dataType);
       dataTypeName = 'custom';
-      return ['customColTypes'];
     }
 
-    if (dataType === ColumnDataType.Number) {
-      dataTypeName = 'number';
-      return [`${dataTypeName}ColType`];
+    switch (dataType) {
+      case ColumnDataType.Boolean: {
+        dataTypeName = 'boolean';
+        break;
+      }
+      case ColumnDataType.Custom: {
+        dataTypeName = 'custom';
+        break;
+      }
+      case ColumnDataType.Number: {
+        dataTypeName = 'number';
+        break;
+      }
+      case ColumnDataType.Decimal: {
+        dataTypeName = 'decimal';
+        break;
+      }
+      case ColumnDataType.DateTime: {
+        dataTypeName = 'dateTime';
+        break;
+      }
+      default: {
+        dataTypeName = 'text';
+      }
     }
 
-    if (dataType === ColumnDataType.Decimal) {
-      dataTypeName = 'decimal';
-      return [`${dataTypeName}ColType`];
+    const colType = `${dataTypeName}ColType`;
+    columnTypes.push(colType);
+
+    if (isList) {
+      // list trumps everything
+      columnTypes.push('listColType');
     }
 
-    if (dataType === ColumnDataType.DateTime) {
-      dataTypeName = 'date';
-    }
-
-    let colType = `${dataTypeName}ColType`;
-
-    if (colType === 'dateColType') {
-      colType = 'dateTimeColType';
-    }
-
-    return [];
+    return columnTypes;
   }
 
   private isVirtualizationModeDisabled(): boolean {

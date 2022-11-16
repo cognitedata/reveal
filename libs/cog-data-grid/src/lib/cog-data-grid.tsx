@@ -37,8 +37,7 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
     const theme = props.theme || 'default';
     const defaultGridOptions = gridConfigService.getGridConfig(
       theme,
-      props.columnTypes,
-      props.rowNodeId
+      props.columnTypes
     ) as GridOptions;
 
     useEffect(() => {

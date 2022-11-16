@@ -69,6 +69,8 @@ export const buildGridConfig = (
       },
     },
     ...dataModelType.fields.map((field) => {
+      const isList = field.type.list || false;
+
       const colConfig = {
         label: field.name,
         property: field.name,
@@ -79,11 +81,11 @@ export const buildGridConfig = (
         defaultValue: '',
         rules: [],
         metadata: {},
-        isList: field.type.list || false,
+        isList,
         colDef: {
           headerName: `${field.name}${field.type.nonNull ? '*' : ''}`,
           sortable: false,
-          editable: enableManualPopulation,
+          editable: enableManualPopulation && !isList,
           cellEditorParams: {
             isRequired: field.nonNull || field.type.nonNull,
           },

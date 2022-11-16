@@ -1,4 +1,4 @@
-import { Flex, Label } from '@cognite/cogs.js';
+import { Flex, Icon, Label } from '@cognite/cogs.js';
 import { ICellRendererParams } from 'ag-grid-community';
 import React from 'react';
 import styled from 'styled-components';
@@ -10,18 +10,14 @@ interface IListCellRendererProps extends ICellRendererParams {
 
 export const ListCellRenderer = React.forwardRef(
   (props: IListCellRendererProps, _) => {
-    const items = Array.isArray(props.value) ? props.value : [];
-
     return (
       <Flex justifyContent={'space-between'}>
         <ListCellValueText>
-          {items.length
-            ? `${printType(items[0], props.listDataType)};...`
+          {props.value.length
+            ? `${printType(props.value[0], props.listDataType)};...`
             : ' '}
         </ListCellValueText>
-        <Label size="small" variant="normal">
-          {items.length || '0'}
-        </Label>
+        {props.value.length > 1 && <Icon type="List" />}
       </Flex>
     );
   }
@@ -33,6 +29,8 @@ const printType = (value: any, type: ColumnDataType) => {
       return value.toLocaleString(undefined, {
         minimumFractionDigits: 2,
       });
+    case 'CUSTOM':
+      return value.externalId;
     default:
       return value.toString();
   }

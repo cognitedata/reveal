@@ -47,7 +47,9 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       directives: directive ? [directive] : [],
     });
 
-    return this.toSolutionDataModelType(newType);
+    const typeNames = this.getTypeNames();
+
+    return this.toSolutionDataModelType(newType, typeNames);
   }
 
   updateType(
@@ -88,7 +90,9 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       }
     }
 
-    return this.toSolutionDataModelType(type);
+    const typeNames = this.getTypeNames();
+
+    return this.toSolutionDataModelType(type, typeNames);
   }
 
   removeType(typeName: string): void {
@@ -97,8 +101,10 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   }
 
   getType(typeName: string): DataModelTypeDefsType {
+    const typeNames = this.getTypeNames();
     return this.toSolutionDataModelType(
-      this.schemaAst!.getObjectType(typeName)
+      this.schemaAst!.getObjectType(typeName),
+      typeNames
     );
   }
 
@@ -112,8 +118,10 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     const createdType = this.schemaAst!.getObjectType(typeName).createField(
       fieldProps as FieldDefinitionNodeProps
     );
+    const typeNames = this.getTypeNames();
     return this.toSolutionDataModelField(
       createdType.getField(updatedFieldName),
+      typeNames,
       fieldProps.id
     );
   }
@@ -129,9 +137,11 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       fieldName,
       updates
     );
+    const typeNames = this.getTypeNames();
 
     const updatedField = this.toSolutionDataModelField(
       updatedType.getField(updatedFieldName),
+      typeNames,
       updates.id
     );
     if (!updatedField.location && updates.location) {
@@ -159,16 +169,18 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       this.schemaAst!.typeMap.get(type)
     );
 
+    const typeNames = this.getTypeNames();
+
     const mappedTypes: DataModelTypeDefsType[] = types
       // We will only parse Objects types for now
       .filter((type) => type && type.kind === Kind.OBJECT_TYPE_DEFINITION)
       .map((type) => {
         const typeDef = type as ObjectTypeDefinitionNode;
         const typeApi = objectTypeApi(typeDef);
-        const mappedType = this.toSolutionDataModelType(typeApi);
+        const mappedType = this.toSolutionDataModelType(typeApi, typeNames);
         if (typeDef.fields && typeDef.fields.length) {
           mappedType.fields = typeDef.fields.map((field) =>
-            this.toSolutionDataModelField(fieldDefinitionApi(field))
+            this.toSolutionDataModelField(fieldDefinitionApi(field), typeNames)
           );
         }
 
@@ -196,13 +208,16 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     return sdl === '\n' ? '' : sdl;
   }
 
-  private toSolutionDataModelType(type: ObjectTypeApi): DataModelTypeDefsType {
+  private toSolutionDataModelType(
+    type: ObjectTypeApi,
+    typeNames: Set<string>
+  ): DataModelTypeDefsType {
     return {
       name: type.getName(),
       description: type.getDescription(),
       fields: type
         .getFields()
-        .map((field) => this.toSolutionDataModelField(field)),
+        .map((field) => this.toSolutionDataModelField(field, typeNames)),
       interfaces: type.node.interfaces?.map(
         (typeInterface) => typeInterface.name.value
       ),
@@ -218,6 +233,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
   private toSolutionDataModelField(
     field: FieldDefinitionApi,
+    typeNames: Set<string>,
     fieldId?: string
   ): DataModelTypeDefsField {
     return {
@@ -228,6 +244,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
         name: field.getTypename(),
         list: field.isListType(),
         nonNull: field.isNonNullType(),
+        custom: typeNames.has(field.getTypename()),
       },
       nonNull: field.isNonNullType(),
       directives: this.mapDirectives(field.getDirectives()),
@@ -273,6 +290,22 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     if (!this.schemaAst) {
       this.schemaAst = documentApi();
     }
+  }
+
+  private getTypeNames() {
+    const dataTypeNames: Set<string> = new Set();
+    if (this.schemaAst) {
+      const types = [...this.schemaAst.typeMap.keys()].map((type) =>
+        this.schemaAst!.typeMap.get(type)
+      );
+
+      for (const type of types) {
+        if (type && type.kind === Kind.OBJECT_TYPE_DEFINITION) {
+          dataTypeNames.add(type.name.value);
+        }
+      }
+    }
+    return dataTypeNames;
   }
 
   clear() {

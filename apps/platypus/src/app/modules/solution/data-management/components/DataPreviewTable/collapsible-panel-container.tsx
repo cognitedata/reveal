@@ -1,11 +1,17 @@
 import { CogDataList, PrimitiveTypesListData } from '@cognite/cog-data-grid';
-import { CollapsablePanel, Body, Title, Button, Input } from '@cognite/cogs.js';
+import {
+  CollapsablePanel,
+  Body,
+  Title,
+  Button,
+  Input,
+  Flex,
+} from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { AgGridReact } from 'ag-grid-react';
 import {
   ChangeEvent,
   ReactElement,
-  SetStateAction,
   useCallback,
   useRef,
   useState,
@@ -15,21 +21,22 @@ import { SidePanel } from './SidePanel';
 
 import * as S from './elements';
 
-export type ListDataType = {
+export type DataPreviewSidebarData = {
+  type: 'list';
   fieldName: string;
-  data: PrimitiveTypesListData;
+  value: PrimitiveTypesListData;
 };
 
 export type CollapsiblePanelContainerProps = {
   children: ReactElement;
-  listData: { fieldName: string; data: PrimitiveTypesListData } | undefined;
-  setListData: (value: SetStateAction<ListDataType | undefined>) => void;
+  data: DataPreviewSidebarData | undefined;
+  onClose: VoidFunction;
   dataModelTypeName: string;
 };
 
 export const CollapsiblePanelContainer: React.FC<
   CollapsiblePanelContainerProps
-> = ({ children, listData, setListData, dataModelTypeName }) => {
+> = ({ children, data, onClose, dataModelTypeName }) => {
   const { t } = useTranslation('DataPreviewCollapsiblePanelContainer');
   const gridRef = useRef<AgGridReact>(null);
   const [openSearchInput, setOpenSearchInput] = useState<boolean>(false);
@@ -46,50 +53,48 @@ export const CollapsiblePanelContainer: React.FC<
     gridRef.current?.api.setQuickFilter('');
   }, []);
 
-  const handleCloseListDataSidePanel = useCallback(() => {
-    setListData(undefined);
-  }, [setListData]);
-
   const PrimitiveTypeListSidePanel = (
     <SidePanel
       title={
         <SidePanelTitle
-          listLength={listData?.data.length || 0}
-          fieldName={listData?.fieldName || ''}
+          listLength={data?.value.length || 0}
+          fieldName={data?.fieldName || ''}
           dataModelTypeName={dataModelTypeName}
         />
       }
-      onCloseClick={handleCloseListDataSidePanel}
+      onCloseClick={onClose}
     >
-      {listData?.data && (
+      {data?.value && (
         <>
-          {!openSearchInput && (
-            <Button
-              data-cy="side-panel-search-button"
-              icon="Search"
-              type="secondary"
-              onClick={() => setOpenSearchInput(true)}
-            />
-          )}
-          {openSearchInput && (
-            <>
-              <Input
-                data-cy="side-panel-search-input"
-                autoFocus
-                onChange={onSearchInputChange}
-              />
+          <Flex>
+            {!openSearchInput && (
               <Button
-                data-cy="side-panel-search-cancel-button"
-                type="link"
-                variant="ghost"
-                onClick={onSearchInputCancel}
-                aria-label="side-panel-search-cancel-button"
-              >
-                {t('side-panel-list-search-cancel-btn', 'Cancel')}
-              </Button>
-            </>
-          )}
-          <CogDataList ref={gridRef} listData={listData.data || []} />
+                data-cy="side-panel-search-button"
+                icon="Search"
+                type="secondary"
+                onClick={() => setOpenSearchInput(true)}
+              />
+            )}
+            {openSearchInput && (
+              <>
+                <Input
+                  data-cy="side-panel-search-input"
+                  autoFocus
+                  onChange={onSearchInputChange}
+                />
+                <Button
+                  data-cy="side-panel-search-cancel-button"
+                  type="link"
+                  variant="ghost"
+                  onClick={onSearchInputCancel}
+                  aria-label="side-panel-search-cancel-button"
+                >
+                  {t('side-panel-list-search-cancel-btn', 'Cancel')}
+                </Button>
+              </>
+            )}
+          </Flex>
+          <CogDataList ref={gridRef} listData={data.value || []} />
         </>
       )}
     </SidePanel>
@@ -99,7 +104,7 @@ export const CollapsiblePanelContainer: React.FC<
     <S.CollapsablePanelContainer>
       <CollapsablePanel
         sidePanelRight={PrimitiveTypeListSidePanel}
-        sidePanelRightVisible={!!listData}
+        sidePanelRightVisible={!!data}
         sidePanelRightWidth={376}
       >
         {children}

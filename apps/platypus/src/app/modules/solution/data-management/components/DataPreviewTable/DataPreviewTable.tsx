@@ -1,4 +1,11 @@
-import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
+import {
+  CogDataGrid,
+  CogDataList,
+  ColumnDataType,
+  GridConfig,
+  PrimitiveTypesListData,
+} from '@cognite/cog-data-grid';
+import { Body, CollapsablePanel, Title } from '@cognite/cogs.js';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
@@ -15,6 +22,7 @@ import {
   PlatypusError,
 } from '@platypus/platypus-core';
 import {
+  CellDoubleClickedEvent,
   CellEditingStartedEvent,
   ColDef,
   GridReadyEvent,
@@ -54,7 +62,7 @@ import {
 } from '@platypus-app/flags';
 import {
   CollapsiblePanelContainer,
-  ListDataType,
+  DataPreviewSidebarData,
 } from './collapsible-panel-container';
 
 const pageSizeLimit = 100;
@@ -155,7 +163,7 @@ export const DataPreviewTable = forwardRef<
       dataModelType,
     });
 
-    const [listData, setListData] = useState<ListDataType>();
+    const [sidebarData, setSidebarData] = useState<DataPreviewSidebarData>();
 
     const handleRowPublish = (row: KeyValueMap) => {
       dataManagementHandler
@@ -337,7 +345,7 @@ export const DataPreviewTable = forwardRef<
         isListTypeCell && e.colDef.cellRendererParams.listDataType === 'CUSTOM';
 
       if (!isListTypeCell || isCustomListTypeCell) {
-        setListData(undefined);
+        setSidebarData(undefined);
         return;
       }
 
@@ -347,8 +355,9 @@ export const DataPreviewTable = forwardRef<
 
       const cellData = e.data[e.colDef.field] || [];
 
-      setListData({
-        data: cellData,
+      setSidebarData({
+        type: 'list',
+        value: cellData,
         fieldName: e.colDef.field,
       });
       e.api.stopEditing();
@@ -356,6 +365,46 @@ export const DataPreviewTable = forwardRef<
         e.colDef.field && e.api.ensureColumnVisible(e.colDef.field);
       }, 400);
     };
+
+    const handleCellDoubleClicked = useCallback(
+      (event: CellDoubleClickedEvent) => {
+        if (!event.colDef.field) {
+          return;
+        }
+        const fieldType = dataModelType.fields.find(
+          (field) => field.name === event.colDef.field
+        );
+
+        // externalID for example is not in the dataModelType.fields
+        if (!fieldType) {
+          return;
+        }
+
+        // return if we double clicked anything but a list cell
+        if (!fieldType.type.list) {
+          return;
+        }
+
+        const isCustomListTypeCell = fieldType.type.custom;
+
+        const cellData = event.value.map((item: any) =>
+          isCustomListTypeCell ? item.externalId : item
+        );
+
+        setSidebarData({
+          value: cellData,
+          fieldName: event.colDef.field,
+          type: 'list',
+        });
+
+        // 400ms is animation time of side panel opening
+        window.setTimeout(() => {
+          event.colDef.field &&
+            event.api.ensureColumnVisible(event.colDef.field);
+        }, 400);
+      },
+      [dataModelType]
+    );
 
     /*
   We use this value-setter to handle editing of pinned draft rows and published rows.
@@ -378,10 +427,9 @@ export const DataPreviewTable = forwardRef<
 
       let newValue = e.newValue;
       if (
-        dataManagementHandler.isRelationshipField(
-          e.colDef.field!,
-          dataModelType,
-          dataModelTypeDefs
+        // if is a relationship and value not null
+        dataModelType.fields.some(
+          (el) => el.name === e.colDef.field && el.type.custom
         ) &&
         e.newValue !== null
       ) {
@@ -522,6 +570,7 @@ export const DataPreviewTable = forwardRef<
       singleSelectedRowExternalId,
       refetchPublishedRowsCountMap,
       t,
+      space,
     ]);
 
     if (!isGridInit || !isPublishedRowsCountMapFetched) {
@@ -582,8 +631,8 @@ export const DataPreviewTable = forwardRef<
           version={version}
         />
         <CollapsiblePanelContainer
-          listData={listData}
-          setListData={setListData}
+          data={sidebarData}
+          onClose={() => setSidebarData(undefined)}
           dataModelTypeName={dataModelType.name}
         >
           <StyledDataPreviewTable data-cy="data-preview-table">
@@ -609,6 +658,7 @@ export const DataPreviewTable = forwardRef<
                   />
                 ),
                 onCellEditingStarted: handleCellEditingStarted,
+                onCellDoubleClicked: handleCellDoubleClicked,
               }}
               defaultColDef={{
                 valueSetter: handleCellValueChanged,
