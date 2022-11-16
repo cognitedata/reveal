@@ -1,3 +1,8 @@
+## 1.0.4 Nov 16 2022
+
+- Remove the 'instanceId' as prop to error boundary
+- Fix peer dependency for react
+
 ## 1.0.2 Jan 17 2022
 
 - Add generic ErrorExpandable
