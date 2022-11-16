@@ -7,8 +7,21 @@ import { NumericRange } from '../NumericRange';
 
 export type IndexNode = IntermediateIndexNode | LeafIndexNode;
 
+// Simple iterator to give a new internal Id to every new IndexSet.
+let indexSetIdIterator = 1;
+
 export class IndexSet {
   rootNode?: IndexNode;
+  private readonly indexSetId = ++indexSetIdIterator;
+  private setRevision = 0;
+
+  /**
+   * Get a "Key" which can be used to memoize an IndexSet calculation to only re-run when it has changed.
+   * The Version will update every time a item is added or removed, or when the set is cleared.
+   */
+  getSetVersion = (): number => {
+    return (this.indexSetId << 32) + this.setRevision;
+  };
 
   constructor(values?: Iterable<number>);
   constructor(values?: NumericRange);
@@ -42,6 +55,7 @@ export class IndexSet {
     } else {
       this.rootNode = new LeafIndexNode(range);
     }
+    this.setRevision++;
   }
 
   remove(index: number): void {
@@ -52,6 +66,7 @@ export class IndexSet {
   removeRange(range: NumericRange): void {
     if (this.rootNode) {
       this.rootNode = this.rootNode.removeRange(range);
+      this.setRevision++;
     }
 
     // Do nothing if root is empty
@@ -210,6 +225,7 @@ export class IndexSet {
 
   clear(): void {
     this.rootNode = undefined;
+    this.setRevision++;
   }
 
   clone(): IndexSet {

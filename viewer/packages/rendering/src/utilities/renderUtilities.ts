@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { createRenderTriangle, WebGLRendererStateHelper } from '@reveal/utilities';
+import { createRenderTriangle, IndexSet, WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
 import { CogniteColors, RevealColors } from './types';
@@ -266,6 +266,38 @@ export function hasStyledNodes(
   return { back: totalBackIndices > 0, ghost: totalGhostIndices > 0, inFront: totalInFrontIndices > 0 };
 }
 
+interface CadModelLayerCache {
+  backSetVersion: number;
+  backSetEnabled: boolean;
+  ghostSetVersion: number;
+  ghostSetEnabled: boolean;
+  inFrontSetVersion: number;
+  inFrontSetEnabled: boolean;
+}
+
+/** Checks if the sets have identical version to last frame, and updates the state accordingly */
+function updateLayerCache(
+  existingCacheRef: CadModelLayerCache,
+  sets: { backSet: IndexSet; ghostSet: IndexSet; inFrontSet: IndexSet },
+  treeIndices: Map<number, number>
+) {
+  const { backSet, inFrontSet, ghostSet } = sets;
+  if (existingCacheRef.backSetVersion !== backSet.getSetVersion()) {
+    existingCacheRef.backSetVersion = backSet.getSetVersion();
+    existingCacheRef.backSetEnabled = backSet.hasIntersectionWith(treeIndices);
+  }
+
+  if (existingCacheRef.inFrontSetVersion !== inFrontSet.getSetVersion()) {
+    existingCacheRef.inFrontSetVersion = inFrontSet.getSetVersion();
+    existingCacheRef.inFrontSetEnabled = inFrontSet.hasIntersectionWith(treeIndices);
+  }
+
+  if (existingCacheRef.ghostSetVersion !== ghostSet.getSetVersion()) {
+    existingCacheRef.ghostSetVersion = ghostSet.getSetVersion();
+    existingCacheRef.ghostSetEnabled = ghostSet.hasIntersectionWith(treeIndices);
+  }
+}
+
 function setModelRenderLayers(
   cadModels: {
     cadNode: THREE.Object3D;
@@ -281,19 +313,25 @@ function setModelRenderLayers(
 
   model.traverse(node => {
     node.layers.disableAll();
-    const objectTreeIndices = node.userData?.treeIndices as Map<number, number> | undefined;
+    const objectTreeIndices = node.userData.treeIndices as Map<number, number> | undefined;
     if (objectTreeIndices === undefined) {
       return;
     }
-    if (backSet.hasIntersectionWith(objectTreeIndices)) {
+
+    const layerCache = (node.userData.layerSetCache as CadModelLayerCache) ?? {};
+    updateLayerCache(layerCache, { backSet, ghostSet, inFrontSet }, objectTreeIndices);
+
+    if (layerCache.backSetEnabled) {
       node.layers.enable(RenderLayer.Back);
     }
-    if (ghostSet.hasIntersectionWith(objectTreeIndices)) {
+    if (layerCache.ghostSetEnabled) {
       node.layers.enable(RenderLayer.Ghost);
     }
-    if (inFrontSet.hasIntersectionWith(objectTreeIndices)) {
+    if (layerCache.inFrontSetEnabled) {
       node.layers.enable(RenderLayer.InFront);
     }
+
+    node.userData.layerSetCache = layerCache;
   });
 }
 
