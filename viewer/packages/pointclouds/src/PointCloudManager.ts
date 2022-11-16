@@ -38,6 +38,8 @@ export class PointCloudManager {
 
   private readonly _renderer: THREE.WebGLRenderer;
 
+  private _needsRedraw: boolean = false;
+
   constructor(
     metadataRepository: PointCloudMetadataRepository,
     materialManager: PointCloudMaterialManager,
@@ -49,7 +51,7 @@ export class PointCloudManager {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
     this._materialManager = materialManager;
-    this._potreeInstance = potreeInstance
+    this._potreeInstance = potreeInstance;
     this._loadingStateHandler = new PointCloudLoadingStateHandler();
 
     scene.add(this.createDrawResetTrigger());
@@ -65,16 +67,14 @@ export class PointCloudManager {
     this._renderer = renderer;
   }
 
-  get pointCloudGroupWrapper(): PointCloudLoadingStateHandler {
-    return this._loadingStateHandler;
-  }
-
   requestRedraw(): void {
-    this._loadingStateHandler.requestRedraw();
+    this._needsRedraw = true;
   }
 
   resetRedraw(): void {
-    this._loadingStateHandler.resetRedraw();
+    this._needsRedraw = false;
+    this._pointCloudNodes.forEach(n => n.resetRedraw());
+    this._loadingStateHandler.resetFrameStats();
   }
 
   get pointBudget(): number {
@@ -87,7 +87,11 @@ export class PointCloudManager {
   }
 
   get needsRedraw(): boolean {
-    return this._loadingStateHandler.needsRedraw;
+    return (
+      this._needsRedraw ||
+      this._loadingStateHandler.needsRedraw(this._pointCloudNodes) ||
+      this._pointCloudNodes.some(n => n.needsRedraw)
+    );
   }
 
   set clippingPlanes(planes: THREE.Plane[]) {
@@ -100,16 +104,13 @@ export class PointCloudManager {
   }
 
   updatePointClouds(camera: THREE.PerspectiveCamera): void {
-    this._potreeInstance.updatePointClouds(
-      this._loadingStateHandler.pointClouds,
-      camera,
-      this._renderer
-    );
+    const octrees = this._pointCloudNodes.map(node => node.octree);
+    this._potreeInstance.updatePointClouds(octrees, camera, this._renderer);
   }
 
   updateCamera(camera: THREE.PerspectiveCamera): void {
     this._cameraSubject.next(camera);
-    this._loadingStateHandler.requestRedraw();
+    this.requestRedraw();
   }
 
   async addModel(modelIdentifier: ModelIdentifier): Promise<PointCloudNode> {
@@ -126,7 +127,10 @@ export class PointCloudManager {
 
     const nodeWrapper = await this._pointCloudFactory.createModel(metadata);
     this._pointCloudNodes.push(nodeWrapper);
-    this._loadingStateHandler.addPointCloud(nodeWrapper);
+
+    this.requestRedraw();
+    this._loadingStateHandler.onModelAdded();
+
     const node = new PointCloudNode(nodeWrapper, metadata.cameraConfiguration);
     node.setModelTransformation(metadata.modelMatrix);
 
@@ -144,6 +148,8 @@ export class PointCloudManager {
     this._pointCloudNodes.splice(index, 1);
 
     this._materialManager.removeModelMaterial(node.potreeNode.modelIdentifier);
+
+    this._loadingStateHandler.onModelRemoved();
   }
 
   dispose(): void {
@@ -176,7 +182,7 @@ export class PointCloudManager {
       // We only reset this when we actually redraw, not on resetRedraw. This is
       // because there are times when this will onAfterRender is triggered
       // just after buffers are uploaded but not visualized yet.
-      this._loadingStateHandler.updatePointBuffersHash();
+      this._loadingStateHandler.updatePointBuffersHash(this._pointCloudNodes);
     };
 
     return drawResetTriggerMesh;

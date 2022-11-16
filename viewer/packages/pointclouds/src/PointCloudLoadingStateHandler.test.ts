@@ -17,9 +17,7 @@ describe(PointCloudLoadingStateHandler.name, () => {
   const pollLoadingStatusInterval = 1;
 
   test('getLoadingStateObserver() triggers false initially', done => {
-    const manager = new PointCloudLoadingStateHandler(
-      pollLoadingStatusInterval
-    );
+    const manager = new PointCloudLoadingStateHandler(pollLoadingStatusInterval);
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
   });
   test('getLoadingStateObserver() triggers true after add', done => {
@@ -34,9 +32,7 @@ describe(PointCloudLoadingStateHandler.name, () => {
       .returns(new PointCloudMaterial())
       .object();
     const model = new PotreeNodeWrapper(Symbol('dummy'), dummyNode, [], { classificationSets: [] });
-    const manager = new PointCloudLoadingStateHandler(
-      pollLoadingStatusInterval
-    );
+    const manager = new PointCloudLoadingStateHandler(pollLoadingStatusInterval);
 
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
     manager.addPointCloud(model);

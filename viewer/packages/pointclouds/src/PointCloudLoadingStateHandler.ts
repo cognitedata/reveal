@@ -9,82 +9,57 @@ import { delay, distinctUntilChanged, map, share, startWith, switchMap } from 'r
 import * as THREE from 'three';
 
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
-import { PointCloudOctree, numPointCloudNodesLoading } from './potree-three-loader';
+import { numPointCloudNodesLoading } from './potree-three-loader';
 
 /**
  * Wrapper around Potree.Group with type information and
  * basic functionality.
  */
 export class PointCloudLoadingStateHandler {
-  private _needsRedraw: boolean = false;
   private _lastDrawPointBuffersHash = 0;
   private readonly _forceLoadingSubject = new Subject<void>();
   private readonly _loadingObservable: Observable<LoadingState>;
-  private readonly _pointClouds: PointCloudOctree[];
 
-  get needsRedraw(): boolean {
-    return (
-      this._needsRedraw ||
-      this._lastDrawPointBuffersHash !== this.pointBuffersHash ||
-      numPointCloudNodesLoading !== this.numNodesLoadingAfterLastRedraw ||
-      this.nodes.some(n => n.needsRedraw)
-    );
-  }
-
-  private readonly nodes: PotreeNodeWrapper[] = [];
-
-  private numNodesLoadingAfterLastRedraw = 0;
+  private _numNodesLoadingAfterLastRedraw = 0;
+  private _numModels = 0;
 
   /**
    * @param pollLoadingStatusInterval Controls how often the wrapper checks for loading status. Used for testing.
    */
   constructor(pollLoadingStatusInterval: number = 200) {
-    this._pointClouds = [];
-
     this._loadingObservable = this.createLoadingStateObservable(pollLoadingStatusInterval);
-    this._lastDrawPointBuffersHash = this.pointBuffersHash;
+    this._lastDrawPointBuffersHash = this.getPointBuffersHash([]);
   }
 
-  get pointClouds(): PointCloudOctree[] {
-    return this._pointClouds;
+  needsRedraw(pointCloudNodes: PotreeNodeWrapper[]): boolean {
+    return (
+      this._lastDrawPointBuffersHash !== this.getPointBuffersHash(pointCloudNodes) ||
+      numPointCloudNodesLoading !== this._numNodesLoadingAfterLastRedraw
+    );
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._loadingObservable;
   }
 
-  addPointCloud(node: PotreeNodeWrapper): void {
-    this.nodes.push(node);
-
-    this._pointClouds.push(node.octree);
-
+  onModelAdded(): void {
+    this._numModels++;
     this._forceLoadingSubject.next();
-    this.requestRedraw();
   }
 
-  removePointCloud(node: PotreeNodeWrapper): void {
-    const index = this.nodes.indexOf(node);
-    if (index === -1) {
-      throw new Error('Point cloud is not added - cannot remove it');
-    }
-    this.nodes.splice(index, 1);
+  onModelRemoved(): void {
+    this._numModels--;
   }
 
-  requestRedraw(): void {
-    this._needsRedraw = true;
-  }
-
-  resetRedraw(): void {
-    this._needsRedraw = false;
-    this.numNodesLoadingAfterLastRedraw = numPointCloudNodesLoading;
-    this.nodes.forEach(n => n.resetRedraw());
+  resetFrameStats(): void {
+    this._numNodesLoadingAfterLastRedraw = numPointCloudNodesLoading;
   }
 
   private createLoadingStateObservable(pollLoadingStatusInterval: number): Observable<LoadingState> {
     const forceLoading$ = this._forceLoadingSubject.pipe(trueForDuration(pollLoadingStatusInterval * 5));
     return combineLatest([
       interval(pollLoadingStatusInterval).pipe(
-        map(() => getLoadingStateFromPotree(this.nodes.length)),
+        map(() => getLoadingStateFromPotree(this._numModels)),
         distinctUntilChanged((x, y) => {
           return (
             x.isLoading === y.isLoading && x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested
@@ -106,18 +81,18 @@ export class PointCloudLoadingStateHandler {
     );
   }
 
-  updatePointBuffersHash() {
-    this._lastDrawPointBuffersHash = this.pointBuffersHash;
+  updatePointBuffersHash(pointCloudNodes: PotreeNodeWrapper[]): void {
+    this._lastDrawPointBuffersHash = this.getPointBuffersHash(pointCloudNodes);
   }
 
   /**
    * Generates a hash for the current loaded points to allow determining if we have
    * loaded data since last redraw.
    */
-  private get pointBuffersHash() {
+  private getPointBuffersHash(pointCloudNodes: PotreeNodeWrapper[]) {
     let pointHash = 0xbaadf00d; // Kind of random bit pattern
-    for (const pointCloud of this._pointClouds) {
-      pointCloud.traverseVisible((x: THREE.Object3D) => {
+    for (const pointCloud of pointCloudNodes) {
+      pointCloud.octree.traverseVisible((x: THREE.Object3D) => {
         // Note! We pretend everything in the scene graph is THREE.Points,
         // but verify that we only visit Points nodes here.
         if (x instanceof THREE.Points) {
@@ -125,7 +100,7 @@ export class PointCloudLoadingStateHandler {
           pointHash ^= geometry.getAttribute('position').count;
         }
       });
-      pointHash ^= pointCloud.id;
+      pointHash ^= pointCloud.octree.id;
     }
     return pointHash;
   }

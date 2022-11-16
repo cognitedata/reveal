@@ -17,10 +17,7 @@ export class PointCloudNode extends THREE.Group {
   private readonly _potreeNode: PotreeNodeWrapper;
   private readonly _cameraConfiguration?: CameraConfiguration;
 
-  constructor(
-    potreeNode: PotreeNodeWrapper,
-    cameraConfiguration?: CameraConfiguration
-  ) {
+  constructor(potreeNode: PotreeNodeWrapper, cameraConfiguration?: CameraConfiguration) {
     super();
     this.name = 'PointCloudNode';
     this._potreeNode = potreeNode;
