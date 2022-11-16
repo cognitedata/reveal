@@ -8,7 +8,6 @@ import {
   PointCloudNode,
   PointCloudOctree,
   Potree,
-  PotreeGroupWrapper,
   PotreeNodeWrapper
 } from '../../packages/pointclouds';
 
@@ -25,8 +24,6 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
 }
 
 export function createPointCloudNode(): PointCloudNode {
-  const potreeGroup = new PotreeGroupWrapper();
-
   const pointCloudOctree = new PointCloudOctree(
     new Mock<Potree>().object(),
     new Mock<IPointCloudTreeGeometry>()
@@ -47,5 +44,5 @@ export function createPointCloudNode(): PointCloudNode {
 
   const nodeWrapper = new PotreeNodeWrapper(Symbol('dummy'), pointCloudOctree, [], { classificationSets: [] });
 
-  return new PointCloudNode(potreeGroup, nodeWrapper);
+  return new PointCloudNode(nodeWrapper);
 }

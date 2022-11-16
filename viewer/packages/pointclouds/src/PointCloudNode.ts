@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 import { CameraConfiguration } from '@reveal/utilities';
 
-import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { WellKnownAsprsPointClassCodes } from './types';
 
@@ -15,27 +14,20 @@ import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 import { CompletePointCloudAppearance, StyledPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 
 export class PointCloudNode extends THREE.Group {
-  private readonly _potreeGroup: PotreeGroupWrapper;
   private readonly _potreeNode: PotreeNodeWrapper;
   private readonly _cameraConfiguration?: CameraConfiguration;
 
   constructor(
-    potreeGroup: PotreeGroupWrapper,
     potreeNode: PotreeNodeWrapper,
     cameraConfiguration?: CameraConfiguration
   ) {
     super();
     this.name = 'PointCloudNode';
-    this._potreeGroup = potreeGroup;
     this._potreeNode = potreeNode;
     this._cameraConfiguration = cameraConfiguration;
     this.add(this._potreeNode.octree);
 
     this.matrixAutoUpdate = false;
-  }
-
-  get potreeGroup(): PotreeGroupWrapper {
-    return this._potreeGroup;
   }
 
   get potreeNode(): PotreeNodeWrapper {
@@ -48,14 +40,6 @@ export class PointCloudNode extends THREE.Group {
 
   get cameraConfiguration(): CameraConfiguration | undefined {
     return this._cameraConfiguration;
-  }
-
-  get needsRedraw(): boolean {
-    return this._potreeGroup.needsRedraw;
-  }
-
-  requestRedraw(): void {
-    this._potreeGroup.requestRedraw();
   }
 
   get pointSize(): number {
