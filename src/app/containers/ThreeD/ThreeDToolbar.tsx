@@ -5,7 +5,6 @@ import {
   Cognite3DViewer,
   Cognite3DModel,
   CognitePointCloudModel,
-  DefaultCameraManager,
 } from '@cognite/reveal';
 import { createLink } from '@cognite/cdf-utilities';
 import { trackUsage } from 'app/utils/Metrics';
@@ -113,15 +112,7 @@ export const PointToPointMeasurementButton = ({
     return new MeasurementTool(viewer);
   }, [viewer]);
 
-  const cameraManager = useMemo(() => {
-    return viewer.cameraManager as DefaultCameraManager;
-  }, [viewer]);
-
   const enterMeasurementMode = () => {
-    cameraManager.setCameraControlsOptions({
-      ...cameraManager.getCameraControlsOptions(),
-      changeCameraTargetOnClick: false,
-    });
     viewer.domElement.style.cursor = 'crosshair';
     measurementTool.enterMeasurementMode();
     measurementTool.visible(true);
@@ -129,10 +120,6 @@ export const PointToPointMeasurementButton = ({
   };
 
   const exitMeasurementMode = () => {
-    cameraManager.setCameraControlsOptions({
-      ...cameraManager.getCameraControlsOptions(),
-      changeCameraTargetOnClick: true,
-    });
     viewer.domElement.style.cursor = 'default';
     measurementTool.visible(false);
     measurementTool.exitMeasurementMode();
