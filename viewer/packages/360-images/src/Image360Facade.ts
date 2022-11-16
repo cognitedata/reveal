@@ -7,11 +7,12 @@ import pull from 'lodash/pull';
 import { Image360Entity } from './Image360Entity';
 import { Image360EntityFactory } from './Image360EntityFactory';
 import { Image360Icon } from './Image360Icon';
+import { Image360LoadingCache } from './Image360LoadingCache';
 
 export class Image360Facade<T> {
-  private readonly _entityFactory: Image360EntityFactory<T>;
   private readonly _image360Entities: Image360Entity[];
   private readonly _rayCaster: THREE.Raycaster;
+  private readonly _image360Cache: Image360LoadingCache;
 
   set allIconsVisibility(visible: boolean) {
     this._image360Entities.forEach(entity => (entity.icon.visible = visible));
@@ -21,10 +22,10 @@ export class Image360Facade<T> {
     this._image360Entities.forEach(entity => (entity.icon.hoverSpriteVisible = visible));
   }
 
-  constructor(entityFactory: Image360EntityFactory<T>) {
-    this._entityFactory = entityFactory;
+  constructor(private readonly _entityFactory: Image360EntityFactory<T>) {
     this._image360Entities = [];
     this._rayCaster = new THREE.Raycaster();
+    this._image360Cache = new Image360LoadingCache();
   }
 
   public async create(
@@ -37,8 +38,13 @@ export class Image360Facade<T> {
     return image360Entities;
   }
 
-  public delete(entity: Image360Entity): void {
+  public delete(entity: Image360Entity): Promise<void> {
     pull(this._image360Entities, entity);
+    return entity.unload360Image();
+  }
+
+  public preload(entity: Image360Entity): Promise<void> {
+    return this._image360Cache.cachedPreload(entity);
   }
 
   public intersect(
