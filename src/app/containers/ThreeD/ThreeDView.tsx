@@ -20,7 +20,7 @@ import HelpButton from './help-button';
 import styled from 'styled-components';
 import { Flex, ToolBar } from '@cognite/cogs.js';
 import ThreeDTitle from './ThreeDTitle';
-import NodePreview from './NodePreview';
+import NodePreview, { ResourceTabType } from './NodePreview';
 import {
   findClosestAsset,
   fitCameraToAsset,
@@ -44,6 +44,7 @@ type Props = {
   modelId: number;
   revisionId: number;
 };
+
 export const ThreeDView = ({ modelId, revisionId }: Props) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
@@ -60,6 +61,8 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
     setAssetDetailsExpanded,
     splitterColumnWidth,
     setSplitterColumnWidth,
+    tab,
+    setTab,
   } = context;
 
   const { viewState, setViewState, selectedAssetId, setSelectedAssetId } =
@@ -231,7 +234,8 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
                       closePreview={() => {
                         setSelectedAssetId(undefined);
                       }}
-                      openDetails={() => {
+                      openDetails={(tab?: ResourceTabType) => {
+                        setTab(tab);
                         setAssetDetailsExpanded(true);
                       }}
                     />
@@ -246,6 +250,7 @@ export const ThreeDView = ({ modelId, revisionId }: Props) => {
               onClose={() => {
                 setAssetDetailsExpanded(false);
               }}
+              tab={tab}
             />
           )}
         </StyledSplitter>

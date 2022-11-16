@@ -19,9 +19,11 @@ import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { DetailsTabWrapper } from 'app/containers/Common/element';
 import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
+import { ResourceTabType } from 'app/containers/ThreeD/NodePreview';
 
 export type AssetPreviewTabType =
   | 'details'
+  | 'assets'
   | 'timeseries'
   | 'files'
   | 'sequences'
@@ -32,17 +34,19 @@ export const AssetPreview = ({
   assetId,
   actions,
   hideDefaultCloseActions,
+  tab = 'details',
 }: {
   assetId: number;
   actions?: React.ReactNode;
   hideDefaultCloseActions?: boolean;
+  tab?: ResourceTabType;
 }) => {
   const { tabType } = useParams<{
-    tabType: AssetPreviewTabType;
+    tabType: ResourceTabType;
   }>();
-  const activeTab = tabType || 'details';
+  const activeTab = tabType || tab || 'details';
 
-  const onTabChange = useOnPreviewTabChange(tabType, 'asset');
+  const onTabChange = useOnPreviewTabChange(tabType, 'details');
 
   useEffect(() => {
     trackUsage('Exploration.Preview.Asset', { assetId });

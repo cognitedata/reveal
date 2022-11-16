@@ -19,6 +19,7 @@ import {
   THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY as SELECTED_ASSET_KEY,
   THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY as VIEW_STATE_KEY,
 } from './utils';
+import { ResourceTabType } from 'app/containers/ThreeD/NodePreview';
 
 type ThreeDContext = {
   viewer?: Cognite3DViewer;
@@ -37,6 +38,8 @@ type ThreeDContext = {
   setAssetDetailsExpanded: Dispatch<SetStateAction<boolean>>;
   splitterColumnWidth: number;
   setSplitterColumnWidth: Dispatch<SetStateAction<number>>;
+  tab?: ResourceTabType;
+  setTab: Dispatch<SetStateAction<ResourceTabType | undefined>>;
 };
 
 const DETAILS_COLUMN_WIDTH = '@cognite/3d-details-column-width';
@@ -52,6 +55,7 @@ export const ThreeDContext = createContext<ThreeDContext>({
   set3DModel: () => {},
   setPointCloudModel: () => {},
   setSplitterColumnWidth: () => {},
+  setTab: () => {},
 });
 ThreeDContext.displayName = 'ThreeDContext';
 
@@ -131,6 +135,8 @@ export const ThreeDContextProvider = ({
   const [assetDetailsExpanded, setAssetDetailsExpanded] =
     useState<boolean>(initialExpanded);
 
+  const [tab, setTab] = useState<ResourceTabType | undefined>();
+
   useEffect(() => {
     window.history.replaceState(
       {},
@@ -165,6 +171,8 @@ export const ThreeDContextProvider = ({
         setAssetDetailsExpanded,
         splitterColumnWidth,
         setSplitterColumnWidth,
+        tab,
+        setTab,
       }}
     >
       {children}
