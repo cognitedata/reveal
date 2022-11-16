@@ -40,10 +40,11 @@ export const RunScheduleConnection = ({
   const { data: last30DayPages } = useAllRuns({
     externalId,
     dateRange: {
-      startDate: moment().subtract('30d').startOf('day').toDate(),
+      startDate: moment().subtract(30, 'days').startOf('day').toDate(),
       endDate: moment().endOf('day').toDate(),
     },
   });
+
   const [last30Days, last30DaysSuccess] = useMemo(() => {
     const runs =
       last30DayPages?.pages.reduce(

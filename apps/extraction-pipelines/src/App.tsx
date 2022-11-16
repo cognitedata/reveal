@@ -25,6 +25,7 @@ import theme from 'styles/theme';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import collapseStyle from 'rc-collapse/assets/index.css';
 import rootStyles from 'styles/index.css';
+import antdTheme from 'styles/antd-theme.less';
 
 import Home from 'pages/Home';
 import { EXTRACTION_PIPELINES } from 'utils/constants';
@@ -63,10 +64,12 @@ const App = () => {
     cogsStyles.use();
     rootStyles.use();
     collapseStyle.use();
+    antdTheme.use();
     return () => {
       cogsStyles.unuse();
       rootStyles.unuse();
       collapseStyle.unuse();
+      antdTheme.unuse();
     };
   }, []);
 

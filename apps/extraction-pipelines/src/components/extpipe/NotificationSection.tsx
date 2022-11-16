@@ -42,7 +42,7 @@ export const NotificationSection: FunctionComponent<
             size="small"
             type="ghost"
           >
-            Edit
+            {t('edit')}
           </Button>
         }
         items={[

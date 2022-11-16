@@ -63,7 +63,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
             size="small"
             type="ghost"
           >
-            Edit
+            {t('edit')}
           </Button>
         }
         title="RAW tables"

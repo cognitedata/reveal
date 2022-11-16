@@ -108,3 +108,5 @@ export const RANGE_START_LABEL: Readonly<string> = 'Date range start time';
 export const CRON_LABEL: Readonly<string> = 'Cron expression';
 export const CRON_TIP: Readonly<string> = `Enter a cron expression for when the extraction pipeline is scheduled to run.`;
 export const CRON_LINK = 'https://crontab.guru/';
+
+export const BASE_QUERY_KEY = 'extraction-pipelines';

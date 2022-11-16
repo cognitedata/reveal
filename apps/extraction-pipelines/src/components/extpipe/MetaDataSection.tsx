@@ -44,7 +44,7 @@ export const MetaDataSection = ({ canEdit }: PropsWithChildren<MetaProps>) => {
             size="small"
             type="ghost"
           >
-            Edit
+            {t('edit')}
           </Button>
         }
         title={t('meta-data')}

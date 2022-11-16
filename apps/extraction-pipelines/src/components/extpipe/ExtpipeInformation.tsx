@@ -50,7 +50,7 @@ export const ExtpipeInformation = ({ canEdit }: Props) => {
             size="small"
             type="ghost"
           >
-            Edit
+            {t('edit')}
           </Button>
         }
         icon="World"

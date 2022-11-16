@@ -1,39 +1,37 @@
 import React from 'react';
-import styled from 'styled-components';
-import LinkWithCopy from 'components/links/LinkWithCopy';
-import { getDataSetsLink } from 'utils/dataSetUtils';
-import { StyledTooltip } from 'components/styled';
 import { useTranslation } from 'common';
-import { useDataSet } from 'hooks/useDataSets';
+import { useDataSet } from 'hooks/dataSet';
+import { Body, Icon, Tooltip } from '@cognite/cogs.js';
+import Link from 'components/links/Link';
+import { createLink } from '@cognite/cdf-utilities';
+
 type Props = {
   dataSetId: number;
 };
 
 export const DataSet = ({ dataSetId }: Props) => {
   const { t } = useTranslation();
+  const { data: dataSet, isLoading, isError, error } = useDataSet(dataSetId);
 
-  const { data: dataSet } = useDataSet(dataSetId);
-
-  if (!dataSetId) {
-    return (
-      <StyledTooltip content={t('no-data-set-info')}>
-        <i data-testid="no-data-set">{t('no-data-set')}</i>
-      </StyledTooltip>
-    );
-  }
-  return (
-    <DatasetTooltip>
-      <LinkWithCopy
-        href={getDataSetsLink(dataSetId)}
-        linkText={dataSet?.name || `${dataSetId}`}
-        copyText={`${dataSetId}`}
-        copyType="dataSetId"
-      />
-    </DatasetTooltip>
+  const body = (
+    <>
+      {isLoading && <Icon type="Loader" />}
+      <Body level={2} strong>
+        <Link to={createLink(`/data-sets/data-set/${dataSetId}`)}>
+          {dataSet ? dataSet?.name || dataSet?.externalId : dataSetId}
+        </Link>
+      </Body>
+    </>
   );
-};
 
-const DatasetTooltip = styled.div`
-  display: flex;
-  align-items: center;
-`;
+  if (isError) {
+    switch (error) {
+      case 403:
+        return <Tooltip content={t('data-set-403')}>{body}</Tooltip>;
+      default:
+        return <Tooltip content={t('data-set-generic-error')}>{body}</Tooltip>;
+    }
+  }
+
+  return body;
+};
