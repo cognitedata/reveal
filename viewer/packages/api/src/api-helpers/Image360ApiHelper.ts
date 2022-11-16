@@ -132,6 +132,10 @@ export class Image360ApiHelper {
       this._activeCameraManager.getCamera()
     );
 
+    if (entity !== undefined) {
+      entity.icon.hoverSpriteVisible = true;
+    }
+
     if (entity === this._interactionState.lastHoveredState) {
       return;
     }
