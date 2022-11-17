@@ -20,6 +20,7 @@ describe(PointCloudLoadingStateHandler.name, () => {
 
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
     manager.onModelAdded();
+    expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [true], done);
   });
 });
 
