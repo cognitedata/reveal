@@ -119,43 +119,47 @@ pods {
     withEnv(["REACT_APP_COMMIT_REF=${scmVars.GIT_COMMIT}"]) {
       threadPool(
         tasks: [
-          'Preview': {
-            dir('preview') {
-              stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
-                fas.build(
-                  appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
-                  repo: APPLICATION_REPO_ID,
-                  buildCommand: 'yarn build',
-                  shouldExecute: environment.isPullRequest,
-                )
-              }
-            }
-          },
-          'Staging': {
-            dir('staging') {
-              stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
-                fas.build(
-                  appId: STAGING_APP_ID,
-                  repo: APPLICATION_REPO_ID,
-                  buildCommand: 'yarn build',
-                  shouldExecute: environment.isStaging,
-                )
-              }
-            }
-          },
+          // TODO(DEGR-903): temporarily disabling non-Fusion builds
+          // 'Preview': {
+          //   dir('preview') {
+          //     stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
+          //       fas.build(
+          //         appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
+          //         repo: APPLICATION_REPO_ID,
+          //         buildCommand: 'yarn build',
+          //         shouldExecute: environment.isPullRequest,
+          //       )
+          //     }
+          //   }
+          // },
 
-          'Production': {
-            dir('production') {
-              stageWithNotify('Build for production', CONTEXTS.buildProduction) {
-                fas.build(
-                  appId: PRODUCTION_APP_ID,
-                  repo: APPLICATION_REPO_ID,
-                  buildCommand: 'yarn build',
-                  shouldExecute: environment.isProduction,
-                )
-              }
-            }
-          },
+          // TODO(DEGR-903): temporarily disabling non-Fusion builds
+          // 'Staging': {
+          //   dir('staging') {
+          //     stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
+          //       fas.build(
+          //         appId: STAGING_APP_ID,
+          //         repo: APPLICATION_REPO_ID,
+          //         buildCommand: 'yarn build',
+          //         shouldExecute: environment.isStaging,
+          //       )
+          //     }
+          //   }
+          // },
+
+          // TODO(DEGR-903): temporarily disabling non-Fusion builds
+          // 'Production': {
+          //   dir('production') {
+          //     stageWithNotify('Build for production', CONTEXTS.buildProduction) {
+          //       fas.build(
+          //         appId: PRODUCTION_APP_ID,
+          //         repo: APPLICATION_REPO_ID,
+          //         buildCommand: 'yarn build',
+          //         shouldExecute: environment.isProduction,
+          //       )
+          //     }
+          //   }
+          // },
 
           'Fusion': {
             dir('fusion') {
@@ -171,46 +175,48 @@ pods {
             }
           },
         ],
-        workers: 4,
+        workers: 1,
       )
     }
 
-    stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
-      if (!environment.isPullRequest) {
-        print 'Not a PR, no need to preview'
-        return
-      }
-      deleteComments(PR_COMMENT_MARKER)
-      dir('preview') {
-        fas.publish(
-          previewSubdomain: PRODUCTION_APP_ID
-        )
-      }
-    }
+    // TODO(DEGR-903): temporarily disabling non-Fusion builds
+    // stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
+    //   if (!environment.isPullRequest) {
+    //     print 'Not a PR, no need to preview'
+    //     return
+    //   }
+    //   deleteComments(PR_COMMENT_MARKER)
+    //   dir('preview') {
+    //     fas.publish(
+    //       previewSubdomain: PRODUCTION_APP_ID
+    //     )
+    //   }
+    // }
 
-    stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
-      if (!environment.isStaging) {
-        print 'Not pushing to staging, no need to preview'
-        return
-      }
-      dir('staging') {
-        fas.publish()
-      }
+    // TODO(DEGR-903): temporarily disabling non-Fusion builds
+    // stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
+    //   if (!environment.isStaging) {
+    //     print 'Not pushing to staging, no need to preview'
+    //     return
+    //   }
+    //   dir('staging') {
+    //     fas.publish()
+    //   }
 
-      // in 'single-branch' mode we always publish 'staging' and 'master' builds
-      // from the main branch, but we only need to notify about one of them.
-      // so it is ok to skip this message in that case
-      //
-      // note: the actual deployment of each is determined by versionSpec in FAS
-      if (VERSIONING_STRATEGY != 'single-branch') {
-        dir('main') {
-          slack.send(
-            channel: SLACK_CHANNEL,
-              message: "Deployment of ${env.BRANCH_NAME} complete!"
-          )
-        }
-      }
-    }
+    //   // in 'single-branch' mode we always publish 'staging' and 'master' builds
+    //   // from the main branch, but we only need to notify about one of them.
+    //   // so it is ok to skip this message in that case
+    //   //
+    //   // note: the actual deployment of each is determined by versionSpec in FAS
+    //   if (VERSIONING_STRATEGY != 'single-branch') {
+    //     dir('main') {
+    //       slack.send(
+    //         channel: SLACK_CHANNEL,
+    //           message: "Deployment of ${env.BRANCH_NAME} complete!"
+    //       )
+    //     }
+    //   }
+    // }
 
     stageWithNotify('Publish Fusion build', CONTEXTS.publishFusion) {
       if (isFusion) {
@@ -222,19 +228,20 @@ pods {
       }
     }
 
-    if (environment.isProduction && PRODUCTION_APP_ID) {
-      stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
-        dir('production') {
-          fas.publish()
-        }
+    // TODO(DEGR-903): temporarily disabling non-Fusion builds
+    // if (environment.isProduction && PRODUCTION_APP_ID) {
+    //   stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
+    //     dir('production') {
+    //       fas.publish()
+    //     }
 
-        dir('main') {
-          slack.send(
-            channel: SLACK_CHANNEL,
-            message: "Deployment of ${env.BRANCH_NAME} complete!"
-          )
-        }
-      }
-    }
+    //     dir('main') {
+    //       slack.send(
+    //         channel: SLACK_CHANNEL,
+    //         message: "Deployment of ${env.BRANCH_NAME} complete!"
+    //       )
+    //     }
+    //   }
+    // }
   }
 }
