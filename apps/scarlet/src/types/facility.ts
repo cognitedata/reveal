@@ -4,6 +4,5 @@ export type Facility = {
   name: string;
   shortName: string;
   datasetId: number;
-  unitPattern?: RegExp;
   env: string[];
 };

@@ -1,6 +1,5 @@
 import { Icon, Skeleton } from '@cognite/cogs.js';
 import { useHomePageContext } from 'hooks';
-import { getPrintedUnitName } from 'utils';
 
 import * as Styled from './style';
 
@@ -16,9 +15,7 @@ export const TopBar = () => {
           <Icon type="OilPlatform" /> {facility?.shortName} plant
         </Styled.Plant>
         <Styled.Unit className="cogs-title-3">
-          {!loading && unitId
-            ? getPrintedUnitName(unitId, facility?.unitPattern)
-            : ''}
+          {!loading && unitId}
           {loading && (
             <Skeleton.Rectangle
               width="120px"

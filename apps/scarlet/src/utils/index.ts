@@ -13,7 +13,6 @@ export * from './getEquipmentToSave';
 export * from './getFormulaFields';
 export * from './getTagColor';
 export * from './preApproveDataElements';
-export * from './unitUtils';
 export * from './updateCalculatedDataElements';
 export * from './isValidEquipment';
 export * from './getTruncatedCourseComponents';

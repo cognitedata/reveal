@@ -32,9 +32,7 @@ export const getUnitListByFacility = async (
         id: item.name,
         cdfId: item.id,
         externalId: item.externalId,
-        number: facility.unitPattern
-          ? getUnitNumber(item.name, facility.unitPattern)
-          : item.name,
+        number: parseInt(item.name, 10),
       } as UnitListItem);
     });
 
@@ -42,11 +40,4 @@ export const getUnitListByFacility = async (
   } while (list.next);
 
   return unitsByFacilityId;
-};
-
-const getUnitNumber = (unitId: string, unitPattern: RegExp) => {
-  const matches = unitId.match(unitPattern);
-  if (matches) return parseFloat(matches[1]);
-
-  return undefined;
 };

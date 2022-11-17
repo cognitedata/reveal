@@ -1,10 +1,19 @@
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, ListResponse, FileInfo } from '@cognite/sdk';
 import { DataSetId, EquipmentListItem, EquipmentStatus, Facility } from 'types';
 import { getEquipmentType, isValidEquipment } from 'utils';
 import config from 'utils/config';
 import { getDocuments } from 'api';
 
 import { getUnitAsset } from '.';
+
+const getU1Presence = ({
+  identifier,
+  docs,
+}: {
+  identifier: string;
+  docs: ListResponse<FileInfo[]>;
+}) =>
+  docs.items.some((doc) => doc.name.startsWith(identifier)) ? 'Yes' : 'No';
 
 export const getEquipmentList = async (
   client: CogniteClient,
@@ -36,13 +45,15 @@ export const getEquipmentList = async (
       let status = EquipmentStatus.NOT_STARTED;
       if (completed) status = EquipmentStatus.COMPLETED;
       else if (equipmentState?.modifiedBy) status = EquipmentStatus.ONGOING;
-      const u1doc = docs.items.some((doc) =>
-        doc.name.startsWith(`${facility.name}_${unitId}_${eq.id}`)
-      );
+      const type = getEquipmentType(eq.type);
+      const u1doc = getU1Presence({
+        identifier: `${facility.name}_${unitId}_${eq.id}`,
+        docs,
+      });
 
       return {
         id: eq.id,
-        type: getEquipmentType(eq.type),
+        type,
         typeName: eq.type,
         status,
         progress,

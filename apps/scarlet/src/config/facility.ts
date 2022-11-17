@@ -8,7 +8,6 @@ export const facilityList: Facility[] = [
     name: 'Borger',
     shortName: 'Borger',
     datasetId: 4809044228760729,
-    unitPattern: /^G(\d+(\.\d+)?)(.*)$/,
     env: ['development', 'staging', 'production'],
   },
   {

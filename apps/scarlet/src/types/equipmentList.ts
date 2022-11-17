@@ -7,4 +7,5 @@ export type EquipmentListItem = {
   status: EquipmentStatus;
   progress?: number;
   modifiedBy?: string;
+  u1doc?: string;
 };

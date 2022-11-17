@@ -149,7 +149,7 @@ export const UnitNavigation = ({ showFacilities }: UnitNavigationProps) => {
                     onClick={() => !isActive && !disabled && onChange(unit)}
                   >
                     <Styled.ListItemContent>
-                      <h4 className="cogs-title-4">Unit {unit.number}</h4>
+                      <h4 className="cogs-title-4">Unit {unit.id}</h4>
                       {numberEquipmentsPerUnitQuery.loading ? (
                         <Styled.NumberEquipments className="cogs-body-2">
                           <Icon type="Loader" />
