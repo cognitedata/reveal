@@ -3,7 +3,7 @@
  */
 
 import { Mock } from 'moq.ts';
-import { CognitePointCloudModel, PointCloudNode, PotreeNodeWrapper } from '../../packages/pointclouds';
+import { CognitePointCloudModel, PointCloudNode } from '../../packages/pointclouds';
 
 import { Potree, PointCloudOctree } from '../../packages/pointclouds/src/potree-three-loader';
 
@@ -38,7 +38,5 @@ export function createPointCloudNode(): PointCloudNode {
       .object()
   );
 
-  const nodeWrapper = new PotreeNodeWrapper(Symbol('dummy'), pointCloudOctree, [], { classificationSets: [] });
-
-  return new PointCloudNode(nodeWrapper);
+  return new PointCloudNode(Symbol(), pointCloudOctree, [], { classificationSets: [] });
 }
