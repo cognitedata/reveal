@@ -30,7 +30,6 @@ export class PotreeNodeWrapper {
   private readonly _modelIdentifier: symbol;
 
   private static readonly pickingWindowSize = 20;
-
   private readonly _classNameToCodeMap: ClassificationMap;
 
   private readonly _annotations: PointCloudObject[];
