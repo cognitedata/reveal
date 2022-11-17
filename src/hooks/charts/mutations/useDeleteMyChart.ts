@@ -1,5 +1,5 @@
 import { toast } from '@cognite/cogs.js';
-import { useProject } from 'hooks/config';
+import { getProject } from '@cognite/cdf-utilities';
 import { useTranslations } from 'hooks/translations';
 import { Chart } from 'models/chart/types';
 import { useMutation, useQueryClient } from 'react-query';
@@ -7,7 +7,7 @@ import { deleteChart } from 'services/charts-storage';
 
 const useDeleteMyChart = () => {
   const queryClient = useQueryClient();
-  const project = useProject();
+  const project = getProject();
   const { t } = useTranslations(
     ['Chart deleted successfully', 'Could not delete chart'],
     'ToastMessages'

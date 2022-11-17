@@ -5,7 +5,7 @@ import { ReactFlowProvider } from 'react-flow-renderer';
 import { Icon, toast } from '@cognite/cogs.js';
 import { SetterOrUpdater, useRecoilValue } from 'recoil';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { useIsChartOwner } from 'hooks/user';
 import { useOperations } from 'models/operations/atom';
 import { availableWorkflows } from 'models/calculation-results/selectors';

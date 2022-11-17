@@ -1,13 +1,13 @@
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInfo } from 'hooks/useUserInfo';
 import dayjs from 'dayjs';
-import { useProject } from 'hooks/config';
+import { getProject } from '@cognite/cdf-utilities';
 import { useQuery, useQueryClient } from 'react-query';
 import { fetchPublicCharts } from 'services/charts-storage';
 import { ChartItem } from '../types';
 
 const usePublicCharts = () => {
   const { data: { id } = {} } = useUserInfo();
-  const project = useProject();
+  const project = getProject();
   const queryClient = useQueryClient();
 
   return useQuery(

@@ -1,6 +1,6 @@
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInfo } from 'hooks/useUserInfo';
 import dayjs from 'dayjs';
-import { useProject } from 'hooks/config';
+import { getProject } from '@cognite/cdf-utilities';
 import { Chart } from 'models/chart/types';
 import { useMutation } from 'react-query';
 import { createChart } from 'services/charts-storage';
@@ -8,7 +8,7 @@ import { v4 } from 'uuid';
 
 const useCreateChart = () => {
   const { data: loginInfo } = useUserInfo();
-  const project = useProject();
+  const project = getProject();
 
   return useMutation(async () => {
     if (!loginInfo?.id) throw new Error('No user present!');

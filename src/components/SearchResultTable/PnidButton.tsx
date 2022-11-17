@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useLinkedAsset } from 'hooks/cdf-assets';
+import { createInternalLink } from 'utils/link';
 import { trackUsage } from 'services/metrics';
-import { useNavigate } from 'hooks/navigation';
 import { StatusIcon } from 'components/StatusIcon/StatusIcon';
 import { useFilesAssetAppearsIn } from 'components/FileList/hooks';
 
@@ -42,19 +42,25 @@ export const PnidButton = ({
     return hideWhenEmpty ? <></> : <span>-</span>;
   }
 
+  const handleButtonClick = () => {
+    move(
+      createInternalLink(
+        `/${chartId}/files/${asset ? asset?.id : linkedAsset?.id}`
+      )
+    );
+
+    // `asset` prop is passed in only when button is placed in search view for now
+    // There is probably a better way to determine whether the source is search or time series row?
+    trackUsage('ChartView.ViewFiles', {
+      source: asset ? 'search' : 'chart',
+    });
+  };
+
   return (
     <Button
       type={asset ? 'tertiary' : 'ghost'}
       icon="Document"
-      onClick={() => {
-        move(`/${chartId}/files/${asset ? asset?.id : linkedAsset?.id}`);
-
-        // `asset` prop is passed in only when button is placed in search view for now
-        // There is probably a better way to determine whether the source is search or time series row?
-        trackUsage('ChartView.ViewFiles', {
-          source: asset ? 'search' : 'chart',
-        });
-      }}
+      onClick={handleButtonClick}
       style={{ height: 28 }}
       iconPlacement="right"
       size="small"

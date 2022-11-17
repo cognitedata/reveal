@@ -1,27 +1,35 @@
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { getProject } from '@cognite/cdf-utilities';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { projectsWithAppSwitcherEnabled } from 'config/features';
-import { useProject } from 'hooks/config';
-import { useNavigate } from 'hooks/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useComponentTranslations } from 'hooks/translations';
 import AppBar from './AppBar';
 
 const ConnectedAppBar = () => {
   const { data: user } = useUserInfo();
   const move = useNavigate();
-  const project = useProject();
+  const project = getProject();
 
   const handleLogout = () => {
     localStorage.clear();
     window.location.reload();
   };
+  const handleLogoClick = () => {
+    move('');
+  };
+  const handleProfileClick = () => {
+    move('/user');
+  };
+
+  const translations = useComponentTranslations(AppBar);
 
   return (
     <AppBar
-      userName={user?.displayName ?? user?.email ?? 'Unknown'}
+      userName={user?.displayName ?? user?.mail ?? 'Unknown'}
       onLogoutClick={handleLogout}
-      onLogoClick={() => move('')}
-      onProfileClick={() => move('/user')}
-      translations={useComponentTranslations(AppBar)}
+      onLogoClick={handleLogoClick}
+      onProfileClick={handleProfileClick}
+      translations={translations}
       hideAppSwitcher={!projectsWithAppSwitcherEnabled.includes(project)}
     />
   );

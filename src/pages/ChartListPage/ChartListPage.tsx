@@ -13,10 +13,11 @@ import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { useComponentTranslations } from 'hooks/translations';
 import { OpenInCharts } from 'components/OpenInCharts/OpenInCharts';
 import useCreateChart from 'hooks/charts/mutations/useCreateChart';
-import { useNavigate } from 'hooks/navigation';
+import { useNavigate } from 'react-router-dom';
 import MyChartsList from 'components/ChartList/MyChartsList/MyChartsList';
 import PublicChartsList from 'components/ChartList/PublicChartsList/PublicChartsList';
 import { currentStartPageLayout } from 'config/startPagePreference';
+import { createInternalLink } from 'utils/link';
 
 const defaultTranslations = makeDefaultTranslations(
   'Name',
@@ -74,7 +75,7 @@ const ChartListPage = () => {
   const handleCreateChart = async () => {
     trackUsage('ChartListPage.CreateChart');
     const id = await createNewChart();
-    move(`/${id}`);
+    move(createInternalLink(id));
   };
 
   const handleSortList = (option: typeof sortOption) => {

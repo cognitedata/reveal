@@ -1,9 +1,11 @@
 const { override, useBabelRc } = require('customize-cra');
 const PrefixWrap = require('postcss-prefixwrap');
+const path = require('path');
 
-const { styleScope } = require('./src/styleScope');
+const { styleScope } = require('./src/styles/styleScope');
 
 const CSS_REGEX = /\.css$/;
+const LESS_REGEX = /\.less$/;
 
 const cssRegexMatcher = (rule) =>
   rule.test && rule.test.toString() === CSS_REGEX.toString();
@@ -52,6 +54,23 @@ const replaceStyleLoaders = (config) => {
           use: styleLoaders,
           sideEffects: true,
         },
+        {
+          test: LESS_REGEX,
+          use: [
+            ...styleLoaders,
+            {
+              loader: 'less-loader',
+              options: {
+                lessOptions: {
+                  modifyVars: {
+                    'root-entry-name': 'default',
+                  },
+                  javascriptEnabled: true,
+                },
+              },
+            },
+          ],
+        },
         ...config.module.rules
           .find((rule) => Array.isArray(rule.oneOf))
           .oneOf.filter((rule) => {
@@ -66,66 +85,9 @@ const replaceStyleLoaders = (config) => {
 
 module.exports = {
   webpack: override(useBabelRc(), (config) => {
-    // Compiling our code to System.register format to use polyfill-like
-    // behavior of SystemJS for import maps and in-browser modules.
-    // https://single-spa.js.org/docs/recommended-setup/#systemjs
-    // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
-    config.output.libraryTarget = 'system';
-
-    // Using a single entry point.
-    // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
-    config.output.filename = 'index.js';
-
-    // Replacing create-react-app style loaders (only for css files matching
-    // the regex).
-    config = replaceStyleLoaders(config);
-
-    // Disabling webpack's optimization configuration, as that makes it harder
-    // to load JS output as a single in-browser JS module.
-    // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
-    delete config.optimization;
-
-    // Removing html-webpack-plugin.
-    // https://single-spa.js.org/docs/faq/#create-react-app
-    config.plugins = config.plugins.filter(
-      (plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin'
-    );
-
-    config.plugins = config.plugins.filter(
-      (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
-    );
-
-    // Setting shared in-browser modules as webpack externals. This will
-    // exclude these dependencies from the output bundle.
-    // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
-    config.externals = {
-      'single-spa': 'single-spa',
-      '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
-      '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
-    };
-
-    // Bumping react-scripts to version 5 and above requires the following fix:
-    // https://alchemy.com/blog/how-to-polyfill-node-core-modules-in-webpack-5
-    // This is a setup commonly found in other Fusion sub-apps as well.
-    const fallback = config.resolve.fallback || {};
-    Object.assign(fallback, {
-      "path": require.resolve("path-browserify")
-    })
-    config.resolve.fallback = fallback;
-
-    // remove source map warning (see: https://github.com/facebook/create-react-app/discussions/11767#discussioncomment-3416044)
-    // todo: remove once data-exploration-components is properly updated from this dependency
-    config.ignoreWarnings = [
-      function ignoreSourcemapsloaderWarnings(warning) {
-        return (
-          warning.module &&
-          warning.module.resource.includes('node_modules') &&
-          warning.details &&
-          warning.details.includes('source-map-loader')
-        );
-      },
-    ];
-    return config;
+    const isFusion = process.env.REACT_APP_DOMAIN === 'fusion';
+    if (isFusion) return fusionConfig(config);
+    else return legacyConfig(config);
   }),
   devServer(configFunction) {
     return function (proxy, allowedHost) {
@@ -144,3 +106,92 @@ module.exports = {
     };
   },
 };
+
+const commonConfig = (config) => {
+  // Replacing create-react-app style loaders (only for css files matching
+  // the regex).
+  config = replaceStyleLoaders(config);
+
+  // Bumping react-scripts to version 5 and above requires the following fix:
+  // https://alchemy.com/blog/how-to-polyfill-node-core-modules-in-webpack-5
+  // This is a setup commonly found in other Fusion sub-apps as well.
+  const fallback = config.resolve.fallback || {};
+  Object.assign(fallback, {
+    "path": require.resolve("path-browserify")
+  })
+  config.resolve.fallback = fallback;
+
+  return config;
+}
+
+const legacyConfig = (config) => {
+  //
+  config.entry = './src/index.tsx';
+
+  const fallback = config.resolve.fallback || {};
+  // In the Legacy Charts, @cognite/cdf-sdk-singleton is not available since
+  // Fusion injects it via single SPA. Therefore in Legacy Charts we use
+  // a fallback instead - the "mocked" SDK uses functions with the same names,
+  // but adjusted to Legacy Charts use-case
+  Object.assign(fallback, {
+    "@cognite/cdf-sdk-singleton": require.resolve("./src/sdk/index.ts")
+  })
+  config.resolve.fallback = fallback;
+
+  const configWithCommonConfig = commonConfig(config);
+  return configWithCommonConfig;
+}
+
+const fusionConfig = (config) => {
+  config.entry = './src/index-fusion.tsx';
+  // Compiling our code to System.register format to use polyfill-like
+  // behavior of SystemJS for import maps and in-browser modules.
+  // https://single-spa.js.org/docs/recommended-setup/#systemjs
+  // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
+  config.output.libraryTarget = 'system';
+
+  // Using a single entry point.
+  // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
+  config.output.filename = 'index.js';
+
+  // Disabling webpack's optimization configuration, as that makes it harder
+  // to load JS output as a single in-browser JS module.
+  // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
+  delete config.optimization;
+
+  // Removing html-webpack-plugin.
+  // https://single-spa.js.org/docs/faq/#create-react-app
+  config.plugins = config.plugins.filter(
+    (plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin'
+  );
+
+  config.plugins = config.plugins.filter(
+    (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
+  );
+
+  // Setting shared in-browser modules as webpack externals. This will
+  // exclude these dependencies from the output bundle.
+  // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
+  config.externals = {
+    ...config.externals,
+    'single-spa': 'single-spa',
+    '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
+    '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
+  };
+
+  // remove source map warning (see : https://github.com/facebook/create-react-app/discussions/11767#discussioncomment-3416044)
+  // todo: remove once data-exploration-components is properly updated from this dependency
+  config.ignoreWarnings = [
+    function ignoreSourcemapsloaderWarnings(warning) {
+      return (
+        warning.module &&
+        warning.module.resource.includes('node_modules') &&
+        warning.details &&
+        warning.details.includes('source-map-loader')
+      );
+    },
+  ];
+
+  const configWithCommonConfig = commonConfig(config);
+  return configWithCommonConfig;
+}

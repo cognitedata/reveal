@@ -1,6 +1,7 @@
 import useMyChartsList from 'hooks/charts/hooks/useMyChartsList';
-import { useNavigate } from 'hooks/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useComponentTranslations } from 'hooks/translations';
+import { createInternalLink } from 'utils/link';
 import { ComponentProps } from 'react';
 import { trackUsage } from 'services/metrics';
 import { EmptyStateMyCharts } from 'components/EmptyStates';
@@ -25,12 +26,16 @@ const MyChartsList = ({ sortOption, searchTerm, viewOption }: Props) => {
   const handleDuplicate = async (chartId: string) => {
     trackUsage('ChartListPage.DuplicateChart', { chartId });
     const newId = await duplicateChart(chartId);
-    move(`/${newId}`);
+    move(createInternalLink(newId));
   };
 
   const handleDelete = (chartId: string) => {
     trackUsage('ChartListPage.DeleteChart', { chartId });
     deleteChart(chartId);
+  };
+
+  const handleChartClick = (chartId: string) => {
+    move(createInternalLink(chartId));
   };
 
   return (
@@ -40,7 +45,7 @@ const MyChartsList = ({ sortOption, searchTerm, viewOption }: Props) => {
       loading={loading}
       viewOption={viewOption}
       list={list}
-      onChartClick={(chartId) => move(`/${chartId}`)}
+      onChartClick={handleChartClick}
       onChartDuplicateClick={handleDuplicate}
       onChartDeleteClick={handleDelete}
       translations={translations}

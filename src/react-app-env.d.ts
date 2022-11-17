@@ -1,4 +1,8 @@
-/// <reference types="react-scripts" />
+/// <reference types="react-app-rewired" />
+
+declare module '*.css';
+declare module '*.less';
+
 declare module 'locize';
 declare module 'locize-lastused';
 declare module '*.svg' {

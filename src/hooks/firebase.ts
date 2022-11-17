@@ -1,13 +1,14 @@
+import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
-import { getFlow } from '@cognite/auth-utils';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import config from 'config/config';
 import {
   fetchFirebaseEnvironment,
   fetchFirebaseToken,
   initializeFirebase,
 } from 'services/firebase';
-import { useAppsApiBaseUrl, useCluster, useProject } from './config';
+import { useAppsApiBaseUrl } from './config';
 
 const cacheOption = {
   staleTime: Infinity,
@@ -16,10 +17,9 @@ const cacheOption = {
 
 export const useFirebaseInit = (enabled: boolean) => {
   const sdk = useSDK();
-  const [cluster] = useCluster();
-  const project = useProject();
   const url = useAppsApiBaseUrl();
-  const { flow } = getFlow(project, cluster);
+  const project = getProject();
+  const { flow } = getFlow();
 
   return useQuery(
     ['firebase', 'init'],

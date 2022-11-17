@@ -7,6 +7,7 @@ import {
   useMemo,
 } from 'react';
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { compact } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { Chart, ChartTimeSeries } from 'models/chart/types';
@@ -16,16 +17,13 @@ import { useSDK } from '@cognite/sdk-provider';
 import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
 import DelayedComponent from 'components/DelayedComponent';
 import { TimeseriesChart } from '@cognite/data-exploration';
-import {
-  useSearchParam,
-  useNavigate,
-  useClearSearchParams,
-} from 'hooks/navigation';
+import { useSearchParam, useClearSearchParams } from 'hooks/navigation';
 import { useMyCharts, useUpdateChart, useChart } from 'hooks/charts-storage';
 import { Timeseries } from '@cognite/sdk';
 import { calculateDefaultYAxis } from 'utils/axis';
+import { createInternalLink } from 'utils/link';
 import { addTimeseries, convertTSToChartTS } from 'models/chart/updates';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 
@@ -241,7 +239,7 @@ export const OpenInCharts: FC = () => {
      * Move to the new or updated chart
      */
     clearSearchParams();
-    move(`/${chartToUpdate.id}`, false);
+    move(createInternalLink(chartToUpdate.id));
   }, [
     selectedIds,
     currentValue,

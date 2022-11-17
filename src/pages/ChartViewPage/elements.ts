@@ -3,26 +3,28 @@ import { Alert } from 'antd';
 import styled from 'styled-components/macro';
 
 export const Header = styled.header`
-  min-height: 56px;
-  max-height: 56px;
-  height: 56px;
-  background: var(--cogs-greyscale-grey1);
-  border-bottom: 1px solid var(--cogs-greyscale-grey4);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  .actions {
+  && {
+    min-height: 56px;
+    max-height: 56px;
+    height: 56px;
+    background: var(--cogs-greyscale-grey1);
+    border-bottom: 1px solid var(--cogs-greyscale-grey4);
     display: flex;
-    margin-right: 24px;
-    .cogs-btn {
-      margin-left: 8px;
-    }
-  }
-  .daterange {
-    display: flex;
-    justify-self: flex-start;
-    padding: 0 24px;
     align-items: center;
+    justify-content: space-between;
+    .actions {
+      display: flex;
+      margin-right: 24px;
+      .cogs-btn {
+        margin-left: 8px;
+      }
+    }
+    .daterange {
+      display: flex;
+      justify-self: flex-start;
+      padding: 0 24px;
+      align-items: center;
+    }
   }
 `;
 

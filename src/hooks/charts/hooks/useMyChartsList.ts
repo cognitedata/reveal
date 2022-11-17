@@ -1,4 +1,4 @@
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { useUpdateChart } from 'hooks/charts-storage';
 import usePlotlyPropsPreview from 'hooks/usePlotlyPropsPreview';
 import { filter, orderBy } from 'lodash';

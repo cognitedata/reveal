@@ -1,11 +1,11 @@
 import { ComponentProps, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Button, Popconfirm, toast, Tooltip } from '@cognite/cogs.js';
-import { useNavigate } from 'hooks/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useDeleteChart, useUpdateChart } from 'hooks/charts-storage';
 import { duplicate, updateChartDateRange } from 'models/chart/updates';
 import { trackUsage } from 'services/metrics';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import DownloadDropdown from 'components/DownloadDropdown/DownloadDropdown';
@@ -18,6 +18,7 @@ import {
 } from 'utils/charts';
 import useScreenshot from 'use-screenshot-hook';
 import CSVModal from 'components/CSVModal/CSVModal';
+import { createInternalLink } from 'utils/link';
 import { isProduction } from 'utils/environment';
 import { currentDateRangeLocale } from 'config/locale';
 import ConnectedSharingDropdown from 'components/SharingDropdown/ConnectedSharingDropdown';
@@ -97,7 +98,7 @@ export const ChartActions = () => {
       const newChart = duplicate(chart, login);
       await updateChart(newChart);
       trackUsage('ChartView.DuplicateChart', { isOwner });
-      move(`/${newChart.id}`);
+      move(createInternalLink(newChart.id));
     }
   };
 
@@ -111,7 +112,7 @@ export const ChartActions = () => {
   };
 
   const onDeleteSuccess = () => {
-    move('/');
+    move(createInternalLink());
   };
 
   const onDeleteError = () => {

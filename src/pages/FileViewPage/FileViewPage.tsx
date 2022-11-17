@@ -3,12 +3,12 @@ import { Body, Button, Loader, Title } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer/FileViewer';
 import { FileList } from 'components/FileList/FileList';
-import { useNavigate } from 'hooks/navigation';
 import { useAsset } from 'hooks/cdf-assets';
 import styled from 'styled-components/macro';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import Layers from 'utils/z-index';
+import { createInternalLink } from 'utils/link';
 import { trackUsage } from 'services/metrics';
 import { SourceTableHeader } from 'components/SourceTable/SourceTableHeader';
 import { useTranslations } from 'hooks/translations';
@@ -17,12 +17,12 @@ import { timeseriesSummaries } from 'models/timeseries-results/selectors';
 import { useRecoilValue } from 'recoil';
 import { calculationSummaries } from 'models/calculation-results/selectors';
 import { useInitializedChart } from 'pages/ChartViewPage/hooks';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { chartSources } from 'models/chart/selectors';
 import ConnectedLinkedAssetsSidebar from 'containers/LinkedAssetsSidebar/ConnectedLinkedAssetsSidebar';
 
 const FileViewPage = () => {
-  const { chartId, assetId } =
+  const { chartId = '', assetId } =
     useParams<{ chartId: string; assetId: string }>();
   const { data: chart } = useInitializedChart(chartId);
 
@@ -41,12 +41,11 @@ const FileViewPage = () => {
   const { data: linkedAssets = [] } = useCdfItems<Asset>(
     'assets',
     selectedFile?.assetIds?.map((id) => ({ id })) || [],
-    {
-      enabled:
-        !!selectedFile &&
-        selectedFile?.assetIds &&
-        selectedFile?.assetIds?.length > 0,
-    }
+    !!(
+      selectedFile &&
+      selectedFile?.assetIds &&
+      selectedFile?.assetIds?.length > 0
+    )
   );
 
   const { t } = useTranslations(
@@ -103,7 +102,7 @@ const FileViewPage = () => {
           <Button
             icon="ArrowLeft"
             style={{ marginBottom: 20 }}
-            onClick={() => move(`/${chartId}`)}
+            onClick={() => move(createInternalLink(chartId))}
           >
             {t['Back to chart']}
           </Button>

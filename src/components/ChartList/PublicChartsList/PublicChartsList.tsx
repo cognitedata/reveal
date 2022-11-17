@@ -1,7 +1,8 @@
-import { useNavigate } from 'hooks/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useComponentTranslations } from 'hooks/translations';
 import useMyChartsList from 'hooks/charts/hooks/useMyChartsList';
 import usePublicChartsList from 'hooks/charts/hooks/usePublicChartsList';
+import { createInternalLink } from 'utils/link';
 import { ComponentProps } from 'react';
 import { trackUsage } from 'services/metrics';
 import { EmptyStatePublicCharts } from 'components/EmptyStates';
@@ -33,7 +34,11 @@ const PublicChartsList = ({ viewOption, sortOption, searchTerm }: Props) => {
     const publicChart = list.find((c) => c.id === chartId);
     if (!publicChart) throw new Error('Public Chart not found');
     const newId = await duplicatePublicChart(publicChart.firebaseChart);
-    move(`/${newId}`);
+    move(createInternalLink(newId));
+  };
+
+  const handleChartClick = (chartId: string) => {
+    move(createInternalLink(chartId));
   };
 
   return (
@@ -42,7 +47,7 @@ const PublicChartsList = ({ viewOption, sortOption, searchTerm }: Props) => {
       loading={loading}
       viewOption={viewOption}
       list={list}
-      onChartClick={(chartId) => move(`/${chartId}`)}
+      onChartClick={handleChartClick}
       onChartDuplicateClick={handleDuplicate}
       onChartDeleteClick={() => {}}
       translations={translations}

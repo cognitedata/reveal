@@ -11,9 +11,9 @@ type SearchSidebarProps = {
 };
 
 const SearchSidebar = ({ visible, onClose }: SearchSidebarProps) => {
-  const [urlAssetId] = useSearchParam(ASSET_KEY, false);
-  const [urlQuery = '', setUrlQuery] = useSearchParam(SEARCH_KEY, false);
-  const [tsUrlQuery = '', setTsUrlQuery] = useSearchParam(TS_SEARCH_KEY, false);
+  const [urlAssetId] = useSearchParam(ASSET_KEY);
+  const [urlQuery = '', setUrlQuery] = useSearchParam(SEARCH_KEY);
+  const [tsUrlQuery = '', setTsUrlQuery] = useSearchParam(TS_SEARCH_KEY);
 
   const handleUrlQueryChange = useCallback(
     (query) => {

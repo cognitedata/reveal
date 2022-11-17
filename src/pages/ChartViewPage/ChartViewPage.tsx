@@ -7,7 +7,7 @@ import {
 } from 'react';
 import get from 'lodash/get';
 import { toast, Loader, Button, Tooltip } from '@cognite/cogs.js';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { useIsChartOwner } from 'hooks/user';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor/NodeEditor';
@@ -87,10 +87,6 @@ import {
   useUploadCalculations,
 } from './hooks';
 
-type ChartViewProps = {
-  chartId: string;
-};
-
 const defaultTranslations = makeDefaultTranslations(
   'Threshold',
   'Chart could not be saved!',
@@ -101,12 +97,12 @@ const defaultTranslations = makeDefaultTranslations(
 
 const keys = translationKeys(defaultTranslations);
 
-const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
+const ChartViewPage = () => {
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showThresholdMenu, setShowThresholdMenu] = useState(false);
   const [showErrorSidebar, setShowErrorSidebar] = useState(false);
-  const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
-  const { chartId = chartIdProp } = useParams<{ chartId: string }>();
+  const [query = '', setQuery] = useSearchParam(SEARCH_KEY);
+  const { chartId = '' } = useParams<{ chartId: string }>();
   const { data: login } = useUserInfo();
 
   /**

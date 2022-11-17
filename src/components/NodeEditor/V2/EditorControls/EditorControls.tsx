@@ -73,25 +73,30 @@ const EditorControls = ({
 };
 
 const CustomControlButtonGroup = styled(Controls)`
-  border-radius: 6px;
+  && {
+    border-radius: 6px;
 
-  .tippy-arrow {
-    color: #ffffff !important;
+    .tippy-arrow {
+      color: #ffffff !important;
+    }
   }
 `;
 
 const CustomControlButton = styled(ControlButton)`
-  width: 22px;
-  height: 22px;
+  && {
+    box-sizing: content-box; //added for fusion, will not impact legacy
+    width: 22px;
+    height: 22px;
 
-  &:first-child {
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-  }
+    &:first-child {
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+    }
 
-  &:last-child {
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
+    &:last-child {
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
   }
 `;
 

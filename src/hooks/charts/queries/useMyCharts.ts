@@ -1,20 +1,20 @@
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInfo } from 'hooks/useUserInfo';
 import dayjs from 'dayjs';
-import { useProject } from 'hooks/config';
+import { getProject } from '@cognite/cdf-utilities';
 import { useQuery, useQueryClient } from 'react-query';
 import { fetchUserCharts } from 'services/charts-storage';
 import { ChartItem } from '../types';
 
 const useMyCharts = () => {
-  const { data: { id, email } = {} } = useUserInfo();
+  const { data: { id, mail } = {} } = useUserInfo();
   const queryClient = useQueryClient();
-  const project = useProject();
+  const project = getProject();
 
   return useQuery(
     ['charts', 'myCharts'],
     async () => {
       if (!id) return [];
-      return fetchUserCharts(project, id, email);
+      return fetchUserCharts(project, id, mail);
     },
     {
       enabled: !!id,

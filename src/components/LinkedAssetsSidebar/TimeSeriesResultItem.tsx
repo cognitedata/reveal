@@ -117,9 +117,9 @@ export default function TimeSeriesResultItem({
 const TSItem = styled.li<{ outline: boolean }>`
   border-radius: 5px;
   padding: 0 5px;
-  &&& {
+  && {
     ${({ outline }) =>
-      outline && `border: 2px dashed ${Colors['green-2'].alpha(0.6)};`}
+      outline && `border: 2px dashed ${Colors['green-2'].alpha(0.6)};`};
   }
   :nth-child(odd) {
     background-color: var(--cogs-greyscale-grey2);
@@ -130,7 +130,7 @@ const TSItem = styled.li<{ outline: boolean }>`
 `;
 
 const ExactMatchLabel = styled(Button)`
-  &&& {
+  && {
     background-color: ${Colors['green-2'].alpha(0.3)};
     font-size: 10px;
     height: 20px;

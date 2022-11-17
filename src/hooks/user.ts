@@ -1,4 +1,4 @@
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { Chart } from 'models/chart/types';
 
 export const useIsChartOwner = (chart?: Chart) => {
@@ -8,5 +8,5 @@ export const useIsChartOwner = (chart?: Chart) => {
     return false;
   }
 
-  return login?.id === chart.user || login?.email === chart.user;
+  return login?.id === chart.user || login?.mail === chart.user;
 };

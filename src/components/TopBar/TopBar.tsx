@@ -1,6 +1,6 @@
 import { Avatar, Menu, Title, TopBar, Icon } from '@cognite/cogs.js';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
-import { useNavigate } from 'hooks/navigation';
+import { useUserInfo } from 'hooks/useUserInfo';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
 import { useRecoilState } from 'recoil';
@@ -119,9 +119,7 @@ const TopBarWrapper = () => {
               {
                 key: 'avatar',
                 component: (
-                  <Avatar
-                    text={user?.displayName || user?.email || 'Unknown'}
-                  />
+                  <Avatar text={user?.displayName || user?.mail || 'Unknown'} />
                 ),
                 menu: (
                   <Menu style={{ minWidth: '140px' }}>

@@ -1,5 +1,5 @@
 import { QueryClient, useQuery, useQueryClient } from 'react-query';
-import { useProject } from './config';
+import { getProject } from '@cognite/cdf-utilities';
 
 const maxRecentViewLength = 10;
 
@@ -69,7 +69,7 @@ export function useRecentViewLocalStorage<T>(
   defaultValue: T
 ) {
   const queryKey = `rv-${viewType}`;
-  const project = useProject();
+  const project = getProject();
 
   return useQuery<T>(
     queryKey,
@@ -84,7 +84,7 @@ export function useRecentViewLocalStorage<T>(
 
 export const useAddToRecentLocalStorage = () => {
   const cached = useQueryClient();
-  const project = useProject();
+  const project = getProject();
 
   return {
     addAssetToRecent: (assetId: number, timeseriesId: number) =>

@@ -1,9 +1,10 @@
 import { Asset } from '@cognite/sdk';
 import LinkedAssetsSidebar from 'components/LinkedAssetsSidebar/LinkedAssetsSidebar';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
-import { useNavigate } from 'hooks/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useComponentTranslations } from 'hooks/translations';
 import useLinkedAssets from 'hooks/charts/linked-assets/hooks/useLinkedAssets';
+import { createInternalLink } from 'utils/link';
 
 type Props = {
   onClose: () => void;
@@ -25,8 +26,10 @@ function ConnectedLinkedAssetsSidebar({ onClose, chartId, assets }: Props) {
       viewAllLabel={t['View all']}
       onClose={onClose}
       assets={linkedAssets}
-      onAssetClick={(id) => move(`/${chartId}/files/${id}`)}
-      onPAndIDClick={(id) => move(`/${chartId}/files/${id}`)}
+      onAssetClick={(id) => move(createInternalLink(`${chartId}/files/${id}`))}
+      onPAndIDClick={(id) =>
+        move(createInternalLink(`/${chartId}/files/${id}`))
+      }
       onTimeSeriesClick={onTimeseriesClick}
     />
   );

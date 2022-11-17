@@ -49,8 +49,8 @@ export default function TenantSelectorView() {
         appName={config.appName}
         clientId={config.azureAppId}
         clusters={clusters}
-        cluster={cluster || ''}
-        setCluster={setCluster}
+        cluster={(cluster || '') as unknown as string}
+        setCluster={setCluster as unknown as (cluster: string) => void}
         move={(project: string) => {
           window.location.href = `/${project}${
             cluster ? `?cluster=${cluster}` : ''

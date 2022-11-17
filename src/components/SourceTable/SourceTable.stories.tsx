@@ -5,13 +5,12 @@ import { Meta, Story } from '@storybook/react';
 import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { ComponentProps } from 'react';
 import { DatapointsSummary } from 'utils/units';
-import { CogniteClient } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
 import SourceTable from './SourceTable';
 
-const cogniteClient = new CogniteClient({ appId: 'test' });
 const queryClient = new QueryClient();
 
 export default {
@@ -21,7 +20,7 @@ export default {
     (story) => (
       <QueryClientProvider client={queryClient}>{story()}</QueryClientProvider>
     ),
-    (story) => <SDKProvider sdk={cogniteClient}>{story()}</SDKProvider>,
+    (story) => <SDKProvider sdk={sdk}>{story()}</SDKProvider>,
     (story) => <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>,
   ],
 } as Meta;

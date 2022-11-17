@@ -37,7 +37,7 @@ export default function AssetSearchHit({
   isExact,
   filter,
 }: Props) {
-  const [__, setUrlAssetId] = useSearchParam(ASSET_KEY, false);
+  const [__, setUrlAssetId] = useSearchParam(ASSET_KEY);
   const [chart] = useRecoilState(chartAtom);
   const handleTimeSeriesClick = useAddRemoveTimeseries();
 
@@ -158,7 +158,7 @@ export default function AssetSearchHit({
 }
 
 const ExactMatchLabel = styled(Button)`
-  &&& {
+  && {
     background-color: ${Colors['green-2'].alpha(0.3)};
     font-size: 10px;
     height: 20px;
@@ -170,7 +170,7 @@ const ExactMatchLabel = styled(Button)`
 const AssetItem = styled.div<{ outline?: boolean }>`
   border: 1px solid var(--cogs-greyscale-grey4);
   ${(props) =>
-    props.outline && `border: 2px dashed ${Colors['green-2'].alpha(0.6)};`}
+    props.outline && `border: 2px dashed ${Colors['green-2'].alpha(0.6)};`};
   border-radius: 5px;
   margin-bottom: 10px;
   padding: 10px 15px 0px 15px;

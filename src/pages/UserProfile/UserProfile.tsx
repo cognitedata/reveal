@@ -9,7 +9,7 @@ import {
   Row,
   Select,
 } from '@cognite/cogs.js';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import { useEffect, useState } from 'react';

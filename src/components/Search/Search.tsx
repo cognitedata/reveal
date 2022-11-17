@@ -68,7 +68,7 @@ const Search = ({
   onClose,
   updateFilterInRoot,
 }: SearchProps) => {
-  const [urlQuery = ''] = useSearchParam(SEARCH_KEY, false);
+  const [urlQuery = ''] = useSearchParam(SEARCH_KEY);
   const [debouncedUrlQuery] = useDebounce(urlQuery, 200);
   const [searchType, setSearchType] = useState<'assets' | 'timeseries'>(
     'assets'

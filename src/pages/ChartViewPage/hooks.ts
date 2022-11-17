@@ -16,6 +16,7 @@ import {
 import chartAtom from 'models/chart/atom';
 import { useFilePicker } from 'use-file-picker';
 import { useSDK } from '@cognite/sdk-provider';
+import { getProject, getCluster } from '@cognite/cdf-utilities';
 import { useDebounce } from 'use-debounce';
 import { useQuery } from 'react-query';
 import {
@@ -32,7 +33,6 @@ import {
 } from '@cognite/calculation-backend';
 
 import { getHash } from 'utils/hash';
-import { useCluster, useProject } from 'hooks/config';
 import { usePrevious } from 'react-use';
 import { useRecoilState } from 'recoil';
 import { useOperations } from 'models/operations/atom';
@@ -159,8 +159,8 @@ export const useUploadCalculations = ({
 };
 
 export const useFusionLink = (path: string) => {
-  const [cluster] = useCluster();
-  const project = useProject();
+  const cluster = getCluster();
+  const project = getProject();
 
   return `https://fusion.cognite.com/${project}${path}${
     cluster && `?env=${cluster}`

@@ -1,8 +1,9 @@
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { getProject } from '@cognite/cdf-utilities';
 import { Chart } from 'models/chart/types';
-import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useUserInfo } from 'hooks/useUserInfo';
 import {
   deleteChart,
   fetchChart,
@@ -10,22 +11,21 @@ import {
   fetchUserCharts,
   updateChart,
 } from 'services/charts-storage';
-import { useProject } from './config';
 
 export const useMyCharts = () => {
-  const { data: { id, email } = {} } = useUserInfo();
-  const project = useProject();
+  const { data: { id, mail } = {} } = useUserInfo();
+  const project = getProject();
 
   return useQuery(
     ['charts', 'mine'],
-    async () => (id ? fetchUserCharts(project, id, email) : []),
+    async () => (id ? fetchUserCharts(project, id, mail) : []),
     { enabled: !!id, refetchOnWindowFocus: false }
   );
 };
 
 export const usePublicCharts = () => {
   const { data } = useUserInfo();
-  const project = useProject();
+  const project = getProject();
 
   return useQuery(
     ['charts', 'public'],
@@ -35,7 +35,7 @@ export const usePublicCharts = () => {
 };
 
 export const useChart = (id: string) => {
-  const project = useProject();
+  const project = getProject();
 
   return useQuery(['chart', id], async () => fetchChart(project, id), {
     enabled: !!id,
@@ -44,7 +44,7 @@ export const useChart = (id: string) => {
 };
 
 export const useDeleteChart = () => {
-  const project = useProject();
+  const project = getProject();
   const cache = useQueryClient();
 
   return useMutation(
@@ -66,7 +66,7 @@ export const useDeleteChart = () => {
 export const useUpdateChart = () => {
   const cache = useQueryClient();
   const { data } = useUserInfo();
-  const project = useProject();
+  const project = getProject();
 
   return useMutation(
     async (chart: Chart) => {
@@ -77,7 +77,7 @@ export const useUpdateChart = () => {
        * later duplicate and save it as your own if you want
        */
       const skipPersist = !(
-        data?.id === chart.user || data?.email === chart.user
+        data?.id === chart.user || data?.mail === chart.user
       );
 
       // skipPersist will result in only the local cache being updated.
@@ -103,7 +103,7 @@ export const useUpdateChart = () => {
          * later duplicate and save it as your own if you want
          */
         const skipPersist = !(
-          data?.id === chart.user || data?.email === chart.user
+          data?.id === chart.user || data?.mail === chart.user
         );
         const key = ['chart', chart.id];
         const cachedChart = cache.getQueryData(key);

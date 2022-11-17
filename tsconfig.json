@@ -23,7 +23,7 @@
   },
   "include": [
     "src",
-    ".storybook/configureStory.ts"
+    ".storybook/configureStory.ts",
   ],
   "exclude": ["**/*/*.spec.ts", "**/*/*.test.ts"]
 }

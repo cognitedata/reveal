@@ -1,14 +1,14 @@
 import { atom, AtomEffect, useRecoilValue } from 'recoil';
 import { fetchOperations } from 'services/calculation-backend';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Operation } from '@cognite/calculation-backend';
-import { getSDK } from 'utils/cdf-sdk';
 
 const initializeOperationsEffect =
   (): AtomEffect<[boolean, Error?, Operation[]?]> =>
   ({ setSelf }) => {
     async function initialize() {
       try {
-        const operations = await fetchOperations(getSDK());
+        const operations = await fetchOperations(sdk);
         setSelf([false, undefined, operations]);
       } catch (err) {
         setSelf([

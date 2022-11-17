@@ -36,8 +36,8 @@ type SearchInAssetProps = {
 };
 
 const SearchInAsset = ({ query, setQuery, filter }: SearchInAssetProps) => {
-  const [urlQuery = ''] = useSearchParam(TS_SEARCH_KEY, false);
-  const [urlAssetId, setUrlAssetId] = useSearchParam(ASSET_KEY, false);
+  const [urlQuery = ''] = useSearchParam(TS_SEARCH_KEY);
+  const [urlAssetId, setUrlAssetId] = useSearchParam(ASSET_KEY);
   const [debouncedUrlQuery] = useDebounce(urlQuery, 200);
 
   const [chart] = useRecoilState(chartAtom);
@@ -47,7 +47,7 @@ const SearchInAsset = ({ query, setQuery, filter }: SearchInAssetProps) => {
   const { data, isLoading, hasNextPage, fetchNextPage } =
     useInfiniteSearch<Timeseries>(
       'timeseries',
-      debouncedUrlQuery,
+      debouncedUrlQuery as unknown as string,
       20,
       {
         assetSubtreeIds: [{ id: asset?.id }],
@@ -67,7 +67,7 @@ const SearchInAsset = ({ query, setQuery, filter }: SearchInAssetProps) => {
 
   const { data: search = [], isFetched: searchDone } = useSearch<Timeseries>(
     'timeseries',
-    debouncedUrlQuery,
+    debouncedUrlQuery as unknown as string,
     { limit: 1000, filter: { assetIds: [asset?.id] } },
     { enabled: Boolean(asset?.id) }
   );
@@ -148,7 +148,7 @@ const SearchInAsset = ({ query, setQuery, filter }: SearchInAssetProps) => {
                     <TimeseriesSearchResultItem
                       key={ts.id}
                       timeseries={ts}
-                      query={urlQuery}
+                      query={urlQuery as unknown as string}
                       renderCheckbox={() => (
                         <Checkbox
                           onClick={(e) => {
