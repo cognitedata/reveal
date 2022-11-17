@@ -8,7 +8,7 @@ import { combineLatest, interval, Observable, of, pipe, Subject } from 'rxjs';
 import { delay, distinctUntilChanged, map, share, startWith, switchMap } from 'rxjs/operators';
 import * as THREE from 'three';
 
-import { PotreeNodeWrapper } from './PotreeNodeWrapper';
+import { PointCloudNode } from './PointCloudNode';
 import { numPointCloudNodesLoading } from './potree-three-loader';
 
 /**
@@ -31,7 +31,7 @@ export class PointCloudLoadingStateHandler {
     this._lastDrawPointBuffersHash = this.getPointBuffersHash([]);
   }
 
-  needsRedraw(pointCloudNodes: PotreeNodeWrapper[]): boolean {
+  needsRedraw(pointCloudNodes: PointCloudNode[]): boolean {
     return (
       this._lastDrawPointBuffersHash !== this.getPointBuffersHash(pointCloudNodes) ||
       numPointCloudNodesLoading !== this._numNodesLoadingAfterLastRedraw
@@ -81,7 +81,7 @@ export class PointCloudLoadingStateHandler {
     );
   }
 
-  updatePointBuffersHash(pointCloudNodes: PotreeNodeWrapper[]): void {
+  updatePointBuffersHash(pointCloudNodes: PointCloudNode[]): void {
     this._lastDrawPointBuffersHash = this.getPointBuffersHash(pointCloudNodes);
   }
 
@@ -89,7 +89,7 @@ export class PointCloudLoadingStateHandler {
    * Generates a hash for the current loaded points to allow determining if we have
    * loaded data since last redraw.
    */
-  private getPointBuffersHash(pointCloudNodes: PotreeNodeWrapper[]) {
+  private getPointBuffersHash(pointCloudNodes: PointCloudNode[]) {
     let pointHash = 0xbaadf00d; // Kind of random bit pattern
     for (const pointCloud of pointCloudNodes) {
       pointCloud.octree.traverseVisible((x: THREE.Object3D) => {

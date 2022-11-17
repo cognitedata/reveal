@@ -19,7 +19,6 @@ import { ModelIdentifier } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
 import { PointCloudMaterialManager } from '@reveal/rendering';
-import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 
 import { Mesh } from 'three';
 
@@ -29,7 +28,7 @@ export class PointCloudManager {
   private readonly _materialManager: PointCloudMaterialManager;
   private readonly _loadingStateHandler: PointCloudLoadingStateHandler;
   private readonly _potreeInstance: Potree;
-  private readonly _pointCloudNodes: PotreeNodeWrapper[] = [];
+  private readonly _pointCloudNodes: PointCloudNode[] = [];
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _modelSubject: Subject<{ modelIdentifier: ModelIdentifier; operation: 'add' | 'remove' }> =
@@ -125,29 +124,27 @@ export class PointCloudManager {
       metadata.formatVersion
     );
 
-    const nodeWrapper = await this._pointCloudFactory.createModel(metadata);
-    this._pointCloudNodes.push(nodeWrapper);
+    const pointCloudNode = await this._pointCloudFactory.createModel(metadata);
+    this._pointCloudNodes.push(pointCloudNode);
+    pointCloudNode.setModelTransformation(metadata.modelMatrix);
 
     this.requestRedraw();
     this._loadingStateHandler.onModelAdded();
 
-    const node = new PointCloudNode(nodeWrapper, metadata.cameraConfiguration);
-    node.setModelTransformation(metadata.modelMatrix);
-
     this._modelSubject.next({ modelIdentifier, operation: 'add' });
     this._materialManager.setClippingPlanesForPointCloud(modelIdentifier.revealInternalId);
 
-    return node;
+    return pointCloudNode;
   }
 
   removeModel(node: PointCloudNode): void {
-    const index = this._pointCloudNodes.indexOf(node.potreeNode);
+    const index = this._pointCloudNodes.indexOf(node);
     if (index === -1) {
       throw new Error('Point cloud is not added - cannot remove it');
     }
     this._pointCloudNodes.splice(index, 1);
 
-    this._materialManager.removeModelMaterial(node.potreeNode.modelIdentifier);
+    this._materialManager.removeModelMaterial(node.modelIdentifier);
 
     this._loadingStateHandler.onModelRemoved();
   }
