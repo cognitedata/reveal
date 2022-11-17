@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Button, Input, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { TableV2 } from 'components/ReactTable/V2';
+import { Table } from 'components/Table';
 import { ColumnDef } from '@tanstack/react-table';
 
 // TODO  Needs to be removed once implemented in our library
@@ -79,7 +79,7 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
         </FilterContainer>
       </MetadataHeader>
       <MetadataTableContainer>
-        <TableV2<DataSource>
+        <Table<DataSource>
           id="metadata-table"
           data={filteredMetadata}
           enableSorting

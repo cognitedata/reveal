@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 
 import { SearchResultToolbar } from 'containers/SearchResults';
 import { DocumentsTable } from 'containers/Documents';
-import { TableSortBy } from 'components/ReactTable/V2';
+import { TableSortBy } from 'components/Table';
 import {
   Document,
   InternalDocumentFilter,

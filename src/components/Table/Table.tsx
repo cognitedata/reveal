@@ -1,162 +1,350 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import ReactBaseTable, { BaseTableProps, ColumnShape } from 'react-base-table';
-import { Body } from '@cognite/cogs.js';
+import { ExpandedState } from '@tanstack/table-core';
+import update from 'immutability-helper';
+import isEmpty from 'lodash/isEmpty';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+
 import {
-  ResourceSelectionMode,
-  useSelectionCheckbox,
-} from 'hooks/useSelection';
-import { TableStateProps, AllowedTableStateId } from 'types';
-import { HighlightCell } from './HighlightCell';
-import { TableWrapper } from './TableWrapper';
-import { ResourceTableColumns } from './Columns';
+  Row,
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  ColumnDef,
+  getSortedRowModel,
+  getExpandedRowModel,
+  SortingState,
+  OnChangeFn,
+} from '@tanstack/react-table';
+import { DASH, useLocalStorageState } from '../../utils';
+import { isElementHorizontallyInViewport } from '../../utils/isElementHorizontallyInViewport';
+import { ColumnToggle } from './ColumnToggle';
 
-const ActionCell = <T extends { id: AllowedTableStateId }>({
-  item,
-  selectionMode,
-  onItemSelected,
-  isSelected,
-  isHovered,
-}: {
-  item: T;
-  selectionMode: ResourceSelectionMode;
-  onItemSelected: (_item: T) => void;
-  isSelected: boolean;
-  isHovered: boolean;
-}) => {
-  const button = useSelectionCheckbox(selectionMode, item.id, isSelected, () =>
-    onItemSelected(item)
+import {
+  TableContainer,
+  ColumnSelectorWrapper,
+  StyledTable,
+  LoadMoreButtonWrapper,
+  Tr,
+  ThWrapper,
+  Th,
+  Td,
+  Thead,
+  ContainerInside,
+  StyledFlex,
+  ResizerWrapper,
+  SubTableWrapper,
+} from './elements';
+
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Body } from '@cognite/cogs.js';
+import { DndProvider } from 'react-dnd';
+
+import { SortIcon } from './SortIcon';
+import { ResourceTableColumns } from './columns';
+import { LoadMore, LoadMoreProps } from './LoadMore';
+import { EmptyState } from 'components/EmpyState/EmptyState';
+
+export interface TableProps<T extends Record<string, any>>
+  extends LoadMoreProps {
+  id: string;
+  data: T[];
+  columns: ColumnDef<T>[];
+  selectedRows?: Record<string, boolean>;
+  expandedRows?: ExpandedState;
+  enableSorting?: boolean;
+  stickyHeader?: boolean;
+  showLoadButton?: boolean;
+  enableExpanding?: boolean;
+  tableHeaders?: React.ReactElement;
+  tableSubHeaders?: React.ReactElement;
+  enableColumnResizing?: boolean;
+  hideColumnToggle?: boolean;
+  hiddenColumns?: string[];
+  scrollIntoViewRow?: string | number; //Scroll into center row when the selectedRows changes
+  onSort?: OnChangeFn<SortingState>;
+  sorting?: SortingState;
+  onRowClick?: (
+    row: T,
+    evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => void;
+  getCanRowExpand?: (row: Row<T>) => boolean;
+  getSubrowData?: (originalRow: T, index: number) => undefined | T[];
+  onRowExpanded?: OnChangeFn<ExpandedState>;
+}
+
+export type TableData = Record<string, any>;
+
+Table.Columns = ResourceTableColumns;
+
+export function Table<T extends TableData>({
+  id,
+  data,
+  columns,
+  onRowClick = () => {},
+  onSort,
+  enableSorting = false,
+  expandedRows,
+  selectedRows,
+  scrollIntoViewRow,
+  stickyHeader = true,
+  enableColumnResizing = true,
+  sorting,
+  showLoadButton = false,
+  hasNextPage,
+  isLoadingMore,
+  tableHeaders,
+  tableSubHeaders,
+  fetchMore,
+  hiddenColumns,
+  hideColumnToggle,
+  getCanRowExpand,
+  getSubrowData,
+  enableExpanding,
+  onRowExpanded,
+}: TableProps<T>) {
+  const defaultColumn: Partial<ColumnDef<T, unknown>> = useMemo(
+    () => ({
+      minSize: 200,
+      size: 400,
+    }),
+    []
   );
-  if (!isHovered && !isSelected) {
-    return null;
-  }
-  return button;
-};
 
-const headerRenderer = ({
-  column: { title },
-}: {
-  column: { title: string };
-}) => (
-  <Body level={3} strong>
-    {title}
-  </Body>
-);
+  const tbodyRef = useRef<HTMLDivElement>(null);
 
-export type TableProps<T> = Partial<BaseTableProps<T>> & {
-  query?: string;
-  onRowClick?: (item: T, event?: React.SyntheticEvent<Element, Event>) => void;
-  selectionMode?: ResourceSelectionMode;
-  onRowSelected?: (item: T) => void;
-  disableScroll?: boolean;
-} & TableStateProps;
+  // To add the navigation in the row
+  const handleKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    row: Row<T>
+  ) => {
+    event.stopPropagation();
+    if (tbodyRef.current) {
+      const currentRow = tbodyRef.current?.children.namedItem(row.id);
 
-export const Table = <T extends { id: AllowedTableStateId }>({
-  activeIds,
-  disabledIds,
-  selectedIds = [],
-  columns = [],
-  query,
-  onRowClick,
-  disableScroll = false,
-  selectionMode = 'none',
-  onRowSelected = () => {},
-  ...props
-}: TableProps<T>) => {
-  const ref = useRef<ReactBaseTable<T>>();
-  const renderSelectButton = useCallback(
-    (item: T, isSelected: boolean, isHovered: boolean) => (
-      <ActionCell
-        item={item}
-        selectionMode={selectionMode}
-        onItemSelected={onRowSelected}
-        isSelected={isSelected}
-        isHovered={isHovered}
-      />
-    ),
-    [selectionMode, onRowSelected]
+      switch (event.key) {
+        case 'ArrowUp':
+          // @ts-ignore
+          currentRow?.previousElementSibling?.focus();
+          break;
+        case 'ArrowDown':
+          // @ts-ignore
+          currentRow?.nextElementSibling?.focus();
+          break;
+        case 'Enter':
+          onRowClick(row.original);
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  const [columnVisibility, setColumnVisibility] = useLocalStorageState(
+    id,
+    (hiddenColumns || []).reduce((previousValue, currentValue) => {
+      return {
+        ...previousValue,
+        [currentValue]: false,
+      };
+    }, {})
   );
+
+  const getRowId = React.useCallback(
+    (originalRow: T, index: number, parent?: Row<T>) => {
+      return (
+        originalRow.id ||
+        originalRow.key ||
+        (parent ? [parent.id, index].join('.') : index)
+      );
+    },
+    []
+  );
+
+  const { getHeaderGroups, getRowModel, getAllLeafColumns, setColumnOrder } =
+    useReactTable<T>({
+      data,
+      columns: columns,
+      state: {
+        sorting,
+        columnVisibility,
+        expanded: expandedRows,
+        rowSelection: selectedRows || {},
+      },
+      getCoreRowModel: getCoreRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getExpandedRowModel: getExpandedRowModel(),
+      onSortingChange: onSort,
+      onColumnVisibilityChange: setColumnVisibility,
+      onExpandedChange: onRowExpanded,
+      enableSorting: enableSorting,
+      manualSorting: !!onSort,
+      columnResizeMode: 'onChange',
+      enableHiding: true,
+      enableExpanding: enableExpanding,
+      defaultColumn: defaultColumn,
+      getRowCanExpand: getCanRowExpand,
+      getSubRows: getSubrowData,
+      getRowId: getRowId,
+      autoResetExpanded: false,
+      enableSortingRemoval: true,
+    });
 
   useEffect(() => {
-    if (disableScroll && ref && ref.current) {
-      ref.current.scrollToLeft(0);
+    if (scrollIntoViewRow) {
+      const rowElement = document.querySelector(
+        `[id="${id}"] [id="${scrollIntoViewRow}"]`
+      );
+      if (rowElement && !isElementHorizontallyInViewport(rowElement)) {
+        rowElement.scrollIntoView({
+          behavior: 'auto',
+          block: 'center',
+          inline: 'center',
+        });
+      }
     }
-  }, [ref, disableScroll]);
-  return (
-    <TableWrapper disableScroll={disableScroll}>
-      <AutoSizer>
-        {({ width, height }) => (
-          <ReactBaseTable<T>
-            // @ts-ignore
-            ref={ref}
-            width={width}
-            height={height}
-            rowClassName={({ rowData }: { rowData: T }) => {
-              const extraClasses: string[] = [];
-              if (selectedIds && selectedIds.some(el => el === rowData.id)) {
-                extraClasses.push('selected');
-              }
-              if (activeIds && activeIds.some(el => el === rowData.id)) {
-                extraClasses.push('active');
-              }
-              if (disabledIds && disabledIds.some(el => el === rowData.id)) {
-                extraClasses.push('disabled');
-              }
-              return `row clickable ${extraClasses.join(' ')}`;
-            }}
-            fixed
-            {...props}
-            rowEventHandlers={{
-              onClick: ({ rowData: item, event }) => {
-                if (onRowClick) {
-                  onRowClick(item, event);
-                }
-                return event;
-              },
-              ...props.rowEventHandlers,
-            }}
-            columns={[
-              ...(selectionMode !== 'none'
-                ? [
-                    {
-                      ...Table.Columns.select,
-                      dataKey: 'id',
-                      selectedIds,
-                      cellRenderer: ({
-                        rowData: item,
-                        column: { selectedIds: ids },
-                        container: {
-                          state: { hoveredRowKey },
-                        },
-                      }) =>
-                        renderSelectButton(
-                          item,
-                          (ids as number[]).some(el => item.id === el),
-                          hoveredRowKey === item.id
-                        ),
-                    } as ColumnShape<T>,
-                  ]
-                : []),
-              ...columns.map((el: ColumnShape<T>) => ({
-                headerRenderer,
-                resizable: true,
-                cellRenderer: ({ cellData }: { cellData: string }) => (
-                  <HighlightCell
-                    text={cellData}
-                    query={query}
-                    lines={el.lines}
-                  />
-                ),
-                ...el,
-                cellProps: { ...el.cellProps, query },
-              })),
-            ]}
-          />
-        )}
-      </AutoSizer>
-    </TableWrapper>
-  );
-};
+  }, [id, scrollIntoViewRow]);
 
-Table.HighlightCell = HighlightCell;
-Table.Columns = ResourceTableColumns;
+  // TODO: replace the drag library with a better one, we should update the order on dropEnd, not while ordering
+  const moveCard = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      const allCards = [...getAllLeafColumns()];
+
+      const newCards = update(allCards, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, allCards[dragIndex]],
+        ],
+      });
+
+      setColumnOrder(newCards.map(bla => bla.id));
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [columns]
+  );
+
+  const handleToggleAllVisibility = (visible: boolean) => {
+    setColumnVisibility(
+      getAllLeafColumns().reduce((previousValue, currentValue) => {
+        if (currentValue.getCanHide()) {
+          return { ...previousValue, [currentValue.id]: visible };
+        }
+        return previousValue;
+      }, {})
+    );
+  };
+  const loadMoreProps = { isLoadingMore, hasNextPage, fetchMore };
+
+  return (
+    <TableContainer>
+      {tableHeaders || !isEmpty(hiddenColumns) ? (
+        <ColumnSelectorWrapper>
+          {tableHeaders}
+          {!hideColumnToggle && (
+            <DndProvider backend={HTML5Backend}>
+              <StyledFlex>
+                <ColumnToggle<T>
+                  moveCard={moveCard}
+                  allColumns={getAllLeafColumns()}
+                  toggleAllColumnsVisible={handleToggleAllVisibility}
+                />
+              </StyledFlex>
+            </DndProvider>
+          )}
+        </ColumnSelectorWrapper>
+      ) : null}
+
+      {tableSubHeaders && <SubTableWrapper>{tableSubHeaders}</SubTableWrapper>}
+
+      {!data || data.length === 0 ? (
+        <EmptyState body="Please, refine your filters" />
+      ) : (
+        <ContainerInside>
+          <StyledTable id={id} className="data-exploration-table">
+            <Thead isStickyHeader={stickyHeader}>
+              {getHeaderGroups().map(headerGroup => (
+                <Tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <Th
+                      {...{
+                        key: header.id,
+                        colSpan: header.colSpan,
+                        style: {
+                          width: header.getSize(),
+                        },
+                      }}
+                    >
+                      <ThWrapper>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        <SortIcon
+                          canSort={header.column.getCanSort()}
+                          isSorted={header.column.getIsSorted()}
+                          onClick={() => {
+                            header.column.toggleSorting();
+                          }}
+                        />
+                        {enableColumnResizing ? (
+                          <ResizerWrapper
+                            {...{
+                              onMouseDown: header.getResizeHandler(),
+                              onTouchStart: header.getResizeHandler(),
+                              className: `resizer ${
+                                header.column.getIsResizing()
+                                  ? 'isResizing'
+                                  : ''
+                              }`,
+                            }}
+                          />
+                        ) : null}
+                      </ThWrapper>
+                    </Th>
+                  ))}
+                </Tr>
+              ))}
+            </Thead>
+            <div ref={tbodyRef}>
+              {getRowModel().rows.map(row => {
+                return (
+                  <Tr
+                    key={row.id}
+                    id={row.id}
+                    tabIndex={0}
+                    onClick={evt => onRowClick(row.original, evt)}
+                    onKeyDown={evt => handleKeyDown(evt, row)}
+                    className={row.getIsSelected() ? 'selected' : ''}
+                  >
+                    {row.getVisibleCells().map(cell => {
+                      return (
+                        <Td
+                          {...{
+                            key: cell.id,
+                            style: {
+                              width: cell.column.getSize(),
+                            },
+                          }}
+                        >
+                          <Body level={2}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            ) || DASH}
+                          </Body>
+                        </Td>
+                      );
+                    })}
+                  </Tr>
+                );
+              })}
+            </div>
+          </StyledTable>
+          {showLoadButton && (
+            <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
+              <LoadMore {...loadMoreProps} />
+            </LoadMoreButtonWrapper>
+          )}
+        </ContainerInside>
+      )}
+    </TableContainer>
+  );
+}

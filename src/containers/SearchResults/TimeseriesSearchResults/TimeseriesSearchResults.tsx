@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { Timeseries } from '@cognite/sdk';
 import { ResourceItem, convertResourceType } from 'types';
-import { TimeseriesNewTable } from 'containers/Timeseries';
+import { TimeseriesTable } from 'containers/Timeseries';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 
 import { Flex, Loader } from '@cognite/cogs.js';
 
 import { SearchResultToolbar, useResourceResults } from '..';
-import { ColumnToggleProps } from 'components/ReactTable';
+
 import {
   InternalTimeseriesFilters,
   useTimeseriesSearchResultQuery,
 } from 'domain/timeseries';
-import { TableSortBy } from 'components/ReactTable/V2';
+import { TableSortBy } from 'components/Table';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 
 export const TimeseriesSearchResults = ({
@@ -39,7 +39,7 @@ export const TimeseriesSearchResults = ({
   showDatePicker?: boolean;
   onClick: (item: Timeseries) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
-} & ColumnToggleProps<Timeseries>) => {
+}) => {
   const api = convertResourceType('timeSeries');
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<Timeseries>(api, query, filter);
@@ -62,7 +62,7 @@ export const TimeseriesSearchResults = ({
     <>
       <Flex justifyContent="space-between" alignItems="center"></Flex>
 
-      <TimeseriesNewTable
+      <TimeseriesTable
         id="timeseries-search-results"
         tableHeaders={
           <SearchResultToolbar

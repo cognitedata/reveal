@@ -8,7 +8,7 @@ import { PreviewFilterDropdown } from 'components/PreviewFilter/PreviewFilterDro
 import { DefaultPreviewFilter } from 'components/PreviewFilter/PreviewFilter';
 import { InternalCommonFilters } from 'domain/types';
 import { InternalTimeseriesFilters } from 'domain/timeseries';
-import { TimeseriesNewTable, useResourceResults } from 'containers';
+import { TimeseriesTable, useResourceResults } from 'containers';
 import { convertResourceType } from 'types';
 import { useDebounce } from 'use-debounce';
 
@@ -88,7 +88,7 @@ export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
   return (
-    <TimeseriesNewTable
+    <TimeseriesTable
       id="timeseries-linked-search-results"
       onRowClick={asset => onClick(asset)}
       data={items}

@@ -4,11 +4,11 @@ import { Loader } from 'components';
 import { SelectableItemsProps, ResourceType, convertResourceType } from 'types';
 import { Alert } from 'antd';
 import {
-  AssetNewTable,
-  TimeseriesNewTable,
-  SequenceNewTable,
-  EventNewTable,
-  FileNewTable,
+  AssetTable,
+  TimeseriesTable,
+  SequenceTable,
+  EventTable,
+  FileTable,
 } from 'containers';
 
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
@@ -78,7 +78,7 @@ export function AnnotationTable({
   switch (resourceType) {
     case 'asset': {
       return (
-        <AssetNewTable
+        <AssetTable
           data={items}
           hideColumnToggle
           onRowClick={onRowClick}
@@ -88,7 +88,7 @@ export function AnnotationTable({
     }
     case 'file': {
       return (
-        <FileNewTable
+        <FileTable
           id="file-annotation-table"
           data={items}
           onRowClick={onRowClick}
@@ -97,7 +97,7 @@ export function AnnotationTable({
     }
     case 'timeSeries': {
       return (
-        <TimeseriesNewTable
+        <TimeseriesTable
           hideColumnToggle
           id="timeseries-annotation-table"
           data={items}
@@ -107,7 +107,7 @@ export function AnnotationTable({
     }
     case 'event': {
       return (
-        <EventNewTable
+        <EventTable
           id="event-annotatio-table"
           data={items}
           onRowClick={onRowClick}
@@ -116,7 +116,7 @@ export function AnnotationTable({
     }
     case 'sequence': {
       return (
-        <SequenceNewTable
+        <SequenceTable
           id="sequence-annotation-table"
           data={items}
           hideColumnToggle

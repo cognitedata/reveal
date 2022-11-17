@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDocumentFilters as useDocumentSearchFilters } from '@cognite/react-document-search';
-import { TableSortBy } from 'components/ReactTable/V2';
+import { TableSortBy } from 'components/Table';
 import {
   mapTableSortByToDocumentSortFields,
   mapFiltersToDocumentSearchFilters,

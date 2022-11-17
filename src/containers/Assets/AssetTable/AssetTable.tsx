@@ -1,70 +1,70 @@
-import React from 'react';
+import { ColumnDef } from '@tanstack/react-table';
+import React, { useMemo } from 'react';
 import { Asset } from '@cognite/sdk';
-import { Button } from '@cognite/cogs.js';
-import { TableProps, Table } from 'components';
 
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { getColumnsWithRelationshipLabels } from 'utils';
+import { Table, TableProps } from 'components/Table/Table';
 import { RelationshipLabels } from 'types';
 
-const ParentCell = ({
-  rootId,
-  onRowClick,
-}: {
-  rootId: number;
-  onRowClick: (asset: Asset) => void;
-}) => {
-  const { data: rootAsset, isFetched } = useCdfItem<Asset>(
-    'assets',
-    { id: rootId },
-    {
-      enabled: !!rootId,
-    }
-  );
+export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
+
+import { useGetHiddenColumns } from 'hooks';
+import { ThreeDModelCell } from './ThreeDModelCell';
+import { RootAsset } from 'components/RootAsset';
+
+const visibleColumns = ['name', 'rootId'];
+
+export const AssetTable = (
+  props: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'>
+) => {
+  const { onRowClick = () => {}, data, ...rest } = props;
+
+  const columns = useMemo(
+    () => [
+      {
+        ...Table.Columns.name,
+        enableHiding: false,
+      },
+      Table.Columns.description,
+      Table.Columns.externalId,
+      {
+        ...Table.Columns.rootAsset,
+        cell: ({ getValue }) => (
+          <RootAsset
+            externalLink={false}
+            assetId={getValue<number>()}
+            onClick={onRowClick}
+          />
+        ),
+        enableSorting: false,
+      },
+      {
+        accessorKey: 'id',
+        header: '3D availability',
+        cell: ({ getValue }) => (
+          <ThreeDModelCell assetId={getValue<number>()} />
+        ),
+        size: 300,
+        enableSorting: false,
+      },
+      Table.Columns.created,
+      {
+        ...Table.Columns.labels,
+        enableSorting: false,
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  ) as ColumnDef<AssetWithRelationshipLabels>[];
+
+  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
-    <Button
-      type="link"
-      icon="ArrowRight"
-      iconPlacement="right"
-      style={{ color: 'inherit' }}
-      onClick={e => {
-        e.stopPropagation();
-        if (rootAsset) {
-          onRowClick(rootAsset);
-        }
-      }}
-    >
-      {isFetched ? rootAsset?.name : 'Loading...'}
-    </Button>
-  );
-};
-
-type AssetWithRelationshipLabels = RelationshipLabels & Asset;
-export type AssetTableProps = TableProps<AssetWithRelationshipLabels>;
-
-export const AssetTable = (props: AssetTableProps) => {
-  const { onRowClick = () => {} } = props;
-
-  const columns = [
-    Table.Columns.name,
-    Table.Columns.description,
-    Table.Columns.externalId,
-    Table.Columns.relationships,
-    {
-      ...Table.Columns.root,
-      cellRenderer: ({ rowData: asset }: { rowData: Asset }) => (
-        <ParentCell rootId={asset.rootId} onRowClick={onRowClick} />
-      ),
-    },
-  ];
-
-  const isRelationshipTable = props?.relatedResourceType === 'relationship';
-
-  return (
-    <Table<AssetWithRelationshipLabels>
-      columns={getColumnsWithRelationshipLabels(columns, isRelationshipTable)}
-      {...props}
+    <Table<Asset>
+      data={data || []}
+      columns={columns}
+      onRowClick={onRowClick}
+      hiddenColumns={hiddenColumns}
+      {...rest}
     />
   );
 };

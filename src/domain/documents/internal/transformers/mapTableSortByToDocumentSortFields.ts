@@ -1,5 +1,5 @@
 import { DocumentFilterProperty, DocumentSortItem } from '@cognite/sdk';
-import { TableSortBy } from 'components/ReactTable/V2';
+import { TableSortBy } from 'components/Table';
 
 const columnToSortMap = new Map<string, DocumentFilterProperty>([
   ['name', ['sourceFile', 'name']],

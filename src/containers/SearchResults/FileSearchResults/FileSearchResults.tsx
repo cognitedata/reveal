@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FileInfo } from '@cognite/sdk';
-import { FileNewTable } from 'containers/Files';
+import { FileTable } from 'containers/Files';
 import { ResourceItem, convertResourceType } from 'types';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
@@ -10,7 +10,7 @@ import { useResourceResults } from '..';
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import styled from 'styled-components';
 import { Flex } from '@cognite/cogs.js';
-import { ColumnToggleProps } from 'components/ReactTable';
+
 import { InternalFilesFilters } from 'domain/files';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 
@@ -39,7 +39,7 @@ export const FileSearchResults = ({
   isGroupingFilesEnabled?: boolean;
   onClick: (item: FileInfo) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
-} & ColumnToggleProps<FileInfo>) => {
+}) => {
   // TODO: Remove this when migrated
   // if (filter.assetSubtreeIds) {
   //   filter = {
@@ -99,7 +99,7 @@ export const FileSearchResults = ({
       )}
 
       {currentView === 'list' && (
-        <FileNewTable
+        <FileTable
           id="file-search-results"
           tableHeaders={
             <StyledTableHeader justifyContent="flex-end">

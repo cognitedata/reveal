@@ -20,7 +20,7 @@ import { HighlightCell, TimeDisplay } from 'components';
 import { DASH, mapFileType } from 'utils';
 import { createLink } from '@cognite/cdf-utilities';
 import { useGetRootAsset } from 'hooks';
-import { ResourceTableHashMap2 } from '../types';
+import { ResourceTableHashMap2 } from './types';
 
 // TODO: this whole approach needs to be refactored a bit, especially the usage of hooks and stuff
 export const ResourceTableColumns: ResourceTableHashMap2 = {

@@ -7,7 +7,7 @@ import {
   mapTableSortByToAssetSortFields,
 } from '../transformers';
 import { InternalAssetFilters } from '../types';
-import { TableSortBy } from 'components/ReactTable/V2';
+import { TableSortBy } from 'components/Table';
 import { useAssetsSearchQueryMetadataKeysQuery } from './useAssetsMetadataKeysQuery';
 
 export const useAssetsSearchResultQuery = ({

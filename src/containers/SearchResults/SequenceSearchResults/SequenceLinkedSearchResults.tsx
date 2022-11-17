@@ -10,7 +10,7 @@ import { DefaultPreviewFilter } from 'components/PreviewFilter/PreviewFilter';
 import { InternalCommonFilters } from 'domain/types';
 import { InternalSequenceFilters } from 'domain/sequence';
 import {
-  SequenceNewTable,
+  SequenceTable,
   SequenceWithRelationshipLabels,
   useResourceResults,
 } from 'containers';
@@ -77,7 +77,7 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
   return (
-    <SequenceNewTable
+    <SequenceTable
       id="sequence-linked-search-results"
       onRowClick={sequence => onClick(sequence)}
       data={items}

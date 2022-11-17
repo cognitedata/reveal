@@ -17,16 +17,7 @@ export const Example: ComponentStory<typeof SequenceTable> = args => (
 );
 Example.args = {
   data: sequences,
-  onItemClicked: action('onItemClicked'),
-};
-
-export const ExampleSingleSelect: ComponentStory<
-  typeof SequenceTable
-> = args => <SequenceTable {...args} />;
-ExampleSingleSelect.args = {
-  selectionMode: 'single',
-  data: sequences,
-  onItemClicked: action('onItemClicked'),
+  onRowClick: action('onItemClicked'),
 };
 
 const Container = styled.div`

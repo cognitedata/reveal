@@ -3,5 +3,5 @@ export * from './SequencePreview/SequencePreview';
 export * from './SequenceColumns/SequenceColumns';
 export * from './SequenceSmallPreview/SequenceSmallPreview';
 export * from './SequenceTable/SequenceTable';
-export { SequenceNewTable } from './SequenceTable/SequenceNewTable';
+export { SequenceTable } from './SequenceTable/SequenceTable';
 export * from './SequenceSummary/SequenceSummary';

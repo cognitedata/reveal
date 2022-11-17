@@ -2,7 +2,7 @@ import { Sequence } from '@cognite/sdk/dist/src';
 import { ColumnDef } from '@tanstack/react-table';
 import { useResourceResults } from 'containers';
 import { InternalSequenceFilters } from 'domain/sequence';
-import { TableV2 as Table } from 'components/ReactTable/V2';
+import { Table } from 'components/Table';
 import React, { useMemo } from 'react';
 import { convertResourceType } from 'types';
 

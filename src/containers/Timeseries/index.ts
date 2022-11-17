@@ -1,4 +1,4 @@
-export { TimeseriesNewTable } from './TimeseriesTable/TimeseriesNewTable';
+export { TimeseriesTable } from './TimeseriesTable/TimeseriesTable';
 export * from './TimeseriesSmallPreview/TimeseriesSmallPreview';
 export * from './TimeseriesTable/TimeseriesTable';
 export * from './TimeseriesChart/TimeseriesChart';

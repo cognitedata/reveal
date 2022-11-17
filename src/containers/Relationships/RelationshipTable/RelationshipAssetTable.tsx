@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { TableV2 as Table } from 'components/ReactTable/V2/TableV2';
-import { AssetWithRelationshipLabels } from 'containers/Assets/AssetTable/AssetNewTable';
+import { Table } from 'components/Table/Table';
+import { AssetWithRelationshipLabels } from 'containers/Assets/AssetTable/AssetTable';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 
 import { RelationshipTableProps } from './RelationshipTable';

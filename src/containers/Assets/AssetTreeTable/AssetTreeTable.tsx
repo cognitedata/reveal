@@ -5,7 +5,7 @@ import { Asset } from '@cognite/sdk';
 import { usePrevious } from 'hooks/CustomHooks';
 import { SelectableItemsProps, TableStateProps } from 'types';
 import { HighlightCell } from '../../../components';
-import { TableV2 as Table } from '../../../components/ReactTable/V2';
+import { Table } from '../../../components/Table';
 import { useSearchAssetTree } from '../../../domain/assets/service/queries/useSearchAssetTree';
 import { useRootAssetsQuery } from '../../../domain/assets/service/queries/useRootAssetsQuery';
 import { DASH } from '../../../utils';

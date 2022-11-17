@@ -2,8 +2,8 @@ import { Asset } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { MetadataFilterV2 } from 'components';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { TableSortBy } from 'components/ReactTable/V2';
-import { AssetNewTable } from 'containers/Assets';
+import { TableSortBy } from 'components/Table';
+import { AssetTable } from 'containers/Assets';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 import {
   InternalAssetFilters,
@@ -79,7 +79,7 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
   return (
-    <AssetNewTable
+    <AssetTable
       id="asset-linked-search-results"
       onRowClick={asset => onClick(asset)}
       data={enableAdvancedFilter ? data : items}

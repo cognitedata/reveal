@@ -2,7 +2,7 @@ import { CogniteEvent } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { InternalSequenceFilters } from 'domain/sequence';
-import { TableV2 as Table } from 'components/ReactTable/V2';
+import { Table } from 'components/Table';
 import React, { useMemo } from 'react';
 
 import { EmptyState } from 'components/EmpyState/EmptyState';

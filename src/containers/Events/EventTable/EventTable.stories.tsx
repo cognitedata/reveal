@@ -17,16 +17,7 @@ export const Example: ComponentStory<typeof EventTable> = args => (
 );
 Example.args = {
   data: events,
-  onItemClicked: action('onItemClicked'),
-};
-
-export const ExampleSingleSelect: ComponentStory<typeof EventTable> = args => (
-  <EventTable {...args} />
-);
-ExampleSingleSelect.args = {
-  selectionMode: 'single',
-  items: events,
-  onItemClicked: action('onItemClicked'),
+  onRowClick: action('onRowClicked'),
 };
 
 const Container = styled.div`

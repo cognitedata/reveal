@@ -1,25 +1,16 @@
-import {
-  ColumnInstance,
-  IdType,
-  TableToggleHideAllColumnProps,
-} from 'react-table';
+import { Column } from '@tanstack/table-core';
 import React, { FC, useRef } from 'react';
 import { Button, Checkbox, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 import { TableData } from './Table';
-import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 import { useDrag, useDrop } from 'react-dnd';
 import { Identifier, XYCoord } from 'dnd-core';
 
-interface ColumnToggleProps<T extends TableData = any> {
-  allColumns: ColumnInstance<T>[];
-  getToggleHideAllColumnsProps?: (
-    props?: Partial<TableToggleHideAllColumnProps>
-  ) => TableToggleHideAllColumnProps | void;
+export interface ColumnToggleProps<T extends TableData = any> {
+  allColumns: Column<T, unknown>[];
+  toggleAllColumnsVisible: (visible: boolean) => void;
   moveCard: (dragIndex: number, hoverIndex: number) => void;
-  setHiddenColumns: (param: IdType<T>[]) => void;
-  alwaysColumnVisible?: string;
 }
 
 export interface CardProps {
@@ -132,7 +123,7 @@ export const MenutItemDrag: FC<CardProps> = ({
       data-handler-id={handlerId}
     >
       <DragHandleWrapper ref={dragRef}>
-        <Icon type="DragHandleVertical" />{' '}
+        <Icon type="DragHandleVertical" />
       </DragHandleWrapper>
       {children}
     </FlexWrapper>
@@ -141,11 +132,12 @@ export const MenutItemDrag: FC<CardProps> = ({
 export function ColumnToggle<T>({
   allColumns,
   moveCard,
-  getToggleHideAllColumnsProps = () => {},
-  alwaysColumnVisible = 'name',
-  setHiddenColumns,
+  toggleAllColumnsVisible,
 }: ColumnToggleProps<T>) {
   const [, drop] = useDrop(() => ({ accept: ItemTypes.CARD }));
+
+  const allChecked = allColumns.every(column => column.getIsVisible());
+  const someChecked = allColumns.some(column => column.getIsVisible());
 
   return (
     <Dropdown
@@ -154,11 +146,16 @@ export function ColumnToggle<T>({
           <Menu.Header>Table Columns</Menu.Header>
           <FlexWrapper className="cogs-menu-item">
             <Label>
-              <IndeterminateCheckbox
-                setHiddenColumns={setHiddenColumns}
-                allColumns={allColumns as any}
-                alwaysColumnVisible={alwaysColumnVisible}
-                {...getToggleHideAllColumnsProps()}
+              <Checkbox
+                name={'selectAll'}
+                indeterminate={!allChecked && someChecked}
+                onChange={checked => {
+                  toggleAllColumnsVisible(
+                    !allChecked && someChecked ? true : checked
+                  );
+                }}
+                className="cogs-checkbox__checkbox"
+                checked={someChecked}
               />
               Select All
             </Label>
@@ -173,16 +170,15 @@ export function ColumnToggle<T>({
             >
               <Label>
                 <Checkbox
-                  type="checkbox"
-                  {...column.getToggleHiddenProps()}
-                  onChange={(_, evt) =>
-                    column.getToggleHiddenProps().onChange(evt)
-                  }
+                  name={column.id}
+                  checked={column.getIsVisible()}
+                  onChange={() => {
+                    column.toggleVisibility();
+                  }}
                   className="cogs-checkbox__checkbox"
-                  disabled={alwaysColumnVisible === column.id}
-                  defaultChecked={alwaysColumnVisible === column.id}
+                  disabled={!column.getCanHide()}
                 />
-                {column.Header}
+                {column.columnDef.header}
               </Label>
             </MenutItemDrag>
           ))}

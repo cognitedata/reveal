@@ -1,23 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { timeseries } from 'stubs/timeseries';
 import { ComponentStory } from '@storybook/react';
-import { TimeseriesNewTable } from './TimeseriesNewTable';
+import { DocumentsTable } from './DocumentsTable';
+import { documents } from 'stubs/documents';
 
 export default {
-  title: 'Time Series/TimeseriesNewTable',
-  component: TimeseriesNewTable,
+  title: 'Documents/DocumentsTable',
+  component: DocumentsTable,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example: ComponentStory<typeof TimeseriesNewTable> = args => (
-  <TimeseriesNewTable {...args} />
+export const Example: ComponentStory<typeof DocumentsTable> = args => (
+  <DocumentsTable {...args} />
 );
+
 Example.args = {
-  data: timeseries,
-  onRowClick: action('onItemClicked'),
+  data: documents,
+  onRowClick: action('onRowClicked'),
 };
 
 const Container = styled.div`

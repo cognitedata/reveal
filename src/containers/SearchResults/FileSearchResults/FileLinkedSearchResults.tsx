@@ -12,7 +12,7 @@ import { useDebounce } from 'use-debounce';
 import { InternalFilesFilters } from 'domain/files';
 import { convertResourceType } from 'types';
 import { useResourceResults } from '../SearchResultLoader';
-import { FileNewTable } from 'containers/Files';
+import { FileTable } from 'containers/Files';
 
 interface Props {
   defaultFilter: InternalCommonFilters;
@@ -75,7 +75,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
   return (
-    <FileNewTable
+    <FileTable
       id="file-linked-search-results"
       onRowClick={file => onClick(file)}
       data={items}

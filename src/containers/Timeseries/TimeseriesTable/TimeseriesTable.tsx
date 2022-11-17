@@ -1,103 +1,141 @@
-import React from 'react';
 import { Timeseries } from '@cognite/sdk';
-import { Table, TableProps } from 'components';
-import { TimeseriesChart } from 'containers/Timeseries';
-import { Body } from '@cognite/cogs.js';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DateRangeProps, RelationshipLabels } from 'types';
+import { Table, TableProps } from 'components/Table/Table';
 import { TIME_SELECT } from 'containers';
-import { getColumnsWithRelationshipLabels } from 'utils';
-import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
-
-const sparkLineColumn = ([startTime, endTime]: [Date, Date]) => {
-  return {
-    title: 'Data',
-    key: 'data',
-    width: 400,
-    startTime: startTime.valueOf(),
-    endTime: endTime.valueOf(),
-    cellRenderer: ({
-      rowData: timeseries,
-      column: { startTime: start, endTime: end },
-    }: {
-      rowData: Timeseries;
-      column: {
-        startTime: number;
-        endTime: number;
-      };
-    }) => {
-      if (timeseries.isString) {
-        return <Body level={2}>N/A for string time series</Body>;
-      }
-      return (
-        <TimeseriesChart
-          height={100}
-          showSmallerTicks
-          timeseriesId={timeseries.id}
-          numberOfPoints={100}
-          showAxis="horizontal"
-          timeOptions={[]}
-          showContextGraph={false}
-          showPoints={false}
-          enableTooltip={false}
-          showGridLine="none"
-          minRowTicks={2}
-          enableTooltipPreview
-          dateRange={[new Date(start), new Date(end)]}
-          onDateRangeChange={() => {}}
-        />
-      );
-    },
-  };
-};
-
-const lastReadingColumn = () => {
-  return {
-    title: 'Last reading',
-    key: 'last-reading',
-    width: 200,
-    cellRenderer: ({ rowData: timeseries }: { rowData: Timeseries }) => {
-      return <TimeseriesLastReading timeseriesId={timeseries.id} />;
-    },
-  };
-};
+import { TimeseriesChart } from '..';
+import { Body } from '@cognite/cogs.js';
+import { ColumnDef } from '@tanstack/react-table';
+import { useGetHiddenColumns } from 'hooks';
+import { RootAsset } from 'components/RootAsset';
+import isEmpty from 'lodash/isEmpty';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
+
+export interface TimeseriesTableProps
+  extends Omit<TableProps<TimeseriesWithRelationshipLabels>, 'columns'>,
+    RelationshipLabels,
+    DateRangeProps {
+  hideEmptyData?: boolean;
+}
+
+const visibleColumns = ['name', 'description', 'data', 'lastUpdatedTime'];
+
 export const TimeseriesTable = ({
-  dateRange = TIME_SELECT['1Y'].getTime(),
+  dateRange: dateRangeProp,
+  hideEmptyData = false,
   ...props
-}: TableProps<TimeseriesWithRelationshipLabels> & DateRangeProps) => {
-  const { relatedResourceType } = props;
+}: TimeseriesTableProps) => {
+  const { data, ...rest } = props;
 
-  const columns = React.useMemo(
-    () => [
-      { ...Table.Columns.name, lines: 3 },
-      { ...Table.Columns.description, lines: 3 },
-      Table.Columns.externalId,
-      Table.Columns.unit,
-      sparkLineColumn(dateRange),
-      Table.Columns.relationships,
-      lastReadingColumn(),
+  const [dateRange, setDateRange] = useState(
+    dateRangeProp || TIME_SELECT['1Y'].getTime()
+  );
+  const [emptyTimeseriesMap, setEmptyTimeseriesMap] = useState<
+    Record<number, boolean>
+  >({});
+
+  useEffect(() => {
+    if (dateRangeProp) {
+      setDateRange(dateRangeProp);
+    }
+  }, [dateRangeProp]);
+
+  useEffect(() => {
+    const emptyTimeseriesMap = data.reduce(
+      (emptyTimeseriesMap, { id }) => ({
+        ...emptyTimeseriesMap,
+        [id]: false,
+      }),
+      {} as Record<number, boolean>
+    );
+    setEmptyTimeseriesMap(emptyTimeseriesMap);
+  }, [data]);
+
+  const columns = useMemo(() => {
+    const sparkLineColumn: ColumnDef<Timeseries & { data: any }> = {
+      header: 'Preview',
+      accessorKey: 'data',
+      size: 400,
+      enableSorting: false,
+      cell: ({ row }) => {
+        const timeseries = row.original;
+        if (timeseries.isString) {
+          return <Body level={2}>N/A for string time series</Body>;
+        }
+        return (
+          <TimeseriesChart
+            height={100}
+            showSmallerTicks
+            timeseriesId={timeseries.id}
+            numberOfPoints={100}
+            showAxis="horizontal"
+            timeOptions={[]}
+            showContextGraph={false}
+            showPoints={false}
+            enableTooltip={false}
+            showGridLine="none"
+            minRowTicks={2}
+            enableTooltipPreview
+            dateRange={dateRange}
+            onDateRangeChange={() => {}}
+            onDataFetched={data =>
+              setEmptyTimeseriesMap(emptyTimeseriesMap => ({
+                ...emptyTimeseriesMap,
+                [timeseries.id]: isEmpty(data?.datapoints),
+              }))
+            }
+          />
+        );
+      },
+    };
+    return [
+      { ...Table.Columns.name, enableHiding: false },
+      Table.Columns.description,
+      {
+        ...Table.Columns.unit,
+        enableSorting: false,
+      },
+      sparkLineColumn,
       Table.Columns.lastUpdatedTime,
-      Table.Columns.createdTime,
-    ],
-    [dateRange]
-  );
+      Table.Columns.created,
+      {
+        ...Table.Columns.id,
+        enableSorting: false,
+      },
+      {
+        ...Table.Columns.isString,
+        enableSorting: false,
+      },
+      {
+        ...Table.Columns.isStep,
+        enableSorting: false,
+      },
+      {
+        ...Table.Columns.dataSet,
+        enableSorting: false,
+      },
+      {
+        ...Table.Columns.rootAsset,
+        accessorKey: 'assetId',
+        cell: ({ getValue }) => <RootAsset assetId={getValue<number>()} />,
+        enableSorting: false,
+      },
+    ] as ColumnDef<Timeseries>[];
+  }, [dateRange]);
 
-  const updatedColumns = React.useMemo(
-    () =>
-      getColumnsWithRelationshipLabels(
-        columns,
-        relatedResourceType === 'relationship'
-      ),
-    [columns, relatedResourceType]
-  );
+  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
+
+  const timeseriesWithDatapoints = useMemo(() => {
+    return data.filter(({ id }) => !emptyTimeseriesMap[id]);
+  }, [data, emptyTimeseriesMap]);
 
   return (
-    <Table<Timeseries>
-      columns={updatedColumns}
-      rowHeight={100}
-      {...props}
-      dateRange={dateRange}
+    <Table
+      columns={columns}
+      data={hideEmptyData ? timeseriesWithDatapoints : data}
+      hiddenColumns={hiddenColumns}
+      {...rest}
     />
   );
 };

@@ -1,10 +1,10 @@
 import React from 'react';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 import { ResultCount } from 'components';
-import { TableV2 as Table } from 'components/ReactTable/V2/TableV2';
+import { Table } from 'components/Table/Table';
 import { RelationshipTableProps } from './RelationshipTable';
 
-import { FileWithRelationshipLabels } from 'containers/Files/FileTable/FileNewTable';
+import { FileWithRelationshipLabels } from 'containers/Files/FileTable/FileTable';
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import { ColumnDef } from '@tanstack/react-table';
 

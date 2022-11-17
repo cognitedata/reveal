@@ -1,61 +1,60 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { FileInfo } from '@cognite/sdk';
-import { TimeDisplay, TableProps, Table } from 'components';
-import { Body, Tooltip } from '@cognite/cogs.js';
+import { Table, TableProps } from 'components/Table/Table';
 import { RelationshipLabels } from 'types';
-import { getColumnsWithRelationshipLabels, mapFileType } from 'utils';
 import { FileNamePreview } from './FileNamePreview';
+import { ColumnDef } from '@tanstack/react-table';
+import { useGetHiddenColumns } from 'hooks';
 
-type FileWithRelationshipLabels = RelationshipLabels & FileInfo;
-export const FileTable = (props: TableProps<FileWithRelationshipLabels>) => {
-  const { relatedResourceType, query } = props;
+const visibleColumns = ['name', 'mimeType', 'uploadedTime'];
+export type FileTableProps = Omit<
+  TableProps<FileWithRelationshipLabels>,
+  'columns'
+> &
+  RelationshipLabels & {
+    query?: string;
+  };
+export type FileWithRelationshipLabels = RelationshipLabels & FileInfo;
+export const FileTable = (props: FileTableProps) => {
+  const { query } = props;
 
-  const columns = [
-    {
-      ...Table.Columns.name,
-      cellRenderer: ({
-        cellData: fileName,
-        rowData: file,
-      }: {
-        cellData: string;
-        rowData: FileInfo;
-      }) => {
-        const fileNamePreviewProps = { fileName, file, query };
-        return <FileNamePreview {...fileNamePreviewProps} />;
-      },
-    },
-    {
-      ...Table.Columns.mimeType,
-      cellRenderer: ({ cellData: mimeValue }: { cellData: string }) => (
-        <Body level={2}>
-          <Tooltip interactive content={mimeValue}>
-            <>{mapFileType(mimeValue || '')}</>
-          </Tooltip>
-        </Body>
-      ),
-    },
-    {
-      ...Table.Columns.uploadedTime,
-      cellRenderer: ({ cellData: file }: { cellData: FileInfo }) => (
-        <Body level={2}>
-          {file && file.uploaded && (
-            <TimeDisplay value={file.uploadedTime} relative withTooltip />
-          )}
-        </Body>
-      ),
-    },
-    Table.Columns.relationships,
-    Table.Columns.lastUpdatedTime,
-    Table.Columns.createdTime,
-  ];
-
-  const updatedColumns = getColumnsWithRelationshipLabels(
-    columns,
-    relatedResourceType === 'relationship'
+  const columns = useMemo(
+    () =>
+      [
+        {
+          ...Table.Columns.name,
+          enableHiding: false,
+          cell: ({ getValue, row }) => {
+            const fileName = getValue<string>();
+            const fileNamePreviewProps = {
+              fileName,
+              file: row.original,
+              query,
+            };
+            return <FileNamePreview {...fileNamePreviewProps} />;
+          },
+        },
+        Table.Columns.mimeType,
+        Table.Columns.externalId,
+        Table.Columns.id,
+        Table.Columns.uploadedTime,
+        Table.Columns.lastUpdatedTime,
+        Table.Columns.created,
+        Table.Columns.dataSet,
+        Table.Columns.source,
+        Table.Columns.assets,
+        Table.Columns.labels,
+      ] as ColumnDef<FileInfo>[],
+    [query]
   );
+  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
-    <Table<FileWithRelationshipLabels> columns={updatedColumns} {...props} />
+    <Table<FileInfo>
+      columns={columns}
+      hiddenColumns={hiddenColumns}
+      {...props}
+    />
   );
 };

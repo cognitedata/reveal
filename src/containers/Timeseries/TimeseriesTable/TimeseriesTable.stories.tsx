@@ -17,24 +17,7 @@ export const Example: ComponentStory<typeof TimeseriesTable> = args => (
 );
 Example.args = {
   data: timeseries,
-  onItemClicked: action('onItemClicked'),
-};
-
-export const ExampleSingleSelect: ComponentStory<
-  typeof TimeseriesTable
-> = args => <TimeseriesTable {...args} />;
-ExampleSingleSelect.args = {
-  items: timeseries,
-  onItemClicked: action('onItemClicked'),
-};
-
-export const HideEmpty: ComponentStory<typeof TimeseriesTable> = args => (
-  <TimeseriesTable {...args} />
-);
-HideEmpty.args = {
-  data: timeseries,
-  onItemClicked: action('onItemClicked'),
-  hideEmptyData: true,
+  onRowClick: action('onItemClicked'),
 };
 
 const Container = styled.div`

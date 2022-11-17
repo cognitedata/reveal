@@ -6,7 +6,7 @@ import {
   useDocumentSearchQuery,
 } from 'domain/documents';
 
-import { TableV2 as Table } from 'components/ReactTable/V2';
+import { Table } from 'components/Table';
 import React, { useMemo } from 'react';
 
 import { EmptyState } from 'components/EmpyState/EmptyState';

@@ -2,11 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { Flex, SegmentedControl } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 
-import { ColumnToggleProps } from 'components/ReactTable/Table';
 import {
   AssetTreeTable,
   SearchResultToolbar,
-  AssetNewTable,
+  AssetTable,
   useResourceResults,
 } from 'containers';
 import { convertResourceType, SelectableItemsProps } from 'types';
@@ -14,7 +13,7 @@ import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
 import styled from 'styled-components';
 import { useAssetsSearchResultQuery } from 'domain/assets/internal/queries/useAssetsFilteredListQuery';
 import { InternalAssetFilters } from 'domain/assets/internal/types';
-import { TableSortBy } from 'components/ReactTable/V2';
+import { TableSortBy } from 'components/Table';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 
 export const AssetSearchResults = ({
@@ -36,8 +35,7 @@ export const AssetSearchResults = ({
   onClick: (item: Asset) => void;
   activeIds?: (string | number)[];
   onFilterChange?: (newValue: Record<string, unknown>) => void;
-} & ColumnToggleProps<Asset> &
-  SelectableItemsProps) => {
+} & SelectableItemsProps) => {
   const api = convertResourceType('asset');
   const { canFetchMore, fetchMore, items } = useResourceResults<Asset>(
     api,
@@ -108,7 +106,7 @@ export const AssetSearchResults = ({
   return (
     <>
       <KeepMounted isVisible={currentView === 'list'}>
-        <AssetNewTable
+        <AssetTable
           id="asset-search-results"
           onRowClick={asset => onClick(asset)}
           data={enableAdvancedFilters ? data : items}

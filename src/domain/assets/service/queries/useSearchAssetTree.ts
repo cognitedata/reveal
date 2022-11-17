@@ -1,7 +1,7 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useEffect, useMemo } from 'react';
 import { useQuery } from 'react-query';
-import { TableSortBy } from '../../../../components/ReactTable/V2';
+import { TableSortBy } from '../../../../components/Table';
 import { queryKeys } from '../../../queryKeys';
 import { InternalAssetTreeData, InternalAssetFilters } from '../../internal';
 import { useAssetsSearchResultQuery } from '../../internal';

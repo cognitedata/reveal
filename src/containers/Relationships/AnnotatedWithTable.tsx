@@ -6,7 +6,7 @@ import { uniqBy } from 'lodash';
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
 import { Alert } from 'antd';
 import { Loader } from 'components';
-import { FileNewTable } from 'containers';
+import { FileTable } from 'containers';
 import { useUniqueCdfItems } from 'hooks';
 
 export const AnnotatedWithTable = ({
@@ -63,7 +63,7 @@ export const AnnotatedWithTable = ({
   }
 
   return (
-    <FileNewTable
+    <FileTable
       id="file-appear-in-table"
       data={items}
       onRowClick={({ id }) => onItemClicked(id)}

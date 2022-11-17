@@ -5,7 +5,7 @@ import { useInfiniteSequenceRows } from 'hooks/sequenceHooks';
 
 import { Loader } from 'components';
 import { EmptyState } from 'components/EmpyState/EmptyState';
-import { TableV2 as Table } from 'components/ReactTable/V2/TableV2';
+import { Table } from 'components/Table/Table';
 import { AllowedTableStateId } from 'types';
 
 export interface SequenceDataRow {

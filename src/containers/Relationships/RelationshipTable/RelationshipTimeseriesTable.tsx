@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { TableV2 as Table } from 'components/ReactTable/V2/TableV2';
+import { Table } from 'components/Table/Table';
 
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 
 import { ResultCount } from 'components';
 
 import { RelationshipTableProps } from './RelationshipTable';
-import { TimeseriesWithRelationshipLabels } from 'containers/Timeseries/TimeseriesTable/TimeseriesNewTable';
+import { TimeseriesWithRelationshipLabels } from 'containers/Timeseries/TimeseriesTable/TimeseriesTable';
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import { ColumnDef } from '@tanstack/react-table';
 

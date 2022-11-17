@@ -1,6 +1,6 @@
 import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from 'domain/constants';
 import { useMemo } from 'react';
-import { TableSortBy } from 'components/ReactTable/V2';
+import { TableSortBy } from 'components/Table';
 import { useEventsListQuery } from '../../service/queries/useEventsListQuery';
 import { mapFiltersToEventsAdvancedFilters } from '../transformers/mapFiltersToEventsAdvancedFilters';
 import { mapTableSortByToEventSortFields } from '../transformers/mapTableSortByToEventSortFields';

@@ -1,4 +1,4 @@
-import { TableSortBy } from 'components/ReactTable/V2';
+import { TableSortBy } from 'components/Table';
 import { InternalTimeseriesSortBy } from 'domain/timeseries';
 
 export const mapTableSortByToTimeseriesSortFields = (

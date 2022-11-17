@@ -17,16 +17,7 @@ export const Example: ComponentStory<typeof FileTable> = args => (
 );
 Example.args = {
   data: files,
-  onItemClicked: action('onItemClicked'),
-};
-
-export const ExampleSingleSelect: ComponentStory<typeof FileTable> = args => (
-  <FileTable {...args} />
-);
-ExampleSingleSelect.args = {
-  selectionMode: 'single',
-  data: files,
-  onItemClicked: action('onItemClicked'),
+  onRowClick: action('onRowClicked'),
 };
 
 const Container = styled.div`

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { TableV2 as Table } from 'components/ReactTable/V2/TableV2';
+import { Table } from 'components/Table/Table';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 import { ResultCount } from 'components';
 import { RelationshipTableProps } from './RelationshipTable';

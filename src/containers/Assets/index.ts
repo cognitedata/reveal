@@ -5,5 +5,5 @@ export * from './AssetTable/AssetTable';
 export * from './AssetTreeTable/AssetTreeTable';
 export * from './AssetBreadcrumb/AssetBreadcrumb';
 export * from './AssetSelect/AssetSelect';
-export { AssetNewTable } from './AssetTable/AssetNewTable';
+export { AssetTable } from './AssetTable/AssetTable';
 export * from './AssetSummary/AssetSummary';

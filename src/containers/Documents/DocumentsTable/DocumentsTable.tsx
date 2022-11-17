@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { TableV2 as Table, TableProps } from 'components/ReactTable/V2/TableV2';
+import { Table, TableProps } from 'components/Table/Table';
 
 import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentContentPreview } from './DocumentContentPreview';

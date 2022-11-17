@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { Sequence } from '@cognite/sdk';
 import { SearchResultToolbar } from 'containers/SearchResults';
 import { ResourceItem, convertResourceType } from 'types';
-import { SequenceNewTable } from 'containers/Sequences';
+import { SequenceTable } from 'containers/Sequences';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { useResourceResults } from '../SearchResultLoader';
 import { Loader } from '@cognite/cogs.js';
-import { ColumnToggleProps } from 'components/ReactTable';
 import {
   InternalSequenceFilters,
   useSequenceSearchResultQuery,
 } from 'domain/sequence';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { TableSortBy } from 'components/ReactTable/V2';
+import { TableSortBy } from 'components/Table';
 
 export const SequenceSearchResults = ({
   query = '',
@@ -36,7 +35,7 @@ export const SequenceSearchResults = ({
   enableAdvancedFilters?: boolean;
   onClick: (item: Sequence) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
-} & ColumnToggleProps<Sequence>) => {
+}) => {
   const api = convertResourceType('sequence');
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<Sequence>(api, query, filter);
@@ -55,7 +54,7 @@ export const SequenceSearchResults = ({
     return <Loader />;
   }
   return (
-    <SequenceNewTable
+    <SequenceTable
       id="sequence-search-results"
       tableHeaders={
         <SearchResultToolbar

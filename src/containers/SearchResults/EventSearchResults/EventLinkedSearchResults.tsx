@@ -2,7 +2,7 @@ import { CogniteEvent } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { AggregatedEventFilterV2, MetadataFilterV2 } from 'components';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { TableSortBy } from 'components/ReactTable/V2';
+import { TableSortBy } from 'components/Table';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from 'components/PreviewFilter/PreviewFilterDropdown';
@@ -13,7 +13,7 @@ import {
   InternalEventsFilters,
   useEventsSearchResultQuery,
 } from 'domain/events';
-import { EventNewTable, useResourceResults } from 'containers';
+import { EventTable, useResourceResults } from 'containers';
 import { convertResourceType } from 'types';
 
 interface Props {
@@ -95,7 +95,7 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
   return (
-    <EventNewTable
+    <EventTable
       id="event-linked-search-results"
       onRowClick={event => onClick(event)}
       data={enableAdvancedFilter ? data : items}

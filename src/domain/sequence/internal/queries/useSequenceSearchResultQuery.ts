@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from 'domain/constants';
-import { TableSortBy } from 'components/ReactTable/V2';
+import { TableSortBy } from 'components/Table';
 
 import {
   InternalSequenceFilters,
