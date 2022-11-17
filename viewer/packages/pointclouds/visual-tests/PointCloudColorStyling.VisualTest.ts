@@ -62,9 +62,7 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
     assert(model.geometryNode instanceof PointCloudNode);
 
     const stylableObjectIds: number[] = [];
-    [...model.geometryNode.potreeNode.stylableObjectAnnotationMetadata].forEach(m =>
-      stylableObjectIds.push(m.annotationId)
-    );
+    [...model.geometryNode.stylableObjectAnnotationMetadata].forEach(m => stylableObjectIds.push(m.annotationId));
 
     const objectCollection = new AnnotationIdPointCloudObjectCollection(stylableObjectIds);
     const appearance = { color: new Color(0, 1, 0), visible: true };
