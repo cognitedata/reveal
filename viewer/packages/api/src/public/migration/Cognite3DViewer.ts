@@ -665,7 +665,7 @@ export class Cognite3DViewer {
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
 
-    this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.potreeNode.modelIdentifier);
+    this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
 
     return model;
   }
