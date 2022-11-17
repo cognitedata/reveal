@@ -64,7 +64,6 @@ import {
 import { Image360Entity } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
-import { Vector2 } from 'three';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
@@ -1070,7 +1069,7 @@ export class Cognite3DViewer {
       throw new Error('Viewer is disposed');
     }
 
-    const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new Vector2());
+    const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
     const originalDomeStyle = { ...this.domElement.style };
 
     try {
