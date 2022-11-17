@@ -138,12 +138,12 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@azure/msal-browser@2.30.0":
-  version "2.30.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.30.0.tgz#9d6545df9604554cd0eb8d6f0292d732ec564d2e"
-  integrity sha512-4Y9+rjJiTFP7KEmuq1btmIrBgk0ImNyKsXj6A6NHZALd1X0M6W7L7kxpH6F+d1tEkMv8bYnZdn7IcauXbL8Llw==
+"@azure/msal-browser@2.31.0":
+  version "2.31.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.31.0.tgz#86f54d7994529fa5deb791b0f79f7a7341582eab"
+  integrity sha512-PaGA7VjjUH9LCL7tbHO3lDW5rH7VQdbe3A6roYEJ7ieWP/0HNwzqKQCNrI/4rCyXO501ABhE9clSx8/mHbmVYw==
   dependencies:
-    "@azure/msal-common" "^7.6.0"
+    "@azure/msal-common" "^8.0.0"
 
 "@azure/msal-browser@^2.11.0":
   version "2.14.2"
@@ -159,10 +159,10 @@
   dependencies:
     debug "^4.1.1"
 
-"@azure/msal-common@^7.6.0":
-  version "7.6.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-7.6.0.tgz#b52e97ef540275f72611cff57937dfa0b34cdcca"
-  integrity sha512-XqfbglUTVLdkHQ8F9UQJtKseRr3sSnr9ysboxtoswvaMVaEfvyLtMoHv9XdKUfOc0qKGzNgRFd9yRjIWVepl6Q==
+"@azure/msal-common@^8.0.0":
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-8.0.0.tgz#51431b46967bf4a0aa89189fe8152fbf7c3a1757"
+  integrity sha512-KLGVmWoDcpWl/SKb4TZUjWm+l3lim4tUwAAvCM8N8rSHu8r0NtMTySMWBv7d3G8as1SvC4nr3eTae1+9hTp4wg==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.14.5", "@babel/code-frame@^7.16.0", "@babel/code-frame@^7.18.6", "@babel/code-frame@^7.8.3":
   version "7.18.6"
@@ -1567,17 +1567,6 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.8.1":
-  version "4.8.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.1.tgz#008c6d7e15393f3a840baf809a0037efa8266849"
-  integrity sha512-FEICothNg/aAHdAY84J/udt5NcPcoe8GlT+piFgpvV8zIFpFbUxU4oLVf20xl0AJX1xCO13iWrL/szf6BWqEcA==
-  dependencies:
-    cross-fetch "^3.0.4"
-    is-buffer "^2.0.5"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
-
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
   uid ""
@@ -2431,7 +2420,7 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
-"@types/geojson@7946.0.10", "@types/geojson@^7946.0.8":
+"@types/geojson@7946.0.10":
   version "7946.0.10"
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.10.tgz#6dfbf5ea17142f7f9a043809f1cd4c448cb68249"
   integrity sha512-Nmh0K3iWQJzniTuPRcJn5hxXkfB1T1pgB89SBig5PlJQU5yocazeu4jATJlaA0GYFKWMqDdvYemoSnF2pXgLVA==
@@ -2633,13 +2622,6 @@
   version "0.141.0"
   resolved "https://registry.yarnpkg.com/@types/three/-/three-0.141.0.tgz#d9d81a54b28ebc2a56931dfd4d9c54d25c20d6c8"
   integrity sha512-OJdKDgTPVBUgc+s74DYoy4aLznbFFC38Xm4ElmU1YwGNgR7GGFVvFCX7lpVgOsT6S1zSJtGdajTsOYE8/xY9nA==
-  dependencies:
-    "@types/webxr" "*"
-
-"@types/three@0.144.0":
-  version "0.144.0"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.144.0.tgz#a154f40122dbc3668c5424a5373f3965c6564557"
-  integrity sha512-psvEs6q5rLN50jUYZ3D4pZMfxTbdt3A243blt0my7/NcL6chaCZpHe2csbCtx0SOD9fI/XnF3wnVUAYZGqCSYg==
   dependencies:
     "@types/webxr" "*"
 
@@ -4835,11 +4817,6 @@ geo-three@^0.0.15:
   dependencies:
     "@types/offscreencanvas" "^2019.6.3"
 
-geojson@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/geojson/-/geojson-0.5.0.tgz#3cd6c96399be65b56ee55596116fe9191ce701c0"
-  integrity sha512-/Bx5lEn+qRF4TfQ5aLu6NH+UKtvIv7Lhc487y/c8BdludrCTpiWf9wyI0RTyqg49MFefIAvFDuEi5Dfd/zgNxQ==
-
 get-caller-file@^2.0.1:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-2.0.5.tgz#4f94412a82db32f36e3b0b9741f8a97feb031f7e"
@@ -6145,6 +6122,11 @@ loglevel@1.8.0, loglevel@^1.7.1:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.8.0.tgz#e7ec73a57e1e7b419cb6c6ac06bf050b67356114"
   integrity sha512-G6A/nJLRgWOuuwdNuA6koovfEV1YpqqAG4pRUlFaz3jj2QNZ8M4vBqnVA+HBTmU/AMNUtlOsMmSpF6NyOjztbA==
+
+loglevel@1.8.1:
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.8.1.tgz#5c621f83d5b48c54ae93b6156353f555963377b4"
+  integrity sha512-tCRIJM51SHjAayKwC+QAg8hT8vg6z7GSgLJKGvzuPb1Wc+hLzqtuVLxp6/HzSPOozuK+8ErAhy7U/sVzw8Dgfg==
 
 loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.2.0, loose-envify@^1.3.1, loose-envify@^1.4.0:
   version "1.4.0"

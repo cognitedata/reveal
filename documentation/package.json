@@ -38,7 +38,7 @@
     "replace-latest-by-next": "yarn replace-4.x"
   },
   "dependencies": {
-    "@azure/msal-browser": "2.30.0",
+    "@azure/msal-browser": "2.31.0",
     "@cognite/reveal": "link:../viewer",
     "@cognite/reveal-2.x": "npm:@cognite/reveal@2.3",
     "@cognite/reveal-3.x": "npm:@cognite/reveal@3.2.1",
@@ -63,7 +63,7 @@
   "devDependencies": {
     "@types/react": "18.0.25",
     "@types/styled-components": "5.1.26",
-    "@types/three": "0.144.0",
+    "@types/three": "0.146.0",
     "docusaurus-plugin-typedoc": "0.17.5",
     "replace": "1.2.2",
     "rimraf": "3.0.2",
