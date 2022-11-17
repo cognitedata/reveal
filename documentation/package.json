@@ -17,7 +17,9 @@
     "start": "cross-env HTTPS=true NODE_OPTIONS=--max_old_space_size=8196 docusaurus start --port=9000",
     "build": "cross-env NODE_OPTIONS=--max_old_space_size=4096 docusaurus build",
     "build:fast": "cross-env NODE_OPTIONS=--max_old_space_size=4096 docusaurus build --no-minify",
-    "swizzle": "docusaurus swizzle"
+    "swizzle": "docusaurus swizzle",
+    "ws:copyfiles": "copyfiles",
+    "ws:replace": "replace"
   },
   "dependencies": {
     "@azure/msal-browser": "2.31.0",
@@ -37,6 +39,7 @@
   "devDependencies": {
     "@types/react": "18.0.25",
     "@types/styled-components": "5.1.26",
+    "copyfiles": "2.4.1",
     "docusaurus-plugin-typedoc": "0.17.5",
     "replace": "1.2.2",
     "rimraf": "3.0.2",

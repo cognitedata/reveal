@@ -6,18 +6,13 @@
   "scripts": {
     "replace-4.x:copy-docs": "yarn copyfiles -u 3 -e \"../../docs/**/*.json\" -e \"../../docs/**/*.lock\" \"../../docs/**/*\" .",
     "replace-4.x:update-site-imports": "yarn replace \"'@site/docs/\" \"'@site/versioned_docs/version-4.x/\" . --include '*.ts*,*.mdx' -r",
-    "replace-4.x:update-sdk": "yarn replace \"\\'@cognite/sdk\\'\" \"''@cognite/sdk-4.x''\" . --include '*.ts*' -r",
-    "replace-4.x:update-reveal": "yarn replace \"\\'@cognite/reveal\\'\" \"''@cognite/reveal-4.x''\" . --include '*.ts*' -r",
     "replace-4.x:update-runnable": "yarn replace '^```(js[x]?) runnable$' '```$1 runnable-4x' . --include '*.mdx' -r",
-    "replace-4.x": "yarn add @types/three@0.146.0 && yarn replace-4.x:copy-docs && yarn replace-4.x:update-sdk && yarn replace-4.x:update-reveal && yarn replace-4.x:update-runnable && yarn replace-4.x:update-site-imports"
+    "replace-4.x": "yarn replace-4.x:copy-docs && yarn replace-4.x:update-runnable && yarn replace-4.x:update-site-imports"
   },
   "dependencies": {
-    "@cognite/reveal": "link:../../viewer/dist",
-    "@cognite/sdk": "link:../../viewer/node_modules/@cognite/sdk",
-    "@docusaurus/core": "^2.2.0",
-    "@types/three": "0.146.0",
-    "copyfiles": "2.4.1",
-    "replace": "1.2.2",
-    "three": "link:../../viewer/node_modules/three"
+    "@cognite/reveal": "link:../../../viewer/dist",
+    "@cognite/sdk": "link:../../../viewer/node_modules/@cognite/sdk",
+    "@types/three": "link:../../../viewer/node_modules/@types/three",
+    "three": "link:../../../viewer/node_modules/three"
   }
 }

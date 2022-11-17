@@ -2006,8 +2006,8 @@ __metadata:
     "@docusaurus/theme-live-codeblock": 2.2.0
     "@types/react": 18.0.25
     "@types/styled-components": 5.1.26
-    "@types/three": 0.146.0
     clsx: 1.2.1
+    copyfiles: 2.4.1
     cross-env: 7.0.3
     docusaurus-plugin-typedoc: 0.17.5
     ieee754: 1.2.1
@@ -2035,15 +2035,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
+"@cognite/reveal@link:../../../viewer/dist::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
   version: 0.0.0-use.local
-  resolution: "@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
+  resolution: "@cognite/reveal@link:../../../viewer/dist::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
   languageName: node
   linkType: soft
 
-"@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
+"@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
-  resolution: "@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
+  resolution: "@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
   languageName: node
   linkType: soft
 
@@ -2134,15 +2134,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk@link:../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
+"@cognite/sdk@link:../../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
   version: 0.0.0-use.local
-  resolution: "@cognite/sdk@link:../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
+  resolution: "@cognite/sdk@link:../../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
   languageName: node
   linkType: soft
 
-"@cognite/sdk@link:../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
+"@cognite/sdk@link:../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
-  resolution: "@cognite/sdk@link:../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
+  resolution: "@cognite/sdk@link:../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
   languageName: node
   linkType: soft
 
@@ -2205,7 +2205,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/core@npm:2.2.0, @docusaurus/core@npm:^2.2.0":
+"@docusaurus/core@npm:2.2.0":
   version: 2.2.0
   resolution: "@docusaurus/core@npm:2.2.0"
   dependencies:
@@ -3015,13 +3015,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal-documentation/v4@workspace:versioned_docs/version-4.x"
   dependencies:
-    "@cognite/reveal": "link:../../viewer/dist"
-    "@cognite/sdk": "link:../../viewer/node_modules/@cognite/sdk"
-    "@docusaurus/core": ^2.2.0
-    "@types/three": 0.146.0
-    copyfiles: 2.4.1
-    replace: 1.2.2
-    three: "link:../../viewer/node_modules/three"
+    "@cognite/reveal": "link:../../../viewer/dist"
+    "@cognite/sdk": "link:../../../viewer/node_modules/@cognite/sdk"
+    "@types/three": "link:../../../viewer/node_modules/@types/three"
+    three: "link:../../../viewer/node_modules/three"
   languageName: unknown
   linkType: soft
 
@@ -3623,6 +3620,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/three@link:../../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
+  version: 0.0.0-use.local
+  resolution: "@types/three@link:../../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
+  languageName: node
+  linkType: soft
+
 "@types/three@link:../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
   resolution: "@types/three@link:../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
@@ -3642,15 +3645,6 @@ __metadata:
   dependencies:
     "@types/webxr": "*"
   checksum: b4d1fd19eec01a15374a9e0a181207f0b2a27df881f3cfc63ce167b36b214c6926d80ac0eeb80c365832f69e7180db514a859808150ece1c1503a4eb58d4ac1e
-  languageName: node
-  linkType: hard
-
-"@types/three@npm:0.146.0":
-  version: 0.146.0
-  resolution: "@types/three@npm:0.146.0"
-  dependencies:
-    "@types/webxr": "*"
-  checksum: f8ea5ba032f6aaa1cb5ad7dfbbd13851e8cba04365bc7fa9a5320ea7e9a2538ea5f2426391f690f0465347ade15cc145d5dc84b1730d8cceea89f746231f667c
   languageName: node
   linkType: hard
 
@@ -12108,15 +12102,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@link:../../viewer/node_modules/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
+"three@link:../../../viewer/node_modules/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
   version: 0.0.0-use.local
-  resolution: "three@link:../../viewer/node_modules/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
+  resolution: "three@link:../../../viewer/node_modules/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
   languageName: node
   linkType: soft
 
-"three@link:../../viewer/node_modules/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
+"three@link:../../viewer/node_modules/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
-  resolution: "three@link:../../viewer/node_modules/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
+  resolution: "three@link:../../viewer/node_modules/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
   languageName: node
   linkType: soft
 
