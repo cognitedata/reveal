@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Badge,
   Button,
   Detail,
   Dropdown,
@@ -7,6 +8,7 @@ import {
   Menu,
   Popconfirm,
   Tooltip,
+  Colors,
 } from '@cognite/cogs.js';
 import { pushMetric } from 'src/utils/pushMetric';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -54,6 +56,18 @@ export const BulkActionMenu = ({
     forceRerender: true,
   });
 
+  const showAlphaBadge = (
+    <Tooltip
+      wrapped
+      content="This feature is in alpha and in limited availability"
+    >
+      <Badge
+        text="alpha"
+        background={Colors['text-icon--status-warning--inverted']}
+      />
+    </Tooltip>
+  );
+
   const MenuContent = (
     <Menu
       style={{
@@ -76,33 +90,10 @@ export const BulkActionMenu = ({
           </>
         </Menu.Item>
       )}
-      {visionMLEnabled && onContextualise && (
-        <Menu.Item onClick={onContextualise} disabled={!count || !inLimit}>
-          <Tooltip
-            content={
-              <span data-testid="text-content">{exceededLimitMessage}</span>
-            }
-            disabled={!!inLimit}
-          >
-            <div style={{ display: 'flex' }}>
-              <Icon type="Scan" style={{ marginRight: 17 }} />
-              <Detail strong style={{ color: 'inherit' }}>
-                Contextualise {count}
-              </Detail>
-            </div>
-          </Tooltip>
-        </Menu.Item>
-      )}
       {onReview && (
         <Menu.Item onClick={onReview} disabled={!count}>
           <Icon type="Edit" style={{ marginRight: 17 }} />
           <Detail strong>Review {count}</Detail>
-        </Menu.Item>
-      )}
-      {visionAutoMLEnabled && onTrainModel && (
-        <Menu.Item onClick={onTrainModel} disabled={!count}>
-          <Icon type="Network" style={{ marginRight: 17 }} />
-          <Detail strong>Train Model {count}</Detail>
         </Menu.Item>
       )}
       {onDownload && (
@@ -139,6 +130,32 @@ export const BulkActionMenu = ({
             </Detail>
           </Menu.Item>
         </Popconfirm>
+      )}
+      {visionMLEnabled && onContextualise && (
+        <Menu.Item onClick={onContextualise} disabled={!count || !inLimit}>
+          <Tooltip
+            content={
+              <span data-testid="text-content">{exceededLimitMessage}</span>
+            }
+            disabled={!!inLimit}
+          >
+            <div style={{ display: 'flex' }}>
+              <Icon type="Scan" style={{ marginRight: 17 }} />
+              <Detail strong style={{ color: 'inherit' }}>
+                Contextualize {count}
+                {showAlphaBadge}
+              </Detail>
+            </div>
+          </Tooltip>
+        </Menu.Item>
+      )}
+      {visionAutoMLEnabled && onTrainModel && (
+        <Menu.Item onClick={onTrainModel} disabled={!count}>
+          <Icon type="Network" style={{ marginRight: 17 }} />
+          <Detail strong>
+            Train Model {count} {showAlphaBadge}
+          </Detail>
+        </Menu.Item>
       )}
     </Menu>
   );
