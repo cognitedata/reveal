@@ -126,4 +126,17 @@ export class ClassificationHandler {
     this._classification[key].w = visible ? 1.0 : 0.0;
     this._material.classification = this._classification;
   }
+
+  hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
+    const key = this.createPointClassKey(pointClass);
+    return this.classification[key] !== undefined;
+  }
+
+  isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
+    if (!this.hasClass(pointClass)) {
+      throw new Error(`Point cloud model doesn't have class ${pointClass}`);
+    }
+    const key = this.createPointClassKey(pointClass);
+    return this.classification[key].w !== 0.0;
+  }
 };

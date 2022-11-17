@@ -292,7 +292,7 @@ export class CognitePointCloudModel {
    * @returns The number of stylable objects
    */
   get stylableObjectCount(): number {
-    return this.pointCloudNode.potreeNode.stylableObjects.length;
+    return this.pointCloudNode.stylableObjects.length;
   }
 
   /**
@@ -305,7 +305,7 @@ export class CognitePointCloudModel {
    * ```
    */
   traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void {
-    for (const obj of this.pointCloudNode.potreeNode.stylableObjectAnnotationMetadata) {
+    for (const obj of this.pointCloudNode.stylableObjectAnnotationMetadata) {
       callback(obj);
     }
   }

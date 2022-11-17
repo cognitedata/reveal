@@ -6,5 +6,6 @@ export * from './tree/PointCloudTree';
 export * from './Potree';
 export * from './types/types';
 export * from './version';
+export * from './loading/ClassificationInfo';
 
 export { globalNumNodesLoading as numPointCloudNodesLoading } from './loading/globalLoadingCounter';

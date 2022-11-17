@@ -5,30 +5,66 @@
 import * as THREE from 'three';
 import { CameraConfiguration } from '@reveal/utilities';
 
-import { PotreeNodeWrapper } from './PotreeNodeWrapper';
+import { ClassificationInfo, PointCloudOctree, PickPoint } from './potree-three-loader';
 import { WellKnownAsprsPointClassCodes } from './types';
 
-import { PickPoint } from './potree-three-loader';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
+
+import { PointCloudObjectMetadata, PointCloudObject } from '@reveal/data-providers';
+import { ClassificationHandler } from './ClassificationHandler';
 
 import { CompletePointCloudAppearance, StyledPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 
 export class PointCloudNode extends THREE.Group {
-  private readonly _potreeNode: PotreeNodeWrapper;
   private readonly _cameraConfiguration?: CameraConfiguration;
+  private readonly _octree: PointCloudOctree;
 
-  constructor(potreeNode: PotreeNodeWrapper, cameraConfiguration?: CameraConfiguration) {
+  private readonly _annotations: PointCloudObject[];
+  private readonly _classificationHandler: ClassificationHandler;
+
+  private _needsRedraw: boolean = false;
+  private static readonly pickingWindowSize = 20;
+
+  private readonly _modelIdentifier: symbol;
+
+  constructor(
+    modelIdentifier: symbol,
+    octree: PointCloudOctree,
+    annotations: PointCloudObject[],
+    classificationInfo: ClassificationInfo,
+    cameraConfiguration?: CameraConfiguration)
+  {
     super();
+
+    this._modelIdentifier = modelIdentifier;
+
     this.name = 'PointCloudNode';
-    this._potreeNode = potreeNode;
     this._cameraConfiguration = cameraConfiguration;
-    this.add(this._potreeNode.octree);
+
+    this._octree = octree;
+    this.add(this._octree);
+
+    this._annotations = annotations;
+    this._classificationHandler = new ClassificationHandler(this._octree.material,
+                                                            classificationInfo);
 
     this.matrixAutoUpdate = false;
   }
 
-  get potreeNode(): PotreeNodeWrapper {
-    return this._potreeNode;
+  get modelIdentifier(): symbol {
+    return this._modelIdentifier;
+  }
+
+  get octree(): PointCloudOctree {
+    return this._octree;
+  }
+
+  get needsRedraw(): boolean {
+    return this._needsRedraw;
+  }
+
+  resetRedraw(): void {
+    this._needsRedraw = false;
   }
 
   get hasCameraConfiguration(): boolean {
@@ -40,39 +76,43 @@ export class PointCloudNode extends THREE.Group {
   }
 
   get pointSize(): number {
-    return this._potreeNode.pointSize;
+    return this._octree.material.size;
   }
 
   set pointSize(size: number) {
-    this._potreeNode.pointSize = size;
+    this._octree.material.size = size;
+    this._needsRedraw = true;
   }
 
   get pointSizeType(): PointSizeType {
-    return this._potreeNode.octree.pointSizeType;
+    return this._octree.pointSizeType;
   }
 
   set pointSizeType(pointSizeType: PointSizeType) {
-    this._potreeNode.octree.pointSizeType = pointSizeType;
-  }
-
-  get visiblePointCount(): number {
-    return this._potreeNode.visiblePointCount;
+    this._octree.pointSizeType = pointSizeType;
+    this._needsRedraw = true;
   }
 
   get pointColorType(): PointColorType {
-    return this._potreeNode.pointColorType;
+    return this._octree.material.pointColorType;
   }
 
   set pointColorType(type: PointColorType) {
-    this._potreeNode.pointColorType = type;
+    this._octree.material.pointColorType = type;
+    this._needsRedraw = true;
   }
 
   get pointShape(): PointShape {
-    return this._potreeNode.pointShape;
+    return this._octree.material.shape;
   }
 
   set pointShape(value: PointShape) {
-    this._potreeNode.pointShape = value;
+    this._octree.material.shape = value;
+    this._needsRedraw = true;
+  }
+
+  get visiblePointCount(): number {
+    return this._octree.numVisiblePoints;
   }
 
   /**
@@ -83,7 +123,7 @@ export class PointCloudNode extends THREE.Group {
    * @returns Picked point data.
    */
   pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
-    return this._potreeNode.pick(renderer, camera, ray);
+    return this._octree.pick(renderer, camera, ray, { pickWindowSize: PointCloudNode.pickingWindowSize });
   }
   /**
    * Sets a visible filter on points of a given class.
@@ -93,7 +133,8 @@ export class PointCloudNode extends THREE.Group {
    * @throws Error if the model doesn't have the class given.
    */
   setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
-    this._potreeNode.setClassificationAndRecompute(pointClass, visible);
+    this._classificationHandler.setClassificationAndRecompute(pointClass, visible);
+    this._needsRedraw = true;
   }
 
   /**
@@ -104,11 +145,7 @@ export class PointCloudNode extends THREE.Group {
    * @throws Error if the model doesn't have the class given.
    */
   isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
-    if (!this.hasClass(pointClass)) {
-      throw new Error(`Point cloud model doesn't have class ${pointClass}`);
-    }
-    const key = this._potreeNode.createPointClassKey(pointClass);
-    return this._potreeNode.classification[key].w !== 0.0;
+    return this._classificationHandler.isClassVisible(pointClass);
   }
 
   /**
@@ -118,8 +155,7 @@ export class PointCloudNode extends THREE.Group {
    * @returns true if model has values in the class given.
    */
   hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
-    const key = this._potreeNode.createPointClassKey(pointClass);
-    return this._potreeNode.classification[key] !== undefined;
+    return this._classificationHandler.hasClass(pointClass);
   }
 
   /**
@@ -127,11 +163,16 @@ export class PointCloudNode extends THREE.Group {
    * @returns A sorted list of classification codes from the model.
    */
   getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes }> {
-    return this._potreeNode.classes;
+    return this._classificationHandler.classes;
   }
 
   getBoundingBox(outBbox: THREE.Box3 = new THREE.Box3()): THREE.Box3 {
-    outBbox.copy(this._potreeNode.boundingBox);
+    const box: THREE.Box3 =
+      this._octree.pcoGeometry.tightBoundingBox ?? this._octree.pcoGeometry.boundingBox ?? this._octree.boundingBox;
+
+    const transformedBox = box.clone().applyMatrix4(this._octree.matrixWorld);
+
+    outBbox.copy(transformedBox);
     return outBbox;
   }
 
@@ -144,19 +185,35 @@ export class PointCloudNode extends THREE.Group {
     return out.copy(this.matrix);
   }
 
+  get stylableObjectAnnotationMetadata(): Iterable<PointCloudObjectMetadata> {
+    return this._annotations.map(a => {
+      return {
+        annotationId: a.annotationId,
+        assetId: a.assetId,
+        boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld)
+      };
+    });
+  }
+
+  get stylableObjects(): PointCloudObject[] {
+    return this._annotations;
+  }
+
   get defaultAppearance(): CompletePointCloudAppearance {
-    return this._potreeNode.defaultAppearance;
+    return this._octree.material.objectAppearanceTexture.defaultAppearance;
   }
 
   set defaultAppearance(appearance: CompletePointCloudAppearance) {
-    this._potreeNode.defaultAppearance = appearance;
+    this._octree.material.objectAppearanceTexture.defaultAppearance = appearance;
+    this._needsRedraw = true;
   }
 
   assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudObjectCollection): void {
-    this._potreeNode.assignObjectStyle(styledCollection);
+    this._octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
+    this._needsRedraw = true;
   }
 
   removeAllStyledPointCloudObjects(): void {
-    this._potreeNode.octree.material.objectAppearanceTexture.removeAllStyledObjectSets();
+    this._octree.material.objectAppearanceTexture.removeAllStyledObjectSets();
   }
 }

@@ -56,7 +56,7 @@ export class PointCloudPickingHandler {
     const intersections: PickPoint[] = [];
 
     nodes.forEach(node => {
-      const intersection = this._picker.pick(camera, this._raycaster.ray, [node.potreeNode.octree], {
+      const intersection = this._picker.pick(camera, this._raycaster.ray, [node.octree], {
         pickWindowSize: PointCloudPickingHandler.PickingWindowSize
       });
       if (intersection !== null) {
@@ -74,7 +74,7 @@ export class PointCloudPickingHandler {
         }
 
         const annotationId =
-          pointCloudNode.potreeNode.octree.material.objectAppearanceTexture.convertObjectIdToAnnotationId(x.objectId);
+          pointCloudNode.octree.material.objectAppearanceTexture.convertObjectIdToAnnotationId(x.objectId);
 
         const result: IntersectPointCloudNodeResult = {
           distance: x.position.distanceTo(camera.position),
@@ -94,7 +94,7 @@ function determinePointCloudNode(node: THREE.Object3D, candidates: PointCloudNod
     node = node.parent;
   }
   if (node instanceof PointCloudOctree) {
-    return candidates.find(x => node === x.potreeNode.octree) || null;
+    return candidates.find(x => node === x.octree) || null;
   }
   return null;
 }
