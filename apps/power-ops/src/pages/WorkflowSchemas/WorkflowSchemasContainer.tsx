@@ -53,7 +53,7 @@ export const WorkflowSchemasContainer = () => {
     <>
       <ToastContainer autoClose={1500} />
       {isLoadingWorkflowSchemas ? (
-        <Loader infoText="Loading Workflow Schemas" />
+        <Loader infoText="Loading Workflow Schemas" darkMode={false} />
       ) : (
         <WorkflowSchemas
           workflowSchemas={workflowSchemas}

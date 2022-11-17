@@ -1,5 +1,6 @@
 import { Loader } from '@cognite/cogs.js';
 import { useMetrics } from '@cognite/metrics';
+import { CommonSidebar } from 'components/CommonSidebar/CommonSidebar';
 import { Sidebar } from 'components/Sidebar/Sidebar';
 import debounce from 'lodash/debounce';
 import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
@@ -36,11 +37,11 @@ const SidebarContainer = ({
     []
   );
 
-  if (status === 'loading') return <Loader />;
+  if (status === 'loading') return <Loader darkMode={false} />;
   if (status === 'error') return <>Error fetching Bid Process</>;
 
   return (
-    <Sidebar
+    <CommonSidebar
       open={open}
       onOpenCloseClick={(fromSearch = false) => {
         onOpenClose(!open);
@@ -52,35 +53,38 @@ const SidebarContainer = ({
           );
         }
       }}
-      onNavigate={(section) => {
-        if (['total', 'price-scenarios'].includes(section)) {
-          metrics.track(`click-sidebar-${section}-link`);
-        } else {
-          trackSearchMetric(section);
-        }
-      }}
-      onSearch={(term, clear = false) => {
-        if (clear) {
-          metrics.track('click-clear-search-button');
-        } else {
-          metrics.track('type-search-input', { term });
-        }
-      }}
-      total={{
-        url: `${url}/total`,
-        current: pathname === `${url}/total`,
-      }}
-      priceScenarios={{
-        url: `${url}/price-scenarios`,
-        current: pathname === `${url}/price-scenarios`,
-      }}
-      plants={bidProcessResult.plants.sort(sortPlants).map((plant) => ({
-        name: plant.displayName,
-        externalId: plant.externalId,
-        url: `${url}/${plant.externalId}`,
-        current: pathname === `${url}/${plant.externalId}`,
-      }))}
-    />
+    >
+      <Sidebar
+        onNavigate={(section) => {
+          if (['total', 'price-scenarios'].includes(section)) {
+            metrics.track(`click-sidebar-${section}-link`);
+          } else {
+            trackSearchMetric(section);
+          }
+        }}
+        onSearch={(term, clear = false) => {
+          if (clear) {
+            metrics.track('click-clear-search-button');
+          } else {
+            metrics.track('type-search-input', { term });
+          }
+        }}
+        total={{
+          url: `${url}/total`,
+          current: pathname === `${url}/total`,
+        }}
+        priceScenarios={{
+          url: `${url}/price-scenarios`,
+          current: pathname === `${url}/price-scenarios`,
+        }}
+        plants={bidProcessResult.plants.sort(sortPlants).map((plant) => ({
+          name: plant.displayName,
+          externalId: plant.externalId,
+          url: `${url}/${plant.externalId}`,
+          current: pathname === `${url}/${plant.externalId}`,
+        }))}
+      />
+    </CommonSidebar>
   );
 };
 

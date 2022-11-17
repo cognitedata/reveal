@@ -17,7 +17,7 @@ import { EventStreamContext } from 'providers/eventStreamProvider';
 import { CopyButton } from 'components/CopyButton/CopyButton';
 import { useFetchProcesses } from 'queries/useFetchProcesses';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
-import { ReusableTable } from 'components/ReusableTable';
+import { CommonTable } from 'components/CommonTable';
 
 import { handleCopyButtonClick, processColumns } from './utils';
 import {
@@ -226,7 +226,7 @@ export const WorkflowSingle = () => {
           </Collapse.Panel>
         </CollapseContainer>
         {processes?.length ? (
-          <ReusableTable data={processes} columns={processColumns} />
+          <CommonTable data={processes} columns={processColumns} />
         ) : (
           <EmptyStateContainer className="processes">
             <Graphic type="Search" />

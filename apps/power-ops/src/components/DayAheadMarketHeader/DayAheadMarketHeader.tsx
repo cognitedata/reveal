@@ -1,12 +1,11 @@
-import { Body, Button, Dropdown, Icon, Label, Menu } from '@cognite/cogs.js';
+import { Body, Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { formatDate } from 'utils/utils';
 import { BidProcessConfiguration } from '@cognite/power-ops-api-types';
+import { CommonHeader } from 'components/CommonHeader/CommonHeader';
 
 import {
-  Header,
   StyledModal,
   VerticalSeparator,
-  StyledTitle,
   MethodItem,
   MethodButton,
 } from './elements';
@@ -40,7 +39,10 @@ export const DayAheadMarketHeader = ({
   onDownloadButtonClick,
 }: Props) => {
   return (
-    <Header>
+    <CommonHeader
+      title={`Price Area ${priceAreaName}`}
+      titleLabel={`Matrix generation started: ${startDate}`}
+    >
       <StyledModal
         testId="confirm-download-modal"
         visible={showConfirmDownloadModal}
@@ -60,16 +62,10 @@ export const DayAheadMarketHeader = ({
           proceed?
         </Body>
       </StyledModal>
-      <div>
-        <StyledTitle level={5}>Price Area {priceAreaName}</StyledTitle>
-        <Label size="small" variant="unknown">
-          {startDate && <>Matrix generation started: {startDate}</>}
-        </Label>
-      </div>
       <div className="right-side">
         <Dropdown
           content={
-            <Menu>
+            <Menu data-testid="method-selector-menu">
               {processConfigurations.map((config) => (
                 <Menu.Item
                   selected={
@@ -81,6 +77,7 @@ export const DayAheadMarketHeader = ({
                       config.bidProcessEventExternalId
                     )
                   }
+                  data-testid="method-selector-menu-item"
                 >
                   <MethodItem>
                     <div>
@@ -101,7 +98,7 @@ export const DayAheadMarketHeader = ({
             </Menu>
           }
         >
-          <MethodButton type="tertiary">
+          <MethodButton type="tertiary" data-testid="method-button">
             <div className="method-name">
               <b>Method:&nbsp;</b>
               {bidProcessExternalId === '' && 'Loading...'}
@@ -117,6 +114,7 @@ export const DayAheadMarketHeader = ({
         </Dropdown>
         <VerticalSeparator />
         <Button
+          data-testid="download-button"
           icon="Download"
           type="primary"
           loading={downloading}
@@ -128,6 +126,6 @@ export const DayAheadMarketHeader = ({
           Download
         </Button>
       </div>
-    </Header>
+    </CommonHeader>
   );
 };

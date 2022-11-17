@@ -9,7 +9,7 @@ import { useFetchWorkflowSchemas } from 'queries/useFetchWorkflowSchemas';
 import { EVENT_STATUSES } from 'utils/utils';
 import { useFetchWorkflowTypes } from 'queries/useFetchWorkflowTypes';
 import queryString from 'query-string';
-import { ReusableTable } from 'components/ReusableTable';
+import { CommonTable } from 'components/CommonTable';
 
 import { Container, EmptyStateContainer, SearchAndFilter } from './elements';
 import { workflowsColumns } from './utils';
@@ -187,7 +187,7 @@ export const Workflows = () => {
         />
       </SearchAndFilter>
       {filteredWorkflows?.length ? (
-        <ReusableTable data={filteredWorkflows} columns={workflowsColumns} />
+        <CommonTable data={filteredWorkflows} columns={workflowsColumns} />
       ) : (
         <EmptyStateContainer className="workflows">
           <Graphic type="Search" />

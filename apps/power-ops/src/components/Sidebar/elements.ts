@@ -48,7 +48,6 @@ export const Header = styled.span`
 `;
 
 export const PanelContent = styled.div`
-  position: absolute;
   padding: 16px;
   max-height: calc(100% - 138px);
   width: 100%;

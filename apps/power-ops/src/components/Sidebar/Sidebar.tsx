@@ -1,19 +1,10 @@
-import { Button, Detail } from '@cognite/cogs.js';
+import { Detail } from '@cognite/cogs.js';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import {
-  Header,
-  PanelContent,
-  StyledPanel,
-  StyledSearch,
-  StyledButton,
-  Footer,
-} from './elements';
+import { Header, PanelContent, StyledSearch, StyledButton } from './elements';
 
 type Props = {
-  open: boolean;
-  onOpenCloseClick: () => void;
   onNavigate?: (section: 'total' | 'price-scenarios' | string) => void;
   onSearch?: (term: string, clear?: boolean) => void;
   total: { url: string; current: boolean };
@@ -27,17 +18,13 @@ type Props = {
 };
 
 export const Sidebar = ({
-  open,
   plants,
   total,
   priceScenarios,
   onSearch,
-  onOpenCloseClick,
   onNavigate,
 }: Props) => {
   const [query, setQuery] = useState('');
-  const [focused, setFocused] = useState(false);
-  const [resize, setResize] = useState(false);
 
   const filteredPlants = plants.filter((plant) =>
     plant.name.toLowerCase().includes(query.toLowerCase())
@@ -55,81 +42,48 @@ export const Sidebar = ({
   };
 
   return (
-    <StyledPanel sidePanelOpened={open}>
+    <>
       <Header>
-        {open ? (
-          <StyledSearch
-            data-testid="plant-search-input"
-            icon="Search"
-            placeholder="Search plants"
-            autoFocus={focused}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              onSearch?.(e.target.value);
-            }}
-            value={query}
-            clearable={{
-              callback: handleClearQuery,
-            }}
-          />
-        ) : (
-          <Button
-            type="secondary"
-            aria-label="Open search field"
-            icon={open ? 'PanelLeft' : 'PanelRight'}
-            onClick={() => {
-              onOpenCloseClick();
-              setFocused(true);
-            }}
-          />
-        )}
-      </Header>
-      {open && (
-        <PanelContent>
-          <Detail>Price area overview</Detail>
-          <NavLink to={total.url} onClick={() => handleNavigate('total')}>
-            <StyledButton toggled={total.current} key="total">
-              <p>Total</p>
-            </StyledButton>
-          </NavLink>
-          <NavLink
-            to={priceScenarios.url}
-            onClick={() => handleNavigate('price-scenarios')}
-          >
-            <StyledButton
-              toggled={priceScenarios.current}
-              key="price-scenarios"
-            >
-              <p>Price Scenarios</p>
-            </StyledButton>
-          </NavLink>
-          <Detail>Plants</Detail>
-          {filteredPlants.map(({ name, url, current, externalId }) => (
-            <NavLink
-              to={url}
-              key={externalId}
-              onClick={() => handleNavigate(externalId)}
-            >
-              <StyledButton toggled={current} key={externalId}>
-                <p>{name}</p>
-              </StyledButton>
-            </NavLink>
-          ))}
-        </PanelContent>
-      )}
-      <Footer onTransitionEnd={() => setResize(!resize)}>
-        <Button
-          type="secondary"
-          aria-label="Show or hide sidebar"
-          icon={open ? 'PanelLeft' : 'PanelRight'}
-          onClick={() => {
-            onOpenCloseClick();
-            setFocused(false);
+        <StyledSearch
+          data-testid="plant-search-input"
+          icon="Search"
+          placeholder="Search plants"
+          onChange={(e) => {
+            setQuery(e.target.value);
+            onSearch?.(e.target.value);
           }}
+          value={query}
+          clearable={{ callback: handleClearQuery }}
+        />
+      </Header>
+      <PanelContent>
+        <Detail>Price area overview</Detail>
+        <NavLink to={total.url} onClick={() => handleNavigate('total')}>
+          <StyledButton toggled={total.current} key="total">
+            <p>Total</p>
+          </StyledButton>
+        </NavLink>
+        <NavLink
+          to={priceScenarios.url}
+          onClick={() => handleNavigate('price-scenarios')}
         >
-          {open && 'Hide'}
-        </Button>
-      </Footer>
-    </StyledPanel>
+          <StyledButton toggled={priceScenarios.current} key="price-scenarios">
+            <p>Price Scenarios</p>
+          </StyledButton>
+        </NavLink>
+        <Detail>Plants</Detail>
+        {filteredPlants.map(({ name, url, current, externalId }) => (
+          <NavLink
+            to={url}
+            key={externalId}
+            onClick={() => handleNavigate(externalId)}
+          >
+            <StyledButton toggled={current} key={externalId}>
+              <p>{name}</p>
+            </StyledButton>
+          </NavLink>
+        ))}
+      </PanelContent>
+    </>
   );
 };

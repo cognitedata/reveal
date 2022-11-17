@@ -21,11 +21,19 @@ export const MenuBar = () => {
   const history = useHistory();
   const { pathname } = useLocation();
 
-  const [visible, setVisible] = useState<boolean>(false);
+  const [dayAheadMarketDropdownVisible, setDayAheadMarketDropdownVisible] =
+    useState<boolean>(false);
+  const [balancingMarketsDropdownVisible, setBalancingMarketsDropdownVisible] =
+    useState<boolean>(false);
+
   const { data: allPriceAreas = [] } = useFetchPriceAreas();
 
-  const toggleDropdown = () => {
-    setVisible(!visible);
+  const toggleDayAheadMarketDropdown = () => {
+    setDayAheadMarketDropdownVisible(!dayAheadMarketDropdownVisible);
+  };
+
+  const toggleBalancingMarketsDropdown = () => {
+    setBalancingMarketsDropdownVisible(!balancingMarketsDropdownVisible);
   };
 
   return (
@@ -38,7 +46,11 @@ export const MenuBar = () => {
             Temporary fix until dropdown functionality is added to TopBar in the Design System
         */}
         <Icon
-          type={visible ? 'ChevronUpSmall' : 'ChevronDownSmall'}
+          type={
+            dayAheadMarketDropdownVisible
+              ? 'ChevronUpSmall'
+              : 'ChevronDownSmall'
+          }
           style={{
             position: 'absolute',
             top: '19.5px',
@@ -46,9 +58,9 @@ export const MenuBar = () => {
           }}
         />
         <Dropdown
-          className="top-bar-dropdown"
-          visible={visible}
-          onClickOutside={() => setVisible(false)}
+          className="day-ahead-market-dropdown"
+          visible={dayAheadMarketDropdownVisible}
+          onClickOutside={() => setDayAheadMarketDropdownVisible(false)}
           content={
             <StyledMenu>
               <Menu.Header>Price Areas</Menu.Header>
@@ -79,12 +91,54 @@ export const MenuBar = () => {
             </StyledMenu>
           }
         />
+        <Icon
+          type={
+            balancingMarketsDropdownVisible
+              ? 'ChevronUpSmall'
+              : 'ChevronDownSmall'
+          }
+          style={{
+            position: 'absolute',
+            top: '19.5px',
+            left: '597px',
+          }}
+        />
+        <Dropdown
+          className="balancing-markets-dropdown"
+          visible={balancingMarketsDropdownVisible}
+          onClickOutside={() => setBalancingMarketsDropdownVisible(false)}
+          content={
+            <StyledMenu style={{ position: 'absolute', left: '164px' }}>
+              <Menu.Item
+                selected={pathname.includes(`${PAGES.BALANCING_MARKETS}`)}
+                key="rkom"
+                onClick={() => {
+                  history.push({
+                    pathname: PAGES.RKOM_BID,
+                  });
+                }}
+                appendIcon={
+                  pathname.includes(`${PAGES.RKOM_BID}`)
+                    ? 'Checkmark'
+                    : undefined
+                }
+              >
+                RKOM
+              </Menu.Item>
+            </StyledMenu>
+          }
+        />
         <TopBar.Navigation
           links={[
             {
               name: 'Day Ahead Market',
               isActive: pathname.includes(PAGES.DAY_AHEAD_MARKET),
-              onClick: () => toggleDropdown(),
+              onClick: () => toggleDayAheadMarketDropdown(),
+            },
+            {
+              name: 'Balancing Markets',
+              isActive: pathname.includes(PAGES.BALANCING_MARKETS),
+              onClick: () => toggleBalancingMarketsDropdown(),
             },
             {
               name: 'Workflows',

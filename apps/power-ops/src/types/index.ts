@@ -56,11 +56,33 @@ export interface ShopRunPenalties
   scenario: string;
 }
 
+export type RKOMTableData = {
+  name: string;
+  subRows: {
+    watercourseName: string;
+    name: string;
+    generationDate: string;
+    bidDate: string;
+    minimumPrice: string;
+    premiumPrice: string;
+    penalties?: string;
+    subRows: [
+      {
+        sequenceExternalId: string;
+      }
+    ];
+  }[];
+}[];
+
 export enum PAGES {
   HOME = '/home',
   PRICE_AREA = '/day-ahead-market/:priceAreaExternalId',
-  PORTFOLIO = '/portfolio', // Deprecated, should use "DAY_AHEAD_MARKET"
+  /** @deprecated - use "DAY_AHEAD_MARKET" instead */
+  PORTFOLIO = '/portfolio',
   DAY_AHEAD_MARKET = '/day-ahead-market',
+  BALANCING_MARKETS = '/balancing-markets',
+  RKOM_BID = '/balancing-markets/rkom/bid',
+  RKOM_PERFORMANCE = '/balancing-markets/rkom/performance',
   WORKFLOWS_SINGLE = '/workflows/:workflowExternalId',
   WORKFLOWS = '/workflows',
   WORKFLOW_SCHEMAS = '/workflow-schemas',

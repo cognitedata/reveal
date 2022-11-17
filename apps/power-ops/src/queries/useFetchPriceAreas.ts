@@ -23,3 +23,14 @@ export const useFetchPriceAreas = () => {
     staleTime: Infinity,
   });
 };
+
+export const useFetchPriceAreaOptions = () => {
+  const { data = [], ...rest } = useFetchPriceAreas();
+  return {
+    data: data.map(({ name }) => ({
+      value: name,
+      label: name,
+    })),
+    ...rest,
+  };
+};

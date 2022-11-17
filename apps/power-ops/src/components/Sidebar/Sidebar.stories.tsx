@@ -2,7 +2,8 @@ import { Meta, Story } from '@storybook/react';
 import { within, userEvent } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { Sidebar } from 'components/Sidebar/Sidebar';
-import { ComponentProps, useState } from 'react';
+import { ComponentProps } from 'react';
+import { mockDayAheadMarketSidebarPlants } from 'utils/test/mockPlants';
 
 export default {
   component: Sidebar,
@@ -13,48 +14,14 @@ export default {
   },
 } as Meta;
 
-const Template: Story<ComponentProps<typeof Sidebar>> = (args) => {
-  const [open, setOpen] = useState(args.open ?? true);
-  return (
-    <Sidebar {...args} open={open} onOpenCloseClick={() => setOpen(!open)} />
-  );
-};
+const Template: Story<ComponentProps<typeof Sidebar>> = (args) => (
+  <Sidebar {...args} />
+);
 
 export const Default = Template.bind({});
 
 Default.args = {
-  plants: [
-    {
-      name: 'Øyberget',
-      externalId: 'plant_ØYBE(2968)',
-      url: '/portfolio/price_area_NO3/plant_ØYBE(2968)',
-      current: false,
-    },
-    {
-      name: 'Rauberget pumpestasjon',
-      externalId: 'plant_RAUD(2978)',
-      url: '/portfolio/price_area_NO3/plant_RAUD(2978)',
-      current: false,
-    },
-    {
-      name: 'Nedre Otta',
-      externalId: 'plant_NOTT(251230)',
-      url: '/portfolio/price_area_NO3/plant_NOTT(251230)',
-      current: false,
-    },
-    {
-      name: 'Skjåk',
-      externalId: 'plant_SKJÅ(2986)',
-      url: '/portfolio/price_area_NO3/plant_SKJÅ(2986)',
-      current: false,
-    },
-    {
-      name: 'Framruste',
-      externalId: 'plant_FRAM(2965)',
-      url: '/portfolio/price_area_NO3/plant_FRAM(2965)',
-      current: false,
-    },
-  ],
+  plants: mockDayAheadMarketSidebarPlants,
   priceScenarios: {
     url: '/portfolio/price_area_NO3/price-scenarios',
     current: false,
@@ -65,17 +32,19 @@ Default.args = {
   },
 };
 
+export const LongList = Template.bind({});
+
+LongList.args = {
+  ...Default.args,
+  plants: Array(3)
+    .fill('')
+    .flatMap(() => mockDayAheadMarketSidebarPlants),
+};
+
 export const Interactions = Template.bind({});
 Interactions.args = { ...Default.args };
 Interactions.play = async ({ canvasElement, args }) => {
   const canvas = within(canvasElement);
-
-  // Show/Hide button tests
-  const hideButton = canvas.getByLabelText('Show or hide sidebar');
-  await userEvent.click(hideButton);
-  expect(canvas.queryByText('Price area overview')).not.toBeInTheDocument();
-  await userEvent.click(hideButton);
-  expect(canvas.getByText('Price area overview')).toBeInTheDocument();
 
   // Search Bar Tests
   const searchField = canvas.getByTestId('plant-search-input');

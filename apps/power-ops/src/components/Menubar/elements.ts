@@ -8,7 +8,7 @@ export const StyledTopBar = styled(TopBar)`
   position: sticky;
   top: 0;
   background: var(--cogs-bg-default);
-  .rc-tabs-tab:first-child {
+  .rc-tabs-tab:nth-child(-n + 2) {
     .rc-tabs-tab-btn {
       padding-right: 32px;
     }
@@ -16,7 +16,9 @@ export const StyledTopBar = styled(TopBar)`
   .cogs-icon {
     z-index: ${layers.MAXIMUM};
   }
-  .top-bar-dropdown {
+
+  .day-ahead-market-dropdown,
+  .balancing-markets-dropdown {
     background-color: transparent;
   }
 `;

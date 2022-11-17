@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Body, Infobox, Icon } from '@cognite/cogs.js';
 import { useMetrics } from '@cognite/metrics';
-import { ReusableTable } from 'components/ReusableTable';
+import { CommonTable } from 'components/CommonTable';
 import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
 import { ShopRunPenalties } from 'types';
 
@@ -84,7 +84,7 @@ export const ShopQualityAssuranceModal = ({
           shop or make adjustments to the models before sending or using this
           bid.
         </Infobox>
-        <ReusableTable
+        <CommonTable
           data={shopRunPenaltiesData}
           columns={shopRunPenaltiesColumns}
           showPagination={false}

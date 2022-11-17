@@ -7,7 +7,8 @@ import { PAGES } from 'types';
 export const DayAheadMarket = () => {
   const { data: priceAreas, status } = useFetchPriceAreas();
 
-  if (status === 'loading') return <Loader infoTitle="Loading Price Areas" />;
+  if (status === 'loading')
+    return <Loader infoTitle="Loading Price Areas" darkMode={false} />;
   if (status === 'error')
     return <NotFoundPage message="Error fetching Price Areas" />;
 
