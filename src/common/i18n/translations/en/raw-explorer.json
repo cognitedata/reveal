@@ -22,7 +22,7 @@
   "create-table-modal-file-upload-notification_cancel": "File upload was canceled.",
   "create-table-modal-file-upload-percentage": "{{percentage}}%",
   "create-table-modal-name-field-note": "The name should be unique. You can not change this name later.",
-  "create-table-modal-name-field-placeholder": "Enter Name",
+  "create-table-modal-name-field-placeholder": "Enter name",
   "create-table-modal-name-field-title": "Name",
   "create-table-modal-no-primary-key-option-description": "An auto-generated key is added as a new column. Updating data creates a new entry and can result in duplicated entries.",
   "create-table-modal-no-primary-key-option-title": "I don’t know the primary key",
