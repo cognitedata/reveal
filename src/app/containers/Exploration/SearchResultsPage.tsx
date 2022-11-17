@@ -116,7 +116,7 @@ function SearchPage() {
     setShowFilter(prevState => !prevState);
   }, []);
 
-  const handleRowClick = (item: ResourceItem) => {
+  const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
     openPreview(item.id !== activeId ? item.id : undefined);
   };
 
@@ -216,7 +216,6 @@ function SearchPage() {
                         showCount
                         onClick={handleRowClick}
                         enableAdvancedFilters={isAdvancedFiltersEnabled}
-                        x
                         onFilterChange={(newValue: Record<string, unknown>) =>
                           setSequenceFilter(newValue)
                         }
@@ -366,9 +365,7 @@ function SearchPage() {
                     showCount
                     filter={fileFilter}
                     allowEdit={editable}
-                    onClick={(item: ResourceItem) =>
-                      openPreview(item.id !== activeId ? item.id : undefined)
-                    }
+                    onClick={handleRowClick}
                     {...commonProps}
                   />
                 )}
@@ -385,9 +382,7 @@ function SearchPage() {
                   <SequenceSearchResults
                     showCount
                     enableAdvancedFilters={isAdvancedFiltersEnabled}
-                    onClick={(item: ResourceItem) =>
-                      openPreview(item.id !== activeId ? item.id : undefined)
-                    }
+                    onClick={handleRowClick}
                     filter={sequenceFilter}
                     {...commonProps}
                   />
@@ -396,9 +391,7 @@ function SearchPage() {
                   <TimeseriesSearchResults
                     showCount
                     enableAdvancedFilters={isAdvancedFiltersEnabled}
-                    onClick={(item: ResourceItem) =>
-                      openPreview(item.id !== activeId ? item.id : undefined)
-                    }
+                    onClick={handleRowClick}
                     filter={timeseriesFilter}
                     showDatePicker={!activeId}
                     {...commonProps}
@@ -408,9 +401,7 @@ function SearchPage() {
                   <EventSearchResults
                     showCount
                     enableAdvancedFilters={isAdvancedFiltersEnabled}
-                    onClick={(item: ResourceItem) =>
-                      openPreview(item.id !== activeId ? item.id : undefined)
-                    }
+                    onClick={handleRowClick}
                     filter={eventFilter}
                     {...commonProps}
                   />

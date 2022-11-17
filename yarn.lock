@@ -1602,10 +1602,10 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/data-exploration@5.47.0":
-  version "5.47.0"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.47.0.tgz#9c14f28787ae5ffd207a410479cfabf32fa5e039"
-  integrity sha512-jQHX67PCbDZJcnraSBIfpXmfe4PcEXYkdV0x5/sF6XBwEPsYGXdbNllT6+Z2KQl/B//Xuc3H23c/MY/nGZFBtw==
+"@cognite/data-exploration@5.47.5":
+  version "5.47.5"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.47.5.tgz#6e077bd1e7f850dc853906f850e162fa89dcbb37"
+  integrity sha512-YGjWsHmOfXhmAgvnezCr/w7YSp0o/WSz/18t6WOkgazh+KIa8IMXLMShDFX4oSq6oKeNTQK+0JvdqLENwD2Odw==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
@@ -1622,7 +1622,6 @@
     "@cognite/unified-file-viewer" "^2.7.1"
     "@tanstack/react-table" "^8.5.15"
     "@types/react-copy-to-clipboard" "^5.0.4"
-    "@types/react-table" "^7.0.0"
     "@visx/axis" "^2.1.0"
     "@visx/event" "^2.1.0"
     "@visx/gradient" "^2.1.0"
@@ -1641,23 +1640,18 @@
     dayjs "^1.11.1"
     dnd-core "^16.0.1"
     i18next "^21.9.1"
-    immutability-helper "^3.1.1"
     lodash "^4.17.21"
     mime-types "^2.1.30"
     query-string "^7.0.0"
-    react-base-table "^1.12.0"
     react-beautiful-dnd "^13.1.1"
     react-copy-to-clipboard "^5.1.0"
     react-datepicker "^3.7.0"
-    react-dnd "^16.0.1"
-    react-dnd-html5-backend "^16.0.1"
     react-highlight-words "^0.18.0"
     react-i18next "^11.18.5"
     react-query "^3.13.10"
     react-router-dom "6.4.2"
     react-select "^4.3.0"
     react-splitter-layout "^4.0.0"
-    react-table "^7.7.0"
     react-virtualized "^9.21.2"
     react-virtualized-auto-sizer "^1.0.5"
     react-virtualized-tree "^3.4.1"
@@ -2926,11 +2920,6 @@
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@react-dnd/shallowequal/-/shallowequal-3.0.1.tgz#8056fe046a8d10a275e321ec0557ae652d7a4d06"
   integrity sha512-XjDVbs3ZU16CO1h5Q3Ew2RPJqmZBDE/EVf1LYp6ePEffs3V/MX9ZbL5bJr8qiK5SbGmUMuDoaFgyKacYz8prRA==
-
-"@react-dnd/shallowequal@^4.0.1":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@react-dnd/shallowequal/-/shallowequal-4.0.2.tgz#d1b4befa423f692fa4abf1c79209702e7d8ae4b4"
-  integrity sha512-/RVXdLvJxLg4QKvMoM5WlwNR9ViO9z8B/qPcc+C0Sa/teJY7QG7kJ441DwzOjMYEY7GmU4dj5EcGHIkKZiQZCA==
 
 "@react-native-async-storage/async-storage@^1.15.5":
   version "1.17.7"
@@ -13038,13 +13027,6 @@ react-dnd-html5-backend@^15.1.2:
   dependencies:
     dnd-core "15.1.2"
 
-react-dnd-html5-backend@^16.0.1:
-  version "16.0.1"
-  resolved "https://registry.yarnpkg.com/react-dnd-html5-backend/-/react-dnd-html5-backend-16.0.1.tgz#87faef15845d512a23b3c08d29ecfd34871688b6"
-  integrity sha512-Wu3dw5aDJmOGw8WjH1I1/yTH+vlXEL4vmjk5p+MHxP8HuHJS1lAGeIdG/hze1AvNeXWo/JgULV87LyQOr+r5jw==
-  dependencies:
-    dnd-core "^16.0.1"
-
 react-dnd@^15.1.2:
   version "15.1.2"
   resolved "https://registry.yarnpkg.com/react-dnd/-/react-dnd-15.1.2.tgz#211b30fd842326209c63f26f1bdf1bc52eef4f64"
@@ -13053,17 +13035,6 @@ react-dnd@^15.1.2:
     "@react-dnd/invariant" "3.0.1"
     "@react-dnd/shallowequal" "3.0.1"
     dnd-core "15.1.2"
-    fast-deep-equal "^3.1.3"
-    hoist-non-react-statics "^3.3.2"
-
-react-dnd@^16.0.1:
-  version "16.0.1"
-  resolved "https://registry.yarnpkg.com/react-dnd/-/react-dnd-16.0.1.tgz#2442a3ec67892c60d40a1559eef45498ba26fa37"
-  integrity sha512-QeoM/i73HHu2XF9aKksIUuamHPDvRglEwdHL4jsp784BgUuWcg6mzfxT0QDdQz8Wj0qyRKx2eMg8iZtWvU4E2Q==
-  dependencies:
-    "@react-dnd/invariant" "^4.0.1"
-    "@react-dnd/shallowequal" "^4.0.1"
-    dnd-core "^16.0.1"
     fast-deep-equal "^3.1.3"
     hoist-non-react-statics "^3.3.2"
 
