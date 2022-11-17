@@ -2006,7 +2006,7 @@ __metadata:
     "@docusaurus/theme-live-codeblock": 2.2.0
     "@types/react": 18.0.25
     "@types/styled-components": 5.1.26
-    "@types/three": 0.144.0
+    "@types/three": 0.146.0
     clsx: 1.2.1
     cross-env: 7.0.3
     docusaurus-plugin-typedoc: 0.17.5
@@ -3642,15 +3642,6 @@ __metadata:
   dependencies:
     "@types/webxr": "*"
   checksum: b4d1fd19eec01a15374a9e0a181207f0b2a27df881f3cfc63ce167b36b214c6926d80ac0eeb80c365832f69e7180db514a859808150ece1c1503a4eb58d4ac1e
-  languageName: node
-  linkType: hard
-
-"@types/three@npm:0.144.0":
-  version: 0.144.0
-  resolution: "@types/three@npm:0.144.0"
-  dependencies:
-    "@types/webxr": "*"
-  checksum: 7ce69e1a48ba6d19dc9efb78c5c67a3e66c036f240386dd700eda7a5964e44550066ac45bc0997bd4fe7be446edae356313d992361c18415191468dfdbfb454d
   languageName: node
   linkType: hard
 
