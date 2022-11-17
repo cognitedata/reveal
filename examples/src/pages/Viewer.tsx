@@ -247,7 +247,7 @@ export function Viewer() {
         });
 
       const screenshotGui = gui.addFolder('Screenshot');
-      screenshotGui.add(guiActions, 'takeScreenshot').name('Take screenshot');
+      screenshotGui.add(guiActions, 'takeScreenshot').name('Create screenshot');
       screenshotGui.add(guiState.screenshot, 'includeUI').name('Include UI elements in the screenshot');
       const resolutionGui = screenshotGui.addFolder('Resolution');
       resolutionGui.add(guiState.screenshot.resolution, 'override').name('Override Resolution');

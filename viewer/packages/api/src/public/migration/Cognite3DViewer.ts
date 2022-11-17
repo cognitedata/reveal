@@ -1055,7 +1055,7 @@ export class Cognite3DViewer {
    * @example
    * ```js
    * // Take a screenshot with custom resolution
-   * const url = await viewer.getScreenshot(false, 1920, 1080);
+   * const url = await viewer.getScreenshot(1920, 1080);
    * ```
    * ```js
    * // Add a screenshot with resolution of the canvas to the page
@@ -1074,10 +1074,9 @@ export class Cognite3DViewer {
     const originalDomeStyle = { ...this.domElement.style };
 
     try {
-      const screenshotCamera = this.cameraManager.getCamera().clone() as THREE.PerspectiveCamera;
-      adjustCamera(screenshotCamera, width, height);
-
-      //Position and scale domElement to match requested resolution
+      // Position and scale domElement to match requested resolution.
+      // Remove observer temporarily to stop animate from running resize in the background.
+      this._domElementResizeObserver.unobserve(this._domElement);
       this.domElement.style.position = 'fixed';
       this.domElement.style.width = width + 'px';
       this.domElement.style.height = height + 'px';
@@ -1087,13 +1086,16 @@ export class Cognite3DViewer {
       this.domElement.style.left = '0px';
       this.domElement.style.top = '0px';
 
-      //We disregard pixelRatio to get the screenshot in requested resolution
+      const screenshotCamera = this.cameraManager.getCamera().clone() as THREE.PerspectiveCamera;
+      adjustCamera(screenshotCamera, width, height);
+
+      // Disregard pixelRatio to get the screenshot in requested resolution.
       const pixelRatioOverride = 1;
       this.renderer.setDrawingBufferSize(width, height, pixelRatioOverride);
       this.revealManager.render(screenshotCamera);
       if (!includeUI) return this.canvas.toDataURL();
 
-      //Force update of overlay elements
+      // Force update of overlay elements.
       this._events.sceneRendered.fire({
         frameNumber: -1,
         renderTime: -1,
@@ -1101,7 +1103,7 @@ export class Cognite3DViewer {
         camera: screenshotCamera
       });
 
-      //Draw screenshot. Again disregarding pixel ratio
+      // Draw screenshot. Again disregarding pixel ratio.
       const outCanvas = await html2canvas(this.domElement, { scale: pixelRatioOverride });
       return outCanvas.toDataURL();
     } finally {
@@ -1113,10 +1115,10 @@ export class Cognite3DViewer {
       this.domElement.style.padding = originalDomeStyle.padding;
       this.domElement.style.left = originalDomeStyle.left;
       this.domElement.style.top = originalDomeStyle.top;
+      this._domElementResizeObserver.observe(this._domElement);
 
       this.renderer.setSize(originalWidth, originalHeight);
       this.revealManager.render(this.cameraManager.getCamera());
-
       this.requestRedraw();
     }
   }
