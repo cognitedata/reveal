@@ -2,6 +2,7 @@ import React from 'react';
 import { Asset } from '@cognite/sdk';
 import { A, Body, Button, Dropdown, Flex, Menu } from '@cognite/cogs.js';
 import { RelationshipLabels } from 'types';
+import groupBy from 'lodash/groupBy';
 
 export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
 
@@ -11,6 +12,7 @@ import {
 } from 'domain/threeD';
 import { createLink } from '@cognite/cdf-utilities';
 import { DASH } from '../../../utils';
+import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
 
 export const ThreeDModelCellLink = ({
   assetId,
@@ -23,6 +25,7 @@ export const ThreeDModelCellLink = ({
     <A
       href={createLink(`/explore/threeD/${mapping.model.id}`, {
         selectedAssetId: assetId,
+        revisionId: mapping.revisionId,
       })}
       onClick={e => e.stopPropagation()}
       as="a"
@@ -39,21 +42,34 @@ export const ThreeDModelCellDropdown = ({
   assetId: number;
   mappings: DetailedMapping[];
 }) => {
+  const mappingGroups = groupBy(
+    mappings.sort((a, b) => a.model.name.localeCompare(b.model.name)),
+    ({ model }) => model.id
+  );
   return (
     <Dropdown
       content={
         <Menu onClick={e => e.stopPropagation()}>
           <Menu.Header>Models</Menu.Header>
-          {mappings.map(mapping => (
-            <Menu.Item
-              key={mapping.model.id}
-              href={createLink(`/explore/threeD/${mapping.model.id}`, {
-                selectedAssetId: assetId,
-              })}
-            >
-              {mapping.model.name}
-            </Menu.Item>
-          ))}
+
+          {Object.entries(mappingGroups).map(([id, mappings]) =>
+            mappings.map(mapping => (
+              <Menu.Item
+                key={id}
+                href={createLink(`/explore/threeD/${id}`, {
+                  selectedAssetId: assetId,
+                  revisionId: mapping.revisionId,
+                })}
+              >
+                {mapping.model.name} (
+                <TimeDisplay
+                  value={mapping.revision.createdTime}
+                  relative
+                />{' '}
+                revision)
+              </Menu.Item>
+            ))
+          )}
         </Menu>
       }
     >

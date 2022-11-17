@@ -1,11 +1,14 @@
 import { CogniteError } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery, useQueryClient, UseQueryOptions } from 'react-query';
+import uniqWith from 'lodash/uniqWith';
+import isEqual from 'lodash/isEqual';
 
 import {
   DetailedMapping,
   fetchBasicMappingsByAssetIdQuery,
   fetchThreeDModelQuery,
+  fetchThreeDRevisionQuery,
 } from 'domain/threeD';
 import { queryKeys } from 'domain/queryKeys';
 
@@ -26,14 +29,22 @@ export const useDetailedMappingsByAssetIdQuery = (
       );
 
       return Promise.all(
-        basicMappings.map(async ({ modelId, ...otherProps }) => {
-          const model = await fetchThreeDModelQuery(sdk, queryClient, modelId);
+        uniqWith(basicMappings, isEqual).map(
+          async ({ modelId, revisionId, ...otherProps }) => {
+            const [model, revision] = await Promise.all([
+              fetchThreeDModelQuery(sdk, queryClient, modelId),
+              fetchThreeDRevisionQuery(sdk, queryClient, modelId, revisionId),
+            ]);
 
-          return {
-            model,
-            ...otherProps,
-          };
-        })
+            return {
+              model,
+              revision,
+              revisionId,
+              modelId,
+              ...otherProps,
+            };
+          }
+        )
       );
     },
     options

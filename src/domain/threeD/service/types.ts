@@ -1,4 +1,4 @@
-import { Model3D } from '@cognite/sdk';
+import { Model3D, Revision3D } from '@cognite/sdk';
 
 export type BasicMapping = {
   modelId: number;
@@ -6,8 +6,7 @@ export type BasicMapping = {
   revisionId: number;
 };
 
-export type DetailedMapping = {
+export type DetailedMapping = BasicMapping & {
   model: Model3D;
-  nodeId: number;
-  revisionId: number;
+  revision: Revision3D;
 };
