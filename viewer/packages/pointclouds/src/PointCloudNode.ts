@@ -32,8 +32,8 @@ export class PointCloudNode extends THREE.Group {
     octree: PointCloudOctree,
     annotations: PointCloudObject[],
     classificationInfo: ClassificationInfo,
-    cameraConfiguration?: CameraConfiguration)
-  {
+    cameraConfiguration?: CameraConfiguration
+  ) {
     super();
 
     this._modelIdentifier = modelIdentifier;
@@ -45,8 +45,7 @@ export class PointCloudNode extends THREE.Group {
     this.add(this._octree);
 
     this._annotations = annotations;
-    this._classificationHandler = new ClassificationHandler(this._octree.material,
-                                                            classificationInfo);
+    this._classificationHandler = new ClassificationHandler(this._octree.material, classificationInfo);
 
     this.matrixAutoUpdate = false;
   }

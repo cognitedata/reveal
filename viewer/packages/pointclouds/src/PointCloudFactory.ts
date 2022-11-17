@@ -58,6 +58,12 @@ export class PointCloudFactory {
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PointCloudNode(modelIdentifier.revealInternalId, pointCloudOctree, annotationInfo, classSchema, cameraConfiguration);
+    return new PointCloudNode(
+      modelIdentifier.revealInternalId,
+      pointCloudOctree,
+      annotationInfo,
+      classSchema,
+      cameraConfiguration
+    );
   }
 }

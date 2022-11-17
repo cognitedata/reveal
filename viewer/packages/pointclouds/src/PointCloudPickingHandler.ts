@@ -73,8 +73,9 @@ export class PointCloudPickingHandler {
           throw new Error(`Coulds not find PointCloudNode for intersected point`);
         }
 
-        const annotationId =
-          pointCloudNode.octree.material.objectAppearanceTexture.convertObjectIdToAnnotationId(x.objectId);
+        const annotationId = pointCloudNode.octree.material.objectAppearanceTexture.convertObjectIdToAnnotationId(
+          x.objectId
+        );
 
         const result: IntersectPointCloudNodeResult = {
           distance: x.position.distanceTo(camera.position),
