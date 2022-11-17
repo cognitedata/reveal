@@ -149,7 +149,6 @@ export function createRevealManager(
     sceneHandler.scene,
     renderer
   );
-  sceneHandler.customObjects.push(pointCloudManager.pointCloudGroupWrapper);
   const cadManager = createCadManager(modelMetadataProvider, modelDataProvider, cadMaterialManager, {
     ...revealOptions.internal?.cad,
     continuousModelStreaming: revealOptions.continuousModelStreaming
