@@ -60,13 +60,6 @@ export function Viewer() {
       Custom: CustomCameraManager;
     }
 
-    function DowloadScreenshot(url: string, filename: string): void {
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
-    }
-
     async function main() {
       const project = urlParams.get('project');
       let modelUrl = urlParams.get('modelUrl');
@@ -196,8 +189,12 @@ export function Viewer() {
           const filename = 'example_screenshot' + (guiState.screenshot.resolution.override ? ('_' + width + 'x' + height) : '');
 
           const url = await viewer.getScreenshot(width, height, guiState.screenshot.includeUI);
-          if (url)
-            DowloadScreenshot(url, filename);
+          if (url) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+          }
         }
       };
       initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
