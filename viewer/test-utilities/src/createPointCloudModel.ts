@@ -3,11 +3,7 @@
  */
 
 import { Mock } from 'moq.ts';
-import {
-  CognitePointCloudModel,
-  PointCloudNode,
-  PotreeNodeWrapper
-} from '../../packages/pointclouds';
+import { CognitePointCloudModel, PointCloudNode, PotreeNodeWrapper } from '../../packages/pointclouds';
 
 import { Potree, PointCloudOctree } from '../../packages/pointclouds/src/potree-three-loader';
 
