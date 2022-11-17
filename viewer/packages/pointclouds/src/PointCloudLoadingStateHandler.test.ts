@@ -6,12 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { PointCloudLoadingStateHandler } from './PointCloudLoadingStateHandler';
-import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { yieldProcessing } from '../../../test-utilities';
-
-import { PointCloudOctree } from './potree-three-loader';
-import { Mock } from 'moq.ts';
-import { PointCloudMaterial } from '@reveal/rendering';
 
 describe(PointCloudLoadingStateHandler.name, () => {
   const pollLoadingStatusInterval = 1;
@@ -21,21 +16,10 @@ describe(PointCloudLoadingStateHandler.name, () => {
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
   });
   test('getLoadingStateObserver() triggers true after add', done => {
-    const dummyNode: PointCloudOctree = new Mock<PointCloudOctree>()
-      .setup(p => p.isObject3D)
-      .returns(true)
-      .setup(p => p.parent)
-      .returns(null)
-      .setup(p => p.dispatchEvent)
-      .returns((_: any) => {})
-      .setup(p => p.material)
-      .returns(new PointCloudMaterial())
-      .object();
-    const model = new PotreeNodeWrapper(Symbol('dummy'), dummyNode, [], { classificationSets: [] });
     const manager = new PointCloudLoadingStateHandler(pollLoadingStatusInterval);
 
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
-    manager.addPointCloud(model);
+    manager.onModelAdded();
   });
 });
 
