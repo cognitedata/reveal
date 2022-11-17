@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { PotreeNodeWrapper } from './PotreeNodeWrapper';
+import { PointCloudNode } from './PointCloudNode';
 import { PointCloudMetadata } from './PointCloudMetadata';
 
 import { Potree } from './potree-three-loader';
@@ -37,8 +37,8 @@ export class PointCloudFactory {
     this._pointCloudMaterialManager.dispose();
   }
 
-  async createModel(modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
-    const { modelBaseUrl, modelIdentifier } = modelMetadata;
+  async createModel(modelMetadata: PointCloudMetadata): Promise<PointCloudNode> {
+    const { modelBaseUrl, modelIdentifier, cameraConfiguration } = modelMetadata;
 
     const annotationInfoPromise = this._pointCloudObjectProvider.getPointCloudObjects(modelIdentifier);
     const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata);
@@ -58,6 +58,12 @@ export class PointCloudFactory {
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(modelIdentifier.revealInternalId, pointCloudOctree, annotationInfo, classSchema);
+    return new PointCloudNode(
+      modelIdentifier.revealInternalId,
+      pointCloudOctree,
+      annotationInfo,
+      classSchema,
+      cameraConfiguration
+    );
   }
 }
