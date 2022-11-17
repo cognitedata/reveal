@@ -39,3 +39,4 @@ export * from './TopBar';
 export * from './WorkspaceTools';
 export * from './DocumentNavigator';
 export * from './ActionToastBody.tsx';
+export * from './DocumentScanTrigger';

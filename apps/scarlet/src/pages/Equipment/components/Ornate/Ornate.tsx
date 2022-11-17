@@ -3,10 +3,15 @@ import { useEffect, useRef, useState } from 'react';
 import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
 import { v4 as uuid } from 'uuid';
 import * as PDFJS from 'pdfjs-dist';
-import { DataPanelActionType, EquipmentDocument, OrnateTag } from 'types';
+import {
+  DataPanelActionType,
+  DocumentType,
+  EquipmentDocument,
+  OrnateTag,
+} from 'types';
 import { useDataPanelDispatch, useOrnateTags } from 'hooks';
 
-import { WorkspaceTools, DocumentNavigator } from '..';
+import { WorkspaceTools, DocumentScanTrigger } from '..';
 
 import {
   getDocumentSkeleton,
@@ -26,7 +31,7 @@ export type OrnateProps = {
 };
 
 const VIEW_OFFSET_X = 200;
-const VIEW_OFFSET_Y = 600;
+const VIEW_OFFSET_Y = 300;
 const SLIDE_WIDTH = 2500;
 const SLIDE_COLUMN_GAP = 300;
 const SLIDE_ROW_GAP = 200;
@@ -49,6 +54,7 @@ export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
   const destroyDocumentLoadCallbacks = useRef<(() => void)[]>([]);
   const dataPanelDispatch = useDataPanelDispatch();
   const { tags, activeTag } = useOrnateTags();
+  const U1doc = documents?.find((doc) => doc.type === DocumentType.U1);
 
   const openDataElementCard = (tag: OrnateTag) =>
     dataPanelDispatch({
@@ -56,17 +62,6 @@ export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
       dataElement: tag.dataElement,
       detection: tag.detection,
     });
-
-  const zoomToDocument = (docExternalId: string) => {
-    if (!ornateViewer.current || !docExternalId) return;
-
-    const doc = ornateDocuments.find(
-      (ornDoc) => ornDoc.externalId === docExternalId
-    );
-
-    if (!doc) return;
-    ornateViewer.current.zoomToDocument(doc.ornateDocument);
-  };
 
   // Setup Ornate
   useEffect(() => {
@@ -253,10 +248,7 @@ export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
       ) : (
         <div id={componentContainerId} />
       )}
-      <DocumentNavigator
-        documents={documents}
-        zoomToDocument={zoomToDocument}
-      />
+      {U1doc?.id && <DocumentScanTrigger documentId={U1doc.id} />}
       <WorkspaceTools ornateRef={ornateViewer.current} />
     </Styled.Container>
   );
