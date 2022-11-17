@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import * as THREE from 'three';
 import { Cognite3DViewer } from "@cognite/reveal";
 import dat from 'dat.gui';
 

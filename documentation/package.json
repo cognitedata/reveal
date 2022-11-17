@@ -14,7 +14,7 @@
     "docs"
   ],
   "scripts": {
-    "start": "cross-env HTTPS=true NODE_OPTIONS=--max_old_space_size=8196 docusaurus start --port=9000",
+    "start": "cross-env HTTPS=true NODE_OPTIONS=--max_old_space_size=4096 docusaurus start --port=9000",
     "build": "cross-env NODE_OPTIONS=--max_old_space_size=4096 docusaurus build",
     "build:fast": "cross-env NODE_OPTIONS=--max_old_space_size=4096 docusaurus build --no-minify",
     "swizzle": "docusaurus swizzle",
