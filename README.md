@@ -1,4 +1,4 @@
-# Raw Explorer
+# RAW Explorer
 
 This repository shows how to bootstrap a [React]-based application at Cognite.
 It demonstrates best practices, such as:
