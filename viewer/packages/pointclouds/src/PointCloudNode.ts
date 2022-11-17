@@ -36,6 +36,10 @@ export class PointCloudNode extends THREE.Group {
   ) {
     super();
 
+    this.pointSize = 2;
+    this.pointColorType = PointColorType.Rgb;
+    this.pointShape = PointShape.Circle;
+
     this._modelIdentifier = modelIdentifier;
 
     this.name = 'PointCloudNode';
