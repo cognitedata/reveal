@@ -12,6 +12,7 @@ import { pixelToNormalizedDeviceCoordinates, SceneHandler } from '@reveal/utilit
 import { CogniteClient } from '@cognite/sdk';
 import { Image360Entity } from '../src/Image360Entity';
 import { degToRad } from 'three/src/math/MathUtils';
+import TWEEN from '@tweenjs/tween.js';
 
 type CdfImage360Facade = Image360Facade<{
   [key: string]: string;
@@ -55,6 +56,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       this.render();
     });
 
+    let lastClicked: Image360Entity | undefined;
     renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
       const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
@@ -67,11 +69,56 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       if (entity !== undefined) {
         await entity.activate360Image();
         entity.icon.visible = false;
+
+        if (lastClicked !== undefined) {
+          const lastClickedMesh = await ((lastClicked as any)._imageContainer as Promise<THREE.Mesh>);
+          const currentClickedMesh = await ((entity as any)._imageContainer as Promise<THREE.Mesh>);
+          lastClickedMesh.renderOrder = 1;
+          currentClickedMesh.renderOrder = 0;
+
+          const transformTo = entity.transform.toArray();
+          const translationTo = new THREE.Vector3(transformTo[12], transformTo[13], transformTo[14]);
+
+          const transformFrom = lastClicked.transform.toArray();
+          const translationFrom = new THREE.Vector3(transformFrom[12], transformFrom[13], transformFrom[14]);
+
+          const length = new THREE.Vector3().subVectors(translationTo, translationFrom).length();
+
+          lastClickedMesh.scale.set(length * 2, length * 2, length * 2);
+          currentClickedMesh.scale.set(length * 2, length * 2, length * 2);
+
+          const from = { t: 0 };
+          const to = { t: 1 };
+          const anim = new TWEEN.Tween(from)
+            .to(to, 1000)
+            .onUpdate(() => {
+              const asd = new THREE.Vector3().lerpVectors(translationFrom, translationTo, from.t);
+              camera.position.copy(asd);
+              lastClicked!.opacity = 1 - from.t;
+            })
+            .easing(num => TWEEN.Easing.Quintic.InOut(num))
+            .start(TWEEN.now());
+
+          const renderTrigger = setInterval(() => this.render(), 16);
+          anim.onComplete(() => {
+            anim.stop();
+            clearInterval(renderTrigger);
+            camera.position.copy(translationTo);
+            const cameraForward = camera.getWorldDirection(new THREE.Vector3());
+            cameraControls.target.copy(translationTo.clone().add(cameraForward.multiplyScalar(0.001)));
+            cameraControls.update();
+            lastClicked = entity;
+          });
+          return;
+        }
+
         const transform = entity.transform.toArray();
         const image360Translation = new THREE.Vector3(transform[12], transform[13], transform[14]);
         camera.position.copy(image360Translation);
-        cameraControls.target.copy(image360Translation.clone().add(new THREE.Vector3(0, 0, 0.001)));
+        const cameraForward = camera.getWorldDirection(new THREE.Vector3());
+        cameraControls.target.copy(image360Translation.clone().add(cameraForward.multiplyScalar(0.001)));
         cameraControls.update();
+        lastClicked = entity;
       }
       this.render();
     });
