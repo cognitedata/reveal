@@ -15,7 +15,7 @@ export { PointCloudIntersection } from './src/PointCloudIntersection';
 export { CognitePointCloudModel } from './src/CognitePointCloudModel';
 
 export { PotreeNodeWrapper } from './src/PotreeNodeWrapper';
-export { PotreeGroupWrapper } from './src/PotreeGroupWrapper';
+export { PointCloudLoadingStateHandler } from './src/PointCloudLoadingStateHandler';
 
 export { PointCloudFactory } from './src/PointCloudFactory';
 
