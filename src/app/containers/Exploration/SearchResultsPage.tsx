@@ -156,11 +156,7 @@ function SearchPage() {
                 );
               }}
               isDocumentEnabled={isDocumentEnabled}
-              additionalTabs={[
-                <Tabs.TabPane tab="All" key="all">
-                  <AllTab />
-                </Tabs.TabPane>,
-              ]}
+              additionalTabs={[<Tabs.TabPane tab="All" key="all" />]}
             />
           </TabsContainer>
 
@@ -189,6 +185,7 @@ function SearchPage() {
                         {...commonProps}
                       />
                     )}
+                    {currentResourceType === undefined && <AllTab />}
                     {currentResourceType === 'file' && (
                       <FileSearchResults
                         showCount
@@ -485,8 +482,9 @@ const TabsContainer = styled.div`
 const MainContainer = styled(Flex)<{ $isFilterFeatureEnabled?: boolean }>`
   padding-left: ${({ $isFilterFeatureEnabled }) =>
     $isFilterFeatureEnabled ? '0px' : '16px'};
-  height: calc(100% - 140px);
+  height: 100%;
   flex: 1;
+  overflow: auto;
 `;
 
 const FilterWrapper = styled.div`
