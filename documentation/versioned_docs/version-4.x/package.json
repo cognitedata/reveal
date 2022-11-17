@@ -4,9 +4,9 @@
   "private": true,
   "author": "Christopher Tannum <christopher.tannum@cognite.com>",
   "scripts": {
-    "replace-4.x:copy-docs": "yarn copyfiles -u 3 -e \"../../docs/**/*.json\" -e \"../../docs/**/*.lock\" \"../../docs/**/*\" .",
-    "replace-4.x:update-site-imports": "yarn replace \"'@site/docs/\" \"'@site/versioned_docs/version-4.x/\" . --include '*.ts*,*.mdx' -r",
-    "replace-4.x:update-runnable": "yarn replace '^```(js[x]?) runnable$' '```$1 runnable-4x' . --include '*.mdx' -r",
+    "replace-4.x:copy-docs": "yarn ws:copyfiles -u 3 -e \"../../docs/**/*.json\" -e \"../../docs/**/*.lock\" \"../../docs/**/*\" .",
+    "replace-4.x:update-site-imports": "yarn ws:replace \"'@site/docs/\" \"'@site/versioned_docs/version-4.x/\" . --include '*.ts*,*.mdx' -r",
+    "replace-4.x:update-runnable": "yarn ws:replace '^```(js[x]?) runnable$' '```$1 runnable-4x' . --include '*.mdx' -r",
     "replace-4.x": "yarn replace-4.x:copy-docs && yarn replace-4.x:update-runnable && yarn replace-4.x:update-site-imports"
   },
   "dependencies": {
