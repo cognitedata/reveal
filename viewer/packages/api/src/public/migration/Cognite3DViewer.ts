@@ -207,8 +207,8 @@ export class Cognite3DViewer {
     const threejsRequiredVersion = viewerPackageJson.peerDependencies.three.split('.')[1].toString();
     if (threejsRequiredVersion != THREE.REVISION) {
       log.warn(
-        'Loaded ThreeJS version is different from Reveal depended version. Upgrade ThreeJS version to ',
-        threejsRequiredVersion
+        `The version of the dependency \"three\" is different from what Reveal expects, which may cause unexpected results.
+        In case of unexpected issues, please set the version to ${viewerPackageJson.peerDependencies.three}`
       );
     }
     this._renderer = options.renderer ?? createRenderer();
