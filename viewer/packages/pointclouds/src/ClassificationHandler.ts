@@ -16,20 +16,16 @@ type ClassificationMap = { [key: string]: { rgb: Color; code: number } };
 const PotreeDefaultPointClass = 'DEFAULT';
 
 export class ClassificationHandler {
-
   private readonly _classification: PointClassification;
   private readonly _material: PointCloudMaterial;
   private readonly _classNameToCodeMap: ClassificationMap;
 
-  constructor(
-    material: PointCloudMaterial,
-    classificationInfo: ClassificationInfo
-  ) {
+  constructor(material: PointCloudMaterial, classificationInfo: ClassificationInfo) {
     this._material = material;
-    this._classification = this._material.classification;
-    this._classNameToCodeMap = this.createClassNameToCodeMap(classificationInfo);
 
-    this.updateMaterialClassMap(this._classNameToCodeMap);
+    this._classNameToCodeMap = this.createClassNameToCodeMap(classificationInfo);
+    this._classification = this.createClassificationFromClassificationMap(this._classNameToCodeMap);
+    this._material.classification = this._classification;
   }
 
   private createClassNameToCodeMap(classificationInfo: ClassificationInfo): ClassificationMap {
@@ -53,7 +49,7 @@ export class ClassificationHandler {
   }
 
   private createDefaultClassNameToCodeMap(): ClassificationMap {
-    const classNames = Object.keys(this._classification);
+    const classNames = Object.keys(DEFAULT_CLASSIFICATION);
 
     const classMap: { [key: string]: { rgb: Color; code: number } } = {};
     const fallbackColors = createDistinctColors(classNames.length);
@@ -68,7 +64,7 @@ export class ClassificationHandler {
   }
 
   private getDefaultClassColor(name: string): Color | undefined {
-    if (!DEFAULT_CLASSIFICATION[name]) {
+    if (!(name in DEFAULT_CLASSIFICATION)) {
       return undefined;
     }
 
@@ -80,12 +76,14 @@ export class ClassificationHandler {
     return WellKnownAsprsPointClassCodes[code] ?? `Class ${code}`;
   }
 
-  private updateMaterialClassMap(classificationMap: ClassificationMap) {
+  private createClassificationFromClassificationMap(classificationMap: ClassificationMap): PointClassification {
+    const classification: PointClassification = { DEFAULT: DEFAULT_CLASSIFICATION.DEFAULT };
     Object.keys(classificationMap).forEach(name => {
       const color = classificationMap[name].rgb;
-      this._classification[classificationMap[name].code] = new Vector4(...color.toArray(), 1.0);
+      classification[classificationMap[name].code] = new Vector4(...color.toArray(), 1.0);
     });
-    this._material.classification = this._classification;
+
+    return classification;
   }
 
   get classification(): PointClassification {
@@ -102,9 +100,9 @@ export class ClassificationHandler {
   }
 
   createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes): number {
-
-    if (this._classNameToCodeMap[this.getClassNameFromCode(pointClass)] !== undefined) {
-      return this._classNameToCodeMap[this.getClassNameFromCode(pointClass)].code;
+    const className = this.getClassNameFromCode(pointClass);
+    if (className in this._classNameToCodeMap) {
+      return this._classNameToCodeMap[className].code;
     }
 
     if (typeof pointClass === 'string') {
@@ -139,4 +137,4 @@ export class ClassificationHandler {
     const key = this.createPointClassKey(pointClass);
     return this.classification[key].w !== 0.0;
   }
-};
+}
