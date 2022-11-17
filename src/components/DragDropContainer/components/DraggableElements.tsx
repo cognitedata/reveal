@@ -6,10 +6,22 @@ import { Flex } from 'styles/layout';
 const getDraggableElement = (element: JSX.Element, index: number) => {
   const id = String(element.key || index);
 
+  const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
+    ...draggableStyle,
+    left: 'auto !important',
+    top: 'auto !important',
+  });
   return (
     <Draggable key={id} draggableId={id} index={index}>
-      {provided => (
-        <Flex ref={provided.innerRef} {...provided.draggableProps}>
+      {(provided, snapshot) => (
+        <Flex
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          style={getItemStyle(
+            snapshot.isDragging,
+            provided.draggableProps.style
+          )}
+        >
           {React.cloneElement(element, {
             dragHandleProps: provided.dragHandleProps,
           })}

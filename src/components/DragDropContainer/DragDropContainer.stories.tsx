@@ -16,7 +16,6 @@ const ItemWrapper = styled(FlexRow)`
   margin: 8px;
   border-radius: 8px;
   width: 120px;
-
   .cogs-icon {
     margin-right: 8px;
   }

@@ -1,7 +1,6 @@
 import { ExpandedState } from '@tanstack/table-core';
-import update from 'immutability-helper';
 import isEmpty from 'lodash/isEmpty';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 import {
   Row,
@@ -34,9 +33,7 @@ import {
   SubTableWrapper,
 } from './elements';
 
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Body } from '@cognite/cogs.js';
-import { DndProvider } from 'react-dnd';
 
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
@@ -203,24 +200,6 @@ export function Table<T extends TableData>({
     }
   }, [id, scrollIntoViewRow]);
 
-  // TODO: replace the drag library with a better one, we should update the order on dropEnd, not while ordering
-  const moveCard = useCallback(
-    (dragIndex: number, hoverIndex: number) => {
-      const allCards = [...getAllLeafColumns()];
-
-      const newCards = update(allCards, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, allCards[dragIndex]],
-        ],
-      });
-
-      setColumnOrder(newCards.map(bla => bla.id));
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [columns]
-  );
-
   const handleToggleAllVisibility = (visible: boolean) => {
     setColumnVisibility(
       getAllLeafColumns().reduce((previousValue, currentValue) => {
@@ -239,15 +218,13 @@ export function Table<T extends TableData>({
         <ColumnSelectorWrapper>
           {tableHeaders}
           {!hideColumnToggle && (
-            <DndProvider backend={HTML5Backend}>
-              <StyledFlex>
-                <ColumnToggle<T>
-                  moveCard={moveCard}
-                  allColumns={getAllLeafColumns()}
-                  toggleAllColumnsVisible={handleToggleAllVisibility}
-                />
-              </StyledFlex>
-            </DndProvider>
+            <StyledFlex>
+              <ColumnToggle<T>
+                onColumnOrderChanged={setColumnOrder}
+                allColumns={getAllLeafColumns()}
+                toggleAllColumnsVisible={handleToggleAllVisibility}
+              />
+            </StyledFlex>
           )}
         </ColumnSelectorWrapper>
       ) : null}
