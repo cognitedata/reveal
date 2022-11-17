@@ -36,6 +36,9 @@ export class PointCloudNode extends THREE.Group {
   ) {
     super();
 
+    this._octree = octree;
+    this.add(this._octree);
+
     this.pointSize = 2;
     this.pointColorType = PointColorType.Rgb;
     this.pointShape = PointShape.Circle;
@@ -44,9 +47,6 @@ export class PointCloudNode extends THREE.Group {
 
     this.name = 'PointCloudNode';
     this._cameraConfiguration = cameraConfiguration;
-
-    this._octree = octree;
-    this.add(this._octree);
 
     this._annotations = annotations;
     this._classificationHandler = new ClassificationHandler(this._octree.material, classificationInfo);
