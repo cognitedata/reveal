@@ -83,6 +83,27 @@ viewer.setBackgroundColor({ alpha: 0.0 });
 viewer.domElement.style.backgroundImage = "url('https://i.imgur.com/8tcxHWh.jpeg')";
 ```
 
+## Creating screenshots
+
+Use `getScreenshot` to create a screenshot from the current camera position. By default the resolution of the image is set to match the size of the render canvas, but a custom resolution can be provided.
+Whether or not to include UI in the screenshot can also be specified. When drawing UI, only the viewer DOM element and its children will be included in the image. The DOM is scaled to fit any provided resolution, 
+and as a result some elements can be positioned incorrectly in regards to the 3D render. 
+
+Note that `html2canvas` is used to draw UI and this has some limitations on what CSS properties it is able to render. For details see https://html2canvas.hertzen.com/documentation.
+
+```js runnable
+async function createScreenshot() {
+  const url = await viewer.getScreenshot(1920, 1080, true);
+  if (url) {
+    const link = document.createElement('a');
+    link.download = 'test';
+    link.href = url;
+    link.click();
+  }
+}
+createScreenshot();
+```
+
 ## Only loading a part of the model
 
 In some cases, it might be useful to restrict the area for which geometry is loaded to only show a partial

@@ -1046,10 +1046,13 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Take screenshot from the current camera position.
+   * Take a screenshot from the current camera position. When drawing UI, only the viewer DOM element and its children will be included in the image.
+   * The DOM is scaled to fit any provided resolution, and as a result some elements can be positioned incorrectly in regards to the 3D render.
+   *
+   * `html2canvas` is used to draw UI and this has some limitations on what CSS properties it is able to render. See their {@link https://html2canvas.hertzen.com/documentation} for details.
    * @param width Width of the final image. Default is current canvas size.
    * @param height Height of the final image. Default is current canvas size.
-   * @param includeUI If false the screenshot will include only the rendered 3D. Default is true.
+   * @param includeUI If false the screenshot will include only the rendered 3D.
    * @returns A {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs Data URL} of the image ('image/png').
    * @example
    * ```js
@@ -1064,7 +1067,7 @@ export class Cognite3DViewer {
    * document.body.appendChild(image);
    * ```
    */
-  async getScreenshot(width = this.canvas.width, height = this.canvas.height, includeUI = false): Promise<string> {
+  async getScreenshot(width = this.canvas.width, height = this.canvas.height, includeUI = true): Promise<string> {
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
     }
