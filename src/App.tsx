@@ -58,7 +58,7 @@ const App = () => {
           <QueryClientProvider client={queryClient}>
             <GlobalStyles>
               <AntStyles>
-                <SubAppWrapper title="Raw Explorer">
+                <SubAppWrapper title="RAW Explorer">
                   <AuthWrapper
                     loadingScreen={<Loader />}
                     login={() => loginAndAuthIfNeeded(projectName, env)}
