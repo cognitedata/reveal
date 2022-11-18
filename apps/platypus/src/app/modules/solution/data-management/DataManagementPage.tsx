@@ -16,6 +16,9 @@ import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelector
 import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
 import { Flex } from '@cognite/cogs.js';
 import { DOCS_LINKS } from '@platypus-app/constants';
+import { useDraftRows } from './hooks/useDraftRows';
+import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
+import { useDataModelState } from '../hooks/useDataModelState';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';
 
@@ -70,10 +73,20 @@ export const DataManagementPage = ({
     dataModel?.space || ''
   );
 
+  const { setSelectedVersionNumber } = useDataModelState();
+
+  const selectedTypeName = useSelector<string>(
+    (state) => state.dataManagement.selectedType?.name || ''
+  );
+
+  const { clearState } = useDraftRows();
+
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     history.replace(
-      `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data/data-management/preview`
+      `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data/data-management/preview?type=${selectedTypeName}`
     );
+    setSelectedVersionNumber(dataModelVersion.version);
+    clearState();
   };
 
   const Preview = (

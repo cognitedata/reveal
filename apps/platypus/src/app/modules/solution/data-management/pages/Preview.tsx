@@ -83,6 +83,12 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
         typeFromQuery
       );
     }
+    if (!typeFromQuery && dataModelTypeDefs.types.length > 0) {
+      const firstAvailableType = dataModelTypeDefs.types[0];
+      history.replace(
+        `/data-models/${dataModelExternalId}/${selectedDataModelVersion.version}/data/data-management/preview?type=${firstAvailableType.name}`
+      );
+    }
   }
 
   if (!selectedTypeNameFromQuery && dataModelTypeDefs.types.length > 0) {
