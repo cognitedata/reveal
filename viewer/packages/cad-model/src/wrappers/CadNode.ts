@@ -2,8 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-
 import { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
 import { SectorScene, CadModelMetadata, RootSectorNode, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
 import { SectorRepository } from '@reveal/sector-loader';
@@ -11,7 +9,9 @@ import { ParsedGeometry } from '@reveal/sector-parser';
 import { CadMaterialManager, NodeTransformProvider, RenderMode } from '@reveal/rendering';
 import { GeometryBatchingManager } from '../batching/GeometryBatchingManager';
 
-export class CadNode extends THREE.Object3D {
+import { Group, Object3D, Plane, Matrix4 } from 'three';
+
+export class CadNode extends Object3D {
   private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: CadMaterialManager;
   private readonly _sectorRepository: SectorRepository;
@@ -23,6 +23,9 @@ export class CadNode extends THREE.Object3D {
   private _sectorScene: SectorScene;
   private _geometryBatchingManager?: GeometryBatchingManager;
 
+  private _sourceTransform: Matrix4;
+  private _customTransform: Matrix4;
+
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
     this.type = 'CadNode';
@@ -30,7 +33,7 @@ export class CadNode extends THREE.Object3D {
     this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
 
-    const batchedGeometryMeshGroup = new THREE.Group();
+    const batchedGeometryMeshGroup = new Group();
     batchedGeometryMeshGroup.name = 'Batched Geometry';
 
     const materials = materialManager.getModelMaterials(model.modelIdentifier);
@@ -50,7 +53,9 @@ export class CadNode extends THREE.Object3D {
 
     this.matrixAutoUpdate = false;
     this.updateMatrixWorld();
-    this.setModelTransformation(model.modelMatrix);
+
+    this._sourceTransform = new Matrix4().copy(model.modelMatrix);
+    this._customTransform = new Matrix4();
   }
 
   get nodeTransformProvider(): NodeTransformProvider {
@@ -69,11 +74,11 @@ export class CadNode extends THREE.Object3D {
     this._materialManager.setModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier, appearance);
   }
 
-  get clippingPlanes(): THREE.Plane[] {
+  get clippingPlanes(): Plane[] {
     return this._materialManager.clippingPlanes;
   }
 
-  set clippingPlanes(planes: THREE.Plane[]) {
+  set clippingPlanes(planes: Plane[]) {
     this._materialManager.clippingPlanes = planes;
   }
 
@@ -114,16 +119,18 @@ export class CadNode extends THREE.Object3D {
    * @param matrix Transformation matrix.
    */
   setModelTransformation(matrix: THREE.Matrix4): void {
-    this._rootSector.setModelTransformation(matrix);
-    this._cadModelMetadata.modelMatrix.copy(matrix);
+    this._customTransform.copy(matrix);
+    const customTransformFromSource = this._customTransform.clone().premultiply(this._sourceTransform);
+    this._rootSector.setModelTransformation(customTransformFromSource);
+    this._cadModelMetadata.modelMatrix.copy(customTransformFromSource);
   }
 
   /**
    * Gets transformation matrix of the model
    * @param out Preallocated `THREE.Matrix4` (optional).
    */
-  getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
-    return this._rootSector!.getModelTransformation(out);
+  getModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
+    return out.copy(this._customTransform);
   }
 
   get prioritizedAreas(): PrioritizedArea[] {
