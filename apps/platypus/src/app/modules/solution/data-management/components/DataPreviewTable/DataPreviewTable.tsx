@@ -66,7 +66,6 @@ import {
 } from './collapsible-panel-container';
 
 const pageSizeLimit = 100;
-const relationshipFieldsLimit = 3;
 
 export interface DataPreviewTableProps {
   dataModelType: DataModelTypeDefsType;
@@ -266,7 +265,6 @@ export const DataPreviewTable = forwardRef<
                 hasNextPage,
                 dataModelType,
                 dataModelTypeDefs,
-                relationshipFieldsLimit,
                 version,
                 limit: pageSizeLimit,
               })
@@ -365,7 +363,6 @@ export const DataPreviewTable = forwardRef<
         e.colDef.field && e.api.ensureColumnVisible(e.colDef.field);
       }, 400);
     };
-
     const handleCellDoubleClicked = useCallback(
       (event: CellDoubleClickedEvent) => {
         if (!event.colDef.field) {
@@ -405,7 +402,6 @@ export const DataPreviewTable = forwardRef<
       },
       [dataModelType]
     );
-
     /*
   We use this value-setter to handle editing of pinned draft rows and published rows.
   The alternative of using readOnlyEdit and onCellEditRequest doesn't give us a good
@@ -657,6 +653,12 @@ export const DataPreviewTable = forwardRef<
                     version={version}
                   />
                 ),
+                context: {
+                  dataModelExternalId,
+                  version,
+                  dataModelType,
+                  dataModelTypeDefs,
+                },
                 onCellEditingStarted: handleCellEditingStarted,
                 onCellDoubleClicked: handleCellDoubleClicked,
               }}

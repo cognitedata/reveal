@@ -19,7 +19,7 @@ describe('MixerApiQueryBuilderServiceTest', () => {
     expect(operationName).toEqual('listTestOperation');
   });
 
-  it('should build query with inline type', () => {
+  it('should build query', () => {
     const service = createInstance();
 
     const mockTypeDefs = {
@@ -122,8 +122,7 @@ user { name }
 
     expect(normalizeString(query)).toEqual(normalizeString(expected));
   });
-
-  it('should build query with max 2 nested relationship fields', () => {
+  it('should build query with filter', () => {
     const service = createInstance();
 
     const mockTypeDefs = {
@@ -172,49 +171,18 @@ user { name }
               },
               nonNull: true,
             },
-            {
-              name: 'priority',
-              type: {
-                name: 'Int',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-            {
-              name: 'content',
-              type: {
-                name: 'String',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
           ],
         },
         {
           name: 'User',
+          directives: [
+            {
+              name: mixerApiInlineTypeDirectiveName,
+            },
+          ],
           fields: [
             {
               name: 'name',
-              type: {
-                name: 'String',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-            {
-              name: 'admin',
-              type: {
-                name: 'Boolean',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-            {
-              name: 'nick',
               type: {
                 name: 'String',
                 list: false,
@@ -229,14 +197,15 @@ user { name }
 
     const limit = 100;
     const cursor = 'abcd=';
+    const filter = { externalId: { eq: '123' } };
 
-    const expected = `query {
-      listPerson(first: ${limit}, after: "${cursor}") {
+    const expected = `query listPerson ($filter: _ListPersonFilter) {
+      listPerson(filter: $filter, first: ${limit}, after: "${cursor}") {
         items {
           externalId
           name
-posts { items { externalId name priority } }
-user { externalId name admin }
+posts { items { externalId } }
+user { name }
         }
         pageInfo {
           startCursor
@@ -253,7 +222,7 @@ user { externalId name admin }
       limit,
       dataModelType: mockTypeDefs.types[0],
       dataModelTypeDefs: mockTypeDefs,
-      relationshipFieldsLimit: 2,
+      filter,
     });
 
     expect(normalizeString(query)).toEqual(normalizeString(expected));
@@ -289,6 +258,67 @@ user { externalId name admin }
         items {
           externalId
           myTimeSeries { externalId }
+        }
+        pageInfo {
+          startCursor
+          hasPreviousPage
+          hasNextPage
+          endCursor
+        }
+      }
+    }`;
+
+    const query = service.buildQuery({
+      cursor,
+      hasNextPage: true,
+      limit,
+      dataModelType: mockTypeDefs.types[0],
+      dataModelTypeDefs: mockTypeDefs,
+    });
+
+    expect(normalizeString(query)).toEqual(normalizeString(expected));
+  });
+
+  it('should build complex query with Timeseries, DataPoint and DataPointValue', () => {
+    const service = createInstance();
+
+    const mockTypeDefs = {
+      types: [
+        {
+          name: 'Demo',
+          fields: [
+            {
+              name: 'ts',
+              type: {
+                name: 'TimeSeries',
+                list: false,
+                nonNull: true,
+              },
+              nonNull: true,
+            },
+            {
+              name: 'tsList',
+              type: {
+                name: 'TimeSeries',
+                list: true,
+                nonNull: true,
+              },
+              nonNull: true,
+            },
+          ],
+        },
+      ],
+    };
+
+    const limit = 100;
+    const cursor = 'abcd=';
+
+    const expected = `query {
+      listDemo(first: ${limit}, after: "${cursor}") {
+        items {
+          externalId 
+ts { externalId }
+tsList { externalId }
         }
         pageInfo {
           startCursor

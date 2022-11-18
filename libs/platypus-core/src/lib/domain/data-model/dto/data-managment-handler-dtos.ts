@@ -1,3 +1,4 @@
+import { QueryFilter } from '../providers/fdm-current';
 import {
   DataModelTransformation,
   DataModelTypeDefs,
@@ -7,12 +8,12 @@ import {
 export interface FetchDataDTO {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
-  relationshipFieldsLimit: number;
   limit: number;
   cursor: string;
   hasNextPage: boolean;
   dataModelId: string;
   version: string;
+  filter?: QueryFilter;
 }
 
 export interface FetchPublishedRowsCountDTO {

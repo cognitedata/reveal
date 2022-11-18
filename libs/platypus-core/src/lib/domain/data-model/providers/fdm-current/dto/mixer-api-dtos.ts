@@ -70,11 +70,20 @@ export interface ApiVersionFromGraphQl {
 export interface BuildQueryDTO {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
-  relationshipFieldsLimit?: number;
   limit: number;
   cursor: string;
   hasNextPage: boolean;
+  filter?: QueryFilter;
 }
+
+export type QueryFilter =
+  | {
+      [filterName: string]: {
+        eq: string | number;
+      };
+    }
+  | { and: QueryFilter[] }
+  | { or: QueryFilter[] };
 
 export interface ApiSpecDTO {
   externalId: string;

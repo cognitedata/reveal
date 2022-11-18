@@ -1,12 +1,5 @@
 import { CogDataList, PrimitiveTypesListData } from '@cognite/cog-data-grid';
-import {
-  CollapsablePanel,
-  Body,
-  Title,
-  Button,
-  Input,
-  Flex,
-} from '@cognite/cogs.js';
+import { CollapsablePanel, Button, Input, Flex } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { AgGridReact } from 'ag-grid-react';
 import {

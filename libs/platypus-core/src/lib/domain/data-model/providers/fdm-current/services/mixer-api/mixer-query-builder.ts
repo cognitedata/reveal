@@ -11,14 +11,32 @@ export class MixerQueryBuilder {
   getOperationName(typeName: string): string {
     return `list${typeName}`;
   }
+  getFilterType(typeName: string): string {
+    return `_List${typeName}Filter`;
+  }
   buildQuery(dto: BuildQueryDTO): string {
-    const { dataModelType, dataModelTypeDefs, limit, cursor, hasNextPage } =
-      dto;
+    const {
+      dataModelType,
+      dataModelTypeDefs,
+      limit,
+      cursor,
+      hasNextPage,
+      filter,
+    } = dto;
     const pagination = hasNextPage
-      ? `(first: ${limit}, after: "${cursor}")`
-      : `(first: ${limit})`;
-    return `query {
-    ${this.getOperationName(dataModelType.name)}${pagination} {
+      ? `first: ${limit}, after: "${cursor}"`
+      : `first: ${limit}`;
+    const filterString = filter
+      ? `(filter: $filter, ${pagination})`
+      : `(${pagination})`;
+    return `query ${
+      filter
+        ? `${this.getOperationName(
+            dataModelType.name
+          )} ($filter: ${this.getFilterType(dataModelType.name)})`
+        : ''
+    } {
+    ${this.getOperationName(dataModelType.name)}${filterString} {
       items {
         externalId
         ${dataModelType.fields
@@ -27,8 +45,7 @@ export class MixerQueryBuilder {
               field,
               dataModelTypeDefs.types.find(
                 (typeDef) => typeDef.name === field.type.name
-              ),
-              dto.relationshipFieldsLimit
+              )
             )
           )
           .join('\n')}
@@ -45,12 +62,17 @@ export class MixerQueryBuilder {
 
   private buildQueryItem(
     field: DataModelTypeDefsField,
-    fieldTypeDef?: DataModelTypeDefsType,
-    relationshipFieldsLimit?: number
+    fieldTypeDef?: DataModelTypeDefsType
   ): string {
-    const isTimeSeries = field.type.name === 'TimeSeries';
+    const isPrimitive = mixerApiBuiltInTypes
+      .filter((t) => t.type === 'SCALAR')
+      .map((t) => t.name)
+      .includes(field.type.name);
 
-    if (this.isPrimitive(field) && !isTimeSeries) {
+    if (isPrimitive) {
+      if (field.type.name === 'TimeSeries') {
+        return `${field.name} { externalId }`;
+      }
       return field.name;
     }
 
@@ -60,28 +82,10 @@ export class MixerQueryBuilder {
         .join('\n')} }`;
     }
 
-    const relationshipFields =
-      fieldTypeDef === undefined
-        ? []
-        : fieldTypeDef.fields
-            .filter(this.isPrimitive)
-            .map((f) => f.name)
-            .slice(0, relationshipFieldsLimit || 0);
-    const relationshipQueryFields = ['externalId']
-      .concat(relationshipFields)
-      .join(' ');
-
     if (field.type.list) {
-      return `${field.name} { items { ${relationshipQueryFields} } }`;
+      return `${field.name} { items { externalId } }`;
     }
 
-    return `${field.name} { ${relationshipQueryFields} }`;
-  }
-
-  private isPrimitive(field: DataModelTypeDefsField): boolean {
-    return mixerApiBuiltInTypes
-      .filter((t) => t.type === 'SCALAR')
-      .map((t) => t.name)
-      .includes(field.type.name);
+    return `${field.name} { externalId }`;
   }
 }

@@ -18,4 +18,11 @@ export const QueryKeys = {
     type: string,
     version: string
   ) => ['TRANSFORMATION', dataModelExternalId, type, version] as const,
+  PREVIEW_DATA: (
+    dataModelExternalId: string,
+    type: string,
+    version: string,
+    externalId: string
+  ) =>
+    ['PREVIEW_DATA', dataModelExternalId, type, version, externalId] as const,
 };

@@ -6,6 +6,7 @@ import {
 } from '@cognite/cog-data-grid';
 import { KeyValueMap, DataModelTypeDefsType } from '@platypus/platypus-core';
 import { CheckboxCellRenderer } from '../components/DataPreviewTable/cell-renderers/CheckboxCellRenderer';
+import { CustomCellRenderer } from '../components/DataPreviewTable/cell-renderers/CustomCellRenderer';
 import { IdCellRenderer } from '../components/DataPreviewTable/cell-renderers/IdCellRenderer';
 
 const colTypesMap: KeyValueMap = {
@@ -89,6 +90,10 @@ export const buildGridConfig = (
           cellEditorParams: {
             isRequired: field.nonNull || field.type.nonNull,
           },
+          ...(!colTypesMap.hasOwnProperty(field.type.name) &&
+            !isList && {
+              cellRenderer: CustomCellRenderer,
+            }),
         },
       } as ColumnConfig;
 
