@@ -34,7 +34,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   }
 
   public async get360ImageDescriptors(metadataFilter: Metadata): Promise<Image360Descriptor[]> {
-    const image360Events = await this._client.events.list({ filter: { metadata: metadataFilter } });
+    const image360Events = await this._client.events.list({ filter: { metadata: metadataFilter }, limit: 1000 });
     return image360Events.items
       .map(image360Event => image360Event.metadata as Event360Metadata)
       .map(eventMetadata => this.parseEventMetadata(eventMetadata));
