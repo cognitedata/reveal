@@ -28,8 +28,8 @@ export class PointCloudNode extends Group {
 
   private readonly _modelIdentifier: symbol;
 
-  private _sourceTransform: Matrix4;
-  private _customTransform: Matrix4;
+  private readonly _sourceTransform: Matrix4;
+  private readonly _customTransform: Matrix4;
 
   constructor(
     modelIdentifier: symbol,

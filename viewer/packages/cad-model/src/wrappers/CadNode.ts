@@ -23,8 +23,8 @@ export class CadNode extends Object3D {
   private _sectorScene: SectorScene;
   private _geometryBatchingManager?: GeometryBatchingManager;
 
-  private _sourceTransform: Matrix4;
-  private _customTransform: Matrix4;
+  private readonly _sourceTransform: Matrix4;
+  private readonly _customTransform: Matrix4;
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
