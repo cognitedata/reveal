@@ -118,7 +118,7 @@ export class CadNode extends Object3D {
    * Sets transformation matrix of the model. This overrides the current transformation.
    * @param matrix Transformation matrix.
    */
-  setModelTransformation(matrix: THREE.Matrix4): void {
+  setModelTransformation(matrix: Matrix4): void {
     this._customTransform.copy(matrix);
     const customTransformFromSource = this._customTransform.clone().premultiply(this._sourceTransform);
     this._rootSector.setModelTransformation(customTransformFromSource);
@@ -131,6 +131,10 @@ export class CadNode extends Object3D {
    */
   getModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
     return out.copy(this._customTransform);
+  }
+
+  getSourceTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
+    return out.copy(this._sourceTransform);
   }
 
   get prioritizedAreas(): PrioritizedArea[] {

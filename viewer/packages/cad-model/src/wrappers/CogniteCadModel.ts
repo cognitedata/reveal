@@ -400,6 +400,16 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
+   * Gets transformation from model source (e.g. CDF) to ThreeJS space,
+   * which includes any additional "default" transformations assigned to this model.
+   * Does not include any custom transformations set by @see {@link this.setModelTransformation}
+   * @param out Preallocated `THREE.Matrix4` (optional)
+   */
+  getSourceTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+    return this.cadNode.getModelTransformation(out);
+  }
+
+  /**
    * Fetches a bounding box from the CDF by the nodeId.
    * @param nodeId
    * @param box Optional. Used to write result to.
