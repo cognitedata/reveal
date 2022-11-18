@@ -1,5 +1,7 @@
 import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
+import { NIL_FILTER_VALUE } from 'domain/constants';
 import { InternalAssetFilters } from '../types';
+import { AssetsAdvancedFilterBuilder } from './assetsAdvancedFilterBuilder';
 
 export type AssetsProperties = {
   assetSubtreeIds: number[];
@@ -16,6 +18,7 @@ export type AssetsProperties = {
 export const mapFiltersToAssetsAdvancedFilters = (
   {
     dataSetIds,
+    labels,
     createdTime,
     lastUpdatedTime,
     externalIdPrefix,
@@ -26,9 +29,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
   searchQueryMetadataKeys?: Record<string, string>,
   query?: string
 ): AdvancedFilter<AssetsProperties> | undefined => {
-  const builder = new AdvancedFilterBuilder<AssetsProperties>();
-
-  const filterBuilder = new AdvancedFilterBuilder<AssetsProperties>()
+  const filtersBuilder = new AdvancedFilterBuilder<AssetsProperties>()
     .in('dataSetId', () => {
       return dataSetIds?.reduce((acc, { value }) => {
         if (typeof value === 'number') {
@@ -36,6 +37,14 @@ export const mapFiltersToAssetsAdvancedFilters = (
         }
         return acc;
       }, [] as number[]);
+    })
+    .containsAny('labels', () => {
+      return labels?.reduce((acc, { value }) => {
+        if (value !== NIL_FILTER_VALUE) {
+          return [...acc, value];
+        }
+        return acc;
+      }, [] as string[]);
     })
     .in('source', () => {
       if (source) {
@@ -57,35 +66,36 @@ export const mapFiltersToAssetsAdvancedFilters = (
       gte: lastUpdatedTime?.min as number,
     });
 
+  const nilFiltersBuilder = new AdvancedFilterBuilder<AssetsProperties>()
+    .notExists('labels', () => {
+      return Boolean(labels?.find(({ value }) => value === NIL_FILTER_VALUE));
+    })
+    .notExists('source', () => {
+      return source === NIL_FILTER_VALUE;
+    });
+
   if (metadata) {
     for (const { key, value } of metadata) {
-      filterBuilder.equals(`metadata|${key}`, value);
+      filtersBuilder.equals(`metadata|${key}`, value);
     }
   }
 
+  const searchQueryBuilder = new AdvancedFilterBuilder<AssetsProperties>();
   if (query) {
-    const searchQueryBuilder = new AdvancedFilterBuilder<AssetsProperties>()
-      .search('name', query)
-      .search('description', query);
-
-    filterBuilder.or(searchQueryBuilder);
+    searchQueryBuilder.search('name', query).search('description', query);
   }
 
-  builder.and(filterBuilder);
-
-  /**
-   * We want to filter all the metadata keys with the search query, to give a better result
-   * to the user when using our search.
-   */
+  const searchMetadataBuilder = new AdvancedFilterBuilder<AssetsProperties>();
   if (searchQueryMetadataKeys) {
-    const searchMetadataBuilder = new AdvancedFilterBuilder<AssetsProperties>();
-
     for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
       searchMetadataBuilder.prefix(`metadata|${key}`, value);
     }
-
-    builder.or(searchMetadataBuilder);
   }
 
-  return new AdvancedFilterBuilder<AssetsProperties>().or(builder).build();
+  return new AssetsAdvancedFilterBuilder<AssetsProperties>()
+    .setFilters(filtersBuilder)
+    .setNilFilters(nilFiltersBuilder)
+    .setSearchQuery(searchQueryBuilder)
+    .setSearchQueryMetadataKeys(searchMetadataBuilder)
+    .build();
 };

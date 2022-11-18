@@ -9,12 +9,14 @@ export const AggregatedFilterV2 = <T,>({
   setValue,
   title,
   aggregator,
+  addNilOption,
 }: {
   items: T[];
   aggregator: string;
   value: string | undefined;
   title: string;
   setValue: (newValue: string | undefined) => void;
+  addNilOption?: boolean;
 }) => {
   const setSource = (newValue: string | undefined) => {
     const newSource = newValue && newValue.length > 0 ? newValue : undefined;
@@ -48,6 +50,7 @@ export const AggregatedFilterV2 = <T,>({
           value: el,
           label: String(el),
         }))}
+        addNilOption={addNilOption}
       />
     </>
   );

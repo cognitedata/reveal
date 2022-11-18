@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { isObjectEmpty } from 'utils';
 
 export type AdvancedFilter<T> = LeafFilter<T> | BoolFilter<T>;
@@ -52,6 +52,8 @@ type AdvancedFilterInput<
   K extends keyof T
 > = T[K] | (() => T[K] | undefined);
 
+type AdvancedFilterValidate = boolean | (() => boolean);
+
 export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
   filters = [] as AdvancedFilter<T>[];
 
@@ -72,6 +74,14 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
     }
 
     return input;
+  }
+
+  private getValidity(validate?: AdvancedFilterValidate) {
+    if (validate instanceof Function) {
+      return validate();
+    }
+
+    return Boolean(validate);
   }
 
   build() {
@@ -173,7 +183,7 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
   containsAny<K extends keyof T>(key: K, input?: AdvancedFilterInput<T, K>) {
     const values = this.getValue(input);
 
-    if (values !== undefined) {
+    if (values !== undefined && !isEmpty(values)) {
       const property = this.getProperty(key);
 
       this.filters = [
@@ -192,7 +202,7 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
   containsAll<K extends keyof T>(key: K, input?: AdvancedFilterInput<T, K>) {
     const values = this.getValue(input);
 
-    if (values !== undefined) {
+    if (values !== undefined && !isEmpty(values)) {
       const property = this.getProperty(key);
 
       this.filters = [
@@ -224,17 +234,44 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
     }
     return this;
   }
-  exists<K extends keyof T>(key: K) {
-    const property = this.getProperty(key);
+  exists<K extends keyof T>(key: K, validate: AdvancedFilterValidate = true) {
+    const valid = this.getValidity(validate);
 
-    this.filters = [
-      ...this.filters,
-      {
-        exists: {
-          property,
+    if (valid) {
+      const property = this.getProperty(key);
+
+      this.filters = [
+        ...this.filters,
+        {
+          exists: {
+            property,
+          },
         },
-      },
-    ];
+      ];
+    }
+
+    return this;
+  }
+  notExists<K extends keyof T>(
+    key: K,
+    validate: AdvancedFilterValidate = true
+  ) {
+    const valid = this.getValidity(validate);
+
+    if (valid) {
+      const property = this.getProperty(key);
+
+      this.filters = [
+        ...this.filters,
+        {
+          not: {
+            exists: {
+              property,
+            },
+          },
+        },
+      ];
+    }
 
     return this;
   }

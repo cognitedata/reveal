@@ -10,3 +10,6 @@ export const COMMON_FILTER_KEYS: readonly (keyof InternalCommonFilters)[] = [
   'externalIdPrefix',
   'internalId',
 ] as const;
+
+export const NIL_FILTER_LABEL = 'N/A';
+export const NIL_FILTER_VALUE = 'DATA_EXPLORATION_NO_VALUE_PLACEHOLDER';

@@ -13,9 +13,11 @@ import {
 } from '@cognite/cogs.js';
 import { Ellipsis } from 'components/Ellipsis/Ellipsis';
 
-const NIL_FILTER_OPTION: OptionType<null> = {
-  label: 'N/A',
-  value: null,
+import { NIL_FILTER_LABEL, NIL_FILTER_VALUE } from 'domain/constants';
+
+const NIL_FILTER_OPTION: OptionType<string> = {
+  label: NIL_FILTER_LABEL,
+  value: NIL_FILTER_VALUE,
 };
 export interface BaseSelectProps<ValueType>
   extends CogsSelectProps<ValueType>,

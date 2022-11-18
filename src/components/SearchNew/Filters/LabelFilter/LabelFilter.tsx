@@ -11,10 +11,12 @@ export const LabelFilterV2 = ({
   resourceType,
   value,
   setValue,
+  addNilOption,
 }: {
   resourceType: ResourceType;
   value: OptionValue<string>[] | undefined;
   setValue: (newValue: OptionValue<string>[] | undefined) => void;
+  addNilOption?: boolean;
 }) => {
   const allowLabels = resourceType === 'asset' || resourceType === 'file';
   const { data: labels = [], isError } = useList<LabelDefinition>(
@@ -53,6 +55,7 @@ export const LabelFilterV2 = ({
           isMulti
           isSearchable
           isClearable
+          addNilOption={addNilOption}
         />
       </>
     </Tooltip>
