@@ -5,7 +5,7 @@ import { TimeseriesTable } from 'containers/Timeseries';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 
-import { Flex, Loader } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 
 import { SearchResultToolbar, useResourceResults } from '..';
 
@@ -46,17 +46,12 @@ export const TimeseriesSearchResults = ({
   // TODO Needs refactoring for hiding emppty datasets
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
-  const { data, isLoading, hasNextPage, fetchNextPage } =
+  const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
     useTimeseriesSearchResultQuery({
       query,
       filter,
       sortBy,
     });
-
-  const loading = enableAdvancedFilters ? isLoading : !isFetched;
-  if (loading) {
-    return <Loader />;
-  }
 
   return (
     <>
@@ -75,8 +70,11 @@ export const TimeseriesSearchResults = ({
           />
         }
         data={enableAdvancedFilters ? data : items}
+        isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
         fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
-        hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
+        hasNextPage={
+          enableAdvancedFilters ? !isPreviousData && hasNextPage : canFetchMore
+        }
         tableSubHeaders={
           <AppliedFiltersTags
             filter={filter}

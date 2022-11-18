@@ -45,10 +45,15 @@ export const useSequenceSearchResultQuery = ({
     [sortBy]
   );
 
-  return useSequenceListQuery({
-    advancedFilter,
-    filter: sequenceFilter,
-    sort: sequenceSort,
-    limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
-  });
+  return useSequenceListQuery(
+    {
+      advancedFilter,
+      filter: sequenceFilter,
+      sort: sequenceSort,
+      limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
+    },
+    {
+      keepPreviousData: true,
+    }
+  );
 };

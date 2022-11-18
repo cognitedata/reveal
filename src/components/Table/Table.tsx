@@ -44,6 +44,7 @@ export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {
   id: string;
   data: T[];
+  isDataLoading?: boolean;
   columns: ColumnDef<T>[];
   selectedRows?: Record<string, boolean>;
   expandedRows?: ExpandedState;
@@ -87,6 +88,7 @@ export function Table<T extends TableData>({
   sorting,
   showLoadButton = false,
   hasNextPage,
+  isDataLoading,
   isLoadingMore,
   tableHeaders,
   tableSubHeaders,
@@ -183,6 +185,9 @@ export function Table<T extends TableData>({
       getRowId: getRowId,
       autoResetExpanded: false,
       enableSortingRemoval: true,
+      // https://github.com/TanStack/table/issues/4289
+      // Fixes the weird behavior with the sorting actions on undefined and async data.
+      sortDescFirst: false,
     });
 
   useEffect(() => {
@@ -210,7 +215,106 @@ export function Table<T extends TableData>({
       }, {})
     );
   };
+
   const loadMoreProps = { isLoadingMore, hasNextPage, fetchMore };
+
+  const renderTableContent = () => {
+    if (isDataLoading) {
+      return <EmptyState isLoading title="Loading results" />;
+    }
+
+    if (!data || data.length === 0) {
+      return <EmptyState body="Please, refine your filters" />;
+    }
+
+    return (
+      <ContainerInside>
+        <StyledTable id={id} className="data-exploration-table">
+          <Thead isStickyHeader={stickyHeader}>
+            {getHeaderGroups().map(headerGroup => (
+              <Tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <Th
+                    {...{
+                      key: header.id,
+                      colSpan: header.colSpan,
+                      style: {
+                        width: header.getSize(),
+                      },
+                    }}
+                  >
+                    <ThWrapper>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      <SortIcon
+                        canSort={header.column.getCanSort()}
+                        isSorted={header.column.getIsSorted()}
+                        onClick={() => {
+                          header.column.toggleSorting();
+                        }}
+                      />
+                      {enableColumnResizing ? (
+                        <ResizerWrapper
+                          {...{
+                            onMouseDown: header.getResizeHandler(),
+                            onTouchStart: header.getResizeHandler(),
+                            className: `resizer ${
+                              header.column.getIsResizing() ? 'isResizing' : ''
+                            }`,
+                          }}
+                        />
+                      ) : null}
+                    </ThWrapper>
+                  </Th>
+                ))}
+              </Tr>
+            ))}
+          </Thead>
+          <div ref={tbodyRef}>
+            {getRowModel().rows.map(row => {
+              return (
+                <Tr
+                  key={row.id}
+                  id={row.id}
+                  tabIndex={0}
+                  onClick={evt => onRowClick(row.original, evt)}
+                  onKeyDown={evt => handleKeyDown(evt, row)}
+                  className={row.getIsSelected() ? 'selected' : ''}
+                >
+                  {row.getVisibleCells().map(cell => {
+                    return (
+                      <Td
+                        {...{
+                          key: cell.id,
+                          style: {
+                            width: cell.column.getSize(),
+                          },
+                        }}
+                      >
+                        <Body level={2}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          ) || DASH}
+                        </Body>
+                      </Td>
+                    );
+                  })}
+                </Tr>
+              );
+            })}
+          </div>
+        </StyledTable>
+        {showLoadButton && (
+          <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
+            <LoadMore {...loadMoreProps} />
+          </LoadMoreButtonWrapper>
+        )}
+      </ContainerInside>
+    );
+  };
 
   return (
     <TableContainer>
@@ -231,97 +335,7 @@ export function Table<T extends TableData>({
 
       {tableSubHeaders && <SubTableWrapper>{tableSubHeaders}</SubTableWrapper>}
 
-      {!data || data.length === 0 ? (
-        <EmptyState body="Please, refine your filters" />
-      ) : (
-        <ContainerInside>
-          <StyledTable id={id} className="data-exploration-table">
-            <Thead isStickyHeader={stickyHeader}>
-              {getHeaderGroups().map(headerGroup => (
-                <Tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <Th
-                      {...{
-                        key: header.id,
-                        colSpan: header.colSpan,
-                        style: {
-                          width: header.getSize(),
-                        },
-                      }}
-                    >
-                      <ThWrapper>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                        <SortIcon
-                          canSort={header.column.getCanSort()}
-                          isSorted={header.column.getIsSorted()}
-                          onClick={() => {
-                            header.column.toggleSorting();
-                          }}
-                        />
-                        {enableColumnResizing ? (
-                          <ResizerWrapper
-                            {...{
-                              onMouseDown: header.getResizeHandler(),
-                              onTouchStart: header.getResizeHandler(),
-                              className: `resizer ${
-                                header.column.getIsResizing()
-                                  ? 'isResizing'
-                                  : ''
-                              }`,
-                            }}
-                          />
-                        ) : null}
-                      </ThWrapper>
-                    </Th>
-                  ))}
-                </Tr>
-              ))}
-            </Thead>
-            <div ref={tbodyRef}>
-              {getRowModel().rows.map(row => {
-                return (
-                  <Tr
-                    key={row.id}
-                    id={row.id}
-                    tabIndex={0}
-                    onClick={evt => onRowClick(row.original, evt)}
-                    onKeyDown={evt => handleKeyDown(evt, row)}
-                    className={row.getIsSelected() ? 'selected' : ''}
-                  >
-                    {row.getVisibleCells().map(cell => {
-                      return (
-                        <Td
-                          {...{
-                            key: cell.id,
-                            style: {
-                              width: cell.column.getSize(),
-                            },
-                          }}
-                        >
-                          <Body level={2}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            ) || DASH}
-                          </Body>
-                        </Td>
-                      );
-                    })}
-                  </Tr>
-                );
-              })}
-            </div>
-          </StyledTable>
-          {showLoadButton && (
-            <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
-              <LoadMore {...loadMoreProps} />
-            </LoadMoreButtonWrapper>
-          )}
-        </ContainerInside>
-      )}
+      {renderTableContent()}
     </TableContainer>
   );
 }

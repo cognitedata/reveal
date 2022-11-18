@@ -44,10 +44,15 @@ export const useTimeseriesSearchResultQuery = ({
     [sortBy]
   );
 
-  return useTimeseriesListQuery({
-    advancedFilter,
-    filter: timeseriesFilter,
-    sort: timeseriesSort,
-    limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
-  });
+  return useTimeseriesListQuery(
+    {
+      advancedFilter,
+      filter: timeseriesFilter,
+      sort: timeseriesSort,
+      limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
+    },
+    {
+      keepPreviousData: true,
+    }
+  );
 };

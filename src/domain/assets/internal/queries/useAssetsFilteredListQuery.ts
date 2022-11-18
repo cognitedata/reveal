@@ -41,10 +41,15 @@ export const useAssetsSearchResultQuery = ({
 
   const sort = useMemo(() => mapTableSortByToAssetSortFields(sortBy), [sortBy]);
 
-  return useAssetsListQuery({
-    filter,
-    advancedFilter,
-    sort,
-    limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
-  });
+  return useAssetsListQuery(
+    {
+      filter,
+      advancedFilter,
+      sort,
+      limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
+    },
+    {
+      keepPreviousData: true,
+    }
+  );
 };

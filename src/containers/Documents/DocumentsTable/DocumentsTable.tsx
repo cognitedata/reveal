@@ -75,8 +75,6 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           cell: ({ row }: { row: Row<Document> }) => {
             return <Body level={2}>{row.original.author || DASH}</Body>;
           },
-          // Temp solution to the problem -> https://github.com/TanStack/table/issues/4289
-          sortDescFirst: false,
         },
         {
           // You do not have to add an id field if accessor is given a string.

@@ -13,12 +13,12 @@ export const SortIcon = ({
   if (!canSort) {
     return null;
   }
-  let sortLabel = 'Default sorting';
+  let sortLabel = 'Default order';
   let sortIcon: IconType = 'ReorderDefault';
 
   if (isSorted) {
-    sortLabel = isSorted === 'desc' ? 'Sort descending' : 'Sort ascending';
-    sortIcon = isSorted === 'desc' ? 'ReorderDescending' : 'ReorderAscending';
+    sortLabel = isSorted === 'desc' ? 'Descending order' : 'Ascending order';
+    sortIcon = isSorted === 'desc' ? 'ReorderAscending' : 'ReorderDescending';
   }
   return (
     <Tooltip content={sortLabel} arrow={false}>

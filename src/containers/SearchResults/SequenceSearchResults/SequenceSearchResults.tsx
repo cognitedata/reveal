@@ -6,7 +6,6 @@ import { SequenceTable } from 'containers/Sequences';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { useResourceResults } from '../SearchResultLoader';
-import { Loader } from '@cognite/cogs.js';
 import {
   InternalSequenceFilters,
   useSequenceSearchResultQuery,
@@ -41,18 +40,13 @@ export const SequenceSearchResults = ({
     useResourceResults<Sequence>(api, query, filter);
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
-  const { data, isLoading, hasNextPage, fetchNextPage } =
+  const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
     useSequenceSearchResultQuery({
       query,
       filter,
       sortBy,
     });
 
-  const loading = enableAdvancedFilters ? isLoading : !isFetched;
-
-  if (loading) {
-    return <Loader />;
-  }
   return (
     <SequenceTable
       id="sequence-search-results"
@@ -68,8 +62,11 @@ export const SequenceSearchResults = ({
       }
       sorting={sortBy}
       data={enableAdvancedFilters ? data : items}
+      isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
       fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
-      hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
+      hasNextPage={
+        enableAdvancedFilters ? !isPreviousData && hasNextPage : canFetchMore
+      }
       tableSubHeaders={
         <AppliedFiltersTags
           filter={filter}

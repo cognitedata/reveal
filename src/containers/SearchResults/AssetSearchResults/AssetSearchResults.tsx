@@ -37,18 +37,16 @@ export const AssetSearchResults = ({
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & SelectableItemsProps) => {
   const api = convertResourceType('asset');
-  const { canFetchMore, fetchMore, items } = useResourceResults<Asset>(
-    api,
-    query,
-    filter
-  );
+  const { canFetchMore, fetchMore, items, isFetched } =
+    useResourceResults<Asset>(api, query, filter);
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
-  const { data, hasNextPage, fetchNextPage } = useAssetsSearchResultQuery({
-    query,
-    assetFilter: filter,
-    sortBy: sortBy,
-  });
+  const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
+    useAssetsSearchResultQuery({
+      query,
+      assetFilter: filter,
+      sortBy,
+    });
 
   const [currentView, setCurrentView] = useState<string>(() =>
     isTreeEnabled ? 'tree' : 'list'
@@ -110,14 +108,16 @@ export const AssetSearchResults = ({
           id="asset-search-results"
           onRowClick={asset => onClick(asset)}
           data={enableAdvancedFilters ? data : items}
+          isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
           enableSorting
+          sorting={sortBy}
           selectedRows={selectedRows}
           scrollIntoViewRow={
             activeIds?.length === 1 && currentView === 'list'
               ? activeIds[0]
               : undefined
           }
-          onSort={props => setSortBy(props)}
+          onSort={setSortBy}
           showLoadButton
           tableSubHeaders={
             <AppliedFiltersTags
@@ -127,7 +127,11 @@ export const AssetSearchResults = ({
             />
           }
           tableHeaders={currentView === 'list' ? tableHeaders : undefined}
-          hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
+          hasNextPage={
+            enableAdvancedFilters
+              ? !isPreviousData && hasNextPage
+              : canFetchMore
+          }
           fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
           {...rest}
         />

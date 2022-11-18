@@ -42,10 +42,15 @@ export const useEventsSearchResultQuery = ({
     [eventsSortBy]
   );
 
-  return useEventsListQuery({
-    filter,
-    advancedFilter,
-    sort,
-    limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
-  });
+  return useEventsListQuery(
+    {
+      filter,
+      advancedFilter,
+      sort,
+      limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
+    },
+    {
+      keepPreviousData: true,
+    }
+  );
 };

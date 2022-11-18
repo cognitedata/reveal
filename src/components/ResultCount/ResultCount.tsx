@@ -112,5 +112,4 @@ export const useResultCount = ({
       return result;
     }
   }
-  return result;
 };

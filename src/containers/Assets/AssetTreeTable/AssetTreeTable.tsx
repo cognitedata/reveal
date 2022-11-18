@@ -65,69 +65,73 @@ export const AssetTreeTable = ({
     );
   }, [query, filter]);
 
-  const columns = [
-    {
-      header: 'Name',
-      accessorKey: 'name',
-      enableHiding: false,
-      cell: ({ row, getValue }) => (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            paddingLeft: `${row.depth * 2}rem`,
-          }}
-        >
-          {row.getCanExpand() && (
-            <Icon
-              type={row.getIsExpanded() ? 'ChevronUp' : 'ChevronDown'}
-              {...{
-                onClick: event => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  row.toggleExpanded();
-                },
-                style: {
-                  cursor: 'pointer',
-                  marginRight: '8px',
-                  height: '16px',
-                  flexShrink: 0,
-                },
+  const columns = React.useMemo(
+    () =>
+      [
+        {
+          header: 'Name',
+          accessorKey: 'name',
+          enableHiding: false,
+          cell: ({ row, getValue }) => (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                paddingLeft: `${row.depth * 2}rem`,
               }}
-            />
-          )}
-          <HighlightCell
-            text={getValue<string>() || DASH}
-            lines={1}
-            query={query}
-          />
-        </div>
-      ),
-    },
-    Table.Columns.description,
-    Table.Columns.externalId,
-    {
-      id: 'childCount',
-      header: startFromRoot ? 'Direct children' : 'Results under asset',
-      accessorKey: 'aggregates',
-      cell: ({ getValue }) => {
-        return (
-          <span>
-            {getValue() && getValue<{ childCount: number }>()?.childCount
-              ? getValue<{ childCount: number }>()?.childCount
-              : DASH}
-          </span>
-        );
-      },
-      size: 300,
-    },
-    {
-      id: 'threeDModels',
-      header: '3D availability',
-      cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
-      size: 300,
-    },
-  ] as ColumnDef<InternalAssetTreeData>[];
+            >
+              {row.getCanExpand() && (
+                <Icon
+                  type={row.getIsExpanded() ? 'ChevronUp' : 'ChevronDown'}
+                  {...{
+                    onClick: event => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      row.toggleExpanded();
+                    },
+                    style: {
+                      cursor: 'pointer',
+                      marginRight: '8px',
+                      height: '16px',
+                      flexShrink: 0,
+                    },
+                  }}
+                />
+              )}
+              <HighlightCell
+                text={getValue<string>() || DASH}
+                lines={1}
+                query={query}
+              />
+            </div>
+          ),
+        },
+        Table.Columns.description,
+        Table.Columns.externalId,
+        {
+          id: 'childCount',
+          header: startFromRoot ? 'Direct children' : 'Results under asset',
+          accessorKey: 'aggregates',
+          cell: ({ getValue }) => {
+            return (
+              <span>
+                {getValue() && getValue<{ childCount: number }>()?.childCount
+                  ? getValue<{ childCount: number }>()?.childCount
+                  : DASH}
+              </span>
+            );
+          },
+          size: 300,
+        },
+        {
+          id: 'threeDModels',
+          header: '3D availability',
+          cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
+          size: 300,
+        },
+      ] as ColumnDef<InternalAssetTreeData>[],
+    [query, startFromRoot]
+  );
 
   const previousRootExpandedKeys = usePrevious(rootExpandedKeys);
 

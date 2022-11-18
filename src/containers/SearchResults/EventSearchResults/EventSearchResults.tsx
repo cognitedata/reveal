@@ -8,7 +8,6 @@ import { convertResourceType, ResourceItem } from 'types';
 import { EventTable } from 'containers/Events';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
-import { Loader } from '@cognite/cogs.js';
 import { useEventsSearchResultQuery } from 'domain/events/internal/queries/useEventsSearchResultQuery';
 import { InternalEventsFilters } from 'domain/events';
 import { TableSortBy } from 'components/Table';
@@ -39,17 +38,12 @@ export const EventSearchResults = ({
     useResourceResults<CogniteEvent>(api, query, filter);
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
-  const { data, isLoading, hasNextPage, fetchNextPage } =
+  const { data, isLoading, hasNextPage, fetchNextPage, isPreviousData } =
     useEventsSearchResultQuery({
       query,
       eventsFilters: filter,
       eventsSortBy: sortBy,
     });
-
-  const loading = enableAdvancedFilters ? isLoading : !isFetched;
-  if (loading) {
-    return <Loader />;
-  }
 
   return (
     <EventTable
@@ -72,12 +66,15 @@ export const EventSearchResults = ({
         />
       }
       data={enableAdvancedFilters ? data : items}
+      isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
       enableSorting
       sorting={sortBy}
       onSort={setSortBy}
       fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
       showLoadButton
-      hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
+      hasNextPage={
+        enableAdvancedFilters ? !isPreviousData && hasNextPage : canFetchMore
+      }
       onRowClick={(event: CogniteEvent) => onClick(event)}
     />
   );
