@@ -1,9 +1,10 @@
 import { GlobalFilter, GlobalFilterKeys } from './types';
-import { atom, useRecoilValue } from 'recoil';
+import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import { syncEffect } from 'recoil-sync';
 import { custom } from '@recoiljs/refine';
 import { FILTER } from './constants';
 import { isObjectEmpty } from 'app/utils/compare';
+import { AssetViewMode } from '@cognite/data-exploration';
 
 const defaultFilterState = {
   asset: {},
@@ -36,6 +37,18 @@ export const useFilterEmptyState = (key: GlobalFilterKeys) => {
 
   return isObjectEmpty(facets);
 };
+
+export const filterSidebar = atom({
+  key: 'FilterSidebar',
+  default: true,
+});
+export const useFilterSidebarState = () => useRecoilState(filterSidebar);
+
+export const assetView = atom<AssetViewMode>({
+  key: 'AssetView',
+  default: 'tree',
+});
+export const useAssetViewState = () => useRecoilState(assetView);
 
 // WIP
 // export const dynamicFilterAtom = atomFamily<DynamicFilter, string>({

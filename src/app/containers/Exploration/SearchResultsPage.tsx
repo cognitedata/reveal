@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import {
   ResourceItem,
   AssetSearchResults,
@@ -50,6 +50,7 @@ import { useDocumentFilters } from 'app/store/filter/selectors/documentSelectors
 import { useNavigate } from 'react-router-dom';
 import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
 import { AllTab } from 'app/containers/All';
+import { useAssetViewState, useFilterSidebarState } from 'app/store';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${
@@ -68,7 +69,8 @@ function SearchPage() {
     useCurrentResourceType();
 
   const [activeId, openPreview] = useCurrentResourceId();
-  const [showFilter, setShowFilter] = useState(true);
+  const [showFilter, setShowFilter] = useFilterSidebarState();
+  const [assetView, setAssetView] = useAssetViewState();
   const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
 
@@ -114,7 +116,7 @@ function SearchPage() {
 
   const handleFilterToggleClick = React.useCallback(() => {
     setShowFilter(prevState => !prevState);
-  }, []);
+  }, [setShowFilter]);
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
     openPreview(item.id !== activeId ? item.id : undefined);
@@ -176,6 +178,8 @@ function SearchPage() {
                       <AssetSearchResults
                         isTreeEnabled
                         showCount
+                        view={assetView}
+                        onViewChange={setAssetView}
                         filter={assetFilter}
                         enableAdvancedFilters={isAdvancedFiltersEnabled}
                         onClick={handleRowClick}
@@ -352,6 +356,8 @@ function SearchPage() {
                     onClick={(item: ResourceItem) =>
                       openPreview(item.id !== activeId ? item.id : undefined)
                     }
+                    view={assetView}
+                    onViewChange={setAssetView}
                     filter={assetFilter}
                     {...commonProps}
                     isTreeEnabled
