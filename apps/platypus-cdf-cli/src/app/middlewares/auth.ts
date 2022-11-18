@@ -50,7 +50,14 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
           message: 'What cluster is it on?',
           limit: 10,
           initial: 2,
-          choices: ['greenfield', 'bluefield', 'api', 'westeurope-1', 'omv'],
+          choices: [
+            'greenfield',
+            'bluefield',
+            'api',
+            'westeurope-1',
+            'europe-west1-1',
+            'omv',
+          ],
         });
       }
 

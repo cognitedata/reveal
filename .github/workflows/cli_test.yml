@@ -31,11 +31,21 @@ jobs:
           rm .npmrc
           yarn build production platypus-cdf-cli
       - name: Run the E2E Tests
-        run: |
-          yarn nx run platypus-cdf-cli:e2e
+        uses: cypress-io/github-action@v4.2.0
+        continue-on-error: false
+        with:
+          # let's make sure our tests pass on Chrome browser
+          browser: chrome
+          start: yarn nx serve mock-server
+          wait-on: 'http://localhost:4002'
+          # wait for 1 minute for the server to respond
+          wait-on-timeout: 60
+          # Run the e2e tests
+          command: yarn nx run platypus-cdf-cli:e2e
         env:
           PROJECT: ${{ secrets.CLI_E2E_PROJECT }}
           TENANT: ${{ secrets.CLI_E2E_TENANT }}
           CLUSTER: ${{ secrets.CLI_E2E_CLUSTER }}
           CLIENT_ID: ${{ secrets.CLI_E2E_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLI_E2E_CLIENT_SECRET }}
+          TESTING_BASE_URL: http://localhost:4002

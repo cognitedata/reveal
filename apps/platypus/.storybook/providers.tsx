@@ -24,6 +24,7 @@ export default makeDecorator({
     const cogniteClient: CogniteClient = new CogniteClient({
       appId: config.APP_APP_ID,
       project: 'mock',
+      noAuthMode: true,
       baseUrl: window.location.origin,
       getToken: async () => 'mock',
     });

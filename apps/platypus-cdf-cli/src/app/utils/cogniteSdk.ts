@@ -16,13 +16,21 @@ export const createSdkClient = (authArgs: ProjectConfig & BaseArgs) => {
   const baseUrl = `https://${cluster}.cognitedata.com`;
   const appId = CONSTANTS.APP_ID;
 
-  const client = new CogniteClient({
-    appId,
-    project,
-    baseUrl: authType === AUTH_TYPE.APIKEY ? '' : baseUrl,
-    apiKeyMode: authType === AUTH_TYPE.APIKEY,
-    getToken: getAuthToken(authArgs),
-  });
+  const client = process.env.TESTING_BASE_URL
+    ? new CogniteClient({
+        appId,
+        project,
+        noAuthMode: true,
+        baseUrl: process.env.TESTING_BASE_URL,
+        getToken: () => Promise.resolve(''),
+      })
+    : new CogniteClient({
+        appId,
+        project,
+        baseUrl: authType === AUTH_TYPE.APIKEY ? '' : baseUrl,
+        apiKeyMode: authType === AUTH_TYPE.APIKEY,
+        getToken: getAuthToken(authArgs),
+      });
 
   setCogniteSDKClient(client);
 

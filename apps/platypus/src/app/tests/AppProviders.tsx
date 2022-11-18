@@ -23,6 +23,7 @@ const AppProviders = ({ store, children, tenant }: Props) => {
     appId: config.APP_APP_ID,
     baseUrl: window.location.origin,
     project: 'mock',
+    noAuthMode: true,
     getToken: async () => 'mock',
   });
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
