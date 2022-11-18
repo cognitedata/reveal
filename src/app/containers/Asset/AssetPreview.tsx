@@ -113,11 +113,7 @@ export const AssetPreview = ({
               <Metadata metadata={asset.metadata} />
             </DetailsTabWrapper>
           </Tabs.TabPane>,
-          <Tabs.TabPane
-            tab={<TabTitle>Hierarchy</TabTitle>}
-            style={{ padding: '20px 16px' }}
-            key="children"
-          >
+          <Tabs.TabPane tab={<TabTitle>Hierarchy</TabTitle>} key="children">
             <AssetTreeTable
               activeIds={[asset.id]}
               filter={

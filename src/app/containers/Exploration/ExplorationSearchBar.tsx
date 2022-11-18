@@ -31,6 +31,7 @@ export const ExplorationSearchBar = () => {
     <Input
       size="large"
       variant="noBorder"
+      autoFocus
       fullWidth
       style={{
         background: isFilterEnabled ? undefined : 'transparent',
