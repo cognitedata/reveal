@@ -51,4 +51,5 @@ const VerticalDivider = styled.div`
 
 const StyledSpacedRow = styled(SpacedRow)`
   align-items: center;
+  padding-bottom: 0;
 `;

@@ -16,11 +16,15 @@ import { InternalAssetFilters } from 'domain/assets/internal/types';
 import { TableSortBy } from 'components/Table';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 
+export type AssetViewMode = 'list' | 'tree';
+
 export const AssetSearchResults = ({
   query = '',
   filter = {},
   showCount = false,
   onClick,
+  view,
+  onViewChange,
   isTreeEnabled,
   enableAdvancedFilters,
   activeIds,
@@ -29,6 +33,8 @@ export const AssetSearchResults = ({
 }: {
   enableAdvancedFilters?: boolean;
   query?: string;
+  view: AssetViewMode;
+  onViewChange: (nextView: AssetViewMode) => void;
   isTreeEnabled?: boolean;
   showCount?: boolean;
   filter: InternalAssetFilters;
@@ -48,9 +54,7 @@ export const AssetSearchResults = ({
       sortBy,
     });
 
-  const [currentView, setCurrentView] = useState<string>(() =>
-    isTreeEnabled ? 'tree' : 'list'
-  );
+  const currentView = isTreeEnabled ? view : 'list';
 
   const { onSelect, selectionMode, isSelected, ...rest } = extraProps;
   const treeProps = { onSelect, selectionMode, isSelected };
@@ -80,7 +84,9 @@ export const AssetSearchResults = ({
         <Flex alignItems="center" gap={10}>
           <SegmentedControl
             currentKey={currentView}
-            onButtonClicked={setCurrentView}
+            onButtonClicked={nextView =>
+              onViewChange(nextView as AssetViewMode)
+            }
           >
             <SegmentedControl.Button
               icon="Tree"

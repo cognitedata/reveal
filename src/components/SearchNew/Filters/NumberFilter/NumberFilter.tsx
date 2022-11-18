@@ -57,7 +57,6 @@ export const NumberFilter = ({
           placeholder={placeholder}
           icon={error ? 'Error' : undefined}
           iconPlacement="right"
-          autoFocus
           onChange={ev => {
             handleValueChange(ev.target.value);
           }}

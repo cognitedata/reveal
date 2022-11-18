@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ResourceType,
   ResourceItem,
@@ -8,7 +8,10 @@ import {
 } from 'types';
 import { FileSearchResults } from './FileSearchResults/FileSearchResults';
 import { EventSearchResults } from './EventSearchResults/EventSearchResults';
-import { AssetSearchResults } from './AssetSearchResults/AssetSearchResults';
+import {
+  AssetSearchResults,
+  AssetViewMode,
+} from './AssetSearchResults/AssetSearchResults';
 import { SequenceSearchResults } from './SequenceSearchResults/SequenceSearchResults';
 import { TimeseriesSearchResults } from './TimeseriesSearchResults/TimeseriesSearchResults';
 
@@ -31,11 +34,15 @@ export const SearchResults = ({
 } & Required<OldResourceFilterProps> &
   SelectableItemsProps &
   DateRangeProps) => {
+  const [assetView, setAssetView] = useState<AssetViewMode>('tree');
+
   switch (resourceType) {
     case 'asset':
       return (
         <AssetSearchResults
           isTreeEnabled
+          view={assetView}
+          onViewChange={setAssetView}
           onClick={item => onClick({ id: item.id, type: 'asset' })}
           filter={{
             ...assetFilter,
