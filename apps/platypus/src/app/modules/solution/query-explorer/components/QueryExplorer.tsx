@@ -27,6 +27,7 @@ export const QueryExplorer = ({
   const [gqlSchema, setGqlSchema] = useState<GraphQLSchema>();
   const [isReady, setIsReady] = useState<boolean>(false);
   const [explorerQuery, setExplorerQuery] = useState(defaultQuery);
+  const [explorerVariables, setExplorerVariables] = useState('{}');
   const explorerPlugin = useExplorerPlugin({
     query: explorerQuery,
     onEdit: setExplorerQuery,
@@ -36,12 +37,13 @@ export const QueryExplorer = ({
   const handleEditQuery = (query: string | undefined) =>
     setExplorerQuery(query);
 
+  const handleEditVariables = (variables: string) =>
+    setExplorerVariables(variables);
+
   useEffect(() => {
     if (isReady || !solutionId || !schemaVersion) {
       return;
     }
-
-    localStorage.setItem('graphiql:theme', 'light');
 
     graphQlQueryFetcher
       .fetcher(
@@ -76,9 +78,12 @@ export const QueryExplorer = ({
           graphQlQueryFetcher.fetcher(graphQlParams, solutionId, schemaVersion)
         }
         onEditQuery={handleEditQuery}
+        onEditVariables={handleEditVariables}
         query={explorerQuery}
         schema={gqlSchema}
         plugins={[explorerPlugin]}
+        isHeadersEditorEnabled={false}
+        variables={explorerVariables}
       ></GraphiQL>
     </QueryExplorerContainer>
   );

@@ -34,6 +34,7 @@ import { DataModelDTO } from './dto/dms-data-model-dtos';
 import { DataModelDataMapper } from './data-mappers';
 import { DataUtils } from '../../../../boundaries/utils/data-utils';
 import { FdmMixerApiService } from './services/mixer-api';
+import { PlatypusError } from '../../../../boundaries/types';
 
 export class FdmClient implements FlexibleDataModelingClient {
   private spacesApi: SpacesApiService;
@@ -185,7 +186,14 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @param dto
    */
   runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
-    throw 'Not implemented';
+    const reqDto: RunQueryDTO = {
+      ...dto,
+      extras: { ...dto.extras, apiName: dto.dataModelId },
+    };
+
+    return this.mixerApiService
+      .runQuery(reqDto)
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
   /**

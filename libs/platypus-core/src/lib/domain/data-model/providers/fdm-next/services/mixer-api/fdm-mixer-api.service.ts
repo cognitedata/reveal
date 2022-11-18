@@ -58,7 +58,11 @@ export class FdmMixerApiService {
     }
 
     const listDataModelsQuery = `
-    query ${queryVariables ? `($filter: GraphQlDmlVersionFilter)` : ''} {
+    query ${
+      Object.keys(queryVariables).length
+        ? `($filter: GraphQlDmlVersionFilter)`
+        : ''
+    } {
       listGraphQlDmlVersions${dataModelsFromSpaceFilter} {
         ${this.dataModelVersionFields}
       }
