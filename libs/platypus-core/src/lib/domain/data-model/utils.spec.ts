@@ -90,8 +90,6 @@ describe('Data model services utils', () => {
 
       expect(typesMap).toEqual({
         Boolean: 'boolean',
-        DataPoint: 'text',
-        DataPointValue: 'text',
         Float: 'float32',
         Int: 'int32',
         Int64: 'int64',
