@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
 import { CameraConfiguration } from '@reveal/utilities';
 
 import { ClassificationInfo, PointCloudOctree, PickPoint } from './potree-three-loader';
@@ -15,7 +14,9 @@ import { ClassificationHandler } from './ClassificationHandler';
 
 import { CompletePointCloudAppearance, StyledPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 
-export class PointCloudNode extends THREE.Group {
+import { Matrix4, Group, Box3 } from 'three';
+
+export class PointCloudNode extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
   private readonly _octree: PointCloudOctree;
 
@@ -27,8 +28,12 @@ export class PointCloudNode extends THREE.Group {
 
   private readonly _modelIdentifier: symbol;
 
+  private _sourceTransform: Matrix4;
+  private _customTransform: Matrix4;
+
   constructor(
     modelIdentifier: symbol,
+    sourceTransform: Matrix4,
     octree: PointCloudOctree,
     annotations: PointCloudObject[],
     classificationInfo: ClassificationInfo,
@@ -52,6 +57,12 @@ export class PointCloudNode extends THREE.Group {
     this._classificationHandler = new ClassificationHandler(this._octree.material, classificationInfo);
 
     this.matrixAutoUpdate = false;
+
+    this._sourceTransform = new Matrix4().copy(sourceTransform);
+    this.matrix.copy(this._sourceTransform);
+    this._customTransform = new Matrix4();
+
+    this.updateMatrixWorld(true);
   }
 
   get modelIdentifier(): symbol {
@@ -169,7 +180,7 @@ export class PointCloudNode extends THREE.Group {
     return this._classificationHandler.classes;
   }
 
-  getBoundingBox(outBbox: THREE.Box3 = new THREE.Box3()): THREE.Box3 {
+  getBoundingBox(outBbox: THREE.Box3 = new Box3()): THREE.Box3 {
     const box: THREE.Box3 =
       this._octree.pcoGeometry.tightBoundingBox ?? this._octree.pcoGeometry.boundingBox ?? this._octree.boundingBox;
 
@@ -180,12 +191,13 @@ export class PointCloudNode extends THREE.Group {
   }
 
   setModelTransformation(matrix: THREE.Matrix4): void {
-    this.matrix.copy(matrix);
+    this._customTransform.copy(matrix);
+    this.matrix.copy(this._customTransform).premultiply(this._sourceTransform);
     this.updateMatrixWorld(true);
   }
 
-  getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {
-    return out.copy(this.matrix);
+  getModelTransformation(out = new Matrix4()): THREE.Matrix4 {
+    return out.copy(this._customTransform);
   }
 
   get stylableObjectAnnotationMetadata(): Iterable<PointCloudObjectMetadata> {
