@@ -19,6 +19,8 @@ type Props = {
   dateFilter?: DateFilter;
 };
 
+const DOWNLOAD_DATA_LABEL = 'Download data as JSON';
+
 function MetadataDownload({ item: { id, type } }: Props) {
   const [downloading, setDownloading] = useState(false);
   const { data: metadata, isFetched } = useCdfItem(
@@ -54,7 +56,7 @@ function MetadataDownload({ item: { id, type } }: Props) {
           setDownloading(true);
         }}
       >
-        Download metadata
+        {DOWNLOAD_DATA_LABEL}
       </Menu.Item>
     </Menu>
   );
@@ -119,7 +121,7 @@ function FileDownloadButton({ item }: Props) {
           setDownloading(true);
         }}
       >
-        Download metadata
+        {DOWNLOAD_DATA_LABEL}
       </Menu.Item>
       <FileDownloadMenuItem item={item} />
     </Menu>
@@ -208,7 +210,7 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
           setDownloading(true);
         }}
       >
-        Download metadata
+        {DOWNLOAD_DATA_LABEL}
       </Menu.Item>
       <Menu.Item
         onClick={() => {
@@ -216,7 +218,7 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
           setDownloading(true);
         }}
       >
-        Download metadata with datapoints
+        Download data with datapoints as JSON
       </Menu.Item>
     </Menu>
   );
