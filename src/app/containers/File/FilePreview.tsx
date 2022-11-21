@@ -58,7 +58,7 @@ export const FilePreview = ({
   const { tabType } = useParams<{
     tabType: FilePreviewTabType;
   }>();
-  const activeTab = tabType || 'preview';
+  const activeTab = tabType || 'info';
 
   const onTabChange = useOnPreviewTabChange(tabType, 'file');
 
@@ -136,6 +136,12 @@ export const FilePreview = ({
           tab={activeTab}
           onTabChange={onTabChange}
           additionalTabs={[
+            <Tabs.TabPane tab={<TabTitle>File details</TabTitle>} key="info">
+              <DetailsTabWrapper>
+                <FileDetails file={fileInfo} />
+                <Metadata metadata={fileInfo.metadata} />
+              </DetailsTabWrapper>
+            </Tabs.TabPane>,
             <Tabs.TabPane tab={<TabTitle>Preview</TabTitle>} key="preview">
               <PreviewTabWrapper>
                 {editMode && (
@@ -152,12 +158,6 @@ export const FilePreview = ({
                   }
                 />
               </PreviewTabWrapper>
-            </Tabs.TabPane>,
-            <Tabs.TabPane tab={<TabTitle>File details</TabTitle>} key="info">
-              <DetailsTabWrapper>
-                <FileDetails file={fileInfo} />
-                <Metadata metadata={fileInfo.metadata} />
-              </DetailsTabWrapper>
             </Tabs.TabPane>,
           ]}
         />
