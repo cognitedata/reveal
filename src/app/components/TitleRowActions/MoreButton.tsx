@@ -1,16 +1,13 @@
-import React from 'react';
 import { notification } from 'antd';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import {
   ResourceType,
   ResourceItem,
-  convertResourceType,
   useEnv,
   useTenant,
 } from '@cognite/data-exploration';
 
 import { trackUsage } from 'app/utils/Metrics';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 type Props = {
   item: ResourceItem;
@@ -61,11 +58,6 @@ export function MoreButton({ item: { type, id } }: Props) {
   const env = useEnv();
   const tenant = useTenant();
 
-  const { data } = useCdfItem<{ externalId?: string }>(
-    convertResourceType(type),
-    { id }
-  );
-
   const menu = (
     <Menu>
       <Menu.Item
@@ -75,15 +67,6 @@ export function MoreButton({ item: { type, id } }: Props) {
         key="copyoData"
       >
         Copy oData query
-      </Menu.Item>
-      <Menu.Item
-        disabled={!data?.externalId}
-        onClick={() =>
-          data?.externalId && copyIdsToClipboard(data?.externalId, 'ExternalID')
-        }
-        key="copyExternalId"
-      >
-        Copy external id
       </Menu.Item>
       <Menu.Item key="copyId">
         <a
