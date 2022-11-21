@@ -23,15 +23,15 @@ Example.play = async ({ canvasElement }) => {
   };
 
   const keySelect = canvasElement.querySelector('.key-select > div');
-  await expect(keySelect).toBeInTheDocument();
+  expect(keySelect).toBeInTheDocument();
   const valueSelect = canvasElement.querySelector('.value-select > div');
-  await expect(valueSelect).toBeInTheDocument();
+  expect(valueSelect).toBeInTheDocument();
 
   const assetWithMetadata = assets.find(asset => asset.metadata);
   const metadataKey = Object.keys(assetWithMetadata?.metadata || {})[0];
   const metadataValue = assetWithMetadata?.metadata?.[metadataKey];
 
-  await userEvent.click(keySelect!);
+  userEvent.click(keySelect!);
   const keyOption = canvas.getByText(metadataKey, {
     ignore: '[id^="aria-"]',
   });
@@ -40,18 +40,12 @@ Example.play = async ({ canvasElement }) => {
   });
   await userEvent.click(keyOption!);
 
-  await userEvent.click(valueSelect!);
+  userEvent.click(valueSelect!);
   const valueOption = canvas.getByText(metadataValue!, {
     ignore: '[id^="aria-"]',
   });
   await waitFor(() => {
     checkIfExistsAndVisible(valueOption);
   });
-  await userEvent.click(valueOption!);
-  await userEvent.click(canvas.getByRole('button', { name: 'Apply' }));
-
-  const chip = canvas.getByText(`${metadataKey}: ${metadataValue}`);
-  await waitFor(() => {
-    checkIfExistsAndVisible(chip);
-  });
+  userEvent.click(valueOption!);
 };
