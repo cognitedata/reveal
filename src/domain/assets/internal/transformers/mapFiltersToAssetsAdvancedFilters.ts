@@ -1,4 +1,5 @@
 import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
+import { NIL_FILTER_VALUE } from 'domain/constants';
 import { InternalAssetFilters } from '../types';
 
 export type AssetsProperties = {
@@ -20,6 +21,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
     lastUpdatedTime,
     externalIdPrefix,
     source,
+    labels,
     metadata,
     internalId,
   }: InternalAssetFilters,
@@ -37,11 +39,31 @@ export const mapFiltersToAssetsAdvancedFilters = (
         return acc;
       }, [] as number[]);
     })
-    .in('source', () => {
-      if (source) {
-        return [source];
-      }
-    })
+    .or(
+      new AdvancedFilterBuilder<AssetsProperties>()
+        .containsAny('labels', () => {
+          return labels?.reduce((acc, { value }) => {
+            if (value !== NIL_FILTER_VALUE) {
+              return [...acc, value];
+            }
+            return acc;
+          }, [] as string[]);
+        })
+        .notExists('labels', () => {
+          return Boolean(
+            labels?.find(({ value }) => value === NIL_FILTER_VALUE)
+          );
+        })
+    )
+    .or(
+      new AdvancedFilterBuilder<AssetsProperties>()
+        .in('source', () => {
+          if (source && source !== NIL_FILTER_VALUE) {
+            return [source];
+          }
+        })
+        .notExists('source', source === NIL_FILTER_VALUE)
+    )
     .in('id', () => {
       if (internalId) {
         return [internalId];
@@ -63,29 +85,25 @@ export const mapFiltersToAssetsAdvancedFilters = (
     }
   }
 
+  builder.and(filterBuilder);
+
   if (query) {
     const searchQueryBuilder = new AdvancedFilterBuilder<AssetsProperties>()
       .search('name', query)
       .search('description', query);
 
-    filterBuilder.or(searchQueryBuilder);
-  }
-
-  builder.and(filterBuilder);
-
-  /**
-   * We want to filter all the metadata keys with the search query, to give a better result
-   * to the user when using our search.
-   */
-  if (searchQueryMetadataKeys) {
-    const searchMetadataBuilder = new AdvancedFilterBuilder<AssetsProperties>();
-
-    for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-      searchMetadataBuilder.prefix(`metadata|${key}`, value);
+    /**
+     * We want to filter all the metadata keys with the search query, to give a better result
+     * to the user when using our search.
+     */
+    if (searchQueryMetadataKeys) {
+      for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
+        searchQueryBuilder.prefix(`metadata|${key}`, value);
+      }
     }
 
-    builder.or(searchMetadataBuilder);
+    builder.or(searchQueryBuilder);
   }
 
-  return new AdvancedFilterBuilder<AssetsProperties>().or(builder).build();
+  return new AdvancedFilterBuilder<AssetsProperties>().and(builder).build();
 };
