@@ -288,8 +288,9 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    * modified externally.
    *
    * Calling this function often might cause degraded performance.
+   * @param customCamera Optional camera to be used in place of viewerCamera when calculating positions
    */
-  forceUpdate(): void {
+  forceUpdate(customCamera?: THREE.PerspectiveCamera): void {
     // Do not update elements if overlay visibility is set to hidden/false.
     if (!this._visible) {
       return;
@@ -301,7 +302,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     }
     this.updateNewElementSizes();
 
-    const camera = this.viewerCamera;
+    const camera = customCamera ?? this.viewerCamera;
     const canvas = this._viewer.canvas;
     const { camPos, camNormal, point, nearPlane, farPlane, position2D } = this._preallocatedVariables;
 
@@ -458,8 +459,13 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this._compositeOverlays.push(htmlElement);
   }
 
-  private onSceneRendered(): void {
-    this.forceUpdate();
+  private onSceneRendered(event: {
+    frameNumber: number;
+    renderTime: number;
+    renderer: THREE.WebGLRenderer;
+    camera: THREE.PerspectiveCamera;
+  }): void {
+    this.forceUpdate(event.camera);
   }
 
   private onViewerDisposed(): void {
