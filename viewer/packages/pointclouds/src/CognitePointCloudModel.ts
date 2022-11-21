@@ -109,7 +109,7 @@ export class CognitePointCloudModel {
    * @param out Preallocated `THREE.Matrix4` (optional)
    */
   getSourceTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
-    return this.pointCloudNode.getModelTransformation(out);
+    return this.pointCloudNode.getSourceTransformation(out);
   }
 
   /**
