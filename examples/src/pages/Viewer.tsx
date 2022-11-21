@@ -5,20 +5,20 @@
 import Stats from 'stats.js';
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three'
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
   Cognite3DViewer,
   Cognite3DViewerOptions,
-  Cognite3DModel,
+  CogniteCadModel,
   CognitePointCloudModel,
   CameraControlsOptions,
   TreeIndexNodeCollection,
-  CogniteModelBase,
-  DefaultCameraManager
+  DefaultCameraManager,
+  CogniteModel
 } from '@cognite/reveal';
-import { DebugCameraTool, ExplodedViewTool, AxisViewTool, Corner } from '@cognite/reveal/tools';
+import { DebugCameraTool, ExplodedViewTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -88,6 +88,8 @@ export function Viewer() {
         });
       }
 
+      const edlEnabled = (urlParams.get('edl') ?? 'true') === 'true';
+
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,
@@ -97,7 +99,11 @@ export function Viewer() {
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         continuousModelStreaming: true,
         pointCloudEffects: {
-          pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined)
+          pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined),
+          edlOptions: edlEnabled ? {
+            strength: parseFloat(urlParams.get('edlStrength') ?? '0.5'),
+            radius: parseFloat(urlParams.get('edlRadius') ?? '2.2'),
+          } : 'disabled'
         }
       };
 
@@ -144,6 +150,14 @@ export function Viewer() {
       const guiState = {
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
+        screenshot: {
+          includeUI: true,
+          resolution: {
+            override: false,
+            width: 1920,
+            height: 1080
+          }
+        },
         debug: {
           stats: {
             drawCalls: 0,
@@ -157,6 +171,7 @@ export function Viewer() {
           ghostAllNodes: false,
           hideAllNodes: false
         },
+        viewerSize: 'fullScreen',
         showCameraTool: new DebugCameraTool(viewer),
         renderMode: 'Color',
         controls: {
@@ -168,20 +183,33 @@ export function Viewer() {
       const guiActions = {
         showCameraHelper: () => {
           guiState.showCameraTool.showCameraHelper();
+        },
+        takeScreenshot: async () => {
+          const width = guiState.screenshot.resolution.override ? guiState.screenshot.resolution.width : undefined;
+          const height = guiState.screenshot.resolution.override ? guiState.screenshot.resolution.height : undefined;
+          const filename = 'example_screenshot' + (guiState.screenshot.resolution.override ? ('_' + width + 'x' + height) : '');
+
+          const url = await viewer.getScreenshot(width, height, guiState.screenshot.includeUI);
+          if (url) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+          }
         }
       };
       initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
 
 
       const totalBounds = new THREE.Box3();
-      function handleModelAdded(model: CogniteModelBase) {
+      function handleModelAdded(model: CogniteModel) {
         const bounds = model.getModelBoundingBox();
         totalBounds.expandByPoint(bounds.min);
         totalBounds.expandByPoint(bounds.max);
         clippingUi.updateWorldBounds(totalBounds);
 
         viewer.loadCameraFromModel(model);
-        if (model instanceof Cognite3DModel) {
+        if (model instanceof CogniteCadModel) {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, viewer, model);
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         } else if (model instanceof CognitePointCloudModel) {
@@ -216,6 +244,14 @@ export function Viewer() {
           window.location.href = url.toString();
         });
 
+      const screenshotGui = gui.addFolder('Screenshot');
+      screenshotGui.add(guiActions, 'takeScreenshot').name('Create screenshot');
+      screenshotGui.add(guiState.screenshot, 'includeUI').name('Include UI elements in the screenshot');
+      const resolutionGui = screenshotGui.addFolder('Resolution');
+      resolutionGui.add(guiState.screenshot.resolution, 'override').name('Override Resolution');
+      resolutionGui.add(guiState.screenshot.resolution, 'width').name('Width');
+      resolutionGui.add(guiState.screenshot.resolution, 'height').name('Height');
+
       const debugGui = gui.addFolder('Debug');
       const debugStatsGui = debugGui.addFolder('Statistics');
       debugStatsGui.add(guiState.debug.stats, 'drawCalls').name('Draw Calls');
@@ -224,6 +260,36 @@ export function Viewer() {
       debugStatsGui.add(guiState.debug.stats, 'geometries').name('Geometries');
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
+
+      const viewerSize = gui.addFolder('Viewer size');
+      viewerSize.add(guiState, 'viewerSize', ['fullScreen', 'halfScreen', 'quarterScreen']).name('Size').onFinishChange(value => {
+        switch (value) {
+          case 'fullScreen':
+            canvasWrapperRef.current!.style.position = 'relative';
+            canvasWrapperRef.current!.style.width = '100%';
+            canvasWrapperRef.current!.style.height = '100%';
+            canvasWrapperRef.current!.style.flexGrow = '1';
+            canvasWrapperRef.current!.style.left = '0px';
+            canvasWrapperRef.current!.style.top = '0px';
+            break;
+          case 'halfScreen':
+            canvasWrapperRef.current!.style.position = 'relative';
+            canvasWrapperRef.current!.style.width = '50%';
+            canvasWrapperRef.current!.style.height = '100%';
+            canvasWrapperRef.current!.style.flexGrow = '1';
+            canvasWrapperRef.current!.style.left = '25%';
+            canvasWrapperRef.current!.style.top = '0px';
+            break;
+          case 'quarterScreen':
+            canvasWrapperRef.current!.style.position = 'absolute';
+            canvasWrapperRef.current!.style.flexGrow = '0.5';
+            canvasWrapperRef.current!.style.width = '50%';
+            canvasWrapperRef.current!.style.height = '50%';
+            canvasWrapperRef.current!.style.left = '25%';
+            canvasWrapperRef.current!.style.top = '25%';
+            break;
+        }
+      });
 
       viewer.on('sceneRendered', (sceneRenderedEventArgs) => {
         guiState.debug.stats.drawCalls = sceneRenderedEventArgs.renderer.info.render.calls;
@@ -371,5 +437,5 @@ export function Viewer() {
       viewer?.dispose();
     };
   }, []);
-  return <CanvasWrapper ref={canvasWrapperRef} />;
+  return <CanvasWrapper ref={canvasWrapperRef} />
 }

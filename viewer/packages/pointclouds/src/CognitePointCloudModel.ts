@@ -9,7 +9,7 @@ import { PointCloudNode } from './PointCloudNode';
 
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
-import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
+import { SupportedModelTypes } from '@reveal/model-base';
 import { PointCloudObjectMetadata } from '@reveal/data-providers';
 
 import {
@@ -25,7 +25,7 @@ import {
  * @noInheritDoc
  * @module @cognite/reveal
  */
-export class CognitePointCloudModel implements CogniteModelBase {
+export class CognitePointCloudModel {
   public readonly type: SupportedModelTypes = 'pointcloud';
   public readonly modelId: number;
   /**
@@ -292,7 +292,7 @@ export class CognitePointCloudModel implements CogniteModelBase {
    * @returns The number of stylable objects
    */
   get stylableObjectCount(): number {
-    return this.pointCloudNode.potreeNode.stylableObjects.length;
+    return this.pointCloudNode.stylableObjects.length;
   }
 
   /**
@@ -305,7 +305,7 @@ export class CognitePointCloudModel implements CogniteModelBase {
    * ```
    */
   traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void {
-    for (const obj of this.pointCloudNode.potreeNode.stylableObjectAnnotationMetadata) {
+    for (const obj of this.pointCloudNode.stylableObjectAnnotationMetadata) {
       callback(obj);
     }
   }

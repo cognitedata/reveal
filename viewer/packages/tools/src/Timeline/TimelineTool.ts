@@ -8,18 +8,18 @@ import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
 import { TimelineDateUpdateDelegate } from './types';
 import { EventTrigger, assertNever } from '@reveal/utilities';
-import { Cognite3DModel } from '@reveal/api';
+import { CogniteCadModel } from '@reveal/api';
 
 /**
  * Tool to applying styles to nodes based on date to play them over in Timeline
  */
 export class TimelineTool extends Cognite3DViewerToolBase {
-  private readonly _model: Cognite3DModel;
+  private readonly _model: CogniteCadModel;
   private readonly _keyframes: Keyframe[];
   private _playback: TWEEN.Tween | undefined = undefined;
   private readonly _events = { dateChanged: new EventTrigger<TimelineDateUpdateDelegate>() };
 
-  constructor(cadModel: Cognite3DModel) {
+  constructor(cadModel: CogniteCadModel) {
     super();
 
     this._model = cadModel;

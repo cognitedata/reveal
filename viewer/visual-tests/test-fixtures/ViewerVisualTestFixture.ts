@@ -1,29 +1,33 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Cognite3DViewer, Cognite3DModel } from '../../packages/api';
+import { Cognite3DViewer, CogniteModel } from '../../packages/api';
 import { VisualTestFixture } from './VisualTestFixture';
 import { addModels, createCognite3DViewer } from './utilities/cognite3DViewerHelpers';
 import { DeferredPromise } from '../../packages/utilities';
 import { CognitePointCloudModel } from '../../packages/pointclouds';
 import { AxisViewTool } from '../../packages/tools';
+import * as THREE from 'three';
 
 export type ViewerTestFixtureComponents = {
   viewer: Cognite3DViewer;
-  models: (Cognite3DModel | CognitePointCloudModel)[];
+  models: CogniteModel[];
 };
 
 export abstract class ViewerVisualTestFixture implements VisualTestFixture {
   private readonly _localModelUrls: string[];
   private _viewer!: Cognite3DViewer;
+  private readonly _renderer: THREE.WebGLRenderer;
 
   constructor(...localModelUrls: string[]) {
     this._localModelUrls = localModelUrls.length > 0 ? localModelUrls : ['primitives'];
+    this._renderer = new THREE.WebGLRenderer({ powerPreference: 'high-performance' });
+    this._renderer.setPixelRatio(window.devicePixelRatio);
   }
 
   public async run(): Promise<void> {
     const modelLoadedPromise = new DeferredPromise<void>();
-    this._viewer = await createCognite3DViewer(modelLoadingCallback);
+    this._viewer = await createCognite3DViewer(modelLoadingCallback, this._renderer);
 
     this.setupDom(this._viewer);
 
@@ -42,10 +46,7 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
       }
     }
   }
-  private modelLoaded(
-    model: Cognite3DModel | CognitePointCloudModel,
-    modelLoadedPromise: DeferredPromise<void>
-  ): Promise<void> {
+  private modelLoaded(model: CogniteModel, modelLoadedPromise: DeferredPromise<void>): Promise<void> {
     // Model loading callback does not work as expected for Point clouds
     if (model instanceof CognitePointCloudModel) {
       return new Promise<void>(resolve => setTimeout(resolve, 5000));
@@ -63,7 +64,7 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
   public abstract setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void>;
 
   public dispose(): void {
-    this._viewer.renderer.forceContextLoss();
+    this._renderer.forceContextLoss();
     this._viewer.dispose();
   }
 }

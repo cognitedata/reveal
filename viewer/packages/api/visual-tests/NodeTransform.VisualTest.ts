@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { Cognite3DModel } from '..';
+import { CogniteCadModel } from '..';
 import {
   ViewerTestFixtureComponents,
   ViewerVisualTestFixture
@@ -15,7 +15,7 @@ export default class NodeTransformVisualTest extends ViewerVisualTestFixture {
 
     const model = models[0];
 
-    if (model instanceof Cognite3DModel) {
+    if (model instanceof CogniteCadModel) {
       const scale = new THREE.Matrix4().makeScale(3, 3, 3);
       const rotation = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(Math.PI / 2, 0, 0));
       const translation = new THREE.Matrix4().makeTranslation(12, 10, -12);

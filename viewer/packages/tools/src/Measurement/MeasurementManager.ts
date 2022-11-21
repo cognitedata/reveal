@@ -116,6 +116,16 @@ export class MeasurementManager {
   }
 
   /**
+   * Hide/unhide all measurements
+   * @param enable
+   */
+  visible(enable: boolean): void {
+    if (this._meshGroup) {
+      this._meshGroup.visible = enable;
+    }
+  }
+
+  /**
    * Start the measurement.
    * @param point World position to start measurement operation from.
    */

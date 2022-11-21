@@ -2,14 +2,14 @@
  * Copyright 2022 Cognite AS
  */
 
+import * as THREE from 'three';
 import {
   Cognite3DViewer,
   CognitePointCloudModel,
   AnnotationIdPointCloudObjectCollection,
   PointCloudAppearance,
   DefaultPointCloudAppearance,
-  PointCloudObjectMetadata,
-  THREE
+  PointCloudObjectMetadata
 } from '@cognite/reveal';
 
 export class PointCloudObjectStylingUI {
@@ -38,11 +38,11 @@ export class PointCloudObjectStylingUI {
       },
       randomColors: () => {
         model.traverseStylableObjects((object: PointCloudObjectMetadata) => {
-          const objectStyle: [number, number, number] = [
+          const objectStyle = new THREE.Color(
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255),
-          ];
+          );
 
           const stylableObject = new AnnotationIdPointCloudObjectCollection([
             object.annotationId,
@@ -86,7 +86,7 @@ export class PointCloudObjectStylingUI {
       appearance.visible = visibility;
     });
     uiFolder.addColor(state, 'color').name('Color').onFinishChange(color => {
-      appearance.color = hexStringToColor(color);
+      appearance.color = new THREE.Color(color);
     });
 
     return () => {
@@ -131,12 +131,3 @@ export class PointCloudObjectStylingUI {
     ui.add(actions, 'apply').name('Apply');
   }
 };
-
-
-function hexStringToColor(hexColor: string): [number, number, number] {
-  const threeColor = new THREE.Color(hexColor);
-  return [
-    Math.floor(threeColor.r * 255),
-    Math.floor(threeColor.g * 255),
-    Math.floor(threeColor.b * 255)];
-}

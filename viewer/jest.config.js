@@ -22,9 +22,6 @@ module.exports = () => {
       '\\.svg$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/svgMock.js'),
       '\\.wasm$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/wasmMock.js')
     },
-    globals: {
-      __webpack_public_path__: ''
-    },
     coverageDirectory: './coverage',
     collectCoverageFrom: [
       '!**/.*.test.ts',
@@ -38,7 +35,7 @@ module.exports = () => {
       '!**/app/**'
     ],
     automock: false,
-    setupFiles: [path.resolve(__dirname, './test-utilities/src/setupJest.ts'), 'jest-canvas-mock', 'core-js'],
+    setupFiles: [path.resolve(__dirname, './test-utilities/src/setupJest.ts'), 'jest-canvas-mock'],
     setupFilesAfterEnv: ['jest-extended/all'],
     testEnvironment: 'jsdom'
   };

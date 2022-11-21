@@ -12,6 +12,7 @@
       "DOM.Iterable",
       "ES6"
     ],
+    "preserveSymlinks": false,
     "noEmit": true,
     "noImplicitAny": false, //TODO christjt 03-08-2021, set to true and fix type errors
     "baseUrl": "./",

@@ -8,8 +8,9 @@ import { CadModelBudget, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { PointCloudBudget, PointCloudIntersection } from '@reveal/pointclouds';
 import { CameraManager } from '@reveal/camera-manager';
 
-import { GeometryFilter, Cognite3DModel } from '@reveal/cad-model';
+import { GeometryFilter, CogniteCadModel } from '@reveal/cad-model';
 import { DataSource } from '@reveal/data-source';
+import { EdlOptions } from '@reveal/rendering';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -121,6 +122,10 @@ export interface Cognite3DViewerOptions {
      * big enough. Can cause significant decrease in performance on some machines.
      */
     pointBlending?: boolean;
+    /**
+     * Eye Dome Lighting (EDL) effect, considerably improves depth perception of point cloud model.
+     */
+    edlOptions?: Partial<EdlOptions> | 'disabled';
   };
 
   /**
@@ -200,7 +205,7 @@ export type CadIntersection = {
   /**
    * The model that was intersected.
    */
-  model: Cognite3DModel;
+  model: CogniteCadModel;
   /**
    * Coordinate of the intersection.
    */

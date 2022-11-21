@@ -2,9 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import { BlobOutputMetadata } from 'extensions/datasource';
 import { CadModelMetadataRepository } from './CadModelMetadataRepository';
-import { File3dFormat, ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
+import { BlobOutputMetadata, File3dFormat, ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 
 import * as THREE from 'three';
 import { createV9SceneSectorMetadata } from '../../../../test-utilities';

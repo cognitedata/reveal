@@ -7,13 +7,7 @@ module.exports = {
   preset: 'jest-puppeteer',
   testRegex: 'VisualTest.jest.ts',
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest'
-  },
-  globals: {
-    __webpack_public_path__: '',
-    'ts-jest': {
-      tsconfig: path.resolve(__dirname, '../tsconfig.test.json')
-    }
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: path.resolve(__dirname, '../tsconfig.test.json') }]
   },
   rootDir: '.',
   globalSetup: 'jest-environment-puppeteer/setup',

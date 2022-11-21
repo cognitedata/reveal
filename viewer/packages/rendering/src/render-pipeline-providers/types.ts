@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import { EdlOptions } from '../rendering/types';
 
 export type RenderTargetData = {
   currentRenderSize: THREE.Vector2;
@@ -18,6 +19,7 @@ export type CadGeometryRenderTargets = {
 };
 
 export type PointCloudRenderTargets = {
+  pointCloudLogDepth: THREE.WebGLRenderTarget;
   pointCloud: THREE.WebGLRenderTarget;
 };
 
@@ -26,4 +28,5 @@ export type PostProcessingPipelineOptions = CadGeometryRenderTargets &
     ssaoTexture: THREE.Texture;
     edges: boolean;
     pointBlending?: boolean;
+    edlOptions: EdlOptions;
   };

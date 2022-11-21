@@ -27,7 +27,7 @@ To enter point-to-point measurement mode, use `MeasurementTool.enterMeasurementM
 To exit measurement mode, call `exitMeasurementMode()`. The tool will also exit measurement mode if user presses Escape key.
 
 ```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
+// import { MeasurementTool } from '@cognite/reveal';
 
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
@@ -37,7 +37,7 @@ measurementTool.enterMeasurementMode();
 The tool exposes events for subscribing to measurement start, end & added. In the below example, the mouse cursor is changed to a cross-hair while measuring.
 
 ```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
+// import { MeasurementTool } from '@cognite/reveal';
 const measurementTool = new MeasurementTool(viewer);
 
 // Subscribe to measurement events
@@ -53,11 +53,8 @@ measurementTool.on('added', (measurement) => {
 measurementTool.enterMeasurementMode();
 ```
 
-
-
 ### Mode of measurement
 To get the mode of measurement `MeasurementTool.isInMeasurementMode`. It returns `true` if the measurement is active else `false`.
-
 
 ## Set width, color & label units of the measuring line
 To change width, color of the line and label units, use `MeasurementTool.setLineOptions(options: MeasurementOptions)`. MeasurementOptions expects
@@ -68,7 +65,7 @@ To change width, color of the line and label units, use `MeasurementTool.setLine
 The updated line width, color and label units will be applied for the next measuring distance.
 
 ```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
+// import { MeasurementTool } from '@cognite/reveal';
 
 const lineOptions = {
   distanceToLabelCallback: (distanceInMeters) => {
@@ -93,7 +90,7 @@ return an array of measurements of type `Measurement`, having below details
   - `endPoint` : end point of the measurement.
   - `distanceInMeters` : measured distance in meters.
 ```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
+// import { MeasurementTool } from '@cognite/reveal';
 
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
@@ -113,7 +110,7 @@ setTimeout(() => {
 To change existing measurement line width or color, use `MeasurementTool.updateLineWidth(lineWidth: number)` or `MeasurementTool.updateLineColor(color: THREE.Color)`
 
 ```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
+// import { MeasurementTool } from '@cognite/reveal';
 
 const measurementTool = new MeasurementTool(viewer);
 setInterval(() => {
@@ -134,7 +131,7 @@ To remove a measurement from the viewer, we have `MeasurementTool.removeMeasurem
   - `measurement` : Measurement to be removed.
 
 ```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
+// import { MeasurementTool } from '@cognite/reveal';
 
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
@@ -149,10 +146,19 @@ setTimeout(() => {
 }, 6000);
 ```
 
+### Hide and show measurements
+It may be useful to view the details of an object without measurements blocking the view.
+It's possible to toggle measurement visibility on and off in the viewer.
+To do this, use `MeasurementTool.visible(enable: boolean)`.
+```jsx
+//Hide all measurements in the viewer
+measurementTool.visible(false);
+```
+
 To remove all measurement from the viewer, use `MeasurementTool.removeAllMeasurement()`
 
 ### Label visibility
-Measurement labels can be hidden/visible using `MeasurementTool.showMeasurementLabels(enable: boolean)`.
+It is also possible to hide/show only the labels of the measurement using `MeasurementTool.showMeasurementLabels(enable: boolean)`.
 ```jsx
 // Hide all measurement lables
 measurementTool.showMeasurementLabels(false);

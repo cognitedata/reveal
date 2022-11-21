@@ -1,18 +1,21 @@
 {
   "excludeExternals": true,
-  "externalPattern": ["../viewer/src/__tests__/**", "../viewer/node_modules/**"],
-  "exclude": ["**/*+(.spec|.test).ts"],
+  "externalPattern": [
+    "../viewer/src/__tests__/**",
+    "../viewer/node_modules/**"
+  ],
+  "exclude": [
+    "**/*+(.spec|.test).ts"
+  ],
   "excludePrivate": true,
   "excludeProtected": true,
   "excludeInternal": true,
-
   "readme": "docs/api_readme.md",
   "tsconfig": "../viewer/tsconfig.typedoc.json",
-
-  "out" : "./generated",
+  "out": "./generated",
   "entryPoints": [
-    "../viewer/index.ts",
-    "../viewer/tools.ts",
-    "../viewer/extensions/datasource.ts"
+    "../viewer/api-entry-points/core.ts",
+    "../viewer/api-entry-points/datasource.ts",
+    "../viewer/api-entry-points/tools.ts"
   ]
 }

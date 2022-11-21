@@ -19,7 +19,13 @@ export {
   NodeCollectionDeserializer
 } from './src/NodeCollectionDeserializer';
 
-export { NodeAppearance, DefaultNodeAppearance, NodeOutlineColor } from './src/NodeAppearance';
+export {
+  NodeAppearance,
+  SerializableNodeAppearance,
+  DefaultNodeAppearance,
+  NodeOutlineColor
+} from './src/NodeAppearance';
+export { toSerializableNodeAppearance, fromSerializableNodeAppearance } from './src/nodeAppearanceSerialization';
 export { NodeAppearanceProvider } from './src/NodeAppearanceProvider';
 
 export { CdfModelNodeCollectionDataProvider } from './src/CdfModelNodeCollectionDataProvider';

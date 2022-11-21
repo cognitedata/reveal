@@ -6,6 +6,8 @@ import { createPointCloudModel } from '../../../test-utilities/src/createPointCl
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { AnnotationIdPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 
+import { Color } from 'three';
+
 describe(CognitePointCloudModel.name, () => {
   let model: CognitePointCloudModel;
 
@@ -19,7 +21,7 @@ describe(CognitePointCloudModel.name, () => {
 
   test('assigned styled object collection is available in styledCollections', () => {
     const annotationIds = [1, 2, 3];
-    const color: [number, number, number] = [255, 0, 127];
+    const color = new Color(1.0, 0.0, 0.498);
 
     model.assignStyledObjectCollection(new AnnotationIdPointCloudObjectCollection(annotationIds), { color });
 
@@ -32,7 +34,7 @@ describe(CognitePointCloudModel.name, () => {
 
   test('Removing all styled object collection leaves zero collections', () => {
     const annotationIds = [1, 2, 3];
-    const color: [number, number, number] = [255, 0, 127];
+    const color = new Color(1.0, 0.0, 0.498);
 
     model.assignStyledObjectCollection(new AnnotationIdPointCloudObjectCollection(annotationIds), { color });
 
@@ -43,14 +45,13 @@ describe(CognitePointCloudModel.name, () => {
   test('Unassigning collection removes the right one', () => {
     const annotationIds0 = [1, 2, 3];
     const annotationIds1 = [4, 5, 6];
-    const color0: [number, number, number] = [127, 0, 255];
-    const color1: [number, number, number] = [0, 127, 255];
+    const color0 = new Color(0.498, 0.0, 1.0);
+    const color1 = new Color(0.0, 0.498, 1.0);
 
     const collection0 = new AnnotationIdPointCloudObjectCollection(annotationIds0);
     const collection1 = new AnnotationIdPointCloudObjectCollection(annotationIds1);
 
     model.assignStyledObjectCollection(collection0, { color: color0 });
-
     model.assignStyledObjectCollection(collection1, { color: color1 });
 
     expect(model.styledCollections).toHaveLength(2);

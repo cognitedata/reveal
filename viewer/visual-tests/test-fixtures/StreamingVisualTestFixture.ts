@@ -15,7 +15,6 @@ import {
   RenderMode,
   RenderPipelineExecutor,
   RenderPipelineProvider,
-  PointColorType,
   PointCloudMaterialManager
 } from '../../packages/rendering';
 import { createDataProviders } from './utilities/createDataProviders';
@@ -30,12 +29,9 @@ import {
 } from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
 
-import {
-  LocalPointClassificationsProvider,
-  PointCloudManager,
-  PointCloudNode,
-  Potree
-} from '../../packages/pointclouds';
+import { LocalPointClassificationsProvider, PointCloudManager, PointCloudNode } from '../../packages/pointclouds';
+
+import { Potree } from '../../packages/pointclouds/src/potree-three-loader';
 
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
@@ -138,6 +134,17 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     return new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
   }
 
+  createDefaultRenderPipelineProvider(
+    materialManager: CadMaterialManager,
+    pointCloudMaterialManager: PointCloudMaterialManager,
+    sceneHandler: SceneHandler
+  ): DefaultRenderPipelineProvider {
+    return new DefaultRenderPipelineProvider(materialManager, pointCloudMaterialManager, sceneHandler, {
+      ...defaultRenderOptions,
+      pointCloudParameters: { pointBlending: false, edlOptions: { radius: 0, strength: 0 } }
+    });
+  }
+
   constructor(localModelUrl = 'primitives') {
     this._localModelUrl = localModelUrl;
 
@@ -155,11 +162,11 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._materialManager = new CadMaterialManager();
     this._pcMaterialManager = new PointCloudMaterialManager();
     this._pipelineExecutor = new BasicPipelineExecutor(this._renderer);
-    this._renderPipelineProvider = new DefaultRenderPipelineProvider(
+
+    this._renderPipelineProvider = this.createDefaultRenderPipelineProvider(
       this._materialManager,
       this._pcMaterialManager,
-      this._sceneHandler,
-      defaultRenderOptions
+      this._sceneHandler
     );
 
     this._depthRenderPipeline = new CadGeometryRenderModePipelineProvider(
@@ -344,7 +351,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       }
       return boundingBox;
     } else if (model instanceof PointCloudNode) {
-      return model.potreeNode.boundingBox.clone();
+      return model.getBoundingBox().clone();
     } else {
       throw new Error(`Unkown type of model(${model})`);
     }
@@ -367,8 +374,6 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       return cadModel;
     } else if (modelOutputs.includes('ept-pointcloud')) {
       const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
-      pointCloudNode.pointColorType = PointColorType.Height;
-
       this._sceneHandler.addPointCloudModel(pointCloudNode, modelIdentifier.revealInternalId);
       return pointCloudNode;
     } else {

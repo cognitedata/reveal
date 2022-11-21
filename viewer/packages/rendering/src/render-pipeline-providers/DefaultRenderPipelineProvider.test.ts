@@ -219,7 +219,8 @@ describe(DefaultRenderPipelineProvider.name, () => {
       {
         ...defaultRenderOptions,
         pointCloudParameters: {
-          pointBlending: true
+          pointBlending: true,
+          edlOptions: { radius: 0, strength: 0 }
         }
       }
     );

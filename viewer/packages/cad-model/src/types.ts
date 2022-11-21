@@ -3,7 +3,7 @@
  */
 
 /**
- * Units supported by {@link Cognite3DModel}.
+ * Units supported by {@link CogniteCadModel}.
  */
 export type WellKnownUnit =
   | 'Meters'
@@ -29,7 +29,7 @@ export type GeometryFilter = {
   boundingBox?: THREE.Box3;
 
   /**
-   * When set, the geometry filter {@link boundingBox} will be considered to be in "Reveal/ThreeJS space".
+   * When set, the geometry filter `boundingBox` will be considered to be in "Reveal/ThreeJS space".
    * Rather than CDF space which is the default. When using Reveal space, the model transformation
    * which can be specified using {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions |the CDF API},
    * or set in {@link https://fusion.cognite.com/ |Cognite Fusion}.

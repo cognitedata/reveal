@@ -14,6 +14,7 @@ import {
   RenderLayer
 } from '../utilities/renderUtilities';
 import { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
+import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
 /**
  * Single pass that applies post processing effects and
@@ -24,6 +25,8 @@ import { PostProcessingPipelineOptions } from '../render-pipeline-providers/type
 export class PostProcessingPass implements RenderPass {
   private readonly _scene: THREE.Scene;
   private readonly _postProcessingObjects: THREE.Mesh[];
+  private readonly _pointcloudBlitMaterial: THREE.ShaderMaterial;
+  private readonly _postProcessingOptions: PostProcessingPipelineOptions;
   private readonly setBlendFactorByBackVisibility: () => void;
 
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
@@ -37,6 +40,7 @@ export class PostProcessingPass implements RenderPass {
 
   constructor(scene: THREE.Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
     this._scene = scene;
+    this._postProcessingOptions = postProcessingPipelineOptions;
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
@@ -53,10 +57,14 @@ export class PostProcessingPass implements RenderPass {
     backBlitObject.renderOrder = -1;
 
     const pointcloudBlitMaterial = getPointCloudPostProcessingMaterial({
+      logDepthTexture: postProcessingPipelineOptions.pointCloudLogDepth.texture,
       texture: postProcessingPipelineOptions.pointCloud.texture,
       depthTexture: postProcessingPipelineOptions.pointCloud.depthTexture,
-      pointBlending: postProcessingPipelineOptions?.pointBlending ?? false
+      pointBlending: postProcessingPipelineOptions?.pointBlending ?? false,
+      edlOptions: postProcessingPipelineOptions.edlOptions
     });
+
+    this._pointcloudBlitMaterial = pointcloudBlitMaterial;
 
     // rendered pointcloud data
     const pointcloudBlitObject = createFullScreenTriangleMesh(pointcloudBlitMaterial);
@@ -105,6 +113,11 @@ export class PostProcessingPass implements RenderPass {
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
+    if (shouldApplyEdl(this._postProcessingOptions.edlOptions)) {
+      this._pointcloudBlitMaterial.uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
+      this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };
+    }
+
     renderer.sortObjects = true;
     camera.layers.mask = getLayerMask(RenderLayer.Default);
     renderer.render(this._scene, camera);

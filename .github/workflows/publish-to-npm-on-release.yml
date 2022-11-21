@@ -8,12 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        persist-credentials: false
+        with:
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: 16
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
 
@@ -33,7 +34,7 @@ jobs:
         run: yarn run build:prod
 
       - name: Publish to NPM
-        working-directory: viewer/dist
+        working-directory: viewer
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}

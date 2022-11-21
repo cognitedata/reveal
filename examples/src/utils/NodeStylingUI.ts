@@ -1,7 +1,8 @@
-import { Cognite3DViewer, THREE } from '@cognite/reveal';
+import * as THREE from 'three';
+import { Cognite3DViewer } from '@cognite/reveal';
 import dat from 'dat.gui';
 
-import { Cognite3DModel, NodeAppearance, DefaultNodeAppearance, TreeIndexNodeCollection, NumericRange, NodeOutlineColor, PropertyFilterNodeCollection } from '@cognite/reveal';
+import { CogniteCadModel, NodeAppearance, DefaultNodeAppearance, TreeIndexNodeCollection, NumericRange, NodeOutlineColor, PropertyFilterNodeCollection } from '@cognite/reveal';
 import { CogniteClient, Viewer3DAPI } from '@cognite/sdk';
 
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };
@@ -22,11 +23,11 @@ const nodeOutlineColorValues = [
 
 export class NodeStylingUI {
   private readonly _client: CogniteClient;
-  private readonly _model: Cognite3DModel;
+  private readonly _model: CogniteCadModel;
   private readonly _viewer: Cognite3DViewer;
   private readonly _areaHelpers: THREE.Object3D[] = [];
 
-  constructor(uiFolder: dat.GUI, client: CogniteClient, viewer: Cognite3DViewer, model: Cognite3DModel) {
+  constructor(uiFolder: dat.GUI, client: CogniteClient, viewer: Cognite3DViewer, model: CogniteCadModel) {
     this._model = model;
     this._client = client;
     this._viewer = viewer;
@@ -142,7 +143,7 @@ export class NodeStylingUI {
     ui.add(appearance, 'renderGhosted').name('Ghosted');
     ui.add(appearance, 'renderInFront').name('In front');
     ui.addColor(state, 'color').name('Node color').onFinishChange(color => {
-      appearance.color = hexStringToColor(color);
+      appearance.color = new THREE.Color(color);
     });
     ui.add(state, 'outlineColor', nodeOutlineColorValues).name('Outline').onFinishChange(() => {
       appearance.outlineColor = stringToNodeOutlineColor(state.outlineColor);
@@ -170,14 +171,6 @@ function nodeOutlineColorToString(color: NodeOutlineColor): string {
   return nodeOutlineColorValues[color as number];
 }
 
-function colorToHexString(color: [number, number, number]): string {
-  return `#${new THREE.Color(color[0] / 255, color[1] / 255, color[2] / 255).getHexString()}`;
-}
-
-function hexStringToColor(hexColor: string): [number, number, number] {
-  const threeColor = new THREE.Color(hexColor);
-  return [
-    Math.floor(threeColor.r * 255),
-    Math.floor(threeColor.g * 255),
-    Math.floor(threeColor.b * 255)];
+function colorToHexString(color: THREE.Color): string {
+  return `#${color.getHexString()}`;
 }
