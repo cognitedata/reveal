@@ -970,18 +970,16 @@ export class Cognite3DViewer {
    * @param restrictToMostGeometry If true, attempt to remove junk geometry from the bounds to allow setting a good camera position.
    */
   fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry = false): void {
-    if (!models) {
-      models = this.models;
-    }
+    const cogniteModels = models ?? this.models;
 
-    if (models.length < 1) {
+    if (cogniteModels.length < 1) {
       return;
     }
 
-    let bounds = new THREE.Box3();
-    for (const model of models) {
-      bounds = bounds.union(model.getModelBoundingBox(new THREE.Box3(), restrictToMostGeometry));
-    }
+    const bounds = cogniteModels.reduce<THREE.Box3>((combinedBoundingBox, model) => {
+      combinedBoundingBox.union(model.getModelBoundingBox(undefined, restrictToMostGeometry));
+      return combinedBoundingBox;
+    }, new THREE.Box3());
 
     this.fitCameraToBoundingBox(bounds, duration);
   }
