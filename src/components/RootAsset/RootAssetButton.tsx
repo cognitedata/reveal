@@ -23,6 +23,7 @@ export const RootAssetButton: React.FC<RootAssetButtonProps> = ({
       iconPlacement="right"
       type={externalLink ? 'link' : 'secondary'}
       onClick={onClick}
+      variant="ghost"
     >
       <RootAssetLabel maxwidth={maxWidth}>{label}</RootAssetLabel>
     </Button>
