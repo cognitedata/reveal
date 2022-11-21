@@ -126,13 +126,15 @@ const commonConfig = (config) => {
 }
 
 const legacyConfig = (config) => {
-  config.entry = './src/index.tsx';
+  // We have a separate entry file for Legacy Charts.
+  // Don't forget to change this field if you rename or move the Legacy Charts entry file!
+  config.entry = './src/index-legacy.tsx';
 
-  const fallback = config.resolve.fallback || {};
   // In the Legacy Charts, @cognite/cdf-sdk-singleton is not available since
   // Fusion injects it via single SPA. Therefore in Legacy Charts we use
   // a fallback instead - the "mocked" SDK uses functions with the same names,
-  // but adjusted to Legacy Charts use-case
+  // but adjusted to Legacy Charts use-case.
+  const fallback = config.resolve.fallback || {};
   Object.assign(fallback, {
     "@cognite/cdf-sdk-singleton": require.resolve("./src/sdk/index.ts")
   })
@@ -143,6 +145,8 @@ const legacyConfig = (config) => {
 }
 
 const fusionConfig = (config) => {
+  // We have a separate entry file for Charts in Fusion.
+  // Don't forget to change this field if you rename or move the Charts in Fusion entry file!
   config.entry = './src/index-fusion.tsx';
   // Compiling our code to System.register format to use polyfill-like
   // behavior of SystemJS for import maps and in-browser modules.

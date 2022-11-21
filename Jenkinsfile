@@ -47,6 +47,7 @@ static final Map<String, String> CONTEXTS = [
   buildFusion: 'continuous-integration/jenkins/build-fusion',
   publishProduction: 'continuous-integration/jenkins/publish-production',
   buildPreview: 'continuous-integration/jenkins/build-preview',
+  buildFusionPreview: 'continuous-integration/jenkins/build-fusion-preview',
   publishPreview: 'continuous-integration/jenkins/publish-preview',
   publishFusion: 'continuous-integration/jenkins/publish-fusion'
 ]
@@ -59,7 +60,8 @@ static final String[] DIRS = [
   'preview',
   'staging',
   'production',
-  'fusion'
+  'fusion',
+  'fusion-preview'
 ]
 
 String appEnv() {
@@ -69,8 +71,6 @@ String appEnv() {
   if (environment.isPullRequest) { appEnv = 'preview' }
   return appEnv
 }
-
-def isFusion = env.BRANCH_NAME == 'release/fusion';
 
 def scmVars = { };
 
@@ -119,6 +119,10 @@ pods {
     withEnv(["REACT_APP_COMMIT_REF=${scmVars.GIT_COMMIT}"]) {
       threadPool(
         tasks: [
+          // // -----------------------
+          // // - LEGACY CHARTS TASKS -
+          // // -----------------------
+
           // TODO(DEGR-903): temporarily disabling non-Fusion builds
           // 'Preview': {
           //   dir('preview') {
@@ -126,7 +130,7 @@ pods {
           //       fas.build(
           //         appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
           //         repo: APPLICATION_REPO_ID,
-          //         buildCommand: 'yarn build',
+          //         buildCommand: 'yarn build:legacy',
           //         shouldExecute: environment.isPullRequest,
           //       )
           //     }
@@ -140,7 +144,7 @@ pods {
           //       fas.build(
           //         appId: STAGING_APP_ID,
           //         repo: APPLICATION_REPO_ID,
-          //         buildCommand: 'yarn build',
+          //         buildCommand: 'yarn build:legacy',
           //         shouldExecute: environment.isStaging,
           //       )
           //     }
@@ -154,28 +158,58 @@ pods {
           //       fas.build(
           //         appId: PRODUCTION_APP_ID,
           //         repo: APPLICATION_REPO_ID,
-          //         buildCommand: 'yarn build',
+          //         buildCommand: 'yarn build:legacy',
           //         shouldExecute: environment.isProduction,
           //       )
           //     }
           //   }
           // },
 
+          // // -----------------------
+          // // - FUSION CHARTS TASKS -
+          // // -----------------------
+
+          'Preview Fusion': {
+            dir('fusion-preview') {
+              stageWithNotify('Build for preview - Fusion', CONTEXTS.buildFusionPreview) {
+                if (!environment.isPullRequest) {
+                  print "No PR previews for release builds"
+                  return;
+                }
+                def package_name = "@cognite/${FUSION_APP_ID}";
+                def prefix = jenkinsHelpersUtil.determineRepoName();
+                def domain = "fusion-preview";
+                previewServer(
+                  buildCommand: 'yarn build:fusion',
+                  buildFolder: 'build',
+                  prefix: prefix,
+                  repo: domain
+                )
+                deleteComments("[FUSION_PREVIEW_URL]")
+                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+                pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
+              }
+            }
+          },
+
           'Fusion': {
             dir('fusion') {
               stageWithNotify('Build for Fusion', CONTEXTS.buildFusion) {
+                if (environment.isPullRequest) {
+                  println "Skipping Fusion Charts build for pull requests"
+                  return
+                }
                 fas.build(
                   appId: FUSION_APP_ID,
                   repo: APPLICATION_REPO_ID,
                   buildCommand: 'yarn build:fusion',
-                  shouldExecute: isFusion,
                   shouldPublishSourceMap: false,
                 )
               }
             }
           },
         ],
-        workers: 1,
+        workers: 2, // TODO(DEGR-903) - change it to 5 when re-enabling legacy charts tasks
       )
     }
 
@@ -218,16 +252,6 @@ pods {
     //   }
     // }
 
-    stageWithNotify('Publish Fusion build', CONTEXTS.publishFusion) {
-      if (isFusion) {
-        dir('fusion') {
-          fas.publish(
-            shouldPublishSourceMap: false
-          )
-        }
-      }
-    }
-
     // TODO(DEGR-903): temporarily disabling non-Fusion builds
     // if (environment.isProduction && PRODUCTION_APP_ID) {
     //   stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
@@ -243,5 +267,17 @@ pods {
     //     }
     //   }
     // }
+
+    stageWithNotify('Publish Fusion build', CONTEXTS.publishFusion) {
+      if (!environment.isProduction) {
+        print 'Not pushing to production, no need for Fusion production build'
+        return
+      }
+      dir('fusion') {
+        fas.publish(
+          shouldPublishSourceMap: false
+        )
+      }
+    }
   }
 }

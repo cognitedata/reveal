@@ -1,3 +1,9 @@
+/**
+ * This is an App file specifically tailored for Legacy Charts.
+ * It needs to be separate from Charts in Fusion app due to additional Fusion specific wrappers
+ * which are incompatible with Legacy Charts, as well as having different login strategies
+ */
+
 import { useEffect } from 'react';
 import {
   BrowserRouter as Router,
@@ -69,7 +75,7 @@ const queryClient = new QueryClient({
   },
 });
 
-export const RootApp = () => {
+export const RootAppLegacy = () => {
   return (
     <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>} showDialog>
       <SDKProvider sdk={sdk}>

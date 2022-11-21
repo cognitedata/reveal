@@ -1,3 +1,10 @@
+/**
+ * This is an App file specifically tailored for Charts in Fusion.
+ * It needs to be separate from Legacy Charts app due to additional Fusion specific wrappers
+ * which are incompatible with Legacy Charts, as well as using sdk-singleton
+ * for authentication related purposes.
+ */
+
 import { useEffect } from 'react';
 import {
   BrowserRouter as Router,

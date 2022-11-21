@@ -3,9 +3,9 @@
   "version": "0.30.0",
   "private": true,
   "scripts": {
-    "build": "env REACT_APP_DOMAIN=charts react-app-rewired build",
+    "build:legacy": "env REACT_APP_DOMAIN=charts react-app-rewired build",
     "build:fusion": "env REACT_APP_DOMAIN=fusion react-app-rewired --max_old_space_size=4096 build",
-    "start": "env REACT_APP_DOMAIN=charts react-app-rewired start",
+    "start:legacy": "env REACT_APP_DOMAIN=charts react-app-rewired start",
     "start:fusion": "env REACT_APP_DOMAIN=fusion GENERATE_SOURCEMAP=false BROWSER=none PORT=3020 WDS_SOCKET_PORT=3020 WDS_SOCKET_HOST=localhost react-app-rewired --max_old_space_size=4096 start",
     "build-storybook": "build-storybook -s public",
     "chromatic": "chromatic --exit-zero-on-changes",

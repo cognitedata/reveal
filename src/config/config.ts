@@ -19,7 +19,7 @@ const {
   REACT_APP_COMMIT_REF = 'local',
   REACT_APP_LOCIZE_API_KEY,
   REACT_APP_MIXPANEL_TOKEN,
-  REACT_APP_DOMAIN = 'charts', // TODO(DEGR-838)
+  REACT_APP_DOMAIN = 'charts',
 } = env;
 
 const config = {
