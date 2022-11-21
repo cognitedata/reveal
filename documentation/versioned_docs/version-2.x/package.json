@@ -1,0 +1,10 @@
+{
+  "name": "@reveal-documentation/v2",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Christopher Tannum <christopher.tannum@cognite.com>",
+  "dependencies": {
+    "@cognite/reveal": "npm:@cognite/reveal@2.3",
+    "@cognite/sdk": "^5.1.3"
+  }
+}

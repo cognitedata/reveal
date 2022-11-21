@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+import viewerPackageJson from '../../../../../package.json';
 
 import TWEEN from '@tweenjs/tween.js';
 import { Subscription, fromEventPattern } from 'rxjs';
@@ -204,6 +205,13 @@ export class Cognite3DViewer {
   }
 
   constructor(options: Cognite3DViewerOptions) {
+    const threejsRequiredVersion = viewerPackageJson.peerDependencies.three.split('.')[1].toString();
+    if (threejsRequiredVersion != THREE.REVISION) {
+      log.warn(
+        `The version of the dependency \"three\" is different from what Reveal expects, which may cause unexpected results.
+        In case of unexpected issues, please set the version to ${viewerPackageJson.peerDependencies.three}`
+      );
+    }
     this._renderer = options.renderer ?? createRenderer();
     this._renderer.localClippingEnabled = true;
 
