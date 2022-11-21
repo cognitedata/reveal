@@ -103,7 +103,12 @@ export const TableCell = {
           {value || 'Unknown'}
         </Label>
       ),
-  ClassifierStatusLabel: ({ value }: CellProps<any, ClassifierStatus>) => {
+  ClassifierStatusLabel: ({
+    value,
+    row: {
+      original: { errorMessage },
+    },
+  }: CellProps<any, ClassifierStatus>) => {
     const status = capitalize(value);
 
     if (value === 'queuing' || value === 'training') {
@@ -116,9 +121,11 @@ export const TableCell = {
 
     if (value === 'failed') {
       return (
-        <Label size="medium" variant="danger">
-          {status}
-        </Label>
+        <Tooltip content={errorMessage}>
+          <Label size="medium" variant="danger">
+            {status}
+          </Label>
+        </Tooltip>
       );
     }
 
