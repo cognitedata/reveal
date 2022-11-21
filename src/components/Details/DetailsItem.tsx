@@ -26,9 +26,12 @@ export const DetailsItem = ({
   copyable = false,
   link,
 }: DetailsItemProps) => {
-  const { hasCopied, onCopy } = useClipboard(
-    copyable && typeof value === 'string' ? value : ''
-  );
+  const clipboardValue =
+    copyable && (typeof value === 'string' || typeof value === 'number')
+      ? value
+      : '';
+
+  const { hasCopied, onCopy } = useClipboard(clipboardValue);
 
   return (
     <Flex>
