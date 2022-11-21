@@ -5,7 +5,7 @@
 import Stats from 'stats.js';
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import { CogniteModel, THREE } from '@cognite/reveal';
+import * as THREE from 'three'
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
@@ -15,7 +15,8 @@ import {
   CognitePointCloudModel,
   CameraControlsOptions,
   TreeIndexNodeCollection,
-  DefaultCameraManager
+  DefaultCameraManager,
+  CogniteModel
 } from '@cognite/reveal';
 import { DebugCameraTool, ExplodedViewTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';

@@ -1,11 +1,11 @@
-import { THREE } from '@cognite/reveal-2.x';
+import { THREE } from '@cognite/reveal';
 
 import { Water } from 'three/examples/jsm/objects/Water';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import * as viewerUtils from '../utils/viewerUtilities';
 
-const reveal = typeof window === 'undefined' ? {} : require('@cognite/reveal-2.x');
-const revealTools = typeof window === 'undefined' ? {} : require('@cognite/reveal-2.x/tools');
+const reveal = typeof window === 'undefined' ? {} : require('@cognite/reveal');
+const revealTools = typeof window === 'undefined' ? {} : require('@cognite/reveal/tools');
 
 export const customScope: Record<string, any> = {
   ...viewerUtils,

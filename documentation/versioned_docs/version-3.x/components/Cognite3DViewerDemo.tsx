@@ -6,8 +6,9 @@ import React, { useEffect, useRef } from 'react';
 import {
   AddModelOptions,
   Cognite3DViewer,
+  CogniteModelBase,
   SupportedModelTypes
-} from '@cognite/reveal-3.x';
+} from '@cognite/reveal';
 
 import { CanvasWrapper } from '@site/versioned_docs/version-3.x/components/styled';
 import { DemoProps } from '@site/versioned_docs/version-3.x/components/DemoProps';
@@ -37,7 +38,7 @@ export default function Cognite3DViewerDemo({
 
     async function addModel(options: AddModelOptions) {
       const model = await viewer.addModel(options);
-      viewer.loadCameraFromModel(model);
+      viewer.loadCameraFromModel(model as unknown as CogniteModelBase);
       window.model = model;
     }
 
