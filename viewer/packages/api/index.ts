@@ -7,6 +7,7 @@ export { CogniteCadModel } from '@reveal/cad-model';
 export { ViewerState, ModelState } from './src/utilities/ViewStateHelper';
 
 export * from './src/public/types';
+export { cdfToViewerTransformation } from './src/public/constants';
 
 // Export ThreeJS to enable easy import for our users
 import * as THREE from 'three';
