@@ -10,7 +10,7 @@ export const RKOMTableRow =
         <tr {...row.getRowProps()}>
           <td
             style={{
-              padding: '0 0 0 80px',
+              padding: '0 0 0 96px',
               backgroundColor: 'var(--cogs-surface--medium)',
             }}
             colSpan={row.cells.length}

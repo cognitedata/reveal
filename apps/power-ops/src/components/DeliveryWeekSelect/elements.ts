@@ -14,6 +14,10 @@ export const DeliveryWeekButton = styled(Button)`
     background: var(--cogs-btn-color-secondary);
     cursor: default;
   }
+
+  .delivery-week-item {
+    margin-right: 14px;
+  }
 `;
 
 export const MenuItem = styled.div`
