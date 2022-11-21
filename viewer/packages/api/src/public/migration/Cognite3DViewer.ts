@@ -1057,7 +1057,7 @@ export class Cognite3DViewer {
    * Take a screenshot from the current camera position. When drawing UI, only the viewer DOM element and its children will be included in the image.
    * The DOM is scaled to fit any provided resolution, and as a result some elements can be positioned incorrectly in regards to the 3D render.
    *
-   * `html2canvas` is used to draw UI and this has some limitations on what CSS properties it is able to render. See their {@link https://html2canvas.hertzen.com/documentation} for details.
+   * `html2canvas` is used to draw UI and this has some limitations on what CSS properties it is able to render. See {@link https://html2canvas.hertzen.com/documentation the html2canvas documentation} for details.
    * @param width Width of the final image. Default is current canvas size.
    * @param height Height of the final image. Default is current canvas size.
    * @param includeUI If false the screenshot will include only the rendered 3D.
