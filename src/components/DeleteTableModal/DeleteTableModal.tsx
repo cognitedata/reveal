@@ -40,16 +40,15 @@ const DeleteTableModal = ({
           onCancel();
           closeTable([databaseName, tableName]);
         },
-        onError: (e: any) => {
+        onError: (e) => {
           notification.error({
-            message: (
-              <p>
-                <p>
-                  {t('delete-table-notification_error', { name: tableName })}
-                </p>
-                <pre>{JSON.stringify(e?.errors, null, 2)}</pre>
-              </p>
-            ),
+            message: t('delete-table-notification_error', { name: tableName }),
+            description:
+              e.status === 403 ? (
+                <Trans i18nKey="explorer-side-panel-tables-delete-warning-no-access" />
+              ) : (
+                e.message
+              ),
             key: 'table-delete',
           });
         },

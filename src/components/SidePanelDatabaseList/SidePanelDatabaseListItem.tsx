@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 import { Body, Colors, Detail, Icon } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk/';
 import styled from 'styled-components';
 
 import { RawExplorerContext } from 'contexts';
-import { useTables } from 'hooks/sdk-queries';
+import { useAllTables } from 'hooks/sdk-queries';
 
 import SidePanelDatabaseListItemTooltip from './SidePanelDatabaseListItemTooltip';
 
@@ -73,15 +73,9 @@ const SidePanelDatabaseListItem = ({
 }: SidePanelDatabaseListItemProps): JSX.Element => {
   const { setSelectedSidePanelDatabase } = useContext(RawExplorerContext);
 
-  const { data, isFetching, hasNextPage, fetchNextPage } = useTables({
+  const { data, hasNextPage } = useAllTables({
     database: name,
   });
-
-  useEffect(() => {
-    if (!isFetching && hasNextPage) {
-      fetchNextPage();
-    }
-  }, [isFetching, fetchNextPage, hasNextPage]);
 
   const tables = useMemo(
     () =>

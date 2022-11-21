@@ -17,7 +17,7 @@ import Modal, { ModalProps } from 'components/Modal/Modal';
 import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
 import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
 import CreateTableModalUploadStep from './CreateTableModalUploadStep';
-import { useTranslation } from 'common/i18n';
+import { Trans, useTranslation } from 'common/i18n';
 
 export enum CreateTableModalStep {
   CreationMode = 'creationMode',
@@ -137,18 +137,21 @@ const CreateTableModal = ({
             resetForm();
           }
         },
-        onError: (e: any) => {
+        onError: (e) => {
           notification.error({
-            message: (
-              <p>
-                <p>
-                  {t('table-created-notification_error', {
-                    name: values.tableName,
-                  })}
-                </p>
-                <pre>{JSON.stringify(e?.errors, null, 2)}</pre>
-              </p>
-            ),
+            message: t('table-created-notification_error', {
+              name: values.tableName,
+            }),
+            description:
+              e.status === 403 ? (
+                <div>
+                  <Trans i18nKey="explorer-side-panel-tables-access-warning" />
+                </div>
+              ) : (
+                <div>
+                  <pre>{JSON.stringify(e, null, 2)}</pre>
+                </div>
+              ),
             key: 'create-table',
           });
         },

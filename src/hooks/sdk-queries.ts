@@ -1,7 +1,20 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { RawDB, RawDBRowInsert } from '@cognite/sdk';
-import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
+import {
+  RawDB,
+  RawDBTable,
+  RawDBRow,
+  RawDBRowInsert,
+  CogniteError,
+} from '@cognite/sdk';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
+  useMutation,
+  useQueryClient,
+} from 'react-query';
 import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';
+import { useEffect } from 'react';
 export const baseKey = 'raw-explorer';
 
 export const dbKey = (db: string) => [baseKey, db];
@@ -18,35 +31,48 @@ export const rowKey = (db: string, table: string, pageSize?: number) => {
   return queryKey;
 };
 
-export const useDatabases = (options?: { enabled: boolean }) => {
+type RawDBPage = { items: RawDB[]; nextCursor?: string };
+type RawTablePage = { items: RawDBTable[]; nextCursor?: string };
+type RawDBRowPage = { items: RawDBRow[]; nextCursor?: string };
+
+const useAll = <T, E>(
+  q: (_?: UseInfiniteQueryOptions<T, E>) => UseInfiniteQueryResult<T, E>,
+  o?: UseInfiniteQueryOptions<T, E>
+) => {
+  const r = q(o);
+  useEffect(() => {
+    if (r.hasNextPage && !r.isFetching && !r.error) {
+      r.fetchNextPage();
+    }
+  }, [r]);
+  return r;
+};
+
+export const useDatabases = (
+  options?: UseInfiniteQueryOptions<RawDBPage, CogniteError>
+) => {
   const sdk = useSDK();
-  return useInfiniteQuery(
+  return useInfiniteQuery<RawDBPage, CogniteError>(
     databaseListKey,
     ({ pageParam = undefined }) =>
-      sdk
-        .get<{
-          items: RawDB[];
-          nextCursor: string | undefined;
-        }>(
-          `/api/v1/projects/${sdk.project}/raw/dbs?limit=100${
-            pageParam ? `&cursor=${pageParam}` : ''
-          }`
-        )
-        .then((response) => response.data),
+      sdk.raw.listDatabases({ cursor: pageParam, limit: 100 }),
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
       ...options,
     }
   );
 };
+export const useAllDatabases = (
+  options?: UseInfiniteQueryOptions<RawDBPage, CogniteError>
+) => useAll(useDatabases, options);
 
 export const useTables = (
   { database }: { database: string },
-  options?: { enabled: boolean }
+  options?: UseInfiniteQueryOptions<RawTablePage, CogniteError>
 ) => {
   const sdk = useSDK();
 
-  return useInfiniteQuery(
+  return useInfiniteQuery<RawTablePage, CogniteError>(
     tableListKey(database),
     ({ pageParam = undefined }) =>
       sdk.raw
@@ -57,6 +83,15 @@ export const useTables = (
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
   );
+};
+export const useAllTables = (
+  { database }: { database: string },
+  options?: UseInfiniteQueryOptions<RawTablePage, CogniteError>
+) => {
+  const useTheseTables = (
+    o?: UseInfiniteQueryOptions<RawTablePage, CogniteError>
+  ) => useTables({ database }, o);
+  return useAll(useTheseTables, options);
 };
 
 export const useTableRows = (
@@ -69,28 +104,20 @@ export const useTableRows = (
     table: string;
     pageSize?: number;
   },
-  options?: { enabled: boolean }
+  options?: UseInfiniteQueryOptions<RawDBRowPage, CogniteError>
 ) => {
   const sdk = useSDK();
 
   const validatedPageSize =
     pageSize > RAW_PAGE_SIZE_LIMIT ? RAW_PAGE_SIZE_LIMIT : pageSize;
 
-  return useInfiniteQuery(
+  return useInfiniteQuery<RawDBRowPage, CogniteError>(
     rowKey(database, table, validatedPageSize),
     ({ pageParam = undefined }) =>
-      sdk.raw
-        .listRows(database, table, {
-          cursor: pageParam,
-          limit: validatedPageSize,
-        })
-        .then((response) => ({
-          ...response,
-          items: response.items.map((r) => ({
-            ...r,
-            lastUpdatedTime: new Date(r.lastUpdatedTime),
-          })),
-        })),
+      sdk.raw.listRows(database, table, {
+        cursor: pageParam,
+        limit: validatedPageSize,
+      }),
     {
       ...options,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -101,9 +128,11 @@ export const useTableRows = (
 export const useDeleteDatabase = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
-  return useMutation(
-    ({ database }: { database: string }) =>
-      sdk.raw.deleteDatabases([{ name: database }]),
+  return useMutation<{}, CogniteError, { database: string }>(
+    ({ database }) =>
+      sdk.raw
+        .deleteDatabases([{ name: database }])
+        .catch((e) => Promise.reject(e.errors[0] || e)),
     {
       onSuccess(_, { database }) {
         queryClient.invalidateQueries(databaseListKey);
@@ -116,8 +145,12 @@ export const useDeleteDatabase = () => {
 export const useCreateDatabase = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
-  return useMutation(
-    ({ name }: { name: string }) => sdk.raw.createDatabases([{ name }]),
+  return useMutation<RawDB, CogniteError, { name: string }>(
+    ({ name }) =>
+      sdk.raw
+        .createDatabases([{ name }])
+        .then((r) => r[0])
+        .catch((e) => Promise.reject(e.errors[0] || e)),
     {
       onSuccess() {
         queryClient.invalidateQueries(databaseListKey);
@@ -129,9 +162,11 @@ export const useCreateDatabase = () => {
 export const useDeleteTable = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
-  return useMutation(
-    ({ database, table }: { database: string; table: string }) =>
-      sdk.raw.deleteTables(database, [{ name: table }]),
+  return useMutation<{}, CogniteError, { database: string; table: string }>(
+    ({ database, table }) =>
+      sdk.raw
+        .deleteTables(database, [{ name: table }])
+        .catch((e) => Promise.reject(e.errors[0] || e)),
     {
       onSuccess(_, { database, table }) {
         queryClient.resetQueries(tableKey(database, table));
@@ -144,9 +179,13 @@ export const useDeleteTable = () => {
 export const useCreateTable = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
-  return useMutation(
-    ({ database, table }: { database: string; table: string }) =>
-      sdk.raw.createTables(database, [{ name: table }]),
+  return useMutation<
+    RawDBTable,
+    CogniteError,
+    { database: string; table: string }
+  >(
+    ({ database, table }) =>
+      sdk.raw.createTables(database, [{ name: table }]).then((r) => r[0]),
     {
       onSuccess(_, { database }) {
         queryClient.invalidateQueries(tableListKey(database));
@@ -158,15 +197,13 @@ export const useCreateTable = () => {
 export const useInsertRows = () => {
   const sdk = useSDK();
 
-  return useMutation(
-    ({
-      database,
-      table,
-      items,
-    }: {
+  return useMutation<
+    {},
+    CogniteError,
+    {
       database: string;
       table: string;
       items: RawDBRowInsert[];
-    }) => sdk.raw.insertRows(database, table, items)
-  );
+    }
+  >(({ database, table, items }) => sdk.raw.insertRows(database, table, items));
 };

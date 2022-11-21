@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button, Flex } from '@cognite/cogs.js';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
 
@@ -18,16 +16,14 @@ import { useTranslation } from 'common/i18n';
 export const Actions = (): JSX.Element => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const { flow } = getFlow();
-  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
   const { database, table } = useActiveTableContext();
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 
   return (
     <Bar alignItems="center" justifyContent="space-between">
       <AccessButton
+        hasWriteAccess={true}
         permissions={[{ acl: 'rawAcl', actions: ['WRITE'] }]}
-        hasWriteAccess={hasWriteAccess}
         onClick={() => setCSVModalVisible(true)}
       >
         {t('spreadsheet-filter-add-new-data')}

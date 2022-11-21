@@ -55,18 +55,17 @@ const DeleteDatabaseModal = ({
           setSelectedSidePanelDatabase(undefined);
           closeDatabase([databaseName]);
         },
-        onError: (e: any) => {
+        onError: (e) => {
           notification.error({
-            message: (
-              <p>
-                <p>
-                  {t('delete-database-notification_error', {
-                    name: databaseName,
-                  })}
-                </p>
-                <pre>{JSON.stringify(e?.errors, null, 2)}</pre>
-              </p>
-            ),
+            message: t('delete-database-notification_error', {
+              name: databaseName,
+            }),
+            description:
+              e.status === 403 ? (
+                <Trans i18nKey="explorer-side-panel-databases-delete-warning-no-access" />
+              ) : (
+                e.message
+              ),
             key: 'database-delete',
           });
         },
