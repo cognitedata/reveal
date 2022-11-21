@@ -2,14 +2,18 @@ import { Flex } from '@cognite/cogs.js';
 import dayjs from 'dayjs';
 import { ComponentProps, useEffect, useState } from 'react';
 import DateTimeRangeSelector from './DateTimeRangeSelector';
-import TimePeriodSelector, { relativeTimeOptions } from './TimePeriodSelector';
+import { RelativeTimeOption } from './types';
+import TimePeriodSelector from './TimePeriodSelector';
+import { TimePeriodMenu } from './TimePeriodMenu';
 
-type Props = ComponentProps<typeof DateTimeRangeSelector>;
+type Props = ComponentProps<typeof DateTimeRangeSelector> & {
+  hideTimePeriodSelector?: boolean;
+};
 
 const DateTimePicker = (props: Props) => {
   const [selectedPeriodOption, setSelectedPeriodOption] = useState<{
     lastSetRange?: typeof props.range;
-    selectedPeriod: typeof relativeTimeOptions[number]['label'] | '';
+    selectedPeriod: RelativeTimeOption;
   }>({
     lastSetRange: undefined,
     selectedPeriod: '',
@@ -25,31 +29,43 @@ const DateTimePicker = (props: Props) => {
     }
   }, [rangeWasChanged]);
 
+  const handlePeriodChange = (period: RelativeTimeOption) => {
+    const nowDate = new Date();
+    const startDate = dayjs(nowDate)
+      .subtract(parseInt(period[0], 10), period[1])
+      .toDate();
+
+    const newRange = {
+      startDate,
+      endDate: nowDate,
+    };
+
+    props.onChange(newRange);
+
+    setSelectedPeriodOption({
+      lastSetRange: newRange,
+      selectedPeriod: period,
+    });
+  };
+
   return (
-    <Flex>
-      <TimePeriodSelector
-        optionSelected={selectedPeriodOption.selectedPeriod}
-        onPeriodClick={(period) => {
-          const nowDate = new Date();
-          const startDate = dayjs(nowDate)
-            .subtract(parseInt(period[0], 10), period[1])
-            .toDate();
+    <Flex alignItems="center" justifyContent="center">
+      {!props?.hideTimePeriodSelector && (
+        <TimePeriodSelector
+          optionSelected={selectedPeriodOption.selectedPeriod}
+          onPeriodChange={handlePeriodChange}
+          style={{ marginRight: 12 }}
+        />
+      )}
 
-          const newRange = {
-            startDate,
-            endDate: nowDate,
-          };
-
-          props.onChange(newRange);
-
-          setSelectedPeriodOption({
-            lastSetRange: newRange,
-            selectedPeriod: period,
-          });
-        }}
-        style={{ marginRight: 12 }}
-      />
       <DateTimeRangeSelector {...props} />
+
+      {props.hideTimePeriodSelector && (
+        <TimePeriodMenu
+          onPeriodChange={handlePeriodChange}
+          optionSelected={selectedPeriodOption.selectedPeriod}
+        />
+      )}
     </Flex>
   );
 };

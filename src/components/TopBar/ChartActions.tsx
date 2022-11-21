@@ -1,6 +1,6 @@
 import { ComponentProps, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Button, Popconfirm, toast, Tooltip } from '@cognite/cogs.js';
+import { Button, Dropdown, Popconfirm, toast, Tooltip } from '@cognite/cogs.js';
 import { useNavigate } from 'react-router-dom';
 import { useDeleteChart, useUpdateChart } from 'hooks/charts-storage';
 import { duplicate, updateChartDateRange } from 'models/chart/updates';
@@ -22,6 +22,16 @@ import { createInternalLink } from 'utils/link';
 import { isProduction } from 'utils/environment';
 import { currentDateRangeLocale } from 'config/locale';
 import ConnectedSharingDropdown from 'components/SharingDropdown/ConnectedSharingDropdown';
+import config from 'config/config';
+import {
+  StyledMenu,
+  HorizontalDivider,
+  StyledMenuButton,
+  StyledMenuButtonDelete,
+  StyledMenuDuplicate,
+  PopupText,
+  PopupContainer,
+} from './elements';
 
 export const ChartActions = () => {
   const { t } = useTranslations(
@@ -33,6 +43,7 @@ export const ChartActions = () => {
       'Download Chart',
       'Duplicate',
       'Delete',
+      'Delete chart',
       'Are you sure you want to delete this chart?',
     ],
     'ChartActions'
@@ -150,6 +161,86 @@ export const ChartActions = () => {
     return <></>;
   }
 
+  if (config.isFusion) {
+    const popperOptions = {
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [-550, 10],
+          },
+        },
+      ],
+    };
+    return (
+      <>
+        <Dropdown
+          content={
+            <StyledMenu>
+              <StyledMenuButton type="ghost">
+                <ConnectedSharingDropdown
+                  label={t.Share}
+                  popperOptions={popperOptions}
+                />
+              </StyledMenuButton>
+              <StyledMenuButton type="ghost">
+                <DownloadDropdown
+                  label={t['Download Chart']}
+                  translations={dropdownTranslations}
+                  onDownloadCalculations={
+                    isProduction ? undefined : handleDownloadCalculations
+                  }
+                  onDownloadImage={handleDownloadImage}
+                  onCsvDownload={() => setIsCSVModalVisible(true)}
+                />
+              </StyledMenuButton>
+              <StyledMenuDuplicate
+                icon="Duplicate"
+                type="ghost"
+                onClick={handleDuplicateChart}
+              >
+                {t.Duplicate}
+              </StyledMenuDuplicate>
+              <HorizontalDivider />
+              <PopupContainer>
+                <Popconfirm
+                  content={
+                    <PopupText>
+                      {t['Are you sure you want to delete this chart?']}
+                    </PopupText>
+                  }
+                  onConfirm={handleDeleteChart}
+                  disabled={!isOwner}
+                >
+                  <StyledMenuButtonDelete
+                    icon="Delete"
+                    type="ghost"
+                    onClick={() => {}}
+                  >
+                    {t['Delete chart']}
+                  </StyledMenuButtonDelete>
+                </Popconfirm>
+              </PopupContainer>
+            </StyledMenu>
+          }
+        >
+          <Button icon="EllipsisHorizontal" iconPlacement="right">
+            Actions
+          </Button>
+        </Dropdown>
+        <CSVModal
+          isOpen={isCSVModalVisible}
+          onClose={() => setIsCSVModalVisible(false)}
+          translations={CSVModalTranslations}
+          dateFrom={new Date(chart.dateFrom)}
+          dateTo={new Date(chart.dateTo)}
+          onDateChange={handleDateChange}
+          locale={currentDateRangeLocale()}
+        />
+      </>
+    );
+  }
+
   return (
     <div
       className="cogs-topbar--item downloadChartHide"
@@ -181,7 +272,11 @@ export const ChartActions = () => {
       <Divider />
       <Tooltip content={t.Delete}>
         <Popconfirm
-          content={t['Are you sure you want to delete this chart?']}
+          content={
+            <div style={{ margin: '1em' }}>
+              {t['Are you sure you want to delete this chart?']}
+            </div>
+          }
           onConfirm={handleDeleteChart}
           disabled={!isOwner}
         >

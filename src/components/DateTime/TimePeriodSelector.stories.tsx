@@ -18,6 +18,6 @@ const Template: Story<ComponentProps<typeof TimePeriodSelector>> = (args) => (
 export const TimePeriod = Template.bind({});
 
 TimePeriod.args = {
-  onPeriodClick: () => {},
+  onPeriodChange: () => {},
   optionSelected: '1M',
 };

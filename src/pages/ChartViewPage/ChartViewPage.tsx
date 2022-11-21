@@ -43,6 +43,7 @@ import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
 import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
 import SearchSidebar from 'components/Search/SearchSidebar';
 import { getEntryColor } from 'utils/colors';
+import config from 'config/config';
 
 import { v4 as uuidv4 } from 'uuid';
 import { Elements } from 'react-flow-renderer';
@@ -68,6 +69,8 @@ import { isProduction } from 'utils/environment';
 import { currentDateRangeLocale } from 'config/locale';
 import { chartSources } from 'models/chart/selectors';
 import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
+import ChartViewPageSecondaryAppBar from 'pages/ChartViewPage/ChartViewPageSecondaryAppBar';
+
 import PageTitle from 'components/PageTitle/PageTitle';
 import ErrorSidebar from 'components/ErrorSidebar/ErrorSidebar';
 import { WorkflowState } from 'models/calculation-results/types';
@@ -85,6 +88,7 @@ import {
   TopPaneWrapper,
 } from './elements';
 import ChartViewHeader from './ChartViewHeader';
+import { ChartActionButton } from './ChartActionButton';
 import {
   useInitializedChart,
   useStatistics,
@@ -173,6 +177,8 @@ const ChartViewPage = () => {
 
   const calledOnceEffect = useRef(false);
   const [showSearch, setShowSearch] = useState(true);
+  const showHeader = !config.isFusion;
+
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
 
@@ -697,33 +703,45 @@ const ChartViewPage = () => {
       <TimeseriesCollectionEffects />
       <CalculationCollectionEffects />
       <ChartViewPageAppBar allChartsLabel={t['All charts']} />
+      <ChartViewPageSecondaryAppBar
+        handleDateChange={handleDateChange}
+        showYAxis={showYAxis}
+        showMinMax={showMinMax}
+        showGridlines={showGridlines}
+        mergeUnits={mergeUnits}
+        stackedMode={stackedMode}
+        setStackedMode={setStackedMode}
+        handleSettingsToggle={handleSettingsToggle}
+      />
       <ChartViewContainer id="chart-view">
         {showSearch && (
           <SearchSidebar visible={showSearch} onClose={handleCloseSearch} />
         )}
         <ContentWrapper showSearch={showSearch}>
-          <ChartViewHeader
-            userId={login?.id}
-            isOwner={isChartOwner}
-            stackedMode={stackedMode}
-            setStackedMode={setStackedMode}
-            showSearch={showSearch}
-            showYAxis={showYAxis}
-            showMinMax={showMinMax}
-            showGridlines={showGridlines}
-            mergeUnits={mergeUnits}
-            dateFrom={new Date(chart.dateFrom)}
-            dateTo={new Date(chart.dateTo)}
-            handleOpenSearch={handleOpenSearch}
-            handleClickNewWorkflow={handleClickNewWorkflow}
-            handleImportCalculationsClick={
-              isProduction ? undefined : handleImportCalculationsClick
-            }
-            handleSettingsToggle={handleSettingsToggle}
-            handleDateChange={handleDateChange}
-            translations={ChartViewHeaderTranslations}
-            locale={currentDateRangeLocale()}
-          />
+          {showHeader && (
+            <ChartViewHeader
+              userId={login?.id}
+              isOwner={isChartOwner}
+              stackedMode={stackedMode}
+              setStackedMode={setStackedMode}
+              showSearch={showSearch}
+              showYAxis={showYAxis}
+              showMinMax={showMinMax}
+              showGridlines={showGridlines}
+              mergeUnits={mergeUnits}
+              dateFrom={new Date(chart.dateFrom)}
+              dateTo={new Date(chart.dateTo)}
+              handleOpenSearch={handleOpenSearch}
+              handleClickNewWorkflow={handleClickNewWorkflow}
+              handleImportCalculationsClick={
+                isProduction ? undefined : handleImportCalculationsClick
+              }
+              handleSettingsToggle={handleSettingsToggle}
+              handleDateChange={handleDateChange}
+              translations={ChartViewHeaderTranslations}
+              locale={currentDateRangeLocale()}
+            />
+          )}
           <ChartContainer>
             <SplitPaneLayout defaultSize={200}>
               <TopPaneWrapper className="chart">
@@ -742,6 +760,11 @@ const ChartViewPage = () => {
                     calculationsData={calculationData}
                   />
                 </ChartWrapper>
+                <ChartActionButton
+                  handleOpenSearch={handleOpenSearch}
+                  handleClickNewWorkflow={handleClickNewWorkflow}
+                  handleImportCalculationsClick={handleImportCalculationsClick}
+                />
               </TopPaneWrapper>
               <BottomPaneWrapper className="table">
                 <div style={{ display: 'flex', height: '100%' }}>

@@ -27,9 +27,7 @@ function ConnectedLinkedAssetsSidebar({ onClose, chartId, assets }: Props) {
       onClose={onClose}
       assets={linkedAssets}
       onAssetClick={(id) => move(createInternalLink(`${chartId}/files/${id}`))}
-      onPAndIDClick={(id) =>
-        move(createInternalLink(`/${chartId}/files/${id}`))
-      }
+      onPAndIDClick={(id) => move(createInternalLink(`${chartId}/files/${id}`))}
       onTimeSeriesClick={onTimeseriesClick}
     />
   );

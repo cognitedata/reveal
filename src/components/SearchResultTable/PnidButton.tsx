@@ -45,7 +45,7 @@ export const PnidButton = ({
   const handleButtonClick = () => {
     move(
       createInternalLink(
-        `/${chartId}/files/${asset ? asset?.id : linkedAsset?.id}`
+        `${chartId}/files/${asset ? asset?.id : linkedAsset?.id}`
       )
     );
 

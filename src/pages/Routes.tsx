@@ -7,6 +7,7 @@ import * as Sentry from '@sentry/react';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
 import ConnectedAppBar from 'components/AppBar/ConnectedAppBar';
 import config from 'config/config';
+import SecondaryTopBar from 'components/SecondaryTopBar/SecondaryTopBar';
 import TenantSelectorView from './TenantSelector/TenantSelector';
 import UserProfile from './UserProfile/UserProfile';
 import ChartListPage from './ChartListPage/ChartListPage';
@@ -28,9 +29,11 @@ const getPath = (basePath: string = '') => {
 
 type PropsRouteWithFirebase = {
   element: () => JSX.Element;
+  enableSecondaryNavBar?: boolean;
 };
 const RouteWithFirebase = ({
   element,
+  enableSecondaryNavBar,
 }: PropsRouteWithFirebase): JSX.Element => {
   const { isFetched: firebaseDone, isError: isFirebaseError } =
     useFirebaseInit(true);
@@ -57,6 +60,7 @@ const RouteWithFirebase = ({
   return (
     <PageLayout className="PageLayout">
       {!config.isFusion && <ConnectedAppBar />}
+      {enableSecondaryNavBar && <SecondaryTopBar />}
       <main>
         <Component />
       </main>
@@ -80,7 +84,9 @@ const Routes = () => {
       />
       <RouteWithSentry
         path={getPath(':chartId')}
-        element={<RouteWithFirebase element={ChartViewPage} />}
+        element={
+          <RouteWithFirebase element={ChartViewPage} enableSecondaryNavBar />
+        }
       />
       <RouteWithSentry
         path={getPath(':chartId/files/:assetId')}

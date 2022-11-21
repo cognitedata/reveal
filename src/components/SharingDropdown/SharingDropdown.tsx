@@ -23,6 +23,8 @@ interface SharingDropdownProps extends DropdownProps {
   onToggleChartAccess: ComponentProps<typeof Switch>['onChange'];
   disabled?: boolean;
   translations?: typeof defaultTranslations;
+  label?: string | undefined;
+  popperOptions?: ComponentProps<typeof Dropdown>['popperOptions'];
 }
 
 const defaultTranslations = makeDefaultTranslations(
@@ -38,6 +40,17 @@ const SharingDropdown = ({
   disabled = false,
   onToggleChartAccess,
   translations,
+  label,
+  popperOptions = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [-260, 10],
+        },
+      },
+    ],
+  },
   ...rest
 }: SharingDropdownProps) => {
   const shareableLink = window.location.href;
@@ -49,16 +62,7 @@ const SharingDropdown = ({
   return (
     <StyledDropdown
       disabled={disabled}
-      popperOptions={{
-        modifiers: [
-          {
-            name: 'offset',
-            options: {
-              offset: [-260, 10],
-            },
-          },
-        ],
-      }}
+      popperOptions={popperOptions}
       content={
         <SharingMenu>
           <SharingMenuContent>
@@ -105,12 +109,9 @@ const SharingDropdown = ({
       }
       {...rest}
     >
-      <Button
-        icon="Share"
-        type="ghost"
-        disabled={disabled}
-        aria-label="share"
-      />
+      <Button icon="Share" type="ghost" disabled={disabled} aria-label="share">
+        {label}
+      </Button>
     </StyledDropdown>
   );
 };
@@ -125,6 +126,7 @@ const SharingSwitchContainer = styled.div`
 
 const SharingMenuContent = styled.div`
   margin: 16px;
+  text-align: left;
 `;
 
 const SharingMenuBody = styled(Body)`

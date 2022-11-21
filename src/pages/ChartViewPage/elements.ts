@@ -1,6 +1,6 @@
-import { Dropdown, Title } from '@cognite/cogs.js';
+import { Dropdown, Title, Menu } from '@cognite/cogs.js';
 import { Alert } from 'antd';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 export const Header = styled.header`
   && {
@@ -144,4 +144,45 @@ export const RangeColumn = styled.div`
 
 export const MenuItemText = styled.div`
   padding-right: 10px;
+`;
+
+// chart action
+
+export const ChartActionStyledButton = styled.button`
+  border-radius: 80px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  gap: 10px;
+
+  width: 48px;
+  height: 48px;
+
+  border: none;
+
+  background-color: #4a67fb;
+  &:hover {
+    background-color: #3a4aa3;
+  }
+
+  box-shadow: var(--cogs-elevation--surface--interactive);
+
+  cursor: pointer;
+`;
+
+export const ChartActionMenu = styled(Menu)`
+  /*sadness as I couldn't find this color token in cogs*/
+  background-color: #4a67fb;
+`;
+
+export const ChartActionMenuItem = styled(Menu.Item)`
+  color: white;
+`;
+
+export const ChartActionContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 16px;
 `;

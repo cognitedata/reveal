@@ -18,6 +18,7 @@ interface SharingDropdownProps {
   onDownloadCalculations?: () => void;
   onDownloadImage: () => void;
   onCsvDownload: () => void;
+  label?: string | undefined;
 }
 
 const DownloadDropdown = ({
@@ -25,6 +26,7 @@ const DownloadDropdown = ({
   onDownloadCalculations,
   onDownloadImage,
   onCsvDownload,
+  label,
 }: SharingDropdownProps) => {
   const t = { ...defaultTranslations, ...translations };
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -61,7 +63,9 @@ const DownloadDropdown = ({
         type="ghost"
         aria-label="Open dropdown"
         onClick={() => setIsMenuOpen((prevState) => !prevState)}
-      />
+      >
+        {label}
+      </Button>
     </Dropdown>
   );
 };
