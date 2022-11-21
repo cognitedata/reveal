@@ -6,7 +6,7 @@ import { createPointCloudModel } from '../../../test-utilities/src/createPointCl
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { AnnotationIdPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 
-import { Color } from 'three';
+import { Color, Matrix4 } from 'three';
 
 describe(CognitePointCloudModel.name, () => {
   let model: CognitePointCloudModel;
@@ -60,5 +60,21 @@ describe(CognitePointCloudModel.name, () => {
 
     expect(model.styledCollections).toHaveLength(1);
     expect([...model.styledCollections[0].objectCollection.getAnnotationIds()]).toEqual(annotationIds1);
+  });
+
+  test('setModelTransform() changes custom transform, not source transform', () => {
+    const originalCustomTransform = model.getModelTransformation();
+    const originalSourceTransform = model.getSourceTransformation();
+
+    const modifyingTransform = new Matrix4().setPosition(1, 2, 3);
+
+    model.setModelTransformation(modifyingTransform);
+
+    const newTransform = model.getModelTransformation();
+
+    expect(originalCustomTransform).not.toEqual(newTransform);
+    expect(newTransform).toEqual(modifyingTransform);
+
+    expect(model.getSourceTransformation()).toEqual(originalSourceTransform);
   });
 });

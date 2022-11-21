@@ -335,7 +335,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * @param out Preallocated `THREE.Matrix4` (optional)
    */
   getSourceTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
-    return this.cadNode.getModelTransformation(out);
+    return this.cadNode.getSourceTransformation(out);
   }
 
   /**

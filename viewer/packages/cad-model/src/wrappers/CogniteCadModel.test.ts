@@ -98,4 +98,20 @@ describe(CogniteCadModel.name, () => {
     expect(result).toBe(bbox);
     expect(result).not.toEqual(new THREE.Box3());
   });
+
+  test('setModelTransform() changes custom transform, not source transform', () => {
+    const originalCustomTransform = model.getModelTransformation();
+    const originalSourceTransform = model.getSourceTransformation();
+
+    const modifyingTransform = new THREE.Matrix4().setPosition(1, 2, 3);
+
+    model.setModelTransformation(modifyingTransform);
+
+    const newTransform = model.getModelTransformation();
+
+    expect(originalCustomTransform).not.toEqual(newTransform);
+    expect(newTransform).toEqual(modifyingTransform);
+
+    expect(model.getSourceTransformation()).toEqual(originalSourceTransform);
+  });
 });
