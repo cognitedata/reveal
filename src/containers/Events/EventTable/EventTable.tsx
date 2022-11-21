@@ -6,6 +6,8 @@ import { Table, TableProps } from 'components/Table/Table';
 import { RelationshipLabels } from 'types';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from 'hooks';
+import { sampleMetadataValue } from 'components/Table/mockData';
+import { DASH } from 'utils';
 
 export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 
@@ -13,6 +15,18 @@ const visibleColumns = ['type', 'description'];
 export const EventTable = (
   props: Omit<TableProps<EventWithRelationshipLabels>, 'columns'>
 ) => {
+  const metadataColumns: ColumnDef<CogniteEvent>[] = sampleMetadataValue.map(
+    item => ({
+      id: `metadata:${item.value}`,
+      accessorFn: data => data?.metadata?.[item.value] || DASH,
+      header: item.value,
+      meta: {
+        isMetadata: true,
+      },
+      enableSorting: false,
+    })
+  );
+
   const columns = useMemo(
     () =>
       [
@@ -39,11 +53,16 @@ export const EventTable = (
       ] as ColumnDef<CogniteEvent>[],
     []
   );
-  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
+
+  const combinedColumns = useMemo(
+    () => [...columns, ...metadataColumns],
+    [columns, metadataColumns]
+  );
+  const hiddenColumns = useGetHiddenColumns(combinedColumns, visibleColumns);
 
   return (
     <Table<CogniteEvent>
-      columns={columns}
+      columns={combinedColumns}
       hiddenColumns={hiddenColumns}
       {...props}
     />

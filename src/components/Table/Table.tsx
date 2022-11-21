@@ -33,7 +33,7 @@ import {
   SubTableWrapper,
 } from './elements';
 
-import { Body } from '@cognite/cogs.js';
+import { Body, Detail, Flex } from '@cognite/cogs.js';
 
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
@@ -244,10 +244,15 @@ export function Table<T extends TableData>({
                     }}
                   >
                     <ThWrapper>
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                      <Flex direction="column" gap={6}>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {header.column.columnDef.meta && (
+                          <Detail>Metadata</Detail>
+                        )}
+                      </Flex>
                       <SortIcon
                         canSort={header.column.getCanSort()}
                         isSorted={header.column.getIsSorted()}
