@@ -35,11 +35,13 @@ import { DataModelDataMapper } from './data-mappers';
 import { DataUtils } from '../../../../boundaries/utils/data-utils';
 import { FdmMixerApiService } from './services/mixer-api';
 import { PlatypusError } from '../../../../boundaries/types';
+import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
 
 export class FdmClient implements FlexibleDataModelingClient {
   private spacesApi: SpacesApiService;
   private mixerApiService: FdmMixerApiService;
   private dataModelDataMapper: DataModelDataMapper;
+  private dataModelVersionDataMapper: DataModelVersionDataMapper;
 
   constructor(
     spacesApi: SpacesApiService,
@@ -48,6 +50,7 @@ export class FdmClient implements FlexibleDataModelingClient {
     this.spacesApi = spacesApi;
     this.mixerApiService = mixerApiService;
     this.dataModelDataMapper = new DataModelDataMapper();
+    this.dataModelVersionDataMapper = new DataModelVersionDataMapper();
   }
 
   /**
@@ -71,7 +74,24 @@ export class FdmClient implements FlexibleDataModelingClient {
   listDataModelVersions(
     dto: ListDataModelVersionsDTO
   ): Promise<DataModelVersion[]> {
-    throw 'Not implemented';
+    return this.mixerApiService
+      .listDataModelVersions(dto.space, {
+        externalId: { eq: dto.externalId },
+      })
+      .then((results) => {
+        if (!results || !results.length) {
+          return Promise.reject(
+            new PlatypusError(
+              `Specified version ${dto.externalId} does not exist!`,
+              'NOT_FOUND'
+            )
+          );
+        }
+
+        return results.map((result) =>
+          this.dataModelVersionDataMapper.deserialize(result)
+        );
+      });
   }
 
   /**
@@ -96,7 +116,23 @@ export class FdmClient implements FlexibleDataModelingClient {
   fetchDataModelVersion(
     dto: FetchDataModelVersionDTO
   ): Promise<DataModelVersion> {
-    throw 'Not implemented';
+    return this.listDataModelVersions(dto).then((versions) => {
+      const version = versions.find(
+        (dataModelVerion) =>
+          dataModelVerion.version.toString() === dto.version.toString()
+      );
+
+      if (!version) {
+        return Promise.reject(
+          new PlatypusError(
+            `Specified version ${dto.version} does not exist!`,
+            'NOT_FOUND'
+          )
+        );
+      }
+
+      return version;
+    });
   }
 
   /**

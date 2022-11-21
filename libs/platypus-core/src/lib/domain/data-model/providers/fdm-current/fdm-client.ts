@@ -93,12 +93,12 @@ export class FdmV2Client implements FlexibleDataModelingClient {
     dto: ListDataModelVersionsDTO
   ): Promise<DataModelVersion[]> {
     return this.mixerApiService
-      .getApisByIds(dto.dataModelId, true)
+      .getApisByIds(dto.externalId, true)
       .then((results) => {
         if (!results || !results.length || results.length > 1) {
           return Promise.reject(
             new PlatypusError(
-              `Specified version ${dto.dataModelId} does not exist!`,
+              `Specified version ${dto.externalId} does not exist!`,
               'NOT_FOUND'
             )
           );
@@ -110,7 +110,7 @@ export class FdmV2Client implements FlexibleDataModelingClient {
         // eslint-disable-next-line
         const versions = results[0].versions!;
         return versions.map((version) =>
-          this.dataModelVersionDataMapper.deserialize(dto.dataModelId, version)
+          this.dataModelVersionDataMapper.deserialize(dto.externalId, version)
         );
       });
   }

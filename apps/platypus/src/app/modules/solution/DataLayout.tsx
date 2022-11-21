@@ -35,7 +35,7 @@ export const DataLayout = () => {
   const renderPageContent = () => {
     return (
       <Switch>
-        <Route path="*data-models/:dataModelExternalId/:version?/:data?/data-management/:subSolutionPage?">
+        <Route path="*data-models/:space/:dataModelExternalId/:version?/:data?/data-management/:subSolutionPage?">
           <Suspense fallback={<Spinner />}>
             <DataManagementPage dataModelExternalId={dataModelExternalId} />
           </Suspense>

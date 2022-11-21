@@ -24,7 +24,7 @@ export const fetchVersions = createAsyncThunk(
         TOKENS.dataModelVersionHandler
       );
       const result = await dataModelVersionHandler.versions({
-        dataModelId: args?.dataModelId as string,
+        externalId: args?.dataModelId as string,
       });
       return result.getValue();
     }

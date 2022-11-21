@@ -6,7 +6,7 @@ describe('Platypus Data Models Page - Create Data Model', () => {
   it('should not have access to data model according to token', () => {
     cy.mockUserToken();
     // blog should not be visible
-    cy.visit('/platypus/data-models/blog/latest');
+    cy.visit('/platypus/data-models/blog/blog/latest');
 
     // edit button should be disabled
     cy.getBySel('edit-schema-btn').should('be.disabled');

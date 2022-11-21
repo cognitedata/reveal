@@ -15,17 +15,18 @@ export type SideBarItem = {
 };
 
 export const SideBarMenu = ({ items }: SideBarProps) => {
-  const { dataModelExternalId, version, solutionPage } = useParams<{
+  const { dataModelExternalId, version, solutionPage, space } = useParams<{
     dataModelExternalId: string;
     version: string;
     solutionPage: string;
+    space: string;
   }>();
 
   const history = useHistory();
 
   const onRoute = (page: string, slug: string) => {
     history.push(
-      `/data-models/${dataModelExternalId}/${version}/${page}/${slug}`
+      `/data-models/${space}/${dataModelExternalId}/${version}/${page}/${slug}`
     );
   };
 

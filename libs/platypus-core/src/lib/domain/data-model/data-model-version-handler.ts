@@ -33,7 +33,7 @@ export class DataModelVersionHandler {
    * @param dto
    */
   version(dto: FetchDataModelVersionDTO): Promise<Result<DataModelVersion>> {
-    const validationResult = this.validateField(dto, ['dataModelId']);
+    const validationResult = this.validateField(dto, ['externalId']);
 
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
@@ -50,7 +50,7 @@ export class DataModelVersionHandler {
    * @param dto
    */
   versions(dto: ListDataModelVersionsDTO): Promise<Result<DataModelVersion[]>> {
-    const validationResult = this.validateField(dto, ['dataModelId']);
+    const validationResult = this.validateField(dto, ['externalId']);
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
     }

@@ -11,7 +11,6 @@ import { Notification } from '@platypus-app/components/Notification/Notification
 import { TOKENS } from '@platypus-app/di';
 import {
   ErrorType,
-  DataModelVersionStatus,
   DataModelVersion,
   Result,
   getDataModelEndpointUrl,
@@ -112,7 +111,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     dataModelTypeDefsBuilder.clear();
     history.replace(
-      `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data`
+      `/data-models/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/data`
     );
   };
 
@@ -197,7 +196,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
 
           refetchDataModelVersions();
           history.replace(
-            `/data-models/${dataModelExternalId}/${DEFAULT_VERSION_PATH}/data`
+            `/data-models/${dataModel?.space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}/data`
           );
         } else {
           // update version in react-query cache and then refetch

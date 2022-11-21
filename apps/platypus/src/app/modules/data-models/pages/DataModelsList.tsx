@@ -68,12 +68,12 @@ export const DataModelsList = () => {
             dataModel={dataModel}
             onOpen={(openDataModel) => {
               history.push({
-                pathname: `/data-models/${openDataModel.id}/${DEFAULT_VERSION_PATH}`,
+                pathname: `/data-models/${dataModel.space}/${openDataModel.id}/${DEFAULT_VERSION_PATH}`,
               });
             }}
             onEdit={(editDataModel) => {
               history.push({
-                pathname: `/data-models/${editDataModel.id}/${DEFAULT_VERSION_PATH}`,
+                pathname: `/data-models/${dataModel.space}/${editDataModel.id}/${DEFAULT_VERSION_PATH}`,
               });
             }}
             onDelete={(deleteDataModel) =>

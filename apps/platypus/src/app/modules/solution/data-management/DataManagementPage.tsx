@@ -83,7 +83,7 @@ export const DataManagementPage = ({
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     history.replace(
-      `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data/data-management/preview?type=${selectedTypeName}`
+      `/data-models/${dataModelVersion.space}/${dataModelExternalId}/${dataModelVersion.version}/data/data-management/preview?type=${selectedTypeName}`
     );
     setSelectedVersionNumber(dataModelVersion.version);
     clearState();

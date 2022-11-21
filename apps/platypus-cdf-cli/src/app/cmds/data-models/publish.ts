@@ -168,7 +168,7 @@ export class PublishCmd extends CLICommand {
   private async getLatestPublishedVersion(externalId: string) {
     const publishedVersionsResponse =
       await this.dataModelVersionsHandler.versions({
-        dataModelId: externalId,
+        externalId,
       });
 
     if (!publishedVersionsResponse.isSuccess) {

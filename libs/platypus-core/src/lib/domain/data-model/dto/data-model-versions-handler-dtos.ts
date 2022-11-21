@@ -2,13 +2,15 @@ import { DataModelStorageBindingsDTO } from '../providers/fdm-current';
 import { DataModelVersion, DataModelVersionStatus } from '../types';
 
 export interface FetchDataModelVersionDTO {
-  dataModelId: string;
+  /** Data Model externalId */
+  externalId: string;
   version: string;
 }
 
 export interface ListDataModelVersionsDTO {
-  /** dataModelId (data model external id) */
-  dataModelId: string;
+  /** Data Model externalId */
+  externalId: string;
+  space?: string;
   version?: string;
 }
 

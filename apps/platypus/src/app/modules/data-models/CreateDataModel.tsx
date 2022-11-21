@@ -72,7 +72,9 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
             ),
           });
           history.push(
-            `data-models/${result.getValue().id}/${DEFAULT_VERSION_PATH}`
+            `data-models/${result.getValue().space}/${
+              result.getValue().id
+            }/${DEFAULT_VERSION_PATH}`
           );
         },
       }

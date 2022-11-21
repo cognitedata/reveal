@@ -147,8 +147,8 @@ export const DataModel = () => {
         <Route
           exact
           path={[
-            '/data-models/:dataModelExternalId?/:version?',
-            '/data-models/:dataModelExternalId?/:version?/data/:solutionPage?/:subSolutionPage?',
+            '/data-models/:space?/:dataModelExternalId?/:version?',
+            '/data-models/:space?/:dataModelExternalId?/:version?/data/:solutionPage?/:subSolutionPage?',
           ]}
         >
           <Suspense fallback={<Spinner />}>
@@ -158,21 +158,24 @@ export const DataModel = () => {
         <Route
           exact
           path={[
-            '/data-models/:dataModelExternalId?/:version?/overview/:solutionPage?',
+            '/data-models/:space?/:dataModelExternalId?/:version?/overview/:solutionPage?',
           ]}
         >
           <Suspense fallback={<Spinner />}>
             <OverviewPage />
           </Suspense>
         </Route>
-        <Route exact path="/data-models/:dataModelExternalId?/:version?/tools">
+        <Route
+          exact
+          path="/data-models/:space?/:dataModelExternalId?/:version?/tools"
+        >
           <Suspense fallback={<Spinner />}>
             <ToolsPage />
           </Suspense>
         </Route>
         <Route
           exact
-          path="/data-models/:dataModelExternalId?/:version?/deployments"
+          path="/data-models/:space?/:dataModelExternalId?/:version?/deployments"
         >
           <Suspense fallback={<Spinner />}>
             <DeploymentsPage />
@@ -180,7 +183,7 @@ export const DataModel = () => {
         </Route>
         <Route
           exact
-          path="/data-models/:dataModelExternalId?/:version?/settings"
+          path="/data-models/:space?/:dataModelExternalId?/:version?/settings"
         >
           <Suspense fallback={<Spinner />}>
             <SettingsPage />

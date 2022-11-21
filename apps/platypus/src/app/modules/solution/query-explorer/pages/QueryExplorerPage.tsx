@@ -43,7 +43,7 @@ export const QueryExplorerPage = ({
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     history.replace(
-      `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data/query-explorer`
+      `/data-models/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/data/query-explorer`
     );
   };
 

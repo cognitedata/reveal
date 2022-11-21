@@ -22,7 +22,7 @@ const Routes = () => {
         <Route
           exact
           path={[
-            '/data-models/:dataModelExternalId?/:version?/:tabKey?/:solutionPage?/:subSolutionPage?',
+            '/data-models/:space?/:dataModelExternalId?/:version?/:tabKey?/:solutionPage?/:subSolutionPage?',
           ]}
         >
           <HOCPathTracking>

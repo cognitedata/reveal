@@ -1,7 +1,7 @@
 describe('Data Model Page - Existing Solution Preview', () => {
   beforeEach(() => {
     cy.request('http://localhost:4200/reset').then(() => {
-      cy.visit('/platypus/data-models/blog/latest/data');
+      cy.visit('/platypus/data-models/blog/blog/latest/data');
     });
   });
 

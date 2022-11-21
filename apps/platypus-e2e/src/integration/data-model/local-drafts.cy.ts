@@ -19,7 +19,7 @@ describe('Data Model Page - Local Drafts', () => {
 
   beforeEach(() => {
     cy.request('http://localhost:4200/reset');
-    cy.visit('/platypus/data-models/blog/latest/data');
+    cy.visit('/platypus/data-models/blog/blog/latest/data');
   });
 
   it('persists unpublished changes after page refresh', () => {
@@ -94,7 +94,7 @@ describe('Data Model Page - Local Drafts', () => {
     cy.ensureCurrentVersionIsDraft();
 
     cy.visit('/platypus/');
-    cy.visit('/platypus/data-models/blog/latest/data');
+    cy.visit('/platypus/data-models/blog/blog/latest/data');
 
     cy.getBySel('schema-version-select')
       .click()
@@ -162,7 +162,7 @@ describe('Data Model Page - Local Drafts', () => {
 
   it('Loads only drafts owned by Data Model ', () => {
     // Edit current data model and create a draft
-    cy.visit('/platypus/data-models/blog/latest/data');
+    cy.visit('/platypus/data-models/blog/blog/latest/data');
     cy.addDataModelType('Currency');
 
     // Go back to Data Models Page and Create new Data Model

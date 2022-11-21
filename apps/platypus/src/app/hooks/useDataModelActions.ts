@@ -54,7 +54,7 @@ export const useDataModelVersions = (dataModelExternalId: string) => {
     async () =>
       await dataModelHandlerFuncWrapper<DataModelVersion[]>(() =>
         dataModelVersionHandler.versions({
-          dataModelId: dataModelExternalId,
+          externalId: dataModelExternalId,
         })
       )
   );
