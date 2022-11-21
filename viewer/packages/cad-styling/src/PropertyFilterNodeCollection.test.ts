@@ -9,6 +9,8 @@ import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
 import nock from 'nock';
 import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
+import { Matrix4 } from 'three';
+
 describe(PropertyFilterNodeCollection.name, () => {
   let client: CogniteClient;
   let model: CdfModelNodeCollectionDataProvider;
@@ -22,7 +24,12 @@ describe(PropertyFilterNodeCollection.name, () => {
       getToken: async () => 'dummy'
     });
 
-    model = { modelId: 112, revisionId: 113 } as CdfModelNodeCollectionDataProvider;
+    model = {
+      modelId: 112,
+      revisionId: 113,
+      getSourceTransformation: () => new Matrix4(),
+      getModelTransformation: () => new Matrix4()
+    } as CdfModelNodeCollectionDataProvider;
     set = new PropertyFilterNodeCollection(client, model);
   });
 
