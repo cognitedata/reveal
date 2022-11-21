@@ -12,10 +12,12 @@ import {
   Title,
   Tooltip,
 } from '@cognite/cogs.js';
-import PlotlyChart from 'components/PlotlyChart/PlotlyChart';
+import { useContext } from 'react';
+import { RenderWhenOnScreen } from 'components/RenderWhenOnScreen/RenderWhenOnScreen';
 import { ChartListProps } from '../types';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
 import formatOwner from '../formatOwner';
+import { ChartListContext } from '../context';
 
 const defaultTranslations = makeDefaultTranslations(
   'Preview',
@@ -43,6 +45,11 @@ function ChartListTable({
   emptyState,
   translations,
 }: Props) {
+  /**
+   * Use context to enable dependency injection / mocking (containers, hooks, etc..)
+   */
+  const { PreviewPlotContainer } = useContext(ChartListContext);
+
   const t = { ...defaultTranslations, ...translations };
   const LoadingRow = () => (
     <tr>
@@ -103,11 +110,17 @@ function ChartListTable({
                           border: '1px solid var(--cogs-greyscale-grey2)',
                         }}
                       >
-                        {row.loadingPlot ? (
-                          <Skeleton.Image style={{ height: 80, width: 86 }} />
-                        ) : (
-                          <PlotlyChart {...row.plotlyProps} />
-                        )}
+                        <RenderWhenOnScreen
+                          containerStyles={{
+                            height: 80,
+                            border: '1px solid var(--cogs-greyscale-grey2)',
+                          }}
+                          loaderComponent={
+                            <Skeleton.Image style={{ height: 80, width: 86 }} />
+                          }
+                        >
+                          <PreviewPlotContainer chart={row.firebaseChart} />
+                        </RenderWhenOnScreen>
                       </div>
                     </A>
                   </td>

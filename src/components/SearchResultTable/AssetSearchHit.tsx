@@ -14,6 +14,9 @@ import { removeIllegalCharacters } from 'utils/text';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import { SearchFilter } from 'components/Search/Search';
+import { useRelationships } from '@cognite/data-exploration';
+import { useSDK } from '@cognite/sdk-provider';
+import { useQuery } from 'react-query';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
 import { PnidButton } from './PnidButton';
 
@@ -31,18 +34,52 @@ type Props = {
   isExact?: boolean;
 };
 
+export const useGetAssetsByExternalIds = (
+  ids: string[],
+  isEnabled: boolean
+) => {
+  const sdk = useSDK();
+  return useQuery({
+    queryKey: ['cdf', 'assets', 'get', 'list', ...ids],
+    queryFn: () =>
+      sdk.assets.list({
+        filter: {
+          parentExternalIds: ids,
+        },
+      }),
+    enabled: isEnabled,
+    refetchOnWindowFocus: false,
+  });
+};
+
 export default function AssetSearchHit({
   asset,
   query = '',
   isExact,
   filter,
 }: Props) {
+  const {
+    data: relationshipAssetExternalIds,
+    isFetched: isFetchedRelationships,
+  } = useRelationships(asset.externalId);
+
+  const { data: relatedAssets, isFetched: relatedAssetsFetched } =
+    useGetAssetsByExternalIds(
+      relationshipAssetExternalIds.map((item) => item.externalId),
+      isFetchedRelationships
+    );
+
   const [__, setUrlAssetId] = useSearchParam(ASSET_KEY);
   const [chart] = useRecoilState(chartAtom);
   const handleTimeSeriesClick = useAddRemoveTimeseries();
 
   const queryFilter = {
-    assetSubtreeIds: [{ id: asset.id }],
+    assetSubtreeIds: [
+      { id: asset.id },
+      ...(relatedAssets?.items.map((item) => {
+        return { id: item.id };
+      }) || []),
+    ],
     isStep: filter?.isStep,
     isString: Boolean(filter?.isString),
   };
@@ -52,10 +89,14 @@ export default function AssetSearchHit({
     ...useTranslations(Object.keys(defaultTranslation), 'SearchResults').t,
   };
 
-  const { data: timeseries = [] } = useList<Timeseries>('timeseries', {
-    filter: queryFilter,
-    limit: TIMESERIES_COUNT,
-  });
+  const { data: timeseries = [] } = useList<Timeseries>(
+    'timeseries',
+    {
+      filter: queryFilter,
+      limit: TIMESERIES_COUNT,
+    },
+    { enabled: relatedAssetsFetched }
+  );
 
   const { data: dataAmount, isFetched: isDataAmountFetched } = useAggregate(
     'timeseries',

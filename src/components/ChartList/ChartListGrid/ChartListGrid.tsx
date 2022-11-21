@@ -47,8 +47,7 @@ function ChartListGrid({
               onDuplicateClick={() => onChartDuplicateClick(row.id)}
               onDeleteClick={() => onChartDeleteClick(row.id)}
               name={row.name}
-              loadingPlot={row.loadingPlot}
-              plotlyProps={row.plotlyProps}
+              chart={row.firebaseChart}
               updatedAt={row.updatedAt}
               owner={row.owner}
               readOnly={readOnly}

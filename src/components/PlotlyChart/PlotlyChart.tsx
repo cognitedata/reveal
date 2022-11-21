@@ -48,6 +48,7 @@ type Props = {
   calculations?: ChartWorkflow[];
   calculationsData?: WorkflowState[];
   thresholds?: ChartThreshold[];
+  eventData?: [];
   isYAxisShown?: boolean;
   isMinMaxShown?: boolean;
   isGridlinesShown?: boolean;
@@ -69,6 +70,7 @@ const PlotlyChart = ({
   calculations = [],
   calculationsData = [],
   thresholds = [],
+  eventData = [],
   isPreview = false,
   isMinMaxShown = false,
   isGridlinesShown = false,
@@ -153,6 +155,7 @@ const PlotlyChart = ({
       showYAxis: isYAxisShown,
       stackedMode,
       seriesData,
+      eventData,
       yAxisValues,
       dateFrom,
       dateTo,

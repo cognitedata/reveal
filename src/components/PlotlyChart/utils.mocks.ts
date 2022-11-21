@@ -9,6 +9,29 @@ import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { WorkflowState } from 'models/calculation-results/types';
 import { SeriesData } from './utils';
 
+export const eventDataExample: any[] = [
+  {
+    id: 'ce1a89ff-badd-42c3-ab6e-c3f19c7004f2',
+    color: '#4078F0',
+    visible: true,
+    results: [
+      {
+        externalId: 'WO_55190379_00000002',
+        dataSetId: 1926631252957173,
+        startTime: 1668580371000,
+        endTime: 1668580749000,
+        type: 'maintenance',
+        subtype: 'work-order-operation',
+        description: 'B30 Replace Sub25 Dbl Doors & Frame',
+        source: 'SAP_PM',
+        id: 7645226744757015,
+        lastUpdatedTime: '2022-11-16T12:35:33.147Z',
+        createdTime: '2022-11-14T15:17:44.908Z',
+      },
+    ],
+  },
+];
+
 export const seriesDataExample1: SeriesData[] = [
   {
     unit: 'PSI',

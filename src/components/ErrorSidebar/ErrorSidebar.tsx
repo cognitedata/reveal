@@ -12,12 +12,13 @@ import {
   TopContainerAside,
   TopContainerTitle,
   ContentOverflowWrapper,
+  ContentContainer,
 } from 'components/Common/SidebarElements';
 import { WorkflowState } from 'models/calculation-results/types';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import { StyleButton } from 'components/StyleButton/StyleButton';
-import { Container, LoadingWrap } from './elements';
+import styled from 'styled-components';
 
 type Props = {
   visible: boolean;
@@ -34,6 +35,14 @@ const defaultTranslation = makeDefaultTranslations(
   'Warning',
   'Hide'
 );
+
+export const LoadingWrap = styled.div`
+  margin-bottom: 1rem;
+
+  > div:first-child {
+    margin-right: 1rem;
+  }
+`;
 
 const LoadingRow = () => (
   <LoadingWrap>
@@ -74,18 +83,14 @@ const ErrorSidebar = memo(
           </TopContainerAside>
         </TopContainer>
         <ContentOverflowWrapper>
-          <Container>
+          <ContentContainer>
             {calculationResult &&
               'status' in calculationResult &&
               calculationResult.loading && <LoadingRow />}
             {calculationResult && !calculationResult.loading ? (
               <>
                 {!calculationResult.status && (
-                  <Infobox
-                    title={t.Info}
-                    key={uuidv4()}
-                    style={{ marginBottom: '1rem' }}
-                  >
+                  <Infobox title={t.Info} style={{ marginBottom: '1rem' }}>
                     {t["This is an empty calculation and it hasn't run yet."]}
                   </Infobox>
                 )}
@@ -93,7 +98,6 @@ const ErrorSidebar = memo(
                   <Infobox
                     type="danger"
                     title={t.Error}
-                    key={uuidv4()}
                     style={{ marginBottom: '1rem' }}
                   >
                     {calculationResult.error}
@@ -115,7 +119,7 @@ const ErrorSidebar = memo(
             ) : (
               ''
             )}
-          </Container>
+          </ContentContainer>
         </ContentOverflowWrapper>
       </Sidebar>
     );

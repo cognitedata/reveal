@@ -76,6 +76,7 @@ const Template: Story<Props> = (args) => {
         _useThresholds={useThresholdsMock}
         onAddThreshold={handleAddThreshold}
         onUpdateThresholdName={handleUpdateName}
+        onDuplicateThreshold={() => '128db2a5-1528-4503-be37-54722e2173a6'}
       />
     </div>
   );

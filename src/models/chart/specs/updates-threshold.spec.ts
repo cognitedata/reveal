@@ -1,5 +1,6 @@
-import { Chart, ChartThreshold } from './types';
+import { Chart, ChartThreshold } from '../types';
 import {
+  initThresholdCollection,
   addChartThreshold,
   removeChartThreshold,
   updateChartThresholdEventFilters,
@@ -10,9 +11,36 @@ import {
   updateChartThresholdUpperLimit,
   updateChartThresholdVisibility,
   updateChartThresholdProperties,
-} from './updates-threshold';
+} from '../updates-threshold';
 
 describe('Update Chart Thresholds', () => {
+  it('should initialise thresholdCollection to chart', () => {
+    const existingChart: Chart = {
+      version: 1,
+      id: 'bb6bdbcb-625f-4ef3-bac5-03cca68b062d',
+      name: 'Demo: Power Consumption',
+      user: 'shekhar.sharma@cognite.com',
+      dateTo: '2021-11-12T20:21:40.881Z',
+      dateFrom: '2020-04-25T07:05:31.547Z',
+      createdAt: 1647350374178,
+      updatedAt: 1651506075740,
+    };
+
+    const updatedChart = initThresholdCollection(existingChart);
+
+    expect(updatedChart).toEqual({
+      version: 1,
+      id: 'bb6bdbcb-625f-4ef3-bac5-03cca68b062d',
+      name: 'Demo: Power Consumption',
+      thresholdCollection: [],
+      user: 'shekhar.sharma@cognite.com',
+      dateTo: '2021-11-12T20:21:40.881Z',
+      dateFrom: '2020-04-25T07:05:31.547Z',
+      createdAt: 1647350374178,
+      updatedAt: 1651506075740,
+    });
+  });
+
   it('should add a new threshold', () => {
     const existingChart: Chart = {
       version: 1,

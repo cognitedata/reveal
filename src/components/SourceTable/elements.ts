@@ -100,6 +100,7 @@ export const SourceStatus = styled.span`
 export const SourceName = styled.span`
   text-overflow: ellipsis;
   overflow: hidden;
+  max-width: 40rem;
 `;
 
 export const SourceDescription = styled.div`

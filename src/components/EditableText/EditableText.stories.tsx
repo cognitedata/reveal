@@ -57,6 +57,7 @@ const ActionTemplate: Story<Props> = (args) => {
 };
 
 export const Default = Template.bind({});
+export const LongText = Template.bind({});
 export const Editing = ActionTemplate.bind({});
 export const Focused = ActionTemplate.bind({});
 export const ErrorState = ActionTemplate.bind({});
@@ -65,6 +66,13 @@ export const ButtonsHidden = ActionTemplate.bind({});
 
 Default.args = {
   value: 'Text value',
+  hideButtons: true,
+  onChange: () => {},
+};
+
+LongText.args = {
+  value:
+    'Has 182 Chars - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras orci dui, tempus suscipit neque vel, scelerisque aliquam orci. In in nibh aliquet, euismod dolor vitae',
   hideButtons: true,
   onChange: () => {},
 };

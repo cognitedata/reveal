@@ -8,7 +8,6 @@ import {
   OptionsType,
   Popconfirm,
   Select,
-  Switch,
 } from '@cognite/cogs.js';
 import { Col, Row } from 'antd';
 import useThresholdsResults from 'hooks/threshold-calculations';
@@ -23,14 +22,15 @@ import { getUnitConverter } from 'utils/units';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { isThresholdValid } from 'utils/threshold';
 import {
+  ReverseSwitch,
   ExpandIcon,
-  FilterCollapse,
+  SidebarInnerCollapse,
   FilterSelect,
   SourceSelect,
-  ThresholdLabel,
-  ThresholdMetadata,
-  ThresholdMetadataValue,
-} from './elements';
+  SidebarFormLabel,
+  SidebarInnerBox,
+  SidebarChip,
+} from 'components/Common/SidebarElements';
 
 import { useFilterValue } from './useFilterValue';
 
@@ -63,6 +63,7 @@ type Props = {
   sources: (ChartTimeSeries | ChartWorkflow)[];
   onRemoveThreshold: (diff: any) => void;
   onToggleThreshold: (id: string, visibility: boolean) => void;
+  onDuplicateThreshold: (id: string) => void;
   onSelectSource: (id: string, diff: any) => void;
   onTypeChange: (id: string, diff: any) => void;
   onLowerLimitChange: (id: string, diff: any) => void;
@@ -108,6 +109,7 @@ const ThresholdItem = ({
   sources,
   onRemoveThreshold,
   onToggleThreshold,
+  onDuplicateThreshold,
   onSelectSource,
   onTypeChange,
   onLowerLimitChange,
@@ -299,7 +301,7 @@ const ThresholdItem = ({
 
   return (
     <>
-      <ThresholdLabel>{t.Source}</ThresholdLabel>
+      <SidebarFormLabel>{t.Source}</SidebarFormLabel>
       <SourceSelect
         iconBg={selectedOptionColor}
         options={sourceOptions}
@@ -310,7 +312,7 @@ const ThresholdItem = ({
         }}
         onChange={(source: OptionType) => onSelectSource(threshold.id, source)}
       />
-      <ThresholdLabel>{t.Type}:</ThresholdLabel>
+      <SidebarFormLabel>{t.Type}:</SidebarFormLabel>
       <Row justify="space-between" gutter={8}>
         <Col span={12}>
           <Select
@@ -348,9 +350,9 @@ const ThresholdItem = ({
           </Col>
         )}
       </Row>
-      <FilterCollapse
+      <SidebarInnerCollapse
         expandIcon={({ isActive }) => (
-          <ExpandIcon isActive={!!isActive} type="ChevronDownLarge" />
+          <ExpandIcon $active={!!isActive} type="ChevronDownLarge" />
         )}
         defaultActiveKey={expandFilters ? 'panelFilterForm' : ''}
         ghost
@@ -403,29 +405,43 @@ const ThresholdItem = ({
             </Col>
           </Row>
         </Collapse.Panel>
-      </FilterCollapse>
-      <ThresholdMetadata>
+      </SidebarInnerCollapse>
+      <SidebarInnerBox>
         <Flex justifyContent="space-between">
           <p>
-            {t['Number of events']}
-            <ThresholdMetadataValue>
+            {t['Number of events']} <br />
+            <SidebarChip icon="Events" size="medium">
               {isThresholdValid(threshold) ? result?.count ?? '-' : '-'}
-            </ThresholdMetadataValue>
+            </SidebarChip>
           </p>
           <p>
-            {t['Total time']} {threshold.type} {t.threshold}
-            <ThresholdMetadataValue>
+            {t['Total time']} {threshold.type} {t.threshold} <br />
+            <SidebarChip icon="Clock" size="medium">
               {isThresholdValid(threshold) &&
               typeof result?.cumulative_duration === 'number'
                 ? convertMSToDisplay(result?.cumulative_duration)
                 : '-'}
-            </ThresholdMetadataValue>
+            </SidebarChip>
           </p>
         </Flex>
-      </ThresholdMetadata>
+      </SidebarInnerBox>
       <footer>
         <Flex justifyContent="space-between">
-          <Switch
+          <div>
+            <Popconfirm
+              content={`${t['Do you want to delete']} "${threshold.name}"?`}
+              onConfirm={() => onRemoveThreshold(threshold.id)}
+            >
+              <Button type="ghost-danger" icon="Delete" aria-label="Delete" />
+            </Popconfirm>
+            <Button
+              type="ghost"
+              onClick={() => onDuplicateThreshold(threshold.id)}
+              icon="Duplicate"
+              aria-label="Duplicate"
+            />
+          </div>
+          <ReverseSwitch
             name={`showThreshold_${threshold.id}`}
             checked={threshold.visible}
             onChange={(val) => {
@@ -435,13 +451,7 @@ const ThresholdItem = ({
             disabled={!showBtnVisibility}
           >
             {t.Show}
-          </Switch>
-          <Popconfirm
-            content={`${t['Do you want to delete']} "${threshold.name}"?`}
-            onConfirm={() => onRemoveThreshold(threshold.id)}
-          >
-            <Button type="ghost" icon="Delete" aria-label="Delete" />
-          </Popconfirm>
+          </ReverseSwitch>
         </Flex>
       </footer>
     </>

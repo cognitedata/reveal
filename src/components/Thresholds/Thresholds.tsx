@@ -7,8 +7,13 @@ import {
 import ThresholdItem from 'components/Thresholds/ThresholdItem';
 import { Button, Collapse } from '@cognite/cogs.js';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
-import { ExpandIcon, ThresholdCollapse } from 'components/Thresholds/elements';
-import { Container } from './elements';
+import {
+  ExpandIcon,
+  ContentContainer,
+  SidebarCollapse,
+  SidebarHeaderActions,
+  CollapsePanelTitle,
+} from 'components/Common/SidebarElements';
 
 interface Props
   extends Omit<ComponentProps<typeof ThresholdItem>, 'threshold'> {
@@ -32,11 +37,12 @@ const Thresholds = ({
   };
 
   return (
-    <Container>
-      <div>
+    <ContentContainer>
+      <SidebarHeaderActions>
         <Button
           icon="Plus"
-          type="tertiary"
+          type="primary"
+          size="small"
           aria-label="Add threshold"
           onClick={() => {
             onAddThreshold();
@@ -45,25 +51,28 @@ const Thresholds = ({
               ...prevState.map((k) => String(parseInt(k, 10) + 1)),
             ]);
           }}
-        />
-      </div>
-      <br />
-      <ThresholdCollapse
+        >
+          Add new
+        </Button>
+      </SidebarHeaderActions>
+      <SidebarCollapse
         activeKey={activeKey}
         onChange={onChange}
         expandIcon={({ isActive }) => (
-          <ExpandIcon isActive={Boolean(isActive)} type="ChevronDownLarge" />
+          <ExpandIcon $active={Boolean(isActive)} type="ChevronDownLarge" />
         )}
       >
         {thresholds.map((threshold, index) => (
           <Collapse.Panel
             key={`${index + 1}`}
             header={
-              <TranslatedEditableText
-                value={threshold.name}
-                onChange={(val) => onUpdateThresholdName(threshold.id, val)}
-                hideButtons
-              />
+              <CollapsePanelTitle>
+                <TranslatedEditableText
+                  value={threshold.name}
+                  onChange={(val) => onUpdateThresholdName(threshold.id, val)}
+                  hideButtons
+                />
+              </CollapsePanelTitle>
             }
           >
             <ThresholdItem
@@ -73,8 +82,8 @@ const Thresholds = ({
             />
           </Collapse.Panel>
         ))}
-      </ThresholdCollapse>
-    </Container>
+      </SidebarCollapse>
+    </ContentContainer>
   );
 };
 

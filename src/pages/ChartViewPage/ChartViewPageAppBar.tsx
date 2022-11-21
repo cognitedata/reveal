@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Flex, Title, TopBar } from '@cognite/cogs.js';
+import { Flex, TopBar } from '@cognite/cogs.js';
 import AppBarLeft from 'components/AppBar/AppBarLeft';
 import AppBarRight from 'components/AppBar/AppBarRight';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import chartAtom from 'models/chart/atom';
 import { useRecoilState } from 'recoil';
 import { ChartActions } from '../../components/TopBar/ChartActions';
+import { ChartName } from './elements';
 
 type Props = {
   allChartsLabel: string;
@@ -27,7 +28,7 @@ const ChartViewPageAppBar = ({ allChartsLabel = 'All charts' }: Props) => {
             className="downloadChartHide"
           />
           <div className="cogs-topbar--item" style={{ paddingLeft: 16 }}>
-            <Title level={4}>
+            <ChartName level={4}>
               <TranslatedEditableText
                 value={chart?.name || ''}
                 onChange={(value) => {
@@ -37,7 +38,7 @@ const ChartViewPageAppBar = ({ allChartsLabel = 'All charts' }: Props) => {
                   }));
                 }}
               />
-            </Title>
+            </ChartName>
           </div>
         </Flex>
       </AppBarLeft>

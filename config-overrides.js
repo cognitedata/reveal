@@ -1,5 +1,6 @@
 const { override, useBabelRc } = require('customize-cra');
 const PrefixWrap = require('postcss-prefixwrap');
+const webpack = require('webpack');
 const path = require('path');
 
 const { styleScope } = require('./src/styles/styleScope');
@@ -125,7 +126,6 @@ const commonConfig = (config) => {
 }
 
 const legacyConfig = (config) => {
-  //
   config.entry = './src/index.tsx';
 
   const fallback = config.resolve.fallback || {};
@@ -191,6 +191,17 @@ const fusionConfig = (config) => {
       );
     },
   ];
+
+  // Adding process fallback as Webpack 5 removed them
+  // https://github.com/facebook/create-react-app/pull/11764
+  // https://github.com/facebook/create-react-app/issues/11951
+  const plugins = config.plugins;
+  config.plugins = [
+    ...plugins,
+    new webpack.DefinePlugin({
+      process: {},
+    }),
+  ]
 
   const configWithCommonConfig = commonConfig(config);
   return configWithCommonConfig;

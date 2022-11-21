@@ -1,6 +1,7 @@
 import { Node, Connection } from '@cognite/connect';
-import { NodeDataDehydratedVariants } from 'components/NodeEditor/V2/types';
+import { EventFilter } from '@cognite/sdk';
 import { FlowExportObject } from 'react-flow-renderer';
+import { NodeDataDehydratedVariants } from 'components/NodeEditor/V2/types';
 
 export type Chart = {
   version: number;
@@ -20,6 +21,7 @@ export type Chart = {
   public?: boolean;
   dirty?: boolean;
   settings?: ChartSettings;
+  eventFilters?: ChartEventFilters[];
 };
 
 export type SourceCollectionData = {
@@ -150,4 +152,12 @@ export type ChartThreshold = {
   type: 'under' | 'over' | 'between';
   calls?: ThresholdCallRef[];
   filter: ChartThresholdEventFilter;
+};
+
+export type ChartEventFilters = {
+  id: string;
+  name: string;
+  visible: boolean;
+  filters: EventFilter;
+  color?: string;
 };

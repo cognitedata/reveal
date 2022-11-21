@@ -1,6 +1,5 @@
 import { useUserInfo } from 'hooks/useUserInfo';
 import { useUpdateChart } from 'hooks/charts-storage';
-import usePlotlyPropsPreview from 'hooks/usePlotlyPropsPreview';
 import { filter, orderBy } from 'lodash';
 import { Chart } from 'models/chart/types';
 import { duplicate } from 'models/chart/updates';
@@ -15,7 +14,6 @@ interface useMyChartsListProps {
 const useMyChartsList = ({ searchTerm, order }: useMyChartsListProps) => {
   const { data: login } = useUserInfo();
   const { data = [], isFetched, error } = useMyCharts();
-  usePlotlyPropsPreview(data?.map((c) => c.firebaseChart) ?? []);
   const { mutateAsync: deleteChartInFirebase } = useDeleteMyChart();
   const { mutateAsync: createChartInFirebase } = useUpdateChart();
 

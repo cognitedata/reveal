@@ -72,6 +72,10 @@ import PageTitle from 'components/PageTitle/PageTitle';
 import ErrorSidebar from 'components/ErrorSidebar/ErrorSidebar';
 import { WorkflowState } from 'models/calculation-results/types';
 import { Toolbar } from 'components/Common/SidebarElements';
+import EventSidebar from 'components/EventSidebar/EventSidebar';
+import { transformNewFilterToOldFilter } from 'components/EventSidebar/helpers';
+import { getTime } from 'date-fns';
+import { useSDK } from '@cognite/sdk-provider';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -89,6 +93,7 @@ import {
 
 const defaultTranslations = makeDefaultTranslations(
   'Threshold',
+  'Events',
   'Chart could not be saved!',
   'Could not load chart',
   'This chart does not seem to exist. You might not have access',
@@ -99,8 +104,9 @@ const keys = translationKeys(defaultTranslations);
 
 const ChartViewPage = () => {
   const [showContextMenu, setShowContextMenu] = useState(false);
-  const [showThresholdMenu, setShowThresholdMenu] = useState(false);
+  const [showThresholdSidebar, setShowThresholdSidebar] = useState(false);
   const [showErrorSidebar, setShowErrorSidebar] = useState(false);
+  const [showEventSidebar, setShowEventSidebar] = useState(false);
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY);
   const { chartId = '' } = useParams<{ chartId: string }>();
   const { data: login } = useUserInfo();
@@ -108,7 +114,11 @@ const ChartViewPage = () => {
   /**
    * Get local initialized chart
    */
-  const { data: chart, isError, isLoading } = useInitializedChart(chartId);
+  const {
+    data: chart,
+    isError,
+    isLoading,
+  } = useInitializedChart(chartId || '');
 
   /**
    * Get local chart context
@@ -170,6 +180,34 @@ const ChartViewPage = () => {
   const showMinMax = get(chart, 'settings.showMinMax', false);
   const showGridlines = get(chart, 'settings.showGridlines', true);
   const mergeUnits = get(chart, 'settings.mergeUnits', true);
+
+  /**
+   * Events
+   */
+  const sdk = useSDK();
+  const allEvents: any = [];
+  const allEventFilters = chart?.eventFilters || [];
+  const visibleEventData = allEventFilters?.filter((item: any) => item.visible);
+
+  (visibleEventData || []).forEach(async (eventItem) => {
+    try {
+      const events = await sdk.events.list({
+        filter: transformNewFilterToOldFilter({
+          ...eventItem.filters,
+          startTime: { min: getTime(new Date(chart!.dateFrom)) },
+          endTime: { max: getTime(new Date(chart!.dateTo)) },
+        }),
+      });
+
+      allEvents.push({
+        id: eventItem.id,
+        visible: eventItem.visible,
+        results: events.items,
+      });
+    } catch (e: any) {
+      throw new Error(e.toString());
+    }
+  });
 
   useEffect(() => {
     trackUsage('PageView.ChartView', {
@@ -280,32 +318,43 @@ const ChartViewPage = () => {
       const isSameSource = sourceId === selectedSourceId;
       const showMenu = isSameSource ? !showContextMenu : true;
       setShowContextMenu(showMenu);
-      setShowThresholdMenu(false);
+      setShowThresholdSidebar(false);
       setShowErrorSidebar(false);
+      setShowEventSidebar(false);
       setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
     },
     [selectedSourceId, showContextMenu]
   );
 
-  const handleThresholdClick = useCallback(() => {
+  const handleThresholdSidebarToggle = useCallback(() => {
     setShowContextMenu(false);
     setShowErrorSidebar(false);
-    setShowThresholdMenu((prevState) => !prevState);
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+    setShowEventSidebar(false);
+    setShowThresholdSidebar((prevState) => !prevState);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   }, []);
 
   const handleErrorIconClick = useCallback(
     (sourceId: string) => {
       const isSameSource = sourceId === selectedSourceId;
       const showMenu = isSameSource ? !showErrorSidebar : true;
-      setShowErrorSidebar(showMenu);
       setShowContextMenu(false);
-      setShowThresholdMenu(false);
+      setShowThresholdSidebar(false);
+      setShowEventSidebar(false);
+      setShowErrorSidebar(showMenu);
 
       setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
     },
-    [selectedSourceId, showErrorSidebar, setShowThresholdMenu]
+    [selectedSourceId, showErrorSidebar, setShowThresholdSidebar]
   );
+
+  const handleEventSidebarToggle = useCallback(() => {
+    setShowContextMenu(false);
+    setShowErrorSidebar(false);
+    setShowThresholdSidebar(false);
+    setShowEventSidebar((prevState) => !prevState);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+  }, []);
 
   const handleCloseContextMenu = useCallback(() => {
     setShowContextMenu(false);
@@ -313,12 +362,17 @@ const ChartViewPage = () => {
   }, []);
 
   const handleCloseThresholdMenu = useCallback(() => {
-    setShowThresholdMenu(false);
+    setShowThresholdSidebar(false);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
 
   const handleCloseErrorSidebar = useCallback(() => {
     setShowErrorSidebar(false);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, []);
+
+  const handleCloseEventSidebar = useCallback(() => {
+    setShowEventSidebar(false);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
 
@@ -678,6 +732,7 @@ const ChartViewPage = () => {
                     key={chartId}
                     chart={chart}
                     setChart={setChart}
+                    eventData={allEvents}
                     isYAxisShown={showYAxis}
                     isMinMaxShown={showMinMax}
                     isGridlinesShown={showGridlines}
@@ -739,9 +794,9 @@ const ChartViewPage = () => {
             statisticsStatus={statisticsStatus}
           />
         )}
-        {showThresholdMenu && (
+        {showThresholdSidebar && (
           <ThresholdSidebar
-            visible={showThresholdMenu}
+            visible={showThresholdSidebar}
             onClose={handleCloseThresholdMenu}
             updateChart={setChart}
             chart={chart}
@@ -758,13 +813,30 @@ const ChartViewPage = () => {
             )}
           />
         )}
+
+        {showEventSidebar && (
+          <EventSidebar
+            visible={showEventSidebar}
+            onClose={handleCloseEventSidebar}
+            updateChart={setChart}
+            chart={chart}
+          />
+        )}
         <Toolbar>
+          <Tooltip content={t.Events} position="left">
+            <Button
+              icon="Events"
+              aria-label="Toggle events sidebar"
+              toggled={showEventSidebar}
+              onClick={() => handleEventSidebarToggle()}
+            />
+          </Tooltip>
           <Tooltip content={t.Threshold} position="left">
             <Button
               icon="Threshold"
               aria-label="Toggle threshold sidebar"
-              toggled={showThresholdMenu}
-              onClick={() => handleThresholdClick()}
+              toggled={showThresholdSidebar}
+              onClick={() => handleThresholdSidebarToggle()}
             />
           </Tooltip>
         </Toolbar>

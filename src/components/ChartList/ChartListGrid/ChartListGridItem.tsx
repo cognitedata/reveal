@@ -8,15 +8,16 @@ import {
   Title,
   Tooltip,
 } from '@cognite/cogs.js';
-import { ComponentProps, MouseEvent } from 'react';
+import { MouseEvent, useContext } from 'react';
 import { Skeleton } from 'antd';
-import PlotlyChart from 'components/PlotlyChart/PlotlyChart';
+import { Chart } from 'models/chart/types';
+import { RenderWhenOnScreen } from 'components/RenderWhenOnScreen/RenderWhenOnScreen';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
 import formatOwner from '../formatOwner';
+import { ChartListContext } from '../context';
 
 interface Props {
-  loadingPlot: boolean;
-  plotlyProps: ComponentProps<typeof PlotlyChart> | undefined;
+  chart: Chart;
   name: string;
   updatedAt: string;
   owner: string;
@@ -29,8 +30,7 @@ interface Props {
 
 const ChartListGridItem = ({
   name,
-  loadingPlot,
-  plotlyProps,
+  chart,
   updatedAt,
   owner,
   onClick,
@@ -39,16 +39,27 @@ const ChartListGridItem = ({
   readOnly,
   translations,
 }: Props) => {
+  /**
+   * Use context to enable dependency injection / mocking (containers, hooks, etc..)
+   */
+  const { PreviewPlotContainer } = useContext(ChartListContext);
+
   return (
     <Wrapper className="z-4">
       <A onClick={onClick}>
         <ImageWrapper>
           <ImageContent>
-            {loadingPlot ? (
-              <Skeleton.Image style={{ width: 286, height: 200 }} />
-            ) : (
-              <PlotlyChart {...plotlyProps} isPreview />
-            )}
+            <RenderWhenOnScreen
+              containerStyles={{
+                height: 200,
+                border: '1px solid var(--cogs-greyscale-grey2)',
+              }}
+              loaderComponent={
+                <Skeleton.Image style={{ height: 200, width: 286 }} />
+              }
+            >
+              <PreviewPlotContainer chart={chart} />
+            </RenderWhenOnScreen>
           </ImageContent>
         </ImageWrapper>
       </A>

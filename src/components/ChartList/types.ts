@@ -1,17 +1,9 @@
-import PlotlyChart from 'components/PlotlyChart/PlotlyChart';
-import { ComponentProps } from 'react';
+import { ChartItem } from 'hooks/charts/types';
 
 export interface ChartListProps {
   loading: boolean;
   readOnly?: boolean;
-  list: {
-    id: string;
-    name: string;
-    owner: string;
-    updatedAt: string;
-    loadingPlot: boolean;
-    plotlyProps: ComponentProps<typeof PlotlyChart> | undefined;
-  }[];
+  list: ChartItem[];
   emptyState?: JSX.Element;
   onChartClick: (chartId: string) => void;
   onChartDuplicateClick: (chartId: string) => void;

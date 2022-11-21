@@ -1,7 +1,7 @@
 import React, { ComponentType, memo } from 'react';
 import { shallowCompareProperties } from 'utils/compare';
 import { PlotWrapper } from './elements';
-import { useDebouncePropsOnNavigation } from './hooks';
+import { useDebouncePropsOnNavigation } from './navigation-safe-plot-hooks';
 
 export function createNavigationSafePlotComponent<P>(
   plotlyComponent: ComponentType<P>

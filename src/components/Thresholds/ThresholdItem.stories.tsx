@@ -155,6 +155,7 @@ Threshold.args = {
   onTypeChange: () => {},
   onLowerLimitChange: () => {},
   onUpperLimitChange: () => {},
+  onDuplicateThreshold: () => {},
 };
 
 Between.args = {
@@ -220,6 +221,7 @@ Between.args = {
   onTypeChange: () => {},
   onLowerLimitChange: () => {},
   onUpperLimitChange: () => {},
+  onDuplicateThreshold: () => {},
 };
 
 Under.args = {
@@ -291,6 +293,7 @@ Under.args = {
   onTypeChange: () => {},
   onLowerLimitChange: () => {},
   onUpperLimitChange: () => {},
+  onDuplicateThreshold: () => {},
 };
 
 Over.args = {
@@ -362,4 +365,5 @@ Over.args = {
   onTypeChange: () => {},
   onLowerLimitChange: () => {},
   onUpperLimitChange: () => {},
+  onDuplicateThreshold: () => {},
 };

@@ -1,7 +1,8 @@
 import { Meta, Story } from '@storybook/react';
-import { plotExamplePropsWithAggregatedData } from 'components/PlotlyChart/PlotlyChart.mocks';
 import dayjs from 'dayjs';
 import { ComponentProps } from 'react';
+import { ChartListContext, ChartListContextInterface } from '../context';
+import { PreviewPlotContainerMock } from '../mocks';
 import ChartListTable from './ChartListTable';
 
 export default {
@@ -12,6 +13,15 @@ export default {
     onChartDeleteClick: { action: 'Clicked to delete the Chart' },
     onChartDuplicateClick: { action: 'Clicked to duplicate the Chart' },
   },
+  decorators: [
+    (story, { parameters }) => {
+      return (
+        <ChartListContext.Provider value={parameters.mocks}>
+          {story()}
+        </ChartListContext.Provider>
+      );
+    },
+  ],
 } as Meta;
 
 const Template: Story<ComponentProps<typeof ChartListTable>> = (args) => (
@@ -25,14 +35,16 @@ const chartMock = {
   name: 'Test Chart',
   owner: 'Rhuan',
   updatedAt: dayjs().toISOString(),
-  plotlyProps: {
-    plotExamplePropsWithAggregatedData,
-    isPreview: true,
-  } as ComponentProps<typeof ChartListTable>['list'][number]['plotlyProps'],
 };
 
 Default.args = {
   list: Array(4).fill(chartMock),
+};
+
+Default.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
 };
 
 export const Loading = Template.bind({});
@@ -40,6 +52,12 @@ export const Loading = Template.bind({});
 Loading.args = {
   list: [],
   loading: true,
+};
+
+Loading.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
 };
 
 export const LoadingOnlyPlots = Template.bind({});
@@ -50,4 +68,10 @@ LoadingOnlyPlots.args = {
     loadingPlot: true,
     plotlyProps: undefined,
   }),
+};
+
+LoadingOnlyPlots.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
 };

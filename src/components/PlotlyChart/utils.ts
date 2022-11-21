@@ -476,6 +476,7 @@ export function generateLayout({
   showYAxis,
   stackedMode,
   seriesData,
+  eventData,
   yAxisValues,
   dateFrom,
   dateTo,
@@ -682,6 +683,50 @@ export function generateLayout({
       );
     }
   });
+
+  /**
+   * Display events
+   */
+
+  if (eventData.length) {
+    eventData.forEach((eventItem: any) => {
+      const shapeColor = eventItem.color || '#4078F0';
+      (eventItem.results || []).forEach((item: any) => {
+        (layout.shapes as any[]).push(
+          ...[
+            {
+              visible: true,
+              xref: 'x0',
+              yref: `paper`,
+              x0: eventItem.startTime,
+              x1: eventItem.endTime,
+              y0: 0,
+              y1: 1,
+              type: 'rect',
+              fillcolor: hexToRGBA(shapeColor, 0.1),
+              line: {
+                width: item ? 0 : 0.001,
+              },
+            },
+            {
+              visible: true,
+              type: 'rect',
+              xref: 'x0',
+              yref: 'paper',
+              x0: eventItem.startTime,
+              x1: eventItem.endTime,
+              y0: 0,
+              y1: 0.01,
+              line: {
+                width: 0,
+              },
+              fillcolor: shapeColor,
+            },
+          ]
+        );
+      });
+    });
+  }
 
   return layout;
 }

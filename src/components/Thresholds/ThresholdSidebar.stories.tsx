@@ -42,6 +42,7 @@ const MockedThresholdSidebar = (args: any) => {
   const handleUpdateChart = () => {
     setChart({
       ...args?.chart,
+      name: 'Final Threshold (Updated)',
     });
   };
 

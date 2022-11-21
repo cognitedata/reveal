@@ -11,7 +11,7 @@ import { Chart, ChartThreshold, ChartThresholdEventFilter } from './types';
  * @param chart                   - A current chart instance to update
  * @returns Chart                 - Returns updated CHART object with empty thresholdCollection[]
  */
-export function initializeThresholdCollections(chart: Chart): Chart {
+export function initThresholdCollection(chart: Chart): Chart {
   return {
     ...chart,
     thresholdCollection: [] as ChartThreshold[],

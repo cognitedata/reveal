@@ -1,8 +1,9 @@
 import { Meta, Story } from '@storybook/react';
-import { plotExamplePropsWithAggregatedData } from 'components/PlotlyChart/PlotlyChart.mocks';
 import dayjs from 'dayjs';
 import { ComponentProps } from 'react';
 import ChartList from './ChartList';
+import { ChartListContext, ChartListContextInterface } from './context';
+import { PreviewPlotContainerMock } from './mocks';
 
 export default {
   component: ChartList,
@@ -12,6 +13,15 @@ export default {
     onChartDeleteClick: { action: 'Clicked to delete the Chart' },
     onChartDuplicateClick: { action: 'Clicked to duplicate the Chart' },
   },
+  decorators: [
+    (story, { parameters }) => {
+      return (
+        <ChartListContext.Provider value={parameters.mocks}>
+          {story()}
+        </ChartListContext.Provider>
+      );
+    },
+  ],
 } as Meta;
 
 type ChartListProps = ComponentProps<typeof ChartList>;
@@ -23,10 +33,6 @@ const chartMock = {
   name: 'Test Chart',
   owner: 'Rhuan',
   updatedAt: dayjs().toISOString(),
-  plotlyProps: {
-    plotExamplePropsWithAggregatedData,
-    isPreview: true,
-  } as ChartListProps['list'][number]['plotlyProps'],
 };
 
 export const Default = Template.bind({});
@@ -35,11 +41,23 @@ Default.args = {
   list: Array(4).fill(chartMock),
 };
 
+Default.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
+};
+
 export const EmptyTable = Template.bind({});
 
 EmptyTable.args = {
   list: [],
   loading: false,
+};
+
+EmptyTable.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
 };
 
 export const EmptyGrid = Template.bind({});
@@ -50,12 +68,24 @@ EmptyGrid.args = {
   loading: false,
 };
 
+EmptyGrid.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
+};
+
 export const ErrorTable = Template.bind({});
 
 ErrorTable.args = {
   list: [],
   loading: false,
   error: 'An Error Happened',
+};
+
+ErrorTable.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
 };
 
 export const ErrorGrid = Template.bind({});
@@ -67,11 +97,23 @@ ErrorGrid.args = {
   error: 'An Error Happened',
 };
 
+ErrorGrid.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
+};
+
 export const LoadingTable = Template.bind({});
 
 LoadingTable.args = {
   list: [],
   loading: true,
+};
+
+LoadingTable.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
 };
 
 export const LoadingGrid = Template.bind({});
@@ -80,6 +122,12 @@ LoadingGrid.args = {
   viewOption: 'grid',
   list: [],
   loading: true,
+};
+
+LoadingGrid.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
 };
 
 export const LoadingTableOnlyPlots = Template.bind({});
@@ -92,6 +140,12 @@ LoadingTableOnlyPlots.args = {
   }),
 };
 
+LoadingTableOnlyPlots.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
+};
+
 export const LoadingGridOnlyPlots = Template.bind({});
 
 LoadingGridOnlyPlots.args = {
@@ -101,4 +155,10 @@ LoadingGridOnlyPlots.args = {
     loadingPlot: true,
     plotlyProps: undefined,
   }),
+};
+
+LoadingGridOnlyPlots.parameters = {
+  mocks: {
+    PreviewPlotContainer: PreviewPlotContainerMock,
+  } as ChartListContextInterface,
 };

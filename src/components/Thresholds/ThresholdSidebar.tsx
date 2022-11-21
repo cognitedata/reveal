@@ -2,9 +2,10 @@
  * Threshold
  */
 
-import { Button, Tooltip } from '@cognite/cogs.js';
+import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 import { FunctionComponent, useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { omit } from 'lodash';
 import { useTranslations } from 'hooks/translations';
 import {
   Chart,
@@ -15,7 +16,7 @@ import {
 } from 'models/chart/types';
 import {
   addChartThreshold,
-  initializeThresholdCollections,
+  initThresholdCollection,
   removeChartThreshold,
   updateChartThresholdName,
   updateChartThresholdSelectedSource,
@@ -138,16 +139,33 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
     );
   };
 
+  const handleDuplicateThreshold = (id: string) => {
+    const selectedThreshold = chart.thresholdCollection?.find(
+      (ths) => ths.id === id
+    );
+    if (!selectedThreshold) throw new Error('Threshold was not found');
+    const clonedThreshold = {
+      ...omit(selectedThreshold, ['name', 'id']),
+      id: uuidv4(),
+      name: `${selectedThreshold.name} (Duplicate)`,
+    };
+
+    updateChart((oldChart) => addChartThreshold(oldChart!, clonedThreshold));
+  };
+
   useEffect(() => {
     if (!chart.thresholdCollection || chart.thresholdCollection === undefined) {
-      updateChart((oldChart) => initializeThresholdCollections(oldChart!));
+      updateChart((oldChart) => initThresholdCollection(oldChart!));
     }
   }, [chart, updateChart]);
 
   return (
     <Sidebar visible={visible}>
       <TopContainer>
-        <TopContainerTitle>{t.Thresholds}</TopContainerTitle>
+        <TopContainerTitle>
+          <Icon type="Threshold" size={21} />
+          {t.Thresholds}
+        </TopContainerTitle>
         <TopContainerAside>
           <Tooltip content={t.Hide}>
             <Button
@@ -165,6 +183,7 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
           sources={availableSources}
           onRemoveThreshold={handleRemoveThreshold}
           onToggleThreshold={handleToggleThreshold}
+          onDuplicateThreshold={handleDuplicateThreshold}
           onLowerLimitChange={handleChangeLowerLimit}
           onUpperLimitChange={handleChangeUpperLimit}
           onEventFilterChange={handleChangeEventFilter}

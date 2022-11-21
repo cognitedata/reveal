@@ -1,5 +1,4 @@
 import { filter, orderBy } from 'lodash';
-import usePlotlyPropsPreview from 'hooks/usePlotlyPropsPreview';
 import usePublicCharts from '../queries/usePublicCharts';
 
 interface useMyChartsListProps {
@@ -9,7 +8,6 @@ interface useMyChartsListProps {
 
 const usePublicChartsList = ({ searchTerm, order }: useMyChartsListProps) => {
   const { data = [], isFetched, error } = usePublicCharts();
-  usePlotlyPropsPreview(data?.map((c) => c.firebaseChart) ?? []);
 
   /**
    * Derive filtered list

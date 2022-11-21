@@ -12,6 +12,7 @@ type Props = {
   setChart?: (
     valOrUpdater: ((currVal: Chart | undefined) => Chart) | Chart
   ) => void;
+  eventData?: [];
   isYAxisShown?: boolean;
   isMinMaxShown?: boolean;
   isGridlinesShown?: boolean;
@@ -24,6 +25,7 @@ type Props = {
 const ChartPlotContainer = ({
   chart = undefined,
   setChart = (val) => val,
+  eventData = [],
   isYAxisShown = true,
   isMinMaxShown = false,
   isGridlinesShown = false,
@@ -94,6 +96,7 @@ const ChartPlotContainer = ({
     calculations,
     calculationsData,
     thresholds,
+    eventData,
     isYAxisShown,
     isMinMaxShown,
     isGridlinesShown,

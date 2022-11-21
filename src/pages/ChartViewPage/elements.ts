@@ -1,4 +1,4 @@
-import { Dropdown } from '@cognite/cogs.js';
+import { Dropdown, Title } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import styled from 'styled-components/macro';
 
@@ -26,6 +26,10 @@ export const Header = styled.header`
       align-items: center;
     }
   }
+`;
+
+export const ChartName = styled(Title)`
+  max-width: 25rem;
 `;
 
 export const TopPaneWrapper = styled.div`

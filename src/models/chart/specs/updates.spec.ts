@@ -5,7 +5,7 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
-} from './types';
+} from '../types';
 import {
   addTimeseries,
   addWorkflow,
@@ -20,7 +20,7 @@ import {
   updateWorkflowsFromV1toV2,
   updateWorkflowsToSupportVersions,
   addWorkflows,
-} from './updates';
+} from '../updates';
 
 describe('charts util', () => {
   const id = uuidv4();
