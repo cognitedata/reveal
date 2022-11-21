@@ -32,12 +32,12 @@ export const HomeButton = () => {
 
 export const ExpandButton = ({
   viewer,
-  threeDModel,
+  model,
 }: {
   viewer: Cognite3DViewer;
-  threeDModel?: Cognite3DModel | CognitePointCloudModel;
+  model?: Cognite3DModel | CognitePointCloudModel;
 }) => {
-  if (!threeDModel) {
+  if (!model) {
     return <></>;
   }
 
@@ -47,7 +47,7 @@ export const ExpandButton = ({
         icon="ExpandAlternative"
         aria-label="Fit to view"
         onClick={() => {
-          viewer.fitCameraToModel(threeDModel);
+          viewer.fitCameraToModel(model);
           trackUsage('Exploration.Preview.FitToView');
         }}
         type="ghost"

@@ -18,7 +18,7 @@ import { Slicer } from './slicer/Slicer';
 import PointSizeSlider from './point-size-slider/PointSizeSlider';
 import HelpButton from './help-button';
 import styled from 'styled-components';
-import { Flex, ToolBar } from '@cognite/cogs.js';
+import { Colors, Flex } from '@cognite/cogs.js';
 import { ThreeDTitle } from './title/ThreeDTitle';
 import NodePreview, { ResourceTabType } from './NodePreview';
 import {
@@ -193,7 +193,10 @@ export const ThreeDView = ({ modelId }: Props) => {
                   viewer={viewer}
                 />
                 <StyledToolBar>
-                  <ExpandButton viewer={viewer} threeDModel={threeDModel} />
+                  <ExpandButton
+                    viewer={viewer}
+                    model={threeDModel || pointCloudModel}
+                  />
                   <FocusAssetButton
                     modelId={modelId}
                     revisionId={revisionId}
@@ -201,20 +204,22 @@ export const ThreeDView = ({ modelId }: Props) => {
                     viewer={viewer}
                     threeDModel={threeDModel}
                   />
+                  <StyledToolBarDivider />
+                  <PointSizeSlider pointCloudModel={pointCloudModel} />
                   <Slicer
                     viewer={viewer}
                     viewerModel={threeDModel || pointCloudModel}
-                  />
-                  <PointSizeSlider pointCloudModel={pointCloudModel} />
-                  <ShareButton
-                    viewState={viewState}
-                    selectedAssetId={selectedAssetId}
-                    assetDetailsExpanded={assetDetailsExpanded}
                   />
                   <PointToPointMeasurementButton
                     viewer={viewer}
                     nodesSelectable={nodesSelectable}
                     setNodesSelectable={setNodesSelectable}
+                  />
+                  <StyledToolBarDivider />
+                  <ShareButton
+                    viewState={viewState}
+                    selectedAssetId={selectedAssetId}
+                    assetDetailsExpanded={assetDetailsExpanded}
                   />
                   <HelpButton />
                 </StyledToolBar>
@@ -270,13 +275,30 @@ const NodePreviewContainer = styled.div`
   width: 300px;
 `;
 
-const StyledToolBar = styled(ToolBar)`
+const StyledToolBar = styled.div`
   position: absolute;
   left: 30px;
   bottom: 30px;
-  display: table-cell;
+  display: flex;
+  flex-direction: column;
   width: fit-content;
   height: fit-content;
+  padding: 4px;
+  border-radius: 4px;
+  background-color: white;
+  width: 48px;
+`;
+
+const StyledToolBarDivider = styled.div`
+  background-color: ${Colors['border--interactive--default']};
+  height: 1px;
+  width: 40px;
+  margin: 4px 0;
+
+  :first-child,
+  :last-child {
+    display: none;
+  }
 `;
 
 const SidebarContainer = styled(Flex)`
