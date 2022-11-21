@@ -49,3 +49,20 @@ Thus, to get the full transformation from source coordinates to the model's tran
 const totalTransform = model.getSourceTransformation().clone().multiply(model.getModelTransformation);
 ```
 This is useful when combining visualization of a model with other data stored in the same source (e.g. CDF) coordinate system.
+
+## Removed several CDF/model transformation methods
+
+The methods `mapFromCdfToModelCoordinates`, `mapPositionFromModelToCdfCoordinates`, `mapBoxFromCdfToModelCoordinates`, `mapBoxFromModelToCdfCoordinates` have been removed from `CogniteCadModel`.
+
+The `*FromCdfToModelCoordinates` can be emulated by constructing the transformation matrix with
+
+```
+const cdfTransformation = model.getSourceTransformation().clone().multiply(model.getModelTransformation);
+```
+as was mentioned above. It can the be used in either `position.applyMatrix4(cdfTransformation)` or `box.applyMatrix4(cdfTransformation)` respectively.
+
+The `*FromModelToCdfCoordinates` can likewise be emulated using the matrix
+```
+const inverseCdfTransformation = model.getSourceTransformation().clone().multiply(model.getModelTransformation).invert();
+```
+and using it with `applyMatrix4()` as above.
