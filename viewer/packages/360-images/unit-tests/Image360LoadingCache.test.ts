@@ -39,7 +39,7 @@ describe(Image360LoadingCache.name, () => {
       .setup(p => p.load360Image())
       .returns(deferredPromise1)
       .setup(p => p.dispose())
-      .returns(Promise.resolve())
+      .returns()
       .object();
 
     const deferredPromise2 = new DeferredPromise<void>();
@@ -47,7 +47,7 @@ describe(Image360LoadingCache.name, () => {
       .setup(p => p.load360Image())
       .returns(deferredPromise2)
       .setup(p => p.dispose())
-      .returns(Promise.resolve())
+      .returns()
       .object();
 
     const preLoad1 = entityLoadingCache.cachedPreload(entityMock1);

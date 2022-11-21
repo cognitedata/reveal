@@ -38,9 +38,9 @@ export class Image360Facade<T> {
     return image360Entities;
   }
 
-  public delete(entity: Image360Entity): Promise<void> {
+  public delete(entity: Image360Entity): void {
     pull(this._image360Entities, entity);
-    return entity.unload360Image();
+    entity.dispose();
   }
 
   public preload(entity: Image360Entity): Promise<void> {

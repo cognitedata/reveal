@@ -101,7 +101,7 @@ export class Image360Icon extends THREE.Group {
     const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: true });
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.updateMatrixWorld();
-    sprite.renderOrder = 4;
+    sprite.renderOrder = 5;
     return sprite;
 
     function drawOuterCircle() {
@@ -134,7 +134,7 @@ export class Image360Icon extends THREE.Group {
     const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: true });
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.updateMatrixWorld();
-    sprite.renderOrder = 4;
+    sprite.renderOrder = 5;
     return sprite;
 
     function drawHoverSelector() {

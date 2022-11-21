@@ -37,7 +37,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       this.render();
     });
 
-    renderer.domElement.addEventListener('mousemove', event => {
+    renderer.domElement.addEventListener('mousemove', async event => {
       entities.forEach(p => (p.icon.hoverSpriteVisible = false));
       const { x, y } = event;
       const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
@@ -52,7 +52,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
       entity.icon.hoverSpriteVisible = true;
-      facade.preload(entity);
+      await facade.preload(entity);
+      entity.visible = false;
       this.render();
     });
 
@@ -67,14 +68,13 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       );
       const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
       if (entity !== undefined) {
-        await entity.activate360Image();
+        await facade.preload(entity);
+        entity.visible = true;
         entity.icon.visible = false;
 
         if (lastClicked !== undefined) {
-          const lastClickedMesh = await ((lastClicked as any)._imageContainer as Promise<THREE.Mesh>);
-          const currentClickedMesh = await ((entity as any)._imageContainer as Promise<THREE.Mesh>);
-          lastClickedMesh.renderOrder = 1;
-          currentClickedMesh.renderOrder = 0;
+          lastClicked.renderOrder = 1;
+          entity.renderOrder = 0;
 
           const transformTo = entity.transform.toArray();
           const translationTo = new THREE.Vector3(transformTo[12], transformTo[13], transformTo[14]);
@@ -84,8 +84,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
           const length = new THREE.Vector3().subVectors(translationTo, translationFrom).length();
 
-          lastClickedMesh.scale.set(length * 2, length * 2, length * 2);
-          currentClickedMesh.scale.set(length * 2, length * 2, length * 2);
+          lastClicked.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
+          entity.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
 
           const from = { t: 0 };
           const to = { t: 1 };
