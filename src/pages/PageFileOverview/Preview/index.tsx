@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Badge, Colors } from '@cognite/cogs.js';
+import { Badge, Colors, Tabs } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import {
-  Tabs,
   FileDetails,
   Metadata,
   useRelatedResourceCounts,
@@ -12,6 +11,7 @@ import { ContextFileViewer as CogniteFileViewer } from 'components/CogniteFileVi
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import { ContentWrapper, TabTitle } from '../components';
 import { ResourceDetailTabContent } from './ResourceDetailTabContent';
+import styled from 'styled-components';
 
 type FilePreviewTabType = 'preview' | 'details' | 'files' | 'assets';
 type Props = {
@@ -32,26 +32,26 @@ export default function Preview(props: Props) {
   const { counts } = useRelatedResourceCounts(resourceDetails);
 
   return (
-    <Tabs
-      tab={activeTab}
-      onTabChange={(newTab) => {
+    <StyledTabs
+      activeKey={activeTab}
+      onChange={(newTab) => {
         trackUsage(PNID_METRICS.fileViewer.viewTab, { tab: newTab });
         setActiveTab(newTab as FilePreviewTabType);
       }}
       style={{ paddingLeft: '20px' }}
     >
-      <Tabs.Pane key="preview" title={<TabTitle>Preview</TabTitle>}>
+      <Tabs.TabPane key="preview" tab={<TabTitle>Preview</TabTitle>}>
         <ContentWrapper>
           <CogniteFileViewer fileId={file?.id} editMode={editMode} />
         </ContentWrapper>
-      </Tabs.Pane>
-      <Tabs.Pane title={<TabTitle>Diagram details</TabTitle>} key="info">
+      </Tabs.TabPane>
+      <Tabs.TabPane tab={<TabTitle>Diagram details</TabTitle>} key="info">
         <FileDetails file={file} />
         <Metadata metadata={file?.metadata} />
-      </Tabs.Pane>
-      <Tabs.Pane
+      </Tabs.TabPane>
+      <Tabs.TabPane
         key="assets"
-        title={
+        tab={
           <>
             <TabTitle>Assets</TabTitle>
             <Badge
@@ -62,10 +62,10 @@ export default function Preview(props: Props) {
         }
       >
         <ResourceDetailTabContent resource={resourceDetails} type="asset" />
-      </Tabs.Pane>
-      <Tabs.Pane
+      </Tabs.TabPane>
+      <Tabs.TabPane
         key="files"
-        title={
+        tab={
           <>
             <TabTitle>Diagrams</TabTitle>
             <Badge
@@ -76,7 +76,25 @@ export default function Preview(props: Props) {
         }
       >
         <ResourceDetailTabContent resource={resourceDetails} type="file" />
-      </Tabs.Pane>
-    </Tabs>
+      </Tabs.TabPane>
+    </StyledTabs>
   );
 }
+
+export const StyledTabs = styled(Tabs)`
+  padding-left: 16px;
+  padding-right: 16px;
+  flex: 1;
+  height: 100%;
+
+  .rc-tabs-nav-wrap {
+    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+    margin-bottom: 16px;
+  }
+  .rc-tabs-content-holder {
+    display: flex;
+    /* We need to consider the height of the tab switcher part at the top which is 48px in height */
+    height: calc(100% - 48px);
+    overflow: auto;
+  }
+`;

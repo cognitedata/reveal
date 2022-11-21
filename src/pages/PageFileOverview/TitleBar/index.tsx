@@ -63,6 +63,7 @@ const TitleRowWrapper = styled.div`
   border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
   display: flex;
   align-items: center;
+  flex-grow: 0;
 `;
 
 const Buttons = styled.div`

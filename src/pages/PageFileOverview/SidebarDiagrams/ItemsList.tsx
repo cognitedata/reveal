@@ -11,8 +11,10 @@ type ItemsListProps = { diagrams?: FileInfo[] };
 
 export default function ItemsList(props: ItemsListProps) {
   const history = useHistory();
-  const { workflowId, fileId } =
-    useParams<{ workflowId: string; fileId: string }>();
+  const { workflowId, fileId } = useParams<{
+    workflowId: string;
+    fileId: string;
+  }>();
 
   const { diagrams } = props;
 

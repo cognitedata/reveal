@@ -37,7 +37,6 @@ export const getColumns = (onFileView: (file: FileInfo) => void) =>
             </Flex>
           </Popover>
           <Button
-            unstyled
             style={{ fontWeight: 500, marginLeft: '12px' }}
             onClick={() => onFileView(file)}
           >

@@ -7,8 +7,11 @@ import { stringContains } from 'utils/utils';
 import ItemsList from './ItemsList';
 
 export default function JobDiagrams() {
-  const { workflowId } =
-    useParams<{ project: string; workflowId: string; fileId: string }>();
+  const { workflowId } = useParams<{
+    project: string;
+    workflowId: string;
+    fileId: string;
+  }>();
   const { diagrams } = useWorkflowItems(Number(workflowId), true);
   const [query, setQuery] = useState<string>('');
 

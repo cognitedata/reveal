@@ -43,7 +43,7 @@ export default function NavigationStickyBottomRow(props: Props) {
         {showSkipButton && (
           <Tooltip title={skip?.tooltip} placement="left" arrowPointAtCenter>
             <Button
-              size="large"
+              size="default"
               type="ghost"
               onClick={() => (skip?.onClick ? skip.onClick() : goToNextStep())}
               disabled={skip?.disabled}
@@ -55,7 +55,7 @@ export default function NavigationStickyBottomRow(props: Props) {
         )}
         <Tooltip title={next?.tooltip} placement="left" arrowPointAtCenter>
           <Button
-            size="large"
+            size="default"
             type="primary"
             onClick={() => (next?.onClick ? next.onClick() : goToNextStep())}
             disabled={next?.disabled}

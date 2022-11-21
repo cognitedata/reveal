@@ -1,17 +1,30 @@
 module.exports = {
+  parser: '@typescript-eslint/parser',
+  plugins: [
+    '@typescript-eslint',
+    'react-hooks',
+    'testing-library',
+    'lodash',
+    'testcafe',
+    'prettier',
+  ],
   extends: [
-    '@cognite',
     'plugin:testing-library/react',
     'plugin:lodash/recommended',
     'plugin:testcafe/recommended',
+    'plugin:prettier/recommended',
   ],
-  plugins: ['@cognite', 'testing-library', 'lodash', 'testcafe'],
   rules: {
-    '@cognite/no-unissued-todos': [
-      'error',
-      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
-    ],
+    'no-console': ['error'],
+    'no-nested-ternary': 'error',
 
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': [
+      'warn',
+      {
+        additionalHooks: '(useRecoilCallback|useRecoilTransaction_UNSTABLE)',
+      },
+    ],
     'max-classes-per-file': ['off'],
     'lines-between-class-members': ['off'],
     'class-methods-use-this': ['off'],
@@ -27,7 +40,6 @@ module.exports = {
         ],
       },
     ],
-
     'react/jsx-props-no-spreading': ['off'],
     'react/static-property-placement': ['off'],
     'react/state-in-constructor': ['off'],
@@ -45,6 +57,9 @@ module.exports = {
     'lodash/prefer-noop': ['off'],
     'lodash/prefer-lodash-typecheck': ['off'],
 
-    '@typescript-eslint/no-unused-vars': ['off'],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+    ],
   },
 };

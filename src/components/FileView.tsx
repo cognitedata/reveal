@@ -9,7 +9,6 @@ import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import isMatch from 'lodash/isMatch';
-import { Flex } from 'components/Common';
 import { Alert } from 'antd';
 import InteractiveIcon from './InteractiveIcon';
 
@@ -76,13 +75,11 @@ export const FilePreview = ({
   }
 
   return (
-    <Flex column style={{ flex: '1' }}>
-      <CogniteFilePreview
-        fileId={fileId!}
-        creatable={editMode}
-        contextualization={writeAccess}
-        fileIcon={<InteractiveIcon />}
-      />
-    </Flex>
+    <CogniteFilePreview
+      fileId={fileId!}
+      creatable={editMode}
+      contextualization={writeAccess}
+      fileIcon={<InteractiveIcon />}
+    />
   );
 };

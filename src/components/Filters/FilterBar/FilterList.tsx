@@ -5,7 +5,7 @@ import { selectAllDataSets } from 'modules/datasets';
 import { Flex } from 'components/Common';
 import { StatusType, approvalDetails } from 'components/Filters';
 import { FilterTag } from './FilterTag';
-import { mimeTypes } from '../FilterSelects/utils';
+import { mimeTypes } from '../FilterSelects';
 
 type FilterListProps = {
   dataSetIds: Array<number>;
@@ -101,7 +101,8 @@ export const FilterList = ({
         const fileType = mimeTypes.find((mt) => mt.value === mT)?.label ?? '';
         return (
           <FilterTag
-            id="filter-tag-mimetype"
+            id={`filter-tag-mimetype-${fileType}`}
+            key={`filter-tag-${fileType}-mimetype`}
             content={`File type: ${fileType}`}
             onClose={() => onMimeTypeChange([])}
           />

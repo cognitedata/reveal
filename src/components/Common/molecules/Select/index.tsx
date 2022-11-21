@@ -29,7 +29,7 @@ export const Select = (props: CustomSelectProps) => {
   };
 
   const selectMenu = (
-    <DropdownWrapper>
+    <DropdownWrapper ref={dropdownRef}>
       <CogsSelect
         autoFocus
         maxHeight={36}
@@ -42,7 +42,7 @@ export const Select = (props: CustomSelectProps) => {
         backspaceRemovesValue={false} // if true, then search input in dropdown cannot be backspaced
         controlShouldRenderValue={false}
         hideSelectedOptions={false}
-        showCustomCheckbox={fixedSelectProps?.isMulti ?? false}
+        showCheckbox={fixedSelectProps?.isMulti ?? false}
         enableSelectAll={fixedSelectProps?.isMulti ?? false}
         menuPortalTarget={dropdownRef.current?.target}
         menuIsOpen
@@ -56,7 +56,7 @@ export const Select = (props: CustomSelectProps) => {
   return (
     <FilterWrapper hasPermission={tooltipProps?.hasPermission}>
       <Spin spinning={!fixedTooltipProps.isLoaded} size="small">
-        <Dropdown content={selectMenu} ref={dropdownRef}>
+        <Dropdown content={selectMenu}>
           <StyledButton
             type="tertiary"
             icon="ChevronDown"
@@ -103,8 +103,7 @@ const DropdownWrapper = styled.div`
   box-sizing: border-box;
   overflow-x: hidden;
   background-color: white;
-  box-shadow: 0px 8px 16px 4px rgba(0, 0, 0, 0.04),
-    0px 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 16px 4px rgba(0, 0, 0, 0.04), 0 2px 12px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
   z-index: ${Layers.POPOVER};
 
