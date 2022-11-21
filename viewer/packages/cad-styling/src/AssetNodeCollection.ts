@@ -65,8 +65,11 @@ export class AssetNodeCollection extends NodeCollection {
     );
     this._fetchResultHelper = fetchResultHelper;
 
-    const totalInverseModelTransform = model.getSourceTransformation()
-      .clone().multiply(model.getModelTransformation()).invert();
+    const totalInverseModelTransform = model
+      .getModelTransformation()
+      .clone()
+      .multiply(model.getSourceTransformation())
+      .invert();
 
     function mapBoundingBoxToCdf(box?: THREE.Box3) {
       if (box === undefined) {
@@ -107,8 +110,10 @@ export class AssetNodeCollection extends NodeCollection {
       })
     );
 
-    const totalModelTransformation = this._modelMetadataProvider.getSourceTransformation()
-      .clone().multiply(this._modelMetadataProvider.getModelTransformation());
+    const totalModelTransformation = this._modelMetadataProvider
+      .getModelTransformation()
+      .clone()
+      .multiply(this._modelMetadataProvider.getSourceTransformation());
 
     const boundingBoxes = nodeList
       .filter(node => node.boundingBox)

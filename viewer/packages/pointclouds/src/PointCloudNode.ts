@@ -192,7 +192,7 @@ export class PointCloudNode extends Group {
 
   setModelTransformation(matrix: THREE.Matrix4): void {
     this._customTransform.copy(matrix);
-    this.matrix.copy(this._customTransform).premultiply(this._sourceTransform);
+    this.matrix.copy(this._customTransform).multiply(this._sourceTransform);
     this.updateMatrixWorld(true);
   }
 

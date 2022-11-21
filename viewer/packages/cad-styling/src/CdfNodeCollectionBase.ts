@@ -32,8 +32,10 @@ export abstract class CdfNodeCollectionBase extends NodeCollection {
       this._fetchResultHelper.interrupt();
     }
 
-    const totalModelTransformation = this._cadModelData.getSourceTransformation()
-      .clone().multiply(this._cadModelData.getModelTransformation());
+    const totalModelTransformation = this._cadModelData
+      .getModelTransformation()
+      .clone()
+      .multiply(this._cadModelData.getSourceTransformation());
 
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
       nodes => nodes.map(node => new NumericRange(node.treeIndex, node.subtreeSize)),

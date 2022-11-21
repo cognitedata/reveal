@@ -120,7 +120,7 @@ export class CadNode extends Object3D {
    */
   setModelTransformation(matrix: Matrix4): void {
     this._customTransform.copy(matrix);
-    const customTransformFromSource = this._customTransform.clone().premultiply(this._sourceTransform);
+    const customTransformFromSource = this._customTransform.clone().multiply(this._sourceTransform);
     this._rootSector.setModelTransformation(customTransformFromSource);
     this._cadModelMetadata.modelMatrix.copy(customTransformFromSource);
   }

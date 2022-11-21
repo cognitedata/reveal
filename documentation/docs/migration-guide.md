@@ -46,7 +46,7 @@ We now also provide `model.getSourceTransformation()` that returns the matrix tr
 Thus, to get the full transformation from source coordinates to the model's transform in Reveal space, you would use something akin to
 
 ```
-const totalTransform = model.getSourceTransformation().clone().multiply(model.getModelTransformation);
+const totalTransform = model.getModelTransformation().clone().multiply(model.getSourceTransformation());
 ```
 This is useful when combining visualization of a model with other data stored in the same source (e.g. CDF) coordinate system.
 
@@ -57,12 +57,12 @@ The methods `mapFromCdfToModelCoordinates`, `mapPositionFromModelToCdfCoordinate
 The `*FromCdfToModelCoordinates` can be emulated by constructing the transformation matrix with
 
 ```
-const cdfTransformation = model.getSourceTransformation().clone().multiply(model.getModelTransformation);
+const cdfTransformation = model.getModelTransformation().clone().multiply(model.getSourceTransformation());
 ```
 as was mentioned above. It can the be used in either `position.applyMatrix4(cdfTransformation)` or `box.applyMatrix4(cdfTransformation)` respectively.
 
 The `*FromModelToCdfCoordinates` can likewise be emulated using the matrix
 ```
-const inverseCdfTransformation = model.getSourceTransformation().clone().multiply(model.getModelTransformation).invert();
+const inverseCdfTransformation = model.getModelTransformation().clone().multiply(model.getSourceTransformation()).invert();
 ```
 and using it with `applyMatrix4()` as above.
