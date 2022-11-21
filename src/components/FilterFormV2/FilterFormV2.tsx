@@ -4,6 +4,7 @@ import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
 import { useAssetMetadataValues } from 'hooks/MetadataAggregateHooks';
 import { reactSelectCogsStylingProps } from 'components/SearchNew/Filters/elements';
+import { DISABLE_VALUE_TOOLTIP } from './constants';
 
 const LOCKSVG = (
   <svg
@@ -217,32 +218,34 @@ const FilterItem = ({
             className="key-select"
           />
         </div>
-        <div className="value">
-          <Select
-            creatable
-            {...reactSelectCogsStylingProps}
-            styles={{
-              menu: style => ({
-                ...style,
-                width: '100%',
-                maxWidth: '320px',
-              }),
-              ...reactSelectCogsStylingProps.styles,
-            }}
-            placeholder="Value"
-            disabled={!selectedKey}
-            value={
-              selectedValue
-                ? { label: selectedValue, value: selectedValue }
-                : undefined
-            }
-            onChange={item => {
-              setSelectedValue(item?.value || null);
-            }}
-            options={selectedKey ? getMetadataValues(selectedKey) : []}
-            isLoading={isFetching}
-            className="value-select"
-          />
+        <div>
+          <Tooltip content={DISABLE_VALUE_TOOLTIP} disabled={!!selectedKey}>
+            <Select
+              creatable
+              {...reactSelectCogsStylingProps}
+              styles={{
+                menu: style => ({
+                  ...style,
+                  width: '100%',
+                  maxWidth: '320px',
+                }),
+                ...reactSelectCogsStylingProps.styles,
+              }}
+              placeholder="Value"
+              isDisabled={!selectedKey && selectedValue === null}
+              value={
+                selectedValue
+                  ? { label: selectedValue, value: selectedValue }
+                  : undefined
+              }
+              onChange={item => {
+                setSelectedValue(item?.value || null);
+              }}
+              options={selectedKey ? getMetadataValues(selectedKey) : []}
+              isLoading={isFetching}
+              className="value-select"
+            />
+          </Tooltip>
         </div>
       </FilterItemWrapper>
       {allowEdit && (
