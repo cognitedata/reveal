@@ -92,7 +92,7 @@ export class StationaryCameraManager implements CameraManager {
 
     return new Promise(resolve => {
       tween.onComplete(() => {
-        tween.end();
+        tween.stop();
         resolve();
       });
     });

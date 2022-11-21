@@ -120,6 +120,22 @@ export class Image360Entity {
     this._imageContainer = undefined;
   }
 
+  public async setVisualizationBoxScale(scale: THREE.Vector3): Promise<void> {
+    const imageContainer = await this._imageContainer;
+    if (imageContainer === undefined) {
+      return;
+    }
+    imageContainer.scale.copy(scale);
+  }
+
+  public async setVisualizationBoxRenderOrder(renderOrder: number): Promise<void> {
+    const imageContainer = await this._imageContainer;
+    if (imageContainer === undefined) {
+      return;
+    }
+    imageContainer.renderOrder = renderOrder;
+  }
+
   public async dispose(): Promise<void> {
     await this.unload360Image();
     //TODO: dispose icon
