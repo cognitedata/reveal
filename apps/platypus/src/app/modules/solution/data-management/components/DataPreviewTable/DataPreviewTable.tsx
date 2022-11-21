@@ -1,11 +1,4 @@
-import {
-  CogDataGrid,
-  CogDataList,
-  ColumnDataType,
-  GridConfig,
-  PrimitiveTypesListData,
-} from '@cognite/cog-data-grid';
-import { Body, CollapsablePanel, Title } from '@cognite/cogs.js';
+import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
@@ -339,29 +332,14 @@ export const DataPreviewTable = forwardRef<
         (field) => field.name === fieldName
       );
       const isListTypeCell = fieldType?.list || fieldType?.type.list;
-      const isCustomListTypeCell =
-        isListTypeCell && e.colDef.cellRendererParams.listDataType === 'CUSTOM';
-
-      if (!isListTypeCell || isCustomListTypeCell) {
-        setSidebarData(undefined);
-        return;
-      }
 
       if (!e.colDef.field) {
         throw Error('Attempting to edit cell without field value');
       }
 
-      const cellData = e.data[e.colDef.field] || [];
-
-      setSidebarData({
-        type: 'list',
-        value: cellData,
-        fieldName: e.colDef.field,
-      });
-      e.api.stopEditing();
-      window.setTimeout(() => {
-        e.colDef.field && e.api.ensureColumnVisible(e.colDef.field);
-      }, 400);
+      if (isListTypeCell) {
+        e.api.stopEditing();
+      }
     };
     const handleCellDoubleClicked = useCallback(
       (event: CellDoubleClickedEvent) => {
@@ -377,30 +355,48 @@ export const DataPreviewTable = forwardRef<
           return;
         }
 
-        // return if we double clicked anything but a list cell
-        if (!fieldType.type.list) {
-          return;
+        const handleColumnVisibility = () => {
+          // 400ms is animation time of side panel opening
+          window.setTimeout(() => {
+            event.colDef.field &&
+              event.api.ensureColumnVisible(event.colDef.field);
+          }, 400);
+        };
+
+        if (fieldType.type.list) {
+          const isCustomListTypeCell = fieldType.type.custom;
+
+          const cellData = event.value.map((item: any) =>
+            isCustomListTypeCell ? item.externalId : item
+          );
+
+          setSidebarData({
+            value: cellData,
+            fieldName: event.colDef.field,
+            type: 'list',
+          });
+
+          handleColumnVisibility();
+        } else if (fieldType.type.custom) {
+          const targetFieldType = dataModelTypeDefs.types.find(
+            (type) => type.name === fieldType.type.name
+          );
+          if (!event.value) {
+            setSidebarData(undefined);
+          } else if (targetFieldType) {
+            setSidebarData({
+              externalId: event.value,
+              fieldName: event.colDef.field,
+              fieldType: targetFieldType,
+              type: 'custom',
+            });
+          }
+          handleColumnVisibility();
+        } else {
+          setSidebarData(undefined);
         }
-
-        const isCustomListTypeCell = fieldType.type.custom;
-
-        const cellData = event.value.map((item: any) =>
-          isCustomListTypeCell ? item.externalId : item
-        );
-
-        setSidebarData({
-          value: cellData,
-          fieldName: event.colDef.field,
-          type: 'list',
-        });
-
-        // 400ms is animation time of side panel opening
-        window.setTimeout(() => {
-          event.colDef.field &&
-            event.api.ensureColumnVisible(event.colDef.field);
-        }, 400);
       },
-      [dataModelType]
+      [dataModelType, dataModelTypeDefs.types]
     );
     /*
   We use this value-setter to handle editing of pinned draft rows and published rows.
@@ -630,6 +626,7 @@ export const DataPreviewTable = forwardRef<
           data={sidebarData}
           onClose={() => setSidebarData(undefined)}
           dataModelTypeName={dataModelType.name}
+          dataModelExternalId={dataModelExternalId}
         >
           <StyledDataPreviewTable data-cy="data-preview-table">
             <CogDataGrid

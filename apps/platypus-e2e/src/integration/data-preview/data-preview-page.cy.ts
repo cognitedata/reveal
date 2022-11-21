@@ -171,4 +171,21 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.getBySel('schema-version-select').click();
     cy.get('.cogs-menu button:last').should('contain.text', 'Latest');
   });
+
+  it('double click to see direct relationships', () => {
+    cy.get('[data-testid="Post"]').click();
+    cy.get('[data-testid="Post"]').should('have.class', 'active');
+    cy.getBySel('data-preview-table').should('be.visible');
+
+    // first make sure table is rendered fully (all 3 rows)
+    cy.get('div[role="gridcell"][col-id="user"]')
+      .should('contain', '123')
+      .should('contain', '456');
+
+    cy.get('div[role="gridcell"][col-id="user"]').first().dblclick();
+
+    cy.getBySel('data-preview-side-panel')
+      .should('contain', '123')
+      .should('contain', 'John Doe');
+  });
 });

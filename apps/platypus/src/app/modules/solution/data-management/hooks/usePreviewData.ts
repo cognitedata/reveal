@@ -1,36 +1,51 @@
-import {
-  DataModelTypeDefs,
-  DataModelTypeDefsType,
-  PlatypusError,
-} from '@platypus/platypus-core';
+import { DataModelTypeDefsType, PlatypusError } from '@platypus/platypus-core';
 import { useQuery } from '@tanstack/react-query';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
 import { KeyValueMap } from '@cognite/cog-data-grid';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
+import {
+  useDataModel,
+  useDataModelTypeDefs,
+  useDataModelVersions,
+  useSelectedDataModelVersion,
+} from '@platypus-app/hooks/useDataModelActions';
 
 export const usePreviewData = (
   params: {
     dataModelExternalId: string;
-    version: string;
     dataModelType: DataModelTypeDefsType;
-    dataModelTypeDefs: DataModelTypeDefs;
     externalId: string;
   },
   options?: { enabled?: boolean }
 ) => {
-  const {
+  const { dataModelExternalId, dataModelType, externalId } = params;
+
+  const { selectedVersionNumber } = useSelector<DataModelState>(
+    (state) => state.dataModel
+  );
+  const dataModelTypeDefs = useDataModelTypeDefs(
     dataModelExternalId,
-    version,
-    dataModelType,
-    dataModelTypeDefs,
-    externalId,
-  } = params;
+    selectedVersionNumber
+  );
+
+  const { data: dataModel } = useDataModel(dataModelExternalId);
+  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
+
+  const selectedDataModelVersion = useSelectedDataModelVersion(
+    selectedVersionNumber,
+    dataModelVersions || [],
+    dataModelExternalId,
+    dataModel?.space || ''
+  );
+
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   return useQuery<KeyValueMap | null>(
     QueryKeys.PREVIEW_DATA(
       dataModelExternalId,
-      version,
+      selectedDataModelVersion.version,
       dataModelType?.name,
       externalId
     ),
@@ -42,7 +57,7 @@ export const usePreviewData = (
           hasNextPage: false,
           dataModelType: dataModelType,
           dataModelTypeDefs: dataModelTypeDefs,
-          version: version,
+          version: selectedDataModelVersion.version,
           limit: 1,
           filter: { externalId: { eq: externalId } },
         })

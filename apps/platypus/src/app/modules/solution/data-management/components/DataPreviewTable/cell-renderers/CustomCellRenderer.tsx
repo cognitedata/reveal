@@ -14,7 +14,7 @@ const DEBOUNCE_HOVER_TIME = 3;
 export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
   const { t } = useTranslation('CustomCellRenderer');
   const [_, setIsHovered] = useState(false);
-  const { dataModelExternalId, version, dataModelType, dataModelTypeDefs } =
+  const { dataModelExternalId, dataModelType, dataModelTypeDefs } =
     props.context as {
       dataModelExternalId: string;
       version: string;
@@ -35,9 +35,7 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
   );
   const { data: previewData, refetch } = usePreviewData(
     {
-      dataModelExternalId: dataModelExternalId,
-      version: version,
-      dataModelTypeDefs: dataModelTypeDefs,
+      dataModelExternalId,
       dataModelType: columnType!,
       externalId: props.value,
     },

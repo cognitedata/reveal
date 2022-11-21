@@ -3,7 +3,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 export type SidePanelTitleProps = {
   fieldName: string;
-  listLength: number;
+  listLength?: number;
   dataModelTypeName: string;
 };
 
@@ -21,7 +21,7 @@ export const SidePanelTitle: React.FC<SidePanelTitleProps> = ({
         level={6}
         style={{ color: 'var(--cogs-text-icon--medium)' }}
       >
-        {`${fieldName} (${listLength})`}
+        {`${fieldName} ${listLength !== undefined ? `(${listLength})` : ''}`}
       </Title>
       {` ${t('side_panel_title_for', 'for')} `}
       <Title
