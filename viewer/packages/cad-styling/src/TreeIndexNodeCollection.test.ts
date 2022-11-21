@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2022 Cognite AS
+ */
 import { IndexSet, NumericRange } from '@reveal/utilities';
 import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 
