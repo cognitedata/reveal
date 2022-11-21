@@ -35,15 +35,15 @@ must now be created by writing
 const style = { color: new THREE.Color(0, 1.0, 0) };
 ```
 
-## `get`/`setModelTransformation` is now relative to the source transform
+## `get`/`setModelTransformation` are now relative to the source transform
 
 In the following, `model` is an instance of `CogniteCadModel` or `CognitePointCloudModel`.
 
-In earlier versions of Reveal, the `model.getModelTransformation()` method would return the entire model transformation from the source geometry coordinates to the model's current transform in threejs-space. It will now only return the custom transformation applied *after* the initial transform from source (e.g. CDF) space to threejs/Reveal space. Thus, it will only return what was last set by `model.setModelTransformation()`, and the identity transformation if no transformation has been set.
+In earlier versions of Reveal, the `model.getModelTransformation()` (`model` being an instance of `CogniteCadModel` or `CognitePointCloudModel`) method would return the entire model transformation from the source geometry coordinates to the model's current transform in threejs-space. It will now only return the custom transformation applied *after* the initial transform from source (e.g. CDF) space to threejs/Reveal space. Thus, it will only return what was last set by `model.setModelTransformation()`, and the identity transformation if no transformation has been set.
 
-We now also provide `model.getSourceTransformation()` that returns the matrix transformation from the source coordinates to Reveal/threejs space. This may include an additional default transformation specified for this model in the backend.
+We now also provide `model.getSourceTransformation()` that returns the matrix transformation from the source coordinates to Reveal/threejs space. It may include an additional default transformation specified for this model in the backend.
 
-Thus, to get the full transformation from source coordinates to the model's transform in Reveal space, you would use something align to
+Thus, to get the full transformation from source coordinates to the model's transform in Reveal space, you would use something akin to
 
 ```
 const totalTransform = model.getSourceTransformation().clone().multiply(model.getModelTransformation);
