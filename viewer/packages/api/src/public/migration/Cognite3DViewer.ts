@@ -956,6 +956,28 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Move camera to a place where a set of 3D models are visible.
+   * @param models Optional 3D models to focus the camera on. If no models are provided the camera will fit to all models.
+   * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
+   */
+  fitCameraToModels(models?: CogniteModel[], duration?: number): void {
+    if (!models) {
+      models = this.models;
+    }
+
+    if (models.length < 1) {
+      return;
+    }
+
+    let bounds = new THREE.Box3();
+    for (const model of models) {
+      bounds = bounds.union(model.getModelBoundingBox(new THREE.Box3(), false));
+    }
+
+    this.fitCameraToBoundingBox(bounds, duration);
+  }
+
+  /**
    * Move camera to a place where the content of a bounding box is visible to the camera.
    * @param box The bounding box in world space.
    * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
