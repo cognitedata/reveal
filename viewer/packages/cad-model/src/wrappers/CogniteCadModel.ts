@@ -321,7 +321,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
-   * Gets transformation matrix of the model.
+   * Gets transformation matrix that has previously been set with {@link CogniteCadModel.setModelTransformation}.
    * @param out Preallocated `THREE.Matrix4` (optional).
    */
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
@@ -331,7 +331,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   /**
    * Gets transformation from model source (e.g. CDF) to ThreeJS space,
    * which includes any additional "default" transformations assigned to this model.
-   * Does not include any custom transformations set by @see {@link this.setModelTransformation}
+   * Does not include any custom transformations set by {@link CogniteCadModel.setModelTransformation}
    * @param out Preallocated `THREE.Matrix4` (optional)
    */
   getSourceTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
