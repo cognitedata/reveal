@@ -15,6 +15,7 @@ import {
   DataExplorationProvider,
 } from '@cognite/data-exploration';
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
+import { ids } from 'cogs-variables';
 
 import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
@@ -87,6 +88,7 @@ export default function App() {
               userInfo={userInfo}
               // @ts-ignore:next-line
               sdk={sdk}
+              styleScopeId={ids.styleScope}
               overrideURLMap={{
                 pdfjsWorkerSrc:
                   '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',

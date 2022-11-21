@@ -6,7 +6,10 @@ import { Drawer } from 'antd';
 import { onResourceSelected } from 'modules/app';
 import Layers from 'utils/zindex';
 import { useDispatch } from 'react-redux';
-import { AssetSmallPreview, FileSmallPreview } from '@cognite/data-exploration';
+import {
+  AssetSmallPreviewUFV,
+  FileSmallPreviewUFV,
+} from '@cognite/data-exploration';
 
 const DetailsWrapper = styled.div`
   pointer-events: all;
@@ -61,7 +64,7 @@ export default function SidebarResource({
   const renderResourceDetails = () => {
     if (previewFileId && Number.isInteger(Number(previewFileId))) {
       return (
-        <FileSmallPreview
+        <FileSmallPreviewUFV
           fileId={previewFileId as number}
           extras={extraActions}
         />
@@ -69,7 +72,7 @@ export default function SidebarResource({
     }
     if (previewAssetId && Number.isInteger(Number(previewAssetId))) {
       return (
-        <AssetSmallPreview
+        <AssetSmallPreviewUFV
           assetId={previewAssetId as number}
           extras={extraActions}
         />

@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import ResourceSelectionContext from 'context/ResourceSelectionContext';
 import {
-  FilePreview as CogniteFilePreview,
+  FilePreviewUFV as CogniteFilePreview,
   ErrorFeedback,
   Loader,
 } from '@cognite/data-exploration';
@@ -11,6 +11,7 @@ import { FileInfo } from '@cognite/sdk';
 import isMatch from 'lodash/isMatch';
 import { Alert } from 'antd';
 import InteractiveIcon from './InteractiveIcon';
+import { APPLICATION_ID } from '../constants';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -76,6 +77,9 @@ export const FilePreview = ({
 
   return (
     <CogniteFilePreview
+      id={`${APPLICATION_ID}-${fileId}`}
+      applicationId={APPLICATION_ID}
+      key={fileId}
       fileId={fileId!}
       creatable={editMode}
       contextualization={writeAccess}

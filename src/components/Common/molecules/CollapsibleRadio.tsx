@@ -56,6 +56,9 @@ const Wrapper = styled.div.attrs(
     top: calc(50% - 8px / 2);
     left: calc(50% - 8px / 2);
   }
+  span.text {
+    flex-grow: 1;
+  }
 `;
 
 const Collapse = styled.div`

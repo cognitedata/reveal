@@ -1,0 +1,16 @@
+{
+  "presets": ["react-app"],
+  "plugins": [
+    [
+      "@quickbaseoss/babel-plugin-styled-components-css-namespace",
+      { "cssNamespace": "&&&" }
+    ],
+    [
+      "@cognite/babel-plugin-styled-components",
+      {
+        "namespace": "context-ui-pnid",
+        "fileName": false
+      }
+    ]
+  ]
+}

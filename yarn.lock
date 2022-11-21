@@ -1337,10 +1337,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@^5.32.0":
-  version "5.32.0"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.32.0.tgz#35d245b34e01b6927e579f2c30c1c27f83dbc59b"
-  integrity sha512-ibz376Ws3g1ebmYOdFYx7/46oKpvqJk4n4vdRcQ81xydVQu7D9e84lJQWI7Pk2RZVd1fSzfAc6yo+OKve/aEJw==
+"@cognite/data-exploration@^5.43.6":
+  version "5.43.6"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.43.6.tgz#b3ec8e32844c19e7381250ae1d7ddd147e611767"
+  integrity sha512-53J4uafTvaIBgsIYVxscy9Q63xqT+pI+kI/nEIL6bqcA8MCK52C+ZC4qtWaEWOX9xrYZAoPUOBcGkD/1njSA3g==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
@@ -1354,7 +1354,7 @@
     "@cognite/sdk" "^7.8.4"
     "@cognite/sdk-provider" "^2.0.0"
     "@cognite/sdk-react-query-hooks" "^6.0.2"
-    "@cognite/unified-file-viewer" "^2.5.0"
+    "@cognite/unified-file-viewer" "^2.7.1"
     "@tanstack/react-table" "^8.5.15"
     "@types/react-copy-to-clipboard" "^5.0.4"
     "@types/react-table" "^7.0.0"
@@ -1381,6 +1381,7 @@
     mime-types "^2.1.30"
     query-string "^7.0.0"
     react-base-table "^1.12.0"
+    react-beautiful-dnd "^13.1.1"
     react-copy-to-clipboard "^5.1.0"
     react-datepicker "^3.7.0"
     react-dnd "^16.0.1"
@@ -1401,7 +1402,7 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/gcs-browser-upload@^1.1.1", "@cognite/gcs-browser-upload@github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
+"@cognite/gcs-browser-upload@^1.1.1", "@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
   version "1.1.1"
   resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
   dependencies:
@@ -1460,36 +1461,6 @@
     "@cognite/testing" "0.1.1-rc.0"
     unleash-proxy-client "1.6.0"
 
-"@cognite/react-picture-annotation@2.1.0-beta.4":
-  version "2.1.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.1.0-beta.4.tgz#1f9d6584c3d0dd9800e02035ab88a4247bbfb7b1"
-  integrity sha512-vZY4ErPXyta+9Xv9usMdsTk65l3tFGPvIgCX9Kx5ymwuQGtCyIfjWZOBe+/fOBKXHAD4t2VCw0y0dVUH9pmZDg==
-  dependencies:
-    "@cognite/annotations" "^1.1.0"
-    "@cognite/sdk" "^6.3.1"
-    "@storybook/addon-knobs" "^6.1.10"
-    "@types/lodash" "^4.14.165"
-    "@types/lz-string" "^1.3.34"
-    "@types/react-canvas-draw" "^1.1.0"
-    "@types/react-splitter-layout" "^3.0.0"
-    lz-string "^1.4.4"
-    parse-color "^1.0.0"
-    pdf-lib "^1.12.0"
-    pdfjs-dist "2.6.347"
-    react-archer "^3.0.0"
-    react-canvas-draw "^1.1.1"
-    react-color "^2.19.3"
-    react-color-palette "^4.1.0"
-    react-draggable "^4.4.3"
-    react-is "^17.0.1"
-    react-splitter-layout "^4.0.0"
-    react-tiny-popover "^6.0.5"
-    reselect "^4.0.0"
-    simplify-js "^1.2.4"
-    styled-components "^5.2.0"
-    typescript "^4.1.2"
-    uuid "^8.3.0"
-
 "@cognite/react-picture-annotation@3.0.1":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-3.0.1.tgz#fcb2db4e13b25299ceaeb07d7a1b4f43a043b09e"
@@ -1533,7 +1504,7 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.1.3", "@cognite/sdk-core@^4.8.1":
+"@cognite/sdk-core@^4.8.1":
   version "4.8.1"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.1.tgz#008c6d7e15393f3a840baf809a0037efa8266849"
   integrity sha512-FEICothNg/aAHdAY84J/udt5NcPcoe8GlT+piFgpvV8zIFpFbUxU4oLVf20xl0AJX1xCO13iWrL/szf6BWqEcA==
@@ -1565,15 +1536,6 @@
     "@cognite/sdk-core" "^2.1.2"
     lodash "^4.17.11"
 
-"@cognite/sdk@^6.3.1":
-  version "6.3.5"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-6.3.5.tgz#9fb1136cae08168b1a3b7abfd6b1f2c79ca34b25"
-  integrity sha512-lhIflTYni7vGhbc17hHLSj5RMFUSn3wyaBDMs1u9y6fKonf0EY+uw5hywIfmLRQ8LhI5mXOa6w+eO/4fY1yJhA==
-  dependencies:
-    "@cognite/sdk-core" "^4.1.3"
-    geojson "^0.5.0"
-    lodash "^4.17.11"
-
 "@cognite/sdk@^7.6.0", "@cognite/sdk@^7.7.0", "@cognite/sdk@^7.8.4", "@cognite/sdk@^7.9.6":
   version "7.9.6"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.9.6.tgz#6f66262bc7b62078bd93dd7996a986fb53b93fee"
@@ -1597,10 +1559,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^2.5.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-2.7.0.tgz#1613c394a310ed13d61ec23caf8ba1ebaa254e69"
-  integrity sha512-onyxzkB8rQk8zOTQb7Yz2mnAI+3MZcrSgW6bUUX/1YtfyncNSCeTI5YTKhzTTtlsRcQsCmRwGM/toCr8edfJ1w==
+"@cognite/unified-file-viewer@^2.7.1":
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-2.7.1.tgz#bc1c1101718255892e7a6704335f8181e5c6f029"
+  integrity sha512-AcsqYvnCK8P0OiKobpTq349cKNnLIacczQlNw7AHRrpqcR2ljROb8oh+laFBSMJfekwzi2dsR1zRJpIS7Vd68Q==
   dependencies:
     "@cognite/cogs.js" "7.0.3"
     "@cognite/sdk" "^7.6.0"
@@ -7053,6 +7015,13 @@ css-blank-pseudo@^3.0.3:
   dependencies:
     postcss-selector-parser "^6.0.9"
 
+css-box-model@^1.2.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/css-box-model/-/css-box-model-1.2.1.tgz#59951d3b81fd6b2074a62d49444415b0d2b4d7c1"
+  integrity sha512-a7Vr4Q/kd/aw96bnJG332W9V9LkJO69JRcaCYDUqjp6/z0w6VcZjgAcTbgFxEPfBgdnAwlh3iwu+hLopa+flJw==
+  dependencies:
+    tiny-invariant "^1.0.6"
+
 css-color-keywords@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/css-color-keywords/-/css-color-keywords-1.0.0.tgz#fea2616dc676b2962686b3af8dbdbe180b244e05"
@@ -12346,7 +12315,7 @@ memfs@^3.1.2, memfs@^3.4.3:
   dependencies:
     fs-monkey "^1.0.3"
 
-"memoize-one@>=3.1.1 <6", memoize-one@^5.0.0:
+"memoize-one@>=3.1.1 <6", memoize-one@^5.0.0, memoize-one@^5.1.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.2.1.tgz#8337aa3c4335581839ec01c3d594090cebe8f00e"
   integrity sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==
@@ -14600,6 +14569,11 @@ quick-lru@^5.1.1:
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-5.1.1.tgz#366493e6b3e42a3a6885e2e99d18f80fb7a8c932"
   integrity sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==
 
+raf-schd@^4.0.2:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/raf-schd/-/raf-schd-4.0.3.tgz#5d6c34ef46f8b2a0e880a8fcdb743efc5bfdbc1a"
+  integrity sha512-tQkJl2GRWh83ui2DiPTJz9wEiMN20syf+5oKfB03yYP7ioZcJwsIK8FjrtLwH1m7C7e+Tt2yYBlrOpdT+dyeIQ==
+
 raf@^3.4.0, raf@^3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/raf/-/raf-3.4.1.tgz#0742e99a4a6552f445d73e3ee0328af0ff1ede39"
@@ -15521,6 +15495,19 @@ react-base-table@^1.12.0:
     react-virtualized-auto-sizer "^1.0.2"
     react-window "^1.8.2"
 
+react-beautiful-dnd@^13.1.1:
+  version "13.1.1"
+  resolved "https://registry.yarnpkg.com/react-beautiful-dnd/-/react-beautiful-dnd-13.1.1.tgz#b0f3087a5840920abf8bb2325f1ffa46d8c4d0a2"
+  integrity sha512-0Lvs4tq2VcrEjEgDXHjT98r+63drkKEgqyxdA7qD3mvKwga6a5SscbdLPO2IExotU1jW8L0Ksdl0Cj2AF67nPQ==
+  dependencies:
+    "@babel/runtime" "^7.9.2"
+    css-box-model "^1.2.0"
+    memoize-one "^5.1.1"
+    raf-schd "^4.0.2"
+    react-redux "^7.2.0"
+    redux "^4.0.4"
+    use-memo-one "^1.1.1"
+
 react-canvas-draw@^1.1.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-canvas-draw/-/react-canvas-draw-1.2.1.tgz#2e9183704866b0e9bbb9a93dbb37073a31b858ed"
@@ -15772,7 +15759,7 @@ react-query@^3.13.10, react-query@^3.16.0:
     broadcast-channel "^3.4.1"
     match-sorter "^6.0.2"
 
-react-redux@^7.2.2:
+react-redux@^7.2.0, react-redux@^7.2.2:
   version "7.2.9"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.9.tgz#09488fbb9416a4efe3735b7235055442b042481d"
   integrity sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==
@@ -16217,7 +16204,7 @@ redux-thunk@^2.3.0, redux-thunk@^2.4.1:
   resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.4.1.tgz#0dd8042cf47868f4b29699941de03c9301a75714"
   integrity sha512-OOYGNY5Jy2TWvTL1KgAlVy6dcx3siPJ1wTq741EPyUKfn6W6nChdICjZwCd0p8AZBs5kWpZlbkXW2nE/zjUa+Q==
 
-redux@^4.0.0, redux@^4.0.5, redux@^4.1.2, redux@^4.2.0:
+redux@^4.0.0, redux@^4.0.4, redux@^4.0.5, redux@^4.1.2, redux@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/redux/-/redux-4.2.0.tgz#46f10d6e29b6666df758780437651eeb2b969f13"
   integrity sha512-oSBmcKKIuIR4ME29/AeNUnl5L+hvBq7OaJWzaptTQJAntaPvxIJqfnjbaEiCzzaIz+XmVILfqAM3Ob0aXLPfjA==
@@ -17900,7 +17887,7 @@ tiny-emitter@^2.1.0:
   resolved "https://registry.yarnpkg.com/tiny-emitter/-/tiny-emitter-2.1.0.tgz#1d1a56edfc51c43e863cbb5382a72330e3555423"
   integrity sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q==
 
-tiny-invariant@^1.0.2:
+tiny-invariant@^1.0.2, tiny-invariant@^1.0.6:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/tiny-invariant/-/tiny-invariant-1.3.1.tgz#8560808c916ef02ecfd55e66090df23a4b7aa642"
   integrity sha512-AD5ih2NlSssTCwsMznbvwMZpJ1cbhkGd2uueNxzv2jDlEeZdU04JQfRnggJQ8DrcVBGjAsCKwFBbDlVNtEMlzw==
@@ -18388,6 +18375,11 @@ use-debounce@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/use-debounce/-/use-debounce-6.0.1.tgz#ed1eb2b30189408fb9792ea2887f4c6c3cb401a3"
   integrity sha512-kpvIxpa0vOLz/2I2sfNJ72mUeaT2CMNCu5BT1f2HkV9qZK27UVSOFf1sSSu+wjJE4TcR2VTXS2SM569+m3TN7Q==
+
+use-memo-one@^1.1.1:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/use-memo-one/-/use-memo-one-1.1.3.tgz#2fd2e43a2169eabc7496960ace8c79efef975e99"
+  integrity sha512-g66/K7ZQGYrI6dy8GLpVcMsBp4s17xNkYJVSMvTEevGy3nDxHOfE6z8BVE22+5G5x7t3+bhzrlTDB7ObrEE0cQ==
 
 util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"

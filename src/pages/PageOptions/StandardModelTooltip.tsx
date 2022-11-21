@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Body, Title, Colors } from '@cognite/cogs.js';
+import { Body, Colors, Title } from '@cognite/cogs.js';
 import { standardModelOptions } from 'modules/workflows';
 import { Flex } from 'components/Common';
 
