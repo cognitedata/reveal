@@ -11,23 +11,21 @@ import { useDocumentAggregateFileTypeQuery } from 'app/domain/document/service/q
 import { useDocumentAggregateSourceQuery } from 'app/domain/document/service/queries/aggregates/useDocumentAggregateSourceQuery';
 import { MultiSelectFilter } from 'app/components/Filters/MultiSelectFilter';
 import { useFilterEmptyState } from 'app/store';
-import { useList } from '@cognite/sdk-react-query-hooks';
-import {
-  MetadataFilterV2,
-  transformNewFilterToOldFilter,
-} from '@cognite/data-exploration';
+import { MetadataFilterV2 } from '@cognite/data-exploration';
 import isEmpty from 'lodash/isEmpty';
+import { useDocumentSearch } from '@cognite/react-document-search';
 
 export const DocumentFilter = ({ ...rest }) => {
   const [documentFilter, setDocumentFilter] = useDocumentFilters();
   const resetDocumentFilters = useResetDocumentFilters();
   const isFiltersEmpty = useFilterEmptyState('document');
 
-  // TODO: Use the documents API to fetch the metadata keys.
-  const { data: items = [] } = useList('files', {
-    filter: transformNewFilterToOldFilter(documentFilter),
-    limit: 1000,
-  });
+  const { results } = useDocumentSearch();
+
+  const resultWithMetadata = results.map(document => ({
+    ...document.item,
+    metadata: document.item.sourceFile.metadata,
+  }));
 
   const { data: authorOptions, isError: isAuthorError } =
     useDocumentAggregateAuthorQuery();
@@ -78,13 +76,13 @@ export const DocumentFilter = ({ ...rest }) => {
           values={documentFilter.source}
         />
         <MetadataFilterV2
-          items={items}
+          items={resultWithMetadata}
           value={documentFilter.metadata}
-          setValue={newMetadata =>
+          setValue={newMetadata => {
             setDocumentFilter({
               metadata: isEmpty(newMetadata) ? undefined : newMetadata,
-            })
-          }
+            });
+          }}
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>
