@@ -967,8 +967,9 @@ export class Cognite3DViewer {
    * Move camera to a place where a set of 3D models are visible.
    * @param models Optional 3D models to focus the camera on. If no models are provided the camera will fit to all models.
    * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
+   * @param restrictToMostGeometry If true, attempt to remove junk geometry from the bounds to allow setting a good camera position.
    */
-  fitCameraToModels(models?: CogniteModel[], duration?: number): void {
+  fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry = false): void {
     if (!models) {
       models = this.models;
     }
@@ -979,7 +980,7 @@ export class Cognite3DViewer {
 
     let bounds = new THREE.Box3();
     for (const model of models) {
-      bounds = bounds.union(model.getModelBoundingBox(new THREE.Box3(), false));
+      bounds = bounds.union(model.getModelBoundingBox(new THREE.Box3(), restrictToMostGeometry));
     }
 
     this.fitCameraToBoundingBox(bounds, duration);
