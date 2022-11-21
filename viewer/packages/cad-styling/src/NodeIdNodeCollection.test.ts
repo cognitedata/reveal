@@ -29,7 +29,8 @@ describe(NodeIdNodeCollection.name, () => {
     mockClient.setup(x => x.revisions3D).returns(mockRevisions3DAPI.object());
 
     mockModel = new Mock<CdfModelNodeCollectionDataProvider>();
-    mockModel.setup(x => x.mapBoxFromCdfToModelCoordinates(It.IsAny(), It.IsAny())).returns(new THREE.Box3());
+    mockModel.setup(x => x.getModelTransformation()).returns(new THREE.Matrix4());
+    mockModel.setup(x => x.getSourceTransformation()).returns(new THREE.Matrix4());
   });
 
   test('executeFilter with 1001 nodeIds, splits into two chunks', async () => {
@@ -55,7 +56,8 @@ describe(NodeIdNodeCollection.name, () => {
   test('executeFilter maps node bounds to ThreeJS coordinates', async () => {
     const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     await collection.executeFilter([1, 2, 3]);
-    mockModel.verify(x => x.mapBoxFromCdfToModelCoordinates(It.IsAny(), It.IsAny()), Times.Exactly(3));
+    mockModel.verify(x => x.getModelTransformation(), Times.Exactly(1));
+    mockModel.verify(x => x.getSourceTransformation(), Times.Exactly(1));
   });
 
   test('deserialize serialized collection works', async () => {

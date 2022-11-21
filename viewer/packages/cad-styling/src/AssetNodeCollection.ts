@@ -65,13 +65,16 @@ export class AssetNodeCollection extends NodeCollection {
     );
     this._fetchResultHelper = fetchResultHelper;
 
+    const totalInverseModelTransform = model.getSourceTransformation()
+      .clone().multiply(model.getModelTransformation()).invert();
+
     function mapBoundingBoxToCdf(box?: THREE.Box3) {
       if (box === undefined) {
         return undefined;
       }
 
       const result = new THREE.Box3().copy(box);
-      model.mapBoxFromModelToCdfCoordinates(result, result);
+      result.applyMatrix4(totalInverseModelTransform);
       return { min: [result.min.x, result.min.y, result.min.z], max: [result.max.x, result.max.y, result.max.z] };
     }
 
@@ -104,13 +107,16 @@ export class AssetNodeCollection extends NodeCollection {
       })
     );
 
+    const totalModelTransformation = this._modelMetadataProvider.getSourceTransformation()
+      .clone().multiply(this._modelMetadataProvider.getModelTransformation());
+
     const boundingBoxes = nodeList
       .filter(node => node.boundingBox)
       .map(node => {
         const bmin = node.boundingBox!.min;
         const bmax = node.boundingBox!.max;
         const bounds = new THREE.Box3().setFromArray([bmin[0], bmin[1], bmin[2], bmax[0], bmax[1], bmax[2]]);
-        this._modelMetadataProvider.mapBoxFromCdfToModelCoordinates(bounds, bounds);
+        bounds.applyMatrix4(totalModelTransformation);
         return bounds;
       });
 

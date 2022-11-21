@@ -14,12 +14,12 @@ export abstract class CdfNodeCollectionBase extends NodeCollection {
   private _indexSet = new IndexSet();
   private _areas: AreaCollection = EmptyAreaCollection.instance();
 
-  private readonly _boundsMapper: CdfModelNodeCollectionDataProvider;
+  private readonly _cadModelData: CdfModelNodeCollectionDataProvider;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
 
   constructor(classToken: string, model: CdfModelNodeCollectionDataProvider) {
     super(classToken);
-    this._boundsMapper = model;
+    this._cadModelData = model;
   }
 
   get isLoading(): boolean {
@@ -31,6 +31,10 @@ export abstract class CdfNodeCollectionBase extends NodeCollection {
       // Interrupt any ongoing operation to avoid fetching results unnecessary
       this._fetchResultHelper.interrupt();
     }
+
+    const totalModelTransformation = this._cadModelData.getSourceTransformation()
+      .clone().multiply(this._cadModelData.getModelTransformation());
+
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
       nodes => nodes.map(node => new NumericRange(node.treeIndex, node.subtreeSize)),
       async nodes =>
@@ -38,7 +42,7 @@ export abstract class CdfNodeCollectionBase extends NodeCollection {
           const bounds = new THREE.Box3();
           if (node.boundingBox !== undefined) {
             toThreeBox3(node.boundingBox, bounds);
-            this._boundsMapper.mapBoxFromCdfToModelCoordinates(bounds, bounds);
+            bounds.applyMatrix4(totalModelTransformation);
           }
           return bounds;
         }),

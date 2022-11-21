@@ -9,14 +9,16 @@ import * as THREE from 'three';
  */
 export interface CdfModelNodeCollectionDataProvider {
   /**
-   * Maps a box from Reveal space to CDF space
+   * Gets the transformation of the model in ThreeJS space
    */
-  mapBoxFromModelToCdfCoordinates: (box: THREE.Box3, out?: THREE.Box3) => THREE.Box3;
+  getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
 
   /**
-   * Maps a box from CDF space to Reveal space
+   * Gets the source (+ default) transformation of the model from e.g. CDF space.
+   * The current total transformation of the model from the backend to its transform in ThreeJS space
+   * is thus `model.getSourceTransformation * model.getModelTransformation()`.
    */
-  mapBoxFromCdfToModelCoordinates: (box: THREE.Box3, out?: THREE.Box3) => THREE.Box3;
+  getSourceTransformation(out?: THREE.Matrix4): THREE.Matrix4;
 
   /**
    * Total count of nodes in the model
