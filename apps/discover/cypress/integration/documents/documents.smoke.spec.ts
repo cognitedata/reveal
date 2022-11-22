@@ -25,7 +25,7 @@ describe('Documents', () => {
   it('Show expanded metadata on row click', () => {
     cy.log('Search for duplicate document');
     cy.performSearch(QUERY_DUPLICATED_FILENAME);
-    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`, { timeout: 20000 });
     cy.findAllByTestId('table-cell')
       .contains(`${QUERY_DUPLICATED_FILENAME} (2)`)
       .first()
@@ -103,7 +103,7 @@ describe('Documents', () => {
 
     cy.log(`Perform input search for: ${filename}`);
     cy.performSearch(filename);
-    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`, { timeout: 20000 });
 
     cy.log(`Search results should be shown in the table`);
     cy.findAllByTestId('table-row').should('have.length.greaterThan', 0);
@@ -134,7 +134,7 @@ describe('Documents', () => {
 
     cy.log('Apply input filter again');
     cy.performSearch(filename);
-    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`, { timeout: 20000 });
 
     // cy.findAllByTestId('table-row').should('have.length.greaterThan', 26);
 
@@ -210,7 +210,7 @@ describe('Documents', () => {
 
     cy.log('Apply input filter');
     cy.performSearch(filename.substring(0, 3));
-    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`, { timeout: 20000 });
 
     cy.log(`Apply File Type filter: ${FILE_TYPE}`);
     cy.contains('File Type').should('be.visible').click({ force: true });
@@ -244,7 +244,7 @@ describe('Documents', () => {
 
   it('Click Preview document hover button', () => {
     cy.performSearch(filename);
-    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`, { timeout: 20000 });
     cy.findAllByTestId('table-row')
       .first()
       .children()
