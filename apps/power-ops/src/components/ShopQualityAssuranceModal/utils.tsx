@@ -58,7 +58,7 @@ export const shopRunPenaltiesColumns: Column<ShopRunPenalties>[] = [
       useMemo(
         () => (
           <CellWrapper>
-            <OpenInFusion type="sequence" endPoint="sequences" id={value} />
+            <OpenInFusion type="sequence" endpoint="sequences" cdfId={value} />
           </CellWrapper>
         ),
         [value]

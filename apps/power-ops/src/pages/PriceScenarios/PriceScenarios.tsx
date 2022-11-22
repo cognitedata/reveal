@@ -39,6 +39,8 @@ interface Props {
   bidProcessResult: BidProcessResultWithData;
 }
 
+const defaultColumnOptions = { minWidth: 70, width: 70, maxWidth: 140 };
+
 export const PriceScenarios = ({ bidProcessResult }: Props) => {
   const metrics = useMetrics('price-scenarios');
   const { client } = useAuthenticatedAuthContext();
@@ -325,10 +327,10 @@ export const PriceScenarios = ({ bidProcessResult }: Props) => {
       <StyledTable>
         {tableColumns && tableData && (
           <HeadlessTable
-            tableHeader={tableColumns as Column<TableData>[]}
-            tableData={tableData}
+            columns={tableColumns as Column<TableData>[]}
+            data={tableData}
             className="price-scenario-table"
-            defaultColumnSize={{ min: 70, width: 70, max: 140 }}
+            defaultColumn={defaultColumnOptions}
           />
         )}
       </StyledTable>

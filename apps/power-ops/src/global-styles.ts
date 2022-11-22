@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components/macro';
 import layers from 'utils/zindex';
+import '@cognite/cogs.js/dist/cogs.css';
 
 export default createGlobalStyle`
   html,

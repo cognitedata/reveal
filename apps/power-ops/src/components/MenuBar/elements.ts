@@ -39,7 +39,9 @@ export const LogOutButtonContainer = styled.div`
 export const LogoContainer = styled.div`
   width: 280px;
   height: 100%;
-  border-right: 1px solid #e8e8e8;
+  .cogs-topbar--item {
+    border-left: 0;
+  }
 `;
 
 export const StyledMenu = styled(Menu)`

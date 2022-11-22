@@ -1,3 +1,4 @@
+import { PowerOpsConfigCDFModel } from '@cognite/power-ops-api-types';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { useQuery } from '@tanstack/react-query';
 
@@ -8,7 +9,7 @@ export const useFetchPowerOpsConfiguration = () => {
     queryFn: () =>
       client.assets
         .retrieve([{ externalId: 'configurations' }])
-        .then((assets) => assets[0]?.metadata ?? {}),
+        .then((list) => (list[0] as PowerOpsConfigCDFModel).metadata),
     staleTime: 1000 * 30,
   });
 };

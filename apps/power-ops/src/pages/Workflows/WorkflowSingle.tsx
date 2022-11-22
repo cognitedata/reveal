@@ -153,7 +153,7 @@ export const WorkflowSingle = () => {
               value={workflowEvent.externalId}
               postfix={
                 <CopyButton
-                  copyFunction={() =>
+                  onClick={() =>
                     handleCopyButtonClick(workflowEvent.externalId)
                   }
                   className="cogs-btn-tiny"

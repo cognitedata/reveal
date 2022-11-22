@@ -82,7 +82,7 @@ export const processColumns: Column<Process>[] = [
       useMemo(
         () => (
           <CellWrapper>
-            <OpenInFusion type="event" endPoint="events" externalId={value} />
+            <OpenInFusion type="event" endpoint="events" externalId={value} />
           </CellWrapper>
         ),
         [value]
@@ -153,7 +153,7 @@ export const workflowsColumns: Column<Workflow>[] = [
         () => (
           <CellWrapper>
             <ViewMoreButton eventExternalId={value} />
-            <OpenInFusion type="event" endPoint="events" externalId={value} />
+            <OpenInFusion type="event" endpoint="events" externalId={value} />
           </CellWrapper>
         ),
         [value]

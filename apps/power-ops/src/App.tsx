@@ -2,7 +2,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { Container, Logout } from '@cognite/react-container';
 import GlobalStyles from 'global-styles';
 import sidecar from 'utils/sidecar';
-import { MenuBar } from 'components/Menubar/Menubar';
+import { MenuBar } from 'components/MenuBar/MenuBar';
 import { EventStreamProvider } from 'providers/eventStreamProvider';
 import { PAGES } from 'types';
 import { PriceArea } from 'pages/PriceArea';

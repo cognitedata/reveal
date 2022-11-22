@@ -39,11 +39,12 @@ export const DayAheadMarketHeader = ({
   onDownloadButtonClick,
 }: Props) => {
   return (
-    <CommonHeader
-      title={`Price Area ${priceAreaName}`}
-      titleLabel={`Matrix generation started: ${startDate}`}
-    >
+    <>
       <StyledModal
+        appElement={document.getElementById('root') ?? document.documentElement}
+        getContainer={() =>
+          document.getElementById('root') ?? document.documentElement
+        }
         testId="confirm-download-modal"
         visible={showConfirmDownloadModal}
         title={<Body strong>Are you sure you want to download this bid?</Body>}
@@ -54,7 +55,6 @@ export const DayAheadMarketHeader = ({
           await onDownloadMatrix(bidProcessExternalId);
         }}
         width={620}
-        appElement={document.documentElement}
       >
         <Body level={2}>
           We have registered high shop run penalties for this bid and would
@@ -62,56 +62,61 @@ export const DayAheadMarketHeader = ({
           proceed?
         </Body>
       </StyledModal>
-      <div className="right-side">
-        <Dropdown
-          content={
-            <Menu data-testid="method-selector-menu">
-              {processConfigurations.map((config) => (
-                <Menu.Item
-                  selected={
-                    config.bidProcessEventExternalId === bidProcessExternalId
-                  }
-                  key={config.bidProcessEventExternalId}
-                  onClick={() =>
-                    onChangeProcessConfigurationExternalId(
-                      config.bidProcessEventExternalId
-                    )
-                  }
-                  data-testid="method-selector-menu-item"
-                >
-                  <MethodItem>
-                    <div>
-                      {formatMethod(config.bidProcessConfiguration)}
-                      <p>
-                        Process finished:{' '}
-                        {config.bidProcessFinishedDate &&
-                          formatDate(
-                            config.bidProcessFinishedDate.toLocaleString()
-                          )}
-                      </p>
-                    </div>
-                    {config.bidProcessEventExternalId ===
-                      bidProcessExternalId && <Icon type="Checkmark" />}
-                  </MethodItem>
-                </Menu.Item>
-              ))}
-            </Menu>
-          }
-        >
-          <MethodButton type="tertiary" data-testid="method-button">
-            <div className="method-name">
-              <b>Method:&nbsp;</b>
-              {bidProcessExternalId === '' && 'Loading...'}
-              {formatMethod(
-                processConfigurations.find(
-                  (config) =>
-                    config.bidProcessEventExternalId === bidProcessExternalId
-                )?.bidProcessConfiguration ?? ''
-              )}
-            </div>
-            <Icon type="ChevronDown" />
-          </MethodButton>
-        </Dropdown>
+      <CommonHeader
+        title={`Price Area ${priceAreaName}`}
+        titleLabel={`Matrix generation started: ${startDate}`}
+      >
+        <div>
+          <Dropdown
+            content={
+              <Menu data-testid="method-selector-menu">
+                {processConfigurations.map((config, i) => (
+                  <Menu.Item
+                    selected={
+                      config.bidProcessEventExternalId === bidProcessExternalId
+                    }
+                    key={config.bidProcessEventExternalId}
+                    onClick={() =>
+                      onChangeProcessConfigurationExternalId(
+                        config.bidProcessEventExternalId
+                      )
+                    }
+                    data-testid={`method-selector-menu-item-${i}`}
+                  >
+                    <MethodItem>
+                      <div>
+                        {formatMethod(config.bidProcessConfiguration)}
+                        <p>
+                          Process finished:{' '}
+                          {config.bidProcessFinishedDate &&
+                            formatDate(
+                              config.bidProcessFinishedDate.toLocaleString()
+                            )}
+                        </p>
+                      </div>
+                      {config.bidProcessEventExternalId ===
+                        bidProcessExternalId && <Icon type="Checkmark" />}
+                    </MethodItem>
+                  </Menu.Item>
+                ))}
+              </Menu>
+            }
+          >
+            <MethodButton type="tertiary" data-testid="method-button">
+              <div className="method-name">
+                <b>Method:&nbsp;</b>
+                {bidProcessExternalId === '' && 'Loading...'}
+                {formatMethod(
+                  processConfigurations.find(
+                    (config) =>
+                      config.bidProcessEventExternalId === bidProcessExternalId
+                  )?.bidProcessConfiguration ?? ''
+                )}
+              </div>
+              <Icon type="ChevronDown" />
+            </MethodButton>
+          </Dropdown>
+        </div>
         <VerticalSeparator />
         <Button
           data-testid="download-button"
@@ -125,7 +130,7 @@ export const DayAheadMarketHeader = ({
         >
           Download
         </Button>
-      </div>
-    </CommonHeader>
+      </CommonHeader>
+    </>
   );
 };

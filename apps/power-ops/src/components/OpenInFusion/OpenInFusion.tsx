@@ -1,53 +1,76 @@
-import { Button, Tooltip } from '@cognite/cogs.js';
+import { Button, Skeleton, Tooltip } from '@cognite/cogs.js';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
+import { useFetchCDFResource } from 'queries/useFetchCDFResource';
 import { useFetchPowerOpsConfiguration } from 'queries/useFetchPowerOpsConfiguration';
-import { useEffect, useState } from 'react';
+import { generatePath } from 'react-router-dom';
 import sidecar from 'utils/sidecar';
 
+const { cdfApiBaseUrl } = sidecar;
+
+interface CommonProps {
+  type?: 'asset' | 'timeseries' | 'sequence' | 'event';
+  endpoint?: 'assets' | 'timeseries' | 'sequences' | 'events';
+}
+interface CDFId extends CommonProps {
+  cdfId: number;
+  externalId?: undefined;
+}
+interface ExternalId extends CommonProps {
+  cdfId?: undefined;
+  externalId: string;
+}
+
+const Loading = (
+  <Skeleton.Rectangle style={{ width: 28, height: 28, margin: 0 }} />
+);
+
 export const OpenInFusion = ({
-  id,
+  cdfId,
   externalId,
   type = 'event',
-  endPoint = 'events',
-}: {
-  id?: number;
-  externalId?: string;
-  type?: string;
-  endPoint?: 'assets' | 'timeseries' | 'sequences' | 'events';
-}) => {
-  const { cdfApiBaseUrl } = sidecar;
-  const { client } = useAuthenticatedAuthContext();
+  endpoint = 'events',
+}: CDFId | ExternalId) => {
+  const { project } = useAuthenticatedAuthContext();
+  const { data: configuration, status: configStatus } =
+    useFetchPowerOpsConfiguration();
+  const { data: resource, status: resourceStatus } = useFetchCDFResource(
+    endpoint,
+    externalId
+  );
 
-  const { data: configuration } = useFetchPowerOpsConfiguration();
+  if (configStatus === 'loading') return Loading;
+  if (!cdfId && resourceStatus === 'loading') return Loading;
+  if (configStatus === 'error' || resourceStatus === 'error')
+    return <span>Error</span>;
 
-  const [cdfId, setcdfId] = useState<number | undefined>(id);
-
-  const fetchcdfId = async (externalId: string): Promise<void> => {
-    if (!client) return;
-
-    try {
-      const [resource] = await client[endPoint].retrieve([{ externalId }]);
-      setcdfId(resource.id);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(`No CDF Event found ${externalId}`);
-    }
+  const link = () => {
+    const finalId = () => {
+      if (cdfId) return cdfId;
+      if (resourceStatus === 'success') return resource.id;
+      throw new Error('No resource to display');
+    };
+    const path = generatePath('/:project/explore/:type/:id', {
+      project,
+      type,
+      id: finalId(),
+    });
+    const finalURL = new URL(
+      `https://${configuration.organization_subdomain}.fusion.cognite.com${path}`
+    );
+    finalURL.searchParams.append('cluster', cdfApiBaseUrl);
+    return finalURL.toString();
   };
 
-  useEffect(() => {
-    if (!id && externalId) fetchcdfId(externalId);
-  }, [externalId]);
-
-  return configuration?.organization_subdomain && client?.project && cdfId ? (
+  return (
     <Tooltip content="Open in CDF" placement="left">
       <Button
         size="small"
         icon="ExternalLink"
         aria-label="open-in-fusion"
         type="ghost"
-        href={`https://${configuration?.organization_subdomain}.fusion.cognite.com/${client?.project}/explore/${type}/${cdfId}?cluster=${cdfApiBaseUrl}`}
+        href={link()}
         target="_blank"
       />
     </Tooltip>
-  ) : null;
+  );
 };

@@ -21,6 +21,7 @@ export const useFetchPriceAreas = () => {
     queryKey: [project, 'price-areas'],
     queryFn: () => fetchPriceAreas(project, token),
     staleTime: Infinity,
+    retry: false,
   });
 };
 

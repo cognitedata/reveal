@@ -1,9 +1,10 @@
 import { Button } from '@cognite/cogs.js';
+import { ComponentProps } from 'react';
 
 import { StyledInfobar } from './elements';
 
 type Props = {
-  onReloadClick: () => void;
+  onReloadClick: ComponentProps<typeof Button>['onClick'];
 };
 
 export const NewDayAheadDataAvailableBar = ({ onReloadClick }: Props) => (

@@ -1,102 +1,94 @@
-# React Demo App
+[![Storybook](https://github.com/storybookjs/brand/blob/master/badge/badge-storybook.svg)](https://www.chromatic.com/library?appId=63469a7e12cb321258899a52)
 
-This app is served as an example [React]-based application served using frontend-app-server (FAS).
+# Power Marker Operations
 
-## Unit tests - Jest
+> “Our vision is to let data and algorithms drive Power Market Operations, freeing Production Planners, Traders and Analysts to focus on strategy and continuous improvement”
 
-Unit tests in React Demo App are using Jest and testing-library/react.
+## Access the product
 
-```sh
-yarn test                                           # To run all tests in watch mode
-yarn test file.test.ts                              # Run test from a file
-yarn test someDirectory                             # Run tests from a specific directory
-yarn test ./some/file.test.ts -t "Name of a test"   # Run a specific test from a file
-yarn test:debug                                     # Run tests in band
-yarn test:coverage                                  # Run tests with coverage report
+- Production - https://power-ops.cogniteapp.com/
+- Staging - https://power-ops.staging.cogniteapp.com/
+
+## Product Documentation
+
+Do you want to know more about Power Ops? Here you can have a list of resources:
+
+- [Confluence](https://cognitedata.atlassian.net/wiki/spaces/PowerOps/overview)
+
+## Important Links
+
+- Ask for help in our channel in slack [#cognite-for-power-markets-core-team](https://cognitedata.slack.com/archives/C02U2QH6W5N)
+- See our roadmap in [Productboard](https://cognite.productboard.com/feature-board/4121570-powerops)
+- See the project progress in [Jira](https://cognitedata.atlassian.net/browse/POWEROPS)
+
+## Power Ops Backends
+
+The frontend is dependent on the Power Ops API and the Sniffer Service. See more on:
+
+- [Backend](https://github.com/cognitedata/application-services/tree/master/services/power-ops-api)
+- [Sniffer](https://github.com/cognitedata/application-services/tree/master/services/sniffer-service)
+
+# Development
+
+Welcome as a developer! Here you will make sure all info is available so you can do a fast onbarding. If something is missing, please [edit this file](https://github.com/cognitedata/applications/edit/master/apps/power-ops/README.md), and commit it.
+
+## Requirements
+
+You will need:
+
+- Google Chrome
+- nvm
+- Node.js v16
+- Yarn
+- Access to the CDF projects - Talk to the Product Manager
+- Access to our private NPM org - Talk to the Tech Lead
+
+(Optional) In order to work with translations in Locize or Mixpanel tracking, you need to add a `.env.development.local` with the following contents according to your need:
+
+```
+REACT_APP_LOCIZE_API_KEY=<Talk to your Tech Lead for the Key>
+REACT_APP_MIXPANEL_TOKEN=<Talk to your Tech Lead for the Token>
 ```
 
-The CI uses the `react_scripts_test` rule which takes longer as it performs a build internally
+- For translation - access to Locize project - Talk to the Tech Lead
 
-## Requirements to run and test locally
+## Running the application
 
-Copy power-ops-e2e-azure-dev.jwk-key.json from Lastpass -> Shared Demo App into the file:
-private-keys/power-ops-e2e-azure-dev.jwk-key.json
-
-## e2e tests
-
-End-to-end tests can be written with [Cypress](https://github.com/cypress-io/cypress)
-
-### Run e2e tests with cypress
-
-Tests are are stored in `/cypress`.
-
-To run cypress tests locally:
-
-1. Start the app
+Go to the root of the repo and do:
 
 ```sh
+yarn install
+cd apps/power-ops
+yarn install
 yarn start
 ```
 
-2. Run Cypress tests
+The server will run over HTTPS (https://localhost:3000), which is required in order to have the authentication working. You probably need to allow HTTPS from localhost in Chrome. You can enable from [this link](chrome://flags/#allow-insecure-localhost)
+
+## UI Components Development
+
+All stateless components of the application are being exposed as stories and you can see them on [this link](https://www.chromatic.com/library?appId=63469a7e12cb321258899a52).
+We use Chromatic as our visual testing runner. It builds and compares story content visually so you can identify visual regressions easily.
+
+How to open the Storybook locally for development? As simply as it is:
 
 ```sh
-yarn cypress:run-live
+$ cd apps/power-ops
+$ yarn storybook
 ```
 
-Note: if you want to run just one cypress file, you can do that like this:
+## Running Tests
+
+In order to execute unit tests you should run:
 
 ```sh
-yarn cypress:run-live cypress/Comments.spec.ts
+yarn test:bazel
 ```
 
-#### Batch cypress testing
+## Linting
 
-One special thing about this rule is that your cypress folder has to contain:
+In order to execute linting tests you should run:
 
-- a `plugin.ts` file that serves your build files
-- a `tsconfig.json` for your cypress base config
-
-```bazel
-cypress_batch_test(
-    name = "base_name_for_every_tests",
-    build_src = ":my_build_target",
-    # Insert as many globs here as you want runs of your tests
-    cypress_files = [
-        glob(["cypress/folder1/*.spec.ts"]),
-        glob(["cypress/folder2/*.spec.ts"]),
-        glob(["cypress/folder3/*.spec.ts"]),
-        glob([
-            "cypress/folder4/*.spec.ts,
-            "cypress/folder5/*.spec.ts,
-        "]),
-    ],
-    cypress_folder = "cypress",
-    # Every files needed for all your cypress tests (like utils)
-    global_cypress_files = FILES,
-    # Make sure your starting port does not interfere with existing ones in other apps
-    starting_port = 12011,
-)
-```
-
-In the event that your test files needs to import a local package and not from npm, you will need to add
-an alias to the webpack config of cypress into your `plugin.ts`
-
-```javascript
-import path from 'path';
-
-import webpackPreprocessor from '@cypress/webpack-preprocessor';
-
-module.exports = (on, config) => {
-  // ...
-  const options = webpackPreprocessor.defaultOptions;
-  options.webpackOptions.resolve = {
-    alias: {
-      '@cognite': path.resolve('./packages'),
-    },
-  };
-
-  on('file:preprocessor', webpackPreprocessor(options));
-  // ...
-};
+```sh
+yarn lint:bazel
 ```

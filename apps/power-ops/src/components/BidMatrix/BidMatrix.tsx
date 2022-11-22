@@ -23,6 +23,11 @@ type Props = {
   onBidMatrixCopyClick: () => Promise<boolean>;
 };
 
+const priceScenarioTableColumns = [
+  { Header: 'Base Price', accessor: 'base' },
+  { Header: 'Production', accessor: 'production' },
+];
+
 export const BidMatrix = ({
   bidDate,
   bidMatrixTitle,
@@ -43,12 +48,12 @@ export const BidMatrix = ({
             {bidMatrixExternalId}
           </Detail>
         </div>
-        <CopyButton copyFunction={onBidMatrixCopyClick} />
+        <CopyButton onClick={onBidMatrixCopyClick} />
       </StyledHeader>
       <StyledBidMatrixTable>
         <HeadlessTable
-          tableHeader={bidMatrixTableData.columns}
-          tableData={bidMatrixTableData.data}
+          columns={bidMatrixTableData.columns}
+          data={bidMatrixTableData.data}
           className="bidmatrix"
         />
       </StyledBidMatrixTable>
@@ -71,11 +76,8 @@ export const BidMatrix = ({
       </StyledHeader>
       <StyledPriceScenarioTable>
         <HeadlessTable
-          tableHeader={[
-            { Header: 'Base Price', accessor: 'base' },
-            { Header: 'Production', accessor: 'production' },
-          ]}
-          tableData={mainScenarioTableData}
+          columns={priceScenarioTableColumns}
+          data={mainScenarioTableData}
           className="price-scenario"
         />
       </StyledPriceScenarioTable>

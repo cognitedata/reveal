@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { generatePath, useHistory, useLocation } from 'react-router-dom';
-import { Dropdown, Icon, Menu, TopBar } from '@cognite/cogs.js';
+import { Dropdown, Icon, Menu, Skeleton, TopBar } from '@cognite/cogs.js';
 import {
   LogoutButton,
   useAuthenticatedAuthContext,
@@ -26,7 +26,7 @@ export const MenuBar = () => {
   const [balancingMarketsDropdownVisible, setBalancingMarketsDropdownVisible] =
     useState<boolean>(false);
 
-  const { data: allPriceAreas = [] } = useFetchPriceAreas();
+  const { data: allPriceAreas = [], status, refetch } = useFetchPriceAreas();
 
   const toggleDayAheadMarketDropdown = () => {
     setDayAheadMarketDropdownVisible(!dayAheadMarketDropdownVisible);
@@ -64,6 +64,21 @@ export const MenuBar = () => {
           content={
             <StyledMenu>
               <Menu.Header>Price Areas</Menu.Header>
+              {status === 'loading' && (
+                <>
+                  <Menu.Item>
+                    <Skeleton.Rectangle width="150px" />
+                  </Menu.Item>
+                  <Menu.Item>
+                    <Skeleton.Rectangle width="150px" />
+                  </Menu.Item>
+                </>
+              )}
+              {status === 'error' && (
+                <Menu.Item onClick={() => refetch()}>
+                  Error. Click to try again
+                </Menu.Item>
+              )}
               {allPriceAreas.map((pricearea) => (
                 <Menu.Item
                   selected={pathname.includes(

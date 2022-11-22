@@ -376,6 +376,7 @@
     "jss-rtl": "^0.3.0",
     "jwk-to-pem": "^2.0.5",
     "kill-port": "^1.6.1",
+    "msw-storybook-addon": "^1.6.3",
     "patch-package": "^6.2.2",
     "path-browserify": "^1.0.1",
     "plop": "^2.7.4",

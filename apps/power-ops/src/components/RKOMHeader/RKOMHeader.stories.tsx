@@ -18,6 +18,9 @@ export default {
     onProductValueChange: { action: 'Product Value Changed' },
     onDeliveryWeekValueChange: { action: 'Delivery Week Value Changed' },
   },
+  parameters: {
+    chromatic: { viewports: [1366] },
+  },
 } as Meta;
 
 const Template: Story<ComponentProps<typeof RKOMHeader>> = (args) => (

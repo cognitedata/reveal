@@ -68,7 +68,7 @@ export const WorkflowSchemas = ({
     <>
       <DeleteModal
         title="Workflow Schema"
-        isOpen={Boolean(workflowSchemaToDelete)}
+        visible={Boolean(workflowSchemaToDelete)}
         onOk={() => {
           if (!workflowSchemaToDelete) return;
           onDelete(workflowSchemaToDelete);

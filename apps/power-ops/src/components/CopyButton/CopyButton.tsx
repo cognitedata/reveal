@@ -1,36 +1,37 @@
 import { Button, Tooltip } from '@cognite/cogs.js';
-import { useState } from 'react';
+import { ComponentProps, useState } from 'react';
 
-export const CopyButton = ({
-  copyFunction,
-  className,
-}: {
-  copyFunction: () => Promise<boolean>;
-  className?: string;
-}) => {
-  const [copied, setCopied] = useState<boolean>(false);
-  const [tooltipContent, setTooltipContent] =
-    useState<string>('Copy to clipboard');
+interface Props
+  extends Omit<
+    ComponentProps<typeof Button>,
+    'aria-label' | 'icon' | 'onMouseEnter' | 'onMouseLeave' | 'onClick'
+  > {
+  onClick: () => Promise<boolean>;
+}
 
-  const copyToClipboard = async () => {
-    if (await copyFunction()) setTooltipContent('Copied!');
+export const CopyButton = ({ onClick, ...rest }: Props) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipContent, setTooltipContent] = useState('Copy to clipboard');
+
+  const handleClick = async () => {
+    if (await onClick()) setTooltipContent('Copied!');
     else setTooltipContent('Unable to copy');
 
-    setCopied(true);
+    setShowTooltip(true);
   };
 
   return (
-    <Tooltip visible={copied} content={tooltipContent}>
+    <Tooltip visible={showTooltip} content={tooltipContent} appendTo="parent">
       <Button
-        className={className}
+        {...rest}
         aria-label="Copy text"
         icon="Copy"
-        onClick={copyToClipboard}
+        onClick={handleClick}
         onMouseEnter={() => {
-          setCopied(true);
+          setShowTooltip(true);
           setTooltipContent('Copy to clipboard');
         }}
-        onMouseLeave={() => setCopied(false)}
+        onMouseLeave={() => setShowTooltip(false)}
       />
     </Tooltip>
   );

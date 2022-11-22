@@ -1,31 +1,30 @@
-import { BrowserRouter } from 'react-router-dom';
+import { initialize, mswDecorator } from 'msw-storybook-addon';
+import { globalStylesDecorator } from 'utils/test/storyDecorators';
+import { powerOpsApiHandlers } from 'utils/test/powerOpsApiHandlers';
+import { cdfApiHandlers } from 'utils/test/cdfApiHandlers';
 
-import { configureI18n, I18nContainer } from '@cognite/react-i18n';
-import GlobalStyles from 'global-styles';
+initialize({
+  onUnhandledRequest({ url: { href }, method }) {
+    // If the unhandled request is to an api (CDf or PowerOps), stop it.
+    if (href.includes('cognitedata.com') || href.includes('cognite.ai'))
+      throw new Error(`Missing mock to (${method} ${href})`);
+  },
+});
 
-import '@cognite/cogs.js/dist/cogs.css';
+export const decorators = [globalStylesDecorator, mswDecorator];
 
-configureI18n();
-
-export const decorators = [
-  (Story) => (
-    <I18nContainer>
-      <BrowserRouter>
-        <GlobalStyles />
-        <Story />
-      </BrowserRouter>
-    </I18nContainer>
-  ),
-];
-
-// https://storybook.js.org/docs/react/writing-stories/parameters#global-parameters
 export const parameters = {
-  // https://storybook.js.org/docs/react/essentials/actions#automatically-matching-args
   actions: { argTypesRegex: '^on[A-Z].*' },
   controls: {
     matchers: {
       color: /(background|color)$/i,
       date: /Date$/,
+    },
+  },
+  msw: {
+    handlers: {
+      powerOpsApiHandlers,
+      cdfApiHandlers,
     },
   },
 };

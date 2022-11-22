@@ -3,6 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { RKOMSidebar } from 'components/RKOMSidebar/RKOMSidebar';
 import { ComponentProps } from 'react';
+import { reactRouterDecorator } from 'utils/test/storyDecorators';
 
 export default {
   component: RKOMSidebar,
@@ -10,6 +11,7 @@ export default {
   argTypes: {
     onNavigate: { action: 'navigate' },
   },
+  decorators: [reactRouterDecorator()],
 } as Meta;
 
 const Template: Story<ComponentProps<typeof RKOMSidebar>> = (args) => (

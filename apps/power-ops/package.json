@@ -41,5 +41,8 @@
   },
   "dependencies": {
     "react-table": "^7.7.0"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }

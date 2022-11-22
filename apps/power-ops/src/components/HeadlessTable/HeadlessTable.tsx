@@ -1,36 +1,28 @@
-import { useMemo } from 'react';
 import { useTable, Column, useFlexLayout, useResizeColumns } from 'react-table';
 import { useSticky } from 'react-table-sticky';
 import { TableData } from 'types';
 
-export const HeadlessTable = ({
-  tableHeader,
-  tableData,
-  className,
-  defaultColumnSize,
-}: {
-  tableHeader: Column<TableData>[];
-  tableData: TableData[];
+type Props = {
+  columns: Column<TableData>[];
+  data: TableData[];
   className: string;
-  defaultColumnSize?: {
-    min: number;
+  defaultColumn?: {
+    minWidth: number;
     width: number;
-    max: number;
+    maxWidth: number;
   };
-}) => {
-  const data = useMemo(() => tableData, [tableData]);
-  const columns = useMemo(() => tableHeader, [tableHeader]);
+};
 
-  const defaultColumn = useMemo(
-    () => ({
-      // When using useFlexLayout:
-      minWidth: defaultColumnSize?.min,
-      width: defaultColumnSize?.width,
-      maxWidth: defaultColumnSize?.max,
-    }),
-    []
-  );
-
+export const HeadlessTable = ({
+  columns,
+  data,
+  className,
+  defaultColumn = {
+    minWidth: NaN,
+    width: NaN,
+    maxWidth: NaN,
+  },
+}: Props) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(
       {
@@ -43,7 +35,7 @@ export const HeadlessTable = ({
       useSticky
     );
 
-  return !tableHeader || !tableData ? (
+  return !columns || !data ? (
     <div>No Data</div>
   ) : (
     <table className={className} {...getTableProps()}>

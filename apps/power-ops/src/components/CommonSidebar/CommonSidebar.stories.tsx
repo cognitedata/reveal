@@ -5,6 +5,7 @@ import { CommonSidebar } from 'components/CommonSidebar/CommonSidebar';
 import { ComponentProps, useState } from 'react';
 import { Sidebar } from 'components/Sidebar/Sidebar';
 import { mockDayAheadMarketSidebarPlants } from 'utils/test/mockPlants';
+import { reactRouterDecorator } from 'utils/test/storyDecorators';
 
 export default {
   component: CommonSidebar,
@@ -30,7 +31,7 @@ Closed.args = {
   open: false,
 };
 
-export const DayAheadMarketSidebar = () => {
+export const DayAheadMarketSidebar: Story = () => {
   const [open, setOpen] = useState(true);
   return (
     <CommonSidebar open={open} onOpenCloseClick={() => setOpen(!open)}>
@@ -48,6 +49,7 @@ export const DayAheadMarketSidebar = () => {
     </CommonSidebar>
   );
 };
+DayAheadMarketSidebar.decorators = [reactRouterDecorator()];
 
 export const Interactions = () => {
   const [open, setOpen] = useState(true);

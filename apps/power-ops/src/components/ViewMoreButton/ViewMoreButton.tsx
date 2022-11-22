@@ -1,11 +1,11 @@
 import { Button } from '@cognite/cogs.js';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 
-export const ViewMoreButton = ({
-  eventExternalId,
-}: {
+interface Props {
   eventExternalId: string;
-}) => {
+}
+
+export const ViewMoreButton = ({ eventExternalId }: Props) => {
   const match = useRouteMatch();
   const history = useHistory();
 
@@ -18,7 +18,7 @@ export const ViewMoreButton = ({
     <Button
       size="small"
       type="secondary"
-      onClick={() => handleRowClick()}
+      onClick={handleRowClick}
       style={{ whiteSpace: 'nowrap' }}
     >
       View more

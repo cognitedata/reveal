@@ -77,7 +77,10 @@ export const ShopQualityAssuranceModal = ({
         width={840}
         onCancel={() => setShowShopRunPenaltiesModal(false)}
         closeIcon={<Icon data-testid="close-modal-icon" type="CloseLarge" />}
-        appElement={document.documentElement}
+        appElement={document.getElementById('root') ?? document.documentElement}
+        getContainer={() =>
+          document.getElementById('root') ?? document.documentElement
+        }
       >
         <Infobox type="danger" title="Penalties are above set limit">
           Based on the output of shop run penalties, we advise you to re-run

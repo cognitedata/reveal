@@ -4,6 +4,7 @@ import { expect } from '@storybook/jest';
 import { Sidebar } from 'components/Sidebar/Sidebar';
 import { ComponentProps } from 'react';
 import { mockDayAheadMarketSidebarPlants } from 'utils/test/mockPlants';
+import { reactRouterDecorator } from 'utils/test/storyDecorators';
 
 export default {
   component: Sidebar,
@@ -12,6 +13,7 @@ export default {
     onNavigate: { action: 'navigate' },
     onSearch: { action: 'search' },
   },
+  decorators: [reactRouterDecorator()],
 } as Meta;
 
 const Template: Story<ComponentProps<typeof Sidebar>> = (args) => (
@@ -43,12 +45,12 @@ LongList.args = {
 
 export const Interactions = Template.bind({});
 Interactions.args = { ...Default.args };
-Interactions.play = async ({ canvasElement, args }) => {
+Interactions.play = ({ canvasElement, args }) => {
   const canvas = within(canvasElement);
 
   // Search Bar Tests
   const searchField = canvas.getByTestId('plant-search-input');
-  await userEvent.type(searchField, 'nedre');
+  userEvent.type(searchField, 'nedre');
 
   expect(args.onSearch).toBeCalledWith('nedre');
   expect(canvas.getByText('Nedre Otta')).toBeInTheDocument();
@@ -56,7 +58,7 @@ Interactions.play = async ({ canvasElement, args }) => {
   expect(canvas.getByText('Total')).toBeInTheDocument();
   expect(canvas.queryByText('Framruste')).not.toBeInTheDocument();
 
-  await userEvent.clear(searchField);
+  userEvent.clear(searchField);
   expect(canvas.getByText('Framruste')).toBeInTheDocument();
   expect(canvas.getByText('Nedre Otta')).toBeInTheDocument();
 };
