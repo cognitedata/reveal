@@ -1380,10 +1380,10 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
-"@cognite/cdf-utilities@^1.13.1":
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.13.1.tgz#72fa68723b6dc2e9f5b655ce4a0c03f0a7e8917d"
-  integrity sha512-rqsI7IIVRIDxO6AqB2+AQGALPwXIc/5633a0KuftORIeuHhipJJ3nFQHke6nm3mIEpTfUeb7Ty98whCn+Cx/qg==
+"@cognite/cdf-utilities@^1.14.0":
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.14.0.tgz#c1e03dc386c1e18312c5041fcdeb8f2c72f4a255"
+  integrity sha512-tfyQlJJ+GnbCharfnCqfHc1HrSHqv0BYNraMB1k5YwswcKyps7Wlw+O74PzxfT+FDulc+7CkqHNFiwbcmRf/mg==
   dependencies:
     "@codemirror/autocomplete" "^6.0.0"
     "@codemirror/commands" "^6.0.0"

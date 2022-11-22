@@ -8,7 +8,6 @@ export const LinkWrapper = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: 2rem;
-  margin-right: 2rem;
 `;
 
 export const StyledLink = styled((props) => <a {...props}>{props.children}</a>)`

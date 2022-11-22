@@ -17,7 +17,6 @@ import { SectionWithoutHeader } from 'components/extpipe/Section';
 import { trackUsage } from 'utils/Metrics';
 import { useTranslation } from 'common';
 import { useSelectedExtpipe, useSelectedExtpipeId } from 'hooks/useExtpipe';
-import { ExtpipeBreadcrumbs } from 'components/navigation/breadcrumbs/ExtpipeBreadcrumbs';
 import { ExtpipeHeading } from './ExtpipeHeading';
 
 export interface RangeType {
@@ -44,7 +43,6 @@ export default function ExtpipeRunHistory() {
 
   return (
     <>
-      <ExtpipeBreadcrumbs extpipe={extpipe} />
       <ExtpipeHeading />
       <PageWrapperColumn>
         <SectionWithoutHeader>

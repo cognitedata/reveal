@@ -1,6 +1,5 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { ExtpipeBreadcrumbs } from 'components/navigation/breadcrumbs/ExtpipeBreadcrumbs';
 import { PageWrapperColumn } from 'components/styled';
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
 
@@ -23,7 +22,6 @@ export default function ConfigurationRevision() {
   }
   return (
     <>
-      <ExtpipeBreadcrumbs extpipe={extpipe} />
       <ConfigurationHeading
         revision={revision}
         externalId={extpipe.externalId}

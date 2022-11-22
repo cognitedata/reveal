@@ -1,28 +1,23 @@
 import React, { useState } from 'react';
 import { useDeletePipeline, useSelectedExtpipe } from 'hooks/useExtpipe';
-import { nameSchema } from 'utils/validation/extpipeSchemas';
-import InlineEdit from 'components/extpipe/InlineEdit';
 import {
+  Body,
   Button,
   Colors,
   Dropdown,
   Flex,
-  Icon,
   Menu,
-  Title,
   toast,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { rootUpdate } from 'hooks/details/useDetailsUpdate';
-import { LinkWrapper, PAGE_MARGIN, StyledNavLink } from 'components/styled';
-import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
-import { EXTPIPES_WRITES } from 'model/AclAction';
+import { LinkWrapper } from 'components/styled';
 import { LastRunStatusMarker } from 'components/extpipes/cols/StatusMarker';
 import { createExtPipePath } from 'utils/baseURL';
 import { useTranslation } from 'common';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { EXT_PIPE_PATH, HEALTH_PATH } from 'routing/RoutingConfig';
 import { DeleteDialog } from './DeleteModal';
+import { SecondaryTopbar } from '@cognite/cdf-utilities';
 
 export const ExtpipeHeading = () => {
   const { t } = useTranslation();
@@ -30,8 +25,6 @@ export const ExtpipeHeading = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { data: extpipe } = useSelectedExtpipe();
-  const perm = useOneOfPermissions(EXTPIPES_WRITES);
-  const canEdit = perm.data;
   const { mutate } = useDeletePipeline({
     onSuccess() {
       toast.success(t('delete-ext-pipeline-success'), {
@@ -51,7 +44,7 @@ export const ExtpipeHeading = () => {
   }
 
   return (
-    <>
+    <StyledHeadingContainer>
       <DeleteDialog
         isOpen={isDeleteDialogOpen}
         doDelete={() => mutate(extpipe.id)}
@@ -60,98 +53,83 @@ export const ExtpipeHeading = () => {
           setIsDeleteDialogOpen(false);
         }}
       />
-      <Flex
-        id="heading"
-        style={{
-          borderBottom: `1px solid ${Colors['greyscale-grey5'].hex()}`,
-        }}
-        justifyContent="space-between"
-        alignItems="stretch"
-      >
-        <Flex alignItems="center" style={{ padding: `1rem ${PAGE_MARGIN}` }}>
-          <StyledNavLink to={createExtPipePath()}>
-            <div css="display: flex; align-items: center;">
-              <Icon type="ArrowLeft" />
-            </div>
-          </StyledNavLink>
-          <InlineEdit
-            name="name"
-            defaultValues={{ name: extpipe?.name }}
-            schema={nameSchema}
-            updateFn={rootUpdate({ extpipe, name: 'name' })}
-            label={t('ext-pipeline-name')}
-            viewComp={<StyledTitle level={1}>{extpipe.name}</StyledTitle>}
-            canEdit={canEdit}
-          />
-          <span style={{ marginRight: '1rem' }}>{t('last-status')}:</span>{' '}
-          <LastRunStatusMarker externalId={extpipe.externalId} />
-        </Flex>
-        <Flex alignItems="end">
-          <LinkWrapper>
-            <TabsAndActions>
-              <PageNav>
-                <li>
-                  <NavLink
-                    to={createExtPipePath(`/${EXT_PIPE_PATH}/${extpipe.id}`)}
-                    className="tab-link"
+      <SecondaryTopbar
+        extraContent={
+          <Flex alignItems="center">
+            <Flex alignItems="center" gap={8}>
+              <Body level={2}>{t('last-status')}:</Body>{' '}
+              <LastRunStatusMarker externalId={extpipe.externalId} />
+            </Flex>
+            <SecondaryTopbar.Divider />
+            <Flex alignItems="end">
+              <LinkWrapper>
+                <TabsAndActions>
+                  <PageNav>
+                    <li>
+                      <NavLink
+                        end
+                        to={createExtPipePath(
+                          `/${EXT_PIPE_PATH}/${extpipe.id}`
+                        )}
+                        className="tab-link"
+                      >
+                        {t('overview')}
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink
+                        to={createExtPipePath(
+                          `/${EXT_PIPE_PATH}/${extpipe.id}/${HEALTH_PATH}`
+                        )}
+                        className="tab-link"
+                      >
+                        {t('run-history')}
+                      </NavLink>
+                    </li>
+                  </PageNav>
+                </TabsAndActions>
+              </LinkWrapper>
+            </Flex>
+            <SecondaryTopbar.Divider />
+            <Dropdown
+              css="align-self: unset"
+              visible={dropdownVisible}
+              onClickOutside={() => setDropdownVisible(false)}
+              content={
+                <Menu>
+                  <Menu.Header>{t('ext-pipeline-actions')}</Menu.Header>
+                  <Button
+                    icon="Delete"
+                    onClick={() => {
+                      setDropdownVisible(false);
+                      setIsDeleteDialogOpen(true);
+                    }}
+                    type="ghost-danger"
+                    data-testid="delete-menu-item"
                   >
-                    {t('overview')}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to={createExtPipePath(
-                      `/${EXT_PIPE_PATH}/${extpipe.id}/${HEALTH_PATH}`
-                    )}
-                    className="tab-link"
-                  >
-                    {t('run-history')}
-                  </NavLink>
-                </li>
-              </PageNav>
-              <Dropdown
-                css="align-self: unset"
-                visible={dropdownVisible}
-                onClickOutside={() => setDropdownVisible(false)}
-                content={
-                  <Menu>
-                    <Menu.Header>{t('ext-pipeline-actions')}</Menu.Header>
-                    <Menu.Item
-                      onClick={() => {
-                        setDropdownVisible(false);
-                        setIsDeleteDialogOpen(true);
-                      }}
-                      color="danger"
-                      data-testid="delete-menu-item"
-                    >
-                      {t('delete')}
-                    </Menu.Item>
-                  </Menu>
-                }
-              >
-                <Button
-                  onClick={() => setDropdownVisible(!dropdownVisible)}
-                  icon="EllipsisHorizontal"
-                  data-testid="extpipe-actions-dropdown-button"
-                  aria-label="More pipeline actions"
-                  iconPlacement="right"
-                  type="ghost"
-                />
-              </Dropdown>
-            </TabsAndActions>
-          </LinkWrapper>
-        </Flex>
-      </Flex>
-    </>
+                    {t('delete-ext-pipeline')}
+                  </Button>
+                </Menu>
+              }
+            >
+              <Button
+                onClick={() => setDropdownVisible(!dropdownVisible)}
+                icon="EllipsisHorizontal"
+                data-testid="extpipe-actions-dropdown-button"
+                aria-label="More pipeline actions"
+                iconPlacement="right"
+              />
+            </Dropdown>
+          </Flex>
+        }
+        title={extpipe.name}
+      />
+    </StyledHeadingContainer>
   );
 };
 
-const StyledTitle = styled(Title)`
-  &.cogs-title-1 {
-    font-size: 1.5rem;
-    line-height: normal;
-    margin: 0;
-  }
+const StyledHeadingContainer = styled.div`
+  border-bottom: 1px solid ${Colors['border--interactive--default']};
 `;
 
 const TabsAndActions = styled.div`
@@ -166,28 +144,33 @@ const PageNav = styled.ul`
     margin: 0;
   }
 
-  padding: 1rem 0 0.8rem 0;
   list-style: none;
   display: flex;
+  height: 56px;
+  padding: 0;
 
   a,
   li {
+    display: flex;
     margin: 0;
     padding: 0;
 
     .tab-link {
-      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
       color: ${Colors.black.hex()};
+      padding: 4px 1rem 0;
       font-weight: bold;
+      border-bottom: 3px solid transparent;
 
       &:hover {
-        background-color: ${Colors['midblue-7'].hex()};
-        border-bottom: 3px solid ${Colors['midblue-7'].hex()};
+        background-color: ${Colors['surface--interactive--hover']};
       }
+    }
 
-      &.active {
-        border-bottom: 3px solid ${Colors.primary.hex()};
-      }
+    .active {
+      background-color: ${Colors['surface--interactive--toggled-default']};
+      border-bottom: 3px solid ${Colors['border--interactive--toggled-default']};
     }
   }
 `;

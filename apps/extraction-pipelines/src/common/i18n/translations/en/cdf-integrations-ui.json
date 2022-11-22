@@ -46,6 +46,7 @@
   "date-range-end-label": "Date range end time",
   "date-range-start-label": "Date range start time",
   "delete": "Delete",
+  "delete-ext-pipeline": "Delete extraction pipeline",
   "delete-ext-pipeline-confirm": "Are you sure you want to delete {{extPipeline}}?",
   "delete-ext-pipeline-desc": "This will remove the extraction pipeline and its metadata and run history. It will NOT delete any data already ingested through the pipeline.",
   "delete-ext-pipeline-fail": "Failed to delete extraction pipeline",

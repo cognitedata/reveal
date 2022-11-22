@@ -11,7 +11,6 @@ import { trackUsage } from 'utils/Metrics';
 import { useTranslation } from 'common';
 import ConfigurationSection from 'components/extpipe/ConfigurationSection';
 import { useSelectedExtpipe, useSelectedExtpipeId } from 'hooks/useExtpipe';
-import { ExtpipeBreadcrumbs } from 'components/navigation/breadcrumbs/ExtpipeBreadcrumbs';
 import { ExtpipeHeading } from './ExtpipeHeading';
 import { Loader } from '@cognite/cogs.js';
 
@@ -39,7 +38,6 @@ export const ExtpipeDetails: FunctionComponent<ExtpipeViewProps> = () => {
   }
   return (
     <>
-      <ExtpipeBreadcrumbs extpipe={extpipe} />
       <ExtpipeHeading />
       <PageWrapperColumn>
         <RunScheduleConnection externalId={extpipe.externalId} />
