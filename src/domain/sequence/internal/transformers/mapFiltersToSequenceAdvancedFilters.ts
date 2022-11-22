@@ -1,5 +1,6 @@
 import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
 import isEmpty from 'lodash/isEmpty';
+import { isNumeric } from 'utils/numbers';
 import { InternalSequenceFilters } from '../types';
 
 export type SequenceProperties = {
@@ -50,14 +51,6 @@ export const mapFiltersToSequenceAdvancedFilters = (
       gte: lastUpdatedTime?.min as number,
     });
 
-  if (!isEmpty(query)) {
-    const searchQueryBuilder = new AdvancedFilterBuilder<SequenceProperties>()
-      .search('name', query)
-      .search('description', query);
-
-    filterBuilder.or(searchQueryBuilder);
-  }
-
   if (metadata) {
     for (const { key, value } of metadata) {
       filterBuilder.equals(`metadata|${key}`, value);
@@ -66,20 +59,30 @@ export const mapFiltersToSequenceAdvancedFilters = (
 
   builder.and(filterBuilder);
 
-  /**
-   * We want to filter all the metadata keys with the search query, to give a better result
-   * to the user when using our search.
-   */
-  if (searchQueryMetadataKeys) {
-    const searchMetadataBuilder =
-      new AdvancedFilterBuilder<SequenceProperties>();
+  if (query) {
+    const searchQueryBuilder = new AdvancedFilterBuilder<SequenceProperties>()
+      .search('name', isEmpty(query) ? undefined : query)
+      .search('description', isEmpty(query) ? undefined : query);
 
-    for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-      searchMetadataBuilder.prefix(`metadata|${key}`, value);
+    /**
+     * We want to filter all the metadata keys with the search query, to give a better result
+     * to the user when using our search.
+     */
+    if (searchQueryMetadataKeys) {
+      for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
+        searchQueryBuilder.prefix(`metadata|${key}`, value);
+      }
     }
 
-    builder.or(searchMetadataBuilder);
+    searchQueryBuilder.in('id', () => {
+      if (query && isNumeric(query)) {
+        return [Number(query)];
+      }
+    });
+    searchQueryBuilder.equals('externalId', query);
+
+    builder.or(searchQueryBuilder);
   }
 
-  return new AdvancedFilterBuilder<SequenceProperties>().or(builder).build();
+  return new AdvancedFilterBuilder<SequenceProperties>().and(builder).build();
 };

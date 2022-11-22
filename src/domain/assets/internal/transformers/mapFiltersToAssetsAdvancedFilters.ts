@@ -1,5 +1,6 @@
 import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
 import { NIL_FILTER_VALUE } from 'domain/constants';
+import { isNumeric } from 'utils';
 import { InternalAssetFilters } from '../types';
 
 export type AssetsProperties = {
@@ -101,6 +102,14 @@ export const mapFiltersToAssetsAdvancedFilters = (
         searchQueryBuilder.prefix(`metadata|${key}`, value);
       }
     }
+
+    searchQueryBuilder.in('id', () => {
+      if (query && isNumeric(query)) {
+        return [Number(query)];
+      }
+    });
+
+    searchQueryBuilder.equals('externalId', query);
 
     builder.or(searchQueryBuilder);
   }

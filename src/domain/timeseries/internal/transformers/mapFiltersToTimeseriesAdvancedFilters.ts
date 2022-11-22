@@ -1,5 +1,7 @@
+import { NIL_FILTER_VALUE } from 'domain/constants';
 import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
 import isEmpty from 'lodash/isEmpty';
+import { isNumeric } from 'utils/numbers';
 import { InternalTimeseriesFilters } from '../types';
 
 export type TimeseriesProperties = {
@@ -9,6 +11,7 @@ export type TimeseriesProperties = {
   externalId: string;
   name: string;
   id: number[];
+  description: string;
   [key: `metadata|${string}`]: string;
 };
 
@@ -36,7 +39,11 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
         return acc;
       }, [] as number[]);
     })
-    .equals('unit', unit)
+    .or(
+      new AdvancedFilterBuilder<TimeseriesProperties>()
+        .equals('unit', unit === NIL_FILTER_VALUE ? undefined : unit)
+        .notExists('unit', unit === NIL_FILTER_VALUE)
+    )
     .in('id', () => {
       if (internalId) {
         return [internalId];
@@ -61,20 +68,30 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
 
   builder.and(filterBuilder);
 
-  /**
-   * We want to filter all the metadata keys with the search query, to give a better result
-   * to the user when using our search.
-   */
-  if (searchQueryMetadataKeys) {
-    const searchMetadataBuilder =
-      new AdvancedFilterBuilder<TimeseriesProperties>();
+  if (query) {
+    const searchQueryBuilder = new AdvancedFilterBuilder<TimeseriesProperties>()
+      .search('name', isEmpty(query) ? undefined : query)
+      .search('description', isEmpty(query) ? undefined : query);
 
-    for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-      searchMetadataBuilder.prefix(`metadata|${key}`, value);
+    /**
+     * We want to filter all the metadata keys with the search query, to give a better result
+     * to the user when using our search.
+     */
+    if (searchQueryMetadataKeys) {
+      for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
+        searchQueryBuilder.prefix(`metadata|${key}`, value);
+      }
     }
 
-    builder.or(searchMetadataBuilder);
+    searchQueryBuilder.in('id', () => {
+      if (query && isNumeric(query)) {
+        return [Number(query)];
+      }
+    });
+    searchQueryBuilder.equals('externalId', query);
+
+    builder.or(searchQueryBuilder);
   }
 
-  return new AdvancedFilterBuilder<TimeseriesProperties>().or(builder).build();
+  return new AdvancedFilterBuilder<TimeseriesProperties>().and(builder).build();
 };

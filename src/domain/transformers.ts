@@ -86,7 +86,7 @@ export const mapMetadataKeysWithQuery = (
         continue;
       }
 
-      const keys = Object.keys(metadata!);
+      const keys = Object.keys(metadata);
       keys.forEach(key => metadataKeysSet.add(key));
     }
 

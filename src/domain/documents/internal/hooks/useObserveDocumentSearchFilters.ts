@@ -13,12 +13,10 @@ export const useObserveDocumentSearchFilters = (
   sortBy?: TableSortBy[]
 ) => {
   const { setAppliedFilters } = useDocumentSearchFilters();
-  // const [query] = useQueryString(SEARCH_KEY);
-  // const [documentFilter] = useDocumentFilters();
 
   const transformFilter = React.useMemo(
-    () => mapFiltersToDocumentSearchFilters(documentsFilters),
-    [documentsFilters]
+    () => mapFiltersToDocumentSearchFilters(documentsFilters, query),
+    [documentsFilters, query]
   );
 
   const sort = useMemo(

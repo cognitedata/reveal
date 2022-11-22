@@ -122,6 +122,10 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
     return this;
   }
 
+  /**
+   * Matches items that contain the exact value in the provided property.
+   * @example {"property":["type"],"value":"PDF"}
+   */
   equals<K extends keyof T>(key: K, input?: AdvancedFilterInput<T, K>) {
     const value = this.getValue(input);
 
@@ -141,6 +145,10 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
 
     return this;
   }
+  /**
+   * Matches items that contain a specific prefix in the provided property.
+   * @example {"property":["name"],"value":"Report"}
+   */
   prefix<K extends keyof T>(key: K, input?: AdvancedFilterInput<T, K>) {
     const value = this.getValue(input);
 
@@ -160,6 +168,10 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
 
     return this;
   }
+  /**
+   * Matches items where the property matches one of the given values
+   * @example {"property":["author"],"values":["Etiam Eget","Praesent Vestibulum"]}
+   */
   in<K extends keyof T>(key: K, input?: AdvancedFilterInput<T, K>) {
     const values = this.getValue(input);
 
@@ -179,7 +191,10 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
 
     return this;
   }
-
+  /**
+   * Matches items where the property contains one or more of the given values
+   * @example {"property":["assetIds"],"values":[51276,94287]}
+   */
   containsAny<K extends keyof T>(key: K, input?: AdvancedFilterInput<T, K>) {
     const values = this.getValue(input);
 
@@ -199,6 +214,10 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
 
     return this;
   }
+  /**
+   * Matches items where the property contains all the given values
+   * @example {"property":["assetIds"],"values":[51276,94287]}
+   */
   containsAll<K extends keyof T>(key: K, input?: AdvancedFilterInput<T, K>) {
     const values = this.getValue(input);
 
@@ -234,6 +253,10 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
     }
     return this;
   }
+  /**
+   * Matches items that contain a value for the provided property.
+   * @example {"property":["language"]}
+   */
   exists<K extends keyof T>(key: K, validate: AdvancedFilterValidate = true) {
     const valid = this.getValidity(validate);
 
@@ -252,6 +275,10 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
 
     return this;
   }
+  /**
+   * Matches items that does not contain a value for the provided property.
+   * @example {"property":["language"]}
+   */
   notExists<K extends keyof T>(
     key: K,
     validate: AdvancedFilterValidate = true
@@ -275,6 +302,17 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
 
     return this;
   }
+  /**
+   * Matches items that contain terms within the provided range.
+   * Range must include both an upper and a lower bound. It is not allowed to specify both inclusive and exclusive
+   * bounds (like `gte`, `gt`) together.
+   * `gte`: Greater than or equal to.
+   * `gt`: Greater than.
+   * `lte`: Less than or equal to.
+   * `lt`: Less than.
+   *
+   * @example {"property":["createdTime"],"gte":1609459200000,"lt":1640995200000}
+   */
   range(
     key: string,
     values?: {

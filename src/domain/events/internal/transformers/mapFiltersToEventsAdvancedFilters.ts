@@ -1,5 +1,6 @@
 import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
 import isEmpty from 'lodash/isEmpty';
+import { isNumeric } from 'utils/numbers';
 import { InternalEventsFilters } from '../types';
 
 export type EventsProperties = {
@@ -76,8 +77,7 @@ export const mapFiltersToEventsAdvancedFilters = (
         endTime && !('isNull' in endTime)
           ? (endTime?.min as number)
           : undefined,
-    })
-    .search('description', isEmpty(query) ? undefined : query);
+    });
 
   if (metadata) {
     for (const { key, value } of metadata) {
@@ -87,19 +87,32 @@ export const mapFiltersToEventsAdvancedFilters = (
 
   builder.and(filterBuilder);
 
-  /**
-   * We want to filter all the metadata keys with the search query, to give a better result
-   * to the user when using our search.
-   */
-  if (searchQueryMetadataKeys) {
-    const searchMetadataBuilder = new AdvancedFilterBuilder<EventsProperties>();
+  if (query) {
+    const searchQueryBuilder =
+      new AdvancedFilterBuilder<EventsProperties>().search(
+        'description',
+        isEmpty(query) ? undefined : query
+      );
 
-    for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-      searchMetadataBuilder.prefix(`metadata|${key}`, value);
+    /**
+     * We want to filter all the metadata keys with the search query, to give a better result
+     * to the user when using our search.
+     */
+    if (searchQueryMetadataKeys) {
+      for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
+        searchQueryBuilder.prefix(`metadata|${key}`, value);
+      }
     }
 
-    builder.or(searchMetadataBuilder);
+    searchQueryBuilder.in('id', () => {
+      if (query && isNumeric(query)) {
+        return [Number(query)];
+      }
+    });
+    searchQueryBuilder.equals('externalId', query);
+
+    builder.or(searchQueryBuilder);
   }
 
-  return new AdvancedFilterBuilder<EventsProperties>().or(builder).build();
+  return new AdvancedFilterBuilder<EventsProperties>().and(builder).build();
 };
