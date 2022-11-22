@@ -14,14 +14,20 @@ export const GeneralDetails = ({
   children,
 }: {
   children: React.ReactNode[];
-}) => (
-  <GeneralDetailsCard>
-    <GeneralDetailsHeader>
-      <Title level={5}>General</Title>
-    </GeneralDetailsHeader>
-    <GeneralDetailsContent>{children}</GeneralDetailsContent>
-  </GeneralDetailsCard>
-);
+}) => {
+  const isPreview: boolean = window.location.pathname.includes('/search');
+
+  return (
+    <GeneralDetailsCard>
+      <GeneralDetailsHeader>
+        <Title level={5}>General</Title>
+      </GeneralDetailsHeader>
+      <GeneralDetailsContent isPreview={isPreview}>
+        {children}
+      </GeneralDetailsContent>
+    </GeneralDetailsCard>
+  );
+};
 GeneralDetails.Item = DetailsItem;
 GeneralDetails.DataSetItem = DataSetItem;
 GeneralDetails.AssetsItem = AssetsItem;
@@ -40,11 +46,11 @@ const GeneralDetailsHeader = styled.div`
   padding: 16px 12px;
 `;
 
-const GeneralDetailsContent = styled.div`
+const GeneralDetailsContent = styled.div<{ isPreview: boolean }>`
   padding: 12px;
   display: grid;
   grid-gap: 8px;
-  --max-columns: 2;
+  --max-columns: ${props => (props.isPreview ? 1 : 2)};
   /* Adjusting for the 8px grid-gap as well */
   grid-template-columns: repeat(
     auto-fit,
