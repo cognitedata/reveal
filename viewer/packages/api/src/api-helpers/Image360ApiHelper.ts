@@ -13,6 +13,7 @@ import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@rev
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
   private readonly _domElement: HTMLElement;
+  private _transitionInProgress: boolean = false;
 
   private readonly _interactionState: {
     lastHoveredState?: Image360Entity;
@@ -78,66 +79,112 @@ export class Image360ApiHelper {
   }
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
+    const lastEntered360ImageEntity = this._interactionState.lastImage360Entered;
+
+    if (lastEntered360ImageEntity === image360Entity) {
+      this._requestRedraw();
+      return;
+    }
+
     await this._image360Facade.preload(image360Entity);
+
+    this.set360CameraManager();
+
     const image360Visualization = image360Entity.image360Visualization;
     image360Visualization.visible = true;
-    const position = new THREE.Vector3().setFromMatrixPosition(image360Entity.transform);
+    this._image360Facade.allIconsVisibility = true;
+    image360Entity.icon.visible = false;
+
+    this._transitionInProgress = true;
+    if (lastEntered360ImageEntity !== undefined) {
+      await this.transition(lastEntered360ImageEntity, image360Entity);
+    } else {
+      const transitionDuration = 1000;
+      const position = new THREE.Vector3().setFromMatrixPosition(image360Entity.transform);
+      await Promise.all([
+        this._image360Navigation.moveTo(position, transitionDuration),
+        this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
+      ]);
+    }
+    this._transitionInProgress = false;
+    this._interactionState.lastImage360Entered = image360Entity;
+    this._requestRedraw();
+  }
+
+  private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
+    const cameraTransitionDuration = 1000;
+    const alphaTweenDuration = 800;
+    const default360ImageRenderOrder = 3;
+
+    const toVisualizationCube = to360Entity.image360Visualization;
+    const fromVisualizationCube = from360Entity.image360Visualization;
+
+    const fromPosition = new THREE.Vector3().setFromMatrixPosition(from360Entity.transform);
+    const toPosition = new THREE.Vector3().setFromMatrixPosition(to360Entity.transform);
+    const length = new THREE.Vector3().subVectors(toPosition, fromPosition).length();
+
+    setPreTransitionState();
+
+    await Promise.all([
+      this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
+      this.tweenVisualizationAlpha(from360Entity, 1, 0, alphaTweenDuration)
+    ]);
+
+    retorePostTransitionState();
+
+    function setPreTransitionState() {
+      const fillingScaleMagnitude = length * 2;
+      const uniformScaling = new THREE.Vector3(1, 1, 1).multiplyScalar(fillingScaleMagnitude);
+
+      fromVisualizationCube.scale = uniformScaling;
+      fromVisualizationCube.renderOrder = default360ImageRenderOrder + 1;
+
+      toVisualizationCube.scale = uniformScaling;
+      toVisualizationCube.renderOrder = default360ImageRenderOrder;
+    }
+
+    function retorePostTransitionState() {
+      const defaultScaling = new THREE.Vector3(1, 1, 1);
+
+      fromVisualizationCube.scale = defaultScaling;
+      fromVisualizationCube.renderOrder = default360ImageRenderOrder;
+
+      toVisualizationCube.scale = defaultScaling;
+      toVisualizationCube.renderOrder = default360ImageRenderOrder;
+
+      fromVisualizationCube.visible = false;
+      fromVisualizationCube.opacity = 1;
+    }
+  }
+
+  private tweenVisualizationAlpha(
+    entity: Image360Entity,
+    alphaFrom: number,
+    alphaTo: number,
+    duration: number
+  ): Promise<void> {
+    const from = { alpha: alphaFrom };
+    const to = { alpha: alphaTo };
+    const tween = new TWEEN.Tween(from)
+      .to(to, duration)
+      .onUpdate(() => {
+        entity.image360Visualization.opacity = from.alpha;
+      })
+      .easing(num => TWEEN.Easing.Quintic.InOut(num))
+      .start(TWEEN.now());
+
+    return new Promise(resolve => {
+      tween.onComplete(() => {
+        tween.stop();
+        resolve();
+      });
+    });
+  }
+
+  private set360CameraManager() {
     if (this._activeCameraManager.innerCameraManager !== this._image360Navigation) {
       this._cachedCameraManager = this._activeCameraManager.innerCameraManager;
       this._activeCameraManager.setActiveCameraManager(this._image360Navigation, true);
-    }
-    this._image360Facade.allIconsVisibility = true;
-    image360Entity.icon.visible = false;
-    const lastImage = this._interactionState.lastImage360Entered;
-    if (lastImage !== image360Entity) {
-      if (lastImage !== undefined) {
-        const lastImageVisualzation = lastImage.image360Visualization;
-        const lastPosition = new THREE.Vector3().setFromMatrixPosition(lastImage.transform);
-        const length = new THREE.Vector3().subVectors(position, lastPosition).length();
-
-        lastImageVisualzation.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
-        lastImageVisualzation.renderOrder = 4;
-
-        image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
-        image360Visualization.renderOrder = 3;
-
-        await Promise.all([this._image360Navigation.moveTo(position, 1000), animateAlpha(lastImage, 0, 1, 800)]);
-
-        lastImageVisualzation.scale = new THREE.Vector3(1, 1, 1);
-        lastImageVisualzation.renderOrder = 3;
-
-        image360Visualization.scale = new THREE.Vector3(1, 1, 1);
-        image360Visualization.renderOrder = 3;
-
-        lastImageVisualzation.visible = false;
-        lastImageVisualzation.opacity = 1;
-      } else {
-        await this._image360Navigation.moveTo(position, 2000);
-        if (this._interactionState.lastImage360Entered !== undefined) {
-          this._interactionState.lastImage360Entered.image360Visualization.visible = false;
-        }
-      }
-    }
-    this._interactionState.lastImage360Entered = image360Entity;
-    this._requestRedraw();
-
-    function animateAlpha(entity: Image360Entity, alphaFrom: number, alphaTo: number, duration = 2000): Promise<void> {
-      const from = { alpha: alphaFrom };
-      const to = { alpha: alphaTo };
-      const tween = new TWEEN.Tween(from)
-        .to(to, duration)
-        .onUpdate(() => {
-          entity.image360Visualization.opacity = 1 - from.alpha;
-        })
-        .easing(num => TWEEN.Easing.Quintic.InOut(num))
-        .start(TWEEN.now());
-
-      return new Promise(resolve => {
-        tween.onComplete(() => {
-          tween.stop();
-          resolve();
-        });
-      });
     }
   }
 
@@ -168,6 +215,9 @@ export class Image360ApiHelper {
   }
 
   private enter360ImageOnIntersect(event: PointerEvent): Promise<void> {
+    if (this._transitionInProgress) {
+      return Promise.resolve();
+    }
     const size = new THREE.Vector2(this._domElement.clientWidth, this._domElement.clientHeight);
 
     const { offsetX, offsetY } = event;

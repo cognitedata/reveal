@@ -81,9 +81,10 @@ export class Image360VisualizationBox implements Image360Visualization {
           const blob = new Blob([image360Face.data]);
           const url = window.URL.createObjectURL(blob);
           const faceTexture = await loader.loadAsync(url);
-          faceTexture.wrapS = THREE.RepeatWrapping;
+
           // Need to horizontally flip the texture since it is being rendered inside a cube
-          faceTexture.repeat.x = -1;
+          faceTexture.center.set(0.5, 0.5);
+          faceTexture.repeat.set(-1, 1);
           return { side: image360Face.face, faceTexture };
         })
       );
