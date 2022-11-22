@@ -33,11 +33,7 @@ export const ConfigurationHeading = ({ externalId, revision }: Props) => {
       >
         <Flex alignItems="center">
           <StyledNavLink
-            to={{
-              pathname: createExtPipePath(
-                `/${EXT_PIPE_PATH}/${id}/${HEALTH_PATH}`
-              ),
-            }}
+            to={createExtPipePath(`/${EXT_PIPE_PATH}/${id}/${HEALTH_PATH}`)}
           >
             <LeftArrowContainer>
               <Icon type="ArrowLeft" />

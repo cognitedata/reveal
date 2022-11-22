@@ -13,7 +13,7 @@ export default function ConfigurationRevision() {
 
   const revision = (() => {
     try {
-      return parseInt(r, 10);
+      return parseInt(r ?? '', 10);
     } catch {
       return 0;
     }

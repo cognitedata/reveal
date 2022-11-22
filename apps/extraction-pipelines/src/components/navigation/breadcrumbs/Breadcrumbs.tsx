@@ -7,7 +7,6 @@ import { PAGE_MARGIN } from 'components/styled';
 interface Breadcrumb {
   href?: string;
   label: string;
-  params?: string;
   dataTestId?: string;
 }
 interface BreadcrumbsProps {
@@ -22,21 +21,11 @@ export const Breadcrumbs: FunctionComponent<BreadcrumbsProps> = ({
   return (
     <BreadcrumbsWrapper aria-label="Breadcrumb">
       <ol>
-        {breadcrumbs.map(({ href, label, dataTestId, params }) => {
+        {breadcrumbs.map(({ href, label, dataTestId }) => {
           if (href) {
             return (
               <li key={href} data-testid={dataTestId}>
-                <NavLink
-                  to={{
-                    pathname: href,
-                    search: params,
-                  }}
-                  isActive={(match, linkLoc) => {
-                    return !!href && href.includes(linkLoc.pathname);
-                  }}
-                >
-                  {label}
-                </NavLink>
+                <NavLink to={href}>{label}</NavLink>
               </li>
             );
           }

@@ -9,10 +9,8 @@ const Create: FunctionComponent<CreateProps> = () => {
   return (
     <>
       <RegisterExtpipeProvider>
-        {createExtpipeRoutes.map(({ path, name, component, exact }) => {
-          return (
-            <Route exact={exact} key={name} path={path} component={component} />
-          );
+        {createExtpipeRoutes.map(({ path, name, component }) => {
+          return <Route key={name} path={path} element={component} />;
         })}
       </RegisterExtpipeProvider>
     </>

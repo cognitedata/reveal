@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { useParams } from 'react-router';
 import { Loader } from '@cognite/cogs.js';
 
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import { ExtpipeDetails } from 'components/extpipe/ExtpipeDetails';
@@ -23,7 +23,6 @@ interface ExtpipePageProps {}
 
 const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
   const { t } = useTranslation();
-  const { path } = useRouteMatch();
   const { id } = useParams<RouterParams>();
 
   const { data: extpipe, isLoading, error } = useSelectedExtpipe();
@@ -46,17 +45,14 @@ const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
   return (
     <RunFilterProvider>
       <div>
-        <Switch>
-          <Route exact path={path} component={ExtpipeDetails} />
+        <Routes>
+          <Route path="/" element={<ExtpipeDetails />} />
+          <Route path={`/${HEALTH_PATH}`} element={<ExtpipeRunHistory />} />
           <Route
-            path={`${path}/${HEALTH_PATH}`}
-            component={ExtpipeRunHistory}
+            path={`/config/:revision`}
+            element={<ConfigurationRevision />}
           />
-          <Route
-            path={`${path}/config/:revision`}
-            component={ConfigurationRevision}
-          />
-        </Switch>
+        </Routes>
       </div>
     </RunFilterProvider>
   );

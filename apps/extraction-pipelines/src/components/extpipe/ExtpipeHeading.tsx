@@ -20,13 +20,13 @@ import { EXTPIPES_WRITES } from 'model/AclAction';
 import { LastRunStatusMarker } from 'components/extpipes/cols/StatusMarker';
 import { createExtPipePath } from 'utils/baseURL';
 import { useTranslation } from 'common';
-import { NavLink, useHistory } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { EXT_PIPE_PATH, HEALTH_PATH } from 'routing/RoutingConfig';
 import { DeleteDialog } from './DeleteModal';
 
 export const ExtpipeHeading = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { data: extpipe } = useSelectedExtpipe();
@@ -38,7 +38,7 @@ export const ExtpipeHeading = () => {
         toastId: 'delete-extpipeline',
         position: 'bottom-right',
       });
-      history.replace(createExtPipePath());
+      navigate(createExtPipePath(), { replace: true });
     },
     onError() {
       toast.error(t('delete-ext-pipeline-fail'), {
@@ -69,11 +69,7 @@ export const ExtpipeHeading = () => {
         alignItems="stretch"
       >
         <Flex alignItems="center" style={{ padding: `1rem ${PAGE_MARGIN}` }}>
-          <StyledNavLink
-            to={{
-              pathname: createExtPipePath(),
-            }}
-          >
+          <StyledNavLink to={createExtPipePath()}>
             <div css="display: flex; align-items: center;">
               <Icon type="ArrowLeft" />
             </div>
@@ -96,14 +92,7 @@ export const ExtpipeHeading = () => {
               <PageNav>
                 <li>
                   <NavLink
-                    to={{
-                      pathname: createExtPipePath(
-                        `/${EXT_PIPE_PATH}/${extpipe.id}`
-                      ),
-                    }}
-                    isActive={(_, { pathname }) => {
-                      return !pathname.includes(HEALTH_PATH);
-                    }}
+                    to={createExtPipePath(`/${EXT_PIPE_PATH}/${extpipe.id}`)}
                     className="tab-link"
                   >
                     {t('overview')}
@@ -111,14 +100,9 @@ export const ExtpipeHeading = () => {
                 </li>
                 <li>
                   <NavLink
-                    to={{
-                      pathname: createExtPipePath(
-                        `/${EXT_PIPE_PATH}/${extpipe.id}/${HEALTH_PATH}`
-                      ),
-                    }}
-                    isActive={(_, { pathname }) => {
-                      return pathname.includes(HEALTH_PATH);
-                    }}
+                    to={createExtPipePath(
+                      `/${EXT_PIPE_PATH}/${extpipe.id}/${HEALTH_PATH}`
+                    )}
                     className="tab-link"
                   >
                     {t('run-history')}
