@@ -38,12 +38,13 @@ export class TreeIndexNodeCollection extends NodeCollection {
   updateSet(treeIndices: NumericRange): void;
   updateSet(treeIndices: Iterable<number>): void;
   updateSet(treeIndices: IndexSet | NumericRange | Iterable<number>): void {
-    this._treeIndices.clear();
     if (treeIndices instanceof IndexSet) {
       this._treeIndices = treeIndices;
     } else if (NumericRange.isNumericRange(treeIndices)) {
+      this._treeIndices.clear();
       this._treeIndices.addRange(treeIndices);
     } else {
+      this._treeIndices.clear();
       this._treeIndices.unionWith(new IndexSet(treeIndices));
     }
     this.notifyChanged();
