@@ -12,11 +12,13 @@ import { AssetMappingsSidebar } from './AssetMappingsSidebar';
 import {
   ExpandButton,
   FocusAssetButton,
+  HelpButton,
   PointToPointMeasurementButton,
-} from './ThreeDToolbar';
+  ShareButton,
+} from './toolbar';
 import { Slicer } from './slicer/Slicer';
 import PointSizeSlider from './point-size-slider/PointSizeSlider';
-import HelpButton from './help-button';
+
 import styled from 'styled-components';
 import { Colors, Flex } from '@cognite/cogs.js';
 import { ThreeDTitle } from './title/ThreeDTitle';
@@ -37,9 +39,10 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useQueryClient } from 'react-query';
 import { ThreeDContext } from './ThreeDContext';
 import debounce from 'lodash/debounce';
-import ShareButton from './share-button';
+
 import AssetLabelsButton from 'app/containers/ThreeD/asset-labels-button/AssetLabelsButton';
 import { LabelEventHandler } from 'app/containers/ThreeD/tools/SmartOverlayTool';
+
 import MouseWheelAction from 'app/containers/ThreeD/components/MouseWheelAction';
 import LoadSecondaryModels from 'app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
 import OverlayTool from 'app/containers/ThreeD/components/OverlayTool';

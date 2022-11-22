@@ -13,6 +13,9 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useQueryClient } from 'react-query';
 import { fitCameraToAsset } from 'app/containers/ThreeD/utils';
 
+export { default as HelpButton } from './help-button';
+export { default as ShareButton } from './share-button';
+
 export const HomeButton = () => {
   const navigate = useNavigate();
 

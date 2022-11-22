@@ -3,7 +3,7 @@ import {
   MouseNavigation,
   KeyboardNavigation,
   TouchNavigation,
-} from 'app/containers/ThreeD/help-button/sections';
+} from './sections';
 import { ids } from 'cogs-variables';
 import styled from 'styled-components';
 
