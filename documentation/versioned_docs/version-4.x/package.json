@@ -1,0 +1,18 @@
+{
+  "name": "@reveal-documentation/v4",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Christopher Tannum <christopher.tannum@cognite.com>",
+  "scripts": {
+    "replace-4.x:copy-docs": "yarn ws:copyfiles -u 1 -e \"./docs/**/*.json\" -e \"./docs/**/*.lock\" \"./docs/**/*\" \"./versioned_docs/version-4.x/\"",
+    "replace-4.x:update-site-imports": "yarn ws:replace \"'@site/docs/\" \"'@site/versioned_docs/version-4.x/\" ./versioned_docs/version-4.x/ --include '*.ts*,*.mdx' -r",
+    "replace-4.x:update-runnable": "yarn ws:replace '^```(js[x]?) runnable$' '```$1 runnable-4x' ./versioned_docs/version-4.x/ --include '*.mdx' -r",
+    "replace-4.x": "yarn replace-4.x:copy-docs && yarn replace-4.x:update-runnable && yarn replace-4.x:update-site-imports"
+  },
+  "dependencies": {
+    "@cognite/reveal": "link:../../../viewer/dist",
+    "@cognite/sdk": "link:../../../viewer/node_modules/@cognite/sdk",
+    "@types/three": "link:../../../viewer/node_modules/@types/three",
+    "three": "link:../../../viewer/node_modules/three"
+  }
+}

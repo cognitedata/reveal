@@ -1,4 +1,4 @@
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three';
 import { CogniteCadModel, Cognite3DViewer, DefaultNodeAppearance, IndexSet, NodeAppearance, NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
 import { CogniteClient } from '@cognite/sdk/dist/src';

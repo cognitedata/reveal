@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+import viewerPackageJson from '../../../../../package.json';
 
 import TWEEN from '@tweenjs/tween.js';
 import { Subscription, fromEventPattern } from 'rxjs';
@@ -63,6 +64,7 @@ import {
 } from './renderOptionsHelpers';
 import { Image360Entity } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
+import html2canvas from 'html2canvas';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
@@ -203,6 +205,13 @@ export class Cognite3DViewer {
   }
 
   constructor(options: Cognite3DViewerOptions) {
+    const threejsRequiredVersion = viewerPackageJson.peerDependencies.three.split('.')[1].toString();
+    if (threejsRequiredVersion != THREE.REVISION) {
+      log.warn(
+        `The version of the dependency \"three\" is different from what Reveal expects, which may cause unexpected results.
+        In case of unexpected issues, please set the version to ${viewerPackageJson.peerDependencies.three}`
+      );
+    }
     this._renderer = options.renderer ?? createRenderer();
     this._renderer.localClippingEnabled = true;
 
@@ -664,7 +673,7 @@ export class Cognite3DViewer {
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
 
-    this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.potreeNode.modelIdentifier);
+    this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
 
     return model;
   }
@@ -967,6 +976,27 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Move camera to a place where a set of 3D models are visible.
+   * @param models Optional 3D models to focus the camera on. If no models are provided the camera will fit to all models.
+   * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
+   * @param restrictToMostGeometry If true, attempt to remove junk geometry from the bounds to allow setting a good camera position.
+   */
+  fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry = false): void {
+    const cogniteModels = models ?? this.models;
+
+    if (cogniteModels.length < 1) {
+      return;
+    }
+
+    const bounds = cogniteModels.reduce<THREE.Box3>((combinedBoundingBox, model) => {
+      combinedBoundingBox.union(model.getModelBoundingBox(undefined, restrictToMostGeometry));
+      return combinedBoundingBox;
+    }, new THREE.Box3());
+
+    this.fitCameraToBoundingBox(bounds, duration);
+  }
+
+  /**
    * Move camera to a place where the content of a bounding box is visible to the camera.
    * @param box The bounding box in world space.
    * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
@@ -1056,9 +1086,13 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Take screenshot from the current camera position.
+   * Take a screenshot from the current camera position. When drawing UI, only the viewer DOM element and its children will be included in the image.
+   * The DOM is scaled to fit any provided resolution, and as a result some elements can be positioned incorrectly in regards to the 3D render.
+   *
+   * `html2canvas` is used to draw UI and this has some limitations on what CSS properties it is able to render. See {@link https://html2canvas.hertzen.com/documentation the html2canvas documentation} for details.
    * @param width Width of the final image. Default is current canvas size.
    * @param height Height of the final image. Default is current canvas size.
+   * @param includeUI If false the screenshot will include only the rendered 3D.
    * @returns A {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs Data URL} of the image ('image/png').
    * @example
    * ```js
@@ -1070,31 +1104,65 @@ export class Cognite3DViewer {
    * const url = await viewer.getScreenshot();
    * const image = document.createElement('img');
    * image.src = url;
-   * document.body.appendChild(url);
+   * document.body.appendChild(image);
    * ```
    */
-  async getScreenshot(width = this.canvas.width, height = this.canvas.height): Promise<string> {
+  async getScreenshot(width = this.canvas.width, height = this.canvas.height, includeUI = true): Promise<string> {
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
     }
 
-    const camera = this.cameraManager.getCamera();
-    const { width: originalWidth, height: originalHeight } = this.canvas;
+    const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
+    const originalDomeStyle = { ...this.domElement.style };
 
-    const screenshotCamera = camera.clone() as THREE.PerspectiveCamera;
-    adjustCamera(screenshotCamera, width, height);
+    try {
+      // Position and scale domElement to match requested resolution.
+      // Remove observer temporarily to stop animate from running resize in the background.
+      this._domElementResizeObserver.unobserve(this._domElement);
+      this.domElement.style.position = 'fixed';
+      this.domElement.style.width = width + 'px';
+      this.domElement.style.height = height + 'px';
+      this.domElement.style.flexGrow = '1';
+      this.domElement.style.margin = '0px';
+      this.domElement.style.padding = '0px';
+      this.domElement.style.left = '0px';
+      this.domElement.style.top = '0px';
 
-    this.renderer.setSize(width, height);
-    this.renderer.render(this._sceneHandler.scene, screenshotCamera);
-    this.revealManager.render(screenshotCamera);
-    const url = this.renderer.domElement.toDataURL();
+      const screenshotCamera = this.cameraManager.getCamera().clone() as THREE.PerspectiveCamera;
+      adjustCamera(screenshotCamera, width, height);
 
-    this.renderer.setSize(originalWidth, originalHeight);
-    this.renderer.render(this._sceneHandler.scene, camera);
+      // Disregard pixelRatio to get the screenshot in requested resolution.
+      const pixelRatioOverride = 1;
+      this.renderer.setDrawingBufferSize(width, height, pixelRatioOverride);
+      this.revealManager.render(screenshotCamera);
+      if (!includeUI) return this.canvas.toDataURL();
 
-    this.requestRedraw();
+      // Force update of overlay elements.
+      this._events.sceneRendered.fire({
+        frameNumber: -1,
+        renderTime: -1,
+        renderer: this.renderer,
+        camera: screenshotCamera
+      });
 
-    return url;
+      // Draw screenshot. Again disregarding pixel ratio.
+      const outCanvas = await html2canvas(this.domElement, { scale: pixelRatioOverride });
+      return outCanvas.toDataURL();
+    } finally {
+      this.domElement.style.position = originalDomeStyle.position;
+      this.domElement.style.width = originalDomeStyle.width;
+      this.domElement.style.height = originalDomeStyle.height;
+      this.domElement.style.flexGrow = originalDomeStyle.flexGrow;
+      this.domElement.style.margin = originalDomeStyle.margin;
+      this.domElement.style.padding = originalDomeStyle.padding;
+      this.domElement.style.left = originalDomeStyle.left;
+      this.domElement.style.top = originalDomeStyle.top;
+      this._domElementResizeObserver.observe(this._domElement);
+
+      this.renderer.setSize(originalWidth, originalHeight);
+      this.revealManager.render(this.cameraManager.getCamera());
+      this.requestRedraw();
+    }
   }
 
   /**

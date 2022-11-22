@@ -3,12 +3,12 @@
  */
 
 import React, { ReactElement } from 'react';
-import { CogniteClient } from '@cognite/sdk-4.x';
+import { CogniteClient } from '@cognite/sdk';
 import { loginManager } from '../utils/LoginManager';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useColorMode } from '@docusaurus/theme-common';
 import styled from 'styled-components';
-import { REVEAL_VERSION } from '@cognite/reveal-4.x';
+import { REVEAL_VERSION } from '@cognite/reveal';
 
 const Root = styled.div`
   padding: 16px;

@@ -97,7 +97,7 @@ When implementing these functions you can use a helper class `CameraManagerHelpe
 Here is an example implementation of a custom camera manager that utilizes standard ThreeJS [`OrbitControls`](https://threejs.org/docs/index.html?q=orbit#examples/en/controls/OrbitControls) for mouse movement:
 
 ```js
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { CameraManager, CameraManagerHelper, CameraState, CameraChangeDelegate } from '@cognite/reveal';

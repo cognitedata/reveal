@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Cognite3DViewer, Image360Entity, THREE } from "@cognite/reveal";
+import * as THREE from 'three';
+import { Cognite3DViewer, Image360Entity } from "@cognite/reveal";
 import * as dat from 'dat.gui';
 
 export class Image360UI {
