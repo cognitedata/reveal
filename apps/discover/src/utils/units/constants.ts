@@ -1,4 +1,4 @@
-import convert, { Distance } from 'convert-units';
+import convert, { Distance, Mass } from 'convert-units';
 
 export const OTHER_CONVERSION_UNITS = {
   ftUS: 'ft-us',
@@ -21,4 +21,14 @@ export const UNITS_TO_STANDARD = OTHER_CONVERSION_UNITS as Record<
 export interface ConvertedDistance {
   value: number;
   unit: Distance;
+}
+
+export interface LinearWeightUnit {
+  weightUnit: Mass;
+  depthUnit: Distance;
+}
+
+export interface LinearWeight {
+  value: number;
+  unit: LinearWeightUnit;
 }

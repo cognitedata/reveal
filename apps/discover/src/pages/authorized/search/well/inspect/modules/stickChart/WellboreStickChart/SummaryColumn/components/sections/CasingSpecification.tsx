@@ -1,26 +1,69 @@
+import { getCasingAverageLinearWeight } from 'domain/wells/casings/internal/selectors/getCasingAverageLinearWeight';
+import { getCasingComponentsGrades } from 'domain/wells/casings/internal/selectors/getCasingComponentsGrades';
+import { getCasingThickness } from 'domain/wells/casings/internal/selectors/getCasingThickness';
+import { formatDiameter } from 'domain/wells/casings/internal/transformers/formatDiameter';
+import { toReadableLinearWeight } from 'domain/wells/casings/internal/transformers/toReadableLinearWeight';
+
 import * as React from 'react';
 
-import { SummarySection, SummaryVisibilityProps } from '../../../../types';
+import isEmpty from 'lodash/isEmpty';
+import { pluralize } from 'utils/pluralize';
+
+import { Specification } from '../../../../components/Specification';
+import {
+  CasingAssemblyView,
+  SummarySection,
+  SummaryVisibilityProps,
+} from '../../../../types';
 import { SummarySectionContent } from '../../elements';
 import { SummaryColumnSection } from '../SummaryColumnSection';
 
 interface CasingSpecificationProps extends SummaryVisibilityProps {
-  casingDiameter: number;
+  casingAssembly: CasingAssemblyView;
 }
 
 export const CasingSpecification: React.FC<CasingSpecificationProps> = ({
-  casingDiameter,
+  casingAssembly,
   isExpanded,
 }) => {
+  const { outsideDiameterFormatted, components } = casingAssembly;
+
+  const thickness = getCasingThickness(casingAssembly);
+
   return (
     <SummaryColumnSection
-      name={`${casingDiameter}" ${SummarySection.CasingSpecification}`}
+      name={`${outsideDiameterFormatted} ${SummarySection.CasingSpecification}`}
       isExpanded={isExpanded}
     >
       <SummarySectionContent>
-        13,570 VAM SLIJ-II, 115.00ppf, 0.812”. 12.376” ID, 12.250” drift, VM
-        125HC, 13.050b, 12.640c
+        <Specification label="Casing size" value={outsideDiameterFormatted} />
+        <CasingSpecificationFromComponents components={components} />
+        <Specification label="Thickness" value={formatDiameter(thickness)} />
       </SummarySectionContent>
     </SummaryColumnSection>
+  );
+};
+
+const CasingSpecificationFromComponents: React.FC<
+  Pick<CasingAssemblyView, 'components'>
+> = ({ components }) => {
+  if (!components || isEmpty(components)) {
+    return null;
+  }
+
+  const grades = getCasingComponentsGrades(components);
+
+  const averageLinerWeight = getCasingAverageLinearWeight(components);
+  const averageLinerWeightReadable =
+    averageLinerWeight && toReadableLinearWeight(averageLinerWeight);
+
+  return (
+    <>
+      <Specification
+        label={pluralize('Grade', grades)}
+        value={grades.join(', ')}
+      />
+      <Specification label="Linear weight" value={averageLinerWeightReadable} />
+    </>
   );
 };

@@ -8,10 +8,10 @@ import { CasingAssemblyView, SummarySection } from '../../../types';
 import { SummaryContainer, SummarySectionColumn } from '../elements';
 
 import { CasingSpecification } from './sections/CasingSpecification';
-import { DrillingParameters } from './sections/DrillingParameters';
-import { HighlightEvent } from './sections/HighlightEvent';
-import { HoleDepth } from './sections/HoleDepth';
-import { MudwayWindow } from './sections/MudwayWindow';
+// import { DrillingParameters } from './sections/DrillingParameters';
+// import { HighlightEvent } from './sections/HighlightEvent';
+// import { HoleDepth } from './sections/HoleDepth';
+// import { MudwayWindow } from './sections/MudwayWindow';
 
 export interface CasingAssemblySummaryProps {
   casingAssembly: CasingAssemblyView;
@@ -22,32 +22,30 @@ export const CasingAssemblySummary: React.FC<CasingAssemblySummaryProps> = ({
   casingAssembly,
   summaryVisibility = EMPTY_OBJECT as BooleanMap,
 }) => {
-  const { maxOutsideDiameter, measuredDepthBase } = casingAssembly;
-
   return (
     <SummaryContainer>
       <SummarySectionColumn>
         <CasingSpecification
-          casingDiameter={maxOutsideDiameter.value}
+          casingAssembly={casingAssembly}
           isExpanded={summaryVisibility[SummarySection.CasingSpecification]}
         />
-        <HoleDepth
+        {/* <HoleDepth
           measuredDepthBase={measuredDepthBase}
           isExpanded={summaryVisibility[SummarySection.HoleDepth]}
         />
         <DrillingParameters
           isExpanded={summaryVisibility[SummarySection.DrillingParameters]}
-        />
+        /> */}
       </SummarySectionColumn>
 
-      <SummarySectionColumn>
+      {/* <SummarySectionColumn>
         <MudwayWindow
           isExpanded={summaryVisibility[SummarySection.MudwayWindow]}
         />
         <HighlightEvent
           isExpanded={summaryVisibility[SummarySection.HighlightedEvent]}
         />
-      </SummarySectionColumn>
+      </SummarySectionColumn> */}
     </SummaryContainer>
   );
 };

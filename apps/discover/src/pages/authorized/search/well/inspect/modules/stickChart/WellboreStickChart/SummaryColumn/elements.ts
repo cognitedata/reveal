@@ -8,7 +8,6 @@ import { DURATION } from 'styles/transition';
 import { BodyColumn } from '../../../common/Events/elements';
 
 export const SummaryColumnWrapper = styled(BodyColumn)`
-  width: 400px;
   overflow: hidden;
 `;
 
@@ -82,8 +81,8 @@ export const SummaryColumnSectionContentWrapper = styled.div`
   `}
 `;
 
-export const SummarySectionContent = styled.div`
-  white-space: initial;
+export const SummarySectionContent = styled(FlexColumn)`
+  flex-wrap: wrap;
   font-size: 12px;
   line-height: ${sizes.normal};
   margin-top: ${sizes.small};

@@ -18,7 +18,7 @@ import { FilterItem } from './FilterItem';
 import { MeasurementsFilterItem } from './MeasurementsFilterItem';
 import { NdsFilterItem } from './NdsFilterItem';
 import { NptFilterItem } from './NptFilterItem';
-// import { SummaryFilterItem } from './SummaryFilterItem';
+import { SummaryFilterItem } from './SummaryFilterItem';
 
 interface FilterBarProps {
   columnOrder: ChartColumn[];
@@ -41,7 +41,7 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
     onChangeDepthMeasurementType,
     onNptCodesChange,
     onNdsCodesChange,
-    // onSummaryVisibilityChange,
+    onSummaryVisibilityChange,
     onMeasurementTypesChange,
     onRearrange,
     onColumnVisibilityChange,
@@ -100,15 +100,15 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
 
-          {/* <SummaryFilterItem
-            key={ChartColumn.SUMMARY}
-            onChange={onSummaryVisibilityChange}
-            onFiterVisiblityChange={onColumnVisibilityChange}
-          /> */}
-
           <FilterItem
             key={ChartColumn.TRAJECTORY}
             column={ChartColumn.TRAJECTORY}
+            onFiterVisiblityChange={onColumnVisibilityChange}
+          />
+
+          <SummaryFilterItem
+            key={ChartColumn.SUMMARY}
+            onChange={onSummaryVisibilityChange}
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
         </DragDropContainer>

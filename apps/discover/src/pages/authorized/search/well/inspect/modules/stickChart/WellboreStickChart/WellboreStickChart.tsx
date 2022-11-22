@@ -27,7 +27,7 @@ import { Header } from './Header';
 import { MeasurementsColumn } from './MeasurementsColumn';
 import { NdsEventsColumn } from './NdsEventsColumn';
 import { NptEventsColumn } from './NptEventsColumn';
-// import { SummaryColumn } from './SummaryColumn';
+import { SummaryColumn } from './SummaryColumn';
 import { TrajectoryColumn } from './TrajectoryColumn';
 import { WellboreNdsDetailedView } from './WellboreNdsDetailedView';
 import { WellboreStickChartEmptyState } from './WellboreStickChartEmptyState';
@@ -82,7 +82,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   depthMeasurementType: depthMeasurementTypeProp,
   nptCodesSelecton,
   ndsRiskTypesSelection,
-  // summaryVisibility,
+  summaryVisibility,
   measurementTypesSelection,
 }) => {
   const [columnOrderInternal, setColumnOrderInternal] = useState(columnOrder);
@@ -194,13 +194,6 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 isVisible={columnVisibility[ChartColumn.NPT]}
               />
 
-              {/* <SummaryColumn
-                key={ChartColumn.SUMMARY}
-                {...casingsData}
-                summaryVisibility={summaryVisibility}
-                isVisible={columnVisibility[ChartColumn.SUMMARY]}
-              /> */}
-
               <TrajectoryColumn
                 key={ChartColumn.TRAJECTORY}
                 {...trajectoryData}
@@ -209,6 +202,13 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 depthMeasurementType={depthMeasurementType}
                 trajectoryCurveConfigs={trajectoryCurveConfigs}
                 isVisible={columnVisibility[ChartColumn.TRAJECTORY]}
+              />
+
+              <SummaryColumn
+                key={ChartColumn.SUMMARY}
+                {...casingsData}
+                summaryVisibility={summaryVisibility}
+                isVisible={columnVisibility[ChartColumn.SUMMARY]}
               />
             </DragDropContainer>
           </ContentWrapper>

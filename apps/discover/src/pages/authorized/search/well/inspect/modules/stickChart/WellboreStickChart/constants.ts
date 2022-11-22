@@ -50,8 +50,8 @@ export const DEFAULT_COLUMN_ORDER = [
   ChartColumn.MEASUREMENTS,
   ChartColumn.NDS,
   ChartColumn.NPT,
-  // ChartColumn.SUMMARY,
   ChartColumn.TRAJECTORY,
+  ChartColumn.SUMMARY,
 ];
 
 export const DEFAULT_VISIBLE_COLUMNS = DEFAULT_COLUMN_ORDER.filter(

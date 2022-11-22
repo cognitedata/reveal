@@ -1,6 +1,11 @@
-import { ConvertedDistance } from 'utils/units/constants';
+import { ConvertedDistance, LinearWeight } from 'utils/units/constants';
 
-import { CasingSchematic, CasingAssembly, Distance } from '@cognite/sdk-wells';
+import {
+  CasingSchematic,
+  CasingAssembly,
+  Distance,
+  CasingComponent,
+} from '@cognite/sdk-wells';
 
 export interface CasingSchematicInternal
   extends Omit<CasingSchematic, 'casingAssemblies'> {
@@ -28,6 +33,7 @@ export interface CasingAssemblyInternal
   outsideDiameterFormatted: string;
   insideDiameterFormatted: string;
   isLiner: boolean;
+  components?: Array<CasingComponentInternal>;
 }
 
 export interface CasingAssemblyWithTvd extends CasingAssembly {
@@ -38,4 +44,20 @@ export interface CasingAssemblyWithTvd extends CasingAssembly {
 export interface CasingAssemblyInternalWithTvd extends CasingAssemblyInternal {
   trueVerticalDepthTop?: ConvertedDistance;
   trueVerticalDepthBase?: ConvertedDistance;
+}
+
+export interface CasingComponentInternal
+  extends Omit<
+    CasingComponent,
+    | 'minInsideDiameter'
+    | 'maxOutsideDiameter'
+    | 'topMeasuredDepth'
+    | 'baseMeasuredDepth'
+    | 'linearWeight'
+  > {
+  minInsideDiameter?: ConvertedDistance;
+  maxOutsideDiameter?: ConvertedDistance;
+  topMeasuredDepth?: ConvertedDistance;
+  baseMeasuredDepth?: ConvertedDistance;
+  linearWeight?: LinearWeight;
 }

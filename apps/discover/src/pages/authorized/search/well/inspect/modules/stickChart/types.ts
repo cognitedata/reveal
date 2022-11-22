@@ -74,10 +74,10 @@ export interface DataWithLoadingStatus<T> {
 
 export enum SummarySection {
   CasingSpecification = 'Casing Specification',
-  HoleDepth = 'Hole Depth (NTH)',
-  DrillingParameters = 'Drilling Parameters',
-  MudwayWindow = 'Mudway Window',
-  HighlightedEvent = 'Highlighted Event',
+  // HoleDepth = 'Hole Depth (NTH)',
+  // DrillingParameters = 'Drilling Parameters',
+  // MudwayWindow = 'Mudway Window',
+  // HighlightedEvent = 'Highlighted Event',
 }
 
 export interface SummaryVisibilityProps {
