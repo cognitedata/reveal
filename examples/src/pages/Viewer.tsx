@@ -98,6 +98,7 @@ export function Viewer() {
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         continuousModelStreaming: true,
+        rendererResolutionThreshold: Infinity,
         pointCloudEffects: {
           pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined),
           edlOptions: edlEnabled ? {

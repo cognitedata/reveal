@@ -40,6 +40,8 @@ describe(Image360LoadingCache.name, () => {
       .returns(deferredPromise1)
       .setup(p => p.dispose())
       .returns()
+      .setup(p => p.unload360Image())
+      .returns()
       .object();
 
     const deferredPromise2 = new DeferredPromise<void>();
