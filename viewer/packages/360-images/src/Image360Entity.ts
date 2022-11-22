@@ -7,6 +7,7 @@ import { SceneHandler } from '@reveal/utilities';
 import { Image360Descriptor, Image360FileProvider } from '@reveal/data-providers';
 import { Image360Icon } from './Image360Icon';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
+import { Image360Visualization } from './Image360Visualization';
 
 export class Image360Entity {
   private readonly _imageProvider: Image360FileProvider;
@@ -33,23 +34,8 @@ export class Image360Entity {
     return this._image360Icon;
   }
 
-  /**
-   * Sets the opacity of this 360 image.
-   */
-  set opacity(alpha: number) {
-    this._image360VisualzationBox.opacity = alpha;
-  }
-
-  set scale(newScale: THREE.Vector3) {
-    this._image360VisualzationBox.scale = newScale;
-  }
-
-  set renderOrder(newRenderOrder: number) {
-    this._image360VisualzationBox.renderOrder = newRenderOrder;
-  }
-
-  set visible(isVisible: boolean) {
-    this._image360VisualzationBox.visible = isVisible;
+  get image360Visualization(): Image360Visualization {
+    return this._image360VisualzationBox;
   }
 
   constructor(

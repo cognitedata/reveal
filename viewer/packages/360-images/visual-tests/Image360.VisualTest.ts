@@ -33,7 +33,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       opacity: 1.0
     };
     this.gui.add(guiData, 'opacity', 0, 1).onChange(() => {
-      entities.forEach(entity => (entity.opacity = guiData.opacity));
+      entities.forEach(entity => (entity.image360Visualization.opacity = guiData.opacity));
       this.render();
     });
 
@@ -53,7 +53,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       }
       entity.icon.hoverSpriteVisible = true;
       await facade.preload(entity);
-      entity.visible = false;
+      entity.image360Visualization.visible = false;
       this.render();
     });
 
@@ -69,12 +69,12 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
       if (entity !== undefined) {
         await facade.preload(entity);
-        entity.visible = true;
+        entity.image360Visualization.visible = true;
         entity.icon.visible = false;
 
         if (lastClicked !== undefined) {
-          lastClicked.renderOrder = 1;
-          entity.renderOrder = 0;
+          lastClicked.image360Visualization.renderOrder = 1;
+          entity.image360Visualization.renderOrder = 0;
 
           const transformTo = entity.transform.toArray();
           const translationTo = new THREE.Vector3(transformTo[12], transformTo[13], transformTo[14]);
@@ -84,8 +84,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
           const length = new THREE.Vector3().subVectors(translationTo, translationFrom).length();
 
-          lastClicked.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
-          entity.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
+          lastClicked.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
+          entity.image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
 
           const from = { t: 0 };
           const to = { t: 1 };
@@ -94,7 +94,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
             .onUpdate(() => {
               const asd = new THREE.Vector3().lerpVectors(translationFrom, translationTo, from.t);
               camera.position.copy(asd);
-              lastClicked!.opacity = 1 - from.t;
+              lastClicked!.image360Visualization.opacity = 1 - from.t;
             })
             .easing(num => TWEEN.Easing.Quintic.InOut(num))
             .start(TWEEN.now());

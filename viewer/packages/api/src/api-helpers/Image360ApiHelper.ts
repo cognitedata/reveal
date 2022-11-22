@@ -75,7 +75,8 @@ export class Image360ApiHelper {
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     await this._image360Facade.preload(image360Entity);
-    image360Entity.visible = true;
+    const image360Visualization = image360Entity.image360Visualization;
+    image360Visualization.visible = true;
     const position = new THREE.Vector3().setFromMatrixPosition(image360Entity.transform);
     if (this._activeCameraManager.innerCameraManager !== this._image360Navigation) {
       this._cachedCameraManager = this._activeCameraManager.innerCameraManager;
@@ -86,29 +87,30 @@ export class Image360ApiHelper {
     const lastImage = this._interactionState.lastImage360Entered;
     if (lastImage !== image360Entity) {
       if (lastImage !== undefined) {
+        const lastImageVisualzation = lastImage.image360Visualization;
         const lastPosition = new THREE.Vector3().setFromMatrixPosition(lastImage.transform);
         const length = new THREE.Vector3().subVectors(position, lastPosition).length();
 
-        lastImage.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
-        lastImage.renderOrder = 4;
+        lastImageVisualzation.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
+        lastImageVisualzation.renderOrder = 4;
 
-        image360Entity.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
-        image360Entity.renderOrder = 3;
+        image360Visualization.scale = new THREE.Vector3(length * 2, length * 2, length * 2);
+        image360Visualization.renderOrder = 3;
 
         await Promise.all([this._image360Navigation.moveTo(position, 1000), animateAlpha(lastImage, 0, 1, 800)]);
 
-        lastImage.scale = new THREE.Vector3(1, 1, 1);
-        lastImage.renderOrder = 3;
+        lastImageVisualzation.scale = new THREE.Vector3(1, 1, 1);
+        lastImageVisualzation.renderOrder = 3;
 
-        image360Entity.scale = new THREE.Vector3(1, 1, 1);
-        image360Entity.renderOrder = 3;
+        image360Visualization.scale = new THREE.Vector3(1, 1, 1);
+        image360Visualization.renderOrder = 3;
 
-        lastImage.visible = false;
-        lastImage.opacity = 1;
+        lastImageVisualzation.visible = false;
+        lastImageVisualzation.opacity = 1;
       } else {
         await this._image360Navigation.moveTo(position, 2000);
         if (this._interactionState.lastImage360Entered !== undefined) {
-          this._interactionState.lastImage360Entered.visible = false;
+          this._interactionState.lastImage360Entered.image360Visualization.visible = false;
         }
       }
     }
@@ -121,7 +123,7 @@ export class Image360ApiHelper {
       const tween = new TWEEN.Tween(from)
         .to(to, duration)
         .onUpdate(() => {
-          entity.opacity = 1 - from.alpha;
+          entity.image360Visualization.opacity = 1 - from.alpha;
         })
         .easing(num => TWEEN.Easing.Quintic.InOut(num))
         .start(TWEEN.now());
@@ -138,10 +140,15 @@ export class Image360ApiHelper {
   public exit360Image(): void {
     this._image360Facade.allIconsVisibility = true;
     if (this._interactionState.lastImage360Entered !== undefined) {
-      this._interactionState.lastImage360Entered.visible = false;
+      this._interactionState.lastImage360Entered.image360Visualization.visible = false;
       this._interactionState.lastImage360Entered = undefined;
     }
-    this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager, true);
+    const { position, rotation } = this._image360Navigation.getCameraState();
+    this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager, false);
+    this._activeCameraManager.setCameraState({
+      position,
+      target: new THREE.Vector3(0, 0, -1).applyQuaternion(rotation).add(position)
+    });
   }
 
   public dispose(): void {

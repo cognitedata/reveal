@@ -6,8 +6,9 @@ import * as THREE from 'three';
 import { SceneHandler } from '@reveal/utilities';
 import assert from 'assert';
 import { Image360Face } from '@reveal/data-providers';
+import { Image360Visualization } from './Image360Visualization';
 
-export class Image360VisualizationBox {
+export class Image360VisualizationBox implements Image360Visualization {
   private readonly _worldTransform: THREE.Matrix4;
   private _visualizationMesh: THREE.Mesh | undefined;
   private _faceMaterials: THREE.MeshBasicMaterial[] | undefined;
@@ -112,5 +113,6 @@ export class Image360VisualizationBox {
 
     this._visualizationMesh.geometry.dispose();
     this._visualizationMesh = undefined;
+    this._faceMaterials = undefined;
   }
 }

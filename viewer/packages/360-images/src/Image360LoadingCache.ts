@@ -38,7 +38,7 @@ export class Image360LoadingCache {
 
     if (this._loaded360Images.length === this._cacheSize) {
       const cachePurgedEntity = this._loaded360Images.pop();
-      cachePurgedEntity?.dispose();
+      cachePurgedEntity?.unload360Image();
     }
 
     this._loaded360Images.unshift(entity);
