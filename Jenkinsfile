@@ -73,6 +73,10 @@ String appEnv() {
 }
 
 def scmVars = { };
+// Usually the condition is branch name containing "release-",
+// but because the Fusion branch is called release/fusion we changed it.
+// Ideally should be changed back to "release-" after Fusion branch gets merged to master
+def isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains("release/fusion");
 
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
@@ -268,15 +272,13 @@ pods {
     //   }
     // }
 
-    stageWithNotify('Publish Fusion build', CONTEXTS.publishFusion) {
-      if (!environment.isProduction) {
-        print 'Not pushing to production, no need for Fusion production build'
-        return
-      }
-      dir('fusion') {
-        fas.publish(
-          shouldPublishSourceMap: false
-        )
+      if (isRelease) {
+      stageWithNotify('Publish Fusion build', CONTEXTS.publishFusion) {
+        dir('fusion') {
+          fas.publish(
+            shouldPublishSourceMap: false
+          )
+        }
       }
     }
   }
