@@ -24,6 +24,7 @@ import {
 import { useDefault3DModelRevision } from './hooks';
 import { Loader } from '@cognite/cogs.js';
 import { ResourceTabType } from 'app/containers/ThreeD/NodePreview';
+import { SmartOverlayTool } from 'app/containers/ThreeD/tools/SmartOverlayTool';
 
 export type SecondaryModelOptions = {
   modelId: number;
@@ -34,6 +35,8 @@ export type SecondaryModelOptions = {
 type ThreeDContext = {
   viewer?: Cognite3DViewer;
   setViewer: Dispatch<SetStateAction<Cognite3DViewer | undefined>>;
+  overlayTool?: SmartOverlayTool;
+  setOverlayTool: Dispatch<SetStateAction<SmartOverlayTool | undefined>>;
   threeDModel?: Cognite3DModel;
   set3DModel: Dispatch<SetStateAction<Cognite3DModel | undefined>>;
   pointCloudModel?: CognitePointCloudModel;
@@ -66,6 +69,7 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setAssetDetailsExpanded: () => {},
   setViewState: () => {},
   setViewer: () => {},
+  setOverlayTool: () => {},
   set3DModel: () => {},
   setPointCloudModel: () => {},
   setSplitterColumnWidth: () => {},
@@ -164,6 +168,9 @@ export const ThreeDContextProvider = ({
   } = useMemo(() => getInitialState(), []);
 
   const [viewer, setViewer] = useState<Cognite3DViewer | undefined>();
+  const [overlayTool, setOverlayTool] = useState<
+    SmartOverlayTool | undefined
+  >();
   const [threeDModel, set3DModel] = useState<Cognite3DModel | undefined>();
   const [pointCloudModel, setPointCloudModel] = useState<
     CognitePointCloudModel | undefined
@@ -245,6 +252,8 @@ export const ThreeDContextProvider = ({
       value={{
         viewer,
         setViewer,
+        overlayTool,
+        setOverlayTool,
         threeDModel,
         set3DModel,
         pointCloudModel,

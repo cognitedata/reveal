@@ -38,8 +38,11 @@ import { useQueryClient } from 'react-query';
 import { ThreeDContext } from './ThreeDContext';
 import debounce from 'lodash/debounce';
 import ShareButton from './share-button';
+import AssetLabelsButton from 'app/containers/ThreeD/asset-labels-button/AssetLabelsButton';
+import { LabelEventHandler } from 'app/containers/ThreeD/tools/SmartOverlayTool';
 import MouseWheelAction from 'app/containers/ThreeD/components/MouseWheelAction';
 import LoadSecondaryModels from 'app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
+import OverlayTool from 'app/containers/ThreeD/components/OverlayTool';
 
 type Props = {
   modelId: number;
@@ -66,8 +69,13 @@ export const ThreeDView = ({ modelId }: Props) => {
     secondaryModels,
   } = context;
 
-  const { viewState, setViewState, selectedAssetId, setSelectedAssetId } =
-    context;
+  const {
+    viewState,
+    setViewState,
+    selectedAssetId,
+    setSelectedAssetId,
+    overlayTool,
+  } = context;
   // Changes to the view state in the url should not cause any updates
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialUrlViewState = useMemo(() => viewState, []);
@@ -118,22 +126,33 @@ export const ThreeDView = ({ modelId }: Props) => {
     ]
   );
 
+  const onLabelClick: LabelEventHandler = useCallback(
+    event => {
+      setSelectedAssetId(event.targetLabel.id);
+    },
+    [setSelectedAssetId]
+  );
+
   useEffect(() => {
     if (!selectedAssetId) {
       setAssetDetailsExpanded(false);
     }
   }, [selectedAssetId, setAssetDetailsExpanded]);
 
+  const [labelsVisibility, setLabelsVisibility] = useState(false);
+
   useEffect(() => {
-    if (!viewer || !threeDModel) {
+    if (!viewer || !threeDModel || !overlayTool) {
       return;
     }
 
     if (selectedAssetId) {
       if (assetDetailsExpanded) {
         ghostAsset(sdk, threeDModel, selectedAssetId);
+        overlayTool.visible = false;
       } else {
         highlightAsset(sdk, threeDModel, selectedAssetId);
+        overlayTool.visible = labelsVisibility;
       }
       fitCameraToAsset(
         sdk,
@@ -147,6 +166,7 @@ export const ThreeDView = ({ modelId }: Props) => {
     } else {
       removeAllStyles(threeDModel);
       outlineAssetMappedNodes(threeDModel);
+      overlayTool.visible = labelsVisibility;
     }
   }, [
     assetDetailsExpanded,
@@ -157,6 +177,8 @@ export const ThreeDView = ({ modelId }: Props) => {
     selectedAssetId,
     threeDModel,
     viewer,
+    overlayTool,
+    labelsVisibility,
   ]);
 
   if (!revisionId) {
@@ -190,6 +212,7 @@ export const ThreeDView = ({ modelId }: Props) => {
                   isAssetSelected={!!selectedAssetId}
                   viewer={viewer}
                 />
+                <OverlayTool viewer={viewer} onLabelClick={onLabelClick} />
                 <StyledToolBar>
                   <ExpandButton
                     viewer={viewer}
@@ -207,6 +230,18 @@ export const ThreeDView = ({ modelId }: Props) => {
                   <Slicer
                     viewer={viewer}
                     viewerModel={threeDModel || pointCloudModel}
+                  />
+                  <AssetLabelsButton
+                    labelsVisibility={labelsVisibility}
+                    setLabelsVisibility={setLabelsVisibility}
+                    overlayTool={overlayTool}
+                    threeDModel={threeDModel}
+                  />
+                  <PointSizeSlider pointCloudModel={pointCloudModel} />
+                  <ShareButton
+                    viewState={viewState}
+                    selectedAssetId={selectedAssetId}
+                    assetDetailsExpanded={assetDetailsExpanded}
                   />
                   <PointToPointMeasurementButton
                     viewer={viewer}

@@ -9,7 +9,12 @@ import {
   THREE,
   ViewerState,
 } from '@cognite/reveal';
-import { CogniteClient } from '@cognite/sdk';
+import {
+  CogniteClient,
+  BoundingBox3D,
+  CogniteInternalId,
+  Node3D,
+} from '@cognite/sdk';
 import {
   fetchAssetMappingsByAssetIdQuery,
   fetchClosestAssetIdQuery,
@@ -26,6 +31,13 @@ export const THREE_D_REVISION_ID_QUERY_PARAMETER_KEY = 'revisionId';
 
 export const MINIMUM_BOUNDINGBOX_SIZE = 0.001;
 export const CAMERA_ANIMATION_DURATION = 500;
+
+export const getAssetQueryKey = (assetId: number) => [
+  'cdf',
+  '3d',
+  'assetId',
+  assetId,
+];
 
 const getBoundingBoxByNodeIdQueryKey = (
   modelId: number,
@@ -176,6 +188,33 @@ export const fetchNodeIdByTreeIndex = (
   );
 };
 
+export async function getBoundingBoxesByNodeIds(
+  sdk: CogniteClient,
+  model: Cognite3DModel,
+  nodeIds: CogniteInternalId[]
+): Promise<Map<number, { node: Node3D; bbox: THREE.Box3 }>> {
+  const boundingBoxMap = new Map<number, { node: Node3D; bbox: THREE.Box3 }>();
+  const mappedBoundingBoxPromises = sdk.revisions3D.retrieve3DNodes(
+    model.modelId,
+    model.revisionId,
+    nodeIds.map(id => {
+      return { id };
+    })
+  );
+
+  const mappedBoundingBoxes = await mappedBoundingBoxPromises;
+  mappedBoundingBoxes
+    .flat()
+    .filter(node => node.boundingBox)
+    .forEach(node => {
+      const box = toThreeBox3(node.boundingBox!);
+      box.applyMatrix4(model.getModelTransformation());
+      boundingBoxMap.set(node.id, { node, bbox: box });
+    });
+
+  return boundingBoxMap;
+}
+
 export const findClosestAsset = async (
   sdk: CogniteClient,
   queryClient: QueryClient,
@@ -284,3 +323,28 @@ export const getStateUrl = ({
 
   return `${window.location.pathname}?${searchParams}`;
 };
+
+export function toThreeBox3(
+  boundingBox: BoundingBox3D,
+  out?: THREE.Box3
+): THREE.Box3 {
+  out = out ?? new THREE.Box3();
+  out.min.set(boundingBox.min[0], boundingBox.min[1], boundingBox.min[2]);
+  out.max.set(boundingBox.max[0], boundingBox.max[1], boundingBox.max[2]);
+  return out;
+}
+
+export function mixColorsToCSS(
+  color1: THREE.Color,
+  color2: THREE.Color,
+  ratio: number
+): string {
+  const mixedColor = new THREE.Color();
+  ratio = THREE.MathUtils.clamp(ratio, 0, 1);
+  mixedColor.r = color1.r * ratio + color2.r * (1 - ratio);
+  mixedColor.g = color1.g * ratio + color2.g * (1 - ratio);
+  mixedColor.b = color1.b * ratio + color2.b * (1 - ratio);
+  return `rgb(${mixedColor.r * 255}, ${mixedColor.g * 255}, ${
+    mixedColor.b * 255
+  })`;
+}
