@@ -29,12 +29,9 @@ import {
 } from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
 
-import {
-  LocalPointClassificationsProvider,
-  PointCloudManager,
-  PointCloudNode,
-  Potree
-} from '../../packages/pointclouds';
+import { LocalPointClassificationsProvider, PointCloudManager, PointCloudNode } from '../../packages/pointclouds';
+
+import { Potree } from '../../packages/pointclouds/src/potree-three-loader';
 
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
@@ -354,7 +351,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       }
       return boundingBox;
     } else if (model instanceof PointCloudNode) {
-      return model.potreeNode.boundingBox.clone();
+      return model.getBoundingBox().clone();
     } else {
       throw new Error(`Unkown type of model(${model})`);
     }

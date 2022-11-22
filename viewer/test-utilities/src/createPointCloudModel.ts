@@ -3,20 +3,14 @@
  */
 
 import { Mock } from 'moq.ts';
-import {
-  CognitePointCloudModel,
-  PointCloudNode,
-  PointCloudOctree,
-  Potree,
-  PotreeGroupWrapper,
-  PotreeNodeWrapper
-} from '../../packages/pointclouds';
+import { CognitePointCloudModel, PointCloudNode } from '../../packages/pointclouds';
+
+import { Potree, PointCloudOctree } from '../../packages/pointclouds/src/potree-three-loader';
 
 import * as THREE from 'three';
 
-import { LocalModelDataProvider } from '../../packages/data-providers';
 import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
-import { DEFAULT_CLASSIFICATION, PointCloudMaterial, PointCloudMaterialManager } from '../../packages/rendering';
+import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../packages/rendering';
 import { PointCloudObjectAppearanceTexture } from '../../packages/rendering/src/pointcloud-rendering/PointCloudObjectAppearanceTexture';
 
 export function createPointCloudModel(modelId: number, revisionId: number): CognitePointCloudModel {
@@ -26,11 +20,6 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
 }
 
 export function createPointCloudNode(): PointCloudNode {
-  const modelDataProvider = new LocalModelDataProvider();
-  const potreeInstance = new Potree(modelDataProvider, new Mock<PointCloudMaterialManager>().object());
-
-  const potreeGroup = new PotreeGroupWrapper(potreeInstance);
-
   const pointCloudOctree = new PointCloudOctree(
     new Mock<Potree>().object(),
     new Mock<IPointCloudTreeGeometry>()
@@ -49,7 +38,5 @@ export function createPointCloudNode(): PointCloudNode {
       .object()
   );
 
-  const nodeWrapper = new PotreeNodeWrapper(Symbol('dummy'), pointCloudOctree, [], { classificationSets: [] });
-
-  return new PointCloudNode(potreeGroup, nodeWrapper);
+  return new PointCloudNode(Symbol(), pointCloudOctree, [], { classificationSets: [] });
 }

@@ -5,7 +5,7 @@
 import Stats from 'stats.js';
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import { CogniteModel, THREE } from '@cognite/reveal';
+import * as THREE from 'three'
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
@@ -15,7 +15,8 @@ import {
   CognitePointCloudModel,
   CameraControlsOptions,
   TreeIndexNodeCollection,
-  DefaultCameraManager
+  DefaultCameraManager,
+  CogniteModel
 } from '@cognite/reveal';
 import { DebugCameraTool, ExplodedViewTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -149,6 +150,14 @@ export function Viewer() {
       const guiState = {
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
+        screenshot: {
+          includeUI: true,
+          resolution: {
+            override: false,
+            width: 1920,
+            height: 1080
+          }
+        },
         debug: {
           stats: {
             drawCalls: 0,
@@ -174,6 +183,19 @@ export function Viewer() {
       const guiActions = {
         showCameraHelper: () => {
           guiState.showCameraTool.showCameraHelper();
+        },
+        takeScreenshot: async () => {
+          const width = guiState.screenshot.resolution.override ? guiState.screenshot.resolution.width : undefined;
+          const height = guiState.screenshot.resolution.override ? guiState.screenshot.resolution.height : undefined;
+          const filename = 'example_screenshot' + (guiState.screenshot.resolution.override ? ('_' + width + 'x' + height) : '');
+
+          const url = await viewer.getScreenshot(width, height, guiState.screenshot.includeUI);
+          if (url) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+          }
         }
       };
       initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
@@ -221,6 +243,14 @@ export function Viewer() {
           urlParams.set('ssao', v);
           window.location.href = url.toString();
         });
+
+      const screenshotGui = gui.addFolder('Screenshot');
+      screenshotGui.add(guiActions, 'takeScreenshot').name('Create screenshot');
+      screenshotGui.add(guiState.screenshot, 'includeUI').name('Include UI elements in the screenshot');
+      const resolutionGui = screenshotGui.addFolder('Resolution');
+      resolutionGui.add(guiState.screenshot.resolution, 'override').name('Override Resolution');
+      resolutionGui.add(guiState.screenshot.resolution, 'width').name('Width');
+      resolutionGui.add(guiState.screenshot.resolution, 'height').name('Height');
 
       const debugGui = gui.addFolder('Debug');
       const debugStatsGui = debugGui.addFolder('Statistics');

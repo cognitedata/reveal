@@ -1,5 +1,5 @@
-import { CogniteModel, THREE } from '@cognite/reveal';
-import { AddModelOptions, CogniteCadModel, Cognite3DViewer, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
+import * as THREE from 'three';
+import { AddModelOptions, CogniteModel, CogniteCadModel, Cognite3DViewer, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
 
 import * as dat from 'dat.gui';
 import { isLocalUrlPointCloudModel } from './isLocalUrlPointCloudModel';
