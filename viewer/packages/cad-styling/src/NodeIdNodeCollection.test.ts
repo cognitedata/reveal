@@ -30,7 +30,7 @@ describe(NodeIdNodeCollection.name, () => {
 
     mockModel = new Mock<CdfModelNodeCollectionDataProvider>();
     mockModel.setup(x => x.getModelTransformation()).returns(new THREE.Matrix4());
-    mockModel.setup(x => x.getSourceTransformation()).returns(new THREE.Matrix4());
+    mockModel.setup(x => x.getCdfToDefaultModelTransformation()).returns(new THREE.Matrix4());
   });
 
   test('executeFilter with 1001 nodeIds, splits into two chunks', async () => {
@@ -57,7 +57,7 @@ describe(NodeIdNodeCollection.name, () => {
     const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     await collection.executeFilter([1, 2, 3]);
     mockModel.verify(x => x.getModelTransformation(), Times.Exactly(1));
-    mockModel.verify(x => x.getSourceTransformation(), Times.Exactly(1));
+    mockModel.verify(x => x.getCdfToDefaultModelTransformation(), Times.Exactly(1));
   });
 
   test('deserialize serialized collection works', async () => {

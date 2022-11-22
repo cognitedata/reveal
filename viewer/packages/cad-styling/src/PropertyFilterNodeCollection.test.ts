@@ -27,7 +27,7 @@ describe(PropertyFilterNodeCollection.name, () => {
     model = {
       modelId: 112,
       revisionId: 113,
-      getSourceTransformation: () => new Matrix4(),
+      getCdfToDefaultModelTransformation: () => new Matrix4(),
       getModelTransformation: () => new Matrix4()
     } as CdfModelNodeCollectionDataProvider;
     set = new PropertyFilterNodeCollection(client, model);

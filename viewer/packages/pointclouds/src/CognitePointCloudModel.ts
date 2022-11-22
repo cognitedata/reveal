@@ -108,8 +108,8 @@ export class CognitePointCloudModel {
    * Does not include any custom transformations set by {@link CognitePointcloudmodel.setModelTransformation}
    * @param out Preallocated `THREE.Matrix4` (optional)
    */
-  getSourceTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
-    return this.pointCloudNode.getSourceTransformation(out);
+  getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+    return this.pointCloudNode.getCdfToDefaultModelTransformation(out);
   }
 
   /**

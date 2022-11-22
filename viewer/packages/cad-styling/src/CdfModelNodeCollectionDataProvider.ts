@@ -16,9 +16,9 @@ export interface CdfModelNodeCollectionDataProvider {
   /**
    * Gets the source (+ default) transformation of the model from e.g. CDF space.
    * The current total transformation of the model from the backend to its transform in ThreeJS space
-   * is thus `model.getSourceTransformation * model.getModelTransformation()`.
+   * is thus `model.getCdfToDefaultModelTransformation() * model.getModelTransformation()`.
    */
-  getSourceTransformation(out?: THREE.Matrix4): THREE.Matrix4;
+  getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
 
   /**
    * Total count of nodes in the model

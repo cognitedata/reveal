@@ -68,7 +68,7 @@ export class AssetNodeCollection extends NodeCollection {
     const totalInverseModelTransform = model
       .getModelTransformation()
       .clone()
-      .multiply(model.getSourceTransformation())
+      .multiply(model.getCdfToDefaultModelTransformation())
       .invert();
 
     function mapBoundingBoxToCdf(box?: THREE.Box3) {
@@ -113,7 +113,7 @@ export class AssetNodeCollection extends NodeCollection {
     const totalModelTransformation = this._modelMetadataProvider
       .getModelTransformation()
       .clone()
-      .multiply(this._modelMetadataProvider.getSourceTransformation());
+      .multiply(this._modelMetadataProvider.getCdfToDefaultModelTransformation());
 
     const boundingBoxes = nodeList
       .filter(node => node.boundingBox)

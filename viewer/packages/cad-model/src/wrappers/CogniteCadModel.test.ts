@@ -101,7 +101,7 @@ describe(CogniteCadModel.name, () => {
 
   test('setModelTransform() changes custom transform, not source transform', () => {
     const originalCustomTransform = model.getModelTransformation();
-    const originalSourceTransform = model.getSourceTransformation();
+    const originalSourceTransform = model.getCdfToDefaultModelTransformation();
 
     const modifyingTransform = new THREE.Matrix4().setPosition(1, 2, 3);
 
@@ -112,6 +112,6 @@ describe(CogniteCadModel.name, () => {
     expect(originalCustomTransform).not.toEqual(newTransform);
     expect(newTransform).toEqual(modifyingTransform);
 
-    expect(model.getSourceTransformation()).toEqual(originalSourceTransform);
+    expect(model.getCdfToDefaultModelTransformation()).toEqual(originalSourceTransform);
   });
 });

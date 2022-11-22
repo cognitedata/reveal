@@ -200,7 +200,7 @@ export class PointCloudNode extends Group {
     return out.copy(this._customTransform);
   }
 
-  getSourceTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
+  getCdfToDefaultModelTransformation(out: Matrix4 = new Matrix4()): Matrix4 {
     return out.copy(this._sourceTransform);
   }
 
