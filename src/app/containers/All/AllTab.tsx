@@ -54,13 +54,15 @@ export const AllTab = () => {
 const AllTabContainer = styled.div`
   padding: 16px;
   display: grid;
+  grid-gap: 8px;
   height: 100%;
   overflow-y: auto;
-
   grid-template-columns: 1fr 1fr;
-  grid-gap: 8px;
+
   & > * {
     height: 400px;
+    min-width: 300px;
+    width: 100%;
   }
   & > *:last-child {
     grid-column: 1 / -1;
