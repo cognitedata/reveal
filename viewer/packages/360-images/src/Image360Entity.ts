@@ -34,6 +34,10 @@ export class Image360Entity {
     return this._image360Icon;
   }
 
+  /**
+   * The object containing the unit cube with the 360 images.
+   * @returns Image360Visualization
+   */
   get image360Visualization(): Image360Visualization {
     return this._image360VisualzationBox;
   }
@@ -55,6 +59,9 @@ export class Image360Entity {
     sceneHandler.addCustomObject(this._image360Icon);
   }
 
+  /**
+   * Loads the 360 image (6 faces) into the visualization object.
+   */
   public async load360Image(): Promise<void> {
     await this._imageProvider
       .get360ImageFiles(this._image360Metadata)
@@ -62,10 +69,17 @@ export class Image360Entity {
     this._image360VisualzationBox.visible = false;
   }
 
+  /**
+   * Drops the GPU resources for the 360 image
+   * the icon will be preserved.
+   */
   public unload360Image(): void {
     this._image360VisualzationBox.unloadImages();
   }
 
+  /**
+   * @obvious
+   */
   public dispose(): void {
     this.unload360Image();
     //TODO: dispose icon

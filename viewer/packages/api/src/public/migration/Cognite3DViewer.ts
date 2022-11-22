@@ -677,7 +677,7 @@ export class Cognite3DViewer {
    * @example
    * ```js
    * const eventFilter = { site_id: "12345" };
-   * await viewer.add360ImageSet(eventFilter);
+   * await viewer.add360ImageSet('events', eventFilter);
    * ```
    */
   add360ImageSet(
@@ -697,6 +697,17 @@ export class Cognite3DViewer {
     const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
 
     return this._image360ApiHelper.add360ImageSet(eventFilter, collectionTransform, preMultipliedRotation);
+  }
+
+  /**
+   * Remove a set of 360 images.
+   * @param image360Entities
+   */
+  remove360Images(...image360Entities: Image360Entity[]): Promise<void> {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+    }
+    return this._image360ApiHelper.remove360Images(image360Entities);
   }
 
   /**

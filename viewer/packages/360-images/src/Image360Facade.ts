@@ -38,8 +38,9 @@ export class Image360Facade<T> {
     return image360Entities;
   }
 
-  public delete(entity: Image360Entity): void {
+  public async delete(entity: Image360Entity): Promise<void> {
     pull(this._image360Entities, entity);
+    await this._image360Cache.purge(entity);
     entity.dispose();
   }
 

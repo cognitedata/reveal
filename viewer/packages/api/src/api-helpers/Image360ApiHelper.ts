@@ -73,6 +73,10 @@ export class Image360ApiHelper {
     return this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
   }
 
+  public async remove360Images(entities: Image360Entity[]): Promise<void> {
+    await Promise.all(entities.map(entity => this._image360Facade.delete(entity))).then();
+  }
+
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     await this._image360Facade.preload(image360Entity);
     const image360Visualization = image360Entity.image360Visualization;
@@ -155,6 +159,11 @@ export class Image360ApiHelper {
     this._domElement.removeEventListener('mousemove', this._domEventHandlers.setHoverIconEventHandler);
     this._domElement.addEventListener('pointerup', this._domEventHandlers.enter360Image);
     this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
+
+    if (this._activeCameraManager.innerCameraManager === this._image360Navigation) {
+      this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
+    }
+
     this._image360Navigation.dispose();
   }
 

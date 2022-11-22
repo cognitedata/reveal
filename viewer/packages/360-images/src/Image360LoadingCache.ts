@@ -3,6 +3,7 @@
  */
 
 import { Image360Entity } from './Image360Entity';
+import pull from 'lodash/pull';
 
 export class Image360LoadingCache {
   private readonly _loaded360Images: Image360Entity[];
@@ -43,5 +44,12 @@ export class Image360LoadingCache {
 
     this._loaded360Images.unshift(entity);
     this._inFlightEntities.delete(entity);
+  }
+
+  public async purge(entity: Image360Entity): Promise<void> {
+    if (this._inFlightEntities.has(entity)) {
+      await this._inFlightEntities.get(entity);
+    }
+    pull(this._loaded360Images, entity);
   }
 }
