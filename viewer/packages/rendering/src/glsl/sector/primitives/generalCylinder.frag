@@ -40,6 +40,8 @@ in float v_radius;
 void main()
 {
     highp float v_treeIndex = unpackTreeIndex(v_treeIndexPacked);
+
+    // Redo appearance texture lookup from vertex shader due to limit in transferable attributes
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
 
     vec4 color = determineColor(v_color, appearance);

@@ -26,6 +26,8 @@ in highp vec2 v_treeIndexPacked;
 void main()
 {
     highp float v_treeIndex = unpackTreeIndex(v_treeIndexPacked);
+
+    // Redo appearance texture lookup from vertex shader due to limit in transferable attributes
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
 
     if (isClipped(appearance, vViewPosition)) {
