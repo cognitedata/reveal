@@ -329,7 +329,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
-   * Gets transformation from model source (e.g. CDF) space to ThreeJS space,
+   * Gets transformation from CDF space to ThreeJS space,
    * which includes any additional "default" transformations assigned to this model.
    * Does not include any custom transformations set by {@link CognitePointcloudmodel.setModelTransformation}
    * @param out Preallocated `THREE.Matrix4` (optional)
