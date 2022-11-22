@@ -13,6 +13,7 @@ type ChartActionProps = {
   handleImportCalculationsClick: () => void;
 };
 
+// need it for Dropdown
 const ChartActionButtonRef = React.forwardRef<HTMLButtonElement, any>(
   (props, ref) => <ChartActionStyledButton ref={ref} {...props} />
 );

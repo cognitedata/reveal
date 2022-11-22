@@ -97,8 +97,14 @@ export const RootAppFusion = () => {
       <SDKProvider sdk={sdk}>
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
-            {/** @ts-ignore */}
-            <DataExplorationProvider sdk={sdk}>
+            <DataExplorationProvider
+              // @ts-ignore
+              sdk={sdk}
+              overrideURLMap={{
+                pdfjsWorkerSrc:
+                  '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+              }}
+            >
               <SubAppWrapper title="Charts">
                 <Sentry.ErrorBoundary
                   fallback={<p>An error has occurred</p>}
