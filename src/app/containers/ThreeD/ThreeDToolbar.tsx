@@ -17,7 +17,7 @@ export const HomeButton = () => {
   const navigate = useNavigate();
 
   return (
-    <Tooltip content="All 3D models">
+    <Tooltip content="All 3D models" placement="right">
       <Button
         icon="Home"
         aria-label="Home"
@@ -42,7 +42,7 @@ export const ExpandButton = ({
   }
 
   return (
-    <Tooltip content="Fit view">
+    <Tooltip content="Fit view" placement="right">
       <Button
         icon="ExpandAlternative"
         aria-label="Fit to view"
@@ -77,7 +77,7 @@ export const FocusAssetButton = ({
   }
 
   return (
-    <Tooltip content="Fit asset">
+    <Tooltip content="Fit asset" placement="right">
       <Button
         icon="Collapse"
         onClick={() => {
@@ -135,7 +135,7 @@ export const PointToPointMeasurementButton = ({
   };
 
   return (
-    <Tooltip content="Distance measuring tool">
+    <Tooltip content="Distance measuring tool" placement="right">
       <Button
         icon="Ruler"
         onClick={handleClick}

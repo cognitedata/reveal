@@ -54,7 +54,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
       }
       placement="right-end"
     >
-      <Tooltip content="Slice">
+      <Tooltip content="Slice" placement="right">
         <Button icon="Slice" type="ghost" />
       </Tooltip>
     </Dropdown>
