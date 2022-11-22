@@ -103,7 +103,7 @@ export function Reveal({
 
       try {
         model = await viewer.addModel({
-          modelId: modelId,
+          modelId,
           revisionId,
         });
       } catch {

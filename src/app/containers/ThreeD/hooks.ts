@@ -18,6 +18,11 @@ import {
   UseQueryOptions,
 } from 'react-query';
 import { prepareSearchString } from './utils';
+import {
+  Cognite3DModel,
+  Cognite3DViewer,
+  CognitePointCloudModel,
+} from '@cognite/reveal';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];
@@ -373,3 +378,56 @@ export const fetchClosestAssetIdQuery = async (
     options
   );
 };
+export const SECONDARY_MODEL_BASE_QUERY_KEY = 'reveal-secondary-model';
+
+export const getSecondaryModelQueryKey = (
+  modelId: number,
+  revisionId: number
+) => [SECONDARY_MODEL_BASE_QUERY_KEY, modelId, revisionId];
+
+export const getSecondaryModelAppliedStateQueryKey = (
+  modelId: number,
+  revisionId: number,
+  applied?: boolean
+) => [...getSecondaryModelQueryKey(modelId, revisionId), applied];
+
+export const getSecondaryModelQueryFn =
+  (
+    queryClient: QueryClient,
+    viewer: Cognite3DViewer,
+    modelId: number,
+    revisionId: number,
+    applied?: boolean
+  ) =>
+  async () => {
+    if (applied === undefined) {
+      return undefined;
+    }
+
+    queryClient.invalidateQueries(
+      getSecondaryModelAppliedStateQueryKey(modelId, revisionId, !applied)
+    );
+
+    const hasAdded = (
+      viewer.models as (Cognite3DModel | CognitePointCloudModel)[]
+    ).some(
+      ({ modelId: tmId, revisionId: trId }) =>
+        modelId === tmId && revisionId === trId
+    );
+
+    if (applied && !hasAdded) {
+      await viewer.addModel({ modelId, revisionId });
+    } else if (!applied && hasAdded) {
+      const modelToRemove = (
+        viewer.models as (Cognite3DModel | CognitePointCloudModel)[]
+      ).find(
+        ({ modelId: tmId, revisionId: trId }) =>
+          modelId === tmId && revisionId === trId
+      );
+      if (modelToRemove) {
+        viewer.removeModel(modelToRemove);
+      }
+    }
+
+    return applied;
+  };

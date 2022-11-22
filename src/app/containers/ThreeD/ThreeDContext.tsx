@@ -18,11 +18,18 @@ import {
   THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY as EXPANDED_KEY,
   THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY as SELECTED_ASSET_KEY,
   THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY as VIEW_STATE_KEY,
+  THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY as SECONDARY_MODELS_KEY,
   THREE_D_REVISION_ID_QUERY_PARAMETER_KEY as REVISION_KEY,
 } from './utils';
 import { useDefault3DModelRevision } from './hooks';
 import { Loader } from '@cognite/cogs.js';
 import { ResourceTabType } from 'app/containers/ThreeD/NodePreview';
+
+export type SecondaryModelOptions = {
+  modelId: number;
+  revisionId: number;
+  applied?: boolean;
+};
 
 type ThreeDContext = {
   viewer?: Cognite3DViewer;
@@ -45,6 +52,8 @@ type ThreeDContext = {
   setSplitterColumnWidth: Dispatch<SetStateAction<number>>;
   tab?: ResourceTabType;
   setTab: Dispatch<SetStateAction<ResourceTabType | undefined>>;
+  secondaryModels: SecondaryModelOptions[];
+  setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
 };
 
 const DETAILS_COLUMN_WIDTH = '@cognite/3d-details-column-width';
@@ -62,6 +71,8 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setSplitterColumnWidth: () => {},
   setRevisionId: () => {},
   setTab: () => {},
+  secondaryModels: [],
+  setSecondaryModels: () => {},
 });
 ThreeDContext.displayName = 'ThreeDContext';
 
@@ -91,6 +102,22 @@ const getInitialState = () => {
     }
   })();
 
+  const secondaryModels = (() => {
+    const s = initialParams.get(SECONDARY_MODELS_KEY);
+    try {
+      if (s) {
+        const models = JSON.parse(s) as Pick<
+          SecondaryModelOptions,
+          'modelId' | 'revisionId'
+        >[];
+        return models.map(model => ({ ...model, applied: true }));
+      }
+      return [];
+    } catch {
+      return [];
+    }
+  })();
+
   const splitterColumnWidth = (() => {
     try {
       const lsNumber = parseInt(
@@ -116,6 +143,7 @@ const getInitialState = () => {
     expanded,
     revisionId,
     splitterColumnWidth,
+    secondaryModels,
   };
 };
 
@@ -131,6 +159,7 @@ export const ThreeDContextProvider = ({
     selectedAssetId: initialSelectedAssetId,
     viewState: initialViewState,
     splitterColumnWidth: initialSplitterColumnWidth,
+    secondaryModels: initialSecondaryModels,
     revisionId: initialRevisionId,
   } = useMemo(() => getInitialState(), []);
 
@@ -153,6 +182,9 @@ export const ThreeDContextProvider = ({
   );
   const [assetDetailsExpanded, setAssetDetailsExpanded] =
     useState<boolean>(initialExpanded);
+  const [secondaryModels, setSecondaryModels] = useState<
+    SecondaryModelOptions[]
+  >(initialSecondaryModels);
 
   const {
     isFetching: fetchingDefaultRevision,
@@ -180,9 +212,16 @@ export const ThreeDContextProvider = ({
         selectedAssetId,
         viewState,
         assetDetailsExpanded,
+        secondaryModels,
       })
     );
-  }, [assetDetailsExpanded, revisionId, selectedAssetId, viewState]);
+  }, [
+    assetDetailsExpanded,
+    revisionId,
+    selectedAssetId,
+    viewState,
+    secondaryModels,
+  ]);
 
   useEffect(() => {
     try {
@@ -222,6 +261,8 @@ export const ThreeDContextProvider = ({
         setRevisionId,
         tab,
         setTab,
+        secondaryModels,
+        setSecondaryModels,
       }}
     >
       {children}

@@ -39,6 +39,7 @@ import { ThreeDContext } from './ThreeDContext';
 import debounce from 'lodash/debounce';
 import ShareButton from './share-button';
 import MouseWheelAction from 'app/containers/ThreeD/components/MouseWheelAction';
+import LoadSecondaryModels from 'app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
 
 type Props = {
   modelId: number;
@@ -62,6 +63,7 @@ export const ThreeDView = ({ modelId }: Props) => {
     revisionId,
     tab,
     setTab,
+    secondaryModels,
   } = context;
 
   const { viewState, setViewState, selectedAssetId, setSelectedAssetId } =
@@ -75,7 +77,8 @@ export const ThreeDView = ({ modelId }: Props) => {
   useEffect(() => {
     if (viewer && setViewState) {
       const fn = debounce(() => {
-        setViewState(viewer.getViewState());
+        const currentState = viewer.getViewState();
+        setViewState({ camera: currentState.camera });
       }, 500);
       viewer.on('sceneRendered', fn);
       return () => viewer.off('sceneRendered', fn);
@@ -121,17 +124,10 @@ export const ThreeDView = ({ modelId }: Props) => {
     }
   }, [selectedAssetId, setAssetDetailsExpanded]);
 
-  // Hack to avoid having an initial selectedAssetId overwriting viewState
-  const [firstRender, setFirstRender] = useState(true);
   useEffect(() => {
     if (!viewer || !threeDModel) {
       return;
     }
-    if (firstRender && viewState) {
-      setFirstRender(false);
-      return;
-    }
-    setFirstRender(false);
 
     if (selectedAssetId) {
       if (assetDetailsExpanded) {
@@ -152,8 +148,6 @@ export const ThreeDView = ({ modelId }: Props) => {
       removeAllStyles(threeDModel);
       outlineAssetMappedNodes(threeDModel);
     }
-    // Ignore changes to `viewState` and `firstRender`
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     assetDetailsExpanded,
     modelId,
@@ -188,6 +182,10 @@ export const ThreeDView = ({ modelId }: Props) => {
           >
             {({ pointCloudModel, threeDModel, viewer }) => (
               <>
+                <LoadSecondaryModels
+                  secondaryModels={secondaryModels}
+                  viewer={viewer}
+                />
                 <MouseWheelAction
                   isAssetSelected={!!selectedAssetId}
                   viewer={viewer}
@@ -220,6 +218,7 @@ export const ThreeDView = ({ modelId }: Props) => {
                     viewState={viewState}
                     selectedAssetId={selectedAssetId}
                     assetDetailsExpanded={assetDetailsExpanded}
+                    secondaryModels={secondaryModels}
                   />
                   <HelpButton />
                 </StyledToolBar>

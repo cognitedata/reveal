@@ -6,16 +6,16 @@ import styled from 'styled-components';
 
 import ThreeDTimestamp from 'app/containers/ThreeD/timestamp/ThreeDTimestamp';
 import { useRevisions } from 'app/containers/ThreeD/hooks';
-import { SecondaryModelState } from 'app/containers/ThreeD/title/ThreeDTitle';
+import { SecondaryModelOptions } from 'app/containers/ThreeD/ThreeDContext';
 
 export const SecondaryThreeDModelMenuItem = ({
   model,
-  setState,
-  state,
+  onChange,
+  options,
 }: {
   model: Model3D;
-  setState: (nextState: SecondaryModelState[number]) => void;
-  state?: SecondaryModelState[number];
+  onChange: (nextState: SecondaryModelOptions) => void;
+  options?: SecondaryModelOptions;
 }) => {
   const { data: revisions = [], isFetched } = useRevisions(model.id);
   const defaultRevision = revisions
@@ -23,42 +23,46 @@ export const SecondaryThreeDModelMenuItem = ({
     : undefined;
 
   const selectedRevision = revisions?.find(
-    ({ id }) => id === state?.revisionId
+    ({ id }) => id === options?.revisionId
   );
 
   useEffect(() => {
-    if (isFetched && !state) {
-      setState({
-        revisionId: defaultRevision?.id,
-        selected: false,
+    if (isFetched && !options && defaultRevision) {
+      onChange({
+        modelId: model.id,
+        revisionId: defaultRevision.id,
+        applied: false,
       });
     }
-  }, [defaultRevision, isFetched, revisions, setState, state]);
+  }, [defaultRevision, isFetched, model, onChange, options]);
 
   const handleClickModelMenuItem = (checked: boolean): void => {
-    setState({
-      ...state,
-      selected: checked,
-    });
+    if (options) {
+      onChange({
+        ...options,
+        applied: checked,
+      });
+    }
   };
 
   const handleSelectRevision = (selectedRevisionId: number): void => {
-    setState({
-      selected: true,
+    onChange({
+      modelId: model.id,
       revisionId: selectedRevisionId,
+      applied: true,
     });
   };
 
   const menuItemContent = (
     <StyledMenuItemContent gap={8}>
       <Checkbox
-        checked={!!state?.selected}
+        checked={!!options?.applied}
         disabled={!revisions?.length}
         name={`model-${model.id}`}
         onChange={c => handleClickModelMenuItem(c)}
       />
       <Flex alignItems="flex-start" direction="column">
-        <StyledSecondaryThreeDModelBody $isSelected={state?.selected}>
+        <StyledSecondaryThreeDModelBody $isSelected={options?.applied}>
           {model.name}
         </StyledSecondaryThreeDModelBody>
         <StyledSecondaryThreeDModelDetail>
@@ -90,14 +94,14 @@ export const SecondaryThreeDModelMenuItem = ({
         <Menu>
           {revisions?.map(({ createdTime, id, index, published }) => (
             <StyledRevisionMenuItem
-              $isSelected={id === state?.revisionId}
-              appendIcon={id === state?.revisionId ? 'Checkmark' : undefined}
+              $isSelected={id === options?.revisionId}
+              appendIcon={id === options?.revisionId ? 'Checkmark' : undefined}
               key={id}
               onClick={() => handleSelectRevision(id)}
             >
               <StyledMenuItemContent alignItems="flex-start" direction="column">
                 <StyledSecondaryThreeDModelBody
-                  $isSelected={id === state?.revisionId}
+                  $isSelected={id === options?.revisionId}
                 >
                   Revision {index}
                 </StyledSecondaryThreeDModelBody>

@@ -1,30 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext } from 'react';
 
 import { createLink, PageTitle, SecondaryTopbar } from '@cognite/cdf-utilities';
-import { Button, Input, Menu } from '@cognite/cogs.js';
-import {
-  ThreeDModelsResponse,
-  useInfinite3DModels,
-} from '@cognite/data-exploration';
-import { Model3D } from '@cognite/sdk';
 import { Alert } from 'antd';
-import { isEqual } from 'lodash';
-import styled from 'styled-components';
 
 import {
   use3DModel,
   useDefault3DModelRevision,
   useRevisionIndex,
 } from 'app/containers/ThreeD/hooks';
-import { MainThreeDModelMenuItem } from 'app/containers/ThreeD/title/MainThreeDModelMenuItem';
-import { SecondaryThreeDModelMenuItem } from 'app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
-
-export type SecondaryModelState = {
-  [modelId: number]: {
-    revisionId?: number;
-    selected?: boolean;
-  };
-};
+import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
+import SecondaryModelDropdown from 'app/containers/ThreeD/title/SecondaryModelDropdown';
 
 export const ThreeDTitle = ({ id }: { id: number }): JSX.Element => {
   const { data: apiThreeDModel, error: modelError, isSuccess } = use3DModel(id);
@@ -38,69 +23,10 @@ export const ThreeDTitle = ({ id }: { id: number }): JSX.Element => {
     enabled: !!revision?.id,
   });
 
+  const { secondaryModels, setSecondaryModels, viewer } =
+    useContext(ThreeDContext);
+
   const goBackFallback = createLink('/explore/search/threeD');
-
-  const [appliedSecondaryModelState, setAppliedSecondaryModelState] =
-    useState<SecondaryModelState>({});
-  const [tempSecondaryModelState, setTempSecondaryModelState] =
-    useState<SecondaryModelState>({});
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const canApply = !isEqual(
-    appliedSecondaryModelState,
-    tempSecondaryModelState
-  );
-
-  const {
-    data: modelData = { pages: [] as ThreeDModelsResponse[] },
-    fetchNextPage: fetchMore,
-    hasNextPage: canFetchMore,
-    isFetchingNextPage: isFetchingMore,
-  } = useInfinite3DModels();
-
-  useEffect(() => {
-    if (canFetchMore && !isFetchingMore) {
-      fetchMore();
-    }
-  }, [canFetchMore, fetchMore, isFetchingMore]);
-
-  const models = useMemo(
-    () =>
-      modelData.pages
-        .reduce((accl, t) => accl.concat(t.items), [] as Model3D[])
-        .filter(({ id: testId }) => testId !== id)
-        .sort((a, b) =>
-          a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
-        ),
-    [id, modelData]
-  );
-
-  const filteredModels = useMemo(() => {
-    return models.filter(({ name }) =>
-      name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [models, searchQuery]);
-
-  const handleApply = (): void => {
-    setAppliedSecondaryModelState({ ...tempSecondaryModelState });
-  };
-
-  const handleModelStateChange = (
-    modelId: number,
-    nextState: SecondaryModelState[number]
-  ): void => {
-    setTempSecondaryModelState(prevState => ({
-      ...prevState,
-      [modelId]: nextState,
-    }));
-
-    if (!appliedSecondaryModelState[modelId]) {
-      setAppliedSecondaryModelState(prevState => ({
-        ...prevState,
-        [modelId]: nextState,
-      }));
-    }
-  };
 
   const error = modelError || revisionError;
   if (error) {
@@ -128,48 +54,17 @@ export const ThreeDTitle = ({ id }: { id: number }): JSX.Element => {
             : undefined
         }
         dropdownProps={
-          filteredModels && {
+          apiThreeDModel &&
+          revision &&
+          viewer && {
             content: (
-              <Menu>
-                <Input
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Search"
-                  value={searchQuery}
-                />
-                <Menu.Header>Main Model</Menu.Header>
-                {apiThreeDModel && revision && (
-                  <MainThreeDModelMenuItem
-                    model={apiThreeDModel}
-                    revision={revision}
-                  />
-                )}
-                <Menu.Divider />
-                <StyledSecondaryModelListContainer>
-                  <Menu.Header>Secondary Model</Menu.Header>
-                  {filteredModels.length ? (
-                    filteredModels.map(m => (
-                      <SecondaryThreeDModelMenuItem
-                        key={m.id}
-                        model={m}
-                        state={tempSecondaryModelState[m.id]}
-                        setState={nextState => {
-                          handleModelStateChange(m.id, nextState);
-                        }}
-                      />
-                    ))
-                  ) : (
-                    <Menu.Item disabled>No model found</Menu.Item>
-                  )}
-                </StyledSecondaryModelListContainer>
-                <Menu.Divider />
-                <StyledApplyButton
-                  disabled={!canApply}
-                  onClick={handleApply}
-                  type="primary"
-                >
-                  Apply
-                </StyledApplyButton>
-              </Menu>
+              <SecondaryModelDropdown
+                mainModel={apiThreeDModel}
+                mainRevision={revision}
+                secondaryModels={secondaryModels}
+                setSecondaryModels={setSecondaryModels}
+                viewer={viewer}
+              />
             ),
           }
         }
@@ -182,14 +77,3 @@ export const ThreeDTitle = ({ id }: { id: number }): JSX.Element => {
     </>
   );
 };
-
-const StyledSecondaryModelListContainer = styled.div`
-  margin: -4px -8px;
-  padding: 4px 8px;
-  max-height: 60vh;
-  overflow-y: auto;
-`;
-
-const StyledApplyButton = styled(Button)`
-  margin-top: 4px;
-`;

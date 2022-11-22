@@ -14,12 +14,14 @@ import {
   fetchAssetMappingsByAssetIdQuery,
   fetchClosestAssetIdQuery,
 } from 'app/containers/ThreeD/hooks';
+import { SecondaryModelOptions } from 'app/containers/ThreeD/ThreeDContext';
 
 import { FetchQueryOptions, QueryClient } from 'react-query';
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
 export const THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY = 'expanded';
+export const THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY = 'secondaryModels';
 export const THREE_D_REVISION_ID_QUERY_PARAMETER_KEY = 'revisionId';
 
 export const MINIMUM_BOUNDINGBOX_SIZE = 0.001;
@@ -228,11 +230,13 @@ export const getStateUrl = ({
   viewState,
   assetDetailsExpanded,
   selectedAssetId,
+  secondaryModels,
 }: {
   revisionId?: number;
   viewState?: ViewerState;
   selectedAssetId?: number;
   assetDetailsExpanded?: boolean;
+  secondaryModels?: SecondaryModelOptions[];
 }) => {
   const searchParams = new URLSearchParams(window.location.search);
   if (revisionId) {
@@ -257,6 +261,18 @@ export const getStateUrl = ({
   } else {
     searchParams.delete(THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY);
   }
+  if (secondaryModels) {
+    const selectedModels = secondaryModels
+      .filter(model => !!model.applied)
+      .map(model => ({ modelId: model.modelId, revisionId: model.revisionId }));
+    searchParams.set(
+      THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY,
+      JSON.stringify(selectedModels)
+    );
+  } else {
+    searchParams.delete(THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY);
+  }
+
   if (viewState) {
     searchParams.set(
       THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY,
