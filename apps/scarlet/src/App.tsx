@@ -10,23 +10,21 @@ import { AppProvider } from 'contexts';
 
 const App = () => (
   <Container sidecar={sidecar}>
-    <>
-      <GlobalStyles />
-      <MenuBar />
-      <div style={{ height: 'calc(100vh - 56px)' }}>
-        <AppProvider>
-          <Switch>
-            <Route path={PAGES.EQUIPMENT} render={() => <Equipment />} />
-            <Route path={PAGES.UNIT} render={() => <Home />} />
-            <Route path={PAGES.FACILITY} render={() => <Home />} />
-            <Route path={PAGES.HOME} render={() => <Home />} />
-            <Redirect from="" to={PAGES.HOME} />
-            <Redirect from="/" to={PAGES.HOME} />
-            <Route render={() => <NotFoundPage />} />
-          </Switch>
-        </AppProvider>
-      </div>
-    </>
+    <GlobalStyles />
+    <MenuBar />
+    <div style={{ height: 'calc(100vh - 56px)' }}>
+      <AppProvider>
+        <Switch>
+          <Route path={PAGES.EQUIPMENT} render={() => <Equipment />} />
+          <Route path={PAGES.UNIT} render={() => <Home />} />
+          <Route path={PAGES.FACILITY} render={() => <Home />} />
+          <Route path={PAGES.HOME} render={() => <Home />} />
+          <Redirect from="" to={PAGES.HOME} />
+          <Redirect from="/" to={PAGES.HOME} />
+          <Route render={() => <NotFoundPage />} />
+        </Switch>
+      </AppProvider>
+    </div>
   </Container>
 );
 

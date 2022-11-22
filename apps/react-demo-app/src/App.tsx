@@ -15,25 +15,23 @@ import DocumentSearch from 'pages/DocumentSearch';
 
 const App = () => (
   <Container sidecar={sidecar}>
-    <>
-      <GlobalStyles />
-      <MenuBar />
+    <GlobalStyles />
+    <MenuBar />
 
-      <Switch>
-        <Route path={PAGES.HOME} render={() => <Home />} />
-        <Route path={PAGES.INFO} render={() => <Info />} />
-        <Route path={PAGES.SDK} render={() => <CogniteSDK />} />
-        <Route path={PAGES.INTERCOM} render={() => <Intercom />} />
-        <Route path={PAGES.LOGOUT} render={() => <Logout />} />
-        <Route path={PAGES.COMMENTS} exact render={() => <Comments />} />
-        <Route path={PAGES.COMMENTS_DRAWER} render={() => <CommentDrawer />} />
-        <Route path={PAGES.COMMENTS_SLIDER} render={() => <CommentSlider />} />
-        <Route path={PAGES.DOCUMENTS} render={() => <DocumentSearch />} />
-        <Redirect from="" to={PAGES.HOME} />
-        <Redirect from="/" to={PAGES.HOME} />
-        <Route render={() => <NotFoundPage />} />
-      </Switch>
-    </>
+    <Switch>
+      <Route path={PAGES.HOME} render={() => <Home />} />
+      <Route path={PAGES.INFO} render={() => <Info />} />
+      <Route path={PAGES.SDK} render={() => <CogniteSDK />} />
+      <Route path={PAGES.INTERCOM} render={() => <Intercom />} />
+      <Route path={PAGES.LOGOUT} render={() => <Logout />} />
+      <Route path={PAGES.COMMENTS} exact render={() => <Comments />} />
+      <Route path={PAGES.COMMENTS_DRAWER} render={() => <CommentDrawer />} />
+      <Route path={PAGES.COMMENTS_SLIDER} render={() => <CommentSlider />} />
+      <Route path={PAGES.DOCUMENTS} render={() => <DocumentSearch />} />
+      <Redirect from="" to={PAGES.HOME} />
+      <Redirect from="/" to={PAGES.HOME} />
+      <Route render={() => <NotFoundPage />} />
+    </Switch>
   </Container>
 );
 
