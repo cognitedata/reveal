@@ -59,7 +59,7 @@ describe(ProxyCameraManager.name, () => {
     expect(cameraChangedResults[0][0]).toBe(cameraOnePositionResult);
     expect(cameraChangedResults[0][1]).toBe(cameraOneTargetResult);
 
-    activeCameraManager.setActiveCameraManager(cameraManagerTwo, false);
+    activeCameraManager.setActiveCameraManager(cameraManagerTwo);
 
     cameraManagerOne.setCameraState({});
 
