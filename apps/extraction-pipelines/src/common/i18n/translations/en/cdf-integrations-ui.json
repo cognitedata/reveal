@@ -114,7 +114,7 @@
   "meta-data-hint": "Information specific to your organization can be added using metadata fields with key/value pairs.",
   "meta-data-title": "Document metadata associated with the extraction pipeline",
   "name": "Name",
-  "name-placeholder": "Firstname Lastname",
+  "name-placeholder": "Enter name",
   "no-access": "You have insufficient access rights to access this feature",
   "no-access-desc": "To access this page you must have one of the following capabilities:",
   "no-activity-alert": "Send an alert if there has been no activity for",
