@@ -1,6 +1,6 @@
 import * as dat from 'dat.gui';
 import * as THREE from 'three';
-import { CogniteCadModel, Cognite3DViewer, DefaultCameraManager } from "@cognite/reveal";
+import { CogniteCadModel, Cognite3DViewer } from "@cognite/reveal";
 import { CogniteClient, Node3D } from "@cognite/sdk";
 import { TreeIndexNodeCollection } from '@cognite/reveal';
 import { NumericRange } from '@cognite/reveal';
