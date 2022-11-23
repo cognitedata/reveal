@@ -122,6 +122,8 @@ export class NodeAppearanceTextureBuilder {
     this._styleProvider.applyStyles((treeIndices, appearance) => {
       // Translate from style to magic values in textures
       const fullStyle = { ...this._defaultAppearance, ...appearance };
+      fullStyle.color = appearance.color; // Ensure color is undefined if appearance.color is
+
       this.applyStyleToNodes(treeIndices, fullStyle);
     });
 
@@ -247,7 +249,7 @@ function fillRGBA(rgbaBuffer: Uint8ClampedArray, style: NodeAppearance) {
 function combineRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style: NodeAppearance) {
   const [r, g, b, a] = appearanceToColorOverride(style);
   // Create a bit mask for updating color (update if style contains color, don't update if it doesn't)
-  const updateRgbBitmask = style.color !== undefined && !style.color.equals(new THREE.Color('black')) ? 0b11111111 : 0;
+  const updateRgbBitmask = style.color === undefined ? 0 : 0b11111111;
   const keepRgbBitmask = ~updateRgbBitmask;
   const updateR = r & updateRgbBitmask;
   const updateG = g & updateRgbBitmask;
