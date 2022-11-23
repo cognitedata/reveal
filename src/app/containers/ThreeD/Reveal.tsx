@@ -144,7 +144,7 @@ export function Reveal({
     }
   }, [error]);
 
-  const { threeDModel } = models || {
+  const { threeDModel } = models ?? {
     threeDModel: undefined,
     pointCloudModel: undefined,
   };
@@ -192,8 +192,7 @@ export function Reveal({
   }, [_onViewerClick, previousClickHandler, viewer]);
 
   useViewerDoubleClickListener({
-    viewer: viewer!,
-    model: threeDModel!,
+    viewer: viewer,
     nodesSelectable: nodesSelectable,
   });
 
