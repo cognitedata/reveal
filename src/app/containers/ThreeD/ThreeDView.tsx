@@ -12,6 +12,7 @@ import { AssetMappingsSidebar } from './AssetMappingsSidebar';
 import {
   ExpandButton,
   FocusAssetButton,
+  HighlightAssetsButton,
   HelpButton,
   PointToPointMeasurementButton,
   ShareButton,
@@ -28,7 +29,7 @@ import {
   fitCameraToAsset,
   ghostAsset,
   highlightAsset,
-  outlineAssetMappedNodes,
+  highlightAssetMappedNodes,
   removeAllStyles,
 } from './utils';
 
@@ -63,6 +64,7 @@ export const ThreeDView = ({ modelId }: Props) => {
     viewer,
     threeDModel,
     assetDetailsExpanded,
+    assetHighlightMode,
     setAssetDetailsExpanded,
     splitterColumnWidth,
     setSplitterColumnWidth,
@@ -70,15 +72,14 @@ export const ThreeDView = ({ modelId }: Props) => {
     tab,
     setTab,
     secondaryModels,
-  } = context;
-
-  const {
+    setAssetHighlightMode,
     viewState,
     setViewState,
     selectedAssetId,
     setSelectedAssetId,
     overlayTool,
   } = context;
+
   // Changes to the view state in the url should not cause any updates
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialUrlViewState = useMemo(() => viewState, []);
@@ -148,15 +149,9 @@ export const ThreeDView = ({ modelId }: Props) => {
     if (!viewer || !threeDModel || !overlayTool) {
       return;
     }
+    removeAllStyles(threeDModel);
 
     if (selectedAssetId) {
-      if (assetDetailsExpanded) {
-        ghostAsset(sdk, threeDModel, selectedAssetId);
-        overlayTool.visible = false;
-      } else {
-        highlightAsset(sdk, threeDModel, selectedAssetId);
-        overlayTool.visible = labelsVisibility;
-      }
       fitCameraToAsset(
         sdk,
         queryClient,
@@ -166,12 +161,24 @@ export const ThreeDView = ({ modelId }: Props) => {
         revisionId!,
         selectedAssetId
       );
+      if (assetDetailsExpanded) {
+        ghostAsset(sdk, threeDModel, selectedAssetId, queryClient);
+        overlayTool.visible = false;
+      } else {
+        overlayTool.visible = labelsVisibility;
+        if (assetHighlightMode) {
+          highlightAssetMappedNodes(threeDModel, queryClient);
+        }
+        highlightAsset(sdk, threeDModel, selectedAssetId, queryClient);
+      }
     } else {
-      removeAllStyles(threeDModel);
-      outlineAssetMappedNodes(threeDModel);
+      if (assetHighlightMode) {
+        highlightAssetMappedNodes(threeDModel, queryClient);
+      }
       overlayTool.visible = labelsVisibility;
     }
   }, [
+    assetHighlightMode,
     assetDetailsExpanded,
     modelId,
     queryClient,
@@ -221,6 +228,14 @@ export const ThreeDView = ({ modelId }: Props) => {
                     viewer={viewer}
                     model={threeDModel || pointCloudModel}
                   />
+                  {!assetDetailsExpanded && (
+                    <HighlightAssetsButton
+                      highligthMode={
+                        !assetDetailsExpanded && assetHighlightMode
+                      }
+                      setHighlightMode={setAssetHighlightMode}
+                    />
+                  )}
                   <FocusAssetButton
                     modelId={modelId}
                     revisionId={revisionId}

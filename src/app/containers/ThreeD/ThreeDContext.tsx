@@ -21,6 +21,7 @@ import {
   THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY as SLICING_STATE_KEY,
   THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY as SECONDARY_MODELS_KEY,
   THREE_D_REVISION_ID_QUERY_PARAMETER_KEY as REVISION_KEY,
+  THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY as HL_MODE_KEY,
 } from './utils';
 import { useDefault3DModelRevision } from './hooks';
 import { Loader } from '@cognite/cogs.js';
@@ -59,6 +60,8 @@ type ThreeDContext = {
   setRevisionId: Dispatch<SetStateAction<number | undefined>>;
   assetDetailsExpanded: boolean;
   setAssetDetailsExpanded: Dispatch<SetStateAction<boolean>>;
+  assetHighlightMode: boolean;
+  setAssetHighlightMode: Dispatch<SetStateAction<boolean>>;
   splitterColumnWidth: number;
   setSplitterColumnWidth: Dispatch<SetStateAction<number>>;
   tab?: ResourceTabType;
@@ -72,6 +75,7 @@ const DEFAULT_COLUMN_WIDTH = 400;
 
 export const ThreeDContext = createContext<ThreeDContext>({
   assetDetailsExpanded: false,
+  assetHighlightMode: false,
   splitterColumnWidth: DEFAULT_COLUMN_WIDTH,
   setSelectedAssetId: () => {},
   setAssetDetailsExpanded: () => {},
@@ -86,6 +90,7 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setTab: () => {},
   secondaryModels: [],
   setSecondaryModels: () => {},
+  setAssetHighlightMode: () => {},
 });
 ThreeDContext.displayName = 'ThreeDContext';
 
@@ -162,6 +167,7 @@ const getInitialState = () => {
   })();
 
   const expanded = initialParams.get(EXPANDED_KEY) === 'true';
+  const assetHighlightMode = initialParams.get(HL_MODE_KEY) === 'true';
   return {
     viewState,
     slicingState,
@@ -170,6 +176,7 @@ const getInitialState = () => {
     revisionId,
     splitterColumnWidth,
     secondaryModels,
+    assetHighlightMode,
   };
 };
 
@@ -188,6 +195,7 @@ export const ThreeDContextProvider = ({
     splitterColumnWidth: initialSplitterColumnWidth,
     secondaryModels: initialSecondaryModels,
     revisionId: initialRevisionId,
+    assetHighlightMode: initialAssetHighlightMode,
   } = useMemo(() => getInitialState(), []);
 
   const [viewer, setViewer] = useState<Cognite3DViewer | undefined>();
@@ -218,6 +226,9 @@ export const ThreeDContextProvider = ({
   const [secondaryModels, setSecondaryModels] = useState<
     SecondaryModelOptions[]
   >(initialSecondaryModels);
+  const [assetHighlightMode, setAssetHighlightMode] = useState<boolean>(
+    initialAssetHighlightMode
+  );
 
   const {
     isFetching: fetchingDefaultRevision,
@@ -247,6 +258,7 @@ export const ThreeDContextProvider = ({
         slicingState,
         assetDetailsExpanded,
         secondaryModels,
+        assetHighlightMode,
       })
     );
   }, [
@@ -256,6 +268,7 @@ export const ThreeDContextProvider = ({
     viewState,
     slicingState,
     secondaryModels,
+    assetHighlightMode,
   ]);
 
   useEffect(() => {
@@ -302,6 +315,8 @@ export const ThreeDContextProvider = ({
         setTab,
         secondaryModels,
         setSecondaryModels,
+        assetHighlightMode,
+        setAssetHighlightMode,
       }}
     >
       {children}

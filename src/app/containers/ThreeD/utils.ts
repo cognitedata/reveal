@@ -1,11 +1,11 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import {
   AssetNodeCollection,
+  InvertedNodeCollection,
   CadIntersection,
   Cognite3DModel,
   Cognite3DViewer,
   DefaultNodeAppearance,
-  NodeOutlineColor,
   THREE,
   ViewerState,
 } from '@cognite/reveal';
@@ -30,6 +30,7 @@ export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY = 'slicingState';
 export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
 export const THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY = 'expanded';
+export const THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY = 'hl_mode';
 export const THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY = 'secondaryModels';
 export const THREE_D_REVISION_ID_QUERY_PARAMETER_KEY = 'revisionId';
 
@@ -43,21 +44,36 @@ export const getAssetQueryKey = (assetId: number) => [
   assetId,
 ];
 
-const getBoundingBoxByNodeIdQueryKey = (
-  modelId: number,
-  revisionId: number,
-  nodeId: number
-) => [
+const queryKeyBase = (modelId: number, revisionId: number) => [
   'cdf',
   '3d',
   'model',
   modelId,
   'revision',
   revisionId,
-  'node',
-  nodeId,
-  'bounding-box',
 ];
+
+const getAssetNodeCollectionQueryKey = (
+  modelId: number,
+  revisionId: number,
+  assetId?: number
+) => [
+  ...queryKeyBase(modelId, revisionId),
+  'node-asset-collection',
+  { assetId },
+];
+
+const getBoundingBoxByNodeIdQueryKey = (
+  modelId: number,
+  revisionId: number,
+  nodeId: number
+) => [...queryKeyBase(modelId, revisionId), 'node', nodeId, 'bounding-box'];
+
+const getNodeIdByTreeIndexQueryKey = (
+  modelId: number,
+  revisionId: number,
+  treeIndex: number
+) => [...queryKeyBase(modelId, revisionId), 'tree-index', treeIndex, 'node-id'];
 
 export const fetchBoundingBoxByNodeIdQuery = (
   sdk: CogniteClient,
@@ -123,29 +139,54 @@ export const fitCameraToAsset = async (
   viewer.fitCameraToBoundingBox(boundingBox, CAMERA_ANIMATION_DURATION, 3);
 };
 
-export const highlightAsset = (
+async function fetchAssetNodeCollection(
+  sdk: CogniteClient,
+  queryClient: QueryClient,
+  model: Cognite3DModel,
+  assetId?: number
+) {
+  const { modelId, revisionId } = model;
+  return queryClient.fetchQuery(
+    getAssetNodeCollectionQueryKey(modelId, revisionId, assetId),
+    () => {
+      const collection = new AssetNodeCollection(sdk, model);
+      collection.executeFilter({ assetId });
+      return collection;
+    }
+  );
+}
+
+export const highlightAsset = async (
   sdk: CogniteClient,
   threeDModel: Cognite3DModel,
-  assetId: number
+  assetId: number,
+  queryClient: QueryClient
 ) => {
-  const assetNodes = new AssetNodeCollection(sdk, threeDModel);
-  assetNodes.executeFilter({ assetId });
+  const assetNodes = await fetchAssetNodeCollection(
+    sdk,
+    queryClient,
+    threeDModel,
+    assetId
+  );
 
-  threeDModel.removeAllStyledNodeCollections();
-  threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
   threeDModel.assignStyledNodeCollection(
     assetNodes,
     DefaultNodeAppearance.Highlighted
   );
 };
 
-export const ghostAsset = (
+export const ghostAsset = async (
   sdk: CogniteClient,
   threeDModel: Cognite3DModel,
-  assetId: number
+  assetId: number,
+  queryClient: QueryClient
 ) => {
-  const assetNodes = new AssetNodeCollection(sdk, threeDModel);
-  assetNodes.executeFilter({ assetId });
+  const assetNodes = await fetchAssetNodeCollection(
+    sdk,
+    queryClient,
+    threeDModel,
+    assetId
+  );
 
   threeDModel.removeAllStyledNodeCollections();
   threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
@@ -155,13 +196,23 @@ export const ghostAsset = (
   );
 };
 
-export const outlineAssetMappedNodes = (threeDModel: Cognite3DModel) => {
-  const allAssetMappedNodes = new AssetNodeCollection(sdk, threeDModel!);
-  // When no asset ID is provided, all nodes mapped to assets are included
-  allAssetMappedNodes.executeFilter({});
-  threeDModel?.assignStyledNodeCollection(allAssetMappedNodes, {
-    renderGhosted: false,
-    outlineColor: NodeOutlineColor.Red,
+export const highlightAssetMappedNodes = async (
+  threeDModel: Cognite3DModel,
+  queryClient: QueryClient
+) => {
+  const assetNodeCollection = await fetchAssetNodeCollection(
+    sdk,
+    queryClient,
+    threeDModel
+  );
+  const nonMappedNodeCollection = new InvertedNodeCollection(
+    threeDModel,
+    assetNodeCollection
+  );
+
+  threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+  threeDModel.assignStyledNodeCollection(nonMappedNodeCollection, {
+    color: [30, 30, 30],
   });
 };
 
@@ -169,22 +220,6 @@ export const removeAllStyles = (threeDModel: Cognite3DModel) => {
   threeDModel.removeAllStyledNodeCollections();
   threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
 };
-
-const getNodeIdByTreeIndexQueryKey = (
-  modelId: number,
-  revisionId: number,
-  treeIndex: number
-) => [
-  'cdf',
-  '3d',
-  'model',
-  modelId,
-  'revision',
-  revisionId,
-  'tree-index',
-  treeIndex,
-  'node-id',
-];
 
 export const fetchNodeIdByTreeIndex = (
   sdk: CogniteClient,
@@ -285,6 +320,7 @@ export const getStateUrl = ({
   assetDetailsExpanded,
   selectedAssetId,
   secondaryModels,
+  assetHighlightMode,
 }: {
   revisionId?: number;
   viewState?: ViewerState;
@@ -292,6 +328,7 @@ export const getStateUrl = ({
   selectedAssetId?: number;
   assetDetailsExpanded?: boolean;
   secondaryModels?: SecondaryModelOptions[];
+  assetHighlightMode?: boolean;
 }) => {
   const searchParams = new URLSearchParams(window.location.search);
   if (revisionId) {
@@ -315,6 +352,11 @@ export const getStateUrl = ({
     );
   } else {
     searchParams.delete(THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY);
+  }
+  if (assetHighlightMode) {
+    searchParams.set(THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY, 'true');
+  } else {
+    searchParams.delete(THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY);
   }
   if (secondaryModels) {
     const selectedModels = secondaryModels

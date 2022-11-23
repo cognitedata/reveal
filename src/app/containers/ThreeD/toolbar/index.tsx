@@ -157,3 +157,22 @@ export const PointToPointMeasurementButton = ({
     </Tooltip>
   );
 };
+
+export const HighlightAssetsButton = ({
+  highligthMode,
+  setHighlightMode,
+}: {
+  highligthMode: boolean;
+  setHighlightMode: (hl: boolean) => void;
+}) => {
+  return (
+    <Tooltip content="Mute non-interactive nodes" placement="right">
+      <Button
+        icon="Assets"
+        toggled={highligthMode}
+        onClick={() => setHighlightMode(!highligthMode)}
+        type="ghost"
+      />
+    </Tooltip>
+  );
+};

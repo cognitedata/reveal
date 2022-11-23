@@ -9,13 +9,7 @@ import styled from 'styled-components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
 import { trackUsage } from 'app/utils/Metrics';
-import {
-  fitCameraToAsset,
-  highlightAsset,
-  removeAllStyles,
-} from 'app/containers/ThreeD/utils';
-import { useSDK } from '@cognite/sdk-provider';
-import { useQueryClient } from 'react-query';
+
 import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
 
 type ThreeDSidebarProps = {
@@ -32,12 +26,7 @@ export const AssetMappingsSidebar = ({
   revisionId,
   selectedAssetId,
   setSelectedAssetId,
-  viewer,
-  threeDModel,
 }: ThreeDSidebarProps) => {
-  const sdk = useSDK();
-  const queryClient = useQueryClient();
-
   const { data: asset } = useCdfItem<Asset>(
     'assets',
     { id: selectedAssetId! },
@@ -70,23 +59,8 @@ export const AssetMappingsSidebar = ({
     [data?.pages]
   );
 
-  const handleAssetClick = async (clickedAssetId: number) => {
-    if (clickedAssetId !== selectedAssetId) {
-      highlightAsset(sdk, threeDModel, clickedAssetId);
-      fitCameraToAsset(
-        sdk,
-        queryClient,
-        viewer,
-        threeDModel,
-        modelId,
-        revisionId,
-        clickedAssetId
-      );
-      setSelectedAssetId(clickedAssetId);
-    } else {
-      removeAllStyles(threeDModel);
-      setSelectedAssetId(undefined);
-    }
+  const handleAssetClick = (clickedAssetId: number) => {
+    setSelectedAssetId(clickedAssetId);
   };
 
   return (
