@@ -5,26 +5,29 @@ import { Alert } from 'antd';
 
 import {
   use3DModel,
-  useDefault3DModelRevision,
+  useRevision,
   useRevisionIndex,
 } from 'app/containers/ThreeD/hooks';
 import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
 import SecondaryModelDropdown from 'app/containers/ThreeD/title/SecondaryModelDropdown';
 
 export const ThreeDTitle = ({ id }: { id: number }): JSX.Element => {
+  const { revisionId, secondaryModels, setSecondaryModels, viewer } =
+    useContext(ThreeDContext);
+
   const { data: apiThreeDModel, error: modelError, isSuccess } = use3DModel(id);
-  const { data: revision, error: revisionError } = useDefault3DModelRevision(
+
+  const { data: revision, error: revisionError } = useRevision(
     id,
+    revisionId!,
     {
-      enabled: isSuccess,
+      enabled: isSuccess && !!revisionId,
     }
   );
-  const { data: revisionIndex } = useRevisionIndex(id, revision?.id!, {
-    enabled: !!revision?.id,
-  });
 
-  const { secondaryModels, setSecondaryModels, viewer } =
-    useContext(ThreeDContext);
+  const { data: revisionIndex } = useRevisionIndex(id, revisionId!, {
+    enabled: !!revisionId,
+  });
 
   const goBackFallback = createLink('/explore/search/threeD');
 

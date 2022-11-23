@@ -99,6 +99,20 @@ export const useDefault3DModelRevision = (
   });
 };
 
+export const useRevision = (
+  modelId: number,
+  revisionId: number,
+  opts?: Omit<
+    RevisionOpts<Revision3DWithIndex | undefined>,
+    'queryKey' | 'queryFn' | 'select'
+  >
+) => {
+  return useRevisions(modelId!, {
+    select: (revisions = []) => revisions.find(r => r.id === revisionId),
+    ...opts,
+  });
+};
+
 export const useRevisionIndex = (
   modelId: number,
   revisionId: number,

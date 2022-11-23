@@ -19,6 +19,7 @@ import { SecondaryModelOptions } from 'app/containers/ThreeD/ThreeDContext';
 import { MainThreeDModelMenuItem } from 'app/containers/ThreeD/title/MainThreeDModelMenuItem';
 import { SecondaryThreeDModelMenuItem } from 'app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
 import { Revision3DWithIndex } from 'app/containers/ThreeD/hooks';
+import { TableNoResults } from '@cognite/cdf-utilities';
 
 type SecondaryModelDropdownProps = {
   mainModel: Model3D;
@@ -111,31 +112,37 @@ const SecondaryModelDropdown = ({
 
   return (
     <Menu>
-      <Input
+      <StyledInput
         onChange={e => setSearchQuery(e.target.value)}
         placeholder="Search"
         value={searchQuery}
       />
-      <Menu.Header>Main Model</Menu.Header>
       {mainModel && mainRevision && (
         <MainThreeDModelMenuItem model={mainModel} revision={mainRevision} />
       )}
       <Menu.Divider />
       <StyledSecondaryModelListContainer>
-        <Menu.Header>Secondary Model</Menu.Header>
         {viewer && filteredModels.length ? (
-          filteredModels.map(m => (
-            <SecondaryThreeDModelMenuItem
-              key={m.id}
-              model={m}
-              options={tempSecondaryModels.find(
-                ({ modelId }) => modelId === m.id
-              )}
-              onChange={handleChange}
-            />
-          ))
+          <>
+            <Menu.Header>Additional Model</Menu.Header>
+            {filteredModels.map(m => (
+              <SecondaryThreeDModelMenuItem
+                key={m.id}
+                model={m}
+                options={tempSecondaryModels.find(
+                  ({ modelId }) => modelId === m.id
+                )}
+                onChange={handleChange}
+              />
+            ))}
+          </>
         ) : (
-          <Menu.Item disabled>No model found</Menu.Item>
+          <StyledNoResultsContainer>
+            <TableNoResults
+              title="No results found"
+              content={`The search ${searchQuery} did not match any models. Please try another search.`}
+            />
+          </StyledNoResultsContainer>
         )}
       </StyledSecondaryModelListContainer>
       <Menu.Divider />
@@ -159,6 +166,14 @@ const StyledSecondaryModelListContainer = styled.div`
 
 const StyledApplyButton = styled(Button)`
   margin-top: 4px;
+`;
+
+const StyledNoResultsContainer = styled.div`
+  margin: 4px 0;
+`;
+
+const StyledInput = styled(Input)`
+  margin-bottom: 8px;
 `;
 
 export default SecondaryModelDropdown;

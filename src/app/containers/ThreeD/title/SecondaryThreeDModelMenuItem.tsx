@@ -91,7 +91,7 @@ export const SecondaryThreeDModelMenuItem = ({
   return (
     <Menu.Submenu
       content={
-        <Menu>
+        <StyledMenu>
           {revisions?.map(({ createdTime, id, index, published }) => (
             <StyledRevisionMenuItem
               $isSelected={id === options?.revisionId}
@@ -118,7 +118,7 @@ export const SecondaryThreeDModelMenuItem = ({
               </StyledMenuItemContent>
             </StyledRevisionMenuItem>
           ))}
-        </Menu>
+        </StyledMenu>
       }
     >
       {menuItemContent}
@@ -126,7 +126,7 @@ export const SecondaryThreeDModelMenuItem = ({
   );
 };
 
-const StyledSecondaryThreeDModelBody = styled(Body).attrs({
+export const StyledSecondaryThreeDModelBody = styled(Body).attrs({
   level: 2,
   strong: true,
 })<{ $isSelected?: boolean }>`
@@ -134,15 +134,24 @@ const StyledSecondaryThreeDModelBody = styled(Body).attrs({
     $isSelected && Colors['text-icon--interactive--default']};
 `;
 
-const StyledSecondaryThreeDModelDetail = styled(Detail)`
+export const StyledSecondaryThreeDModelDetail = styled(Detail)`
   color: ${Colors['text-icon--muted']};
 `;
 
-const StyledMenuItemContent = styled(Flex)`
+export const StyledMenu = styled(Menu)`
+  max-height: 60vh;
+  overflow-y: auto;
+`;
+
+export const StyledMenuItemContent = styled(Flex)`
   margin-right: 16px;
 `;
 
-const StyledRevisionMenuItem = styled(Menu.Item)<{ $isSelected?: boolean }>`
+export const StyledRevisionMenuItem = styled(Menu.Item)<{
+  $isSelected?: boolean;
+}>`
+  min-height: 52px;
+
   .cogs-icon {
     color: ${({ $isSelected }) =>
       $isSelected && Colors['text-icon--interactive--default']};
