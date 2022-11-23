@@ -1,0 +1,10 @@
+const int RenderTypeColor = 1;
+const int RenderTypeNormal = 2;
+const int RenderTypeTreeIndex = 3;
+const int RenderTypePackColorAndNormal = 4;
+const int RenderTypeDepth = 5;
+const int RenderTypeEffects = 6;
+const int RenderTypeGhost = 7;
+const int RenderTypeLOD = 8;
+const int RenderTypeDepthBufferOnly = 9;
+const int RenderTypeGeometryType = 10;

@@ -53,7 +53,9 @@ describe(DefaultRenderPipelineProvider.name, () => {
       .setup(p => p.getModelGhostedTreeIndices('0'))
       .returns(new IndexSet([]))
       .setup(p => p.getModelInFrontTreeIndices('0'))
-      .returns(new IndexSet([]));
+      .returns(new IndexSet([]))
+      .setup(p => p.getModelVisibleTreeIndices('0'))
+      .returns(new IndexSet([0]));
     const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
       .setup(p => p.setModelsMaterialParameters({}))
       .returns();
@@ -86,6 +88,8 @@ describe(DefaultRenderPipelineProvider.name, () => {
       .setup(p => p.getModelGhostedTreeIndices('0'))
       .returns(new IndexSet([0]))
       .setup(p => p.getModelInFrontTreeIndices('0'))
+      .returns(new IndexSet([0]))
+      .setup(p => p.getModelVisibleTreeIndices('0'))
       .returns(new IndexSet([0]));
     const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
       .setup(p => p.setModelsMaterialParameters({}))
@@ -146,7 +150,9 @@ describe(DefaultRenderPipelineProvider.name, () => {
       .setup(p => p.getModelGhostedTreeIndices('0'))
       .returns(new IndexSet([]))
       .setup(p => p.getModelInFrontTreeIndices('0'))
-      .returns(new IndexSet([]));
+      .returns(new IndexSet([]))
+      .setup(p => p.getModelVisibleTreeIndices('0'))
+      .returns(new IndexSet([0]));
     const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
       .setup(p => p.setModelsMaterialParameters({}))
       .returns();
