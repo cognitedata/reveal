@@ -4,12 +4,15 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { PublicClientApplication, EventType } from '@azure/msal-browser';
-import cdfEnvironments from '../../visual-tests/.cdf-environments.json';
+import type cdfEnvironmentTypes from '../../visual-tests/.cdf-env[example].json';
 
-export function getApplicationSDK(urlParams: URLSearchParams): Promise<CogniteClient> {
-  const tenant = urlParams.get('env') as keyof typeof cdfEnvironments.environments;
+export async function getApplicationSDK(urlParams: URLSearchParams): Promise<CogniteClient> {
+  // @ts-ignore
+  const cdfEnv = CDF_ENV as typeof cdfEnvironmentTypes;
 
-  const tenantInfo = cdfEnvironments.environments[tenant ?? 'cog-3d'];
+  const tenant = urlParams.get('env') as keyof typeof cdfEnvironmentTypes.environments;
+
+  const tenantInfo = cdfEnv.environments[tenant ?? 'cog-3d'];
 
   const project = urlParams.get('project') ?? '3d-test';
   const cluster = urlParams.get('cluster') ?? 'greenfield';
