@@ -1,7 +1,5 @@
 import { getCasingAverageLinearWeight } from 'domain/wells/casings/internal/selectors/getCasingAverageLinearWeight';
 import { getCasingComponentsGrades } from 'domain/wells/casings/internal/selectors/getCasingComponentsGrades';
-import { getCasingThickness } from 'domain/wells/casings/internal/selectors/getCasingThickness';
-import { formatDiameter } from 'domain/wells/casings/internal/transformers/formatDiameter';
 import { toReadableLinearWeight } from 'domain/wells/casings/internal/transformers/toReadableLinearWeight';
 
 import * as React from 'react';
@@ -28,8 +26,6 @@ export const CasingSpecification: React.FC<CasingSpecificationProps> = ({
 }) => {
   const { outsideDiameterFormatted, components } = casingAssembly;
 
-  const thickness = getCasingThickness(casingAssembly);
-
   return (
     <SummaryColumnSection
       name={`${outsideDiameterFormatted} ${SummarySection.CasingSpecification}`}
@@ -38,7 +34,6 @@ export const CasingSpecification: React.FC<CasingSpecificationProps> = ({
       <SummarySectionContent>
         <Specification label="Casing OD" value={outsideDiameterFormatted} />
         <CasingSpecificationFromComponents components={components} />
-        <Specification label="Thickness" value={formatDiameter(thickness)} />
       </SummarySectionContent>
     </SummaryColumnSection>
   );
