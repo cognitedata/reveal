@@ -38,7 +38,12 @@ const ShareButton = ({
 
   return (
     <Tooltip content="Copy URL to current state" placement="right">
-      <Button icon="Link" onClick={handleShare} type="ghost" />
+      <Button
+        icon="Link"
+        onClick={handleShare}
+        type="ghost"
+        aria-label="share-button"
+      />
     </Tooltip>
   );
 };

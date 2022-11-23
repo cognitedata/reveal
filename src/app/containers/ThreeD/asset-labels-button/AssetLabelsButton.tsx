@@ -72,6 +72,7 @@ const AssetLabelsButton = ({
         toggled={labelsVisibility}
         icon="Comment"
         type="ghost"
+        aria-label="asset-labels-button"
       />
     </Tooltip>
   );

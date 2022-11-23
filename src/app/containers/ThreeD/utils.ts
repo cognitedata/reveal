@@ -19,11 +19,15 @@ import {
   fetchAssetMappingsByAssetIdQuery,
   fetchClosestAssetIdQuery,
 } from 'app/containers/ThreeD/hooks';
-import { SecondaryModelOptions } from 'app/containers/ThreeD/ThreeDContext';
+import {
+  SecondaryModelOptions,
+  SlicingState,
+} from 'app/containers/ThreeD/ThreeDContext';
 
 import { FetchQueryOptions, QueryClient } from 'react-query';
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
+export const THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY = 'slicingState';
 export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
 export const THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY = 'expanded';
 export const THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY = 'secondaryModels';
@@ -267,12 +271,14 @@ export function prepareSearchString(s: string): Set<string> {
 export const getStateUrl = ({
   revisionId,
   viewState,
+  slicingState,
   assetDetailsExpanded,
   selectedAssetId,
   secondaryModels,
 }: {
   revisionId?: number;
   viewState?: ViewerState;
+  slicingState?: SlicingState;
   selectedAssetId?: number;
   assetDetailsExpanded?: boolean;
   secondaryModels?: SecondaryModelOptions[];
@@ -319,6 +325,15 @@ export const getStateUrl = ({
     );
   } else {
     searchParams.delete(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY);
+  }
+
+  if (slicingState) {
+    searchParams.set(
+      THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY,
+      JSON.stringify(slicingState)
+    );
+  } else {
+    searchParams.delete(THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY);
   }
 
   return `${window.location.pathname}?${searchParams}`;

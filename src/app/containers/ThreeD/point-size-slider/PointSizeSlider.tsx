@@ -47,7 +47,7 @@ export default function PointSizeSlider({ pointCloudModel }: SliderProps) {
         </StyledMenu>
       }
     >
-      <Button icon="DotLarge" type="ghost" />
+      <Button icon="DotLarge" type="ghost" aria-label="point-size-button" />
     </Dropdown>
   );
 }

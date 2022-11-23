@@ -97,6 +97,7 @@ export const FocusAssetButton = ({
           }
         }}
         type="ghost"
+        aria-label="fit-asset-button"
       />
     </Tooltip>
   );
@@ -144,6 +145,7 @@ export const PointToPointMeasurementButton = ({
         onClick={handleClick}
         toggled={!nodesSelectable}
         type="ghost"
+        aria-label="measurement-button"
       />
     </Tooltip>
   );

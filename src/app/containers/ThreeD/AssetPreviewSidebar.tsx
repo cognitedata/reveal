@@ -17,6 +17,7 @@ export const AssetPreviewSidebar = ({
     <Tooltip content="Close preview">
       <Button
         icon="Close"
+        aria-label="close-assets-preview-button"
         onClick={() => {
           onClose();
           trackUsage('Exploration.Preview.ThreeDModel', { assetId });

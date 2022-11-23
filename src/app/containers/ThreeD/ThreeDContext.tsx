@@ -18,6 +18,7 @@ import {
   THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY as EXPANDED_KEY,
   THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY as SELECTED_ASSET_KEY,
   THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY as VIEW_STATE_KEY,
+  THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY as SLICING_STATE_KEY,
   THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY as SECONDARY_MODELS_KEY,
   THREE_D_REVISION_ID_QUERY_PARAMETER_KEY as REVISION_KEY,
 } from './utils';
@@ -30,6 +31,11 @@ export type SecondaryModelOptions = {
   modelId: number;
   revisionId: number;
   applied?: boolean;
+};
+
+export type SlicingState = {
+  top: number;
+  bottom: number;
 };
 
 type ThreeDContext = {
@@ -45,6 +51,8 @@ type ThreeDContext = {
   >;
   viewState?: ViewerState;
   setViewState: Dispatch<SetStateAction<ViewerState | undefined>>;
+  slicingState?: SlicingState;
+  setSlicingState: Dispatch<SetStateAction<SlicingState | undefined>>;
   selectedAssetId?: number;
   setSelectedAssetId: Dispatch<SetStateAction<number | undefined>>;
   revisionId?: number;
@@ -68,6 +76,7 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setSelectedAssetId: () => {},
   setAssetDetailsExpanded: () => {},
   setViewState: () => {},
+  setSlicingState: () => {},
   setViewer: () => {},
   setOverlayTool: () => {},
   set3DModel: () => {},
@@ -88,6 +97,18 @@ const getInitialState = () => {
     try {
       if (s) {
         return JSON.parse(s) as ViewerState;
+      }
+      return undefined;
+    } catch {
+      return undefined;
+    }
+  })();
+
+  const slicingState = (() => {
+    const s = initialParams.get(SLICING_STATE_KEY);
+    try {
+      if (s) {
+        return JSON.parse(s) as SlicingState;
       }
       return undefined;
     } catch {
@@ -143,6 +164,7 @@ const getInitialState = () => {
   const expanded = initialParams.get(EXPANDED_KEY) === 'true';
   return {
     viewState,
+    slicingState,
     selectedAssetId,
     expanded,
     revisionId,
@@ -162,6 +184,7 @@ export const ThreeDContextProvider = ({
     expanded: initialExpanded,
     selectedAssetId: initialSelectedAssetId,
     viewState: initialViewState,
+    slicingState: initialSlicingState,
     splitterColumnWidth: initialSplitterColumnWidth,
     secondaryModels: initialSecondaryModels,
     revisionId: initialRevisionId,
@@ -177,6 +200,9 @@ export const ThreeDContextProvider = ({
   >();
   const [viewState, setViewState] = useState<ViewerState | undefined>(
     initialViewState
+  );
+  const [slicingState, setSlicingState] = useState<SlicingState | undefined>(
+    initialSlicingState
   );
   const [selectedAssetId, setSelectedAssetId] = useState<number | undefined>(
     initialSelectedAssetId
@@ -218,6 +244,7 @@ export const ThreeDContextProvider = ({
         revisionId,
         selectedAssetId,
         viewState,
+        slicingState,
         assetDetailsExpanded,
         secondaryModels,
       })
@@ -227,6 +254,7 @@ export const ThreeDContextProvider = ({
     revisionId,
     selectedAssetId,
     viewState,
+    slicingState,
     secondaryModels,
   ]);
 
@@ -260,6 +288,8 @@ export const ThreeDContextProvider = ({
         setPointCloudModel,
         viewState,
         setViewState,
+        slicingState,
+        setSlicingState,
         selectedAssetId,
         setSelectedAssetId,
         assetDetailsExpanded,

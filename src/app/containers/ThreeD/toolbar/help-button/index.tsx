@@ -21,7 +21,7 @@ const HelpButton = (): JSX.Element => {
       placement="right-end"
     >
       <Tooltip content="Help" placement="right">
-        <Button icon="Help" type="ghost" />
+        <Button icon="Help" type="ghost" aria-label="help-button" />
       </Tooltip>
     </Dropdown>
   );

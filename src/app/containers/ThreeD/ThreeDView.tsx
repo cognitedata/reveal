@@ -240,12 +240,6 @@ export const ThreeDView = ({ modelId }: Props) => {
                     overlayTool={overlayTool}
                     threeDModel={threeDModel}
                   />
-                  <PointSizeSlider pointCloudModel={pointCloudModel} />
-                  <ShareButton
-                    viewState={viewState}
-                    selectedAssetId={selectedAssetId}
-                    assetDetailsExpanded={assetDetailsExpanded}
-                  />
                   <PointToPointMeasurementButton
                     viewer={viewer}
                     nodesSelectable={nodesSelectable}

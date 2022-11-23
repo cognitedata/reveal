@@ -5,8 +5,9 @@ import {
   CognitePointCloudModel,
   THREE,
 } from '@cognite/reveal';
+import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
 import { ids } from 'cogs-variables';
-import { useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 
@@ -16,16 +17,32 @@ type SliderProps = {
 };
 
 export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
+  const { setSlicingState, slicingState } = useContext(ThreeDContext);
+
   const [min, max] = useMemo(() => {
     const bounds = viewerModel?.getModelBoundingBox();
-    return [bounds?.min.y ?? 0, bounds?.max.y ?? 0];
+    const values = [bounds?.min.y ?? 0, bounds?.max.y ?? 0];
+
+    return values;
   }, [viewerModel]);
 
-  const [sliderValue, setSliderValue] = useState<[number, number]>([min, max]);
+  useEffect(() => {
+    if (!slicingState) return;
+
+    const maxVector = [0, -1, 0];
+    const minVector = [0, 1, 0];
+
+    viewer.setClippingPlanes([
+      new THREE.Plane(new THREE.Vector3(...minVector), -slicingState.bottom),
+      new THREE.Plane(new THREE.Vector3(...maxVector), slicingState.top),
+    ]);
+  }, [slicingState, viewer]);
 
   if (!viewerModel || min === undefined || max === undefined) {
     return <></>;
   }
+
+  const sliderValue = [slicingState?.bottom ?? min, slicingState?.top ?? max];
 
   return (
     <Dropdown
@@ -38,13 +55,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
             step={(max - min) / 1000}
             setValue={v => {
               if (v[0] !== undefined && v[1] !== undefined) {
-                const maxVector = [0, -1, 0];
-                const minVector = [0, 1, 0];
-                viewer.setClippingPlanes([
-                  new THREE.Plane(new THREE.Vector3(...minVector), -v[0]),
-                  new THREE.Plane(new THREE.Vector3(...maxVector), v[1]),
-                ]);
-                setSliderValue([v[0], v[1]]);
+                setSlicingState({ top: v[1], bottom: v[0] });
               }
             }}
             value={sliderValue}
@@ -55,7 +66,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
       placement="right-end"
     >
       <Tooltip content="Slice" placement="right">
-        <Button icon="Slice" type="ghost" />
+        <Button icon="Slice" type="ghost" aria-label="slice-button" />
       </Tooltip>
     </Dropdown>
   );

@@ -113,6 +113,7 @@ export const AssetMappingsSidebar = ({
         {expanded && (
           <Button
             icon="Close"
+            aria-label="close-asset-mappings-button"
             onClick={() => {
               setExpanded(false);
               trackUsage('Exploration.Preview.AssetMapping');
