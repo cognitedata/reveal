@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/preset-create-react-app', '@storybook/addon-interactions'],
@@ -14,5 +16,18 @@ module.exports = {
   // https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#webpack-5
   core: {
     builder: 'webpack5'
-  }
+  },
+  // Storybook does not recognize absolute import by itself.
+  // ../__mocks__ is here because of cdf-sdk-singleton
+  // https://github.com/storybookjs/storybook/issues/2704#issuecomment-357407742
+  webpackFinal: async (config) => {
+    config.resolve.modules = [
+      ...(config.resolve.modules || []),
+      path.resolve(__dirname, "../src"),
+      path.resolve(__dirname, "../__mocks__"),
+      'node_modules',
+    ];
+
+    return config;
+  },
 };
