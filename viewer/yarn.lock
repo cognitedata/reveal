@@ -845,7 +845,7 @@ __metadata:
     skmeans: 0.11.3
     stats.js: 0.17.0
     three: 0.146.0
-    three-stdlib: 2.17.3
+    three-stdlib: 2.18.1
     ts-jest: 29.0.3
     ts-loader: 9.4.1
     tsc-alias: 1.7.1
@@ -11935,9 +11935,9 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:2.17.3":
-  version: 2.17.3
-  resolution: "three-stdlib@npm:2.17.3"
+"three-stdlib@npm:2.18.1":
+  version: 2.18.1
+  resolution: "three-stdlib@npm:2.18.1"
   dependencies:
     "@babel/runtime": ^7.16.7
     "@types/offscreencanvas": ^2019.6.4
@@ -11952,7 +11952,7 @@ resolve@^1.20.0:
     zstddec: ^0.0.2
   peerDependencies:
     three: ">=0.122.0"
-  checksum: e3e164c86bd6a08df2e5c2516a6f53d2ed30842c8124512225148b584a3957add99a6328dbf7c9ba28ddfba5806a106dcf0813b6647bf9efcb2a81cf8f794ee8
+  checksum: 1838aa6889941370655ff07d1da64e92b85c5bd9f4e628f2586d90bb55cff10fbdd71b23e7841c27d41ee690bf10109350c57dd25fb7880c3a42c91aee322ac2
   languageName: node
   linkType: hard
 
