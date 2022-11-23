@@ -8,9 +8,16 @@ import {
   EventSearchResults,
   DocumentSearchResults,
   ResourceTypeTabs,
+  ResourceTypeTabsV2,
   getTitle,
   ResourceType,
   SearchFilters as OldSearchFilters,
+  AssetsTab,
+  EventsTab,
+  DocumentsTab,
+  TimeseriesTab,
+  SequenceTab,
+  ThreeDTab,
 } from '@cognite/data-exploration';
 
 import { Colors, Flex, Tabs } from '@cognite/cogs.js';
@@ -62,8 +69,7 @@ function SearchPage() {
   const navigate = useNavigate();
   const isFilterFeatureEnabled = useFlagFilter();
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
-  // Adding the flag to manually enable 'Documents' tab to appear.
-  const isDocumentEnabled = useFlagDocumentSearch();
+  const isDocumentEnabled = useFlagDocumentSearch(); // Adding the flag to manually enable 'Documents' tab to appear.
 
   const [currentResourceType, setCurrentResourceType] =
     useCurrentResourceType();
@@ -121,7 +127,6 @@ function SearchPage() {
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
     openPreview(item.id !== activeId ? item.id : undefined);
   };
-
   if (isFilterFeatureEnabled) {
     return (
       <RootHeightWrapperNew>
@@ -148,18 +153,85 @@ function SearchPage() {
           </SearchInputContainer>
 
           <TabsContainer>
-            <ResourceTypeTabs
-              showCount
-              query={query}
-              currentResourceType={currentResourceType || 'all'}
-              setCurrentResourceType={tab => {
-                setCurrentResourceType(
-                  tab === 'all' ? undefined : (tab as ResourceType)
-                );
-              }}
-              isDocumentEnabled={isDocumentEnabled}
-              additionalTabs={[<Tabs.TabPane tab="All" key="all" />]}
-            />
+            {isAdvancedFiltersEnabled && isDocumentEnabled ? (
+              <ResourceTypeTabsV2
+                currentResourceType={currentResourceType || 'all'}
+                setCurrentResourceType={tab => {
+                  setCurrentResourceType(
+                    tab === 'all' ? undefined : (tab as ResourceType)
+                  );
+                }}
+              >
+                <Tabs.TabPane key="all" tab="All" />
+                <Tabs.TabPane
+                  key="asset"
+                  tab={
+                    <AssetsTab
+                      showCount
+                      query={debouncedQuery}
+                      filter={assetFilter}
+                    />
+                  }
+                />
+                <Tabs.TabPane
+                  key="timeSeries"
+                  tab={
+                    <TimeseriesTab
+                      showCount
+                      query={debouncedQuery}
+                      filter={timeseriesFilter}
+                    />
+                  }
+                />
+                <Tabs.TabPane
+                  key="document"
+                  tab={
+                    <DocumentsTab
+                      query={debouncedQuery}
+                      filter={documentFilter}
+                      showCount
+                    />
+                  }
+                />
+                <Tabs.TabPane
+                  key="event"
+                  tab={
+                    <EventsTab
+                      showCount
+                      query={debouncedQuery}
+                      filter={eventFilter}
+                    />
+                  }
+                />
+                <Tabs.TabPane
+                  key="sequence"
+                  tab={
+                    <SequenceTab
+                      showCount
+                      query={debouncedQuery}
+                      filter={sequenceFilter}
+                    />
+                  }
+                />
+                <Tabs.TabPane
+                  key="threeD"
+                  tab={<ThreeDTab showCount query={debouncedQuery} />}
+                />
+              </ResourceTypeTabsV2>
+            ) : (
+              <ResourceTypeTabs
+                showCount
+                query={query}
+                currentResourceType={currentResourceType || 'all'}
+                setCurrentResourceType={tab => {
+                  setCurrentResourceType(
+                    tab === 'all' ? undefined : (tab as ResourceType)
+                  );
+                }}
+                isDocumentEnabled={isDocumentEnabled}
+                additionalTabs={[<Tabs.TabPane tab="All" key="all" />]}
+              />
+            )}
           </TabsContainer>
 
           <MainContainer $isFilterFeatureEnabled={isFilterFeatureEnabled}>
