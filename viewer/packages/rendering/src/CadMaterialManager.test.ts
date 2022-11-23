@@ -32,6 +32,7 @@ describe('CadMaterialManager', () => {
     expect(manager.getModelBackTreeIndices('model')).toEqual(new IndexSet(range(0, 17)));
     expect(manager.getModelGhostedTreeIndices('model')).toEqual(new IndexSet());
     expect(manager.getModelInFrontTreeIndices('model')).toEqual(new IndexSet());
+    expect(manager.getModelVisibleTreeIndices('model')).toEqual(new IndexSet(range(0, 17)));
   });
 
   test('set clipping planes, materials are updated', () => {
@@ -61,16 +62,18 @@ describe('CadMaterialManager', () => {
   });
 
   test('style provider triggers update, node collections are updated', () => {
-    manager.addModelMaterials('model', 4);
+    manager.addModelMaterials('model', 5);
     const provider = manager.getModelNodeAppearanceProvider('model');
     const listener = jest.fn();
     manager.on('materialsChanged', listener);
 
     provider.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([1, 2, 3])), { renderGhosted: true });
+    provider.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([5])), { visible: false });
     jest.runAllTimers();
 
     expect(manager.getModelBackTreeIndices('model')).toEqual(new IndexSet([0, 4]));
     expect(manager.getModelGhostedTreeIndices('model')).toEqual(new IndexSet([1, 2, 3]));
+    expect(manager.getModelVisibleTreeIndices('model')).toEqual(new IndexSet([0, 1, 2, 3, 4]));
     expect(listener).toBeCalled();
   });
 
