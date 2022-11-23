@@ -48,7 +48,7 @@ export const MetaDataSection = ({ canEdit }: PropsWithChildren<MetaProps>) => {
           </Button>
         }
         title={t('meta-data')}
-        icon="DataTable"
+        icon="TableViewSmall"
         items={
           meta && Object.keys(meta)?.length !== 0
             ? Object.entries(meta).map(([key, value]) => ({
