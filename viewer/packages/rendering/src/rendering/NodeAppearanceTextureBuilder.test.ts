@@ -189,23 +189,22 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)!.slice(0, 4)).toEqual([...expectedBytes, 1]);
   });
 
-  test('add custom color then updating superset with color 0, 0, 0 keeps color', () => {
+  test('add 0, 0, 0 color then updating default with custom color keeps original node color', () => {
     // Need to do this here, as we want two elements in our buffer
     const builder = new NodeAppearanceTextureBuilder(2, styleProvider);
 
-    const customColor = new Color(0.496, 0.5, 0.504);
-    const expectedBytes = toByteTuple(customColor);
+    const black = new Color(0, 0, 0);
+    const expectedBytes = toByteTuple(black);
 
     const set = new TreeIndexNodeCollection(new IndexSet([0]));
-    const style0: NodeAppearance = { color: customColor, visible: true };
+    const style0: NodeAppearance = { color: black, visible: true };
     styleProvider.assignStyledNodeCollection(set, style0);
 
     jest.runAllTimers();
     builder.build();
 
-    const superSet = new TreeIndexNodeCollection(new IndexSet([0, 1]));
-    const style1: NodeAppearance = { color: new Color(0, 0, 0) };
-    styleProvider.assignStyledNodeCollection(superSet, style1);
+    const style1: NodeAppearance = { color: new Color(0.1, 0.2, 0.3) };
+    builder.setDefaultAppearance(style1);
 
     jest.runAllTimers();
     builder.build();
