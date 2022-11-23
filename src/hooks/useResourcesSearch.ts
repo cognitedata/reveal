@@ -7,6 +7,7 @@ type ResourceSearchParams = {
   filter: {
     dataSetIds: Array<{ id: number }>;
   };
+  limit?: number;
   search?: {
     query?: string;
     name?: string;
@@ -22,9 +23,11 @@ const getResourceSearchParams = (
   dataSetId: number,
   query: string,
   filters: ResourcesFilters,
-  prop?: 'query' | 'name' | 'description'
+  prop?: 'query' | 'name' | 'description',
+  limit = 1000
 ): ResourceSearchParams => {
   const params: ResourceSearchParams = {
+    limit,
     filter: {
       dataSetIds: [{ id: dataSetId }],
       ...filters,
