@@ -17,7 +17,7 @@ import { isFilePreviewable, getIdParam } from 'utils';
 import { SmallPreviewProps, SelectableItemProps } from 'types';
 import { FileDetails, FilePreviewUFV } from 'containers/Files';
 import { useSelectionButton } from 'hooks/useSelection';
-import { useAnnotations } from '../../hooks';
+import { useEventAnnotations } from '../../hooks';
 
 export const FileSmallPreviewUFV = ({
   fileId,
@@ -47,7 +47,7 @@ export const FileSmallPreviewUFV = ({
     isSelected,
     onSelect
   );
-  const annotations = useAnnotations(fileId);
+  const annotations = useEventAnnotations(fileId);
 
   const fileIds = annotations
     .map(annotation =>

@@ -20,7 +20,7 @@ import { SmallPreviewProps, SelectableItemProps } from 'types';
 import { FileDetails } from 'containers/Files';
 import { AppContext } from 'context/AppContext';
 import { useSelectionButton } from 'hooks/useSelection';
-import { useAnnotations } from '../hooks';
+import { useEventAnnotations } from '../hooks';
 
 export const FileSmallPreview = ({
   fileId,
@@ -54,7 +54,7 @@ export const FileSmallPreview = ({
     isSelected,
     onSelect
   );
-  const annotations = useAnnotations(fileId);
+  const annotations = useEventAnnotations(fileId);
 
   const fileIds = annotations
     .map(annotation =>
@@ -154,6 +154,10 @@ export const FileSmallPreview = ({
           <Preview>
             <CogniteFileViewer
               file={file}
+              // The addition of Annotations API requires a bump in the sdk which react-picture-annotations
+              // does not support yet. We'll be removing the old file viewer within days so this is a temporary
+              // solution until then
+              // @ts-expect-error
               sdk={sdk}
               disableAutoFetch
               hideControls

@@ -8,6 +8,7 @@ import pdfFileUrl from '../pnid.pdf';
 // @ts-ignore
 import longPdfFileUrl from '../multipageExample.pdf';
 import testImageUrl from './test-image.png';
+import { annotations } from './stubs/annotations';
 
 const VIEWER_ID = 'FilePreviewUFV-story';
 const APPLICATION_ID = 'data-exploration-components-storybook';
@@ -107,6 +108,9 @@ const pdfSdkMock = {
         return { downloadUrl: fileUrl };
       });
     },
+  },
+  annotations: {
+    list: async () => ({ items: annotations }),
   },
 } as unknown as CogniteClient;
 

@@ -130,6 +130,7 @@ export const ResourceSelectionSidebarUFV = ({
             <ResourceTypeTabs
               currentResourceType={activeKey}
               setCurrentResourceType={tab => setActiveKey(tab as ResourceType)}
+              resourceTypes={resourceTypes}
             />
             <Wrapper>
               <SearchFilters

@@ -1,54 +1,82 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import {
-  Annotation,
-  AnnotationType,
-  getAnnotationsFromLegacyCogniteAnnotations,
-  RectangleAnnotation,
+  filterNonOverlappingBoundingBoxes,
+  isSimilarBoundingBox,
 } from '@cognite/unified-file-viewer';
-import { LegacyCogniteAnnotation } from '@cognite/unified-file-viewer/dist/core/utils/api';
 import { useMemo } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { CommonLegacyCogniteAnnotation } from './types';
+import { useEventAnnotations } from '../../hooks';
+import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
+import getExtendedAnnotationsFromCogniteAnnotations from './getExtendedAnnotationsFromCogniteAnnotations';
+import { isNotUndefined } from 'utils';
+import { getExtendedAnnotationPage } from './migration/utils';
+import { ExtendedAnnotation } from './types';
+import { useAnnotations } from '../../../../domain/annotations';
 import { getContainerId, getStyledAnnotationFromAnnotation } from './utils';
-import { Colors } from '@cognite/cogs.js';
+
+// The maximum difference the corresponding sides of two bounding boxes may
+// have. If all differences are below this value, for all sides of the bounding
+// box, the two bounding boxes are considered to be similar.
+const MAX_BOUNDING_BOX_DIFFERENCE = 0.1;
 
 type useUnifiedFileViewerAnnotationsProps = {
   fileId: number;
-  annotations: CommonLegacyCogniteAnnotation[];
-  selectedAnnotations: CommonLegacyCogniteAnnotation[];
-  pendingAnnotations: CommonLegacyCogniteAnnotation[];
+  page: number;
+  selectedAnnotations: ExtendedAnnotation[];
+  pendingAnnotations: ExtendedAnnotation[];
   hoverId: string | undefined;
-  onMouseOver?: (annotation: Annotation) => void;
-  onMouseOut?: (annotation: Annotation) => void;
-  onClick?: (annotation: Annotation) => void;
+  onMouseOver?: (annotation: ExtendedAnnotation) => void;
+  onMouseOut?: (annotation: ExtendedAnnotation) => void;
+  onClick?: (annotation: ExtendedAnnotation) => void;
 };
 export const useUnifiedFileViewerAnnotations = ({
   fileId,
-  annotations,
+  page,
   selectedAnnotations,
   pendingAnnotations,
   hoverId,
   onClick,
   onMouseOver,
   onMouseOut,
-}: useUnifiedFileViewerAnnotationsProps): Annotation[] => {
-  const unhandledAnnotations = useMemo(() => {
-    return annotations.filter(annotation => annotation.status === 'unhandled');
-  }, [annotations]);
-  const ufvAnnotationsWithEvents = useMemo(
-    () =>
-      annotations
-        .map(annotation => {
-          const [ufvAnnotation] = getAnnotationsFromLegacyCogniteAnnotations(
-            [annotation as LegacyCogniteAnnotation],
-            getContainerId(fileId)
-          );
+}: useUnifiedFileViewerAnnotationsProps): ExtendedAnnotation[] => {
+  const persistedAnnotations = useEventAnnotations(fileId);
 
-          if (ufvAnnotation === undefined) {
-            return undefined;
+  // NOTE: We are filtering out annotations originating from the migratin script.
+  // When we remove support for the Events API, we can remove this filter.
+  const annotationsApiAnnotations = useAnnotations(fileId).data.filter(
+    annotation =>
+      annotation.creatingApp !==
+      'annotation-migration-migrate-event-annotations'
+  );
+  return useMemo(
+    () =>
+      [
+        ...getExtendedAnnotationsFromCogniteAnnotations(
+          persistedAnnotations,
+          getContainerId(fileId)
+        ),
+        ...getExtendedAnnotationsFromAnnotationsApi(
+          annotationsApiAnnotations,
+          getContainerId(fileId)
+        ),
+        ...filterNonOverlappingBoundingBoxes(
+          pendingAnnotations,
+          isSimilarBoundingBox(MAX_BOUNDING_BOX_DIFFERENCE)
+        ),
+      ]
+        .filter(annotation => {
+          if (page === 1) {
+            return (
+              getExtendedAnnotationPage(annotation) === 1 ||
+              getExtendedAnnotationPage(annotation) === undefined
+            );
           }
 
+          return getExtendedAnnotationPage(annotation) === page;
+        })
+        .filter(isNotUndefined)
+        .map(annotation => {
           const isSelected = selectedAnnotations.some(
             ({ id }) => id === annotation.id
           );
@@ -56,65 +84,53 @@ export const useUnifiedFileViewerAnnotations = ({
             ({ id }) => id === annotation.id
           );
 
+          // TODO: Validate that this is working correctly
           const isOnHover = hoverId === String(annotation.id);
 
           return getStyledAnnotationFromAnnotation(
-            ufvAnnotation,
+            annotation,
             isSelected,
             isPending,
-            isOnHover,
-            annotation
+            isOnHover
           );
         })
-        .filter((item): item is Annotation => Boolean(item))
         .map(
-          ufvAnnotation =>
+          annotation =>
             ({
-              ...ufvAnnotation,
-              onClick: (e: any, annotation: Annotation) => {
+              ...annotation,
+              onClick: (e: any, annotation: ExtendedAnnotation) => {
                 e.cancelBubble = true;
                 if (onClick) {
                   onClick(annotation);
                 }
               },
-              onMouseOver: (e: any, annotation: Annotation) => {
+              onMouseOver: (e: any, annotation: ExtendedAnnotation) => {
                 e.cancelBubble = true;
                 if (onMouseOver) {
                   onMouseOver(annotation);
                 }
               },
-              onMouseOut: (e: any, annotation: Annotation) => {
+              onMouseOut: (e: any, annotation: ExtendedAnnotation) => {
                 e.cancelBubble = true;
                 if (onMouseOut) {
                   onMouseOut(annotation);
                 }
               },
-            } as RectangleAnnotation)
+            } as ExtendedAnnotation)
         ),
     [
       onClick,
       onMouseOver,
       onMouseOut,
-      annotations,
       selectedAnnotations,
       fileId,
       hoverId,
       pendingAnnotations,
+      persistedAnnotations,
+      annotationsApiAnnotations,
+      page,
     ]
   );
-
-  const ufvAnnotationsWithSuggestedStyles = ufvAnnotationsWithEvents.flatMap(
-    ufvAnnotation => {
-      const isSuggested = unhandledAnnotations.some(
-        ({ id }) => String(id) === ufvAnnotation.id
-      );
-      if (isSuggested) {
-        return addSuggestedStyleAnnotations(ufvAnnotation, fileId);
-      }
-      return ufvAnnotation;
-    }
-  );
-  return ufvAnnotationsWithSuggestedStyles;
 };
 
 const URL_EXPIRATION_TIME_MS = 28 * 1000;
@@ -142,26 +158,4 @@ export const useFileDownloadUrl = (fileId: number | undefined): string => {
   );
 
   return data?.downloadUrl || '';
-};
-
-const addSuggestedStyleAnnotations = (
-  annotation: RectangleAnnotation,
-  fileId: number
-): Annotation[] => {
-  return [
-    annotation,
-    {
-      containerId: annotation.containerId || getContainerId(fileId),
-      id: `${annotation.id}-suggested`,
-      radius: 0.01,
-      style: {
-        fill: Colors['decorative--red--400'],
-        stroke: Colors['decorative--grayscale--100'],
-        strokeWidth: 3,
-      },
-      type: AnnotationType.ELLIPSE,
-      x: annotation.x + annotation.width,
-      y: annotation.y,
-    },
-  ];
 };

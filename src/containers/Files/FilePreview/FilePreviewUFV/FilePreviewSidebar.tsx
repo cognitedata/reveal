@@ -1,38 +1,32 @@
 import { ResourcePreviewSidebarUFV } from 'containers';
-import React, { useContext } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
 
 import { FileInfo } from '@cognite/sdk';
-import {
-  AnnotationStatus,
-  CogniteAnnotation,
-  CogniteAnnotationPatch,
-  linkFileToAssetIds,
-} from '@cognite/annotations';
-import { useSDK } from '@cognite/sdk-provider';
-import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
-import { AppContext } from 'context/AppContext';
 import AnnotationsList from './AnnotationsList';
 import { useDisclosure } from 'hooks';
 import { useReviewFile } from '../../hooks';
 import DiagramReviewStatus from '../DiagramStatus';
-import FileReview from '../FileReview';
-import { CommonLegacyCogniteAnnotation } from './types';
+import FileReview from './FileReview';
+import {
+  isAssetAnnotation,
+  isFileAnnotation,
+  isSuggestedAnnotation,
+} from './migration/utils';
+import { ExtendedAnnotation } from './types';
 
 interface FilePreviewSidebarProps {
   fileIcon?: React.ReactNode;
   file?: FileInfo;
-  annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
-  approveAnnotations: (updatePatch: CogniteAnnotationPatch[]) => void;
+  annotations: ExtendedAnnotation[];
+  approveAnnotations: (annotations: ExtendedAnnotation[]) => void;
   viewingAnnotations?: 'assets' | 'files';
   setViewingAnnotations: (type: 'assets' | 'files' | undefined) => void;
   setIsAnnotationsShown: (isAnnotationsShown: boolean) => void;
   isAnnotationsShown: boolean;
   reset: () => void;
-  setSelectedAnnotations: (
-    annotations: CommonLegacyCogniteAnnotation[]
-  ) => void;
+  setSelectedAnnotations: (annotations: ExtendedAnnotation[]) => void;
 }
 
 const FilePreviewSidebar = ({
@@ -47,33 +41,14 @@ const FilePreviewSidebar = ({
   reset,
   setSelectedAnnotations,
 }: FilePreviewSidebarProps) => {
-  const sdk = useSDK();
-  const context = useContext(AppContext);
-  const email = context?.userInfo?.email || 'UNKNOWN';
-
   const { onApproveFile } = useReviewFile(file?.id);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onApproveAllAnnotations = async () => {
-    const unhandledAnnotations = annotations.filter(
-      a => a.status === 'unhandled'
-    ) as Array<CogniteAnnotation>;
-    const updatePatch = unhandledAnnotations.map(annotation => ({
-      id: Number(annotation.id),
-      annotation,
-      update: {
-        status: {
-          set: 'verified' as AnnotationStatus,
-        },
-        checkedBy: {
-          set: email,
-        },
-      },
-    }));
-    approveAnnotations(updatePatch);
+    const unhandledAnnotations = annotations.filter(isSuggestedAnnotation);
+    await approveAnnotations(unhandledAnnotations);
     await onApproveFile();
-    await linkFileToAssetIds(sdk, unhandledAnnotations);
     setSelectedAnnotations([]);
     onClose();
   };
@@ -83,14 +58,24 @@ const FilePreviewSidebar = ({
     reset?.();
   };
 
+  const filteredAnnotations = useMemo(() => {
+    return annotations.filter(annotation => {
+      if (viewingAnnotations === 'assets') {
+        return isAssetAnnotation(annotation);
+      }
+
+      if (viewingAnnotations === 'files') {
+        return isFileAnnotation(annotation);
+      }
+
+      return false;
+    });
+  }, [viewingAnnotations, annotations]);
+
   if (viewingAnnotations) {
     return (
       <AnnotationsList
-        annotations={annotations.filter(an =>
-          viewingAnnotations === 'assets'
-            ? an.resourceType === 'asset'
-            : an.resourceType === 'file'
-        )}
+        annotations={filteredAnnotations}
         type={viewingAnnotations}
         goBack={handleGoBack}
         reset={reset}

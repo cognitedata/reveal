@@ -43,6 +43,10 @@ export const DataExplorationProvider = ({
   return (
     <SDKProvider sdk={sdk}>
       <CogniteFileViewer.Provider
+        // The addition of Annotations API requires a bump in the sdk which react-picture-annotations
+        // does not support yet. We'll be removing the old file viewer within days so this is a temporary
+        // solution until then
+        // @ts-expect-error
         sdk={sdk}
         disableAutoFetch
         overrideURLMap={{

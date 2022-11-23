@@ -21,7 +21,7 @@ import {
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceItem } from 'types';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
-import { useAnnotations } from '../hooks';
+import { useEventAnnotations } from '../hooks';
 import { AnnotationHoverPreview } from './AnnotationHoverPreview';
 import { EmptyState } from 'components/EmpyState/EmptyState';
 
@@ -68,7 +68,7 @@ export const FilePreview = ({
   const isMimeTypeSet = file && file.mimeType;
   const canPreviewFile = file && isFilePreviewable(file);
 
-  const persistedAnnotations = useAnnotations(fileId);
+  const persistedAnnotations = useEventAnnotations(fileId);
   const allAnnotations = [
     ...persistedAnnotations,
     ...[...pendingAnnotations].filter(removeSimilarAnnotations),

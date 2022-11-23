@@ -1,3 +1,4 @@
+export * from './annotations';
 export * from './assets';
 export * from './builders';
 export * from './documents';

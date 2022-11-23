@@ -2389,6 +2389,17 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
+"@cognite/sdk-core@^4.8.2":
+  version "4.8.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.2.tgz#00f69eaf93d433223f650891d098e1ffb0738631"
+  integrity sha512-nV17d8Z+NMErVyO2hv6yafpl32TmRwMc1pPYnMp+J4FcE0bCUqvL6AduXAPQZ443NZx86+Obz5SWzUg3PXzfkA==
+  dependencies:
+    cross-fetch "^3.0.4"
+    is-buffer "^2.0.5"
+    lodash "^4.17.11"
+    query-string "^5.1.1"
+    url "^0.11.0"
+
 "@cognite/sdk-provider@^2.0.0":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-provider/-/sdk-provider-2.0.6.tgz#170f6c8d6b78f5b8b9600be9b2e0bba1cf0f1a32"
@@ -2410,6 +2421,16 @@
     "@cognite/sdk-core" "^2.1.2"
     lodash "^4.17.11"
 
+"@cognite/sdk@7.12.0":
+  version "7.12.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.12.0.tgz#1d1c2a3a7c4203a12958802f2c8564e179158877"
+  integrity sha512-gvNgWGeT31h6rT2/wMqJrXwolkmrGAKix2DuD0sllylq6bQarTbJEO1tkvFmFe97IT5Yl33V1hKzKTkkcw1yuw==
+  dependencies:
+    "@cognite/sdk-core" "^4.8.2"
+    "@types/geojson" "^7946.0.8"
+    geojson "^0.5.0"
+    lodash "^4.17.11"
+
 "@cognite/sdk@^7.6.0":
   version "7.9.4"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.9.4.tgz#c59af1694fcfed0be1034c24676701a1749bdfe1"
@@ -2419,7 +2440,7 @@
     geojson "^0.5.0"
     lodash "^4.17.11"
 
-"@cognite/sdk@^7.7.0", "@cognite/sdk@^7.8.4":
+"@cognite/sdk@^7.7.0":
   version "7.8.4"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.8.4.tgz#a9273eb35f5c40556738752158e7c2078a615252"
   integrity sha512-1SNSAFNTXwyiGIv6VMQyyZ1DgHKbqNttav/6eDkKnAhYpyPIdF5W1Eb8tioN9r4z+CxKYxfMGc4j1KZgoopOEw==
@@ -5745,6 +5766,11 @@
     "@types/express-serve-static-core" "^4.17.18"
     "@types/qs" "*"
     "@types/serve-static" "*"
+
+"@types/geojson@^7946.0.8":
+  version "7946.0.10"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.10.tgz#6dfbf5ea17142f7f9a043809f1cd4c448cb68249"
+  integrity sha512-Nmh0K3iWQJzniTuPRcJn5hxXkfB1T1pgB89SBig5PlJQU5yocazeu4jATJlaA0GYFKWMqDdvYemoSnF2pXgLVA==
 
 "@types/glob@*", "@types/glob@^7.1.1":
   version "7.2.0"

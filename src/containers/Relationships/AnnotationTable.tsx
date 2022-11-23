@@ -11,10 +11,13 @@ import {
   FileTable,
 } from 'containers';
 
-import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
 import { IdEither } from '@cognite/sdk';
-import { useAnnotations } from 'hooks/RelationshipHooks';
+import { useTaggedAnnotationsByResourceType } from 'hooks/RelationshipHooks';
 import { useUniqueCdfItems } from 'hooks';
+import {
+  getResourceExternalIdFromTaggedAnnotation,
+  getResourceIdFromTaggedAnnotation,
+} from '../Files/FilePreview/FilePreviewUFV/migration/utils';
 
 type Props = {
   fileId: number;
@@ -27,23 +30,29 @@ export function AnnotationTable({
   onItemClicked,
 }: Props & SelectableItemsProps) {
   const {
-    data: annotations,
+    data: taggedAnnotations,
     isFetched,
     isError,
-  } = useAnnotations(fileId, resourceType);
+  } = useTaggedAnnotationsByResourceType(fileId, resourceType);
 
   const ids = useMemo(
     () =>
       uniqBy(
-        annotations.map(({ metadata = {} }) => {
-          if (metadata[`${PREFIX}resource_external_id`]) {
+        taggedAnnotations.map(taggedAnnotation => {
+          const resourceExternalId =
+            getResourceExternalIdFromTaggedAnnotation(taggedAnnotation);
+          if (resourceExternalId) {
             return {
-              externalId: metadata[`${PREFIX}resource_external_id`],
+              externalId: resourceExternalId,
             };
           }
-          if (metadata[`${PREFIX}resource_id`]) {
-            return { id: parseInt(metadata[`${PREFIX}resource_id`], 10) };
+
+          const resourceId =
+            getResourceIdFromTaggedAnnotation(taggedAnnotation);
+          if (resourceId) {
+            return { id: resourceId };
           }
+
           return undefined;
         }),
         (
@@ -53,7 +62,7 @@ export function AnnotationTable({
             | undefined
         ) => i?.externalId || i?.id
       ).filter(Boolean) as IdEither[],
-    [annotations]
+    [taggedAnnotations]
   );
 
   function onRowClick<T extends { id: number }>({ id }: T) {

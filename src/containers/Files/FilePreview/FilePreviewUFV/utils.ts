@@ -1,14 +1,11 @@
-import {
-  AnnotationResourceType,
-  CogniteAnnotation,
-} from '@cognite/annotations';
+import { CogniteAnnotation } from '@cognite/annotations';
 import { Colors } from '@cognite/cogs.js';
 import {
-  Annotation,
   AnnotationType,
   RectangleAnnotation,
 } from '@cognite/unified-file-viewer';
-import { CommonLegacyCogniteAnnotation } from './types';
+import { getResourceTypeFromExtendedAnnotation } from './migration/utils';
+import { ExtendedAnnotation } from './types';
 
 export const getContainerId = (fileId: number) => {
   return String(fileId);
@@ -36,12 +33,11 @@ export const convertUFVAnnotationToLegacyCogniteAnnotation = (
 };
 
 export const getStyledAnnotationFromAnnotation = (
-  annotation: Annotation,
+  annotation: ExtendedAnnotation,
   isSelected = false,
   isPending: boolean,
-  isHover: boolean,
-  cogniteAnnotation: CommonLegacyCogniteAnnotation
-): Annotation => {
+  isHover: boolean
+): ExtendedAnnotation => {
   if (annotation.type !== AnnotationType.RECTANGLE) {
     throw new Error('Unsupported annotation type');
   }
@@ -50,7 +46,7 @@ export const getStyledAnnotationFromAnnotation = (
     annotation,
     isSelected,
     isPending,
-    cogniteAnnotation.resourceType
+    getResourceTypeFromExtendedAnnotation(annotation)
   );
 
   return {
@@ -58,18 +54,18 @@ export const getStyledAnnotationFromAnnotation = (
     style: {
       ...(annotation.style || {}),
       strokeWidth: 2,
-      ...(isSelected && { dash: [4, 4] }),
-      stroke: cogniteAnnotation.metadata?.color ?? colors.strokeColor,
+      stroke: colors.strokeColor,
       fill: isHover ? colors.backgroundColor : 'transparent',
+      ...(isSelected && { dash: [4, 4] }),
     },
   };
 };
 
-export const selectAnnotationColors = <T extends Annotation>(
-  annotation: T,
+export const selectAnnotationColors = (
+  annotation: ExtendedAnnotation,
   isSelected = false,
   isPending = false,
-  resourceType?: AnnotationResourceType
+  resourceType?: string
 ): { strokeColor: string; backgroundColor: string } => {
   if (isSelected)
     return {

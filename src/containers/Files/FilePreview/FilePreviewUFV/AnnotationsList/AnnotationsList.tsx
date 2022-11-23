@@ -1,9 +1,10 @@
+import uniq from 'lodash/uniq';
 import React, { useEffect, useMemo, useState } from 'react';
-import { CogniteAnnotation } from '@cognite/annotations';
 import styled from 'styled-components';
 import {
   Body,
   Button,
+  Colors,
   Flex,
   Graphic,
   Icon,
@@ -11,20 +12,24 @@ import {
 } from '@cognite/cogs.js';
 import { Breadcrumb } from 'antd';
 import { ResourceIcons } from 'components';
-import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import capitalize from 'lodash/capitalize';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
-import { CommonLegacyCogniteAnnotation } from '../types';
+import { isNotUndefined } from 'utils';
+import {
+  getExtendedAnnotationLabel,
+  getResourceIdFromExtendedAnnotation,
+  isApprovedAnnotation,
+  isSuggestedAnnotation,
+} from '../migration/utils';
+import { ExtendedAnnotation } from '../types';
 
 interface AnnotationsListProps {
-  annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
+  annotations: ExtendedAnnotation[];
   type: 'assets' | 'files';
   goBack: () => void;
   reset: () => void;
-  setSelectedAnnotations: (
-    annotations: CommonLegacyCogniteAnnotation[]
-  ) => void;
+  setSelectedAnnotations: (annotations: ExtendedAnnotation[]) => void;
 }
 
 type AnnotationType = 'pending' | 'approved' | 'all';
@@ -37,35 +42,38 @@ const AnnotationsList = ({
   setSelectedAnnotations,
 }: AnnotationsListProps) => {
   const [filterType, setFilterType] = useState<AnnotationType>('all');
-  const [filteredList, setFilteredList] = useState<
-    Array<CogniteAnnotation | ProposedCogniteAnnotation>
-  >([]);
+  const [filteredList, setFilteredList] = useState<ExtendedAnnotation[]>([]);
 
-  const set = new Set<number>();
-  filteredList.forEach(({ resourceId = 0 }) => {
-    set.add(+resourceId);
-  });
+  const filteredListIdsEither = uniq(
+    filteredList.map(getResourceIdFromExtendedAnnotation)
+  )
+    .filter(isNotUndefined)
+    .map(id => ({ id }));
+
   const { data: assetsResources = [] } = useCdfItems<Asset>(
     'assets',
-    Array.from(set).map(id => ({ id })),
+    filteredListIdsEither,
     false,
     {
-      enabled: filteredList.length > 0,
+      enabled: filteredListIdsEither.length > 0,
     }
   );
-  const filteredItemWithName = useMemo(
-    () =>
-      filteredList.map(item => {
-        const assetDetail = assetsResources.find(
-          resource => resource.id === item.resourceId!
-        );
-        return {
-          ...item,
-          label: item.label ? item.label : assetDetail?.name ?? '',
-        };
-      }),
-    [assetsResources, filteredList]
-  );
+  const filteredItemWithName: (ExtendedAnnotation & { label: string })[] =
+    useMemo(
+      () =>
+        filteredList.map(item => {
+          const assetDetail = assetsResources.find(
+            resource =>
+              resource.id === getResourceIdFromExtendedAnnotation(item)
+          );
+          const annotationLabel = getExtendedAnnotationLabel(item);
+          return {
+            ...item,
+            label: annotationLabel ? annotationLabel : assetDetail?.name ?? '',
+          };
+        }),
+      [assetsResources, filteredList]
+    );
 
   useEffect(() => {
     if (filterType === 'all') {
@@ -76,14 +84,12 @@ const AnnotationsList = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterType, annotations]);
 
-  const filterByStatus = (an: CogniteAnnotation | ProposedCogniteAnnotation) =>
+  const filterByStatus = (annotation: ExtendedAnnotation) =>
     filterType === 'pending'
-      ? !!(an.status === 'unhandled')
-      : !!(an.status === 'verified');
+      ? isSuggestedAnnotation(annotation)
+      : isApprovedAnnotation(annotation);
 
-  const handleClick = (
-    annotation: CogniteAnnotation | ProposedCogniteAnnotation
-  ) => {
+  const handleClick = (annotation: ExtendedAnnotation) => {
     setSelectedAnnotations([annotation]);
   };
 
@@ -92,15 +98,20 @@ const AnnotationsList = ({
     goBack();
   };
 
+  const getColor = (annotation: ExtendedAnnotation) =>
+    isSuggestedAnnotation(annotation)
+      ? Colors['border--interactive--toggled-hover'].hex()
+      : Colors['surface--misc-canvas--inverted'].hex();
+
   const AnnotationItem = ({
     annotation,
   }: {
-    annotation: CogniteAnnotation | ProposedCogniteAnnotation;
+    annotation: ExtendedAnnotation;
   }) => (
     <ListItem
       key={annotation.id}
       onClick={() => handleClick(annotation)}
-      pending={annotation.status === 'unhandled'}
+      pending={isSuggestedAnnotation(annotation)}
     >
       <Flex direction="row">
         <ResourceIcons
@@ -112,19 +123,19 @@ const AnnotationsList = ({
         />
         <Body
           style={{
-            color: annotation.status === 'unhandled' ? '#4255BB' : '#333333',
+            color: getColor(annotation),
           }}
           level={2}
           strong
         >
-          {annotation.label ?? 'N/A'}
+          {getExtendedAnnotationLabel(annotation) || 'N/A'}
         </Body>
       </Flex>
       <Icon
         type="ChevronRight"
         style={{
           marginTop: '3px',
-          color: annotation.status === 'unhandled' ? '#4255BB' : '#333333',
+          color: getColor(annotation),
         }}
       />
     </ListItem>

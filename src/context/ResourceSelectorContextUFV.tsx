@@ -5,6 +5,7 @@ import {
   ResourceItemState,
   InitialResourceFilterProps,
   SelectableItemsProps,
+  ResourceType,
 } from 'types';
 
 export type OpenSelectorProps = {
@@ -12,6 +13,7 @@ export type OpenSelectorProps = {
   onClose?: (confirmed: boolean, results?: ResourceItem[]) => void;
   initialItemState?: ResourceItemState[];
   header?: React.ReactNode;
+  resourceTypes?: ResourceType[];
 } & Omit<SelectableItemsProps, 'isSelected'> &
   InitialResourceFilterProps;
 
@@ -32,6 +34,9 @@ export const ResourceSelectorProviderUFV = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const [resourceTypes, setResourceTypes] = useState<
+    ResourceType[] | undefined
+  >(undefined);
   const [isOpen, setIsOpen] = useState(false);
   const [props, setProps] = useState<Omit<SelectableItemsProps, 'isSelected'>>({
     selectionMode: 'single',
@@ -54,6 +59,7 @@ export const ResourceSelectorProviderUFV = ({
         onSelect: propsOnSelect = () => {},
         selectionMode = 'single',
         initialItemState = [],
+        resourceTypes,
         ...selectionProps
       }: OpenSelectorProps = {
         onClose: () => {},
@@ -62,6 +68,7 @@ export const ResourceSelectorProviderUFV = ({
         initialItemState: [],
       }
     ) => {
+      setResourceTypes(resourceTypes);
       setProps({
         selectionMode,
         onSelect,
@@ -130,6 +137,7 @@ export const ResourceSelectorProviderUFV = ({
           )
         }
         onSelect={onSelect}
+        resourceTypes={resourceTypes}
       />
     </ResourceSelectorContext.Provider>
   );

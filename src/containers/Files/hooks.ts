@@ -22,7 +22,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { sleep } from 'utils';
 import { notification } from 'antd';
 
-export const useAnnotations = (fileId: number): CogniteAnnotation[] => {
+export const useEventAnnotations = (fileId: number): CogniteAnnotation[] => {
   const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
     id: fileId,
   });
