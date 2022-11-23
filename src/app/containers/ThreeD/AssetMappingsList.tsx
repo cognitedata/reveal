@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { createLink } from '@cognite/cdf-utilities';
-import { Body, Flex, Graphic, Icon } from '@cognite/cogs.js';
+import { Body, Colors, Flex, Graphic, Icon } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { Link } from 'react-router-dom';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -98,76 +98,117 @@ export const AssetMappingsList = ({
   }
 
   return (
-    <AssetList>
-      <AutoSizer>
-        {({ height, width }) => (
-          <InfiniteLoader
-            isItemLoaded={isItemLoaded}
-            itemCount={query ? filteredAssets.length : itemCount}
-            loadMoreItems={() => {}}
-          >
-            {({ onItemsRendered, ref }) => (
-              <List
-                height={height}
-                width={width}
-                itemCount={filteredAssets.length}
-                itemSize={90}
-                onItemsRendered={onItemsRendered}
-                ref={ref}
-              >
-                {({ index, style }) => {
-                  if (!filteredAssets[index]) {
-                    return null;
-                  }
+    <>
+      <StyledBorder />
+      <AssetList>
+        <AutoSizer>
+          {({ height, width }) => (
+            <InfiniteLoader
+              isItemLoaded={isItemLoaded}
+              itemCount={query ? filteredAssets.length : itemCount}
+              loadMoreItems={() => {}}
+            >
+              {({ onItemsRendered, ref }) => (
+                <List
+                  height={height}
+                  width={width}
+                  itemCount={filteredAssets.length}
+                  itemSize={90}
+                  onItemsRendered={onItemsRendered}
+                  ref={ref}
+                >
+                  {({ index, style }) => {
+                    if (!filteredAssets[index]) {
+                      return null;
+                    }
 
-                  return (
-                    <AssetListItem
-                      key={filteredAssets[index].assetId}
-                      onClick={() => {
-                        onClick(filteredAssets[index].assetId);
-                        trackUsage('Exploration.Action.Select', {
-                          selectedAssetId,
-                        });
-                      }}
-                      onKeyDown={() => onClick(filteredAssets[index].assetId)}
-                      className={
-                        selectedAssetId === filteredAssets[index].assetId
-                          ? 'selected'
-                          : ''
-                      }
-                      role="button"
-                      tabIndex={0}
-                      style={style}
-                    >
-                      <Flex direction="row" alignItems="center">
-                        <Icon type="Assets" style={{ marginRight: 5 }} />
-                        <Highlighter
-                          searchWords={query.split(' ')}
-                          textToHighlight={filteredAssets[index].assetName}
-                          autoEscape
-                        />
-                      </Flex>
-                      <Highlighter
-                        searchWords={query.split(' ')}
-                        textToHighlight={
-                          filteredAssets[index].assetDescription || ''
+                    return (
+                      <AssetListItem
+                        key={filteredAssets[index].assetId}
+                        onClick={() => {
+                          onClick(filteredAssets[index].assetId);
+                          trackUsage('Exploration.Action.Select', {
+                            selectedAssetId,
+                          });
+                        }}
+                        onKeyDown={() => onClick(filteredAssets[index].assetId)}
+                        className={
+                          selectedAssetId === filteredAssets[index].assetId
+                            ? 'selected'
+                            : ''
                         }
-                        autoEscape
-                      />
-                    </AssetListItem>
-                  );
-                }}
-              </List>
-            )}
-          </InfiniteLoader>
-        )}
-      </AutoSizer>
-    </AssetList>
+                        role="button"
+                        tabIndex={0}
+                        style={style}
+                      >
+                        <Icon
+                          type="Assets"
+                          style={{
+                            position: 'absolute',
+                            marginTop: 2,
+                            marginLeft: '5px',
+                          }}
+                        />
+                        <StyledFlex direction="column">
+                          <StyledHighlighter
+                            searchWords={query.split(' ')}
+                            textToHighlight={filteredAssets[index].assetName}
+                            autoEscape
+                          />
+                          <StyledDescriptionHighlighter
+                            searchWords={query.split(' ')}
+                            textToHighlight={
+                              filteredAssets[index].assetDescription || ''
+                            }
+                            autoEscape
+                          />
+                        </StyledFlex>
+                      </AssetListItem>
+                    );
+                  }}
+                </List>
+              )}
+            </InfiniteLoader>
+          )}
+        </AutoSizer>
+      </AssetList>
+    </>
   );
 };
 
+const StyledBorder = styled.div`
+  height: 1px;
+  width: 100%;
+  background-color: ${Colors['border--muted']};
+`;
+
+const StyledFlex = styled(Flex)`
+  padding-left: 5px;
+`;
+
+const StyledHighlighter = styled(Highlighter)`
+  margin-left: 1.5rem;
+  top: 0;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: ${Colors['text-icon--strong']};
+  font-weight: 500;
+`;
+
+const StyledDescriptionHighlighter = styled(Highlighter)`
+  margin-left: 1.5rem;
+  top: 0;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: ${Colors['text-icon--muted']};
+  font-weight: 400;
+`;
+
 const AssetList = styled.div`
   height: calc(100% - 56px);
+  border-radius: 4px;
 `;
 
 const AssetListItem = styled.div`
@@ -176,12 +217,9 @@ const AssetListItem = styled.div`
   flex-direction: column;
   height: 80px;
   padding: 10px;
+  border-bottom: 1px solid ${Colors['border--muted']};
+  border-radius: 4px;
   cursor: pointer;
-
-  :nth-child(odd) {
-    background-color: var(--cogs-greyscale-grey2);
-  }
-
   &:hover {
     background-color: var(--cogs-greyscale-grey3);
   }

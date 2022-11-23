@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { Button, Flex, Input } from '@cognite/cogs.js';
 import { AssetMappingsList } from 'app/containers/ThreeD/AssetMappingsList';
 import {
@@ -63,6 +63,23 @@ export const AssetMappingsSidebar = ({
     setSelectedAssetId(clickedAssetId);
   };
 
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  window.addEventListener('keydown', function (e) {
+    if (
+      e.keyCode === 75 &&
+      document.getElementById('search') !== document.activeElement
+    ) {
+      e.preventDefault();
+      document.getElementById('search')?.focus();
+    }
+    if (e.key === 'Escape' && expanded) {
+      setQuery('');
+      setExpanded(false);
+      searchRef.current?.blur();
+    }
+  });
+
   return (
     <SidebarContainer
       expanded={expanded}
@@ -71,28 +88,36 @@ export const AssetMappingsSidebar = ({
         trackUsage('Exploration.Preview.AssetMapping');
       }}
     >
-      <Flex gap={5}>
-        <Input
+      <Flex gap={5} justifyContent="flex-end" alignItems="center">
+        <StyledInput
+          ref={searchRef}
+          id="search"
           style={{ flexGrow: 1 }}
           value={query}
           onChange={e => {
             setQuery(e.target.value);
             trackUsage('Exploration.Action.Search', { name: query });
           }}
-          placeholder={asset?.name || 'Search assets'}
+          placeholder={asset?.name || 'Search (⌘ + K)'}
           fullWidth
-          iconPlacement="right"
-          icon={isFetching || hasNextPage ? 'Loader' : undefined}
+          size="large"
+          iconPlacement="left"
+          icon={isFetching || hasNextPage ? 'Loader' : 'Search'}
         />
         {expanded && (
-          <Button
-            icon="Close"
+          <StyledButton
             aria-label="close-asset-mappings-button"
             onClick={() => {
-              setExpanded(false);
+              if (query) {
+                setQuery('');
+              } else {
+                setExpanded(false);
+              }
               trackUsage('Exploration.Preview.AssetMapping');
             }}
-          />
+          >
+            {query ? 'Clear' : 'Close'}
+          </StyledButton>
         )}
       </Flex>
       {expanded && (
@@ -118,4 +143,32 @@ const SidebarContainer = styled.div<{ expanded?: boolean }>`
   height: ${props => (props.expanded ? '400px' : 'initial')};
   background: ${props => (props.expanded ? ' var(--cogs-white)' : 'initial')};
   overflow: hidden;
+`;
+
+const StyledButton = styled(Button)`
+  position: absolute;
+  background: white;
+  margin-right: 5px;
+  &:hover {
+    background: white;
+  }
+`;
+
+const StyledInput = styled(Input)`
+  height: 50px;
+  border-radius: 4px;
+  .cogs-input {
+    border: none;
+    width: 260px;
+    &:focus {
+      outline: none;
+      border: none;
+    }
+  }
+  .cogs-input.with-icon-left {
+    padding-left: 43px;
+  }
+  .cogs-input:hover {
+    border: none;
+  }
 `;
