@@ -1,0 +1,12 @@
+{
+  "name": "@reveal-documentation/next",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Christopher Tannum <christopher.tannum@cognite.com>",
+  "dependencies": {
+    "@cognite/reveal": "link:../../viewer/dist",
+    "@cognite/sdk": "link:../../viewer/node_modules/@cognite/sdk",
+    "@types/three": "link:../../viewer/node_modules/@types/three",
+    "three": "link:../../viewer/node_modules/three"
+  }
+}

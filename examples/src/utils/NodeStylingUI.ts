@@ -1,4 +1,5 @@
-import { Cognite3DViewer, THREE } from '@cognite/reveal';
+import * as THREE from 'three';
+import { Cognite3DViewer } from '@cognite/reveal';
 import dat from 'dat.gui';
 
 import { CogniteCadModel, NodeAppearance, DefaultNodeAppearance, TreeIndexNodeCollection, NumericRange, NodeOutlineColor, PropertyFilterNodeCollection } from '@cognite/reveal';

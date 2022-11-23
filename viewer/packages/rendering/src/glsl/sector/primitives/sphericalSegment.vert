@@ -1,5 +1,9 @@
 #pragma glslify: import('../../math/mul3.glsl')
 #pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
+#pragma glslify: import('../../base/renderModes.glsl')
+#pragma glslify: import('../../base/nodeAppearance.glsl')
+#pragma glslify: import('../../base/determineNodeAppearance.glsl')
+#pragma glslify: import('../../base/determineVisibility.glsl')
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
@@ -8,6 +12,8 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 uniform vec3 cameraPosition;
+uniform sampler2D colorDataTexture;
+uniform lowp int renderMode;
 
 in vec3 position;
 in float a_treeIndex;
@@ -35,6 +41,12 @@ out vec3 v_normal;
 out highp vec2 v_treeIndexPacked;
 
 void main() {
+    NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, a_treeIndex);
+    if (!determineVisibility(appearance, renderMode)) {
+        gl_Position = vec4(2.0, 2.0, 2.0, 1.0); // Will be clipped
+        return;
+    }
+
     v_treeIndexPacked = packTreeIndex(a_treeIndex);
     v_color = a_color;
 

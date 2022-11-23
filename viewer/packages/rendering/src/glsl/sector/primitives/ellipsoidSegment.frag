@@ -3,7 +3,6 @@ precision highp float;
 #pragma glslify: import('../../base/nodeAppearance.glsl')
 #pragma glslify: import('../../base/updateFragmentColor.glsl')
 #pragma glslify: import('../../base/determineNodeAppearance.glsl');
-#pragma glslify: import('../../base/determineVisibility.glsl');
 #pragma glslify: import('../../base/determineColor.glsl');
 #pragma glslify: import('../../base/isClipped.glsl');
 #pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
@@ -12,7 +11,7 @@ uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
 uniform mat4 projectionMatrix;
-uniform int renderMode;
+uniform lowp int renderMode;
 
 // Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
 #pragma glslify: import('../../base/updateFragmentDepth.glsl')
@@ -25,15 +24,15 @@ in vec4 V;
 in vec4 sphereNormal;
 in vec3 v_color;
 in vec3 v_normal;
-in highp vec2  v_treeIndexPacked;
+
+in highp vec2 v_treeIndexPacked;
 
 void main()
 {
     highp float v_treeIndex = unpackTreeIndex(v_treeIndexPacked);
+
+    // Redo appearance texture lookup from vertex shader due to limit in transferable attributes
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
-    if (!determineVisibility(appearance, renderMode)) {
-        discard;
-    }
 
     vec4 color = determineColor(v_color, appearance);
     vec3 normal = normalize(sphereNormal.xyz);
