@@ -43,7 +43,7 @@ export const WellboreStickChartWrapper = styled(FlexColumn)`
 `;
 
 export const ContentWrapper = styled(Flex)`
-  height: 100%;
+  height: calc(100% - 60px);
   padding: ${sizes.extraSmall};
   justify-content: center;
 `;

@@ -76,7 +76,7 @@ export enum SummarySection {
   CasingSpecification = 'Casing Specification',
   // HoleDepth = 'Hole Depth (NTH)',
   // DrillingParameters = 'Drilling Parameters',
-  // MudwayWindow = 'Mudway Window',
+  MudWeightWindow = 'Mud Weight Window',
   // HighlightedEvent = 'Highlighted Event',
 }
 
@@ -88,4 +88,11 @@ export interface TrajectoryCurveConfig {
   chartConfig: ProjectConfigWellsTrajectoryCharts;
   axisNames: Record<string, string>;
   title?: string;
+}
+
+export interface MudWeight {
+  id: string;
+  type: string;
+  value: { value: number; unit: string };
+  depth: { value: number; unit: string };
 }

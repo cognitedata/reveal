@@ -36,7 +36,7 @@ export const CasingSpecification: React.FC<CasingSpecificationProps> = ({
       isExpanded={isExpanded}
     >
       <SummarySectionContent>
-        <Specification label="Casing size" value={outsideDiameterFormatted} />
+        <Specification label="Casing OD" value={outsideDiameterFormatted} />
         <CasingSpecificationFromComponents components={components} />
         <Specification label="Thickness" value={formatDiameter(thickness)} />
       </SummarySectionContent>

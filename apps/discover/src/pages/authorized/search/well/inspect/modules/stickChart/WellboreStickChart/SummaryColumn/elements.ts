@@ -2,32 +2,12 @@ import styled from 'styled-components/macro';
 
 import { Button } from '@cognite/cogs.js';
 
-import { FlexColumn, FlexRow, sizes } from 'styles/layout';
+import { FlexColumn, FlexRow, PrettyScrollBar, sizes } from 'styles/layout';
 import { DURATION } from 'styles/transition';
 
-import { BodyColumn } from '../../../common/Events/elements';
-
-export const SummaryColumnWrapper = styled(BodyColumn)`
-  overflow: hidden;
-`;
-
 export const SummariesWrapper = styled(FlexColumn)`
+  ${PrettyScrollBar};
   overflow-y: scroll;
-
-  ::-webkit-scrollbar {
-    width: ${sizes.small};
-    height: ${sizes.small};
-  }
-  ::-webkit-scrollbar-track {
-    background: var(--cogs-greyscale-grey2);
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--cogs-greyscale-grey3);
-    border-radius: ${sizes.small};
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--cogs-greyscale-grey4);
-  }
 `;
 
 export const SummaryContainer = styled(FlexRow)`
@@ -38,7 +18,9 @@ export const SummaryContainer = styled(FlexRow)`
   }
 `;
 
-export const SummarySectionColumn = styled.span``;
+export const SummarySectionColumn = styled.div`
+  width: ${(props: { width?: number }) => `${props.width}px`};
+`;
 
 export const SummarySectionToggleButton = styled(Button)`
   font-size: 12px;
@@ -83,9 +65,11 @@ export const SummaryColumnSectionContentWrapper = styled.div`
 
 export const SummarySectionContent = styled(FlexColumn)`
   flex-wrap: wrap;
+  white-space: initial;
   font-size: 12px;
   line-height: ${sizes.normal};
   margin-top: ${sizes.small};
+  padding-left: 6px;
   color: #000000;
   opacity: 90%;
 
@@ -100,16 +84,23 @@ export const SummaryColumnEmptyStateSpacer = styled.div`
 
 export const SecondaryText = styled(SummarySectionContent)`
   margin-top: -10px;
-  color: var(--cogs-greyscale-grey8);
+  color: var(--cogs-text-secondary);
 `;
 
 export const Depth = styled(SecondaryText)`
+  flex-direction: row;
   &:before {
     content: '@';
+    margin-right: ${sizes.extraSmall};
   }
 `;
 
 export const EventText = styled(SecondaryText)`
   color: #000000;
   opacity: 90%;
+`;
+
+export const EmptyStateText = styled.span`
+  color: var(--cogs-text-secondary);
+  font-weight: 500;
 `;

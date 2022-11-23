@@ -206,7 +206,9 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
 
               <SummaryColumn
                 key={ChartColumn.SUMMARY}
-                {...casingsData}
+                casingAssemblies={casingsData.data}
+                measurementsData={measurementsData.data}
+                depthMeasurementType={depthMeasurementType}
                 summaryVisibility={summaryVisibility}
                 isVisible={columnVisibility[ChartColumn.SUMMARY]}
               />
