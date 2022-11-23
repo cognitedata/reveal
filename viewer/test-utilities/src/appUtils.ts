@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { PublicClientApplication, EventType } from '@azure/msal-browser';
-import type cdfEnvironmentTypes from '../../visual-tests/.cdf-env[example].json';
+import type cdfEnvironmentTypes from '../../visual-tests/.cdf-env.example.json';
 
 export async function getApplicationSDK(urlParams: URLSearchParams): Promise<CogniteClient> {
   // @ts-ignore
