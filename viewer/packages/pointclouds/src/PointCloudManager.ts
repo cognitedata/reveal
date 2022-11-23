@@ -126,7 +126,6 @@ export class PointCloudManager {
 
     const pointCloudNode = await this._pointCloudFactory.createModel(metadata);
     this._pointCloudNodes.push(pointCloudNode);
-    pointCloudNode.setModelTransformation(metadata.modelMatrix);
 
     this.requestRedraw();
     this._loadingStateHandler.onModelAdded();

@@ -62,6 +62,8 @@ export class BulkHtmlOverlayUI {
 
     const matchedNodes = await this._sdk.revisions3D.list3DNodes(modelId, revisionId, { limit: 1000, properties: { [filterCategory]: { [filterKey]: filterValue } } }).autoPagingToArray();
 
+    const cdfModelTransformation = this._model.getModelTransformation()
+      .clone().multiply(this._model.getCdfToDefaultModelTransformation());
 
     for (let i = 0; i < matchedNodes.length; ++i) {
       const { id } = matchedNodes[i];
@@ -75,7 +77,7 @@ export class BulkHtmlOverlayUI {
         const bounds = new THREE.Box3();
         bounds.min.set(boundingBox.min[0], boundingBox.min[1], boundingBox.min[2]);
         bounds.max.set(boundingBox.max[0], boundingBox.max[1], boundingBox.max[2]);
-        this._model.mapBoxFromCdfToModelCoordinates(bounds, bounds);
+        bounds.applyMatrix4(cdfModelTransformation);
         const center = bounds.getCenter(new THREE.Vector3());
 
         const htmlElement = this.createTagOverlay(name, bounds, treeIndex, subtreeSize);

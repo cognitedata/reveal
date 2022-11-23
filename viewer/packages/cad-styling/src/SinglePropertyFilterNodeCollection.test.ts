@@ -23,7 +23,8 @@ describe('SinglePropertyFilterNodeCollection', () => {
     mockClient.setup(x => x.getBaseUrl()).returns('https://mycdf');
 
     mockModel = new Mock<CdfModelNodeCollectionDataProvider>();
-    mockModel.setup(x => x.mapBoxFromCdfToModelCoordinates(It.IsAny(), It.IsAny())).returns(new THREE.Box3());
+    mockModel.setup(x => x.getCdfToDefaultModelTransformation()).returns(new THREE.Matrix4());
+    mockModel.setup(x => x.getModelTransformation()).returns(new THREE.Matrix4());
 
     set = new SinglePropertyFilterNodeCollection(mockClient.object(), mockModel.object());
   });
