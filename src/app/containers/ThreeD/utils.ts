@@ -106,10 +106,9 @@ export const fitCameraToAsset = async (
   queryClient: QueryClient,
   viewer: Cognite3DViewer,
   threeDModel: Cognite3DModel,
-  modelId: number,
-  revisionId: number,
   assetId: number
 ) => {
+  const { modelId, revisionId } = threeDModel;
   const mappings = await fetchAssetMappingsByAssetIdQuery(
     sdk,
     queryClient,

@@ -152,15 +152,6 @@ export const ThreeDView = ({ modelId }: Props) => {
     removeAllStyles(threeDModel);
 
     if (selectedAssetId) {
-      fitCameraToAsset(
-        sdk,
-        queryClient,
-        viewer,
-        threeDModel,
-        modelId,
-        revisionId!,
-        selectedAssetId
-      );
       if (assetDetailsExpanded) {
         ghostAsset(sdk, threeDModel, selectedAssetId, queryClient);
         overlayTool.visible = false;
@@ -190,6 +181,16 @@ export const ThreeDView = ({ modelId }: Props) => {
     overlayTool,
     labelsVisibility,
   ]);
+
+  useEffect(() => {
+    if (!viewer || !threeDModel) {
+      return;
+    }
+
+    if (selectedAssetId) {
+      fitCameraToAsset(sdk, queryClient, viewer, threeDModel, selectedAssetId);
+    }
+  }, [queryClient, sdk, selectedAssetId, threeDModel, viewer]);
 
   if (!revisionId) {
     return null;
@@ -237,8 +238,6 @@ export const ThreeDView = ({ modelId }: Props) => {
                     />
                   )}
                   <FocusAssetButton
-                    modelId={modelId}
-                    revisionId={revisionId}
                     selectedAssetId={selectedAssetId}
                     viewer={viewer}
                     threeDModel={threeDModel}

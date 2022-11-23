@@ -63,14 +63,10 @@ export const ExpandButton = ({
 };
 
 export const FocusAssetButton = ({
-  modelId,
-  revisionId,
   selectedAssetId,
   viewer,
   threeDModel,
 }: {
-  modelId: number;
-  revisionId: number;
   selectedAssetId?: number;
   viewer: Cognite3DViewer;
   threeDModel?: Cognite3DModel;
@@ -93,8 +89,6 @@ export const FocusAssetButton = ({
               queryClient,
               viewer,
               threeDModel,
-              modelId,
-              revisionId,
               selectedAssetId
             );
           }
