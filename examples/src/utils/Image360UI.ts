@@ -13,16 +13,16 @@ export class Image360UI {
     const optionsFolder = gui.addFolder('Add Options');
 
     const translation = {
-      x: 11,
-      y: 49,
-      z: 32
+      x: 0,
+      y: 0,
+      z: 0
     };
     
     const rotation = {
       x: 0,
-      y: 1,
+      y: 0,
       z: 0,
-      radians: 3.08923
+      radians: 0
     };
 
     const opacity = {
@@ -30,12 +30,10 @@ export class Image360UI {
     };
     
     const params = {
-      siteId: 'helideck-site-2',
+      siteId: '',
       add: add360ImageSet,
       premultipliedRotation: true
     };
-
-    add360ImageSet();
 
     optionsFolder.add(params, 'siteId').name('Site ID');
     
