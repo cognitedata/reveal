@@ -278,6 +278,7 @@ function setModelRenderLayers(
   const backSet = materialManager.getModelBackTreeIndices(modelIdentifier);
   const ghostSet = materialManager.getModelGhostedTreeIndices(modelIdentifier);
   const inFrontSet = materialManager.getModelInFrontTreeIndices(modelIdentifier);
+  const visibleSet = materialManager.getModelVisibleTreeIndices(modelIdentifier);
 
   model.traverse(node => {
     node.layers.disableAll();
@@ -285,14 +286,17 @@ function setModelRenderLayers(
     if (objectTreeIndices === undefined) {
       return;
     }
-    if (backSet.hasIntersectionWith(objectTreeIndices)) {
-      node.layers.enable(RenderLayer.Back);
-    }
-    if (ghostSet.hasIntersectionWith(objectTreeIndices)) {
-      node.layers.enable(RenderLayer.Ghost);
-    }
-    if (inFrontSet.hasIntersectionWith(objectTreeIndices)) {
-      node.layers.enable(RenderLayer.InFront);
+
+    if (visibleSet.hasIntersectionWith(objectTreeIndices)) {
+      if (backSet.hasIntersectionWith(objectTreeIndices)) {
+        node.layers.enable(RenderLayer.Back);
+      }
+      if (ghostSet.hasIntersectionWith(objectTreeIndices)) {
+        node.layers.enable(RenderLayer.Ghost);
+      }
+      if (inFrontSet.hasIntersectionWith(objectTreeIndices)) {
+        node.layers.enable(RenderLayer.InFront);
+      }
     }
   });
 }
