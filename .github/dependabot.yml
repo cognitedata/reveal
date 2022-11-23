@@ -4,9 +4,17 @@
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
+registries:
+  npm-npmjs: # Define access for a private registry
+    type: npm-registry
+    url: https://registry.npmjs.org
+    token: ${{secrets.NPM_READONLY_TOKEN}}
+
 updates:
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/" # Location of package manifests
+    registries:
+      - npm-npmjs
     schedule:
       interval: "daily"
       time: "07:00"
