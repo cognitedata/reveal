@@ -73,6 +73,7 @@ export const AssetFilters = ({ ...rest }) => {
               labels: newFilters,
             })
           }
+          addNilOption
         />
         <AggregatedFilterV2
           title="Source"
@@ -84,6 +85,7 @@ export const AssetFilters = ({ ...rest }) => {
               source: newSource,
             })
           }
+          addNilOption
         />
         <MetadataFilterV2
           items={items}
