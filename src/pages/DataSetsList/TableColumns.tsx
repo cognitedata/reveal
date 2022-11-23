@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Body, Flex, Icon, Label, Tooltip } from '@cognite/cogs.js';
+import { Body, Colors, Flex, Icon, Label, Tooltip } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/shared';
 import { getItemFromStorage } from 'utils/localStorage';
 import { DataSet, DataSetV3, Extpipe } from 'utils/types';
@@ -47,9 +47,11 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
             postProcess: 'lowercase',
           })}`}
         >
-          <Label size="small" icon="Assets" variant="unknown">
-            {assetCount.toLocaleString()}
-          </Label>
+          <StyledLabelCount size="small" icon="Assets" variant="unknown">
+            <Body level={2} strong>
+              {assetCount.toLocaleString()}
+            </Body>
+          </StyledLabelCount>
         </Tooltip>
       )}
       {timeseriesCount > 0 && (
@@ -58,9 +60,11 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
             postProcess: 'lowercase',
           })}`}
         >
-          <Label size="small" icon="Timeseries" variant="unknown">
-            {timeseriesCount.toLocaleString()}
-          </Label>
+          <StyledLabelCount size="small" icon="Timeseries" variant="unknown">
+            <Body level={2} strong>
+              {timeseriesCount.toLocaleString()}
+            </Body>
+          </StyledLabelCount>
         </Tooltip>
       )}
       {filesCount > 0 && (
@@ -69,9 +73,11 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
             postProcess: 'lowercase',
           })}`}
         >
-          <Label size="small" icon="Document" variant="unknown">
-            {filesCount.toLocaleString()}
-          </Label>
+          <StyledLabelCount size="small" icon="Document" variant="unknown">
+            <Body level={2} strong>
+              {filesCount.toLocaleString()}
+            </Body>
+          </StyledLabelCount>
         </Tooltip>
       )}
       {eventsCount > 0 && (
@@ -80,9 +86,11 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
             postProcess: 'lowercase',
           })}`}
         >
-          <Label size="small" icon="Events" variant="unknown">
-            {eventsCount.toLocaleString()}
-          </Label>
+          <StyledLabelCount size="small" icon="Events" variant="unknown">
+            <Body level={2} strong>
+              {eventsCount.toLocaleString()}
+            </Body>
+          </StyledLabelCount>
         </Tooltip>
       )}
       {sequencesCount > 0 && (
@@ -91,9 +99,11 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
             postProcess: 'lowercase',
           })}`}
         >
-          <Label size="small" icon="Sequences" variant="unknown">
-            {sequencesCount.toLocaleString()}
-          </Label>
+          <StyledLabelCount size="small" icon="Sequences" variant="unknown">
+            <Body level={2} strong>
+              {sequencesCount.toLocaleString()}
+            </Body>
+          </StyledLabelCount>
         </Tooltip>
       )}
       {assetCount === 0 &&
@@ -109,6 +119,11 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
 
 const StyledEmptyText = styled(Body)`
   color: rgba(0, 0, 0, 0.55);
+`;
+const StyledLabelCount = styled(Label)`
+  background: ${Colors['surface--muted']};
+  border: 1px solid #bfbfbf;
+  border-radius: 4px;
 `;
 
 export const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {

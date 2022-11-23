@@ -276,7 +276,7 @@ const DataSetsList = (): JSX.Element => {
   }
 
   return (
-    <Page title={t('data-set_other')}>
+    <Page title={t('landing-title')}>
       <DataSetEditor
         visible={creationDrawerVisible}
         onClose={onClose}
