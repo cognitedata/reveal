@@ -25,7 +25,7 @@ export default class TwoModelsVisualTest extends ViewerVisualTestFixture {
 
     model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 
-    const translation = new THREE.Matrix4().makeTranslation(0, 0, 5);
+    const translation = new THREE.Matrix4().makeTranslation(0, 5, 0);
     const transform = model.getModelTransformation();
     transform.multiply(translation);
     model.setModelTransformation(transform);

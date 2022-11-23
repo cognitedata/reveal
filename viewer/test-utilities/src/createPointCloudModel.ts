@@ -38,5 +38,5 @@ export function createPointCloudNode(): PointCloudNode {
       .object()
   );
 
-  return new PointCloudNode(Symbol(), pointCloudOctree, [], { classificationSets: [] });
+  return new PointCloudNode(Symbol(), new THREE.Matrix4(), pointCloudOctree, [], { classificationSets: [] });
 }

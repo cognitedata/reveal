@@ -38,7 +38,7 @@ export class PointCloudFactory {
   }
 
   async createModel(modelMetadata: PointCloudMetadata): Promise<PointCloudNode> {
-    const { modelBaseUrl, modelIdentifier, cameraConfiguration } = modelMetadata;
+    const { modelBaseUrl, modelIdentifier, modelMatrix, cameraConfiguration } = modelMetadata;
 
     const annotationInfoPromise = this._pointCloudObjectProvider.getPointCloudObjects(modelIdentifier);
     const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata);
@@ -60,6 +60,7 @@ export class PointCloudFactory {
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
     return new PointCloudNode(
       modelIdentifier.revealInternalId,
+      modelMatrix,
       pointCloudOctree,
       annotationInfo,
       classSchema,
