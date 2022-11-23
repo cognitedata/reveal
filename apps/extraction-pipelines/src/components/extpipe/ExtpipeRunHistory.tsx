@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { RunLogsTable } from 'components/extpipe/RunLogsTable';
 import ErrorFeedback from './ErrorFeedback';
-import { PageWrapperColumn } from 'components/styled';
+import { PageWrapperColumn, StyledPageContainer } from 'components/styled';
 import { DebouncedSearch } from 'components/inputs/DebouncedSearch';
 import { DateRangeFilter } from 'components/inputs/dateTime/DateRangeFilter';
 import { Colors, Loader } from '@cognite/cogs.js';
@@ -42,7 +42,7 @@ export default function ExtpipeRunHistory() {
   }
 
   return (
-    <>
+    <StyledPageContainer>
       <ExtpipeHeading />
       <PageWrapperColumn>
         <SectionWithoutHeader>
@@ -63,7 +63,7 @@ export default function ExtpipeRunHistory() {
           </div>
         </SectionWithoutHeader>
       </PageWrapperColumn>
-    </>
+    </StyledPageContainer>
   );
 }
 

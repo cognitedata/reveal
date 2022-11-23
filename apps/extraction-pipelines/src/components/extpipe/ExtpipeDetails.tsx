@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { PageWrapperColumn } from 'components/styled';
+import { PageWrapperColumn, StyledPageContainer } from 'components/styled';
 import { DocumentationSection } from 'components/extpipe/DocumentationSection';
 import { RunScheduleConnection } from 'components/extpipe/RunScheduleConnection';
 import { ExtpipeInformation } from 'components/extpipe/ExtpipeInformation';
@@ -37,7 +37,7 @@ export const ExtpipeDetails: FunctionComponent<ExtpipeViewProps> = () => {
     return <p>{t('ext-pipeline-id-not-found', { id })}</p>;
   }
   return (
-    <>
+    <StyledPageContainer>
       <ExtpipeHeading />
       <PageWrapperColumn>
         <RunScheduleConnection externalId={extpipe.externalId} />
@@ -53,7 +53,7 @@ export const ExtpipeDetails: FunctionComponent<ExtpipeViewProps> = () => {
           </div>
         </MiddleSection>
       </PageWrapperColumn>
-    </>
+    </StyledPageContainer>
   );
 };
 
