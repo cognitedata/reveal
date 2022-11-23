@@ -38,6 +38,11 @@ export const DataSetFilterV2 = ({
     }
   );
 
+  const convertResourceTypeDocument = (resourceType?: ResourceType) => {
+    if (resourceType === 'document') return 'files';
+    return convertResourceType(resourceType);
+  };
+
   const setDataSetFilter = (newValue?: OptionType<number>[]) => {
     // const newFilters =
     //   ids && ids.length > 0 ? ids?.map(id => ({ id })) : undefined;
@@ -45,7 +50,7 @@ export const DataSetFilterV2 = ({
   };
 
   const { data: datasetOptions, isError } = useResourceTypeDataSetAggregate(
-    resourceType ? convertResourceType(resourceType) : undefined
+    resourceType ? convertResourceTypeDocument(resourceType) : undefined
   );
 
   return (

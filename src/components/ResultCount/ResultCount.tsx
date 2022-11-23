@@ -71,15 +71,18 @@ export const useResultCount = ({
     sdkType as SdkResourceType,
     filter,
     {
-      enabled: type !== 'threeD' && api === 'list' && !count,
+      enabled:
+        type !== 'threeD' && type !== 'document' && api === 'list' && !count,
     }
   );
+
   const result = {
     count: 0,
     label: label || getTitle(type, count !== 1).toLowerCase(),
   };
 
   const { data: filteredDocumentCount } = useDocumentFilteredAggregateCount();
+
   if (type === 'document') {
     return { ...result, count: formatNumber(filteredDocumentCount || 0) };
   }
