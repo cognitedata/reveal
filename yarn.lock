@@ -12865,10 +12865,10 @@ postcss-place@^7.0.4:
   dependencies:
     postcss-value-parser "^4.2.0"
 
-postcss-prefixwrap@1.29.0:
-  version "1.29.0"
-  resolved "https://registry.yarnpkg.com/postcss-prefixwrap/-/postcss-prefixwrap-1.29.0.tgz#0e8367d2c77622cecfa95e38e4ae0687efa27ffb"
-  integrity sha512-tn5+95restVO4sw+KdVQiiYuiUwldAaE1VQTAZedHnJ/S5zHiI9zfzx+Bs3DUcy2DaV4WbxCnBz58tiOZjEpXQ==
+postcss-prefixwrap@1.37.0:
+  version "1.37.0"
+  resolved "https://registry.yarnpkg.com/postcss-prefixwrap/-/postcss-prefixwrap-1.37.0.tgz#ee2ce3f2a5cc5ecde795f965486fe7e890af67c7"
+  integrity sha512-J76yDPTDdqpX9uFfDxc4oRFNKaBdIcviJ6A+Nb31+Mu7VEmGX7xGFNwAsAE/9GuAgrPo4S8DyyCnhytWb1rjiA==
 
 postcss-preset-env@^7.0.1:
   version "7.4.3"
