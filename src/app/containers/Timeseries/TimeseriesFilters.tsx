@@ -55,6 +55,7 @@ export const TimeseriesFilters = ({ ...rest }) => {
           items={items}
           aggregator="unit"
           title="Unit"
+          addNilOption
           value={timeseriesFilter.unit}
           setValue={newValue => setTimeseriesFilter({ unit: newValue })}
         />

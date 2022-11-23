@@ -40,7 +40,11 @@ export const ExplorationSearchBar = () => {
         boxShadow: isFilterEnabled ? undefined : 'none',
       }}
       icon="Search"
-      placeholder="Search..."
+      placeholder={
+        isFilterEnabled
+          ? 'Search by name, description/content, metadata values, ID, and external ID...'
+          : 'Search...'
+      }
       onChange={ev => setLocalQuery(ev.target.value)}
       value={localQuery}
     />
