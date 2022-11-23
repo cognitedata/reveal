@@ -1,8 +1,18 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
-import { Label, LabelVariants } from '@cognite/cogs.js';
+import {
+  Body,
+  Colors,
+  Flex,
+  Icon,
+  IconType,
+  Label,
+  LabelVariants,
+} from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import { RunStatus } from 'model/Runs';
 import { useRuns } from 'hooks/useRuns';
+import RelativeTimeWithTooltip from './RelativeTimeWithTooltip';
+import styled from 'styled-components';
 
 interface OwnProps {
   id?: string;
@@ -11,6 +21,31 @@ interface OwnProps {
 }
 
 type Props = OwnProps;
+
+const getIconType = (status?: RunStatus): IconType => {
+  switch (status) {
+    case 'success':
+      return 'Checkmark';
+    case 'failure':
+      return 'Error';
+    case 'seen':
+      return 'Info';
+    default:
+      return 'Remove';
+  }
+};
+
+const getIconColor = (status?: RunStatus): string => {
+  switch (status) {
+    case 'success':
+      return Colors['text-icon--status-success'];
+    case 'failure':
+      return Colors['text-icon--status-critical'];
+    case 'seen':
+    default:
+      return Colors['text-icon--status-neutral'];
+  }
+};
 
 const getVariant = (status?: RunStatus | 'not-activated'): LabelVariants => {
   switch (status) {
@@ -61,29 +96,27 @@ export const LastRunStatusMarker: FunctionComponent<
     statuses: ['success', 'failure'],
   });
   const lastRun = data?.pages?.[0]?.items?.[0];
+
+  if (!isFetched) {
+    return <></>;
+  }
+
   if (lastRun) {
-    const variant = getVariant(lastRun.status);
+    const iconType = getIconType(lastRun.status);
+    const iconColor = getIconColor(lastRun.status);
     return (
-      <Label
-        size="medium"
-        variant={variant}
-        data-testid={`status-marker-${externalId}`}
-      >
-        {t(lastRun.status)}
-      </Label>
-    );
-  } else if (isFetched) {
-    return (
-      <Label
-        size="medium"
-        variant="unknown"
-        data-testid={`status-marker-${externalId}`}
-      >
-        {t('not-activated')}
-      </Label>
+      <Flex gap={8} alignItems="center">
+        <Icon type={iconType} style={{ color: iconColor }} />
+        <RelativeTimeWithTooltip id="last-run" time={lastRun.createdTime} />
+      </Flex>
     );
   }
-  return null;
+
+  return <StyledBody level={2}>{t('not-activated')}</StyledBody>;
 };
+
+const StyledBody = styled(Body)`
+  color: ${Colors['text-icon--muted']};
+`;
 
 export default StatusMarker;
