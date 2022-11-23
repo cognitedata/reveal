@@ -75,6 +75,16 @@ export const fetchBoundingBoxByNodeIdQuery = (
   );
 };
 
+export const distancesInFeetAndMeters = (distanceInMeters: number) => {
+  const distanceInFeet = distanceInMeters * 3.281;
+  const distanceInFeetInt = Math.floor(distanceInFeet);
+  const distanceInches = Math.round(12 * (distanceInFeet - distanceInFeetInt)); // 12 inches in a foot
+  const distances = `${distanceInMeters.toFixed(
+    2
+  )} m\n ${distanceInFeetInt}' ${distanceInches}''`;
+  return distances;
+};
+
 export const fitCameraToAsset = async (
   sdk: CogniteClient,
   queryClient: QueryClient,

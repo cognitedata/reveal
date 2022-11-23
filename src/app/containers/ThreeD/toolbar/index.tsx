@@ -11,7 +11,10 @@ import { trackUsage } from 'app/utils/Metrics';
 import { MeasurementTool } from '@cognite/reveal/tools';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQueryClient } from 'react-query';
-import { fitCameraToAsset } from 'app/containers/ThreeD/utils';
+import {
+  distancesInFeetAndMeters,
+  fitCameraToAsset,
+} from 'app/containers/ThreeD/utils';
 
 export { default as HelpButton } from './help-button';
 export { default as ShareButton } from './share-button';
@@ -113,7 +116,11 @@ export const PointToPointMeasurementButton = ({
   setNodesSelectable: (selectable: boolean) => void;
 }) => {
   const measurementTool = useMemo(() => {
-    return new MeasurementTool(viewer);
+    return new MeasurementTool(viewer, {
+      distanceToLabelCallback: (distanceInMeters: number) => {
+        return distancesInFeetAndMeters(distanceInMeters);
+      },
+    });
   }, [viewer]);
 
   const enterMeasurementMode = () => {
