@@ -162,25 +162,6 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   /**
-   * Sets whether camera controls through mouse, touch and keyboard are enabled.
-   * This can be useful to e.g. temporarily disable navigation when manipulating other
-   * objects in the scene or when implementing a "cinematic" viewer.
-   * @deprecated Will be removed in 4.0.0. Use {@link DefaultCameraManager.enabled} instead.
-   */
-  set cameraControlsEnabled(enabled: boolean) {
-    this._controls.enabled = enabled;
-    this._enabledCopy = enabled;
-  }
-
-  /**
-   * Gets whether camera controls through mouse, touch and keyboard are enabled.
-   * @deprecated Will be removed in 4.0.0. Use {@link DefaultCameraManager.enabled} instead.
-   */
-  get cameraControlsEnabled(): boolean {
-    return this._controls.enabled;
-  }
-
-  /**
    * Sets whether keyboard control of the camera is enabled/disabled.
    */
   set keyboardNavigationEnabled(enabled: boolean) {
@@ -230,6 +211,23 @@ export class DefaultCameraManager implements CameraManager {
       rotation: this._camera.quaternion.clone(),
       target: this._controls.getState().target.clone()
     };
+  }
+
+  activate(cameraManager?: CameraManager): void {
+    if (cameraManager) {
+      const previousState = cameraManager.getCameraState();
+      this.setCameraState({ position: previousState.position, target: previousState.target });
+      this.getCamera().aspect = cameraManager.getCamera().aspect;
+    }
+
+    this.enabled = true;
+    this.teardownControls(false);
+    this.setupControls();
+  }
+
+  deactivate(): void {
+    this.enabled = false;
+    this.teardownControls(true);
   }
 
   /**

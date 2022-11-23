@@ -44,6 +44,17 @@ export interface CameraManager {
   getCameraState(): Required<CameraState>;
 
   /**
+   * Called when this manager is set as the active manager.
+   * @param cameraManager Previously used camera manager.
+   */
+  activate(cameraManager?: CameraManager): void;
+
+  /**
+   * Called when this manager is deactivated.
+   */
+  deactivate(): void;
+
+  /**
    * Subscribes to changes of the camera event. This is used by Reveal to react on changes of the camera.
    * @param event Name of the event.
    * @param callback Callback to be called when the event is fired.
@@ -76,7 +87,7 @@ export interface CameraManager {
    */
   dispose(): void;
   /**
-   * Enables or disables camera manager. When disabled, camera manager shouldn't consume or react to any DOM events.
+   * Enabled is true if this camera manager is active. When disabled, the camera manager shouldn't consume or react to any DOM events.
    */
-  enabled?: boolean;
+  enabled: boolean;
 }

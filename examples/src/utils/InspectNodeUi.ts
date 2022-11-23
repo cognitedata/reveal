@@ -79,8 +79,15 @@ export class InspectNodeUI {
         });
         gizmo.addEventListener('dragging-changed', (event: any) => {
           const dragging: boolean = event.value;
-          const cameraManager: DefaultCameraManager = this._viewer.cameraManager as DefaultCameraManager;
-          cameraManager.cameraControlsEnabled = !dragging;
+
+          //Disable active camera controls when drag is detected on gizmo
+          const cameraManager = this._viewer.cameraManager;
+          if (dragging) {
+            cameraManager.deactivate();
+          }
+          else {
+            cameraManager.activate();
+          }
         });
 
         this._viewer.addObject3D(gizmo);

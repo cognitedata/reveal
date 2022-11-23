@@ -78,7 +78,7 @@ export class Image360ApiHelper {
     const { rotation } = this._activeCameraManager.getCameraState();
     if (this._activeCameraManager.innerCameraManager !== this._image360Navigation) {
       this._cachedCameraManager = this._activeCameraManager.innerCameraManager;
-      this._activeCameraManager.setActiveCameraManager(this._image360Navigation, false);
+      this._activeCameraManager.setActiveCameraManager(this._image360Navigation);
     }
     this._image360Navigation.setCameraState({ position, rotation });
     this._image360Facade.allIconsVisibility = true;
@@ -94,7 +94,7 @@ export class Image360ApiHelper {
     this._image360Facade.allIconsVisibility = true;
     this._interactionState.lastImage360Entered?.deactivate360Image();
     this._interactionState.lastImage360Entered = undefined;
-    this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager, true);
+    this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
   }
 
   public dispose(): void {
