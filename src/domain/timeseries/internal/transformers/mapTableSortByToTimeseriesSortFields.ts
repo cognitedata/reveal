@@ -1,9 +1,9 @@
 import { TableSortBy } from 'components/Table';
-import { InternalTimeseriesSortBy } from 'domain/timeseries';
+import { InternalSortBy } from 'domain/types';
 
 export const mapTableSortByToTimeseriesSortFields = (
   sortBy?: TableSortBy[]
-): InternalTimeseriesSortBy[] | undefined => {
+): InternalSortBy[] | undefined => {
   if (!sortBy || sortBy.length === 0) return undefined;
 
   if (sortBy.length > 0) {

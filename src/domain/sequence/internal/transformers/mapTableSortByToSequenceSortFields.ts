@@ -1,9 +1,9 @@
 import { TableSortBy } from 'components/Table';
-import { InternalSequenceSortBy } from 'domain/sequence';
+import { InternalSortBy } from 'domain/types';
 
 export const mapTableSortByToSequenceSortFields = (
   sortBy?: TableSortBy[]
-): InternalSequenceSortBy[] | undefined => {
+): InternalSortBy[] | undefined => {
   if (!sortBy || sortBy.length === 0) return undefined;
 
   if (sortBy.length > 0) {

@@ -13,6 +13,6 @@ export type InternalCommonFilters = {
 export type Order = 'asc' | 'desc';
 
 export type InternalSortBy = {
-  property: string;
+  property: string[];
   order: Order;
 };

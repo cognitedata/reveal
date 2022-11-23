@@ -8,7 +8,7 @@ export const mapTableSortByToAssetSortFields = (
 
   return sortBy.map(tableSort => {
     return {
-      property: tableSort.id,
+      property: [tableSort.id],
       order: tableSort.desc ? 'desc' : 'asc',
     };
   });

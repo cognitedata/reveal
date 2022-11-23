@@ -1,5 +1,5 @@
 import { CogniteExternalId, CogniteInternalId, Metadata } from '@cognite/sdk';
-import { InternalCommonFilters, Order } from '../../types';
+import { InternalCommonFilters } from '../../types';
 export interface InternalTimeseriesData {
   id: number;
   lastUpdatedTime: Date;
@@ -27,9 +27,3 @@ export interface OldTimeseriesFilters
   extends Omit<InternalTimeseriesFilters, 'metadata'> {
   metadata?: Metadata;
 }
-
-// We need this type instead of `InternalSortBy` becuase property is a string array for Timeseries.
-export type InternalTimeseriesSortBy = {
-  property: string[];
-  order: Order;
-};

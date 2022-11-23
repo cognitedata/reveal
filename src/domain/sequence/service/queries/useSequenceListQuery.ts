@@ -4,11 +4,8 @@ import { useSDK } from '@cognite/sdk-provider';
 import { SequenceFilter } from '@cognite/sdk/dist/src';
 import { AdvancedFilter } from 'domain/builders';
 import { queryKeys } from 'domain/queryKeys';
-import {
-  InternalSequenceSortBy,
-  SequenceProperties,
-  getSequenceList,
-} from 'domain/sequence';
+import { SequenceProperties, getSequenceList } from 'domain/sequence';
+import { InternalSortBy } from 'domain/types';
 
 export const useSequenceListQuery = (
   {
@@ -20,7 +17,7 @@ export const useSequenceListQuery = (
     advancedFilter?: AdvancedFilter<SequenceProperties>;
     filter?: Required<SequenceFilter>['filter'];
     limit?: number;
-    sort?: InternalSequenceSortBy[];
+    sort?: InternalSortBy[];
   } = {},
   options?: UseInfiniteQueryOptions
 ) => {
