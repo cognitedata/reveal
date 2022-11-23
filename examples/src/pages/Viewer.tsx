@@ -14,7 +14,6 @@ import {
   CogniteCadModel,
   CognitePointCloudModel,
   CameraControlsOptions,
-  TreeIndexNodeCollection,
   DefaultCameraManager,
   CogniteModel
 } from '@cognite/reveal';
