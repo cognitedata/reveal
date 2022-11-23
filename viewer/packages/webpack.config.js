@@ -29,7 +29,7 @@ module.exports = env => {
   } catch (_) {
     const yellowColor = '\x1b[33m';
     console.warn(yellowColor, '\nWARNING: CDF environments are not set which only allows local models to be loaded\n');
-    cdfEnv = '';
+    cdfEnv = 'undefined';
   }
   return {
     mode: 'development',
