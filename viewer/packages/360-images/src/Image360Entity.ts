@@ -53,10 +53,8 @@ export class Image360Entity {
     this._image360Metadata = image360Metadata;
 
     this._transform = this.computeTransform(image360Metadata, preComputedRotation, postTransform);
-    this._image360Icon = new Image360Icon(this._transform);
+    this._image360Icon = new Image360Icon(this._transform, sceneHandler);
     this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
-
-    sceneHandler.addCustomObject(this._image360Icon);
   }
 
   /**
@@ -82,7 +80,7 @@ export class Image360Entity {
    */
   public dispose(): void {
     this.unload360Image();
-    //TODO: dispose icon
+    this._image360Icon.dispose();
   }
 
   private computeTransform(
