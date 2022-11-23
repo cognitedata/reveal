@@ -53,9 +53,9 @@ const CasingSpecificationFromComponents: React.FC<
 
   const grades = getCasingComponentsGrades(components);
 
-  const averageLinerWeight = getCasingAverageLinearWeight(components);
-  const averageLinerWeightReadable =
-    averageLinerWeight && toReadableLinearWeight(averageLinerWeight);
+  const averageLinearWeight = getCasingAverageLinearWeight(components);
+  const averageLinearWeightReadable =
+    averageLinearWeight && toReadableLinearWeight(averageLinearWeight);
 
   return (
     <>
@@ -63,7 +63,7 @@ const CasingSpecificationFromComponents: React.FC<
         label={pluralize('Grade', grades)}
         value={grades.join(', ')}
       />
-      <Specification label="Linear weight" value={averageLinerWeightReadable} />
+      <Specification label="Weight" value={averageLinearWeightReadable} />
     </>
   );
 };

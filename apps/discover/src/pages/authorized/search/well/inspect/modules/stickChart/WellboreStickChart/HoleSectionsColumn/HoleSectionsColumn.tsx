@@ -34,7 +34,7 @@ export const HoleSectionsColumn: React.FC<HoleSectionsColumnProps> = ({
 
   const renderHoleSectionBlock = (section: HoleSectionView) => {
     const {
-      name,
+      id,
       holeSizeFormatted,
       topMeasuredDepth,
       baseMeasuredDepth,
@@ -53,7 +53,7 @@ export const HoleSectionsColumn: React.FC<HoleSectionsColumnProps> = ({
     const top = getScaledDepth(center);
 
     return (
-      <HoleSectionLabel key={`${depthTop}-${depthBase}-${name}`} top={top}>
+      <HoleSectionLabel key={id} top={top}>
         {holeSizeFormatted} Hole
       </HoleSectionLabel>
     );

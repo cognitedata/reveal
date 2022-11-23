@@ -81,7 +81,10 @@ export const MudWeightWindow: React.FC<MudWeightWindowProps> = ({
                 value={`${value.value}${value.unit}`}
               />
             </SummarySectionContent>
-            <Depth>{`${depth.value}${depth.unit}`}</Depth>
+            <Depth>
+              {depth.value}
+              {depth.unit}
+            </Depth>
           </React.Fragment>
         );
       })}

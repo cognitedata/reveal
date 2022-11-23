@@ -54,6 +54,8 @@ export interface CasingAssemblyView extends CasingAssemblyInternalWithTvd {
 
 export interface HoleSectionView extends HoleSectionInternalWithTvd {
   wellboreMatchingId: string;
+  depthUnit: Distance;
+  sizeUnit: Distance;
 }
 
 export enum ChartColumn {
@@ -74,7 +76,7 @@ export interface DataWithLoadingStatus<T> {
 
 export enum SummarySection {
   CasingSpecification = 'Casing Specification',
-  // HoleDepth = 'Hole Depth (NTH)',
+  HoleSection = 'Hole Section',
   // DrillingParameters = 'Drilling Parameters',
   MudWeightWindow = 'Mud Weight Window',
   // HighlightedEvent = 'Highlighted Event',

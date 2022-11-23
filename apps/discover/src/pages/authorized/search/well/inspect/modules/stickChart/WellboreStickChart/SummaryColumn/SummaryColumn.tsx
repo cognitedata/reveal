@@ -10,7 +10,12 @@ import { EMPTY_ARRAY } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
 
 import { Column } from '../../components/Column';
-import { ColumnVisibilityProps, CasingAssemblyView } from '../../types';
+import {
+  ColumnVisibilityProps,
+  CasingAssemblyView,
+  HoleSectionView,
+} from '../../types';
+import { getHoleSectionsForCasingAssembly } from '../../utils/getHoleSectionsForCasingAssembly';
 import { getMeasurementsDataForCasingAssembly } from '../../utils/getMeasurementsDataForCasingAssembly';
 
 import { CasingAssemblySummary } from './components/CasingAssemblySummary';
@@ -19,6 +24,7 @@ import { SummariesWrapper } from './elements';
 
 export interface SummaryColumnProps extends ColumnVisibilityProps {
   casingAssemblies?: CasingAssemblyView[];
+  holeSections?: HoleSectionView[];
   measurementsData?: DepthMeasurementWithData[];
   isLoading?: boolean;
   depthMeasurementType?: DepthMeasurementUnit;
@@ -29,6 +35,7 @@ export const SummaryColumn: React.FC<WithDragHandleProps<SummaryColumnProps>> =
   React.memo(
     ({
       casingAssemblies,
+      holeSections = EMPTY_ARRAY,
       measurementsData = EMPTY_ARRAY,
       isLoading = false,
       isVisible = true,
@@ -48,6 +55,11 @@ export const SummaryColumn: React.FC<WithDragHandleProps<SummaryColumnProps>> =
                 <CasingAssemblySummary
                   key={casingAssembly.id}
                   casingAssembly={casingAssembly}
+                  holeSections={getHoleSectionsForCasingAssembly(
+                    holeSections,
+                    casingAssembly,
+                    depthMeasurementType
+                  )}
                   measurementsData={getMeasurementsDataForCasingAssembly(
                     measurementsData,
                     casingAssembly

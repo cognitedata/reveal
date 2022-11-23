@@ -14,6 +14,7 @@ export interface HoleSectionGroupInternal
 }
 
 export interface HoleSectionInternal extends HoleSection {
+  id: string;
   holeSizeFormatted?: string;
   color: string;
 }

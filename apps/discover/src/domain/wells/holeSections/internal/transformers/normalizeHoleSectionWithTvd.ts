@@ -1,4 +1,5 @@
 import isUndefined from 'lodash/isUndefined';
+import { Fixed } from 'utils/number';
 import { changeUnitTo } from 'utils/units/changeUnitTo';
 
 import { DistanceUnitEnum } from '@cognite/sdk-wells';
@@ -32,14 +33,16 @@ export const normalizeHoleSectionWithTvd = (
       : changeUnitTo(
           topTrueVerticalDepth,
           trueVerticalDepthUnit,
-          userPreferredUnit
+          userPreferredUnit,
+          Fixed.TwoDecimals
         ),
     baseTrueVerticalDepth: isUndefined(baseTrueVerticalDepth)
       ? undefined
       : changeUnitTo(
           baseTrueVerticalDepth,
           trueVerticalDepthUnit,
-          userPreferredUnit
+          userPreferredUnit,
+          Fixed.TwoDecimals
         ),
   };
 };
