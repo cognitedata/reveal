@@ -81,7 +81,7 @@
     "proj4": "2.8.0",
     "rxjs": "7.5.7",
     "skmeans": "0.11.3",
-    "three-stdlib": "2.17.3"
+    "three-stdlib": "2.18.1"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.31.0",
@@ -102,8 +102,8 @@
     "@types/skmeans": "0.11.3",
     "@types/stats": "0.16.30",
     "@types/tween.js": "18.5.1",
-    "@typescript-eslint/eslint-plugin": "5.42.1",
-    "@typescript-eslint/parser": "5.42.1",
+    "@typescript-eslint/eslint-plugin": "5.43.0",
+    "@typescript-eslint/parser": "5.43.0",
     "concurrently": "7.5.0",
     "cross-env": "7.0.3",
     "cross-var": "1.1.0",
@@ -142,7 +142,7 @@
     "ts-jest": "29.0.3",
     "ts-loader": "9.4.1",
     "tsc-alias": "1.7.1",
-    "typescript": "4.8.4",
+    "typescript": "4.9.3",
     "wasm-pack": "0.10.3",
     "webpack": "5.75.0",
     "webpack-cli": "4.10.0",

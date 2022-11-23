@@ -184,6 +184,11 @@ export class CadMaterialManager {
     return wrapper.nodeAppearanceTextureBuilder.ghostedNodeTreeIndices;
   }
 
+  getModelVisibleTreeIndices(modelIdentifier: string): IndexSet {
+    const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
+    return wrapper.nodeAppearanceTextureBuilder.visibleNodeTreeIndices;
+  }
+
   setRenderMode(mode: RenderMode): void {
     this._renderMode = mode;
     const colorWrite = mode !== RenderMode.DepthBufferOnly;
