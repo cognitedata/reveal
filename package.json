@@ -29,7 +29,7 @@
     "@cognite/sdk-react-query-hooks": "6.0.3",
     "@cognite/z-index": "0.2.3",
     "@rescripts/cli": "0.0.14",
-    "@rescripts/utilities": "0.0.7",
+    "@rescripts/utilities": "0.0.8",
     "@sentry/browser": "5.30.0",
     "@xstate/inspect": "0.5.2",
     "@xstate/react": "1.6.3",
