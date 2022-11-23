@@ -235,77 +235,6 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
-   * Maps a position retrieved from the CDF API (e.g. 3D node information) to
-   * coordinates in "ThreeJS model space". This is necessary because CDF has a right-handed
-   * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
-   * @param p     The CDF coordinate to transform.
-   * @param out   Optional preallocated buffer for storing the result. May be `p`.
-   * @returns Transformed position.
-   */
-  mapFromCdfToModelCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
-    out = out !== undefined ? out : new THREE.Vector3();
-    if (out !== p) {
-      out.copy(p);
-    }
-    out.applyMatrix4(this.cadModel.modelMatrix);
-    return out;
-  }
-
-  /**
-   * Maps from a 3D position in "ThreeJS model space" (e.g. a ray intersection coordinate)
-   * to coordinates in "CDF space". This is necessary because CDF has a right-handed
-   * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
-   * This function also accounts for transformation applied to the model.
-   * @param p       The ThreeJS coordinate to transform.
-   * @param out     Optional preallocated buffer for storing the result. May be `p`.
-   * @returns Transformed position.
-   */
-  mapPositionFromModelToCdfCoordinates(p: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3 {
-    out = out !== undefined ? out : new THREE.Vector3();
-    if (out !== p) {
-      out.copy(p);
-    }
-    out.applyMatrix4(this.cadModel.inverseModelMatrix);
-    return out;
-  }
-
-  /**
-   * Maps from a 3D position in "ThreeJS model space" to coordinates in "CDF space".
-   * This is necessary because CDF has a right-handed Z-up coordinate system while ThreeJS
-   * uses a right-hand Y-up coordinate system. This function also accounts for transformation
-   * applied to the model.
-   * @param box     The box in ThreeJS/model coordinates.
-   * @param out     Optional preallocated buffer for storing the result. May be same input as `box`.
-   * @returns       Transformed box.
-   */
-  mapBoxFromModelToCdfCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
-    out = out ?? new THREE.Box3();
-    if (out !== box) {
-      out.copy(box);
-    }
-    out.applyMatrix4(this.cadModel.inverseModelMatrix);
-    return out;
-  }
-
-  /**
-   * Maps from a 3D position in "CDF space" to coordinates in "ThreeJS model space".
-   * This is necessary because CDF has a right-handed Z-up coordinate system while ThreeJS
-   * uses a right-hand Y-up coordinate system. This function also accounts for transformation
-   * applied to the model.
-   * @param box     The box in CDF model coordinates.
-   * @param out     Optional preallocated buffer for storing the result. May be same input as `box`.
-   * @returns       Transformed box.
-   */
-  mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
-    out = out ?? new THREE.Box3();
-    if (out !== box) {
-      out.copy(box);
-    }
-    out.applyMatrix4(this.cadModel.modelMatrix);
-    return out;
-  }
-
-  /**
    * Cleans up used resources.
    */
   dispose(): void {
@@ -392,11 +321,21 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
-   * Gets transformation matrix of the model.
+   * Gets transformation matrix that has previously been set with {@link CogniteCadModel.setModelTransformation}.
    * @param out Preallocated `THREE.Matrix4` (optional).
    */
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
     return this.cadNode.getModelTransformation(out);
+  }
+
+  /**
+   * Gets transformation from CDF space to ThreeJS space,
+   * which includes any additional "default" transformations assigned to this model.
+   * Does not include any custom transformations set by {@link CognitePointcloudmodel.setModelTransformation}
+   * @param out Preallocated `THREE.Matrix4` (optional)
+   */
+  getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+    return this.cadNode.getCdfToDefaultModelTransformation(out);
   }
 
   /**

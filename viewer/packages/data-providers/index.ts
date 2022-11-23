@@ -20,6 +20,8 @@ export { StylableObject, SerializableStylableObject } from './src/pointcloud-sty
 export { CdfPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/CdfPointCloudStylableObjectProvider';
 export { DummyPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/DummyPointCloudStylableObjectProvider';
 
+export { cadFromCdfToThreeMatrix } from './src/utilities/applyDefaultModelTransformation';
+
 export { Image360Provider } from './src/Image360Provider';
 export {
   BinaryFileProvider,
