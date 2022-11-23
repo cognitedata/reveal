@@ -1427,10 +1427,10 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
-"@cognite/cogs.js@5.19.0":
-  version "5.19.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.19.0.tgz#bfa143f9a7171ead262381ec48a197448c062949"
-  integrity sha512-QG4yWtdpJ+IyLB1p/rrDTRrRKcxcZ7FcaZ+FYbgZOL92k++Cz5EpYnVPgQ4YlNl85biSlaFOc55uiYMA4uTI/w==
+"@cognite/cogs.js@5.19.5":
+  version "5.19.5"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.19.5.tgz#5fa025481b8711b90fea1b9b29bf38ebef773f29"
+  integrity sha512-8Fi+0J2j4qNOAENoIV2L10WXZGmhGXnxeEJDfZFZyPDWHKcilADD7mojmdg9lKGk1rgHkp4cYhxDm0xdRCwHwA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
