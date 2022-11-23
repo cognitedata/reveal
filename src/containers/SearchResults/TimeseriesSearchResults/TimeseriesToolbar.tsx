@@ -5,27 +5,14 @@ import { SearchResultToolbar } from '../SearchResultToolbar';
 export const TimeseriesToolbar = ({
   onViewChange,
   currentView = 'list',
-  query,
   showCount = false,
-  filter,
-  count,
 }: {
   onViewChange?: (view: string) => void;
   currentView?: string;
-  query: string;
   showCount: boolean;
-  count?: number;
-  filter?: any;
 }) => (
   <>
-    <SearchResultToolbar
-      showCount={showCount}
-      api={query?.length > 0 ? 'search' : 'list'}
-      type="timeSeries"
-      filter={filter}
-      count={count}
-      query={query}
-    >
+    <SearchResultToolbar showCount={showCount} type="timeSeries">
       <SegmentedControl onButtonClicked={onViewChange} currentKey={currentView}>
         <SegmentedControl.Button
           key="list"

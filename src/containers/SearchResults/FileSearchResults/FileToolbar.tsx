@@ -19,20 +19,14 @@ export const FileToolbar = ({
   isGroupingFilesEnabled = false,
   onViewChange,
   currentView = 'list',
-  query,
   relatedResourceType,
-  filter,
-  count,
   showCount = false,
   allowEdit = false,
 }: {
   onFileClicked?: (file: FileInfo) => boolean;
   onViewChange?: (view: string) => void;
   currentView?: string;
-  query: string;
   isHaveParent?: boolean;
-  count?: number;
-  filter?: any;
   isGroupingFilesEnabled?: boolean;
   relatedResourceType?: RelatedResourceType;
   allowEdit?: boolean;
@@ -52,12 +46,8 @@ export const FileToolbar = ({
   return (
     <>
       <SearchResultToolbar
-        api={query?.length > 0 ? 'search' : 'list'}
         type="file"
         showCount={showCount}
-        filter={filter}
-        query={query}
-        count={count}
         style={{ flex: 1, justifyContent: 'space-between' }}
       >
         {allowEdit && (

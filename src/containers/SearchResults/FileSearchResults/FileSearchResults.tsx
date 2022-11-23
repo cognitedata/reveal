@@ -19,7 +19,6 @@ export const FileSearchResults = ({
   filter = {},
   relatedResourceType,
   parentResource,
-  count,
   isGroupingFilesEnabled,
   showCount = false,
   allowEdit = false,
@@ -34,7 +33,6 @@ export const FileSearchResults = ({
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;
-  count?: number;
   allowEdit?: boolean;
   isGroupingFilesEnabled?: boolean;
   onClick: (item: FileInfo) => void;
@@ -72,9 +70,7 @@ export const FileSearchResults = ({
       showCount={showCount}
       isHaveParent={Boolean(parentResource)}
       relatedResourceType={relatedResourceType}
-      query={query}
       isGroupingFilesEnabled={isGroupingFilesEnabled}
-      filter={filter}
       onFileClicked={file => {
         onClick(file);
         return true;
@@ -82,7 +78,6 @@ export const FileSearchResults = ({
       currentView={currentView}
       onViewChange={setCurrentView}
       allowEdit={allowEdit}
-      count={count}
     />
   );
 

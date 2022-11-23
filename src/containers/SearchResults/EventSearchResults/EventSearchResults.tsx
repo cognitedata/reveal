@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CogniteEvent } from '@cognite/sdk';
 import {
+  SearchResultCountLabel,
   SearchResultToolbar,
   useResourceResults,
 } from 'containers/SearchResults';
@@ -8,8 +9,12 @@ import { convertResourceType, ResourceItem } from 'types';
 import { EventTable } from 'containers/Events';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
-import { useEventsSearchResultQuery } from 'domain/events/internal/queries/useEventsSearchResultQuery';
-import { InternalEventsFilters } from 'domain/events';
+
+import {
+  InternalEventsFilters,
+  useEventsSearchResultQuery,
+  useEventsSearchAggregateQuery,
+} from 'domain/events';
 import { TableSortBy } from 'components/Table';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 
@@ -17,7 +22,6 @@ export const EventSearchResults = ({
   query = '',
   filter = {},
   onClick,
-  count,
   showCount = false,
   enableAdvancedFilters,
   onFilterChange,
@@ -28,7 +32,6 @@ export const EventSearchResults = ({
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;
-  count?: number;
   enableAdvancedFilters?: boolean;
   onClick: (item: CogniteEvent) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
@@ -44,18 +47,26 @@ export const EventSearchResults = ({
       eventsFilters: filter,
       eventsSortBy: sortBy,
     });
+  const { data: aggregateData } = useEventsSearchAggregateQuery({
+    eventsFilters: filter,
+    query,
+  });
+  const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
 
   return (
     <EventTable
       id="event-search-results"
       tableHeaders={
         <SearchResultToolbar
-          api={query.length > 0 ? 'search' : 'list'}
           type="event"
-          filter={filter}
           showCount={showCount}
-          query={query}
-          count={count}
+          resultCount={
+            <SearchResultCountLabel
+              loadedCount={loadedDataCount}
+              totalCount={aggregateData.count}
+              resourceType="event"
+            />
+          }
         />
       }
       tableSubHeaders={

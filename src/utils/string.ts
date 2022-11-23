@@ -1,3 +1,5 @@
+import { getTitle, ResourceType } from 'types';
+
 export const stringContains = (value?: string, searchText?: string) => {
   if (!searchText) {
     return true;
@@ -14,4 +16,15 @@ export const capitalizeFirstLetter = (value?: string) => {
     return value;
   }
   return value.charAt(0).toUpperCase() + value.slice(1);
+};
+
+export const getSearchResultCountLabel = (
+  loadedCount: number,
+  totalCount: number | string,
+  resourceType: ResourceType
+): string => {
+  return `${loadedCount} of ${totalCount} ${getTitle(
+    resourceType,
+    totalCount <= 1
+  ).toLowerCase()}`;
 };

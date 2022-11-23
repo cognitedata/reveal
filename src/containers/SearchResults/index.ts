@@ -2,6 +2,7 @@ export * from './SearchResultToolbar';
 export * from './SearchFiltersNew';
 export * from './SearchResults';
 export * from './SearchResultLoader';
+export * from './SearchResultCountLabel';
 export * from './AssetSearchResults/AssetSearchResults';
 export * from './TimeseriesSearchResults/TimeseriesSearchResults';
 export * from './FileSearchResults/FileSearchResults';

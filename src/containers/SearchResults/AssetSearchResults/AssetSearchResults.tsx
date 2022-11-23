@@ -7,14 +7,18 @@ import {
   SearchResultToolbar,
   AssetTable,
   useResourceResults,
+  SearchResultCountLabel,
 } from 'containers';
 import { convertResourceType, SelectableItemsProps } from 'types';
 import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
 import styled from 'styled-components';
-import { useAssetsSearchResultQuery } from 'domain/assets/internal/queries/useAssetsFilteredListQuery';
-import { InternalAssetFilters } from 'domain/assets/internal/types';
 import { TableSortBy } from 'components/Table';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
+import {
+  InternalAssetFilters,
+  useAssetsSearchAggregateQuery,
+  useAssetsSearchResultQuery,
+} from 'domain/assets';
 
 export type AssetViewMode = 'list' | 'tree';
 
@@ -54,6 +58,12 @@ export const AssetSearchResults = ({
       sortBy,
     });
 
+  const { data: aggregateData } = useAssetsSearchAggregateQuery({
+    assetsFilters: filter,
+    query,
+  });
+  const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
+
   const currentView = isTreeEnabled ? view : 'list';
 
   const { onSelect, selectionMode, isSelected, ...rest } = extraProps;
@@ -73,11 +83,15 @@ export const AssetSearchResults = ({
   const tableHeaders = (
     <StyledTableHeader justifyContent="space-between" alignItems="center">
       <SearchResultToolbar
-        showCount={showCount}
-        api={query.length > 0 ? 'search' : 'list'}
         type="asset"
-        filter={filter}
-        query={query}
+        showCount={showCount}
+        resultCount={
+          <SearchResultCountLabel
+            loadedCount={loadedDataCount}
+            totalCount={aggregateData.count}
+            resourceType="asset"
+          />
+        }
       />
 
       {isTreeEnabled ? (

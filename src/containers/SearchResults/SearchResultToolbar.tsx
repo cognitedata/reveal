@@ -1,46 +1,34 @@
 import React from 'react';
-import { FilesSyntaxButton, ResultCount, SpacedRow } from 'components';
+import { FilesSyntaxButton, SpacedRow } from 'components';
 import { ResourceType } from 'types';
 import styled from 'styled-components/macro';
 
 export const SearchResultToolbar = ({
-  api,
   type,
-  filter,
-  query,
   children,
-  count,
   showCount,
+  resultCount,
   style,
 }: {
-  api: 'list' | 'search';
   type: ResourceType;
-  filter?: any;
-  query?: string;
   children?: React.ReactNode;
-  count?: number;
   showCount?: boolean;
+  resultCount?: React.ReactNode;
   style?: React.CSSProperties;
-}) => (
-  <StyledSpacedRow style={style}>
-    {showCount && (
-      <ResultCount
-        type={type}
-        filter={filter}
-        api={api}
-        query={query}
-        count={count}
-      />
-    )}
-    {type === 'document' && (
-      <>
-        <VerticalDivider />
-        <FilesSyntaxButton />
-      </>
-    )}
-    {children}
-  </StyledSpacedRow>
-);
+}) => {
+  return (
+    <StyledSpacedRow style={style}>
+      {showCount && <>{resultCount}</>}
+      {type === 'document' && (
+        <>
+          <VerticalDivider />
+          <FilesSyntaxButton />
+        </>
+      )}
+      {children}
+    </StyledSpacedRow>
+  );
+};
 
 const VerticalDivider = styled.div`
   width: 1px;

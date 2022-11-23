@@ -1,81 +1,24 @@
 import React from 'react';
-import { ResourceType } from 'types';
-import { Badge, Colors, Tabs } from '@cognite/cogs.js';
-import { ResourceIcons } from 'components/ResourceIcons/ResourceIcons';
+import { Colors, Tabs } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
-import { useResultCount } from 'components/ResultCount/ResultCount';
-
-// Why do we have this file and a 'SearchNew' folder in the first place?
-const resourceTypeMap: Record<ResourceType, string> = {
-  asset: 'Assets',
-  file: 'Files',
-  document: 'Documents',
-  event: 'Events',
-  timeSeries: 'Time series',
-  sequence: 'Sequences',
-  threeD: '3D',
-};
-const defaultResourceTypes: ResourceType[] = [
-  'asset',
-  'timeSeries',
-  'file',
-  'document',
-  'event',
-  'sequence',
-  'threeD',
-];
 
 type Props = {
-  resourceTypes?: ResourceType[];
-  currentResourceType: ResourceType;
-  query?: string;
-  filter?: any;
-  showCount?: boolean;
-  setCurrentResourceType: (newResourceType: ResourceType) => void;
+  currentResourceType?: string;
+  setCurrentResourceType: (tab?: string) => void;
+  children: React.ReactNode;
 };
 
-const ResourceTypeTab = ({
-  currentResourceType,
-  query,
-  showCount = false,
-}: Omit<Props, 'setCurrentResourceType'>) => {
-  const result = useResultCount({
-    filter: {},
-    query,
-    api: query && query.length > 0 ? 'search' : 'list',
-    type: currentResourceType,
-  });
-
-  return (
-    <TabContainer>
-      <ResourceIcons style={{ marginRight: 12 }} type={currentResourceType} />
-      <div>{resourceTypeMap[currentResourceType]}</div>
-      {showCount && (
-        <Badge
-          text={`${result.count}`}
-          background={Colors['greyscale-grey3'].hex()}
-        />
-      )}
-    </TabContainer>
-  );
-};
-export const ResourceTypeTabs = ({
+export const ResourceTypeTabsV2 = ({
   currentResourceType,
   setCurrentResourceType,
-  resourceTypes = defaultResourceTypes,
-  ...rest
+  children,
 }: Props) => {
   return (
     <StyledTabs
       activeKey={currentResourceType}
-      onChange={tab => setCurrentResourceType(tab as ResourceType)}
+      onChange={tab => setCurrentResourceType(tab)}
     >
-      {resourceTypes.map(resourceType => (
-        <Tabs.TabPane
-          key={resourceType}
-          tab={<ResourceTypeTab currentResourceType={resourceType} {...rest} />}
-        />
-      ))}
+      {children}
     </StyledTabs>
   );
 };
@@ -84,9 +27,4 @@ const StyledTabs = styled(Tabs)`
   .rc-tabs-nav-wrap {
     border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
   }
-`;
-
-const TabContainer = styled.div`
-  display: flex;
-  align-items: center;
 `;

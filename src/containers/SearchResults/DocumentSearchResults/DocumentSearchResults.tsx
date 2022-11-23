@@ -1,7 +1,10 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components/macro';
 
-import { SearchResultToolbar } from 'containers/SearchResults';
+import {
+  SearchResultCountLabel,
+  SearchResultToolbar,
+} from 'containers/SearchResults';
 import { DocumentsTable } from 'containers/Documents';
 import { TableSortBy } from 'components/Table';
 import {
@@ -18,6 +21,7 @@ import { CLOSE_DROPDOWN_EVENT } from 'utils';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from 'context/AppContext';
 import { DocumentUploaderModal } from 'containers/Documents/DocumentUploader/DocumentUploaderModal';
+import { useDocumentFilteredAggregateCount } from '@cognite/react-document-search';
 
 export interface DocumentSearchResultsProps {
   query?: string;
@@ -39,7 +43,7 @@ export const DocumentSearchResults = ({
   const { results, isLoading, fetchNextPage, hasNextPage } =
     useDocumentSearchQuery();
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
-
+  const { data: aggregateCount = 0 } = useDocumentFilteredAggregateCount();
   useObserveDocumentSearchFilters(query, filter, sortBy);
 
   const context = useContext(AppContext);
@@ -61,12 +65,16 @@ export const DocumentSearchResults = ({
         tableHeaders={
           <>
             <SearchResultToolbar
-              showCount={true}
-              api={query.length > 0 ? 'search' : 'list'}
               type="document"
-              filter={filter}
-              query={query}
               style={{ width: '100%' }}
+              showCount={true}
+              resultCount={
+                <SearchResultCountLabel
+                  loadedCount={results.length}
+                  totalCount={aggregateCount}
+                  resourceType="document"
+                />
+              }
             />
             <UploadButton
               onClick={() => {

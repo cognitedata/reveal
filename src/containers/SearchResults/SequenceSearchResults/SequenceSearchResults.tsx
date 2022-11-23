@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Sequence } from '@cognite/sdk';
-import { SearchResultToolbar } from 'containers/SearchResults';
+import {
+  SearchResultCountLabel,
+  SearchResultToolbar,
+} from 'containers/SearchResults';
 import { ResourceItem, convertResourceType } from 'types';
 import { SequenceTable } from 'containers/Sequences';
 
@@ -8,6 +11,7 @@ import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { useResourceResults } from '../SearchResultLoader';
 import {
   InternalSequenceFilters,
+  useSequenceSearchAggregateQuery,
   useSequenceSearchResultQuery,
 } from 'domain/sequence';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
@@ -18,7 +22,6 @@ export const SequenceSearchResults = ({
   filter = {},
   relatedResourceType,
   onFilterChange,
-  count,
   onClick,
   showCount = false,
   enableAdvancedFilters,
@@ -29,7 +32,6 @@ export const SequenceSearchResults = ({
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;
-  count?: number;
   showCount?: boolean;
   enableAdvancedFilters?: boolean;
   onClick: (item: Sequence) => void;
@@ -47,17 +49,26 @@ export const SequenceSearchResults = ({
       sortBy,
     });
 
+  const { data: aggregateData } = useSequenceSearchAggregateQuery({
+    query,
+    filter,
+  });
+  const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
+
   return (
     <SequenceTable
       id="sequence-search-results"
       tableHeaders={
         <SearchResultToolbar
-          api={query.length > 0 ? 'search' : 'list'}
           type="sequence"
-          filter={filter}
           showCount={showCount}
-          query={query}
-          count={count}
+          resultCount={
+            <SearchResultCountLabel
+              loadedCount={loadedDataCount}
+              totalCount={aggregateData.count}
+              resourceType="sequence"
+            />
+          }
         />
       }
       sorting={sortBy}

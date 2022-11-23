@@ -1,4 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
+import { AssetFilterProps } from '@cognite/sdk';
 import { AssetsProperties } from 'domain/assets/internal/transformers/mapFiltersToAssetsAdvancedFilters';
 import { AdvancedFilter } from 'domain/builders';
 import { queryKeys } from 'domain/queryKeys';
@@ -14,7 +15,7 @@ export const useAssetsListQuery = (
     sort,
     limit,
   }: {
-    filter?: Record<string, any>;
+    filter?: AssetFilterProps;
     advancedFilter?: AdvancedFilter<AssetsProperties>;
     sort?: InternalSortBy[];
     limit?: number;

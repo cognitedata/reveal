@@ -7,10 +7,15 @@ import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 
 import { Flex } from '@cognite/cogs.js';
 
-import { SearchResultToolbar, useResourceResults } from '..';
+import {
+  SearchResultCountLabel,
+  SearchResultToolbar,
+  useResourceResults,
+} from '..';
 
 import {
   InternalTimeseriesFilters,
+  useTimeseriesSearchAggregateQuery,
   useTimeseriesSearchResultQuery,
 } from 'domain/timeseries';
 import { TableSortBy } from 'components/Table';
@@ -20,7 +25,6 @@ export const TimeseriesSearchResults = ({
   query = '',
   filter = {},
   showCount = false,
-  count,
   onClick,
   onFilterChange,
   relatedResourceType,
@@ -35,7 +39,6 @@ export const TimeseriesSearchResults = ({
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;
-  count?: number;
   showDatePicker?: boolean;
   onClick: (item: Timeseries) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
@@ -53,6 +56,12 @@ export const TimeseriesSearchResults = ({
       sortBy,
     });
 
+  const { data: aggregateData } = useTimeseriesSearchAggregateQuery({
+    query,
+    filter,
+  });
+  const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
+
   return (
     <>
       <Flex justifyContent="space-between" alignItems="center"></Flex>
@@ -61,12 +70,15 @@ export const TimeseriesSearchResults = ({
         id="timeseries-search-results"
         tableHeaders={
           <SearchResultToolbar
-            showCount={showCount}
-            api={query?.length > 0 ? 'search' : 'list'}
             type="timeSeries"
-            filter={filter}
-            count={count}
-            query={query}
+            showCount={showCount}
+            resultCount={
+              <SearchResultCountLabel
+                loadedCount={loadedDataCount}
+                totalCount={aggregateData.count}
+                resourceType="timeSeries"
+              />
+            }
           />
         }
         data={enableAdvancedFilters ? data : items}
