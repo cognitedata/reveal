@@ -33,8 +33,12 @@ Point cloud models are 3D models generated from techniques such as 3D scanning o
 
 ## Technology
 
-Behind the scenes Reveal based on [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/**WebGL_API**) through [ThreeJS](https://threejs.org/) and uses [three-loader](https://github.com/pnext/three-loader) for point cloud visualization. three-loader is based on [Potree](https://www.potree.org). 
+Behind the scenes Reveal based on [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/**WebGL_API**) through [ThreeJS](https://threejs.org/) and uses [three-loader](https://github.com/pnext/three-loader) for point cloud visualization. three-loader is based on [Potree](https://www.potree.org).
 
 Reveal is written in [TypeScript](https://www.typescriptlang.org/) and uses [WebAssembly](https://webassembly.org/) modules written in [Rust](https://www.rust-lang.org/) to do much of the heavy-lifting.
 
 Reveal is available on [Github](https://github.com/cognitedata/reveal). If you find issues, have a feature suggestion or a question, please register a ticket in our [issue tracker](https://github.com/cognitedata/reveal/issues).
+
+## A note on coordinate systems
+
+The models provided by CDF are stored in "CDF space", a coordinate system where the positive Z axis is the up direction. However, objects visualized in Reveal uses ThreeJS's coordinate system, which has the positive Y axis pointing upward. The transformation between these two coordinate systems is handled automatically behind the scenes for all CDF models. This difference can still introduce errors when combining models in Reveal with other data from CDF. To transform objects between the two coordinate systems, the `@cognite/reveal` package exports the transformation in the variable `CDF_TO_VIEWER_TRANSFORMATION`.
