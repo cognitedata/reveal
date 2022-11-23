@@ -109,7 +109,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
       }
     });
 
-    searchQueryBuilder.equals('externalId', query);
+    searchQueryBuilder.prefix('externalId', query);
 
     builder.or(searchQueryBuilder);
   }

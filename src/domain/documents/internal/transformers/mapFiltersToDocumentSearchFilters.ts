@@ -71,7 +71,7 @@ export const mapFiltersToDocumentSearchFilters = (
   //       return [Number(query)];
   //     }
   //   });
-  //   searchQueryBuilder.equals('externalId', query);
+  //   searchQueryBuilder.prefix('externalId', query);
 
   //   builder.or(searchQueryBuilder);
   // }
