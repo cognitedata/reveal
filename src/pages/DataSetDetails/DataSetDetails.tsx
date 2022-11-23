@@ -21,7 +21,7 @@ import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
 import DatasetTopBar from 'components/dataset-detail-topbar/DatasetTopBar';
 
 import { useTranslation } from 'common/i18n';
-import { DetailsPane, Divider, getContainer } from 'utils';
+import { DetailsPane, Divider, getContainer, trackUsage } from 'utils';
 
 import {
   DataSetWithExtpipes,
@@ -81,6 +81,7 @@ const DataSetDetails = (): JSX.Element => {
     useUpdateDataSetVisibility();
 
   const handleDatasetIdCopy = (copiedText: string | number | undefined) => {
+    trackUsage({ e: 'data.sets.detail.copy.id.click', dataSetId: copiedText });
     if (copiedText) {
       copy(copiedText.toString());
       notification.success({
@@ -105,6 +106,7 @@ const DataSetDetails = (): JSX.Element => {
     <Button
       disabled={!hasWritePermissions}
       onClick={() => {
+        trackUsage({ e: 'data.sets.detail.edit.click', dataSetId });
         setSelectedDataSet(Number(dataSetId));
         setEditDrawerVisible(true);
       }}
@@ -198,12 +200,20 @@ const DataSetDetails = (): JSX.Element => {
 
   const archiveDataSet = () => {
     if (dataSet) {
+      trackUsage({
+        e: 'data.sets.detail.archive.click',
+        dataSetId: dataSet?.id,
+      });
       updateDataSetVisibility(dataSet, true);
     }
   };
 
   const restoreDataSet = () => {
     if (dataSet) {
+      trackUsage({
+        e: 'data.sets.detail.restore.click',
+        dataSetId: dataSet?.id,
+      });
       updateDataSetVisibility(dataSet, false);
     }
   };
@@ -217,6 +227,8 @@ const DataSetDetails = (): JSX.Element => {
 
   const activeTabChangeHandler = (tabKey: string) => {
     searchParams.set('activeTab', tabKey);
+    //@ts-ignore
+    trackUsage({ e: `data.sets.detail.${tabKey}` });
     setSearchParams(searchParams);
   };
 

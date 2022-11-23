@@ -4,6 +4,7 @@ import { Icon, Title, Flex, Colors, Body } from '@cognite/cogs.js';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'common/i18n';
 import { createLink } from '@cognite/cdf-utilities';
+import { trackUsage } from 'utils';
 
 export type PageProps = {
   children: ReactNode;
@@ -22,7 +23,11 @@ const Page = ({ children, className, title }: PageProps): JSX.Element => {
         alignItems="center"
       >
         <Title level={3}>{title}</Title>
-        <Link to={createLink('/explore')} target="_blank">
+        <Link
+          to={createLink('/explore')}
+          target="_blank"
+          onClick={() => trackUsage({ e: 'data.explore.navigate' })}
+        >
           <Flex alignItems="center" gap={8}>
             <StyledLinkText level={5}>{t('explore-link')}</StyledLinkText>
             <Icon type="ExternalLink" />

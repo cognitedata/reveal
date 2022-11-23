@@ -1,11 +1,15 @@
 import { ReactElement } from 'react';
 import { Button, Flex, Icon, Label, Title } from '@cognite/cogs.js';
-import { createLink, getProject } from '@cognite/cdf-utilities';
-import { trackEvent } from '@cognite/cdf-route-tracker';
+import { createLink } from '@cognite/cdf-utilities';
 
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { DataSet, DATASET_HELP_DOC, getGovernedStatus } from 'utils';
+import {
+  DataSet,
+  DATASET_HELP_DOC,
+  getGovernedStatus,
+  trackUsage,
+} from 'utils';
 import styled from 'styled-components';
 import { useTranslation } from 'common/i18n';
 
@@ -24,6 +28,7 @@ const DatasetTopBar = ({ dataset, actions }: DatasetTopBarProps) => {
   const { statusVariant, statusI18nKey } = getGovernedStatus(isGoverned);
 
   const handleGoToDatasets = () => {
+    trackUsage({ e: 'data.sets.detail.navigate.back.click' });
     navigate(createLink(`/${appPath}`));
   };
 
@@ -62,12 +67,12 @@ const DatasetTopBar = ({ dataset, actions }: DatasetTopBarProps) => {
           type="ghost"
           href={DATASET_HELP_DOC}
           target="_blank"
-          onClick={() => {
-            trackEvent('Applications.OperationSupport.Assets.Clicked help', {
-              url: DATASET_HELP_DOC,
-              projectName: getProject(),
-            });
-          }}
+          onClick={() =>
+            trackUsage({
+              e: 'data.sets.detail.help.documentation.click',
+              document: DATASET_HELP_DOC,
+            })
+          }
         />
       </Flex>
     </TopBarWrapper>

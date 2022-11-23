@@ -13,7 +13,6 @@ import {
   ContentWrapper,
   isEmptyDataset,
 } from 'utils';
-import { useUserInformation } from 'hooks/useUserInformation';
 import { useTranslation } from 'common/i18n';
 import EmptyDataState from './EmptyDataState';
 import TabTitle from 'pages/DataSetDetails/TabTitle';
@@ -57,8 +56,8 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
     visible: false,
   });
 
-  const { data } = useUserInformation();
-  const email = data?.email;
+  // const { data } = useUserInformation();
+  // const email = data?.email;
 
   const [assetCount, setAssetCount] = useState<number>(0);
   const [eventsCount, setEventsCount] = useState<number>(0);
@@ -138,26 +137,28 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
   });
 
   const activeResourceTabChangeHandler = (tabKey: string) => {
+    //@ts-ignore
+    trackUsage({ e: `data.sets.detail.resources.${tabKey}` });
     setActiveResourceTabKey(tabKey as ExploreDataResourceTypes);
   };
 
   const renderExploreView = () => {
-    if (exploreView.type && exploreView.id) {
-      trackUsage(`DataSets.DataExplore.Viewed resource`, email, {
-        resourceType: exploreView.type,
-      });
-      if (exploreView.type === 'events-profile') {
-        return (
-          <>
-            <EventsProfile
-              dataSetId={dataSetId}
-              closeDrawer={() => setExploreView({ visible: false })}
-              visible={exploreView.visible}
-            />
-          </>
-        );
-      }
-    }
+    if (
+      exploreView.type &&
+      exploreView.id &&
+      exploreView.type === 'events-profile'
+    )
+      return (
+        <>
+          <EventsProfile
+            dataSetId={dataSetId}
+            closeDrawer={() => setExploreView({ visible: false })}
+            visible={exploreView.visible}
+          />
+        </>
+      );
+
+    return <></>;
   };
 
   const formik = useFormik({
@@ -175,6 +176,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
 
   const onApplyFilters = () => {
     formik.handleSubmit();
+    trackUsage({ e: 'data.sets.detail.data', filter: 'external-id' });
     setIsFilterVisible(false);
   };
 
@@ -244,7 +246,9 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                   prefix={<Icon type="Search" />}
                   placeholder={t('search')}
                   onChange={(evt) => {
-                    setQuery(evt.currentTarget.value);
+                    const searchText = evt.currentTarget.value;
+                    trackUsage({ e: 'data.sets.detail.data', searchText });
+                    setQuery(searchText);
                   }}
                   style={{ width: 312 }}
                   allowClear

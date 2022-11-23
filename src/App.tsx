@@ -1,5 +1,5 @@
 import GlobalStyles from 'styles/GlobalStyles';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import {
@@ -17,6 +17,7 @@ import { DataSetsContextProvider } from 'context';
 import AccessCheck from 'AccessCheck';
 import { translations } from 'common/i18n';
 import { FlagProvider } from '@cognite/react-feature-flags';
+import { trackUsage } from 'utils';
 
 const DataSetsList = lazy(() => import('pages/DataSetsList/DataSetsList'));
 const DataSetDetails = lazy(
@@ -36,6 +37,10 @@ const App = () => {
   const appName = 'cdf-data-sets';
   const projectName = getProject();
   const env = getEnv();
+
+  useEffect(() => {
+    trackUsage({ e: 'data.sets.navigate' });
+  }, []);
 
   return (
     <I18nWrapper translations={translations} defaultNamespace="data-sets">
