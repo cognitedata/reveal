@@ -153,7 +153,7 @@ export interface Cognite3DViewerOptions {
    * the camera is moving. Note that this option should left to false on
    * low-end devices as more loading can cause frame drops.
    *
-   * Default value is set to false.
+   * Default value is set to true.
    */
   continuousModelStreaming?: boolean;
 
