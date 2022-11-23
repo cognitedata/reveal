@@ -18,7 +18,7 @@ import {
   DefaultCameraManager,
   CogniteModel
 } from '@cognite/reveal';
-import { DebugCameraTool, ExplodedViewTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -323,56 +323,6 @@ export function Viewer() {
       const pointCloudUi = new PointCloudUi(viewer, gui.addFolder('Point clouds'));
       await modelUi.restoreModelsFromUrl();
       new Image360UI(viewer, gui.addFolder('360 Images'));
-
-      let expandTool: ExplodedViewTool | null;
-      let explodeSlider: dat.GUIController | null;
-
-      const assetExplode = gui.addFolder('Asset Inspect');
-
-      const explodeParams = { explodeFactor: 0.0, rootTreeIndex: 0 };
-      const explodeActions = {
-        selectAssetTreeIndex: async () => {
-          if (expandTool) {
-            explodeActions.reset();
-          }
-
-          const rootTreeIndex = explodeParams.rootTreeIndex;
-          const treeIndices = await modelUi.cadModels[0].getSubtreeTreeIndices(rootTreeIndex);
-          modelUi.cadModels[0].setDefaultNodeAppearance({ visible: false });
-          const explodeSet = new TreeIndexNodeCollection(treeIndices);
-          modelUi.cadModels[0].assignStyledNodeCollection(explodeSet, { visible: true });
-
-          const rootBoundingBox = await modelUi.cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
-          viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
-
-          expandTool = new ExplodedViewTool(rootTreeIndex, modelUi.cadModels[0]);
-
-          await expandTool.readyPromise;
-
-          explodeSlider = assetExplode
-            .add(explodeParams, 'explodeFactor', 0, 1)
-            .name('Explode Factor')
-            .step(0.01)
-            .onChange(p => {
-              expandTool!.expand(p);
-            });
-        },
-        reset: () => {
-          expandTool?.reset();
-          modelUi.cadModels[0].setDefaultNodeAppearance({ visible: true });
-          modelUi.cadModels[0].removeAllStyledNodeCollections();
-          explodeParams.explodeFactor = 0;
-          expandTool = null;
-          if (explodeSlider) {
-            assetExplode.remove(explodeSlider);
-            explodeSlider = null;
-          }
-        }
-      };
-      assetExplode.add(explodeParams, 'rootTreeIndex').name('Tree index');
-      assetExplode.add(explodeActions, 'selectAssetTreeIndex').name('Inspect tree index');
-
-      assetExplode.add(explodeActions, 'reset').name('Reset');
 
       const controlsGui = gui.addFolder('Camera controls');
       const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
