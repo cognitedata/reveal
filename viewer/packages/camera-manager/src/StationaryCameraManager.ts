@@ -50,7 +50,7 @@ export class StationaryCameraManager implements CameraManager {
     };
   }
 
-  activate(cameraManager?: CameraManager): void {
+  activate(): void {
     this.enabled = true;
 
     this._domElement.addEventListener('pointermove', this.rotateCamera);
