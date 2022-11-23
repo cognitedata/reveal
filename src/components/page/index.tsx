@@ -22,7 +22,7 @@ const Page = ({ children, className, title }: PageProps): JSX.Element => {
         alignItems="center"
       >
         <Title level={3}>{title}</Title>
-        <Link to={createLink('/explore')}>
+        <Link to={createLink('/explore')} target="_blank">
           <Flex alignItems="center" gap={8}>
             <StyledLinkText level={5}>{t('explore-link')}</StyledLinkText>
             <Icon type="ExternalLink" />
