@@ -12,12 +12,12 @@ import {
 import styled from 'styled-components';
 import { LinkWrapper } from 'components/styled';
 import { LastRunStatusMarker } from 'components/extpipes/cols/StatusMarker';
-import { createExtPipePath } from 'utils/baseURL';
+import { createExtPipePath, EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 import { useTranslation } from 'common';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { EXT_PIPE_PATH, HEALTH_PATH } from 'routing/RoutingConfig';
 import { DeleteDialog } from './DeleteModal';
-import { SecondaryTopbar } from '@cognite/cdf-utilities';
+import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 
 export const ExtpipeHeading = () => {
   const { t } = useTranslation();
@@ -54,6 +54,7 @@ export const ExtpipeHeading = () => {
         }}
       />
       <SecondaryTopbar
+        goBackFallback={createLink(`/${EXTRACTION_PIPELINES_PATH}`)}
         extraContent={
           <Flex alignItems="center">
             <Flex alignItems="center" gap={8}>

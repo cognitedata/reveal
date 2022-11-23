@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SecondaryTopbar } from '@cognite/cdf-utilities';
+import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
@@ -8,6 +8,7 @@ import { useTranslation } from 'common';
 import { useExtpipeConfig } from 'hooks/config';
 
 import CreatedTime from './CreatedTime';
+import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 
 type Props = { externalId: string; revision: number };
 
@@ -22,6 +23,7 @@ export const ConfigurationHeading = ({ externalId, revision }: Props) => {
   return (
     <StyledHeadingContainer>
       <SecondaryTopbar
+        goBackFallback={createLink(`/${EXTRACTION_PIPELINES_PATH}`)}
         extraContent={
           created && (
             <div>
