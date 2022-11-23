@@ -31,9 +31,7 @@ export default class SsaoVisualTest extends StreamingVisualTestFixture {
 
     (this.pipelineProvider as DefaultRenderPipelineProvider).renderOptions = renderOptions;
 
-    const matrix = new THREE.Matrix4()
-      .makeTranslation(10.5, -1, 15)
-      .multiply(model.geometryNode.getModelTransformation());
+    const matrix = new THREE.Matrix4().makeTranslation(10.5, -1, 15);
 
     model.geometryNode.setModelTransformation(matrix);
 

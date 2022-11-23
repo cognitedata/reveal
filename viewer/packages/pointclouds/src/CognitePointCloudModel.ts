@@ -87,18 +87,29 @@ export class CognitePointCloudModel {
 
   /**
    * Sets transformation matrix of the model. This overrides the current transformation.
-   * @param transformationMatrix
+   * @param transformationMatrix The new transformation matrix
    */
   setModelTransformation(transformationMatrix: THREE.Matrix4): void {
     this.pointCloudNode.setModelTransformation(transformationMatrix);
   }
 
   /**
-   * Gets transformation matrix of the model.
+   * Gets transformation matrix that has previously been
+   * set with {@link CognitePointCloudmodel.setModelTransformation}.
    * @param out Preallocated `THREE.Matrix4` (optional).
    */
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
     return this.pointCloudNode.getModelTransformation(out);
+  }
+
+  /**
+   * Gets transformation from CDF space to ThreeJS space,
+   * which includes any additional "default" transformations assigned to this model.
+   * Does not include any custom transformations set by {@link CognitePointcloudmodel.setModelTransformation}
+   * @param out Preallocated `THREE.Matrix4` (optional)
+   */
+  getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
+    return this.pointCloudNode.getCdfToDefaultModelTransformation(out);
   }
 
   /**
