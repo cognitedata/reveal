@@ -9,6 +9,7 @@ import { SDKProvider } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { Flow, AppContextProvider, OverrideURLMap } from './AppContext';
 import { Tooltip } from '@cognite/cogs.js';
+import { MetricsMetadata } from 'hooks/useMetrics';
 
 export type DataExplorationProviderProps = {
   flow: Flow;
@@ -16,6 +17,7 @@ export type DataExplorationProviderProps = {
   sdk: CogniteClient;
   userInfo: any;
   styleScopeId?: string;
+  trackUsage?: (event: string, metadata?: MetricsMetadata) => void;
 };
 
 export const DataExplorationProvider = ({
@@ -25,6 +27,7 @@ export const DataExplorationProvider = ({
   sdk,
   userInfo,
   styleScopeId,
+  trackUsage,
 }: DataExplorationProviderProps & {
   children: React.ReactNode;
 }) => {
@@ -52,6 +55,7 @@ export const DataExplorationProvider = ({
           flow={flow}
           overrideURLMap={overrideURLMap}
           userInfo={userInfo}
+          trackUsage={trackUsage}
         >
           <FileContextualizationContextProvider>
             <ResourcePreviewProvider>

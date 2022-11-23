@@ -1,3 +1,4 @@
+import { MetricsMetadata } from 'hooks/useMetrics';
 import React from 'react';
 
 export type Flow =
@@ -16,6 +17,7 @@ export const AppContext = React.createContext<{
   flow: Flow;
   overrideURLMap?: OverrideURLMap;
   userInfo: any;
+  trackUsage?: (event: string, metadata?: MetricsMetadata) => void;
 } | null>(null);
 
 export const AppContextProvider = ({
@@ -23,13 +25,15 @@ export const AppContextProvider = ({
   flow,
   overrideURLMap,
   userInfo,
+  trackUsage,
 }: {
   children: any;
   flow: Flow;
   overrideURLMap?: OverrideURLMap;
   userInfo: any;
+  trackUsage?: (event: string, metadata?: MetricsMetadata) => void;
 }) => (
-  <AppContext.Provider value={{ flow, overrideURLMap, userInfo }}>
+  <AppContext.Provider value={{ flow, overrideURLMap, userInfo, trackUsage }}>
     {children}
   </AppContext.Provider>
 );
