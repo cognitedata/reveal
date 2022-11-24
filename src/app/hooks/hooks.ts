@@ -130,8 +130,9 @@ export const useCurrentResourceId = (): [
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { id } = useParams<{
+  const { id, tabType } = useParams<{
     id: string;
+    tabType?: string;
   }>();
   const idNumber =
     !!id && Number.isFinite(parseInt(id, 10)) ? parseInt(id, 10) : undefined;
@@ -147,7 +148,13 @@ export const useCurrentResourceId = (): [
       });
     } else {
       navigate(
-        createLink(`/explore/search/${type}/${newResourceId}`, search, opts),
+        createLink(
+          `/explore/search/${type}/${newResourceId}${
+            tabType ? `/${tabType}` : ''
+          }`,
+          search,
+          opts
+        ),
         { replace: replaceHistory }
       );
     }

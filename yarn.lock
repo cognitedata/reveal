@@ -1602,10 +1602,10 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/data-exploration@5.54.4":
-  version "5.54.4"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.54.4.tgz#07d82627153e1dab241b27ab4ba0310193a1137f"
-  integrity sha512-G5mGj6LcsIUXYl9/N+sZ5JsJ7WZAvAMwau6S9ptqn/xNEP2d4eqB3yUbdytCBAmissTa6ygbJNyOUbIU1CpJIw==
+"@cognite/data-exploration@5.54.6":
+  version "5.54.6"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.54.6.tgz#b487d8cfb23fd062d528e02a8d8ead696f19bcbc"
+  integrity sha512-V7+CL/vwBDPp31bufUU+GT4HRet1NZbdZlzqBrJbEIfgDckkrdwMhpXQoqur3TcnWKLyGYJRSDmAJXN02f5Vwg==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
@@ -1666,7 +1666,7 @@
   resolved "https://registry.yarnpkg.com/@cognite/frontend-metrics-types/-/frontend-metrics-types-0.0.2.tgz#b6684a39222194e8a2a5f4e372d84404edd881f2"
   integrity sha512-i064sawWl1uKgfJ6QckXKutw3y+y8KpWuoerX3c/PlaEW/eC/gV6SHkK7q0ltxZcRxBZXhD8wlNMeh+vPxt1gA==
 
-"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
+"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix", "@cognite/gcs-browser-upload@github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
   version "1.1.1"
   resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
   dependencies:
