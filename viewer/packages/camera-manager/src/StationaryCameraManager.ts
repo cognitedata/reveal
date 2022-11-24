@@ -12,17 +12,20 @@ export class StationaryCameraManager implements CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
   private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
   private readonly _domElement: HTMLElement;
+  private readonly _defaultFOV: number;
   private _isEnabled = false;
   private _isDragging = false;
 
   constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
     this._domElement = domElement;
     this._camera = camera;
+    this._defaultFOV = camera.fov;
 
     domElement.addEventListener('pointermove', this.rotateCamera.bind(this));
     domElement.addEventListener('pointerdown', this.enableDragging.bind(this));
     domElement.addEventListener('pointerup', this.disableDragging.bind(this));
     domElement.addEventListener('pointerout', this.disableDragging.bind(this));
+    domElement.addEventListener('wheel', this.zoomCamera.bind(this));
   }
 
   set enabled(value: boolean) {
@@ -86,6 +89,7 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement.removeEventListener('pointerdown', this.enableDragging.bind(this));
     this._domElement.removeEventListener('pointerup', this.disableDragging.bind(this));
     this._domElement.removeEventListener('pointerout', this.disableDragging.bind(this));
+    this._domElement.removeEventListener('wheel', this.zoomCamera.bind(this));
   }
 
   private enableDragging(_: PointerEvent) {
@@ -110,5 +114,11 @@ export class StationaryCameraManager implements CameraManager {
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
     this._cameraChangedListener.forEach(cb => cb(this._camera.position, this._camera.position));
+  }
+
+  private zoomCamera(event: WheelEvent) {
+    const sensitivityScaler = 0.05;
+    this._camera.fov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
+    this._camera.updateProjectionMatrix();
   }
 }

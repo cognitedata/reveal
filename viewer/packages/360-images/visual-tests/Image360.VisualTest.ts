@@ -23,6 +23,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
     const { cogniteClient, sceneHandler, cameraControls, renderer, camera } = testFixtureComponents;
 
+    const defaultFov = camera.fov;
     camera.near = 0.01;
     camera.updateProjectionMatrix();
 
@@ -55,6 +56,17 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       this.render();
     });
 
+    let lastEnteredImage: Image360Entity | undefined;
+
+    renderer.domElement.addEventListener('wheel', event => {
+      if (lastEnteredImage === undefined) {
+        return;
+      }
+      camera.fov = Math.min(Math.max(camera.fov + event.deltaY / 20, 10), defaultFov);
+      camera.updateProjectionMatrix();
+      this.render();
+    });
+
     renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
       const ndcCoordinates = pixelToNormalizedDeviceCoordinates(
@@ -72,6 +84,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         camera.position.copy(image360Translation);
         cameraControls.target.copy(image360Translation.clone().add(new THREE.Vector3(0, 0, 0.001)));
         cameraControls.update();
+        lastEnteredImage = entity;
       }
       this.render();
     });
