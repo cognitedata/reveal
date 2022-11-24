@@ -12,7 +12,6 @@ import { AssetMappingsSidebar } from './AssetMappingsSidebar';
 import {
   ExpandButton,
   FocusAssetButton,
-  HighlightAssetsButton,
   HelpButton,
   PointToPointMeasurementButton,
   ShareButton,
@@ -41,12 +40,13 @@ import { useQueryClient } from 'react-query';
 import { ThreeDContext } from './ThreeDContext';
 import debounce from 'lodash/debounce';
 
-import AssetLabelsButton from 'app/containers/ThreeD/asset-labels-button/AssetLabelsButton';
+import AssetsHighlightButton from 'app/containers/ThreeD/assets-highlight-button/AssetsHighlightButton';
 import { LabelEventHandler } from 'app/containers/ThreeD/tools/SmartOverlayTool';
 
 import MouseWheelAction from 'app/containers/ThreeD/components/MouseWheelAction';
 import LoadSecondaryModels from 'app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
 import OverlayTool from 'app/containers/ThreeD/components/OverlayTool';
+import { useFlagAssetMappingsOverlays } from 'app/hooks/flags';
 
 type Props = {
   modelId: number;
@@ -54,6 +54,7 @@ type Props = {
 export const ThreeDView = ({ modelId }: Props) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
+  const useOverlays = useFlagAssetMappingsOverlays();
 
   useEffect(() => {
     trackUsage('3DPreview.Open', { modelId });
@@ -72,7 +73,6 @@ export const ThreeDView = ({ modelId }: Props) => {
     tab,
     setTab,
     secondaryModels,
-    setAssetHighlightMode,
     viewState,
     setViewState,
     selectedAssetId,
@@ -143,7 +143,9 @@ export const ThreeDView = ({ modelId }: Props) => {
     }
   }, [selectedAssetId, setAssetDetailsExpanded]);
 
-  const [labelsVisibility, setLabelsVisibility] = useState(false);
+  const [labelsVisibility, setLabelsVisibility] = useState(
+    useOverlays ? assetHighlightMode : false
+  );
 
   useEffect(() => {
     if (!viewer || !threeDModel || !overlayTool) {
@@ -229,14 +231,6 @@ export const ThreeDView = ({ modelId }: Props) => {
                     viewer={viewer}
                     model={threeDModel || pointCloudModel}
                   />
-                  {!assetDetailsExpanded && (
-                    <HighlightAssetsButton
-                      highligthMode={
-                        !assetDetailsExpanded && assetHighlightMode
-                      }
-                      setHighlightMode={setAssetHighlightMode}
-                    />
-                  )}
                   <FocusAssetButton
                     selectedAssetId={selectedAssetId}
                     viewer={viewer}
@@ -244,15 +238,17 @@ export const ThreeDView = ({ modelId }: Props) => {
                   />
                   <StyledToolBarDivider />
                   <PointSizeSlider pointCloudModel={pointCloudModel} />
+                  {!assetDetailsExpanded && (
+                    <AssetsHighlightButton
+                      labelsVisibility={labelsVisibility}
+                      setLabelsVisibility={setLabelsVisibility}
+                      overlayTool={overlayTool}
+                      threeDModel={threeDModel}
+                    />
+                  )}
                   <Slicer
                     viewer={viewer}
                     viewerModel={threeDModel || pointCloudModel}
-                  />
-                  <AssetLabelsButton
-                    labelsVisibility={labelsVisibility}
-                    setLabelsVisibility={setLabelsVisibility}
-                    overlayTool={overlayTool}
-                    threeDModel={threeDModel}
                   />
                   <PointToPointMeasurementButton
                     viewer={viewer}

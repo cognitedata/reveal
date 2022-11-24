@@ -8,22 +8,27 @@ import {
 } from 'app/containers/ThreeD/hooks';
 import { SmartOverlayTool } from 'app/containers/ThreeD/tools/SmartOverlayTool';
 import { getBoundingBoxesByNodeIds } from 'app/containers/ThreeD/utils';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useContext } from 'react';
+import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
+import { useFlagAssetMappingsOverlays } from 'app/hooks/flags';
 
-type AssetLabelsButtonProps = {
+type AssetsHighlightButtonProps = {
   labelsVisibility: boolean;
   setLabelsVisibility: (visibility: boolean) => void;
   overlayTool?: SmartOverlayTool;
   threeDModel?: Cognite3DModel;
 };
 
-const AssetLabelsButton = ({
+const AssetsHighlightButton = ({
   overlayTool,
   threeDModel,
   labelsVisibility,
   setLabelsVisibility,
-}: AssetLabelsButtonProps): JSX.Element => {
+}: AssetsHighlightButtonProps): JSX.Element => {
   const sdk = useSDK();
+  const useOverlays = useFlagAssetMappingsOverlays();
+  const { setAssetHighlightMode, assetHighlightMode } =
+    useContext(ThreeDContext);
   const { data: assetMappings } = useInfiniteAssetMappings(
     threeDModel?.modelId,
     threeDModel?.revisionId,
@@ -58,19 +63,20 @@ const AssetLabelsButton = ({
 
   if (!threeDModel) return <></>;
 
-  const handleLabelsVisibility = () => {
-    if (!overlayTool) return;
+  const handleAssetHighlighting = () => {
+    setAssetHighlightMode(!assetHighlightMode);
+
+    if (!useOverlays || !overlayTool) return;
 
     overlayTool.visible = !labelsVisibility;
-
     setLabelsVisibility(!labelsVisibility);
   };
   return (
-    <Tooltip content="Toggle labels visibility">
+    <Tooltip content="Emphasize clickable objects" placement="right">
       <Button
-        onClick={handleLabelsVisibility}
-        toggled={labelsVisibility}
-        icon="Comment"
+        onClick={handleAssetHighlighting}
+        toggled={assetHighlightMode}
+        icon="Assets"
         type="ghost"
         aria-label="asset-labels-button"
       />
@@ -107,4 +113,4 @@ function addLabelsFromAssetMappings(
   });
 }
 
-export default AssetLabelsButton;
+export default AssetsHighlightButton;
