@@ -3,10 +3,22 @@ import styled from 'styled-components';
 
 const defaultRowHeight = '48px';
 
+export const SummaryCardWrapper = styled.div`
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--cogs-border--muted);
+
+  background-color: var(--cogs-surface--medium);
+`;
+
 export const ContainerInside = styled.div`
   height: 100%;
   overflow-y: auto;
   scroll-margin-top: ${defaultRowHeight};
+  ${SummaryCardWrapper} & {
+    height: unset;
+  }
 `;
 
 export const TableContainer = styled.div`
@@ -15,15 +27,6 @@ export const TableContainer = styled.div`
   padding-bottom: 0;
   height: 100%;
   flex-direction: column;
-`;
-
-export const SummaryCardWrapper = styled.div`
-  border-radius: 8px;
-  width: 100%;
-  height: 100%;
-  border: 1px solid var(--cogs-border--muted);
-
-  background-color: var(--cogs-surface--medium);
 `;
 
 export const ColumnSelectorWrapper = styled.div`
