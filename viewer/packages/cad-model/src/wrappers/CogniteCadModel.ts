@@ -53,7 +53,6 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
   /**
    * Sets the model visibility.
-   * @default true
    * @example
    * ```js
    * model.visible = false
