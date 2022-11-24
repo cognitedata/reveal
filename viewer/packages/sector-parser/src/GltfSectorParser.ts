@@ -16,15 +16,12 @@ import {
 } from './types';
 import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
 import { COLLECTION_TYPE_SIZES, DATA_TYPE_BYTE_SIZES } from './constants';
-import { DracoDecoderHelper } from './DracoDecoderHelper';
 
 export class GltfSectorParser {
   private readonly _glbMetadataParser: GlbMetadataParser;
-  private readonly _dracoDecoderHelper: DracoDecoderHelper;
 
   constructor() {
     this._glbMetadataParser = new GlbMetadataParser();
-    this._dracoDecoderHelper = new DracoDecoderHelper();
   }
 
   public async parseSector(data: ArrayBuffer): Promise<ParsedGeometry[]> {
@@ -238,31 +235,7 @@ export class GltfSectorParser {
     const dracoCompression = primitive.extensions?.KHR_draco_mesh_compression;
 
     if (dracoCompression !== undefined) {
-      const dracoBufferView = json.bufferViews[dracoCompression.bufferView];
-
-      const dracoMeshOffset = offsetToBinChunk + (dracoBufferView.byteOffset ?? 0);
-
-      const dracoMeshLength = dracoBufferView.byteLength;
-
-      const dracoMeshBufferView = new Int8Array(data, dracoMeshOffset, dracoMeshLength);
-
-      const dracoMesh = await this._dracoDecoderHelper.decodeDracoBufferToDracoMesh(dracoMeshBufferView);
-
-      const { indexBufferView, vertexBufferView, vertexBufferDescriptor } =
-        await this._dracoDecoderHelper.decodeDracoMeshToGeometryBuffers(
-          json,
-          dracoMesh,
-          dracoCompression.attributes,
-          primitive.attributes
-        );
-
-      bufferGeometry.setIndex(new THREE.BufferAttribute(indexBufferView, 1));
-
-      vertexBuffer = vertexBufferView.buffer;
-      byteOffset = vertexBufferView.byteOffset;
-      byteLength = vertexBufferView.byteLength;
-
-      byteStride = Object.values(vertexBufferDescriptor).reduce((sum, descriptor) => sum + descriptor.byteStride, 0);
+      throw new Error('Draco encoded meshes are not supported by Reveal');
     } else {
       this.setIndexBuffer(glbHeaderData, primitive, data, bufferGeometry);
 

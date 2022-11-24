@@ -21,7 +21,7 @@ export default class RotationVisualTest extends StreamingVisualTestFixture {
     }
 
     const matrix = cadNode.getModelTransformation();
-    const newMatrix = new THREE.Matrix4().multiplyMatrices(matrix, new THREE.Matrix4().makeRotationY(Math.PI / 3.0));
+    const newMatrix = new THREE.Matrix4().multiplyMatrices(matrix, new THREE.Matrix4().makeRotationZ(-Math.PI / 3.0));
     cadNode.setModelTransformation(newMatrix);
 
     return Promise.resolve();

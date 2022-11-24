@@ -36,7 +36,22 @@ Where the `testFixture` variable points to whatever you would like the entrypoin
 Visual tests also supports loading different 3d-models than the basic primitives scene.
 To load a local model in a visual test, simply specify a `modelUrl` url param that points to the 3d model you wish to use (f.ex. `https://localhost:8080/?testfixture=Rendering.VisualTest&modelUrl=[Path/to/my/3dmodel]`).
 
-If you wish to use a 3D model hosted by [Cognite Data Fusion](https://www.cognite.com/en/product/cognite_data_fusion_industrial_dataops_platform) you first have to fill out the `/viewer/visual-tests/.cdf-environments.json` config file with the environment you wish to target (tenant ID and client ID).
+If you wish to use a 3D model hosted by [Cognite Data Fusion](https://www.cognite.com/en/product/cognite_data_fusion_industrial_dataops_platform) you first have to fill out a `/viewer/visual-tests/.cdf-env.json` config file with the environment you wish to target (tenant ID and client ID).
+Start by making a copy of `/viewer/visual-tests/.cdf-env.example.json` and rename it to `.cdf-env.json`, and then fill out credentials for any projects you want to target.
+The file will be git ignored.
+This is an example of `.cdf-env.json` with mocked data:
+
+```js
+{
+  "environments": {
+    "cog-3d": {
+      "tenantId": "1234-5678-1234-5678",
+      "clientId": "9876-5432-9876-5432"
+    }
+  }
+}
+```
+
 Once this is done you can specify additional URL parameters to target the specific environment (`env`) as well as the project, model, and revision ID. An example of the full URL will look something like this:
 
 ```

@@ -49,7 +49,7 @@ export class CadModelUpdateHandler {
 
   private _updateObservable: Observable<ConsumedSector> | undefined;
 
-  constructor(sectorCuller: SectorCuller, continuousModelStreaming = false) {
+  constructor(sectorCuller: SectorCuller, continuousModelStreaming = true) {
     this._sectorCuller = sectorCuller;
     this._modelStateHandler = new ModelStateHandler();
     this._budget = defaultCadModelBudget;
