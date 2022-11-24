@@ -246,7 +246,9 @@ export class Cognite3DViewer {
       this._revealManagerHelper.revealManager.setCameraInMotion(true);
     });
 
-    this.cameraManager.on('cameraStopped', () => this._revealManagerHelper.revealManager.setCameraInMotion(false));
+    this._activeCameraManager.on('cameraStopped', () =>
+      this._revealManagerHelper.revealManager.setCameraInMotion(false)
+    );
 
     const revealOptions = createRevealManagerOptions(options, this._renderer.getPixelRatio());
     if (options._localModels === true) {
