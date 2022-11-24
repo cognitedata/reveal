@@ -13,11 +13,11 @@ const getExtendedAnnotationsWithBadges = (
           {
             containerId: annotation.containerId,
             id: `${annotation.id}-suggested`,
-            radius: 0.008,
+            radius: 0.003,
             style: {
               fill: Colors['decorative--red--400'],
-              stroke: Colors['decorative--grayscale--100'],
-              strokeWidth: 3,
+              stroke: Colors['decorative--red--400'],
+              strokeWidth: 5,
             },
             type: AnnotationType.ELLIPSE,
             x: annotation.x + annotation.width,
