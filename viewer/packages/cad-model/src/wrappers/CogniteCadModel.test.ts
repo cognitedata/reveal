@@ -116,14 +116,17 @@ describe(CogniteCadModel.name, () => {
   });
 
   test('visible property hides or unhides model', () => {
+    const visible = false;
     expect(model.visible).toBeTrue();
 
     model.visible = false;
 
-    expect(model.visible).toBeFalse();
+    expect(model.cadNode.visible).toBe(visible);
+    expect(model.visible).toBe(visible);
 
     model.visible = true;
 
-    expect(model.visible).not.toBeFalse();
+    expect(model.cadNode.visible).not.toBe(visible);
+    expect(model.visible).not.toBe(visible);
   });
 });
