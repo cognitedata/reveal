@@ -30,7 +30,7 @@ import {
   clickOrTouchEventOffset
 } from '@reveal/utilities';
 
-import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventHandler';
+import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
 
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
