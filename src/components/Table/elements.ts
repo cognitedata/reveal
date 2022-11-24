@@ -8,6 +8,8 @@ export const SummaryCardWrapper = styled.div`
   width: 100%;
   height: 100%;
   border: 1px solid var(--cogs-border--muted);
+  display: flex;
+  flex-direction: column;
 
   background-color: var(--cogs-surface--medium);
 `;
@@ -142,6 +144,15 @@ export const Tr = styled.div`
     cursor: unset;
   }
 `;
+
+export const Tbody = styled.div`
+  ${Tr} {
+    &:last-child {
+      border: none;
+    }
+  }
+`;
+
 export const Td = styled.div`
   word-wrap: break-word;
   padding: 8px 12px;

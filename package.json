@@ -29,7 +29,7 @@
     "@cognite/react-document-table": "^1.22.2",
     "@cognite/react-feature-flags": "^1.0.1",
     "@cognite/react-picture-annotation": "3.0.1",
-    "@cognite/sdk": "7.12.0",
+    "@cognite/sdk": "^7.13.0",
     "@cognite/sdk-provider": "^2.0.0",
     "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@cognite/unified-file-viewer": "^2.7.1",
@@ -162,7 +162,8 @@
   "peerDependencies": {
     "react": "^16.8.0||^17||^18",
     "react-dom": "^16.8.0||^17||^18",
-    "react-router-dom": "^6.4.2"
+    "react-router-dom": "^6.4.2",
+    "@cognite/sdk": "^7.13.0"
   },
   "engines": {
     "node": ">=14"

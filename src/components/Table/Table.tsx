@@ -31,6 +31,7 @@ import {
   StyledFlex,
   ResizerWrapper,
   SubTableWrapper,
+  Tbody,
 } from './elements';
 
 import { Body, Detail, Flex } from '@cognite/cogs.js';
@@ -277,7 +278,7 @@ export function Table<T extends TableData>({
               </Tr>
             ))}
           </Thead>
-          <div ref={tbodyRef}>
+          <Tbody ref={tbodyRef}>
             {getRowModel().rows.map(row => {
               return (
                 <Tr
@@ -310,7 +311,7 @@ export function Table<T extends TableData>({
                 </Tr>
               );
             })}
-          </div>
+          </Tbody>
         </StyledTable>
         {showLoadButton && (
           <LoadMoreButtonWrapper justifyContent="center" alignItems="center">

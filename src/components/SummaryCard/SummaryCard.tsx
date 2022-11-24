@@ -47,7 +47,7 @@ export function SummaryCard({
 const StyledFlex = styled(Flex)`
   border-bottom: 1px solid var(--cogs-border--muted);
   align-items: center;
-  padding: 18px 16px;
+  padding: 16px;
 `;
 const IconWrapper = styled.div`
   padding: 12px;
