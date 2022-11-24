@@ -101,7 +101,7 @@ export const FilePreview = ({
   return (
     <>
       <CogniteFileViewer.Provider
-        sdk={sdk}
+        sdk={sdk as any}
         disableAutoFetch
         overrideURLMap={{
           pdfjsWorkerSrc:
