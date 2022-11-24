@@ -46,7 +46,11 @@ export class ProxyCameraManager implements CameraManager {
     }
     if (preserveCameraState) {
       const currentState = this._activeCameraManager.getCameraState();
-      cameraManager.setCameraState({ position: currentState.position, target: currentState.target });
+      cameraManager.setCameraState({
+        position: currentState.position,
+        target: currentState.target,
+        rotation: currentState.rotation
+      });
     }
     cameraManager.getCamera().aspect = this.getCamera().aspect;
 
