@@ -81,7 +81,7 @@
     "proj4": "2.8.0",
     "rxjs": "7.5.7",
     "skmeans": "0.11.3",
-    "three-stdlib": "2.18.1"
+    "three-stdlib": "2.19.0"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.31.0",
@@ -124,7 +124,7 @@
     "jest-canvas-mock": "2.4.0",
     "jest-environment-jsdom": "29.3.1",
     "jest-extended": "3.1.0",
-    "jest-image-snapshot": "5.2.0",
+    "jest-image-snapshot": "6.0.0",
     "jest-puppeteer": "6.1.1",
     "jsdom": "20.0.2",
     "moq.ts": "9.0.2",

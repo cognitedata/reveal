@@ -823,7 +823,7 @@ __metadata:
     jest-canvas-mock: 2.4.0
     jest-environment-jsdom: 29.3.1
     jest-extended: 3.1.0
-    jest-image-snapshot: 5.2.0
+    jest-image-snapshot: 6.0.0
     jest-puppeteer: 6.1.1
     jsdom: 20.0.2
     lodash: 4.17.21
@@ -845,7 +845,7 @@ __metadata:
     skmeans: 0.11.3
     stats.js: 0.17.0
     three: 0.146.0
-    three-stdlib: 2.18.1
+    three-stdlib: 2.19.0
     ts-jest: 29.0.3
     ts-loader: 9.4.1
     tsc-alias: 1.7.1
@@ -8075,11 +8075,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-image-snapshot@npm:5.2.0":
-  version: 5.2.0
-  resolution: "jest-image-snapshot@npm:5.2.0"
+"jest-image-snapshot@npm:6.0.0":
+  version: 6.0.0
+  resolution: "jest-image-snapshot@npm:6.0.0"
   dependencies:
-    chalk: ^1.1.3
+    chalk: ^4.0.0
     get-stdin: ^5.0.1
     glur: ^1.1.2
     lodash: ^4.17.4
@@ -8089,8 +8089,8 @@ __metadata:
     rimraf: ^2.6.2
     ssim.js: ^3.1.1
   peerDependencies:
-    jest: ">=20 <=28"
-  checksum: 37c7e03a9969c484c963a5a7293df63ce73f69e3a54b269966b11555793fe7b21ed3de708208b5234809e2e02f8088a242e13848a6634d191fea81fc0d70fb79
+    jest: ">=20 <=29"
+  checksum: 228f796f9fc49d0c507870daed27aee6a77c0886dec0b29b3bd51ed5a32ed48b8a6d89cc0a7fa2e76c48dbe260c7c1ec0dd665b06c294c2161fce472856f675e
   languageName: node
   linkType: hard
 
@@ -11935,9 +11935,9 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:2.18.1":
-  version: 2.18.1
-  resolution: "three-stdlib@npm:2.18.1"
+"three-stdlib@npm:2.19.0":
+  version: 2.19.0
+  resolution: "three-stdlib@npm:2.19.0"
   dependencies:
     "@babel/runtime": ^7.16.7
     "@types/offscreencanvas": ^2019.6.4
@@ -11952,7 +11952,7 @@ resolve@^1.20.0:
     zstddec: ^0.0.2
   peerDependencies:
     three: ">=0.122.0"
-  checksum: 1838aa6889941370655ff07d1da64e92b85c5bd9f4e628f2586d90bb55cff10fbdd71b23e7841c27d41ee690bf10109350c57dd25fb7880c3a42c91aee322ac2
+  checksum: d2f8dc00c26cbbb5894a2272dd1e59f942031fe24b28e6f0754b1152beecb6e52ad3ab14aad6cd126721a93f5123a13cb3c94cbb14a935bc981b00d2468f0727
   languageName: node
   linkType: hard
 
