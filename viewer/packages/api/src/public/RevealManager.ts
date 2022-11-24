@@ -32,7 +32,7 @@ export class RevealManager {
   private readonly _pipelineExecutor: RenderPipelineExecutor;
   private readonly _renderPipeline: RenderPipelineProvider;
 
-  private _cameraInMotion: boolean = true;
+  private _cameraInMotion: boolean = false;
 
   private _isDisposed = false;
   private readonly _subscriptions = new Subscription();
