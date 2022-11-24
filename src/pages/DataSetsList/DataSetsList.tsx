@@ -25,6 +25,7 @@ import Page from 'components/page';
 import RowActions from 'components/data-sets-list/row-actions';
 import TableFilter, { GovernanceStatus } from 'components/table-filters';
 import { useSearchParamState } from 'hooks/useSearchParamState';
+import { trackUsage } from 'utils';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
@@ -173,6 +174,10 @@ const DataSetsList = (): JSX.Element => {
             {
               children: t('edit'),
               onClick: () => {
+                trackUsage({
+                  e: 'data.sets.edit.click',
+                  dataSetId: record.key,
+                });
                 editDataSet(record.key);
               },
               disabled: !hasWritePermissions,
@@ -181,10 +186,20 @@ const DataSetsList = (): JSX.Element => {
             },
             {
               children: record.archived ? t('restore') : t('archive'),
-              onClick: () =>
-                record.archived
-                  ? restoreDataSet(record.key)
-                  : archiveDataSet(record.key),
+              onClick: () => {
+                if (record.archived) {
+                  trackUsage({
+                    e: 'data.sets.archive.click',
+                    dataSetId: record.key,
+                  });
+                  return restoreDataSet(record.key);
+                }
+                trackUsage({
+                  e: 'data.sets.restore.click',
+                  dataSetId: record.key,
+                });
+                return archiveDataSet(record.key);
+              },
               disabled: !hasWritePermissions,
               loading: isUpdatingDataSetVisibility || loading,
               icon: record.archived ? 'Restore' : 'Archive',
@@ -240,7 +255,7 @@ const DataSetsList = (): JSX.Element => {
       icon="Add"
       onClick={() => {
         setCreationDrawerVisible(true);
-        trackEvent('DataSets.CreationFlow.Starts creating data set');
+        trackUsage({ e: 'data.sets.create.click' });
         setUserWarned(false);
       }}
       disabled={!hasWritePermissions}
@@ -297,7 +312,10 @@ const DataSetsList = (): JSX.Element => {
         />
         <Flex alignItems="center" gap={8}>
           <Checkbox
-            onChange={(e) => setShowArchived(e.target.checked)}
+            onChange={(e) => {
+              setShowArchived(e.target.checked);
+              trackUsage({ e: 'data.sets.view.archive.click' });
+            }}
             checked={showArchived}
           >
             {t('show-archived-data-sets')}

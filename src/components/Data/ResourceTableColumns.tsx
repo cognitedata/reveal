@@ -12,6 +12,7 @@ import { useTranslation } from 'common/i18n';
 import moment from 'moment';
 import { useFlag } from '@cognite/react-feature-flags';
 import { ExploreDataResourceTypes } from './ExploreData';
+import { trackUsage } from 'utils';
 
 type TResource = Asset | Timeseries | FileInfo | CogniteEvent | Sequence;
 
@@ -21,6 +22,19 @@ export function useResourceTableColumns<T extends TResource>(
   const { t } = useTranslation();
 
   const { isEnabled } = useFlag('data-catalog');
+
+  const ResourcePropertyClickHandler = (
+    tableKey: string,
+    resourcePropertyId?: string | number
+  ) => {
+    if (resourcePropertyId) {
+      trackUsage({
+        e: 'data.sets.detail.data.navigate.explore.resource',
+        resourceType: tableKey,
+        resourceId: resourcePropertyId,
+      });
+    }
+  };
 
   const assets: ColumnsType<Asset> = [
     {
@@ -72,6 +86,7 @@ export function useResourceTableColumns<T extends TResource>(
           value={record.id}
           isLink
           redirectURL={createLink(`/explore/asset/${record.id}`)}
+          onClick={() => ResourcePropertyClickHandler('assets', record.id)}
         />
       ),
     },
@@ -127,6 +142,7 @@ export function useResourceTableColumns<T extends TResource>(
           value={record.id}
           isLink
           redirectURL={createLink(`/explore/event/${record.id}`)}
+          onClick={() => ResourcePropertyClickHandler('events', record.id)}
         />
       ),
     },
@@ -175,6 +191,7 @@ export function useResourceTableColumns<T extends TResource>(
           value={record.id}
           isLink
           redirectURL={createLink(`/explore/file/${record.id}`)}
+          onClick={() => ResourcePropertyClickHandler('files', record.id)}
         />
       ),
     },
@@ -225,6 +242,7 @@ export function useResourceTableColumns<T extends TResource>(
           value={record.id}
           isLink
           redirectURL={createLink(`/explore/sequence/${record.id}`)}
+          onClick={() => ResourcePropertyClickHandler('sequences', record.id)}
         />
       ),
     },
@@ -291,6 +309,7 @@ export function useResourceTableColumns<T extends TResource>(
           value={record.id}
           isLink
           redirectURL={createLink(`/explore/timeSeries/${record.id}`)}
+          onClick={() => ResourcePropertyClickHandler('timeseries', record.id)}
         />
       ),
     },

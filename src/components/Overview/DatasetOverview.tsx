@@ -13,6 +13,7 @@ import {
   ContentWrapper,
   isEmptyDataset,
   EXPLORE_DATA_CATALOG,
+  trackUsage,
 } from 'utils';
 import { useTranslation } from 'common/i18n';
 import UsersIcon from 'assets/Users.svg';
@@ -80,6 +81,7 @@ const DatasetOverview = ({
   } as const;
 
   const handleManageAccess = () => {
+    trackUsage({ e: 'data.sets.detail.manage.access.click', dataSetId: id });
     window.open(createLink(`/access-management`), '_blank');
   };
 
