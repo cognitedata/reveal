@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import { SceneHandler } from '@reveal/utilities';
 import * as THREE from 'three';
 
 export class Image360Icon extends THREE.Group {
@@ -9,8 +10,12 @@ export class Image360Icon extends THREE.Group {
   private readonly MAX_PIXEL_SIZE = 256;
   private readonly _hoverSprite: THREE.Sprite;
   private readonly _outerSprite: THREE.Sprite;
-  constructor(modelToWorldTransform: THREE.Matrix4) {
+  private readonly _sceneHandler: SceneHandler;
+  constructor(modelToWorldTransform: THREE.Matrix4, sceneHandler: SceneHandler) {
     super();
+
+    this._sceneHandler = sceneHandler;
+
     this._hoverSprite = this.createHoverSprite();
     this._hoverSprite.visible = false;
 
@@ -21,6 +26,8 @@ export class Image360Icon extends THREE.Group {
     this.add(this._outerSprite);
     this.add(this._hoverSprite);
     this.applyMatrix4(modelToWorldTransform);
+
+    sceneHandler.addCustomObject(this);
   }
 
   set hoverSpriteVisible(visible: boolean) {
@@ -38,6 +45,18 @@ export class Image360Icon extends THREE.Group {
       obj.object = this;
       intersects.push(obj);
     }
+  }
+
+  public dispose(): void {
+    this._sceneHandler.removeCustomObject(this);
+
+    this._hoverSprite.material.map?.dispose();
+    this._hoverSprite.material.dispose();
+    this._hoverSprite.geometry.dispose();
+
+    this._outerSprite.material.map?.dispose();
+    this._outerSprite.material.dispose();
+    this._outerSprite.geometry.dispose();
   }
 
   private setupAdaptiveScaling(modelToWorldTransform: THREE.Matrix4): void {
@@ -101,7 +120,7 @@ export class Image360Icon extends THREE.Group {
     const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: true });
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.updateMatrixWorld();
-    sprite.renderOrder = 4;
+    sprite.renderOrder = 5;
     return sprite;
 
     function drawOuterCircle() {
@@ -134,7 +153,7 @@ export class Image360Icon extends THREE.Group {
     const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: true });
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.updateMatrixWorld();
-    sprite.renderOrder = 4;
+    sprite.renderOrder = 5;
     return sprite;
 
     function drawHoverSelector() {

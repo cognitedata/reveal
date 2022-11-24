@@ -53,7 +53,7 @@ export class Image360UI {
     gui.add(params, 'add').name('Add image set');
 
     gui.add(opacity, 'alpha', 0, 1, 0.01).onChange(() => {
-      entities.forEach(p => (p.opacity = opacity.alpha));
+      entities.forEach(p => (p.image360Visualization.opacity = opacity.alpha));
       viewer.requestRedraw();
     });
 

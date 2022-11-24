@@ -3,43 +3,53 @@
  */
 
 import { Image360Entity } from './Image360Entity';
+import pull from 'lodash/pull';
 
 export class Image360LoadingCache {
   private readonly _loaded360Images: Image360Entity[];
-  private readonly _inFlightEntities: Set<Image360Entity>;
+  private readonly _inFlightEntities: Map<Image360Entity, Promise<void>>;
 
   get cachedEntities(): Image360Entity[] {
     return this._loaded360Images;
   }
 
-  get currentlyLoadingEntities(): Set<Image360Entity> {
+  get currentlyLoadingEntities(): Map<Image360Entity, Promise<void>> {
     return this._inFlightEntities;
   }
 
   constructor(private readonly _cacheSize = 10) {
     this._loaded360Images = [];
-    this._inFlightEntities = new Set();
+    this._inFlightEntities = new Map();
   }
 
   public async cachedPreload(entity: Image360Entity): Promise<void> {
-    if (this._loaded360Images.filter(preloadedEntity => preloadedEntity === entity).length > 0) {
+    if (this._loaded360Images.includes(entity)) {
       return;
     }
 
-    if (this._inFlightEntities.has(entity)) {
-      return entity.load360Image();
+    const inflightEntity = this._inFlightEntities.get(entity);
+    if (inflightEntity !== undefined) {
+      return inflightEntity;
     }
 
-    this._inFlightEntities.add(entity);
+    const load360Image = entity.load360Image();
+    this._inFlightEntities.set(entity, load360Image);
 
-    await entity.load360Image();
+    await load360Image;
 
     if (this._loaded360Images.length === this._cacheSize) {
       const cachePurgedEntity = this._loaded360Images.pop();
-      await cachePurgedEntity?.dispose();
+      cachePurgedEntity?.unload360Image();
     }
 
     this._loaded360Images.unshift(entity);
     this._inFlightEntities.delete(entity);
+  }
+
+  public async purge(entity: Image360Entity): Promise<void> {
+    if (this._inFlightEntities.has(entity)) {
+      await this._inFlightEntities.get(entity);
+    }
+    pull(this._loaded360Images, entity);
   }
 }
