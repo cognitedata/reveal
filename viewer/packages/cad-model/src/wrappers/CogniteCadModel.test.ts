@@ -114,4 +114,16 @@ describe(CogniteCadModel.name, () => {
 
     expect(model.getCdfToDefaultModelTransformation()).toEqual(originalSourceTransform);
   });
+
+  test('visible property hides or unhides model', () => {
+    expect(model.visible).toBeTrue();
+
+    model.visible = false;
+
+    expect(model.visible).toBeFalse();
+
+    model.visible = true;
+
+    expect(model.visible).not.toBeFalse();
+  });
 });

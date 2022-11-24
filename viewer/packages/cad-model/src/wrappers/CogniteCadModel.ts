@@ -52,6 +52,25 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
+   * Sets the model visibility.
+   * @default true
+   * @example
+   * ```js
+   * model.visible = false
+   * ```
+   */
+  set visible(value: boolean) {
+    this.cadNode.visible = value;
+  }
+
+  /**
+   * Returns the model visibility.
+   */
+  get visible(): boolean {
+    return this.cadNode.visible;
+  }
+
+  /**
    * The CDF model ID of the model.
    */
   readonly modelId: number;
@@ -82,17 +101,6 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, this.nodesApiClient);
 
     this.cadNode = cadNode;
-
-    // Note! As this is defined in ThreeJS we cannot override this using
-    // regular TypeScript getters and setters.
-    // It's necessary to forward this setting to CadNode as CogniteCadModel is
-    // just a wrapper around this and not part of the actual rendered scene.
-    Object.defineProperty(this, 'visible', {
-      get: () => this.cadNode.visible,
-      set: (x: boolean) => {
-        this.cadNode.visible = x;
-      }
-    });
   }
 
   /**
