@@ -13,20 +13,8 @@ export class ProxyCameraManager implements CameraManager {
 
   private readonly _activeCameraEventHandler: CameraChangeDelegate;
 
-  set enabled(value: boolean) {
-    const isEnabled = this._activeCameraManager.enabled;
-    if (isEnabled === undefined) {
-      throw new Error('Currently set Camera Manager does not support setting enabled state');
-    }
-    this._activeCameraManager.enabled = value;
-  }
-
   get enabled(): boolean {
-    const isEnabled = this._activeCameraManager.enabled;
-    if (isEnabled === undefined) {
-      throw new Error('Currently set Camera Manager does not support querying for enabled state');
-    }
-    return isEnabled;
+    return this._activeCameraManager.enabled;
   }
 
   get innerCameraManager(): CameraManager {
@@ -40,27 +28,13 @@ export class ProxyCameraManager implements CameraManager {
     initialActiveCamera.on('cameraChange', this._activeCameraEventHandler);
   }
 
-  public setActiveCameraManager(cameraManager: CameraManager, preserveCameraState = true): void {
+  public setActiveCameraManager(cameraManager: CameraManager): void {
     if (cameraManager === this._activeCameraManager) {
       return;
     }
-    if (preserveCameraState) {
-      const currentState = this._activeCameraManager.getCameraState();
-      cameraManager.setCameraState({
-        position: currentState.position,
-        target: currentState.target,
-        rotation: currentState.rotation
-      });
-    }
-    cameraManager.getCamera().aspect = this.getCamera().aspect;
 
-    if (cameraManager.enabled !== undefined) {
-      cameraManager.enabled = true;
-    }
-
-    if (this._activeCameraManager.enabled !== undefined) {
-      this._activeCameraManager.enabled = false;
-    }
+    cameraManager.activate(this._activeCameraManager);
+    this._activeCameraManager.deactivate();
 
     this._activeCameraManager.off('cameraChange', this._activeCameraEventHandler);
     this._activeCameraManager = cameraManager;
@@ -77,6 +51,14 @@ export class ProxyCameraManager implements CameraManager {
 
   public getCameraState(): Required<CameraState> {
     return this._activeCameraManager.getCameraState();
+  }
+
+  activate(cameraManager?: CameraManager): void {
+    this._activeCameraManager.activate(cameraManager);
+  }
+
+  deactivate(): void {
+    this._activeCameraManager.deactivate();
   }
 
   public on(_: 'cameraChange', callback: CameraChangeDelegate): void {
