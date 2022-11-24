@@ -13,6 +13,7 @@ import { DateRangeProvider } from 'app/context/DateRangeContext';
 import { useSDK } from '@cognite/sdk-provider';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useUserInformation } from 'app/hooks/hooks';
+import { trackUsage } from 'app/utils/Metrics';
 
 const Spinner = () => <Loader />;
 const Exploration = React.lazy(
@@ -43,6 +44,7 @@ export default function App() {
                   pdfjsWorkerSrc:
                     '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
                 }}
+                trackUsage={trackUsage}
               >
                 <Routes>
                   <Route path="/explore/*" element={<Exploration />} />
