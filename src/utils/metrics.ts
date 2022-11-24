@@ -12,12 +12,10 @@ export type DataCatalogEvent =
       labels?: string[];
     }
   | { e: 'data.sets.create.click' }
-  // TODO: | { e: 'data.sets.label', labels?: string[], totalLabels?: number }
   | { e: 'data.sets.view.archive.click' }
   | { e: 'data.sets.edit.click'; dataSetId?: number | string }
   | { e: 'data.sets.archive.click'; dataSetId?: number | string }
   | { e: 'data.sets.restore.click'; dataSetId?: number | string }
-  // TODO: | { e: 'data.sets.labels.select' }
   | { e: 'data.sets.detail.overview' }
   | { e: 'data.sets.detail.navigate.back.click' }
   | { e: 'data.sets.detail.copy.id.click'; dataSetId?: string | number }
