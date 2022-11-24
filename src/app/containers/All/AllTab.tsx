@@ -54,13 +54,13 @@ export const AllTab = () => {
 const AllTabContainer = styled.div`
   padding: 16px;
   display: grid;
-  grid-gap: 8px;
+  grid-gap: 16px;
   height: 100%;
   overflow-y: auto;
   grid-template-columns: 1fr 1fr;
 
   & > * {
-    height: 400px;
+    height: 384px;
     min-width: 300px;
     width: 100%;
   }
