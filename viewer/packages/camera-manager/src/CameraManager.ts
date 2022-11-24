@@ -45,6 +45,8 @@ export interface CameraManager {
 
   /**
    * Set this manager as active and enable controls.
+   *
+   * Should update {@link CameraManager.enabled} to reflect the state of the manager.
    * Note that this is called automatically when a new CameraManager is set on the {@link Cognite3DViewer}.
    * @param cameraManager Previously used camera manager.
    */
@@ -52,6 +54,8 @@ export interface CameraManager {
 
   /**
    * Deactivate this manager and disable controls.
+   *
+   * Should update {@link CameraManager.enabled} to reflect the state of the manager.
    * Note that this is called automatically when a new CameraManager is set on the {@link Cognite3DViewer}.
    */
   deactivate(): void;
