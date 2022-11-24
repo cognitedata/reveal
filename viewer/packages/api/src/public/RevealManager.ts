@@ -32,12 +32,7 @@ export class RevealManager {
   private readonly _pipelineExecutor: RenderPipelineExecutor;
   private readonly _renderPipeline: RenderPipelineProvider;
 
-  private readonly _lastCamera = {
-    position: new THREE.Vector3(NaN, NaN, NaN),
-    quaternion: new THREE.Quaternion(NaN, NaN, NaN, NaN),
-    zoom: NaN,
-    fov: NaN
-  };
+  private _cameraInMotion: boolean = true;
 
   private _isDisposed = false;
   private readonly _subscriptions = new Subscription();
@@ -91,6 +86,10 @@ export class RevealManager {
     this._pointCloudManager.resetRedraw();
   }
 
+  public setCameraInMotion(inMotion: boolean): void {
+    this._cameraInMotion = inMotion;
+  }
+
   get materialManager(): CadMaterialManager {
     return this._cadManager.materialManager;
   }
@@ -100,22 +99,10 @@ export class RevealManager {
   }
 
   public update(camera: THREE.PerspectiveCamera): void {
-    const hasCameraChanged =
-      this._lastCamera.zoom !== camera.zoom ||
-      this._lastCamera.fov !== camera.fov ||
-      !this._lastCamera.position.equals(camera.position) ||
-      !this._lastCamera.quaternion.equals(camera.quaternion);
+    this._cadManager.updateCamera(camera, this._cameraInMotion);
 
-    this._cadManager.updateCamera(camera, hasCameraChanged);
-
-    if (hasCameraChanged) {
-      this._lastCamera.position.copy(camera.position);
-      this._lastCamera.quaternion.copy(camera.quaternion);
-      this._lastCamera.zoom = camera.zoom;
-      this._lastCamera.fov = camera.fov;
-
+    if (this._cameraInMotion) {
       this._pointCloudManager.updateCamera(camera);
-
       this._updateSubject.next();
     }
   }

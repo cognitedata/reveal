@@ -243,7 +243,10 @@ export class Cognite3DViewer {
 
     this._activeCameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
+      this._revealManagerHelper.revealManager.setCameraInMotion(true);
     });
+
+    this.cameraManager.on('cameraStopped', () => this._revealManagerHelper.revealManager.setCameraInMotion(false));
 
     const revealOptions = createRevealManagerOptions(options, this._renderer.getPixelRatio());
     if (options._localModels === true) {
