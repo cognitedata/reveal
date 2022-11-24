@@ -131,8 +131,8 @@ export class StationaryCameraManager implements CameraManager {
 
     const euler = new THREE.Euler().setFromQuaternion(this._camera.quaternion, 'YXZ');
 
-    euler.x -= movementY * 0.002;
-    euler.y -= movementX * 0.002;
+    euler.x -= -movementY * 0.0015 * (this._camera.fov / this._defaultFOV);
+    euler.y -= -movementX * 0.0015 * (this._camera.fov / this._defaultFOV);
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
     this._cameraChangedListener.forEach(cb => cb(this._camera.position, this._camera.position));
