@@ -57,8 +57,7 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     .range('lastUpdatedTime', {
       lte: lastUpdatedTime?.max as number,
       gte: lastUpdatedTime?.min as number,
-    })
-    .search('name', isEmpty(query) ? undefined : query); // TODO? is name working for search??
+    });
 
   if (metadata) {
     for (const { key, value } of metadata) {
