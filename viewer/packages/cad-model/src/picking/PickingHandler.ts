@@ -98,7 +98,6 @@ export class PickingHandler {
 
     try {
       for (const cadNode of visibleCadNodes) {
-        console.log('Intersection looped');
         // Make current CadNode visible & hide others
         visibleCadNodes.forEach(p => (p.visible = false));
         cadNode.visible = true;
