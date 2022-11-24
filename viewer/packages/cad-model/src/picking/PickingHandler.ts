@@ -94,7 +94,7 @@ export class PickingHandler {
     const release = await this._mutex.acquire();
     const cadNodesVisibility = cadNodes.map(p => p.visible);
     // Get CadNodes which are visible
-    const visibleCadNodes = cadNodes.filter(node => node.visible === true);
+    const visibleCadNodes = cadNodes.filter(node => node.visible);
 
     try {
       for (const cadNode of visibleCadNodes) {
