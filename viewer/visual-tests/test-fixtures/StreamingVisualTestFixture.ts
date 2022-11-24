@@ -3,6 +3,7 @@
  */
 import * as THREE from 'three';
 import { OrbitControls } from 'three-stdlib';
+import TWEEN from '@tweenjs/tween.js';
 
 import { CadManager, CadModelUpdateHandler } from '../../packages/cad-geometry-loaders';
 import { CadModelFactory, CadNode } from '../../packages/cad-model';
@@ -281,6 +282,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   public abstract setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void>;
 
   public render(): void {
+    TWEEN.update(TWEEN.now());
     this._statsJs.begin();
     this._pipelineExecutor.render(this._renderPipelineProvider, this._perspectiveCamera);
     this._statsJs.end();
