@@ -8,13 +8,23 @@ import assert from 'assert';
 import { Image360Face } from '@reveal/data-providers';
 import { Image360Visualization } from './Image360Visualization';
 
+type VisualizationState = {
+  opacity: number;
+  visible: boolean;
+  scale: THREE.Vector3;
+  renderOrder: number;
+};
+
 export class Image360VisualizationBox implements Image360Visualization {
   private readonly _worldTransform: THREE.Matrix4;
   private _visualizationMesh: THREE.Mesh | undefined;
   private _faceMaterials: THREE.MeshBasicMaterial[] | undefined;
   private readonly _sceneHandler: SceneHandler;
+  private readonly _visualizationState: VisualizationState;
 
   set opacity(alpha: number) {
+    this._visualizationState.opacity = alpha;
+
     if (this._faceMaterials === undefined) {
       return;
     }
@@ -25,6 +35,8 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   set visible(isVisible: boolean) {
+    this._visualizationState.visible = isVisible;
+
     if (this._visualizationMesh === undefined) {
       return;
     }
@@ -32,6 +44,8 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   set scale(newScale: THREE.Vector3) {
+    this._visualizationState.scale = newScale;
+
     if (this._visualizationMesh === undefined) {
       return;
     }
@@ -40,6 +54,8 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   set renderOrder(newRenderOrder: number) {
+    this._visualizationState.renderOrder = newRenderOrder;
+
     if (this._visualizationMesh === undefined) {
       return;
     }
@@ -50,6 +66,12 @@ export class Image360VisualizationBox implements Image360Visualization {
   constructor(worldTransform: THREE.Matrix4, sceneHandler: SceneHandler) {
     this._worldTransform = worldTransform;
     this._sceneHandler = sceneHandler;
+    this._visualizationState = {
+      opacity: 1,
+      renderOrder: 3,
+      scale: new THREE.Vector3(1, 1, 1),
+      visible: true
+    };
   }
 
   public async loadImages(faces: Image360Face[]): Promise<void> {
@@ -66,13 +88,15 @@ export class Image360VisualizationBox implements Image360Visualization {
           side: THREE.BackSide,
           map: getFaceTexture(face),
           depthTest: false,
-          opacity: 1.0,
+          opacity: this._visualizationState.opacity,
           transparent: true
         })
     );
     this._visualizationMesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
-    this._visualizationMesh.renderOrder = 3;
+    this._visualizationMesh.renderOrder = this._visualizationState.renderOrder;
     this._visualizationMesh.applyMatrix4(this._worldTransform);
+    this._visualizationMesh.scale.copy(this._visualizationState.scale);
+    this._visualizationMesh.visible = this._visualizationState.visible;
     this._sceneHandler.addCustomObject(this._visualizationMesh);
 
     function getTextures() {

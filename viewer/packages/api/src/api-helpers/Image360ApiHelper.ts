@@ -75,7 +75,7 @@ export class Image360ApiHelper {
   }
 
   public async remove360Images(entities: Image360Entity[]): Promise<void> {
-    await Promise.all(entities.map(entity => this._image360Facade.delete(entity))).then();
+    await Promise.all(entities.map(entity => this._image360Facade.delete(entity)));
   }
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
@@ -130,7 +130,7 @@ export class Image360ApiHelper {
       this.tweenVisualizationAlpha(from360Entity, 1, 0, alphaTweenDuration)
     ]);
 
-    retorePostTransitionState();
+    restorePostTransitionState();
 
     function setPreTransitionState() {
       const fillingScaleMagnitude = length * 2;
@@ -143,7 +143,7 @@ export class Image360ApiHelper {
       toVisualizationCube.renderOrder = default360ImageRenderOrder;
     }
 
-    function retorePostTransitionState() {
+    function restorePostTransitionState() {
       const defaultScaling = new THREE.Vector3(1, 1, 1);
 
       fromVisualizationCube.scale = defaultScaling;
