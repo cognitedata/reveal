@@ -96,7 +96,7 @@ export class PickingHandler {
 
     try {
       for (const cadNode of cadNodes) {
-        // Make current CAD node visible & hide others to fix REV-595
+        // Make current CAD node visible & hide others
         cadNodesVisibility = cadNodes.map(p => {
           const previousVisibility = p.visible;
           p.visible = false;
