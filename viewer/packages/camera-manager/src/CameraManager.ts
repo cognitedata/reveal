@@ -44,6 +44,23 @@ export interface CameraManager {
   getCameraState(): Required<CameraState>;
 
   /**
+   * Set this manager as active and enable controls.
+   *
+   * Should update {@link CameraManager.enabled} to reflect the state of the manager.
+   * Note that this is called automatically when a new CameraManager is set on the {@link Cognite3DViewer}.
+   * @param cameraManager Previously used camera manager.
+   */
+  activate(cameraManager?: CameraManager): void;
+
+  /**
+   * Deactivate this manager and disable controls.
+   *
+   * Should update {@link CameraManager.enabled} to reflect the state of the manager.
+   * Note that this is called automatically when a new CameraManager is set on the {@link Cognite3DViewer}.
+   */
+  deactivate(): void;
+
+  /**
    * Subscribes to changes of the camera event. This is used by Reveal to react on changes of the camera.
    * @param event Name of the event.
    * @param callback Callback to be called when the event is fired.
@@ -76,7 +93,7 @@ export interface CameraManager {
    */
   dispose(): void;
   /**
-   * Enables or disables camera manager. When disabled, camera manager shouldn't consume or react to any DOM events.
+   * Enabled is true if this camera manager is active. When disabled, the camera manager shouldn't consume or react to any DOM events.
    */
-  enabled?: boolean;
+  enabled: boolean;
 }

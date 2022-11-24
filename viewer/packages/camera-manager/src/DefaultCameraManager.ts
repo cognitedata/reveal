@@ -37,8 +37,10 @@ export class DefaultCameraManager implements CameraManager {
 
   private isDisposed = false;
   private _nearAndFarNeedsUpdate = false;
-  // Used by onWheel() to temporarily disable (and reset enabled flag) during pick operations when in `zoomToCursor` -mode
-  private _enabledCopy = true;
+
+  // The active/inactive state of this manager. Does not always match up with the controls
+  // as these are temporarily disabled to block onWheel input during `zoomToCursor`-mode
+  private isEnabled = true;
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
   private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
@@ -149,35 +151,16 @@ export class DefaultCameraManager implements CameraManager {
   /**
    * Sets whether camera controls through mouse, touch and keyboard are enabled.
    */
-  set enabled(enabled: boolean) {
+  private set enabled(enabled: boolean) {
     this._controls.enabled = enabled;
-    this._enabledCopy = enabled;
+    this.isEnabled = enabled;
   }
 
   /**
    * Gets whether camera controls through mouse, touch and keyboard are enabled.
    */
   get enabled(): boolean {
-    return this._controls.enabled;
-  }
-
-  /**
-   * Sets whether camera controls through mouse, touch and keyboard are enabled.
-   * This can be useful to e.g. temporarily disable navigation when manipulating other
-   * objects in the scene or when implementing a "cinematic" viewer.
-   * @deprecated Will be removed in 4.0.0. Use {@link DefaultCameraManager.enabled} instead.
-   */
-  set cameraControlsEnabled(enabled: boolean) {
-    this._controls.enabled = enabled;
-    this._enabledCopy = enabled;
-  }
-
-  /**
-   * Gets whether camera controls through mouse, touch and keyboard are enabled.
-   * @deprecated Will be removed in 4.0.0. Use {@link DefaultCameraManager.enabled} instead.
-   */
-  get cameraControlsEnabled(): boolean {
-    return this._controls.enabled;
+    return this.isEnabled;
   }
 
   /**
@@ -232,6 +215,26 @@ export class DefaultCameraManager implements CameraManager {
     };
   }
 
+  activate(cameraManager?: CameraManager): void {
+    if (this.enabled) return;
+
+    this.enabled = true;
+    this.setupControls();
+
+    if (cameraManager) {
+      const previousState = cameraManager.getCameraState();
+      this.setCameraState({ position: previousState.position, target: previousState.target });
+      this.getCamera().aspect = cameraManager.getCamera().aspect;
+    }
+  }
+
+  deactivate(): void {
+    if (!this.enabled) return;
+
+    this.enabled = false;
+    this.teardownControls(true);
+  }
+
   /**
    * Gets current camera controls options.
    */
@@ -246,8 +249,11 @@ export class DefaultCameraManager implements CameraManager {
   setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
     this._cameraControlsOptions = { ...DefaultCameraManager.DefaultCameraControlsOptions, ...controlsOptions };
 
-    this.teardownControls(false);
-    this.setupControls();
+    if (this.enabled) {
+      // New EventListeners are added in 'setupControls', so to avoid “doubling” of some behaviours we need to tear down controls first.
+      this.teardownControls(false);
+      this.setupControls();
+    }
   }
 
   update(deltaTime: number, boundingBox: THREE.Box3): void {
@@ -606,7 +612,7 @@ export class DefaultCameraManager implements CameraManager {
 
           newTarget = await this.calculateNewTarget(pointerEventData);
         } finally {
-          this._controls.enabled = this._enabledCopy;
+          this._controls.enabled = this.isEnabled;
         }
 
         this._controls.setScrollTarget(newTarget);
