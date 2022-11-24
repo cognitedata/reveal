@@ -64,3 +64,41 @@ The `*FromModelToCdfCoordinates` can likewise be emulated using the matrix
 const inverseCdfTransformation = model.getModelTransformation().clone().multiply(model.getCdfToDefaultModelTransformation()).invert();
 ```
 and using it with `applyMatrix4()` as above.
+
+## 'cameraStop' event on CameraManager
+
+`CameraManager` implementations must now allow listeners for the `'cameraStop'` event, in addition to the old `'cameraChange'` event. This is to allow `CameraManager` implementors the flexibility of deciding when the camera manager is standing still.
+
+In order to make this transition easy, we expose the `DebouncedCameraStopEventTrigger` class, which will fire a stop event when the camera manager's `'cameraChange'` has not triggered for a short while.
+
+To use this class, construct it in the custom camera manager's constructor:
+```
+this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
+```
+Note that it takes the custom camera manager itself as argument. It will immediately subscribe to the `cameraChange` event on this camera manager, so make sure any prerequisite initialization is finished before constructing it.
+
+Then, assuming the custom camera manager has an old `on(eventType, callback)` implementation:
+
+```
+on(eventType: 'cameraChange', callback: CameraChangeDelegate): void {
+    // handle adding camera change callback
+}
+```
+a new implementation could for instance look like
+```
+on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
+    switch(event) {
+        case 'cameraChange':
+            // handle adding camera change callback
+            break;
+        case 'cameraStop':
+            this._stopEventTrigger.subscribe(callback as CameraStoppedDelegate);
+            break;
+        default:
+            throw Error(`Unrecognized camera event type: ${event}`);
+    }
+}
+```
+The `off(eventType, callback)` implementation can have a similar structure, calling `unsubscribe` on the trigger object.
+
+Finally, call `this._stopEventTrigger.dispose()` in the camera manager's `dispose()` method.
