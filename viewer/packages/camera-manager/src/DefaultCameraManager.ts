@@ -249,7 +249,6 @@ export class DefaultCameraManager implements CameraManager {
   setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
     this._cameraControlsOptions = { ...DefaultCameraManager.DefaultCameraControlsOptions, ...controlsOptions };
 
-    //@astrid-kg: Warn user that CameraControls can't be set up on an inactive manager?
     if (this.enabled) {
       // New EventListeners are added in 'setupControls', so to avoid “doubling” of some behaviours we need to tear down controls first.
       this.teardownControls(false);
