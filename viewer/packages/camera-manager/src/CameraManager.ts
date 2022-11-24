@@ -2,7 +2,13 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import { CameraState, CameraChangeDelegate } from './types';
+import {
+  CameraState,
+  CameraChangeDelegate,
+  CameraStoppedDelegate,
+  CameraManagerEventType,
+  CameraEventDelegate
+} from './types';
 
 /**
  * Interface for manager responsible for all manipulations to the camera,
@@ -61,21 +67,28 @@ export interface CameraManager {
   deactivate(): void;
 
   /**
-   * Subscribes to changes of the camera event. This is used by Reveal to react on changes of the camera.
-   * @param event Name of the event.
+   * Subscribes to events on this camera manager. There are several event types:
+   * 'cameraChange' - Subscribes to changes of the camera. This is used by Reveal to react on changes of the camera.
+   * 'cameraStopped' - Subscribes to events indicating the camera has stopped
+   * @param event The event type.
    * @param callback Callback to be called when the event is fired.
    */
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  on(event: 'cameraStopped', callback: CameraStoppedDelegate): void;
+  on(event: CameraManagerEventType, callback: CameraEventDelegate): void;
+
   /**
    * Unsubscribes from changes of the camera event.
-   * @param event Name of the event.
+   * @param event The event type.
    * @param callback Callback function to be unsubscribed.
    */
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
+  off(event: 'cameraStopped', callback: CameraStoppedDelegate): void;
+  off(event: CameraManagerEventType, callback: CameraEventDelegate): void;
 
   /**
    * Moves camera to a place where the content of a bounding box is visible to the camera.
-   * @param box The bounding box in world space.
+   * @param boundingBox The bounding box in world space.
    * @param duration The duration of the animation moving the camera.
    * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.
    */

@@ -7,11 +7,20 @@ import TWEEN from '@tweenjs/tween.js';
 
 import { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
-import { CameraChangeDelegate, CameraState } from './types';
+import {
+  CameraChangeDelegate,
+  CameraEventDelegate,
+  CameraManagerEventType,
+  CameraState,
+  CAMERA_MANAGER_EVENT_TYPE_LIST
+} from './types';
 
 export class StationaryCameraManager implements CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
-  private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
+  private readonly _cameraChangedListeners: Record<CameraManagerEventType, Array<CameraChangeDelegate>> = {
+    cameraChange: [],
+    cameraStopped: []
+  };
   private readonly _domElement: HTMLElement;
   private _defaultFOV: number;
   private _isEnabled = false;
@@ -77,14 +86,14 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement.addEventListener('wheel', this.zoomCamera);
   }
 
-  on(_: 'cameraChange', callback: CameraChangeDelegate): void {
-    this._cameraChangedListener.push(callback);
+  on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
+    this._cameraChangedListeners[eventType].push(callback);
   }
 
-  off(_: 'cameraChange', callback: CameraChangeDelegate): void {
-    const index = this._cameraChangedListener.indexOf(callback);
+  off(eventType: CameraManagerEventType, callback: CameraChangeDelegate): void {
+    const index = this._cameraChangedListeners[eventType].indexOf(callback);
     if (index !== -1) {
-      this._cameraChangedListener.splice(index, 1);
+      this._cameraChangedListeners[eventType].splice(index, 1);
     }
   }
 
@@ -124,7 +133,9 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   dispose(): void {
-    this._cameraChangedListener.splice(0);
+    CAMERA_MANAGER_EVENT_TYPE_LIST.forEach(eventType => {
+      this._cameraChangedListeners[eventType].splice(0);
+    });
     this.deactivate();
   }
 
@@ -150,7 +161,8 @@ export class StationaryCameraManager implements CameraManager {
     euler.y -= -movementX * sensitivityScaler * (this._camera.fov / this._defaultFOV);
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
-    this._cameraChangedListener.forEach(cb => cb(this._camera.position, this._camera.position));
+
+    this._cameraChangedListeners['cameraChange'].forEach(cb => cb(this._camera.position, this._camera.position));
   };
 
   private readonly zoomCamera = (event: WheelEvent) => {
