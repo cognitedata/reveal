@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import TWEEN from '@tweenjs/tween.js';
 
 import { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
@@ -83,6 +84,27 @@ export class StationaryCameraManager implements CameraManager {
     );
 
     this.setCameraState({ position, target });
+  }
+
+  moveTo(targetPosition: THREE.Vector3, duration = 2000): Promise<void> {
+    const from = { t: 0 };
+    const to = { t: 1 };
+    const { position } = this.getCameraState();
+    const tween = new TWEEN.Tween(from)
+      .to(to, duration)
+      .onUpdate(() => {
+        const temporaryPosition = new THREE.Vector3().lerpVectors(position, targetPosition, from.t);
+        this._camera.position.copy(temporaryPosition);
+      })
+      .easing(num => TWEEN.Easing.Quintic.InOut(num))
+      .start(TWEEN.now());
+
+    return new Promise(resolve => {
+      tween.onComplete(() => {
+        tween.stop();
+        resolve();
+      });
+    });
   }
 
   update(_: number, boundingBox: THREE.Box3): void {
