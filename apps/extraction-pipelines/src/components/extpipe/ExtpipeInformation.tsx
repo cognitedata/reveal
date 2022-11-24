@@ -56,6 +56,11 @@ export const ExtpipeInformation = ({ canEdit }: Props) => {
         icon="World"
         items={[
           {
+            key: 'name',
+            title: t('name'),
+            value: extpipe.name ?? '-',
+          },
+          {
             key: 'description',
             title: t('description'),
             value: extpipe.description ?? '-',

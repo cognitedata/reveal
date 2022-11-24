@@ -1,5 +1,4 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
 import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 
 const LazyExtpipes = React.lazy(
@@ -56,15 +55,3 @@ export const routingConfig: ExtpipesRoute[] = [
     component: LazyExtpipe,
   },
 ];
-
-export const Routes = () => {
-  return (
-    <>
-      {routingConfig.map(({ path, name, component, exact }) => {
-        return (
-          <Route exact={exact} key={name} path={path} component={component} />
-        );
-      })}
-    </>
-  );
-};

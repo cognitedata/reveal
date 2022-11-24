@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { RegisterExtpipeLayout } from 'components/layout/RegisterExtpipeLayout';
 import {
   ButtonPlaced,
@@ -63,7 +63,7 @@ const findDataSetId = (search: string) => {
 
 export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const dataSetIdFromLocation = findDataSetId(location.search);
   const { data: userInfo } = useUserInformation();
@@ -106,7 +106,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
         onSuccess: (response) => {
           trackUsage({ t: 'Create.Completed' });
           const newExtpipeId = response.id;
-          history.push(createExtPipePath(`/${EXT_PIPE_PATH}/${newExtpipeId}`));
+          navigate(createExtPipePath(`/${EXT_PIPE_PATH}/${newExtpipeId}`));
         },
         onError: (errorRes, variables) => {
           const serverErrorMessage =

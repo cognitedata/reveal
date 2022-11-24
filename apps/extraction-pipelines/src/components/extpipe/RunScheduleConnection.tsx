@@ -13,7 +13,7 @@ import { addIfExist, calculateLatest } from 'utils/extpipeUtils';
 import { useAllRuns } from 'hooks/useRuns';
 import moment from 'moment';
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
-import { useLocation, useRouteMatch } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { HEALTH_PATH } from 'routing/RoutingConfig';
 import { useTranslation } from 'common';
 import { RunApi } from 'model/Runs';
@@ -25,7 +25,6 @@ export const RunScheduleConnection = ({
 }) => {
   const { t } = useTranslation();
   const { search } = useLocation();
-  const { url } = useRouteMatch();
   const { data: extpipe } = useSelectedExtpipe();
   const { data, status: runsStatus } = useAllRuns({ externalId });
 
@@ -83,7 +82,7 @@ export const RunScheduleConnection = ({
 
   return (
     <CardWrapper className={`${lastRun.status.toLowerCase()} z-2`}>
-      <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>
+      <CardNavLink to={`${HEALTH_PATH}${search}`}>
         <CardInWrapper>
           <StyledTitleCard
             className="card-title"
@@ -122,7 +121,7 @@ export const RunScheduleConnection = ({
           )}
         </CardInWrapper>
       )}
-      <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>
+      <CardNavLink to={`${HEALTH_PATH}${search}`}>
         <CardInWrapper>
           <StyledTitleCard className="card-title">
             <Icon type="Checkmark" />

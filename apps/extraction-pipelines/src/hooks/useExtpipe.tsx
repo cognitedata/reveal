@@ -12,7 +12,7 @@ import { RouterParams } from 'routing/RoutingConfig';
 import { useParams } from 'react-router-dom';
 
 export const useSelectedExtpipeId = () => {
-  return parseInt(useParams<RouterParams>().id, 10);
+  return parseInt(useParams<RouterParams>().id ?? '', 10);
 };
 
 const useExtpipeById = (extpipeId?: number) => {

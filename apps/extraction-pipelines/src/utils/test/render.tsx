@@ -2,8 +2,7 @@ import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { styleScope } from 'utils/utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
+import { MemoryRouter as Router } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import { AppEnvProvider } from 'hooks/useAppEnv';
 import { Extpipe, RegisterExtpipeInfo } from 'model/Extpipe';
@@ -30,10 +29,8 @@ export const renderWithRouter = (
   { route = EXTRACTION_PIPELINES_PATH, ...renderOptions }
 ) => {
   const client = new QueryClient({});
-  const history = createMemoryHistory();
-  history.push(route);
   return render(
-    <Router history={history}>
+    <Router initialEntries={[route]}>
       <QueryClientProvider client={client}>
         <>{ui}</>
       </QueryClientProvider>
@@ -52,11 +49,9 @@ export const renderWithSelectedExtpipeContext = (
     ...renderOptions
   }: { initExtpipe: Extpipe; client: QueryClient; route: string }
 ) => {
-  const history = createMemoryHistory();
-  history.push(route);
   addModalElements();
   return render(
-    <Router history={history}>
+    <Router initialEntries={[route]}>
       <QueryClientProvider client={client}>{ui}</QueryClientProvider>
     </Router>,
     renderOptions
@@ -116,19 +111,17 @@ export const renderWithReQueryCacheSelectedExtpipeContext = (
   route: string = EXTRACTION_PIPELINES_PATH,
   runFilter?: RunFilterProviderProps
 ) => {
-  const history = createMemoryHistory();
-  history.push(route);
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={client}>
       <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
-        <Router history={history}>
+        <Router initialEntries={[route]}>
           <RunFilterProvider {...runFilter}>{children}</RunFilterProvider>
         </Router>
       </AppEnvProvider>
     </QueryClientProvider>
   );
   addModalElements();
-  return { wrapper, history };
+  return { wrapper };
 };
 export const renderRegisterContext = (
   ui: React.ReactNode,
@@ -149,15 +142,13 @@ export const renderRegisterContext = (
     initRegisterExtpipe: Partial<RegisterExtpipeInfo>;
   }
 ) => {
-  const history = createMemoryHistory();
-  history.push(route);
   addModalElements();
   return {
     ...render(
       <QueryClientProvider client={client}>
         <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
           <RegisterExtpipeProvider initExtpipe={initRegisterExtpipe}>
-            <Router history={history}>
+            <Router initialEntries={[route]}>
               <>{ui}</>
             </Router>
           </RegisterExtpipeProvider>
@@ -165,7 +156,6 @@ export const renderRegisterContext = (
       </QueryClientProvider>,
       renderOptions
     ),
-    history,
   };
 };
 

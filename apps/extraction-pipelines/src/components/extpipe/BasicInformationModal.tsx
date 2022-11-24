@@ -20,7 +20,7 @@ type BasicInformationModalProps = {
 
 export type BasicInformationFormFields = Pick<
   Extpipe,
-  'dataSetId' | 'description' | 'externalId' | 'source'
+  'dataSetId' | 'description' | 'externalId' | 'name' | 'source'
 > & {
   schedule?: SupportedScheduleStrings;
   cron?: string;
@@ -44,6 +44,9 @@ const BasicInformationModal = ({
         {
           id: `${extpipe.id}`,
           update: {
+            name: {
+              set: values.name,
+            },
             dataSetId: {
               set: values.dataSetId,
             },
@@ -74,6 +77,10 @@ const BasicInformationModal = ({
   ): FormikErrors<BasicInformationFormFields> => {
     const errors: FormikErrors<BasicInformationFormFields> = {};
 
+    if (!values.name) {
+      errors.name = t('required-field-is-missing');
+    }
+
     if (!values.dataSetId) {
       errors.dataSetId = t('required-field-is-missing');
     }
@@ -103,6 +110,7 @@ const BasicInformationModal = ({
       dataSetId: extpipe.dataSetId,
       description: extpipe.description,
       externalId: extpipe.externalId,
+      name: extpipe.name,
       schedule: extpipe.schedule
         ? convertScheduleValue(extpipe.schedule)
         : undefined,
@@ -144,6 +152,16 @@ const BasicInformationModal = ({
       close={onClose}
     >
       <Flex direction="column" gap={16}>
+        <Field title={t('name')}>
+          <Input
+            error={errors.name}
+            fullWidth
+            name="name"
+            onChange={(e) => setFieldValue('name', e.target.value)}
+            placeholder={t('name-placeholder')}
+            value={values.name}
+          />
+        </Field>
         <Field info={t('description-hint')} title={t('description')}>
           <Input
             name="description"
