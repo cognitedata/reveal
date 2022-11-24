@@ -21,10 +21,6 @@ export class CustomCameraManager implements CameraManager {
         });
     }
 
-    set enabled(value: boolean) {
-        this._controls.enabled = value;
-    }
-
     get enabled(): boolean {
         return this._controls.enabled;
     }
@@ -60,11 +56,11 @@ export class CustomCameraManager implements CameraManager {
             const cameraState = cameraManager.getCameraState();
             this.setCameraState({ target: cameraState.target });
         }
-        this.enabled = true;
+        this._controls.enabled = true;
     }
 
     deactivate(): void {
-        this.enabled = false;
+        this._controls.enabled = false;
     }
 
     on(event: "cameraChange", callback: CameraChangeDelegate): void {

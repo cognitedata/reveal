@@ -149,7 +149,7 @@ export class DefaultCameraManager implements CameraManager {
   /**
    * Sets whether camera controls through mouse, touch and keyboard are enabled.
    */
-  set enabled(enabled: boolean) {
+  private set enabled(enabled: boolean) {
     this._controls.enabled = enabled;
     this._enabledCopy = enabled;
   }

@@ -20,10 +20,6 @@ export class StationaryCameraManager implements CameraManager {
     this._camera = camera;
   }
 
-  private set enabled(value: boolean) {
-    this._isEnabled = value;
-  }
-
   get enabled(): boolean {
     return this._isEnabled;
   }
@@ -51,7 +47,7 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   activate(): void {
-    this.enabled = true;
+    this._isEnabled = true;
 
     this._domElement.addEventListener('pointermove', this.rotateCamera);
     this._domElement.addEventListener('pointerdown', this.enableDragging);
@@ -60,7 +56,7 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   deactivate(): void {
-    this.enabled = false;
+    this._isEnabled = false;
 
     this._domElement.removeEventListener('pointermove', this.rotateCamera);
     this._domElement.removeEventListener('pointerdown', this.enableDragging);
