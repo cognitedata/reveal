@@ -4,6 +4,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
+const fs = require('fs');
 
 function setTestFixture(testFixture) {
   if (testFixture === undefined) {
@@ -22,6 +23,14 @@ function setTestFixture(testFixture) {
 module.exports = env => {
   const entryFile = '../visual-tests/VisualTest.browser.ts';
   const open = setTestFixture(env.testFixture);
+  let cdfEnv;
+  try {
+    cdfEnv = fs.readFileSync(path.resolve(__dirname, '../visual-tests/.cdf-env.json')).toString();
+  } catch (_) {
+    const yellowColor = '\x1b[33m';
+    console.warn(yellowColor, '\nWARNING: CDF environments are not set which only allows local models to be loaded\n');
+    cdfEnv = 'undefined';
+  }
   return {
     mode: 'development',
 
@@ -113,6 +122,9 @@ module.exports = env => {
       new HtmlWebpackPlugin({ title: require(path.resolve('./packages/sector-parser', './package.json')).name }),
       new webpack.ProvidePlugin({
         process: 'process/browser'
+      }),
+      new webpack.DefinePlugin({
+        CDF_ENV: cdfEnv
       })
     ]
   };
