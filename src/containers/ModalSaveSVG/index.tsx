@@ -83,7 +83,7 @@ export const ModalSaveSVG = (props: Props) => {
           maxWidth={1024}
           style={{ marginBottom: '14px' }}
         >
-          <Body level={2}>Save selected filed with their initial names.</Body>
+          <Body level={2}>Save selected files with their initial names.</Body>
         </CollapsibleRadio>
         <CollapsibleRadio
           name={uuid()}
