@@ -1,13 +1,23 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { CameraManager, CameraManagerHelper, CameraState, CameraChangeDelegate } from '@cognite/reveal';
+import {
+    CameraManager,
+    CameraManagerHelper,
+    CameraState,
+    CameraChangeDelegate,
+    CameraManagerEventType,
+    CameraEventDelegate,
+    DebouncedCameraStopEventTrigger,
+    CameraStoppedDelegate
+} from '@cognite/reveal';
 
 export class CustomCameraManager implements CameraManager {
     private _domElement: HTMLElement;
     private _camera: THREE.PerspectiveCamera;
     private _controls: OrbitControls;
     private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
+    private _stopEventHandler: DebouncedCameraStopEventTrigger;
 
     constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
         this._domElement = domElement;
@@ -15,6 +25,7 @@ export class CustomCameraManager implements CameraManager {
         this._controls = new OrbitControls(this._camera, domElement);
         this._controls.enableDamping = true;
         this._controls.dampingFactor = 0.3;
+        this._stopEventHandler = new DebouncedCameraStopEventTrigger(this);
 
         this._controls.addEventListener('change', () => {
             this._cameraChangedListener.forEach(cb => cb(this._camera.position, this._controls.target));
@@ -63,14 +74,32 @@ export class CustomCameraManager implements CameraManager {
         this._controls.enabled = false;
     }
 
-    on(event: "cameraChange", callback: CameraChangeDelegate): void {
-        this._cameraChangedListener.push(callback);
+    on(event: CameraManagerEventType, callback: CameraEventDelegate): void {
+        switch(event) {
+            case 'cameraChange':
+                this._cameraChangedListener.push(callback);
+                break;
+            case 'cameraStopped':
+                this._stopEventHandler.subscribe(callback as CameraStoppedDelegate);
+                break;
+            default:
+                throw Error(`Unrecognized camera event type: ${event}`);
+        }
     }
 
-    off(event: "cameraChange", callback: CameraChangeDelegate): void {
-        const index = this._cameraChangedListener.indexOf(callback);
-        if (index !== -1) {
-            this._cameraChangedListener.splice(index, 1);
+    off(event: CameraManagerEventType, callback: CameraEventDelegate): void {
+        switch(event) {
+            case 'cameraChange':
+                const index  = this._cameraChangedListener.indexOf(callback);
+                if (index !== -1) {
+                    this._cameraChangedListener.splice(index, 1);
+                }
+                break;
+            case 'cameraStopped':
+                this._stopEventHandler.unsubscribe(callback as CameraStoppedDelegate);
+                break;
+            default:
+                throw Error(`Unrecognized camera event type: ${event}`);
         }
     }
 
