@@ -44,6 +44,7 @@ import { EmptyState } from 'components/EmpyState/EmptyState';
 export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {
   id: string;
+  query?: string;
   data: T[];
   isDataLoading?: boolean;
   columns: ColumnDef<T>[];

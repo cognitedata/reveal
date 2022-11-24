@@ -24,6 +24,7 @@ const visibleColumns = ['name', 'description', 'data', 'lastUpdatedTime'];
 export const TimeseriesTable = ({
   dateRange: dateRangeProp,
   hideEmptyData = false,
+  query,
   ...props
 }: TimeseriesTableProps) => {
   const { data, ...rest } = props;
@@ -90,8 +91,8 @@ export const TimeseriesTable = ({
       },
     };
     return [
-      { ...Table.Columns.name, enableHiding: false },
-      Table.Columns.description,
+      Table.Columns.name(query),
+      Table.Columns.description(query),
       {
         ...Table.Columns.unit,
         enableSorting: false,
@@ -122,7 +123,7 @@ export const TimeseriesTable = ({
         enableSorting: false,
       },
     ] as ColumnDef<Timeseries>[];
-  }, [dateRange]);
+  }, [query, dateRange]);
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 

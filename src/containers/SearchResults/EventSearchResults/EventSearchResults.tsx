@@ -56,6 +56,7 @@ export const EventSearchResults = ({
   return (
     <EventTable
       id="event-search-results"
+      query={query}
       tableHeaders={
         <SearchResultToolbar
           type="event"

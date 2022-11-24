@@ -126,6 +126,7 @@ export const AssetSearchResults = ({
       <KeepMounted isVisible={currentView === 'list'}>
         <AssetTable
           id="asset-search-results"
+          query={query}
           onRowClick={asset => onClick(asset)}
           data={enableAdvancedFilters ? data : items}
           isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}

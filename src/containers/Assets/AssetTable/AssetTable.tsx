@@ -13,18 +13,16 @@ import { RootAsset } from 'components/RootAsset';
 
 const visibleColumns = ['name', 'rootId'];
 
-export const AssetTable = (
-  props: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'>
-) => {
-  const { onRowClick = () => {}, data, ...rest } = props;
-
+export const AssetTable = ({
+  onRowClick = () => {},
+  data,
+  query,
+  ...rest
+}: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'>) => {
   const columns = useMemo(
     () => [
-      {
-        ...Table.Columns.name,
-        enableHiding: false,
-      },
-      Table.Columns.description,
+      Table.Columns.name(query),
+      Table.Columns.description(query),
       Table.Columns.externalId,
       {
         ...Table.Columns.rootAsset,
@@ -53,7 +51,7 @@ export const AssetTable = (
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [query]
   ) as ColumnDef<AssetWithRelationshipLabels>[];
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);

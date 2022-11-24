@@ -68,6 +68,7 @@ export const TimeseriesSearchResults = ({
 
       <TimeseriesTable
         id="timeseries-search-results"
+        query={query}
         tableHeaders={
           <SearchResultToolbar
             type="timeSeries"

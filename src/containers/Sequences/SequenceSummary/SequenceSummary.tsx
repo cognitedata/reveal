@@ -28,8 +28,11 @@ export const SequenceSummary = ({
   const { isLoading, items } = useResourceResults<Sequence>(api, query, filter);
   const columns = useMemo(
     () =>
-      [Table.Columns.name, Table.Columns.description] as ColumnDef<Sequence>[],
-    []
+      [
+        Table.Columns.name(query),
+        Table.Columns.description(query),
+      ] as ColumnDef<Sequence>[],
+    [query]
   );
 
   return (

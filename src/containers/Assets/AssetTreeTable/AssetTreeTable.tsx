@@ -106,7 +106,7 @@ export const AssetTreeTable = ({
             </div>
           ),
         },
-        Table.Columns.description,
+        Table.Columns.description(query),
         Table.Columns.externalId,
         {
           id: 'childCount',

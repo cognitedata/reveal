@@ -15,12 +15,19 @@ export type TableSortBy = {
   desc: boolean;
 };
 
-export type ResourceTableHashMap2 = {
-  [key in typeof ColumnKeys[number]]: ColumnDef<
-    TimeseriesWithRelationshipLabels &
-      AssetWithRelationshipLabels &
-      CogniteEvent &
-      FileWithRelationshipLabels &
-      SequenceWithRelationshipLabels
-  >;
+type TableColumnDef = ColumnDef<
+  TimeseriesWithRelationshipLabels &
+    AssetWithRelationshipLabels &
+    CogniteEvent &
+    FileWithRelationshipLabels &
+    SequenceWithRelationshipLabels
+>;
+
+type ColumnWithQuery = (q?: string) => TableColumnDef;
+
+export type ResourceTableHashMap = {
+  name: ColumnWithQuery;
+  description: ColumnWithQuery;
+} & {
+  [key in typeof ColumnKeys[number]]: TableColumnDef;
 };

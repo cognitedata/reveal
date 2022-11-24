@@ -33,10 +33,10 @@ export const TimeseriesSummary = ({
   const columns = useMemo(
     () =>
       [
-        Table.Columns.name,
-        Table.Columns.description,
+        Table.Columns.name(query),
+        Table.Columns.description(query),
       ] as ColumnDef<Timeseries>[],
-    []
+    [query]
   );
 
   return (

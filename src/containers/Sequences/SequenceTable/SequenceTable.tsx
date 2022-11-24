@@ -15,18 +15,16 @@ const visibleColumns = [
   'lastUpdatedTime',
   'createdTime',
 ];
-export const SequenceTable = (
-  props: Omit<
-    TableProps<SequenceWithRelationshipLabels | Sequence>,
-    'columns'
-  > &
-    RelationshipLabels
-) => {
+export const SequenceTable = ({
+  query,
+  ...rest
+}: Omit<TableProps<SequenceWithRelationshipLabels | Sequence>, 'columns'> &
+  RelationshipLabels) => {
   const columns = useMemo(
     () =>
       [
-        { ...Table.Columns.name, enableHiding: false },
-        Table.Columns.description,
+        Table.Columns.name(query),
+        Table.Columns.description(query),
         Table.Columns.externalId,
         {
           ...Table.Columns.columns,
@@ -44,9 +42,10 @@ export const SequenceTable = (
         },
         Table.Columns.dataSet,
       ] as ColumnDef<Sequence>[],
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [query]
   );
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
-  return <Table columns={columns} hiddenColumns={hiddenColumns} {...props} />;
+  return <Table columns={columns} hiddenColumns={hiddenColumns} {...rest} />;
 };

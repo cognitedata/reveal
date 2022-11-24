@@ -24,6 +24,8 @@ export const FileTable = (props: FileTableProps) => {
       [
         {
           ...Table.Columns.name,
+          header: 'Name',
+          accessorKey: 'name',
           enableHiding: false,
           cell: ({ getValue, row }) => {
             const fileName = getValue<string>();

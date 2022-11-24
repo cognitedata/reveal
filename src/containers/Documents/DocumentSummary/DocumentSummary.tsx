@@ -31,8 +31,9 @@ export const DocumentSummary = ({
   useObserveDocumentSearchFilters(query, filter);
 
   const columns = useMemo(
-    () => [Table.Columns.name, Table.Columns.type] as ColumnDef<Document>[],
-    []
+    () =>
+      [Table.Columns.name(query), Table.Columns.type] as ColumnDef<Document>[],
+    [query]
   );
 
   return (

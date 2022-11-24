@@ -1,6 +1,4 @@
 export const ColumnKeys = [
-  'name',
-  'description',
   'externalId',
   'created',
   'relation',

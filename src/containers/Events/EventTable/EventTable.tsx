@@ -12,9 +12,10 @@ import { DASH } from 'utils';
 export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 
 const visibleColumns = ['type', 'description'];
-export const EventTable = (
-  props: Omit<TableProps<EventWithRelationshipLabels>, 'columns'>
-) => {
+export const EventTable = ({
+  query,
+  ...rest
+}: Omit<TableProps<EventWithRelationshipLabels>, 'columns'>) => {
   const metadataColumns: ColumnDef<CogniteEvent>[] = sampleMetadataValue.map(
     item => ({
       id: `metadata:${item.value}`,
@@ -31,7 +32,7 @@ export const EventTable = (
     () =>
       [
         { ...Table.Columns.type, enableHiding: false },
-        Table.Columns.description,
+        Table.Columns.description(query),
         Table.Columns.externalId,
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
@@ -51,7 +52,8 @@ export const EventTable = (
           enableSorting: false,
         },
       ] as ColumnDef<CogniteEvent>[],
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [query]
   );
 
   const combinedColumns = useMemo(
@@ -64,7 +66,7 @@ export const EventTable = (
     <Table<CogniteEvent>
       columns={combinedColumns}
       hiddenColumns={hiddenColumns}
-      {...props}
+      {...rest}
     />
   );
 };

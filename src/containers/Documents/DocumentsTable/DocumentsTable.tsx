@@ -49,6 +49,9 @@ export const DocumentsTable = (props: DocumentTableProps) => {
       [
         {
           ...Table.Columns.name,
+          header: 'Name',
+          accessorKey: 'name',
+          enableHiding: false,
           cell: ({ row }: { row: Row<DocumentWithRelationshipLabels> }) => {
             const fileNamePreviewProps = {
               fileName: row.original.name || '',
@@ -60,7 +63,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           },
         },
         {
-          id: 'content',
+          accessorKey: 'content',
           header: 'Content',
           cell: ({ row }: { row: Row<Document> }) => {
             return (

@@ -20,23 +20,39 @@ import { HighlightCell, TimeDisplay } from 'components';
 import { DASH, mapFileType } from 'utils';
 import { createLink } from '@cognite/cdf-utilities';
 import { useGetRootAsset } from 'hooks';
-import { ResourceTableHashMap2 } from './types';
+import { ResourceTableHashMap } from './types';
 
 // TODO: this whole approach needs to be refactored a bit, especially the usage of hooks and stuff
-export const ResourceTableColumns: ResourceTableHashMap2 = {
-  name: {
-    header: 'Name',
-    accessorKey: 'name',
-    cell: ({ getValue }) => (
-      <HighlightCell text={getValue<string>() || DASH} lines={1} />
-    ),
+export const ResourceTableColumns: ResourceTableHashMap = {
+  name: (query?: string) => {
+    return {
+      header: 'Name',
+      accessorKey: 'name',
+      cell: ({ getValue }) => {
+        return (
+          <HighlightCell
+            query={query}
+            text={getValue<string>() || DASH}
+            lines={1}
+          />
+        );
+      },
+    };
   },
-  description: {
-    header: 'Description',
-    accessorKey: 'description',
-    cell: ({ getValue }) => (
-      <HighlightCell text={getValue<string>() || DASH} lines={1} />
-    ),
+  description: (query?: string) => {
+    return {
+      header: 'Description',
+      accessorKey: 'description',
+      cell: ({ getValue }) => {
+        return (
+          <HighlightCell
+            query={query}
+            text={getValue<string>() || DASH}
+            lines={1}
+          />
+        );
+      },
+    };
   },
   externalId: {
     header: 'External ID',

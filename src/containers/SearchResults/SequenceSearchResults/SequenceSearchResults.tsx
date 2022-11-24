@@ -58,6 +58,7 @@ export const SequenceSearchResults = ({
   return (
     <SequenceTable
       id="sequence-search-results"
+      query={query}
       tableHeaders={
         <SearchResultToolbar
           type="sequence"

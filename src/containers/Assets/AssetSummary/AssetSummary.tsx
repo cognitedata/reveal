@@ -30,8 +30,12 @@ export const AssetSummary = ({
     assetFilter: filter,
   });
   const columns = useMemo(
-    () => [Table.Columns.name, Table.Columns.description] as ColumnDef<Asset>[],
-    []
+    () =>
+      [
+        Table.Columns.name(query),
+        Table.Columns.description(query),
+      ] as ColumnDef<Asset>[],
+    [query]
   );
 
   return (
