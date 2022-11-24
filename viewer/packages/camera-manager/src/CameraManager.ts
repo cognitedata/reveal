@@ -44,13 +44,15 @@ export interface CameraManager {
   getCameraState(): Required<CameraState>;
 
   /**
-   * Called when this manager is set as the active manager.
+   * Set this manager as active and enable controls.
+   * Note that this is called automatically when a new CameraManager is set on the {@link Cognite3DViewer}.
    * @param cameraManager Previously used camera manager.
    */
   activate(cameraManager?: CameraManager): void;
 
   /**
-   * Called when this manager is deactivated.
+   * Deactivate this manager and disable controls.
+   * Note that this is called automatically when a new CameraManager is set on the {@link Cognite3DViewer}.
    */
   deactivate(): void;
 
