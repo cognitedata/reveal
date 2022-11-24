@@ -216,7 +216,7 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   activate(cameraManager?: CameraManager): void {
-    if (this.enabled) return; //Aleady active
+    if (this.enabled) return;
 
     this.enabled = true;
     this.setupControls();
@@ -229,7 +229,7 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   deactivate(): void {
-    if (!this.enabled) return; //Aleady inactive
+    if (!this.enabled) return;
 
     this.enabled = false;
     this.teardownControls(true);
