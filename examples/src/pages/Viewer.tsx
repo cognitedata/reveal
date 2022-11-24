@@ -142,7 +142,7 @@ export function Viewer() {
         Default: viewer.cameraManager as DefaultCameraManager,
         Custom: new CustomCameraManager(canvasWrapperRef.current!, new THREE.PerspectiveCamera(5, 1., 0.01, 1000))
       };
-      cameraManagers.Custom.enabled = false;
+      cameraManagers.Custom.deactivate();
 
       // Add GUI for loading models and such
       const guiState = {

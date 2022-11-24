@@ -555,10 +555,9 @@ export class Cognite3DViewer {
   /**
    * Sets the active camera manager instance for current Cognite3Dviewer.
    * @param cameraManager Camera manager instance.
-   * @param preserveCameraState Whether to set current camera state to new camera manager.
    */
-  setCameraManager(cameraManager: CameraManager, preserveCameraState: boolean = true): void {
-    this._activeCameraManager.setActiveCameraManager(cameraManager, preserveCameraState);
+  setCameraManager(cameraManager: CameraManager): void {
+    this._activeCameraManager.setActiveCameraManager(cameraManager);
     this.requestRedraw();
   }
 

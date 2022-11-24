@@ -19,15 +19,6 @@ export class StationaryCameraManager implements CameraManager {
   constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
     this._domElement = domElement;
     this._camera = camera;
-
-    domElement.addEventListener('pointermove', this.rotateCamera.bind(this));
-    domElement.addEventListener('pointerdown', this.enableDragging.bind(this));
-    domElement.addEventListener('pointerup', this.disableDragging.bind(this));
-    domElement.addEventListener('pointerout', this.disableDragging.bind(this));
-  }
-
-  set enabled(value: boolean) {
-    this._isEnabled = value;
   }
 
   get enabled(): boolean {
@@ -54,6 +45,24 @@ export class StationaryCameraManager implements CameraManager {
       rotation: this._camera.quaternion,
       target: unitForward.add(this._camera.position)
     };
+  }
+
+  activate(): void {
+    this._isEnabled = true;
+
+    this._domElement.addEventListener('pointermove', this.rotateCamera);
+    this._domElement.addEventListener('pointerdown', this.enableDragging);
+    this._domElement.addEventListener('pointerup', this.disableDragging);
+    this._domElement.addEventListener('pointerout', this.disableDragging);
+  }
+
+  deactivate(): void {
+    this._isEnabled = false;
+
+    this._domElement.removeEventListener('pointermove', this.rotateCamera);
+    this._domElement.removeEventListener('pointerdown', this.enableDragging);
+    this._domElement.removeEventListener('pointerup', this.disableDragging);
+    this._domElement.removeEventListener('pointerout', this.disableDragging);
   }
 
   on(_: 'cameraChange', callback: CameraChangeDelegate): void {
@@ -104,21 +113,18 @@ export class StationaryCameraManager implements CameraManager {
 
   dispose(): void {
     this._cameraChangedListener.splice(0);
-    this._domElement.removeEventListener('pointermove', this.rotateCamera.bind(this));
-    this._domElement.removeEventListener('pointerdown', this.enableDragging.bind(this));
-    this._domElement.removeEventListener('pointerup', this.disableDragging.bind(this));
-    this._domElement.removeEventListener('pointerout', this.disableDragging.bind(this));
+    this.deactivate();
   }
 
-  private enableDragging(_: PointerEvent) {
+  private readonly enableDragging = (_: PointerEvent) => {
     this._isDragging = true;
-  }
+  };
 
-  private disableDragging(_: PointerEvent) {
+  private readonly disableDragging = (_: PointerEvent) => {
     this._isDragging = false;
-  }
+  };
 
-  private rotateCamera(event: PointerEvent) {
+  private readonly rotateCamera = (event: PointerEvent) => {
     if (!this._isDragging || !this._isEnabled) {
       return;
     }
@@ -132,5 +138,5 @@ export class StationaryCameraManager implements CameraManager {
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
     this._cameraChangedListener.forEach(cb => cb(this._camera.position, this._camera.position));
-  }
+  };
 }
