@@ -53,7 +53,8 @@ export const ExpandButton = ({
         icon="ExpandAlternative"
         aria-label="Fit to view"
         onClick={() => {
-          viewer.fitCameraToModel(model);
+          const boundingBox = model.getModelBoundingBox(undefined, true);
+          viewer.fitCameraToBoundingBox(boundingBox);
           trackUsage('Exploration.Preview.FitToView');
         }}
         type="ghost"
