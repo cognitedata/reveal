@@ -52,11 +52,11 @@ export class CustomCameraManager implements CameraManager {
     }
 
     activate(cameraManager?: CameraManager): void {
-        if (cameraManager) {
-            const cameraState = cameraManager.getCameraState();
-            this.setCameraState({ target: cameraState.target });
-        }
         this._controls.enabled = true;
+
+        if (cameraManager) {
+            this.setCameraState({ target: cameraManager.getCameraState().target });
+        }
     }
 
     deactivate(): void {
