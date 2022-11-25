@@ -77,20 +77,23 @@ describe('RevealManager', () => {
     expect(manager.needsRedraw).toBeTrue();
   });
 
-  test('update only triggers update when camera changes', () => {
+  test('updates only trigger when setCameraInMotion is set to true', () => {
     manager.resetRedraw();
+
+    expect(manager.needsRedraw).toBeFalse();
+
     const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
     manager.update(camera);
-    expect(manager.needsRedraw).toBeTrue(); // Changed
+    manager.setCameraInMotion(true);
 
     manager.resetRedraw();
     manager.update(camera);
-    expect(manager.needsRedraw).toBeFalse(); // Unhanged
+    expect(manager.needsRedraw).toBeTrue();
+
+    manager.setCameraInMotion(false);
 
     manager.resetRedraw();
-    camera.position.set(1, 2, 3);
-    manager.update(camera);
-    expect(manager.needsRedraw).toBeTrue(); // Changed again
+    expect(manager.needsRedraw).toBeFalse();
   });
 
   test('dispose() disposes culler', () => {
