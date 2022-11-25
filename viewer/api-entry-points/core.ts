@@ -15,6 +15,7 @@ export {
   CameraManager,
   CameraState,
   ComboControls,
+  ComboControlsOptions,
   CameraChangeDelegate
 } from '../packages/camera-manager';
 

@@ -137,8 +137,8 @@ export class ComboControls extends EventDispatcher {
   private readonly _targetFPS: number = 30;
   private _targetFPSOverActualFPS: number = 1;
 
-  private _options: ComboControlsOptions = { ...ComboControls.DefaultControlsOptions };
-  private static readonly DefaultControlsOptions: Required<ComboControlsOptions> = {
+  private _options: ComboControlsOptions = ComboControls.DefaultControlsOptions;
+  private static readonly DefaultControlsOptions: Readonly<Required<ComboControlsOptions>> = {
     enabled: true,
     enableDamping: true,
     dampingFactor: 0.25,
@@ -179,16 +179,18 @@ export class ComboControls extends EventDispatcher {
   /**
    * Gets current Combo Controls options.
    */
-  get options(): ComboControlsOptions {
+  get options(): Readonly<ComboControlsOptions> {
     return this._options;
   }
 
   /**
    * Sets Combo Controls options.
-   * To set only a selection of options see {@link ComboControls.setOptions}
+   *
+   * Accepts any number of controls options and will combine these with the current options.
+   * Only the provided options will be changed, any undefined options will be kept as is.
    */
-  set options(options: ComboControlsOptions) {
-    this._options = options;
+  set options(options: Partial<ComboControlsOptions>) {
+    this._options = { ...this._options, ...options };
   }
 
   constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
@@ -321,14 +323,6 @@ export class ComboControls extends EventDispatcher {
     this.update(1000 / this._targetFPS, true);
     this.triggerCameraChangeEvent();
   };
-
-  /**
-   * Accepts any number of controls options and combine these with the current options.
-   * Only the provided options will be changed, any undefined options will be kept as is.
-   */
-  public setOptions(options: Partial<ComboControlsOptions>) {
-    this._options = { ...this._options, ...options };
-  }
 
   /**
    * Camera rotation to be used by the camera instead of target-based rotation.

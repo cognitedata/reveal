@@ -104,7 +104,7 @@ export class DefaultCameraManager implements CameraManager {
 
     this.setCameraControlsOptions(this._cameraControlsOptions);
     this._controls = new ComboControls(this._camera, domElement);
-    this.comboControlsOptions.minZoomDistance = DefaultCameraManager.MinZoomDistance;
+    this.setComboControlsOptions({ minZoomDistance: DefaultCameraManager.MinZoomDistance });
 
     this._controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
@@ -143,7 +143,7 @@ export class DefaultCameraManager implements CameraManager {
    * Sets whether camera controls through mouse, touch and keyboard are enabled.
    */
   private set enabled(enabled: boolean) {
-    this.comboControlsOptions.enabled = enabled;
+    this.setComboControlsOptions({ enabled: enabled });
     this.isEnabled = enabled;
   }
 
@@ -157,22 +157,30 @@ export class DefaultCameraManager implements CameraManager {
   /**
    * Gets current Combo Controls options.
    */
-  get comboControlsOptions(): ComboControlsOptions {
+  getComboControlsOptions(): Readonly<ComboControlsOptions> {
     return this._controls.options;
+  }
+
+  /**
+   * Sets Combo Controls options.
+   * Only provided options will be changed, any undefined options will be kept as is.
+   */
+  setComboControlsOptions(options: Partial<ComboControlsOptions>): void {
+    this._controls.options = { ...this.getComboControlsOptions(), ...options };
   }
 
   /**
    * Sets whether keyboard control of the camera is enabled/disabled.
    */
   set keyboardNavigationEnabled(enabled: boolean) {
-    this.comboControlsOptions.enableKeyboardNavigation = enabled;
+    this.setComboControlsOptions({ enableKeyboardNavigation: enabled });
   }
 
   /**
    * Whether keyboard control of the camera is enabled/disabled.
    */
   get keyboardNavigationEnabled(): boolean {
-    return this.comboControlsOptions.enableKeyboardNavigation;
+    return this.getComboControlsOptions().enableKeyboardNavigation;
   }
 
   getCamera(): THREE.PerspectiveCamera {
@@ -252,14 +260,6 @@ export class DefaultCameraManager implements CameraManager {
       this.teardownControls(false);
       this.setupControls();
     }
-  }
-
-  /**
-   * Sets Combo Controls options.
-   * Only provided options will be changed, any undefined options will be kept as is.
-   */
-  setComboControlsOptions(options: Partial<ComboControlsOptions>): void {
-    this._controls.options = { ...this.comboControlsOptions, ...options };
   }
 
   update(deltaTime: number, boundingBox: THREE.Box3): void {
@@ -349,7 +349,7 @@ export class DefaultCameraManager implements CameraManager {
       return;
     }
 
-    const { _camera, _controls: controls, comboControlsOptions: comboControlsOptions } = this;
+    const { _camera, _controls: controls } = this;
 
     duration = duration ?? this.calculateDefaultDuration(target.distanceTo(_camera.position));
 
@@ -371,7 +371,7 @@ export class DefaultCameraManager implements CameraManager {
 
     tween
       .onStart(() => {
-        comboControlsOptions.lookAtViewTarget = true;
+        this.setComboControlsOptions({ lookAtViewTarget: true });
         controls.setState(this._camera.position, target);
       })
       .onUpdate(() => {
@@ -387,7 +387,7 @@ export class DefaultCameraManager implements CameraManager {
         controls.setViewTarget(tempTarget);
       })
       .onStop(() => {
-        comboControlsOptions.lookAtViewTarget = false;
+        this.setComboControlsOptions({ lookAtViewTarget: false });
         controls.setState(this._camera.position, tempTarget);
       })
       .onComplete(() => {
@@ -395,8 +395,8 @@ export class DefaultCameraManager implements CameraManager {
           return;
         }
 
-        comboControlsOptions.lookAtViewTarget = false;
-        comboControlsOptions.enableKeyboardNavigation = true;
+        this.setComboControlsOptions({ lookAtViewTarget: false });
+        this.setComboControlsOptions({ enableKeyboardNavigation: true });
 
         this._domElement.removeEventListener('pointerdown', stopTween);
       })
@@ -423,10 +423,9 @@ export class DefaultCameraManager implements CameraManager {
       // This is used to determine the speed of the camera when flying with ASDW.
       // We want to either let it be controlled by the near plane if we are far away,
       // but no more than a fraction of the bounding box of the system if inside
-      this.comboControlsOptions.minDistance = Math.min(
-        Math.max(diagonal * 0.02, 0.1 * camera.near),
-        DefaultCameraManager.MinDistance
-      );
+      this.setComboControlsOptions({
+        minDistance: Math.min(Math.max(diagonal * 0.02, 0.1 * camera.near), DefaultCameraManager.MinDistance)
+      });
     }
   }
 
@@ -452,7 +451,7 @@ export class DefaultCameraManager implements CameraManager {
         return;
       }
 
-      if (event.type !== 'keydown' || this.comboControlsOptions.enableKeyboardNavigation) {
+      if (event.type !== 'keydown' || this.keyboardNavigationEnabled) {
         animation.stop();
         this._domElement.removeEventListener('pointerdown', stopTween);
         this._domElement.removeEventListener('wheel', stopTween);
@@ -484,7 +483,7 @@ export class DefaultCameraManager implements CameraManager {
     const lastScrollTargetDistance = this._controls.getScrollTarget().distanceTo(this._camera.position);
 
     const newTargetDistance =
-      lastScrollTargetDistance <= this.comboControlsOptions.minDistance
+      lastScrollTargetDistance <= this.getComboControlsOptions().minDistance
         ? Math.min(this._camera.position.distanceTo(modelsBoundingBox.getCenter(new THREE.Vector3())), modelSize) / 2
         : lastScrollTargetDistance;
 
@@ -531,20 +530,20 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   private handleMouseWheelActionChange(cameraControlsOptions: CameraControlsOptions) {
-    const { _controls: controls, comboControlsOptions: comboControlsOptions } = this;
+    const { _controls: controls } = this;
 
     switch (cameraControlsOptions?.mouseWheelAction) {
       case 'zoomToTarget':
-        comboControlsOptions.zoomToCursor = false;
+        this.setComboControlsOptions({ zoomToCursor: false });
         break;
       case 'zoomPastCursor':
-        comboControlsOptions.useScrollTarget = false;
-        comboControlsOptions.zoomToCursor = true;
+        this.setComboControlsOptions({ useScrollTarget: false });
+        this.setComboControlsOptions({ zoomToCursor: true });
         break;
       case 'zoomToCursor':
         controls.setScrollTarget(controls.getState().target);
-        comboControlsOptions.useScrollTarget = true;
-        comboControlsOptions.zoomToCursor = true;
+        this.setComboControlsOptions({ useScrollTarget: true });
+        this.setComboControlsOptions({ zoomToCursor: true });
         break;
       case undefined:
         break;
@@ -565,7 +564,7 @@ export class DefaultCameraManager implements CameraManager {
     const lastMousePosition = new THREE.Vector2();
 
     const onClick = async (e: PointerEventData) => {
-      this.comboControlsOptions.enableKeyboardNavigation = false;
+      this.setComboControlsOptions({ enableKeyboardNavigation: false });
       const newTarget = await this.calculateNewTarget(e);
       this.moveCameraTargetTo(newTarget, DefaultCameraManager.AnimationDuration);
     };
@@ -610,7 +609,7 @@ export class DefaultCameraManager implements CameraManager {
         // Disable controls to prevent camera from moving while picking is happening.
         // await is not working as expected because event itself is not awaited.
         try {
-          this.comboControlsOptions.enabled = false;
+          this.setComboControlsOptions({ enabled: false });
           const pointerEventData = {
             offsetX: domElementRelativeOffset.offsetX,
             offsetY: domElementRelativeOffset.offsetY,
@@ -619,7 +618,7 @@ export class DefaultCameraManager implements CameraManager {
 
           newTarget = await this.calculateNewTarget(pointerEventData);
         } finally {
-          this.comboControlsOptions.enabled = this.isEnabled;
+          this.setComboControlsOptions({ enabled: this.isEnabled });
         }
 
         this._controls.setScrollTarget(newTarget);
