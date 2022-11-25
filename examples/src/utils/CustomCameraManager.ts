@@ -17,12 +17,8 @@ export class CustomCameraManager implements CameraManager {
         this._controls.dampingFactor = 0.3;
 
         this._controls.addEventListener('change', () => {
-            this._cameraChangedListener.forEach( cb => cb(this._camera.position, this._controls.target));
+            this._cameraChangedListener.forEach(cb => cb(this._camera.position, this._controls.target));
         });
-    }
-
-    set enabled(value: boolean) {
-        this._controls.enabled = value;
     }
 
     get enabled(): boolean {
@@ -37,9 +33,9 @@ export class CustomCameraManager implements CameraManager {
         if (state.rotation && state.target) throw new Error("Can't set both rotation and target");
         const position = state.position ?? this._camera.position;
         const rotation = state.rotation ?? this._camera.quaternion;
-        const target = state.target ?? ( state.rotation ? 
+        const target = state.target ?? (state.rotation ?
             CameraManagerHelper.calculateNewTargetFromRotation(
-                this._camera, state.rotation, this._controls.target) : 
+                this._camera, state.rotation, this._controls.target) :
             this._controls.target);
 
         this._camera.position.copy(position);
@@ -55,12 +51,24 @@ export class CustomCameraManager implements CameraManager {
         }
     }
 
+    activate(cameraManager?: CameraManager): void {
+        this._controls.enabled = true;
+
+        if (cameraManager) {
+            this.setCameraState({ target: cameraManager.getCameraState().target });
+        }
+    }
+
+    deactivate(): void {
+        this._controls.enabled = false;
+    }
+
     on(event: "cameraChange", callback: CameraChangeDelegate): void {
         this._cameraChangedListener.push(callback);
     }
 
     off(event: "cameraChange", callback: CameraChangeDelegate): void {
-        const index  = this._cameraChangedListener.indexOf(callback);
+        const index = this._cameraChangedListener.indexOf(callback);
         if (index !== -1) {
             this._cameraChangedListener.splice(index, 1);
         }

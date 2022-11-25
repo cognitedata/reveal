@@ -14,6 +14,10 @@ describe(ProxyCameraManager.name, () => {
     const cameraOnePositionResult = new THREE.Vector3().random();
     const cameraOneTargetResult = new THREE.Vector3().random();
     const cameraManagerOne = new Mock<CameraManager>()
+      .setup(p => p.activate())
+      .returns()
+      .setup(p => p.deactivate())
+      .returns()
       .setup(p => p.on('cameraChange', It.IsAny()))
       .callback(({ args: [_, eventHandler] }) => {
         cameraOneEventHandlers.add(eventHandler);
@@ -34,6 +38,10 @@ describe(ProxyCameraManager.name, () => {
     const cameraTwoTargetResult = new THREE.Vector3().random();
     let cameraTwoEventHandler: CameraChangeDelegate;
     const cameraManagerTwo = new Mock<CameraManager>()
+      .setup(p => p.activate())
+      .returns()
+      .setup(p => p.deactivate())
+      .returns()
       .setup(p => p.on('cameraChange', It.IsAny()))
       .callback(({ args: [_, eventHandler] }) => {
         cameraTwoEventHandler = eventHandler;
@@ -59,7 +67,7 @@ describe(ProxyCameraManager.name, () => {
     expect(cameraChangedResults[0][0]).toBe(cameraOnePositionResult);
     expect(cameraChangedResults[0][1]).toBe(cameraOneTargetResult);
 
-    activeCameraManager.setActiveCameraManager(cameraManagerTwo, false);
+    activeCameraManager.setActiveCameraManager(cameraManagerTwo);
 
     cameraManagerOne.setCameraState({});
 
