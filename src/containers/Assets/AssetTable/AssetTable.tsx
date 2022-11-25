@@ -21,7 +21,10 @@ export const AssetTable = ({
 }: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'>) => {
   const columns = useMemo(
     () => [
-      Table.Columns.name(query),
+      {
+        ...Table.Columns.name(query),
+        enableHiding: false,
+      },
       Table.Columns.description(query),
       Table.Columns.externalId,
       {

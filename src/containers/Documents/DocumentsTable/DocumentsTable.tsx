@@ -48,9 +48,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
     () =>
       [
         {
-          ...Table.Columns.name,
-          header: 'Name',
-          accessorKey: 'name',
+          ...Table.Columns.name(),
           enableHiding: false,
           cell: ({ row }: { row: Row<DocumentWithRelationshipLabels> }) => {
             const fileNamePreviewProps = {

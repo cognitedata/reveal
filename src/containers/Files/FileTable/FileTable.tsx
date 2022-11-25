@@ -23,7 +23,7 @@ export const FileTable = (props: FileTableProps) => {
     () =>
       [
         {
-          ...Table.Columns.name,
+          ...Table.Columns.name(),
           header: 'Name',
           accessorKey: 'name',
           enableHiding: false,

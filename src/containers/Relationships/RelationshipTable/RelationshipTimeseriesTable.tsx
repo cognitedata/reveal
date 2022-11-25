@@ -23,11 +23,11 @@ const {
 } = Table.Columns;
 
 const columns = [
-  name,
+  name(),
   relationshipLabels,
   relation,
   externalId,
-  description,
+  description(),
   lastUpdatedTime,
   created,
   assets,
@@ -49,6 +49,7 @@ export function RelationshipTimeseriesTable({
   if (isLoading) {
     return <EmptyState isLoading={isLoading} />;
   }
+
   return (
     <Table
       id="relationship-timeseries-table"

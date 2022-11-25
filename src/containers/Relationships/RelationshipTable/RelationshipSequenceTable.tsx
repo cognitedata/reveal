@@ -20,7 +20,7 @@ const {
 } = Table.Columns;
 
 const columns = [
-  name,
+  name(),
   relationshipLabels,
   relation,
   mimeType,

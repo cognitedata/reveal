@@ -91,7 +91,10 @@ export const TimeseriesTable = ({
       },
     };
     return [
-      Table.Columns.name(query),
+      {
+        ...Table.Columns.name(query),
+        enableHiding: false,
+      },
       Table.Columns.description(query),
       {
         ...Table.Columns.unit,

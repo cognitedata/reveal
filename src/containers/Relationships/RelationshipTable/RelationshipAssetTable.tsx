@@ -17,7 +17,7 @@ export function RelationshipAssetTable({
   const { relationshipLabels, relation, externalId, rootAsset, name } =
     Table.Columns;
   const columns = [
-    name,
+    name(),
     relationshipLabels,
     relation,
     externalId,
