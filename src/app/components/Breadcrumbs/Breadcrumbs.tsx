@@ -30,7 +30,7 @@ export const Breadcrumbs = ({ currentResource }: BreadcrumbsProps) => {
   return (
     <BreadcrumbWrapper>
       <Breadcrumb>
-        <Breadcrumb.Item title="Search" link={createLink('/explore/search')} />
+        <Breadcrumb.Item title="Search" link={''} />
         {location.state?.history?.map(
           ({ path, resource }: any, index: number) => (
             <Breadcrumb.Item
@@ -57,5 +57,13 @@ const BreadcrumbWrapper = styled.div`
   .cogs-breadcrumb {
     margin: 0;
     padding: 0;
+  }
+
+  /* disable Search field */
+  li:first-child {
+    a {
+      pointer-events: none;
+      color: var(--cogs-text-icon--strong);
+    }
   }
 `;
