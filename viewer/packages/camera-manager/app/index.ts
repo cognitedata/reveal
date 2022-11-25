@@ -46,12 +46,7 @@ function init() {
 
   controls = new ComboControls(camera, renderer.domElement);
 
-  controls.dynamicTarget = true;
-  controls.minDistance = 0.1;
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.2;
-
-  controls.enabled = true;
+  controls.options = { dynamicTarget: true, minDistance: 0.1, enableDamping: true, dampingFactor: 0.2, enabled: true };
 
   controls.setState(new THREE.Vector3(0, 20, 20), new THREE.Vector3());
 
