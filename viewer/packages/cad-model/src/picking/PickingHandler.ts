@@ -92,9 +92,14 @@ export class PickingHandler {
   ): Promise<IntersectCadNodesResult[]> {
     const results: IntersectCadNodesResult[] = [];
     const release = await this._mutex.acquire();
+    // Get CadNodes which are visible
+    const visibleCadNodes = cadNodes.filter(node => node.visible);
 
     try {
-      for (const cadNode of cadNodes) {
+      for (const cadNode of visibleCadNodes) {
+        // Make current CadNode visible & hide others
+        visibleCadNodes.forEach(p => (p.visible = false));
+        cadNode.visible = true;
         const result = await this.intersectCadNode(cadNode, input, async);
         if (result) {
           results.push(result);
@@ -102,6 +107,8 @@ export class PickingHandler {
       }
       return results.sort((l, r) => l.distance - r.distance);
     } finally {
+      // Restore CadNodes back to original visibility state
+      visibleCadNodes.forEach(p => (p.visible = true));
       release();
     }
   }
