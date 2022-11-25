@@ -7,15 +7,15 @@
 import { clickOrTouchEventOffset } from '@reveal/utilities';
 import {
   EventDispatcher,
+  MathUtils,
   MOUSE,
+  OrthographicCamera,
+  PerspectiveCamera,
+  Quaternion,
+  Raycaster,
   Spherical,
   Vector2,
-  Vector3,
-  Raycaster,
-  PerspectiveCamera,
-  OrthographicCamera,
-  MathUtils,
-  Quaternion
+  Vector3
 } from 'three';
 import Keyboard from './Keyboard';
 
@@ -40,47 +40,79 @@ function getPinchInfo(domElement: HTMLElement, touches: TouchList) {
   };
 }
 
+/**
+ * Exposed options for Combo Controls
+ */
+export type ComboControlsOptions = {
+  enabled: boolean;
+  enableDamping: boolean;
+  dampingFactor: number;
+  dynamicTarget: boolean;
+  minDistance: number;
+  minZoomDistance: number;
+  dollyFactor: number;
+  /**
+   * Radians
+   */
+  minPolarAngle: number;
+
+  /**
+   * Radians
+   */
+  maxPolarAngle: number;
+
+  /**
+   * Radians
+   */
+  minAzimuthAngle: number;
+
+  /**
+   * Radians
+   */
+  maxAzimuthAngle: number;
+  panDollyMinDistanceFactor: number;
+  firstPersonRotationFactor: number;
+
+  /**
+   * Radians per pixel
+   */
+  pointerRotationSpeedAzimuth: number;
+
+  /**
+   * Radians per pixel
+   */
+  pointerRotationSpeedPolar: number;
+  enableKeyboardNavigation: boolean;
+  keyboardRotationSpeedAzimuth: number;
+  keyboardRotationSpeedPolar: number;
+  mouseFirstPersonRotationSpeed: number;
+  keyboardDollySpeed: number;
+  keyboardPanSpeed: number;
+
+  /**
+   * How much quicker keyboard navigation will be with 'shift' pressed
+   */
+  keyboardSpeedFactor: number;
+  pinchEpsilon: number;
+  pinchPanSpeed: number;
+  EPSILON: number;
+  minZoom: number;
+  maxZoom: number;
+  orthographicCameraDollyFactor: number;
+  lookAtViewTarget: boolean;
+  useScrollTarget: boolean;
+  zoomToCursor: boolean;
+  minDeltaRatio: number;
+  maxDeltaRatio: number;
+  minDeltaDownscaleCoefficient: number;
+  maxDeltaDownscaleCoefficient: number;
+};
+
 const defaultPointerRotationSpeed = Math.PI / 360; // half degree per pixel
 const defaultKeyboardRotationSpeed = defaultPointerRotationSpeed * 10;
 
 export class ComboControls extends EventDispatcher {
-  public enabled: boolean = true;
-  public enableDamping: boolean = true;
-  public dampingFactor: number = 0.25;
-  public dynamicTarget: boolean = true;
-  public minDistance: number = 0.8;
-  public minZoomDistance: number = 0.4;
-  public dollyFactor: number = 0.99;
-  public minPolarAngle: number = 0; // radians
-  public maxPolarAngle: number = Math.PI; // radians
-  public minAzimuthAngle: number = -Infinity; // radians
-  public maxAzimuthAngle: number = Infinity; // radians
-  public panDollyMinDistanceFactor: number = 10.0;
-  public firstPersonRotationFactor: number = 0.4;
-  public pointerRotationSpeedAzimuth: number = defaultPointerRotationSpeed; // radians per pixel
-  public pointerRotationSpeedPolar: number = defaultPointerRotationSpeed; // radians per pixel
-  public enableKeyboardNavigation: boolean = true;
-  public keyboardRotationSpeedAzimuth: number = defaultKeyboardRotationSpeed;
-  public keyboardRotationSpeedPolar: number = defaultKeyboardRotationSpeed;
-  public mouseFirstPersonRotationSpeed: number = defaultPointerRotationSpeed * 2;
-  public keyboardDollySpeed: number = 2;
-  public keyboardPanSpeed: number = 10;
-  public keyboardSpeedFactor: number = 3; // how much quicker keyboard navigation will be with 'shift' pressed
-  public pinchEpsilon: number = 2;
-  public pinchPanSpeed: number = 1;
-  public EPSILON: number = 0.001;
   public dispose: () => void;
-  public minZoom: number = 0;
-  public maxZoom: number = Infinity;
-  public orthographicCameraDollyFactor: number = 0.3;
-
-  public lookAtViewTarget = false;
-  public useScrollTarget = false;
-  public zoomToCursor = true;
-  public minDeltaRatio = 1;
-  public maxDeltaRatio = 8;
-  public minDeltaDownscaleCoefficient = 0.1;
-  public maxDeltaDownscaleCoefficient = 1;
 
   private _temporarilyDisableDamping: boolean = false;
   private readonly _camera: PerspectiveCamera | OrthographicCamera;
@@ -105,6 +137,60 @@ export class ComboControls extends EventDispatcher {
   private readonly _targetFPS: number = 30;
   private _targetFPSOverActualFPS: number = 1;
 
+  private _options: ComboControlsOptions = { ...ComboControls.DefaultControlsOptions };
+  private static readonly DefaultControlsOptions: Required<ComboControlsOptions> = {
+    enabled: true,
+    enableDamping: true,
+    dampingFactor: 0.25,
+    dynamicTarget: true,
+    minDistance: 0.8,
+    minZoomDistance: 0.4,
+    dollyFactor: 0.99,
+    minPolarAngle: 0,
+    maxPolarAngle: Math.PI,
+    minAzimuthAngle: -Infinity,
+    maxAzimuthAngle: Infinity,
+    panDollyMinDistanceFactor: 10.0,
+    firstPersonRotationFactor: 0.4,
+    pointerRotationSpeedAzimuth: defaultPointerRotationSpeed,
+    pointerRotationSpeedPolar: defaultPointerRotationSpeed,
+    enableKeyboardNavigation: true,
+    keyboardRotationSpeedAzimuth: defaultKeyboardRotationSpeed,
+    keyboardRotationSpeedPolar: defaultKeyboardRotationSpeed,
+    mouseFirstPersonRotationSpeed: defaultPointerRotationSpeed * 2,
+    keyboardDollySpeed: 2,
+    keyboardPanSpeed: 10,
+    keyboardSpeedFactor: 3,
+    pinchEpsilon: 2,
+    pinchPanSpeed: 1,
+    EPSILON: 0.001,
+    minZoom: 0,
+    maxZoom: Infinity,
+    orthographicCameraDollyFactor: 0.3,
+    lookAtViewTarget: false,
+    useScrollTarget: false,
+    zoomToCursor: true,
+    minDeltaRatio: 1,
+    maxDeltaRatio: 8,
+    minDeltaDownscaleCoefficient: 0.1,
+    maxDeltaDownscaleCoefficient: 1
+  };
+
+  /**
+   * Gets current Combo Controls options.
+   */
+  get options(): ComboControlsOptions {
+    return this._options;
+  }
+
+  /**
+   * Sets Combo Controls options.
+   * Only provided options will be changed, any undefined options will be kept as is.
+   */
+  set options(options: ComboControlsOptions) {
+    this._options = { ...this._options, ...options };
+  }
+
   constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
     super();
     this._camera = camera;
@@ -113,7 +199,6 @@ export class ComboControls extends EventDispatcher {
     this._keyboard = new Keyboard(this._domElement);
 
     // rotation
-
     this._spherical.setFromVector3(camera.position);
     this._sphericalEnd.copy(this._spherical);
     domElement.addEventListener('pointerdown', this.onPointerDown);
@@ -154,14 +239,11 @@ export class ComboControls extends EventDispatcher {
       _sphericalEnd,
       _deltaTarget,
       handleKeyboard,
-      enableDamping,
-      dampingFactor,
-      EPSILON,
       _targetFPS,
-      enabled
+      _options
     } = this;
 
-    if (!forceUpdate && !enabled) {
+    if (!forceUpdate && !_options.enabled) {
       return false;
     }
 
@@ -190,17 +272,17 @@ export class ComboControls extends EventDispatcher {
 
     let changed = false;
 
-    const wantDamping = enableDamping && !this._temporarilyDisableDamping;
-    const deltaFactor = wantDamping ? Math.min(dampingFactor * this._targetFPSOverActualFPS, 1) : 1;
+    const wantDamping = _options.enableDamping && !this._temporarilyDisableDamping;
+    const deltaFactor = wantDamping ? Math.min(_options.dampingFactor * this._targetFPSOverActualFPS, 1) : 1;
     this._temporarilyDisableDamping = false;
 
     if (
-      Math.abs(deltaTheta) > EPSILON ||
-      Math.abs(deltaPhi) > EPSILON ||
-      Math.abs(deltaRadius) > EPSILON ||
-      Math.abs(_deltaTarget.x) > EPSILON ||
-      Math.abs(_deltaTarget.y) > EPSILON ||
-      Math.abs(_deltaTarget.z) > EPSILON
+      Math.abs(deltaTheta) > _options.EPSILON ||
+      Math.abs(deltaPhi) > _options.EPSILON ||
+      Math.abs(deltaRadius) > _options.EPSILON ||
+      Math.abs(_deltaTarget.x) > _options.EPSILON ||
+      Math.abs(_deltaTarget.y) > _options.EPSILON ||
+      Math.abs(_deltaTarget.z) > _options.EPSILON
     ) {
       _spherical.set(
         _spherical.radius + deltaRadius * deltaFactor,
@@ -219,7 +301,7 @@ export class ComboControls extends EventDispatcher {
     _camera.position.setFromSpherical(_spherical).add(_target);
 
     if (this.isIdentityQuaternion(this._rawCameraRotation)) {
-      _camera.lookAt(this.lookAtViewTarget ? this._viewTarget : _target);
+      _camera.lookAt(_options.lookAtViewTarget ? this._viewTarget : _target);
     } else {
       _camera.setRotationFromQuaternion(this._rawCameraRotation);
     }
@@ -305,7 +387,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onMouseDown = (event: MouseEvent) => {
-    if (!this.enabled) {
+    if (!this._options.enabled) {
       return;
     }
 
@@ -333,7 +415,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onMouseWheel = (event: WheelEvent) => {
-    if (!this.enabled) {
+    if (!this._options.enabled) {
       return;
     }
     event.preventDefault();
@@ -362,12 +444,12 @@ export class ComboControls extends EventDispatcher {
       // @ts-ignore
       this._camera.isPerspectiveCamera
         ? this.getDollyDeltaDistance(dollyIn, Math.abs(delta))
-        : Math.sign(delta) * this.orthographicCameraDollyFactor;
+        : Math.sign(delta) * this._options.orthographicCameraDollyFactor;
     this.dolly(x, y, deltaDistance, false);
   };
 
   private readonly onTouchStart = (event: TouchEvent) => {
-    if (!this.enabled) {
+    if (!this._options.enabled) {
       return;
     }
     event.preventDefault();
@@ -397,7 +479,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {
-    if (!this.enabled) {
+    if (!this._options.enabled) {
       return;
     }
     event.preventDefault();
@@ -409,9 +491,12 @@ export class ComboControls extends EventDispatcher {
     }
 
     const azimuthAngle =
-      (this._firstPersonMode ? this.mouseFirstPersonRotationSpeed : this.pointerRotationSpeedAzimuth) * deltaX;
+      (this._firstPersonMode
+        ? this._options.mouseFirstPersonRotationSpeed
+        : this._options.pointerRotationSpeedAzimuth) * deltaX;
     const polarAngle =
-      (this._firstPersonMode ? this.mouseFirstPersonRotationSpeed : this.pointerRotationSpeedPolar) * deltaY;
+      (this._firstPersonMode ? this._options.mouseFirstPersonRotationSpeed : this._options.pointerRotationSpeedPolar) *
+      deltaY;
 
     if (this._firstPersonMode) {
       this._temporarilyDisableDamping = true;
@@ -511,12 +596,12 @@ export class ComboControls extends EventDispatcher {
       const distanceFactor = initialPinchInfo.distance / pinchInfo.distance;
       // Min distance / 5 because on phones it is reasonable to get quite close to the target,
       // but we don't want to get too close since zooming slows down very close to target.
-      this._sphericalEnd.radius = Math.max(distanceFactor * initialRadius, this.minDistance / 5);
+      this._sphericalEnd.radius = Math.max(distanceFactor * initialRadius, this._options.minDistance / 5);
 
       // pan
       const deltaCenter = pinchInfo.center.clone().sub(previousPinchInfo.center);
-      if (deltaCenter.length() > this.pinchEpsilon) {
-        deltaCenter.multiplyScalar(this.pinchPanSpeed);
+      if (deltaCenter.length() > this._options.pinchEpsilon) {
+        deltaCenter.multiplyScalar(this._options.pinchPanSpeed);
         this.pan(deltaCenter.x, deltaCenter.y);
       }
       previousPinchInfo = pinchInfo;
@@ -545,17 +630,19 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly handleKeyboard = () => {
-    if (!this.enabled || !this.enableKeyboardNavigation) {
+    if (!this._options.enabled || !this._options.enableKeyboardNavigation) {
       return;
     }
 
-    const { _keyboard, keyboardDollySpeed, keyboardPanSpeed, keyboardSpeedFactor } = this;
+    const { _keyboard, _options } = this;
 
     // rotate
     const azimuthAngle =
-      this.keyboardRotationSpeedAzimuth * (Number(_keyboard.isPressed('left')) - Number(_keyboard.isPressed('right')));
+      this._options.keyboardRotationSpeedAzimuth *
+      (Number(_keyboard.isPressed('left')) - Number(_keyboard.isPressed('right')));
     let polarAngle =
-      this.keyboardRotationSpeedPolar * (Number(_keyboard.isPressed('up')) - Number(_keyboard.isPressed('down')));
+      this._options.keyboardRotationSpeedPolar *
+      (Number(_keyboard.isPressed('up')) - Number(_keyboard.isPressed('down')));
 
     if (azimuthAngle !== 0 || polarAngle !== 0) {
       this._firstPersonMode = true;
@@ -568,11 +655,11 @@ export class ComboControls extends EventDispatcher {
       this.rotateFirstPersonMode(azimuthAngle, polarAngle);
     }
 
-    const speedFactor = _keyboard.isPressed('shift') ? keyboardSpeedFactor : 1;
+    const speedFactor = _keyboard.isPressed('shift') ? _options.keyboardSpeedFactor : 1;
     const moveForward = _keyboard.isPressed('w') ? true : _keyboard.isPressed('s') ? false : undefined;
 
     if (moveForward !== undefined) {
-      this.dolly(0, 0, this.getDollyDeltaDistance(moveForward, keyboardDollySpeed * speedFactor), true);
+      this.dolly(0, 0, this.getDollyDeltaDistance(moveForward, _options.keyboardDollySpeed * speedFactor), true);
       this._firstPersonMode = true;
     }
 
@@ -581,27 +668,38 @@ export class ComboControls extends EventDispatcher {
     const verticalMovement = Number(_keyboard.isPressed('e')) - Number(_keyboard.isPressed('q'));
     if (horizontalMovement !== 0 || verticalMovement !== 0) {
       this._firstPersonMode = true;
-      this.pan(speedFactor * keyboardPanSpeed * horizontalMovement, speedFactor * keyboardPanSpeed * verticalMovement);
+      this.pan(
+        speedFactor * _options.keyboardPanSpeed * horizontalMovement,
+        speedFactor * _options.keyboardPanSpeed * verticalMovement
+      );
     }
   };
 
   private readonly rotateSpherical = (azimuthAngle: number, polarAngle: number) => {
     const { _sphericalEnd } = this;
-    const theta = MathUtils.clamp(_sphericalEnd.theta + azimuthAngle, this.minAzimuthAngle, this.maxAzimuthAngle);
-    const phi = MathUtils.clamp(_sphericalEnd.phi + polarAngle, this.minPolarAngle, this.maxPolarAngle);
+    const theta = MathUtils.clamp(
+      _sphericalEnd.theta + azimuthAngle,
+      this._options.minAzimuthAngle,
+      this._options.maxAzimuthAngle
+    );
+    const phi = MathUtils.clamp(
+      _sphericalEnd.phi + polarAngle,
+      this._options.minPolarAngle,
+      this._options.maxPolarAngle
+    );
     _sphericalEnd.theta = theta;
     _sphericalEnd.phi = phi;
     _sphericalEnd.makeSafe();
   };
 
   private readonly rotateFirstPersonMode = (azimuthAngle: number, polarAngle: number) => {
-    const { firstPersonRotationFactor, _reusableCamera, _reusableVector3, _sphericalEnd, _targetEnd } = this;
+    const { _options, _reusableCamera, _reusableVector3, _sphericalEnd, _targetEnd } = this;
 
     _reusableCamera.position.setFromSpherical(_sphericalEnd).add(_targetEnd);
     _reusableCamera.lookAt(_targetEnd);
 
-    _reusableCamera.rotateX(firstPersonRotationFactor * polarAngle);
-    _reusableCamera.rotateY(firstPersonRotationFactor * azimuthAngle);
+    _reusableCamera.rotateX(_options.firstPersonRotationFactor * polarAngle);
+    _reusableCamera.rotateY(_options.firstPersonRotationFactor * azimuthAngle);
 
     const distToTarget = _targetEnd.distanceTo(_reusableCamera.position);
     _reusableCamera.getWorldDirection(_reusableVector3);
@@ -615,7 +713,10 @@ export class ComboControls extends EventDispatcher {
     const { _domElement, _camera, _offsetVector, _target } = this;
 
     _offsetVector.copy(_camera.position).sub(_target);
-    let targetDistance = Math.max(_offsetVector.length(), this.panDollyMinDistanceFactor * this.minDistance);
+    let targetDistance = Math.max(
+      _offsetVector.length(),
+      this._options.panDollyMinDistanceFactor * this._options.minDistance
+    );
 
     // half of the fov is center to top of screen
     // @ts-ignore
@@ -631,7 +732,7 @@ export class ComboControls extends EventDispatcher {
   private readonly dollyOrthographicCamera = (_x: number, _y: number, deltaDistance: number) => {
     const camera = this._camera as OrthographicCamera;
     camera.zoom *= 1 - deltaDistance;
-    camera.zoom = MathUtils.clamp(camera.zoom, this.minZoom, this.maxZoom);
+    camera.zoom = MathUtils.clamp(camera.zoom, this._options.minZoom, this._options.maxZoom);
     camera.updateProjectionMatrix();
   };
 
@@ -641,7 +742,7 @@ export class ComboControls extends EventDispatcher {
     deltaDistance: number,
     cameraDirection: THREE.Vector3
   ) => {
-    const { dynamicTarget, minZoomDistance, _raycaster, _targetEnd, _reusableCamera } = this;
+    const { _options, _raycaster, _targetEnd, _reusableCamera } = this;
 
     const distFromCameraToScreenCenter = Math.tan(
       MathUtils.degToRad(90 - (this._camera as PerspectiveCamera).fov * 0.5)
@@ -658,9 +759,9 @@ export class ComboControls extends EventDispatcher {
 
     let radius = distToTarget + deltaDistance;
 
-    if (radius < minZoomDistance && !isDollyOut) {
+    if (radius < _options.minZoomDistance && !isDollyOut) {
       radius = distToTarget;
-      if (dynamicTarget) {
+      if (_options.dynamicTarget) {
         // push targetEnd forward
         _reusableCamera.getWorldDirection(cameraDirection);
         _targetEnd.add(cameraDirection.normalize().multiplyScalar(Math.abs(deltaDistance)));
@@ -693,17 +794,7 @@ export class ComboControls extends EventDispatcher {
     deltaDistance: number,
     cameraDirection: THREE.Vector3
   ) => {
-    const {
-      minZoomDistance,
-      _reusableVector3,
-      _target,
-      _scrollTarget,
-      _camera,
-      minDeltaRatio,
-      maxDeltaRatio,
-      minDeltaDownscaleCoefficient,
-      maxDeltaDownscaleCoefficient
-    } = this;
+    const { _reusableVector3, _target, _scrollTarget, _camera, _options } = this;
 
     const distToTarget = cameraDirection.length();
 
@@ -731,13 +822,16 @@ export class ComboControls extends EventDispatcher {
     // if target movement is too fast we want to slow it down a bit
     const deltaDownscaleCoefficient = this.clampedMap(
       targetOffsetToDeltaRatio,
-      minDeltaRatio,
-      maxDeltaRatio,
-      maxDeltaDownscaleCoefficient,
-      minDeltaDownscaleCoefficient
+      _options.minDeltaRatio,
+      _options.maxDeltaRatio,
+      _options.maxDeltaDownscaleCoefficient,
+      _options.minDeltaDownscaleCoefficient
     );
 
-    if (Math.abs(deltaDistance) > this.minDistance || Math.abs(deltaTargetOffsetDistance) > this.minDistance) {
+    if (
+      Math.abs(deltaDistance) > this._options.minDistance ||
+      Math.abs(deltaTargetOffsetDistance) > this._options.minDistance
+    ) {
       deltaDistance *= deltaDownscaleCoefficient;
       deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
     }
@@ -745,11 +839,11 @@ export class ComboControls extends EventDispatcher {
     let radius = distToTarget + deltaDistance;
 
     // behaviour for scrolling with mouse wheel
-    if (radius < minZoomDistance) {
+    if (radius < _options.minZoomDistance) {
       this._temporarilyDisableDamping = true;
 
       // stops camera from moving forward only if target became close to scroll target
-      if (_scrollTarget.distanceTo(_target) < minZoomDistance) {
+      if (_scrollTarget.distanceTo(_target) < _options.minZoomDistance) {
         deltaTargetOffsetDistance = 0;
         radius = distToTarget;
       }
@@ -757,9 +851,9 @@ export class ComboControls extends EventDispatcher {
       if (radius <= 0) {
         deltaTargetOffsetDistance = 0;
 
-        if (_scrollTarget.distanceTo(_target) > minZoomDistance) {
-          radius = minZoomDistance;
-          this._targetEnd.add(cameraDirection.normalize().multiplyScalar(-(minZoomDistance - distToTarget)));
+        if (_scrollTarget.distanceTo(_target) > _options.minZoomDistance) {
+          radius = _options.minZoomDistance;
+          this._targetEnd.add(cameraDirection.normalize().multiplyScalar(-(_options.minZoomDistance - distToTarget)));
         } else {
           radius = distToTarget;
         }
@@ -781,14 +875,14 @@ export class ComboControls extends EventDispatcher {
     deltaDistance: number,
     cameraDirection: THREE.Vector3
   ) => {
-    const { _targetEnd, _sphericalEnd, useScrollTarget, zoomToCursor } = this;
+    const { _targetEnd, _sphericalEnd, _options } = this;
 
     const isDollyIn = deltaDistance < 0 ? true : false;
     const newTargetOffset = new Vector3();
     let newRadius = _sphericalEnd.radius;
 
-    if (zoomToCursor) {
-      if (useScrollTarget && isDollyIn) {
+    if (_options.zoomToCursor) {
+      if (_options.useScrollTarget && isDollyIn) {
         const { radius, targetOffset } = this.calculateNewRadiusAndTargetOffsetScrollTarget(
           deltaDistance,
           cameraDirection
@@ -851,11 +945,11 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly getDollyDeltaDistance = (dollyIn: boolean, steps: number = 1) => {
-    const { _sphericalEnd, dollyFactor } = this;
+    const { _sphericalEnd, _options } = this;
 
-    const zoomFactor = dollyFactor ** steps;
+    const zoomFactor = _options.dollyFactor ** steps;
     const factor = dollyIn ? zoomFactor : 1 / zoomFactor;
-    const distance = Math.max(_sphericalEnd.radius, this.panDollyMinDistanceFactor * this.minDistance);
+    const distance = Math.max(_sphericalEnd.radius, _options.panDollyMinDistanceFactor * _options.minDistance);
     return distance * (factor - 1);
   };
 
