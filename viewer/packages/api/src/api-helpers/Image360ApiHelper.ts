@@ -186,7 +186,7 @@ export class Image360ApiHelper {
   private set360CameraManager() {
     if (this._activeCameraManager.innerCameraManager !== this._image360Navigation) {
       this._cachedCameraManager = this._activeCameraManager.innerCameraManager;
-      this._activeCameraManager.setActiveCameraManager(this._image360Navigation, true);
+      this._activeCameraManager.setActiveCameraManager(this._image360Navigation);
     }
   }
 
@@ -197,7 +197,7 @@ export class Image360ApiHelper {
       this._interactionState.lastImage360Entered = undefined;
     }
     const { position, rotation } = this._image360Navigation.getCameraState();
-    this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager, false);
+    this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
     this._activeCameraManager.setCameraState({
       position,
       target: new THREE.Vector3(0, 0, -1).applyQuaternion(rotation).add(position)

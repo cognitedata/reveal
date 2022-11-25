@@ -13,7 +13,7 @@ export class StationaryCameraManager implements CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
   private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
   private readonly _domElement: HTMLElement;
-  private readonly _defaultFOV: number;
+  private _defaultFOV: number;
   private _isEnabled = false;
   private _isDragging = false;
 
@@ -21,16 +21,6 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement = domElement;
     this._camera = camera;
     this._defaultFOV = camera.fov;
-
-    domElement.addEventListener('pointermove', this.rotateCamera.bind(this));
-    domElement.addEventListener('pointerdown', this.enableDragging.bind(this));
-    domElement.addEventListener('pointerup', this.disableDragging.bind(this));
-    domElement.addEventListener('pointerout', this.disableDragging.bind(this));
-    domElement.addEventListener('wheel', this.zoomCamera.bind(this));
-  }
-
-  set enabled(value: boolean) {
-    this._isEnabled = value;
   }
 
   get enabled(): boolean {
@@ -57,6 +47,35 @@ export class StationaryCameraManager implements CameraManager {
       rotation: this._camera.quaternion,
       target: unitForward.add(this._camera.position)
     };
+  }
+
+  activate(cameraManager: CameraManager): void {
+    this._isEnabled = true;
+
+    const { position, rotation } = cameraManager.getCameraState();
+    this.setCameraState({ position, rotation });
+
+    this._defaultFOV = cameraManager.getCamera().fov;
+
+    this._camera.fov = this._defaultFOV;
+    this._camera.aspect = cameraManager.getCamera().aspect;
+    this._camera.updateProjectionMatrix();
+
+    this._domElement.addEventListener('pointermove', this.rotateCamera);
+    this._domElement.addEventListener('pointerdown', this.enableDragging);
+    this._domElement.addEventListener('pointerup', this.disableDragging);
+    this._domElement.addEventListener('pointerout', this.disableDragging);
+    this._domElement.addEventListener('wheel', this.zoomCamera);
+  }
+
+  deactivate(): void {
+    this._isEnabled = false;
+
+    this._domElement.removeEventListener('pointermove', this.rotateCamera);
+    this._domElement.removeEventListener('pointerdown', this.enableDragging);
+    this._domElement.removeEventListener('pointerup', this.disableDragging);
+    this._domElement.removeEventListener('pointerout', this.disableDragging);
+    this._domElement.addEventListener('wheel', this.zoomCamera);
   }
 
   on(_: 'cameraChange', callback: CameraChangeDelegate): void {
@@ -107,22 +126,18 @@ export class StationaryCameraManager implements CameraManager {
 
   dispose(): void {
     this._cameraChangedListener.splice(0);
-    this._domElement.removeEventListener('pointermove', this.rotateCamera.bind(this));
-    this._domElement.removeEventListener('pointerdown', this.enableDragging.bind(this));
-    this._domElement.removeEventListener('pointerup', this.disableDragging.bind(this));
-    this._domElement.removeEventListener('pointerout', this.disableDragging.bind(this));
-    this._domElement.removeEventListener('wheel', this.zoomCamera.bind(this));
+    this.deactivate();
   }
 
-  private enableDragging(_: PointerEvent) {
+  private readonly enableDragging = (_: PointerEvent) => {
     this._isDragging = true;
-  }
+  };
 
-  private disableDragging(_: PointerEvent) {
+  private readonly disableDragging = (_: PointerEvent) => {
     this._isDragging = false;
-  }
+  };
 
-  private rotateCamera(event: PointerEvent) {
+  private readonly rotateCamera = (event: PointerEvent) => {
     if (!this._isDragging || !this._isEnabled) {
       return;
     }
@@ -136,11 +151,11 @@ export class StationaryCameraManager implements CameraManager {
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
     this._cameraChangedListener.forEach(cb => cb(this._camera.position, this._camera.position));
-  }
+  };
 
-  private zoomCamera(event: WheelEvent) {
+  private readonly zoomCamera = (event: WheelEvent) => {
     const sensitivityScaler = 0.05;
     this._camera.fov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
     this._camera.updateProjectionMatrix();
-  }
+  };
 }
