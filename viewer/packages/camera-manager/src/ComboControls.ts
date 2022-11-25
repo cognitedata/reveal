@@ -623,7 +623,7 @@ export class ComboControls extends EventDispatcher {
       return;
     }
 
-    const { _keyboard } = this;
+    const _keyboard = this._keyboard;
 
     // rotate
     const azimuthAngle =
