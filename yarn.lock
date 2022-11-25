@@ -2378,17 +2378,6 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.8.0":
-  version "4.8.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.0.tgz#d82b2c92b203ceafabe35a605fe2dbbccae57beb"
-  integrity sha512-XpWDx2+Mys+cGNGcPKMY8Vroju/j1eCe8+AcPCaH5ueu2aRoS4JUSZ/CcvTP+iGzxl3G/3OMv2IwV2E7p0rD/w==
-  dependencies:
-    cross-fetch "^3.0.4"
-    is-buffer "^2.0.5"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
-
 "@cognite/sdk-core@^4.8.2":
   version "4.8.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.2.tgz#00f69eaf93d433223f650891d098e1ffb0738631"
@@ -2431,15 +2420,6 @@
     geojson "^0.5.0"
     lodash "^4.17.11"
 
-"@cognite/sdk@^7.6.0":
-  version "7.9.4"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.9.4.tgz#c59af1694fcfed0be1034c24676701a1749bdfe1"
-  integrity sha512-+2F4sMsiralzwdFTZYS7pFX0nu4eke6nXauc+dDjXgWKMmdztredB5b2Td2B/zUoAtbWrffzIcFLBy903lv8cQ==
-  dependencies:
-    "@cognite/sdk-core" "^4.8.0"
-    geojson "^0.5.0"
-    lodash "^4.17.11"
-
 "@cognite/sdk@^7.7.0":
   version "7.8.4"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.8.4.tgz#a9273eb35f5c40556738752158e7c2078a615252"
@@ -2462,13 +2442,13 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^2.7.1":
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-2.7.1.tgz#bc1c1101718255892e7a6704335f8181e5c6f029"
-  integrity sha512-AcsqYvnCK8P0OiKobpTq349cKNnLIacczQlNw7AHRrpqcR2ljROb8oh+laFBSMJfekwzi2dsR1zRJpIS7Vd68Q==
+"@cognite/unified-file-viewer@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-3.0.0.tgz#f6ea08c6ee02321ee3ebc953e8006a2d23c1b483"
+  integrity sha512-M4X0mKH5uotHayn4ZOkhqubGoSwkmMuFXD4y3S67E+Zvc+atr2Ep/dFypkby7GeoUU4vXHqOKbGfor7CQyctlw==
   dependencies:
     "@cognite/cogs.js" "7.0.3"
-    "@cognite/sdk" "^7.6.0"
+    "@cognite/sdk" "^7.13.0"
     chroma-js "^2.4.2"
     konva "^8.3.9"
     lodash "^4.17.21"

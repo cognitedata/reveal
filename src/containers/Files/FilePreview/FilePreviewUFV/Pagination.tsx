@@ -3,14 +3,13 @@ import { Pagination as CogsPagination } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useEffect } from 'react';
 import { ContainerType, getPdfCache } from '@cognite/unified-file-viewer';
-import { DocumentContainerProps } from '@cognite/unified-file-viewer/dist/core/containers/DocumentContainer';
-import { ImageContainerProps } from '@cognite/unified-file-viewer/dist/core/containers/ImageContainer';
+import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
 
 export const Pagination = ({
   container,
   onPageChange,
 }: {
-  container: DocumentContainerProps | ImageContainerProps;
+  container: FileContainerProps;
   onPageChange: (pageNumber: number) => void;
 }) => {
   const [numPages, setNumPages] = useState(0);

@@ -1,15 +1,14 @@
 import { FileInfo } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import ReactUnifiedViewer, {
   Annotation,
   AnnotationType,
-  ContainerType,
+  getContainerConfigFromFileInfo,
   TooltipAnchorPosition,
   ToolType,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
-import { DocumentContainerProps } from '@cognite/unified-file-viewer/dist/core/containers/DocumentContainer';
-import { ImageContainerProps } from '@cognite/unified-file-viewer/dist/core/containers/ImageContainer';
 import { Loader } from 'components';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -29,7 +28,7 @@ import {
   MAX_CONTAINER_WIDTH,
 } from './constants';
 import getExtendedAnnotationsWithBadges from './getExtendedAnnotationsWithBadges';
-import { useFileDownloadUrl, useUnifiedFileViewerAnnotations } from './hooks';
+import { useUnifiedFileViewerAnnotations } from './hooks';
 import { Pagination } from './Pagination';
 import {
   ANNOTATION_SOURCE_KEY,
@@ -37,6 +36,7 @@ import {
   ExtendedAnnotation,
 } from './types';
 import { getContainerId } from './utils';
+import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
 
 export type FilePreviewUFVProps = {
   id: string;
@@ -82,14 +82,13 @@ export const FilePreviewUFV = ({
 }: FilePreviewUFVProps) => {
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
   const [page, setPage] = useState(1);
-  const [container, setContainer] = useState<
-    DocumentContainerProps | ImageContainerProps
-  >();
+  const [container, setContainer] = useState<FileContainerProps>();
   const [hoverId, setHoverId] = useState<string | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [pendingAnnotations, setPendingAnnotations] = useState<
     ExtendedAnnotation[]
   >([]);
+  const sdk = useSDK();
 
   const [isAnnotationsShown, setIsAnnotationsShown] = useState<boolean>(true);
   const [selectedAnnotations, setSelectedAnnotations] = useState<
@@ -125,33 +124,20 @@ export const FilePreviewUFV = ({
   const isMimeTypeSet = file && file.mimeType;
   const canPreviewFile = file && isFilePreviewable(file);
 
-  const fileUrl = useFileDownloadUrl(file?.id);
-
   useEffect(() => {
-    if (file?.id && file?.mimeType && fileUrl) {
-      const containerId = getContainerId(file.id);
-      if (file.mimeType === 'application/pdf') {
-        setContainer({
-          type: ContainerType.DOCUMENT,
-          id: containerId,
-          url: fileUrl,
-          page,
-          maxWidth: MAX_CONTAINER_WIDTH,
-          maxHeight: MAX_CONTAINER_HEIGHT,
-        } as DocumentContainerProps);
-        return;
+    (async () => {
+      if (file?.id && file?.mimeType) {
+        setContainer(
+          await getContainerConfigFromFileInfo(sdk as any, file, {
+            id: getContainerId(file.id),
+            page,
+            maxWidth: MAX_CONTAINER_WIDTH,
+            maxHeight: MAX_CONTAINER_HEIGHT,
+          })
+        );
       }
-
-      setContainer({
-        type: ContainerType.IMAGE,
-        id: containerId,
-        url: fileUrl,
-        page,
-        maxWidth: MAX_CONTAINER_WIDTH,
-        maxHeight: MAX_CONTAINER_HEIGHT,
-      } as ImageContainerProps);
-    }
-  }, [file, file?.id, file?.mimeType, fileUrl, page]);
+    })();
+  }, [file, file?.id, file?.mimeType, page, sdk]);
 
   const onClickAnnotation = useCallback(
     (annotation: ExtendedAnnotation) =>
@@ -316,7 +302,6 @@ export const FilePreviewUFV = ({
         <Pagination container={container} onPageChange={handlePageChange} />
         <ActionTools
           file={file}
-          fileUrl={fileUrl}
           fileViewerRef={unifiedViewerRef}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
