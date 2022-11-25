@@ -13,8 +13,7 @@ import {
   CameraEventDelegate,
   CameraManagerEventType,
   CameraState,
-  CameraStopDelegate,
-  CAMERA_MANAGER_EVENT_TYPE_LIST
+  CameraStopDelegate
 } from './types';
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
 
@@ -89,7 +88,7 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
-    switch(eventType) {
+    switch (eventType) {
       case 'cameraChange':
         this._cameraChangedListeners.push(callback);
         break;
@@ -102,7 +101,7 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   off(eventType: CameraManagerEventType, callback: CameraChangeDelegate): void {
-    switch(eventType) {
+    switch (eventType) {
       case 'cameraChange':
         const index = this._cameraChangedListeners.indexOf(callback);
         if (index !== -1) {
