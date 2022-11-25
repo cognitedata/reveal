@@ -17,11 +17,7 @@ const Page = ({ children, className, title }: PageProps): JSX.Element => {
 
   return (
     <StyledPage className={className}>
-      <Flex
-        style={{ paddingBottom: 32, paddingLeft: 40, paddingRight: 40 }}
-        justifyContent="space-between"
-        alignItems="center"
-      >
+      <StyledTitleContainer justifyContent="space-between" alignItems="center">
         <Title level={3}>{title}</Title>
         <Link
           to={createLink('/explore')}
@@ -33,8 +29,7 @@ const Page = ({ children, className, title }: PageProps): JSX.Element => {
             <Icon type="ExternalLink" />
           </Flex>
         </Link>
-      </Flex>
-      <Divider />
+      </StyledTitleContainer>
       <StyledPageContent>{children}</StyledPageContent>
     </StyledPage>
   );
@@ -44,14 +39,14 @@ const StyledPage = styled.div`
   padding-top: 24px;
   padding-bottom: 24px;
 `;
+const StyledTitleContainer = styled(Flex)`
+  padding-left: 40px;
+  padding-right: 40px;
+`;
 const StyledPageContent = styled.div`
   padding-left: 40px;
   padding-right: 40px;
   margin-top: 40px;
-`;
-
-const Divider = styled.div`
-  border-bottom: 1px solid ${Colors['border--muted']};
 `;
 
 const StyledLinkText = styled(Body)`
