@@ -19,14 +19,6 @@ export class ProxyCameraManager implements CameraManager {
 
   private _activeCameraManager: CameraManager;
 
-  set enabled(value: boolean) {
-    const isEnabled = this._activeCameraManager.enabled;
-    if (isEnabled === undefined) {
-      throw new Error('Currently set Camera Manager does not support setting enabled state');
-    }
-    this._activeCameraManager.enabled = value;
-  }
-
   get enabled(): boolean {
     return this._activeCameraManager.enabled;
   }
