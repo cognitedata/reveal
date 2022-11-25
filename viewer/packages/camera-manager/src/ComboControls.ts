@@ -186,7 +186,6 @@ export class ComboControls extends EventDispatcher {
   /**
    * Sets Combo Controls options.
    *
-   * Accepts any number of controls options and will combine these with the current options.
    * Only the provided options will be changed, any undefined options will be kept as is.
    */
   set options(options: Partial<ComboControlsOptions>) {
