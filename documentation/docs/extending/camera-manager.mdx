@@ -210,8 +210,12 @@ export class CustomCameraManager implements CameraManager {
     }
 }
 ```
-As you can see, implementation can be quite simple. There are three things that you should really pay extra attention to:
+As you can see, implementation can be quite simple. There are four things that you should really pay extra attention to:
 1. `'cameraChange'` event must be fired every time camera position or rotation changes to trigger redraw in Reveal.
+
 2. For the `setCameraState` method you should properly handle how change in rotation and target affects the camera and corresponds with 
 the behaviour of camera controls (`OrbitControls` in this case). For calculating camera target from rotation you can use `calculateNewTargetFromRotation` method of `CameraManagerHelper` .
-3. Inside `update` method you should update `near` and `far` planes of the camera, which can be easily done using `updateCameraNearAndFar` method of `CameraManagerHelper`. 
+
+3. Inside `update` method you should update `near` and `far` planes of the camera, which can be easily done using `updateCameraNearAndFar` method of `CameraManagerHelper`.
+
+4. The functions `activate` and `deactivate` are called automatically when a new CameraManager is assigned to the Cognite3DViewer. These functions are intended to help manage enabling and disabling of input when the manager changes state. Return value of `get enabled` should reflect this state.
