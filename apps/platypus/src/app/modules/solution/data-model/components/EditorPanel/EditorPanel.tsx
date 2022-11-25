@@ -15,6 +15,7 @@ import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import useSelector from '@platypus-app/hooks/useSelector';
+import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 
 const GraphqlCodeEditor = React.lazy(() =>
   import('../GraphqlCodeEditor/GraphqlCodeEditor').then((module) => ({
@@ -28,16 +29,19 @@ export interface EditorPanelProps {
   isPublishing: boolean;
 }
 
-export const EditorPanel = (props: EditorPanelProps) => {
+export const EditorPanel: React.FC<EditorPanelProps> = ({
+  externalId,
+  editorMode,
+  isPublishing,
+}) => {
   const { t } = useTranslation('EditorPanel');
-
+  const { data: dataModelVersionList } = useDataModelVersions(externalId);
   const [currentView, setCurrentView] = useState('ui');
   const { graphQlSchema, builtInTypes } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
 
-  const isUIDisabled =
-    props.editorMode === SchemaEditorMode.View || props.isPublishing;
+  const isUIDisabled = editorMode === SchemaEditorMode.View || isPublishing;
   const { setGraphQlSchema } = useDataModelState();
 
   return (
@@ -71,8 +75,9 @@ export const EditorPanel = (props: EditorPanelProps) => {
       {currentView === 'code' ? (
         <Suspense fallback={<Spinner />}>
           <GraphqlCodeEditor
+            key={`graphql-code-editor-version-${dataModelVersionList?.length}`}
             builtInTypes={builtInTypes}
-            externalId={props.externalId}
+            externalId={externalId}
             code={graphQlSchema}
             disabled={isUIDisabled}
             onChange={setGraphQlSchema}

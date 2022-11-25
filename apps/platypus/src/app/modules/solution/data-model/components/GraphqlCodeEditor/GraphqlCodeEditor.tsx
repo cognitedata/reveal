@@ -26,6 +26,7 @@ export const GraphqlCodeEditor = React.memo(
     const dataModelVersionHandler = useInjection(
       TOKENS.dataModelVersionHandler
     );
+
     const { track } = useMixpanel();
 
     const validateFn = async (graphQLString: string) => {
@@ -65,13 +66,15 @@ export const GraphqlCodeEditor = React.memo(
       return markers;
     };
 
-    function editorWillMount(monaco: Monaco) {
+    const editorWillMount = (monaco: Monaco) => {
       langProviders.current = setupGraphql(monaco, builtInTypes, validateFn);
-    }
+    };
+
     const debouncedOnChange = useMemo(
       () => debounce((value: string) => onChange(value), 500),
       [onChange]
     );
+
     useEffect(() => {
       return () => {
         debouncedOnChange.cancel();
@@ -85,6 +88,7 @@ export const GraphqlCodeEditor = React.memo(
     useEffect(() => {
       track('CodeEditor', { dataModel: externalId });
     }, [track, externalId]);
+
     useEffect(() => {
       // Destroy lang services when component is unmounted
       return () => {

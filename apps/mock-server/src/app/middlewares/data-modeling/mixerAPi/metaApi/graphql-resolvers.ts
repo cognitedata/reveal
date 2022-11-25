@@ -119,15 +119,14 @@ export const graphQlMetaApiResolvers = (
         );
 
         if (breakingChanges.length) {
-          throw new GraphQLError(
-            breakingChanges[0].message,
-            null,
-            null,
-            null,
-            null,
-            null,
-            breakingChanges[0].extensions
-          );
+          throw new GraphQLError(breakingChanges[0].message, {
+            nodes: null,
+            source: null,
+            positions: null,
+            path: null,
+            originalError: null,
+            extensions: breakingChanges[0].extensions,
+          });
         }
 
         return [];
