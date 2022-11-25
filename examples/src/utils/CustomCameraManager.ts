@@ -79,8 +79,8 @@ export class CustomCameraManager implements CameraManager {
             case 'cameraChange':
                 this._cameraChangedListener.push(callback);
                 break;
-            case 'camerastop':
-                this._stopEventHandler.subscribe(callback as CamerastopDelegate);
+            case 'cameraStop':
+                this._stopEventHandler.subscribe(callback as CameraStopDelegate);
                 break;
             default:
                 throw Error(`Unrecognized camera event type: ${event}`);
@@ -95,8 +95,8 @@ export class CustomCameraManager implements CameraManager {
                     this._cameraChangedListener.splice(index, 1);
                 }
                 break;
-            case 'camerastop':
-                this._stopEventHandler.unsubscribe(callback as CamerastopDelegate);
+            case 'cameraStop':
+                this._stopEventHandler.unsubscribe(callback as CameraStopDelegate);
                 break;
             default:
                 throw Error(`Unrecognized camera event type: ${event}`);
