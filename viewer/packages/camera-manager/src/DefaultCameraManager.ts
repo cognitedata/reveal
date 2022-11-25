@@ -166,7 +166,7 @@ export class DefaultCameraManager implements CameraManager {
    * Only provided options will be changed, any undefined options will be kept as is.
    */
   setComboControlsOptions(options: Partial<ComboControlsOptions>): void {
-    this._controls.options = { ...this.getComboControlsOptions(), ...options };
+    this._controls.options = options;
   }
 
   /**
