@@ -15,8 +15,8 @@ const getExtendedAnnotationsWithBadges = (
             id: `${annotation.id}-suggested`,
             radius: 0.003,
             style: {
-              fill: Colors['decorative--red--400'],
-              stroke: Colors['decorative--red--400'],
+              fill: Colors['decorative--red--400'].hex(),
+              stroke: Colors['decorative--red--400'].hex(),
               strokeWidth: 5,
             },
             type: AnnotationType.ELLIPSE,
