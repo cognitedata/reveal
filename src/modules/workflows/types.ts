@@ -1,4 +1,5 @@
-import { Asset, FileInfo } from '@cognite/sdk';
+import { CogniteAnnotation } from '@cognite/annotations';
+import { AnnotationModel, Asset, FileInfo } from '@cognite/sdk';
 import { ResourceType } from 'modules/types';
 
 export type PendingResourceSelection = Omit<ResourceSelection, 'id'>;
@@ -175,3 +176,22 @@ export type JobStatus =
   | 'running'
   | 'done'
   | 'error';
+
+export enum AnnotationSource {
+  EVENTS = 'events',
+  ANNOTATIONS = 'annotations',
+}
+
+export type TaggedEventAnnotation = {
+  source: AnnotationSource.EVENTS;
+  annotation: CogniteAnnotation;
+};
+
+export type TaggedAnnotationAnnotation = {
+  source: AnnotationSource.ANNOTATIONS;
+  annotation: AnnotationModel;
+};
+
+export type TaggedAnnotation =
+  | TaggedEventAnnotation
+  | TaggedAnnotationAnnotation;

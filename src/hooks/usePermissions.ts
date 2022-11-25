@@ -18,6 +18,7 @@ export const useAllNeededPermissions = () => {
     'filesAcl',
     'READ'
   );
+  // TODO: remove events:read as required permission once annotation migration is complete
   const { data: eventsWritePermission } = usePermissions(
     flow,
     'eventsAcl',
@@ -27,6 +28,11 @@ export const useAllNeededPermissions = () => {
     flow,
     'eventsAcl',
     'READ'
+  );
+  const { data: annotationsWritePermission } = usePermissions(
+    flow,
+    'annotationsAcl',
+    'WRITE'
   );
   const { data: assetsReadPermission } = usePermissions(
     flow,
@@ -54,6 +60,7 @@ export const useAllNeededPermissions = () => {
   const allPermissions: Permission[] = [
     { label: 'files:write', hasPermission: filesWritePermission },
     { label: 'files:read', hasPermission: filesReadPermission },
+    { label: 'annotations:write', hasPermission: annotationsWritePermission },
     { label: 'events:write', hasPermission: eventsWritePermission },
     { label: 'events:read', hasPermission: eventsReadPermission },
     { label: 'assets:read', hasPermission: assetsReadPermission },

@@ -3,18 +3,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import isEqual from 'lodash/isEqual';
 import { FileInfo } from '@cognite/sdk';
-import {
-  CogniteAnnotation,
-  summarizeAssetIdsFromAnnotations,
-} from '@cognite/annotations';
 import { RootState } from 'store';
 import { AppStateContext } from 'context';
 import { useAnnotationsForFiles } from 'hooks';
 import { itemSelector as assetSelector } from 'modules/assets';
 import { itemSelector as fileSelector } from 'modules/files';
-import { boundingBoxToVertices } from 'modules/workflows';
+import {
+  boundingBoxToVertices,
+  getTaggedAnnotationBoundingBox,
+  isTaggedAnnotationsApiAnnotation,
+  isTaggedEventAnnotation,
+  TaggedAnnotation,
+} from 'modules/workflows';
 import { startConvertFileToSvgJob } from 'modules/svgConvert';
 import { Vertices } from 'modules/types';
+import getAssetIdsFromTaggedAnnotations from '../utils/getAssetIdsFromTaggedAnnotations';
 
 type DiagramToConvert = {
   fileName: string;
@@ -80,27 +83,48 @@ export const useDiagramsToConvert = (fileIds: number[]) => {
     const pendingDiagrams = fileIds.filter(
       (fileId: number) =>
         Boolean(annotationsMap[fileId]) &&
-        annotationsMap[fileId].find((an) => an.status === 'unhandled')
+        annotationsMap[fileId].find((taggedAnnotation) => {
+          if (isTaggedEventAnnotation(taggedAnnotation)) {
+            return taggedAnnotation.annotation.status === 'unhandled';
+          }
+
+          return taggedAnnotation.annotation.status === 'suggested';
+        })
     ).length;
     const diagrams = fileIds
       .filter((fileId: number) => Boolean(annotationsMap[fileId]))
       .map((fileId: number) => {
         const annotations = annotationsMap[fileId].filter(
-          (an) => an.status === 'verified'
+          (taggedAnnotation) => {
+            if (isTaggedEventAnnotation(taggedAnnotation)) {
+              return taggedAnnotation.annotation.status === 'verified';
+            }
+
+            return taggedAnnotation.annotation.status === 'approved';
+          }
         );
         const file: FileInfo = getFile(fileId);
-        const [item] = summarizeAssetIdsFromAnnotations(annotations);
+
+        const [item] = getAssetIdsFromTaggedAnnotations(annotations);
         const assetIds = Array.from(item?.assetIds ?? []) as number[];
+
         const annotationsWithLabels = labelsForAnnotations(annotations);
-        const mappedAnnotations = annotationsWithLabels.map(
-          (annotation: CogniteAnnotation) => ({
-            text: annotation.label,
-            region: {
-              shape: 'rectangle',
-              vertices: boundingBoxToVertices(annotation.box),
-            },
+        const mappedAnnotations = annotationsWithLabels
+          .map(({ taggedAnnotation, label }) => {
+            const boundingBox =
+              getTaggedAnnotationBoundingBox(taggedAnnotation);
+            if (boundingBox === undefined) {
+              return undefined;
+            }
+            return {
+              text: label,
+              region: {
+                shape: 'rectangle',
+                vertices: boundingBoxToVertices(boundingBox),
+              },
+            };
           })
-        );
+          .filter((annotation) => annotation !== undefined);
         return {
           fileName: file?.name ?? '',
           fileId,
@@ -117,21 +141,75 @@ export const useDiagramsToConvert = (fileIds: number[]) => {
   return { diagramsToConvert, nrOfPendingDiagramsToConvert };
 };
 
+const getSafeLabel = (
+  taggedAnnotation: TaggedAnnotation,
+  label: string | undefined
+): string => {
+  if (label !== undefined) {
+    return label;
+  }
+
+  if (
+    isTaggedEventAnnotation(taggedAnnotation) &&
+    taggedAnnotation.annotation.label !== undefined
+  ) {
+    return taggedAnnotation.annotation.label;
+  }
+
+  if (
+    isTaggedAnnotationsApiAnnotation(taggedAnnotation) &&
+    // @ts-expect-error
+    taggedAnnotation.annotation.data.text !== undefined
+  ) {
+    // @ts-expect-error
+    return taggedAnnotation.annotation.data.text;
+  }
+
+  return 'No label';
+};
+
 export const selectLabelsForAnnotations = createSelector(
   assetSelector,
   fileSelector,
-  (assets: any, files: any) => (annotations: CogniteAnnotation[]) => {
-    const annotationLabel = (annotation: CogniteAnnotation) => {
-      switch (annotation.resourceType) {
-        case 'asset': {
+  (assets: any, files: any) => (taggedAnnotations: TaggedAnnotation[]) => {
+    const annotationLabel = (taggedAnnotation: TaggedAnnotation) => {
+      if (isTaggedEventAnnotation(taggedAnnotation)) {
+        switch (taggedAnnotation.annotation.resourceType) {
+          case 'asset': {
+            const asset = assets(
+              taggedAnnotation.annotation.resourceExternalId ||
+                taggedAnnotation.annotation.resourceId
+            );
+            return asset?.name;
+          }
+          case 'file': {
+            const file = files(
+              taggedAnnotation.annotation.resourceExternalId ||
+                taggedAnnotation.annotation.resourceId
+            );
+            return file?.name;
+          }
+          default:
+            return undefined;
+        }
+      }
+
+      switch (taggedAnnotation.annotation.annotationType) {
+        case 'diagrams.AssetLink': {
           const asset = assets(
-            annotation.resourceExternalId || annotation.resourceId
+            // @ts-expect-error
+            taggedAnnotation.annotation.data.assetRef.externalId ||
+              // @ts-expect-error
+              taggedAnnotation.annotation.data.assetRef.id
           );
           return asset?.name;
         }
-        case 'file': {
+        case 'diagrams.FileLink': {
           const file = files(
-            annotation.resourceExternalId || annotation.resourceId
+            // @ts-expect-error
+            taggedAnnotation.annotation.data.fileRef.externalId ||
+              // @ts-expect-error
+              taggedAnnotation.annotation.data.fileRef.id
           );
           return file?.name;
         }
@@ -139,13 +217,16 @@ export const selectLabelsForAnnotations = createSelector(
           return undefined;
       }
     };
-    return annotations.map((annotation) => {
-      const label =
-        annotationLabel(annotation) || annotation.label || 'No label';
+    return taggedAnnotations.map((taggedAnnotation) => {
+      const label = getSafeLabel(
+        taggedAnnotation,
+        annotationLabel(taggedAnnotation)
+      );
+
       return {
-        ...annotation,
+        taggedAnnotation,
         label,
-      } as CogniteAnnotation;
+      };
     });
   }
 );

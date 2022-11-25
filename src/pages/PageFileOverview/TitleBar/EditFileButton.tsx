@@ -17,8 +17,14 @@ export const EditFileButton = ({
 }) => {
   const { flow } = getFlow();
   const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
+  // TODO: remove events:write once the migration to Annotations API is completed
   const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
-  const writeAccess = filesAcl && eventsAcl;
+  const { data: annotationsAcl } = usePermissions(
+    flow,
+    'annotationsAcl',
+    'WRITE'
+  );
+  const writeAccess = filesAcl && eventsAcl && annotationsAcl;
 
   if (type !== 'file') {
     return null;

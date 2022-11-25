@@ -1337,10 +1337,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@^5.43.6":
-  version "5.43.6"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.43.6.tgz#b3ec8e32844c19e7381250ae1d7ddd147e611767"
-  integrity sha512-53J4uafTvaIBgsIYVxscy9Q63xqT+pI+kI/nEIL6bqcA8MCK52C+ZC4qtWaEWOX9xrYZAoPUOBcGkD/1njSA3g==
+"@cognite/data-exploration@^5.54.10":
+  version "5.54.10"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.54.10.tgz#1ab73cd26ff5366e6de01ed8858fc0ad16cddb2d"
+  integrity sha512-XY3d0aS/N3ej8RYecFgaU3py5hKT1sp4Gu1ddhVOjfYlfTNvwt7K29rbyGO1ZGS0eq5ei/qBqEhiJF4pqTZ3Ig==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
@@ -1351,13 +1351,12 @@
     "@cognite/react-document-table" "^1.22.2"
     "@cognite/react-feature-flags" "^1.0.1"
     "@cognite/react-picture-annotation" "3.0.1"
-    "@cognite/sdk" "^7.8.4"
+    "@cognite/sdk" "^7.13.0"
     "@cognite/sdk-provider" "^2.0.0"
     "@cognite/sdk-react-query-hooks" "^6.0.2"
-    "@cognite/unified-file-viewer" "^2.7.1"
+    "@cognite/unified-file-viewer" "^3.0.0"
     "@tanstack/react-table" "^8.5.15"
     "@types/react-copy-to-clipboard" "^5.0.4"
-    "@types/react-table" "^7.0.0"
     "@visx/axis" "^2.1.0"
     "@visx/event" "^2.1.0"
     "@visx/gradient" "^2.1.0"
@@ -1376,23 +1375,18 @@
     dayjs "^1.11.1"
     dnd-core "^16.0.1"
     i18next "^21.9.1"
-    immutability-helper "^3.1.1"
     lodash "^4.17.21"
     mime-types "^2.1.30"
     query-string "^7.0.0"
-    react-base-table "^1.12.0"
     react-beautiful-dnd "^13.1.1"
     react-copy-to-clipboard "^5.1.0"
     react-datepicker "^3.7.0"
-    react-dnd "^16.0.1"
-    react-dnd-html5-backend "^16.0.1"
     react-highlight-words "^0.18.0"
     react-i18next "^11.18.5"
     react-query "^3.13.10"
-    react-router-dom "^6.2.2"
+    react-router-dom "6.4.2"
     react-select "^4.3.0"
     react-splitter-layout "^4.0.0"
-    react-table "^7.7.0"
     react-virtualized "^9.21.2"
     react-virtualized-auto-sizer "^1.0.5"
     react-virtualized-tree "^3.4.1"
@@ -1402,7 +1396,7 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/gcs-browser-upload@^1.1.1", "@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
+"@cognite/gcs-browser-upload@^1.1.1", "@cognite/gcs-browser-upload@github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
   version "1.1.1"
   resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
   dependencies:
@@ -1515,6 +1509,17 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
+"@cognite/sdk-core@^4.8.2":
+  version "4.8.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.2.tgz#00f69eaf93d433223f650891d098e1ffb0738631"
+  integrity sha512-nV17d8Z+NMErVyO2hv6yafpl32TmRwMc1pPYnMp+J4FcE0bCUqvL6AduXAPQZ443NZx86+Obz5SWzUg3PXzfkA==
+  dependencies:
+    cross-fetch "^3.0.4"
+    is-buffer "^2.0.5"
+    lodash "^4.17.11"
+    query-string "^5.1.1"
+    url "^0.11.0"
+
 "@cognite/sdk-provider@^2.0.0", "@cognite/sdk-provider@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-provider/-/sdk-provider-2.0.6.tgz#170f6c8d6b78f5b8b9600be9b2e0bba1cf0f1a32"
@@ -1536,7 +1541,27 @@
     "@cognite/sdk-core" "^2.1.2"
     lodash "^4.17.11"
 
-"@cognite/sdk@^7.6.0", "@cognite/sdk@^7.7.0", "@cognite/sdk@^7.8.4", "@cognite/sdk@^7.9.6":
+"@cognite/sdk@7.12.0":
+  version "7.12.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.12.0.tgz#1d1c2a3a7c4203a12958802f2c8564e179158877"
+  integrity sha512-gvNgWGeT31h6rT2/wMqJrXwolkmrGAKix2DuD0sllylq6bQarTbJEO1tkvFmFe97IT5Yl33V1hKzKTkkcw1yuw==
+  dependencies:
+    "@cognite/sdk-core" "^4.8.2"
+    "@types/geojson" "^7946.0.8"
+    geojson "^0.5.0"
+    lodash "^4.17.11"
+
+"@cognite/sdk@^7.13.0":
+  version "7.13.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.13.0.tgz#536af64fd77e8686d64c8caad0fc43558b27c5ac"
+  integrity sha512-fGMDGi9TaBdGQIkfvgR09dApklQZLRUGiZ5brjFfZ5mv9Xx6LVzQ73mxM7u6FgmzCWAkwIlnQpHj9Wz3B1iNzg==
+  dependencies:
+    "@cognite/sdk-core" "^4.8.2"
+    "@types/geojson" "^7946.0.8"
+    geojson "^0.5.0"
+    lodash "^4.17.11"
+
+"@cognite/sdk@^7.7.0":
   version "7.9.6"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.9.6.tgz#6f66262bc7b62078bd93dd7996a986fb53b93fee"
   integrity sha512-JDtTAer69pX3BdM4ftG6n/OT2GjnhrqlLCO8ufZivORbC/0aNGOYcgoBkIoAaacmqn1DJGJDTeI33g3XZErHEQ==
@@ -1559,13 +1584,13 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^2.7.1":
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-2.7.1.tgz#bc1c1101718255892e7a6704335f8181e5c6f029"
-  integrity sha512-AcsqYvnCK8P0OiKobpTq349cKNnLIacczQlNw7AHRrpqcR2ljROb8oh+laFBSMJfekwzi2dsR1zRJpIS7Vd68Q==
+"@cognite/unified-file-viewer@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-3.0.0.tgz#f6ea08c6ee02321ee3ebc953e8006a2d23c1b483"
+  integrity sha512-M4X0mKH5uotHayn4ZOkhqubGoSwkmMuFXD4y3S67E+Zvc+atr2Ep/dFypkby7GeoUU4vXHqOKbGfor7CQyctlw==
   dependencies:
     "@cognite/cogs.js" "7.0.3"
-    "@cognite/sdk" "^7.6.0"
+    "@cognite/sdk" "^7.13.0"
     chroma-js "^2.4.2"
     konva "^8.3.9"
     lodash "^4.17.21"
@@ -3794,13 +3819,6 @@
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/react-splitter-layout/-/react-splitter-layout-3.0.2.tgz#72a3c8b9329ee2a626d8c4c456852473a94a5e8b"
   integrity sha512-kb6eJoMTvgefh7LJE5VZuJMiqshxgECarfNO5NAXXyLaPg1FuUPUpmDqlWyGHdal81FYBuNfT1Q9+fwrGc2fOw==
-  dependencies:
-    "@types/react" "*"
-
-"@types/react-table@^7.0.0":
-  version "7.7.12"
-  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.7.12.tgz#628011d3cb695b07c678704a61f2f1d5b8e567fd"
-  integrity sha512-bRUent+NR/WwtDGwI/BqhZ8XnHghwHw0HUKeohzB5xN3K2qKWYE5w19e7GCuOkL1CXD9Gi1HFy7TIm2AvgWUHg==
   dependencies:
     "@types/react" "*"
 
@@ -10302,11 +10320,6 @@ immer@^9.0.7:
   resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.16.tgz#8e7caab80118c2b54b37ad43e05758cdefad0198"
   integrity sha512-qenGE7CstVm1NrHQbMh8YaSzTZTFNP3zPqr3YU0S0UY441j4bJTg4A2Hh5KAhwgaiU6ZZ1Ar6y/2f4TblnMReQ==
 
-immutability-helper@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/immutability-helper/-/immutability-helper-3.1.1.tgz#2b86b2286ed3b1241c9e23b7b21e0444f52f77b7"
-  integrity sha512-Q0QaXjPjwIju/28TsugCHNEASwoCcJSyJV3uO1sOIQGI0jKgm9f41Lvz0DZj3n46cNCyAZTsEYoY4C2bVRUzyQ==
-
 immutable@^3.7.4, immutable@^3.8.2:
   version "3.8.2"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
@@ -15483,18 +15496,6 @@ react-archer@^3.0.0:
     react-fast-compare "^2.0.4"
     resize-observer-polyfill "1.5.0"
 
-react-base-table@^1.12.0:
-  version "1.13.2"
-  resolved "https://registry.yarnpkg.com/react-base-table/-/react-base-table-1.13.2.tgz#bf76a3d68cd86d7b9935e620aacd7f883be99f19"
-  integrity sha512-VhyKXZwEu8U/wH2eY3Ie3GJbvGP9wQzts26k1t/A7b8IS1OM31j8ul6HAvLmudpT33XqFPD7/KK18tfx/5I/eA==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    classnames "^2.2.5"
-    memoize-one "^5.0.0"
-    prop-types "^15.7.0"
-    react-virtualized-auto-sizer "^1.0.2"
-    react-window "^1.8.2"
-
 react-beautiful-dnd@^13.1.1:
   version "13.1.1"
   resolved "https://registry.yarnpkg.com/react-beautiful-dnd/-/react-beautiful-dnd-13.1.1.tgz#b0f3087a5840920abf8bb2325f1ffa46d8c4d0a2"
@@ -15600,14 +15601,14 @@ react-dev-utils@^12.0.1:
     strip-ansi "^6.0.1"
     text-table "^0.2.0"
 
-react-dnd-html5-backend@^15.1.2, react-dnd-html5-backend@^16.0.1:
+react-dnd-html5-backend@^15.1.2:
   version "15.1.3"
   resolved "https://registry.yarnpkg.com/react-dnd-html5-backend/-/react-dnd-html5-backend-15.1.3.tgz#57b4f47e0f23923e7c243d2d0eefe490069115a9"
   integrity sha512-HH/8nOEmrrcRGHMqJR91FOwhnLlx5SRLXmsQwZT3IPcBjx88WT+0pWC5A4tDOYDdoooh9k+KMPvWfxooR5TcOA==
   dependencies:
     dnd-core "15.1.2"
 
-react-dnd@^15.1.2, react-dnd@^16.0.1:
+react-dnd@^15.1.2:
   version "15.1.2"
   resolved "https://registry.yarnpkg.com/react-dnd/-/react-dnd-15.1.2.tgz#211b30fd842326209c63f26f1bdf1bc52eef4f64"
   integrity sha512-EaSbMD9iFJDY/o48T3c8wn3uWU+2uxfFojhesZN3LhigJoAIvH2iOjxofSA9KbqhAKP6V9P853G6XG8JngKVtA==
@@ -15776,6 +15777,14 @@ react-refresh@^0.11.0:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.11.0.tgz#77198b944733f0f1f1a90e791de4541f9f074046"
   integrity sha512-F27qZr8uUqwhWZboondsPx8tnC3Ct3SxZA3V5WyEvujRyyNv0VYPhoBg1gZ8/MV5tubQp76Trw8lTv9hzRBa+A==
 
+react-router-dom@6.4.2:
+  version "6.4.2"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.4.2.tgz#115b37d501d6d8ac870683694978c51c43e6c0d2"
+  integrity sha512-yM1kjoTkpfjgczPrcyWrp+OuQMyB1WleICiiGfstnQYo/S8hPEEnVjr/RdmlH6yKK4Tnj1UGXFSa7uwAtmDoLQ==
+  dependencies:
+    "@remix-run/router" "1.0.2"
+    react-router "6.4.2"
+
 react-router-dom@^5.2.0:
   version "5.3.4"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-5.3.4.tgz#2ed62ffd88cae6db134445f4a0c0ae8b91d2e5e6"
@@ -15788,14 +15797,6 @@ react-router-dom@^5.2.0:
     react-router "5.3.4"
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
-
-react-router-dom@^6.2.2:
-  version "6.4.2"
-  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.4.2.tgz#115b37d501d6d8ac870683694978c51c43e6c0d2"
-  integrity sha512-yM1kjoTkpfjgczPrcyWrp+OuQMyB1WleICiiGfstnQYo/S8hPEEnVjr/RdmlH6yKK4Tnj1UGXFSa7uwAtmDoLQ==
-  dependencies:
-    "@remix-run/router" "1.0.2"
-    react-router "6.4.2"
 
 react-router@5.3.4:
   version "5.3.4"
@@ -15944,7 +15945,7 @@ react-splitter-layout@^4.0.0:
   resolved "https://registry.yarnpkg.com/react-splitter-layout/-/react-splitter-layout-4.0.0.tgz#70b43ca6a78c056f5e5fbf29c67b597f040fbf2e"
   integrity sha512-SLqOjBOxRuizWUa83w6q5/u9cDWa9/yj9Iko9V9JFN8x+cqIXiDlUFWSx+icz3IIgvsN/oRIw3za5/32RjIwrA==
 
-react-table@^7.6.0, react-table@^7.7.0:
+react-table@^7.6.0:
   version "7.8.0"
   resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.8.0.tgz#07858c01c1718c09f7f1aed7034fcfd7bda907d2"
   integrity sha512-hNaz4ygkZO4bESeFfnfOft73iBUj8K5oKi1EcSHPAibEydfsX2MyU6Z8KCr3mv3C9Kqqh71U+DhZkFvibbnPbA==
@@ -15990,7 +15991,7 @@ react-use-measure@^2.0.4:
   dependencies:
     debounce "^1.2.1"
 
-react-virtualized-auto-sizer@^1.0.2, react-virtualized-auto-sizer@^1.0.5:
+react-virtualized-auto-sizer@^1.0.5:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.7.tgz#bfb8414698ad1597912473de3e2e5f82180c1195"
   integrity sha512-Mxi6lwOmjwIjC1X4gABXMJcKHsOo0xWl3E3ugOgufB8GJU+MqrtY35aBuvCYv/razQ1Vbp7h1gWJjGjoNN5pmA==
@@ -16027,7 +16028,7 @@ react-window-infinite-loader@^1.0.7:
   resolved "https://registry.yarnpkg.com/react-window-infinite-loader/-/react-window-infinite-loader-1.0.8.tgz#f88b1444829e732a3f4c5ae861644815329ddd88"
   integrity sha512-907ZLAiZZfBHuZyiY0V7uiSL4P/rI6UQyCF9wES1cDWTeyNLgGLaxu+BZkcUW3R5tSCQcbCcWBl0jVIpYzrKGQ==
 
-react-window@^1.8.2, react-window@^1.8.6:
+react-window@^1.8.6:
   version "1.8.7"
   resolved "https://registry.yarnpkg.com/react-window/-/react-window-1.8.7.tgz#5e9fd0d23f48f432d7022cdb327219353a15f0d4"
   integrity sha512-JHEZbPXBpKMmoNO1bNhoXOOLg/ujhL/BU4IqVU9r8eQPcy5KQnGHIHDRkJ0ns9IM5+Aq5LNwt3j8t3tIrePQzA==

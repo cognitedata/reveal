@@ -39,8 +39,14 @@ export const FilePreview = ({
   );
   const { flow } = getFlow();
   const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
+  const { data: annotationsAcl } = usePermissions(
+    flow,
+    'annotationsAcl',
+    'WRITE'
+  );
+  // TODO: remove events:write once the migration to Annotations API is completed
   const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
-  const writeAccess = filesAcl && eventsAcl;
+  const writeAccess = filesAcl && eventsAcl && annotationsAcl;
 
   useEffect(() => {
     if (fileId && !isActive) {

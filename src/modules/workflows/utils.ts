@@ -1,35 +1,49 @@
-import { FileChangeUpdate, Asset, FileInfo } from '@cognite/sdk';
 import {
-  createAnnotations,
+  AnnotationBoundingBox,
+  CogniteAnnotation,
   listAnnotationsForFile,
 } from '@cognite/annotations';
 import sdk from '@cognite/cdf-sdk-singleton';
 import {
-  workflowDiagramStatusSelector,
-  workflowAllResourcesStatusSelector,
-} from 'modules/workflows';
+  AnnotationCreate,
+  AnnotationModel,
+  Asset,
+  FileChangeUpdate,
+  FileInfo,
+} from '@cognite/sdk';
 import {
-  PnidsParsingJobSchema,
-  FileAnnotationsCount,
-  PnidResponseEntity,
-  RetrieveResultsResponseItem,
-  RetrieveResultsResponseItems,
-  PnidFailedFileSchema,
-  Workflow,
-  Vertices,
-  BoundingBox,
-} from 'modules/types';
-import { createPendingAnnotationsFromJob } from 'utils/AnnotationUtils';
-import { getUniqueValuesArray } from 'utils/utils';
-import { translateError } from 'utils/handleError';
-import {
+  doesLabelExist,
+  INTERACTIVE_LABEL,
   isFileApproved,
   isFilePending,
-  doesLabelExist,
   PENDING_LABEL,
-  INTERACTIVE_LABEL,
 } from 'hooks';
+import {
+  BoundingBox,
+  FileAnnotationsCount,
+  PnidFailedFileSchema,
+  PnidResponseEntity,
+  PnidsParsingJobSchema,
+  RetrieveResultsResponseItem,
+  RetrieveResultsResponseItems,
+  TaggedAnnotationAnnotation,
+  TaggedEventAnnotation,
+  Vertices,
+  Workflow,
+} from 'modules/types';
+import {
+  AnnotationSource,
+  TaggedAnnotation,
+  workflowAllResourcesStatusSelector,
+  workflowDiagramStatusSelector,
+} from 'modules/workflows';
 import { RootState } from 'store';
+import {
+  createPendingAnnotationsFromJob,
+  listAnnotationsForFileFromAnnotationsApi,
+} from 'utils/AnnotationUtils';
+import { translateError } from 'utils/handleError';
+import { getUniqueValuesArray } from 'utils/utils';
 import { loadWorkflowDiagrams, loadWorkflowResources } from './actions';
 import { MatchFields } from './types';
 
@@ -90,20 +104,60 @@ export const handleNewAnnotations = async (
   return { annotationCounts, failedFiles };
 };
 
+const getTaggedAnnotations = async (
+  file: FileInfo
+): Promise<TaggedAnnotation[]> => {
+  const annotations = await listAnnotationsForFileFromAnnotationsApi(
+    sdk,
+    file.id
+  );
+  return annotations.map((annotation) => ({
+    source: AnnotationSource.ANNOTATIONS,
+    annotation,
+  }));
+};
+
+const getTaggedEventAnnotations = async (
+  file: FileInfo
+): Promise<TaggedAnnotation[]> => {
+  const existingAnnotations = await listAnnotationsForFile(sdk, file, true);
+  return existingAnnotations.map((annotation) => ({
+    source: AnnotationSource.EVENTS,
+    annotation,
+  }));
+};
+
 export const createPendingAnnotations = async (
   file: FileInfo,
   jobId: string,
-  annotations: NonNullable<RetrieveResultsResponseItem['annotations']>
+  detectedAnnotations: NonNullable<RetrieveResultsResponseItem['annotations']>
 ): Promise<FileAnnotationsCount> => {
-  const existingAnnotations = await listAnnotationsForFile(sdk, file, true);
+  const taggedAnnotations = [
+    ...(await getTaggedAnnotations(file)),
+    ...(await getTaggedEventAnnotations(file)),
+  ];
 
-  const existingNotRejectedAnnotations = existingAnnotations.filter(
-    (annotation) => annotation.status !== 'deleted'
-  );
-  const existingUnhandledAnnotations = existingAnnotations.filter(
-    (annotation) => annotation.status === 'unhandled'
-  );
-  const preparedAnnotations: PnidResponseEntity[] = annotations.map(
+  const existingNotRejectedAnnotationsCount = taggedAnnotations.filter(
+    (taggedAnnotation) => {
+      if (taggedAnnotation.source === AnnotationSource.EVENTS) {
+        return taggedAnnotation.annotation.status !== 'deleted';
+      }
+
+      return taggedAnnotation.annotation.status !== 'rejected';
+    }
+  ).length;
+
+  const existingUnhandledAnnotationsCount = taggedAnnotations.filter(
+    (taggedAnnotation) => {
+      if (taggedAnnotation.source === AnnotationSource.EVENTS) {
+        return taggedAnnotation.annotation.status === 'unhandled';
+      }
+
+      return taggedAnnotation.annotation.status === 'suggested';
+    }
+  ).length;
+
+  const preparedAnnotations: PnidResponseEntity[] = detectedAnnotations.map(
     (annotation) => ({
       text: annotation.text,
       boundingBox: verticesToBoundingBox(annotation.region.vertices),
@@ -117,43 +171,76 @@ export const createPendingAnnotations = async (
   );
 
   // generate valid annotations
-  const pendingAnnotations = await createPendingAnnotationsFromJob(
-    file,
-    preparedAnnotations,
-    `${jobId!}`,
-    existingAnnotations
-  );
+  const pendingAnnotations: AnnotationCreate[] =
+    await createPendingAnnotationsFromJob(
+      file,
+      preparedAnnotations,
+      `${jobId!}`,
+      taggedAnnotations
+    );
 
-  const hasLinkedPendingTags = pendingAnnotations.some(
-    (an) =>
-      (an.resourceId || an.resourceExternalId) && an.status === 'unhandled'
-  );
-
-  await createAnnotations(sdk, pendingAnnotations);
+  if (pendingAnnotations.length > 0) {
+    await sdk.annotations.create(pendingAnnotations);
+  }
 
   const isFileMissingLabel =
-    !isFilePending(file) && !!existingUnhandledAnnotations.length;
+    !isFilePending(file) && !!existingUnhandledAnnotationsCount;
 
+  const hasLinkedPendingTags = pendingAnnotations.some((annotation) => {
+    if (annotation.annotationType === 'diagrams.FileLink') {
+      return (
+        // @ts-expect-error
+        (annotation.data.fileRef.id ||
+          // @ts-expect-error
+          annotation.data.fileRef.externalId) &&
+        annotation.status === 'suggested'
+      );
+    }
+
+    if (annotation.annotationType === 'diagrams.AssetLink') {
+      return (
+        // @ts-expect-error
+        (annotation.data.assetRef.id ||
+          // @ts-expect-error
+          annotation.data.assetRef.externalId) &&
+        annotation.status === 'suggested'
+      );
+    }
+
+    // NOTE: This should never happen
+    return false;
+  });
   // If file is missing the pending label OR has unapproved annotations
   if (hasLinkedPendingTags || isFileMissingLabel) {
     await setFilePending(file);
   }
-  if (!existingNotRejectedAnnotations?.length && !hasLinkedPendingTags) {
+  if (!existingNotRejectedAnnotationsCount && !hasLinkedPendingTags) {
     await setFileNoLabels(file);
   }
 
   return {
-    existingFilesAnnotations: existingAnnotations.filter(
-      (anotation) => anotation.resourceType === 'file'
-    ).length,
-    existingAssetsAnnotations: existingAnnotations.filter(
-      (anotation) => anotation.resourceType === 'asset'
-    ).length,
+    existingFilesAnnotations: taggedAnnotations.filter((taggedAnnotation) => {
+      if (taggedAnnotation.source === AnnotationSource.EVENTS) {
+        return taggedAnnotation.annotation.resourceType === 'file';
+      }
+
+      return taggedAnnotation.annotation.annotationType === 'diagrams.FileLink';
+    }).length,
+
+    existingAssetsAnnotations: taggedAnnotations.filter((taggedAnnotation) => {
+      if (taggedAnnotation.source === AnnotationSource.EVENTS) {
+        return taggedAnnotation.annotation.resourceType === 'asset';
+      }
+
+      return (
+        taggedAnnotation.annotation.annotationType === 'diagrams.AssetLink'
+      );
+    }).length,
     newFilesAnnotations: pendingAnnotations.filter(
-      (annotation) => annotation.resourceType === 'file'
+      (annotation) => annotation.annotationType === 'diagrams.FileLink'
     ).length,
     newAssetAnnotations: pendingAnnotations.filter(
-      (annotation) => annotation.resourceType === 'asset'
+      (annotation) => annotation.annotationType === 'diagrams.AssetLink'
     ).length,
   };
 };
@@ -294,4 +381,51 @@ export const mapFilesToEntities = (
       ? (file?.metadata ?? {})[metadataField] ?? ''
       : file[fieldToMatch as keyof FileInfo] ?? '',
   }));
+};
+
+export const isTaggedEventAnnotation = (
+  annotation: TaggedAnnotation
+): annotation is TaggedEventAnnotation => {
+  return annotation.source === AnnotationSource.EVENTS;
+};
+
+export const isTaggedAnnotationsApiAnnotation = (
+  annotation: TaggedAnnotation
+): annotation is TaggedAnnotationAnnotation => {
+  return annotation.source === AnnotationSource.ANNOTATIONS;
+};
+
+export const getTaggedAnnotationFromEventAnnotation = (
+  eventAnnotation: CogniteAnnotation
+): TaggedAnnotation => ({
+  source: AnnotationSource.EVENTS,
+  annotation: eventAnnotation,
+});
+
+export const getTaggedAnnotationFromAnnotationsApiAnnotation = (
+  annotation: AnnotationModel
+): TaggedAnnotation => ({
+  source: AnnotationSource.ANNOTATIONS,
+  annotation,
+});
+
+export const getTaggedAnnotationBoundingBox = (
+  taggedAnnotation: TaggedAnnotation
+): AnnotationBoundingBox | undefined => {
+  if (isTaggedEventAnnotation(taggedAnnotation)) {
+    return taggedAnnotation.annotation.box;
+  }
+
+  const annotationType = taggedAnnotation.annotation.annotationType;
+  if (
+    annotationType === 'diagrams.AssetLink' ||
+    annotationType === 'diagrams.FileLink' ||
+    annotationType === 'diagrams.UnhandledTextObject'
+  ) {
+    // @ts-expect-error
+    return taggedAnnotation.annotation.data.textRegion;
+  }
+  // eslint-disable-next-line no-console
+  console.warn(`Unhandled annotation type '${annotationType}'`);
+  return undefined;
 };

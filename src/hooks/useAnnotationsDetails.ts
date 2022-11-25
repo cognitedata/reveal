@@ -1,32 +1,39 @@
+import sdk from '@cognite/cdf-sdk-singleton';
 import { useEffect, useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import uniqBy from 'lodash/uniqBy';
 import {
   getIdFilter,
   getExternalIdFilter,
   convertEventsToAnnotations,
-  CogniteAnnotation,
 } from '@cognite/annotations';
 import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
 import { FileInfo, CogniteEvent } from '@cognite/sdk';
 import { useInterval } from 'hooks';
+import {
+  getTaggedAnnotationFromAnnotationsApiAnnotation,
+  getTaggedAnnotationFromEventAnnotation,
+  isTaggedEventAnnotation,
+  TaggedAnnotation,
+} from '../modules/workflows';
+import { listAnnotationsForFileFromAnnotationsApi } from 'utils/AnnotationUtils';
 
 const TIMES_TO_REFETCH = 3;
 
 export const useAnnotationsDetails = (fileId: number, refetch?: boolean) => {
   const client = useQueryClient();
   const [refetchTime, setRefetchTime] = useState(TIMES_TO_REFETCH);
-  const [assetTags, setAssetTags] = useState<CogniteAnnotation[]>([]);
-  const [fileTags, setFileTags] = useState<CogniteAnnotation[]>([]);
-  const [pendingAssetTags, setPendingAssetTags] = useState<CogniteAnnotation[]>(
+  const [assetTags, setAssetTags] = useState<TaggedAnnotation[]>([]);
+  const [fileTags, setFileTags] = useState<TaggedAnnotation[]>([]);
+  const [pendingAssetTags, setPendingAssetTags] = useState<TaggedAnnotation[]>(
     []
   );
-  const [pendingFileTags, setPendingFileTags] = useState<CogniteAnnotation[]>(
+  const [pendingFileTags, setPendingFileTags] = useState<TaggedAnnotation[]>(
     []
   );
   const [isFetched, setIsFetched] = useState<boolean>(false);
   const [annotations, setAnnotations] = useState<{
-    [id: number]: CogniteAnnotation[];
+    [id: number]: TaggedAnnotation[];
   }>({});
   const [fileIdFilter, setFileIdFilter] = useState<any>();
   const [fileExternalIdFilter, setFileExternalIdFilter] = useState<any>();
@@ -56,25 +63,73 @@ export const useAnnotationsDetails = (fileId: number, refetch?: boolean) => {
       { enabled: isFileFetched && !!fileExternalIdFilter }
     );
 
+  const { data: annotationsById, isFetched: isAnnotationsByIdFetched } =
+    useQuery(
+      `annotations-file-${fileId}`,
+      () => listAnnotationsForFileFromAnnotationsApi(sdk, fileId),
+      { enabled: isFileFetched }
+    );
+
   const refetchAnnotations = () => {
     if (refetchTime <= 0) return;
     client.resetQueries(['sdk-react-query-hooks', 'cdf', 'events', 'list']);
+    client.resetQueries(`annotations-file-${fileId}`);
     setRefetchTime(refetchTime - 1);
   };
 
   const setTags = () => {
     const newAssetTags =
-      annotations[fileId]?.filter(
-        (an) => an.resourceType === 'asset' && an.id && an.status !== 'deleted'
-      ) ?? [];
+      annotations[fileId]?.filter((taggedAnnotation) => {
+        if (isTaggedEventAnnotation(taggedAnnotation)) {
+          return (
+            taggedAnnotation.annotation.resourceType === 'asset' &&
+            taggedAnnotation.annotation.id &&
+            taggedAnnotation.annotation.status !== 'deleted'
+          );
+        }
+
+        return (
+          taggedAnnotation.annotation.annotationType === 'diagrams.AssetLink' &&
+          taggedAnnotation.annotation.status !== 'rejected'
+        );
+      }) ?? [];
     const newFileTags =
-      annotations[fileId]?.filter(
-        (an) => an.resourceType === 'file' && an.id && an.status !== 'deleted'
-      ) ?? [];
+      annotations[fileId]?.filter((taggedAnnotation) => {
+        if (isTaggedEventAnnotation(taggedAnnotation)) {
+          return (
+            taggedAnnotation.annotation.resourceType === 'file' &&
+            taggedAnnotation.annotation.id &&
+            taggedAnnotation.annotation.status !== 'deleted'
+          );
+        }
+
+        return (
+          taggedAnnotation.annotation.annotationType === 'diagrams.FileLink' &&
+          taggedAnnotation.annotation.status !== 'rejected'
+        );
+      }) ?? [];
     const newPendingAssetTags =
-      newAssetTags?.filter((an) => an.id && an.status === 'unhandled') ?? [];
+      newAssetTags?.filter((taggedAnnotation) => {
+        if (isTaggedEventAnnotation(taggedAnnotation)) {
+          return (
+            taggedAnnotation.annotation.id &&
+            taggedAnnotation.annotation.status === 'unhandled'
+          );
+        }
+
+        return taggedAnnotation.annotation.status === 'suggested';
+      }) ?? [];
     const newPendingFileTags =
-      newFileTags?.filter((an) => an.id && an.status === 'unhandled') ?? [];
+      newFileTags?.filter((taggedAnnotation) => {
+        if (isTaggedEventAnnotation(taggedAnnotation)) {
+          return (
+            taggedAnnotation.annotation.id &&
+            taggedAnnotation.annotation.status === 'unhandled'
+          );
+        }
+
+        return taggedAnnotation.annotation.status === 'suggested';
+      }) ?? [];
 
     setAssetTags(newAssetTags);
     setFileTags(newFileTags);
@@ -87,9 +142,16 @@ export const useAnnotationsDetails = (fileId: number, refetch?: boolean) => {
       [...(eventsById ?? []), ...(eventsByExternalId ?? [])],
       (el) => el.id
     );
-    const newAnnotations = convertEventsToAnnotations(uniqueAnnotations).filter(
-      (annotation) => annotation.status !== 'deleted'
-    );
+
+    const newAnnotations = [
+      ...convertEventsToAnnotations(uniqueAnnotations)
+        .filter((annotation) => annotation.status !== 'deleted')
+        .map(getTaggedAnnotationFromEventAnnotation),
+      ...(annotationsById ?? []).map(
+        getTaggedAnnotationFromAnnotationsApiAnnotation
+      ),
+    ];
+
     setAnnotations({ ...annotations, [fileId]: newAnnotations });
     setIsFetched(true);
   };
@@ -100,16 +162,23 @@ export const useAnnotationsDetails = (fileId: number, refetch?: boolean) => {
   }, [annotations]);
 
   useEffect(() => {
-    if (isFileFetched && (isEventsByIdFetched || isEventsByExternalIdFetched)) {
+    if (
+      isFileFetched &&
+      (isEventsByIdFetched ||
+        isEventsByExternalIdFetched ||
+        isAnnotationsByIdFetched)
+    ) {
       getAnnotationsForFile();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isFileFetched,
+    annotationsById,
     eventsById,
     eventsByExternalId,
     isEventsByIdFetched,
     isEventsByExternalIdFetched,
+    isAnnotationsByIdFetched,
   ]);
 
   useInterval(refetchAnnotations, refetch && refetchTime > 0 ? 5000 : null);

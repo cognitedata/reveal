@@ -6,16 +6,21 @@ import {
   getIdFilter,
   getExternalIdFilter,
   convertEventsToAnnotations,
-  CogniteAnnotation,
 } from '@cognite/annotations';
 import sdk from '@cognite/cdf-sdk-singleton';
+import {
+  getTaggedAnnotationFromAnnotationsApiAnnotation,
+  getTaggedAnnotationFromEventAnnotation,
+  TaggedAnnotation,
+} from '../modules/workflows';
+import { listAnnotationsForFileFromAnnotationsApi } from 'utils/AnnotationUtils';
 
 export type FileWithAnnotations = FileInfo & {
-  annotations: CogniteAnnotation[];
+  annotations: TaggedAnnotation[];
 };
 
 type AnnotationsForFiles = {
-  annotations: { [id: number]: CogniteAnnotation[] };
+  annotations: { [id: number]: TaggedAnnotation[] };
   files: FileWithAnnotations[];
   isFetchingAnnotations: boolean;
   isFetchingFiles: boolean;
@@ -31,7 +36,7 @@ export const useAnnotationsForFiles = (
     useState<boolean>(false);
   const [annotationsFetched, setAnnotationsFetched] = useState<boolean>(false);
   const [annotations, setAnnotations] = useState<{
-    [id: number]: CogniteAnnotation[];
+    [id: number]: TaggedAnnotation[];
   }>({});
   const { data: files, isFetched: filesFetched } = useCdfItems<FileInfo>(
     'files',
@@ -41,7 +46,7 @@ export const useAnnotationsForFiles = (
   const fetchEventsForFile = async (
     fileId: number,
     fileExternalId?: string
-  ): Promise<{ [fileId: number]: CogniteAnnotation[] }> => {
+  ): Promise<{ [fileId: number]: TaggedAnnotation[] }> => {
     const eventsById = await sdk.events
       .list({ filter: getIdFilter(fileId) })
       .autoPagingToArray({ limit: -1 });
@@ -52,15 +57,29 @@ export const useAnnotationsForFiles = (
           .autoPagingToArray({ limit: -1 })
       : [];
 
-    const allEvents = convertEventsToAnnotations(
+    const eventAnnotations = convertEventsToAnnotations(
       uniqBy([...eventsById, ...eventsByExternalId], (el) => el.id)
     ).filter((annotation) => annotation.status !== 'deleted');
 
-    return { ...annotations, [fileId]: allEvents };
+    // Note: We only check for annotations by the file internal id since it's always set
+    // and it's always set on all of the annotations in the Annotations API. Not sure if the
+    // same holds for the old events API annotations.
+    const annotationsApiAnnotations =
+      await listAnnotationsForFileFromAnnotationsApi(sdk, fileId);
+
+    return {
+      ...annotations,
+      [fileId]: [
+        ...eventAnnotations.map(getTaggedAnnotationFromEventAnnotation),
+        ...annotationsApiAnnotations.map(
+          getTaggedAnnotationFromAnnotationsApiAnnotation
+        ),
+      ],
+    };
   };
 
   const getAnnotationsForFiles = async () => {
-    let fixedAnnotations: { [fileId: number]: CogniteAnnotation[] } = {};
+    let fixedAnnotations: { [fileId: number]: TaggedAnnotation[] } = {};
     if (!files) return;
     setIsFetchingAnnotations(true);
     await Promise.all(

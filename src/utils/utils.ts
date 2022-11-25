@@ -87,3 +87,11 @@ export const getWorkflowIdFromPath = (path: string): string | false => {
   }
   return false;
 };
+
+export const hasOwnProperty = <T extends {}, U extends PropertyKey>(
+  obj: T,
+  prop: U
+): obj is T & Record<U, unknown> => {
+  // eslint-disable-next-line no-prototype-builtins
+  return obj.hasOwnProperty(prop);
+};

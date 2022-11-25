@@ -1,5 +1,6 @@
+import { AnnotationModel } from '@cognite/sdk/dist/src';
 import React, { useEffect, useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import chunk from 'lodash/chunk';
 import uniqBy from 'lodash/uniqBy';
 import { Modal, notification } from 'antd';
@@ -21,13 +22,18 @@ import {
   getIdFilter,
   getExternalIdFilter,
   updateAnnotations,
-  linkFileToAssetIds,
 } from '@cognite/annotations';
 import { useUserId } from 'hooks/useUserId';
 
 import { sleep } from 'utils/utils';
 import handleError from 'utils/handleError';
+import {
+  isTaggedAnnotationsApiAnnotation,
+  isTaggedEventAnnotation,
+} from '../modules/workflows';
+import linkFileToAssetIds from '../utils/linkFileToAssetIds';
 import { useAnnotationsForFiles } from './useAnnotationsForFiles';
+import { listAnnotationsForFileFromAnnotationsApi } from 'utils/AnnotationUtils';
 
 export const PENDING_LABEL = {
   externalId: 'Pending interactive engineering diagram',
@@ -96,6 +102,10 @@ export const useReviewFiles = (fileIds: Array<number>) => {
         'list',
       ]);
 
+      fileIds.forEach((fileId) => {
+        client.invalidateQueries(`annotations-file-${fileId}`);
+      });
+
       client.invalidateQueries([
         'sdk-react-query-hooks',
         'cdf',
@@ -150,16 +160,30 @@ export const useReviewFiles = (fileIds: Array<number>) => {
   };
 
   const reviewAnnotations = async (fileId: number, approve?: boolean) => {
-    const annotations = annotationsMap[fileId];
-    const unhandledAnnotations = annotations.filter(
-      (annotation) => annotation.status === 'unhandled'
+    const taggedAnnotations = annotationsMap[fileId];
+    const unhandledAnnotations = taggedAnnotations.filter(
+      (taggedAnnotation) => {
+        if (isTaggedEventAnnotation(taggedAnnotation)) {
+          return taggedAnnotation.annotation.status === 'unhandled';
+        }
+
+        return taggedAnnotation.annotation.status === 'suggested';
+      }
     );
-    if (unhandledAnnotations.length) {
+
+    const unhandledTaggedEventAnnotations = unhandledAnnotations.filter(
+      isTaggedEventAnnotation
+    );
+
+    const unhandledTaggedAnnotationsApiAnnotations =
+      unhandledAnnotations.filter(isTaggedAnnotationsApiAnnotation);
+
+    if (unhandledTaggedEventAnnotations.length > 0) {
       await updateAnnotations(
         sdk,
-        unhandledAnnotations.map((annotation) => ({
-          id: annotation.id,
-          annotation,
+        unhandledTaggedEventAnnotations.map((taggedAnnotation) => ({
+          id: taggedAnnotation.annotation.id,
+          annotation: taggedAnnotation.annotation,
           update: {
             status: {
               set: approve ? 'verified' : 'deleted',
@@ -170,9 +194,23 @@ export const useReviewFiles = (fileIds: Array<number>) => {
           },
         }))
       );
-      if (approve) {
-        await linkFileToAssetIds(sdk, unhandledAnnotations);
-      }
+    }
+
+    if (unhandledTaggedAnnotationsApiAnnotations.length > 0) {
+      await sdk.annotations.update(
+        unhandledTaggedAnnotationsApiAnnotations.map((taggedAnnotation) => ({
+          id: taggedAnnotation.annotation.id,
+          update: {
+            status: {
+              set: approve ? 'approved' : 'rejected',
+            },
+          },
+        }))
+      );
+    }
+
+    if (unhandledAnnotations.length > 0 && approve) {
+      await linkFileToAssetIds(sdk, unhandledAnnotations);
     }
   };
 
@@ -197,7 +235,13 @@ export const useReviewFiles = (fileIds: Array<number>) => {
   };
 
   const isFileInteractive = (fileId: number) => {
-    return annotationsMap[fileId]?.some((an) => an.status === 'verified');
+    return annotationsMap[fileId]?.some((taggedAnnotation) => {
+      if (isTaggedEventAnnotation(taggedAnnotation)) {
+        return taggedAnnotation.annotation.status === 'verified';
+      }
+
+      return taggedAnnotation.annotation.status === 'approved';
+    });
   };
 
   const setFilesRejected = async (selectedFileIds: Array<number>) => {
@@ -390,22 +434,32 @@ export const useDeleteTags = () => {
     { enabled: !!fileId }
   );
   const {
-    data: eventsById,
-    isError: isEventsByIdError,
-    isFetched: isEventsByIdFetched,
+    data: eventAnnotationEventsById,
+    isError: isEventAnnotationEventsByIdError,
+    isFetched: isEventAnnotationEventsByIdFetched,
   } = useList<CogniteEvent>(
     'events',
     { filter: fileIdFilter, limit: 1000 },
     { enabled: !!file && !!fileIdFilter }
   );
   const {
-    data: eventsByExternalId,
-    isError: isEventsByExternalIdError,
-    isFetched: isEventsByExternalIdFetched,
+    data: eventAnnotationEventsByExternalId,
+    isError: isEventAnnotationEventsByExternalIdError,
+    isFetched: isEventAnnotationEventsByExternalIdFetched,
   } = useList<CogniteEvent>(
     'events',
     { filter: fileExternalIdFilter, limit: 1000 },
     { enabled: !!file && !!fileExternalIdFilter }
+  );
+
+  const {
+    data: annotationsById,
+    isError: isAnnotationsByIdError,
+    isFetched: isAnnotationsByIdFetched,
+  } = useQuery(
+    `annotations-file-${fileId}`,
+    () => listAnnotationsForFileFromAnnotationsApi(sdk, fileId!),
+    { enabled: !!file && fileId !== undefined }
   );
 
   useEffect(() => {
@@ -419,37 +473,73 @@ export const useDeleteTags = () => {
 
   useEffect(() => {
     const deleteAll = async () => {
-      const allAnnotations: CogniteEvent[] = uniqBy(
-        [...(eventsById ?? []), ...(eventsByExternalId ?? [])],
+      // EventAnnotations
+      const allEventAnnotations: CogniteEvent[] = uniqBy(
+        [
+          ...(eventAnnotationEventsById ?? []),
+          ...(eventAnnotationEventsByExternalId ?? []),
+        ],
         (el: CogniteEvent) => el.id
       );
-      const chunkedList = chunk(allAnnotations, 1000);
+      const chunkedListOfEventAnnotationsToDelete = chunk(
+        allEventAnnotations,
+        1000
+      );
+      const eventAnnotationDeleteRequests =
+        chunkedListOfEventAnnotationsToDelete.map((items) =>
+          sdk.events.delete([...items.map((event) => ({ id: event.id }))])
+        );
+      await Promise.allSettled(eventAnnotationDeleteRequests);
+
+      // Annotations from Annotations API
+      const annotationsToDelete: AnnotationModel[] = uniqBy(
+        annotationsById ?? [],
+        (annotation) => annotation.id
+      );
+      const chunkedList = chunk(annotationsToDelete, 1000);
       const deleteRequests = chunkedList.map((items) =>
-        sdk.events.delete([...items.map((event) => ({ id: event.id }))])
+        sdk.annotations.delete([
+          ...items.map((annotation) => ({ id: annotation.id })),
+        ])
       );
       await Promise.allSettled(deleteRequests);
+
       setShouldDelete(false);
     };
     if (
       shouldDelete &&
-      (eventsById || eventsByExternalId) &&
-      (isEventsByIdFetched || isEventsByExternalIdFetched)
+      (eventAnnotationEventsById ||
+        eventAnnotationEventsByExternalId ||
+        annotationsById) &&
+      (isEventAnnotationEventsByIdFetched ||
+        isEventAnnotationEventsByExternalIdFetched ||
+        isAnnotationsByIdFetched)
     )
       deleteAll();
   }, [
     shouldDelete,
-    eventsById,
-    eventsByExternalId,
-    isEventsByIdFetched,
-    isEventsByExternalIdFetched,
+    eventAnnotationEventsById,
+    eventAnnotationEventsByExternalId,
+    annotationsById,
+    isEventAnnotationEventsByIdFetched,
+    isEventAnnotationEventsByExternalIdFetched,
+    isAnnotationsByIdFetched,
   ]);
 
   useEffect(() => {
-    if (isEventsByIdError || isEventsByExternalIdError) {
+    if (
+      isEventAnnotationEventsByIdError ||
+      isEventAnnotationEventsByExternalIdError ||
+      isAnnotationsByIdError
+    ) {
       // [todo] put legit error here
       // console.log('error :(');
     }
-  }, [isEventsByIdError, isEventsByExternalIdError]);
+  }, [
+    isEventAnnotationEventsByIdError,
+    isEventAnnotationEventsByExternalIdError,
+    isAnnotationsByIdError,
+  ]);
 
   const deleteAnnotationsForFile = (newFileId: number) => {
     setFileId(newFileId);
