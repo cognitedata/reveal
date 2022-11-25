@@ -3,12 +3,12 @@
  */
 
 import { CameraManager } from '../CameraManager';
-import { CameraStoppedDelegate } from '../types';
+import { CameraStopDelegate } from '../types';
 
 import debounce from 'lodash/debounce';
 import { EventTrigger } from '@reveal/utilities';
 
-export class DebouncedCameraStopEventTrigger extends EventTrigger<CameraStoppedDelegate> {
+export class DebouncedCameraStopEventTrigger extends EventTrigger<CameraStopDelegate> {
   private readonly _debouncedFireEvent: () => void;
   private readonly _cameraManager: CameraManager;
 

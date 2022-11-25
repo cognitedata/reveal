@@ -21,7 +21,7 @@ export {
   ComboControlsOptions,
   CameraEventDelegate,
   CameraChangeDelegate,
-  CameraStoppedDelegate
+  CameraStopDelegate
 } from '../packages/camera-manager';
 
 export {

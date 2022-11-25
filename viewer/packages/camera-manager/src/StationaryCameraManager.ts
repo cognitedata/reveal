@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import { assertNever } from '@reveal/utilities';
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
@@ -12,17 +13,17 @@ import {
   CameraEventDelegate,
   CameraManagerEventType,
   CameraState,
+  CameraStopDelegate,
   CAMERA_MANAGER_EVENT_TYPE_LIST
 } from './types';
+import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
 
 export class StationaryCameraManager implements CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
-  private readonly _cameraChangedListeners: Record<CameraManagerEventType, Array<CameraChangeDelegate>> = {
-    cameraChange: [],
-    cameraStopped: []
-  };
+  private readonly _cameraChangedListeners: Array<CameraChangeDelegate> = [];
   private readonly _domElement: HTMLElement;
   private _defaultFOV: number;
+  private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private _isEnabled = false;
   private _isDragging = false;
 
@@ -30,6 +31,7 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement = domElement;
     this._camera = camera;
     this._defaultFOV = camera.fov;
+    this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
   }
 
   get enabled(): boolean {
@@ -87,13 +89,31 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
-    this._cameraChangedListeners[eventType].push(callback);
+    switch(eventType) {
+      case 'cameraChange':
+        this._cameraChangedListeners.push(callback);
+        break;
+      case 'cameraStop':
+        this._stopEventTrigger.subscribe(callback as CameraStopDelegate);
+        break;
+      default:
+        assertNever(eventType);
+    }
   }
 
   off(eventType: CameraManagerEventType, callback: CameraChangeDelegate): void {
-    const index = this._cameraChangedListeners[eventType].indexOf(callback);
-    if (index !== -1) {
-      this._cameraChangedListeners[eventType].splice(index, 1);
+    switch(eventType) {
+      case 'cameraChange':
+        const index = this._cameraChangedListeners.indexOf(callback);
+        if (index !== -1) {
+          this._cameraChangedListeners.splice(index, 1);
+        }
+        break;
+      case 'cameraStop':
+        this._stopEventTrigger.unsubscribe(callback as CameraStopDelegate);
+        break;
+      default:
+        assertNever(eventType);
     }
   }
 
@@ -133,10 +153,9 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   dispose(): void {
-    CAMERA_MANAGER_EVENT_TYPE_LIST.forEach(eventType => {
-      this._cameraChangedListeners[eventType].splice(0);
-    });
     this.deactivate();
+    this._cameraChangedListeners.splice(0);
+    this._stopEventTrigger.dispose();
   }
 
   private readonly enableDragging = (_: PointerEvent) => {
@@ -162,7 +181,7 @@ export class StationaryCameraManager implements CameraManager {
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
 
-    this._cameraChangedListeners['cameraChange'].forEach(cb => cb(this._camera.position, this._camera.position));
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   };
 
   private readonly zoomCamera = (event: WheelEvent) => {

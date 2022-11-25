@@ -13,7 +13,7 @@ import {
   CameraState,
   CameraChangeDelegate,
   CameraManagerEventType,
-  CameraStoppedDelegate,
+  CameraStopDelegate,
   CameraEventDelegate
 } from './types';
 
@@ -135,8 +135,8 @@ export class DefaultCameraManager implements CameraManager {
       case 'cameraChange':
         this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
         break;
-      case 'cameraStopped':
-        this._stopEventTrigger.subscribe(callback as CameraStoppedDelegate);
+      case 'cameraStop':
+        this._stopEventTrigger.subscribe(callback as CameraStopDelegate);
         break;
       default:
         assertNever(event);
@@ -148,8 +148,8 @@ export class DefaultCameraManager implements CameraManager {
       case 'cameraChange':
         this._events.cameraChange.unsubscribe(callback as CameraChangeDelegate);
         break;
-      case 'cameraStopped':
-        this._stopEventTrigger.unsubscribe(callback as CameraStoppedDelegate);
+      case 'cameraStop':
+        this._stopEventTrigger.unsubscribe(callback as CameraStopDelegate);
         break;
       default:
         assertNever(event);

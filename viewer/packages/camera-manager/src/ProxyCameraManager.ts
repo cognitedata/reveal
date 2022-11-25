@@ -9,7 +9,7 @@ import {
   CameraState,
   CameraManagerEventType,
   CAMERA_MANAGER_EVENT_TYPE_LIST,
-  CameraStoppedDelegate,
+  CameraStopDelegate,
   CameraEventDelegate
 } from './types';
 
@@ -40,7 +40,7 @@ export class ProxyCameraManager implements CameraManager {
 
     this._activeCameraEventHandlers = {
       cameraChange: (position, target) => this.onActiveCameraManagerChangeFired(position, target),
-      cameraStopped: () => this.onActiveCameraManagerStoppedFired()
+      cameraStop: () => this.onActiveCameraManagerStopFired()
     };
 
     this._cameraEventListeners = {} as Record<CameraManagerEventType, Set<CameraEventDelegate>>;
@@ -93,13 +93,13 @@ export class ProxyCameraManager implements CameraManager {
   }
 
   public on(eventType: 'cameraChange', callback: CameraChangeDelegate): void;
-  public on(eventType: 'cameraStopped', callback: CameraStoppedDelegate): void;
+  public on(eventType: 'cameraStop', callback: CameraStopDelegate): void;
   public on(eventType: CameraManagerEventType, callback: CameraChangeDelegate): void {
     this._cameraEventListeners[eventType].add(callback);
   }
 
   public off(eventType: 'cameraChange', callback: CameraChangeDelegate): void;
-  public off(eventType: 'cameraStopped', callback: CameraStoppedDelegate): void;
+  public off(eventType: 'cameraStop', callback: CameraStopDelegate): void;
   public off(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
     this._cameraEventListeners[eventType].delete(callback);
   }
@@ -130,7 +130,7 @@ export class ProxyCameraManager implements CameraManager {
     );
   }
 
-  private onActiveCameraManagerStoppedFired() {
-    this._cameraEventListeners['cameraStopped'].forEach(eventHandler => (eventHandler as CameraStoppedDelegate)());
+  private onActiveCameraManagerStopFired() {
+    this._cameraEventListeners['cameraStop'].forEach(eventHandler => (eventHandler as CameraStopDelegate)());
   }
 }

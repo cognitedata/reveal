@@ -9,7 +9,7 @@ import {
     CameraManagerEventType,
     CameraEventDelegate,
     DebouncedCameraStopEventTrigger,
-    CameraStoppedDelegate
+    CameraStopDelegate
 } from '@cognite/reveal';
 
 export class CustomCameraManager implements CameraManager {
@@ -79,8 +79,8 @@ export class CustomCameraManager implements CameraManager {
             case 'cameraChange':
                 this._cameraChangedListener.push(callback);
                 break;
-            case 'cameraStopped':
-                this._stopEventHandler.subscribe(callback as CameraStoppedDelegate);
+            case 'camerastop':
+                this._stopEventHandler.subscribe(callback as CamerastopDelegate);
                 break;
             default:
                 throw Error(`Unrecognized camera event type: ${event}`);
@@ -95,8 +95,8 @@ export class CustomCameraManager implements CameraManager {
                     this._cameraChangedListener.splice(index, 1);
                 }
                 break;
-            case 'cameraStopped':
-                this._stopEventHandler.unsubscribe(callback as CameraStoppedDelegate);
+            case 'camerastop':
+                this._stopEventHandler.unsubscribe(callback as CamerastopDelegate);
                 break;
             default:
                 throw Error(`Unrecognized camera event type: ${event}`);

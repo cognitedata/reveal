@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import {
   CameraState,
   CameraChangeDelegate,
-  CameraStoppedDelegate,
+  CameraStopDelegate,
   CameraManagerEventType,
   CameraEventDelegate
 } from './types';
@@ -69,12 +69,12 @@ export interface CameraManager {
   /**
    * Subscribes to events on this camera manager. There are several event types:
    * 'cameraChange' - Subscribes to changes of the camera. This is used by Reveal to react on changes of the camera.
-   * 'cameraStopped' - Subscribes to events indicating the camera has stopped
+   * 'cameraStop' - Subscribes to events indicating the camera has stopped
    * @param event The event type.
    * @param callback Callback to be called when the event is fired.
    */
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
-  on(event: 'cameraStopped', callback: CameraStoppedDelegate): void;
+  on(event: 'cameraStop', callback: CameraStopDelegate): void;
   on(event: CameraManagerEventType, callback: CameraEventDelegate): void;
 
   /**
@@ -83,7 +83,7 @@ export interface CameraManager {
    * @param callback Callback function to be unsubscribed.
    */
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
-  off(event: 'cameraStopped', callback: CameraStoppedDelegate): void;
+  off(event: 'cameraStop', callback: CameraStopDelegate): void;
   off(event: CameraManagerEventType, callback: CameraEventDelegate): void;
 
   /**

@@ -92,7 +92,7 @@ on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
             // handle adding camera change callback
             break;
         case 'cameraStop':
-            this._stopEventTrigger.subscribe(callback as CameraStoppedDelegate);
+            this._stopEventTrigger.subscribe(callback as CameraStopDelegate);
             break;
         default:
             throw Error(`Unrecognized camera event type: ${event}`);
