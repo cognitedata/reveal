@@ -16,6 +16,7 @@ import {
   Node3D,
 } from '@cognite/sdk';
 import {
+  fetchAssetDetails,
   fetchAssetMappingsByAssetIdQuery,
   fetchClosestAssetIdQuery,
 } from 'app/containers/ThreeD/hooks';
@@ -290,7 +291,18 @@ export const findClosestAsset = async (
     nodeId
   );
 
-  return closestAssetId;
+  if (closestAssetId) {
+    try {
+      const assetDetails = await fetchAssetDetails(
+        sdk,
+        queryClient,
+        closestAssetId
+      );
+      return assetDetails ? closestAssetId : undefined;
+    } catch {}
+  }
+
+  return undefined;
 };
 
 const GREP_STRING_SPLITTER = /\s/;

@@ -1,4 +1,5 @@
 import {
+  Asset,
   AssetMapping3D,
   CogniteClient,
   CogniteError,
@@ -392,6 +393,29 @@ export const fetchClosestAssetIdQuery = async (
     options
   );
 };
+
+const getAssetDetailsQueryKey = (assetId: number) => [
+  'sdk-react-query-hooks',
+  'cdf',
+  'assets',
+  'get',
+  'byId',
+  { id: assetId },
+];
+
+export const fetchAssetDetails = (
+  sdk: CogniteClient,
+  queryClient: QueryClient,
+  assetId: number,
+  options?: FetchQueryOptions<Asset | undefined>
+) => {
+  return queryClient.fetchQuery(
+    getAssetDetailsQueryKey(assetId),
+    async () => sdk.assets.retrieve([{ id: assetId }]).then(items => items[0]),
+    options
+  );
+};
+
 export const SECONDARY_MODEL_BASE_QUERY_KEY = 'reveal-secondary-model';
 
 export const getSecondaryModelQueryKey = (
