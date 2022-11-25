@@ -1,4 +1,10 @@
-import React, { useMemo, useState, useEffect, useRef } from 'react';
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+} from 'react';
 import { Button, Flex, Input } from '@cognite/cogs.js';
 import { AssetMappingsList } from 'app/containers/ThreeD/AssetMappingsList';
 import {
@@ -32,6 +38,7 @@ export const AssetMappingsSidebar = ({
     { id: selectedAssetId! },
     { enabled: Number.isFinite(selectedAssetId) }
   );
+  const isMac = useMemo(() => /Macintosh/.test(window.navigator.userAgent), []);
 
   const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState(false);
@@ -65,20 +72,21 @@ export const AssetMappingsSidebar = ({
 
   const searchRef = useRef<HTMLInputElement>(null);
 
-  window.addEventListener('keydown', function (e) {
-    if (
-      e.keyCode === 75 &&
-      document.getElementById('search') !== document.activeElement
-    ) {
-      e.preventDefault();
-      document.getElementById('search')?.focus();
-    }
-    if (e.key === 'Escape' && expanded) {
-      setQuery('');
-      setExpanded(false);
-      searchRef.current?.blur();
-    }
-  });
+  const keyEventHandler = useCallback(
+    function (e: KeyboardEvent) {
+      const meta = isMac ? 'metaKey' : 'ctrlKey';
+      if (e.key === 'k' && e[meta]) {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    },
+    [isMac]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', keyEventHandler);
+    return () => window.removeEventListener('keydown', keyEventHandler);
+  }, [keyEventHandler]);
 
   return (
     <SidebarContainer
@@ -90,6 +98,13 @@ export const AssetMappingsSidebar = ({
     >
       <Flex gap={5} justifyContent="flex-end" alignItems="center">
         <StyledInput
+          onKeyUp={e => {
+            if (e.key === 'Escape' && expanded) {
+              setQuery('');
+              setExpanded(false);
+              searchRef.current?.blur();
+            }
+          }}
           ref={searchRef}
           id="search"
           style={{ flexGrow: 1 }}
@@ -98,7 +113,7 @@ export const AssetMappingsSidebar = ({
             setQuery(e.target.value);
             trackUsage('Exploration.Action.Search', { name: query });
           }}
-          placeholder={asset?.name || 'Search (⌘ + K)'}
+          placeholder={asset?.name || `Search (${isMac ? '⌘' : 'Ctrl'} + K)`}
           fullWidth
           size="large"
           iconPlacement="left"
