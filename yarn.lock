@@ -1602,10 +1602,10 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/data-exploration@5.54.6":
-  version "5.54.6"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.54.6.tgz#b487d8cfb23fd062d528e02a8d8ead696f19bcbc"
-  integrity sha512-V7+CL/vwBDPp31bufUU+GT4HRet1NZbdZlzqBrJbEIfgDckkrdwMhpXQoqur3TcnWKLyGYJRSDmAJXN02f5Vwg==
+"@cognite/data-exploration@5.54.10":
+  version "5.54.10"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.54.10.tgz#1ab73cd26ff5366e6de01ed8858fc0ad16cddb2d"
+  integrity sha512-XY3d0aS/N3ej8RYecFgaU3py5hKT1sp4Gu1ddhVOjfYlfTNvwt7K29rbyGO1ZGS0eq5ei/qBqEhiJF4pqTZ3Ig==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
@@ -1619,7 +1619,7 @@
     "@cognite/sdk" "^7.13.0"
     "@cognite/sdk-provider" "^2.0.0"
     "@cognite/sdk-react-query-hooks" "^6.0.2"
-    "@cognite/unified-file-viewer" "^2.7.1"
+    "@cognite/unified-file-viewer" "^3.0.0"
     "@tanstack/react-table" "^8.5.15"
     "@types/react-copy-to-clipboard" "^5.0.4"
     "@visx/axis" "^2.1.0"
@@ -1925,13 +1925,13 @@
     styled-components "^5.3.5"
     uuid "^8.3.2"
 
-"@cognite/unified-file-viewer@^2.7.1":
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-2.7.1.tgz#bc1c1101718255892e7a6704335f8181e5c6f029"
-  integrity sha512-AcsqYvnCK8P0OiKobpTq349cKNnLIacczQlNw7AHRrpqcR2ljROb8oh+laFBSMJfekwzi2dsR1zRJpIS7Vd68Q==
+"@cognite/unified-file-viewer@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-3.0.0.tgz#f6ea08c6ee02321ee3ebc953e8006a2d23c1b483"
+  integrity sha512-M4X0mKH5uotHayn4ZOkhqubGoSwkmMuFXD4y3S67E+Zvc+atr2Ep/dFypkby7GeoUU4vXHqOKbGfor7CQyctlw==
   dependencies:
     "@cognite/cogs.js" "7.0.3"
-    "@cognite/sdk" "^7.6.0"
+    "@cognite/sdk" "^7.13.0"
     chroma-js "^2.4.2"
     konva "^8.3.9"
     lodash "^4.17.21"

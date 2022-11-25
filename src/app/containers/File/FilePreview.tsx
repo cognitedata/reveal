@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import {
-  FilePreview as CogniteFilePreview,
+  FilePreviewUFV as CogniteFilePreview,
   ErrorFeedback,
   Loader,
   FileDetails,
@@ -24,6 +24,7 @@ import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useOnPreviewTabChange } from 'app/hooks/hooks';
 import { DetailsTabWrapper } from 'app/containers/Common/element';
 import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
+import { APPLICATION_ID } from 'app/utils/constants';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -150,6 +151,9 @@ export const FilePreview = ({
                   </Banner>
                 )}
                 <CogniteFilePreview
+                  key={fileId}
+                  id={`${APPLICATION_ID}-${fileId}`}
+                  applicationId={APPLICATION_ID}
                   fileId={fileId!}
                   creatable={editMode}
                   contextualization={writeAccess}

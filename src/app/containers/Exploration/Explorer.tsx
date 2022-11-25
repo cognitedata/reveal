@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { ResourceSelectorProvider } from '@cognite/data-exploration';
+import { ResourceSelectorProviderUFV } from '@cognite/data-exploration';
 import styled from 'styled-components';
 import { ResourceDetailsPage } from 'app/containers/ResourceDetails';
 import SearchRedirect from './SearchRedirect';
@@ -9,7 +9,7 @@ import { SearchResultsPage } from './SearchResultsPage';
 export const Explorer = () => {
   return (
     <AppWrapper>
-      <ResourceSelectorProvider>
+      <ResourceSelectorProviderUFV>
         <Routes>
           <Route path="/search" element={<SearchResultsPage />}>
             <Route path=":resourceType" element={<SearchResultsPage />}>
@@ -23,7 +23,7 @@ export const Explorer = () => {
           </Route>
           <Route path="/" element={<SearchRedirect />} />
         </Routes>
-      </ResourceSelectorProvider>
+      </ResourceSelectorProviderUFV>
     </AppWrapper>
   );
 };
