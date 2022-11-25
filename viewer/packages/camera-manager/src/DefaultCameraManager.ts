@@ -157,14 +157,6 @@ export class DefaultCameraManager implements CameraManager {
   /**
    * Gets current Combo Controls options.
    */
-  set comboControlsOptions(options: ComboControlsOptions) {
-    this._controls.options = options;
-  }
-
-  /**
-   * Sets Combo Controls options.
-   * Only provided options will be changed, any undefined options will be kept as is.
-   */
   get comboControlsOptions(): ComboControlsOptions {
     return this._controls.options;
   }
@@ -260,6 +252,14 @@ export class DefaultCameraManager implements CameraManager {
       this.teardownControls(false);
       this.setupControls();
     }
+  }
+
+  /**
+   * Sets Combo Controls options.
+   * Only provided options will be changed, any undefined options will be kept as is.
+   */
+  setComboControlsOptions(options: Partial<ComboControlsOptions>): void {
+    this._controls.options = { ...this.comboControlsOptions, ...options };
   }
 
   update(deltaTime: number, boundingBox: THREE.Box3): void {

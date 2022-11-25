@@ -185,10 +185,9 @@ export class ComboControls extends EventDispatcher {
 
   /**
    * Sets Combo Controls options.
-   * Only provided options will be changed, any undefined options will be kept as is.
    */
   set options(options: ComboControlsOptions) {
-    this._options = { ...this._options, ...options };
+    this._options = options;
   }
 
   constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
