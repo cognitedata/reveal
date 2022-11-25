@@ -118,6 +118,7 @@ export const AssetMappingsSidebar = ({
           size="large"
           iconPlacement="left"
           icon={isFetching || hasNextPage ? 'Loader' : 'Search'}
+          autoComplete="off"
         />
         {expanded && (
           <StyledButton
@@ -157,6 +158,7 @@ export const AssetMappingsSidebar = ({
 const SidebarContainer = styled.div<{ expanded?: boolean }>`
   height: ${props => (props.expanded ? '400px' : 'initial')};
   background: ${props => (props.expanded ? ' var(--cogs-white)' : 'initial')};
+  border-radius: 4px;
   overflow: hidden;
 `;
 
@@ -178,6 +180,8 @@ const StyledInput = styled(Input)`
     &:focus {
       outline: none;
       border: none;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
     }
   }
   .cogs-input.with-icon-left {

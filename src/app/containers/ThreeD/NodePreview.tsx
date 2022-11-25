@@ -112,17 +112,14 @@ export default function NodePreview({
 
   return (
     <Wrapper>
-      <Flex gap={10} alignItems="center">
-        <div style={{ flexGrow: 1, fontWeight: 500 }}>
+      <StyledAssetInfo>
+        <StyledAssetName>
           {isFetching ? <Icon type="Loader" /> : assetInfo?.name}
-        </div>
-        <Button icon="Close" type="ghost" onClick={() => closePreview()} />
-      </Flex>
-      <div>
+        </StyledAssetName>
         <StyledOverline>
           {assetInfo?.description || 'No description'}
         </StyledOverline>
-      </div>
+      </StyledAssetInfo>
       <Menu.Divider />
       <Flex alignItems="center" direction="column">
         {details.map(detail => (
@@ -137,7 +134,7 @@ export default function NodePreview({
       <Flex
         gap={10}
         justifyContent="flex-end"
-        style={{ marginTop: 'auto', padding: '1rem 0 0.5rem 0' }}
+        style={{ marginTop: 'auto', padding: '4px 0 0 0' }}
       >
         <StyledButton
           type="ghost"
@@ -154,6 +151,13 @@ export default function NodePreview({
     </Wrapper>
   );
 }
+const StyledAssetName = styled.div`
+  font-weight: 500;
+`;
+
+const StyledAssetInfo = styled.div`
+  padding: 6px 8px 12px 8px;
+`;
 
 const StyledButton = styled(Button)`
   padding: 7px;
@@ -178,9 +182,9 @@ const StyledCount = styled.div`
 `;
 
 const StyledOverline = styled(Overline)`
-  margin-bottom: 1.2rem;
   color: ${Colors['text-icon--medium']};
   font-weight: 400;
+  font-size: 13px;
 `;
 
 const StyledDetailElement = styled(Menu.Item)`
@@ -189,7 +193,7 @@ const StyledDetailElement = styled(Menu.Item)`
   align-items: center;
   width: 100%;
   border-radius: 0px;
-  padding-left: 0rem;
+  padding-left: 8px;
   padding-right: 0rem;
   :hover {
     cursor: pointer;

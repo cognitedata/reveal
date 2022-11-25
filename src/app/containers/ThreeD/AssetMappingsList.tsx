@@ -163,6 +163,7 @@ export const AssetMappingsList = ({
                             autoEscape
                           />
                         </StyledFlex>
+                        <StyledItemBorder />
                       </AssetListItem>
                     );
                   }}
@@ -180,6 +181,15 @@ const StyledBorder = styled.div`
   height: 1px;
   width: 100%;
   background-color: ${Colors['border--muted']};
+`;
+
+const StyledItemBorder = styled.div`
+  border-bottom: 1px solid ${Colors['border--muted']};
+  width: 90%;
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  bottom: 0;
 `;
 
 const StyledFlex = styled(Flex)`
@@ -217,7 +227,6 @@ const AssetListItem = styled.div`
   flex-direction: column;
   height: 80px;
   padding: 10px;
-  border-bottom: 1px solid ${Colors['border--muted']};
   border-radius: 4px;
   cursor: pointer;
   &:hover {
