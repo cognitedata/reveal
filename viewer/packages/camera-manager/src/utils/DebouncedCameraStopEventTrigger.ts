@@ -12,9 +12,9 @@ export class DebouncedCameraStopEventTrigger extends EventTrigger<CameraStopDele
   private readonly _debouncedFireEvent: () => void;
   private readonly _cameraManager: CameraManager;
 
-  constructor(cameraManager: CameraManager) {
+  constructor(cameraManager: CameraManager, debounceTimeMs: number = 100) {
     super();
-    this._debouncedFireEvent = debounce(() => this.fire(), 100);
+    this._debouncedFireEvent = debounce(() => this.fire(), debounceTimeMs);
     this._cameraManager = cameraManager;
 
     this._cameraManager.on('cameraChange', this._debouncedFireEvent);
