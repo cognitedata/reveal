@@ -127,12 +127,13 @@ export class Image360ApiHelper {
 
     setPreTransitionState();
 
+    const currentFromOpacity = fromVisualizationCube.opacity;
     await Promise.all([
       this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
-      this.tweenVisualizationAlpha(from360Entity, 1, 0, alphaTweenDuration)
+      this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
     ]);
 
-    restorePostTransitionState();
+    restorePostTransitionState(currentFromOpacity);
 
     function setPreTransitionState() {
       const fillingScaleMagnitude = length * 2;
@@ -145,7 +146,7 @@ export class Image360ApiHelper {
       toVisualizationCube.renderOrder = default360ImageRenderOrder;
     }
 
-    function restorePostTransitionState() {
+    function restorePostTransitionState(opacity: number) {
       const defaultScaling = new THREE.Vector3(1, 1, 1);
 
       fromVisualizationCube.scale = defaultScaling;
@@ -155,7 +156,7 @@ export class Image360ApiHelper {
       toVisualizationCube.renderOrder = default360ImageRenderOrder;
 
       fromVisualizationCube.visible = false;
-      fromVisualizationCube.opacity = 1;
+      fromVisualizationCube.opacity = opacity;
     }
   }
 
@@ -171,6 +172,7 @@ export class Image360ApiHelper {
       .to(to, duration)
       .onUpdate(() => {
         entity.image360Visualization.opacity = from.alpha;
+        this._requestRedraw();
       })
       .easing(num => TWEEN.Easing.Quintic.InOut(num))
       .start(TWEEN.now());
@@ -264,10 +266,19 @@ export class Image360ApiHelper {
     this._interactionState.lastHoveredState = entity;
   }
 
-  private exit360ImageOnEscape(event: KeyboardEvent) {
+  private async exit360ImageOnEscape(event: KeyboardEvent) {
     if (event.key !== 'Escape') {
       return;
     }
+
+    const lastEntered = this._interactionState.lastImage360Entered;
+    if (lastEntered !== undefined) {
+      const transitionOutDuration = 600;
+      const currentOpacity = lastEntered.image360Visualization.opacity;
+      await this.tweenVisualizationAlpha(lastEntered, currentOpacity, 0, transitionOutDuration);
+      lastEntered.image360Visualization.opacity = currentOpacity;
+    }
+
     this.exit360Image();
   }
 }
