@@ -74,27 +74,29 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
+  const handleFilterChange = (newValue: InternalFilesFilters) => {
+    setFilter(prevState => ({ ...prevState, ...newValue }));
+  };
+
   return (
     <FileTable
       id="file-linked-search-results"
       onRowClick={file => onClick(file)}
       data={items}
-      enableSorting
+      // enableSorting
       // onSort={props => setSortBy(props)}
       showLoadButton
       tableSubHeaders={
         <AppliedFiltersTags
           filter={appliedFilters}
-          onFilterChange={setFilter}
+          onFilterChange={handleFilterChange}
         />
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
           <LinkedFileFilter
-            filter={filter}
-            onFilterChange={newValue =>
-              setFilter(prevState => ({ ...prevState, ...newValue }))
-            }
+            filter={filesFilter}
+            onFilterChange={handleFilterChange}
           />
         </DefaultPreviewFilter>
       }

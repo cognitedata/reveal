@@ -1,18 +1,27 @@
 import { Timeseries } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { AggregatedFilterV2, DateFilterV2, MetadataFilterV2 } from 'components';
+import {
+  AggregatedFilterV2,
+  DateFilterV2,
+  MetadataFilterV2,
+  TableSortBy,
+} from 'components';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from 'components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from 'components/PreviewFilter/PreviewFilter';
 import { InternalCommonFilters } from 'domain/types';
-import { InternalTimeseriesFilters } from 'domain/timeseries';
+import {
+  InternalTimeseriesFilters,
+  useTimeseriesSearchResultQuery,
+} from 'domain/timeseries';
 import { TimeseriesTable, useResourceResults } from 'containers';
 import { convertResourceType } from 'types';
 import { useDebounce } from 'use-debounce';
 
 interface Props {
+  enableAdvancedFilter?: boolean;
   defaultFilter: InternalCommonFilters;
   onClick: (item: Timeseries) => void;
 }
@@ -57,13 +66,14 @@ const LinkedAssetFilter = ({
 };
 
 export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
+  enableAdvancedFilter,
   defaultFilter,
   onClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
   const [debouncedQuery] = useDebounce(query, 300);
   const [filter, setFilter] = useState<InternalTimeseriesFilters>({});
-  // const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
 
   const timeseriesFilters = useMemo(() => {
     return {
@@ -73,17 +83,19 @@ export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
   }, [filter, defaultFilter]);
   const api = convertResourceType('timeSeries');
 
-  const { canFetchMore, fetchMore, items } = useResourceResults<Timeseries>(
-    api,
-    debouncedQuery,
-    timeseriesFilters
-  );
+  const { canFetchMore, fetchMore, items, isFetched } =
+    useResourceResults<Timeseries>(api, debouncedQuery, timeseriesFilters);
 
-  // const { data, hasNextPage, fetchNextPage } = useTimeseriesSearchResultQuery({
-  //   // query: debouncedQuery,
-  //   filter: timeseriesFilters,
-  //   sortBy,
-  // });
+  const handleFilterChange = (newValue: InternalTimeseriesFilters) => {
+    setFilter(prevState => ({ ...prevState, ...newValue }));
+  };
+
+  const { data, hasNextPage, fetchNextPage, isLoading } =
+    useTimeseriesSearchResultQuery({
+      query: debouncedQuery,
+      filter: timeseriesFilters,
+      sortBy,
+    });
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
@@ -91,28 +103,28 @@ export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
     <TimeseriesTable
       id="timeseries-linked-search-results"
       onRowClick={asset => onClick(asset)}
-      data={items}
-      enableSorting
-      // onSort={props => setSortBy(props)}
+      data={enableAdvancedFilter ? data : items}
+      isDataLoading={enableAdvancedFilter ? isLoading : !isFetched}
+      enableSorting={enableAdvancedFilter}
+      sorting={sortBy}
+      onSort={props => setSortBy(props)}
       showLoadButton
       tableSubHeaders={
         <AppliedFiltersTags
           filter={appliedFilters}
-          onFilterChange={setFilter}
+          onFilterChange={handleFilterChange}
         />
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
           <LinkedAssetFilter
-            filter={filter}
-            onFilterChange={newValue =>
-              setFilter(prevState => ({ ...prevState, ...newValue }))
-            }
+            filter={timeseriesFilters}
+            onFilterChange={handleFilterChange}
           />
         </DefaultPreviewFilter>
       }
-      hasNextPage={canFetchMore}
-      fetchMore={fetchMore}
+      hasNextPage={enableAdvancedFilter ? hasNextPage : canFetchMore}
+      fetchMore={enableAdvancedFilter ? fetchNextPage : fetchMore}
     />
   );
 };

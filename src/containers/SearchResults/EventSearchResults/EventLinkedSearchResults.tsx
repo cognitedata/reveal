@@ -94,27 +94,30 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
+  const handleFilterChange = (newValue: InternalEventsFilters) => {
+    setFilter(prevState => ({ ...prevState, ...newValue }));
+  };
+
   return (
     <EventTable
       id="event-linked-search-results"
       onRowClick={event => onClick(event)}
       data={enableAdvancedFilter ? data : items}
-      enableSorting
+      sorting={sortBy}
+      enableSorting={enableAdvancedFilter}
       onSort={props => setSortBy(props)}
       showLoadButton
       tableSubHeaders={
         <AppliedFiltersTags
           filter={appliedFilters}
-          onFilterChange={setFilter}
+          onFilterChange={handleFilterChange}
         />
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
           <LinkedEventFilter
-            filter={filter}
-            onFilterChange={newValue =>
-              setFilter(prevState => ({ ...prevState, ...newValue }))
-            }
+            filter={eventsFilters}
+            onFilterChange={handleFilterChange}
           />
         </DefaultPreviewFilter>
       }

@@ -31,6 +31,6 @@ const FlexGrow = styled.div`
 
 const StyledInput = styled(Input)`
   width: 100%;
-  max-width: 256px;
+  max-width: 300px;
   border-color: #cccccc;
 `;

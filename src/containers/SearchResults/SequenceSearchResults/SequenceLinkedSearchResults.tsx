@@ -1,6 +1,6 @@
 import { Sequence } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { MetadataFilterV2 } from 'components';
+import { MetadataFilterV2, TableSortBy } from 'components';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 
@@ -8,7 +8,10 @@ import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from 'components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from 'components/PreviewFilter/PreviewFilter';
 import { InternalCommonFilters } from 'domain/types';
-import { InternalSequenceFilters } from 'domain/sequence';
+import {
+  InternalSequenceFilters,
+  useSequenceSearchResultQuery,
+} from 'domain/sequence';
 import {
   SequenceTable,
   SequenceWithRelationshipLabels,
@@ -18,6 +21,7 @@ import { convertResourceType } from 'types';
 import { useDebounce } from 'use-debounce';
 
 interface Props {
+  enableAdvancedFilter?: boolean;
   defaultFilter: InternalCommonFilters;
   onClick: (item: Sequence | SequenceWithRelationshipLabels) => void;
 }
@@ -46,13 +50,14 @@ const LinkedSequenceFilter = ({
 };
 
 export const SequenceLinkedSearchResults: React.FC<Props> = ({
+  enableAdvancedFilter,
   defaultFilter,
   onClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
   const [debouncedQuery] = useDebounce(query, 300);
   const [filter, setFilter] = useState<InternalSequenceFilters>({});
-  // const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
 
   const sequenceFilter = useMemo(() => {
     return {
@@ -68,40 +73,43 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
     sequenceFilter
   );
 
-  // const { data, hasNextPage, fetchNextPage } = useSequenceSearchResultQuery({
-  //   query: debouncedQuery,
-  //   filter: sequenceFilter,
-  //   sortBy,
-  // });
+  const { data, hasNextPage, fetchNextPage } = useSequenceSearchResultQuery({
+    query: debouncedQuery,
+    filter: sequenceFilter,
+    sortBy,
+  });
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
+
+  const handleFilterChange = (newValue: InternalSequenceFilters) => {
+    setFilter(prevState => ({ ...prevState, ...newValue }));
+  };
 
   return (
     <SequenceTable
       id="sequence-linked-search-results"
       onRowClick={sequence => onClick(sequence)}
-      data={items}
-      enableSorting
-      // onSort={props => setSortBy(props)}
+      data={enableAdvancedFilter ? data : items}
+      sorting={sortBy}
+      enableSorting={enableAdvancedFilter}
+      onSort={props => setSortBy(props)}
       showLoadButton
       tableSubHeaders={
         <AppliedFiltersTags
           filter={appliedFilters}
-          onFilterChange={setFilter}
+          onFilterChange={handleFilterChange}
         />
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
           <LinkedSequenceFilter
-            filter={filter}
-            onFilterChange={newValue =>
-              setFilter(prevState => ({ ...prevState, ...newValue }))
-            }
+            filter={sequenceFilter}
+            onFilterChange={handleFilterChange}
           />
         </DefaultPreviewFilter>
       }
-      hasNextPage={canFetchMore}
-      fetchMore={fetchMore}
+      hasNextPage={enableAdvancedFilter ? hasNextPage : canFetchMore}
+      fetchMore={enableAdvancedFilter ? fetchNextPage : fetchMore}
     />
   );
 };

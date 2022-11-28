@@ -64,6 +64,7 @@ export const LinkedResourceTable = ({
     case 'sequence':
       return (
         <SequenceLinkedSearchResults
+          enableAdvancedFilter={enableAdvancedFilter}
           defaultFilter={filter}
           onClick={el => onItemClicked(el.id)}
         />
@@ -72,6 +73,7 @@ export const LinkedResourceTable = ({
     case 'timeSeries':
       return (
         <TimeseriesLinkedSearchResults
+          enableAdvancedFilter={enableAdvancedFilter}
           defaultFilter={filter}
           onClick={el => onItemClicked(el.id)}
         />

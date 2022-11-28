@@ -78,27 +78,30 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
+  const handleFilterChange = (newValue: InternalAssetFilters) => {
+    setFilter(prevState => ({ ...prevState, ...newValue }));
+  };
+
   return (
     <AssetTable
       id="asset-linked-search-results"
       onRowClick={asset => onClick(asset)}
       data={enableAdvancedFilter ? data : items}
-      enableSorting
+      enableSorting={enableAdvancedFilter}
+      sorting={sortBy}
       onSort={props => setSortBy(props)}
       showLoadButton
       tableSubHeaders={
         <AppliedFiltersTags
           filter={appliedFilters}
-          onFilterChange={setFilter}
+          onFilterChange={handleFilterChange}
         />
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
           <LinkedAssetFilter
-            filter={filter}
-            onFilterChange={newValue =>
-              setFilter(prevState => ({ ...prevState, ...newValue }))
-            }
+            filter={assetFilter}
+            onFilterChange={handleFilterChange}
           />
         </DefaultPreviewFilter>
       }
