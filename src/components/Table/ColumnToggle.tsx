@@ -1,19 +1,18 @@
 import { Column, Updater, ColumnOrderState } from '@tanstack/table-core';
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Checkbox,
-  Detail,
   Dropdown,
   Flex,
   Input,
   Menu,
+  Label,
   SegmentedControl,
 } from '@cognite/cogs.js';
-import { useDebounce } from 'use-debounce';
 
 import styled from 'styled-components';
-import { TableData } from '../Table';
+import { MetadataHeaderText, TableData } from '../Table';
 
 import {
   DragDropContainer,
@@ -23,7 +22,7 @@ import {
 import { HighlightCell } from './HighlightCell';
 
 export interface ColumnToggleProps<T extends TableData = any> {
-  allColumns: Column<T, unknown>[];
+  allColumns: () => Column<T, unknown>[];
   toggleAllColumnsVisible: (visible: boolean) => void;
   onColumnOrderChanged: (updater: Updater<ColumnOrderState>) => void;
 }
@@ -37,7 +36,7 @@ export const MenutItemDrag: React.FC<
   WithDragHandleProps<{ isDragEnabled?: boolean }>
 > = ({ dragHandleProps, children, isDragEnabled }) => {
   return (
-    <FlexWrapper className="cogs-menu-item" style={{ ...style }}>
+    <FlexWrapper className="cogs-menu-item" style={style}>
       {isDragEnabled && (
         <DragHandleIcon.Vertical dragHandleProps={dragHandleProps} />
       )}
@@ -45,38 +44,32 @@ export const MenutItemDrag: React.FC<
     </FlexWrapper>
   );
 };
+
 export function ColumnToggle<T>({
   allColumns,
   onColumnOrderChanged,
-  toggleAllColumnsVisible,
 }: ColumnToggleProps<T>) {
   const [searchInput, setSearchInput] = useState('');
-  const [isActive, setIsActive] = useState(false);
-  const allChecked = allColumns.every(column => column.getIsVisible());
-  const someChecked = allColumns.some(column => column.getIsVisible());
-  const selectedColumns = allColumns.filter(column => column.getIsVisible());
-
-  const elementOrders = allColumns.map(column => column.id);
   const [tab, setTab] = useState('All');
+
+  const elementOrders = allColumns().map(column => column.id);
+
   const handleTabClick = (key: string) => {
     setTab(key);
   };
 
-  const [debouncedSearchInput] = useDebounce(searchInput, 200);
-
-  const filteredColumns = useMemo(
-    () =>
-      allColumns.filter(column =>
-        column.columnDef.header
-          ?.toString()
-          .toLowerCase()
-          .includes(debouncedSearchInput)
-      ),
-
-    [allColumns, debouncedSearchInput]
+  const filteredColumns = allColumns().filter(column =>
+    column.columnDef.header?.toString().toLowerCase().includes(searchInput)
+  );
+  const selectedColumns = filteredColumns.filter(column =>
+    column.getIsVisible()
   );
 
   const selectedTabColumns = tab === 'All' ? filteredColumns : selectedColumns;
+
+  const selectedColumnsCount = allColumns().reduce((accumulator, item) => {
+    return item.getIsVisible() ? accumulator + 1 : accumulator;
+  }, 0);
 
   return (
     <Dropdown
@@ -90,42 +83,21 @@ export function ColumnToggle<T>({
             <SegmentedControl.Button key="All">All</SegmentedControl.Button>
             <SegmentedControl.Button key="Selected">
               Selected
+              <StyledCountLabel size="small" variant="unknown">
+                {selectedColumnsCount}
+              </StyledCountLabel>
             </SegmentedControl.Button>
           </SegmentedControl>
-          <Menu.Header>Table Columns</Menu.Header>
-          {tab === 'All' && (
-            <div>
-              <Input
-                type="search"
-                clearable={{ callback: () => setSearchInput('') }}
-                placeholder="Filter by name"
-                fullWidth
-                onFocus={() => setIsActive(true)}
-                onBlur={() => setIsActive(false)}
-                value={searchInput}
-                onChange={e => setSearchInput(e.target.value)}
-              />
-            </div>
-          )}
-          {tab === 'All' && (
-            <FlexWrapper className="cogs-menu-item">
-              <Label>
-                <Checkbox
-                  name={'selectAll'}
-                  indeterminate={!allChecked && someChecked}
-                  onChange={checked => {
-                    toggleAllColumnsVisible(
-                      !allChecked && someChecked ? true : checked
-                    );
-                  }}
-                  className="cogs-checkbox__checkbox"
-                  checked={someChecked}
-                />
-                Select All
-              </Label>
-            </FlexWrapper>
-          )}
-          <Menu.Divider />
+
+          <StyledInput
+            type="search"
+            clearable={{ callback: () => setSearchInput('') }}
+            placeholder="Filter by name"
+            fullWidth
+            variant="noBorder"
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+          />
 
           <DragDropContainer
             direction="vertical"
@@ -135,8 +107,11 @@ export function ColumnToggle<T>({
           >
             {selectedTabColumns.map(column => {
               return (
-                <MenutItemDrag key={column.id} isDragEnabled={!isActive}>
-                  <Label>
+                <MenutItemDrag
+                  key={column.id}
+                  isDragEnabled={!Boolean(searchInput)}
+                >
+                  <StyledLabel>
                     <Checkbox
                       name={column.id}
                       checked={column.getIsVisible()}
@@ -146,13 +121,15 @@ export function ColumnToggle<T>({
                       className="cogs-checkbox__checkbox"
                       disabled={!column.getCanHide()}
                     />
-                    <Flex direction="column" gap={4}>
+                    <Flex direction="column">
                       <StyledHeader
                         text={column.columnDef.header?.toString()}
                       />
-                      {column.columnDef.meta && <Detail>Metadata</Detail>}
+                      {column.columnDef.meta && (
+                        <MetadataHeaderText>Metadata</MetadataHeaderText>
+                      )}
                     </Flex>
-                  </Label>
+                  </StyledLabel>
                 </MenutItemDrag>
               );
             })}
@@ -166,19 +143,19 @@ export function ColumnToggle<T>({
 }
 
 const StyledMenu = styled(Menu)`
-  min-width: 200px;
-  max-width: 200px;
+  min-width: 256px;
+  max-width: 256px;
   width: 100%;
   max-height: 320px;
   overflow: auto;
-  display: block;
 `;
 
 const StyledHeader = styled(HighlightCell)`
-  max-width: 110px;
+  max-width: 170px;
+  text-transform: capitalize;
 `;
 
-const Label = styled.label`
+const StyledLabel = styled.label`
   gap: 8px;
   display: flex;
   align-items: center;
@@ -188,6 +165,13 @@ const Label = styled.label`
 const FlexWrapper = styled.div`
   display: flex;
   min-height: 36px;
-
   align-items: center;
+`;
+
+export const StyledInput = styled(Input)`
+  margin-top: 8px;
+`;
+
+export const StyledCountLabel = styled(Label)`
+  margin-left: 6px;
 `;

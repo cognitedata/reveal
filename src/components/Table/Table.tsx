@@ -34,12 +34,13 @@ import {
   Tbody,
 } from './elements';
 
-import { Body, Detail, Flex } from '@cognite/cogs.js';
+import { Body, Flex } from '@cognite/cogs.js';
 
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from './LoadMore';
 import { EmptyState } from 'components/EmpyState/EmptyState';
+import { MetadataHeaderText } from '.';
 
 export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {
@@ -246,13 +247,13 @@ export function Table<T extends TableData>({
                     }}
                   >
                     <ThWrapper>
-                      <Flex direction="column" gap={6}>
+                      <Flex direction="column" gap={2}>
+                        {header.column.columnDef.meta && (
+                          <MetadataHeaderText>Metadata</MetadataHeaderText>
+                        )}
                         {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
-                        )}
-                        {header.column.columnDef.meta && (
-                          <Detail>Metadata</Detail>
                         )}
                       </Flex>
                       <SortIcon
@@ -332,7 +333,7 @@ export function Table<T extends TableData>({
             <StyledFlex>
               <ColumnToggle<T>
                 onColumnOrderChanged={setColumnOrder}
-                allColumns={getAllLeafColumns()}
+                allColumns={getAllLeafColumns}
                 toggleAllColumnsVisible={handleToggleAllVisibility}
               />
             </StyledFlex>

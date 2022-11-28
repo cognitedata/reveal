@@ -1,4 +1,4 @@
-import { Flex } from '@cognite/cogs.js';
+import { Detail, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 const defaultRowHeight = '48px';
@@ -176,4 +176,9 @@ export const ThWrapper = styled.div`
 
 export const LoadMoreButtonWrapper = styled(Flex)`
   margin: 20px 0;
+`;
+
+export const MetadataHeaderText = styled(Detail)`
+  font-weight: 400 !important;
+  color: var(--cogs-text-icon--muted) !important;
 `;
