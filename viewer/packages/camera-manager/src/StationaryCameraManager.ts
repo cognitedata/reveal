@@ -143,11 +143,12 @@ export class StationaryCameraManager implements CameraManager {
     }
 
     const { movementX, movementY } = event;
+    const sensitivityScaler = 0.0015;
 
     const euler = new THREE.Euler().setFromQuaternion(this._camera.quaternion, 'YXZ');
 
-    euler.x -= -movementY * 0.0015 * (this._camera.fov / this._defaultFOV);
-    euler.y -= -movementX * 0.0015 * (this._camera.fov / this._defaultFOV);
+    euler.x -= -movementY * sensitivityScaler * (this._camera.fov / this._defaultFOV);
+    euler.y -= -movementX * sensitivityScaler * (this._camera.fov / this._defaultFOV);
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
     this._cameraChangedListener.forEach(cb => cb(this._camera.position, this._camera.position));
