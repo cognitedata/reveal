@@ -29,7 +29,7 @@ export interface CameraManager {
    */
   getCamera(): THREE.PerspectiveCamera;
   /**
-   * Set camera's state. Rotation and target can't be set at the same time. as they could conflict,
+   * Set camera's state. Rotation and target can't be set at the same time as they could conflict,
    * should throw an error if both are passed with non-zero value inside state.
    *
    * @param state Camera state, all fields are optional.
@@ -53,17 +53,34 @@ export interface CameraManager {
   getCameraState(): Required<CameraState>;
 
   /**
+   * Set this manager as active and enable controls.
+   *
+   * Should update {@link CameraManager.enabled} to reflect the state of the manager.
+   * Note that this is called automatically when a new CameraManager is set on the {@link Cognite3DViewer}.
+   * @param cameraManager Previously used camera manager.
+   */
+  activate(cameraManager?: CameraManager): void;
+
+  /**
+   * Deactivate this manager and disable controls.
+   *
+   * Should update {@link CameraManager.enabled} to reflect the state of the manager.
+   * Note that this is called automatically when a new CameraManager is set on the {@link Cognite3DViewer}.
+   */
+  deactivate(): void;
+
+  /**
    * Subscribes to changes of the camera event. This is used by Reveal to react on changes of the camera.
    * @param event Name of the event.
    * @param callback Callback to be called when the event is fired.
    */
-  on(event: 'cameraChange', callback: CameraChangedEvent): void;
+  on(event: 'cameraChange', callback: CameraChangeDelegate): void;
   /**
    * Unsubscribes from changes of the camera event.
    * @param event Name of the event.
    * @param callback Callback function to be unsubscribed.
    */
-  off(event: 'cameraChange', callback: CameraChangedEvent): void;
+  off(event: 'cameraChange', callback: CameraChangeDelegate): void;
 
   /**
    * Moves camera to a place where the content of a bounding box is visible to the camera.
@@ -84,8 +101,11 @@ export interface CameraManager {
    * @obvious
    */
   dispose(): void;
+  /**
+   * Enabled is true if this camera manager is active. When disabled, the camera manager shouldn't consume or react to any DOM events.
+   */
+  enabled: boolean;
 }
-
 ```
 
 Main implementation specific functions are `setCameraState`, `fitCameraToBoundingBox` and `update`. 
@@ -97,7 +117,7 @@ When implementing these functions you can use a helper class `CameraManagerHelpe
 Here is an example implementation of a custom camera manager that utilizes standard ThreeJS [`OrbitControls`](https://threejs.org/docs/index.html?q=orbit#examples/en/controls/OrbitControls) for mouse movement:
 
 ```js
-import * as THREE from 'three'
+import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { CameraManager, CameraManagerHelper, CameraState, CameraChangeDelegate } from '@cognite/reveal';
@@ -116,12 +136,8 @@ export class CustomCameraManager implements CameraManager {
         this._controls.dampingFactor = 0.3;
 
         this._controls.addEventListener('change', () => {
-            this._cameraChangedListener.forEach( cb => cb(this._camera.position, this._controls.target));
+            this._cameraChangedListener.forEach(cb => cb(this._camera.position, this._controls.target));
         });
-    }
-
-    set enabled(value: boolean) {
-        this._controls.enabled = value;
     }
 
     get enabled(): boolean {
@@ -136,9 +152,9 @@ export class CustomCameraManager implements CameraManager {
         if (state.rotation && state.target) throw new Error("Can't set both rotation and target");
         const position = state.position ?? this._camera.position;
         const rotation = state.rotation ?? this._camera.quaternion;
-        const target = state.target ?? ( state.rotation ? 
+        const target = state.target ?? (state.rotation ?
             CameraManagerHelper.calculateNewTargetFromRotation(
-                this._camera, state.rotation, this._controls.target) : 
+                this._camera, state.rotation, this._controls.target) :
             this._controls.target);
 
         this._camera.position.copy(position);
@@ -154,12 +170,24 @@ export class CustomCameraManager implements CameraManager {
         }
     }
 
+    activate(cameraManager?: CameraManager): void {
+        this._controls.enabled = true;
+
+        if (cameraManager) {
+            this.setCameraState({ target: cameraManager.getCameraState().target });
+        }
+    }
+
+    deactivate(): void {
+        this._controls.enabled = false;
+    }
+
     on(event: "cameraChange", callback: CameraChangeDelegate): void {
         this._cameraChangedListener.push(callback);
     }
 
     off(event: "cameraChange", callback: CameraChangeDelegate): void {
-        const index  = this._cameraChangedListener.indexOf(callback);
+        const index = this._cameraChangedListener.indexOf(callback);
         if (index !== -1) {
             this._cameraChangedListener.splice(index, 1);
         }
@@ -182,8 +210,12 @@ export class CustomCameraManager implements CameraManager {
     }
 }
 ```
-As you can see, implementation can be quite simple. There are three things that you should really pay extra attention to:
+As you can see, implementation can be quite simple. There are four things that you should really pay extra attention to:
 1. `'cameraChange'` event must be fired every time camera position or rotation changes to trigger redraw in Reveal.
+
 2. For the `setCameraState` method you should properly handle how change in rotation and target affects the camera and corresponds with 
 the behaviour of camera controls (`OrbitControls` in this case). For calculating camera target from rotation you can use `calculateNewTargetFromRotation` method of `CameraManagerHelper` .
-3. Inside `update` method you should update `near` and `far` planes of the camera, which can be easily done using `updateCameraNearAndFar` method of `CameraManagerHelper`. 
+
+3. Inside `update` method you should update `near` and `far` planes of the camera, which can be easily done using `updateCameraNearAndFar` method of `CameraManagerHelper`.
+
+4. The functions `activate` and `deactivate` are called automatically when a new CameraManager is assigned to the Cognite3DViewer. These functions are intended to help manage enabling and disabling of input when the manager changes state. Return value of `get enabled` should reflect this state.
