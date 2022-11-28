@@ -4,14 +4,20 @@
 import * as THREE from 'three';
 
 import { CameraManager } from './CameraManager';
-import { CameraChangeDelegate, CameraState } from './types';
+import {
+  CameraChangeDelegate,
+  CameraState,
+  CameraManagerEventType,
+  CAMERA_MANAGER_EVENT_TYPE_LIST,
+  CameraStopDelegate,
+  CameraEventDelegate
+} from './types';
 
 export class ProxyCameraManager implements CameraManager {
-  private readonly _cameraChangedListeners: Set<CameraChangeDelegate> = new Set();
+  private readonly _cameraEventListeners: Record<CameraManagerEventType, Set<CameraEventDelegate>>;
+  private readonly _activeCameraEventHandlers: Record<CameraManagerEventType, CameraEventDelegate>;
 
   private _activeCameraManager: CameraManager;
-
-  private readonly _activeCameraEventHandler: CameraChangeDelegate;
 
   get enabled(): boolean {
     return this._activeCameraManager.enabled;
@@ -24,8 +30,17 @@ export class ProxyCameraManager implements CameraManager {
   constructor(initialActiveCamera: CameraManager) {
     this._activeCameraManager = initialActiveCamera;
 
-    this._activeCameraEventHandler = (position, target) => this.onActiveCameraManagerEventFired(position, target);
-    initialActiveCamera.on('cameraChange', this._activeCameraEventHandler);
+    this._activeCameraEventHandlers = {
+      cameraChange: (position, target) => this.onActiveCameraManagerChangeFired(position, target),
+      cameraStop: () => this.onActiveCameraManagerStopFired()
+    };
+
+    this._cameraEventListeners = {} as Record<CameraManagerEventType, Set<CameraEventDelegate>>;
+
+    CAMERA_MANAGER_EVENT_TYPE_LIST.forEach(eventType => {
+      initialActiveCamera.on(eventType, this._activeCameraEventHandlers[eventType]);
+      this._cameraEventListeners[eventType] = new Set();
+    });
   }
 
   public setActiveCameraManager(cameraManager: CameraManager): void {
@@ -36,9 +51,17 @@ export class ProxyCameraManager implements CameraManager {
     cameraManager.activate(this._activeCameraManager);
     this._activeCameraManager.deactivate();
 
-    this._activeCameraManager.off('cameraChange', this._activeCameraEventHandler);
+    // Unregister event listeners from old camera manager
+    CAMERA_MANAGER_EVENT_TYPE_LIST.forEach(eventType => {
+      this._activeCameraManager.off(eventType, this._activeCameraEventHandlers[eventType]);
+    });
+
     this._activeCameraManager = cameraManager;
-    this._activeCameraManager.on('cameraChange', this._activeCameraEventHandler);
+
+    // Register event listeners on new camera manager
+    CAMERA_MANAGER_EVENT_TYPE_LIST.forEach(eventType => {
+      this._activeCameraManager.on(eventType, this._activeCameraEventHandlers[eventType]);
+    });
   }
 
   public getCamera(): THREE.PerspectiveCamera {
@@ -61,12 +84,16 @@ export class ProxyCameraManager implements CameraManager {
     this._activeCameraManager.deactivate();
   }
 
-  public on(_: 'cameraChange', callback: CameraChangeDelegate): void {
-    this._cameraChangedListeners.add(callback);
+  public on(eventType: 'cameraChange', callback: CameraChangeDelegate): void;
+  public on(eventType: 'cameraStop', callback: CameraStopDelegate): void;
+  public on(eventType: CameraManagerEventType, callback: CameraChangeDelegate): void {
+    this._cameraEventListeners[eventType].add(callback);
   }
 
-  public off(_: 'cameraChange', callback: CameraChangeDelegate): void {
-    this._cameraChangedListeners.delete(callback);
+  public off(eventType: 'cameraChange', callback: CameraChangeDelegate): void;
+  public off(eventType: 'cameraStop', callback: CameraStopDelegate): void;
+  public off(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
+    this._cameraEventListeners[eventType].delete(callback);
   }
 
   public fitCameraToBoundingBox(
@@ -83,10 +110,19 @@ export class ProxyCameraManager implements CameraManager {
 
   public dispose(): void {
     this._activeCameraManager.dispose();
-    this._cameraChangedListeners.clear();
+
+    CAMERA_MANAGER_EVENT_TYPE_LIST.forEach(eventType => {
+      this._cameraEventListeners[eventType].clear();
+    });
   }
 
-  private onActiveCameraManagerEventFired(position: THREE.Vector3, target: THREE.Vector3) {
-    this._cameraChangedListeners.forEach(eventHandler => eventHandler(position, target));
+  private onActiveCameraManagerChangeFired(position: THREE.Vector3, target: THREE.Vector3) {
+    this._cameraEventListeners['cameraChange'].forEach(eventHandler =>
+      (eventHandler as CameraChangeDelegate)(position, target)
+    );
+  }
+
+  private onActiveCameraManagerStopFired() {
+    this._cameraEventListeners['cameraStop'].forEach(eventHandler => (eventHandler as CameraStopDelegate)());
   }
 }

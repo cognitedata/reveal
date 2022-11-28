@@ -9,14 +9,19 @@
 export * from '../packages/api/';
 
 export {
+  CAMERA_MANAGER_EVENT_TYPE_LIST,
   CameraControlsOptions,
+  DebouncedCameraStopEventTrigger,
   DefaultCameraManager,
+  CameraManagerEventType,
   CameraManagerHelper,
   CameraManager,
   CameraState,
   ComboControls,
   ComboControlsOptions,
-  CameraChangeDelegate
+  CameraEventDelegate,
+  CameraChangeDelegate,
+  CameraStopDelegate
 } from '../packages/camera-manager';
 
 export {

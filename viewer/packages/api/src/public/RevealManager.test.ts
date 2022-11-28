@@ -12,6 +12,8 @@ import { SceneHandler } from '@reveal/utilities';
 import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
 import { LoadingStateChangeListener } from './types';
 import { It, Mock, SetPropertyExpression } from 'moq.ts';
+import { CameraManager } from '@reveal/camera-manager';
+import { PerspectiveCamera } from 'three';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
@@ -28,8 +30,22 @@ describe('RevealManager', () => {
   const pointClassificationsProvider = new LocalPointClassificationsProvider();
   let manager: RevealManager;
 
+  let onChangeListeners: (() => void)[];
+  let onStopListeners: (() => void)[];
+
+  const cameraManagerMock = new Mock<CameraManager>()
+    .setup(p => p.on('cameraChange', It.IsAny()))
+    .callback(({ args: [_eventType, callback] }) => onChangeListeners.push(callback))
+    .setup(p => p.on('cameraStop', It.IsAny()))
+    .callback(({ args: [_eventType, callback] }) => onStopListeners.push(callback))
+    .setup(p => p.off(It.IsAny(), It.IsAny()))
+    .returns();
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    onChangeListeners = [];
+    onStopListeners = [];
 
     const rendererMock = new Mock<THREE.WebGLRenderer>()
       .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name === 'info'))
@@ -51,6 +67,7 @@ describe('RevealManager', () => {
       pointClassificationsProvider,
       rendererMock.object(),
       new SceneHandler(),
+      cameraManagerMock.object(),
       {
         internal: { cad: { sectorCuller } }
       }
@@ -77,20 +94,23 @@ describe('RevealManager', () => {
     expect(manager.needsRedraw).toBeTrue();
   });
 
-  test('update only triggers update when camera changes', () => {
+  test('updates triggers after camera move event, but not after stop event has fired', () => {
     manager.resetRedraw();
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
-    manager.update(camera);
-    expect(manager.needsRedraw).toBeTrue(); // Changed
+
+    expect(manager.needsRedraw).toBeFalse();
+
+    const camera = new PerspectiveCamera(70, 1, 0.1, 100);
+
+    onChangeListeners.forEach(callback => callback());
 
     manager.resetRedraw();
     manager.update(camera);
-    expect(manager.needsRedraw).toBeFalse(); // Unhanged
+    expect(manager.needsRedraw).toBeTrue();
+
+    onStopListeners.forEach(callback => callback());
 
     manager.resetRedraw();
-    camera.position.set(1, 2, 3);
-    manager.update(camera);
-    expect(manager.needsRedraw).toBeTrue(); // Changed again
+    expect(manager.needsRedraw).toBeFalse();
   });
 
   test('dispose() disposes culler', () => {

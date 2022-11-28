@@ -84,6 +84,17 @@ export type CameraState = {
  */
 export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
+/**
+ * Delegate for camera update events.
+ * @module @cognite/reveal
+ */
+export type CameraStopDelegate = () => void;
+
+/**
+ * Union type of all camera event delegates
+ */
+export type CameraEventDelegate = CameraChangeDelegate | CameraStopDelegate;
+
 export type CameraManagerCallbackData = {
   intersection: {
     /**
@@ -100,3 +111,13 @@ export type CameraManagerCallbackData = {
    */
   modelsBoundingBox: THREE.Box3;
 };
+
+/**
+ * List of supported event types (adapted from https://stackoverflow.com/questions/44480644/string-union-to-string-array)
+ */
+export const CAMERA_MANAGER_EVENT_TYPE_LIST = ['cameraChange', 'cameraStop'] as const;
+
+/**
+ * Union type of the supported camera manager event types
+ */
+export type CameraManagerEventType = typeof CAMERA_MANAGER_EVENT_TYPE_LIST[number];

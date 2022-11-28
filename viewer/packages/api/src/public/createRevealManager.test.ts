@@ -11,6 +11,7 @@ import { It, Mock, SetPropertyExpression } from 'moq.ts';
 import * as THREE from 'three';
 import { SceneHandler } from '@reveal/utilities';
 import { IPointClassificationsProvider } from '@reveal/pointclouds';
+import { CameraManager } from '@reveal/camera-manager';
 
 describe('createRevealManager', () => {
   test('createRevealManager does not throw on empty internal options', () => {
@@ -34,6 +35,10 @@ describe('createRevealManager', () => {
           )
           .object(),
         new SceneHandler(),
+        new Mock<CameraManager>()
+          .setup(p => p.on(It.IsAny(), It.IsAny()))
+          .returns()
+          .object(),
         {}
       )
     ).not.toThrow();

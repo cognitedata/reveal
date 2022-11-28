@@ -252,6 +252,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createLocalHelper(
         this._renderer,
         this._sceneHandler,
+        this._activeCameraManager,
         revealOptions
       );
     } else if (options.customDataSource !== undefined) {
@@ -259,6 +260,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
         this._renderer,
         this._sceneHandler,
+        this._activeCameraManager,
         revealOptions,
         options.customDataSource
       );
@@ -269,6 +271,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this._sceneHandler,
+        this._activeCameraManager,
         revealOptions,
         options.sdk
       );
