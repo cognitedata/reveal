@@ -143,7 +143,7 @@ export class DefaultCameraManager implements CameraManager {
    * Sets whether camera controls through mouse, touch and keyboard are enabled.
    */
   private set enabled(enabled: boolean) {
-    this.setComboControlsOptions({ enabled: enabled });
+    this._controls.enabled = enabled;
     this.isEnabled = enabled;
   }
 
@@ -609,7 +609,7 @@ export class DefaultCameraManager implements CameraManager {
         // Disable controls to prevent camera from moving while picking is happening.
         // await is not working as expected because event itself is not awaited.
         try {
-          this.setComboControlsOptions({ enabled: false });
+          this._controls.enabled = false;
           const pointerEventData = {
             offsetX: domElementRelativeOffset.offsetX,
             offsetY: domElementRelativeOffset.offsetY,
@@ -618,7 +618,7 @@ export class DefaultCameraManager implements CameraManager {
 
           newTarget = await this.calculateNewTarget(pointerEventData);
         } finally {
-          this.setComboControlsOptions({ enabled: this.isEnabled });
+          this._controls.enabled = this.isEnabled;
         }
 
         this._controls.setScrollTarget(newTarget);

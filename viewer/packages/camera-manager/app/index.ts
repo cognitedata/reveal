@@ -50,9 +50,9 @@ function init() {
     dynamicTarget: true,
     minDistance: 0.1,
     enableDamping: true,
-    dampingFactor: 0.2,
-    enabled: true
+    dampingFactor: 0.2
   };
+  controls.enable = true;
 
   controls.setState(new THREE.Vector3(0, 20, 20), new THREE.Vector3());
 

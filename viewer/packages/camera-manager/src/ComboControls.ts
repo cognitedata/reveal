@@ -44,7 +44,6 @@ function getPinchInfo(domElement: HTMLElement, touches: TouchList) {
  * Exposed options for Combo Controls
  */
 export type ComboControlsOptions = {
-  enabled: boolean;
   enableDamping: boolean;
   dampingFactor: number;
   dynamicTarget: boolean;
@@ -137,9 +136,9 @@ export class ComboControls extends EventDispatcher {
   private readonly _targetFPS: number = 30;
   private _targetFPSOverActualFPS: number = 1;
 
+  private _enabled: boolean = true;
   private _options: ComboControlsOptions = ComboControls.DefaultControlsOptions;
   private static readonly DefaultControlsOptions: Readonly<Required<ComboControlsOptions>> = {
-    enabled: true,
     enableDamping: true,
     dampingFactor: 0.25,
     dynamicTarget: true,
@@ -192,6 +191,20 @@ export class ComboControls extends EventDispatcher {
     this._options = { ...this._options, ...options };
   }
 
+  /**
+   * Returns true if these controls are enabled.
+   */
+  get enabled(): Readonly<boolean> {
+    return this._enabled;
+  }
+
+  /**
+   * Sets the enabled state of these controls.
+   */
+  set enabled(enabled: boolean) {
+    this._enabled = enabled;
+  }
+
   constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
     super();
     this._camera = camera;
@@ -234,7 +247,7 @@ export class ComboControls extends EventDispatcher {
   public update = (deltaTime: number, forceUpdate = false): boolean => {
     const { _camera, _target, _targetEnd, _spherical, _sphericalEnd, _deltaTarget, handleKeyboard, _targetFPS } = this;
 
-    if (!forceUpdate && !this._options.enabled) {
+    if (!forceUpdate && !this._enabled) {
       return false;
     }
 
@@ -378,7 +391,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onMouseDown = (event: MouseEvent) => {
-    if (!this._options.enabled) {
+    if (!this._enabled) {
       return;
     }
 
@@ -406,7 +419,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onMouseWheel = (event: WheelEvent) => {
-    if (!this._options.enabled) {
+    if (!this._enabled) {
       return;
     }
     event.preventDefault();
@@ -440,7 +453,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onTouchStart = (event: TouchEvent) => {
-    if (!this._options.enabled) {
+    if (!this._enabled) {
       return;
     }
     event.preventDefault();
@@ -470,7 +483,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {
-    if (!this._options.enabled) {
+    if (!this._enabled) {
       return;
     }
     event.preventDefault();
@@ -621,7 +634,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly handleKeyboard = () => {
-    if (!this._options.enabled || !this._options.enableKeyboardNavigation) {
+    if (!this._enabled || !this._options.enableKeyboardNavigation) {
       return;
     }
 
