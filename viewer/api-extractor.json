@@ -1,0 +1,31 @@
+/**
+ * Config file for API Extractor.  For more info, please visit: https://api-extractor.com
+ */
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+  "projectFolder": ".",
+  "mainEntryPointFilePath": "<projectFolder>/dist/index.d.ts",
+  "newlineKind": "lf",
+
+  /**
+   * Configures how the API report file (*.api.md) will be generated.
+   */
+  "apiReport": {
+    "enabled": true,
+    "reportFolder": "<projectFolder>"
+  },
+
+  /**
+   * Configures how the doc model file (*.api.json) will be generated.
+   */
+  "docModel": {
+    "enabled": false
+  },
+
+  /**
+   * Configures how the .d.ts rollup file will be generated.
+   */
+  "dtsRollup": {
+    "enabled": false
+  }
+}
