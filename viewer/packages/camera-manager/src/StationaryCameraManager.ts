@@ -6,6 +6,8 @@ import { assertNever } from '@reveal/utilities';
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
+import pull from 'lodash/pull';
+
 import { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
 import {
@@ -103,10 +105,7 @@ export class StationaryCameraManager implements CameraManager {
   off(eventType: CameraManagerEventType, callback: CameraChangeDelegate): void {
     switch (eventType) {
       case 'cameraChange':
-        const index = this._cameraChangedListeners.indexOf(callback);
-        if (index !== -1) {
-          this._cameraChangedListeners.splice(index, 1);
-        }
+        pull(this._cameraChangedListeners, callback);
         break;
       case 'cameraStop':
         this._stopEventTrigger.unsubscribe(callback as CameraStopDelegate);

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import pull from 'lodash/pull';
 
 import {
     CameraManager,
@@ -90,10 +91,7 @@ export class CustomCameraManager implements CameraManager {
     off(event: CameraManagerEventType, callback: CameraEventDelegate): void {
         switch(event) {
             case 'cameraChange':
-                const index  = this._cameraChangedListener.indexOf(callback);
-                if (index !== -1) {
-                    this._cameraChangedListener.splice(index, 1);
-                }
+                pull(this._cameraChangedListener, callback);
                 break;
             case 'cameraStop':
                 this._stopEventHandler.unsubscribe(callback as CameraStopDelegate);
