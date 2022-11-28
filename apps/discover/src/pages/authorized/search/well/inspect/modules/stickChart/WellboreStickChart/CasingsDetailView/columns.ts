@@ -40,10 +40,5 @@ export const getCasingsDetailViewColumns = (
       accessor: 'outsideDiameterFormatted',
       width: 'auto',
     },
-    {
-      Header: `ID (${CASING_ASSEMBLY_DIAMETER_UNIT})`,
-      accessor: 'insideDiameterFormatted',
-      width: 'auto',
-    },
   ];
 };
