@@ -469,23 +469,9 @@ export class ComboControls extends EventDispatcher {
     constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement);
     get cameraRawRotation(): Quaternion;
     // (undocumented)
-    dampingFactor: number;
-    // (undocumented)
     dispose: () => void;
-    // (undocumented)
-    dollyFactor: number;
-    // (undocumented)
-    dynamicTarget: boolean;
-    // (undocumented)
-    enabled: boolean;
-    // (undocumented)
-    enableDamping: boolean;
-    // (undocumented)
-    enableKeyboardNavigation: boolean;
-    // (undocumented)
-    EPSILON: number;
-    // (undocumented)
-    firstPersonRotationFactor: number;
+    get enabled(): boolean;
+    set enabled(enabled: boolean);
     // (undocumented)
     getScrollTarget: () => Vector3;
     // (undocumented)
@@ -493,56 +479,8 @@ export class ComboControls extends EventDispatcher {
         target: Vector3;
         position: Vector3;
     };
-    // (undocumented)
-    keyboardDollySpeed: number;
-    // (undocumented)
-    keyboardPanSpeed: number;
-    // (undocumented)
-    keyboardRotationSpeedAzimuth: number;
-    // (undocumented)
-    keyboardRotationSpeedPolar: number;
-    // (undocumented)
-    keyboardSpeedFactor: number;
-    // (undocumented)
-    lookAtViewTarget: boolean;
-    // (undocumented)
-    maxAzimuthAngle: number;
-    // (undocumented)
-    maxDeltaDownscaleCoefficient: number;
-    // (undocumented)
-    maxDeltaRatio: number;
-    // (undocumented)
-    maxPolarAngle: number;
-    // (undocumented)
-    maxZoom: number;
-    // (undocumented)
-    minAzimuthAngle: number;
-    // (undocumented)
-    minDeltaDownscaleCoefficient: number;
-    // (undocumented)
-    minDeltaRatio: number;
-    // (undocumented)
-    minDistance: number;
-    // (undocumented)
-    minPolarAngle: number;
-    // (undocumented)
-    minZoom: number;
-    // (undocumented)
-    minZoomDistance: number;
-    // (undocumented)
-    mouseFirstPersonRotationSpeed: number;
-    // (undocumented)
-    orthographicCameraDollyFactor: number;
-    // (undocumented)
-    panDollyMinDistanceFactor: number;
-    // (undocumented)
-    pinchEpsilon: number;
-    // (undocumented)
-    pinchPanSpeed: number;
-    // (undocumented)
-    pointerRotationSpeedAzimuth: number;
-    // (undocumented)
-    pointerRotationSpeedPolar: number;
+    get options(): Readonly<ComboControlsOptions>;
+    set options(options: Partial<ComboControlsOptions>);
     // (undocumented)
     setScrollTarget: (target: Vector3) => void;
     // (undocumented)
@@ -553,11 +491,45 @@ export class ComboControls extends EventDispatcher {
     triggerCameraChangeEvent: () => void;
     // (undocumented)
     update: (deltaTime: number, forceUpdate?: boolean) => boolean;
-    // (undocumented)
-    useScrollTarget: boolean;
-    // (undocumented)
-    zoomToCursor: boolean;
 }
+
+// @public
+export type ComboControlsOptions = {
+    enableDamping: boolean;
+    dampingFactor: number;
+    dynamicTarget: boolean;
+    minDistance: number;
+    minZoomDistance: number;
+    dollyFactor: number;
+    minPolarAngle: number;
+    maxPolarAngle: number;
+    minAzimuthAngle: number;
+    maxAzimuthAngle: number;
+    panDollyMinDistanceFactor: number;
+    firstPersonRotationFactor: number;
+    pointerRotationSpeedAzimuth: number;
+    pointerRotationSpeedPolar: number;
+    enableKeyboardNavigation: boolean;
+    keyboardRotationSpeedAzimuth: number;
+    keyboardRotationSpeedPolar: number;
+    mouseFirstPersonRotationSpeed: number;
+    keyboardDollySpeed: number;
+    keyboardPanSpeed: number;
+    keyboardSpeedFactor: number;
+    pinchEpsilon: number;
+    pinchPanSpeed: number;
+    EPSILON: number;
+    minZoom: number;
+    maxZoom: number;
+    orthographicCameraDollyFactor: number;
+    lookAtViewTarget: boolean;
+    useScrollTarget: boolean;
+    zoomToCursor: boolean;
+    minDeltaRatio: number;
+    maxDeltaRatio: number;
+    minDeltaDownscaleCoefficient: number;
+    maxDeltaDownscaleCoefficient: number;
+};
 
 // @public (undocumented)
 export type CompletePointCloudAppearance = Required<PointCloudAppearance>;
@@ -598,8 +570,6 @@ export class DefaultCameraManager implements CameraManager {
     activate(cameraManager?: CameraManager): void;
     automaticControlsSensitivity: boolean;
     automaticNearFarPlane: boolean;
-    // @deprecated
-    get cameraControls(): ComboControls;
     // (undocumented)
     deactivate(): void;
     // (undocumented)
@@ -612,6 +582,7 @@ export class DefaultCameraManager implements CameraManager {
     getCameraControlsOptions(): CameraControlsOptions;
     // (undocumented)
     getCameraState(): Required<CameraState>;
+    getComboControlsOptions(): Readonly<ComboControlsOptions>;
     set keyboardNavigationEnabled(enabled: boolean);
     get keyboardNavigationEnabled(): boolean;
     // (undocumented)
@@ -620,6 +591,7 @@ export class DefaultCameraManager implements CameraManager {
     on(event: 'cameraChange', callback: CameraChangeDelegate): void;
     setCameraControlsOptions(controlsOptions: CameraControlsOptions): void;
     setCameraState(state: CameraState): void;
+    setComboControlsOptions(options: Partial<ComboControlsOptions>): void;
     // (undocumented)
     update(deltaTime: number, boundingBox: THREE_2.Box3): void;
 }
