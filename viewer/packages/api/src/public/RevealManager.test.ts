@@ -30,7 +30,6 @@ describe('RevealManager', () => {
   const pointClassificationsProvider = new LocalPointClassificationsProvider();
   let manager: RevealManager;
 
-
   let onChangeListeners: (() => void)[];
   let onStopListeners: (() => void)[];
 

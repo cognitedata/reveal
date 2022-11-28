@@ -44,8 +44,7 @@ export class RevealManager {
   private readonly _updateSubject: Subject<void>;
   private readonly _cameraManager: CameraManager;
 
-  private readonly _onCameraChange: (position: THREE.Vector3,
-                                     target: THREE.Vector3) => void;
+  private readonly _onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void;
   private readonly _onCameraStop: () => void;
 
   constructor(
@@ -62,8 +61,8 @@ export class RevealManager {
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
 
     this._cameraManager = cameraManager;
-    this._onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => this._cameraInMotion = true;
-    this._onCameraStop = () => this._cameraInMotion = false;
+    this._onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => (this._cameraInMotion = true);
+    this._onCameraStop = () => (this._cameraInMotion = false);
     this._cameraManager.on('cameraChange', this._onCameraChange);
     this._cameraManager.on('cameraStop', this._onCameraStop);
 
