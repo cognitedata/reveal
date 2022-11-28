@@ -446,7 +446,7 @@ const DataSetDetails = (): JSX.Element => {
                     alignItems="center"
                   >
                     <Icon type="Documentation" />
-                    {t('documentation')}
+                    {t('docs')}
                   </Flex>
                 </Menu.Item>
               </Menu>
