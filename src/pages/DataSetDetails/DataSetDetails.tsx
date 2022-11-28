@@ -47,7 +47,7 @@ import TabTitle from './TabTitle';
 import DatasetOverview from 'components/Overview/DatasetOverview';
 import styled from 'styled-components';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
-import { useFlag } from '@cognite/react-feature-flags';
+// import { useFlag } from '@cognite/react-feature-flags';
 
 const { TabPane } = Tabs;
 
