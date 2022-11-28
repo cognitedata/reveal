@@ -12,6 +12,7 @@ export const ColumnKeys = [
   'dataSet',
   'assets',
   'type',
+  'subtype',
   'startTime',
   'endTime',
   'mimeType',

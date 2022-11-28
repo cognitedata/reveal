@@ -32,6 +32,7 @@ export const EventTable = ({
     () =>
       [
         { ...Table.Columns.type, enableHiding: false },
+        Table.Columns.subtype,
         Table.Columns.description(query),
         Table.Columns.externalId,
         Table.Columns.lastUpdatedTime,

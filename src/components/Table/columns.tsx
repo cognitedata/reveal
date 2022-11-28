@@ -208,11 +208,15 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   type: {
     accessorKey: 'type',
     header: 'Type',
-    cell: ({ getValue, row }) => {
-      const finalString = row.original.subtype
-        ? `${getValue()} - ${row.original.subtype}`
-        : row.original.type;
-      return <HighlightCell lines={1} text={finalString} />;
+    cell: ({ getValue }) => {
+      return <HighlightCell lines={1} text={getValue<string>() || DASH} />;
+    },
+  },
+  subtype: {
+    accessorKey: 'subtype',
+    header: 'Subtype',
+    cell: ({ getValue }) => {
+      return <HighlightCell lines={1} text={getValue<string>() || DASH} />;
     },
   },
   startTime: {
