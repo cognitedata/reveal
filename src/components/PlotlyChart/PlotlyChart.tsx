@@ -29,7 +29,7 @@ const DEFAULT_Y_AXIS_WIDTH = 60;
 const DEFAULT_Y_AXIS_MARGIN = 40;
 
 const defaultChartStyles = {
-  height: '100%',
+  height: 'calc(100% - 30px)',
   width: '100%',
 };
 
