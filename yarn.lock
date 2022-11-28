@@ -1150,13 +1150,12 @@
     babel-plugin-syntax-jsx "^6.18.0"
     lodash "^4.17.11"
 
-"@cognite/cdf-i18n-utils@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-i18n-utils/-/cdf-i18n-utils-0.1.1.tgz#b2a567b7b96e047c4433ad7301f874d59ccde6ea"
-  integrity sha512-Q6YuXhsSHQvHAb2+eX03ELUpVqKPW4d63Ejr7d8Zb/KZPR2ludTeD8s3LV1rrh1v/l0zQnke7pNzFpgv1OP3GA==
+"@cognite/cdf-i18n-utils@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-i18n-utils/-/cdf-i18n-utils-0.6.0.tgz#82468aa3c453bf61a9b0bce6429c227de706fbcb"
+  integrity sha512-gMl1tpnQgU9pbQQ8BAmw+dDnH9CrvORejRjbHDineeQ7DvV8yDRGuLhCsrsVHPgReD1nPeVKZNDnhbTjxUjSWg==
   dependencies:
     "@cognite/cdf-utilities" "^1.4.6"
-    "@cognite/react-feature-flags" "^1.0.0"
     cross-spawn "^7.0.3"
     dotenv "^16.0.0"
     i18next "^21.6.13"

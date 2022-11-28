@@ -22,11 +22,13 @@ export type ExtractorLink = {
   name: string;
 };
 
-type Extractor = {
+export type ExtractorType = 'global' | 'community' | 'unreleased';
+
+export type Extractor = {
   externalId: string;
   name: string;
   description?: string;
-  type: string;
+  type: ExtractorType;
   latestVersion: string | undefined;
   documentation?: string;
   imageUrl: string;
@@ -38,17 +40,7 @@ type Items<T> = {
   items: T[];
 };
 
-export type ExtractorWithRelease = {
-  externalId: string;
-  name: string;
-  description?: string;
-  type: string;
-  releases: Release[];
-  documentation?: string;
-  imageUrl: string;
-  tags?: string[];
-  links?: ExtractorLink[];
-};
+export type ExtractorWithReleases = Extractor & { releases: Release[] };
 
 type ExtractorDownload = {
   downloadUrl: string;
@@ -75,7 +67,7 @@ export const getExtractorsWithReleases = async () => {
       }
     )
     .then((res) => res.data.items);
-  const extractorMap: { [externalId: string]: ExtractorWithRelease } = {};
+  const extractorMap: { [externalId: string]: ExtractorWithReleases } = {};
   const [extractors, releases] = await Promise.all([
     extractorsPromise,
     releasesPromise,
@@ -84,10 +76,6 @@ export const getExtractorsWithReleases = async () => {
   extractors.forEach((extractor) => {
     extractorMap[extractor.externalId] = {
       ...extractor,
-      externalId: extractor.externalId,
-      name: extractor.name,
-      description: extractor.description,
-      type: extractor.type,
       releases: [],
     };
   });
