@@ -4,7 +4,7 @@ import { ApiVersion } from '../dto';
 export class DataModelVersionDataMapper {
   serialize(externalId: string, solutionSchema: DataModelVersion): ApiVersion {
     return {
-      createdTime: new Date(solutionSchema.createdTime).toISOString(),
+      createdTime: new Date(solutionSchema.createdTime as number).toISOString(),
       dataModel: {
         graphqlRepresentation: solutionSchema.schema,
       },

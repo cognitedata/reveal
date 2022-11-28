@@ -17,6 +17,7 @@ import {
   PublishedRowsCountMap,
   RunQueryDTO,
   UpdateDataModelDTO,
+  PublishDataModelVersionDTO,
 } from '../../dto';
 
 import {
@@ -190,10 +191,20 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @param conflictMode - NEW_VERSION | PATCH
    */
   publishDataModelVersion(
-    dto: CreateDataModelVersionDTO,
+    dto: PublishDataModelVersionDTO,
     conflictMode: ConflictMode
   ): Promise<DataModelVersion> {
-    throw 'Not implemented';
+    return this.mixerApiService.upsertVersion(dto).then((upsertResult) => {
+      if (upsertResult.errors.length) {
+        return Promise.reject(
+          new PlatypusError(
+            `An error has occured. Data model was not published.`,
+            'SERVER_ERROR'
+          )
+        );
+      }
+      return this.dataModelVersionDataMapper.deserialize(upsertResult.result);
+    });
   }
 
   /**

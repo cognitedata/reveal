@@ -81,9 +81,11 @@ export function SchemaVersionDropdown({
                     level={2}
                     style={{ width: 50, textAlign: 'left' }}
                   >{`v. ${schemaObj.version}`}</Body>
-                  {dateUtils.isValid(schemaObj.lastUpdatedTime) ? (
+                  {dateUtils.isValid(schemaObj.lastUpdatedTime as number) ? (
                     <LastTimeText level={2}>
-                      {dateUtils.toTimeDiffString(schemaObj.lastUpdatedTime)}
+                      {dateUtils.toTimeDiffString(
+                        schemaObj.lastUpdatedTime as number
+                      )}
                     </LastTimeText>
                   ) : null}
                 </Flex>

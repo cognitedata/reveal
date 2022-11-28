@@ -28,11 +28,11 @@ export interface DataModelVersion {
   /**
    * When resource was created
    */
-  createdTime: number;
+  createdTime?: number;
   /**
    * When resource was last updated
    */
-  lastUpdatedTime: number;
+  lastUpdatedTime?: number;
   /** DMS v3 requires space externalId */
   space: string;
 }
