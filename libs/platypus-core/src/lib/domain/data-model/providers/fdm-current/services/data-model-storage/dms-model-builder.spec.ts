@@ -150,7 +150,7 @@ describe('DataModelStorageBuilderServiceTest', () => {
             post: {
               type: 'direct_relation',
               nullable: false,
-              targetModel: ['app-dev-test-1', 'Post_1'],
+              targetModel: ['node'],
             },
           },
         },

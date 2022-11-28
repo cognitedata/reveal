@@ -67,11 +67,7 @@ export class DmsModelBuilder {
               this.buildEdgeModel(type, field, dataModelVersion.version)
             );
           } else {
-            table.properties[field.name] = this.buildModelProperty(
-              field,
-              externalId,
-              dataModelVersion.version
-            );
+            table.properties[field.name] = this.buildModelProperty(field);
           }
         });
 
@@ -100,11 +96,7 @@ export class DmsModelBuilder {
     };
   }
 
-  private buildModelProperty(
-    field: DataModelTypeDefsField,
-    externalId: string,
-    version: string
-  ) {
+  private buildModelProperty(field: DataModelTypeDefsField) {
     const propType = field.type.name as string;
 
     const property = {
@@ -117,10 +109,7 @@ export class DmsModelBuilder {
     } as DmsModelProperty;
 
     if (isCustomType(propType)) {
-      property.targetModel = [
-        externalId,
-        `${getVersionedExternalId(propType, version)}`,
-      ];
+      property.targetModel = [`node`];
     }
 
     return property;

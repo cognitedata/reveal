@@ -29,7 +29,7 @@ export type DmsModelProperty = {
    * A reference to a model. Consists of an array of spaceExternalId and modelExternalId.
    *  May also just reference [ edge ] or [ node ], which don't belong to any particular space.
    */
-  targetModel?: [string, string];
+  targetModel?: [string, string] | [string];
 };
 
 export type DataModelStorageModel = {
