@@ -52,7 +52,7 @@ function init() {
     enableDamping: true,
     dampingFactor: 0.2
   };
-  controls.enable = true;
+  controls.enabled = true;
 
   controls.setState(new THREE.Vector3(0, 20, 20), new THREE.Vector3());
 
