@@ -37,17 +37,20 @@ import {
   LocalPointClassificationsProvider,
   UrlPointClassificationsProvider
 } from '@reveal/pointclouds';
+import { CameraManager } from '@reveal/camera-manager';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
  * @param renderer
  * @param sceneHandler
+ * @param cameraManager
  * @param revealOptions
  * @returns RevealManager instance.
  */
 export function createLocalRevealManager(
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
+  cameraManager: CameraManager,
   revealOptions: RevealOptions = {}
 ): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
@@ -63,6 +66,7 @@ export function createLocalRevealManager(
     pointClassificationsProvider,
     renderer,
     sceneHandler,
+    cameraManager,
     revealOptions
   );
 }
@@ -72,12 +76,14 @@ export function createLocalRevealManager(
  * @param client
  * @param renderer
  * @param sceneHandler
+ * @param cameraManager
  * @param revealOptions
  */
 export function createCdfRevealManager(
   client: CogniteClient,
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
+  cameraManager: CameraManager,
   revealOptions: RevealOptions = {}
 ): RevealManager {
   const applicationId = getSdkApplicationId(client);
@@ -94,6 +100,7 @@ export function createCdfRevealManager(
     pointClassificationsProvider,
     renderer,
     sceneHandler,
+    cameraManager,
     revealOptions
   );
 }
@@ -109,6 +116,7 @@ export function createCdfRevealManager(
  * @param pointClassificationsProvider
  * @param renderer
  * @param sceneHandler
+ * @param cameraManager
  * @param revealOptions
  */
 export function createRevealManager(
@@ -120,6 +128,7 @@ export function createRevealManager(
   pointClassificationsProvider: IPointClassificationsProvider,
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
+  cameraManager: CameraManager,
   revealOptions: RevealOptions = {}
 ): RevealManager {
   MetricsLogger.init(revealOptions.logMetrics !== false, project, applicationId, {
@@ -153,7 +162,7 @@ export function createRevealManager(
     ...revealOptions.internal?.cad,
     continuousModelStreaming: revealOptions.continuousModelStreaming
   });
-  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline);
+  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline, cameraManager);
 }
 
 /**

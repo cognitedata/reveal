@@ -243,10 +243,7 @@ export class Cognite3DViewer {
 
     this._activeCameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
-      this._revealManagerHelper.revealManager.setCameraInMotion(true);
     });
-
-    this._activeCameraManager.on('cameraStop', () => this._revealManagerHelper.revealManager.setCameraInMotion(false));
 
     const revealOptions = createRevealManagerOptions(options, this._renderer.getPixelRatio());
     if (options._localModels === true) {
@@ -255,6 +252,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createLocalHelper(
         this._renderer,
         this._sceneHandler,
+        this._activeCameraManager,
         revealOptions
       );
     } else if (options.customDataSource !== undefined) {
@@ -262,6 +260,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
         this._renderer,
         this._sceneHandler,
+        this._activeCameraManager,
         revealOptions,
         options.customDataSource
       );
@@ -272,6 +271,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this._sceneHandler,
+        this._activeCameraManager,
         revealOptions,
         options.sdk
       );

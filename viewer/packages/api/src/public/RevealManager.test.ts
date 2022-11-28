@@ -12,6 +12,8 @@ import { SceneHandler } from '@reveal/utilities';
 import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
 import { LoadingStateChangeListener } from './types';
 import { It, Mock, SetPropertyExpression } from 'moq.ts';
+import { CameraManager } from '@reveal/camera-manager';
+import { PerspectiveCamera } from 'three';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
@@ -28,8 +30,23 @@ describe('RevealManager', () => {
   const pointClassificationsProvider = new LocalPointClassificationsProvider();
   let manager: RevealManager;
 
+
+  let onChangeListeners: (() => void)[];
+  let onStopListeners: (() => void)[];
+
+  const cameraManagerMock = new Mock<CameraManager>()
+    .setup(p => p.on('cameraChange', It.IsAny()))
+    .callback(({ args: [_eventType, callback] }) => onChangeListeners.push(callback))
+    .setup(p => p.on('cameraStop', It.IsAny()))
+    .callback(({ args: [_eventType, callback] }) => onStopListeners.push(callback))
+    .setup(p => p.off(It.IsAny(), It.IsAny()))
+    .returns();
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    onChangeListeners = [];
+    onStopListeners = [];
 
     const rendererMock = new Mock<THREE.WebGLRenderer>()
       .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name === 'info'))
@@ -51,6 +68,7 @@ describe('RevealManager', () => {
       pointClassificationsProvider,
       rendererMock.object(),
       new SceneHandler(),
+      cameraManagerMock.object(),
       {
         internal: { cad: { sectorCuller } }
       }
@@ -77,20 +95,20 @@ describe('RevealManager', () => {
     expect(manager.needsRedraw).toBeTrue();
   });
 
-  test('updates only trigger when setCameraInMotion is set to true', () => {
+  test('updates triggers after camera move event, but not after some time after camera has stopped', () => {
     manager.resetRedraw();
 
     expect(manager.needsRedraw).toBeFalse();
 
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 100);
-    manager.update(camera);
-    manager.setCameraInMotion(true);
+    const camera = new PerspectiveCamera(70, 1, 0.1, 100);
+
+    onChangeListeners.forEach(callback => callback());
 
     manager.resetRedraw();
     manager.update(camera);
     expect(manager.needsRedraw).toBeTrue();
 
-    manager.setCameraInMotion(false);
+    onStopListeners.forEach(callback => callback());
 
     manager.resetRedraw();
     expect(manager.needsRedraw).toBeFalse();
