@@ -132,13 +132,11 @@ export class AssetNodeCollection extends NodeCollection {
     return this._filter;
   }
 
-  clear(): 3 {
+  clear(): void {
     if (this._fetchResultHelper !== undefined) {
       this._fetchResultHelper.interrupt();
     }
     this._indexSet.clear();
-
-    return 3;
   }
 
   getIndexSet(): IndexSet {
