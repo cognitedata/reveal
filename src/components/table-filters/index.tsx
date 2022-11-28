@@ -18,6 +18,7 @@ import {
 } from 'hooks/useSearchParamState';
 import useDebounce from 'hooks/useDebounce';
 import AppliedFilters from 'components/applied-filters';
+import { trackUsage } from 'utils';
 
 const GOVERNANCE_STATUSES = ['governed', 'ungoverned', 'not-defined'] as const;
 export type GovernanceStatus = typeof GOVERNANCE_STATUSES[number];
@@ -65,6 +66,11 @@ const TableFilter = ({
 
   const handleApply = () => {
     updateSearchParamState({
+      governance: tempGovernanceStatus,
+      labels: tempSelectedLabels,
+    });
+    trackUsage({
+      e: 'data.sets.filter',
       governance: tempGovernanceStatus,
       labels: tempSelectedLabels,
     });
@@ -121,7 +127,11 @@ const TableFilter = ({
           <Input
             prefix={<Icon type="Search" />}
             placeholder={t('search-by-name-description-or-label')}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              const searchText = e.target.value;
+              setSearchQuery(searchText);
+              trackUsage({ e: 'data.sets.filter', searchText });
+            }}
             value={searchQuery}
             allowClear
           />
