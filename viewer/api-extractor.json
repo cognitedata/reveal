@@ -7,25 +7,41 @@
   "mainEntryPointFilePath": "<projectFolder>/dist/index.d.ts",
   "newlineKind": "lf",
 
-  /**
-   * Configures how the API report file (*.api.md) will be generated.
-   */
   "apiReport": {
     "enabled": true,
+    "reportTempFolder": "<projectFolder>/api-extractor-temp",
     "reportFolder": "<projectFolder>"
   },
 
-  /**
-   * Configures how the doc model file (*.api.json) will be generated.
-   */
   "docModel": {
+    "enabled": false
+  },
+  "dtsRollup": {
     "enabled": false
   },
 
   /**
-   * Configures how the .d.ts rollup file will be generated.
+   * Turn off all compiler / TSDoc warnings
+   * These will trigger a non-zero exit code for the production run of the extractor,
+   * unnecessarily failing the CI pipeline step. We may want to enable these later on,
+   * but the extractor is extremely pedantic, so fixing all warnings seems like an
+   * infeasible (and unnecessary) task, at least considering our usage.
    */
-  "dtsRollup": {
-    "enabled": false
+  "messages": {
+    "tsdocMessageReporting": {
+      "default": {
+        "logLevel": "none"
+      }
+    },
+    "extractorMessageReporting": {
+      "default": {
+        "logLevel": "none"
+      }
+    },
+    "compilerMessageReporting": {
+      "default": {
+        "logLevel": "none"
+      }
+    }
   }
 }
