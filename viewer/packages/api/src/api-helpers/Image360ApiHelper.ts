@@ -127,12 +127,13 @@ export class Image360ApiHelper {
 
     setPreTransitionState();
 
+    const currentFromOpacity = fromVisualizationCube.opacity;
     await Promise.all([
       this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
-      this.tweenVisualizationAlpha(from360Entity, fromVisualizationCube.opacity, 0, alphaTweenDuration)
+      this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
     ]);
 
-    restorePostTransitionState();
+    restorePostTransitionState(currentFromOpacity);
 
     function setPreTransitionState() {
       const fillingScaleMagnitude = length * 2;
@@ -145,7 +146,7 @@ export class Image360ApiHelper {
       toVisualizationCube.renderOrder = default360ImageRenderOrder;
     }
 
-    function restorePostTransitionState() {
+    function restorePostTransitionState(opacity: number) {
       const defaultScaling = new THREE.Vector3(1, 1, 1);
 
       fromVisualizationCube.scale = defaultScaling;
@@ -155,7 +156,7 @@ export class Image360ApiHelper {
       toVisualizationCube.renderOrder = default360ImageRenderOrder;
 
       fromVisualizationCube.visible = false;
-      fromVisualizationCube.opacity = 1;
+      fromVisualizationCube.opacity = opacity;
     }
   }
 
