@@ -103,7 +103,9 @@ jobs:
     - name: Check for API changes
       working-directory: viewer
       continue-on-error: false
-      run: npx api-extractor run
+      run: |
+        npx api-extractor run || diff reveal.api.md api-extractor-temp/reveal.api.md
+
 
     - name: Upload dist/ artifact
       uses: actions/upload-artifact@v3
