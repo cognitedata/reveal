@@ -95,7 +95,7 @@ describe('RevealManager', () => {
     expect(manager.needsRedraw).toBeTrue();
   });
 
-  test('updates triggers after camera move event, but not after some time after camera has stopped', () => {
+  test('updates triggers after camera move event, but not after stop event has fired', () => {
     manager.resetRedraw();
 
     expect(manager.needsRedraw).toBeFalse();
