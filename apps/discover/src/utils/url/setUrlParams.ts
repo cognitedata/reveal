@@ -1,5 +1,6 @@
 import { useHistory } from 'react-router-dom';
 
+import isEmpty from 'lodash/isEmpty';
 import without from 'lodash/without';
 
 import { getSearchParamsFromCurrentUrl } from './getSearchParamsFromCurrentUrl';
@@ -18,7 +19,7 @@ export const useSetUrlParams = () => {
       preserveKeyFilters: [],
     }
   ) => {
-    let searchParams = search;
+    let searchParams = '';
 
     const params = getSearchParamsFromCurrentUrl();
     let unprocessedKeys = Object.keys(params);
@@ -45,6 +46,10 @@ export const useSetUrlParams = () => {
           searchParams += `${getPrefix(searchParams)}${param}=${params[param]}`;
         }
       });
+    }
+
+    if (!isEmpty(search.trim())) {
+      searchParams += `${getPrefix(searchParams)}${search}`;
     }
 
     history.replace({

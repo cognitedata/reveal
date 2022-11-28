@@ -13,6 +13,7 @@ import { FlexRowFullWidth } from 'styles/layout';
 
 import { NptCodeDefinition } from '../../../../nptEvents/components/NptCodeDefinition';
 import { DetailCardBlock } from '../../../components/DetailCard';
+import { ToggleHighlightButton } from '../../../components/DetailCard/ToggleHighlightButton';
 
 export interface NptEventDetailCardContentProps {
   event: NptInternalWithTvd;
@@ -24,6 +25,7 @@ export const NptEventDetailCardContent: React.FC<
   NptEventDetailCardContentProps
 > = ({ event, nptCodeDefinitions, depthMeasurementType }) => {
   const {
+    source: { eventExternalId },
     nptCode,
     nptCodeDetail,
     nptCodeColor,
@@ -58,7 +60,9 @@ export const NptEventDetailCardContent: React.FC<
           value={nptCodeDetail}
           avatarColor={nptCodeColor}
           info={<NptCodeDefinition nptCodeDefinition={nptCodeDefinition} />}
-        />
+        >
+          <ToggleHighlightButton type="npt" eventExternalId={eventExternalId} />
+        </DetailCardBlock>
         <DetailCardBlock
           title={`Depth ${depth && `(${depth.unit})`}`}
           value={depth?.value}

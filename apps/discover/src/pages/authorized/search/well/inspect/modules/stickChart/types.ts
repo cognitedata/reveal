@@ -14,6 +14,8 @@ import { Distance } from 'convert-units';
 
 import { ProjectConfigWellsTrajectoryCharts } from '@cognite/discover-api-types';
 
+import { EVENT_TYPES } from './WellboreStickChart/constants';
+
 export interface WellboreData {
   wellboreMatchingId: string;
   wellName: string;
@@ -79,7 +81,7 @@ export enum SummarySection {
   HoleSection = 'Hole Section',
   // DrillingParameters = 'Drilling Parameters',
   MudWeightWindow = 'Mud Weight Window',
-  // HighlightedEvent = 'Highlighted Event',
+  HighlightedEvent = 'Highlighted Event',
 }
 
 export interface SummaryVisibilityProps {
@@ -98,3 +100,5 @@ export interface MudWeight {
   value: { value: number; unit: string };
   depth: { value: number; unit: string };
 }
+
+export type EventType = typeof EVENT_TYPES[number];

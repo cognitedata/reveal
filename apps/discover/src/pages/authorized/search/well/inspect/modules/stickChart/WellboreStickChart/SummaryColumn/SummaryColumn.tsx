@@ -1,4 +1,6 @@
 import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
+import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
+import { NptInternalWithTvd } from 'domain/wells/npt/internal/types';
 
 import * as React from 'react';
 
@@ -17,6 +19,8 @@ import {
 } from '../../types';
 import { getHoleSectionsForCasingAssembly } from '../../utils/getHoleSectionsForCasingAssembly';
 import { getMeasurementsDataForCasingAssembly } from '../../utils/getMeasurementsDataForCasingAssembly';
+import { getNdsForCasingAssembly } from '../../utils/getNdsForCasingAssembly';
+import { getNptForCasingAssembly } from '../../utils/getNptForCasingAssembly';
 
 import { CasingAssemblySummary } from './components/CasingAssemblySummary';
 import { SummaryColumnEmptyState } from './components/SummaryColumnEmptyState';
@@ -26,6 +30,8 @@ export interface SummaryColumnProps extends ColumnVisibilityProps {
   casingAssemblies?: CasingAssemblyView[];
   holeSections?: HoleSectionView[];
   measurementsData?: DepthMeasurementWithData[];
+  nptEvents?: NptInternalWithTvd[];
+  ndsEvents?: NdsInternalWithTvd[];
   isLoading?: boolean;
   depthMeasurementType?: DepthMeasurementUnit;
   summaryVisibility?: BooleanMap;
@@ -37,6 +43,8 @@ export const SummaryColumn: React.FC<WithDragHandleProps<SummaryColumnProps>> =
       casingAssemblies,
       holeSections = EMPTY_ARRAY,
       measurementsData = EMPTY_ARRAY,
+      nptEvents = EMPTY_ARRAY,
+      ndsEvents = EMPTY_ARRAY,
       isLoading = false,
       isVisible = true,
       depthMeasurementType,
@@ -62,7 +70,18 @@ export const SummaryColumn: React.FC<WithDragHandleProps<SummaryColumnProps>> =
                   )}
                   measurementsData={getMeasurementsDataForCasingAssembly(
                     measurementsData,
-                    casingAssembly
+                    casingAssembly,
+                    depthMeasurementType
+                  )}
+                  nptEvents={getNptForCasingAssembly(
+                    nptEvents,
+                    casingAssembly,
+                    depthMeasurementType
+                  )}
+                  ndsEvents={getNdsForCasingAssembly(
+                    ndsEvents,
+                    casingAssembly,
+                    depthMeasurementType
                   )}
                   depthMeasurementType={depthMeasurementType}
                   summaryVisibility={summaryVisibility}

@@ -20,13 +20,9 @@ export interface DetailBlockProps {
   extended?: boolean;
 }
 
-export const DetailCardBlock: React.FC<DetailBlockProps> = ({
-  title,
-  value = '-',
-  avatarColor,
-  info,
-  extended = false,
-}) => {
+export const DetailCardBlock: React.FC<
+  React.PropsWithChildren<DetailBlockProps>
+> = ({ title, value = '-', avatarColor, info, extended = false, children }) => {
   const renderInfo = () => {
     if (isString(info)) {
       return <DetailCardBlockInfo info={info} />;
@@ -44,6 +40,8 @@ export const DetailCardBlock: React.FC<DetailBlockProps> = ({
       </DetailsWrapper>
 
       {info && <InfoContentWrapper>{renderInfo()}</InfoContentWrapper>}
+
+      {children}
     </DetailCardBlockWrapper>
   );
 };

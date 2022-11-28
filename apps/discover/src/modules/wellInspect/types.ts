@@ -14,6 +14,8 @@ export const SET_COLORED_WELLBORES = 'SET_COLORED_WELLBORES';
 export const SET_SELECTED_RELATED_DOCUMENT_COLUMNS =
   'SET_SELECTED_RELATED_DOCUMENT_COLUMNS';
 
+export const STICK_CHART_HIGHLIGHT_EVENT = 'STICK_CHART_HIGHLIGHT_EVENT';
+
 export type BooleanSelection = {
   [key: string]: boolean;
 };
@@ -32,6 +34,12 @@ export interface WellInspectState {
   goBackNavigationPath: string;
   coloredWellbores: boolean;
   selectedRelatedDocumentsColumns: BooleanSelection;
+  stickCharts: StickChartsState;
+}
+
+export interface StickChartsState {
+  highlightedNpt: BooleanSelection;
+  highlightedNds: BooleanSelection;
 }
 
 export interface SetPrerequisiteData {
@@ -73,10 +81,20 @@ interface SetSelectedRelatedDoucmentColumns {
   payload: TableResults;
 }
 
+export interface StickChartHighlightEvent {
+  type: typeof STICK_CHART_HIGHLIGHT_EVENT;
+  payload: {
+    type: 'npt' | 'nds';
+    eventExternalId: string;
+    isHighlighted: boolean;
+  };
+}
+
 export type WellInspectAction =
   | SetPrerequisiteData
   | ToggleSelectedWell
   | ToggleSelectedWellboreOfWell
   | SetGoBackNavigationPath
   | SetColoredWellbores
-  | SetSelectedRelatedDoucmentColumns;
+  | SetSelectedRelatedDoucmentColumns
+  | StickChartHighlightEvent;

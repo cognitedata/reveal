@@ -58,16 +58,14 @@ export const HoleSectionSummary: React.FC<HoleSectionSummaryProps> = ({
             : baseTrueVerticalDepth;
 
           return (
-            <React.Fragment key={id}>
-              <SummarySectionContent>
-                <SpecificationLabel label={`${holeSizeFormatted} Hole`} />
-              </SummarySectionContent>
+            <SummarySectionContent key={id}>
+              <SpecificationLabel label={`${holeSizeFormatted} Hole`} />
               <Depth>
                 {topDepth}
                 {depthUnit} - {baseDepth}
                 {depthUnit}
               </Depth>
-            </React.Fragment>
+            </SummarySectionContent>
           );
         }
       )}

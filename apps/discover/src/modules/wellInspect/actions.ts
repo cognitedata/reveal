@@ -11,6 +11,8 @@ import {
   SetPrerequisiteData,
   ToggleSelectedWell,
   ToggleSelectedWellboreOfWell,
+  StickChartHighlightEvent,
+  STICK_CHART_HIGHLIGHT_EVENT,
 } from './types';
 
 export const WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS =
@@ -37,6 +39,10 @@ const setSelectedRelatedDocumentColumns = createAction<BooleanSelection>(
   SET_SELECTED_RELATED_DOCUMENT_COLUMNS
 );
 
+const stickChartHighlightEvent = createAction<
+  StickChartHighlightEvent['payload']
+>(STICK_CHART_HIGHLIGHT_EVENT);
+
 export const wellInspectActions = {
   setPrerequisiteData,
   setGoBackNavigationPath,
@@ -44,4 +50,5 @@ export const wellInspectActions = {
   toggleSelectedWellboreOfWell,
   setColoredWellbores,
   setSelectedRelatedDocumentColumns,
+  stickChartHighlightEvent,
 };

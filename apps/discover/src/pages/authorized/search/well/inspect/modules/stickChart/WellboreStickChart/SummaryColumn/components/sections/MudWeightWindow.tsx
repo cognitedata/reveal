@@ -74,18 +74,13 @@ export const MudWeightWindow: React.FC<MudWeightWindowProps> = ({
     >
       {mudWeights.map(({ id, type, value, depth }) => {
         return (
-          <React.Fragment key={id}>
-            <SummarySectionContent>
-              <Specification
-                label={type}
-                value={`${value.value}${value.unit}`}
-              />
-            </SummarySectionContent>
+          <SummarySectionContent key={id}>
+            <Specification label={type} value={`${value.value}${value.unit}`} />
             <Depth>
               {depth.value}
               {depth.unit}
             </Depth>
-          </React.Fragment>
+          </SummarySectionContent>
         );
       })}
     </SummaryColumnSection>

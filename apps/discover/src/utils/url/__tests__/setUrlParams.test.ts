@@ -49,7 +49,7 @@ describe('setUrlParams', () => {
 
     const call = mockReplace.mock.lastCall[0];
 
-    expect(call.search).toEqual('nice=one&test=true');
+    expect(call.search).toEqual('test=true&nice=one');
   });
 
   it('should keep keys listed with preserveKeys when doing a reset', () => {
@@ -77,7 +77,7 @@ describe('setUrlParams', () => {
 
     const call = mockReplace.mock.lastCall[0];
 
-    expect(call.search).toEqual('nice=one&filter_test=true');
+    expect(call.search).toEqual('filter_test=true&nice=one');
   });
 
   it('should keep keys listed with either preserveKeys or preserveKeyFilters', () => {
@@ -94,6 +94,6 @@ describe('setUrlParams', () => {
 
     const call = mockReplace.mock.lastCall[0];
 
-    expect(call.search).toEqual('nice=one&test=true&filter_test=true');
+    expect(call.search).toEqual('test=true&filter_test=true&nice=one');
   });
 });

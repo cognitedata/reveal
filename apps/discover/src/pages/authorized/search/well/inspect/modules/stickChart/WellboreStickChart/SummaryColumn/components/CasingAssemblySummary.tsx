@@ -1,11 +1,19 @@
 import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
+import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
+import { NptInternalWithTvd } from 'domain/wells/npt/internal/types';
 
 import * as React from 'react';
+import { useMemo } from 'react';
 
+import isEmpty from 'lodash/isEmpty';
 import { BooleanMap } from 'utils/booleanMap';
 
 import { EMPTY_OBJECT } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
+import {
+  useHighlightedNdsMap,
+  useHighlightedNptMap,
+} from 'modules/wellInspect/selectors';
 
 import {
   CasingAssemblyView,
@@ -16,7 +24,7 @@ import { SummaryContainer, SummarySectionColumn } from '../elements';
 
 import { CasingSpecification } from './sections/CasingSpecification';
 // import { DrillingParameters } from './sections/DrillingParameters';
-// import { HighlightEvent } from './sections/HighlightEvent';
+import { HighlightedEvent } from './sections/HighlightedEvent';
 import { HoleSectionSummary } from './sections/HoleSectionSummary';
 import { MudWeightWindow } from './sections/MudWeightWindow';
 
@@ -24,6 +32,8 @@ export interface CasingAssemblySummaryProps {
   casingAssembly: CasingAssemblyView;
   holeSections: HoleSectionView[];
   measurementsData: DepthMeasurementWithData[];
+  nptEvents: NptInternalWithTvd[];
+  ndsEvents: NdsInternalWithTvd[];
   depthMeasurementType?: DepthMeasurementUnit;
   summaryVisibility?: BooleanMap;
 }
@@ -32,9 +42,32 @@ export const CasingAssemblySummary: React.FC<CasingAssemblySummaryProps> = ({
   casingAssembly,
   holeSections,
   measurementsData,
+  nptEvents,
+  ndsEvents,
   depthMeasurementType,
   summaryVisibility = EMPTY_OBJECT as BooleanMap,
 }) => {
+  const highlightedNptMap = useHighlightedNptMap();
+  const highlightedNdsMap = useHighlightedNdsMap();
+
+  const highlightedNptEvents = useMemo(() => {
+    return nptEvents.filter(
+      ({ source }) => highlightedNptMap[source.eventExternalId]
+    );
+  }, [nptEvents, highlightedNptMap]);
+
+  const highlightedNdsEvents = useMemo(() => {
+    return ndsEvents.filter(
+      ({ source }) => highlightedNdsMap[source.eventExternalId]
+    );
+  }, [nptEvents, highlightedNptMap]);
+
+  const noEventHighlighted =
+    !isEmpty(nptEvents) &&
+    !isEmpty(ndsEvents) &&
+    isEmpty(highlightedNptEvents) &&
+    isEmpty(highlightedNdsEvents);
+
   return (
     <SummaryContainer>
       <SummarySectionColumn width={200}>
@@ -58,9 +91,13 @@ export const CasingAssemblySummary: React.FC<CasingAssemblySummaryProps> = ({
           depthMeasurementType={depthMeasurementType}
           isExpanded={summaryVisibility[SummarySection.MudWeightWindow]}
         />
-        {/* <HighlightEvent
+        <HighlightedEvent
+          nptEvents={highlightedNptEvents}
+          ndsEvents={highlightedNdsEvents}
+          noEventHighlighted={noEventHighlighted}
+          depthMeasurementType={depthMeasurementType}
           isExpanded={summaryVisibility[SummarySection.HighlightedEvent]}
-        /> */}
+        />
       </SummarySectionColumn>
     </SummaryContainer>
   );

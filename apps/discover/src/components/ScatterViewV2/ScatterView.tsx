@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
+import { BooleanMap } from 'utils/booleanMap';
 import { isOverflow } from 'utils/isOverflow';
 
 import { Dropdown, DropdownProps } from '@cognite/cogs.js';
+import { EventSource } from '@cognite/sdk-wells';
+
+import { EMPTY_OBJECT } from 'constants/empty';
 
 import {
   OverflowActionWrapper,
@@ -22,9 +26,10 @@ export interface ScatterViewProps<T> {
   renderScatterDetails?: (dataElement: T) => JSX.Element;
   scatterDetailsPlacement?: DropdownProps['placement'];
   renderOverflowAction?: (data: T[]) => JSX.Element;
+  highlightedEventsMap?: BooleanMap;
 }
 
-export const ScatterView = <T extends object>({
+export const ScatterView = <T extends { source: EventSource }>({
   data,
   colorAccessor,
   highlightScatterIndex,
@@ -32,6 +37,7 @@ export const ScatterView = <T extends object>({
   renderScatterDetails,
   scatterDetailsPlacement,
   renderOverflowAction,
+  highlightedEventsMap = EMPTY_OBJECT as BooleanMap,
 }: ScatterViewProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -68,16 +74,18 @@ export const ScatterView = <T extends object>({
         overflow={renderOverflowAction ? 'hidden' : 'auto'}
       >
         {data.map((dataElement, index) => {
+          const { eventExternalId } = dataElement.source;
+
           return (
             <Dropdown
-              // eslint-disable-next-line react/no-array-index-key
-              key={`scatter-${index}`}
+              key={`scatter-${eventExternalId}`}
               placement={scatterDetailsPlacement}
               content={renderScatterDetails?.(dataElement)}
             >
               <Scatter
                 color={getScatterColor(dataElement)}
                 $pointer={Boolean(renderScatterDetails || onClickScatter)}
+                $highlighted={Boolean(highlightedEventsMap[eventExternalId])}
                 opacity={getScatterOpacity(index)}
                 onClick={() => onClickScatter?.(dataElement, index)}
               />

@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components/macro';
 import layers from 'utils/zindex';
 
+import { BaseButton } from 'components/Buttons';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 export const BaseDetailCardWrapper = styled(FlexColumn)`
@@ -84,4 +85,8 @@ export const InfoContentWrapper = styled.div`
   margin-top: 2px;
   margin-right: ${sizes.small};
   cursor: pointer;
+`;
+
+export const DetailCardButton = styled(BaseButton)`
+  // font-size: 14px;
 `;

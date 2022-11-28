@@ -14,6 +14,7 @@ import {
 import { WellInspectAction, WellInspectState } from './types';
 import {
   getBooleanSelection,
+  getHighlightedEventsStateKey,
   getInitialSelectedRelatedDocumentsColumns,
 } from './utils';
 
@@ -23,6 +24,10 @@ export const initialState: WellInspectState = {
   goBackNavigationPath: navigation.SEARCH_WELLS,
   coloredWellbores: false,
   selectedRelatedDocumentsColumns: getInitialSelectedRelatedDocumentsColumns(),
+  stickCharts: {
+    highlightedNpt: {},
+    highlightedNds: {},
+  },
 };
 
 const {
@@ -32,6 +37,7 @@ const {
   toggleSelectedWellboreOfWell,
   setColoredWellbores,
   setSelectedRelatedDocumentColumns,
+  stickChartHighlightEvent,
 } = wellInspectActions;
 
 const wellInspectReducerCreator = createReducer(initialState, (builder) => {
@@ -86,6 +92,19 @@ const wellInspectReducerCreator = createReducer(initialState, (builder) => {
         WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS,
         selectedRelatedDocumentsColumns
       );
+    })
+    .addCase(stickChartHighlightEvent, (state, action) => {
+      const { type, eventExternalId, isHighlighted } = action.payload;
+
+      const stateKey = getHighlightedEventsStateKey(type);
+
+      state.stickCharts = {
+        ...state.stickCharts,
+        [stateKey]: {
+          ...state.stickCharts[stateKey],
+          [eventExternalId]: isHighlighted,
+        },
+      };
     });
 });
 

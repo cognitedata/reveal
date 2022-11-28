@@ -1,4 +1,4 @@
-import isUndefined from 'lodash/isUndefined';
+import { filterByMinMax } from 'utils/filter/filterByMinMax';
 
 import { HoleSectionInternal } from '../types';
 
@@ -15,18 +15,6 @@ export const filterHoleSectionsByMD = <T extends HoleSectionType>(
   }
 ) => {
   return holeSections.filter(({ topMeasuredDepth }) => {
-    if (isUndefined(topMeasuredDepth)) {
-      return false;
-    }
-    if (!isUndefined(min) && !isUndefined(max)) {
-      return min <= topMeasuredDepth && topMeasuredDepth <= max;
-    }
-    if (!isUndefined(min)) {
-      return min <= topMeasuredDepth;
-    }
-    if (!isUndefined(max)) {
-      return topMeasuredDepth <= max;
-    }
-    return false;
+    return topMeasuredDepth && filterByMinMax(topMeasuredDepth, min, max);
   });
 };

@@ -5,6 +5,8 @@ import {
 
 import * as React from 'react';
 
+import { BooleanMap } from 'utils/booleanMap';
+
 import { DepthMeasurementUnit } from 'constants/units';
 
 import { EventsScatterViewExpanded } from '../../../components/EventsScatterViewExpanded';
@@ -18,6 +20,7 @@ export interface NptEventsExpandedViewProps {
   scaleBlockRange: [number, number];
   depthMeasurementType?: DepthMeasurementUnit;
   onCollapse: () => void;
+  highlightedEventsMap?: BooleanMap;
 }
 
 export const NptEventsExpandedView: React.FC<NptEventsExpandedViewProps> = ({
@@ -26,6 +29,7 @@ export const NptEventsExpandedView: React.FC<NptEventsExpandedViewProps> = ({
   scaleBlockRange,
   depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
   onCollapse,
+  highlightedEventsMap,
 }) => {
   return (
     <EventsScatterViewExpanded<NptInternalWithTvd>
@@ -42,6 +46,7 @@ export const NptEventsExpandedView: React.FC<NptEventsExpandedViewProps> = ({
           depthMeasurementType={depthMeasurementType}
         />
       )}
+      highlightedEventsMap={highlightedEventsMap}
     />
   );
 };

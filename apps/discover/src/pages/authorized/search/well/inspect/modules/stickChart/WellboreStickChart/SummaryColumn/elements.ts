@@ -5,6 +5,8 @@ import { Button } from '@cognite/cogs.js';
 import { FlexColumn, FlexRow, PrettyScrollBar, sizes } from 'styles/layout';
 import { DURATION } from 'styles/transition';
 
+import { Avatar } from '../../components/DetailCard/elements';
+
 export const SummariesWrapper = styled(FlexColumn)`
   ${PrettyScrollBar};
   overflow-y: scroll;
@@ -82,8 +84,7 @@ export const SummaryColumnEmptyStateSpacer = styled.div`
   height: 32px;
 `;
 
-export const SecondaryText = styled(SummarySectionContent)`
-  margin-top: -10px;
+export const SecondaryText = styled.span`
   color: var(--cogs-text-secondary);
 `;
 
@@ -95,9 +96,21 @@ export const Depth = styled(SecondaryText)`
   }
 `;
 
-export const EventText = styled(SecondaryText)`
+export const EventSpecificationWrapper = styled(FlexRow)`
+  margin-top: ${sizes.extraSmall};
+
+  ${Avatar} {
+    margin-top: 1px;
+  }
+  ${Depth} {
+    margin-left: ${sizes.extraSmall};
+  }
+`;
+
+export const HighlightedEventText = styled(SecondaryText)`
   color: #000000;
   opacity: 90%;
+  margin: 0 ${sizes.extraSmall};
 `;
 
 export const EmptyStateText = styled.span`

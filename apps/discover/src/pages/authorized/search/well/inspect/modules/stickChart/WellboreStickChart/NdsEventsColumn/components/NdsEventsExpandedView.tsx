@@ -2,6 +2,8 @@ import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
 
 import * as React from 'react';
 
+import { BooleanMap } from 'utils/booleanMap';
+
 import { DepthMeasurementUnit } from 'constants/units';
 
 import { EventsScatterViewExpanded } from '../../../components/EventsScatterViewExpanded';
@@ -14,6 +16,7 @@ export interface NdsEventsExpandedViewProps {
   scaleBlockRange: [number, number];
   depthMeasurementType?: DepthMeasurementUnit;
   onCollapse: () => void;
+  highlightedEventsMap?: BooleanMap;
 }
 
 export const NdsEventsExpandedView: React.FC<NdsEventsExpandedViewProps> = ({
@@ -21,6 +24,7 @@ export const NdsEventsExpandedView: React.FC<NdsEventsExpandedViewProps> = ({
   scaleBlockRange,
   depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
   onCollapse,
+  highlightedEventsMap,
 }) => {
   return (
     <EventsScatterViewExpanded<NdsInternalWithTvd>
@@ -36,6 +40,7 @@ export const NdsEventsExpandedView: React.FC<NdsEventsExpandedViewProps> = ({
           depthMeasurementType={depthMeasurementType}
         />
       )}
+      highlightedEventsMap={highlightedEventsMap}
     />
   );
 };

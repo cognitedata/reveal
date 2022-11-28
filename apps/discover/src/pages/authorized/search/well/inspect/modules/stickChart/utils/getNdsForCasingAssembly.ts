@@ -1,12 +1,13 @@
-import { filterMeasurementsByDepth } from 'domain/wells/measurements/internal/selectors/filterMeasurementsByDepth';
-import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
+import { filterNdsByMD } from 'domain/wells/nds/internal/selectors/filterNdsByMD';
+import { filterNdsByTVD } from 'domain/wells/nds/internal/selectors/filterNdsByTVD';
+import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
 
 import { DepthMeasurementUnit } from 'constants/units';
 
 import { CasingAssemblyView } from '../types';
 
-export const getMeasurementsDataForCasingAssembly = (
-  depthMeasurements: DepthMeasurementWithData[],
+export const getNdsForCasingAssembly = (
+  events: NdsInternalWithTvd[],
   casingAssembly: CasingAssemblyView,
   depthMeasurementType = DepthMeasurementUnit.MD
 ) => {
@@ -18,13 +19,13 @@ export const getMeasurementsDataForCasingAssembly = (
   } = casingAssembly;
 
   if (depthMeasurementType === DepthMeasurementUnit.MD) {
-    return filterMeasurementsByDepth(depthMeasurements, {
+    return filterNdsByMD(events, {
       min: measuredDepthTop.value,
       max: measuredDepthBase.value,
     });
   }
 
-  return filterMeasurementsByDepth(depthMeasurements, {
+  return filterNdsByTVD(events, {
     min: trueVerticalDepthTop?.value,
     max: trueVerticalDepthBase?.value,
   });

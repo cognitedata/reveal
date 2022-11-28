@@ -54,18 +54,6 @@ export const ColumnHeaderWrapper = styled(DefaultColumnHeaderWrapper)`
   }
 `;
 
-export const NptEventAvatar = styled.div`
-  height: 12px;
-  width: 12px;
-  border-radius: ${sizes.extraSmall};
-  border: 2px var(--cogs-greyscale-grey2) solid;
-  background-color: ${(props: { color: string }) => props.color};
-  margin-top: -9px;
-  margin-right: ${sizes.extraSmall};
-  align-self: center;
-  cursor: pointer;
-`;
-
 export const WellboreStickChartEmptyStateWrapper = styled(ContentWrapper)`
   margin-top: 25%;
 `;

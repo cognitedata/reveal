@@ -9,6 +9,7 @@ import { ExpandCollapseIconButton } from 'components/Buttons';
 import { ScatterView } from 'components/ScatterViewV2';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
+import { useHighlightedNdsMap } from 'modules/wellInspect/selectors';
 
 import { DEFAULT_DEPTH_MEASUREMENT_TYPE } from '../../constants';
 
@@ -32,6 +33,8 @@ export const NdsEventsScatterView: React.FC<Props> = ({
   expandedScaleBlock,
   onExpandOverflowEvents,
 }) => {
+  const highlightedNdsMap = useHighlightedNdsMap();
+
   const sortedEvents = useDeepMemo(
     () => sortNdsEventsByOccurence(events),
     [events]
@@ -63,6 +66,7 @@ export const NdsEventsScatterView: React.FC<Props> = ({
             scaleBlockRange={scaleBlockRange}
             depthMeasurementType={depthMeasurementType}
             onCollapse={collapseExpandedView}
+            highlightedEventsMap={highlightedNdsMap}
           />
         }
       >
@@ -85,6 +89,7 @@ export const NdsEventsScatterView: React.FC<Props> = ({
       renderScatterDetails={renderScatterDetails}
       scatterDetailsPlacement="top"
       renderOverflowAction={renderOverflowAction}
+      highlightedEventsMap={highlightedNdsMap}
     />
   );
 };

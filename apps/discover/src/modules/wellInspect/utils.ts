@@ -7,7 +7,7 @@ import { storage } from '@cognite/react-container';
 import { columns } from 'pages/authorized/search/well/inspect/modules/relatedDocument/constant';
 
 import { WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS } from './actions';
-import { BooleanSelection } from './types';
+import { BooleanSelection, StickChartsState } from './types';
 
 export const getBooleanSelection = (
   array: (string | number)[],
@@ -41,4 +41,16 @@ export const selectObjectsByKey = <T extends Record<string | number, unknown>>(
     // @sdk-wells
     filterKeys.map(String).includes(String(key))
   ) as T;
+};
+
+export const getHighlightedEventsStateKey = (
+  type: 'npt' | 'nds'
+  // eslint-disable-next-line consistent-return
+): keyof StickChartsState => {
+  switch (type) {
+    case 'npt':
+      return 'highlightedNpt';
+    case 'nds':
+      return 'highlightedNds';
+  }
 };

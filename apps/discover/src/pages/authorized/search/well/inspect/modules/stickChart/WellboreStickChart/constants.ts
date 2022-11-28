@@ -15,6 +15,7 @@ export const INCOMPLETE_DATA_TEXT = 'Data incomplete';
 export const NO_OPTIONS_SELECTED_TEXT = 'No options selected';
 export const NO_DATA_AMONG_SELECTED_OPTIONS_TEXT =
   'No data among selected options';
+export const NO_EVENT_HIGHLIGHTED_TEXT = 'No event highlighted';
 
 export const NO_COLUMNS_SELECTED_TEXT = 'No columns selected';
 
@@ -57,3 +58,7 @@ export const DEFAULT_COLUMN_ORDER = [
 export const DEFAULT_VISIBLE_COLUMNS = DEFAULT_COLUMN_ORDER.filter(
   (column) => column !== ChartColumn.DEPTH
 );
+
+export const EVENT_TYPES = ['npt', 'nds'] as const;
+
+export const HIGHLIGHTED_EVENTS_STORAGE_KEY = 'HIGHLIGHTED_EVENTS_STORAGE_KEY';

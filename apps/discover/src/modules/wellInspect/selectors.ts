@@ -80,3 +80,11 @@ export const useWellInspectGoBackNavigationPath = () => {
 export const useColoredWellbores = () => {
   return useSelector((state) => state.wellInspect.coloredWellbores);
 };
+
+export const useHighlightedNptMap = () => {
+  return useSelector((state) => state.wellInspect.stickCharts.highlightedNpt);
+};
+
+export const useHighlightedNdsMap = () => {
+  return useSelector((state) => state.wellInspect.stickCharts.highlightedNds);
+};

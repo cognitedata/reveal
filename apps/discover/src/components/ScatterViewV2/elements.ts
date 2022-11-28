@@ -21,9 +21,15 @@ export const Scatter = styled.div`
   width: ${sizes.small};
   height: ${sizes.small};
   border-radius: 2px;
-  ${(props: { color: string; $pointer: boolean; opacity?: number }) => `
+  ${(props: {
+    color: string;
+    $pointer: boolean;
+    $highlighted: boolean;
+    opacity?: number;
+  }) => `
     background: ${props.color};
     cursor: ${props.$pointer ? 'pointer' : 'auto'};
+    border: ${props.$highlighted ? '2px solid rgba(0,0,0, 0.15)' : 'none'};
     opacity: ${isUndefined(props.opacity) ? 1 : props.opacity};
   `}
 `;

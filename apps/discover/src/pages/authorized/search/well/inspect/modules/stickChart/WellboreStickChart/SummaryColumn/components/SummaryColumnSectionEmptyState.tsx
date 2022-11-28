@@ -12,9 +12,18 @@ import {
 import { SummaryColumnSectionProps } from './SummaryColumnSection';
 import { SummarySectionToggle } from './SummarySectionToggle';
 
+export interface SummaryColumnSectionEmptyStateProps
+  extends SummaryColumnSectionProps {
+  emptyText?: string;
+}
+
 export const SummaryColumnSectionEmptyState: React.FC<
-  SummaryColumnSectionProps
-> = ({ name, isExpanded: isExpandedProp = false }) => {
+  SummaryColumnSectionEmptyStateProps
+> = ({
+  name,
+  isExpanded: isExpandedProp = false,
+  emptyText = NO_DATA_TEXT,
+}) => {
   const [isExpanded, setExpanded] = useState(false);
 
   useEffect(() => {
@@ -31,7 +40,7 @@ export const SummaryColumnSectionEmptyState: React.FC<
 
       <SummaryColumnSectionContentWrapper $visible={isExpanded}>
         <SummarySectionContent>
-          <EmptyStateText>{NO_DATA_TEXT}</EmptyStateText>
+          <EmptyStateText>{emptyText}</EmptyStateText>
         </SummarySectionContent>
       </SummaryColumnSectionContentWrapper>
     </SummaryColumnSectionWrapper>

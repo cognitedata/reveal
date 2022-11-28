@@ -20,6 +20,8 @@ import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 import { WellboreCasingsViewsWrapper } from './elements';
 import { FilterBar } from './filters';
 import { useMaxDepths } from './hooks/useMaxDepths';
+import { usePreserveHighlightedEvents } from './hooks/usePreserveHighlightedEvents';
+import { useUpdateHighlightedEventsUrlParams } from './hooks/useUpdateHighlightedEventsUrlParams';
 import { useWellboreStickChartData } from './hooks/useWellboreStickChartData';
 import { ChartColumn } from './types';
 import { getWellboreData } from './utils/getWellboreData';
@@ -31,6 +33,9 @@ import {
 } from './WellboreStickChart/constants';
 
 const StickChart: React.FC = () => {
+  useUpdateHighlightedEventsUrlParams();
+  usePreserveHighlightedEvents();
+
   const wellbores = useWellInspectWellbores();
   const { selectedWellboreIds } = useWellInspectSelection();
 

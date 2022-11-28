@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+import { BooleanMap } from 'utils/booleanMap';
+
+import { EventSource } from '@cognite/sdk-wells';
+
 import { CollapseIconButton } from 'components/Buttons';
 import { ScatterView } from 'components/ScatterViewV2';
 import { DepthMeasurementUnit } from 'constants/units';
@@ -26,9 +30,10 @@ export interface EventsScatterViewExpandedProps<T> {
   depthMeasurementType?: DepthMeasurementUnit;
   onCollapse: () => void;
   renderEventDetailCard: (selectedEvent: T) => JSX.Element;
+  highlightedEventsMap?: BooleanMap;
 }
 
-export const EventsScatterViewExpanded = <T extends object>({
+export const EventsScatterViewExpanded = <T extends { source: EventSource }>({
   title,
   events,
   colorAccessor,
@@ -36,6 +41,7 @@ export const EventsScatterViewExpanded = <T extends object>({
   depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
   onCollapse,
   renderEventDetailCard,
+  highlightedEventsMap,
 }: EventsScatterViewExpandedProps<T>) => {
   const { data: depthUnit } = useUserPreferencesMeasurement();
 
@@ -70,6 +76,7 @@ export const EventsScatterViewExpanded = <T extends object>({
             colorAccessor={colorAccessor}
             highlightScatterIndex={selectedEventIndex}
             onClickScatter={handleClickScatter}
+            highlightedEventsMap={highlightedEventsMap}
           />
         </ScattersWrapper>
       </FlexRowFullWidth>

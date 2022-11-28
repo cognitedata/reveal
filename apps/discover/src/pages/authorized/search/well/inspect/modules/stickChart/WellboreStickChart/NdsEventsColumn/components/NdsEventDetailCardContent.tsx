@@ -7,6 +7,7 @@ import { DepthMeasurementUnit } from 'constants/units';
 import { FlexRowFullWidth } from 'styles/layout';
 
 import { DetailCardBlock } from '../../../components/DetailCard';
+import { ToggleHighlightButton } from '../../../components/DetailCard/ToggleHighlightButton';
 import { getDisplayUnit } from '../../../utils/getDisplayUnit';
 
 export interface NdsEventDetailCardContentProps {
@@ -18,6 +19,7 @@ export const NdsEventDetailCardContent: React.FC<
   NdsEventDetailCardContentProps
 > = ({ event, depthMeasurementType }) => {
   const {
+    source: { eventExternalId },
     riskType,
     subtype,
     ndsCodeColor,
@@ -58,7 +60,9 @@ export const NdsEventDetailCardContent: React.FC<
           title={riskType || 'Unknown'}
           value={subtype || 'Unknown'}
           avatarColor={ndsCodeColor}
-        />
+        >
+          <ToggleHighlightButton type="nds" eventExternalId={eventExternalId} />
+        </DetailCardBlock>
         <DetailCardBlock title="Severity" value={severity} />
       </FlexRowFullWidth>
 
