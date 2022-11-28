@@ -6,7 +6,12 @@ import { Document } from 'domain/documents';
 export const getMIMEType = (fileURI: string) => mime.lookup(fileURI);
 
 export const PREVIEWABLE_IMAGE_TYPES = ['png', 'jpeg', 'jpg', 'svg', 'webp'];
-export const PREVIEWABLE_FILE_TYPES = [...PREVIEWABLE_IMAGE_TYPES, 'pdf'];
+export const PREVIEWABLE_FILE_TYPES = [
+  ...PREVIEWABLE_IMAGE_TYPES,
+  'tif',
+  'tiff',
+  'pdf',
+];
 
 export const readablePreviewableFileTypes = () =>
   PREVIEWABLE_FILE_TYPES.reduce((acc, current, i) => {
