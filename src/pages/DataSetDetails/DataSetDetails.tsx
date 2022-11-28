@@ -190,39 +190,43 @@ const DataSetDetails = (): JSX.Element => {
     return <ErrorMessage error={error} />;
   };
 
-  const { isEnabled } = useFlag('DATA_EXPLORATION_filters');
+  // const { isEnabled } = useFlag('DATA_EXPLORATION_filters');
 
   const [selectedTab, setSelectedTab] = useState(
     searchParams.get('activeTab') || 'overview'
   );
   const activeTabChangeHandler = (tabKey: string) => {
     // Navigate the user to the new data exploration UI if it's feature toggled.
-    if (tabKey === 'data' && isEnabled) {
-      const url = createLink(`/explore/search`, {
-        filter: JSON.stringify({
-          filters: {
-            common: {
-              dataSetIds: [
-                {
-                  value: dataSet?.id,
-                  label:
-                    dataSet?.name ||
-                    dataSet?.externalId ||
-                    dataSet?.description,
-                },
-              ],
-            },
-          },
-        }),
-      });
-      window.open(url, '_blank', 'noopener noreferrer');
-    } else {
-      searchParams.set('activeTab', tabKey);
-      // @ts-ignore
-      trackUsage({ e: `data.sets.detail.${tabKey}` });
-      setSearchParams(searchParams);
-      setSelectedTab(tabKey);
-    }
+    // After discussions, we decided not to have the link to data exploration from
+    // here, instead we want to keep the tables in view, will comment out this code
+    // for future references in order to be able to reproduce this if we ever want to
+    // link to data exploration.
+    // if (tabKey === 'data' && isEnabled) {
+    //   const url = createLink(`/explore/search`, {
+    //     filter: JSON.stringify({
+    //       filters: {
+    //         common: {
+    //           dataSetIds: [
+    //             {
+    //               value: dataSet?.id,
+    //               label:
+    //                 dataSet?.name ||
+    //                 dataSet?.externalId ||
+    //                 dataSet?.description,
+    //             },
+    //           ],
+    //         },
+    //       },
+    //     }),
+    //   });
+    //   window.open(url, '_blank', 'noopener noreferrer');
+    // } else {
+    searchParams.set('activeTab', tabKey);
+    // @ts-ignore
+    trackUsage({ e: `data.sets.detail.${tabKey}` });
+    setSearchParams(searchParams);
+    setSelectedTab(tabKey);
+    // }
   };
 
   const renderTab = () => {
