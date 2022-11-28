@@ -67,8 +67,10 @@ const SearchTooltip = ({ children }: React.PropsWithChildren<any>) => {
 export default SearchTooltip;
 
 const Heading = styled(Title)`
-  font-weight: bold;
-  color: var(--cogs-text-inverted);
+  &&& {
+    font-weight: bold;
+    color: var(--cogs-text-inverted);
+  }
 `;
 
 const Contents = styled.div`

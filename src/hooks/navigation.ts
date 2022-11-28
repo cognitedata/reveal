@@ -13,12 +13,15 @@ export const useSearchParam = (
      * use window.location here, and not the cached location
      * from the useLocation hook
      */
+    const params = Object.fromEntries(
+      new URLSearchParams(window.location.search)
+    );
     const newSearch = newSearchParam
       ? {
-          ...searchParams,
+          ...params,
           [name]: encodeURIComponent(newSearchParam),
         }
-      : omit(searchParams, name);
+      : omit(params, name);
 
     setSearchParams(newSearch);
   };

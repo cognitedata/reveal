@@ -5,45 +5,53 @@ import { Icon, Switch, Collapse, Select, Label } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
 export const Toolbar = styled.aside`
-  border-left: 1px solid var(--cogs-greyscale-grey4);
-  width: 3.4375rem;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 4rem 10px 0;
-  row-gap: 1rem;
+  && {
+    border-left: 1px solid var(--cogs-greyscale-grey4);
+    width: 3.4375rem;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 4rem 10px 0;
+    row-gap: 1rem;
+  }
 `;
 
 export const Sidebar = styled.aside<{ visible?: boolean }>`
-  border-left: 1px solid var(--cogs-greyscale-grey4);
-  visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
-  width: ${(props) => (props.visible ? '400px' : 0)};
-  min-width: ${(props) => (props.visible ? '400px' : 0)};
-  transition: 0s linear 200ms, width 200ms ease;
+  && {
+    border-left: 1px solid var(--cogs-greyscale-grey4);
+    visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
+    width: ${(props) => (props.visible ? '400px' : 0)};
+    min-width: ${(props) => (props.visible ? '400px' : 0)};
+    transition: 0s linear 200ms, width 200ms ease;
 
-  position: relative;
+    position: relative;
+  }
 `;
 
 export const TopContainer = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--cogs-greyscale-grey4);
-  padding: 9px 0 10px 10px;
+  && {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--cogs-greyscale-grey4);
+    padding: 9px 0 10px 10px;
+  }
 `;
 
 export const TopContainerTitle = styled.h2`
-  font-size: 18px;
-  font-weight: 600;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
+  && {
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
 
-  > .cogs-icon {
-    margin-right: 10px;
+    > .cogs-icon {
+      margin-right: 10px;
+    }
   }
 `;
 
@@ -76,42 +84,44 @@ export const CollapsePanelTitle = styled.div`
 `;
 
 export const SidebarCollapse = styled(Collapse)`
-  background-color: white;
-
-  .rc-collapse-item {
-    border-radius: 4px;
-    background-color: #f5f5f5;
-    margin: 0 0 1rem;
-    border: 0;
-
-    > .rc-collapse-header {
-      color: #595959;
-      font-weight: 600;
-      flex-direction: row-reverse;
-      justify-content: space-between;
-    }
-
-    &:last-child > .rc-collapse-content {
-      border-radius: 0 0 0.75rem 0.75rem;
-    }
-  }
-
-  .rc-collapse-content {
-    background-color: #f5f5f5;
-    overflow: visible;
-    border-radius: 0 0 0.75rem 0.75rem;
-    padding-bottom: 1px;
-  }
-
-  .rc-collapse-content-box {
-    margin-bottom: 15px;
-  }
-
-  .cogs-select__control {
+  && {
     background-color: white;
-  }
-  .cogs-switch.disabled input[type='checkbox']:hover + .switch-ui {
-    background: var(--cogs-greyscale-grey3);
+
+    .rc-collapse-item {
+      border-radius: 4px;
+      background-color: #f5f5f5;
+      margin: 0 0 1rem;
+      border: 0;
+
+      > .rc-collapse-header {
+        color: #595959;
+        font-weight: 600;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+      }
+
+      &:last-child > .rc-collapse-content {
+        border-radius: 0 0 0.75rem 0.75rem;
+      }
+    }
+
+    .rc-collapse-content {
+      background-color: #f5f5f5;
+      overflow: visible;
+      border-radius: 0 0 0.75rem 0.75rem;
+      padding-bottom: 1px;
+    }
+
+    .rc-collapse-content-box {
+      margin-bottom: 15px;
+    }
+
+    .cogs-select__control {
+      background-color: white;
+    }
+    .cogs-switch.disabled input[type='checkbox']:hover + .switch-ui {
+      background: var(--cogs-greyscale-grey3);
+    }
   }
 `;
 

@@ -176,7 +176,7 @@ export const ChartActions = () => {
       <>
         <Dropdown
           content={
-            <StyledMenu>
+            <StyledMenu className="downloadChartHide">
               <StyledMenuButton type="ghost">
                 <ConnectedSharingDropdown
                   label={t.Share}
