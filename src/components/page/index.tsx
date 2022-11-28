@@ -28,7 +28,7 @@ const Page = ({ children, className, title }: PageProps): JSX.Element => {
         >
           {t('explore-data')}
         </Button>
-      </Flex>
+      </StyledTitleContainer>
       <StyledPageContent>{children}</StyledPageContent>
     </StyledPage>
   );
