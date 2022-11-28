@@ -71,7 +71,9 @@ export class Image360ApiHelper {
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
   ): Promise<Image360Entity[]> {
-    return this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
+    const entities = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
+    this._requestRedraw();
+    return entities;
   }
 
   public async remove360Images(entities: Image360Entity[]): Promise<void> {
