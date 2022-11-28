@@ -80,7 +80,7 @@ Note that it takes the custom camera manager itself as argument. It will immedia
 Then, implement a new `on(eventType, callback)` method, for instance:
 ```
 on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
-    switch(event) {
+    switch(eventType) {
         case 'cameraChange':
             // handle adding camera change callback as before
             break;
