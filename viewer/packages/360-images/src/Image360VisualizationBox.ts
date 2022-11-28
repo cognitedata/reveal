@@ -22,6 +22,10 @@ export class Image360VisualizationBox implements Image360Visualization {
   private readonly _sceneHandler: SceneHandler;
   private readonly _visualizationState: VisualizationState;
 
+  get opacity(): number {
+    return this._visualizationState.opacity;
+  }
+
   set opacity(alpha: number) {
     this._visualizationState.opacity = alpha;
 

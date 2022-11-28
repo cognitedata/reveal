@@ -129,7 +129,7 @@ export class Image360ApiHelper {
 
     await Promise.all([
       this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
-      this.tweenVisualizationAlpha(from360Entity, 1, 0, alphaTweenDuration)
+      this.tweenVisualizationAlpha(from360Entity, fromVisualizationCube.opacity, 0, alphaTweenDuration)
     ]);
 
     restorePostTransitionState();
@@ -171,6 +171,7 @@ export class Image360ApiHelper {
       .to(to, duration)
       .onUpdate(() => {
         entity.image360Visualization.opacity = from.alpha;
+        this._requestRedraw();
       })
       .easing(num => TWEEN.Easing.Quintic.InOut(num))
       .start(TWEEN.now());
@@ -264,10 +265,19 @@ export class Image360ApiHelper {
     this._interactionState.lastHoveredState = entity;
   }
 
-  private exit360ImageOnEscape(event: KeyboardEvent) {
+  private async exit360ImageOnEscape(event: KeyboardEvent) {
     if (event.key !== 'Escape') {
       return;
     }
+
+    const lastEntered = this._interactionState.lastImage360Entered;
+    if (lastEntered !== undefined) {
+      const transitionOutDuration = 600;
+      const currentOpacity = lastEntered.image360Visualization.opacity;
+      await this.tweenVisualizationAlpha(lastEntered, currentOpacity, 0, transitionOutDuration);
+      lastEntered.image360Visualization.opacity = currentOpacity;
+    }
+
     this.exit360Image();
   }
 }
