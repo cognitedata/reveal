@@ -1,3 +1,5 @@
+import { DataModelTypeDefs, DataModelTypeDefsType } from '../types';
+
 export interface GraphQlQueryParams {
   query: string;
   operationName?: string | null;
@@ -35,4 +37,22 @@ export interface ValidateDataModelDTO {
     breakingChangeInfo?: ValidateDataModelBreakingChangeInfoDTO;
   };
   breakingChangeInfo?: ValidateDataModelBreakingChangeInfoDTO;
+}
+
+export type QueryFilter =
+  | {
+      [filterName: string]: {
+        eq: string | number;
+      };
+    }
+  | { and: QueryFilter[] }
+  | { or: QueryFilter[] };
+
+export interface BuildQueryDTO {
+  dataModelType: DataModelTypeDefsType;
+  dataModelTypeDefs: DataModelTypeDefs;
+  limit: number;
+  cursor: string;
+  hasNextPage: boolean;
+  filter?: QueryFilter;
 }

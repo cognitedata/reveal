@@ -1,5 +1,3 @@
-import { DataModelTypeDefs, DataModelTypeDefsType } from '../../../types';
-
 export interface ApiVersionDataModel {
   types: any[];
   graphqlRepresentation: string;
@@ -66,25 +64,6 @@ export interface ApiVersionFromGraphQl {
   };
   version?: number;
 }
-
-export interface BuildQueryDTO {
-  dataModelType: DataModelTypeDefsType;
-  dataModelTypeDefs: DataModelTypeDefs;
-  limit: number;
-  cursor: string;
-  hasNextPage: boolean;
-  filter?: QueryFilter;
-}
-
-export type QueryFilter =
-  | {
-      [filterName: string]: {
-        eq: string | number;
-      };
-    }
-  | { and: QueryFilter[] }
-  | { or: QueryFilter[] };
-
 export interface ApiSpecDTO {
   externalId: string;
   name: string;

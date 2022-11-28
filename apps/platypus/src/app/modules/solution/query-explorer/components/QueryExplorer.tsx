@@ -14,14 +14,16 @@ import graphQlQueryFetcher from '../utils/graphqlQueryFetcher';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 type QueryExplorerType = {
-  solutionId: string;
+  dataModelExternalId: string;
+  space: string;
   schemaVersion: string;
   defaultQuery?: string;
 };
 
 export const QueryExplorer = ({
-  solutionId,
+  dataModelExternalId,
   schemaVersion,
+  space,
   defaultQuery,
 }: QueryExplorerType) => {
   const [gqlSchema, setGqlSchema] = useState<GraphQLSchema>();
@@ -41,7 +43,7 @@ export const QueryExplorer = ({
     setExplorerVariables(variables);
 
   useEffect(() => {
-    if (isReady || !solutionId || !schemaVersion) {
+    if (isReady || !dataModelExternalId || !schemaVersion) {
       return;
     }
 
@@ -51,8 +53,9 @@ export const QueryExplorer = ({
           query: getIntrospectionQuery(),
           operationName: 'IntrospectionQuery',
         },
-        solutionId,
-        schemaVersion
+        dataModelExternalId,
+        schemaVersion,
+        space
       )
       .then((result: any) => {
         setIsReady(true);
@@ -65,7 +68,7 @@ export const QueryExplorer = ({
           message: error.message,
         });
       });
-  }, [isReady, schemaVersion, solutionId, setIsReady]);
+  }, [isReady, schemaVersion, dataModelExternalId, setIsReady]);
 
   if (!isReady) {
     return <Spinner />;
@@ -75,7 +78,12 @@ export const QueryExplorer = ({
     <QueryExplorerContainer>
       <GraphiQL
         fetcher={(graphQlParams) =>
-          graphQlQueryFetcher.fetcher(graphQlParams, solutionId, schemaVersion)
+          graphQlQueryFetcher.fetcher(
+            graphQlParams,
+            dataModelExternalId,
+            schemaVersion,
+            space
+          )
         }
         onEditQuery={handleEditQuery}
         onEditVariables={handleEditVariables}

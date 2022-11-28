@@ -1,11 +1,8 @@
-import { mixerApiBuiltInTypes } from '../../../../constants';
+import { mixerApiBuiltInTypes } from '../constants';
+import { isInlineType } from '../utils';
 
-import { isInlineType } from '../../../../utils';
-import { BuildQueryDTO } from '../../dto';
-import {
-  DataModelTypeDefsField,
-  DataModelTypeDefsType,
-} from '../../../../types';
+import { DataModelTypeDefsField, DataModelTypeDefsType } from '../types';
+import { BuildQueryDTO } from '../dto';
 
 export class MixerQueryBuilder {
   getOperationName(typeName: string): string {

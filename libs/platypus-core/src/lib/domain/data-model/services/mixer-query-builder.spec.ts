@@ -1,4 +1,4 @@
-import { mixerApiInlineTypeDirectiveName } from '../../../../constants';
+import { mixerApiInlineTypeDirectiveName } from '../constants';
 import { MixerQueryBuilder } from './mixer-query-builder';
 
 describe('MixerApiQueryBuilderServiceTest', () => {
@@ -7,7 +7,7 @@ describe('MixerApiQueryBuilderServiceTest', () => {
   };
 
   const normalizeString = (input: string) =>
-    input.replace(/\n/gm, '').replace(/\s{2,}/gm, ' ');
+    input.replace(/\n/gm, '').replace(/\s{1,}/gm, '');
   it('should create instance', () => {
     const service = createInstance();
     expect(service).toBeTruthy();
@@ -316,7 +316,7 @@ user { name }
     const expected = `query {
       listDemo(first: ${limit}, after: "${cursor}") {
         items {
-          externalId 
+          externalId
 ts { externalId }
 tsList { externalId }
         }

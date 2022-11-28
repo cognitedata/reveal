@@ -65,7 +65,8 @@ export const QueryExplorerPage = ({
       <PageContentLayout.Body>
         {selectedDataModelVersion.version ? (
           <QueryExplorer
-            solutionId={dataModelExternalId}
+            dataModelExternalId={dataModelExternalId}
+            space={dataModel?.space || ''}
             schemaVersion={selectedDataModelVersion.version}
           />
         ) : (

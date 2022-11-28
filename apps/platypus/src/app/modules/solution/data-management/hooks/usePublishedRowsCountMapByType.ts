@@ -38,6 +38,7 @@ export const usePublishedRowsCountMapByType = ({
     dataModelId: dataModelExternalId,
     dataModelTypes,
     version: selectedDataModelVersion.version,
+    space: dataModel?.space || '',
   };
 
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);

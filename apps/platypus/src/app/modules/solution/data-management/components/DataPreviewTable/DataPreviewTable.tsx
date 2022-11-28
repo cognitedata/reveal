@@ -259,6 +259,7 @@ export const DataPreviewTable = forwardRef<
                 dataModelType,
                 dataModelTypeDefs,
                 version,
+                space,
                 limit: pageSizeLimit,
               })
               .then((response) => {

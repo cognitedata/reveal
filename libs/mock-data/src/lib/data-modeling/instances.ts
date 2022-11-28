@@ -4,9 +4,14 @@ export const fdmInstancesMockData = [
     externalId: '1',
     title: 'Lorem Ipsum',
     views: 254,
-    user: { id: 123 },
+    user: { externalId: '123' },
     tags: ['Lorem', 'Ipsum'],
-    comments: [{ id: 987 }, { id: 995 }, { id: 996 }, { id: 997 }],
+    comments: [
+      { externalId: '987' },
+      { externalId: '995' },
+      { externalId: '996' },
+      { externalId: '997' },
+    ],
 
     _metadata_type: 'node',
     _metadata_space: 'blog',
@@ -20,7 +25,7 @@ export const fdmInstancesMockData = [
     externalId: '2',
     title: 'Sic Dolor amet',
     views: 65,
-    user: { id: 456 },
+    user: { externalId: '456' },
     tags: ['Sic', 'Dolor'],
     comments: [],
 
@@ -36,7 +41,7 @@ export const fdmInstancesMockData = [
     externalId: '3',
     title: 'Lorem Sic Dolor amet',
     views: 100,
-    user: { id: 456 },
+    user: { externalId: '456' },
     tags: ['Dolor', 'Lorem'],
     comments: [],
 
@@ -49,7 +54,7 @@ export const fdmInstancesMockData = [
   },
   {
     id: 'blog_User_123',
-    externalId: 123,
+    externalId: '123',
     name: 'John Doe',
 
     _metadata_type: 'node',
@@ -61,7 +66,7 @@ export const fdmInstancesMockData = [
   },
   {
     id: 'blog_User_456',
-    externalId: 456,
+    externalId: '456',
     name: 'Jane Doe',
 
     _metadata_type: 'node',
@@ -74,7 +79,7 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_Comment_987',
     externalId: '987',
-    post: { id: 1 },
+    post: { externalId: '1' },
     body: 'Consectetur adipiscing elit',
     date: 1651346026630,
 
@@ -88,7 +93,7 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_Comment_995',
     externalId: '995',
-    post: { id: 1 },
+    post: { externalId: '1' },
     body: 'Nam molestie pellentesque dui',
     date: 1651346026630,
 
@@ -102,7 +107,7 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_Comment_996',
     externalId: '996',
-    post: { id: 1 },
+    post: { externalId: '1' },
     body: 'Random comment 996',
     date: 1651346026630,
 
@@ -116,7 +121,7 @@ export const fdmInstancesMockData = [
   {
     id: 'blog_Comment_997',
     externalId: '997',
-    post: { id: 1 },
+    post: { externalId: '1' },
     body: 'Random comment 997',
     date: 1651346026630,
 

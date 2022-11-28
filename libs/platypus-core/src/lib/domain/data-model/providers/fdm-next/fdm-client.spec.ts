@@ -1,5 +1,5 @@
 import { PublishDataModelVersionDTO } from '../../dto';
-import { DataModelVersionStatus } from '../../types';
+import { DataModelTypeDefsType, DataModelVersionStatus } from '../../types';
 import { FdmClient } from './fdm-client';
 
 const spacesApiMock = {
@@ -27,6 +27,7 @@ const mixerApiMock = {
       })
     ),
     listDataModelVersions: jest.fn(() => Promise.resolve([])),
+    runQuery: jest.fn(() => Promise.resolve({ data: { listPerson: [] } })),
   },
 } as any;
 
@@ -115,6 +116,59 @@ describe('FDM v3 Client', () => {
           lastUpdatedTime: 1667260800,
         });
       });
+    });
+  });
+
+  describe('should fetch data', () => {
+    test('should run graphql query', async () => {
+      const spacesApi = spacesApiMock.working;
+      const mixerApi = mixerApiMock.working;
+      const fdmClient = new FdmClient(spacesApi, mixerApi);
+
+      const dto = {
+        dataModelId: 'testExternalId',
+        space: 'testSpace',
+        schemaVersion: '1',
+        graphQlParams: {
+          query: `query { listPerson { items { externalId } } }`,
+          variables: { limit: 10 },
+        },
+      };
+
+      await fdmClient.runQuery(dto);
+      expect(mixerApi.runQuery).toHaveBeenCalledWith(
+        expect.objectContaining(dto)
+      );
+    });
+
+    test('should fetch data for data model', async () => {
+      const spacesApi = spacesApiMock.working;
+      const mixerApi = mixerApiMock.working;
+      const fdmClient = new FdmClient(spacesApi, mixerApi);
+
+      await fdmClient.fetchData({
+        cursor: '',
+        dataModelId: 'testExternalId',
+        space: 'testSpace',
+        version: '1',
+        limit: 10,
+        hasNextPage: false,
+        dataModelType: {
+          name: 'Person',
+          fields: [],
+        } as any as DataModelTypeDefsType,
+        dataModelTypeDefs: { types: [] },
+      });
+
+      const expectedReqDto = {
+        dataModelId: 'testExternalId',
+        space: 'testSpace',
+        schemaVersion: '1',
+      };
+
+      expect(mixerApi.runQuery).toHaveBeenCalledWith(
+        expect.objectContaining(expectedReqDto)
+      );
     });
   });
 });

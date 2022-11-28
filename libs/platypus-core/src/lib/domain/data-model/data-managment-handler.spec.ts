@@ -67,6 +67,7 @@ describe('DataManagementHandlerTest', () => {
       hasNextPage: true,
       limit: 100,
       dataModelId: 'testExternalId',
+      space: 'testExternalId',
       version: '1',
     });
 
@@ -81,6 +82,7 @@ describe('DataManagementHandlerTest', () => {
     const response = await service.fetchPublishedRowsCount({
       dataModelTypes: [],
       dataModelId: 'testExternalId',
+      space: 'testExternalId',
       version: '1',
     });
     expect(response.isSuccess).toBe(true);

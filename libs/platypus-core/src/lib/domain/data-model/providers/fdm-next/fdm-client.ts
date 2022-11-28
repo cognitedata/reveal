@@ -37,12 +37,14 @@ import { DataUtils } from '../../../../boundaries/utils/data-utils';
 import { FdmMixerApiService } from './services/mixer-api';
 import { PlatypusError } from '../../../../boundaries/types';
 import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
+import { MixerQueryBuilder } from '../../services';
 
 export class FdmClient implements FlexibleDataModelingClient {
   private spacesApi: SpacesApiService;
   private mixerApiService: FdmMixerApiService;
   private dataModelDataMapper: DataModelDataMapper;
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
+  private queryBuilder: MixerQueryBuilder;
 
   constructor(
     spacesApi: SpacesApiService,
@@ -52,6 +54,7 @@ export class FdmClient implements FlexibleDataModelingClient {
     this.mixerApiService = mixerApiService;
     this.dataModelDataMapper = new DataModelDataMapper();
     this.dataModelVersionDataMapper = new DataModelVersionDataMapper();
+    this.queryBuilder = new MixerQueryBuilder();
   }
 
   /**
@@ -248,7 +251,47 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @param dto
    */
   fetchData(dto: FetchDataDTO): Promise<PaginatedResponse> {
-    throw 'Not implemented';
+    const {
+      cursor,
+      hasNextPage,
+      limit,
+      dataModelType,
+      dataModelTypeDefs,
+      dataModelId,
+      version,
+      space,
+    } = dto;
+    const operationName = this.queryBuilder.getOperationName(
+      dataModelType.name
+    );
+    const query = this.queryBuilder.buildQuery({
+      cursor,
+      dataModelType,
+      dataModelTypeDefs,
+      hasNextPage,
+      limit,
+    });
+    return this.mixerApiService
+      .runQuery({
+        graphQlParams: {
+          query,
+        },
+        dataModelId,
+        space,
+        schemaVersion: version,
+      })
+      .then((result) => {
+        const response = result.data[operationName];
+        return {
+          pageInfo: {
+            cursor: response.pageInfo ? response.pageInfo.endCursor : undefined,
+            hasNextPage: response.pageInfo
+              ? response.pageInfo.hasNextPage
+              : false,
+          },
+          items: response.items,
+        };
+      });
   }
 
   /**
@@ -292,6 +335,35 @@ export class FdmClient implements FlexibleDataModelingClient {
   fetchPublishedRowsCount(
     dto: FetchPublishedRowsCountDTO
   ): Promise<PublishedRowsCountMap> {
-    throw 'Not implemented';
+    return this.mixerApiService
+      .runQuery({
+        graphQlParams: {
+          query: `query Aggregate {
+      ${dto.dataModelTypes
+        ?.map(
+          (dataModelType) => `
+          aggregate${dataModelType.name} {
+            items {
+              count {
+                externalId
+              }
+            }
+          }`
+        )
+        .join('')}
+    }`,
+        },
+        dataModelId: dto.dataModelId,
+        schemaVersion: dto.version,
+        space: dto.space,
+      })
+      .then((res) => {
+        const counts: PublishedRowsCountMap = {};
+        for (const typeName in res.data || {}) {
+          counts[typeName.replace(/aggregate/, '')] =
+            res.data[typeName]?.items[0]?.count?.externalId || 0;
+        }
+        return counts;
+      });
   }
 }

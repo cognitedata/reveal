@@ -122,7 +122,12 @@ export const buildDmsV3QueryResolvers = (params: BuildQueryResolversParams) => {
 
       // storage could have different name in schema service
       // make sure that we read the right table
-      const fieldStorageTableName = fieldSchemaType;
+      let fieldStorageTableName = fieldSchemaType;
+
+      // edge case, it seems that GraphQL have some reserved word when using User as a type
+      if (fieldStorageTableName === 'UserType') {
+        fieldStorageTableName = 'User';
+      }
 
       if (fieldKind === 'OBJECT') {
         tableResolver[fieldName] = (ref) => {

@@ -59,6 +59,7 @@ export const usePreviewData = (
           dataModelTypeDefs: dataModelTypeDefs,
           version: selectedDataModelVersion.version,
           limit: 1,
+          space: dataModel?.space || '',
           filter: { externalId: { eq: externalId } },
         })
         .then((response) => {

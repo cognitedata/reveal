@@ -1,9 +1,9 @@
-import { QueryFilter } from '../providers/fdm-current';
 import {
   DataModelTransformation,
   DataModelTypeDefs,
   DataModelTypeDefsType,
 } from '../types';
+import { QueryFilter } from './common-dtos';
 
 export interface FetchDataDTO {
   dataModelType: DataModelTypeDefsType;
@@ -13,6 +13,7 @@ export interface FetchDataDTO {
   hasNextPage: boolean;
   dataModelId: string;
   version: string;
+  space: string;
   filter?: QueryFilter;
 }
 
@@ -20,6 +21,7 @@ export interface FetchPublishedRowsCountDTO {
   dataModelTypes: DataModelTypeDefsType[];
   dataModelId: string;
   version: string;
+  space: string;
 }
 
 export interface PublishedRowsCountMap {

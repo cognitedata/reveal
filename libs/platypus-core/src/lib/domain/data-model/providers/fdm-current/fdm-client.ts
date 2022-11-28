@@ -44,11 +44,9 @@ import {
   DmsIngestNodesRequestDTO,
 } from './dto';
 import { DmsApiService, DmsModelBuilder } from './services/data-model-storage';
-import {
-  MixerApiService,
-  MixerBindingsBuilder,
-  MixerQueryBuilder,
-} from './services/mixer-api';
+import { MixerApiService, MixerBindingsBuilder } from './services/mixer-api';
+
+import { MixerQueryBuilder } from '../../services';
 
 export class FdmV2Client implements FlexibleDataModelingClient {
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
@@ -444,6 +442,7 @@ export class FdmV2Client implements FlexibleDataModelingClient {
         },
         dataModelId: dto.dataModelId,
         schemaVersion: dto.version,
+        space: dto.space,
       })
       .then((res) => {
         const counts: PublishedRowsCountMap = {};
