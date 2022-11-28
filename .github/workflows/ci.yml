@@ -100,6 +100,11 @@ jobs:
       working-directory: viewer
       run: yarn run build
 
+    - name: Check for API changes
+      working-directory: viewer
+      continue-on-error: false
+      run: npx api-extractor run
+
     - name: Upload dist/ artifact
       uses: actions/upload-artifact@v3
       with:
