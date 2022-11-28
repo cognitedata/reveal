@@ -786,7 +786,7 @@ __metadata:
     "@types/jest-environment-puppeteer": 5.0.3
     "@types/jest-image-snapshot": 5.1.0
     "@types/jsdom": 20.0.1
-    "@types/lodash": 4.14.189
+    "@types/lodash": 4.14.190
     "@types/mixpanel-browser": 2.38.0
     "@types/node": 18.11.3
     "@types/proj4": 2.5.2
@@ -800,7 +800,7 @@ __metadata:
     assert: 2.0.0
     async-mutex: 0.4.0
     comlink: 4.3.1
-    concurrently: 7.5.0
+    concurrently: 7.6.0
     cross-env: 7.0.3
     cross-var: 1.1.0
     dat.gui: 0.7.9
@@ -2108,10 +2108,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.189":
-  version: 4.14.189
-  resolution: "@types/lodash@npm:4.14.189"
-  checksum: 096d1e0954794fb76bd6a0ea443067f02004b53e3c59ac6e3fed88817a1468fc2e6614abdf44341f5e0fdff5f9a3c94a934cc9ff7126e07efbcd94355a21fe45
+"@types/lodash@npm:4.14.190":
+  version: 4.14.190
+  resolution: "@types/lodash@npm:4.14.190"
+  checksum: 353a55a1222a57224ead8bd3379fabb2e3e3f6685f599c48b1b66f099d8e9e015e6c6352c6e2275954004c3bb510377804c63117233c6f187700b6ab78adfa02
   languageName: node
   linkType: hard
 
@@ -4763,9 +4763,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:7.5.0":
-  version: 7.5.0
-  resolution: "concurrently@npm:7.5.0"
+"concurrently@npm:7.6.0":
+  version: 7.6.0
+  resolution: "concurrently@npm:7.6.0"
   dependencies:
     chalk: ^4.1.0
     date-fns: ^2.29.1
@@ -4779,7 +4779,7 @@ __metadata:
   bin:
     conc: dist/bin/concurrently.js
     concurrently: dist/bin/concurrently.js
-  checksum: 7886e1c8559d2699ae1b62be8aca5d56c226966e252a2b9dd6077b3c1fd5397e98ef537c040fffa1de50418bd2616746eb9dd589a31ffb9056d4758b850a865b
+  checksum: f705c9a7960f1b16559ca64958043faeeef6385c0bf30a03d1375e15ab2d96dba4f8166f1bbbb1c85e8da35ca0ce3c353875d71dff2aa132b2357bb533b3332e
   languageName: node
   linkType: hard
 
