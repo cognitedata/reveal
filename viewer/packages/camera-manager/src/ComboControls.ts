@@ -194,7 +194,7 @@ export class ComboControls extends EventDispatcher {
   /**
    * Returns true if these controls are enabled.
    */
-  get enabled(): Readonly<boolean> {
+  get enabled(): boolean {
     return this._enabled;
   }
 
@@ -280,13 +280,14 @@ export class ComboControls extends EventDispatcher {
     const deltaFactor = wantDamping ? Math.min(this._options.dampingFactor * this._targetFPSOverActualFPS, 1) : 1;
     this._temporarilyDisableDamping = false;
 
+    const EPSILON = this._options.EPSILON;
     if (
-      Math.abs(deltaTheta) > this._options.EPSILON ||
-      Math.abs(deltaPhi) > this._options.EPSILON ||
-      Math.abs(deltaRadius) > this._options.EPSILON ||
-      Math.abs(_deltaTarget.x) > this._options.EPSILON ||
-      Math.abs(_deltaTarget.y) > this._options.EPSILON ||
-      Math.abs(_deltaTarget.z) > this._options.EPSILON
+      Math.abs(deltaTheta) > EPSILON ||
+      Math.abs(deltaPhi) > EPSILON ||
+      Math.abs(deltaRadius) > EPSILON ||
+      Math.abs(_deltaTarget.x) > EPSILON ||
+      Math.abs(_deltaTarget.y) > EPSILON ||
+      Math.abs(_deltaTarget.z) > EPSILON
     ) {
       _spherical.set(
         _spherical.radius + deltaRadius * deltaFactor,
