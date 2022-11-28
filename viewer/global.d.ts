@@ -1,13 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { MetricsLogger } from '@reveal/metrics';
 
 declare global {
-  // Global variables will only be usable if they are declared with var
-  // eslint-disable-next-line no-var
-  var revealMetricsLogger: { metricsLogger: MetricsLogger };
-
   namespace NodeJS {
     interface ProcessEnv {
       VERSION: string;
