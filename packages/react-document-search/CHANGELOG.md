@@ -1,3 +1,7 @@
+## 0.5.0
+
+Option for enabling `keepPreviousData` as a parameter of `useDocumentSearch` hook
+
 ## 0.4.0
 
 Option for passing in the limit in the function parameter of `useDocumentSearch`

@@ -9,7 +9,13 @@ import { useDocumentFilters } from './useDocumentFilters';
 
 export const DOCUMENT_SEARCH_PAGE_LIMIT = 20;
 
-export const useDocumentSearch = ({ limit }: { limit?: number } = {}) => {
+export const useDocumentSearch = ({
+  limit,
+  keepPreviousData,
+}: {
+  limit?: number;
+  keepPreviousData?: boolean;
+} = {}) => {
   const { sdkClient } = useContext(DocumentSearchContext);
   const { appliedFilters } = useDocumentFilters();
   const localLimit = limit || DOCUMENT_SEARCH_PAGE_LIMIT;
@@ -35,6 +41,7 @@ export const useDocumentSearch = ({ limit }: { limit?: number } = {}) => {
         return lastPage?.nextCursor;
       },
       enabled: Boolean(sdkClient),
+      keepPreviousData,
     }
   );
 
