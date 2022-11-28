@@ -255,6 +255,12 @@ export const DetailsPane = styled.div`
   .ant-card-body {
     padding: 0 !important;
   }
+
+  // Remove the bottom border because the parent defines it,
+  // instead we're just keeping the active border intact.
+  .ant-tabs-nav::before {
+    border-bottom: none;
+  }
 `;
 
 export const PaneTitle = styled.h4`

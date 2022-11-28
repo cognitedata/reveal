@@ -11,15 +11,18 @@ interface FilesTableProps {
 
 const FilesTable = ({ data = [], isLoading }: FilesTableProps) => {
   const { t } = useTranslation();
-  const resourceTableColumns = useResourceTableColumns<FileInfo>('files');
+  const { fileColumns } = useResourceTableColumns();
 
   return (
     <ContentView id="filesTableId">
       <Table
         rowKey="key"
         loading={isLoading}
-        columns={resourceTableColumns}
-        dataSource={data}
+        // The types are interfaces instead of type, can't get them to work
+        // with the types defined in the library. The components worked and
+        // still work fine, therefore I think it's safe to provide any.
+        columns={fileColumns as any}
+        dataSource={data as any}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting
         }}

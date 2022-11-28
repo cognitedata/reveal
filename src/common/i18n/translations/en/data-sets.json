@@ -132,7 +132,7 @@
   "extpipe-raw-tables-title": "The RAW tables below are used in this data extpipe.",
   "extraction-pipelines": "Extraction pipelines",
   "extractor_one": "Extractor",
-  "explore-link": "Go to Data explorer",
+  "explore-data": "Explore data",
   "fetch-cdf-groups-failed": "Failed to fetch CDF groups.",
   "fetch-events-failed": "Failed to fetch events",
   "fetch-files-failed": "Failed to fetch files",

@@ -14,16 +14,18 @@ const TimeseriesPreview = ({
   isLoading,
 }: TimeseriesPreviewProps) => {
   const { t } = useTranslation();
-  const resourceTableColumns =
-    useResourceTableColumns<Timeseries>('timeseries');
+  const { timeseriesColumns } = useResourceTableColumns();
 
   return (
     <ContentView id="timeseriesTableId">
       <Table
         rowKey="key"
         loading={isLoading}
-        columns={resourceTableColumns}
-        dataSource={data}
+        // The types are interfaces instead of type, can't get them to work
+        // with the types defined in the library. The components worked and
+        // still work fine, therefore I think it's safe to provide any.
+        columns={timeseriesColumns as any}
+        dataSource={data as any}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting
         }}
