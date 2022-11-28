@@ -93,6 +93,12 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
                   scaleBlocks={scaleBlocks}
                 />
 
+                <DepthLimits
+                  scaleBlocks={scaleBlocks}
+                  maxDepth={maxDepth}
+                  depthMeasurementType={depthMeasurementType}
+                />
+
                 <HoleSectionsColumn
                   data={holeSections}
                   scaleBlocks={scaleBlocks}
@@ -103,12 +109,6 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
                   casingAssemblies={data}
                   scaleBlocks={scaleBlocks}
                   showBothSides={showBothSides}
-                  depthMeasurementType={depthMeasurementType}
-                />
-
-                <DepthLimits
-                  scaleBlocks={scaleBlocks}
-                  maxDepth={maxDepth}
                   depthMeasurementType={depthMeasurementType}
                 />
               </BodyColumnBody>

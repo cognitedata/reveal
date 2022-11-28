@@ -26,7 +26,7 @@ import { CasingSpecification } from './sections/CasingSpecification';
 // import { DrillingParameters } from './sections/DrillingParameters';
 import { HighlightedEvent } from './sections/HighlightedEvent';
 import { HoleSectionSummary } from './sections/HoleSectionSummary';
-import { MudWeightWindow } from './sections/MudWeightWindow';
+import { MudWeight } from './sections/MudWeightWindow';
 
 export interface CasingAssemblySummaryProps {
   casingAssembly: CasingAssemblyView;
@@ -86,10 +86,10 @@ export const CasingAssemblySummary: React.FC<CasingAssemblySummaryProps> = ({
       </SummarySectionColumn>
 
       <SummarySectionColumn>
-        <MudWeightWindow
+        <MudWeight
           measurementsData={measurementsData}
           depthMeasurementType={depthMeasurementType}
-          isExpanded={summaryVisibility[SummarySection.MudWeightWindow]}
+          isExpanded={summaryVisibility[SummarySection.MudWeight]}
         />
         <HighlightedEvent
           nptEvents={highlightedNptEvents}

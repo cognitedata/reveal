@@ -1,8 +1,8 @@
-import { MudWeight } from '../types';
+import { MudWeightData } from '../types';
 
 export const isEqualMudWeights = (
-  mudWeight1: MudWeight,
-  mudWeight2: MudWeight
+  mudWeight1: MudWeightData,
+  mudWeight2: MudWeightData
 ) => {
   return (
     mudWeight1.type === mudWeight2.type &&

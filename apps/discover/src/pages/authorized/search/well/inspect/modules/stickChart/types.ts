@@ -80,7 +80,7 @@ export enum SummarySection {
   CasingSpecification = 'Casing Specification',
   HoleSection = 'Hole Section',
   // DrillingParameters = 'Drilling Parameters',
-  MudWeightWindow = 'Mud Weight Window',
+  MudWeight = 'Mud Weight',
   HighlightedEvent = 'Highlighted Event',
 }
 
@@ -94,7 +94,7 @@ export interface TrajectoryCurveConfig {
   title?: string;
 }
 
-export interface MudWeight {
+export interface MudWeightData {
   id: string;
   type: string;
   value: { value: number; unit: string };

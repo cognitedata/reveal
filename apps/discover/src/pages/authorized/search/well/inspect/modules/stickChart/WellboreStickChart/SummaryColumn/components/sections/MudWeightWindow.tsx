@@ -19,12 +19,12 @@ import { Depth, SummarySectionContent } from '../../elements';
 import { SummaryColumnSection } from '../SummaryColumnSection';
 import { SummaryColumnSectionEmptyState } from '../SummaryColumnSectionEmptyState';
 
-export interface MudWeightWindowProps extends SummaryVisibilityProps {
+export interface MudWeightProps extends SummaryVisibilityProps {
   measurementsData: DepthMeasurementWithData[];
   depthMeasurementType?: DepthMeasurementUnit;
 }
 
-export const MudWeightWindow: React.FC<MudWeightWindowProps> = ({
+export const MudWeight: React.FC<MudWeightProps> = ({
   measurementsData,
   depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
   isExpanded,
@@ -61,7 +61,7 @@ export const MudWeightWindow: React.FC<MudWeightWindowProps> = ({
   if (isEmpty(mudWeights)) {
     return (
       <SummaryColumnSectionEmptyState
-        name={SummarySection.MudWeightWindow}
+        name={SummarySection.MudWeight}
         isExpanded={isExpanded}
       />
     );
@@ -69,7 +69,7 @@ export const MudWeightWindow: React.FC<MudWeightWindowProps> = ({
 
   return (
     <SummaryColumnSection
-      name={SummarySection.MudWeightWindow}
+      name={SummarySection.MudWeight}
       isExpanded={isExpanded}
     >
       {mudWeights.map(({ id, type, value, depth }) => {

@@ -7,13 +7,13 @@ import uniqWith from 'lodash/uniqWith';
 import { Fixed, toFixedNumberFromNumber } from 'utils/number';
 import { sortObjectsAscending } from 'utils/sort';
 
-import { MudWeight } from '../types';
+import { MudWeightData } from '../types';
 
 import { isEqualMudWeights } from './isEqualMudWeights';
 
 export const adaptDepthMeasurementToMudWeight = (
   depthMeasurement: DepthMeasurementWithData
-): Array<MudWeight> => {
+): Array<MudWeightData> => {
   const { columns, rows, depthUnit } = depthMeasurement;
 
   const mudWeights = columns.flatMap(
