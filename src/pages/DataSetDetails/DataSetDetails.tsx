@@ -95,7 +95,8 @@ const DataSetDetails = (): JSX.Element => {
     'WRITE'
   );
 
-  const { updateDataSetVisibility, isLoading: isUpdatingDataSetVisibility } =
+  // TODO: add this once we have new Menu
+  const { updateDataSetVisibility, isLoading: _isUpdatingDataSetVisibility } =
     useUpdateDataSetVisibility();
 
   const handleDatasetIdCopy = (copiedText: string | number | undefined) => {
