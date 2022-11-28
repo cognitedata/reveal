@@ -224,7 +224,7 @@ const DataSetDetails = (): JSX.Element => {
     searchParams.set('activeTab', tabKey);
     // @ts-ignore
     trackUsage({ e: `data.sets.detail.${tabKey}` });
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: true });
     setSelectedTab(tabKey);
     // }
   };
