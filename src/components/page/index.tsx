@@ -16,11 +16,7 @@ const Page = ({ children, className, title }: PageProps): JSX.Element => {
 
   return (
     <StyledPage className={className}>
-      <Flex
-        style={{ paddingBottom: 32, paddingLeft: 40, paddingRight: 40 }}
-        justifyContent="space-between"
-        alignItems="center"
-      >
+      <StyledTitleContainer justifyContent="space-between" alignItems="center">
         <Title level={3}>{title}</Title>
         <Button
           type="link"
@@ -41,6 +37,10 @@ const Page = ({ children, className, title }: PageProps): JSX.Element => {
 const StyledPage = styled.div`
   padding-top: 24px;
   padding-bottom: 24px;
+`;
+const StyledTitleContainer = styled(Flex)`
+  padding-left: 40px;
+  padding-right: 40px;
 `;
 const StyledPageContent = styled.div`
   padding-left: 40px;
