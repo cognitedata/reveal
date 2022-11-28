@@ -446,7 +446,7 @@ const DataSetDetails = (): JSX.Element => {
                     alignItems="center"
                   >
                     <Icon type="Documentation" />
-                    {t('cognite-docs')}
+                    {t('documentation')}
                   </Flex>
                 </Menu.Item>
               </Menu>
