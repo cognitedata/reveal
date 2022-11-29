@@ -1,0 +1,47 @@
+/**
+ * Config file for API Extractor.  For more info, please visit: https://api-extractor.com
+ */
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+  "projectFolder": ".",
+  "mainEntryPointFilePath": "<projectFolder>/dist/index.d.ts",
+  "newlineKind": "lf",
+
+  "apiReport": {
+    "enabled": true,
+    "reportTempFolder": "<projectFolder>/api-extractor-temp",
+    "reportFolder": "<projectFolder>"
+  },
+
+  "docModel": {
+    "enabled": false
+  },
+  "dtsRollup": {
+    "enabled": false
+  },
+
+  /**
+   * Turn off all compiler / TSDoc warnings
+   * These will trigger a non-zero exit code for the production run of the extractor,
+   * unnecessarily failing the CI pipeline step. We may want to enable these later on,
+   * but the extractor is extremely pedantic, so fixing all warnings seems like an
+   * infeasible (and unnecessary) task, at least considering our needs.
+   */
+  "messages": {
+    "tsdocMessageReporting": {
+      "default": {
+        "logLevel": "none"
+      }
+    },
+    "extractorMessageReporting": {
+      "default": {
+        "logLevel": "none"
+      }
+    },
+    "compilerMessageReporting": {
+      "default": {
+        "logLevel": "none"
+      }
+    }
+  }
+}
