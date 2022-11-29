@@ -305,7 +305,7 @@ export class Cognite3DViewer {
     constructor(options: Cognite3DViewerOptions);
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
-    }, add360ImageOptions?: AddImage360Options): Promise<Image360Entity[]>;
+    }, add360ImageOptions?: AddImage360Options): Promise<Image360[]>;
     addCadModel(options: AddModelOptions): Promise<CogniteCadModel>;
     addModel(options: AddModelOptions): Promise<CogniteModel>;
     addObject3D(object: THREE_2.Object3D): void;
@@ -318,7 +318,7 @@ export class Cognite3DViewer {
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
     get domElement(): HTMLElement;
-    enter360Image(image360: Image360Entity): Promise<void>;
+    enter360Image(image360: Image360): Promise<void>;
     exit360Image(): void;
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
@@ -348,7 +348,7 @@ export class Cognite3DViewer {
     on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
     get pointCloudBudget(): PointCloudBudget;
     set pointCloudBudget(budget: PointCloudBudget);
-    remove360Images(...image360Entities: Image360Entity[]): Promise<void>;
+    remove360Images(...image360Entities: Image360[]): Promise<void>;
     removeModel(model: CogniteModel): void;
     removeObject3D(object: THREE_2.Object3D): void;
     requestRedraw(): void;
@@ -696,27 +696,14 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 }
 
 // @public (undocumented)
-export class Image360Entity {
-    // Warning: (ae-forgotten-export) The symbol "Image360Descriptor" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "SceneHandler" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "Image360FileProvider" needs to be exported by the entry point index.d.ts
-    constructor(image360Metadata: Image360Descriptor, sceneHandler: SceneHandler, imageProvider: Image360FileProvider, postTransform: THREE_2.Matrix4, preComputedRotation: boolean);
-    // (undocumented)
-    dispose(): void;
-    // Warning: (ae-forgotten-export) The symbol "Image360Icon" needs to be exported by the entry point index.d.ts
-    get icon(): Image360Icon;
+export interface Image360 {
     get image360Visualization(): Image360Visualization;
-    load360Image(): Promise<void>;
-    get transform(): THREE_2.Matrix4;
-    unload360Image(): void;
+    get transform(): THREE.Matrix4;
 }
 
-// @public (undocumented)
+// @public
 export interface Image360Visualization {
     opacity: number;
-    renderOrder: number;
-    scale: THREE_2.Vector3;
-    visible: boolean;
 }
 
 // @public (undocumented)
