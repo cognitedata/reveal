@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { Body, Button, Colors, Overline } from '@cognite/cogs.js';
+import { Body, Button, Colors, Icon, Overline } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { CustomIcon } from 'components/CustomIcon';
 import Message, { MessageType } from 'components/Message/Message';
 import {
   SIDE_PANEL_TRANSITION_DURATION,
@@ -43,10 +42,7 @@ const CreateTableModalUploadStep = ({
     <>
       <Message message={messageContent} type={messageType} />
       <StyledUploadStepWrapper>
-        <CustomIcon
-          icon="DocumentIcon"
-          style={{ height: 40, marginRight: 16 }}
-        />
+        <StyledDocumentIcon type="Document" size={40} />
         <StyledProgressionWrapper>
           <StyledProgressionInfo>
             <StyledFileName level={3} strong>
@@ -70,6 +66,11 @@ const CreateTableModalUploadStep = ({
     </>
   );
 };
+
+const StyledDocumentIcon = styled(Icon)`
+  color: ${Colors['border--muted']};
+  margin-right: 16px;
+`;
 
 const StyledUploadStepWrapper = styled.div`
   align-items: center;
