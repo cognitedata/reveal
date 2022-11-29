@@ -231,4 +231,5 @@ export type Intersection = CadIntersection | PointCloudIntersection;
  */
 export { CameraConfiguration } from '@reveal/utilities';
 
-export { CadModelBudget, PointCloudBudget };
+export { CadModelBudget, PointCloudBudget,
+         EdlOptions, PointCloudIntersection};

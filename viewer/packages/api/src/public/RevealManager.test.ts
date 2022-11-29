@@ -4,13 +4,12 @@
 import * as THREE from 'three';
 
 import { createRevealManager } from './createRevealManager';
-import { RevealManager } from './RevealManager';
+import { RevealManager, LoadingStateChangeListener } from './RevealManager';
 
 import { ModelDataProvider, ModelMetadataProvider, PointCloudStylableObjectProvider } from '@reveal/data-providers';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SceneHandler } from '@reveal/utilities';
 import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
-import { LoadingStateChangeListener } from './types';
 import { It, Mock, SetPropertyExpression } from 'moq.ts';
 import { CameraManager } from '@reveal/camera-manager';
 import { PerspectiveCamera } from 'three';
