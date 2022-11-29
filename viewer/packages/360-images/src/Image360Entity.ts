@@ -8,8 +8,9 @@ import { Image360Descriptor, Image360FileProvider } from '@reveal/data-providers
 import { Image360Icon } from './Image360Icon';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { Image360Visualization } from './Image360Visualization';
+import { Image360 } from './Image360';
 
-export class Image360Entity {
+export class Image360Entity implements Image360 {
   private readonly _imageProvider: Image360FileProvider;
   private readonly _image360Metadata: Image360Descriptor;
   private readonly _transform: THREE.Matrix4;
