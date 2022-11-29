@@ -60,7 +60,7 @@ export const CasingAssemblySummary: React.FC<CasingAssemblySummaryProps> = ({
     return ndsEvents.filter(
       ({ source }) => highlightedNdsMap[source.eventExternalId]
     );
-  }, [nptEvents, highlightedNptMap]);
+  }, [ndsEvents, highlightedNdsMap]);
 
   const noEventHighlighted =
     !isEmpty(nptEvents) &&
