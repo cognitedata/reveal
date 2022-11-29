@@ -193,6 +193,9 @@ export type CadModelBudget = {
 };
 
 // @public
+export const CAMERA_MANAGER_EVENT_TYPE_LIST: readonly ["cameraChange", "cameraStop"];
+
+// @public
 export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
 
 // @public
@@ -208,6 +211,9 @@ export type CameraControlsOptions = {
 };
 
 // @public
+export type CameraEventDelegate = CameraChangeDelegate | CameraStopDelegate;
+
+// @public
 export interface CameraManager {
     activate(cameraManager?: CameraManager): void;
     deactivate(): void;
@@ -218,10 +224,21 @@ export interface CameraManager {
     getCamera(): THREE_2.PerspectiveCamera;
     getCameraState(): Required<CameraState>;
     off(event: 'cameraChange', callback: CameraChangeDelegate): void;
+    // (undocumented)
+    off(event: 'cameraStop', callback: CameraStopDelegate): void;
+    // (undocumented)
+    off(event: CameraManagerEventType, callback: CameraEventDelegate): void;
     on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+    // (undocumented)
+    on(event: 'cameraStop', callback: CameraStopDelegate): void;
+    // (undocumented)
+    on(event: CameraManagerEventType, callback: CameraEventDelegate): void;
     setCameraState(state: CameraState): void;
     update(deltaTime: number, boundingBox: THREE_2.Box3): void;
 }
+
+// @public
+export type CameraManagerEventType = typeof CAMERA_MANAGER_EVENT_TYPE_LIST[number];
 
 // @public
 export class CameraManagerHelper {
@@ -239,6 +256,9 @@ export type CameraState = {
     target?: THREE.Vector3;
     rotation?: THREE.Quaternion;
 };
+
+// @public
+export type CameraStopDelegate = () => void;
 
 // @public
 export const CDF_TO_VIEWER_TRANSFORMATION: Matrix4;
@@ -553,6 +573,15 @@ export interface DataSource {
     getNodesApiClient(): NodesApiClient;
 }
 
+// Warning: (ae-forgotten-export) The symbol "EventTrigger" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export class DebouncedCameraStopEventTrigger extends EventTrigger<CameraStopDelegate> {
+    constructor(cameraManager: CameraManager, debounceTimeMs?: number);
+    // (undocumented)
+    dispose(): void;
+}
+
 // @public (undocumented)
 export class DebugCameraTool extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer);
@@ -586,9 +615,9 @@ export class DefaultCameraManager implements CameraManager {
     set keyboardNavigationEnabled(enabled: boolean);
     get keyboardNavigationEnabled(): boolean;
     // (undocumented)
-    off(event: 'cameraChange', callback: CameraChangeDelegate): void;
+    off(event: CameraManagerEventType, callback: CameraEventDelegate): void;
     // (undocumented)
-    on(event: 'cameraChange', callback: CameraChangeDelegate): void;
+    on(event: CameraManagerEventType, callback: CameraEventDelegate): void;
     setCameraControlsOptions(controlsOptions: CameraControlsOptions): void;
     setCameraState(state: CameraState): void;
     setComboControlsOptions(options: Partial<ComboControlsOptions>): void;
