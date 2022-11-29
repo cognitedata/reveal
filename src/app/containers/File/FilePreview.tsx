@@ -137,7 +137,7 @@ export const FilePreview = ({
           tab={activeTab}
           onTabChange={onTabChange}
           additionalTabs={[
-            <Tabs.TabPane tab={<TabTitle>File details</TabTitle>} key="info">
+            <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="info">
               <DetailsTabWrapper>
                 <FileDetails file={fileInfo} />
                 <Metadata metadata={fileInfo.metadata} />
