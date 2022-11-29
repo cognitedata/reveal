@@ -7,7 +7,6 @@ import styled from 'styled-components';
 
 import { UPLOAD_MODAL_WIDTH } from 'utils/constants';
 import { getContainer, trimFileExtension } from 'utils/utils';
-import { useCSVUpload } from 'hooks/csv-upload';
 import { useActiveTableContext } from 'contexts';
 
 import Modal from 'components/Modal/Modal';
@@ -16,6 +15,7 @@ import CreateTableModalPrimaryKeyStep from 'components/CreateTableModal/CreateTa
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 import Dropzone from 'components/Dropzone/Dropzone';
 import { useTranslation } from 'common/i18n';
+import { DEFAULT_FILE_PROPS, useUpload } from 'hooks/upload';
 
 interface UploadCsvProps {
   setCSVModalVisible(value: boolean, tableChanged?: boolean): void;
@@ -29,6 +29,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     useState<PrimaryKeyMethod>();
 
   const { database, table } = useActiveTableContext();
+
   const {
     uploadPercentage,
     columns,
@@ -37,7 +38,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     isUploadFailed,
     isParsing,
     onConfirmUpload,
-  } = useCSVUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
+  } = useUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
 
   const onCancelUpload = () => {
     if (file && isParsing && !isUploadCompleted) {
@@ -51,7 +52,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
 
   const onOk = () => {
     if (isUploadCompleted) setCSVModalVisible(false, true);
-    else onConfirmUpload(database, table);
+    else onConfirmUpload?.(database, table);
   };
 
   const selectPrimaryKeyMethod =
@@ -62,9 +63,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     };
 
   const fileProps = {
-    name: 'file',
-    accept: '.csv',
-    multiple: false,
+    ...DEFAULT_FILE_PROPS,
     handleManualRemove() {
       setFile(undefined);
     },

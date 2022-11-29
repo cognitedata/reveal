@@ -6,9 +6,10 @@ import { notification } from 'antd';
 import { useFormik } from 'formik';
 import styled from 'styled-components';
 
+import { Trans, useTranslation } from 'common/i18n';
+import { useUpload } from 'hooks/upload';
 import { useCreateTable } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
-import { useCSVUpload } from 'hooks/csv-upload';
 import { trimFileExtension } from 'utils/utils';
 import { CREATE_TABLE_MODAL_WIDTH } from 'utils/constants';
 
@@ -17,7 +18,6 @@ import Modal, { ModalProps } from 'components/Modal/Modal';
 import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
 import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
 import CreateTableModalUploadStep from './CreateTableModalUploadStep';
-import { Trans, useTranslation } from 'common/i18n';
 
 export enum CreateTableModalStep {
   CreationMode = 'creationMode',
@@ -78,7 +78,7 @@ const CreateTableModal = ({
     isUploadCompleted,
     onConfirmUpload,
     uploadPercentage,
-  } = useCSVUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
+  } = useUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
 
   const { errors, handleBlur, handleChange, handleSubmit, values, resetForm } =
     useFormik<CreateTableFormValues>({
@@ -124,7 +124,7 @@ const CreateTableModal = ({
         onSuccess: () => {
           if (selectedCreationMode === CreationMode.Upload) {
             setCreateTableModalStep(CreateTableModalStep.Upload);
-            onConfirmUpload(databaseName, values.tableName);
+            onConfirmUpload?.(databaseName, values.tableName);
           } else {
             notification.success({
               message: t('table-created-notification_success', {

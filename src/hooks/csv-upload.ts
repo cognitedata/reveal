@@ -11,9 +11,9 @@ import { sleep } from 'utils/utils';
 import { useTranslation } from 'common/i18n';
 
 export const useCSVUpload = (
-  file: File | undefined,
-  selectedPrimaryKeyMethod: PrimaryKeyMethod | undefined,
-  selectedKeyIndex: number
+  file?: File,
+  selectedPrimaryKeyMethod?: PrimaryKeyMethod,
+  selectedKeyIndex?: number
 ) => {
   const { t } = useTranslation();
   const sdk = useSDK();
@@ -30,21 +30,20 @@ export const useCSVUpload = (
   const [parsedCursor, setParsedCursor] = useState(0);
   const [uploadedCursor, setUploadedCursor] = useState(0);
 
-  const [parsePercentage] = useMemo(() => {
-    if (!file || !isUpload) return [0];
+  const parsePercentage = useMemo(() => {
+    if (!file || !isUpload) return 0;
     const newParsePercentage = Math.ceil((parsedCursor / file.size) * 100);
-    return [newParsePercentage];
+    return newParsePercentage;
   }, [parsedCursor, file, isUpload]);
 
-  const [uploadPercentage, uploadSize] = useMemo(() => {
-    if (!file || !isUpload) return [0, 0];
-    const newUploadPercentage = Math.ceil((uploadedCursor / file.size) * 100);
-    const size = Math.ceil(uploadedCursor / 2 ** 20);
-    return [newUploadPercentage, size];
+  const uploadPercentage = useMemo(() => {
+    if (!file || !isUpload) return 0;
+    return Math.ceil((uploadedCursor / file.size) * 100);
   }, [uploadedCursor, file, isUpload]);
 
   const selectedColumn =
-    selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn
+    selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
+    selectedKeyIndex !== undefined
       ? columns?.[selectedKeyIndex]
       : undefined;
 
@@ -75,7 +74,7 @@ export const useCSVUpload = (
       header: true,
       error: () => {
         notification.error({
-          message: t('file-upload-error', { name: file.name }),
+          message: t('file-parse-error', { name: file.name }),
           key: 'file-upload',
         });
         setIsUpload(false);
@@ -119,15 +118,15 @@ export const useCSVUpload = (
     if (!file || !isUploadCompleted) return;
     if (isUploadFailed)
       notification.error({
-        message: `${file.name} is not uploaded!`,
+        message: t('file-upload-error', { name: file.name }),
         key: 'file-upload',
       });
     else
       notification.success({
-        message: `${file.name} is uploaded!`,
+        message: t('file-upload-success', { name: file.name }),
         key: 'file-upload',
       });
-  }, [file, isUploadCompleted, isUploadFailed]);
+  }, [file, isUploadCompleted, isUploadFailed, t]);
 
   const onConfirmUpload = (database: string, table: string) => {
     trackEvent('RAW.Explorer.CSVUpload.Upload');
@@ -138,7 +137,6 @@ export const useCSVUpload = (
   return {
     parsePercentage,
     uploadPercentage,
-    uploadSize,
     columns,
     isUpload,
     isUploadFailed,
