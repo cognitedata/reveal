@@ -5,7 +5,6 @@ import { Upload } from 'antd';
 import { DraggerProps } from 'antd/lib/upload';
 import styled from 'styled-components';
 
-import { CustomIcon } from 'components/CustomIcon';
 import { useTranslation } from 'common/i18n';
 
 type DropzoneProps = {
@@ -26,32 +25,26 @@ const Dropzone = ({
         <StyledDropzoneOnDrop>
           <Icon type="Upload" />
           <StyledDropzoneOnDropText level={6}>
-            {t('csv-file-drop-area-drop-text')}
+            {t('file-drop-area-drop-text')}
           </StyledDropzoneOnDropText>
         </StyledDropzoneOnDrop>
         <StyledDocumentIcon />
-        <StyledDocumentIconHover />
         <StyledDropzoneTitle level={6} strong>
-          {title ?? t('csv-file-drop-area-title')}
+          {title ?? t('file-drop-area-title')}
         </StyledDropzoneTitle>
         <StyledDropzoneDetail strong>
-          {description ?? t('csv-file-drop-area-detail')}
+          {description ?? t('file-drop-area-detail')}
         </StyledDropzoneDetail>
       </StyledDropzoneContent>
     </StyledDropzone>
   );
 };
 
-const StyledDocumentIcon = styled(CustomIcon).attrs({
-  icon: 'DocumentIconDisabled',
+const StyledDocumentIcon = styled(Icon).attrs({
+  type: 'Document',
+  size: 40,
 })`
-  height: 40px;
-`;
-
-const StyledDocumentIconHover = styled(CustomIcon).attrs({
-  icon: 'DocumentIconHover',
-})`
-  height: 40px;
+  color: ${Colors['border--muted']};
 `;
 
 const StyledDropzoneContent = styled.div`
@@ -102,19 +95,11 @@ const StyledDropzone = styled(Upload.Dragger)`
       }
     }
 
-    ${StyledDocumentIconHover} {
-      display: none;
-    }
-
     :hover {
       background-color: ${Colors['bg-hover'].hex()};
 
       ${StyledDocumentIcon} {
-        display: none;
-      }
-
-      ${StyledDocumentIconHover} {
-        display: unset;
+        color: ${Colors['border--interactive--hover']};
       }
 
       ${StyledDropzoneContent} {
@@ -126,11 +111,7 @@ const StyledDropzone = styled(Upload.Dragger)`
       background-color: ${Colors['bg-selected'].hex()};
 
       ${StyledDocumentIcon} {
-        display: none;
-      }
-
-      ${StyledDocumentIconHover} {
-        display: unset;
+        color: ${Colors['border--interactive--toggled-hover']};
       }
 
       ${StyledDropzoneContent} {
@@ -145,11 +126,7 @@ const StyledDropzone = styled(Upload.Dragger)`
     background-color: ${Colors['bg-hover'].hex()};
 
     ${StyledDocumentIcon} {
-      display: none;
-    }
-
-    ${StyledDocumentIconHover} {
-      display: unset;
+      color: ${Colors['border--interactive--hover']};
     }
 
     ${StyledDropzoneContent} {
