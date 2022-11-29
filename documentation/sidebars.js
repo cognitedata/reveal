@@ -32,6 +32,7 @@ module.exports = {
         'examples/cad-transform-override',
         'examples/cad-2doverlay',
         'examples/cad-3dobjects',
+        'examples/image360',
         'examples/node-visiting',
         'examples/clipping',
         'examples/cad-save-viewerstate',
