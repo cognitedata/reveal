@@ -186,5 +186,6 @@ export class StationaryCameraManager implements CameraManager {
     const sensitivityScaler = 0.05;
     this._camera.fov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
     this._camera.updateProjectionMatrix();
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   };
 }
