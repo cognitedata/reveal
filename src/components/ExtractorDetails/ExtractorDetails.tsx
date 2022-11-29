@@ -10,7 +10,7 @@ import {
   Flex,
   formatDate,
   Icon,
-  Label,
+  Chip,
   Loader,
   Title,
 } from '@cognite/cogs.js';
@@ -138,7 +138,7 @@ const ExtractorDetails = () => {
                 <Flex justifyContent="space-between" alignItems="center">
                   <Title level="5">{t('versions')}</Title>
                   <Button
-                    type="link"
+                    type="ghost-accent"
                     size="small"
                     onClick={() => {
                       trackUsage({
@@ -153,11 +153,12 @@ const ExtractorDetails = () => {
                 </Flex>
                 <Flex gap={8} direction="column">
                   <Flex gap={8}>
-                    <Label size="small">
-                      {t('v-version', {
+                    <Chip
+                      label={t('v-version', {
                         version: getReleaseVersionCore(latestRelease?.version),
                       })}
-                    </Label>
+                      size="x-small"
+                    />
                     <ReleaseTag version={latestRelease?.version}></ReleaseTag>
                   </Flex>
                   <Flex gap={8}>
@@ -196,9 +197,7 @@ const ExtractorDetails = () => {
                     <Title level="5">{t('tags')}</Title>
                     <StyledTagsContainer>
                       {tags?.map((tag) => (
-                        <Label size="small" key={tag}>
-                          {tag}
-                        </Label>
+                        <Chip size="x-small" label={tag} key={tag} />
                       ))}
                     </StyledTagsContainer>
                   </>
@@ -290,7 +289,7 @@ const ExtractorDetails = () => {
                   {release.artifacts?.map((artifact) => (
                     <Button
                       key={artifact.link}
-                      type="link"
+                      type="ghost-accent"
                       icon="Download"
                       iconPlacement="right"
                       onClick={() => {

@@ -1,4 +1,4 @@
-import { Flex, Label } from '@cognite/cogs.js';
+import { Flex, Chip } from '@cognite/cogs.js';
 import { getReleaseState } from 'utils/utils';
 
 type ReleaseTagProp = {
@@ -10,7 +10,7 @@ const ReleaseTag = ({ version }: ReleaseTagProp) => {
 
   return releaseState ? (
     <Flex gap={6} alignItems="center">
-      <Label size="small">{releaseState}</Label>
+      <Chip label={releaseState} size="x-small" />
     </Flex>
   ) : null;
 };

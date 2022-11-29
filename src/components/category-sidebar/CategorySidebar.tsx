@@ -15,7 +15,6 @@ const CategorySidebar = (): JSX.Element => {
       <Flex gap={4} direction="column">
         <CategorySidebarItem count={5} title={t('all')} />
         <CategorySidebarItem tab="extractors" title={t('extractors')} />
-        <CategorySidebarItem tab="source-systems" title={t('source-systems')} />
       </Flex>
     </StyledContainer>
   );

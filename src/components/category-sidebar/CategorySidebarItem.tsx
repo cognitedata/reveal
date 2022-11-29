@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Chip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 type CategorySidebarItemProps = {
@@ -19,19 +19,19 @@ const CategorySidebarItem = ({
   };
 
   return (
-    <Button onClick={handleClick} type="ghost">
-      <StyledContent>
-        <span>{title}</span>
-        <span>{count}</span>
-      </StyledContent>
-    </Button>
+    <StyledButton onClick={handleClick} type="ghost">
+      <span>{title}</span>
+      {count && <Chip label={count} muted size="x-small" />}
+    </StyledButton>
   );
 };
 
-const StyledContent = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
+const StyledButton = styled(Button)`
+  > span {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
 `;
 
 export default CategorySidebarItem;
