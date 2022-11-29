@@ -45,7 +45,7 @@ export class CustomCameraManager implements CameraManager {
     private _camera: THREE.PerspectiveCamera;
     private _controls: OrbitControls;
     private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
-    private readonly _stopCameraListener: DebouncedCameraStopEventTrigger;
+    private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
 
     constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
         this._domElement = domElement;
@@ -54,7 +54,7 @@ export class CustomCameraManager implements CameraManager {
         this._controls.enableDamping = true;
         this._controls.dampingFactor = 0.3;
 
-        this._stopCameraListener = new DebouncedCameraStopEventTrigger(this);
+        this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
 
         this._controls.addEventListener('change', () => {
             this._cameraChangedListener.forEach(cb => cb(this._camera.position, this._controls.target));
@@ -116,7 +116,7 @@ export class CustomCameraManager implements CameraManager {
         }
     }
 
-    off(event: "cameraChange", callback: CameraChangeDelegate): void {
+    off(event: CameraManagerEventType, callback: CameraEventDelegate): void {
         switch(eventType) {
             case 'cameraChange':
                 const index = this._cameraChangedListener.indexOf(callback);
