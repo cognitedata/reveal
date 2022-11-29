@@ -173,7 +173,9 @@ export const useJSONUpload = ({
     const requestChunks = chunk(jsonContent, ROW_CHUNK_SIZE);
 
     setRequestChunks(requestChunks);
-    setFetchingIndex(REQUEST_CHUNK_SIZE - 1);
+    setFetchingIndex(
+      Math.min(REQUEST_CHUNK_SIZE - 1, requestChunks.length - 1)
+    );
   };
 
   return {
