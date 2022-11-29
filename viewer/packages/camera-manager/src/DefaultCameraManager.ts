@@ -4,8 +4,19 @@
 
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
+
 import { ComboControls, ComboControlsOptions } from './ComboControls';
-import { CameraManagerCallbackData, CameraControlsOptions, CameraState, CameraChangeDelegate } from './types';
+
+import {
+  CameraManagerCallbackData,
+  CameraControlsOptions,
+  CameraState,
+  CameraChangeDelegate,
+  CameraManagerEventType,
+  CameraStopDelegate,
+  CameraEventDelegate
+} from './types';
+
 import { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
 import {
@@ -19,6 +30,8 @@ import {
   clickOrTouchEventOffset
 } from '@reveal/utilities';
 
+import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
+
 /**
  * Default implementation of {@link CameraManager}. Uses target-based orbit controls combined with
  * keyboard and mouse navigation possibility. Supports automatic update of camera near and far
@@ -28,6 +41,8 @@ export class DefaultCameraManager implements CameraManager {
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeDelegate>()
   };
+
+  private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
 
   private readonly _controls: ComboControls;
   private readonly _camera: THREE.PerspectiveCamera;
@@ -111,22 +126,30 @@ export class DefaultCameraManager implements CameraManager {
       this._events.cameraChange.fire(position.clone(), target.clone());
       this._nearAndFarNeedsUpdate = true;
     });
+
+    this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
   }
 
-  on(event: 'cameraChange', callback: CameraChangeDelegate): void {
+  on(event: CameraManagerEventType, callback: CameraEventDelegate): void {
     switch (event) {
       case 'cameraChange':
         this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
+        break;
+      case 'cameraStop':
+        this._stopEventTrigger.subscribe(callback as CameraStopDelegate);
         break;
       default:
         assertNever(event);
     }
   }
 
-  off(event: 'cameraChange', callback: CameraChangeDelegate): void {
+  off(event: CameraManagerEventType, callback: CameraEventDelegate): void {
     switch (event) {
       case 'cameraChange':
-        this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
+        this._events.cameraChange.unsubscribe(callback as CameraChangeDelegate);
+        break;
+      case 'cameraStop':
+        this._stopEventTrigger.unsubscribe(callback as CameraStopDelegate);
         break;
       default:
         assertNever(event);
@@ -278,6 +301,7 @@ export class DefaultCameraManager implements CameraManager {
     this.teardownControls();
     disposeOfAllEventListeners(this._events);
     this._inputHandler.dispose();
+    this._stopEventTrigger.dispose();
   }
 
   private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number): void {

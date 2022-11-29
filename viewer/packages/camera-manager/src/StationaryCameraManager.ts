@@ -2,18 +2,29 @@
  * Copyright 2022 Cognite AS
  */
 
+import { assertNever } from '@reveal/utilities';
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
+import pull from 'lodash/pull';
+
 import { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
-import { CameraChangeDelegate, CameraState } from './types';
+import {
+  CameraChangeDelegate,
+  CameraEventDelegate,
+  CameraManagerEventType,
+  CameraState,
+  CameraStopDelegate
+} from './types';
+import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
 
 export class StationaryCameraManager implements CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
-  private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
+  private readonly _cameraChangedListeners: Array<CameraChangeDelegate> = [];
   private readonly _domElement: HTMLElement;
   private _defaultFOV: number;
+  private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private _isEnabled = false;
   private _isDragging = false;
 
@@ -21,6 +32,7 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement = domElement;
     this._camera = camera;
     this._defaultFOV = camera.fov;
+    this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
   }
 
   get enabled(): boolean {
@@ -77,14 +89,29 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement.addEventListener('wheel', this.zoomCamera);
   }
 
-  on(_: 'cameraChange', callback: CameraChangeDelegate): void {
-    this._cameraChangedListener.push(callback);
+  on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
+    switch (eventType) {
+      case 'cameraChange':
+        this._cameraChangedListeners.push(callback);
+        break;
+      case 'cameraStop':
+        this._stopEventTrigger.subscribe(callback as CameraStopDelegate);
+        break;
+      default:
+        assertNever(eventType);
+    }
   }
 
-  off(_: 'cameraChange', callback: CameraChangeDelegate): void {
-    const index = this._cameraChangedListener.indexOf(callback);
-    if (index !== -1) {
-      this._cameraChangedListener.splice(index, 1);
+  off(eventType: CameraManagerEventType, callback: CameraChangeDelegate): void {
+    switch (eventType) {
+      case 'cameraChange':
+        pull(this._cameraChangedListeners, callback);
+        break;
+      case 'cameraStop':
+        this._stopEventTrigger.unsubscribe(callback as CameraStopDelegate);
+        break;
+      default:
+        assertNever(eventType);
     }
   }
 
@@ -124,8 +151,9 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   dispose(): void {
-    this._cameraChangedListener.splice(0);
     this.deactivate();
+    this._cameraChangedListeners.splice(0);
+    this._stopEventTrigger.dispose();
   }
 
   private readonly enableDragging = (_: PointerEvent) => {
@@ -150,12 +178,14 @@ export class StationaryCameraManager implements CameraManager {
     euler.y -= -movementX * sensitivityScaler * (this._camera.fov / this._defaultFOV);
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
-    this._cameraChangedListener.forEach(cb => cb(this._camera.position, this._camera.position));
+
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   };
 
   private readonly zoomCamera = (event: WheelEvent) => {
     const sensitivityScaler = 0.05;
     this._camera.fov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
     this._camera.updateProjectionMatrix();
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   };
 }

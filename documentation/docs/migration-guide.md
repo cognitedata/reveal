@@ -64,3 +64,34 @@ The `*FromModelToCdfCoordinates` can likewise be emulated using the matrix
 const inverseCdfTransformation = model.getModelTransformation().clone().multiply(model.getCdfToDefaultModelTransformation()).invert();
 ```
 and using it with `applyMatrix4()` as above.
+
+## 'cameraStop' event on CameraManager
+
+`CameraManager` implementations must now allow listeners for the `'cameraStop'` event, in addition to the old `'cameraChange'` event. This is to allow `CameraManager` implementors the flexibility of deciding when the camera manager is standing still. The event *must* be emitted in order to trigger loading of model data if `continuousStreaming` is set to `false`.
+
+In order to make this transition easy, we expose the `DebouncedCameraStopEventTrigger` class, which will fire a stop event when the camera manager's `'cameraChange'` has not triggered for a short while.
+
+To use this class, construct it in the custom camera manager's constructor:
+```
+this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
+```
+Note that it takes the custom camera manager itself as argument. It will immediately subscribe to the `cameraChange` event on this camera manager, so make sure any prerequisite initialization is finished before constructing it.
+
+Then, implement a new `on(eventType, callback)` method, for instance:
+```
+on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
+    switch(eventType) {
+        case 'cameraChange':
+            // handle adding camera change callback as before
+            break;
+        case 'cameraStop':
+            this._stopEventTrigger.subscribe(callback as CameraStopDelegate);
+            break;
+        default:
+            throw Error(`Unrecognized camera event type: ${event}`);
+    }
+}
+```
+The `off(eventType, callback)` implementation may have a similar structure, but calling `unsubscribe` on the trigger object instead of `subscribe`.
+
+Finally, call `this._stopEventTrigger.dispose()` in the camera manager's `dispose()` method to clean up resources after use.

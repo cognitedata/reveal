@@ -65,6 +65,7 @@ import {
 import { Image360Entity } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
+import { Image360 } from '@reveal/360-images/src/Image360';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
@@ -252,6 +253,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createLocalHelper(
         this._renderer,
         this._sceneHandler,
+        this._activeCameraManager,
         revealOptions
       );
     } else if (options.customDataSource !== undefined) {
@@ -259,6 +261,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
         this._renderer,
         this._sceneHandler,
+        this._activeCameraManager,
         revealOptions,
         options.customDataSource
       );
@@ -269,6 +272,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this._sceneHandler,
+        this._activeCameraManager,
         revealOptions,
         options.sdk
       );
@@ -692,7 +696,7 @@ export class Cognite3DViewer {
     datasource: 'events',
     eventFilter: { [key: string]: string },
     add360ImageOptions?: AddImage360Options
-  ): Promise<Image360Entity[]> {
+  ): Promise<Image360[]> {
     if (datasource !== 'events') {
       throw new Error(`${datasource} is an unknown datasource from 360 images`);
     }
@@ -711,22 +715,22 @@ export class Cognite3DViewer {
    * Remove a set of 360 images.
    * @param image360Entities
    */
-  remove360Images(...image360Entities: Image360Entity[]): Promise<void> {
+  remove360Images(...image360Entities: Image360[]): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
-    return this._image360ApiHelper.remove360Images(image360Entities);
+    return this._image360ApiHelper.remove360Images(image360Entities.map(entity => entity as Image360Entity));
   }
 
   /**
    * Enter visualization of a 360 image.
    * @param image360
    */
-  async enter360Image(image360: Image360Entity): Promise<void> {
+  async enter360Image(image360: Image360): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
-    return this._image360ApiHelper.enter360Image(image360);
+    return this._image360ApiHelper.enter360Image(image360 as Image360Entity);
   }
 
   /**

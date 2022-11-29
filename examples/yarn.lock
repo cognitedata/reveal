@@ -187,7 +187,7 @@
   version "0.0.0"
   uid ""
 
-"@cognite/sdk-core@^4.8.1":
+"@cognite/sdk-core@^4.8.2":
   version "4.8.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.2.tgz#00f69eaf93d433223f650891d098e1ffb0738631"
   integrity sha512-nV17d8Z+NMErVyO2hv6yafpl32TmRwMc1pPYnMp+J4FcE0bCUqvL6AduXAPQZ443NZx86+Obz5SWzUg3PXzfkA==
@@ -471,6 +471,11 @@
   version "7.0.11"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.11.tgz#d421b6c527a3037f7c84433fd2c4229e016863d3"
   integrity sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==
+
+"@types/lodash@^4.14.190":
+  version "4.14.190"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.190.tgz#d8e99647af141c63902d0ca53cf2b34d2df33545"
+  integrity sha512-5iJ3FBJBvQHQ8sFhEhJfjUP+G+LalhavTkYyrAYqz5MEJG+erSv0k9KJLb6q7++17Lafk1scaTIFXcMJlwK8Mw==
 
 "@types/mime@*":
   version "3.0.1"
@@ -3853,10 +3858,10 @@ text-segmentation@^1.0.3:
   dependencies:
     utrie "^1.0.2"
 
-three-stdlib@2.17.3:
-  version "2.17.3"
-  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.17.3.tgz#f92d322810d81379a51344b21e0a2e941b84cb8f"
-  integrity sha512-k2VwPXi75ySy0fxPIeUk3mLkj3/j+sCFK4g9Kp5J7w0PUh6qrCdhah7L6+On6fW5mBdVtML4Q5yEyN1R0Cfvqw==
+three-stdlib@2.19.0:
+  version "2.19.0"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.19.0.tgz#22b73fe07b2524548b486e551737db4b17586beb"
+  integrity sha512-ImKJXIlmx/iYH3U2CeLiYA2V60UqhpwLE2ErOME+FrD3Xodk7oQU5N9IZGKQzGjnl3hOfLmLZ5BPJrotmttBjg==
   dependencies:
     "@babel/runtime" "^7.16.7"
     "@types/offscreencanvas" "^2019.6.4"

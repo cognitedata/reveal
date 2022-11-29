@@ -16,6 +16,7 @@ import { NodeAppearanceProvider } from '@reveal/cad-styling';
 import { RenderMode, RenderPipelineExecutor, CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
+import { CameraManager } from '@reveal/camera-manager';
 
 import { ModelIdentifier } from '@reveal/data-providers';
 
@@ -32,12 +33,7 @@ export class RevealManager {
   private readonly _pipelineExecutor: RenderPipelineExecutor;
   private readonly _renderPipeline: RenderPipelineProvider;
 
-  private readonly _lastCamera = {
-    position: new THREE.Vector3(NaN, NaN, NaN),
-    quaternion: new THREE.Quaternion(NaN, NaN, NaN, NaN),
-    zoom: NaN,
-    fov: NaN
-  };
+  private _cameraInMotion: boolean = false;
 
   private _isDisposed = false;
   private readonly _subscriptions = new Subscription();
@@ -46,18 +42,30 @@ export class RevealManager {
   };
 
   private readonly _updateSubject: Subject<void>;
+  private readonly _cameraManager: CameraManager;
+
+  private readonly _onCameraChange: (position: THREE.Vector3, target: THREE.Vector3) => void;
+  private readonly _onCameraStop: () => void;
 
   constructor(
     cadManager: CadManager,
     pointCloudManager: PointCloudManager,
     pipelineExecutor: RenderPipelineExecutor,
-    renderPipeline: RenderPipelineProvider
+    renderPipeline: RenderPipelineProvider,
+    cameraManager: CameraManager
   ) {
     this._pipelineExecutor = pipelineExecutor;
     this._renderPipeline = renderPipeline;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
+
+    this._cameraManager = cameraManager;
+    this._onCameraChange = (_position: THREE.Vector3, _target: THREE.Vector3) => (this._cameraInMotion = true);
+    this._onCameraStop = () => (this._cameraInMotion = false);
+    this._cameraManager.on('cameraChange', this._onCameraChange);
+    this._cameraManager.on('cameraStop', this._onCameraStop);
+
     this._updateSubject = new Subject();
     this._updateSubject
       .pipe(
@@ -79,6 +87,9 @@ export class RevealManager {
     this._renderPipeline.dispose();
     this._subscriptions.unsubscribe();
     this._isDisposed = true;
+
+    this._cameraManager.off('cameraChange', this._onCameraChange);
+    this._cameraManager.off('cameraStop', this._onCameraStop);
   }
 
   public requestRedraw(): void {
@@ -100,22 +111,10 @@ export class RevealManager {
   }
 
   public update(camera: THREE.PerspectiveCamera): void {
-    const hasCameraChanged =
-      this._lastCamera.zoom !== camera.zoom ||
-      this._lastCamera.fov !== camera.fov ||
-      !this._lastCamera.position.equals(camera.position) ||
-      !this._lastCamera.quaternion.equals(camera.quaternion);
+    this._cadManager.updateCamera(camera, this._cameraInMotion);
 
-    this._cadManager.updateCamera(camera, hasCameraChanged);
-
-    if (hasCameraChanged) {
-      this._lastCamera.position.copy(camera.position);
-      this._lastCamera.quaternion.copy(camera.quaternion);
-      this._lastCamera.zoom = camera.zoom;
-      this._lastCamera.fov = camera.fov;
-
+    if (this._cameraInMotion) {
       this._pointCloudManager.updateCamera(camera);
-
       this._updateSubject.next();
     }
   }

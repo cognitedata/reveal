@@ -19,6 +19,7 @@ import { assertNever, SceneHandler } from '@reveal/utilities';
 import { CadNode } from '@reveal/cad-model';
 import { CogniteClient } from '@cognite/sdk';
 import { PointCloudNode, LocalPointClassificationsProvider } from '@reveal/pointclouds';
+import { CameraManager } from '@reveal/camera-manager';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for
@@ -58,14 +59,16 @@ export class RevealManagerHelper {
    * meant for use in debugging and development.
    * @param renderer
    * @param sceneHandler
+   * @param cameraManager
    * @param revealOptions
    */
   static createLocalHelper(
     renderer: THREE.WebGLRenderer,
     sceneHandler: SceneHandler,
+    cameraManager: CameraManager,
     revealOptions: RevealOptions
   ): RevealManagerHelper {
-    const revealManager = createLocalRevealManager(renderer, sceneHandler, revealOptions);
+    const revealManager = createLocalRevealManager(renderer, sceneHandler, cameraManager, revealOptions);
     return new RevealManagerHelper('local', revealManager);
   }
 
@@ -73,22 +76,25 @@ export class RevealManagerHelper {
    * Creates a helper for RevealManager that loads models from CDF.
    * @param renderer
    * @param sceneHandler
+   * @param cameraManager
    * @param revealOptions
    * @param sdkClient
    */
   static createCdfHelper(
     renderer: THREE.WebGLRenderer,
     sceneHandler: SceneHandler,
+    cameraManager: CameraManager,
     revealOptions: RevealOptions,
     sdkClient: CogniteClient
   ): RevealManagerHelper {
-    const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, revealOptions);
+    const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, cameraManager, revealOptions);
     return new RevealManagerHelper('cdf', revealManager);
   }
 
   static createCustomDataSourceHelper(
     renderer: THREE.WebGLRenderer,
     sceneHandler: SceneHandler,
+    cameraManager: CameraManager,
     revealOptions: RevealOptions,
     dataSource: DataSource
   ): RevealManagerHelper {
@@ -101,6 +107,7 @@ export class RevealManagerHelper {
       new LocalPointClassificationsProvider(),
       renderer,
       sceneHandler,
+      cameraManager,
       revealOptions
     );
     // Note! We consider custom data sources 'CDF-type' as we use CDF model identifiers
