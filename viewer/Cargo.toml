@@ -1,7 +1,7 @@
 [workspace]
 
 members = [
-  "packages/*/wasm"
+  "packages/pointclouds/wasm"
 ]
 
 
