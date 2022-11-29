@@ -44,7 +44,7 @@ export const EventSummary = ({
   return (
     <SummaryCard
       icon="Events"
-      title="Event"
+      title="Events"
       onAllResultsClick={onAllResultsClick}
     >
       {isLoading ? (

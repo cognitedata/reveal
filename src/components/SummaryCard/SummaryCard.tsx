@@ -36,7 +36,7 @@ export function SummaryCard({
           onClick={onAllResultsClick}
         >
           {' '}
-          All Results
+          All results
         </Button>
       </StyledFlex>
       {children}

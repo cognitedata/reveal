@@ -42,7 +42,7 @@ export const TimeseriesSummary = ({
   return (
     <SummaryCard
       icon="Timeseries"
-      title="Timeseries"
+      title="Time series"
       onAllResultsClick={onAllResultsClick}
     >
       {isLoading ? (
