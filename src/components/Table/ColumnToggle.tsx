@@ -9,6 +9,9 @@ import {
   Menu,
   Label,
   SegmentedControl,
+  Infobar,
+  Detail,
+  Body,
 } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
@@ -20,6 +23,7 @@ import {
   WithDragHandleProps,
 } from 'components/DragDropContainer';
 import { HighlightCell } from './HighlightCell';
+import { MAX_COLUMN_SELECTION } from 'index';
 
 export interface ColumnToggleProps<T extends TableData = any> {
   allColumns: () => Column<T, unknown>[];
@@ -54,22 +58,35 @@ export function ColumnToggle<T>({
 
   const elementOrders = allColumns().map(column => column.id);
 
-  const handleTabClick = (key: string) => {
-    setTab(key);
-  };
-
   const filteredColumns = allColumns().filter(column =>
     column.columnDef.header?.toString().toLowerCase().includes(searchInput)
   );
+  const isSearchResultEmpty = filteredColumns.length === 0;
+
   const selectedColumns = filteredColumns.filter(column =>
     column.getIsVisible()
   );
-
   const selectedTabColumns = tab === 'All' ? filteredColumns : selectedColumns;
 
   const selectedColumnsCount = allColumns().reduce((accumulator, item) => {
     return item.getIsVisible() ? accumulator + 1 : accumulator;
   }, 0);
+  const isSelectedCountLimitExceedingMaxValue =
+    selectedColumnsCount >= MAX_COLUMN_SELECTION;
+
+  const handleTabClick = (key: string) => {
+    setTab(key);
+  };
+  const handleColumnChange = (column: Column<T>) => (nextState: boolean) => {
+    if (nextState === true && selectedColumnsCount >= MAX_COLUMN_SELECTION) {
+      return;
+    }
+
+    column.toggleVisibility();
+  };
+
+  const shouldDisableUnselectedColumnOnMaxLimit = (column: Column<T>) =>
+    isSelectedCountLimitExceedingMaxValue && !column.getIsVisible();
 
   return (
     <Dropdown
@@ -80,13 +97,13 @@ export function ColumnToggle<T>({
             onButtonClicked={handleTabClick}
             currentKey={tab}
           >
-            <SegmentedControl.Button key="All">All</SegmentedControl.Button>
-            <SegmentedControl.Button key="Selected">
+            <StyledSegmentedButton key="All">All</StyledSegmentedButton>
+            <StyledSegmentedButton key="Selected">
               Selected
               <StyledCountLabel size="small" variant="unknown">
                 {selectedColumnsCount}
               </StyledCountLabel>
-            </SegmentedControl.Button>
+            </StyledSegmentedButton>
           </SegmentedControl>
 
           <StyledInput
@@ -98,6 +115,10 @@ export function ColumnToggle<T>({
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
           />
+
+          {!isSearchResultEmpty && searchInput && (
+            <SearchResultText>Results for "{searchInput}":</SearchResultText>
+          )}
 
           <DragDropContainer
             direction="vertical"
@@ -115,11 +136,12 @@ export function ColumnToggle<T>({
                     <Checkbox
                       name={column.id}
                       checked={column.getIsVisible()}
-                      onChange={() => {
-                        column.toggleVisibility();
-                      }}
+                      onChange={handleColumnChange(column)}
                       className="cogs-checkbox__checkbox"
-                      disabled={!column.getCanHide()}
+                      disabled={
+                        !column.getCanHide() ||
+                        shouldDisableUnselectedColumnOnMaxLimit(column)
+                      }
                     />
                     <Flex direction="column">
                       <StyledHeader
@@ -134,6 +156,21 @@ export function ColumnToggle<T>({
               );
             })}
           </DragDropContainer>
+
+          {isSearchResultEmpty && (
+            <EmptyStateContainer alignItems="center" justifyContent="center">
+              <EmptyText>No options</EmptyText>
+            </EmptyStateContainer>
+          )}
+
+          {!isSearchResultEmpty && isSelectedCountLimitExceedingMaxValue && (
+            <Footer>
+              <WarningInfobar>
+                Due to performance reasons, the max amount of columns that can
+                be selected is 20
+              </WarningInfobar>
+            </Footer>
+          )}
         </StyledMenu>
       }
     >
@@ -146,8 +183,12 @@ const StyledMenu = styled(Menu)`
   min-width: 256px;
   max-width: 256px;
   width: 100%;
-  max-height: 320px;
+  max-height: 456px;
   overflow: auto;
+
+  .btn-reset {
+    background: inherit !important;
+  }
 `;
 
 const StyledHeader = styled(HighlightCell)`
@@ -169,9 +210,40 @@ const FlexWrapper = styled.div`
 `;
 
 export const StyledInput = styled(Input)`
-  margin-top: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 `;
 
 export const StyledCountLabel = styled(Label)`
   margin-left: 6px;
+`;
+
+export const Footer = styled(Menu.Footer)`
+  position: sticky;
+  bottom: -8px;
+  background-color: white;
+`;
+
+const WarningInfobar = styled(Infobar).attrs({ type: 'warning' })`
+  margin-bottom: 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 187, 0, 0.2);
+`;
+
+const SearchResultText = styled(Detail)`
+  font-weight: 400 !important;
+  color: var(--cogs-text-icon--muted) !important;
+  padding: 8px;
+`;
+
+const StyledSegmentedButton = styled(SegmentedControl.Button)`
+  width: 50% !important;
+`;
+
+const EmptyText = styled(Body).attrs({ level: 2, strong: true })`
+  color: var(--cogs-text-icon--muted) !important;
+`;
+
+const EmptyStateContainer = styled(Flex)`
+  padding: 16px;
 `;

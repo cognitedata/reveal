@@ -4,6 +4,7 @@ import { Table } from 'components/Table/Table';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 import { ResultCount } from 'components';
 import { RelationshipTableProps } from './RelationshipTable';
+import { ResourceTableColumns } from 'components/Table/columns';
 
 import { SequenceWithRelationshipLabels } from 'index';
 import { EmptyState } from 'components/EmpyState/EmptyState';
@@ -17,7 +18,7 @@ const {
   uploadedTime,
   lastUpdatedTime,
   created,
-} = Table.Columns;
+} = ResourceTableColumns;
 
 const columns = [
   name(),

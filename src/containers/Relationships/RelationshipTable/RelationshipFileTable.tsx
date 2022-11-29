@@ -2,6 +2,7 @@ import React from 'react';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 import { ResultCount } from 'components';
 import { Table } from 'components/Table/Table';
+import { ResourceTableColumns } from 'components/Table/columns';
 import { RelationshipTableProps } from './RelationshipTable';
 
 import { FileWithRelationshipLabels } from 'containers/Files/FileTable/FileTable';
@@ -16,7 +17,7 @@ const {
   uploadedTime,
   lastUpdatedTime,
   created,
-} = Table.Columns;
+} = ResourceTableColumns;
 
 const columns = [
   name(),

@@ -23,3 +23,5 @@ export const ColumnKeys = [
   'rootAsset',
   'relationshipLabels',
 ] as const;
+
+export const MAX_COLUMN_SELECTION = 20;

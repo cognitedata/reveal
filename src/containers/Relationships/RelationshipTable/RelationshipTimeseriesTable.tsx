@@ -9,6 +9,7 @@ import { ResultCount } from 'components';
 import { RelationshipTableProps } from './RelationshipTable';
 import { TimeseriesWithRelationshipLabels } from 'containers/Timeseries/TimeseriesTable/TimeseriesTable';
 import { EmptyState } from 'components/EmpyState/EmptyState';
+import { ResourceTableColumns } from 'components/Table/columns';
 import { ColumnDef } from '@tanstack/react-table';
 
 const {
@@ -20,7 +21,7 @@ const {
   lastUpdatedTime,
   created,
   assets,
-} = Table.Columns;
+} = ResourceTableColumns;
 
 const columns = [
   name(),

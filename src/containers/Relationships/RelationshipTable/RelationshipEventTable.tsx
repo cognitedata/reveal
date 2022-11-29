@@ -1,12 +1,13 @@
 import React from 'react';
 import { Table } from 'components/Table/Table';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
-import { ResultCount } from 'components';
+import { ResourceTableColumns } from 'components/Table/columns';
 import { RelationshipTableProps } from './RelationshipTable';
 import { EventWithRelationshipLabels } from 'containers/Events/EventTable/EventTable';
 
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import { ColumnDef } from '@tanstack/react-table';
+import { ResultCount } from 'components/ResultCount/ResultCount';
 
 const {
   relationshipLabels,
@@ -15,7 +16,7 @@ const {
   type,
   lastUpdatedTime,
   created,
-} = Table.Columns;
+} = ResourceTableColumns;
 
 const columns = [
   type,
