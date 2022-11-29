@@ -26,20 +26,4 @@ export interface Image360 {
    * @returns Image360Visualization
    */
   get image360Visualization(): Image360Visualization;
-
-  /**
-   * Loads the 360 image (6 faces) into the visualization object.
-   */
-  load360Image(): Promise<void>;
-
-  /**
-   * Drops the GPU resources for the 360 image
-   * the icon will be preserved.
-   */
-  unload360Image(): void;
-
-  /**
-   * @obvious
-   */
-  dispose(): void;
 }
