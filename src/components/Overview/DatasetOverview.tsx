@@ -23,20 +23,20 @@ import EmptyDatasetIcon from 'assets/EmptyDataset.svg';
 import { useUpdateDataSetMutation } from 'actions';
 
 type DatasetOverviewProps = {
-  dataset: DataSet;
+  dataSet: DataSet;
   loading?: Boolean | undefined;
   onActiveTabChange: (tabKey: string) => void;
 };
 const DatasetOverview = ({
-  dataset,
+  dataSet,
   onActiveTabChange,
 }: DatasetOverviewProps): JSX.Element => {
   const { t } = useTranslation();
   const [isEditEnabled, setEdit] = useState(false);
   const { isLoading: isUpdating, mutateAsync: updateDataSet } =
     useUpdateDataSetMutation();
-  const [description, setDescription] = useState(dataset.description || '');
-  const { id } = dataset;
+  const [description, setDescription] = useState(dataSet?.description || '');
+  const { id } = dataSet || {};
   const [
     { data: assets, isLoading: isAssetsLoading },
     { data: timeseries, isLoading: isTimeseriesLoading },
@@ -105,7 +105,7 @@ const DatasetOverview = ({
 
   const handleEdit = () => {
     updateDataSet({
-      ...dataset,
+      ...dataSet,
       description,
     }).then(() => {
       setEdit(false);
@@ -170,7 +170,7 @@ const DatasetOverview = ({
                           type="secondary"
                           onClick={() => {
                             setEdit(false);
-                            setDescription(dataset.description || '');
+                            setDescription(dataSet?.description || '');
                           }}
                         >
                           {t('cancel')}
@@ -178,7 +178,7 @@ const DatasetOverview = ({
                       </Flex>
                     </Flex>
                   ) : (
-                    dataset?.description
+                    dataSet?.description
                   )}
                 </ContentView>
               </StyledCard>
@@ -326,7 +326,7 @@ const DatasetOverview = ({
           <StyledCard>
             <StyledCardTitle level={5}>{t('summary')}</StyledCardTitle>
             <Divider />
-            <BasicInfoCard dataSet={dataset} />
+            <BasicInfoCard dataSet={dataSet} />
           </StyledCard>
         </Col>
       </Row>

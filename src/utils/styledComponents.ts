@@ -255,6 +255,10 @@ export const DetailsPane = styled.div`
   .ant-card-body {
     padding: 0 !important;
   }
+
+  .ant-tabs-nav::before {
+    border-bottom: none;
+  }
 `;
 
 export const PaneTitle = styled.h4`

@@ -5,20 +5,15 @@ import {
   Sequence,
   Timeseries,
 } from '@cognite/sdk';
-import { ColumnsType } from 'antd/es/table';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceProperty from './ResourceProperty';
 import { useTranslation } from 'common/i18n';
 import moment from 'moment';
 import { useFlag } from '@cognite/react-feature-flags';
-import { ExploreDataResourceTypes } from './ExploreData';
 import { trackUsage } from 'utils';
+import { TableColumnType } from 'antd';
 
-type TResource = Asset | Timeseries | FileInfo | CogniteEvent | Sequence;
-
-export function useResourceTableColumns<T extends TResource>(
-  resource: ExploreDataResourceTypes
-): ColumnsType<T> {
+export function useResourceTableColumns() {
   const { t } = useTranslation();
 
   const { isEnabled } = useFlag('data-catalog');
@@ -36,7 +31,7 @@ export function useResourceTableColumns<T extends TResource>(
     }
   };
 
-  const assets: ColumnsType<Asset> = [
+  const assetColumns: TableColumnType<Asset>[] = [
     {
       title: t('name'),
       dataIndex: 'name',
@@ -92,7 +87,7 @@ export function useResourceTableColumns<T extends TResource>(
     },
   ];
 
-  const events: ColumnsType<CogniteEvent> = [
+  const eventColumns: TableColumnType<CogniteEvent>[] = [
     {
       title: t('type'),
       dataIndex: 'type',
@@ -148,7 +143,7 @@ export function useResourceTableColumns<T extends TResource>(
     },
   ];
 
-  const files: ColumnsType<FileInfo> = [
+  const fileColumns: TableColumnType<FileInfo>[] = [
     {
       title: t('name'),
       dataIndex: 'name',
@@ -197,7 +192,7 @@ export function useResourceTableColumns<T extends TResource>(
     },
   ];
 
-  const sequences: ColumnsType<Sequence> = [
+  const sequenceColumns: TableColumnType<Sequence>[] = [
     {
       title: t('name'),
       dataIndex: 'name',
@@ -248,7 +243,7 @@ export function useResourceTableColumns<T extends TResource>(
     },
   ];
 
-  const timeseries: ColumnsType<Timeseries> = [
+  const timeseriesColumns: TableColumnType<Timeseries>[] = [
     {
       title: t('name'),
       dataIndex: 'name',
@@ -316,7 +311,7 @@ export function useResourceTableColumns<T extends TResource>(
   ];
 
   if (isEnabled) {
-    events.splice(3, 0, {
+    eventColumns.splice(3, 0, {
       title: t('external-id'),
       dataIndex: 'external-id',
       key: 'dataset-events-external-id',
@@ -325,7 +320,7 @@ export function useResourceTableColumns<T extends TResource>(
       ),
     });
 
-    files.splice(2, 0, {
+    fileColumns.splice(2, 0, {
       title: t('external-id'),
       dataIndex: 'external-id',
       key: 'dataset-files-external-id',
@@ -334,7 +329,7 @@ export function useResourceTableColumns<T extends TResource>(
       ),
     });
 
-    sequences.splice(2, 0, {
+    sequenceColumns.splice(2, 0, {
       title: t('external-id'),
       dataIndex: 'external-id',
       key: 'dataset-sequences-external-id',
@@ -344,16 +339,11 @@ export function useResourceTableColumns<T extends TResource>(
     });
   }
 
-  switch (resource) {
-    case 'assets':
-      return assets as ColumnsType<T>;
-    case 'events':
-      return events as ColumnsType<T>;
-    case 'files':
-      return files as ColumnsType<T>;
-    case 'sequences':
-      return sequences as ColumnsType<T>;
-    case 'timeseries':
-      return timeseries as ColumnsType<T>;
-  }
+  return {
+    assetColumns,
+    eventColumns,
+    fileColumns,
+    sequenceColumns,
+    timeseriesColumns,
+  };
 }
