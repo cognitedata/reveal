@@ -353,6 +353,10 @@ const StyledProgressBar = styled.div<{
 const StyledCard = styled(Card)`
   height: auto;
 
+  .ant-card-body {
+    padding: 0;
+  }
+
   .aggr-title {
     font-weight: 500;
     font-size: 16px;
