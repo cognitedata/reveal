@@ -78,7 +78,7 @@ export class Image360ApiHelper {
   }
 
   public async remove360Images(entities: Image360[]): Promise<void> {
-    await Promise.all(entities.map(entity => this._image360Facade.delete(entity)));
+    await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
   }
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
