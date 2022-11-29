@@ -6,7 +6,6 @@ import { Image360Icon } from './Image360Icon';
 import { Image360Visualization } from './Image360Visualization';
 
 export interface Image360 {
-
   /**
    * Get a copy of the model-to-world transformation matrix
    * of the given 360 image.
