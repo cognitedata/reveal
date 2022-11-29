@@ -125,7 +125,7 @@ export class CustomCameraManager implements CameraManager {
                 }
                 break;
             case 'cameraStop':
-                this._stopEventTrigger.subscribe(callback as CameraStopDelegate);
+                this._stopEventTrigger.unsubscribe(callback as CameraStopDelegate);
                 break;
             default:
                 throw Error(`Unrecognized camera event type: ${event}`);
