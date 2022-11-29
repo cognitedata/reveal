@@ -22,7 +22,7 @@ export const EventsTab = ({ query, filter, showCount = false }: Props) => {
       <ResourceTypeTitle>{'Events'}</ResourceTypeTitle>
       {showCount && (
         <Label size="small" variant="unknown">
-          {count}
+          {`${count}`}
         </Label>
       )}
     </TabContainer>

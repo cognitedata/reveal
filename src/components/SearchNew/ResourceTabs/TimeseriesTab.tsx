@@ -22,7 +22,7 @@ export const TimeseriesTab = ({ query, filter, showCount = false }: Props) => {
       <ResourceTypeTitle>{'Time series'}</ResourceTypeTitle>
       {showCount && (
         <Label size="small" variant="unknown">
-          {count}
+          {`${count}`}
         </Label>
       )}
     </TabContainer>

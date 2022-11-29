@@ -28,7 +28,7 @@ export const DocumentsTab = ({ query, filter, showCount = false }: Props) => {
       <ResourceTypeTitle>{'Documents'}</ResourceTypeTitle>
       {showCount && (
         <Label size="small" variant="unknown">
-          {count}
+          {`${count}`}
         </Label>
       )}
     </TabContainer>

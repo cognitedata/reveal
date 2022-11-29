@@ -35,7 +35,7 @@ export const ThreeDTab = ({ query, showCount = false }: Props) => {
       <ResourceTypeTitle>{'3D'}</ResourceTypeTitle>
       {showCount && (
         <Label size="small" variant="unknown">
-          {count}
+          {`${count}`}
         </Label>
       )}
     </TabContainer>
