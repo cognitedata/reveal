@@ -168,6 +168,7 @@ export const bidMatrixresponse = {
           majorPenalties: 0,
           minorPenalties: 56170.16834997605,
           solverStatus: 'Optimal solution is available',
+          limitPenalties: 42000,
         },
       ],
     },

@@ -41,6 +41,7 @@ export const ShopQualityAssuranceModal = ({
           majorPenalties: objective.majorPenalties,
           minorPenalties: objective.minorPenalties,
           solverStatus: objective.solverStatus,
+          limitPenalties: objective.limitPenalties,
           scenario: scenario.name,
           watercourse: objective.watercourse,
         }))

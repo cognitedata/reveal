@@ -74,7 +74,7 @@ export const shopPenaltiesExceedLimit = (
     scenario.objectives?.some(
       (objective) =>
         objective.solverStatus !== SOLVER_STATUS_TYPES.OPTIMAL ||
-        objective.sumPenalties > 42
+        objective.sumPenalties > objective.limitPenalties
     )
   );
 };
