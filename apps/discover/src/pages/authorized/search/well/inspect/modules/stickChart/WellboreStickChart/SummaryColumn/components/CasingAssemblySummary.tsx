@@ -26,7 +26,7 @@ import { CasingSpecification } from './sections/CasingSpecification';
 // import { DrillingParameters } from './sections/DrillingParameters';
 import { HighlightedEvent } from './sections/HighlightedEvent';
 import { HoleSectionSummary } from './sections/HoleSectionSummary';
-import { MudWeight } from './sections/MudWeightWindow';
+import { MudWeight } from './sections/MudWeight';
 
 export interface CasingAssemblySummaryProps {
   casingAssembly: CasingAssemblyView;

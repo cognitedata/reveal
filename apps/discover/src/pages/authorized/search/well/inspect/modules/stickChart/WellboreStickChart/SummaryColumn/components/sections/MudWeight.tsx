@@ -13,7 +13,7 @@ import { useDeepMemo } from 'hooks/useDeep';
 
 import { Specification } from '../../../../components/Specification';
 import { SummarySection, SummaryVisibilityProps } from '../../../../types';
-import { adaptDepthMeasurementToMudWeight } from '../../../../utils/adaptDepthMeasurementToMudWeight';
+import { adaptDepthMeasurementToMudWeights } from '../../../../utils/adaptDepthMeasurementToMudWeights';
 import { DEFAULT_DEPTH_MEASUREMENT_TYPE } from '../../../constants';
 import { Depth, SummarySectionContent } from '../../elements';
 import { SummaryColumnSection } from '../SummaryColumnSection';
@@ -38,7 +38,7 @@ export const MudWeight: React.FC<MudWeightProps> = ({
       return EMPTY_ARRAY;
     }
 
-    return adaptDepthMeasurementToMudWeight(depthMeasurements);
+    return adaptDepthMeasurementToMudWeights(depthMeasurements);
   }, [measurementsData]);
 
   const mudWeightsTVD = useDeepMemo(() => {
@@ -50,7 +50,7 @@ export const MudWeight: React.FC<MudWeightProps> = ({
       return EMPTY_ARRAY;
     }
 
-    return adaptDepthMeasurementToMudWeight(depthMeasurements);
+    return adaptDepthMeasurementToMudWeights(depthMeasurements);
   }, [measurementsData]);
 
   const mudWeights =

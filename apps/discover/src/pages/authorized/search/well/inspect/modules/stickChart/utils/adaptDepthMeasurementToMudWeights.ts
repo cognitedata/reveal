@@ -11,7 +11,7 @@ import { MudWeightData } from '../types';
 
 import { isEqualMudWeights } from './isEqualMudWeights';
 
-export const adaptDepthMeasurementToMudWeight = (
+export const adaptDepthMeasurementToMudWeights = (
   depthMeasurement: DepthMeasurementWithData
 ): Array<MudWeightData> => {
   const { columns, rows, depthUnit } = depthMeasurement;

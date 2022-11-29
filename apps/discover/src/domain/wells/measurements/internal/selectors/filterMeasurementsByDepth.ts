@@ -14,7 +14,7 @@ export const filterMeasurementsByDepth = <T extends MeasurementType>(
     min?: number;
     max?: number;
   }
-) => {
+): T[] => {
   return depthMeasurements.map((measurement) => {
     const { rows, depthRange: depthRangeOriginal } = measurement;
 

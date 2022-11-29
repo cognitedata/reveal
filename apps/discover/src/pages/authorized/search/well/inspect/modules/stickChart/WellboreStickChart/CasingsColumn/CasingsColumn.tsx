@@ -1,3 +1,4 @@
+import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
 import { MaxDepthData } from 'domain/wells/trajectory/internal/types';
 import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
@@ -40,6 +41,7 @@ export interface CasingsColumnProps extends ColumnVisibilityProps {
   data?: CasingAssemblyView[];
   isLoading: boolean;
   holeSections?: HoleSectionView[];
+  measurementsData?: DepthMeasurementWithData[];
   scaleBlocks: number[];
   rkbLevel: WellboreInternal['datum'];
   wellWaterDepth: WellboreInternal['wellWaterDepth'];
@@ -55,6 +57,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
       data,
       isLoading,
       holeSections,
+      measurementsData,
       rkbLevel,
       wellWaterDepth,
       maxDepth,
@@ -101,6 +104,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
 
                 <HoleSectionsColumn
                   data={holeSections}
+                  measurementsData={measurementsData}
                   scaleBlocks={scaleBlocks}
                   depthMeasurementType={depthMeasurementType}
                 />
