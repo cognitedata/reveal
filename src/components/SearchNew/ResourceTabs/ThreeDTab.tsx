@@ -4,6 +4,7 @@ import { ThreeDModelsResponse, useInfinite3DModels } from 'hooks';
 import { Model3D } from '@cognite/sdk';
 import { MORE_THAN_MAX_RESULT_LIMIT } from 'domain/constants';
 import { ResourceTypeTitle, TabContainer } from './elements';
+import { getTabCountLabel } from 'utils';
 
 type Props = {
   query?: string;
@@ -35,7 +36,7 @@ export const ThreeDTab = ({ query, showCount = false }: Props) => {
       <ResourceTypeTitle>{'3D'}</ResourceTypeTitle>
       {showCount && (
         <Label size="small" variant="unknown">
-          {`${count}`}
+          {getTabCountLabel(count)}
         </Label>
       )}
     </TabContainer>

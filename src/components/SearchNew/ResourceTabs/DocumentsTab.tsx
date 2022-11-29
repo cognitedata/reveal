@@ -7,6 +7,7 @@ import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
 } from 'domain/constants';
 import { ResourceTypeTitle, TabContainer } from './elements';
+import { getTabCountLabel } from 'utils';
 
 type Props = {
   query?: string;
@@ -28,7 +29,7 @@ export const DocumentsTab = ({ query, filter, showCount = false }: Props) => {
       <ResourceTypeTitle>{'Documents'}</ResourceTypeTitle>
       {showCount && (
         <Label size="small" variant="unknown">
-          {`${count}`}
+          {getTabCountLabel(count)}
         </Label>
       )}
     </TabContainer>
