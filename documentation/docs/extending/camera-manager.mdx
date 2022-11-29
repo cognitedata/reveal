@@ -116,7 +116,7 @@ export class CustomCameraManager implements CameraManager {
         }
     }
 
-    off(event: CameraManagerEventType, callback: CameraEventDelegate): void {
+    off(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
         switch(eventType) {
             case 'cameraChange':
                 const index = this._cameraChangedListener.indexOf(callback);
