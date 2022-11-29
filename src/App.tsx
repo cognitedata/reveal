@@ -73,7 +73,7 @@ const App = () => {
                             />
                             {/* We used to use the /data-sets route, now we're redirecting */}
                             {/* to /data-catalog instead, this basically sets up a redirect. */}
-                            <Route
+                            {/* <Route
                               path="/:tenant/data-sets"
                               element={
                                 <Navigate
@@ -81,7 +81,7 @@ const App = () => {
                                   to={createLink('/data-catalog')}
                                 />
                               }
-                            />
+                            /> */}
                           </Routes>
                         </AccessCheck>
                       </Suspense>
