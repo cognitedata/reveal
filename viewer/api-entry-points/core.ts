@@ -58,7 +58,8 @@ export {
   SceneRenderedDelegate,
   PointerEventDelegate,
   PointerEventData,
-  DisposedDelegate
+  DisposedDelegate,
+  EventTrigger
 } from '../packages/utilities';
 
 export { PointCloudObjectMetadata } from '../packages/data-providers';

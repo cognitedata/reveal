@@ -701,6 +701,18 @@ export type EdlOptions = {
     radius: number;
 };
 
+// @public
+export class EventTrigger<TListener extends (...args: any[]) => void> {
+    // (undocumented)
+    fire(...args: Parameters<TListener>): void;
+    // (undocumented)
+    subscribe(listener: TListener): void;
+    // (undocumented)
+    unsubscribe(listener: TListener): void;
+    // (undocumented)
+    unsubscribeAll(): void;
+}
+
 // @public (undocumented)
 export enum File3dFormat {
     // (undocumented)
