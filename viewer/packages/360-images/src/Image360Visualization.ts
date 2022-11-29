@@ -11,13 +11,13 @@ export interface Image360Visualization {
   /**
    * Visibility of the 360 image
    */
-  visible: boolean;
+  set visible(value: boolean);
   /**
    * Scale of the box containing the 360 image
    */
-  scale: THREE.Vector3;
+  set scale(value: THREE.Vector3);
   /**
    * Render order of the mesh containing the 360 image
    */
-  renderOrder: number;
+  set renderOrder(value: number);
 }
