@@ -78,6 +78,16 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           },
         },
         {
+          accessorKey: 'sourceFile.directory',
+          id: 'directory',
+          header: 'Directory',
+          cell: ({ getValue }) => {
+            return (
+              <Body level={2}>{getValue<string | undefined>() || DASH}</Body>
+            );
+          },
+        },
+        {
           // You do not have to add an id field if accessor is given a string.
           accessorKey: 'type',
           header: 'File type',

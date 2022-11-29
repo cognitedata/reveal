@@ -5,6 +5,7 @@ import { TimeDisplay, GeneralDetails } from 'components';
 export const FileDetails = ({ file }: { file: FileInfo }) => (
   <GeneralDetails>
     <GeneralDetails.Item name="Name" value={file.name} copyable />
+    <GeneralDetails.Item name="Directory" value={file.directory} copyable />
     <GeneralDetails.Item name="ID" value={file.id} copyable />
     <GeneralDetails.Item name="External ID" value={file.externalId} copyable />
     <GeneralDetails.Item name="Source" value={file.source} />
