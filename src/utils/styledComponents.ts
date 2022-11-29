@@ -415,6 +415,10 @@ export const Divider = styled.div`
 `;
 
 export const LineageSection = styled(Card)`
+  .ant-card-body {
+    padding: 0;
+  }
+
   border-radius: 6px;
   border: 1px solid #d9d9d9;
   padding: 24px;
@@ -431,6 +435,10 @@ export const ContentWrapper = styled.div<{ $backgroundColor?: string }>`
   min-height: 300px;
   height: 100%;
   background-color: ${({ $backgroundColor }) => $backgroundColor || '#FFF'};
+
+  .ant-card-body {
+    padding: 0;
+  }
 
   .margin-right-bottom {
     margin: 0 24px 24px 0;
