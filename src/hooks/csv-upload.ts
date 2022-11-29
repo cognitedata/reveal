@@ -1,20 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
-import uuid from 'uuid';
-import PapaParse from 'papaparse';
-import { notification } from 'antd';
 
-import { useSDK } from '@cognite/sdk-provider';
 import { trackEvent } from '@cognite/cdf-route-tracker';
+import { useSDK } from '@cognite/sdk-provider';
+import { notification } from 'antd';
+import PapaParse from 'papaparse';
+import uuid from 'uuid';
 
+import { useTranslation } from 'common/i18n';
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 import { sleep } from 'utils/utils';
-import { useTranslation } from 'common/i18n';
 
-export const useCSVUpload = (
-  file?: File,
-  selectedPrimaryKeyMethod?: PrimaryKeyMethod,
-  selectedKeyIndex?: number
-) => {
+import { UseUploadOptions } from './upload';
+
+export const useCSVUpload = ({
+  file,
+  selectedPrimaryKeyMethod,
+  selectedColumnIndex,
+}: UseUploadOptions) => {
   const { t } = useTranslation();
   const sdk = useSDK();
 
@@ -43,8 +45,8 @@ export const useCSVUpload = (
 
   const selectedColumn =
     selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
-    selectedKeyIndex !== undefined
-      ? columns?.[selectedKeyIndex]
+    selectedColumnIndex !== undefined
+      ? columns?.[selectedColumnIndex]
       : undefined;
 
   useEffect(

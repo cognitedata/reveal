@@ -13,6 +13,12 @@ type RAWUpload = {
   onConfirmUpload?: (database: string, table: string) => void;
 };
 
+export type UseUploadOptions = {
+  file?: File;
+  selectedPrimaryKeyMethod?: PrimaryKeyMethod;
+  selectedColumnIndex?: number;
+};
+
 export const DEFAULT_FILE_PROPS = {
   accept: '.csv, .json',
   multiple: false,
@@ -25,14 +31,14 @@ export const useUpload = (
   selectedColumnIndex?: number
 ): RAWUpload => {
   const csvUpload = useCSVUpload(
-    file?.type === 'text/csv' ? file : undefined,
-    selectedPrimaryKeyMethod,
-    selectedColumnIndex ?? -1 // FIXME
+    file?.type === 'text/csv'
+      ? { file, selectedPrimaryKeyMethod, selectedColumnIndex }
+      : {}
   );
   const jsonUpload = useJSONUpload(
-    file?.type === 'application/json' ? file : undefined,
-    selectedPrimaryKeyMethod,
-    selectedColumnIndex
+    file?.type === 'application/json'
+      ? { file, selectedPrimaryKeyMethod, selectedColumnIndex }
+      : {}
   );
 
   if (file?.type === 'text/csv') {

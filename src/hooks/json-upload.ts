@@ -10,14 +10,16 @@ import { useTranslation } from 'common/i18n';
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 import { sleep } from 'utils/utils';
 
+import { UseUploadOptions } from './upload';
+
 const ROW_CHUNK_SIZE = 10000;
 const REQUEST_CHUNK_SIZE = 3;
 
-export const useJSONUpload = (
-  file?: File,
-  selectedPrimaryKeyMethod?: PrimaryKeyMethod,
-  selectedKeyIndex?: number
-) => {
+export const useJSONUpload = ({
+  file,
+  selectedPrimaryKeyMethod,
+  selectedColumnIndex,
+}: UseUploadOptions) => {
   const { t } = useTranslation();
   const sdk = useSDK();
 
@@ -52,8 +54,8 @@ export const useJSONUpload = (
 
   const selectedColumn =
     selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
-    selectedKeyIndex !== undefined
-      ? columns?.[selectedKeyIndex]
+    selectedColumnIndex !== undefined
+      ? columns?.[selectedColumnIndex]
       : undefined;
 
   useEffect(() => {
