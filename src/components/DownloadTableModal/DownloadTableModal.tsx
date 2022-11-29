@@ -7,11 +7,17 @@ import { CSVLink } from 'react-csv';
 import { escapeCSVValue } from 'utils/utils';
 import Modal, { ModalProps } from 'components/Modal/Modal';
 import Message from 'components/Message/Message';
-import { useDownloadData } from 'hooks/table-data';
+import { PRIMARY_KEY_DATAKEY, useDownloadData } from 'hooks/table-data';
 import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';
 import { useTranslation } from 'common/i18n';
 
-const COLUMNS_IGNORED = ['column-index', 'lastUpdatedTime'];
+const COLUMNS_IGNORED = [
+  'column-index',
+  'lastUpdatedTime',
+  'parentId',
+  'id',
+  PRIMARY_KEY_DATAKEY,
+];
 
 type DownloadTableModalProps = {
   databaseName: string;
@@ -46,7 +52,7 @@ const DownloadTableModal = ({
       fetchedRows.slice(0, Number(fetchRowCount)).map((item) => {
         const escapedColumns: Record<string, string> = {};
         Object.keys(item).forEach((key) => {
-          escapedColumns[key] = escapeCSVValue(item[key]);
+          escapedColumns[key] = escapeCSVValue(item[PRIMARY_KEY_DATAKEY]);
         });
         COLUMNS_IGNORED.forEach((column: string) => {
           delete escapedColumns[column];
