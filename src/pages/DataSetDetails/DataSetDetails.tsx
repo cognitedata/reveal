@@ -355,7 +355,7 @@ const DataSetDetails = (): JSX.Element => {
               </Tabs>
             </DetailsPane>
           }
-          dropdownProps={{
+          optionsDropdownProps={{
             content: (
               <Menu>
                 <Menu.Item
