@@ -9,6 +9,7 @@ import { Image360Entity, Image360EntityFactory, Image360Facade } from '@reveal/3
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import { pixelToNormalizedDeviceCoordinates, SceneHandler } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
+import { Image360 } from '@reveal/360-images/src/Image360';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
@@ -76,7 +77,7 @@ export class Image360ApiHelper {
     return entities;
   }
 
-  public async remove360Images(entities: Image360Entity[]): Promise<void> {
+  public async remove360Images(entities: Image360[]): Promise<void> {
     await Promise.all(entities.map(entity => this._image360Facade.delete(entity)));
   }
 
