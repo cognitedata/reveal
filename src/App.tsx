@@ -4,14 +4,14 @@ import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import {
   AuthWrapper,
-  createLink,
+  // createLink,
   getEnv,
   getProject,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
@@ -73,7 +73,7 @@ const App = () => {
                             />
                             {/* We used to use the /data-sets route, now we're redirecting */}
                             {/* to /data-catalog instead, this basically sets up a redirect. */}
-                            <Route
+                            {/* <Route
                               path="/:tenant/data-sets"
                               element={
                                 <Navigate
@@ -81,7 +81,7 @@ const App = () => {
                                   to={createLink('/data-catalog')}
                                 />
                               }
-                            />
+                            /> */}
                           </Routes>
                         </AccessCheck>
                       </Suspense>
