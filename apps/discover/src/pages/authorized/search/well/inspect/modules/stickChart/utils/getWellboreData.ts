@@ -11,6 +11,7 @@ export const getWellboreData = (wellbore: WellboreInternal): WellboreData => {
     color,
     wellWaterDepth,
     totalDrillingDays,
+    uniqueWellboreIdentifier,
   } = wellbore;
 
   return {
@@ -21,5 +22,6 @@ export const getWellboreData = (wellbore: WellboreInternal): WellboreData => {
     rkbLevel: getRkbLevel(wellbore),
     wellWaterDepth,
     totalDrillingDays,
+    uniqueWellboreIdentifier,
   };
 };

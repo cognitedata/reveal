@@ -16,14 +16,16 @@ import { ProjectConfigWellsTrajectoryCharts } from '@cognite/discover-api-types'
 
 import { EVENT_TYPES } from './WellboreStickChart/constants';
 
-export interface WellboreData {
+export interface WellboreData
+  extends Pick<
+    WellboreInternal,
+    'wellWaterDepth' | 'totalDrillingDays' | 'uniqueWellboreIdentifier'
+  > {
   wellboreMatchingId: string;
   wellName: string;
   wellboreName: string;
   wellboreColor: string;
   rkbLevel: WellboreInternal['datum'];
-  wellWaterDepth: WellboreInternal['wellWaterDepth'];
-  totalDrillingDays: WellboreInternal['totalDrillingDays'];
 }
 
 export interface WellboreStickChartData {

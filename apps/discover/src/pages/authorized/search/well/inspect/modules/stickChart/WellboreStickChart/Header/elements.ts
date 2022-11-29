@@ -32,10 +32,18 @@ export const WellboreName = styled(Flex)`
   color: rgba(0, 0, 0, 0.9);
 `;
 
+export const WellboreUBI = styled(WellName)`
+  color: var(--cogs-text-secondary);
+`;
+
 export const HeaderData = styled(FlexRow)`
   margin-top: ${sizes.extraSmall};
   width: fit-content;
   gap: ${sizes.small};
+
+  :first-child {
+    margin-top: 0;
+  }
 `;
 
 export const HeaderLabel = styled(Label)`

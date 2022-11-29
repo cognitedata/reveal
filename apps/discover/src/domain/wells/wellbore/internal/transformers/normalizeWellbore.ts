@@ -12,7 +12,6 @@ import { WellboreInternal } from '../types';
 import { normalizeDatum } from './normalizeDatum';
 
 export const normalizeWellboreByWell = (
-  // rawWell: Well,
   wellMatchingId: string,
   wellName: string,
   rawWellbore: Wellbore,
@@ -20,9 +19,6 @@ export const normalizeWellboreByWell = (
   wellboresColorMap: ColorMap = {},
   waterDepth?: Distance
 ): WellboreInternal => {
-  // const { matchingId: wellMatchingId, name: wellName, waterDepth } = rawWell;
-
-  // const { matchingId: wellMatchingId, name: wellName } = rawWell;
   const { matchingId, name, datum } = rawWellbore;
 
   return {
