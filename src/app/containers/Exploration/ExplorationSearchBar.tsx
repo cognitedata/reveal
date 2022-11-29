@@ -4,6 +4,7 @@ import { debounce } from 'lodash';
 import { useQueryString } from 'app/hooks/hooks';
 import { SEARCH_KEY } from 'app/utils/constants';
 import { useFlagFilter } from 'app/hooks';
+import styled from 'styled-components';
 
 export const ExplorationSearchBar = () => {
   const [urlQuery, setUrlQuery] = useQueryString(SEARCH_KEY);
@@ -28,7 +29,7 @@ export const ExplorationSearchBar = () => {
   }, [urlQuery, setLocalQuery]);
 
   return (
-    <Input
+    <StyledInput
       size="large"
       variant="noBorder"
       autoFocus
@@ -39,6 +40,7 @@ export const ExplorationSearchBar = () => {
         outline: isFilterEnabled ? undefined : 'none',
         boxShadow: isFilterEnabled ? undefined : 'none',
       }}
+      clearable={{ callback: () => setLocalQuery('') }}
       icon="Search"
       placeholder={
         isFilterEnabled
@@ -50,3 +52,9 @@ export const ExplorationSearchBar = () => {
     />
   );
 };
+
+const StyledInput = styled(Input)`
+  .btn-reset {
+    background: inherit !important;
+  }
+`;
