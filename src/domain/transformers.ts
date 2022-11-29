@@ -1,6 +1,7 @@
-import { isArray, isEmpty } from 'lodash';
+import { isArray, isEmpty, take } from 'lodash';
 import { isObjectEmpty } from 'utils';
 import { InternalAssetData } from './assets';
+import { MAX_METADATA_KEYS } from './constants';
 import { InternalEventsData } from './events';
 
 /**
@@ -109,7 +110,10 @@ export const mapMetadataKeysWithQuery = (
     }, {});
   };
 
-  const metadataKeys = getUniqueMetadataKeysFromData(data);
+  const metadataKeys = take(
+    getUniqueMetadataKeysFromData(data),
+    MAX_METADATA_KEYS
+  );
 
   return mergeMetadataKeysWithQuery(query, metadataKeys);
 };
