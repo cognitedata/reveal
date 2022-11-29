@@ -16,7 +16,6 @@ import {
 import chartAtom from 'models/chart/atom';
 import { useFilePicker } from 'use-file-picker';
 import { useSDK } from '@cognite/sdk-provider';
-import { getProject, getCluster } from '@cognite/cdf-utilities';
 import { useDebounce } from 'use-debounce';
 import { useQuery } from 'react-query';
 import {
@@ -156,15 +155,6 @@ export const useUploadCalculations = ({
   }, [filesContent, loading, handleImportCalculations]);
 
   return openFileSelector;
-};
-
-export const useFusionLink = (path: string) => {
-  const cluster = getCluster();
-  const project = getProject();
-
-  return `https://fusion.cognite.com/${project}${path}${
-    cluster && `?env=${cluster}`
-  }`;
 };
 
 export const useStatistics = (

@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 import { Body, Icon } from '@cognite/cogs.js';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Asset, DataSet, Timeseries } from '@cognite/sdk';
-import { useFusionLink } from './utils';
+import { createLink } from '@cognite/cdf-utilities';
 
 type MetadataItemProps = {
   label: string;
@@ -67,7 +67,7 @@ export const DataSetItem = ({
       enabled: Number.isFinite(timeseries?.dataSetId),
     }
   );
-  const link = useFusionLink(`/data-sets/data-set/${timeseries?.dataSetId}`);
+  const link = createLink(`/data-sets/data-set/${timeseries?.dataSetId}`);
 
   return (
     <MetadataItem
@@ -95,7 +95,7 @@ export const LinkedAssetItem = ({
       enabled: Number.isFinite(timeseries?.assetId),
     }
   );
-  const link = useFusionLink(`/explore/asset/${timeseries?.assetId}`);
+  const link = createLink(`/explore/asset/${timeseries?.assetId}`);
 
   return (
     <MetadataItem
