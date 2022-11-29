@@ -286,6 +286,28 @@ export interface CdfModelNodeCollectionDataProvider {
     revisionId: number;
 }
 
+// @public (undocumented)
+export abstract class CdfNodeCollectionBase extends NodeCollection {
+    constructor(classToken: string, model: CdfModelNodeCollectionDataProvider);
+    clear(): void;
+    // (undocumented)
+    getAreas(): AreaCollection;
+    // (undocumented)
+    getIndexSet(): IndexSet;
+    // (undocumented)
+    get isLoading(): boolean;
+    // (undocumented)
+    protected updateCollectionFromResults(requests: Promise<ListResponse<Node3D[]>>[]): Promise<void>;
+}
+
+// @public (undocumented)
+export type ClippingPlanesState = {
+    nx: number;
+    ny: number;
+    nz: number;
+    constant: number;
+};
+
 // @public
 export class ClusteredAreaCollection implements AreaCollection {
     // (undocumented)
@@ -484,6 +506,30 @@ export class CognitePointCloudModel {
     get visiblePointCount(): number;
 }
 
+// @public
+export abstract class CombineNodeCollectionBase extends NodeCollection {
+    constructor(classToken: string, nodeCollections?: NodeCollection[]);
+    // (undocumented)
+    add(nodeCollection: NodeCollection): void;
+    clear(): void;
+    // (undocumented)
+    protected abstract createCombinedIndexSet(): IndexSet;
+    // (undocumented)
+    abstract getAreas(): AreaCollection;
+    // @override (undocumented)
+    getIndexSet(): IndexSet;
+    // @override (undocumented)
+    get isLoading(): boolean;
+    // (undocumented)
+    protected makeDirty(): void;
+    // (undocumented)
+    protected _nodeCollections: NodeCollection[];
+    // (undocumented)
+    remove(nodeCollection: NodeCollection): void;
+    // (undocumented)
+    abstract serialize(): SerializedNodeCollection;
+}
+
 // @public (undocumented)
 export class ComboControls extends EventDispatcher {
     constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement);
@@ -573,8 +619,6 @@ export interface DataSource {
     getNodesApiClient(): NodesApiClient;
 }
 
-// Warning: (ae-forgotten-export) The symbol "EventTrigger" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
 export class DebouncedCameraStopEventTrigger extends EventTrigger<CameraStopDelegate> {
     constructor(cameraManager: CameraManager, debounceTimeMs?: number);
@@ -648,6 +692,15 @@ export const DefaultPointCloudAppearance: CompletePointCloudAppearance;
 // @public
 export type DisposedDelegate = () => void;
 
+// @public
+export type DistanceToLabelDelegate = (distanceInMeters: number) => string;
+
+// @public
+export type EdlOptions = {
+    strength: number;
+    radius: number;
+};
+
 // @public (undocumented)
 export enum File3dFormat {
     // (undocumented)
@@ -680,7 +733,6 @@ export type HtmlOverlayPositionUpdatedDelegate = (element: HTMLElement, position
 
 // @public
 export class HtmlOverlayTool extends Cognite3DViewerToolBase {
-    // Warning: (ae-forgotten-export) The symbol "HtmlOverlayToolOptions" needs to be exported by the entry point index.d.ts
     constructor(viewer: Cognite3DViewer, options?: HtmlOverlayToolOptions);
     add(htmlElement: HTMLElement, position3D: THREE_2.Vector3, options?: HtmlOverlayOptions): void;
     clear(): void;
@@ -694,6 +746,17 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     remove(htmlElement: HTMLElement): void;
     visible(enable: boolean): void;
 }
+
+// @public
+export type HtmlOverlayToolClusteringOptions = {
+    mode: 'overlapInScreenSpace';
+    createClusterElementCallback: HtmlOverlayCreateClusterDelegate;
+};
+
+// @public
+export type HtmlOverlayToolOptions = {
+    clusteringOptions?: HtmlOverlayToolClusteringOptions;
+};
 
 // @public (undocumented)
 export interface Image360 {
@@ -736,10 +799,6 @@ export class IndexSet {
     remove(index: number): void;
     // (undocumented)
     removeRange(range: NumericRange): void;
-    // Warning: (ae-forgotten-export) The symbol "IndexNode" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    rootNode?: IndexNode;
     // (undocumented)
     toIndexArray(): number[];
     // (undocumented)
@@ -750,13 +809,9 @@ export class IndexSet {
     unionWith(otherSet: IndexSet): IndexSet;
 }
 
-// Warning: (ae-forgotten-export) The symbol "PointCloudIntersection" needs to be exported by the entry point index.d.ts
-//
 // @public
 export type Intersection = CadIntersection | PointCloudIntersection;
 
-// Warning: (ae-forgotten-export) The symbol "CombineNodeCollectionBase" needs to be exported by the entry point index.d.ts
-//
 // @public
 export class IntersectionNodeCollection extends CombineNodeCollectionBase {
     constructor(nodeCollections?: NodeCollection[]);
@@ -804,11 +859,6 @@ class Keyframe_2 {
     unassignStyledNodeCollection(nodeCollection: NodeCollection): void;
 }
 export { Keyframe_2 as Keyframe }
-
-// Warning: (ae-forgotten-export) The symbol "LoadingState" needs to be exported by the entry point index.d.ts
-//
-// @public
-export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
 
 // @public (undocumented)
 export type Measurement = {
@@ -917,36 +967,6 @@ export type NodeAppearance = {
     readonly prioritizedForLoadingHint?: number;
 };
 
-// @public (undocumented)
-export class NodeAppearanceProvider {
-    // Warning: (ae-forgotten-export) The symbol "ApplyStyleDelegate" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    applyStyles(applyCb: ApplyStyleDelegate): void;
-    // (undocumented)
-    assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance): void;
-    // (undocumented)
-    clear(): void;
-    // Warning: (ae-forgotten-export) The symbol "PrioritizedArea" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    getPrioritizedAreas(): PrioritizedArea[];
-    // (undocumented)
-    get isLoading(): boolean;
-    // (undocumented)
-    off(event: 'changed', listener: () => void): void;
-    // (undocumented)
-    off(event: 'loadingStateChanged', listener: (isLoading: boolean) => void): void;
-    // (undocumented)
-    on(event: 'changed', listener: () => void): void;
-    // (undocumented)
-    on(event: 'loadingStateChanged', listener: (isLoading: boolean) => void): void;
-    // (undocumented)
-    on(event: 'prioritizedAreasChanged', listener: () => void): void;
-    // (undocumented)
-    unassignStyledNodeCollection(nodeCollection: NodeCollection): void;
-}
-
 // @public
 export abstract class NodeCollection {
     protected constructor(classToken: string);
@@ -974,8 +994,6 @@ export type NodeCollectionSerializationContext = {
     model: CdfModelNodeCollectionDataProvider;
 };
 
-// Warning: (ae-forgotten-export) The symbol "CdfNodeCollectionBase" needs to be exported by the entry point index.d.ts
-//
 // @public
 export class NodeIdNodeCollection extends CdfNodeCollectionBase {
     constructor(client: CogniteClient, model: CdfModelNodeCollectionDataProvider);
@@ -1074,6 +1092,16 @@ export type PointCloudBudget = {
     readonly numberOfPoints: number;
 };
 
+// @public (undocumented)
+export type PointCloudIntersection = {
+    type: 'pointcloud';
+    model: CognitePointCloudModel;
+    point: THREE.Vector3;
+    pointIndex: number;
+    distanceToCamera: number;
+    annotationId: number;
+};
+
 // @public
 export abstract class PointCloudObjectCollection {
     // (undocumented)
@@ -1116,8 +1144,13 @@ export enum PointColorType {
     Rgb = 0
 }
 
-// Warning: (ae-forgotten-export) The symbol "PointerEventData" needs to be exported by the entry point index.d.ts
-//
+// @public
+export type PointerEventData = {
+    offsetX: number;
+    offsetY: number;
+    button?: number;
+};
+
 // @public
 export type PointerEventDelegate = (event: PointerEventData) => void;
 
@@ -1143,7 +1176,6 @@ export enum PointSizeType {
 
 // @public
 export class PropertyFilterNodeCollection extends CdfNodeCollectionBase {
-    // Warning: (ae-forgotten-export) The symbol "PropertyFilterNodeCollectionOptions" needs to be exported by the entry point index.d.ts
     constructor(client: CogniteClient, model: CdfModelNodeCollectionDataProvider, options?: PropertyFilterNodeCollectionOptions);
     // (undocumented)
     static readonly classToken = "PropertyFilterNodeCollection";
@@ -1156,6 +1188,11 @@ export class PropertyFilterNodeCollection extends CdfNodeCollectionBase {
     serialize(): SerializedNodeCollection;
 }
 
+// @public
+export type PropertyFilterNodeCollectionOptions = {
+    requestPartitions?: number;
+};
+
 // @public (undocumented)
 export function registerNodeCollectionType<T extends NodeCollection>(nodeCollectionTypeName: string, deserializer: (descriptor: SerializedNodeCollection, context: NodeCollectionSerializationContext) => Promise<T>): void;
 
@@ -1167,21 +1204,6 @@ export type RelativePosition = {
 
 // @public (undocumented)
 export const REVEAL_VERSION: string;
-
-// @public
-export type RevealOptions = {
-    logMetrics?: boolean;
-    renderOptions?: RenderOptions;
-    continuousModelStreaming?: boolean;
-    outputRenderTarget?: {
-        target: THREE_2.WebGLRenderTarget;
-        autoSize?: boolean;
-    };
-    rendererResolutionThreshold?: number;
-    internal?: {
-        cad?: InternalRevealCadOptions;
-    };
-};
 
 // @public
 export type SceneRenderedDelegate = (event: {
@@ -1357,14 +1379,6 @@ export enum WellKnownAsprsPointClassCodes {
 
 // @public
 export type WellKnownUnit = 'Meters' | 'Centimeters' | 'Millimeters' | 'Micrometers' | 'Kilometers' | 'Feet' | 'Inches' | 'Yards' | 'Miles' | 'Mils' | 'Microinches';
-
-// Warnings were encountered during analysis:
-//
-// dist/packages/api/src/public/migration/types.d.ts:108:9 - (ae-forgotten-export) The symbol "EdlOptions" needs to be exported by the entry point index.d.ts
-// dist/packages/api/src/public/types.d.ts:17:5 - (ae-forgotten-export) The symbol "RenderOptions" needs to be exported by the entry point index.d.ts
-// dist/packages/api/src/public/types.d.ts:25:9 - (ae-forgotten-export) The symbol "InternalRevealCadOptions" needs to be exported by the entry point index.d.ts
-// dist/packages/api/src/utilities/ViewStateHelper.d.ts:18:5 - (ae-forgotten-export) The symbol "ClippingPlanesState" needs to be exported by the entry point index.d.ts
-// dist/packages/tools/src/Measurement/types.d.ts:29:5 - (ae-forgotten-export) The symbol "DistanceToLabelDelegate" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
