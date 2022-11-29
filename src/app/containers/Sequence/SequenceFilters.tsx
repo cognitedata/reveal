@@ -11,6 +11,7 @@ import {
   transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
+import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
 
 export const SequenceFilters = ({ ...rest }) => {
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
@@ -25,6 +26,7 @@ export const SequenceFilters = ({ ...rest }) => {
   return (
     <BaseFilterCollapse.Panel
       title="Sequences"
+      infoContent={SPECIFIC_INFO_CONTENT}
       hideResetButton={isFiltersEmpty}
       onResetClick={resetSequenceFilters}
       {...rest}

@@ -16,6 +16,7 @@ import {
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
 import { CogniteEvent } from '@cognite/sdk/dist/src';
+import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
 
 export const EventFilters = ({ ...rest }: {}) => {
   const [eventFilter, setEventFilter] = useEventsFilters();
@@ -30,6 +31,7 @@ export const EventFilters = ({ ...rest }: {}) => {
   return (
     <BaseFilterCollapse.Panel
       title="Events"
+      infoContent={SPECIFIC_INFO_CONTENT}
       hideResetButton={isFiltersEmpty}
       onResetClick={resetEventFilters}
       {...rest}
@@ -45,7 +47,7 @@ export const EventFilters = ({ ...rest }: {}) => {
           value={eventFilter.type}
         />
         <DateFilterV2
-          title="Start Time"
+          title="Start time"
           value={eventFilter.startTime}
           setValue={newDate =>
             setEventFilter({
@@ -54,7 +56,7 @@ export const EventFilters = ({ ...rest }: {}) => {
           }
         />
         <DateFilterV2
-          title="End Time"
+          title="End time"
           enableNull
           value={
             eventFilter.endTime && 'isNull' in eventFilter.endTime

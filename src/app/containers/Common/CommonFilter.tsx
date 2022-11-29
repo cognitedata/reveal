@@ -15,6 +15,7 @@ import {
 } from 'app/store/filter';
 import { TempCommonMultiSelectFix } from 'app/containers/elements';
 import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
+import { COMMON_INFO_CONTENT } from 'app/containers/constants';
 
 interface Props {
   resourceType?: ResourceType;
@@ -30,6 +31,7 @@ export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
     <BaseFilterCollapse.Panel
       title="Common"
       hideResetButton={isFiltersEmpty}
+      infoContent={COMMON_INFO_CONTENT}
       onResetClick={resetCommonFilter}
       {...rest}
     >
@@ -44,14 +46,14 @@ export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
           setValue={newValue => setCommonFilter({ assetSubtreeIds: newValue })}
         />
         <DateFilterV2
-          title="Created Time"
+          title="Created time"
           value={commonFilter.createdTime}
           setValue={newValue =>
             setCommonFilter({ createdTime: newValue || undefined })
           }
         />
         <DateFilterV2
-          title="Updated Time"
+          title="Updated time"
           value={commonFilter.lastUpdatedTime}
           setValue={newValue =>
             setCommonFilter({ lastUpdatedTime: newValue || undefined })

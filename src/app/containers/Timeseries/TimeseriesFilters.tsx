@@ -13,6 +13,7 @@ import {
   transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
+import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
 
 export const TimeseriesFilters = ({ ...rest }) => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
@@ -27,6 +28,7 @@ export const TimeseriesFilters = ({ ...rest }) => {
   return (
     <BaseFilterCollapse.Panel
       title="Time series"
+      infoContent={SPECIFIC_INFO_CONTENT}
       hideResetButton={isFiltersEmpty}
       onResetClick={resetTimeseriesFilters}
       {...rest}

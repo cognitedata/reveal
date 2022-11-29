@@ -14,6 +14,7 @@ import { useFilterEmptyState } from 'app/store';
 import { MetadataFilterV2 } from '@cognite/data-exploration';
 import isEmpty from 'lodash/isEmpty';
 import { useDocumentSearch } from '@cognite/react-document-search';
+import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
 
 export const DocumentFilter = ({ ...rest }) => {
   const [documentFilter, setDocumentFilter] = useDocumentFilters();
@@ -37,6 +38,7 @@ export const DocumentFilter = ({ ...rest }) => {
   return (
     <BaseFilterCollapse.Panel
       title="Documents"
+      infoContent={SPECIFIC_INFO_CONTENT}
       hideResetButton={isFiltersEmpty}
       onResetClick={resetDocumentFilters}
       {...rest}

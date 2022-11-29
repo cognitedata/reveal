@@ -15,6 +15,7 @@ import {
   transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
+import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
 
 export const FileFilters = ({ ...rest }) => {
   const [fileFilter, setFileFilter] = useFileFilters();
@@ -29,6 +30,7 @@ export const FileFilters = ({ ...rest }) => {
   return (
     <BaseFilterCollapse.Panel
       title="Files"
+      infoContent={SPECIFIC_INFO_CONTENT}
       hideResetButton={isFiltersEmpty}
       onResetClick={resetFileFilters}
       {...rest}

@@ -16,6 +16,7 @@ import {
   transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
+import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
 
 // TODO: Move to domain layer
 export const useAssetMetadataKeys = (
@@ -61,6 +62,7 @@ export const AssetFilters = ({ ...rest }) => {
     <BaseFilterCollapse.Panel
       title="Assets"
       hideResetButton={isFiltersEmpty}
+      infoContent={SPECIFIC_INFO_CONTENT}
       onResetClick={resetAssetFilters}
       {...rest}
     >
