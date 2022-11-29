@@ -431,14 +431,13 @@ const DataSetDetails = (): JSX.Element => {
                 </Tooltip>
                 <Menu.Divider />
                 <Menu.Item
-                  href={DATASET_HELP_DOC}
-                  target="_blank"
-                  onClick={() =>
+                  onClick={() => {
                     trackUsage({
                       e: 'data.sets.detail.help.documentation.click',
                       document: DATASET_HELP_DOC,
-                    })
-                  }
+                    });
+                    window.open(DATASET_HELP_DOC, '_blank');
+                  }}
                 >
                   <Flex
                     gap={4}
