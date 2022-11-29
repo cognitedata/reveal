@@ -81,7 +81,7 @@ const DownloadTableModal = ({
             data={onDownloadData}
           >
             <Button
-              disabled={isError}
+              disabled={isError || isDownloading}
               loading={isDownloading}
               onClick={handleClose}
               type="primary"
