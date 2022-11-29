@@ -1,5 +1,7 @@
 import { useState } from 'react';
+
 import { Flex, Loader } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
 import { useExtractorsList } from 'hooks/useExtractorsList';
 import { ListHeader } from 'components/ListHeader';
@@ -7,6 +9,7 @@ import { Layout } from 'components/Layout';
 import { ExtractorsList } from 'components/ExtractorsList';
 import { CreateExtractor } from 'components/CreateExtractor';
 import { ContentContainer } from 'components/ContentContainer';
+import CategorySidebar from 'components/category-sidebar/CategorySidebar';
 
 const Extractors = () => {
   const [search, setSearch] = useState('');
@@ -39,14 +42,24 @@ const Extractors = () => {
       <ListHeader search={search} setSearch={setSearch} />
       <Layout.Container>
         <ContentContainer>
-          <Flex gap={48} direction="column">
-            <CreateExtractor />
-            <ExtractorsList extractorsList={extractorsList} />
+          <Flex gap={40}>
+            <CategorySidebar />
+            <StyledListContainer>
+              <CreateExtractor />
+              <ExtractorsList extractorsList={extractorsList} />
+            </StyledListContainer>
           </Flex>
         </ContentContainer>
       </Layout.Container>
     </Layout>
   );
 };
+
+const StyledListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+`;
 
 export default Extractors;
