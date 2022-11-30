@@ -42,4 +42,8 @@ export const FilterContainer = styled.div`
 
 export const FilterInput = styled(Input)`
   background: #efefef !important;
+  &:hover,
+  :focus {
+    background: transparent !important;
+  }
 `;
