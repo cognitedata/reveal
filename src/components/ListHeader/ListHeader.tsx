@@ -1,20 +1,12 @@
-import styled from 'styled-components';
-import { Colors, Flex, Icon, Input, Title } from '@cognite/cogs.js';
+import { Flex, Icon, Title } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 
 import { useTranslation } from 'common';
 import { Layout } from 'components/Layout';
 import { Breadcrumb } from '@cognite/cdf-utilities';
 import { HeaderContainer } from 'components/HeaderContainer';
-import { Dispatch } from 'react';
-import { trackUsage } from 'utils';
 
-type ListHeaderProps = {
-  search: string;
-  setSearch: Dispatch<string>;
-};
-
-const ListHeader = ({ search, setSearch }: ListHeaderProps) => {
+const ListHeader = () => {
   const { t } = useTranslation();
   const { subAppPath } = useParams<{ subAppPath?: string }>();
   return (
@@ -34,34 +26,11 @@ const ListHeader = ({ search, setSearch }: ListHeaderProps) => {
               <Icon type="Export" size={28} />
               <Title level={2}>{t('extract-data')}</Title>
             </Flex>
-            <StyledSearchInput
-              size="large"
-              fullWidth
-              placeholder={t('search-for-source-systems')}
-              value={search}
-              onChange={(evt) => {
-                trackUsage({ e: 'Search.Extractor' });
-                setSearch(evt.currentTarget.value);
-              }}
-            />
           </Flex>
         </Flex>
       </Layout.Container>
     </HeaderContainer>
   );
 };
-
-const StyledSearchInput = styled(Input).attrs({
-  type: 'search',
-  icon: 'Search',
-})`
-  svg {
-    color: ${Colors['text-icon--muted']};
-
-    path {
-      fill: currentColor;
-    }
-  }
-`;
 
 export default ListHeader;

@@ -1,16 +1,19 @@
 import { Link, useParams } from 'react-router-dom';
 
-import { Body, Colors, Elevations, Flex, Title } from '@cognite/cogs.js';
+import { Body, Chip, Colors, Elevations, Flex, Title } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 
 import { trackUsage } from 'utils';
+import { useTranslation } from 'common';
 
 type ExtractorsListProps = {
   extractorsList: any[];
 };
 
 const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
+  const { t } = useTranslation();
+
   const { subAppPath } = useParams<{ subAppPath?: string }>();
 
   return (
@@ -23,7 +26,7 @@ const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
             trackUsage({ e: 'View.Extractor.Click', name: extractor.name });
           }}
         >
-          <Flex gap={12} direction="column">
+          <StyledExtractorContent>
             {extractor?.imageUrl && (
               <div>
                 <img src={extractor?.imageUrl} />
@@ -35,7 +38,10 @@ const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
                 {extractor.description}
               </StyledMutedDescription>
             </Flex>
-          </Flex>
+            <StyledTagContainer>
+              <Chip label={t('extractor_one')} size="x-small" />
+            </StyledTagContainer>
+          </StyledExtractorContent>
         </StyledExtractorContainer>
       ))}
     </StyledGrid>
@@ -43,6 +49,17 @@ const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
 };
 
 export default ExtractorsList;
+
+const StyledTagContainer = styled.div`
+  margin-top: auto;
+`;
+
+const StyledExtractorContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 12px;
+`;
 
 const StyledGrid = styled.div`
   --cell: minmax(256px, 1fr);

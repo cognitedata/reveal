@@ -31,7 +31,7 @@ const CategorySidebar = (): JSX.Element => {
           count={extractorCount}
           isLoading={!didFetchExtractorList}
           tab="extractors"
-          title={t('extractors')}
+          title={t('extractor_other')}
         />
       </Flex>
     </StyledContainer>

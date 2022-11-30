@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Flex, Loader } from '@cognite/cogs.js';
+import { Colors, Flex, Input, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useExtractorsList } from 'hooks/useExtractorsList';
@@ -10,8 +10,12 @@ import { ExtractorsList } from 'components/ExtractorsList';
 import { CreateExtractor } from 'components/CreateExtractor';
 import { ContentContainer } from 'components/ContentContainer';
 import CategorySidebar from 'components/category-sidebar/CategorySidebar';
+import { trackUsage } from 'utils';
+import { useTranslation } from 'common';
 
 const Extractors = () => {
+  const { t } = useTranslation();
+
   const [search, setSearch] = useState('');
 
   const { data: extractors, status } = useExtractorsList();
@@ -39,15 +43,27 @@ const Extractors = () => {
 
   return (
     <Layout>
-      <ListHeader search={search} setSearch={setSearch} />
+      <ListHeader />
       <Layout.Container>
         <ContentContainer>
-          <Flex gap={40}>
-            <CategorySidebar />
-            <StyledListContainer>
-              <CreateExtractor />
-              <ExtractorsList extractorsList={extractorsList} />
-            </StyledListContainer>
+          <Flex direction="column" gap={16}>
+            <StyledSearchInput
+              size="large"
+              fullWidth
+              placeholder={t('search-for-source-systems')}
+              value={search}
+              onChange={(evt) => {
+                trackUsage({ e: 'Search.Extractor' });
+                setSearch(evt.currentTarget.value);
+              }}
+            />
+            <Flex gap={40}>
+              <CategorySidebar />
+              <StyledListContainer>
+                <CreateExtractor />
+                <ExtractorsList extractorsList={extractorsList} />
+              </StyledListContainer>
+            </Flex>
           </Flex>
         </ContentContainer>
       </Layout.Container>
@@ -60,6 +76,19 @@ const StyledListContainer = styled.div`
   flex-direction: column;
   gap: 16px;
   flex: 1;
+`;
+
+const StyledSearchInput = styled(Input).attrs({
+  type: 'search',
+  icon: 'Search',
+})`
+  svg {
+    color: ${Colors['text-icon--muted']};
+
+    path {
+      fill: currentColor;
+    }
+  }
 `;
 
 export default Extractors;
