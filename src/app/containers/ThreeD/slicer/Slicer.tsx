@@ -5,7 +5,9 @@ import {
   CognitePointCloudModel,
   THREE,
 } from '@cognite/reveal';
+import { EXPLORATION } from 'app/constants/metrics';
 import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
+import { trackUsage } from 'app/utils/Metrics';
 import { ids } from 'cogs-variables';
 import { useContext, useEffect, useMemo } from 'react';
 
@@ -66,7 +68,14 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
       placement="right-end"
     >
       <Tooltip content="Slice" placement="right">
-        <Button icon="Slice" type="ghost" aria-label="slice-button" />
+        <Button
+          icon="Slice"
+          type="ghost"
+          aria-label="slice-button"
+          onClick={() => {
+            trackUsage(EXPLORATION.CLICK.SLICE);
+          }}
+        />
       </Tooltip>
     </Dropdown>
   );

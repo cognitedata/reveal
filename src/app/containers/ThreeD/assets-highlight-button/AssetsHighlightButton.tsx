@@ -11,6 +11,8 @@ import { getBoundingBoxesByNodeIds } from 'app/containers/ThreeD/utils';
 import { useRef, useEffect, useContext } from 'react';
 import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
 import { useFlagAssetMappingsOverlays } from 'app/hooks/flags';
+import { trackUsage } from 'app/utils/Metrics';
+import { EXPLORATION } from 'app/constants/metrics';
 
 type AssetsHighlightButtonProps = {
   labelsVisibility: boolean;
@@ -70,6 +72,9 @@ const AssetsHighlightButton = ({
 
     overlayTool.visible = !labelsVisibility;
     setLabelsVisibility(!labelsVisibility);
+    trackUsage(EXPLORATION.CLICK.EMPHASIZE_CLICKABLE_OBJECT, {
+      modelId: threeDModel?.modelId,
+    });
   };
   return (
     <Tooltip content="Emphasize clickable objects" placement="right">

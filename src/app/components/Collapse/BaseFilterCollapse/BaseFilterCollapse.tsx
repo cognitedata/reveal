@@ -3,6 +3,8 @@ import * as React from 'react';
 import { Collapse, Container, Panel } from './elements';
 import { FilterHeader } from './BaseFilterHeader';
 import { ResetButton } from 'app/components/Buttons/ResetButton';
+import { trackUsage } from 'app/utils/Metrics';
+import { EXPLORATION } from 'app/constants/metrics';
 
 // Might need this in the near future. Leaving for now
 // const CollapseIcon: React.FC<CollapsePanelProps> = ({ isActive }) => {
@@ -60,7 +62,14 @@ export const BaseFilterPanel = ({
       header={
         <Container>
           <FilterHeader title={title} infoContent={infoContent} />
-          {!hideResetButton && <ResetButton onClick={onResetClick} />}
+          {!hideResetButton && (
+            <ResetButton
+              onClick={() => {
+                onResetClick && onResetClick();
+                trackUsage(EXPLORATION.CLICK.RESET_FILTER, { title });
+              }}
+            />
+          )}
         </Container>
       }
       key={title?.split(' ').join('-')}

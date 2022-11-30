@@ -12,6 +12,7 @@ import { SEARCH_KEY } from 'app/utils/constants';
 import { trackUsage } from 'app/utils/Metrics';
 import DownloadButton from './DownloadButton';
 import { MoreButton } from './MoreButton';
+import { EXPLORATION } from 'app/constants/metrics';
 
 type TitleRowActionsProps = {
   item: ResourceItem;
@@ -46,6 +47,7 @@ export const TitleRowActions = ({
         },
       }
     );
+    trackUsage(EXPLORATION.CLICK.COLLAPSE_FULL_PAGE, item);
   };
 
   const goToFullPagePreview = () => {
@@ -59,11 +61,12 @@ export const TitleRowActions = ({
         },
       }
     );
-    trackUsage('Exploration.FullPage', item);
+    trackUsage(EXPLORATION.CLICK.EXPAND_FULL_PAGE, item);
   };
 
   const closePreview = () => {
     openPreview(undefined);
+    trackUsage(EXPLORATION.CLICK.CLOSE_DETAILED_VIEW, item);
   };
 
   const closeFullPagePreview = () => {
@@ -88,6 +91,7 @@ export const TitleRowActions = ({
         },
       }
     );
+    trackUsage(EXPLORATION.CLICK.CLOSE_FULL_PAGE, item);
   };
 
   if (item.type === 'threeD') {

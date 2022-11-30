@@ -20,6 +20,8 @@ import styled from 'styled-components';
 import { useFlag } from '@cognite/react-feature-flags';
 import { addPlusSignToCount } from 'app/utils/stringUtils';
 import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
+import { trackUsage } from 'app/utils/Metrics';
+import { EXPLORATION } from 'app/constants/metrics';
 
 type TypeOption = {
   label: string;
@@ -139,8 +141,11 @@ export const RelatedResources = ({
         <SelectWrapper>
           <Select
             title="Filter By:"
-            value={selectedType as any}
-            onChange={setSelectedType}
+            value={selectedType}
+            onChange={(type: TypeOption) => {
+              setSelectedType(type);
+              trackUsage(EXPLORATION.SELECT.FILTER_BY, { type });
+            }}
             options={relatedResourceTypes}
             styles={selectStyles}
             closeMenuOnSelect
@@ -149,7 +154,13 @@ export const RelatedResources = ({
         {selectedType?.value === 'relationship' && (
           <RelationshipFilters
             options={relationshipLabelOptions}
-            onChange={onChangeLabelValue}
+            onChange={labels => {
+              onChangeLabelValue(labels);
+              trackUsage(EXPLORATION.SELECT.RELATIONSHIP_LABEL, {
+                labels,
+                type,
+              });
+            }}
             value={labelValue}
           />
         )}

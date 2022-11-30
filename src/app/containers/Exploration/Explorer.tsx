@@ -5,8 +5,14 @@ import styled from 'styled-components';
 import { ResourceDetailsPage } from 'app/containers/ResourceDetails';
 import SearchRedirect from './SearchRedirect';
 import { SearchResultsPage } from './SearchResultsPage';
+import { trackUsage } from 'app/utils/Metrics';
+import { EXPLORATION } from 'app/constants/metrics';
 
 export const Explorer = () => {
+  React.useEffect(() => {
+    trackUsage(EXPLORATION.LOAD.APPLICATION);
+  }, []);
+
   return (
     <AppWrapper>
       <ResourceSelectorProviderUFV>

@@ -20,6 +20,8 @@ import { MainThreeDModelMenuItem } from 'app/containers/ThreeD/title/MainThreeDM
 import { SecondaryThreeDModelMenuItem } from 'app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
 import { Revision3DWithIndex } from 'app/containers/ThreeD/hooks';
 import { TableNoResults } from '@cognite/cdf-utilities';
+import { trackUsage } from 'app/utils/Metrics';
+import { EXPLORATION } from 'app/constants/metrics';
 
 type SecondaryModelDropdownProps = {
   mainModel: Model3D;
@@ -83,6 +85,9 @@ const SecondaryModelDropdown = ({
 
   const handleApply = (): void => {
     setSecondaryModels([...tempSecondaryModels]);
+    trackUsage(EXPLORATION.CLICK.APPLY_MODEL, {
+      resourceType: '3D',
+    });
   };
 
   const handleChange = (nextState: SecondaryModelOptions): void => {

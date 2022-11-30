@@ -15,6 +15,7 @@ import {
   distancesInFeetAndMeters,
   fitCameraToAsset,
 } from 'app/containers/ThreeD/utils';
+import { EXPLORATION } from 'app/constants/metrics';
 
 export { default as HelpButton } from './help-button';
 export { default as ShareButton } from './share-button';
@@ -138,6 +139,7 @@ export const PointToPointMeasurementButton = ({
     } else {
       enterMeasurementMode();
     }
+    trackUsage(EXPLORATION.CLICK.MEASURING_TOOL, { show: nodesSelectable });
   };
 
   return (

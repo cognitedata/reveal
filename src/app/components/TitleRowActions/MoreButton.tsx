@@ -8,6 +8,7 @@ import {
 } from '@cognite/data-exploration';
 
 import { trackUsage } from 'app/utils/Metrics';
+import { EXPLORATION } from 'app/constants/metrics';
 
 type Props = {
   item: ResourceItem;
@@ -61,14 +62,20 @@ export function MoreButton({ item: { type, id } }: Props) {
   const menu = (
     <Menu>
       <Menu.Item
-        onClick={() =>
-          copyIdsToClipboard(oData(id, type, tenant!, env), 'oData')
-        }
+        onClick={() => {
+          copyIdsToClipboard(oData(id, type, tenant!, env), 'oData');
+          trackUsage(EXPLORATION.COPY.O_DATA, { id, type, tenant });
+        }}
         key="copyoData"
       >
         Copy oData query
       </Menu.Item>
-      <Menu.Item key="copyId">
+      <Menu.Item
+        key="copyId"
+        onClick={() =>
+          trackUsage(EXPLORATION.CLICK.POWER_BI_CONNECTOR, { type })
+        }
+      >
         <a
           href="https://docs.cognite.com/cdf/dashboards/guides/powerbi/getting_started.html"
           target="_blank"
@@ -77,7 +84,12 @@ export function MoreButton({ item: { type, id } }: Props) {
           Learn about the PowerBI connector
         </a>
       </Menu.Item>
-      <Menu.Item key="grafanaLink">
+      <Menu.Item
+        key="grafanaLink"
+        onClick={() => {
+          trackUsage(EXPLORATION.CLICK.GRAFANA_CONNECTOR, { type });
+        }}
+      >
         <a
           href="https://docs.cognite.com/cdf/dashboards/guides/grafana/getting_started.html"
           target="_blank"

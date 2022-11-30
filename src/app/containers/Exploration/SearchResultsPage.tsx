@@ -12,6 +12,7 @@ import {
   getTitle,
   ResourceType,
   SearchFilters as OldSearchFilters,
+  AssetViewMode,
   AssetsTab,
   EventsTab,
   DocumentsTab,
@@ -58,6 +59,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
 import { AllTab } from 'app/containers/All';
 import { useAssetViewState, useFilterSidebarState } from 'app/store';
+import { EXPLORATION } from 'app/constants/metrics';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${
@@ -121,12 +123,24 @@ function SearchPage() {
   };
 
   const handleFilterToggleClick = React.useCallback(() => {
-    setShowFilter(prevState => !prevState);
+    setShowFilter(prevState => {
+      trackUsage(EXPLORATION.CLICK.TOGGLE_FILTERS_VIEW, {
+        tab: currentResourceType,
+        showFilters: !prevState,
+      });
+      return !prevState;
+    }); // eslint-disable-next-line
   }, [setShowFilter]);
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
     openPreview(item.id !== activeId ? item.id : undefined);
   };
+
+  const handleViewChange = (nextView: AssetViewMode) => {
+    setAssetView(nextView);
+    trackUsage(EXPLORATION.CLICK.TOGGLE_ASSET_TABLE_VIEW, { view: nextView });
+  };
+
   if (isFilterFeatureEnabled) {
     return (
       <RootHeightWrapperNew>
@@ -255,7 +269,7 @@ function SearchPage() {
                         isTreeEnabled
                         showCount
                         view={assetView}
-                        onViewChange={setAssetView}
+                        onViewChange={handleViewChange}
                         filter={assetFilter}
                         enableAdvancedFilters={isAdvancedFiltersEnabled}
                         onClick={handleRowClick}
@@ -408,7 +422,7 @@ function SearchPage() {
               fileFilter={fileFilter}
               setFileFilter={setFileFilter}
               resourceType={currentResourceType}
-              closeFilters={() => setShowFilter(false)}
+              closeFilters={handleFilterToggleClick}
               visible={currentResourceType !== 'threeD' && showFilter}
             />
           )}
@@ -433,7 +447,7 @@ function SearchPage() {
                       openPreview(item.id !== activeId ? item.id : undefined)
                     }
                     view={assetView}
-                    onViewChange={setAssetView}
+                    onViewChange={handleViewChange}
                     filter={assetFilter}
                     {...commonProps}
                     isTreeEnabled

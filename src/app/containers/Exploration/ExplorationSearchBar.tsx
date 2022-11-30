@@ -4,6 +4,8 @@ import { debounce } from 'lodash';
 import { useQueryString } from 'app/hooks/hooks';
 import { SEARCH_KEY } from 'app/utils/constants';
 import { useFlagFilter } from 'app/hooks';
+import { trackUsage } from 'app/utils/Metrics';
+import { EXPLORATION } from 'app/constants/metrics';
 import styled from 'styled-components';
 
 export const ExplorationSearchBar = () => {
@@ -28,6 +30,15 @@ export const ExplorationSearchBar = () => {
     // eslint-disable-next-line
   }, [urlQuery, setLocalQuery]);
 
+  const track = debounce((value: string) => {
+    trackUsage(EXPLORATION.SEARCH.GLOBAL, { query: value });
+  }, 500);
+
+  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalQuery(event.target.value);
+    track(event.target.value);
+  };
+
   return (
     <StyledInput
       size="large"
@@ -47,7 +58,7 @@ export const ExplorationSearchBar = () => {
           ? 'Search by name, description/content, metadata values, ID, and external ID...'
           : 'Search...'
       }
-      onChange={ev => setLocalQuery(ev.target.value)}
+      onChange={handleOnChange}
       value={localQuery}
     />
   );

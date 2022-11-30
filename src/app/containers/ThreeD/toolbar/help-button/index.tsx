@@ -6,6 +6,8 @@ import {
 } from './sections';
 import { ids } from 'cogs-variables';
 import styled from 'styled-components';
+import { trackUsage } from 'app/utils/Metrics';
+import { EXPLORATION } from 'app/constants/metrics';
 
 const HelpButton = (): JSX.Element => {
   return (
@@ -21,7 +23,16 @@ const HelpButton = (): JSX.Element => {
       placement="right-end"
     >
       <Tooltip content="Help" placement="right">
-        <Button icon="Help" type="ghost" aria-label="help-button" />
+        <Button
+          icon="Help"
+          type="ghost"
+          aria-label="help-button"
+          onClick={() => {
+            trackUsage(EXPLORATION.CLICK.HELP, {
+              resourceType: '3D',
+            });
+          }}
+        />
       </Tooltip>
     </Dropdown>
   );
