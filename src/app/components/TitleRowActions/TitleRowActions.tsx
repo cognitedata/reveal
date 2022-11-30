@@ -1,18 +1,13 @@
 import React from 'react';
 import { ResourceItem } from '@cognite/data-exploration';
-import { createLink } from '@cognite/cdf-utilities';
-import { Button } from '@cognite/cogs.js';
-import isArray from 'lodash/isArray';
-import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { DateFilter } from 'app/components/ResourceTitleRow';
-import { useCurrentResourceId, useQueryString } from 'app/hooks/hooks';
-import { SEARCH_KEY } from 'app/utils/constants';
-import { trackUsage } from 'app/utils/Metrics';
+import { useCurrentResourceId } from 'app/hooks/hooks';
 import DownloadButton from './DownloadButton';
 import { MoreButton } from './MoreButton';
-import { EXPLORATION } from 'app/constants/metrics';
+import { PreviewCloseButton } from 'app/components/TitleRowActions/PreviewCloseButton';
+import { FullscreenButton } from 'app/components/TitleRowActions/FullscreenButton';
 
 type TitleRowActionsProps = {
   item: ResourceItem;
@@ -29,70 +24,7 @@ export const TitleRowActions = ({
   beforeDefaultActions,
   hideDefaultCloseActions,
 }: TitleRowActionsProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [query] = useQueryString(SEARCH_KEY);
-  const [activeId, openPreview] = useCurrentResourceId();
-
-  const isPreview = location.pathname.includes('/search');
-
-  const goToPreview = () => {
-    navigate(
-      createLink(`/explore/search/${item.type}/${item.id}`, {
-        [SEARCH_KEY]: query,
-      }),
-      {
-        state: {
-          history: location.state?.history,
-        },
-      }
-    );
-    trackUsage(EXPLORATION.CLICK.COLLAPSE_FULL_PAGE, item);
-  };
-
-  const goToFullPagePreview = () => {
-    navigate(
-      createLink(`/explore/${item.type}/${item.id}`, {
-        [SEARCH_KEY]: query,
-      }),
-      {
-        state: {
-          history: location.state?.history,
-        },
-      }
-    );
-    trackUsage(EXPLORATION.CLICK.EXPAND_FULL_PAGE, item);
-  };
-
-  const closePreview = () => {
-    openPreview(undefined);
-    trackUsage(EXPLORATION.CLICK.CLOSE_DETAILED_VIEW, item);
-  };
-
-  const closeFullPagePreview = () => {
-    if (!location.state?.history || location.state?.history?.length === 0) {
-      navigate(
-        createLink(`/explore/search/${item.type}`, {
-          [SEARCH_KEY]: query,
-        }),
-        { replace: true }
-      );
-      return;
-    }
-
-    navigate(
-      location.state.history[location.state.history.length - 1].path +
-        location.search,
-      {
-        state: {
-          history:
-            isArray(location.state?.history) &&
-            location.state.history.slice(0, -1),
-        },
-      }
-    );
-    trackUsage(EXPLORATION.CLICK.CLOSE_FULL_PAGE, item);
-  };
+  const [activeId] = useCurrentResourceId();
 
   if (item.type === 'threeD') {
     return <StyledSpace>{afterDefaultActions}</StyledSpace>;
@@ -107,18 +39,9 @@ export const TitleRowActions = ({
       {!hideDefaultCloseActions && activeId && (
         <>
           <Divider />
-          <Button
-            icon={isPreview ? 'Expand' : 'Collapse'}
-            aria-label="Toggle fullscreen"
-            onClick={() => (isPreview ? goToFullPagePreview() : goToPreview())}
-          />
-          <Button
-            icon="Close"
-            aria-label="Close"
-            onClick={() =>
-              isPreview ? closePreview() : closeFullPagePreview()
-            }
-          />
+
+          <FullscreenButton item={item} />
+          <PreviewCloseButton item={item} />
         </>
       )}
     </StyledSpace>
