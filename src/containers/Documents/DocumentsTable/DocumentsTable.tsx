@@ -35,7 +35,7 @@ const RootAssetCell = ({ row }: { row: Row<Document> }) => {
   const assetId = row.original?.assetIds?.length && row.original.assetIds[0];
 
   if (!assetId) {
-    return null;
+    return <>{DASH}</>;
   }
 
   return <RootAsset assetId={assetId} maxWidth={300} />;

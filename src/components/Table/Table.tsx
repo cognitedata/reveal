@@ -13,7 +13,7 @@ import {
   SortingState,
   OnChangeFn,
 } from '@tanstack/react-table';
-import { DASH, useLocalStorageState } from '../../utils';
+import { useLocalStorageState } from '../../utils';
 import { isElementHorizontallyInViewport } from '../../utils/isElementHorizontallyInViewport';
 import { ColumnToggle } from './ColumnToggle';
 
@@ -305,7 +305,7 @@ export function Table<T extends TableData>({
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()
-                          ) || DASH}
+                          )}
                         </Body>
                       </Td>
                     );

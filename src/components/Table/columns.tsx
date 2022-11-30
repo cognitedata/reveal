@@ -102,15 +102,24 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   parentExternalId: {
     header: 'Parent External ID',
     accessorKey: 'parentExternalId',
+    cell: ({ getValue }) => (
+      <HighlightCell text={getValue<string>() || DASH} lines={1} />
+    ),
   },
   unit: {
     header: 'Unit',
     accessorKey: 'unit',
+    cell: ({ getValue }) => (
+      <HighlightCell text={getValue<string>() || DASH} lines={1} />
+    ),
   },
 
   id: {
     header: 'ID',
     accessorKey: 'id',
+    cell: ({ getValue }) => (
+      <HighlightCell text={getValue<string>() || DASH} lines={1} />
+    ),
   },
   isString: {
     header: 'Is String',
@@ -264,6 +273,9 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   source: {
     accessorKey: 'source',
     header: 'Source',
+    cell: ({ getValue }) => (
+      <HighlightCell text={getValue<string>() || DASH} lines={1} />
+    ),
   },
   columns: {
     accessorKey: 'columns',
@@ -294,7 +306,9 @@ export const ResourceTableColumns: ResourceTableHashMap = {
         >
           <StyledButton>{rootAsset?.name}</StyledButton>
         </Button>
-      ) : null;
+      ) : (
+        DASH
+      );
     },
   },
   rootAsset: {
