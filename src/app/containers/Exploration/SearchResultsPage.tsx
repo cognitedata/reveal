@@ -106,6 +106,7 @@ function SearchPage() {
   };
 
   const active = !!activeId || cart.length > 0;
+  const selectedRow = activeId ? { [activeId]: true } : {};
 
   const isSelected = (item: ResourceItem) => cart.includes(item.id);
 
@@ -283,6 +284,7 @@ function SearchPage() {
                     {currentResourceType === 'file' && (
                       <FileSearchResults
                         showCount
+                        selectedRow={selectedRow}
                         filter={fileFilter}
                         allowEdit={editable}
                         onClick={handleRowClick}
@@ -295,6 +297,7 @@ function SearchPage() {
                     {currentResourceType === 'document' && (
                       <DocumentSearchResults
                         query={query}
+                        selectedRow={selectedRow}
                         filter={documentFilter}
                         onClick={handleRowClick}
                         onFilterChange={(newValue: Record<string, unknown>) =>
@@ -305,6 +308,7 @@ function SearchPage() {
                     {currentResourceType === 'sequence' && (
                       <SequenceSearchResults
                         showCount
+                        selectedRow={selectedRow}
                         onClick={handleRowClick}
                         enableAdvancedFilters={isAdvancedFiltersEnabled}
                         onFilterChange={(newValue: Record<string, unknown>) =>
@@ -317,6 +321,7 @@ function SearchPage() {
                     {currentResourceType === 'timeSeries' && (
                       <TimeseriesSearchResults
                         showCount
+                        selectedRow={selectedRow}
                         enableAdvancedFilters={isAdvancedFiltersEnabled}
                         onClick={handleRowClick}
                         onFilterChange={(newValue: Record<string, unknown>) =>
