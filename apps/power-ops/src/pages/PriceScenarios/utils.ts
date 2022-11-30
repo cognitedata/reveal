@@ -65,9 +65,7 @@ export function getActiveColumns(
           )
           .map((plant, plantIndex) => {
             return {
-              Header: bidProcessResult.plants.find(
-                (specificPlant) => specificPlant.name === plant.plantName
-              )?.name,
+              Header: plant.plantName ?? 'Untitled',
               id: `plant-${plantIndex}`,
               accessor: `plant-${plantIndex}`,
               columns: [

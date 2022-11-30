@@ -14,8 +14,8 @@ export interface TableRow {
 }
 
 export interface TableColumn {
-  Header: string | undefined;
-  accessor?: string | undefined;
+  Header: string;
+  accessor?: string;
   disableSortBy: boolean;
   columns?: SubColumn[];
   sticky?: string;
@@ -23,7 +23,7 @@ export interface TableColumn {
 }
 
 export interface SubColumn {
-  Header: string | undefined;
+  Header: string;
   id?: string;
   accessor: string | (() => string) | undefined;
 }
