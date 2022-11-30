@@ -1,5 +1,4 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import {
@@ -54,20 +53,20 @@ const App = () => {
               >
                 <SDKProvider sdk={sdk}>
                   <Router>
-                    <Switch>
+                    <Routes>
                       <Route
                         path={`/:project/:subAppPath/new`}
-                        component={NewExtractor}
+                        element={<NewExtractor />}
                       />
                       <Route
                         path={`/:project/:subAppPath/:extractorExternalId`}
-                        component={ExtractorDetails}
+                        element={<ExtractorDetails />}
                       />
                       <Route
                         path="/:project/:subAppPath"
-                        component={ExtractorDownloads}
+                        element={<ExtractorDownloads />}
                       />
-                    </Switch>
+                    </Routes>
                   </Router>
                 </SDKProvider>
               </AuthWrapper>
