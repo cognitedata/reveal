@@ -10,3 +10,7 @@ export type OCRAnnotation = {
   type: 'word' | 'paragraph' | null;
   entities?: OCREntities;
 };
+
+export type OCRAnnotationPageResult = {
+  annotations: OCRAnnotation[];
+};

@@ -1,7 +1,7 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
 import { FileInfo } from '@cognite/sdk';
-import { OCRAnnotation } from '../../types';
+import { OCRAnnotationPageResult } from '../../types';
 import { retrievePnIdRawOCRResult } from '../network/retrievePnIdRawOCRResult';
 
 export const usePnIdRawOCRResultQuery = (
@@ -12,7 +12,7 @@ export const usePnIdRawOCRResultQuery = (
 
   const result = useQuery(
     ['pnidocr', file?.id],
-    (): Promise<OCRAnnotation[]> => {
+    (): Promise<OCRAnnotationPageResult[]> => {
       if (!file?.id) {
         return Promise.resolve([]);
       }

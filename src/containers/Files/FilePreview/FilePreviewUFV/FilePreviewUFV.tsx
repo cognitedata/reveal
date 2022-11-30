@@ -172,7 +172,8 @@ export const FilePreviewUFV = ({
 
   const { annotationSearchResult } = usePnIdOCRResultFilterQuery(
     searchQuery,
-    file
+    file,
+    page
   );
 
   const displayedAnnotations = useMemo(() => {

@@ -89,7 +89,7 @@ const pdfSdkMock = {
       return { data: { items: response } };
     }
     if (query.includes('ocr')) {
-      return { data: { items: [{ annotations: ocrResults }] } };
+      return { data: { items: ocrResults } };
     }
     return { data: { items: [] } };
   },

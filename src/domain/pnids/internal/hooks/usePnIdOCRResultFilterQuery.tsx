@@ -4,7 +4,11 @@ import { getAnnotationsFromContextApiOcrAnnotations } from '@cognite/unified-fil
 import { getContainerId } from '../../../../containers/Files/FilePreview/FilePreviewUFV/utils';
 import { usePnIdRawOCRResultQuery } from '../../service/queries/usePnIdRawOCRResultQuery';
 
-export const usePnIdOCRResultFilterQuery = (query: string, file?: FileInfo) => {
+export const usePnIdOCRResultFilterQuery = (
+  query: string,
+  file?: FileInfo,
+  page?: number
+) => {
   const { data } = usePnIdRawOCRResultQuery(file, !!file && query !== '');
 
   const annotationSearchResult = useMemo(() => {
@@ -16,8 +20,11 @@ export const usePnIdOCRResultFilterQuery = (query: string, file?: FileInfo) => {
     if (data === undefined || data?.length === length) {
       return [];
     }
+    const currentPage = page ? page - 1 : 0;
 
-    const filteredOCRAnnotations = data?.filter(
+    const currentPageData = data[currentPage].annotations;
+
+    const filteredOCRAnnotations = currentPageData?.filter(
       box =>
         query.length !== 0 &&
         query
@@ -30,7 +37,7 @@ export const usePnIdOCRResultFilterQuery = (query: string, file?: FileInfo) => {
       filteredOCRAnnotations,
       containerId
     );
-  }, [file, data, query]);
+  }, [file, data, query, page]);
 
   return { annotationSearchResult };
 };
