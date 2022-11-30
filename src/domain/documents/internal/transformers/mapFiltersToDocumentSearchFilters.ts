@@ -2,6 +2,7 @@ import { AdvancedFilterBuilder, AdvancedFilter } from '../../../builders';
 import { InternalDocumentFilter } from '../types';
 
 type DocumentProperties = {
+  'sourceFile|datasetId': number[];
   'sourceFile|assetIds': number[];
   author: string[];
   'sourceFile|source': string[];
@@ -13,6 +14,7 @@ type DocumentProperties = {
 
 export const mapFiltersToDocumentSearchFilters = (
   {
+    dataSetIds,
     externalIdPrefix,
     source,
     author,
@@ -28,6 +30,14 @@ export const mapFiltersToDocumentSearchFilters = (
   const builder = new AdvancedFilterBuilder<DocumentProperties>();
 
   const filterBuilder = new AdvancedFilterBuilder<DocumentProperties>()
+    .in('sourceFile|datasetId', () => {
+      return dataSetIds?.reduce((acc, { value }) => {
+        if (typeof value === 'number') {
+          return [...acc, value];
+        }
+        return acc;
+      }, [] as number[]);
+    })
     .containsAny('sourceFile|assetIds', () => {
       return assetSubtreeIds?.reduce((acc, { value }) => {
         if (typeof value === 'number') {
