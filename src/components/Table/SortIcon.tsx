@@ -18,7 +18,7 @@ export const SortIcon = ({
 
   if (isSorted) {
     sortLabel = isSorted === 'desc' ? 'Descending order' : 'Ascending order';
-    sortIcon = isSorted === 'desc' ? 'ReorderAscending' : 'ReorderDescending';
+    sortIcon = isSorted === 'desc' ? 'ReorderDescending' : 'ReorderAscending';
   }
   return (
     <Tooltip content={sortLabel} arrow={false}>
