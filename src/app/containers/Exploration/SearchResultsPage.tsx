@@ -19,6 +19,11 @@ import {
   TimeseriesTab,
   SequenceTab,
   ThreeDTab,
+  useAssetsMetadataKeys,
+  useTimeseriesMetadataKeys,
+  useDocumentsMetadataKeys,
+  useEventsMetadataKeys,
+  useSequencesMetadataKeys,
 } from '@cognite/data-exploration';
 
 import { Colors, Flex, Tabs } from '@cognite/cogs.js';
@@ -68,6 +73,13 @@ const getPageTitle = (query: string, resourceType?: ResourceType): string => {
 };
 
 function SearchPage() {
+  // start fetching metadata keys as early as possible
+  useAssetsMetadataKeys();
+  useTimeseriesMetadataKeys();
+  useDocumentsMetadataKeys();
+  useEventsMetadataKeys();
+  useSequencesMetadataKeys();
+
   const navigate = useNavigate();
   const isFilterFeatureEnabled = useFlagFilter();
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
