@@ -1,5 +1,6 @@
 import { SDKProvider } from '@cognite/sdk-provider';
 import { DataExplorationProvider } from '@cognite/data-exploration';
+import styled from 'styled-components'
 
 import '@cognite/cogs.js/dist/cogs.css';
 import 'antd/dist/antd.css';
@@ -17,11 +18,19 @@ dayjs.locale('en');
 export const decorators = [
   (Story) => {
     return (
-      <SDKProvider sdk={mockSDK}>
-        <DataExplorationProvider sdk={mockSDK}>
-          <Story />
-        </DataExplorationProvider>
-      </SDKProvider>
+      <div style={{
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+        width: "100%",
+        height: "100%",
+      }}>
+        <SDKProvider sdk={mockSDK}>
+          <DataExplorationProvider sdk={mockSDK}>
+            <Story />
+          </DataExplorationProvider>
+        </SDKProvider>
+      </div>
     );
   },
 ];

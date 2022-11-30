@@ -18,22 +18,22 @@ export default {
 const ControlledTemplate: Story<Props> = (args) => {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   return (
-    <>
+    <div style={{ height: '300px' }}>
       <h2>{args.title} Example</h2>
       <Dropdown {...args} open={isMenuOpen}>
         <Button
           icon="EllipsisHorizontal"
           type="ghost"
           aria-label="Open dropdown"
-          onClick={() => setIsMenuOpen((prevState) => !prevState)}
+          onClick={() => setIsMenuOpen((prevState: boolean) => !prevState)}
         />
       </Dropdown>
-    </>
+    </div>
   );
 };
 
 const UncontrolledTemplate: Story<UncontrolledProps> = (args) => (
-  <>
+  <div style={{ height: '300px' }}>
     <h2>{args.title} Example</h2>
     <p>
       Trigger button can be customized as per{' '}
@@ -47,7 +47,7 @@ const UncontrolledTemplate: Story<UncontrolledProps> = (args) => (
       using <b>btnProps</b>
     </p>
     <Dropdown.Uncontrolled {...args} />
-  </>
+  </div>
 );
 
 export const TimeseriesDropdown = ControlledTemplate.bind({});
