@@ -15,6 +15,7 @@ type CategorySidebarItemProps = {
 
 const CategorySidebarItem = ({
   count,
+  isLoading,
   tab,
   title,
 }: CategorySidebarItemProps): JSX.Element => {
@@ -29,6 +30,7 @@ const CategorySidebarItem = ({
 
   return (
     <StyledButton
+      loading={isLoading}
       onClick={handleClick}
       toggled={searchParamCategory === tab}
       type="ghost"
