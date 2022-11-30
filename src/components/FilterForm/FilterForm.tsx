@@ -225,7 +225,7 @@ const FilterItem = ({
               }),
             }}
             placeholder="Value"
-            disabled={!selectedKey}
+            isDisabled={!selectedKey}
             value={
               selectedValue
                 ? { label: selectedValue, value: selectedValue }

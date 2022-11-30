@@ -174,7 +174,7 @@ const FilterItem = ({
                 ...reactSelectCogsStylingProps.styles,
               }}
               placeholder="Value"
-              isDisabled={!selectedKey && selectedValue === null}
+              isDisabled={!selectedKey}
               value={
                 selectedValue
                   ? { label: selectedValue, value: selectedValue }
