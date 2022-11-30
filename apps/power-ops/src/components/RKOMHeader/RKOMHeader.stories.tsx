@@ -41,7 +41,7 @@ Default.args = {
   disabledDownload: true,
   downloading: false,
   productValue: productOptions[0],
-  deliveryWeekValue: dayjs().startOf('week').format('YYYY-MM-DD'),
+  deliveryWeekValue: dayjs('2022-11-25').startOf('week').format('YYYY-MM-DD'),
 };
 
 export const BidSelected = Template.bind({});
