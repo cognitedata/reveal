@@ -113,6 +113,7 @@ export class CustomCameraManager implements CameraManager {
     }
 
     dispose(): void {
+        this._stopEventHandler.dispose();
         this._controls.dispose();
         this._cameraChangedListener.splice(0);
     }
