@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { generatePath, useHistory, useLocation } from 'react-router-dom';
 import { Dropdown, Icon, Menu, Skeleton, TopBar } from '@cognite/cogs.js';
 import {
-  LogoutButton,
+  LogoutButtonWithoutTranslation,
   useAuthenticatedAuthContext,
 } from '@cognite/react-container';
 import { handleLogout } from 'utils/utils';
@@ -179,7 +179,9 @@ export const MenuBar = () => {
       </TopBar.Left>
       <TopBar.Right>
         <LogOutButtonContainer>
-          <LogoutButton handleClick={() => handleLogout(history)} />
+          <LogoutButtonWithoutTranslation
+            onClick={() => handleLogout(history)}
+          />
         </LogOutButtonContainer>
       </TopBar.Right>
     </StyledTopBar>

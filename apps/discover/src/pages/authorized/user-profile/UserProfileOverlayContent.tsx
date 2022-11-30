@@ -97,7 +97,7 @@ export const UserProfileOverlayContent: React.FC<Props> = ({ companyInfo }) => {
       <UserAccessList />
 
       <LogOutButtonContainer>
-        <LogoutButton handleClick={logout} />
+        <LogoutButton onClick={logout} />
       </LogOutButtonContainer>
     </UserProfileContainer>
   );

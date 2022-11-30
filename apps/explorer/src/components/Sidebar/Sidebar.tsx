@@ -38,7 +38,7 @@ export const Sidebar: React.FC<Props> = ({ isOverlayOpened, onCancel }) => {
         <SettingsContent>{authState?.email}</SettingsContent>
         <SettingsContent>{authState?.username}</SettingsContent>
         <LogOutButtonContainer>
-          <LogoutButton handleClick={handleClick} />
+          <LogoutButton onClick={handleClick} />
         </LogOutButtonContainer>
       </SettingsContainer>
     </Drawer>

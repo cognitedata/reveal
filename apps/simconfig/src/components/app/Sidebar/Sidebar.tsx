@@ -29,7 +29,7 @@ export function Sidebar({ isOverlayOpened, onCancel }: SidebarProps) {
         <SettingsContent>Here you can put some settings!</SettingsContent>
         <LogOutButtonContainer>
           <LogoutButton
-            handleClick={() => {
+            onClick={() => {
               navigate({ to: '/logout' });
             }}
           />
