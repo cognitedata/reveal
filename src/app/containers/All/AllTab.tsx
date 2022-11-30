@@ -31,11 +31,11 @@ export const AllTab = () => {
         onRowClick={row => setCurrentResourceType('asset', row.id)}
         onAllResultsClick={() => handleAllResultsClick('asset')}
       />
-      <EventSummary
+      <TimeseriesSummary
         filter={commonFilters}
         query={query}
-        onRowClick={row => setCurrentResourceType('event', row.id)}
-        onAllResultsClick={() => handleAllResultsClick('event')}
+        onRowClick={row => setCurrentResourceType('timeSeries', row.id)}
+        onAllResultsClick={() => handleAllResultsClick('timeSeries')}
       />
       <DocumentSummary
         filter={commonFilters}
@@ -43,11 +43,11 @@ export const AllTab = () => {
         onRowClick={row => setCurrentResourceType('document', row.id)}
         onAllResultsClick={() => handleAllResultsClick('document')}
       />
-      <TimeseriesSummary
+      <EventSummary
         filter={commonFilters}
         query={query}
-        onRowClick={row => setCurrentResourceType('timeSeries', row.id)}
-        onAllResultsClick={() => handleAllResultsClick('timeSeries')}
+        onRowClick={row => setCurrentResourceType('event', row.id)}
+        onAllResultsClick={() => handleAllResultsClick('event')}
       />
       <SequenceSummary
         filter={commonFilters}
