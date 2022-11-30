@@ -2,18 +2,25 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
 import React, { useEffect, useState, useMemo } from 'react';
 import { Asset } from '@cognite/sdk';
-import { usePrevious } from 'hooks/CustomHooks';
+import { useGetHiddenColumns, usePrevious } from 'hooks/CustomHooks';
 import { SelectableItemsProps, TableStateProps } from 'types';
-import { HighlightCell } from '../../../components';
-import { Table } from '../../../components/Table';
-import { useSearchAssetTree } from '../../../domain/assets/service/queries/useSearchAssetTree';
-import { useRootAssetsQuery } from '../../../domain/assets/service/queries/useRootAssetsQuery';
+import { HighlightCell, ResourceTableColumns } from '../../../components';
+import { Table } from '../../../components';
+import { useSearchAssetTree } from '../../../domain';
+import { useRootAssetsQuery } from '../../../domain';
 import { DASH } from '../../../utils';
+import { AssetWithRelationshipLabels } from '../AssetTable/AssetTable';
 import { useRootTree, useSearchTree, useRootPath } from './hooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
-import { InternalAssetFilters, InternalAssetTreeData } from 'domain/assets';
+import {
+  InternalAssetFilters,
+  InternalAssetTreeData,
+  useAssetsMetadataKeys,
+} from 'domain/assets';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
+
+const visibleColumns = ['name', 'rootId'];
 
 export const AssetTreeTable = ({
   filter = {},
@@ -41,6 +48,8 @@ export const AssetTreeTable = ({
   const [rootExpanded, setRootExpanded] = useState<ExpandedState>({});
   const [searchExpanded, setSearchExpanded] = useState<ExpandedState>({});
 
+  const { data: metadataKeys } = useAssetsMetadataKeys();
+
   const rootExpandedKeys = useMemo(() => {
     return Object.keys(rootExpanded).reduce((previousValue, currentValue) => {
       return [...previousValue, Number(currentValue)];
@@ -64,6 +73,13 @@ export const AssetTreeTable = ({
       Object.values(filter).filter(Boolean).length === 0
     );
   }, [query, filter]);
+
+  const metadataColumns: ColumnDef<AssetWithRelationshipLabels>[] =
+    useMemo(() => {
+      return (metadataKeys || []).map((key: string) =>
+        ResourceTableColumns.metadata(key)
+      );
+    }, [metadataKeys]);
 
   const columns = React.useMemo(
     () =>
@@ -129,8 +145,9 @@ export const AssetTreeTable = ({
           cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
           size: 300,
         },
+        ...metadataColumns,
       ] as ColumnDef<InternalAssetTreeData>[],
-    [query, startFromRoot]
+    [query, startFromRoot, metadataColumns]
   );
 
   const previousRootExpandedKeys = usePrevious(rootExpandedKeys);
@@ -236,6 +253,8 @@ export const AssetTreeTable = ({
     return assets as InternalAssetTreeData[];
   };
 
+  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
+
   return (
     <Table<InternalAssetTreeData>
       id={'asset-tree-table'}
@@ -261,6 +280,7 @@ export const AssetTreeTable = ({
       expandedRows={startFromRoot ? rootExpanded : searchExpanded}
       onRowClick={onAssetClicked}
       tableSubHeaders={tableSubHeaders}
+      hiddenColumns={hiddenColumns}
       onRowExpanded={expanded => {
         if (startFromRoot) {
           setRootExpanded(expanded);

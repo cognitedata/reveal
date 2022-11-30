@@ -5,6 +5,8 @@ import { RelationshipLabels } from 'types';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from 'hooks';
+import { ResourceTableColumns } from '../../../components';
+import { useSequencesMetadataKeys } from '../../../domain';
 
 export type SequenceWithRelationshipLabels = Sequence & RelationshipLabels;
 
@@ -20,6 +22,13 @@ export const SequenceTable = ({
   ...rest
 }: Omit<TableProps<SequenceWithRelationshipLabels | Sequence>, 'columns'> &
   RelationshipLabels) => {
+  const { data: metadataKeys } = useSequencesMetadataKeys();
+
+  const metadataColumns: ColumnDef<Sequence>[] = useMemo(() => {
+    return (metadataKeys || []).map((key: string) =>
+      ResourceTableColumns.metadata(key)
+    );
+  }, [metadataKeys]);
   const columns = useMemo(
     () =>
       [
@@ -44,9 +53,10 @@ export const SequenceTable = ({
           enableSorting: false,
         },
         Table.Columns.dataSet,
+        ...metadataColumns,
       ] as ColumnDef<Sequence>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query]
+    [query, metadataColumns]
   );
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 

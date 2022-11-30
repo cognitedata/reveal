@@ -7,7 +7,7 @@ import {
 import { AssetsProperties } from 'domain/assets';
 import { AdvancedFilter } from 'domain/builders';
 import { InternalSortBy } from 'domain/types';
-import { normalizeAssets } from '../transformers/normalize';
+import { normalizeAssets } from '../transformers';
 
 export const getAssetsList = (
   sdk: CogniteClient,

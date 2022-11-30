@@ -5,7 +5,7 @@ import { ToastContainer } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { Container, sdkMock } from '../src/docs/stub';
-import { DataExplorationProvider } from '../src/context';
+import { DataExplorationProvider } from '../src';
 import { DocumentSearchProvider } from '@cognite/react-document-search';
 
 type DataExplorationProviderParameters = {
@@ -16,7 +16,13 @@ type ExplorerWrapperSettings = {
   parameters: DataExplorationProviderParameters;
 } & WrapperSettings;
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 export default makeDecorator({
   name: 'withExplorerConfig',

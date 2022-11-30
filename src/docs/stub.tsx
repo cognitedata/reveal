@@ -30,6 +30,7 @@ export const ResourceSelectorPropsFunctions: React.FC<OpenSelectorProps> = (
 ) => null;
 
 export const sdkMock = {
+  project: 'cog-dss',
   get: async (query: string) => {
     if (query.includes('icon')) {
       const reponse = await fetch(UNSPLASH_URL);
@@ -210,6 +211,10 @@ export const sdkMock = {
       },
     },
   },
+  getBaseUrl: () => 'api.test.cogniteapp.com',
+  getDefaultRequestHeaders: () => ({
+    authorization: 'Bearer test token',
+  }),
 };
 
 export const Container = styled.div`

@@ -1,5 +1,6 @@
 import { DocumentFilterProperty, DocumentSortItem } from '@cognite/sdk';
 import { TableSortBy } from 'components/Table';
+import { METADATA_KEY_SEPARATOR } from '../../../../utils';
 
 const columnToSortMap = new Map<string, DocumentFilterProperty>([
   ['name', ['sourceFile', 'name']],
@@ -21,7 +22,10 @@ export const mapTableSortByToDocumentSortFields = (
   return [
     {
       order: desc ? 'desc' : 'asc',
-      property: columnToSortMap.get(id)!,
+      property: columnToSortMap.get(id) || [
+        'sourceFile',
+        ...id.split(METADATA_KEY_SEPARATOR),
+      ],
     },
   ];
 };

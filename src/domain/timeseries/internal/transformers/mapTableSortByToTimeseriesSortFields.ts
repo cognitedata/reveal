@@ -1,5 +1,6 @@
 import { TableSortBy } from 'components/Table';
 import { InternalSortBy } from 'domain/types';
+import { METADATA_KEY_SEPARATOR } from '../../../../utils';
 
 export const mapTableSortByToTimeseriesSortFields = (
   sortBy?: TableSortBy[]
@@ -8,8 +9,10 @@ export const mapTableSortByToTimeseriesSortFields = (
 
   if (sortBy.length > 0) {
     return sortBy.map(tableSort => {
+      const properties = tableSort.id.split(METADATA_KEY_SEPARATOR);
+
       return {
-        property: [tableSort.id],
+        property: properties,
         order: tableSort.desc ? 'desc' : 'asc',
       };
     });

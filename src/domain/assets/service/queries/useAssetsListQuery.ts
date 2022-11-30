@@ -6,7 +6,7 @@ import { queryKeys } from 'domain/queryKeys';
 import { InternalSortBy } from 'domain/types';
 import { useMemo } from 'react';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
-import { getAssetsList } from '../network/getAssetsList';
+import { getAssetsList } from '../network';
 
 export const useAssetsListQuery = (
   {

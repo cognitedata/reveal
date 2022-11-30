@@ -6,8 +6,8 @@ import { Table, TableProps } from 'components/Table/Table';
 import { RelationshipLabels } from 'types';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from 'hooks';
-import { sampleMetadataValue } from 'components/Table/mockData';
-import { DASH } from 'utils';
+import { ResourceTableColumns } from '../../../components';
+import { useEventsMetadataKeys } from '../../../domain';
 
 export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 
@@ -16,17 +16,13 @@ export const EventTable = ({
   query,
   ...rest
 }: Omit<TableProps<EventWithRelationshipLabels>, 'columns'>) => {
-  const metadataColumns: ColumnDef<CogniteEvent>[] = sampleMetadataValue.map(
-    item => ({
-      id: `metadata:${item.value}`,
-      accessorFn: data => data?.metadata?.[item.value] || DASH,
-      header: item.value,
-      meta: {
-        isMetadata: true,
-      },
-      enableSorting: false,
-    })
-  );
+  const { data: metadataKeys } = useEventsMetadataKeys();
+
+  const metadataColumns: ColumnDef<CogniteEvent>[] = useMemo(() => {
+    return (metadataKeys || []).map((key: string) =>
+      ResourceTableColumns.metadata(key)
+    );
+  }, [metadataKeys]);
 
   const columns = useMemo(
     () =>
@@ -52,20 +48,17 @@ export const EventTable = ({
           ...Table.Columns.assets,
           enableSorting: false,
         },
+        ...metadataColumns,
       ] as ColumnDef<CogniteEvent>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query]
+    [query, metadataColumns]
   );
 
-  const combinedColumns = useMemo(
-    () => [...columns, ...metadataColumns],
-    [columns, metadataColumns]
-  );
-  const hiddenColumns = useGetHiddenColumns(combinedColumns, visibleColumns);
+  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
     <Table<CogniteEvent>
-      columns={combinedColumns}
+      columns={columns}
       hiddenColumns={hiddenColumns}
       {...rest}
     />

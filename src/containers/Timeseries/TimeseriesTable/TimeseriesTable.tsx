@@ -9,6 +9,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from 'hooks';
 import { RootAsset } from 'components/RootAsset';
 import isEmpty from 'lodash/isEmpty';
+import { ResourceTableColumns } from '../../../components';
+import { useTimeseriesMetadataKeys } from '../../../domain';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 
@@ -28,6 +30,7 @@ export const TimeseriesTable = ({
   ...props
 }: TimeseriesTableProps) => {
   const { data, ...rest } = props;
+  const { data: metadataKeys } = useTimeseriesMetadataKeys();
 
   const [dateRange, setDateRange] = useState(
     dateRangeProp || TIME_SELECT['1Y'].getTime()
@@ -53,6 +56,11 @@ export const TimeseriesTable = ({
     setEmptyTimeseriesMap(emptyTimeseriesMap);
   }, [data]);
 
+  const metadataColumns: ColumnDef<Timeseries>[] = useMemo(() => {
+    return (metadataKeys || []).map((key: string) =>
+      ResourceTableColumns.metadata(key)
+    );
+  }, [metadataKeys]);
   const columns = useMemo(() => {
     const sparkLineColumn: ColumnDef<Timeseries & { data: any }> = {
       header: 'Preview',
@@ -125,8 +133,9 @@ export const TimeseriesTable = ({
         cell: ({ getValue }) => <RootAsset assetId={getValue<number>()} />,
         enableSorting: false,
       },
+      ...metadataColumns,
     ] as ColumnDef<Timeseries>[];
-  }, [query, dateRange]);
+  }, [query, dateRange, metadataColumns]);
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 

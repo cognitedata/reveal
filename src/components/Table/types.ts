@@ -6,7 +6,7 @@ import {
 } from 'containers';
 import { AssetWithRelationshipLabels } from 'containers/Assets/AssetTable/AssetTable';
 import { FileWithRelationshipLabels } from 'containers/Files/FileTable/FileTable';
-import { ColumnKeys } from '../Table/constants';
+import { ColumnKeys } from './constants';
 
 // We recreated these types on our side to be less dependant on react-table.
 // This is same to ColumnSort from react-table
@@ -24,10 +24,15 @@ type TableColumnDef = ColumnDef<
 >;
 
 type ColumnWithQuery = (q?: string) => TableColumnDef;
+type MetadataColumn = (
+  key: string,
+  accessorFn?: (row: any) => string
+) => TableColumnDef;
 
 export type ResourceTableHashMap = {
   name: ColumnWithQuery;
   description: ColumnWithQuery;
+  metadata: MetadataColumn;
 } & {
   [key in typeof ColumnKeys[number]]: TableColumnDef;
 };

@@ -17,7 +17,7 @@ import styled, { css } from 'styled-components';
 
 import { HighlightCell, TimeDisplay } from 'components';
 
-import { DASH, mapFileType } from 'utils';
+import { DASH, mapFileType, METADATA_KEY_SEPARATOR } from 'utils';
 import { createLink } from '@cognite/cdf-utilities';
 import { useGetRootAsset } from 'hooks';
 import { ResourceTableHashMap } from './types';
@@ -349,6 +349,17 @@ export const ResourceTableColumns: ResourceTableHashMap = {
         ))}
       </Flex>
     ),
+  },
+  metadata: (key: string, accessorFn?: (row: any) => string) => {
+    return {
+      id: `metadata${METADATA_KEY_SEPARATOR}${key}`,
+      accessorFn: row =>
+        accessorFn ? accessorFn(row) : row?.metadata?.[key] || DASH,
+      header: key,
+      meta: {
+        isMetadata: true,
+      },
+    };
   },
 };
 

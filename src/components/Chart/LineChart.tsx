@@ -141,13 +141,14 @@ export const LineChart = ({
   const numRowTicks = Math.max(minRowTicks, Math.floor(height / 30));
   const numColumnTicks = Math.max(5, Math.floor(width / 100));
   const getXWithScale = (d: DatapointAggregate) => dateScale(getDate(d));
+  const gridWidth = innerWidth > 0 ? innerWidth : 0;
 
   const renderGrid = () => (
     <>
       {(showGridLine === 'both' || showGridLine === 'horizontal') && (
         <GridRows
           scale={valuesScale}
-          width={innerWidth}
+          width={gridWidth}
           height={innerHeight}
           numTicks={numColumnTicks}
           strokeDasharray="1,3"
@@ -158,7 +159,7 @@ export const LineChart = ({
       {(showGridLine === 'both' || showGridLine === 'vertical') && (
         <GridColumns
           scale={dateScale}
-          width={innerWidth}
+          width={gridWidth}
           height={innerHeight}
           numTicks={numRowTicks}
           stroke={lightGrey}
@@ -192,7 +193,7 @@ export const LineChart = ({
       {(showAxis === 'both' || showAxis === 'vertical') && (
         <AxisRight
           scale={valuesScale}
-          left={innerWidth}
+          left={gridWidth}
           numTicks={numRowTicks}
           tickStroke={lightGrey}
           strokeWidth={0}
@@ -224,7 +225,7 @@ export const LineChart = ({
     return (
       <AreaClosed<DatapointAggregate>
         data={renderableValues}
-        width={innerWidth}
+        width={gridWidth}
         height={innerHeight}
         x={d => getXWithScale(d)!}
         y1={d => valuesScale(getDataPointAverage(d)!)!}
@@ -240,7 +241,7 @@ export const LineChart = ({
   const renderLine = () => (
     <LinePath<DatapointAggregate>
       data={renderableValues}
-      width={innerWidth}
+      width={gridWidth}
       height={innerHeight}
       x={d => getXWithScale(d)!}
       y={d => valuesScale(getDataPointAverage(d)!)!}
@@ -314,7 +315,7 @@ export const LineChart = ({
     return (
       <>
         <Bar
-          width={innerWidth}
+          width={gridWidth}
           height={innerHeight}
           fill="transparent"
           rx={14}

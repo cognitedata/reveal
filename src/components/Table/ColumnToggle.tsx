@@ -15,7 +15,8 @@ import {
 } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
-import { MetadataHeaderText, TableData } from '../Table';
+import { TableData } from './Table';
+import { MetadataHeaderText } from './elements';
 
 import {
   DragDropContainer,
@@ -207,6 +208,7 @@ const StyledMenu = styled(Menu)`
 const StyledHeader = styled(HighlightCell)`
   max-width: 170px;
   text-transform: capitalize;
+  text-overflow: ellipsis;
 `;
 
 const StyledLabel = styled.label`

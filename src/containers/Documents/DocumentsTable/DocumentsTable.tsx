@@ -5,12 +5,12 @@ import { Table, TableProps } from 'components/Table/Table';
 import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentContentPreview } from './DocumentContentPreview';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { Document } from 'domain/documents';
+import { Document, useDocumentsMetadataKeys } from 'domain/documents';
 import { DASH } from 'utils';
 import { useGetHiddenColumns } from 'hooks';
 import { Body } from '@cognite/cogs.js';
 
-import { TimeDisplay, RootAsset } from 'components';
+import { TimeDisplay, RootAsset, ResourceTableColumns } from 'components';
 
 export type DocumentWithRelationshipLabels = Document;
 
@@ -43,6 +43,17 @@ const RootAssetCell = ({ row }: { row: Row<Document> }) => {
 
 export const DocumentsTable = (props: DocumentTableProps) => {
   const { query } = props;
+  const { data: metadataKeys } = useDocumentsMetadataKeys();
+
+  const metadataColumns: ColumnDef<DocumentWithRelationshipLabels>[] =
+    useMemo(() => {
+      return (metadataKeys || []).map((key: string) =>
+        ResourceTableColumns.metadata(
+          key,
+          row => row?.sourceFile?.metadata?.key
+        )
+      );
+    }, [metadataKeys]);
 
   const columns = useMemo(
     () =>
@@ -114,8 +125,9 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         },
         Table.Columns.externalId,
         Table.Columns.id,
+        ...metadataColumns,
       ] as ColumnDef<DocumentWithRelationshipLabels>[],
-    [query]
+    [query, metadataColumns]
   );
 
   // const updatedColumns =
