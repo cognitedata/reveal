@@ -36,7 +36,7 @@ const CategorySidebarItem = ({
       type="ghost"
     >
       <span>{title}</span>
-      {count && <Chip label={count} muted size="x-small" />}
+      {count !== undefined && <Chip label={count} muted size="x-small" />}
     </StyledButton>
   );
 };

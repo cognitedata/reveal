@@ -58,7 +58,7 @@ const Extractors = () => {
               }}
             />
             <Flex gap={40}>
-              <CategorySidebar />
+              <CategorySidebar extractorsList={extractorsList} />
               <StyledListContainer>
                 <CreateExtractor />
                 <ExtractorsList extractorsList={extractorsList} />

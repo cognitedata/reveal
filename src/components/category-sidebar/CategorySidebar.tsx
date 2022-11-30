@@ -6,14 +6,20 @@ import styled from 'styled-components';
 import { useTranslation } from 'common';
 import CategorySidebarItem from './CategorySidebarItem';
 import { useExtractorsList } from 'hooks/useExtractorsList';
+import { ExtractorWithReleases } from 'service/extractors';
 
-const CategorySidebar = (): JSX.Element => {
+type CategorySidebarProps = {
+  extractorsList: ExtractorWithReleases[];
+};
+
+const CategorySidebar = ({
+  extractorsList,
+}: CategorySidebarProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { data: extractors, isFetched: didFetchExtractorList } =
-    useExtractorsList();
+  const { isFetched: didFetchExtractorList } = useExtractorsList();
 
-  const extractorCount = extractors?.length;
+  const extractorCount = extractorsList?.length;
   const isLoading = !didFetchExtractorList;
   const totalCount = extractorCount;
 
