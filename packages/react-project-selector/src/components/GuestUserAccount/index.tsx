@@ -26,13 +26,9 @@ const GuestUserAccount = ({
 }: GuestUserAccountProps) => {
   const { cluster, clientId, clusters } = useContext(LoginContext);
   const { flow, options } = getFlow();
-  const [directory, setDirectory] = useState<string | undefined>(() => {
-    if (flow === 'AZURE_AD' && options?.directory) {
-      return options?.directory;
-    }
-
-    return undefined;
-  });
+  const [directory, setDirectory] = useState(
+    flow === 'AZURE_AD' && options?.directory ? options?.directory : ''
+  );
 
   useEffect(() => {
     if (isError) {
