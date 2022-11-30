@@ -29,6 +29,7 @@ export interface ColumnToggleProps<T extends TableData = any> {
   allColumns: () => Column<T, unknown>[];
   toggleAllColumnsVisible: (visible: boolean) => void;
   onColumnOrderChanged: (updater: Updater<ColumnOrderState>) => void;
+  onResetSelectedColumns: () => void;
 }
 
 const style = {
@@ -52,6 +53,7 @@ export const MenutItemDrag: React.FC<
 export function ColumnToggle<T>({
   allColumns,
   onColumnOrderChanged,
+  onResetSelectedColumns,
 }: ColumnToggleProps<T>) {
   const [searchInput, setSearchInput] = useState('');
   const [tab, setTab] = useState('All');
@@ -167,7 +169,10 @@ export function ColumnToggle<T>({
             <Footer>
               <WarningInfobar>
                 Due to performance reasons, the max amount of columns that can
-                be selected is 20
+                be selected is 20.{' '}
+                <StyledResetSpan onClick={onResetSelectedColumns}>
+                  Reset to default
+                </StyledResetSpan>
               </WarningInfobar>
             </Footer>
           )}
@@ -178,6 +183,14 @@ export function ColumnToggle<T>({
     </Dropdown>
   );
 }
+
+const StyledResetSpan = styled.span`
+  text-decoration: underline;
+  font-weight: 500;
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 const StyledMenu = styled(Menu)`
   min-width: 256px;

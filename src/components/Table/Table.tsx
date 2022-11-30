@@ -140,14 +140,18 @@ export function Table<T extends TableData>({
     }
   };
 
-  const [columnVisibility, setColumnVisibility] = useLocalStorageState(
-    id,
-    (hiddenColumns || []).reduce((previousValue, currentValue) => {
+  const initialHiddenColumns = useMemo(() => {
+    return (hiddenColumns || []).reduce((previousValue, currentValue) => {
       return {
         ...previousValue,
         [currentValue]: false,
       };
-    }, {})
+    }, {});
+  }, [hiddenColumns]);
+
+  const [columnVisibility, setColumnVisibility] = useLocalStorageState(
+    id,
+    initialHiddenColumns
   );
 
   const getRowId = React.useCallback(
@@ -217,6 +221,10 @@ export function Table<T extends TableData>({
         return previousValue;
       }, {})
     );
+  };
+
+  const handleResetSelectedColumns = () => {
+    setColumnVisibility(initialHiddenColumns);
   };
 
   const loadMoreProps = { isLoadingMore, hasNextPage, fetchMore };
@@ -335,6 +343,7 @@ export function Table<T extends TableData>({
                 onColumnOrderChanged={setColumnOrder}
                 allColumns={getAllLeafColumns}
                 toggleAllColumnsVisible={handleToggleAllVisibility}
+                onResetSelectedColumns={handleResetSelectedColumns}
               />
             </StyledFlex>
           )}
