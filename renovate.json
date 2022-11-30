@@ -15,9 +15,10 @@
     },
     {
       "matchPackagePrefixes": [
-        "@cognite/sdk-",
-        "@cognite/reveal-"
+        "@cognite/sdk",
+        "@cognite/reveal"
       ],
+      "matchPaths": ["documentation/versioned_docs/*/package.json"],
       "enabled": false
     },
     {
