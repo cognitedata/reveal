@@ -182,7 +182,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.32.0, @azure/msal-browser@npm:^2.11.0":
+"@azure/msal-browser@npm:2.32.0":
   version: 2.32.0
   resolution: "@azure/msal-browser@npm:2.32.0"
   dependencies:
@@ -2106,21 +2106,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk-core@npm:^3.4.1":
-  version: 3.4.1
-  resolution: "@cognite/sdk-core@npm:3.4.1"
-  dependencies:
-    "@azure/msal-browser": ^2.11.0
-    cross-fetch: ^3.0.4
-    is-buffer: ^2.0.5
-    lodash: ^4.17.11
-    oidc-client: ^1.11.5
-    query-string: ^5.1.1
-    url: ^0.11.0
-  checksum: 5ac6668cd78d91680f793078bc28b8e38f2a6254dbdaf32a8f14a6ab20fe6e347f42f00b791969ab0d897a052898ebc870cacad7c1d749ad4a1e3f1c690d7bbf
-  languageName: node
-  linkType: hard
-
 "@cognite/sdk-core@npm:^4.8.1":
   version: 4.8.1
   resolution: "@cognite/sdk-core@npm:4.8.1"
@@ -2131,6 +2116,19 @@ __metadata:
     query-string: ^5.1.1
     url: ^0.11.0
   checksum: c9653a1d125f92c2e97069ee22ed9bbec8fa55992eedf9a9ac3a46eeb774d95256ebef909115a79ebfa976b9df31625249494c36b77f1c78e0fc277301de17af
+  languageName: node
+  linkType: hard
+
+"@cognite/sdk-core@npm:^4.8.2":
+  version: 4.8.2
+  resolution: "@cognite/sdk-core@npm:4.8.2"
+  dependencies:
+    cross-fetch: ^3.0.4
+    is-buffer: ^2.0.5
+    lodash: ^4.17.11
+    query-string: ^5.1.1
+    url: ^0.11.0
+  checksum: e252cee628c4e9cd76038ea8df82cea561ec5dc2af121df77c81628d8102a90a0a8a607454c71de3522e341d8c5e7f2b31e48d777426db240656763f441ad272
   languageName: node
   linkType: hard
 
@@ -2146,13 +2144,15 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@cognite/sdk@npm:5.6.2":
-  version: 5.6.2
-  resolution: "@cognite/sdk@npm:5.6.2"
+"@cognite/sdk@npm:7.12.0":
+  version: 7.12.0
+  resolution: "@cognite/sdk@npm:7.12.0"
   dependencies:
-    "@cognite/sdk-core": ^3.4.1
+    "@cognite/sdk-core": ^4.8.2
+    "@types/geojson": ^7946.0.8
+    geojson: ^0.5.0
     lodash: ^4.17.11
-  checksum: 4aa69322b02fc29bcf6aa6d1bc25c99ed1974c789791d6d093e21f751d154da55d03582350e78297f4eb55f92a693df60fdbb07ab225386c23f4e2f0c684db96
+  checksum: 87cb30f5e87998fed65a56fb867d87ef2e4f7d4a1ff8b13e090c808993b731d62d65017d17eb37d76de5786f0e6933dc6bb9077333228467483f60927460c6a5
   languageName: node
   linkType: hard
 
@@ -2998,7 +2998,7 @@ __metadata:
   resolution: "@reveal-documentation/v2@workspace:versioned_docs/version-2.x"
   dependencies:
     "@cognite/reveal": "npm:@cognite/reveal@2.3"
-    "@cognite/sdk": 5.6.2
+    "@cognite/sdk": 7.12.0
   languageName: unknown
   linkType: soft
 
@@ -3912,7 +3912,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^7.1.1, acorn@npm:^7.4.1":
+"acorn@npm:^7.1.1":
   version: 7.4.1
   resolution: "acorn@npm:7.4.1"
   bin:
@@ -4382,13 +4382,6 @@ __metadata:
   version: 1.0.0
   resolution: "base16@npm:1.0.0"
   checksum: 0cd449a2db0f0f957e4b6b57e33bc43c9e20d4f1dd744065db94b5da35e8e71fa4dc4bc7a901e59a84d5f8b6936e3c520e2471787f667fc155fb0f50d8540f5d
-  languageName: node
-  linkType: hard
-
-"base64-js@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "base64-js@npm:1.5.1"
-  checksum: 669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
   languageName: node
   linkType: hard
 
@@ -5247,13 +5240,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.8.3":
-  version: 3.26.1
-  resolution: "core-js@npm:3.26.1"
-  checksum: 0a01149f51ff1e9f41d1ea49cc4c9222047949ea597189ede7c4cf8cde3b097766b9c7615acc77c86fe65b4002f20b638a133dfba7b41dba830d707aeeed45ad
-  languageName: node
-  linkType: hard
-
 "core-util-is@npm:~1.0.0":
   version: 1.0.3
   resolution: "core-util-is@npm:1.0.3"
@@ -5316,13 +5302,6 @@ __metadata:
     shebang-command: ^2.0.0
     which: ^2.0.1
   checksum: 671cc7c7288c3a8406f3c69a3ae2fc85555c04169e9d611def9a675635472614f1c0ed0ef80955d5b6d4e724f6ced67f0ad1bb006c2ea643488fcfef994d7f52
-  languageName: node
-  linkType: hard
-
-"crypto-js@npm:^4.0.0":
-  version: 4.1.1
-  resolution: "crypto-js@npm:4.1.1"
-  checksum: b3747c12ee3a7632fab3b3e171ea50f78b182545f0714f6d3e7e2858385f0f4101a15f2517e033802ce9d12ba50a391575ff4638c9de3dd9b2c4bc47768d5425
   languageName: node
   linkType: hard
 
@@ -9168,19 +9147,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oidc-client@npm:^1.11.5":
-  version: 1.11.5
-  resolution: "oidc-client@npm:1.11.5"
-  dependencies:
-    acorn: ^7.4.1
-    base64-js: ^1.5.1
-    core-js: ^3.8.3
-    crypto-js: ^4.0.0
-    serialize-javascript: ^4.0.0
-  checksum: 3d0a84667de96936d7bab1a57c80389e333f2883c4f20e9d6366bdbacde7e4d56bda3625b5df8bd44420df093d4cebe591e6dba3ef6d214bc70c5f86ef41452c
-  languageName: node
-  linkType: hard
-
 "on-finished@npm:2.4.1":
   version: 2.4.1
   resolution: "on-finished@npm:2.4.1"
@@ -11306,15 +11272,6 @@ __metadata:
     range-parser: ~1.2.1
     statuses: 2.0.1
   checksum: 74fc07ebb58566b87b078ec63e5a3e41ecd987e4272ba67b7467e86c6ad51bc6b0b0154133b6d8b08a2ddda360464f71382f7ef864700f34844a76c8027817a8
-  languageName: node
-  linkType: hard
-
-"serialize-javascript@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "serialize-javascript@npm:4.0.0"
-  dependencies:
-    randombytes: ^2.1.0
-  checksum: 3273b3394b951671fcf388726e9577021870dfbf85e742a1183fb2e91273e6101bdccea81ff230724f6659a7ee4cef924b0ff9baca32b79d9384ec37caf07302
   languageName: node
   linkType: hard
 
