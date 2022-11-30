@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { Colors, Flex, Input, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
@@ -12,17 +10,19 @@ import { ContentContainer } from 'components/ContentContainer';
 import CategorySidebar from 'components/category-sidebar/CategorySidebar';
 import { trackUsage } from 'utils';
 import { useTranslation } from 'common';
+import { useSearchParams } from 'react-router-dom';
 
 const Extractors = () => {
   const { t } = useTranslation();
 
-  const [search, setSearch] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get('q') ?? '';
 
   const { data: extractors, status } = useExtractorsList();
 
   const extractorsList =
     extractors?.filter((extractor) => {
-      const searchLowercase = search.toLowerCase();
+      const searchLowercase = searchQuery.toLowerCase();
       if (extractor.description?.toLowerCase()?.includes(searchLowercase)) {
         return true;
       }
@@ -36,6 +36,12 @@ const Extractors = () => {
       }
       return false;
     }, []) ?? [];
+
+  const handleSearchQueryUpdate = (query: string) => {
+    const updatedSearchParams = new URLSearchParams(searchParams);
+    updatedSearchParams.set('q', query);
+    setSearchParams(updatedSearchParams, { replace: true });
+  };
 
   if (status === 'loading') {
     return <Loader />;
@@ -51,10 +57,10 @@ const Extractors = () => {
               size="large"
               fullWidth
               placeholder={t('search-for-source-systems')}
-              value={search}
-              onChange={(evt) => {
+              value={searchQuery}
+              onChange={(e) => {
                 trackUsage({ e: 'Search.Extractor' });
-                setSearch(evt.currentTarget.value);
+                handleSearchQueryUpdate(e.currentTarget.value);
               }}
             />
             <Flex gap={40}>
