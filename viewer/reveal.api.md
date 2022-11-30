@@ -619,11 +619,12 @@ export interface DataSource {
     getNodesApiClient(): NodesApiClient;
 }
 
-// @public (undocumented)
-export class DebouncedCameraStopEventTrigger extends EventTrigger<CameraStopDelegate> {
+// @public
+export class DebouncedCameraStopEventTrigger {
     constructor(cameraManager: CameraManager, debounceTimeMs?: number);
-    // (undocumented)
     dispose(): void;
+    subscribe(callback: CameraStopDelegate): void;
+    unsubscribe(callback: CameraStopDelegate): void;
 }
 
 // @public (undocumented)
@@ -700,18 +701,6 @@ export type EdlOptions = {
     strength: number;
     radius: number;
 };
-
-// @public
-export class EventTrigger<TListener extends (...args: any[]) => void> {
-    // (undocumented)
-    fire(...args: Parameters<TListener>): void;
-    // (undocumented)
-    subscribe(listener: TListener): void;
-    // (undocumented)
-    unsubscribe(listener: TListener): void;
-    // (undocumented)
-    unsubscribeAll(): void;
-}
 
 // @public (undocumented)
 export enum File3dFormat {
