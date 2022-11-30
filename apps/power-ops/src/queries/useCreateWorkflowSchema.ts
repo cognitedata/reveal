@@ -49,6 +49,7 @@ export const useCreateWorkflowSchema = () => {
     triggeredBy: ['<CHANGE_HERE>'],
     workflowType: 'UNTITLED',
     processes: [],
+    enabled: true,
   };
 
   return useMutation({

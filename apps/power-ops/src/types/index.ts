@@ -43,7 +43,7 @@ export interface BidProcessResultWithData extends BidProcessResult {
 
 export type WorkflowSchemaEditable = Omit<
   WorkflowSchemaWithProcesses,
-  'id' | 'cdfProject'
+  'id' | 'cdfProject' | 'enabled'
 >;
 
 export enum SOLVER_STATUS_TYPES {
