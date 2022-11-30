@@ -4,14 +4,14 @@ import {
   withThousandSeparatorStringExtended,
   formatBigNumbersWithSuffixStringExtended,
 } from '../numbers';
-import { UNIT_SEPARATOR } from '../constants';
+import { SPACE } from '../constants';
 
 describe('withThousandSeparator', () => {
   test('0', () => {
     expect(withThousandSeparator(0)).toEqual('0');
   });
   test('simple case', () => {
-    expect(withThousandSeparator(1000)).toEqual(`1${UNIT_SEPARATOR}000`);
+    expect(withThousandSeparator(1000)).toEqual(`1${SPACE}000`);
   });
   test('other separators', () => {
     expect(withThousandSeparator(1000, ',')).toEqual('1,000');

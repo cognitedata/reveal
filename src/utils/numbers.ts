@@ -1,4 +1,4 @@
-import { UNIT_SEPARATOR } from 'utils/constants';
+import { SPACE } from 'utils/constants';
 
 export const formatNumber = new Intl.NumberFormat().format;
 
@@ -11,10 +11,7 @@ export const isNumeric = (value: string) => {
 export const decimalToPercent = (value: number) =>
   Math.round((value + Number.EPSILON) * 100);
 
-export const withThousandSeparator = (
-  value: number,
-  separator = UNIT_SEPARATOR
-) => {
+export const withThousandSeparator = (value: number, separator = SPACE) => {
   if (value)
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator);
   return '0';
@@ -23,7 +20,7 @@ export const withThousandSeparator = (
 // TODO: This is added to handle '1K+' phrase we get due to the aggregate limitations for advanced filters.
 export const withThousandSeparatorStringExtended = (
   value: number | string,
-  separator = UNIT_SEPARATOR
+  separator = SPACE
 ) => {
   if (typeof value === 'string') {
     return value;
