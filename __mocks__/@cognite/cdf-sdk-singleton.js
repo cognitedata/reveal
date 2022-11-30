@@ -1,4 +1,6 @@
 export default {
-    project: 'test',
-    getOAuthFlowType: () => 'test',
+    appId: "Charts Storybook",
+    project: "Charts Storybook",
+    getToken: () => "fake token",
+    getOAuthFlowType: () => 'fake flow type',
 };

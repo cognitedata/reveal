@@ -35,12 +35,14 @@ const eventData = {
 };
 
 InfoBox.args = {
+  onToggleEvent: () => {},
   event: {
     ...eventData,
   },
 };
 
 InfoBoxNilEventRange.args = {
+  onToggleEvent: () => {},
   event: {
     ...eventData,
     startTime: new Date('Tue Nov 30 2022 09:16:49'),
@@ -57,6 +59,7 @@ InfoBoxSelected.args = {
 };
 
 Translated.args = {
+  onToggleEvent: () => {},
   event: {
     ...eventData,
     type: 'Annotation Translated',

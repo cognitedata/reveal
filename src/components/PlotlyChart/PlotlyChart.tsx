@@ -9,6 +9,7 @@ import {
 } from 'models/chart/types';
 import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { WorkflowState } from 'models/calculation-results/types';
+import { ChartEventResults, EventsCollection } from 'models/events/types';
 import { PlotWrapper } from './elements';
 import {
   calculateSeriesData,
@@ -48,7 +49,8 @@ type Props = {
   calculations?: ChartWorkflow[];
   calculationsData?: WorkflowState[];
   thresholds?: ChartThreshold[];
-  eventData?: [];
+  eventData?: ChartEventResults[];
+  storedSelectedEvents?: EventsCollection;
   isYAxisShown?: boolean;
   isMinMaxShown?: boolean;
   isGridlinesShown?: boolean;
@@ -71,6 +73,7 @@ const PlotlyChart = ({
   calculationsData = [],
   thresholds = [],
   eventData = [],
+  storedSelectedEvents = [],
   isPreview = false,
   isMinMaxShown = false,
   isGridlinesShown = false,
@@ -156,6 +159,7 @@ const PlotlyChart = ({
       stackedMode,
       seriesData,
       eventData,
+      storedSelectedEvents,
       yAxisValues,
       dateFrom,
       dateTo,
@@ -168,6 +172,8 @@ const PlotlyChart = ({
     isYAxisShown,
     stackedMode,
     seriesData,
+    eventData,
+    storedSelectedEvents,
     yAxisValues,
     dateFrom,
     dateTo,

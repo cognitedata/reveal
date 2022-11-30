@@ -4,13 +4,22 @@
 import { Meta, Story } from '@storybook/react';
 import chartAtom from 'models/chart/atom';
 import { RecoilRoot, useRecoilState } from 'recoil';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
 import EventSidebar from './EventSidebar';
 
 type Props = React.ComponentProps<typeof EventSidebar>;
 
+const queryClient = new QueryClient();
+
 export default {
   component: EventSidebar,
   title: 'Components/Events/Sidebar',
+  decorators: [
+    (story) => (
+      <QueryClientProvider client={queryClient}>{story()}</QueryClientProvider>
+    ),
+  ],
 } as Meta;
 
 const MockedEventSidebar = (args: any) => {
@@ -58,6 +67,13 @@ All.args = {
     updatedAt: 1651753181691,
     id: 'f6280002-ebc7-43f4-9bc5-30bd46b2f758',
     version: 1,
-    eventFilters: [],
+    eventFilters: [
+      {
+        id: 'ebc7-43f4-9bc5-30bd46b2f758',
+        name: `Event Filter Storybook`,
+        visible: true,
+        filters: {},
+      },
+    ],
   },
 };

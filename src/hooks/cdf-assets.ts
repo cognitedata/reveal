@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { Asset, Timeseries } from '@cognite/sdk';
+import { Asset, ListResponse, Timeseries } from '@cognite/sdk';
 import { useQuery } from 'react-query';
 
 export const useAsset = (id?: number) => {
@@ -12,6 +12,19 @@ export const useAsset = (id?: number) => {
       return assets[0];
     },
     { enabled: !!id }
+  );
+};
+
+export const useAssetList = (name?: string) => {
+  const sdk = useSDK();
+
+  return useQuery<ListResponse<Asset[]>>(
+    ['assets', name],
+    async () => {
+      const assets = await sdk.assets.list({ filter: { name } });
+      return assets;
+    },
+    { enabled: !!name }
   );
 };
 

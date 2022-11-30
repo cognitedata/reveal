@@ -2,10 +2,11 @@
  * Event InfoBox
  */
 
-import { Body } from '@cognite/cogs.js';
-import { CogniteEvent } from '@cognite/sdk';
+import { useCallback } from 'react';
 import { Col, Row } from 'antd';
 import dayjs from 'dayjs';
+import { Body } from '@cognite/cogs.js';
+import { CogniteEvent } from '@cognite/sdk';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { EventDetails } from './elements';
 
@@ -23,20 +24,29 @@ const defaultTranslations = makeDefaultTranslations(
 
 type Props = {
   event: Partial<CogniteEvent>;
+  onToggleEvent: (id: number | undefined) => void;
   selected?: boolean;
   translations?: typeof defaultTranslations;
 };
 
-const EventInfoBox = ({ event, selected = false, translations }: Props) => {
+const EventInfoBox = ({
+  event,
+  onToggleEvent,
+  selected = false,
+  translations,
+}: Props) => {
   const diff = dayjs(event.endTime).diff(dayjs(event.startTime));
-
   const t = {
     ...defaultTranslations,
     ...translations,
   };
 
+  const toggleSelection = useCallback(() => {
+    onToggleEvent(event.id);
+  }, []);
+
   return (
-    <EventDetails $active={selected}>
+    <EventDetails $active={selected} onClick={toggleSelection}>
       <Row>
         <Col span={12}>
           <Body level={2}>{t.Type}:</Body>

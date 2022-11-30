@@ -1,4 +1,9 @@
-import { DatapointAggregate, Datapoints, DoubleDatapoint } from '@cognite/sdk';
+import {
+  CogniteEvent,
+  DatapointAggregate,
+  Datapoints,
+  DoubleDatapoint,
+} from '@cognite/sdk';
 import dayjs from 'dayjs';
 import groupBy from 'lodash/groupBy';
 import {
@@ -13,6 +18,8 @@ import { convertUnits, convertThresholdUnits, units } from 'utils/units';
 import { WorkflowState } from 'models/calculation-results/types';
 import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { isThresholdValid } from 'utils/threshold';
+import { ChartEventResults } from 'models/events/types';
+import { isEventSelected } from 'components/EventSidebar/helpers';
 
 export type PlotlyEventData = {
   [key: string]: any;
@@ -477,6 +484,7 @@ export function generateLayout({
   stackedMode,
   seriesData,
   eventData,
+  storedSelectedEvents,
   yAxisValues,
   dateFrom,
   dateTo,
@@ -685,42 +693,79 @@ export function generateLayout({
   });
 
   /**
-   * Display events
+   * Display event shapes
    */
 
   if (eventData.length) {
-    eventData.forEach((eventItem: any) => {
-      const shapeColor = eventItem.color || '#4078F0';
-      (eventItem.results || []).forEach((item: any) => {
+    eventData.forEach((eventSet: ChartEventResults) => {
+      const shapeColor = eventSet.color || '#4078F0';
+      (eventSet.results || []).forEach((eventItem: CogniteEvent) => {
+        const { startTime } = eventItem;
+        const { endTime } = eventItem;
+
+        const eventSelected = isEventSelected(storedSelectedEvents, eventItem);
+
         (layout.shapes as any[]).push(
           ...[
             {
+              // Event rect left border
               visible: true,
               xref: 'x0',
               yref: `paper`,
-              x0: eventItem.startTime,
-              x1: eventItem.endTime,
+              x0: startTime,
+              x1: startTime,
               y0: 0,
               y1: 1,
-              type: 'rect',
-              fillcolor: hexToRGBA(shapeColor, 0.1),
+              type: 'line',
               line: {
-                width: item ? 0 : 0.001,
+                width: eventSelected ? 1.5 : 0,
+                color: eventSelected ? shapeColor : '#ffffff',
               },
             },
             {
+              // Event rect right border
+              visible: true,
+              xref: 'x0',
+              yref: `paper`,
+              x0: endTime,
+              x1: endTime,
+              y0: 0,
+              y1: 1,
+              type: 'line',
+              line: {
+                width: eventSelected ? 1.5 : 0,
+                color: eventSelected ? shapeColor : '#ffffff',
+              },
+            },
+            {
+              // Event rect
+              visible: true,
+              xref: 'x0',
+              yref: `paper`,
+              x0: startTime,
+              x1: endTime,
+              y0: 0,
+              y1: 1,
+              type: 'rect',
+              fillcolor: hexToRGBA(shapeColor, eventSelected ? 0.3 : 0.1),
+              line: { width: 0 },
+            },
+            {
+              // Bottom shade rect
               visible: true,
               type: 'rect',
               xref: 'x0',
               yref: 'paper',
-              x0: eventItem.startTime,
-              x1: eventItem.endTime,
+              x0: startTime,
+              x1: endTime,
               y0: 0,
               y1: 0.01,
               line: {
                 width: 0,
               },
-              fillcolor: shapeColor,
+              fillcolor: eventSelected
+                ? shapeColor
+                : hexToRGBA(shapeColor, 0.7),
             },
           ]
         );

@@ -49,12 +49,14 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const fileUrl = useDownloadUrl(file);
+  const { fileUrl, extractedAnnotations } = useDownloadUrl(file);
   const { data: assetAnnotations } = useAssetAnnotations(file);
   const { annotations, popovers, setClickedId } = useAnnotations({
     assetAnnotations,
+    extractedAnnotations,
     currentPage,
   });
+
   const { searchResultAnnotations } = useSearchResultsToShow(file, searchQuery);
 
   const fileViewerContainerType = useMemo(

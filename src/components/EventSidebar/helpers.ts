@@ -3,6 +3,9 @@
  * https://github.com/cognitedata/data-exploration-components/blob/master/src/domain/transformers.ts
  */
 
+import { CogniteEvent } from '@cognite/sdk';
+import { EventsCollection, EventsEntry } from 'models/events/types';
+
 export const transformNewFilterToOldFilter = <T>(
   filter?: any
 ): T | undefined => {
@@ -33,4 +36,11 @@ export const transformNewFilterToOldFilter = <T>(
   }
 
   return updatedFilter as T;
+};
+
+export const isEventSelected = (
+  allEventItems: EventsCollection,
+  currentEvent: CogniteEvent
+) => {
+  return allEventItems.find((evt: EventsEntry) => evt.id === currentEvent.id);
 };

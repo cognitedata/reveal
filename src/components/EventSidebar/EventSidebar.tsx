@@ -31,8 +31,12 @@ import {
   removeChartEventFilter,
   updateEventFiltersProperties,
 } from 'models/chart/updates-event-filters';
+import { useRecoilState } from 'recoil';
+import { selectedEventsAtom } from 'models/events/atom';
+import { EventsCollection, EventsEntry } from 'models/events/types';
 import EventFilterForm from './EventFilterForm';
 import EventInfoBox from './EventInfoBox';
+import { isEventSelected } from './helpers';
 
 type Props = {
   visible: boolean;
@@ -51,12 +55,15 @@ const defaultTranslation = makeDefaultTranslations(
 );
 
 const EventSidebar = memo(({ visible, onClose, chart, updateChart }: Props) => {
-  const [activeKey, setActiveKey] = useState(['1']);
+  const [activeKeys, setActiveKeys] = useState([
+    chart.eventFilters?.length ? chart.eventFilters[0].id : '',
+  ]);
+
   const [showEventResults, setShowEventResults] = useState(false);
   const [eventList, setEventList] = useState<CogniteEvent[]>([]);
 
-  const onChange = (key: any) => {
-    setActiveKey(key);
+  const handleToggleAccordian = (key: any) => {
+    setActiveKeys(key);
   };
 
   const t = {
@@ -70,13 +77,15 @@ const EventSidebar = memo(({ visible, onClose, chart, updateChart }: Props) => {
   };
 
   const handleAddEventFilters = () => {
+    const id = uuidv4();
     const filterCount = chart.eventFilters?.length || 0;
     const eventFilter: ChartEventFilters = {
-      id: uuidv4(),
+      id,
       name: `${t['New event filter']} ${filterCount + 1}`,
       visible: true,
       filters: {},
     };
+    setActiveKeys((prevState) => [id, ...prevState]);
     updateChart((oldChart) => addEventFilters(oldChart!, eventFilter));
   };
 
@@ -98,13 +107,15 @@ const EventSidebar = memo(({ visible, onClose, chart, updateChart }: Props) => {
 
   const handleDuplicateEventFilter = (id: string) => {
     const selectedFilters = chart.eventFilters?.find((f) => f.id === id);
+    const newId = uuidv4();
     if (!selectedFilters) throw new Error('Filter was not found');
     const clonedFilter = {
       ...omit(selectedFilters, ['name', 'id']),
-      id: uuidv4(),
+      id: newId,
       name: `${selectedFilters.name} (${t.Duplicate})`,
     };
 
+    setActiveKeys((prevState) => [newId, ...prevState]);
     updateChart((oldChart) => addEventFilters(oldChart!, clonedFilter));
   };
 
@@ -124,6 +135,24 @@ const EventSidebar = memo(({ visible, onClose, chart, updateChart }: Props) => {
     setEventList(values);
     setShowEventResults((prevState) => !prevState);
   }, []);
+
+  const [selectedEvents, setSelectedEvents] =
+    useRecoilState(selectedEventsAtom);
+
+  const handleSetSelectedEventItems = useCallback(
+    (id: number | undefined) => {
+      if (!id) return;
+      setSelectedEvents((prevVals: EventsCollection) => {
+        const isSelected = prevVals.find((evt: EventsEntry) => evt.id === id);
+        if (isSelected) {
+          return prevVals.filter((val: EventsEntry) => val.id !== id);
+        }
+
+        return [{ id }, ...prevVals];
+      });
+    },
+    [selectedEvents, setSelectedEvents]
+  );
 
   useEffect(() => {
     if (!chart.eventFilters || chart.eventFilters === undefined) {
@@ -157,26 +186,20 @@ const EventSidebar = memo(({ visible, onClose, chart, updateChart }: Props) => {
               type="primary"
               size="small"
               aria-label="Add event filter"
-              onClick={() => {
-                handleAddEventFilters();
-                setActiveKey((prevState) => [
-                  '1',
-                  ...prevState.map((k) => String(parseInt(k, 10) + 1)),
-                ]);
-              }}
+              onClick={handleAddEventFilters}
             >
               {t['Add new filter']}
             </Button>
           </SidebarHeaderActions>
           <SidebarCollapse
-            activeKey={activeKey}
-            onChange={onChange}
+            activeKey={activeKeys}
+            onChange={handleToggleAccordian}
             expandIcon={({ isActive }) => (
               <ExpandIcon $active={Boolean(isActive)} type="ChevronDownLarge" />
             )}
           >
             {chart.eventFilters &&
-              chart.eventFilters.map((eventFilter: any) => (
+              chart.eventFilters.map((eventFilter: ChartEventFilters) => (
                 <Collapse.Panel
                   key={eventFilter.id}
                   header={
@@ -220,13 +243,18 @@ const EventSidebar = memo(({ visible, onClose, chart, updateChart }: Props) => {
                 {t.Back}
               </Button>
             </SidebarHeaderActions>
-            {eventList.map((event) => (
-              <EventInfoBox
-                key={uuidv4()}
-                event={event}
-                translations={eventInfoTranslation}
-              />
-            ))}
+            {eventList.map((event) => {
+              const eventSelected = isEventSelected(selectedEvents, event);
+              return (
+                <EventInfoBox
+                  key={event.id}
+                  event={event}
+                  selected={!!eventSelected}
+                  onToggleEvent={handleSetSelectedEventItems}
+                  translations={eventInfoTranslation}
+                />
+              );
+            })}
           </ContentContainer>
         </OverlayContentOverflowWrapper>
       )}

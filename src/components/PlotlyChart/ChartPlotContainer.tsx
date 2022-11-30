@@ -3,6 +3,9 @@ import { Chart } from 'models/chart/types';
 import { updateSourceAxisForChart } from 'models/chart/updates';
 import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { WorkflowState } from 'models/calculation-results/types';
+import { selectedEventsAtom } from 'models/events/atom';
+import { useRecoilValue } from 'recoil';
+import { ChartEventResults } from 'models/events/types';
 import { ChartingContainer } from './elements';
 import { cleanTimeseriesCollection, cleanWorkflowCollection } from './utils';
 import PlotlyChart, { PlotNavigationUpdate } from './PlotlyChart';
@@ -12,7 +15,7 @@ type Props = {
   setChart?: (
     valOrUpdater: ((currVal: Chart | undefined) => Chart) | Chart
   ) => void;
-  eventData?: [];
+  eventData?: ChartEventResults[];
   isYAxisShown?: boolean;
   isMinMaxShown?: boolean;
   isGridlinesShown?: boolean;
@@ -64,6 +67,8 @@ const ChartPlotContainer = ({
 
   const thresholds = chart?.thresholdCollection;
 
+  const storedSelectedEvents = useRecoilValue(selectedEventsAtom);
+
   const handleChartNavigation = useCallback(
     ({ x, y, dragmode: newDragmode }: PlotNavigationUpdate) => {
       setChart((oldChart) =>
@@ -97,6 +102,7 @@ const ChartPlotContainer = ({
     calculationsData,
     thresholds,
     eventData,
+    storedSelectedEvents,
     isYAxisShown,
     isMinMaxShown,
     isGridlinesShown,

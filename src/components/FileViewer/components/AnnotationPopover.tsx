@@ -1,7 +1,6 @@
-import { CogniteAnnotation } from '@cognite/annotations';
-import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
 import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
-import { useAsset, useAssetTimeseries } from 'hooks/cdf-assets';
+import { useAsset, useAssetTimeseries, useAssetList } from 'hooks/cdf-assets';
 import styled from 'styled-components/macro';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import dayjs from 'dayjs';
@@ -11,23 +10,27 @@ import chartAtom from 'models/chart/atom';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
 
 export const AnnotationPopover = ({
-  annotations,
+  resourceId,
+  label,
   annotationTitle = 'Time series',
   fallbackText = 'Asset not found!',
 }: {
-  annotations: (CogniteAnnotation | ProposedCogniteAnnotation)[];
-  annotationTitle: string;
-  fallbackText: string;
+  resourceId?: number;
+  label?: string;
+  annotationTitle?: string;
+  fallbackText?: string;
 }) => {
-  const annotation = annotations[0];
-  const selectedAssetId =
-    annotation?.resourceType === 'asset' ? annotation.resourceId : undefined;
-
-  const { data: asset, isLoading } = useAsset(selectedAssetId);
-
-  if (annotation?.resourceType !== 'asset' || !selectedAssetId) {
+  if (!resourceId && !label) {
     return <></>;
   }
+
+  const { data: selectedAsset, isLoading: isLoadingAsset } =
+    useAsset(resourceId);
+
+  const { data: assets, isLoading: isLoadingListAsset } = useAssetList(label);
+
+  const asset = selectedAsset || assets?.items[0];
+  const isLoading = isLoadingAsset || isLoadingListAsset;
 
   if (isLoading) {
     return <Icon type="Loader" />;
@@ -44,7 +47,7 @@ export const AnnotationPopover = ({
           <Icon type="Assets" />
         </IconBackground>
         <AssetInfoContainer>
-          <Title level={5}>{asset.name}</Title>
+          <Title level={5}>{asset.name || label}</Title>
           <Body level={2}>{asset.description}</Body>
         </AssetInfoContainer>
       </TitleContainer>
@@ -53,7 +56,7 @@ export const AnnotationPopover = ({
           {`${annotationTitle}:`}
         </Overline>
       </TimeseriesTitle>
-      <TimeseriesList assetId={selectedAssetId} />
+      <TimeseriesList assetId={asset.id} />
     </StyledMenu>
   );
 };

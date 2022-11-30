@@ -210,6 +210,8 @@ const ChartViewPage = () => {
         visible: eventItem.visible,
         results: events.items,
       });
+
+      // setSelectedEvents([]);
     } catch (e: any) {
       throw new Error(e.toString());
     }
