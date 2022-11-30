@@ -8,21 +8,9 @@ export const getBasicMappingsByAssetId = (
   { assetId }: { assetId: number }
 ) =>
   sdk
-    .post<{
-      items: { assetId: number; mappings: BasicMapping[] }[];
-    }>(`/api/v1/projects/${getProject()}/3d/mappings`, {
-      data: {
-        items: [
-          {
-            id: assetId,
-          },
-        ],
-      },
-    })
+    .get<{
+      items: BasicMapping[];
+    }>(`/api/v1/projects/${getProject()}/3d/mappings/${assetId}/modelnodes`)
     .then(response => {
-      const { data } = response;
-      if (data.items.length > 0) {
-        return data.items[0].mappings;
-      }
-      return [];
+      return response.data.items;
     });
