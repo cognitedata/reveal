@@ -13,7 +13,7 @@ const CategorySidebar = (): JSX.Element => {
     <StyledContainer>
       <Title level={6}>{t('categories')}</Title>
       <Flex gap={4} direction="column">
-        <CategorySidebarItem count={5} title={t('all')} />
+        <CategorySidebarItem tab="" count={5} title={t('all')} />
         <CategorySidebarItem tab="extractors" title={t('extractors')} />
       </Flex>
     </StyledContainer>
