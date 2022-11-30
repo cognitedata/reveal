@@ -23,6 +23,7 @@ export const EventSearchResults = ({
   filter = {},
   onClick,
   showCount = false,
+  selectedRow,
   enableAdvancedFilters,
   onFilterChange,
 }: {
@@ -34,6 +35,7 @@ export const EventSearchResults = ({
   parentResource?: ResourceItem;
   enableAdvancedFilters?: boolean;
   onClick: (item: CogniteEvent) => void;
+  selectedRow?: Record<string | number, boolean>;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 }) => {
   const api = convertResourceType('event');
@@ -57,6 +59,7 @@ export const EventSearchResults = ({
     <EventTable
       id="event-search-results"
       query={query}
+      selectedRows={selectedRow}
       tableHeaders={
         <SearchResultToolbar
           type="event"

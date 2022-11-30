@@ -17,12 +17,14 @@ import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFilters
 export const FileSearchResults = ({
   query = '',
   filter = {},
+
   relatedResourceType,
   parentResource,
   isGroupingFilesEnabled,
   showCount = false,
   allowEdit = false,
   onClick,
+  selectedRow,
   onFilterChange,
   ...rest
 }: {
@@ -33,6 +35,7 @@ export const FileSearchResults = ({
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;
+  selectedRow?: Record<string | number, boolean>;
   allowEdit?: boolean;
   isGroupingFilesEnabled?: boolean;
   onClick: (item: FileInfo) => void;
@@ -95,6 +98,7 @@ export const FileSearchResults = ({
 
       {currentView === 'list' && (
         <FileTable
+          selectedRows={selectedRow}
           id="file-search-results"
           tableHeaders={
             <StyledTableHeader justifyContent="flex-end">

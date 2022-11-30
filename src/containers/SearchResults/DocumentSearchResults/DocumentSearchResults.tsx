@@ -29,6 +29,7 @@ export interface DocumentSearchResultsProps {
   onClick: (item: Document) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   onFileClicked?: (file: FileInfo) => boolean;
+  selectedRow?: Record<string | number, boolean>;
 }
 
 // When using this component do not forget to wrap it with DocumentSearchProvider.
@@ -36,6 +37,7 @@ export const DocumentSearchResults = ({
   query = '',
   filter = {},
   onClick,
+  selectedRow,
   onFilterChange,
   onFileClicked,
 }: DocumentSearchResultsProps) => {
@@ -60,6 +62,7 @@ export const DocumentSearchResults = ({
       <DocumentsTable
         id="documents-search-results"
         enableSorting
+        selectedRows={selectedRow}
         onSort={setSortBy}
         query={query}
         tableHeaders={

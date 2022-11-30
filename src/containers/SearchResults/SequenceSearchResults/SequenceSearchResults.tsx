@@ -25,6 +25,7 @@ export const SequenceSearchResults = ({
   onClick,
   showCount = false,
   enableAdvancedFilters,
+  selectedRow,
   ...rest
 }: {
   query?: string;
@@ -36,6 +37,7 @@ export const SequenceSearchResults = ({
   enableAdvancedFilters?: boolean;
   onClick: (item: Sequence) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
+  selectedRow?: Record<string | number, boolean>;
 }) => {
   const api = convertResourceType('sequence');
   const { canFetchMore, fetchMore, isFetched, items } =
@@ -59,6 +61,7 @@ export const SequenceSearchResults = ({
     <SequenceTable
       id="sequence-search-results"
       query={query}
+      selectedRows={selectedRow}
       tableHeaders={
         <SearchResultToolbar
           type="sequence"

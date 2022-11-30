@@ -27,6 +27,7 @@ export const TimeseriesSearchResults = ({
   showCount = false,
   onClick,
   onFilterChange,
+  selectedRow,
   relatedResourceType,
   enableAdvancedFilters,
   ...rest
@@ -39,6 +40,7 @@ export const TimeseriesSearchResults = ({
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;
+  selectedRow?: Record<string | number, boolean>;
   showDatePicker?: boolean;
   onClick: (item: Timeseries) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
@@ -68,6 +70,7 @@ export const TimeseriesSearchResults = ({
 
       <TimeseriesTable
         id="timeseries-search-results"
+        selectedRows={selectedRow}
         query={query}
         tableHeaders={
           <SearchResultToolbar
