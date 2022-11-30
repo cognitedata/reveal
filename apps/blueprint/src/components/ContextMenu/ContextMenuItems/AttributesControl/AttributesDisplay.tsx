@@ -112,9 +112,9 @@ export const AttributeDisplay = ({
           </strong>
           <strong>{renderAttributeValue()} </strong>
         </Flex>
-        <div style={{ overflowWrap: 'anywhere' }}>
-          {selectedResource?.name} <Icon type="ArrowRight" />{' '}
-          {startCase(attribute.extractor)}
+        <div className="attribute-extractor-detail">
+          {selectedResource?.name}.
+          {startCase(attribute.extractor).toLowerCase()}
           {startCase(attribute.subExtractor)
             ? `.${startCase(attribute.subExtractor)}`
             : ''}

@@ -14,8 +14,10 @@ export const AttributeWrapper = styled.div`
   align-items: center;
   background: #fafafa;
   margin-bottom: 8px;
-  padding: 16px;
-
+  padding: 8px 10px;
+  .attribute-extractor-detail {
+    font-size: 11px;
+  }
   .details {
     flex-grow: 1;
     padding: 0 8px;
