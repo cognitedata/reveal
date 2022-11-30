@@ -52,7 +52,7 @@ const App = () => {
       >
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
-            <SubAppWrapper title="Data Sets">
+            <SubAppWrapper title="Data Catalog">
               <AuthWrapper
                 loadingScreen={<Loader />}
                 login={() => loginAndAuthIfNeeded(projectName, env)}
