@@ -61,6 +61,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   rkbLevel,
   wellWaterDepth,
   totalDrillingDays,
+  uniqueWellboreIdentifier,
   /**
    * WellboreStickChartData
    */
@@ -123,6 +124,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
           <Header
             wellName={wellName}
             wellboreName={wellboreName}
+            uniqueWellboreIdentifier={uniqueWellboreIdentifier}
             totalDrillingDays={totalDrillingDays}
             rigNames={rigNames}
           />

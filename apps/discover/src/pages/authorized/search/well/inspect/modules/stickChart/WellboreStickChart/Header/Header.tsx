@@ -21,16 +21,16 @@ interface HeaderProps
       WellboreData,
       | 'wellName'
       | 'wellboreName'
-      | 'totalDrillingDays'
       | 'uniqueWellboreIdentifier'
+      | 'totalDrillingDays'
     >,
     Pick<WellboreStickChartData, 'rigNames'> {}
 
 export const Header: React.FC<HeaderProps> = ({
   wellName,
   wellboreName,
-  totalDrillingDays,
   uniqueWellboreIdentifier,
+  totalDrillingDays,
   rigNames,
 }) => {
   return (
