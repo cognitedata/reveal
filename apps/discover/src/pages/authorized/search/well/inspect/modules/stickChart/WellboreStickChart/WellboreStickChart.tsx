@@ -72,6 +72,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   trajectoryData,
   measurementsData,
   holeSectionsData,
+  mudTypeData,
   /**
    * Other props
    */
@@ -157,7 +158,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 {...casingsData}
                 scaleBlocks={scaleBlocks}
                 holeSections={holeSectionsData.data}
-                measurementsData={measurementsData.data}
+                mudTypeData={mudTypeData.data}
                 rkbLevel={rkbLevel}
                 wellWaterDepth={wellWaterDepth}
                 maxDepth={maxDepth}
@@ -209,7 +210,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 key={ChartColumn.SUMMARY}
                 casingAssemblies={casingsData.data}
                 holeSections={holeSectionsData.data}
-                measurementsData={measurementsData.data}
+                mudTypeData={mudTypeData.data}
                 nptEvents={nptData.data}
                 ndsEvents={ndsData.data}
                 depthMeasurementType={depthMeasurementType}

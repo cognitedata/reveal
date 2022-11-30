@@ -8,11 +8,8 @@ import isEmpty from 'lodash/isEmpty';
 import { pluralize } from 'utils/pluralize';
 
 import { Specification } from '../../../../components/Specification';
-import {
-  CasingAssemblyView,
-  SummarySection,
-  SummaryVisibilityProps,
-} from '../../../../types';
+import { CasingAssemblyView, SummaryVisibilityProps } from '../../../../types';
+import { getCasingSpecificationLabel } from '../../../../utils/getCasingSpecificationLabel';
 import { SummarySectionContent } from '../../elements';
 import { SummaryColumnSection } from '../SummaryColumnSection';
 
@@ -24,11 +21,11 @@ export const CasingSpecification: React.FC<CasingSpecificationProps> = ({
   casingAssembly,
   isExpanded,
 }) => {
-  const { outsideDiameterFormatted, components } = casingAssembly;
+  const { outsideDiameterFormatted, isLiner, components } = casingAssembly;
 
   return (
     <SummaryColumnSection
-      name={`${outsideDiameterFormatted} ${SummarySection.CasingSpecification}`}
+      name={getCasingSpecificationLabel(outsideDiameterFormatted, isLiner)}
       isExpanded={isExpanded}
     >
       <SummarySectionContent>

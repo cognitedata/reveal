@@ -5,6 +5,7 @@ import { useCasingsData } from './useCasingsData';
 import { useFormationsData } from './useFormationsData';
 import { useHoleSectionsData } from './useHoleSectionsData';
 import { useMeasurementsData } from './useMeasurementsData';
+import { useMudTypeData } from './useMudTypeData';
 import { useNdsData } from './useNdsData';
 import { useNptData } from './useNptData';
 import { useRigNames } from './useRigNames';
@@ -19,6 +20,7 @@ export const useWellboreStickChartData = () => {
   const trajectoryData = useTrajectoryData();
   const measurementsData = useMeasurementsData();
   const holeSectionsData = useHoleSectionsData();
+  const mudTypeData = useMudTypeData();
 
   return (wellboreMatchingId: string): WellboreStickChartData => ({
     rigNames: rigNames[wellboreMatchingId],
@@ -41,5 +43,6 @@ export const useWellboreStickChartData = () => {
       holeSectionsData,
       wellboreMatchingId
     ),
+    mudTypeData: getDataWithLoadingStatus(mudTypeData, wellboreMatchingId),
   });
 };

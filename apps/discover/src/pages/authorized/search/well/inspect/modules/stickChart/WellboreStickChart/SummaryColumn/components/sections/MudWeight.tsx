@@ -20,38 +20,34 @@ import { SummaryColumnSection } from '../SummaryColumnSection';
 import { SummaryColumnSectionEmptyState } from '../SummaryColumnSectionEmptyState';
 
 export interface MudWeightProps extends SummaryVisibilityProps {
-  measurementsData: DepthMeasurementWithData[];
+  mudTypeData: DepthMeasurementWithData[];
   depthMeasurementType?: DepthMeasurementUnit;
 }
 
 export const MudWeight: React.FC<MudWeightProps> = ({
-  measurementsData,
+  mudTypeData,
   depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
   isExpanded,
 }) => {
   const mudWeightsMD = useDeepMemo(() => {
-    const depthMeasurements = head(
-      filterMdIndexedDepthMeasurements(measurementsData)
-    );
+    const mudType = head(filterMdIndexedDepthMeasurements(mudTypeData));
 
-    if (!depthMeasurements) {
+    if (!mudType) {
       return EMPTY_ARRAY;
     }
 
-    return adaptDepthMeasurementToMudWeights(depthMeasurements);
-  }, [measurementsData]);
+    return adaptDepthMeasurementToMudWeights(mudType);
+  }, [mudTypeData]);
 
   const mudWeightsTVD = useDeepMemo(() => {
-    const depthMeasurements = head(
-      filterTvdIndexedDepthMeasurements(measurementsData)
-    );
+    const mudType = head(filterTvdIndexedDepthMeasurements(mudTypeData));
 
-    if (!depthMeasurements) {
+    if (!mudType) {
       return EMPTY_ARRAY;
     }
 
-    return adaptDepthMeasurementToMudWeights(depthMeasurements);
-  }, [measurementsData]);
+    return adaptDepthMeasurementToMudWeights(mudType);
+  }, [mudTypeData]);
 
   const mudWeights =
     depthMeasurementType === DepthMeasurementUnit.MD

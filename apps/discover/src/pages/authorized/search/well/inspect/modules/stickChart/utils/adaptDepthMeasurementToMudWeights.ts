@@ -2,6 +2,7 @@ import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/typ
 
 import compact from 'lodash/compact';
 import isNil from 'lodash/isNil';
+import isNumber from 'lodash/isNumber';
 import uniqueId from 'lodash/uniqueId';
 import uniqWith from 'lodash/uniqWith';
 import { Fixed, toFixedNumberFromNumber } from 'utils/number';
@@ -29,7 +30,9 @@ export const adaptDepthMeasurementToMudWeights = (
           const type = name || measurementType;
 
           const value = {
-            value: toFixedNumberFromNumber(columnValue, Fixed.TwoDecimals),
+            value: isNumber(columnValue)
+              ? toFixedNumberFromNumber(columnValue, Fixed.TwoDecimals)
+              : columnValue,
             unit: columnUnit,
           };
 

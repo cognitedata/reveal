@@ -2,9 +2,7 @@ import * as React from 'react';
 
 import isUndefined from 'lodash/isUndefined';
 
-import { FlexRow } from 'styles/layout';
-
-import { Label } from './elements';
+import { Label, SpecificationWrapper } from './elements';
 
 export interface SpecificationProps {
   label: string;
@@ -20,9 +18,9 @@ export const Specification: React.FC<SpecificationProps> = ({
   }
 
   return (
-    <FlexRow>
+    <SpecificationWrapper>
       <Label>{label}:</Label>
       <span>{value}</span>
-    </FlexRow>
+    </SpecificationWrapper>
   );
 };

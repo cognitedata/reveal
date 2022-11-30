@@ -25,14 +25,14 @@ import { MudWeightInfo } from './MudWeightInfo';
 
 export interface HoleSectionsColumnProps {
   data?: HoleSectionView[];
-  measurementsData?: DepthMeasurementWithData[];
+  mudTypeData?: DepthMeasurementWithData[];
   scaleBlocks: number[];
   depthMeasurementType: DepthMeasurementUnit;
 }
 
 export const HoleSectionsColumn: React.FC<HoleSectionsColumnProps> = ({
   data,
-  measurementsData = EMPTY_ARRAY,
+  mudTypeData = EMPTY_ARRAY,
   scaleBlocks,
   depthMeasurementType,
 }) => {
@@ -40,14 +40,14 @@ export const HoleSectionsColumn: React.FC<HoleSectionsColumnProps> = ({
 
   const isMdScale = depthMeasurementType === DepthMeasurementUnit.MD;
 
-  const depthMeasurementsMD = useDeepMemo(
-    () => filterMdIndexedDepthMeasurements(measurementsData),
-    [measurementsData]
+  const mudTypeDataMD = useDeepMemo(
+    () => filterMdIndexedDepthMeasurements(mudTypeData),
+    [mudTypeData]
   );
 
-  const depthMeasurementsTVD = useDeepMemo(
-    () => filterTvdIndexedDepthMeasurements(measurementsData),
-    [measurementsData]
+  const mudTypeDataTVD = useDeepMemo(
+    () => filterTvdIndexedDepthMeasurements(mudTypeData),
+    [mudTypeData]
   );
 
   if (!data || isEmpty(data)) {
@@ -67,23 +67,20 @@ export const HoleSectionsColumn: React.FC<HoleSectionsColumnProps> = ({
     const depthTop = isMdScale ? topMeasuredDepth : topTrueVerticalDepth;
     const depthBase = isMdScale ? baseMeasuredDepth : baseTrueVerticalDepth;
 
-    const measurementsForScale = isMdScale
-      ? depthMeasurementsMD
-      : depthMeasurementsTVD;
+    if (!holeSizeFormatted || isUndefined(depthTop) || isUndefined(depthBase)) {
+      return null;
+    }
 
-    const depthMeasurement = head(
-      filterMeasurementsByDepth(measurementsForScale, {
+    const mudTypeDataForScale = isMdScale ? mudTypeDataMD : mudTypeDataTVD;
+
+    const mudType = head(
+      filterMeasurementsByDepth(mudTypeDataForScale, {
         min: depthTop,
         max: depthBase,
       })
     );
 
-    const mudWeights =
-      depthMeasurement && adaptDepthMeasurementToMudWeights(depthMeasurement);
-
-    if (!holeSizeFormatted || isUndefined(depthTop) || isUndefined(depthBase)) {
-      return null;
-    }
+    const mudWeights = mudType && adaptDepthMeasurementToMudWeights(mudType);
 
     const center = (depthBase + depthTop) / 2;
     const top = getScaledDepth(center);

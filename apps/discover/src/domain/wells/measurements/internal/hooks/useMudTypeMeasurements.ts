@@ -8,9 +8,9 @@ import {
 import { useDepthMeasurementsWithData } from './useDepthMeasurementsWithData';
 import { useDepthMeasurementsWithTvdData } from './useDepthMeasurementsWithTvdData';
 
-const measurementTypes = [WdlMeasurementType.FIT, WdlMeasurementType.LOT];
+const measurementTypes = [WdlMeasurementType.MUD_TYPE];
 
-export const useFitLotDepthMeasurements = ({
+export const useMudTypeMeasurements = ({
   wellboreIds,
   withTvd,
 }: AllCursorsProps & MeasurementsFetchOptions) => {

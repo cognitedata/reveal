@@ -1,3 +1,6 @@
+import compact from 'lodash/compact';
+import isEmpty from 'lodash/isEmpty';
+
 import { DepthMeasurementWithData } from '../types';
 
 import { filterMeasurementRowsByDepth } from './filterMeasurementRowsByDepth';
@@ -15,20 +18,26 @@ export const filterMeasurementsByDepth = <T extends MeasurementType>(
     max?: number;
   }
 ): T[] => {
-  return depthMeasurements.map((measurement) => {
-    const { rows, depthRange: depthRangeOriginal } = measurement;
+  return compact(
+    depthMeasurements.map((measurement) => {
+      const { rows, depthRange: depthRangeOriginal } = measurement;
 
-    const filteredRows = filterMeasurementRowsByDepth(rows, { min, max });
+      const filteredRows = filterMeasurementRowsByDepth(rows, { min, max });
 
-    const depthRange = depthRangeOriginal && {
-      ...depthRangeOriginal,
-      ...getRowsDepthRange(filteredRows),
-    };
+      if (isEmpty(filteredRows)) {
+        return null;
+      }
 
-    return {
-      ...measurement,
-      depthRange,
-      rows: filteredRows,
-    };
-  });
+      const depthRange = depthRangeOriginal && {
+        ...depthRangeOriginal,
+        ...getRowsDepthRange(filteredRows),
+      };
+
+      return {
+        ...measurement,
+        depthRange,
+        rows: filteredRows,
+      };
+    })
+  );
 };

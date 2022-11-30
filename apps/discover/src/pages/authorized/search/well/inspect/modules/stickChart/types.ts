@@ -37,6 +37,7 @@ export interface WellboreStickChartData {
   trajectoryData: DataWithLoadingStatus<TrajectoryWithData>;
   measurementsData: DataWithLoadingStatus<DepthMeasurementWithData[]>;
   holeSectionsData: DataWithLoadingStatus<HoleSectionView[]>;
+  mudTypeData: DataWithLoadingStatus<DepthMeasurementWithData[]>;
 }
 
 export interface ColumnVisibilityProps {

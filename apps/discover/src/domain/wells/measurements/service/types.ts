@@ -17,6 +17,10 @@ export interface MeasurementTypeFilter {
   measurementTypes?: Array<WdlMeasurementType>;
 }
 
+export interface MeasurementsFetchOptions {
+  withTvd?: boolean;
+}
+
 export interface SequenceExternalIdFilter {
   sequenceExternalIds: Array<string>;
 }
@@ -50,4 +54,5 @@ export enum WdlMeasurementType {
   SHALLOW_RESISTIVITY = 'shallow resistivity',
   DENSITY = 'density',
   NEUTRON_POROSITY = 'neutron porosity',
+  MUD_TYPE = 'mud type',
 }

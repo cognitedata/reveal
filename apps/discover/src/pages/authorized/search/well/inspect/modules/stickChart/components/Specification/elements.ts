@@ -1,8 +1,10 @@
 import styled from 'styled-components/macro';
 
-import { FlexRow, sizes } from 'styles/layout';
+import { sizes } from 'styles/layout';
 
-export const SpecificationWrapper = styled(FlexRow)``;
+export const SpecificationWrapper = styled.div`
+  word-break: break-word;
+`;
 
 export const Label = styled.span`
   margin-right: ${sizes.extraSmall};
