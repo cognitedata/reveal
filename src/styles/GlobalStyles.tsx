@@ -13,6 +13,7 @@ import { styleScope } from 'styles/styleScope';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 // import antTheme from './antd-theme.less'; // The .less import did not work
 import antTheme from 'antd/dist/antd.css';
+import katexCss from 'katex/dist/katex.min.css';
 
 // This will override the appendTo prop on all Tooltips used from cog
 CogsTooltip.defaultProps = {
@@ -38,7 +39,7 @@ DateRange.defaultProps = {
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
   const [didLoadStyles, setDidLoadStyles] = useState<boolean>(false);
-  const styles = [cogsStyles, antTheme];
+  const styles = [cogsStyles, antTheme, katexCss];
 
   useEffect(() => {
     styles.forEach((style) => style?.use && style.use());

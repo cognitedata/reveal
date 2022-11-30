@@ -169,31 +169,37 @@ const FunctionNode = memo(
 );
 
 const HandleContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  justify-items: center;
-  position: absolute;
-  bottom: -3px;
-  height: ${(props: { height?: number; position: 'left' | 'right' }) =>
-    props.height}px;
-  left: ${(props: { height?: number; position: 'left' | 'right' }) =>
-    props.position === 'left' ? '-4px' : 'unset'};
-  right: ${(props: { height?: number; position: 'left' | 'right' }) =>
-    props.position === 'right' ? '-4px' : 'unset'};
-  pointer-events: all;
+  &&& {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    justify-items: center;
+    position: absolute;
+    bottom: -3px;
+    height: ${(props: { height?: number; position: 'left' | 'right' }) =>
+      props.height}px;
+    left: ${(props: { height?: number; position: 'left' | 'right' }) =>
+      props.position === 'left' ? '-4px' : 'unset'};
+    right: ${(props: { height?: number; position: 'left' | 'right' }) =>
+      props.position === 'right' ? '-4px' : 'unset'};
+    pointer-events: all;
+  }
 `;
 
 const FunctionNodeHandle = styled(NodeHandle)`
-  position: unset;
+  &&& {
+    position: unset;
+  }
 `;
 
 const FunctionName = styled.span`
-  font-weight: 500;
+  &&& {
+    font-weight: 500;
+  }
 `;
 
 const StyledMarkdown = styled(Markdown)`
-  & > p {
+  &&& > p {
     font-size: 10px;
     font-weight: 400;
     line-height: 24px;

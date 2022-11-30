@@ -105,12 +105,16 @@ const FunctionParameterForm = ({
 };
 
 const ParameterFormWrapper = styled.div`
-  margin-top: 10px;
+  &&& {
+    margin-top: 10px;
+  }
 `;
 
 const SaveButton = styled(Button)`
-  width: 100%;
-  margin-top: 10px;
+  &&& {
+    width: 100%;
+    margin-top: 10px;
+  }
 `;
 
 export default FunctionParameterForm;

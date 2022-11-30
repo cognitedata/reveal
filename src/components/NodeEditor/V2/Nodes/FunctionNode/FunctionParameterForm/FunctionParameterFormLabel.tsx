@@ -25,7 +25,7 @@ const FunctionParameterFormLabel = ({
 const Label = styled.label``;
 
 const StyledMarkdown = styled(Markdown)`
-  & > p {
+  &&& > p {
     font-size: 13px;
     font-weight: 500;
     line-height: 20px;

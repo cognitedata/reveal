@@ -24,13 +24,15 @@ const NodeWithActionBar = ({
 );
 
 const ActionContainer = styled(NodeWrapper)`
-  width: fit-content;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0;
-  position: absolute;
-  top: -40px;
+  &&& {
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0;
+    position: absolute;
+    top: -40px;
+  }
 `;
 
 export default NodeWithActionBar;

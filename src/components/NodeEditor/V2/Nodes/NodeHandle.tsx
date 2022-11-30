@@ -10,7 +10,7 @@ const NodeHandle = (props: HandleProps) => {
 };
 
 const HandleContainer = styled(Handle)`
-  && {
+  &&& {
     background: transparent;
     border: none;
     min-width: 24px;
@@ -24,7 +24,7 @@ const HandleContainer = styled(Handle)`
 `;
 
 const StyledHandle = styled.div`
-  && {
+  &&& {
     background: white;
     width: 8px;
     height: 8px;

@@ -25,10 +25,12 @@ const ParameterCheckbox = ({
 };
 
 const CheckboxContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-top: 5px;
+  &&& {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 5px;
+  }
 `;
 
 export default ParameterCheckbox;
