@@ -276,7 +276,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   asset: {
     accessorKey: 'assetId',
-    header: 'Root Asset',
+    header: 'Root asset',
     cell: ({ getValue }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const { data: rootAsset, isLoading } = useGetRootAsset(
