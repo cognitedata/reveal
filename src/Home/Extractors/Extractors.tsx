@@ -11,6 +11,7 @@ import CategorySidebar from 'components/category-sidebar/CategorySidebar';
 import { trackUsage } from 'utils';
 import { useTranslation } from 'common';
 import { useSearchParams } from 'react-router-dom';
+import SearchHelper from 'components/search-helper/SearchHelper';
 
 const Extractors = () => {
   const { t } = useTranslation();
@@ -76,7 +77,10 @@ const Extractors = () => {
                 ) : (
                   <CreateExtractor />
                 )}
-                <ExtractorsList extractorsList={extractorsList} />
+                {!!extractorsList.length && (
+                  <ExtractorsList extractorsList={extractorsList} />
+                )}
+                {!!searchQuery && <SearchHelper />}
               </StyledListContainer>
             </Flex>
           </Flex>
