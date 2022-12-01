@@ -29,7 +29,7 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     isString,
     internalId,
   }: InternalTimeseriesFilters,
-  searchQueryMetadataKeys?: Record<string, string>,
+  // searchQueryMetadataKeys?: Record<string, string>,
   query?: string
 ): AdvancedFilter<TimeseriesProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<TimeseriesProperties>();
@@ -82,11 +82,11 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchQueryMetadataKeys) {
-      for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-        searchQueryBuilder.prefix(`metadata|${key}`, value);
-      }
-    }
+    // if (searchQueryMetadataKeys) {
+    //   for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
+    //     searchQueryBuilder.prefix(`metadata|${key}`, value);
+    //   }
+    // }
 
     searchQueryBuilder.in('id', () => {
       if (query && isNumeric(query)) {

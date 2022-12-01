@@ -8,7 +8,7 @@ import {
 } from '../transformers';
 import { InternalAssetFilters } from '../types';
 import { TableSortBy } from 'components/Table';
-import { useAssetsSearchQueryMetadataKeysQuery } from './useAssetsMetadataKeysQuery';
+// import { useAssetsSearchQueryMetadataKeysQuery } from './useAssetsMetadataKeysQuery';
 
 export const useAssetsSearchResultQuery = ({
   query,
@@ -19,19 +19,19 @@ export const useAssetsSearchResultQuery = ({
   assetFilter: InternalAssetFilters;
   sortBy?: TableSortBy[];
 }) => {
-  const searchQueryMetadataKeys = useAssetsSearchQueryMetadataKeysQuery(
-    query,
-    assetFilter
-  );
+  // const searchQueryMetadataKeys = useAssetsSearchQueryMetadataKeysQuery(
+  //   query,
+  //   assetFilter
+  // );
 
   const advancedFilter = useMemo(
     () =>
       mapFiltersToAssetsAdvancedFilters(
         assetFilter,
-        searchQueryMetadataKeys,
+        // searchQueryMetadataKeys,
         query
       ),
-    [assetFilter, searchQueryMetadataKeys, query]
+    [assetFilter, query]
   );
 
   const filter = useMemo(

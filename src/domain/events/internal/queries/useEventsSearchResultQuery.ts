@@ -5,7 +5,7 @@ import { useEventsListQuery } from '../../service/queries/useEventsListQuery';
 import { mapFiltersToEventsAdvancedFilters } from '../transformers/mapFiltersToEventsAdvancedFilters';
 import { mapTableSortByToEventSortFields } from '../transformers/mapTableSortByToEventSortFields';
 import { InternalEventsFilters } from '../types';
-import { useEventsSearchQueryMetadataKeysQuery } from './useEventsMetadataKeysQuery';
+// import { useEventsSearchQueryMetadataKeysQuery } from './useEventsMetadataKeysQuery';
 import { mapInternalFilterToEventsFilter } from '../transformers/mapInternalFilterToEventsFilter';
 
 export const useEventsSearchResultQuery = ({
@@ -17,10 +17,10 @@ export const useEventsSearchResultQuery = ({
   eventsFilters: InternalEventsFilters;
   eventsSortBy?: TableSortBy[];
 }) => {
-  const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(
-    query,
-    eventsFilters
-  );
+  // const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(
+  //   query,
+  //   eventsFilters
+  // );
 
   const filter = useMemo(
     () => mapInternalFilterToEventsFilter(eventsFilters),
@@ -31,10 +31,10 @@ export const useEventsSearchResultQuery = ({
     () =>
       mapFiltersToEventsAdvancedFilters(
         eventsFilters,
-        searchQueryMetadataKeys,
+        // searchQueryMetadataKeys,
         query
       ),
-    [eventsFilters, searchQueryMetadataKeys, query]
+    [eventsFilters, query]
   );
 
   const sort = useMemo(

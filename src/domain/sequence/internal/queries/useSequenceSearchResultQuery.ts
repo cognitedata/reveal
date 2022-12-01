@@ -8,7 +8,7 @@ import {
   mapInternalFilterToSequenceFilter,
   mapTableSortByToSequenceSortFields,
   useSequenceListQuery,
-  useSequenceSearchQueryMetadataKeysQuery,
+  // useSequenceSearchQueryMetadataKeysQuery,
 } from 'domain/sequence';
 
 export const useSequenceSearchResultQuery = ({
@@ -20,19 +20,19 @@ export const useSequenceSearchResultQuery = ({
   filter: InternalSequenceFilters;
   sortBy?: TableSortBy[];
 }) => {
-  const searchQueryMetadataKeys = useSequenceSearchQueryMetadataKeysQuery(
-    query,
-    filter
-  );
+  // const searchQueryMetadataKeys = useSequenceSearchQueryMetadataKeysQuery(
+  //   query,
+  //   filter
+  // );
 
   const advancedFilter = useMemo(
     () =>
       mapFiltersToSequenceAdvancedFilters(
         filter,
-        searchQueryMetadataKeys,
+        // searchQueryMetadataKeys,
         query
       ),
-    [filter, searchQueryMetadataKeys, query]
+    [filter, query]
   );
 
   const sequenceFilter = useMemo(

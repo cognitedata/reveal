@@ -26,7 +26,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
     metadata,
     internalId,
   }: InternalAssetFilters,
-  searchQueryMetadataKeys?: Record<string, string>,
+  // searchQueryMetadataKeys?: Record<string, string>,
   query?: string
 ): AdvancedFilter<AssetsProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<AssetsProperties>();
@@ -97,11 +97,11 @@ export const mapFiltersToAssetsAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    if (searchQueryMetadataKeys) {
-      for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-        searchQueryBuilder.prefix(`metadata|${key}`, value);
-      }
-    }
+    // if (searchQueryMetadataKeys) {
+    //   for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
+    //     searchQueryBuilder.prefix(`metadata|${key}`, value);
+    //   }
+    // }
 
     searchQueryBuilder.in('id', () => {
       if (query && isNumeric(query)) {

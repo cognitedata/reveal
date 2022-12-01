@@ -3,7 +3,7 @@ import {
   InternalEventsFilters,
   mapFiltersToEventsAdvancedFilters,
   mapInternalFilterToEventsFilter,
-  useEventsSearchQueryMetadataKeysQuery,
+  // useEventsSearchQueryMetadataKeysQuery,
   useEventsAggregateQuery,
 } from 'domain/events';
 
@@ -14,19 +14,19 @@ export const useEventsSearchAggregateQuery = ({
   query?: string;
   eventsFilters: InternalEventsFilters;
 }) => {
-  const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(
-    query,
-    eventsFilters
-  );
+  // const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(
+  //   query,
+  //   eventsFilters
+  // );
 
   const advancedFilter = useMemo(
     () =>
       mapFiltersToEventsAdvancedFilters(
         eventsFilters,
-        searchQueryMetadataKeys,
+        // searchQueryMetadataKeys,
         query
       ),
-    [eventsFilters, searchQueryMetadataKeys, query]
+    [eventsFilters, query]
   );
 
   const filter = useMemo(

@@ -7,7 +7,7 @@ import {
   mapInternalFilterToTimeseriesFilter,
   mapTableSortByToTimeseriesSortFields,
   useTimeseriesListQuery,
-  useTimeseriesSearchQueryMetadataKeysQuery,
+  // useTimeseriesSearchQueryMetadataKeysQuery,
 } from 'domain/timeseries';
 
 export const useTimeseriesSearchResultQuery = ({
@@ -19,19 +19,19 @@ export const useTimeseriesSearchResultQuery = ({
   filter: InternalTimeseriesFilters;
   sortBy?: TableSortBy[];
 }) => {
-  const searchQueryMetadataKeys = useTimeseriesSearchQueryMetadataKeysQuery(
-    query,
-    filter
-  );
+  // const searchQueryMetadataKeys = useTimeseriesSearchQueryMetadataKeysQuery(
+  //   query,
+  //   filter
+  // );
 
   const advancedFilter = useMemo(
     () =>
       mapFiltersToTimeseriesAdvancedFilters(
         filter,
-        searchQueryMetadataKeys,
+        // searchQueryMetadataKeys,
         query
       ),
-    [filter, searchQueryMetadataKeys, query]
+    [filter, query]
   );
 
   const timeseriesFilter = useMemo(

@@ -3,7 +3,7 @@ import {
   InternalSequenceFilters,
   mapFiltersToSequenceAdvancedFilters,
   mapInternalFilterToSequenceFilter,
-  useSequenceSearchQueryMetadataKeysQuery,
+  // useSequenceSearchQueryMetadataKeysQuery,
   useSequenceAggregateQuery,
 } from 'domain/sequence';
 
@@ -14,19 +14,19 @@ export const useSequenceSearchAggregateQuery = ({
   query?: string;
   filter: InternalSequenceFilters;
 }) => {
-  const searchQueryMetadataKeys = useSequenceSearchQueryMetadataKeysQuery(
-    query,
-    filter
-  );
+  // const searchQueryMetadataKeys = useSequenceSearchQueryMetadataKeysQuery(
+  //   query,
+  //   filter
+  // );
 
   const advancedFilter = useMemo(
     () =>
       mapFiltersToSequenceAdvancedFilters(
         filter,
-        searchQueryMetadataKeys,
+        // searchQueryMetadataKeys,
         query
       ),
-    [filter, searchQueryMetadataKeys, query]
+    [filter, query]
   );
 
   const sequenceFilter = useMemo(

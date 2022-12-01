@@ -3,7 +3,7 @@ import {
   InternalTimeseriesFilters,
   mapFiltersToTimeseriesAdvancedFilters,
   mapInternalFilterToTimeseriesFilter,
-  useTimeseriesSearchQueryMetadataKeysQuery,
+  // useTimeseriesSearchQueryMetadataKeysQuery,
   useTimeseriesAggregateQuery,
 } from 'domain/timeseries';
 
@@ -14,19 +14,19 @@ export const useTimeseriesSearchAggregateQuery = ({
   query?: string;
   filter: InternalTimeseriesFilters;
 }) => {
-  const searchQueryMetadataKeys = useTimeseriesSearchQueryMetadataKeysQuery(
-    query,
-    filter
-  );
+  // const searchQueryMetadataKeys = useTimeseriesSearchQueryMetadataKeysQuery(
+  //   query,
+  //   filter
+  // );
 
   const advancedFilter = useMemo(
     () =>
       mapFiltersToTimeseriesAdvancedFilters(
         filter,
-        searchQueryMetadataKeys,
+        // searchQueryMetadataKeys,
         query
       ),
-    [filter, searchQueryMetadataKeys, query]
+    [filter, query]
   );
 
   const timeseriesFilter = useMemo(

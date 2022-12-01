@@ -3,7 +3,7 @@ import {
   InternalAssetFilters,
   mapFiltersToAssetsAdvancedFilters,
   mapInternalFilterToAssetFilter,
-  useAssetsSearchQueryMetadataKeysQuery,
+  // useAssetsSearchQueryMetadataKeysQuery,
   useAssetsAggregateQuery,
 } from 'domain/assets';
 
@@ -14,19 +14,19 @@ export const useAssetsSearchAggregateQuery = ({
   query?: string;
   assetsFilters: InternalAssetFilters;
 }) => {
-  const searchQueryMetadataKeys = useAssetsSearchQueryMetadataKeysQuery(
-    query,
-    assetsFilters
-  );
+  // const searchQueryMetadataKeys = useAssetsSearchQueryMetadataKeysQuery(
+  //   query,
+  //   assetsFilters
+  // );
 
   const advancedFilter = useMemo(
     () =>
       mapFiltersToAssetsAdvancedFilters(
         assetsFilters,
-        searchQueryMetadataKeys,
+        // searchQueryMetadataKeys,
         query
       ),
-    [assetsFilters, searchQueryMetadataKeys, query]
+    [assetsFilters, query]
   );
 
   const filter = useMemo(
