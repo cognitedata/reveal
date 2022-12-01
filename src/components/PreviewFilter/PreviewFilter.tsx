@@ -16,7 +16,7 @@ export const DefaultPreviewFilter: React.FC<Props> = ({
       <StyledInput
         variant="default"
         value={query || ''}
-        placeholder={'Search...'}
+        placeholder={'Search for name, description, etc...'}
         onChange={event => onQueryChange?.(event.target.value)}
       />
       <FlexGrow />

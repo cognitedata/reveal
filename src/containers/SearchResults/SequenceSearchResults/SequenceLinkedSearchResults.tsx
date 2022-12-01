@@ -88,6 +88,7 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
   return (
     <SequenceTable
       id="sequence-linked-search-results"
+      query={debouncedQuery}
       onRowClick={sequence => onClick(sequence)}
       data={enableAdvancedFilter ? data : items}
       sorting={sortBy}

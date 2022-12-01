@@ -101,6 +101,7 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
   return (
     <EventTable
       id="event-linked-search-results"
+      query={debouncedQuery}
       onRowClick={event => onClick(event)}
       data={enableAdvancedFilter ? data : items}
       sorting={sortBy}

@@ -102,6 +102,7 @@ export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
   return (
     <TimeseriesTable
       id="timeseries-linked-search-results"
+      query={debouncedQuery}
       onRowClick={asset => onClick(asset)}
       data={enableAdvancedFilter ? data : items}
       isDataLoading={enableAdvancedFilter ? isLoading : !isFetched}

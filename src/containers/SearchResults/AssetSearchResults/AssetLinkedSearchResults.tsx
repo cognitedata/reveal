@@ -85,6 +85,7 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
   return (
     <AssetTable
       id="asset-linked-search-results"
+      query={debouncedQuery}
       onRowClick={asset => onClick(asset)}
       data={enableAdvancedFilter ? data : items}
       enableSorting={enableAdvancedFilter}

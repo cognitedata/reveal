@@ -81,6 +81,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
   return (
     <FileTable
       id="file-linked-search-results"
+      query={debouncedQuery}
       onRowClick={file => onClick(file)}
       data={items}
       // enableSorting
