@@ -697,8 +697,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
 // @public (undocumented)
 export interface Image360 {
-    get image360Visualization(): Image360Visualization;
-    get transform(): THREE.Matrix4;
+    readonly image360Visualization: Image360Visualization;
+    readonly transform: THREE.Matrix4;
 }
 
 // @public
