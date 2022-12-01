@@ -55,7 +55,7 @@ export const ExplorationSearchBar = () => {
       icon="Search"
       placeholder={
         isFilterEnabled
-          ? 'Search for name, description/content, metadata values, ID, and external ID...'
+          ? 'Search for name, description, content, ID, and external ID...'
           : 'Search...'
       }
       onChange={handleOnChange}
