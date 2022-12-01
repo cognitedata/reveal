@@ -4,36 +4,35 @@
  *
  * @extends Button from cogs.js
  *
- * @param styleType Must be a icon name from cogs.js
  * @param styleColor a valid web color string
  * @param label String for wai-aria
  * @param {boolean} [disabled] Enable or disable the button
  */
 
-import { Button, IconType, ButtonProps } from '@cognite/cogs.js';
+import { Button, ButtonProps } from '@cognite/cogs.js';
 
 interface Props extends ButtonProps {
-  styleType: IconType;
   styleColor: string;
   label: string;
 }
+
 export const StyleButton = ({
-  styleType,
   styleColor,
   label,
   disabled,
+  size,
   ...rest
 }: Props) => {
+  const base = size === 'small' ? 16 : 28;
   return (
     <Button
       disabled={disabled}
       {...rest}
       type="ghost"
-      icon={styleType}
       style={{
-        height: 28,
-        width: 28,
-        borderRadius: 6,
+        height: base,
+        width: base,
+        borderRadius: base / 4,
         fontSize: 12.25,
         padding: 7.87,
         backgroundColor: styleColor,

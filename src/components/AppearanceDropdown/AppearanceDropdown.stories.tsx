@@ -4,9 +4,10 @@
 
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
-import AppearanceDropdown from './AppearanceDropdown';
+import AppearanceDropdown, { ColorDropdown } from './AppearanceDropdown';
 
 type Props = React.ComponentProps<typeof AppearanceDropdown>;
+type ColorDdProps = React.ComponentProps<typeof ColorDropdown>;
 
 export default {
   component: AppearanceDropdown,
@@ -14,9 +15,26 @@ export default {
 } as Meta;
 
 const Template: Story<Props> = (args) => <AppearanceDropdown {...args} />;
+const ColorMenu: Story<ColorDdProps> = (args) => (
+  <div style={{ maxWidth: '15rem' }}>
+    <ColorDropdown {...args} />
+  </div>
+);
 
-export const ApearanceDropdowns = Template.bind({});
+export const AllOptions = Template.bind({});
+export const ColorOptions = ColorMenu.bind({});
+export const ColorWithoutTitle = ColorMenu.bind({});
 
-ApearanceDropdowns.args = {
+AllOptions.args = {
   onUpdate: () => {},
+};
+
+ColorOptions.args = {
+  onColorSelected: () => {},
+  selectedColor: '#002d9c',
+};
+
+ColorWithoutTitle.args = {
+  showLabel: false,
+  onColorSelected: () => {},
 };

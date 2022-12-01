@@ -14,6 +14,9 @@ export const eventDataExample: any[] = [
     id: 'ce1a89ff-badd-42c3-ab6e-c3f19c7004f2',
     color: '#4078F0',
     visible: true,
+    filters: {
+      metadata: {},
+    },
     results: [
       {
         externalId: 'WO_55190379_00000002',

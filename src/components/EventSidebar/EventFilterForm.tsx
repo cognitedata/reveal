@@ -14,8 +14,7 @@ import {
 } from '@cognite/data-exploration';
 import { CogniteEvent, InternalId } from '@cognite/sdk';
 import { Col, Row } from 'antd';
-import { getTime } from 'date-fns';
-import { useList } from '@cognite/sdk-react-query-hooks';
+import { omit } from 'lodash';
 
 import { ChartEventFilters } from 'models/chart/types';
 import {
@@ -27,8 +26,6 @@ import {
   SidebarInnerCollapse,
 } from 'components/Common/SidebarElements';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
-import { omit } from 'lodash';
-import { transformNewFilterToOldFilter } from './helpers';
 import { GhostMetadataFilter } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(
@@ -47,8 +44,7 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 type Props = {
-  startDate: string;
-  endDate: string;
+  items: CogniteEvent[] | undefined;
   eventFilters: ChartEventFilters;
   setFilters: (id: string, diff: any) => void;
   onDeleteEventFilter: (diff: any) => void;
@@ -59,8 +55,7 @@ type Props = {
 };
 
 const EventFilterForm = ({
-  startDate,
-  endDate,
+  items,
   eventFilters,
   setFilters,
   onDeleteEventFilter,
@@ -76,18 +71,6 @@ const EventFilterForm = ({
     ...translations,
   };
 
-  const startTimeMin = getTime(new Date(startDate));
-  const endTimeMax = getTime(new Date(endDate));
-
-  const { data: items = [] } = useList<CogniteEvent>('events', {
-    filter: transformNewFilterToOldFilter({
-      ...filters,
-      startTime: { min: startTimeMin },
-      endTime: { max: endTimeMax },
-    }),
-    limit: 1000,
-  });
-
   const handleUpdateFilters = useCallback(
     (diff: Partial<ChartEventFilters['filters']>) => {
       setFilters(eventFilters.id, diff);
@@ -96,6 +79,8 @@ const EventFilterForm = ({
   );
 
   const isEventFilterValid = !!Object.keys(filters).length;
+
+  if (!items) return <div>No items</div>;
 
   return (
     <>

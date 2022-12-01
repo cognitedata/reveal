@@ -19,6 +19,8 @@ export const availableColors = [
   '#a56eff',
 ];
 
+export const DEFAULT_EVENT_COLOR = '#009d9a';
+
 export function getColor(value: number) {
   return availableColors[modulo(value, availableColors.length)];
 }

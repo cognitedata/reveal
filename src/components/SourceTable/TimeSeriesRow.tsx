@@ -146,7 +146,7 @@ function TimeSeriesRow({
         >
           <StyleButton
             disabled={!isVisible}
-            styleType="Timeseries"
+            icon="Timeseries"
             styleColor={color}
             label="Timeseries"
           />

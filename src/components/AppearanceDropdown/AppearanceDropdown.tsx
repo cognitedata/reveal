@@ -123,18 +123,20 @@ const InterpolationPreview = ({
   );
 };
 
-const ColorDropdown = ({
+export const ColorDropdown = ({
   selectedColor,
   onColorSelected,
   label = 'Color',
+  showLabel = true,
 }: {
   selectedColor: string;
   onColorSelected: (color: string) => void;
   label: string;
+  showLabel?: boolean;
 }) => {
   return (
     <MenuWrapper>
-      <Menu.Header>{label}</Menu.Header>
+      {showLabel ? <Menu.Header>{label}</Menu.Header> : ''}
       {availableColors.map((color) => (
         <Menu.Item
           key={color}

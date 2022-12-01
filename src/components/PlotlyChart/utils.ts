@@ -13,12 +13,12 @@ import {
   LineStyle,
 } from 'models/chart/types';
 import { roundToSignificantDigits } from 'utils/numbers';
-import { hexToRGBA } from 'utils/colors';
+import { DEFAULT_EVENT_COLOR, hexToRGBA } from 'utils/colors';
 import { convertUnits, convertThresholdUnits, units } from 'utils/units';
 import { WorkflowState } from 'models/calculation-results/types';
 import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { isThresholdValid } from 'utils/threshold';
-import { ChartEventResults } from 'models/events/types';
+import { ChartEventResults } from 'models/event-results/types';
 import { isEventSelected } from 'components/EventSidebar/helpers';
 
 export type PlotlyEventData = {
@@ -698,7 +698,10 @@ export function generateLayout({
 
   if (eventData.length) {
     eventData.forEach((eventSet: ChartEventResults) => {
-      const shapeColor = eventSet.color || '#4078F0';
+      const shapeColor = eventSet.color || DEFAULT_EVENT_COLOR;
+      const isEventFilterValid = !!Object.keys(eventSet.filters).length;
+      const showEvent = isEventFilterValid && eventSet.visible;
+
       (eventSet.results || []).forEach((eventItem: CogniteEvent) => {
         const { startTime } = eventItem;
         const { endTime } = eventItem;
@@ -709,7 +712,7 @@ export function generateLayout({
           ...[
             {
               // Event rect left border
-              visible: true,
+              visible: showEvent,
               xref: 'x0',
               yref: `paper`,
               x0: startTime,
@@ -724,7 +727,7 @@ export function generateLayout({
             },
             {
               // Event rect right border
-              visible: true,
+              visible: showEvent,
               xref: 'x0',
               yref: `paper`,
               x0: endTime,
@@ -739,7 +742,7 @@ export function generateLayout({
             },
             {
               // Event rect
-              visible: true,
+              visible: showEvent,
               xref: 'x0',
               yref: `paper`,
               x0: startTime,
@@ -752,7 +755,7 @@ export function generateLayout({
             },
             {
               // Bottom shade rect
-              visible: true,
+              visible: showEvent,
               type: 'rect',
               xref: 'x0',
               yref: 'paper',

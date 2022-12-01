@@ -155,7 +155,7 @@ function WorkflowRow({
         >
           <StyleButton
             disabled={!enabled}
-            styleType="Function"
+            icon="Function"
             styleColor={color}
             label="Workflow Function"
           />

@@ -4,7 +4,7 @@
  */
 
 import { CogniteEvent } from '@cognite/sdk';
-import { EventsCollection, EventsEntry } from 'models/events/types';
+import { EventsCollection, EventsEntry } from 'models/event-results/types';
 
 export const transformNewFilterToOldFilter = <T>(
   filter?: any

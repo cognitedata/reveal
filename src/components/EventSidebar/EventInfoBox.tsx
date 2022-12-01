@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { Col, Row } from 'antd';
 import dayjs from 'dayjs';
 import { Body } from '@cognite/cogs.js';
-import { CogniteEvent } from '@cognite/sdk';
+import { CogniteEvent, Timestamp } from '@cognite/sdk';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { EventDetails } from './elements';
 
@@ -29,6 +29,11 @@ type Props = {
   translations?: typeof defaultTranslations;
 };
 
+const formatDate = (date: Date | Timestamp | undefined) => {
+  if (!date) return '';
+  return dayjs(date).format('MM.DD.YYYY HH:mm');
+};
+
 const EventInfoBox = ({
   event,
   onToggleEvent,
@@ -44,9 +49,6 @@ const EventInfoBox = ({
   const toggleSelection = useCallback(() => {
     onToggleEvent(event.id);
   }, []);
-
-  const { startTime } = event;
-  const { endTime } = event;
 
   return (
     <EventDetails $active={selected} onClick={toggleSelection}>
@@ -68,13 +70,13 @@ const EventInfoBox = ({
         <Col span={12}>
           <Body level={2}>{t.Updated}:</Body>
           <Body level={2} strong>
-            {dayjs(event.lastUpdatedTime).format('MM.DD.YYYY HH:mm')}
+            {formatDate(event.lastUpdatedTime)}
           </Body>
         </Col>
         <Col span={12}>
           <Body level={2}>{t.Created}:</Body>
           <Body level={2} strong>
-            {dayjs(event.createdTime).format('MM.DD.YYYY HH:mm')}
+            {formatDate(event.createdTime)}
           </Body>
         </Col>
       </Row>
@@ -93,13 +95,13 @@ const EventInfoBox = ({
         <Col span={12}>
           <Body level={2}>{t.Start}:</Body>
           <Body level={2} strong>
-            {dayjs(startTime).format('MM.DD.YYYY HH:mm')}
+            {formatDate(event.startTime)}
           </Body>
         </Col>
         <Col span={12}>
           <Body level={2}>{t.End}:</Body>
           <Body level={2} strong>
-            {dayjs(endTime).format('MM.DD.YYYY HH:mm')}
+            {formatDate(event.endTime)}
           </Body>
         </Col>
       </Row>

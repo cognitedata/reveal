@@ -3,9 +3,9 @@ import { Chart } from 'models/chart/types';
 import { updateSourceAxisForChart } from 'models/chart/updates';
 import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { WorkflowState } from 'models/calculation-results/types';
-import { selectedEventsAtom } from 'models/events/atom';
+import { selectedEventsAtom } from 'models/event-results/atom';
 import { useRecoilValue } from 'recoil';
-import { ChartEventResults } from 'models/events/types';
+import { ChartEventResults } from 'models/event-results/types';
 import { ChartingContainer } from './elements';
 import { cleanTimeseriesCollection, cleanWorkflowCollection } from './utils';
 import PlotlyChart, { PlotNavigationUpdate } from './PlotlyChart';
@@ -15,7 +15,6 @@ type Props = {
   setChart?: (
     valOrUpdater: ((currVal: Chart | undefined) => Chart) | Chart
   ) => void;
-  eventData?: ChartEventResults[];
   isYAxisShown?: boolean;
   isMinMaxShown?: boolean;
   isGridlinesShown?: boolean;
@@ -23,12 +22,12 @@ type Props = {
   mergeUnits?: boolean;
   timeseriesData: TimeseriesEntry[];
   calculationsData: WorkflowState[];
+  eventData?: ChartEventResults[];
 };
 
 const ChartPlotContainer = ({
   chart = undefined,
   setChart = (val) => val,
-  eventData = [],
   isYAxisShown = true,
   isMinMaxShown = false,
   isGridlinesShown = false,
@@ -36,6 +35,7 @@ const ChartPlotContainer = ({
   mergeUnits = false,
   timeseriesData = [],
   calculationsData = [],
+  eventData = [],
 }: Props) => {
   const [dragmode, setDragmode] = useState<'zoom' | 'pan'>('pan');
 
@@ -100,8 +100,8 @@ const ChartPlotContainer = ({
     timeseriesData,
     calculations,
     calculationsData,
-    thresholds,
     eventData,
+    thresholds,
     storedSelectedEvents,
     isYAxisShown,
     isMinMaxShown,

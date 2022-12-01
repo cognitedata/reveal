@@ -17,14 +17,22 @@ const Template: Story<ComponentProps<typeof StyleButton>> = (args) => (
 
 export const TimeseriesStyleButton = Template.bind({});
 export const WorkflowStyleButton = Template.bind({});
+export const StyleButtonNoIcon = Template.bind({});
 
 TimeseriesStyleButton.args = {
-  styleType: 'Timeseries',
+  icon: 'Timeseries',
   styleColor: '#6929c4',
   label: 'Timeseries',
 };
+
 WorkflowStyleButton.args = {
-  styleType: 'Function',
+  icon: 'Function',
   styleColor: '#005d5d',
   label: 'Workflow Function',
+};
+
+StyleButtonNoIcon.args = {
+  styleColor: '#8a3800',
+  label: 'Color Button',
+  size: 'small',
 };

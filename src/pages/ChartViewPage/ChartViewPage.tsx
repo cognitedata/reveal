@@ -18,7 +18,6 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
-  ChartEventFilters,
 } from 'models/chart/types';
 import { useSearchParam } from 'hooks/navigation';
 import { SEARCH_KEY, ACTIVE_SIDEBAR_KEY } from 'utils/constants';
@@ -77,9 +76,8 @@ import ErrorSidebar from 'components/ErrorSidebar/ErrorSidebar';
 import { WorkflowState } from 'models/calculation-results/types';
 import { Toolbar } from 'components/Common/SidebarElements';
 import EventSidebar from 'components/EventSidebar/EventSidebar';
-import { transformNewFilterToOldFilter } from 'components/EventSidebar/helpers';
-import { getTime } from 'date-fns';
-import { useSDK } from '@cognite/sdk-provider';
+import { eventResultsAtom } from 'models/event-results/atom';
+import { EventResultEffects } from 'effects/events';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -140,10 +138,11 @@ const ChartViewPage = () => {
   const isChartOwner = useIsChartOwner(chart);
 
   /**
-   * Get stored results for timeseries and calculations
+   * Get stored results for timeseries, calculations and events
    */
   const timeseriesData = useRecoilValue(timeseriesAtom);
   const calculationData = useRecoilValue(availableWorkflows);
+  const eventData = useRecoilValue(eventResultsAtom);
 
   /**
    * Method for updating storage value of chart
@@ -191,37 +190,6 @@ const ChartViewPage = () => {
   const showMinMax = get(chart, 'settings.showMinMax', false);
   const showGridlines = get(chart, 'settings.showGridlines', true);
   const mergeUnits = get(chart, 'settings.mergeUnits', true);
-
-  /**
-   * Events
-   */
-  const sdk = useSDK();
-  const allEvents: any = [];
-  const allEventFilters = chart?.eventFilters || [];
-  const validEventFilters = allEventFilters?.filter(
-    (item: ChartEventFilters) =>
-      item.visible && Object.keys(item.filters).length
-  );
-
-  (validEventFilters || []).forEach(async (eventItem) => {
-    try {
-      const events = await sdk.events.list({
-        filter: transformNewFilterToOldFilter({
-          ...eventItem.filters,
-          startTime: { min: getTime(new Date(chart!.dateFrom)) },
-          endTime: { max: getTime(new Date(chart!.dateTo)) },
-        }),
-      });
-
-      allEvents.push({
-        id: eventItem.id,
-        visible: eventItem.visible,
-        results: events.items,
-      });
-    } catch (e: any) {
-      throw new Error(e.toString());
-    }
-  });
 
   useEffect(() => {
     trackUsage('PageView.ChartView', {
@@ -719,6 +687,7 @@ const ChartViewPage = () => {
       <PageTitle title={chart.name} />
       <TimeseriesCollectionEffects />
       <CalculationCollectionEffects />
+      <EventResultEffects />
       <ChartViewPageAppBar allChartsLabel={t['All charts']} />
       <ChartViewPageSecondaryAppBar
         handleDateChange={handleDateChange}
@@ -767,7 +736,6 @@ const ChartViewPage = () => {
                     key={chartId}
                     chart={chart}
                     setChart={setChart}
-                    eventData={allEvents}
                     isYAxisShown={showYAxis}
                     isMinMaxShown={showMinMax}
                     isGridlinesShown={showGridlines}
@@ -775,6 +743,7 @@ const ChartViewPage = () => {
                     mergeUnits={mergeUnits}
                     timeseriesData={timeseriesData}
                     calculationsData={calculationData}
+                    eventData={eventData}
                   />
                 </ChartWrapper>
                 <ChartActionButton
@@ -860,6 +829,7 @@ const ChartViewPage = () => {
             onClose={handleCloseEventSidebar}
             updateChart={setChart}
             chart={chart}
+            eventData={eventData}
           />
         )}
         <Toolbar>

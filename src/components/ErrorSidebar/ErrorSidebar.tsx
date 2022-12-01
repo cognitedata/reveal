@@ -64,7 +64,7 @@ const ErrorSidebar = memo(
         <TopContainer>
           <TopContainerTitle>
             <StyleButton
-              styleType="Function"
+              icon="Function"
               styleColor={workflowColor}
               label="Workflow Function"
               style={{ marginRight: '0.5rem' }}

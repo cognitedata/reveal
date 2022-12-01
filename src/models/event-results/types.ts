@@ -8,5 +8,6 @@ export type EventsEntry = {
 export type EventsCollection = EventsEntry[];
 
 export type ChartEventResults = ChartEventFilters & {
-  results: CogniteEvent[];
+  results: CogniteEvent[] | undefined;
+  isLoading?: boolean;
 };

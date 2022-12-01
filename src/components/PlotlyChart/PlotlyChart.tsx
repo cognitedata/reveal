@@ -9,7 +9,10 @@ import {
 } from 'models/chart/types';
 import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { WorkflowState } from 'models/calculation-results/types';
-import { ChartEventResults, EventsCollection } from 'models/events/types';
+import {
+  ChartEventResults,
+  EventsCollection,
+} from 'models/event-results/types';
 import { PlotWrapper } from './elements';
 import {
   calculateSeriesData,
