@@ -37,7 +37,7 @@ export const DocumentFilter = ({ ...rest }) => {
 
   return (
     <BaseFilterCollapse.Panel
-      title="Documents"
+      title="Files"
       infoContent={SPECIFIC_INFO_CONTENT}
       hideResetButton={isFiltersEmpty}
       onResetClick={resetDocumentFilters}
