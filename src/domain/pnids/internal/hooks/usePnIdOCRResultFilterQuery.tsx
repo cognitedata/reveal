@@ -7,9 +7,10 @@ import { usePnIdRawOCRResultQuery } from '../../service/queries/usePnIdRawOCRRes
 export const usePnIdOCRResultFilterQuery = (
   query: string,
   file?: FileInfo,
-  page?: number
+  page?: number,
+  enabled = true
 ) => {
-  const { data } = usePnIdRawOCRResultQuery(file, !!file && query !== '');
+  const { data } = usePnIdRawOCRResultQuery(file, enabled && !!file);
 
   const annotationSearchResult = useMemo(() => {
     if (file === undefined) {
@@ -22,15 +23,14 @@ export const usePnIdOCRResultFilterQuery = (
     }
     const currentPage = page ? page - 1 : 0;
 
-    const currentPageData = data[currentPage].annotations;
+    const currentPageData = data[currentPage]?.annotations ?? [];
 
     const filteredOCRAnnotations = currentPageData?.filter(
       box =>
         query.length !== 0 &&
-        query
-          .toLowerCase()
-          .split(',')
-          .some(partialQuery => box.text.toLowerCase().includes(partialQuery))
+        getSanitizedQueryPartials(query).some(partialQuery =>
+          box.text.toLowerCase().includes(partialQuery)
+        )
     );
 
     return getAnnotationsFromContextApiOcrAnnotations(
@@ -39,5 +39,16 @@ export const usePnIdOCRResultFilterQuery = (
     );
   }, [file, data, query, page]);
 
-  return { annotationSearchResult };
+  return {
+    annotationSearchResult,
+    resultsAvailable: Boolean(data) && Boolean(data?.length),
+  };
+};
+
+const getSanitizedQueryPartials = (query: string): string[] => {
+  return query
+    .toLowerCase()
+    .split(',') // separate query items by comma
+    .map(partialQuery => partialQuery.trim()) // trim white space
+    .filter(partialQuery => partialQuery !== ''); // remove empty string
 };

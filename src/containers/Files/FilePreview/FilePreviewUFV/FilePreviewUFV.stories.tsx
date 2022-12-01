@@ -89,7 +89,11 @@ const pdfSdkMock = {
       return { data: { items: response } };
     }
     if (query.includes('ocr')) {
-      return { data: { items: ocrResults } };
+      if (data.fileId === longPDF.id) {
+        return { data: { items: ocrResults } };
+      }
+
+      throw new Error('ocr results not available');
     }
     return { data: { items: [] } };
   },
@@ -118,6 +122,9 @@ export default {
   title: 'Files/FilePreviewUFV',
   component: FilePreviewUFV,
   parameters: {
+    options: {
+      enableShortcuts: false,
+    },
     explorerConfig: { sdkMockOverride: pdfSdkMock },
   },
 };

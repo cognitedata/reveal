@@ -10,7 +10,7 @@ export const SearchBar = ({
   setSearchQuery: (page: string) => void;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure({
-    isOpen: false,
+    isOpen: Boolean(searchQuery),
   });
 
   const handleCloseSearch = () => {

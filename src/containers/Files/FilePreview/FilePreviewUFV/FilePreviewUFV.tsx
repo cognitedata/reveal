@@ -170,11 +170,8 @@ export const FilePreviewUFV = ({
     onMouseOut: onAnnotationMouseOut,
   });
 
-  const { annotationSearchResult } = usePnIdOCRResultFilterQuery(
-    searchQuery,
-    file,
-    page
-  );
+  const { annotationSearchResult, resultsAvailable } =
+    usePnIdOCRResultFilterQuery(searchQuery, file, page, showControls);
 
   const displayedAnnotations = useMemo(() => {
     if (isAnnotationsShown) {
@@ -307,7 +304,7 @@ export const FilePreviewUFV = ({
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           enableDownload={showDownload}
-          enableSearch={showControls}
+          enableSearch={showControls && resultsAvailable}
         />
       </FullHeightWrapper>
       {showSideBar && (

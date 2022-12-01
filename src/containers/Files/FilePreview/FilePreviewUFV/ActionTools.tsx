@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Button, Dropdown, Flex, Menu } from '@cognite/cogs.js';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { SearchBar } from './SearchBar';
-import { SEARCHABLE_DOCUMENT_TYPES } from './constants';
 import { useFileDownloadUrl } from './hooks';
 
 export const ActionTools = ({
@@ -22,10 +21,6 @@ export const ActionTools = ({
   enableSearch?: boolean;
   enableDownload?: boolean;
 }): JSX.Element | null => {
-  const { mimeType = '', name = '' } = file ?? {};
-  const query = mimeType + name.slice(0, name.lastIndexOf('.'));
-  const showSearch =
-    enableSearch && SEARCHABLE_DOCUMENT_TYPES.some(el => query.includes(el));
   const fileUrl = useFileDownloadUrl(file.id);
 
   if (!fileUrl) return null;
@@ -46,7 +41,7 @@ export const ActionTools = ({
   return (
     <ToolBar>
       <Flex gap={5}>
-        {showSearch && (
+        {enableSearch && (
           <SearchBar
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
