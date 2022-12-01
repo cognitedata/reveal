@@ -1,16 +1,22 @@
 import { AllCursorsProps } from 'domain/wells/types';
 
+import { useDeepMemo } from 'hooks/useDeep';
+
 import {
   MeasurementsFetchOptions,
   WdlMeasurementType,
 } from '../../service/types';
+import { filterMudWeightData } from '../selectors/filterMudWeightData';
 
 import { useDepthMeasurementsWithData } from './useDepthMeasurementsWithData';
 import { useDepthMeasurementsWithTvdData } from './useDepthMeasurementsWithTvdData';
 
-const measurementTypes = [WdlMeasurementType.MUD_TYPE];
+export const measurementTypes = [
+  WdlMeasurementType.MUD_TYPE,
+  WdlMeasurementType.MUD_DENSITY,
+];
 
-export const useMudTypeMeasurements = ({
+export const useMudWeightMeasurements = ({
   wellboreIds,
   withTvd,
 }: AllCursorsProps & MeasurementsFetchOptions) => {
@@ -18,5 +24,12 @@ export const useMudTypeMeasurements = ({
     ? useDepthMeasurementsWithTvdData
     : useDepthMeasurementsWithData;
 
-  return hook({ wellboreIds, measurementTypes });
+  const { data, ...rest } = hook({ wellboreIds, measurementTypes });
+
+  const mudWeightData = useDeepMemo(() => filterMudWeightData(data), [data]);
+
+  return {
+    data: mudWeightData,
+    ...rest,
+  };
 };

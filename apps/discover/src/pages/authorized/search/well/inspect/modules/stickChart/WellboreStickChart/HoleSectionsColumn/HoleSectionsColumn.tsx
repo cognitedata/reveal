@@ -25,14 +25,14 @@ import { MudWeightInfo } from './MudWeightInfo';
 
 export interface HoleSectionsColumnProps {
   data?: HoleSectionView[];
-  mudTypeData?: DepthMeasurementWithData[];
+  mudWeightData?: DepthMeasurementWithData[];
   scaleBlocks: number[];
   depthMeasurementType: DepthMeasurementUnit;
 }
 
 export const HoleSectionsColumn: React.FC<HoleSectionsColumnProps> = ({
   data,
-  mudTypeData = EMPTY_ARRAY,
+  mudWeightData = EMPTY_ARRAY,
   scaleBlocks,
   depthMeasurementType,
 }) => {
@@ -41,13 +41,13 @@ export const HoleSectionsColumn: React.FC<HoleSectionsColumnProps> = ({
   const isMdScale = depthMeasurementType === DepthMeasurementUnit.MD;
 
   const mudTypeDataMD = useDeepMemo(
-    () => filterMdIndexedDepthMeasurements(mudTypeData),
-    [mudTypeData]
+    () => filterMdIndexedDepthMeasurements(mudWeightData),
+    [mudWeightData]
   );
 
   const mudTypeDataTVD = useDeepMemo(
-    () => filterTvdIndexedDepthMeasurements(mudTypeData),
-    [mudTypeData]
+    () => filterTvdIndexedDepthMeasurements(mudWeightData),
+    [mudWeightData]
   );
 
   if (!data || isEmpty(data)) {

@@ -1,60 +1,48 @@
 import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
+import { WdlMeasurementType } from 'domain/wells/measurements/service/types';
 
-import compact from 'lodash/compact';
-import isNil from 'lodash/isNil';
 import isNumber from 'lodash/isNumber';
 import uniqueId from 'lodash/uniqueId';
-import uniqWith from 'lodash/uniqWith';
+import { includesAll } from 'utils/filter/includesAll';
 import { Fixed, toFixedNumberFromNumber } from 'utils/number';
-import { sortObjectsAscending } from 'utils/sort';
 
 import { MudWeightData } from '../types';
-
-import { isEqualMudWeights } from './isEqualMudWeights';
 
 export const adaptDepthMeasurementToMudWeights = (
   depthMeasurement: DepthMeasurementWithData
 ): Array<MudWeightData> => {
   const { columns, rows, depthUnit } = depthMeasurement;
 
-  const mudWeights = columns.flatMap(
-    ({ name, measurementType, unit: columnUnit }, columnIndex) => {
-      return compact(
-        rows.map(({ depth: depthValue, values }) => {
-          const columnValue = values[columnIndex];
+  let mudTypeColumnIndex: number;
+  let minMudDensityColumnIndex: number;
+  let maxMudDensityColumnIndex: number;
 
-          if (isNil(columnValue)) {
-            return null;
-          }
-
-          const type = name || measurementType;
-
-          const value = {
-            value: isNumber(columnValue)
-              ? toFixedNumberFromNumber(columnValue, Fixed.TwoDecimals)
-              : columnValue,
-            unit: columnUnit,
-          };
-
-          const depth = {
-            value: toFixedNumberFromNumber(depthValue, Fixed.TwoDecimals),
-            unit: depthUnit,
-          };
-
-          return {
-            id: uniqueId(`${depthValue}-${columnValue}-`),
-            type,
-            value,
-            depth,
-          };
-        })
-      );
+  columns.forEach(({ externalId, measurementType }, index) => {
+    if (measurementType.includes(WdlMeasurementType.MUD_TYPE)) {
+      mudTypeColumnIndex = index;
+    } else if (includesAll(externalId, ['min', 'density'])) {
+      minMudDensityColumnIndex = index;
+    } else if (includesAll(externalId, ['max', 'density'])) {
+      maxMudDensityColumnIndex = index;
     }
-  );
+  });
 
-  const uniqMudWeights = uniqWith(mudWeights, isEqualMudWeights);
+  return rows.map(({ depth, values }) => {
+    return {
+      id: uniqueId('mud-weight-'),
+      type: values[mudTypeColumnIndex],
+      depth,
+      minMudDensity: getColumnValue(values[minMudDensityColumnIndex]),
+      maxMudDensity: getColumnValue(values[maxMudDensityColumnIndex]),
+      depthUnit,
+      densityUnit: columns[minMudDensityColumnIndex].unit,
+    };
+  });
+};
 
-  const sortedMudWeights = sortObjectsAscending(uniqMudWeights, 'value.value');
-
-  return sortedMudWeights;
+const getColumnValue = <T extends string | number>(columnValue?: T) => {
+  if (isNumber(columnValue)) {
+    return toFixedNumberFromNumber(columnValue, Fixed.TwoDecimals);
+  }
+  return columnValue;
 };

@@ -55,4 +55,5 @@ export enum WdlMeasurementType {
   DENSITY = 'density',
   NEUTRON_POROSITY = 'neutron porosity',
   MUD_TYPE = 'mud type',
+  MUD_DENSITY = 'mud density',
 }

@@ -41,7 +41,7 @@ export interface CasingsColumnProps extends ColumnVisibilityProps {
   data?: CasingAssemblyView[];
   isLoading: boolean;
   holeSections?: HoleSectionView[];
-  mudTypeData?: DepthMeasurementWithData[];
+  mudWeightData?: DepthMeasurementWithData[];
   scaleBlocks: number[];
   rkbLevel: WellboreInternal['datum'];
   wellWaterDepth: WellboreInternal['wellWaterDepth'];
@@ -57,7 +57,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
       data,
       isLoading,
       holeSections,
-      mudTypeData,
+      mudWeightData,
       rkbLevel,
       wellWaterDepth,
       maxDepth,
@@ -104,7 +104,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
 
                 <HoleSectionsColumn
                   data={holeSections}
-                  mudTypeData={mudTypeData}
+                  mudWeightData={mudWeightData}
                   scaleBlocks={scaleBlocks}
                   depthMeasurementType={depthMeasurementType}
                 />

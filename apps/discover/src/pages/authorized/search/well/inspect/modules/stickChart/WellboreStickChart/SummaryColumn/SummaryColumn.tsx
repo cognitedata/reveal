@@ -29,7 +29,7 @@ import { SummariesWrapper } from './elements';
 export interface SummaryColumnProps extends ColumnVisibilityProps {
   casingAssemblies?: CasingAssemblyView[];
   holeSections?: HoleSectionView[];
-  mudTypeData?: DepthMeasurementWithData[];
+  mudWeightData?: DepthMeasurementWithData[];
   nptEvents?: NptInternalWithTvd[];
   ndsEvents?: NdsInternalWithTvd[];
   isLoading?: boolean;
@@ -42,7 +42,7 @@ export const SummaryColumn: React.FC<WithDragHandleProps<SummaryColumnProps>> =
     ({
       casingAssemblies,
       holeSections = EMPTY_ARRAY,
-      mudTypeData = EMPTY_ARRAY,
+      mudWeightData = EMPTY_ARRAY,
       nptEvents = EMPTY_ARRAY,
       ndsEvents = EMPTY_ARRAY,
       isLoading = false,
@@ -68,8 +68,8 @@ export const SummaryColumn: React.FC<WithDragHandleProps<SummaryColumnProps>> =
                     casingAssembly,
                     depthMeasurementType
                   )}
-                  mudTypeData={getMeasurementsDataForCasingAssembly(
-                    mudTypeData,
+                  mudWeightData={getMeasurementsDataForCasingAssembly(
+                    mudWeightData,
                     casingAssembly,
                     depthMeasurementType
                   )}

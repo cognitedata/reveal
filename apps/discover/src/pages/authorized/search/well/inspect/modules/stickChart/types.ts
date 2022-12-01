@@ -37,7 +37,7 @@ export interface WellboreStickChartData {
   trajectoryData: DataWithLoadingStatus<TrajectoryWithData>;
   measurementsData: DataWithLoadingStatus<DepthMeasurementWithData[]>;
   holeSectionsData: DataWithLoadingStatus<HoleSectionView[]>;
-  mudTypeData: DataWithLoadingStatus<DepthMeasurementWithData[]>;
+  mudWeightData: DataWithLoadingStatus<DepthMeasurementWithData[]>;
 }
 
 export interface ColumnVisibilityProps {
@@ -100,8 +100,21 @@ export interface TrajectoryCurveConfig {
 export interface MudWeightData {
   id: string;
   type: string;
-  value: { value: number; unit: string };
-  depth: { value: number; unit: string };
+  depth: number;
+  minMudDensity?: number;
+  maxMudDensity?: number;
+  depthUnit: string;
+  densityUnit: string;
+}
+
+export interface MudWeightSummary {
+  id: string;
+  type: string;
+  mudDensityRange: {
+    min?: number;
+    max?: number;
+    unit: string;
+  };
 }
 
 export type EventType = typeof EVENT_TYPES[number];

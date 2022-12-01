@@ -11,50 +11,59 @@ import { EMPTY_ARRAY } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 
-import { Specification } from '../../../../components/Specification';
+import { SpecificationLabel } from '../../../../components/Specification';
 import { SummarySection, SummaryVisibilityProps } from '../../../../types';
 import { adaptDepthMeasurementToMudWeights } from '../../../../utils/adaptDepthMeasurementToMudWeights';
+import { getMudWeightDataSummaries } from '../../../../utils/getMudWeightDataSummaries';
 import { DEFAULT_DEPTH_MEASUREMENT_TYPE } from '../../../constants';
-import { Depth, SummarySectionContent } from '../../elements';
+import { SummarySectionContent } from '../../elements';
 import { SummaryColumnSection } from '../SummaryColumnSection';
 import { SummaryColumnSectionEmptyState } from '../SummaryColumnSectionEmptyState';
 
 export interface MudWeightProps extends SummaryVisibilityProps {
-  mudTypeData: DepthMeasurementWithData[];
+  data: DepthMeasurementWithData[];
   depthMeasurementType?: DepthMeasurementUnit;
 }
 
 export const MudWeight: React.FC<MudWeightProps> = ({
-  mudTypeData,
+  data,
   depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
   isExpanded,
 }) => {
   const mudWeightsMD = useDeepMemo(() => {
-    const mudType = head(filterMdIndexedDepthMeasurements(mudTypeData));
+    const mudType = head(filterMdIndexedDepthMeasurements(data));
 
     if (!mudType) {
       return EMPTY_ARRAY;
     }
 
     return adaptDepthMeasurementToMudWeights(mudType);
-  }, [mudTypeData]);
+  }, [data]);
 
   const mudWeightsTVD = useDeepMemo(() => {
-    const mudType = head(filterTvdIndexedDepthMeasurements(mudTypeData));
+    const mudType = head(filterTvdIndexedDepthMeasurements(data));
 
     if (!mudType) {
       return EMPTY_ARRAY;
     }
 
     return adaptDepthMeasurementToMudWeights(mudType);
-  }, [mudTypeData]);
+  }, [data]);
 
-  const mudWeights =
+  const mudWeightDataSummariesMD = useDeepMemo(() => {
+    return getMudWeightDataSummaries(mudWeightsMD);
+  }, [mudWeightsMD]);
+
+  const mudWeightDataSummariesTVD = useDeepMemo(() => {
+    return getMudWeightDataSummaries(mudWeightsTVD);
+  }, [mudWeightsTVD]);
+
+  const mudWeightDataSummaries =
     depthMeasurementType === DepthMeasurementUnit.MD
-      ? mudWeightsMD
-      : mudWeightsTVD;
+      ? mudWeightDataSummariesMD
+      : mudWeightDataSummariesTVD;
 
-  if (isEmpty(mudWeights)) {
+  if (isEmpty(mudWeightDataSummaries)) {
     return (
       <SummaryColumnSectionEmptyState
         name={SummarySection.MudWeight}
@@ -68,17 +77,18 @@ export const MudWeight: React.FC<MudWeightProps> = ({
       name={SummarySection.MudWeight}
       isExpanded={isExpanded}
     >
-      {mudWeights.map(({ id, type, value, depth }) => {
-        return (
-          <SummarySectionContent key={id}>
-            <Specification label={type} value={`${value.value}${value.unit}`} />
-            <Depth>
-              {depth.value}
-              {depth.unit}
-            </Depth>
-          </SummarySectionContent>
-        );
-      })}
+      {mudWeightDataSummaries.map(
+        ({ id, type, mudDensityRange: { min, max, unit } }) => {
+          return (
+            <SummarySectionContent key={id}>
+              <SpecificationLabel label={type} />
+              <span>
+                {min} - {max} {unit}
+              </span>
+            </SummarySectionContent>
+          );
+        }
+      )}
     </SummaryColumnSection>
   );
 };

@@ -4,36 +4,44 @@ import isEmpty from 'lodash/isEmpty';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 
-import { MudWeightData } from '../../types';
+import { EMPTY_ARRAY } from 'constants/empty';
+import { useDeepMemo } from 'hooks/useDeep';
 
-import {
-  InfoIcon,
-  MugWeightInfo,
-  MugWeightType,
-  MugWeightValue,
-} from './elements';
+import { MudWeightData } from '../../types';
+import { getMudWeightDataSummaries } from '../../utils/getMudWeightDataSummaries';
+
+import { InfoIcon, MudWeightInfoWrapper, MudWeightType } from './elements';
 
 export interface MudWeightInfoProps {
   mudWeights?: MudWeightData[];
 }
 
 export const MudWeightInfo: React.FC<MudWeightInfoProps> = ({ mudWeights }) => {
-  if (!mudWeights || isEmpty(mudWeights)) {
+  const mudWeightDataSummaries = useDeepMemo(() => {
+    if (!mudWeights || isEmpty(mudWeights)) {
+      return EMPTY_ARRAY;
+    }
+    return getMudWeightDataSummaries(mudWeights);
+  }, [mudWeights]);
+
+  if (isEmpty(mudWeightDataSummaries)) {
     return null;
   }
 
   const Content = (
     <Menu>
-      {mudWeights.map(({ id, type, value: { value, unit } }) => {
-        return (
-          <MugWeightInfo key={id}>
-            <MugWeightType>{type}</MugWeightType>
-            <MugWeightValue>
-              {value} {unit}
-            </MugWeightValue>
-          </MugWeightInfo>
-        );
-      })}
+      {mudWeightDataSummaries.map(
+        ({ id, type, mudDensityRange: { min, max, unit } }) => {
+          return (
+            <MudWeightInfoWrapper key={id}>
+              <MudWeightType>{type}</MudWeightType>
+              <span>
+                {min} - {max} {unit}
+              </span>
+            </MudWeightInfoWrapper>
+          );
+        }
+      )}
     </Menu>
   );
 

@@ -36,7 +36,7 @@ export const InfoIcon = styled(Icon)`
   cursor: pointer;
 `;
 
-export const MugWeightInfo = styled(FlexColumn)`
+export const MudWeightInfoWrapper = styled(FlexColumn)`
   padding: ${sizes.extraSmall};
   &:not(:last-child) {
     border-bottom: 1px solid var(--cogs-border--interactive--default);
@@ -44,8 +44,6 @@ export const MugWeightInfo = styled(FlexColumn)`
   }
 `;
 
-export const MugWeightType = styled.span`
+export const MudWeightType = styled.span`
   font-weight: 600;
 `;
-
-export const MugWeightValue = styled.span``;

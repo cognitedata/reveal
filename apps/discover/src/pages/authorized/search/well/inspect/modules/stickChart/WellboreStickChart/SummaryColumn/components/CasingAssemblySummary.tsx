@@ -31,7 +31,7 @@ import { MudWeight } from './sections/MudWeight';
 export interface CasingAssemblySummaryProps {
   casingAssembly: CasingAssemblyView;
   holeSections: HoleSectionView[];
-  mudTypeData: DepthMeasurementWithData[];
+  mudWeightData: DepthMeasurementWithData[];
   nptEvents: NptInternalWithTvd[];
   ndsEvents: NdsInternalWithTvd[];
   depthMeasurementType?: DepthMeasurementUnit;
@@ -41,7 +41,7 @@ export interface CasingAssemblySummaryProps {
 export const CasingAssemblySummary: React.FC<CasingAssemblySummaryProps> = ({
   casingAssembly,
   holeSections,
-  mudTypeData,
+  mudWeightData,
   nptEvents,
   ndsEvents,
   depthMeasurementType,
@@ -87,7 +87,7 @@ export const CasingAssemblySummary: React.FC<CasingAssemblySummaryProps> = ({
 
       <SummarySectionColumn>
         <MudWeight
-          mudTypeData={mudTypeData}
+          data={mudWeightData}
           depthMeasurementType={depthMeasurementType}
           isExpanded={summaryVisibility[SummarySection.MudWeight]}
         />
