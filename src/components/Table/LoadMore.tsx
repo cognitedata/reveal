@@ -7,16 +7,19 @@ export interface LoadMoreProps extends ButtonProps {
   fetchMore?: Function;
   text?: string;
 }
-export const LoadMore: React.FC<LoadMoreProps> = props => {
-  const {
-    hasNextPage = false,
-    isLoadingMore = false,
-    text = 'Load More',
-    fetchMore = () => {},
-    ...rest
-  } = props;
 
-  return hasNextPage ? (
+export const LoadMore: React.FC<LoadMoreProps> = ({
+  hasNextPage = false,
+  isLoadingMore = false,
+  text = 'Load More',
+  fetchMore = () => {},
+  ...rest
+}) => {
+  if (!hasNextPage) {
+    return null;
+  }
+
+  return (
     <Button
       type="secondary"
       loading={isLoadingMore}
@@ -25,5 +28,5 @@ export const LoadMore: React.FC<LoadMoreProps> = props => {
     >
       {text}
     </Button>
-  ) : null;
+  );
 };

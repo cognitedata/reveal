@@ -176,6 +176,8 @@ export const ThWrapper = styled.div`
 
 export const LoadMoreButtonWrapper = styled(Flex)`
   margin: 20px 0;
+  position: sticky;
+  left: 0;
 `;
 
 export const MetadataHeaderText = styled(Detail)`
