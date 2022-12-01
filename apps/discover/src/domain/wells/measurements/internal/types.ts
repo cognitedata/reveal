@@ -75,3 +75,10 @@ export interface MeasurementCurveFormatterData<T> {
   column: DepthMeasurementDataColumnInternal;
   curveData: MeasurementCurveData;
 }
+
+export enum CurveSuffix {
+  LOW = 'LOW',
+  ML = 'ML',
+  HIGH = 'HIGH',
+  DIFF = 'DIFF',
+}

@@ -44,4 +44,5 @@ export const LegendCustomData = styled.span`
   letter-spacing: -0.004em;
   color: var(--cogs-greyscale-grey6);
   z-index: ${layers.TABLE_HEADER};
+  max-width: 150px;
 `;

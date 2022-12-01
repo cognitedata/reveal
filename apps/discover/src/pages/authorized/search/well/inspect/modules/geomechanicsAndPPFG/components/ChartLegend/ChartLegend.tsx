@@ -6,6 +6,8 @@ import head from 'lodash/head';
 
 import { useDeepCallback, useDeepMemo } from 'hooks/useDeep';
 
+import { sortCurvesByCustomDataLength } from '../../utils/sortCurvesByCustomDataLength';
+
 import { ChartLegendItem } from './ChartLegendItem';
 import { ChartLegendWrapper, LegendsHolder } from './elements';
 import { ShowAllButton } from './ShowAllButton';
@@ -47,7 +49,7 @@ export const ChartLegend: React.FC<GraphLegendProps> = ({ data }) => {
         expand={showAll}
         height={legendItemLinesHeight}
       >
-        {data.map((curve) => (
+        {sortCurvesByCustomDataLength(data).map((curve) => (
           <ChartLegendItem key={curve.id} curve={curve} />
         ))}
       </LegendsHolder>

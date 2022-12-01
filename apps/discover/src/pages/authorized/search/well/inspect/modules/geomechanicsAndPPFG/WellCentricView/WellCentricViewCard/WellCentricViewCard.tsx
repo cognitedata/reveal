@@ -1,4 +1,5 @@
 import { filterChartDataBySelection } from 'domain/wells/measurements/internal/selectors/filterChartDataBySelection';
+import { getCurvesWithFillProps } from 'domain/wells/measurements/internal/transformers/getCurvesWithFillProps';
 import { filterNdsByMeasuredDepth } from 'domain/wells/nds/internal/selectors/filterNdsByMeasuredDepth';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { filterNptByMeasuredDepth } from 'domain/wells/npt/internal/selectors/filterNptByMeasuredDepth';
@@ -62,10 +63,10 @@ export const WellCentricViewCard: React.FC<WellCentricViewCardProps> = ({
     [data, pressureUnit]
   );
 
-  const chartDataSelected = useDeepMemo(
-    () => filterChartDataBySelection(chartData, curveSelection),
-    [chartData, curveSelection]
-  );
+  const chartDataSelected = useDeepMemo(() => {
+    const curves = filterChartDataBySelection(chartData, curveSelection);
+    return getCurvesWithFillProps(curves);
+  }, [chartData, curveSelection]);
 
   const nptColumnData = useDeepMemo(
     () => filterNptByMeasuredDepth(nptEvents, minDepth, maxDepth),

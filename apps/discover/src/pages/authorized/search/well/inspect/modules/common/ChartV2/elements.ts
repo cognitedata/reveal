@@ -202,6 +202,7 @@ export const DetailcardBlockContent = styled(Flex)`
   line-height: var(--cogs-b3-line-height);
   letter-spacing: -2.5e-5em;
   color: var(--cogs-greyscale-grey9);
+  max-width: 300px;
 `;
 
 export const ScaleLineForChart = styled(ScaleLine)`
