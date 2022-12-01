@@ -1,32 +1,33 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSDK } from '@cognite/sdk-provider';
 import * as pdfjs from 'pdfjs-dist';
 import { FileInfo } from '@cognite/sdk';
 import ReactUnifiedViewer, {
   ContainerConfig,
-  ContainerType,
+  getContainerConfigFromFileInfo,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
 import styled from 'styled-components/macro';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
-import { useAssetAnnotations } from 'components/FileList/hooks';
 import {
   isFilePreviewable,
   readablePreviewableFileTypes,
 } from 'components/FileList/utils';
 import { Loader } from './components/Loader';
-import { useDownloadUrl } from './hooks/useDownloadUrl';
-import { useAnnotations } from './hooks/useAnnotations';
-import { mapContainerToMimeType } from './utils/mapContainerToMimeType';
+import { useUnifiedFileViewerState } from './hooks/useUnifiedFileViewerState';
 import {
-  FILE_CONTAINER_ID,
   MAX_CONTAINER_HEIGHT,
   MAX_CONTAINER_WIDTH,
   ROOT_CONTAINER_ID,
 } from './constants';
 import { ActionTools } from './components/ActionTools';
 import { Paginator } from './components/Paginator';
-import { useSearchResultsToShow } from './hooks/useSearchResultsToShow';
+import { useOCRSearchResults } from './hooks/useOCRSearchResults';
+import { useAnnotations } from './hooks/useAnnotations';
+import { useEventAnnotations } from './hooks/useEventAnnotations';
+import { getContainerId } from './utils/getContainerId';
+import { useExtractedAnnotations } from './hooks/useExtractedAnnotations';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
 
@@ -46,33 +47,48 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
     ...useTranslations(Object.keys(defaultTranslations), 'FileViewer').t,
   };
   const [ref, setRef] = useState<UnifiedViewer | undefined>(undefined);
+  const [containerConfig, setContainerConfig] = useState<ContainerConfig>();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const sdk = useSDK();
 
-  const { fileUrl, extractedAnnotations } = useDownloadUrl(file);
-  const { data: assetAnnotations } = useAssetAnnotations(file);
-  const { annotations, popovers, setClickedId } = useAnnotations({
-    assetAnnotations,
+  const { extractedAnnotations } = useExtractedAnnotations(file);
+  const { data: annotationsFromEvents } = useEventAnnotations(file);
+  const { data: annotationsFromAnnotations } = useAnnotations(file);
+  const { ocrSearchResultAnnotations } = useOCRSearchResults(file, searchQuery);
+
+  const { annotations, popovers, onStageClick } = useUnifiedFileViewerState({
+    file,
+    annotationsFromEvents,
+    annotationsFromAnnotations,
     extractedAnnotations,
+    ocrSearchResultAnnotations,
     currentPage,
   });
 
-  const { searchResultAnnotations } = useSearchResultsToShow(file, searchQuery);
-
-  const fileViewerContainerType = useMemo(
-    () => mapContainerToMimeType(file),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [fileUrl]
-  );
-
-  const onStageClick = () => {
-    setClickedId(undefined);
-  };
-
+  // reset when new file is loaded
   useEffect(() => {
     setCurrentPage(1);
     ref?.zoomToFit();
   }, [file, ref]);
+
+  useEffect(() => {
+    (async () => {
+      if (file?.id && file?.mimeType) {
+        const fileContainerConfig = await getContainerConfigFromFileInfo(
+          sdk as any,
+          file,
+          {
+            id: getContainerId(file.id),
+            page: currentPage,
+            maxWidth: MAX_CONTAINER_WIDTH,
+            maxHeight: MAX_CONTAINER_HEIGHT,
+          }
+        );
+        setContainerConfig(fileContainerConfig);
+      }
+    })();
+  }, [file, currentPage]);
 
   if (!file) {
     return (
@@ -94,25 +110,9 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
     );
   }
 
-  if (!fileUrl) {
+  if (!containerConfig) {
     return <Loader />;
   }
-
-  const container: ContainerConfig = {
-    type: ContainerType.ROW,
-    shouldRenderCompactly: true,
-    id: ROOT_CONTAINER_ID,
-    children: [
-      {
-        id: FILE_CONTAINER_ID,
-        type: fileViewerContainerType,
-        url: fileUrl,
-        maxWidth: MAX_CONTAINER_WIDTH,
-        maxHeight: MAX_CONTAINER_HEIGHT,
-        page: currentPage,
-      },
-    ],
-  };
 
   return (
     <FileViewerWrapper>
@@ -120,21 +120,19 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
         applicationId={CHARTS_APPLICATION_ID}
         id={ROOT_CONTAINER_ID}
         setRef={setRef}
-        container={container}
-        annotations={[...annotations, ...searchResultAnnotations]}
+        container={containerConfig}
+        annotations={annotations}
         tooltips={popovers}
         onClick={onStageClick}
       />
       <ActionTools
         file={file}
-        fileUrl={fileUrl}
         fileViewerRef={ref}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
       <Paginator
-        file={file}
-        fileUrl={fileUrl}
+        containerConfig={containerConfig}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
       />

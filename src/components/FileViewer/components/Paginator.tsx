@@ -1,29 +1,23 @@
 /* eslint-disable @cognite/no-number-z-index */
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { FileInfo } from '@cognite/sdk';
 import { Pagination } from '@cognite/cogs.js';
-import { getPdfCache } from '@cognite/unified-file-viewer';
-import { MULTI_PAGE_DOCUMENT_TYPES } from '../constants';
+import {
+  ContainerConfig,
+  ContainerType,
+  getPdfCache,
+} from '@cognite/unified-file-viewer';
 
 export const Paginator = ({
-  file,
-  fileUrl,
+  containerConfig,
   currentPage,
   onPageChange,
 }: {
-  file: FileInfo | undefined;
-  fileUrl: string | undefined;
+  containerConfig: ContainerConfig;
   currentPage: number;
   onPageChange: (page: number) => void;
 }) => {
   const [totalPages, setTotalPages] = useState<number>(1);
-
-  const { mimeType = '', name = '' } = file ?? {};
-  const query = mimeType + name.slice(0, name.lastIndexOf('.'));
-  const isMultiPageDocument = MULTI_PAGE_DOCUMENT_TYPES.some((el) =>
-    query.includes(el)
-  );
 
   const handlePageChange = (page: number) => {
     onPageChange(page);
@@ -31,18 +25,19 @@ export const Paginator = ({
 
   useEffect(() => {
     (async () => {
-      if (fileUrl && isMultiPageDocument) {
-        const pages = await getPdfCache().getPdfNumPages(fileUrl);
+      if (
+        containerConfig.type === ContainerType.DOCUMENT &&
+        containerConfig.url
+      ) {
+        const pages = await getPdfCache().getPdfNumPages(containerConfig.url);
         setTotalPages(pages);
+      } else {
+        setTotalPages(1);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fileUrl]);
+  }, [containerConfig]);
 
-  const showPaginator = useMemo(
-    () => isMultiPageDocument && totalPages > 1,
-    [isMultiPageDocument, totalPages]
-  );
+  const showPaginator = useMemo(() => totalPages > 1, [totalPages]);
 
   return (
     <ToolBar>

@@ -1,9 +1,9 @@
 import { FileInfo } from '@cognite/sdk';
 import { ContainerType } from '@cognite/unified-file-viewer';
 import {
-  PREVIEWABLE_IMAGE_TYPES,
   PREVIEWABLE_DOCUMENT_TYPES,
-} from 'components/FileList/utils';
+  PREVIEWABLE_IMAGE_TYPES,
+} from '../constants';
 
 // this will soon replaced by UFV built in utility
 export const mapContainerToMimeType = (file: FileInfo | undefined) => {

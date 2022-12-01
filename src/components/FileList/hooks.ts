@@ -1,26 +1,9 @@
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
-import {
-  CogniteAnnotation,
-  listAnnotationsForFile,
-  listFilesAnnotatedWithAssetId,
-} from '@cognite/annotations';
+import { listFilesAnnotatedWithAssetId } from '@cognite/annotations';
 import unionBy from 'lodash/unionBy';
 import { isFilePreviewable, isPreviewableImage } from './utils';
-
-export const useAssetAnnotations = (file?: File) => {
-  const sdk = useSDK();
-
-  return useQuery<CogniteAnnotation[]>(
-    ['annotations', file?.id],
-    async () => {
-      const annotations = await listAnnotationsForFile(sdk, file!);
-      return annotations.filter((a) => a.resourceType === 'asset');
-    },
-    { enabled: !!file }
-  );
-};
 
 export const useFilesAssetAppearsIn = (asset?: Asset, enabled = true) => {
   const sdk = useSDK();

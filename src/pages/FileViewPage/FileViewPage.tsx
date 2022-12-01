@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Body, Button, Loader, Title } from '@cognite/cogs.js';
+import { Body, Button, Loader, Title, Icon } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer/FileViewer';
 import { FileList } from 'components/FileList/FileList';
@@ -118,7 +118,13 @@ const FileViewPage = () => {
       <FileViewerContainer>
         <SplitPaneLayout defaultSize={250}>
           <div style={{ width: '100%', height: '100%' }}>
-            <FileViewer file={selectedFile} />
+            {selectedFile ? (
+              <FileViewer key={selectedFile.id} file={selectedFile} />
+            ) : (
+              <div style={{ padding: 16, textAlign: 'center' }}>
+                <Icon type="Loader" />
+              </div>
+            )}
             {linkedAssets.length > 0 && (
               <Button
                 style={{

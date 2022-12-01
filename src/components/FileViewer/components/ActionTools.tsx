@@ -5,16 +5,15 @@ import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { SearchBar } from './SearchBar';
 import { SEARCHABLE_DOCUMENT_TYPES } from '../constants';
+import { useFileUrl } from '../hooks/useFileUrl';
 
 export const ActionTools = ({
   file,
-  fileUrl,
   fileViewerRef,
   searchQuery,
   setSearchQuery,
 }: {
   file: FileInfo;
-  fileUrl: string | undefined;
   fileViewerRef: UnifiedViewer | undefined;
 
   searchQuery: string;
@@ -23,6 +22,8 @@ export const ActionTools = ({
   const { mimeType = '', name = '' } = file ?? {};
   const query = mimeType + name.slice(0, name.lastIndexOf('.'));
   const showSearch = SEARCHABLE_DOCUMENT_TYPES.some((el) => query.includes(el));
+
+  const { fileUrl } = useFileUrl(file);
 
   if (!fileUrl) return null;
 

@@ -1,11 +1,8 @@
+import {
+  PREVIEWABLE_FILE_TYPES,
+  PREVIEWABLE_IMAGE_TYPES,
+} from 'components/FileViewer/constants';
 import { FileInfo as File } from '@cognite/sdk';
-
-export const PREVIEWABLE_IMAGE_TYPES = ['png', 'jpeg', 'jpg', 'svg'];
-export const PREVIEWABLE_DOCUMENT_TYPES = ['pdf'];
-const PREVIEWABLE_FILE_TYPES = [
-  ...PREVIEWABLE_IMAGE_TYPES,
-  ...PREVIEWABLE_DOCUMENT_TYPES,
-];
 
 const isFileOfType = (file?: File, type?: string[]) => {
   const { mimeType = '', name = '' } = file || {};

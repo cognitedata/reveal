@@ -1,5 +1,4 @@
 export const ROOT_CONTAINER_ID = 'root-container-id';
-export const FILE_CONTAINER_ID = 'file-container-id';
 
 // Assuming these values were large enough to get a usable resolution for the download file.
 // Increasing this has a performance tradeoff.
@@ -12,5 +11,21 @@ export const styleForSelected = {
   fill: '#D46AE222',
 };
 
+export const PREVIEWABLE_IMAGE_TYPES = [
+  'png',
+  'jpeg',
+  'jpg',
+  'svg',
+  'tiff',
+  'tif',
+];
+export const PREVIEWABLE_DOCUMENT_TYPES = ['pdf'];
+export const PREVIEWABLE_FILE_TYPES = [
+  ...PREVIEWABLE_IMAGE_TYPES,
+  ...PREVIEWABLE_DOCUMENT_TYPES,
+];
+
 export const SEARCHABLE_DOCUMENT_TYPES = ['pdf'];
-export const MULTI_PAGE_DOCUMENT_TYPES = ['pdf'];
+
+// The retrieved URL becomes invalid in 30 seconds so refetch will trigger after every 25 seconds
+export const FILE_URL_REFETCH_INTERVAL = 25000;
