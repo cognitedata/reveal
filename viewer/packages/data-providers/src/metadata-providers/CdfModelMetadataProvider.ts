@@ -7,8 +7,7 @@ import { ModelMetadataProvider } from '../ModelMetadataProvider';
 
 import { applyDefaultModelTransformation } from '../utilities/applyDefaultModelTransformation';
 
-import { CogniteClient } from '@cognite/sdk';
-import { ItemsResponse } from '@cognite/sdk-core';
+import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 import { ModelIdentifier } from '../ModelIdentifier';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 
