@@ -70,34 +70,6 @@ export function MoreButton({ item: { type, id } }: Props) {
       >
         Copy oData query
       </Menu.Item>
-      <Menu.Item
-        key="copyId"
-        onClick={() =>
-          trackUsage(EXPLORATION.CLICK.POWER_BI_CONNECTOR, { type })
-        }
-      >
-        <a
-          href="https://docs.cognite.com/cdf/dashboards/guides/powerbi/getting_started.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn about the PowerBI connector
-        </a>
-      </Menu.Item>
-      <Menu.Item
-        key="grafanaLink"
-        onClick={() => {
-          trackUsage(EXPLORATION.CLICK.GRAFANA_CONNECTOR, { type });
-        }}
-      >
-        <a
-          href="https://docs.cognite.com/cdf/dashboards/guides/grafana/getting_started.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn about the Grafana connector
-        </a>
-      </Menu.Item>
     </Menu>
   );
 

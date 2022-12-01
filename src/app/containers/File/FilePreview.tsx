@@ -16,7 +16,7 @@ import { FileInfo } from '@cognite/sdk';
 import { EditFileButton } from 'app/components/TitleRowActions/EditFileButton';
 import styled from 'styled-components';
 import { Colors, Body, Tabs } from '@cognite/cogs.js';
-import { ContextualizationButton } from 'app/components/TitleRowActions/ContextualizationButton';
+
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
@@ -121,8 +121,6 @@ export const FilePreview = ({
                   setEditMode(mode => !mode);
                 }}
               />
-
-              <ContextualizationButton item={{ type: 'file', id: fileId! }} />
             </>
           }
           afterDefaultActions={actions}
