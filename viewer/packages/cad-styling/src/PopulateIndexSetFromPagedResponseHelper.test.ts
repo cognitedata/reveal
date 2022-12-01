@@ -9,7 +9,7 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import { sleep } from '../../../test-utilities';
 
 import { NumericRange } from '@reveal/utilities';
-import { ListResponse } from '@cognite/sdk-core';
+import { ListResponse } from '@cognite/sdk';
 
 describe('PopulateIndexSetFromPagedResponseHelper', () => {
   let helper: PopulateIndexSetFromPagedResponseHelper<number>;
