@@ -39,7 +39,7 @@ export const DocumentSummary = ({
   return (
     <SummaryCard
       icon="Document"
-      title="Documents"
+      title="Files"
       onAllResultsClick={onAllResultsClick}
     >
       {isLoading ? (

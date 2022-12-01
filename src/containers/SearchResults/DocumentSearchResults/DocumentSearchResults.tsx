@@ -75,7 +75,7 @@ export const DocumentSearchResults = ({
                 <SearchResultCountLabel
                   loadedCount={results.length}
                   totalCount={aggregateCount}
-                  resourceType="document"
+                  resourceType="file"
                 />
               }
             />

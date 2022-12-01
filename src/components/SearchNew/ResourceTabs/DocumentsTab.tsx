@@ -26,7 +26,7 @@ export const DocumentsTab = ({ query, filter, showCount = false }: Props) => {
       : filteredDocumentCount;
   return (
     <TabContainer>
-      <ResourceTypeTitle>{'Documents'}</ResourceTypeTitle>
+      <ResourceTypeTitle>Files</ResourceTypeTitle>
       {showCount && (
         <Label size="small" variant="unknown">
           {getTabCountLabel(count)}
