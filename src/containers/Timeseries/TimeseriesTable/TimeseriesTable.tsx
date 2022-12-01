@@ -11,6 +11,7 @@ import { RootAsset } from 'components/RootAsset';
 import isEmpty from 'lodash/isEmpty';
 import { ResourceTableColumns } from '../../../components';
 import { useTimeseriesMetadataKeys } from '../../../domain';
+import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 
@@ -61,6 +62,7 @@ export const TimeseriesTable = ({
       ResourceTableColumns.metadata(key)
     );
   }, [metadataKeys]);
+
   const columns = useMemo(() => {
     const sparkLineColumn: ColumnDef<Timeseries & { data: any }> = {
       header: 'Preview',
@@ -110,6 +112,13 @@ export const TimeseriesTable = ({
       },
       sparkLineColumn,
       Table.Columns.lastUpdatedTime,
+      {
+        header: 'Last reading',
+        accessorKey: 'lastReading',
+        cell: ({ row }) => {
+          return <TimeseriesLastReading timeseriesId={row.original.id} />;
+        },
+      },
       Table.Columns.created,
       {
         ...Table.Columns.id,
@@ -135,7 +144,7 @@ export const TimeseriesTable = ({
       },
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];
-  }, [query, dateRange, metadataColumns]);
+  }, [query, metadataColumns, dateRange]);
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
