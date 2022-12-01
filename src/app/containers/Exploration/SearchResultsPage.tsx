@@ -347,6 +347,7 @@ function SearchPage() {
                     {currentResourceType === 'event' && (
                       <EventSearchResults
                         showCount
+                        selectedRow={selectedRow}
                         enableAdvancedFilters={isAdvancedFiltersEnabled}
                         onClick={handleRowClick}
                         onFilterChange={(newValue: Record<string, unknown>) =>
