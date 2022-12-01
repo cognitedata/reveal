@@ -91,14 +91,16 @@ jobs:
            rustup component add rustfmt
            cargo fmt --check
 
-    # Skip to save time - development version is enough
-    # - name: Build prod version
-    #   working-directory: viewer
-    #   run: yarn run build:prod
-
     - name: Build development version
       working-directory: viewer
       run: yarn run build
+
+    - name: Check for API changes
+      working-directory: viewer
+      continue-on-error: false
+      run: |
+        # Run api-extractor comparison, output diff if failing
+        npx api-extractor run || diff reveal.api.md api-extractor-temp/reveal.api.md
 
     - name: Upload dist/ artifact
       uses: actions/upload-artifact@v3

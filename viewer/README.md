@@ -153,6 +153,12 @@ Add the following script to your package's `package.json`:
 Running the command `yarn start` will host a localhost site with a template HTML that includes the `/app/index.ts` script that has been transpiled to javascript.
 To see an example of this check out the `packages/camera-manager` package.
 
+## API Extractor
+
+The `viewer/reveal.api.md` file contains a description of the public API of Reveal. In the CI pipeline, the `reveal.api.md` file is checked to be up-to-date by API extractor.
+
+In order to update this file locally, run `yarn run update-api` *after* having run the build script. This will update the API file with any changes, which should be added and commited in the same PR.
+
 ## Debugging
 
 ### Worker source maps

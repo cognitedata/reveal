@@ -36,6 +36,8 @@ export class MetricsLogger {
   private static readonly TrackCameraNavigationThrottleDelay = 5000;
   private static readonly TrackCadNodeTransformOverriddenThrottleDelay = 1000;
 
+  public static globalMetricsLogger: MetricsLogger;
+
   private constructor(project: string, applicationId: string, eventProps: EventProps) {
     // Even though mixpanel has an opt out property, the mixpanel object
     // used by Metrics is not available here, so we have our own way of opting out.
@@ -91,9 +93,8 @@ export class MetricsLogger {
   }
 
   static init(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps): void {
-    if (globalThis.revealMetricsLogger === undefined && logMetrics) {
-      const metricsLogger = new MetricsLogger(project, applicationId, eventProps);
-      globalThis.revealMetricsLogger = { metricsLogger };
+    if (this.globalMetricsLogger === undefined && logMetrics) {
+      this.globalMetricsLogger = new MetricsLogger(project, applicationId, eventProps);
     }
   }
 
@@ -103,8 +104,8 @@ export class MetricsLogger {
   }
 
   static trackEvent(eventName: TrackedEvents, eventProps: EventProps): void {
-    if (globalThis.revealMetricsLogger) {
-      globalThis.revealMetricsLogger.metricsLogger.innerTrackEvent(eventName, eventProps);
+    if (MetricsLogger.globalMetricsLogger) {
+      this.globalMetricsLogger.innerTrackEvent(eventName, eventProps);
     }
   }
 

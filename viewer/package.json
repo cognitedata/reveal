@@ -52,6 +52,7 @@
     "test:visual": "yarn run build:wasm && concurrently --passthrough-arguments -k -s \"first\" \"yarn run test:visual:client {@}\" \"yarn run test:visual:server\"",
     "coverage": "yarn run build:wasm-test && jest --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache",
+    "update-api": "api-extractor run --local && shx rm -rf api-extractor-temp/",
     "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
     "bump": " yarn bump:commit && yarn bump:tag && yarn bump:push",
     "bump:commit": "git add -A && cross-var git commit -m \"chore(viewer): bump version $npm_package_version\"",
@@ -86,7 +87,7 @@
   "devDependencies": {
     "@azure/msal-browser": "2.32.0",
     "@cognite/sdk": "7.12.0",
-    "@cognite/sdk-core": "4.4.0",
+    "@microsoft/api-extractor": "^7.33.6",
     "@types/dat.gui": "0.7.7",
     "@types/expect-puppeteer": "5.0.2",
     "@types/glob": "8.0.0",
@@ -102,8 +103,8 @@
     "@types/skmeans": "0.11.3",
     "@types/stats": "0.16.30",
     "@types/tween.js": "18.5.1",
-    "@typescript-eslint/eslint-plugin": "5.43.0",
-    "@typescript-eslint/parser": "5.43.0",
+    "@typescript-eslint/eslint-plugin": "5.44.0",
+    "@typescript-eslint/parser": "5.44.0",
     "concurrently": "7.6.0",
     "cross-env": "7.0.3",
     "cross-var": "1.1.0",
@@ -129,9 +130,9 @@
     "jsdom": "20.0.3",
     "moq.ts": "9.0.2",
     "nock": "13.2.9",
-    "prettier": "2.7.1",
+    "prettier": "2.8.0",
     "process": "0.11.10",
-    "puppeteer": "19.2.2",
+    "puppeteer": "19.3.0",
     "random-seed": "0.3.0",
     "raw-loader": "4.0.2",
     "remove-files-webpack-plugin": "1.5.0",
@@ -153,7 +154,6 @@
   },
   "peerDependencies": {
     "@cognite/sdk": "7.12.0",
-    "@cognite/sdk-core": "^4.1.0",
     "three": "0.146.0"
   },
   "glslify": {
