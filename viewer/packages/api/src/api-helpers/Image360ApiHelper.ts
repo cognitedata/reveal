@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient, Metadata } from '@cognite/sdk';
 import { Image360Entity, Image360EntityFactory, Image360Facade } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
-import { pixelToNormalizedDeviceCoordinates, SceneHandler } from '@reveal/utilities';
+import { InputHandler, pixelToNormalizedDeviceCoordinates, PointerEventData, SceneHandler } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { Image360 } from '@reveal/360-images/src/Image360';
 
@@ -37,6 +37,7 @@ export class Image360ApiHelper {
     sceneHandler: SceneHandler,
     domElement: HTMLElement,
     activeCameraManager: ProxyCameraManager,
+    inputHandler: InputHandler,
     requestRedraw: () => void
   ) {
     const image360DataProvider = new Cdf360ImageEventProvider(cogniteClient);
@@ -54,8 +55,8 @@ export class Image360ApiHelper {
     const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event);
     domElement.addEventListener('mousemove', setHoverIconEventHandler);
 
-    const enter360Image = (event: PointerEvent) => this.enter360ImageOnIntersect(event);
-    domElement.addEventListener('pointerup', enter360Image);
+    const enter360Image = (event: PointerEventData) => this.enter360ImageOnIntersect(event);
+    inputHandler.on('click', enter360Image);
 
     const exit360ImageOnEscapeKey = (event: KeyboardEvent) => this.exit360ImageOnEscape(event);
     domElement.addEventListener('keydown', exit360ImageOnEscapeKey);
@@ -219,23 +220,27 @@ export class Image360ApiHelper {
     this._image360Navigation.dispose();
   }
 
-  private enter360ImageOnIntersect(event: PointerEvent): Promise<void> {
+  private enter360ImageOnIntersect(event: PointerEventData): Promise<void> {
     if (this._transitionInProgress) {
       return Promise.resolve();
     }
+    const entity = this.intersect360ImageIcons(event.offsetX, event.offsetY);
+    if (entity === undefined) {
+      return Promise.resolve();
+    }
+    return this.enter360Image(entity);
+  }
+
+  public intersect360ImageIcons(offsetX: number, offsetY: number): Image360Entity | undefined {
     const size = new THREE.Vector2(this._domElement.clientWidth, this._domElement.clientHeight);
 
-    const { offsetX, offsetY } = event;
     const { x: width, y: height } = size;
     const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
     const entity = this._image360Facade.intersect(
       { x: ndcCoordinates.x, y: ndcCoordinates.y },
       this._activeCameraManager.getCamera()
     );
-    if (entity === undefined) {
-      return Promise.resolve();
-    }
-    return this.enter360Image(entity);
+    return entity;
   }
 
   private setHoverIconOnIntersect(event: MouseEvent) {
