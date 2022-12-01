@@ -36,6 +36,6 @@ export const getSearchResultCountLabel = (
     loadedCount
   )} of ${withThousandSeparatorStringExtended(totalCount)} ${getTitle(
     resourceType,
-    totalCount <= 1
+    Number(totalCount) != 1
   ).toLowerCase()}`;
 };
