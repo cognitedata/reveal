@@ -8,7 +8,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 360 images is a common way to augment the 3D experience of your application.
 A 360 image is a controllable panoramic image that surrounds the original point from which the shot was taken. 
-360 images simulate being in the shoes of a photographer and looking around to the left, right, up and down as desired as well as sometimes zooming.
+360 images simulate being in the shoes of a photographer and looking around to the left, right, up and down as desired as well as zooming.
 
 The `Cognite3DViewer` entrypoint exposes the following methods related to 360 images.
 
@@ -35,20 +35,7 @@ At this time, the only valid `datasource` is `'events'`, but you can expect more
 The `eventFilter` property describes the filter that is used when fetching data from the data source.
 This is a generic key-value pair and can point to any metdata that was set during ingestion.
 
-The `AddImage360Options` is used for correcting / adding transformations to the set of 360 images and has the following declaration:
-```ts
-type AddImage360Options = {
-  /**
-   * An optional transformation which will be applied to all 360 images that are fetched.
-   */
-  collectionTransform?: THREE.Matrix4;
-  /**
-   * Set this to false if the 360 images' rotation is not pre-multiplied to fit the given model.
-   * @default true
-   */
-  preMultipliedRotation?: boolean;
-};
-```
+The `AddImage360Options` is used for correcting / adding transformations to the set of 360 images. The declaration can be found [here.](../api/modules/cognite_reveal#addimage360options)
 
 :::note
 The 360 images should be ingested with proper transformation data, and one should only rely on `AddImage360Options` when failing to do so or when using the same 360 images for multiple 3D models with different coordinate system.
@@ -69,26 +56,12 @@ It is also possible enter a 360 image programatically by calling the `enter360Im
 Exiting the visualization of a given 360 image is also possible using the `exit360Image()` method.
 For convenience, this is bound to the `ESCAPE` key out of the box.
 
+An example of entering into a 360 image can be seen here:
+<img src={useBaseUrl('/img/image360_2.png')} alt="AxisViewTool" />
+
 To remove one or more 360 images you can use the `remove360Images(...)` method which will also cleanup icons and other related data to the instance.
 
-The `Image360` instances that are returned have the following form:
-
-```ts
-interface Image360 {
-  /**
-   * Get a copy of the model-to-world transformation matrix
-   * of the given 360 image.
-   * @returns model-to-world transform of the 360 Image
-   */
-  get transform(): THREE.Matrix4;
-
-  /**
-   * The object containing the unit cube with the 360 images.
-   * @returns Image360Visualization
-   */
-  get image360Visualization(): Image360Visualization;
-}
-```
+The `Image360` declaration can be found here [here.](../api/interfaces/cognite_reveal.Image360)
 
 The `transform` represents the world transformation (rotation and translation) of the 360 image.
 The `Image360Visualization` object has convenience functionality related to the visualization of the 360 image such as setting the opacity of the given 360 image.
