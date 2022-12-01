@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { getFromLocalStorage, saveToLocalStorage } from '@cognite/storage';
-import { Title, Tooltip, Button } from '@cognite/cogs.js';
+import { Tooltip, Button } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { makeDefaultTranslations } from 'utils/translations';
 
 const defaultTranslations = makeDefaultTranslations(
-  'Start building your chart',
-  'Get started to creating your charts! Before creating any chart, first get your data here',
-  'Got it!'
+  'Find your data here to get started creating your chart.',
+  'Got it'
 );
 
 type Props = {
@@ -19,17 +18,12 @@ const TooltipContent = ({ onHide, translations }: Props) => {
   const t = { ...defaultTranslations, ...translations };
   return (
     <Contents>
-      <Heading level={4}>{t['Start building your chart']}</Heading>
       <TooltipText>
-        {
-          t[
-            'Get started to creating your charts! Before creating any chart, first get your data here'
-          ]
-        }
+        {t['Find your data here to get started creating your chart.']}
       </TooltipText>
       <TooltipActions>
         <Button onClick={onHide} type="primary">
-          {t['Got it!']}
+          {t['Got it']}
         </Button>
       </TooltipActions>
     </Contents>
@@ -65,13 +59,6 @@ const SearchTooltip = ({ children }: React.PropsWithChildren<any>) => {
 };
 
 export default SearchTooltip;
-
-const Heading = styled(Title)`
-  &&& {
-    font-weight: bold;
-    color: var(--cogs-text-inverted);
-  }
-`;
 
 const Contents = styled.div`
   width: 400px;
