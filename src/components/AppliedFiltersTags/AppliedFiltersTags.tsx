@@ -26,7 +26,7 @@ export const AppliedFiltersTags: React.FC<Props> = ({
       {filterKeys.map(key => {
         const filterValues = filter[key];
 
-        if (!filterValues) {
+        if (filterValues === undefined) {
           return null;
         }
 

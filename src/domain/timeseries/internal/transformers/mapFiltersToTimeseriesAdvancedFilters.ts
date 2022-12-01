@@ -11,6 +11,8 @@ export type TimeseriesProperties = {
   externalId: string;
   name: string;
   id: number[];
+  isStep: boolean;
+  isString: boolean;
   description: string;
   [key: `metadata|${string}`]: string;
 };
@@ -23,6 +25,8 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     externalIdPrefix,
     unit,
     metadata,
+    isStep,
+    isString,
     internalId,
   }: InternalTimeseriesFilters,
   searchQueryMetadataKeys?: Record<string, string>,
@@ -49,6 +53,8 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
         return [internalId];
       }
     })
+    .equals('isStep', isStep)
+    .equals('isString', isString)
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,
