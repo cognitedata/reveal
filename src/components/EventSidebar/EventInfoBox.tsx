@@ -45,6 +45,9 @@ const EventInfoBox = ({
     onToggleEvent(event.id);
   }, []);
 
+  const { startTime } = event;
+  const { endTime } = event;
+
   return (
     <EventDetails $active={selected} onClick={toggleSelection}>
       <Row>
@@ -65,13 +68,13 @@ const EventInfoBox = ({
         <Col span={12}>
           <Body level={2}>{t.Updated}:</Body>
           <Body level={2} strong>
-            {dayjs(event.lastUpdatedTime).format('MM.DD.YYYY hh:ss')}
+            {dayjs(event.lastUpdatedTime).format('MM.DD.YYYY HH:mm')}
           </Body>
         </Col>
         <Col span={12}>
           <Body level={2}>{t.Created}:</Body>
           <Body level={2} strong>
-            {dayjs(event.createdTime).format('MM.DD.YYYY hh:ss')}
+            {dayjs(event.createdTime).format('MM.DD.YYYY HH:mm')}
           </Body>
         </Col>
       </Row>
@@ -90,13 +93,13 @@ const EventInfoBox = ({
         <Col span={12}>
           <Body level={2}>{t.Start}:</Body>
           <Body level={2} strong>
-            {dayjs(event.startTime).format('MM.DD.YYYY hh:ss')}
+            {dayjs(startTime).format('MM.DD.YYYY HH:mm')}
           </Body>
         </Col>
         <Col span={12}>
           <Body level={2}>{t.End}:</Body>
           <Body level={2} strong>
-            {dayjs(event.endTime).format('MM.DD.YYYY hh:ss')}
+            {dayjs(endTime).format('MM.DD.YYYY HH:mm')}
           </Body>
         </Col>
       </Row>

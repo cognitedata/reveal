@@ -27,6 +27,7 @@ import {
   SidebarInnerCollapse,
 } from 'components/Common/SidebarElements';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
+import { omit } from 'lodash';
 import { transformNewFilterToOldFilter } from './helpers';
 import { GhostMetadataFilter } from './elements';
 
@@ -41,7 +42,8 @@ const defaultTranslations = makeDefaultTranslations(
   'View results',
   'Delete',
   'Duplicate',
-  'Show / hide'
+  'Show / hide',
+  'Event filter is empty'
 );
 
 type Props = {
@@ -93,6 +95,8 @@ const EventFilterForm = ({
     [eventFilters.id, setFilters]
   );
 
+  const isEventFilterValid = !!Object.keys(filters).length;
+
   return (
     <>
       <ByAssetFilter
@@ -135,12 +139,18 @@ const EventFilterForm = ({
             <MetadataFilter
               items={items}
               value={filters.metadata}
-              setValue={(newMetadata) =>
-                handleUpdateFilters({
-                  ...filters,
-                  metadata: newMetadata,
-                })
-              }
+              setValue={(newMetadata) => {
+                if (Object.keys(newMetadata || {}).length) {
+                  handleUpdateFilters({
+                    ...filters,
+                    metadata: newMetadata,
+                  });
+                } else {
+                  handleUpdateFilters({
+                    ...omit(filters, ['metadata']),
+                  });
+                }
+              }}
             />
           </GhostMetadataFilter>
 
@@ -186,16 +196,17 @@ const EventFilterForm = ({
           {t['Number of events']}:
           <br />
           <SidebarChip icon="Events" size="medium">
-            {items.length || '-'}
+            {isEventFilterValid && items.length > 0 ? items.length : '-'}
           </SidebarChip>
         </p>
       </SidebarInnerBox>
       <Button
         onClick={() => onShowEventResults(items)}
-        disabled={!(items.length > 0)}
+        disabled={!isEventFilterValid || !(items.length > 0)}
         block
       >
-        {t['View results']} &nbsp; <Icon type="ArrowRight" />
+        {isEventFilterValid ? t['View results'] : t['Event filter is empty']}
+        &nbsp; <Icon type="ArrowRight" />
       </Button>
       <SidebarFooterActions>
         <Row justify="space-between" align="middle">

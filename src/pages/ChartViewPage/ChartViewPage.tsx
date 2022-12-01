@@ -18,9 +18,10 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV2,
+  ChartEventFilters,
 } from 'models/chart/types';
 import { useSearchParam } from 'hooks/navigation';
-import { SEARCH_KEY } from 'utils/constants';
+import { SEARCH_KEY, ACTIVE_SIDEBAR_KEY } from 'utils/constants';
 import { startTimer, stopTimer, trackUsage } from 'services/metrics';
 import { Modes } from 'pages/types';
 import {
@@ -107,10 +108,14 @@ const defaultTranslations = makeDefaultTranslations(
 const keys = translationKeys(defaultTranslations);
 
 const ChartViewPage = () => {
+  const [activeSidebar = '', setActiveSidebarQuery] =
+    useSearchParam(ACTIVE_SIDEBAR_KEY);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showThresholdSidebar, setShowThresholdSidebar] = useState(false);
   const [showErrorSidebar, setShowErrorSidebar] = useState(false);
-  const [showEventSidebar, setShowEventSidebar] = useState(false);
+  const [showEventSidebar, setShowEventSidebar] = useState(
+    activeSidebar === 'events'
+  );
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY);
   const { chartId = '' } = useParams<{ chartId: string }>();
   const { data: login } = useUserInfo();
@@ -193,9 +198,12 @@ const ChartViewPage = () => {
   const sdk = useSDK();
   const allEvents: any = [];
   const allEventFilters = chart?.eventFilters || [];
-  const visibleEventData = allEventFilters?.filter((item: any) => item.visible);
+  const validEventFilters = allEventFilters?.filter(
+    (item: ChartEventFilters) =>
+      item.visible && Object.keys(item.filters).length
+  );
 
-  (visibleEventData || []).forEach(async (eventItem) => {
+  (validEventFilters || []).forEach(async (eventItem) => {
     try {
       const events = await sdk.events.list({
         filter: transformNewFilterToOldFilter({
@@ -210,8 +218,6 @@ const ChartViewPage = () => {
         visible: eventItem.visible,
         results: events.items,
       });
-
-      // setSelectedEvents([]);
     } catch (e: any) {
       throw new Error(e.toString());
     }
@@ -297,6 +303,13 @@ const ChartViewPage = () => {
     }
   }, [query, showSearch]);
 
+  /**
+   * Save events visibility on query param
+   */
+  useEffect(() => {
+    setActiveSidebarQuery(showEventSidebar ? 'events' : '');
+  }, [showEventSidebar]);
+
   const openNodeEditor = useCallback(() => {
     setWorkspaceMode('editor');
     startTimer('NodeEditor.ViewTime');
@@ -381,8 +394,10 @@ const ChartViewPage = () => {
 
   const handleCloseEventSidebar = useCallback(() => {
     setShowEventSidebar(false);
+    setActiveSidebarQuery('');
+    trackUsage('ChartView.CloseEventSidebar');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
-  }, []);
+  }, [setActiveSidebarQuery]);
 
   const handleCloseSearch = useCallback(() => {
     setShowSearch(false);
