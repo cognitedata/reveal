@@ -1,4 +1,5 @@
 import { Colors, Flex, Input, Loader } from '@cognite/cogs.js';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { useExtractorsList } from 'hooks/useExtractorsList';
@@ -12,6 +13,7 @@ import { trackUsage } from 'utils';
 import { useTranslation } from 'common';
 import { useSearchParams } from 'react-router-dom';
 import SearchHelper from 'components/search-helper/SearchHelper';
+import { useSourceSystems } from 'hooks/useSourceSystems';
 
 const Extractors = () => {
   const { t } = useTranslation();
@@ -20,6 +22,27 @@ const Extractors = () => {
   const searchQuery = searchParams.get('q') ?? '';
 
   const { data: extractors, status } = useExtractorsList();
+  const { data: sourceSystems } = useSourceSystems();
+
+  const filteredSourceSystems = useMemo(() => {
+    return (
+      sourceSystems?.filter((extractor) => {
+        const searchLowercase = searchQuery.toLowerCase();
+        if (extractor.description?.toLowerCase()?.includes(searchLowercase)) {
+          return true;
+        }
+        if (extractor.name.toLowerCase().includes(searchLowercase)) {
+          return true;
+        }
+        if (
+          extractor?.tags?.map((t) => t.toLowerCase()).includes(searchLowercase)
+        ) {
+          return true;
+        }
+        return false;
+      }) ?? []
+    );
+  }, [searchQuery, sourceSystems]);
 
   const extractorsList =
     extractors?.filter((extractor) => {
@@ -65,7 +88,10 @@ const Extractors = () => {
               }}
             />
             <Flex gap={40}>
-              <CategorySidebar extractorsList={extractorsList} />
+              <CategorySidebar
+                extractorsList={extractorsList}
+                sourceSystems={filteredSourceSystems}
+              />
               <StyledListContainer>
                 {searchQuery ? (
                   <StyledSearchResults>
