@@ -107,6 +107,7 @@ export function Table<T extends TableData>({
     () => ({
       minSize: 200,
       size: 400,
+      maxSize: 600,
     }),
     []
   );
