@@ -50,7 +50,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
       return (metadataKeys || []).map((key: string) =>
         ResourceTableColumns.metadata(
           key,
-          row => row?.sourceFile?.metadata?.key
+          row => row?.sourceFile?.metadata?.key || DASH
         )
       );
     }, [metadataKeys]);
