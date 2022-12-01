@@ -32,31 +32,33 @@ export const useDataModels = () => {
   );
 };
 
-export const useDataModel = (dataModelExternalId: string) => {
+export const useDataModel = (dataModelExternalId?: string) => {
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
 
   return useQuery(
-    QueryKeys.DATA_MODEL(dataModelExternalId),
+    QueryKeys.DATA_MODEL(dataModelExternalId || ''),
     async () =>
       await dataModelHandlerFuncWrapper<DataModel>(() =>
         dataModelsHandler.fetch({
-          dataModelId: dataModelExternalId,
+          dataModelId: dataModelExternalId || '',
         })
-      )
+      ),
+    { enabled: !!dataModelExternalId }
   );
 };
 
-export const useDataModelVersions = (dataModelExternalId: string) => {
+export const useDataModelVersions = (dataModelExternalId?: string) => {
   const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
 
   return useQuery(
-    QueryKeys.DATA_MODEL_VERSION_LIST(dataModelExternalId),
+    QueryKeys.DATA_MODEL_VERSION_LIST(dataModelExternalId || ''),
     async () =>
       await dataModelHandlerFuncWrapper<DataModelVersion[]>(() =>
         dataModelVersionHandler.versions({
-          externalId: dataModelExternalId,
+          externalId: dataModelExternalId || '',
         })
-      )
+      ),
+    { enabled: !!dataModelExternalId }
   );
 };
 

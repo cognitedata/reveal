@@ -13,7 +13,7 @@ import {
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { DataModelVersion } from '@platypus/platypus-core';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { Flex } from '@cognite/cogs.js';
 import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
@@ -27,7 +27,7 @@ export const QueryExplorerPage = ({
   dataModelExternalId,
 }: QueryExplorerPageProps) => {
   const { t } = useTranslation('SolutionMonitoring');
-  const history = useHistory();
+  const navigate = useNavigate();
   const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
@@ -42,8 +42,9 @@ export const QueryExplorerPage = ({
   );
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
-    history.replace(
-      `/data-models/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/data/query-explorer`
+    navigate(
+      `/data-models/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/data/query-explorer`,
+      { replace: true }
     );
   };
 

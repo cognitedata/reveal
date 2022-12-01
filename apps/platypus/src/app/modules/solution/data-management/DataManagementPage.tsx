@@ -1,5 +1,5 @@
-import React, { lazy, Suspense, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { lazy, Suspense, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
@@ -17,7 +17,6 @@ import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/
 import { Flex } from '@cognite/cogs.js';
 import { DOCS_LINKS } from '@platypus-app/constants';
 import { useDraftRows } from './hooks/useDraftRows';
-import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
 import { useDataModelState } from '../hooks/useDataModelState';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';
@@ -25,18 +24,6 @@ type TabType = 'preview' | 'pipelines' | 'data-quality';
 const PreviewPage = lazy<any>(() =>
   import('./pages/Preview').then((module) => ({
     default: module.Preview,
-  }))
-);
-
-const PipelinesPage = lazy<any>(() =>
-  import('./pages/Pipelines').then((module) => ({
-    default: module.Pipelines,
-  }))
-);
-
-const DataQualityPage = lazy<any>(() =>
-  import('./pages/DataQuality').then((module) => ({
-    default: module.DataQuality,
   }))
 );
 
@@ -58,7 +45,7 @@ export const DataManagementPage = ({
 
   const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
@@ -82,7 +69,7 @@ export const DataManagementPage = ({
   const { clearState } = useDraftRows();
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
-    history.replace(
+    navigate(
       `/data-models/${dataModelVersion.space}/${dataModelExternalId}/${dataModelVersion.version}/data/data-management/preview?type=${selectedTypeName}`
     );
     setSelectedVersionNumber(dataModelVersion.version);
@@ -93,22 +80,6 @@ export const DataManagementPage = ({
     <StyledPage style={tab !== 'preview' ? { display: 'none' } : {}}>
       <Suspense fallback={<Spinner />}>
         <PreviewPage dataModelExternalId={dataModelExternalId} />
-      </Suspense>
-    </StyledPage>
-  );
-
-  const Pipelines = (
-    <StyledPage style={tab !== 'pipelines' ? { display: 'none' } : {}}>
-      <Suspense fallback={<Spinner />}>
-        <PipelinesPage />
-      </Suspense>
-    </StyledPage>
-  );
-
-  const DataQuality = (
-    <StyledPage style={tab !== 'data-quality' ? { display: 'none' } : {}}>
-      <Suspense fallback={<Spinner />}>
-        <DataQualityPage />
       </Suspense>
     </StyledPage>
   );
@@ -129,11 +100,7 @@ export const DataManagementPage = ({
         </VersionSelectorToolbar>
       </PageContentLayout.Header>
 
-      <PageContentLayout.Body>
-        {Preview}
-        {Pipelines}
-        {DataQuality}
-      </PageContentLayout.Body>
+      <PageContentLayout.Body>{Preview}</PageContentLayout.Body>
     </PageContentLayout>
   );
 };

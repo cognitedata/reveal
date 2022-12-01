@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -53,7 +53,7 @@ export interface DataModelPageProps {
 }
 
 export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { t } = useTranslation('SolutionDataModel');
 
@@ -110,8 +110,9 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     dataModelTypeDefsBuilder.clear();
-    history.replace(
-      `/data-models/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/data`
+    navigate(
+      `/data-models/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/data`,
+      { replace: true }
     );
   };
 
@@ -195,8 +196,9 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
           );
 
           refetchDataModelVersions();
-          history.replace(
-            `/data-models/${dataModel?.space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}/data`
+          navigate(
+            `/data-models/${dataModel?.space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}/data`,
+            { replace: true }
           );
         } else {
           // update version in react-query cache and then refetch

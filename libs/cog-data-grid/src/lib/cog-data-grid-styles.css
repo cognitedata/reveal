@@ -120,6 +120,11 @@
 }
 
 .cog-data-grid.cog-data-grid-default .ag-header-cell {
+  padding-top: unset;
+  padding-bottom: unset;
+}
+
+.cog-data-grid.cog-data-grid-default .ag-header-cell {
   font-weight: 600;
 }
 

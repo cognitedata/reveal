@@ -1,7 +1,6 @@
 describe('Platypus Data Models Page - Create Data Model', () => {
   beforeEach(() => {
     cy.request('http://localhost:4200/reset');
-    cy.visit('/');
   });
   it('should not have access to data model according to token', () => {
     cy.mockUserToken();
@@ -13,7 +12,7 @@ describe('Platypus Data Models Page - Create Data Model', () => {
   });
   it('should not have access to creating a data model according to token', () => {
     cy.mockUserToken();
-    cy.visit('/');
+    cy.visit('/platypus/data-models');
     cy.getBySel('create-data-model-btn').should('be.disabled');
   });
 });

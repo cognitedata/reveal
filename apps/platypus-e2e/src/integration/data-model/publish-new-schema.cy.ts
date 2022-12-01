@@ -116,7 +116,7 @@ describe('Data Model Page - Publish new schema', () => {
   });
 
   it('should only show the published data model version after the localDraft is published', () => {
-    cy.visit('/');
+    cy.visit('/platypus');
 
     cy.getBySel('create-data-model-btn').click();
     cy.getBySel('input-data-model-name').type('cypress-test');

@@ -1,4 +1,4 @@
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from '@cognite/cogs.js';
 import {
   StyledButton,
@@ -15,12 +15,10 @@ import { useState } from 'react';
 import { DataModelSettingsModal } from '@platypus-app/components/DataModelSettingsModal/DataModelSettingsModal';
 
 export const NavigationDataModel = () => {
-  const { dataModelExternalId } = useParams<{
-    dataModelExternalId: string;
-  }>();
+  const { dataModelExternalId } = useParams();
   const { data: dataModel } = useDataModel(dataModelExternalId);
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const renderTopBarRight = () => {
     return (
@@ -44,7 +42,7 @@ export const NavigationDataModel = () => {
               icon="ArrowLeft"
               iconPlacement="left"
               aria-label="Go Back to data model list page"
-              onClick={() => history.push('/data-models')}
+              onClick={() => navigate('/data-models')}
               data-cy="back-to-all-models-btn"
             />
           </Tooltip>

@@ -1,7 +1,7 @@
 describe('Platypus Data Models Page - List Data Models', () => {
   beforeEach(() => {
     cy.request('http://localhost:4200/reset');
-    cy.visit('/');
+    cy.visit('/platypus');
   });
 
   it('should display title', () => {

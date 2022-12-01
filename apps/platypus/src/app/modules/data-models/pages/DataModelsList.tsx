@@ -10,13 +10,13 @@ import { DataModelCard } from '@platypus-app/modules/data-models/components/Data
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { DataModel } from '@platypus/platypus-core';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CreateDataModel } from '../CreateDataModel';
 import { DeleteDataModel } from '../DeleteDataModel';
 import { StyledRow, StyledDataModelListWrapper } from '../elements';
 
 export const DataModelsList = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation('data-models');
 
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
@@ -67,14 +67,14 @@ export const DataModelsList = () => {
           <DataModelCard
             dataModel={dataModel}
             onOpen={(openDataModel) => {
-              history.push({
-                pathname: `/data-models/${dataModel.space}/${openDataModel.id}/${DEFAULT_VERSION_PATH}`,
-              });
+              navigate(
+                `/data-models/${dataModel.space}/${openDataModel.id}/${DEFAULT_VERSION_PATH}`
+              );
             }}
             onEdit={(editDataModel) => {
-              history.push({
-                pathname: `/data-models/${dataModel.space}/${editDataModel.id}/${DEFAULT_VERSION_PATH}`,
-              });
+              navigate(
+                `/data-models/${dataModel.space}/${editDataModel.id}/${DEFAULT_VERSION_PATH}`
+              );
             }}
             onDelete={(deleteDataModel) =>
               setDataModelToDelete(deleteDataModel)

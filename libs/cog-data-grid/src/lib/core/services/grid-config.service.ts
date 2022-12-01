@@ -69,7 +69,6 @@ export class GridConfigService {
       stopEditingWhenCellsLoseFocus: true,
       autoSizePadding: 0,
       singleClickEdit: false,
-      editType: '', // removed 'fullRow' for now, since there seems to be a bug in ag grid in full row edit
       multiSortKey: 'ctrl',
       domLayout: virtualizationDisabled ? 'autoHeight' : 'normal',
       suppressColumnVirtualisation: virtualizationDisabled ? true : false,

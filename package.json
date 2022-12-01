@@ -9,7 +9,7 @@
     "@cognite/cdf-ui-cli": "^1.1.1",
     "@cognite/cdf-utilities": "^1.11.0",
     "@cognite/cogs.js": "^7.14.7",
-    "@cognite/react-container": "^6.2.0",
+    "@cognite/react-container": "^7.1.0",
     "@cognite/react-feature-flags": "^1.0.1",
     "@cognite/sdk": "^7.9.6",
     "@cognite/sidecar": "^0.4.1",
@@ -72,7 +72,7 @@
     "react-is": "18.0.0",
     "react-redux": "8.0.2",
     "react-refresh": "^0.11.0",
-    "react-router-dom": "^5.3.0",
+    "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
     "reactify-wc": "^4.0.0",
     "redux": "^4.1.2",
@@ -211,7 +211,8 @@
     "styled-components": "^5.3.3",
     "@cognite/cogs.js": "^7.14.7",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "@cognite/react-container/react-router-dom": "5.3.3"
   },
   "bin": {
     "platypus": "./dist/libs/platypus-cli/src/index.js"

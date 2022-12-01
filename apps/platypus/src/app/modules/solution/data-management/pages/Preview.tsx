@@ -15,7 +15,12 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { useEffect, useRef } from 'react';
-import { Redirect, useHistory, useLocation } from 'react-router-dom';
+import {
+  useNavigate,
+  useLocation,
+  Navigate,
+  useSearchParams,
+} from 'react-router-dom';
 import {
   DataPreviewTable,
   DataPreviewTableRef,
@@ -32,10 +37,12 @@ export interface PreviewProps {
 }
 
 export const Preview = ({ dataModelExternalId }: PreviewProps) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
   const dataPreviewTableRef = useRef<DataPreviewTableRef>(null);
+  const [, setSearchParams] = useSearchParams();
+  const newQueryParameters: URLSearchParams = new URLSearchParams();
 
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
@@ -85,7 +92,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     }
     if (!typeFromQuery && dataModelTypeDefs.types.length > 0) {
       const firstAvailableType = dataModelTypeDefs.types[0];
-      history.replace(
+      navigate(
         `/data-models/${dataModel?.space}/${dataModelExternalId}/${selectedDataModelVersion.version}/data/data-management/preview?type=${firstAvailableType.name}`
       );
     }
@@ -97,7 +104,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     params.set('type', dataModelTypeDefs.types[0].name);
 
     return (
-      <Redirect
+      <Navigate
         to={{
           ...location,
           search: params.toString(),
@@ -150,9 +157,9 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
             )}
             selectedTypeName={selectedType?.name}
             onClick={(item) => {
-              history.push({
-                search: `type=${item.name}`,
-              });
+              newQueryParameters.set('type', item.name);
+              setSearchParams(newQueryParameters);
+
               setSelectedType(
                 dataModelExternalId,
                 selectedDataModelVersion.version,

@@ -1,6 +1,6 @@
 describe('Data Model Page - Toggle Schema Visualizer', () => {
   const createNewDataModel = (dataModelName: string) => {
-    cy.visit('/');
+    cy.visit('/platypus');
 
     cy.getBySel('create-data-model-btn').click();
     cy.getBySel('input-data-model-name').type(dataModelName);

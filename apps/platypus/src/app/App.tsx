@@ -18,6 +18,7 @@ import { FeatureFlagProvider } from '../environments/FeatureFlagProvider';
 
 function App() {
   const tenant = getTenant();
+
   return (
     <FeatureFlagProvider>
       <QueryClientProvider client={queryClient}>
@@ -26,11 +27,15 @@ function App() {
           <ToastContainer />
           <StyledWrapper>
             <NoAccessWrapper>
-              <Router basename={tenant}>
-                <StyledPage>
-                  <Routes />
-                </StyledPage>
-              </Router>
+              <Router
+                basename={tenant}
+                window={window}
+                children={
+                  <StyledPage>
+                    <Routes />
+                  </StyledPage>
+                }
+              />
             </NoAccessWrapper>
           </StyledWrapper>
         </ContainerProvider>

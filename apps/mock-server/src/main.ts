@@ -36,7 +36,7 @@ server.use(cors());
 const cdfMiddlewares = cdfMiddleware(
   mockData,
   mockServerConfig,
-  args.middlewares
+  args.middlewares as string[]
 );
 
 server.get('/reset', (req, res) => {

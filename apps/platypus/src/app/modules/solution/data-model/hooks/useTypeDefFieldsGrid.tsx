@@ -82,16 +82,19 @@ export const useTypeDefFieldsGrid = () => {
         {
           property: 'nonNull',
           label: (
-            <Tooltip content={t('field_label_req_tooltip', 'Required')}>
-              <span
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}
-              >
-                {t('field_label_req', '!')}
-              </span>
-            </Tooltip>
+            <div style={{ width: 'inherit' }}>
+              <Tooltip content={t('field_label_req_tooltip', 'Required')}>
+                <span
+                  style={{
+                    width: 'inherit',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {t('field_label_req', '!')}
+                </span>
+              </Tooltip>
+            </div>
           ),
           optional: false,
           dataType: 'BOOLEAN',

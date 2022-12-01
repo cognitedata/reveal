@@ -1,7 +1,7 @@
 describe('Platypus Data Models Page - Create Data Model', () => {
   beforeEach(() => {
     cy.request('http://localhost:4200/reset');
-    cy.visit('/');
+    cy.visit('/platypus');
   });
 
   it('should contain create button', () => {

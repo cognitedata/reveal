@@ -1,6 +1,6 @@
 import { getCluster, getEnv } from '@cognite/cdf-utilities';
 import { useEffect, useRef } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 
 // This hook is for setting up the fusion query(env & cluster)
 // for the app so it can read current project in fusion.
@@ -10,7 +10,9 @@ export function useFusionQuery() {
   const cluster = getCluster();
   const env = getEnv();
   const location = useLocation();
-  const history = useHistory();
+
+  const [, setSearchParams] = useSearchParams();
+
   const ref = useRef<null | Record<string, string>>(null);
   useEffect(() => {
     if (env && cluster) {
@@ -25,7 +27,7 @@ export function useFusionQuery() {
     if (!env && !cluster && ref.current) {
       params.set('cluster', ref.current.cluster);
       params.set('env', ref.current.env);
-      history.replace('?' + params.toString());
+      setSearchParams(params);
     }
   });
 }

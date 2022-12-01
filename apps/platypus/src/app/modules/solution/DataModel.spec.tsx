@@ -12,6 +12,7 @@ import {
   DataModelReducerState,
   initialState,
 } from '@platypus-app/redux/reducers/global/dataModelReducer';
+import { DataLayout } from './DataLayout';
 
 const mockSolution = mockSolutions[0];
 const mockSchema = mockSchemas[0];
@@ -66,7 +67,7 @@ describe('DataModelPage Test', () => {
       };
     });
 
-    render(<DataModel />, {
+    render(<DataLayout />, {
       redux: {
         dataModel: {
           ...solutionReduxMock,

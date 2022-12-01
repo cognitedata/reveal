@@ -1,7 +1,7 @@
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useDataSets } from '@platypus-app/hooks/useDataSets';
 import { useDataModelMutation } from './hooks/useDataModelMutation';
@@ -14,7 +14,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
   const [hasInputError, setHasInputError] = useState(false);
   const [externalId, setExternalId] = useState('');
   const [isExternalIdDirty, setIsExternalIdDirty] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation('CreateDataModelDialog');
   const { create } = useDataModelMutation();
 
@@ -71,7 +71,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
               'Data Model successfully created'
             ),
           });
-          history.push(
+          navigate(
             `data-models/${result.getValue().space}/${
               result.getValue().id
             }/${DEFAULT_VERSION_PATH}`

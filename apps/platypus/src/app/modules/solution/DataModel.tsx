@@ -1,5 +1,4 @@
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
-import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import {
   useDataModel,
@@ -7,15 +6,9 @@ import {
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { lazy, Suspense, useEffect, useState } from 'react';
-import { Route, Switch, useParams } from 'react-router-dom';
+import { lazy, useEffect, useState } from 'react';
+import { Route, Routes, useParams } from 'react-router-dom';
 import { useDataModelState } from './hooks/useDataModelState';
-
-const OverviewPage = lazy<any>(() =>
-  import('./OverviewLayout').then((module) => ({
-    default: module.OverviewLayout,
-  }))
-);
 
 const DataPage = lazy(() =>
   import('./DataLayout').then((module) => ({
@@ -23,31 +16,10 @@ const DataPage = lazy(() =>
   }))
 );
 
-const ToolsPage = lazy(() =>
-  import('./tools/pages/ToolsPage').then((module) => ({
-    default: module.ToolsPage,
-  }))
-);
-
-const DeploymentsPage = lazy(() =>
-  import('./deployments/pages/DeploymentsPage').then((module) => ({
-    default: module.DeploymentsPage,
-  }))
-);
-
-const SettingsPage = lazy(() =>
-  import('./settings/pages/SettingsPage').then((module) => ({
-    default: module.SettingsPage,
-  }))
-);
-
 export const DataModel = () => {
   const { t } = useTranslation('DataModel');
 
-  const { dataModelExternalId, version } = useParams<{
-    dataModelExternalId: string;
-    version: string;
-  }>();
+  const { dataModelExternalId, version } = useParams();
   const {
     setCurrentTypeName,
     setSelectedVersionNumber,
@@ -76,9 +48,9 @@ export const DataModel = () => {
   // Otherwise you will end up having race condition and unpredictable state
   // Think twice before changing anything from here!
   const selectedDataModelVersion = useSelectedDataModelVersion(
-    version,
+    version || '',
     dataModelVersions || [],
-    dataModelExternalId,
+    dataModelExternalId || '',
     dataModel?.space || ''
   );
 
@@ -103,7 +75,7 @@ export const DataModel = () => {
 
         setGraphQlSchema(selectedDataModelVersion.schema);
         // set selected version based on the param in the route we landed on
-        setSelectedVersionNumber(version);
+        setSelectedVersionNumber(version || '');
         setSelectedDataModelVersion(selectedDataModelVersion);
         setCurrentTypeName(null);
         setIsReady(true);
@@ -142,54 +114,8 @@ export const DataModel = () => {
   }
 
   return (
-    <StyledPageWrapper data-testid="data_model_page_wrapper">
-      <Switch>
-        <Route
-          exact
-          path={[
-            '/data-models/:space?/:dataModelExternalId?/:version?',
-            '/data-models/:space?/:dataModelExternalId?/:version?/data/:solutionPage?/:subSolutionPage?',
-          ]}
-        >
-          <Suspense fallback={<Spinner />}>
-            <DataPage />
-          </Suspense>
-        </Route>
-        <Route
-          exact
-          path={[
-            '/data-models/:space?/:dataModelExternalId?/:version?/overview/:solutionPage?',
-          ]}
-        >
-          <Suspense fallback={<Spinner />}>
-            <OverviewPage />
-          </Suspense>
-        </Route>
-        <Route
-          exact
-          path="/data-models/:space?/:dataModelExternalId?/:version?/tools"
-        >
-          <Suspense fallback={<Spinner />}>
-            <ToolsPage />
-          </Suspense>
-        </Route>
-        <Route
-          exact
-          path="/data-models/:space?/:dataModelExternalId?/:version?/deployments"
-        >
-          <Suspense fallback={<Spinner />}>
-            <DeploymentsPage />
-          </Suspense>
-        </Route>
-        <Route
-          exact
-          path="/data-models/:space?/:dataModelExternalId?/:version?/settings"
-        >
-          <Suspense fallback={<Spinner />}>
-            <SettingsPage />
-          </Suspense>
-        </Route>
-      </Switch>
-    </StyledPageWrapper>
+    <Routes>
+      <Route path="*" element={<DataPage />} />
+    </Routes>
   );
 };

@@ -1,8 +1,6 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
 import { DataModelsPage } from './modules/data-models/DataModelsPage';
-import { GuideToolsPage } from './modules/guides/GuideToolsPage';
-import { StatusPage } from './modules/statusboard/StatusboardPage';
 import { DataModel } from './modules/solution/DataModel';
 import { NavigationDataModel } from './components/Navigations/NavigationDataModel';
 import { Spinner } from './components/Spinner/Spinner';
@@ -11,36 +9,44 @@ import { useMixpanelPathTracking } from './hooks/useMixpanel';
 
 const Routes = () => {
   useFusionQuery();
+
   return (
     <React.Suspense fallback={<Spinner />}>
-      <Switch>
-        <Route exact path={['/', '/data-models']}>
-          <HOCPathTracking>
-            <DataModelsPage />
-          </HOCPathTracking>
-        </Route>
-        <Route
-          exact
-          path={[
-            '/data-models/:space?/:dataModelExternalId?/:version?/:tabKey?/:solutionPage?/:subSolutionPage?',
-          ]}
-        >
-          <HOCPathTracking>
-            <NavigationDataModel />
-          </HOCPathTracking>
-          <DataModel />
-        </Route>
-        <Route exact path="/guidetools">
-          <HOCPathTracking>
-            <GuideToolsPage />
-          </HOCPathTracking>
-        </Route>
-        <Route exact path="/statusboard">
-          <HOCPathTracking>
-            <StatusPage />
-          </HOCPathTracking>
-        </Route>
-      </Switch>
+      <HOCPathTracking>
+        <ReactRoutes>
+          <Route path="/" element={<Outlet />}>
+            <Route index element={<DataModelsPage />} />
+            <Route
+              path="data-models/*"
+              element={
+                <ReactRoutes>
+                  <Route>
+                    <Route index element={<DataModelsPage />} />
+                    <Route
+                      path=":space/:dataModelExternalId/:version/*"
+                      element={
+                        <ReactRoutes>
+                          <Route
+                            path="/*"
+                            element={
+                              <React.Suspense fallback={<Spinner />}>
+                                <NavigationDataModel />
+                                <React.Suspense fallback={<Spinner />}>
+                                  <DataModel />
+                                </React.Suspense>
+                              </React.Suspense>
+                            }
+                          />
+                        </ReactRoutes>
+                      }
+                    ></Route>
+                  </Route>
+                </ReactRoutes>
+              }
+            />
+          </Route>
+        </ReactRoutes>
+      </HOCPathTracking>
     </React.Suspense>
   );
 };

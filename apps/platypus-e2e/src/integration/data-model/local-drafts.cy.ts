@@ -1,7 +1,7 @@
 describe('Data Model Page - Local Drafts', () => {
   function createDataModel(name: string) {
     // Create new data model
-    cy.visit('/');
+    cy.visit('/platypus');
     cy.getBySel('create-data-model-btn').click();
     cy.getBySel('input-data-model-name').type(name);
     cy.getBySel('modal-ok-button').click();

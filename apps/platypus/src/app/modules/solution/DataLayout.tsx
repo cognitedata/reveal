@@ -1,12 +1,15 @@
 import { lazy, Suspense } from 'react';
 
-import { Route, Switch, useParams } from 'react-router-dom';
-import { Icon } from '@cognite/cogs.js';
+import { Outlet, Route, Routes, useParams } from 'react-router-dom';
 
 import { PageLayout } from '@platypus-app/components/Layouts/PageLayout';
-import { SideBarMenu } from '@platypus-app/components/Navigations/SideBarMenu';
+import {
+  SideBarItem,
+  SideBarMenu,
+} from '@platypus-app/components/Navigations/SideBarMenu';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 
 const DataModelPage = lazy<any>(() =>
   import('./data-model/pages/DataModelPage').then((module) => ({
@@ -32,44 +35,19 @@ export const DataLayout = () => {
     dataModelExternalId: string;
   }>();
 
-  const renderPageContent = () => {
-    return (
-      <Switch>
-        <Route path="*data-models/:space/:dataModelExternalId/:version?/:data?/data-management/:subSolutionPage?">
-          <Suspense fallback={<Spinner />}>
-            <DataManagementPage dataModelExternalId={dataModelExternalId} />
-          </Suspense>
-        </Route>
-        <Route exact path="*/query-explorer">
-          <Suspense fallback={<Spinner />}>
-            <QueryExplorerPage dataModelExternalId={dataModelExternalId} />
-          </Suspense>
-        </Route>
-        <Route exact path="*">
-          <Suspense fallback={<Spinner />}>
-            <DataModelPage dataModelExternalId={dataModelExternalId} />
-          </Suspense>
-        </Route>
-      </Switch>
-    );
-  };
-
-  const sideBarMenuItems = [
+  const sideBarMenuItems: SideBarItem[] = [
     {
-      icon: <Icon type="GraphTree" />,
-      page: 'data',
+      icon: 'GraphTree',
       slug: '',
       tooltip: t('data_model_title', 'Data model'),
     },
     {
-      icon: <Icon type="DataSource" />,
-      page: 'data',
+      icon: 'DataSource',
       slug: 'data-management/preview',
       tooltip: t('data_management_title', 'Data management'),
     },
     {
-      icon: <Icon type="Search" />,
-      page: 'data',
+      icon: 'Search',
       slug: 'query-explorer',
       tooltip: t('query_explorer_title', 'Query Explorer'),
       splitter: true,
@@ -77,11 +55,55 @@ export const DataLayout = () => {
   ];
 
   return (
-    <PageLayout>
-      <PageLayout.Navigation>
-        <SideBarMenu items={sideBarMenuItems} />
-      </PageLayout.Navigation>
-      <PageLayout.Content>{renderPageContent()}</PageLayout.Content>
-    </PageLayout>
+    <Routes>
+      <Route
+        element={
+          <StyledPageWrapper data-testid="data_model_page_wrapper">
+            <PageLayout>
+              <PageLayout.Navigation>
+                <SideBarMenu items={sideBarMenuItems} />
+              </PageLayout.Navigation>
+              <PageLayout.Content>
+                <Suspense fallback={<Spinner />}>
+                  <Outlet />
+                </Suspense>
+              </PageLayout.Content>
+            </PageLayout>
+          </StyledPageWrapper>
+        }
+      >
+        <Route
+          index
+          element={<DataModelPage dataModelExternalId={dataModelExternalId} />}
+        />
+        <Route
+          path="/data"
+          element={
+            <>
+              <Outlet />
+            </>
+          }
+        >
+          <Route
+            index
+            element={
+              <DataModelPage dataModelExternalId={dataModelExternalId} />
+            }
+          />
+          <Route
+            path="data-management/:subSolutionPage"
+            element={
+              <DataManagementPage dataModelExternalId={dataModelExternalId} />
+            }
+          />
+          <Route
+            path="query-explorer"
+            element={
+              <QueryExplorerPage dataModelExternalId={dataModelExternalId} />
+            }
+          />
+        </Route>
+      </Route>
+    </Routes>
   );
 };
