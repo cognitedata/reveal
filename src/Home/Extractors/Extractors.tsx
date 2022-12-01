@@ -66,7 +66,16 @@ const Extractors = () => {
             <Flex gap={40}>
               <CategorySidebar extractorsList={extractorsList} />
               <StyledListContainer>
-                <CreateExtractor />
+                {searchQuery ? (
+                  <StyledSearchResults>
+                    {t('search-results', {
+                      count: extractorsList.length,
+                      query: searchQuery,
+                    })}
+                  </StyledSearchResults>
+                ) : (
+                  <CreateExtractor />
+                )}
                 <ExtractorsList extractorsList={extractorsList} />
               </StyledListContainer>
             </Flex>
@@ -82,6 +91,10 @@ const StyledListContainer = styled.div`
   flex-direction: column;
   gap: 16px;
   flex: 1;
+`;
+
+const StyledSearchResults = styled.div`
+  color: ${Colors['text-icon--muted']};
 `;
 
 const StyledSearchInput = styled(Input).attrs({
