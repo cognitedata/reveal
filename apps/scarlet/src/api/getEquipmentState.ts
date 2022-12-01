@@ -1,5 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
-import { DataSetId, Facility } from 'types';
+import { datasetByProject } from 'config';
+import { Facility } from 'types';
 import config from 'utils/config';
 
 export const getEquipmentState = async (
@@ -11,12 +12,13 @@ export const getEquipmentState = async (
   }: { facility?: Facility; unitId: string; equipmentId: string }
 ): Promise<any> => {
   if (!facility) throw Error('Facility is not set');
+  const dataSet = datasetByProject(client.project);
 
   try {
     const file = await client.files
       .list({
         filter: {
-          dataSetIds: [{ id: DataSetId.P66_ScarletEquipmentState }],
+          dataSetIds: [{ id: dataSet.P66_ScarletEquipmentState }],
           metadata: {
             env: config.env,
             facilityId: facility.id,

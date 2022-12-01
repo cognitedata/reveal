@@ -5,4 +5,5 @@ export type Facility = {
   shortName: string;
   datasetId: number;
   env: string[];
+  project: string;
 };

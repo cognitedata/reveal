@@ -19,6 +19,7 @@ import {
   equipmentStatusOptions,
   equipmentStatusOptionsDictionary,
   EquipmentTypeOption,
+  U1PresenceOption,
 } from './utils';
 
 type EquipmentsFilterProps = {
@@ -28,6 +29,12 @@ type EquipmentsFilterProps = {
   equipmentTypeNames: string[];
   setFilter: Dispatch<SetStateAction<Filter>>;
 };
+
+const BinarySelectorOptions = [
+  { label: 'All', value: 'all' },
+  { label: 'Yes', value: 'Yes' },
+  { label: 'No', value: 'No' },
+];
 
 export const EquipmentsFilter = ({
   loading,
@@ -39,20 +46,26 @@ export const EquipmentsFilter = ({
   const [search, setSearch] = useState('');
 
   const onChangeEquipmentType = useCallback(
-    (equipmentTypeOption: EquipmentTypeOption) =>
+    (option: EquipmentTypeOption) =>
       setFilter((filter) => ({
         ...filter,
-        equipmentTypeName: equipmentTypeOption.value,
+        equipmentTypeName: option.value,
       })),
     []
   );
 
   const onChangeEquipmentStatus = useCallback(
-    (equipmentStatusOption: EquipmentStatusOption) =>
+    (option: EquipmentStatusOption) =>
       setFilter((filter) => ({
         ...filter,
-        equipmentStatus: equipmentStatusOption.value,
+        equipmentStatus: option.value,
       })),
+    []
+  );
+
+  const onChangeU1Presence = useCallback(
+    (option: U1PresenceOption) =>
+      setFilter((filter) => ({ ...filter, U1Presence: option.value })),
     []
   );
 
@@ -115,6 +128,16 @@ export const EquipmentsFilter = ({
           width={180}
           onChange={onChangeEquipmentStatus}
           title={filter.equipmentStatus === 'all' ? 'Status' : undefined}
+        />
+        <Select<string>
+          menuPlacement="bottom"
+          value={BinarySelectorOptions.find(
+            (opt) => opt.value === filter.U1Presence
+          )}
+          options={BinarySelectorOptions}
+          width={120}
+          onChange={onChangeU1Presence}
+          title="U1"
         />
       </Styled.FiltersContainer>
       <Styled.NumberEquipments className="cogs-body-2">

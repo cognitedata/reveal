@@ -4,6 +4,7 @@ import { getUnitListByFacility } from 'api';
 import { defaultFacility } from 'config';
 import { useApi, useAppContext, useFacility, useHomePageContext } from 'hooks';
 import { PAGES } from 'pages/Menubar';
+import { useAuthContext } from '@cognite/react-container';
 
 import { EquipmentList, Navigation } from '..';
 import { AppActionType, HomePageActionType } from '../EquipmentList/types';
@@ -11,6 +12,7 @@ import { AppActionType, HomePageActionType } from '../EquipmentList/types';
 import * as Styled from './style';
 
 export const PageBody = () => {
+  const { client } = useAuthContext();
   const history = useHistory();
   const { unitId } = useParams<{ unitId: string }>();
   const facility = useFacility();
@@ -33,7 +35,7 @@ export const PageBody = () => {
     } else {
       const facilityPath =
         localStorage?.getItem('scarlet_last_facility_path') ||
-        defaultFacility.path;
+        defaultFacility(client?.project || '').path;
 
       history.replace(
         generatePath(PAGES.FACILITY, {

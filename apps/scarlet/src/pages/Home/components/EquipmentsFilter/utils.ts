@@ -8,6 +8,7 @@ export type EquipmentStatusOption = {
   value: 'all' | EquipmentStatus;
   label: string;
 };
+export type U1PresenceOption = { value: string; label: string };
 
 const allOption = { value: 'all', label: 'All' };
 

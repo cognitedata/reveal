@@ -1,5 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
-import { DataSetId, EquipmentData, Facility } from 'types';
+import { datasetByProject } from 'config';
+import { EquipmentData, Facility } from 'types';
 import {
   getEquipmentProgress,
   getEquipmentStateExternalId,
@@ -25,6 +26,7 @@ export const saveEquipment = async (
 ): Promise<boolean> => {
   if (!facility) throw Error('Facility is not set');
 
+  const dataSet = datasetByProject(client.project);
   const externalId = getEquipmentStateExternalId(facility, unitId, equipmentId);
 
   try {
@@ -33,7 +35,7 @@ export const saveEquipment = async (
         externalId,
         name: `${externalId}.json`,
         mimeType: 'application/json',
-        dataSetId: DataSetId.P66_ScarletEquipmentState,
+        dataSetId: dataSet.P66_ScarletEquipmentState,
         metadata: {
           env: config.env,
           facilityId: facility.id,

@@ -27,12 +27,14 @@ export type Filter = {
   search: string;
   equipmentTypeName: string;
   equipmentStatus: 'all' | EquipmentStatus;
+  U1Presence: string;
 };
 
 const defaultFilter: Filter = {
   search: '',
   equipmentTypeName: 'all',
   equipmentStatus: 'all',
+  U1Presence: 'all',
 };
 
 export const EquipmentList = () => {
@@ -79,7 +81,8 @@ export const EquipmentList = () => {
           (filter.equipmentTypeName === 'all' ||
             item.typeName === filter.equipmentTypeName) &&
           (filter.equipmentStatus === 'all' ||
-            item.status === filter.equipmentStatus)
+            item.status === filter.equipmentStatus) &&
+          (filter.U1Presence === 'all' || item.u1doc === filter.U1Presence)
       ),
     [data, filter]
   );

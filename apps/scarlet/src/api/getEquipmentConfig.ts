@@ -1,9 +1,10 @@
 import { CogniteClient } from '@cognite/sdk';
+import { datasetByProject } from 'config';
 import { transformEquipmentConfig } from 'transformations';
-import { DataSetId } from 'types';
 import config from 'utils/config';
 
 export const getEquipmentConfig = async (client: CogniteClient) => {
+  const dataSet = datasetByProject(client.project);
   const externalIdPrefix = ['schema', 'scanner', 'config', config.env].join(
     '_'
   );
@@ -11,7 +12,7 @@ export const getEquipmentConfig = async (client: CogniteClient) => {
     .list({
       filter: {
         externalIdPrefix,
-        dataSetIds: [{ id: DataSetId.P66_ScarletScannerConfiguration }],
+        dataSetIds: [{ id: dataSet.P66_ScarletScannerConfiguration }],
       },
       limit: 1000,
     })
@@ -32,7 +33,7 @@ export const getEquipmentConfig = async (client: CogniteClient) => {
 
   if (!configFile)
     throw Error(
-      `Failed to load equipment-configuration file with data-set-id: ${DataSetId.P66_ScarletScannerConfiguration}`
+      `Failed to load equipment-configuration file with data-set-id: ${dataSet.P66_ScarletScannerConfiguration}`
     );
 
   const downloadUrl = await client.files

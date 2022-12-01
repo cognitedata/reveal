@@ -5,7 +5,8 @@ import { facilityList } from 'config';
 export const getUnitListByFacility = async (
   client: CogniteClient
 ): Promise<UnitListByFacility> => {
-  const unitsByFacilityId = facilityList.reduce((result, facility) => {
+  const { project } = client;
+  const unitsByFacilityId = facilityList(project).reduce((result, facility) => {
     if (!facility.id) return result;
     return { ...result, [facility.id]: [] };
   }, {} as UnitListByFacility);
@@ -13,8 +14,8 @@ export const getUnitListByFacility = async (
   let next;
   let list = await client.assets.list({
     filter: {
-      parentExternalIds: facilityList.map((f) => f.id),
-      dataSetIds: facilityList.map((f) => ({ id: f.datasetId })),
+      parentExternalIds: facilityList(project).map((f) => f.id),
+      dataSetIds: facilityList(project).map((f) => ({ id: f.datasetId })),
       labels: { containsAll: [{ externalId: 'Unit' }] },
     },
     limit: 1000,
@@ -23,7 +24,7 @@ export const getUnitListByFacility = async (
   do {
     if (next) list = await next(); // eslint-disable-line no-await-in-loop
     list.items.forEach((item) => {
-      const facility = facilityList.find(
+      const facility = facilityList(project).find(
         (facility) => facility.id === item.parentExternalId
       );
 

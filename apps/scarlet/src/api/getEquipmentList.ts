@@ -1,8 +1,9 @@
 import { CogniteClient, ListResponse, FileInfo } from '@cognite/sdk';
-import { DataSetId, EquipmentListItem, EquipmentStatus, Facility } from 'types';
+import { EquipmentListItem, EquipmentStatus, Facility } from 'types';
 import { getEquipmentType, isValidEquipment } from 'utils';
 import config from 'utils/config';
 import { getDocuments } from 'api';
+import { datasetByProject } from 'config';
 
 import { getUnitAsset } from '.';
 
@@ -70,11 +71,12 @@ const getEquipmentStates = async (
   client: CogniteClient,
   { facility, unitId }: { facility: Facility; unitId: string }
 ) => {
+  const dataSet = datasetByProject(client.project);
   const equipmentStates: Record<string, any> = {};
 
   let list = await client.files.list({
     filter: {
-      dataSetIds: [{ id: DataSetId.P66_ScarletEquipmentState }],
+      dataSetIds: [{ id: dataSet.P66_ScarletEquipmentState }],
       metadata: {
         env: config.env,
         facilityId: facility.id,

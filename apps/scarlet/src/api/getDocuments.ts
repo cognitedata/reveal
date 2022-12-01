@@ -1,5 +1,6 @@
 import { CogniteClient, ListResponse, FileInfo } from '@cognite/sdk';
-import { DataSetId, Facility } from 'types';
+import { datasetByProject } from 'config';
+import { Facility } from 'types';
 
 export const getDocuments = async (
   client: CogniteClient,
@@ -13,6 +14,7 @@ export const getDocuments = async (
     prefix?: string;
   }
 ): Promise<ListResponse<FileInfo[]>> => {
+  const dataSet = datasetByProject(client.project);
   const externalIdPrefix = [facility.name, unitId, prefix]
     .filter(Boolean)
     .join('_');
@@ -20,7 +22,7 @@ export const getDocuments = async (
     filter: {
       externalIdPrefix,
       uploaded: true,
-      dataSetIds: [{ id: DataSetId.P66_EquipmentScans }],
+      dataSetIds: [{ id: dataSet.P66_U1Forms }],
     },
   });
 
