@@ -7,7 +7,7 @@ import { Cognite3DViewer, Image360 } from "@cognite/reveal";
 import * as dat from 'dat.gui';
 
 export class Image360UI {
-  constructor(private viewer: Cognite3DViewer, private gui: dat.GUI){
+  constructor(viewer: Cognite3DViewer, gui: dat.GUI){
     let entities: Image360[] = [];
 
     const optionsFolder = gui.addFolder('Add Options');
