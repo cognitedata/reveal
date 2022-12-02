@@ -17,7 +17,7 @@ add360ImageSet(
   datasource: 'events', 
   eventFilter: { [key: string]: string }, 
   add360ImageOptions?: AddImage360Options
-): Promise<Image360[]>;
+): Promise<Image360Collection>;
 
 remove360Images(...image360Entities: Image360[]): Promise<void>:
 
@@ -34,6 +34,8 @@ Once the data is ingested, a set of 360 images can be added to the viewer with `
 At this time, the only valid `datasource` is `'events'`, but you can expect more to be added in the future.
 The `eventFilter` property describes the filter that is used when fetching data from the data source.
 This is a generic key-value pair and can point to any metdata that was set during ingestion.
+`viewer.add360ImageSet(...)` will return a `Image360Collection` which contains each of the `image360` entities for this given set.
+The definition of `Image360Collection` can be found [here.](../api/interfaces/cognite_reveal.Image360Collection)
 
 The `AddImage360Options` is used for correcting / adding transformations to the set of 360 images. The declaration can be found [here.](../api/modules/cognite_reveal#addimage360options)
 
