@@ -16,6 +16,7 @@ import {
 } from 'domain/sequence';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 import { TableSortBy } from 'components/Table';
+import { useResultCount } from 'components';
 
 export const SequenceSearchResults = ({
   query = '',
@@ -42,21 +43,36 @@ export const SequenceSearchResults = ({
   const api = convertResourceType('sequence');
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<Sequence>(api, query, filter);
+  const { count: itemCount } = useResultCount({
+    type: 'sequence',
+    filter,
+    query,
+    api: query && query.length > 0 ? 'search' : 'list',
+  });
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
-    useSequenceSearchResultQuery({
+    useSequenceSearchResultQuery(
+      {
+        query,
+        filter,
+        sortBy,
+      },
+      { enabled: enableAdvancedFilters }
+    );
+
+  const { data: aggregateData } = useSequenceSearchAggregateQuery(
+    {
       query,
       filter,
-      sortBy,
-    });
+    },
+    { enabled: enableAdvancedFilters }
+  );
 
-  const { data: aggregateData } = useSequenceSearchAggregateQuery({
-    query,
-    filter,
-  });
   const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
-
+  const totalDataCount = enableAdvancedFilters
+    ? aggregateData.count
+    : itemCount;
   return (
     <SequenceTable
       id="sequence-search-results"
@@ -69,7 +85,7 @@ export const SequenceSearchResults = ({
           resultCount={
             <SearchResultCountLabel
               loadedCount={loadedDataCount}
-              totalCount={aggregateData.count}
+              totalCount={totalDataCount}
               resourceType="sequence"
             />
           }
@@ -91,7 +107,7 @@ export const SequenceSearchResults = ({
       }
       showLoadButton
       onRowClick={sequence => onClick(sequence)}
-      enableSorting
+      enableSorting={enableAdvancedFilters}
       onSort={setSortBy}
       relatedResourceType={relatedResourceType}
       {...rest}

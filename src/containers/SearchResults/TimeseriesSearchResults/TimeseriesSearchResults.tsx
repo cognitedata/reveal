@@ -20,6 +20,7 @@ import {
 } from 'domain/timeseries';
 import { TableSortBy } from 'components/Table';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
+import { useResultCount } from 'components';
 
 export const TimeseriesSearchResults = ({
   query = '',
@@ -48,21 +49,37 @@ export const TimeseriesSearchResults = ({
   const api = convertResourceType('timeSeries');
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<Timeseries>(api, query, filter);
+  const { count: itemCount } = useResultCount({
+    type: 'timeSeries',
+    filter,
+    query,
+    api: query && query.length > 0 ? 'search' : 'list',
+  });
   // TODO Needs refactoring for hiding emppty datasets
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
-    useTimeseriesSearchResultQuery({
+    useTimeseriesSearchResultQuery(
+      {
+        query,
+        filter,
+        sortBy,
+      },
+      { enabled: enableAdvancedFilters }
+    );
+
+  const { data: aggregateData } = useTimeseriesSearchAggregateQuery(
+    {
       query,
       filter,
-      sortBy,
-    });
+    },
+    { enabled: enableAdvancedFilters }
+  );
 
-  const { data: aggregateData } = useTimeseriesSearchAggregateQuery({
-    query,
-    filter,
-  });
   const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
+  const totalDataCount = enableAdvancedFilters
+    ? aggregateData.count
+    : itemCount;
 
   return (
     <>
@@ -79,7 +96,7 @@ export const TimeseriesSearchResults = ({
             resultCount={
               <SearchResultCountLabel
                 loadedCount={loadedDataCount}
-                totalCount={aggregateData.count}
+                totalCount={totalDataCount}
                 resourceType="timeSeries"
               />
             }
@@ -100,7 +117,7 @@ export const TimeseriesSearchResults = ({
         }
         showLoadButton
         onRowClick={timseries => onClick(timseries)}
-        enableSorting
+        enableSorting={enableAdvancedFilters}
         sorting={sortBy}
         onSort={setSortBy}
         relatedResourceType={relatedResourceType}

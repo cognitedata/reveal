@@ -6,14 +6,18 @@ import {
   // useTimeseriesSearchQueryMetadataKeysQuery,
   useTimeseriesAggregateQuery,
 } from 'domain/timeseries';
+import { UseQueryOptions } from 'react-query';
 
-export const useTimeseriesSearchAggregateQuery = ({
-  query,
-  filter,
-}: {
-  query?: string;
-  filter: InternalTimeseriesFilters;
-}) => {
+export const useTimeseriesSearchAggregateQuery = (
+  {
+    query,
+    filter,
+  }: {
+    query?: string;
+    filter: InternalTimeseriesFilters;
+  },
+  options?: UseQueryOptions
+) => {
   // const searchQueryMetadataKeys = useTimeseriesSearchQueryMetadataKeysQuery(
   //   query,
   //   filter
@@ -40,6 +44,7 @@ export const useTimeseriesSearchAggregateQuery = ({
       advancedFilter,
     },
     {
+      ...options,
       keepPreviousData: true,
     }
   );

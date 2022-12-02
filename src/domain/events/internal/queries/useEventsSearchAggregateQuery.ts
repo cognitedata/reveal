@@ -6,14 +6,18 @@ import {
   // useEventsSearchQueryMetadataKeysQuery,
   useEventsAggregateQuery,
 } from 'domain/events';
+import { UseQueryOptions } from 'react-query';
 
-export const useEventsSearchAggregateQuery = ({
-  query,
-  eventsFilters,
-}: {
-  query?: string;
-  eventsFilters: InternalEventsFilters;
-}) => {
+export const useEventsSearchAggregateQuery = (
+  {
+    query,
+    eventsFilters,
+  }: {
+    query?: string;
+    eventsFilters: InternalEventsFilters;
+  },
+  options?: UseQueryOptions
+) => {
   // const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(
   //   query,
   //   eventsFilters
@@ -39,6 +43,6 @@ export const useEventsSearchAggregateQuery = ({
       filter,
       advancedFilter,
     },
-    { keepPreviousData: true }
+    { ...options, keepPreviousData: true }
   );
 };

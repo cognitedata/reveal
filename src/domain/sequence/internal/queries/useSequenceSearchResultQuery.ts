@@ -10,16 +10,20 @@ import {
   useSequenceListQuery,
   // useSequenceSearchQueryMetadataKeysQuery,
 } from 'domain/sequence';
+import { UseInfiniteQueryOptions } from 'react-query';
 
-export const useSequenceSearchResultQuery = ({
-  query,
-  filter,
-  sortBy,
-}: {
-  query?: string;
-  filter: InternalSequenceFilters;
-  sortBy?: TableSortBy[];
-}) => {
+export const useSequenceSearchResultQuery = (
+  {
+    query,
+    filter,
+    sortBy,
+  }: {
+    query?: string;
+    filter: InternalSequenceFilters;
+    sortBy?: TableSortBy[];
+  },
+  options?: UseInfiniteQueryOptions
+) => {
   // const searchQueryMetadataKeys = useSequenceSearchQueryMetadataKeysQuery(
   //   query,
   //   filter
@@ -53,6 +57,7 @@ export const useSequenceSearchResultQuery = ({
       limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
     },
     {
+      ...options,
       keepPreviousData: true,
     }
   );

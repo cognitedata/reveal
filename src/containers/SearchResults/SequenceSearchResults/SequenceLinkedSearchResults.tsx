@@ -73,11 +73,14 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
     sequenceFilter
   );
 
-  const { data, hasNextPage, fetchNextPage } = useSequenceSearchResultQuery({
-    query: debouncedQuery,
-    filter: sequenceFilter,
-    sortBy,
-  });
+  const { data, hasNextPage, fetchNextPage } = useSequenceSearchResultQuery(
+    {
+      query: debouncedQuery,
+      filter: sequenceFilter,
+      sortBy,
+    },
+    { enabled: enableAdvancedFilter }
+  );
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 

@@ -30,7 +30,7 @@ type Props = {
   setCurrentResourceType: (tab?: string) => void;
   isDocumentEnabled?: boolean;
   query?: string;
-  filter?: any;
+  globalFilters?: { [key in ResourceType]: any };
   showCount?: boolean;
   additionalTabs?: React.ReactElement<TabPaneProps>[];
 };
@@ -38,13 +38,14 @@ type Props = {
 const ResourceTypeTab = ({
   currentResourceType,
   query,
+  filter,
   showCount = false,
-}: Omit<
+}: { filter: any } & Omit<
   Props,
   'setCurrentResourceType' | 'isDocumentEnabled' | 'additionalTabs'
 >) => {
   const result = useResultCount({
-    filter: {},
+    filter,
     query,
     api: query && query.length > 0 ? 'search' : 'list',
     type: currentResourceType as ResourceType,
@@ -69,6 +70,7 @@ export const ResourceTypeTabs = ({
   resourceTypes = defaultResourceTypes,
   isDocumentEnabled = false,
   additionalTabs = [],
+  globalFilters,
   ...rest
 }: Props) => {
   return (
@@ -87,7 +89,11 @@ export const ResourceTypeTabs = ({
           <Tabs.TabPane
             key={resourceType}
             tab={
-              <ResourceTypeTab currentResourceType={resourceType} {...rest} />
+              <ResourceTypeTab
+                currentResourceType={resourceType}
+                filter={globalFilters?.[resourceType] || {}}
+                {...rest}
+              />
             }
           />
         );

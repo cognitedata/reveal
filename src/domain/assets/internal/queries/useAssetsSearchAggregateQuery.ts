@@ -6,14 +6,18 @@ import {
   // useAssetsSearchQueryMetadataKeysQuery,
   useAssetsAggregateQuery,
 } from 'domain/assets';
+import { UseQueryOptions } from 'react-query';
 
-export const useAssetsSearchAggregateQuery = ({
-  query,
-  assetsFilters,
-}: {
-  query?: string;
-  assetsFilters: InternalAssetFilters;
-}) => {
+export const useAssetsSearchAggregateQuery = (
+  {
+    query,
+    assetsFilters,
+  }: {
+    query?: string;
+    assetsFilters: InternalAssetFilters;
+  },
+  options?: UseQueryOptions
+) => {
   // const searchQueryMetadataKeys = useAssetsSearchQueryMetadataKeysQuery(
   //   query,
   //   assetsFilters
@@ -39,6 +43,6 @@ export const useAssetsSearchAggregateQuery = ({
       filter,
       advancedFilter,
     },
-    { keepPreviousData: true }
+    { ...options, keepPreviousData: true }
   );
 };

@@ -19,6 +19,7 @@ import {
   useAssetsSearchAggregateQuery,
   useAssetsSearchResultQuery,
 } from 'domain/assets';
+import { useResultCount } from 'components';
 
 export type AssetViewMode = 'list' | 'tree';
 
@@ -49,20 +50,35 @@ export const AssetSearchResults = ({
   const api = convertResourceType('asset');
   const { canFetchMore, fetchMore, items, isFetched } =
     useResourceResults<Asset>(api, query, filter);
+  const { count: itemCount } = useResultCount({
+    type: 'asset',
+    filter,
+    query,
+    api: query && query.length > 0 ? 'search' : 'list',
+  });
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
-    useAssetsSearchResultQuery({
+    useAssetsSearchResultQuery(
+      {
+        query,
+        assetFilter: filter,
+        sortBy,
+      },
+      { enabled: enableAdvancedFilters }
+    );
+  const { data: aggregateData } = useAssetsSearchAggregateQuery(
+    {
+      assetsFilters: filter,
       query,
-      assetFilter: filter,
-      sortBy,
-    });
+    },
+    { enabled: enableAdvancedFilters }
+  );
 
-  const { data: aggregateData } = useAssetsSearchAggregateQuery({
-    assetsFilters: filter,
-    query,
-  });
   const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
+  const totalDataCount = enableAdvancedFilters
+    ? aggregateData.count
+    : itemCount;
 
   const currentView = isTreeEnabled ? view : 'list';
 
@@ -88,7 +104,7 @@ export const AssetSearchResults = ({
         resultCount={
           <SearchResultCountLabel
             loadedCount={loadedDataCount}
-            totalCount={aggregateData.count}
+            totalCount={totalDataCount}
             resourceType="asset"
           />
         }
@@ -130,7 +146,7 @@ export const AssetSearchResults = ({
           onRowClick={asset => onClick(asset)}
           data={enableAdvancedFilters ? data : items}
           isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
-          enableSorting
+          enableSorting={enableAdvancedFilters}
           sorting={sortBy}
           selectedRows={selectedRows}
           scrollIntoViewRow={

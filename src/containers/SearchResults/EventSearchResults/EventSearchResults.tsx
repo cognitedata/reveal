@@ -17,6 +17,7 @@ import {
 } from 'domain/events';
 import { TableSortBy } from 'components/Table';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
+import { useResultCount } from 'components';
 
 export const EventSearchResults = ({
   query = '',
@@ -41,19 +42,35 @@ export const EventSearchResults = ({
   const api = convertResourceType('event');
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<CogniteEvent>(api, query, filter);
+  const { count: itemCount } = useResultCount({
+    type: 'event',
+    filter,
+    query,
+    api: query && query.length > 0 ? 'search' : 'list',
+  });
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, hasNextPage, fetchNextPage, isPreviousData } =
-    useEventsSearchResultQuery({
-      query,
+    useEventsSearchResultQuery(
+      {
+        query,
+        eventsFilters: filter,
+        eventsSortBy: sortBy,
+      },
+      { enabled: enableAdvancedFilters }
+    );
+  const { data: aggregateData } = useEventsSearchAggregateQuery(
+    {
       eventsFilters: filter,
-      eventsSortBy: sortBy,
-    });
-  const { data: aggregateData } = useEventsSearchAggregateQuery({
-    eventsFilters: filter,
-    query,
-  });
+      query,
+    },
+    { enabled: enableAdvancedFilters }
+  );
+
   const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
+  const totalDataCount = enableAdvancedFilters
+    ? aggregateData.count
+    : itemCount;
 
   return (
     <EventTable
@@ -67,7 +84,7 @@ export const EventSearchResults = ({
           resultCount={
             <SearchResultCountLabel
               loadedCount={loadedDataCount}
-              totalCount={aggregateData.count}
+              totalCount={totalDataCount}
               resourceType="event"
             />
           }
@@ -82,7 +99,7 @@ export const EventSearchResults = ({
       }
       data={enableAdvancedFilters ? data : items}
       isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
-      enableSorting
+      enableSorting={enableAdvancedFilters}
       sorting={sortBy}
       onSort={setSortBy}
       fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}

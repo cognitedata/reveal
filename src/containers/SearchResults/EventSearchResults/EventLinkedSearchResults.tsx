@@ -80,11 +80,14 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
     };
   }, [filter, defaultFilter]);
 
-  const { data, hasNextPage, fetchNextPage } = useEventsSearchResultQuery({
-    query: debouncedQuery,
-    eventsFilters,
-    eventsSortBy: sortBy,
-  });
+  const { data, hasNextPage, fetchNextPage } = useEventsSearchResultQuery(
+    {
+      query: debouncedQuery,
+      eventsFilters,
+      eventsSortBy: sortBy,
+    },
+    { enabled: enableAdvancedFilter }
+  );
   const api = convertResourceType('event');
   const { canFetchMore, fetchMore, items } = useResourceResults<CogniteEvent>(
     api,

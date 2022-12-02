@@ -9,16 +9,20 @@ import {
   useTimeseriesListQuery,
   // useTimeseriesSearchQueryMetadataKeysQuery,
 } from 'domain/timeseries';
+import { UseInfiniteQueryOptions } from 'react-query';
 
-export const useTimeseriesSearchResultQuery = ({
-  query,
-  filter,
-  sortBy,
-}: {
-  query?: string;
-  filter: InternalTimeseriesFilters;
-  sortBy?: TableSortBy[];
-}) => {
+export const useTimeseriesSearchResultQuery = (
+  {
+    query,
+    filter,
+    sortBy,
+  }: {
+    query?: string;
+    filter: InternalTimeseriesFilters;
+    sortBy?: TableSortBy[];
+  },
+  options?: UseInfiniteQueryOptions
+) => {
   // const searchQueryMetadataKeys = useTimeseriesSearchQueryMetadataKeysQuery(
   //   query,
   //   filter
@@ -52,6 +56,7 @@ export const useTimeseriesSearchResultQuery = ({
       limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
     },
     {
+      ...options,
       keepPreviousData: true,
     }
   );

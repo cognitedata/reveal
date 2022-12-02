@@ -63,11 +63,14 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
     };
   }, [filter, defaultFilter]);
 
-  const { data, hasNextPage, fetchNextPage } = useAssetsSearchResultQuery({
-    query: debouncedQuery,
-    assetFilter,
-    sortBy,
-  });
+  const { data, hasNextPage, fetchNextPage } = useAssetsSearchResultQuery(
+    {
+      query: debouncedQuery,
+      assetFilter,
+      sortBy,
+    },
+    { enabled: enableAdvancedFilter }
+  );
 
   const api = convertResourceType('asset');
   const { canFetchMore, fetchMore, items } = useResourceResults<Asset>(

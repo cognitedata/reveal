@@ -6,14 +6,18 @@ import {
   // useSequenceSearchQueryMetadataKeysQuery,
   useSequenceAggregateQuery,
 } from 'domain/sequence';
+import { UseQueryOptions } from 'react-query';
 
-export const useSequenceSearchAggregateQuery = ({
-  query,
-  filter,
-}: {
-  query?: string;
-  filter: InternalSequenceFilters;
-}) => {
+export const useSequenceSearchAggregateQuery = (
+  {
+    query,
+    filter,
+  }: {
+    query?: string;
+    filter: InternalSequenceFilters;
+  },
+  options?: UseQueryOptions
+) => {
   // const searchQueryMetadataKeys = useSequenceSearchQueryMetadataKeysQuery(
   //   query,
   //   filter
@@ -40,6 +44,7 @@ export const useSequenceSearchAggregateQuery = ({
       advancedFilter,
     },
     {
+      ...options,
       keepPreviousData: true,
     }
   );

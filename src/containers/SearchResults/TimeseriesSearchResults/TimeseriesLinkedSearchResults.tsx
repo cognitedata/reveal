@@ -91,11 +91,14 @@ export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
   };
 
   const { data, hasNextPage, fetchNextPage, isLoading } =
-    useTimeseriesSearchResultQuery({
-      query: debouncedQuery,
-      filter: timeseriesFilters,
-      sortBy,
-    });
+    useTimeseriesSearchResultQuery(
+      {
+        query: debouncedQuery,
+        filter: timeseriesFilters,
+        sortBy,
+      },
+      { enabled: enableAdvancedFilter }
+    );
 
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
