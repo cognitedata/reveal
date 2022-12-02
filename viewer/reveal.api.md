@@ -327,7 +327,7 @@ export class Cognite3DViewer {
     constructor(options: Cognite3DViewerOptions);
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
-    }, add360ImageOptions?: AddImage360Options): Promise<Image360[]>;
+    }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
     addCadModel(options: AddModelOptions): Promise<CogniteCadModel>;
     addModel(options: AddModelOptions): Promise<CogniteModel>;
     addObject3D(object: THREE_2.Object3D): void;
