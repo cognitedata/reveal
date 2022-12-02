@@ -15,7 +15,7 @@ export const adaptToWellboreRigNamesMap = <T extends RigOperationType>(
       return {
         ...wellboreRigNameMap,
         [wellboreMatchingId]: Array.from(
-          new Set([...currentRigNames, rigName])
+          new Set([...currentRigNames, rigName.toLowerCase()])
         ),
       };
     },

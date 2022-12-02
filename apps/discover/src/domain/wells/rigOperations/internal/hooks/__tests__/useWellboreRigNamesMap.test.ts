@@ -42,7 +42,7 @@ describe('useWellboreRigNamesMap', () => {
     );
 
     expect(result.current.data).toMatchObject({
-      [wellboreMatchingId]: [rigName],
+      [wellboreMatchingId]: [rigName.toLowerCase()],
     });
     expect(result.current.isLoading).toEqual(false);
   });
