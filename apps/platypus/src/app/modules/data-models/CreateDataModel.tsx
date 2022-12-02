@@ -72,7 +72,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
             ),
           });
           navigate(
-            `data-models/${result.getValue().space}/${
+            `/data-models/${result.getValue().space}/${
               result.getValue().id
             }/${DEFAULT_VERSION_PATH}`
           );
