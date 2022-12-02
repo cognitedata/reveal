@@ -2,6 +2,7 @@ import React from 'react';
 import { Select } from 'components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
+import { NIL_FILTER_VALUE } from 'domain/constants';
 
 export const AggregatedFilterV2 = <T,>({
   items,
@@ -37,7 +38,11 @@ export const AggregatedFilterV2 = <T,>({
         creatable
         className="aggregated-filter-select"
         {...reactSelectCogsStylingProps}
-        value={value ? { value, label: value } : undefined}
+        value={
+          value
+            ? { value, label: value === NIL_FILTER_VALUE ? 'N/A' : value }
+            : undefined
+        }
         onChange={item => {
           if (item) {
             const tmpValue = (item as { value: string }).value;
