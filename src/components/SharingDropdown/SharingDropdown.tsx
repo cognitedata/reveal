@@ -14,6 +14,7 @@ import {
 } from '@cognite/cogs.js';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import CopyButton from 'components/CopyButton/CopyButton';
+import config from 'config/config';
 
 interface SharingDropdownProps extends DropdownProps {
   chart: {
@@ -109,9 +110,14 @@ const SharingDropdown = ({
       }
       {...rest}
     >
-      <Button icon="Share" type="ghost" disabled={disabled} aria-label="share">
+      <StyledButton
+        icon="Share"
+        type="ghost"
+        disabled={disabled}
+        aria-label="share"
+      >
         {label}
-      </Button>
+      </StyledButton>
     </StyledDropdown>
   );
 };
@@ -152,6 +158,14 @@ const StyledDropdown = styled(Dropdown)`
   position: absolute;
   right: 1px;
   transform: translate(50%);
+`;
+
+const StyledButton = styled(Button)`
+  ${config.isFusion &&
+  `&&&:disabled {
+        border: 0;
+        background: none;
+      }`}
 `;
 
 SharingDropdown.defaultTranslations = defaultTranslations;
