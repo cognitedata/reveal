@@ -11,6 +11,7 @@ export const mapTableSortByToEventSortFields = (
     return {
       property: properties,
       order: tableSort.desc ? 'desc' : 'asc',
+      nulls: tableSort.desc ? 'last' : 'first', // When ascending undefined(null) comes first and last for descending
     };
   });
 };
