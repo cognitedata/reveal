@@ -2,9 +2,12 @@ import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/typ
 import { WdlMeasurementType } from 'domain/wells/measurements/service/types';
 
 import isNumber from 'lodash/isNumber';
+import isUndefined from 'lodash/isUndefined';
 import uniqueId from 'lodash/uniqueId';
 import { includesAll } from 'utils/filter/includesAll';
 import { Fixed, toFixedNumberFromNumber } from 'utils/number';
+
+import { EMPTY_ARRAY } from 'constants/empty';
 
 import { MudWeightData } from '../types';
 
@@ -13,9 +16,9 @@ export const adaptDepthMeasurementToMudWeights = (
 ): Array<MudWeightData> => {
   const { columns, rows, depthUnit } = depthMeasurement;
 
-  let mudTypeColumnIndex: number;
-  let minMudDensityColumnIndex: number;
-  let maxMudDensityColumnIndex: number;
+  let mudTypeColumnIndex: number | undefined;
+  let minMudDensityColumnIndex: number | undefined;
+  let maxMudDensityColumnIndex: number | undefined;
 
   columns.forEach(({ externalId, measurementType }, index) => {
     if (measurementType.includes(WdlMeasurementType.MUD_TYPE)) {
@@ -27,15 +30,23 @@ export const adaptDepthMeasurementToMudWeights = (
     }
   });
 
+  if (
+    isUndefined(mudTypeColumnIndex) ||
+    isUndefined(minMudDensityColumnIndex) ||
+    isUndefined(maxMudDensityColumnIndex)
+  ) {
+    return EMPTY_ARRAY;
+  }
+
   return rows.map(({ depth, values }) => {
     return {
       id: uniqueId('mud-weight-'),
-      type: values[mudTypeColumnIndex],
+      type: values[mudTypeColumnIndex!],
       depth,
-      minMudDensity: getColumnValue(values[minMudDensityColumnIndex]),
-      maxMudDensity: getColumnValue(values[maxMudDensityColumnIndex]),
+      minMudDensity: getColumnValue(values[minMudDensityColumnIndex!]),
+      maxMudDensity: getColumnValue(values[maxMudDensityColumnIndex!]),
       depthUnit,
-      densityUnit: columns[minMudDensityColumnIndex].unit,
+      densityUnit: columns[minMudDensityColumnIndex!].unit,
     };
   });
 };

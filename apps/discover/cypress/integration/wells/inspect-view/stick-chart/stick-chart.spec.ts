@@ -78,7 +78,6 @@ describe('Wells: stick chart', () => {
 
     cy.log(`diameter should be displayed in: ${CASING_ASSEMBLY_DIAMETER_UNIT}`);
     cy.verifyColumnHeader(`OD (${CASING_ASSEMBLY_DIAMETER_UNIT})`);
-    cy.verifyColumnHeader(`ID (${CASING_ASSEMBLY_DIAMETER_UNIT})`);
 
     cy.log('go back to stick chart page');
     cy.findAllByTestId('go-back-button').click({ force: true });
@@ -307,11 +306,14 @@ describe('Wells: stick chart', () => {
     cy.log('unchecked trajectory column');
     cy.get('[name="Trajectory"]').click();
 
-    cy.log('trajectory column should hide');
+    cy.log('Trajectory column should hide');
     cy.findAllByTestId('trajectory-column').should('not.be.visible');
 
     cy.log('unchecked FIT & LOT column');
     cy.get('[name="FIT and LOT"]').click();
+
+    cy.log('unchecked Section Summary column');
+    cy.get('[name="Section Summary"]').click();
 
     cy.log('empty state should visible');
     cy.findAllByTestId('empty-state-container').should('be.visible');
