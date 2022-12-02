@@ -63,7 +63,7 @@ import {
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
-import { Image360Entity } from '@reveal/360-images';
+import { Image360Collection, Image360Entity } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { Image360 } from '@reveal/360-images/src/Image360';
@@ -694,11 +694,11 @@ export class Cognite3DViewer {
    * await viewer.add360ImageSet('events', eventFilter);
    * ```
    */
-  add360ImageSet(
+  async add360ImageSet(
     datasource: 'events',
     eventFilter: { [key: string]: string },
     add360ImageOptions?: AddImage360Options
-  ): Promise<Image360[]> {
+  ): Promise<Image360Collection> {
     if (datasource !== 'events') {
       throw new Error(`${datasource} is an unknown datasource from 360 images`);
     }
@@ -710,7 +710,13 @@ export class Cognite3DViewer {
     const collectionTransform = add360ImageOptions?.collectionTransform ?? new THREE.Matrix4();
     const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
 
-    return this._image360ApiHelper.add360ImageSet(eventFilter, collectionTransform, preMultipliedRotation);
+    const image360Entities = await this._image360ApiHelper.add360ImageSet(
+      eventFilter,
+      collectionTransform,
+      preMultipliedRotation
+    );
+
+    return { image360Entities };
   }
 
   /**
