@@ -20,10 +20,15 @@ import { transformNewFilterToOldFilter } from 'components/EventSidebar/helpers';
 
 export function EventResultEffects() {
   const [chart] = useRecoilState(chartAtom);
+  const [, setChartEventResults] = useRecoilState(eventResultsAtom);
 
   const eventFiltersElements = chart?.eventFilters?.map((eventFilter) => (
     <EventEffects eventFilter={eventFilter} key={eventFilter.id} />
   ));
+
+  useEffect(() => {
+    if (!eventFiltersElements?.length) setChartEventResults([]);
+  }, [chart, setChartEventResults, eventFiltersElements]);
 
   return <>{eventFiltersElements}</>;
 }

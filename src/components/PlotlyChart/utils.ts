@@ -700,7 +700,9 @@ export function generateLayout({
     eventData.forEach((eventSet: ChartEventResults) => {
       const shapeColor = eventSet.color || DEFAULT_EVENT_COLOR;
       const isEventFilterValid = !!Object.keys(eventSet.filters).length;
-      const showEvent = isEventFilterValid && eventSet.visible;
+      const { isLoading } = eventSet;
+
+      const showEvent = !isLoading && isEventFilterValid && eventSet.visible;
 
       (eventSet.results || []).forEach((eventItem: CogniteEvent) => {
         const { startTime } = eventItem;

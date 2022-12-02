@@ -12,13 +12,14 @@ import {
   MetadataFilter,
   StringFilter,
 } from '@cognite/data-exploration';
-import { CogniteEvent, InternalId } from '@cognite/sdk';
+import { InternalId } from '@cognite/sdk';
 import { Col, Row } from 'antd';
 import { omit } from 'lodash';
 
 import { ChartEventFilters } from 'models/chart/types';
 import {
   ExpandIcon,
+  LoadingRow,
   ReverseSwitch,
   SidebarChip,
   SidebarFooterActions,
@@ -26,6 +27,7 @@ import {
   SidebarInnerCollapse,
 } from 'components/Common/SidebarElements';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
+import { ChartEventResults } from 'models/event-results/types';
 import { GhostMetadataFilter } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(
@@ -44,18 +46,18 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 type Props = {
-  items: CogniteEvent[] | undefined;
+  eventData: ChartEventResults | undefined;
   eventFilters: ChartEventFilters;
   setFilters: (id: string, diff: any) => void;
   onDeleteEventFilter: (diff: any) => void;
   onDuplicateEventFilter: (id: string) => void;
   onToggleEventFilter: (id: string, visibility: boolean) => void;
-  onShowEventResults: (diff: any) => void;
+  onShowEventResults: (id: string) => void;
   translations?: typeof defaultTranslations;
 };
 
 const EventFilterForm = ({
-  items,
+  eventData,
   eventFilters,
   setFilters,
   onDeleteEventFilter,
@@ -80,7 +82,11 @@ const EventFilterForm = ({
 
   const isEventFilterValid = !!Object.keys(filters).length;
 
-  if (!items) return <div>No items</div>;
+  if (!eventData || eventData?.isLoading) return <LoadingRow lines={21} />;
+
+  const { results } = eventData;
+
+  if (!results) return <LoadingRow lines={20} />;
 
   return (
     <>
@@ -122,7 +128,7 @@ const EventFilterForm = ({
         <Collapse.Panel header={t['More filters']} key="panelFilterForm">
           <GhostMetadataFilter>
             <MetadataFilter
-              items={items}
+              items={results}
               value={filters.metadata}
               setValue={(newMetadata) => {
                 if (Object.keys(newMetadata || {}).length) {
@@ -141,7 +147,7 @@ const EventFilterForm = ({
 
           <AggregatedFilter
             title={t.Source}
-            items={items}
+            items={results}
             aggregator="source"
             value={filters.source}
             setValue={(newSource) =>
@@ -181,13 +187,13 @@ const EventFilterForm = ({
           {t['Number of events']}:
           <br />
           <SidebarChip icon="Events" size="medium">
-            {isEventFilterValid && items.length > 0 ? items.length : '-'}
+            {isEventFilterValid && results.length > 0 ? results.length : '-'}
           </SidebarChip>
         </p>
       </SidebarInnerBox>
       <Button
-        onClick={() => onShowEventResults(items)}
-        disabled={!isEventFilterValid || !(items.length > 0)}
+        onClick={() => onShowEventResults(eventData.id)}
+        disabled={!isEventFilterValid || !(results.length > 0)}
         block
       >
         {isEventFilterValid ? t['View results'] : t['Event filter is empty']}

@@ -1,7 +1,14 @@
 /**
  * Common Elements
  */
-import { Icon, Switch, Collapse, Select, Label } from '@cognite/cogs.js';
+import {
+  Icon,
+  Switch,
+  Collapse,
+  Select,
+  Label,
+  Skeleton,
+} from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
 export const Toolbar = styled.aside`
@@ -236,3 +243,27 @@ export const SidebarFormLabel = styled.p`
   font-weight: 400;
   margin: 1rem 0 0.5rem;
 `;
+
+export const LoadingWrap = styled.div`
+  margin-bottom: 1rem;
+
+  > div:first-child {
+    margin-right: 1rem;
+  }
+`;
+
+export const LoadingRow = ({ lines = 2 }: { lines?: number }) => (
+  <LoadingWrap>
+    <Skeleton.Circle diameter="24px" />
+    <Skeleton.Rectangle height="24px" width="16rem" />
+    {lines % 2 === 0 ? (
+      <>
+        <Skeleton.Paragraph lines={lines / 2} />
+        <br />
+        <Skeleton.Paragraph lines={lines / 2} />
+      </>
+    ) : (
+      <Skeleton.Paragraph lines={lines} />
+    )}
+  </LoadingWrap>
+);

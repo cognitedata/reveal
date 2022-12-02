@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { Body } from '@cognite/cogs.js';
 import { CogniteEvent, Timestamp } from '@cognite/sdk';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
+import { LoadingRow } from 'components/Common/SidebarElements';
 import { EventDetails } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(
@@ -25,6 +26,7 @@ const defaultTranslations = makeDefaultTranslations(
 type Props = {
   event: Partial<CogniteEvent>;
   onToggleEvent: (id: number | undefined) => void;
+  loading?: boolean;
   selected?: boolean;
   translations?: typeof defaultTranslations;
 };
@@ -38,6 +40,7 @@ const EventInfoBox = ({
   event,
   onToggleEvent,
   selected = false,
+  loading = false,
   translations,
 }: Props) => {
   const diff = dayjs(event.endTime).diff(dayjs(event.startTime));
@@ -52,73 +55,65 @@ const EventInfoBox = ({
 
   return (
     <EventDetails $active={selected} onClick={toggleSelection}>
-      <Row>
-        <Col span={12}>
-          <Body level={2}>{t.Type}:</Body>
-          <Body level={2} strong>
-            {event.type}
-          </Body>
-        </Col>
-        <Col span={12}>
-          <Body level={2}>{t['Sub type']}:</Body>
-          <Body level={2} strong>
-            {event.subtype}
-          </Body>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={12}>
-          <Body level={2}>{t.Updated}:</Body>
-          <Body level={2} strong>
-            {formatDate(event.lastUpdatedTime)}
-          </Body>
-        </Col>
-        <Col span={12}>
-          <Body level={2}>{t.Created}:</Body>
-          <Body level={2} strong>
-            {formatDate(event.createdTime)}
-          </Body>
-        </Col>
-      </Row>
-      {diff <= 0 ? (
-        <p className="hint">
-          {
-            t[
-              'Event start and end time are the same, it may not be visible in the chart graph area.'
-            ]
-          }
-        </p>
+      {loading ? (
+        <LoadingRow lines={4} />
       ) : (
-        ''
+        <>
+          <Row>
+            <Col span={12}>
+              <Body level={2}>{t.Type}:</Body>
+              <Body level={2} strong>
+                {event.type}
+              </Body>
+            </Col>
+            <Col span={12}>
+              <Body level={2}>{t['Sub type']}:</Body>
+              <Body level={2} strong>
+                {event.subtype}
+              </Body>
+            </Col>
+          </Row>
+          {diff <= 0 ? (
+            <p className="hint">
+              {
+                t[
+                  'Event start and end time are the same, it may not be visible in the chart graph area.'
+                ]
+              }
+            </p>
+          ) : (
+            ''
+          )}
+          <Row>
+            <Col span={12}>
+              <Body level={2}>{t.Start}:</Body>
+              <Body level={2} strong>
+                {formatDate(event.startTime)}
+              </Body>
+            </Col>
+            <Col span={12}>
+              <Body level={2}>{t.End}:</Body>
+              <Body level={2} strong>
+                {formatDate(event.endTime)}
+              </Body>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <Body level={2}>{t['External ID']}:</Body>
+              <Body level={2} strong>
+                {event.externalId}
+              </Body>
+            </Col>
+            <Col span={12}>
+              <Body level={2}>{t['Root asset']}:</Body>
+              <Body level={2} strong>
+                WIP
+              </Body>
+            </Col>
+          </Row>
+        </>
       )}
-      <Row>
-        <Col span={12}>
-          <Body level={2}>{t.Start}:</Body>
-          <Body level={2} strong>
-            {formatDate(event.startTime)}
-          </Body>
-        </Col>
-        <Col span={12}>
-          <Body level={2}>{t.End}:</Body>
-          <Body level={2} strong>
-            {formatDate(event.endTime)}
-          </Body>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={12}>
-          <Body level={2}>{t['External ID']}:</Body>
-          <Body level={2} strong>
-            {event.externalId}
-          </Body>
-        </Col>
-        <Col span={12}>
-          <Body level={2}>{t['Root asset']}:</Body>
-          <Body level={2} strong>
-            WIP
-          </Body>
-        </Col>
-      </Row>
     </EventDetails>
   );
 };

@@ -5,6 +5,7 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { isNil, omit, omitBy } from 'lodash';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   Button,
   Collapse,
@@ -38,8 +39,11 @@ import {
   removeChartEventFilter,
   updateEventFiltersProperties,
 } from 'models/chart/updates-event-filters';
-import { useRecoilState } from 'recoil';
-import { selectedEventsAtom } from 'models/event-results/atom';
+import {
+  activeEventFilterIdAtom,
+  selectedEventsAtom,
+} from 'models/event-results/atom';
+import { activeEventFilterResultsSelector } from 'models/event-results/selectors';
 import {
   ChartEventResults,
   EventsCollection,
@@ -78,7 +82,14 @@ const EventSidebar = memo(
     ]);
 
     const [showEventResults, setShowEventResults] = useState(false);
-    const [eventList, setEventList] = useState<CogniteEvent[]>([]);
+
+    const [selectedEvents, setSelectedEvents] =
+      useRecoilState(selectedEventsAtom);
+
+    const [, setActiveEventFilterId] = useRecoilState(activeEventFilterIdAtom);
+    const activeEventFilterResults = useRecoilValue(
+      activeEventFilterResultsSelector
+    );
 
     const handleToggleAccordian = (key: any) => {
       setActiveKeys(key);
@@ -156,13 +167,10 @@ const EventSidebar = memo(
       );
     };
 
-    const toggleShowSearchResults = useCallback((values) => {
-      setEventList(values);
+    const toggleShowSearchResults = useCallback((id: string) => {
+      setActiveEventFilterId(id);
       setShowEventResults((prevState) => !prevState);
     }, []);
-
-    const [selectedEvents, setSelectedEvents] =
-      useRecoilState(selectedEventsAtom);
 
     const handleSetSelectedEventItems = useCallback(
       (id: number | undefined) => {
@@ -280,9 +288,7 @@ const EventSidebar = memo(
                     }
                   >
                     <EventFilterForm
-                      items={
-                        eventData.find((f) => f.id === eventFilter.id)?.results
-                      }
+                      eventData={eventData.find((f) => f.id === eventFilter.id)}
                       eventFilters={eventFilter}
                       setFilters={handleUpdateFilterProps}
                       onDeleteEventFilter={handleDeleteEventFilter}
@@ -296,12 +302,12 @@ const EventSidebar = memo(
             </SidebarCollapse>
           </ContentContainer>
         </ContentOverflowWrapper>
-        {showEventResults && (
+        {showEventResults && eventData && (
           <OverlayContentOverflowWrapper>
             <ContentContainer>
               <SidebarHeaderActions>
                 <Button
-                  onClick={() => toggleShowSearchResults([])}
+                  onClick={() => toggleShowSearchResults('')}
                   icon="ArrowLeft"
                   size="small"
                   aria-label="Back"
@@ -309,18 +315,21 @@ const EventSidebar = memo(
                   {t.Back}
                 </Button>
               </SidebarHeaderActions>
-              {eventList.map((event) => {
-                const eventSelected = isEventSelected(selectedEvents, event);
-                return (
-                  <EventInfoBox
-                    key={event.id}
-                    event={event}
-                    selected={!!eventSelected}
-                    onToggleEvent={handleSetSelectedEventItems}
-                    translations={eventInfoTranslation}
-                  />
-                );
-              })}
+              {activeEventFilterResults &&
+                activeEventFilterResults.results?.map((event: CogniteEvent) => {
+                  const eventSelected = isEventSelected(selectedEvents, event);
+
+                  return (
+                    <EventInfoBox
+                      loading={activeEventFilterResults.isLoading}
+                      key={event.id}
+                      event={event}
+                      selected={!!eventSelected}
+                      onToggleEvent={handleSetSelectedEventItems}
+                      translations={eventInfoTranslation}
+                    />
+                  );
+                })}
             </ContentContainer>
           </OverlayContentOverflowWrapper>
         )}

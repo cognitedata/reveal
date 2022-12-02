@@ -20,6 +20,7 @@ const Template: Story<Props> = (args) => {
 };
 
 export const InfoBox = Template.bind({});
+export const InfoBoxLoading = Template.bind({});
 export const InfoBoxNilEventRange = Template.bind({});
 export const InfoBoxSelected = Template.bind({});
 export const Translated = Template.bind({});
@@ -41,6 +42,14 @@ InfoBox.args = {
   },
 };
 
+InfoBoxLoading.args = {
+  onToggleEvent: () => {},
+  loading: true,
+  event: {
+    ...eventData,
+  },
+};
+
 InfoBoxNilEventRange.args = {
   onToggleEvent: () => {},
   event: {
@@ -51,6 +60,7 @@ InfoBoxNilEventRange.args = {
 };
 
 InfoBoxSelected.args = {
+  onToggleEvent: () => {},
   selected: true,
   event: {
     ...eventData,

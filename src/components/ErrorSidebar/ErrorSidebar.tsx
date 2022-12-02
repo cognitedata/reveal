@@ -2,7 +2,7 @@
  * Error Sidebar
  */
 
-import { Button, Infobox, Skeleton, Tooltip } from '@cognite/cogs.js';
+import { Button, Infobox, Tooltip } from '@cognite/cogs.js';
 import { memo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,12 +13,12 @@ import {
   TopContainerTitle,
   ContentOverflowWrapper,
   ContentContainer,
+  LoadingRow,
 } from 'components/Common/SidebarElements';
 import { WorkflowState } from 'models/calculation-results/types';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import { StyleButton } from 'components/StyleButton/StyleButton';
-import styled from 'styled-components';
 
 type Props = {
   visible: boolean;
@@ -34,22 +34,6 @@ const defaultTranslation = makeDefaultTranslations(
   'Error',
   'Warning',
   'Hide'
-);
-
-export const LoadingWrap = styled.div`
-  margin-bottom: 1rem;
-
-  > div:first-child {
-    margin-right: 1rem;
-  }
-`;
-
-const LoadingRow = () => (
-  <LoadingWrap>
-    <Skeleton.Circle diameter="24px" />
-    <Skeleton.Rectangle height="24px" width="15rem" />
-    <Skeleton.Paragraph lines={2} />
-  </LoadingWrap>
 );
 
 const ErrorSidebar = memo(
