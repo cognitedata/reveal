@@ -31,18 +31,6 @@ export type AddImage360Options = {
 };
 
 // @public
-export interface AddModelOptions {
-    // (undocumented)
-    geometryFilter?: GeometryFilter;
-    // (undocumented)
-    localPath?: string;
-    // (undocumented)
-    modelId: number;
-    // (undocumented)
-    revisionId: number;
-}
-
-// @public
 export class AnnotationIdPointCloudObjectCollection extends PointCloudObjectCollection {
     constructor(ids: Iterable<number>);
     // (undocumented)
