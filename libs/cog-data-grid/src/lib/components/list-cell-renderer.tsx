@@ -9,15 +9,23 @@ interface IListCellRendererProps extends ICellRendererParams {
 }
 
 export const ListCellRenderer = React.forwardRef(
-  (props: IListCellRendererProps, _) => {
+  (props: IListCellRendererProps) => {
+    const getText = () => {
+      if (props.value.length === 0) return '';
+
+      const baseText = `${printType(props.value[0], props.listDataType)}`;
+
+      if (props.value.length > 1) {
+        return `${baseText};...`;
+      }
+
+      return baseText;
+    };
+
     return (
       <Flex justifyContent={'space-between'}>
-        <ListCellValueText>
-          {props.value.length
-            ? `${printType(props.value[0], props.listDataType)};...`
-            : ' '}
-        </ListCellValueText>
-        {props.value.length > 1 && <Icon type="List" />}
+        <ListCellValueText>{getText()}</ListCellValueText>
+        {props.value.length > 0 && <Icon type="List" />}
       </Flex>
     );
   }
