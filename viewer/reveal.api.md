@@ -766,6 +766,11 @@ export interface Image360 {
 }
 
 // @public
+export interface Image360Collection {
+    readonly image360Entities: Image360[];
+}
+
+// @public
 export interface Image360Visualization {
     opacity: number;
 }
