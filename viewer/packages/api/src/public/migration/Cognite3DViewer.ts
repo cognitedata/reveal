@@ -43,7 +43,8 @@ import {
   CadIntersection
 } from './types';
 import { RevealManager } from '../RevealManager';
-import { CogniteModel, RevealOptions } from '../types';
+import { CogniteModel } from '../types';
+import { RevealOptions } from '../RevealOptions';
 
 import { Spinner } from '../../utilities/Spinner';
 
