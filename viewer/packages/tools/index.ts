@@ -5,6 +5,8 @@
 export {
   HtmlOverlayTool,
   HtmlOverlayOptions,
+  HtmlOverlayToolOptions,
+  HtmlOverlayToolClusteringOptions,
   HtmlOverlayPositionUpdatedDelegate,
   HtmlOverlayCreateClusterDelegate
 } from './src/HtmlOverlay/HtmlOverlayTool';
@@ -25,6 +27,7 @@ export { Cognite3DViewerToolBase } from './src/Cognite3DViewerToolBase';
 export { MeasurementTool } from './src/Measurement/MeasurementTool';
 export { Measurement } from './src/Measurement/MeasurementManager';
 export {
+  DistanceToLabelDelegate,
   MeasurementOptions,
   MeasurementAddedDelegate,
   MeasurementStartedDelegate,
