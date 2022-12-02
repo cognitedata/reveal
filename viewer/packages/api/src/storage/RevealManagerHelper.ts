@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { AddModelOptions } from '../public/migration/types';
 import { createCdfRevealManager, createLocalRevealManager, createRevealManager } from '../public/createRevealManager';
 import { RevealManager } from '../public/RevealManager';
-import { RevealOptions } from '../public/types';
+import { RevealOptions } from '../public/RevealOptions';
 
 import {
   CdfModelIdentifier,
