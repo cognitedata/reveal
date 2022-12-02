@@ -100,7 +100,7 @@ jobs:
       continue-on-error: false
       run: |
         # Run api-extractor comparison, output diff if failing
-        npx api-extractor run || diff reveal.api.md api-extractor-temp/reveal.api.md
+        npx api-extractor run || (diff reveal.api.md api-extractor-temp/reveal.api.md && exit 1)
 
     - name: Upload dist/ artifact
       uses: actions/upload-artifact@v3
