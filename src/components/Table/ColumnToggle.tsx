@@ -207,7 +207,6 @@ const StyledMenu = styled(Menu)`
 
 const StyledHeader = styled(HighlightCell)`
   max-width: 170px;
-  text-transform: capitalize;
   text-overflow: ellipsis;
 `;
 

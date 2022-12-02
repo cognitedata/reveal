@@ -71,7 +71,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     ),
   },
   relation: {
-    header: 'Relationship Description(Source/Target)',
+    header: 'Relationship description(Source/Target)',
     accessorKey: 'relation',
   },
   labels: {
@@ -100,7 +100,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     ),
   },
   parentExternalId: {
-    header: 'Parent External ID',
+    header: 'Parent external ID',
     accessorKey: 'parentExternalId',
     cell: ({ getValue }) => (
       <HighlightCell text={getValue<string>() || DASH} lines={1} />
@@ -122,14 +122,14 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     ),
   },
   isString: {
-    header: 'Is String',
+    header: 'Is string',
     accessorKey: 'isString',
     cell: ({ getValue }) => (
       <Body level={2}>{capitalize(getValue<boolean>().toString())}</Body>
     ),
   },
   isStep: {
-    header: 'Is Step',
+    header: 'Is step',
     accessorKey: 'isStep',
     cell: ({ getValue }) => (
       <Body level={2}>{capitalize(getValue<boolean>().toString())}</Body>
@@ -230,7 +230,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   startTime: {
     accessorKey: 'startTime',
-    header: 'Start Time',
+    header: 'Start time',
     cell: ({ getValue }) => (
       <Body level={2}>
         {getValue() ? <TimeDisplay value={getValue<number | Date>()} /> : DASH}
@@ -239,7 +239,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   endTime: {
     accessorKey: 'endTime',
-    header: 'End Time',
+    header: 'End time',
     cell: ({ getValue }) => (
       <Body level={2}>
         {getValue() ? <TimeDisplay value={getValue<number | Date>()} /> : DASH}
@@ -313,7 +313,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   rootAsset: {
     accessorKey: 'rootId',
-    header: 'Root Asset',
+    header: 'Root asset',
     cell: ({ getValue }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const { data: rootAsset, isLoading } = useGetRootAsset(
@@ -336,7 +336,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   relationshipLabels: {
     accessorKey: 'relationshipLabels',
-    header: 'Relationship Labels',
+    header: 'Relationship labels',
     size: 250,
     cell: ({ getValue }) => (
       <Flex gap={2} wrap="wrap">
