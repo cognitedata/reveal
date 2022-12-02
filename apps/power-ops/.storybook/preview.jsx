@@ -2,6 +2,7 @@ import { initialize, mswDecorator } from 'msw-storybook-addon';
 import { globalStylesDecorator } from 'utils/test/storyDecorators';
 import { powerOpsApiHandlers } from 'utils/test/powerOpsApiHandlers';
 import { cdfApiHandlers } from 'utils/test/cdfApiHandlers';
+import { withDesign } from 'storybook-addon-designs';
 
 initialize({
   onUnhandledRequest({ url: { href }, method }) {
@@ -11,7 +12,7 @@ initialize({
   },
 });
 
-export const decorators = [globalStylesDecorator, mswDecorator];
+export const decorators = [globalStylesDecorator, mswDecorator, withDesign];
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },

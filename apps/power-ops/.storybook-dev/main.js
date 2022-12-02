@@ -11,6 +11,7 @@ module.exports = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
+    'storybook-addon-designs',
   ],
   features: { interactionsDebugger: true },
   // https://storybook.js.org/docs/react/configure/typescript#mainjs-configuration

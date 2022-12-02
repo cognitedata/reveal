@@ -5,6 +5,7 @@ STORYBOOK_DEPENDENCIES = [
     "@npm//@storybook/addon-links",
     "@npm//@storybook/addon-interactions",
     "@npm//chromatic",
+    "@npm//storybook-addon-designs",
     "@npm//msw-storybook-addon",
     "@npm//@storybook/react",
     "@npm//@storybook/jest",
