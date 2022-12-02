@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
-import { LoadingStateChangeListener, PointCloudBudget } from './types';
+import { PointCloudBudget } from './types';
 
 import { GeometryFilter, CadModelSectorLoadStatistics, CadNode } from '@reveal/cad-model';
 import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
@@ -26,6 +26,11 @@ export type AddCadModelOptions = {
   nodeAppearanceProvider?: NodeAppearanceProvider;
   geometryFilter?: GeometryFilter;
 };
+
+/**
+ * Handler for events about data being loaded.
+ */
+export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
 
 export class RevealManager {
   private readonly _cadManager: CadManager;

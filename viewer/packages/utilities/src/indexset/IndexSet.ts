@@ -8,7 +8,7 @@ import { NumericRange } from '../NumericRange';
 export type IndexNode = IntermediateIndexNode | LeafIndexNode;
 
 export class IndexSet {
-  rootNode?: IndexNode;
+  private rootNode?: IndexNode;
 
   constructor(values?: Iterable<number>);
   constructor(values?: NumericRange);

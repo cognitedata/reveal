@@ -9,7 +9,7 @@
 export type PointerEventDelegate = (event: PointerEventData) => void;
 
 /**
- * Data typr for PointerEventDelegate.
+ * Data type for PointerEventDelegate.
  * @module @cognite/reveal
  */
 export type PointerEventData = { offsetX: number; offsetY: number; button?: number };
