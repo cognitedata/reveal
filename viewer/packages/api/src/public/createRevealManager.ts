@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { RevealOptions } from './types';
+import { RevealOptions } from './RevealOptions';
 import { RevealManager } from './RevealManager';
 
 import { MetricsLogger } from '@reveal/metrics';

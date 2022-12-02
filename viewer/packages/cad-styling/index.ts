@@ -2,13 +2,15 @@
  * Copyright 2021 Cognite AS
  */
 
+export { CombineNodeCollectionBase } from './src/CombineNodeCollectionBase';
 export { IntersectionNodeCollection } from './src/IntersectionNodeCollection';
 export { NodeCollection } from './src/NodeCollection';
+export { CdfNodeCollectionBase } from './src/CdfNodeCollectionBase';
 export { SerializedNodeCollection } from './src/SerializedNodeCollection';
 export { TreeIndexNodeCollection } from './src/TreeIndexNodeCollection';
 export { UnionNodeCollection } from './src/UnionNodeCollection';
 export { NodeIdNodeCollection } from './src/NodeIdNodeCollection';
-export { PropertyFilterNodeCollection } from './src/PropertyFilterNodeCollection';
+export { PropertyFilterNodeCollection, PropertyFilterNodeCollectionOptions } from './src/PropertyFilterNodeCollection';
 export { SinglePropertyFilterNodeCollection } from './src/SinglePropertyFilterNodeCollection';
 export { AssetNodeCollection } from './src/AssetNodeCollection';
 export { InvertedNodeCollection } from './src/InvertedNodeCollection';
