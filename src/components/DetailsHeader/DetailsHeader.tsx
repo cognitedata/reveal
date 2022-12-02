@@ -11,8 +11,8 @@ import { ReleaseTag } from 'components/ReleaseTag';
 type DetailsHeaderProps = {
   imageUrl?: string;
   title: string;
-  version: string;
-  createdAt: string;
+  version?: string;
+  createdAt?: string;
 };
 
 const DetailsHeader = ({
@@ -22,10 +22,12 @@ const DetailsHeader = ({
   createdAt,
 }: DetailsHeaderProps) => {
   const { t } = useTranslation();
+
   const { subAppPath, extractorExternalId } = useParams<{
     subAppPath?: string;
     extractorExternalId?: string;
   }>();
+
   return (
     <HeaderContainer>
       <Layout.Container>
@@ -49,29 +51,35 @@ const DetailsHeader = ({
               </div>
             )}
             <Title level="3">{title}</Title>
-            <Flex gap={12}>
-              <Flex gap={6} alignItems="center">
-                <StyledIconMuted type="Layers" />
-                <StyledBodyMuted>
-                  <Flex gap={2}>
-                    <Flex gap={6} alignItems="center">
-                      {t('version-n', {
-                        version: getReleaseVersionCore(version),
-                      })}
-                    </Flex>
-                    <ReleaseTag version={version}></ReleaseTag>
+            {(version || createdAt) && (
+              <Flex gap={12}>
+                {version && (
+                  <Flex gap={6} alignItems="center">
+                    <StyledIconMuted type="Layers" />
+                    <StyledBodyMuted>
+                      <Flex gap={2}>
+                        <Flex gap={6} alignItems="center">
+                          {t('version-n', {
+                            version: getReleaseVersionCore(version),
+                          })}
+                        </Flex>
+                        <ReleaseTag version={version}></ReleaseTag>
+                      </Flex>
+                    </StyledBodyMuted>
                   </Flex>
-                </StyledBodyMuted>
+                )}
+                {createdAt && (
+                  <Flex gap={6} alignItems="center">
+                    <StyledIconMuted type="Events" />
+                    <StyledBodyMuted>
+                      {t('released-date', {
+                        createdAt,
+                      })}
+                    </StyledBodyMuted>
+                  </Flex>
+                )}
               </Flex>
-              <Flex gap={6} alignItems="center">
-                <StyledIconMuted type="Events" />
-                <StyledBodyMuted>
-                  {t('released-date', {
-                    createdAt,
-                  })}
-                </StyledBodyMuted>
-              </Flex>
-            </Flex>
+            )}
           </Flex>
         </Flex>
       </Layout.Container>

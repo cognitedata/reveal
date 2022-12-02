@@ -27,7 +27,7 @@ const ExtractorLibraryList = ({ items }: ExtractorLibraryListProps) => {
       {items?.map((item) => (
         <StyledExtractorContainer
           key={item.externalId}
-          to={createLink(`/${subAppPath}/${item.externalId}`)}
+          to={createLink(`/${subAppPath}/${item.category}/${item.externalId}`)}
           onClick={() => {
             trackUsage({ e: 'View.Extractor.Click', name: item.name });
           }}
