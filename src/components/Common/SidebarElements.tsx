@@ -84,7 +84,7 @@ export const CollapsePanelTitle = styled.div`
 `;
 
 export const SidebarCollapse = styled(Collapse)`
-  && {
+  &&& {
     background-color: white;
 
     .rc-collapse-item {
