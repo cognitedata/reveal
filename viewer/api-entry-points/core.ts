@@ -32,7 +32,6 @@ export {
   NodeOutlineColor,
   DefaultNodeAppearance,
   NodeCollection,
-  CdfNodeCollectionBase,
   CombineNodeCollectionBase,
   TreeIndexNodeCollection,
   NodeIdNodeCollection,

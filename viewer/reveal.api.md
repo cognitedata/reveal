@@ -31,6 +31,18 @@ export type AddImage360Options = {
 };
 
 // @public
+export interface AddModelOptions {
+    // (undocumented)
+    geometryFilter?: GeometryFilter;
+    // (undocumented)
+    localPath?: string;
+    // (undocumented)
+    modelId: number;
+    // (undocumented)
+    revisionId: number;
+}
+
+// @public
 export class AnnotationIdPointCloudObjectCollection extends PointCloudObjectCollection {
     constructor(ids: Iterable<number>);
     // (undocumented)
@@ -272,20 +284,6 @@ export interface CdfModelNodeCollectionDataProvider {
     nodeCount: number;
     // (undocumented)
     revisionId: number;
-}
-
-// @public (undocumented)
-export abstract class CdfNodeCollectionBase extends NodeCollection {
-    constructor(classToken: string, model: CdfModelNodeCollectionDataProvider);
-    clear(): void;
-    // (undocumented)
-    getAreas(): AreaCollection;
-    // (undocumented)
-    getIndexSet(): IndexSet;
-    // (undocumented)
-    get isLoading(): boolean;
-    // (undocumented)
-    protected updateCollectionFromResults(requests: Promise<ListResponse<Node3D[]>>[]): Promise<void>;
 }
 
 // @public (undocumented)
