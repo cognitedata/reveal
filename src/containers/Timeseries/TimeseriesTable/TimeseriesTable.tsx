@@ -118,6 +118,7 @@ export const TimeseriesTable = ({
         cell: ({ row }) => {
           return <TimeseriesLastReading timeseriesId={row.original.id} />;
         },
+        enableSorting: false,
       },
       Table.Columns.created,
       {
