@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import {
   Document,
   InternalDocumentFilter,
@@ -13,6 +13,7 @@ import { EmptyState } from 'components/EmpyState/EmptyState';
 import { SummaryCard } from 'components/SummaryCard/SummaryCard';
 
 import { getSummaryCardItems } from 'components/SummaryCard/utils';
+import { DocumentContentPreview } from 'containers';
 
 export const DocumentSummary = ({
   query = '',
@@ -32,7 +33,18 @@ export const DocumentSummary = ({
 
   const columns = useMemo(
     () =>
-      [Table.Columns.name(query), Table.Columns.type] as ColumnDef<Document>[],
+      [
+        Table.Columns.name(query),
+        {
+          accessorKey: 'content',
+          header: 'Content',
+          cell: ({ row }: { row: Row<Document> }) => {
+            return (
+              <DocumentContentPreview document={row.original} query={query} />
+            );
+          },
+        },
+      ] as ColumnDef<Document>[],
     [query]
   );
 

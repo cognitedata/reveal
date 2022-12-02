@@ -53,7 +53,7 @@ export function getTitle(t: ResourceType, plural: boolean = true): string {
       return plural ? 'Files' : 'File';
     }
     case 'document': {
-      return plural ? 'Documents' : 'Document';
+      return plural ? 'Files' : 'File';
     }
     case 'event': {
       return plural ? 'Events' : 'Event';

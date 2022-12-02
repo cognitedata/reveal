@@ -23,7 +23,7 @@ type TableColumnDef = ColumnDef<
     SequenceWithRelationshipLabels
 >;
 
-type ColumnWithQuery = (q?: string) => TableColumnDef;
+type ColumnWithQuery = (query?: string) => TableColumnDef;
 type MetadataColumn = (
   key: string,
   accessorFn?: (row: any) => string

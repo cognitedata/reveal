@@ -33,12 +33,9 @@ export const EventSummary = ({
     () =>
       [
         Table.Columns.type,
-        {
-          accessorKey: 'subtype',
-          header: () => 'Subtype',
-        },
+        Table.Columns.description(query),
       ] as ColumnDef<CogniteEvent>[],
-    []
+    [query]
   );
 
   return (

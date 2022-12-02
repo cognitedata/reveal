@@ -79,6 +79,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
               <DocumentContentPreview document={row.original} query={query} />
             );
           },
+          enableSorting: false,
         },
         {
           accessorKey: 'author',
@@ -97,6 +98,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
               <Body level={2}>{getValue<string | undefined>() || DASH}</Body>
             );
           },
+          enableSorting: false,
         },
         {
           // You do not have to add an id field if accessor is given a string.
@@ -122,6 +124,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           cell: ({ row }: { row: Row<Document> }) => {
             return <RootAssetCell row={row} />;
           },
+          enableSorting: false,
         },
         Table.Columns.externalId,
         Table.Columns.id,
