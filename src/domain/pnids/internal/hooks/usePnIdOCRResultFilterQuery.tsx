@@ -18,7 +18,7 @@ export const usePnIdOCRResultFilterQuery = (
     }
 
     const containerId = getContainerId(file.id);
-    if (data === undefined || data?.length === length) {
+    if (data === undefined || data?.length === 0) {
       return [];
     }
     const currentPage = page ? page - 1 : 0;
