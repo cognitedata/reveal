@@ -47,6 +47,7 @@ export class StationaryCameraManager implements CameraManager {
   setCameraState(state: CameraState): void {
     const rotation = state.rotation ?? this._camera.quaternion;
     this._camera.quaternion.copy(rotation);
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   }
 
   getCameraState(): Required<CameraState> {
