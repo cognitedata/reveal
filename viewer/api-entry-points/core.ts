@@ -27,18 +27,20 @@ export {
 export {
   AreaCollection,
   ClusteredAreaCollection,
-  NodeAppearanceProvider,
   NodeAppearance,
   SerializableNodeAppearance,
   NodeOutlineColor,
   DefaultNodeAppearance,
   NodeCollection,
+  CdfNodeCollectionBase,
+  CombineNodeCollectionBase,
   TreeIndexNodeCollection,
   NodeIdNodeCollection,
   IntersectionNodeCollection,
   UnionNodeCollection,
   SerializedNodeCollection,
   PropertyFilterNodeCollection,
+  PropertyFilterNodeCollectionOptions,
   SinglePropertyFilterNodeCollection,
   AssetNodeCollection,
   InvertedNodeCollection,
@@ -55,6 +57,7 @@ export {
   BeforeSceneRenderedDelegate,
   SceneRenderedDelegate,
   PointerEventDelegate,
+  PointerEventData,
   DisposedDelegate
 } from '../packages/utilities';
 
