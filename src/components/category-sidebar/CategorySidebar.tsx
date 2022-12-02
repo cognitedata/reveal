@@ -34,21 +34,20 @@ const CategorySidebar = ({
       <Title level={6}>{t('categories')}</Title>
       <Flex gap={4} direction="column">
         <CategorySidebarItem
-          isLoading={isLoading}
-          tab=""
           count={totalCount}
+          isLoading={isLoading}
           title={t('all')}
         />
         <CategorySidebarItem
+          category="extractor"
           count={extractorCount}
           isLoading={!didFetchExtractorList}
-          tab="extractor"
           title={t('extractor_other')}
         />
         <CategorySidebarItem
+          category="source-system"
           count={sourceSystemCount}
           isLoading={!didFetchSourceSystems}
-          tab="source"
           title={t('source-system_other')}
         />
       </Flex>

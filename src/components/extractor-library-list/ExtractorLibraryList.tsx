@@ -5,41 +5,47 @@ import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 
 import { trackUsage } from 'utils';
+import { ExtractorBase } from 'service/extractors';
+import { ExtractorLibraryCategory } from 'components/category-sidebar/CategorySidebarItem';
 import { useTranslation } from 'common';
 
-type ExtractorsListProps = {
-  extractorsList: any[];
+export type ExtractorLibraryItem = ExtractorBase & {
+  category: ExtractorLibraryCategory;
 };
 
-const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
+type ExtractorLibraryListProps = {
+  items: ExtractorLibraryItem[];
+};
+
+const ExtractorLibraryList = ({ items }: ExtractorLibraryListProps) => {
   const { t } = useTranslation();
 
   const { subAppPath } = useParams<{ subAppPath?: string }>();
 
   return (
     <StyledGrid>
-      {extractorsList?.map((extractor) => (
+      {items?.map((item) => (
         <StyledExtractorContainer
-          key={extractor.externalId}
-          to={createLink(`/${subAppPath}/${extractor.externalId}`)}
+          key={item.externalId}
+          to={createLink(`/${subAppPath}/${item.externalId}`)}
           onClick={() => {
-            trackUsage({ e: 'View.Extractor.Click', name: extractor.name });
+            trackUsage({ e: 'View.Extractor.Click', name: item.name });
           }}
         >
           <StyledExtractorContent>
-            {extractor?.imageUrl && (
+            {item?.imageUrl && (
               <div>
-                <img src={extractor?.imageUrl} />
+                <img src={item?.imageUrl} />
               </div>
             )}
             <Flex gap={8} direction="column">
-              <Title level="5">{extractor.name}</Title>
+              <Title level="5">{item.name}</Title>
               <StyledMutedDescription>
-                {extractor.description}
+                {item.description}
               </StyledMutedDescription>
             </Flex>
             <StyledTagContainer>
-              <Chip label={t('extractor_one')} size="x-small" />
+              <Chip label={t(`${item.category}_one`)} size="x-small" />
             </StyledTagContainer>
           </StyledExtractorContent>
         </StyledExtractorContainer>
@@ -47,8 +53,6 @@ const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
     </StyledGrid>
   );
 };
-
-export default ExtractorsList;
 
 const StyledTagContainer = styled.div`
   margin-top: auto;
@@ -97,3 +101,5 @@ const StyledExtractorContainer = styled(Link)`
 const StyledMutedDescription = styled(Body).attrs({ level: 3 })`
   color: ${Colors['text-icon--muted']};
 `;
+
+export default ExtractorLibraryList;

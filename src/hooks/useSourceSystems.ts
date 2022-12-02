@@ -1,23 +1,25 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
+import {
+  ExtractorLibraryCategory,
+  EXTRACTOR_LIBRARY_CATEGORIES,
+} from 'components/category-sidebar/CategorySidebarItem';
 import { useQuery } from 'react-query';
+import { ExtractorBase } from 'service/extractors';
 
 export const getSourceSystemsQueryKey = () => ['source-systems', 'list'];
 
-export type SourceSystem = {
-  externalId: string;
-  name: string;
-  description?: string;
-  type: string; // FIXME: get full type list
-  tags?: string[];
+type SourceSystemBase = ExtractorBase;
+export type SourceSystem = SourceSystemBase & {
+  category: ExtractorLibraryCategory;
 };
 
 export const useSourceSystems = () => {
   const sdk = useSDK();
 
   return useQuery<SourceSystem[]>(getSourceSystemsQueryKey(), async () => {
-    const solutions = await sdk
-      .get<{ items: SourceSystem[] }>(
+    const sourceSystems = await sdk
+      .get<{ items: SourceSystemBase[] }>(
         `api/v1/projects/${getProject()}/extractors/sources`,
         {
           headers: {
@@ -27,6 +29,9 @@ export const useSourceSystems = () => {
       )
       .then((res) => res.data.items);
 
-    return solutions;
+    return sourceSystems.map((item) => ({
+      ...item,
+      category: EXTRACTOR_LIBRARY_CATEGORIES.sourceSystem,
+    }));
   });
 };

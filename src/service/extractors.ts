@@ -1,4 +1,5 @@
 import sdk from '@cognite/cdf-sdk-singleton';
+import { ExtractorLibraryCategory } from 'components/category-sidebar/CategorySidebarItem';
 
 export type Artifact = {
   name: string;
@@ -24,15 +25,19 @@ export type ExtractorLink = {
 
 export type ExtractorType = 'global' | 'community' | 'unreleased';
 
-export type Extractor = {
+export type ExtractorBase = {
+  imageUrl?: string;
   externalId: string;
   name: string;
   description?: string;
   type: ExtractorType;
+  tags?: string[];
+};
+
+export type Extractor = ExtractorBase & {
   latestVersion: string | undefined;
   documentation?: string;
   imageUrl: string;
-  tags?: string[];
   links?: ExtractorLink[];
 };
 
@@ -40,7 +45,10 @@ type Items<T> = {
   items: T[];
 };
 
-export type ExtractorWithReleases = Extractor & { releases: Release[] };
+export type ExtractorWithReleases = Extractor & {
+  category: ExtractorLibraryCategory;
+  releases: Release[];
+};
 
 type ExtractorDownload = {
   downloadUrl: string;
@@ -76,6 +84,7 @@ export const getExtractorsWithReleases = async () => {
   extractors.forEach((extractor) => {
     extractorMap[extractor.externalId] = {
       ...extractor,
+      category: 'extractor',
       releases: [],
     };
   });
