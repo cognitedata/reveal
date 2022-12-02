@@ -282,6 +282,7 @@ export class Cognite3DViewer {
         this._sceneHandler,
         this._domElement,
         this._activeCameraManager,
+        this._mouseHandler,
         () => this.requestRedraw()
       );
     }
@@ -1204,6 +1205,12 @@ export class Cognite3DViewer {
    * ```
    */
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection> {
+    if (this._image360ApiHelper !== undefined) {
+      const image360Intersection = this._image360ApiHelper.intersect360ImageIcons(offsetX, offsetY);
+      if (image360Intersection !== undefined) {
+        return null;
+      }
+    }
     return this.intersectModels(offsetX, offsetY);
   }
 
