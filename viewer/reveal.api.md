@@ -287,6 +287,20 @@ export interface CdfModelNodeCollectionDataProvider {
 }
 
 // @public (undocumented)
+export abstract class CdfNodeCollectionBase extends NodeCollection {
+    constructor(classToken: string, model: CdfModelNodeCollectionDataProvider);
+    clear(): void;
+    // (undocumented)
+    getAreas(): AreaCollection;
+    // (undocumented)
+    getIndexSet(): IndexSet;
+    // (undocumented)
+    get isLoading(): boolean;
+    // (undocumented)
+    protected updateCollectionFromResults(requests: Promise<ListResponse<Node3D[]>>[]): Promise<void>;
+}
+
+// @public (undocumented)
 export type ClippingPlanesState = {
     nx: number;
     ny: number;
