@@ -727,7 +727,7 @@ export class Cognite3DViewer {
    * Enter visualization of a 360 image.
    * @param image360
    */
-  async enter360Image(image360: Image360): Promise<void> {
+  enter360Image(image360: Image360): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
