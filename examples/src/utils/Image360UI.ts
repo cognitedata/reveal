@@ -62,7 +62,7 @@ export class Image360UI {
       const translationMatrix = new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
       const collectionTransform = translationMatrix.multiply(rotationMatrix);
       const set = await viewer.add360ImageSet('events', {site_id: params.siteId}, {collectionTransform, preMultipliedRotation: params.premultipliedRotation});
-      entities = entities.concat(set);
+      entities = entities.concat(set.image360Entities);
       viewer.requestRedraw();
     }
   }
