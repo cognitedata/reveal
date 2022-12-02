@@ -86,8 +86,7 @@
   },
   "devDependencies": {
     "@azure/msal-browser": "2.32.0",
-    "@cognite/sdk": "7.12.0",
-    "@cognite/sdk-core": "4.4.0",
+    "@cognite/sdk": "7.13.0",
     "@microsoft/api-extractor": "^7.33.6",
     "@types/dat.gui": "0.7.7",
     "@types/expect-puppeteer": "5.0.2",
@@ -104,8 +103,8 @@
     "@types/skmeans": "0.11.3",
     "@types/stats": "0.16.30",
     "@types/tween.js": "18.5.1",
-    "@typescript-eslint/eslint-plugin": "5.43.0",
-    "@typescript-eslint/parser": "5.43.0",
+    "@typescript-eslint/eslint-plugin": "5.44.0",
+    "@typescript-eslint/parser": "5.44.0",
     "concurrently": "7.6.0",
     "cross-env": "7.0.3",
     "cross-var": "1.1.0",
@@ -131,9 +130,9 @@
     "jsdom": "20.0.3",
     "moq.ts": "9.0.2",
     "nock": "13.2.9",
-    "prettier": "2.7.1",
+    "prettier": "2.8.0",
     "process": "0.11.10",
-    "puppeteer": "19.2.2",
+    "puppeteer": "19.3.0",
     "random-seed": "0.3.0",
     "raw-loader": "4.0.2",
     "remove-files-webpack-plugin": "1.5.0",
@@ -154,8 +153,7 @@
     "workerize-loader": "2.0.2"
   },
   "peerDependencies": {
-    "@cognite/sdk": "7.12.0",
-    "@cognite/sdk-core": "^4.1.0",
+    "@cognite/sdk": "7.13.0",
     "three": "0.146.0"
   },
   "glslify": {

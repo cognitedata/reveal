@@ -2,9 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-// To avoid direct dependency on @cognite/sdk we use sdk-core here for HttpError.
-// that's why it's avoided https://github.com/cognitedata/cdf-hub/pull/687/files#r489204315
-import { HttpError } from '@cognite/sdk-core';
+import { HttpError } from '@cognite/sdk';
 
 export const supportedVersions = [8];
 
