@@ -9,6 +9,38 @@ import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 This document is an overview of some important differences between Reveal 3.x and Reveal 4.x.
 
+## Entrypoint and import paths
+For Reveal 4 we changed into using a single entry point for everything: `@cognite/reveal`.
+So extensions and tools also should be imported from this entry point.
+We have however also added support for node's module `exports` such that if your tsconfig is setup with:
+```ts
+"moduleResolution": "Node16",
+```
+
+imports will still work the same way they did with Reveal 3.x. 
+Note that this may require a bump in typescript version.
+If this is not possible for you, then you need to change all imports to be `from @cognite/reveal` vs. f.ex. `from @cognite/reveal/tools`. 
+
+## Three.js is now a peer-dependency
+For Reveal 4 we have changed threejs from being exported from Reveal and rather require applications that consume Reveal to import it.
+There are multiple reasons for this, but a major pain point has been that Reveal does not expose the three.js examples in its export, causing applications to have to install threejs anyway.
+In addition, we also see a lot of applications ending up having multiple bundles of three.js which we are trying to alliviate.
+
+## Exploded view tool has been removed
+Due to low / no usage of this tool we have decided to remove it.
+Note that the tool was a convenience method and it is fully possible to implement this in the application logic.
+The functionality should be easily adoptable from the removed tool.
+The removed tool can be found [here.](https://github.com/cognitedata/reveal/blob/release/3.3.x/viewer/packages/tools/src/ExplodedViewTool.ts)
+
+## Geomap tool has been removed
+Due to low / no usage of this tool we have decided to remove it.
+Note that the tool was a convenience method and it is fully possible to implement this in the application logic.
+The functionality should be easily adoptable from the removed tool.
+The removed tool can be found [here.](https://github.com/cognitedata/reveal/tree/release/3.3.x/viewer/packages/tools/src/Geomap)
+The geomap tool leveraged the [geo-three](https://www.npmjs.com/package/geo-three) npm library which can be used by your application and added through custom objects if you want to support this using Reveal.
+
+
+
 ## Potree prefix removed
 
 In Reveal 3, several symbols has `Potree`-prefix which now has been replaced. This includes:
