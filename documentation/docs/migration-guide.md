@@ -47,7 +47,7 @@ This becomes relevant when you want your 3D content to blend with your website.
 This method has been left unused for a long time, and Reveal now supports all major browsers with WebGL 2.0 capabilities.
 
 ## Cognite3DModel has been renamed to CogniteCadModel
-Renamed for clarity, as technically a point cloud can also be viewer as a 3D model.
+Renamed for clarity, as technically a point cloud can also be viewed as a 3D model.
 
 ## Cognite3DViewer.getIntersectionFromPixel options parameter has been removed
 Reveal currently uses GPU driven picking for point clouds, so the previously used options are not applicable anymore.
