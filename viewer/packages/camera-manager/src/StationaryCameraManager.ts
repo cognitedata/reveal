@@ -25,7 +25,6 @@ export class StationaryCameraManager implements CameraManager {
   private readonly _domElement: HTMLElement;
   private _defaultFOV: number;
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
-  private _isEnabled = false;
   private _isDragging = false;
 
   constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
@@ -33,10 +32,6 @@ export class StationaryCameraManager implements CameraManager {
     this._camera = camera;
     this._defaultFOV = camera.fov;
     this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
-  }
-
-  get enabled(): boolean {
-    return this._isEnabled;
   }
 
   getCamera(): THREE.PerspectiveCamera {
@@ -61,8 +56,6 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   activate(cameraManager: CameraManager): void {
-    this._isEnabled = true;
-
     const { position, rotation } = cameraManager.getCameraState();
     this.setCameraState({ rotation });
     this._camera.position.copy(position);
@@ -81,8 +74,6 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   deactivate(): void {
-    this._isEnabled = false;
-
     this._domElement.removeEventListener('pointermove', this.rotateCamera);
     this._domElement.removeEventListener('pointerdown', this.enableDragging);
     this._domElement.removeEventListener('pointerup', this.disableDragging);
@@ -166,7 +157,7 @@ export class StationaryCameraManager implements CameraManager {
   };
 
   private readonly rotateCamera = (event: PointerEvent) => {
-    if (!this._isDragging || !this._isEnabled) {
+    if (!this._isDragging) {
       return;
     }
 

@@ -163,21 +163,6 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   /**
-   * Sets whether camera controls through mouse, touch and keyboard are enabled.
-   */
-  private set enabled(enabled: boolean) {
-    this._controls.enabled = enabled;
-    this.isEnabled = enabled;
-  }
-
-  /**
-   * Gets whether camera controls through mouse, touch and keyboard are enabled.
-   */
-  get enabled(): boolean {
-    return this.isEnabled;
-  }
-
-  /**
    * Gets current Combo Controls options.
    */
   getComboControlsOptions(): Readonly<ComboControlsOptions> {
@@ -245,9 +230,9 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   activate(cameraManager?: CameraManager): void {
-    if (this.enabled) return;
+    if (this.isEnabled) return;
 
-    this.enabled = true;
+    this.isEnabled = true;
     this.setupControls();
 
     if (cameraManager) {
@@ -258,9 +243,9 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   deactivate(): void {
-    if (!this.enabled) return;
+    if (!this.isEnabled) return;
 
-    this.enabled = false;
+    this.isEnabled = false;
     this.teardownControls(true);
   }
 
@@ -278,7 +263,7 @@ export class DefaultCameraManager implements CameraManager {
   setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
     this._cameraControlsOptions = { ...DefaultCameraManager.DefaultCameraControlsOptions, ...controlsOptions };
 
-    if (this.enabled) {
+    if (this.isEnabled) {
       // New EventListeners are added in 'setupControls', so to avoid “doubling” of some behaviours we need to tear down controls first.
       this.teardownControls(false);
       this.setupControls();
