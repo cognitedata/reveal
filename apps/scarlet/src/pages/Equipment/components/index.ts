@@ -10,8 +10,6 @@ export * from './CardRemarks';
 export * from './ComponentGroups';
 export * from './ComponentList';
 export * from './ComponentPanel';
-export * from './ComponentsDeletion';
-export * from './ComponentsRenaming';
 export * from './ConnectedElements';
 export * from './DataElementList';
 export * from './DataElementListSkeleton';

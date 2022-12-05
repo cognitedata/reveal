@@ -1,4 +1,3 @@
-export * from './useAddComponent';
 export * from './useApi';
 export * from './useAppContext';
 export * from './useCheckedDataElementsState';
