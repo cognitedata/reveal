@@ -11,7 +11,8 @@ export class LoadGltfUi {
   private readonly _params = {
     url: 'https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf',
     transformGizmosVisible: true,
-    scale: 1.0
+    scale: 1.0,
+    scaleStr: '1.0'
   };
 
   constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer) {
@@ -33,10 +34,19 @@ export class LoadGltfUi {
         });
         this._viewer.requestRedraw();
       });
-    ui.add(this._params, 'scale', 1, 20, 1).name('Scale models').onChange(scale => {
-      this._objects.forEach(object => object.scale.set(scale, scale, scale));
-      this._viewer.requestRedraw();
-    })
+    ui.add(this._params, 'scaleStr').name('Scale models').onChange(scaleStr => {
+      try {
+        console.log(scaleStr);
+        const scale = Number.parseFloat(scaleStr);
+        console.log(scale);
+        this._objects.forEach(object => object.scale.set(scale, scale, scale));
+        this._viewer.requestRedraw();
+        this._params.scale = scale;
+      }
+      catch  {
+      }
+    });
+
     ui.add(this._params, 'url').name('URL');
     ui.add(actions, 'loadGltf').name('Load GLTF');
     ui.add(actions, 'addHeadlight').name('Add headlight');
@@ -110,16 +120,16 @@ export class LoadGltfUi {
   }
 
   private addHeadlight(): void {
-    const headlight = new THREE.SpotLight();
-    headlight.power *= 2.0;
+    const pointlight = new THREE.PointLight();
+    pointlight.power *= 2.0;
     const updatePose = () => {
       const { position, rotation } =
         this._viewer.cameraManager.getCameraState();
-      headlight.position.copy(position);
-      headlight.setRotationFromQuaternion(rotation);
+        pointlight.position.copy(position);
+        pointlight.setRotationFromQuaternion(rotation);
     };
     this._viewer.on('cameraChange', updatePose);
 
-    this._viewer.addObject3D(headlight);
+    this._viewer.addObject3D(pointlight);
   }
 }
