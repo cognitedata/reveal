@@ -1,7 +1,7 @@
 {
   "name": "@cognite/cdf-extractor-downloads",
   "description": "Extractor downloads subapp of fusion.cognite.com",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost PORT=8000 react-app-rewired --max_old_space_size=2000 start",
@@ -21,7 +21,7 @@
   "dependencies": {
     "@cognite/cdf-i18n-utils": "^0.6.0",
     "@cognite/cdf-utilities": "^1.4.7",
-    "@cognite/cogs.js": "^7.6.1",
+    "@cognite/cogs.js": "^8.0.2",
     "@cognite/metrics": "^1.2.1",
     "@cognite/react-feature-flags": "^1.0.0",
     "@cognite/sdk": "^6.3.4",
@@ -38,7 +38,7 @@
     "react-i18next": "^11.15.5",
     "react-markdown": "^8.0.3",
     "react-query": "^3.34.16",
-    "react-router-dom": "^5.3.0",
+    "react-router-dom": "^6.4.3",
     "react-scripts": "^5.0.0",
     "styled-components": "^5.3.1",
     "systemjs-webpack-interop": "^2.1.2"
@@ -55,7 +55,6 @@
     "@types/node": "^16.11.1",
     "@types/react": "^17.0.30",
     "@types/react-dom": "^17.0.9",
-    "@types/react-router-dom": "^5.3.1",
     "@types/single-spa-react": "^2.12.0",
     "@types/styled-components": "^5.1.15",
     "@typescript-eslint/eslint-plugin": "^5.13.0",

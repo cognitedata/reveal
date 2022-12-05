@@ -9,15 +9,18 @@ export type DocsLinkGridItemProps = {
 
 const DocsLinkGridItem = styled(
   (props: PropsWithChildren<DocsLinkGridItemProps>) => (
-    <Button type="link" target="_blank" {...props}>
+    <Button type="secondary" target="_blank" {...props}>
       <Title level="5">{props.children}</Title>
       <Icon type="ExternalLink" />
     </Button>
   )
 )`
-  display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
+  & > span {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
   background-color: ${Colors['decorative--grayscale--200']};
   border-radius: 6px;
 

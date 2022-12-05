@@ -1,10 +1,11 @@
-import { Body, Colors, Elevations, Flex, Title } from '@cognite/cogs.js';
-import styled from 'styled-components';
 import { Link, useParams } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
 
-import { useTranslation } from 'common';
+import { Body, Chip, Colors, Elevations, Flex, Title } from '@cognite/cogs.js';
+import { createLink } from '@cognite/cdf-utilities';
+import styled from 'styled-components';
+
 import { trackUsage } from 'utils';
+import { useTranslation } from 'common';
 
 type ExtractorsListProps = {
   extractorsList: any[];
@@ -12,64 +13,61 @@ type ExtractorsListProps = {
 
 const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
   const { t } = useTranslation();
+
   const { subAppPath } = useParams<{ subAppPath?: string }>();
 
   return (
-    <Flex gap={24} direction="column">
-      <Flex gap={4} direction="column">
-        <Title level="4">{t('cognite-extractors')}</Title>
-        <Body level="1">{t('install-prebuilt-cognite-extractors')}</Body>
-      </Flex>
-      <StyledGrid>
-        {extractorsList?.map((extractor) => (
-          <StyledExtractorContainer
-            key={extractor.externalId}
-            to={createLink(`/${subAppPath}/${extractor.externalId}`)}
-            onClick={() => {
-              trackUsage({ e: 'View.Extractor.Click', name: extractor.name });
-            }}
-          >
-            <Flex gap={24} direction="column">
-              {extractor?.imageUrl && (
-                <div>
-                  <img src={extractor?.imageUrl} />
-                </div>
-              )}
-              <Flex gap={8} direction="column">
-                <Title level="5">{extractor.name}</Title>
-                <StyledMutedDescription>
-                  {extractor.description}
-                </StyledMutedDescription>
-              </Flex>
+    <StyledGrid>
+      {extractorsList?.map((extractor) => (
+        <StyledExtractorContainer
+          key={extractor.externalId}
+          to={createLink(`/${subAppPath}/${extractor.externalId}`)}
+          onClick={() => {
+            trackUsage({ e: 'View.Extractor.Click', name: extractor.name });
+          }}
+        >
+          <StyledExtractorContent>
+            {extractor?.imageUrl && (
+              <div>
+                <img src={extractor?.imageUrl} />
+              </div>
+            )}
+            <Flex gap={8} direction="column">
+              <Title level="5">{extractor.name}</Title>
+              <StyledMutedDescription>
+                {extractor.description}
+              </StyledMutedDescription>
             </Flex>
-          </StyledExtractorContainer>
-        ))}
-      </StyledGrid>
-    </Flex>
+            <StyledTagContainer>
+              <Chip label={t('extractor_one')} size="x-small" />
+            </StyledTagContainer>
+          </StyledExtractorContent>
+        </StyledExtractorContainer>
+      ))}
+    </StyledGrid>
   );
 };
 
 export default ExtractorsList;
+
+const StyledTagContainer = styled.div`
+  margin-top: auto;
+`;
+
+const StyledExtractorContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 12px;
+`;
 
 const StyledGrid = styled.div`
   --cell: minmax(256px, 1fr);
 
   display: grid;
   justify-content: space-between;
-  gap: 24px;
-  grid-template-columns: repeat(auto-fit, var(--cell));
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, var(--cell));
-  }
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, var(--cell));
-  }
-
-  @media (min-width: 1440px) {
-    grid-template-columns: repeat(4, var(--cell));
-  }
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, var(--cell));
 `;
 
 const StyledExtractorContainer = styled(Link)`
@@ -91,7 +89,7 @@ const StyledExtractorContainer = styled(Link)`
   }
 
   && {
-    padding: 24px;
+    padding: 20px;
     height: auto;
   }
 `;
