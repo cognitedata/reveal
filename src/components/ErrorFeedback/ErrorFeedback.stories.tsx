@@ -5,12 +5,13 @@ import { ErrorFeedback } from './ErrorFeedback';
 export default {
   title: 'Component/ErrorFeedback',
   component: ErrorFeedback,
-  argTypes: { error: { control: 'text' } },
 };
 
 export const Simple: ComponentStory<typeof ErrorFeedback> = args => (
-  <div style={{ padding: '40px', background: 'lightgrey' }}>
+  <div>
     <ErrorFeedback {...args} />
   </div>
 );
-Simple.args = { error: 'error' };
+Simple.args = {
+  error: { message: 'Event Id not found', requestId: '232423-4234-423432' },
+};
