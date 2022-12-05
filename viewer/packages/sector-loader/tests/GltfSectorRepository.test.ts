@@ -10,7 +10,10 @@ import { IMock, Mock } from 'moq.ts';
 import { BinaryFileProvider } from '@reveal/data-providers';
 import { CadMaterialManager } from '@reveal/rendering';
 import { WantedSector } from '@reveal/cad-parsers';
-import Log from '@reveal/logger';
+
+import log from '@reveal/logger';
+
+import { jest } from '@jest/globals';
 
 describe(GltfSectorRepository.name, () => {
   let binaryFileProvider: IMock<BinaryFileProvider>;
@@ -46,8 +49,8 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test('loadSector should gracefully handle errors from sectorLoader', async () => {
-    const currentLogLevel = Log.getLevel();
-    Log.setLevel('silent');
+    const currentLogLevel = log.default.getLevel();
+    log.default.setLevel('silent');
 
     const binaryFileProvider = createBinaryFileProviderMock();
     const materialManager = new Mock<CadMaterialManager>();
@@ -57,6 +60,6 @@ describe(GltfSectorRepository.name, () => {
     //Sector loader will throw since there is no valid materials for given object
     await expect(sectorRepository.loadSector(wantedSectorMock.object())).resolves.not.toThrow();
 
-    Log.setLevel(currentLogLevel);
+    log.default.setLevel(currentLogLevel);
   });
 });

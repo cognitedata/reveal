@@ -20,6 +20,11 @@ import {
 import { MetricsLogger } from '@reveal/metrics';
 import { Cognite3DViewer } from '@reveal/api';
 
+// const vertexShaderSource = await fetch('./shaders/axisTool.vert').then(p => p.text());
+// const fragmentShaderSource = await fetch('./shaders/axisTool.frag').then(p => p.text());
+// const vertexShaderSource = require('./shaders/axisTool.vert').default;
+// const fragmentShaderSource = require('./shaders/axisTool.frag').default;
+
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
 

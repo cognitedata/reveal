@@ -12,10 +12,13 @@ module.exports = () => {
     rootDir: '.',
     roots: ['<rootDir>'],
     transform: {
-      '^.+\\.tsx?$': ['ts-jest', { tsconfig: path.resolve(__dirname, './tsconfig.test.json') }]
+      // '^.+\\.(mjs|tsx?)$': ['ts-jest', { useESM: true, tsconfig: path.resolve(__dirname, './tsconfig.test.json') }]
     },
+    preset: 'ts-jest/presets/js-with-ts-esm', // or other ESM presets
     testRegex: '(.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
+    // extensionsToTreatAsEsm: ['.ts'],
     moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+    transformIgnorePatterns: ["node_modules/(?!(moq.ts|rxjs|random-seed)/)"],
     moduleNameMapper: {
       '\\.(frag|vert)$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/glslMocks.js'),
       '\\.css$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/cssMock.js'),

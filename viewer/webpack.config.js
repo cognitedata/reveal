@@ -66,7 +66,10 @@ module.exports = env => {
         {
           test: /\.(glsl|vert|frag)$/,
           exclude: '/node_modules/',
+          // type: 'asset/source',
+          // mimetype: 'text/plain'
           use: ['raw-loader', 'glslify-loader']
+          // use: ['raw-loader']
         },
         {
           test: /\.css$/,
@@ -142,6 +145,9 @@ module.exports = env => {
           });
         }
       }
-    ]
+    ],
+    experiments: {
+      topLevelAwait: true
+    }
   };
 };

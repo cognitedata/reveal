@@ -5,6 +5,8 @@
 import * as THREE from 'three';
 import { AutoDisposeGroup } from './AutoDisposeGroup';
 
+import { jest } from '@jest/globals';
+
 describe('AutoDisposeGroup', () => {
   let mesh: THREE.Mesh;
   let geometry: THREE.BufferGeometry;

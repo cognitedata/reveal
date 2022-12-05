@@ -10,6 +10,10 @@ import * as fs from 'fs';
 export const defaultBaseUrl = 'https://some_baseurl.com';
 const modelIdentifier = 'some_model_identifier';
 
+// https://blog.logrocket.com/alternatives-dirname-node-js-es-modules/
+import url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
 export function createWantedSectorMock(id: number = 1): IMock<WantedSector> {
   const wantedFile = 'wanted_file.glb';
 

@@ -4,6 +4,9 @@
 
 import glsl from 'glslify';
 
+import sectorShaderSimpleMeshFrag from '../glsl/sector/simple.frag';
+import sectorShaderSimpleMeshVert from '../glsl/sector/simple.vert';
+
 /**
  * Defines used to enable debugging features in shaders.
  */
@@ -14,69 +17,74 @@ export const shaderDefines = {
   }
 };
 
+
+
 export const sectorShaders = {
   // ----------------
   // "Regular" meshes
   // ----------------
   simpleMesh: {
-    fragment: glsl(require('../glsl/sector/simple.frag').default),
-    vertex: glsl(require('../glsl/sector/simple.vert').default)
+    // fragment: glsl(sectorShaderSimpleMeshFrag.default),
+    fragment: glsl(sectorShaderSimpleMeshFrag.default /* (await import('../glsl/sector/mesh.frag')).default.default */),
+    vertex: glsl(sectorShaderSimpleMeshVert.default)
+    // fragment: glsl(await fetch('../glsl/sector/simple.frag').then(p => p.text())),
+    // vertex: glsl(await fetch('../glsl/sector/simple.vert').then(p => p.text()))
   },
   detailedMesh: {
-    fragment: glsl(require('../glsl/sector/mesh.frag').default),
-    vertex: glsl(require('../glsl/sector/mesh.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/mesh.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/mesh.vert').then(p => p.text()))
   },
   instancedMesh: {
-    fragment: glsl(require('../glsl/sector/instancedMesh.frag').default),
-    vertex: glsl(require('../glsl/sector/instancedMesh.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/instancedMesh.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/instancedMesh.vert').then(p => p.text()))
   },
 
   // ----------------
   // Primitives
   // ----------------
   boxPrimitive: {
-    fragment: glsl(require('../glsl/sector/instancedMesh.frag').default),
-    vertex: glsl(require('../glsl/sector/instancedMesh.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/instancedMesh.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/instancedMesh.vert').then(p => p.text()))
   },
   circlePrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/circle.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/circle.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/primitives/circle.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/primitives/circle.vert').then(p => p.text()))
   },
   conePrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/cone.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/cone.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/primitives/cone.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/primitives/cone.vert').then(p => p.text()))
   },
   eccentricConePrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/eccentricCone.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/eccentricCone.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/primitives/eccentricCone.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/primitives/eccentricCone.vert').then(p => p.text()))
   },
   ellipsoidSegmentPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/ellipsoidSegment.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/ellipsoidSegment.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/primitives/ellipsoidSegment.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/primitives/ellipsoidSegment.vert').then(p => p.text()))
   },
   generalCylinderPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/generalCylinder.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/generalCylinder.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/primitives/generalCylinder.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/primitives/generalCylinder.vert').then(p => p.text()))
   },
   generalRingPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/generalring.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/generalring.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/primitives/generalring.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/primitives/generalring.vert').then(p => p.text()))
   },
   nutPrimitive: {
-    fragment: glsl(require('../glsl/sector/instancedMesh.frag').default),
-    vertex: glsl(require('../glsl/sector/instancedMesh.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/instancedMesh.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/instancedMesh.vert').then(p => p.text()))
   },
   quadPrimitive: {
-    fragment: glsl(require('../glsl/sector/instancedMesh.frag').default),
-    vertex: glsl(require('../glsl/sector/instancedMesh.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/instancedMesh.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/instancedMesh.vert').then(p => p.text()))
   },
   torusSegmentPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/torusSegment.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/torusSegment.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/primitives/torusSegment.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/primitives/torusSegment.vert').then(p => p.text()))
   },
   trapeziumPrimitive: {
-    fragment: glsl(require('../glsl/sector/primitives/trapezium.frag').default),
-    vertex: glsl(require('../glsl/sector/primitives/trapezium.vert').default)
+    fragment: glsl(await fetch('../glsl/sector/primitives/trapezium.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/sector/primitives/trapezium.vert').then(p => p.text()))
   }
 };
 
@@ -85,12 +93,12 @@ export const sectorShaders = {
  */
 export const pointCloudShaders = {
   normalize: {
-    fragment: glsl(require('../glsl/pointcloud/normalize.frag').default),
-    vertex: glsl(require('../glsl/pointcloud/normalize.vert').default)
+    fragment: glsl(await fetch('../glsl/pointcloud/normalize.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/pointcloud/normalize.vert').then(p => p.text()))
   },
   pointcloud: {
-    fragment: glsl(require('../glsl/pointcloud/pointcloud.frag').default),
-    vertex: glsl(require('../glsl/pointcloud/pointcloud.vert').default)
+    fragment: glsl(await fetch('../glsl/pointcloud/pointcloud.frag').then(p => p.text())),
+    vertex: glsl(await fetch('../glsl/pointcloud/pointcloud.vert').then(p => p.text()))
   }
 };
 
@@ -98,24 +106,24 @@ export const pointCloudShaders = {
  * Screen space ambient occlusion shader
  */
 export const ssaoShaders = {
-  fragment: glsl(require('../glsl/post-processing/pure-depth-ssao.frag').default),
-  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
+  fragment: glsl(await fetch('../glsl/post-processing/pure-depth-ssao.frag').then(p => p.text())),
+  vertex: glsl(await fetch('../glsl/post-processing/passthrough.vert').then(p => p.text()))
 };
 
 export const blitShaders = {
-  fragment: glsl(require('../glsl/post-processing/blit.frag').default),
-  vertex: glsl(require('../glsl/post-processing/unit-orthographic-passthrough.vert').default)
+  fragment: glsl(await fetch('../glsl/post-processing/blit.frag').then(p => p.text())),
+  vertex: glsl(await fetch('../glsl/post-processing/unit-orthographic-passthrough.vert').then(p => p.text()))
 };
 
 export const depthBlendBlitShaders = {
-  fragment: glsl(require('../glsl/post-processing/depthBlendBlit.frag').default),
-  vertex: glsl(require('../glsl/post-processing/unit-orthographic-passthrough.vert').default)
+  fragment: glsl(await fetch('../glsl/post-processing/depthBlendBlit.frag').then(p => p.text())),
+  vertex: glsl(await fetch('../glsl/post-processing/unit-orthographic-passthrough.vert').then(p => p.text()))
 };
 
 /**
  * Shaders use to estimate how many pixels a sector covers on screen.
  */
 export const coverageShaders = {
-  fragment: glsl(require('../glsl/sector/sectorCoverage.frag').default),
-  vertex: glsl(require('../glsl/sector/sectorCoverage.vert').default)
+  fragment: glsl(await fetch('../glsl/sector/sectorCoverage.frag').then(p => p.text())),
+  vertex: glsl(await fetch('../glsl/sector/sectorCoverage.vert').then(p => p.text()))
 };

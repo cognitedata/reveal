@@ -9,11 +9,11 @@ global.TextEncoder = TextEncoder;
 // https://stackoverflow.com/a/50629802
 import { JSDOM } from 'jsdom';
 
-export function createGlContext(
+export async function createGlContext(
   width: number,
   height: number,
   options?: WebGLContextAttributes
-): WebGLRenderingContext {
+): Promise<WebGLRenderingContext> {
   // Override console.warn and eat warnings from THREE.WebGLRenderer about missing extensions
   const consoleWarn = console.warn;
   console.warn = (...data: any[]) => {
@@ -31,7 +31,8 @@ export function createGlContext(
   canvas.width = width;
   canvas.height = height;
 
-  const context: WebGLRenderingContext = require('gl')(width, height, options);
+  const context: WebGLRenderingContext = (await import('gl')
+    .then(p => p.default))(width, height, options);
   Object.defineProperty(context, 'canvas', { get: () => canvas });
   // https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/drawBuffers
   Object.defineProperty(context, 'drawBuffers', { value: () => {} });

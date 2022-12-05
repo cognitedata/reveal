@@ -6,7 +6,7 @@ import { ClusteredAreaCollection } from './ClusteredAreaCollection';
 
 import { createRandomBoxes } from '../../../../test-utilities/src/createBoxes';
 
-import * as SeededRandom from 'random-seed';
+import SeededRandom from 'random-seed';
 
 import * as THREE from 'three';
 

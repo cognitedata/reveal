@@ -87,7 +87,7 @@ export class SectorDownloadScheduler {
     sectorIdentifier: string
   ) {
     const sectorDownload = downloadSector(sector).catch(error => {
-      log.error('Failed to load sector', sector, 'error:', error);
+      log.default.error('Failed to load sector', sector, 'error:', error);
       return {
         modelIdentifier: sector.modelIdentifier,
         metadata: sector.metadata,

@@ -10,7 +10,9 @@ import { StubNodeCollection } from './stubs/StubNodeCollection';
 import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 
 import { createRandomBoxes } from '../../../test-utilities/src/createBoxes';
-import * as SeededRandom from 'random-seed';
+import SeededRandom from 'random-seed';
+
+import { jest } from '@jest/globals';
 
 describe('NodeAppearanceProvider', () => {
   let provider: NodeAppearanceProvider;

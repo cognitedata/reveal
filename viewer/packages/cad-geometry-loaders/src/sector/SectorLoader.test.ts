@@ -15,9 +15,11 @@ import { ModelStateHandler } from './ModelStateHandler';
 import { SectorRepository } from '@reveal/sector-loader';
 import { SectorLoader } from './SectorLoader';
 import { IMock, Mock } from 'moq.ts';
-import Log from '@reveal/logger';
+import log from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 import { CadNode } from '@reveal/cad-model';
+
+import { jest } from '@jest/globals';
 
 describe('SectorLoader', () => {
   let culler: SectorCuller;
@@ -34,12 +36,12 @@ describe('SectorLoader', () => {
   beforeAll(() => {
     const sectorRoot = generateV9SectorTree(2, 2);
     model = createCadModelMetadata(9, sectorRoot);
-    currentLogLevel = Log.getLevel();
-    Log.setLevel('silent');
+    currentLogLevel = log.default.getLevel();
+    log.default.setLevel('silent');
   });
 
   afterAll(() => {
-    Log.setLevel(currentLogLevel);
+    log.default.setLevel(currentLogLevel);
   });
 
   beforeEach(() => {

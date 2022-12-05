@@ -10,7 +10,7 @@ import {
   scrambleBoxes
 } from '../../../../test-utilities/src/createBoxes';
 
-import * as SeededRandom from 'random-seed';
+import SeededRandom from 'random-seed';
 
 describe('SmartMergeBoxes', () => {
   test('add non-intersecting bboxes', () => {

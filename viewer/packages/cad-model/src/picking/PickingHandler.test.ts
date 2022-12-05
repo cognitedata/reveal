@@ -13,12 +13,14 @@ import { SceneHandler } from '@reveal/utilities';
 import { CadNode } from '../wrappers/CadNode';
 import { createGlContext } from '../../../../test-utilities';
 
+
+const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
+
 describe(PickingHandler.name, () => {
   let pickingHandler: PickingHandler;
 
   const camera = new THREE.PerspectiveCamera();
 
-  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });
 
   const input: IntersectInput = {

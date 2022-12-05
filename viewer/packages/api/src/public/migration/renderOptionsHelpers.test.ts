@@ -17,12 +17,12 @@ describe(determineAntiAliasingMode.name, () => {
   let currentLogLevel: LogLevelNumbers;
 
   beforeAll(() => {
-    currentLogLevel = log.getLevel();
-    log.setLevel('ERROR');
+    currentLogLevel = log.default.getLevel();
+    log.default.setLevel('ERROR');
   });
 
   afterAll(() => {
-    log.setLevel(currentLogLevel);
+    log.default.setLevel(currentLogLevel);
   });
 
   const mobileDevice: DeviceDescriptor = { deviceType: 'mobile' };
