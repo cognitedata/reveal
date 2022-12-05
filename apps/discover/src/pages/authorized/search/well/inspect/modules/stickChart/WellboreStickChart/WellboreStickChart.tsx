@@ -9,7 +9,7 @@ import { BooleanMap } from 'utils/booleanMap';
 
 import { DragDropContainer } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
-import { DepthMeasurementUnit } from 'constants/units';
+import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
@@ -44,6 +44,7 @@ export interface WellboreStickChartProps
   columnVisibility: BooleanMap;
   columnOrder: string[];
   depthMeasurementType: DepthMeasurementUnit;
+  pressureUnit: PressureUnit;
   nptCodesSelecton?: NptCodesSelection;
   ndsRiskTypesSelection?: NdsRiskTypesSelection;
   summaryVisibility?: BooleanMap;
@@ -82,6 +83,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   columnVisibility,
   columnOrder,
   depthMeasurementType: depthMeasurementTypeProp,
+  pressureUnit,
   nptCodesSelecton,
   ndsRiskTypesSelection,
   summaryVisibility,
@@ -175,6 +177,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 scaleBlocks={scaleBlocks}
                 measurementTypesSelection={measurementTypesSelection}
                 depthMeasurementType={depthMeasurementType}
+                pressureUnit={pressureUnit}
                 isVisible={columnVisibility[ChartColumn.MEASUREMENTS]}
               />
 

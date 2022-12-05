@@ -1,4 +1,4 @@
-import { DepthMeasurementUnit } from 'constants/units';
+import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 
 import { EventsColumnView } from '../../common/Events/types';
 import { ChartColumn } from '../types';
@@ -38,6 +38,7 @@ export const CHART_COLUMN_WIDTH_COLLAPSED = 120;
 
 export const DEFAULT_DEPTH_MEASUREMENT_TYPE = DepthMeasurementUnit.MD;
 export const DEFAULT_EVENTS_COLUMN_VIEW = EventsColumnView.Cluster;
+export const DEFAULT_PRESSURE_UNIT: PressureUnit = PressureUnit.PPG;
 
 export const DEPTH_MEASUREMENT_TYPES = [
   DepthMeasurementUnit.MD,

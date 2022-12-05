@@ -29,6 +29,7 @@ import { WellboreStickChart } from './WellboreStickChart';
 import {
   DEFAULT_COLUMN_ORDER,
   DEFAULT_DEPTH_MEASUREMENT_TYPE,
+  DEFAULT_PRESSURE_UNIT,
   DEFAULT_VISIBLE_COLUMNS,
 } from './WellboreStickChart/constants';
 
@@ -53,6 +54,8 @@ const StickChart: React.FC = () => {
   const [depthMeasurementType, setDepthMeasurementType] = useState(
     DEFAULT_DEPTH_MEASUREMENT_TYPE
   );
+
+  const [pressureUnit, setPressureUnit] = useState(DEFAULT_PRESSURE_UNIT);
 
   const [nptCodesSelecton, setNptCodesSelection] =
     useState<NptCodesSelection>();
@@ -90,6 +93,8 @@ const StickChart: React.FC = () => {
       <FilterBar
         columnOrder={columnOrder}
         depthMeasurementType={depthMeasurementType}
+        pressureUnit={pressureUnit}
+        onPressureUnitChange={setPressureUnit}
         onChangeDepthMeasurementType={setDepthMeasurementType}
         onNptCodesChange={setNptCodesSelection}
         onNdsCodesChange={setNdsRiskTypesSelection}
@@ -116,6 +121,7 @@ const StickChart: React.FC = () => {
               columnVisibility={columnVisibility}
               columnOrder={columnOrder}
               depthMeasurementType={depthMeasurementType}
+              pressureUnit={pressureUnit}
               nptCodesSelecton={nptCodesSelecton}
               ndsRiskTypesSelection={ndsRiskTypesSelection}
               summaryVisibility={summaryVisibility}

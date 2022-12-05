@@ -4,18 +4,13 @@ import {
   MeasurementCurveData,
 } from 'domain/wells/measurements/internal/types';
 
-import { EMPTY_ARRAY } from 'constants/empty';
-
-import { PRESSURE_UNIT } from '../WellboreStickChart/MeasurementsColumn/constants';
+import { PressureUnit } from 'constants/units';
 
 export const adaptMeasurementsDataToChart = (
-  data?: DepthMeasurementWithData
+  data: DepthMeasurementWithData,
+  pressureUnit: PressureUnit
 ): MeasurementCurveData[] => {
-  if (!data) {
-    return EMPTY_ARRAY;
-  }
-
-  return adaptToMeasurementChartData(data, PRESSURE_UNIT, ({ curveData }) => ({
+  return adaptToMeasurementChartData(data, pressureUnit, ({ curveData }) => ({
     customdata: [curveData.curveName],
   }));
 };

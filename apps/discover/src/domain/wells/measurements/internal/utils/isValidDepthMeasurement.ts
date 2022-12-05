@@ -1,3 +1,5 @@
+import isNil from 'lodash/isNil';
+
 const DEFAULT_INVALID_VALUE = -9999;
 const INVALID_VALUES = [0, DEFAULT_INVALID_VALUE];
 
@@ -19,6 +21,10 @@ export const isValidDepthMeasurement = ({
   columnValue: number;
   rowIndex: number;
 }) => {
+  if (isNil(columnValue)) {
+    return false;
+  }
+
   if (rowIndex === 0) {
     if (
       depthValue === DEFAULT_INVALID_VALUE ||

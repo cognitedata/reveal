@@ -67,3 +67,9 @@ export const MultiSelectWrapper = styled.div`
     }
   }
 `;
+
+export const FooterWrapper = styled.div`
+  border-top: 2px solid var(--cogs-greyscale-grey4);
+  padding-top: 6px;
+  margin-top: ${sizes.extraSmall};
+`;

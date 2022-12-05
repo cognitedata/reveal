@@ -7,7 +7,7 @@ import * as React from 'react';
 import { BooleanMap } from 'utils/booleanMap';
 
 import { DragDropContainer } from 'components/DragDropContainer';
-import { DepthMeasurementUnit } from 'constants/units';
+import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 
 import { useFilterOptions } from '../hooks/useFilterOptions';
 import { ChartColumn } from '../types';
@@ -23,6 +23,8 @@ import { SummaryFilterItem } from './SummaryFilterItem';
 interface FilterBarProps {
   columnOrder: ChartColumn[];
   depthMeasurementType: DepthMeasurementUnit;
+  pressureUnit: PressureUnit;
+  onPressureUnitChange: (unit: PressureUnit) => void;
   onChangeDepthMeasurementType: (
     depthMeasurementType: DepthMeasurementUnit
   ) => void;
@@ -38,6 +40,8 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
   ({
     columnOrder,
     depthMeasurementType,
+    pressureUnit,
+    onPressureUnitChange,
     onChangeDepthMeasurementType,
     onNptCodesChange,
     onNdsCodesChange,
@@ -82,8 +86,10 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
 
           <MeasurementsFilterItem
             key={ChartColumn.MEASUREMENTS}
+            pressureUnit={pressureUnit}
             onChange={onMeasurementTypesChange}
             onFiterVisiblityChange={onColumnVisibilityChange}
+            onPressureUnitChange={onPressureUnitChange}
           />
 
           <NdsFilterItem

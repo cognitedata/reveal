@@ -3,7 +3,7 @@ import { filterMdIndexedDepthMeasurements } from 'domain/wells/measurements/inte
 import { filterTvdIndexedDepthMeasurements } from 'domain/wells/measurements/internal/selectors/filterTvdIndexedDepthMeasurements';
 import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
@@ -11,7 +11,7 @@ import { BooleanMap } from 'utils/booleanMap';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { EMPTY_ARRAY } from 'constants/empty';
-import { DepthMeasurementUnit } from 'constants/units';
+import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
@@ -20,11 +20,10 @@ import { ChartColumn, ColumnVisibilityProps } from '../../types';
 import { adaptMeasurementsDataToChart } from '../../utils/adaptMeasurementsDataToChart';
 import {
   DEFAULT_CHART_WIDTH,
+  DEFAULT_PRESSURE_UNIT,
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
 } from '../constants';
-
-import { CHART_TITLE, PRESSURE_UNIT } from './constants';
 
 export interface MeasurementsColumnProps extends ColumnVisibilityProps {
   data?: DepthMeasurementWithData[];
@@ -32,6 +31,7 @@ export interface MeasurementsColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
   measurementTypesSelection?: BooleanMap;
   depthMeasurementType?: DepthMeasurementUnit;
+  pressureUnit?: PressureUnit;
 }
 
 export const MeasurementsColumn: React.FC<
@@ -43,27 +43,36 @@ export const MeasurementsColumn: React.FC<
     scaleBlocks,
     measurementTypesSelection,
     depthMeasurementType = DepthMeasurementUnit.TVD,
+    pressureUnit = DEFAULT_PRESSURE_UNIT,
     isVisible = true,
     ...dragHandleProps
   }) => {
     const { data: depthUnit } = useUserPreferencesMeasurement();
 
     const chartDataMD = useDeepMemo(() => {
-      const data = filterMdIndexedDepthMeasurements(allData);
-      return adaptMeasurementsDataToChart(head(data));
-    }, [allData]);
+      const data = head(filterMdIndexedDepthMeasurements(allData));
+
+      if (!data) {
+        return EMPTY_ARRAY;
+      }
+
+      return adaptMeasurementsDataToChart(data, pressureUnit);
+    }, [allData, pressureUnit]);
 
     const chartDataTVD = useDeepMemo(() => {
-      const data = filterTvdIndexedDepthMeasurements(allData);
-      return adaptMeasurementsDataToChart(head(data));
-    }, [allData]);
+      const data = head(filterTvdIndexedDepthMeasurements(allData));
 
-    const chartData = useDeepMemo(() => {
-      if (depthMeasurementType === DepthMeasurementUnit.MD) {
-        return chartDataMD;
+      if (!data) {
+        return EMPTY_ARRAY;
       }
-      return chartDataTVD;
-    }, [chartDataMD, chartDataTVD, depthMeasurementType]);
+
+      return adaptMeasurementsDataToChart(data, pressureUnit);
+    }, [allData, pressureUnit]);
+
+    const chartData =
+      depthMeasurementType === DepthMeasurementUnit.MD
+        ? chartDataMD
+        : chartDataTVD;
 
     const filteredChartData = useDeepMemo(() => {
       if (!measurementTypesSelection) {
@@ -75,15 +84,12 @@ export const MeasurementsColumn: React.FC<
       );
     }, [chartData, measurementTypesSelection]);
 
-    const axisNames = useMemo(
-      () => ({
-        x: `Pressure (${PRESSURE_UNIT.toLowerCase()})`,
-        y: `Depth (${depthUnit})`,
-      }),
-      [depthUnit]
-    );
+    const axisNames = {
+      x: `Pressure (${pressureUnit})`,
+      y: `Depth (${depthUnit})`,
+    };
 
-    const emptySubtitle = useDeepMemo(() => {
+    const getEmptySubtitle = () => {
       if (measurementTypesSelection && isEmpty(measurementTypesSelection)) {
         return NO_OPTIONS_SELECTED_TEXT;
       }
@@ -91,7 +97,7 @@ export const MeasurementsColumn: React.FC<
         return NO_DATA_AMONG_SELECTED_OPTIONS_TEXT;
       }
       return undefined;
-    }, [chartData, filteredChartData, measurementTypesSelection]);
+    };
 
     return (
       <PlotlyChartColumn
@@ -100,10 +106,10 @@ export const MeasurementsColumn: React.FC<
         data={filteredChartData}
         isLoading={isLoading}
         header={ChartColumn.MEASUREMENTS}
-        chartHeader={CHART_TITLE}
+        chartHeader="Depth vs Pressure"
         axisNames={axisNames}
         scaleBlocks={scaleBlocks}
-        emptySubtitle={emptySubtitle}
+        emptySubtitle={getEmptySubtitle()}
         chartWidth={DEFAULT_CHART_WIDTH / 2}
         {...dragHandleProps}
       />

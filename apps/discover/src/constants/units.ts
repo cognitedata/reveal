@@ -39,3 +39,9 @@ export enum DepthMeasurementUnit {
   TVD = 'TVD',
   MD = 'MD',
 }
+
+export const PRESSURE_UNITS = [
+  PressureUnit.PPG,
+  PressureUnit.PSI,
+  PressureUnit.SG,
+];

@@ -8,6 +8,7 @@ import { EMPTY_ARRAY } from 'constants/empty';
 
 import { ChartProps } from '../../../common/ChartV2/ChartV2';
 import { ColumnVisibilityProps } from '../../types';
+import { hasAtLeasOneValidValue } from '../../utils/hasAtLeasOneValidValue';
 import { Chart } from '../Chart';
 import { ColumnAction } from '../ColumnAction';
 import { ColumnEmptyState } from '../ColumnEmptyState';
@@ -75,7 +76,7 @@ export const PlotlyChartColumn: React.FC<
     }, []);
 
     const renderContent = () => {
-      if (isEmpty(data) || isLoading) {
+      if (isEmpty(data) || isLoading || !hasAtLeasOneValidValue(data)) {
         return (
           <ColumnEmptyState
             isLoading={isLoading}
