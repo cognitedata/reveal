@@ -12,6 +12,7 @@ import {
   Dropdown,
   Icon,
   Menu,
+  Popconfirm,
   Tooltip,
 } from '@cognite/cogs.js';
 import { CogniteEvent } from '@cognite/sdk';
@@ -28,6 +29,8 @@ import {
   SidebarCollapse,
   OverlayContentOverflowWrapper,
   CollapsePanelTitle,
+  SidebarFooterActions,
+  ReverseSwitch,
 } from 'components/Common/SidebarElements';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
@@ -287,16 +290,60 @@ const EventSidebar = memo(
                       </CollapsePanelTitle>
                     }
                   >
-                    <EventFilterForm
-                      eventData={eventData.find((f) => f.id === eventFilter.id)}
-                      eventFilters={eventFilter}
-                      setFilters={handleUpdateFilterProps}
-                      onDeleteEventFilter={handleDeleteEventFilter}
-                      onToggleEventFilter={handleToggleEventFilter}
-                      onDuplicateEventFilter={handleDuplicateEventFilter}
-                      onShowEventResults={toggleShowSearchResults}
-                      translations={t}
-                    />
+                    <>
+                      <EventFilterForm
+                        eventData={eventData.find(
+                          (f) => f.id === eventFilter.id
+                        )}
+                        eventFilter={eventFilter}
+                        setFilters={handleUpdateFilterProps}
+                        onShowEventResults={toggleShowSearchResults}
+                        translations={t}
+                      />
+                      <SidebarFooterActions>
+                        <Row justify="space-between" align="middle">
+                          <Col span={8}>
+                            <Popconfirm
+                              maxWidth={390}
+                              content={`${t.Delete} "${eventFilter.name}"?`}
+                              onConfirm={() =>
+                                handleDeleteEventFilter(eventFilter.id)
+                              }
+                            >
+                              <Button
+                                type="ghost-danger"
+                                icon="Delete"
+                                aria-label="Delete"
+                              />
+                            </Popconfirm>
+                            <Popconfirm
+                              maxWidth={390}
+                              content={`${t.Duplicate} "${eventFilter.name}"?`}
+                              onConfirm={() =>
+                                handleDuplicateEventFilter(eventFilter.id)
+                              }
+                            >
+                              <Button
+                                type="ghost"
+                                icon="Duplicate"
+                                aria-label="Duplicate"
+                              />
+                            </Popconfirm>
+                          </Col>
+                          <Col>
+                            <ReverseSwitch
+                              name={`showEvents_${eventFilter.id}`}
+                              checked={eventFilter.visible}
+                              onChange={(val) => {
+                                handleToggleEventFilter(eventFilter.id, val);
+                              }}
+                            >
+                              {t['Show / hide']}
+                            </ReverseSwitch>
+                          </Col>
+                        </Row>
+                      </SidebarFooterActions>
+                    </>
                   </Collapse.Panel>
                 ))}
             </SidebarCollapse>

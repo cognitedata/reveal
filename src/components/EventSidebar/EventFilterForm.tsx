@@ -3,7 +3,7 @@
  */
 
 import { useCallback, useMemo } from 'react';
-import { Button, Collapse, Icon, Popconfirm } from '@cognite/cogs.js';
+import { Button, Collapse, Icon } from '@cognite/cogs.js';
 import {
   AggregatedEventFilter,
   AggregatedFilter,
@@ -13,16 +13,13 @@ import {
   StringFilter,
 } from '@cognite/data-exploration';
 import { InternalId } from '@cognite/sdk';
-import { Col, Row } from 'antd';
 import { omit } from 'lodash';
 
 import { ChartEventFilters } from 'models/chart/types';
 import {
   ExpandIcon,
   LoadingRow,
-  ReverseSwitch,
   SidebarChip,
-  SidebarFooterActions,
   SidebarInnerBox,
   SidebarInnerCollapse,
 } from 'components/Common/SidebarElements';
@@ -47,26 +44,20 @@ const defaultTranslations = makeDefaultTranslations(
 
 type Props = {
   eventData: ChartEventResults | undefined;
-  eventFilters: ChartEventFilters;
+  eventFilter: ChartEventFilters;
   setFilters: (id: string, diff: any) => void;
-  onDeleteEventFilter: (diff: any) => void;
-  onDuplicateEventFilter: (id: string) => void;
-  onToggleEventFilter: (id: string, visibility: boolean) => void;
   onShowEventResults: (id: string) => void;
   translations?: typeof defaultTranslations;
 };
 
 const EventFilterForm = ({
   eventData,
-  eventFilters,
+  eventFilter,
   setFilters,
-  onDeleteEventFilter,
-  onDuplicateEventFilter,
-  onToggleEventFilter,
   onShowEventResults,
   translations,
 }: Props) => {
-  const { filters } = useMemo(() => eventFilters, [eventFilters]);
+  const { filters } = useMemo(() => eventFilter, [eventFilter]);
 
   const t = {
     ...defaultTranslations,
@@ -75,14 +66,14 @@ const EventFilterForm = ({
 
   const handleUpdateFilters = useCallback(
     (diff: Partial<ChartEventFilters['filters']>) => {
-      setFilters(eventFilters.id, diff);
+      setFilters(eventFilter.id, diff);
     },
-    [eventFilters.id, setFilters]
+    [eventFilter.id, setFilters]
   );
 
   const isEventFilterValid = !!Object.keys(filters).length;
 
-  if (!eventData || eventData?.isLoading) return <LoadingRow lines={21} />;
+  if (!eventData || eventData?.isLoading) return <LoadingRow lines={20} />;
 
   const { results } = eventData;
 
@@ -199,37 +190,6 @@ const EventFilterForm = ({
         {isEventFilterValid ? t['View results'] : t['Event filter is empty']}
         &nbsp; <Icon type="ArrowRight" />
       </Button>
-      <SidebarFooterActions>
-        <Row justify="space-between" align="middle">
-          <Col span={8}>
-            <Popconfirm
-              maxWidth={390}
-              content={`${t.Delete} "${eventFilters.name}"?`}
-              onConfirm={() => onDeleteEventFilter(eventFilters.id)}
-            >
-              <Button type="ghost-danger" icon="Delete" aria-label="Delete" />
-            </Popconfirm>
-            <Popconfirm
-              maxWidth={390}
-              content={`${t.Duplicate} "${eventFilters.name}"?`}
-              onConfirm={() => onDuplicateEventFilter(eventFilters.id)}
-            >
-              <Button type="ghost" icon="Duplicate" aria-label="Duplicate" />
-            </Popconfirm>
-          </Col>
-          <Col>
-            <ReverseSwitch
-              name={`showEvents_${eventFilters.id}`}
-              checked={eventFilters.visible}
-              onChange={(val) => {
-                onToggleEventFilter(eventFilters.id, val);
-              }}
-            >
-              {t['Show / hide']}
-            </ReverseSwitch>
-          </Col>
-        </Row>
-      </SidebarFooterActions>
     </>
   );
 };
