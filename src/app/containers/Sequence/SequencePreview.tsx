@@ -37,7 +37,7 @@ export const SequencePreview = ({
   const { tabType } = useParams<{
     tabType: SequencePreviewType;
   }>();
-  const activeTab = tabType || 'details';
+  const activeTab = tabType || 'preview';
 
   const onTabChange = useOnPreviewTabChange(tabType, 'sequence');
 
@@ -84,14 +84,14 @@ export const SequencePreview = ({
         tab={activeTab}
         onTabChange={onTabChange}
         additionalTabs={[
+          <Tabs.TabPane tab={<TabTitle>Preview</TabTitle>} key="preview">
+            <SequenceTabPreview sequence={sequence} />
+          </Tabs.TabPane>,
           <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">
             <DetailsTabWrapper>
               <SequenceDetails sequence={sequence} />
               <Metadata metadata={sequence.metadata} />
             </DetailsTabWrapper>
-          </Tabs.TabPane>,
-          <Tabs.TabPane tab={<TabTitle>Preview</TabTitle>} key="preview">
-            <SequenceTabPreview sequence={sequence} />
           </Tabs.TabPane>,
         ]}
       />
