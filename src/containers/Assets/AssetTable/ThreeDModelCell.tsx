@@ -1,10 +1,6 @@
 import React from 'react';
-import { Asset } from '@cognite/sdk';
 import { A, Body, Button, Dropdown, Flex, Menu } from '@cognite/cogs.js';
-import { RelationshipLabels } from 'types';
 import groupBy from 'lodash/groupBy';
-
-export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
 
 import {
   DetailedMapping,

@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { Asset } from '@cognite/sdk';
-import { useMemo } from 'react';
+import { Asset, ListResponse } from '@cognite/sdk';
+import { useCallback, useMemo } from 'react';
 import { QueryClient, useQueries, useQuery, useQueryClient } from 'react-query';
 import { queryKeys } from '../../../queryKeys';
 
@@ -20,9 +20,25 @@ const getChildren = (
     });
 };
 
-export const useRootAssetsQuery = (expandedRootIds: number[]) => {
+export const useRootAssetsQuery = (
+  expandedRootIds: number[],
+  rootAssetId?: number // if we want to use only some specific rootId
+) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
+  const selectCallback = useCallback(
+    (data: ListResponse<Asset[]>) => {
+      if (rootAssetId) {
+        return {
+          ...data,
+          items: data.items.filter(item => item.id === rootAssetId),
+        };
+      }
+
+      return data;
+    },
+    [rootAssetId]
+  );
 
   const childAssets = useQueries(
     expandedRootIds.map(assetId => {
@@ -40,21 +56,27 @@ export const useRootAssetsQuery = (expandedRootIds: number[]) => {
     })
   );
 
-  const rootAssets = useQuery(queryKeys.rootAssets(), () => {
-    return sdk.assets
-      .list({
-        filter: { root: true },
-        aggregatedProperties: ['childCount'],
-      })
-      .then(res => {
-        return {
-          ...res,
-          items: res.items.sort((a: Asset, b: Asset) => {
-            return a.name.localeCompare(b.name);
-          }),
-        };
-      });
-  });
+  const rootAssets = useQuery(
+    queryKeys.rootAssets(),
+    () => {
+      return sdk.assets
+        .list({
+          filter: { root: true },
+          aggregatedProperties: ['childCount'],
+        })
+        .then(res => {
+          return {
+            ...res,
+            items: res.items.sort((a: Asset, b: Asset) => {
+              return a.name.localeCompare(b.name);
+            }),
+          };
+        });
+    },
+    {
+      select: selectCallback,
+    }
+  );
 
   return useMemo(() => {
     return rootAssets.data?.items.map(rootAsset => {
