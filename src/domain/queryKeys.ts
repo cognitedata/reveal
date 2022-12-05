@@ -53,6 +53,22 @@ export const queryKeys = {
 
   // DOCUMENTS
   documents: () => [...queryKeys.all, 'documents'] as const,
+  documentsAggregate: () => [...queryKeys.documents(), 'aggregates'] as const,
+  documentsAggregateCount: () =>
+    [...queryKeys.documentsAggregate(), 'count'] as const,
+  documentsTotalAggregateCount: (aggregate?: any) =>
+    [
+      ...queryKeys.documentsAggregateCount(),
+      'total',
+      ...(aggregate || []),
+    ] as const,
+  documentsSearch: (filter?: any, localLimit?: number) =>
+    [...queryKeys.documents(), 'search', filter, localLimit] as const,
+
+  documentsFilterAggregateCount: (filters?: any) =>
+    [...queryKeys.documentsAggregateCount(), filters] as const,
+  documentsFilteredAggregates: (filters: any, aggregates: any) =>
+    [...queryKeys.documentsAggregate(), filters, aggregates] as const,
   documentsMetadata: () =>
     [...queryKeys.documents(), 'metadata', 'keys'] as const,
 } as const;
