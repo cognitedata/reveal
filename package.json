@@ -15,7 +15,7 @@
     "@cognite/sidecar": "^0.4.1",
     "@graphiql/plugin-explorer": "^0.1.6",
     "@graphql-codegen/core": "^2.4.0",
-    "@graphql-codegen/typescript": "^2.4.2",
+    "@graphql-codegen/typescript": "^2.8.3",
     "@graphql-codegen/typescript-apollo-angular": "^3.3.2",
     "@graphql-codegen/typescript-operations": "^2.2.2",
     "@graphql-codegen/typescript-react-apollo": "^3.2.3",
