@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import {
   AssetDetails,
-  AssetTreeTable,
+  AssetDetailsTreeTable,
   Loader,
   ErrorFeedback,
   Metadata,
@@ -114,18 +114,15 @@ export const AssetPreview = ({
             </DetailsTabWrapper>
           </Tabs.TabPane>,
           <Tabs.TabPane tab={<TabTitle>Hierarchy</TabTitle>} key="children">
-            <AssetTreeTable
+            <AssetDetailsTreeTable
+              assetId={assetId}
+              rootAssetId={asset.rootId}
               activeIds={[asset.id]}
-              filter={
-                asset.id === asset.rootId
-                  ? { assetSubtreeIds: [{ value: asset.rootId }] }
-                  : {}
-              }
-              hierachyRootId={asset.rootId}
               onAssetClicked={(newAsset: Asset) => openAsset(newAsset.id)}
               selectionMode={mode}
               onSelect={onSelect}
               isSelected={isSelected}
+              selectedRows={{ [assetId]: true }}
             />
           </Tabs.TabPane>,
         ]}
