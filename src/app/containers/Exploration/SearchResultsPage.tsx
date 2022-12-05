@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useMemo } from 'react';
 import {
   ResourceItem,
   AssetSearchResults,
@@ -11,7 +11,6 @@ import {
   ResourceTypeTabsV2,
   getTitle,
   ResourceType,
-  SearchFilters as OldSearchFilters,
   AssetViewMode,
   AssetsTab,
   EventsTab,
@@ -47,9 +46,7 @@ import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSear
 import { useDateRange } from 'app/context/DateRangeContext';
 import { createLink, PageTitle } from '@cognite/cdf-utilities';
 import { ThreeDSearchResults } from 'app/containers/ThreeD/ThreeDSearchResults';
-import FilterToggleButton from './FilterToggleButton';
 import { ExplorationFilterToggle } from 'app/containers/Exploration/ExplorationFilterToggle';
-import { useFlagFilter, useFlagDocumentSearch } from 'app/hooks/flags';
 import { SearchFilters } from 'app/containers/SearchResults/SearchFilters';
 import {
   useAssetFilters,
@@ -81,9 +78,7 @@ function SearchPage() {
   useSequencesMetadataKeys();
 
   const navigate = useNavigate();
-  const isFilterFeatureEnabled = useFlagFilter();
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
-  const isDocumentEnabled = useFlagDocumentSearch(); // Adding the flag to manually enable 'Documents' tab to appear.
 
   const [currentResourceType, setCurrentResourceType] =
     useCurrentResourceType();
@@ -107,6 +102,17 @@ function SearchPage() {
   const [eventFilter, setEventFilter] = useEventsFilters();
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
+
+  const filterMap = useMemo(
+    () => ({
+      asset: assetFilter,
+      timeSeries: timeseriesFilter,
+      event: eventFilter,
+      file: fileFilter,
+      sequence: sequenceFilter,
+    }),
+    [assetFilter, fileFilter, eventFilter, timeseriesFilter, sequenceFilter]
+  );
 
   const { mode } = useContext(ResourceSelectionContext);
 
@@ -154,396 +160,237 @@ function SearchPage() {
     trackUsage(EXPLORATION.CLICK.TOGGLE_ASSET_TABLE_VIEW, { view: nextView });
   };
 
-  if (isFilterFeatureEnabled) {
-    return (
-      <RootHeightWrapperNew>
-        <SearchFiltersWrapper>
-          <SearchFilters
-            resourceType={currentResourceType}
-            visible={currentResourceType !== 'threeD' && showFilter}
-          />
-        </SearchFiltersWrapper>
-
-        <MainSearchContainer>
-          <SearchInputContainer>
-            {currentResourceType !== 'threeD' && (
-              <>
-                <ExplorationFilterToggle
-                  filterState={showFilter}
-                  onClick={handleFilterToggleClick}
-                />
-                <VerticalDivider />
-              </>
-            )}
-
-            <ExplorationSearchBar />
-          </SearchInputContainer>
-
-          <TabsContainer>
-            {isAdvancedFiltersEnabled && isDocumentEnabled ? (
-              <ResourceTypeTabsV2
-                currentResourceType={currentResourceType || 'all'}
-                setCurrentResourceType={tab => {
-                  setCurrentResourceType(
-                    tab === 'all' ? undefined : (tab as ResourceType)
-                  );
-                }}
-              >
-                <Tabs.TabPane key="all" tab="All" />
-                <Tabs.TabPane
-                  key="asset"
-                  tab={
-                    <AssetsTab
-                      showCount
-                      query={debouncedQuery}
-                      filter={assetFilter}
-                    />
-                  }
-                />
-                <Tabs.TabPane
-                  key="timeSeries"
-                  tab={
-                    <TimeseriesTab
-                      showCount
-                      query={debouncedQuery}
-                      filter={timeseriesFilter}
-                    />
-                  }
-                />
-                <Tabs.TabPane
-                  key="document"
-                  tab={
-                    <DocumentsTab
-                      query={debouncedQuery}
-                      filter={documentFilter}
-                      showCount
-                    />
-                  }
-                />
-                <Tabs.TabPane
-                  key="event"
-                  tab={
-                    <EventsTab
-                      showCount
-                      query={debouncedQuery}
-                      filter={eventFilter}
-                    />
-                  }
-                />
-                <Tabs.TabPane
-                  key="sequence"
-                  tab={
-                    <SequenceTab
-                      showCount
-                      query={debouncedQuery}
-                      filter={sequenceFilter}
-                    />
-                  }
-                />
-                <Tabs.TabPane
-                  key="threeD"
-                  tab={<ThreeDTab showCount query={debouncedQuery} />}
-                />
-              </ResourceTypeTabsV2>
-            ) : (
-              <ResourceTypeTabs
-                showCount
-                query={query}
-                currentResourceType={currentResourceType || 'all'}
-                setCurrentResourceType={tab => {
-                  setCurrentResourceType(
-                    tab === 'all' ? undefined : (tab as ResourceType)
-                  );
-                }}
-                isDocumentEnabled={isDocumentEnabled}
-                additionalTabs={[<Tabs.TabPane tab="All" key="all" />]}
-              />
-            )}
-          </TabsContainer>
-
-          <MainContainer $isFilterFeatureEnabled={isFilterFeatureEnabled}>
-            <Wrapper>
-              <StyledSplitter
-                primaryMinSize={420}
-                secondaryInitialSize={700}
-                primaryIndex={0}
-              >
-                <Flex
-                  direction="column"
-                  style={{
-                    borderRight: active
-                      ? `1px solid ${Colors['greyscale-grey3'].hex()}`
-                      : 'unset',
-                  }}
-                >
-                  <SearchResultWrapper>
-                    {currentResourceType === 'asset' && (
-                      <AssetSearchResults
-                        isTreeEnabled
-                        showCount
-                        view={assetView}
-                        onViewChange={handleViewChange}
-                        filter={assetFilter}
-                        enableAdvancedFilters={isAdvancedFiltersEnabled}
-                        onClick={handleRowClick}
-                        onFilterChange={(newValue: Record<string, unknown>) =>
-                          setAssetFilter(newValue)
-                        }
-                        {...commonProps}
-                      />
-                    )}
-                    {currentResourceType === undefined && <AllTab />}
-                    {currentResourceType === 'file' && (
-                      <FileSearchResults
-                        showCount
-                        selectedRow={selectedRow}
-                        filter={fileFilter}
-                        allowEdit={editable}
-                        onClick={handleRowClick}
-                        onFilterChange={(newValue: Record<string, unknown>) =>
-                          setFileFilter(newValue)
-                        }
-                        {...commonProps}
-                      />
-                    )}
-                    {currentResourceType === 'document' && (
-                      <DocumentSearchResults
-                        query={query}
-                        selectedRow={selectedRow}
-                        filter={documentFilter}
-                        onClick={handleRowClick}
-                        onFilterChange={(newValue: Record<string, unknown>) =>
-                          setDocumentFilter(newValue)
-                        }
-                      />
-                    )}
-                    {currentResourceType === 'sequence' && (
-                      <SequenceSearchResults
-                        showCount
-                        selectedRow={selectedRow}
-                        onClick={handleRowClick}
-                        enableAdvancedFilters={isAdvancedFiltersEnabled}
-                        onFilterChange={(newValue: Record<string, unknown>) =>
-                          setSequenceFilter(newValue)
-                        }
-                        filter={sequenceFilter}
-                        {...commonProps}
-                      />
-                    )}
-                    {currentResourceType === 'timeSeries' && (
-                      <TimeseriesSearchResults
-                        showCount
-                        selectedRow={selectedRow}
-                        enableAdvancedFilters={isAdvancedFiltersEnabled}
-                        onClick={handleRowClick}
-                        onFilterChange={(newValue: Record<string, unknown>) =>
-                          setTimeseriesFilter(newValue)
-                        }
-                        filter={timeseriesFilter}
-                        showDatePicker={!activeId}
-                        {...commonProps}
-                      />
-                    )}
-                    {currentResourceType === 'event' && (
-                      <EventSearchResults
-                        showCount
-                        selectedRow={selectedRow}
-                        enableAdvancedFilters={isAdvancedFiltersEnabled}
-                        onClick={handleRowClick}
-                        onFilterChange={(newValue: Record<string, unknown>) =>
-                          setEventFilter(newValue)
-                        }
-                        filter={eventFilter}
-                        {...commonProps}
-                      />
-                    )}
-                    {currentResourceType === 'threeD' && (
-                      <ThreeDSearchResults
-                        onClick={(item: ResourceItem) => {
-                          navigate(createLink(`/explore/threeD/${item.id}`));
-                        }}
-                        query={query}
-                      />
-                    )}
-                  </SearchResultWrapper>
-                </Flex>
-
-                {active && activeId && currentResourceType && (
-                  <SearchResultWrapper>
-                    <ResourcePreview
-                      item={{ id: activeId, type: currentResourceType }}
-                    />
-                  </SearchResultWrapper>
-                )}
-                {!activeId && currentResourceType && cart.length > 0 && (
-                  <SelectedResults
-                    ids={cart.map(id => ({ id }))}
-                    resourceType={currentResourceType}
-                  />
-                )}
-              </StyledSplitter>
-            </Wrapper>
-          </MainContainer>
-        </MainSearchContainer>
-      </RootHeightWrapperNew>
-    );
-  }
-
   return (
     <RootHeightWrapper>
-      <SearchInputContainer alignItems="center">
-        {isFilterFeatureEnabled && (
-          <>
-            <ExplorationFilterToggle
-              filterState={showFilter}
-              onClick={handleFilterToggleClick}
-            />
-            <VerticalDivider />
-          </>
-        )}
-        <ExplorationSearchBar />
-      </SearchInputContainer>
-      <TabsContainer>
-        <ResourceTypeTabs
-          showCount
-          query={query}
-          currentResourceType={currentResourceType}
-          setCurrentResourceType={tab =>
-            setCurrentResourceType(tab as ResourceType)
-          }
-          isDocumentEnabled={isDocumentEnabled}
+      <SearchFiltersWrapper>
+        <SearchFilters
+          resourceType={currentResourceType}
+          visible={currentResourceType !== 'threeD' && showFilter}
         />
-      </TabsContainer>
-      <MainContainer $isFilterFeatureEnabled={isFilterFeatureEnabled}>
-        {currentResourceType !== 'threeD' && !showFilter && (
-          <FilterWrapper>
-            <FilterToggleButton toggleOpen={handleFilterToggleClick} />
-          </FilterWrapper>
-        )}
+      </SearchFiltersWrapper>
 
-        <SearchFiltersWrapper>
-          {isFilterFeatureEnabled ? (
-            <SearchFilters
-              resourceType={currentResourceType}
-              visible={currentResourceType !== 'threeD' && showFilter}
-            />
-          ) : (
-            <OldSearchFilters
-              assetFilter={assetFilter}
-              setAssetFilter={setAssetFilter}
-              timeseriesFilter={timeseriesFilter}
-              setTimeseriesFilter={setTimeseriesFilter}
-              sequenceFilter={sequenceFilter}
-              setSequenceFilter={setSequenceFilter}
-              eventFilter={eventFilter}
-              setEventFilter={setEventFilter}
-              fileFilter={fileFilter}
-              setFileFilter={setFileFilter}
-              resourceType={currentResourceType}
-              closeFilters={handleFilterToggleClick}
-              visible={currentResourceType !== 'threeD' && showFilter}
-            />
+      <MainSearchContainer>
+        <SearchInputContainer>
+          {currentResourceType !== 'threeD' && (
+            <>
+              <ExplorationFilterToggle
+                filterState={showFilter}
+                onClick={handleFilterToggleClick}
+              />
+              <VerticalDivider />
+            </>
           )}
-        </SearchFiltersWrapper>
 
-        <Wrapper>
-          <StyledSplitter secondaryMinSize={415} primaryIndex={1}>
-            <Flex
-              direction="column"
-              style={{
-                borderRight: active
-                  ? `1px solid ${Colors['greyscale-grey3'].hex()}`
-                  : 'unset',
+          <ExplorationSearchBar />
+        </SearchInputContainer>
+
+        <TabsContainer>
+          {isAdvancedFiltersEnabled ? (
+            <ResourceTypeTabsV2
+              currentResourceType={currentResourceType || 'all'}
+              setCurrentResourceType={tab => {
+                setCurrentResourceType(
+                  tab === 'all' ? undefined : (tab as ResourceType)
+                );
               }}
             >
-              <SearchResultWrapper>
-                {currentResourceType === 'asset' && (
-                  <AssetSearchResults
+              <Tabs.TabPane key="all" tab="All" />
+              <Tabs.TabPane
+                key="asset"
+                tab={
+                  <AssetsTab
                     showCount
-                    enableAdvancedFilters={isAdvancedFiltersEnabled}
-                    onClick={(item: ResourceItem) =>
-                      openPreview(item.id !== activeId ? item.id : undefined)
-                    }
-                    view={assetView}
-                    onViewChange={handleViewChange}
+                    query={debouncedQuery}
                     filter={assetFilter}
-                    {...commonProps}
-                    isTreeEnabled
                   />
-                )}
-                {currentResourceType === 'file' && (
-                  <FileSearchResults
-                    showCount
-                    filter={fileFilter}
-                    allowEdit={editable}
-                    onClick={handleRowClick}
-                    {...commonProps}
-                  />
-                )}
-                {currentResourceType === 'document' && (
-                  <DocumentSearchResults
-                    query={query}
-                    filter={fileFilter}
-                    onClick={(item: ResourceItem) => {
-                      openPreview(item.id !== activeId ? item.id : undefined);
-                    }}
-                  />
-                )}
-                {currentResourceType === 'sequence' && (
-                  <SequenceSearchResults
-                    showCount
-                    enableAdvancedFilters={isAdvancedFiltersEnabled}
-                    onClick={handleRowClick}
-                    filter={sequenceFilter}
-                    {...commonProps}
-                  />
-                )}
-                {currentResourceType === 'timeSeries' && (
-                  <TimeseriesSearchResults
-                    showCount
-                    enableAdvancedFilters={isAdvancedFiltersEnabled}
-                    onClick={handleRowClick}
-                    filter={timeseriesFilter}
-                    showDatePicker={!activeId}
-                    {...commonProps}
-                  />
-                )}
-                {currentResourceType === 'event' && (
-                  <EventSearchResults
-                    showCount
-                    enableAdvancedFilters={isAdvancedFiltersEnabled}
-                    onClick={handleRowClick}
-                    filter={eventFilter}
-                    {...commonProps}
-                  />
-                )}
-                {currentResourceType === 'threeD' && (
-                  <ThreeDSearchResults
-                    onClick={(item: ResourceItem) => {
-                      navigate(createLink(`/explore/threeD/${item.id}`));
-                    }}
-                    query={query}
-                  />
-                )}
-              </SearchResultWrapper>
-            </Flex>
-
-            {active && activeId && currentResourceType && (
-              <SearchResultWrapper>
-                <ResourcePreview
-                  item={{ id: activeId, type: currentResourceType }}
-                />
-              </SearchResultWrapper>
-            )}
-            {!activeId && currentResourceType && cart.length > 0 && (
-              <SelectedResults
-                ids={cart.map(id => ({ id }))}
-                resourceType={currentResourceType}
+                }
               />
-            )}
-          </StyledSplitter>
-        </Wrapper>
-      </MainContainer>
+              <Tabs.TabPane
+                key="timeSeries"
+                tab={
+                  <TimeseriesTab
+                    showCount
+                    query={debouncedQuery}
+                    filter={timeseriesFilter}
+                  />
+                }
+              />
+              <Tabs.TabPane
+                key="document"
+                tab={
+                  <DocumentsTab
+                    query={debouncedQuery}
+                    filter={documentFilter}
+                    showCount
+                  />
+                }
+              />
+              <Tabs.TabPane
+                key="event"
+                tab={
+                  <EventsTab
+                    showCount
+                    query={debouncedQuery}
+                    filter={eventFilter}
+                  />
+                }
+              />
+              <Tabs.TabPane
+                key="sequence"
+                tab={
+                  <SequenceTab
+                    showCount
+                    query={debouncedQuery}
+                    filter={sequenceFilter}
+                  />
+                }
+              />
+              <Tabs.TabPane
+                key="threeD"
+                tab={<ThreeDTab showCount query={debouncedQuery} />}
+              />
+            </ResourceTypeTabsV2>
+          ) : (
+            <ResourceTypeTabs
+              showCount
+              globalFilters={filterMap}
+              query={query}
+              currentResourceType={currentResourceType || 'all'}
+              setCurrentResourceType={tab => {
+                setCurrentResourceType(
+                  tab === 'all' ? undefined : (tab as ResourceType)
+                );
+              }}
+              isDocumentEnabled={isAdvancedFiltersEnabled}
+              additionalTabs={[<Tabs.TabPane tab="All" key="all" />]}
+            />
+          )}
+        </TabsContainer>
+
+        <MainContainer $isFilterFeatureEnabled>
+          <Wrapper>
+            <StyledSplitter
+              primaryMinSize={420}
+              secondaryInitialSize={700}
+              primaryIndex={0}
+            >
+              <Flex
+                direction="column"
+                style={{
+                  borderRight: active
+                    ? `1px solid ${Colors['greyscale-grey3'].hex()}`
+                    : 'unset',
+                }}
+              >
+                <SearchResultWrapper>
+                  {currentResourceType === 'asset' && (
+                    <AssetSearchResults
+                      isTreeEnabled
+                      showCount
+                      view={assetView}
+                      onViewChange={handleViewChange}
+                      filter={assetFilter}
+                      enableAdvancedFilters={isAdvancedFiltersEnabled}
+                      onClick={handleRowClick}
+                      onFilterChange={(newValue: Record<string, unknown>) =>
+                        setAssetFilter(newValue)
+                      }
+                      {...commonProps}
+                    />
+                  )}
+                  {currentResourceType === undefined && <AllTab />}
+                  {currentResourceType === 'file' && (
+                    <FileSearchResults
+                      showCount
+                      selectedRow={selectedRow}
+                      filter={fileFilter}
+                      allowEdit={editable}
+                      onClick={handleRowClick}
+                      onFilterChange={(newValue: Record<string, unknown>) =>
+                        setFileFilter(newValue)
+                      }
+                      {...commonProps}
+                    />
+                  )}
+                  {currentResourceType === 'document' && (
+                    <DocumentSearchResults
+                      query={query}
+                      selectedRow={selectedRow}
+                      filter={documentFilter}
+                      onClick={handleRowClick}
+                      onFilterChange={(newValue: Record<string, unknown>) =>
+                        setDocumentFilter(newValue)
+                      }
+                    />
+                  )}
+                  {currentResourceType === 'sequence' && (
+                    <SequenceSearchResults
+                      showCount
+                      selectedRow={selectedRow}
+                      onClick={handleRowClick}
+                      enableAdvancedFilters={isAdvancedFiltersEnabled}
+                      onFilterChange={(newValue: Record<string, unknown>) =>
+                        setSequenceFilter(newValue)
+                      }
+                      filter={sequenceFilter}
+                      {...commonProps}
+                    />
+                  )}
+                  {currentResourceType === 'timeSeries' && (
+                    <TimeseriesSearchResults
+                      showCount
+                      selectedRow={selectedRow}
+                      enableAdvancedFilters={isAdvancedFiltersEnabled}
+                      onClick={handleRowClick}
+                      onFilterChange={(newValue: Record<string, unknown>) =>
+                        setTimeseriesFilter(newValue)
+                      }
+                      filter={timeseriesFilter}
+                      showDatePicker={!activeId}
+                      {...commonProps}
+                    />
+                  )}
+                  {currentResourceType === 'event' && (
+                    <EventSearchResults
+                      showCount
+                      selectedRow={selectedRow}
+                      enableAdvancedFilters={isAdvancedFiltersEnabled}
+                      onClick={handleRowClick}
+                      onFilterChange={(newValue: Record<string, unknown>) =>
+                        setEventFilter(newValue)
+                      }
+                      filter={eventFilter}
+                      {...commonProps}
+                    />
+                  )}
+                  {currentResourceType === 'threeD' && (
+                    <ThreeDSearchResults
+                      onClick={(item: ResourceItem) => {
+                        navigate(createLink(`/explore/threeD/${item.id}`));
+                      }}
+                      query={query}
+                    />
+                  )}
+                </SearchResultWrapper>
+              </Flex>
+
+              {active && activeId && currentResourceType && (
+                <SearchResultWrapper>
+                  <ResourcePreview
+                    item={{ id: activeId, type: currentResourceType }}
+                  />
+                </SearchResultWrapper>
+              )}
+              {!activeId && currentResourceType && cart.length > 0 && (
+                <SelectedResults
+                  ids={cart.map(id => ({ id }))}
+                  resourceType={currentResourceType}
+                />
+              )}
+            </StyledSplitter>
+          </Wrapper>
+        </MainContainer>
+      </MainSearchContainer>
     </RootHeightWrapper>
   );
 }
@@ -601,12 +448,6 @@ const MainContainer = styled(Flex)<{ $isFilterFeatureEnabled?: boolean }>`
   overflow: auto;
 `;
 
-const FilterWrapper = styled.div`
-  padding-top: 1rem;
-  border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
-  padding-right: 10px;
-`;
-
 const SearchFiltersWrapper = styled.div`
   display: flex;
   flex: 0 0 auto;
@@ -620,12 +461,6 @@ const Wrapper = styled.div`
 `;
 
 const RootHeightWrapper = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-`;
-
-const RootHeightWrapperNew = styled.div`
   height: 100%;
   display: flex;
   flex-direction: row;

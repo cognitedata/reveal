@@ -3,16 +3,16 @@ import { Input } from '@cognite/cogs.js';
 import { debounce } from 'lodash';
 import { useQueryString } from 'app/hooks/hooks';
 import { SEARCH_KEY } from 'app/utils/constants';
-import { useFlagFilter } from 'app/hooks';
 import { trackUsage } from 'app/utils/Metrics';
 import { EXPLORATION } from 'app/constants/metrics';
 import styled from 'styled-components';
+import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
 
 export const ExplorationSearchBar = () => {
   const [urlQuery, setUrlQuery] = useQueryString(SEARCH_KEY);
   const debouncedSetUrlQuery = debounce(setUrlQuery, 200);
   const [localQuery, setLocalQuery] = useState(urlQuery);
-  const isFilterEnabled = useFlagFilter();
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   useEffect(() => {
     if (localQuery !== urlQuery) {
@@ -45,16 +45,10 @@ export const ExplorationSearchBar = () => {
       variant="noBorder"
       autoFocus
       fullWidth
-      style={{
-        background: isFilterEnabled ? undefined : 'transparent',
-        border: isFilterEnabled ? undefined : 'none',
-        outline: isFilterEnabled ? undefined : 'none',
-        boxShadow: isFilterEnabled ? undefined : 'none',
-      }}
       clearable={{ callback: () => setLocalQuery('') }}
       icon="Search"
       placeholder={
-        isFilterEnabled
+        isAdvancedFiltersEnabled
           ? 'Search for name, description, content, ID, and external ID...'
           : 'Search...'
       }
