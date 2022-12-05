@@ -22,6 +22,7 @@ import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from 'context/AppContext';
 import { DocumentUploaderModal } from 'containers/Documents/DocumentUploader/DocumentUploaderModal';
 import { useDocumentFilteredAggregateCount } from '@cognite/react-document-search';
+import { VerticalDivider } from 'components/Divider';
 
 export interface DocumentSearchResultsProps {
   query?: string;
@@ -85,6 +86,7 @@ export const DocumentSearchResults = ({
               }}
               disabled={!hasEditPermissions}
             />
+            <VerticalDivider />
           </>
         }
         sorting={sortBy}

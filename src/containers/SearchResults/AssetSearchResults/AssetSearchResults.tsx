@@ -20,6 +20,7 @@ import {
   useAssetsSearchResultQuery,
 } from 'domain/assets';
 import { useResultCount } from 'components';
+import { VerticalDivider } from 'components/Divider';
 
 export type AssetViewMode = 'list' | 'tree';
 
@@ -131,7 +132,7 @@ export const AssetSearchResults = ({
               aria-label="List"
             />
           </SegmentedControl>
-          <Divider />
+          <VerticalDivider />
         </Flex>
       ) : null}
     </StyledTableHeader>
@@ -203,10 +204,4 @@ export const AssetSearchResults = ({
 
 const StyledTableHeader = styled(Flex)`
   flex: 1;
-`;
-
-const Divider = styled.div`
-  height: 16px;
-  width: 2px;
-  background: var(--cogs-border--muted);
 `;

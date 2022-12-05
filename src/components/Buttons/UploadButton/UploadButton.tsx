@@ -1,5 +1,5 @@
+import { Button } from '@cognite/cogs.js';
 import React from 'react';
-import { UploadButtonWrapper } from '../element';
 
 type Props = {
   onClick: () => void;
@@ -8,8 +8,8 @@ type Props = {
 
 export const UploadButton: React.FC<Props> = ({ onClick, disabled }: Props) => {
   return (
-    <UploadButtonWrapper onClick={onClick} icon="Upload" disabled={disabled}>
+    <Button onClick={onClick} icon="Upload" disabled={disabled}>
       Upload
-    </UploadButtonWrapper>
+    </Button>
   );
 };
