@@ -63,9 +63,6 @@ Getter for the renderer used by Reveal has been removed.
 Any direct manipulation of the three.js scene which Reveal uses for rendering can cause undefined behaviour, so in an effort to limit unintentional mistakes it has now been removed.
 Please reach out if there is any missing functionality that Reveal should expose.
 
-## CameraManager now requires two new methods: activate and deactivate
-These new methods are used for transitioning to and from other `CameraManager`s and lets each implementation decide what this functionality should look like.
-
 ## DefaultCameraManager no longer exposes its internal ComboControls implementation
 Methods for settings and getting options has been added to support dynamically updating the state.
 
@@ -133,7 +130,11 @@ const inverseCdfTransformation = model.getModelTransformation().clone().multiply
 ```
 and using it with `applyMatrix4()` as above.
 
-## 'cameraStop' event on CameraManager
+## Changes related to the CameraManager interface
+
+Two major changes are now required for `CameraManager`s.
+The first change is adding a `cameraStop` which Reveal will use to control when geometry should be loaded and other performance intensive computations.
+The second is adding a activate / deactivate method to handle transitioning to and from other `CameraManager`s and lets each implementation decide what this functionality should look like.
 
 `CameraManager` implementations must now allow listeners for the `'cameraStop'` event, in addition to the old `'cameraChange'` event. This is to allow `CameraManager` implementors the flexibility of deciding when the camera manager is standing still. The event *must* be emitted in order to trigger loading of model data if `continuousStreaming` is set to `false`.
 
