@@ -12,7 +12,7 @@ import { sleep } from 'utils/utils';
 
 import { UseUploadOptions } from './upload';
 
-const ROW_CHUNK_SIZE = 10000;
+const ROW_CHUNK_SIZE = 1000;
 const REQUEST_CHUNK_SIZE = 3;
 
 export const useJSONUpload = ({
