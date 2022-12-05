@@ -31,7 +31,7 @@ jobs:
           rm .npmrc
           yarn build production platypus-cdf-cli
       - name: Run the E2E Tests
-        uses: cypress-io/github-action@v4.2.0
+        uses: cypress-io/github-action@v4.2.2
         continue-on-error: false
         with:
           # let's make sure our tests pass on Chrome browser

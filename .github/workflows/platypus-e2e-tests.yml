@@ -40,7 +40,7 @@ jobs:
           yarn test
 
       - name: Cypress run
-        uses: cypress-io/github-action@v4.2.0
+        uses: cypress-io/github-action@v4.2.2
         # let's give this action an ID so we can refer
         # to its output values later
         id: cypress
