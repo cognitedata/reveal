@@ -52,7 +52,6 @@ The version number is used to determine what is visible in different environment
 ### 2- Deploying to Fusion
 
 After the subapp is released, to see the changes on any environment of Fusion, a build of cdf-ui-hub's master branch should be triggered.
-
 1. Go to [`cdf-ui-hub` on Jenkins CD](https://cd.jenkins.cognite.ai/blue/organizations/jenkins/cognitedata-cd%2Fcdf-ui-hub/branches).
 2. Locate the `master` branch and click the `Run ▶️` button.
 3. After the build is successful, the changes automatically will take effect on `dev.fusion.cogniteapp.com` and `next-release.fusion.cognite.com` if the new version matches the corresponding import maps.

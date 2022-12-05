@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-data-exploration",
-  "version": "0.16.0",
+  "version": "1.2.0",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/lib/index.d.ts",
@@ -29,6 +29,7 @@
     "@cognite/cogs.js": "^7.17.0",
     "@cognite/data-exploration": "5.57.23",
     "@cognite/data-exploration-v4": "npm:@cognite/data-exploration@4.38.0",
+    "@cognite/fas-utils": "^3.2.0-rc.1",
     "@cognite/react-document-search": "^0.2.0",
     "@cognite/react-errors": "^1.0.4",
     "@cognite/react-feature-flags": "^1.0.0",
