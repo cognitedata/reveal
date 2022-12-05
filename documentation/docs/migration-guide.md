@@ -39,7 +39,43 @@ The functionality should be easily adoptable from the removed tool.
 The removed tool can be found [here.](https://github.com/cognitedata/reveal/tree/release/3.3.x/viewer/packages/tools/src/Geomap)
 The geomap tool leveraged the [geo-three](https://www.npmjs.com/package/geo-three) npm library which can be used by your application and added through custom objects if you want to support this using Reveal.
 
+## Cognite3DViewer.setBackgroundColor now alpha
+The `setBackgroundColor` now supports settings alpha value. 
+This becomes relevant when you want your 3D content to blend with your website.
 
+## Cognite3DViewer.isBrowserSupported has been removed
+This method has been left unused for a long time, and Reveal now supports all major browsers with WebGL 2.0 capabilities.
+
+## Cognite3DModel has been renamed to CogniteCadModel
+Renamed for clarity, as technically a point cloud can also be viewer as a 3D model.
+
+## Cognite3DViewer.getIntersectionFromPixel options parameter has been removed
+Reveal currently uses GPU driven picking for point clouds, so the previously used options are not applicable anymore.
+
+## Cognite3DViewer.getCamera has been removed
+The camera must now be fetched from the `CameraManager`.
+The camera used by the current active `CameraManager` can be fetched with `viewer.cameraManager.getCamera()`.
+
+## Cognite3DViewer.renderer has been removed
+Getter for the renderer used by Reveal has been removed.
+
+## Cognite3DViewer.getScene has been removed
+Any direct manipulation of the three.js scene which Reveal uses for rendering can cause undefined behaviour, so in an effort to limit unintentional mistakes it has now been removed.
+Please reach out if there is any missing functionality that Reveal should expose.
+
+## CameraManager now requires two new methods: activate and deactivate
+These new methods are used for transitioning to and from other `CameraManager`s and lets each implementation decide what this functionality should look like.
+
+## DefaultCameraManager no longer exposes its internal ComboControls implementation
+Methods for settings and getting options has been added to support dynamically updating the state.
+
+## CogniteCadModel and PointCloudModel no longer inherit from the three.js Object3D base class
+This prevents usages that Reveal does not handle such as reparenting and other mutable operations on the three.js object.
+Methods such as setting the transformation or visibility are available
+
+## contiuousModelStreaming option has been promoted to opt-out
+This means that CAD models will now stream continuously (vs. just when camera stops moving) by default.
+This can be reverted by setting the `contiuousModelStreaming` option to false when initializing the `Cognite3DViewer`.
 
 ## Potree prefix removed
 
