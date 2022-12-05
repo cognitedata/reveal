@@ -15,7 +15,7 @@ jobs:
       - uses: rlespinasse/github-slug-action@v3.x
       
       - name: Cleanup 
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@v0.1.5
         with:
           host: 35.195.114.37
           username: david_liu_cognite_com
