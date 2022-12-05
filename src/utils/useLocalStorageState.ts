@@ -1,6 +1,6 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { getFromLocalStorage, storage } from '@cognite/storage';
-import React from 'react';
+import React, { useEffect } from 'react';
 import merge from 'lodash/merge';
 /**
  *   Hook that is similar to the useState  persisting the state in the localstate with passing projectKey to it
@@ -22,6 +22,16 @@ export function useLocalStorageState<T>(
     }
     return defaultValue;
   });
+
+  useEffect(() => {
+    setState(() => {
+      const valueInLocalStorage = getFromLocalStorage<string>(projectKey);
+      if (valueInLocalStorage) {
+        return merge(defaultValue, deserialize(valueInLocalStorage));
+      }
+      return defaultValue;
+    });
+  }, [defaultValue, deserialize, projectKey]);
 
   const prevKeyRef = React.useRef(projectKey);
 

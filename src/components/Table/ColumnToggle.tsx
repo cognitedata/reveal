@@ -1,5 +1,6 @@
 import { Column, Updater, ColumnOrderState } from '@tanstack/table-core';
-import React, { useState } from 'react';
+import take from 'lodash/take';
+import React, { useState, Suspense, useMemo } from 'react';
 import {
   Button,
   Checkbox,
@@ -69,7 +70,13 @@ export function ColumnToggle<T>({
   const selectedColumns = filteredColumns.filter(column =>
     column.getIsVisible()
   );
-  const selectedTabColumns = tab === 'All' ? filteredColumns : selectedColumns;
+  const selectedTabColumns = useMemo(() => {
+    return tab === 'All' ? filteredColumns : selectedColumns;
+  }, [tab, filteredColumns, selectedColumns]);
+
+  const slicedColumns = useMemo(() => {
+    return take(selectedTabColumns, 100);
+  }, [selectedTabColumns]);
 
   const selectedColumnsCount = allColumns().reduce((accumulator, item) => {
     return item.getIsVisible() ? accumulator + 1 : accumulator;
@@ -94,90 +101,99 @@ export function ColumnToggle<T>({
   return (
     <Dropdown
       content={
-        <StyledMenu>
-          <SegmentedControl
-            fullWidth
-            onButtonClicked={handleTabClick}
-            currentKey={tab}
-          >
-            <StyledSegmentedButton key="All">All</StyledSegmentedButton>
-            <StyledSegmentedButton key="Selected">
-              Selected
-              <StyledCountLabel size="small" variant="unknown">
-                {selectedColumnsCount}
-              </StyledCountLabel>
-            </StyledSegmentedButton>
-          </SegmentedControl>
+        <Suspense fallback={'...loading'}>
+          <StyledMenu>
+            <SegmentedControl
+              fullWidth
+              onButtonClicked={handleTabClick}
+              currentKey={tab}
+            >
+              <StyledSegmentedButton key="All">All</StyledSegmentedButton>
+              <StyledSegmentedButton key="Selected">
+                Selected
+                <StyledCountLabel size="small" variant="unknown">
+                  {selectedColumnsCount}
+                </StyledCountLabel>
+              </StyledSegmentedButton>
+            </SegmentedControl>
 
-          <StyledInput
-            type="search"
-            clearable={{ callback: () => setSearchInput('') }}
-            placeholder="Filter by name"
-            fullWidth
-            variant="noBorder"
-            value={searchInput}
-            onChange={e => setSearchInput(e.target.value)}
-          />
+            <StyledInput
+              type="search"
+              clearable={{ callback: () => setSearchInput('') }}
+              placeholder="Filter by name"
+              fullWidth
+              variant="noBorder"
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+            />
 
-          {!isSearchResultEmpty && searchInput && (
-            <SearchResultText>Results for "{searchInput}":</SearchResultText>
-          )}
+            {!isSearchResultEmpty && searchInput && (
+              <SearchResultText>Results for "{searchInput}":</SearchResultText>
+            )}
 
-          <DragDropContainer
-            direction="vertical"
-            id="column-toggle"
-            elementsOrder={elementOrders}
-            onDragEnd={onColumnOrderChanged}
-          >
-            {selectedTabColumns.map(column => {
-              return (
-                <MenutItemDrag
-                  key={column.id}
-                  isDragEnabled={!Boolean(searchInput)}
-                >
-                  <StyledLabel>
-                    <Checkbox
-                      name={column.id}
-                      checked={column.getIsVisible()}
-                      onChange={handleColumnChange(column)}
-                      className="cogs-checkbox__checkbox"
-                      disabled={
-                        !column.getCanHide() ||
-                        shouldDisableUnselectedColumnOnMaxLimit(column)
-                      }
-                    />
-                    <Flex direction="column">
-                      <StyledHeader
-                        text={column.columnDef.header?.toString()}
-                      />
-                      {column.columnDef.meta && (
-                        <MetadataHeaderText>Metadata</MetadataHeaderText>
-                      )}
-                    </Flex>
-                  </StyledLabel>
-                </MenutItemDrag>
-              );
-            })}
-          </DragDropContainer>
+            <MenuItemsWrapper>
+              <DragDropContainer
+                direction="vertical"
+                id="column-toggle"
+                elementsOrder={elementOrders}
+                onDragEnd={onColumnOrderChanged}
+              >
+                {slicedColumns.map(column => {
+                  return (
+                    <MenutItemDrag
+                      key={column.id}
+                      isDragEnabled={!Boolean(searchInput)}
+                    >
+                      <StyledLabel>
+                        <Checkbox
+                          name={column.id}
+                          checked={column.getIsVisible()}
+                          onChange={handleColumnChange(column)}
+                          className="cogs-checkbox__checkbox"
+                          disabled={
+                            !column.getCanHide() ||
+                            shouldDisableUnselectedColumnOnMaxLimit(column)
+                          }
+                        />
+                        <Flex direction="column">
+                          <StyledHeader
+                            text={column.columnDef.header?.toString()}
+                          />
+                          {column.columnDef.meta && (
+                            <MetadataHeaderText>Metadata</MetadataHeaderText>
+                          )}
+                        </Flex>
+                      </StyledLabel>
+                    </MenutItemDrag>
+                  );
+                })}
+              </DragDropContainer>
+              {selectedTabColumns.length - slicedColumns.length > 0 && (
+                <Menu.Footer>
+                  And {selectedTabColumns.length - slicedColumns.length} more...
+                </Menu.Footer>
+              )}
+            </MenuItemsWrapper>
 
-          {isSearchResultEmpty && (
-            <EmptyStateContainer alignItems="center" justifyContent="center">
-              <EmptyText>No options</EmptyText>
-            </EmptyStateContainer>
-          )}
+            {isSearchResultEmpty && (
+              <EmptyStateContainer alignItems="center" justifyContent="center">
+                <EmptyText>No options</EmptyText>
+              </EmptyStateContainer>
+            )}
 
-          {!isSearchResultEmpty && isSelectedCountLimitExceedingMaxValue && (
-            <Footer>
-              <WarningInfobar>
-                Due to performance reasons, the max amount of columns that can
-                be selected is 20.{' '}
-                <StyledResetSpan onClick={onResetSelectedColumns}>
-                  Reset to default
-                </StyledResetSpan>
-              </WarningInfobar>
-            </Footer>
-          )}
-        </StyledMenu>
+            {!isSearchResultEmpty && isSelectedCountLimitExceedingMaxValue && (
+              <Footer>
+                <WarningInfobar>
+                  Due to performance reasons, the max amount of columns that can
+                  be selected is 20.{' '}
+                  <StyledResetSpan onClick={onResetSelectedColumns}>
+                    Reset to default
+                  </StyledResetSpan>
+                </WarningInfobar>
+              </Footer>
+            )}
+          </StyledMenu>
+        </Suspense>
       }
     >
       <Button icon="SplitView" aria-label="Column Selection" />
@@ -233,13 +249,10 @@ export const StyledCountLabel = styled(Label)`
 `;
 
 export const Footer = styled(Menu.Footer)`
-  position: sticky;
-  bottom: -8px;
-  background-color: white;
+  padding: 0 !important;
 `;
 
 const WarningInfobar = styled(Infobar).attrs({ type: 'warning' })`
-  margin-bottom: 4px;
   border-radius: 6px;
   border: 1px solid rgba(255, 187, 0, 0.2);
 `;
@@ -260,4 +273,9 @@ const EmptyText = styled(Body).attrs({ level: 2, strong: true })`
 
 const EmptyStateContainer = styled(Flex)`
   padding: 16px;
+`;
+
+const MenuItemsWrapper = styled.div`
+  height: 100%;
+  overflow: auto;
 `;

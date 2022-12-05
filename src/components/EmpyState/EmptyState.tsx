@@ -22,7 +22,9 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         <GraphicWrapper>
           {isLoading ? <Loading /> : <Graphic type={graphic || 'Search'} />}
         </GraphicWrapper>
-        <Title level={5}>{title || 'No results available'}</Title>
+        <Title level={5}>
+          {title || isLoading ? 'Loading...' : 'No results available'}
+        </Title>
         {body && <StyledBody level={2}>{body}</StyledBody>}
       </Flex>
     </EmptyStateWrapper>

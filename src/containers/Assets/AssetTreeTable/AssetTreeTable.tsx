@@ -1,11 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import { Asset } from '@cognite/sdk';
 import { useGetHiddenColumns, usePrevious } from 'hooks/CustomHooks';
 import { SelectableItemsProps, TableStateProps } from 'types';
 import { HighlightCell, ResourceTableColumns } from '../../../components';
 import { Table } from '../../../components';
+import { EmptyState } from '../../../components/EmpyState/EmptyState';
 import { useSearchAssetTree } from '../../../domain';
 import { useRootAssetsQuery } from '../../../domain';
 import { DASH } from '../../../utils';
@@ -256,38 +257,40 @@ export const AssetTreeTable = ({
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
-    <Table<InternalAssetTreeData>
-      id={'asset-tree-table'}
-      data={getData()}
-      columns={columns}
-      tableHeaders={tableHeaders}
-      enableExpanding
-      selectedRows={selectedRows}
-      showLoadButton={!startFromRoot}
-      scrollIntoViewRow={scrollIntoViewRow}
-      hasNextPage={hasNextPage}
-      fetchMore={fetchNextPage}
-      getCanRowExpand={
-        startFromRoot
-          ? row => {
-              return gt(row.original.aggregates?.childCount, 0);
-            }
-          : undefined
-      }
-      getSubrowData={originalRow => {
-        return originalRow.children;
-      }}
-      expandedRows={startFromRoot ? rootExpanded : searchExpanded}
-      onRowClick={onAssetClicked}
-      tableSubHeaders={tableSubHeaders}
-      hiddenColumns={hiddenColumns}
-      onRowExpanded={expanded => {
-        if (startFromRoot) {
-          setRootExpanded(expanded);
-        } else {
-          setSearchExpanded(expanded);
+    <Suspense fallback={<EmptyState isLoading={true} />}>
+      <Table<InternalAssetTreeData>
+        id={'asset-tree-table'}
+        data={getData()}
+        columns={columns}
+        tableHeaders={tableHeaders}
+        enableExpanding
+        selectedRows={selectedRows}
+        showLoadButton={!startFromRoot}
+        scrollIntoViewRow={scrollIntoViewRow}
+        hasNextPage={hasNextPage}
+        fetchMore={fetchNextPage}
+        getCanRowExpand={
+          startFromRoot
+            ? row => {
+                return gt(row.original.aggregates?.childCount, 0);
+              }
+            : undefined
         }
-      }}
-    />
+        getSubrowData={originalRow => {
+          return originalRow.children;
+        }}
+        expandedRows={startFromRoot ? rootExpanded : searchExpanded}
+        onRowClick={onAssetClicked}
+        tableSubHeaders={tableSubHeaders}
+        hiddenColumns={hiddenColumns}
+        onRowExpanded={expanded => {
+          if (startFromRoot) {
+            setRootExpanded(expanded);
+          } else {
+            setSearchExpanded(expanded);
+          }
+        }}
+      />
+    </Suspense>
   );
 };

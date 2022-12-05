@@ -143,11 +143,11 @@ export function Table<T extends TableData>({
 
   const initialHiddenColumns = useMemo(() => {
     return (hiddenColumns || []).reduce((previousValue, currentValue) => {
-      return {
-        ...previousValue,
-        [currentValue]: false,
-      };
-    }, {});
+      // turns out the spread syntax was causing huge memory consumption.
+      // my guess would be that every cycle we create a new object and all of them go to memory.
+      previousValue[currentValue] = false;
+      return previousValue;
+    }, {} as Record<string, boolean>);
   }, [hiddenColumns]);
 
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(
