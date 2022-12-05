@@ -124,7 +124,7 @@ export const AssetTreeTable = ({
           ),
         },
         Table.Columns.description(query),
-        Table.Columns.externalId,
+        Table.Columns.externalId(query),
         {
           id: 'childCount',
           header: startFromRoot ? 'Direct children' : 'Results under asset',

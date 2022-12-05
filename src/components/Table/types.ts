@@ -32,6 +32,9 @@ type MetadataColumn = (
 export type ResourceTableHashMap = {
   name: ColumnWithQuery;
   description: ColumnWithQuery;
+  externalId: ColumnWithQuery;
+  type: ColumnWithQuery;
+  id: ColumnWithQuery;
   metadata: MetadataColumn;
 } & {
   [key in typeof ColumnKeys[number]]: TableColumnDef;

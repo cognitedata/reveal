@@ -17,7 +17,7 @@ import styled, { css } from 'styled-components';
 
 import { HighlightCell, TimeDisplay } from 'components';
 
-import { DASH, mapFileType, METADATA_KEY_SEPARATOR } from 'utils';
+import { DASH, isNumber, mapFileType, METADATA_KEY_SEPARATOR } from 'utils';
 import { createLink } from '@cognite/cdf-utilities';
 import { useGetRootAsset } from 'hooks';
 import { ResourceTableHashMap } from './types';
@@ -54,12 +54,57 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       },
     };
   },
-  externalId: {
-    header: 'External ID',
-    accessorKey: 'externalId',
-    cell: ({ getValue }) => (
-      <HighlightCell text={getValue<string>() || DASH} lines={1} />
-    ),
+  // [Product Decision]: We are highlighting type and external id fields according to the query
+  // even though search has nothing to do with these fields.
+  // https://docs.google.com/document/d/1NealpKxykyosTPul9695oX_njJjwyIlEhqYoDAsCLIg
+  externalId: (query?: string) => {
+    return {
+      header: 'External ID',
+      accessorKey: 'externalId',
+      cell: ({ getValue }) => {
+        return (
+          <HighlightCell
+            query={query}
+            text={getValue<string>() || DASH}
+            lines={1}
+          />
+        );
+      },
+    };
+  },
+  type: (query?: string) => {
+    return {
+      header: 'Type',
+      accessorKey: 'type',
+      cell: ({ getValue }) => {
+        return (
+          <HighlightCell
+            query={query}
+            text={getValue<string>() || DASH}
+            lines={1}
+          />
+        );
+      },
+    };
+  },
+  id: (query?: string) => {
+    return {
+      header: 'ID',
+      accessorKey: 'id',
+      cell: ({ getValue }) => {
+        const text = isNumber(getValue<number>())
+          ? `${getValue<number>()}`
+          : DASH;
+        return <HighlightCell query={query} text={text} lines={1} />;
+      },
+    };
+  },
+  subtype: {
+    accessorKey: 'subtype',
+    header: 'Subtype',
+    cell: ({ getValue }) => {
+      return <HighlightCell lines={1} text={getValue<string>() || DASH} />;
+    },
   },
   created: {
     header: 'Created',
@@ -109,14 +154,6 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   unit: {
     header: 'Unit',
     accessorKey: 'unit',
-    cell: ({ getValue }) => (
-      <HighlightCell text={getValue<string>() || DASH} lines={1} />
-    ),
-  },
-
-  id: {
-    header: 'ID',
-    accessorKey: 'id',
     cell: ({ getValue }) => (
       <HighlightCell text={getValue<string>() || DASH} lines={1} />
     ),
@@ -212,20 +249,6 @@ export const ResourceTableColumns: ResourceTableHashMap = {
           </Button>
         </Dropdown>
       );
-    },
-  },
-  type: {
-    accessorKey: 'type',
-    header: 'Type',
-    cell: ({ getValue }) => {
-      return <HighlightCell lines={1} text={getValue<string>() || DASH} />;
-    },
-  },
-  subtype: {
-    accessorKey: 'subtype',
-    header: 'Subtype',
-    cell: ({ getValue }) => {
-      return <HighlightCell lines={1} text={getValue<string>() || DASH} />;
     },
   },
   startTime: {

@@ -122,7 +122,7 @@ export const TimeseriesTable = ({
       },
       Table.Columns.created,
       {
-        ...Table.Columns.id,
+        ...Table.Columns.id(query),
         enableSorting: false,
       },
       {

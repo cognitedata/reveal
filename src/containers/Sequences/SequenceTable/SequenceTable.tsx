@@ -37,7 +37,7 @@ export const SequenceTable = ({
           enableHiding: false,
         },
         Table.Columns.description(query),
-        Table.Columns.externalId,
+        Table.Columns.externalId(query),
         {
           ...Table.Columns.columns,
           enableSorting: false,
@@ -45,7 +45,7 @@ export const SequenceTable = ({
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         {
-          ...Table.Columns.id,
+          ...Table.Columns.id(query),
           enableSorting: false,
         },
         {

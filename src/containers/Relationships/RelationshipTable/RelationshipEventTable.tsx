@@ -22,7 +22,7 @@ const columns = [
   type,
   relationshipLabels,
   relation,
-  externalId,
+  externalId(),
   lastUpdatedTime,
   created,
 ] as ColumnDef<EventWithRelationshipLabels>[];

@@ -126,8 +126,8 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           },
           enableSorting: false,
         },
-        Table.Columns.externalId,
-        Table.Columns.id,
+        Table.Columns.externalId(query),
+        Table.Columns.id(query),
         ...metadataColumns,
       ] as ColumnDef<DocumentWithRelationshipLabels>[],
     [query, metadataColumns]

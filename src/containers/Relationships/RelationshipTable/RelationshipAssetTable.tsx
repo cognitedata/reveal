@@ -20,7 +20,7 @@ export function RelationshipAssetTable({
     name(),
     relationshipLabels,
     relation,
-    externalId,
+    externalId(),
     rootAsset,
   ] as ColumnDef<AssetWithRelationshipLabels>[];
 

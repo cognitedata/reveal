@@ -38,7 +38,7 @@ export const AssetTable = ({
           enableHiding: false,
         },
         Table.Columns.description(query),
-        Table.Columns.externalId,
+        Table.Columns.externalId(query),
         {
           ...Table.Columns.rootAsset,
           cell: ({ getValue }) => (

@@ -27,14 +27,14 @@ export const EventTable = ({
   const columns = useMemo(
     () =>
       [
-        { ...Table.Columns.type, enableHiding: false },
+        { ...Table.Columns.type(query), enableHiding: false },
         Table.Columns.subtype,
         Table.Columns.description(query),
-        Table.Columns.externalId,
+        Table.Columns.externalId(query),
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         {
-          ...Table.Columns.id,
+          ...Table.Columns.id(query),
           enableSorting: false,
         },
         {

@@ -27,7 +27,7 @@ const columns = [
   name(),
   relationshipLabels,
   relation,
-  externalId,
+  externalId(),
   description(),
   lastUpdatedTime,
   created,

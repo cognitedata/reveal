@@ -32,7 +32,7 @@ export const EventSummary = ({
   const columns = useMemo(
     () =>
       [
-        Table.Columns.type,
+        Table.Columns.type(query),
         Table.Columns.description(query),
       ] as ColumnDef<CogniteEvent>[],
     [query]
