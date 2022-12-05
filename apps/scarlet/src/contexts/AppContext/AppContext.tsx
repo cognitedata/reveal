@@ -1,4 +1,5 @@
 import React, { Reducer, useReducer } from 'react';
+import { v4 as uuid } from 'uuid';
 import { useSaveEquipment } from 'hooks';
 import { getTruncatedCourseComponents } from 'utils';
 import { EquipmentComponentType } from 'types';
@@ -23,6 +24,7 @@ const equipmentInitialState = {
   equipment: { loading: true },
   equipmentConfig: { loading: true },
   saveState: { loading: false },
+  scanTriggerKey: '',
 };
 
 const initialState: AppState = {
@@ -82,6 +84,9 @@ function reducer(state: AppState, action: AppAction) {
           data,
         },
       };
+    }
+    case AppActionType.UPDATE_EQUIPMENT_SCANS: {
+      return { ...state, scanTriggerKey: uuid() };
     }
     case AppActionType.SET_EQUIPMENT_CONFIG:
       return {

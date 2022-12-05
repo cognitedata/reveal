@@ -52,7 +52,10 @@ export const Equipment = () => {
     equipmentId,
   });
 
-  const { state: scannerDetectionsQuery } = useApi(
+  const {
+    state: scannerDetectionsQuery,
+    trigger: triggerScannerDetectionQuery,
+  } = useApi(
     getEquipmentAnnotations,
     { config: configQuery.data, documents: documentsQuery.data },
     { skip: !configQuery.data || !documentsQuery.data }
@@ -151,6 +154,11 @@ export const Equipment = () => {
       toast.error('Failed to load scanner data');
     }
   }, [scannerDetectionsQuery.error]);
+
+  useEffect(() => {
+    if (!appState.scanTriggerKey) return;
+    triggerScannerDetectionQuery();
+  }, [appState.scanTriggerKey]);
 
   if (!facility) return null;
 

@@ -19,3 +19,4 @@ export * from './remark';
 export * from './sortOrder';
 export * from './unit';
 export * from './dataset';
+export * from './scan';

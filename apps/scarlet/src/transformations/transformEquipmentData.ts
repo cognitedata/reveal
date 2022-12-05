@@ -46,7 +46,6 @@ export const transformEquipmentData = ({
     config,
     scannerDetections,
     equipmentState?.equipmentElements
-    // pcms?.equipment
   );
 
   const equipmentComponents = getEquipmentComponents(
@@ -73,7 +72,6 @@ const getEquipmentElements = (
   config: EquipmentConfig,
   scannerDetections: ScannerDetection[] = [],
   equipmentStateElements: DataElement[] = []
-  // pcms?: Asset
 ): DataElement[] => {
   const equipmentTypeData = config.equipmentTypes[type];
 
@@ -105,16 +103,10 @@ const getEquipmentElements = (
       const equipmentStateDetections = equipmentStateElement?.detections.map(
         (detection) => transformDetection(detection, dataElementConfig.type)
       );
-      // const pcmsDetection = getPCMSDetection(
-      //   dataElementConfig.label,
-      //   pcms,
-      //   dataElementConfig.type
-      // );
 
       const detections = mergeDetections(
         equipmentStateDetections,
         itemScannerDetections
-        // pcmsDetection
       );
 
       return {
@@ -132,40 +124,11 @@ const getEquipmentElements = (
   return equipmentElements as DataElement[];
 };
 
-// const getPCMSDetection = (
-//   key: string,
-//   pcms?: Asset,
-//   dataElementType?: DataElementType
-// ) => {
-//   if (!pcms?.metadata || pcms.metadata[key] === undefined) return undefined;
-
-//   return {
-//     id: uuid(),
-//     type: DetectionType.PCMS,
-//     value: transformDetectionValue(pcms.metadata[key], dataElementType),
-//     state: DetectionState.APPROVED,
-//   } as Detection;
-// };
-
 const mergeDetections = (
   equipmentStateDetections: Detection[] = [],
   scannerDetections: ScannerDetection[] = []
-  // pcmsDetection?: Detection
 ) => {
   const detections = [...equipmentStateDetections];
-
-  // // update pcms detection if it's not primary,
-  // // otherwise add it
-  // if (pcmsDetection) {
-  //   const existingPCMSDetection = detections.find(
-  //     (detection) => detection.type === DetectionType.PCMS
-  //   );
-  //   if (!existingPCMSDetection) {
-  //     detections.push(pcmsDetection);
-  //   } else if (!existingPCMSDetection.isPrimary) {
-  //     existingPCMSDetection.value = pcmsDetection.value;
-  //   }
-  // }
 
   // add scanner detections if there are no detections approved or omitted
   if (
@@ -188,20 +151,12 @@ const getEquipmentComponents = (
   if (equipmentStateComponents) {
     components = equipmentStateComponents.map(
       (component: EquipmentComponent) => {
-        // const pcmsComponent = component.pcmsExternalId
-        //   ? pcmsComponents?.find(
-        //       (pcmsComponent) =>
-        //         pcmsComponent.externalId === component.pcmsExternalId
-        //     )
-        //   : undefined;
-
         return {
           ...component,
           componentElements: getComponentElements(
             equipmentType,
             config,
             component
-            // pcmsComponent
           ),
         };
       }
@@ -229,7 +184,6 @@ const getEquipmentComponents = (
           equipmentType,
           config,
           component
-          // pcmsComponent
         );
 
         return component;
@@ -295,7 +249,6 @@ const getComponentElements = (
   equipmentType: EquipmentType,
   config: EquipmentConfig,
   component: EquipmentComponent
-  // pcmsComponent?: Asset
 ): DataElement[] => {
   const configComponentTypes = Object.values(
     config.equipmentTypes[equipmentType].componentTypes
@@ -337,25 +290,6 @@ const getComponentElements = (
       };
     })
     .filter((dataElement) => dataElement) as DataElement[];
-
-  // componentElements.forEach((dataElement) => {
-  // const pcmsDetection = getPCMSDetection(
-  //   dataElement.config.label.replace(/\?$/gi, ''),
-  //   pcmsComponent,
-  //   dataElement.config.type
-  // );
-
-  // if (pcmsDetection) {
-  //   const existingPCMSDetection = dataElement.detections.find(
-  //     (detection) => detection.type === DetectionType.PCMS
-  //   );
-
-  //   if (!existingPCMSDetection) {
-  //     dataElement.detections.unshift(pcmsDetection);
-  //   } else if (!existingPCMSDetection.isPrimary) {
-  //     existingPCMSDetection.value = pcmsDetection.value;
-  //   }
-  // }
 
   return componentElements;
 };

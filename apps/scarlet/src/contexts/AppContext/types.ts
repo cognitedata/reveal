@@ -33,6 +33,7 @@ export type AppState = {
   equipmentList?: AppStateEquipmentList;
   dataElementModal?: AppStateDataElementModal;
   saveState: APIState<EquipmentData> & { isAutoSave?: boolean };
+  scanTriggerKey: string;
   unitListByFacility: APIState<UnitListByFacility>;
 };
 
@@ -55,6 +56,9 @@ export type AppAction =
       type: AppActionType.SET_EQUIPMENT;
       equipment: APIState<EquipmentData>;
       isInitial?: boolean;
+    }
+  | {
+      type: AppActionType.UPDATE_EQUIPMENT_SCANS;
     }
   | {
       type: AppActionType.CLEANUP_EQUIPMENT_DATA;
@@ -120,6 +124,7 @@ export enum AppActionType {
   INIT_EQUIPMENT = 'init-equipment',
   SET_DOCUMENTS = 'set-documents',
   SET_EQUIPMENT = 'set-equipment',
+  UPDATE_EQUIPMENT_SCANS = 'update-equipment_scans',
   SET_EQUIPMENT_CONFIG = 'set-equipment-config',
   SET_SAVE_SATE = 'set-save-state',
   UPDATE_DATA_ELEMENTS_STATE = 'update-data-elements-state',
