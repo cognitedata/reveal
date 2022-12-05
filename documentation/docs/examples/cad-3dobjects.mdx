@@ -12,25 +12,9 @@ support or to customize the 3D environment. Reveal supports this by using the
 `Cognite3DViewer.addObject3D`-function which accepts [ThreeJS](https://threejs.org/) objects.
 
 :::note
-There are a few restrictions to the 3D content that is to be combined with Reveal models:
-- Reveal uses an "implicit lighting model", i.e. no lights are added to the scene. If you
-need lights this needs to be added to the viewer scene.
-- Geometry is expected to use "default depth testing", meaning
-[`THREE.Material.depthTest`](https://threejs.org/docs/#api/en/materials/Material.depthTest) must be `true`,
-[`THREE.Material.depthWrite`](https://threejs.org/docs/#api/en/materials/Material.depthWrite) must  `true` and
-[`THREE.Material.depthFunc`](https://threejs.org/docs/#api/en/materials/Material.depthFunc) must be `LessEqualDepth`.
-You might experience unexpected results if you are using materials where this doesn't hold.
-- Objects with opacity less than 1.0 will appear transparent regardless of if
-[`THREE.Material.transparent`](https://threejs.org/docs/?q=Material#api/en/materials/Material.transparent) is `true` or
-`false`. The final composited image is always blended as if
-[`THREE.Material.blendDst`](https://threejs.org/docs/?q=Material#api/en/materials/Material.blendDst) is
-`OneMinusSrcAlphaFactor` and the blending settings on the material won't have any effect on the composition.
-:::
-
-<!-- :::tip
 Reveal uses an "implicit lighting model", i.e. no lights are added to the scene. If you
-need lights this needs to be added to the viewer scene.
-::: -->
+need lights this needs to be added to the viewer scene if the added objects isn't "unlit".
+:::
 
 <DemoWrapper />
 
