@@ -26,8 +26,8 @@ describe('adaptToWellboreRigNamesMap', () => {
     const wellboreRigNamesMap = adaptToWellboreRigNamesMap(rigOperations);
 
     expect(wellboreRigNamesMap).toEqual({
-      'wellbore-1': ['rig 1'],
-      'wellbore-2': ['rig 2', 'rig 3'],
+      'wellbore-1': ['Rig 1'],
+      'wellbore-2': ['Rig 2', 'Rig 3'],
     });
   });
 });

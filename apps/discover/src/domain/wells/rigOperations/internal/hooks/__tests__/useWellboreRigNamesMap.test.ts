@@ -5,6 +5,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import { testWrapper as wrapper } from '__test-utils/renderer';
 
 import { useRigOperationsQuery } from '../../queries/useRigOperationsQuery';
+import { formatRigName } from '../../utils/formatRigName';
 import { useWellboreRigNamesMap } from '../useWellboreRigNamesMap';
 
 jest.mock('../../queries/useRigOperationsQuery', () => ({
@@ -42,7 +43,7 @@ describe('useWellboreRigNamesMap', () => {
     );
 
     expect(result.current.data).toMatchObject({
-      [wellboreMatchingId]: [rigName.toLowerCase()],
+      [wellboreMatchingId]: [formatRigName(rigName)],
     });
     expect(result.current.isLoading).toEqual(false);
   });

@@ -1,4 +1,5 @@
 import { WellboreRigNamesMap } from '../types';
+import { formatRigName } from '../utils/formatRigName';
 
 type RigOperationType = {
   wellboreMatchingId: string;
@@ -15,7 +16,7 @@ export const adaptToWellboreRigNamesMap = <T extends RigOperationType>(
       return {
         ...wellboreRigNameMap,
         [wellboreMatchingId]: Array.from(
-          new Set([...currentRigNames, rigName.toLowerCase()])
+          new Set([...currentRigNames, formatRigName(rigName)])
         ),
       };
     },
