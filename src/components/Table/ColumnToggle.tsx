@@ -17,7 +17,6 @@ import {
 
 import styled from 'styled-components';
 import { TableData } from './Table';
-import { MetadataHeaderText } from './elements';
 
 import {
   DragDropContainer,
@@ -25,12 +24,16 @@ import {
   WithDragHandleProps,
 } from 'components/DragDropContainer';
 import { HighlightCell } from './HighlightCell';
+import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { MetadataHeaderText } from './elements';
 import { MAX_COLUMN_SELECTION } from 'index';
 
 export interface ColumnToggleProps<T extends TableData = any> {
   allColumns: () => Column<T, unknown>[];
   toggleAllColumnsVisible: (visible: boolean) => void;
   onColumnOrderChanged: (updater: Updater<ColumnOrderState>) => void;
+  tableId: string;
   onResetSelectedColumns: () => void;
 }
 
@@ -61,6 +64,14 @@ export function ColumnToggle<T>({
   const [tab, setTab] = useState('All');
 
   const elementOrders = allColumns().map(column => column.id);
+  const trackUsage = useMetrics();
+
+  const handleTabClick = (key: string) => {
+    setTab(key);
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.COLUMN_SELECTION_TAB, {
+      tab: key,
+    });
+  };
 
   const filteredColumns = allColumns().filter(column =>
     column.columnDef.header?.toString().toLowerCase().includes(searchInput)
@@ -84,15 +95,15 @@ export function ColumnToggle<T>({
   const isSelectedCountLimitExceedingMaxValue =
     selectedColumnsCount >= MAX_COLUMN_SELECTION;
 
-  const handleTabClick = (key: string) => {
-    setTab(key);
-  };
   const handleColumnChange = (column: Column<T>) => (nextState: boolean) => {
     if (nextState === true && selectedColumnsCount >= MAX_COLUMN_SELECTION) {
       return;
     }
 
     column.toggleVisibility();
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.COLUMN_SELECTION, {
+      column: column.id,
+    });
   };
 
   const shouldDisableUnselectedColumnOnMaxLimit = (column: Column<T>) =>

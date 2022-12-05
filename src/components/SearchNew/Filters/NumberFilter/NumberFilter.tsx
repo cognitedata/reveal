@@ -3,6 +3,8 @@ import { Input, Tooltip } from '@cognite/cogs.js';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import styled from 'styled-components';
 import { isNumber } from 'utils/numbers';
+import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 
 export const NumberFilter = ({
   value,
@@ -16,6 +18,7 @@ export const NumberFilter = ({
   setValue: (newValue: number | undefined) => void;
 }) => {
   const [error, setError] = useState(false);
+  const trackUsage = useMetrics();
 
   const resetError = () => {
     if (error) {
@@ -59,6 +62,10 @@ export const NumberFilter = ({
           iconPlacement="right"
           onChange={ev => {
             handleValueChange(ev.target.value);
+            trackUsage(DATA_EXPLORATION_COMPONENT.INPUT.NUMBER_FILTER, {
+              value: ev.target.value,
+              title,
+            });
           }}
         />
       </Tooltip>

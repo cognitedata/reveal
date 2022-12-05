@@ -9,6 +9,9 @@ import {
   MetadataHeader,
   MetadataTableContainer,
 } from './elements';
+import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { useDebounceTrackUsage } from 'hooks/useTrackDebounce';
 
 // TODO  Needs to be removed once implemented in our library
 interface DataSource {
@@ -20,6 +23,8 @@ interface DataSource {
 export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
   const [query, setQuery] = useState('');
   const [hideEmpty, setHideEmpty] = useState(false);
+  const trackUsage = useMetrics();
+  const track = useDebounceTrackUsage();
   const columns = useMemo(
     () =>
       [
@@ -62,6 +67,26 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
     return null;
   }
 
+  const handleOnClickHideEmpty = () => {
+    setHideEmpty(hideEmpty => {
+      trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.METADATA_HIDE_EMPTY, {
+        visible: !hideEmpty,
+      });
+      return !hideEmpty;
+    });
+  };
+
+  const handleFilterInputOnChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    event.stopPropagation();
+    setQuery(event.target.value);
+
+    track(DATA_EXPLORATION_COMPONENT.SEARCH.METADATA_FILTER, {
+      value: event.target.value,
+    });
+  };
+
   return (
     <MetadataCard>
       <MetadataHeader>
@@ -72,13 +97,13 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
             placeholder="Filter"
             size="small"
             variant="noBorder"
-            onChange={e => setQuery(e.target.value)}
+            onChange={handleFilterInputOnChange}
           />
           <Button
             name="hideEmpty"
             type="secondary"
             size="small"
-            onClick={() => setHideEmpty(hideEmpty => !hideEmpty)}
+            onClick={handleOnClickHideEmpty}
           >
             {hideEmpty ? 'Show' : 'Hide'} empty
           </Button>

@@ -3,6 +3,9 @@ import { DatePicker, Select, RangePicker } from 'components';
 import { TIME_SELECT } from 'containers';
 import { DateRange } from '@cognite/sdk';
 import { FilterFacetTitle } from '../FilterFacetTitle';
+import { OptionType } from '@cognite/cogs.js';
+import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 
 const determinePeriod = (value: DateRange | undefined | null) => {
   if (value === undefined) {
@@ -39,6 +42,7 @@ export const DateFilterV2 = ({
   ) => void;
 }) => {
   const [period, setPeriod] = useState<PeriodType>(determinePeriod(value));
+  const trackUsage = useMetrics();
 
   const prevValueRef = useRef<PeriodType>();
   const prevValue = prevValueRef.current;
@@ -65,6 +69,57 @@ export const DateFilterV2 = ({
     { value: 'after', label: 'After' },
   ];
 
+  const handleOnChange = (newValue: OptionType<string>) => {
+    const newKey = (
+      newValue as {
+        value: 'none' | 'null' | 'before' | 'during' | 'after';
+      }
+    ).value;
+    setPeriod(newKey);
+    let finalValue;
+    switch (newKey) {
+      case 'none': {
+        if (value !== undefined) {
+          finalValue = undefined;
+        }
+        break;
+      }
+      case 'during': {
+        if (
+          !value ||
+          value.min !== startDate.valueOf() ||
+          value.max !== endDate.valueOf()
+        ) {
+          finalValue = { min: startDate.valueOf(), max: endDate.valueOf() };
+        }
+        break;
+      }
+      case 'before': {
+        if (!value || value.max !== endDate.valueOf()) {
+          finalValue = { max: endDate.valueOf() };
+        }
+        break;
+      }
+      case 'after': {
+        if (!value || value.min !== endDate.valueOf()) {
+          finalValue = { min: endDate.valueOf() };
+        }
+        break;
+      }
+      case 'null': {
+        if (value !== null) {
+          finalValue = null;
+        }
+      }
+    }
+    setValue(finalValue);
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.DATE_FILTER, {
+      value: finalValue,
+      period: newKey,
+      title,
+    });
+  };
+
   return (
     <>
       <FilterFacetTitle>{title}</FilterFacetTitle>
@@ -76,49 +131,7 @@ export const DateFilterV2 = ({
         blurInputOnSelect
         isMulti={false}
         cogsTheme="grey"
-        onChange={(newValue: any) => {
-          const newKey = (
-            newValue as {
-              value: 'none' | 'null' | 'before' | 'during' | 'after';
-            }
-          ).value;
-          setPeriod(newKey);
-          switch (newKey) {
-            case 'none': {
-              if (value !== undefined) {
-                setValue(undefined);
-              }
-              return;
-            }
-            case 'during': {
-              if (
-                !value ||
-                value.min !== startDate.valueOf() ||
-                value.max !== endDate.valueOf()
-              ) {
-                setValue({ min: startDate.valueOf(), max: endDate.valueOf() });
-              }
-              return;
-            }
-            case 'before': {
-              if (!value || value.max !== endDate.valueOf()) {
-                setValue({ max: endDate.valueOf() });
-              }
-              return;
-            }
-            case 'after': {
-              if (!value || value.min !== endDate.valueOf()) {
-                setValue({ min: endDate.valueOf() });
-              }
-              return;
-            }
-            case 'null': {
-              if (value !== null) {
-                setValue(null);
-              }
-            }
-          }
-        }}
+        onChange={handleOnChange}
       />
       {(period === 'after' || period === 'before') && (
         <div style={{ marginTop: 8 }}>

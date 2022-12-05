@@ -12,6 +12,8 @@ import {
   ThreeDModelCellDropdown,
   ThreeDModelCellLink,
 } from 'containers/Assets/AssetTable/ThreeDModelCell';
+import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 
 type DetailsItemProps = {
   name: string;
@@ -32,6 +34,13 @@ export const DetailsItem = ({
       : '';
 
   const { hasCopied, onCopy } = useClipboard(clipboardValue);
+  const trackUsage = useMetrics();
+
+  const handleOnClickCopy = () => {
+    onCopy();
+    toast.success('Copied to clipboard');
+    trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.COPY_TO_CLIPBOARD, { name });
+  };
 
   return (
     <Flex>
@@ -64,10 +73,7 @@ export const DetailsItem = ({
           size="small"
           icon={hasCopied ? 'Checkmark' : 'Copy'}
           disabled={hasCopied}
-          onClick={() => {
-            onCopy();
-            toast.success('Copied to clipboard');
-          }}
+          onClick={handleOnClickCopy}
           aria-label="Copy"
         />
       </ButtonWrapper>

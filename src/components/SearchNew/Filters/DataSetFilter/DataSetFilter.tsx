@@ -10,6 +10,8 @@ import { FilterFacetTitle } from '../FilterFacetTitle';
 
 import { OptionValue } from '../types';
 import isEmpty from 'lodash/isEmpty';
+import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 
 const formatOption = (dataset: DataSetWCount) => {
   const name = dataset?.name || '';
@@ -29,6 +31,7 @@ export const DataSetFilterV2 = ({
   value?: number[];
   setValue: (newValue: OptionValue<number>[] | undefined) => void;
 }) => {
+  const trackUsage = useMetrics();
   const { data: currentDataSets } = useCdfItems<DataSet>(
     'datasets',
     (value || []).map(id => ({ id })),
@@ -69,6 +72,10 @@ export const DataSetFilterV2 = ({
           isDisabled={isError}
           onChange={newValue => {
             setDataSetFilter(isEmpty(newValue) ? undefined : newValue);
+            trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.DATA_SET_FILTER, {
+              ...newValue,
+              resourceType,
+            });
           }}
           value={currentDataSets?.map(el => ({
             label: String(el.name),

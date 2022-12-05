@@ -12,6 +12,7 @@ import { StringFilter } from './StringFilter/StringFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 import { OldEventsFilters } from 'domain/events';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { ResourceTypes } from 'types';
 
 export const EventFilters = ({
   filter,
@@ -20,6 +21,7 @@ export const EventFilters = ({
   filter: OldEventsFilters;
   setFilter: (newFilter: OldEventsFilters) => void;
 }) => {
+  const resourceType = ResourceTypes.Event;
   const { data: items = [] } = useList('events', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
@@ -27,9 +29,9 @@ export const EventFilters = ({
 
   return (
     <div>
-      <ResetFiltersButton setFilter={setFilter} />
+      <ResetFiltersButton setFilter={setFilter} resourceType={resourceType} />
       <DataSetFilter
-        resourceType="event"
+        resourceType={resourceType}
         value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
         setValue={newIds =>
           setFilter({
@@ -80,7 +82,7 @@ export const EventFilters = ({
           })
         }
       />
-      <AdvancedFiltersCollapse resourceType="event" filter={filter}>
+      <AdvancedFiltersCollapse resourceType={resourceType} filter={filter}>
         <AggregatedEventFilter
           field="subtype"
           filter={filter}

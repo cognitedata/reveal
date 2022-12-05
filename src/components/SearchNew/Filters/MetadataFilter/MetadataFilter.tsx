@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Body, Button } from '@cognite/cogs.js';
 import { mergeUniqueMetadataKeys } from './utils';
 import { FilterFormV2 } from 'components/FilterFormV2/FilterFormV2';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { useMetrics } from 'hooks/useMetrics';
 
 const FilterHeader = styled.div`
   display: flex;
@@ -26,6 +28,7 @@ export const MetadataFilterV2 = <
   setValue: (newValue: { key: string; value: string }[] | undefined) => void;
   useAggregates?: boolean;
 }) => {
+  const trackUsage = useMetrics();
   const metadata = useMemo(() => {
     if (!useAggregates) {
       return mergeUniqueMetadataKeys(items);
@@ -35,6 +38,7 @@ export const MetadataFilterV2 = <
 
   const setFilter = (newFilters: { key: string; value: string }[]) => {
     setValue(newFilters);
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.METADATA_FILTER, newFilters);
   };
 
   const clearFilters = () => {

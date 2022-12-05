@@ -10,12 +10,14 @@ import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import dayjs from 'dayjs';
-import { DateRangeProps } from 'types';
+import { DateRangeProps, ResourceTypes } from 'types';
 import { OptionType, Select } from '@cognite/cogs.js';
 import { ParentSize } from '@visx/responsive';
 
 import styled from 'styled-components';
 import { DatapointAggregates, Datapoints } from '@cognite/sdk';
+import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 
 export type TIME_OPTION_KEY =
   | '10Y'
@@ -157,6 +159,8 @@ export const TimeseriesChart = ({
   const [timePeriod, setTimePeriod] = useState<TIME_OPTION_KEY | undefined>(
     defaultOption || (dateRange ? undefined : timeOptions[0])
   );
+  const trackUsage = useMetrics();
+  const resourceType = ResourceTypes.TimeSeries;
 
   const [presetZoom, setPresetZoomDomain] = useState<[Date, Date]>(
     dateRange || TIME_SELECT[timePeriod || timeOptions[0]].getTime()
@@ -269,6 +273,10 @@ export const TimeseriesChart = ({
               if (value) {
                 setTimePeriod(value);
               }
+              trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.TIME_PERIOD, {
+                resourceType,
+                value,
+              });
             }}
             width={250}
           />
@@ -283,6 +291,10 @@ export const TimeseriesChart = ({
             onRangeChanged={range => {
               setTimePeriod(undefined);
               setPresetZoomDomain(range);
+              trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.TIME_RANGE, {
+                resourceType,
+                value: range,
+              });
             }}
           />
         )}

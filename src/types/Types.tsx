@@ -1,6 +1,16 @@
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { AllIconTypes } from '@cognite/cogs.js';
 
+export enum ResourceTypes {
+  Document = 'document',
+  Asset = 'asset',
+  TimeSeries = 'timeSeries',
+  Sequence = 'sequence',
+  File = 'file',
+  Event = 'event',
+  ThreeD = 'threeD',
+}
+
 export type ResourceType =
   | 'asset'
   | 'timeSeries'

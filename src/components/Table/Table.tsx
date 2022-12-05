@@ -16,6 +16,7 @@ import {
 import { useLocalStorageState } from '../../utils';
 import { isElementHorizontallyInViewport } from '../../utils/isElementHorizontallyInViewport';
 import { ColumnToggle } from './ColumnToggle';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 
 import {
   TableContainer,
@@ -32,6 +33,7 @@ import {
   ResizerWrapper,
   SubTableWrapper,
   Tbody,
+  MetadataHeaderText,
 } from './elements';
 
 import { Body, Flex } from '@cognite/cogs.js';
@@ -40,7 +42,7 @@ import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from './LoadMore';
 import { EmptyState } from 'components/EmpyState/EmptyState';
-import { MetadataHeaderText } from '.';
+import { useMetrics } from 'hooks/useMetrics';
 
 export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {
@@ -113,6 +115,7 @@ export function Table<T extends TableData>({
   );
 
   const tbodyRef = useRef<HTMLDivElement>(null);
+  const trackUsage = useMetrics();
 
   // To add the navigation in the row
   const handleKeyDown = (
@@ -224,6 +227,11 @@ export function Table<T extends TableData>({
     );
   };
 
+  const handleClickLoadMore = () => {
+    fetchMore && fetchMore();
+    trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.LOAD_MORE, { table: id });
+  };
+
   const handleResetSelectedColumns = () => {
     setColumnVisibility(initialHiddenColumns);
   };
@@ -270,6 +278,11 @@ export function Table<T extends TableData>({
                         isSorted={header.column.getIsSorted()}
                         onClick={() => {
                           header.column.toggleSorting();
+
+                          trackUsage(
+                            DATA_EXPLORATION_COMPONENT.CLICK.SORT_COLUMN,
+                            { table: id, Column: header.column.id }
+                          );
                         }}
                       />
                       {enableColumnResizing ? (
@@ -326,7 +339,7 @@ export function Table<T extends TableData>({
         </StyledTable>
         {showLoadButton && (
           <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
-            <LoadMore {...loadMoreProps} />
+            <LoadMore {...loadMoreProps} fetchMore={handleClickLoadMore} />
           </LoadMoreButtonWrapper>
         )}
       </ContainerInside>
@@ -344,6 +357,7 @@ export function Table<T extends TableData>({
                 onColumnOrderChanged={setColumnOrder}
                 allColumns={getAllLeafColumns}
                 toggleAllColumnsVisible={handleToggleAllVisibility}
+                tableId={id}
                 onResetSelectedColumns={handleResetSelectedColumns}
               />
             </StyledFlex>

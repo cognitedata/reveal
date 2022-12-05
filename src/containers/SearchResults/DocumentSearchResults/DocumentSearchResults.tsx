@@ -23,6 +23,8 @@ import { AppContext } from 'context/AppContext';
 import { DocumentUploaderModal } from 'containers/Documents/DocumentUploader/DocumentUploaderModal';
 import { useDocumentFilteredAggregateCount } from '@cognite/react-document-search';
 import { VerticalDivider } from 'components/Divider';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { ResourceTypes } from 'types';
 
 export interface DocumentSearchResultsProps {
   query?: string;
@@ -57,6 +59,8 @@ export const DocumentSearchResults = ({
     undefined,
     { enabled: !!context?.flow }
   );
+  const resourceType = ResourceTypes.Document;
+  const trackUsage = context?.trackUsage;
 
   return (
     <DocumentSearchResultWrapper>
@@ -69,20 +73,24 @@ export const DocumentSearchResults = ({
         tableHeaders={
           <>
             <SearchResultToolbar
-              type="document"
+              type={resourceType}
               style={{ width: '100%' }}
               showCount={true}
               resultCount={
                 <SearchResultCountLabel
                   loadedCount={results.length}
                   totalCount={aggregateCount}
-                  resourceType="document"
+                  resourceType={resourceType}
                 />
               }
             />
             <UploadButton
               onClick={() => {
                 setModalVisible(true);
+                trackUsage &&
+                  trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.UPLOAD, {
+                    table: resourceType,
+                  });
               }}
               disabled={!hasEditPermissions}
             />

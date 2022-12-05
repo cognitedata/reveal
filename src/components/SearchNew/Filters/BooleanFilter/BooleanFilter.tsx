@@ -1,6 +1,8 @@
 import React from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
 import { FilterFacetTitle } from '../FilterFacetTitle';
+import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 
 export const BooleanFilter = ({
   title,
@@ -11,6 +13,8 @@ export const BooleanFilter = ({
   value: boolean | undefined;
   setValue: (newValue: boolean | undefined) => void;
 }) => {
+  const trackUsage = useMetrics();
+
   const currentChecked = (() => {
     if (value === undefined) {
       return 'unset';
@@ -25,21 +29,27 @@ export const BooleanFilter = ({
     setValue(newValue);
   };
 
+  const handleButtonClick = (key: string) => {
+    if (key === 'unset') {
+      setUploaded(undefined);
+    } else if (key === 'true') {
+      setUploaded(true);
+    } else {
+      setUploaded(false);
+    }
+    trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.BOOLEAN_FILTER, {
+      value: key,
+      title,
+    });
+  };
+
   return (
     <>
       <FilterFacetTitle>{title}</FilterFacetTitle>
       <SegmentedControl
         fullWidth
         currentKey={currentChecked}
-        onButtonClicked={key => {
-          if (key === 'unset') {
-            setUploaded(undefined);
-          } else if (key === 'true') {
-            setUploaded(true);
-          } else {
-            setUploaded(false);
-          }
-        }}
+        onButtonClicked={handleButtonClick}
       >
         <SegmentedControl.Button key="unset" style={{ flex: 1 }}>
           All

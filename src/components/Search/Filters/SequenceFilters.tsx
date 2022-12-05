@@ -9,6 +9,7 @@ import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 import { OldSequenceFilters } from 'domain/sequence';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { ResourceTypes } from 'types';
 
 export const SequenceFilters = ({
   filter,
@@ -17,6 +18,7 @@ export const SequenceFilters = ({
   filter: OldSequenceFilters;
   setFilter: (newFilter: OldSequenceFilters) => void;
 }) => {
+  const resourceType = ResourceTypes.Sequence;
   const { data: items = [] } = useList('sequences', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
@@ -24,9 +26,9 @@ export const SequenceFilters = ({
 
   return (
     <div>
-      <ResetFiltersButton setFilter={setFilter} />
+      <ResetFiltersButton setFilter={setFilter} resourceType={resourceType} />
       <DataSetFilter
-        resourceType="sequence"
+        resourceType={resourceType}
         value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
         setValue={newIds =>
           setFilter({
@@ -74,7 +76,7 @@ export const SequenceFilters = ({
           })
         }
       />
-      <AdvancedFiltersCollapse resourceType="sequence" filter={filter}>
+      <AdvancedFiltersCollapse resourceType={resourceType} filter={filter}>
         <MetadataFilter
           items={items}
           value={filter.metadata}

@@ -11,6 +11,7 @@ import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 import { OldFilesFilters } from 'domain/files';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { ResourceTypes } from 'types';
 
 export const FileFilters = ({
   filter,
@@ -19,6 +20,7 @@ export const FileFilters = ({
   filter: OldFilesFilters;
   setFilter: (newFilter: OldFilesFilters) => void;
 }) => {
+  const resourceType = ResourceTypes.File;
   const { data: items = [] } = useList('files', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
@@ -26,9 +28,9 @@ export const FileFilters = ({
 
   return (
     <div>
-      <ResetFiltersButton setFilter={setFilter} />
+      <ResetFiltersButton setFilter={setFilter} resourceType={resourceType} />
       <DataSetFilter
-        resourceType="file"
+        resourceType={resourceType}
         value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
         setValue={newIds =>
           setFilter({
@@ -64,9 +66,9 @@ export const FileFilters = ({
           })
         }
       />
-      <AdvancedFiltersCollapse resourceType="file" filter={filter}>
+      <AdvancedFiltersCollapse resourceType={resourceType} filter={filter}>
         <LabelFilter
-          resourceType="file"
+          resourceType={resourceType}
           value={filter.labels?.map(({ value }) => ({ externalId: value }))}
           setValue={newFilters =>
             setFilter({

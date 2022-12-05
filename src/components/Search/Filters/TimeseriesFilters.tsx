@@ -11,6 +11,7 @@ import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 import { OldTimeseriesFilters } from 'domain/timeseries';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { ResourceTypes } from 'types';
 
 export const TimeseriesFilters = ({
   filter,
@@ -19,6 +20,7 @@ export const TimeseriesFilters = ({
   filter: OldTimeseriesFilters;
   setFilter: (newFilter: OldTimeseriesFilters) => void;
 }) => {
+  const resourceType = ResourceTypes.TimeSeries;
   const { data: items = [] } = useList('timeseries', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
@@ -26,9 +28,9 @@ export const TimeseriesFilters = ({
 
   return (
     <div>
-      <ResetFiltersButton setFilter={setFilter} />
+      <ResetFiltersButton setFilter={setFilter} resourceType={resourceType} />
       <DataSetFilter
-        resourceType="timeSeries"
+        resourceType={resourceType}
         value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
         setValue={newIds =>
           setFilter({
@@ -69,7 +71,7 @@ export const TimeseriesFilters = ({
         }
       />
 
-      <AdvancedFiltersCollapse resourceType="timeSeries" filter={filter}>
+      <AdvancedFiltersCollapse resourceType={resourceType} filter={filter}>
         <ByAssetFilter
           value={filter.assetSubtreeIds?.map(({ value }) => value)}
           setValue={newValue =>

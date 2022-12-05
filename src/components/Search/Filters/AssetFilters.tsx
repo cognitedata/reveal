@@ -12,6 +12,7 @@ import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 import { OldAssetFilters } from 'domain/assets';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { ResourceTypes } from 'types';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFilters = ({
@@ -21,6 +22,7 @@ export const AssetFilters = ({
   filter: OldAssetFilters;
   setFilter: (newFilter: OldAssetFilters) => void;
 }) => {
+  const resourceType = ResourceTypes.Asset;
   const { data: items = [] } = useList('assets', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
@@ -30,9 +32,9 @@ export const AssetFilters = ({
 
   return (
     <div>
-      <ResetFiltersButton setFilter={setFilter} />
+      <ResetFiltersButton setFilter={setFilter} resourceType={resourceType} />
       <LabelFilter
-        resourceType="asset"
+        resourceType={resourceType}
         value={filter.labels?.map(({ value }) => ({ externalId: value }))}
         setValue={newFilters =>
           setFilter({
@@ -44,7 +46,7 @@ export const AssetFilters = ({
         }
       />
       <DataSetFilter
-        resourceType="asset"
+        resourceType={resourceType}
         value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
         setValue={newIds =>
           setFilter({
@@ -75,7 +77,7 @@ export const AssetFilters = ({
           })
         }
       />
-      <AdvancedFiltersCollapse resourceType="asset" filter={filter}>
+      <AdvancedFiltersCollapse resourceType={resourceType} filter={filter}>
         <ByAssetFilter
           title="Parent"
           value={filter.assetSubtreeIds?.map(({ value }) => value)}

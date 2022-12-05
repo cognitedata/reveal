@@ -6,6 +6,8 @@ import { ResourceType } from 'types';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { OptionValue } from '../types';
+import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 
 export const LabelFilterV2 = ({
   resourceType,
@@ -18,6 +20,8 @@ export const LabelFilterV2 = ({
   setValue: (newValue: OptionValue<string>[] | undefined) => void;
   addNilOption?: boolean;
 }) => {
+  const trackUsage = useMetrics();
+
   const allowLabels = resourceType === 'asset' || resourceType === 'file';
   const { data: labels = [], isError } = useList<LabelDefinition>(
     'labels',
@@ -33,6 +37,10 @@ export const LabelFilterV2 = ({
   const setLabel = (newValue?: OptionType<string>[]) => {
     const newFilters = newValue && newValue.length > 0 ? newValue : undefined;
     setValue(newFilters as OptionValue<string>[]);
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.LABEL_FILTER, {
+      ...newValue,
+      resourceType,
+    });
   };
 
   return (

@@ -20,6 +20,7 @@ import { HighlightCell, TimeDisplay } from 'components';
 import { DASH, isNumber, mapFileType, METADATA_KEY_SEPARATOR } from 'utils';
 import { createLink } from '@cognite/cdf-utilities';
 import { useGetRootAsset } from 'hooks';
+import { RootAssetCell } from './RootAssetCell';
 import { ResourceTableHashMap } from './types';
 
 // TODO: this whole approach needs to be refactored a bit, especially the usage of hooks and stuff
@@ -338,23 +339,9 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     accessorKey: 'rootId',
     header: 'Root asset',
     cell: ({ getValue }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const { data: rootAsset, isLoading } = useGetRootAsset(
-        getValue<number>()!
-      );
-
-      return isLoading || rootAsset?.name ? (
-        <Button
-          onClick={e => e.stopPropagation()}
-          type="link"
-          target="_blank"
-          href={createLink(`/explore/asset/${getValue()}`)}
-          icon="ArrowUpRight"
-          iconPlacement="right"
-        >
-          <StyledButton>{rootAsset?.name}</StyledButton>
-        </Button>
-      ) : null;
+      const value = getValue<number | undefined>();
+      if (!value) return <>{DASH}</>;
+      return <RootAssetCell value={value} />;
     },
   },
   relationshipLabels: {

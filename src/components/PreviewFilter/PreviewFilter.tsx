@@ -1,4 +1,6 @@
 import { Input } from '@cognite/cogs.js';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { useDebounceTrackUsage } from 'hooks/useTrackDebounce';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -11,13 +13,21 @@ export const DefaultPreviewFilter: React.FC<Props> = ({
   onQueryChange,
   children,
 }) => {
+  const track = useDebounceTrackUsage();
+
+  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onQueryChange?.(event.target.value);
+    track(DATA_EXPLORATION_COMPONENT.SEARCH.PREVIEW_SEARCH, {
+      query: event.target.value,
+    });
+  };
   return (
     <>
       <StyledInput
         variant="default"
         value={query || ''}
         placeholder={'Search for name, description, etc...'}
-        onChange={event => onQueryChange?.(event.target.value)}
+        onChange={handleOnChange}
       />
       <FlexGrow />
       {children}

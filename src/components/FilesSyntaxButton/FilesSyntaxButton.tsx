@@ -3,6 +3,7 @@ import { Button, Dropdown } from '@cognite/cogs.js';
 import { useDisclosure } from 'hooks';
 import { InfoPanel } from 'components';
 import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 
 export const FilesSyntaxButton: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure({ isOpen: false });
@@ -20,7 +21,7 @@ export const FilesSyntaxButton: React.FC = () => {
         aria-label="Open document search info popup"
         onClick={() => {
           onOpen();
-          trackUsage('Exploration.Open.FileSyntax');
+          trackUsage(DATA_EXPLORATION_COMPONENT.OPEN.FILE_SYNTAX);
         }}
       >
         Files syntax

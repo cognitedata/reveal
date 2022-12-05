@@ -10,6 +10,8 @@ import { useSDK } from '@cognite/sdk-provider';
 import { CogniteClient } from '@cognite/sdk';
 import { getMIMEType, sleep } from 'utils';
 import { GCSUploader } from './GCSUploader';
+import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 
 const { confirm } = Modal;
 const currentUploads: { [key: string]: any } = {};
@@ -38,9 +40,46 @@ export const DocumentUploadButtons: React.FC<Props> = ({
   assetIds,
 }: Props) => {
   const sdk = useSDK();
+  const trackUsage = useMetrics();
+  const table = 'document';
 
-  const onClickStopUpload = () => {
+  const handleOnClickStopUpload = () => {
     stopUpload(uploadStatus, fileList, setUploadStatus, onCancel, setFileList);
+    trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.FILE_UPLOAD_STOP, {
+      table,
+    });
+  };
+
+  const handleOnClickPauseUpload = () => {
+    pauseUpload(uploadStatus, fileList, setUploadStatus);
+    trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.FILE_UPLOAD_PAUSE, {
+      table,
+    });
+  };
+
+  const handleContinueUpload = () => {
+    unpauseUpload(uploadStatus, fileList, setUploadStatus);
+    trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.FILE_UPLOAD_CONTINUE, {
+      table,
+    });
+  };
+
+  const handleReadyStateOnClick = () => {
+    startUpload(
+      uploadStatus,
+      fileList,
+      setUploadStatus,
+      setFileList,
+      onUploadFailure,
+      onUploadSuccess,
+      beforeUploadStart,
+      sdk,
+      assetIds
+    );
+
+    trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.FILE_UPLOAD_READY, {
+      table,
+    });
   };
 
   let uploaderButton;
@@ -61,19 +100,7 @@ export const DocumentUploadButtons: React.FC<Props> = ({
           <div style={{ flex: 1 }} />
           <Button
             type="primary"
-            onClick={() =>
-              startUpload(
-                uploadStatus,
-                fileList,
-                setUploadStatus,
-                setFileList,
-                onUploadFailure,
-                onUploadSuccess,
-                beforeUploadStart,
-                sdk,
-                assetIds
-              )
-            }
+            onClick={handleReadyStateOnClick}
             icon="Upload"
           >
             Upload
@@ -84,11 +111,11 @@ export const DocumentUploadButtons: React.FC<Props> = ({
     case STATUS.STARTED:
       uploaderButton = (
         <>
-          <Button onClick={onClickStopUpload}>Cancel Upload</Button>
+          <Button onClick={handleOnClickStopUpload}>Cancel Upload</Button>
           <div style={{ flex: 1 }} />
           <Button
             type="primary"
-            onClick={() => pauseUpload(uploadStatus, fileList, setUploadStatus)}
+            onClick={handleOnClickPauseUpload}
             icon="Loader"
           >
             Pause Upload
@@ -99,14 +126,9 @@ export const DocumentUploadButtons: React.FC<Props> = ({
     case STATUS.PAUSED:
       uploaderButton = (
         <>
-          <Button onClick={onClickStopUpload}>Cancel Upload</Button>
+          <Button onClick={handleOnClickStopUpload}>Cancel Upload</Button>
           <div style={{ flex: 1 }} />
-          <Button
-            type="primary"
-            onClick={() =>
-              unpauseUpload(uploadStatus, fileList, setUploadStatus)
-            }
-          >
+          <Button type="primary" onClick={handleContinueUpload}>
             Continue Upload
           </Button>
         </>

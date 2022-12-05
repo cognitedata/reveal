@@ -9,6 +9,8 @@ import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
 import { InternalEventsFilters } from 'domain/events';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { useMetrics } from 'hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 
 type EventFieldForAggregate = 'type' | 'subtype' | 'dataSetId';
 
@@ -47,9 +49,14 @@ export const AggregatedEventFilterV2 = ({
   value?: string;
 }): JSX.Element => {
   const { data = [] } = useEventAggregate('uniqueValues', field, filter);
+  const trackUsage = useMetrics();
 
   const handleUpdate = (newValue?: string): void => {
     setValue(newValue && newValue.length > 0 ? newValue : undefined);
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_EVENT_FILTER, {
+      value: newValue,
+      title,
+    });
   };
 
   return (
