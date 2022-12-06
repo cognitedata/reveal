@@ -1,5 +1,5 @@
-import React from 'react';
+import { FilePage } from 'app/containers/File/FilePage';
 
 export const DocumentPage = () => {
-  return <div>Document Page here!</div>;
+  return <FilePage />;
 };

@@ -6,6 +6,7 @@ import {
   Loader,
   FileDetails,
   Metadata,
+  ResourceType,
 } from '@cognite/data-exploration';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
@@ -55,6 +56,10 @@ export const FilePreview = ({
   const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
   const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl;
+
+  const { resourceType } = useParams<{
+    resourceType: ResourceType;
+  }>();
 
   const { tabType } = useParams<{
     tabType: FilePreviewTabType;
@@ -111,7 +116,7 @@ export const FilePreview = ({
       >
         <Breadcrumbs currentResource={{ title: fileInfo.name }} />
         <ResourceTitleRow
-          item={{ id: fileId!, type: 'file' }}
+          item={{ id: fileId!, type: resourceType || 'file' }}
           beforeDefaultActions={
             <>
               <EditFileButton
