@@ -92,7 +92,7 @@ export const AssetDetailsTreeTable = ({
           ),
         },
         Table.Columns.description(),
-        Table.Columns.externalId,
+        Table.Columns.externalId(),
         {
           id: 'childCount',
           header: 'Direct children',

@@ -33,7 +33,7 @@
     "@cognite/sdk-provider": "^2.0.0",
     "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@cognite/unified-file-viewer": "^3.0.2",
-    "@tanstack/react-table": "^8.5.15",
+    "@tanstack/react-table": "^8.7.0",
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@visx/axis": "^2.1.0",
     "@visx/event": "^2.1.0",
