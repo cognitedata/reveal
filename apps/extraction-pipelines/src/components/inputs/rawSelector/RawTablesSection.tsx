@@ -67,7 +67,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
           </Button>
         }
         title="RAW tables"
-        icon="TableViewSmall"
+        icon="DataTable"
         data-testid={`${TEST_ID_BTN_SAVE}rawTable`}
         items={[
           {
