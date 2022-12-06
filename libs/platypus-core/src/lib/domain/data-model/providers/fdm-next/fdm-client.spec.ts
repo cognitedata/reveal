@@ -1,6 +1,13 @@
 import { PublishDataModelVersionDTO } from '../../dto';
 import { DataModelTypeDefsType, DataModelVersionStatus } from '../../types';
+import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
 import { FdmClient } from './fdm-client';
+
+const graphqlServiceMock = {
+  working: {
+    parseSchema: jest.fn(() => ({})),
+  },
+} as any;
 
 const spacesApiMock = {
   working: {
@@ -12,6 +19,7 @@ const spacesApiMock = {
 
 const mixerApiMock = {
   working: {
+    validateVersion: jest.fn(() => Promise.resolve([])),
     upsertVersion: jest.fn(() =>
       Promise.resolve({
         errors: [],
@@ -40,7 +48,8 @@ describe('FDM v3 Client', () => {
     test('sends correct payload', async () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi);
+      const graphqlService = graphqlServiceMock.working;
+      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
 
       await fdmClient.createDataModel({
         name: 'Test',
@@ -67,10 +76,31 @@ describe('FDM v3 Client', () => {
     test('sends correct payload', async () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi);
+      const graphqlService = graphqlServiceMock.working;
+      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
 
       await fdmClient.listDataModels();
       expect(mixerApi.listDataModelVersions).toHaveBeenCalled();
+    });
+  });
+
+  describe('validate data model version', () => {
+    test('sends correct payload', () => {
+      const spacesApi = spacesApiMock.working;
+      const mixerApi = mixerApiMock.working;
+      const graphqlService = graphqlServiceMock.working;
+      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+
+      fdmClient.validateDataModel({
+        externalId: '',
+        status: 'DRAFT' as DataModelVersionStatus,
+        version: '',
+        schema: '',
+        createdTime: 0,
+        lastUpdatedTime: 0,
+        space: '',
+      });
+      expect(mixerApi.validateVersion).toHaveBeenCalled();
     });
   });
 
@@ -78,7 +108,8 @@ describe('FDM v3 Client', () => {
     test('sends correct payload', async () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi);
+      const graphqlService = graphqlServiceMock.working;
+      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
 
       const dto: PublishDataModelVersionDTO = {
         externalId: 'external-id',
@@ -89,13 +120,23 @@ describe('FDM v3 Client', () => {
       };
       await fdmClient.publishDataModelVersion(dto, 'PATCH');
 
-      expect(mixerApi.upsertVersion).toHaveBeenCalledWith(dto);
+      const mixerApiDto = {
+        space: dto.space,
+        externalId: dto.externalId,
+        version: dto.version,
+        graphQlDml: dto.schema,
+        name: dto.externalId,
+        description: dto.externalId,
+      } as GraphQlDmlVersionDTO;
+
+      expect(mixerApi.upsertVersion).toHaveBeenCalledWith(mixerApiDto);
     });
 
     test('returns deserialized data model when upsert call succeeds', () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi);
+      const graphqlService = graphqlServiceMock.working;
+      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
 
       const dto: PublishDataModelVersionDTO = {
         externalId: 'external-id',
@@ -123,7 +164,8 @@ describe('FDM v3 Client', () => {
     test('should run graphql query', async () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi);
+      const graphqlService = graphqlServiceMock.working;
+      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
 
       const dto = {
         dataModelId: 'testExternalId',
@@ -144,7 +186,8 @@ describe('FDM v3 Client', () => {
     test('should fetch data for data model', async () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi);
+      const graphqlService = graphqlServiceMock.working;
+      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
 
       await fdmClient.fetchData({
         cursor: '',

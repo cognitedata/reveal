@@ -2,7 +2,6 @@ import {
   ConflictMode,
   CreateDataModelDTO,
   CreateDataModelTransformationDTO,
-  CreateDataModelVersionDTO,
   DeleteDataModelDTO,
   DeleteInstancesDTO,
   FetchDataDTO,
@@ -14,10 +13,10 @@ import {
   IngestInstancesDTO,
   IngestInstancesResponseDTO,
   ListDataModelVersionsDTO,
+  PublishDataModelVersionDTO,
   PublishedRowsCountMap,
   RunQueryDTO,
   UpdateDataModelDTO,
-  PublishDataModelVersionDTO,
 } from '../../dto';
 
 import {
@@ -36,23 +35,29 @@ import { DataModelDataMapper } from './data-mappers';
 import { DataUtils } from '../../../../boundaries/utils/data-utils';
 import { FdmMixerApiService } from './services/mixer-api';
 import { PlatypusError } from '../../../../boundaries/types';
+import { IGraphQlUtilsService } from '../../boundaries';
+import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
 import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
 import { MixerQueryBuilder } from '../../services';
+import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
 
 export class FdmClient implements FlexibleDataModelingClient {
   private spacesApi: SpacesApiService;
   private mixerApiService: FdmMixerApiService;
   private dataModelDataMapper: DataModelDataMapper;
+  private validationErrorDataMapper: DataModelValidationErrorDataMapper;
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
   private queryBuilder: MixerQueryBuilder;
 
   constructor(
     spacesApi: SpacesApiService,
-    mixerApiService: FdmMixerApiService
+    mixerApiService: FdmMixerApiService,
+    private graphqlService: IGraphQlUtilsService
   ) {
     this.spacesApi = spacesApi;
     this.mixerApiService = mixerApiService;
     this.dataModelDataMapper = new DataModelDataMapper();
+    this.validationErrorDataMapper = new DataModelValidationErrorDataMapper();
     this.dataModelVersionDataMapper = new DataModelVersionDataMapper();
     this.queryBuilder = new MixerQueryBuilder();
   }
@@ -197,17 +202,27 @@ export class FdmClient implements FlexibleDataModelingClient {
     dto: PublishDataModelVersionDTO,
     conflictMode: ConflictMode
   ): Promise<DataModelVersion> {
-    return this.mixerApiService.upsertVersion(dto).then((upsertResult) => {
-      if (upsertResult.errors.length) {
-        return Promise.reject(
-          new PlatypusError(
-            `An error has occured. Data model was not published.`,
-            'SERVER_ERROR'
-          )
-        );
-      }
-      return this.dataModelVersionDataMapper.deserialize(upsertResult.result);
-    });
+    const createDTO = {
+      space: dto.space,
+      externalId: dto.externalId,
+      version: dto.version,
+      graphQlDml: dto.schema,
+      name: dto.externalId,
+      description: dto.externalId,
+    } as GraphQlDmlVersionDTO;
+    return this.mixerApiService
+      .upsertVersion(createDTO)
+      .then((upsertResult) => {
+        if (upsertResult.errors.length) {
+          return Promise.reject(
+            new PlatypusError(
+              `An error has occured. Data model was not published.`,
+              'SERVER_ERROR'
+            )
+          );
+        }
+        return this.dataModelVersionDataMapper.deserialize(upsertResult.result);
+      });
   }
 
   /**
@@ -224,11 +239,25 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @param dto
    * @param validateBreakingChanges
    */
-  validateDataModel(
-    dto: CreateDataModelVersionDTO,
-    validateBreakingChanges?: boolean
+  async validateDataModel(
+    dto: PublishDataModelVersionDTO
   ): Promise<DataModelValidationError[]> {
-    throw 'Not implemented';
+    const typeDefs = this.graphqlService.parseSchema(dto.schema);
+
+    const validationErrors = await this.mixerApiService.validateVersion({
+      space: dto.space,
+      externalId: dto.externalId,
+      version: dto.version,
+      graphQlDml: dto.schema,
+      createdTime: dto.createdTime,
+      lastUpdatedTime: dto.lastUpdatedTime,
+    });
+
+    const dataModelValidationErrors = validationErrors.map((err) =>
+      this.validationErrorDataMapper.deserialize(err, typeDefs)
+    );
+
+    return dataModelValidationErrors;
   }
 
   /**

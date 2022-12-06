@@ -68,7 +68,8 @@ rootInjector
     if (localStorageProvider.getItem('USE_FDM_V3')) {
       return new FdmClient(
         new SpacesApiService(sdkClient),
-        new FdmMixerApiService(sdkClient)
+        new FdmMixerApiService(sdkClient),
+        new GraphQlUtilsService()
       );
     } else {
       return new FdmV2Client(

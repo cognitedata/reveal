@@ -81,7 +81,7 @@ export class DataModelVersionHandler {
     // if all ok til this point, the schema should be valid
     // we can check for breaking changes
     return this.fdmClient
-      .validateDataModel(dto)
+      .validateDataModel(dto as PublishDataModelVersionDTO)
       .then((dataModelValidationErrors) => {
         return dataModelValidationErrors.length === 0
           ? Result.ok([])

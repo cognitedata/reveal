@@ -32,8 +32,6 @@ export default function (
   // Create JSON server REST API endpoints and db
   let jsonServerApiRouter = jsonServerRouter(db);
   let jsonServerDb = jsonServerApiRouter.db as any as CdfMockDatabase;
-  // set json server id to be externalId because that is how cdf works
-  (jsonServerDb._ as any).id = 'externalId';
 
   let serverConfig = mergeConfigs(
     config || ({} as CdfApiConfig),
@@ -79,8 +77,6 @@ export default function (
     jsonServerApiRouter = jsonServerRouter(cdfMockData);
     jsonServerApiRouter.db.defaults(cdfMockData).write();
     jsonServerDb = jsonServerApiRouter.db as any as CdfMockDatabase;
-    // set json server id to be externalId because that is how cdf works
-    (jsonServerDb._ as any).id = 'externalId';
 
     templatesApiRouter.init(jsonServerDb);
     schemaServiceApiRouter.init(jsonServerDb);

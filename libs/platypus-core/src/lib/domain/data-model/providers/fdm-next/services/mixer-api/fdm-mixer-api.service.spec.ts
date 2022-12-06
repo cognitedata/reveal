@@ -42,6 +42,6 @@ describe('fdm-mixer-api-service test', () => {
     const reqDto = DmlVersion;
     const response = await service.validateVersion(reqDto);
     console.log(response);
-    expect(response.result).toEqual(DmlVersionResult);
+    expect(response).toEqual(DmlVersionResult);
   });
 });

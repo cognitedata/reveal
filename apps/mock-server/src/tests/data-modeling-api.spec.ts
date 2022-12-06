@@ -130,6 +130,7 @@ describe('DataModelingAPI Test', () => {
       space: 'blog',
       name: 'Post',
       description: 'The Container for Post',
+      id: 'PostTable',
       externalId: 'PostTable',
       usedFor: 'node',
       properties: {
@@ -187,7 +188,12 @@ describe('DataModelingAPI Test', () => {
         .set('Accept', 'application/json')
         .send({
           items: [
-            { ...mockContainerObj, externalId: 'TestTable', name: 'Test' },
+            {
+              ...mockContainerObj,
+              externalId: 'TestTable',
+              name: 'Test',
+              id: 'NewTestTable',
+            },
           ],
         });
       let qryResult = response.body;
@@ -535,7 +541,7 @@ describe('DataModelingAPI Test', () => {
             title: 'Sic Dolor amet',
             views: 65,
             user: {
-              id: 456,
+              externalId: '456',
             },
             tags: ['Sic', 'Dolor'],
             comments: [],

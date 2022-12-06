@@ -9,6 +9,7 @@ import {
   GraphQlQueryParams,
   GraphQLQueryResponse,
   RunQueryDTO,
+  ValidateDataModelDTO,
 } from '../../../../dto';
 import {
   DataModelVersionFilter,
@@ -92,9 +93,7 @@ export class FdmMixerApiService {
               message
             }
             result {
-              externalId
-              version
-              graphQlDml
+              ${this.dataModelVersionFields}
             }
           }
         }
@@ -113,9 +112,9 @@ export class FdmMixerApiService {
 
   validateVersion(
     dataModelVersion: GraphQlDmlVersionDTO
-  ): Promise<UpsertDataModelResult> {
+  ): Promise<ValidateDataModelDTO[]> {
     const validateDTO = {
-      query: `query ($graphQlDmlVersion) {
+      query: `query ($graphQlDmlVersion: GraphQlDmlVersionUpsert!) {
         validateGraphQlDmlVersion(graphQlDmlVersion: $graphQlDmlVersion) {
           errors {
             message
@@ -126,7 +125,14 @@ export class FdmMixerApiService {
         }
       }`,
       variables: {
-        graphQlDmlVersion: dataModelVersion,
+        graphQlDmlVersion: {
+          space: dataModelVersion.space,
+          externalId: dataModelVersion.externalId,
+          version: dataModelVersion.version,
+          name: dataModelVersion.name,
+          description: dataModelVersion.description,
+          graphQlDml: dataModelVersion.graphQlDml,
+        },
       },
     } as GraphQlQueryParams;
 
@@ -135,7 +141,14 @@ export class FdmMixerApiService {
     // Also the structure of the actual errors is different as well
 
     return this.runGraphQlQuery(this.mixerApiPath, validateDTO)
-      .then((response) => response.data.data.validateGraphQlDmlVersion)
+      .then(
+        (response) => {
+          const returnResponse = response.data.data.validateGraphQlDmlVersion;
+          if (!returnResponse.errors) return [];
+          return returnResponse;
+        },
+        (errResponse) => errResponse.errors
+      )
       .catch((err) => {
         Promise.reject(PlatypusError.fromSdkError(err));
       });

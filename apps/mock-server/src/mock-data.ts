@@ -29,11 +29,12 @@ export const mockDataSample = {
   groups: groupsMockData,
   transformations: transformationsMockData,
   posts: [{ id: 1, title: 'json-server', author: 'typicode' }],
-  spaces: [{ externalId: 'blog' }],
+  spaces: [{ id: 'blog', externalId: 'blog' }],
   models: [
     {
       spaceExternalId: 'blog',
       externalId: 'PostTable',
+      id: 'PostTable',
       properties: {
         title: {
           type: 'text',
@@ -53,6 +54,7 @@ export const mockDataSample = {
     {
       spaceExternalId: 'blog',
       externalId: 'UserTable',
+      id: 'UserTable',
       properties: {
         name: {
           type: 'text',
@@ -62,6 +64,7 @@ export const mockDataSample = {
     },
     {
       spaceExternalId: 'blog',
+      id: 'CommentTable',
       externalId: 'CommentTable',
       properties: {
         body: {
@@ -82,6 +85,7 @@ export const mockDataSample = {
     {
       spaceExternalId: 'blog',
       externalId: 'TypeWithoutDataTable',
+      id: 'TypeWithoutDataTable',
       properties: {
         name: {
           type: 'text',
@@ -132,6 +136,7 @@ export const mockDataSample = {
   schema: [
     {
       externalId: 'blog',
+      id: 'blog',
       name: 'blog',
       description: 'blog',
       metadata: {},

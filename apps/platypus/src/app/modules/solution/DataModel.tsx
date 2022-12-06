@@ -54,6 +54,11 @@ export const DataModel = () => {
     dataModel?.space || ''
   );
 
+  const selectedDataModelVersionGraphQlSchema =
+    selectedDataModelVersion && selectedDataModelVersion.schema;
+  const selectedDataModelVersionExternalId =
+    selectedDataModelVersion && selectedDataModelVersion.externalId;
+
   // Init livecycle hook, need to run first before everything else
   // Run after data is loaded or selected schema is being changed
   useEffect(
@@ -86,8 +91,8 @@ export const DataModel = () => {
       isDataModelLoaded,
       areDataModelVersionsLoaded,
       version, // run when version in url is changed
-      selectedDataModelVersion.schema, // run when selected schema is changed
-      selectedDataModelVersion.externalId, // or run when externalId is changed
+      selectedDataModelVersionGraphQlSchema, // run when selected schema is changed
+      selectedDataModelVersionExternalId, // or run when externalId is changed
     ]
   );
 

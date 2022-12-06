@@ -4,6 +4,7 @@ export const fdmContainersMockData = [
     name: 'Post',
     description: 'The Container for Post',
     externalId: 'PostTable',
+    id: 'PostTable',
     usedFor: 'node',
     properties: {
       title: {
@@ -26,6 +27,7 @@ export const fdmContainersMockData = [
     name: 'User',
     description: 'The Container for User',
     externalId: 'UserTable',
+    id: 'UserTable',
     usedFor: 'node',
     properties: {
       name: {
@@ -39,6 +41,7 @@ export const fdmContainersMockData = [
     name: 'Comment',
     description: 'The Container for Comment',
     externalId: 'CommentTable',
+    id: 'CommentTable',
     usedFor: 'node',
     properties: {
       body: {
@@ -61,6 +64,7 @@ export const fdmContainersMockData = [
     name: 'Post_Comments_Edge',
     description: 'The Edge for connecting Posts and Comments',
     externalId: 'Post_Comments_Edge',
+    id: 'Post_Comments_Edge',
     usedFor: 'edge',
     properties: {
       dummy: {

@@ -33,6 +33,10 @@ export const requestMiddleware = (
       // eslint-disable-next-line lodash/prefer-lodash-typecheck
       typeof endpointConfig.handler === 'function'
     ) {
+      if (isCdfCreateRequest(req)) {
+        transformPostCreateRequest(req);
+      }
+
       // if we have handler, allow the handler to do the job
       endpointConfig.handler(db, req, res);
     } else if (!shouldUrlBeIgnored(req.url)) {

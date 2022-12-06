@@ -17,6 +17,8 @@ export interface ListDataModelVersionsDTO {
 export interface CreateDataModelVersionDTO {
   /** Data Model externalId */
   externalId: string;
+  space?: string;
+
   /** GraphQL schema as string */
   schema: string;
   version?: string;

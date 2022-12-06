@@ -103,7 +103,9 @@ describe('MixerApi Test', () => {
       });
     const qryResult = response.body;
 
-    const expectedSchema = { ...db.datamodels[0] };
+    // by default, API will return just the latest version
+    // since mock
+    const expectedSchema = { ...db.datamodels[1] };
     expect(response.statusCode).toEqual(200);
     expect(qryResult.data.listGraphQlDmlVersions.length).toEqual(1);
     expect(qryResult.data.listGraphQlDmlVersions[0]).toEqual(

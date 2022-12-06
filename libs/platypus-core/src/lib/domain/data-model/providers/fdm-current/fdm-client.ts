@@ -291,7 +291,7 @@ export class FdmV2Client implements FlexibleDataModelingClient {
    * @param validateBreakingChanges
    */
   async validateDataModel(
-    dto: CreateDataModelVersionDTO
+    dto: PublishDataModelVersionDTO
   ): Promise<DataModelValidationError[]> {
     const typeDefs = this.graphqlService.parseSchema(dto.schema);
 

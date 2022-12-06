@@ -16,8 +16,8 @@ export const fdmDataModelsMockData = [
   {
     space: 'blog',
     externalId: 'blog',
-    id: 'blog',
-    name: 'blog',
+    id: 'blog2',
+    name: 'blog2',
     description: 'blog',
     version: '2',
     metadata: {

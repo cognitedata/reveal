@@ -1,3 +1,3 @@
 export const fdmSpacesMockData = [
-  { space: 'blog', name: 'Blog', description: 'Blog space' },
+  { id: 'blog', space: 'blog', name: 'Blog', description: 'Blog space' },
 ];

@@ -131,6 +131,47 @@ export const graphQlMetaApiResolvers = (
 
         return [];
       },
+      validateGraphQlDmlVersion: async (prm, req) => {
+        const { space, externalId, version, graphQlDml } =
+          req.graphQlDmlVersion;
+
+        const dataModelsStore = CdfDatabaseService.from(
+          db,
+          'datamodels'
+        ).getState();
+
+        const currentSchemaVersion = dataModelsStore.find(
+          (item) =>
+            // eslint-disable-next-line
+            item.externalId === externalId &&
+            item.space === space &&
+            item.version.toString() === version.toString()
+        ) as any;
+
+        if (!currentSchemaVersion) {
+          return [];
+        }
+
+        const breakingChanges = await validateBreakingChanges(
+          graphQlDml,
+          currentSchemaVersion.metadata.graphQlDml,
+          'upsertGraphQlDmlVersion'
+        );
+
+        if (breakingChanges.length) {
+          throw new GraphQLError(
+            breakingChanges[0].message,
+            null,
+            null,
+            null,
+            null,
+            null,
+            breakingChanges[0].extensions
+          );
+        }
+
+        return [];
+      },
     },
     Mutation: {
       upsertApis: (_, req) => {
@@ -248,7 +289,11 @@ export const graphQlMetaApiResolvers = (
           req.graphQlDmlVersion;
 
         // not available in the specs, will be added later?
-        const conflictMode = req.conflictMode || 'NEW_VERSION';
+        let conflictMode = req.conflictMode || 'NEW_VERSION';
+        const serverKey = createMockServerKey(
+          `${space}_${externalId}`,
+          version
+        );
 
         const dataModelVersion = {
           id: v4(),
@@ -266,10 +311,23 @@ export const graphQlMetaApiResolvers = (
 
         const dbDataModelVersion = dataModelsStore.find({
           externalId,
+          space,
           version,
         });
 
-        if (conflictMode !== 'NEW_VERSION' && dbDataModelVersion) {
+        if (
+          dbDataModelVersion &&
+          !dbDataModelVersion.metadata.graphQlDml &&
+          conflictMode === 'NEW_VERSION'
+        ) {
+          conflictMode = 'PATCH';
+        }
+
+        if (
+          conflictMode !== 'NEW_VERSION' &&
+          dbDataModelVersion &&
+          dbDataModelVersion.metadata.graphQlDml
+        ) {
           const breakingChanges = await validateBreakingChanges(
             graphQlDml,
             dbDataModelVersion.metadata.graphQlDml as string,
@@ -295,15 +353,13 @@ export const graphQlMetaApiResolvers = (
           dataModelVersion.lastUpdatedTime = Date.now();
           dataModelVersion.metadata.graphQlDml = graphQlDml;
 
-          dataModelsStore.updateBy({ externalId }, dataModelVersion);
+          dataModelsStore.updateBy(
+            { id: dbDataModelVersion.id },
+            dataModelVersion
+          );
         }
 
         if (graphQlDml) {
-          const serverKey = createMockServerKey(
-            `${dataModelVersion.space}_${dataModelVersion.externalId}`,
-            version
-          );
-
           graphQlServers[serverKey] = buildMockServer(
             {
               db,
@@ -311,7 +367,7 @@ export const graphQlMetaApiResolvers = (
                 db,
                 'instances'
               ).getState() as any,
-              externalId: dataModelVersion.externalId as string,
+              externalId,
               schema: graphQlDml,
               version: dataModelVersion.version,
               updateBindings: true,
@@ -321,7 +377,7 @@ export const graphQlMetaApiResolvers = (
           );
         }
 
-        return { result: dataModelVersion, errors: [] };
+        return { result: { ...dataModelVersion, graphQlDml }, errors: [] };
       },
     },
   };

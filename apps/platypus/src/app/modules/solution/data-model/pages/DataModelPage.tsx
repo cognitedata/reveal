@@ -281,6 +281,8 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
               <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                 <EditorPanel
                   editorMode={editorMode}
+                  space={dataModel?.space || ''}
+                  version={selectedDataModelVersion.version}
                   externalId={dataModelExternalId}
                   isPublishing={saving || updating}
                 />

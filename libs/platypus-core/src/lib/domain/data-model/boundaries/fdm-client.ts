@@ -95,7 +95,7 @@ export interface FlexibleDataModelingClient {
    * @param validateBreakingChanges
    */
   validateDataModel(
-    dto: CreateDataModelVersionDTO,
+    dto: PublishDataModelVersionDTO,
     validateBreakingChanges?: boolean
   ): Promise<DataModelValidationError[]>;
 

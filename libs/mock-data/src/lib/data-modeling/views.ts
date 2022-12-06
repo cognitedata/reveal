@@ -2,6 +2,7 @@ export const fdmViewsMockData = [
   {
     space: 'blog',
     externalId: 'Post',
+    id: 'Post',
     name: 'Post',
     description: 'Post',
     filter: {},
@@ -98,6 +99,7 @@ export const fdmViewsMockData = [
   {
     space: 'blog',
     externalId: 'User',
+    id: 'User',
     name: 'User',
     description: 'User',
     filter: {},
@@ -129,6 +131,7 @@ export const fdmViewsMockData = [
   {
     space: 'blog',
     externalId: 'Comment',
+    id: 'Comment',
     name: 'Comment',
     description: 'Comment',
     filter: {},

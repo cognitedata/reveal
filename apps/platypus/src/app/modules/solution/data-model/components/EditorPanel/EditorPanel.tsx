@@ -25,12 +25,16 @@ const GraphqlCodeEditor = React.lazy(() =>
 
 export interface EditorPanelProps {
   externalId: string;
+  space: string;
+  version: string;
   editorMode: SchemaEditorMode;
   isPublishing: boolean;
 }
 
 export const EditorPanel: React.FC<EditorPanelProps> = ({
   externalId,
+  space,
+  version,
   editorMode,
   isPublishing,
 }) => {
@@ -78,6 +82,8 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             key={`graphql-code-editor-version-${dataModelVersionList?.length}`}
             builtInTypes={builtInTypes}
             externalId={externalId}
+            space={space}
+            version={version}
             code={graphQlSchema}
             disabled={isUIDisabled}
             onChange={setGraphQlSchema}

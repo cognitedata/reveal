@@ -14,12 +14,22 @@ type Props = {
   code: string;
   builtInTypes: BuiltInType[];
   externalId: string;
+  space: string;
+  version: string;
   disabled?: boolean;
   onChange: (code: string) => void;
 };
 
 export const GraphqlCodeEditor = React.memo(
-  ({ code, builtInTypes, externalId, disabled = false, onChange }: Props) => {
+  ({
+    code,
+    builtInTypes,
+    externalId,
+    space,
+    version,
+    disabled = false,
+    onChange,
+  }: Props) => {
     const [editorValue, setEditorValue] = useState(code);
     const langProviders = useRef<any>(null);
 
@@ -32,6 +42,8 @@ export const GraphqlCodeEditor = React.memo(
     const validateFn = async (graphQLString: string) => {
       const result = await dataModelVersionHandler.validate({
         externalId,
+        space,
+        version,
         schema: graphQLString,
       });
 
