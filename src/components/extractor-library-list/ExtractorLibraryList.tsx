@@ -33,17 +33,15 @@ const ExtractorLibraryList = ({ items }: ExtractorLibraryListProps) => {
           }}
         >
           <StyledExtractorContent>
-            {item?.imageUrl && (
-              <StyledExtractorImageContainer>
-                <StyledExtractorImage src={item?.imageUrl} />
-              </StyledExtractorImageContainer>
-            )}
-            <Flex gap={8} direction="column">
+            <Flex gap={8}>
+              {item?.imageUrl && (
+                <StyledExtractorImageContainer>
+                  <StyledExtractorImage src={item?.imageUrl} />
+                </StyledExtractorImageContainer>
+              )}
               <Title level="5">{item.name}</Title>
-              <StyledMutedDescription>
-                {item.description}
-              </StyledMutedDescription>
             </Flex>
+            <StyledMutedDescription>{item.description}</StyledMutedDescription>
             <StyledTagContainer>
               <Chip label={t(`${item.category}_one`)} size="x-small" />
             </StyledTagContainer>
