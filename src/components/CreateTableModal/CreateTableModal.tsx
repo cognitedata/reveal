@@ -42,7 +42,6 @@ type CreateTableFormValues = {
 type CreateTableModalProps = {
   databaseName: string;
   tables: RawDBTable[];
-  onReset: () => void;
 } & Omit<ModalProps, 'children' | 'onOk' | 'title' | 'width'>;
 
 const CreateTableModal = ({
@@ -50,7 +49,6 @@ const CreateTableModal = ({
   onCancel,
   tables,
   visible,
-  onReset,
   ...modalProps
 }: CreateTableModalProps): JSX.Element => {
   const { t } = useTranslation();
@@ -274,10 +272,6 @@ const CreateTableModal = ({
         title={<Title level={5}>{t('create-table-modal-title')}</Title>}
         visible={visible}
         {...modalProps}
-        afterClose={() => {
-          modalProps?.afterClose && modalProps.afterClose();
-          onReset();
-        }}
         width={CREATE_TABLE_MODAL_WIDTH}
       >
         {createTableModalStep !== CreateTableModalStep.Upload && (

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
@@ -36,17 +36,6 @@ const SidePanelTableList = (): JSX.Element => {
     [data]
   );
 
-  // We're using this ref as a container for a "unique" value that will
-  // remount the <CreateTableModal... /> whenever we close the modal.
-  // We do this in order to reset the whole state and recreate the scope of the component
-  // so we will have a clean slate when it comes to creating a new table.
-  // This is most important due to the file upload that was causing multiple issues
-  // with opening tabs in the raw explorer for tables that haven't been created successfully
-  // and for stopping requests to fetch a resource that shouldn't exist.
-  // By binding this refs `current` value as a key to the component React will force a
-  // remount whenever it changes.
-  const remountCount = useRef(0);
-
   return (
     <SidePanelLevelWrapper
       selectedSidePanelDatabase={selectedSidePanelDatabase}
@@ -63,21 +52,17 @@ const SidePanelTableList = (): JSX.Element => {
         searchQuery={query}
         tables={tables}
       />
-
       <Button block icon="Add" onClick={() => setIsCreateModalOpen(true)}>
         {t('explorer-side-panel-tables-button-create-table')}
       </Button>
-
-      <CreateTableModal
-        key={remountCount.current}
-        databaseName={selectedSidePanelDatabase}
-        onCancel={() => setIsCreateModalOpen(false)}
-        onReset={() => {
-          remountCount.current += 1;
-        }}
-        tables={tables}
-        visible={isCreateModalOpen}
-      />
+      {isCreateModalOpen && (
+        <CreateTableModal
+          databaseName={selectedSidePanelDatabase}
+          onCancel={() => setIsCreateModalOpen(false)}
+          tables={tables}
+          visible={isCreateModalOpen}
+        />
+      )}
     </SidePanelLevelWrapper>
   );
 };
