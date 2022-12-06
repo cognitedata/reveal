@@ -282,7 +282,11 @@ export function Table<T extends TableData>({
 
                           trackUsage(
                             DATA_EXPLORATION_COMPONENT.CLICK.SORT_COLUMN,
-                            { table: id, Column: header.column.id }
+                            {
+                              table: id,
+                              column: header.column.id,
+                              sortIndex: header.column.getSortIndex(),
+                            }
                           );
                         }}
                       />

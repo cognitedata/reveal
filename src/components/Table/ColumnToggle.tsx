@@ -103,6 +103,7 @@ export function ColumnToggle<T>({
     column.toggleVisibility();
     trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.COLUMN_SELECTION, {
       column: column.id,
+      isSelected: !column.getIsVisible(),
     });
   };
 
