@@ -1,4 +1,12 @@
 /* eslint-disable global-require */
+
+const mockIsProductionValueGetter = jest.fn();
+jest.mock('utils/environment', () => ({
+  get isProduction() {
+    return mockIsProductionValueGetter();
+  },
+}));
+
 describe('config', () => {
   describe('getBackendServiceBaseUrl', () => {
     const OLD_ENV = process.env;
@@ -13,28 +21,28 @@ describe('config', () => {
     });
 
     it('provides correct base url for no cluster in development', () => {
-      process.env.REACT_APP_ENV = 'development';
+      mockIsProductionValueGetter.mockReturnValue(false);
       const baseUrl =
         require('./calculation-backend').getBackendServiceBaseUrl();
       expect(baseUrl).toBe('https://calculation-backend.staging.cognite.ai/v4');
     });
 
     it('provides correct base url for default staging', () => {
-      process.env.REACT_APP_ENV = 'staging';
+      mockIsProductionValueGetter.mockReturnValue(false);
       const baseUrl =
         require('./calculation-backend').getBackendServiceBaseUrl();
       expect(baseUrl).toBe('https://calculation-backend.staging.cognite.ai/v4');
     });
 
     it('provides correct base url for default production', () => {
-      process.env.REACT_APP_ENV = 'production';
+      mockIsProductionValueGetter.mockReturnValue(true);
       const baseUrl =
         require('./calculation-backend').getBackendServiceBaseUrl();
       expect(baseUrl).toBe('https://calculation-backend.cognite.ai/v4');
     });
 
     it('provides correct base url for alternative cluster staging', () => {
-      process.env.REACT_APP_ENV = 'development';
+      mockIsProductionValueGetter.mockReturnValue(false);
       const baseUrl = require('./calculation-backend').getBackendServiceBaseUrl(
         'greenfield'
       );
@@ -44,7 +52,7 @@ describe('config', () => {
     });
 
     it('provides correct base url for alternative cluster production', () => {
-      process.env.REACT_APP_ENV = 'production';
+      mockIsProductionValueGetter.mockReturnValue(true);
       const baseUrl = require('./calculation-backend').getBackendServiceBaseUrl(
         'greenfield'
       );

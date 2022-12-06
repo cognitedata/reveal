@@ -11,7 +11,7 @@ import { DatapointsSummary } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
 import { StyleButton } from 'components/StyleButton/StyleButton';
 import { useComponentTranslations, useTranslations } from 'hooks/translations';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import { TimeseriesEntry } from 'models/timeseries-results/types';
 import {
@@ -296,6 +296,8 @@ function TimeSeriesRow({
   );
 }
 
-TimeSeriesRow.translationKeys = Object.keys(defaultTranslations);
+TimeSeriesRow.translationKeys = translationKeys(defaultTranslations);
+TimeSeriesRow.defaultTranslations = defaultTranslations;
+TimeSeriesRow.translationNamespace = 'TimeSeriesRow';
 
 export default TimeSeriesRow;

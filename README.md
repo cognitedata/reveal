@@ -177,4 +177,4 @@ Try to clean your `node_modules` folder (`rm -rf ./node_modules`) and run `yarn 
 
 ### During a `yarn install` I'm getting a 404 NOT FOUND!
 
-You don't have access to our `@cognite` organization in NPM. Check if you meet all [requirements](#requirements)
+You don't have access to our `@cognite` organization in NPM. Check if you meet all [requirements](#requirements) 

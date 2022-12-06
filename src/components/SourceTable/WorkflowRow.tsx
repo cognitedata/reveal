@@ -7,7 +7,7 @@ import { ChartWorkflow } from 'models/chart/types';
 import { DatapointsSummary } from 'utils/units';
 import { StyleButton } from 'components/StyleButton/StyleButton';
 import { useComponentTranslations, useTranslations } from 'hooks/translations';
-import { makeDefaultTranslations } from 'utils/translations';
+import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import Dropdown from 'components/Dropdown/Dropdown';
 import { trackUsage } from 'services/metrics';
@@ -320,6 +320,8 @@ function WorkflowRow({
   );
 }
 
-WorkflowRow.translationKeys = Object.keys(defaultTranslations);
+WorkflowRow.translationKeys = translationKeys(defaultTranslations);
+WorkflowRow.defaultTranslations = defaultTranslations;
+WorkflowRow.translationNamespace = 'WorkflowRow';
 
 export default WorkflowRow;
