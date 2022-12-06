@@ -1602,10 +1602,10 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/data-exploration@5.60.3":
-  version "5.60.3"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.60.3.tgz#76acb937b39a53ef941a45e0f5f49cb4875d041e"
-  integrity sha512-ZTtntocjwJJF0nSam4CsYdhhLBDgxVpEzKY7vIAb4O1ngzLXyqqhr/pFNVKSJfjHdNxLvARwL+0SFlTH5pmX2g==
+"@cognite/data-exploration@5.60.8":
+  version "5.60.8"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.60.8.tgz#d849821a83e30316c7a3149b6d645bf55b8287d6"
+  integrity sha512-5iGQ0XXZtTLow7G1N6Su3EyAEUl/LhCfJJHbE3MnegWax1DNIf/XL/E7z2Sd3Q7XiSHTZnzJkAMWfBZK9jDfkw==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
@@ -1620,7 +1620,7 @@
     "@cognite/sdk-provider" "^2.0.0"
     "@cognite/sdk-react-query-hooks" "^6.0.2"
     "@cognite/unified-file-viewer" "^3.0.2"
-    "@tanstack/react-table" "^8.5.15"
+    "@tanstack/react-table" "^8.7.0"
     "@types/react-copy-to-clipboard" "^5.0.4"
     "@visx/axis" "^2.1.0"
     "@visx/event" "^2.1.0"
@@ -3339,17 +3339,17 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@tanstack/react-table@^8.5.15":
-  version "8.5.27"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.5.27.tgz#3e69f9a25ea1a479a903d9c311ad46d2168ed640"
-  integrity sha512-dUl8qRGvWVaJkOk/goUxb3w675FtioY7uh6NalRG04dYBiwIpjHn8a1Jhmp9lE+Puk88GZ0OCF7svCVXIJviqQ==
+"@tanstack/react-table@^8.7.0":
+  version "8.7.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.7.0.tgz#853fae74db6bf49738d0f18e4d507b00262fc09c"
+  integrity sha512-VJ+9rsymDLaSU35rWOfX0bwNXnpW1i+T14wi+sHx8lxwAsfg6IY1Yw7FPfGADvUFP5eQn2t4nlohAJd+IoEj/Q==
   dependencies:
-    "@tanstack/table-core" "8.5.27"
+    "@tanstack/table-core" "8.7.0"
 
-"@tanstack/table-core@8.5.27":
-  version "8.5.27"
-  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.5.27.tgz#8b5167068637d67a585cfb844f233b52f6608a69"
-  integrity sha512-sxGZPV97bNYap+U/ZxYVmx3Uy872Fc/M0qjKl85PzMaqBgikosybtkOEEjLdeJlBthqG5G8VI6zN1/Pej9awWA==
+"@tanstack/table-core@8.7.0":
+  version "8.7.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.7.0.tgz#046e376cd536cd53727a91a880345f92d3ec5859"
+  integrity sha512-DRiRbOAmDHapzUBd4/C4Yy+FTug4fdGp5sdZWWfCq4wxRoaXQraQgbzmK23a3QcbwLFtLeNezPkZrqbJWuX+VA==
 
 "@testing-library/cypress@^8.0.2":
   version "8.0.3"
