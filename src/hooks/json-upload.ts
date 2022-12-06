@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { useSDK } from '@cognite/sdk-provider';
@@ -8,9 +8,8 @@ import uuid from 'uuid';
 
 import { useTranslation } from 'common/i18n';
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
-import { sleep } from 'utils/utils';
 
-import { UseUploadOptions } from './upload';
+import { RAWUploadStatus, UseUploadOptions } from './upload';
 
 const ROW_CHUNK_SIZE = 1000;
 const REQUEST_CHUNK_SIZE = 3;
@@ -26,9 +25,6 @@ export const useJSONUpload = ({
   const [[database, table], setTableToUpload] = useState<
     [string | undefined, string | undefined]
   >([undefined, undefined]);
-  const [isUpload, setIsUpload] = useState<boolean>(false);
-  const [isUploadFailed, setIsUploadFailed] = useState(false);
-  const [isUploadCompleted, setIsUploadCompleted] = useState(false);
 
   const [columns, setColumns] = useState<string[] | undefined>();
   const [jsonContent, setJsonContent] = useState<
@@ -42,15 +38,13 @@ export const useJSONUpload = ({
   const [uploadedRowCount, setUploadedRowCount] = useState(0);
   const [totalRowCount, setTotalRowCount] = useState(0);
 
-  const parsePercentage = useMemo(() => {
-    if (!file || !isUpload) return 0;
-    return columns ? 100 : 0;
-  }, [columns, file, isUpload]);
+  const [uploadStatus, setUploadStatus] = useState<RAWUploadStatus>(undefined);
 
-  const uploadPercentage = useMemo(() => {
-    if (!file || !isUpload) return 0;
-    return Math.ceil((uploadedRowCount / totalRowCount) * 100);
-  }, [file, isUpload, totalRowCount, uploadedRowCount]);
+  const uploadPercentage =
+    !uploadStatus || uploadStatus === 'ready'
+      ? 0
+      : Math.ceil((uploadedRowCount / totalRowCount) * 100);
+  const parsePercentage = uploadPercentage; // FIXME: is it correct?
 
   const selectedColumn =
     selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
@@ -59,32 +53,39 @@ export const useJSONUpload = ({
       : undefined;
 
   useEffect(() => {
-    if (!file || jsonContent) return;
+    if (!file || jsonContent) {
+      return;
+    }
 
     const reader = new FileReader();
     reader.readAsText(file);
+
     reader.onload = (e) => {
       let content: string | undefined = undefined;
       try {
         content = JSON.parse((e.target?.result as string | undefined) ?? '');
-      } catch {
-        setIsUploadFailed(true);
-      }
-
-      if (isArray(content)) {
-        setJsonContent(content);
-        setColumns(Object.keys(content[0]));
-        setTotalRowCount(content.length);
-      } else {
-        setIsUploadFailed(true);
+        if (isArray(content)) {
+          setJsonContent(content);
+          setColumns(Object.keys(content[0]));
+          setTotalRowCount(content.length);
+          setUploadStatus('ready');
+        } else {
+          throw new Error(t('file-parse-content-format-error'));
+        }
+      } catch (error: any) {
+        const errorMessage = error?.message;
+        notification.error({
+          message: t('file-invalid-error', { name: file.name }),
+          description: errorMessage,
+          key: 'file-invalid',
+        });
       }
     };
-  }, [file, jsonContent]);
+  }, [file, jsonContent, t]);
 
   useEffect(() => {
     if (
       !file ||
-      !isUpload ||
       !database ||
       !table ||
       !requestChunks ||
@@ -96,7 +97,6 @@ export const useJSONUpload = ({
 
     const chunk = requestChunks.slice(fetchedIndex + 1, fetchingIndex + 1);
 
-    let isFailed = false;
     Promise.all(
       chunk.map(async (row) => {
         let items: { key: string; columns: Record<string, any> }[] = [];
@@ -105,34 +105,31 @@ export const useJSONUpload = ({
             key: !selectedColumn ? uuid() : rowData[selectedColumn].toString(),
             columns: rowData,
           }));
-        } catch (e) {
-          isFailed = true;
+        } catch {
+          return Promise.reject(t('file-upload-primary-key-empty-cells'));
         }
 
-        return sdk.raw
-          .insertRows(database, table, items)
-          .then(() => {
-            setUploadedRowCount((prevCount) => prevCount + row.length);
-          })
-          .then(() => sleep(250))
-          .catch(() => {
-            isFailed = true;
-          });
+        return sdk.raw.insertRows(database, table, items).then(() => {
+          setUploadedRowCount((prevCount) => prevCount + row.length);
+        });
       })
-    ).then(() => {
-      setFetchedIndex(fetchingIndex);
-
-      if (isFailed) {
-        setIsUploadFailed(true);
-      } else {
+    )
+      .then(() => {
+        setFetchedIndex(fetchingIndex);
         setFetchingIndex((prevIndex) =>
           Math.min(prevIndex + REQUEST_CHUNK_SIZE, requestChunks.length - 1)
         );
-      }
-    });
+      })
+      .catch((e) => {
+        notification.error({
+          message: t('file-upload-error', { name: file.name }),
+          description: e,
+          key: 'file-upload',
+        });
+        setUploadStatus('error');
+      });
   }, [
     file,
-    isUpload,
     columns,
     selectedColumn,
     database,
@@ -146,29 +143,18 @@ export const useJSONUpload = ({
 
   useEffect(() => {
     if (requestChunks && fetchedIndex >= requestChunks.length - 1) {
-      setIsUploadCompleted(true);
-      setIsUpload(false);
-    }
-  }, [requestChunks, fetchedIndex]);
-
-  useEffect(() => {
-    if (!file || !isUploadCompleted) return;
-    if (isUploadFailed)
-      notification.error({
-        message: t('file-upload-error', { name: file.name }),
-        key: 'file-upload',
-      });
-    else
+      setUploadStatus('success');
       notification.success({
-        message: t('file-upload-success', { name: file.name }),
+        message: t('file-upload-success', { name: file?.name }),
         key: 'file-upload',
       });
-  }, [file, isUploadCompleted, isUploadFailed, t]);
+    }
+  }, [file, requestChunks, fetchedIndex, t]);
 
   const onConfirmUpload = async (database: string, table: string) => {
     trackEvent('RAW.Explorer.JSONUpload.Upload');
     setTableToUpload([database, table]);
-    setIsUpload(true);
+    setUploadStatus('in-progress');
 
     const requestChunks = chunk(jsonContent, ROW_CHUNK_SIZE);
 
@@ -182,10 +168,11 @@ export const useJSONUpload = ({
     parsePercentage,
     uploadPercentage,
     columns,
-    isUpload,
-    isUploadFailed,
-    isUploadCompleted,
-    isParsing: !!totalRowCount,
     onConfirmUpload,
+
+    isUploadError: uploadStatus === 'error',
+    isUploadInProgress: uploadStatus === 'in-progress',
+    isUploadSuccess: uploadStatus === 'success',
+    uploadStatus,
   };
 };

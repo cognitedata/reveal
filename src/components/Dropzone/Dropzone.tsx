@@ -20,7 +20,7 @@ const Dropzone = ({
   const { t } = useTranslation();
 
   return (
-    <StyledDropzone {...draggerProps}>
+    <StyledDropzone {...draggerProps} fileList={[]}>
       <StyledDropzoneContent>
         <StyledDropzoneOnDrop>
           <Icon type="Upload" />

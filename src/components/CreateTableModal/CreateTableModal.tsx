@@ -71,11 +71,12 @@ const CreateTableModal = ({
 
   const {
     columns,
-    isParsing,
-    isUploadFailed,
-    isUploadCompleted,
     onConfirmUpload,
     uploadPercentage,
+    isUploadError,
+    isUploadInProgress,
+    isUploadSuccess,
+    uploadStatus,
   } = useUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
 
   const { errors, handleBlur, handleChange, handleSubmit, values, resetForm } =
@@ -101,7 +102,7 @@ const CreateTableModal = ({
       !(selectedColumnIndex >= 0));
 
   function handleCancel(): void {
-    if (file && isParsing && !isUploadCompleted) {
+    if (file && isUploadInProgress) {
       notification.info({
         message: t('create-table-modal-file-upload-notification_cancel'),
         key: 'file-upload',
@@ -193,39 +194,40 @@ const CreateTableModal = ({
   }
 
   function renderCreateTableModalStep(): JSX.Element | undefined {
-    if (createTableModalStep === CreateTableModalStep.CreationMode) {
-      return (
-        <CreateTableModalCreationModeStep
-          isCreatingTable={isCreatingTable}
-          selectedCreationMode={selectedCreationMode}
-          selectCreationMode={selectCreationMode}
-          setFile={selectFile}
-        />
-      );
-    }
-    if (createTableModalStep === CreateTableModalStep.PrimaryKey) {
-      return (
-        <CreateTableModalPrimaryKeyStep
-          columns={columns}
-          selectedColumnIndex={selectedColumnIndex}
-          selectColumnAsPrimaryKey={(index: number) =>
-            setSelectedColumnIndex(index)
-          }
-          selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
-          selectPrimaryKeyMethod={selectPrimaryKeyMethod}
-        />
-      );
-    }
-    if (createTableModalStep === CreateTableModalStep.Upload) {
-      return (
-        <CreateTableModalUploadStep
-          fileName={file?.name ? trimFileExtension(file.name) : ''}
-          isUploadFailed={isUploadFailed}
-          isUploadCompleted={isUploadCompleted}
-          onCancel={handleCancel}
-          progression={uploadPercentage}
-        />
-      );
+    switch (uploadStatus) {
+      case undefined:
+        return (
+          <CreateTableModalCreationModeStep
+            isCreatingTable={isCreatingTable}
+            selectedCreationMode={selectedCreationMode}
+            selectCreationMode={selectCreationMode}
+            setFile={selectFile}
+          />
+        );
+      case 'ready':
+        return (
+          <CreateTableModalPrimaryKeyStep
+            columns={columns}
+            selectedColumnIndex={selectedColumnIndex}
+            selectColumnAsPrimaryKey={(index: number) =>
+              setSelectedColumnIndex(index)
+            }
+            selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
+            selectPrimaryKeyMethod={selectPrimaryKeyMethod}
+          />
+        );
+      case 'in-progress':
+      case 'error':
+      case 'success':
+        return (
+          <CreateTableModalUploadStep
+            fileName={file?.name ? trimFileExtension(file.name) : ''}
+            isUploadError={isUploadError}
+            isUploadSuccess={isUploadSuccess}
+            onCancel={handleCancel}
+            progression={uploadPercentage}
+          />
+        );
     }
   }
 
@@ -239,7 +241,7 @@ const CreateTableModal = ({
                 {t('cancel')}
               </StyledCancelButton>
             ) : (
-              (isUploadCompleted || isUploadFailed) && (
+              (isUploadSuccess || isUploadError) && (
                 <Button onClick={handleCancel} type="primary">
                   {t('create-table-modal-button-ok')}
                 </Button>

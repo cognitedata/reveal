@@ -2,15 +2,23 @@ import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 import { useCSVUpload } from './csv-upload';
 import { useJSONUpload } from './json-upload';
 
+export type RAWUploadStatus =
+  | undefined
+  | 'ready'
+  | 'in-progress'
+  | 'success'
+  | 'error';
+
 type RAWUpload = {
   parsePercentage?: number;
   uploadPercentage?: number;
   columns?: string[];
-  isUpload?: boolean;
-  isUploadFailed?: boolean;
-  isUploadCompleted?: boolean;
-  isParsing?: boolean;
   onConfirmUpload?: (database: string, table: string) => void;
+
+  isUploadError?: boolean;
+  isUploadInProgress?: boolean;
+  isUploadSuccess?: boolean;
+  uploadStatus?: RAWUploadStatus;
 };
 
 export type UseUploadOptions = {
