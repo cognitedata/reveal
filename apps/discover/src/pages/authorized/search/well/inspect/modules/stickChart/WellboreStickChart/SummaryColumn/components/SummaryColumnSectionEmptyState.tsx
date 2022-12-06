@@ -22,13 +22,18 @@ export const SummaryColumnSectionEmptyState: React.FC<
 > = ({
   name,
   isExpanded: isExpandedProp = false,
+  onToggleExpand,
   emptyText = NO_DATA_TEXT,
 }) => {
-  const [isExpanded, setExpanded] = useState(false);
+  const [isExpanded, setExpanded] = useState(isExpandedProp);
 
   useEffect(() => {
     setExpanded(isExpandedProp);
   }, [isExpandedProp]);
+
+  useEffect(() => {
+    onToggleExpand?.(isExpanded);
+  }, [isExpanded]);
 
   return (
     <SummaryColumnSectionWrapper>
