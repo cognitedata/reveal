@@ -43,7 +43,7 @@ export const AggregatedFilterV2 = <T,>({
       setSource(undefined);
     }
     trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_FILTER, {
-      value: item.value,
+      value: item?.value,
       title,
     });
   };
