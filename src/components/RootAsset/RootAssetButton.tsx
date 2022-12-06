@@ -21,9 +21,8 @@ export const RootAssetButton: React.FC<RootAssetButtonProps> = ({
     <Button
       icon={externalLink ? 'ArrowUpRight' : 'ArrowRight'}
       iconPlacement="right"
-      type={externalLink ? 'link' : 'secondary'}
+      type="link"
       onClick={onClick}
-      variant="ghost"
     >
       <RootAssetLabel maxwidth={maxWidth}>{label}</RootAssetLabel>
     </Button>
