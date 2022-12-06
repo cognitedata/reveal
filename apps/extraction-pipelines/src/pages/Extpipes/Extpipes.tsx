@@ -135,6 +135,7 @@ const Extpipes: FunctionComponent<Props> = () => {
 };
 
 const StyledContainer = styled.div`
+  margin-top: 24px;
   width: 100%;
 `;
 
@@ -147,7 +148,7 @@ const StyledActionBar = styled.div`
 export default function CombinedComponent() {
   const { t } = useTranslation();
   return (
-    <div>
+    <StyledPageContainer>
       <PageWrapperColumn>
         <CapabilityCheck requiredPermissions={EXTPIPES_READS}>
           <Title level={3}>{t('extraction-pipeline', { count: 0 })}</Title>
@@ -156,10 +157,14 @@ export default function CombinedComponent() {
           </Flex>
         </CapabilityCheck>
       </PageWrapperColumn>
-    </div>
+    </StyledPageContainer>
   );
 }
 
 const VerticalSpace = styled.div`
   height: 16px;
+`;
+
+const StyledPageContainer = styled.div`
+  padding: 0 16px;
 `;
