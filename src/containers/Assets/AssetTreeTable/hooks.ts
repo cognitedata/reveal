@@ -173,7 +173,7 @@ export const useRootTree = (
 
       return constructTree(rootAssetIds, assetsChildrenMap, assetsMap);
     },
-    { enabled: rootAssets.length > 0 }
+    { enabled: rootAssets.length > 0, keepPreviousData: true }
   );
 };
 
