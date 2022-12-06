@@ -1,17 +1,21 @@
-import { useState, useEffect } from 'react';
-import GraphiQL from 'graphiql';
 import { useExplorerPlugin } from '@graphiql/plugin-explorer';
+import { Notification } from '@platypus-app/components/Notification/Notification';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import { TOKENS } from '@platypus-app/di';
+import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { StorageProviderType } from '@platypus/platypus-core';
+import GraphiQL from 'graphiql';
 import {
-  GraphQLSchema,
   buildClientSchema,
   getIntrospectionQuery,
+  GraphQLSchema,
   IntrospectionQuery,
 } from 'graphql';
-import { QueryExplorerContainer } from './elements';
-import { Notification } from '@platypus-app/components/Notification/Notification';
+import { useEffect, useMemo, useState } from 'react';
+import { GraphiqlStorageProvider } from '../utils/graphiqlStorageProvider';
 import graphQlQueryFetcher from '../utils/graphqlQueryFetcher';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import { QueryExplorerContainer } from './elements';
 
 type QueryExplorerType = {
   dataModelExternalId: string;
@@ -26,21 +30,31 @@ export const QueryExplorer = ({
   space,
   defaultQuery,
 }: QueryExplorerType) => {
+  const { t } = useTranslation('SolutionQueryExplorer');
+  const localStorageProvider = useInjection(
+    TOKENS.storageProviderFactory
+  ).getProvider(StorageProviderType.localStorage);
+  const graphiqlStorageApi = useMemo(
+    () =>
+      new GraphiqlStorageProvider(
+        space,
+        dataModelExternalId,
+        schemaVersion,
+        localStorageProvider
+      ),
+    [localStorageProvider, schemaVersion, dataModelExternalId, space]
+  );
+
   const [gqlSchema, setGqlSchema] = useState<GraphQLSchema>();
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [explorerQuery, setExplorerQuery] = useState(defaultQuery);
-  const [explorerVariables, setExplorerVariables] = useState('{}');
+  const [explorerQuery, handleEditQuery] = useState(defaultQuery);
+  const [explorerVariables, handleEditVariables] = useState('{}');
+
   const explorerPlugin = useExplorerPlugin({
+    schema: gqlSchema,
     query: explorerQuery,
-    onEdit: setExplorerQuery,
+    onEdit: handleEditQuery,
   });
-  const { t } = useTranslation('SolutionQueryExplorer');
-
-  const handleEditQuery = (query: string | undefined) =>
-    setExplorerQuery(query);
-
-  const handleEditVariables = (variables: string) =>
-    setExplorerVariables(variables);
 
   useEffect(() => {
     if (isReady || !dataModelExternalId || !schemaVersion) {
@@ -68,7 +82,14 @@ export const QueryExplorer = ({
           message: error.message,
         });
       });
-  }, [isReady, schemaVersion, dataModelExternalId, setIsReady]);
+  }, [
+    isReady,
+    schemaVersion,
+    dataModelExternalId,
+    space,
+    setIsReady,
+    graphiqlStorageApi,
+  ]);
 
   if (!isReady) {
     return <Spinner />;
@@ -92,6 +113,7 @@ export const QueryExplorer = ({
         plugins={[explorerPlugin]}
         isHeadersEditorEnabled={false}
         variables={explorerVariables}
+        storage={graphiqlStorageApi}
       ></GraphiQL>
     </QueryExplorerContainer>
   );
