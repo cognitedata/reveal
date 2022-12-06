@@ -228,7 +228,8 @@ export function Table<T extends TableData>({
   };
 
   const handleClickLoadMore = () => {
-    fetchMore && fetchMore();
+    if (!fetchMore) return;
+    fetchMore();
     trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.LOAD_MORE, { table: id });
   };
 
