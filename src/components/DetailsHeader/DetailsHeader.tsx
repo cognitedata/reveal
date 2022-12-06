@@ -46,9 +46,9 @@ const DetailsHeader = ({
           />
           <Flex direction="column" gap={16}>
             {imageUrl && (
-              <div>
-                <img src={imageUrl} />
-              </div>
+              <StyledExtractorImageContainer>
+                <StyledExtractorImage src={imageUrl} />
+              </StyledExtractorImageContainer>
             )}
             <Title level="3">{title}</Title>
             {(version || createdAt) && (
@@ -87,8 +87,6 @@ const DetailsHeader = ({
   );
 };
 
-export default DetailsHeader;
-
 const StyledBodyMuted = styled(Body).attrs({
   level: 3,
 })`
@@ -98,3 +96,16 @@ const StyledBodyMuted = styled(Body).attrs({
 const StyledIconMuted = styled(Icon)`
   color: ${Colors['text-icon--muted']};
 `;
+
+const StyledExtractorImageContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 32px;
+`;
+
+const StyledExtractorImage = styled.img`
+  max-height: 32px;
+  max-width: 32px;
+`;
+
+export default DetailsHeader;

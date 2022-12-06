@@ -12,7 +12,7 @@ export const getSolutionsForSourceSystemQueryKey = (
 export type Solution = {
   externalId: string;
   extractorExternalId: string;
-  name: string;
+  documentation: string;
   sourceSystemExternalId: string;
   type: ExtractorType;
 };

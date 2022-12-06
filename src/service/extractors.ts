@@ -30,13 +30,13 @@ export type ExtractorBase = {
   externalId: string;
   name: string;
   description?: string;
+  documentation?: string;
   type: ExtractorType;
   tags?: string[];
 };
 
 export type Extractor = ExtractorBase & {
   latestVersion: string | undefined;
-  documentation?: string;
   imageUrl: string;
   links?: ExtractorLink[];
 };

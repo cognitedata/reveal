@@ -74,7 +74,7 @@ const ExtractorDetails = () => {
       <ContentContainer>
         <Layout.Container>
           <StyledLayoutGrid>
-            <Flex direction="column" gap={56}>
+            <Flex direction="column" gap={32}>
               <StyledBody>
                 <ReactMarkdown>
                   {(extractor?.documentation || extractor?.description) ?? ''}
@@ -82,7 +82,7 @@ const ExtractorDetails = () => {
               </StyledBody>
               {externalLinks?.length > 0 && (
                 <Flex direction="column" gap={16}>
-                  <Title level="4">{t('user-guide-from-cognite-docs')}</Title>
+                  <Title level={5}>{t('user-guide-from-cognite-docs')}</Title>
                   <DocsLinkGrid>
                     {externalLinks?.map((link) => (
                       <DocsLinkGridItem

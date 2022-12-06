@@ -48,5 +48,7 @@
   "search-results_one": "{{count}} result found for \"{{query}}\"",
   "search-results_other": "{{count}} results found for \"{{query}}\"",
   "search-helper": "Can’t find a extractor? <1>Create your own</1> or <2>request a extractor</2>",
-  "connect-to-source-system-with-colon": "Connect to {{name}} with an extractor:"
+  "connect-to-source-system-via-extractor": "Connect to {{sourceSystem}} via an extractor",
+  "connect-to-source-system-via-extractor-with-name": "Connect to {{sourceSystem}} via {{extractor}}",
+  "go-to-extractor": "Go to extractor"
 }
