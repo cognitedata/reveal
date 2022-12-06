@@ -30,7 +30,7 @@ export const FullscreenButton: React.FC<{ item: ResourceItem }> = ({
         }`,
         {
           [SEARCH_KEY]: query,
-          [FILTER]: filter,
+          ...(filter && { [FILTER]: filter }),
         }
       ),
       {
@@ -48,7 +48,7 @@ export const FullscreenButton: React.FC<{ item: ResourceItem }> = ({
         `/explore/${item.type}/${item.id}${tabType ? `/${tabType}` : ''}`,
         {
           [SEARCH_KEY]: query,
-          [FILTER]: filter,
+          ...(filter && { [FILTER]: filter }),
         }
       ),
       {

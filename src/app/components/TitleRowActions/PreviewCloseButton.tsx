@@ -28,7 +28,7 @@ export const PreviewCloseButton: React.FC<{ item: ResourceItem }> = ({
     navigate(
       createLink(`/explore/search/${item.type}`, {
         [SEARCH_KEY]: query,
-        [FILTER]: filter,
+        ...(filter && { [FILTER]: filter }),
       }),
       { replace: true }
     );

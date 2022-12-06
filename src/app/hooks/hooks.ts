@@ -110,7 +110,7 @@ export const useCurrentResourceType = (): [
             .join(''),
           {
             [SEARCH_KEY]: query,
-            [FILTER]: filter,
+            ...(filter && { [FILTER]: filter }),
           },
           opts
         )
