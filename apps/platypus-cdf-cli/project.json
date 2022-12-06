@@ -1,0 +1,76 @@
+{
+  "sourceRoot": "apps/platypus-cdf-cli/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/platypus-cdf-cli",
+        "main": "apps/platypus-cdf-cli/src/main.ts",
+        "tsConfig": "apps/platypus-cdf-cli/tsconfig.app.json",
+        "assets": ["apps/platypus-cdf-cli/src/assets"],
+        "generatePackageJson": true,
+        "extractLicenses": true,
+        "sourceMap": true,
+        "webpackConfig": "tools/custom-webpack-configurations/platypus-cli-webpack-config.js",
+        "target": "node",
+        "compiler": "tsc"
+      },
+      "configurations": {
+        "production": {
+          "sourceMap": false,
+          "vendorChunk": false,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "3mb"
+            }
+          ],
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/platypus-cdf-cli/src/environments/environment.ts",
+              "with": "apps/platypus-cdf-cli/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "platypus-cdf-cli:build",
+        "watch": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/platypus-cdf-cli/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/platypus-cdf-cli"],
+      "options": {
+        "jestConfig": "apps/platypus-cdf-cli/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "jest apps/platypus-cdf-cli/e2e-tests -c apps/platypus-cdf-cli/jest.config.ts --runInBand --verbose"
+        ],
+        "parallel": false
+      }
+    }
+  },
+  "tags": []
+}

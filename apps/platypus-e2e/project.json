@@ -1,0 +1,31 @@
+{
+  "root": "apps/platypus",
+  "sourceRoot": "apps/platypus-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/platypus-e2e/cypress.config.js",
+        "devServerTarget": "platypus:serve:mock"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "platypus:serve:production"
+        },
+        "mock": {
+          "devServerTarget": "platypus:serve:mock"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/platypus-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["platypus"]
+}
