@@ -133,10 +133,12 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.get('[data-testid="Comment"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
 
-    // Wait for row to be rendered
+    // Wait for *all* row to be rendered
     cy.get('div[role="gridcell"][col-id="body"]')
       .should('be.visible')
-      .should('contain', 'Consectetur adipiscing elit');
+      .should('contain', 'Consectetur adipiscing elit')
+      .should('contain', 'Random comment 996')
+      .should('contain', 'Random comment 997');
 
     cy.get('div[role="gridcell"][col-id="_isDraftSelected"]')
       .first()
