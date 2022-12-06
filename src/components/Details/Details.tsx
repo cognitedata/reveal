@@ -49,11 +49,11 @@ const GeneralDetailsHeader = styled.div`
 const GeneralDetailsContent = styled.div<{ isPreview: boolean }>`
   padding: 12px;
   display: grid;
-  grid-gap: 8px;
+  grid-gap: 16px;
   --max-columns: ${props => (props.isPreview ? 1 : 2)};
   /* Adjusting for the 8px grid-gap as well */
   grid-template-columns: repeat(
     auto-fit,
-    minmax(max(330px, calc(100% / var(--max-columns) - 16px)), 1fr)
+    minmax(max(330px, calc(100% / var(--max-columns) - 32px)), 1fr)
   );
 `;
