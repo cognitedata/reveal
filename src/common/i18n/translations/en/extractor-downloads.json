@@ -42,5 +42,9 @@
   "all": "All",
   "extractor_one": "Extractor",
   "extractor_other": "Extractors",
-  "source-systems": "Source systems"
+  "source-systems": "Source systems",
+  "search-results_zero": "No results found for \"{{query}}\"",
+  "search-results_one": "{{count}} result found for \"{{query}}\"",
+  "search-results_other": "{{count}} results found for \"{{query}}\"",
+  "search-helper": "Can’t find a extractor? <1>Create your own</1> or <2>request a extractor</2>"
 }

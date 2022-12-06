@@ -11,6 +11,7 @@ import CategorySidebar from 'components/category-sidebar/CategorySidebar';
 import { trackUsage } from 'utils';
 import { useTranslation } from 'common';
 import { useSearchParams } from 'react-router-dom';
+import SearchHelper from 'components/search-helper/SearchHelper';
 
 const Extractors = () => {
   const { t } = useTranslation();
@@ -66,8 +67,20 @@ const Extractors = () => {
             <Flex gap={40}>
               <CategorySidebar extractorsList={extractorsList} />
               <StyledListContainer>
-                <CreateExtractor />
-                <ExtractorsList extractorsList={extractorsList} />
+                {searchQuery ? (
+                  <StyledSearchResults>
+                    {t('search-results', {
+                      count: extractorsList.length,
+                      query: searchQuery,
+                    })}
+                  </StyledSearchResults>
+                ) : (
+                  <CreateExtractor />
+                )}
+                {!!extractorsList.length && (
+                  <ExtractorsList extractorsList={extractorsList} />
+                )}
+                {!!searchQuery && <SearchHelper />}
               </StyledListContainer>
             </Flex>
           </Flex>
@@ -82,6 +95,10 @@ const StyledListContainer = styled.div`
   flex-direction: column;
   gap: 16px;
   flex: 1;
+`;
+
+const StyledSearchResults = styled.div`
+  color: ${Colors['text-icon--muted']};
 `;
 
 const StyledSearchInput = styled(Input).attrs({
