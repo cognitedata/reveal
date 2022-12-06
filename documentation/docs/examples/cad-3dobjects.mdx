@@ -39,6 +39,48 @@ viewer.on('click', async event => {
 });
 ```
 
+## Load external GLTF content
+
+[GLTF](https://www.khronos.org/gltf/) is a commonly used 3D format for content delivery - think of it as the JPG of 3D.
+GLTF is supported by ThreeJS and can easily be added to Reveal using [`GLTFLoader`](https://threejs.org/docs/#examples/en/loaders/GLTFLoader).
+
+```jsx runnable
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+
+const loader = new GLTFLoader();
+function onLoaded(gltf) {
+  gltf.scene.scale.set(0.2, 0.2, 0.2);
+  const objectBounds = new THREE.Box3().setFromObject(gltf.scene);
+
+  viewer.on('click', async event => {
+    const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+    if (intersection) {
+      const clonedScene = gltf.scene.clone();
+      intersection.point.y += (objectBounds.max.y - objectBounds.min.y) * 0.5;
+      clonedScene.position.copy(intersection.point);
+      viewer.addObject3D(clonedScene);
+      console.log(clonedScene);
+    }
+  });
+
+  alert('Loaded GLTF! Click the 3D model to place model');
+}
+function onProgress() {
+}
+function onError(error) {
+  alert('Loading GLTF failed: ' + error);
+}
+
+// Add a "sun"
+const sun = new THREE.PointLight();
+sun.position.set(500, 500, 500);
+viewer.addObject3D(sun);
+viewer.addObject3D(new THREE.AmbientLight())
+
+// Load and add 3D model
+loader.load(gltfModelUrl, onLoaded, onProgress, onError);
+```
+
 ## Add environment
 
 To make a model feel more natural it might be useful to add an environment. The following
