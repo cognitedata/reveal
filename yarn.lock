@@ -1452,10 +1452,10 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
-"@cognite/cdf-utilities@^1.14.0":
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.14.0.tgz#c1e03dc386c1e18312c5041fcdeb8f2c72f4a255"
-  integrity sha512-tfyQlJJ+GnbCharfnCqfHc1HrSHqv0BYNraMB1k5YwswcKyps7Wlw+O74PzxfT+FDulc+7CkqHNFiwbcmRf/mg==
+"@cognite/cdf-utilities@^1.19.0":
+  version "1.19.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.19.0.tgz#2c719b903887601f311d8b7450cdaf79b4a503fd"
+  integrity sha512-BBvUbqbJ+SxFBDtPDt0Z3Axe2mZJ4rJUxtpyvRhN9IhxaHmXAawxAEVcNY4UyyQ1VDFjWUWWpH2zjPEWDOn/WQ==
   dependencies:
     "@codemirror/autocomplete" "^6.0.0"
     "@codemirror/commands" "^6.0.0"
@@ -1682,10 +1682,10 @@
     "@azure/msal-browser" "2.22.0"
     "@cognite/sdk-core" "4.1.1"
 
-"@cognite/login-utils@^4.1.2":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@cognite/login-utils/-/login-utils-4.1.2.tgz#4b4e635f2d1a321cb9481d0825db4089c5c24ae6"
-  integrity sha512-nVI+DCB9cWatN0Pdzm6FGuxQBpFW/rntR7GI780wEWcLzNlwkYk1aS0e0Ci+Mz6tAH65pEIfyrJHXDp0IC2CeA==
+"@cognite/login-utils@^3.4.1":
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/@cognite/login-utils/-/login-utils-3.4.1.tgz#5521d47ddbda245455c988e22210011ba3848f14"
+  integrity sha512-Ole00c0rwHImZQIa8GvSkIDs1qLf7IpqDnVVxC0CNWOskiiseOSAEDmDUrbKBHYGlDDEVp9rzrACVcVYE5NJTA==
   dependencies:
     "@auth0/auth0-spa-js" "1.20.0"
     "@azure/msal-browser" "2.22.0"

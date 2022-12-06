@@ -1,11 +1,12 @@
 import {
   isDevelopment as isDev,
   isStaging as isStage,
-  checkUrl,
   isProduction as isProd,
+  checkUrl,
+  Envs,
 } from '@cognite/cdf-utilities';
 
-export const isPR = checkUrl('pr');
+export const isPR = checkUrl(Envs.PR);
 
 export const isDevelopment = isDev();
 export const isStaging = isStage();

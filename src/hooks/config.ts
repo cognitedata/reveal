@@ -1,4 +1,5 @@
-import { getEnv, getProject } from '@cognite/cdf-utilities';
+import { getCluster, getProject } from '@cognite/cdf-utilities';
+import { parseEnvFromCluster } from '@cognite/login-utils';
 import { useSearchParams } from 'react-router-dom';
 import { omit } from 'lodash';
 import { CLUSTER_KEY } from 'utils/constants';
@@ -22,10 +23,9 @@ export const useCluster = () => {
   return [cluster ? decodeURIComponent(cluster) : undefined, setCluster];
 };
 
-// TODO(DEGR-832)
 export const useAppsApiBaseUrl = (): string => {
-  // const cluster = getCluster();
-  const env = getEnv();
+  const cluster = getCluster();
+  const env = parseEnvFromCluster(cluster);
   const stagingPart = isProduction ? '' : 'staging';
   const url = ['apps-api', stagingPart, env, 'cognite', 'ai']
     .filter(Boolean)
