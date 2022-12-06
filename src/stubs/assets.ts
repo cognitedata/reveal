@@ -71,6 +71,7 @@ export const mockAsset3 = {
   name: 'Gathering point F',
   metadata: {
     'Network Level': '["Facility - Sub-Level - PSH"]',
+    metadataKey: 'someValue',
   },
   source: 'some source',
   id: 778676031640514,

@@ -317,6 +317,7 @@ export const FilterFormV2 = ({
               onClick={() => {
                 handleRemoveMetadataFilter(key);
               }}
+              formatName={false}
             />
           );
         })}

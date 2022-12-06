@@ -9,13 +9,20 @@ interface Props {
   name: string;
   value: string;
   icon?: IconType;
+  formatName?: boolean;
   onClick?: () => void;
 }
-export const FilterChip: React.FC<Props> = ({ name, value, icon, onClick }) => {
+export const FilterChip: React.FC<Props> = ({
+  name,
+  value,
+  icon,
+  formatName = true,
+  onClick,
+}) => {
   const isCommonKeyName = includes(COMMON_FILTER_KEYS, name);
 
   const variant = isCommonKeyName ? 'normal' : 'success';
-  const text = `${getTitle(name)}: ${value}`;
+  const text = `${formatName ? getTitle(name) : name}: ${value}`;
 
   return (
     <Tooltip content={text}>
