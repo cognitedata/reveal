@@ -13,6 +13,7 @@ import { Flex } from '@cognite/cogs.js';
 
 import { InternalFilesFilters } from 'domain/files';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
+import { useResultCount } from 'components';
 
 export const FileSearchResults = ({
   query = '',
@@ -65,12 +66,22 @@ export const FileSearchResults = ({
   const { canFetchMore, fetchMore, items, isFetched } =
     useResourceResults<FileInfo>(api, query, filter);
 
+  const { count: itemCount } = useResultCount({
+    type: 'file',
+    filter,
+    query,
+    api: query && query.length > 0 ? 'search' : 'list',
+  });
+
   if (!isFetched) {
     return <EmptyState isLoading={!isFetched} />;
   }
+
   const tableHeaders = (
     <FileToolbar
       showCount={showCount}
+      loadedCount={items.length}
+      totalCount={itemCount}
       isHaveParent={Boolean(parentResource)}
       relatedResourceType={relatedResourceType}
       isGroupingFilesEnabled={isGroupingFilesEnabled}

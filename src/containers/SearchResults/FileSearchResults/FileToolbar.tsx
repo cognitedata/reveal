@@ -6,7 +6,11 @@ import { FileInfo } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
-import { SearchResultToolbar, FileUploaderModal } from 'containers';
+import {
+  SearchResultToolbar,
+  FileUploaderModal,
+  SearchResultCountLabel,
+} from 'containers';
 import { CLOSE_DROPDOWN_EVENT } from 'utils';
 import { AppContext } from 'context/AppContext';
 import { RelatedResourceType } from 'hooks';
@@ -22,6 +26,8 @@ export const FileToolbar = ({
   relatedResourceType,
   showCount = false,
   allowEdit = false,
+  loadedCount = 0,
+  totalCount = 0,
 }: {
   onFileClicked?: (file: FileInfo) => boolean;
   onViewChange?: (view: string) => void;
@@ -31,6 +37,8 @@ export const FileToolbar = ({
   relatedResourceType?: RelatedResourceType;
   allowEdit?: boolean;
   showCount?: boolean;
+  loadedCount?: number;
+  totalCount?: string | number;
 }) => {
   const context = useContext(AppContext);
   const { data: hasEditPermissions } = usePermissions(
@@ -49,6 +57,13 @@ export const FileToolbar = ({
         type="file"
         showCount={showCount}
         style={{ flex: 1, justifyContent: 'space-between' }}
+        resultCount={
+          <SearchResultCountLabel
+            loadedCount={loadedCount}
+            totalCount={totalCount}
+            resourceType="file"
+          />
+        }
       >
         {allowEdit && (
           <UploadButton
