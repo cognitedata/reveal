@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-data-exploration",
-  "version": "1.2.0",
+  "version": "2.1.0",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/lib/index.d.ts",
@@ -22,7 +22,8 @@
     "cy:run": "cypress run",
     "tsc:compile:watch": "tsc --watch --project cypress/tsconfig.json",
     "deploy": "gsutil -m cp -r build/. gs://cdf-hub-dev",
-    "e2e:dev": "concurrently --kill-others 'yarn start' 'yarn cy:open' "
+    "e2e:dev": "concurrently --kill-others 'yarn start' 'yarn cy:open' ",
+    "release-prod": "yarn fas-utils cut-release --no-dry-run --no-release-pr"
   },
   "dependencies": {
     "@cognite/cdf-utilities": "^1.14.0",
