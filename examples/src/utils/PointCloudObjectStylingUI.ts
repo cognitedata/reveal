@@ -108,7 +108,7 @@ export class PointCloudObjectStylingUI {
   }
 
   private createByObjectIndexUi(ui: dat.GUI) {
-    const state = { from: 1, count: 1, annotationId: 0 };
+    const state = { from: 0, count: 1, annotationId: 0 };
     const createAppearanceCb = this.createObjectAppearanceUi(ui);
     const actions = {
       apply: () => {
@@ -125,7 +125,7 @@ export class PointCloudObjectStylingUI {
         this._model.assignStyledObjectCollection(objects, appearance);
       }
     };
-    ui.add(state, 'from', 1, this._model.stylableObjectCount, 1).name('First object ID');
+    ui.add(state, 'from', 0, this._model.stylableObjectCount - 1, 1).name('First object ID');
     ui.add(state, 'count', 1, this._model.stylableObjectCount, 1).name('Object ID count');
     ui.add(state, 'annotationId', 0).name(`Object's annotationId`);
     ui.add(actions, 'apply').name('Apply');
