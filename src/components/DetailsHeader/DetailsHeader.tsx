@@ -45,12 +45,14 @@ const DetailsHeader = ({
             ]}
           />
           <Flex direction="column" gap={16}>
-            {imageUrl && (
-              <StyledExtractorImageContainer>
-                <StyledExtractorImage src={imageUrl} />
-              </StyledExtractorImageContainer>
-            )}
-            <Title level="3">{title}</Title>
+            <Flex gap={8}>
+              {imageUrl && (
+                <StyledExtractorImageContainer>
+                  <StyledExtractorImage src={imageUrl} />
+                </StyledExtractorImageContainer>
+              )}
+              <Title level="3">{title}</Title>
+            </Flex>
             {(version || createdAt) && (
               <Flex gap={12}>
                 {version && (
