@@ -30,7 +30,6 @@ export class LoadGltfUi {
       .onChange(value => {
         this._gizmos.forEach(gizmo => {
           gizmo.visible = value;
-          // gizmo.enabled = value;
         });
         this._viewer.requestRedraw();
       });
