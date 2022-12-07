@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Menu as AntMenu } from 'antd';
 import { Icon } from '@cognite/cogs.js';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
 import styled from 'styled-components';
 
 import { useTableData } from 'hooks/table-data';
@@ -15,8 +14,6 @@ import { ItemType } from 'antd/lib/menu/hooks/useItems';
 
 export const Menu = (): JSX.Element => {
   const { t } = useTranslation();
-  const { flow } = getFlow();
-  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
   const { rows, isFetched } = useTableData();
   const { database, table } = useActiveTableContext();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -42,7 +39,6 @@ export const Menu = (): JSX.Element => {
           icon: <Icon type="Delete" />,
           label: t('spreadsheet-menu-delete-table'),
           danger: true,
-          disabled: !hasWriteAccess,
           onClick: () => setIsDeleteModalOpen(true),
         },
       ],

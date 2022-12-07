@@ -1,15 +1,13 @@
 import React, { useContext, useState } from 'react';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Body, Button, Colors, Icon, Menu } from '@cognite/cogs.js';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
 import { RawExplorerContext } from 'contexts';
 import DeleteDatabaseModal from 'components/DeleteDatabaseModal/DeleteDatabaseModal';
 import Dropdown from 'components/Dropdown/Dropdown';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { Trans, useTranslation } from 'common/i18n';
+import { useTranslation } from 'common/i18n';
 
 type SidePanelTableListHomeItemProps = {
   isEmpty?: boolean;
@@ -49,12 +47,9 @@ const SidePanelTableListHomeItem = ({
   isEmpty,
 }: SidePanelTableListHomeItemProps): JSX.Element => {
   const { t } = useTranslation();
-  const { flow } = getFlow();
   const { selectedSidePanelDatabase = '' } = useContext(RawExplorerContext);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
 
   return (
     <StyledPanelTableListHomeItemWrapper>
@@ -67,17 +62,13 @@ const SidePanelTableListHomeItem = ({
           content={
             <Menu>
               <Tooltip
-                content={
-                  hasWriteAccess ? (
-                    t('explorer-side-panel-databases-delete-warning-non-empty')
-                  ) : (
-                    <Trans i18nKey="explorer-side-panel-databases-delete-warning-no-access" />
-                  )
-                }
-                disabled={hasWriteAccess && isEmpty}
+                content={t(
+                  'explorer-side-panel-databases-delete-warning-non-empty'
+                )}
+                disabled={isEmpty}
               >
                 <Button
-                  disabled={!isEmpty || !hasWriteAccess}
+                  disabled={!isEmpty}
                   icon="Delete"
                   onClick={() => setIsDeleteModalOpen(true)}
                   type="ghost-danger"

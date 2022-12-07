@@ -1,39 +1,25 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-
 import SidePanelLevelWrapper from 'components/SidePanel/SidePanelLevelWrapper';
-import Tooltip from 'components/Tooltip/Tooltip';
 import { RawExplorerContext } from 'contexts';
-
 import SidePanelTableListContent from './SidePanelTableListContent';
 import SidePanelTableListHomeItem from './SidePanelTableListHomeItem';
 import CreateTableModal from 'components/CreateTableModal/CreateTableModal';
-import { useTables } from 'hooks/sdk-queries';
-import { Trans, useTranslation } from 'common/i18n';
+import { useAllTables } from 'hooks/sdk-queries';
+import { useTranslation } from 'common/i18n';
 
 const SidePanelTableList = (): JSX.Element => {
   const { t } = useTranslation();
   const { selectedSidePanelDatabase = '' } = useContext(RawExplorerContext);
-  const { flow } = getFlow();
   const [query, setQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  const { data, isFetching, isLoading, hasNextPage, fetchNextPage } = useTables(
+  const { data, isLoading } = useAllTables(
     { database: selectedSidePanelDatabase },
     { enabled: !!selectedSidePanelDatabase }
   );
-
-  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
-
-  useEffect(() => {
-    if (!isFetching && hasNextPage) {
-      fetchNextPage();
-    }
-  }, [isFetching, fetchNextPage, hasNextPage]);
 
   useEffect(() => {
     setQuery('');
@@ -77,23 +63,11 @@ const SidePanelTableList = (): JSX.Element => {
         searchQuery={query}
         tables={tables}
       />
-      {!!tables.length && (
-        <Tooltip
-          content={
-            <Trans i18nKey="explorer-side-panel-tables-access-warning" />
-          }
-          disabled={hasWriteAccess}
-        >
-          <Button
-            block
-            disabled={!hasWriteAccess}
-            icon="Add"
-            onClick={() => setIsCreateModalOpen(true)}
-          >
-            {t('explorer-side-panel-tables-button-create-table')}
-          </Button>
-        </Tooltip>
-      )}
+
+      <Button block icon="Add" onClick={() => setIsCreateModalOpen(true)}>
+        {t('explorer-side-panel-tables-button-create-table')}
+      </Button>
+
       <CreateTableModal
         key={remountCount.current}
         databaseName={selectedSidePanelDatabase}

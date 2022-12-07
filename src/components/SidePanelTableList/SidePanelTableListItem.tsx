@@ -1,15 +1,13 @@
 import React, { MouseEvent, useState } from 'react';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Body, Button, Colors, Icon, Menu } from '@cognite/cogs.js';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
 import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
 import Dropdown from 'components/Dropdown/Dropdown';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { useActiveTable } from 'hooks/table-tabs';
-import { Trans, useTranslation } from 'common/i18n';
+import { useTranslation } from 'common/i18n';
 
 type SidePanelTableListItemProps = {
   databaseName: string;
@@ -69,13 +67,11 @@ const SidePanelTableListItem = ({
   tableName,
 }: SidePanelTableListItemProps): JSX.Element => {
   const { t } = useTranslation();
-  const { flow } = getFlow();
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [[, activeTableName] = [], setTable] = useActiveTable();
   const isSelected = activeTableName === tableName;
-
-  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
 
   const handleDatabaseListItemClick = (): void => {
     setTable([databaseName, tableName]);
@@ -99,24 +95,16 @@ const SidePanelTableListItem = ({
       <Dropdown
         content={
           <Menu>
-            <Tooltip
-              content={
-                <Trans i18nKey="explorer-side-panel-tables-delete-warning-no-access" />
-              }
-              disabled={hasWriteAccess}
+            <Button
+              icon="Delete"
+              onClick={(e) => {
+                stopPropagation(e);
+                setIsDeleteModalOpen(true);
+              }}
+              type="ghost-danger"
             >
-              <Button
-                disabled={!hasWriteAccess}
-                icon="Delete"
-                onClick={(e) => {
-                  stopPropagation(e);
-                  setIsDeleteModalOpen(true);
-                }}
-                type="ghost-danger"
-              >
-                {t('explorer-side-panel-tables-delete-button')}
-              </Button>
-            </Tooltip>
+              {t('explorer-side-panel-tables-delete-button')}
+            </Button>
           </Menu>
         }
       >

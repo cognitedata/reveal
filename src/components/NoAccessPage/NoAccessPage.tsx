@@ -17,9 +17,6 @@ const NoAccessPage = (): JSX.Element => {
       <AccessInfoWrapper className="z-4">
         <AccessInfo>
           <p>
-            <Trans i18nKey="error-page-no-access-required-for-any-feature" />
-          </p>
-          <p>
             <Trans i18nKey="error-page-no-access-required-for-this-feature" />
           </p>
         </AccessInfo>

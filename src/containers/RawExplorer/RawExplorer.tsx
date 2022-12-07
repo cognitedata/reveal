@@ -1,9 +1,6 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Colors, Loader } from '@cognite/cogs.js';
-import { RawDB } from '@cognite/sdk';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
 import NoAccessPage from 'components/NoAccessPage/NoAccessPage';
@@ -19,66 +16,56 @@ import { Allotment, LayoutPriority } from 'allotment';
 export type RawExplorerSideMenuItem = 'raw';
 
 const RawExplorer = (): JSX.Element => {
-  const { flow } = getFlow();
-  const { data: hasReadAccess, isFetched: isReadAccessFetched } =
-    usePermissions(flow, 'rawAcl', 'READ');
-  const { data: hasListAccess, isFetched: isListAccessFetched } =
-    usePermissions(flow, 'rawAcl', 'LIST');
+  const { data, error, isLoading } = useDatabases();
 
-  const { data, isLoading: isFetchingDatabases } = useDatabases({
-    enabled: hasListAccess,
-  });
-
-  const databases = useMemo(
-    () =>
-      data
-        ? data.pages.reduce(
-            (accl, page) => [...accl, ...page.items],
-            [] as RawDB[]
-          )
-        : ([] as RawDB[]),
-    [data]
-  );
+  const databases = data?.pages[0]?.items || [];
 
   const { isSidePanelOpen, setIsSidePanelOpen } =
     useContext(RawExplorerContext);
 
-  if (!isReadAccessFetched || !isListAccessFetched || isFetchingDatabases) {
+  if (error) {
+    switch (error.status) {
+      case 403: {
+        return <NoAccessPage />;
+      }
+      default: {
+        return <>Error</>;
+      }
+    }
+  }
+
+  if (isLoading) {
     return <Loader />;
   }
 
   return (
     <>
-      {hasReadAccess && hasListAccess ? (
-        <StyledRawExplorerContent>
-          <Allotment proportionalLayout={false}>
-            <Allotment.Pane
-              key="side-panel"
-              minSize={SIDE_PANEL_MIN_WIDTH}
-              maxSize={SIDE_PANEL_MAX_WIDTH}
-              preferredSize={SIDE_PANEL_MIN_WIDTH}
-              priority={LayoutPriority.Low}
-              visible={isSidePanelOpen}
-            >
-              <SidePanel onClose={() => setIsSidePanelOpen(false)} />
-            </Allotment.Pane>
-            <Allotment.Pane key="content" priority={LayoutPriority.High}>
-              <StyledRawExplorerTableContentWrapper>
-                {databases.length > 0 ? (
-                  <ActiveTableProvider>
-                    <TableTabList />
-                    <TableContent />
-                  </ActiveTableProvider>
-                ) : (
-                  <RawExplorerFirstTimeUser />
-                )}
-              </StyledRawExplorerTableContentWrapper>
-            </Allotment.Pane>
-          </Allotment>
-        </StyledRawExplorerContent>
-      ) : (
-        <NoAccessPage />
-      )}
+      <StyledRawExplorerContent>
+        <Allotment proportionalLayout={false}>
+          <Allotment.Pane
+            key="side-panel"
+            minSize={SIDE_PANEL_MIN_WIDTH}
+            maxSize={SIDE_PANEL_MAX_WIDTH}
+            preferredSize={SIDE_PANEL_MIN_WIDTH}
+            priority={LayoutPriority.Low}
+            visible={isSidePanelOpen}
+          >
+            <SidePanel onClose={() => setIsSidePanelOpen(false)} />
+          </Allotment.Pane>
+          <Allotment.Pane key="content" priority={LayoutPriority.High}>
+            <StyledRawExplorerTableContentWrapper>
+              {databases.length === 0 ? (
+                <RawExplorerFirstTimeUser />
+              ) : (
+                <ActiveTableProvider>
+                  <TableTabList />
+                  <TableContent />
+                </ActiveTableProvider>
+              )}
+            </StyledRawExplorerTableContentWrapper>
+          </Allotment.Pane>
+        </Allotment>
+      </StyledRawExplorerContent>
     </>
   );
 };

@@ -10,7 +10,7 @@ import Modal, { ModalProps } from 'components/Modal/Modal';
 import { RawExplorerContext } from 'contexts';
 import { useCreateDatabase } from 'hooks/sdk-queries';
 import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
-import { useTranslation } from 'common/i18n';
+import { Trans, useTranslation } from 'common/i18n';
 
 type CreateDatabaseFormValues = {
   databaseName: string;
@@ -70,18 +70,35 @@ const CreateDatabaseModal = ({
           onCancel();
           setSelectedSidePanelDatabase(databaseName);
         },
-        onError: (e: any) => {
+        onError: (e) => {
           notification.error({
-            message: (
-              <p>
-                <p>
-                  {t('database-created-notification_error', {
-                    name: databaseName,
-                  })}
-                </p>
-                <pre>{JSON.stringify(e?.errors, null, 2)}</pre>
-              </p>
+            description: (
+              <>
+                {e.status === 403 && (
+                  <>
+                    <Trans i18nKey="error-insufficient-access" />
+                    <Trans
+                      i18nKey={'explorer-side-panel-databases-access-warning'}
+                    />
+                  </>
+                )}
+                {e.status !== 403 && (
+                  <>
+                    {!!e.requestId && (
+                      <>
+                        <p>Request ID</p>
+                        <p>{e.requestId}</p>
+                      </>
+                    )}
+
+                    <pre>{e.errorMessage}</pre>
+                  </>
+                )}
+              </>
             ),
+            message: t('database-created-notification_error', {
+              name: databaseName,
+            }),
             key: 'create-database',
           });
         },

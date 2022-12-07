@@ -1,9 +1,7 @@
 import React, { useMemo } from 'react';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button, Title } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk/';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import {
   StyledEmptyListDetail,
@@ -12,11 +10,11 @@ import {
   StyledNoItemsDetail,
   StyledNoItemsWrapper,
 } from 'components/SidePanel/SidePanelLevelWrapper';
-import Tooltip from 'components/Tooltip/Tooltip';
+
 import { stringCompare } from 'utils/utils';
 
 import SidePanelDatabaseListItem from './SidePanelDatabaseListItem';
-import { Trans, useTranslation } from 'common/i18n';
+import { useTranslation } from 'common/i18n';
 
 type SidePanelDatabaseListContentProps = {
   databases: RawDB[];
@@ -30,8 +28,6 @@ const SidePanelDatabaseListContent = ({
   searchQuery,
 }: SidePanelDatabaseListContentProps): JSX.Element => {
   const { t } = useTranslation();
-  const { flow } = getFlow();
-  const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
 
   const filteredDatabaseList = useMemo(() => {
     return (
@@ -52,21 +48,10 @@ const SidePanelDatabaseListContent = ({
         <StyledEmptyListDetail strong>
           {t('explorer-side-panel-databases-create-detail')}
         </StyledEmptyListDetail>
-        <Tooltip
-          content={
-            <Trans i18nKey="explorer-side-panel-tables-access-warning" />
-          }
-          disabled={hasWriteAccess}
-        >
-          <Button
-            disabled={!hasWriteAccess}
-            icon="Add"
-            onClick={openCreateModal}
-            type="primary"
-          >
-            {t('explorer-side-panel-databases-button-create-database')}
-          </Button>
-        </Tooltip>
+
+        <Button icon="Add" onClick={openCreateModal} type="primary">
+          {t('explorer-side-panel-databases-button-create-database')}
+        </Button>
       </StyledEmptyListWrapper>
     );
   }
