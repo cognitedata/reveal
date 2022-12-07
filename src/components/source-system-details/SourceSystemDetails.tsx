@@ -1,11 +1,11 @@
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Body, Flex, Loader, Title } from '@cognite/cogs.js';
+import { Body, Chip, Flex, Loader, Title } from '@cognite/cogs.js';
 import { DetailsHeader } from 'components/DetailsHeader';
 import { Layout } from 'components/Layout';
 import { ContentContainer } from 'components/ContentContainer';
-import { useSourceSystems } from 'hooks/useSourceSystems';
 import { useSolutionsForSourceSystem } from 'hooks/useSolutions';
+import { useSourceSystem } from 'hooks/useSourceSystems';
 import { useTranslation } from 'common';
 import ReactMarkdown from 'react-markdown';
 import Solution from 'components/solution/Solution';
@@ -13,18 +13,16 @@ import Solution from 'components/solution/Solution';
 const SourceSystemDetails = () => {
   const { t } = useTranslation();
 
-  const { sourceSystemExternalId } = useParams<{
+  const { sourceSystemExternalId = '' } = useParams<{
     sourceSystemExternalId?: string;
   }>();
 
-  const { data, status } = useSourceSystems();
-
-  const { data: solutions } = useSolutionsForSourceSystem(
-    sourceSystemExternalId ?? ''
+  const { data: sourceSystem, status } = useSourceSystem(
+    sourceSystemExternalId
   );
 
-  const sourceSystem = data?.find(
-    (item) => item.externalId === sourceSystemExternalId
+  const { data: solutions } = useSolutionsForSourceSystem(
+    sourceSystemExternalId
   );
 
   if (status === 'loading') {
@@ -62,6 +60,20 @@ const SourceSystemDetails = () => {
                 </Flex>
               )}
             </Flex>
+            <aside>
+              <Flex direction="column" gap={24}>
+                {!!sourceSystem?.tags?.length && (
+                  <>
+                    <Title level="5">{t('tags')}</Title>
+                    <StyledTagsContainer>
+                      {sourceSystem.tags?.map((tag) => (
+                        <Chip size="x-small" label={tag} key={tag} />
+                      ))}
+                    </StyledTagsContainer>
+                  </>
+                )}
+              </Flex>
+            </aside>
           </StyledLayoutGrid>
         </Layout.Container>
       </ContentContainer>
@@ -73,6 +85,12 @@ const StyledLayoutGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 296px;
   gap: 56px;
+`;
+
+const StyledTagsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 `;
 
 export default SourceSystemDetails;
