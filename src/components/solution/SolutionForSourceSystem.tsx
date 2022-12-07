@@ -20,12 +20,15 @@ import { useExtractor } from 'hooks/useExtractorsList';
 import { useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 
-type SolutionForSourceSystemProps = SolutionType;
+type SolutionForSourceSystemProps = SolutionType & {
+  isInitiallyCollapsed?: boolean;
+};
 
 const SolutionForSourceSystem = ({
   documentation,
   extractorExternalId,
   sourceSystemExternalId,
+  isInitiallyCollapsed,
 }: SolutionForSourceSystemProps): JSX.Element => {
   const { t } = useTranslation();
 
@@ -34,7 +37,7 @@ const SolutionForSourceSystem = ({
   const { data: sourceSystem } = useSourceSystem(sourceSystemExternalId);
   const { data: extractor } = useExtractor(extractorExternalId);
 
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(isInitiallyCollapsed);
 
   const handleClick = () => {
     setIsCollapsed((prevState) => !prevState);

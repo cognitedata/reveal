@@ -56,6 +56,7 @@ const SourceSystemDetails = () => {
                     {solutions.map((solution) => (
                       <SolutionForSourceSystem
                         key={solution.externalId}
+                        isInitiallyCollapsed={solutions.length === 1}
                         {...solution}
                       />
                     ))}
