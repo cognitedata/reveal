@@ -7,7 +7,7 @@ import * as THREE from 'three';
 
 export class Image360Icon extends THREE.Group {
   private readonly MIN_PIXEL_SIZE = 32;
-  private readonly MAX_PIXEL_SIZE = 256;
+  private readonly MAX_PIXEL_SIZE = 128;
   private readonly _hoverSprite: THREE.Sprite;
   private readonly _outerSprite: THREE.Sprite;
   private readonly _sceneHandler: SceneHandler;
@@ -127,7 +127,7 @@ export class Image360Icon extends THREE.Group {
       context.beginPath();
       context.lineWidth = textureSize / 16;
       context.strokeStyle = '#FFFFFF';
-      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth / 2, 0, 2 * Math.PI);
+      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth / 2 - 2, 0, 2 * Math.PI);
       context.stroke();
     }
 

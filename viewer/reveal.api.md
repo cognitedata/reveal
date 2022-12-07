@@ -219,7 +219,6 @@ export interface CameraManager {
     deactivate(): void;
     // (undocumented)
     dispose(): void;
-    enabled: boolean;
     fitCameraToBoundingBox(boundingBox: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     getCamera(): THREE_2.PerspectiveCamera;
     getCameraState(): Required<CameraState>;
@@ -327,7 +326,7 @@ export class Cognite3DViewer {
     constructor(options: Cognite3DViewerOptions);
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
-    }, add360ImageOptions?: AddImage360Options): Promise<Image360[]>;
+    }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
     addCadModel(options: AddModelOptions): Promise<CogniteCadModel>;
     addModel(options: AddModelOptions): Promise<CogniteModel>;
     addObject3D(object: THREE_2.Object3D): void;
@@ -648,7 +647,6 @@ export class DefaultCameraManager implements CameraManager {
     deactivate(): void;
     // (undocumented)
     dispose(): void;
-    get enabled(): boolean;
     // (undocumented)
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     // (undocumented)
@@ -763,6 +761,11 @@ export type HtmlOverlayToolOptions = {
 export interface Image360 {
     readonly image360Visualization: Image360Visualization;
     readonly transform: THREE.Matrix4;
+}
+
+// @public
+export interface Image360Collection {
+    readonly image360Entities: Image360[];
 }
 
 // @public

@@ -7,7 +7,7 @@ import { Cognite3DViewer, Image360 } from "@cognite/reveal";
 import * as dat from 'dat.gui';
 
 export class Image360UI {
-  constructor(private viewer: Cognite3DViewer, private gui: dat.GUI){
+  constructor(viewer: Cognite3DViewer, gui: dat.GUI){
     let entities: Image360[] = [];
 
     const optionsFolder = gui.addFolder('Add Options');
@@ -62,7 +62,7 @@ export class Image360UI {
       const translationMatrix = new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
       const collectionTransform = translationMatrix.multiply(rotationMatrix);
       const set = await viewer.add360ImageSet('events', {site_id: params.siteId}, {collectionTransform, preMultipliedRotation: params.premultipliedRotation});
-      entities = entities.concat(set);
+      entities = entities.concat(set.image360Entities);
       viewer.requestRedraw();
     }
   }
