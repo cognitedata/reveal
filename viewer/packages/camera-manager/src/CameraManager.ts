@@ -105,8 +105,4 @@ export interface CameraManager {
    * @obvious
    */
   dispose(): void;
-  /**
-   * Enabled is true if this camera manager is active. When disabled, the camera manager shouldn't consume or react to any DOM events.
-   */
-  enabled: boolean;
 }

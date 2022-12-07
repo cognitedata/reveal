@@ -219,7 +219,6 @@ export interface CameraManager {
     deactivate(): void;
     // (undocumented)
     dispose(): void;
-    enabled: boolean;
     fitCameraToBoundingBox(boundingBox: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     getCamera(): THREE_2.PerspectiveCamera;
     getCameraState(): Required<CameraState>;
@@ -648,7 +647,6 @@ export class DefaultCameraManager implements CameraManager {
     deactivate(): void;
     // (undocumented)
     dispose(): void;
-    get enabled(): boolean;
     // (undocumented)
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     // (undocumented)
