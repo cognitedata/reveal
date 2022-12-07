@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Flex, Icon, Title } from '@cognite/cogs.js';
+import { Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { Solution as SolutionType } from 'hooks/useSolutions';
@@ -30,12 +30,7 @@ const SolutionForExtractor = ({
   return (
     <StyledSolutionContainer onClick={handleClick}>
       <StyledContent>
-        <Flex alignItems="center" gap={8}>
-          <div>
-            <StyledLogo src={sourceSystem?.imageUrl} />
-          </div>
-          <Title level={6}>{sourceSystem?.name}</Title>
-        </Flex>
+        <Title level={6}>{sourceSystem?.name}</Title>
         <Icon type="ChevronRight" />
       </StyledContent>
     </StyledSolutionContainer>
@@ -47,11 +42,6 @@ const StyledContent = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
-`;
-
-const StyledLogo = styled.img`
-  max-height: 24px;
-  max-width: 24px;
 `;
 
 export default SolutionForExtractor;
