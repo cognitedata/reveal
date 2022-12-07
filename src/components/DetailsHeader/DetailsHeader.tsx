@@ -23,9 +23,8 @@ const DetailsHeader = ({
 }: DetailsHeaderProps) => {
   const { t } = useTranslation();
 
-  const { subAppPath, extractorExternalId } = useParams<{
+  const { subAppPath } = useParams<{
     subAppPath?: string;
-    extractorExternalId?: string;
   }>();
 
   return (
@@ -39,8 +38,7 @@ const DetailsHeader = ({
                 title: t('extract-data'),
               },
               {
-                path: `/${subAppPath}/${extractorExternalId}`,
-                title: title,
+                title,
               },
             ]}
           />
