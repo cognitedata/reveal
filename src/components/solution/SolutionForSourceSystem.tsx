@@ -21,13 +21,13 @@ import Arrow from 'assets/Arrow.svg';
 import { useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 
-type SolutionProps = SolutionType;
+type SolutionForSourceSystemProps = SolutionType;
 
-const Solution = ({
+const SolutionForSourceSystem = ({
   documentation,
   extractorExternalId,
   sourceSystemExternalId,
-}: SolutionProps): JSX.Element => {
+}: SolutionForSourceSystemProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { subAppPath } = useParams<{ subAppPath?: string }>();
@@ -42,7 +42,7 @@ const Solution = ({
   };
 
   return (
-    <StyledContainer onClick={handleClick}>
+    <StyledSolutionContainer onClick={handleClick}>
       <StyledHeading>
         <Flex alignItems="center" gap={8}>
           <StyledCollapseIcon
@@ -82,11 +82,11 @@ const Solution = ({
           <ReactMarkdown>{documentation}</ReactMarkdown>
         </StyledContent>
       )}
-    </StyledContainer>
+    </StyledSolutionContainer>
   );
 };
 
-const StyledContainer = styled.button`
+export const StyledSolutionContainer = styled.button`
   background-color: ${Colors['surface--muted']};
   border: 1px solid ${Colors['border--interactive--default']};
   border-radius: 6px;
@@ -149,4 +149,4 @@ const StyledLogo = styled.img`
   max-width: 16px;
 `;
 
-export default Solution;
+export default SolutionForSourceSystem;

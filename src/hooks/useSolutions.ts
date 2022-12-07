@@ -5,9 +5,18 @@ import { QueryClient, useQuery, useQueryClient } from 'react-query';
 import { ExtractorType } from 'service/extractors';
 
 export const getSolutionsQueryKey = () => ['solutions', 'list'];
-export const getSolutionsForSourceSystemQueryKey = (
-  sourceSystemExternalId: string
-) => ['solutions', 'list', 'source-system', sourceSystemExternalId];
+export const getSolutionsForSourceSystemQueryKey = (externalId: string) => [
+  'solutions',
+  'list',
+  'source-system',
+  externalId,
+];
+export const getSolutionsForExtractorQueryKey = (externalId: string) => [
+  'solutions',
+  'list',
+  'extractor',
+  externalId,
+];
 
 export type Solution = {
   externalId: string;
@@ -54,6 +63,22 @@ export const useSolutionsForSourceSystem = (sourceSystemExternalId: string) => {
       return solutions.filter(
         ({ sourceSystemExternalId: testId }) =>
           testId === sourceSystemExternalId
+      );
+    }
+  );
+};
+
+export const useSolutionsForExtractor = (extractorExternalId: string) => {
+  const queryClient = useQueryClient();
+  const sdk = useSDK();
+
+  return useQuery(
+    getSolutionsForSourceSystemQueryKey(extractorExternalId),
+    async () => {
+      const solutions = await fetchSolutionsQuery(queryClient, sdk);
+
+      return solutions.filter(
+        ({ extractorExternalId: testId }) => testId === extractorExternalId
       );
     }
   );
