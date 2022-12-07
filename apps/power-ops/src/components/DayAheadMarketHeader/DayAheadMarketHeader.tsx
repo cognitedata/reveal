@@ -87,10 +87,10 @@ export const DayAheadMarketHeader = ({
                       <div>
                         {formatMethod(config.bidProcessConfiguration)}
                         <p>
-                          Process finished:{' '}
-                          {config.bidProcessFinishedDate &&
+                          Process started:{' '}
+                          {config.bidProcessStartedDate &&
                             formatDate(
-                              config.bidProcessFinishedDate.toLocaleString()
+                              config.bidProcessStartedDate.toLocaleString()
                             )}
                         </p>
                       </div>
