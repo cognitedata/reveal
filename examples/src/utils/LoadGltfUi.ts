@@ -35,7 +35,6 @@ export class LoadGltfUi {
       });
     ui.add(this._params, 'scaleStr').name('Scale models').onChange(scaleStr => {
       try {
-        console.log(scaleStr);
         const scale = Number.parseFloat(scaleStr);
         console.log(scale);
         this._objects.forEach(object => object.scale.set(scale, scale, scale));
