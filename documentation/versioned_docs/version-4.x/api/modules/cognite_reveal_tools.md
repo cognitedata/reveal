@@ -8,25 +8,13 @@ custom_edit_url: null
 
 ## Enumerations
 
-- [BingMapImageFormat](../enums/cognite_reveal_tools.BingMapImageFormat.md)
-- [BingMapType](../enums/cognite_reveal_tools.BingMapType.md)
 - [Corner](../enums/cognite_reveal_tools.Corner.md)
-- [HereMapImageFormat](../enums/cognite_reveal_tools.HereMapImageFormat.md)
-- [HereMapScheme](../enums/cognite_reveal_tools.HereMapScheme.md)
-- [HereMapType](../enums/cognite_reveal_tools.HereMapType.md)
-- [MapProviders](../enums/cognite_reveal_tools.MapProviders.md)
-- [MapboxImageFormat](../enums/cognite_reveal_tools.MapboxImageFormat.md)
-- [MapboxMode](../enums/cognite_reveal_tools.MapboxMode.md)
-- [MapboxStyle](../enums/cognite_reveal_tools.MapboxStyle.md)
 
 ## Classes
 
 - [AxisViewTool](../classes/cognite_reveal_tools.AxisViewTool.md)
 - [Cognite3DViewerToolBase](../classes/cognite_reveal_tools.Cognite3DViewerToolBase.md)
 - [DebugCameraTool](../classes/cognite_reveal_tools.DebugCameraTool.md)
-- [DebugLoadedSectorsTool](../classes/cognite_reveal_tools.DebugLoadedSectorsTool.md)
-- [ExplodedViewTool](../classes/cognite_reveal_tools.ExplodedViewTool.md)
-- [GeomapTool](../classes/cognite_reveal_tools.GeomapTool.md)
 - [HtmlOverlayTool](../classes/cognite_reveal_tools.HtmlOverlayTool.md)
 - [Keyframe](../classes/cognite_reveal_tools.Keyframe.md)
 - [MeasurementTool](../classes/cognite_reveal_tools.MeasurementTool.md)
@@ -49,7 +37,7 @@ Absolute position in pixels.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:47](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/AxisView/types.ts#L47)
+[packages/tools/src/AxisView/types.ts:47](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L47)
 
 ___
 
@@ -71,7 +59,7 @@ Configuration of the compass.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:79](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/AxisView/types.ts#L79)
+[packages/tools/src/AxisView/types.ts:79](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L79)
 
 ___
 
@@ -99,7 +87,7 @@ Configuration of [AxisViewTool](../classes/cognite_reveal_tools.AxisViewTool.md)
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:10](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/AxisView/types.ts#L10)
+[packages/tools/src/AxisView/types.ts:10](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L10)
 
 ___
 
@@ -122,68 +110,33 @@ Configuration of each face of the orientation box.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:64](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/AxisView/types.ts#L64)
+[packages/tools/src/AxisView/types.ts:64](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L64)
 
 ___
 
-### BingMapConfig
+### DistanceToLabelDelegate
 
-Ƭ **BingMapConfig**: `Object`
-
-#### Type declaration
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `APIKey` | `string` | Bing Map API Key |
-| `provider` | [`BingMap`](../enums/cognite_reveal_tools.MapProviders.md#bingmap) | - |
-| `type?` | [`BingMapType`](../enums/cognite_reveal_tools.BingMapType.md) | The type of the map used. |
-
-#### Defined in
-
-[packages/tools/src/Geomap/MapConfig.ts:121](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Geomap/MapConfig.ts#L121)
-
-___
-
-### DebugLoadedSectorsToolOptions
-
-Ƭ **DebugLoadedSectorsToolOptions**: `Object`
+Ƭ **DistanceToLabelDelegate**: (`distanceInMeters`: `number`) => `string`
 
 #### Type declaration
+
+▸ (`distanceInMeters`): `string`
+
+Custom callback for users to change measurement label content.
+
+##### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `colorBy?` | ``"depth"`` \| ``"lod"`` \| ``"loadedTimestamp"`` \| ``"drawcalls"`` \| ``"random"`` |
-| `leafsOnly?` | `boolean` |
-| `sectorPathFilterRegex?` | `string` |
-| `showDetailedSectors?` | `boolean` |
-| `showDiscardedSectors?` | `boolean` |
-| `showSimpleSectors?` | `boolean` |
+| `distanceInMeters` | `number` |
+
+##### Returns
+
+`string`
 
 #### Defined in
 
-[packages/tools/src/DebugLoadedSectorsTool.ts:13](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/DebugLoadedSectorsTool.ts#L13)
-
-___
-
-### HereMapConfig
-
-Ƭ **HereMapConfig**: `Object`
-
-#### Type declaration
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `APIKey` | `string` | Here map API Key |
-| `appCode?` | `string` | Service application code token. |
-| `imageFormat?` | [`HereMapImageFormat`](../enums/cognite_reveal_tools.HereMapImageFormat.md) | Map image tile format |
-| `provider` | [`HereMap`](../enums/cognite_reveal_tools.MapProviders.md#heremap) | - |
-| `scheme?` | `string` | Specifies the view scheme |
-| `size?` | `number` | Returned tile map image size. The following sizes are supported:  - 256  - 512  - 128 (deprecated, although usage is still accepted) |
-| `style?` | [`HereMapType`](../enums/cognite_reveal_tools.HereMapType.md) | The type of maps to be used. |
-
-#### Defined in
-
-[packages/tools/src/Geomap/MapConfig.ts:133](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Geomap/MapConfig.ts#L133)
+[packages/tools/src/Measurement/types.ts:8](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/types.ts#L8)
 
 ___
 
@@ -210,7 +163,7 @@ Callback that is triggered when a set of overlays are clustered together in
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:32](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L32)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L32)
 
 ___
 
@@ -229,7 +182,7 @@ Options for an overlay added using [add](../classes/cognite_reveal_tools.HtmlOve
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:42](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L42)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:42](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L42)
 
 ___
 
@@ -260,40 +213,44 @@ in [HtmlOverlayTool](../classes/cognite_reveal_tools.HtmlOverlayTool.md).
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:20](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L20)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:20](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L20)
 
 ___
 
-### MapConfig
+### HtmlOverlayToolClusteringOptions
 
-Ƭ **MapConfig**: { `latlong`: `LatLongPosition`  } & [`BingMapConfig`](cognite_reveal_tools.md#bingmapconfig) \| [`HereMapConfig`](cognite_reveal_tools.md#heremapconfig) \| [`MapboxConfig`](cognite_reveal_tools.md#mapboxconfig) \| `OpenStreetMapConfig`
+Ƭ **HtmlOverlayToolClusteringOptions**: `Object`
 
-Maps Configuration of [GeomapTool](../classes/cognite_reveal_tools.GeomapTool.md).
-
-#### Defined in
-
-[packages/tools/src/Geomap/MapConfig.ts:198](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Geomap/MapConfig.ts#L198)
-
-___
-
-### MapboxConfig
-
-Ƭ **MapboxConfig**: `Object`
+Controls how close overlay elements are clustered together.
 
 #### Type declaration
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `APIKey` | `string` | Mapbox API Key |
-| `id` | `string` | Map style or map ID if the mode is set to MAP_ID |
-| `mode?` | [`MapboxMode`](../enums/cognite_reveal_tools.MapboxMode.md) | Map tile access mode  - MapboxMode.STYLE  - MapboxMode.MAP_ID |
-| `provider` | [`MapboxMap`](../enums/cognite_reveal_tools.MapProviders.md#mapboxmap) | - |
-| `tileFormat?` | [`MapboxImageFormat`](../enums/cognite_reveal_tools.MapboxImageFormat.md) | Map image tile format |
-| `useHDPI?` | `boolean` | Flag to indicate if should use high resolution tiles |
+| `createClusterElementCallback` | [`HtmlOverlayCreateClusterDelegate`](cognite_reveal_tools.md#htmloverlaycreateclusterdelegate) | Callback that is triggered when a set of overlays are clustered together to create a "composite" element as a placeholder for the clustered elements. Note that this callback will be triggered every frame for each cluster so it must be performant. |
+| `mode` | ``"overlapInScreenSpace"`` | Currently only 'overlapInScreenSpace' is supported. In this mode, overlays are clustered together into a single element as defined by the [createClusterElementCallback](cognite_reveal_tools.md#createclusterelementcallback) and hidden when they overlap in screen space. The composite element is placed at the midpoint of all clustered elements.  Clustered elements are faded in/out using CSS styling `transition`, `opacity` and `visibility`. |
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:169](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Geomap/MapConfig.ts#L169)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:57](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L57)
+
+___
+
+### HtmlOverlayToolOptions
+
+Ƭ **HtmlOverlayToolOptions**: `Object`
+
+Options for the visualization of overlays
+
+#### Type declaration
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `clusteringOptions?` | [`HtmlOverlayToolClusteringOptions`](cognite_reveal_tools.md#htmloverlaytoolclusteringoptions) | Options for clustering the HTML overlays |
+
+#### Defined in
+
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:82](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L82)
 
 ___
 
@@ -312,7 +269,7 @@ ___
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementManager.ts:11](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Measurement/MeasurementManager.ts#L11)
+[packages/tools/src/Measurement/MeasurementManager.ts:11](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/MeasurementManager.ts#L11)
 
 ___
 
@@ -342,7 +299,7 @@ Delegate for measurement added events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:13](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Measurement/types.ts#L13)
+[packages/tools/src/Measurement/types.ts:13](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/types.ts#L13)
 
 ___
 
@@ -362,7 +319,7 @@ Delegate for measurement ended events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:28](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Measurement/types.ts#L28)
+[packages/tools/src/Measurement/types.ts:28](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/types.ts#L28)
 
 ___
 
@@ -377,12 +334,12 @@ Measurement tool option with user custom callback, line width & color.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `color?` | `THREE.Color` | Line color in 32 bit hex. |
-| `distanceToLabelCallback?` | `DistanceToLabelDelegate` | - |
+| `distanceToLabelCallback?` | [`DistanceToLabelDelegate`](cognite_reveal_tools.md#distancetolabeldelegate) | - |
 | `lineWidth?` | `number` | Line width in cm. Note that the minium drawn line will be ~2 pixels. |
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:33](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Measurement/types.ts#L33)
+[packages/tools/src/Measurement/types.ts:33](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/types.ts#L33)
 
 ___
 
@@ -402,7 +359,7 @@ Delegate for measurement started events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:23](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Measurement/types.ts#L23)
+[packages/tools/src/Measurement/types.ts:23](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/types.ts#L23)
 
 ___
 
@@ -422,7 +379,7 @@ and a given padding.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:56](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/AxisView/types.ts#L56)
+[packages/tools/src/AxisView/types.ts:56](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L56)
 
 ___
 
@@ -452,4 +409,4 @@ Delegate for Timeline Date update
 
 #### Defined in
 
-[packages/tools/src/Timeline/types.ts:8](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Timeline/types.ts#L8)
+[packages/tools/src/Timeline/types.ts:8](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Timeline/types.ts#L8)

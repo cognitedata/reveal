@@ -14,7 +14,7 @@ a large number of values (i.e. thousands).
 
 ## Hierarchy
 
-- [`NodeCollection`](cognite_reveal.NodeCollection.md)
+- [`CdfNodeCollectionBase`](cognite_reveal.CdfNodeCollectionBase.md)
 
   ↳ **`SinglePropertyFilterNodeCollection`**
 
@@ -32,15 +32,15 @@ Construct a new node set.
 | :------ | :------ | :------ |
 | `client` | `default` | CogniteClient authenticated to the project the model is loaded from. |
 | `model` | [`CdfModelNodeCollectionDataProvider`](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md) | CAD model. |
-| `options` | `PropertyFilterNodeCollectionOptions` |  |
+| `options` | [`PropertyFilterNodeCollectionOptions`](../modules/cognite_reveal.md#propertyfilternodecollectionoptions) |  |
 
 #### Overrides
 
-NodeCollection.constructor
+[CdfNodeCollectionBase](cognite_reveal.CdfNodeCollectionBase.md).[constructor](cognite_reveal.CdfNodeCollectionBase.md#constructor)
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:50](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L50)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:41](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L41)
 
 ## Properties
 
@@ -50,7 +50,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:29](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L29)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:24](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L24)
 
 ## Accessors
 
@@ -64,11 +64,11 @@ NodeCollection.constructor
 
 #### Inherited from
 
-NodeCollection.classToken
+CdfNodeCollectionBase.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -80,13 +80,13 @@ ___
 
 `boolean`
 
-#### Overrides
+#### Inherited from
 
-NodeCollection.isLoading
+CdfNodeCollectionBase.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:61](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L61)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:25](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L25)
 
 ## Methods
 
@@ -94,19 +94,19 @@ NodeCollection.isLoading
 
 ▸ **clear**(): `void`
 
-Clears the node set and interrupts any ongoing operations.
+Clears the node collection and interrupts any ongoing operations.
 
 #### Returns
 
 `void`
 
-#### Overrides
+#### Inherited from
 
-[NodeCollection](cognite_reveal.NodeCollection.md).[clear](cognite_reveal.NodeCollection.md#clear)
+[CdfNodeCollectionBase](cognite_reveal.CdfNodeCollectionBase.md).[clear](cognite_reveal.CdfNodeCollectionBase.md#clear)
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:125](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L125)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:69](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L69)
 
 ___
 
@@ -133,7 +133,7 @@ during construction of the node set, the total number of batches will be request
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:75](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L75)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:62](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L62)
 
 ___
 
@@ -149,13 +149,13 @@ implementations supports this.
 
 [`AreaCollection`](../interfaces/cognite_reveal.AreaCollection.md)
 
-#### Overrides
+#### Inherited from
 
-[NodeCollection](cognite_reveal.NodeCollection.md).[getAreas](cognite_reveal.NodeCollection.md#getareas)
+[CdfNodeCollectionBase](cognite_reveal.CdfNodeCollectionBase.md).[getAreas](cognite_reveal.CdfNodeCollectionBase.md#getareas)
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:137](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L137)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:81](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L81)
 
 ___
 
@@ -167,13 +167,13 @@ ___
 
 [`IndexSet`](cognite_reveal.IndexSet.md)
 
-#### Overrides
+#### Inherited from
 
-[NodeCollection](cognite_reveal.NodeCollection.md).[getIndexSet](cognite_reveal.NodeCollection.md#getindexset)
+[CdfNodeCollectionBase](cognite_reveal.CdfNodeCollectionBase.md).[getIndexSet](cognite_reveal.CdfNodeCollectionBase.md#getindexset)
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:133](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L133)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:77](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L77)
 
 ___
 
@@ -194,11 +194,11 @@ ___
 
 #### Inherited from
 
-[NodeCollection](cognite_reveal.NodeCollection.md).[off](cognite_reveal.NodeCollection.md#off)
+[CdfNodeCollectionBase](cognite_reveal.CdfNodeCollectionBase.md).[off](cognite_reveal.CdfNodeCollectionBase.md#off)
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -219,11 +219,11 @@ ___
 
 #### Inherited from
 
-[NodeCollection](cognite_reveal.NodeCollection.md).[on](cognite_reveal.NodeCollection.md#on)
+[CdfNodeCollectionBase](cognite_reveal.CdfNodeCollectionBase.md).[on](cognite_reveal.CdfNodeCollectionBase.md#on)
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -237,8 +237,8 @@ ___
 
 #### Overrides
 
-[NodeCollection](cognite_reveal.NodeCollection.md).[serialize](cognite_reveal.NodeCollection.md#serialize)
+[CdfNodeCollectionBase](cognite_reveal.CdfNodeCollectionBase.md).[serialize](cognite_reveal.CdfNodeCollectionBase.md#serialize)
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:147](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L147)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:97](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L97)

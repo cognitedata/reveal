@@ -30,7 +30,7 @@ Currently the default mode is FXAA, but this is subject to change.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:93](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L93)
+[packages/api/src/public/migration/types.ts:98](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L98)
 
 ___
 
@@ -46,7 +46,7 @@ Default implementation is [DefaultCameraManager](../classes/cognite_reveal.Defau
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:64](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L64)
+[packages/api/src/public/migration/types.ts:65](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L65)
 
 ___
 
@@ -58,11 +58,11 @@ Allows for controlling if geometry streaming should be halted when
 the camera is moving. Note that this option should left to false on
 low-end devices as more loading can cause frame drops.
 
-Default value is set to false.
+Default value is set to true.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:149](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L149)
+[packages/api/src/public/migration/types.ts:158](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L158)
 
 ___
 
@@ -81,7 +81,7 @@ This cannot be used together with _localModels.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:140](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L140)
+[packages/api/src/public/migration/types.ts:149](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L149)
 
 ___
 
@@ -93,7 +93,7 @@ An existing DOM element that we will render canvas into.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:33](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L33)
+[packages/api/src/public/migration/types.ts:34](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L34)
 
 ___
 
@@ -105,7 +105,7 @@ Enables / disables visualizing the edges of geometry. Defaults to true.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:125](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L125)
+[packages/api/src/public/migration/types.ts:134](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L134)
 
 ___
 
@@ -124,7 +124,7 @@ Style the loading indicator.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:46](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L46)
+[packages/api/src/public/migration/types.ts:47](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L47)
 
 ___
 
@@ -136,7 +136,7 @@ Send anonymous usage statistics.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:36](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L36)
+[packages/api/src/public/migration/types.ts:37](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L37)
 
 ___
 
@@ -148,7 +148,7 @@ Callback to download stream progress.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:128](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L128)
+[packages/api/src/public/migration/types.ts:137](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L137)
 
 ___
 
@@ -162,11 +162,12 @@ Point cloud visualisation effects parameteres.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
+| `edlOptions?` | ``"disabled"`` \| `Partial`<[`EdlOptions`](../modules/cognite_reveal.md#edloptions)\> | Eye Dome Lighting (EDL) effect, considerably improves depth perception of point cloud model. |
 | `pointBlending?` | `boolean` | Point blending effect, creates more "stable" texture on objects surfaces if point sizing is big enough. Can cause significant decrease in performance on some machines. |
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:114](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L114)
+[packages/api/src/public/migration/types.ts:119](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L119)
 
 ___
 
@@ -185,7 +186,7 @@ Render to offscreen buffer instead of canvas.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:41](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L41)
+[packages/api/src/public/migration/types.ts:42](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L42)
 
 ___
 
@@ -194,10 +195,12 @@ ___
 • `Optional` **renderer**: `WebGLRenderer`
 
 Renderer used to visualize model (optional).
+Note that when providing a custom renderer, this should be configured with
+`'powerPreference': 'high-performance'` for best performance.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:66](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L66)
+[packages/api/src/public/migration/types.ts:71](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L71)
 
 ___
 
@@ -213,7 +216,7 @@ set this upper limit of what resolution Reveal will allow.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:75](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L75)
+[packages/api/src/public/migration/types.ts:80](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L80)
 
 ___
 
@@ -225,7 +228,7 @@ Initialized connection to CDF used to load data.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:30](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L30)
+[packages/api/src/public/migration/types.ts:31](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L31)
 
 ___
 
@@ -238,4 +241,4 @@ an effect creating shadows and that gives the rendered image more depth.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:109](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/api/src/public/migration/types.ts#L109)
+[packages/api/src/public/migration/types.ts:114](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L114)
