@@ -29,7 +29,7 @@ and `viewer.cameraManager.cameraControls.maxDistance`.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:85](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L85)
+[packages/camera-manager/src/DefaultCameraManager.ts:103](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L103)
 
 ___
 
@@ -54,116 +54,9 @@ viewer.camera.updateProjectionMatrix();
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:77](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L77)
+[packages/camera-manager/src/DefaultCameraManager.ts:95](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L95)
 
 ## Accessors
-
-### cameraControls
-
-• `get` **cameraControls**(): [`ComboControls`](cognite_reveal.ComboControls.md)
-
-Gets instance of camera controls that are used by camera manager. See [ComboControls](cognite_reveal.ComboControls.md) for more
-information on all adjustable properties.
-
-**`Deprecated`**
-
-Will be removed in 4.0.0.
-
-#### Returns
-
-[`ComboControls`](cognite_reveal.ComboControls.md)
-
-#### Defined in
-
-[packages/camera-manager/src/DefaultCameraManager.ts:144](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L144)
-
-___
-
-### cameraControlsEnabled
-
-• `get` **cameraControlsEnabled**(): `boolean`
-
-Gets whether camera controls through mouse, touch and keyboard are enabled.
-
-**`Deprecated`**
-
-Will be removed in 4.0.0. Use [enabled](cognite_reveal.DefaultCameraManager.md#enabled) instead.
-
-#### Returns
-
-`boolean`
-
-#### Defined in
-
-[packages/camera-manager/src/DefaultCameraManager.ts:178](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L178)
-
-• `set` **cameraControlsEnabled**(`enabled`): `void`
-
-Sets whether camera controls through mouse, touch and keyboard are enabled.
-This can be useful to e.g. temporarily disable navigation when manipulating other
-objects in the scene or when implementing a "cinematic" viewer.
-
-**`Deprecated`**
-
-Will be removed in 4.0.0. Use [enabled](cognite_reveal.DefaultCameraManager.md#enabled) instead.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `enabled` | `boolean` |
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[packages/camera-manager/src/DefaultCameraManager.ts:169](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L169)
-
-___
-
-### enabled
-
-• `get` **enabled**(): `boolean`
-
-Gets whether camera controls through mouse, touch and keyboard are enabled.
-
-#### Returns
-
-`boolean`
-
-#### Implementation of
-
-[CameraManager](../interfaces/cognite_reveal.CameraManager.md).[enabled](../interfaces/cognite_reveal.CameraManager.md#enabled)
-
-#### Defined in
-
-[packages/camera-manager/src/DefaultCameraManager.ts:159](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L159)
-
-• `set` **enabled**(`enabled`): `void`
-
-Sets whether camera controls through mouse, touch and keyboard are enabled.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `enabled` | `boolean` |
-
-#### Returns
-
-`void`
-
-#### Implementation of
-
-[CameraManager](../interfaces/cognite_reveal.CameraManager.md).[enabled](../interfaces/cognite_reveal.CameraManager.md#enabled)
-
-#### Defined in
-
-[packages/camera-manager/src/DefaultCameraManager.ts:151](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L151)
-
-___
 
 ### keyboardNavigationEnabled
 
@@ -177,7 +70,7 @@ Whether keyboard control of the camera is enabled/disabled.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:192](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L192)
+[packages/camera-manager/src/DefaultCameraManager.ts:190](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L190)
 
 • `set` **keyboardNavigationEnabled**(`enabled`): `void`
 
@@ -195,9 +88,61 @@ Sets whether keyboard control of the camera is enabled/disabled.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:185](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L185)
+[packages/camera-manager/src/DefaultCameraManager.ts:183](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L183)
 
 ## Methods
+
+### activate
+
+▸ **activate**(`cameraManager?`): `void`
+
+Set this manager as active and enable controls.
+
+Should update CameraManager.enabled to reflect the state of the manager.
+Note that this is called automatically when a new CameraManager is set on the [Cognite3DViewer](cognite_reveal.Cognite3DViewer.md).
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `cameraManager?` | [`CameraManager`](../interfaces/cognite_reveal.CameraManager.md) | Previously used camera manager. |
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[CameraManager](../interfaces/cognite_reveal.CameraManager.md).[activate](../interfaces/cognite_reveal.CameraManager.md#activate)
+
+#### Defined in
+
+[packages/camera-manager/src/DefaultCameraManager.ts:232](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L232)
+
+___
+
+### deactivate
+
+▸ **deactivate**(): `void`
+
+Deactivate this manager and disable controls.
+
+Should update CameraManager.enabled to reflect the state of the manager.
+Note that this is called automatically when a new CameraManager is set on the [Cognite3DViewer](cognite_reveal.Cognite3DViewer.md).
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[CameraManager](../interfaces/cognite_reveal.CameraManager.md).[deactivate](../interfaces/cognite_reveal.CameraManager.md#deactivate)
+
+#### Defined in
+
+[packages/camera-manager/src/DefaultCameraManager.ts:245](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L245)
+
+___
 
 ### dispose
 
@@ -215,7 +160,7 @@ Sets whether keyboard control of the camera is enabled/disabled.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:262](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L262)
+[packages/camera-manager/src/DefaultCameraManager.ts:283](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L283)
 
 ___
 
@@ -229,7 +174,7 @@ Moves camera to a place where the content of a bounding box is visible to the ca
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `box` | `Box3` | `undefined` | - |
+| `box` | `Box3` | `undefined` | The bounding box in world space. |
 | `duration?` | `number` | `undefined` | The duration of the animation moving the camera. |
 | `radiusFactor` | `number` | `2` | The ratio of the distance from camera to center of box and radius of the box. |
 
@@ -243,7 +188,7 @@ Moves camera to a place where the content of a bounding box is visible to the ca
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:133](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L133)
+[packages/camera-manager/src/DefaultCameraManager.ts:159](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L159)
 
 ___
 
@@ -266,7 +211,7 @@ camera changes.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:196](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L196)
+[packages/camera-manager/src/DefaultCameraManager.ts:194](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L194)
 
 ___
 
@@ -282,7 +227,7 @@ Gets current camera controls options.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:237](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L237)
+[packages/camera-manager/src/DefaultCameraManager.ts:255](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L255)
 
 ___
 
@@ -304,7 +249,23 @@ Camera state: position, target and rotation.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:226](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L226)
+[packages/camera-manager/src/DefaultCameraManager.ts:224](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L224)
+
+___
+
+### getComboControlsOptions
+
+▸ **getComboControlsOptions**(): `Readonly`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
+
+Gets current Combo Controls options.
+
+#### Returns
+
+`Readonly`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
+
+#### Defined in
+
+[packages/camera-manager/src/DefaultCameraManager.ts:168](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L168)
 
 ___
 
@@ -318,8 +279,8 @@ Unsubscribes from changes of the camera event.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | ``"cameraChange"`` | Name of the event. |
-| `callback` | [`CameraChangeDelegate`](../modules/cognite_reveal.md#camerachangedelegate) | Callback function to be unsubscribed. |
+| `event` | ``"cameraChange"`` \| ``"cameraStop"`` | The event type. |
+| `callback` | [`CameraEventDelegate`](../modules/cognite_reveal.md#cameraeventdelegate) | Callback function to be unsubscribed. |
 
 #### Returns
 
@@ -331,7 +292,7 @@ Unsubscribes from changes of the camera event.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:123](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L123)
+[packages/camera-manager/src/DefaultCameraManager.ts:146](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L146)
 
 ___
 
@@ -339,14 +300,16 @@ ___
 
 ▸ **on**(`event`, `callback`): `void`
 
-Subscribes to changes of the camera event. This is used by Reveal to react on changes of the camera.
+Subscribes to events on this camera manager. There are several event types:
+'cameraChange' - Subscribes to changes of the camera. This is used by Reveal to react on changes of the camera.
+'cameraStop' - Subscribes to events indicating the camera has stopped
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | ``"cameraChange"`` | Name of the event. |
-| `callback` | [`CameraChangeDelegate`](../modules/cognite_reveal.md#camerachangedelegate) | Callback to be called when the event is fired. |
+| `event` | ``"cameraChange"`` \| ``"cameraStop"`` | The event type. |
+| `callback` | [`CameraEventDelegate`](../modules/cognite_reveal.md#cameraeventdelegate) | Callback to be called when the event is fired. |
 
 #### Returns
 
@@ -358,7 +321,7 @@ Subscribes to changes of the camera event. This is used by Reveal to react on ch
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:113](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L113)
+[packages/camera-manager/src/DefaultCameraManager.ts:133](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L133)
 
 ___
 
@@ -380,7 +343,7 @@ Sets camera controls options to customize camera controls modes. See [CameraCont
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:245](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L245)
+[packages/camera-manager/src/DefaultCameraManager.ts:263](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L263)
 
 ___
 
@@ -408,7 +371,30 @@ empty rotation field.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:206](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L206)
+[packages/camera-manager/src/DefaultCameraManager.ts:204](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L204)
+
+___
+
+### setComboControlsOptions
+
+▸ **setComboControlsOptions**(`options`): `void`
+
+Sets Combo Controls options.
+Only provided options will be changed, any undefined options will be kept as is.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `Partial`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\> |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/camera-manager/src/DefaultCameraManager.ts:176](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L176)
 
 ___
 
@@ -437,4 +423,4 @@ Reveal performance affects frequency with which this method is called.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:252](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L252)
+[packages/camera-manager/src/DefaultCameraManager.ts:273](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L273)

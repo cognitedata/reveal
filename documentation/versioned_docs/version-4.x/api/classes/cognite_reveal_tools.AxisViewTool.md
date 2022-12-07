@@ -7,7 +7,7 @@ custom_edit_url: null
 
 [@cognite/reveal/tools](../modules/cognite_reveal_tools.md).AxisViewTool
 
-Base class for tools attaching to a {@see Cognite3DViewer}.
+Base class for tools attaching to a Cognite3DViewer.
 
 ## Hierarchy
 
@@ -34,7 +34,7 @@ Base class for tools attaching to a {@see Cognite3DViewer}.
 
 #### Defined in
 
-[packages/tools/src/AxisView/AxisViewTool.ts:42](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/AxisView/AxisViewTool.ts#L42)
+[packages/tools/src/AxisView/AxisViewTool.ts:42](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/AxisViewTool.ts#L42)
 
 ## Methods
 
@@ -55,7 +55,7 @@ of dipose-listeners.
 
 #### Defined in
 
-[packages/tools/src/AxisView/AxisViewTool.ts:66](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/AxisView/AxisViewTool.ts#L66)
+[packages/tools/src/AxisView/AxisViewTool.ts:66](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/AxisViewTool.ts#L66)
 
 ___
 
@@ -82,4 +82,4 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
+[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)

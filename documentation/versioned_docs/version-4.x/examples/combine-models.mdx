@@ -16,9 +16,7 @@ import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWra
 
 In many cases, it will be necessary to apply some transformation to the models to make them be in the same
 coordinate system. This can be done using `setModelTransformation` with a [`THREE.Matrix4`](https://threejs.org/docs/#api/en/math/Matrix4)
-representing the transformation. Note that each 3D model stored in Cognite Data Fusion will have an associated
-model transformation that is loaded when the model is added. When updating `setModelTransformation` this model transformation
-should also be applied to ensure that the axis system is correct.
+representing the transformation.
 
 The following example shows how to modify the coordinate system of a point cloud model to make it fit with a CAD model.
 
@@ -29,13 +27,10 @@ async function updateModelTransformation() {
     revisionId: 2817572261344477,
   })
 
-  // Retrieve default transformation
-  const modelTransformation = pointCloudModel.getModelTransformation();
-  // Apply translation
+  // Create translation matrix
   const translation = new THREE.Matrix4().makeTranslation(140, 75, -110);
-  modelTransformation.multiply(translation);
   // Update model transformation
-  pointCloudModel.setModelTransformation(modelTransformation);
+  pointCloudModel.setModelTransformation(translation);
 
   viewer.fitCameraToModel(pointCloudModel);
 }
@@ -68,16 +63,16 @@ const sliceOffset = new THREE.Vector3(0, 20, 0);
 const sliceSize = new THREE.Vector3(100, 10, 100);
 
 const sliceColors = [
-  [200, 0, 0],
-  [0, 200, 0],
-  [0, 0, 200],
-  [200, 200, 0],
-  [200, 0, 200]
+  new THREE.Color(0.8, 0.0, 0.0),
+  new THREE.Color(0.0, 0.8, 0.0),
+  new THREE.Color(0.0, 0.0, 0.8),
+  new THREE.Color(0.8, 0.8, 0.0),
+  new THREE.Color(0.8, 0.0, 0.8)
 ]
 for (let i = 0; i < 5; i++) {
   const sliceCenter = sliceOffset.clone().multiplyScalar(i).add(center);
   const sliceBounds = new THREE.Box3().setFromCenterAndSize(sliceCenter, sliceSize);
-  const sliceColor = [...sliceColors[i]];
+  const sliceColor = sliceColors[i];
 
   addFilteredModel(sliceBounds).then(model => {
     model.setDefaultNodeAppearance({ color: sliceColor });

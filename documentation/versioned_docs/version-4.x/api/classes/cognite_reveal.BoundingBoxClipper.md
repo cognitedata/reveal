@@ -21,7 +21,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:18](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L18)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:18](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L18)
 
 ## Accessors
 
@@ -35,7 +35,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:104](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L104)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:104](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L104)
 
 ___
 
@@ -49,7 +49,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:55](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L55)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:55](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L55)
 
 • `set` **maxX**(`x`): `void`
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:50](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L50)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:50](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L50)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:64](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L64)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:64](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L64)
 
 • `set` **maxY**(`y`): `void`
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:59](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L59)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:59](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L59)
 
 ___
 
@@ -109,7 +109,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:73](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L73)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:73](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L73)
 
 • `set` **maxZ**(`z`): `void`
 
@@ -125,7 +125,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:68](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L68)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:68](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L68)
 
 ___
 
@@ -139,7 +139,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:28](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L28)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:28](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L28)
 
 • `set` **minX**(`x`): `void`
 
@@ -155,7 +155,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:23](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L23)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:23](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L23)
 
 ___
 
@@ -169,7 +169,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:37](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L37)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:37](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L37)
 
 • `set` **minY**(`y`): `void`
 
@@ -185,7 +185,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:32](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L32)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L32)
 
 ___
 
@@ -199,7 +199,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:46](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L46)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:46](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L46)
 
 • `set` **minZ**(`z`): `void`
 
@@ -215,4 +215,4 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:41](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L41)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:41](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L41)

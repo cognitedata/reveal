@@ -7,7 +7,7 @@ custom_edit_url: null
 
 [@cognite/reveal/tools](../modules/cognite_reveal_tools.md).Cognite3DViewerToolBase
 
-Base class for tools attaching to a {@see Cognite3DViewer}.
+Base class for tools attaching to a Cognite3DViewer.
 
 ## Hierarchy
 
@@ -15,17 +15,11 @@ Base class for tools attaching to a {@see Cognite3DViewer}.
 
   ↳ [`HtmlOverlayTool`](cognite_reveal_tools.HtmlOverlayTool.md)
 
-  ↳ [`ExplodedViewTool`](cognite_reveal_tools.ExplodedViewTool.md)
-
   ↳ [`DebugCameraTool`](cognite_reveal_tools.DebugCameraTool.md)
 
   ↳ [`AxisViewTool`](cognite_reveal_tools.AxisViewTool.md)
 
-  ↳ [`GeomapTool`](cognite_reveal_tools.GeomapTool.md)
-
   ↳ [`TimelineTool`](cognite_reveal_tools.TimelineTool.md)
-
-  ↳ [`DebugLoadedSectorsTool`](cognite_reveal_tools.DebugLoadedSectorsTool.md)
 
   ↳ [`MeasurementTool`](cognite_reveal_tools.MeasurementTool.md)
 
@@ -50,7 +44,7 @@ of dipose-listeners.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:52](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L52)
+[packages/tools/src/Cognite3DViewerToolBase.ts:52](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L52)
 
 ___
 
@@ -73,4 +67,4 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
+[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
