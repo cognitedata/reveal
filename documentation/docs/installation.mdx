@@ -12,3 +12,18 @@ npm install @cognite/reveal @cognite/sdk three@<version>
 ```
 
 Please find the correct version of ThreeJS in [the release documentation on Github](https://github.com/cognitedata/reveal/releases/). We only guarantee support for the exact ThreeJS version specified there.
+
+## Installation for projects with Content-Security-Policy
+
+To be able to use Reveal while having a CSP you have to allow the following:
+* [script-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src) `unsafe-eval`
+* [connect-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/connect-src) `data:`
+
+These settings are nessesary to allow for execution of internal WebAssembly modules bundled with Reveal.
+The `connect-src` policy is for allowing the WebAssembly module to be added as [data url](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs).
+The `unsafe-eval` policy is needed to evaluate and execute the WebAssembly module at runtime.
+This may be removed in the future once the [wasm-unsafe-eval](https://github.com/WebAssembly/content-security-policy/blob/master/proposals/CSP.md) policy gets implemented into all major browsers.
+
+:::note
+Evaluate security risks before adding any of these options to your CSP.
+:::
