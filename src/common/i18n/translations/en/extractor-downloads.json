@@ -54,5 +54,6 @@
   "no-results": "No results",
   "no-results-description": "Sorry, we couldn’t find any results for the search \"{{query}}\"",
   "no-results-description-extractor": "Sorry, we couldn’t find any extractors for the search \"{{query}}\"",
-  "no-results-description-source-system": "Sorry, we couldn’t find any source systems for the search \"{{query}}\""
+  "no-results-description-source-system": "Sorry, we couldn’t find any source systems for the search \"{{query}}\"",
+  "use-extractor-for-with-colon": "Use {{extractor}} for:"
 }

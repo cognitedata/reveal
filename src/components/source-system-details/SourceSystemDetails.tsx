@@ -8,7 +8,7 @@ import { useSolutionsForSourceSystem } from 'hooks/useSolutions';
 import { useSourceSystem } from 'hooks/useSourceSystems';
 import { useTranslation } from 'common';
 import ReactMarkdown from 'react-markdown';
-import Solution from 'components/solution/Solution';
+import SolutionForSourceSystem from 'components/solution/SolutionForSourceSystem';
 
 const SourceSystemDetails = () => {
   const { t } = useTranslation();
@@ -54,7 +54,10 @@ const SourceSystemDetails = () => {
                   </Title>
                   <Flex direction="column" gap={16}>
                     {solutions.map((solution) => (
-                      <Solution key={solution.externalId} {...solution} />
+                      <SolutionForSourceSystem
+                        key={solution.externalId}
+                        {...solution}
+                      />
                     ))}
                   </Flex>
                 </Flex>

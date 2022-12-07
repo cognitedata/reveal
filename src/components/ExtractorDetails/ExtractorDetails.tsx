@@ -25,16 +25,22 @@ import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
 import { trackUsage } from 'utils';
 import { getReleaseVersionCore } from 'utils/utils';
 import { ReleaseTag } from 'components/ReleaseTag';
+import { useSolutionsForExtractor } from 'hooks/useSolutions';
+import SolutionForExtractor from 'components/solution/SolutionForExtractor';
 
 const ExtractorDetails = () => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { extractorExternalId } = useParams<{ extractorExternalId?: string }>();
+  const { extractorExternalId = '' } = useParams<{
+    extractorExternalId?: string;
+  }>();
   const { data, status } = useExtractorsList();
 
   const extractor = data?.find(
     (extractor) => extractor.externalId === extractorExternalId
   );
+
+  const { data: solutions } = useSolutionsForExtractor(extractorExternalId);
 
   const latestRelease = extractor?.releases?.at(0);
   const createdAt =
@@ -101,6 +107,21 @@ const ExtractorDetails = () => {
                       </DocsLinkGridItem>
                     ))}
                   </DocsLinkGrid>
+                </Flex>
+              )}
+              {!!solutions?.length && (
+                <Flex direction="column" gap={16}>
+                  <Title level={5}>
+                    {t('use-extractor-for-with-colon', {
+                      extractor: extractor?.name,
+                    })}
+                  </Title>
+                  {solutions.map((solution) => (
+                    <SolutionForExtractor
+                      key={solution.externalId}
+                      {...solution}
+                    />
+                  ))}
                 </Flex>
               )}
             </Flex>
