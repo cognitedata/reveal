@@ -32,7 +32,12 @@ import {
   removeAllStyles,
 } from './utils';
 
-import { CadIntersection, Intersection } from '@cognite/reveal';
+import {
+  CadIntersection,
+  Cognite3DModel,
+  CognitePointCloudModel,
+  Intersection,
+} from '@cognite/reveal';
 import { AssetPreviewSidebar } from './AssetPreviewSidebar';
 import { StyledSplitter } from '../elements';
 import { useSDK } from '@cognite/sdk-provider';
@@ -151,6 +156,17 @@ export const ThreeDView = ({ modelId }: Props) => {
     if (!viewer || !threeDModel || !overlayTool) {
       return;
     }
+
+    const hasAdded = (
+      viewer.models as (Cognite3DModel | CognitePointCloudModel)[]
+    ).some(
+      ({ modelId: tmId, revisionId: trId }) =>
+        threeDModel.modelId === tmId && threeDModel.revisionId === trId
+    );
+    if (!hasAdded) {
+      return;
+    }
+
     removeAllStyles(threeDModel);
 
     if (selectedAssetId) {
