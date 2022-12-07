@@ -96,6 +96,7 @@
   "field-in-use": "{{field}} is already in use",
   "key": "Key",
   "last-modified": "Last modified",
+  "last-run": "Last run",
   "last-run-status": "Last run status",
   "last-run-time": "Last run time",
   "last-seen": "Last connected",

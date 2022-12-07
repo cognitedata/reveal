@@ -104,22 +104,10 @@ const ExtpipesTable = ({ search }: ExtpipesTableProps): JSX.Element => {
       sorter: (recordA, recordB) => stringSorter(recordA.name, recordB.name),
     },
     {
-      title: t('last-run-status'),
+      title: t('last-run'),
       dataIndex: 'externalId',
-      key: 'last-run-status',
+      key: 'last-run',
       render: (value: string) => <LastRunStatusMarker externalId={value} />,
-    },
-    {
-      title: t('last-run-time'),
-      dataIndex: 'latestRun',
-      key: 'last-run-time',
-      render: (value: number) => {
-        return !!value ? (
-          <RelativeTimeWithTooltip id="latest-run" time={value} />
-        ) : (
-          '-'
-        );
-      },
       sorter: (recordA, recordB) =>
         dateSorter(recordA.latestRun, recordB.latestRun),
     },
