@@ -27,23 +27,21 @@ const ExtractorLibraryList = ({ items }: ExtractorLibraryListProps) => {
       {items?.map((item) => (
         <StyledExtractorContainer
           key={item.externalId}
-          to={createLink(`/${subAppPath}/${item.externalId}`)}
+          to={createLink(`/${subAppPath}/${item.category}/${item.externalId}`)}
           onClick={() => {
             trackUsage({ e: 'View.Extractor.Click', name: item.name });
           }}
         >
           <StyledExtractorContent>
-            {item?.imageUrl && (
-              <StyledExtractorImageContainer>
-                <StyledExtractorImage src={item?.imageUrl} />
-              </StyledExtractorImageContainer>
-            )}
-            <Flex gap={8} direction="column">
+            <Flex gap={8}>
+              {item?.imageUrl && (
+                <StyledExtractorImageContainer>
+                  <StyledExtractorImage src={item?.imageUrl} />
+                </StyledExtractorImageContainer>
+              )}
               <Title level="5">{item.name}</Title>
-              <StyledMutedDescription>
-                {item.description}
-              </StyledMutedDescription>
             </Flex>
+            <StyledMutedDescription>{item.description}</StyledMutedDescription>
             <StyledTagContainer>
               <Chip label={t(`${item.category}_one`)} size="x-small" />
             </StyledTagContainer>

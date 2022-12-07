@@ -11,8 +11,8 @@ import { ReleaseTag } from 'components/ReleaseTag';
 type DetailsHeaderProps = {
   imageUrl?: string;
   title: string;
-  version: string;
-  createdAt: string;
+  version?: string;
+  createdAt?: string;
 };
 
 const DetailsHeader = ({
@@ -22,10 +22,11 @@ const DetailsHeader = ({
   createdAt,
 }: DetailsHeaderProps) => {
   const { t } = useTranslation();
-  const { subAppPath, extractorExternalId } = useParams<{
+
+  const { subAppPath } = useParams<{
     subAppPath?: string;
-    extractorExternalId?: string;
   }>();
+
   return (
     <HeaderContainer>
       <Layout.Container>
@@ -37,49 +38,54 @@ const DetailsHeader = ({
                 title: t('extract-data'),
               },
               {
-                path: `/${subAppPath}/${extractorExternalId}`,
-                title: title,
+                title,
               },
             ]}
           />
           <Flex direction="column" gap={16}>
-            {imageUrl && (
-              <div>
-                <img src={imageUrl} />
-              </div>
-            )}
-            <Title level="3">{title}</Title>
-            <Flex gap={12}>
-              <Flex gap={6} alignItems="center">
-                <StyledIconMuted type="Layers" />
-                <StyledBodyMuted>
-                  <Flex gap={2}>
-                    <Flex gap={6} alignItems="center">
-                      {t('version-n', {
-                        version: getReleaseVersionCore(version),
-                      })}
-                    </Flex>
-                    <ReleaseTag version={version}></ReleaseTag>
-                  </Flex>
-                </StyledBodyMuted>
-              </Flex>
-              <Flex gap={6} alignItems="center">
-                <StyledIconMuted type="Events" />
-                <StyledBodyMuted>
-                  {t('released-date', {
-                    createdAt,
-                  })}
-                </StyledBodyMuted>
-              </Flex>
+            <Flex gap={8}>
+              {imageUrl && (
+                <StyledExtractorImageContainer>
+                  <StyledExtractorImage src={imageUrl} />
+                </StyledExtractorImageContainer>
+              )}
+              <Title level="3">{title}</Title>
             </Flex>
+            {(version || createdAt) && (
+              <Flex gap={12}>
+                {version && (
+                  <Flex gap={6} alignItems="center">
+                    <StyledIconMuted type="Layers" />
+                    <StyledBodyMuted>
+                      <Flex gap={2}>
+                        <Flex gap={6} alignItems="center">
+                          {t('version-n', {
+                            version: getReleaseVersionCore(version),
+                          })}
+                        </Flex>
+                        <ReleaseTag version={version}></ReleaseTag>
+                      </Flex>
+                    </StyledBodyMuted>
+                  </Flex>
+                )}
+                {createdAt && (
+                  <Flex gap={6} alignItems="center">
+                    <StyledIconMuted type="Events" />
+                    <StyledBodyMuted>
+                      {t('released-date', {
+                        createdAt,
+                      })}
+                    </StyledBodyMuted>
+                  </Flex>
+                )}
+              </Flex>
+            )}
           </Flex>
         </Flex>
       </Layout.Container>
     </HeaderContainer>
   );
 };
-
-export default DetailsHeader;
 
 const StyledBodyMuted = styled(Body).attrs({
   level: 3,
@@ -90,3 +96,16 @@ const StyledBodyMuted = styled(Body).attrs({
 const StyledIconMuted = styled(Icon)`
   color: ${Colors['text-icon--muted']};
 `;
+
+const StyledExtractorImageContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 32px;
+`;
+
+const StyledExtractorImage = styled.img`
+  max-height: 32px;
+  max-width: 32px;
+`;
+
+export default DetailsHeader;
