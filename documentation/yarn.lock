@@ -2035,12 +2035,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/reveal@link:../../../viewer/dist::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
-  version: 0.0.0-use.local
-  resolution: "@cognite/reveal@link:../../../viewer/dist::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
-  languageName: node
-  linkType: soft
-
 "@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
   resolution: "@cognite/reveal@link:../../viewer/dist::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
@@ -2075,6 +2069,34 @@ __metadata:
     "@cognite/sdk": ^5.0.0 || ^6.0.0 || ^7.0.0
     "@cognite/sdk-core": ^4.1.0
   checksum: 8c4fa4b52729b3ecee4425349c2f28a5a4c9824456b586ab141a65d5245d3782507bb6e36bd6e6b029a1e3cd3807b571fc81782825c65ad96b1c46f289c06654
+  languageName: node
+  linkType: hard
+
+"@cognite/reveal@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@cognite/reveal@npm:4.0.0"
+  dependencies:
+    "@tweenjs/tween.js": 18.6.4
+    "@types/draco3dgltf": 1.4.0
+    "@types/three": 0.146.0
+    assert: 2.0.0
+    async-mutex: 0.4.0
+    comlink: 4.3.1
+    glslify: 7.1.1
+    glslify-import: 3.1.0
+    html2canvas: ^1.4.1
+    lodash: 4.17.21
+    loglevel: 1.8.1
+    mixpanel-browser: 2.45.0
+    path-browserify: 1.0.1
+    proj4: 2.8.0
+    rxjs: 7.5.7
+    skmeans: 0.11.3
+    three-stdlib: 2.19.0
+  peerDependencies:
+    "@cognite/sdk": 7.13.0
+    three: 0.146.0
+  checksum: 4593851109a2c2361bd991a24726ee7b149a8d2f612ab92344e7c54c791d42a1de0e1c98bf0523a1ccc4f7b87d144de056dc80c2b9fd1b3532003b6796dd6259
   languageName: node
   linkType: hard
 
@@ -2134,11 +2156,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk@link:../../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
-  version: 0.0.0-use.local
-  resolution: "@cognite/sdk@link:../../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
+"@cognite/sdk-core@npm:^4.8.2":
+  version: 4.8.2
+  resolution: "@cognite/sdk-core@npm:4.8.2"
+  dependencies:
+    cross-fetch: ^3.0.4
+    is-buffer: ^2.0.5
+    lodash: ^4.17.11
+    query-string: ^5.1.1
+    url: ^0.11.0
+  checksum: e252cee628c4e9cd76038ea8df82cea561ec5dc2af121df77c81628d8102a90a0a8a607454c71de3522e341d8c5e7f2b31e48d777426db240656763f441ad272
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@cognite/sdk@link:../../viewer/node_modules/@cognite/sdk::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
@@ -2153,6 +2182,18 @@ __metadata:
     "@cognite/sdk-core": ^3.4.1
     lodash: ^4.17.11
   checksum: 4aa69322b02fc29bcf6aa6d1bc25c99ed1974c789791d6d093e21f751d154da55d03582350e78297f4eb55f92a693df60fdbb07ab225386c23f4e2f0c684db96
+  languageName: node
+  linkType: hard
+
+"@cognite/sdk@npm:7.13.0":
+  version: 7.13.0
+  resolution: "@cognite/sdk@npm:7.13.0"
+  dependencies:
+    "@cognite/sdk-core": ^4.8.2
+    "@types/geojson": ^7946.0.8
+    geojson: ^0.5.0
+    lodash: ^4.17.11
+  checksum: 0e5f562a35fad13c6c1262c42316eb17de673e3ace9f4dd0162896d11e5570e909af97c4ac762b2cccd6fce2657d4e0db29766f5a2435d20e1db64d479b7c865
   languageName: node
   linkType: hard
 
@@ -3015,10 +3056,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal-documentation/v4@workspace:versioned_docs/version-4.x"
   dependencies:
-    "@cognite/reveal": "link:../../../viewer/dist"
-    "@cognite/sdk": "link:../../../viewer/node_modules/@cognite/sdk"
-    "@types/three": "link:../../../viewer/node_modules/@types/three"
-    three: "link:../../../viewer/node_modules/three"
+    "@cognite/reveal": 4.0.0
+    "@cognite/sdk": 7.13.0
+    "@types/three": 0.146.0
+    three: 0.146.0
   languageName: unknown
   linkType: soft
 
@@ -3620,12 +3661,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@link:../../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
-  version: 0.0.0-use.local
-  resolution: "@types/three@link:../../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
-  languageName: node
-  linkType: soft
-
 "@types/three@link:../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
   resolution: "@types/three@link:../../viewer/node_modules/@types/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs"
@@ -3645,6 +3680,15 @@ __metadata:
   dependencies:
     "@types/webxr": "*"
   checksum: b4d1fd19eec01a15374a9e0a181207f0b2a27df881f3cfc63ce167b36b214c6926d80ac0eeb80c365832f69e7180db514a859808150ece1c1503a4eb58d4ac1e
+  languageName: node
+  linkType: hard
+
+"@types/three@npm:0.146.0":
+  version: 0.146.0
+  resolution: "@types/three@npm:0.146.0"
+  dependencies:
+    "@types/webxr": "*"
+  checksum: f8ea5ba032f6aaa1cb5ad7dfbbd13851e8cba04365bc7fa9a5320ea7e9a2538ea5f2426391f690f0465347ade15cc145d5dc84b1730d8cceea89f746231f667c
   languageName: node
   linkType: hard
 
@@ -4382,6 +4426,13 @@ __metadata:
   version: 1.0.0
   resolution: "base16@npm:1.0.0"
   checksum: 0cd449a2db0f0f957e4b6b57e33bc43c9e20d4f1dd744065db94b5da35e8e71fa4dc4bc7a901e59a84d5f8b6936e3c520e2471787f667fc155fb0f50d8540f5d
+  languageName: node
+  linkType: hard
+
+"base64-arraybuffer@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "base64-arraybuffer@npm:1.0.2"
+  checksum: 15e6400d2d028bf18be4ed97702b11418f8f8779fb8c743251c863b726638d52f69571d4cc1843224da7838abef0949c670bde46936663c45ad078e89fee5c62
   languageName: node
   linkType: hard
 
@@ -5346,6 +5397,15 @@ __metadata:
   peerDependencies:
     postcss: ^8.0.9
   checksum: 69ce1c2e0e854c043dccbb613f15e2911e2e12dd656d18cdae831baa6a6a8f9ef0d6560c456e3b41d28835e5e013bfdf9114eeba206564b1513ea968a3633c1f
+  languageName: node
+  linkType: hard
+
+"css-line-break@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "css-line-break@npm:2.1.0"
+  dependencies:
+    utrie: ^1.0.2
+  checksum: 37b1fe632b03be7a287cd394cef8b5285666343443125c510df9cfb6a4734a2c71e154ec8f7bbff72d7c339e1e5872989b1c52d86162aed27d6cc114725bb4d0
   languageName: node
   linkType: hard
 
@@ -7400,6 +7460,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html2canvas@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "html2canvas@npm:1.4.1"
+  dependencies:
+    css-line-break: ^2.1.0
+    text-segmentation: ^1.0.3
+  checksum: c134324af57f3262eecf982e436a4843fded3c6cf61954440ffd682527e4dd350e0c2fafd217c0b6f9a455fe345d0c67b4505689796ab160d4ca7c91c3766739
+  languageName: node
+  linkType: hard
+
 "htmlparser2@npm:^6.1.0":
   version: 6.1.0
   resolution: "htmlparser2@npm:6.1.0"
@@ -8399,7 +8469,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loglevel@npm:^1.7.1":
+"loglevel@npm:1.8.1, loglevel@npm:^1.7.1":
   version: 1.8.1
   resolution: "loglevel@npm:1.8.1"
   checksum: a1a62db40291aaeaef2f612334c49e531bff71cc1d01a2acab689ab80d59e092f852ab164a5aedc1a752fdc46b7b162cb097d8a9eb2cf0b299511106c29af61d
@@ -11113,7 +11183,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.1.0":
+"rxjs@npm:7.5.7, rxjs@npm:^7.1.0":
   version: 7.5.7
   resolution: "rxjs@npm:7.5.7"
   dependencies:
@@ -12056,6 +12126,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"text-segmentation@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "text-segmentation@npm:1.0.3"
+  dependencies:
+    utrie: ^1.0.2
+  checksum: 2e24632d59567c55ab49ac324815e2f7a8043e63e26b109636322ac3e30692cee8679a448fd5d0f0598a345f407afd0e34ba612e22524cf576d382d84058c013
+  languageName: node
+  linkType: hard
+
 "text-table@npm:^0.2.0":
   version: 0.2.0
   resolution: "text-table@npm:0.2.0"
@@ -12102,11 +12181,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@link:../../../viewer/node_modules/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x":
-  version: 0.0.0-use.local
-  resolution: "three@link:../../../viewer/node_modules/three::locator=%40reveal-documentation%2Fv4%40workspace%3Aversioned_docs%2Fversion-4.x"
+"three-stdlib@npm:2.19.0":
+  version: 2.19.0
+  resolution: "three-stdlib@npm:2.19.0"
+  dependencies:
+    "@babel/runtime": ^7.16.7
+    "@types/offscreencanvas": ^2019.6.4
+    "@webgpu/glslang": ^0.0.15
+    chevrotain: ^10.1.2
+    draco3d: ^1.4.1
+    fflate: ^0.6.9
+    ktx-parse: ^0.4.5
+    mmd-parser: ^1.0.4
+    opentype.js: ^1.3.3
+    potpack: ^1.0.1
+    zstddec: ^0.0.2
+  peerDependencies:
+    three: ">=0.122.0"
+  checksum: d2f8dc00c26cbbb5894a2272dd1e59f942031fe24b28e6f0754b1152beecb6e52ad3ab14aad6cd126721a93f5123a13cb3c94cbb14a935bc981b00d2468f0727
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "three@link:../../viewer/node_modules/three::locator=%40reveal-documentation%2Fnext%40workspace%3Adocs":
   version: 0.0.0-use.local
@@ -12132,6 +12226,13 @@ __metadata:
   version: 0.141.0
   resolution: "three@npm:0.141.0"
   checksum: d161350b5134f2db616c7081d625c84235a1d50658b9f9c6ffe94143ddb77944b1c1b6831ad0be00037f8c744c8c60ee8d740ea4d48844b54f4525ee73a2d44f
+  languageName: node
+  linkType: hard
+
+"three@npm:0.146.0":
+  version: 0.146.0
+  resolution: "three@npm:0.146.0"
+  checksum: c6eb2005d97c599de7f4eccf73c4b1e8731c353ca3e7b9bf9d3bc2b52a8e288c59c06c148fd93df16df323b28938947227a37e07cc6fbe04aa8f8725e49caa8a
   languageName: node
   linkType: hard
 
@@ -12786,6 +12887,15 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: c81095493225ecfc28add49c106ca4f09cdf56bc66731aa8dabc2edbbccb1e1bfe2de6a115e5c6a380d3ea166d1636410b62ef216bb07b3feb1cfde1d95d5080
+  languageName: node
+  linkType: hard
+
+"utrie@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "utrie@npm:1.0.2"
+  dependencies:
+    base64-arraybuffer: ^1.0.2
+  checksum: c96fbb7d4d8855a154327da0b18e39b7511cc70a7e4bcc3658e24f424bb884312d72b5ba777500b8858e34d365dc6b1a921dc5ca2f0d341182519c6b78e280a5
   languageName: node
   linkType: hard
 
