@@ -90,12 +90,13 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           },
         },
         {
-          accessorKey: 'sourceFile.directory',
           id: 'directory',
           header: 'Directory',
-          cell: ({ getValue }) => {
+          cell: ({ row }) => {
             return (
-              <Body level={2}>{getValue<string | undefined>() || DASH}</Body>
+              <Body level={2}>
+                {row.original?.sourceFile?.directory || DASH}
+              </Body>
             );
           },
           enableSorting: false,
