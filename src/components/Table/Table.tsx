@@ -54,6 +54,7 @@ export interface TableProps<T extends Record<string, any>>
   selectedRows?: Record<string, boolean>;
   expandedRows?: ExpandedState;
   enableSorting?: boolean;
+  manualSorting?: boolean;
   stickyHeader?: boolean;
   showLoadButton?: boolean;
   enableExpanding?: boolean;
@@ -85,6 +86,7 @@ export function Table<T extends TableData>({
   onRowClick = () => {},
   onSort,
   enableSorting = false,
+  manualSorting = true,
   expandedRows,
   selectedRows,
   scrollIntoViewRow,
@@ -186,7 +188,7 @@ export function Table<T extends TableData>({
       onColumnVisibilityChange: setColumnVisibility,
       onExpandedChange: onRowExpanded,
       enableSorting: enableSorting,
-      manualSorting: !!onSort,
+      manualSorting: manualSorting,
       columnResizeMode: 'onChange',
       enableHiding: true,
       enableExpanding: enableExpanding,
@@ -328,7 +330,7 @@ export function Table<T extends TableData>({
                           },
                         }}
                       >
-                        <Body level={2}>
+                        <Body level={2} className="cell-content">
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()

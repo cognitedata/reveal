@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Button, Title } from '@cognite/cogs.js';
 import { Table } from 'components/Table';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, SortingState } from '@tanstack/react-table';
 import {
   FilterContainer,
   FilterInput,
@@ -25,6 +25,7 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
   const [hideEmpty, setHideEmpty] = useState(false);
   const trackUsage = useMetrics();
   const track = useDebounceTrackUsage();
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const columns = useMemo(
     () =>
       [
@@ -114,6 +115,9 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
           id="metadata-table"
           data={filteredMetadata}
           enableSorting
+          sorting={sorting}
+          onSort={setSorting}
+          manualSorting={false}
           columns={columns}
         />
       </MetadataTableContainer>

@@ -25,8 +25,10 @@ export const MetadataTableContainer = styled.div`
 
   .data-exploration-table {
     background-color: var(--cogs-surface-medium);
-    & > div {
-      max-width: 100%;
+
+    .cell-content {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 `;
