@@ -1,11 +1,6 @@
 import React from 'react';
 import { Colors, Title } from '@cognite/cogs.js';
-import {
-  convertResourceType,
-  ResourceItem,
-  ResourceIcons,
-} from '@cognite/data-exploration';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { ResourceItem, ResourceIcons } from '@cognite/data-exploration';
 import { DatapointsMultiQuery } from '@cognite/sdk';
 import styled from 'styled-components';
 import { TitleRowActions } from './TitleRowActions';
@@ -25,19 +20,14 @@ export default function ResourceTitleRow({
   title,
   item: { type, id },
   datefilter,
-  getTitle = (i: any) => i?.name,
   beforeDefaultActions,
   afterDefaultActions,
   hideDefaultCloseActions,
 }: Props) {
-  const { data } = useCdfItem<{ name?: string }>(convertResourceType(type), {
-    id,
-  });
-
   const name = (
     <NameWrapper>
       <ResourceIcons type={type} style={{ marginRight: '10px' }} />
-      <Name level="3">{title || getTitle(data) || id}</Name>
+      <Name level="3">{title || id}</Name>
     </NameWrapper>
   );
 

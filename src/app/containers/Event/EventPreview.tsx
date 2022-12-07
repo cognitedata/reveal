@@ -73,7 +73,7 @@ export const EventPreview = ({
       <Breadcrumbs currentResource={{ title: renderTitle(event) }} />
       <ResourceTitleRow
         item={{ id: eventId, type: 'event' }}
-        getTitle={renderTitle}
+        title={renderTitle(event)}
         afterDefaultActions={actions}
       />
       <ResourceDetailsTabs

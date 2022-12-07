@@ -72,6 +72,7 @@ export const SequencePreview = ({
       />
       <ResourceTitleRow
         item={{ id: sequenceId, type: 'sequence' }}
+        title={sequence.name}
         afterDefaultActions={actions}
       />
       <ResourceDetailsTabs

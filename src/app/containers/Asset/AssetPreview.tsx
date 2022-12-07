@@ -94,6 +94,7 @@ export const AssetPreview = ({
       <Breadcrumbs currentResource={{ title: asset.name }} />
       <ResourceTitleRow
         item={{ id: assetId, type: 'asset' }}
+        title={asset.name}
         afterDefaultActions={actions}
         hideDefaultCloseActions={hideDefaultCloseActions}
       />

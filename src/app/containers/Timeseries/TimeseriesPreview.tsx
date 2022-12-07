@@ -82,6 +82,7 @@ export const TimeseriesPreview = ({
           end: dateRange[1],
         }}
         item={{ id: timeseriesId, type: 'timeSeries' }}
+        title={timeseries.name}
         afterDefaultActions={actions}
       />
 

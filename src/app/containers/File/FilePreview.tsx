@@ -117,6 +117,7 @@ export const FilePreview = ({
         <Breadcrumbs currentResource={{ title: fileInfo.name }} />
         <ResourceTitleRow
           item={{ id: fileId!, type: resourceType || 'file' }}
+          title={fileInfo.name}
           beforeDefaultActions={
             <>
               <EditFileButton
