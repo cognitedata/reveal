@@ -3,13 +3,14 @@ import { FlexibleDataModelingClient } from './boundaries';
 import {
   CreateDataModelTransformationDTO,
   DeleteInstancesDTO,
-  FetchDataDTO,
+  ListDataDTO,
   FetchDataModelTransformationsDTO,
   FetchPublishedRowsCountDTO,
   IngestInstanceDTO,
   IngestInstancesDTO,
   IngestInstancesResponseDTO,
   PublishedRowsCountMap,
+  SearchDataDTO,
 } from './dto';
 
 import { UnnormalizedDmsIngestNodesItemDTO } from './providers/fdm-current';
@@ -34,7 +35,7 @@ export class DataManagementHandler {
     );
   }
 
-  fetchData(dto: FetchDataDTO): Promise<Result<PaginatedResponse>> {
+  fetchData(dto: ListDataDTO): Promise<Result<PaginatedResponse>> {
     return new Promise((resolve, reject) => {
       this.fdmClient
         .fetchData(dto)
@@ -43,6 +44,13 @@ export class DataManagementHandler {
         })
         .catch((error) => reject(Result.fail(error)));
     });
+  }
+
+  searchData(dto: SearchDataDTO) {
+    return this.fdmClient
+      .searchData(dto)
+      .then((result) => Result.ok(result))
+      .catch((error) => Promise.reject(Result.fail(error)));
   }
 
   getTransformations(dto: FetchDataModelTransformationsDTO) {

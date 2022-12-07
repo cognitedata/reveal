@@ -191,9 +191,13 @@ describe('FDM v3 Client', () => {
 
       await fdmClient.fetchData({
         cursor: '',
-        dataModelId: 'testExternalId',
-        space: 'testSpace',
-        version: '1',
+        dataModelVersion: {
+          externalId: 'testExternalId',
+          version: '1',
+          space: 'testSpace',
+          schema: '',
+          status: DataModelVersionStatus.PUBLISHED,
+        },
         limit: 10,
         hasNextPage: false,
         dataModelType: {

@@ -2,16 +2,23 @@ import { mixerApiBuiltInTypes } from '../constants';
 import { isInlineType } from '../utils';
 
 import { DataModelTypeDefsField, DataModelTypeDefsType } from '../types';
-import { BuildQueryDTO } from '../dto';
+import { BuildListQueryDTO, BuildSearchQueryDTO } from '../dto';
+
+export enum OPERATION_TYPE {
+  LIST = 'list',
+  SEARCH = 'search',
+}
 
 export class MixerQueryBuilder {
-  getOperationName(typeName: string): string {
-    return `list${typeName}`;
+  getOperationName(typeName: string, operationType: OPERATION_TYPE): string {
+    return `${operationType}${typeName}`;
   }
+
   getFilterType(typeName: string): string {
     return `_List${typeName}Filter`;
   }
-  buildQuery(dto: BuildQueryDTO): string {
+
+  buildListQuery(dto: BuildListQueryDTO): string {
     const {
       dataModelType,
       dataModelTypeDefs,
@@ -29,11 +36,15 @@ export class MixerQueryBuilder {
     return `query ${
       filter
         ? `${this.getOperationName(
-            dataModelType.name
+            dataModelType.name,
+            OPERATION_TYPE.LIST
           )} ($filter: ${this.getFilterType(dataModelType.name)})`
         : ''
     } {
-    ${this.getOperationName(dataModelType.name)}${filterString} {
+    ${this.getOperationName(
+      dataModelType.name,
+      OPERATION_TYPE.LIST
+    )}${filterString} {
       items {
         externalId
         ${dataModelType.fields
@@ -52,6 +63,34 @@ export class MixerQueryBuilder {
         hasPreviousPage
         hasNextPage
         endCursor
+      }
+    }
+  }`;
+  }
+
+  buildSearchQuery({
+    dataModelType,
+    dataModelTypeDefs,
+  }: BuildSearchQueryDTO): string {
+    const operationName = this.getOperationName(
+      dataModelType.name,
+      OPERATION_TYPE.SEARCH
+    );
+
+    return `query ${operationName}($first: Int, $query: String!) {
+    ${operationName}(first: $first, query: $query) {
+      items {
+        externalId
+        ${dataModelType.fields
+          .map((field) =>
+            this.buildQueryItem(
+              field,
+              dataModelTypeDefs.types.find(
+                (typeDef) => typeDef.name === field.type.name
+              )
+            )
+          )
+          .join('\n')}
       }
     }
   }`;

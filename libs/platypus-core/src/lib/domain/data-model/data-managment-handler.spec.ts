@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Result } from '@platypus-core/boundaries/types';
 import { FlexibleDataModelingClient } from './boundaries';
 import { DataManagementHandler } from './data-managment-handler';
+import { DataModelVersionStatus } from './types';
 
 describe('DataManagementHandlerTest', () => {
   const fetchDataResponseMock = {
@@ -25,6 +27,8 @@ describe('DataManagementHandlerTest', () => {
     },
   ];
 
+  const mockSearchData = jest.fn();
+
   const fdmClientMock = {
     createTransformation: jest
       .fn()
@@ -35,6 +39,7 @@ describe('DataManagementHandlerTest', () => {
     fetchData: jest
       .fn()
       .mockImplementation(() => Promise.resolve(fetchDataResponseMock)),
+    searchData: mockSearchData,
     fetchPublishedRowsCount: jest.fn().mockImplementationOnce(() =>
       Promise.resolve({
         Person: 0,
@@ -66,14 +71,77 @@ describe('DataManagementHandlerTest', () => {
       dataModelTypeDefs: { types: [mockType] },
       hasNextPage: true,
       limit: 100,
-      dataModelId: 'testExternalId',
-      space: 'testExternalId',
-      version: '1',
+      dataModelVersion: {
+        externalId: 'testExternalId',
+        version: '1',
+        space: 'testSpace',
+        schema: '',
+        status: DataModelVersionStatus.PUBLISHED,
+      },
     });
 
     expect(fdmClientMock.fetchData).toBeCalled();
     expect(response.isSuccess).toBe(true);
     expect(response.getValue().items).toEqual(fetchDataResponseMock.items);
+  });
+
+  it('should search data', async () => {
+    const service = createInstance();
+    const mockType = {
+      name: 'Person',
+      fields: [],
+    };
+    mockSearchData.mockImplementationOnce(() => {
+      return Promise.resolve(['foo']);
+    });
+
+    const response = await service.searchData({
+      dataModelType: mockType,
+      dataModelTypeDefs: { types: [mockType] },
+      dataModelVersion: {
+        externalId: 'testExternalId',
+        version: '1',
+        space: 'testSpace',
+        schema: '',
+        status: DataModelVersionStatus.PUBLISHED,
+      },
+      limit: 100,
+      searchTerm: 'lorem',
+    });
+
+    expect(response.isSuccess).toBe(true);
+    expect(response.getValue()).toEqual(['foo']);
+  });
+
+  it('rejects with failed Result if search fails', async () => {
+    const service = createInstance();
+    const mockType = {
+      name: 'Person',
+      fields: [],
+    };
+    mockSearchData.mockImplementationOnce(() => {
+      return Promise.reject('search failed');
+    });
+
+    expect.assertions(1);
+
+    try {
+      await service.searchData({
+        dataModelType: mockType,
+        dataModelTypeDefs: { types: [mockType] },
+        dataModelVersion: {
+          externalId: 'testExternalId',
+          version: '1',
+          space: 'testSpace',
+          schema: '',
+          status: DataModelVersionStatus.PUBLISHED,
+        },
+        limit: 100,
+        searchTerm: 'lorem',
+      });
+    } catch (error) {
+      expect((error as Result<string>).errorValue()).toBe('search failed');
+    }
   });
 
   it('should fetch published rows count', async () => {

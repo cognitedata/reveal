@@ -13,7 +13,7 @@ import {
   DeleteDataModelDTO,
   RunQueryDTO,
   GraphQLQueryResponse,
-  FetchDataDTO,
+  ListDataDTO,
   IngestInstancesDTO,
   DeleteInstancesDTO,
   FetchDataModelTransformationsDTO,
@@ -22,6 +22,7 @@ import {
   PublishedRowsCountMap,
   IngestInstancesResponseDTO,
   PublishDataModelVersionDTO,
+  SearchDataDTO,
 } from '../../dto';
 import { TransformationApiService } from '../../services';
 import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
@@ -31,6 +32,7 @@ import {
   DataModelValidationError,
   PaginatedResponse,
   DataModelTransformation,
+  CdfResourceInstance,
 } from '../../types';
 import {
   DataModelDataMapper,
@@ -45,8 +47,7 @@ import {
 } from './dto';
 import { DmsApiService, DmsModelBuilder } from './services/data-model-storage';
 import { MixerApiService, MixerBindingsBuilder } from './services/mixer-api';
-
-import { MixerQueryBuilder } from '../../services';
+import { MixerQueryBuilder, OPERATION_TYPE } from '../../services';
 
 export class FdmV2Client implements FlexibleDataModelingClient {
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
@@ -329,20 +330,20 @@ export class FdmV2Client implements FlexibleDataModelingClient {
    * Returns the data as Paginated Response for a type.
    * @param dto
    */
-  fetchData(dto: FetchDataDTO): Promise<PaginatedResponse> {
+  fetchData(dto: ListDataDTO): Promise<PaginatedResponse> {
     const {
       cursor,
       hasNextPage,
       limit,
       dataModelType,
       dataModelTypeDefs,
-      dataModelId,
-      version,
+      dataModelVersion: { externalId, version },
     } = dto;
     const operationName = this.queryBuilder.getOperationName(
-      dataModelType.name
+      dataModelType.name,
+      OPERATION_TYPE.LIST
     );
-    const query = this.queryBuilder.buildQuery({
+    const query = this.queryBuilder.buildListQuery({
       cursor,
       dataModelType,
       dataModelTypeDefs,
@@ -354,7 +355,7 @@ export class FdmV2Client implements FlexibleDataModelingClient {
         graphQlParams: {
           query,
         },
-        dataModelId,
+        dataModelId: externalId,
         schemaVersion: version,
       })
       .then((result) => {
@@ -369,6 +370,42 @@ export class FdmV2Client implements FlexibleDataModelingClient {
           items: response.items,
         };
       });
+  }
+
+  searchData({
+    dataModelVersion: { externalId, version },
+    dataModelType,
+    dataModelTypeDefs,
+    limit,
+    searchTerm,
+  }: SearchDataDTO): Promise<CdfResourceInstance[]> {
+    const query = this.queryBuilder.buildSearchQuery({
+      dataModelType,
+      dataModelTypeDefs,
+    });
+
+    return this.mixerApiService
+      .runQuery({
+        graphQlParams: {
+          query,
+          variables: {
+            first: limit,
+            query: searchTerm,
+          },
+        },
+        dataModelId: externalId,
+        schemaVersion: version,
+      })
+      .then((result) => {
+        const operationName = this.queryBuilder.getOperationName(
+          dataModelType.name,
+          OPERATION_TYPE.SEARCH
+        );
+
+        const response = result.data[operationName];
+        return response.items;
+      })
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
   /**

@@ -2,19 +2,25 @@ import {
   DataModelTransformation,
   DataModelTypeDefs,
   DataModelTypeDefsType,
+  DataModelVersion,
 } from '../types';
 import { QueryFilter } from './common-dtos';
 
-export interface FetchDataDTO {
+export interface DataQueryingBaseDTO {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
+  dataModelVersion: DataModelVersion;
   limit: number;
+}
+
+export interface ListDataDTO extends DataQueryingBaseDTO {
   cursor: string;
   hasNextPage: boolean;
-  dataModelId: string;
-  version: string;
-  space: string;
   filter?: QueryFilter;
+}
+
+export interface SearchDataDTO extends DataQueryingBaseDTO {
+  searchTerm: string;
 }
 
 export interface FetchPublishedRowsCountDTO {

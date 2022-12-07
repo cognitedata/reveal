@@ -19,8 +19,6 @@ import {
   CellEditingStartedEvent,
   ColDef,
   GridReadyEvent,
-  IDatasource,
-  IGetRowsParams,
   RowDataUpdatedEvent,
   ValueSetterParams,
 } from 'ag-grid-community';
@@ -57,6 +55,12 @@ import {
   CollapsiblePanelContainer,
   DataPreviewSidebarData,
 } from './collapsible-panel-container';
+import debounce from 'lodash/debounce';
+import {
+  useDataModelVersions,
+  useSelectedDataModelVersion,
+} from '@platypus-app/hooks/useDataModelActions';
+import { useListDataSource } from '../../hooks/useListDataSource';
 
 const pageSizeLimit = 100;
 
@@ -84,6 +88,7 @@ export const DataPreviewTable = forwardRef<
 
     const { t } = useTranslation('DataPreviewTable');
     const [isGridInit, setIsGridInit] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
     const [isTransformationModalVisible, setIsTransformationModalVisible] =
       useState(false);
     // This property is used to trigger a rerender when a selection occurs in the grid
@@ -97,6 +102,14 @@ export const DataPreviewTable = forwardRef<
       useManualPopulationFeatureFlag();
     const { isEnabled: enableDeletion } =
       useDataManagementDeletionFeatureFlag();
+    const { data: dataModelVersions } =
+      useDataModelVersions(dataModelExternalId);
+    const selectedDataModelVersion = useSelectedDataModelVersion(
+      version,
+      dataModelVersions || [],
+      dataModelExternalId,
+      space || ''
+    );
 
     const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
 
@@ -230,65 +243,37 @@ export const DataPreviewTable = forwardRef<
       [gridRef]
     );
 
+    const listDataSource = useListDataSource({
+      dataModelType,
+      dataModelTypeDefs,
+      dataModelVersion: selectedDataModelVersion,
+      limit: pageSizeLimit,
+      onError: (error) => {
+        setFetchError(error);
+
+        Notification({
+          type: 'error',
+          message: error.message,
+        });
+      },
+      onSuccess: (items) => {
+        /*
+        This conditional is for the case where the aggregation
+        is only returning 0s due to the syncer issue. Remove below code
+        when the syncer issue is resolved.
+        */
+        if (items.length > 0 && onHideOverlay.current) {
+          onHideOverlay.current();
+        }
+      },
+    });
+
     const onGridReady = useCallback(
       (grid: GridReadyEvent) => {
-        let cursor: string;
-        let hasNextPage: boolean;
-
         onShowNoRowsOverlay.current = () => grid.api.showNoRowsOverlay();
         onHideOverlay.current = () => grid.api.hideOverlay();
 
-        const dataSource = {
-          getRows: async (params: IGetRowsParams) => {
-            /*
-          startRow will be 0 if we're fetching the first block of data or if we've
-          already fetched blocks of data but the ag-grid cache is being refreshed
-          or purged. We need to ensure the pagination properties are reset when
-          fetching the first block of data.
-          */
-            if (params.startRow === 0) {
-              cursor = '';
-              hasNextPage = false;
-            }
-
-            return dataManagementHandler
-              .fetchData({
-                dataModelId: dataModelExternalId,
-                cursor,
-                hasNextPage,
-                dataModelType,
-                dataModelTypeDefs,
-                version,
-                space,
-                limit: pageSizeLimit,
-              })
-              .then((response) => {
-                const result = response.getValue();
-                hasNextPage = result.pageInfo.hasNextPage;
-                cursor = result.pageInfo.cursor;
-
-                const lastRow = !result.pageInfo.hasNextPage
-                  ? params.startRow + result.items.length
-                  : -1;
-
-                /*
-              This conditional is for the case where the aggregation
-              is only returning 0s due to the syncer issue. Remove below code
-              when the syncer issue is resolved.
-              */
-                if (result.items.length > 0 && onHideOverlay.current) {
-                  onHideOverlay.current();
-                }
-
-                params.successCallback(result.items, lastRow);
-              })
-              .catch((err) => {
-                setFetchError(err);
-              });
-          },
-        } as IDatasource;
-
-        grid.api.setDatasource(dataSource);
+        grid.api.setDatasource(listDataSource);
 
         if (isNoRowsOverlayVisible) {
           onShowNoRowsOverlay.current();
@@ -297,17 +282,28 @@ export const DataPreviewTable = forwardRef<
         }
       },
       [
-        dataManagementHandler,
-        dataModelExternalId,
-        dataModelType,
-        dataModelTypeDefs,
+        listDataSource,
         isNoRowsOverlayVisible,
         onHideOverlay,
         onShowNoRowsOverlay,
-        version,
       ]
     );
+
     const prevDraftRowsLength = useRef(draftRowsData.length);
+
+    useEffect(() => {
+      gridRef.current?.api.onFilterChanged();
+    }, [searchTerm]);
+
+    const debouncedHandleSearchInputValueChange = debounce((value) => {
+      setSearchTerm(value);
+    }, 300);
+
+    useEffect(() => {
+      return () => {
+        debouncedHandleSearchInputValueChange.cancel();
+      };
+    }, [debouncedHandleSearchInputValueChange]);
 
     const handlePinnedRowDataChanged = (event: RowDataUpdatedEvent) => {
       if (draftRowsData.length > prevDraftRowsLength.current) {
@@ -342,6 +338,7 @@ export const DataPreviewTable = forwardRef<
         e.api.stopEditing();
       }
     };
+
     const handleCellDoubleClicked = useCallback(
       (event: CellDoubleClickedEvent) => {
         if (!event.colDef.field) {
@@ -604,7 +601,8 @@ export const DataPreviewTable = forwardRef<
         )}
 
         <PreviewPageHeader
-          title={dataModelType.name}
+          dataModelExternalId={dataModelExternalId}
+          draftRowsCount={draftRowsData.length}
           isDeleteButtonDisabled={
             totalSelectedRowCount === 0 || deleteRowsMutation.isLoading
           }
@@ -613,14 +611,14 @@ export const DataPreviewTable = forwardRef<
           onDeleteClick={() => {
             setIsDeleteRowsModalVisible(true);
           }}
-          draftRowsCount={draftRowsData.length}
+          onDraftRowsCountClick={toggleShouldShowDraftRows}
+          onPublishedRowsCountClick={toggleShouldShowPublishedRows}
+          onSearchInputValueChange={debouncedHandleSearchInputValueChange}
           publishedRowsCount={publishedRowsCountMap?.[dataModelType.name] || 0}
           shouldShowDraftRows={shouldShowDraftRows}
           shouldShowPublishedRows={shouldShowPublishedRows}
-          onDraftRowsCountClick={toggleShouldShowDraftRows}
-          onPublishedRowsCountClick={toggleShouldShowPublishedRows}
+          title={dataModelType.name}
           typeName={dataModelType.name}
-          dataModelExternalId={dataModelExternalId}
           version={version}
         />
         <CollapsiblePanelContainer
@@ -653,9 +651,10 @@ export const DataPreviewTable = forwardRef<
                 ),
                 context: {
                   dataModelExternalId,
-                  version,
                   dataModelType,
                   dataModelTypeDefs,
+                  searchTerm,
+                  version,
                 },
                 onCellEditingStarted: handleCellEditingStarted,
                 onCellDoubleClicked: handleCellDoubleClicked,

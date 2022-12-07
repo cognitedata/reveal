@@ -48,11 +48,16 @@ export type QueryFilter =
   | { and: QueryFilter[] }
   | { or: QueryFilter[] };
 
-export interface BuildQueryDTO {
+export interface BuildListQueryDTO {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
   limit: number;
   cursor: string;
   hasNextPage: boolean;
   filter?: QueryFilter;
+}
+
+export interface BuildSearchQueryDTO {
+  dataModelType: DataModelTypeDefsType;
+  dataModelTypeDefs: DataModelTypeDefs;
 }

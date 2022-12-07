@@ -89,6 +89,7 @@ describe('PreviewPageHeader', () => {
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onSearchInputValueChange={noop}
         publishedRowsCount={0}
         shouldShowDraftRows
         shouldShowPublishedRows
@@ -117,6 +118,7 @@ describe('PreviewPageHeader', () => {
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onSearchInputValueChange={noop}
         publishedRowsCount={1}
         shouldShowDraftRows
         shouldShowPublishedRows
@@ -129,6 +131,7 @@ describe('PreviewPageHeader', () => {
     expect(screen.getByText(/add instance/i)).toBeTruthy();
     expect(screen.getByLabelText(/delete/i)).toBeTruthy();
   });
+
   it('Shows action buttons if there are draft rows', () => {
     mockedUseTransformations.mockReturnValue({
       data: [],
@@ -144,6 +147,7 @@ describe('PreviewPageHeader', () => {
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onSearchInputValueChange={noop}
         publishedRowsCount={0}
         shouldShowDraftRows
         shouldShowPublishedRows
@@ -172,6 +176,7 @@ describe('PreviewPageHeader', () => {
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onSearchInputValueChange={noop}
         publishedRowsCount={0}
         shouldShowDraftRows
         shouldShowPublishedRows
@@ -183,5 +188,53 @@ describe('PreviewPageHeader', () => {
 
     expect(screen.queryByText(/add instance/i)).toBeNull();
     expect(screen.queryByLabelText(/delete/i)).toBeNull();
+  });
+
+  it('Shows search input if there are published rows', () => {
+    render(
+      <PreviewPageHeader
+        dataModelExternalId="imdb"
+        draftRowsCount={0}
+        isDeleteButtonDisabled={false}
+        onAddTransformationClick={noop}
+        onCreateClick={noop}
+        onDeleteClick={noop}
+        onDraftRowsCountClick={noop}
+        onPublishedRowsCountClick={noop}
+        onSearchInputValueChange={noop}
+        publishedRowsCount={4}
+        shouldShowDraftRows
+        shouldShowPublishedRows
+        title="Lorem"
+        typeName="Movie"
+        version="2"
+      />
+    );
+
+    expect(screen.getByRole('searchbox')).toBeTruthy();
+  });
+
+  it('Does not show search input if there are draft rows but no published rows', () => {
+    render(
+      <PreviewPageHeader
+        dataModelExternalId="imdb"
+        draftRowsCount={10}
+        isDeleteButtonDisabled={false}
+        onAddTransformationClick={noop}
+        onCreateClick={noop}
+        onDeleteClick={noop}
+        onDraftRowsCountClick={noop}
+        onPublishedRowsCountClick={noop}
+        onSearchInputValueChange={noop}
+        publishedRowsCount={0}
+        shouldShowDraftRows
+        shouldShowPublishedRows
+        title="Lorem"
+        typeName="Movie"
+        version="2"
+      />
+    );
+
+    expect(screen.queryByRole('searchbox')).toBeNull();
   });
 });

@@ -5,7 +5,7 @@ import {
   CreateDataModelVersionDTO,
   DeleteDataModelDTO,
   DeleteInstancesDTO,
-  FetchDataDTO,
+  ListDataDTO,
   FetchDataModelDTO,
   FetchDataModelTransformationsDTO,
   FetchDataModelVersionDTO,
@@ -17,10 +17,12 @@ import {
   PublishDataModelVersionDTO,
   PublishedRowsCountMap,
   RunQueryDTO,
+  SearchDataDTO,
   UpdateDataModelDTO,
 } from '../dto';
 
 import {
+  CdfResourceInstance,
   DataModel,
   DataModelTransformation,
   DataModelValidationError,
@@ -109,7 +111,13 @@ export interface FlexibleDataModelingClient {
    * Returns the data as Paginated Response for a type.
    * @param dto
    */
-  fetchData(dto: FetchDataDTO): Promise<PaginatedResponse>;
+  fetchData(dto: ListDataDTO): Promise<PaginatedResponse>;
+
+  /**
+   * Returns the search results from a given query.
+   * @param dto
+   */
+  searchData(dto: SearchDataDTO): Promise<CdfResourceInstance[]>;
 
   /**
    * Ingest data model type instances (data).

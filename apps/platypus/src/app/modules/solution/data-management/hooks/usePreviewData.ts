@@ -52,15 +52,13 @@ export const usePreviewData = (
     async () => {
       return await dataManagementHandler
         .fetchData({
-          dataModelId: dataModelExternalId,
           cursor: '',
-          hasNextPage: false,
           dataModelType: dataModelType,
           dataModelTypeDefs: dataModelTypeDefs,
-          version: selectedDataModelVersion.version,
-          limit: 1,
-          space: dataModel?.space || '',
+          dataModelVersion: selectedDataModelVersion,
           filter: { externalId: { eq: externalId } },
+          hasNextPage: false,
+          limit: 1,
         })
         .then((response) => {
           return response.getValue().items[0];

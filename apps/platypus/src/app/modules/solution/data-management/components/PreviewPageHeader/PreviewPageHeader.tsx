@@ -9,6 +9,8 @@ import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
 } from '@platypus-app/flags';
+import * as S from './elements';
+import { useRef } from 'react';
 
 type Props = {
   dataModelExternalId: string;
@@ -19,6 +21,7 @@ type Props = {
   onDeleteClick: () => void;
   onDraftRowsCountClick: () => void;
   onPublishedRowsCountClick: () => void;
+  onSearchInputValueChange: (value: string) => void;
   publishedRowsCount: number;
   shouldShowDraftRows: boolean;
   shouldShowPublishedRows: boolean;
@@ -36,6 +39,7 @@ export function PreviewPageHeader({
   onDeleteClick,
   onDraftRowsCountClick,
   onPublishedRowsCountClick,
+  onSearchInputValueChange,
   publishedRowsCount,
   shouldShowDraftRows,
   shouldShowPublishedRows,
@@ -53,6 +57,7 @@ export function PreviewPageHeader({
     typeName,
     version,
   });
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const tableHasRows = draftRowsCount > 0 || publishedRowsCount > 0;
   const shouldShowActions =
@@ -125,6 +130,30 @@ export function PreviewPageHeader({
     >
       {shouldShowActions && (
         <Flex justifyContent={'flex-end'} gap={8}>
+          {publishedRowsCount > 0 && (
+            <>
+              <S.SearchInput
+                clearable={{
+                  callback: () => {
+                    // input is not controlled to make debouncing easier, but that means
+                    // we need to clear it manually
+                    if (searchInputRef.current) {
+                      searchInputRef.current.value = '';
+                    }
+
+                    onSearchInputValueChange('');
+                  },
+                }}
+                iconPlacement="left"
+                icon="Search"
+                onChange={(e) => onSearchInputValueChange(e.target.value)}
+                placeholder="Search"
+                ref={searchInputRef}
+                type="search"
+              />
+              <PageHeaderDivider />
+            </>
+          )}
           {enableDelete && (
             <Button
               type="ghost"
@@ -146,7 +175,7 @@ export function PreviewPageHeader({
               {t('create-new-row', 'Add instance')}
             </Button>
           )}
-          <PageHeaderDivider />
+          {(enableDelete || enableManualPopulation) && <PageHeaderDivider />}
           {transformations && transformations.length > 0 ? (
             <TransformationDropdown
               onAddClick={onAddTransformationClick}

@@ -4,7 +4,7 @@ import {
   CreateDataModelTransformationDTO,
   DeleteDataModelDTO,
   DeleteInstancesDTO,
-  FetchDataDTO,
+  ListDataDTO,
   FetchDataModelDTO,
   FetchDataModelTransformationsDTO,
   FetchDataModelVersionDTO,
@@ -16,10 +16,12 @@ import {
   PublishDataModelVersionDTO,
   PublishedRowsCountMap,
   RunQueryDTO,
+  SearchDataDTO,
   UpdateDataModelDTO,
 } from '../../dto';
 
 import {
+  CdfResourceInstance,
   DataModel,
   DataModelTransformation,
   DataModelValidationError,
@@ -38,7 +40,7 @@ import { PlatypusError } from '../../../../boundaries/types';
 import { IGraphQlUtilsService } from '../../boundaries';
 import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
 import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
-import { MixerQueryBuilder } from '../../services';
+import { MixerQueryBuilder, OPERATION_TYPE } from '../../services';
 import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
 
 export class FdmClient implements FlexibleDataModelingClient {
@@ -279,21 +281,20 @@ export class FdmClient implements FlexibleDataModelingClient {
    * Returns the data as Paginated Response for a type.
    * @param dto
    */
-  fetchData(dto: FetchDataDTO): Promise<PaginatedResponse> {
+  fetchData(dto: ListDataDTO): Promise<PaginatedResponse> {
     const {
       cursor,
       hasNextPage,
       limit,
       dataModelType,
       dataModelTypeDefs,
-      dataModelId,
-      version,
-      space,
+      dataModelVersion: { externalId, space, version },
     } = dto;
     const operationName = this.queryBuilder.getOperationName(
-      dataModelType.name
+      dataModelType.name,
+      OPERATION_TYPE.LIST
     );
-    const query = this.queryBuilder.buildQuery({
+    const query = this.queryBuilder.buildListQuery({
       cursor,
       dataModelType,
       dataModelTypeDefs,
@@ -305,7 +306,7 @@ export class FdmClient implements FlexibleDataModelingClient {
         graphQlParams: {
           query,
         },
-        dataModelId,
+        dataModelId: externalId,
         space,
         schemaVersion: version,
       })
@@ -321,6 +322,14 @@ export class FdmClient implements FlexibleDataModelingClient {
           items: response.items,
         };
       });
+  }
+
+  /**
+   * Returns the search results from a given query.
+   * @param dto
+   */
+  searchData(dto: SearchDataDTO): Promise<CdfResourceInstance[]> {
+    throw 'Not implemented';
   }
 
   /**

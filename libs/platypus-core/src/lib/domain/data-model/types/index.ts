@@ -46,7 +46,7 @@ export type BuiltInType = {
 
 export type PaginatedResponse = {
   pageInfo: { cursor: string; hasNextPage: boolean };
-  items: KeyValueMap[];
+  items: CdfResourceInstance[];
 };
 export interface DataModelValidationError extends ValidationError {
   typeName?: string;
@@ -64,3 +64,8 @@ export type DataModelTransformation = {
     instanceSpaceExternalId: string;
   };
 };
+
+/* CdfResourceInstance represents a single row of published data */
+export interface CdfResourceInstance extends KeyValueMap {
+  externalId: string;
+}
