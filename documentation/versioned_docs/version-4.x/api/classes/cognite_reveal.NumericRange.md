@@ -22,7 +22,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:10](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L10)
+[packages/utilities/src/NumericRange.ts:10](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L10)
 
 ## Properties
 
@@ -32,7 +32,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:7](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L7)
+[packages/utilities/src/NumericRange.ts:7](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L7)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:6](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L6)
+[packages/utilities/src/NumericRange.ts:6](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L6)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:8](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L8)
+[packages/utilities/src/NumericRange.ts:8](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L8)
 
 ## Methods
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:38](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L38)
+[packages/utilities/src/NumericRange.ts:38](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L38)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:34](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L34)
+[packages/utilities/src/NumericRange.ts:34](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L34)
 
 ___
 
@@ -112,13 +112,13 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:72](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L72)
+[packages/utilities/src/NumericRange.ts:72](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L72)
 
 ___
 
 ### intersectionWith
 
-▸ **intersectionWith**(`range`): [`NumericRange`](cognite_reveal.NumericRange.md)
+▸ **intersectionWith**(`range`): `undefined` \| [`NumericRange`](cognite_reveal.NumericRange.md)
 
 #### Parameters
 
@@ -128,11 +128,11 @@ ___
 
 #### Returns
 
-[`NumericRange`](cognite_reveal.NumericRange.md)
+`undefined` \| [`NumericRange`](cognite_reveal.NumericRange.md)
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:50](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L50)
+[packages/utilities/src/NumericRange.ts:50](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L50)
 
 ___
 
@@ -152,7 +152,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:42](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L42)
+[packages/utilities/src/NumericRange.ts:42](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L42)
 
 ___
 
@@ -172,7 +172,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:46](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L46)
+[packages/utilities/src/NumericRange.ts:46](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L46)
 
 ___
 
@@ -192,7 +192,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:61](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L61)
+[packages/utilities/src/NumericRange.ts:61](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L61)
 
 ___
 
@@ -206,7 +206,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:30](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L30)
+[packages/utilities/src/NumericRange.ts:30](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L30)
 
 ___
 
@@ -220,7 +220,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:78](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L78)
+[packages/utilities/src/NumericRange.ts:78](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L78)
 
 ___
 
@@ -240,7 +240,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:65](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L65)
+[packages/utilities/src/NumericRange.ts:65](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L65)
 
 ___
 
@@ -254,7 +254,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:24](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L24)
+[packages/utilities/src/NumericRange.ts:24](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L24)
 
 ___
 
@@ -275,7 +275,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:20](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L20)
+[packages/utilities/src/NumericRange.ts:20](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L20)
 
 ___
 
@@ -295,4 +295,4 @@ value is NumericRange
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:82](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/utilities/src/NumericRange.ts#L82)
+[packages/utilities/src/NumericRange.ts:82](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/NumericRange.ts#L82)

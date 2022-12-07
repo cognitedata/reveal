@@ -36,7 +36,7 @@ For more information on assigning styles please refer [CAD Styling](cad-styling)
 
 ```jsx
 const nodes = new AssetNodeCollection(sdk, model);
-keyframe.assignStyledNodeCollection(nodes, { renderGhosted: false, color: [150, 200, 120] });
+keyframe.assignStyledNodeCollection(nodes, { renderGhosted: false, color: new THREE.Color(0.6, 0.8, 0.45) });
 ```
 
 ### Remove styled node collections from keyframes
@@ -59,7 +59,7 @@ Note that the dates doesn't need to match the keyframe dates - the playback will
 
 ```js runnable-4x
 // import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
-// import { TimelineTool, Keyframe } from '@cognite/reveal/tools';
+// import { TimelineTool, Keyframe } from '@cognite/reveal';
 
 function createProgressBarContainer() {
   const container = document.createElement('div');
@@ -94,7 +94,7 @@ function createProgressBar() {
   return progress;
 }
 
-model.setDefaultNodeAppearance({color: [200, 20, 0]});
+model.setDefaultNodeAppearance({ color: new THREE.Color(0.8, 0.08, 0) });
 
 const timeline = new TimelineTool(model);
 
@@ -103,7 +103,7 @@ for (let i = 0; i < 20; i++) {
   indexSet.addRange(new NumericRange(0, (i+1)*60000));
   const nodes = new TreeIndexNodeCollection(indexSet);
   const keyframe = timeline.createKeyframe(new Date(`2020-01-${i+1}`));
-  keyframe.assignStyledNodeCollection(nodes, { color: [20, 200, 0] });
+  keyframe.assignStyledNodeCollection(nodes, { color: new THREE.Color(0.08, 0.8, 0) });
 }
 
 // div element Cognite3DViewer to insert into the canvas
@@ -163,7 +163,7 @@ If we have subscribed to `dateChanged` event and if there are no active Keyframe
 :::
 
 ```jsx
-// import { TimelineDateUpdateDelegate } from '@cognite/reveal/tools';
+// import { TimelineDateUpdateDelegate } from '@cognite/reveal';
 
 timeline.subscribe('dateChanged', (data) => {
   const date = data.date;

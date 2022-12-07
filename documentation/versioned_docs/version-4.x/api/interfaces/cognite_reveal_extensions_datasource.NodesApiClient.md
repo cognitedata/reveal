@@ -33,7 +33,7 @@ ancestor at the generation given, the span of the root node is returned.
 
 #### Defined in
 
-[packages/nodes-api/src/NodesApiClient.ts:51](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/nodes-api/src/NodesApiClient.ts#L51)
+[packages/nodes-api/src/NodesApiClient.ts:51](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/nodes-api/src/NodesApiClient.ts#L51)
 
 ___
 
@@ -58,7 +58,7 @@ of) given a set of node IDs.
 
 #### Defined in
 
-[packages/nodes-api/src/NodesApiClient.ts:37](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/nodes-api/src/NodesApiClient.ts#L37)
+[packages/nodes-api/src/NodesApiClient.ts:37](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/nodes-api/src/NodesApiClient.ts#L37)
 
 ___
 
@@ -84,7 +84,7 @@ the model transformation for the given model.
 
 #### Defined in
 
-[packages/nodes-api/src/NodesApiClient.ts:67](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/nodes-api/src/NodesApiClient.ts#L67)
+[packages/nodes-api/src/NodesApiClient.ts:67](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/nodes-api/src/NodesApiClient.ts#L67)
 
 ___
 
@@ -109,7 +109,7 @@ Maps a set of "node IDs" that identify nodes, to the respective
 
 #### Defined in
 
-[packages/nodes-api/src/NodesApiClient.ts:27](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/nodes-api/src/NodesApiClient.ts#L27)
+[packages/nodes-api/src/NodesApiClient.ts:27](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/nodes-api/src/NodesApiClient.ts#L27)
 
 ___
 
@@ -134,4 +134,4 @@ Maps a set of "tree indexes" that identify nodes, to the respective
 
 #### Defined in
 
-[packages/nodes-api/src/NodesApiClient.ts:17](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/nodes-api/src/NodesApiClient.ts#L17)
+[packages/nodes-api/src/NodesApiClient.ts:17](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/nodes-api/src/NodesApiClient.ts#L17)

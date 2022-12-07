@@ -16,8 +16,10 @@ custom_edit_url: null
 
 ## Interfaces
 
+- [BinaryFileProvider](../interfaces/cognite_reveal_extensions_datasource.BinaryFileProvider.md)
 - [BlobOutputMetadata](../interfaces/cognite_reveal_extensions_datasource.BlobOutputMetadata.md)
 - [DataSource](../interfaces/cognite_reveal_extensions_datasource.DataSource.md)
+- [JsonFileProvider](../interfaces/cognite_reveal_extensions_datasource.JsonFileProvider.md)
 - [ModelDataProvider](../interfaces/cognite_reveal_extensions_datasource.ModelDataProvider.md)
 - [ModelIdentifier](../interfaces/cognite_reveal_extensions_datasource.ModelIdentifier.md)
 - [ModelMetadataProvider](../interfaces/cognite_reveal_extensions_datasource.ModelMetadataProvider.md)

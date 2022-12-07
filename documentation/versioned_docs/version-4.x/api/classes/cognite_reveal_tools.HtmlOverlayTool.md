@@ -7,7 +7,7 @@ custom_edit_url: null
 
 [@cognite/reveal/tools](../modules/cognite_reveal_tools.md).HtmlOverlayTool
 
-Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a
+Manages HTMLoverlays for Cognite3DViewer. Attaches HTML elements to a
 3D position and updates its position/visibility as user moves the camera. This is
 useful to create HTML overlays to highlight information about key positions in the 3D model.
 
@@ -61,7 +61,7 @@ overlayTool.dispose();
 | Name | Type |
 | :------ | :------ |
 | `viewer` | [`Cognite3DViewer`](cognite_reveal.Cognite3DViewer.md) |
-| `options?` | `HtmlOverlayToolOptions` |
+| `options?` | [`HtmlOverlayToolOptions`](../modules/cognite_reveal_tools.md#htmloverlaytooloptions) |
 
 #### Overrides
 
@@ -69,7 +69,7 @@ overlayTool.dispose();
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:166](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L166)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:171](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L171)
 
 ## Accessors
 
@@ -85,7 +85,7 @@ Returns all added HTML elements along with their 3D positions.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:186](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L186)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:191](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L191)
 
 ## Methods
 
@@ -109,7 +109,7 @@ Registers a HTML overlay that will be updated on rendering.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:210](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L210)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:215](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L215)
 
 ___
 
@@ -125,7 +125,7 @@ Removes all attached HTML overlay elements.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:258](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L258)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:263](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L263)
 
 ___
 
@@ -145,13 +145,13 @@ Removes all elements and detaches from the viewer.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:196](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L196)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:201](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L201)
 
 ___
 
 ### forceUpdate
 
-▸ **forceUpdate**(): `void`
+▸ **forceUpdate**(`customCamera?`): `void`
 
 Updates positions of all overlays. This is automatically managed and there
 shouldn't be any reason to trigger this unless the attached elements are
@@ -159,13 +159,19 @@ modified externally.
 
 Calling this function often might cause degraded performance.
 
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `customCamera?` | `PerspectiveCamera` | Optional camera to be used in place of viewerCamera when calculating positions |
+
 #### Returns
 
 `void`
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:292](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L292)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:298](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L298)
 
 ___
 
@@ -192,7 +198,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
+[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
 
 ___
 
@@ -214,7 +220,7 @@ Removes a overlay and removes it from the DOM.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:246](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L246)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:251](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L251)
 
 ___
 
@@ -236,4 +242,4 @@ Hide/unhide all HTML overlay elements.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:270](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L270)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:275](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L275)
