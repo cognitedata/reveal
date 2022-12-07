@@ -15,7 +15,8 @@ import {
   CognitePointCloudModel,
   CameraControlsOptions,
   DefaultCameraManager,
-  CogniteModel
+  CogniteModel,
+  AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
 import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -357,11 +358,17 @@ export function Viewer() {
               break;
             case 'pointcloud':
               {
-                const { point } = intersection;
+                const { point, model } = intersection;
                 console.log(`Clicked point assigned to the object with annotationId: ${intersection.annotationId} at`, point);
-                const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
-                sphere.position.copy(point);
-                viewer.addObject3D(sphere);
+                if (intersection.annotationId !== 0) {
+                  model.removeAllStyledObjectCollections();
+                  const selected = new AnnotationIdPointCloudObjectCollection([intersection.annotationId]);
+                  model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });  
+                } else {
+                  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
+                  sphere.position.copy(point);
+                  viewer.addObject3D(sphere);
+                }
               }
               break;
           }
