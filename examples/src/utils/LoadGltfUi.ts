@@ -79,7 +79,6 @@ export class LoadGltfUi {
       gltf.animations.forEach(animation => {
         mixer.clipAction(animation).play();
       });
-      // mixer.clipAction( gltf.animations[ 0 ] ).play();
       const clock = new THREE.Clock();
       this._viewer.on('beforeSceneRendered', () => {
         mixer.update(clock.getDelta());
