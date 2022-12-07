@@ -34,9 +34,9 @@ const ExtractorLibraryList = ({ items }: ExtractorLibraryListProps) => {
         >
           <StyledExtractorContent>
             {item?.imageUrl && (
-              <div>
-                <img src={item?.imageUrl} />
-              </div>
+              <StyledExtractorImageContainer>
+                <StyledExtractorImage src={item?.imageUrl} />
+              </StyledExtractorImageContainer>
             )}
             <Flex gap={8} direction="column">
               <Title level="5">{item.name}</Title>
@@ -100,6 +100,17 @@ const StyledExtractorContainer = styled(Link)`
 
 const StyledMutedDescription = styled(Body).attrs({ level: 3 })`
   color: ${Colors['text-icon--muted']};
+`;
+
+const StyledExtractorImageContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 32px;
+`;
+
+const StyledExtractorImage = styled.img`
+  max-height: 32px;
+  max-width: 32px;
 `;
 
 export default ExtractorLibraryList;
