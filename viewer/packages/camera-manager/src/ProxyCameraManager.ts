@@ -19,10 +19,6 @@ export class ProxyCameraManager implements CameraManager {
 
   private _activeCameraManager: CameraManager;
 
-  get enabled(): boolean {
-    return this._activeCameraManager.enabled;
-  }
-
   get innerCameraManager(): CameraManager {
     return this._activeCameraManager;
   }
