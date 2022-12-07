@@ -43,6 +43,14 @@ viewer.on('click', async event => {
 
 [GLTF](https://www.khronos.org/gltf/) is a commonly used 3D format for content delivery - think of it as the JPG of 3D.
 GLTF is supported by ThreeJS and can easily be added to Reveal using [`GLTFLoader`](https://threejs.org/docs/#examples/en/loaders/GLTFLoader).
+GLTF is great for creating custom 3D content with high fidelity, and is supported by most 3D design software,
+e.g. [Blender](https://www.blender.org/). There's also several services for generating GLTF content (e.g. [ElevationAPI](https://elevationapi.com/))
+and market places for 3D models for download (e.g. [Sketchfab](https://sketchfab.com/) and [Turbosquid](https://www.turbosquid.com/)) - allowing you
+to quickly build "digital worlds" with Reveal.
+
+In the following example, a GLTF model is loaded and placed in the clicked positions in the CAD model. The 3D model is from 
+[Grand Dog Studio on Sketchfab](https://sketchfab.com/3d-models/3d-industrial-tanker-a9d3dac0c55042989309bdcf68c60f76) under 
+[the CC 4.0 license](https://creativecommons.org/licenses/by/4.0/).
 
 ```jsx runnable
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
