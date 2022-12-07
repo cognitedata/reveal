@@ -4,6 +4,7 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import ReactUnifiedViewer, {
   Annotation,
   AnnotationType,
+  ContainerConfig,
   getContainerConfigFromFileInfo,
   TooltipAnchorPosition,
   ToolType,
@@ -62,8 +63,8 @@ const RectangleToolProps = {
   },
 };
 
-const NoopToolProps = {
-  tool: ToolType.NOOP,
+const PanToolProps = {
+  tool: ToolType.PAN,
 };
 
 export const FilePreviewUFV = ({
@@ -208,16 +209,19 @@ export const FilePreviewUFV = ({
     setSelectedAnnotations([]);
   }, [setSelectedAnnotations]);
 
-  const handleAnnotationsUpdateRequest = (annotations: Annotation[]) => {
+  const handleUpdateRequest = (update: {
+    containers: ContainerConfig[];
+    annotations: Annotation[];
+  }) => {
     if (file === undefined) {
       return;
     }
 
-    if (annotations.length === 0) {
+    if (update.annotations.length === 0) {
       return;
     }
 
-    const annotation = annotations[0];
+    const annotation = update.annotations[0];
     if (annotation.type !== AnnotationType.RECTANGLE) {
       throw new Error('Only expecting rectangle annotations from this flow');
     }
@@ -280,7 +284,7 @@ export const FilePreviewUFV = ({
     return <Loader />;
   }
 
-  const toolProps = creatable ? RectangleToolProps : NoopToolProps;
+  const toolProps = creatable ? RectangleToolProps : PanToolProps;
 
   return (
     <FullHeightWrapper>
@@ -294,7 +298,7 @@ export const FilePreviewUFV = ({
           tooltips={enableToolTips ? tooltips : undefined}
           onClick={onStageClick}
           shouldShowZoomControls={showControls}
-          onAnnotationsUpdateRequest={handleAnnotationsUpdateRequest}
+          onUpdateRequest={handleUpdateRequest}
           {...toolProps}
         />
         <Pagination container={container} onPageChange={handlePageChange} />

@@ -4,7 +4,7 @@ import {
 } from '@cognite/annotations';
 import { AnnotationModel } from '@cognite/sdk';
 
-import { RectangleAnnotation } from '@cognite/unified-file-viewer';
+import { Annotation, RectangleAnnotation } from '@cognite/unified-file-viewer';
 
 export interface ProposedCogniteAnnotation extends PendingCogniteAnnotation {
   id: string;
@@ -37,9 +37,5 @@ export type TaggedAnnotation =
   | TaggedAnnotationAnnotation
   | TaggedLocalAnnotation;
 
-// TODO: ExtendedAnnotation is a WIP type that will be exposed via unified-file-viewer
-// once it's confirmed that they are fulfilling the desired need
 export type ExtendedAnnotation<T extends TaggedAnnotation = TaggedAnnotation> =
-  RectangleAnnotation & {
-    metadata: T;
-  };
+  Extract<Annotation<T>, RectangleAnnotation>;

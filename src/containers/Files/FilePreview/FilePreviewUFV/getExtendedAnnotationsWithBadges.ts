@@ -5,7 +5,7 @@ import { ExtendedAnnotation } from './types';
 
 const getExtendedAnnotationsWithBadges = (
   annotations: ExtendedAnnotation[]
-): (ExtendedAnnotation | Annotation)[] => {
+): Annotation[] => {
   return annotations.flatMap(annotation =>
     isSuggestedAnnotation(annotation)
       ? [
@@ -22,6 +22,7 @@ const getExtendedAnnotationsWithBadges = (
             type: AnnotationType.ELLIPSE,
             x: annotation.x + annotation.width,
             y: annotation.y,
+            metadata: undefined,
           },
         ]
       : [annotation]

@@ -262,10 +262,20 @@ export const setExtendedAnnotationLabel = (
     };
   }
 
-  if (
-    isExtendedAnnotationAnnotation(annotation) ||
-    isExtendedLocalAnnotation(annotation)
-  ) {
+  if (isExtendedAnnotationAnnotation(annotation)) {
+    return {
+      ...annotation,
+      metadata: {
+        ...annotation.metadata,
+        data: {
+          ...annotation.metadata.data,
+          text: label,
+        },
+      },
+    };
+  }
+
+  if (isExtendedLocalAnnotation(annotation)) {
     return {
       ...annotation,
       metadata: {
@@ -295,10 +305,20 @@ export const setExtendedAnnotationDescription = (
     };
   }
 
-  if (
-    isExtendedAnnotationAnnotation(annotation) ||
-    isExtendedLocalAnnotation(annotation)
-  ) {
+  if (isExtendedAnnotationAnnotation(annotation)) {
+    return {
+      ...annotation,
+      metadata: {
+        ...annotation.metadata,
+        data: {
+          ...annotation.metadata.data,
+          description,
+        },
+      },
+    };
+  }
+
+  if (isExtendedLocalAnnotation(annotation)) {
     return {
       ...annotation,
       metadata: {
