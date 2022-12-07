@@ -1,11 +1,9 @@
 ---
 id: migration-guide
-title: Migrating from previous versions
+title: Migrating from Reveal 3 to 4
 hide_title: true
 description: This page describes the differences between Reveal 3 and 4.
 ---
-
-import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 This document is an overview of some important differences between Reveal 3.x and Reveal 4.x.
 
@@ -19,73 +17,51 @@ We have however also added support for node's module `exports` such that if your
 
 imports will still work the same way they did with Reveal 3.x. 
 Note that this may require a bump in typescript version.
-If this is not possible for you, then you need to change all imports to be `from @cognite/reveal` vs. f.ex. `from @cognite/reveal/tools`. 
+If this is not possible for you, then you need to change all imports to be `from @cognite/reveal`.
+
+Using Reveal 3 or Reveal 4 with `"moduleResolution": "Node16"` the import path of the Axis Cross Tool is:
+
+```ts
+import { AxisViewTool } from '@cognite/reveal/tools';
+const axisViewTool = new AxisViewTool(...);
+```
+
+if you use Reveal 4 without the `Node16` module resolution, the import should look like this:
+```ts
+import { AxisViewTool } from '@cognite/reveal';
+const axisViewTool = new AxisViewTool(...);
+```
+
+## `connect-src data:` is required content-security-policy
+See [Installation](./installation.mdx#installation-for-projects-with-content-security-policy) for updated content security policies needed for Reveal. 
 
 ## Three.js is now a peer-dependency
 For Reveal 4 we have changed threejs from being exported from Reveal and rather require applications that consume Reveal to import it.
 There are multiple reasons for this, but a major pain point has been that Reveal does not expose the three.js examples in its export, causing applications to have to install threejs anyway.
 In addition, we also see a lot of applications ending up having multiple bundles of three.js which we are trying to alliviate.
 
-## Exploded view tool has been removed
-Due to low / no usage of this tool we have decided to remove it.
-Note that the tool was a convenience method and it is fully possible to implement this in the application logic.
-The functionality should be easily adoptable from the removed tool.
-The removed tool can be found [here.](https://github.com/cognitedata/reveal/blob/release/3.3.x/viewer/packages/tools/src/ExplodedViewTool.ts)
-
-## Geomap tool has been removed
-Due to low / no usage of this tool we have decided to remove it.
-Note that the tool was a convenience method and it is fully possible to implement this in the application logic.
-The functionality should be easily adoptable from the removed tool.
-The removed tool can be found [here.](https://github.com/cognitedata/reveal/tree/release/3.3.x/viewer/packages/tools/src/Geomap)
-The geomap tool leveraged the [geo-three](https://www.npmjs.com/package/geo-three) npm library which can be used by your application and added through custom objects if you want to support this using Reveal.
-
-## Cognite3DViewer.setBackgroundColor now alpha
+## `Cognite3DViewer.setBackgroundColor` now has optional alpha parameter
 The `setBackgroundColor` now supports settings alpha value. 
 This becomes relevant when you want your 3D content to blend with your website.
 
-## Cognite3DViewer.isBrowserSupported has been removed
-This method has been left unused for a long time, and Reveal now supports all major browsers with WebGL 2.0 capabilities.
-
-## Cognite3DModel has been renamed to CogniteCadModel
+## `Cognite3DModel` has been renamed to `CogniteCadModel`
 Renamed for clarity, as technically a point cloud can also be viewed as a 3D model.
 
-## Cognite3DViewer.getIntersectionFromPixel options parameter has been removed
+## `Cognite3DViewer.getIntersectionFromPixel` options parameter has been removed
 Reveal currently uses GPU driven picking for point clouds, so the previously used options are not applicable anymore.
 
-## Cognite3DViewer.getCamera has been removed
-The camera must now be fetched from the `CameraManager`.
-The camera used by the current active `CameraManager` can be fetched with `viewer.cameraManager.getCamera()`.
-
-## Cognite3DViewer.renderer has been removed
-Getter for the renderer used by Reveal has been removed.
-
-## Cognite3DViewer.getScene has been removed
-Any direct manipulation of the three.js scene which Reveal uses for rendering can cause undefined behaviour, so in an effort to limit unintentional mistakes it has now been removed.
-Please reach out if there is any missing functionality that Reveal should expose.
-
-## DefaultCameraManager no longer exposes its internal ComboControls implementation
+## `DefaultCameraManager` no longer exposes its internal `ComboControls` implementation
 Methods for settings and getting options has been added to support dynamically updating the state.
 
-## CogniteCadModel and PointCloudModel no longer inherit from the three.js Object3D base class
+## `CogniteCadModel` and `PointCloudModel` no longer inherit from the three.js Object3D base class
 This prevents usages that Reveal does not handle such as reparenting and other mutable operations on the three.js object.
 Methods such as setting the transformation or visibility are available
 
-## contiuousModelStreaming option has been promoted to opt-out
+## `contiuousModelStreaming` option has been promoted to opt-out
 This means that CAD models will now stream continuously (vs. just when camera stops moving) by default.
 This can be reverted by setting the `contiuousModelStreaming` option to false when initializing the `Cognite3DViewer`.
 
-## Potree prefix removed
-
-In Reveal 3, several symbols has `Potree`-prefix which now has been replaced. This includes:
-
-- `PotreePointColorType` is now called `PointColorType`
-- `PotreePointShape` is now called `PointShape`
-- `PotreePointSizeType` is now called `PointSizeType`
-- `PotreeClassification` is now called `PointClassification`
-
-The above changes are simple renames and migrating these should be very easy.
-
-## Styling types use THREE.Color instead of RGB tuples
+## Styling types use `THREE.Color` instead of RGB tuples
 
 The `NodeAppearance` and `PointCloudAppearance` objects now use `THREE.Color` from the threejs library for storing colors. This means that e.g. a style that was previously created by writing
 
@@ -100,37 +76,7 @@ must now be created by writing
 const style = { color: new THREE.Color(0, 1.0, 0) };
 ```
 
-## `get`/`setModelTransformation` are now relative to to the initial CDF-to-ThreeJS transform
-
-In earlier versions of Reveal, the `model.getModelTransformation()` method (`model` being an instance of `CogniteCadModel` or `CognitePointCloudModel`) would return the entire model transformation from CDF geometry coordinates to the model's current transform in threejs-space. It will now only return the custom transformation applied *after* the initial transform from CDF space to threejs/Reveal space. Thus, it will only return what was last set by `model.setModelTransformation()`, and the identity transformation if no transformation has been set.
-
-We now also provide `model.getCdfToDefaultModelTransformation()` that returns the matrix transformation from CDF coordinates to Reveal/threejs space. It may include an additional default transformation specified for this model in the backend.
-
-Thus, to get the full transformation from CDF coordinates to the model's transform in Reveal space, you would use something akin to
-
-```
-const totalTransform = model.getModelTransformation().clone().multiply(model.getCdfToDefaultModelTransformation());
-```
-This is useful when combining visualization of a model with other 3D data extracted directly from CDF outside Reveal.
-
-## Removed several CDF/model transformation methods
-
-The methods `mapFromCdfToModelCoordinates`, `mapPositionFromModelToCdfCoordinates`, `mapBoxFromCdfToModelCoordinates`, `mapBoxFromModelToCdfCoordinates` have been removed from `CogniteCadModel`.
-
-The `*FromCdfToModelCoordinates` can be emulated by constructing the transformation matrix with
-
-```
-const cdfTransformation = model.getModelTransformation().clone().multiply(model.getCdfToDefaultModelTransformation());
-```
-as was mentioned above. It can then be used in either `position.applyMatrix4(cdfTransformation)` or `box.applyMatrix4(cdfTransformation)` respectively.
-
-The `*FromModelToCdfCoordinates` can likewise be emulated using the matrix
-```
-const inverseCdfTransformation = model.getModelTransformation().clone().multiply(model.getCdfToDefaultModelTransformation()).invert();
-```
-and using it with `applyMatrix4()` as above.
-
-## Changes related to the CameraManager interface
+## Changes related to the `CameraManager` interface
 
 Two major changes are now required for `CameraManager`s.
 The first change is adding a `cameraStop` which Reveal will use to control when geometry should be loaded and other performance intensive computations.
@@ -164,3 +110,54 @@ on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
 The `off(eventType, callback)` implementation may have a similar structure, but calling `unsubscribe` on the trigger object instead of `subscribe`.
 
 Finally, call `this._stopEventTrigger.dispose()` in the camera manager's `dispose()` method to clean up resources after use.
+
+## `get`/`setModelTransformation` are now relative to to the initial CDF-to-ThreeJS transform
+
+In earlier versions of Reveal, the `model.getModelTransformation()` method (`model` being an instance of `CogniteCadModel` or `CognitePointCloudModel`) would return the entire model transformation from CDF geometry coordinates to the model's current transform in threejs-space. It will now only return the custom transformation applied *after* the initial transform from CDF space to threejs/Reveal space. Thus, it will only return what was last set by `model.setModelTransformation()`, and the identity transformation if no transformation has been set.
+
+We now also provide `model.getCdfToDefaultModelTransformation()` that returns the matrix transformation from CDF coordinates to Reveal/threejs space. It may include an additional default transformation specified for this model in the backend.
+
+Thus, to get the full transformation from CDF coordinates to the model's transform in Reveal space, you would use something akin to
+
+```
+const totalTransform = model.getModelTransformation().clone().multiply(model.getCdfToDefaultModelTransformation());
+```
+This is useful when combining visualization of a model with other 3D data extracted directly from CDF outside Reveal.
+
+## Removed several CDF/model transformation methods
+
+The methods `mapFromCdfToModelCoordinates`, `mapPositionFromModelToCdfCoordinates`, `mapBoxFromCdfToModelCoordinates`, `mapBoxFromModelToCdfCoordinates` have been removed from `CogniteCadModel`.
+
+The `*FromCdfToModelCoordinates` can be emulated by constructing the transformation matrix with
+
+```
+const cdfTransformation = model.getModelTransformation().clone().multiply(model.getCdfToDefaultModelTransformation());
+```
+as was mentioned above. It can then be used in either `position.applyMatrix4(cdfTransformation)` or `box.applyMatrix4(cdfTransformation)` respectively.
+
+The `*FromModelToCdfCoordinates` can likewise be emulated using the matrix
+```
+const inverseCdfTransformation = model.getModelTransformation().clone().multiply(model.getCdfToDefaultModelTransformation()).invert();
+```
+and using it with `applyMatrix4()` as above.
+
+## Potree prefix removed
+
+In Reveal 4, several symbols has `Potree`-prefix which now has been replaced. This includes:
+
+- `PotreePointColorType` is now called `PointColorType`
+- `PotreePointShape` is now called `PointShape`
+- `PotreePointSizeType` is now called `PointSizeType`
+- `PotreeClassification` is now called `PointClassification`
+
+The above changes are simple renames and migrating these should be very easy.
+
+## Removed methods on Cognite3DViewer
+* `getScene()`
+* `renderer`
+* `isBrowserSupported`
+* `getCamera()`, can be fetched with `cameraManager.getCamera()`
+
+## Removed tools due to low / no usage
+* Geomap tool
+* Exploded view tool
