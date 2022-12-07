@@ -32,8 +32,9 @@ import { AxisViewTool } from '@cognite/reveal';
 const axisViewTool = new AxisViewTool(...);
 ```
 
-## `connect-src data:` is required content-security-policy
-See [Installation](./installation.mdx#installation-for-projects-with-content-security-policy) for updated content security policies needed for Reveal. 
+## `connect-src data:` is now a required content-security-policy
+See [Installation](./installation.mdx#installation-for-projects-with-content-security-policy) for updated content security policies needed for Reveal.
+Note that this is only relevant if you have a content-security-policy set up. 
 
 ## Three.js is now a peer-dependency
 For Reveal 4 we have changed threejs from being exported from Reveal and rather require applications that consume Reveal to import it.
