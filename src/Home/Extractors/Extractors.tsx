@@ -1,4 +1,12 @@
-import { Colors, Flex, Input, Loader } from '@cognite/cogs.js';
+import {
+  Body,
+  Colors,
+  Flex,
+  Icon,
+  Input,
+  Loader,
+  Title,
+} from '@cognite/cogs.js';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
@@ -120,8 +128,23 @@ const Extractors = () => {
                 ) : (
                   <CreateExtractor />
                 )}
-                {!!filteredExtractorLibraryItems.length && (
+                {!!filteredExtractorLibraryItems.length ? (
                   <ExtractorLibraryList items={filteredExtractorLibraryItems} />
+                ) : (
+                  <StyledEmptyContainer>
+                    <Icon type="ListSearch" />
+                    <Title level={5}>{t('no-results')}</Title>
+                    <Body level={2}>
+                      {t(
+                        category
+                          ? `no-results-description-${category}`
+                          : 'no-results-description',
+                        {
+                          query: searchQuery,
+                        }
+                      )}
+                    </Body>
+                  </StyledEmptyContainer>
                 )}
                 {!!searchQuery && <SearchHelper />}
               </StyledListContainer>
@@ -155,6 +178,14 @@ const StyledSearchInput = styled(Input).attrs({
       fill: currentColor;
     }
   }
+`;
+
+const StyledEmptyContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 48px;
 `;
 
 export default Extractors;
