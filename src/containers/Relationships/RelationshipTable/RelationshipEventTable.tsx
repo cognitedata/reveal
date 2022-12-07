@@ -19,7 +19,7 @@ const {
 } = ResourceTableColumns;
 
 const columns = [
-  type,
+  type(),
   relationshipLabels,
   relation,
   externalId(),

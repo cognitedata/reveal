@@ -27,7 +27,7 @@ export const EventTable = ({
   const columns = useMemo(
     () =>
       [
-        { ...Table.Columns.type(query), enableHiding: false },
+        { ...Table.Columns.type(), enableHiding: false },
         Table.Columns.subtype,
         Table.Columns.description(query),
         Table.Columns.externalId(query),

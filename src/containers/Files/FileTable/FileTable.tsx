@@ -3,6 +3,8 @@ import React, { useMemo } from 'react';
 import { FileInfo } from '@cognite/sdk';
 import { Table, TableProps } from 'components/Table/Table';
 import { RelationshipLabels } from 'types';
+import { ResourceTableColumns } from '../../../components';
+import { useDocumentsMetadataKeys } from '../../../domain';
 import { FileNamePreview } from './FileNamePreview';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from 'hooks';
@@ -18,6 +20,13 @@ export type FileTableProps = Omit<
 export type FileWithRelationshipLabels = RelationshipLabels & FileInfo;
 export const FileTable = (props: FileTableProps) => {
   const { query } = props;
+  const { data: metadataKeys } = useDocumentsMetadataKeys();
+
+  const metadataColumns: ColumnDef<FileInfo>[] = useMemo(() => {
+    return (metadataKeys || []).map((key: string) =>
+      ResourceTableColumns.metadata(key)
+    );
+  }, [metadataKeys]);
 
   const columns = useMemo(
     () =>
@@ -47,8 +56,9 @@ export const FileTable = (props: FileTableProps) => {
         Table.Columns.source,
         Table.Columns.assets,
         Table.Columns.labels,
+        ...metadataColumns,
       ] as ColumnDef<FileInfo>[],
-    [query]
+    [query, metadataColumns]
   );
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
