@@ -1276,10 +1276,10 @@
     "@cognite/testing" "0.1.1-rc.0"
     unleash-proxy-client "1.6.0"
 
-"@cognite/sdk-core@^4.1.0":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.1.1.tgz#c0793c68be3c965707a1b7948669f9401885951e"
-  integrity sha512-4/7f0xgIVN/tJXD+0fyEu0mOZeAg0tRiYucx3IngLT9jXAjMuk1SeJbrQPWk3lRyuNj8BkW/2SlUtsvGnleljQ==
+"@cognite/sdk-core@^4.8.2":
+  version "4.8.2"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.2.tgz#00f69eaf93d433223f650891d098e1ffb0738631"
+  integrity sha512-nV17d8Z+NMErVyO2hv6yafpl32TmRwMc1pPYnMp+J4FcE0bCUqvL6AduXAPQZ443NZx86+Obz5SWzUg3PXzfkA==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -1287,19 +1287,19 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-provider@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-provider/-/sdk-provider-1.0.0.tgz#d5b55e6b1013351f24d5e97e86c6a62295d1f4b3"
-  integrity sha512-mUVNogLYobapuyqnpGBSKEZW1IWXJjsfqaJg9w5W6PxgNVduZqH7MWxcqN+AC+OyEhQbwmbdlLyQfTRr7yHrPA==
-  dependencies:
-    react "^16.14.0"
+"@cognite/sdk-provider@^2.0.0":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-provider/-/sdk-provider-2.0.6.tgz#170f6c8d6b78f5b8b9600be9b2e0bba1cf0f1a32"
+  integrity sha512-virwJdy9NuthuS6UQ75hzIbeAtTp8mbxPFJsVehIm6DBXd0AwTggbG0TQVkPqO9OayImjEVk5HCv+9fXrjXM2Q==
 
-"@cognite/sdk@^6.3.4":
-  version "6.3.4"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-6.3.4.tgz#ffeec9475fb08d43be25306ded05114261f3802c"
-  integrity sha512-hBqiWZwRov9BPVLNBUChNvHlRy5CYWv/rkGQLPmNMdabwTTA1vbF346AOpVUcLH5vX2NZ7fMIPjPBZG4PHsRCw==
+"@cognite/sdk@^7.9.1":
+  version "7.13.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.13.0.tgz#536af64fd77e8686d64c8caad0fc43558b27c5ac"
+  integrity sha512-fGMDGi9TaBdGQIkfvgR09dApklQZLRUGiZ5brjFfZ5mv9Xx6LVzQ73mxM7u6FgmzCWAkwIlnQpHj9Wz3B1iNzg==
   dependencies:
-    "@cognite/sdk-core" "^4.1.0"
+    "@cognite/sdk-core" "^4.8.2"
+    "@types/geojson" "^7946.0.8"
+    geojson "^0.5.0"
     lodash "^4.17.11"
 
 "@cognite/testing@0.1.1-rc.0":
@@ -2595,6 +2595,11 @@
     "@types/express-serve-static-core" "^4.17.18"
     "@types/qs" "*"
     "@types/serve-static" "*"
+
+"@types/geojson@^7946.0.8":
+  version "7946.0.10"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.10.tgz#6dfbf5ea17142f7f9a043809f1cd4c448cb68249"
+  integrity sha512-Nmh0K3iWQJzniTuPRcJn5hxXkfB1T1pgB89SBig5PlJQU5yocazeu4jATJlaA0GYFKWMqDdvYemoSnF2pXgLVA==
 
 "@types/graceful-fs@^4.1.2":
   version "4.1.5"
@@ -6421,6 +6426,11 @@ gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
   integrity sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==
+
+geojson@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/geojson/-/geojson-0.5.0.tgz#3cd6c96399be65b56ee55596116fe9191ce701c0"
+  integrity sha512-/Bx5lEn+qRF4TfQ5aLu6NH+UKtvIv7Lhc487y/c8BdludrCTpiWf9wyI0RTyqg49MFefIAvFDuEi5Dfd/zgNxQ==
 
 get-caller-file@^2.0.5:
   version "2.0.5"
@@ -11352,15 +11362,6 @@ react-transition-group@^4.4.5:
     "@babel/runtime" "^7.5.5"
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
-    prop-types "^15.6.2"
-
-react@^16.14.0:
-  version "16.14.0"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.14.0.tgz#94d776ddd0aaa37da3eda8fc5b6b18a4c9a3114d"
-  integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
     prop-types "^15.6.2"
 
 react@^17.0.2:

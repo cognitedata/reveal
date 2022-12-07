@@ -6,25 +6,38 @@ import styled from 'styled-components';
 
 import { CATEGORY_SEARCH_PARAM_KEY } from 'common';
 
+export const EXTRACTOR_LIBRARY_CATEGORIES = {
+  extractor: 'extractor',
+  sourceSystem: 'source-system',
+} as const;
+
+export type ExtractorLibraryCategory =
+  typeof EXTRACTOR_LIBRARY_CATEGORIES[keyof typeof EXTRACTOR_LIBRARY_CATEGORIES];
+
 type CategorySidebarItemProps = {
+  category?: ExtractorLibraryCategory;
   count?: number;
   isLoading?: boolean;
-  tab: string;
   title: string;
 };
 
 const CategorySidebarItem = ({
+  category,
   count,
   isLoading,
-  tab,
   title,
 }: CategorySidebarItemProps): JSX.Element => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const searchParamCategory = searchParams.get(CATEGORY_SEARCH_PARAM_KEY) ?? '';
+  const searchParamCategory =
+    searchParams.get(CATEGORY_SEARCH_PARAM_KEY) ?? undefined;
 
   const handleClick = (): void => {
     const urlSearchParams = new URLSearchParams(searchParams);
-    urlSearchParams.set(CATEGORY_SEARCH_PARAM_KEY, tab);
+    if (category) {
+      urlSearchParams.set(CATEGORY_SEARCH_PARAM_KEY, category);
+    } else {
+      urlSearchParams.delete(CATEGORY_SEARCH_PARAM_KEY);
+    }
     setSearchParams(urlSearchParams, { replace: true });
   };
 
@@ -32,7 +45,7 @@ const CategorySidebarItem = ({
     <StyledButton
       loading={isLoading}
       onClick={handleClick}
-      toggled={searchParamCategory === tab}
+      toggled={searchParamCategory === category}
       type="ghost"
     >
       <span>{title}</span>

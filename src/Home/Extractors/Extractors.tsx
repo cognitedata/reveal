@@ -1,10 +1,10 @@
 import { Colors, Flex, Input, Loader } from '@cognite/cogs.js';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { useExtractorsList } from 'hooks/useExtractorsList';
 import { ListHeader } from 'components/ListHeader';
 import { Layout } from 'components/Layout';
-import { ExtractorsList } from 'components/ExtractorsList';
 import { CreateExtractor } from 'components/CreateExtractor';
 import { ContentContainer } from 'components/ContentContainer';
 import CategorySidebar from 'components/category-sidebar/CategorySidebar';
@@ -12,31 +12,71 @@ import { trackUsage } from 'utils';
 import { useTranslation } from 'common';
 import { useSearchParams } from 'react-router-dom';
 import SearchHelper from 'components/search-helper/SearchHelper';
+import { useSourceSystems } from 'hooks/useSourceSystems';
+import ExtractorLibraryList from 'components/extractor-library-list/ExtractorLibraryList';
+import { ExtractorLibraryCategory } from 'components/category-sidebar/CategorySidebarItem';
 
 const Extractors = () => {
   const { t } = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') ?? '';
+  const category = searchParams.get(
+    'category'
+  ) as ExtractorLibraryCategory | null;
 
   const { data: extractors, status } = useExtractorsList();
+  const { data: sourceSystems } = useSourceSystems();
 
-  const extractorsList =
-    extractors?.filter((extractor) => {
-      const searchLowercase = searchQuery.toLowerCase();
-      if (extractor.description?.toLowerCase()?.includes(searchLowercase)) {
-        return true;
-      }
-      if (extractor.name.toLowerCase().includes(searchLowercase)) {
-        return true;
-      }
-      if (
-        extractor?.tags?.map((t) => t.toLowerCase()).includes(searchLowercase)
-      ) {
-        return true;
-      }
-      return false;
-    }, []) ?? [];
+  const [filteredExtractors, filteredSourceSystems] = useMemo(() => {
+    const tempExtractors =
+      extractors?.filter((extractor) => {
+        const searchLowercase = searchQuery.toLowerCase();
+        if (extractor.description?.toLowerCase()?.includes(searchLowercase)) {
+          return true;
+        }
+        if (extractor.name.toLowerCase().includes(searchLowercase)) {
+          return true;
+        }
+        if (
+          extractor?.tags?.map((t) => t.toLowerCase()).includes(searchLowercase)
+        ) {
+          return true;
+        }
+        return false;
+      }, []) ?? [];
+
+    const tempSourceSystems =
+      sourceSystems?.filter((extractor) => {
+        const searchLowercase = searchQuery.toLowerCase();
+        if (extractor.description?.toLowerCase()?.includes(searchLowercase)) {
+          return true;
+        }
+        if (extractor.name.toLowerCase().includes(searchLowercase)) {
+          return true;
+        }
+        if (
+          extractor?.tags?.map((t) => t.toLowerCase()).includes(searchLowercase)
+        ) {
+          return true;
+        }
+        return false;
+      }) ?? [];
+
+    return [tempExtractors, tempSourceSystems];
+  }, [extractors, sourceSystems, searchQuery]);
+
+  const filteredExtractorLibraryItems = useMemo(() => {
+    if (category === 'extractor') {
+      return filteredExtractors;
+    }
+
+    if (category === 'source-system') {
+      return filteredSourceSystems;
+    }
+
+    return [...filteredExtractors, ...filteredSourceSystems];
+  }, [category, filteredExtractors, filteredSourceSystems]);
 
   const handleSearchQueryUpdate = (query: string) => {
     const updatedSearchParams = new URLSearchParams(searchParams);
@@ -65,20 +105,23 @@ const Extractors = () => {
               }}
             />
             <Flex gap={40}>
-              <CategorySidebar extractorsList={extractorsList} />
+              <CategorySidebar
+                extractorsList={filteredExtractors}
+                sourceSystems={filteredSourceSystems}
+              />
               <StyledListContainer>
                 {searchQuery ? (
                   <StyledSearchResults>
                     {t('search-results', {
-                      count: extractorsList.length,
+                      count: filteredExtractorLibraryItems.length,
                       query: searchQuery,
                     })}
                   </StyledSearchResults>
                 ) : (
                   <CreateExtractor />
                 )}
-                {!!extractorsList.length && (
-                  <ExtractorsList extractorsList={extractorsList} />
+                {!!filteredExtractorLibraryItems.length && (
+                  <ExtractorLibraryList items={filteredExtractorLibraryItems} />
                 )}
                 {!!searchQuery && <SearchHelper />}
               </StyledListContainer>
