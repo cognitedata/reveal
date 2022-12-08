@@ -7,8 +7,8 @@ import { ContentContainer } from 'components/ContentContainer';
 import { useSolutionsForSourceSystem } from 'hooks/useSolutions';
 import { useSourceSystem } from 'hooks/useSourceSystems';
 import { useTranslation } from 'common';
-import ReactMarkdown from 'react-markdown';
 import SolutionForSourceSystem from 'components/solution/SolutionForSourceSystem';
+import Markdown from 'components/markdown';
 
 const SourceSystemDetails = () => {
   const { t } = useTranslation();
@@ -40,10 +40,11 @@ const SourceSystemDetails = () => {
           <StyledLayoutGrid>
             <Flex direction="column" gap={32}>
               <Body level={2}>
-                <ReactMarkdown>
-                  {(sourceSystem?.documentation || sourceSystem?.description) ??
-                    ''}
-                </ReactMarkdown>
+                <Markdown
+                  content={
+                    sourceSystem?.documentation || sourceSystem?.description
+                  }
+                />
               </Body>
               {sourceSystem?.name && !!solutions?.length && (
                 <Flex direction="column" gap={16}>

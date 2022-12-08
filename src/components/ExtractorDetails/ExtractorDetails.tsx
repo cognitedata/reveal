@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import fileDownload from 'js-file-download';
-import ReactMarkdown from 'react-markdown';
 import {
   Body,
   Button,
@@ -27,6 +26,7 @@ import { getReleaseVersionCore } from 'utils/utils';
 import { ReleaseTag } from 'components/ReleaseTag';
 import { useSolutionsForExtractor } from 'hooks/useSolutions';
 import SolutionForExtractor from 'components/solution/SolutionForExtractor';
+import Markdown from 'components/markdown';
 
 const ExtractorDetails = () => {
   const { t } = useTranslation();
@@ -81,11 +81,9 @@ const ExtractorDetails = () => {
         <Layout.Container>
           <StyledLayoutGrid>
             <Flex direction="column" gap={32}>
-              <StyledBody>
-                <ReactMarkdown>
-                  {(extractor?.documentation || extractor?.description) ?? ''}
-                </ReactMarkdown>
-              </StyledBody>
+              <Markdown
+                content={extractor?.documentation || extractor?.description}
+              />
               {externalLinks?.length > 0 && (
                 <Flex direction="column" gap={16}>
                   <Title level={5}>{t('user-guide-from-cognite-docs')}</Title>
@@ -344,8 +342,6 @@ const StyledLayoutGrid = styled.div`
   grid-template-columns: 1fr 296px;
   gap: 56px;
 `;
-
-const StyledBody = styled.div``;
 
 const StyledDivider = styled.div`
   width: 100%;
