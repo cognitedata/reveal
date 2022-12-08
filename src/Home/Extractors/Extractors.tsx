@@ -23,6 +23,7 @@ import SearchHelper from 'components/search-helper/SearchHelper';
 import { useSourceSystems } from 'hooks/useSourceSystems';
 import ExtractorLibraryList from 'components/extractor-library-list/ExtractorLibraryList';
 import { ExtractorLibraryCategory } from 'components/category-sidebar/CategorySidebarItem';
+import { grepContains, prepareSearchString } from 'utils/utils';
 
 const Extractors = () => {
   const { t } = useTranslation();
@@ -37,39 +38,41 @@ const Extractors = () => {
   const { data: sourceSystems } = useSourceSystems();
 
   const [filteredExtractors, filteredSourceSystems] = useMemo(() => {
+    const querySet = prepareSearchString(searchQuery);
+
     const tempExtractors =
       extractors?.filter((extractor) => {
-        const searchLowercase = searchQuery.toLowerCase();
-        if (extractor.description?.toLowerCase()?.includes(searchLowercase)) {
-          return true;
-        }
-        if (extractor.name.toLowerCase().includes(searchLowercase)) {
-          return true;
-        }
-        if (
-          extractor?.tags?.map((t) => t.toLowerCase()).includes(searchLowercase)
-        ) {
-          return true;
-        }
-        return false;
+        const toSearch = [
+          extractor.description,
+          extractor.name,
+          ...(extractor?.tags ?? []),
+        ];
+        const contentSet = new Set<string>();
+        toSearch.forEach((s = '') => {
+          const sSet = prepareSearchString(s);
+          sSet.forEach((i) => {
+            contentSet.add(i);
+          });
+        });
+        return grepContains(contentSet, querySet);
       }, []) ?? [];
 
     const tempSourceSystems =
-      sourceSystems?.filter((extractor) => {
-        const searchLowercase = searchQuery.toLowerCase();
-        if (extractor.description?.toLowerCase()?.includes(searchLowercase)) {
-          return true;
-        }
-        if (extractor.name.toLowerCase().includes(searchLowercase)) {
-          return true;
-        }
-        if (
-          extractor?.tags?.map((t) => t.toLowerCase()).includes(searchLowercase)
-        ) {
-          return true;
-        }
-        return false;
-      }) ?? [];
+      sourceSystems?.filter((sourceSystem) => {
+        const toSearch = [
+          sourceSystem.description,
+          sourceSystem.name,
+          ...(sourceSystem?.tags ?? []),
+        ];
+        const contentSet = new Set<string>();
+        toSearch.forEach((s = '') => {
+          const sSet = prepareSearchString(s);
+          sSet.forEach((i) => {
+            contentSet.add(i);
+          });
+        });
+        return grepContains(contentSet, querySet);
+      }, []) ?? [];
 
     return [tempExtractors, tempSourceSystems];
   }, [extractors, sourceSystems, searchQuery]);

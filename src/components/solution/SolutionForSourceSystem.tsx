@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 
-import {
-  Body,
-  Colors,
-  Elevations,
-  Flex,
-  Icon,
-  Link,
-  Title,
-} from '@cognite/cogs.js';
-import ReactMarkdown from 'react-markdown';
+import { Colors, Elevations, Flex, Icon, Link, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { Solution as SolutionType } from 'hooks/useSolutions';
@@ -19,6 +10,7 @@ import { useExtractor } from 'hooks/useExtractorsList';
 
 import { useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
+import Markdown from 'components/markdown';
 
 type SolutionForSourceSystemProps = SolutionType & {
   isInitiallyCollapsed?: boolean;
@@ -44,8 +36,8 @@ const SolutionForSourceSystem = ({
   };
 
   return (
-    <StyledSolutionContainer onClick={handleClick}>
-      <StyledHeading>
+    <StyledSolutionContainer>
+      <StyledHeading onClick={handleClick}>
         <Flex alignItems="center" gap={8}>
           <StyledCollapseIcon
             type={isCollapsed ? 'ChevronDown' : 'ChevronRight'}
@@ -70,20 +62,14 @@ const SolutionForSourceSystem = ({
           </Link>
         </div>
       </StyledHeading>
-      {isCollapsed && (
-        <StyledContent>
-          <ReactMarkdown>{documentation}</ReactMarkdown>
-        </StyledContent>
-      )}
+      {isCollapsed && <Markdown content={documentation} />}
     </StyledSolutionContainer>
   );
 };
 
-export const StyledSolutionContainer = styled.button`
-  background-color: ${Colors['surface--muted']};
+export const StyledSolutionContainer = styled.div`
   border: 1px solid ${Colors['border--interactive--default']};
   border-radius: 6px;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -96,18 +82,15 @@ export const StyledSolutionContainer = styled.button`
   }
 `;
 
-const StyledHeading = styled.div`
+const StyledHeading = styled.button`
   align-items: center;
+  background-color: ${Colors['surface--muted']};
+  border: none;
+  cursor: pointer;
   display: flex;
   gap: 16px;
   justify-content: space-between;
   width: 100%;
-`;
-
-const StyledContent = styled(Body).attrs({ level: 2 })`
-  p {
-    margin-bottom: 0;
-  }
 `;
 
 const StyledCollapseIcon = styled(Icon)`
