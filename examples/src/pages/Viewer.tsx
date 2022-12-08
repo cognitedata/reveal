@@ -34,6 +34,7 @@ import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
 import { CustomCameraManager } from '../utils/CustomCameraManager';
 import { MeasurementUi } from '../utils/MeasurementUi';
 import { Image360UI } from '../utils/Image360UI';
+import { LoadGltfUi } from '../utils/LoadGltfUi';
 
 
 window.THREE = THREE;
@@ -340,6 +341,7 @@ export function Viewer() {
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
+      new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event;
