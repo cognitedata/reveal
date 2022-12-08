@@ -11,7 +11,10 @@ const ONE_MIN = 20000;
 
 export const DocumentScanTrigger = ({ documentId }: { documentId: number }) => {
   const { client } = useAuthContext();
-  const { appDispatch } = useAppContext();
+  const {
+    appState: { equipment },
+    appDispatch,
+  } = useAppContext();
   const [scanJobId, setScanJobId] = useState<number>();
 
   const triggerScan = async () => {
@@ -48,9 +51,11 @@ export const DocumentScanTrigger = ({ documentId }: { documentId: number }) => {
     setScanJobId(parseInt(jobId, 10));
   }, []);
 
+  if (equipment.data?.latestAnnotations) return null;
+
   return (
-    <Styled.Container pending={!!scanJobId}>
-      {!!scanJobId && <Styled.PendingLabel>scan pending</Styled.PendingLabel>}
+    <Styled.Container contained={!!scanJobId}>
+      {!!scanJobId && <Styled.Label>scan pending</Styled.Label>}
       <Button
         type="tertiary"
         size="default"

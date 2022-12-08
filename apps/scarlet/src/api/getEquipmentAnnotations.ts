@@ -13,12 +13,16 @@ export const getEquipmentAnnotations = async (
     config,
     documents,
   }: { config?: EquipmentConfig; documents?: EquipmentDocument[] }
-): Promise<ScannerDetection[]> => {
+): Promise<{
+  annotationsVersion?: string;
+  annotations: ScannerDetection[];
+}> => {
   const u1Documents = documents?.filter(
     (document) => document.type === DocumentType.U1
   );
   const creatingAppVersions = config?.creatingAppVersions || [];
-  if (!u1Documents?.length || !creatingAppVersions?.length) return [];
+  if (!u1Documents?.length || !creatingAppVersions?.length)
+    return { annotations: [] };
 
   // eslint-disable-next-line no-restricted-syntax
   for (const creatingAppVersion of creatingAppVersions) {
@@ -35,13 +39,16 @@ export const getEquipmentAnnotations = async (
         }),
         {} as Record<number, string>
       );
-      return annotations.map((annotation) =>
-        transformScannerAnnotation(annotation, externalIds)
-      );
+      return {
+        annotationsVersion: creatingAppVersion,
+        annotations: annotations.map((annotation) =>
+          transformScannerAnnotation(annotation, externalIds)
+        ),
+      };
     }
   }
 
-  return [];
+  return { annotations: [] };
 };
 
 const fetchAnnotations = async (

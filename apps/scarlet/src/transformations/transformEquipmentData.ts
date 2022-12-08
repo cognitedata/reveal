@@ -28,12 +28,15 @@ const PCMS_TYPE_KEY = 'Component Type(API)';
 
 export const transformEquipmentData = ({
   config,
-  scannerDetections = [],
+  scannerDetections,
   equipmentState,
   pcms,
 }: {
   config?: EquipmentConfig;
-  scannerDetections?: ScannerDetection[];
+  scannerDetections?: {
+    annotationsVersion?: string;
+    annotations: ScannerDetection[];
+  };
   equipmentState?: EquipmentData;
   pcms?: PCMSData;
 }): EquipmentData | undefined => {
@@ -44,14 +47,14 @@ export const transformEquipmentData = ({
   const equipmentElements = getEquipmentElements(
     type,
     config,
-    scannerDetections,
+    scannerDetections?.annotations || [],
     equipmentState?.equipmentElements
   );
 
   const equipmentComponents = getEquipmentComponents(
     type,
     config,
-    scannerDetections,
+    scannerDetections?.annotations || [],
     equipmentState?.components,
     pcms?.components
   );
@@ -64,6 +67,8 @@ export const transformEquipmentData = ({
     typeName,
     equipmentElements,
     components: equipmentComponents,
+    latestAnnotations:
+      scannerDetections?.annotationsVersion === config.creatingAppVersions[0],
   };
 };
 

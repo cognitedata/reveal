@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import z from 'utils/z';
 
-const pendingStateCSS = css`
+const containedStateCSS = css`
   display: flex;
   flex-direction: column;
   box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
@@ -9,7 +9,7 @@ const pendingStateCSS = css`
   padding: 4px;
 `;
 
-export const Container = styled.div<{ pending: boolean }>`
+export const Container = styled.div<{ contained: boolean }>`
   position: absolute;
   right: 18px;
   bottom: 16px;
@@ -17,10 +17,9 @@ export const Container = styled.div<{ pending: boolean }>`
 
   z-index: ${z.OVERLAY};
 
-  ${({ pending }) => pending && pendingStateCSS}
+  ${({ contained }) => contained && containedStateCSS}
 `;
 
-export const PendingLabel = styled.span`
+export const Label = styled.span`
   text-align: center;
-  padding: 5px;
 `;

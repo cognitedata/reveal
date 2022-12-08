@@ -7,6 +7,7 @@ export type EquipmentData = {
   components: EquipmentComponent[];
   created: number;
   modified?: number;
+  latestAnnotations: boolean;
 };
 
 export enum EquipmentStatus {
