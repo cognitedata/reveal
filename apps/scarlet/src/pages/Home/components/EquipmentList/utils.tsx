@@ -62,7 +62,4 @@ export const getCellSkeleton = ({
 };
 
 export const transformSearchValue = (value?: string) =>
-  value
-    ?.trim()
-    .toLocaleLowerCase()
-    .replaceAll(/[\s.,-]/g, '');
+  value?.trim().toLocaleLowerCase();

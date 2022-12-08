@@ -1,6 +1,7 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import { Table, Graphic } from '@cognite/cogs.js';
-import { useHistory, generatePath } from 'react-router-dom';
+import { useHistory, useLocation, generatePath } from 'react-router-dom';
+import queryString from 'query-string';
 import { getEquipmentList } from 'api';
 import { useApi, useHomePageContext } from 'hooks';
 import { PAGES } from 'pages/Menubar';
@@ -9,12 +10,7 @@ import { TopBar, StatusBar } from '..';
 import { EquipmentsFilter } from '../EquipmentsFilter';
 
 import * as Styled from './style';
-import {
-  ColumnAccessor,
-  EquipmentListItem,
-  EquipmentStatus,
-  HomePageActionType,
-} from './types';
+import { ColumnAccessor, EquipmentListItem, HomePageActionType } from './types';
 import {
   getCellSkeleton,
   getCellStatus,
@@ -23,26 +19,13 @@ import {
   transformSearchValue,
 } from './utils';
 
-export type Filter = {
-  search: string;
-  equipmentTypeName: string;
-  equipmentStatus: 'all' | EquipmentStatus;
-  U1Presence: string;
-};
-
-const defaultFilter: Filter = {
-  search: '',
-  equipmentTypeName: 'all',
-  equipmentStatus: 'all',
-  U1Presence: 'all',
-};
-
 export const EquipmentList = () => {
   const history = useHistory();
+  const { search } = useLocation();
   const TableContainerRef = useRef<HTMLDivElement>(null);
   const { homePageState, homePageDispatch } = useHomePageContext();
 
-  const [filter, setFilter] = useState<Filter>(defaultFilter);
+  const searchQuery = queryString.parse(search);
 
   const { facility, unitId } = homePageState;
 
@@ -61,10 +44,6 @@ export const EquipmentList = () => {
     });
   }, [equipmentListQuery]);
 
-  useEffect(() => {
-    setFilter(defaultFilter);
-  }, [unitId]);
-
   const { data } = homePageState.equipmentListQuery;
   const loading =
     homePageState.unitListQuery.loading ||
@@ -77,14 +56,17 @@ export const EquipmentList = () => {
     () =>
       data?.filter(
         (item) =>
-          transformSearchValue(item.id)?.includes(filter.search) &&
-          (filter.equipmentTypeName === 'all' ||
-            item.typeName === filter.equipmentTypeName) &&
-          (filter.equipmentStatus === 'all' ||
-            item.status === filter.equipmentStatus) &&
-          (filter.U1Presence === 'all' || item.u1doc === filter.U1Presence)
+          transformSearchValue(item.id)?.includes(
+            (searchQuery.s as string) || ''
+          ) &&
+          (['all', ''].includes((searchQuery.et as string) || '') ||
+            item.typeName === searchQuery.et) &&
+          (['all', ''].includes((searchQuery.es as string) || '') ||
+            item.status === searchQuery.es) &&
+          (['all', ''].includes((searchQuery.u1 as string) || '') ||
+            item.u1doc === searchQuery.u1)
       ),
-    [data, filter]
+    [data, searchQuery]
   );
 
   const equipmentTypeNames: string[] = useMemo(
@@ -136,10 +118,8 @@ export const EquipmentList = () => {
             <EquipmentsFilter
               key={unitId}
               loading={loading}
-              filter={filter}
               numberEquipments={equipmentList?.length || 0}
               equipmentTypeNames={equipmentTypeNames}
-              setFilter={setFilter}
             />
           )}
           <Styled.TableContainer isLoading={loading} ref={TableContainerRef}>
@@ -157,7 +137,7 @@ export const EquipmentList = () => {
                   {
                     Header: 'Equipment type',
                     accessor: ColumnAccessor.TYPE,
-                    maxWidth: 150,
+                    maxWidth: 200,
                     Cell: loading ? getCellSkeleton : getCellType,
                   },
                   {
@@ -175,7 +155,6 @@ export const EquipmentList = () => {
                   {
                     Header: 'Last modified by',
                     accessor: ColumnAccessor.MODIFIED_BY,
-                    maxWidth: 200,
                     Cell: loading ? getCellSkeleton : getCellValue,
                   },
                 ]}
@@ -183,13 +162,14 @@ export const EquipmentList = () => {
                   loading
                     ? undefined
                     : ({ original: { id } }) => {
-                        history.push(
-                          generatePath(PAGES.EQUIPMENT, {
+                        history.push({
+                          pathname: generatePath(PAGES.EQUIPMENT, {
                             facility: facility!.path,
                             unitId: unitId!,
                             equipmentId: id,
-                          })
-                        );
+                          }),
+                          search,
+                        });
                       }
                 }
                 rowKey={({ id }) => id}

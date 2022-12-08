@@ -65,14 +65,14 @@ DEPENDENCIES = [
     "@npm//@cognite/sdk",
     "@npm//@cognite/sdk-playground",
     "@npm//@sentry/browser",
+    "@npm//@tanstack/react-query",
     "@npm//formik",
     "@npm//konva",
     "@npm//lodash",
     "@npm//pdfjs-dist",
+    "@npm//query-string",
     "@npm//react",
     "@npm//react-dom",
-    "@npm//@tanstack/react-query",
-    "@npm//@tanstack/react-query-devtools",
     "@npm//react-router-dom",
     "@npm//react-table",
     "@npm//styled-components",
@@ -104,6 +104,7 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/react",
     "@npm//eslint-config-react-app",
     "@npm//sinon",
+    "@npm//vite",
 ]
 
 # Mappings for absolute imports from baseUrl @unused

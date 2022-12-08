@@ -1,5 +1,5 @@
 import { Button, Skeleton } from '@cognite/cogs.js';
-import { generatePath, useHistory } from 'react-router-dom';
+import { generatePath, useHistory, useLocation } from 'react-router-dom';
 import { useAppState, useFacility, useApi } from 'hooks';
 import { PAGES } from 'pages/Menubar';
 import { saveEquipmentRaw } from 'api';
@@ -16,6 +16,7 @@ type TopBarProps = {
 export const TopBar = ({ unitId, equipmentId }: TopBarProps) => {
   const { documents, equipment } = useAppState();
   const facility = useFacility();
+  const { search } = useLocation();
   const history = useHistory();
   const equipmentListPath = generatePath(PAGES.UNIT, {
     facility: facility!.path,
@@ -30,7 +31,10 @@ export const TopBar = ({ unitId, equipmentId }: TopBarProps) => {
 
   return (
     <Styled.Container>
-      <Button icon="ArrowLeft" onClick={() => history.push(equipmentListPath)}>
+      <Button
+        icon="ArrowLeft"
+        onClick={() => history.push({ pathname: equipmentListPath, search })}
+      >
         Dashboard
       </Button>
       <Styled.Title level={3}>{equipmentId}</Styled.Title>

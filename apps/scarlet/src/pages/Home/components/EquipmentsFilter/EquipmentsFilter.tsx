@@ -1,16 +1,10 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Icon, Select } from '@cognite/cogs.js';
 import { EquipmentStatus, EquipmentType } from 'types';
 import debounce from 'lodash/debounce';
+import queryString from 'query-string';
+import { useHistory, useLocation } from 'react-router-dom';
 
-import { Filter } from '../EquipmentList';
 import { transformSearchValue } from '../EquipmentList/utils';
 
 import * as Styled from './style';
@@ -24,10 +18,8 @@ import {
 
 type EquipmentsFilterProps = {
   loading: boolean;
-  filter: Filter;
   numberEquipments: number;
   equipmentTypeNames: string[];
-  setFilter: Dispatch<SetStateAction<Filter>>;
 };
 
 const BinarySelectorOptions = [
@@ -38,43 +30,25 @@ const BinarySelectorOptions = [
 
 export const EquipmentsFilter = ({
   loading,
-  filter,
   numberEquipments,
   equipmentTypeNames,
-  setFilter,
 }: EquipmentsFilterProps) => {
-  const [search, setSearch] = useState('');
+  const history = useHistory();
+  const { pathname, search } = useLocation();
+  const searchQuery = queryString.parse(search);
+  const [text, setText] = useState((searchQuery.s as string) || '');
 
-  const onChangeEquipmentType = useCallback(
-    (option: EquipmentTypeOption) =>
-      setFilter((filter) => ({
-        ...filter,
-        equipmentTypeName: option.value,
-      })),
-    []
-  );
-
-  const onChangeEquipmentStatus = useCallback(
-    (option: EquipmentStatusOption) =>
-      setFilter((filter) => ({
-        ...filter,
-        equipmentStatus: option.value,
-      })),
-    []
-  );
-
-  const onChangeU1Presence = useCallback(
-    (option: U1PresenceOption) =>
-      setFilter((filter) => ({ ...filter, U1Presence: option.value })),
-    []
-  );
-
-  const setFilterWithDebounce = useCallback(
-    debounce((search) => {
-      setFilter((filter) => ({ ...filter, search }));
-    }, 300),
-    []
-  );
+  const addQuery = (key: string, value: string) => {
+    history.push({
+      pathname,
+      search: queryString.stringify(
+        { ...searchQuery, ...{ [key]: value } },
+        {
+          skipEmptyString: true,
+        }
+      ),
+    });
+  };
 
   const equipmentTypeNameOptions = useMemo(
     () => [
@@ -87,10 +61,11 @@ export const EquipmentsFilter = ({
     [equipmentTypeNames]
   );
 
-  useEffect(
-    () => setFilterWithDebounce(transformSearchValue(search)),
-    [search]
+  const setSearchFilterDebounce = debounce(
+    (val) => addQuery('s', transformSearchValue(val) || ''),
+    300
   );
+  useEffect(() => setSearchFilterDebounce(text), [text]);
 
   return (
     <Styled.Container>
@@ -98,45 +73,54 @@ export const EquipmentsFilter = ({
         <Styled.Search
           placeholder="Search by equipment ID"
           iconPlacement="left"
-          value={search}
+          value={text}
           icon="Search"
-          onChange={({ target: { value } }) => {
-            setSearch(value);
-          }}
+          onChange={({ target: { value } }) => setText(value)}
           clearable={{
-            callback: () => {
-              setSearch('');
-            },
+            callback: () => setText(''),
           }}
         />
         <Select<EquipmentType | string>
           menuPlacement="bottom"
-          value={equipmentTypeNameOptions.find(
-            (opt) => opt.value === filter.equipmentTypeName
-          )}
+          value={
+            equipmentTypeNameOptions.find(
+              (opt) => opt.value === searchQuery.et
+            ) || equipmentTypeNameOptions[0]
+          }
           options={equipmentTypeNameOptions}
           width={220}
-          onChange={onChangeEquipmentType}
+          onChange={(option: EquipmentTypeOption) =>
+            addQuery('et', option.value)
+          }
           title={
-            filter.equipmentTypeName === 'all' ? 'Equipment type' : undefined
+            !searchQuery.et || searchQuery.et === 'all'
+              ? 'Equipment type'
+              : undefined
           }
         />
         <Select<EquipmentStatus | string>
           menuPlacement="bottom"
-          value={equipmentStatusOptionsDictionary[filter.equipmentStatus]}
+          value={
+            equipmentStatusOptionsDictionary[
+              (searchQuery.es as EquipmentStatus) || 'all'
+            ]
+          }
           options={equipmentStatusOptions}
           width={180}
-          onChange={onChangeEquipmentStatus}
-          title={filter.equipmentStatus === 'all' ? 'Status' : undefined}
+          onChange={(option: EquipmentStatusOption) =>
+            addQuery('es', option.value)
+          }
+          title="Status"
         />
         <Select<string>
           menuPlacement="bottom"
-          value={BinarySelectorOptions.find(
-            (opt) => opt.value === filter.U1Presence
-          )}
+          value={
+            BinarySelectorOptions.find((opt) => opt.value === searchQuery.u1) ||
+            BinarySelectorOptions[0]
+          }
           options={BinarySelectorOptions}
           width={120}
-          onChange={onChangeU1Presence}
+          onChange={(option: U1PresenceOption) => addQuery('u1', option.value)}
           title="U1"
         />
       </Styled.FiltersContainer>
