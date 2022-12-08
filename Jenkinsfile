@@ -154,6 +154,7 @@ pods {
           container('fas') {
             if (!isPullRequest) {
               print 'No storybook reviews for release builds'
+              return;
             }
 
             def projects = getAffectedProjects(isPullRequest)
@@ -213,7 +214,7 @@ pods {
               return;
             }
 
-            def projects = getAffectedProjects(!isPullRequest) 
+            def projects = getAffectedProjects(isPullRequest) 
 
             for (int i = 0; i < projects.size(); i++) {
               def productionAppId = PRODUCTION_APP_IDS[projects[i]];
