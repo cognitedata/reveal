@@ -88,7 +88,7 @@ def getAffectedProjects(boolean isPullRequest = true, String target = 'build', S
   if (isPullRequest) {
     affected = sh(script: "npx nx print-affected --base=origin/${env.CHANGE_TARGET} --plain --target=${target} --select=${select}", returnStdout: true)
   } else {
-    affected = sh(script: "npx nx print-affected --base=origin/${env.CHANGE_TARGET} --head=HEAD~1 --plain --target=${target} --select=${select}", returnStdout: true)
+    affected = sh(script: "npx nx print-affected --base=HEAD~1 --plain --target=${target} --select=${select}", returnStdout: true)
   }
 
   print "[NX] Affected projects: ${affected}"
@@ -145,7 +145,7 @@ pods {
       stage('git setup') {
         withCredentials([usernamePassword(credentialsId: 'githubapp', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
           sh("git config --global credential.helper '!f() { sleep 1; echo \"username=${GH_USER}\"; echo \"password=${GITHUB_TOKEN}\"; }; f'")
-          sh("git fetch origin ${env.CHANGE_TARGET}:refs/remotes/origin/${env.CHANGE_TARGET}")
+          sh("git fetch origin master:refs/remotes/origin/master")
         }
       }
 
