@@ -5,6 +5,7 @@ import App from './app/App';
 
 //
 // Globally defined global
+//
 // GraphiQL package needs this to be run correctly
 (window as any).global = window;
 
