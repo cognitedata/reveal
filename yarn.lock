@@ -2442,10 +2442,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^5.2.0":
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-5.2.0.tgz#267d2ac46fb848d985515b4116d86c0a2a802a3d"
-  integrity sha512-tqUFDDr0FN/7xvS55IMasaqPy7la0G06vag8Pn7xwitLx8rKjO7RXwP+1GA3gMQt7oixugGcvOR9IH+Z+NVbYA==
+"@cognite/unified-file-viewer@^5.3.1":
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-5.3.1.tgz#466f642ce25a4206f6a64a3957bbfe08a7f15b8b"
+  integrity sha512-0tt3heCNpRaUSkqGu47/m1YfQtW5nzH7wiZ6xymYhzI4kLeCCLqYVutsuyZ8g3+y8RtON9yNwekhbdjcvzdVcw==
   dependencies:
     "@cognite/cogs.js" "7.0.3"
     "@cognite/sdk" "^7.13.0"
