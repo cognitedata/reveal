@@ -2,6 +2,7 @@ import {
   BidProcessResult,
   WorkflowSchemaWithProcesses,
   ScenarioObjectiveOutputCDFModel,
+  BenchmarkingWaterCourses,
 } from '@cognite/power-ops-api-types';
 
 export interface TableData {
@@ -74,18 +75,36 @@ export type RKOMTableData = {
   }[];
 }[];
 
-export enum PAGES {
-  HOME = '/home',
-  PRICE_AREA = '/day-ahead-market/:priceAreaExternalId',
+export type BenchmarkingTypeOption =
+  | 'absolute'
+  | BenchmarkingWaterCourses['methods'][number]['value'];
+
+export type BenchmarkingTimeSeriesPoints = {
+  [timestamp: string]: number;
+};
+
+export const SECTIONS = {
+  DAY_AHEAD_MARKET: 'day-ahead-market',
+  BALANCING_MARKETS: 'balancing-markets',
+  BENCHMARKING: 'performance',
+  PRICE_SCENARIOS: 'price-scenarios',
+  TOTAL: 'total',
+  WORKFLOWS: 'workflows',
+};
+
+export const PAGES = {
+  DAY_AHEAD_BENCHMARKING: `/${SECTIONS.DAY_AHEAD_MARKET}/:priceAreaExternalId/${SECTIONS.BENCHMARKING}`,
+  PRICE_AREA: `/${SECTIONS.DAY_AHEAD_MARKET}/:priceAreaExternalId`,
+  DAY_AHEAD_MARKET: `/${SECTIONS.DAY_AHEAD_MARKET}`,
+  RKOM_PERFORMANCE: `/${SECTIONS.BALANCING_MARKETS}/rkom/${SECTIONS.BENCHMARKING}`,
+  RKOM_BID: `/${SECTIONS.BALANCING_MARKETS}/rkom/bid`,
+  BALANCING_MARKETS: `/${SECTIONS.BALANCING_MARKETS}`,
+  WORKFLOWS_SINGLE: `/${SECTIONS.WORKFLOWS}/:workflowExternalId`,
+  WORKFLOWS: `/${SECTIONS.WORKFLOWS}`,
+  WORKFLOW_SCHEMAS: '/workflow-schemas',
+  MONITORING: '/monitoring',
+  LOGOUT: '/logout',
+
   /** @deprecated - use "DAY_AHEAD_MARKET" instead */
-  PORTFOLIO = '/portfolio',
-  DAY_AHEAD_MARKET = '/day-ahead-market',
-  BALANCING_MARKETS = '/balancing-markets',
-  RKOM_BID = '/balancing-markets/rkom/bid',
-  RKOM_PERFORMANCE = '/balancing-markets/rkom/performance',
-  WORKFLOWS_SINGLE = '/workflows/:workflowExternalId',
-  WORKFLOWS = '/workflows',
-  WORKFLOW_SCHEMAS = '/workflow-schemas',
-  MONITORING = '/monitoring',
-  LOGOUT = '/logout',
-}
+  PORTFOLIO: '/portfolio',
+};

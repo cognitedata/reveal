@@ -6,7 +6,7 @@ import { expect } from '@storybook/jest';
 
 export default {
   component: DeliveryWeekSelect,
-  title: 'Components/Delivery Week Select',
+  title: 'Components/RKOM Header/Delivery Week',
   argTypes: {
     onChange: { action: 'Value Changed' },
     value: { control: 'date' },

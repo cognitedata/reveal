@@ -7,7 +7,7 @@ import {
 } from '@cognite/react-container';
 import { handleLogout } from 'utils/utils';
 import { useFetchPriceAreas } from 'queries/useFetchPriceAreas';
-import { PAGES } from 'types';
+import { PAGES, SECTIONS } from 'types';
 
 import {
   StyledTopBar,
@@ -87,7 +87,7 @@ export const MenuBar = () => {
                   key={pricearea.externalId}
                   onClick={() => {
                     history.push(
-                      generatePath(`${PAGES.PRICE_AREA}/total`, {
+                      generatePath(`${PAGES.PRICE_AREA}/${SECTIONS.TOTAL}`, {
                         priceAreaExternalId: pricearea.externalId,
                       })
                     );

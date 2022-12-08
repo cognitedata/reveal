@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { ShopQualityAssuranceModal } from 'components/ShopQualityAssuranceModal/ShopQualityAssuranceModal';
 import { ComponentProps } from 'react';
-import { PAGES } from 'types';
+import { PAGES, SECTIONS } from 'types';
 import {
   authDecorator,
   boxDecorator,
@@ -18,7 +18,7 @@ export default {
     reactRouterDecorator(
       {
         initialEntries: [
-          '/power-ops-staging/day-ahead-market/price_area_NO2/total',
+          `/power-ops-staging/${SECTIONS.DAY_AHEAD_MARKET}/price_area_NO2/${SECTIONS.TOTAL}`,
         ],
       },
       `/:project${PAGES.PRICE_AREA}/:plantExternalId`

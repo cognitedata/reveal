@@ -3,6 +3,7 @@ import {
   Redirect,
   Route,
   Switch,
+  useLocation,
   useParams,
   useRouteMatch,
 } from 'react-router-dom';
@@ -15,11 +16,15 @@ import { NewDayAheadDataAvailableBar } from 'components/NewDayAheadDataAvailable
 import { ShopQualityAssuranceModal } from 'components/ShopQualityAssuranceModal/ShopQualityAssuranceModal';
 import { useNewBidMatrixAvailable } from 'hooks/useNewBidMatrixAvailable';
 import { BaseContainer } from 'styles/layout';
+import { MethodPerformanceContainer } from 'pages/MethodPerformance/MethodPerformance';
+import { SECTIONS } from 'types';
 
 import { Container, MainDiv } from './elements';
 
 export const PriceArea = () => {
   const { path } = useRouteMatch();
+  const { pathname } = useLocation();
+
   const metrics = useMetrics('bid-matrix');
 
   const { priceAreaExternalId } = useParams<{
@@ -47,12 +52,14 @@ export const PriceArea = () => {
         bidProcessEventExternalId={bidProcessEventExternalId}
         onChangeBidProcessEventExternalId={setBidProcessEventExternalId}
       />
-      {newMatrixAvailable && (
+      {!pathname.includes(SECTIONS.BENCHMARKING) && newMatrixAvailable && (
         <NewDayAheadDataAvailableBar onReloadClick={handleReloadClick} />
       )}
-      <ShopQualityAssuranceModal
-        bidProcessEventExternalId={bidProcessEventExternalId}
-      />
+      {!pathname.includes(SECTIONS.BENCHMARKING) && (
+        <ShopQualityAssuranceModal
+          bidProcessEventExternalId={bidProcessEventExternalId}
+        />
+      )}
       <Container>
         <SidebarContainer
           bidProcessEventExternalId={bidProcessEventExternalId}
@@ -61,17 +68,20 @@ export const PriceArea = () => {
         />
         <MainDiv sidePanelOpen={sidePanelOpen}>
           <Switch>
-            <Route path={`${path}/price-scenarios`}>
+            <Route path={`${path}/${SECTIONS.PRICE_SCENARIOS}`}>
               <PriceScenariosContainer
                 bidProcessEventExternalId={bidProcessEventExternalId}
               />
+            </Route>
+            <Route path={`${path}/${SECTIONS.BENCHMARKING}`}>
+              <MethodPerformanceContainer priceAreaId={priceAreaExternalId} />
             </Route>
             <Route path={`${path}/:plantExternalId`}>
               <BidMatrixContainer
                 bidProcessEventExternalId={bidProcessEventExternalId}
               />
             </Route>
-            <Redirect from={path} to={`${path}/total`} />
+            <Redirect from={path} to={`${path}/${SECTIONS.TOTAL}`} />
           </Switch>
         </MainDiv>
       </Container>

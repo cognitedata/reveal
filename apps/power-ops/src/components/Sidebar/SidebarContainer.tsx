@@ -6,6 +6,7 @@ import debounce from 'lodash/debounce';
 import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
 import { useCallback } from 'react';
 import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
+import { SECTIONS } from 'types';
 import { sortPlants } from 'utils/utils';
 
 type Props = {
@@ -19,7 +20,7 @@ const SidebarContainer = ({
   open,
   onOpenClose,
 }: Props) => {
-  const metrics = useMetrics('day-ahead-market');
+  const metrics = useMetrics(SECTIONS.DAY_AHEAD_MARKET);
   const { url } = useRouteMatch();
   const { pathname } = useLocation();
   const { priceAreaExternalId } = useParams<{ priceAreaExternalId: string }>();
@@ -56,7 +57,7 @@ const SidebarContainer = ({
     >
       <Sidebar
         onNavigate={(section) => {
-          if (['total', 'price-scenarios'].includes(section)) {
+          if ([SECTIONS.TOTAL, SECTIONS.PRICE_SCENARIOS].includes(section)) {
             metrics.track(`click-sidebar-${section}-link`);
           } else {
             trackSearchMetric(section);
@@ -70,12 +71,16 @@ const SidebarContainer = ({
           }
         }}
         total={{
-          url: `${url}/total`,
-          current: pathname === `${url}/total`,
+          url: `${url}/${SECTIONS.TOTAL}`,
+          current: pathname === `${url}/${SECTIONS.TOTAL}`,
         }}
         priceScenarios={{
-          url: `${url}/price-scenarios`,
-          current: pathname === `${url}/price-scenarios`,
+          url: `${url}/${SECTIONS.PRICE_SCENARIOS}`,
+          current: pathname === `${url}/${SECTIONS.PRICE_SCENARIOS}`,
+        }}
+        methodPerformance={{
+          url: `${url}/${SECTIONS.BENCHMARKING}`,
+          current: pathname === `${url}/${SECTIONS.BENCHMARKING}`,
         }}
         plants={bidProcessResult.plants.sort(sortPlants).map((plant) => ({
           name: plant.displayName,

@@ -24,6 +24,7 @@ interface Props {
   ) => void;
   onDownloadMatrix: (bidProcessExternalId: string) => Promise<void>;
   onDownloadButtonClick: () => Promise<void>;
+  showRightSide: boolean;
 }
 
 export const DayAheadMarketHeader = ({
@@ -37,6 +38,7 @@ export const DayAheadMarketHeader = ({
   onChangeProcessConfigurationExternalId,
   onDownloadMatrix,
   onDownloadButtonClick,
+  showRightSide = true,
 }: Props) => {
   return (
     <>
@@ -66,70 +68,78 @@ export const DayAheadMarketHeader = ({
         title={`Price Area ${priceAreaName}`}
         titleLabel={`Matrix generation started: ${startDate}`}
       >
-        <div>
-          <Dropdown
-            content={
-              <Menu data-testid="method-selector-menu">
-                {processConfigurations.map((config, i) => (
-                  <Menu.Item
-                    selected={
-                      config.bidProcessEventExternalId === bidProcessExternalId
-                    }
-                    key={config.bidProcessEventExternalId}
-                    onClick={() =>
-                      onChangeProcessConfigurationExternalId(
-                        config.bidProcessEventExternalId
-                      )
-                    }
-                    data-testid={`method-selector-menu-item-${i}`}
-                  >
-                    <MethodItem>
-                      <div>
-                        {formatMethod(config.bidProcessConfiguration)}
-                        <p>
-                          Process started:{' '}
-                          {config.bidProcessStartedDate &&
-                            formatDate(
-                              config.bidProcessStartedDate.toLocaleString()
-                            )}
-                        </p>
-                      </div>
-                      {config.bidProcessEventExternalId ===
-                        bidProcessExternalId && <Icon type="Checkmark" />}
-                    </MethodItem>
-                  </Menu.Item>
-                ))}
-              </Menu>
-            }
-          >
-            <MethodButton type="tertiary" data-testid="method-button">
-              <div className="method-name">
-                <b>Method:&nbsp;</b>
-                {bidProcessExternalId === '' && 'Loading...'}
-                {formatMethod(
-                  processConfigurations.find(
-                    (config) =>
-                      config.bidProcessEventExternalId === bidProcessExternalId
-                  )?.bidProcessConfiguration ?? ''
-                )}
-              </div>
-              <Icon type="ChevronDown" />
-            </MethodButton>
-          </Dropdown>
-        </div>
-        <VerticalSeparator />
-        <Button
-          data-testid="download-button"
-          icon="Download"
-          type="primary"
-          loading={downloading}
-          disabled={bidProcessExternalId === ''}
-          onClick={async () => {
-            await onDownloadButtonClick();
-          }}
-        >
-          Download
-        </Button>
+        {showRightSide ? (
+          <>
+            <div>
+              <Dropdown
+                content={
+                  <Menu data-testid="method-selector-menu">
+                    {processConfigurations.map((config, i) => (
+                      <Menu.Item
+                        selected={
+                          config.bidProcessEventExternalId ===
+                          bidProcessExternalId
+                        }
+                        key={config.bidProcessEventExternalId}
+                        onClick={() =>
+                          onChangeProcessConfigurationExternalId(
+                            config.bidProcessEventExternalId
+                          )
+                        }
+                        data-testid={`method-selector-menu-item-${i}`}
+                      >
+                        <MethodItem>
+                          <div>
+                            {formatMethod(config.bidProcessConfiguration)}
+                            <p>
+                              Process started:{' '}
+                              {config.bidProcessStartedDate &&
+                                formatDate(
+                                  config.bidProcessStartedDate.toLocaleString()
+                                )}
+                            </p>
+                          </div>
+                          {config.bidProcessEventExternalId ===
+                            bidProcessExternalId && <Icon type="Checkmark" />}
+                        </MethodItem>
+                      </Menu.Item>
+                    ))}
+                  </Menu>
+                }
+              >
+                <MethodButton type="tertiary" data-testid="method-button">
+                  <div className="method-name">
+                    <b>Method:&nbsp;</b>
+                    {bidProcessExternalId === '' && 'Loading...'}
+                    {formatMethod(
+                      processConfigurations.find(
+                        (config) =>
+                          config.bidProcessEventExternalId ===
+                          bidProcessExternalId
+                      )?.bidProcessConfiguration ?? ''
+                    )}
+                  </div>
+                  <Icon type="ChevronDown" />
+                </MethodButton>
+              </Dropdown>
+            </div>
+            <VerticalSeparator />
+            <Button
+              data-testid="download-button"
+              icon="Download"
+              type="primary"
+              loading={downloading}
+              disabled={bidProcessExternalId === ''}
+              onClick={async () => {
+                await onDownloadButtonClick();
+              }}
+            >
+              Download
+            </Button>
+          </>
+        ) : (
+          <span />
+        )}
       </CommonHeader>
     </>
   );

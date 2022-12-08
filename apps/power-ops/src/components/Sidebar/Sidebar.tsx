@@ -1,14 +1,18 @@
 import { Detail } from '@cognite/cogs.js';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { SECTIONS } from 'types';
 
 import { Header, PanelContent, StyledSearch, StyledButton } from './elements';
 
 type Props = {
-  onNavigate?: (section: 'total' | 'price-scenarios' | string) => void;
+  onNavigate?: (
+    section: typeof SECTIONS.TOTAL | typeof SECTIONS.PRICE_SCENARIOS | string
+  ) => void;
   onSearch?: (term: string, clear?: boolean) => void;
   total: { url: string; current: boolean };
   priceScenarios: { url: string; current: boolean };
+  methodPerformance: { url: string; current: boolean };
   plants: {
     name: string;
     externalId: string;
@@ -21,6 +25,7 @@ export const Sidebar = ({
   plants,
   total,
   priceScenarios,
+  methodPerformance,
   onSearch,
   onNavigate,
 }: Props) => {
@@ -58,17 +63,31 @@ export const Sidebar = ({
       </Header>
       <PanelContent>
         <Detail>Price area overview</Detail>
-        <NavLink to={total.url} onClick={() => handleNavigate('total')}>
-          <StyledButton toggled={total.current} key="total">
+        <NavLink to={total.url} onClick={() => handleNavigate(SECTIONS.TOTAL)}>
+          <StyledButton toggled={total.current} key={SECTIONS.TOTAL}>
             <p>Total</p>
           </StyledButton>
         </NavLink>
         <NavLink
           to={priceScenarios.url}
-          onClick={() => handleNavigate('price-scenarios')}
+          onClick={() => handleNavigate(SECTIONS.PRICE_SCENARIOS)}
         >
-          <StyledButton toggled={priceScenarios.current} key="price-scenarios">
+          <StyledButton
+            toggled={priceScenarios.current}
+            key={SECTIONS.PRICE_SCENARIOS}
+          >
             <p>Price Scenarios</p>
+          </StyledButton>
+        </NavLink>
+        <NavLink
+          to={methodPerformance.url}
+          onClick={() => handleNavigate(SECTIONS.BENCHMARKING)}
+        >
+          <StyledButton
+            toggled={methodPerformance.current}
+            key={SECTIONS.BENCHMARKING}
+          >
+            <p>Method Performance</p>
           </StyledButton>
         </NavLink>
         <Detail>Plants</Detail>

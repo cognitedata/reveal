@@ -1,4 +1,4 @@
-import { BidProcessResultWithData, TableColumn } from 'types';
+import { BidProcessResultWithData, SECTIONS, TableColumn } from 'types';
 import { calculateScenarioProduction } from 'utils/utils';
 import { DatapointAggregates, Datapoints, DoubleDatapoint } from '@cognite/sdk';
 import {
@@ -13,7 +13,7 @@ export function getActiveColumns(
   let columns: TableColumn[] = [];
 
   // If on total tab, one column for each Scenario
-  if (activeTab === 'total') {
+  if (activeTab === SECTIONS.TOTAL) {
     columns = bidProcessResult.priceScenarios.map((scenario, index) => {
       const header: TableColumn = {
         Header: scenario.name,
@@ -127,7 +127,7 @@ export const calculateProduction = async (
   bidProcessResult: BidProcessResultWithData
 ): Promise<Record<string, string>[][]> => {
   let calcProductionData: Record<string, string>[][];
-  if (activeTab === 'total') {
+  if (activeTab === SECTIONS.TOTAL) {
     calcProductionData = priceTimeseries.map((scenarioPricePerHour, index) => {
       const accessor = `calc-${index}`;
       const calulatedProduction = calculateScenarioProduction(

@@ -5,7 +5,7 @@ import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { pickChartColor } from 'utils/utils';
 import { DEFAULT_CONFIG, BidProcessResult } from '@cognite/power-ops-api-types';
 import { useMetrics } from '@cognite/metrics';
-import { TableData } from 'types';
+import { SECTIONS, TableData } from 'types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -26,7 +26,7 @@ interface TooltipData {
   shop: string;
 }
 
-interface PriceScenariosChartProps {
+interface Props {
   externalIds: ExternalId[] | undefined;
   bidProcessResult: BidProcessResult;
   activeTab: string | number;
@@ -43,8 +43,8 @@ export const PriceScenariosChart = ({
   activeTab,
   changeTab,
   tableData,
-}: PriceScenariosChartProps) => {
-  const metrics = useMetrics('price-scenarios');
+}: Props) => {
+  const metrics = useMetrics(SECTIONS.PRICE_SCENARIOS);
   const { client } = useAuthenticatedAuthContext();
   const [chartData, setChartData] = useState<Data[]>([{}]);
   const [hoverClass, setHoverClass] = useState<string>('');
@@ -103,7 +103,7 @@ export const PriceScenariosChart = ({
           });
 
           const active = !(
-            activeTab !== 'total' && activeTab !== ts.externalId
+            activeTab !== SECTIONS.TOTAL && activeTab !== ts.externalId
           );
           const opacity = active ? 1 : 0.1;
 
@@ -162,7 +162,10 @@ export const PriceScenariosChart = ({
         : 'No data',
     });
 
-    if (activeTab === 'total' || activeTab === event.points[0].data.name) {
+    if (
+      activeTab === SECTIONS.TOTAL ||
+      activeTab === event.points[0].data.name
+    ) {
       setHoverClass('hover');
     }
   };

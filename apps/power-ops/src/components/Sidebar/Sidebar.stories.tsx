@@ -5,6 +5,7 @@ import { Sidebar } from 'components/Sidebar/Sidebar';
 import { ComponentProps } from 'react';
 import { mockDayAheadMarketSidebarPlants } from 'utils/test/mockPlants';
 import { reactRouterDecorator } from 'utils/test/storyDecorators';
+import { SECTIONS } from 'types';
 
 export default {
   component: Sidebar,
@@ -25,11 +26,15 @@ export const Default = Template.bind({});
 Default.args = {
   plants: mockDayAheadMarketSidebarPlants,
   priceScenarios: {
-    url: '/portfolio/price_area_NO3/price-scenarios',
+    url: `/portfolio/price_area_NO3/${SECTIONS.PRICE_SCENARIOS}`,
+    current: false,
+  },
+  methodPerformance: {
+    url: `/portfolio/price_area_NO3/${SECTIONS.BENCHMARKING}`,
     current: false,
   },
   total: {
-    url: '/portfolio/price_area_NO3/total',
+    url: `/portfolio/price_area_NO3/${SECTIONS.TOTAL}`,
     current: false,
   },
 };

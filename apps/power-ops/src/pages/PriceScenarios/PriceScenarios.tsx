@@ -2,7 +2,12 @@ import * as Sentry from '@sentry/browser';
 import { PriceScenariosChart } from 'components/PriceScenariosChart';
 import { SetStateAction, useEffect, useState } from 'react';
 import { pickChartColor } from 'utils/utils';
-import { BidProcessResultWithData, TableData, TableColumn } from 'types';
+import {
+  BidProcessResultWithData,
+  TableData,
+  TableColumn,
+  SECTIONS,
+} from 'types';
 import { Column } from 'react-table';
 import { HeadlessTable } from 'components/HeadlessTable';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
@@ -42,7 +47,7 @@ interface Props {
 const defaultColumnOptions = { minWidth: 70, width: 70, maxWidth: 140 };
 
 export const PriceScenarios = ({ bidProcessResult }: Props) => {
-  const metrics = useMetrics('price-scenarios');
+  const metrics = useMetrics(SECTIONS.PRICE_SCENARIOS);
   const { client } = useAuthenticatedAuthContext();
   const bidDate = dayjs(bidProcessResult.bidDate).tz(
     bidProcessResult.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE
@@ -52,11 +57,11 @@ export const PriceScenarios = ({ bidProcessResult }: Props) => {
     { externalId: string }[] | undefined
   >();
 
-  const [activeTab, setActiveTab] = useState<string>('total');
+  const [activeTab, setActiveTab] = useState<string>(SECTIONS.TOTAL);
 
   const handleTabClickEvent = (activeKey: string) => {
     setActiveTab(activeKey);
-    if (activeKey === 'total') {
+    if (activeKey === SECTIONS.TOTAL) {
       metrics.track('click-total-tab');
     } else {
       metrics.track('click-price-scenario-tab', {
@@ -220,14 +225,14 @@ export const PriceScenarios = ({ bidProcessResult }: Props) => {
     );
     let shopProductionData: Record<string, string>[][] = [];
 
-    if (activeTab === 'total') {
+    if (activeTab === SECTIONS.TOTAL) {
       shopProductionData = await getTotalProductionData();
     } else {
       shopProductionData = await getScenarioProductionData(activeScenarioIndex);
     }
 
     const priceTimeseries =
-      activeTab === 'total'
+      activeTab === SECTIONS.TOTAL
         ? priceExternalIds &&
           (await client.datapoints.retrieve({
             items: priceExternalIds.map((externalId) => {
@@ -304,11 +309,11 @@ export const PriceScenarios = ({ bidProcessResult }: Props) => {
           tableData={tableData}
         />
         <StyledTabs
-          defaultActiveKey="total"
+          defaultActiveKey={SECTIONS.TOTAL}
           activeKey={activeTab}
           onChange={(activeKey: string) => handleTabClickEvent(activeKey)}
         >
-          <StyledTabs.TabPane key="total" tab="Total" />
+          <StyledTabs.TabPane key={SECTIONS.TOTAL} tab="Total" />
           {bidProcessResult?.priceScenarios.map((scenario, index) => {
             return (
               <StyledTabs.TabPane

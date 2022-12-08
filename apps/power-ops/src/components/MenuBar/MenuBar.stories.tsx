@@ -7,6 +7,7 @@ import {
   reactQueryDecorator,
   reactRouterDecorator,
 } from 'utils/test/storyDecorators';
+import { SECTIONS } from 'types';
 
 export default {
   component: MenuBar,
@@ -14,7 +15,9 @@ export default {
   decorators: [
     reactQueryDecorator,
     reactRouterDecorator({
-      initialEntries: ['/day-ahead-market/price_area_NO2/total'],
+      initialEntries: [
+        `/${SECTIONS.DAY_AHEAD_MARKET}/price_area_NO2/${SECTIONS.TOTAL}`,
+      ],
     }),
     boxDecorator({ width: 1366, height: 500 }),
   ],

@@ -1,13 +1,14 @@
 import { useMetrics } from '@cognite/metrics';
 import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
 import { useFetchProcessConfigurations } from 'queries/useFetchProcessConfigurations';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { downloadBidMatrices, formatDate } from 'utils/utils';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { DayAheadMarketHeader } from 'components/DayAheadMarketHeader/DayAheadMarketHeader';
 import { useFetchPriceAreas } from 'queries/useFetchPriceAreas';
 import { useEffect, useMemo, useState } from 'react';
 import { shopPenaltiesExceedLimit } from 'components/ShopQualityAssuranceModal/utils';
+import { SECTIONS } from 'types';
 
 type Props = {
   bidProcessEventExternalId: string;
@@ -18,7 +19,9 @@ const DayAheadMarketHeaderContainer = ({
   bidProcessEventExternalId,
   onChangeBidProcessEventExternalId,
 }: Props) => {
-  const metrics = useMetrics('day-ahead-market');
+  const { pathname } = useLocation();
+
+  const metrics = useMetrics(SECTIONS.DAY_AHEAD_MARKET);
 
   const { project, token } = useAuthenticatedAuthContext();
   const { priceAreaExternalId } = useParams<{ priceAreaExternalId: string }>();
@@ -99,6 +102,7 @@ const DayAheadMarketHeaderContainer = ({
       }}
       onDownloadMatrix={handleDownloadMatrix}
       onDownloadButtonClick={handleDownloadButtonClick}
+      showRightSide={!pathname.includes(SECTIONS.BENCHMARKING)}
     />
   );
 };
