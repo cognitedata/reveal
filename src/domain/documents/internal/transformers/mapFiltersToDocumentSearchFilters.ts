@@ -9,7 +9,7 @@ type DocumentProperties = {
   type: string[];
   externalId: string;
   id: number[];
-  [key: `metadata|${string}`]: string;
+  [key: `sourceFile|metadata|${string}`]: string;
 };
 
 export const mapFiltersToDocumentSearchFilters = (
@@ -66,7 +66,7 @@ export const mapFiltersToDocumentSearchFilters = (
 
   if (metadata) {
     for (const { key, value } of metadata) {
-      filterBuilder.equals(`metadata|${key}`, value);
+      filterBuilder.equals(`sourceFile|metadata|${key}`, value);
     }
   }
 
