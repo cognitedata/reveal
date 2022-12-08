@@ -32,10 +32,12 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
         {
           header: 'Key',
           accessorKey: 'key',
+          maxSize: undefined,
         },
         {
           header: 'Value',
           accessorKey: 'value',
+          maxSize: undefined,
         },
       ] as ColumnDef<DataSource>[],
     []
