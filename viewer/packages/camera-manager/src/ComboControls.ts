@@ -349,6 +349,7 @@ export class ComboControls extends EventDispatcher {
 
   public setViewTarget = (target: Vector3) => {
     this._viewTarget.copy(target);
+    this.triggerCameraChangeEvent();
   };
 
   public setScrollTarget = (target: Vector3) => {
