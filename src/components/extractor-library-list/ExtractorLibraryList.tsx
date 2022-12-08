@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 
-import { Body, Chip, Colors, Elevations, Flex, Title } from '@cognite/cogs.js';
+import { Body, Chip, Colors, Elevations, Title } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 
@@ -33,14 +33,12 @@ const ExtractorLibraryList = ({ items }: ExtractorLibraryListProps) => {
           }}
         >
           <StyledExtractorContent>
-            <Flex gap={8}>
-              {item?.imageUrl && (
-                <StyledExtractorImageContainer>
-                  <StyledExtractorImage src={item?.imageUrl} />
-                </StyledExtractorImageContainer>
-              )}
-              <Title level="5">{item.name}</Title>
-            </Flex>
+            {item?.imageUrl && (
+              <StyledExtractorImageContainer>
+                <StyledExtractorImage src={item?.imageUrl} />
+              </StyledExtractorImageContainer>
+            )}
+            <Title level="5">{item.name}</Title>
             <StyledMutedDescription>{item.description}</StyledMutedDescription>
             <StyledTagContainer>
               <Chip label={t(`${item.category}_one`)} size="x-small" />
@@ -108,7 +106,7 @@ const StyledExtractorImageContainer = styled.div`
 
 const StyledExtractorImage = styled.img`
   max-height: 32px;
-  max-width: 32px;
+  max-width: 100%;
 `;
 
 export default ExtractorLibraryList;

@@ -43,14 +43,12 @@ const DetailsHeader = ({
             ]}
           />
           <Flex direction="column" gap={16}>
-            <Flex gap={8}>
-              {imageUrl && (
-                <StyledExtractorImageContainer>
-                  <StyledExtractorImage src={imageUrl} />
-                </StyledExtractorImageContainer>
-              )}
-              <Title level="3">{title}</Title>
-            </Flex>
+            {imageUrl && (
+              <StyledExtractorImageContainer>
+                <StyledExtractorImage src={imageUrl} />
+              </StyledExtractorImageContainer>
+            )}
+            <Title level="3">{title}</Title>
             {(version || createdAt) && (
               <Flex gap={12}>
                 {version && (
@@ -105,7 +103,7 @@ const StyledExtractorImageContainer = styled.div`
 
 const StyledExtractorImage = styled.img`
   max-height: 32px;
-  max-width: 32px;
+  max-width: 100%;
 `;
 
 export default DetailsHeader;

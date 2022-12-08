@@ -17,16 +17,18 @@ import { useTranslation } from 'common';
 import { useSourceSystem } from 'hooks/useSourceSystems';
 import { useExtractor } from 'hooks/useExtractorsList';
 
-import Arrow from 'assets/Arrow.svg';
 import { useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 
-type SolutionForSourceSystemProps = SolutionType;
+type SolutionForSourceSystemProps = SolutionType & {
+  isInitiallyCollapsed?: boolean;
+};
 
 const SolutionForSourceSystem = ({
   documentation,
   extractorExternalId,
   sourceSystemExternalId,
+  isInitiallyCollapsed,
 }: SolutionForSourceSystemProps): JSX.Element => {
   const { t } = useTranslation();
 
@@ -35,7 +37,7 @@ const SolutionForSourceSystem = ({
   const { data: sourceSystem } = useSourceSystem(sourceSystemExternalId);
   const { data: extractor } = useExtractor(extractorExternalId);
 
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(isInitiallyCollapsed);
 
   const handleClick = () => {
     setIsCollapsed((prevState) => !prevState);
@@ -48,15 +50,6 @@ const SolutionForSourceSystem = ({
           <StyledCollapseIcon
             type={isCollapsed ? 'ChevronDown' : 'ChevronRight'}
           />
-          <StyledConnection>
-            <StyledLogoContainer>
-              <StyledLogo src={sourceSystem?.imageUrl} />
-            </StyledLogoContainer>
-            <StyledLogoContainer>
-              <StyledLogo src={extractor?.imageUrl} />
-            </StyledLogoContainer>
-            <StyledArrow src={Arrow} />
-          </StyledConnection>
           <Title level={6}>
             {t('connect-to-source-system-via-extractor-with-name', {
               extractor: extractor?.name,
@@ -119,34 +112,6 @@ const StyledContent = styled(Body).attrs({ level: 2 })`
 
 const StyledCollapseIcon = styled(Icon)`
   margin-right: 8px;
-`;
-
-const StyledConnection = styled.div`
-  display: flex;
-  gap: 12px;
-  position: relative;
-`;
-
-const StyledArrow = styled.img`
-  left: 30px;
-  position: absolute;
-  top: 14px;
-`;
-
-const StyledLogoContainer = styled.div`
-  align-items: center;
-  background-color: ${Colors['surface--strong']};
-  border-radius: 6px;
-  display: flex;
-  height: 36px;
-  justify-content: center;
-  padding: 10px;
-  width: 36px;
-`;
-
-const StyledLogo = styled.img`
-  max-height: 16px;
-  max-width: 16px;
 `;
 
 export default SolutionForSourceSystem;
