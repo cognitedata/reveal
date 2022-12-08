@@ -4,6 +4,7 @@ import {
   AssetSummary,
   TimeseriesSummary,
   DocumentSummary,
+  FileSummary,
   EventSummary,
   ResourceType,
 } from '@cognite/data-exploration';
@@ -12,8 +13,10 @@ import { SEARCH_KEY } from 'app/utils/constants';
 import { useCurrentResourceType, useQueryString } from 'app/hooks/hooks';
 import { trackUsage } from 'app/utils/Metrics';
 import { EXPLORATION } from 'app/constants/metrics';
+import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
 
 export const AllTab = () => {
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const [commonFilters] = useCommonFilters();
   const [query] = useQueryString(SEARCH_KEY);
   const [_, setCurrentResourceType] = useCurrentResourceType();
@@ -37,12 +40,21 @@ export const AllTab = () => {
         onRowClick={row => setCurrentResourceType('timeSeries', row.id)}
         onAllResultsClick={() => handleAllResultsClick('timeSeries')}
       />
-      <DocumentSummary
-        filter={commonFilters}
-        query={query}
-        onRowClick={row => setCurrentResourceType('document', row.id)}
-        onAllResultsClick={() => handleAllResultsClick('document')}
-      />
+      {isAdvancedFiltersEnabled ? (
+        <DocumentSummary
+          filter={commonFilters}
+          query={query}
+          onRowClick={row => setCurrentResourceType('document', row.id)}
+          onAllResultsClick={() => handleAllResultsClick('document')}
+        />
+      ) : (
+        <FileSummary
+          filter={commonFilters}
+          query={query}
+          onRowClick={row => setCurrentResourceType('file', row.id)}
+          onAllResultsClick={() => handleAllResultsClick('file')}
+        />
+      )}
       <EventSummary
         filter={commonFilters}
         query={query}
