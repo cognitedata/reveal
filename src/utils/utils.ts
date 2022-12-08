@@ -65,3 +65,26 @@ const parseReleaseVersion = (version: string): string[] => {
   );
   return [version].concat((matches || []).slice(2, 4));
 };
+
+const GREP_STRING_SPLITTER = /\s/;
+
+export const grepContains = (
+  contentSet: Set<string>,
+  querySet: Set<string>
+) => {
+  const content = [...contentSet];
+  const query = [...querySet];
+  return query.every((queryPart) =>
+    content.find((content_part) => content_part.includes(queryPart))
+  );
+};
+
+export const prepareSearchString = (s: string): Set<string> => {
+  return new Set(
+    s
+      .trim()
+      .toLocaleLowerCase()
+      .split(GREP_STRING_SPLITTER)
+      .filter((s) => s.length > 0)
+  );
+};
