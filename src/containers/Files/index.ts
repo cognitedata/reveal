@@ -8,3 +8,4 @@ export * from './FileTable/FileTable';
 export * from './FileUploader/FileUploader';
 export * from './FileUploader/FileUploaderModal';
 export * from './FilePreview/FilePreviewUFV';
+export * from './FileSummary/FileSummary';
