@@ -164,6 +164,15 @@ export interface DmsIngestNodesItemDTO {
   [key: string]: string | number | boolean | [string, string] | null;
 }
 
+export interface DmsIngestEdgesItemDTO {
+  externalId: string;
+  type: [string, string];
+  // The value must be a [spaceExternalId, externalId]
+  startNode: [string, string];
+  endNode: [string, string];
+  dummy: '';
+}
+
 export interface UnnormalizedDmsIngestNodesItemDTO {
   // The value can also be a { externalId } or null for direction relatiobships.
   [key: string]: string | number | boolean | { externalId: string } | null;
@@ -193,8 +202,20 @@ export interface DmsDeleteNodesRequestDTO extends BaseDTOWithExternalIdItems {
 /************* Nodes APIs DTOs **************/
 
 /************* Edges APIs DTOs **************/
-export interface DmsIngestEdgesRequestDTO
-  extends BaseDTOWithKeyValuePairsItems {
+export interface UnnormalizedDmsIngestEdgesRequestDTO {
+  items: { startNode: string; endNode: string }[];
+  spaceExternalId: string;
+  /**
+   * A reference to a model. Consists of an array of spaceExternalId and modelExternalId.
+   * May also just reference [ edge ] or [ node ], which don't belong to any particular space.
+   */
+  model: [string, string];
+  autoCreateStartNodes?: boolean;
+  autoCreateEndNodes?: boolean;
+  overwrite?: boolean;
+}
+export interface DmsIngestEdgesRequestDTO {
+  items: DmsIngestEdgesItemDTO[];
   spaceExternalId: string;
   /**
    * A reference to a model. Consists of an array of spaceExternalId and modelExternalId.

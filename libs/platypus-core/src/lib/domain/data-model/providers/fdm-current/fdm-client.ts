@@ -8,7 +8,6 @@ import {
   FetchDataModelVersionDTO,
   CreateDataModelDTO,
   UpdateDataModelDTO,
-  CreateDataModelVersionDTO,
   ConflictMode,
   DeleteDataModelDTO,
   RunQueryDTO,
@@ -22,6 +21,7 @@ import {
   PublishedRowsCountMap,
   IngestInstancesResponseDTO,
   PublishDataModelVersionDTO,
+  IngestInstanceDTO,
   SearchDataDTO,
 } from '../../dto';
 import { TransformationApiService } from '../../services';
@@ -32,6 +32,7 @@ import {
   DataModelValidationError,
   PaginatedResponse,
   DataModelTransformation,
+  DataModelTypeDefsType,
   CdfResourceInstance,
 } from '../../types';
 import {
@@ -42,6 +43,8 @@ import {
   ApiVersion,
   ApiVersionFromGraphQl,
   DmsDeleteNodesRequestDTO,
+  DmsIngestEdgesItemDTO,
+  DmsIngestEdgesRequestDTO,
   DmsIngestNodesItemDTO,
   DmsIngestNodesRequestDTO,
 } from './dto';
@@ -338,6 +341,7 @@ export class FdmV2Client implements FlexibleDataModelingClient {
       dataModelType,
       dataModelTypeDefs,
       dataModelVersion: { externalId, version },
+      filter,
       sort,
     } = dto;
     const operationName = this.queryBuilder.getOperationName(
@@ -350,12 +354,14 @@ export class FdmV2Client implements FlexibleDataModelingClient {
       dataModelTypeDefs,
       hasNextPage,
       limit,
+      filter,
       sort,
     });
     return this.mixerApiService
       .runQuery({
         graphQlParams: {
           query,
+          variables: { filter },
         },
         dataModelId: externalId,
         schemaVersion: version,
@@ -417,13 +423,34 @@ export class FdmV2Client implements FlexibleDataModelingClient {
   ingestInstances(
     dto: IngestInstancesDTO
   ): Promise<IngestInstancesResponseDTO> {
-    const normalizedDto: DmsIngestNodesRequestDTO = {
-      spaceExternalId: dto.space,
-      model: dto.model || [],
-      overwrite: dto.overwrite,
-      items: dto.items as DmsIngestNodesItemDTO[],
-    };
-    return this.dmsApiService.ingestNodes(normalizedDto);
+    if (dto.type === 'node') {
+      const normalizedDto: DmsIngestNodesRequestDTO = {
+        spaceExternalId: dto.space,
+        model: dto.model || [],
+        overwrite: dto.overwrite,
+        items: normalizeIngestionItem(
+          dto.items,
+          dto.dataModelExternalId,
+          dto.dataModelType
+        ),
+      };
+      return this.dmsApiService.ingestNodes(normalizedDto);
+    } else {
+      if (!dto.model || dto.model.length !== 2) {
+        throw new PlatypusError('Unable to ingest relationships', 'VALIDATION');
+      }
+      const normalizedDto: DmsIngestEdgesRequestDTO = {
+        spaceExternalId: dto.space,
+        model: dto.model || [],
+        overwrite: dto.overwrite,
+        items: normalizeEdgeItem(
+          dto.items,
+          dto.dataModelExternalId,
+          dto.model as [string, string]
+        ),
+      };
+      return this.dmsApiService.ingestEdges(normalizedDto);
+    }
   }
 
   /**
@@ -435,7 +462,11 @@ export class FdmV2Client implements FlexibleDataModelingClient {
       spaceExternalId: dto.space,
       items: dto.items,
     };
-    return this.dmsApiService.deleteNodes(normalizedDto);
+    if (dto.type === 'node') {
+      return this.dmsApiService.deleteNodes(normalizedDto);
+    } else {
+      return this.dmsApiService.deleteEdges(normalizedDto);
+    }
   }
 
   /**
@@ -493,3 +524,56 @@ export class FdmV2Client implements FlexibleDataModelingClient {
       });
   }
 }
+/*
+Replace relationships with correct ingestion format.
+Must be on the format [spaceExternalId, externalId] or null instead of {externalId} or null
+*/
+const normalizeIngestionItem = (
+  items: IngestInstanceDTO[],
+  dataModelExternalId: string,
+  dataModelType: DataModelTypeDefsType
+): DmsIngestNodesItemDTO[] => {
+  return items.map((item) =>
+    Object.fromEntries(
+      Object.entries(item).map(([key, value]) => {
+        const fieldType = dataModelType.fields.find(
+          (field) => field.name === key
+        );
+        if (fieldType?.type.custom && fieldType?.type.list) {
+          return [key, undefined];
+        } else if (
+          fieldType?.type.custom &&
+          !fieldType?.type.list &&
+          value !== null &&
+          typeof value === 'object'
+        ) {
+          const externalId = value.externalId;
+          if (externalId === '') {
+            return [key, null];
+          } else {
+            return [key, [dataModelExternalId, externalId]];
+          }
+        } else {
+          return [key, value];
+        }
+      })
+    )
+  );
+};
+/*
+Replace relationships with correct ingestion format.
+Must be on the format [spaceExternalId, externalId] or null instead of {externalId} or null
+*/
+const normalizeEdgeItem = (
+  items: { startNode: string; endNode: string; externalId: string }[],
+  dataModelExternalId: string,
+  type: [string, string]
+): DmsIngestEdgesItemDTO[] => {
+  return items.map((item) => ({
+    externalId: item.externalId,
+    type,
+    startNode: [dataModelExternalId, item.startNode],
+    endNode: [dataModelExternalId, item.endNode],
+    dummy: '',
+  }));
+};

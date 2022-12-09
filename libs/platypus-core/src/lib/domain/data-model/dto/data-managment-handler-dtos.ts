@@ -44,17 +44,25 @@ export interface IngestInstanceDTO {
   [key: string]: string | number | boolean | { externalId: string } | null;
 }
 
-export interface IngestInstancesDTO {
+export interface IngestEdgeDTO extends IngestInstanceDTO {
+  externalId: string;
+  startNode: string;
+  endNode: string;
+}
+
+export type IngestInstancesDTO = {
   dataModelExternalId: string;
   // allow v2
-  items: IngestInstanceDTO[];
   space: string;
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
   // v2 optional
   model?: string[];
   overwrite?: boolean;
-}
+} & (
+  | { type: 'node'; items: IngestInstanceDTO[] }
+  | { type: 'edge'; items: IngestEdgeDTO[] }
+);
 
 export type IngestInstancesResponseDTO = {
   items: {
@@ -65,6 +73,7 @@ export type IngestInstancesResponseDTO = {
 export interface DeleteInstancesDTO {
   dataModelExternalId?: string;
   space: string;
+  type: 'node' | 'edge';
   items: {
     externalId: string;
   }[];

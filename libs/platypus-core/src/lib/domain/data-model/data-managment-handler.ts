@@ -6,16 +6,14 @@ import {
   ListDataDTO,
   FetchDataModelTransformationsDTO,
   FetchPublishedRowsCountDTO,
-  IngestInstanceDTO,
+  IngestEdgeDTO,
   IngestInstancesDTO,
   IngestInstancesResponseDTO,
   PublishedRowsCountMap,
   SearchDataDTO,
 } from './dto';
 
-import { UnnormalizedDmsIngestNodesItemDTO } from './providers/fdm-current';
-
-import { DataModelTypeDefsType, PaginatedResponse } from './types';
+import { PaginatedResponse } from './types';
 
 export class DataManagementHandler {
   constructor(private fdmClient: FlexibleDataModelingClient) {}
@@ -61,60 +59,33 @@ export class DataManagementHandler {
     return this.fdmClient.createTransformation(dto);
   }
 
-  deleteData(dto: DeleteInstancesDTO): Promise<Result<boolean>> {
+  deleteData(dto: Omit<DeleteInstancesDTO, 'type'>): Promise<Result<boolean>> {
     if (!dto.items.length) {
       return Promise.resolve(Result.ok(true));
     }
 
     return this.fdmClient
-      .deleteInstances(dto)
+      .deleteInstances({ ...dto, type: 'node' })
       .then(() => Result.ok(true))
       .catch((error) => Result.fail(error));
   }
 
-  ingestNodes(dto: IngestInstancesDTO): Promise<IngestInstancesResponseDTO> {
-    const { items, dataModelExternalId, dataModelType } = dto;
-
-    dto.items = this.normalizeIngestionItem(
-      items,
-      dataModelExternalId,
-      dataModelType
-    );
-
-    return this.fdmClient.ingestInstances(dto);
+  ingestNodes(
+    dto: Omit<IngestInstancesDTO, 'type'>
+  ): Promise<IngestInstancesResponseDTO> {
+    return this.fdmClient.ingestInstances({ ...dto, type: 'node' });
   }
 
-  /*
-Replace relationships with correct ingestion format.
-Must be on the format [spaceExternalId, externalId] or null instead of {externalId} or null
-*/
-  private normalizeIngestionItem(
-    items: UnnormalizedDmsIngestNodesItemDTO[],
-    dataModelExternalId: string,
-    dataModelType: DataModelTypeDefsType
-  ): IngestInstanceDTO[] {
-    const relationshipFields = dataModelType.fields.filter(
-      (el) => el.type.custom
-    );
-    return items.map((item) =>
-      Object.fromEntries(
-        Object.entries(item).map(([key, value]) => {
-          if (
-            relationshipFields.some((el) => el.name === key) &&
-            value !== null &&
-            typeof value === 'object'
-          ) {
-            const externalId = value.externalId;
-            if (externalId === '') {
-              return [key, null];
-            } else {
-              return [key, [dataModelExternalId, externalId]];
-            }
-          } else {
-            return [key, value];
-          }
-        })
-      )
-    );
+  ingestEdges(
+    dto: Omit<IngestInstancesDTO, 'type'> & { items: IngestEdgeDTO[] }
+  ) {
+    return this.fdmClient.ingestInstances({ ...dto, type: 'edge' });
+  }
+
+  deleteEdges(dto: Omit<DeleteInstancesDTO, 'type'>) {
+    if (!dto.items.length) {
+      return Promise.resolve(Result.ok(true));
+    }
+    return this.fdmClient.deleteInstances({ ...dto, type: 'edge' });
   }
 }

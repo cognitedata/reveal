@@ -11,6 +11,7 @@ import { DraftRowData } from '@platypus-app/redux/reducers/global/dataManagement
 import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
+  DeleteInstancesDTO,
   KeyValueMap,
   PlatypusError,
   QuerySort,
@@ -475,7 +476,8 @@ export const DataPreviewTable = forwardRef<
 
     const handleDeleteRows = useCallback(() => {
       const selectedRows = gridRef.current?.api.getSelectedRows() || [];
-      const dto = {
+      const dto: DeleteInstancesDTO = {
+        type: 'node',
         dataModelExternalId,
         space,
         items: selectedRows.map((row) => ({ externalId: row.externalId })),

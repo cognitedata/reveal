@@ -66,6 +66,63 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
     return res.status(200).jsonp({});
   });
 
+  fdmServiceRouter.post('/datamodelstorage/edges/delete', (req, res) => {
+    if (!req.body.items || !req.body.items.length) {
+      return res.status(400).jsonp({ errorMessage: 'items can not be empty' });
+    }
+
+    const schemaDb = CdfDatabaseService.from(schemaServiceDb, 'schema');
+    const dataModel = schemaDb.find({ externalId: req.body.spaceExternalId });
+    const dataModelDb = dataModel.db;
+
+    req.body.items.forEach((item) => {
+      // temporary hack, assume the externalId definition is always "platypus" generated
+      // i.e. actor_startNode_endNode
+      const field = item.externalId.split('_')[0];
+      const startNode = item.externalId.split('_')[1];
+      const endNode = item.externalId.split('_')[2];
+
+      if (item.externalId === undefined) {
+        return res.status(400).jsonp({
+          errorMessage: 'one or more items is missing externalId property',
+        });
+      }
+      CdfDatabaseService.from(schemaServiceDb, 'edges').deleteByKey({
+        externalId: item.externalId,
+      });
+
+      Object.keys(dataModelDb).forEach((modelName) => {
+        const nodeIndex = dataModelDb[modelName].findIndex(
+          (el) => `${el.id}` === startNode
+        );
+        if (nodeIndex >= 0) {
+          if (!(modelName in (dataModelDb as object))) {
+            dataModelDb[modelName] = [];
+          }
+          if (!(dataModelDb[modelName] as object)[nodeIndex]) {
+            dataModelDb[modelName][nodeIndex] = {};
+          }
+          if (!(dataModelDb[modelName] as object)[nodeIndex][field]) {
+            dataModelDb[modelName][nodeIndex][field] = [];
+          }
+          dataModelDb[modelName][nodeIndex][field] = dataModelDb[modelName][
+            nodeIndex
+          ][field].filter((el) => {
+            if ('externalId' in el && `${el['externalId']}` === endNode) {
+              return false;
+            }
+            if ('id' in el && `${el['id']}` === endNode) {
+              return false;
+            }
+            return true;
+          });
+        }
+      });
+    });
+
+    return res.status(200).jsonp({});
+  });
+
   fdmServiceRouter.post('/datamodelstorage/nodes', (req, res) => {
     if (!req.body.spaceExternalId) {
       return res
@@ -107,6 +164,75 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
       });
       // Temporary fix!
       CdfDatabaseService.from(schemaServiceDb, 'nodes').insert({
+        ...item,
+        id: item.externalId,
+      });
+    });
+
+    res.status(201).jsonp({ items: req.body.items });
+  });
+
+  fdmServiceRouter.post('/datamodelstorage/edges', (req, res) => {
+    if (!req.body.spaceExternalId) {
+      return res
+        .status(400)
+        .jsonp({ errorMessage: 'spaceExternalId can not be empty' });
+    }
+
+    if (!req.body.model) {
+      return res.status(400).jsonp({ errorMessage: 'model can not be empty' });
+    }
+
+    if (!req.body.items || !req.body.items.length) {
+      return res.status(400).jsonp({ errorMessage: 'items can not be empty' });
+    }
+
+    const model = req.body.model[1];
+
+    const schemaDb = CdfDatabaseService.from(schemaServiceDb, 'schema');
+    const dataModel = schemaDb.find({ externalId: req.body.spaceExternalId });
+    const dataModelDb = dataModel.db;
+
+    // eslint-disable-next-line
+    if (!dataModelDb.hasOwnProperty(model)) {
+      dataModelDb[model] = [];
+    }
+
+    // temporary hack, I wanted to just reuse everything what json-server is doing
+    // so I don't have to reimplement all apis
+    // for ingest, we need to insert in nodes and as well in the schema db
+    // because the graphql apis will use schema.db field
+    req.body.items.forEach((item) => {
+      // temporary hack, assume the externalId definition is always "platypus" generated
+      // i.e. actor_startNode_endNode
+      const field = item.externalId.split('_')[0];
+      const startNode = item.externalId.split('_')[1];
+      const endNode = item.externalId.split('_')[2];
+      Object.keys(dataModelDb).forEach((modelName) => {
+        const nodeIndex = dataModelDb[modelName].findIndex(
+          (el) => `${el.id}` === startNode
+        );
+        if (nodeIndex >= 0) {
+          if (!(modelName in (dataModelDb as object))) {
+            dataModelDb[modelName] = [];
+          }
+          if (!(dataModelDb[modelName] as object)[nodeIndex]) {
+            dataModelDb[modelName][nodeIndex] = {};
+          }
+          if (!(dataModelDb[modelName] as object)[nodeIndex][field]) {
+            dataModelDb[modelName][nodeIndex][field] = [];
+          }
+          dataModelDb[modelName][nodeIndex][field] = dataModelDb[modelName][
+            nodeIndex
+          ][field].concat([{ externalId: endNode }]);
+        }
+      });
+
+      CdfDatabaseService.from(schemaServiceDb, 'edges').deleteByKey({
+        externalId: item.externalId,
+      });
+      // Temporary fix!
+      CdfDatabaseService.from(schemaServiceDb, 'edges').insert({
         ...item,
         id: item.externalId,
       });
