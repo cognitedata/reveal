@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { FileInfo, Asset } from '@cognite/sdk';
+import { FileInfo, Asset, CogniteError } from '@cognite/sdk';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
@@ -95,7 +95,7 @@ export const FileSmallPreview = ({
   }
 
   if (error) {
-    return <ErrorFeedback error={error} />;
+    return <ErrorFeedback error={error as CogniteError} />;
   }
   if (!file) {
     return <>File {fileId} not found!</>;

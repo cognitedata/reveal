@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileInfo, Asset } from '@cognite/sdk';
+import { FileInfo, Asset, CogniteError } from '@cognite/sdk';
 import styled from 'styled-components';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Icon, Title, Badge, Body, Colors } from '@cognite/cogs.js';
@@ -88,7 +88,7 @@ export const FileSmallPreviewUFV = ({
   }
 
   if (error) {
-    return <ErrorFeedback error={error} />;
+    return <ErrorFeedback error={error as CogniteError} />;
   }
   if (!file) {
     return <>File {fileId} not found!</>;

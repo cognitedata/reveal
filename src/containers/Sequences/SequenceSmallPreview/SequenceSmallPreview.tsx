@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { Sequence } from '@cognite/sdk';
+import { CogniteError, Sequence } from '@cognite/sdk';
 import {
   ErrorFeedback,
   Loader,
@@ -48,7 +48,7 @@ export const SequenceSmallPreview = ({
   }
 
   if (error) {
-    return <ErrorFeedback error={error} />;
+    return <ErrorFeedback error={error as CogniteError} />;
   }
 
   if (!sequence) {

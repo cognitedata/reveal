@@ -1,5 +1,5 @@
 import React from 'react';
-import { Timeseries } from '@cognite/sdk';
+import { CogniteError, Timeseries } from '@cognite/sdk';
 import { Title, Body, Colors } from '@cognite/cogs.js';
 import {
   ErrorFeedback,
@@ -48,7 +48,7 @@ export const TimeseriesSmallPreview = ({
   }
 
   if (error) {
-    return <ErrorFeedback error={error} />;
+    return <ErrorFeedback error={error as CogniteError} />;
   }
 
   if (!timeseries) {

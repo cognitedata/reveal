@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { CogniteEvent } from '@cognite/sdk';
+import { CogniteError, CogniteEvent } from '@cognite/sdk';
 import {
   ErrorFeedback,
   Loader,
@@ -48,7 +48,7 @@ export const EventSmallPreview = ({
   }
 
   if (error) {
-    return <ErrorFeedback error={error} />;
+    return <ErrorFeedback error={error as CogniteError} />;
   }
 
   if (!event) {
