@@ -129,7 +129,7 @@ export class CadManager {
   }
 
   get needsRedraw(): boolean {
-    return this._needsRedraw;
+    return this._needsRedraw || [...this._cadModelMap.values()].some(m => m.needsRedraw);
   }
 
   updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {

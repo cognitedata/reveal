@@ -26,6 +26,8 @@ export class CadNode extends Object3D {
   private readonly _sourceTransform: Matrix4;
   private readonly _customTransform: Matrix4;
 
+  private _needsRedraw: boolean = false;
+
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
     this.type = 'CadNode';
@@ -56,6 +58,10 @@ export class CadNode extends Object3D {
 
     this._sourceTransform = new Matrix4().copy(model.modelMatrix);
     this._customTransform = new Matrix4();
+  }
+
+  get needsRedraw(): boolean {
+    return this._needsRedraw;
   }
 
   get nodeTransformProvider(): NodeTransformProvider {
@@ -123,6 +129,8 @@ export class CadNode extends Object3D {
     const customTransformFromSource = this._customTransform.clone().multiply(this._sourceTransform);
     this._rootSector.setModelTransformation(customTransformFromSource);
     this._cadModelMetadata.modelMatrix.copy(customTransformFromSource);
+
+    this._needsRedraw = true;
   }
 
   /**
