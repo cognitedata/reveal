@@ -39,24 +39,4 @@ yarn test:once
 
 ## Releasing a new version to Fusion
 
-Releasing a new version of the subapp to Fusion is done in two steps.
-
-### 1- Releasing a new version of the subapp
-
-Merging to `master` branch will automatically trigger the release of a new version of subapp on FAS. The new version number is determined by the version field in `package.json` with a bumped `patch` version from the last build.
-
-The version number is used to determine what is visible in different environments of Fusion: `dev.fusion.cogniteapp.com` (dev), `next-release.fusion.cognite.com` (staging) and `fusion.cognite.com` (prod). Each environment has its own [import map](https://github.com/cognitedata/cdf-ui-hub/tree/master/packages/fas-apps/config), governing the range of valid versions.
-
-> For a more detailed explanation of this step, see the guide [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3688562771/...version+and+release+sub-app).
-
-### 2- Deploying to Fusion
-
-After the subapp is released, to see the changes on any environment of Fusion, a build of cdf-ui-hub's master branch should be triggered.
-1. Go to [`cdf-ui-hub` on Jenkins CD](https://cd.jenkins.cognite.ai/blue/organizations/jenkins/cognitedata-cd%2Fcdf-ui-hub/branches).
-2. Locate the `master` branch and click the `Run ▶️` button.
-3. After the build is successful, the changes automatically will take effect on `dev.fusion.cogniteapp.com` and `next-release.fusion.cognite.com` if the new version matches the corresponding import maps.
-4. To deploy to the production environment `fusion.cognite.com`, go to `staging.fusion.cognite.com` to verify that your changes work properly.
-5. If everything looks alright, go to [Spinnaker](https://spinnaker.cognite.ai/#/applications/fusion-app/executions).
-6. Locate the `deploy-fusion-app-prod` pipeline and verify the build by clicking `Continue`.
-
-> For a more detailed explanation of this step, see the step-by-step guide [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3758588022/...deploy+a+new+sub-app+version+to+production).
+The release process is documented on the [How to release](https://cognitedata.atlassian.net/wiki/spaces/DEGEXP/pages/3830743065/How+to+release) page
