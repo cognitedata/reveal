@@ -127,6 +127,7 @@ export type TimeseriesChartProps = {
   cacheToDate?: boolean;
   showCustomRangePicker?: boolean;
   enableTooltipPreview?: boolean;
+  disableStep?: boolean;
   disabled?: boolean;
   onDataFetched?: (data?: DatapointAggregates | Datapoints) => void;
 } & Omit<
@@ -152,6 +153,7 @@ export const TimeseriesChart = ({
   dateRange,
   onDateRangeChange,
   disabled = false,
+  disableStep = false,
   onDataFetched,
   ...otherProps
 }: TimeseriesChartProps) => {
@@ -259,7 +261,7 @@ export const TimeseriesChart = ({
       </ParentSize>
 
       <SpacedRow>
-        {timeOptions.length > 1 && (
+        {!disableStep && timeOptions.length > 1 && (
           <StyledSelect
             title="Step:"
             value={

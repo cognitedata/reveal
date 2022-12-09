@@ -112,6 +112,7 @@ export const TimeseriesSmallPreview = ({
         }}
       >
         <TimeseriesChart
+          disableStep
           timeseriesId={timeseries.id}
           height={150}
           numberOfPoints={300}
