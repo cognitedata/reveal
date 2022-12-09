@@ -48,12 +48,18 @@ export type QueryFilter =
   | { and: QueryFilter[] }
   | { or: QueryFilter[] };
 
+export type QuerySort = {
+  fieldName: string;
+  sortType: 'ASC' | 'DESC';
+};
+
 export interface BuildListQueryDTO {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
   limit: number;
   cursor: string;
   hasNextPage: boolean;
+  sort?: QuerySort;
   filter?: QueryFilter;
 }
 

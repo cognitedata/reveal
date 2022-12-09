@@ -26,13 +26,17 @@ export class MixerQueryBuilder {
       cursor,
       hasNextPage,
       filter,
+      sort,
     } = dto;
     const pagination = hasNextPage
       ? `first: ${limit}, after: "${cursor}"`
       : `first: ${limit}`;
+    const sortString = sort
+      ? `, sort: {${sort.fieldName}: ${sort.sortType}}`
+      : ``;
     const filterString = filter
-      ? `(filter: $filter, ${pagination})`
-      : `(${pagination})`;
+      ? `(filter: $filter, ${pagination} ${sortString})`
+      : `(${pagination} ${sortString})`;
     return `query ${
       filter
         ? `${this.getOperationName(

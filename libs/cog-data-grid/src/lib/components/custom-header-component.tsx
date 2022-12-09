@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { IHeaderParams } from 'ag-grid-community';
-import { Icon, IconType } from '@cognite/cogs.js';
+import { Button, Icon, IconType } from '@cognite/cogs.js';
 
 interface CustomHeaderState {
   sortDirection: string;
@@ -58,6 +58,38 @@ export class CustomHeader extends PureComponent<
           </span>
         )}
 
+        <span
+          data-ref="eSortOrder"
+          className={
+            'ag-header-icon ag-header-label-icon ag-sort-order ' +
+            (sortIndex ? '' : 'ag-hidden')
+          }
+        >
+          {sortIndex ? sortIndex + 1 : ''}
+        </span>
+        <span
+          data-ref="eSortAsc"
+          className={
+            'ag-header-icon ag-header-label-icon ag-sort-ascending-icon ' +
+            (this.state.sortDirection === 'asc' ? '' : 'ag-hidden')
+          }
+        >
+          <Button size="small" variant="ghost" onClick={this.onSortRequested}>
+            <Icon type="SortAscending" />
+          </Button>
+        </span>
+        <span
+          data-ref="eSortDesc"
+          className={
+            'ag-header-icon ag-header-label-icon ag-sort-descending-icon ' +
+            (this.state.sortDirection === 'desc' ? '' : 'ag-hidden')
+          }
+        >
+          <Button size="small" variant="ghost" onClick={this.onSortRequested}>
+            <Icon type="SortDescending" />
+          </Button>
+        </span>
+
         <div
           data-ref="eLabel"
           className="ag-header-cell-label"
@@ -75,33 +107,6 @@ export class CustomHeader extends PureComponent<
             data-ref="eFilter"
             className="ag-header-icon ag-header-label-icon ag-filter-icon ag-hidden"
           ></span>
-          <span
-            data-ref="eSortOrder"
-            className={
-              'ag-header-icon ag-header-label-icon ag-sort-order ' +
-              (sortIndex ? '' : 'ag-hidden')
-            }
-          >
-            {sortIndex ? sortIndex + 1 : ''}
-          </span>
-          <span
-            data-ref="eSortAsc"
-            className={
-              'ag-header-icon ag-header-label-icon ag-sort-ascending-icon ' +
-              (this.state.sortDirection === 'asc' ? '' : 'ag-hidden')
-            }
-          >
-            <Icon type="ReorderAscending" />
-          </span>
-          <span
-            data-ref="eSortDesc"
-            className={
-              'ag-header-icon ag-header-label-icon ag-sort-descending-icon ' +
-              (this.state.sortDirection === 'desc' ? '' : 'ag-hidden')
-            }
-          >
-            <Icon type="ReorderDescending" />
-          </span>
         </div>
       </div>
     );

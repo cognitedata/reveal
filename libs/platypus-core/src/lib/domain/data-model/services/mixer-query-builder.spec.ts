@@ -1,6 +1,76 @@
 import { mixerApiInlineTypeDirectiveName } from '../constants';
 import { MixerQueryBuilder, OPERATION_TYPE } from './mixer-query-builder';
 
+const typeDefsMock = {
+  types: [
+    {
+      name: 'Person',
+      fields: [
+        {
+          name: 'name',
+          type: {
+            name: 'String',
+            list: false,
+            nonNull: true,
+          },
+          nonNull: true,
+        },
+        {
+          name: 'posts',
+          type: {
+            name: 'Post',
+            list: true,
+            nonNull: true,
+          },
+          nonNull: true,
+        },
+        {
+          name: 'user',
+          type: {
+            name: 'User',
+            list: false,
+            nonNull: false,
+          },
+          nonNull: false,
+        },
+      ],
+    },
+    {
+      name: 'Post',
+      fields: [
+        {
+          name: 'name',
+          type: {
+            name: 'String',
+            list: false,
+            nonNull: true,
+          },
+          nonNull: true,
+        },
+      ],
+    },
+    {
+      name: 'User',
+      directives: [
+        {
+          name: mixerApiInlineTypeDirectiveName,
+        },
+      ],
+      fields: [
+        {
+          name: 'name',
+          type: {
+            name: 'String',
+            list: false,
+            nonNull: true,
+          },
+          nonNull: true,
+        },
+      ],
+    },
+  ],
+};
+
 describe('MixerApiQueryBuilderServiceTest', () => {
   const createInstance = () => {
     return new MixerQueryBuilder();
@@ -31,78 +101,8 @@ describe('MixerApiQueryBuilderServiceTest', () => {
     expect(operationName).toEqual('searchTestOperation');
   });
 
-  it('should build list query', () => {
+  it('should build paginated list query', () => {
     const service = createInstance();
-
-    const mockTypeDefs = {
-      types: [
-        {
-          name: 'Person',
-          fields: [
-            {
-              name: 'name',
-              type: {
-                name: 'String',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-            {
-              name: 'posts',
-              type: {
-                name: 'Post',
-                list: true,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-            {
-              name: 'user',
-              type: {
-                name: 'User',
-                list: false,
-                nonNull: false,
-              },
-              nonNull: false,
-            },
-          ],
-        },
-        {
-          name: 'Post',
-          fields: [
-            {
-              name: 'name',
-              type: {
-                name: 'String',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-          ],
-        },
-        {
-          name: 'User',
-          directives: [
-            {
-              name: mixerApiInlineTypeDirectiveName,
-            },
-          ],
-          fields: [
-            {
-              name: 'name',
-              type: {
-                name: 'String',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-          ],
-        },
-      ],
-    };
 
     const limit = 100;
     const cursor = 'abcd=';
@@ -128,8 +128,8 @@ user { name }
       cursor,
       hasNextPage: true,
       limit,
-      dataModelType: mockTypeDefs.types[0],
-      dataModelTypeDefs: mockTypeDefs,
+      dataModelType: typeDefsMock.types[0],
+      dataModelTypeDefs: typeDefsMock,
     });
 
     expect(normalizeString(query)).toEqual(normalizeString(expected));
@@ -137,76 +137,6 @@ user { name }
 
   it('should build list query with filter', () => {
     const service = createInstance();
-
-    const mockTypeDefs = {
-      types: [
-        {
-          name: 'Person',
-          fields: [
-            {
-              name: 'name',
-              type: {
-                name: 'String',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-            {
-              name: 'posts',
-              type: {
-                name: 'Post',
-                list: true,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-            {
-              name: 'user',
-              type: {
-                name: 'User',
-                list: false,
-                nonNull: false,
-              },
-              nonNull: false,
-            },
-          ],
-        },
-        {
-          name: 'Post',
-          fields: [
-            {
-              name: 'name',
-              type: {
-                name: 'String',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-          ],
-        },
-        {
-          name: 'User',
-          directives: [
-            {
-              name: mixerApiInlineTypeDirectiveName,
-            },
-          ],
-          fields: [
-            {
-              name: 'name',
-              type: {
-                name: 'String',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-          ],
-        },
-      ],
-    };
 
     const limit = 100;
     const cursor = 'abcd=';
@@ -233,9 +163,43 @@ user { name }
       cursor,
       hasNextPage: true,
       limit,
-      dataModelType: mockTypeDefs.types[0],
-      dataModelTypeDefs: mockTypeDefs,
+      dataModelType: typeDefsMock.types[0],
+      dataModelTypeDefs: typeDefsMock,
       filter,
+    });
+
+    expect(normalizeString(query)).toEqual(normalizeString(expected));
+  });
+
+  it('should build list query with sorting', () => {
+    const service = createInstance();
+
+    const limit = 100;
+    const cursor = 'abcd=';
+    const expected = `query {
+      listPerson(first: ${limit}, after: "${cursor}", sort: {title: ASC}) {
+        items {
+          externalId
+          name
+posts { items { externalId } }
+user { name }
+        }
+        pageInfo {
+          startCursor
+          hasPreviousPage
+          hasNextPage
+          endCursor
+        }
+      }
+    }`;
+
+    const query = service.buildListQuery({
+      cursor,
+      hasNextPage: true,
+      limit,
+      dataModelType: typeDefsMock.types[0],
+      dataModelTypeDefs: typeDefsMock,
+      sort: { fieldName: 'title', sortType: 'ASC' },
     });
 
     expect(normalizeString(query)).toEqual(normalizeString(expected));
@@ -243,76 +207,6 @@ user { name }
 
   it('should build search query', () => {
     const service = createInstance();
-
-    const mockTypeDefs = {
-      types: [
-        {
-          name: 'Person',
-          fields: [
-            {
-              name: 'name',
-              type: {
-                name: 'String',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-            {
-              name: 'posts',
-              type: {
-                name: 'Post',
-                list: true,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-            {
-              name: 'user',
-              type: {
-                name: 'User',
-                list: false,
-                nonNull: false,
-              },
-              nonNull: false,
-            },
-          ],
-        },
-        {
-          name: 'Post',
-          fields: [
-            {
-              name: 'name',
-              type: {
-                name: 'String',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-          ],
-        },
-        {
-          name: 'User',
-          directives: [
-            {
-              name: mixerApiInlineTypeDirectiveName,
-            },
-          ],
-          fields: [
-            {
-              name: 'name',
-              type: {
-                name: 'String',
-                list: false,
-                nonNull: true,
-              },
-              nonNull: true,
-            },
-          ],
-        },
-      ],
-    };
 
     const expected = `query searchPerson($first: Int, $query: String!) {
         searchPerson(first: $first, query: $query) {
@@ -326,8 +220,8 @@ user { name }
     }`;
 
     const query = service.buildSearchQuery({
-      dataModelType: mockTypeDefs.types[0],
-      dataModelTypeDefs: mockTypeDefs,
+      dataModelType: typeDefsMock.types[0],
+      dataModelTypeDefs: typeDefsMock,
     });
 
     expect(normalizeString(query)).toEqual(normalizeString(expected));

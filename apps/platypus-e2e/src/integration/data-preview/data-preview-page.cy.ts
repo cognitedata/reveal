@@ -101,6 +101,58 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.get('data-preview-side-panel').should('not.exist');
   });
 
+  it('should sort the data for selected type', () => {
+    // managed by ag-grid
+    const agGridSortableClass = 'ag-header-cell-sortable';
+
+    cy.get('[data-testid="Post"]').click();
+    cy.get('[data-testid="Post"]').should('have.class', 'active');
+    cy.getBySel('data-preview-table').should('be.visible');
+
+    // wait for rows to render
+    cy.get('.ag-center-cols-container .ag-row').should('have.length', 3);
+
+    // externalId and custom types and lists should not be sortable
+    cy.get('.ag-header .ag-header-cell[col-id="externalId"]').should(
+      'not.have.class',
+      agGridSortableClass
+    );
+    cy.get('.ag-header .ag-header-cell[col-id="user"]').should(
+      'not.have.class',
+      agGridSortableClass
+    );
+    cy.get('.ag-header .ag-header-cell[col-id="tags"]').should(
+      'not.have.class',
+      agGridSortableClass
+    );
+
+    // Primitives should be sortable
+    cy.get('.ag-header .ag-header-cell[col-id="title"]').should(
+      'have.class',
+      agGridSortableClass
+    );
+
+    // clicking on the header should sort the results
+    // clicking once should sort asc
+    cy.get('.ag-header .ag-header-cell[col-id="title"]').click();
+
+    cy.get(
+      '.ag-header .ag-header-cell[col-id="title"] [data-ref="eSortAsc"]'
+    ).should('not.have.class', 'ag-hidden');
+
+    // clicking again should sort desc
+    cy.get('.ag-header .ag-header-cell[col-id="title"]').click();
+    cy.get(
+      '.ag-header .ag-header-cell[col-id="title"] [data-ref="eSortDesc"]'
+    ).should('not.have.class', 'ag-hidden');
+
+    // check the data
+    // check strings
+    cy.get(
+      '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="title"]'
+    ).should('have.text', 'Sic Dolor amet');
+  });
+
   it('should search through primitive type list in the side panel', () => {
     cy.get('[data-testid="Post"]').click();
     cy.get('[data-testid="Post"]').should('have.class', 'active');

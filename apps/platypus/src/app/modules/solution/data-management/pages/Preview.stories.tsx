@@ -6,8 +6,15 @@ import {
   Group,
 } from '@platypus-app/components/Styles/storybook';
 import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { TypeList } from '../components/TypeList/TypeList';
+import {
+  ColDef,
+  GetRowIdParams,
+  GridReadyEvent,
+  IDatasource,
+  IGetRowsParams,
+} from 'ag-grid-community';
 
 const configMock = {
   columns: [
@@ -177,6 +184,35 @@ const responseMock = [
   },
 ];
 
+const sortData = (sortModel: any, data: any[]) => {
+  const sortPresent = sortModel && sortModel.length > 0;
+  if (!sortPresent) {
+    return data;
+  }
+  // do an in memory sort of the data, across all the fields
+  const resultOfSort = data.slice();
+  resultOfSort.sort(function (a, b) {
+    for (let k = 0; k < sortModel.length; k++) {
+      const sortColModel = sortModel[k];
+      const valueA = a[sortColModel.colId];
+      const valueB = b[sortColModel.colId];
+      // this filter didn't find a difference, move onto the next one
+      if (valueA === valueB) {
+        continue;
+      }
+      const sortDirection = sortColModel.sort === 'asc' ? 1 : -1;
+      if (valueA > valueB) {
+        return sortDirection;
+      } else {
+        return sortDirection * -1;
+      }
+    }
+    // no filters found a difference
+    return 0;
+  });
+  return resultOfSort;
+};
+
 const DataGridComponent = () => {
   const [data, setData] = useState(responseMock);
 
@@ -238,6 +274,74 @@ export const DataPreview = () => (
     </Group>
   </Wrapper>
 );
+
+export const DataPreviewInfiniteModel = () => {
+  const [data, setData] = useState(responseMock);
+
+  const defaultColDef = useMemo<ColDef>(() => {
+    return {
+      flex: 1,
+      minWidth: 150,
+      sortable: true,
+      resizable: true,
+      floatingFilter: false,
+    };
+  }, []);
+  const getRowId = useCallback(function (params: GetRowIdParams) {
+    return params.data.id;
+  }, []);
+  const onGridReady = useCallback((params: GridReadyEvent) => {
+    const dataSource: IDatasource = {
+      rowCount: undefined,
+      getRows: (getRowsParams: IGetRowsParams) => {
+        console.log('asking new rows' + getRowsParams);
+
+        const mockedData = sortData(getRowsParams.sortModel, responseMock);
+
+        // At this point in your code, you would call the server.
+        // To make the demo look real, wait for 500ms before returning
+        setTimeout(function () {
+          // if on or after the last page, work out the last row.
+          let lastRow = -1;
+          if (mockedData.length <= getRowsParams.endRow) {
+            lastRow = mockedData.length;
+          }
+          // call the success callback
+          getRowsParams.successCallback(mockedData, lastRow);
+        }, 500);
+      },
+    };
+
+    params.api.setDatasource(dataSource);
+  }, []);
+
+  return (
+    <Wrapper>
+      <MainTitle>Data Preview Component</MainTitle>
+      <Group>
+        <GroupTitle>Default</GroupTitle>
+        <div style={{ height: '600px' }}>
+          <div style={{ height: '100%' }}>
+            <CogDataGrid
+              data={responseMock}
+              config={configMock}
+              defaultColDef={defaultColDef}
+              rowSelection={'multiple'}
+              rowModelType={'infinite'}
+              cacheBlockSize={100}
+              cacheOverflowSize={2}
+              maxConcurrentDatasourceRequests={2}
+              infiniteInitialRowCount={1}
+              maxBlocksInCache={2}
+              getRowId={getRowId}
+              onGridReady={onGridReady}
+            />
+          </div>
+        </div>
+      </Group>
+    </Wrapper>
+  );
+};
 
 export const TypeListPreview = () => {
   const [selected, setSelected] = useState<string | undefined>(undefined);

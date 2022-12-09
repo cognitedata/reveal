@@ -4,7 +4,7 @@ import {
   ColumnDataType,
   GridConfig,
 } from '@cognite/cog-data-grid';
-import { KeyValueMap, DataModelTypeDefsType } from '@platypus/platypus-core';
+import { DataModelTypeDefsType, KeyValueMap } from '@platypus/platypus-core';
 import { CheckboxCellRenderer } from '../components/DataPreviewTable/cell-renderers/CheckboxCellRenderer';
 import { CustomCellRenderer } from '../components/DataPreviewTable/cell-renderers/CustomCellRenderer';
 import { IdCellRenderer } from '../components/DataPreviewTable/cell-renderers/IdCellRenderer';
@@ -85,7 +85,8 @@ export const buildGridConfig = (
         isList,
         colDef: {
           headerName: `${field.name}${field.type.nonNull ? '*' : ''}`,
-          sortable: false,
+          // Mixer API supports sorting only on primitives (not array and not custom types)
+          sortable: !field.type.custom && !isList,
           editable: enableManualPopulation && !isList,
           cellEditorParams: {
             isRequired: field.nonNull || field.type.nonNull,

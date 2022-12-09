@@ -4,7 +4,7 @@ import {
   DataModelTypeDefsType,
   DataModelVersion,
 } from '../types';
-import { QueryFilter } from './common-dtos';
+import { QueryFilter, QuerySort } from './common-dtos';
 
 export interface DataQueryingBaseDTO {
   dataModelType: DataModelTypeDefsType;
@@ -17,6 +17,11 @@ export interface ListDataDTO extends DataQueryingBaseDTO {
   cursor: string;
   hasNextPage: boolean;
   filter?: QueryFilter;
+  sort?: QuerySort;
+}
+
+export interface SearchDataDTO extends DataQueryingBaseDTO {
+  searchTerm: string;
 }
 
 export interface SearchDataDTO extends DataQueryingBaseDTO {

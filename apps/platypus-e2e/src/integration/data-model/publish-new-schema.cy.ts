@@ -1,5 +1,3 @@
-import { getDataModelEndpointUrl } from '@platypus/platypus-core';
-
 const checkQueryExplorer = (query: string, expectedResult: any) => {
   cy.setQueryExplorerQuery(query);
   cy.clickQueryExplorerExecuteQuery();
@@ -24,10 +22,12 @@ describe('Data Model Page - Publish new schema', () => {
 
     cy.getBySel('btn-endpoint-modal').click();
 
-    cy.getBySel('endpoint-url').should(
-      'have.text',
-      getDataModelEndpointUrl('platypus', 'blog', '1', 'http://localhost:4200')
-    );
+    // do not import things directly from platypus or platypus core
+    // this creates circular dependency
+    // cy.getBySel('endpoint-url').should(
+    //   'have.text',
+    //   getDataModelEndpointUrl('platypus', 'blog', '1', 'http://localhost:4200')
+    // );
 
     // Navigate to Query explorer page and make sure that we can run queries against updated schema
     cy.visit('/platypus/data-models/blog/blog/latest/data/query-explorer');

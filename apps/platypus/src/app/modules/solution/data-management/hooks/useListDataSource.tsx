@@ -5,6 +5,7 @@ import {
   DataModelTypeDefsType,
   DataModelVersion,
   KeyValueMap,
+  QuerySort,
   PlatypusError,
   Result,
 } from '@platypus/platypus-core';
@@ -15,6 +16,7 @@ export type ListDataSourceProps = {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
   dataModelVersion: DataModelVersion;
+  sort?: QuerySort;
   limit: number;
   onError: (error: any) => void;
   onSuccess: (items: KeyValueMap[]) => void;
@@ -64,6 +66,15 @@ export const useListDataSource = ({
             onError(result.errorValue());
           });
       } else {
+        const sort = params.sortModel.length
+          ? {
+              fieldName: params.sortModel[0].colId,
+              sortType:
+                (params.sortModel[0].sort.toUpperCase() as 'ASC' | 'DESC') ||
+                'ASC',
+            }
+          : undefined;
+
         return dataManagementHandler
           .fetchData({
             cursor: cursor.current,
@@ -72,6 +83,7 @@ export const useListDataSource = ({
             dataModelVersion,
             hasNextPage: hasNextPage.current,
             limit,
+            sort,
           })
           .then((response) => {
             const result = response.getValue();

@@ -1,5 +1,5 @@
 {
-  "root": "apps/platypus",
+  "root": "apps/platypus-e2e",
   "sourceRoot": "apps/platypus-e2e/src",
   "projectType": "application",
   "targets": {

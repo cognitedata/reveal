@@ -13,6 +13,7 @@ import {
   DataModelTypeDefsType,
   KeyValueMap,
   PlatypusError,
+  QuerySort,
 } from '@platypus/platypus-core';
 import {
   CellDoubleClickedEvent,
@@ -20,6 +21,7 @@ import {
   ColDef,
   GridReadyEvent,
   RowDataUpdatedEvent,
+  SortChangedEvent,
   ValueSetterParams,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
@@ -272,7 +274,6 @@ export const DataPreviewTable = forwardRef<
       (grid: GridReadyEvent) => {
         onShowNoRowsOverlay.current = () => grid.api.showNoRowsOverlay();
         onHideOverlay.current = () => grid.api.hideOverlay();
-
         grid.api.setDatasource(listDataSource);
 
         if (isNoRowsOverlayVisible) {
@@ -631,6 +632,7 @@ export const DataPreviewTable = forwardRef<
             <CogDataGrid
               ref={gridRef}
               gridOptions={{
+                alwaysMultiSort: false,
                 readOnlyEdit: !enableManualPopulation,
                 enableCellChangeFlash: true,
                 rowModelType: 'infinite',
