@@ -38,10 +38,7 @@ import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import { useDraftRows } from '../../hooks/useDraftRows';
 import { useNodesDeleteMutation } from '../../hooks/useNodesDeleteMutation';
 import { usePublishedRowsCountMapByType } from '../../hooks/usePublishedRowsCountMapByType';
-import {
-  buildGridConfig,
-  getInitialGridConfig,
-} from '../../services/grid-config-builder';
+import { buildGridConfig } from '../../services/grid-config-builder';
 import { CreateTransformationModal } from '../CreateTransformationModal';
 import { DeleteRowsModal } from '../DeleteRowsModal/DeleteRowsModal';
 import { PreviewPageHeader } from '../PreviewPageHeader/PreviewPageHeader';
@@ -89,7 +86,6 @@ export const DataPreviewTable = forwardRef<
     const instanceIdCol = 'externalId';
 
     const { t } = useTranslation('DataPreviewTable');
-    const [isGridInit, setIsGridInit] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [isTransformationModalVisible, setIsTransformationModalVisible] =
       useState(false);
@@ -97,9 +93,6 @@ export const DataPreviewTable = forwardRef<
     const [, setSelectedPublishedRowsCount] = useState(0);
     const gridRef = useRef<AgGridReact>(null);
     const [fetchError, setFetchError] = useState(null);
-    const [gridConfig, setGridConfig] = useState<GridConfig>(
-      getInitialGridConfig()
-    );
     const { isEnabled: enableManualPopulation } =
       useManualPopulationFeatureFlag();
     const { isEnabled: enableDeletion } =
@@ -194,35 +187,23 @@ export const DataPreviewTable = forwardRef<
         });
     };
 
+    // set gridConfig in state so the reference is stable and doesn't cause rerenders
+    const [gridConfig] = useState<GridConfig>(
+      buildGridConfig(
+        instanceIdCol,
+        dataModelType,
+        handleRowPublish,
+        enableDeletion,
+        enableManualPopulation
+      )
+    );
+
     const isNoRowsOverlayVisible = useMemo(
       () =>
         draftRowsData.length === 0 &&
         (publishedRowsCountMap?.[dataModelType.name] || 0) === 0,
       [draftRowsData.length, publishedRowsCountMap, dataModelType]
     );
-
-    useEffect(() => {
-      setGridConfig(
-        buildGridConfig(
-          instanceIdCol,
-          dataModelType,
-          handleRowPublish,
-          enableDeletion,
-          enableManualPopulation
-        )
-      );
-      setIsGridInit(false);
-      setFetchError(null);
-
-      // re-init grid config only and only when another type is clicked
-      // eslint-disable-next-line
-    }, [dataModelType.name, enableManualPopulation]);
-
-    useEffect(() => {
-      if (!isGridInit) {
-        setIsGridInit(true);
-      }
-    }, [isGridInit]);
 
     useEffect(() => {
       if (isNoRowsOverlayVisible && onShowNoRowsOverlay.current) {
@@ -564,7 +545,7 @@ export const DataPreviewTable = forwardRef<
       space,
     ]);
 
-    if (!isGridInit || !isPublishedRowsCountMapFetched) {
+    if (!isPublishedRowsCountMapFetched) {
       return <Spinner />;
     }
 

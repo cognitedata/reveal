@@ -172,7 +172,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
           selectedType ? (
             <Flex direction="column" style={{ flex: 1 }}>
               <DataPreviewTable
-                key={`data-preview-table-key`}
+                key={selectedType?.name}
                 dataModelType={selectedType}
                 dataModelTypeDefs={dataModelTypeDefs}
                 dataModelExternalId={dataModelExternalId}
