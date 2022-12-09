@@ -179,8 +179,7 @@ function determineCandidateSectors(
 
   const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
   transformedCameraMatrixWorldInverse.multiplyMatrices(cameraWorldInverseMatrix, modelMatrix);
-  const sectors = modelScene
-    .getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse);
+  const sectors = modelScene.getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse);
 
   if (clippingPlanes.length <= 0) {
     return sectors;
