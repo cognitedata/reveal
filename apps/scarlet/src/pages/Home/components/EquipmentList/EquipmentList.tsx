@@ -1,10 +1,11 @@
 import { useMemo, useEffect, useRef } from 'react';
-import { Table, Graphic } from '@cognite/cogs.js';
+import { Graphic } from '@cognite/cogs.js';
 import { useHistory, useLocation, generatePath } from 'react-router-dom';
 import queryString from 'query-string';
 import { getEquipmentList } from 'api';
 import { useApi, useHomePageContext } from 'hooks';
 import { PAGES } from 'pages/Menubar';
+import { Table } from 'components/Table';
 
 import { TopBar, StatusBar } from '..';
 import { EquipmentsFilter } from '../EquipmentsFilter';
@@ -149,7 +150,7 @@ export const EquipmentList = () => {
                   {
                     Header: 'U1 Document',
                     accessor: ColumnAccessor.U1_DOC,
-                    maxWidth: 100,
+                    maxWidth: 150,
                     Cell: loading ? getCellSkeleton : getCellValue,
                   },
                   {

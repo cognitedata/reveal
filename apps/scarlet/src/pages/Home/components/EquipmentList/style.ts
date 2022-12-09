@@ -62,8 +62,13 @@ export const TableContainer = styled.div<{ isLoading: boolean }>`
     }
   }
 
+  thead tr {
+    border-bottom: 1px solid var(--cogs-greyscale-grey3);
+    background: var(--cogs-greyscale-grey1);
+  }
+
   .cogs-table-pagination {
-    margin: 2rem 0;
+    margin: 1rem 0;
   }
 `;
 
