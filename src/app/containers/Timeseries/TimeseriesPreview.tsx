@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { Timeseries } from '@cognite/sdk';
+import { CogniteError, Timeseries } from '@cognite/sdk';
 import { Tabs } from '@cognite/cogs.js';
 import {
   ErrorFeedback,
@@ -15,7 +15,7 @@ import {
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 
 import { useDateRange } from 'app/context/DateRangeContext';
-import { useOnPreviewTabChange } from 'app/hooks/hooks';
+import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
 import styled from 'styled-components';
 import { DetailsTabWrapper } from 'app/containers/Common/element';
 import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
@@ -42,6 +42,11 @@ export const TimeseriesPreview = ({
 
   const tabChange = useOnPreviewTabChange(tabType, 'timeseries');
   const [dateRange, setDateRange] = useDateRange();
+  const [, openPreview] = useCurrentResourceId();
+
+  const handlePreviewClose = () => {
+    openPreview(undefined);
+  };
 
   useEffect(() => {
     trackUsage('Exploration.Preview.Timeseries', { timeseriesId });
@@ -61,7 +66,13 @@ export const TimeseriesPreview = ({
   }
 
   if (error) {
-    return <ErrorFeedback error={error} />;
+    const { errorMessage: message, status, requestId } = error as CogniteError;
+    return (
+      <ErrorFeedback
+        error={{ message, status, requestId }}
+        onPreviewClose={handlePreviewClose}
+      />
+    );
   }
 
   if (!timeseries) {

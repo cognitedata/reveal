@@ -13,7 +13,7 @@ import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
-import { FileInfo } from '@cognite/sdk';
+import { CogniteError, FileInfo } from '@cognite/sdk';
 import { EditFileButton } from 'app/components/TitleRowActions/EditFileButton';
 import styled from 'styled-components';
 import { Colors, Body, Tabs } from '@cognite/cogs.js';
@@ -22,7 +22,7 @@ import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useOnPreviewTabChange } from 'app/hooks/hooks';
+import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
 import { DetailsTabWrapper } from 'app/containers/Common/element';
 import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
 import { APPLICATION_ID } from 'app/utils/constants';
@@ -67,6 +67,11 @@ export const FilePreview = ({
   const activeTab = tabType || 'preview';
 
   const onTabChange = useOnPreviewTabChange(tabType, 'file');
+  const [, openPreview] = useCurrentResourceId();
+
+  const handlePreviewClose = () => {
+    openPreview(undefined);
+  };
 
   useEffect(() => {
     if (fileId && !isActive) {
@@ -105,9 +110,16 @@ export const FilePreview = ({
   }
 
   if (isError) {
-    return <ErrorFeedback error={error} />;
+    const { errorMessage: message, status, requestId } = error as CogniteError;
+    return (
+      <ErrorFeedback
+        error={{ message, status, requestId }}
+        onPreviewClose={handlePreviewClose}
+      />
+    );
   }
 
+  // TODO: is this a needed check?
   if (!fileInfo) {
     return <>File {fileId} not found!</>;
   }

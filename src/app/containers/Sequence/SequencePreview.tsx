@@ -10,11 +10,11 @@ import {
   Metadata,
 } from '@cognite/data-exploration';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
-import { Sequence } from '@cognite/sdk';
+import { CogniteError, Sequence } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useOnPreviewTabChange } from 'app/hooks/hooks';
+import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
 import { DetailsTabWrapper } from 'app/containers/Common/element';
 import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
 
@@ -40,6 +40,11 @@ export const SequencePreview = ({
   const activeTab = tabType || 'preview';
 
   const onTabChange = useOnPreviewTabChange(tabType, 'sequence');
+  const [, openPreview] = useCurrentResourceId();
+
+  const handlePreviewClose = () => {
+    openPreview(undefined);
+  };
 
   useEffect(() => {
     trackUsage('Exploration.Preview.Sequence', { sequenceId });
@@ -56,7 +61,13 @@ export const SequencePreview = ({
   }
 
   if (error) {
-    return <ErrorFeedback error={error} />;
+    const { errorMessage: message, status, requestId } = error as CogniteError;
+    return (
+      <ErrorFeedback
+        error={{ message, status, requestId }}
+        onPreviewClose={handlePreviewClose}
+      />
+    );
   }
 
   if (!sequence) {

@@ -12,7 +12,7 @@ import {
 } from '@cognite/data-exploration';
 import { Tabs } from '@cognite/cogs.js';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
-import { Asset } from '@cognite/sdk';
+import { Asset, CogniteError } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
@@ -47,6 +47,11 @@ export const AssetPreview = ({
   const activeTab = tabType || tab || 'details';
 
   const onTabChange = useOnPreviewTabChange(tabType, 'details');
+  const [, openPreview] = useCurrentResourceId();
+
+  const handlePreviewClose = () => {
+    openPreview(undefined);
+  };
 
   useEffect(() => {
     trackUsage('Exploration.Preview.Asset', { assetId });
@@ -82,7 +87,13 @@ export const AssetPreview = ({
   }
 
   if (error) {
-    return <ErrorFeedback error={error} />;
+    const { errorMessage: message, status, requestId } = error as CogniteError;
+    return (
+      <ErrorFeedback
+        error={{ message, status, requestId }}
+        onPreviewClose={handlePreviewClose}
+      />
+    );
   }
 
   if (!asset) {
