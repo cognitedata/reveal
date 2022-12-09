@@ -145,11 +145,15 @@ export class PointCloudOctree extends PointCloudTree {
     bbRoot.children = visibleBoxes;
   }
 
-  updateMatrixWorld(force: boolean): void {
-    if (this.matrixAutoUpdate === true) {
-      this.updateMatrix();
-    }
+  updateMatricesForDescendants() {
+    this.traverseVisible(node => node.matrixWorld.multiplyMatrices(this.matrixWorld, node.matrix));
+  }
 
+  /**
+   * Override updateMatrixWorld to not update children recursively. Child transformations
+   * are defined in relation to the base octree, and are instead updated using updateMatricesfordescendants()
+   */
+  override updateMatrixWorld(force: boolean): void {
     if (this.matrixWorldNeedsUpdate === true || force === true) {
       if (!this.parent) {
         this.matrixWorld.copy(this.matrix);
@@ -157,9 +161,10 @@ export class PointCloudOctree extends PointCloudTree {
         this.matrixWorld.multiplyMatrices(this.parent.matrixWorld, this.matrix);
       }
 
-      this.updateMaterial();
-
       this.matrixWorldNeedsUpdate = false;
+
+      this.updateMaterial();
+      this.updateMatricesForDescendants();
     }
   }
 
