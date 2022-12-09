@@ -14,9 +14,7 @@ export type CadSceneRootMetadata = {
   // readonly subRevisionId: number;
 };
 
-export type SceneSectorMetadata = BaseSceneSectorMetadata & (GltfSceneSectorMetadata | I3dF3dSceneSectorMetadata);
-export type V8SceneSectorMetadata = BaseSceneSectorMetadata & I3dF3dSceneSectorMetadata;
-export type V9SceneSectorMetadata = BaseSceneSectorMetadata & GltfSceneSectorMetadata;
+export type SceneSectorMetadata = BaseSceneSectorMetadata & GltfSceneSectorMetadata;
 
 export type BoundingBox = {
   readonly min: {
@@ -48,29 +46,4 @@ export type GltfSceneSectorMetadata = {
   readonly maxDiagonalLength: number;
   readonly minDiagonalLength: number;
   readonly downloadSize: number;
-};
-
-export type I3dF3dSceneSectorMetadata = {
-  readonly indexFile: {
-    readonly fileName: string;
-    readonly peripheralFiles: string[];
-    readonly downloadSize: number;
-  };
-  readonly facesFile: {
-    readonly quadSize: number;
-    readonly coverageFactors: {
-      xy: number;
-      yz: number;
-      xz: number;
-    };
-    readonly recursiveCoverageFactors:
-      | {
-          xy: number;
-          yz: number;
-          xz: number;
-        }
-      | undefined;
-    readonly fileName: string | null;
-    readonly downloadSize: number;
-  } | null;
 };

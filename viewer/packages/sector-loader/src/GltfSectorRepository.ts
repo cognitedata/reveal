@@ -3,7 +3,7 @@
  */
 
 import { MemoryRequestCache } from '@reveal/utilities';
-import { ConsumedSector, V9SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
+import { ConsumedSector, SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/data-providers';
 import { CadMaterialManager } from '@reveal/rendering';
 import { SectorRepository } from './SectorRepository';
@@ -21,7 +21,7 @@ export class GltfSectorRepository implements SectorRepository {
   private async getEmptySectorWithLod(
     lod: LevelOfDetail,
     modelIdentifier: string,
-    metadata: V9SectorMetadata
+    metadata: SectorMetadata
   ): Promise<ConsumedSector> {
     return Promise.resolve({
       modelIdentifier,
@@ -32,16 +32,16 @@ export class GltfSectorRepository implements SectorRepository {
     });
   }
 
-  private async getEmptyDetailedSector(modelIdentifier: string, metadata: V9SectorMetadata) {
+  private async getEmptyDetailedSector(modelIdentifier: string, metadata: SectorMetadata) {
     return this.getEmptySectorWithLod(LevelOfDetail.Detailed, modelIdentifier, metadata);
   }
 
-  private async getEmptyDiscardedSector(modelIdentifier: string, metadata: V9SectorMetadata) {
+  private async getEmptyDiscardedSector(modelIdentifier: string, metadata: SectorMetadata) {
     return this.getEmptySectorWithLod(LevelOfDetail.Discarded, modelIdentifier, metadata);
   }
 
   async loadSector(sector: WantedSector): Promise<ConsumedSector> {
-    const metadata = sector.metadata as V9SectorMetadata;
+    const metadata = sector.metadata as SectorMetadata;
 
     if (metadata.sectorFileName === undefined || metadata.downloadSize === 0) {
       return this.getEmptyDetailedSector(sector.modelIdentifier, metadata);

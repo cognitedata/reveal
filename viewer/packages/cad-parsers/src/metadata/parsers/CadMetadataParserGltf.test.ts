@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { traverseDepthFirst } from '@reveal/utilities';
-import { V9SectorMetadata } from '../types';
+import { SectorMetadata } from '../types';
 import { parseCadMetadataGltf, toThreeBoundingBox } from './CadMetadataParserGltf';
 import { CadSceneRootMetadata } from './types';
 
@@ -49,7 +49,7 @@ describe('CadMetadataParserGltf', () => {
       new THREE.Vector3(sectorRoot.boundingBox.max.x, sectorRoot.boundingBox.max.y, sectorRoot.boundingBox.max.z)
     );
 
-    const expectedRoot: V9SectorMetadata = {
+    const expectedRoot: SectorMetadata = {
       id: sectorRoot.id,
       path: sectorRoot.path,
       subtreeBoundingBox,

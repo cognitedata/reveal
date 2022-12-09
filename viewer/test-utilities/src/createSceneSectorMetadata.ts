@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { V9SceneSectorMetadata } from '../../packages/cad-parsers/src/metadata/parsers/types';
+import { SceneSectorMetadata } from '../../packages/cad-parsers/src/metadata/parsers/types';
 
 export type BoundingBox = {
   min: {
@@ -22,8 +22,8 @@ export function createV9SceneSectorMetadata(
   parentId: number = -1,
   boundingBox?: BoundingBox,
   geometryBoundingBox?: BoundingBox
-): V9SceneSectorMetadata {
-  const metadata: V9SceneSectorMetadata = {
+): SceneSectorMetadata {
+  const metadata: SceneSectorMetadata = {
     id,
     parentId,
     path: '0/',

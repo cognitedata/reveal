@@ -83,28 +83,13 @@ function mockWantedSectors(id: number): {
     path: '0/',
     depth: 0,
     subtreeBoundingBox: new THREE.Box3(),
+    geometryBoundingBox: new THREE.Box3(),
     estimatedDrawCallCount: 0,
     estimatedRenderCost: 0,
-    indexFile: {
-      fileName: `sector_${id}.i3d`,
-      peripheralFiles: [],
-      downloadSize: 0
-    },
-    facesFile: {
-      fileName: `sector_${id}.f3d`,
-      quadSize: 0,
-      coverageFactors: {
-        xy: 0,
-        xz: 0,
-        yz: 0
-      },
-      recursiveCoverageFactors: {
-        xy: 0,
-        xz: 0,
-        yz: 0
-      },
-      downloadSize: 0
-    },
+    minDiagonalLength: 0.1,
+    maxDiagonalLength: 1.0,
+    sectorFileName: '0.glb',
+    downloadSize: 1000,
     children: []
   };
 

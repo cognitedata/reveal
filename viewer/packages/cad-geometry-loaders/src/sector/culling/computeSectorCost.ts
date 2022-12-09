@@ -3,10 +3,10 @@
  */
 import { SectorCost } from './types';
 
-import { LevelOfDetail, SectorMetadata, V9SectorMetadata } from '@reveal/cad-parsers';
+import { LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
 
 export function computeV9SectorCost(sectorMetadata: SectorMetadata, lod: LevelOfDetail): SectorCost {
-  const metadata = sectorMetadata as V9SectorMetadata;
+  const metadata = sectorMetadata;
   switch (lod) {
     case LevelOfDetail.Detailed:
       return {

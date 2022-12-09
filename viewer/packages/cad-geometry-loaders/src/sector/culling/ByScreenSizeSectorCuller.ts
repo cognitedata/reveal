@@ -11,7 +11,7 @@ import { computeV9SectorCost } from './computeSectorCost';
 import { TakenV9SectorMap } from './takensectors';
 
 import Log from '@reveal/logger';
-import { CadModelMetadata, V9SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
+import { CadModelMetadata, SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
 import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
 import { PrioritizedArea } from '@reveal/cad-styling';
 
@@ -20,11 +20,11 @@ export type ByScreenSizeSectorCullerOptions = {
    * Optional callback for determining the cost of a sector. The default unit of the cost
    * function is bytes downloaded.
    */
-  determineSectorCost?: DetermineSectorCostDelegate<V9SectorMetadata>;
+  determineSectorCost?: DetermineSectorCostDelegate<SectorMetadata>;
 };
 
 export class ByScreenSizeSectorCuller implements SectorCuller {
-  private readonly _determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>;
+  private readonly _determineSectorCost: DetermineSectorCostDelegate<SectorMetadata>;
 
   constructor(options?: ByScreenSizeSectorCullerOptions) {
     this._determineSectorCost = options?.determineSectorCost || computeV9SectorCost;
@@ -94,7 +94,7 @@ const sortSectorsByPriorityVars = {
 };
 
 function sortSectorsByPriority(
-  modelsAndCandidateSectors: Map<CadModelMetadata, V9SectorMetadata[]>,
+  modelsAndCandidateSectors: Map<CadModelMetadata, SectorMetadata[]>,
   weightFunctions: WeightFunctionsHelper,
   prioritizedAreas: PrioritizedArea[]
 ): { model: CadModelMetadata; sectorId: number; priority: number }[] {
@@ -144,14 +144,14 @@ function determineCandidateSectorsByModel(
     );
     result.set(model, sectors);
     return result;
-  }, new Map<CadModelMetadata, V9SectorMetadata[]>());
+  }, new Map<CadModelMetadata, SectorMetadata[]>());
 }
 
 /**
  * Prepares data structures with model and sectors
  */
 function initializeTakenSectorsAndWeightFunctions(
-  modelsAndCandidateSectors: Map<CadModelMetadata, V9SectorMetadata[]>,
+  modelsAndCandidateSectors: Map<CadModelMetadata, SectorMetadata[]>,
   takenSectors: TakenV9SectorMap,
   weightFunctions: WeightFunctionsHelper
 ) {
@@ -172,7 +172,7 @@ function determineCandidateSectors(
   modelMatrix: THREE.Matrix4,
   modelScene: SectorScene,
   clippingPlanes: THREE.Plane[]
-): V9SectorMetadata[] {
+): SectorMetadata[] {
   if (modelScene.version !== 9) {
     throw new Error(`Expected model version 9, but got ${modelScene.version}`);
   }
@@ -180,8 +180,7 @@ function determineCandidateSectors(
   const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
   transformedCameraMatrixWorldInverse.multiplyMatrices(cameraWorldInverseMatrix, modelMatrix);
   const sectors = modelScene
-    .getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse)
-    .map(x => x as V9SectorMetadata);
+    .getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse);
 
   if (clippingPlanes.length <= 0) {
     return sectors;
@@ -202,7 +201,7 @@ function determineCandidateSectors(
  */
 function determineSectorPriority(
   weightFunctions: WeightFunctionsHelper,
-  sector: V9SectorMetadata,
+  sector: SectorMetadata,
   transformedBounds: THREE.Box3,
   prioritizedAreas: PrioritizedArea[]
 ) {

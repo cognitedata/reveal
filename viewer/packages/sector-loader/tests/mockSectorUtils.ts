@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { WantedSector, V9SectorMetadata } from '@reveal/cad-parsers';
+import { WantedSector, SectorMetadata } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/data-providers';
 import { IMock, Mock, It } from 'moq.ts';
 
@@ -13,7 +13,7 @@ const modelIdentifier = 'some_model_identifier';
 export function createWantedSectorMock(id: number = 1): IMock<WantedSector> {
   const wantedFile = 'wanted_file.glb';
 
-  const mockedSectorMetadata = new Mock<V9SectorMetadata>()
+  const mockedSectorMetadata = new Mock<SectorMetadata>()
     .setup(p => p.sectorFileName)
     .returns(wantedFile)
     .setup(p => p.id)

@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
 
-import { SectorMetadata, V9SectorMetadata } from '@reveal/cad-parsers';
+import { SectorMetadata } from '@reveal/cad-parsers';
 import { PrioritizedArea } from '@reveal/cad-styling';
 
 const preallocated = {
@@ -120,7 +120,7 @@ export class WeightFunctionsHelper {
    * sectors right below root sector.
    * @param sector
    */
-  computeSectorTreePlacementWeight(sector: V9SectorMetadata): number {
+  computeSectorTreePlacementWeight(sector: SectorMetadata): number {
     // Prioritize sectors directly under the root. These contains large structures
     // in V9 format and is therefore a low-detail version of the full model.
     return sector.depth === 1 ? 1.0 : 1.0 / 3.0;
