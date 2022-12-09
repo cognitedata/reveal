@@ -4,7 +4,7 @@ import ErrorIcon from './ErrorIcon';
 
 type Props = {
   error: {
-    errorMessage: string;
+    message: string;
     status: number;
     requestId?: string;
   };
@@ -38,7 +38,7 @@ export function ErrorFeedback({ error, onPreviewClose }: Props) {
         </div>
         <Title style={{ textAlign: 'center' }} level={5}>
           {error.status ? `${error.status}: ` : null}
-          {error.errorMessage}
+          {error.message}
         </Title>
         {error.requestId && (
           <Flex
