@@ -92,6 +92,14 @@ export const FilePreview = ({
     id: fileId!,
   });
 
+  useEffect(() => {
+    if (fileInfo !== undefined) {
+      trackUsage('Exploration.Preview.File.MimeType', {
+        mimeType: fileInfo.mimeType,
+      });
+    }
+  }, [fileInfo]);
+
   if (isLoading) {
     return <Loader />;
   }
