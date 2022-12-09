@@ -52,8 +52,9 @@ const DownloadTableModal = ({
       fetchedRows.slice(0, Number(fetchRowCount)).map((item) => {
         const escapedColumns: Record<string, string> = {};
         Object.keys(item).forEach((key) => {
-          escapedColumns[key] = escapeCSVValue(item[PRIMARY_KEY_DATAKEY]);
+          escapedColumns[key] = escapeCSVValue(item[key]);
         });
+        escapedColumns.key = escapedColumns[PRIMARY_KEY_DATAKEY];
         COLUMNS_IGNORED.forEach((column: string) => {
           delete escapedColumns[column];
         });
