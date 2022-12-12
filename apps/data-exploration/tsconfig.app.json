@@ -18,7 +18,8 @@
     "**/*.stories.jsx",
     "**/*.stories.tsx",
     "**/mocks/**.*",
-    "jest.config.ts"
+    "jest.config.ts",
+    "node_modules"
   ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }
