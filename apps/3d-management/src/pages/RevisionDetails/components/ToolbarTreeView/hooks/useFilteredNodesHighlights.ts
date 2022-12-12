@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import sdk from '@cognite/cdf-sdk-singleton';
 import {
   PropertyFilterNodeCollection,
-  Cognite3DModel,
+  CogniteCadModel,
   NodeOutlineColor,
 } from '@cognite/reveal';
 import {
@@ -16,7 +16,7 @@ import { assignOrUpdateStyledNodeCollection } from 'utils/sdk/3dNodeStylingUtils
 export function useFilteredNodesHighlights({
   model,
 }: {
-  model: Cognite3DModel;
+  model: CogniteCadModel;
 }) {
   const dispatch = useDispatch();
   const { value: filter } = useSelector(

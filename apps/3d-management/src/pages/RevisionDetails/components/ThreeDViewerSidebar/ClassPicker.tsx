@@ -20,15 +20,15 @@ export function ClassPicker(props: Props) {
     number
   > = props.model.getClasses().reduce((acc, classValue) => {
     const key =
-      WellKnownAsprsPointClassCodes[classValue] ||
+      WellKnownAsprsPointClassCodes[classValue.code] ||
       // eslint-disable-next-line no-plusplus
       `User defined (${userDefinedNameCounter++})`;
 
     if (key.startsWith('ReservedOr')) {
       const betterKey = key.slice('ReservedOr'.length);
-      acc[`${betterKey} (legacy)`] = classValue;
+      acc[`${betterKey} (legacy)`] = classValue.code;
     } else {
-      acc[key] = classValue;
+      acc[key] = classValue.code;
     }
 
     return acc;

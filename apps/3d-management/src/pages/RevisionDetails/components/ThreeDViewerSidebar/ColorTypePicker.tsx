@@ -1,30 +1,30 @@
 import React from 'react';
 import { Select } from 'antd';
-import { PotreePointColorType } from '@cognite/reveal';
+import { PointColorType } from '@cognite/reveal';
 
 const { Option } = Select;
 
 const options: Record<number, string> = {
-  [PotreePointColorType.Rgb]: 'Color (RGB)',
-  [PotreePointColorType.Classification]: 'Classification',
-  [PotreePointColorType.Depth]: 'Depth',
-  [PotreePointColorType.Height]: 'Height',
-  [PotreePointColorType.Intensity]: 'Intensity',
+  [PointColorType.Rgb]: 'Color (RGB)',
+  [PointColorType.Classification]: 'Classification',
+  [PointColorType.Depth]: 'Depth',
+  [PointColorType.Height]: 'Height',
+  [PointColorType.Intensity]: 'Intensity',
 };
 
 type Props = {
-  onChange: (colorType: PotreePointColorType) => void;
+  onChange: (colorType: PointColorType) => void;
 };
 
 export function ColorTypePicker({ onChange }: Props) {
   return (
     <div title="Point color type">
       <Select
-        defaultValue={PotreePointColorType.Rgb}
+        defaultValue={PointColorType.Rgb}
         style={{ width: '100%' }}
         onChange={onChange}
       >
-        {(Object.values(PotreePointColorType) as Array<PotreePointColorType>)
+        {(Object.values(PointColorType) as Array<PointColorType>)
           .filter((type) => options[type])
           .map((type) => (
             <Option key={type} value={type}>

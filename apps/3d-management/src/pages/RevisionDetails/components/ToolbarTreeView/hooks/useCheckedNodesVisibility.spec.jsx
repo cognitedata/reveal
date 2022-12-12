@@ -25,18 +25,28 @@ describe('useCheckedNodesVisibility tests', () => {
       12,
       13,
     ].sort();
+    // 0
+    // - 1,2
+    // - 3
+    // -- 4,5,6,7
+    // - 8
+    // -- (9 - not fetched)
+    // - 10
+    // -- 11,12, (13 - not fetched)
     const treeData = [
       {
+        isTreeDataNode: true,
         key: 0,
         meta: {
           id: 7587176698924415,
           treeIndex: 0,
           depth: 0,
           name: 'RootNode',
-          subtreeSize: allTreeIndexes.length,
+          subtreeSize: 14,
         },
         children: [
           {
+            isTreeDataNode: true,
             key: 2,
             meta: {
               id: 4118495943076177,
@@ -48,6 +58,7 @@ describe('useCheckedNodesVisibility tests', () => {
             },
           },
           {
+            isTreeDataNode: true,
             key: 3, // 3,4,5,6,7
             meta: {
               id: 3518215128723287,
@@ -59,6 +70,7 @@ describe('useCheckedNodesVisibility tests', () => {
             },
             children: [
               {
+                isTreeDataNode: true,
                 key: 4,
                 meta: {
                   id: 172917895243234,
@@ -70,6 +82,7 @@ describe('useCheckedNodesVisibility tests', () => {
                 },
               },
               {
+                isTreeDataNode: true,
                 key: 5,
                 meta: {
                   id: 5528114778128032,
@@ -81,6 +94,7 @@ describe('useCheckedNodesVisibility tests', () => {
                 },
               },
               {
+                isTreeDataNode: true,
                 key: 6,
                 meta: {
                   id: 4086799595416334,
@@ -92,6 +106,7 @@ describe('useCheckedNodesVisibility tests', () => {
                 },
               },
               {
+                isTreeDataNode: true,
                 key: 7,
                 meta: {
                   id: 6444092424355782,
@@ -109,6 +124,7 @@ describe('useCheckedNodesVisibility tests', () => {
             ],
           },
           {
+            isTreeDataNode: true,
             key: 1,
             meta: {
               id: 6025029534731389,
@@ -120,6 +136,7 @@ describe('useCheckedNodesVisibility tests', () => {
             },
           },
           {
+            isTreeDataNode: true,
             key: 8, // 8, (9)
             meta: {
               id: 888,
@@ -131,6 +148,7 @@ describe('useCheckedNodesVisibility tests', () => {
             },
           },
           {
+            isTreeDataNode: true,
             key: 10, // 10, 11, 12, (13)
             meta: {
               id: 10,
@@ -142,6 +160,7 @@ describe('useCheckedNodesVisibility tests', () => {
             },
             children: [
               {
+                isTreeDataNode: true,
                 key: 11,
                 meta: {
                   id: 11,
@@ -153,6 +172,7 @@ describe('useCheckedNodesVisibility tests', () => {
                 },
               },
               {
+                isTreeDataNode: true,
                 key: 12,
                 meta: {
                   id: 12,
@@ -176,9 +196,7 @@ describe('useCheckedNodesVisibility tests', () => {
       assignStyledNodeCollection(set) {
         set.on('changed', () => {
           const indexSet = set.getIndexSet();
-          this.ownCheckedNodes = allTreeIndexes
-            .filter((treeIndex) => !indexSet.contains(treeIndex))
-            .sort();
+          this.ownCheckedNodes = indexSet.toIndexArray().sort();
         });
       },
       updateStyledNodeCollection() {},
@@ -191,10 +209,9 @@ describe('useCheckedNodesVisibility tests', () => {
       <TestComponent
         model={modelMock}
         treeData={treeData}
-        checkedKeys={[0, 1, 2, 3, 4, 5, 6, 7, 8, /* 9 */ 10, 11, 12 /* 13 */]}
+        checkedKeys={[0]} // Checking root means checking everything
       />
     );
-
     expect(modelMock.ownCheckedNodes).toEqual(allTreeIndexes);
 
     // uncheck one leaf [2]
@@ -202,10 +219,7 @@ describe('useCheckedNodesVisibility tests', () => {
       <TestComponent
         model={modelMock}
         treeData={treeData}
-        checkedKeys={
-          // eslint-disable-next-line prettier/prettier
-          [/* 0, */ 1, /* 2, */ 3, 4, 5, 6, 7, 8, /* 9 */ 10, 11, 12 /* 13 */]
-        }
+        checkedKeys={[1, 3, 8, 10, 11, 12, 13]}
       />
     );
 
@@ -243,24 +257,6 @@ describe('useCheckedNodesVisibility tests', () => {
     );
 
     expect(modelMock.ownCheckedNodes).toEqual(allTreeIndexes);
-
-    // uncheck one of the loaded nodes [11] - other children [12,13] must be visible
-
-    rerender(
-      <TestComponent
-        model={modelMock}
-        treeData={treeData}
-        checkedKeys={
-          // eslint-disable-next-line prettier/prettier
-          [/* 0, */ 1, 2, 3, 4, 5, 6, 7, 8, /* 9, 10, 11, */ 12 /* 13 */]
-        }
-      />
-    );
-
-    expect(modelMock.ownCheckedNodes).toEqual(
-      // eslint-disable-next-line prettier/prettier
-      [/* 0, */ 1, 2, 3, 4, 5, 6, 7, 8, 9, /* 10, 11, */ 12, 13].sort()
-    );
 
     // uncheck both of the loaded nodes [11, 12] - all known unchecked - so hide [10..13] completely
 

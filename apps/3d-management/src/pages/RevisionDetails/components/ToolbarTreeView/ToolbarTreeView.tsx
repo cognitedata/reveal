@@ -6,7 +6,7 @@ import {
   TreeDataNode,
   TreeLoadMoreNode,
 } from 'pages/RevisionDetails/components/TreeView/types';
-import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
+import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
 import {
@@ -42,7 +42,7 @@ const Container = styled.div`
 `;
 
 type TreeViewWrapperProps = {
-  model: Cognite3DModel;
+  model: CogniteCadModel;
   height: number;
 
   onNodeInfoRequested: (treeIndex: number) => void;

@@ -2,15 +2,16 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { ToolBarButton, ToolBar, Slider, Icon } from '@cognite/cogs.js';
 import {
   CameraControlsOptions,
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
   DefaultCameraManager,
-  THREE,
+  MeasurementTool,
 } from '@cognite/reveal';
 
 import styled from 'styled-components';
-import { MeasurementTool } from '@cognite/reveal/tools';
+
+import * as THREE from 'three';
 
 const SliderContainer = styled.div`
   display: flex;
@@ -45,7 +46,7 @@ const CenteredIcon = styled(Icon)`
 
 type Props = {
   viewer: Cognite3DViewer;
-  model: Cognite3DModel | CognitePointCloudModel;
+  model: CogniteCadModel | CognitePointCloudModel;
   setNodesClickable: Dispatch<SetStateAction<boolean>>;
   nodesClickable: boolean;
 };
@@ -85,8 +86,8 @@ export function OverlayToolbar({
   const buttonGroups: ToolBarButton[][] = [
     [
       {
-        icon: 'Scan',
-        description: 'Fit camera to the model',
+        icon: 'ExpandAlternative',
+        description: 'Fit view',
         onClick: () => viewer.fitCameraToModel(model, 400),
       },
     ],
@@ -98,7 +99,7 @@ export function OverlayToolbar({
   subscribeMeasurementEvents();
 
   return (
-    <ToolBar direction="horizontal">
+    <ToolBar direction="vertical">
       <ToolBar.ButtonGroup buttonGroup={buttonGroups[0]} />
     </ToolBar>
   );
@@ -138,7 +139,7 @@ export function OverlayToolbar({
         <ClippingPlaneSlider
           min={bounds.min.y}
           max={bounds.max.y}
-          step={(bounds.max.y - bounds.min.y) / 250.0}
+          step={(bounds.max.y - bounds.min.y) / 1000.0}
           defaultValue={bounds.max.y}
           onChange={(clippingYPosition) => {
             viewer.setClippingPlanes([
@@ -150,7 +151,7 @@ export function OverlayToolbar({
       </SliderContainer>
     );
     const pointSizeTool: ToolBarButton = {
-      icon: 'ResizeHeight',
+      icon: 'Slice',
       description: 'Slice',
       dropdownContent: clippingPlaneSlider,
     };

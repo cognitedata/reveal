@@ -1,11 +1,11 @@
 import {
-  Cognite3DModel,
+  CogniteCadModel,
   NodeAppearance,
   NodeCollection,
 } from '@cognite/reveal';
 
 export function assignOrUpdateStyledNodeCollection(
-  model: Cognite3DModel,
+  model: CogniteCadModel,
   nodeCollection: NodeCollection,
   appearance: NodeAppearance
 ): void {

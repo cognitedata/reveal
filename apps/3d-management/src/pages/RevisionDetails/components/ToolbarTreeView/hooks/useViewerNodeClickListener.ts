@@ -4,14 +4,14 @@ import { useDispatch } from 'react-redux';
 import { expandArbitraryNode, selectNodes } from 'store/modules/TreeView';
 import { fireErrorNotification } from 'utils';
 import {
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   PointerEventDelegate,
 } from '@cognite/reveal';
 
 type Args = {
   viewer: Cognite3DViewer;
-  model: Cognite3DModel;
+  model: CogniteCadModel;
   treeViewRef: React.RefObject<NodesTreeViewRefType>;
   nodesClickable: boolean;
 };

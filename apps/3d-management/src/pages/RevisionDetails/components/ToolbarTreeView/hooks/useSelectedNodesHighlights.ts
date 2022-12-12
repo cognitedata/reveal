@@ -1,6 +1,6 @@
 import {
   TreeIndexNodeCollection,
-  Cognite3DModel,
+  CogniteCadModel,
   DefaultNodeAppearance,
   IndexSet,
   NumericRange,
@@ -15,7 +15,7 @@ import { assignOrUpdateStyledNodeCollection } from 'utils/sdk/3dNodeStylingUtils
 export function useSelectedNodesHighlights({
   model,
 }: {
-  model: Cognite3DModel;
+  model: CogniteCadModel;
 }) {
   const selectedNodes: Array<SelectedNode> = useSelector(
     ({ treeView }: RootState) => treeView.selectedNodes

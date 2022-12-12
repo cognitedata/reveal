@@ -5,16 +5,17 @@ import { Button as ButtonAnt, message } from 'antd';
 import { Button, Dropdown, SegmentedControl } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
-  THREE,
 } from '@cognite/reveal';
 
 import * as Sentry from '@sentry/browser';
 import { RedoOutlined, UndoOutlined } from '@ant-design/icons';
 import antdRadioStyles from 'antd/es/radio/style/index.less';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
+
+import * as THREE from 'three';
 
 const ButtonGroup = ButtonAnt.Group;
 
@@ -23,7 +24,7 @@ type RotationAxis = 'x' | 'y' | 'z';
 type Props = {
   saveModelRotation: (rotation: Tuple3<number>) => Promise<void>;
   viewer: Cognite3DViewer;
-  model: Cognite3DModel | CognitePointCloudModel;
+  model: CogniteCadModel | CognitePointCloudModel;
 };
 
 export function EditRotation(props: Props) {
@@ -157,10 +158,10 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
       try {
         // Update revision with correct starting location and correct rotation
         await props.saveModelRotation(
-          rotationEuler
-            .toArray()
-            .slice(0, 3)
-            .map((n) => (n === 0 ? 1e-20 : n)) // backend bug, 0 is ignored instead of being set
+          // backend bug, 0 is ignored instead of being set
+          [rotationEuler.x, rotationEuler.y, rotationEuler.z].map((n) =>
+            n === 0 ? 1e-20 : n
+          )
         );
 
         progressMessage.then(() =>

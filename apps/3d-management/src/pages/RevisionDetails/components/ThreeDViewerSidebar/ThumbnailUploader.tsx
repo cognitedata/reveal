@@ -6,14 +6,14 @@ import sdk from '@cognite/cdf-sdk-singleton';
 import { FileUploadResponse, HttpError } from '@cognite/sdk';
 import { fireErrorNotification } from 'utils/notifications';
 import {
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
 } from '@cognite/reveal';
 
 type Props = {
   viewer: Cognite3DViewer;
-  model: Cognite3DModel | CognitePointCloudModel;
+  model: CogniteCadModel | CognitePointCloudModel;
   onUploadDone: () => void;
   style?: CSSProperties;
 };

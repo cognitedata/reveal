@@ -1,17 +1,19 @@
-import { DataNode, EventDataNode } from 'antd-v4/lib/tree';
-import { v3 } from '@cognite/cdf-sdk-singleton';
+import { DataNode, EventDataNode } from 'antd/lib/tree';
+import { Node3D } from '@cognite/sdk';
 
 type DataNodeWithTitle = DataNode & {
   title: NonNullable<Pick<Required<DataNode>, 'title'>['title']>;
 };
 
 export interface TreeDataNode extends DataNodeWithTitle {
+  isTreeDataNode: true;
   key: number; // treeIndex
-  meta: v3.Node3D;
+  meta: Node3D;
   children?: CustomDataNode[];
 }
 
 export interface TreeLoadMoreNode extends DataNodeWithTitle {
+  isTreeDataNode: false;
   key: string;
   cursor: string;
   parent: {

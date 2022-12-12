@@ -1,9 +1,8 @@
 import {
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
-  PotreePointColorType,
-  THREE,
+  PointColorType,
 } from '@cognite/reveal';
 import React from 'react';
 import { Tuple3, RevisionCameraProperties } from '@cognite/sdk';
@@ -36,7 +35,7 @@ type RevisionUpdatePayload = {
 type Props = {
   // consider context for viewer/model
   viewer: Cognite3DViewer;
-  model: Cognite3DModel | CognitePointCloudModel;
+  model: CogniteCadModel | CognitePointCloudModel;
   nodesClickable: boolean;
 };
 
@@ -66,18 +65,22 @@ export default function ThreeDViewerSidebar(props: Props) {
     const { position, target } = viewer.cameraManager.getCameraState();
 
     // Get camera position and target for upload
-
-    // Convert camera position and target to model space
-    const inverseModelMatrix = new THREE.Matrix4();
-
-    if (props.model instanceof Cognite3DModel) {
-      props.model.mapPositionFromModelToCdfCoordinates(position, position);
-      props.model.mapPositionFromModelToCdfCoordinates(target, target);
+    if (props.model instanceof CogniteCadModel) {
+      const cdfTransformation = props.model
+        .getModelTransformation()
+        .clone()
+        .multiply(props.model.getCdfToDefaultModelTransformation());
+      position.applyMatrix4(cdfTransformation);
+      target.applyMatrix4(cdfTransformation);
     } else {
       // TODO 2022-09-21 larsmoa: Replace with map-functions in Reveal 4.0
 
       // Get inverse transformation matrix to compute camera position and target in model space
-      inverseModelMatrix.copy(props.model.matrix).invert();
+      const inverseModelMatrix = props.model
+        .getModelTransformation()
+        .clone()
+        .multiply(props.model.getCdfToDefaultModelTransformation())
+        .invert();
       position.applyMatrix4(inverseModelMatrix);
       target.applyMatrix4(inverseModelMatrix);
     }
@@ -94,7 +97,7 @@ export default function ThreeDViewerSidebar(props: Props) {
   };
 
   const showTreeView =
-    treeViewFeatureFlagIsEnabled && props.model instanceof Cognite3DModel;
+    treeViewFeatureFlagIsEnabled && props.model instanceof CogniteCadModel;
 
   return (
     <SidebarContainer
@@ -120,7 +123,7 @@ export default function ThreeDViewerSidebar(props: Props) {
         <>
           <MenuSection>
             <ColorTypePicker
-              onChange={(colorType: PotreePointColorType) => {
+              onChange={(colorType: PointColorType) => {
                 if (props.model instanceof CognitePointCloudModel) {
                   // eslint-disable-next-line no-param-reassign
                   props.model.pointColorType = colorType;
@@ -159,7 +162,7 @@ export default function ThreeDViewerSidebar(props: Props) {
           <Divider style={{ margin: `${DEFAULT_MARGIN_V}px 0` }} />
 
           <ToolbarTreeView
-            model={props.model as Cognite3DModel}
+            model={props.model as CogniteCadModel}
             viewer={props.viewer as Cognite3DViewer}
             nodesClickable={props.nodesClickable}
           />

@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
-  CogniteModelBase,
-  PotreePointSizeType,
+  CogniteModel,
+  PointSizeType,
   DefaultCameraManager,
+  AxisViewTool,
 } from '@cognite/reveal';
 
 import styled from 'styled-components';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { AxisViewTool } from '@cognite/reveal/tools';
 import { OverlayToolbar } from '../OverlayToolbar/OverlayToolbar';
 import ThreeDViewerSidebar from '../ThreeDViewerSidebar';
 import { ThreeDViewerProps } from './ThreeDViewer.d';
@@ -31,10 +31,25 @@ const CanvasContainer = styled.div`
   }
 `;
 
+const StyledToolBar = styled.div`
+  position: absolute;
+  left: 30px;
+  bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  height: fit-content;
+  padding: 4px;
+  border-radius: 4px;
+  background-color: white;
+`;
+
 export default function ThreeDViewer(props: ThreeDViewerProps) {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<Error>();
-  const [model, setModel] = useState<Cognite3DModel | CognitePointCloudModel>();
+  const [model, setModel] = useState<
+    CogniteCadModel | CognitePointCloudModel
+  >();
   const [viewer, setViewer] = useState<Cognite3DViewer>();
 
   const modelId = +props.modelId;
@@ -89,7 +104,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
       if (!viewer) {
         return;
       }
-      let modelLocal: CognitePointCloudModel | Cognite3DModel;
+      let modelLocal: CognitePointCloudModel | CogniteCadModel;
 
       try {
         (viewer.cameraManager as DefaultCameraManager).setCameraControlsOptions(
@@ -109,7 +124,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
               modelId,
               revisionId,
             });
-            modelLocal.pointSizeType = PotreePointSizeType.Attenuated;
+            modelLocal.pointSizeType = PointSizeType.Attenuated;
             modelLocal.pointSize = 0.25;
             break;
           }
@@ -124,7 +139,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
         return;
       }
 
-      viewer.loadCameraFromModel(modelLocal as CogniteModelBase);
+      viewer.loadCameraFromModel(modelLocal as CogniteModel);
 
       if (canvasWrapperRef.current) {
         setModel(modelLocal);
@@ -140,18 +155,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
 
   return (
     <ThreeDViewerStyled className="z-2">
-      <CanvasContainer ref={canvasWrapperRef}>
-        {viewer && model && (
-          <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
-            <OverlayToolbar
-              viewer={viewer}
-              model={model}
-              setNodesClickable={setNodesClickable}
-              nodesClickable={nodesClickable}
-            />
-          </div>
-        )}
-      </CanvasContainer>
+      <CanvasContainer ref={canvasWrapperRef} />
 
       {viewer && model && (
         <ThreeDViewerSidebar
@@ -159,6 +163,16 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
           model={model}
           nodesClickable={nodesClickable}
         />
+      )}
+      {viewer && model && canvasWrapperRef.current && (
+        <StyledToolBar>
+          <OverlayToolbar
+            viewer={viewer}
+            model={model}
+            setNodesClickable={setNodesClickable}
+            nodesClickable={nodesClickable}
+          />
+        </StyledToolBar>
       )}
     </ThreeDViewerStyled>
   );

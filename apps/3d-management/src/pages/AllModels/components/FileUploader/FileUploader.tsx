@@ -199,8 +199,8 @@ class FileUploader extends React.Component<Props, State> {
         throw new Error(`File with id=${id} is never marked as uploaded`);
       }
       this.props.onUploadSuccess(fileInfo.id);
-    } catch (e) {
-      if (e.code === 401) {
+    } catch (e: any) {
+      if (e.status === 401) {
         // eslint-disable-next-line no-alert
         alert('Authorization is expired. The page will be reloaded');
 

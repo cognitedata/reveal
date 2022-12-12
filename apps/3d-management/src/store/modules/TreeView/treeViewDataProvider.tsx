@@ -13,7 +13,7 @@ import { sortNaturally } from 'utils';
 
 export const FETCH_PARAMS: List3DNodesQuery = {
   depth: 1,
-  limit: 50,
+  limit: 200,
 } as const;
 
 export type RevisionId = {
@@ -129,6 +129,7 @@ function createLoadMoreOption({
   cursor: TreeLoadMoreNode['key'];
 }): TreeLoadMoreNode {
   return {
+    isTreeDataNode: false,
     key: `${parent.nodeId}_${cursor}`, // cursor uniqueness is not guaranteed by API
     cursor,
     title: <LoadMore />,
