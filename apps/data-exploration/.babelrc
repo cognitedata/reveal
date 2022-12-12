@@ -1,5 +1,12 @@
 {
-  "presets": ["react-app"],
+  "presets": [
+    [
+      "@nrwl/react/babel",
+      {
+        "runtime": "automatic"
+      }
+    ]
+  ],
   "plugins": [
     [
       // Info: this plugin might silently fail if the format of the styled-components string interpolation css is not correct.

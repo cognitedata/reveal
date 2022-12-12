@@ -4,6 +4,7 @@
     "cog-data-grid": "libs/cog-data-grid",
     "mock-data": "libs/mock-data",
     "mock-server": "apps/mock-server",
+    "data-exploration": "apps/data-exploration",
     "platypus": "apps/platypus",
     "platypus-cdf-cli": "apps/platypus-cdf-cli",
     "platypus-common-utils": "libs/platypus-common-utils",

@@ -1,34 +1,23 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "src/",
-    "target": "es5",
-    "module": "esnext",
-    "declaration": true,
-    "declarationDir": "dist",
-    "outDir": "dist",
-    "strict": true,
-    "sourceMap": false,
-    "moduleResolution": "node",
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "downlevelIteration": true,
-    "allowSyntheticDefaultImports": true,
-    "lib": ["es2015", "dom", "dom.iterable"],
     "jsx": "react-jsx",
     "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*","cypress/e2e"],
-  "exclude": [
-    "node_modules",
-    "tests/*",
-    "**/*.(spec|test|stories).ts+(|x)",
-    "**/*.test.ts",
-    "**/*.stories.tsx"
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
   ]
 }

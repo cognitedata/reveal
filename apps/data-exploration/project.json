@@ -1,0 +1,128 @@
+{
+  "sourceRoot": "apps/data-exploration/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "build",
+        "index": "apps/data-exploration/src/index.html",
+        "main": "apps/data-exploration/src/index.tsx",
+        "runtimeChunk": false,
+        "vendorChunk": false,
+        "commonChunk": false,
+        "tsConfig": "apps/data-exploration/tsconfig.app.json",
+        "assets": ["apps/data-exploration/src/assets"],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/data-exploration/webpack-config.js"
+      },
+      "configurations": {
+        "development": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": false,
+          "namedChunks": false,
+          "extractLicenses": false,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "preview": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "production": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": []
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "options": {
+        "buildTarget": "data-exploration:build",
+        "hmr": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "data-exploration:build:development",
+          "hmr": true,
+          "liveReload": true
+        },
+
+        "preview": {
+          "buildTarget": "data-exploration:build:preview",
+          "hmr": false
+        },
+        "production": {
+          "buildTarget": "data-exploration:build:production",
+          "hmr": false
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/data-exploration/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/platypus"],
+      "options": {
+        "jestConfig": "apps/data-exploration/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "storybook": {
+      "executor": "@nrwl/storybook:storybook",
+      "options": {
+        "uiFramework": "@storybook/react",
+        "port": 4400,
+        "config": {
+          "configFolder": "apps/platypus/.storybook"
+        }
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@nrwl/storybook:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "uiFramework": "@storybook/react",
+        "outputPath": "storybook-static",
+        "config": {
+          "configFolder": "apps/platypus/.storybook"
+        }
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    }
+  },
+  "tags": []
+}
