@@ -9,7 +9,7 @@ import uuid from 'uuid';
 import { useTranslation } from 'common/i18n';
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 
-import { RAWUploadStatus, UseUploadOptions } from './upload';
+import { RAWUploadStatus, renderUploadError, UseUploadOptions } from './upload';
 
 const ROW_CHUNK_SIZE = 1000;
 const REQUEST_CHUNK_SIZE = 3;
@@ -123,7 +123,7 @@ export const useJSONUpload = ({
       .catch((e) => {
         notification.error({
           message: t('file-upload-error', { name: file.name }),
-          description: e,
+          description: renderUploadError(e),
           key: 'file-upload',
         });
         setUploadStatus('error');

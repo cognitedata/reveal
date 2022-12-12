@@ -108,6 +108,7 @@
   "first-time-user-title-analyze-inspect": "Analyze and inspect your data.",
   "first-time-user-title-get-started": "Get started with RAW Explorer.",
   "first-time-user-title-view-compare": "View and compare tables as tabs.",
+  "insert-rows-access-warning": "To insert rows, you need to have the <strong>raw:write</strong> capability",
   "million": "million",
   "n-rows_one": "{{count}} row",
   "n-rows_other": "{{count}} rows",

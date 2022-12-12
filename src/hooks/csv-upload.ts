@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
+import { CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { notification } from 'antd';
 import PapaParse from 'papaparse';
@@ -10,7 +11,7 @@ import { useTranslation } from 'common/i18n';
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 import { sleep } from 'utils/utils';
 
-import { RAWUploadStatus, UseUploadOptions } from './upload';
+import { RAWUploadStatus, renderUploadError, UseUploadOptions } from './upload';
 
 export const useCSVUpload = ({
   file,
@@ -126,10 +127,10 @@ export const useCSVUpload = ({
               // Keep the main thread "open" to render progress before continuing parsing the file
               .then(() => sleep(100))
               .then(() => _parser.resume())
-              .catch((e) => {
+              .catch((e: CogniteError) => {
                 notification.error({
                   message: t('file-upload-network-error'),
-                  description: e?.message,
+                  description: renderUploadError(e),
                   key: 'file-upload',
                 });
                 setUploadStatus('error');

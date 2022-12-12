@@ -1,4 +1,7 @@
+import { Trans } from 'common/i18n';
+
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
+
 import { useCSVUpload } from './csv-upload';
 import { useJSONUpload } from './json-upload';
 
@@ -58,4 +61,24 @@ export const useUpload = (
   }
 
   return {};
+};
+
+export const renderUploadError = (error: any) => {
+  if (error?.status === 403) {
+    return (
+      <div>
+        <Trans i18nKey="insert-rows-access-warning" />
+      </div>
+    );
+  }
+
+  if (typeof error === 'object') {
+    return (
+      <div>
+        <pre>{JSON.stringify(error, null, 2)}</pre>
+      </div>
+    );
+  }
+
+  return error?.message ?? error;
 };
