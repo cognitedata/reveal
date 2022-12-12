@@ -16,6 +16,11 @@ import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataM
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
+import { useUIEditorFeatureFlag } from '@platypus-app/flags';
+import { TOKENS } from '@platypus-app/di';
+import { StorageProviderType } from '@platypus/platypus-core';
+import { useInjection } from 'brandi-react';
+import { USE_FDM_V3_LOCALSTORAGE_KEY } from '@platypus-app/constants';
 
 const GraphqlCodeEditor = React.lazy(() =>
   import('../GraphqlCodeEditor/GraphqlCodeEditor').then((module) => ({
@@ -39,8 +44,22 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
   isPublishing,
 }) => {
   const { t } = useTranslation('EditorPanel');
+  const localStorageProvider = useInjection(
+    TOKENS.storageProviderFactory
+  ).getProvider(StorageProviderType.localStorage);
+  const { isEnabled: isUIEditorFlagEnabled } = useUIEditorFeatureFlag();
+
+  const isFDMV3 = localStorageProvider.getItem(USE_FDM_V3_LOCALSTORAGE_KEY);
+
+  // always show the ui editor for fdm v2 users
+  // for fdm v3 users, only show the ui editor if the feature toggle is on.
+  const isUIEditorVisible = (isUIEditorFlagEnabled && isFDMV3) || !isFDMV3;
+
+  const [currentView, setCurrentView] = useState(
+    isUIEditorVisible ? 'ui' : 'code'
+  );
+
   const { data: dataModelVersionList } = useDataModelVersions(externalId);
-  const [currentView, setCurrentView] = useState('ui');
   const { graphQlSchema, builtInTypes } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
@@ -58,22 +77,24 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
       }}
     >
       <PageToolbar title={t('editor_title', 'Editor')} size={Size.SMALL}>
-        <SegmentedControl
-          currentKey={currentView}
-          onButtonClicked={setCurrentView}
-          size="small"
-        >
-          <SegmentedControl.Button
-            key="code"
-            icon="Code"
-            aria-label="Code editor"
-          />
-          <SegmentedControl.Button
-            key="ui"
-            icon="TableViewSmall"
-            aria-label="UI editor"
-          />
-        </SegmentedControl>
+        {isUIEditorVisible && (
+          <SegmentedControl
+            currentKey={currentView}
+            onButtonClicked={setCurrentView}
+            size="small"
+          >
+            <SegmentedControl.Button
+              key="code"
+              icon="Code"
+              aria-label="Code editor"
+            />
+            <SegmentedControl.Button
+              key="ui"
+              icon="TableViewSmall"
+              aria-label="UI editor"
+            />
+          </SegmentedControl>
+        )}
       </PageToolbar>
 
       {currentView === 'code' ? (

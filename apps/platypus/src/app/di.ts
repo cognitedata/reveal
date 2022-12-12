@@ -26,6 +26,7 @@ import { StorageProviderFactoryImpl } from '@platypus-app/utils/persistence';
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 
 import { getCogniteSDKClient } from '../environments/cogniteSdk';
+import { USE_FDM_V3_LOCALSTORAGE_KEY } from './constants';
 
 // First define the Tokens
 export const TOKENS = {
@@ -65,7 +66,7 @@ rootInjector
 
     const sdkClient = getCogniteSDKClient();
 
-    if (localStorageProvider.getItem('USE_FDM_V3')) {
+    if (localStorageProvider.getItem(USE_FDM_V3_LOCALSTORAGE_KEY)) {
       return new FdmClient(
         new SpacesApiService(sdkClient),
         new FdmMixerApiService(sdkClient),
