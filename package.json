@@ -28,7 +28,7 @@
   "dependencies": {
     "@cognite/cdf-utilities": "^1.14.0",
     "@cognite/cogs.js": "^7.17.0",
-    "@cognite/data-exploration": "5.61.7",
+    "@cognite/data-exploration": "5.61.8",
     "@cognite/data-exploration-v4": "npm:@cognite/data-exploration@4.38.0",
     "@cognite/fas-utils": "^3.2.0-rc.1",
     "@cognite/react-document-search": "^0.2.0",
@@ -161,6 +161,7 @@
     "node": ">=14"
   },
   "resolutions": {
+    "@mui/joy": "5.0.0-alpha.56",
     "@cognite/data-exploration-v4/dnd-core": "^15.1.2",
     "@cognite/data-exploration-v4/react-dnd": "^15.1.2",
     "@cognite/data-exploration-v4/react-dnd-html5-backend": "^15.1.2"
