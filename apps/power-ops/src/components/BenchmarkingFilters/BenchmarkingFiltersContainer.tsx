@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import { BenchmarkingFilters as BenchmarkingFiltersComponent } from 'components/BenchmarkingFilters/BenchmarkingFilters';
-import { useFetchBenchmarkingFilters } from 'queries/useFetchBenchmarkingFilters';
 import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
@@ -14,6 +13,7 @@ import { timeFrameOptions, timeFrameStartDates } from './utils';
 
 type Props = {
   priceAreaId: string;
+  benchmarkingFilters: BenchmarkingFilters;
   showFirstRuns: boolean;
   onFilterChange: (filter: BenchmarkingFilterType) => void;
   onTypeChange: (type: BenchmarkingTypeOption) => void;
@@ -22,6 +22,7 @@ type Props = {
 
 const BenchmarkingFiltersContainer = ({
   priceAreaId,
+  benchmarkingFilters,
   showFirstRuns,
   onFilterChange,
   onTypeChange,
@@ -31,11 +32,6 @@ const BenchmarkingFiltersContainer = ({
   const { pathname, search } = useLocation();
   const urlParams = new URLSearchParams(search);
 
-  const { data: benchmarkingFilters, status } = useFetchBenchmarkingFilters({
-    priceAreaId: priceAreaId.split('_')[2],
-    market: 'day-ahead',
-  });
-
   const [watercourseFilterOptions, setWatercourseFilterOptions] = useState<
     BenchmarkingWaterCourses['methods']
   >([]);
@@ -44,12 +40,41 @@ const BenchmarkingFiltersContainer = ({
   const [typeFilterOptions, setTypeFilterOptions] = useState<
     BenchmarkingWaterCourses['methods']
   >([]);
-  const [typeValue, setTypeValue] = useState<BenchmarkingTypeOption>();
+  const [typeValue, setTypeValue] = useState<BenchmarkingTypeOption>('');
   const [metricFilterOptions, setMetricFilterOptions] = useState<
     BenchmarkingWaterCourses['methods']
   >([]);
   const [metricValue, setMetricValue] =
     useState<BenchmarkingWaterCourses['methods'][number]>();
+
+  const [timeFrameValue, setTimeFrameValue] = useState<
+    typeof timeFrameOptions[number]
+  >(() => {
+    // if it exists from URL, fill it up
+    if (urlParams.get('timeFrame')) {
+      const found = timeFrameOptions.find(
+        (timeFrame) => timeFrame.value === urlParams.get('timeFrame')
+      );
+      if (found) return found;
+    }
+    return timeFrameOptions[0];
+  });
+
+  const handleWatercourseValueChange = (
+    newValue: BenchmarkingWaterCourses['methods'][number]
+  ) => {
+    const methods =
+      benchmarkingFilters?.waterCourses?.find(
+        (data: BenchmarkingWaterCourses) => data.name === newValue?.value
+      )?.methods || [];
+    setTypeFilterOptions(methods);
+    setTypeValue(
+      typeValue && methods.some((method) => method.value === typeValue)
+        ? typeValue
+        : methods[0].value || ''
+    );
+    setWatercourseValue(newValue);
+  };
 
   const getMetricFromUrlParam = (
     selectedMetric: BenchmarkingFilters['metrics'][number]['value'] | null
@@ -71,8 +96,6 @@ const BenchmarkingFiltersContainer = ({
   };
 
   useEffect(() => {
-    if (status !== 'success') return;
-
     const watercourseFilterOptions =
       benchmarkingFilters.waterCourses.map(
         (watercourse: BenchmarkingWaterCourses) => {
@@ -103,7 +126,7 @@ const BenchmarkingFiltersContainer = ({
         (watercourse) => watercourse.name === watercourseValue?.value
       )?.methods || [];
     setTypeFilterOptions(typeFilterOptions);
-    setTypeValue(urlParams.get('type') || typeFilterOptions[0].value);
+    setTypeValue(urlParams.get('type') || typeFilterOptions[0]?.value);
 
     setMetricFilterOptions(benchmarkingFilters.metrics);
     setMetricValue(getMetricFromUrlParam(urlParams.get('metric')));
@@ -111,36 +134,7 @@ const BenchmarkingFiltersContainer = ({
     if (urlParams.get('showFirstRuns')) {
       onShowFirstRunsChange(urlParams.get('showFirstRuns') === 'true');
     }
-  }, [status]);
-
-  const [timeFrameValue, setTimeFrameValue] = useState<
-    typeof timeFrameOptions[number]
-  >(() => {
-    // if it exists from URL, fill it up
-    if (urlParams.get('timeFrame')) {
-      const found = timeFrameOptions.find(
-        (timeFrame) => timeFrame.value === urlParams.get('timeFrame')
-      );
-      if (found) return found;
-    }
-    return timeFrameOptions[0];
-  });
-
-  const handleWatercourseValueChange = (
-    newValue: BenchmarkingWaterCourses['methods'][number]
-  ) => {
-    const methods =
-      benchmarkingFilters?.waterCourses?.find(
-        (data: BenchmarkingWaterCourses) => data.name === newValue?.value
-      )?.methods || [];
-    setTypeFilterOptions(methods);
-    setTypeValue(
-      typeValue && methods.some((method) => method.value === typeValue)
-        ? typeValue
-        : methods[0].value || ''
-    );
-    setWatercourseValue(newValue);
-  };
+  }, [benchmarkingFilters]);
 
   useEffect(() => {
     if (!watercourseValue?.value || !metricValue?.value || !typeValue) return;

@@ -46,7 +46,9 @@ export const DayAheadBenchmarkingChartContainer = ({
   }, [tooltipData]);
 
   if (status === 'loading')
-    return <Loader infoTitle="Loading..." darkMode={false} />;
+    return (
+      <Loader infoTitle="Loading Benchmarking data ..." darkMode={false} />
+    );
   if (status === 'error')
     return (
       <PlotContainer>
