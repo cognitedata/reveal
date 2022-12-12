@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   RelationshipTable,
   RelationshipTableProps,
@@ -17,9 +17,11 @@ import {
 import { Select } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
-import { useFlag } from '@cognite/react-feature-flags';
 import { addPlusSignToCount } from 'app/utils/stringUtils';
-import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
+import {
+  useFlagAdvancedFilters,
+  useFlagFileCategorization,
+} from 'app/hooks/flags';
 import { trackUsage } from 'app/utils/Metrics';
 import { EXPLORATION } from 'app/constants/metrics';
 
@@ -29,23 +31,13 @@ type TypeOption = {
   count: number;
 };
 
-export const DATA_EXPLORATION_DOCUMENT_CATEGORISATION =
-  'DATA_EXPLORATION_document_categorisation';
-
 export const RelatedResources = ({
   parentResource,
   type,
   ...props
 }: RelationshipTableProps & SelectableItemsProps) => {
   const [selectedType, setSelectedType] = useState<TypeOption>();
-
-  // Adding the flag to manually enable this feature to categorize the documents
-  const { isEnabled: isGroupingFilesEnabled } = useFlag(
-    DATA_EXPLORATION_DOCUMENT_CATEGORISATION,
-    {
-      forceRerender: true,
-    }
-  );
+  const isGroupingFilesEnabled = useFlagFileCategorization();
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const {
