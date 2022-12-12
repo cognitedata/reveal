@@ -3,9 +3,12 @@ import { queryKeys } from 'domain/queryKeys';
 import { InternalDocumentFilter } from 'domain/documents';
 import { useQuery } from 'react-query';
 import { getDocumentAggregateCount } from '../../network/getDocumentAggregateCount';
+import { useMemo } from 'react';
+import { mapFiltersToDocumentSearchFilters } from 'domain/documents';
+import { EMPTY_OBJECT } from 'utils';
 
 export const useDocumentFilteredAggregateCount = ({
-  filters,
+  filters = EMPTY_OBJECT,
   query,
 }: {
   filters?: InternalDocumentFilter;
@@ -13,13 +16,21 @@ export const useDocumentFilteredAggregateCount = ({
 }) => {
   const sdk = useSDK();
 
-  return useQuery(queryKeys.documentsFilterAggregateCount(filters), () => {
-    return getDocumentAggregateCount(
-      {
-        ...filters,
-        ...(query ? { search: { query } } : {}),
-      },
-      sdk
-    );
-  });
+  const transformFilter = useMemo(
+    () => mapFiltersToDocumentSearchFilters(filters, query),
+    [filters, query]
+  );
+
+  return useQuery(
+    queryKeys.documentsAggregatesCountFiltered(transformFilter, query || ''),
+    () => {
+      return getDocumentAggregateCount(
+        {
+          filter: transformFilter as any,
+          ...(query ? { search: { query } } : {}),
+        },
+        sdk
+      );
+    }
+  );
 };

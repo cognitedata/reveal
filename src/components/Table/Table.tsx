@@ -1,4 +1,3 @@
-import { ExpandedState } from '@tanstack/table-core';
 import isEmpty from 'lodash/isEmpty';
 import React, { useEffect, useMemo, useRef } from 'react';
 
@@ -12,6 +11,7 @@ import {
   getExpandedRowModel,
   SortingState,
   OnChangeFn,
+  ExpandedState,
 } from '@tanstack/react-table';
 import { useLocalStorageState } from '../../utils';
 import { isElementHorizontallyInViewport } from '../../utils/isElementHorizontallyInViewport';

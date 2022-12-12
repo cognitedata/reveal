@@ -10,19 +10,19 @@ import { TableSortBy } from 'components/Table';
 import {
   Document,
   InternalDocumentFilter,
-  useDocumentSearchQuery,
-  useObserveDocumentSearchFilters,
+  useDocumentSearchResultQuery,
 } from 'domain/documents';
+import { FileInfo } from '@cognite/sdk';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 import { UploadButton } from 'components/Buttons/UploadButton/UploadButton';
 import { v4 as uuid } from 'uuid';
-import { FileInfo } from '@cognite/sdk';
 import { CLOSE_DROPDOWN_EVENT } from 'utils';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from 'context/AppContext';
 import { DocumentUploaderModal } from 'containers/Documents/DocumentUploader/DocumentUploaderModal';
-import { useDocumentFilteredAggregateCount } from '@cognite/react-document-search';
+
 import { VerticalDivider } from 'components/Divider';
+import { useDocumentFilteredAggregateCount } from 'domain/documents/service/queries/aggregates/useDocumentFilteredAggregateCount';
 import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 import { ResourceTypes } from 'types';
 
@@ -46,10 +46,16 @@ export const DocumentSearchResults = ({
 }: DocumentSearchResultsProps) => {
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { results, isLoading, fetchNextPage, hasNextPage } =
-    useDocumentSearchQuery();
+    useDocumentSearchResultQuery(
+      { filter, query, sortBy },
+      { keepPreviousData: true }
+    );
+
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
-  const { data: aggregateCount = 0 } = useDocumentFilteredAggregateCount();
-  useObserveDocumentSearchFilters(query, filter, sortBy);
+  const { data: aggregateCount = 0 } = useDocumentFilteredAggregateCount({
+    query,
+    filters: filter,
+  });
 
   const context = useContext(AppContext);
   const { data: hasEditPermissions } = usePermissions(

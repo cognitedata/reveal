@@ -1,5 +1,5 @@
-import { useDocumentTotalAggregates } from '@cognite/react-document-search';
-import { mapAggregatesToFilters } from '../../transformers/mapAggregatesToFilters';
+import { mapAggregatesToFilters } from '../../service';
+import { useDocumentTotalAggregates } from '../../service';
 
 export const useDocumentAggregateAuthorQuery = () => {
   const { data, ...rest } = useDocumentTotalAggregates([

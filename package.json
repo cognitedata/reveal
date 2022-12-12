@@ -25,7 +25,6 @@
     "@cognite/cdf-utilities": "^0.14.4",
     "@cognite/cogs.js": "7.17.0",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
-    "@cognite/react-document-search": "0.2.0",
     "@cognite/react-document-table": "^1.22.2",
     "@cognite/react-feature-flags": "^1.0.1",
     "@cognite/react-picture-annotation": "3.0.1",
@@ -161,10 +160,10 @@
     "yalc": "^1.0.0-pre.53"
   },
   "peerDependencies": {
+    "@cognite/sdk": "^7.13.0",
     "react": "^16.8.0||^17||^18",
     "react-dom": "^16.8.0||^17||^18",
-    "react-router-dom": "^6.4.2",
-    "@cognite/sdk": "^7.13.0"
+    "react-router-dom": "^6.4.2"
   },
   "engines": {
     "node": ">=14"

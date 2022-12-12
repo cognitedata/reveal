@@ -1,6 +1,6 @@
+import React, { useEffect } from 'react';
 import { getProject } from '@cognite/cdf-utilities';
 import { getFromLocalStorage, storage } from '@cognite/storage';
-import React, { useEffect } from 'react';
 import merge from 'lodash/merge';
 /**
  *   Hook that is similar to the useState  persisting the state in the localstate with passing projectKey to it

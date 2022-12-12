@@ -1,7 +1,7 @@
 import { AdvancedFilterBuilder, AdvancedFilter } from '../../../builders';
 import { InternalDocumentFilter } from '../types';
 
-type DocumentProperties = {
+export type DocumentProperties = {
   'sourceFile|datasetId': number[];
   'sourceFile|assetIds': number[];
   author: string[];

@@ -2,8 +2,7 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import {
   Document,
   InternalDocumentFilter,
-  useObserveDocumentSearchFilters,
-  useDocumentSearchQuery,
+  useDocumentSearchResultQuery,
 } from 'domain/documents';
 
 import { Table } from 'components/Table';
@@ -28,8 +27,10 @@ export const DocumentSummary = ({
   ) => void;
   onRowClick?: (row: Document) => void;
 }) => {
-  const { results, isLoading } = useDocumentSearchQuery();
-  useObserveDocumentSearchFilters(query, filter);
+  const { results, isLoading } = useDocumentSearchResultQuery({
+    query,
+    filter,
+  });
 
   const columns = useMemo(
     () =>

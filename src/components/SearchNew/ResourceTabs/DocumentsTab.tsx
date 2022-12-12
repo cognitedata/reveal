@@ -1,13 +1,13 @@
 import React from 'react';
 import { Label } from '@cognite/cogs.js';
-import { useDocumentFilteredAggregateCount } from '@cognite/react-document-search';
-import { useObserveDocumentSearchFilters } from 'domain/documents';
+
 import {
   MORE_THAN_MAX_RESULT_LIMIT,
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
 } from 'domain/constants';
 import { ResourceTypeTitle, TabContainer } from './elements';
 import { getTabCountLabel } from 'utils';
+import { useDocumentFilteredAggregateCount } from 'domain/documents';
 
 type Props = {
   query?: string;
@@ -16,9 +16,9 @@ type Props = {
 };
 
 export const DocumentsTab = ({ query, filter, showCount = false }: Props) => {
-  const { data: filteredDocumentCount = 0 } =
-    useDocumentFilteredAggregateCount();
-  useObserveDocumentSearchFilters(query!, filter);
+  const { data: filteredDocumentCount = 0 } = useDocumentFilteredAggregateCount(
+    { filters: filter, query }
+  );
 
   const count =
     filteredDocumentCount > DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT

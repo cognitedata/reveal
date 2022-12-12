@@ -1,3 +1,5 @@
+import { DocumentSortItem } from '@cognite/sdk/dist/src';
+
 export const queryKeys = {
   all: ['cdf'] as const,
   // SEQUENCE
@@ -53,22 +55,32 @@ export const queryKeys = {
 
   // DOCUMENTS
   documents: () => [...queryKeys.all, 'documents'] as const,
+  documentsSearch: (
+    filter?: any,
+    query?: string,
+    localLimit?: number,
+    sort?: DocumentSortItem[]
+  ) =>
+    [
+      ...queryKeys.documents(),
+      'search',
+      filter,
+      localLimit,
+      query,
+      sort,
+    ] as const,
   documentsAggregate: () => [...queryKeys.documents(), 'aggregates'] as const,
   documentsAggregateCount: () =>
     [...queryKeys.documentsAggregate(), 'count'] as const,
-  documentsTotalAggregateCount: (aggregate?: any) =>
-    [
-      ...queryKeys.documentsAggregateCount(),
-      'total',
-      ...(aggregate || []),
-    ] as const,
-  documentsSearch: (filter?: any, localLimit?: number) =>
-    [...queryKeys.documents(), 'search', filter, localLimit] as const,
-
-  documentsFilterAggregateCount: (filters?: any) =>
-    [...queryKeys.documentsAggregateCount(), filters] as const,
+  documentsAggregatesCountTotal: () =>
+    [...queryKeys.documentsAggregateCount(), 'total'] as const,
+  documentsAggregatesCountFiltered: (filters: any, query: string) =>
+    [...queryKeys.documentsAggregateCount(), query, filters] as const,
+  documentsTotalAggregates: (aggregate: any) =>
+    [...queryKeys.documentsAggregate(), 'total', aggregate] as const,
   documentsFilteredAggregates: (filters: any, aggregates: any) =>
     [...queryKeys.documentsAggregate(), filters, aggregates] as const,
+
   documentsMetadata: () =>
     [...queryKeys.documents(), 'metadata', 'keys'] as const,
 } as const;

@@ -11,7 +11,7 @@ export const useDocumentTotalAggregates = (
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.documentsTotalAggregateCount(aggregates),
+    queryKeys.documentsTotalAggregates(aggregates),
     () => {
       if (isEmpty(aggregates)) {
         return undefined;
