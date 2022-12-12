@@ -2,12 +2,12 @@ import React from 'react';
 import { ResourceItem } from '@cognite/data-exploration';
 import styled from 'styled-components';
 
-import { DateFilter } from 'app/components/ResourceTitleRow';
-import { useCurrentResourceId } from 'app/hooks/hooks';
+import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
+import { useCurrentResourceId } from '@data-exploration-app/hooks/hooks';
 import DownloadButton from './DownloadButton';
 import { MoreButton } from './MoreButton';
-import { PreviewCloseButton } from 'app/components/TitleRowActions/PreviewCloseButton';
-import { FullscreenButton } from 'app/components/TitleRowActions/FullscreenButton';
+import { PreviewCloseButton } from '@data-exploration-app/components/TitleRowActions/PreviewCloseButton';
+import { FullscreenButton } from '@data-exploration-app/components/TitleRowActions/FullscreenButton';
 
 type TitleRowActionsProps = {
   item: ResourceItem;

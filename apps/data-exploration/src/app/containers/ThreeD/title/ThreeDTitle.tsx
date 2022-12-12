@@ -7,9 +7,9 @@ import {
   use3DModel,
   useRevision,
   useRevisionIndex,
-} from 'app/containers/ThreeD/hooks';
-import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
-import SecondaryModelDropdown from 'app/containers/ThreeD/title/SecondaryModelDropdown';
+} from '@data-exploration-app/containers/ThreeD/hooks';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import SecondaryModelDropdown from '@data-exploration-app/containers/ThreeD/title/SecondaryModelDropdown';
 
 export const ThreeDTitle = ({ id }: { id: number }): JSX.Element => {
   const { revisionId, secondaryModels, setSecondaryModels, viewer } =

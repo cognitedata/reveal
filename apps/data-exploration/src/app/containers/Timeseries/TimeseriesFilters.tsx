@@ -5,15 +5,15 @@ import {
   useFilterEmptyState,
   useResetTimeseriesFilters,
   useTimeseriesFilters,
-} from 'app/store/filter';
+} from '@data-exploration-app/store/filter';
 import {
   AggregatedFilterV2,
   BooleanFilter,
   MetadataFilterV2,
   transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
-import { TempMultiSelectFix } from 'app/containers/elements';
-import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
+import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
+import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 
 export const TimeseriesFilters = ({ ...rest }) => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
@@ -37,7 +37,7 @@ export const TimeseriesFilters = ({ ...rest }) => {
         <BooleanFilter
           title="Is step"
           value={timeseriesFilter.isStep}
-          setValue={newValue =>
+          setValue={(newValue) =>
             setTimeseriesFilter({
               isStep: newValue,
             })
@@ -46,7 +46,7 @@ export const TimeseriesFilters = ({ ...rest }) => {
         <BooleanFilter
           title="Is string"
           value={timeseriesFilter.isString}
-          setValue={newValue =>
+          setValue={(newValue) =>
             setTimeseriesFilter({
               isString: newValue,
             })
@@ -59,13 +59,13 @@ export const TimeseriesFilters = ({ ...rest }) => {
           title="Unit"
           addNilOption
           value={timeseriesFilter.unit}
-          setValue={newValue => setTimeseriesFilter({ unit: newValue })}
+          setValue={(newValue) => setTimeseriesFilter({ unit: newValue })}
         />
 
         <MetadataFilterV2
           items={items}
           value={timeseriesFilter.metadata}
-          setValue={newMetadata =>
+          setValue={(newMetadata) =>
             setTimeseriesFilter({
               metadata: newMetadata,
             })

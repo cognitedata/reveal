@@ -15,9 +15,9 @@ import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { useQuery } from 'react-query';
 import isArray from 'lodash/isArray';
 
-import { trackUsage } from 'app/utils/Metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { SEARCH_KEY } from '../utils/constants';
-import { FILTER } from 'app/store/filter/constants';
+import { FILTER } from '@data-exploration-app/store/filter/constants';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 
@@ -67,7 +67,7 @@ export function useQueryString(
 const emptyArray = [] as string[];
 export function useQueryStringArray(
   key: string,
-  push: boolean = true
+  push = true
 ): [string[], (_: any[]) => void] {
   const location = useLocation();
   const navigate = useNavigate();
@@ -139,7 +139,7 @@ export const useCurrentResourceId = (): [
 
   const setCurrentResourceId = (
     newResourceId?: number,
-    replaceHistory: boolean = false
+    replaceHistory = false
   ) => {
     const search = qs.parse(location.search, opts);
     if (!newResourceId) {

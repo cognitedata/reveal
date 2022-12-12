@@ -1,8 +1,8 @@
 import React from 'react';
 import { Badge } from 'antd';
 import { Button, Tooltip } from '@cognite/cogs.js';
-import { useResourceFilter } from 'app/context/ResourceSelectionContext';
-import { useCurrentResourceType } from 'app/hooks/hooks';
+import { useResourceFilter } from '@data-exploration-app/context/ResourceSelectionContext';
+import { useCurrentResourceType } from '@data-exploration-app/hooks/hooks';
 import { countByFilter } from '@cognite/data-exploration';
 
 export default function FilterToggleButton({

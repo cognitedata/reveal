@@ -1,24 +1,24 @@
 import React from 'react';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
-import { TempMultiSelectFix } from 'app/containers/elements';
+import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import {
   useDocumentFilters,
   useResetDocumentFilters,
-} from 'app/store/filter/selectors/documentSelectors';
+} from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import {
   useDocumentAggregateAuthorQuery,
   useDocumentAggregateSourceQuery,
   useDocumentSearchResultQuery,
 } from '@cognite/data-exploration';
-import { useDocumentAggregateFileTypeQuery } from 'app/domain/document/service/queries/aggregates/useDocumentAggregateFileTypeQuery';
+import { useDocumentAggregateFileTypeQuery } from '@data-exploration-app/domain/document/service/queries/aggregates/useDocumentAggregateFileTypeQuery';
 
-import { MultiSelectFilter } from 'app/components/Filters/MultiSelectFilter';
-import { useFilterEmptyState } from 'app/store';
+import { MultiSelectFilter } from '@data-exploration-app/components/Filters/MultiSelectFilter';
+import { useFilterEmptyState } from '@data-exploration-app/store';
 import { MetadataFilterV2 } from '@cognite/data-exploration';
 import isEmpty from 'lodash/isEmpty';
 
-import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
+import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 
 export const DocumentFilter = ({ ...rest }) => {
   const [documentFilter, setDocumentFilter] = useDocumentFilters();
@@ -27,7 +27,7 @@ export const DocumentFilter = ({ ...rest }) => {
 
   const { results } = useDocumentSearchResultQuery({ filter: documentFilter });
 
-  const resultWithMetadata = results.map(document => ({
+  const resultWithMetadata = results.map((document) => ({
     ...document,
     metadata: document.sourceFile.metadata,
   }));
@@ -84,7 +84,7 @@ export const DocumentFilter = ({ ...rest }) => {
         <MetadataFilterV2
           items={resultWithMetadata}
           value={documentFilter.metadata}
-          setValue={newMetadata => {
+          setValue={(newMetadata) => {
             setDocumentFilter({
               metadata: isEmpty(newMetadata) ? undefined : newMetadata,
             });

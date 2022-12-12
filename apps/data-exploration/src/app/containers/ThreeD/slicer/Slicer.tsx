@@ -5,9 +5,9 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
 } from '@cognite/reveal';
-import { EXPLORATION } from 'app/constants/metrics';
-import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
-import { trackUsage } from 'app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { ids } from 'cogs-variables';
 import { useContext, useEffect, useMemo } from 'react';
 
@@ -55,7 +55,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
             min={min}
             max={max}
             step={(max - min) / 1000}
-            setValue={v => {
+            setValue={(v) => {
               if (v[0] !== undefined && v[1] !== undefined) {
                 setSlicingState({ top: v[1], bottom: v[0] });
               }

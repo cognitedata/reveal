@@ -9,7 +9,7 @@ import {
 import {
   CAMERA_ANIMATION_DURATION,
   MINIMUM_BOUNDINGBOX_SIZE,
-} from 'app/containers/ThreeD/utils';
+} from '@data-exploration-app/containers/ThreeD/utils';
 
 type Args = {
   viewer?: Cognite3DViewer;

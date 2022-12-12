@@ -2,11 +2,11 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ResourceSelectorProviderUFV } from '@cognite/data-exploration';
 import styled from 'styled-components';
-import { ResourceDetailsPage } from 'app/containers/ResourceDetails';
+import { ResourceDetailsPage } from '@data-exploration-app/containers/ResourceDetails';
 import SearchRedirect from './SearchRedirect';
 import { SearchResultsPage } from './SearchResultsPage';
-import { trackUsage } from 'app/utils/Metrics';
-import { EXPLORATION } from 'app/constants/metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 export const Explorer = () => {
   React.useEffect(() => {

@@ -4,9 +4,9 @@ import { Body, Checkbox, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
-import ThreeDTimestamp from 'app/containers/ThreeD/timestamp/ThreeDTimestamp';
-import { useRevisions } from 'app/containers/ThreeD/hooks';
-import { SecondaryModelOptions } from 'app/containers/ThreeD/ThreeDContext';
+import ThreeDTimestamp from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
+import { useRevisions } from '@data-exploration-app/containers/ThreeD/hooks';
+import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
 export const SecondaryThreeDModelMenuItem = ({
   model,
@@ -59,7 +59,7 @@ export const SecondaryThreeDModelMenuItem = ({
         checked={!!options?.applied}
         disabled={!revisions?.length}
         name={`model-${model.id}`}
-        onChange={c => handleClickModelMenuItem(c)}
+        onChange={(c) => handleClickModelMenuItem(c)}
       />
       <Flex alignItems="flex-start" direction="column">
         <StyledSecondaryThreeDModelBody $isSelected={options?.applied}>

@@ -7,8 +7,8 @@ import {
   SECONDARY_MODEL_BASE_QUERY_KEY,
   getSecondaryModelAppliedStateQueryKey,
   getSecondaryModelQueryFn,
-} from 'app/containers/ThreeD/hooks';
-import { SecondaryModelOptions } from 'app/containers/ThreeD/ThreeDContext';
+} from '@data-exploration-app/containers/ThreeD/hooks';
+import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
 type LoadSecondaryModelsProps = {
   secondaryModels: SecondaryModelOptions[];

@@ -11,8 +11,8 @@ import {
 import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
-import { trackUsage } from 'app/utils/Metrics';
-import { DateFilter } from 'app/components/ResourceTitleRow';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
 
 type Props = {
   item: ResourceItem;
@@ -157,7 +157,7 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
     () =>
       sdk.datapoints
         .retrieve({ items: [{ id }], limit, ...dateFilter })
-        .then(r => r[0].datapoints || []),
+        .then((r) => r[0].datapoints || []),
     { enabled: downloading && includeDatapoints }
   );
 

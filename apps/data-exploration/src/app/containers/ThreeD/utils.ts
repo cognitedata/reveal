@@ -19,11 +19,11 @@ import {
   fetchAssetDetails,
   fetchAssetMappingsByAssetIdQuery,
   fetchClosestAssetIdQuery,
-} from 'app/containers/ThreeD/hooks';
+} from '@data-exploration-app/containers/ThreeD/hooks';
 import {
   SecondaryModelOptions,
   SlicingState,
-} from 'app/containers/ThreeD/ThreeDContext';
+} from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
 import { FetchQueryOptions, QueryClient } from 'react-query';
 

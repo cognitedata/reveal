@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { ThreeDModelsResponse } from 'app/containers/ThreeD/hooks';
+import { ThreeDModelsResponse } from '@data-exploration-app/containers/ThreeD/hooks';
 import { Loader } from '@cognite/cogs.js';
 import {
   ThreeDGridPreview,
   Model3DWithType,
-} from 'app/containers/ThreeD/ThreeDGridPreview';
+} from '@data-exploration-app/containers/ThreeD/ThreeDGridPreview';
 import { Model3D } from '@cognite/sdk';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeGrid as Grid } from 'react-window';
@@ -39,7 +39,7 @@ export const ThreeDSearchResults = ({
     [] as Model3D[]
   );
 
-  const filteredModels = models.filter(model =>
+  const filteredModels = models.filter((model) =>
     model.name.toLowerCase().includes(query?.toLowerCase() || '')
   );
 

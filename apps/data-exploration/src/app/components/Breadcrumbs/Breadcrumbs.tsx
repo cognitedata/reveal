@@ -1,6 +1,6 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Breadcrumb } from '@cognite/cogs.js';
-import { removeProjectFromPath } from 'app/utils/URLUtils';
+import { removeProjectFromPath } from '@data-exploration-app/utils/URLUtils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -36,7 +36,7 @@ export const Breadcrumbs = ({ currentResource }: BreadcrumbsProps) => {
             <Breadcrumb.Item
               key={`${path}-${index}`}
               title={resource.title}
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 handleBreadcrumbClick(path, index);
               }}

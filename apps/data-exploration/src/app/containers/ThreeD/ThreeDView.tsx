@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from 'react';
 
-import { trackUsage } from 'app/utils/Metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import Reveal from './Reveal';
 import { AssetMappingsSidebar } from './AssetMappingsSidebar';
 import {
@@ -45,13 +45,13 @@ import { useQueryClient } from 'react-query';
 import { ThreeDContext } from './ThreeDContext';
 import debounce from 'lodash/debounce';
 
-import AssetsHighlightButton from 'app/containers/ThreeD/assets-highlight-button/AssetsHighlightButton';
-import { LabelEventHandler } from 'app/containers/ThreeD/tools/SmartOverlayTool';
+import AssetsHighlightButton from '@data-exploration-app/containers/ThreeD/assets-highlight-button/AssetsHighlightButton';
+import { LabelEventHandler } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
 
-import MouseWheelAction from 'app/containers/ThreeD/components/MouseWheelAction';
-import LoadSecondaryModels from 'app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
-import OverlayTool from 'app/containers/ThreeD/components/OverlayTool';
-import { useFlagAssetMappingsOverlays } from 'app/hooks/flags';
+import MouseWheelAction from '@data-exploration-app/containers/ThreeD/components/MouseWheelAction';
+import LoadSecondaryModels from '@data-exploration-app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
+import OverlayTool from '@data-exploration-app/containers/ThreeD/components/OverlayTool';
+import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';
 
 type Props = {
   modelId: number;
@@ -136,7 +136,7 @@ export const ThreeDView = ({ modelId }: Props) => {
   );
 
   const onLabelClick: LabelEventHandler = useCallback(
-    event => {
+    (event) => {
       setSelectedAssetId(event.targetLabel.id);
     },
     [setSelectedAssetId]

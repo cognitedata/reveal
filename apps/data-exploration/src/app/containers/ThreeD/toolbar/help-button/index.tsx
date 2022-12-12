@@ -6,8 +6,8 @@ import {
 } from './sections';
 import { ids } from 'cogs-variables';
 import styled from 'styled-components';
-import { trackUsage } from 'app/utils/Metrics';
-import { EXPLORATION } from 'app/constants/metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 const HelpButton = (): JSX.Element => {
   return (

@@ -7,8 +7,8 @@ import {
   useTenant,
 } from '@cognite/data-exploration';
 
-import { trackUsage } from 'app/utils/Metrics';
-import { EXPLORATION } from 'app/constants/metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 type Props = {
   item: ResourceItem;

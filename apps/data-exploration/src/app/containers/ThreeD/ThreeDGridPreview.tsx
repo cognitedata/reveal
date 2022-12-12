@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   useDefault3DModelRevision,
   use3DModelThumbnail,
-} from 'app/containers/ThreeD/hooks';
+} from '@data-exploration-app/containers/ThreeD/hooks';
 import styled from 'styled-components';
 import {
   Body,
@@ -16,8 +16,8 @@ import {
 import Highlighter from 'react-highlight-words';
 import { Model3D } from '@cognite/sdk';
 import { ResourceType } from '@cognite/data-exploration';
-import { useCurrentResourceId } from 'app/hooks/hooks';
-import { trackUsage } from 'app/utils/Metrics';
+import { useCurrentResourceId } from '@data-exploration-app/hooks/hooks';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 export type Model3DWithType = Model3D & {
   type: ResourceType;
@@ -53,7 +53,7 @@ export const ThreeDGridPreview = ({
       setImage(URL.createObjectURL(blob));
     }
     return () => {
-      setImage(url => {
+      setImage((url) => {
         if (url) {
           URL.revokeObjectURL(url);
         }
@@ -132,9 +132,9 @@ type GridItemType = {
   isSelected: boolean;
 };
 const GridItemWrapper = styled.div<GridItemType>`
-  background-color: ${props => props.isSelected && 'var(--cogs-midblue-6)'};
+  background-color: ${(props) => props.isSelected && 'var(--cogs-midblue-6)'};
   &:hover {
-    background-color: ${props =>
+    background-color: ${(props) =>
       !props.isSelected && 'var(--cogs-greyscale-grey1)'};
     cursor: pointer;
   }

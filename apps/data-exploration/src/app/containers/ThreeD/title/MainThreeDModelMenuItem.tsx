@@ -4,16 +4,19 @@ import { Body, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
-import { Revision3DWithIndex, useRevisions } from 'app/containers/ThreeD/hooks';
+import {
+  Revision3DWithIndex,
+  useRevisions,
+} from '@data-exploration-app/containers/ThreeD/hooks';
 import {
   StyledSecondaryThreeDModelDetail,
   StyledMenuItemContent,
   StyledRevisionMenuItem,
   StyledSecondaryThreeDModelBody,
-} from 'app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
-import ThreeDTimestamp from 'app/containers/ThreeD/timestamp/ThreeDTimestamp';
-import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
-import { getStateUrl } from 'app/containers/ThreeD/utils';
+} from '@data-exploration-app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
+import ThreeDTimestamp from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { getStateUrl } from '@data-exploration-app/containers/ThreeD/utils';
 import { useNavigate } from 'react-router-dom';
 
 export const MainThreeDModelMenuItem = ({

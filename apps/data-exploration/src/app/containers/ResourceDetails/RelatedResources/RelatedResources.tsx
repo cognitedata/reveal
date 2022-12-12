@@ -17,13 +17,13 @@ import {
 import { Select } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
-import { addPlusSignToCount } from 'app/utils/stringUtils';
+import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import {
   useFlagAdvancedFilters,
   useFlagFileCategorization,
-} from 'app/hooks/flags';
-import { trackUsage } from 'app/utils/Metrics';
-import { EXPLORATION } from 'app/constants/metrics';
+} from '@data-exploration-app/hooks/flags';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 type TypeOption = {
   label: string;
@@ -114,7 +114,7 @@ export const RelatedResources = ({
   useEffect(
     () =>
       setSelectedType(
-        relatedResourceTypes.find(t => t.count > 0) || relatedResourceTypes[0]
+        relatedResourceTypes.find((t) => t.count > 0) || relatedResourceTypes[0]
       ),
     // Should NOT set state when relatedResourceTypes changes!
     // eslint-disable-next-line
@@ -146,7 +146,7 @@ export const RelatedResources = ({
         {selectedType?.value === 'relationship' && (
           <RelationshipFilters
             options={relationshipLabelOptions}
-            onChange={labels => {
+            onChange={(labels) => {
               onChangeLabelValue(labels);
               trackUsage(EXPLORATION.SELECT.RELATIONSHIP_LABEL, {
                 labels,

@@ -5,7 +5,7 @@ import {
   useFileFilters,
   useFilterEmptyState,
   useResetFileFilters,
-} from 'app/store/filter';
+} from '@data-exploration-app/store/filter';
 import {
   AggregatedFilterV2,
   DateFilterV2,
@@ -14,8 +14,8 @@ import {
   StringFilterV2,
   transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
-import { TempMultiSelectFix } from 'app/containers/elements';
-import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
+import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
+import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 
 export const FileFilters = ({ ...rest }) => {
   const [fileFilter, setFileFilter] = useFileFilters();
@@ -41,12 +41,12 @@ export const FileFilters = ({ ...rest }) => {
           aggregator="mimeType"
           title="Mime type"
           value={fileFilter.mimeType}
-          setValue={newValue => setFileFilter({ mimeType: newValue })}
+          setValue={(newValue) => setFileFilter({ mimeType: newValue })}
         />
         <DateFilterV2
           title="Source Modified Time"
           value={fileFilter.sourceModifiedTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setFileFilter({
               sourceModifiedTime: newDate || undefined,
             })
@@ -55,7 +55,7 @@ export const FileFilters = ({ ...rest }) => {
         <LabelFilterV2
           resourceType="file"
           value={fileFilter.labels}
-          setValue={newFilters =>
+          setValue={(newFilters) =>
             setFileFilter({
               labels: newFilters,
             })
@@ -65,7 +65,7 @@ export const FileFilters = ({ ...rest }) => {
         <DateFilterV2
           title="Uploaded Time"
           value={fileFilter.uploadedTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setFileFilter({
               uploadedTime: newDate || undefined,
             })
@@ -74,7 +74,7 @@ export const FileFilters = ({ ...rest }) => {
         <StringFilterV2
           title="Directory prefix"
           value={(fileFilter as any).directoryPrefix}
-          setValue={newPrefix =>
+          setValue={(newPrefix) =>
             setFileFilter({
               // @ts-ignore
               directoryPrefix: newPrefix,
@@ -86,7 +86,7 @@ export const FileFilters = ({ ...rest }) => {
           items={items}
           aggregator="source"
           value={fileFilter.source}
-          setValue={newSource =>
+          setValue={(newSource) =>
             setFileFilter({
               source: newSource,
             })
@@ -95,7 +95,7 @@ export const FileFilters = ({ ...rest }) => {
         <MetadataFilterV2
           items={items}
           value={fileFilter.metadata}
-          setValue={newMetadata =>
+          setValue={(newMetadata) =>
             setFileFilter({
               metadata: newMetadata,
             })
@@ -105,7 +105,7 @@ export const FileFilters = ({ ...rest }) => {
         <DateFilterV2
           title="Source Created Time"
           value={fileFilter.sourceCreatedTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setFileFilter({
               sourceCreatedTime: newDate || undefined,
             })

@@ -9,7 +9,7 @@ import { CommonFilter } from './Common/CommonFilter';
 import { FileFilters } from './File/FileFilters';
 import { TimeseriesFilters } from './Timeseries/TimeseriesFilters';
 import { SequenceFilters } from './Sequence/SequenceFilters';
-import { DocumentFilter } from 'app/containers/Document/DocumentFilters';
+import { DocumentFilter } from '@data-exploration-app/containers/Document/DocumentFilters';
 
 export interface Props {
   resourceType?: ResourceType;

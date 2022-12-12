@@ -8,14 +8,14 @@ import {
   MeasurementTool,
 } from '@cognite/reveal';
 import { createLink } from '@cognite/cdf-utilities';
-import { trackUsage } from 'app/utils/Metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQueryClient } from 'react-query';
 import {
   distancesInFeetAndMeters,
   fitCameraToAsset,
-} from 'app/containers/ThreeD/utils';
-import { EXPLORATION } from 'app/constants/metrics';
+} from '@data-exploration-app/containers/ThreeD/utils';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 export { default as HelpButton } from './help-button';
 export { default as ShareButton } from './share-button';

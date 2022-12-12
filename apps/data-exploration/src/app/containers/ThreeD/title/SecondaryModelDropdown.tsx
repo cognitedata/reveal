@@ -15,13 +15,13 @@ import { Cognite3DViewer } from '@cognite/reveal';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
-import { SecondaryModelOptions } from 'app/containers/ThreeD/ThreeDContext';
-import { MainThreeDModelMenuItem } from 'app/containers/ThreeD/title/MainThreeDModelMenuItem';
-import { SecondaryThreeDModelMenuItem } from 'app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
-import { Revision3DWithIndex } from 'app/containers/ThreeD/hooks';
+import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { MainThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/MainThreeDModelMenuItem';
+import { SecondaryThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
+import { Revision3DWithIndex } from '@data-exploration-app/containers/ThreeD/hooks';
 import { TableNoResults } from '@cognite/cdf-utilities';
-import { trackUsage } from 'app/utils/Metrics';
-import { EXPLORATION } from 'app/constants/metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 type SecondaryModelDropdownProps = {
   mainModel: Model3D;
@@ -91,7 +91,7 @@ const SecondaryModelDropdown = ({
   };
 
   const handleChange = (nextState: SecondaryModelOptions): void => {
-    setTempSecondaryModels(prevState => [
+    setTempSecondaryModels((prevState) => [
       ...prevState.filter(
         ({ modelId: testModelId }) => nextState.modelId !== testModelId
       ),
@@ -106,7 +106,7 @@ const SecondaryModelDropdown = ({
       ) === -1 &&
       nextState.revisionId
     ) {
-      setSecondaryModels(prevState => [
+      setSecondaryModels((prevState) => [
         ...prevState,
         {
           ...nextState,
@@ -118,7 +118,7 @@ const SecondaryModelDropdown = ({
   return (
     <Menu>
       <StyledInput
-        onChange={e => setSearchQuery(e.target.value)}
+        onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="Search"
         value={searchQuery}
       />
@@ -130,7 +130,7 @@ const SecondaryModelDropdown = ({
         {viewer && filteredModels.length ? (
           <>
             <Menu.Header>Additional Model</Menu.Header>
-            {filteredModels.map(m => (
+            {filteredModels.map((m) => (
               <SecondaryThreeDModelMenuItem
                 key={m.id}
                 model={m}

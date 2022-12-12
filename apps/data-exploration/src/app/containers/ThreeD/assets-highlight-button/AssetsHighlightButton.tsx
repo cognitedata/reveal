@@ -5,14 +5,14 @@ import { CogniteClient } from '@cognite/sdk';
 import {
   AugmentedMapping,
   useInfiniteAssetMappings,
-} from 'app/containers/ThreeD/hooks';
-import { SmartOverlayTool } from 'app/containers/ThreeD/tools/SmartOverlayTool';
-import { getBoundingBoxesByNodeIds } from 'app/containers/ThreeD/utils';
+} from '@data-exploration-app/containers/ThreeD/hooks';
+import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
+import { getBoundingBoxesByNodeIds } from '@data-exploration-app/containers/ThreeD/utils';
 import { useRef, useEffect, useContext } from 'react';
-import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
-import { useFlagAssetMappingsOverlays } from 'app/hooks/flags';
-import { trackUsage } from 'app/utils/Metrics';
-import { EXPLORATION } from 'app/constants/metrics';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 type AssetsHighlightButtonProps = {
   labelsVisibility: boolean;
@@ -55,7 +55,7 @@ const AssetsHighlightButton = ({
       );
       loadedPagesIndex.current = assetMappings.pages.length - 1;
       addLabelsFromAssetMappings(
-        newPages.flatMap(page => page.items),
+        newPages.flatMap((page) => page.items),
         threeDModel,
         sdk,
         overlayTool
@@ -95,7 +95,7 @@ function addLabelsFromAssetMappings(
   sdk: CogniteClient,
   overlayTool: SmartOverlayTool
 ) {
-  const assetMapped3DNodes = assetMappings.map(m => m.nodeId);
+  const assetMapped3DNodes = assetMappings.map((m) => m.nodeId);
 
   const bbsData = getBoundingBoxesByNodeIds(
     sdk,
@@ -104,11 +104,11 @@ function addLabelsFromAssetMappings(
   );
 
   const assetMappedNodesMap = new Map<number, number>();
-  assetMappings.forEach(m => {
+  assetMappings.forEach((m) => {
     assetMappedNodesMap.set(m.nodeId, m.assetId);
   });
 
-  bbsData.then(data => {
+  bbsData.then((data) => {
     for (const bbData of data) {
       const assetId = assetMappedNodesMap.get(bbData[0]);
       if (assetId) {

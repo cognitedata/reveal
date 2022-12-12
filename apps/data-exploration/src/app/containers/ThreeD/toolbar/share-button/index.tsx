@@ -1,9 +1,9 @@
 import { Button, Tooltip, toast } from '@cognite/cogs.js';
 import { ViewerState } from '@cognite/reveal';
-import { EXPLORATION } from 'app/constants/metrics';
-import { SecondaryModelOptions } from 'app/containers/ThreeD/ThreeDContext';
-import { getStateUrl } from 'app/containers/ThreeD/utils';
-import { trackUsage } from 'app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { getStateUrl } from '@data-exploration-app/containers/ThreeD/utils';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 type ShareButtonProps = {
   viewState?: ViewerState;

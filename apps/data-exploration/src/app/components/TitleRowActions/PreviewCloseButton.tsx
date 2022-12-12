@@ -1,11 +1,14 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { ResourceItem } from '@cognite/data-exploration';
-import { EXPLORATION } from 'app/constants/metrics';
-import { useCurrentResourceId, useQueryString } from 'app/hooks/hooks';
-import { FILTER } from 'app/store/filter/constants';
-import { SEARCH_KEY } from 'app/utils/constants';
-import { trackUsage } from 'app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import {
+  useCurrentResourceId,
+  useQueryString,
+} from '@data-exploration-app/hooks/hooks';
+import { FILTER } from '@data-exploration-app/store/filter/constants';
+import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export const PreviewCloseButton: React.FC<{ item: ResourceItem }> = ({

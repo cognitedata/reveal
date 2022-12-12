@@ -25,8 +25,8 @@ import {
 } from './utils';
 import { useDefault3DModelRevision } from './hooks';
 import { Loader } from '@cognite/cogs.js';
-import { ResourceTabType } from 'app/containers/ThreeD/NodePreview';
-import { SmartOverlayTool } from 'app/containers/ThreeD/tools/SmartOverlayTool';
+import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
+import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
 
 export type SecondaryModelOptions = {
   modelId: number;
@@ -123,7 +123,7 @@ const getInitialState = () => {
 
   const selectedAssetId = (() => {
     const s = initialParams.get(SELECTED_ASSET_KEY);
-    const n = !!s ? parseInt(s, 10) : undefined;
+    const n = s ? parseInt(s, 10) : undefined;
 
     if (!!s && Number.isFinite(n)) {
       return n;
@@ -140,7 +140,7 @@ const getInitialState = () => {
           SecondaryModelOptions,
           'modelId' | 'revisionId'
         >[];
-        return models.map(model => ({ ...model, applied: true }));
+        return models.map((model) => ({ ...model, applied: true }));
       }
       return [];
     } catch {
@@ -162,7 +162,7 @@ const getInitialState = () => {
 
   const revisionId = (() => {
     const s = initialParams.get(REVISION_KEY);
-    const n = !!s ? parseInt(s, 10) : undefined;
+    const n = s ? parseInt(s, 10) : undefined;
     return Number.isFinite(n) ? n : undefined;
   })();
 

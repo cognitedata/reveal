@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { AssetPreview } from 'app/containers/Asset/AssetPreview';
+import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import { Tooltip, Button } from '@cognite/cogs.js';
-import { trackUsage } from 'app/utils/Metrics';
-import { ResourceTabType } from 'app/containers/ThreeD/NodePreview';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
 
 export const AssetPreviewSidebar = ({
   assetId,

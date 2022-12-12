@@ -7,7 +7,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList as List } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import styled from 'styled-components';
-import { trackUsage } from 'app/utils/Metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { AugmentedMapping } from './hooks';
 import { prepareSearchString, grepContains } from './utils';
 import { CogniteError } from '@cognite/sdk';

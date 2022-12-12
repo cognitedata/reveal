@@ -12,10 +12,10 @@ import {
   useCommonFilters,
   useFilterEmptyState,
   useResetCommonFilters,
-} from 'app/store/filter';
-import { TempCommonMultiSelectFix } from 'app/containers/elements';
-import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
-import { COMMON_INFO_CONTENT } from 'app/containers/constants';
+} from '@data-exploration-app/store/filter';
+import { TempCommonMultiSelectFix } from '@data-exploration-app/containers/elements';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+import { COMMON_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 
 interface Props {
   resourceType?: ResourceType;
@@ -39,23 +39,25 @@ export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
         <DataSetFilterV2
           resourceType={resourceType}
           value={commonFilter.dataSetIds?.map(({ value }) => value)}
-          setValue={newValue => setCommonFilter({ dataSetIds: newValue })}
+          setValue={(newValue) => setCommonFilter({ dataSetIds: newValue })}
         />
         <ByAssetFilterV2
           value={commonFilter.assetSubtreeIds?.map(({ value }) => value)}
-          setValue={newValue => setCommonFilter({ assetSubtreeIds: newValue })}
+          setValue={(newValue) =>
+            setCommonFilter({ assetSubtreeIds: newValue })
+          }
         />
         <DateFilterV2
           title="Created time"
           value={commonFilter.createdTime}
-          setValue={newValue =>
+          setValue={(newValue) =>
             setCommonFilter({ createdTime: newValue || undefined })
           }
         />
         <DateFilterV2
           title="Updated time"
           value={commonFilter.lastUpdatedTime}
-          setValue={newValue =>
+          setValue={(newValue) =>
             setCommonFilter({ lastUpdatedTime: newValue || undefined })
           }
         />
@@ -68,13 +70,15 @@ export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
         <StringFilterV2
           title="External ID"
           value={commonFilter.externalIdPrefix}
-          setValue={newValue => setCommonFilter({ externalIdPrefix: newValue })}
+          setValue={(newValue) =>
+            setCommonFilter({ externalIdPrefix: newValue })
+          }
         />
         {isAdvancedFiltersEnabled && (
           <NumberFilter
             title="Internal ID"
             value={commonFilter.internalId}
-            setValue={newValue =>
+            setValue={(newValue) =>
               setCommonFilter({
                 internalId: newValue,
               })

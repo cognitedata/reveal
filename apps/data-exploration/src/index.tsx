@@ -5,7 +5,7 @@ import singleSpaReact from 'single-spa-react';
 import * as Sentry from '@sentry/browser';
 
 import App from './app/App';
-import { getEnvironment } from 'app/utils/environment';
+import { getEnvironment } from '@data-exploration-app/utils/environment';
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({

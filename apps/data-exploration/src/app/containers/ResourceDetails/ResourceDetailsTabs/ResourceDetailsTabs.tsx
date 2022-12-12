@@ -8,10 +8,10 @@ import {
 } from '@cognite/data-exploration';
 import { Colors, Tabs, TabPaneProps, Label } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
-import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
-import { RelatedResources } from 'app/containers/ResourceDetails/RelatedResources/RelatedResources';
-import { addPlusSignToCount } from 'app/utils/stringUtils';
-import { useNavigateWithHistory } from 'app/hooks/hooks';
+import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
+import { RelatedResources } from '@data-exploration-app/containers/ResourceDetails/RelatedResources/RelatedResources';
+import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
+import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };
@@ -45,7 +45,7 @@ const ResourceDetailTabContent = ({
 
   const isSelected = (item: ResourceItem) => {
     return resourcesState.some(
-      el =>
+      (el) =>
         el.state === 'selected' && el.id === item.id && el.type === item.type
     );
   };
@@ -76,7 +76,7 @@ export const ResourceDetailsTabs = ({
     useRelatedResourceCounts(parentResource);
 
   const filteredTabs = defaultRelationshipTabs.filter(
-    type => !excludedTypes.includes(type)
+    (type) => !excludedTypes.includes(type)
   );
 
   let assetCount = counts.asset || '0';
@@ -93,7 +93,7 @@ export const ResourceDetailsTabs = ({
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
-  const relationshipTabs = filteredTabs.map(key => (
+  const relationshipTabs = filteredTabs.map((key) => (
     <Tabs.TabPane
       key={key}
       tab={

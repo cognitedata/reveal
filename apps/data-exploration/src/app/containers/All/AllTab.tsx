@@ -8,12 +8,15 @@ import {
   EventSummary,
   ResourceType,
 } from '@cognite/data-exploration';
-import { useCommonFilters } from 'app/store';
-import { SEARCH_KEY } from 'app/utils/constants';
-import { useCurrentResourceType, useQueryString } from 'app/hooks/hooks';
-import { trackUsage } from 'app/utils/Metrics';
-import { EXPLORATION } from 'app/constants/metrics';
-import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
+import { useCommonFilters } from '@data-exploration-app/store';
+import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+import {
+  useCurrentResourceType,
+  useQueryString,
+} from '@data-exploration-app/hooks/hooks';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 
 export const AllTab = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
@@ -31,40 +34,40 @@ export const AllTab = () => {
       <AssetSummary
         filter={commonFilters}
         query={query}
-        onRowClick={row => setCurrentResourceType('asset', row.id)}
+        onRowClick={(row) => setCurrentResourceType('asset', row.id)}
         onAllResultsClick={() => handleAllResultsClick('asset')}
       />
       <TimeseriesSummary
         filter={commonFilters}
         query={query}
-        onRowClick={row => setCurrentResourceType('timeSeries', row.id)}
+        onRowClick={(row) => setCurrentResourceType('timeSeries', row.id)}
         onAllResultsClick={() => handleAllResultsClick('timeSeries')}
       />
       {isAdvancedFiltersEnabled ? (
         <DocumentSummary
           filter={commonFilters}
           query={query}
-          onRowClick={row => setCurrentResourceType('file', row.id)}
+          onRowClick={(row) => setCurrentResourceType('file', row.id)}
           onAllResultsClick={() => handleAllResultsClick('file')}
         />
       ) : (
         <FileSummary
           filter={commonFilters}
           query={query}
-          onRowClick={row => setCurrentResourceType('file', row.id)}
+          onRowClick={(row) => setCurrentResourceType('file', row.id)}
           onAllResultsClick={() => handleAllResultsClick('file')}
         />
       )}
       <EventSummary
         filter={commonFilters}
         query={query}
-        onRowClick={row => setCurrentResourceType('event', row.id)}
+        onRowClick={(row) => setCurrentResourceType('event', row.id)}
         onAllResultsClick={() => handleAllResultsClick('event')}
       />
       <SequenceSummary
         filter={commonFilters}
         query={query}
-        onRowClick={row => setCurrentResourceType('sequence', row.id)}
+        onRowClick={(row) => setCurrentResourceType('sequence', row.id)}
         onAllResultsClick={() => handleAllResultsClick('sequence')}
       />
     </AllTabContainer>

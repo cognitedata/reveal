@@ -3,7 +3,7 @@ import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import { syncEffect } from 'recoil-sync';
 import { custom } from '@recoiljs/refine';
 import { FILTER } from './constants';
-import { isObjectEmpty } from 'app/utils/compare';
+import { isObjectEmpty } from '@data-exploration-app/utils/compare';
 import { AssetViewMode } from '@cognite/data-exploration';
 
 const defaultFilterState = {
@@ -16,7 +16,7 @@ const defaultFilterState = {
 };
 
 // TODO: Add some proper object validation here.
-const customChecker = <T>() => custom(x => x as T);
+const customChecker = <T>() => custom((x) => x as T);
 
 export const globalFilterAtom = atom<GlobalFilter>({
   key: 'GlobalFilter',

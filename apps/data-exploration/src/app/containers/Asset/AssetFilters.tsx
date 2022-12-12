@@ -6,8 +6,8 @@ import {
   useAssetFilters,
   useFilterEmptyState,
   useResetAssetFilters,
-} from 'app/store/filter';
-import { BaseFilterCollapse } from 'app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+} from '@data-exploration-app/store/filter';
+import { BaseFilterCollapse } from '@data-exploration-app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
   AggregatedFilterV2,
   InternalAssetFilters,
@@ -15,8 +15,8 @@ import {
   MetadataFilterV2,
   transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
-import { TempMultiSelectFix } from 'app/containers/elements';
-import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
+import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
+import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 
 // TODO: Move to domain layer
 export const useAssetMetadataKeys = (
@@ -70,7 +70,7 @@ export const AssetFilters = ({ ...rest }) => {
         <LabelFilterV2
           resourceType="asset"
           value={assetFilters.labels}
-          setValue={newFilters =>
+          setValue={(newFilters) =>
             setAssetFilters({
               labels: newFilters,
             })
@@ -82,7 +82,7 @@ export const AssetFilters = ({ ...rest }) => {
           items={items}
           aggregator="source"
           value={assetFilters.source}
-          setValue={newSource =>
+          setValue={(newSource) =>
             setAssetFilters({
               source: newSource,
             })
@@ -93,7 +93,7 @@ export const AssetFilters = ({ ...rest }) => {
           items={items}
           keys={metadataKeys}
           value={assetFilters.metadata}
-          setValue={newMetadata =>
+          setValue={(newMetadata) =>
             setAssetFilters({
               metadata: newMetadata,
             })

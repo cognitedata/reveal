@@ -4,12 +4,12 @@ import { Cognite3DViewer } from '@cognite/reveal';
 import {
   LabelEventHandler,
   SmartOverlayTool,
-} from 'app/containers/ThreeD/tools/SmartOverlayTool';
+} from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
 import { useSDK } from '@cognite/sdk-provider';
-import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import * as THREE from 'three';
 import { useQueryClient } from 'react-query';
-import { getAssetQueryKey } from 'app/containers/ThreeD/utils';
+import { getAssetQueryKey } from '@data-exploration-app/containers/ThreeD/utils';
 
 type OverlayToolProps = {
   viewer: Cognite3DViewer;
@@ -46,7 +46,7 @@ const OverlayTool = ({
         .getBoundingSphere(new THREE.Sphere()).radius * 0.07;
     smartOverlayTool.visible = false;
 
-    smartOverlayTool.on('hover', async event => {
+    smartOverlayTool.on('hover', async (event) => {
       const label = event.targetLabel;
 
       const asset = await queryClient.fetchQuery(

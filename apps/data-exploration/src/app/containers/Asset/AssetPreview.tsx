@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import { trackUsage } from 'app/utils/Metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useParams } from 'react-router-dom';
 
 import {
@@ -11,15 +11,21 @@ import {
   ResourceItem,
 } from '@cognite/data-exploration';
 import { Tabs } from '@cognite/cogs.js';
-import ResourceTitleRow from 'app/components/ResourceTitleRow';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { Asset, CogniteError } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
-import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
-import { DetailsTabWrapper } from 'app/containers/Common/element';
-import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
-import { ResourceTabType } from 'app/containers/ThreeD/NodePreview';
+import {
+  ResourceDetailsTabs,
+  TabTitle,
+} from '@data-exploration-app/containers/ResourceDetails';
+import {
+  useCurrentResourceId,
+  useOnPreviewTabChange,
+} from '@data-exploration-app/hooks/hooks';
+import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
+import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
+import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
+import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
 
 export type AssetPreviewTabType =
   | 'details'
@@ -63,7 +69,7 @@ export const AssetPreview = ({
 
   const isSelected = (item: ResourceItem) => {
     return resourcesState.some(
-      el =>
+      (el) =>
         el.state === 'selected' && el.id === item.id && el.type === item.type
     );
   };

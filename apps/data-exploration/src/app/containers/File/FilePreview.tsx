@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
+import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
 import {
   FilePreviewUFV as CogniteFilePreview,
   ErrorFeedback,
@@ -8,24 +8,30 @@ import {
   Metadata,
   ResourceType,
 } from '@cognite/data-exploration';
-import { trackUsage } from 'app/utils/Metrics';
-import ResourceTitleRow from 'app/components/ResourceTitleRow';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, FileInfo } from '@cognite/sdk';
-import { EditFileButton } from 'app/components/TitleRowActions/EditFileButton';
+import { EditFileButton } from '@data-exploration-app/components/TitleRowActions/EditFileButton';
 import styled from 'styled-components';
 import { Colors, Body, Tabs } from '@cognite/cogs.js';
 
-import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
+import {
+  ResourceDetailsTabs,
+  TabTitle,
+} from '@data-exploration-app/containers/ResourceDetails';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
-import { DetailsTabWrapper } from 'app/containers/Common/element';
-import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
-import { APPLICATION_ID } from 'app/utils/constants';
+import {
+  useCurrentResourceId,
+  useOnPreviewTabChange,
+} from '@data-exploration-app/hooks/hooks';
+import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
+import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
+import { APPLICATION_ID } from '@data-exploration-app/utils/constants';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -50,7 +56,7 @@ export const FilePreview = ({
   );
   const navigate = useNavigate();
   const isActive = resourcesState.some(
-    el => el.state === 'active' && el.id === fileId && el.type === 'file'
+    (el) => el.state === 'active' && el.id === fileId && el.type === 'file'
   );
   const { flow } = getFlow();
   const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
@@ -77,7 +83,7 @@ export const FilePreview = ({
     if (fileId && !isActive) {
       setResourcesState(
         resourcesState
-          .filter(el => el.state !== 'active')
+          .filter((el) => el.state !== 'active')
           .concat([{ id: fileId, type: 'file', state: 'active' }])
       );
     }
@@ -144,7 +150,7 @@ export const FilePreview = ({
                 item={{ type: 'file', id: fileId! }}
                 isActive={editMode}
                 onClick={() => {
-                  setEditMode(mode => !mode);
+                  setEditMode((mode) => !mode);
                 }}
               />
             </>
@@ -175,7 +181,7 @@ export const FilePreview = ({
                   fileId={fileId!}
                   creatable={editMode}
                   contextualization={writeAccess}
-                  onItemClicked={item =>
+                  onItemClicked={(item) =>
                     navigate(createLink(`/explore/${item.type}/${item.id}`))
                   }
                 />

@@ -26,42 +26,45 @@ import {
 } from '@cognite/data-exploration';
 
 import { Colors, Flex, Tabs } from '@cognite/cogs.js';
-import { trackUsage } from 'app/utils/Metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import ResourceSelectionContext, {
   useResourceFilter,
   useResourceEditable,
-} from 'app/context/ResourceSelectionContext';
+} from '@data-exploration-app/context/ResourceSelectionContext';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components/macro';
-import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
+import ResourcePreview from '@data-exploration-app/containers/Exploration/ResourcePreview';
 import {
   useQueryString,
   useQueryStringArray,
   useCurrentResourceType,
   useCurrentResourceId,
-} from 'app/hooks/hooks';
-import { SEARCH_KEY, CART_KEY } from 'app/utils/constants';
-import SelectedResults from 'app/components/SelectionResults/SelectionResults';
-import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSearchBar';
-import { useDateRange } from 'app/context/DateRangeContext';
+} from '@data-exploration-app/hooks/hooks';
+import { SEARCH_KEY, CART_KEY } from '@data-exploration-app/utils/constants';
+import SelectedResults from '@data-exploration-app/components/SelectionResults/SelectionResults';
+import { ExplorationSearchBar } from '@data-exploration-app/containers/Exploration/ExplorationSearchBar';
+import { useDateRange } from '@data-exploration-app/context/DateRangeContext';
 import { createLink, PageTitle } from '@cognite/cdf-utilities';
-import { ThreeDSearchResults } from 'app/containers/ThreeD/ThreeDSearchResults';
-import { ExplorationFilterToggle } from 'app/containers/Exploration/ExplorationFilterToggle';
-import { SearchFilters } from 'app/containers/SearchResults/SearchFilters';
+import { ThreeDSearchResults } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResults';
+import { ExplorationFilterToggle } from '@data-exploration-app/containers/Exploration/ExplorationFilterToggle';
+import { SearchFilters } from '@data-exploration-app/containers/SearchResults/SearchFilters';
 import {
   useAssetFilters,
   useEventsFilters,
   useFileFilters,
   useSequenceFilters,
   useTimeseriesFilters,
-} from 'app/store/filter/selectors';
-import { StyledSplitter } from 'app/containers/elements';
-import { useDocumentFilters } from 'app/store/filter/selectors/documentSelectors';
+} from '@data-exploration-app/store/filter/selectors';
+import { StyledSplitter } from '@data-exploration-app/containers/elements';
+import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import { useNavigate } from 'react-router-dom';
-import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
-import { AllTab } from 'app/containers/All';
-import { useAssetViewState, useFilterSidebarState } from 'app/store';
-import { EXPLORATION } from 'app/constants/metrics';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+import { AllTab } from '@data-exploration-app/containers/All';
+import {
+  useAssetViewState,
+  useFilterSidebarState,
+} from '@data-exploration-app/store';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${
@@ -93,8 +96,8 @@ function SearchPage() {
 
   const [rawCart, setCart] = useQueryStringArray(CART_KEY, false);
   const cart = rawCart
-    .map(s => parseInt(s, 10))
-    .filter(n => Number.isFinite(n));
+    .map((s) => parseInt(s, 10))
+    .filter((n) => Number.isFinite(n));
 
   const [assetFilter, setAssetFilter] = useAssetFilters();
   const [fileFilter, setFileFilter] = useFileFilters();
@@ -118,7 +121,7 @@ function SearchPage() {
 
   const onSelect = (item: ResourceItem) => {
     const newCart = cart.includes(item.id)
-      ? cart.filter(id => id !== item.id)
+      ? cart.filter((id) => id !== item.id)
       : cart.concat([item.id]);
     setCart(newCart);
   };
@@ -142,7 +145,7 @@ function SearchPage() {
   };
 
   const handleFilterToggleClick = React.useCallback(() => {
-    setShowFilter(prevState => {
+    setShowFilter((prevState) => {
       trackUsage(EXPLORATION.CLICK.TOGGLE_FILTERS_VIEW, {
         tab: currentResourceType,
         showFilters: !prevState,
@@ -189,7 +192,7 @@ function SearchPage() {
           {isAdvancedFiltersEnabled ? (
             <ResourceTypeTabsV2
               currentResourceType={currentResourceType || 'all'}
-              setCurrentResourceType={tab => {
+              setCurrentResourceType={(tab) => {
                 setCurrentResourceType(
                   tab === 'all' ? undefined : (tab as ResourceType)
                 );
@@ -257,7 +260,7 @@ function SearchPage() {
               globalFilters={filterMap}
               query={query}
               currentResourceType={currentResourceType || 'all'}
-              setCurrentResourceType={tab => {
+              setCurrentResourceType={(tab) => {
                 setCurrentResourceType(
                   tab === 'all' ? undefined : (tab as ResourceType)
                 );
@@ -385,7 +388,7 @@ function SearchPage() {
               )}
               {!activeId && currentResourceType && cart.length > 0 && (
                 <SelectedResults
-                  ids={cart.map(id => ({ id }))}
+                  ids={cart.map((id) => ({ id }))}
                   resourceType={currentResourceType}
                 />
               )}

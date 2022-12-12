@@ -1,8 +1,6 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "**/*"
-  ],
+  "ignorePatterns": ["**/*"],
   "extends": [
     "plugin:testing-library/react",
     "plugin:lodash/recommended",
@@ -18,12 +16,7 @@
   ],
   "overrides": [
     {
-      "files": [
-        "*.ts",
-        "*.tsx",
-        "*.js",
-        "*.jsx"
-      ],
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
@@ -31,64 +24,33 @@
             "enforceBuildableLibDependency": true,
             "allow": [
               "@platypus-app",
+              "@data-exploration-app",
               "@platypus-core",
               "@cognite/platypus-cdf-cli"
             ],
             "depConstraints": [
               {
                 "sourceTag": "*",
-                "onlyDependOnLibsWithTags": [
-                  "*"
-                ]
+                "onlyDependOnLibsWithTags": ["*"]
               }
             ]
           }
         ],
-        "max-classes-per-file": [
-          "off"
-        ],
-        "lines-between-class-members": [
-          "off"
-        ],
-        "class-methods-use-this": [
-          "off"
-        ],
-        "react/jsx-props-no-spreading": [
-          "off"
-        ],
-        "react/static-property-placement": [
-          "off"
-        ],
-        "react/state-in-constructor": [
-          "off"
-        ],
-        "jest/expect-expect": [
-          "off"
-        ],
-        "jest/no-test-callback": [
-          "off"
-        ],
-        "jest/no-export": [
-          "off"
-        ],
-        "lodash/prefer-lodash-method": [
-          "off"
-        ],
-        "lodash/prefer-lodash-typecheck": [
-          "off"
-        ],
-        "lodash/prop-shorthand": [
-          "off"
-        ],
-        "lodash/prefer-constant": [
-          "off"
-        ],
-        "lodash/prefer-is-nil": [
-          "off"
-        ],
-        "lodash/prefer-get": [
-          "off"
-        ],
+        "max-classes-per-file": ["off"],
+        "lines-between-class-members": ["off"],
+        "class-methods-use-this": ["off"],
+        "react/jsx-props-no-spreading": ["off"],
+        "react/static-property-placement": ["off"],
+        "react/state-in-constructor": ["off"],
+        "jest/expect-expect": ["off"],
+        "jest/no-test-callback": ["off"],
+        "jest/no-export": ["off"],
+        "lodash/prefer-lodash-method": ["off"],
+        "lodash/prefer-lodash-typecheck": ["off"],
+        "lodash/prop-shorthand": ["off"],
+        "lodash/prefer-constant": ["off"],
+        "lodash/prefer-is-nil": ["off"],
+        "lodash/prefer-get": ["off"],
         "@typescript-eslint/no-unused-vars": [
           "error",
           {
@@ -100,19 +62,12 @@
       }
     },
     {
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
-      "extends": [
-        "plugin:@nrwl/nx/typescript"
-      ],
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@nrwl/nx/typescript"],
       "rules": {}
     },
     {
-      "files": [
-        "*.tsx"
-      ],
+      "files": ["*.tsx"],
       "extends": [
         "plugin:@nrwl/nx/typescript",
         "plugin:testing-library/react",
@@ -133,36 +88,16 @@
             "props": false
           }
         ],
-        "react/require-default-props": [
-          "off"
-        ],
-        "max-classes-per-file": [
-          "off"
-        ],
-        "lines-between-class-members": [
-          "off"
-        ],
-        "class-methods-use-this": [
-          "off"
-        ],
-        "react/jsx-props-no-spreading": [
-          "off"
-        ],
-        "react/static-property-placement": [
-          "off"
-        ],
-        "react/state-in-constructor": [
-          "off"
-        ],
-        "jest/expect-expect": [
-          "off"
-        ],
-        "jest/no-test-callback": [
-          "off"
-        ],
-        "jest/no-export": [
-          "off"
-        ],
+        "react/require-default-props": ["off"],
+        "max-classes-per-file": ["off"],
+        "lines-between-class-members": ["off"],
+        "class-methods-use-this": ["off"],
+        "react/jsx-props-no-spreading": ["off"],
+        "react/static-property-placement": ["off"],
+        "react/state-in-constructor": ["off"],
+        "jest/expect-expect": ["off"],
+        "jest/no-test-callback": ["off"],
+        "jest/no-export": ["off"],
         "@typescript-eslint/no-unused-vars": "off",
         "prettier/prettier": [
           "error",
@@ -181,13 +116,8 @@
       }
     },
     {
-      "files": [
-        "*.js",
-        "*.jsx"
-      ],
-      "extends": [
-        "plugin:@nrwl/nx/javascript"
-      ],
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nrwl/nx/javascript"],
       "rules": {}
     }
   ]

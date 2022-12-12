@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { trackUsage } from 'app/utils/Metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
-import ResourceTitleRow from 'app/components/ResourceTitleRow';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import {
   EventDetails,
   ErrorFeedback,
@@ -10,14 +10,20 @@ import {
   Metadata,
 } from '@cognite/data-exploration';
 import { Tabs } from '@cognite/cogs.js';
-import { renderTitle } from 'app/utils/EventsUtils';
+import { renderTitle } from '@data-exploration-app/utils/EventsUtils';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, CogniteEvent } from '@cognite/sdk';
 
-import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
-import { DetailsTabWrapper } from 'app/containers/Common/element';
-import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
+import {
+  ResourceDetailsTabs,
+  TabTitle,
+} from '@data-exploration-app/containers/ResourceDetails';
+import {
+  useCurrentResourceId,
+  useOnPreviewTabChange,
+} from '@data-exploration-app/hooks/hooks';
+import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
+import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 
 export type EventPreviewTabType =
   | 'details'

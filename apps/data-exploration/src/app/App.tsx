@@ -3,7 +3,7 @@ import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import GlobalStyle from 'app/styles/global-styles';
+import GlobalStyle from '@data-exploration-app/styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
@@ -14,8 +14,8 @@ import {
 } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
-import RootApp from 'app/containers/App';
-import AntStyles from 'app/styles/Styles';
+import RootApp from '@data-exploration-app/containers/App';
+import AntStyles from '@data-exploration-app/styles/Styles';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import collapseStyle from 'rc-collapse/assets/index.css';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';

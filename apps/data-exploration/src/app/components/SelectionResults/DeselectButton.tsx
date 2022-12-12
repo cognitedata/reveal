@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
-import { useQueryStringArray } from 'app/hooks/hooks';
-import { CART_KEY } from 'app/utils/constants';
+import { useQueryStringArray } from '@data-exploration-app/hooks/hooks';
+import { CART_KEY } from '@data-exploration-app/utils/constants';
 import { Tooltip } from 'antd';
 
 export default function DeselectButton() {

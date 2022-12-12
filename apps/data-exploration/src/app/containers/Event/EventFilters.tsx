@@ -6,7 +6,7 @@ import {
   useEventsFilters,
   useFilterEmptyState,
   useResetEventsFilters,
-} from 'app/store/filter';
+} from '@data-exploration-app/store/filter';
 import {
   AggregatedEventFilterV2,
   AggregatedFilterV2,
@@ -14,9 +14,9 @@ import {
   MetadataFilterV2,
   transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
-import { TempMultiSelectFix } from 'app/containers/elements';
+import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { CogniteEvent } from '@cognite/sdk/dist/src';
-import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
+import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 
 export const EventFilters = ({ ...rest }: {}) => {
   const [eventFilter, setEventFilter] = useEventsFilters();
@@ -40,7 +40,7 @@ export const EventFilters = ({ ...rest }: {}) => {
         <AggregatedEventFilterV2
           field="type"
           filter={eventFilter}
-          setValue={newValue => {
+          setValue={(newValue) => {
             setEventFilter({ type: newValue });
           }}
           title="Type"
@@ -49,7 +49,7 @@ export const EventFilters = ({ ...rest }: {}) => {
         <DateFilterV2
           title="Start time"
           value={eventFilter.startTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setEventFilter({
               startTime: newDate || undefined,
             })
@@ -63,7 +63,7 @@ export const EventFilters = ({ ...rest }: {}) => {
               ? null
               : eventFilter.endTime
           }
-          setValue={newDate =>
+          setValue={(newDate) =>
             setEventFilter({
               endTime:
                 newDate === null ? { isNull: true } : newDate || undefined,
@@ -73,7 +73,7 @@ export const EventFilters = ({ ...rest }: {}) => {
         <AggregatedEventFilterV2
           field="subtype"
           filter={eventFilter}
-          setValue={newValue => {
+          setValue={(newValue) => {
             setEventFilter({ subtype: newValue });
           }}
           title="Sub-type"
@@ -93,7 +93,7 @@ export const EventFilters = ({ ...rest }: {}) => {
           items={items}
           aggregator="source"
           value={eventFilter.source}
-          setValue={newSource =>
+          setValue={(newSource) =>
             setEventFilter({
               source: newSource,
             })
@@ -102,7 +102,7 @@ export const EventFilters = ({ ...rest }: {}) => {
         <MetadataFilterV2
           items={items}
           value={eventFilter.metadata}
-          setValue={newMetadata =>
+          setValue={(newMetadata) =>
             setEventFilter({
               metadata: newMetadata,
             })

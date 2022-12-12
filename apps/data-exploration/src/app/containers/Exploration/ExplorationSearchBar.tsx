@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from '@cognite/cogs.js';
 import { debounce } from 'lodash';
-import { useQueryString } from 'app/hooks/hooks';
-import { SEARCH_KEY } from 'app/utils/constants';
-import { trackUsage } from 'app/utils/Metrics';
-import { EXPLORATION } from 'app/constants/metrics';
+import { useQueryString } from '@data-exploration-app/hooks/hooks';
+import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import styled from 'styled-components';
-import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 
 export const ExplorationSearchBar = () => {
   const [urlQuery, setUrlQuery] = useQueryString(SEARCH_KEY);

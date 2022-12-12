@@ -6,15 +6,15 @@ import React, {
   useCallback,
 } from 'react';
 import { Button, Flex, Input } from '@cognite/cogs.js';
-import { AssetMappingsList } from 'app/containers/ThreeD/AssetMappingsList';
+import { AssetMappingsList } from '@data-exploration-app/containers/ThreeD/AssetMappingsList';
 import {
   AugmentedMapping,
   useInfiniteAssetMappings,
-} from 'app/containers/ThreeD/hooks';
+} from '@data-exploration-app/containers/ThreeD/hooks';
 import styled from 'styled-components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
-import { trackUsage } from 'app/utils/Metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
 
@@ -98,7 +98,7 @@ export const AssetMappingsSidebar = ({
     >
       <Flex gap={5} justifyContent="flex-end" alignItems="center">
         <StyledInput
-          onKeyUp={e => {
+          onKeyUp={(e) => {
             if (e.key === 'Escape' && expanded) {
               setQuery('');
               setExpanded(false);
@@ -109,7 +109,7 @@ export const AssetMappingsSidebar = ({
           id="search"
           style={{ flexGrow: 1 }}
           value={query}
-          onChange={e => {
+          onChange={(e) => {
             setQuery(e.target.value);
             trackUsage('Exploration.Action.Search', { name: query });
           }}
@@ -142,13 +142,13 @@ export const AssetMappingsSidebar = ({
           query={query}
           assets={items ?? []}
           selectedAssetId={selectedAssetId}
-          onClick={e => {
+          onClick={(e) => {
             handleAssetClick(e);
             setExpanded(false);
             trackUsage('Exploration.Action.Select', { selectedAssetId });
           }}
           itemCount={items?.length ?? 0}
-          isItemLoaded={i => i < (items?.length || 0)}
+          isItemLoaded={(i) => i < (items?.length || 0)}
         />
       )}
     </SidebarContainer>
@@ -156,8 +156,8 @@ export const AssetMappingsSidebar = ({
 };
 
 const SidebarContainer = styled.div<{ expanded?: boolean }>`
-  height: ${props => (props.expanded ? '400px' : 'initial')};
-  background: ${props => (props.expanded ? ' var(--cogs-white)' : 'initial')};
+  height: ${(props) => (props.expanded ? '400px' : 'initial')};
+  background: ${(props) => (props.expanded ? ' var(--cogs-white)' : 'initial')};
   border-radius: 4px;
   overflow: hidden;
 `;

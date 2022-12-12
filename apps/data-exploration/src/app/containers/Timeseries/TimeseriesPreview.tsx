@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { trackUsage } from 'app/utils/Metrics';
-import ResourceTitleRow from 'app/components/ResourceTitleRow';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, Timeseries } from '@cognite/sdk';
 import { Tabs } from '@cognite/cogs.js';
@@ -12,13 +12,19 @@ import {
   Metadata,
   TimeseriesDetails,
 } from '@cognite/data-exploration';
-import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
+import {
+  ResourceDetailsTabs,
+  TabTitle,
+} from '@data-exploration-app/containers/ResourceDetails';
 
-import { useDateRange } from 'app/context/DateRangeContext';
-import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
+import { useDateRange } from '@data-exploration-app/context/DateRangeContext';
+import {
+  useCurrentResourceId,
+  useOnPreviewTabChange,
+} from '@data-exploration-app/hooks/hooks';
 import styled from 'styled-components';
-import { DetailsTabWrapper } from 'app/containers/Common/element';
-import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
+import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
+import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 
 export type TimeseriesPreviewTabType =
   | 'details'

@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { ThreeDContextProvider } from './ThreeDContext';
 import { ThreeDView } from './ThreeDView';
-import { useSearchParamString } from 'app/utils/URLUtils';
+import { useSearchParamString } from '@data-exploration-app/utils/URLUtils';
 
 export const ThreeDPage = () => {
   const { id: threeDIdString = '' } = useParams<{

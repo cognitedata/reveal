@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { trackUsage } from 'app/utils/Metrics';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { Tabs } from '@cognite/cogs.js';
 import {
   SequenceDetails,
@@ -9,14 +9,20 @@ import {
   Loader,
   Metadata,
 } from '@cognite/data-exploration';
-import ResourceTitleRow from 'app/components/ResourceTitleRow';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { CogniteError, Sequence } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
-import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
-import { DetailsTabWrapper } from 'app/containers/Common/element';
-import { Breadcrumbs } from 'app/components/Breadcrumbs/Breadcrumbs';
+import {
+  ResourceDetailsTabs,
+  TabTitle,
+} from '@data-exploration-app/containers/ResourceDetails';
+import {
+  useCurrentResourceId,
+  useOnPreviewTabChange,
+} from '@data-exploration-app/hooks/hooks';
+import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
+import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 
 export type SequencePreviewType =
   | 'details'

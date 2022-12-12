@@ -5,13 +5,13 @@ import {
   useFilterEmptyState,
   useResetSequenceFilters,
   useSequenceFilters,
-} from 'app/store/filter';
+} from '@data-exploration-app/store/filter';
 import {
   MetadataFilterV2,
   transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
-import { TempMultiSelectFix } from 'app/containers/elements';
-import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
+import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
+import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 
 export const SequenceFilters = ({ ...rest }) => {
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
@@ -35,7 +35,7 @@ export const SequenceFilters = ({ ...rest }) => {
         <MetadataFilterV2
           items={items}
           value={sequenceFilter.metadata}
-          setValue={newMetadata =>
+          setValue={(newMetadata) =>
             setSequenceFilter({
               metadata: newMetadata,
             })

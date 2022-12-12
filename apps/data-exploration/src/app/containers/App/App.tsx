@@ -6,20 +6,20 @@ import {
   FileContextualizationContextProvider,
   DataExplorationProvider,
 } from '@cognite/data-exploration';
-import { ResourceActionsProvider } from 'app/context/ResourceActionsContext';
-import { ResourceSelectionProvider } from 'app/context/ResourceSelectionContext';
+import { ResourceActionsProvider } from '@data-exploration-app/context/ResourceActionsContext';
+import { ResourceSelectionProvider } from '@data-exploration-app/context/ResourceSelectionContext';
 
-import { DateRangeProvider } from 'app/context/DateRangeContext';
+import { DateRangeProvider } from '@data-exploration-app/context/DateRangeContext';
 import { useSDK } from '@cognite/sdk-provider';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useUserInformation } from 'app/hooks/hooks';
-import { trackUsage } from 'app/utils/Metrics';
+import { useUserInformation } from '@data-exploration-app/hooks/hooks';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 const Spinner = () => <Loader />;
 const Exploration = React.lazy(
   () =>
     import(
-      'app/containers/Exploration'
+      '@data-exploration-app/containers/Exploration'
       /* webpackChunkName: "pnid_exploration" */
     )
 );

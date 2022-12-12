@@ -2,8 +2,11 @@ import {
   COMMON_FILTER_KEYS,
   InternalCommonFilters,
 } from '@cognite/data-exploration';
-import { globalFilterAtom } from 'app/store/filter';
-import { GlobalFilter, GlobalFilterKeys } from 'app/store/filter/types';
+import { globalFilterAtom } from '@data-exploration-app/store/filter';
+import {
+  GlobalFilter,
+  GlobalFilterKeys,
+} from '@data-exploration-app/store/filter/types';
 import { includes, isArray } from 'lodash';
 import { DefaultValue, GetRecoilValue, SetRecoilState } from 'recoil';
 

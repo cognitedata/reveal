@@ -12,8 +12,8 @@ import styled from 'styled-components';
 import {
   useResourceFilter,
   useSetResourceFilter,
-} from 'app/context/ResourceSelectionContext';
-import { trackUsage } from 'app/utils/Metrics';
+} from '@data-exploration-app/context/ResourceSelectionContext';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
   const filter = useResourceFilter(type) as FileFilterProps | AssetFilterProps;
@@ -30,18 +30,18 @@ export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
 
   const appliedLabelFilters =
     (filter.labels as LabelContainsAnyFilter)?.containsAny.map(
-      l => l.externalId
+      (l) => l.externalId
     ) || [];
 
   const setLabel = (label: string) => {
     const newFilters = appliedLabelFilters.includes(label)
-      ? appliedLabelFilters.filter(l => l !== label)
+      ? appliedLabelFilters.filter((l) => l !== label)
       : [...appliedLabelFilters, label];
     setFilter((prevFilter: FileFilterProps | AssetFilterProps) => ({
       ...prevFilter,
       labels:
         newFilters.length > 0
-          ? { containsAny: newFilters.map(l => ({ externalId: l })) }
+          ? { containsAny: newFilters.map((l) => ({ externalId: l })) }
           : undefined,
     }));
     trackUsage('Exploration.Filter.PredefinedLabel', { label });
@@ -49,7 +49,7 @@ export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
 
   return (
     <SpacedRow>
-      {labels.map(label => (
+      {labels.map((label) => (
         <LabelButton
           key={label}
           size="small"

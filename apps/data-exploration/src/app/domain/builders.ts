@@ -1,4 +1,4 @@
-import { isObjectEmpty } from 'app/utils/compare';
+import { isObjectEmpty } from '@data-exploration-app/utils/compare';
 
 export type AdvancedFilter<T> = LeafFilter<T> | BoolFilter<T>;
 // export type Sort = {
