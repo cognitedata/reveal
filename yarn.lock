@@ -1700,38 +1700,28 @@
     typescript "^4.1.2"
     uuid "^8.3.0"
 
-"@cognite/reveal-parser-worker@1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.3.0.tgz#9910121ba90cad684a91b3b04e6df0528ea671f5"
-  integrity sha512-39wuqtdogmZfTmnQhigNpgU/nfYG3POpUFKFO/FMKJKJ+pAsCCZfu4IPEXCDAevJS6/K+mEViPSLL6+Gagi1HQ==
+"@cognite/reveal@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.0.0.tgz#fce469dcb6793d1417345cf7658b3eb2f8efb8bb"
+  integrity sha512-BF6h5x1t6QCWL0/nBG3xELkeiRhDHpAShIyt2bQ65raiYyeaOCJnGIHNl2BPO8v7VGN62XjzSYWKMtT15bT8kw==
   dependencies:
-    comlink "4.3.1"
-
-"@cognite/reveal@^3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-3.3.0.tgz#1c3413c68654ec01476062043e5699343cca610c"
-  integrity sha512-lca2T89spXuaH1cHHC8HkyHzwSkonmb2BmnNezEuULocN6utIzRi285Vys0ntjx3t1anufCAKihXPvuCehUUVA==
-  dependencies:
-    "@cognite/reveal-parser-worker" "1.3.0"
     "@tweenjs/tween.js" "18.6.4"
     "@types/draco3dgltf" "1.4.0"
-    "@types/geojson" "7946.0.10"
-    "@types/three" "0.141.0"
+    "@types/three" "0.146.0"
     assert "2.0.0"
     async-mutex "0.4.0"
     comlink "4.3.1"
-    geo-three "0.0.17"
     glslify "7.1.1"
     glslify-import "3.1.0"
+    html2canvas "^1.4.1"
     lodash "4.17.21"
-    loglevel "1.8.0"
+    loglevel "1.8.1"
     mixpanel-browser "2.45.0"
     path-browserify "1.0.1"
     proj4 "2.8.0"
-    rxjs "7.5.6"
+    rxjs "7.5.7"
     skmeans "0.11.3"
-    three "0.141.0"
-    three-stdlib "2.15.0"
+    three-stdlib "2.19.0"
 
 "@cognite/sdk-core@^2.1.2":
   version "2.2.0"
@@ -3464,7 +3454,7 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
-"@types/geojson@7946.0.10", "@types/geojson@^7946.0.8":
+"@types/geojson@^7946.0.8":
   version "7946.0.10"
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.10.tgz#6dfbf5ea17142f7f9a043809f1cd4c448cb68249"
   integrity sha512-Nmh0K3iWQJzniTuPRcJn5hxXkfB1T1pgB89SBig5PlJQU5yocazeu4jATJlaA0GYFKWMqDdvYemoSnF2pXgLVA==
@@ -3828,10 +3818,10 @@
     "@types/react" "*"
     csstype "^3.0.2"
 
-"@types/three@0.141.0":
-  version "0.141.0"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.141.0.tgz#d9d81a54b28ebc2a56931dfd4d9c54d25c20d6c8"
-  integrity sha512-OJdKDgTPVBUgc+s74DYoy4aLznbFFC38Xm4ElmU1YwGNgR7GGFVvFCX7lpVgOsT6S1zSJtGdajTsOYE8/xY9nA==
+"@types/three@0.146.0":
+  version "0.146.0"
+  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.146.0.tgz#83813ba0d2fff6bdc6d7fda3a77993a932bba45f"
+  integrity sha512-75AgysUrIvTCB054eQa2pDVFurfeFW8CrMQjpzjt3yHBfuuknoSvvsESd/3EhQxPrz9si3+P0wiDUVsWUlljfA==
   dependencies:
     "@types/webxr" "*"
 
@@ -5176,6 +5166,11 @@ balanced-match@^2.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-2.0.0.tgz#dc70f920d78db8b858535795867bf48f820633d9"
   integrity sha512-1ugUSr8BHXRnK23KfuYS+gVMC3LB8QGH9W1iGtDPsNWoQbgtXSExkBu2aDR4epiGWZOjZsj6lDl/N/AqqTC3UA==
 
+base64-arraybuffer@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/base64-arraybuffer/-/base64-arraybuffer-1.0.2.tgz#1c37589a7c4b0746e34bd1feb951da2df01c1bdc"
+  integrity sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==
+
 base64-js@^1.3.0, base64-js@^1.3.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
@@ -6171,6 +6166,13 @@ css-has-pseudo@^3.0.4:
   integrity sha512-Vse0xpR1K9MNlp2j5w1pgWIJtm1a8qS0JwS9goFYcImjlHEmywP9VUF05aGBXzGpDJF86QXk4L0ypBmwPhGArw==
   dependencies:
     postcss-selector-parser "^6.0.9"
+
+css-line-break@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/css-line-break/-/css-line-break-2.1.0.tgz#bfef660dfa6f5397ea54116bb3cb4873edbc4fa0"
+  integrity sha512-FHcKFCZcAha3LwfVBhCQbW2nCNbkZXn7KVUJcsT5/P8YmfsVja0FMPJr0B903j/E69HUphKiV9iQArX8SDYA4w==
+  dependencies:
+    utrie "^1.0.2"
 
 css-loader@^6.5.1:
   version "6.7.2"
@@ -8337,11 +8339,6 @@ gensync@^1.0.0-beta.2:
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
   integrity sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==
 
-geo-three@0.0.17:
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.17.tgz#869694f81df09b5a2724340ad212f47e48459162"
-  integrity sha512-yPujgRnkRNdYVllLt32JOFB/mSJtUKkTKrT7YYbuEyDmCa9CotxzJkI7Wlhqd8ky1STMccSluYDi4JDV30InLw==
-
 geojson@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/geojson/-/geojson-0.5.0.tgz#3cd6c96399be65b56ee55596116fe9191ce701c0"
@@ -8920,6 +8917,14 @@ html-webpack-plugin@^5.5.0:
     lodash "^4.17.21"
     pretty-error "^4.0.0"
     tapable "^2.0.0"
+
+html2canvas@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/html2canvas/-/html2canvas-1.4.1.tgz#7cef1888311b5011d507794a066041b14669a543"
+  integrity sha512-fPU6BHNpsyIhr8yyMpTLLxAbkaK8ArIBcmZIRiBLiDhjeqvXolaEmDGmELFuX9I4xDcaKKcJl+TKZLqruBbmWA==
+  dependencies:
+    css-line-break "^2.1.0"
+    text-segmentation "^1.0.3"
 
 htmlparser2@^3.10.0:
   version "3.10.1"
@@ -10615,10 +10620,10 @@ log-update@^4.0.0:
     slice-ansi "^4.0.0"
     wrap-ansi "^6.2.0"
 
-loglevel@1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.8.0.tgz#e7ec73a57e1e7b419cb6c6ac06bf050b67356114"
-  integrity sha512-G6A/nJLRgWOuuwdNuA6koovfEV1YpqqAG4pRUlFaz3jj2QNZ8M4vBqnVA+HBTmU/AMNUtlOsMmSpF6NyOjztbA==
+loglevel@1.8.1:
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.8.1.tgz#5c621f83d5b48c54ae93b6156353f555963377b4"
+  integrity sha512-tCRIJM51SHjAayKwC+QAg8hT8vg6z7GSgLJKGvzuPb1Wc+hLzqtuVLxp6/HzSPOozuK+8ErAhy7U/sVzw8Dgfg==
 
 longest-streak@^2.0.0:
   version "2.0.4"
@@ -14223,10 +14228,10 @@ run-parallel@^1.1.9:
   dependencies:
     queue-microtask "^1.2.2"
 
-rxjs@7.5.6:
-  version "7.5.6"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.6.tgz#0446577557862afd6903517ce7cae79ecb9662bc"
-  integrity sha512-dnyv2/YsXhnm461G+R/Pe5bWP41Nm6LBXEYWI6eiFP4fiwx6WRI/CD0zbdVAudd9xwLEF2IDcKXLHit0FYjUzw==
+rxjs@7.5.7:
+  version "7.5.7"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.7.tgz#2ec0d57fdc89ece220d2e702730ae8f1e49def39"
+  integrity sha512-z9MzKh/UcOqB3i20H6rtrlaE/CgjLOvheWK/9ILrbhROGTweAi1BaFsTT9FbwZi5Trr1qNRs+MXkhmR06awzQA==
   dependencies:
     tslib "^2.1.0"
 
@@ -15374,15 +15379,22 @@ test-exclude@^6.0.0:
     glob "^7.1.4"
     minimatch "^3.0.4"
 
+text-segmentation@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/text-segmentation/-/text-segmentation-1.0.3.tgz#52a388159efffe746b24a63ba311b6ac9f2d7943"
+  integrity sha512-iOiPUo/BGnZ6+54OsWxZidGCsdU8YbE4PSpdPinp7DeMtUJNJBoJ/ouUSTJjHkh1KntHaltHl/gDs2FC4i5+Nw==
+  dependencies:
+    utrie "^1.0.2"
+
 text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
 
-three-stdlib@2.15.0:
-  version "2.15.0"
-  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.15.0.tgz#2f5c43ea95c8f6eb1add95dd0e7c5bd6ea769838"
-  integrity sha512-81jgpEajYB1HczIKAqcG8oEgRPbKJr/8KfxMY3xIHe9kDNw426PckStLt+GVmV15ezOS+QlUFVSuyjSRPpSLsg==
+three-stdlib@2.19.0:
+  version "2.19.0"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.19.0.tgz#22b73fe07b2524548b486e551737db4b17586beb"
+  integrity sha512-ImKJXIlmx/iYH3U2CeLiYA2V60UqhpwLE2ErOME+FrD3Xodk7oQU5N9IZGKQzGjnl3hOfLmLZ5BPJrotmttBjg==
   dependencies:
     "@babel/runtime" "^7.16.7"
     "@types/offscreencanvas" "^2019.6.4"
@@ -15396,10 +15408,10 @@ three-stdlib@2.15.0:
     potpack "^1.0.1"
     zstddec "^0.0.2"
 
-three@0.141.0:
-  version "0.141.0"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.141.0.tgz#16677a12b9dd0c3e1568ebad0fd09de15d5a8216"
-  integrity sha512-JaSDAPWuk4RTzG5BYRQm8YZbERUxTfTDVouWgHMisS2to4E5fotMS9F2zPFNOIJyEFTTQDDKPpsgZVThKU3pXA==
+three@^0.146.0:
+  version "0.146.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.146.0.tgz#fd80f0d128ab4bb821a02191ae241e4e6326f17a"
+  integrity sha512-1lvNfLezN6OJ9NaFAhfX4sm5e9YCzHtaRgZ1+B4C+Hv6TibRMsuBAM5/wVKzxjpYIlMymvgsHEFrrigEfXnb2A==
 
 throat@^6.0.1:
   version "6.0.1"
@@ -15928,6 +15940,13 @@ utils-merge@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==
+
+utrie@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/utrie/-/utrie-1.0.2.tgz#d42fe44de9bc0119c25de7f564a6ed1b2c87a645"
+  integrity sha512-1MLa5ouZiOmQzUbjbu9VmjLzn1QLXBhwpUa7kdLUQK+KQ5KA9I1vk5U4YHe/X2Ch7PYnJfWuWT+VbuxbGwljhw==
+  dependencies:
+    base64-arraybuffer "^1.0.2"
 
 uuid@^8.0.0, uuid@^8.3.0, uuid@^8.3.2:
   version "8.3.2"

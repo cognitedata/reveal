@@ -16,7 +16,7 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
 import { trackUsage } from 'app/utils/Metrics';
 
-import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
+import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
 
 type ThreeDSidebarProps = {
   modelId: number;
@@ -24,7 +24,7 @@ type ThreeDSidebarProps = {
   selectedAssetId?: number;
   setSelectedAssetId: (assetId?: number) => void;
   viewer: Cognite3DViewer;
-  threeDModel: Cognite3DModel;
+  threeDModel: CogniteCadModel;
 };
 
 export const AssetMappingsSidebar = ({

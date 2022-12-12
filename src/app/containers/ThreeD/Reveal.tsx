@@ -10,7 +10,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
 import { use3DModel } from './hooks';
 import {
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
   Intersection,
@@ -28,7 +28,7 @@ import { toast } from '@cognite/cogs.js';
 import RevealErrorToast from './RevealErrorToast';
 
 type ChildProps = {
-  threeDModel?: Cognite3DModel;
+  threeDModel?: CogniteCadModel;
   pointCloudModel?: CognitePointCloudModel;
   viewer: Cognite3DViewer;
 };
@@ -117,7 +117,7 @@ export function Reveal({
       if (initialViewerState) {
         viewer.setViewState(initialViewerState);
       }
-      const threeDModel = model instanceof Cognite3DModel ? model : undefined;
+      const threeDModel = model instanceof CogniteCadModel ? model : undefined;
       const pointCloudModel =
         model instanceof CognitePointCloudModel ? model : undefined;
       if (set3DModel) {

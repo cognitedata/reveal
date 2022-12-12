@@ -1,5 +1,5 @@
 import { Button, Tooltip } from '@cognite/cogs.js';
-import { Cognite3DModel } from '@cognite/reveal';
+import { CogniteCadModel } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteClient } from '@cognite/sdk';
 import {
@@ -18,7 +18,7 @@ type AssetsHighlightButtonProps = {
   labelsVisibility: boolean;
   setLabelsVisibility: (visibility: boolean) => void;
   overlayTool?: SmartOverlayTool;
-  threeDModel?: Cognite3DModel;
+  threeDModel?: CogniteCadModel;
 };
 
 const AssetsHighlightButton = ({
@@ -91,7 +91,7 @@ const AssetsHighlightButton = ({
 
 function addLabelsFromAssetMappings(
   assetMappings: AugmentedMapping[],
-  threeDModel: Cognite3DModel,
+  threeDModel: CogniteCadModel,
   sdk: CogniteClient,
   overlayTool: SmartOverlayTool
 ) {

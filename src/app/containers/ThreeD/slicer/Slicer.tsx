@@ -1,9 +1,9 @@
 import { Button, Dropdown, Menu, RangeSlider, Tooltip } from '@cognite/cogs.js';
+import * as THREE from 'three';
 import {
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
-  THREE,
 } from '@cognite/reveal';
 import { EXPLORATION } from 'app/constants/metrics';
 import { ThreeDContext } from 'app/containers/ThreeD/ThreeDContext';
@@ -15,7 +15,7 @@ import styled from 'styled-components';
 
 type SliderProps = {
   viewer: Cognite3DViewer;
-  viewerModel?: Cognite3DModel | CognitePointCloudModel;
+  viewerModel?: CogniteCadModel | CognitePointCloudModel;
 };
 
 export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {

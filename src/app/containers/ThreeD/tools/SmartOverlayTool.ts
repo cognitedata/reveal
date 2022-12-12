@@ -1,6 +1,9 @@
-import { Cognite3DViewer } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  HtmlOverlayOptions,
+  HtmlOverlayTool,
+} from '@cognite/reveal';
 import { EventTrigger } from './EventTrigger';
-import { HtmlOverlayOptions, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as THREE from 'three';
 
 export type SmartLabel = {

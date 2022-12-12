@@ -12,7 +12,8 @@ const MouseWheelAction = ({
   viewer,
 }: MouseWheelActionProps): JSX.Element => {
   useEffect(() => {
-    const cameraManager = viewer.cameraManager as DefaultCameraManager;
+    const cameraManager =
+      viewer.cameraManager as unknown as DefaultCameraManager;
     cameraManager.setCameraControlsOptions({
       mouseWheelAction: 'zoomToCursor',
     });

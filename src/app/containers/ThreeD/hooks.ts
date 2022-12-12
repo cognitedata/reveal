@@ -20,7 +20,7 @@ import {
 } from 'react-query';
 import { prepareSearchString } from './utils';
 import {
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
 } from '@cognite/reveal';
@@ -447,7 +447,7 @@ export const getSecondaryModelQueryFn =
     );
 
     const hasAdded = (
-      viewer.models as (Cognite3DModel | CognitePointCloudModel)[]
+      viewer.models as (CogniteCadModel | CognitePointCloudModel)[]
     ).some(
       ({ modelId: tmId, revisionId: trId }) =>
         modelId === tmId && revisionId === trId
@@ -457,7 +457,7 @@ export const getSecondaryModelQueryFn =
       await viewer.addModel({ modelId, revisionId });
     } else if (!applied && hasAdded) {
       const modelToRemove = (
-        viewer.models as (Cognite3DModel | CognitePointCloudModel)[]
+        viewer.models as (CogniteCadModel | CognitePointCloudModel)[]
       ).find(
         ({ modelId: tmId, revisionId: trId }) =>
           modelId === tmId && revisionId === trId

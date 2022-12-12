@@ -1,10 +1,10 @@
 import { useCallback, useEffect } from 'react';
+import * as THREE from 'three';
 import {
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
   PointerEventDelegate,
-  THREE,
 } from '@cognite/reveal';
 import {
   CAMERA_ANIMATION_DURATION,
@@ -17,7 +17,7 @@ type Args = {
 };
 
 async function fitCameraToNode(
-  model: Cognite3DModel,
+  model: CogniteCadModel,
   treeIndex: number,
   nodeId: number,
   ancestorLevel: number
@@ -45,8 +45,8 @@ function getBoundingBoxAroundCamera(
   viewer: Cognite3DViewer,
   distanceFromCamera: number
 ): THREE.Box3 {
-  const cameraPos = viewer.getCamera().position;
-  const camera = viewer.getCamera();
+  const cameraPos = viewer.cameraManager.getCamera().position;
+  const camera = viewer.cameraManager.getCamera();
   const vFOV = THREE.MathUtils.degToRad(camera.fov);
   const boundingBoxHeight = 2 * Math.tan(vFOV / 2) * distanceFromCamera;
   const boundingBoxWidth = boundingBoxHeight * camera.aspect;
@@ -88,7 +88,7 @@ export function useViewerDoubleClickListener({
       );
       if (intersection) {
         const model = intersection.model;
-        if (model instanceof Cognite3DModel && 'treeIndex' in intersection) {
+        if (model instanceof CogniteCadModel && 'treeIndex' in intersection) {
           const { treeIndex } = intersection;
           model.mapTreeIndexToNodeId(treeIndex).then(async (nodeId: number) => {
             const nodeBoundingBox = await fitCameraToNode(

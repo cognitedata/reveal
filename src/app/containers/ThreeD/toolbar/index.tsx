@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import {
   Cognite3DViewer,
-  Cognite3DModel,
+  CogniteCadModel,
   CognitePointCloudModel,
+  MeasurementTool,
 } from '@cognite/reveal';
 import { createLink } from '@cognite/cdf-utilities';
 import { trackUsage } from 'app/utils/Metrics';
-import { MeasurementTool } from '@cognite/reveal/tools';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQueryClient } from 'react-query';
 import {
@@ -42,7 +42,7 @@ export const ExpandButton = ({
   model,
 }: {
   viewer: Cognite3DViewer;
-  model?: Cognite3DModel | CognitePointCloudModel;
+  model?: CogniteCadModel | CognitePointCloudModel;
 }) => {
   if (!model) {
     return <></>;
@@ -71,7 +71,7 @@ export const FocusAssetButton = ({
 }: {
   selectedAssetId?: number;
   viewer: Cognite3DViewer;
-  threeDModel?: Cognite3DModel;
+  threeDModel?: CogniteCadModel;
 }) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();

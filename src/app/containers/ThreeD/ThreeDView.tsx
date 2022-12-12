@@ -34,7 +34,7 @@ import {
 
 import {
   CadIntersection,
-  Cognite3DModel,
+  CogniteCadModel,
   CognitePointCloudModel,
   Intersection,
 } from '@cognite/reveal';
@@ -158,7 +158,7 @@ export const ThreeDView = ({ modelId }: Props) => {
     }
 
     const hasAdded = (
-      viewer.models as (Cognite3DModel | CognitePointCloudModel)[]
+      viewer.models as (CogniteCadModel | CognitePointCloudModel)[]
     ).some(
       ({ modelId: tmId, revisionId: trId }) =>
         threeDModel.modelId === tmId && threeDModel.revisionId === trId

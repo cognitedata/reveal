@@ -1,12 +1,12 @@
 import sdk from '@cognite/cdf-sdk-singleton';
+import * as THREE from 'three';
 import {
   AssetNodeCollection,
   InvertedNodeCollection,
   CadIntersection,
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   DefaultNodeAppearance,
-  THREE,
   ViewerState,
 } from '@cognite/reveal';
 import {
@@ -79,7 +79,7 @@ const getNodeIdByTreeIndexQueryKey = (
 export const fetchBoundingBoxByNodeIdQuery = (
   sdk: CogniteClient,
   queryClient: QueryClient,
-  threeDModel: Cognite3DModel,
+  threeDModel: CogniteCadModel,
   modelId: number,
   revisionId: number,
   nodeId: number,
@@ -106,7 +106,7 @@ export const fitCameraToAsset = async (
   sdk: CogniteClient,
   queryClient: QueryClient,
   viewer: Cognite3DViewer,
-  threeDModel: Cognite3DModel,
+  threeDModel: CogniteCadModel,
   assetId: number
 ) => {
   const { modelId, revisionId } = threeDModel;
@@ -142,7 +142,7 @@ export const fitCameraToAsset = async (
 async function fetchAssetNodeCollection(
   sdk: CogniteClient,
   queryClient: QueryClient,
-  model: Cognite3DModel,
+  model: CogniteCadModel,
   assetId?: number
 ) {
   const { modelId, revisionId } = model;
@@ -158,7 +158,7 @@ async function fetchAssetNodeCollection(
 
 export const highlightAsset = async (
   sdk: CogniteClient,
-  threeDModel: Cognite3DModel,
+  threeDModel: CogniteCadModel,
   assetId: number,
   queryClient: QueryClient
 ) => {
@@ -177,7 +177,7 @@ export const highlightAsset = async (
 
 export const ghostAsset = async (
   sdk: CogniteClient,
-  threeDModel: Cognite3DModel,
+  threeDModel: CogniteCadModel,
   assetId: number,
   queryClient: QueryClient
 ) => {
@@ -197,7 +197,7 @@ export const ghostAsset = async (
 };
 
 export const highlightAssetMappedNodes = async (
-  threeDModel: Cognite3DModel,
+  threeDModel: CogniteCadModel,
   queryClient: QueryClient
 ) => {
   const assetNodeCollection = await fetchAssetNodeCollection(
@@ -212,11 +212,11 @@ export const highlightAssetMappedNodes = async (
 
   threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
   threeDModel.assignStyledNodeCollection(nonMappedNodeCollection, {
-    color: [30, 30, 30],
+    color: new THREE.Color(30, 30, 30),
   });
 };
 
-export const removeAllStyles = (threeDModel: Cognite3DModel) => {
+export const removeAllStyles = (threeDModel: CogniteCadModel) => {
   threeDModel.removeAllStyledNodeCollections();
   threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
 };
@@ -224,7 +224,7 @@ export const removeAllStyles = (threeDModel: Cognite3DModel) => {
 export const fetchNodeIdByTreeIndex = (
   sdk: CogniteClient,
   queryClient: QueryClient,
-  threeDModel: Cognite3DModel,
+  threeDModel: CogniteCadModel,
   modelId: number,
   revisionId: number,
   treeIndex: number,
@@ -239,7 +239,7 @@ export const fetchNodeIdByTreeIndex = (
 
 export async function getBoundingBoxesByNodeIds(
   sdk: CogniteClient,
-  model: Cognite3DModel,
+  model: CogniteCadModel,
   nodeIds: CogniteInternalId[]
 ): Promise<Map<number, { node: Node3D; bbox: THREE.Box3 }>> {
   const boundingBoxMap = new Map<number, { node: Node3D; bbox: THREE.Box3 }>();
@@ -267,7 +267,7 @@ export async function getBoundingBoxesByNodeIds(
 export const findClosestAsset = async (
   sdk: CogniteClient,
   queryClient: QueryClient,
-  threeDModel: Cognite3DModel,
+  threeDModel: CogniteCadModel,
   modelId: number,
   revisionId: number,
   intersection: CadIntersection

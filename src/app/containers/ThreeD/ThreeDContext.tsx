@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 import {
-  Cognite3DModel,
+  CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
   ViewerState,
@@ -44,8 +44,8 @@ type ThreeDContext = {
   setViewer: Dispatch<SetStateAction<Cognite3DViewer | undefined>>;
   overlayTool?: SmartOverlayTool;
   setOverlayTool: Dispatch<SetStateAction<SmartOverlayTool | undefined>>;
-  threeDModel?: Cognite3DModel;
-  set3DModel: Dispatch<SetStateAction<Cognite3DModel | undefined>>;
+  threeDModel?: CogniteCadModel;
+  set3DModel: Dispatch<SetStateAction<CogniteCadModel | undefined>>;
   pointCloudModel?: CognitePointCloudModel;
   setPointCloudModel: Dispatch<
     SetStateAction<CognitePointCloudModel | undefined>
@@ -202,7 +202,7 @@ export const ThreeDContextProvider = ({
   const [overlayTool, setOverlayTool] = useState<
     SmartOverlayTool | undefined
   >();
-  const [threeDModel, set3DModel] = useState<Cognite3DModel | undefined>();
+  const [threeDModel, set3DModel] = useState<CogniteCadModel | undefined>();
   const [pointCloudModel, setPointCloudModel] = useState<
     CognitePointCloudModel | undefined
   >();
