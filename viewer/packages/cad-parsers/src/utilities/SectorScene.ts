@@ -99,13 +99,20 @@ export class SectorSceneImpl implements SectorScene {
     }
 
     // Find all leaf bounds
+    let allRenderCost = 0;
     const allBounds: THREE.Box3[] = [];
     traverseDepthFirst(this.root, x => {
       if (x.children.length === 0) {
+        allRenderCost += x.estimatedRenderCost;
         allBounds.push(x.subtreeBoundingBox);
       }
       return true;
     });
+
+    // If more than 5% of the geometry is located in the root we return the full BoundingBox.
+    if (this.root.estimatedRenderCost > allRenderCost * 0.05) {
+      return this.root.subtreeBoundingBox;
+    }
 
     //Sort by diagonal length, ascending
     allBounds.sort((a, b) => {
