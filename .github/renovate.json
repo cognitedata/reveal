@@ -3,10 +3,7 @@
   "extends": [
     "local>cognitedata/renovate-config"
   ],
-  "prConcurrentLimit": 3,
+  "prConcurrentLimit": 5,
   "labels": ["dependencies"],
-  "schedule": [
-    "before 3am on Monday"
-  ],
   "prCreation": "not-pending"
 }
