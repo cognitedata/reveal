@@ -60,8 +60,8 @@ export const FilePreview = ({
     (el) => el.state === 'active' && el.id === fileId && el.type === 'file'
   );
   const { flow } = getFlow();
-  const { data: filesAcl } = usePermissions(flow, 'filesAcl', 'WRITE');
-  const { data: eventsAcl } = usePermissions(flow, 'eventsAcl', 'WRITE');
+  const { data: filesAcl } = usePermissions(flow as any, 'filesAcl', 'WRITE');
+  const { data: eventsAcl } = usePermissions(flow as any, 'eventsAcl', 'WRITE');
   const writeAccess = filesAcl && eventsAcl;
 
   const { resourceType } = useParams<{
