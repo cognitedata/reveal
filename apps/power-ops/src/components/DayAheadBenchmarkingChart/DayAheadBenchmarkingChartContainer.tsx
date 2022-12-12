@@ -62,13 +62,25 @@ export const DayAheadBenchmarkingChartContainer = ({
 
   const formattedData = formatPlotData(data, type, showFirstRuns);
 
+  const getChartTitle = (): string => {
+    return data?.[0] ? `${data[0].label} by method` : 'No data found';
+  };
+  const getChartSubtitle = (): string => {
+    return `Showing ${
+      showFirstRuns ? 'first and' : 'only'
+    } latests runs per day`;
+  };
+
   const benchmarkingLayout = {
     ...layout,
     yaxis: {
       ...layout.yaxis,
       title: {
         standoff: 8,
-        text: `${data[0]?.label} - Difference`,
+        text:
+          type !== 'absolute'
+            ? `${data[0]?.label}: Difference vs ${type}`
+            : `${data[0]?.label}: Absolute`,
         font: {
           size: 10,
         },
@@ -115,8 +127,8 @@ export const DayAheadBenchmarkingChartContainer = ({
         />
       )}
       <CommonChart
-        title={`${data[0]?.label} by method`}
-        subTitle="Based on latest runs"
+        title={getChartTitle()}
+        subTitle={getChartSubtitle()}
         data={formattedData}
         layout={benchmarkingLayout}
         chartStyles={chartStyles}
