@@ -6,14 +6,18 @@ import {
   useDocumentFilters,
   useResetDocumentFilters,
 } from 'app/store/filter/selectors/documentSelectors';
-import { useDocumentAggregateAuthorQuery } from 'app/domain/document/service/queries/aggregates/useDocumentAggregateAuthorQuery';
+import {
+  useDocumentAggregateAuthorQuery,
+  useDocumentAggregateSourceQuery,
+  useDocumentSearchResultQuery,
+} from '@cognite/data-exploration';
 import { useDocumentAggregateFileTypeQuery } from 'app/domain/document/service/queries/aggregates/useDocumentAggregateFileTypeQuery';
-import { useDocumentAggregateSourceQuery } from 'app/domain/document/service/queries/aggregates/useDocumentAggregateSourceQuery';
+
 import { MultiSelectFilter } from 'app/components/Filters/MultiSelectFilter';
 import { useFilterEmptyState } from 'app/store';
 import { MetadataFilterV2 } from '@cognite/data-exploration';
 import isEmpty from 'lodash/isEmpty';
-import { useDocumentSearch } from '@cognite/react-document-search';
+
 import { SPECIFIC_INFO_CONTENT } from 'app/containers/constants';
 
 export const DocumentFilter = ({ ...rest }) => {
@@ -21,11 +25,11 @@ export const DocumentFilter = ({ ...rest }) => {
   const resetDocumentFilters = useResetDocumentFilters();
   const isFiltersEmpty = useFilterEmptyState('document');
 
-  const { results } = useDocumentSearch();
+  const { results } = useDocumentSearchResultQuery({ filter: documentFilter });
 
   const resultWithMetadata = results.map(document => ({
-    ...document.item,
-    metadata: document.item.sourceFile.metadata,
+    ...document,
+    metadata: document.sourceFile.metadata,
   }));
 
   const { data: authorOptions, isError: isAuthorError } =

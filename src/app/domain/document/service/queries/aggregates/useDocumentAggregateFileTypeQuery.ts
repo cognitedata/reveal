@@ -1,4 +1,4 @@
-import { useDocumentTotalAggregates } from '@cognite/react-document-search';
+import { useDocumentTotalAggregates } from '@cognite/data-exploration';
 import { mapAggregatesToFilters } from '../../transformers/mapAggregatesToFilters';
 
 export const useDocumentAggregateFileTypeQuery = () => {

@@ -14,7 +14,6 @@ import {
 } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { DocumentSearchProvider } from '@cognite/react-document-search';
 import RootApp from 'app/containers/App';
 import AntStyles from 'app/styles/Styles';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
@@ -62,39 +61,37 @@ export default () => {
       <SDKProvider sdk={sdk}>
         <ErrorBoundary>
           <QueryClientProvider client={queryClient}>
-            <DocumentSearchProvider sdkClient={sdk}>
-              <SubAppWrapper title="Data Exploration">
-                <AuthWrapper
-                  loadingScreen={<Loader darkMode={false} />}
-                  login={() => loginAndAuthIfNeeded(project, env)}
-                >
-                  <ThemeProvider theme={theme}>
-                    <FlagProvider
-                      apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-                      appName="data-exploration"
-                      projectName={project}
-                      remoteAddress={window.location.hostname}
-                      disableMetrics
-                      refreshInterval={86400}
-                    >
-                      <RecoilRoot>
-                        <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
-                          <BrowserRouter>
-                            <Routes>
-                              <Route path="/:tenant/*" element={<RootApp />} />
-                            </Routes>
-                          </BrowserRouter>
-                          <RecoilDevTools />
-                        </RecoilURLSyncJSON>
-                      </RecoilRoot>
-                    </FlagProvider>
-                  </ThemeProvider>
-                  <GlobalStyle theme={theme} />
-                </AuthWrapper>
-              </SubAppWrapper>
-              <ToastContainer />
-              <ReactQueryDevtools initialIsOpen={false} />
-            </DocumentSearchProvider>
+            <SubAppWrapper title="Data Exploration">
+              <AuthWrapper
+                loadingScreen={<Loader darkMode={false} />}
+                login={() => loginAndAuthIfNeeded(project, env)}
+              >
+                <ThemeProvider theme={theme}>
+                  <FlagProvider
+                    apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                    appName="data-exploration"
+                    projectName={project}
+                    remoteAddress={window.location.hostname}
+                    disableMetrics
+                    refreshInterval={86400}
+                  >
+                    <RecoilRoot>
+                      <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
+                        <BrowserRouter>
+                          <Routes>
+                            <Route path="/:tenant/*" element={<RootApp />} />
+                          </Routes>
+                        </BrowserRouter>
+                        <RecoilDevTools />
+                      </RecoilURLSyncJSON>
+                    </RecoilRoot>
+                  </FlagProvider>
+                </ThemeProvider>
+                <GlobalStyle theme={theme} />
+              </AuthWrapper>
+            </SubAppWrapper>
+            <ToastContainer />
+            <ReactQueryDevtools initialIsOpen={false} />
           </QueryClientProvider>
         </ErrorBoundary>
       </SDKProvider>

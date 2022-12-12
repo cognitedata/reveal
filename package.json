@@ -31,7 +31,6 @@
     "@cognite/data-exploration": "5.62.1",
     "@cognite/data-exploration-v4": "npm:@cognite/data-exploration@4.38.0",
     "@cognite/fas-utils": "^3.2.0-rc.1",
-    "@cognite/react-document-search": "^0.2.0",
     "@cognite/react-errors": "^1.0.4",
     "@cognite/react-feature-flags": "^1.0.0",
     "@cognite/react-picture-annotation": "3.0.1",
