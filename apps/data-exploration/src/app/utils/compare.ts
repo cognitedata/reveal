@@ -9,7 +9,7 @@ export const isObjectEmpty = <T extends Record<string, unknown>>(
     return true;
   }
 
-  const isAllPropertiesInObjectEmpty = Object.keys(object).every(key => {
+  const isAllPropertiesInObjectEmpty = Object.keys(object).every((key) => {
     const value = object[key];
 
     return (

@@ -15,7 +15,7 @@ export const MultiSelectFilter = ({
           const values = newValue?.map(({ value }) => value);
           rest.onChange(values);
         }}
-        value={values?.map(item => ({
+        value={values?.map((item) => ({
           label: item,
           value: item,
         }))}

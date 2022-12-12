@@ -32,19 +32,19 @@ export class SmartOverlayTool {
     click: new EventTrigger<LabelEventHandler>(),
   };
 
-  labelsVisible: boolean = true;
-  pointIndicatorsVisible: boolean = true;
+  labelsVisible = true;
+  pointIndicatorsVisible = true;
   /**
    * Circle size in pixels. Default is 17.
    */
-  circleSize: number = 17;
+  circleSize = 17;
   /**
    * Sets overlay color for newly added labels.
    */
   overlayColor: THREE.Color = new THREE.Color('#fbe50b');
 
-  maxLabelDistance: number = 4;
-  maxPointIndicatorDistance: number = 4;
+  maxLabelDistance = 4;
+  maxPointIndicatorDistance = 4;
   constructor(viewer: Cognite3DViewer) {
     this._htmlOverlayTool = new HtmlOverlayTool(viewer);
   }
@@ -80,14 +80,14 @@ export class SmartOverlayTool {
       textOverlay: textOverlay,
     };
 
-    circleOverlay.addEventListener('mousedown', e => e.stopPropagation());
-    circleOverlay.addEventListener('mouseup', e => e.stopPropagation());
+    circleOverlay.addEventListener('mousedown', (e) => e.stopPropagation());
+    circleOverlay.addEventListener('mouseup', (e) => e.stopPropagation());
 
-    circleOverlay.addEventListener('click', event => {
+    circleOverlay.addEventListener('click', (event) => {
       this._events.click.fire({ targetLabel: label, mouseEvent: event });
     });
 
-    circleOverlay.addEventListener('pointerover', event => {
+    circleOverlay.addEventListener('pointerover', (event) => {
       this._events.hover.fire({
         targetLabel: label,
         mouseEvent: event,
@@ -100,7 +100,7 @@ export class SmartOverlayTool {
       textOverlay.style.opacity = '0';
       overlayWrapper.style.zIndex = 'auto';
     });
-    overlayWrapper.addEventListener('transitionend', e => {
+    overlayWrapper.addEventListener('transitionend', (e) => {
       if (e.propertyName !== 'opacity') return;
 
       if (overlayWrapper.style.opacity === '0') {
@@ -166,7 +166,7 @@ export class SmartOverlayTool {
   set visible(visible: boolean) {
     this._isVisible = visible;
     this._htmlOverlayTool.visible(visible);
-    this._htmlOverlayTool.elements.forEach(element => {
+    this._htmlOverlayTool.elements.forEach((element) => {
       element.element.style.display = visible ? 'block' : 'none';
     });
   }

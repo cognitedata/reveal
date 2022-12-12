@@ -36,7 +36,7 @@ export default function PointSizeSlider({ pointCloudModel }: SliderProps) {
                 min={0.01}
                 max={5}
                 step={0.1}
-                onChange={v => {
+                onChange={(v) => {
                   pointCloudModel.pointSize = v;
                   setSliderValue(v);
                 }}

@@ -61,27 +61,27 @@ export const AssetSelect = ({
   }, [debouncedQuery, searchData, rootSearchData, listData, rootListData]);
 
   const values = rootOnly
-    ? (rootData || []).map(el => ({
+    ? (rootData || []).map((el) => ({
         label: el.name,
         value: el.id,
       }))
     : [
         {
           label: 'Root assets',
-          options: (rootData || []).map(el => ({
+          options: (rootData || []).map((el) => ({
             label: el.name,
             value: el.id,
           })),
         },
         {
           label: 'All assets',
-          options: (data || []).map(el => ({ label: el.name, value: el.id })),
+          options: (data || []).map((el) => ({ label: el.name, value: el.id })),
         },
       ];
 
   const getSelectedItemValues = () => {
     const selectedItemArr = selectedItems
-      ? selectedItems.map(el => ({
+      ? selectedItems.map((el) => ({
           value: el.id,
           label: el.name,
         }))

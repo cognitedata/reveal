@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export type TIME_OPTION_KEY =
   | '10Y'
   | '5Y'
@@ -10,8 +12,6 @@ export type TIME_OPTION_KEY =
   | '6H'
   | '1H'
   | '15M';
-
-import dayjs from 'dayjs';
 
 export const TIME_SELECT: {
   [key in TIME_OPTION_KEY]: {

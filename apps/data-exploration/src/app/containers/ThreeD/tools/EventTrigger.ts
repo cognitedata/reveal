@@ -17,6 +17,6 @@ export class EventTrigger<TListener extends (...args: any[]) => void> {
   }
 
   fire(...args: Parameters<TListener>): void {
-    this._listeners.forEach(listener => listener(...args));
+    this._listeners.forEach((listener) => listener(...args));
   }
 }

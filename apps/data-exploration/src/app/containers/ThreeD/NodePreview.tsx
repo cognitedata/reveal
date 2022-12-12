@@ -122,7 +122,7 @@ export default function NodePreview({
       </StyledAssetInfo>
       <Menu.Divider />
       <Flex alignItems="center" direction="column">
-        {details.map(detail => (
+        {details.map((detail) => (
           <DetailsMenuItem
             key={detail.detailTypeKey}
             details={detail}

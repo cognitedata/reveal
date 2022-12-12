@@ -26,7 +26,7 @@ const oData = (
   const baseUrl = `https://${
     env || 'api'
   }.cognitedata.com/odata/v1/projects/${tenant}`;
-  const filter = ids.map(i => `(Id eq ${i})`).join(' or ');
+  const filter = ids.map((i) => `(Id eq ${i})`).join(' or ');
   switch (type) {
     case 'asset':
       return `${baseUrl}/Assets?$filter=${filter}`;
@@ -53,7 +53,7 @@ export function PowerBIButton({ ids, resourceType }: Props) {
         onClick={() =>
           copyIdsToClipboard(
             oData(
-              ids.map(i => i.id),
+              ids.map((i) => i.id),
               resourceType,
               tenant!,
               env
@@ -92,7 +92,7 @@ export function GrafanaButton({ ids, resourceType }: Props) {
     ids
   );
 
-  const externalIds = data.map(d => d.externalId).filter(Boolean);
+  const externalIds = data.map((d) => d.externalId).filter(Boolean);
 
   const menu = (
     <Menu>

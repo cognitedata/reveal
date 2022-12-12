@@ -170,8 +170,8 @@ Spin.setDefaultIndicator(<Icon type="Loading" />);
 
 export default function AntStyles(props: { children: React.Node }) {
   useEffect(() => {
-    styles.forEach(style => style.use());
-    return () => styles.forEach(style => style.unuse());
+    styles.forEach((style) => style.use());
+    return () => styles.forEach((style) => style.unuse());
   }, []);
 
   return (

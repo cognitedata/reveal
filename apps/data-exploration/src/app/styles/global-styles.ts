@@ -21,9 +21,9 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   }
 
   a {
-    color: ${props => props.theme.actionText};
+    color: ${(props) => props.theme.actionText};
     :hover {
-      color: ${props => props.theme.actionText};
+      color: ${(props) => props.theme.actionText};
     }
   }
   .ant-table {

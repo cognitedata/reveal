@@ -48,11 +48,11 @@ export const ResourceActionsProvider = ({
     [functions, keys]
   );
   const remove = useCallback((key: string) => {
-    setFunctions(funcs => ({ ...funcs, [key]: undefined }));
+    setFunctions((funcs) => ({ ...funcs, [key]: undefined }));
   }, []);
   const add = useCallback(
     (key: string, func: RenderResourceActionsFunction) => {
-      setFunctions(funcs => ({ ...funcs, [key]: func }));
+      setFunctions((funcs) => ({ ...funcs, [key]: func }));
     },
     []
   );

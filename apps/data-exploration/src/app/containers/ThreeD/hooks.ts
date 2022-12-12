@@ -76,7 +76,7 @@ export const useRevisions = <T = Revision3DWithIndex[]>(
       sdk.revisions3D
         .list(modelId)
         .autoPagingToArray({ limit: -1 })
-        .then(res =>
+        .then((res) =>
           res.map((r, rIndex) => ({ ...r, index: res.length - rIndex }))
         ),
     opts
@@ -92,7 +92,7 @@ export const useDefault3DModelRevision = (
 ) => {
   return useRevisions(modelId!, {
     select: (revisions = []) =>
-      revisions.find(r => r.published) ||
+      revisions.find((r) => r.published) ||
       revisions.reduce((prev, current) =>
         prev.createdTime > current.createdTime ? prev : current
       ),
@@ -109,7 +109,7 @@ export const useRevision = (
   >
 ) => {
   return useRevisions(modelId!, {
-    select: (revisions = []) => revisions.find(r => r.id === revisionId),
+    select: (revisions = []) => revisions.find((r) => r.id === revisionId),
     ...opts,
   });
 };
@@ -126,7 +126,7 @@ export const useRevisionIndex = (
     select: (revisions = []) => {
       const index = [...revisions]
         .reverse()
-        .findIndex(r => r.id === revisionId);
+        .findIndex((r) => r.id === revisionId);
       return index >= 0 ? index + 1 : index;
     },
     ...opts,
@@ -184,7 +184,7 @@ export const useInfiniteAssetMappings = (
         nextCursor: models.nextCursor,
         items: models.items
           .filter(({ assetId }) => !!assets[assetId])
-          .map(mapping => ({
+          .map((mapping) => ({
             ...mapping,
             assetName: assets[mapping.assetId].name,
             assetDescription: assets[mapping.assetId].description,
@@ -197,7 +197,7 @@ export const useInfiniteAssetMappings = (
       };
     },
     {
-      getNextPageParam: r => r.nextCursor,
+      getNextPageParam: (r) => r.nextCursor,
       enabled: Boolean(modelId && revisionId),
       ...config,
     }
@@ -242,7 +242,7 @@ export const getAssetMappingsQueryFn = async (
   ).data;
   return {
     nextCursor,
-    items: items.filter(i => !!i.treeIndex),
+    items: items.filter((i) => !!i.treeIndex),
   };
 };
 
@@ -302,7 +302,7 @@ export const fetchAssetMappingsByAssetIdQuery = async (
   modelId: number,
   revisionId: number,
   assetId: number,
-  limit: number = 10,
+  limit = 10,
   options?: FetchQueryOptions<MappingResponse>
 ) => {
   return queryClient.fetchQuery(
@@ -318,7 +318,7 @@ export const fetchAncestorsByNodeIdQuery = async (
   modelId: number,
   revisionId: number,
   nodeId: number,
-  limit: number = 1000,
+  limit = 1000,
   options?: FetchQueryOptions<Node3D[]>
 ): Promise<Node3D[]> => {
   return queryClient.fetchQuery(
@@ -353,7 +353,7 @@ export const fetchClosestAssetIdQuery = async (
   modelId: number,
   revisionId: number,
   nodeId: number,
-  limit: number = 1000,
+  limit = 1000,
   options?: FetchQueryOptions<number | undefined>
 ): Promise<number | undefined> => {
   return queryClient.fetchQuery(
@@ -369,11 +369,11 @@ export const fetchClosestAssetIdQuery = async (
       );
 
       const nodeIds = ancestors
-        .filter(node => node.depth !== 0)
-        .map(node => node.id)
+        .filter((node) => node.depth !== 0)
+        .map((node) => node.id)
         .reverse();
 
-      for (let nodeId of nodeIds) {
+      for (const nodeId of nodeIds) {
         const { assetId } = (await fetchAssetMappingsQuery(
           sdk,
           queryClient,
@@ -384,7 +384,7 @@ export const fetchClosestAssetIdQuery = async (
             // TODO: figure out what happens when a node maps to multiple assets
             limit: 1,
           }
-        ).then(r => r.items[0])) || { assetId: undefined };
+        ).then((r) => r.items[0])) || { assetId: undefined };
         if (assetId) {
           return assetId;
         }
@@ -411,7 +411,8 @@ export const fetchAssetDetails = (
 ) => {
   return queryClient.fetchQuery(
     getAssetDetailsQueryKey(assetId),
-    async () => sdk.assets.retrieve([{ id: assetId }]).then(items => items[0]),
+    async () =>
+      sdk.assets.retrieve([{ id: assetId }]).then((items) => items[0]),
     options
   );
 };

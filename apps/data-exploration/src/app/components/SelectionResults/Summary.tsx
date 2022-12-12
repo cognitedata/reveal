@@ -56,7 +56,7 @@ type Props = {
 export default function Summary({ ids, resourceType }: Props) {
   return (
     <ul key={resourceType}>
-      {ids.map(i => (
+      {ids.map((i) => (
         <Item id={i.id} resourceType={resourceType} />
       ))}
     </ul>

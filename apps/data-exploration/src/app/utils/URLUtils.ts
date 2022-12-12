@@ -98,8 +98,8 @@ export const useSearchParamString = (
 ) => {
   return useSearchParam<string>(key, {
     replace: opts?.replace,
-    serialize: s => s,
-    deserialize: s => s,
+    serialize: (s) => s,
+    deserialize: (s) => s,
   });
 };
 
@@ -109,13 +109,13 @@ export const useSearchParamNumber = (
 ) => {
   return useSearchParam<number>(key, {
     replace: opts?.replace,
-    serialize: n => {
+    serialize: (n) => {
       if (!Number.isFinite(n)) {
         return null;
       }
       return `${n}`;
     },
-    deserialize: s => {
+    deserialize: (s) => {
       if (!s) {
         return null;
       }

@@ -120,7 +120,7 @@ export const fitCameraToAsset = async (
   );
 
   const boundingBoxNodes = await Promise.all(
-    mappings.items.map(m =>
+    mappings.items.map((m) =>
       fetchBoundingBoxByNodeIdQuery(
         sdk,
         queryClient,
@@ -246,7 +246,7 @@ export async function getBoundingBoxesByNodeIds(
   const mappedBoundingBoxPromises = sdk.revisions3D.retrieve3DNodes(
     model.modelId,
     model.revisionId,
-    nodeIds.map(id => {
+    nodeIds.map((id) => {
       return { id };
     })
   );
@@ -254,8 +254,8 @@ export async function getBoundingBoxesByNodeIds(
   const mappedBoundingBoxes = await mappedBoundingBoxPromises;
   mappedBoundingBoxes
     .flat()
-    .filter(node => node.boundingBox)
-    .forEach(node => {
+    .filter((node) => node.boundingBox)
+    .forEach((node) => {
       const box = toThreeBox3(node.boundingBox!);
       box.applyMatrix4(model.getModelTransformation());
       boundingBoxMap.set(node.id, { node, bbox: box });
@@ -309,8 +309,8 @@ const GREP_STRING_SPLITTER = /\s/;
 export function grepContains(contentSet: Set<string>, querySet: Set<string>) {
   const content = [...contentSet];
   const query = [...querySet];
-  return query.every(queryPart =>
-    content.find(content_part => content_part.includes(queryPart))
+  return query.every((queryPart) =>
+    content.find((content_part) => content_part.includes(queryPart))
   );
 }
 
@@ -320,7 +320,7 @@ export function prepareSearchString(s: string): Set<string> {
       .trim()
       .toLocaleLowerCase()
       .split(GREP_STRING_SPLITTER)
-      .filter(s => s.length > 0)
+      .filter((s) => s.length > 0)
   );
 }
 
@@ -371,8 +371,11 @@ export const getStateUrl = ({
   }
   if (secondaryModels) {
     const selectedModels = secondaryModels
-      .filter(model => !!model.applied)
-      .map(model => ({ modelId: model.modelId, revisionId: model.revisionId }));
+      .filter((model) => !!model.applied)
+      .map((model) => ({
+        modelId: model.modelId,
+        revisionId: model.revisionId,
+      }));
     searchParams.set(
       THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY,
       JSON.stringify(selectedModels)

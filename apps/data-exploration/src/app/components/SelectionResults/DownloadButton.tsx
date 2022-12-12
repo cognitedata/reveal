@@ -79,7 +79,7 @@ function TimeseriesDownloadButton({ ids }: Pick<Props, 'ids'>) {
         ids.map(({ id }) =>
           sdk.datapoints
             .retrieve({ items: [{ id }], limit })
-            .then(r => r[0].datapoints)
+            .then((r) => r[0].datapoints)
         )
       ),
     { enabled: downloading && includeDatapoints }
