@@ -70,6 +70,7 @@ export const AssetPreview = ({
   const isSelected = (item: ResourceItem) => {
     return resourcesState.some(
       (el) =>
+        // eslint-disable-next-line lodash/prefer-matches
         el.state === 'selected' && el.id === item.id && el.type === item.type
     );
   };

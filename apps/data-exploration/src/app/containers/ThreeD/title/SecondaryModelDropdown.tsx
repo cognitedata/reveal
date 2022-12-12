@@ -101,6 +101,7 @@ const SecondaryModelDropdown = ({
     ]);
 
     if (
+      // eslint-disable-next-line lodash/prefer-some
       secondaryModels.findIndex(
         ({ modelId: testModelId }) => nextState.modelId === testModelId
       ) === -1 &&

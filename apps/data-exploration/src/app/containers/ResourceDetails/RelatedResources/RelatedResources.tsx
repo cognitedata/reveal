@@ -134,9 +134,9 @@ export const RelatedResources = ({
           <Select
             title="Filter By:"
             value={selectedType}
-            onChange={(type: TypeOption) => {
-              setSelectedType(type);
-              trackUsage(EXPLORATION.SELECT.FILTER_BY, { type });
+            onChange={(newType: TypeOption) => {
+              setSelectedType(newType);
+              trackUsage(EXPLORATION.SELECT.FILTER_BY, { type: newType });
             }}
             options={relatedResourceTypes}
             styles={selectStyles}

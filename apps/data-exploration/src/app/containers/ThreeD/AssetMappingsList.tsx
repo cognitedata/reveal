@@ -11,6 +11,7 @@ import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { AugmentedMapping } from './hooks';
 import { prepareSearchString, grepContains } from './utils';
 import { CogniteError } from '@cognite/sdk';
+import noop from 'lodash/noop';
 
 const FeedbackFlex = styled(Flex)`
   padding-top: 30px;
@@ -106,7 +107,7 @@ export const AssetMappingsList = ({
             <InfiniteLoader
               isItemLoaded={isItemLoaded}
               itemCount={query ? filteredAssets.length : itemCount}
-              loadMoreItems={() => {}}
+              loadMoreItems={noop}
             >
               {({ onItemsRendered, ref }) => (
                 <List

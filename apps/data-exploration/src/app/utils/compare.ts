@@ -1,6 +1,6 @@
 import isObject from 'lodash/isObject';
 import isEmpty from 'lodash/isEmpty';
-import { isArray } from 'lodash';
+import isArray from 'lodash/isArray';
 
 export const isObjectEmpty = <T extends Record<string, unknown>>(
   object?: T

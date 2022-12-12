@@ -16,7 +16,7 @@ export const Breadcrumbs = ({ currentResource }: BreadcrumbsProps) => {
 
   const handleBreadcrumbClick = (path: string, index: number) => {
     // Keep history until the clicked item
-    const history = [...location.state?.history];
+    const history = [...(location.state?.history || [])];
     history.splice(index, history.length - index);
 
     navigate(createLink(removeProjectFromPath(path)), {

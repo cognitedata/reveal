@@ -7,6 +7,7 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import { useDebounce } from 'use-debounce';
 import { Select } from '@cognite/data-exploration';
+import noop from 'lodash/noop';
 // import { Props, OptionTypeBase } from 'react-select';
 
 type AssetInfo = { value: number; name: string };
@@ -18,7 +19,7 @@ export type AssetSelectProps = any & {
 };
 
 export const AssetSelect = ({
-  onAssetSelected = () => {},
+  onAssetSelected = noop,
   selectedAssetIds,
   rootOnly,
   ...extraProps

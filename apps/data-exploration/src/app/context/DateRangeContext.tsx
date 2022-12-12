@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { TIME_SELECT } from '@cognite/data-exploration';
+import noop from 'lodash/noop';
 
 export type DateRangeObserver = {
   range: [Date, Date];
@@ -8,7 +9,7 @@ export type DateRangeObserver = {
 
 const DateRangeContext = React.createContext({
   range: TIME_SELECT['2Y'].getTime(),
-  setRange: () => {},
+  setRange: noop,
 } as DateRangeObserver);
 
 export const useDateRange = (): [

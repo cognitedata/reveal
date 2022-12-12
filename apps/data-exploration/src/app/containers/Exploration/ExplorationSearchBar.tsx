@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from '@cognite/cogs.js';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { useQueryString } from '@data-exploration-app/hooks/hooks';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';

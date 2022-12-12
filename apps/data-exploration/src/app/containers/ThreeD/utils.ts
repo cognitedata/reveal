@@ -256,6 +256,7 @@ export async function getBoundingBoxesByNodeIds(
     .flat()
     .filter((node) => node.boundingBox)
     .forEach((node) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const box = toThreeBox3(node.boundingBox!);
       box.applyMatrix4(model.getModelTransformation());
       boundingBoxMap.set(node.id, { node, bbox: box });
@@ -299,7 +300,10 @@ export const findClosestAsset = async (
         closestAssetId
       );
       return assetDetails ? closestAssetId : undefined;
-    } catch {}
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Error in ThreeD:', e);
+    }
   }
 
   return undefined;

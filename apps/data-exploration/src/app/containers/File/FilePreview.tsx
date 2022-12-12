@@ -56,6 +56,7 @@ export const FilePreview = ({
   );
   const navigate = useNavigate();
   const isActive = resourcesState.some(
+    // eslint-disable-next-line lodash/prefer-matches
     (el) => el.state === 'active' && el.id === fileId && el.type === 'file'
   );
   const { flow } = getFlow();

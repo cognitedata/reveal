@@ -10,6 +10,7 @@ import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDCon
 import * as THREE from 'three';
 import { useQueryClient } from 'react-query';
 import { getAssetQueryKey } from '@data-exploration-app/containers/ThreeD/utils';
+import noop from 'lodash/noop';
 
 type OverlayToolProps = {
   viewer: Cognite3DViewer;
@@ -56,7 +57,7 @@ const OverlayTool = ({
       label.textOverlay.innerText = asset[0]?.name ?? 'undefined';
     });
 
-    smartOverlayTool.on('click', onLabelClick ?? (() => {}));
+    smartOverlayTool.on('click', onLabelClick ?? noop);
   }, [threeDModel, onLabelClick, smartOverlayTool, sdk, viewer, queryClient]);
 
   return <></>;

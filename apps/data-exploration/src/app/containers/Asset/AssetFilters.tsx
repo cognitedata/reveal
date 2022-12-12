@@ -30,11 +30,13 @@ export const useAssetMetadataKeys = (
 ) => {
   const sdk = useSDK();
 
+  // eslint-disable-next-line no-param-reassign
   filter = transformNewFilterToOldFilter(filter);
 
   const { data, ...rest } = useQuery(
     ['assets', 'aggregate', 'metadataKeys', filter],
     async () =>
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       sdk.assets.aggregate({ filter, aggregate: 'metadataKeys' }),
     {

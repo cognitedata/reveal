@@ -7,13 +7,14 @@ import {
   GlobalFilter,
   GlobalFilterKeys,
 } from '@data-exploration-app/store/filter/types';
-import { includes, isArray } from 'lodash';
+import includes from 'lodash/includes';
+import isArray from 'lodash/isArray';
 import { DefaultValue, GetRecoilValue, SetRecoilState } from 'recoil';
 
 const isCommonKey = (key: string) => includes(COMMON_FILTER_KEYS, key);
 
 const getCategoryValues = <T>(newValue: T) => {
-  return Object.entries(newValue)?.reduce(
+  return Object.entries(newValue as Record<string, unknown>)?.reduce(
     (accumulator, [key, value]) => {
       const categoryKey = isCommonKey(key) ? 'common' : 'specific';
 

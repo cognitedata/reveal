@@ -1,5 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { ids } from 'cogs-variables';
+import { ids } from '../../cogs-variables';
 import React, { useEffect } from 'react';
 import {
   ConfigProvider,

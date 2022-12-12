@@ -100,6 +100,8 @@ export const ThreeDView = ({ modelId }: Props) => {
       viewer.on('sceneRendered', fn);
       return () => viewer.off('sceneRendered', fn);
     }
+
+    return undefined;
   }, [setViewState, viewer]);
 
   const onViewerClick = useCallback(
@@ -231,26 +233,33 @@ export const ThreeDView = ({ modelId }: Props) => {
             initialViewerState={initialUrlViewState}
             onViewerClick={onViewerClick}
           >
-            {({ pointCloudModel, threeDModel, viewer }) => (
+            {({
+              pointCloudModel,
+              threeDModel: revealThreeDModel,
+              viewer: revealViewer,
+            }) => (
               <>
                 <LoadSecondaryModels
                   secondaryModels={secondaryModels}
-                  viewer={viewer}
+                  viewer={revealViewer}
                 />
                 <MouseWheelAction
                   isAssetSelected={!!selectedAssetId}
-                  viewer={viewer}
+                  viewer={revealViewer}
                 />
-                <OverlayTool viewer={viewer} onLabelClick={onLabelClick} />
+                <OverlayTool
+                  viewer={revealViewer}
+                  onLabelClick={onLabelClick}
+                />
                 <StyledToolBar>
                   <ExpandButton
-                    viewer={viewer}
-                    model={threeDModel || pointCloudModel}
+                    viewer={revealViewer}
+                    model={revealThreeDModel || pointCloudModel}
                   />
                   <FocusAssetButton
                     selectedAssetId={selectedAssetId}
-                    viewer={viewer}
-                    threeDModel={threeDModel}
+                    viewer={revealViewer}
+                    threeDModel={revealThreeDModel}
                   />
                   <StyledToolBarDivider />
                   <PointSizeSlider pointCloudModel={pointCloudModel} />
@@ -259,15 +268,15 @@ export const ThreeDView = ({ modelId }: Props) => {
                       labelsVisibility={labelsVisibility}
                       setLabelsVisibility={setLabelsVisibility}
                       overlayTool={overlayTool}
-                      threeDModel={threeDModel}
+                      threeDModel={revealThreeDModel}
                     />
                   )}
                   <Slicer
-                    viewer={viewer}
-                    viewerModel={threeDModel || pointCloudModel}
+                    viewer={revealViewer}
+                    viewerModel={revealThreeDModel || pointCloudModel}
                   />
                   <PointToPointMeasurementButton
-                    viewer={viewer}
+                    viewer={revealViewer}
                     nodesSelectable={nodesSelectable}
                     setNodesSelectable={setNodesSelectable}
                   />
@@ -281,14 +290,14 @@ export const ThreeDView = ({ modelId }: Props) => {
                   <HelpButton />
                 </StyledToolBar>
                 <SidebarContainer gap={15}>
-                  {threeDModel && (
+                  {revealThreeDModel && (
                     <AssetMappingsSidebar
                       modelId={modelId}
                       revisionId={revisionId}
                       selectedAssetId={selectedAssetId}
                       setSelectedAssetId={setSelectedAssetId}
-                      viewer={viewer}
-                      threeDModel={threeDModel}
+                      viewer={revealViewer}
+                      threeDModel={revealThreeDModel}
                     />
                   )}
                 </SidebarContainer>
@@ -299,8 +308,8 @@ export const ThreeDView = ({ modelId }: Props) => {
                       closePreview={() => {
                         setSelectedAssetId(undefined);
                       }}
-                      openDetails={(tab?: ResourceTabType) => {
-                        setTab(tab);
+                      openDetails={(newTab?: ResourceTabType) => {
+                        setTab(newTab);
                         setAssetDetailsExpanded(true);
                       }}
                     />

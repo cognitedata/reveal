@@ -22,7 +22,7 @@ export const FileFilters = ({ ...rest }) => {
   const resetFileFilters = useResetFileFilters();
   const isFiltersEmpty = useFilterEmptyState('file');
 
-  const { data: items = [] } = useList('files', {
+  const { data: items = [] } = useList<any>('files', {
     filter: transformNewFilterToOldFilter(fileFilter),
     limit: 1000,
   });
@@ -76,6 +76,7 @@ export const FileFilters = ({ ...rest }) => {
           value={(fileFilter as any).directoryPrefix}
           setValue={(newPrefix) =>
             setFileFilter({
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               directoryPrefix: newPrefix,
             })

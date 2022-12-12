@@ -27,6 +27,7 @@ import { useDefault3DModelRevision } from './hooks';
 import { Loader } from '@cognite/cogs.js';
 import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
 import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
+import noop from 'lodash/noop';
 
 export type SecondaryModelOptions = {
   modelId: number;
@@ -77,20 +78,20 @@ export const ThreeDContext = createContext<ThreeDContext>({
   assetDetailsExpanded: false,
   assetHighlightMode: false,
   splitterColumnWidth: DEFAULT_COLUMN_WIDTH,
-  setSelectedAssetId: () => {},
-  setAssetDetailsExpanded: () => {},
-  setViewState: () => {},
-  setSlicingState: () => {},
-  setViewer: () => {},
-  setOverlayTool: () => {},
-  set3DModel: () => {},
-  setPointCloudModel: () => {},
-  setSplitterColumnWidth: () => {},
-  setRevisionId: () => {},
-  setTab: () => {},
+  setSelectedAssetId: noop,
+  setAssetDetailsExpanded: noop,
+  setViewState: noop,
+  setSlicingState: noop,
+  setViewer: noop,
+  setOverlayTool: noop,
+  set3DModel: noop,
+  setPointCloudModel: noop,
+  setSplitterColumnWidth: noop,
+  setRevisionId: noop,
+  setTab: noop,
   secondaryModels: [],
-  setSecondaryModels: () => {},
-  setAssetHighlightMode: () => {},
+  setSecondaryModels: noop,
+  setAssetHighlightMode: noop,
 });
 ThreeDContext.displayName = 'ThreeDContext';
 
@@ -277,7 +278,10 @@ export const ThreeDContextProvider = ({
         DETAILS_COLUMN_WIDTH,
         `${splitterColumnWidth}`
       );
-    } catch {}
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Error in ThreeDContext', e);
+    }
   }, [splitterColumnWidth]);
 
   if (error) {

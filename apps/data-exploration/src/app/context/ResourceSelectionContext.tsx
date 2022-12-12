@@ -7,6 +7,7 @@ import {
   EventFilter,
   SequenceFilter,
 } from '@cognite/sdk';
+import noop from 'lodash/noop';
 
 export type ResourceSelectionMode = 'single' | 'multiple' | 'none';
 export type ResourceItemState = ResourceItem & {
@@ -146,7 +147,7 @@ export const useSelectedResource = () => {
   };
 };
 
-const defaultOnSelect = () => {};
+const defaultOnSelect = noop;
 
 export type ResourceSelectionProps = {
   /**
