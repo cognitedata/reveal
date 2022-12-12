@@ -8,7 +8,7 @@ import { FileContextualizationContextProvider } from 'context/FileContextualizat
 import { SDKProvider } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { Flow, AppContextProvider, OverrideURLMap } from './AppContext';
-import { Tooltip } from '@cognite/cogs.js';
+import { Tooltip, Tabs } from '@cognite/cogs.js';
 import { MetricsMetadata } from 'hooks/useMetrics';
 
 export type DataExplorationProviderProps = {
@@ -37,6 +37,15 @@ export const DataExplorationProvider = ({
     Tooltip.defaultProps = {
       ...Tooltip.defaultProps,
       appendTo: () => document.getElementsByClassName(styleScopeId).item(0)!,
+    };
+
+    // defaultProps does not exist on type
+    // @ts-expect-error
+    Tabs.defaultProps = {
+      // @ts-expect-error
+      ...Tabs.defaultProps,
+      getPopupContainer: () =>
+        document.getElementsByClassName(styleScopeId).item(0)!,
     };
   }, [styleScopeId]);
 
