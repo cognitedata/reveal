@@ -1,18 +1,20 @@
 @Library('jenkins-helpers') _
 
-// This is your FAS staging app id. Staging deployments are protected by Cognite
-// IAP, meaning they're only accessible to Cogniters.
-// static final String STAGING_APP_ID = 'platypus-staging'
+// This is all the applications in the monorepo. Register your application name here
+// in addition to updating the 'PROPECTION_APP_IDS' & 'PREVIEW_PACKAGE_NAMES'
+def APPLICATIONS = ['platypus']
 
 // This is your FAS production app id.
 // At this time, there is no production build for the demo app.
 // static final String PRODUCTION_APP_ID = 'cdf-solutions-ui'
 static final Map<String, String> PRODUCTION_APP_IDS = [
   'platypus': "cdf-solutions-ui",
+  // 'data-exploration': "cdf-data-exploration",
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
-  'platypus': "@cognite/cdf-solutions-ui"
+  'platypus': "@cognite/cdf-solutions-ui",
+  // 'data-exploration': "@cognite/cdf-data-exploration",
 ]
 
 // This is your FAS app identifier (repo) shared across both production and staging apps
@@ -77,23 +79,48 @@ final boolean isPullRequest = !!env.CHANGE_ID
 /**
  * Get list of affected projects.
  *
- * @param target Select the specific target (build | test)
- * @param select Select the subset of the returned json document (e.g., --selected=projects)
- *
  * @return Array List of affected items
  */
-def getAffectedProjects(boolean isPullRequest = true, String target = 'build', String select = 'tasks.target.project') {
-  def affected
+def getAffectedProjects(boolean isPullRequest = true, boolean isMaster = false, boolean isRelease = false) {
+  if (isRelease) {
+    for (int i = 0; i < APPLICATIONS.size(); i++) {
+      if (env.BRANCH_NAME.contains(APPLICATIONS[i])) {
+        print "[AFFECTED]: Found release application: ${APPLICATIONS[i]}"
+        return APPLICATIONS[i].split() // splitting to turn a string into an array (e.g., 'platypus' -> [platypus])
+      }
+    }
 
-  if (isPullRequest) {
-    affected = sh(script: "npx nx print-affected --base=origin/${env.CHANGE_TARGET} --plain --target=${target} --select=${select}", returnStdout: true)
-  } else {
-    affected = sh(script: "npx nx print-affected --base=HEAD~1 --plain --target=${target} --select=${select}", returnStdout: true)
+    print "[AFFECTED]: No matching applications found in release branch name, try either of: ${APPLICATIONS.join(', ')}"
+    return []
   }
 
-  print "[NX] Affected projects: ${affected}"
+  if (isPullRequest || isMaster) {
+    def target = 'build'
+    def select = 'tasks.target.project'
 
-  return affected.replaceAll('[\r\n]+', '').split(', ')
+    def affected
+
+    // Using the NX's affected tree to determine which applications were changed in the branch.
+    // The 'base' value is derived from the NX documentation, see: https://nx.dev/recipes/ci/monorepo-ci-jenkins
+    if (isPullRequest) {
+      affected = sh(script: "npx nx print-affected --base=origin/${env.CHANGE_TARGET} --plain --target=${target} --select=${select}", returnStdout: true)
+    }
+    if (isMaster) {
+      affected = sh(script: "npx nx print-affected --base=HEAD~1 --plain --target=${target} --select=${select}", returnStdout: true)
+    }
+
+    if (!affected) {
+      print "[AFFECTED:NX] No affected applications were found!"
+      return []
+    }
+
+    print "[AFFECTED:NX] Affected projects: ${affected}"
+
+    return affected.replaceAll('[\r\n]+', '').split(', ')
+  }
+
+  print "[AFFECTED]: Oh no! You reached an edge-case that should not have been met. Contact your friends in #frontend for help (branch name: ${env.BRANCH_NAME})"
+  return []
 }
 
 def pods = { body ->
@@ -143,6 +170,7 @@ pods {
   ) {
     dir('main') {
       stage('git setup') {
+        // NX needs the references to the master in order to check affected projects.
         withCredentials([usernamePassword(credentialsId: 'githubapp', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
           sh("git config --global credential.helper '!f() { sleep 1; echo \"username=${GH_USER}\"; echo \"password=${GITHUB_TOKEN}\"; }; f'")
           sh("git fetch origin master:refs/remotes/origin/master")
@@ -157,7 +185,7 @@ pods {
               return;
             }
 
-            def projects = getAffectedProjects(isPullRequest)
+            def projects = getAffectedProjects(isPullRequest, isMaster, isRelease)
 
             if (projects.contains('platypus')) {
               stageWithNotify("Build and deploy Storyboor for: 'platypus'") {
@@ -179,7 +207,7 @@ pods {
               return
             }
 
-            def projects = getAffectedProjects(isPullRequest)
+            def projects = getAffectedProjects(isPullRequest, isMaster, isRelease)
 
             for (int i = 0; i < projects.size(); i++) {
               def packageName = PREVIEW_PACKAGE_NAMES[projects[i]]
@@ -187,6 +215,13 @@ pods {
               if (packageName == null) {
                 print "No preview available for '${projects[i]}'"
                 continue
+              }
+
+              dir("apps/${projects[i]}") {
+                // Run the yarn install in the app in cases of local packages.json
+                if (fileExists("yarn.lock")) {
+                  yarn.setup()
+                }
               }
 
               stageWithNotify("Build and deploy PR for: ${projects[i]}") {
@@ -214,7 +249,7 @@ pods {
               return;
             }
 
-            def projects = getAffectedProjects(isPullRequest) 
+            def projects = getAffectedProjects(isPullRequest, isMaster, isRelease) 
 
             for (int i = 0; i < projects.size(); i++) {
               def productionAppId = PRODUCTION_APP_IDS[projects[i]];
@@ -222,6 +257,13 @@ pods {
               if (productionAppId == null) {
                 print "No release available for '${projects[i]}'"
                 continue;
+              }
+
+              dir("apps/${projects[i]}") {
+                // Run the yarn install in the app in cases of local packages.json
+                if (fileExists("yarn.lock")) {
+                  yarn.setup()
+                }
               }
 
               stageWithNotify("Publish production build: ${projects[i]}") {
