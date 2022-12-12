@@ -1,47 +1,48 @@
-import { ResourceItem } from 'types';
 import React from 'react';
 import { Document, DocumentTable } from '@cognite/react-document-table';
-import { useList } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
+import { useResourceResults } from 'containers';
+import { InternalFilesFilters } from 'domain/files/internal';
 import { docTypes } from './docTypes';
 
-const FileGroupingTable = ({
-  parentResource,
-  onItemClicked,
-}: {
-  parentResource?: ResourceItem;
+type FileGroupingTableProps = {
+  query?: string;
+  filter: InternalFilesFilters;
+  currentView: string;
+  setCurrentView: (view: string) => void;
   onItemClicked: (file: any) => void;
-}) => {
-  const { data: fileData } = useList<FileInfo>('files', {
-    limit: 1000,
-    filter: {
-      assetSubtreeIds: parentResource ? [{ id: parentResource.id }] : [],
-    },
-  });
+};
 
-  const modifiedData: Document[] =
-    fileData?.map(file => {
-      const {
-        id,
-        name: fileName,
-        metadata,
-        directory,
-        source,
-        uploaded,
-      } = file;
-      return {
-        id,
-        fileName,
-        metadata,
-        directory,
-        source,
-        uploaded,
-      };
-    }) ?? [];
+const convertFilesToDocs = (files: FileInfo[] = []): Document[] => {
+  return files?.map(file => {
+    const { id, name: fileName, metadata, directory, source, uploaded } = file;
+    return {
+      id,
+      fileName,
+      metadata,
+      directory,
+      source,
+      uploaded,
+    };
+  });
+};
+
+const FileGroupingTable = ({
+  query,
+  filter,
+  onItemClicked,
+}: FileGroupingTableProps) => {
+  const { items: files } = useResourceResults<FileInfo>(
+    'files',
+    query,
+    filter,
+    1000
+  );
+  const docs: Document[] = convertFilesToDocs(files);
 
   return (
     <DocumentTable
-      docs={modifiedData}
+      docs={docs}
       docTypes={docTypes}
       handleDocumentClick={onItemClicked}
     />

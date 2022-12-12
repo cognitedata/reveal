@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FileInfo } from '@cognite/sdk';
 import { FileTable } from 'containers/Files';
 import { ResourceItem, convertResourceType } from 'types';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
-import FileGroupingTable from 'containers/Files/FileGroupingTable/FileGroupingTable';
 import { FileToolbar } from './FileToolbar';
 import { useResourceResults } from '..';
 import { EmptyState } from 'components/EmpyState/EmptyState';
@@ -18,10 +17,8 @@ import { useResultCount } from 'components';
 export const FileSearchResults = ({
   query = '',
   filter = {},
-
   relatedResourceType,
   parentResource,
-  isGroupingFilesEnabled,
   showCount = false,
   allowEdit = false,
   onClick,
@@ -42,26 +39,6 @@ export const FileSearchResults = ({
   onClick: (item: FileInfo) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 }) => {
-  // TODO: Remove this when migrated
-  // if (filter.assetSubtreeIds) {
-  //   filter = {
-  //     ...filter,
-  //     assetSubtreeIds: filter?.assetSubtreeIds?.map(({ value }: any) => ({
-  //       id: value,
-  //     })),
-  //   };
-  // }
-
-  const [currentView, setCurrentView] = useState<string>(() => {
-    if (
-      Boolean(parentResource) &&
-      relatedResourceType === 'linkedResource' &&
-      isGroupingFilesEnabled
-    ) {
-      return 'tree';
-    }
-    return 'list';
-  });
   const api = convertResourceType('file');
   const { canFetchMore, fetchMore, items, isFetched } =
     useResourceResults<FileInfo>(api, query, filter);
@@ -84,54 +61,37 @@ export const FileSearchResults = ({
       totalCount={itemCount}
       isHaveParent={Boolean(parentResource)}
       relatedResourceType={relatedResourceType}
-      isGroupingFilesEnabled={isGroupingFilesEnabled}
       onFileClicked={file => {
         onClick(file);
         return true;
       }}
-      currentView={currentView}
-      onViewChange={setCurrentView}
       allowEdit={allowEdit}
     />
   );
 
   return (
-    <>
-      {currentView !== 'list' ? (
-        <StyledTableHeader>{tableHeaders}</StyledTableHeader>
-      ) : null}
-      {currentView === 'tree' && (
-        <FileGroupingTable
-          parentResource={parentResource}
-          onItemClicked={file => onClick(file)}
+    <FileTable
+      selectedRows={selectedRow}
+      id="file-search-results"
+      tableHeaders={
+        <StyledTableHeader justifyContent="flex-end">
+          {tableHeaders}
+        </StyledTableHeader>
+      }
+      tableSubHeaders={
+        <AppliedFiltersTags
+          filter={filter}
+          onFilterChange={onFilterChange}
+          icon="Document"
         />
-      )}
-
-      {currentView === 'list' && (
-        <FileTable
-          selectedRows={selectedRow}
-          id="file-search-results"
-          tableHeaders={
-            <StyledTableHeader justifyContent="flex-end">
-              {tableHeaders}
-            </StyledTableHeader>
-          }
-          tableSubHeaders={
-            <AppliedFiltersTags
-              filter={filter}
-              onFilterChange={onFilterChange}
-              icon="Document"
-            />
-          }
-          data={items}
-          onRowClick={file => onClick(file)}
-          fetchMore={fetchMore}
-          showLoadButton
-          hasNextPage={canFetchMore}
-          {...rest}
-        />
-      )}
-    </>
+      }
+      data={items}
+      onRowClick={file => onClick(file)}
+      fetchMore={fetchMore}
+      showLoadButton
+      hasNextPage={canFetchMore}
+      {...rest}
+    />
   );
 };
 

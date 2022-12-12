@@ -101,7 +101,8 @@ export const useDatapointFromTimeseries = <T extends ResourceType>(
 export const useResourceResults = <T extends ResourceType>(
   api: SdkResourceType,
   query?: string,
-  filter?: any
+  filter?: any,
+  limit: number = PAGE_SIZE
   // dateRange: [Date, Date] | undefined = TIME_SELECT['2Y'].getTime(),
   // hideEmptyData?: boolean
 ) => {
@@ -117,7 +118,7 @@ export const useResourceResults = <T extends ResourceType>(
     isFetchingNextPage: listIsFetchingMore,
     fetchNextPage: listFetchMore,
     isFetching: isFetchingList,
-  } = useInfiniteList<T>(api, PAGE_SIZE, filter, {
+  } = useInfiniteList<T>(api, limit, filter, {
     enabled: !searchEnabled,
   });
   const listItems = useMemo(
@@ -136,7 +137,7 @@ export const useResourceResults = <T extends ResourceType>(
   } = useInfiniteSearch<T>(
     api,
     query!,
-    PAGE_SIZE,
+    limit,
     Object.keys(filter).length > 0 ? filter : undefined,
     {
       enabled: searchEnabled,

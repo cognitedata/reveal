@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
-import { Button, SegmentedControl } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
@@ -15,23 +15,14 @@ import { CLOSE_DROPDOWN_EVENT } from 'utils';
 import { AppContext } from 'context/AppContext';
 import { RelatedResourceType } from 'hooks';
 
-export const DATA_EXPLORATION_DOCUMENT_CATEGORISATION =
-  'DATA_EXPLORATION_document_categorisation';
 export const FileToolbar = ({
   onFileClicked,
-  isHaveParent,
-  isGroupingFilesEnabled = false,
-  onViewChange,
-  currentView = 'list',
-  relatedResourceType,
   showCount = false,
   allowEdit = false,
   loadedCount = 0,
   totalCount = 0,
 }: {
   onFileClicked?: (file: FileInfo) => boolean;
-  onViewChange?: (view: string) => void;
-  currentView?: string;
   isHaveParent?: boolean;
   isGroupingFilesEnabled?: boolean;
   relatedResourceType?: RelatedResourceType;
@@ -74,31 +65,6 @@ export const FileToolbar = ({
             Upload
           </UploadButton>
         )}
-        {isGroupingFilesEnabled ? (
-          <SegmentedControl
-            onButtonClicked={onViewChange}
-            currentKey={currentView}
-          >
-            {isHaveParent &&
-            relatedResourceType === 'linkedResource' &&
-            isGroupingFilesEnabled ? (
-              <SegmentedControl.Button
-                key="tree"
-                icon="Tree"
-                title="Tree"
-                aria-label="Tree"
-              />
-            ) : (
-              <div />
-            )}
-            <SegmentedControl.Button
-              key="list"
-              icon="List"
-              title="List"
-              aria-label="List"
-            />
-          </SegmentedControl>
-        ) : null}
       </SearchResultToolbar>
       <FileUploaderModal
         key={uuid()}

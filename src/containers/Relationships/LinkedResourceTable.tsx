@@ -9,7 +9,7 @@ import { FileLinkedSearchResults } from 'containers/SearchResults/FileSearchResu
 import { SequenceLinkedSearchResults } from 'containers/SearchResults/SequenceSearchResults/SequenceLinkedSearchResults';
 
 export const LinkedResourceTable = ({
-  // isGroupingFilesEnabled,
+  isGroupingFilesEnabled,
   type,
   parentResource,
   onItemClicked,
@@ -46,21 +46,10 @@ export const LinkedResourceTable = ({
       return (
         <FileLinkedSearchResults
           defaultFilter={filter}
+          isGroupingFilesEnabled={isGroupingFilesEnabled}
           onClick={el => onItemClicked(el.id)}
         />
       );
-    // Keeping this for now, as some features are gonna be re-worked on in the near future.
-    // return (
-    //   <FileSearchResults
-    //     isGroupingFilesEnabled={isGroupingFilesEnabled}
-    //     relatedResourceType="linkedResource"
-    //     parentResource={parentResource}
-    //     filter={filter}
-    //     onClick={el => onItemClicked(el.id)}
-    //     {...selectionMode}
-    //     hideColumnToggle
-    //   />
-    // );
     case 'sequence':
       return (
         <SequenceLinkedSearchResults
