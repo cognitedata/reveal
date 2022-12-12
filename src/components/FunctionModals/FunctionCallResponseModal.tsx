@@ -1,9 +1,7 @@
-import React, { SyntheticEvent } from 'react';
+import React from 'react';
 import { Modal, Alert } from 'antd';
 import { Icon, Button } from '@cognite/cogs.js';
 import { CallResponse } from 'types/Types';
-import { useQueryCache } from 'react-query';
-import { responseKey } from 'utils/queryKeys';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import { useResponse } from 'utils/hooks';
 
@@ -46,16 +44,10 @@ function ModalBody({ response, error, fetched }: BodyProps) {
 }
 
 export default function ViewResponseModal({ id, callId, onCancel }: Props) {
-  const queryCache = useQueryCache();
-  const { data: response, error, isFetched, isFetching } = useResponse({
+  const { data: response, error, isFetched } = useResponse({
     id,
     callId,
   });
-
-  const update = (e: SyntheticEvent) => {
-    e.preventDefault();
-    queryCache.invalidateQueries(responseKey({ id, callId }));
-  };
 
   return (
     <Modal
@@ -72,14 +64,6 @@ export default function ViewResponseModal({ id, callId, onCancel }: Props) {
           }}
         >
           Close
-        </Button>,
-        <Button
-          key="button"
-          type="primary"
-          icon={isFetching ? 'Loading' : 'Refresh'}
-          onClick={update}
-        >
-          {error ? 'Retry' : 'Update'}
         </Button>,
       ]}
       width={900}
