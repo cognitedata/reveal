@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ant-layout-header {
+  background: white;
+}
+.ant-layout-content {
+  padding: 30px 80px;
+  margin-top: 54px;
+}
+
+@media (max-width: 768px) {
+  .ant-layout-content {
+    padding: 30px 0px;
+    margin-top: 54px;
+  }
+}
+
+h1,
+h2,
+h3 {
+  font-weight: bold;
+}
+
+
+/* Cogs / Ant interop */
+.ant-btn .cogs-icon {
+  margin-top: 5px;
+}
