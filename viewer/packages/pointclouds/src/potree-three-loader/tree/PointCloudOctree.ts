@@ -146,7 +146,7 @@ export class PointCloudOctree extends PointCloudTree {
     bbRoot.children = visibleBoxes;
   }
 
-  updateMatricesForDescendants() {
+  updateMatricesForDescendants(): void {
     this.traverseVisible(node => node.matrixWorld.multiplyMatrices(this.matrixWorld, node.matrix));
   }
 
