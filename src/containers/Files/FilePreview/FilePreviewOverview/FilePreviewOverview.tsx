@@ -116,10 +116,8 @@ type FilePreviewOverviewProps = {
   onSequenceClicked?: (item: Sequence) => void;
 };
 
-type ExtendedAnnotationResourceType = AnnotationResourceType | 'document';
-
 type CategorizedAnnotations = {
-  [key in ExtendedAnnotationResourceType]: {
+  [key in AnnotationResourceType]: {
     annotations: CogniteAnnotation[];
     ids: Set<number | string>;
   };
@@ -171,7 +169,6 @@ export const FilePreviewOverview = ({
     });
   const categorizedAnnotations: CategorizedAnnotations = {
     file: { annotations: [], ids: new Set() },
-    document: { annotations: [], ids: new Set() },
     asset: { annotations: [], ids: new Set() },
     timeSeries: { annotations: [], ids: new Set() },
     threeD: { annotations: [], ids: new Set() },

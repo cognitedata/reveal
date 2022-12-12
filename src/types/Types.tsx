@@ -2,7 +2,6 @@ import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { AllIconTypes } from '@cognite/cogs.js';
 
 export enum ResourceTypes {
-  Document = 'document',
   Asset = 'asset',
   TimeSeries = 'timeSeries',
   Sequence = 'sequence',
@@ -17,14 +16,13 @@ export type ResourceType =
   | 'sequence'
   | 'file'
   | 'event'
-  | 'document'
   | 'threeD';
 
 // Temporary mapping of the two almost identical types. Should be
 // removed as soon as possible, but that requires a full refactor
 // replacing ResourceType with SdkResourcetype
 export function convertResourceType(type?: ResourceType): SdkResourceType {
-  if (type === 'threeD' || type === 'document') return type as SdkResourceType;
+  if (type === 'threeD') return type as SdkResourceType;
 
   switch (type) {
     case 'asset': {
@@ -60,9 +58,6 @@ export function getTitle(t: ResourceType, plural: boolean = true): string {
       return plural ? 'Sequences' : 'Sequence';
     }
     case 'file': {
-      return plural ? 'Files' : 'File';
-    }
-    case 'document': {
       return plural ? 'Files' : 'File';
     }
     case 'event': {

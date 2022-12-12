@@ -41,6 +41,7 @@ export const DocumentUploadButtons: React.FC<Props> = ({
 }: Props) => {
   const sdk = useSDK();
   const trackUsage = useMetrics();
+  // document -> Files table when advance filters enabled.
   const table = 'document';
 
   const handleOnClickStopUpload = () => {

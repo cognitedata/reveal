@@ -11,9 +11,6 @@ const TimeseriesIcon = ({ style }: { style?: React.CSSProperties }) => (
 const FileIcon = ({ style }: { style?: React.CSSProperties }) => (
   <Label variant="normal" icon="Document" style={style} />
 );
-const DocumentIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label variant="normal" icon="Document" style={style} />
-);
 const SequenceIcon = ({ style }: { style?: React.CSSProperties }) => (
   <Label variant="normal" icon="Sequences" style={style} />
 );
@@ -36,8 +33,6 @@ export const ResourceIcons = ({
       return <TimeseriesIcon style={style} />;
     case 'file':
       return <FileIcon style={style} />;
-    case 'document':
-      return <DocumentIcon style={style} />;
     case 'sequence':
       return <SequenceIcon style={style} />;
     case 'event':
@@ -54,6 +49,5 @@ export const ResourceIcons = ({
 ResourceIcons.Asset = AssetIcon;
 ResourceIcons.Timeseries = TimeseriesIcon;
 ResourceIcons.File = FileIcon;
-ResourceIcons.Document = DocumentIcon;
 ResourceIcons.Sequence = SequenceIcon;
 ResourceIcons.Event = EventIcon;

@@ -54,8 +54,9 @@ export const RelationshipTable = ({
     );
   }
 
+  // Do we show same relationship table for files and documents(files tab when advanced filters disabled)?
   // TODO needs to add the table related to documents
-  if (type === 'document' || type === 'threeD') return null;
+  if (type === 'threeD') return null;
 
   const RelationshipMappedTable = relationshipMapper[type];
 

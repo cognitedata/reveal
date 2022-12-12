@@ -7,7 +7,6 @@ import { useResultCount } from 'components/ResultCount/ResultCount';
 const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',
   file: 'Files',
-  document: 'Documents',
   event: 'Events',
   timeSeries: 'Time series',
   sequence: 'Sequences',
@@ -18,7 +17,6 @@ const defaultResourceTypes: ResourceType[] = [
   'asset',
   'timeSeries',
   'file',
-  'document',
   'event',
   'sequence',
   'threeD',
@@ -28,7 +26,6 @@ type Props = {
   resourceTypes?: ResourceType[];
   currentResourceType?: string;
   setCurrentResourceType: (tab?: string) => void;
-  isDocumentEnabled?: boolean;
   query?: string;
   globalFilters?: { [key in ResourceType]: any };
   showCount?: boolean;
@@ -68,7 +65,6 @@ export const ResourceTypeTabs = ({
   currentResourceType,
   setCurrentResourceType,
   resourceTypes = defaultResourceTypes,
-  isDocumentEnabled = false,
   additionalTabs = [],
   globalFilters,
   ...rest
@@ -80,11 +76,6 @@ export const ResourceTypeTabs = ({
     >
       {additionalTabs}
       {resourceTypes.map(resourceType => {
-        // This basically hides the 'Documents' tab with the help of a feature flag controlled from subapp.
-        if (!isDocumentEnabled && resourceType === 'document') {
-          return null;
-        }
-
         return (
           <Tabs.TabPane
             key={resourceType}

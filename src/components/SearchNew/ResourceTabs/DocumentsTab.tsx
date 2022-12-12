@@ -15,6 +15,7 @@ type Props = {
   showCount?: boolean;
 };
 
+// This is FilesTab with counts when advanced filters are enabled!
 export const DocumentsTab = ({ query, filter, showCount = false }: Props) => {
   const { data: filteredDocumentCount = 0 } = useDocumentFilteredAggregateCount(
     { filters: filter, query }

@@ -33,10 +33,11 @@ export interface DocumentSearchResultsProps {
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   onFileClicked?: (file: FileInfo) => boolean;
   selectedRow?: Record<string | number, boolean>;
+  enableAdvancedFilters?: boolean;
 }
 
-// When using this component do not forget to wrap it with DocumentSearchProvider.
 export const DocumentSearchResults = ({
+  enableAdvancedFilters,
   query = '',
   filter = {},
   onClick,
@@ -65,7 +66,8 @@ export const DocumentSearchResults = ({
     undefined,
     { enabled: !!context?.flow }
   );
-  const resourceType = ResourceTypes.Document;
+
+  const resourceType = ResourceTypes.File;
   const trackUsage = context?.trackUsage;
 
   return (
@@ -79,6 +81,7 @@ export const DocumentSearchResults = ({
         tableHeaders={
           <>
             <SearchResultToolbar
+              enableAdvancedFilters={enableAdvancedFilters}
               type={resourceType}
               style={{ width: '100%' }}
               showCount={true}
@@ -96,6 +99,7 @@ export const DocumentSearchResults = ({
                 trackUsage &&
                   trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.UPLOAD, {
                     table: resourceType,
+                    isAdvanceFiltersEnabled: enableAdvancedFilters,
                   });
               }}
               disabled={!hasEditPermissions}

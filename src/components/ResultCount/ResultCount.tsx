@@ -9,9 +9,7 @@ import { Label } from '@cognite/cogs.js';
 import { getTitle, ResourceType, convertResourceType } from 'types';
 import { ThreeDModelsResponse, useInfinite3DModels } from 'hooks';
 import { Model3D } from '@cognite/sdk';
-
 import { transformNewFilterToOldFilter } from 'domain/transformers';
-import { useDocumentFilteredAggregateCount } from 'domain/documents';
 
 type ResultProps = {
   api: 'list' | 'search';
@@ -72,8 +70,7 @@ export const useResultCount = ({
     sdkType as SdkResourceType,
     filter,
     {
-      enabled:
-        type !== 'threeD' && type !== 'document' && api === 'list' && !count,
+      enabled: type !== 'threeD' && api === 'list' && !count,
     }
   );
 
@@ -81,12 +78,6 @@ export const useResultCount = ({
     count: 0,
     label: label || getTitle(type, count !== 1).toLowerCase(),
   };
-
-  const { data: filteredDocumentCount } = useDocumentFilteredAggregateCount({});
-
-  if (type === 'document') {
-    return { ...result, count: formatNumber(filteredDocumentCount || 0) };
-  }
 
   if (type === 'threeD') {
     if (is3DModelLoading) return result;

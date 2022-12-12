@@ -9,17 +9,20 @@ export const SearchResultToolbar = ({
   showCount,
   resultCount,
   style,
+  enableAdvancedFilters,
 }: {
   type: ResourceType;
   children?: React.ReactNode;
   showCount?: boolean;
   resultCount?: React.ReactNode;
   style?: React.CSSProperties;
+  enableAdvancedFilters?: boolean;
 }) => {
   return (
     <StyledSpacedRow style={style}>
       {showCount && <>{resultCount}</>}
-      {type === 'document' && (
+      {/* Show documents api syntax tips button if advanced filters are enabled */}
+      {enableAdvancedFilters && type === 'file' && (
         <>
           <VerticalDivider />
           <FilesSyntaxButton />
