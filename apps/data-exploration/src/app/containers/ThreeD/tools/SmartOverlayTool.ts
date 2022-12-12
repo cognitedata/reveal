@@ -166,7 +166,7 @@ export class SmartOverlayTool {
   set visible(visible: boolean) {
     this._isVisible = visible;
     this._htmlOverlayTool.visible(visible);
-    this._htmlOverlayTool.elements.forEach((element) => {
+    this._htmlOverlayTool.elements.forEach((element: any) => {
       element.element.style.display = visible ? 'block' : 'none';
     });
   }

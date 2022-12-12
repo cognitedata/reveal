@@ -20,7 +20,7 @@ export const TimeseriesFilters = ({ ...rest }) => {
   const resetTimeseriesFilters = useResetTimeseriesFilters();
   const isFiltersEmpty = useFilterEmptyState('timeseries');
 
-  const { data: items = [] } = useList('timeseries', {
+  const { data: items = [] } = useList<any>('timeseries', {
     filter: transformNewFilterToOldFilter(timeseriesFilter),
     limit: 1000,
   });

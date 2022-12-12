@@ -8,7 +8,7 @@ import {
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { ids } from 'cogs-variables';
+import { ids } from '../../../../cogs-variables';
 import { useContext, useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';

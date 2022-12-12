@@ -53,7 +53,7 @@ export const AssetFilters = ({ ...rest }) => {
   const resetAssetFilters = useResetAssetFilters();
   const isFiltersEmpty = useFilterEmptyState('asset');
 
-  const { data: items = [] } = useList('assets', {
+  const { data: items = [] } = useList<any>('assets', {
     filter: transformNewFilterToOldFilter(assetFilters),
     limit: 1000,
   });

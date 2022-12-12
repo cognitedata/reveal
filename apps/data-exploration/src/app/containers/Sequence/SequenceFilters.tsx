@@ -18,7 +18,7 @@ export const SequenceFilters = ({ ...rest }) => {
   const resetSequenceFilters = useResetSequenceFilters();
   const isFiltersEmpty = useFilterEmptyState('sequence');
 
-  const { data: items = [] } = useList('sequences', {
+  const { data: items = [] } = useList<any>('sequences', {
     filter: transformNewFilterToOldFilter(sequenceFilter),
     limit: 1000,
   });

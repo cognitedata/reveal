@@ -8,7 +8,7 @@ import {
   Slider as CogsSlider,
 } from '@cognite/cogs.js';
 import { CognitePointCloudModel } from '@cognite/reveal';
-import { ids } from 'cogs-variables';
+import { ids } from '../../../../cogs-variables';
 import { useState } from 'react';
 
 import styled from 'styled-components';

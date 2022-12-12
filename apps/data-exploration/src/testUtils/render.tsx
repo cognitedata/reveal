@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react';
 import { QueryClientProvider, QueryClient } from 'react-query';
 
-import { ids } from 'cogs-variables';
+import { ids } from '../cogs-variables';
 
 configure({});
 
