@@ -6,7 +6,13 @@ import {
   GridOptions,
 } from 'ag-grid-community';
 import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
-import { ForwardedRef, forwardRef, useEffect, useState } from 'react';
+import {
+  CSSProperties,
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 import { CogDataGridStyled } from './cog-data-grid-styled';
 import './cog-data-grid.module.css';
@@ -27,6 +33,7 @@ export interface CogDataGridProps extends AgGridReactProps {
   getRowId?: (params: GetRowIdParams<KeyValueMap>) => string;
   shouldShowDraftRows?: boolean;
   shouldShowPublishedRows?: boolean;
+  wrapperStyle?: CSSProperties;
 }
 
 export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
@@ -88,6 +95,7 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
     return (
       <CogDataGridStyled
         theme={theme}
+        style={props.wrapperStyle}
         shouldShowDraftRows={props.shouldShowDraftRows}
         shouldShowPublishedRows={props.shouldShowPublishedRows}
       >

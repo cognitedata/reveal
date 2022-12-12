@@ -43,13 +43,16 @@ import { buildGridConfig } from '../../services/grid-config-builder';
 import { CreateTransformationModal } from '../CreateTransformationModal';
 import { DeleteRowsModal } from '../DeleteRowsModal/DeleteRowsModal';
 import { PreviewPageHeader } from '../PreviewPageHeader/PreviewPageHeader';
+import { SuggestionsModal } from '../SuggestionsModal/SuggestionsModal';
+
 import { StyledDataPreviewTable } from './elements';
 import { ErrorPlaceholder } from './ErrorPlaceholder';
 import { NoRowsOverlay } from './NoRowsOverlay';
-import { sanitizeRow } from './utils';
+import { getSuggestionsAvailable, sanitizeRow } from './utils';
 import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
+  useSuggestionsFeatureFlag,
 } from '@platypus-app/flags';
 import {
   CollapsiblePanelContainer,
@@ -96,6 +99,7 @@ export const DataPreviewTable = forwardRef<
     const [fetchError, setFetchError] = useState(null);
     const { isEnabled: enableManualPopulation } =
       useManualPopulationFeatureFlag();
+    const { isEnabled: enableSuggestions } = useSuggestionsFeatureFlag();
     const { isEnabled: enableDeletion } =
       useDataManagementDeletionFeatureFlag();
     const { data: dataModelVersions } =
@@ -127,6 +131,11 @@ export const DataPreviewTable = forwardRef<
       deleteSelectedRows,
     } = useDraftRows();
 
+    const [suggestionsAvailable, setSuggestionsAvailable] = useState(false);
+    const [suggestionsColumn, setSuggestionsColumn] = useState<
+      string | undefined
+    >(undefined);
+
     const {
       toggleShouldShowDraftRows,
       toggleShouldShowPublishedRows,
@@ -149,6 +158,9 @@ export const DataPreviewTable = forwardRef<
     }
 
     const [isDeleteRowsModalVisible, setIsDeleteRowsModalVisible] =
+      useState(false);
+
+    const [isSuggestionsModalVisible, setIsSuggestionsModalVisible] =
       useState(false);
 
     const {
@@ -186,6 +198,12 @@ export const DataPreviewTable = forwardRef<
             message: t('ingest_success_title', 'Instance added'),
           });
         });
+    };
+
+    const handleSuggestionsClose = async (selectedColumn?: string) => {
+      gridRef.current?.api.refreshInfiniteCache();
+      setIsSuggestionsModalVisible(false);
+      setSuggestionsColumn(selectedColumn);
     };
 
     // set gridConfig in state so the reference is stable and doesn't cause rerenders
@@ -249,6 +267,12 @@ export const DataPreviewTable = forwardRef<
         if (items.length > 0 && onHideOverlay.current) {
           onHideOverlay.current();
         }
+        setSuggestionsAvailable(
+          getSuggestionsAvailable({
+            dataModelType,
+            previewData: items,
+          })
+        );
       },
     });
 
@@ -447,6 +471,14 @@ export const DataPreviewTable = forwardRef<
           if (e.colDef.field) {
             e.api.refreshCells({ columns: [e.column], rowNodes: [e.node!] });
           }
+          const data: KeyValueMap[] = [];
+          gridRef.current?.api.forEachNode((el) => data.push(el.data));
+          setSuggestionsAvailable(
+            getSuggestionsAvailable({
+              dataModelType,
+              previewData: data,
+            })
+          );
         })
         .catch((error: PlatypusError) => {
           Notification({
@@ -583,7 +615,20 @@ export const DataPreviewTable = forwardRef<
             version={version}
           />
         )}
-
+        {isSuggestionsModalVisible && enableSuggestions && (
+          <SuggestionsModal
+            defaultColumn={suggestionsColumn}
+            onCancel={handleSuggestionsClose}
+            onConfirm={handleSuggestionsClose}
+            dataModelInfo={{
+              dataModelType,
+              dataModelTypeDefs,
+              dataModelExternalId,
+              version,
+              space,
+            }}
+          />
+        )}
         <PreviewPageHeader
           dataModelExternalId={dataModelExternalId}
           draftRowsCount={draftRowsData.length}
@@ -602,6 +647,8 @@ export const DataPreviewTable = forwardRef<
           shouldShowDraftRows={shouldShowDraftRows}
           shouldShowPublishedRows={shouldShowPublishedRows}
           title={dataModelType.name}
+          onSuggestionsClick={() => setIsSuggestionsModalVisible(true)}
+          suggestionsAvailable={suggestionsAvailable}
           typeName={dataModelType.name}
           version={version}
         />

@@ -8,6 +8,7 @@ import { BulkPopulationButton } from '@platypus-app/modules/solution/data-manage
 import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
+  useSuggestionsFeatureFlag,
 } from '@platypus-app/flags';
 import * as S from './elements';
 import { useRef } from 'react';
@@ -19,12 +20,14 @@ type Props = {
   onAddTransformationClick: () => void;
   onCreateClick: () => void;
   onDeleteClick: () => void;
+  onSuggestionsClick: () => void;
   onDraftRowsCountClick: () => void;
   onPublishedRowsCountClick: () => void;
   onSearchInputValueChange: (value: string) => void;
   publishedRowsCount: number;
   shouldShowDraftRows: boolean;
   shouldShowPublishedRows: boolean;
+  suggestionsAvailable?: boolean;
   title: string;
   typeName: string;
   version: string;
@@ -37,12 +40,14 @@ export function PreviewPageHeader({
   onAddTransformationClick,
   onCreateClick,
   onDeleteClick,
+  onSuggestionsClick,
   onDraftRowsCountClick,
   onPublishedRowsCountClick,
   onSearchInputValueChange,
   publishedRowsCount,
   shouldShowDraftRows,
   shouldShowPublishedRows,
+  suggestionsAvailable = false,
   title,
   typeName,
   version,
@@ -51,6 +56,7 @@ export function PreviewPageHeader({
   const { isEnabled: enableManualPopulation } =
     useManualPopulationFeatureFlag();
   const { isEnabled: enableDelete } = useDataManagementDeletionFeatureFlag();
+  const { isEnabled: enableSuggestions } = useSuggestionsFeatureFlag();
   const { data: transformations } = useTransformations({
     dataModelExternalId,
     isEnabled: true,
@@ -176,6 +182,20 @@ export function PreviewPageHeader({
             </Button>
           )}
           {(enableDelete || enableManualPopulation) && <PageHeaderDivider />}
+          {enableSuggestions && (
+            <S.SuggestionButton
+              icon="LightBulb"
+              aria-label="Suggestions"
+              onClick={onSuggestionsClick}
+              data-cy={`suggestions-button${
+                suggestionsAvailable ? '-active' : ''
+              }`}
+              // https://stackoverflow.com/questions/57586654/styled-component-attrs-react-does-not-recognize-prop
+              $isActive={suggestionsAvailable}
+            >
+              Suggestions
+            </S.SuggestionButton>
+          )}
           {transformations && transformations.length > 0 ? (
             <TransformationDropdown
               onAddClick={onAddTransformationClick}

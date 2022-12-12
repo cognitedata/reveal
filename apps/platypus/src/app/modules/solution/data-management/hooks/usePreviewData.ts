@@ -49,8 +49,8 @@ export const usePreviewData = (
       dataModelType?.name,
       externalId
     ),
-    async () => {
-      return await dataManagementHandler
+    () => {
+      return dataManagementHandler
         .fetchData({
           cursor: '',
           dataModelType: dataModelType,

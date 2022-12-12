@@ -18,6 +18,11 @@ export const QueryKeys = {
     type: string,
     version: string
   ) => ['TRANSFORMATION', dataModelExternalId, type, version] as const,
+  PREVIEW_TABLE_DATA: (
+    dataModelExternalId: string,
+    type: string,
+    version: string
+  ) => ['PREVIEW_TABLE_DATA', dataModelExternalId, type, version] as const,
   PREVIEW_DATA: (
     dataModelExternalId: string,
     type: string,
@@ -25,4 +30,15 @@ export const QueryKeys = {
     externalId: string
   ) =>
     ['PREVIEW_DATA', dataModelExternalId, type, version, externalId] as const,
+  SUGGESTIONS_DATA: (
+    selectedColumn: string,
+    selectedSourceColumns: string[],
+    selectedTargetColumns: string[]
+  ) =>
+    [
+      'SUGGESTIONS_DATA',
+      selectedColumn,
+      selectedSourceColumns,
+      selectedTargetColumns,
+    ] as const,
 };

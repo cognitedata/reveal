@@ -14,6 +14,9 @@ jest.mock('@platypus-app/flags', () => {
     useDataManagementDeletionFeatureFlag: () => ({
       isEnabled: true,
     }),
+    useSuggestionsFeatureFlag: () => ({
+      isEnabled: true,
+    }),
   };
 });
 
@@ -91,6 +94,7 @@ describe('PreviewPageHeader', () => {
         onPublishedRowsCountClick={noop}
         onSearchInputValueChange={noop}
         publishedRowsCount={0}
+        onSuggestionsClick={noop}
         shouldShowDraftRows
         shouldShowPublishedRows
         title="Lorem"
@@ -118,6 +122,7 @@ describe('PreviewPageHeader', () => {
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onSuggestionsClick={noop}
         onSearchInputValueChange={noop}
         publishedRowsCount={1}
         shouldShowDraftRows
@@ -147,6 +152,7 @@ describe('PreviewPageHeader', () => {
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onSuggestionsClick={noop}
         onSearchInputValueChange={noop}
         publishedRowsCount={0}
         shouldShowDraftRows
@@ -176,6 +182,7 @@ describe('PreviewPageHeader', () => {
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onSuggestionsClick={noop}
         onSearchInputValueChange={noop}
         publishedRowsCount={0}
         shouldShowDraftRows
@@ -202,6 +209,7 @@ describe('PreviewPageHeader', () => {
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
         onSearchInputValueChange={noop}
+        onSuggestionsClick={noop}
         publishedRowsCount={4}
         shouldShowDraftRows
         shouldShowPublishedRows
@@ -226,6 +234,7 @@ describe('PreviewPageHeader', () => {
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
         onSearchInputValueChange={noop}
+        onSuggestionsClick={noop}
         publishedRowsCount={0}
         shouldShowDraftRows
         shouldShowPublishedRows

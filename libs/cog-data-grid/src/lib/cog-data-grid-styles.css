@@ -11,6 +11,25 @@
   --ag-cell-horizontal-padding: 4px;
 }
 
+/*------------- SUGGESTIONS THEME STYLES ------------*/
+.cog-data-grid.cog-data-grid-suggestions {
+  /* disable all borders */
+  --ag-borders: none;
+  /* then add back a border between rows */
+  --ag-borders-row: dashed 1px;
+  --ag-border-color: var(--cogs-greyscale-grey4, #d9d9d9);
+  --ag-row-border-color: var(--cogs-greyscale-grey4, #d9d9d9);
+}
+.cog-data-grid.cog-data-grid-suggestions .ag-header-row {
+  border-bottom: 1px solid var(--ag-border-color);
+}
+.cog-data-grid.cog-data-grid-suggestions .ag-row {
+  border-bottom: 1px solid var(--ag-border-color);
+}
+.cog-data-grid.cog-data-grid-suggestions .ag-cell-wrapper {
+  overflow: hidden;
+}
+
 /*------------- SHOW HIDE DRAFT & PUBLISHED ROWS STYLES ------------*/
 .cog-data-grid.cog-data-grid--hide-draft-rows .ag-floating-top {
   display: none !important;

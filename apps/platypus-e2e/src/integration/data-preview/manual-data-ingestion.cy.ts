@@ -119,7 +119,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
       .should('contain', 'John Doe')
       .first()
       .focus()
-      .click()
+      .click({ force: true })
       .type('{enter} Not John Doe{enter}');
 
     cy.get('div[role="gridcell"][col-id="name"]')

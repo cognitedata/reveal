@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import './cog-data-grid-styles.css';
 import { ThemeClasses, ThemeNames } from './types';
@@ -7,6 +8,7 @@ export interface CogDataGridStyledProps {
   shouldShowDraftRows?: boolean;
   shouldShowPublishedRows?: boolean;
   children?: any;
+  style?: CSSProperties;
 }
 export const CogDataGridStyled = (props: CogDataGridStyledProps) => {
   const shouldShowDraftRows =
@@ -20,6 +22,7 @@ export const CogDataGridStyled = (props: CogDataGridStyledProps) => {
   const themeClasses: ThemeClasses = {
     default: 'cog-data-grid-default',
     compact: 'cog-data-grid-compact',
+    suggestions: 'cog-data-grid-suggestions',
   };
 
   const classNames = ['cog-data-grid', themeClasses[props.theme]];
@@ -30,5 +33,9 @@ export const CogDataGridStyled = (props: CogDataGridStyledProps) => {
     classNames.push('cog-data-grid--hide-published-rows');
   }
 
-  return <div className={classNames.join(' ')}>{props.children}</div>;
+  return (
+    <div className={classNames.join(' ')} style={props.style}>
+      {props.children}
+    </div>
+  );
 };

@@ -179,6 +179,8 @@ export class GridConfigService {
                 isFloat: true,
               }),
           },
+          // default no auto header or cell editor
+          defaultColType: {},
         },
         columnTypes || {}
       ),
@@ -264,8 +266,12 @@ export class GridConfigService {
         dataTypeName = 'dateTime';
         break;
       }
-      default: {
+      case ColumnDataType.Text: {
         dataTypeName = 'text';
+        break;
+      }
+      default: {
+        dataTypeName = 'default';
       }
     }
 
