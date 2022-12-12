@@ -10,11 +10,28 @@ import Message from 'components/Message/Message';
 import { useDownloadData } from 'hooks/table-data';
 import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';
 import { useTranslation } from 'common/i18n';
+import { RawDBRow } from '@cognite/sdk';
 
 type DownloadTableModalProps = {
   databaseName: string;
   tableName: string;
 } & Omit<ModalProps, 'children' | 'title' | 'footer'>;
+
+export const prepareRows = (
+  rows: RawDBRow[],
+  expectedCount: number
+): Record<string, string>[] => {
+  return (
+    rows.slice(0, Number(expectedCount)).map((item) => {
+      const escapedColumns: Record<string, string> = { key: '' };
+      Object.keys(item.columns).forEach((columnName) => {
+        escapedColumns[columnName] = escapeCSVValue(item.columns[columnName]);
+      });
+      escapedColumns.key = escapeCSVValue(item.key);
+      return escapedColumns;
+    }) || []
+  );
+};
 
 const DownloadTableModal = ({
   databaseName,
@@ -40,16 +57,7 @@ const DownloadTableModal = ({
   };
 
   const onDownloadData = useMemo(() => {
-    return (
-      fetchedRows.slice(0, Number(fetchRowCount)).map((item) => {
-        const escapedColumns: Record<string, string> = { key: '' };
-        Object.keys(item.columns).forEach((columnName) => {
-          escapedColumns[columnName] = escapeCSVValue(item.columns[columnName]);
-        });
-        escapedColumns.key = escapeCSVValue(item.key);
-        return escapedColumns;
-      }) || []
-    );
+    return prepareRows(fetchedRows, Number(fetchRowCount));
   }, [fetchRowCount, fetchedRows]);
 
   const isItValidRowNumber = (n: string | number): boolean => {
