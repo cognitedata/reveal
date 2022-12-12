@@ -168,5 +168,8 @@
   },
   "engines": {
     "node": ">=14"
+  },
+  "resolutions": {
+    "@cognite/cogs.js/@mui/joy": "5.0.0-alpha.56"
   }
 }
