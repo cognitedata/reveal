@@ -28,7 +28,7 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
     .post(`/api/v1/projects/${getProject()}/functions/${id}/calls/list`, {
       data: { filter },
     })
-    .then(response => response.data?.items);
+    .then((response) => response.data?.items);
 };
 
 export const getCalls = async (_: QueryKey, args: GetCallsArgs) => {
@@ -36,7 +36,7 @@ export const getCalls = async (_: QueryKey, args: GetCallsArgs) => {
 };
 
 export const getLatestCalls = async (_: QueryKey, args: GetCallsArgs[]) => {
-  const requests = args.map(a => getCallsSdk(a));
+  const requests = args.map((a) => getCallsSdk(a));
   const results = await Promise.all(requests);
   return args.reduce(
     (accl, { id }, index) => ({
@@ -56,7 +56,7 @@ export const getCall = (_: QueryKey, { id, callId }: GetCallArgs) => {
   }
   return sdk
     .get(`/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}`)
-    .then(response => response.data);
+    .then((response) => response.data);
 };
 
 type GetResponseArgs = {
@@ -74,7 +74,7 @@ export const getResponse = (_: QueryKey, { id, callId }: GetResponseArgs) => {
     .get(
       `/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}/response`
     )
-    .then(response => response?.data?.response);
+    .then((response) => response?.data?.response);
 };
 
 export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
@@ -88,7 +88,7 @@ export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
     .get(
       `/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}/logs`
     )
-    .then(response => response?.data?.items);
+    .then((response) => response?.data?.items);
 };
 
 export const createFunctionCall = async ({
@@ -109,7 +109,7 @@ export const createFunctionCall = async ({
     .post(`/api/v1/projects/${getProject()}/functions/${id}/call`, {
       data: { data: data || {}, nonce },
     })
-    .then(response => response?.data);
+    .then((response) => response?.data);
 };
 
 export const createSchedule = async ({
@@ -122,7 +122,15 @@ export const createSchedule = async ({
     .post(`/api/v1/projects/${getProject()}/functions/schedules`, {
       data: { items: [{ ...schedule, nonce }] },
     })
-    .then(response => response?.data);
+    .then((response) => response?.data);
+};
+
+export const getScheduleData = (scheduleId: number) => {
+  return sdk
+    .get(
+      `/api/v1/projects/${getProject()}/functions/schedules/${scheduleId}/input_data`
+    )
+    .then((response) => response.data);
 };
 
 export const deleteSchedule = (id: number) =>
@@ -130,7 +138,7 @@ export const deleteSchedule = (id: number) =>
     .post(`/api/v1/projects/${getProject()}/functions/schedules/delete`, {
       data: { items: [{ id }] },
     })
-    .then(response => response?.data);
+    .then((response) => response?.data);
 
 const createFunction = (
   cogfunction: CogFunctionUpload
@@ -139,7 +147,7 @@ const createFunction = (
     .post(`/api/v1/projects/${getProject()}/functions`, {
       data: { items: [cogfunction] },
     })
-    .then(response => response?.data);
+    .then((response) => response?.data);
 };
 export const deleteFunction = async ({
   id,
@@ -155,7 +163,7 @@ export const deleteFunction = async ({
     .post(`/api/v1/projects/${getProject()}/functions/delete`, {
       data: { items: [{ id }] },
     })
-    .then(response => response?.data);
+    .then((response) => response?.data);
   if (fileId) {
     await sdk.files.delete([{ id: fileId }]);
   }
@@ -205,13 +213,13 @@ const uploadFile = async (file: UploadFile) => {
 
   await currentUpload.start();
 
-  let fileInfo = await sdk.files.retrieve([{ id }]).then(r => r[0]);
+  let fileInfo = await sdk.files.retrieve([{ id }]).then((r) => r[0]);
   let retries = 0;
   while (!fileInfo.uploaded && retries <= 10) {
     retries += 1;
     /* eslint-disable no-await-in-loop */
     await sleep(retries * 1000);
-    fileInfo = await sdk.files.retrieve([{ id }]).then(r => r[0]);
+    fileInfo = await sdk.files.retrieve([{ id }]).then((r) => r[0]);
   }
 
   if (!fileInfo.uploaded) {
@@ -248,7 +256,7 @@ export const createSession = (clientCredentials?: {
         items: [clientCredentials || { tokenExchange: true }],
       },
     })
-    .then(response => response?.data.items[0]);
+    .then((response) => response?.data.items[0]);
 };
 
 export const isOIDCFlow = () => {
