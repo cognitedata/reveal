@@ -100,7 +100,6 @@ export const useResourceFilter = (type?: ResourceType) => {
       return observer.timeseriesFilter;
     }
     case 'threeD':
-    case 'document':
     default:
       return {};
   }

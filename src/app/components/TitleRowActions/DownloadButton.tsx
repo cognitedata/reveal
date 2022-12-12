@@ -240,8 +240,6 @@ export default function DownloadButton({ item, dateFilter }: Props) {
   switch (item.type) {
     case 'file':
       return <FileDownloadButton item={item} />;
-    case 'document':
-      return <FileDownloadButton item={{ id: item.id, type: 'file' }} />;
     case 'timeSeries':
       return <TimeseriesDownloadButton item={item} dateFilter={dateFilter} />;
     default:

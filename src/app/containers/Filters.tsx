@@ -13,9 +13,13 @@ import { DocumentFilter } from 'app/containers/Document/DocumentFilters';
 
 export interface Props {
   resourceType?: ResourceType;
+  enableAdvancedFilters?: boolean;
 }
 
-export const Filters: React.FC<Props> = ({ resourceType }) => {
+export const Filters: React.FC<Props> = ({
+  resourceType,
+  enableAdvancedFilters,
+}) => {
   const renderCustomResourceTypeFilter = () => {
     switch (resourceType) {
       case 'asset': {
@@ -27,10 +31,10 @@ export const Filters: React.FC<Props> = ({ resourceType }) => {
       case 'timeSeries': {
         return <TimeseriesFilters />;
       }
-      case 'document': {
-        return <DocumentFilter />;
-      }
       case 'file': {
+        if (enableAdvancedFilters) {
+          return <DocumentFilter />;
+        }
         return <FileFilters />;
       }
       case 'sequence': {

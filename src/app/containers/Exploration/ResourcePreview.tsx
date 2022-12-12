@@ -15,8 +15,6 @@ export default function ResourcePreview({ item: { type, id } }: Props) {
       return <AssetPreview assetId={id} />;
     case 'file':
       return <FilePreview fileId={id} />;
-    case 'document': // At some point we might want to have documents its own preview
-      return <FilePreview fileId={id} />;
     case 'sequence':
       return <SequencePreview sequenceId={id} />;
     case 'timeSeries':

@@ -164,6 +164,7 @@ function SearchPage() {
     <RootHeightWrapper>
       <SearchFiltersWrapper>
         <SearchFilters
+          enableAdvancedFilters={isAdvancedFiltersEnabled}
           resourceType={currentResourceType}
           visible={currentResourceType !== 'threeD' && showFilter}
         />
@@ -216,7 +217,7 @@ function SearchPage() {
                 }
               />
               <Tabs.TabPane
-                key="document"
+                key="file"
                 tab={
                   <DocumentsTab
                     query={debouncedQuery}
@@ -261,12 +262,10 @@ function SearchPage() {
                   tab === 'all' ? undefined : (tab as ResourceType)
                 );
               }}
-              isDocumentEnabled={isAdvancedFiltersEnabled}
               additionalTabs={[<Tabs.TabPane tab="All" key="all" />]}
             />
           )}
         </TabsContainer>
-
         <MainContainer $isFilterFeatureEnabled>
           <Wrapper>
             <StyledSplitter
@@ -283,6 +282,7 @@ function SearchPage() {
                 }}
               >
                 <SearchResultWrapper>
+                  {currentResourceType === undefined && <AllTab />}
                   {currentResourceType === 'asset' && (
                     <AssetSearchResults
                       isTreeEnabled
@@ -298,31 +298,33 @@ function SearchPage() {
                       {...commonProps}
                     />
                   )}
-                  {currentResourceType === undefined && <AllTab />}
-                  {currentResourceType === 'file' && (
-                    <FileSearchResults
-                      showCount
-                      selectedRow={selectedRow}
-                      filter={fileFilter}
-                      allowEdit={editable}
-                      onClick={handleRowClick}
-                      onFilterChange={(newValue: Record<string, unknown>) =>
-                        setFileFilter(newValue)
-                      }
-                      {...commonProps}
-                    />
-                  )}
-                  {currentResourceType === 'document' && (
-                    <DocumentSearchResults
-                      query={query}
-                      selectedRow={selectedRow}
-                      filter={documentFilter}
-                      onClick={handleRowClick}
-                      onFilterChange={(newValue: Record<string, unknown>) =>
-                        setDocumentFilter(newValue)
-                      }
-                    />
-                  )}
+                  {!isAdvancedFiltersEnabled &&
+                    currentResourceType === 'file' && (
+                      <FileSearchResults
+                        showCount
+                        selectedRow={selectedRow}
+                        filter={fileFilter}
+                        allowEdit={editable}
+                        onClick={handleRowClick}
+                        onFilterChange={(newValue: Record<string, unknown>) =>
+                          setFileFilter(newValue)
+                        }
+                        {...commonProps}
+                      />
+                    )}
+                  {isAdvancedFiltersEnabled &&
+                    currentResourceType === 'file' && (
+                      <DocumentSearchResults
+                        enableAdvancedFilters={isAdvancedFiltersEnabled}
+                        query={query}
+                        selectedRow={selectedRow}
+                        filter={documentFilter}
+                        onClick={handleRowClick}
+                        onFilterChange={(newValue: Record<string, unknown>) =>
+                          setDocumentFilter(newValue)
+                        }
+                      />
+                    )}
                   {currentResourceType === 'sequence' && (
                     <SequenceSearchResults
                       showCount

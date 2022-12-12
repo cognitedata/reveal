@@ -25,11 +25,12 @@ export const SearchFilters = ({
   // allowHide = true,
   // closeFilters = () => {},
   resourceType,
-}: // enableFilterFeature,
-{
+  enableAdvancedFilters,
+}: {
   resourceType?: ResourceType;
   visible?: boolean;
   allowHide?: boolean;
+  enableAdvancedFilters?: boolean;
 }) => {
   return (
     <div
@@ -43,7 +44,12 @@ export const SearchFilters = ({
         transition: `visibility 0s linear ${TRANSITION_TIME}ms, width ${TRANSITION_TIME}ms ease`,
       }}
     >
-      {visible && <Filters resourceType={resourceType} />}
+      {visible && (
+        <Filters
+          resourceType={resourceType}
+          enableAdvancedFilters={enableAdvancedFilters}
+        />
+      )}
     </div>
   );
 };

@@ -44,8 +44,8 @@ export const AllTab = () => {
         <DocumentSummary
           filter={commonFilters}
           query={query}
-          onRowClick={row => setCurrentResourceType('document', row.id)}
-          onAllResultsClick={() => handleAllResultsClick('document')}
+          onRowClick={row => setCurrentResourceType('file', row.id)}
+          onAllResultsClick={() => handleAllResultsClick('file')}
         />
       ) : (
         <FileSummary

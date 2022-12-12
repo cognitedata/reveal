@@ -28,7 +28,7 @@
   "dependencies": {
     "@cognite/cdf-utilities": "^1.14.0",
     "@cognite/cogs.js": "^7.17.0",
-    "@cognite/data-exploration": "5.61.9",
+    "@cognite/data-exploration": "5.62.1",
     "@cognite/data-exploration-v4": "npm:@cognite/data-exploration@4.38.0",
     "@cognite/fas-utils": "^3.2.0-rc.1",
     "@cognite/react-document-search": "^0.2.0",

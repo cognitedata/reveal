@@ -1521,17 +1521,16 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/data-exploration@5.61.9":
-  version "5.61.9"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.61.9.tgz#9ff6a74b4680fb8d29d2313a0247b5d5b8a55e81"
-  integrity sha512-0YmjRqwEJKWGlT6mE09jXCwmCQVg3lQLX2qWd0J3+bpK+KbS2JgwkVAepo+kiLIx3xoALMLmtlY1zFmgprNfkQ==
+"@cognite/data-exploration@5.62.1":
+  version "5.62.1"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.62.1.tgz#4dbff05a5efe06eed63874703aad0b706e5cdab8"
+  integrity sha512-2ziLotiEndAmdrSj/s86okwwjC6J40Y/5xuIyWhVskAAE1lxvEiDUqjmwpVGXsrXFDYGASbSSBK+m4DyN41Y9g==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
     "@cognite/cdf-utilities" "^0.14.4"
     "@cognite/cogs.js" "7.17.0"
     "@cognite/gcs-browser-upload" cognitedata/gcs-browser-upload#mn/temporary-azure-fix
-    "@cognite/react-document-search" "0.2.0"
     "@cognite/react-document-table" "^1.22.2"
     "@cognite/react-feature-flags" "^1.0.1"
     "@cognite/react-picture-annotation" "3.0.1"
@@ -1634,7 +1633,7 @@
     lodash "4.17.21"
     mixpanel-browser "2.41.0"
 
-"@cognite/react-document-search@0.2.0", "@cognite/react-document-search@^0.2.0":
+"@cognite/react-document-search@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@cognite/react-document-search/-/react-document-search-0.2.0.tgz#abd4cd7301dbbf54647265abddb554fc447faa96"
   integrity sha512-yWMdOWxA93uGZAmF67gJSgvJGPtDAr9GuIlB5ctV3LacX2qD2jgR2PZ7LV5/F+q+ato4lZ4K+hExZbibuPPwIg==
