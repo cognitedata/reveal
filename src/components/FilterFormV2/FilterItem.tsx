@@ -136,6 +136,8 @@ export const FilterItem = ({
                 setSelectedValue(item?.value || null);
                 if (selectedKey && item.value) {
                   setFilter(selectedKey, item.value);
+                  setSelectedKey(null);
+                  setSelectedValue(null);
                 }
               }}
               options={selectedKey ? getMetadataValues(selectedKey) : []}
