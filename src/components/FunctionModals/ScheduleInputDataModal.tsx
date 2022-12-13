@@ -17,7 +17,7 @@ type BodyProps = {
 };
 function ModalBody({ response, error, fetched }: BodyProps) {
   if (!fetched) {
-    return <em>Fetching logs</em>;
+    return <em>Fetching input data</em>;
   }
   if (error) {
     return (
