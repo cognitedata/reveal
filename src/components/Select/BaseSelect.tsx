@@ -79,6 +79,8 @@ export const BaseSelect = <ValueType,>({
       <ReactSelectCreatable
         {...(props as ReactSelectCreatableProps<OptionType<ValueType>>)}
         formatCreateLabel={input => `Use "${input}"`}
+        value={props.value ? props.value : null} // should pass null when clear selected items
+        isDisabled={props.disabled}
       />
     );
   }
