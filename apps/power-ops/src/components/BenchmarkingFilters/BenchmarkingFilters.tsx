@@ -65,7 +65,6 @@ export const BenchmarkingFilters = ({
       theme="grey"
       title="Metric:"
       value={metricValue}
-      disableTyping
       options={metricFilterOptions}
       onChange={onMetricValueChange}
     />
