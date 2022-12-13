@@ -109,11 +109,6 @@ export class SectorSceneImpl implements SectorScene {
       return true;
     });
 
-    // If more than 5% of the geometry is located in the root we return the full BoundingBox.
-    if (this.root.estimatedRenderCost > allRenderCost * 0.05) {
-      return this.root.subtreeBoundingBox;
-    }
-
     //Sort by diagonal length, ascending
     allBounds.sort((a, b) => {
       return a.min.distanceTo(a.max) - b.min.distanceTo(b.max);
