@@ -71,7 +71,7 @@ export default function FunctionSchedules({ externalId, id }: Props) {
   const { data, isFetched, error } = useSchedules();
   const schedules =
     data
-      ?.filter((s) => {
+      ?.filter(s => {
         return (
           (s.functionExternalId && s.functionExternalId === externalId) ||
           (s.functionId && s.functionId === id)
@@ -105,7 +105,7 @@ export default function FunctionSchedules({ externalId, id }: Props) {
         <CreateScheduleButton externalId={externalId} id={id} />
       ) : null}
       <Table
-        rowKey={(s) => s.id.toString()}
+        rowKey={s => s.id.toString()}
         pagination={{ pageSize: 25 }}
         dataSource={schedules}
         columns={scheduleTableColumns}

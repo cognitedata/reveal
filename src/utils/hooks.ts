@@ -40,10 +40,10 @@ export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) => {
     () =>
       sdk
         .get(`/api/v1/projects/${getProject()}/functions`)
-        .then((r) => r.data?.items),
+        .then(r => r.data?.items),
     {
-      onSuccess: (functions) => {
-        functions.forEach((fn) => {
+      onSuccess: functions => {
+        functions.forEach(fn => {
           cache.setQueryData(functionKey({ id: fn.id }), fn, {
             initialStale: false,
           });
@@ -62,7 +62,7 @@ export const useFunction = (
     () =>
       sdk
         .get(`/api/v1/projects/${getProject()}/functions/${id}`)
-        .then((r) => r.data),
+        .then(r => r.data),
     config
   );
 export const useSchedules = (config?: QueryConfig<Schedule[], unknown>) =>
@@ -73,7 +73,7 @@ export const useSchedules = (config?: QueryConfig<Schedule[], unknown>) =>
         .get(`/api/v1/projects/${getProject()}/functions/schedules`, {
           params: { limit: 1000 },
         })
-        .then((r) => r.data?.items),
+        .then(r => r.data?.items),
     config
   );
 
@@ -97,7 +97,7 @@ export const useLimits = (config?: QueryConfig<CogFunctionLimit, unknown>) =>
           params: { vendor: true },
         })
         .then(
-          (r) => mapKeys(r.data, (_, key) => camelCase(key)) as CogFunctionLimit
+          r => mapKeys(r.data, (_, key) => camelCase(key)) as CogFunctionLimit
         ),
     config
   );
@@ -166,7 +166,7 @@ export const useCheckActivateFunction = (
     () =>
       sdk
         .get(`api/v1/projects/${project}/functions/status`)
-        .then((res) => res.data),
+        .then(res => res.data),
     config
   );
 };
@@ -180,10 +180,10 @@ export const useActivateFunction = (
     () =>
       sdk
         .post(`/api/v1/projects/${project}/functions/status`)
-        .then((res) => res.data),
+        .then(res => res.data),
     {
       ...config,
-      onSuccess: (data) => {
+      onSuccess: data => {
         cache.setQueryData(['activation', project], data);
       },
     }

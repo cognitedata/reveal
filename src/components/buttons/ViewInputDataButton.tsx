@@ -16,7 +16,7 @@ export default function ViewInputDataButton({ id }: Props) {
         style={{
           justifyContent: 'center',
         }}
-        onClick={(e) => {
+        onClick={e => {
           e.stopPropagation();
           setShowModal(true);
         }}
