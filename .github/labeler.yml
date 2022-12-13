@@ -1,0 +1,12 @@
+repo
+- "*"
+
+platypus
+- "apps/mock-server/**/*"
+- "apps/platypus/**/*"
+- "apps/platypus-cdf-cli/**/*"
+- "apps/platypus-e2e/**/*"
+- "libs/cog-data-grid/**/*"
+- "libs/mock-data/**/*"
+- "libs/platypus-common-utils/**/*"
+- "libs/platypus-core/**/*"
