@@ -130,7 +130,7 @@ export const getScheduleData = (scheduleId: number) => {
     .get(
       `/api/v1/projects/${getProject()}/functions/schedules/${scheduleId}/input_data`
     )
-    .then(response => response.data);
+    .then(response => response.data?.data);
 };
 
 export const deleteSchedule = (id: number) =>
