@@ -152,11 +152,22 @@ export class SectorSceneImpl implements SectorScene {
     });
 
     // Start looking for intersections and merge overlapping bounds into final bounding box.
+    // Bounds that do not intersect are kept as potentialJunk, but are retried if the merged bounds grow.
     // At the end, assume any non-overlapping clusters are junk.
     const mergedBounds = clusterBounds[biggestCluster].clone();
+    const potentialJunk: THREE.Box3[] = [];
     clusterBounds.forEach(cluster => {
-      if (cluster.intersectsBox(clusterBounds[biggestCluster])) {
+      if (cluster.intersectsBox(mergedBounds)) {
         this.mergeBounds(mergedBounds, cluster);
+
+        potentialJunk.forEach((junk, index) => {
+          if (junk.intersectsBox(mergedBounds)) {
+            this.mergeBounds(mergedBounds, junk);
+            potentialJunk.splice(index, 1);
+          }
+        });
+      } else {
+        potentialJunk.push(cluster);
       }
     });
     return mergedBounds;
