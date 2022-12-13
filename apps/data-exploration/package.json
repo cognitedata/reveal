@@ -5,7 +5,8 @@
     "start": "../../scripts/start.sh dev data-exploration",
     "build": "../../scripts/build.sh production data-exploration",
     "test": "../../scripts/test.sh data-exploration",
-    "lint": "../../scripts/lint.sh data-exploration"
+    "lint": "../../scripts/lint.sh data-exploration",
+    "lint:fix": "../../scripts/lint.sh platypus --fix"
   },
   "dependencies": {},
   "devDependencies": {},

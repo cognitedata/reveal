@@ -17,6 +17,11 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'data-exploration': "@cognite/cdf-data-exploration",
 ]
 
+static final Map<String, String> APPLICATIONS_REPO_IDS = [
+  'platypus': "platypus",
+  'data-exploration': "cdf-ui-data-exploration"
+]
+
 // This is your FAS app identifier (repo) shared across both production and staging apps
 // in order to do a commit lookup (commits are shared between apps).
 static final String APPLICATION_REPO_ID = 'platypus'
@@ -275,10 +280,12 @@ pods {
               def appPackageString = sh(script: "cat apps/${projects[i]}/package.json", returnStdout: true)
               def params = readJSON text: appPackageString
 
+              print "Reading version ${params.version} for ${projects[i]} with repoId: ${APPLICATIONS_REPO_IDS[projects[i]]}"
+
               stageWithNotify("Publish production build: ${projects[i]}") {
                 fas.build(
                   appId: productionAppId,
-                  repo: APPLICATION_REPO_ID,
+                  repo: APPLICATIONS_REPO_IDS[projects[i]],
                   baseVersion: params.version,
                   buildCommand: "yarn build production ${projects[i]}",
                   shouldPublishSourceMap: false
