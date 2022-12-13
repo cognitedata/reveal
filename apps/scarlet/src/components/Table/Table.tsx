@@ -76,8 +76,6 @@ export const Table = <T extends TableData>({
     ...plugins
   );
 
-  console.log({ page, pageCount, setPageSize, gotoPage });
-
   useEffect(() => {
     setPageSize(pagination ? propsPageSize : dataSource.length);
   }, [dataSource, pagination, propsPageSize]);

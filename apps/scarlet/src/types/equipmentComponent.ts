@@ -3,6 +3,7 @@ import { DataElement } from '.';
 export type EquipmentComponent = {
   id: string;
   name: string;
+  circuitId: string;
   pcmsExternalId?: string;
   type: EquipmentComponentType;
   componentElements: DataElement[];

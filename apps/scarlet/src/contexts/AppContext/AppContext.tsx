@@ -107,18 +107,19 @@ function reducer(state: AppState, action: AppAction) {
         detection
       );
 
-      const componentType = state.equipment.data?.components.find(
+      const refComp = state.equipment.data?.components.find(
         (c) => c.id === dataElement.componentId
-      )?.type;
+      );
 
       if (
-        componentType &&
+        refComp?.type &&
         [EquipmentComponentType.CHANNEL, EquipmentComponentType.SHELL].includes(
-          componentType
+          refComp.type
         )
       )
         equipmentToSave.components = getTruncatedCourseComponents({
-          componentType,
+          componentType: refComp.type,
+          circuitId: refComp.circuitId,
           equipmentType: equipmentToSave.type,
           prevComponents: state.equipment.data?.components ?? [],
           newComponents: equipmentToSave.components,

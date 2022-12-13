@@ -24,12 +24,14 @@ const getComponentElemValue = ({
 
 export const getTruncatedCourseComponents = ({
   componentType,
+  circuitId,
   equipmentType,
   prevComponents,
   newComponents,
   config,
 }: {
   componentType: EquipmentComponentType;
+  circuitId: string;
   equipmentType: EquipmentType;
   prevComponents: EquipmentComponent[];
   newComponents: EquipmentComponent[];
@@ -81,7 +83,8 @@ export const getTruncatedCourseComponents = ({
     resComponents = [...allComps, ...courseComps.slice(0, newNumbOfCourses)];
   } else if (newNumbOfCourses > prevNumbOfCourses) {
     const courseComponents = getCourseComponents({
-      idPrexis: componentType,
+      idPrefix: componentType,
+      circuitId,
       numbOfCourses: newNumbOfCourses - prevNumbOfCourses,
       equipmentType,
       config,

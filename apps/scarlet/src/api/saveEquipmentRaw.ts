@@ -51,7 +51,7 @@ export const saveEquipmentRaw = async (
   // await client.raw.deleteRows(dbName, tableName, [{ key: '' }]);
 };
 
-const getExistingTable = async (
+export const getExistingTable = async (
   client: CogniteClient,
   dbName: string,
   tableName: string

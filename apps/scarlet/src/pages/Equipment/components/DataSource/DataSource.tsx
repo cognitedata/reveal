@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Checkbox, Icon, toast } from '@cognite/cogs.js';
+import { useAuthContext } from '@cognite/react-container';
 import { Form, Formik, FormikState } from 'formik';
 import {
   AppActionType,
@@ -13,6 +14,7 @@ import {
 } from 'types';
 import { useAppContext, useAppState, useDataPanelDispatch } from 'hooks';
 import { getPrintedDataElementValue } from 'utils';
+import { deleteFieldRaw } from 'api';
 
 import { DataSourceField, DataSourceOrigin } from '..';
 
@@ -46,6 +48,7 @@ export const DataSource = ({
   isCalculated = false,
   hasConnectedElements,
 }: DataSourceProps) => {
+  const { client } = useAuthContext();
   const originalValue = detection.value;
   const originalExternalSource = detection.externalSource;
   const [isApproved, setIsApproved] = useState(
@@ -58,7 +61,7 @@ export const DataSource = ({
   const [isApproving, setApproving] = useState(false);
   const [isPrimaryLoading, setIsPrimaryLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { appDispatch } = useAppContext();
+  const { appState, appDispatch } = useAppContext();
   const dataPanelDispatch = useDataPanelDispatch();
   const isPCMS = detection?.type === DetectionType.PCMS;
   const isExternalSource = detection?.type === DetectionType.MANUAL_EXTERNAL;
@@ -76,6 +79,15 @@ export const DataSource = ({
         type: DataPanelActionType.REMOVE_NEW_DETECTION,
       });
     } else {
+      if (client)
+        deleteFieldRaw({
+          client,
+          detection,
+          equipment: appState.equipment.data!,
+          facility: appState.facility!,
+          unitId: appState.unitId,
+          dataElement,
+        });
       setRemoving(true);
       appDispatch({
         type: AppActionType.REMOVE_DETECTION,

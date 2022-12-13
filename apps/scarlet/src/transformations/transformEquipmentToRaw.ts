@@ -5,14 +5,19 @@ export const transformEquipmentToRaw = (
   equipmentId: string,
   equipment: EquipmentData
 ) => {
-  const typeName = equipment.typeName.replace(/\s/g, '');
+  const typeName = getComponentTypeName(equipment);
   const equipmentRows = equipment.equipmentElements
     .filter((elem) => elem.state === DataElementState.APPROVED)
     .map((elem) => ({
-      key: `${unitId}_${typeName}_${elem.config.key}`,
+      key: getRawDataElemKey({
+        unitId,
+        typeName,
+        elemConfigKey: elem.config.key,
+      }),
       columns: {
         'Equip ID': equipmentId,
         'Equip Type': typeName,
+        'Circuit ID': '-',
         Property: elem.config.label,
         Value: elem.detections.find(
           (detections) => detections.state === 'approved'
@@ -20,22 +25,50 @@ export const transformEquipmentToRaw = (
       },
     }));
   const componentRows = equipment.components
-    .map((component) =>
-      component.componentElements
+    .map((component) => {
+      const componentType =
+        component.type === 'course'
+          ? component.name.toLowerCase()
+          : component.type;
+      return component.componentElements
         .filter((elem) => elem.state === DataElementState.APPROVED)
         .map((elem) => ({
-          key: `${unitId}_${typeName}_${component.type}_${elem.config.key}`,
+          key: getRawDataElemKey({
+            unitId,
+            typeName,
+            componentType,
+            elemConfigKey: elem.config.key,
+          }),
           columns: {
             'Equip ID': equipmentId,
-            'Equip Type': `${typeName} - ${component.type}`,
+            'Circuit ID': component.circuitId,
+            'Equip Type': `${typeName} - ${componentType}`,
             Property: elem.config.label,
             Value: elem.detections.find(
               (detections) => detections.state === 'approved'
             )?.value,
           },
-        }))
-    )
+        }));
+    })
     .flat();
 
   return [...equipmentRows, ...componentRows];
 };
+
+export const getComponentTypeName = (equipment: EquipmentData) =>
+  equipment.typeName.replace(/\s/g, '');
+
+export const getRawDataElemKey = ({
+  unitId,
+  typeName,
+  componentType,
+  elemConfigKey,
+}: {
+  unitId: string;
+  typeName: string;
+  componentType?: string;
+  elemConfigKey: string;
+}) =>
+  componentType
+    ? `${unitId}_${typeName}_${componentType}_${elemConfigKey}`
+    : `${unitId}_${typeName}_${elemConfigKey}`;

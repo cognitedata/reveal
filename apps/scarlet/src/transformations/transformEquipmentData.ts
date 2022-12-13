@@ -180,6 +180,7 @@ const getEquipmentComponents = (
         const component: EquipmentComponent = {
           id: uuid(),
           name: pcmsComponent.name,
+          circuitId: pcmsComponent.name,
           pcmsExternalId: pcmsComponent.externalId,
           type: componentType,
           componentElements: [],
@@ -349,13 +350,15 @@ const transformDetectionValue = (
 };
 
 export const getCourseComponents = ({
-  idPrexis,
+  idPrefix,
+  circuitId,
   numbOfCourses,
   equipmentType,
   config,
   startIndex,
 }: {
-  idPrexis: string;
+  idPrefix: string;
+  circuitId: string;
   numbOfCourses: number;
   equipmentType: EquipmentType;
   config: EquipmentConfig;
@@ -364,8 +367,9 @@ export const getCourseComponents = ({
   const courseComponents = [];
   for (let i = 1; i <= numbOfCourses; i++) {
     const courseComp: EquipmentComponent = {
-      id: `${idPrexis}-${uuid()}`,
+      id: `${idPrefix}-${uuid()}`,
       name: `Course-${startIndex ? startIndex + i : i}`,
+      circuitId,
       pcmsExternalId: '',
       type: EquipmentComponentType.COURSE,
       componentElements: [],

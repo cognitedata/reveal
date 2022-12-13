@@ -52,6 +52,8 @@ const getEquipmentComponentType = (
       return EquipmentComponentType.NOZZLE;
     case 'shell':
       return EquipmentComponentType.SHELL;
+    case 'channel':
+      return EquipmentComponentType.CHANNEL;
   }
   return undefined;
 };

@@ -31,13 +31,27 @@ export const getConnectedDataElements = (
     });
   } else {
     if (dataElement.key === ComponentElementKey.COMPONENT_ID) return [];
-    const currentComponentType = equipment?.components.find(
+    const refComp = equipment?.components.find(
       ({ id }) => dataElement.componentId === id
-    )!.type;
+    );
+    let parentCompType = '';
+    const currCompType = refComp!.type;
+
+    // the subcomponent course id is suffixed with its parent component type - using that we can filter subcomponents per parent component type
+    // eslint-disable-next-line prefer-destructuring
+    if (currCompType === 'course') parentCompType = refComp!.id.split('-')[0];
 
     // add connected component elements only from the same group/type
     equipment?.components
-      .filter((component) => component.type === currentComponentType)
+      .filter((component) => {
+        if (parentCompType) {
+          return (
+            component.type === currCompType &&
+            component.id.startsWith(parentCompType)
+          );
+        }
+        return component.type === currCompType;
+      })
       .forEach((component) => {
         list.push(
           ...getConnectedElements(component.componentElements, connectedKeys)
