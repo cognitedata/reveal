@@ -24,6 +24,7 @@ export const deleteFieldRaw = async ({
 
   let elemToDelete;
   let componentType;
+  let circuitId;
   elemToDelete = equipment.equipmentElements.find(
     (elem) => elem.id === dataElement.id
   );
@@ -33,6 +34,7 @@ export const deleteFieldRaw = async ({
         if (elem.id === dataElement.id) {
           elemToDelete = elem;
           componentType = comp.type;
+          circuitId = comp.circuitId;
           return true;
         }
         return false;
@@ -46,6 +48,7 @@ export const deleteFieldRaw = async ({
     unitId,
     typeName,
     componentType,
+    circuitId,
     elemConfigKey: elemToDelete.config.key,
   });
 
