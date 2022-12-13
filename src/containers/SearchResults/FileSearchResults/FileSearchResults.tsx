@@ -73,6 +73,7 @@ export const FileSearchResults = ({
     <FileTable
       selectedRows={selectedRow}
       id="file-search-results"
+      query={query}
       tableHeaders={
         <StyledTableHeader justifyContent="flex-end">
           {tableHeaders}
