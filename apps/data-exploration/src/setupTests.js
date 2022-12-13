@@ -13,7 +13,7 @@ jest.mock('mixpanel-browser', () => {
     },
   };
 });
-jest.mock('app/utils/Metrics');
+jest.mock('@data-exploration-app/utils/Metrics');
 jest.mock('@cognite/cdf-utilities', () => ({
   createLink: jest.fn(),
 }));

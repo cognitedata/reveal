@@ -389,7 +389,7 @@ export const fetchClosestAssetIdQuery = async (
           return assetId;
         }
       }
-      
+
       return undefined;
     },
     options

@@ -184,6 +184,5 @@ module.exports = (config) => {
   // This ensures Monaco is able to load its web workers
   config.plugins.push(new MonacoWebpackPlugin({ publicPath: '' }));
 
-
   return config;
 };
