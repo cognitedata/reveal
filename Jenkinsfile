@@ -187,8 +187,8 @@ pods {
 
             def projects = getAffectedProjects(isPullRequest, isMaster, isRelease)
 
-            if (projects.equals('platypus')) {
-              stageWithNotify("Build and deploy Storyboor for: 'platypus'") {
+            if (projects.contains('platypus')) {
+              stageWithNotify("Build and deploy Storybook for: 'platypus'") {
                 previewServer(
                   prefix: 'storybook',
                   commentPrefix: STORYBOOK_COMMENT_MARKER,
@@ -215,7 +215,7 @@ pods {
               def packageName = PREVIEW_PACKAGE_NAMES[projects[i]]
 
               if (packageName == null) {
-                print "No preview available for '${projects[i]}'"
+                print "No preview available for: ${projects[i]}"
                 continue
               }
 
@@ -255,7 +255,7 @@ pods {
               def productionAppId = PRODUCTION_APP_IDS[projects[i]];
 
               if (productionAppId == null) {
-                print "No release available for '${projects[i]}'"
+                print "No release available for: ${projects[i]}"
                 continue;
               }
 
@@ -280,7 +280,7 @@ pods {
 
                 slack.send(
                   channel: SLACK_CHANNEL,
-                  message: "Deployment of ${env.BRANCH_NAME} complete for '${projects[i]}'!"
+                  message: "Deployment of ${env.BRANCH_NAME} complete for: ${projects[i]}!"
                 )
               }
             }
