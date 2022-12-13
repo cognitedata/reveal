@@ -187,7 +187,7 @@ pods {
 
             def projects = getAffectedProjects(isPullRequest, isMaster, isRelease)
 
-            if (projects.contains('platypus')) {
+            if (projects.equals('platypus')) {
               stageWithNotify("Build and deploy Storyboor for: 'platypus'") {
                 previewServer(
                   prefix: 'storybook',
