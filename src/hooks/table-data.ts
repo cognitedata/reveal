@@ -170,14 +170,43 @@ export const useTableData = (pageSize = PAGE_SIZE) => {
 
 export const useDownloadData = (size: number) => {
   const [isDownloading, setIsDownloading] = useState(true);
-  const { rows: currentRows } = useTableData();
+
+  const { database, table } = useActiveTableContext();
+
+  const { data: currentRowsData } = useTableRows({
+    database,
+    table,
+  });
+
+  const currentRows = useMemo(() => {
+    return (
+      currentRowsData?.pages.reduce(
+        (acc, cur) => acc.concat(cur.items),
+        [] as RawDBRow[]
+      ) ?? []
+    );
+  }, [currentRowsData]);
+
   const {
-    rows: fetchedRows,
+    data: fetchedRowsData,
     isFetching,
     isError,
     fetchNextPage,
     hasNextPage,
-  } = useTableData(Math.min(size, 10000));
+  } = useTableRows({
+    database,
+    table,
+    pageSize: Math.min(size, 10000),
+  });
+
+  const fetchedRows = useMemo(() => {
+    return (
+      fetchedRowsData?.pages.reduce(
+        (acc, cur) => acc.concat(cur.items),
+        [] as RawDBRow[]
+      ) ?? []
+    );
+  }, [fetchedRowsData]);
 
   useEffect(() => {
     setIsDownloading(true);

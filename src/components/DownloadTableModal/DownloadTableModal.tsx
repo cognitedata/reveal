@@ -7,22 +7,31 @@ import { CSVLink } from 'react-csv';
 import { escapeCSVValue } from 'utils/utils';
 import Modal, { ModalProps } from 'components/Modal/Modal';
 import Message from 'components/Message/Message';
-import { PRIMARY_KEY_DATAKEY, useDownloadData } from 'hooks/table-data';
+import { useDownloadData } from 'hooks/table-data';
 import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';
 import { useTranslation } from 'common/i18n';
-
-const COLUMNS_IGNORED = [
-  'column-index',
-  'lastUpdatedTime',
-  'parentId',
-  'id',
-  PRIMARY_KEY_DATAKEY,
-];
+import { RawDBRow } from '@cognite/sdk';
 
 type DownloadTableModalProps = {
   databaseName: string;
   tableName: string;
 } & Omit<ModalProps, 'children' | 'title' | 'footer'>;
+
+export const prepareRows = (
+  rows: RawDBRow[],
+  expectedCount: number
+): Record<string, string>[] => {
+  return (
+    rows.slice(0, Number(expectedCount)).map((item) => {
+      const escapedColumns: Record<string, string> = { key: '' };
+      Object.keys(item.columns).forEach((columnName) => {
+        escapedColumns[columnName] = escapeCSVValue(item.columns[columnName]);
+      });
+      escapedColumns.key = escapeCSVValue(item.key);
+      return escapedColumns;
+    }) || []
+  );
+};
 
 const DownloadTableModal = ({
   databaseName,
@@ -48,19 +57,7 @@ const DownloadTableModal = ({
   };
 
   const onDownloadData = useMemo(() => {
-    return (
-      fetchedRows.slice(0, Number(fetchRowCount)).map((item) => {
-        const escapedColumns: Record<string, string> = {};
-        Object.keys(item).forEach((key) => {
-          escapedColumns[key] = escapeCSVValue(item[key]);
-        });
-        escapedColumns.key = escapedColumns[PRIMARY_KEY_DATAKEY];
-        COLUMNS_IGNORED.forEach((column: string) => {
-          delete escapedColumns[column];
-        });
-        return { key: item.key, ...escapedColumns };
-      }) || []
-    );
+    return prepareRows(fetchedRows, Number(fetchRowCount));
   }, [fetchRowCount, fetchedRows]);
 
   const isItValidRowNumber = (n: string | number): boolean => {
