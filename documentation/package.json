@@ -40,7 +40,7 @@
     "@types/react": "18.0.26",
     "@types/styled-components": "5.1.26",
     "copyfiles": "2.4.1",
-    "docusaurus-plugin-typedoc": "0.17.5",
+    "docusaurus-plugin-typedoc": "0.18.0",
     "replace": "1.2.2",
     "rimraf": "3.0.2",
     "typedoc": "0.23.21",
