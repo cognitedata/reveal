@@ -260,17 +260,26 @@ pods {
                 continue;
               }
 
+              // Run the yarn install in the app in cases of local packages.json
               dir("apps/${projects[i]}") {
-                // Run the yarn install in the app in cases of local packages.json
                 if (fileExists("yarn.lock")) {
                   yarn.setup()
                 }
               }
 
+              if (!fileExists("apps/${projects[i]}/package.json")) {
+                throw new Error("App '${projects[i]}' is missing package.json file with a version number!")
+              }
+
+              // Get the local application package version to be used as base to FAS publish.
+              def appPackageString = sh(script: "cat apps/${projects[i]}/package.json", returnStdout: true)
+              def params = readJSON text: appPackageString
+
               stageWithNotify("Publish production build: ${projects[i]}") {
                 fas.build(
                   appId: productionAppId,
                   repo: APPLICATION_REPO_ID,
+                  baseVersion: params.version,
                   buildCommand: "yarn build production ${projects[i]}",
                   shouldPublishSourceMap: false
                 )
