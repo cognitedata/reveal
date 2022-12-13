@@ -80,6 +80,13 @@ export interface Cognite3DViewerOptions {
   rendererResolutionThreshold?: number;
 
   /**
+   * A factor that will scale down the resolution when moving the camera. This can
+   * be used to achieve a better user experience on devices with limited hardware.
+   * A value of e.g. 0.25 will approximately divide the number of pixels on the screen by four.
+   */
+  movingResolutionFactor?: number;
+
+  /**
    * Hints Reveal to use a given anti-aliasing technique.
    *
    * Fast approximate anti-aliasing (FXAA) is a fast technique that will remove some, but not all aliasing effects. See
