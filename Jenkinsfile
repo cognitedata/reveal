@@ -235,6 +235,7 @@ pods {
                   buildCommand: "yarn build preview ${projects[i]}",
                   buildFolder: 'build',
                 )
+                deleteComments(PR_COMMENT_MARKER)
                 def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
                 pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${projects[i]}")
               }
