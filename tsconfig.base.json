@@ -25,6 +25,7 @@
         "apps/platypus/src/app/*",
         "apps/platypus/src/environments/environment.ts"
       ],
+      "@data-exploration-app/*": ["apps/data-exploration/src/app/*"],
       "@platypus-core/*": ["libs/platypus-core/src/lib/*"],
       "@platypus/mock-data": ["libs/mock-data/src/index.ts"],
       "@platypus/platypus-common-utils": [

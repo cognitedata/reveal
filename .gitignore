@@ -14,6 +14,7 @@ apps/platypus-e2e/.nyc_output
 /build
 /dist
 /tmp
+/storybook-static
 
 # misc
 .DS_Store
@@ -35,3 +36,13 @@ junit.xml
 
 /.docz
 /dist
+#Cypress
+
+cypress/downloads
+cypress/screenshots
+cypress/videos
+
+.yalc/
+yalc.lock
+/.idea/
+/.log/

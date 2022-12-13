@@ -2,19 +2,19 @@
 
 // This is all the applications in the monorepo. Register your application name here
 // in addition to updating the 'PROPECTION_APP_IDS' & 'PREVIEW_PACKAGE_NAMES'
-def APPLICATIONS = ['platypus']
+def APPLICATIONS = ['platypus', 'data-exploration']
 
 // This is your FAS production app id.
 // At this time, there is no production build for the demo app.
 // static final String PRODUCTION_APP_ID = 'cdf-solutions-ui'
 static final Map<String, String> PRODUCTION_APP_IDS = [
   'platypus': "cdf-solutions-ui",
-  // 'data-exploration': "cdf-data-exploration",
+  'data-exploration': "cdf-data-exploration",
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
-  // 'data-exploration': "@cognite/cdf-data-exploration",
+  'data-exploration': "@cognite/cdf-data-exploration",
 ]
 
 // This is your FAS app identifier (repo) shared across both production and staging apps
@@ -188,7 +188,7 @@ pods {
             def projects = getAffectedProjects(isPullRequest, isMaster, isRelease)
 
             if (projects.contains('platypus')) {
-              stageWithNotify("Build and deploy Storyboor for: 'platypus'") {
+              stageWithNotify("Build and deploy Storybook for: 'platypus'") {
                 previewServer(
                   prefix: 'storybook',
                   commentPrefix: STORYBOOK_COMMENT_MARKER,
@@ -209,11 +209,13 @@ pods {
 
             def projects = getAffectedProjects(isPullRequest, isMaster, isRelease)
 
+            deleteComments('[FUSION_PREVIEW_URL]')
+
             for (int i = 0; i < projects.size(); i++) {
               def packageName = PREVIEW_PACKAGE_NAMES[projects[i]]
 
               if (packageName == null) {
-                print "No preview available for '${projects[i]}'"
+                print "No preview available for: ${projects[i]}"
                 continue
               }
 
@@ -233,10 +235,9 @@ pods {
                   buildCommand: "yarn build preview ${projects[i]}",
                   buildFolder: 'build',
                 )
-                deleteComments('[FUSION_PREVIEW_URL]')
-                deleteComments('[pr-server]')
+                deleteComments(PR_COMMENT_MARKER)
                 def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
-                pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url)")
+                pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${projects[i]}")
               }
             }
           }
@@ -255,7 +256,7 @@ pods {
               def productionAppId = PRODUCTION_APP_IDS[projects[i]];
 
               if (productionAppId == null) {
-                print "No release available for '${projects[i]}'"
+                print "No release available for: ${projects[i]}"
                 continue;
               }
 
@@ -280,7 +281,7 @@ pods {
 
                 slack.send(
                   channel: SLACK_CHANNEL,
-                  message: "Deployment of ${env.BRANCH_NAME} complete for '${projects[i]}'!"
+                  message: "Deployment of ${env.BRANCH_NAME} complete for: ${projects[i]}!"
                 )
               }
             }
