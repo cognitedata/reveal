@@ -89,20 +89,10 @@ export function SchemaVersionDropdown({
                     </LastTimeText>
                   ) : null}
                 </Flex>
-                <Flex alignItems="center">
-                  <VersionType
-                    status={schemaObj.status}
-                    isLatest={schemaObj.version === latestVersion}
-                  />
-                  <Icon
-                    type="EllipsisVertical"
-                    style={{
-                      margin: 0,
-                      marginLeft: 12,
-                      marginRight: 12,
-                    }}
-                  />
-                </Flex>
+                <VersionType
+                  status={schemaObj.status}
+                  isLatest={schemaObj.version === latestVersion}
+                />
               </MenuItem>
             ))}
           </Menu>
