@@ -130,6 +130,20 @@ module.exports = (config) => {
     );
   }
 
+  if (nodeEnv === 'development') {
+    // Temp fix to devserver and hmr
+    config.devServer.allowedHosts = 'all';
+    config.devServer.headers['Access-Control-Allow-Origin'] = '*';
+    config.devServer.https = true;
+    config.devServer.port = 3010;
+
+    config.devServer.static = {
+      watch: {
+        followSymlinks: true,
+      },
+    };
+  }
+
   config.output.libraryTarget = 'system';
   config.output.chunkLoading = 'jsonp';
   config.output.filename = ({ chunk: { name } }) => {
@@ -170,17 +184,6 @@ module.exports = (config) => {
   // This ensures Monaco is able to load its web workers
   config.plugins.push(new MonacoWebpackPlugin({ publicPath: '' }));
 
-  // Temp fix to devserver and hmr
-  config.devServer.allowedHosts = 'all';
-  config.devServer.headers['Access-Control-Allow-Origin'] = '*';
-  config.devServer.https = true;
-  config.devServer.port = 3010;
-
-  config.devServer.static = {
-    watch: {
-      followSymlinks: true,
-    },
-  };
 
   return config;
 };
