@@ -1,16 +1,8 @@
 {
   "name": "@cognite/cdf-data-exploration",
   "version": "2.1.0",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "typings": "dist/lib/index.d.ts",
-  "license": "UNLICENSED",
   "dependencies": {},
-  "files": [
-    "dist",
-    "package.json",
-    "README.md"
-  ],
+  "devDependencies": {},
   "browserslist": {
     "production": [
       ">0.2%",
@@ -22,9 +14,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {},
-  "engines": {
-    "node": ">=14"
   }
 }
