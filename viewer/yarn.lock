@@ -14,19 +14,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.32.0":
-  version: 2.32.0
-  resolution: "@azure/msal-browser@npm:2.32.0"
+"@azure/msal-browser@npm:2.32.1":
+  version: 2.32.1
+  resolution: "@azure/msal-browser@npm:2.32.1"
   dependencies:
-    "@azure/msal-common": ^9.0.0
-  checksum: b6b6f562ce34f38cf28f7aebcbc63395a0c826ac87ddb3effe9afac6e0aee2e05b68c2b9bb74753e137367ad464baba80d6f3b37f16093fd1a5a47dbcfc85f39
+    "@azure/msal-common": ^9.0.1
+  checksum: 3afc8aa8c3dcf17a348cc69c6e15db5c6d7d89cf656b0c585687a8885db8f82340cc38a9d9c842e2871929b7c31ce7e3c2016385153a7ba68b7d8f8b1729368f
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@azure/msal-common@npm:9.0.0"
-  checksum: e4b1fcff3a95a019761e62b6a3a7a8a5a67905826771ed262b8741efa719afb992db213b74b1000b1fee6faf8041189045fd32beb9d0e69961a7ee0980539546
+"@azure/msal-common@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "@azure/msal-common@npm:9.0.1"
+  checksum: 2e23a356c5662c999bdb1ca9878a265ff15711f78bdb701c9f0b1c4667c107e45e4abb04fb7b5e27f9d9df788604fb0ef435639d29a4e791486ed7f53ac75095
   languageName: node
   linkType: hard
 
@@ -774,7 +774,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal@workspace:."
   dependencies:
-    "@azure/msal-browser": 2.32.0
+    "@azure/msal-browser": 2.32.1
     "@cognite/sdk": 7.13.0
     "@microsoft/api-extractor": ^7.33.6
     "@tweenjs/tween.js": 18.6.4
@@ -782,7 +782,7 @@ __metadata:
     "@types/draco3dgltf": 1.4.0
     "@types/expect-puppeteer": 5.0.2
     "@types/glob": 8.0.0
-    "@types/jest": 29.2.3
+    "@types/jest": 29.2.4
     "@types/jest-environment-puppeteer": 5.0.3
     "@types/jest-image-snapshot": 5.1.0
     "@types/jsdom": 20.0.1
@@ -832,7 +832,7 @@ __metadata:
     moq.ts: 9.0.2
     nock: 13.2.9
     path-browserify: 1.0.1
-    prettier: 2.8.0
+    prettier: 2.8.1
     process: 0.11.10
     proj4: 2.8.0
     puppeteer: 19.3.0
@@ -848,7 +848,7 @@ __metadata:
     three-stdlib: 2.19.0
     ts-jest: 29.0.3
     ts-loader: 9.4.2
-    tsc-alias: 1.7.1
+    tsc-alias: 1.8.2
     typescript: 4.9.3
     wasm-pack: 0.10.3
     webpack: 5.75.0
@@ -2145,13 +2145,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.2.3":
-  version: 29.2.3
-  resolution: "@types/jest@npm:29.2.3"
+"@types/jest@npm:29.2.4":
+  version: 29.2.4
+  resolution: "@types/jest@npm:29.2.4"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: 55370906711b600a05b9e497c22aa74d80d8adcdbe4ac2f1bc9311f6f6ca0dd192862b6f38df6ac0d45e92396bcd796e377b1d8058c10bdfd584aeee580c3ce1
+  checksum: 9deb4756fe1b438d41ff1aae7d6c216c9e49e5fe60f539f8edb6698ffeb530ff7b25d37e223439b03602ca3a7397c9c2e53e1a39c7bd616353472fce0cc04107
   languageName: node
   linkType: hard
 
@@ -10383,12 +10383,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.8.0":
-  version: 2.8.0
-  resolution: "prettier@npm:2.8.0"
+"prettier@npm:2.8.1":
+  version: 2.8.1
+  resolution: "prettier@npm:2.8.1"
   bin:
     prettier: bin-prettier.js
-  checksum: 72004ce0cc9bb097daf3e3833f62495768724392c1d5b178dd47372337616e9e50ecbb0804f236596223f7b5eb1bbe69cefc8957dca21112c5777e77ef73a564
+  checksum: 4f21a0f1269f76fb36f54e9a8a1ea4c11e27478958bf860661fb4b6d7ac69aac1581f8724fa98ea3585e56d42a2ea317a17ff6e3324f40cb11ff9e20b73785cc
   languageName: node
   linkType: hard
 
@@ -12374,9 +12374,9 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"tsc-alias@npm:1.7.1":
-  version: 1.7.1
-  resolution: "tsc-alias@npm:1.7.1"
+"tsc-alias@npm:1.8.2":
+  version: 1.8.2
+  resolution: "tsc-alias@npm:1.8.2"
   dependencies:
     chokidar: ^3.5.3
     commander: ^9.0.0
@@ -12386,7 +12386,7 @@ resolve@~1.19.0:
     plimit-lit: ^1.2.6
   bin:
     tsc-alias: dist/bin/index.js
-  checksum: 3e153cad544997303c1ff030358f898b4b381e692a05170e772fb35182d23c3c52c5e604ff00752f33a6133b27552f6b3794b05d8b9e0d8997cd3fe76a03bafd
+  checksum: d3a45982d521bb4550a71c291028cf819ee5a6e2e3c0eb3dfe36886f0f4e265a4dbf589dbcebb2e03215695a9081974715a543100176caed389e9d32c3ba0c50
   languageName: node
   linkType: hard
 
