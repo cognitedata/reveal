@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 
+import styled from 'styled-components/macro';
+
 import { Flex } from 'styles/layout';
+
+const FlexNoShrink = styled(Flex)`
+  flex-shrink: 0;
+`;
 
 const getDraggableElement = (element: JSX.Element, index: number) => {
   const id = String(element.key || index);
@@ -9,11 +15,11 @@ const getDraggableElement = (element: JSX.Element, index: number) => {
   return (
     <Draggable key={id} draggableId={id} index={index}>
       {(provided) => (
-        <Flex ref={provided.innerRef} {...provided.draggableProps}>
+        <FlexNoShrink ref={provided.innerRef} {...provided.draggableProps}>
           {React.cloneElement(element, {
             ...provided.dragHandleProps,
           })}
-        </Flex>
+        </FlexNoShrink>
       )}
     </Draggable>
   );

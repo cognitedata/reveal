@@ -17,7 +17,8 @@ export const FilterItemWrapper = styled(FlexRow)`
 
 export const FilterBarWrapper = styled(FlexRow)`
   gap: ${sizes.small};
-  margin-bottom: ${sizes.normal};
+  padding-bottom: ${sizes.normal};
+  overflow-x: auto;
 `;
 
 export const VertSeperator = styled.div`
