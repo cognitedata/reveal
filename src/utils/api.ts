@@ -125,6 +125,7 @@ export const createSchedule = async ({
     .then(response => response?.data);
 };
 
+// Get the input data for scheduling item
 export const getScheduleData = (scheduleId: number) => {
   return sdk
     .get(
