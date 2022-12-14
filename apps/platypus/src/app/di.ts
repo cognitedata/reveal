@@ -60,13 +60,9 @@ export const rootInjector = new Container();
 rootInjector
   .bind(TOKENS.fdmClient)
   .toInstance(() => {
-    const localStorageProvider = rootInjector
-      .get(TOKENS.storageProviderFactory)
-      .getProvider(StorageProviderType.localStorage);
-
     const sdkClient = getCogniteSDKClient();
 
-    if (localStorageProvider.getItem(USE_FDM_V3_LOCALSTORAGE_KEY)) {
+    if (localStorage.getItem(`ls.${USE_FDM_V3_LOCALSTORAGE_KEY}`)) {
       return new FdmClient(
         new SpacesApiService(sdkClient),
         new FdmMixerApiService(sdkClient),
