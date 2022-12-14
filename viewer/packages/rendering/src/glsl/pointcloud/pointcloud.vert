@@ -254,6 +254,9 @@ void main() {
 	float slope = tan(fov / 2.0);
 	float projFactor =  -0.5 * screenHeight / (slope * mvPosition.z);
 
+	// Scale point appropriately according to render size
+	float size = size * screenHeight / 500.0;
+
 	#if defined fixed_point_size
 		pointSize = size;
 	#elif defined attenuated_point_size

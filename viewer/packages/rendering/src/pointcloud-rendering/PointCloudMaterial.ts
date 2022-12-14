@@ -335,36 +335,25 @@ export class PointCloudMaterial extends RawShaderMaterial {
     }
   }
 
-  onBeforeRender(): void {
+  onBeforeRender(renderer: WebGLRenderer): void {
     this._objectAppearanceTexture.onBeforeRender();
+
+    const renderSize = renderer.getDrawingBufferSize(new Vector2());
+    this.screenWidth = renderSize.x;
+    this.screenHeight = renderSize.y;
   }
 
   updateMaterial(
     octreeParams: OctreeMaterialParams,
     visibilityTextureData: Uint8Array,
     camera: Camera,
-    renderer: WebGLRenderer
+    _renderer: WebGLRenderer
   ): void {
-    const pixelRatio = renderer.getPixelRatio();
 
     if (camera.type === PERSPECTIVE_CAMERA) {
       this.fov = (camera as PerspectiveCamera).fov * (Math.PI / 180);
     } else {
       this.fov = Math.PI / 2; // will result in slope = 1 in the shader
-    }
-    const renderTarget = renderer.getRenderTarget();
-    if (renderTarget !== null) {
-      this.screenWidth = renderTarget.width;
-      this.screenHeight = renderTarget.height;
-    } else {
-      this.screenWidth = renderer.domElement.clientWidth * pixelRatio;
-      this.screenHeight = renderer.domElement.clientHeight * pixelRatio;
-    }
-
-    if (this.useDrawingBufferSize) {
-      renderer.getDrawingBufferSize(PointCloudMaterial.helperVec2);
-      this.screenWidth = PointCloudMaterial.helperVec2.width;
-      this.screenHeight = PointCloudMaterial.helperVec2.height;
     }
 
     const maxScale = Math.max(octreeParams.scale.x, octreeParams.scale.y, octreeParams.scale.z);
