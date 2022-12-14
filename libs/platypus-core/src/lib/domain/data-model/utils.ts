@@ -1,4 +1,8 @@
-import { DataModelTransformation, DataModelTypeDefsType } from './types';
+import {
+  DataModelTransformation,
+  DataModelTypeDefsType,
+  DataModelVersion,
+} from './types';
 import { KeyValueMap } from '../../boundaries/types';
 import {
   mixerApiBuiltInTypes,
@@ -96,4 +100,28 @@ Movie_actors_3 => Movie.actors
 */
 export const parseModelName = (modelName: string) => {
   return modelName.split('_').slice(0, -1).join('.');
+};
+
+/*
+Compare function used to sort DataModelVersion array with most recent createdTime first
+*/
+export const compareDataModelVersions = (
+  a: DataModelVersion,
+  b: DataModelVersion
+) => {
+  if (a.createdTime === undefined && b.createdTime === undefined) {
+    return 0;
+  }
+
+  // sort b after a
+  if (b.createdTime === undefined) {
+    return -1;
+  }
+
+  // sort a after b
+  if (a.createdTime === undefined) {
+    return 1;
+  }
+
+  return b.createdTime - a.createdTime;
 };

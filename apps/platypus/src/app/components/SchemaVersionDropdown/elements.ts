@@ -19,11 +19,13 @@ export const DropdownButton = styled(Button)<{ open: boolean }>`
 `;
 
 export const MenuItem = styled(Menu.Item)<{ selected: boolean }>`
-  background: ${(props) => props.selected && 'rgba(74, 103, 251, 0.08)'};
-  display: flex;
-  justify-content: space-between;
-  height: 40px;
-  overflow: visible;
+  && {
+    background: ${(props) => props.selected && 'rgba(74, 103, 251, 0.08)'};
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    overflow: visible;
+  }
 `;
 
 export const VersionTag = styled.span<{ status: DataModelVersionStatus }>`

@@ -47,9 +47,7 @@ export const useLocalDraft = (dataModelId: string) => {
   };
 
   const getRemoteAndLocalSchemas = (remoteSchemas: DataModelVersion[]) => {
-    return [...getLocalDrafts(), ...remoteSchemas].sort((a, b) =>
-      b.version.localeCompare(a.version)
-    );
+    return [...getLocalDrafts(), ...remoteSchemas];
   };
 
   return {

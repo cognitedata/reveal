@@ -42,6 +42,7 @@ import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/
 import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
 import { MixerQueryBuilder, OPERATION_TYPE } from '../../services';
 import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
+import { compareDataModelVersions } from '../../utils';
 
 export class FdmClient implements FlexibleDataModelingClient {
   private spacesApi: SpacesApiService;
@@ -79,7 +80,7 @@ export class FdmClient implements FlexibleDataModelingClient {
   }
 
   /**
-   * List Data Model Versions
+   * List Data Model Versions ordered by createdTime, most recent first
    * @param dto
    */
   listDataModelVersions(
@@ -99,9 +100,9 @@ export class FdmClient implements FlexibleDataModelingClient {
           );
         }
 
-        return results.map((result) =>
-          this.dataModelVersionDataMapper.deserialize(result)
-        );
+        return results
+          .map((result) => this.dataModelVersionDataMapper.deserialize(result))
+          .sort(compareDataModelVersions);
       });
   }
 

@@ -1,7 +1,12 @@
 import * as utils from './utils';
 
 import { mixerApiInlineTypeDirectiveName } from './constants';
-import { DataModelTransformation, DataModelTypeDefs } from './types';
+import {
+  DataModelTransformation,
+  DataModelTypeDefs,
+  DataModelVersion,
+  DataModelVersionStatus,
+} from './types';
 import { groupTransformationsByTypes, parseModelName } from './utils';
 
 const dataModelTypeDefsMock: DataModelTypeDefs = {
@@ -249,6 +254,60 @@ describe('groupTransformationsByTypes', () => {
 
     it('returns correctly for one-to-many model names', () => {
       expect(parseModelName('Movie_actors_3')).toBe('Movie.actors');
+    });
+  });
+
+  describe('compareDataModelVersions', () => {
+    it('sorts correctly', () => {
+      const dataModelVersions: DataModelVersion[] = [
+        {
+          externalId: 'foo',
+          space: 'foo',
+          status: DataModelVersionStatus.PUBLISHED,
+          version: 'three',
+          createdTime: 1666341041026,
+          schema: '',
+        },
+        {
+          externalId: 'foo',
+          space: 'foo',
+          status: DataModelVersionStatus.PUBLISHED,
+          version: 'no time',
+          schema: '',
+        },
+        {
+          externalId: 'foo',
+          space: 'foo',
+          status: DataModelVersionStatus.PUBLISHED,
+          version: 'four',
+          createdTime: 1666787116635,
+          schema: '',
+        },
+        {
+          externalId: 'foo',
+          space: 'foo',
+          status: DataModelVersionStatus.PUBLISHED,
+          version: 'two',
+          createdTime: 1666250631722,
+          schema: '',
+        },
+        {
+          externalId: 'foo',
+          space: 'foo',
+          status: DataModelVersionStatus.PUBLISHED,
+          version: 'one',
+          createdTime: 1666171691371,
+          schema: '',
+        },
+      ];
+
+      const sortedArray = dataModelVersions.sort(
+        utils.compareDataModelVersions
+      );
+
+      expect(
+        sortedArray.map((dataModelVersion) => dataModelVersion.version)
+      ).toEqual(['four', 'three', 'two', 'one', 'no time']);
     });
   });
 });

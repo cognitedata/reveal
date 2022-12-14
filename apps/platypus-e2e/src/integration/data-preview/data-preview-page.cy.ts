@@ -222,10 +222,9 @@ describe('Platypus Data Preview Page - Preview', () => {
       '/platypus/data-models/blog/blog/latest/data/data-management/preview'
     );
     cy.getBySel('schema-version-select').click();
-    cy.get('.cogs-menu button:last').click();
-
-    cy.getBySel('schema-version-select').click();
-    cy.get('.cogs-menu button:last').should('contain.text', 'Latest');
+    cy.get('.cogs-menu button:first')
+      .should('contain', 'v. 2')
+      .and('contain', 'Latest');
   });
 
   it('double click to see direct relationships', () => {

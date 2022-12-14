@@ -51,6 +51,7 @@ import {
 import { DmsApiService, DmsModelBuilder } from './services/data-model-storage';
 import { MixerApiService, MixerBindingsBuilder } from './services/mixer-api';
 import { MixerQueryBuilder, OPERATION_TYPE } from '../../services';
+import { compareDataModelVersions } from '../../utils';
 
 export class FdmV2Client implements FlexibleDataModelingClient {
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
@@ -88,7 +89,7 @@ export class FdmV2Client implements FlexibleDataModelingClient {
   }
 
   /**
-   * List Data Model Versions
+   * List Data Model Versions ordered by createdTime, most recent first
    * @param dto
    */
   listDataModelVersions(
@@ -111,9 +112,11 @@ export class FdmV2Client implements FlexibleDataModelingClient {
         }
         // eslint-disable-next-line
         const versions = results[0].versions!;
-        return versions.map((version) =>
-          this.dataModelVersionDataMapper.deserialize(dto.externalId, version)
-        );
+        return versions
+          .map((version) =>
+            this.dataModelVersionDataMapper.deserialize(dto.externalId, version)
+          )
+          .sort(compareDataModelVersions);
       });
   }
 
