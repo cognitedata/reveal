@@ -40,7 +40,6 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
       .should('be.visible')
       .should('contain', 'John Doe')
       .first()
-      .focus()
       .click()
       .type('{enter}Not John Doe{enter}');
 
