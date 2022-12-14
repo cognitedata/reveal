@@ -88,11 +88,6 @@ export class SectorSceneImpl implements SectorScene {
     return accepted;
   }
 
-  private mergeBounds(outBounds: THREE.Box3, expandBy: THREE.Box3) {
-    outBounds.expandByPoint(expandBy.min);
-    outBounds.expandByPoint(expandBy.max);
-  }
-
   private detectIntersectingBounds(bounds: THREE.Box3, clusters: THREE.Box3[]): THREE.Box3[] {
     const intersectingClusters: THREE.Box3[] = [];
     const potentialJunkClusters: THREE.Box3[] = [];
@@ -154,7 +149,7 @@ export class SectorSceneImpl implements SectorScene {
       const validBoundsMerged = new THREE.Box3();
       validBounds.forEach(x => {
         corners.push(x.min.toArray(), x.max.toArray());
-        this.mergeBounds(validBoundsMerged, x);
+        validBoundsMerged.union(x);
       });
 
       // Create a centroid for each "corner" of the validBounds + one for the center.
@@ -189,7 +184,7 @@ export class SectorSceneImpl implements SectorScene {
 
       // Get all validBounds that belongs to a cluster and merge them into one.
       clusters.idxs.forEach((cluster, idx) => {
-        this.mergeBounds(clusterBounds[cluster], validBounds[Math.floor(idx / 2)]);
+        clusterBounds[cluster].union(validBounds[Math.floor(idx / 2)]);
       });
 
       // Find chains of intersecting bounds starting with the biggestCluster
@@ -198,7 +193,7 @@ export class SectorSceneImpl implements SectorScene {
       // Merge bounds into final bounding box.
       const mergedBounds = clusterBounds[biggestCluster].clone();
       intersections.forEach(cluster => {
-        this.mergeBounds(mergedBounds, cluster);
+        mergedBounds.union(cluster);
       });
       return mergedBounds;
     }
