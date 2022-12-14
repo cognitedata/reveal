@@ -225,20 +225,20 @@ pods {
               }
 
               dir("apps/${projects[i]}") {
-                // Run the yarn install in the app in cases of local packages.json
+                // Run the yarn install in the app in cases of local packages.json file
                 if (fileExists("yarn.lock")) {
                   yarn.setup()
                 }
               }
 
               stageWithNotify("Build and deploy PR for: ${projects[i]}") {
-                def prefix = jenkinsHelpersUtil.determineRepoName()
+                def prefix = "${jenkinsHelpersUtil.determineRepoName()}-${projects[i]}"
                 def domain = 'fusion-preview'
                 previewServer(
                   repo: domain,
                   prefix: prefix,
                   buildCommand: "yarn build preview ${projects[i]}",
-                  buildFolder: 'build',
+                  buildFolder: "build",
                 )
                 deleteComments(PR_COMMENT_MARKER)
                 def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"

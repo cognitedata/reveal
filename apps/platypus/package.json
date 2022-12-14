@@ -5,7 +5,8 @@
     "start": "../../scripts/start.sh dev platypus",
     "build": "../../scripts/build.sh production platypus",
     "test": "../../scripts/test.sh platypus",
-    "lint": "../../scripts/lint.sh platypus"
+    "lint": "../../scripts/lint.sh platypus",
+    "lint:fix": "../../scripts/lint.sh platypus --fix"
   },
   "dependencies": {},
   "devDependencies": {},
