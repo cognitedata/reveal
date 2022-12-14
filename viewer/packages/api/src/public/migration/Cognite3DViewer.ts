@@ -72,7 +72,6 @@ type Cognite3DViewerEvents =
   | 'click'
   | 'hover'
   | 'cameraChange'
-  | 'cameraStop'
   | 'beforeSceneRendered'
   | 'sceneRendered'
   | 'disposed';
