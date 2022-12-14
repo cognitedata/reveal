@@ -135,7 +135,7 @@ export class SectorSceneImpl implements SectorScene {
       }
     }
 
-    //Sort by diagonal length, ascending
+    // Sort by diagonal length, ascending
     allBounds.sort((a, b) => {
       return a.min.distanceTo(a.max) - b.min.distanceTo(b.max);
     });
