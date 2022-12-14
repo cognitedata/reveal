@@ -68,7 +68,14 @@ import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { Image360 } from '@reveal/360-images/src/Image360';
 
-type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'cameraStop' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
+type Cognite3DViewerEvents =
+  | 'click'
+  | 'hover'
+  | 'cameraChange'
+  | 'cameraStop'
+  | 'beforeSceneRendered'
+  | 'sceneRendered'
+  | 'disposed';
 
 /**
  * @example
@@ -334,7 +341,8 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Set resolution threshold
+   * Set resolution threshold.
+   * @param threshold
    */
   setResolutionThreshold(threshold: number): void {
     this._revealManagerHelper.revealManager.setResolutionThreshold(threshold);

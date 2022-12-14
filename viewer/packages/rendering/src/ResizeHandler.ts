@@ -25,10 +25,7 @@ export class ResizeHandler {
 
   private _shouldResize: boolean;
 
-  constructor(renderer: WebGLRenderer,
-              cameraManager: CameraManager,
-              resizeOptions: ResizeHandlerOptions) {
-
+  constructor(renderer: WebGLRenderer, cameraManager: CameraManager, resizeOptions: ResizeHandlerOptions) {
     this._stoppedCameraResolutionThreshold =
       resizeOptions.renderResolutionThreshold ?? this._defaultResolutionThreshold;
     this._currentResolutionThreshold = this._stoppedCameraResolutionThreshold;
@@ -58,7 +55,7 @@ export class ResizeHandler {
     return this._shouldResize;
   }
 
-  public setResolutionThreshold(threshold: number) {
+  public setResolutionThreshold(threshold: number): void {
     this._stoppedCameraResolutionThreshold = threshold;
     this._shouldResize = true;
   }
@@ -80,7 +77,6 @@ export class ResizeHandler {
 
     return resizeObserver;
   }
-
 
   private resize(camera: THREE.PerspectiveCamera): void {
     const canvas = this._renderer.domElement;

@@ -147,12 +147,10 @@ export function createRevealManager(
     renderOptions,
     revealOptions.outputRenderTarget
   );
-  const resizeHandler = new ResizeHandler(renderer,
-                                          cameraManager,
-                                          {
-                                            renderResolutionThreshold: revealOptions.rendererResolutionThreshold,
-                                            movingResolutionFactor: revealOptions.movingResolutionFactor
-                                          });
+  const resizeHandler = new ResizeHandler(renderer, cameraManager, {
+    renderResolutionThreshold: revealOptions.rendererResolutionThreshold,
+    movingResolutionFactor: revealOptions.movingResolutionFactor
+  });
   const pointCloudManager = createPointCloudManager(
     modelMetadataProvider,
     modelDataProvider,
@@ -166,12 +164,14 @@ export function createRevealManager(
     ...revealOptions.internal?.cad,
     continuousModelStreaming: revealOptions.continuousModelStreaming
   });
-  return new RevealManager(cadManager,
-                           pointCloudManager,
-                           pipelineExecutor,
-                           defaultRenderPipeline,
-                           resizeHandler,
-                           cameraManager);
+  return new RevealManager(
+    cadManager,
+    pointCloudManager,
+    pipelineExecutor,
+    defaultRenderPipeline,
+    resizeHandler,
+    cameraManager
+  );
 }
 
 /**

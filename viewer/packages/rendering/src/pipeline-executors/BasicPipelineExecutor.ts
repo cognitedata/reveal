@@ -7,7 +7,6 @@ import { RenderPipelineExecutor } from '../RenderPipelineExecutor';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
 
 export class BasicPipelineExecutor implements RenderPipelineExecutor {
-
   private readonly _renderer: THREE.WebGLRenderer;
 
   constructor(renderer: THREE.WebGLRenderer) {
@@ -23,5 +22,5 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
     }
   }
 
-  dispose(): void { }
+  dispose(): void {}
 }

@@ -13,7 +13,13 @@ import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
 import { SupportedModelTypes, LoadingState } from '@reveal/model-base';
 import { CadManager, CadModelBudget } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
-import { RenderMode, RenderPipelineExecutor, CadMaterialManager, RenderPipelineProvider, ResizeHandler } from '@reveal/rendering';
+import {
+  RenderMode,
+  RenderPipelineExecutor,
+  CadMaterialManager,
+  RenderPipelineProvider,
+  ResizeHandler
+} from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import { CameraManager } from '@reveal/camera-manager';
@@ -115,9 +121,7 @@ export class RevealManager {
   }
 
   get needsRedraw(): boolean {
-    return this._cadManager.needsRedraw ||
-      this._pointCloudManager.needsRedraw ||
-      this._resizeHandler.needsRedraw;
+    return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw || this._resizeHandler.needsRedraw;
   }
 
   public update(camera: THREE.PerspectiveCamera): void {
