@@ -114,6 +114,7 @@ export class RevealManager {
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
     this._pointCloudManager.resetRedraw();
+    this._resizeHandler.resetRedraw();
   }
 
   get materialManager(): CadMaterialManager {
