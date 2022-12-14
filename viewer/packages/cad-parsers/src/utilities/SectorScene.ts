@@ -170,16 +170,10 @@ export class SectorSceneImpl implements SectorScene {
     const clusterCounts = new Array<number>(numClusters).fill(0);
     const clusterBounds = clusterCounts.map(_ => new THREE.Box3());
     clusters.idxs.map(x => clusterCounts[x]++);
-    const biggestCluster = clusterCounts.reduce(
-      (max, count, idx) => {
-        if (count > max.count) {
-          max.count = count;
-          max.idx = idx;
-        }
-        return max;
-      },
-      { count: 0, idx: -1 }
-    ).idx;
+    const biggestCluster = clusterCounts.reduce((max, count, idx) => (count > max.count ? { count, idx } : max), {
+      count: 0,
+      idx: -1
+    }).idx;
 
     // Get all validBounds that belongs to a cluster and merge them into one.
     clusters.idxs.forEach((cluster, idx) => {
