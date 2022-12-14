@@ -380,6 +380,7 @@ export class Cognite3DViewer {
     setCameraManager(cameraManager: CameraManager): void;
     setClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
+    setResolutionThreshold(threshold: number): void;
     setViewState(state: ViewerState): Promise<void>;
     worldToScreen(point: THREE_2.Vector3, normalize?: boolean): THREE_2.Vector2 | null;
 }
@@ -397,6 +398,7 @@ export interface Cognite3DViewerOptions {
         opacity: number;
     };
     logMetrics?: boolean;
+    movingResolutionFactor?: number;
     onLoading?: OnLoadingCallback;
     pointCloudEffects?: {
         pointBlending?: boolean;
