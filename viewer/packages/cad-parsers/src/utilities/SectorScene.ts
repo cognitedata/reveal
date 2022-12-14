@@ -143,7 +143,7 @@ export class SectorSceneImpl implements SectorScene {
     //Discard 1% of largest bounds
     const validBounds = allBounds.slice(0, Math.ceil(allBounds.length * 0.99));
 
-    //Find valid corners and create a merged bonds consisting of all valid bounds
+    // Find valid corners and create a merged bonds consisting of all valid bounds
     const corners: number[][] = [];
     {
       const validBoundsMerged = new THREE.Box3();
