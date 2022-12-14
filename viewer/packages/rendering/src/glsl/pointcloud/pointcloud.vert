@@ -256,6 +256,8 @@ void main() {
 
 	// Scale point appropriately according to render size
 	float size = size * screenHeight / 500.0;
+	float minSize = minSize * screenHeight / 500.0;
+	float maxSize = maxSize * screenHeight / 500.0;
 
 	#if defined fixed_point_size
 		pointSize = size;
