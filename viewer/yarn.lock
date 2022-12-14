@@ -849,7 +849,7 @@ __metadata:
     ts-jest: 29.0.3
     ts-loader: 9.4.2
     tsc-alias: 1.8.2
-    typescript: 4.9.3
+    typescript: 4.9.4
     wasm-pack: 0.10.3
     webpack: 5.75.0
     webpack-cli: 5.0.1
@@ -12494,23 +12494,23 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-typescript@4.9.3:
-  version: 4.9.3
-  resolution: "typescript@npm:4.9.3"
+typescript@4.9.4:
+  version: 4.9.4
+  resolution: "typescript@npm:4.9.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 17b8f816050b412403e38d48eef0e893deb6be522d6dc7caf105e54a72e34daf6835c447735fd2b28b66784e72bfbf87f627abb4818a8e43d1fa8106396128dc
+  checksum: e782fb9e0031cb258a80000f6c13530288c6d63f1177ed43f770533fdc15740d271554cdae86701c1dd2c83b082cea808b07e97fd68b38a172a83dbf9e0d0ef9
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.9.3#~builtin<compat/typescript>":
-  version: 4.9.3
-  resolution: "typescript@patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=32657b"
+"typescript@patch:typescript@4.9.4#~builtin<compat/typescript>":
+  version: 4.9.4
+  resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=32657b"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: c61b948d9181e52c3b12874f61e067720dd35f3e2ef0e77e5fdc314a1d15bbfd53e66a9110d3347d471632f9a4871d338df967e264fd20715431c6463f64546d
+  checksum: 8a0218b6fc89f1f3fa1acb20415aab070cd10f060c2bd5fc23295bdfb36f83a5c4eef32eadcc9fd4140c3517501d1cb83aca53d924346c7305d0112731e10e58
   languageName: node
   linkType: hard
 
