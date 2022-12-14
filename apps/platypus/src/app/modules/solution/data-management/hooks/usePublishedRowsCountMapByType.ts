@@ -57,6 +57,9 @@ export const usePublishedRowsCountMapByType = ({
         });
         throw errResponse;
       }
+    },
+    {
+      enabled: dataModelTypes.length > 0,
     }
   );
 };
