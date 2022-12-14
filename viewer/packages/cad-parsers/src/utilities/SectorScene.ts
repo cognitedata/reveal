@@ -116,7 +116,7 @@ export class SectorSceneImpl implements SectorScene {
       return this.root.subtreeBoundingBox;
     }
 
-    // Find all leaf bounds and count overal rendercost
+    // Find all leaf bounds and count overall render cost
     const allBounds: THREE.Box3[] = [];
     {
       let allBoundsRenderCost = 0;
