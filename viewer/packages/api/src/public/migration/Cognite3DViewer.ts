@@ -141,6 +141,7 @@ export class Cognite3DViewer {
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
   private _clippingNeedsUpdate: boolean = false;
+  private _nearAndFarPlaneNeedsUpdate: boolean = false;
 
   private readonly spinner: Spinner;
 
@@ -648,7 +649,7 @@ export class Cognite3DViewer {
 
     const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this.recalculateBoundingBox();
+    this._nearAndFarPlaneNeedsUpdate = true;
     this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
 
     return model3d;
@@ -678,7 +679,7 @@ export class Cognite3DViewer {
     const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
-    this.recalculateBoundingBox();
+    this._nearAndFarPlaneNeedsUpdate = true;
 
     this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
 
@@ -765,7 +766,7 @@ export class Cognite3DViewer {
       throw new Error('Model is not added to viewer');
     }
     this._models.splice(modelIdx, 1);
-    this.recalculateBoundingBox();
+    this._nearAndFarPlaneNeedsUpdate = true;
 
     switch (model.type) {
       case 'cad':
@@ -859,7 +860,7 @@ export class Cognite3DViewer {
     this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
     this.revealManager.requestRedraw();
-    this.recalculateBoundingBox();
+    this._nearAndFarPlaneNeedsUpdate = true;
   }
 
   /**
@@ -882,7 +883,7 @@ export class Cognite3DViewer {
       this._extraObjects.splice(index, 1);
     }
     this.revealManager.requestRedraw();
-    this.recalculateBoundingBox();
+    this._nearAndFarPlaneNeedsUpdate = true;
   }
 
   /**
@@ -1255,6 +1256,10 @@ export class Cognite3DViewer {
     if (isVisible) {
       const camera = this.cameraManager.getCamera();
       TWEEN.update(time);
+      if (this._nearAndFarPlaneNeedsUpdate) {
+        this.recalculateBoundingBox();
+        this._nearAndFarPlaneNeedsUpdate = false;
+      }
       this._activeCameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
       this.revealManager.update(camera);
 
