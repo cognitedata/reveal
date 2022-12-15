@@ -92,7 +92,6 @@ export class ResizeHandler {
     const pixelRatio = this._renderer.getPixelRatio();
 
     const virtualDomElementWidth = domElement.clientWidth !== 0 ? domElement.clientWidth : canvas.clientWidth;
-
     const virtualDomElementHeight = domElement.clientHeight !== 0 ? domElement.clientHeight : canvas.clientHeight;
 
     const domElementPhysicalWidth = virtualDomElementWidth * pixelRatio;
