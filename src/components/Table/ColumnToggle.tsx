@@ -149,6 +149,7 @@ export function ColumnToggle<T>({
                 id="column-toggle"
                 elementsOrder={elementOrders}
                 onDragEnd={onColumnOrderChanged}
+                isCustomPortal
               >
                 {slicedColumns.map(column => {
                   return (

@@ -22,7 +22,14 @@ import { orderElementsByKey } from './utils/orderElementsByKey';
 export const DragDropContainer: React.FC<
   React.PropsWithChildren<DragDropContainerProps>
 > = React.memo(
-  ({ id, children, direction = 'horizontal', elementsOrder, onDragEnd }) => {
+  ({
+    id,
+    children,
+    direction = 'horizontal',
+    elementsOrder,
+    onDragEnd,
+    isCustomPortal = false,
+  }) => {
     const [orderedElements, setOrderedElements] = useState<JSX.Element[]>([]);
 
     const childrenProps = useDeepMemo(
@@ -77,7 +84,9 @@ export const DragDropContainer: React.FC<
         <Droppable droppableId={id} direction={direction}>
           {provided => (
             <Wrapper ref={provided.innerRef} {...provided.droppableProps}>
-              <DraggableElements>{orderedElements}</DraggableElements>
+              <DraggableElements isCustomPortal={isCustomPortal}>
+                {orderedElements}
+              </DraggableElements>
               {provided.placeholder}
             </Wrapper>
           )}

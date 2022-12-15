@@ -20,6 +20,12 @@ export interface DragDropContainerProps {
     result: DropResult,
     provided: ResponderProvided
   ) => void;
+  /**
+   * Render dragging option on a custom portal.
+   * This is useful when we have to render a drag-drop component on top of another
+   * component that has a transform behavior (like dropdowns).
+   */
+  isCustomPortal?: boolean;
 }
 
 export type DragHandleProps = {

@@ -10,6 +10,7 @@ import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { Flow, AppContextProvider, OverrideURLMap } from './AppContext';
 import { Tooltip, Tabs } from '@cognite/cogs.js';
 import { MetricsMetadata } from 'hooks/useMetrics';
+import { DRAG_DROP_PORTAL_CLASS } from 'components/DragDropContainer/constants';
 
 export type DataExplorationProviderProps = {
   flow: Flow;
@@ -47,6 +48,14 @@ export const DataExplorationProvider = ({
       getPopupContainer: () =>
         document.getElementsByClassName(styleScopeId).item(0)!,
     };
+
+    // create a custom portal for drag-drop
+    const dragDropPortal: HTMLElement = document.createElement('div');
+    dragDropPortal.classList.add(DRAG_DROP_PORTAL_CLASS);
+    document
+      .getElementsByClassName(styleScopeId)
+      .item(0)!
+      .appendChild(dragDropPortal);
   }, [styleScopeId]);
 
   return (
