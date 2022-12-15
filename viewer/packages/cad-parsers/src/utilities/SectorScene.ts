@@ -117,12 +117,12 @@ export class SectorSceneImpl implements SectorScene {
   /**
    * Use kmeans to group inputBounds into clusters.
    *
-   * @param inputBounds The bounds to be grouped into clusters.
+   * @param inBounds The bounds to be grouped into clusters.
    * @returns Both the list of cluster bounds and the cluster with the highest node count
    */
   private generateClusters(inBounds: THREE.Box3[]): [THREE.Box3[], THREE.Box3] {
     // Store the position of the min and max corners of each bound in 'nodes'
-    // Also generate a merged box of all bounds that is used to calculate centroid position later
+    // Also generate a merged box of all bounds that is used to calculate centroid positions later
     const nodes: number[][] = [];
     const mergedBounds = new THREE.Box3();
     inBounds.forEach(x => {
