@@ -87,7 +87,6 @@ describe('RevealManager', () => {
   });
 
   test('set clippingPlanes triggers redraw', () => {
-    manager.resetRedraw();
     expect(manager.needsRedraw).toBeFalse();
     const planes = [new THREE.Plane(), new THREE.Plane()];
     manager.clippingPlanes = planes;

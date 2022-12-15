@@ -23,7 +23,7 @@ export class ResizeHandler {
 
   private readonly _resizeObserver: ResizeObserver | undefined;
 
-  private _shouldResize: boolean;
+  private _shouldResize: boolean = false;
 
   constructor(renderer: WebGLRenderer, cameraManager: CameraManager, resizeOptions: ResizeHandlerOptions) {
     this._stoppedCameraResolutionThreshold =
@@ -34,8 +34,6 @@ export class ResizeHandler {
     this._cameraManager = cameraManager;
 
     this._renderer = renderer;
-
-    this._shouldResize = true;
 
     if (resizeOptions.movingResolutionFactor) {
       this._movingResolutionFactor = resizeOptions.movingResolutionFactor;
