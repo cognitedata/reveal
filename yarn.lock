@@ -2535,7 +2535,7 @@
     uuid "^8.0.0"
     xdg-basedir "^4.0.0"
 
-"@graphiql/plugin-explorer@^0.1.6":
+"@graphiql/plugin-explorer@^0.1.12":
   version "0.1.12"
   resolved "https://registry.yarnpkg.com/@graphiql/plugin-explorer/-/plugin-explorer-0.1.12.tgz#10b8df7d76f7a63e31cac3ab52d95811f4b86d69"
   integrity sha512-H7YsmXl96QbYo+8tyV7RXhTDzr7q/W34yZXi0ABnxTMx3K0SGFU9fsnfTliM4TpiRm27lysROriWjqvHbOQXYQ==
@@ -14576,7 +14576,7 @@ graphiql-explorer@^0.9.0:
   resolved "https://registry.yarnpkg.com/graphiql-explorer/-/graphiql-explorer-0.9.0.tgz#25f6b990bfc3e04e88c0cf419e28d12abe2c4fbe"
   integrity sha512-fZC/wsuatqiQDO2otchxriFO0LaWIo/ovF/CQJ1yOudmY0P7pzDiP+l9CEHUiWbizk3e99x6DQG4XG1VxA+d6A==
 
-graphiql@^2.0.9:
+graphiql@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/graphiql/-/graphiql-2.2.0.tgz#406b9b28bca130ae9ece892826c1d60958c1ac13"
   integrity sha512-w1ujpCKMlkwkoUjeg0HpRiBBTm1WHAjHNkFv1TbMu6trjzz63mQ48GLZlmyQY1yhwmc+diCcvmmAt+AyvKLWWA==
