@@ -21,7 +21,7 @@ const projects =
 
 if (projects.length > 0) {
   execSync(
-    `npx nx run-many --configuration=ci --target=${target} --projects=${projects} --parallel`,
+    `npx nx run-many --configuration=production --target=${target} --projects=${projects} --parallel`,
     {
       stdio: [0, 1, 2],
     }
