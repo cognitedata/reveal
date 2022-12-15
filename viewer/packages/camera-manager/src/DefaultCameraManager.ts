@@ -233,6 +233,7 @@ export class DefaultCameraManager implements CameraManager {
     if (this.isEnabled) return;
 
     this.isEnabled = true;
+    this._controls.enabled = true;
     this.setupControls();
 
     if (cameraManager) {
@@ -246,6 +247,7 @@ export class DefaultCameraManager implements CameraManager {
     if (!this.isEnabled) return;
 
     this.isEnabled = false;
+    this._controls.enabled = false;
     this.teardownControls(true);
   }
 
