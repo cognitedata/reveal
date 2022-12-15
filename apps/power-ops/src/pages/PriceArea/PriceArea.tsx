@@ -15,11 +15,10 @@ import SidebarContainer from 'components/Sidebar/SidebarContainer';
 import { NewDayAheadDataAvailableBar } from 'components/NewDayAheadDataAvailableBar/NewDayAheadDataAvailableBar';
 import { ShopQualityAssuranceModal } from 'components/ShopQualityAssuranceModal/ShopQualityAssuranceModal';
 import { useNewBidMatrixAvailable } from 'hooks/useNewBidMatrixAvailable';
-import { BaseContainer } from 'styles/layout';
 import { MethodPerformanceContainer } from 'pages/MethodPerformance/MethodPerformance';
 import { SECTIONS } from 'types';
 
-import { Container, MainDiv } from './elements';
+import { Container, MainDiv, MainContainer } from './elements';
 
 export const PriceArea = () => {
   const { path } = useRouteMatch();
@@ -47,7 +46,7 @@ export const PriceArea = () => {
   };
 
   return (
-    <BaseContainer data-testid="pricearea-page">
+    <MainContainer data-testid="pricearea-page">
       <DayAheadMarketHeaderContainer
         bidProcessEventExternalId={bidProcessEventExternalId}
         onChangeBidProcessEventExternalId={setBidProcessEventExternalId}
@@ -85,6 +84,6 @@ export const PriceArea = () => {
           </Switch>
         </MainDiv>
       </Container>
-    </BaseContainer>
+    </MainContainer>
   );
 };

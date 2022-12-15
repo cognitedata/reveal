@@ -1,7 +1,6 @@
 import styled from 'styled-components/macro';
-import { BaseContainer } from 'styles/layout';
 
-export const Container = styled(BaseContainer)`
+export const Container = styled.div`
   padding-top: 32px;
   padding-bottom: 32px;
 `;

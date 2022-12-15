@@ -1,9 +1,9 @@
 import styled from 'styled-components/macro';
-import { BaseContainer } from 'styles/layout';
 
-export const NotFound = styled(BaseContainer)`
+export const NotFound = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
   justify-content: center;
   align-items: center;
 

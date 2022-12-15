@@ -1,7 +1,8 @@
 import styled from 'styled-components/macro';
-import { MainPanel } from 'styles/layout';
 
-export const Main = styled(MainPanel)`
+export const Main = styled.div`
+  display: flex;
   flex-direction: column;
   padding: 16px;
+  height: 100%;
 `;

@@ -11,7 +11,7 @@ export const StyledPanel = styled.div<SidePanelProps>`
   position: absolute;
   top: 0;
   left: 0;
-  min-height: 100%;
+  height: 100%;
   overflow: hidden;
   border-right: 1px solid var(--cogs-bg-control--disabled);
 

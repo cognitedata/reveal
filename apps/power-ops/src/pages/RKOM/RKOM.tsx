@@ -4,10 +4,9 @@ import RKOMSidebarContainer from 'components/RKOMSidebar/RKOMSidebarContainer';
 import { RKOMTableContainer } from 'components/RKOMTable/RKOMTableContainer';
 import { useState } from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
-import { BaseContainer } from 'styles/layout';
 import { PAGES } from 'types';
 
-import { Container, MainDiv } from './elements';
+import { Container, MainDiv, MainContainer } from './elements';
 
 export const RKOM = () => {
   const { path } = useRouteMatch();
@@ -15,7 +14,7 @@ export const RKOM = () => {
   const [filter, setFilter] = useState<RkomFilterType>();
 
   return (
-    <BaseContainer data-testid="balancing-markets-page">
+    <MainContainer data-testid="balancing-markets-page">
       <RKOMHeaderContainer
         filter={filter}
         onDownloadButtonClick={() => null}
@@ -39,6 +38,6 @@ export const RKOM = () => {
           </Switch>
         </MainDiv>
       </Container>
-    </BaseContainer>
+    </MainContainer>
   );
 };

@@ -13,7 +13,12 @@ export const CommonError = ({
   onButtonClick,
 }: Props) => {
   return (
-    <Flex direction="column" alignItems="center">
+    <Flex
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      style={{ height: '100%' }}
+    >
       <div style={{ marginBottom: 32 }}>
         <Graphic type="DataKits" />
       </div>

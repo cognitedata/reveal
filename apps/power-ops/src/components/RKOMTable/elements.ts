@@ -1,5 +1,4 @@
 import styled from 'styled-components/macro';
-import { MainPanel } from 'styles/layout';
 
 export const StyledSequenceTable = styled.table`
   text-align: left;
@@ -37,9 +36,10 @@ export const StyledSequenceTable = styled.table`
   }
 `;
 
-export const Main = styled(MainPanel)`
+export const Main = styled.div`
   flex-direction: column;
   overflow: auto;
+  height: 100%;
 
   .main {
     padding: 8px 16px 0 16px;

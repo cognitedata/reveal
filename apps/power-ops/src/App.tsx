@@ -13,31 +13,39 @@ import { Monitoring } from 'pages/Monitoring';
 import { DayAheadMarket } from 'pages/DayAheadMarket';
 import { WorkflowSchemasContainer } from 'pages/WorkflowSchemas';
 import { RKOM } from 'pages/RKOM';
+import { BaseContainer, VerticalFlexContainer } from 'styles/layout';
 
 const App = () => (
   <Container sidecar={sidecar}>
     <GlobalStyles />
     <EventStreamProvider>
-      <MenuBar />
-      <Switch>
-        <Route path={PAGES.PRICE_AREA} component={PriceArea} />
-        <Route path={PAGES.PORTFOLIO} component={DayAheadMarket} />
-        <Route path={PAGES.DAY_AHEAD_MARKET} component={DayAheadMarket} />
-        <Route path={PAGES.RKOM_BID} component={RKOM} />
-        <Route path={PAGES.RKOM_PERFORMANCE} component={RKOM} />
-        <Route path={PAGES.BALANCING_MARKETS} component={BalancingMarkets} />
-        <Route path={PAGES.WORKFLOWS_SINGLE} component={WorkflowSingle} />
-        <Route path={PAGES.WORKFLOWS} component={Workflows} />
-        <Route
-          path={PAGES.WORKFLOW_SCHEMAS}
-          component={WorkflowSchemasContainer}
-        />
-        <Route path={PAGES.MONITORING} component={Monitoring} />
-        <Route path={PAGES.LOGOUT} component={Logout} />
-        <Redirect from="" to={PAGES.DAY_AHEAD_MARKET} />
-        <Redirect from="/" to={PAGES.DAY_AHEAD_MARKET} />
-        <Route component={NotFoundPage} />
-      </Switch>
+      <BaseContainer>
+        <MenuBar />
+        <VerticalFlexContainer>
+          <Switch>
+            <Route path={PAGES.PRICE_AREA} component={PriceArea} />
+            <Route path={PAGES.PORTFOLIO} component={DayAheadMarket} />
+            <Route path={PAGES.DAY_AHEAD_MARKET} component={DayAheadMarket} />
+            <Route path={PAGES.RKOM_BID} component={RKOM} />
+            <Route path={PAGES.RKOM_PERFORMANCE} component={RKOM} />
+            <Route
+              path={PAGES.BALANCING_MARKETS}
+              component={BalancingMarkets}
+            />
+            <Route path={PAGES.WORKFLOWS_SINGLE} component={WorkflowSingle} />
+            <Route path={PAGES.WORKFLOWS} component={Workflows} />
+            <Route
+              path={PAGES.WORKFLOW_SCHEMAS}
+              component={WorkflowSchemasContainer}
+            />
+            <Route path={PAGES.MONITORING} component={Monitoring} />
+            <Route path={PAGES.LOGOUT} component={Logout} />
+            <Redirect from="" to={PAGES.DAY_AHEAD_MARKET} />
+            <Redirect from="/" to={PAGES.DAY_AHEAD_MARKET} />
+            <Route component={NotFoundPage} />
+          </Switch>
+        </VerticalFlexContainer>
+      </BaseContainer>
     </EventStreamProvider>
   </Container>
 );

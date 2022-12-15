@@ -1,10 +1,10 @@
 import styled from 'styled-components/macro';
 import { Icon, Tabs } from '@cognite/cogs.js';
 import layers from 'utils/zindex';
-import { MainPanel } from 'styles/layout';
 
-export const Main = styled(MainPanel)`
+export const Main = styled.div`
   flex-direction: column;
+  height: 100%;
   overflow: hidden;
   &:hover {
     overflow: overlay;

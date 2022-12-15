@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components/macro';
 import { Title } from '@cognite/cogs.js';
-import { MainPanel } from 'styles/layout';
 
 const GeneralTableStyles = css`
   overflow: hidden;
@@ -22,9 +21,10 @@ const GeneralTableInternalStyles = css`
   text-align: right;
 `;
 
-export const Main = styled(MainPanel)`
+export const Main = styled.div`
   flex-direction: column;
   overflow: auto;
+  height: 100%;
 
   .main {
     display: flex;

@@ -29,15 +29,13 @@ export const sizes = {
 };
 
 export const BaseContainer = styled.div`
-  text-align: center;
-  min-height: calc(100vh - 134px);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 `;
 
-export const MainPanel = styled.div`
+export const VerticalFlexContainer = styled.div`
   display: flex;
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: inherit;
+  flex-direction: column;
+  flex-grow: 1;
 `;
