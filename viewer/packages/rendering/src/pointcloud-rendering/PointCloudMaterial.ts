@@ -89,7 +89,6 @@ const COLOR_DEFS = {
 
 export class PointCloudMaterial extends RawShaderMaterial {
   private static readonly helperVec3 = new Vector3();
-  private static readonly helperVec2 = new Vector2();
 
   /**
    * Use the drawing buffer size instead of the dom client width and height when passing the screen height and screen width uniforms to the
