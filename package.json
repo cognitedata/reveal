@@ -48,7 +48,7 @@
     "chalk": "4.1.2",
     "cli-table": "^0.3.11",
     "conf": "^10.0.3",
-    "configstore": "5.0.0",
+    "configstore": "5.0.1",
     "copy-webpack-plugin": "^10.0.0",
     "core-js": "^3.6.5",
     "d3": "^7.1.1",
