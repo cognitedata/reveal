@@ -66,7 +66,7 @@ You can find the code under `apps/platypus`.
 
 ## Running Platypus locally
 
-*Note: make sure to use Node v14! There's a bug with the `cdf-utilities` requirement.*
+_Note: make sure to use Node v14! There's a bug with the `cdf-utilities` requirement._
 
 For development, you can use either `development` or `fusion` environments. The default environment is `development`, which runs the app standalone outside of the CDF Fusion platform app. To use this environment, run:
 
@@ -85,13 +85,13 @@ Your bundle should now be hosted at https://localhost:3000/index.js. You can go 
 
 Then show it in unified CDF UI by following these steps:
 
-* Go to [https://cog-appdev.dev.fusion.cogniteapp.com/](https://cog-appdev.dev.fusion.cogniteapp.com/)
-* Open devtools
-* In the console type: `importMapOverrides.enableUI()` (This sets some variables in localstorage)
-* On the bottom right click the "{...}"-button
-* Select @cognite/cdf-solutions-ui
-* Type in "https://localhost:3000/index.js"
-* Refresh the browser
+- Go to [https://cog-appdev.dev.fusion.cogniteapp.com/](https://cog-appdev.dev.fusion.cogniteapp.com/)
+- Open devtools
+- In the console type: `importMapOverrides.enableUI()` (This sets some variables in localstorage)
+- On the bottom right click the "{...}"-button
+- Select @cognite/cdf-solutions-ui
+- Type in "https://localhost:3000/index.js"
+- Refresh the browser
 
 Voila!
 
@@ -135,6 +135,16 @@ Breakdown:
 - externalOverride - overrides the `signle-spa` import mapping to load the file from `overrideUrl`
 - overrideUrl - url where your compiled js files are deployed
 
+# Testing your app production build locally
+
+If you ever need to debug the production/staging build before is being deployed on fusion locally, here are the steps how to do it:
+
+- Install `http-server` globally
+- build the app locally `yarn build preview platypus` (platypus is the name of the app)
+- Copy SSL certificates - you can use the ones in mock server/src/
+- Navigate to `build` folder and run the app `http-server --ssl -C server.crt -K server.key --cors`
+- Finally, just add the override in fusion
+
 # Platypus CLI
 
 Read more [here](./apps/platypus-cdf-cli/README.md)
@@ -174,3 +184,49 @@ You can optionally run the e2e tests using the `Nx Console` VSCode extension by 
 ## Setup for M1 machines
 
 If you're on an Apple M1 machine, you need to do a bit of extra setup to get Cypress to run using Rosetta 2. You can follow [these instructions](https://www.cypress.io/blog/2021/01/20/running-cypress-on-the-apple-m1-silicon-arm-architecture-using-rosetta-2/) and then use the above commands from your terminal running Rosetta.
+
+# Deploying to Fusion and all what you need to know
+
+After your PR was merged on `master` and the subapp is released, to see the changes on any environment of Fusion, a build of cdf-ui-hub's master branch should be triggered.
+
+### To trigger the deployment:
+
+1. Go to [`cdf-ui-hub` on Jenkins CD](https://cd.jenkins.cognite.ai/blue/organizations/jenkins/cognitedata-cd%2Fcdf-ui-hub/branches).
+2. Locate the `master` branch and click the `Run ▶️` button.
+3. After the build is successful, the changes automatically will take effect on `dev.fusion.cogniteapp.com` and `next-release.fusion.cognite.com` if the new version matches the corresponding import maps.
+4. To deploy to the production environment `fusion.cognite.com`, go to `staging.fusion.cognite.com` to verify that your changes work properly.
+5. If everything looks alright, go to [Spinnaker](https://spinnaker.cognite.ai/#/applications/fusion-app/executions).
+6. Locate the `deploy-fusion-app-prod` pipeline and verify the build by clicking `Continue`.
+
+> For a more detailed explanation of this step, see the step-by-step guide [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3758588022/...deploy+a+new+sub-app+version+to+production).
+
+### Useful links
+
+Jenkins CD for `cdf-ui-hub`
+[cdf-ui-hub cd](https://cd.jenkins.cognite.ai/job/cognitedata-cd/job/cdf-hub/job/master/)
+
+To monitor Jenkins pipeline activity
+[cdf-ui-hub Jenkins pipelines](https://cd.jenkins.cognite.ai/blue/organizations/jenkins/cognitedata-cd%2Fcdf-ui-hub/activity)
+
+Spinnaker
+[Spinnaker](https://spinnaker.cognite.ai/#/applications/fusion-app/executions)
+
+CDF UI HUB Versions map. If you want to lock your app to a specific version, open a PR here:
+[CDF UI HUB Prod Versions map](https://github.com/cognitedata/cdf-ui-hub/blob/master/packages/fas-apps/config/prod.fas-apps.import-map.json)
+[CDF UI HUB Versions map](https://github.com/cognitedata/cdf-ui-hub/tree/master/packages/fas-apps/config)
+
+Firebase database with versions for each app. We are keeping all the versions for all apps on firebase.
+You can see them here, just filter using the name of your app:
+[Cognite App Server Firebase Database](https://console.firebase.google.com/u/0/project/cognite-app-server/firestore/data/~2Fapps~2Fcdf-solutions-ui~2Freleases)
+
+#### Troubleshooting
+
+- I can not see my latest changes on dev.fusion or next-release
+
+First verify you are previewing the correct deployment. Check the autogenerated number from your Jenkins PR.
+For example, open Jenkins and find the version or folder where your build was uploaded. Should be something like `frontend-app-server-cognitedata-production/name-of-the-app/v.a32c74bc75a493b61e2e2cf5aeddc8f130ed5f63/`. Open your app in fusion and compare if the version that was served is the same as the one from your PR.
+If not, then follow the steps above.
+
+- I want to lock my app to a specific version
+  See above `CDF UI HUB Versions map`.You will need to open a PR and specify which version you want to use.
+  If you need to see the available versions from your app, check the `Cognite App Server Firebase Database` link.

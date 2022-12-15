@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-solutions-ui",
-  "version": "0.1.240",
+  "version": "0.2.0",
   "scripts": {
     "start": "../../scripts/start.sh dev platypus",
     "build": "../../scripts/build.sh production platypus",
