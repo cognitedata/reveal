@@ -59,7 +59,8 @@
       "outputs": ["{workspaceRoot}/coverage/apps/platypus-cdf-cli"],
       "options": {
         "jestConfig": "apps/platypus-cdf-cli/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "testPathIgnorePatterns": ["/e2e-tests/"]
       }
     },
     "e2e": {
