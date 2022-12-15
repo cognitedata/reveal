@@ -24,7 +24,14 @@ import {
   sortFunctionKey,
   limitsKey,
 } from './queryKeys';
-import { getCalls, getCall, getResponse, getLogs, getLatestCalls } from './api';
+import {
+  getCalls,
+  getCall,
+  getResponse,
+  getLogs,
+  getLatestCalls,
+  getScheduleData,
+} from './api';
 
 export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) => {
   const cache = useQueryCache();
@@ -69,6 +76,18 @@ export const useSchedules = (config?: QueryConfig<Schedule[], unknown>) =>
         .then(r => r.data?.items),
     config
   );
+
+type ObjectType = Record<string, any>;
+export const useRetriveScheduleInputData = (
+  scheduleId: number,
+  config?: QueryConfig<ObjectType, unknown>
+) => {
+  return useQuery<ObjectType>(
+    [allSchedulesKey, scheduleId],
+    () => getScheduleData(scheduleId),
+    config
+  );
+};
 export const useLimits = (config?: QueryConfig<CogFunctionLimit, unknown>) =>
   useQuery<CogFunctionLimit>(
     [limitsKey],

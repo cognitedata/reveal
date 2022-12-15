@@ -125,6 +125,15 @@ export const createSchedule = async ({
     .then(response => response?.data);
 };
 
+// Get the input data for scheduling item
+export const getScheduleData = (scheduleId: number) => {
+  return sdk
+    .get(
+      `/api/v1/projects/${getProject()}/functions/schedules/${scheduleId}/input_data`
+    )
+    .then(response => response.data?.data);
+};
+
 export const deleteSchedule = (id: number) =>
   sdk
     .post(`/api/v1/projects/${getProject()}/functions/schedules/delete`, {

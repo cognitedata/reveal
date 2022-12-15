@@ -1,24 +1,23 @@
 import React from 'react';
 import { Modal, Alert } from 'antd';
 import { Icon, Button } from '@cognite/cogs.js';
-import { CallResponse } from 'types/Types';
+
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
-import { useResponse } from 'utils/hooks';
+import { useRetriveScheduleInputData } from '../../../src/utils/hooks';
 
 type Props = {
   onCancel: () => void;
   id: number;
-  callId: number;
 };
 
 type BodyProps = {
-  response?: CallResponse;
+  response?: Record<string, any>;
   error?: any;
   fetched: boolean;
 };
 function ModalBody({ response, error, fetched }: BodyProps) {
   if (!fetched) {
-    return <em>Fetching logs</em>;
+    return <em>Fetching input data</em>;
   }
   if (error) {
     return (
@@ -28,7 +27,7 @@ function ModalBody({ response, error, fetched }: BodyProps) {
         message="Error"
         description={
           <>
-            <p>There was an error fetching the function response.</p>
+            <p>There was an error fetching the input data response.</p>
             <ErrorFeedback error={error} />
           </>
         }
@@ -37,22 +36,18 @@ function ModalBody({ response, error, fetched }: BodyProps) {
   }
 
   if (!response) {
-    return <em>No response found for this function</em>;
+    return <em>No input data found for this function</em>;
   }
 
   return <pre>{JSON.stringify(response, null, 4)}</pre>;
 }
 
-export default function ViewResponseModal({ id, callId, onCancel }: Props) {
-  const { data: response, error, isFetched } = useResponse({
-    id,
-    callId,
-  });
-
+export default function ScheduleInputDataModal({ id, onCancel }: Props) {
+  const { data, isFetched, error } = useRetriveScheduleInputData(id);
   return (
     <Modal
       visible
-      title="Call response"
+      title="Input data"
       footer={[
         <Button
           key="close"
@@ -69,7 +64,7 @@ export default function ViewResponseModal({ id, callId, onCancel }: Props) {
       width={900}
       onCancel={onCancel}
     >
-      <ModalBody response={response} error={error} fetched={isFetched} />
+      <ModalBody response={data} error={error} fetched={isFetched} />
     </Modal>
   );
 }
