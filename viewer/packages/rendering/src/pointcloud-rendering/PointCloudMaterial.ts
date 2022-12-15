@@ -349,7 +349,6 @@ export class PointCloudMaterial extends RawShaderMaterial {
     camera: Camera,
     _renderer: WebGLRenderer
   ): void {
-
     if (camera.type === PERSPECTIVE_CAMERA) {
       this.fov = (camera as PerspectiveCamera).fov * (Math.PI / 180);
     } else {

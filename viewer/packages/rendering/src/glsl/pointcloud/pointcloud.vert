@@ -255,9 +255,9 @@ void main() {
 	float projFactor =  -0.5 * screenHeight / (slope * mvPosition.z);
 
 	// Scale point appropriately according to render size
-	float size = size * screenHeight / 500.0;
-	float minSize = minSize * screenHeight / 500.0;
-	float maxSize = maxSize * screenHeight / 500.0;
+	float size = size * screenHeight / 750.0;
+	float minSize = minSize * screenHeight / 730.0;
+	float maxSize = maxSize * screenHeight / 720.0;
 
 	#if defined fixed_point_size
 		pointSize = size;
