@@ -5,6 +5,7 @@ import alias from '@rollup/plugin-alias';
 import { terser } from 'rollup-plugin-terser';
 // import multi from '@rollup/plugin-multi-entry';
 import commonjs from '@rollup/plugin-commonjs';
+import url from '@rollup/plugin-url';
 
 import path from 'path';
 import pkg from './package.json';
@@ -49,6 +50,7 @@ export default [
         extensions: ['.ts', '.tsx'],
         babelHelpers: 'runtime',
       }),
+      url(),
     ],
     external: [
       ...Object.keys(pkg.dependencies || {}),

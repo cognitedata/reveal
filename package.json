@@ -99,6 +99,7 @@
     "@rollup/plugin-babel": "^5.2.1",
     "@rollup/plugin-commonjs": "^15.1.0",
     "@rollup/plugin-multi-entry": "^4.0.0",
+    "@rollup/plugin-url": "^8.0.1",
     "@storybook/addon-essentials": "^6.5.10",
     "@storybook/addon-interactions": "^6.5.10",
     "@storybook/addon-storysource": "^6.5.10",

@@ -3,6 +3,7 @@ import SplitterLayout from 'react-splitter-layout';
 import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { SIDEBAR_RESIZE_EVENT } from 'utils';
+import handle from '../../assets/handle.svg';
 
 export type SplitterProps = {
   secondaryMinSize?: number;
@@ -90,19 +91,23 @@ const SplitterWrapper = styled.div(
       height: 100%;
       cursor: col-resize;
       transition: 0.3s all;
-      background-color: rgba(0, 0, 0, 0.1);
+      position: relative;
+      border-left: solid 1px var(--cogs-border--muted);
     }
 
-    .splitter-layout .layout-splitter:hover {
-      background-color: ${Colors['midblue-7'].hex()};
+    .splitter-layout > .layout-splitter::before {
+      content: url(${handle});
+      position: absolute;
+      isolation: isolate;
+      z-index: 1;
+      top: 50%;
+      left: -6px;
+      width: 12px;
+      height: 36px;
     }
 
     .splitter-layout.layout-changing {
       cursor: col-resize;
-    }
-
-    .splitter-layout.layout-changing > .layout-splitter {
-      background-color: #aaa;
     }
 
     .splitter-layout.splitter-layout-vertical {
