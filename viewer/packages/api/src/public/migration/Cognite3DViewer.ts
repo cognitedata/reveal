@@ -141,7 +141,7 @@ export class Cognite3DViewer {
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
   private _clippingNeedsUpdate: boolean = false;
-  private _nearAndFarPlaneNeedsUpdate: boolean = false;
+  private _updateBoundingBoxOnAnimate: boolean = false;
 
   private readonly spinner: Spinner;
 
@@ -649,7 +649,7 @@ export class Cognite3DViewer {
 
     const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this._nearAndFarPlaneNeedsUpdate = true;
+    this.recalculateBoundingBox();
     this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
 
     return model3d;
@@ -679,7 +679,7 @@ export class Cognite3DViewer {
     const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
-    this._nearAndFarPlaneNeedsUpdate = true;
+    this.recalculateBoundingBox();
 
     this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
 
@@ -766,7 +766,7 @@ export class Cognite3DViewer {
       throw new Error('Model is not added to viewer');
     }
     this._models.splice(modelIdx, 1);
-    this._nearAndFarPlaneNeedsUpdate = true;
+    this.recalculateBoundingBox();
 
     switch (model.type) {
       case 'cad':
@@ -860,7 +860,7 @@ export class Cognite3DViewer {
     this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
     this.revealManager.requestRedraw();
-    this._nearAndFarPlaneNeedsUpdate = true;
+    this.recalculateBoundingBox();
   }
 
   /**
@@ -883,7 +883,7 @@ export class Cognite3DViewer {
       this._extraObjects.splice(index, 1);
     }
     this.revealManager.requestRedraw();
-    this._nearAndFarPlaneNeedsUpdate = true;
+    this.recalculateBoundingBox();
   }
 
   /**
@@ -1039,7 +1039,19 @@ export class Cognite3DViewer {
    */
   requestRedraw(): void {
     this.revealManager.requestRedraw();
-    this._nearAndFarPlaneNeedsUpdate = true;
+    this.recalculateBoundingBox();
+  }
+
+  /**
+   * Near and far planes are automatically updated when 3D models are added to or removed from the viewer
+   * or when a redraw is requested. However, if models have animation that would move them outside the
+   * current bounding box or for other reasons will need the planes to be updated more often, this flag
+   * will enable bounding box update on every animate call. The flag is false by default.
+   *
+   * @param enabled If true the boundingBox will be updated on every animation frame.
+   */
+  updateboundingBoxOnAnimate(enabled: boolean): void {
+    this._updateBoundingBoxOnAnimate = enabled;
   }
 
   /**
@@ -1257,9 +1269,8 @@ export class Cognite3DViewer {
     if (isVisible) {
       const camera = this.cameraManager.getCamera();
       TWEEN.update(time);
-      if (this._nearAndFarPlaneNeedsUpdate) {
+      if (this._updateBoundingBoxOnAnimate) {
         this.recalculateBoundingBox();
-        this._nearAndFarPlaneNeedsUpdate = false;
       }
       this._activeCameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
       this.revealManager.update(camera);
