@@ -2,6 +2,7 @@ precision highp float;
 precision highp int;
 
 #define max_clip_boxes 30
+#define point_size_unit_in_screen_height (1.0 / 720.0)
 
 in vec3 position;
 in vec3 color;
@@ -255,9 +256,9 @@ void main() {
 	float projFactor =  -0.5 * screenHeight / (slope * mvPosition.z);
 
 	// Scale point appropriately according to render size
-	float size = size * screenHeight / 750.0;
-	float minSize = minSize * screenHeight / 730.0;
-	float maxSize = maxSize * screenHeight / 720.0;
+	float size = size * screenHeight / point_size_unit_in_screen_height;
+	float minSize = minSize * screenHeight / point_size_unit_in_screen_height;
+	float maxSize = maxSize * screenHeight / point_size_unit_in_screen_height;
 
 	#if defined fixed_point_size
 		pointSize = size;
