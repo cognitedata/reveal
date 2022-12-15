@@ -6,12 +6,25 @@ import {
   MixerApiService,
   TransformationApiService,
   FdmV2Client,
+  FdmClient,
+  FdmMixerApiService,
+  SpacesApiService,
 } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
 export const getMixerApiService = () => {
   const client = getCogniteSDKClient();
   return new MixerApiService(client);
+};
+
+export const getFdmV3MixerApiService = () => {
+  const client = getCogniteSDKClient();
+  return new FdmMixerApiService(client);
+};
+
+export const getFdmV3SpacesApiService = () => {
+  const client = getCogniteSDKClient();
+  return new SpacesApiService(client);
 };
 
 export const getDataModelStorageApiService = () => {
@@ -25,13 +38,20 @@ export const getTransformationsApiService = () => {
 };
 
 export const getFlexibleDataModelingClient = () => {
-  // refactor this part after implementing client switching logic
-  return new FdmV2Client(
-    getMixerApiService(),
-    getDataModelStorageApiService(),
-    getTransformationsApiService(),
-    new GraphQlUtilsService()
-  );
+  if (process.env.USE_FDM_V3) {
+    return new FdmClient(
+      getFdmV3SpacesApiService(),
+      getFdmV3MixerApiService(),
+      new GraphQlUtilsService()
+    );
+  } else {
+    return new FdmV2Client(
+      getMixerApiService(),
+      getDataModelStorageApiService(),
+      getTransformationsApiService(),
+      new GraphQlUtilsService()
+    );
+  }
 };
 
 export const getDataModelsHandler = () => {

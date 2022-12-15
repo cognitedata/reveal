@@ -26,13 +26,11 @@ export const commandArgs = [
     isPositional: true,
     type: CommandArgumentType.STRING,
     required: true,
-    example:
-      'cdf data-models create "Testing DM"   Create a data model with the name (and external-id) "Testing DM"',
+    example: 'cdf data-models create',
   },
   {
     name: 'external-id',
-    description:
-      'The external id of the data model (Default value is name if not specified)',
+    description: 'The external id of the data model',
     prompt: 'Enter data model external id',
     type: CommandArgumentType.STRING,
     required: true,
@@ -40,12 +38,12 @@ export const commandArgs = [
       return DataUtils.convertToCamelCase(commandArgs['name']);
     },
     example:
-      'cdf data-models create "My DM" --external-id="DM1" --data-set-id="ds-1"   Create a data model with the name "My DM" and external-id "DM1" managed by Data Set "ds-1"',
+      'cdf data-models create "My DM" --external-id="DM1" Create a data model with the name "My DM" and external-id "DM1"',
   },
   {
-    name: 'data-set-id',
-    description: 'Determine the users who can modify the data model',
-    prompt: 'Enter data set ID',
+    name: 'space',
+    description:
+      'Space id to the space the data model should belong to. Defaults to same as external-id.',
     type: CommandArgumentType.STRING,
     required: false,
   },
@@ -54,7 +52,7 @@ export const commandArgs = [
 type DataModelCreateCommandArgs = BaseArgs & {
   name: string;
   'external-id': string;
-  'data-set-id': string;
+  space: string;
 };
 
 export class CreateCmd extends CLICommand {
@@ -82,6 +80,7 @@ export class CreateCmd extends CLICommand {
 
     const response = await dataModelsHandler.create({
       name: args.name,
+      space: args.space ? args.space : args['external-id'],
       externalId: args['external-id'],
     });
 

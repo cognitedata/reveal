@@ -153,7 +153,7 @@ export class FdmClient implements FlexibleDataModelingClient {
    */
   createDataModel(dto: CreateDataModelDTO): Promise<DataModel> {
     const space: SpaceDTO = {
-      space: dto.externalId || DataUtils.convertToCamelCase(dto.name),
+      space: dto.space || DataUtils.convertToCamelCase(dto.name),
       name: dto.name,
     };
 

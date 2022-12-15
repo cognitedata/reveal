@@ -8,7 +8,6 @@ import Response, {
   DEBUG as _DEBUG,
 } from '@cognite/platypus-cdf-cli/app/utils/logger';
 import {
-  ConflictMode,
   CreateDataModelVersionDTO,
   DataModelVersionHandler,
   ErrorType,
@@ -49,12 +48,29 @@ export const commandArgs = [
     example: `cdf data-models publish --externalId="Testing-DM" --file="./dm.gql" --allow-breaking-change
       Update a data model with the name (external id) "Testing-DM" with local file "dm.gql", where in a breaking change, simply create a new version`,
   },
+  {
+    name: 'space',
+    description:
+      'Space id to the space the data model should belong to. Defaults to same as external-id.',
+    type: CommandArgumentType.STRING,
+    required: false,
+  },
+  {
+    name: 'dry-run',
+    description:
+      'Perform a dry run. Will only validate the data model without publishing.',
+    type: CommandArgumentType.BOOLEAN,
+    required: false,
+    initial: false,
+  },
 ] as CommandArgument[];
 
 type DataModelPublishCommandArgs = BaseArgs & {
   'external-id': string;
   file: string;
   'allow-breaking-change': boolean;
+  space: string;
+  'dry-run': boolean;
 };
 
 export class PublishCmd extends CLICommand {
@@ -74,10 +90,6 @@ export class PublishCmd extends CLICommand {
     this.dataModelVersionsHandler = getDataModelVersionsHandler();
     DEBUG('dataModelVersionsHandler initialized');
 
-    const publishConflictMode: ConflictMode = args['allow-breaking-change']
-      ? 'NEW_VERSION'
-      : 'PATCH';
-
     const graphqlSchema = await this.readGraphqlSchemaFile(args.file);
     const latestSchema = await this.getLatestPublishedVersion(
       args['external-id']
@@ -87,38 +99,25 @@ export class PublishCmd extends CLICommand {
       externalId: args['external-id'],
       schema: graphqlSchema,
       version: latestSchema ? latestSchema.version : '1',
+      space: args['space'] ? args['space'] : args['external-id'],
     };
 
-    if (publishConflictMode === 'NEW_VERSION' && latestSchema) {
-      dto.version = (parseInt(dto.version) + 1).toString();
+    if (args['dry-run']) {
+      const response = await this.dataModelVersionsHandler.validate(dto, true);
+      if (response.isSuccess) {
+        Response.success('Data model is valid');
+      } else {
+        response.error.forEach((error) => {
+          Response.error(error.message);
+        });
+      }
+      return;
     }
 
-    const response = await this.dataModelVersionsHandler.publish(
-      dto,
-      publishConflictMode
-    );
+    const response = await this.dataModelVersionsHandler.publish(dto, 'PATCH');
     if (!response.isSuccess) {
-      if (
-        (response.error.type as ErrorType) === 'BREAKING_CHANGE' &&
-        args.interactive
-      ) {
-        console.error(
-          'There are breaking change(s) in your data model.' +
-            '\n' +
-            'A new version of the data model will be created when publishing.' +
-            '\n' +
-            response.error.message +
-            '\n'
-        );
-        const confirm = showConfirm(
-          commandArgs.find((arg) => arg.name === 'allow-breaking-change')
-        );
-        const prompt = await promptQuestions({
-          ...confirm,
-          message:
-            'Allow for a breaking change, resulting in a new version of the data model?',
-        });
-        if (prompt['allow-breaking-change']) {
+      if ((response.error.type as ErrorType) === 'BREAKING_CHANGE') {
+        if (args['allow-breaking-change']) {
           dto.version = (parseInt(dto.version) + 1).toString();
           const publishResponse = await this.dataModelVersionsHandler.publish(
             dto,
@@ -129,6 +128,36 @@ export class PublishCmd extends CLICommand {
                 'Successfully published data model v' + dto.version
               )
             : Response.error(publishResponse.error);
+        }
+        if (args.interactive) {
+          console.error(
+            'There are breaking change(s) in your data model.' +
+              '\n' +
+              'A new version of the data model will be created when publishing.' +
+              '\n' +
+              response.error.message +
+              '\n'
+          );
+          const confirm = showConfirm(
+            commandArgs.find((arg) => arg.name === 'allow-breaking-change')
+          );
+          const prompt = await promptQuestions({
+            ...confirm,
+            message:
+              'Allow for a breaking change, resulting in a new version of the data model?',
+          });
+          if (prompt['allow-breaking-change']) {
+            dto.version = (parseInt(dto.version) + 1).toString();
+            const publishResponse = await this.dataModelVersionsHandler.publish(
+              dto,
+              'NEW_VERSION'
+            );
+            return publishResponse.isSuccess
+              ? Response.success(
+                  'Successfully published data model v' + dto.version
+                )
+              : Response.error(publishResponse.error);
+          }
         }
       }
       throw response.error;

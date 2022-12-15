@@ -55,6 +55,7 @@ describe('FDM v3 Client', () => {
         name: 'Test',
         externalId: 'Test',
         description: 'Test',
+        space: 'Test',
       });
       expect(spacesApi.upsert).toHaveBeenCalledWith([
         {

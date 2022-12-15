@@ -4,7 +4,7 @@ set -e
 
 project="${1:-platypus,platypus-core,platypus-common-utils}"
 
-nx run-many --target=test --projects=${project} "$@" \
+FORCE_COLOR=true nx run-many --target=test --projects=${project} "$@" \
   --ci \
   --verbose \
   --runInBand \

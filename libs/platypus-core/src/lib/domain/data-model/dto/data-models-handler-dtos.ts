@@ -4,6 +4,7 @@ export interface FetchDataModelDTO {
 }
 
 export interface CreateDataModelDTO {
+  space?: string;
   name: string;
   externalId?: string;
   description?: string;
