@@ -126,8 +126,9 @@ export function Viewer() {
       // Add Stats.js overlay with FPS etc
       var stats = new Stats();
       stats.dom.style.position = 'absolute';
-      stats.dom.style.top = stats.dom.style.left = '';
-      stats.dom.style.right = stats.dom.style.bottom = '0px';
+      stats.dom.style.top = stats.dom.style.right = '';
+      stats.dom.style.bottom = '0px';
+      stats.dom.style.left = '0px';
       document.body.appendChild(stats.dom);
       viewer.on('beforeSceneRendered', () => stats.begin());
       viewer.on('sceneRendered', () => stats.end());
