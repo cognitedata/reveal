@@ -103,7 +103,7 @@ export class DataModelValidationErrorDataMapper {
 
       if (typeFieldNameString?.length) {
         const nameParts = typeFieldNameString[0].split('.');
-        response.typeName = nameParts[0].replace(': ', '').replace('"', '');
+        response.typeName = nameParts[0].replace(': ', '').replace(/"/g, '');
         response.fieldName = nameParts[1];
       }
     }
