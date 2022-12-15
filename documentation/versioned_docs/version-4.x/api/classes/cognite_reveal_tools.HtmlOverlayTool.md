@@ -69,7 +69,7 @@ overlayTool.dispose();
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:171](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L171)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:171](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L171)
 
 ## Accessors
 
@@ -85,7 +85,7 @@ Returns all added HTML elements along with their 3D positions.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:191](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L191)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:191](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L191)
 
 ## Methods
 
@@ -109,7 +109,7 @@ Registers a HTML overlay that will be updated on rendering.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:215](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L215)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:215](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L215)
 
 ___
 
@@ -125,7 +125,7 @@ Removes all attached HTML overlay elements.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:263](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L263)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:263](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L263)
 
 ___
 
@@ -145,7 +145,7 @@ Removes all elements and detaches from the viewer.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:201](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L201)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:201](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L201)
 
 ___
 
@@ -171,7 +171,7 @@ Calling this function often might cause degraded performance.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:298](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L298)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:298](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L298)
 
 ___
 
@@ -198,7 +198,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
+[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
 
 ___
 
@@ -220,7 +220,7 @@ Removes a overlay and removes it from the DOM.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:251](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L251)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:251](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L251)
 
 ___
 
@@ -242,4 +242,4 @@ Hide/unhide all HTML overlay elements.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:275](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L275)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:275](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L275)

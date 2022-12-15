@@ -37,7 +37,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:36](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L36)
+[packages/cad-styling/src/AssetNodeCollection.ts:36](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L36)
 
 ## Properties
 
@@ -47,7 +47,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L27)
+[packages/cad-styling/src/AssetNodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L27)
 
 ## Accessors
 
@@ -65,7 +65,7 @@ NodeCollection.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -83,7 +83,7 @@ NodeCollection.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:43](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L43)
+[packages/cad-styling/src/AssetNodeCollection.ts:43](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L43)
 
 ## Methods
 
@@ -101,7 +101,7 @@ NodeCollection.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:135](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L135)
+[packages/cad-styling/src/AssetNodeCollection.ts:135](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L135)
 
 ___
 
@@ -126,7 +126,7 @@ assets within the bounding box or all assets associated with the 3D model.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:54](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L54)
+[packages/cad-styling/src/AssetNodeCollection.ts:54](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L54)
 
 ___
 
@@ -148,7 +148,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:146](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L146)
+[packages/cad-styling/src/AssetNodeCollection.ts:146](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L146)
 
 ___
 
@@ -162,7 +162,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:131](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L131)
+[packages/cad-styling/src/AssetNodeCollection.ts:131](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L131)
 
 ___
 
@@ -180,7 +180,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:142](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L142)
+[packages/cad-styling/src/AssetNodeCollection.ts:142](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L142)
 
 ___
 
@@ -205,7 +205,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -230,7 +230,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -248,4 +248,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:150](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L150)
+[packages/cad-styling/src/AssetNodeCollection.ts:150](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L150)

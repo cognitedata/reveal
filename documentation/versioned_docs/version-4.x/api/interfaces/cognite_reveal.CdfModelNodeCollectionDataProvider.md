@@ -23,7 +23,7 @@ Model and revision IDs for the model
 
 #### Defined in
 
-[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:31](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L31)
+[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:31](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L31)
 
 ___
 
@@ -35,7 +35,7 @@ Total count of nodes in the model
 
 #### Defined in
 
-[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:26](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L26)
+[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:26](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L26)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L32)
+[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:32](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L32)
 
 ## Methods
 
@@ -69,7 +69,7 @@ is thus `model.getCdfToDefaultModelTransformation() * model.getModelTransformati
 
 #### Defined in
 
-[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:21](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L21)
+[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:21](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L21)
 
 ___
 
@@ -91,4 +91,4 @@ Gets the transformation of the model in ThreeJS space
 
 #### Defined in
 
-[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:14](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L14)
+[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:14](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L14)

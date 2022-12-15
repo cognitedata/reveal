@@ -15,7 +15,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:45](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/data-providers/src/types.ts#L45)
+[packages/data-providers/src/types.ts:45](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/data-providers/src/types.ts#L45)
 
 ___
 
@@ -25,7 +25,7 @@ ___
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:40](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/data-providers/src/types.ts#L40)
+[packages/data-providers/src/types.ts:40](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/data-providers/src/types.ts#L40)
 
 ___
 
@@ -37,4 +37,4 @@ Reveal v9 and above (GLTF based output)
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:44](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/data-providers/src/types.ts#L44)
+[packages/data-providers/src/types.ts:44](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/data-providers/src/types.ts#L44)
