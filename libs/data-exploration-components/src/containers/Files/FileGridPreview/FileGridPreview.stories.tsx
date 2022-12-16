@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { files } from 'stubs/files';
+import { files } from '@data-exploration-components/stubs/files';
 import { ComponentStory } from '@storybook/react';
 import { FileGridPreview } from './FileGridPreview';
 

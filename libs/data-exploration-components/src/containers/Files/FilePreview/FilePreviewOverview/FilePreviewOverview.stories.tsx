@@ -3,7 +3,7 @@ import { CogniteAnnotation } from '@cognite/annotations';
 import { action } from '@storybook/addon-actions';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { CogniteClient } from '@cognite/sdk';
-import { files } from 'stubs/files';
+import { files } from '@data-exploration-components/stubs/files';
 import { ComponentStory } from '@storybook/react';
 import { FilePreviewOverview } from './FilePreviewOverview';
 

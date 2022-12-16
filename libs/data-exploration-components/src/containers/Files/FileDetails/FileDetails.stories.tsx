@@ -1,5 +1,5 @@
 import React from 'react';
-import { files } from 'stubs/files';
+import { files } from '@data-exploration-components/stubs/files';
 import { FileDetails } from './FileDetails';
 
 export default {

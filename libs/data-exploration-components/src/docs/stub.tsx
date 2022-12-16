@@ -1,15 +1,15 @@
-import { assets, rootAssets } from 'stubs/assets';
-import { timeseries } from 'stubs/timeseries';
-import { sequences } from 'stubs/sequences';
-import { datasets } from 'stubs/datasets';
-import { events } from 'stubs/events';
-import { files } from 'stubs/files';
-import { documents } from 'stubs/documents';
-import { mappings } from 'stubs/mappings';
+import { assets, rootAssets } from '@data-exploration-components/stubs/assets';
+import { timeseries } from '@data-exploration-components/stubs/timeseries';
+import { sequences } from '@data-exploration-components/stubs/sequences';
+import { datasets } from '@data-exploration-components/stubs/datasets';
+import { events } from '@data-exploration-components/stubs/events';
+import { files } from '@data-exploration-components/stubs/files';
+import { documents } from '@data-exploration-components/stubs/documents';
+import { mappings } from '@data-exploration-components/stubs/mappings';
 import styled from 'styled-components';
-import { datapoints } from 'stubs/timeseriesDatapoints';
+import { datapoints } from '@data-exploration-components/stubs/timeseriesDatapoints';
 import { AssetListScope, IdEither } from '@cognite/sdk';
-import { relationships } from 'stubs/relationships';
+import { relationships } from '@data-exploration-components/stubs/relationships';
 import {
   ResourcePreviewObserver,
   ResourcePreviewProps,

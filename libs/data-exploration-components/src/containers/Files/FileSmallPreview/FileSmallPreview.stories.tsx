@@ -1,5 +1,5 @@
 import React from 'react';
-import { files } from 'stubs/files';
+import { files } from '@data-exploration-components/stubs/files';
 import { sdkMock } from 'docs/stub';
 import { FileSmallPreview } from './FileSmallPreview';
 import { assets } from '../../../stubs/assets';

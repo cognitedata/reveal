@@ -2,7 +2,7 @@ import { ComponentStory } from '@storybook/react';
 import { within, userEvent, waitFor } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import React, { useState } from 'react';
-import { assets } from 'stubs/assets';
+import { assets } from '@data-exploration-components/stubs/assets';
 import { MetadataFilterV2 } from './MetadataFilter';
 
 export default {

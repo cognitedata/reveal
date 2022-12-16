@@ -1,6 +1,6 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import { assets, rootAssets } from 'stubs/assets';
+import { assets, rootAssets } from '@data-exploration-components/stubs/assets';
 import { AssetBreadcrumb } from './AssetBreadcrumb';
 
 const sdkMock = {

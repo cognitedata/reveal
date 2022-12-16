@@ -1,5 +1,5 @@
 import React from 'react';
-import { events } from 'stubs/events';
+import { events } from '@data-exploration-components/stubs/events';
 import { EventSmallPreview } from './EventSmallPreview';
 
 export default {

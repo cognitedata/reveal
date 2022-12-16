@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { assets } from 'stubs/assets';
+import { assets } from '@data-exploration-components/stubs/assets';
 import { action } from '@storybook/addon-actions';
 import { ComponentStory } from '@storybook/react';
 import { AssetTreeTable } from './AssetTreeTable';

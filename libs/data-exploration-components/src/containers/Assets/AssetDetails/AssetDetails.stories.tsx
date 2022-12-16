@@ -1,6 +1,6 @@
 import React from 'react';
-import { assets } from 'stubs/assets';
-import { threeDModels } from 'stubs/threeDModels';
+import { assets } from '@data-exploration-components/stubs/assets';
+import { threeDModels } from '@data-exploration-components/stubs/threeDModels';
 import { AssetDetails } from './AssetDetails';
 
 const sdkMock = {

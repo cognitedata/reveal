@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { sequences } from 'stubs/sequences';
+import { sequences } from '@data-exploration-components/stubs/sequences';
 import { ComponentStory } from '@storybook/react';
 import { SequenceTable } from './SequenceTable';
 

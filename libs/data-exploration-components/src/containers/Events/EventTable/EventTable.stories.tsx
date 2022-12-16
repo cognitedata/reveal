@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { events } from 'stubs/events';
+import { events } from '@data-exploration-components/stubs/events';
 import { ComponentStory } from '@storybook/react';
 import { EventTable } from './EventTable';
 

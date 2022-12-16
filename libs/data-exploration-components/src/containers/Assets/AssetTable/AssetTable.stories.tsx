@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
-import { assets } from 'stubs/assets';
+import { assets } from '@data-exploration-components/stubs/assets';
 import { ComponentStory } from '@storybook/react';
 import { AssetTable } from './AssetTable';
 
