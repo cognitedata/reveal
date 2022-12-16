@@ -22,9 +22,12 @@ import {
 } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { DetailsItem, InfoGrid } from '@data-exploration-components/components';
-import { useResourcePreviewUFV } from 'context';
-import { FileDetails } from 'containers/Files';
-import { getIdParam, extractUniqueIds } from 'utils';
+import { useResourcePreviewUFV } from '@data-exploration-components/context';
+import { FileDetails } from '@data-exploration-components/containers/Files';
+import {
+  getIdParam,
+  extractUniqueIds,
+} from '@data-exploration-components/utils';
 import {
   AssetItem,
   EventItem,

@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
-import { DataSetInternal } from 'domain/dataSets/internal/types';
+import { DataSetInternal } from '@data-exploration-components/domain/dataSets/internal/types';
 import { useQuery } from 'react-query';
 import { ONE_HOUR_IN_MS } from '../../service/constants';
 import { getAggregateByIds } from '../../service/network/getAggregateById';

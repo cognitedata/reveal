@@ -1,4 +1,4 @@
-import { MetricsMetadata } from 'hooks/useMetrics';
+import { MetricsMetadata } from '@data-exploration-components/hooks/useMetrics';
 import React from 'react';
 
 export type Flow =

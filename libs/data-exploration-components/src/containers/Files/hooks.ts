@@ -19,7 +19,7 @@ import {
 import uniqBy from 'lodash/uniqBy';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { sleep } from 'utils';
+import { sleep } from '@data-exploration-components/utils';
 import { notification } from 'antd';
 
 export const useEventAnnotations = (fileId: number): CogniteAnnotation[] => {

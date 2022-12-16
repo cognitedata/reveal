@@ -20,9 +20,14 @@ import {
   TimeDisplay,
 } from '@data-exploration-components/components';
 
-import { DASH, isNumber, mapFileType, METADATA_KEY_SEPARATOR } from 'utils';
+import {
+  DASH,
+  isNumber,
+  mapFileType,
+  METADATA_KEY_SEPARATOR,
+} from '@data-exploration-components/utils';
 import { createLink } from '@cognite/cdf-utilities';
-import { useGetRootAsset } from 'hooks';
+import { useGetRootAsset } from '@data-exploration-components/hooks';
 import { RootAssetCell } from './RootAssetCell';
 import { ResourceTableHashMap } from './types';
 

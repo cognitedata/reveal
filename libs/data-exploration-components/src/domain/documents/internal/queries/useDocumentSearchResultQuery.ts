@@ -8,9 +8,9 @@ import {
   mapFiltersToDocumentSearchFilters,
   mapTableSortByToDocumentSortFields,
   TableSortBy,
-} from 'index';
+} from '@data-exploration-components/index';
 import { UseInfiniteQueryOptions } from 'react-query';
-import { EMPTY_OBJECT } from 'utils';
+import { EMPTY_OBJECT } from '@data-exploration-components/utils';
 import { useDocumentSearchQuery } from '../../service';
 
 export const useDocumentSearchResultQuery = (

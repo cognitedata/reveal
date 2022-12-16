@@ -1,4 +1,4 @@
-import { ResourceSelectionMode } from 'hooks/useSelection';
+import { ResourceSelectionMode } from '@data-exploration-components/hooks/useSelection';
 import {
   AssetFilterProps,
   TimeseriesFilter,
@@ -19,7 +19,7 @@ import {
   OldFilesFilters,
   OldEventsFilters,
   OldSequenceFilters,
-} from 'domain/index';
+} from '@data-exploration-components/domain/index';
 
 export type SmallPreviewProps = {
   actions?: React.ReactNode[];

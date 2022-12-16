@@ -7,9 +7,9 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldSequenceFilters } from 'domain/sequence';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
-import { ResourceTypes } from 'types';
+import { OldSequenceFilters } from '@data-exploration-components/domain/sequence';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { ResourceTypes } from '@data-exploration-components/types';
 
 export const SequenceFilters = ({
   filter,
@@ -19,7 +19,7 @@ export const SequenceFilters = ({
   setFilter: (newFilter: OldSequenceFilters) => void;
 }) => {
   const resourceType = ResourceTypes.Sequence;
-  const { data: items = [] } = useList('sequences', {
+  const { data: items = [] } = useList<any>('sequences', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

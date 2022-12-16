@@ -1,12 +1,12 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { useAssetMetadataKeys } from 'hooks/MetadataAggregateHooks';
+import { useAssetMetadataKeys } from '@data-exploration-components/hooks/MetadataAggregateHooks';
 import { LabelFilterV2 } from './LabelFilter/LabelFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { InternalAssetFilters } from 'domain/assets';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { InternalAssetFilters } from '@data-exploration-components/domain/assets';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFiltersV2 = ({
@@ -17,7 +17,7 @@ export const AssetFiltersV2 = ({
   filter: InternalAssetFilters;
   setFilter: (newFilter: InternalAssetFilters) => void;
 }) => {
-  const { data: items = [] } = useList('assets', {
+  const { data: items = [] } = useList<any>('assets', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

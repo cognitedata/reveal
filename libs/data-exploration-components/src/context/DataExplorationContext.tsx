@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { CogniteClient } from '@cognite/sdk';
-import { ResourcePreviewProvider } from 'context/ResourcePreviewContext';
-import { ResourceSelectorProvider } from 'context/ResourceSelectorContext';
-import { ResourcePreviewProviderUFV } from 'context/ResourcePreviewContextUFV';
-import { ResourceSelectorProviderUFV } from 'context/ResourceSelectorContextUFV';
-import { FileContextualizationContextProvider } from 'context/FileContextualization';
+import { ResourcePreviewProvider } from '@data-exploration-components/context/ResourcePreviewContext';
+import { ResourceSelectorProvider } from '@data-exploration-components/context/ResourceSelectorContext';
+import { ResourcePreviewProviderUFV } from '@data-exploration-components/context/ResourcePreviewContextUFV';
+import { ResourceSelectorProviderUFV } from '@data-exploration-components/context/ResourceSelectorContextUFV';
+import { FileContextualizationContextProvider } from '@data-exploration-components/context/FileContextualization';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { Flow, AppContextProvider, OverrideURLMap } from './AppContext';
 import { Tooltip, Tabs } from '@cognite/cogs.js';
-import { MetricsMetadata } from 'hooks/useMetrics';
-import { DRAG_DROP_PORTAL_CLASS } from 'components/DragDropContainer/constants';
+import { MetricsMetadata } from '@data-exploration-components/hooks/useMetrics';
+import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration-components/components/DragDropContainer/constants';
 
 export type DataExplorationProviderProps = {
   flow: Flow;
@@ -64,7 +64,6 @@ export const DataExplorationProvider = ({
         // The addition of Annotations API requires a bump in the sdk which react-picture-annotations
         // does not support yet. We'll be removing the old file viewer within days so this is a temporary
         // solution until then
-        // @ts-expect-error
         sdk={sdk}
         disableAutoFetch
         overrideURLMap={{

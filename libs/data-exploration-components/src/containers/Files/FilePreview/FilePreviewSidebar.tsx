@@ -1,4 +1,4 @@
-import { ResourcePreviewSidebar } from 'containers';
+import { ResourcePreviewSidebar } from '@data-exploration-components/containers';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
@@ -16,9 +16,9 @@ import {
   useSelectedAnnotations,
   useZoomControls,
 } from '@cognite/react-picture-annotation';
-import { AppContext } from 'context/AppContext';
-import AnnotationsList from 'components/AnnotationsList';
-import { useDisclosure } from 'hooks';
+import { AppContext } from '@data-exploration-components/context/AppContext';
+import AnnotationsList from '@data-exploration-components/components/AnnotationsList';
+import { useDisclosure } from '@data-exploration-components/hooks';
 import { useReviewFile } from '../hooks';
 import DiagramReviewStatus from './DiagramStatus';
 import FileReview from './FileReview';

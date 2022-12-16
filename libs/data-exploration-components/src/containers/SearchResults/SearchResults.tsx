@@ -5,7 +5,7 @@ import {
   SelectableItemsProps,
   DateRangeProps,
   OldResourceFilterProps,
-} from 'types';
+} from '@data-exploration-components/types';
 import { FileSearchResults } from './FileSearchResults/FileSearchResults';
 import { EventSearchResults } from './EventSearchResults/EventSearchResults';
 import {

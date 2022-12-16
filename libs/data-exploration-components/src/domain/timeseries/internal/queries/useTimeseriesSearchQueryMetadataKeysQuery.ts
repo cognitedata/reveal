@@ -2,8 +2,8 @@ import {
   mapFiltersToTimeseriesAdvancedFilters,
   useTimeseriesListQuery,
   InternalTimeseriesFilters,
-} from 'domain/timeseries';
-import { mapMetadataKeysWithQuery } from 'domain/transformers';
+} from '@data-exploration-components/domain/timeseries';
+import { mapMetadataKeysWithQuery } from '@data-exploration-components/domain/transformers';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 

@@ -12,8 +12,8 @@ import {
   ResourceType,
   ResourceFilterProps,
   SetResourceFilterProps,
-} from 'types';
-import { FilterSection } from 'containers/SearchResults/SearchFiltersNew';
+} from '@data-exploration-components/types';
+import { FilterSection } from '@data-exploration-components/containers/SearchResults/SearchFiltersNew';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import styled from 'styled-components';

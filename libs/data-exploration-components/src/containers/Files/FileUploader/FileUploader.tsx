@@ -4,7 +4,7 @@ import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse } from '@cognite/sdk';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { Body, Icon, Button } from '@cognite/cogs.js';
-import { getMIMEType, sleep } from 'utils';
+import { getMIMEType, sleep } from '@data-exploration-components/utils';
 import { SpacedRow } from '@data-exploration-components/components';
 import { useSDK } from '@cognite/sdk-provider';
 

@@ -1,10 +1,13 @@
 import React, { useMemo } from 'react';
 import { Sequence } from '@cognite/sdk';
-import { Table, TableProps } from 'components/Table/Table';
-import { RelationshipLabels } from 'types';
+import {
+  Table,
+  TableProps,
+} from '@data-exploration-components/components/Table/Table';
+import { RelationshipLabels } from '@data-exploration-components/types';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { useGetHiddenColumns } from 'hooks';
+import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { ResourceTableColumns } from '../../../components';
 import { useSequencesMetadataKeys } from '../../../domain';
 

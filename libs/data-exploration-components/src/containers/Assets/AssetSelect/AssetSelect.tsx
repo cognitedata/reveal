@@ -9,7 +9,7 @@ import { useDebounce } from 'use-debounce';
 import { MultiSelect } from '@data-exploration-components/components';
 import { Props, OptionTypeBase } from 'react-select';
 import { Theme } from '@cognite/cogs.js';
-import { OptionValue } from 'components/SearchNew/Filters/types';
+import { OptionValue } from '@data-exploration-components/components/SearchNew/Filters/types';
 
 export type AssetSelectProps = Omit<Props<OptionTypeBase>, 'theme'> & {
   onAssetSelected?: (input?: OptionValue<number>[]) => void;

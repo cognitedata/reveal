@@ -1,17 +1,20 @@
 import React from 'react';
 import { FileInfo } from '@cognite/sdk';
-import { FileTable } from 'containers/Files';
-import { ResourceItem, convertResourceType } from 'types';
+import { FileTable } from '@data-exploration-components/containers/Files';
+import {
+  ResourceItem,
+  convertResourceType,
+} from '@data-exploration-components/types';
 
-import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
+import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
 import { FileToolbar } from './FileToolbar';
 import { useResourceResults } from '..';
-import { EmptyState } from 'components/EmpyState/EmptyState';
+import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
 import styled from 'styled-components';
 import { Flex } from '@cognite/cogs.js';
 
-import { InternalFilesFilters } from 'domain/files';
-import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
+import { InternalFilesFilters } from '@data-exploration-components/domain/files';
+import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { useResultCount } from '@data-exploration-components/components';
 
 export const FileSearchResults = ({

@@ -4,7 +4,7 @@ import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Tooltip } from 'antd';
 import { ResourceIcons } from '@data-exploration-components/components';
-import { AppContext } from 'context/AppContext';
+import { AppContext } from '@data-exploration-components/context/AppContext';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 

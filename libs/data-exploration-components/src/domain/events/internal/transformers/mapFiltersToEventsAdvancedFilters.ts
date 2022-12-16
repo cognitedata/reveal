@@ -1,6 +1,9 @@
-import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
+import {
+  AdvancedFilter,
+  AdvancedFilterBuilder,
+} from '@data-exploration-components/domain/builders';
 import isEmpty from 'lodash/isEmpty';
-import { isNumeric } from 'utils/numbers';
+import { isNumeric } from '@data-exploration-components/utils/numbers';
 import { InternalEventsFilters } from '../types';
 
 export type EventsProperties = {
@@ -49,11 +52,13 @@ export const mapFiltersToEventsAdvancedFilters = (
       if (source) {
         return [source];
       }
+      return undefined;
     })
     .in('id', () => {
       if (internalId) {
         return [internalId];
       }
+      return undefined;
     })
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
@@ -108,6 +113,7 @@ export const mapFiltersToEventsAdvancedFilters = (
       if (query && isNumeric(query)) {
         return [Number(query)];
       }
+      return undefined;
     });
     searchQueryBuilder.prefix('externalId', query);
 

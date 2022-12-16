@@ -1,5 +1,5 @@
 import { Asset } from '@cognite/sdk';
-import { InternalAssetData } from 'domain/assets/internal/types';
+import { InternalAssetData } from '@data-exploration-components/domain/assets/internal/types';
 
 export const normalizeAssets = (assets: Asset[]): InternalAssetData[] => {
   return assets.map((asset) => ({

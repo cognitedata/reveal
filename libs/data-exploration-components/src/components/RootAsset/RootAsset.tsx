@@ -3,11 +3,11 @@ import * as React from 'react';
 import { RootAssetButton } from './RootAssetButton';
 import { useCallback } from 'react';
 import { Asset } from '@cognite/sdk';
-import { useRootAssetQuery } from 'domain/assets/service/queries/useRootAssetQuery';
+import { useRootAssetQuery } from '@data-exploration-components/domain/assets/service/queries/useRootAssetQuery';
 import { LoadingState } from './LoadingState';
-import { openAssetInNewTab } from 'utils/assets';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { openAssetInNewTab } from '@data-exploration-components/utils/assets';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 export interface RootAssetProps {
   assetId: number;

@@ -15,7 +15,7 @@ import { ResourceIcons } from '@data-exploration-components/components';
 import capitalize from 'lodash/capitalize';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
-import { isNotUndefined } from 'utils';
+import { isNotUndefined } from '@data-exploration-components/utils';
 import {
   getExtendedAnnotationLabel,
   getResourceIdFromExtendedAnnotation,

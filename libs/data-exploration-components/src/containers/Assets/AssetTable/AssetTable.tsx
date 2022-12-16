@@ -2,14 +2,17 @@ import { ColumnDef } from '@tanstack/react-table';
 import React, { useMemo } from 'react';
 import { Asset } from '@cognite/sdk';
 
-import { Table, TableProps } from 'components/Table/Table';
-import { RelationshipLabels } from 'types';
+import {
+  Table,
+  TableProps,
+} from '@data-exploration-components/components/Table/Table';
+import { RelationshipLabels } from '@data-exploration-components/types';
 
-import { useGetHiddenColumns } from 'hooks';
+import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { ResourceTableColumns } from '../../../components';
 import { useAssetsMetadataKeys } from '../../../domain';
 import { ThreeDModelCell } from './ThreeDModelCell';
-import { RootAsset } from 'components/RootAsset';
+import { RootAsset } from '@data-exploration-components/components/RootAsset';
 
 export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
 

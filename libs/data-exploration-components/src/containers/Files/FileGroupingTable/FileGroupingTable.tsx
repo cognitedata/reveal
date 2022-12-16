@@ -1,8 +1,8 @@
 import React from 'react';
 import { Document, DocumentTable } from '@cognite/react-document-table';
 import { FileInfo } from '@cognite/sdk';
-import { useResourceResults } from 'containers';
-import { InternalFilesFilters } from 'domain/files/internal';
+import { useResourceResults } from '@data-exploration-components/containers';
+import { InternalFilesFilters } from '@data-exploration-components/domain/files/internal';
 import { docTypes } from './docTypes';
 
 type FileGroupingTableProps = {

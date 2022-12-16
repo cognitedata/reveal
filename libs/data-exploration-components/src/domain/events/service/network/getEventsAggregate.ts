@@ -4,12 +4,12 @@ import {
   CursorResponse,
   EventFilter,
 } from '@cognite/sdk';
-import { AdvancedFilter } from 'domain/builders';
+import { AdvancedFilter } from '@data-exploration-components/domain/builders';
 import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
   MORE_THAN_MAX_RESULT_LIMIT,
-} from 'domain/constants';
-import { EventsProperties } from 'domain/events';
+} from '@data-exploration-components/domain/constants';
+import { EventsProperties } from '@data-exploration-components/domain/events';
 import { isEmpty } from 'lodash';
 
 export const getEventsAggregate = (

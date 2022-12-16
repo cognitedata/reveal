@@ -6,18 +6,21 @@ import {
   MetadataFilterV2,
   TableSortBy,
 } from '@data-exploration-components/components';
-import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 import React, { useMemo, useState } from 'react';
-import { PreviewFilterDropdown } from 'components/PreviewFilter/PreviewFilterDropdown';
-import { DefaultPreviewFilter } from 'components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from 'domain/types';
+import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
+import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
+import { InternalCommonFilters } from '@data-exploration-components/domain/types';
 import {
   InternalTimeseriesFilters,
   useTimeseriesSearchResultQuery,
-} from 'domain/timeseries';
-import { TimeseriesTable, useResourceResults } from 'containers';
-import { convertResourceType } from 'types';
+} from '@data-exploration-components/domain/timeseries';
+import {
+  TimeseriesTable,
+  useResourceResults,
+} from '@data-exploration-components/containers';
+import { convertResourceType } from '@data-exploration-components/types';
 import { useDebounce } from 'use-debounce';
 
 interface Props {
@@ -33,7 +36,7 @@ const LinkedAssetFilter = ({
   filter: InternalTimeseriesFilters;
   onFilterChange: (newValue: InternalTimeseriesFilters) => void;
 }) => {
-  const { data: items = [] } = useList('timeseries', {
+  const { data: items = [] } = useList<any>('timeseries', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

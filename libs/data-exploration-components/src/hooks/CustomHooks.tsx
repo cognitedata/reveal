@@ -8,7 +8,7 @@ import {
 import { useParams } from 'react-router-dom';
 import queryString from 'query-string';
 import { Asset, IdEither, Model3D } from '@cognite/sdk';
-import { extractUniqueIds } from 'utils';
+import { extractUniqueIds } from '@data-exploration-components/utils';
 import {
   SdkResourceType,
   useCdfItem,

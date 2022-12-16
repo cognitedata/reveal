@@ -2,16 +2,19 @@ import React from 'react';
 import { OptionType, Tooltip } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
 import { MultiSelect } from '@data-exploration-components/components';
-import { ResourceType, convertResourceType } from 'types';
-import { DataSetWCount } from 'hooks/sdk';
+import {
+  ResourceType,
+  convertResourceType,
+} from '@data-exploration-components/types';
+import { DataSetWCount } from '@data-exploration-components/hooks/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { useResourceTypeDataSetAggregate } from 'domain/dataSets/internal/hooks/useResourceTypeDataSetAggregate';
+import { useResourceTypeDataSetAggregate } from '@data-exploration-components/domain/dataSets/internal/hooks/useResourceTypeDataSetAggregate';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 
 import { OptionValue } from '../types';
 import isEmpty from 'lodash/isEmpty';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 const formatOption = (dataset: DataSetWCount) => {
   const name = dataset?.name || '';

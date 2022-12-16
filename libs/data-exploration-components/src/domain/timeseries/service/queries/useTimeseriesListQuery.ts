@@ -1,9 +1,12 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { TimeseriesFilter } from '@cognite/sdk/dist/src';
-import { AdvancedFilter } from 'domain/builders';
-import { queryKeys } from 'domain/queryKeys';
-import { getTimeseriesList, TimeseriesProperties } from 'domain/timeseries';
-import { InternalSortBy } from 'domain/types';
+import { AdvancedFilter } from '@data-exploration-components/domain/builders';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
+import {
+  getTimeseriesList,
+  TimeseriesProperties,
+} from '@data-exploration-components/domain/timeseries';
+import { InternalSortBy } from '@data-exploration-components/domain/types';
 import { useMemo } from 'react';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
 

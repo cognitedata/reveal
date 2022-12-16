@@ -4,12 +4,12 @@ import {
   CursorResponse,
   TimeseriesFilter,
 } from '@cognite/sdk';
-import { AdvancedFilter } from 'domain/builders';
+import { AdvancedFilter } from '@data-exploration-components/domain/builders';
 import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
   MORE_THAN_MAX_RESULT_LIMIT,
-} from 'domain/constants';
-import { TimeseriesProperties } from 'domain/timeseries';
+} from '@data-exploration-components/domain/constants';
+import { TimeseriesProperties } from '@data-exploration-components/domain/timeseries';
 import { isEmpty } from 'lodash';
 
 export const getTimeseriesAggregate = (

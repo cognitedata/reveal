@@ -2,7 +2,7 @@ import React from 'react';
 import { MultiSelect } from '@data-exploration-components/components';
 import { OptionsType, OptionTypeBase } from 'react-select';
 import styled from 'styled-components';
-import { RelationshipTypeLabels } from 'hooks';
+import { RelationshipTypeLabels } from '@data-exploration-components/hooks';
 
 interface RelationshipFiltersProps {
   options: string[];

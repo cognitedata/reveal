@@ -6,8 +6,8 @@ import { AggregatedEventFilterV2 } from './AggregatedEventFilter/AggregatedEvent
 import { DateFilterV2 } from './DateFilter/DateFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { InternalEventsFilters } from 'domain/events';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { InternalEventsFilters } from '@data-exploration-components/domain/events';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 
 export const EventFilters = ({
   filter,
@@ -17,7 +17,7 @@ export const EventFilters = ({
   filter: InternalEventsFilters;
   setFilter: (newFilter: InternalEventsFilters) => void;
 }) => {
-  const { data: items = [] } = useList('events', {
+  const { data: items = [] } = useList<any>('events', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

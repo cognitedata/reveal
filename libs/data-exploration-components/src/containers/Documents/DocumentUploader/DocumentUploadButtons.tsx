@@ -8,10 +8,10 @@ import { Modal, message } from 'antd';
 import { STATUS } from './DocumentUploader';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteClient } from '@cognite/sdk';
-import { getMIMEType, sleep } from 'utils';
+import { getMIMEType, sleep } from '@data-exploration-components/utils';
 import { GCSUploader } from './GCSUploader';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 const { confirm } = Modal;
 const currentUploads: { [key: string]: any } = {};

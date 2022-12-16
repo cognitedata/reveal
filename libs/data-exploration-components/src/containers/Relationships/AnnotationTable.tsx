@@ -1,7 +1,11 @@
 import React, { useMemo } from 'react';
 import uniqBy from 'lodash/uniqBy';
 import { Loader } from '@data-exploration-components/components';
-import { SelectableItemsProps, ResourceType, convertResourceType } from 'types';
+import {
+  SelectableItemsProps,
+  ResourceType,
+  convertResourceType,
+} from '@data-exploration-components/types';
 import { Alert } from 'antd';
 import {
   AssetTable,
@@ -9,11 +13,11 @@ import {
   SequenceTable,
   EventTable,
   FileTable,
-} from 'containers';
+} from '@data-exploration-components/containers';
 
 import { IdEither } from '@cognite/sdk';
-import { useTaggedAnnotationsByResourceType } from 'hooks/RelationshipHooks';
-import { useUniqueCdfItems } from 'hooks';
+import { useTaggedAnnotationsByResourceType } from '@data-exploration-components/hooks/RelationshipHooks';
+import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import {
   getResourceExternalIdFromTaggedAnnotation,
   getResourceIdFromTaggedAnnotation,
@@ -74,7 +78,7 @@ export function AnnotationTable({
     data: items = [],
     isLoading: itemsLoading,
     isError: itemsError,
-  } = useUniqueCdfItems(convertResourceType(resourceType), ids, true);
+  } = useUniqueCdfItems<any>(convertResourceType(resourceType), ids, true);
 
   if (isError || itemsError) {
     return <Alert type="warning" message="Error fetching annotations" />;

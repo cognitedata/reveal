@@ -2,10 +2,13 @@ import { useMemo } from 'react';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { SequenceFilter } from '@cognite/sdk/dist/src';
-import { AdvancedFilter } from 'domain/builders';
-import { queryKeys } from 'domain/queryKeys';
-import { SequenceProperties, getSequenceList } from 'domain/sequence';
-import { InternalSortBy } from 'domain/types';
+import { AdvancedFilter } from '@data-exploration-components/domain/builders';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
+import {
+  SequenceProperties,
+  getSequenceList,
+} from '@data-exploration-components/domain/sequence';
+import { InternalSortBy } from '@data-exploration-components/domain/types';
 
 export const useSequenceListQuery = (
   {

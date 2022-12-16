@@ -12,9 +12,12 @@ import {
   ResourceIcons,
 } from '@data-exploration-components/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { TimeseriesChart } from 'containers/Timeseries';
-import { SmallPreviewProps, SelectableItemProps } from 'types';
-import { useSelectionButton } from 'hooks/useSelection';
+import { TimeseriesChart } from '@data-exploration-components/containers/Timeseries';
+import {
+  SmallPreviewProps,
+  SelectableItemProps,
+} from '@data-exploration-components/types';
+import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 
 export const TimeseriesSmallPreview = ({
   timeseriesId,

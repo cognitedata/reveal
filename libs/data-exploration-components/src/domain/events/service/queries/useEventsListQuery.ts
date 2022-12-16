@@ -1,9 +1,9 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { EventFilter } from '@cognite/sdk/dist/src';
-import { AdvancedFilter } from 'domain/builders';
-import { EventsProperties } from 'domain/events/internal/transformers/mapFiltersToEventsAdvancedFilters';
-import { queryKeys } from 'domain/queryKeys';
-import { InternalSortBy } from 'domain/types';
+import { AdvancedFilter } from '@data-exploration-components/domain/builders';
+import { EventsProperties } from '@data-exploration-components/domain/events/internal/transformers/mapFiltersToEventsAdvancedFilters';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
+import { InternalSortBy } from '@data-exploration-components/domain/types';
 import { useMemo } from 'react';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
 import { getEventsList } from '../network/getEventsList';

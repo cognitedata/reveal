@@ -15,11 +15,17 @@ import {
   SpacedRow,
   ResourceIcons,
 } from '@data-exploration-components/components';
-import { isFilePreviewable, getIdParam } from 'utils';
-import { SmallPreviewProps, SelectableItemProps } from 'types';
-import { FileDetails } from 'containers/Files';
-import { AppContext } from 'context/AppContext';
-import { useSelectionButton } from 'hooks/useSelection';
+import {
+  isFilePreviewable,
+  getIdParam,
+} from '@data-exploration-components/utils';
+import {
+  SmallPreviewProps,
+  SelectableItemProps,
+} from '@data-exploration-components/types';
+import { FileDetails } from '@data-exploration-components/containers/Files';
+import { AppContext } from '@data-exploration-components/context/AppContext';
+import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import { useEventAnnotations } from '../hooks';
 
 export const FileSmallPreview = ({
@@ -157,7 +163,6 @@ export const FileSmallPreview = ({
               // The addition of Annotations API requires a bump in the sdk which react-picture-annotations
               // does not support yet. We'll be removing the old file viewer within days so this is a temporary
               // solution until then
-              // @ts-expect-error
               sdk={sdk}
               disableAutoFetch
               hideControls

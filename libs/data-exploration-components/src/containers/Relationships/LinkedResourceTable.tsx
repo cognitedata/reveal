@@ -1,12 +1,16 @@
 import React from 'react';
 
-import { ResourceType, ResourceItem, SelectableItemsProps } from 'types';
+import {
+  ResourceType,
+  ResourceItem,
+  SelectableItemsProps,
+} from '@data-exploration-components/types';
 
-import { AssetLinkedSearchResults } from 'containers/SearchResults/AssetSearchResults/AssetLinkedSearchResults';
-import { TimeseriesLinkedSearchResults } from 'containers/SearchResults/TimeseriesSearchResults/TimeseriesLinkedSearchResults';
-import { EventLinkedSearchResults } from 'containers/SearchResults/EventSearchResults/EventLinkedSearchResults';
-import { FileLinkedSearchResults } from 'containers/SearchResults/FileSearchResults/FileLinkedSearchResults';
-import { SequenceLinkedSearchResults } from 'containers/SearchResults/SequenceSearchResults/SequenceLinkedSearchResults';
+import { AssetLinkedSearchResults } from '@data-exploration-components/containers/SearchResults/AssetSearchResults/AssetLinkedSearchResults';
+import { TimeseriesLinkedSearchResults } from '@data-exploration-components/containers/SearchResults/TimeseriesSearchResults/TimeseriesLinkedSearchResults';
+import { EventLinkedSearchResults } from '@data-exploration-components/containers/SearchResults/EventSearchResults/EventLinkedSearchResults';
+import { FileLinkedSearchResults } from '@data-exploration-components/containers/SearchResults/FileSearchResults/FileLinkedSearchResults';
+import { SequenceLinkedSearchResults } from '@data-exploration-components/containers/SearchResults/SequenceSearchResults/SequenceLinkedSearchResults';
 
 export const LinkedResourceTable = ({
   isGroupingFilesEnabled,

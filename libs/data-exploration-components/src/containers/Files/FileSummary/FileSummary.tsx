@@ -1,16 +1,16 @@
 import { ColumnDef } from '@tanstack/react-table';
 
-import { Table } from 'components/Table';
+import { Table } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
 
-import { EmptyState } from 'components/EmpyState/EmptyState';
-import { SummaryCard } from 'components/SummaryCard/SummaryCard';
+import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
+import { SummaryCard } from '@data-exploration-components/components/SummaryCard/SummaryCard';
 
-import { getSummaryCardItems } from 'components/SummaryCard/utils';
-import { useResourceResults } from 'containers';
-import { convertResourceType } from 'types';
+import { getSummaryCardItems } from '@data-exploration-components/components/SummaryCard/utils';
+import { useResourceResults } from '@data-exploration-components/containers';
+import { convertResourceType } from '@data-exploration-components/types';
 import { FileInfo } from '@cognite/sdk';
-import { InternalFilesFilters } from 'domain/files';
+import { InternalFilesFilters } from '@data-exploration-components/domain/files';
 
 export const FileSummary = ({
   query = '',

@@ -2,7 +2,7 @@
 import React from 'react';
 import { mergeUniqueMetadataKeys } from './utils';
 
-describe('Utils', () => {
+describe('@data-exploration-components/utils', () => {
   describe('mergeUnqieuMetadataKeys', () => {
     it('Merges the metadata fields across objects', () => {
       const data = [

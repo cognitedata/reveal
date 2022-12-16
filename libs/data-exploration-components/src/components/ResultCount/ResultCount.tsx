@@ -4,12 +4,19 @@ import {
   useAggregate,
   SdkResourceType,
 } from '@cognite/sdk-react-query-hooks';
-import { formatNumber } from 'utils';
+import { formatNumber } from '@data-exploration-components/utils';
 import { Label } from '@cognite/cogs.js';
-import { getTitle, ResourceType, convertResourceType } from 'types';
-import { ThreeDModelsResponse, useInfinite3DModels } from 'hooks';
+import {
+  getTitle,
+  ResourceType,
+  convertResourceType,
+} from '@data-exploration-components/types';
+import {
+  ThreeDModelsResponse,
+  useInfinite3DModels,
+} from '@data-exploration-components/hooks';
 import { Model3D } from '@cognite/sdk';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 
 type ResultProps = {
   api: 'list' | 'search';

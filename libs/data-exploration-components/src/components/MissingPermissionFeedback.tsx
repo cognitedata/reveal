@@ -3,7 +3,7 @@ import { notification } from 'antd';
 import { useParams } from 'react-router-dom';
 
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { AppContext } from 'context/AppContext';
+import { AppContext } from '@data-exploration-components/context/AppContext';
 
 type Props = {
   key: string;

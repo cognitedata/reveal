@@ -1,13 +1,16 @@
 import React from 'react';
 
-import { Table } from 'components/Table/Table';
-import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
+import { Table } from '@data-exploration-components/components/Table/Table';
+import {
+  useRelatedResourceResults,
+  useRelationshipCount,
+} from '@data-exploration-components/hooks';
 import { ResultCount } from '@data-exploration-components/components';
 import { RelationshipTableProps } from './RelationshipTable';
-import { ResourceTableColumns } from 'components/Table/columns';
+import { ResourceTableColumns } from '@data-exploration-components/components/Table/columns';
 
-import { SequenceWithRelationshipLabels } from 'index';
-import { EmptyState } from 'components/EmpyState/EmptyState';
+import { SequenceWithRelationshipLabels } from '@data-exploration-components/index';
+import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
 import { ColumnDef } from '@tanstack/react-table';
 
 const {

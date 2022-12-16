@@ -9,7 +9,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import { useEventAnnotations } from '../../hooks';
 import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
 import getExtendedAnnotationsFromCogniteAnnotations from './getExtendedAnnotationsFromCogniteAnnotations';
-import { isNotUndefined } from 'utils';
+import { isNotUndefined } from '@data-exploration-components/utils';
 import { getExtendedAnnotationPage } from './migration/utils';
 import { ExtendedAnnotation } from './types';
 import { useAnnotations } from '../../../../domain/annotations';

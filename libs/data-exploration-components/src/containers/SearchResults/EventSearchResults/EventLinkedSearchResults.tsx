@@ -4,20 +4,23 @@ import {
   AggregatedEventFilterV2,
   MetadataFilterV2,
 } from '@data-exploration-components/components';
-import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { TableSortBy } from 'components/Table';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
+import { TableSortBy } from '@data-exploration-components/components/Table';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 import React, { useMemo, useState } from 'react';
-import { PreviewFilterDropdown } from 'components/PreviewFilter/PreviewFilterDropdown';
-import { DefaultPreviewFilter } from 'components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from 'domain/types';
+import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
+import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
+import { InternalCommonFilters } from '@data-exploration-components/domain/types';
 import { useDebounce } from 'use-debounce';
 import {
   InternalEventsFilters,
   useEventsSearchResultQuery,
-} from 'domain/events';
-import { EventTable, useResourceResults } from 'containers';
-import { convertResourceType } from 'types';
+} from '@data-exploration-components/domain/events';
+import {
+  EventTable,
+  useResourceResults,
+} from '@data-exploration-components/containers';
+import { convertResourceType } from '@data-exploration-components/types';
 
 interface Props {
   enableAdvancedFilter?: boolean;
@@ -32,7 +35,7 @@ const LinkedEventFilter = ({
   filter: InternalEventsFilters;
   onFilterChange: (newValue: InternalEventsFilters) => void;
 }) => {
-  const { data: items = [] } = useList('events', {
+  const { data: items = [] } = useList<any>('events', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

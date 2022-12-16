@@ -1,9 +1,9 @@
 import React, { useContext, useState, useCallback } from 'react';
-import { ResourceItem } from 'types';
+import { ResourceItem } from '@data-exploration-components/types';
 import { Splitter } from '@data-exploration-components/components';
-import { ResourcePreviewSidebar } from 'containers/ResourceSidebar';
+import { ResourcePreviewSidebar } from '@data-exploration-components/containers/ResourceSidebar';
 import styled from 'styled-components';
-import { SIDEBAR_RESIZE_EVENT } from 'utils';
+import { SIDEBAR_RESIZE_EVENT } from '@data-exploration-components/utils';
 
 export type ResourcePreviewProps = {
   /**

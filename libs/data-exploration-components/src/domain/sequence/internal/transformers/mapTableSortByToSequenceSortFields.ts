@@ -1,5 +1,5 @@
-import { TableSortBy } from 'components/Table';
-import { InternalSortBy } from 'domain/types';
+import { TableSortBy } from '@data-exploration-components/components/Table';
+import { InternalSortBy } from '@data-exploration-components/domain/types';
 import { METADATA_KEY_SEPARATOR } from '../../../../utils';
 
 export const mapTableSortByToSequenceSortFields = (

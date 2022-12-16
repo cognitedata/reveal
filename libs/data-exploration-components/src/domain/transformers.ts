@@ -1,5 +1,5 @@
 import { isArray, isEmpty, take } from 'lodash';
-import { isObjectEmpty } from 'utils';
+import { isObjectEmpty } from '@data-exploration-components/utils';
 import { InternalAssetData } from './assets';
 import { MAX_METADATA_KEYS } from './constants';
 import { InternalEventsData } from './events';

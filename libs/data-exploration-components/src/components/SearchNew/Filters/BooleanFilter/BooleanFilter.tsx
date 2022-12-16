@@ -1,8 +1,8 @@
 import React from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
 import { FilterFacetTitle } from '../FilterFacetTitle';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 export const BooleanFilter = ({
   title,

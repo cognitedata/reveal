@@ -1,5 +1,5 @@
-import { useAssetsListQuery } from 'domain/assets/service/queries/useAssetsListQuery';
-import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from 'domain/constants';
+import { useAssetsListQuery } from '@data-exploration-components/domain/assets/service/queries/useAssetsListQuery';
+import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '@data-exploration-components/domain/constants';
 import { useMemo } from 'react';
 import {
   mapFiltersToAssetsAdvancedFilters,
@@ -7,7 +7,7 @@ import {
   mapTableSortByToAssetSortFields,
 } from '../transformers';
 import { InternalAssetFilters } from '../types';
-import { TableSortBy } from 'components/Table';
+import { TableSortBy } from '@data-exploration-components/components/Table';
 import { UseInfiniteQueryOptions } from 'react-query';
 // import { useAssetsSearchQueryMetadataKeysQuery } from './useAssetsMetadataKeysQuery';
 

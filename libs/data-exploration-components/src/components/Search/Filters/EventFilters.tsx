@@ -10,9 +10,9 @@ import { DateFilter } from './DateFilter/DateFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldEventsFilters } from 'domain/events';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
-import { ResourceTypes } from 'types';
+import { OldEventsFilters } from '@data-exploration-components/domain/events';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { ResourceTypes } from '@data-exploration-components/types';
 
 export const EventFilters = ({
   filter,
@@ -22,7 +22,7 @@ export const EventFilters = ({
   setFilter: (newFilter: OldEventsFilters) => void;
 }) => {
   const resourceType = ResourceTypes.Event;
-  const { data: items = [] } = useList('events', {
+  const { data: items = [] } = useList<any>('events', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

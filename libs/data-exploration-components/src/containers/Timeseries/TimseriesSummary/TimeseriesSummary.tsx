@@ -1,14 +1,14 @@
 import { Timeseries } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
-import { useResourceResults } from 'containers';
-import { InternalSequenceFilters } from 'domain/sequence';
-import { Table } from 'components/Table';
+import { useResourceResults } from '@data-exploration-components/containers';
+import { InternalSequenceFilters } from '@data-exploration-components/domain/sequence';
+import { Table } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
-import { convertResourceType } from 'types';
+import { convertResourceType } from '@data-exploration-components/types';
 
-import { EmptyState } from 'components/EmpyState/EmptyState';
-import { SummaryCard } from 'components/SummaryCard/SummaryCard';
-import { getSummaryCardItems } from 'components/SummaryCard/utils';
+import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
+import { SummaryCard } from '@data-exploration-components/components/SummaryCard/SummaryCard';
+import { getSummaryCardItems } from '@data-exploration-components/components/SummaryCard/utils';
 
 export const TimeseriesSummary = ({
   query = '',

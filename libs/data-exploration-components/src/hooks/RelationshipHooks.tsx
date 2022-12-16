@@ -6,12 +6,16 @@ import {
   useCdfItem,
   usePermissions,
 } from '@cognite/sdk-react-query-hooks';
-import { ResourceType, ResourceItem, convertResourceType } from 'types';
+import {
+  ResourceType,
+  ResourceItem,
+  convertResourceType,
+} from '@data-exploration-components/types';
 import {
   formatNumber,
   annotationInteralIdFilter,
   annotationExternalIdFilter,
-} from 'utils';
+} from '@data-exploration-components/utils';
 import { useEffect, useContext, useMemo, useState } from 'react';
 import {
   ExternalId,
@@ -30,8 +34,8 @@ import {
   convertEventsToAnnotations,
 } from '@cognite/annotations';
 import uniqueBy from 'lodash/uniqBy';
-import { AppContext } from 'context/AppContext';
-import { useUniqueCdfItems } from 'hooks';
+import { AppContext } from '@data-exploration-components/context/AppContext';
+import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import { getBoundingBoxFromAnnotationIfDefined } from '../containers/Files/FilePreview/FilePreviewUFV/Annotations';
 import {
   getResourceExternalIdFromTaggedAnnotation,
@@ -428,6 +432,8 @@ export const useTaggedAnnotationsByResourceType = (
           if (isTaggedAnnotationAnnotation(taggedAnnotation)) {
             return getBoundingBoxFromAnnotationIfDefined(taggedAnnotation);
           }
+
+          return undefined;
         }
       ),
     [

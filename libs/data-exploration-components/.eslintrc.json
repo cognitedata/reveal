@@ -8,7 +8,7 @@
         "lodash/import-scope": "warn",
         "no-only-tests/no-only-tests": "warn",
         "testing-library/render-result-naming-convention": "warn",
-        "@typescript-eslint/ban-ts-comment": "warn",
+        "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/no-non-null-asserted-optional-chain": "warn",
         "no-param-reassign": "warn",
         "no-control-regex": "warn",

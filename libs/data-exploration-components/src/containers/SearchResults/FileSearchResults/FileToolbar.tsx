@@ -10,10 +10,10 @@ import {
   SearchResultToolbar,
   FileUploaderModal,
   SearchResultCountLabel,
-} from 'containers';
-import { CLOSE_DROPDOWN_EVENT } from 'utils';
-import { AppContext } from 'context/AppContext';
-import { RelatedResourceType } from 'hooks';
+} from '@data-exploration-components/containers';
+import { CLOSE_DROPDOWN_EVENT } from '@data-exploration-components/utils';
+import { AppContext } from '@data-exploration-components/context/AppContext';
+import { RelatedResourceType } from '@data-exploration-components/hooks';
 
 export const FileToolbar = ({
   onFileClicked,

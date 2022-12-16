@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Select } from '@data-exploration-components/components';
-import { useAssetMetadataValues } from 'hooks/MetadataAggregateHooks';
-import { reactSelectCogsStylingProps } from 'components/SearchNew/Filters/elements';
+import { useAssetMetadataValues } from '@data-exploration-components/hooks/MetadataAggregateHooks';
+import { reactSelectCogsStylingProps } from '@data-exploration-components/components/SearchNew/Filters/elements';
 import { DISABLE_VALUE_TOOLTIP } from './constants';
 import { Tooltip } from '@cognite/cogs.js';
 import { FilterItemWrapper } from './elements';

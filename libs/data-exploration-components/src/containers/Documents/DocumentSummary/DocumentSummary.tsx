@@ -3,16 +3,16 @@ import {
   Document,
   InternalDocumentFilter,
   useDocumentSearchResultQuery,
-} from 'domain/documents';
+} from '@data-exploration-components/domain/documents';
 
-import { Table } from 'components/Table';
+import { Table } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
 
-import { EmptyState } from 'components/EmpyState/EmptyState';
-import { SummaryCard } from 'components/SummaryCard/SummaryCard';
+import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
+import { SummaryCard } from '@data-exploration-components/components/SummaryCard/SummaryCard';
 
-import { getSummaryCardItems } from 'components/SummaryCard/utils';
-import { DocumentContentPreview } from 'containers';
+import { getSummaryCardItems } from '@data-exploration-components/components/SummaryCard/utils';
+import { DocumentContentPreview } from '@data-exploration-components/containers';
 
 export const DocumentSummary = ({
   query = '',

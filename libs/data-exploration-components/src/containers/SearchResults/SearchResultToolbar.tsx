@@ -3,7 +3,7 @@ import {
   FilesSyntaxButton,
   SpacedRow,
 } from '@data-exploration-components/components';
-import { ResourceType } from 'types';
+import { ResourceType } from '@data-exploration-components/types';
 import styled from 'styled-components/macro';
 
 export const SearchResultToolbar = ({

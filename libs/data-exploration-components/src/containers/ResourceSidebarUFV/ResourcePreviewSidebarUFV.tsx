@@ -1,13 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button, Graphic } from '@cognite/cogs.js';
-import { AssetSmallPreviewUFV } from 'containers/Assets';
-import { FileSmallPreviewUFV } from 'containers/Files';
-import { SequenceSmallPreview } from 'containers/Sequences';
-import { TimeseriesSmallPreview } from 'containers/Timeseries';
-import { EventSmallPreview } from 'containers/Events';
+import { AssetSmallPreviewUFV } from '@data-exploration-components/containers/Assets';
+import { FileSmallPreviewUFV } from '@data-exploration-components/containers/Files';
+import { SequenceSmallPreview } from '@data-exploration-components/containers/Sequences';
+import { TimeseriesSmallPreview } from '@data-exploration-components/containers/Timeseries';
+import { EventSmallPreview } from '@data-exploration-components/containers/Events';
 import { Loader } from '@data-exploration-components/components';
-import { ResourceItem, SelectableItemProps } from 'types';
+import {
+  ResourceItem,
+  SelectableItemProps,
+} from '@data-exploration-components/types';
 
 type Props = {
   item?: ResourceItem;

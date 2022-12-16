@@ -13,12 +13,12 @@ import ReactUnifiedViewer, {
 import { Loader } from '@data-exploration-components/components';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { ResourceItem } from 'types';
+import { ResourceItem } from '@data-exploration-components/types';
 import {
   isFilePreviewable,
   lightGrey,
   readablePreviewableFileTypes,
-} from 'utils';
+} from '@data-exploration-components/utils';
 import { usePnIdOCRResultFilterQuery } from '../../../../domain/pnids/internal/hooks/usePnIdOCRResultFilterQuery';
 import { AnnotationHoverPreview } from './AnnotationHoverPreview';
 import { ActionTools } from './ActionTools';

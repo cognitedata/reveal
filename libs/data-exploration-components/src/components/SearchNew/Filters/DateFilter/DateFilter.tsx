@@ -4,12 +4,12 @@ import {
   Select,
   RangePicker,
 } from '@data-exploration-components/components';
-import { TIME_SELECT } from 'containers';
+import { TIME_SELECT } from '@data-exploration-components/containers';
 import { DateRange } from '@cognite/sdk';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { OptionType } from '@cognite/cogs.js';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 const determinePeriod = (value: DateRange | undefined | null) => {
   if (value === undefined) {

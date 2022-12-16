@@ -4,27 +4,27 @@ import styled from 'styled-components/macro';
 import {
   SearchResultCountLabel,
   SearchResultToolbar,
-} from 'containers/SearchResults';
-import { DocumentsTable } from 'containers/Documents';
-import { TableSortBy } from 'components/Table';
+} from '@data-exploration-components/containers/SearchResults';
+import { DocumentsTable } from '@data-exploration-components/containers/Documents';
+import { TableSortBy } from '@data-exploration-components/components/Table';
 import {
   Document,
   InternalDocumentFilter,
   useDocumentSearchResultQuery,
-} from 'domain/documents';
+} from '@data-exploration-components/domain/documents';
 import { FileInfo } from '@cognite/sdk';
-import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { UploadButton } from 'components/Buttons/UploadButton/UploadButton';
+import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
+import { UploadButton } from '@data-exploration-components/components/Buttons/UploadButton/UploadButton';
 import { v4 as uuid } from 'uuid';
-import { CLOSE_DROPDOWN_EVENT } from 'utils';
+import { CLOSE_DROPDOWN_EVENT } from '@data-exploration-components/utils';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { AppContext } from 'context/AppContext';
-import { DocumentUploaderModal } from 'containers/Documents/DocumentUploader/DocumentUploaderModal';
+import { AppContext } from '@data-exploration-components/context/AppContext';
+import { DocumentUploaderModal } from '@data-exploration-components/containers/Documents/DocumentUploader/DocumentUploaderModal';
 
-import { VerticalDivider } from 'components/Divider';
-import { useDocumentFilteredAggregateCount } from 'domain/documents/service/queries/aggregates/useDocumentFilteredAggregateCount';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
-import { ResourceTypes } from 'types';
+import { VerticalDivider } from '@data-exploration-components/components/Divider';
+import { useDocumentFilteredAggregateCount } from '@data-exploration-components/domain/documents/service/queries/aggregates/useDocumentFilteredAggregateCount';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { ResourceTypes } from '@data-exploration-components/types';
 
 export interface DocumentSearchResultsProps {
   query?: string;

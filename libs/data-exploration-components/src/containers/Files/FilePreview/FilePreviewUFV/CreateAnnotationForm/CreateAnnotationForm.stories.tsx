@@ -1,4 +1,4 @@
-import { getExtendedAnnotationFixture } from 'domain/annotations/internal/__fixtures/mockExtendedAnnotation';
+import { getExtendedAnnotationFixture } from '@data-exploration-components/domain/annotations/internal/__fixtures/mockExtendedAnnotation';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ExtendedAnnotation } from '../types';

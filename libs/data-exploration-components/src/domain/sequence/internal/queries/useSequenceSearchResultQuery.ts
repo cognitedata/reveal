@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from 'domain/constants';
-import { TableSortBy } from 'components/Table';
+import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '@data-exploration-components/domain/constants';
+import { TableSortBy } from '@data-exploration-components/components/Table';
 
 import {
   InternalSequenceFilters,
@@ -9,7 +9,7 @@ import {
   mapTableSortByToSequenceSortFields,
   useSequenceListQuery,
   // useSequenceSearchQueryMetadataKeysQuery,
-} from 'domain/sequence';
+} from '@data-exploration-components/domain/sequence';
 import { UseInfiniteQueryOptions } from 'react-query';
 
 export const useSequenceSearchResultQuery = (

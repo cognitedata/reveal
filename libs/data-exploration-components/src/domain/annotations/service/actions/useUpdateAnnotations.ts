@@ -7,7 +7,7 @@ import { CogniteClient, CogniteEvent, EventChange } from '@cognite/sdk';
 import { AnnotationChangeById } from '@cognite/sdk/dist/src/types';
 import omit from 'lodash/omit';
 import { useMutation } from 'react-query';
-import { isNotUndefined } from 'utils';
+import { isNotUndefined } from '@data-exploration-components/utils';
 import {
   ANNOTATION_SOURCE_KEY,
   ExtendedAnnotation,

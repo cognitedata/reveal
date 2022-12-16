@@ -2,7 +2,7 @@ import { Flex, IconType } from '@cognite/cogs.js';
 import { isArray, isEqual } from 'lodash';
 import React from 'react';
 import styled from 'styled-components';
-import { NewFiltersType } from 'types';
+import { NewFiltersType } from '@data-exploration-components/types';
 import { FilterChip } from './FilterChip';
 import { formatValue } from './utils';
 
@@ -41,14 +41,10 @@ export const AppliedFiltersTags: React.FC<Props> = ({
                 icon={icon}
                 value={displayValue}
                 onClick={() => {
-                  if (!onFilterChange) {
-                    return undefined;
-                  }
-
                   const filtered = (filterValues as any[]).filter(
                     (item) => !isEqual(item, value)
                   );
-                  onFilterChange({ [key]: filtered });
+                  onFilterChange?.({ [key]: filtered });
                 }}
               />
             );
@@ -63,11 +59,7 @@ export const AppliedFiltersTags: React.FC<Props> = ({
             icon={icon}
             value={displayValue}
             onClick={() => {
-              if (!onFilterChange) {
-                return undefined;
-              }
-
-              onFilterChange({ [key]: undefined });
+              onFilterChange?.({ [key]: undefined });
             }}
           />
         );

@@ -11,9 +11,12 @@ import {
   SelectProps as CogsSelectProps,
   Theme,
 } from '@cognite/cogs.js';
-import { Ellipsis } from 'components/Ellipsis/Ellipsis';
+import { Ellipsis } from '@data-exploration-components/components/Ellipsis/Ellipsis';
 
-import { NIL_FILTER_LABEL, NIL_FILTER_VALUE } from 'domain/constants';
+import {
+  NIL_FILTER_LABEL,
+  NIL_FILTER_VALUE,
+} from '@data-exploration-components/domain/constants';
 
 const NIL_FILTER_OPTION: OptionType<string> = {
   label: NIL_FILTER_LABEL,

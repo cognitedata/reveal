@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { IdEither } from '@cognite/sdk';
 import { ComponentStory } from '@storybook/react';
 import { DataSetFilterV2 } from './DataSetFilter';
-import { DataSetFilter } from 'index';
+import { DataSetFilter } from '@data-exploration-components/components/Search/Filters';
 
 export default {
   title: 'Search Results/Filters/DataSetFilterV2',

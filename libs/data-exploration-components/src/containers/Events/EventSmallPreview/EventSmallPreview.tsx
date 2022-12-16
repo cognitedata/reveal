@@ -9,11 +9,14 @@ import {
   SpacedRow,
 } from '@data-exploration-components/components';
 import { Title, Body, Colors } from '@cognite/cogs.js';
-import { renderTitle } from 'utils';
-import { ResourceIcons } from 'components/ResourceIcons/ResourceIcons';
-import { EventDetails } from 'containers/Events';
-import { SmallPreviewProps, SelectableItemProps } from 'types';
-import { useSelectionButton } from 'hooks/useSelection';
+import { renderTitle } from '@data-exploration-components/utils';
+import { ResourceIcons } from '@data-exploration-components/components/ResourceIcons/ResourceIcons';
+import { EventDetails } from '@data-exploration-components/containers/Events';
+import {
+  SmallPreviewProps,
+  SelectableItemProps,
+} from '@data-exploration-components/types';
+import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 
 export const EventSmallPreview = ({
   eventId,

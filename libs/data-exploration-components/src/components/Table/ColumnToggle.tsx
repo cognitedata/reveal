@@ -22,12 +22,12 @@ import {
   DragDropContainer,
   DragHandleIcon,
   WithDragHandleProps,
-} from 'components/DragDropContainer';
+} from '@data-exploration-components/components/DragDropContainer';
 import { HighlightCell } from './HighlightCell';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { MetadataHeaderText } from './elements';
-import { MAX_COLUMN_SELECTION } from 'index';
+import { MAX_COLUMN_SELECTION } from './constants';
 
 export interface ColumnToggleProps<T extends TableData = any> {
   allColumns: () => Column<T, unknown>[];
@@ -55,7 +55,7 @@ export const MenutItemDrag: React.FC<
   );
 };
 
-export function ColumnToggle<T>({
+export function ColumnToggle<T extends TableData = any>({
   allColumns,
   onColumnOrderChanged,
   onResetSelectedColumns,

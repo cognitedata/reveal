@@ -5,14 +5,14 @@ import {
 } from '@cognite/annotations';
 import isBoolean from 'lodash/isBoolean';
 import isEmpty from 'lodash/isEmpty';
-import { ResourceType, ResourceFilterProps } from 'types';
+import { ResourceType, ResourceFilterProps } from '@data-exploration-components/types';
 import { Metadata, IdEither, DateRange } from '@cognite/sdk';
 import {
   InternalAssetFilters,
   InternalEventsFilters,
   InternalFilesFilters,
   InternalSequenceFilters,
-} from 'domain/index';
+} from '@data-exploration-components/domain/index';
 
 export const annotationInteralIdFilter = (
   fileId: number,

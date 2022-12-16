@@ -25,12 +25,15 @@ import {
   SpacedRow,
   ResourceIcons,
 } from '@data-exploration-components/components';
-import { TimeseriesSmallPreview } from 'containers/Timeseries';
-import { FileSmallPreviewUFV } from 'containers/Files';
-import { SelectableItemProps, SmallPreviewProps } from 'types';
-import { useSelectionButton } from 'hooks/useSelection';
+import { TimeseriesSmallPreview } from '@data-exploration-components/containers/Timeseries';
+import { FileSmallPreviewUFV } from '@data-exploration-components/containers/Files';
+import {
+  SelectableItemProps,
+  SmallPreviewProps,
+} from '@data-exploration-components/types';
+import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import { createLink } from '@cognite/cdf-utilities';
-import { lightGrey } from 'utils';
+import { lightGrey } from '@data-exploration-components/utils';
 import styled from 'styled-components';
 import { EmptyState } from '../../../components/EmpyState/EmptyState';
 

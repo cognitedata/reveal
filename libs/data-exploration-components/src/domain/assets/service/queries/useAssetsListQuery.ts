@@ -1,9 +1,9 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { AssetFilterProps } from '@cognite/sdk';
-import { AssetsProperties } from 'domain/assets/internal/transformers/mapFiltersToAssetsAdvancedFilters';
-import { AdvancedFilter } from 'domain/builders';
-import { queryKeys } from 'domain/queryKeys';
-import { InternalSortBy } from 'domain/types';
+import { AssetsProperties } from '@data-exploration-components/domain/assets/internal/transformers/mapFiltersToAssetsAdvancedFilters';
+import { AdvancedFilter } from '@data-exploration-components/domain/builders';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
+import { InternalSortBy } from '@data-exploration-components/domain/types';
 import { useMemo } from 'react';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
 import { getAssetsList } from '../network';

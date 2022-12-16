@@ -10,9 +10,12 @@ import {
   ResourceIcons,
 } from '@data-exploration-components/components';
 import { Title, Body, Colors } from '@cognite/cogs.js';
-import { SmallPreviewProps, SelectableItemProps } from 'types';
-import { SequenceDetails } from 'containers/Sequences';
-import { useSelectionButton } from 'hooks/useSelection';
+import {
+  SmallPreviewProps,
+  SelectableItemProps,
+} from '@data-exploration-components/types';
+import { SequenceDetails } from '@data-exploration-components/containers/Sequences';
+import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 
 export const SequenceSmallPreview = ({
   sequenceId,

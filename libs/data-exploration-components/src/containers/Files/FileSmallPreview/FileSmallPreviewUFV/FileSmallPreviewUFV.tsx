@@ -13,10 +13,19 @@ import {
   SpacedRow,
   ResourceIcons,
 } from '@data-exploration-components/components';
-import { isFilePreviewable, getIdParam } from 'utils';
-import { SmallPreviewProps, SelectableItemProps } from 'types';
-import { FileDetails, FilePreviewUFV } from 'containers/Files';
-import { useSelectionButton } from 'hooks/useSelection';
+import {
+  isFilePreviewable,
+  getIdParam,
+} from '@data-exploration-components/utils';
+import {
+  SmallPreviewProps,
+  SelectableItemProps,
+} from '@data-exploration-components/types';
+import {
+  FileDetails,
+  FilePreviewUFV,
+} from '@data-exploration-components/containers/Files';
+import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import { useEventAnnotations } from '../../hooks';
 
 export const FileSmallPreviewUFV = ({

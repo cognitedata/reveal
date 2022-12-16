@@ -2,10 +2,10 @@ import React from 'react';
 import { Input, Button, Title, Icon, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Loader, SpacedRow } from '@data-exploration-components/components';
-import { renderTitle, lightGrey } from 'utils';
+import { renderTitle, lightGrey } from '@data-exploration-components/utils';
 import { useCdfItem, SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { IdEither } from '@cognite/sdk';
-import { convertResourceType } from 'types';
+import { convertResourceType } from '@data-exploration-components/types';
 import {
   getExtendedAnnotationDescription,
   getExtendedAnnotationLabel,

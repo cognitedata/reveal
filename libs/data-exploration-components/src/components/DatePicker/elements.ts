@@ -1,5 +1,5 @@
 import { Button, Colors } from '@cognite/cogs.js';
-import { SpacedRow } from 'components/Common';
+import { SpacedRow } from '@data-exploration-components/components/Common';
 import styled, { css } from 'styled-components';
 
 export const DatePickerWrapper = styled.div<{

@@ -4,10 +4,10 @@ import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
 import { Loader, SpacedRow } from '@data-exploration-components/components';
 import { CogniteAnnotation } from '@cognite/annotations';
-import { renderTitle, lightGrey } from 'utils';
+import { renderTitle, lightGrey } from '@data-exploration-components/utils';
 import { useCdfItem, SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { IdEither } from '@cognite/sdk';
-import { convertResourceType } from 'types';
+import { convertResourceType } from '@data-exploration-components/types';
 
 const getId = (
   annotation?: ProposedCogniteAnnotation | CogniteAnnotation

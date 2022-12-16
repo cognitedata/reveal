@@ -2,8 +2,14 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
 import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import { Asset } from '@cognite/sdk';
-import { useGetHiddenColumns, usePrevious } from 'hooks/CustomHooks';
-import { SelectableItemsProps, TableStateProps } from 'types';
+import {
+  useGetHiddenColumns,
+  usePrevious,
+} from '@data-exploration-components/hooks/CustomHooks';
+import {
+  SelectableItemsProps,
+  TableStateProps,
+} from '@data-exploration-components/types';
 import { HighlightCell, ResourceTableColumns } from '../../../components';
 import { Table } from '../../../components';
 import { EmptyState } from '../../../components/EmpyState/EmptyState';
@@ -17,7 +23,7 @@ import {
   InternalAssetFilters,
   InternalAssetTreeData,
   useAssetsMetadataKeys,
-} from 'domain/assets';
+} from '@data-exploration-components/domain/assets';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
 

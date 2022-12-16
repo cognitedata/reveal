@@ -21,6 +21,8 @@ export const useDeleteAnnotation = (options: any) => {
       if (isExtendedAnnotationAnnotation(annotation)) {
         return sdk.annotations.delete([{ id: annotation.metadata.id }]);
       }
+
+      return undefined;
     })();
 
     const removeAssetIdFromFilePromise = (() => {

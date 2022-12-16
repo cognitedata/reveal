@@ -8,19 +8,22 @@ import {
   AssetTable,
   useResourceResults,
   SearchResultCountLabel,
-} from 'containers';
-import { convertResourceType, SelectableItemsProps } from 'types';
+} from '@data-exploration-components/containers';
+import {
+  convertResourceType,
+  SelectableItemsProps,
+} from '@data-exploration-components/types';
 import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
 import styled from 'styled-components';
-import { TableSortBy } from 'components/Table';
-import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
+import { TableSortBy } from '@data-exploration-components/components/Table';
+import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import {
   InternalAssetFilters,
   useAssetsSearchAggregateQuery,
   useAssetsSearchResultQuery,
-} from 'domain/assets';
+} from '@data-exploration-components/domain/assets';
 import { useResultCount } from '@data-exploration-components/components';
-import { VerticalDivider } from 'components/Divider';
+import { VerticalDivider } from '@data-exploration-components/components/Divider';
 
 export type AssetViewMode = 'list' | 'tree';
 
@@ -95,6 +98,8 @@ export const AssetSearchResults = ({
         };
       }, {});
     }
+
+    return {};
   }, [activeIds]);
 
   const tableHeaders = (

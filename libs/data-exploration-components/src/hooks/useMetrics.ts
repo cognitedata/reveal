@@ -1,4 +1,4 @@
-import { AppContext } from 'context/AppContext';
+import { AppContext } from '@data-exploration-components/context/AppContext';
 import { noop } from 'lodash';
 import { useContext } from 'react';
 

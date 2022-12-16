@@ -4,19 +4,22 @@ import {
   SearchResultCountLabel,
   SearchResultToolbar,
   useResourceResults,
-} from 'containers/SearchResults';
-import { convertResourceType, ResourceItem } from 'types';
-import { EventTable } from 'containers/Events';
+} from '@data-exploration-components/containers/SearchResults';
+import {
+  convertResourceType,
+  ResourceItem,
+} from '@data-exploration-components/types';
+import { EventTable } from '@data-exploration-components/containers/Events';
 
-import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
+import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
 
 import {
   InternalEventsFilters,
   useEventsSearchResultQuery,
   useEventsSearchAggregateQuery,
-} from 'domain/events';
-import { TableSortBy } from 'components/Table';
-import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
+} from '@data-exploration-components/domain/events';
+import { TableSortBy } from '@data-exploration-components/components/Table';
+import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { useResultCount } from '@data-exploration-components/components';
 
 export const EventSearchResults = ({

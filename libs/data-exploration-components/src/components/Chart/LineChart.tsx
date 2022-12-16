@@ -17,7 +17,11 @@ import { AxisRight, AxisBottom, TickFormatter } from '@visx/axis';
 import { Group } from '@visx/group';
 import { Threshold } from '@visx/threshold';
 import { Body, Colors, Overline } from '@cognite/cogs.js';
-import { lightGrey, formatDate, datetimeMultiFormat } from 'utils';
+import {
+  lightGrey,
+  formatDate,
+  datetimeMultiFormat,
+} from '@data-exploration-components/utils';
 import styled from 'styled-components';
 
 const pointColor = Colors['midblue-3'].hex();

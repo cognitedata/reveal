@@ -11,7 +11,7 @@ import {
 } from '@data-exploration-components/components';
 import { Title, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { lightGrey } from 'utils';
+import { lightGrey } from '@data-exploration-components/utils';
 
 export const ContextualizationData = ({
   selectedAnnotation,

@@ -6,8 +6,8 @@ import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { StringFilterV2 } from './StringFilter/StringFilter';
 import { DateFilterV2 } from './DateFilter/DateFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { InternalFilesFilters } from 'domain/files';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { InternalFilesFilters } from '@data-exploration-components/domain/files';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 
 export const FileFilters = ({
   filter,
@@ -17,7 +17,7 @@ export const FileFilters = ({
   filter: InternalFilesFilters;
   setFilter: (newFilter: InternalFilesFilters) => void;
 }) => {
-  const { data: items = [] } = useList('files', {
+  const { data: items = [] } = useList<any>('files', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

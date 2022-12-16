@@ -1,11 +1,14 @@
 import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import { queryKeys } from 'domain/queryKeys';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
 import { useQuery, UseQueryOptions } from 'react-query';
 import isEmpty from 'lodash/isEmpty';
 import { SequenceFilter } from '@cognite/sdk';
-import { AdvancedFilter } from 'domain/builders';
-import { SequenceProperties, getSequenceAggregate } from 'domain/sequence';
+import { AdvancedFilter } from '@data-exploration-components/domain/builders';
+import {
+  SequenceProperties,
+  getSequenceAggregate,
+} from '@data-exploration-components/domain/sequence';
 
 export const useSequenceAggregateQuery = (
   {

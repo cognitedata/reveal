@@ -1,8 +1,8 @@
 import React from 'react';
 import { Input } from '@cognite/cogs.js';
 import { FilterFacetTitle } from '../FilterFacetTitle';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
-import { useDebounceTrackUsage } from 'hooks/useTrackDebounce';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { useDebounceTrackUsage } from '@data-exploration-components/hooks/useTrackDebounce';
 
 export const StringFilterV2 = ({
   value,

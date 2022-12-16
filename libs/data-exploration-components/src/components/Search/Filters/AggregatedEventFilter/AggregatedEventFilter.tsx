@@ -6,8 +6,11 @@ import { aggregateKey } from '@cognite/sdk-react-query-hooks';
 import { useQuery } from 'react-query';
 
 import { Select } from '@data-exploration-components/components';
-import { InternalEventsFilters, OldEventsFilters } from 'domain/events';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import {
+  InternalEventsFilters,
+  OldEventsFilters,
+} from '@data-exploration-components/domain/events';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 
 type EventFieldForAggregate = 'type' | 'subtype' | 'dataSetId';
 

@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Button, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
 import noop from 'lodash/noop';
-import { SummaryCardWrapper } from 'components/Table/elements';
+import { SummaryCardWrapper } from '@data-exploration-components/components/Table/elements';
 
 interface SummaryCardProps {
   icon?: IconType;

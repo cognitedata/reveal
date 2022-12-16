@@ -1,13 +1,16 @@
 import React, { useMemo } from 'react';
 
 import { FileInfo } from '@cognite/sdk';
-import { Table, TableProps } from 'components/Table/Table';
-import { RelationshipLabels } from 'types';
+import {
+  Table,
+  TableProps,
+} from '@data-exploration-components/components/Table/Table';
+import { RelationshipLabels } from '@data-exploration-components/types';
 import { ResourceTableColumns } from '../../../components';
 import { useDocumentsMetadataKeys } from '../../../domain';
 import { FileNamePreview } from './FileNamePreview';
 import { ColumnDef } from '@tanstack/react-table';
-import { useGetHiddenColumns } from 'hooks';
+import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 
 const visibleColumns = ['name', 'mimeType', 'uploadedTime'];
 export type FileTableProps = Omit<

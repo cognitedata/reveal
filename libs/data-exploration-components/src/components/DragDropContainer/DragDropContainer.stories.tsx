@@ -6,7 +6,10 @@ import styled from 'styled-components/macro';
 import { WithDragHandleProps } from '.';
 import { DragDropContainer } from './DragDropContainer';
 import { DragHandleIcon } from './components/DragHandleIcon';
-import { FlexColumn, FlexRow } from 'styles/layout';
+import {
+  FlexColumn,
+  FlexRow,
+} from '@data-exploration-components/styles/layout';
 
 const ItemWrapper = styled(FlexRow)`
   align-items: center;

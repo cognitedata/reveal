@@ -1,6 +1,6 @@
 import React from 'react';
 import { Label } from '@cognite/cogs.js';
-import { ResourceType } from 'types';
+import { ResourceType } from '@data-exploration-components/types';
 
 const AssetIcon = ({ style }: { style?: React.CSSProperties }) => (
   <Label variant="normal" icon="Assets" style={style} />

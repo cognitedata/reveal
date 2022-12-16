@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { queryKeys } from 'domain/queryKeys';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
 import { useQuery } from 'react-query';
 import { getRootAsset } from '../network/getRootAsset';
 

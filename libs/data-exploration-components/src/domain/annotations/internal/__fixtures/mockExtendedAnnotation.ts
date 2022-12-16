@@ -5,8 +5,8 @@ import {
   ANNOTATION_SOURCE_KEY,
   AnnotationSource,
   ExtendedAnnotation,
-} from 'containers/Files/FilePreview/FilePreviewUFV/types';
-import { PNID_ANNOTATION_TYPE } from 'utils';
+} from '@data-exploration-components/containers/Files/FilePreview/FilePreviewUFV/types';
+import { PNID_ANNOTATION_TYPE } from '@data-exploration-components/utils';
 
 export const getExtendedAnnotationFixture = (): ExtendedAnnotation => {
   return {

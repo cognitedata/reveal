@@ -1,4 +1,4 @@
-import { BasicMapping } from 'domain/threeD';
+import { BasicMapping } from '@data-exploration-components/domain/threeD';
 
 import { threeDModels } from './threeDModels';
 

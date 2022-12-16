@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import { EventsProperties, getEventsAggregate } from 'domain/events';
-import { queryKeys } from 'domain/queryKeys';
+import { EventsProperties, getEventsAggregate } from '@data-exploration-components/domain/events';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
 import { useQuery, UseQueryOptions } from 'react-query';
 import isEmpty from 'lodash/isEmpty';
 import { EventFilter } from '@cognite/sdk';
-import { AdvancedFilter } from 'domain/builders';
+import { AdvancedFilter } from '@data-exploration-components/domain/builders';
 
 export const useEventsAggregateQuery = (
   {

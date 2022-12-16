@@ -1,8 +1,8 @@
 import {
   useInfiniteRelationshipsList,
   Resource,
-} from 'hooks/RelationshipHooks';
-import { ResourceType, ResourceItem } from 'types';
+} from '@data-exploration-components/hooks/RelationshipHooks';
+import { ResourceType, ResourceItem } from '@data-exploration-components/types';
 
 export type RelatedResourceType =
   | 'linkedResource'
@@ -22,5 +22,5 @@ export const useRelatedResourceResults = <T extends Resource>(
     relatedResourceType === 'relationship'
   );
 
-  return { items: items as T[], ...relationshipParams };
+  return { items: items as unknown as T[], ...relationshipParams };
 };

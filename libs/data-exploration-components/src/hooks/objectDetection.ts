@@ -1,10 +1,10 @@
 import { v4 as uuid } from 'uuid';
 import { useMutation, useQuery } from 'react-query';
 import { useContext, useState } from 'react';
-import { ModelStatus } from 'types';
+import { ModelStatus } from '@data-exploration-components/types';
 import { useSDK } from '@cognite/sdk-provider';
 import { AnnotationBoundingBox } from '@cognite/annotations';
-import { FileContextualizationContext } from 'context/FileContextualization';
+import { FileContextualizationContext } from '@data-exploration-components/context/FileContextualization';
 
 export type ObjectDetectionEntity = {
   id: string;

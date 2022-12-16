@@ -4,9 +4,12 @@ import {
   TimeseriesFilter,
   Timeseries,
 } from '@cognite/sdk';
-import { AdvancedFilter } from 'domain/builders';
-import { normalizeTimeseries, TimeseriesProperties } from 'domain/timeseries';
-import { InternalSortBy } from 'domain/types';
+import { AdvancedFilter } from '@data-exploration-components/domain/builders';
+import {
+  normalizeTimeseries,
+  TimeseriesProperties,
+} from '@data-exploration-components/domain/timeseries';
+import { InternalSortBy } from '@data-exploration-components/domain/types';
 
 export const getTimeseriesList = (
   sdk: CogniteClient,

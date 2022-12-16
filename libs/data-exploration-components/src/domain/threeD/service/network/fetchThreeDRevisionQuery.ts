@@ -1,7 +1,7 @@
 import { CogniteClient, CogniteError, Revision3D } from '@cognite/sdk/dist/src';
 import { FetchQueryOptions, QueryClient } from 'react-query';
 
-import { queryKeys } from 'domain/queryKeys';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
 
 export const fetchThreeDRevisionQuery = (
   sdk: CogniteClient,

@@ -1,13 +1,19 @@
 import { Timeseries } from '@cognite/sdk';
 import React, { useEffect, useMemo, useState } from 'react';
-import { DateRangeProps, RelationshipLabels } from 'types';
-import { Table, TableProps } from 'components/Table/Table';
-import { TIME_SELECT } from 'containers';
+import {
+  DateRangeProps,
+  RelationshipLabels,
+} from '@data-exploration-components/types';
+import {
+  Table,
+  TableProps,
+} from '@data-exploration-components/components/Table/Table';
+import { TIME_SELECT } from '@data-exploration-components/containers';
 import { TimeseriesChart } from '..';
 import { Body } from '@cognite/cogs.js';
 import { ColumnDef } from '@tanstack/react-table';
-import { useGetHiddenColumns } from 'hooks';
-import { RootAsset } from 'components/RootAsset';
+import { useGetHiddenColumns } from '@data-exploration-components/hooks';
+import { RootAsset } from '@data-exploration-components/components/RootAsset';
 import isEmpty from 'lodash/isEmpty';
 import { ResourceTableColumns } from '../../../components';
 import { useTimeseriesMetadataKeys } from '../../../domain';

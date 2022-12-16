@@ -1,8 +1,8 @@
 import React from 'react';
-import { ResourceType } from 'types';
+import { ResourceType } from '@data-exploration-components/types';
 import { Colors, Label, TabPaneProps, Tabs } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
-import { useResultCount } from 'components/ResultCount/ResultCount';
+import { useResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
 
 const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',

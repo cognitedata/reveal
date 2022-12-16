@@ -10,14 +10,17 @@ import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import dayjs from 'dayjs';
-import { DateRangeProps, ResourceTypes } from 'types';
+import {
+  DateRangeProps,
+  ResourceTypes,
+} from '@data-exploration-components/types';
 import { OptionType, Select } from '@cognite/cogs.js';
 import { ParentSize } from '@visx/responsive';
 
 import styled from 'styled-components';
 import { DatapointAggregates, Datapoints } from '@cognite/sdk';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 export type TIME_OPTION_KEY =
   | '10Y'

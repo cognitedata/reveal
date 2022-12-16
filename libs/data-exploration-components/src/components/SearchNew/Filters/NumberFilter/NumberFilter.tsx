@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Input, Tooltip } from '@cognite/cogs.js';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import styled from 'styled-components';
-import { isNumber } from 'utils/numbers';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { isNumber } from '@data-exploration-components/utils/numbers';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 export const NumberFilter = ({
   value,

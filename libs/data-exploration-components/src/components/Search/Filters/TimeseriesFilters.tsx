@@ -9,9 +9,9 @@ import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldTimeseriesFilters } from 'domain/timeseries';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
-import { ResourceTypes } from 'types';
+import { OldTimeseriesFilters } from '@data-exploration-components/domain/timeseries';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { ResourceTypes } from '@data-exploration-components/types';
 
 export const TimeseriesFilters = ({
   filter,
@@ -21,7 +21,7 @@ export const TimeseriesFilters = ({
   setFilter: (newFilter: OldTimeseriesFilters) => void;
 }) => {
   const resourceType = ResourceTypes.TimeSeries;
-  const { data: items = [] } = useList('timeseries', {
+  const { data: items = [] } = useList<any>('timeseries', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

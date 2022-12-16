@@ -6,18 +6,18 @@ import {
   AggregatedFilterV2,
   MetadataFilterV2,
 } from '@data-exploration-components/components';
-import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 
-import { PreviewFilterDropdown } from 'components/PreviewFilter/PreviewFilterDropdown';
-import { DefaultPreviewFilter } from 'components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from 'domain/types';
+import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
+import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
+import { InternalCommonFilters } from '@data-exploration-components/domain/types';
 import { useDebounce } from 'use-debounce';
-import { InternalFilesFilters } from 'domain/files';
-import { convertResourceType } from 'types';
+import { InternalFilesFilters } from '@data-exploration-components/domain/files';
+import { convertResourceType } from '@data-exploration-components/types';
 import { useResourceResults } from '../SearchResultLoader';
-import { FileTable } from 'containers/Files';
-import FileGroupingTable from 'containers/Files/FileGroupingTable/FileGroupingTable';
+import { FileTable } from '@data-exploration-components/containers/Files';
+import FileGroupingTable from '@data-exploration-components/containers/Files/FileGroupingTable/FileGroupingTable';
 import {
   GroupingTableHeader,
   GroupingTableContainer,
@@ -38,7 +38,7 @@ const LinkedFileFilter = ({
   filter: InternalFilesFilters;
   onFilterChange: (newValue: InternalFilesFilters) => void;
 }) => {
-  const { data: items = [] } = useList('files', {
+  const { data: items = [] } = useList<any>('files', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

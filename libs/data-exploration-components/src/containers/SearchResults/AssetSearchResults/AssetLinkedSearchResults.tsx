@@ -1,20 +1,20 @@
 import { Asset } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { MetadataFilterV2 } from '@data-exploration-components/components';
-import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { TableSortBy } from 'components/Table';
-import { AssetTable } from 'containers/Assets';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
+import { TableSortBy } from '@data-exploration-components/components/Table';
+import { AssetTable } from '@data-exploration-components/containers/Assets';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 import {
   InternalAssetFilters,
   useAssetsSearchResultQuery,
-} from 'domain/assets';
+} from '@data-exploration-components/domain/assets';
 import React, { useMemo, useState } from 'react';
-import { PreviewFilterDropdown } from 'components/PreviewFilter/PreviewFilterDropdown';
-import { DefaultPreviewFilter } from 'components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from 'domain/types';
+import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
+import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
+import { InternalCommonFilters } from '@data-exploration-components/domain/types';
 import { useDebounce } from 'use-debounce';
-import { convertResourceType } from 'types';
+import { convertResourceType } from '@data-exploration-components/types';
 import { useResourceResults } from '../SearchResultLoader';
 
 interface Props {
@@ -30,7 +30,7 @@ const LinkedAssetFilter = ({
   filter: InternalAssetFilters;
   onFilterChange: (newValue: InternalAssetFilters) => void;
 }) => {
-  const { data: items = [] } = useList('assets', {
+  const { data: items = [] } = useList<any>('assets', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

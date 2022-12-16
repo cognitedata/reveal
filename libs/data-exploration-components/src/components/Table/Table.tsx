@@ -16,7 +16,7 @@ import {
 import { useLocalStorageState } from '../../utils';
 import { isElementHorizontallyInViewport } from '../../utils/isElementHorizontallyInViewport';
 import { ColumnToggle } from './ColumnToggle';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 import {
   TableContainer,
@@ -41,8 +41,8 @@ import { Body, Flex } from '@cognite/cogs.js';
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from './LoadMore';
-import { EmptyState } from 'components/EmpyState/EmptyState';
-import { useMetrics } from 'hooks/useMetrics';
+import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 
 export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {

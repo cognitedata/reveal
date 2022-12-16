@@ -4,8 +4,8 @@ import { BooleanFilter } from './BooleanFilter/BooleanFilter';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { InternalTimeseriesFilters } from 'domain/timeseries';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { InternalTimeseriesFilters } from '@data-exploration-components/domain/timeseries';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 
 export const TimeseriesFilters = ({
   filter,
@@ -15,7 +15,7 @@ export const TimeseriesFilters = ({
   filter: InternalTimeseriesFilters;
   setFilter: (newFilter: InternalTimeseriesFilters) => void;
 }) => {
-  const { data: items = [] } = useList('timeseries', {
+  const { data: items = [] } = useList<any>('timeseries', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

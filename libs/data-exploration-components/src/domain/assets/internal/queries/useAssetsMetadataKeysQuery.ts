@@ -1,5 +1,5 @@
-import { useAssetsListQuery } from 'domain/assets';
-import { mapMetadataKeysWithQuery } from 'domain/transformers';
+import { useAssetsListQuery } from '@data-exploration-components/domain/assets';
+import { mapMetadataKeysWithQuery } from '@data-exploration-components/domain/transformers';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { InternalAssetFilters, mapFiltersToAssetsAdvancedFilters } from '..';

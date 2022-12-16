@@ -5,21 +5,21 @@ import {
   ResourceType,
   OldResourceFilterProps,
   SetOldResourceFilterProps,
-} from 'types';
+} from '@data-exploration-components/types';
 import {
   AssetFilters,
   EventFilters,
   FileFilters,
   SequenceFilters,
   TimeseriesFilters,
-} from 'components/Search';
+} from '@data-exploration-components/components/Search';
 import {
   lightGrey,
   getSelectedFilter,
   countByFilter,
   FiltersWithResourceType,
   FilterType,
-} from 'utils';
+} from '@data-exploration-components/utils';
 import styled from 'styled-components';
 
 const TRANSITION_TIME = 200;

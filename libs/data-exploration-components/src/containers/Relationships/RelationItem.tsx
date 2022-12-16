@@ -1,6 +1,6 @@
 import { Body, Overline } from '@cognite/cogs.js';
-import { ResourceType } from 'types';
-import { ResourceIcons } from 'components/ResourceIcons/ResourceIcons';
+import { ResourceType } from '@data-exploration-components/types';
+import { ResourceIcons } from '@data-exploration-components/components/ResourceIcons/ResourceIcons';
 import React from 'react';
 import styled from 'styled-components';
 

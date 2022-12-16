@@ -29,23 +29,27 @@ import {
   AnnotationResourceType,
 } from '@cognite/annotations';
 import styled from 'styled-components';
-import { useResourceSelector } from 'context/ResourceSelectorContext';
+import { useResourceSelector } from '@data-exploration-components/context/ResourceSelectorContext';
 import {
   ResourceItemState,
   ResourceItem,
   convertResourceType,
   ResourceType,
-} from 'types';
-import { useCreate } from 'hooks/sdk';
+} from '@data-exploration-components/types';
+import { useCreate } from '@data-exploration-components/hooks/sdk';
 import { useQueryClient, useMutation } from 'react-query';
-import { sleep, lightGrey, SIDEBAR_RESIZE_EVENT } from 'utils';
+import {
+  sleep,
+  lightGrey,
+  SIDEBAR_RESIZE_EVENT,
+} from '@data-exploration-components/utils';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteEvent, EventChange, FileInfo } from '@cognite/sdk';
-import { ResourcePreviewSidebar } from 'containers';
+import { ResourcePreviewSidebar } from '@data-exploration-components/containers';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { AppContext } from 'context/AppContext';
+import { AppContext } from '@data-exploration-components/context/AppContext';
 import capitalize from 'lodash/capitalize';
-import { useDisclosure } from 'hooks';
+import { useDisclosure } from '@data-exploration-components/hooks';
 
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';

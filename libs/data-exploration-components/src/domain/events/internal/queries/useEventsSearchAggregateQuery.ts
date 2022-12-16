@@ -5,7 +5,7 @@ import {
   mapInternalFilterToEventsFilter,
   // useEventsSearchQueryMetadataKeysQuery,
   useEventsAggregateQuery,
-} from 'domain/events';
+} from '@data-exploration-components/domain/events';
 import { UseQueryOptions } from 'react-query';
 
 export const useEventsSearchAggregateQuery = (

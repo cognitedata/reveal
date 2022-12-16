@@ -1,5 +1,5 @@
 import { Tooltip } from '@cognite/cogs.js';
-import { useIsOverflow } from 'hooks';
+import { useIsOverflow } from '@data-exploration-components/hooks';
 import React from 'react';
 import styled from 'styled-components';
 

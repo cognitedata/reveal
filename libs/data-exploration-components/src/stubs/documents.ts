@@ -1,4 +1,4 @@
-import { Document } from 'domain/documents';
+import { Document } from '@data-exploration-components/domain/documents';
 
 export const mockDocument: Document = {
   id: 1,

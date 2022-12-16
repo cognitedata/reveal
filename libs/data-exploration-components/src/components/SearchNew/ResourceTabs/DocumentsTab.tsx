@@ -4,10 +4,10 @@ import { Label } from '@cognite/cogs.js';
 import {
   MORE_THAN_MAX_RESULT_LIMIT,
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
-} from 'domain/constants';
+} from '@data-exploration-components/domain/constants';
 import { ResourceTypeTitle, TabContainer } from './elements';
-import { getTabCountLabel } from 'utils';
-import { useDocumentFilteredAggregateCount } from 'domain/documents';
+import { getTabCountLabel } from '@data-exploration-components/utils';
+import { useDocumentFilteredAggregateCount } from '@data-exploration-components/domain/documents';
 
 type Props = {
   query?: string;

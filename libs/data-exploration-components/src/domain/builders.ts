@@ -1,5 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
-import { isObjectEmpty } from 'utils';
+import { isObjectEmpty } from '@data-exploration-components/utils';
 
 export type AdvancedFilter<T> = LeafFilter<T> | BoolFilter<T>;
 // export type Sort = {

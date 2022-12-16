@@ -1,6 +1,6 @@
 import { useInfiniteList } from '@cognite/sdk-react-query-hooks';
-import { mergeDataSetResponsePages } from 'domain/dataSets/internal/transformers/mergeDataSetResponsePages';
-import { DataSetInternal } from 'domain/dataSets/internal/types';
+import { mergeDataSetResponsePages } from '@data-exploration-components/domain/dataSets/internal/transformers/mergeDataSetResponsePages';
+import { DataSetInternal } from '@data-exploration-components/domain/dataSets/internal/types';
 import { DATA_SET_LIMIT } from '../../service/constants';
 
 export const useDataSetQuery = () => {

@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import { queryKeys } from 'domain/queryKeys';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
 import { useQuery, UseQueryOptions } from 'react-query';
 import isEmpty from 'lodash/isEmpty';
 import { TimeseriesFilter } from '@cognite/sdk';
-import { AdvancedFilter } from 'domain/builders';
+import { AdvancedFilter } from '@data-exploration-components/domain/builders';
 import {
   getTimeseriesAggregate,
   TimeseriesProperties,
-} from 'domain/timeseries';
+} from '@data-exploration-components/domain/timeseries';
 
 export const useTimeseriesAggregateQuery = (
   {

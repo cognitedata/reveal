@@ -8,7 +8,10 @@ import {
 
 import isEmpty from 'lodash/isEmpty';
 
-import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
+import {
+  useDeepEffect,
+  useDeepMemo,
+} from '@data-exploration-components/hooks/useDeep';
 
 import { DraggableElements } from './components/DraggableElements';
 import { DragDropContainerProps } from './types';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
-import { PNID_ANNOTATION_TYPE } from 'utils';
+import { PNID_ANNOTATION_TYPE } from '@data-exploration-components/utils';
 import { CogniteAnnotation, CURRENT_VERSION } from '@cognite/annotations';
 import { v4 as uuid } from 'uuid';
 import { CreateAnnotationForm } from './CreateAnnotationForm';

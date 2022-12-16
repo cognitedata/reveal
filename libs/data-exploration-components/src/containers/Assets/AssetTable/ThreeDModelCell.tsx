@@ -5,10 +5,10 @@ import groupBy from 'lodash/groupBy';
 import {
   DetailedMapping,
   useDetailedMappingsByAssetIdQuery,
-} from 'domain/threeD';
+} from '@data-exploration-components/domain/threeD';
 import { createLink } from '@cognite/cdf-utilities';
 import { DASH } from '../../../utils';
-import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
+import { TimeDisplay } from '@data-exploration-components/components/TimeDisplay/TimeDisplay';
 
 export const ThreeDModelCellLink = ({
   assetId,

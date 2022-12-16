@@ -1,8 +1,11 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { AggregateResponse } from '@cognite/sdk';
-import { InternalAssetFilters, OldAssetFilters } from 'domain/assets';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import {
+  InternalAssetFilters,
+  OldAssetFilters,
+} from '@data-exploration-components/domain/assets';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 
 export const useAssetMetadataKeys = (
   filter?: InternalAssetFilters | OldAssetFilters,

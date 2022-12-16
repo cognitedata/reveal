@@ -3,19 +3,22 @@ import { Sequence } from '@cognite/sdk';
 import {
   SearchResultCountLabel,
   SearchResultToolbar,
-} from 'containers/SearchResults';
-import { ResourceItem, convertResourceType } from 'types';
-import { SequenceTable } from 'containers/Sequences';
+} from '@data-exploration-components/containers/SearchResults';
+import {
+  ResourceItem,
+  convertResourceType,
+} from '@data-exploration-components/types';
+import { SequenceTable } from '@data-exploration-components/containers/Sequences';
 
-import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
+import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
 import { useResourceResults } from '../SearchResultLoader';
 import {
   InternalSequenceFilters,
   useSequenceSearchAggregateQuery,
   useSequenceSearchResultQuery,
-} from 'domain/sequence';
-import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { TableSortBy } from 'components/Table';
+} from '@data-exploration-components/domain/sequence';
+import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
+import { TableSortBy } from '@data-exploration-components/components/Table';
 import { useResultCount } from '@data-exploration-components/components';
 
 export const SequenceSearchResults = ({

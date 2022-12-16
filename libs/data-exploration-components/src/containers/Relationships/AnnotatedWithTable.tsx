@@ -1,13 +1,16 @@
 import React, { useMemo } from 'react';
-import { SelectableItemsProps, ResourceItem } from 'types';
+import {
+  SelectableItemsProps,
+  ResourceItem,
+} from '@data-exploration-components/types';
 import { FileInfo, IdEither } from '@cognite/sdk';
-import { useFilesAnnotatedWithResource } from 'hooks/RelationshipHooks';
+import { useFilesAnnotatedWithResource } from '@data-exploration-components/hooks/RelationshipHooks';
 import { uniqBy } from 'lodash';
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
 import { Alert } from 'antd';
 import { Loader } from '@data-exploration-components/components';
-import { FileTable } from 'containers';
-import { useUniqueCdfItems } from 'hooks';
+import { FileTable } from '@data-exploration-components/containers';
+import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 
 export const AnnotatedWithTable = ({
   resource,

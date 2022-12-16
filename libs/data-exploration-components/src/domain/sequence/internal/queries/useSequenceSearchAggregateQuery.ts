@@ -5,7 +5,7 @@ import {
   mapInternalFilterToSequenceFilter,
   // useSequenceSearchQueryMetadataKeysQuery,
   useSequenceAggregateQuery,
-} from 'domain/sequence';
+} from '@data-exploration-components/domain/sequence';
 import { UseQueryOptions } from 'react-query';
 
 export const useSequenceSearchAggregateQuery = (

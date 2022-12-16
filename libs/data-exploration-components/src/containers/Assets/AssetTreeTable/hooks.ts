@@ -7,8 +7,8 @@ import {
   listKey,
   listApi,
 } from '@cognite/sdk-react-query-hooks';
-import { InternalAssetFilters } from 'domain/assets';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { InternalAssetFilters } from '@data-exploration-components/domain/assets';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 import { useQueryClient, useQuery, UseQueryOptions } from 'react-query';
 import { InternalAssetData } from '../../../domain';
 

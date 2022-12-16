@@ -1,7 +1,10 @@
-import { NIL_FILTER_VALUE } from 'domain/constants';
-import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
+import { NIL_FILTER_VALUE } from '@data-exploration-components/domain/constants';
+import {
+  AdvancedFilter,
+  AdvancedFilterBuilder,
+} from '@data-exploration-components/domain/builders';
 import isEmpty from 'lodash/isEmpty';
-import { isNumeric } from 'utils/numbers';
+import { isNumeric } from '@data-exploration-components/utils/numbers';
 import { InternalTimeseriesFilters } from '../types';
 
 export type TimeseriesProperties = {
@@ -52,6 +55,7 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
       if (internalId) {
         return [internalId];
       }
+      return undefined;
     })
     .equals('isStep', isStep)
     .equals('isString', isString)
@@ -92,6 +96,7 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
       if (query && isNumeric(query)) {
         return [Number(query)];
       }
+      return undefined;
     });
     searchQueryBuilder.prefix('externalId', query);
 

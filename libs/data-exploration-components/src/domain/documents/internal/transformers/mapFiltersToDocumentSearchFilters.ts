@@ -53,6 +53,7 @@ export const mapFiltersToDocumentSearchFilters = (
       if (internalId) {
         return [internalId];
       }
+      return undefined;
     })
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {

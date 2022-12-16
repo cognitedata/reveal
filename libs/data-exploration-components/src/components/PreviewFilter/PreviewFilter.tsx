@@ -1,6 +1,6 @@
 import { Input } from '@cognite/cogs.js';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
-import { useDebounceTrackUsage } from 'hooks/useTrackDebounce';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { useDebounceTrackUsage } from '@data-exploration-components/hooks/useTrackDebounce';
 import React from 'react';
 import styled from 'styled-components';
 

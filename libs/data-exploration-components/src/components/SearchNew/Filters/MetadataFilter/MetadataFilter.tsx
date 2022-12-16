@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Body, Button } from '@cognite/cogs.js';
 import { mergeUniqueMetadataKeys } from './utils';
-import { FilterFormV2 } from 'components/FilterFormV2/FilterFormV2';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
-import { useMetrics } from 'hooks/useMetrics';
+import { FilterFormV2 } from '@data-exploration-components/components/FilterFormV2/FilterFormV2';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 
 const FilterHeader = styled.div`
   display: flex;

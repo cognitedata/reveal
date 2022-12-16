@@ -7,7 +7,7 @@ import {
   SequenceItem,
   SequenceRow,
 } from '@cognite/sdk';
-import { pickOptionalId } from 'utils';
+import { pickOptionalId } from '@data-exploration-components/utils';
 
 import { UseInfiniteQueryOptions, useInfiniteQuery } from 'react-query';
 

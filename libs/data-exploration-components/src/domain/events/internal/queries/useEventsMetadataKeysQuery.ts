@@ -1,5 +1,5 @@
-import { useEventsListQuery } from 'domain/events/service/queries/useEventsListQuery';
-import { mapMetadataKeysWithQuery } from 'domain/transformers';
+import { useEventsListQuery } from '@data-exploration-components/domain/events/service/queries/useEventsListQuery';
+import { mapMetadataKeysWithQuery } from '@data-exploration-components/domain/transformers';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { mapFiltersToEventsAdvancedFilters } from '../transformers/mapFiltersToEventsAdvancedFilters';

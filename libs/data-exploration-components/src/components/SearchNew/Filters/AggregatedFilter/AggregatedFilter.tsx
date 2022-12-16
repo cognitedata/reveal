@@ -2,9 +2,9 @@ import React from 'react';
 import { Select } from '@data-exploration-components/components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
-import { NIL_FILTER_VALUE } from 'domain/constants';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { NIL_FILTER_VALUE } from '@data-exploration-components/domain/constants';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { OptionType } from '@cognite/cogs.js';
 
 export const AggregatedFilterV2 = <T,>({

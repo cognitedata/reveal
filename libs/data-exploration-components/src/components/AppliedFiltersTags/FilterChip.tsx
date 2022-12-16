@@ -1,5 +1,5 @@
 import { Button, IconType, Label, Tooltip } from '@cognite/cogs.js';
-import { COMMON_FILTER_KEYS } from 'domain/constants';
+import { COMMON_FILTER_KEYS } from '@data-exploration-components/domain/constants';
 import includes from 'lodash/includes';
 import React from 'react';
 import styled from 'styled-components';

@@ -5,7 +5,7 @@ import {
   mapInternalFilterToTimeseriesFilter,
   // useTimeseriesSearchQueryMetadataKeysQuery,
   useTimeseriesAggregateQuery,
-} from 'domain/timeseries';
+} from '@data-exploration-components/domain/timeseries';
 import { UseQueryOptions } from 'react-query';
 
 export const useTimeseriesSearchAggregateQuery = (

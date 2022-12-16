@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Timeseries } from '@cognite/sdk';
-import { ResourceItem, convertResourceType } from 'types';
-import { TimeseriesTable } from 'containers/Timeseries';
+import {
+  ResourceItem,
+  convertResourceType,
+} from '@data-exploration-components/types';
+import { TimeseriesTable } from '@data-exploration-components/containers/Timeseries';
 
-import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
+import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
 
 import { Flex } from '@cognite/cogs.js';
 
@@ -17,9 +20,9 @@ import {
   InternalTimeseriesFilters,
   useTimeseriesSearchAggregateQuery,
   useTimeseriesSearchResultQuery,
-} from 'domain/timeseries';
-import { TableSortBy } from 'components/Table';
-import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
+} from '@data-exploration-components/domain/timeseries';
+import { TableSortBy } from '@data-exploration-components/components/Table';
+import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { useResultCount } from '@data-exploration-components/components';
 
 export const TimeseriesSearchResults = ({

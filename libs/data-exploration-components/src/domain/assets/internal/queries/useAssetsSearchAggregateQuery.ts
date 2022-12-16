@@ -5,7 +5,7 @@ import {
   mapInternalFilterToAssetFilter,
   // useAssetsSearchQueryMetadataKeysQuery,
   useAssetsAggregateQuery,
-} from 'domain/assets';
+} from '@data-exploration-components/domain/assets';
 import { UseQueryOptions } from 'react-query';
 
 export const useAssetsSearchAggregateQuery = (

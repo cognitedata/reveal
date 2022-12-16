@@ -1,8 +1,8 @@
 import React from 'react';
 import { Label } from '@cognite/cogs.js';
-import { useSequenceSearchAggregateQuery } from 'domain/sequence';
+import { useSequenceSearchAggregateQuery } from '@data-exploration-components/domain/sequence';
 import { ResourceTypeTitle, TabContainer } from './elements';
-import { getTabCountLabel } from 'utils';
+import { getTabCountLabel } from '@data-exploration-components/utils';
 
 type Props = {
   query?: string;

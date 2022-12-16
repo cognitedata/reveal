@@ -1,5 +1,5 @@
 import { Document } from '../types';
-import { DASH } from 'utils/constants';
+import { DASH } from '@data-exploration-components/utils/constants';
 
 export const getHighlightContent = (document: Document) => {
   if (

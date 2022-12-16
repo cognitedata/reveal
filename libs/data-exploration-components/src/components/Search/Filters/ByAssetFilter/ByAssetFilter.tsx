@@ -1,6 +1,6 @@
 import React from 'react';
 import { Body } from '@cognite/cogs.js';
-import { AssetSelect } from 'containers/Assets';
+import { AssetSelect } from '@data-exploration-components/containers/Assets';
 
 export const ByAssetFilter = ({
   value,

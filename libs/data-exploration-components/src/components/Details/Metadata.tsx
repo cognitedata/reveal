@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Button, Title } from '@cognite/cogs.js';
-import { Table } from 'components/Table';
+import { Table } from '@data-exploration-components/components/Table';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import {
   FilterContainer,
@@ -9,9 +9,9 @@ import {
   MetadataHeader,
   MetadataTableContainer,
 } from './elements';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
-import { useDebounceTrackUsage } from 'hooks/useTrackDebounce';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { useDebounceTrackUsage } from '@data-exploration-components/hooks/useTrackDebounce';
 
 // TODO  Needs to be removed once implemented in our library
 interface DataSource {

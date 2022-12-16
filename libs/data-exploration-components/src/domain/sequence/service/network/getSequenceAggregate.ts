@@ -4,12 +4,12 @@ import {
   CursorResponse,
   SequenceFilter,
 } from '@cognite/sdk';
-import { AdvancedFilter } from 'domain/builders';
+import { AdvancedFilter } from '@data-exploration-components/domain/builders';
 import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
   MORE_THAN_MAX_RESULT_LIMIT,
-} from 'domain/constants';
-import { SequenceProperties } from 'domain/sequence';
+} from '@data-exploration-components/domain/constants';
+import { SequenceProperties } from '@data-exploration-components/domain/sequence';
 import { isEmpty } from 'lodash';
 
 export const getSequenceAggregate = (

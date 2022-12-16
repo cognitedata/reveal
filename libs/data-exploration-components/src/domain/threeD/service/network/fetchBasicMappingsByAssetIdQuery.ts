@@ -1,8 +1,8 @@
 import { CogniteClient, CogniteError } from '@cognite/sdk';
 import { FetchQueryOptions, QueryClient } from 'react-query';
 
-import { BasicMapping, getBasicMappingsByAssetId } from 'domain/threeD';
-import { queryKeys } from 'domain/queryKeys';
+import { BasicMapping, getBasicMappingsByAssetId } from '@data-exploration-components/domain/threeD';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
 
 export const fetchBasicMappingsByAssetIdQuery = (
   sdk: CogniteClient,

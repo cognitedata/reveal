@@ -2,8 +2,8 @@ import {
   getBadEventsDataFixture,
   getEventDataFixture,
   getGoodEventsData,
-} from 'domain/events/internal/__fixtures/mockEventsData';
-import { mapMetadataKeysWithQuery } from 'domain/transformers';
+} from '@data-exploration-components/domain/events/internal/__fixtures/mockEventsData';
+import { mapMetadataKeysWithQuery } from '@data-exploration-components/domain/transformers';
 
 const SEARCH_QUERY = 'search-input-value';
 

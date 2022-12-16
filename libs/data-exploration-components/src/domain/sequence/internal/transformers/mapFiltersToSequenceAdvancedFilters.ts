@@ -1,6 +1,9 @@
-import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
+import {
+  AdvancedFilter,
+  AdvancedFilterBuilder,
+} from '@data-exploration-components/domain/builders';
 import isEmpty from 'lodash/isEmpty';
-import { isNumeric } from 'utils/numbers';
+import { isNumeric } from '@data-exploration-components/utils/numbers';
 import { InternalSequenceFilters } from '../types';
 
 export type SequenceProperties = {
@@ -40,6 +43,7 @@ export const mapFiltersToSequenceAdvancedFilters = (
       if (internalId) {
         return [internalId];
       }
+      return undefined;
     })
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
@@ -78,6 +82,7 @@ export const mapFiltersToSequenceAdvancedFilters = (
       if (query && isNumeric(query)) {
         return [Number(query)];
       }
+      return undefined;
     });
     searchQueryBuilder.prefix('externalId', query);
 

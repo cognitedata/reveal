@@ -1,6 +1,6 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { useAssetMetadataKeys } from 'hooks/MetadataAggregateHooks';
+import { useAssetMetadataKeys } from '@data-exploration-components/hooks/MetadataAggregateHooks';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import { LabelFilter } from './LabelFilter/LabelFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
@@ -10,9 +10,9 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldAssetFilters } from 'domain/assets';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
-import { ResourceTypes } from 'types';
+import { OldAssetFilters } from '@data-exploration-components/domain/assets';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { ResourceTypes } from '@data-exploration-components/types';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFilters = ({
@@ -23,7 +23,7 @@ export const AssetFilters = ({
   setFilter: (newFilter: OldAssetFilters) => void;
 }) => {
   const resourceType = ResourceTypes.Asset;
-  const { data: items = [] } = useList('assets', {
+  const { data: items = [] } = useList<any>('assets', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

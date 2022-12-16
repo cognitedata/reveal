@@ -9,7 +9,7 @@ import {
   ButtonProps,
   SegmentedControl,
 } from '@cognite/cogs.js';
-import { TIME_SELECT } from 'containers';
+import { TIME_SELECT } from '@data-exploration-components/containers';
 import { PivotRangePicker } from './PivotRangePicker';
 import {
   PivotRange,

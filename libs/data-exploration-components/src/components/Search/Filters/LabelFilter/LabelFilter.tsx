@@ -3,7 +3,7 @@ import { Body, Tooltip } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
 import { OptionsType, OptionTypeBase } from 'react-select';
 import { MultiSelect } from '@data-exploration-components/components';
-import { ResourceType } from 'types';
+import { ResourceType } from '@data-exploration-components/types';
 import { useList } from '@cognite/sdk-react-query-hooks';
 
 export const LabelFilter = ({

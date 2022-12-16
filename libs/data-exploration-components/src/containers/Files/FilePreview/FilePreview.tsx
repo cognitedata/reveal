@@ -13,17 +13,17 @@ import {
   lightGrey,
   readablePreviewableFileTypes,
   removeSimilarAnnotations,
-} from 'utils';
+} from '@data-exploration-components/utils';
 import {
   PendingCogniteAnnotation,
   CogniteAnnotation,
 } from '@cognite/annotations';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { ResourceItem } from 'types';
+import { ResourceItem } from '@data-exploration-components/types';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useEventAnnotations } from '../hooks';
 import { AnnotationHoverPreview } from './AnnotationHoverPreview';
-import { EmptyState } from 'components/EmpyState/EmptyState';
+import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
 
 type FilePreviewProps = {
   fileId: number;

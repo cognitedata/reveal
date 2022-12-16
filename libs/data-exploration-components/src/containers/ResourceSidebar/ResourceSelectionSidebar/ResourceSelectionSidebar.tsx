@@ -6,7 +6,7 @@ import {
   ResourceItem,
   SelectableItemsProps,
   InitialOldResourceFilterProps,
-} from 'types';
+} from '@data-exploration-components/types';
 import {
   Divider,
   SpacedRow,
@@ -16,7 +16,7 @@ import {
   SearchFilters,
   SearchResults,
   ResourcePreviewSidebar,
-} from 'containers';
+} from '@data-exploration-components/containers';
 
 import {
   OldAssetFilters,
@@ -24,7 +24,7 @@ import {
   OldEventsFilters,
   OldTimeseriesFilters,
   OldSequenceFilters,
-} from 'domain/index';
+} from '@data-exploration-components/domain/index';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: absolute;

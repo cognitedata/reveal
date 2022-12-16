@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import ReactDOM from 'react-dom';
 
-import { Flex } from 'styles/layout';
+import { Flex } from '@data-exploration-components/styles/layout';
 import { DRAG_DROP_PORTAL_CLASS } from '../constants';
 
 const getDraggableElement = (

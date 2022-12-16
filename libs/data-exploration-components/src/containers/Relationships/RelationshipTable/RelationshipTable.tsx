@@ -1,12 +1,16 @@
 import React, { useContext } from 'react';
 import { Alert } from 'antd';
 
-import { ResourceItem, ResourceType, SelectableItemsProps } from 'types';
+import {
+  ResourceItem,
+  ResourceType,
+  SelectableItemsProps,
+} from '@data-exploration-components/types';
 
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { createLink } from '@cognite/cdf-utilities';
 import { A } from '@cognite/cogs.js';
-import { AppContext } from 'context/AppContext';
+import { AppContext } from '@data-exploration-components/context/AppContext';
 import { RelationshipAssetTable } from './RelationshipAssetTable';
 import { RelationshipEventTable } from './RelationshipEventTable';
 import { RelationshipFileTable } from './RelationshipFileTable';

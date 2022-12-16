@@ -9,9 +9,9 @@ import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldFilesFilters } from 'domain/files';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
-import { ResourceTypes } from 'types';
+import { OldFilesFilters } from '@data-exploration-components/domain/files';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { ResourceTypes } from '@data-exploration-components/types';
 
 export const FileFilters = ({
   filter,
@@ -21,7 +21,7 @@ export const FileFilters = ({
   setFilter: (newFilter: OldFilesFilters) => void;
 }) => {
   const resourceType = ResourceTypes.File;
-  const { data: items = [] } = useList('files', {
+  const { data: items = [] } = useList<any>('files', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

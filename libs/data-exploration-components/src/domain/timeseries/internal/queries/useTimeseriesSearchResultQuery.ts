@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from 'domain/constants';
-import { TableSortBy } from 'components/Table';
+import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '@data-exploration-components/domain/constants';
+import { TableSortBy } from '@data-exploration-components/components/Table';
 import {
   InternalTimeseriesFilters,
   mapFiltersToTimeseriesAdvancedFilters,
@@ -8,7 +8,7 @@ import {
   mapTableSortByToTimeseriesSortFields,
   useTimeseriesListQuery,
   // useTimeseriesSearchQueryMetadataKeysQuery,
-} from 'domain/timeseries';
+} from '@data-exploration-components/domain/timeseries';
 import { UseInfiniteQueryOptions } from 'react-query';
 
 export const useTimeseriesSearchResultQuery = (

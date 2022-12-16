@@ -1,9 +1,9 @@
 import React from 'react';
-import { useFilePreviewURL } from 'hooks/sdk';
+import { useFilePreviewURL } from '@data-exploration-components/hooks/sdk';
 import { Body, DocumentIcon } from '@cognite/cogs.js';
 import { Loader } from '@data-exploration-components/components';
 import { FileInfo } from '@cognite/sdk';
-import { Document } from 'domain/documents';
+import { Document } from '@data-exploration-components/domain/documents';
 
 export const FileThumbnail = ({ file }: { file: FileInfo | Document }) => {
   const { data: filePreviewUrl, isError, isFetching } = useFilePreviewURL(file);

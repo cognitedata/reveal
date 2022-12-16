@@ -1,6 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { DocumentsAggregateAllUniqueValuesRequest } from '@cognite/sdk/dist/src';
-import { queryKeys } from 'domain/queryKeys';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
 import { isEmpty } from 'lodash';
 import { useQuery } from 'react-query';
 import { getDocumentAggregates } from '../../network/getDocumentAggregates';

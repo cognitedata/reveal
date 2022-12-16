@@ -3,7 +3,7 @@ import {
   AnnotationType,
   getDefaultStylesByResourceType,
 } from '@cognite/unified-file-viewer';
-import { isNotUndefined } from 'utils';
+import { isNotUndefined } from '@data-exploration-components/utils';
 import { getTaggedEventAnnotation } from './migration/utils';
 import { ExtendedAnnotation, TaggedEventAnnotation } from './types';
 

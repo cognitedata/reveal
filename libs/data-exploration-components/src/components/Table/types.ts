@@ -3,9 +3,9 @@ import { ColumnDef } from '@tanstack/react-table';
 import {
   SequenceWithRelationshipLabels,
   TimeseriesWithRelationshipLabels,
-} from 'containers';
-import { AssetWithRelationshipLabels } from 'containers/Assets/AssetTable/AssetTable';
-import { FileWithRelationshipLabels } from 'containers/Files/FileTable/FileTable';
+} from '@data-exploration-components/containers';
+import { AssetWithRelationshipLabels } from '@data-exploration-components/containers/Assets/AssetTable/AssetTable';
+import { FileWithRelationshipLabels } from '@data-exploration-components/containers/Files/FileTable/FileTable';
 import { ColumnKeys } from './constants';
 
 // We recreated these types on our side to be less dependant on react-table.

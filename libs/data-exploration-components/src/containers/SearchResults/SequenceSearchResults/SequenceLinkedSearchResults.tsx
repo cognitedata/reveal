@@ -4,23 +4,23 @@ import {
   MetadataFilterV2,
   TableSortBy,
 } from '@data-exploration-components/components';
-import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
+import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
 
 import React, { useMemo, useState } from 'react';
-import { PreviewFilterDropdown } from 'components/PreviewFilter/PreviewFilterDropdown';
-import { DefaultPreviewFilter } from 'components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from 'domain/types';
+import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
+import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
+import { InternalCommonFilters } from '@data-exploration-components/domain/types';
 import {
   InternalSequenceFilters,
   useSequenceSearchResultQuery,
-} from 'domain/sequence';
+} from '@data-exploration-components/domain/sequence';
 import {
   SequenceTable,
   SequenceWithRelationshipLabels,
   useResourceResults,
-} from 'containers';
-import { convertResourceType } from 'types';
+} from '@data-exploration-components/containers';
+import { convertResourceType } from '@data-exploration-components/types';
 import { useDebounce } from 'use-debounce';
 
 interface Props {
@@ -36,7 +36,7 @@ const LinkedSequenceFilter = ({
   filter: InternalSequenceFilters;
   onFilterChange: (newValue: InternalSequenceFilters) => void;
 }) => {
-  const { data: items = [] } = useList('sequences', {
+  const { data: items = [] } = useList<any>('sequences', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
   });

@@ -1,5 +1,5 @@
 import { DocumentSearchItem } from '@cognite/sdk';
-import { Document } from 'domain/documents';
+import { Document } from '@data-exploration-components/domain/documents';
 
 // A function to convert data for documents
 export const normalize = (

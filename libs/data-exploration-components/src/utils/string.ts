@@ -1,4 +1,4 @@
-import { getTitle, ResourceType } from 'types';
+import { getTitle, ResourceType } from '@data-exploration-components/types';
 import {
   withThousandSeparator,
   withThousandSeparatorStringExtended,

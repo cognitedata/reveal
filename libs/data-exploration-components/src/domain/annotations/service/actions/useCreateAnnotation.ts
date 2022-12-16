@@ -10,7 +10,7 @@ import {
   isAssetAnnotation,
   isExtendedLocalAnnotation,
 } from '../../../../containers/Files/FilePreview/FilePreviewUFV/migration/utils';
-import { isNotUndefined } from 'utils';
+import { isNotUndefined } from '@data-exploration-components/utils';
 import { CogniteClient } from '@cognite/sdk';
 import uniq from 'lodash/uniq';
 

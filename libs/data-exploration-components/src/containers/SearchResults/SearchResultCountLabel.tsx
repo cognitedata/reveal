@@ -1,7 +1,7 @@
 import React from 'react';
-import { ResourceType } from 'types';
+import { ResourceType } from '@data-exploration-components/types';
 import { Label } from '@cognite/cogs.js';
-import { getSearchResultCountLabel } from 'utils/string';
+import { getSearchResultCountLabel } from '@data-exploration-components/utils/string';
 
 export const SearchResultCountLabel = ({
   loadedCount,

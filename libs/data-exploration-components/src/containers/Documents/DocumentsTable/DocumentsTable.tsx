@@ -1,13 +1,19 @@
 import React, { useMemo } from 'react';
 
-import { Table, TableProps } from 'components/Table/Table';
+import {
+  Table,
+  TableProps,
+} from '@data-exploration-components/components/Table/Table';
 
 import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentContentPreview } from './DocumentContentPreview';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { Document, useDocumentsMetadataKeys } from 'domain/documents';
-import { DASH } from 'utils';
-import { useGetHiddenColumns } from 'hooks';
+import {
+  Document,
+  useDocumentsMetadataKeys,
+} from '@data-exploration-components/domain/documents';
+import { DASH } from '@data-exploration-components/utils';
+import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Body } from '@cognite/cogs.js';
 
 import {

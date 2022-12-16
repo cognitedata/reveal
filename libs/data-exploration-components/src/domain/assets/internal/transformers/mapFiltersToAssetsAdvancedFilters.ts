@@ -1,6 +1,9 @@
-import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
-import { NIL_FILTER_VALUE } from 'domain/constants';
-import { isNumeric } from 'utils';
+import {
+  AdvancedFilter,
+  AdvancedFilterBuilder,
+} from '@data-exploration-components/domain/builders';
+import { NIL_FILTER_VALUE } from '@data-exploration-components/domain/constants';
+import { isNumeric } from '@data-exploration-components/utils';
 import { InternalAssetFilters } from '../types';
 
 export type AssetsProperties = {
@@ -62,6 +65,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
           if (source && source !== NIL_FILTER_VALUE) {
             return [source];
           }
+          return undefined;
         })
         .notExists('source', source === NIL_FILTER_VALUE)
     )
@@ -69,6 +73,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
       if (internalId) {
         return [internalId];
       }
+      return undefined;
     })
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
@@ -107,6 +112,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
       if (query && isNumeric(query)) {
         return [Number(query)];
       }
+      return undefined;
     });
 
     searchQueryBuilder.prefix('externalId', query);

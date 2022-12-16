@@ -1,14 +1,14 @@
 import React from 'react';
 import { Card, Button, Dropdown, Menu, notification } from 'antd';
 import { Timeseries } from '@cognite/sdk';
-import { TimeseriesChart } from 'containers/Timeseries';
+import { TimeseriesChart } from '@data-exploration-components/containers/Timeseries';
 import styled from 'styled-components';
 import { Body, Tooltip, Icon, Colors } from '@cognite/cogs.js';
 import {
   GridCellProps,
   LatestDatapoint,
 } from '@data-exploration-components/components';
-import { DateRangeProps } from 'types';
+import { DateRangeProps } from '@data-exploration-components/types';
 
 export const TimeseriesSparklineCard = ({
   item,

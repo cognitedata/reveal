@@ -1,15 +1,15 @@
 import { Asset } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { InternalSequenceFilters } from 'domain/sequence';
-import { Table } from 'components/Table';
+import { InternalSequenceFilters } from '@data-exploration-components/domain/sequence';
+import { Table } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
 
-import { EmptyState } from 'components/EmpyState/EmptyState';
-import { SummaryCard } from 'components/SummaryCard/SummaryCard';
+import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
+import { SummaryCard } from '@data-exploration-components/components/SummaryCard/SummaryCard';
 
-import { useAssetsSearchResultQuery } from 'domain/assets';
-import { getSummaryCardItems } from 'components/SummaryCard/utils';
+import { useAssetsSearchResultQuery } from '@data-exploration-components/domain/assets';
+import { getSummaryCardItems } from '@data-exploration-components/components/SummaryCard/utils';
 import { noop } from 'lodash';
 
 export const AssetSummary = ({

@@ -1,11 +1,11 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { queryKeys } from 'domain/queryKeys';
-import { InternalDocumentFilter } from 'domain/documents';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
+import { InternalDocumentFilter } from '@data-exploration-components/domain/documents';
 import { useQuery } from 'react-query';
 import { getDocumentAggregateCount } from '../../network/getDocumentAggregateCount';
 import { useMemo } from 'react';
-import { mapFiltersToDocumentSearchFilters } from 'domain/documents';
-import { EMPTY_OBJECT } from 'utils';
+import { mapFiltersToDocumentSearchFilters } from '@data-exploration-components/domain/documents';
+import { EMPTY_OBJECT } from '@data-exploration-components/utils';
 
 export const useDocumentFilteredAggregateCount = ({
   filters = EMPTY_OBJECT,

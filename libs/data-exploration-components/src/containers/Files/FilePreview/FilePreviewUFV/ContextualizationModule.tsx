@@ -8,7 +8,10 @@ import {
 } from '@data-exploration-components/components';
 import { Title, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { decimalToPercent, lightGrey } from 'utils';
+import {
+  decimalToPercent,
+  lightGrey,
+} from '@data-exploration-components/utils';
 import { isExtendedEventAnnotation } from './migration/utils';
 import { ExtendedAnnotation } from './types';
 

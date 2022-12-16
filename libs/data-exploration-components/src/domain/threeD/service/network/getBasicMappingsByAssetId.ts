@@ -1,7 +1,7 @@
 import { getProject } from '@cognite/cdf-utilities';
 import { CogniteClient } from '@cognite/sdk';
 
-import { BasicMapping } from 'domain/threeD';
+import { BasicMapping } from '@data-exploration-components/domain/threeD';
 
 export const getBasicMappingsByAssetId = (
   sdk: CogniteClient,

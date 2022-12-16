@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import omit from 'lodash/omit';
-import { LocalStorageFileContextKey } from 'types';
+import { LocalStorageFileContextKey } from '@data-exploration-components/types';
 
 /**
  * This context contains mappings between file ids and context jobs

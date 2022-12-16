@@ -1,8 +1,8 @@
 import React from 'react';
-import { useRelationships } from 'hooks/RelationshipHooks';
+import { useRelationships } from '@data-exploration-components/hooks/RelationshipHooks';
 import { Loader } from '@data-exploration-components/components';
-import { ResourceType } from 'types';
-import { RelationshipCount } from 'containers/Relationships/RelationshipCount';
+import { ResourceType } from '@data-exploration-components/types';
+import { RelationshipCount } from '@data-exploration-components/containers/Relationships/RelationshipCount';
 
 export type RelatedResourceTypes = {
   [key in ResourceType]: number;

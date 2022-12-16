@@ -1,19 +1,22 @@
 import React from 'react';
 import { Body, A, toast, Label, Flex, Button } from '@cognite/cogs.js';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { convertResourceType, ResourceType } from 'types';
+import {
+  convertResourceType,
+  ResourceType,
+} from '@data-exploration-components/types';
 import { DataSet } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
-import { useClipboard } from 'hooks';
-import { DASH } from 'utils';
-import { DetailedMapping } from 'domain/threeD';
+import { useClipboard } from '@data-exploration-components/hooks';
+import { DASH } from '@data-exploration-components/utils';
+import { DetailedMapping } from '@data-exploration-components/domain/threeD';
 import {
   ThreeDModelCellDropdown,
   ThreeDModelCellLink,
-} from 'containers/Assets/AssetTable/ThreeDModelCell';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+} from '@data-exploration-components/containers/Assets/AssetTable/ThreeDModelCell';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 type DetailsItemProps = {
   name: string;

@@ -1,7 +1,7 @@
 import styled, { CSSProperties, css } from 'styled-components';
 import { Colors, Title } from '@cognite/cogs.js';
 import React from 'react';
-import { lightGrey } from 'utils';
+import { lightGrey } from '@data-exploration-components/utils';
 
 type WrapperProps = {
   selected?: boolean;

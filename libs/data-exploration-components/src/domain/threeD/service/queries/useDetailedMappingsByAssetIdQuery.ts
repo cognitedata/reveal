@@ -8,8 +8,8 @@ import {
   fetchBasicMappingsByAssetIdQuery,
   fetchThreeDModelQuery,
   fetchThreeDRevisionQuery,
-} from 'domain/threeD';
-import { queryKeys } from 'domain/queryKeys';
+} from '@data-exploration-components/domain/threeD';
+import { queryKeys } from '@data-exploration-components/domain/queryKeys';
 
 export const useDetailedMappingsByAssetIdQuery = (
   assetId: number,

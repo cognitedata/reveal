@@ -7,10 +7,10 @@ import { useQuery } from 'react-query';
 import { Select } from '@data-exploration-components/components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
-import { InternalEventsFilters } from 'domain/events';
-import { transformNewFilterToOldFilter } from 'domain/transformers';
-import { useMetrics } from 'hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
+import { InternalEventsFilters } from '@data-exploration-components/domain/events';
+import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 type EventFieldForAggregate = 'type' | 'subtype' | 'dataSetId';
 

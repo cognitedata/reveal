@@ -3,7 +3,7 @@ import {
   Document,
   getHighlightContent,
   getFocusedHighlightContent,
-} from 'domain/documents';
+} from '@data-exploration-components/domain/documents';
 import styled from 'styled-components';
 import { HighlightCell } from '@data-exploration-components/components';
 import { Body, Flex } from '@cognite/cogs.js';

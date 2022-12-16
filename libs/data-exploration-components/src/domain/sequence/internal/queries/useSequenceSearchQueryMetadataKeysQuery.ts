@@ -3,8 +3,8 @@ import {
   InternalSequenceFilters,
   mapFiltersToSequenceAdvancedFilters,
   useSequenceListQuery,
-} from 'domain/sequence';
-import { mapMetadataKeysWithQuery } from 'domain/transformers';
+} from '@data-exploration-components/domain/sequence';
+import { mapMetadataKeysWithQuery } from '@data-exploration-components/domain/transformers';
 import { isEmpty } from 'lodash';
 
 export const useSequenceSearchQueryMetadataKeysQuery = (

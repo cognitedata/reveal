@@ -1,7 +1,10 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { DocumentFilter, DocumentSortItem } from '@cognite/sdk';
 
-import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT, queryKeys } from 'index';
+import {
+  DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
+  queryKeys,
+} from '@data-exploration-components/index';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
 import { search } from '../network/search';
 

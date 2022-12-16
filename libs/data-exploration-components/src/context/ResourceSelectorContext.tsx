@@ -1,11 +1,11 @@
 import React, { useContext, useState, useCallback } from 'react';
-import { ResourceSelectionSidebar } from 'containers/ResourceSidebar';
+import { ResourceSelectionSidebar } from '@data-exploration-components/containers/ResourceSidebar';
 import {
   ResourceItem,
   ResourceItemState,
   InitialResourceFilterProps,
   SelectableItemsProps,
-} from 'types';
+} from '@data-exploration-components/types';
 
 export type OpenSelectorProps = {
   /** Callback for when the selector is closed */

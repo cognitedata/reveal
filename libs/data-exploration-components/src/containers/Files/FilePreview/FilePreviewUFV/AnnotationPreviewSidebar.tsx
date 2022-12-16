@@ -11,22 +11,28 @@ import {
 import { Divider, InfoCell } from '@data-exploration-components/components';
 import { Dropdown, Pagination, Spin, Breadcrumb, Modal } from 'antd';
 import styled from 'styled-components';
-import { useResourceSelectorUFV } from 'context/ResourceSelectorContextUFV';
-import { ResourceItem, convertResourceType } from 'types';
+import { useResourceSelectorUFV } from '@data-exploration-components/context/ResourceSelectorContextUFV';
+import {
+  ResourceItem,
+  convertResourceType,
+} from '@data-exploration-components/types';
 import { useQueryClient } from 'react-query';
-import { sleep, SIDEBAR_RESIZE_EVENT } from 'utils';
+import {
+  sleep,
+  SIDEBAR_RESIZE_EVENT,
+} from '@data-exploration-components/utils';
 import { FileInfo, AnnotationStatus } from '@cognite/sdk';
-import { ResourcePreviewSidebarUFV } from 'containers';
+import { ResourcePreviewSidebarUFV } from '@data-exploration-components/containers';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import capitalize from 'lodash/capitalize';
-import { useDisclosure } from 'hooks';
+import { useDisclosure } from '@data-exploration-components/hooks';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import {
   useCreateAnnotation,
   useDeleteAnnotation,
   useUpdateAnnotations,
-} from 'domain/annotations';
+} from '@data-exploration-components/domain/annotations';
 import {
   getExtendedAnnotationDescription,
   getExtendedAnnotationLabel,

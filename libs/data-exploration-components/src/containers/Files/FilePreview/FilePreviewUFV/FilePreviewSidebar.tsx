@@ -1,11 +1,11 @@
-import { ResourcePreviewSidebarUFV } from 'containers';
+import { ResourcePreviewSidebarUFV } from '@data-exploration-components/containers';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
 
 import { FileInfo } from '@cognite/sdk';
 import AnnotationsList from './AnnotationsList';
-import { useDisclosure } from 'hooks';
+import { useDisclosure } from '@data-exploration-components/hooks';
 import { useReviewFile } from '../../hooks';
 import DiagramReviewStatus from '../DiagramStatus';
 import FileReview from './FileReview';

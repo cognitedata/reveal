@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document } from 'domain/documents';
+import { Document } from '@data-exploration-components/domain/documents';
 import styled from 'styled-components';
 import Highlighter from 'react-highlight-words';
 import {
@@ -8,7 +8,10 @@ import {
   FileThumbnail,
 } from '@data-exploration-components/components';
 import { Popover } from 'antd';
-import { isFilePreviewable, fileIconMapper } from 'utils';
+import {
+  isFilePreviewable,
+  fileIconMapper,
+} from '@data-exploration-components/utils';
 import { DocumentIcon, Flex } from '@cognite/cogs.js';
 
 const DocumentIconWrapper = styled.div`
