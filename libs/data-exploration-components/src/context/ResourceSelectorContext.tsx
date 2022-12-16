@@ -72,18 +72,18 @@ export const ResourceSelectorProvider = ({
         propsOnSelect(item);
         if (selectionMode === 'single') {
           setIsOpen(false);
-          setResourceItemState(value => {
+          setResourceItemState((value) => {
             propsOnClose(
               true,
-              value.filter(el => el.state === 'selected')
+              value.filter((el) => el.state === 'selected')
             );
             return [];
           });
           setOnCloseCallback(() => () => {});
         } else {
-          setResourceItemState(items => {
+          setResourceItemState((items) => {
             const newItems = items.filter(
-              el => !(el.id === item.id && el.type === item.type)
+              (el) => !(el.id === item.id && el.type === item.type)
             );
             return newItems.length !== items.length
               ? newItems
@@ -111,19 +111,19 @@ export const ResourceSelectorProvider = ({
     >
       {children}
       <ResourceSelectionSidebar
-        onClose={success => {
+        onClose={(success) => {
           onClose(
             success,
-            resourceItemState.filter(el => el.state === 'selected')
+            resourceItemState.filter((el) => el.state === 'selected')
           );
           hideResourceSelector();
         }}
         visible={isOpen}
         {...props}
         selectionMode={props.selectionMode || 'single'}
-        isSelected={item =>
+        isSelected={(item) =>
           resourceItemState.some(
-            el =>
+            (el) =>
               el.state === 'selected' &&
               el.id === item.id &&
               el.type === item.type

@@ -78,7 +78,7 @@ const pdfSdkMock = {
       if (data?.items.length) {
         return {
           data: {
-            items: ALL_FILES.filter(item => item.id === data.items[0].id),
+            items: ALL_FILES.filter((item) => item.id === data.items[0].id),
           },
         };
       } else {
@@ -99,7 +99,7 @@ const pdfSdkMock = {
   },
   files: {
     retrieve: async (fileIds: { id: string }[]) => {
-      return fileIds.map(({ id }) => ALL_FILES.find(item => item.id === +id));
+      return fileIds.map(({ id }) => ALL_FILES.find((item) => item.id === +id));
     },
     getDownloadUrls: async (files: { id: number }[]) => {
       return files.map(({ id }) => {
@@ -129,34 +129,34 @@ export default {
   },
 };
 
-export const WithZoomControls: ComponentStory<typeof FilePreviewUFV> = args => (
-  <FilePreviewUFV {...args} />
-);
+export const WithZoomControls: ComponentStory<typeof FilePreviewUFV> = (
+  args
+) => <FilePreviewUFV {...args} />;
 WithZoomControls.args = {
   id: VIEWER_ID,
   applicationId: APPLICATION_ID,
   fileId: pdfFile.id,
 };
 
-export const UnsupportedFileType: ComponentStory<
-  typeof FilePreviewUFV
-> = args => <FilePreviewUFV {...args} />;
+export const UnsupportedFileType: ComponentStory<typeof FilePreviewUFV> = (
+  args
+) => <FilePreviewUFV {...args} />;
 UnsupportedFileType.args = {
   id: VIEWER_ID,
   applicationId: APPLICATION_ID,
   fileId: unsupportedFileTypeFile.id,
 };
 
-export const FileWithoutMimeType: ComponentStory<
-  typeof FilePreviewUFV
-> = args => <FilePreviewUFV {...args} />;
+export const FileWithoutMimeType: ComponentStory<typeof FilePreviewUFV> = (
+  args
+) => <FilePreviewUFV {...args} />;
 FileWithoutMimeType.args = {
   id: VIEWER_ID,
   applicationId: APPLICATION_ID,
   fileId: fileWithoutMimeType.id,
 };
 
-export const WithPagination: ComponentStory<typeof FilePreviewUFV> = args => (
+export const WithPagination: ComponentStory<typeof FilePreviewUFV> = (args) => (
   <FilePreviewUFV {...args} />
 );
 WithPagination.args = {
@@ -165,7 +165,7 @@ WithPagination.args = {
   fileId: longPDF.id,
 };
 
-export const Images: ComponentStory<typeof FilePreviewUFV> = args => (
+export const Images: ComponentStory<typeof FilePreviewUFV> = (args) => (
   <FilePreviewUFV {...args} />
 );
 Images.args = {

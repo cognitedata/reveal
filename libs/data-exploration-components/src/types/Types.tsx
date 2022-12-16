@@ -46,7 +46,7 @@ export function convertResourceType(type?: ResourceType): SdkResourceType {
   }
 }
 
-export function getTitle(t: ResourceType, plural: boolean = true): string {
+export function getTitle(t: ResourceType, plural = true): string {
   switch (t) {
     case 'asset': {
       return plural ? 'Assets' : 'Asset';

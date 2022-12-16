@@ -23,7 +23,7 @@ export const ThreeDModelCellLink = ({
         selectedAssetId: assetId,
         revisionId: mapping.revisionId,
       })}
-      onClick={e => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
       as="a"
     >
       {mapping.model.name}
@@ -45,11 +45,11 @@ export const ThreeDModelCellDropdown = ({
   return (
     <Dropdown
       content={
-        <Menu onClick={e => e.stopPropagation()}>
+        <Menu onClick={(e) => e.stopPropagation()}>
           <Menu.Header>Models</Menu.Header>
 
           {Object.entries(mappingGroups).map(([id, mappings]) =>
-            mappings.map(mapping => (
+            mappings.map((mapping) => (
               <Menu.Item
                 key={id}
                 href={createLink(`/explore/threeD/${id}`, {
@@ -72,7 +72,7 @@ export const ThreeDModelCellDropdown = ({
       <Button
         icon="ChevronDown"
         iconPlacement="right"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
         size="small"
         type="ghost"
       />

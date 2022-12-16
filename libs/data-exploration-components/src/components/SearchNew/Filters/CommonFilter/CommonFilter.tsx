@@ -32,12 +32,14 @@ export const CommonFilter: React.FC<Props> = ({
       <DateFilterV2
         title="Created Time"
         value={commonFilter.createdTime}
-        setValue={newValue => onChange({ createdTime: newValue || undefined })}
+        setValue={(newValue) =>
+          onChange({ createdTime: newValue || undefined })
+        }
       />
       <DateFilterV2
         title="Updated Time"
         value={commonFilter.lastUpdatedTime}
-        setValue={newValue =>
+        setValue={(newValue) =>
           onChange({ lastUpdatedTime: newValue || undefined })
         }
       />
@@ -50,7 +52,7 @@ export const CommonFilter: React.FC<Props> = ({
       <StringFilterV2
         title="External ID"
         value={commonFilter.externalIdPrefix}
-        setValue={newValue => onChange({ externalIdPrefix: newValue })}
+        setValue={(newValue) => onChange({ externalIdPrefix: newValue })}
       />
     </BaseFilterCollapse.Panel>
   );

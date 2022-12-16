@@ -60,7 +60,7 @@ export const NumberFilter = ({
           placeholder={placeholder}
           icon={error ? 'Error' : undefined}
           iconPlacement="right"
-          onChange={ev => {
+          onChange={(ev) => {
             handleValueChange(ev.target.value);
             trackUsage(DATA_EXPLORATION_COMPONENT.INPUT.NUMBER_FILTER, {
               value: ev.target.value,

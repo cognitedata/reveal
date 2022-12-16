@@ -47,7 +47,7 @@ export const determinePivotRange = (
     'hour',
     'minute',
   ];
-  units.some(item => {
+  units.some((item) => {
     amount = endDay.diff(startDay, item);
     unit = item;
     if (amount !== 0) {
@@ -98,7 +98,7 @@ export const DatePickerInput = ({
     <ReactDatePicker
       open={false}
       dateFormat="yyyy-MM-dd HH:mm"
-      onChange={value => onDateChange(value as Date)}
+      onChange={(value) => onDateChange(value as Date)}
       selected={date}
       showTimeInput
     />
@@ -148,13 +148,13 @@ export const renderCustomHeader = (
         />
         <YearWrapper>
           <YearSelect
-            onChange={value => {
+            onChange={(value) => {
               changeYear(years[value.target.selectedIndex]);
             }}
             value={year}
             className="cogs-select__control"
           >
-            {years.map(year => (
+            {years.map((year) => (
               <OptionStyle value={year} disabled={isYearDisabled(year)}>
                 {year}
               </OptionStyle>
@@ -163,7 +163,7 @@ export const renderCustomHeader = (
         </YearWrapper>
         <MonthWrapper>
           <MonthSelect
-            onChange={value => {
+            onChange={(value) => {
               changeMonth(value.target.selectedIndex);
             }}
             value={months[month]}

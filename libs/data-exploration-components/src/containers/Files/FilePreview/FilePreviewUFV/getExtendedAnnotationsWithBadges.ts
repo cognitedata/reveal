@@ -6,7 +6,7 @@ import { ExtendedAnnotation } from './types';
 const getExtendedAnnotationsWithBadges = (
   annotations: ExtendedAnnotation[]
 ): Annotation[] => {
-  return annotations.flatMap(annotation =>
+  return annotations.flatMap((annotation) =>
     isSuggestedAnnotation(annotation)
       ? [
           annotation,

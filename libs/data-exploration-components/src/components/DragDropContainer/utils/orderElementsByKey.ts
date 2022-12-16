@@ -14,7 +14,7 @@ export const orderElementsByKey = (
    * If the key looks like `key="example:something"`, in the DOM it will be `key="example=2something"`
    * that's why we have the .replace() call
    */
-  const elementsOrderWithPrefix = elementsOrder.map(key => `.$${key}`);
+  const elementsOrderWithPrefix = elementsOrder.map((key) => `.$${key}`);
 
   return elements.sort((element1, element2) => {
     return (

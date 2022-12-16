@@ -22,7 +22,7 @@ export const AssetIdTable = ({
 
   const { data: assets = [] } = useCdfItems<Asset>(
     'assets',
-    assetIds.map(id => ({ id })),
+    assetIds.map((id) => ({ id })),
     false,
     { enabled: isItemFetched && !!assetIds && assetIds.length > 0 }
   );
@@ -30,7 +30,7 @@ export const AssetIdTable = ({
   return (
     <AssetTable
       data={assets}
-      onRowClick={asset => onItemClicked(asset.id)}
+      onRowClick={(asset) => onItemClicked(asset.id)}
       id="asset-id-table"
     />
   );

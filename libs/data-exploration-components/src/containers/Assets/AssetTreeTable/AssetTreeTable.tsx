@@ -101,7 +101,7 @@ export const AssetTreeTable = ({
                 <Icon
                   type={row.getIsExpanded() ? 'ChevronUp' : 'ChevronDown'}
                   {...{
-                    onClick: event => {
+                    onClick: (event) => {
                       event.preventDefault();
                       event.stopPropagation();
                       row.toggleExpanded();
@@ -206,7 +206,7 @@ export const AssetTreeTable = ({
     if (startFromRoot) {
       if (rootFetched) {
         if (hierachyRootId) {
-          return rootItems?.filter(item => item.id === hierachyRootId);
+          return rootItems?.filter((item) => item.id === hierachyRootId);
         }
         return rootItems;
       }
@@ -271,19 +271,19 @@ export const AssetTreeTable = ({
         fetchMore={fetchNextPage}
         getCanRowExpand={
           startFromRoot
-            ? row => {
+            ? (row) => {
                 return gt(row.original.aggregates?.childCount, 0);
               }
             : undefined
         }
-        getSubrowData={originalRow => {
+        getSubrowData={(originalRow) => {
           return originalRow.children;
         }}
         expandedRows={startFromRoot ? rootExpanded : searchExpanded}
         onRowClick={onAssetClicked}
         tableSubHeaders={tableSubHeaders}
         hiddenColumns={hiddenColumns}
-        onRowExpanded={expanded => {
+        onRowExpanded={(expanded) => {
           if (startFromRoot) {
             setRootExpanded(expanded);
           } else {

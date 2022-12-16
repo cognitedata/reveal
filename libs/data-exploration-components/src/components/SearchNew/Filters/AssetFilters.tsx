@@ -29,7 +29,7 @@ export const AssetFiltersV2 = ({
       <LabelFilterV2
         resourceType="asset"
         value={filter.labels}
-        setValue={newFilters =>
+        setValue={(newFilters) =>
           setFilter({
             ...filter,
             labels: newFilters,
@@ -41,7 +41,7 @@ export const AssetFiltersV2 = ({
         items={items}
         aggregator="source"
         value={filter.source}
-        setValue={newSource =>
+        setValue={(newSource) =>
           setFilter({
             ...filter,
             source: newSource,
@@ -52,7 +52,7 @@ export const AssetFiltersV2 = ({
         items={items}
         keys={metadataKeys}
         value={filter.metadata}
-        setValue={newMetadata =>
+        setValue={(newMetadata) =>
           setFilter({
             ...filter,
             metadata: newMetadata,

@@ -44,7 +44,7 @@ export const DatePicker = ({
     >
       <DatePickerInput
         date={date}
-        onDateChange={newDate => {
+        onDateChange={(newDate) => {
           onDateChanged(newDate);
           setDate(newDate);
         }}
@@ -53,7 +53,7 @@ export const DatePicker = ({
         <ReactDatePicker
           renderCustomHeader={renderCustomHeader()}
           selected={date}
-          onChange={newDate => {
+          onChange={(newDate) => {
             const typedDate = newDate as Date;
             onDateChanged(typedDate);
             setDate(typedDate);

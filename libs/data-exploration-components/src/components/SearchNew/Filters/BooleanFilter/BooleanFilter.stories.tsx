@@ -11,7 +11,7 @@ export default {
     },
   },
 };
-export const Example: ComponentStory<typeof BooleanFilter> = args => {
+export const Example: ComponentStory<typeof BooleanFilter> = (args) => {
   const [value, setValue] = useState<boolean | undefined>(false);
   return <BooleanFilter {...args} value={value} setValue={setValue} />;
 };

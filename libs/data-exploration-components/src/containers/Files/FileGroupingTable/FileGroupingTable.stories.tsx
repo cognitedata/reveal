@@ -9,7 +9,7 @@ export default {
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example: ComponentStory<typeof FileGroupingTable> = args => (
+export const Example: ComponentStory<typeof FileGroupingTable> = (args) => (
   <Container>
     <FileGroupingTable {...args} />
   </Container>

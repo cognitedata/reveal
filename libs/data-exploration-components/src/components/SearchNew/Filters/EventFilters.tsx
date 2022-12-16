@@ -27,7 +27,7 @@ export const EventFilters = ({
       <AggregatedEventFilterV2
         field="type"
         filter={filter}
-        setValue={newValue => {
+        setValue={(newValue) => {
           setFilter({ ...filter, type: newValue });
         }}
         title="Type"
@@ -36,7 +36,7 @@ export const EventFilters = ({
       <DateFilterV2
         title="Start Time"
         value={filter.startTime}
-        setValue={newDate =>
+        setValue={(newDate) =>
           setFilter({
             ...filter,
             startTime: newDate || undefined,
@@ -49,7 +49,7 @@ export const EventFilters = ({
         value={
           filter.endTime && 'isNull' in filter.endTime ? null : filter.endTime
         }
-        setValue={newDate =>
+        setValue={(newDate) =>
           setFilter({
             ...filter,
             endTime: newDate === null ? { isNull: true } : newDate || undefined,
@@ -59,7 +59,7 @@ export const EventFilters = ({
       <AggregatedEventFilterV2
         field="subtype"
         filter={filter}
-        setValue={newValue => {
+        setValue={(newValue) => {
           setFilter({ ...filter, subtype: newValue });
         }}
         title="Sub-type"
@@ -79,7 +79,7 @@ export const EventFilters = ({
         items={items}
         aggregator="source"
         value={filter.source}
-        setValue={newSource =>
+        setValue={(newSource) =>
           setFilter({
             ...filter,
             source: newSource,
@@ -89,7 +89,7 @@ export const EventFilters = ({
       <MetadataFilterV2
         items={items}
         value={filter.metadata}
-        setValue={newMetadata =>
+        setValue={(newMetadata) =>
           setFilter({
             ...filter,
             metadata: newMetadata,

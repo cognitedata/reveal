@@ -48,7 +48,7 @@ export const useUpdateAnnotations = (options: any) => {
         sdk,
         annotations
           .filter(isExtendedEventAnnotation)
-          .map(extendedEventAnnotation => {
+          .map((extendedEventAnnotation) => {
             const eventAnnotation: CogniteAnnotation = omit(
               extendedEventAnnotation.metadata,
               ANNOTATION_SOURCE_KEY
@@ -84,7 +84,7 @@ export const useUpdateAnnotations = (options: any) => {
         sdk,
         annotations
           .filter(isExtendedAnnotationAnnotation)
-          .map(extendedAnnotationAnnotation => ({
+          .map((extendedAnnotationAnnotation) => ({
             id: extendedAnnotationAnnotation.metadata.id,
             update: {
               annotationType: {

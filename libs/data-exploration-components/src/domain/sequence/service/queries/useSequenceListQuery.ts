@@ -34,7 +34,7 @@ export const useSequenceListQuery = (
       });
     },
     {
-      getNextPageParam: param => param.nextCursor,
+      getNextPageParam: (param) => param.nextCursor,
       ...(options as any),
     }
   );

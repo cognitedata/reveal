@@ -60,7 +60,7 @@ export const InfoPanel: React.FC<Props> = ({
         currentKey={currentTab}
         onButtonClicked={handleNavigation}
       >
-        {SEARCH_QUERY_INFO_TABS.map(tab => (
+        {SEARCH_QUERY_INFO_TABS.map((tab) => (
           <SegmentedControl.Button key={tab}>{tab}</SegmentedControl.Button>
         ))}
       </SegmentedControl>

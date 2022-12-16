@@ -45,7 +45,7 @@ export const useUnifiedFileViewerAnnotations = ({
   // NOTE: We are filtering out annotations originating from the migratin script.
   // When we remove support for the Events API, we can remove this filter.
   const annotationsApiAnnotations = useAnnotations(fileId).data.filter(
-    annotation =>
+    (annotation) =>
       annotation.creatingApp !==
       'annotation-migration-migrate-event-annotations'
   );
@@ -65,7 +65,7 @@ export const useUnifiedFileViewerAnnotations = ({
           isSimilarBoundingBox(MAX_BOUNDING_BOX_DIFFERENCE)
         ),
       ]
-        .filter(annotation => {
+        .filter((annotation) => {
           if (page === 1) {
             return (
               getExtendedAnnotationPage(annotation) === 1 ||
@@ -76,7 +76,7 @@ export const useUnifiedFileViewerAnnotations = ({
           return getExtendedAnnotationPage(annotation) === page;
         })
         .filter(isNotUndefined)
-        .map(annotation => {
+        .map((annotation) => {
           const isSelected = selectedAnnotations.some(
             ({ id }) => id === annotation.id
           );
@@ -95,7 +95,7 @@ export const useUnifiedFileViewerAnnotations = ({
           );
         })
         .map(
-          annotation =>
+          (annotation) =>
             ({
               ...annotation,
               onClick: (e: any, annotation: ExtendedAnnotation) => {
@@ -146,7 +146,7 @@ export const useFileDownloadUrl = (fileId: number | undefined): string => {
     () =>
       fileId === undefined
         ? undefined
-        : sdk.files.getDownloadUrls([{ id: fileId }]).then(r => r[0]),
+        : sdk.files.getDownloadUrls([{ id: fileId }]).then((r) => r[0]),
     // The retrieved URL becomes invalid after 30 seconds
     {
       onSuccess: () => {

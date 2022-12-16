@@ -13,7 +13,7 @@ export const RootAssetCell: React.FC<Props> = ({ value }: Props) => {
 
   return isLoading || rootAsset?.name ? (
     <Button
-      onClick={e => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
       type="link"
       target="_blank"
       href={createLink(`/explore/asset/${value}`)}

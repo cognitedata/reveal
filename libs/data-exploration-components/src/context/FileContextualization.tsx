@@ -59,7 +59,7 @@ export const FileContextualizationContextProvider = ({
     type: keyof JobTypeIdMapping,
     jobId: number
   ) => {
-    updateMapping(m => ({
+    updateMapping((m) => ({
       ...m,
       [fileId]: {
         ...(mappings[fileId] || {}),
@@ -82,7 +82,7 @@ export const FileContextualizationContextProvider = ({
   } catch {}
 
   const deleteJobId = (fileId: number, type: keyof JobTypeIdMapping) => {
-    updateMapping(m => ({
+    updateMapping((m) => ({
       ...m,
       [fileId]: omit(m[fileId] || {}, type),
     }));

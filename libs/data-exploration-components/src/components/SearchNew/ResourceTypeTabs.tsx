@@ -16,7 +16,7 @@ export const ResourceTypeTabsV2 = ({
   return (
     <StyledTabs
       activeKey={currentResourceType}
-      onChange={tab => setCurrentResourceType(tab)}
+      onChange={(tab) => setCurrentResourceType(tab)}
     >
       {children}
     </StyledTabs>

@@ -25,7 +25,7 @@ export const TimeseriesFilters = ({
       <BooleanFilter
         title="Is step"
         value={filter.isStep}
-        setValue={newValue =>
+        setValue={(newValue) =>
           setFilter({
             ...filter,
             isStep: newValue,
@@ -35,7 +35,7 @@ export const TimeseriesFilters = ({
       <BooleanFilter
         title="Is string"
         value={filter.isString}
-        setValue={newValue =>
+        setValue={(newValue) =>
           setFilter({
             ...filter,
             isString: newValue,
@@ -48,13 +48,13 @@ export const TimeseriesFilters = ({
         aggregator="unit"
         title="Unit"
         value={filter.unit}
-        setValue={newValue => setFilter({ ...filter, unit: newValue })}
+        setValue={(newValue) => setFilter({ ...filter, unit: newValue })}
       />
 
       <MetadataFilterV2
         items={items}
         value={filter.metadata}
-        setValue={newMetadata =>
+        setValue={(newMetadata) =>
           setFilter({
             ...filter,
             metadata: newMetadata,

@@ -10,7 +10,7 @@ export default {
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example: ComponentStory<typeof SequenceSummary> = args => (
+export const Example: ComponentStory<typeof SequenceSummary> = (args) => (
   <SequenceSummary {...args} />
 );
 

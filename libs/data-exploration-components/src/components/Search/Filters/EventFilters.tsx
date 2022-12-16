@@ -33,7 +33,7 @@ export const EventFilters = ({
       <DataSetFilter
         resourceType={resourceType}
         value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
-        setValue={newIds =>
+        setValue={(newIds) =>
           setFilter({
             ...filter,
             dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
@@ -43,7 +43,7 @@ export const EventFilters = ({
       <AggregatedEventFilter
         field="type"
         filter={filter}
-        setValue={newValue => {
+        setValue={(newValue) => {
           setFilter({ ...filter, type: newValue });
         }}
         title="Type"
@@ -52,7 +52,7 @@ export const EventFilters = ({
       <DateFilter
         title="Start Time"
         value={filter.startTime}
-        setValue={newDate =>
+        setValue={(newDate) =>
           setFilter({
             ...filter,
             startTime: newDate || undefined,
@@ -65,7 +65,7 @@ export const EventFilters = ({
         value={
           filter.endTime && 'isNull' in filter.endTime ? null : filter.endTime
         }
-        setValue={newDate =>
+        setValue={(newDate) =>
           setFilter({
             ...filter,
             endTime: newDate === null ? { isNull: true } : newDate || undefined,
@@ -75,7 +75,7 @@ export const EventFilters = ({
       <StringFilter
         title="External ID"
         value={filter.externalIdPrefix}
-        setValue={newExternalId =>
+        setValue={(newExternalId) =>
           setFilter({
             ...filter,
             externalIdPrefix: newExternalId,
@@ -86,7 +86,7 @@ export const EventFilters = ({
         <AggregatedEventFilter
           field="subtype"
           filter={filter}
-          setValue={newValue => {
+          setValue={(newValue) => {
             setFilter({ ...filter, subtype: newValue });
           }}
           title="Sub-type"
@@ -94,10 +94,10 @@ export const EventFilters = ({
         />
         <ByAssetFilter
           value={filter.assetSubtreeIds?.map(({ value }) => value)}
-          setValue={newValue =>
+          setValue={(newValue) =>
             setFilter({
               ...filter,
-              assetSubtreeIds: newValue?.map(id => ({ value: id })),
+              assetSubtreeIds: newValue?.map((id) => ({ value: id })),
             })
           }
         />
@@ -106,7 +106,7 @@ export const EventFilters = ({
           items={items}
           aggregator="source"
           value={filter.source}
-          setValue={newSource =>
+          setValue={(newSource) =>
             setFilter({
               ...filter,
               source: newSource,
@@ -116,7 +116,7 @@ export const EventFilters = ({
         <MetadataFilter
           items={items}
           value={filter.metadata}
-          setValue={newMetadata =>
+          setValue={(newMetadata) =>
             setFilter({
               ...filter,
               metadata: newMetadata,
@@ -126,7 +126,7 @@ export const EventFilters = ({
         <DateFilter
           title="Created Time"
           value={filter.createdTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setFilter({
               ...filter,
               createdTime: newDate || undefined,
@@ -136,7 +136,7 @@ export const EventFilters = ({
         <DateFilter
           title="Updated Time"
           value={filter.lastUpdatedTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setFilter({
               ...filter,
               lastUpdatedTime: newDate || undefined,

@@ -7,7 +7,7 @@ export const getAggregateByIds = (
   type: SdkResourceType,
   dataSets: DataSet[]
 ) => {
-  const makePromises = dataSets.map(async dataSet => {
+  const makePromises = dataSets.map(async (dataSet) => {
     const filter = { dataSetIds: [{ id: dataSet.id }] };
     const { count } = await aggregate(sdk, type, filter);
 

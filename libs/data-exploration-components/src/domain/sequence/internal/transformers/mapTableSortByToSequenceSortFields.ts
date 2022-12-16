@@ -8,7 +8,7 @@ export const mapTableSortByToSequenceSortFields = (
   if (!sortBy || sortBy.length === 0) return undefined;
 
   if (sortBy.length > 0) {
-    return sortBy.map(tableSort => {
+    return sortBy.map((tableSort) => {
       const properties = tableSort.id.split(METADATA_KEY_SEPARATOR);
 
       return {

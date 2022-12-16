@@ -27,7 +27,7 @@ Example.play = async ({ canvasElement }) => {
   const valueSelect = canvasElement.querySelector('.value-select > div');
   expect(valueSelect).toBeInTheDocument();
 
-  const assetWithMetadata = assets.find(asset => asset.metadata);
+  const assetWithMetadata = assets.find((asset) => asset.metadata);
   const metadataKey = Object.keys(assetWithMetadata?.metadata || {})[0];
   const metadataValue = assetWithMetadata?.metadata?.[metadataKey];
 

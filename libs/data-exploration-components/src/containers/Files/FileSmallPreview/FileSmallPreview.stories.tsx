@@ -22,7 +22,7 @@ const tempSdk = {
         data: {
           items:
             events.find(
-              evt => evt?.metadata?.CDF_ANNOTATION_resource_type === 'asset'
+              (evt) => evt?.metadata?.CDF_ANNOTATION_resource_type === 'asset'
             ) || [],
         },
       };

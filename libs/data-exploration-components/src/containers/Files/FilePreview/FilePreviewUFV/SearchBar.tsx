@@ -24,7 +24,7 @@ export const SearchBar = ({
         <Button icon="Close" aria-label="Close" onClick={handleCloseSearch} />
       }
       value={searchQuery}
-      onChange={e => setSearchQuery(e.target.value)}
+      onChange={(e) => setSearchQuery(e.target.value)}
       autoFocus
     />
   ) : (

@@ -23,12 +23,12 @@ export const persistAssetIds = async (
 ) => {
   const fileIds = uniq(
     annotations.map(getFileIdFromExtendedAnnotation).filter(isNotUndefined)
-  ).map(id => ({ id }));
+  ).map((id) => ({ id }));
   const fileExternalIds = uniq(
     annotations
       .map(getFileExternalIdFromExtendedAnnotation)
       .filter(isNotUndefined)
-  ).map(externalId => ({ externalId }));
+  ).map((externalId) => ({ externalId }));
 
   const fileIdsEither = [...fileIds, ...fileExternalIds];
 
@@ -50,7 +50,7 @@ export const persistAssetIds = async (
   }
 
   return sdk.files.update(
-    fileIdsEither.map(fileIdEither => ({
+    fileIdsEither.map((fileIdEither) => ({
       ...fileIdEither,
       update: {
         assetIds: {

@@ -47,7 +47,7 @@ const getExtendedAnnotationsFromAnnotationsApi = (
 ): ExtendedAnnotation[] =>
   annotations
     .filter(filterApplicableAnnotations)
-    .map(annotation =>
+    .map((annotation) =>
       getRectangleAnnotationFromCogniteAnnotation(annotation, containerId)
     );
 

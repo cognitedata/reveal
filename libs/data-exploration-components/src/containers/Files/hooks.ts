@@ -46,39 +46,39 @@ export const useEventAnnotations = (fileId: number): CogniteAnnotation[] => {
 
   const totalEvents = uniqBy(
     [...eventsById, ...eventsByExternalId],
-    el => el.id
+    (el) => el.id
   );
 
   // To Get only the annotation of resource type assets
   const eventsWithAsset = totalEvents.filter(
-    item => item.metadata?.CDF_ANNOTATION_resource_type === 'asset'
+    (item) => item.metadata?.CDF_ANNOTATION_resource_type === 'asset'
   );
 
   const uniqueAssetsIdSet = new Set<number>();
 
-  eventsWithAsset.forEach(ev => {
+  eventsWithAsset.forEach((ev) => {
     uniqueAssetsIdSet.add(Number(ev.metadata?.CDF_ANNOTATION_resource_id));
   });
 
   const { data: assets } = useCdfItems<Asset>(
     'assets',
-    Array.from(uniqueAssetsIdSet).map(id => ({ id })),
+    Array.from(uniqueAssetsIdSet).map((id) => ({ id })),
     false,
     {
       enabled: Boolean(eventsWithAsset.length),
     }
   );
 
-  const labels = totalEvents.map(event => {
+  const labels = totalEvents.map((event) => {
     const foundAssets = assets?.find(
-      asset => `${asset.id}` === event.metadata?.CDF_ANNOTATION_resource_id
+      (asset) => `${asset.id}` === event.metadata?.CDF_ANNOTATION_resource_id
     );
     return foundAssets?.name || '';
   });
 
   // filter out events without box property if not conversion will fail
 
-  const totalEventsWithBox = totalEvents.filter(ev =>
+  const totalEventsWithBox = totalEvents.filter((ev) =>
     Boolean(ev?.metadata?.CDF_ANNOTATION_box)
   );
 
@@ -89,10 +89,12 @@ export const useEventAnnotations = (fileId: number): CogniteAnnotation[] => {
 };
 
 export const isFileApproved = (file: FileInfo) =>
-  file.labels?.find(label => label.externalId === INTERACTIVE_LABEL.externalId);
+  file.labels?.find(
+    (label) => label.externalId === INTERACTIVE_LABEL.externalId
+  );
 
 export const isFilePending = (file: FileInfo) =>
-  file.labels?.find(label => label.externalId === PENDING_LABEL.externalId);
+  file.labels?.find((label) => label.externalId === PENDING_LABEL.externalId);
 
 export const useReviewFile = (fileId?: number) => {
   const client = useQueryClient();
@@ -109,7 +111,7 @@ export const useReviewFile = (fileId?: number) => {
     if (
       !items ||
       (items &&
-        !items.find(curLabel => curLabel.externalId === label.externalId))
+        !items.find((curLabel) => curLabel.externalId === label.externalId))
     ) {
       await sdk.labels.create([label]);
     }

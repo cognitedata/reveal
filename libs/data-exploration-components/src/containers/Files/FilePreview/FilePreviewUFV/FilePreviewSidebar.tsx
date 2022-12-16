@@ -59,7 +59,7 @@ const FilePreviewSidebar = ({
   };
 
   const filteredAnnotations = useMemo(() => {
-    return annotations.filter(annotation => {
+    return annotations.filter((annotation) => {
       if (viewingAnnotations === 'assets') {
         return isAssetAnnotation(annotation);
       }

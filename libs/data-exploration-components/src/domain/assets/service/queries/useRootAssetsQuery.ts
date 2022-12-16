@@ -10,7 +10,7 @@ const getChildren = (
 ): Asset[] | undefined => {
   return queryClient
     .getQueryData<Asset[]>(queryKeys.assetChildren(parentAssetId))
-    ?.map(asset => {
+    ?.map((asset) => {
       return {
         ...asset,
         children: asset.aggregates?.childCount
@@ -31,7 +31,7 @@ export const useRootAssetsQuery = (
       if (rootAssetId) {
         return {
           ...data,
-          items: data.items.filter(item => item.id === rootAssetId),
+          items: data.items.filter((item) => item.id === rootAssetId),
         };
       }
 
@@ -41,7 +41,7 @@ export const useRootAssetsQuery = (
   );
 
   const childAssets = useQueries(
-    expandedRootIds.map(assetId => {
+    expandedRootIds.map((assetId) => {
       return {
         queryKey: queryKeys.assetChildren(assetId),
         queryFn: () => {
@@ -50,7 +50,7 @@ export const useRootAssetsQuery = (
               filter: { parentIds: [assetId] },
               aggregatedProperties: ['childCount'],
             })
-            .then(res => res.items);
+            .then((res) => res.items);
         },
       };
     })
@@ -64,7 +64,7 @@ export const useRootAssetsQuery = (
           filter: { root: true },
           aggregatedProperties: ['childCount'],
         })
-        .then(res => {
+        .then((res) => {
           return {
             ...res,
             items: res.items.sort((a: Asset, b: Asset) => {
@@ -79,7 +79,7 @@ export const useRootAssetsQuery = (
   );
 
   return useMemo(() => {
-    return rootAssets.data?.items.map(rootAsset => {
+    return rootAssets.data?.items.map((rootAsset) => {
       return {
         ...rootAsset,
         children: rootAsset.aggregates?.childCount

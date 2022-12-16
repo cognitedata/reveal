@@ -36,7 +36,7 @@ export const useDatapointFromTimeseries = <T extends ResourceType>(
   const sdk = useSDK();
 
   const timeseriesAggregateResults = useQueries(
-    items.map(timeseries => ({
+    items.map((timeseries) => ({
       queryKey: [
         ...baseCacheKey('timeseries'),
         'datapoints',
@@ -46,7 +46,7 @@ export const useDatapointFromTimeseries = <T extends ResourceType>(
           end: dateRange[1].getTime(),
         },
         calculateGranularity(
-          dateRange.map(el => el.valueOf()),
+          dateRange.map((el) => el.valueOf()),
           NUMBER_OF_POINTS
         ),
         NUMBER_OF_POINTS,
@@ -64,7 +64,7 @@ export const useDatapointFromTimeseries = <T extends ResourceType>(
           end: dateRange[1].valueOf(),
           start: dateRange[0].valueOf(),
           granularity: calculateGranularity(
-            dateRange.map(el => el.valueOf()),
+            dateRange.map((el) => el.valueOf()),
             NUMBER_OF_POINTS
           ),
           limit: NUMBER_OF_POINTS,
@@ -80,9 +80,9 @@ export const useDatapointFromTimeseries = <T extends ResourceType>(
 
   const endResult = !isAllAggregatesReady
     ? items
-    : items.filter(timeseries => {
+    : items.filter((timeseries) => {
         const correspondingAggregateResult = timeseriesAggregateResults.find(
-          agrResult => agrResult.data?.id === timeseries.id
+          (agrResult) => agrResult.data?.id === timeseries.id
         );
 
         // Handling the cases where some queeirs have error and response is not success then we filter the data

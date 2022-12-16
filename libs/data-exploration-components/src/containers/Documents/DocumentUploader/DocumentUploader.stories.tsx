@@ -8,7 +8,7 @@ export default {
   component: DocumentUploader,
 };
 
-export const Example: ComponentStory<typeof DocumentUploader> = args => (
+export const Example: ComponentStory<typeof DocumentUploader> = (args) => (
   <DocumentUploader {...args} />
 );
 Example.args = {

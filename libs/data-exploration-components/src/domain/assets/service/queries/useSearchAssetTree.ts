@@ -46,8 +46,8 @@ export const useSearchAssetTree = ({
     Record<string, InternalAssetTreeData>
   >([queryKeys.assets(), 'parent-assets'], () => {
     return sdkClient.assets
-      .retrieve(parentIds.map(id => ({ id })))
-      .then(response => {
+      .retrieve(parentIds.map((id) => ({ id })))
+      .then((response) => {
         return keyBy(response, 'id');
       });
   });

@@ -11,6 +11,6 @@ export const getBasicMappingsByAssetId = (
     .get<{
       items: BasicMapping[];
     }>(`/api/v1/projects/${getProject()}/3d/mappings/${assetId}/modelnodes`)
-    .then(response => {
+    .then((response) => {
       return response.data.items;
     });

@@ -65,7 +65,7 @@ export type FilterType =
  */
 export const countByFilter = (filter: Partial<FilterType>) => {
   const count = filter
-    ? Object.values(filter).filter(f => isBoolean(f) || (!!f && !isEmpty(f)))
+    ? Object.values(filter).filter((f) => isBoolean(f) || (!!f && !isEmpty(f)))
         .length
     : 0;
   return count;

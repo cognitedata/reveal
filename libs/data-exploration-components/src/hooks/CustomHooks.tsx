@@ -71,7 +71,7 @@ export const useDisclosure = (props?: UseDisclosureProps) => {
   };
 
   const onToggle = () => {
-    setIsOpen(prev => !prev);
+    setIsOpen((prev) => !prev);
   };
 
   return { isOpen, onOpen, onClose, onToggle };
@@ -108,7 +108,7 @@ export function useUniqueCdfItems<T>(
       enabled: itemsWithExternaIdEnabled,
     }
   );
-  const uniqueItems = unionBy(items, itemsWithExternalId, file => file.id);
+  const uniqueItems = unionBy(items, itemsWithExternalId, (file) => file.id);
 
   return {
     isError: itemsWithExternalIdError || itemsError,
@@ -139,7 +139,7 @@ export const useInfinite3DModels = (
       return models.data;
     },
     {
-      getNextPageParam: r => r.nextCursor,
+      getNextPageParam: (r) => r.nextCursor,
       ...config,
     }
   );
@@ -251,12 +251,12 @@ export function useGetHiddenColumns<T>(
     return (
       columns
         .filter(
-          column =>
+          (column) =>
             // @ts-ignore Don't know why `accessorKey` is not recognized from the type -_-
             !visibleColumns.includes(column.accessorKey || column?.id)
         )
         // @ts-ignore
-        .map(column => column.accessorKey || column.id)
+        .map((column) => column.accessorKey || column.id)
     );
   }, [columns, visibleColumns]);
 }

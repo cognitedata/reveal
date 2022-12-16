@@ -6,7 +6,7 @@ type InfoGridProps = {
   noBorders?: boolean;
 };
 export const InfoGrid = styled.div<InfoGridProps>(
-  props => css`
+  (props) => css`
     width: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -26,14 +26,14 @@ type InfoCellContainerProps = {
 };
 const InfoCellContainer = styled.div<InfoCellContainerProps>`
   padding: 16px;
-  padding-top: ${props => (props.noPadding ? 0 : '16px')};
-  padding-bottom: ${props => (props.noPadding ? 0 : '16px')};
+  padding-top: ${(props) => (props.noPadding ? 0 : '16px')};
+  padding-bottom: ${(props) => (props.noPadding ? 0 : '16px')};
   display: inline-block;
   font-size: 14px;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: ${props => (props.half ? '50%' : '100%')};
-  ${props =>
+  width: ${(props) => (props.half ? '50%' : '100%')};
+  ${(props) =>
     !props.noBorders &&
     css`
       border-bottom: 1px solid var(--cogs-greyscale-grey4);

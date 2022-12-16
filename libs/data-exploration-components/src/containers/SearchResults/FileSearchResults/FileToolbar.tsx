@@ -69,7 +69,7 @@ export const FileToolbar = ({
       <FileUploaderModal
         key={uuid()}
         visible={modalVisible}
-        onFileSelected={file => {
+        onFileSelected={(file) => {
           if (onFileClicked) {
             if (!onFileClicked(file)) {
               return;

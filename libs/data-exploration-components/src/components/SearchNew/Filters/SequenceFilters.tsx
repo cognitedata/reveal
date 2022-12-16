@@ -23,7 +23,7 @@ export const SequenceFilters = ({
       <MetadataFilterV2
         items={items}
         value={filter.metadata}
-        setValue={newMetadata =>
+        setValue={(newMetadata) =>
           setFilter({
             ...filter,
             metadata: newMetadata,

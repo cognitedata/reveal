@@ -36,7 +36,7 @@ export const BooleanFilter = ({
       <SegmentedControl
         fullWidth
         currentKey={currentChecked}
-        onButtonClicked={key => {
+        onButtonClicked={(key) => {
           if (key === 'unset') {
             setUploaded(undefined);
           } else if (key === 'true') {

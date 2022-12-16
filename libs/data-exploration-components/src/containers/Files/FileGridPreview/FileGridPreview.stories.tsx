@@ -12,7 +12,7 @@ export default {
   argTypes: { query: { control: 'text', defaultValue: '' } },
 };
 
-export const Example: ComponentStory<typeof FileGridPreview> = args => (
+export const Example: ComponentStory<typeof FileGridPreview> = (args) => (
   <FileGridPreview {...args} />
 );
 Example.args = {
@@ -21,9 +21,9 @@ Example.args = {
   isSelected: () => false,
 };
 
-export const ExampleSingleSelect: ComponentStory<
-  typeof FileGridPreview
-> = args => <FileGridPreview {...args} />;
+export const ExampleSingleSelect: ComponentStory<typeof FileGridPreview> = (
+  args
+) => <FileGridPreview {...args} />;
 ExampleSingleSelect.args = {
   selectionMode: 'single',
   item: files[0],

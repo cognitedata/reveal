@@ -90,8 +90,8 @@ export const TimeseriesTable = ({
             enableTooltipPreview
             dateRange={dateRange}
             onDateRangeChange={() => {}}
-            onDataFetched={data =>
-              setEmptyTimeseriesMap(emptyTimeseriesMap => ({
+            onDataFetched={(data) =>
+              setEmptyTimeseriesMap((emptyTimeseriesMap) => ({
                 ...emptyTimeseriesMap,
                 [timeseries.id]: isEmpty(data?.datapoints),
               }))

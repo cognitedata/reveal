@@ -18,7 +18,7 @@ export default {
   },
 };
 
-export const Example: ComponentStory<typeof AggregatedFilterV2> = args => {
+export const Example: ComponentStory<typeof AggregatedFilterV2> = (args) => {
   const [value, setValue] = useState<string | undefined>(undefined);
   return <AggregatedFilterV2 {...args} value={value} setValue={setValue} />;
 };

@@ -18,7 +18,7 @@ import { Document } from 'domain/documents';
 const post = (sdk: CogniteClient, path: string, data: any) =>
   sdk
     .post(`/api/v1/projects/${sdk.project}${path}`, { data })
-    .then(response => response.data);
+    .then((response) => response.data);
 
 const get = (
   sdk: CogniteClient,
@@ -28,7 +28,7 @@ const get = (
 ) =>
   sdk
     .get(`/api/v1/projects/${sdk.project}${path}`, { params: data, ...options })
-    .then(response => response.data);
+    .then((response) => response.data);
 
 export const useCreate = (type: SdkResourceType, options?: any) => {
   const sdk = useSDK();
@@ -130,7 +130,7 @@ export const useRelevantDatasets = (
     data?.pages
       ?.reduce((accl, { items }) => accl.concat(items), [] as DataSet[])
       .sort((a, b) => a.id - b.id) || [];
-  const ids = datasets?.map(d => d.id);
+  const ids = datasets?.map((d) => d.id);
 
   const { data: counts, isFetched: aggregateFetched } = useQuery<
     DataSetWCount[]

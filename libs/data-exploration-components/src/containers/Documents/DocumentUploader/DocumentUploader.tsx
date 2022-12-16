@@ -39,7 +39,7 @@ export const DocumentUploader = ({
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const removeFile = (file: UploadFile) => {
-    setFileList(list => list.filter(el => el.uid !== file.uid));
+    setFileList((list) => list.filter((el) => el.uid !== file.uid));
     onFileListChange(fileList);
   };
 
@@ -49,7 +49,7 @@ export const DocumentUploader = ({
       validExtensions.length === 0 ||
       validExtensions.includes(file.name.split('.').pop().toLowerCase())
     ) {
-      setFileList(list => [...list, file]);
+      setFileList((list) => [...list, file]);
       setUploadStatus(STATUS.READY);
       onFileListChange(fileList);
     } else {

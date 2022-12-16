@@ -12,7 +12,7 @@ export default {
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example: ComponentStory<typeof DocumentsTable> = args => (
+export const Example: ComponentStory<typeof DocumentsTable> = (args) => (
   <DocumentsTable {...args} />
 );
 

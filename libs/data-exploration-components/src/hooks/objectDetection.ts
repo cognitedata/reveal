@@ -59,7 +59,7 @@ export const useJob = (
           `/api/playground/projects/${sdk.project}/context/pnidobjects/${type}/${jobId}`
         )
         .then(
-          r =>
+          (r) =>
             ({
               jobId,
               status: r.data.status,
@@ -126,7 +126,7 @@ export const useFindObjects = () => {
             data,
           }
         )
-        .then(r => {
+        .then((r) => {
           if (Number.isFinite(r.data?.jobId)) {
             return r.data.jobId;
           }

@@ -75,7 +75,7 @@ export const Basic = () => {
     <>
       <h3>Basic - Horizontal</h3>
       <DragDropContainer id="basic-horizontal">
-        {times(5).map(key => (
+        {times(5).map((key) => (
           <Item key={`basic-horizontal-${key}`} label={`Basic Item: ${key}`} />
         ))}
       </DragDropContainer>
@@ -84,7 +84,7 @@ export const Basic = () => {
 
       <h3>Basic - Vertical</h3>
       <DragDropContainer id="basic-vertical" direction="vertical">
-        {times(5).map(key => (
+        {times(5).map((key) => (
           <Item key={`basic-vertical-${key}`} label={`Basic Item: ${key}`} />
         ))}
       </DragDropContainer>
@@ -95,7 +95,7 @@ export const Basic = () => {
 export const WithDragHandleIcon = () => {
   return (
     <DragDropContainer id="with-drag-handle-icon">
-      {times(5).map(key => (
+      {times(5).map((key) => (
         <ItemHorizontalIcon key={key} label={`Item: ${key}`} />
       ))}
     </DragDropContainer>
@@ -119,7 +119,7 @@ export const Synchronized = () => {
         elementsOrder={elementsOrder}
         onDragEnd={setElementsOrder}
       >
-        {elementKeys.map(key => (
+        {elementKeys.map((key) => (
           <Item key={`synchronized-${key}`} label={`Row 1 - Item: ${key}`} />
         ))}
       </DragDropContainer>
@@ -129,7 +129,7 @@ export const Synchronized = () => {
         elementsOrder={elementsOrder}
         onDragEnd={setElementsOrder}
       >
-        {elementKeys.map(key => (
+        {elementKeys.map((key) => (
           <Item key={`synchronized-${key}`} label={`Row 2 - Item: ${key}`} />
         ))}
       </DragDropContainer>
@@ -150,13 +150,13 @@ export const MasterSlave = () => {
       </h3>
 
       <DragDropContainer id="synchronized-master" onDragEnd={setElementsOrder}>
-        {elementKeys.map(key => (
+        {elementKeys.map((key) => (
           <Item key={`synchronized-${key}`} label={`Master Item: ${key}`} />
         ))}
       </DragDropContainer>
 
       <DragDropContainer id="synchronized-slave" elementsOrder={elementsOrder}>
-        {elementKeys.map(key => (
+        {elementKeys.map((key) => (
           <Item key={`synchronized-${key}`} label={`Slave Item: ${key}`} />
         ))}
       </DragDropContainer>
@@ -170,7 +170,7 @@ export const Scrollable = () => {
       <h3>Scrollable - Horizontal</h3>
       <ScrollContainerHorizontal>
         <DragDropContainer id="scrollable-horizontal">
-          {times(5).map(key => (
+          {times(5).map((key) => (
             <ItemHorizontalIcon
               key={`scrollable-horizontal-${key}`}
               label={`Item: ${key}`}
@@ -187,7 +187,7 @@ export const Scrollable = () => {
           id="drag-drop-container-scrollable-vertical"
           direction="vertical"
         >
-          {times(5).map(key => (
+          {times(5).map((key) => (
             <ItemVerticalIcon
               key={`scrollable-vertical-${key}`}
               label={`Item: ${key}`}

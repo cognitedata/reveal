@@ -5,7 +5,7 @@ export const getFocusedHighlightContent = (highlightContent: string) => {
   const highlightEndPosition = highlightContent.indexOf('</em>');
 
   if (highlightStartPosition >= 0) {
-    let content =
+    const content =
       '...' +
       highlightContent.substring(
         highlightStartPosition - HIGHLIGHTED_CONTENT_TEXT_PADDING,

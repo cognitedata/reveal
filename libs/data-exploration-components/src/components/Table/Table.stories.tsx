@@ -38,7 +38,7 @@ const exampleColumns: ColumnDef<DataType>[] = [
   {
     header: 'Column 2',
     accessorKey: 'col2',
-    cell: props => {
+    cell: (props) => {
       return <span> {props?.getValue()}</span>;
     },
   },

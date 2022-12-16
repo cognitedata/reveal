@@ -109,7 +109,7 @@ export const useRootTree = (
   return useQuery<ConstructedTreeAsset[]>(
     ['asset-list-tree', openIds],
     async () => {
-      const rootAssetIds: number[] = rootAssets.map(el => el.id);
+      const rootAssetIds: number[] = rootAssets.map((el) => el.id);
       const assetsChildrenMap: {
         [key in number]: number[];
       } = {};
@@ -131,7 +131,7 @@ export const useRootTree = (
       );
 
       await Promise.all(
-        openIds.map(async id => {
+        openIds.map(async (id) => {
           const countFilter = {
             limit: 1000,
             filter: {
@@ -147,7 +147,7 @@ export const useRootTree = (
             }
           );
 
-          items.forEach(el => {
+          items.forEach((el) => {
             const item: ConstructedTreeAsset = {
               ...el,
               children:
@@ -188,7 +188,7 @@ const constructTree = (
     return nameA.localeCompare(nameB);
   });
 
-  return sortedIds.map(id => ({
+  return sortedIds.map((id) => ({
     ...resourceMap[id],
     children: idsChildrenMap[id]
       ? constructTree(idsChildrenMap[id], idsChildrenMap, resourceMap)
@@ -205,9 +205,9 @@ export const useRootPath = (assetId: number | undefined) => {
         .retrieve([{ id: assetId! }], {
           aggregatedProperties: ['path'],
         })
-        .then(res => {
+        .then((res) => {
           // @ts-ignore
-          return res[0]?.aggregates?.path?.map(path => path?.id);
+          return res[0]?.aggregates?.path?.map((path) => path?.id);
         });
     },
     { enabled: !!assetId }
@@ -238,14 +238,14 @@ const useFetchAndBuildTree = async (data: Asset[]) => {
       if (!assetsMap[el.parentId]) {
         parentIds.add(el.parentId);
       }
-    } else if (!rootAssets.some(id => id === el.id)) {
+    } else if (!rootAssets.some((id) => id === el.id)) {
       rootAssets.push(el.id);
     }
   };
   data.forEach(processItems);
 
   while (parentIds.size !== 0) {
-    const parentIdsList = [...parentIds].map(id => ({ id }));
+    const parentIdsList = [...parentIds].map((id) => ({ id }));
     // eslint-disable-next-line no-await-in-loop
     const items = await client.fetchQuery(
       retrieveItemsKey('assets', parentIdsList),

@@ -36,7 +36,7 @@ export const useEventsListQuery = (
       });
     },
     {
-      getNextPageParam: param => param.nextCursor,
+      getNextPageParam: (param) => param.nextCursor,
       ...(options as any),
     }
   );

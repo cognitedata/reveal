@@ -13,7 +13,7 @@ export default {
   },
 };
 
-export const Example: ComponentStory<typeof LabelFilter> = args => {
+export const Example: ComponentStory<typeof LabelFilter> = (args) => {
   const [value, setValue] = useState<{ externalId: string }[] | undefined>(
     undefined
   );

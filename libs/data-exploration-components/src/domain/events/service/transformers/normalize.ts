@@ -4,7 +4,7 @@ import { InternalEventsData } from 'domain/events/internal/types';
 export const normalizeEvents = (
   items: CogniteEvent[]
 ): InternalEventsData[] => {
-  return items.map(item => ({
+  return items.map((item) => ({
     id: item.id,
     externalId: item.externalId,
 

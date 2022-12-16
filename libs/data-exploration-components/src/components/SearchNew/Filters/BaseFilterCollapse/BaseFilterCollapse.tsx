@@ -23,7 +23,7 @@ export const BaseFilterCollapse = ({
     <Collapse
       {...rest}
       activeKey={activeKeys}
-      onChange={keys => {
+      onChange={(keys) => {
         setActiveKeys(keys as unknown as string[]);
       }}
       ghost

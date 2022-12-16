@@ -81,7 +81,7 @@ export const useSelectionCheckbox = (
     return (
       <Button
         key={`${id}-select-button`}
-        onClick={e => {
+        onClick={(e) => {
           e.stopPropagation();
           onSelect();
         }}
@@ -98,7 +98,7 @@ export const useSelectionCheckbox = (
     <Checkbox
       key={`${id}-select-button`}
       value={isSelected}
-      onClick={e => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
       onChange={() => {
         onSelect();
       }}

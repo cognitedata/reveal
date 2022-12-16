@@ -17,7 +17,7 @@ export default {
   },
 };
 
-export const Example: ComponentStory<typeof AssetTable> = args => (
+export const Example: ComponentStory<typeof AssetTable> = (args) => (
   <AssetTable {...args} />
 );
 Example.args = {
@@ -25,9 +25,9 @@ Example.args = {
   onItemClicked: action('onItemClicked'),
 };
 
-export const ExampleSingleSelect: ComponentStory<typeof AssetTable> = args => (
-  <AssetTable {...args} />
-);
+export const ExampleSingleSelect: ComponentStory<typeof AssetTable> = (
+  args
+) => <AssetTable {...args} />;
 ExampleSingleSelect.args = {
   selectionMode: 'single',
   data: assets,

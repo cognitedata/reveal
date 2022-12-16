@@ -31,7 +31,7 @@ export const LinkedResourceTable = ({
         <AssetLinkedSearchResults
           enableAdvancedFilter={enableAdvancedFilter}
           defaultFilter={filter}
-          onClick={row => onItemClicked(row.id)}
+          onClick={(row) => onItemClicked(row.id)}
         />
       );
     case 'event':
@@ -39,7 +39,7 @@ export const LinkedResourceTable = ({
         <EventLinkedSearchResults
           enableAdvancedFilter={enableAdvancedFilter}
           defaultFilter={filter}
-          onClick={el => onItemClicked(el.id)}
+          onClick={(el) => onItemClicked(el.id)}
         />
       );
     case 'file':
@@ -47,7 +47,7 @@ export const LinkedResourceTable = ({
         <FileLinkedSearchResults
           defaultFilter={filter}
           isGroupingFilesEnabled={isGroupingFilesEnabled}
-          onClick={el => onItemClicked(el.id)}
+          onClick={(el) => onItemClicked(el.id)}
         />
       );
     case 'sequence':
@@ -55,7 +55,7 @@ export const LinkedResourceTable = ({
         <SequenceLinkedSearchResults
           enableAdvancedFilter={enableAdvancedFilter}
           defaultFilter={filter}
-          onClick={el => onItemClicked(el.id)}
+          onClick={(el) => onItemClicked(el.id)}
         />
       );
 
@@ -64,7 +64,7 @@ export const LinkedResourceTable = ({
         <TimeseriesLinkedSearchResults
           enableAdvancedFilter={enableAdvancedFilter}
           defaultFilter={filter}
-          onClick={el => onItemClicked(el.id)}
+          onClick={(el) => onItemClicked(el.id)}
         />
       );
     default:

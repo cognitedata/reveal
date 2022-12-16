@@ -61,9 +61,9 @@ const FilePreviewSidebar = ({
 
   const onApproveAllAnnotations = async () => {
     const unhandledAnnotations = annotations.filter(
-      a => a.status === 'unhandled'
+      (a) => a.status === 'unhandled'
     ) as Array<CogniteAnnotation>;
-    const updatePatch = unhandledAnnotations.map(annotation => ({
+    const updatePatch = unhandledAnnotations.map((annotation) => ({
       id: Number(annotation.id),
       annotation,
       update: {
@@ -91,7 +91,7 @@ const FilePreviewSidebar = ({
   if (viewingAnnotations) {
     return (
       <AnnotationsList
-        annotations={annotations.filter(an =>
+        annotations={annotations.filter((an) =>
           viewingAnnotations === 'assets'
             ? an.resourceType === 'asset'
             : an.resourceType === 'file'

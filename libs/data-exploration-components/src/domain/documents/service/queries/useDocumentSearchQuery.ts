@@ -37,7 +37,7 @@ export const useDocumentSearchQuery = (
         sdk
       ),
     {
-      getNextPageParam: lastPage => {
+      getNextPageParam: (lastPage) => {
         return lastPage?.nextCursor;
       },
       ...(options as any),

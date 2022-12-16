@@ -26,9 +26,9 @@ export const usePnIdOCRResultFilterQuery = (
     const currentPageData = data[currentPage]?.annotations ?? [];
 
     const filteredOCRAnnotations = currentPageData?.filter(
-      box =>
+      (box) =>
         query.length !== 0 &&
-        getSanitizedQueryPartials(query).some(partialQuery =>
+        getSanitizedQueryPartials(query).some((partialQuery) =>
           box.text.toLowerCase().includes(partialQuery)
         )
     );
@@ -49,6 +49,6 @@ const getSanitizedQueryPartials = (query: string): string[] => {
   return query
     .toLowerCase()
     .split(',') // separate query items by comma
-    .map(partialQuery => partialQuery.trim()) // trim white space
-    .filter(partialQuery => partialQuery !== ''); // remove empty string
+    .map((partialQuery) => partialQuery.trim()) // trim white space
+    .filter((partialQuery) => partialQuery !== ''); // remove empty string
 };

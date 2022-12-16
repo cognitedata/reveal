@@ -6,8 +6,8 @@ export const extractMetadataKeys = <
   const set = new Set<string>();
 
   items
-    .flatMap(item => Object.keys(item?.metadata || {}))
-    .forEach(key => {
+    .flatMap((item) => Object.keys(item?.metadata || {}))
+    .forEach((key) => {
       set.add(key);
     });
 

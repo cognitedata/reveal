@@ -73,7 +73,7 @@ export const AssetDetailsTreeTable = ({
                 <Icon
                   type={row.getIsExpanded() ? 'ChevronUp' : 'ChevronDown'}
                   {...{
-                    onClick: event => {
+                    onClick: (event) => {
                       event.preventDefault();
                       event.stopPropagation();
                       row.toggleExpanded();
@@ -144,17 +144,17 @@ export const AssetDetailsTreeTable = ({
       enableExpanding
       selectedRows={selectedRows}
       scrollIntoViewRow={scrollIntoViewRow}
-      getCanRowExpand={row => {
+      getCanRowExpand={(row) => {
         return gt(row.original.aggregates?.childCount, 0);
       }}
-      getSubrowData={originalRow => {
+      getSubrowData={(originalRow) => {
         return originalRow.children;
       }}
       expandedRows={rootExpanded}
       onRowClick={onAssetClicked}
       tableSubHeaders={tableSubHeaders}
       hiddenColumns={hiddenColumns}
-      onRowExpanded={expanded => {
+      onRowExpanded={(expanded) => {
         setRootExpanded(expanded);
       }}
     />

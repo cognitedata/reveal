@@ -34,7 +34,7 @@ export const useTimeseriesListQuery = (
       });
     },
     {
-      getNextPageParam: param => param.nextCursor,
+      getNextPageParam: (param) => param.nextCursor,
       ...(options as any),
     }
   );

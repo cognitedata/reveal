@@ -30,7 +30,7 @@ export const SequenceFilters = ({
       <DataSetFilter
         resourceType={resourceType}
         value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
-        setValue={newIds =>
+        setValue={(newIds) =>
           setFilter({
             ...filter,
             dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
@@ -40,7 +40,7 @@ export const SequenceFilters = ({
       <StringFilter
         title="External ID"
         value={filter.externalIdPrefix}
-        setValue={newExternalId =>
+        setValue={(newExternalId) =>
           setFilter({
             ...filter,
             externalIdPrefix: newExternalId,
@@ -49,17 +49,17 @@ export const SequenceFilters = ({
       />
       <ByAssetFilter
         value={filter.assetSubtreeIds?.map(({ value }) => value)}
-        setValue={newValue =>
+        setValue={(newValue) =>
           setFilter({
             ...filter,
-            assetSubtreeIds: newValue?.map(id => ({ value: id })),
+            assetSubtreeIds: newValue?.map((id) => ({ value: id })),
           })
         }
       />
       <DateFilter
         title="Created Time"
         value={filter.createdTime}
-        setValue={newDate =>
+        setValue={(newDate) =>
           setFilter({
             ...filter,
             createdTime: newDate || undefined,
@@ -69,7 +69,7 @@ export const SequenceFilters = ({
       <DateFilter
         title="Updated Time"
         value={filter.lastUpdatedTime}
-        setValue={newDate =>
+        setValue={(newDate) =>
           setFilter({
             ...filter,
             lastUpdatedTime: newDate || undefined,
@@ -80,7 +80,7 @@ export const SequenceFilters = ({
         <MetadataFilter
           items={items}
           value={filter.metadata}
-          setValue={newMetadata =>
+          setValue={(newMetadata) =>
             setFilter({
               ...filter,
               metadata: newMetadata,

@@ -52,8 +52,8 @@ export const FileUploaderModal = ({
     >
       <Wrapper>
         <FileUploader
-          onUploadSuccess={file => {
-            setFileList(list => [...list, file]);
+          onUploadSuccess={(file) => {
+            setFileList((list) => [...list, file]);
             client.refetchQueries(listBaseCacheKey('files'));
             client.refetchQueries(searchBaseCacheKey('files'));
           }}
@@ -64,7 +64,7 @@ export const FileUploaderModal = ({
           <>
             {fileList.length !== 0 && (
               <ul>
-                {fileList.map(file => (
+                {fileList.map((file) => (
                   <li>
                     File{' '}
                     <Button type="link" onClick={() => onFileSelected(file)}>

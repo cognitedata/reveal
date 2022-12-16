@@ -14,7 +14,7 @@ export default {
     },
   },
 };
-export const Simple: ComponentStory<typeof ResourceIcons> = args => (
+export const Simple: ComponentStory<typeof ResourceIcons> = (args) => (
   <Item>
     <ResourceIcons {...args} />
   </Item>

@@ -42,10 +42,10 @@ export const FilterFormV2 = ({
   }>();
 
   if (keys && keys.length > 0) {
-    keys.forEach(el => allKeys.add(el));
+    keys.forEach((el) => allKeys.add(el));
   } else {
-    Object.keys(metadataCategory).forEach(el => allKeys.add({ value: el }));
-    Object.keys(metadata).forEach(el => allKeys.add({ value: el }));
+    Object.keys(metadataCategory).forEach((el) => allKeys.add({ value: el }));
+    Object.keys(metadata).forEach((el) => allKeys.add({ value: el }));
   }
 
   const categories = [...allKeys].reduce(
@@ -85,7 +85,7 @@ export const FilterFormV2 = ({
   };
 
   const handleRemoveMetadataFilter = (key: string) => {
-    const newFilter = filters?.filter(filter => filter.key !== key);
+    const newFilter = filters?.filter((filter) => filter.key !== key);
     setFilters(newFilter);
   };
 
@@ -103,7 +103,7 @@ export const FilterFormV2 = ({
             initialValue={value}
             setFilter={(newKey, newValue) => {
               handleSetMetadataFilter(newKey, newValue);
-              setEditingKeys(editingKeys.filter(el => el !== key));
+              setEditingKeys(editingKeys.filter((el) => el !== key));
             }}
           />
         ))}

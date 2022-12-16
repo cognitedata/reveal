@@ -14,7 +14,7 @@ export default {
     },
   },
 };
-export const Example: ComponentStory<typeof ByAssetFilter> = args => {
+export const Example: ComponentStory<typeof ByAssetFilter> = (args) => {
   const [value, setValue] = useState<number[] | undefined>(undefined);
   return <ByAssetFilter {...args} value={value} setValue={setValue} />;
 };

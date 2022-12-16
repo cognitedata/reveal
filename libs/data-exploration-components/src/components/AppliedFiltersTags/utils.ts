@@ -18,8 +18,8 @@ type FilterValues =
   | string
   | Metadata
   | DateRange
-  | Number
-  | Boolean
+  | number
+  | boolean
   | undefined;
 
 export const formatValue = (input?: FilterValues): string => {

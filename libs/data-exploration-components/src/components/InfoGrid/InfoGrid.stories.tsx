@@ -9,7 +9,7 @@ export default {
   argTypes: { noBorders: { control: 'boolean' } },
 };
 
-export const Example: ComponentStory<typeof InfoGrid> = args => (
+export const Example: ComponentStory<typeof InfoGrid> = (args) => (
   <>
     <InfoGrid {...args}>
       <InfoCell title="Latest reading" half noBorders={false} noPadding={false}>

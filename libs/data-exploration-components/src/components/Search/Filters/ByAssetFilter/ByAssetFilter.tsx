@@ -27,7 +27,7 @@ export const ByAssetFilter = ({
       <AssetSelect
         isMulti
         selectedAssetIds={value}
-        onAssetSelected={input =>
+        onAssetSelected={(input) =>
           setFilterByAsset(input?.map(({ value }) => value))
         }
       />

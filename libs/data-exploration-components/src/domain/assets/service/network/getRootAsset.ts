@@ -13,7 +13,7 @@ export const getRootAsset = (
       ],
       { ignoreUnknownIds: true }
     )
-    .then(res => {
+    .then((res) => {
       const asset = res[0];
 
       if (asset) {
@@ -26,7 +26,7 @@ export const getRootAsset = (
             ],
             { ignoreUnknownIds: true }
           )
-          .then(response => {
+          .then((response) => {
             return response[0] || undefined;
           });
       }

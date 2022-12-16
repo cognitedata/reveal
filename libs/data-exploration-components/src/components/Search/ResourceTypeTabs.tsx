@@ -72,10 +72,10 @@ export const ResourceTypeTabs = ({
   return (
     <StyledTabs
       activeKey={currentResourceType}
-      onChange={tab => setCurrentResourceType(tab)}
+      onChange={(tab) => setCurrentResourceType(tab)}
     >
       {additionalTabs}
-      {resourceTypes.map(resourceType => {
+      {resourceTypes.map((resourceType) => {
         return (
           <Tabs.TabPane
             key={resourceType}

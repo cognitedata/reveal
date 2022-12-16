@@ -65,7 +65,7 @@ export const DetailsItem = ({
               {value}
             </Body>
           ))}
-        {!Boolean(value) && <MutedBody level={2}>{DASH}</MutedBody>}
+        {!value && <MutedBody level={2}>{DASH}</MutedBody>}
       </DetailsItemContainer>
       <ButtonWrapper visible={copyable && Boolean(value)}>
         <Button
@@ -176,7 +176,7 @@ export const LabelsItem = ({ labels = [] }: { labels?: string[] }) => {
         name="Labels"
         value={
           <Flex wrap="wrap" gap={8} justifyContent="flex-end">
-            {labels.map(label => (
+            {labels.map((label) => (
               <Label variant="unknown" size="medium" key={label}>
                 {label}
               </Label>

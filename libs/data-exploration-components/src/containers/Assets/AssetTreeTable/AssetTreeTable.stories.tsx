@@ -12,7 +12,7 @@ export default {
   argTypes: { query: { control: 'string' } },
 };
 
-export const Example: ComponentStory<typeof AssetTreeTable> = args => (
+export const Example: ComponentStory<typeof AssetTreeTable> = (args) => (
   <AssetTreeTable {...args} />
 );
 Example.args = {
@@ -20,9 +20,9 @@ Example.args = {
   isSelected: () => false,
 };
 
-export const ExampleSingleSelect: ComponentStory<
-  typeof AssetTreeTable
-> = args => <AssetTreeTable {...args} />;
+export const ExampleSingleSelect: ComponentStory<typeof AssetTreeTable> = (
+  args
+) => <AssetTreeTable {...args} />;
 ExampleSingleSelect.args = {
   selectionMode: 'single',
   onAssetClicked: action('onAssetClicked'),
@@ -30,9 +30,9 @@ ExampleSingleSelect.args = {
 };
 
 const asset = assets[assets.length - 1];
-export const ExampleFocusAsset: ComponentStory<
-  typeof AssetTreeTable
-> = args => <AssetTreeTable {...args} />;
+export const ExampleFocusAsset: ComponentStory<typeof AssetTreeTable> = (
+  args
+) => <AssetTreeTable {...args} />;
 ExampleFocusAsset.args = {
   selectionMode: 'single',
   activeIds: [asset.id],

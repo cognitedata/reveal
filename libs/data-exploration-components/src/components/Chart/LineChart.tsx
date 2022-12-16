@@ -42,7 +42,7 @@ const getDataPointMinValue = (d?: DatapointAggregate) =>
   d ? d.min : undefined;
 const getDataPointCount = (d?: DatapointAggregate) => (d ? d.count : undefined);
 const bisectDate = bisector<DatapointAggregate, Date>(
-  d => new Date(d.timestamp)
+  (d) => new Date(d.timestamp)
 ).left;
 
 export type LineChartProps = {
@@ -101,10 +101,10 @@ export const LineChart = ({
   const valuesScale = useMemo(() => {
     const minValues = values
       .map(getDataPointMinValue)
-      .filter(el => el !== undefined) as number[];
+      .filter((el) => el !== undefined) as number[];
     const maxValues = values
       .map(getDataPointMaxValue)
-      .filter(el => el !== undefined) as number[];
+      .filter((el) => el !== undefined) as number[];
     return scaleLinear({
       range: [innerHeight, 0],
       domain: [min(minValues) || 0, max(maxValues) || 1],
@@ -210,7 +210,7 @@ export const LineChart = ({
     </>
   );
 
-  const renderableValues = values.filter(el => {
+  const renderableValues = values.filter((el) => {
     const data = getDataPointAverage(el);
     if (data !== undefined) {
       return valuesScale(data) !== undefined;
@@ -227,8 +227,8 @@ export const LineChart = ({
         data={renderableValues}
         width={gridWidth}
         height={innerHeight}
-        x={d => getXWithScale(d)!}
-        y1={d => valuesScale(getDataPointAverage(d)!)!}
+        x={(d) => getXWithScale(d)!}
+        y1={(d) => valuesScale(getDataPointAverage(d)!)!}
         y0={0}
         yScale={valuesScale}
         strokeWidth={0}
@@ -243,8 +243,8 @@ export const LineChart = ({
       data={renderableValues}
       width={gridWidth}
       height={innerHeight}
-      x={d => getXWithScale(d)!}
-      y={d => valuesScale(getDataPointAverage(d)!)!}
+      x={(d) => getXWithScale(d)!}
+      y={(d) => valuesScale(getDataPointAverage(d)!)!}
       strokeWidth={2}
       stroke={primaryColor}
     />
@@ -254,7 +254,7 @@ export const LineChart = ({
     if (!enableMinMaxArea) {
       return <></>;
     }
-    const renderableMinMaxValues = values.filter(el => {
+    const renderableMinMaxValues = values.filter((el) => {
       const minVal = getDataPointMinValue(el);
       const maxVal = getDataPointMaxValue(el);
       if (minVal !== undefined && maxVal !== undefined) {
@@ -268,9 +268,9 @@ export const LineChart = ({
       <Threshold<DatapointAggregate>
         id={`${Math.random()}`}
         data={renderableMinMaxValues}
-        x={d => getXWithScale(d)!}
-        y0={d => valuesScale(getDataPointMinValue(d)!)!}
-        y1={d => valuesScale(getDataPointMaxValue(d)!)!}
+        x={(d) => getXWithScale(d)!}
+        y0={(d) => valuesScale(getDataPointMinValue(d)!)!}
+        y1={(d) => valuesScale(getDataPointMaxValue(d)!)!}
         clipAboveTo={0}
         clipBelowTo={innerHeight}
         belowAreaProps={{
@@ -291,7 +291,7 @@ export const LineChart = ({
     }
     return (
       <Group>
-        {values.map(d => {
+        {values.map((d) => {
           const value = getDataPointAverage(d);
           const cy = d && value !== undefined ? valuesScale(value) : 0;
           return (

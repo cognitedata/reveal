@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 export const DatePickerWrapper = styled.div<{
   mode: 'start' | 'end' | undefined;
 }>(
-  props => css`
+  (props) => css`
     font-family: 'Inter';
     position: relative;
 
@@ -86,14 +86,22 @@ export const DatePickerWrapper = styled.div<{
       border-radius: 0px;
     }
 
-    .react-datepicker__day--range-start:not(.react-datepicker__day--in-selecting-range),
-    .react-datepicker__day--selecting-range-start:not(.react-datepicker__day--in-range),
+    .react-datepicker__day--range-start:not(
+        .react-datepicker__day--in-selecting-range
+      ),
+    .react-datepicker__day--selecting-range-start:not(
+        .react-datepicker__day--in-range
+      ),
     .react-datepicker__day--range-start.react-datepicker__day--selecting-range-start {
       border-top-left-radius: 20px;
       border-bottom-left-radius: 20px;
     }
-    .react-datepicker__day--range-end:not(.react-datepicker__day--in-selecting-range),
-    .react-datepicker__day--selecting-range-end:not(.react-datepicker__day--in-range),
+    .react-datepicker__day--range-end:not(
+        .react-datepicker__day--in-selecting-range
+      ),
+    .react-datepicker__day--selecting-range-end:not(
+        .react-datepicker__day--in-range
+      ),
     .react-datepicker__day--range-end.react-datepicker__day--selecting-range-end {
       border-top-right-radius: 20px;
       border-bottom-right-radius: 20px;

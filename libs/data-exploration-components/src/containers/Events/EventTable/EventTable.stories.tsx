@@ -12,7 +12,7 @@ export default {
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example: ComponentStory<typeof EventTable> = args => (
+export const Example: ComponentStory<typeof EventTable> = (args) => (
   <EventTable {...args} />
 );
 Example.args = {

@@ -29,12 +29,12 @@ export const FileFilters = ({
         aggregator="mimeType"
         title="Mime type"
         value={filter.mimeType}
-        setValue={newValue => setFilter({ ...filter, mimeType: newValue })}
+        setValue={(newValue) => setFilter({ ...filter, mimeType: newValue })}
       />
       <DateFilterV2
         title="Source Modified Time"
         value={filter.sourceModifiedTime}
-        setValue={newDate =>
+        setValue={(newDate) =>
           setFilter({
             ...filter,
             sourceModifiedTime: newDate || undefined,
@@ -44,7 +44,7 @@ export const FileFilters = ({
       <LabelFilterV2
         resourceType="file"
         value={filter.labels}
-        setValue={newFilters =>
+        setValue={(newFilters) =>
           setFilter({
             ...filter,
             labels: newFilters,
@@ -55,7 +55,7 @@ export const FileFilters = ({
       <DateFilterV2
         title="Uploaded Time"
         value={filter.uploadedTime}
-        setValue={newDate =>
+        setValue={(newDate) =>
           setFilter({
             ...filter,
             uploadedTime: newDate || undefined,
@@ -65,7 +65,7 @@ export const FileFilters = ({
       <StringFilterV2
         title="Directory prefix"
         value={(filter as any).directoryPrefix}
-        setValue={newPrefix =>
+        setValue={(newPrefix) =>
           setFilter({
             ...filter,
             // @ts-ignore
@@ -78,7 +78,7 @@ export const FileFilters = ({
         items={items}
         aggregator="source"
         value={filter.source}
-        setValue={newSource =>
+        setValue={(newSource) =>
           setFilter({
             ...filter,
             source: newSource,
@@ -88,7 +88,7 @@ export const FileFilters = ({
       <MetadataFilterV2
         items={items}
         value={filter.metadata}
-        setValue={newMetadata =>
+        setValue={(newMetadata) =>
           setFilter({
             ...filter,
             metadata: newMetadata,
@@ -99,7 +99,7 @@ export const FileFilters = ({
       <DateFilterV2
         title="Source Created Time"
         value={filter.sourceCreatedTime}
-        setValue={newDate =>
+        setValue={(newDate) =>
           setFilter({
             ...filter,
             sourceCreatedTime: newDate || undefined,

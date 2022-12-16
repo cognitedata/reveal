@@ -81,16 +81,16 @@ describe('useLocalStorageState', () => {
     // write to localStorage
     saveToLocalStorage('-test1', JSON.stringify({}));
     const { result, rerender } = renderHook(
-      columnsState => useLocalStorageState('test1', columnsState),
+      (columnsState) => useLocalStorageState('test1', columnsState),
       {
         initialProps: columnsVisibility,
       }
     );
 
-    const updatedDefault = { ...columnsVisibility, ['newKey1']: true };
+    const updatedDefault = { ...columnsVisibility, newKey1: true };
     rerender(updatedDefault);
 
     const [data] = result.current;
-    expect(data).toEqual({ ...columnsVisibility, ['newKey1']: true });
+    expect(data).toEqual({ ...columnsVisibility, newKey1: true });
   });
 });

@@ -102,7 +102,7 @@ export const AdvancedFiltersCollapse = ({
         expandIcon={renderExpandIcon}
         expandIconPosition="end"
         activeKey={activeCollapseKey}
-        onChange={key => setActiveCollapseKey(key)}
+        onChange={(key) => setActiveCollapseKey(key)}
       >
         <Collapse.Panel header="More filters" key={COLLAPSE_KEY}>
           {children}

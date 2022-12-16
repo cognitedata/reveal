@@ -64,7 +64,7 @@ const annotations = [
   } as CogniteAnnotation,
 ];
 
-export const Example: ComponentStory<typeof FilePreviewOverview> = args => (
+export const Example: ComponentStory<typeof FilePreviewOverview> = (args) => (
   <FilePreviewOverview {...args} />
 );
 Example.args = {
@@ -80,7 +80,7 @@ Example.args = {
 
 export const ExampleWithAnnotations: ComponentStory<
   typeof FilePreviewOverview
-> = args => <FilePreviewOverview {...args} />;
+> = (args) => <FilePreviewOverview {...args} />;
 ExampleWithAnnotations.args = {
   annotations,
   file: files[0],

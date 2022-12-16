@@ -8,7 +8,7 @@ export default {
   component: EmptyState,
 };
 
-export const Example: ComponentStory<typeof EmptyState> = args => {
+export const Example: ComponentStory<typeof EmptyState> = (args) => {
   return (
     <Container>
       <EmptyState {...args} />
@@ -20,7 +20,7 @@ Example.args = {
   body: 'Please, refine your filters',
 };
 
-export const ExampleWithLoading: ComponentStory<typeof EmptyState> = args => {
+export const ExampleWithLoading: ComponentStory<typeof EmptyState> = (args) => {
   return (
     <Container>
       <EmptyState {...args} />

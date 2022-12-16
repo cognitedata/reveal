@@ -5,13 +5,13 @@ import { Asset } from '@cognite/sdk';
 import { Table, TableProps } from 'components/Table/Table';
 import { RelationshipLabels } from 'types';
 
-export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
-
 import { useGetHiddenColumns } from 'hooks';
 import { ResourceTableColumns } from '../../../components';
 import { useAssetsMetadataKeys } from '../../../domain';
 import { ThreeDModelCell } from './ThreeDModelCell';
 import { RootAsset } from 'components/RootAsset';
+
+export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
 
 const visibleColumns = ['name', 'rootId'];
 

@@ -82,7 +82,7 @@ export const DragDropContainer: React.FC<
     return (
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId={id} direction={direction}>
-          {provided => (
+          {(provided) => (
             <Wrapper ref={provided.innerRef} {...provided.droppableProps}>
               <DraggableElements isCustomPortal={isCustomPortal}>
                 {orderedElements}

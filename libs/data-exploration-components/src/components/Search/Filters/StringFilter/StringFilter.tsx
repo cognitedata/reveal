@@ -30,7 +30,7 @@ export const StringFilter = ({
         style={{ width: '100%', borderColor: '#cccccc' }}
         value={value || ''}
         placeholder={placeholder}
-        onChange={ev => setNewString(ev.target.value)}
+        onChange={(ev) => setNewString(ev.target.value)}
       />
     </>
   );

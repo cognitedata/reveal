@@ -28,7 +28,7 @@ export function FileDownloadAnchor({
     isError: linkError,
   } = useQuery(
     [...baseCacheKey('files'), 'downloadLink', id],
-    () => sdk.files.getDownloadUrls([id]).then(r => r[0]),
+    () => sdk.files.getDownloadUrls([id]).then((r) => r[0]),
     // The retrieved URL becomes invalid after 30 seconds
     { refetchInterval: 25000 }
   );

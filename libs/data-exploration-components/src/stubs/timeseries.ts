@@ -1338,7 +1338,7 @@ const temp = [
     lastUpdatedTime: 1649079399931,
   },
 ];
-export const timeseries: Timeseries[] = temp.map(item => ({
+export const timeseries: Timeseries[] = temp.map((item) => ({
   ...item,
   createdTime: new Date(item.createdTime),
   lastUpdatedTime: new Date(item.lastUpdatedTime),

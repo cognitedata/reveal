@@ -254,9 +254,9 @@ export function Table<T extends TableData>({
       <ContainerInside>
         <StyledTable id={id} className="data-exploration-table">
           <Thead isStickyHeader={stickyHeader}>
-            {getHeaderGroups().map(headerGroup => (
+            {getHeaderGroups().map((headerGroup) => (
               <Tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
+                {headerGroup.headers.map((header) => (
                   <Th
                     {...{
                       key: header.id,
@@ -310,17 +310,17 @@ export function Table<T extends TableData>({
             ))}
           </Thead>
           <Tbody ref={tbodyRef}>
-            {getRowModel().rows.map(row => {
+            {getRowModel().rows.map((row) => {
               return (
                 <Tr
                   key={row.id}
                   id={row.id}
                   tabIndex={0}
-                  onClick={evt => onRowClick(row.original, evt)}
-                  onKeyDown={evt => handleKeyDown(evt, row)}
+                  onClick={(evt) => onRowClick(row.original, evt)}
+                  onKeyDown={(evt) => handleKeyDown(evt, row)}
                   className={row.getIsSelected() ? 'selected' : ''}
                 >
-                  {row.getVisibleCells().map(cell => {
+                  {row.getVisibleCells().map((cell) => {
                     return (
                       <Td
                         {...{

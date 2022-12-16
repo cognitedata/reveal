@@ -13,7 +13,7 @@ export default {
   },
 };
 
-export const Example: ComponentStory<typeof FileSearchResults> = args => (
+export const Example: ComponentStory<typeof FileSearchResults> = (args) => (
   <Container>
     <FileSearchResults {...args} />
   </Container>
@@ -23,9 +23,9 @@ Example.args = {
   showCount: true,
 };
 
-export const GroupingEnabled: ComponentStory<
-  typeof FileSearchResults
-> = args => (
+export const GroupingEnabled: ComponentStory<typeof FileSearchResults> = (
+  args
+) => (
   <Container>
     <FileSearchResults {...args} />
   </Container>
@@ -40,7 +40,7 @@ GroupingEnabled.args = {
 
 export const LinkedSearchResults: ComponentStory<
   typeof FileLinkedSearchResults
-> = args => (
+> = (args) => (
   <Container>
     <FileLinkedSearchResults {...args} />
   </Container>

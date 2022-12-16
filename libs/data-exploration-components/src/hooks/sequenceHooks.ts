@@ -14,7 +14,7 @@ import { UseInfiniteQueryOptions, useInfiniteQuery } from 'react-query';
 const post = <T>(sdk: CogniteClient, path: string, data: any) =>
   sdk
     .post(`/api/v1/projects/${sdk.project}${path}`, { data })
-    .then(response => response.data as T);
+    .then((response) => response.data as T);
 
 // refactor into the sdq-query-library
 export const useInfiniteSequenceRows = (

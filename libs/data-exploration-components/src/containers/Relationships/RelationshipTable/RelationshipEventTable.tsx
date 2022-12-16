@@ -53,7 +53,7 @@ export function RelationshipEventTable({
       fetchMore={fetchNextPage}
       hasNextPage={hasNextPage}
       isLoadingMore={isLoading}
-      onRowClick={row => onItemClicked(row.id)}
+      onRowClick={(row) => onItemClicked(row.id)}
     />
   );
 }

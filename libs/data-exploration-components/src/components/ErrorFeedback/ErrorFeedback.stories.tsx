@@ -7,7 +7,7 @@ export default {
   component: ErrorFeedback,
 };
 
-export const Simple: ComponentStory<typeof ErrorFeedback> = args => (
+export const Simple: ComponentStory<typeof ErrorFeedback> = (args) => (
   <div>
     <ErrorFeedback {...args} />
   </div>

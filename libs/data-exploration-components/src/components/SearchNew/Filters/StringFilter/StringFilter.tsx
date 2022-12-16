@@ -31,7 +31,7 @@ export const StringFilterV2 = ({
         }}
         value={value || ''}
         placeholder={placeholder}
-        onChange={ev => {
+        onChange={(ev) => {
           setNewString(ev.target.value);
           track(DATA_EXPLORATION_COMPONENT.INPUT.TEXT_FILTER, {
             value: ev.target.value,

@@ -43,7 +43,7 @@ export const SearchResults = ({
           isTreeEnabled
           view={assetView}
           onViewChange={setAssetView}
-          onClick={item => onClick({ id: item.id, type: 'asset' })}
+          onClick={(item) => onClick({ id: item.id, type: 'asset' })}
           filter={{
             ...assetFilter,
             metadata: Object.entries(assetFilter?.metadata || {}).map(
@@ -63,13 +63,13 @@ export const SearchResults = ({
             ),
           }}
           allowEdit={allowEdit}
-          onClick={item => onClick({ id: item.id, type: 'file' })}
+          onClick={(item) => onClick({ id: item.id, type: 'file' })}
         />
       );
     case 'sequence':
       return (
         <SequenceSearchResults
-          onClick={item => onClick({ id: item.id, type: 'sequence' })}
+          onClick={(item) => onClick({ id: item.id, type: 'sequence' })}
           filter={{
             ...sequenceFilter,
             metadata: Object.entries(sequenceFilter?.metadata || {}).map(
@@ -82,7 +82,7 @@ export const SearchResults = ({
     case 'timeSeries':
       return (
         <TimeseriesSearchResults
-          onClick={item => onClick({ id: item.id, type: 'timeSeries' })}
+          onClick={(item) => onClick({ id: item.id, type: 'timeSeries' })}
           filter={{
             ...timeseriesFilter,
             metadata: Object.entries(timeseriesFilter?.metadata || {}).map(
@@ -95,7 +95,7 @@ export const SearchResults = ({
     case 'event':
       return (
         <EventSearchResults
-          onClick={item => onClick({ id: item.id, type: 'event' })}
+          onClick={(item) => onClick({ id: item.id, type: 'event' })}
           filter={{
             ...eventFilter,
             metadata: Object.entries(eventFilter?.metadata || {}).map(

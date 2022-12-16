@@ -20,7 +20,7 @@ export default {
   },
 };
 
-export const Asset: ComponentStory<typeof SearchFilters> = args => {
+export const Asset: ComponentStory<typeof SearchFilters> = (args) => {
   const [assetFilter, setAssetFilter] = useState<AssetFilterProps>({});
   return (
     <Container>
@@ -34,7 +34,7 @@ export const Asset: ComponentStory<typeof SearchFilters> = args => {
   );
 };
 
-export const Timeseries: ComponentStory<typeof SearchFilters> = args => {
+export const Timeseries: ComponentStory<typeof SearchFilters> = (args) => {
   const [timeseriesFilter, setTimeseriesFilter] = useState<TimeseriesFilter>(
     {}
   );
@@ -50,7 +50,7 @@ export const Timeseries: ComponentStory<typeof SearchFilters> = args => {
   );
 };
 
-export const File: ComponentStory<typeof SearchFilters> = args => {
+export const File: ComponentStory<typeof SearchFilters> = (args) => {
   const [fileFilter, setFileFilter] = useState<FileFilterProps>({});
   return (
     <Container>
@@ -64,7 +64,7 @@ export const File: ComponentStory<typeof SearchFilters> = args => {
   );
 };
 
-export const Event: ComponentStory<typeof SearchFilters> = args => {
+export const Event: ComponentStory<typeof SearchFilters> = (args) => {
   const [eventFilter, setEventFilter] = useState<EventFilter>({});
   return (
     <Container>
@@ -78,7 +78,7 @@ export const Event: ComponentStory<typeof SearchFilters> = args => {
   );
 };
 
-export const Sequence: ComponentStory<typeof SearchFilters> = args => {
+export const Sequence: ComponentStory<typeof SearchFilters> = (args) => {
   const [sequenceFilter, setSequenceFilter] = useState<
     Required<SequenceFilter>['filter']
   >({});

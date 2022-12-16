@@ -32,7 +32,7 @@ export const TimeseriesFilters = ({
       <DataSetFilter
         resourceType={resourceType}
         value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
-        setValue={newIds =>
+        setValue={(newIds) =>
           setFilter({
             ...filter,
             dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
@@ -43,7 +43,7 @@ export const TimeseriesFilters = ({
       <BooleanFilter
         title="Is step"
         value={filter.isStep}
-        setValue={newValue =>
+        setValue={(newValue) =>
           setFilter({
             ...filter,
             isStep: newValue,
@@ -53,7 +53,7 @@ export const TimeseriesFilters = ({
       <BooleanFilter
         title="Is string"
         value={filter.isString}
-        setValue={newValue =>
+        setValue={(newValue) =>
           setFilter({
             ...filter,
             isString: newValue,
@@ -63,7 +63,7 @@ export const TimeseriesFilters = ({
       <StringFilter
         title="External ID"
         value={filter.externalIdPrefix}
-        setValue={newExternalId =>
+        setValue={(newExternalId) =>
           setFilter({
             ...filter,
             externalIdPrefix: newExternalId,
@@ -74,10 +74,10 @@ export const TimeseriesFilters = ({
       <AdvancedFiltersCollapse resourceType={resourceType} filter={filter}>
         <ByAssetFilter
           value={filter.assetSubtreeIds?.map(({ value }) => value)}
-          setValue={newValue =>
+          setValue={(newValue) =>
             setFilter({
               ...filter,
-              assetSubtreeIds: newValue?.map(id => ({ value: id })),
+              assetSubtreeIds: newValue?.map((id) => ({ value: id })),
             })
           }
         />
@@ -86,12 +86,12 @@ export const TimeseriesFilters = ({
           aggregator="unit"
           title="Unit"
           value={filter.unit}
-          setValue={newValue => setFilter({ ...filter, unit: newValue })}
+          setValue={(newValue) => setFilter({ ...filter, unit: newValue })}
         />
         <MetadataFilter
           items={items}
           value={filter.metadata}
-          setValue={newMetadata =>
+          setValue={(newMetadata) =>
             setFilter({
               ...filter,
               metadata: newMetadata,
@@ -101,7 +101,7 @@ export const TimeseriesFilters = ({
         <DateFilter
           title="Created Time"
           value={filter.createdTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setFilter({
               ...filter,
               createdTime: newDate || undefined,
@@ -111,7 +111,7 @@ export const TimeseriesFilters = ({
         <DateFilter
           title="Updated Time"
           value={filter.lastUpdatedTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setFilter({
               ...filter,
               lastUpdatedTime: newDate || undefined,

@@ -18,7 +18,7 @@ export default {
     },
   },
 };
-export const Example: ComponentStory<typeof Select> = args => (
+export const Example: ComponentStory<typeof Select> = (args) => (
   <Select {...args} />
 );
 Example.args = {
@@ -34,7 +34,7 @@ Example.args = {
   onChange: action('onChange'),
 };
 
-export const WithNilOption: ComponentStory<typeof Select> = args => (
+export const WithNilOption: ComponentStory<typeof Select> = (args) => (
   <Select {...args} />
 );
 WithNilOption.args = {

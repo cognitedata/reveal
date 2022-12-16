@@ -58,7 +58,7 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
               );
             })
             .map(([key, value]) => [key.trim(), value.trim()])
-            .map(item => ({
+            .map((item) => ({
               key: item[0],
               id: item[0],
               value: item[1],
@@ -71,7 +71,7 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
   }
 
   const handleOnClickHideEmpty = () => {
-    setHideEmpty(hideEmpty => {
+    setHideEmpty((hideEmpty) => {
       trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.METADATA_HIDE_EMPTY, {
         visible: !hideEmpty,
       });

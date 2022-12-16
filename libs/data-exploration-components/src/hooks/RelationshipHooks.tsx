@@ -90,7 +90,7 @@ const extractRelationships = (
   type: 'source' | 'target'
 ) => {
   const relationships = pages.reduce((accl, t) => {
-    t.items.forEach(rel => {
+    t.items.forEach((rel) => {
       const { sourceExternalId, targetExternalId } = rel;
 
       accl[type === 'source' ? targetExternalId : sourceExternalId] = {
@@ -109,7 +109,7 @@ const extractRelationshipLabels = (
   const labels = pages.reduce((accl, page) => {
     page.items.forEach(
       ({ labels: rlabels, sourceExternalId, targetExternalId }) => {
-        const labelsExtracted = rlabels.map(label => label.externalId);
+        const labelsExtracted = rlabels.map((label) => label.externalId);
         if (!accl[sourceExternalId]) {
           accl[sourceExternalId] = labelsExtracted;
         } else {
@@ -165,12 +165,12 @@ export const useRelationships = (externalId?: string, type?: ResourceType) => {
   );
 
   const data = (sourceRelationships.data?.pages[0].items || [])
-    .map(item => ({
+    .map((item) => ({
       externalId: item.targetExternalId,
       type: item.targetType,
     }))
     .concat(
-      (targetRelationships.data?.pages[0].items || []).map(item => ({
+      (targetRelationships.data?.pages[0].items || []).map((item) => ({
         externalId: item.sourceExternalId,
         type: item.sourceType,
       }))
@@ -191,7 +191,7 @@ export const useRelationships = (externalId?: string, type?: ResourceType) => {
 export const useInfiniteRelationshipsList = <T extends Resource>(
   resourceExternalId?: string,
   type?: ResourceType,
-  enabled: boolean = true
+  enabled = true
 ) => {
   const fetchEnabled = enabled && !!resourceExternalId;
   const [labelValue, setLabelValue] = useState<
@@ -203,7 +203,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   const onChangeLabelValue = (labels?: string[]) => {
     const newRelationshipFilters =
       labels && labels.length > 0
-        ? labels.map(externalId => ({ externalId }))
+        ? labels.map((externalId) => ({ externalId }))
         : undefined;
     setLabelValue(newRelationshipFilters);
   };
@@ -310,7 +310,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
 
   const rest = sourceParams.hasNextPage ? sourceParams : targetParams;
 
-  const sourceResourcesWithRelationshipLabels = sourceResources.map(item => {
+  const sourceResourcesWithRelationshipLabels = sourceResources.map((item) => {
     const relation = getRelation(sourceRelationships, item);
 
     return {
@@ -322,7 +322,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     };
   });
 
-  const targetResourcesWithRelationshipLabels = targetResources.map(item => {
+  const targetResourcesWithRelationshipLabels = targetResources.map((item) => {
     const relation = getRelation(targetRelationships, item);
     return {
       ...item,
@@ -348,7 +348,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
       )
     );
 
-    setSelectOptions(prev => new Set([...prev, ...options]));
+    setSelectOptions((prev) => new Set([...prev, ...options]));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [relationshipLabelsLength]);
@@ -410,17 +410,17 @@ export const useTaggedAnnotationsByResourceType = (
             ...annotationsApiAnnotations
               .map(getTaggedAnnotationAnnotation)
               .filter(
-                taggedAnnotation =>
+                (taggedAnnotation) =>
                   getResourceTypeFromTaggedAnnotation(taggedAnnotation) ===
                   resourceType
               ),
           ].filter(
-            taggedAnnotation =>
+            (taggedAnnotation) =>
               isApprovedTaggedAnnotation(taggedAnnotation) ||
               isSuggestedTaggedAnnotation(taggedAnnotation)
           ),
         ],
-        taggedAnnotation => {
+        (taggedAnnotation) => {
           if (isTaggedEventAnnotation(taggedAnnotation)) {
             return taggedAnnotation.box;
           }
@@ -533,7 +533,7 @@ export const useTaggedAnnotationCount = (
     () =>
       new Set(
         taggedAnnotations
-          .map(taggedAnnotation => {
+          .map((taggedAnnotation) => {
             return (
               getResourceExternalIdFromTaggedAnnotation(taggedAnnotation) ||
               getResourceIdFromTaggedAnnotation(taggedAnnotation)

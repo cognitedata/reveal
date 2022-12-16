@@ -14,7 +14,7 @@ type FileGroupingTableProps = {
 };
 
 const convertFilesToDocs = (files: FileInfo[] = []): Document[] => {
-  return files?.map(file => {
+  return files?.map((file) => {
     const { id, name: fileName, metadata, directory, source, uploaded } = file;
     return {
       id,

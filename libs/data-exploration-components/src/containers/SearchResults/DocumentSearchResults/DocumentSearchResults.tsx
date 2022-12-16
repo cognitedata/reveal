@@ -116,7 +116,7 @@ export const DocumentSearchResults = ({
           />
         }
         data={results}
-        onRowClick={document => {
+        onRowClick={(document) => {
           if (document !== undefined) {
             onClick(document);
           }
@@ -132,7 +132,7 @@ export const DocumentSearchResults = ({
         <DocumentUploaderModal
           key={uuid()}
           visible={modalVisible}
-          onFileSelected={file => {
+          onFileSelected={(file) => {
             if (onFileClicked) {
               if (!onFileClicked(file)) {
                 return;

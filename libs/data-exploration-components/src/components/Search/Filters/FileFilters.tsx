@@ -32,7 +32,7 @@ export const FileFilters = ({
       <DataSetFilter
         resourceType={resourceType}
         value={filter.dataSetIds?.map(({ value }) => ({ id: value }))}
-        setValue={newIds =>
+        setValue={(newIds) =>
           setFilter({
             ...filter,
             dataSetIds: newIds?.map(({ id }: any) => ({ value: id })),
@@ -44,12 +44,12 @@ export const FileFilters = ({
         aggregator="mimeType"
         title="Mime type"
         value={filter.mimeType}
-        setValue={newValue => setFilter({ ...filter, mimeType: newValue })}
+        setValue={(newValue) => setFilter({ ...filter, mimeType: newValue })}
       />
       <StringFilter
         title="External ID"
         value={filter.externalIdPrefix}
-        setValue={newExternalId =>
+        setValue={(newExternalId) =>
           setFilter({
             ...filter,
             externalIdPrefix: newExternalId,
@@ -59,7 +59,7 @@ export const FileFilters = ({
       <DateFilter
         title="Source Modified Time"
         value={filter.sourceModifiedTime}
-        setValue={newDate =>
+        setValue={(newDate) =>
           setFilter({
             ...filter,
             sourceModifiedTime: newDate || undefined,
@@ -70,7 +70,7 @@ export const FileFilters = ({
         <LabelFilter
           resourceType={resourceType}
           value={filter.labels?.map(({ value }) => ({ externalId: value }))}
-          setValue={newFilters =>
+          setValue={(newFilters) =>
             setFilter({
               ...filter,
               labels: newFilters
@@ -81,17 +81,17 @@ export const FileFilters = ({
         />
         <ByAssetFilter
           value={filter.assetSubtreeIds?.map(({ value }) => value)}
-          setValue={newValue =>
+          setValue={(newValue) =>
             setFilter({
               ...filter,
-              assetSubtreeIds: newValue?.map(id => ({ value: id })),
+              assetSubtreeIds: newValue?.map((id) => ({ value: id })),
             })
           }
         />
         <DateFilter
           title="Uploaded Time"
           value={filter.uploadedTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setFilter({
               ...filter,
               uploadedTime: newDate || undefined,
@@ -101,7 +101,7 @@ export const FileFilters = ({
         <StringFilter
           title="Directory prefix"
           value={(filter as any).directoryPrefix}
-          setValue={newPrefix =>
+          setValue={(newPrefix) =>
             setFilter({
               ...filter,
               // @ts-ignore
@@ -114,7 +114,7 @@ export const FileFilters = ({
           items={items}
           aggregator="source"
           value={filter.source}
-          setValue={newSource =>
+          setValue={(newSource) =>
             setFilter({
               ...filter,
               source: newSource,
@@ -124,7 +124,7 @@ export const FileFilters = ({
         <MetadataFilter
           items={items}
           value={filter.metadata}
-          setValue={newMetadata =>
+          setValue={(newMetadata) =>
             setFilter({
               ...filter,
               metadata: newMetadata,
@@ -134,7 +134,7 @@ export const FileFilters = ({
         <DateFilter
           title="Created Time"
           value={filter.createdTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setFilter({
               ...filter,
               createdTime: newDate || undefined,
@@ -144,7 +144,7 @@ export const FileFilters = ({
         <DateFilter
           title="Updated Time"
           value={filter.lastUpdatedTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setFilter({
               ...filter,
               lastUpdatedTime: newDate || undefined,
@@ -154,7 +154,7 @@ export const FileFilters = ({
         <DateFilter
           title="Source Created Time"
           value={filter.sourceCreatedTime}
-          setValue={newDate =>
+          setValue={(newDate) =>
             setFilter({
               ...filter,
               sourceCreatedTime: newDate || undefined,

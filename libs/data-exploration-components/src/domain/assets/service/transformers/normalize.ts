@@ -2,7 +2,7 @@ import { Asset } from '@cognite/sdk';
 import { InternalAssetData } from 'domain/assets/internal/types';
 
 export const normalizeAssets = (assets: Asset[]): InternalAssetData[] => {
-  return assets.map(asset => ({
+  return assets.map((asset) => ({
     id: asset.id,
     rootId: asset.rootId,
     parentExternalId: asset.parentExternalId,

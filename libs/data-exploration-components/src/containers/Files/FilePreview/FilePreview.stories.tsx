@@ -47,7 +47,7 @@ export default {
   },
 };
 
-export const Example: ComponentStory<typeof FilePreview> = args => (
+export const Example: ComponentStory<typeof FilePreview> = (args) => (
   <FilePreview {...args} />
 );
 Example.args = {

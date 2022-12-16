@@ -72,7 +72,7 @@ const AssetNodeRenderer: React.FC<AssetNodeRendererProps> = ({
       className={`node-name ${isSelected(asset) ? 'selected' : ''}`}
       key={asset.id}
       onClick={handleSelect}
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         if (e.key === 'Enter') {
           handleSelect();
         }
@@ -160,7 +160,7 @@ const AssetNodeRenderer: React.FC<AssetNodeRendererProps> = ({
           className="node-icon"
           tabIndex={deepness}
           onClick={handleExpand}
-          onKeyDown={e => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter') {
               handleExpand();
             }

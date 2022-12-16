@@ -9,7 +9,7 @@ export default {
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example: ComponentStory<typeof DocumentSearchResults> = args => {
+export const Example: ComponentStory<typeof DocumentSearchResults> = (args) => {
   return (
     <Container>
       <DocumentSearchResults {...args} />

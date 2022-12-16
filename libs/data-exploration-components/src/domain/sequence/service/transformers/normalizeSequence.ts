@@ -4,7 +4,7 @@ import { InternalSequenceData } from 'domain/sequence';
 export const normalizeSequence = (
   items: Sequence[]
 ): InternalSequenceData[] => {
-  return items.map(item => ({
+  return items.map((item) => ({
     id: item.id,
     lastUpdatedTime: item.lastUpdatedTime,
     createdTime: item.createdTime,

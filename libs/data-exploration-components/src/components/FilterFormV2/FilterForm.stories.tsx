@@ -20,7 +20,7 @@ export default {
   },
 };
 
-export const Example: ComponentStory<typeof FilterFormV2> = args => {
+export const Example: ComponentStory<typeof FilterFormV2> = (args) => {
   const [filters, setFilters] = useState<
     {
       key: string;
@@ -38,9 +38,9 @@ Example.args = {
   lockedFilters: [],
 };
 
-export const ExampleWithCategories: ComponentStory<
-  typeof FilterFormV2
-> = args => {
+export const ExampleWithCategories: ComponentStory<typeof FilterFormV2> = (
+  args
+) => {
   const [filters, setFilters] = useState<
     {
       key: string;
@@ -66,7 +66,7 @@ ExampleWithCategories.args = {
 
 export const ExampleWithLockedCategories: ComponentStory<
   typeof FilterFormV2
-> = args => {
+> = (args) => {
   const [filters, setFilters] = useState<
     {
       key: string;

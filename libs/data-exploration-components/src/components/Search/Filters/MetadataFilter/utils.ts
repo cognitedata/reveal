@@ -5,7 +5,7 @@ export const mergeUniqueMetadataKeys = <
 ) => {
   // No need to extract metadata if keys are already supplied by the API
   const metadata = items.reduce((accumulator, item) => {
-    Object.keys(item.metadata || {}).forEach(key => {
+    Object.keys(item.metadata || {}).forEach((key) => {
       if (item.metadata![key].length !== 0) {
         if (!accumulator[key]) {
           accumulator[key] = new Set<string>();

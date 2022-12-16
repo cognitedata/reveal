@@ -11,7 +11,7 @@ export default {
     },
   },
 };
-export const Example: ComponentStory<typeof DateFilter> = args => {
+export const Example: ComponentStory<typeof DateFilter> = (args) => {
   const [value, setValue] = useState<
     { min?: number; max?: number } | undefined | null
   >();

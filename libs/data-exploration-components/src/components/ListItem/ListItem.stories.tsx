@@ -22,7 +22,7 @@ export default {
   },
 };
 
-export const Example: ComponentStory<typeof ListItem> = args => (
+export const Example: ComponentStory<typeof ListItem> = (args) => (
   <ListItem {...args} onClick={action('onClick')} />
 );
 Example.args = {

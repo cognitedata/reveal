@@ -22,7 +22,7 @@ export const ThreeDTab = ({ query, showCount = false }: Props) => {
     [] as Model3D[]
   );
 
-  const filteredModels = models.filter(model =>
+  const filteredModels = models.filter((model) =>
     model.name.toLowerCase().includes(query?.toLowerCase() || '')
   );
 

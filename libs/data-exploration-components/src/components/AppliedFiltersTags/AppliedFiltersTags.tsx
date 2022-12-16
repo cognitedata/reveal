@@ -23,7 +23,7 @@ export const AppliedFiltersTags: React.FC<Props> = ({
 
   return (
     <Container>
-      {filterKeys.map(key => {
+      {filterKeys.map((key) => {
         const filterValues = filter[key];
 
         if (filterValues === undefined) {
@@ -31,7 +31,7 @@ export const AppliedFiltersTags: React.FC<Props> = ({
         }
 
         if (isArray(filterValues)) {
-          return filterValues.map(value => {
+          return filterValues.map((value) => {
             const displayValue = formatValue(value);
 
             return (
@@ -46,7 +46,7 @@ export const AppliedFiltersTags: React.FC<Props> = ({
                   }
 
                   const filtered = (filterValues as any[]).filter(
-                    item => !isEqual(item, value)
+                    (item) => !isEqual(item, value)
                   );
                   onFilterChange({ [key]: filtered });
                 }}

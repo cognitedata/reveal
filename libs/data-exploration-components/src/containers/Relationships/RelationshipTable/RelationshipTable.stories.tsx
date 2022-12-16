@@ -7,7 +7,7 @@ export default {
   title: 'Relationship/RelationshipTable',
   component: RelationshipTable,
 };
-export const Example: ComponentStory<typeof RelationshipTable> = args => (
+export const Example: ComponentStory<typeof RelationshipTable> = (args) => (
   <RelationshipTable {...args} />
 );
 Example.args = {

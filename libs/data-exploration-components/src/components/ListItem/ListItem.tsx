@@ -70,7 +70,7 @@ const additionalStyles = ({ selected, isClickable }: WrapperProps) => {
 };
 
 export const ListItemWrapper = styled.div<WrapperProps>(
-  props => css`
+  (props) => css`
     align-items: baseline;
     display: flex;
     flex-direction: row;

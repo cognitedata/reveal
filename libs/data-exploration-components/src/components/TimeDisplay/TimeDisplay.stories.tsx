@@ -17,7 +17,7 @@ export default {
     },
   },
 };
-export const Example: ComponentStory<typeof TimeDisplay> = args => (
+export const Example: ComponentStory<typeof TimeDisplay> = (args) => (
   <TimeDisplay {...args} />
 );
 Example.args = {

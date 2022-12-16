@@ -37,7 +37,7 @@ export const isFileOfType = (file?: FileInfo | Document, type?: string[]) => {
     ? lowerCase(name.substring(name.lastIndexOf('.') + 1))
     : undefined;
   return (type || []).some(
-    el => lowerCase(mimeType).includes(el) || fileExt === el
+    (el) => lowerCase(mimeType).includes(el) || fileExt === el
   );
 };
 
@@ -54,7 +54,7 @@ export async function fetchFilePreviewURL(
     return imageUrl;
   }
 
-  return sdk.documents.preview.documentAsImage(file.id, 1).then(response => {
+  return sdk.documents.preview.documentAsImage(file.id, 1).then((response) => {
     const icon = response;
     const arrayBufferView = new Uint8Array(icon);
     const blob = new Blob([arrayBufferView]);

@@ -86,7 +86,7 @@ export const useResultCount = ({
       [] as Model3D[]
     );
 
-    const filteredModels = models.filter(model =>
+    const filteredModels = models.filter((model) =>
       model.name.toLowerCase().includes(query?.toLowerCase() || '')
     );
     return { ...result, count: formatNumber(filteredModels.length) };

@@ -53,7 +53,7 @@ export const sdkMock = {
       if (query.includes('byids')) {
         const idArr = body.data.items.map((el: { id: IdEither }) => el.id);
         return {
-          data: { items: datasets.filter(el => idArr.includes(el.id)) },
+          data: { items: datasets.filter((el) => idArr.includes(el.id)) },
         };
       }
 
@@ -80,7 +80,7 @@ export const sdkMock = {
           // Filter assets according to the ids.
           data: {
             items: allAssets.filter(
-              el =>
+              (el) =>
                 idArr.includes(el.id) || externalIdArr.includes(el.externalId)
             ),
           },
@@ -94,7 +94,7 @@ export const sdkMock = {
     }
     if (query.includes('relationships')) {
       const { filter } = body.data;
-      const filteredRelationship = relationships.filter(relationship =>
+      const filteredRelationship = relationships.filter((relationship) =>
         filter.sourceExternalIds
           ? relationship.sourceExternalId === filter.sourceExternalIds[0]
           : relationship.targetExternalId === filter.targetExternalIds[0]
@@ -107,8 +107,8 @@ export const sdkMock = {
 
         return {
           data: {
-            items: filteredRelationship.filter(relationship =>
-              relationship.labels?.some(label => labels.has(label.externalId))
+            items: filteredRelationship.filter((relationship) =>
+              relationship.labels?.some((label) => labels.has(label.externalId))
             ),
           },
         };
@@ -158,7 +158,7 @@ export const sdkMock = {
       }
       if (parentIds) {
         return {
-          items: assets.filter(asset => asset.parentId === parentIds[0]),
+          items: assets.filter((asset) => asset.parentId === parentIds[0]),
         };
       }
       return { items: assets };
@@ -194,10 +194,10 @@ export const sdkMock = {
   },
   datapoints: {
     retrieve: async (asc: any) => {
-      const result = timeseries.find(asset => asset.id === asc.items[0].id);
+      const result = timeseries.find((asset) => asset.id === asc.items[0].id);
 
       return datapoints.filter(
-        datapoint => datapoint.externalId === result?.externalId
+        (datapoint) => datapoint.externalId === result?.externalId
       );
     },
   },

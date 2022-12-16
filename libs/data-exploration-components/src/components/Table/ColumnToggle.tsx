@@ -63,7 +63,7 @@ export function ColumnToggle<T>({
   const [searchInput, setSearchInput] = useState('');
   const [tab, setTab] = useState('All');
 
-  const elementOrders = allColumns().map(column => column.id);
+  const elementOrders = allColumns().map((column) => column.id);
   const trackUsage = useMetrics();
 
   const handleTabClick = (key: string) => {
@@ -73,12 +73,12 @@ export function ColumnToggle<T>({
     });
   };
 
-  const filteredColumns = allColumns().filter(column =>
+  const filteredColumns = allColumns().filter((column) =>
     column.columnDef.header?.toString().toLowerCase().includes(searchInput)
   );
   const isSearchResultEmpty = filteredColumns.length === 0;
 
-  const selectedColumns = filteredColumns.filter(column =>
+  const selectedColumns = filteredColumns.filter((column) =>
     column.getIsVisible()
   );
   const selectedTabColumns = useMemo(() => {
@@ -136,7 +136,7 @@ export function ColumnToggle<T>({
               fullWidth
               variant="noBorder"
               value={searchInput}
-              onChange={e => setSearchInput(e.target.value)}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
 
             {!isSearchResultEmpty && searchInput && (
@@ -151,12 +151,9 @@ export function ColumnToggle<T>({
                 onDragEnd={onColumnOrderChanged}
                 isCustomPortal
               >
-                {slicedColumns.map(column => {
+                {slicedColumns.map((column) => {
                   return (
-                    <MenutItemDrag
-                      key={column.id}
-                      isDragEnabled={!Boolean(searchInput)}
-                    >
+                    <MenutItemDrag key={column.id} isDragEnabled={!searchInput}>
                       <StyledLabel>
                         <Checkbox
                           name={column.id}

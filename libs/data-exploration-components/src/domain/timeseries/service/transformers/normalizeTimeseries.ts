@@ -4,7 +4,7 @@ import { InternalTimeseriesData } from 'domain/timeseries';
 export const normalizeTimeseries = (
   items: Timeseries[]
 ): InternalTimeseriesData[] => {
-  return items.map(item => ({
+  return items.map((item) => ({
     id: item.id,
     lastUpdatedTime: item.lastUpdatedTime,
     createdTime: item.createdTime,

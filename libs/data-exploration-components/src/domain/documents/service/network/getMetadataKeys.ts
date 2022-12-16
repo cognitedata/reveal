@@ -13,7 +13,7 @@ export const getMetadataKeys = (sdk: CogniteClient) => {
   return fetch(`${apiUrl}/aggregates/documents/metadata`, {
     headers: sdk.getDefaultRequestHeaders(),
   })
-    .then(response => {
+    .then((response) => {
       if (response.ok) {
         return response.json();
       }
@@ -26,7 +26,7 @@ export const getMetadataKeys = (sdk: CogniteClient) => {
         .list({
           limit: 1000,
         })
-        .then(response => {
+        .then((response) => {
           return extractMetadataKeys(response.items);
         });
     });

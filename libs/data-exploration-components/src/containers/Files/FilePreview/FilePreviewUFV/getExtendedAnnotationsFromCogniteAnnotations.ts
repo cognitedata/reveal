@@ -68,7 +68,7 @@ const getAnnotationsFromLegacyCogniteAnnotations = (
   containerId?: string
 ): ExtendedAnnotation[] =>
   legacyCogniteAnnotations
-    .map(annotation =>
+    .map((annotation) =>
       getRectangleAnnotationFromLegacyCogniteAnnotation(annotation, containerId)
     )
     .filter(isNotUndefined);

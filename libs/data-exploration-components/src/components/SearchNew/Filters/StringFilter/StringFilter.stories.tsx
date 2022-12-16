@@ -11,7 +11,7 @@ export default {
     },
   },
 };
-export const Example: ComponentStory<typeof StringFilterV2> = args => {
+export const Example: ComponentStory<typeof StringFilterV2> = (args) => {
   const [value, setValue] = useState<string | undefined>();
   return <StringFilterV2 {...args} value={value} setValue={setValue} />;
 };

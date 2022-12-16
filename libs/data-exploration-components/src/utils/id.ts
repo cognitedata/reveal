@@ -8,7 +8,7 @@ export const extractUniqueIds = (ids: IdEither[]) => {
   const uniqueIdSet = new Set<number>();
   const externalIdSet = new Set<string>();
 
-  ids.forEach(id => {
+  ids.forEach((id) => {
     if ('externalId' in id) {
       externalIdSet.add(id.externalId);
     } else if ('id' in id) {
@@ -16,8 +16,8 @@ export const extractUniqueIds = (ids: IdEither[]) => {
     }
   });
   const updatedIds = {
-    uniqueIds: Array.from(uniqueIdSet).map(id => ({ id })),
-    uniqueExternalIds: Array.from(externalIdSet).map(externalId => ({
+    uniqueIds: Array.from(uniqueIdSet).map((id) => ({ id })),
+    uniqueExternalIds: Array.from(externalIdSet).map((externalId) => ({
       externalId,
     })),
   };
