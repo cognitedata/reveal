@@ -40,7 +40,7 @@ Note that this is called automatically when a new CameraManager is set on the [C
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:59](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L59)
+[packages/camera-manager/src/CameraManager.ts:59](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L59)
 
 ___
 
@@ -59,7 +59,7 @@ Note that this is called automatically when a new CameraManager is set on the [C
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:67](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L67)
+[packages/camera-manager/src/CameraManager.ts:67](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L67)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:107](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L107)
+[packages/camera-manager/src/CameraManager.ts:107](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L107)
 
 ___
 
@@ -99,7 +99,7 @@ Moves camera to a place where the content of a bounding box is visible to the ca
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:95](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L95)
+[packages/camera-manager/src/CameraManager.ts:95](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L95)
 
 ___
 
@@ -118,7 +118,7 @@ camera changes.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:27](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L27)
+[packages/camera-manager/src/CameraManager.ts:27](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L27)
 
 ___
 
@@ -136,7 +136,7 @@ Camera state: position, target and rotation.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:50](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L50)
+[packages/camera-manager/src/CameraManager.ts:50](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L50)
 
 ___
 
@@ -159,7 +159,7 @@ Unsubscribes from changes of the camera event.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:85](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L85)
+[packages/camera-manager/src/CameraManager.ts:85](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L85)
 
 ▸ **off**(`event`, `callback`): `void`
 
@@ -176,7 +176,7 @@ Unsubscribes from changes of the camera event.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:86](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L86)
+[packages/camera-manager/src/CameraManager.ts:86](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L86)
 
 ▸ **off**(`event`, `callback`): `void`
 
@@ -193,7 +193,7 @@ Unsubscribes from changes of the camera event.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:87](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L87)
+[packages/camera-manager/src/CameraManager.ts:87](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L87)
 
 ___
 
@@ -218,7 +218,7 @@ Subscribes to events on this camera manager. There are several event types:
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:76](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L76)
+[packages/camera-manager/src/CameraManager.ts:76](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L76)
 
 ▸ **on**(`event`, `callback`): `void`
 
@@ -235,7 +235,7 @@ Subscribes to events on this camera manager. There are several event types:
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:77](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L77)
+[packages/camera-manager/src/CameraManager.ts:77](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L77)
 
 ▸ **on**(`event`, `callback`): `void`
 
@@ -252,7 +252,7 @@ Subscribes to events on this camera manager. There are several event types:
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:78](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L78)
+[packages/camera-manager/src/CameraManager.ts:78](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L78)
 
 ___
 
@@ -284,7 +284,7 @@ cameraManager.setCameraState({ position, target });
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:44](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L44)
+[packages/camera-manager/src/CameraManager.ts:44](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L44)
 
 ___
 
@@ -309,4 +309,4 @@ Reveal performance affects frequency with which this method is called.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:103](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/CameraManager.ts#L103)
+[packages/camera-manager/src/CameraManager.ts:103](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L103)

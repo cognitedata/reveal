@@ -36,7 +36,7 @@ a node is considered to match if it or a [NodeCollection](cognite_reveal.NodeCol
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:43](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L43)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:43](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L43)
 
 ## Properties
 
@@ -46,7 +46,7 @@ a node is considered to match if it or a [NodeCollection](cognite_reveal.NodeCol
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:31](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L31)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:31](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L31)
 
 ## Accessors
 
@@ -64,7 +64,7 @@ CdfNodeCollectionBase.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -82,7 +82,7 @@ CdfNodeCollectionBase.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:25](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L25)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:25](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L25)
 
 ## Methods
 
@@ -102,7 +102,7 @@ Clears the node collection and interrupts any ongoing operations.
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:69](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L69)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:69](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L69)
 
 ___
 
@@ -131,7 +131,7 @@ set.executeFilter({ 'PDMS': { 'Module': 'AQ550' }});
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:63](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L63)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:63](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L63)
 
 ___
 
@@ -153,7 +153,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:81](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L81)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:81](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L81)
 
 ___
 
@@ -171,7 +171,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:77](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L77)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:77](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L77)
 
 ___
 
@@ -196,7 +196,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -221,7 +221,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -239,4 +239,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:82](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L82)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:82](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L82)

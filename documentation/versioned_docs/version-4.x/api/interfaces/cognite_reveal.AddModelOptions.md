@@ -15,7 +15,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:185](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/public/migration/types.ts#L185)
+[packages/api/src/public/migration/types.ts:185](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L185)
 
 ___
 
@@ -25,7 +25,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:184](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/public/migration/types.ts#L184)
+[packages/api/src/public/migration/types.ts:184](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L184)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:181](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/public/migration/types.ts#L181)
+[packages/api/src/public/migration/types.ts:181](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L181)
 
 ___
 
@@ -45,4 +45,4 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:182](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/public/migration/types.ts#L182)
+[packages/api/src/public/migration/types.ts:182](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L182)

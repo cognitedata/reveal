@@ -37,7 +37,7 @@ Absolute position in pixels.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:47](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/AxisView/types.ts#L47)
+[packages/tools/src/AxisView/types.ts:47](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L47)
 
 ___
 
@@ -59,7 +59,7 @@ Configuration of the compass.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:79](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/AxisView/types.ts#L79)
+[packages/tools/src/AxisView/types.ts:79](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L79)
 
 ___
 
@@ -87,7 +87,7 @@ Configuration of [AxisViewTool](../classes/cognite_reveal_tools.AxisViewTool.md)
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:10](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/AxisView/types.ts#L10)
+[packages/tools/src/AxisView/types.ts:10](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L10)
 
 ___
 
@@ -110,7 +110,7 @@ Configuration of each face of the orientation box.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:64](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/AxisView/types.ts#L64)
+[packages/tools/src/AxisView/types.ts:64](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L64)
 
 ___
 
@@ -136,7 +136,7 @@ Custom callback for users to change measurement label content.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:8](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/Measurement/types.ts#L8)
+[packages/tools/src/Measurement/types.ts:8](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/types.ts#L8)
 
 ___
 
@@ -163,7 +163,7 @@ Callback that is triggered when a set of overlays are clustered together in
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:32](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L32)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L32)
 
 ___
 
@@ -182,7 +182,7 @@ Options for an overlay added using [add](../classes/cognite_reveal_tools.HtmlOve
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:42](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L42)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:42](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L42)
 
 ___
 
@@ -213,7 +213,7 @@ in [HtmlOverlayTool](../classes/cognite_reveal_tools.HtmlOverlayTool.md).
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:20](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L20)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:20](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L20)
 
 ___
 
@@ -232,7 +232,7 @@ Controls how close overlay elements are clustered together.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:57](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L57)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:57](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L57)
 
 ___
 
@@ -250,7 +250,7 @@ Options for the visualization of overlays
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:82](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L82)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:82](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L82)
 
 ___
 
@@ -269,7 +269,7 @@ ___
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementManager.ts:11](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/Measurement/MeasurementManager.ts#L11)
+[packages/tools/src/Measurement/MeasurementManager.ts:11](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/MeasurementManager.ts#L11)
 
 ___
 
@@ -299,7 +299,7 @@ Delegate for measurement added events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:13](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/Measurement/types.ts#L13)
+[packages/tools/src/Measurement/types.ts:13](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/types.ts#L13)
 
 ___
 
@@ -319,7 +319,7 @@ Delegate for measurement ended events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:28](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/Measurement/types.ts#L28)
+[packages/tools/src/Measurement/types.ts:28](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/types.ts#L28)
 
 ___
 
@@ -339,7 +339,7 @@ Measurement tool option with user custom callback, line width & color.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:33](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/Measurement/types.ts#L33)
+[packages/tools/src/Measurement/types.ts:33](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/types.ts#L33)
 
 ___
 
@@ -359,7 +359,7 @@ Delegate for measurement started events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:23](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/Measurement/types.ts#L23)
+[packages/tools/src/Measurement/types.ts:23](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Measurement/types.ts#L23)
 
 ___
 
@@ -379,7 +379,7 @@ and a given padding.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:56](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/AxisView/types.ts#L56)
+[packages/tools/src/AxisView/types.ts:56](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L56)
 
 ___
 
@@ -409,4 +409,4 @@ Delegate for Timeline Date update
 
 #### Defined in
 
-[packages/tools/src/Timeline/types.ts:8](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/tools/src/Timeline/types.ts#L8)
+[packages/tools/src/Timeline/types.ts:8](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Timeline/types.ts#L8)

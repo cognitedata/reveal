@@ -68,7 +68,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:188](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/public/migration/types.ts#L188)
+[packages/api/src/public/migration/types.ts:188](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L188)
 
 ___
 
@@ -97,7 +97,7 @@ Delegate for event triggered when scene is about to be rendered.
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:25](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/utilities/src/events/types.ts#L25)
+[packages/utilities/src/events/types.ts:25](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/events/types.ts#L25)
 
 ___
 
@@ -117,7 +117,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:200](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/public/migration/types.ts#L200)
+[packages/api/src/public/migration/types.ts:200](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L200)
 
 ___
 
@@ -136,7 +136,7 @@ Represents a measurement of how much geometry can be loaded.
 
 #### Defined in
 
-[packages/cad-geometry-loaders/src/CadModelBudget.ts:10](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-geometry-loaders/src/CadModelBudget.ts#L10)
+[packages/cad-geometry-loaders/src/CadModelBudget.ts:10](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-geometry-loaders/src/CadModelBudget.ts#L10)
 
 ___
 
@@ -161,7 +161,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:85](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/types.ts#L85)
+[packages/camera-manager/src/types.ts:85](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/types.ts#L85)
 
 ___
 
@@ -180,7 +180,7 @@ Represents a camera configuration, consisting of a camera position and target.
 
 #### Defined in
 
-[packages/utilities/src/CameraConfiguration.ts:8](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/utilities/src/CameraConfiguration.ts#L8)
+[packages/utilities/src/CameraConfiguration.ts:8](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/CameraConfiguration.ts#L8)
 
 ___
 
@@ -197,7 +197,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:5](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/types.ts#L5)
+[packages/camera-manager/src/types.ts:5](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/types.ts#L5)
 
 ___
 
@@ -209,7 +209,7 @@ Union type of all camera event delegates
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:96](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/types.ts#L96)
+[packages/camera-manager/src/types.ts:96](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/types.ts#L96)
 
 ___
 
@@ -221,7 +221,7 @@ Union type of the supported camera manager event types
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:123](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/types.ts#L123)
+[packages/camera-manager/src/types.ts:123](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/types.ts#L123)
 
 ___
 
@@ -239,7 +239,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:66](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/types.ts#L66)
+[packages/camera-manager/src/types.ts:66](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/types.ts#L66)
 
 ___
 
@@ -257,7 +257,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:91](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/types.ts#L91)
+[packages/camera-manager/src/types.ts:91](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/types.ts#L91)
 
 ___
 
@@ -276,7 +276,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/utilities/ViewStateHelper.ts:28](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/utilities/ViewStateHelper.ts#L28)
+[packages/api/src/utilities/ViewStateHelper.ts:28](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/utilities/ViewStateHelper.ts#L28)
 
 ___
 
@@ -288,7 +288,7 @@ Type abstraction for CogniteCadModel or CognitePointCloudModel;.
 
 #### Defined in
 
-[packages/api/src/public/types.ts:11](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/public/types.ts#L11)
+[packages/api/src/public/types.ts:11](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/types.ts#L11)
 
 ___
 
@@ -339,7 +339,7 @@ Exposed options for Combo Controls
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:46](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/ComboControls.ts#L46)
+[packages/camera-manager/src/ComboControls.ts:46](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L46)
 
 ___
 
@@ -349,7 +349,7 @@ ___
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudAppearance.ts:12](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L12)
+[packages/pointcloud-styling/src/PointCloudAppearance.ts:12](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L12)
 
 ___
 
@@ -367,7 +367,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:20](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/utilities/src/events/types.ts#L20)
+[packages/utilities/src/events/types.ts:20](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/events/types.ts#L20)
 
 ___
 
@@ -386,7 +386,7 @@ Configuration parameters for Eye Dome Lighting (EDL) point cloud post-processing
 
 #### Defined in
 
-[packages/rendering/src/rendering/types.ts:22](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/rendering/src/rendering/types.ts#L22)
+[packages/rendering/src/rendering/types.ts:22](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/rendering/src/rendering/types.ts#L22)
 
 ___
 
@@ -403,7 +403,7 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/types.ts:21](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-model/src/types.ts#L21)
+[packages/cad-model/src/types.ts:21](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/types.ts#L21)
 
 ___
 
@@ -413,7 +413,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:227](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/public/migration/types.ts#L227)
+[packages/api/src/public/migration/types.ts:227](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L227)
 
 ___
 
@@ -432,7 +432,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/utilities/ViewStateHelper.ts:35](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/utilities/ViewStateHelper.ts#L35)
+[packages/api/src/utilities/ViewStateHelper.ts:35](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/utilities/ViewStateHelper.ts#L35)
 
 ___
 
@@ -459,7 +459,7 @@ Type for defining node appearance profiles to style a 3D CAD model.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:22](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/NodeAppearance.ts#L22)
+[packages/cad-styling/src/NodeAppearance.ts:22](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeAppearance.ts#L22)
 
 ___
 
@@ -476,7 +476,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollectionDeserializer.ts:22](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L22)
+[packages/cad-styling/src/NodeCollectionDeserializer.ts:22](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L22)
 
 ___
 
@@ -502,7 +502,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:24](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/public/migration/types.ts#L24)
+[packages/api/src/public/migration/types.ts:24](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/migration/types.ts#L24)
 
 ___
 
@@ -519,7 +519,7 @@ ___
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudAppearance.ts:7](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L7)
+[packages/pointcloud-styling/src/PointCloudAppearance.ts:7](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L7)
 
 ___
 
@@ -538,7 +538,7 @@ loaded at the same time.
 
 #### Defined in
 
-[packages/pointclouds/src/PointCloudBudget.ts:10](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/pointclouds/src/PointCloudBudget.ts#L10)
+[packages/pointclouds/src/PointCloudBudget.ts:10](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/pointclouds/src/PointCloudBudget.ts#L10)
 
 ___
 
@@ -559,7 +559,7 @@ ___
 
 #### Defined in
 
-[packages/pointclouds/src/PointCloudIntersection.ts:6](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/pointclouds/src/PointCloudIntersection.ts#L6)
+[packages/pointclouds/src/PointCloudIntersection.ts:6](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/pointclouds/src/PointCloudIntersection.ts#L6)
 
 ___
 
@@ -577,7 +577,7 @@ ___
 
 #### Defined in
 
-[packages/data-providers/src/pointcloud-stylable-object-providers/types.ts:16](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/data-providers/src/pointcloud-stylable-object-providers/types.ts#L16)
+[packages/data-providers/src/pointcloud-stylable-object-providers/types.ts:16](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/data-providers/src/pointcloud-stylable-object-providers/types.ts#L16)
 
 ___
 
@@ -595,7 +595,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:15](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/utilities/src/events/types.ts#L15)
+[packages/utilities/src/events/types.ts:15](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/events/types.ts#L15)
 
 ___
 
@@ -619,7 +619,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:9](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/utilities/src/events/types.ts#L9)
+[packages/utilities/src/events/types.ts:9](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/events/types.ts#L9)
 
 ___
 
@@ -637,7 +637,7 @@ Options for [PropertyFilterNodeCollection](../classes/cognite_reveal.PropertyFil
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:17](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L17)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:17](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L17)
 
 ___
 
@@ -665,7 +665,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:35](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/utilities/src/events/types.ts#L35)
+[packages/utilities/src/events/types.ts:35](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/utilities/src/events/types.ts#L35)
 
 ___
 
@@ -688,7 +688,7 @@ Type that represents a [NodeAppearance](cognite_reveal.md#nodeappearance) in a s
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:77](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/NodeAppearance.ts#L77)
+[packages/cad-styling/src/NodeAppearance.ts:77](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeAppearance.ts#L77)
 
 ___
 
@@ -706,7 +706,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/SerializedNodeCollection.ts:4](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/SerializedNodeCollection.ts#L4)
+[packages/cad-styling/src/SerializedNodeCollection.ts:4](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/SerializedNodeCollection.ts#L4)
 
 ___
 
@@ -716,7 +716,7 @@ ___
 
 #### Defined in
 
-[packages/model-base/src/SupportedModelTypes.ts:4](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/model-base/src/SupportedModelTypes.ts#L4)
+[packages/model-base/src/SupportedModelTypes.ts:4](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/model-base/src/SupportedModelTypes.ts#L4)
 
 ___
 
@@ -742,7 +742,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/utilities/ViewStateHelper.ts:19](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/utilities/ViewStateHelper.ts#L19)
+[packages/api/src/utilities/ViewStateHelper.ts:19](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/utilities/ViewStateHelper.ts#L19)
 
 ___
 
@@ -754,7 +754,7 @@ Units supported by [CogniteCadModel](../classes/cognite_reveal.CogniteCadModel.m
 
 #### Defined in
 
-[packages/cad-model/src/types.ts:8](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-model/src/types.ts#L8)
+[packages/cad-model/src/types.ts:8](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/types.ts#L8)
 
 ## Variables
 
@@ -766,7 +766,7 @@ List of supported event types (adapted from https://stackoverflow.com/questions/
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:118](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/camera-manager/src/types.ts#L118)
+[packages/camera-manager/src/types.ts:118](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/types.ts#L118)
 
 ___
 
@@ -781,7 +781,7 @@ the [getCdfToDefaultModelTransformation](../classes/cognite_reveal.CogniteCadMod
 
 #### Defined in
 
-[packages/api/src/public/constants.ts:15](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/src/public/constants.ts#L15)
+[packages/api/src/public/constants.ts:15](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/src/public/constants.ts#L15)
 
 ___
 
@@ -810,7 +810,7 @@ A set of default node appearances used in Reveal.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:142](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/NodeAppearance.ts#L142)
+[packages/cad-styling/src/NodeAppearance.ts:142](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeAppearance.ts#L142)
 
 ___
 
@@ -820,7 +820,7 @@ ___
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudAppearance.ts:14](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L14)
+[packages/pointcloud-styling/src/PointCloudAppearance.ts:14](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L14)
 
 ___
 
@@ -830,7 +830,7 @@ ___
 
 #### Defined in
 
-[packages/api/index.ts:12](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/api/index.ts#L12)
+[packages/api/index.ts:12](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/api/index.ts#L12)
 
 ## Functions
 
@@ -857,4 +857,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollectionDeserializer.ts:156](https://github.com/cognitedata/reveal/blob/09f51630/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L156)
+[packages/cad-styling/src/NodeCollectionDeserializer.ts:156](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L156)
