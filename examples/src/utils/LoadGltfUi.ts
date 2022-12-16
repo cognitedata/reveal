@@ -104,7 +104,6 @@ export class LoadGltfUi {
     this._gizmos.push(gizmo);
 
     gizmo.addEventListener('change', () => {
-      this._viewer.forceCameraNearFarPlanesUpdated();
       this._viewer.requestRedraw();
     });
     gizmo.addEventListener('dragging-changed', (event: any) => {
@@ -113,6 +112,7 @@ export class LoadGltfUi {
       //Disable active camera controls when drag is detected on gizmo
       const cameraManager = this._viewer.cameraManager;
       if (dragging) {
+        this._viewer.forceCameraNearFarPlanesUpdated();
         cameraManager.deactivate();
       } else {
         cameraManager.activate();
