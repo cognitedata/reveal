@@ -29,7 +29,7 @@ import { generateClassificationTexture, generateDataTexture, generateGradientTex
 import { PointClassification, IUniform, OctreeMaterialParams } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
-import { PointCloudObjectIdMaps } from '@reveal/rendering';
+import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import { pointCloudShaders } from '../rendering/shaders';
 
 export interface IPointCloudMaterialParameters {

@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ModelIdentifier } from '@reveal/data-providers';
+import { ModelIdentifier } from '../ModelIdentifier';
 import { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
 import { PointCloudObject } from './types';
 
