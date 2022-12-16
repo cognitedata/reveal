@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 
 import { localPoint } from '@visx/event';
 import { Bar, Line } from '@visx/shape';
@@ -51,15 +51,28 @@ export function usePortalTooltip({
     useTooltip<TooltipData>();
 
   const bisect = bisector<DatumType, Date | number>((it) => getX(it, 0));
-
+  const cleanupTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
   const mouseMove = useCallback(
     (event: React.MouseEvent<SVGRectElement>) => {
       const { x } = localPoint(event, event) ?? { x: 0 };
       const xValue = xScale.invert(x - margin.left);
-      const index = bisect.center(data as DatumType[], xValue);
-
+      const index = bisect.center(data, xValue);
       const value = getY(data[index]);
       const { left, top } = event.currentTarget.getBoundingClientRect();
+      if (cleanupTimeout.current === undefined) {
+        cleanupTimeout.current = setTimeout(() => {
+          const selector = `.${Array.from(event.target.classList).join('.')}`;
+          const isHovered = document.querySelector(selector)?.matches(':hover');
+          if (!isHovered) {
+            hideTooltip();
+          }
+          clearTimeout(cleanupTimeout.current);
+          cleanupTimeout.current = undefined;
+        }, 250);
+      }
+      // console.log('Value = ', xMax, yMax, 'Bounding = ', left, top);
 
       if (value !== undefined) {
         showTooltip({
@@ -75,7 +88,16 @@ export function usePortalTooltip({
         hideTooltip();
       }
     },
-    [data, margin.left, xScale, yScale, showTooltip, bisect, hideTooltip]
+    [
+      data,
+      margin.left,
+      xScale,
+      yScale,
+      showTooltip,
+      bisect,
+      hideTooltip,
+      cleanupTimeout,
+    ]
   );
 
   return ({
@@ -124,8 +146,13 @@ export function usePortalTooltip({
         width={xMax}
         x={0}
         y={0}
-        onMouseLeave={hideTooltip}
+        onMouseLeave={() => {
+          hideTooltip();
+        }}
         onMouseMove={mouseMove}
+        onMouseOut={() => {
+          hideTooltip();
+        }}
       />
       {tooltipData && (
         <Portal>
