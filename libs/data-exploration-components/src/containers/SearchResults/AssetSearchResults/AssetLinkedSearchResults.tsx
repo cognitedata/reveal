@@ -1,6 +1,6 @@
 import { Asset } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { MetadataFilterV2 } from 'components';
+import { MetadataFilterV2 } from '@data-exploration-components/components';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 import { TableSortBy } from 'components/Table';
 import { AssetTable } from 'containers/Assets';
@@ -40,7 +40,7 @@ const LinkedAssetFilter = ({
       <MetadataFilterV2
         items={items}
         value={filter.metadata}
-        setValue={newValue => onFilterChange({ metadata: newValue })}
+        setValue={(newValue) => onFilterChange({ metadata: newValue })}
       />
     </PreviewFilterDropdown>
   );
@@ -82,18 +82,18 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
   const handleFilterChange = (newValue: InternalAssetFilters) => {
-    setFilter(prevState => ({ ...prevState, ...newValue }));
+    setFilter((prevState) => ({ ...prevState, ...newValue }));
   };
 
   return (
     <AssetTable
       id="asset-linked-search-results"
       query={debouncedQuery}
-      onRowClick={asset => onClick(asset)}
+      onRowClick={(asset) => onClick(asset)}
       data={enableAdvancedFilter ? data : items}
       enableSorting={enableAdvancedFilter}
       sorting={sortBy}
-      onSort={props => setSortBy(props)}
+      onSort={(props) => setSortBy(props)}
       showLoadButton
       tableSubHeaders={
         <AppliedFiltersTags

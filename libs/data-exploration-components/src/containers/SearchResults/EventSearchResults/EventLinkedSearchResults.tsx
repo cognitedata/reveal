@@ -1,6 +1,9 @@
 import { CogniteEvent } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { AggregatedEventFilterV2, MetadataFilterV2 } from 'components';
+import {
+  AggregatedEventFilterV2,
+  MetadataFilterV2,
+} from '@data-exploration-components/components';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 import { TableSortBy } from 'components/Table';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
@@ -39,7 +42,7 @@ const LinkedEventFilter = ({
       <AggregatedEventFilterV2
         field="type"
         filter={filter}
-        setValue={newValue => {
+        setValue={(newValue) => {
           onFilterChange({ type: newValue });
         }}
         title="Type"
@@ -48,7 +51,7 @@ const LinkedEventFilter = ({
       <AggregatedEventFilterV2
         field="subtype"
         filter={filter}
-        setValue={newValue => {
+        setValue={(newValue) => {
           onFilterChange({ subtype: newValue });
         }}
         title="Sub-type"
@@ -57,7 +60,7 @@ const LinkedEventFilter = ({
       <MetadataFilterV2
         items={items}
         value={filter.metadata}
-        setValue={newValue => onFilterChange({ metadata: newValue })}
+        setValue={(newValue) => onFilterChange({ metadata: newValue })}
       />
     </PreviewFilterDropdown>
   );
@@ -98,18 +101,18 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
   const handleFilterChange = (newValue: InternalEventsFilters) => {
-    setFilter(prevState => ({ ...prevState, ...newValue }));
+    setFilter((prevState) => ({ ...prevState, ...newValue }));
   };
 
   return (
     <EventTable
       id="event-linked-search-results"
       query={debouncedQuery}
-      onRowClick={event => onClick(event)}
+      onRowClick={(event) => onClick(event)}
       data={enableAdvancedFilter ? data : items}
       sorting={sortBy}
       enableSorting={enableAdvancedFilter}
-      onSort={props => setSortBy(props)}
+      onSort={(props) => setSortBy(props)}
       showLoadButton
       tableSubHeaders={
         <AppliedFiltersTags

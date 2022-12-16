@@ -16,7 +16,7 @@ import {
   useExtractFromCanvas,
   useZoomControls,
 } from '@cognite/react-picture-annotation';
-import { Divider, InfoCell } from 'components';
+import { Divider, InfoCell } from '@data-exploration-components/components';
 import { Dropdown, Pagination, Spin, Breadcrumb } from 'antd';
 import {
   AnnotationStatus,
@@ -180,8 +180,8 @@ const AnnotationPreviewSidebar = ({
     sleep(1500).then(invalidate);
     sleep(5000).then(invalidate);
 
-    setPendingAnnotations(pendingAnnotations =>
-      pendingAnnotations.filter(el => el.id !== selectedAnnotation?.id)
+    setPendingAnnotations((pendingAnnotations) =>
+      pendingAnnotations.filter((el) => el.id !== selectedAnnotation?.id)
     );
     toast.success(`Tag ${action} successfully`);
   };
@@ -303,9 +303,9 @@ const AnnotationPreviewSidebar = ({
   const onDeleteAnnotation = (
     annotation: CogniteAnnotation | ProposedCogniteAnnotation
   ) => {
-    setPendingAnnotations(pendingAnnotations => {
-      if (pendingAnnotations.find(el => el.id === annotation.id)) {
-        return pendingAnnotations.filter(el => el.id !== annotation.id);
+    setPendingAnnotations((pendingAnnotations) => {
+      if (pendingAnnotations.find((el) => el.id === annotation.id)) {
+        return pendingAnnotations.filter((el) => el.id !== annotation.id);
       }
       return pendingAnnotations;
     });
@@ -347,7 +347,7 @@ const AnnotationPreviewSidebar = ({
   const onLinkResource = useCallback(() => {
     openResourceSelector({
       selectionMode: 'single',
-      onSelect: item => {
+      onSelect: (item) => {
         setSelectedAnnotations([
           {
             ...selectedAnnotation!,
@@ -461,7 +461,7 @@ const AnnotationPreviewSidebar = ({
               pageSize={1}
               showQuickJumper={false}
               current={currentIndex + 1 || 1}
-              onChange={i => {
+              onChange={(i) => {
                 setCurrentIndex(i - 1);
               }}
               style={{ marginTop: '10px' }}
@@ -489,13 +489,13 @@ const AnnotationPreviewSidebar = ({
             <InfoCell noBorders>
               <ReviewTagBar
                 annotation={annotation}
-                onApprove={curAnnotation =>
+                onApprove={(curAnnotation) =>
                   onUpdateAnnotationStatus(
                     curAnnotation as CogniteAnnotation,
                     'verified'
                   )
                 }
-                onReject={curAnnotation =>
+                onReject={(curAnnotation) =>
                   onUpdateAnnotationStatus(
                     curAnnotation as CogniteAnnotation,
                     'deleted'
@@ -566,7 +566,7 @@ const AnnotationPreviewSidebar = ({
             isEditingMode ? (
               <CreateAnnotationForm
                 annotation={selectedAnnotation}
-                updateAnnotation={annotation =>
+                updateAnnotation={(annotation) =>
                   setSelectedAnnotations([annotation])
                 }
                 onLinkResource={onLinkResource}

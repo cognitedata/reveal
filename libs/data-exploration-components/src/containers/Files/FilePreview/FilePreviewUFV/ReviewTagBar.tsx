@@ -1,5 +1,5 @@
 import { A, Body, Button, Icon } from '@cognite/cogs.js';
-import { ResourceIcons } from 'components';
+import { ResourceIcons } from '@data-exploration-components/components';
 import { ResourceType } from 'index';
 import React from 'react';
 import styled from 'styled-components';

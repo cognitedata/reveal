@@ -26,6 +26,12 @@
         "apps/platypus/src/environments/environment.ts"
       ],
       "@data-exploration-app/*": ["apps/data-exploration/src/app/*"],
+      "@data-exploration-components/*": [
+        "libs/data-exploration-components/src/*"
+      ],
+      "@cognite/data-exploration-components": [
+        "libs/data-exploration-components/index.ts"
+      ],
       "@platypus-core/*": ["libs/platypus-core/src/lib/*"],
       "@platypus/mock-data": ["libs/mock-data/src/index.ts"],
       "@platypus/platypus-common-utils": [

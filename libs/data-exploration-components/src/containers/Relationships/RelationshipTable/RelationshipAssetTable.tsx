@@ -7,7 +7,7 @@ import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 import { RelationshipTableProps } from './RelationshipTable';
 
 import { EmptyState } from 'components/EmpyState/EmptyState';
-import { ResultCount } from 'components';
+import { ResultCount } from '@data-exploration-components/components';
 import { ColumnDef } from '@tanstack/react-table';
 
 export function RelationshipAssetTable({
@@ -46,7 +46,7 @@ export function RelationshipAssetTable({
       hasNextPage={hasNextPage}
       isLoadingMore={isLoading}
       hideColumnToggle
-      onRowClick={row => onItemClicked(row.id)}
+      onRowClick={(row) => onItemClicked(row.id)}
     />
   );
 }

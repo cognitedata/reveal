@@ -15,7 +15,10 @@ import React from 'react';
 
 import styled, { css } from 'styled-components';
 
-import { HighlightCell, TimeDisplay } from 'components';
+import {
+  HighlightCell,
+  TimeDisplay,
+} from '@data-exploration-components/components';
 
 import { DASH, isNumber, mapFileType, METADATA_KEY_SEPARATOR } from 'utils';
 import { createLink } from '@cognite/cdf-utilities';
@@ -125,7 +128,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     accessorKey: 'labels',
     cell: ({ getValue }) => (
       <Flex gap={2} wrap="wrap">
-        {getValue<{ externalId: string }[]>()?.map(label => (
+        {getValue<{ externalId: string }[]>()?.map((label) => (
           <Tooltip content={label.externalId} key={uniqueId()}>
             <StyledLabel variant="unknown" size="small">
               {label.externalId}
@@ -195,7 +198,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       const data = row.original;
       const ids = getValue()
         ? [{ id: getValue<number>() }]
-        : data.assetIds?.map(val => ({ id: val }));
+        : data.assetIds?.map((val) => ({ id: val }));
 
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const { data: items, isFetched } = useCdfItems<Asset>(
@@ -215,7 +218,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
         const rootAsset = items[0];
         return (
           <Button
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             type="link"
             target="_blank"
             href={createLink(`/explore/asset/${rootAsset.id}`)}
@@ -232,9 +235,9 @@ export const ResourceTableColumns: ResourceTableHashMap = {
           openOnHover
           content={
             <Menu>
-              {items?.map(item => (
+              {items?.map((item) => (
                 <Menu.Item
-                  onClick={e => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
                   href={createLink(`/explore/asset/${item.id}`)}
                   target="_blank"
                   key={item.id}
@@ -322,7 +325,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       return isLoading || rootAsset?.name ? (
         <Button
           type="link"
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
           target="_blank"
           href={createLink(`/explore/asset/${getValue()}`)}
           icon="ArrowUpRight"
@@ -363,7 +366,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   metadata: (key: string, accessorFn?: (row: any) => string) => {
     return {
       id: `metadata${METADATA_KEY_SEPARATOR}${key}`,
-      accessorFn: row =>
+      accessorFn: (row) =>
         accessorFn ? accessorFn(row) : row?.metadata?.[key] || DASH,
       header: key,
       meta: {

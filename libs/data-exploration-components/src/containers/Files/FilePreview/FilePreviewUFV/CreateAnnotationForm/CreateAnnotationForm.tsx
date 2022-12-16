@@ -1,7 +1,7 @@
 import React from 'react';
 import { Input, Button, Title, Icon, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Loader, SpacedRow } from 'components';
+import { Loader, SpacedRow } from '@data-exploration-components/components';
 import { renderTitle, lightGrey } from 'utils';
 import { useCdfItem, SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { IdEither } from '@cognite/sdk';
@@ -140,7 +140,7 @@ export const CreateAnnotationForm = ({
         variant="noBorder"
         placeholder="Label"
         value={getExtendedAnnotationLabel(annotation)}
-        onChange={e =>
+        onChange={(e) =>
           updateAnnotation(
             setExtendedAnnotationLabel(annotation, e.target.value)
           )
@@ -150,7 +150,7 @@ export const CreateAnnotationForm = ({
         variant="noBorder"
         placeholder="Description"
         value={getExtendedAnnotationDescription(annotation)}
-        onChange={e =>
+        onChange={(e) =>
           updateAnnotation(
             setExtendedAnnotationDescription(annotation, e.target.value)
           )

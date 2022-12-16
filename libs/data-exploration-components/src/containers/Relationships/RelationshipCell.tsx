@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRelationships } from 'hooks/RelationshipHooks';
-import { Loader } from 'components';
+import { Loader } from '@data-exploration-components/components';
 import { ResourceType } from 'types';
 import { RelationshipCount } from 'containers/Relationships/RelationshipCount';
 

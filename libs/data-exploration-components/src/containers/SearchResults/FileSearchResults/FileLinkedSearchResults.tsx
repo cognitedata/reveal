@@ -2,7 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { FileInfo } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
 
-import { AggregatedFilterV2, MetadataFilterV2 } from 'components';
+import {
+  AggregatedFilterV2,
+  MetadataFilterV2,
+} from '@data-exploration-components/components';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 
@@ -47,12 +50,12 @@ const LinkedFileFilter = ({
         aggregator="mimeType"
         title="Mime type"
         value={filter.mimeType}
-        setValue={newValue => onFilterChange({ mimeType: newValue })}
+        setValue={(newValue) => onFilterChange({ mimeType: newValue })}
       />
       <MetadataFilterV2
         items={items}
         value={filter.metadata}
-        setValue={newValue => onFilterChange({ metadata: newValue })}
+        setValue={(newValue) => onFilterChange({ metadata: newValue })}
       />
     </PreviewFilterDropdown>
   );
@@ -88,7 +91,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
   const handleFilterChange = (newValue: InternalFilesFilters) => {
-    setFilter(prevState => ({ ...prevState, ...newValue }));
+    setFilter((prevState) => ({ ...prevState, ...newValue }));
   };
 
   return (
@@ -118,7 +121,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
                 filter={filesFilter}
                 currentView={currentView}
                 setCurrentView={setCurrentView}
-                onItemClicked={file => onClick(file)}
+                onItemClicked={(file) => onClick(file)}
               />
             </GroupingTableWrapper>
           </GroupingTableContainer>
@@ -128,7 +131,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
         <FileTable
           id="file-linked-search-results"
           query={debouncedQuery}
-          onRowClick={file => onClick(file)}
+          onRowClick={(file) => onClick(file)}
           data={items}
           // enableSorting
           // onSort={props => setSortBy(props)}

@@ -24,7 +24,7 @@ import {
   ListItem,
   SpacedRow,
   ResourceIcons,
-} from 'components';
+} from '@data-exploration-components/components';
 import { TimeseriesSmallPreview } from 'containers/Timeseries';
 import { FileSmallPreview } from 'containers/Files';
 import { SelectableItemProps, SmallPreviewProps } from 'types';
@@ -228,7 +228,7 @@ export const AssetSmallPreview = ({
                 </ListItem>
               }
             >
-              {files.map(file => (
+              {files.map((file) => (
                 <RowItem
                   onClick={() =>
                     setSelected({
@@ -267,7 +267,7 @@ export const AssetSmallPreview = ({
                 </ListItem>
               }
             >
-              {timeseries.map(time => (
+              {timeseries.map((time) => (
                 <RowItem
                   onClick={() =>
                     setSelected({

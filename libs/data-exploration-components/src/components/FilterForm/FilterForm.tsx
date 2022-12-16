@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Select, SpacedRow } from 'components';
+import { Select, SpacedRow } from '@data-exploration-components/components';
 import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
 import { useAssetMetadataValues } from 'hooks/MetadataAggregateHooks';
@@ -33,7 +33,7 @@ const Tags = styled.div`
 
 type TagProps = { isLocked: boolean };
 const Tag = styled.div<TagProps>(
-  props => css`
+  (props) => css`
     display: inline-flex;
     align-items: center;
     background: ${Colors['midblue-6'].hex()};
@@ -169,9 +169,9 @@ const FilterItem = ({
       }
       return a.localeCompare(b);
     })
-    .map(category => ({
+    .map((category) => ({
       label: category,
-      options: categories[category].map(el => ({
+      options: categories[category].map((el) => ({
         label: `${el.value} ${el.count ? `(${el.count})` : ''}`,
         value: el.value,
         disabled: lockedFilters.includes(el.value),
@@ -184,7 +184,7 @@ const FilterItem = ({
           label: `${el.value} (${el.count})`,
           value: el.value,
         }))
-      : metadata[key]?.map(el => ({ label: el, value: el }));
+      : metadata[key]?.map((el) => ({ label: el, value: el }));
 
   return (
     <>
@@ -193,7 +193,7 @@ const FilterItem = ({
           <Select
             creatable
             styles={{
-              menu: style => ({
+              menu: (style) => ({
                 ...style,
                 width: '100%',
                 maxWidth: '320px',
@@ -206,7 +206,7 @@ const FilterItem = ({
                 ? { label: selectedKey, value: selectedKey }
                 : undefined
             }
-            onChange={item => {
+            onChange={(item) => {
               setSelectedKey(item.value || null);
               setSelectedValue(null);
             }}
@@ -218,7 +218,7 @@ const FilterItem = ({
           <Select
             creatable
             styles={{
-              menu: style => ({
+              menu: (style) => ({
                 ...style,
                 width: '100%',
                 maxWidth: '320px',
@@ -231,7 +231,7 @@ const FilterItem = ({
                 ? { label: selectedValue, value: selectedValue }
                 : undefined
             }
-            onChange={item => {
+            onChange={(item) => {
               setSelectedValue(item.value || null);
             }}
             options={selectedKey ? getMetadataValues(selectedKey) : []}
@@ -293,7 +293,7 @@ export const FilterTag = ({
       <Icon
         type="Close"
         className="delete"
-        onClick={ev => {
+        onClick={(ev) => {
           ev.stopPropagation();
           onDeleteClicked();
         }}
@@ -338,10 +338,10 @@ export const FilterForm = ({
   }>();
 
   if (keys && keys.length > 0) {
-    keys.forEach(el => allKeys.add(el));
+    keys.forEach((el) => allKeys.add(el));
   } else {
-    Object.keys(metadataCategory).forEach(el => allKeys.add({ value: el }));
-    Object.keys(metadata).forEach(el => allKeys.add({ value: el }));
+    Object.keys(metadataCategory).forEach((el) => allKeys.add({ value: el }));
+    Object.keys(metadata).forEach((el) => allKeys.add({ value: el }));
   }
 
   const categories = [...allKeys].reduce(
@@ -363,8 +363,8 @@ export const FilterForm = ({
   return (
     <Wrapper>
       {Object.keys(filters)
-        .filter(el => editingKeys.includes(el))
-        .map(key => (
+        .filter((el) => editingKeys.includes(el))
+        .map((key) => (
           <FilterItem
             key={key}
             categories={categories}
@@ -374,15 +374,15 @@ export const FilterForm = ({
             initialValue={filters[key]}
             setFilter={(newKey, newValue) => {
               setFilters({ ...filters, [newKey]: newValue });
-              setEditingKeys(editingKeys.filter(el => el !== key));
+              setEditingKeys(editingKeys.filter((el) => el !== key));
             }}
-            onCancel={shouldDelete => {
+            onCancel={(shouldDelete) => {
               if (shouldDelete) {
                 const newFilter = { ...filters };
                 delete newFilter[key];
                 setFilters(newFilter);
               }
-              setEditingKeys(editingKeys.filter(el => el !== key));
+              setEditingKeys(editingKeys.filter((el) => el !== key));
             }}
           />
         ))}
@@ -397,8 +397,8 @@ export const FilterForm = ({
         useAggregates={useAggregates}
       />
       <Tags>
-        {Object.keys(filters).map(el => {
-          const isLocked = lockedFilters.some(filter => filter === el);
+        {Object.keys(filters).map((el) => {
+          const isLocked = lockedFilters.some((filter) => filter === el);
           return (
             <FilterTag
               key={el}

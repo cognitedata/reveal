@@ -2,7 +2,10 @@ import React, { useMemo } from 'react';
 import { FileInfo as File } from '@cognite/sdk';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import styled, { css } from 'styled-components';
-import { TimeDisplay, FileThumbnail } from 'components';
+import {
+  TimeDisplay,
+  FileThumbnail,
+} from '@data-exploration-components/components';
 import { Body, Colors } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { SelectableItemsProps } from 'types';
@@ -62,7 +65,7 @@ export const FileGridPreview = ({
 };
 
 const PreviewCell = styled.div<{ isActive: boolean; isPreviewing: boolean }>(
-  props => css`
+  (props) => css`
     height: 400px;
     padding: 12px;
     cursor: pointer;

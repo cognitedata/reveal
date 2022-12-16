@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Dropdown } from '@cognite/cogs.js';
 import { useDisclosure } from 'hooks';
-import { InfoPanel } from 'components';
+import { InfoPanel } from '@data-exploration-components/components';
 import { useMetrics } from 'hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from 'constants/metrics';
 

@@ -6,7 +6,7 @@ import {
   ProposedCogniteAnnotation,
   convertCogniteAnnotationToIAnnotation,
 } from '@cognite/react-picture-annotation';
-import { Loader } from 'components';
+import { Loader } from '@data-exploration-components/components';
 import styled from 'styled-components';
 import {
   isFilePreviewable,
@@ -118,7 +118,7 @@ export const FilePreview = ({
           file={file}
           creatable={creatable}
           annotations={getAnnotations()}
-          renderItemPreview={annotation => (
+          renderItemPreview={(annotation) => (
             <AnnotationHoverPreview annotation={annotation} />
           )}
           hoverable

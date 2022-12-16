@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFilePreviewURL } from 'hooks/sdk';
 import { Body, DocumentIcon } from '@cognite/cogs.js';
-import { Loader } from 'components';
+import { Loader } from '@data-exploration-components/components';
 import { FileInfo } from '@cognite/sdk';
 import { Document } from 'domain/documents';
 

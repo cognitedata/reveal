@@ -21,7 +21,7 @@ import {
   CogniteEvent,
 } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { DetailsItem, InfoGrid } from 'components';
+import { DetailsItem, InfoGrid } from '@data-exploration-components/components';
 import { useResourcePreviewUFV } from 'context';
 import { FileDetails } from 'containers/Files';
 import { getIdParam, extractUniqueIds } from 'utils';
@@ -144,27 +144,27 @@ export const FilePreviewOverview = ({
 
   const onAssetClickedCallback =
     onAssetClicked ||
-    (item => {
+    ((item) => {
       openPreview({ item: { id: item.id, type: 'asset' } });
     });
   const onFileClickedCallback =
     onFileClicked ||
-    (item => {
+    ((item) => {
       openPreview({ item: { id: item.id, type: 'file' } });
     });
   const onTimeseriesClickedCallback =
     onTimeseriesClicked ||
-    (item => {
+    ((item) => {
       openPreview({ item: { id: item.id, type: 'timeSeries' } });
     });
   const onEventClickedCallback =
     onEventClicked ||
-    (item => {
+    ((item) => {
       openPreview({ item: { id: item.id, type: 'event' } });
     });
   const onSequenceClickedCallback =
     onSequenceClicked ||
-    (item => {
+    ((item) => {
       openPreview({ item: { id: item.id, type: 'sequence' } });
     });
   const categorizedAnnotations: CategorizedAnnotations = {
@@ -177,7 +177,7 @@ export const FilePreviewOverview = ({
     sequence: { annotations: [], ids: new Set() },
   };
 
-  annotations.forEach(annotation => {
+  annotations.forEach((annotation) => {
     if (
       annotation.resourceType &&
       (annotation.resourceExternalId || annotation.resourceId)
@@ -239,7 +239,7 @@ export const FilePreviewOverview = ({
         variant="noBorder"
         icon="Search"
         placeholder="Search for resource in file..."
-        onChange={ev => setQuery(ev.target.value)}
+        onChange={(ev) => setQuery(ev.target.value)}
         value={query}
       />
       <Collapse
@@ -267,7 +267,7 @@ export const FilePreviewOverview = ({
           }
         >
           <div>
-            {assets.map(asset => (
+            {assets.map((asset) => (
               <FilePreviewOverview.AssetItem
                 onItemClick={() => asset && onAssetClickedCallback(asset)}
                 key={asset.id}
@@ -275,7 +275,7 @@ export const FilePreviewOverview = ({
                 currentPage={page}
                 query={query}
                 annotations={categorizedAnnotations.asset.annotations.filter(
-                  el =>
+                  (el) =>
                     asset &&
                     ((el.resourceId && el.resourceId === asset.id) ||
                       (el.resourceExternalId &&
@@ -307,7 +307,7 @@ export const FilePreviewOverview = ({
           }
         >
           <div>
-            {files.map(linkedFile => (
+            {files.map((linkedFile) => (
               <FilePreviewOverview.FileItem
                 onItemClick={() => file && onFileClickedCallback(file)}
                 key={linkedFile.id}
@@ -315,7 +315,7 @@ export const FilePreviewOverview = ({
                 currentPage={page}
                 query={query}
                 annotations={categorizedAnnotations.file.annotations.filter(
-                  el =>
+                  (el) =>
                     linkedFile &&
                     ((el.resourceId && el.resourceId === linkedFile.id) ||
                       (el.resourceExternalId &&
@@ -347,7 +347,7 @@ export const FilePreviewOverview = ({
           }
         >
           <div>
-            {timeseries.map(ts => (
+            {timeseries.map((ts) => (
               <FilePreviewOverview.TimeseriesItem
                 onItemClick={() => ts && onTimeseriesClickedCallback(ts)}
                 key={ts.id}
@@ -355,7 +355,7 @@ export const FilePreviewOverview = ({
                 currentPage={page}
                 query={query}
                 annotations={categorizedAnnotations.timeSeries.annotations.filter(
-                  el =>
+                  (el) =>
                     ts &&
                     ((el.resourceId && el.resourceId === ts.id) ||
                       (el.resourceExternalId &&
@@ -387,7 +387,7 @@ export const FilePreviewOverview = ({
           }
         >
           <div>
-            {events.map(event => (
+            {events.map((event) => (
               <FilePreviewOverview.EventItem
                 onItemClick={() => event && onEventClickedCallback(event)}
                 key={event.id}
@@ -395,7 +395,7 @@ export const FilePreviewOverview = ({
                 currentPage={page}
                 query={query}
                 annotations={categorizedAnnotations.event.annotations.filter(
-                  el =>
+                  (el) =>
                     event &&
                     ((el.resourceId && el.resourceId === event.id) ||
                       (el.resourceExternalId &&
@@ -427,7 +427,7 @@ export const FilePreviewOverview = ({
           }
         >
           <div>
-            {sequences.map(sequence => (
+            {sequences.map((sequence) => (
               <FilePreviewOverview.SequenceItem
                 onItemClick={() =>
                   sequence && onSequenceClickedCallback(sequence)
@@ -437,7 +437,7 @@ export const FilePreviewOverview = ({
                 currentPage={page}
                 query={query}
                 annotations={categorizedAnnotations.sequence.annotations.filter(
-                  el =>
+                  (el) =>
                     sequence &&
                     ((el.resourceId && el.resourceId === sequence.id) ||
                       (el.resourceExternalId &&
@@ -457,7 +457,7 @@ export const FilePreviewOverview = ({
       <FileDetails file={file} />
       {file && file!.metadata && (
         <InfoGrid noBorders>
-          {Object.keys(file!.metadata).map(key => (
+          {Object.keys(file!.metadata).map((key) => (
             <DetailsItem name={key} value={file!.metadata![key]} />
           ))}
         </InfoGrid>

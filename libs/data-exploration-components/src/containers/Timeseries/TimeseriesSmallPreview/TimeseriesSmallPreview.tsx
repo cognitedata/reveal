@@ -10,7 +10,7 @@ import {
   DetailsItem,
   SpacedRow,
   ResourceIcons,
-} from 'components';
+} from '@data-exploration-components/components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { TimeseriesChart } from 'containers/Timeseries';
 import { SmallPreviewProps, SelectableItemProps } from 'types';

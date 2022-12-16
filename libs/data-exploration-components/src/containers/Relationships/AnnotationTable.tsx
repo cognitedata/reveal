@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import uniqBy from 'lodash/uniqBy';
-import { Loader } from 'components';
+import { Loader } from '@data-exploration-components/components';
 import { SelectableItemsProps, ResourceType, convertResourceType } from 'types';
 import { Alert } from 'antd';
 import {
@@ -38,7 +38,7 @@ export function AnnotationTable({
   const ids = useMemo(
     () =>
       uniqBy(
-        taggedAnnotations.map(taggedAnnotation => {
+        taggedAnnotations.map((taggedAnnotation) => {
           const resourceExternalId =
             getResourceExternalIdFromTaggedAnnotation(taggedAnnotation);
           if (resourceExternalId) {

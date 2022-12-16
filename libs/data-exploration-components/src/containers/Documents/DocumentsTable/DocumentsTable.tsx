@@ -10,7 +10,11 @@ import { DASH } from 'utils';
 import { useGetHiddenColumns } from 'hooks';
 import { Body } from '@cognite/cogs.js';
 
-import { TimeDisplay, RootAsset, ResourceTableColumns } from 'components';
+import {
+  TimeDisplay,
+  RootAsset,
+  ResourceTableColumns,
+} from '@data-exploration-components/components';
 
 export type DocumentWithRelationshipLabels = Document;
 
@@ -50,7 +54,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
       return (metadataKeys || []).map((key: string) =>
         ResourceTableColumns.metadata(
           key,
-          row => row?.sourceFile?.metadata?.[key] || DASH
+          (row) => row?.sourceFile?.metadata?.[key] || DASH
         )
       );
     }, [metadataKeys]);

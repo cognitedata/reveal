@@ -12,7 +12,7 @@ import { Flex } from '@cognite/cogs.js';
 
 import { InternalFilesFilters } from 'domain/files';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { useResultCount } from 'components';
+import { useResultCount } from '@data-exploration-components/components';
 
 export const FileSearchResults = ({
   query = '',
@@ -61,7 +61,7 @@ export const FileSearchResults = ({
       totalCount={itemCount}
       isHaveParent={Boolean(parentResource)}
       relatedResourceType={relatedResourceType}
-      onFileClicked={file => {
+      onFileClicked={(file) => {
         onClick(file);
         return true;
       }}
@@ -87,7 +87,7 @@ export const FileSearchResults = ({
         />
       }
       data={items}
-      onRowClick={file => onClick(file)}
+      onRowClick={(file) => onClick(file)}
       fetchMore={fetchMore}
       showLoadButton
       hasNextPage={canFetchMore}

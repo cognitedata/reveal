@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Body } from '@cognite/cogs.js';
-import { DatePicker, Select, RangePicker } from 'components';
+import {
+  DatePicker,
+  Select,
+  RangePicker,
+} from '@data-exploration-components/components';
 import { TIME_SELECT } from 'containers';
 import { DateRange } from '@cognite/sdk';
 
@@ -74,7 +78,7 @@ export const DateFilter = ({
         {title}
       </Body>
       <Select
-        value={options.find(el => el.value === period)!}
+        value={options.find((el) => el.value === period)!}
         options={options}
         isSearchable={false}
         isClearable={false}
@@ -128,7 +132,7 @@ export const DateFilter = ({
         <div style={{ marginTop: 8 }}>
           <DatePicker
             initialDate={new Date(startDate)}
-            onDateChanged={newDate => {
+            onDateChanged={(newDate) => {
               if (period === 'after') {
                 setValue({ min: newDate.valueOf() });
               } else {
@@ -142,7 +146,7 @@ export const DateFilter = ({
         <div style={{ marginTop: 8 }}>
           <RangePicker
             initialRange={[new Date(startDate), new Date(endDate)]}
-            onRangeChanged={dates => {
+            onRangeChanged={(dates) => {
               setValue({ min: dates[0].valueOf(), max: dates[1].valueOf() });
             }}
           />

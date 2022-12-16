@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Table } from 'components/Table/Table';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
-import { ResultCount } from 'components';
+import { ResultCount } from '@data-exploration-components/components';
 import { RelationshipTableProps } from './RelationshipTable';
 import { ResourceTableColumns } from 'components/Table/columns';
 
@@ -56,7 +56,7 @@ export function RelationshipSequenceTable({
       fetchMore={fetchNextPage}
       hasNextPage={hasNextPage}
       isLoadingMore={isLoading}
-      onRowClick={row => onItemClicked(row.id)}
+      onRowClick={(row) => onItemClicked(row.id)}
     />
   );
 }

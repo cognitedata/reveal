@@ -17,7 +17,7 @@ import {
 } from 'domain/events';
 import { TableSortBy } from 'components/Table';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { useResultCount } from 'components';
+import { useResultCount } from '@data-exploration-components/components';
 
 export const EventSearchResults = ({
   query = '',

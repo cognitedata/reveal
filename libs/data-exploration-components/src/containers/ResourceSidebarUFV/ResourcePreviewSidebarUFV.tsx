@@ -6,7 +6,7 @@ import { FileSmallPreviewUFV } from 'containers/Files';
 import { SequenceSmallPreview } from 'containers/Sequences';
 import { TimeseriesSmallPreview } from 'containers/Timeseries';
 import { EventSmallPreview } from 'containers/Events';
-import { Loader } from 'components';
+import { Loader } from '@data-exploration-components/components';
 import { ResourceItem, SelectableItemProps } from 'types';
 
 type Props = {

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Body, Button } from '@cognite/cogs.js';
-import { FilterForm } from 'components';
+import { FilterForm } from '@data-exploration-components/components';
 import { mergeUniqueMetadataKeys } from './utils';
 
 const FilterHeader = styled.div`

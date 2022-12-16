@@ -12,7 +12,7 @@ import {
   ListItem,
   SpacedRow,
   ResourceIcons,
-} from 'components';
+} from '@data-exploration-components/components';
 import { isFilePreviewable, getIdParam } from 'utils';
 import { SmallPreviewProps, SelectableItemProps } from 'types';
 import { FileDetails, FilePreviewUFV } from 'containers/Files';
@@ -50,7 +50,7 @@ export const FileSmallPreviewUFV = ({
   const annotations = useEventAnnotations(fileId);
 
   const fileIds = annotations
-    .map(annotation =>
+    .map((annotation) =>
       annotation.resourceType === 'file'
         ? annotation.resourceExternalId || annotation.resourceId
         : false
@@ -59,7 +59,7 @@ export const FileSmallPreviewUFV = ({
       Boolean(fileIdOrExternalId)
     );
   const assetIds = annotations
-    .map(annotation =>
+    .map((annotation) =>
       annotation.resourceType === 'asset'
         ? annotation.resourceExternalId || annotation.resourceId
         : false

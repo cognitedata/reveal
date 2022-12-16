@@ -11,7 +11,7 @@ import {
   SegmentedControl,
 } from '@cognite/cogs.js';
 import { Breadcrumb } from 'antd';
-import { ResourceIcons } from 'components';
+import { ResourceIcons } from '@data-exploration-components/components';
 import capitalize from 'lodash/capitalize';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
@@ -48,7 +48,7 @@ const AnnotationsList = ({
     filteredList.map(getResourceIdFromExtendedAnnotation)
   )
     .filter(isNotUndefined)
-    .map(id => ({ id }));
+    .map((id) => ({ id }));
 
   const { data: assetsResources = [] } = useCdfItems<Asset>(
     'assets',
@@ -61,9 +61,9 @@ const AnnotationsList = ({
   const filteredItemWithName: (ExtendedAnnotation & { label: string })[] =
     useMemo(
       () =>
-        filteredList.map(item => {
+        filteredList.map((item) => {
           const assetDetail = assetsResources.find(
-            resource =>
+            (resource) =>
               resource.id === getResourceIdFromExtendedAnnotation(item)
           );
           const annotationLabel = getExtendedAnnotationLabel(item);
@@ -178,7 +178,7 @@ const AnnotationsList = ({
             {filteredList.length} {type}{' '}
           </div>
           {filteredItemWithName.length ? (
-            filteredItemWithName.map(an =>
+            filteredItemWithName.map((an) =>
               an ? <AnnotationItem key={an.id} annotation={an} /> : null
             )
           ) : (

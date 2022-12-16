@@ -1,6 +1,9 @@
 import React from 'react';
 import { CogniteEvent } from '@cognite/sdk';
-import { TimeDisplay, GeneralDetails } from 'components';
+import {
+  TimeDisplay,
+  GeneralDetails,
+} from '@data-exploration-components/components';
 
 export const EventDetails = ({ event }: { event: CogniteEvent }) => (
   <GeneralDetails>

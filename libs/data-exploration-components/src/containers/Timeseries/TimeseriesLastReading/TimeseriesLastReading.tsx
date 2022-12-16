@@ -1,5 +1,5 @@
 import { Body } from '@cognite/cogs.js';
-import { TimeDisplay } from 'components';
+import { TimeDisplay } from '@data-exploration-components/components';
 import { useTimeseriesLatestDatapointQuery } from 'hooks/Timeseries/useTimeseriesLatestDatapointQuery';
 import React from 'react';
 

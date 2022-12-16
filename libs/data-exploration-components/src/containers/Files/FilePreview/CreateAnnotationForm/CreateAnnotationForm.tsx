@@ -2,7 +2,7 @@ import React from 'react';
 import { Input, Button, Title, Icon, Body } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
-import { Loader, SpacedRow } from 'components';
+import { Loader, SpacedRow } from '@data-exploration-components/components';
 import { CogniteAnnotation } from '@cognite/annotations';
 import { renderTitle, lightGrey } from 'utils';
 import { useCdfItem, SdkResourceType } from '@cognite/sdk-react-query-hooks';
@@ -125,7 +125,7 @@ export const CreateAnnotationForm = ({
         variant="noBorder"
         placeholder="Label"
         value={annotation.label}
-        onChange={e =>
+        onChange={(e) =>
           updateAnnotation({ ...annotation, label: e.target.value })
         }
       />
@@ -133,7 +133,7 @@ export const CreateAnnotationForm = ({
         variant="noBorder"
         placeholder="Description"
         value={annotation.description}
-        onChange={e =>
+        onChange={(e) =>
           updateAnnotation({
             ...annotation,
             description: e.target.value,

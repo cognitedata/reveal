@@ -1,7 +1,7 @@
 import React from 'react';
 import { OptionType, Tooltip } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
-import { MultiSelect } from 'components';
+import { MultiSelect } from '@data-exploration-components/components';
 import { ResourceType } from 'types';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { FilterFacetTitle } from '../FilterFacetTitle';
@@ -52,7 +52,7 @@ export const LabelFilterV2 = ({
       <>
         <FilterFacetTitle>Labels</FilterFacetTitle>
         <MultiSelect
-          options={labels.map(el => ({
+          options={labels.map((el) => ({
             label: el.name,
             value: el.externalId,
           }))}

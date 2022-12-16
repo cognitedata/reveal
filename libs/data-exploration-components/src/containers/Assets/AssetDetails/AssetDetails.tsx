@@ -1,6 +1,9 @@
 import React from 'react';
 import { Asset } from '@cognite/sdk';
-import { TimeDisplay, GeneralDetails } from 'components';
+import {
+  TimeDisplay,
+  GeneralDetails,
+} from '@data-exploration-components/components';
 import { useDetailedMappingsByAssetIdQuery } from 'domain/threeD';
 
 type Props = {
@@ -38,7 +41,7 @@ export const AssetDetails = ({ asset }: Props) => {
         />
       )}
       <GeneralDetails.LabelsItem
-        labels={asset.labels?.map(label => label.externalId)}
+        labels={asset.labels?.map((label) => label.externalId)}
       />
     </GeneralDetails>
   );

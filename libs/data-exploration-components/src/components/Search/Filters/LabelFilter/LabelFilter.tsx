@@ -2,7 +2,7 @@ import React from 'react';
 import { Body, Tooltip } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
 import { OptionsType, OptionTypeBase } from 'react-select';
-import { MultiSelect } from 'components';
+import { MultiSelect } from '@data-exploration-components/components';
 import { ResourceType } from 'types';
 import { useList } from '@cognite/sdk-react-query-hooks';
 
@@ -24,13 +24,13 @@ export const LabelFilter = ({
   );
 
   const currentLabels = (value || [])
-    .map(({ externalId }) => labels.find(el => el.externalId === externalId))
-    .filter(el => !!el) as LabelDefinition[];
+    .map(({ externalId }) => labels.find((el) => el.externalId === externalId))
+    .filter((el) => !!el) as LabelDefinition[];
 
   const setLabel = (ids?: string[]) => {
     const newFilters =
       ids && ids.length > 0
-        ? ids.map(externalId => ({ externalId }))
+        ? ids.map((externalId) => ({ externalId }))
         : undefined;
     setValue(newFilters);
   };
@@ -50,19 +50,21 @@ export const LabelFilter = ({
           Labels
         </Body>
         <MultiSelect
-          options={labels.map(el => ({
+          options={labels.map((el) => ({
             label: el.name,
             value: el.externalId,
           }))}
           isDisabled={isError || !allowLabels}
-          onChange={newValue => {
+          onChange={(newValue) => {
             setLabel(
               newValue
-                ? (newValue as OptionsType<OptionTypeBase>).map(el => el.value)
+                ? (newValue as OptionsType<OptionTypeBase>).map(
+                    (el) => el.value
+                  )
                 : undefined
             );
           }}
-          value={currentLabels?.map(el => ({
+          value={currentLabels?.map((el) => ({
             label: el.name,
             value: el.externalId,
           }))}

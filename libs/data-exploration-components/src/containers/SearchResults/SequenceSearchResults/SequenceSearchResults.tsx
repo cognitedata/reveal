@@ -16,7 +16,7 @@ import {
 } from 'domain/sequence';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 import { TableSortBy } from 'components/Table';
-import { useResultCount } from 'components';
+import { useResultCount } from '@data-exploration-components/components';
 
 export const SequenceSearchResults = ({
   query = '',
@@ -106,7 +106,7 @@ export const SequenceSearchResults = ({
         />
       }
       showLoadButton
-      onRowClick={sequence => onClick(sequence)}
+      onRowClick={(sequence) => onClick(sequence)}
       enableSorting={enableAdvancedFilters}
       onSort={setSortBy}
       relatedResourceType={relatedResourceType}

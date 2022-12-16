@@ -3,7 +3,7 @@ import { Body, Button, Icon } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Tooltip } from 'antd';
-import { ResourceIcons } from 'components';
+import { ResourceIcons } from '@data-exploration-components/components';
 import { AppContext } from 'context/AppContext';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
@@ -38,18 +38,22 @@ const FileReview = ({
   const labelsAccess = labelsReadAcl && labelsWriteAcl;
 
   const linkedAnnotations = annotations.filter(
-    an => !!an.resourceId || !!an.resourceExternalId
+    (an) => !!an.resourceId || !!an.resourceExternalId
   );
-  const pendingAnnotations = annotations.filter(a => a.status === 'unhandled');
+  const pendingAnnotations = annotations.filter(
+    (a) => a.status === 'unhandled'
+  );
 
-  const assetAnnotations = annotations.filter(a => a.resourceType === 'asset');
+  const assetAnnotations = annotations.filter(
+    (a) => a.resourceType === 'asset'
+  );
 
-  const fileAnnotations = annotations.filter(a => a.resourceType === 'file');
+  const fileAnnotations = annotations.filter((a) => a.resourceType === 'file');
   const pendingAssetAnnotations = pendingAnnotations.filter(
-    a => a.resourceType === 'asset'
+    (a) => a.resourceType === 'asset'
   );
   const pendingFileAnnotations = pendingAnnotations.filter(
-    a => a.resourceType === 'file'
+    (a) => a.resourceType === 'file'
   );
 
   return (

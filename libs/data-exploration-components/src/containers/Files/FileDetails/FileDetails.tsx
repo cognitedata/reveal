@@ -1,6 +1,9 @@
 import React from 'react';
 import { FileInfo } from '@cognite/sdk';
-import { TimeDisplay, GeneralDetails } from 'components';
+import {
+  TimeDisplay,
+  GeneralDetails,
+} from '@data-exploration-components/components';
 
 export const FileDetails = ({ file }: { file: FileInfo }) => (
   <GeneralDetails>
@@ -17,7 +20,7 @@ export const FileDetails = ({ file }: { file: FileInfo }) => (
       type="file"
     />
     <GeneralDetails.LabelsItem
-      labels={file.labels?.map(label => label.externalId)}
+      labels={file.labels?.map((label) => label.externalId)}
     />
     <GeneralDetails.Item
       name="Uploaded at"

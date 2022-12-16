@@ -4,7 +4,10 @@ import { Timeseries } from '@cognite/sdk';
 import { TimeseriesChart } from 'containers/Timeseries';
 import styled from 'styled-components';
 import { Body, Tooltip, Icon, Colors } from '@cognite/cogs.js';
-import { GridCellProps, LatestDatapoint } from 'components';
+import {
+  GridCellProps,
+  LatestDatapoint,
+} from '@data-exploration-components/components';
 import { DateRangeProps } from 'types';
 
 export const TimeseriesSparklineCard = ({

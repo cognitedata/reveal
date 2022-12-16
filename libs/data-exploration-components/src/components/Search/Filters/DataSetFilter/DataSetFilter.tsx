@@ -2,7 +2,7 @@ import React from 'react';
 import { Body, Tooltip } from '@cognite/cogs.js';
 import { DataSet, IdEither } from '@cognite/sdk';
 import { OptionsType, OptionTypeBase } from 'react-select';
-import { MultiSelect } from 'components';
+import { MultiSelect } from '@data-exploration-components/components';
 import { ResourceType, convertResourceType } from 'types';
 import { useRelevantDatasets, DataSetWCount } from 'hooks/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
@@ -26,7 +26,7 @@ export const DataSetFilter = ({
   );
   const setDataSetFilter = (ids?: number[]) => {
     const newFilters =
-      ids && ids.length > 0 ? ids.map(id => ({ id })) : undefined;
+      ids && ids.length > 0 ? ids.map((id) => ({ id })) : undefined;
     setValue(newFilters);
   };
 
@@ -62,14 +62,16 @@ export const DataSetFilter = ({
         <MultiSelect
           options={validDatasets?.map(formatOption) || []}
           isDisabled={isError}
-          onChange={newValue => {
+          onChange={(newValue) => {
             setDataSetFilter(
               newValue
-                ? (newValue as OptionsType<OptionTypeBase>).map(el => el.value)
+                ? (newValue as OptionsType<OptionTypeBase>).map(
+                    (el) => el.value
+                  )
                 : undefined
             );
           }}
-          value={currentDataSets?.map(el => ({
+          value={currentDataSets?.map((el) => ({
             label: String(el.name),
             value: el.id,
           }))}

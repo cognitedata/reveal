@@ -10,7 +10,7 @@ import ReactUnifiedViewer, {
   ToolType,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
-import { Loader } from 'components';
+import { Loader } from '@data-exploration-components/components';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { ResourceItem } from 'types';
@@ -142,9 +142,10 @@ export const FilePreviewUFV = ({
 
   const onClickAnnotation = useCallback(
     (annotation: ExtendedAnnotation) =>
-      setSelectedAnnotations(prevSelectedAnnotations =>
+      setSelectedAnnotations((prevSelectedAnnotations) =>
         prevSelectedAnnotations.some(
-          prevSelectedAnnotation => prevSelectedAnnotation.id === annotation.id
+          (prevSelectedAnnotation) =>
+            prevSelectedAnnotation.id === annotation.id
         )
           ? []
           : [annotation]
@@ -292,7 +293,7 @@ export const FilePreviewUFV = ({
         <ReactUnifiedViewer
           applicationId={applicationId}
           id={id}
-          setRef={ref => setUnifiedViewerRef(ref)}
+          setRef={(ref) => setUnifiedViewerRef(ref)}
           container={container}
           annotations={displayedAnnotations}
           tooltips={enableToolTips ? tooltips : undefined}

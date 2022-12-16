@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Button, Overline, Icon, Body, Colors } from '@cognite/cogs.js';
 import { CogniteAnnotation } from '@cognite/annotations';
 import Highlighter from 'react-highlight-words';
-import { SpacedRow } from 'components';
+import { SpacedRow } from '@data-exploration-components/components';
 
 import {
   Asset,
@@ -85,10 +85,10 @@ const preparedPages = (
         Located on Pages
       </Overline>
       <SpacedRow className="button-row">
-        {sortedPages.map(page => (
+        {sortedPages.map((page) => (
           <PageButton
             key={`page-${page}`}
-            onClick={ev => {
+            onClick={(ev) => {
               ev.preventDefault();
               ev.stopPropagation();
               selectPage(page);
@@ -122,7 +122,7 @@ const AssetItem = ({
   asset?: Asset;
 } & FileViewerSidebarItemProps) => {
   const pages = new Set<number>();
-  annotations.forEach(item => {
+  annotations.forEach((item) => {
     if (item.page !== undefined) {
       pages.add(item.page);
     }
@@ -170,7 +170,7 @@ const TimeseriesItem = ({
   timeseries?: Timeseries;
 } & FileViewerSidebarItemProps) => {
   const pages = new Set<number>();
-  annotations.forEach(item => {
+  annotations.forEach((item) => {
     if (item.page) {
       pages.add(item.page);
     }
@@ -220,7 +220,7 @@ const FileItem = ({
   file?: FileInfo;
 } & FileViewerSidebarItemProps) => {
   const pages = new Set<number>();
-  annotations.forEach(item => {
+  annotations.forEach((item) => {
     if (item.page) {
       pages.add(item.page);
     }
@@ -260,7 +260,7 @@ const SequenceItem = ({
   sequence?: Sequence;
 } & FileViewerSidebarItemProps) => {
   const pages = new Set<number>();
-  annotations.forEach(item => {
+  annotations.forEach((item) => {
     if (item.page) {
       pages.add(item.page);
     }
@@ -310,7 +310,7 @@ const EventItem = ({
   event?: CogniteEvent;
 } & FileViewerSidebarItemProps) => {
   const pages = new Set<number>();
-  annotations.forEach(item => {
+  annotations.forEach((item) => {
     if (item.page) {
       pages.add(item.page);
     }

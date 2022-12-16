@@ -1,7 +1,11 @@
 import React from 'react';
 import { ExtractFromCanvasFunction } from '@cognite/react-picture-annotation';
 import { AnnotationBoundingBox } from '@cognite/annotations';
-import { InfoGrid, InfoCell, Divider } from 'components';
+import {
+  InfoGrid,
+  InfoCell,
+  Divider,
+} from '@data-exploration-components/components';
 import { Title, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { decimalToPercent, lightGrey } from 'utils';

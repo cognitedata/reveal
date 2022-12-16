@@ -20,7 +20,7 @@ import {
 } from 'domain/timeseries';
 import { TableSortBy } from 'components/Table';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
-import { useResultCount } from 'components';
+import { useResultCount } from '@data-exploration-components/components';
 
 export const TimeseriesSearchResults = ({
   query = '',
@@ -116,7 +116,7 @@ export const TimeseriesSearchResults = ({
           />
         }
         showLoadButton
-        onRowClick={timseries => onClick(timseries)}
+        onRowClick={(timseries) => onClick(timseries)}
         enableSorting={enableAdvancedFilters}
         sorting={sortBy}
         onSort={setSortBy}

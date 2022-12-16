@@ -5,7 +5,7 @@ import {
   getFocusedHighlightContent,
 } from 'domain/documents';
 import styled from 'styled-components';
-import { HighlightCell } from 'components';
+import { HighlightCell } from '@data-exploration-components/components';
 import { Body, Flex } from '@cognite/cogs.js';
 
 export const DocumentContentPreview = ({

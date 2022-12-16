@@ -10,7 +10,7 @@ import {
   SegmentedControl,
 } from '@cognite/cogs.js';
 import { Breadcrumb } from 'antd';
-import { ResourceIcons } from 'components';
+import { ResourceIcons } from '@data-exploration-components/components';
 import {
   ProposedCogniteAnnotation,
   useSelectedAnnotations,
@@ -51,7 +51,7 @@ const AnnotationsList = ({
   });
   const { data: assetsResources = [] } = useCdfItems<Asset>(
     'assets',
-    Array.from(set).map(id => ({ id })),
+    Array.from(set).map((id) => ({ id })),
     false,
     {
       enabled: filteredList.length > 0,
@@ -59,9 +59,9 @@ const AnnotationsList = ({
   );
   const filteredItemWithName = useMemo(
     () =>
-      filteredList.map(item => {
+      filteredList.map((item) => {
         const assetDetail = assetsResources.find(
-          resource => resource.id === item.resourceId!
+          (resource) => resource.id === item.resourceId!
         );
         return {
           ...item,
@@ -174,7 +174,7 @@ const AnnotationsList = ({
             {filteredList.length} {type}{' '}
           </div>
           {filteredItemWithName.length ? (
-            filteredItemWithName.map(an =>
+            filteredItemWithName.map((an) =>
               an ? <AnnotationItem key={an.id} annotation={an} /> : null
             )
           ) : (

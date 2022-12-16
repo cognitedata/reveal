@@ -7,7 +7,7 @@ import InfiniteLoader from 'react-window-infinite-loader';
 import styled from 'styled-components';
 
 import { SelectableItemsProps, AllowedTableStateId } from 'types';
-import { Loader } from 'components';
+import { Loader } from '@data-exploration-components/components';
 
 export type GridCellProps<T> = {
   item: T;
@@ -76,7 +76,7 @@ export const GridTable = <T extends { id: AllowedTableStateId }>({
 
   return (
     <GridTableWrapper>
-      <AutoResizer onResize={size => setCurrentWidth(size.width)}>
+      <AutoResizer onResize={(size) => setCurrentWidth(size.width)}>
         {({ width, height }) => (
           <InfiniteLoader
             isItemLoaded={isItemLoaded}
@@ -132,8 +132,8 @@ export const GridTable = <T extends { id: AllowedTableStateId }>({
                     if (item) {
                       return renderCell({
                         style,
-                        isActive: activeIds.some(el => el === item.id),
-                        isPreviewing: previewIds.some(el => el === item.id),
+                        isActive: activeIds.some((el) => el === item.id),
+                        isPreviewing: previewIds.some((el) => el === item.id),
                         item,
                         query,
                         onClick: () => onItemClicked(item),

@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { InfoCell, SpacedRow, TimeDisplay } from 'components';
+import {
+  InfoCell,
+  SpacedRow,
+  TimeDisplay,
+} from '@data-exploration-components/components';
 import { Timeseries, DoubleDatapoint, StringDatapoint } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 

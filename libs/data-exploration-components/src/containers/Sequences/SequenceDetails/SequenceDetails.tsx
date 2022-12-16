@@ -1,6 +1,9 @@
 import React from 'react';
 import { Sequence } from '@cognite/sdk';
-import { TimeDisplay, GeneralDetails } from 'components';
+import {
+  TimeDisplay,
+  GeneralDetails,
+} from '@data-exploration-components/components';
 
 export const SequenceDetails = ({ sequence }: { sequence: Sequence }) => (
   <GeneralDetails>

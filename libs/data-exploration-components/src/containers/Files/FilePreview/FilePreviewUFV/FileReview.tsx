@@ -1,7 +1,7 @@
 import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Tooltip } from 'antd';
-import { ResourceIcons } from 'components';
+import { ResourceIcons } from '@data-exploration-components/components';
 import { AppContext } from 'context/AppContext';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
@@ -42,7 +42,7 @@ const FileReview = ({
   const labelsAccess = labelsReadAcl && labelsWriteAcl;
 
   const linkedAnnotations = annotations.filter(
-    annotation =>
+    (annotation) =>
       getResourceIdFromExtendedAnnotation(annotation) !== undefined ||
       getResourceExternalIdFromExtendedAnnotation(annotation) !== undefined
   );

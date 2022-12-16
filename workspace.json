@@ -5,7 +5,7 @@
     "mock-data": "libs/mock-data",
     "mock-server": "apps/mock-server",
     "data-exploration": "apps/data-exploration",
-    "data-exploration-componets": "libs/data-exploration-components",
+    "data-exploration-components": "libs/data-exploration-components",
     "platypus": "apps/platypus",
     "platypus-cdf-cli": "apps/platypus-cdf-cli",
     "platypus-common-utils": "libs/platypus-common-utils",

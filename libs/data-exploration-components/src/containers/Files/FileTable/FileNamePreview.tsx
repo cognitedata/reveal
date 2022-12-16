@@ -2,7 +2,11 @@ import React from 'react';
 import { FileInfo } from '@cognite/sdk';
 import styled from 'styled-components';
 import Highlighter from 'react-highlight-words';
-import { HighlightCell, EllipsisText, FileThumbnail } from 'components';
+import {
+  HighlightCell,
+  EllipsisText,
+  FileThumbnail,
+} from '@data-exploration-components/components';
 import { Popover } from 'antd';
 import { isFilePreviewable, fileIconMapper } from 'utils';
 import { DocumentIcon, Flex } from '@cognite/cogs.js';

@@ -7,7 +7,11 @@ import {
   SelectableItemsProps,
   InitialOldResourceFilterProps,
 } from 'types';
-import { Divider, SpacedRow, ResourceTypeTabs } from 'components';
+import {
+  Divider,
+  SpacedRow,
+  ResourceTypeTabs,
+} from '@data-exploration-components/components';
 import {
   SearchFilters,
   SearchResults,
@@ -26,7 +30,7 @@ const Drawer = styled.div<{ visible: boolean }>`
   position: absolute;
   top: 0;
   right: 0;
-  width: ${props => (props.visible ? '80vw' : '0')};
+  width: ${(props) => (props.visible ? '80vw' : '0')};
   height: 100%;
   z-index: 4;
   background: #fff;
@@ -45,8 +49,8 @@ const Overlay = styled.div<{ visible: boolean }>`
   width: 100vw;
   height: 100%;
   z-index: 3;
-  display: ${props => (props.visible ? 'block' : 'none')};
-  background-color: ${props =>
+  display: ${(props) => (props.visible ? 'block' : 'none')};
+  background-color: ${(props) =>
     props.visible ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0,0,0,0)'};
   transition: 0.3s all;
 `;
@@ -129,7 +133,9 @@ export const ResourceSelectionSidebar = ({
             {header}
             <ResourceTypeTabs
               currentResourceType={activeKey}
-              setCurrentResourceType={tab => setActiveKey(tab as ResourceType)}
+              setCurrentResourceType={(tab) =>
+                setActiveKey(tab as ResourceType)
+              }
             />
             <Wrapper>
               <SearchFilters
@@ -153,7 +159,7 @@ export const ResourceSelectionSidebar = ({
                   size="large"
                   iconPlacement="left"
                   placeholder="Search..."
-                  onChange={ev => setQuery(ev.target.value)}
+                  onChange={(ev) => setQuery(ev.target.value)}
                   value={query}
                 />
                 <SearchResults
@@ -167,7 +173,7 @@ export const ResourceSelectionSidebar = ({
                   fileFilter={fileFilter}
                   resourceType={activeKey}
                   query={query}
-                  onClick={item => setPreviewItem(item)}
+                  onClick={(item) => setPreviewItem(item)}
                 />
               </SearchResultWrapper>
               {previewItem && (

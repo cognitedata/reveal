@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useMemo, useState, useRef } from 'react';
 import dayjs from 'dayjs';
-import { Divider } from 'components';
+import { Divider } from '@data-exploration-components/components';
 import {
   Dropdown,
   Button,
@@ -74,7 +74,7 @@ export const RangePicker = ({
         style={{ marginBottom: 8 }}
         currentKey={mode}
         fullWidth
-        onButtonClicked={key => setMode(key as 'range' | 'calendar')}
+        onButtonClicked={(key) => setMode(key as 'range' | 'calendar')}
       >
         <SegmentedControl.Button key="range" icon="Events">
           Range
@@ -93,7 +93,7 @@ export const RangePicker = ({
           dates={[startEndRange.startDate, startEndRange.endDate]}
           onDatesChanged={(startDate, endDate) => {
             onRangeChanged([startDate, endDate]);
-            setStartEndRange(currentRange => ({
+            setStartEndRange((currentRange) => ({
               ...currentRange,
               startDate,
               endDate,

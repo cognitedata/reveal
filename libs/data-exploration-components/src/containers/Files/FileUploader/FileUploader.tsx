@@ -5,7 +5,7 @@ import { FileUploadResponse } from '@cognite/sdk';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { Body, Icon, Button } from '@cognite/cogs.js';
 import { getMIMEType, sleep } from 'utils';
-import { SpacedRow } from 'components';
+import { SpacedRow } from '@data-exploration-components/components';
 import { useSDK } from '@cognite/sdk-provider';
 
 export const GCSUploader = (
@@ -84,7 +84,7 @@ export const FileUploader = ({
 
     message.info('Starting Upload...');
 
-    fileList.forEach(async file => {
+    fileList.forEach(async (file) => {
       const mimeType = getMIMEType(file.name);
       const fallbackMimeType = 'application/octet-stream';
 
@@ -104,7 +104,9 @@ export const FileUploader = ({
       file.status = 'uploading';
       file.percent = 0;
 
-      setFileList(list => list.map(el => (el.uid === file.uid ? file : el)));
+      setFileList((list) =>
+        list.map((el) => (el.uid === file.uid ? file : el))
+      );
 
       currentUploads[file.uid] = await GCSUploader(
         file,
@@ -114,8 +116,8 @@ export const FileUploader = ({
           file.response = info;
           file.percent = (info.uploadedBytes / info.totalBytes) * 100;
 
-          setFileList(list =>
-            list.map(el => {
+          setFileList((list) =>
+            list.map((el) => {
               if (el.uid === file.uid) {
                 return file;
               }
@@ -133,19 +135,19 @@ export const FileUploader = ({
         // seconds.
         let fileInfo = await sdk.files
           .retrieve([{ id: fileMetadata.id }])
-          .then(r => r[0]);
+          .then((r) => r[0]);
         let retries = 0;
         while (!fileInfo.uploaded && retries <= 4) {
           retries += 1;
           /* eslint-disable no-await-in-loop */
           await sleep(retries * 1000);
-          fileInfo = await sdk.files.retrieve([{ id }]).then(r => r[0]);
+          fileInfo = await sdk.files.retrieve([{ id }]).then((r) => r[0]);
         }
       } catch (e) {
         message.error('Unable to upload file to server.');
       }
 
-      setFileList(list => list.filter(el => el.uid !== file.uid));
+      setFileList((list) => list.filter((el) => el.uid !== file.uid));
       if (fileList.length === 1) {
         setUploadStatus(STATUS.WAITING);
       }
@@ -158,7 +160,7 @@ export const FileUploader = ({
   };
 
   const stopUpload = () => {
-    fileList.forEach(file => {
+    fileList.forEach((file) => {
       if (uploadStatus === STATUS.PAUSED || uploadStatus === STATUS.STARTED) {
         confirm({
           title: 'Do you want to cancel the file upload?',
@@ -187,7 +189,7 @@ export const FileUploader = ({
 
   const pauseUpload = () => {
     if (uploadStatus === STATUS.STARTED) {
-      fileList.forEach(file => {
+      fileList.forEach((file) => {
         currentUploads[file.uid].pause();
       });
       setUploadStatus(STATUS.PAUSED);
@@ -196,7 +198,7 @@ export const FileUploader = ({
 
   const unpauseUpload = () => {
     if (uploadStatus === STATUS.PAUSED) {
-      fileList.forEach(file => {
+      fileList.forEach((file) => {
         currentUploads[file.uid].unpause();
       });
 
@@ -205,7 +207,7 @@ export const FileUploader = ({
   };
 
   const removeFile = (file: UploadFile) => {
-    setFileList(list => list.filter(el => el.uid !== file.uid));
+    setFileList((list) => list.filter((el) => el.uid !== file.uid));
     onFileListChange(fileList);
   };
 
@@ -215,7 +217,7 @@ export const FileUploader = ({
       validExtensions.length === 0 ||
       validExtensions.includes(file.name.split('.').pop().toLowerCase())
     ) {
-      setFileList(list => [...list, file]);
+      setFileList((list) => [...list, file]);
       setUploadStatus(STATUS.READY);
       onFileListChange(fileList);
     } else {

@@ -8,7 +8,7 @@ import {
   InfoCell,
   SpacedRow,
   ResourceIcons,
-} from 'components';
+} from '@data-exploration-components/components';
 import { Title, Body, Colors } from '@cognite/cogs.js';
 import { SmallPreviewProps, SelectableItemProps } from 'types';
 import { SequenceDetails } from 'containers/Sequences';

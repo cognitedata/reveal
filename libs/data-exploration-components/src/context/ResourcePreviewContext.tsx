@@ -1,6 +1,6 @@
 import React, { useContext, useState, useCallback } from 'react';
 import { ResourceItem } from 'types';
-import { Splitter } from 'components';
+import { Splitter } from '@data-exploration-components/components';
 import { ResourcePreviewSidebar } from 'containers/ResourceSidebar';
 import styled from 'styled-components';
 import { SIDEBAR_RESIZE_EVENT } from 'utils';

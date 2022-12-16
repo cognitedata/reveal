@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select } from 'components';
+import { Select } from '@data-exploration-components/components';
 import { useAssetMetadataValues } from 'hooks/MetadataAggregateHooks';
 import { reactSelectCogsStylingProps } from 'components/SearchNew/Filters/elements';
 import { DISABLE_VALUE_TOOLTIP } from './constants';
@@ -63,9 +63,9 @@ export const FilterItem = ({
       }
       return a.localeCompare(b);
     })
-    .map(category => ({
+    .map((category) => ({
       label: category,
-      options: categories[category].map(el => ({
+      options: categories[category].map((el) => ({
         label: `${el.value} ${el.count ? `(${el.count})` : ''}`,
         value: el.value,
         disabled: lockedFilters.includes(el.value),
@@ -79,7 +79,7 @@ export const FilterItem = ({
           value: el.value,
           disabled: false,
         }))
-      : metadata[key]?.map(el => ({ label: el, value: el, disabled: false }));
+      : metadata[key]?.map((el) => ({ label: el, value: el, disabled: false }));
 
   return (
     <>
@@ -89,7 +89,7 @@ export const FilterItem = ({
             creatable
             {...reactSelectCogsStylingProps}
             styles={{
-              menu: style => ({
+              menu: (style) => ({
                 ...style,
                 width: '100%',
                 maxWidth: '320px',
@@ -103,7 +103,7 @@ export const FilterItem = ({
                 ? { label: selectedKey, value: selectedKey }
                 : undefined
             }
-            onChange={item => {
+            onChange={(item) => {
               setSelectedKey(item ? (item as { value: string }).value : null);
               setSelectedValue(null);
             }}
@@ -117,7 +117,7 @@ export const FilterItem = ({
               creatable
               {...reactSelectCogsStylingProps}
               styles={{
-                menu: style => ({
+                menu: (style) => ({
                   ...style,
                   width: '100%',
                   maxWidth: '320px',
@@ -132,7 +132,7 @@ export const FilterItem = ({
                   : undefined
               }
               select
-              onChange={item => {
+              onChange={(item) => {
                 setSelectedValue(item?.value || null);
                 if (selectedKey && item.value) {
                   setFilter(selectedKey, item.value);

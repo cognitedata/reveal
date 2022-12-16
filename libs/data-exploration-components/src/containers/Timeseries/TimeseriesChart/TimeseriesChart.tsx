@@ -5,7 +5,7 @@ import {
   Loader,
   RangePicker,
   SpacedRow,
-} from 'components';
+} from '@data-exploration-components/components';
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
@@ -169,7 +169,7 @@ export const TimeseriesChart = ({
   );
 
   const timeSelectOptions = useMemo(() => {
-    return timeOptions.map(key => ({ label: key, value: key }));
+    return timeOptions.map((key) => ({ label: key, value: key }));
   }, [timeOptions]);
 
   useEffect(() => {
@@ -205,7 +205,7 @@ export const TimeseriesChart = ({
         end: presetZoom[1].getTime(),
       },
       calculateGranularity(
-        presetZoom.map(el => el.valueOf()),
+        presetZoom.map((el) => el.valueOf()),
         numberOfPoints
       ),
       numberOfPoints,
@@ -218,7 +218,7 @@ export const TimeseriesChart = ({
           end: presetZoom[1].valueOf(),
           start: presetZoom[0].valueOf(),
           granularity: calculateGranularity(
-            presetZoom.map(el => el.valueOf()),
+            presetZoom.map((el) => el.valueOf()),
             numberOfPoints
           ),
           limit: numberOfPoints,
@@ -228,7 +228,7 @@ export const TimeseriesChart = ({
     {
       staleTime: Infinity,
       enabled: !disabled,
-      onSuccess: data => onDataFetched?.(data),
+      onSuccess: (data) => onDataFetched?.(data),
       onError: () => onDataFetched?.(undefined),
     }
   );
@@ -236,7 +236,7 @@ export const TimeseriesChart = ({
   return (
     <>
       <ParentSize>
-        {parent =>
+        {(parent) =>
           isFetching && !isFetched ? (
             <div
               style={{
@@ -251,7 +251,7 @@ export const TimeseriesChart = ({
               width={parent.width}
               height={height || parent.height - 30}
               values={((overallData?.datapoints ?? []) as any[]).filter(
-                el => el.average !== undefined
+                (el) => el.average !== undefined
               )}
               domain={presetZoom}
               {...otherProps}
@@ -290,7 +290,7 @@ export const TimeseriesChart = ({
               variant: 'outline',
             }}
             initialRange={presetZoom}
-            onRangeChanged={range => {
+            onRangeChanged={(range) => {
               setTimePeriod(undefined);
               setPresetZoomDomain(range);
               trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.TIME_RANGE, {

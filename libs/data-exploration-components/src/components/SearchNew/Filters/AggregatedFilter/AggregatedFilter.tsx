@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select } from 'components';
+import { Select } from '@data-exploration-components/components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
 import { NIL_FILTER_VALUE } from 'domain/constants';
@@ -29,7 +29,7 @@ export const AggregatedFilterV2 = <T,>({
   const trackUsage = useMetrics();
 
   const sources: Set<string | number> = new Set();
-  items.forEach(el => {
+  items.forEach((el) => {
     if (aggregator in el) {
       sources.add((el as any)[aggregator] as string | number);
     }
@@ -61,7 +61,7 @@ export const AggregatedFilterV2 = <T,>({
             : undefined
         }
         onChange={handleOnChange}
-        options={[...sources].map(el => ({
+        options={[...sources].map((el) => ({
           value: el,
           label: String(el),
         }))}

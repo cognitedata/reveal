@@ -19,7 +19,7 @@ import {
   useAssetsSearchAggregateQuery,
   useAssetsSearchResultQuery,
 } from 'domain/assets';
-import { useResultCount } from 'components';
+import { useResultCount } from '@data-exploration-components/components';
 import { VerticalDivider } from 'components/Divider';
 
 export type AssetViewMode = 'list' | 'tree';
@@ -115,7 +115,7 @@ export const AssetSearchResults = ({
         <Flex alignItems="center" gap={10}>
           <SegmentedControl
             currentKey={currentView}
-            onButtonClicked={nextView =>
+            onButtonClicked={(nextView) =>
               onViewChange(nextView as AssetViewMode)
             }
           >
@@ -144,7 +144,7 @@ export const AssetSearchResults = ({
         <AssetTable
           id="asset-search-results"
           query={query}
-          onRowClick={asset => onClick(asset)}
+          onRowClick={(asset) => onClick(asset)}
           data={enableAdvancedFilters ? data : items}
           isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
           enableSorting={enableAdvancedFilters}
@@ -179,7 +179,7 @@ export const AssetSearchResults = ({
         <AssetTreeTable
           filter={filter}
           query={query}
-          onAssetClicked={asset => onClick(asset)}
+          onAssetClicked={(asset) => onClick(asset)}
           tableHeaders={currentView !== 'list' ? tableHeaders : undefined}
           enableAdvancedFilters={enableAdvancedFilters}
           selectedRows={selectedRows}

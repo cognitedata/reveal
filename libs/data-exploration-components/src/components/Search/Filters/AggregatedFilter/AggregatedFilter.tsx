@@ -1,6 +1,6 @@
 import React from 'react';
 import { Body } from '@cognite/cogs.js';
-import { Select } from 'components';
+import { Select } from '@data-exploration-components/components';
 
 export const AggregatedFilter = <T,>({
   items,
@@ -21,7 +21,7 @@ export const AggregatedFilter = <T,>({
   };
 
   const sources: Set<string | number> = new Set();
-  items.forEach(el => {
+  items.forEach((el) => {
     if (aggregator in el) {
       sources.add((el as any)[aggregator] as string | number);
     }
@@ -40,7 +40,7 @@ export const AggregatedFilter = <T,>({
         creatable
         className="aggregated-filter-select"
         value={value ? { value, label: value } : undefined}
-        onChange={item => {
+        onChange={(item) => {
           if (item) {
             const tmpValue = (item as { value: string }).value;
             setSource(tmpValue);
@@ -48,7 +48,7 @@ export const AggregatedFilter = <T,>({
             setSource(undefined);
           }
         }}
-        options={[...sources].map(el => ({
+        options={[...sources].map((el) => ({
           value: el,
           label: String(el),
         }))}

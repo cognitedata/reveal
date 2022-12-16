@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import union from 'lodash/union';
 import Tree, { Node } from 'react-virtualized-tree';
-import { Loader } from 'components';
+import { Loader } from '@data-exploration-components/components';
 
 import {
   useAssetBreadcrumbsQuery,
@@ -158,7 +158,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
         {} as AssetNodesById
       );
 
-      setAssetNodesById(prev => ({
+      setAssetNodesById((prev) => ({
         ...prev,
         ...expandedAssetNodes,
       }));
@@ -221,9 +221,9 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
       rootAssets
         ?.slice()
         .sort((ast1, ast2) => ast1.name.localeCompare(ast2.name))
-        .map(rootAsset => rootAsset.id)
+        .map((rootAsset) => rootAsset.id)
     );
-    setAssetNodesById(prevState => ({
+    setAssetNodesById((prevState) => ({
       ...prevState,
       ...mapAssetsById(rootAssets),
     }));
@@ -236,7 +236,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
   ) => {
     const { data, isLoading, isError, error } = query;
     if (isLoading) {
-      setAssetNodesById(prevState => ({
+      setAssetNodesById((prevState) => ({
         ...prevState,
         [assetId]: {
           ...prevState[assetId],
@@ -251,7 +251,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
         // eslint-disable-next-line no-console
         console.error(error);
       }
-      setAssetNodesById(prevState => ({
+      setAssetNodesById((prevState) => ({
         ...prevState,
         [assetId]: {
           ...prevState[assetId],
@@ -263,13 +263,13 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
 
     const { items: childAssets, nextCursor } = data as ListResponse<Asset[]>;
 
-    setAssetNodesById(prevState => {
+    setAssetNodesById((prevState) => {
       const knownAssetIds = Object.keys(prevState);
       const newChildAssetNodes = mapAssetsById(childAssets, knownAssetIds);
 
       const nextChildren = union(
         prevState[assetId].childrenIds || [],
-        childAssets?.map(asset => asset.id) || []
+        childAssets?.map((asset) => asset.id) || []
       ).sort((id1, id2) =>
         (
           newChildAssetNodes[id1] || assetNodesById[id1]
@@ -360,7 +360,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
       if (!updatedNode) {
         return;
       }
-      setAssetNodesById(prevState => ({
+      setAssetNodesById((prevState) => ({
         ...prevState,
         [updatedNode.asset.id]: {
           ...updatedNode,
@@ -373,7 +373,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
   const treeSelectHandler = useCallback(
     (nodes: Node[], updatedNode: Node): Node[] => {
       onItemSelect(updatedNode.state?.asset.id);
-      return nodes.map(node => {
+      return nodes.map((node) => {
         if (node.id === updatedNode.id) {
           return {
             ...updatedNode,
@@ -402,7 +402,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
       }
 
       updateAssetNode(updatedNode.state as AssetNodeState);
-      return nodes.map(node => {
+      return nodes.map((node) => {
         if (node.id === updatedNode.id) {
           return {
             ...node,
@@ -427,7 +427,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
   );
 
   const mapAssetNodeToTreeNode = (ids: number[], parent?: number): Node[] => {
-    const treeNodes = ids.map(id => {
+    const treeNodes = ids.map((id) => {
       const node = assetNodesById[id];
       const children = node.childrenIds
         ? (mapAssetNodeToTreeNode(node.childrenIds, id) as Node[])
@@ -490,7 +490,7 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
             },
           }}
         >
-          {props => (
+          {(props) => (
             <div style={props.style}>
               <AssetNodeWrapper key={`node-${props.index}`}>
                 <AssetNodeRenderer {...props} selectedId={selectedAssetId} />

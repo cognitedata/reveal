@@ -1,7 +1,7 @@
 import React from 'react';
 import { OptionType, Tooltip } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
-import { MultiSelect } from 'components';
+import { MultiSelect } from '@data-exploration-components/components';
 import { ResourceType, convertResourceType } from 'types';
 import { DataSetWCount } from 'hooks/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
@@ -34,7 +34,7 @@ export const DataSetFilterV2 = ({
   const trackUsage = useMetrics();
   const { data: currentDataSets } = useCdfItems<DataSet>(
     'datasets',
-    (value || []).map(id => ({ id })),
+    (value || []).map((id) => ({ id })),
     false,
     {
       enabled: value && value.length > 0,
@@ -65,14 +65,14 @@ export const DataSetFilterV2 = ({
         <MultiSelect
           options={datasetOptions?.map(formatOption) || []}
           isDisabled={isError}
-          onChange={newValue => {
+          onChange={(newValue) => {
             setDataSetFilter(isEmpty(newValue) ? undefined : newValue);
             trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.DATA_SET_FILTER, {
               ...newValue,
               resourceType,
             });
           }}
-          value={currentDataSets?.map(el => ({
+          value={currentDataSets?.map((el) => ({
             label: String(el.name),
             value: el.id,
           }))}

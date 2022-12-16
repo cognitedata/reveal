@@ -3,7 +3,7 @@ import { Sequence } from '@cognite/sdk';
 
 import { useInfiniteSequenceRows } from 'hooks/sequenceHooks';
 
-import { Loader } from 'components';
+import { Loader } from '@data-exploration-components/components';
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import { Table } from 'components/Table/Table';
 import { AllowedTableStateId } from 'types';
@@ -34,7 +34,7 @@ export const SequencePreview = ({ sequence }: { sequence: Sequence }) => {
       data?.pages?.reduce(
         (accl, t) =>
           accl.concat(
-            t.rows.map(row => ({
+            t.rows.map((row) => ({
               rowNumber: row.rowNumber,
               key: `${row.rowNumber}`,
               ...Object.values(row.values).reduce(

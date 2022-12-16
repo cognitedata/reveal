@@ -4,7 +4,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { aggregateKey } from '@cognite/sdk-react-query-hooks';
 import { useQuery } from 'react-query';
 
-import { Select } from 'components';
+import { Select } from '@data-exploration-components/components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
 import { InternalEventsFilters } from 'domain/events';
@@ -65,7 +65,7 @@ export const AggregatedEventFilterV2 = ({
       <Select
         creatable
         value={value ? { value, label: value } : undefined}
-        onChange={item => {
+        onChange={(item) => {
           if (item) {
             handleUpdate((item as { value: string }).value);
           } else {

@@ -4,7 +4,7 @@ import { Table } from 'components/Table/Table';
 
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 
-import { ResultCount } from 'components';
+import { ResultCount } from '@data-exploration-components/components';
 
 import { RelationshipTableProps } from './RelationshipTable';
 import { TimeseriesWithRelationshipLabels } from 'containers/Timeseries/TimeseriesTable/TimeseriesTable';
@@ -61,7 +61,7 @@ export function RelationshipTimeseriesTable({
       fetchMore={fetchNextPage}
       hasNextPage={hasNextPage}
       isLoadingMore={isLoading}
-      onRowClick={row => onItemClicked(row.id)}
+      onRowClick={(row) => onItemClicked(row.id)}
     />
   );
 }

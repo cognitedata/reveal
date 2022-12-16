@@ -2,7 +2,7 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import { Body, Input } from '@cognite/cogs.js';
-import { SpacedRow } from 'components';
+import { SpacedRow } from '@data-exploration-components/components';
 import ReactDatePicker from 'react-datepicker';
 import { DatePickerInput, PivotRange, renderCustomHeader } from './Common';
 import {
@@ -39,7 +39,7 @@ export const PivotRangePicker = ({
   onRangeChanged,
   units = ['minute', 'hour', 'day', 'week', 'month', 'year'],
 }: PivotRangePickerProps) => {
-  const options = units.map(key => ({
+  const options = units.map((key) => ({
     value: key,
     label: amount > 1 ? `${key}s` : key,
   }));
@@ -58,7 +58,7 @@ export const PivotRangePicker = ({
             variant="noBorder"
             value={amount}
             style={{ width: '100%' }}
-            onChange={ev => {
+            onChange={(ev) => {
               const { value } = ev.target;
               const number = +value;
 
@@ -74,8 +74,8 @@ export const PivotRangePicker = ({
         </PivotRangeInput>
         <PivotRangeUnit>
           <select
-            value={options.find(el => el.value === unit)?.value}
-            onChange={value => {
+            value={options.find((el) => el.value === unit)?.value}
+            onChange={(value) => {
               onChange({
                 unit: (
                   options[value.target.selectedIndex] as {
@@ -86,7 +86,7 @@ export const PivotRangePicker = ({
             }}
             className="cogs-select__control"
           >
-            {options.map(duration => (
+            {options.map((duration) => (
               <option value={duration.value}>{duration.label}</option>
             ))}
           </select>
@@ -94,8 +94,8 @@ export const PivotRangePicker = ({
       </SpacedRow>
       <PivotRangeDirection>
         <select
-          value={directions.find(el => el.value === direction)?.value}
-          onChange={value => {
+          value={directions.find((el) => el.value === direction)?.value}
+          onChange={(value) => {
             onChange({
               direction: (
                 directions[value.target.selectedIndex] as {
@@ -106,20 +106,20 @@ export const PivotRangePicker = ({
           }}
           className="cogs-select__control"
         >
-          {directions.map(direction => (
+          {directions.map((direction) => (
             <option value={direction.value}>{direction.label}</option>
           ))}
         </select>
       </PivotRangeDirection>
       <DatePickerInput
         date={date}
-        onDateChange={newDate => onChange({ date: newDate })}
+        onDateChange={(newDate) => onChange({ date: newDate })}
       />
       <DatePickerWrapper mode={undefined} style={{ marginTop: 8 }}>
         <ReactDatePicker
           renderCustomHeader={renderCustomHeader()}
           selected={date}
-          onChange={newDate => onChange({ date: newDate as Date })}
+          onChange={(newDate) => onChange({ date: newDate as Date })}
           inline
           disabledKeyboardNavigation
         />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
-import { ResultCount } from 'components';
+import { ResultCount } from '@data-exploration-components/components';
 import { Table } from 'components/Table/Table';
 import { ResourceTableColumns } from 'components/Table/columns';
 import { RelationshipTableProps } from './RelationshipTable';
@@ -55,7 +55,7 @@ export function RelationshipFileTable({
       fetchMore={fetchNextPage}
       hasNextPage={hasNextPage}
       isLoadingMore={isLoading}
-      onRowClick={row => onItemClicked(row.id)}
+      onRowClick={(row) => onItemClicked(row.id)}
     />
   );
 }

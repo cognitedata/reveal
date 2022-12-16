@@ -1,5 +1,5 @@
 import React from 'react';
-import { MultiSelect } from 'components';
+import { MultiSelect } from '@data-exploration-components/components';
 import { OptionsType, OptionTypeBase } from 'react-select';
 import styled from 'styled-components';
 import { RelationshipTypeLabels } from 'hooks';
@@ -17,19 +17,19 @@ export function RelationshipFilters({
   return (
     <SelectWrapper>
       <MultiSelect
-        options={options.map(option => ({
+        options={options.map((option) => ({
           label: option,
           value: option,
         }))}
         title="Labels:"
-        onChange={newValue => {
+        onChange={(newValue) => {
           onChange(
             newValue
-              ? (newValue as OptionsType<OptionTypeBase>).map(el => el.value)
+              ? (newValue as OptionsType<OptionTypeBase>).map((el) => el.value)
               : undefined
           );
         }}
-        value={value?.map(el => ({
+        value={value?.map((el) => ({
           label: el.externalId,
           value: el.externalId,
         }))}

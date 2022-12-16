@@ -25,6 +25,7 @@
             "allow": [
               "@platypus-app",
               "@data-exploration-app",
+              "@data-exploration-components",
               "@platypus-core",
               "@cognite/platypus-cdf-cli"
             ],

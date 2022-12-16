@@ -5,7 +5,7 @@ import { useFilesAnnotatedWithResource } from 'hooks/RelationshipHooks';
 import { uniqBy } from 'lodash';
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
 import { Alert } from 'antd';
-import { Loader } from 'components';
+import { Loader } from '@data-exploration-components/components';
 import { FileTable } from 'containers';
 import { useUniqueCdfItems } from 'hooks';
 

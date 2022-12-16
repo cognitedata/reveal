@@ -5,7 +5,7 @@ import {
   DateFilterV2,
   MetadataFilterV2,
   TableSortBy,
-} from 'components';
+} from '@data-exploration-components/components';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 import React, { useMemo, useState } from 'react';
@@ -45,13 +45,13 @@ const LinkedAssetFilter = ({
         aggregator="unit"
         title="Unit"
         value={filter.unit}
-        setValue={newValue => onFilterChange({ unit: newValue })}
+        setValue={(newValue) => onFilterChange({ unit: newValue })}
       />
 
       <DateFilterV2
         title="Updated Time"
         value={filter.lastUpdatedTime}
-        setValue={newValue =>
+        setValue={(newValue) =>
           onFilterChange({ lastUpdatedTime: newValue || undefined })
         }
       />
@@ -59,7 +59,7 @@ const LinkedAssetFilter = ({
       <MetadataFilterV2
         items={items}
         value={filter.metadata}
-        setValue={newValue => onFilterChange({ metadata: newValue })}
+        setValue={(newValue) => onFilterChange({ metadata: newValue })}
       />
     </PreviewFilterDropdown>
   );
@@ -87,7 +87,7 @@ export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
     useResourceResults<Timeseries>(api, debouncedQuery, timeseriesFilters);
 
   const handleFilterChange = (newValue: InternalTimeseriesFilters) => {
-    setFilter(prevState => ({ ...prevState, ...newValue }));
+    setFilter((prevState) => ({ ...prevState, ...newValue }));
   };
 
   const { data, hasNextPage, fetchNextPage, isLoading } =
@@ -106,12 +106,12 @@ export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
     <TimeseriesTable
       id="timeseries-linked-search-results"
       query={debouncedQuery}
-      onRowClick={asset => onClick(asset)}
+      onRowClick={(asset) => onClick(asset)}
       data={enableAdvancedFilter ? data : items}
       isDataLoading={enableAdvancedFilter ? isLoading : !isFetched}
       enableSorting={enableAdvancedFilter}
       sorting={sortBy}
-      onSort={props => setSortBy(props)}
+      onSort={(props) => setSortBy(props)}
       showLoadButton
       tableSubHeaders={
         <AppliedFiltersTags

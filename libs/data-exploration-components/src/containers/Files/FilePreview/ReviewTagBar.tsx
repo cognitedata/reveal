@@ -1,7 +1,7 @@
 import { CogniteAnnotation } from '@cognite/annotations';
 import { A, Body, Button, Icon } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
-import { ResourceIcons } from 'components';
+import { ResourceIcons } from '@data-exploration-components/components';
 import { ResourceType } from 'index';
 import React from 'react';
 import styled from 'styled-components';

@@ -7,7 +7,7 @@ import {
   InfoGrid,
   InfoCell,
   SpacedRow,
-} from 'components';
+} from '@data-exploration-components/components';
 import { Title, Body, Colors } from '@cognite/cogs.js';
 import { renderTitle } from 'utils';
 import { ResourceIcons } from 'components/ResourceIcons/ResourceIcons';

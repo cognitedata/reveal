@@ -1,6 +1,9 @@
 import { Sequence } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { MetadataFilterV2, TableSortBy } from 'components';
+import {
+  MetadataFilterV2,
+  TableSortBy,
+} from '@data-exploration-components/components';
 import { AppliedFiltersTags } from 'components/AppliedFiltersTags/AppliedFiltersTags';
 import { transformNewFilterToOldFilter } from 'domain/transformers';
 
@@ -43,7 +46,7 @@ const LinkedSequenceFilter = ({
       <MetadataFilterV2
         items={items}
         value={filter.metadata}
-        setValue={newValue => onFilterChange({ metadata: newValue })}
+        setValue={(newValue) => onFilterChange({ metadata: newValue })}
       />
     </PreviewFilterDropdown>
   );
@@ -85,18 +88,18 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
   const appliedFilters = { ...filter, assetSubtreeIds: undefined };
 
   const handleFilterChange = (newValue: InternalSequenceFilters) => {
-    setFilter(prevState => ({ ...prevState, ...newValue }));
+    setFilter((prevState) => ({ ...prevState, ...newValue }));
   };
 
   return (
     <SequenceTable
       id="sequence-linked-search-results"
       query={debouncedQuery}
-      onRowClick={sequence => onClick(sequence)}
+      onRowClick={(sequence) => onClick(sequence)}
       data={enableAdvancedFilter ? data : items}
       sorting={sortBy}
       enableSorting={enableAdvancedFilter}
-      onSort={props => setSortBy(props)}
+      onSort={(props) => setSortBy(props)}
       showLoadButton
       tableSubHeaders={
         <AppliedFiltersTags
