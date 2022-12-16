@@ -5,14 +5,18 @@ type ReleaseTagProp = {
   version?: string;
 };
 
-const ReleaseTag = ({ version }: ReleaseTagProp) => {
+const ReleaseTag = ({ version }: ReleaseTagProp): JSX.Element => {
   const releaseState = getReleaseState(version);
 
-  return releaseState ? (
+  if (!releaseState) {
+    return <></>;
+  }
+
+  return (
     <Flex gap={6} alignItems="center">
       <Chip selectable label={releaseState} size="x-small" />
     </Flex>
-  ) : null;
+  );
 };
 
 export default ReleaseTag;
