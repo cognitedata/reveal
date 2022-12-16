@@ -125,7 +125,7 @@ export class ComboControls extends EventDispatcher {
   private readonly _scrollTarget: Vector3 = new Vector3();
   private readonly _targetEnd: Vector3 = new Vector3();
   private readonly _spherical: Spherical = new Spherical();
-  private _sphericalEnd: Spherical = new Spherical();
+  private readonly _sphericalEnd: Spherical = new Spherical();
   private readonly _deltaTarget: Vector3 = new Vector3();
   private readonly _rawCameraRotation = new Quaternion();
   private readonly _keyboard: Keyboard;
