@@ -3,6 +3,7 @@ import { Container, Logout } from '@cognite/react-container';
 import GlobalStyles from 'global-styles';
 import sidecar from 'utils/sidecar';
 import { MenuBar } from 'components/MenuBar/MenuBar';
+import { EnvironmentInfoBar } from 'components/EnvironmentInfoBar/EnvironmentInfoBar';
 import { EventStreamProvider } from 'providers/eventStreamProvider';
 import { PAGES } from 'types';
 import { PriceArea } from 'pages/PriceArea';
@@ -13,6 +14,7 @@ import { Monitoring } from 'pages/Monitoring';
 import { DayAheadMarket } from 'pages/DayAheadMarket';
 import { WorkflowSchemasContainer } from 'pages/WorkflowSchemas';
 import { RKOM } from 'pages/RKOM';
+import config from 'utils/config';
 import { BaseContainer, VerticalFlexContainer } from 'styles/layout';
 
 const App = () => (
@@ -20,6 +22,7 @@ const App = () => (
     <GlobalStyles />
     <EventStreamProvider>
       <BaseContainer>
+        {config.env !== 'production' && <EnvironmentInfoBar />}
         <MenuBar />
         <VerticalFlexContainer>
           <Switch>
