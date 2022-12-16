@@ -44,7 +44,7 @@ export const useSearchTree = (
       limit: 1000,
       filter: Object.keys(filter || {}).length > 0 ? filter : undefined,
     },
-    { ...config, enabled: enableSearch && config?.enabled !== false }
+    { ...(config as any), enabled: enableSearch && config?.enabled !== false }
   );
 
   const {
@@ -59,7 +59,7 @@ export const useSearchTree = (
       limit: 1000,
       filter: Object.keys(filter || {}).length > 0 ? filter : undefined,
     },
-    { ...config, enabled: !enableSearch && config?.enabled !== false }
+    { ...(config as any), enabled: !enableSearch && config?.enabled !== false }
   );
 
   const data = enableSearch ? searchData : listData;
@@ -102,7 +102,7 @@ export const useRootTree = (
     },
     {
       staleTime: Infinity,
-      ...config,
+      ...(config as any),
     }
   );
 

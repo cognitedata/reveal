@@ -44,7 +44,7 @@ const ResourcePreviewPlaceholder = () => {
 export const ResourcePreviewSidebarUFV = ({
   item,
   closable = true,
-  placeholder = ResourcePreviewPlaceholder,
+  placeholder = ResourcePreviewPlaceholder(),
   header,
   actions,
   footer,

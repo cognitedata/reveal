@@ -17,6 +17,9 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
+      "@cognite/data-exploration": [
+        "libs/data-exploration-components/src/index.ts"
+      ],
       "@cognite/cog-data-grid": ["libs/cog-data-grid/src/index.ts"],
       "@cognite/cog-data-grid-root/*": ["libs/cog-data-grid/src/*"],
       "@cognite/graph": ["libs/graph/src/index.ts"],
@@ -28,9 +31,6 @@
       "@data-exploration-app/*": ["apps/data-exploration/src/app/*"],
       "@data-exploration-components/*": [
         "libs/data-exploration-components/src/*"
-      ],
-      "@cognite/data-exploration-components": [
-        "libs/data-exploration-components/index.ts"
       ],
       "@platypus-core/*": ["libs/platypus-core/src/lib/*"],
       "@platypus/mock-data": ["libs/mock-data/src/index.ts"],

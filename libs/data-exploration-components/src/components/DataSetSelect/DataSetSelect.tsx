@@ -38,7 +38,7 @@ export const DataSetSelect = ({
   );
   const context = useContext(AppContext);
   const { data: canReadDataSets } = usePermissions(
-    context?.flow!,
+    context?.flow! as any,
     'datasetsAcl',
     'READ',
     undefined,

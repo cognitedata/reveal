@@ -11,7 +11,7 @@ export type RelatedResourceType =
   | 'assetId'
   | 'annotatedWith';
 
-export const useRelatedResourceResults = <T extends Resource>(
+export const useRelatedResourceResults = <T,>(
   relatedResourceType: RelatedResourceType,
   type: ResourceType,
   parentResource: ResourceItem

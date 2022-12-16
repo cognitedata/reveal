@@ -7,6 +7,8 @@ export const Title = styled(Body).attrs({ strong: true, level: 2 })`
   padding-top: 12px;
 `;
 
-export const FilterFacetTitle: React.FC = ({ children }) => {
+export const FilterFacetTitle: React.FC<
+  React.PropsWithChildren<Record<string, unknown>>
+> = ({ children }) => {
   return <Title>{children}</Title>;
 };

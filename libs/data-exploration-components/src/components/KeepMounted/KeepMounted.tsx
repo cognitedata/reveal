@@ -3,7 +3,10 @@ import React from 'react';
 interface Props {
   isVisible: boolean;
 }
-export const KeepMounted: React.FC<Props> = ({ children, isVisible }) => {
+export const KeepMounted: React.FC<React.PropsWithChildren<Props>> = ({
+  children,
+  isVisible,
+}) => {
   return (
     <div
       style={{

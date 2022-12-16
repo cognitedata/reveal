@@ -33,7 +33,7 @@ export const FileToolbar = ({
 }) => {
   const context = useContext(AppContext);
   const { data: hasEditPermissions } = usePermissions(
-    context?.flow!,
+    context?.flow! as any,
     'filesAcl',
     'WRITE',
     undefined,

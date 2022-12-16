@@ -8,7 +8,7 @@ interface Props {
   query?: string;
   onQueryChange?: (newQuery: string) => void;
 }
-export const DefaultPreviewFilter: React.FC<Props> = ({
+export const DefaultPreviewFilter: React.FC<React.PropsWithChildren<Props>> = ({
   query,
   onQueryChange,
   children,

@@ -43,7 +43,7 @@ const style = {
 
 //Modified the example from here https://github.com/react-dnd/react-dnd/blob/main/packages/examples/src/04-sortable/simple/Card.tsx
 export const MenutItemDrag: React.FC<
-  WithDragHandleProps<{ isDragEnabled?: boolean }>
+  React.PropsWithChildren<WithDragHandleProps<{ isDragEnabled?: boolean }>>
 > = ({ dragHandleProps, children, isDragEnabled }) => {
   return (
     <FlexWrapper className="cogs-menu-item" style={style}>

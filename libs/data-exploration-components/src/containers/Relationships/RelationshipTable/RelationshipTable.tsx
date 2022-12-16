@@ -37,9 +37,15 @@ export const RelationshipTable = ({
 }: RelationshipTableProps & SelectableItemsProps) => {
   const context = useContext(AppContext);
   const { data: relationshipPermission, isFetched: permissionFetched } =
-    usePermissions(context?.flow!, 'relationshipsAcl', 'READ', undefined, {
-      enabled: Boolean(context?.flow),
-    });
+    usePermissions(
+      context?.flow! as any,
+      'relationshipsAcl',
+      'READ',
+      undefined,
+      {
+        enabled: Boolean(context?.flow),
+      }
+    );
 
   if (permissionFetched && !relationshipPermission) {
     return (

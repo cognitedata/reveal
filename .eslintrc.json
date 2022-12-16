@@ -27,7 +27,8 @@
               "@data-exploration-app",
               "@data-exploration-components",
               "@platypus-core",
-              "@cognite/platypus-cdf-cli"
+              "@cognite/platypus-cdf-cli",
+              "@cognite/data-exploration"
             ],
             "depConstraints": [
               {
