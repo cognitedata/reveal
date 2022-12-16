@@ -243,7 +243,7 @@
     "@cognite/cogs.js": "^7.14.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@cognite/react-container/react-router-dom": "5.3.3",
+    "@cognite/react-container/react-router-dom": "5.3.4",
     "@mui/joy": "5.0.0-alpha.56"
   },
   "bin": {
