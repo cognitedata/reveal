@@ -54,7 +54,7 @@ Configuration of the compass.
 | `fontColor?` | `THREE.Color` | - |
 | `fontSize?` | `number` | - |
 | `labelDelta?` | `number` | Offset in radians of the orientation indicator. |
-| `ringLabel?` | `string` | Label of the orientation indicator. Defaults to 'N' for north. |
+| `ringLabel?` | `string` | Label of the orientation indicator. Defaults  to 'N' for north. |
 | `tickColor?` | `THREE.Color` | - |
 
 #### Defined in
@@ -73,9 +73,9 @@ Configuration of [AxisViewTool](../classes/cognite_reveal_tools.AxisViewTool.md)
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `animationSpeed?` | `number` | How long the camera animation lasts when clicking a face of the orientation box. |
+| `animationSpeed?` | `number` | How long the camera animation lasts when  clicking a face of the orientation box. |
 | `compass?` | [`AxisBoxCompassConfig`](cognite_reveal_tools.md#axisboxcompassconfig) | Configuration of the compass "base" of the tool. |
-| `faces?` | { `xNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `xPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `yNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `yPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `zNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `zPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig)  } | Configuration for each of the faces of the orientation box. Note that Reveal uses a right-handed Y up coordinate system, which might differ from the original model space. To account for this, you might want to reassign labels of the faces. |
+| `faces?` | { `xNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `xPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `yNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `yPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `zNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `zPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig)  } | Configuration for each of the faces of the orientation box.  Note that Reveal uses a right-handed Y up coordinate system,  which might differ from the original model space. To account  for this, you might want to reassign labels of the faces. |
 | `faces.xNegativeFace?` | [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) | - |
 | `faces.xPositiveFace?` | [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) | - |
 | `faces.yNegativeFace?` | [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) | - |
@@ -178,7 +178,7 @@ Options for an overlay added using [add](../classes/cognite_reveal_tools.HtmlOve
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `positionUpdatedCallback?` | [`HtmlOverlayPositionUpdatedDelegate`](cognite_reveal_tools.md#htmloverlaypositionupdateddelegate) | Callback that is triggered whenever the position of the overlay is updated. Optional. |
-| `userData?` | `any` | Optional user specified data that is provided to the [HtmlOverlayCreateClusterDelegate](cognite_reveal_tools.md#htmloverlaycreateclusterdelegate) and [HtmlOverlayPositionUpdatedDelegate](cognite_reveal_tools.md#htmloverlaypositionupdateddelegate). |
+| `userData?` | `any` | Optional user specified data that is provided to the [HtmlOverlayCreateClusterDelegate](cognite_reveal_tools.md#htmloverlaycreateclusterdelegate) and  [HtmlOverlayPositionUpdatedDelegate](cognite_reveal_tools.md#htmloverlaypositionupdateddelegate). |
 
 #### Defined in
 
@@ -227,8 +227,8 @@ Controls how close overlay elements are clustered together.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `createClusterElementCallback` | [`HtmlOverlayCreateClusterDelegate`](cognite_reveal_tools.md#htmloverlaycreateclusterdelegate) | Callback that is triggered when a set of overlays are clustered together to create a "composite" element as a placeholder for the clustered elements. Note that this callback will be triggered every frame for each cluster so it must be performant. |
-| `mode` | ``"overlapInScreenSpace"`` | Currently only 'overlapInScreenSpace' is supported. In this mode, overlays are clustered together into a single element as defined by the [createClusterElementCallback](cognite_reveal_tools.md#createclusterelementcallback) and hidden when they overlap in screen space. The composite element is placed at the midpoint of all clustered elements.  Clustered elements are faded in/out using CSS styling `transition`, `opacity` and `visibility`. |
+| `createClusterElementCallback` | [`HtmlOverlayCreateClusterDelegate`](cognite_reveal_tools.md#htmloverlaycreateclusterdelegate) | Callback that is triggered when a set of overlays are clustered together  to create a "composite" element as a placeholder for the clustered elements.  Note that this callback will be triggered every frame for each cluster so it  must be performant. |
+| `mode` | ``"overlapInScreenSpace"`` | Currently only 'overlapInScreenSpace' is supported. In this mode,  overlays are clustered together into a single element as defined by  the [createClusterElementCallback](cognite_reveal_tools.md#createclusterelementcallback) and hidden when they overlap  in screen space. The composite element is placed at the midpoint of  all clustered elements.    Clustered elements are faded in/out using CSS styling `transition`,  `opacity` and `visibility`. |
 
 #### Defined in
 

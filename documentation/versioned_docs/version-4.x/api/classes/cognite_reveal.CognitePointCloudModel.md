@@ -442,7 +442,7 @@ Returns true if the model has values with the given classification class.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `pointClass` | `number` | ASPRS classification class code. Either one of the well known classes from [WellKnownAsprsPointClassCodes](../enums/cognite_reveal.WellKnownAsprsPointClassCodes.md) or a number for user defined classes. |
+| `pointClass` | `number` | ASPRS classification class code. Either one of the well known  classes from [WellKnownAsprsPointClassCodes](../enums/cognite_reveal.WellKnownAsprsPointClassCodes.md) or a number for user defined classes. |
 
 #### Returns
 
@@ -470,7 +470,7 @@ Error if the model doesn't have the class given.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `pointClass` | `number` | ASPRS classification class code. Either one of the well known classes from [WellKnownAsprsPointClassCodes](../enums/cognite_reveal.WellKnownAsprsPointClassCodes.md) or a number for user defined classes. |
+| `pointClass` | `number` | ASPRS classification class code. Either one of the well known  classes from [WellKnownAsprsPointClassCodes](../enums/cognite_reveal.WellKnownAsprsPointClassCodes.md) or a number for user defined classes. |
 
 #### Returns
 
@@ -514,7 +514,7 @@ Error if the model doesn't have the class given.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `pointClass` | `number` | ASPRS classification class code. Either one of the well known classes from [WellKnownAsprsPointClassCodes](../enums/cognite_reveal.WellKnownAsprsPointClassCodes.md) or a number for user defined classes. |
+| `pointClass` | `number` | ASPRS classification class code. Either one of the well known  classes from [WellKnownAsprsPointClassCodes](../enums/cognite_reveal.WellKnownAsprsPointClassCodes.md) or a number for user defined classes. |
 | `visible` | `boolean` | Boolean flag that determines if the point class type should be visible or not. |
 
 #### Returns
