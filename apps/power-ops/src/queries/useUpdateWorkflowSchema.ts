@@ -38,10 +38,7 @@ const updateWorkflowSchemas = (
 };
 
 export const useUpdateWorkflowSchema = () => {
-  const {
-    client: { project },
-    authState: { token },
-  } = useAuthenticatedAuthContext();
+  const { project, token } = useAuthenticatedAuthContext();
   const queryClient = useQueryClient();
   const workflowSchemasKey = [project, 'workflow-schemas'];
 

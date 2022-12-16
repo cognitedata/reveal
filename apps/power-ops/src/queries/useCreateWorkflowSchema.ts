@@ -37,10 +37,7 @@ const updateWorkflowSchemas = (
 };
 
 export const useCreateWorkflowSchema = () => {
-  const {
-    client: { project },
-    authState: { token },
-  } = useAuthenticatedAuthContext();
+  const { project, token } = useAuthenticatedAuthContext();
   const queryClient = useQueryClient();
   const workflowSchemasKey = [project, 'workflow-schemas'];
   const emptyWorkflowSchema: WorkflowSchemaWithProcessesCreate = {
@@ -49,13 +46,19 @@ export const useCreateWorkflowSchema = () => {
     triggeredBy: ['<CHANGE_HERE>'],
     workflowType: 'UNTITLED',
     processes: [],
-    enabled: true,
+    enabled: false,
   };
 
   return useMutation({
-    mutationFn: () =>
-      createWorkflowSchemaBackend(emptyWorkflowSchema, project, token!),
-    onMutate: async () => {
+    mutationFn: (workflowSchemaBody?: WorkflowSchemaWithProcessesCreate) =>
+      createWorkflowSchemaBackend(
+        workflowSchemaBody
+          ? { ...workflowSchemaBody, enabled: false }
+          : emptyWorkflowSchema,
+        project,
+        token
+      ),
+    onMutate: async (createdWorkflowSchema) => {
       // Stop any data refresh
       await queryClient.cancelQueries(workflowSchemasKey);
       // Get a snapshot of the previous value in case of failure
@@ -66,7 +69,7 @@ export const useCreateWorkflowSchema = () => {
         workflowSchemasKey,
         (oldWorkflowSchemas = { workflowSchemas: [], count: 0 }) =>
           updateWorkflowSchemas(oldWorkflowSchemas, {
-            ...emptyWorkflowSchema,
+            ...(createdWorkflowSchema ?? emptyWorkflowSchema),
             id: NaN,
           })
       );

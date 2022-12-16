@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-export const Header = styled.span`
+export const Header = styled.div`
   display: flex;
   position: static;
   padding: 12px 16px;

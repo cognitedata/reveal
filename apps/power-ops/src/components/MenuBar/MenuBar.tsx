@@ -160,13 +160,13 @@ export const MenuBar = () => {
               isActive: pathname.includes(PAGES.WORKFLOWS),
               onClick: () => history.push(PAGES.WORKFLOWS),
             },
+            {
+              name: 'Workflow Schemas',
+              isActive: pathname.includes(PAGES.WORKFLOW_SCHEMAS),
+              onClick: () => history.push(PAGES.WORKFLOW_SCHEMAS),
+            },
             ...(authState.email?.includes('@cognite')
               ? [
-                  {
-                    name: 'Workflow Schemas',
-                    isActive: pathname.includes(PAGES.WORKFLOW_SCHEMAS),
-                    onClick: () => history.push(PAGES.WORKFLOW_SCHEMAS),
-                  },
                   {
                     name: 'Monitoring',
                     isActive: pathname.includes(PAGES.MONITORING),

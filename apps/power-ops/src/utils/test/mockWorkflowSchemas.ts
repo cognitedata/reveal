@@ -7,6 +7,7 @@ import {
 export const mockWorkflowSchemas: WorkflowSchemaWithProcesses[] = [
   {
     id: 1,
+    enabled: true,
     name: 'Day-Ahead Bid Matrix Calculation',
     triggeredBy: ['POWEROPS_BID_PROCESS'],
     workflowType: WORKFLOW_TYPES.DAY_AHEAD_BID_MATRIX_CALCULATION,
@@ -34,6 +35,7 @@ export const mockWorkflowSchemas: WorkflowSchemaWithProcesses[] = [
   },
   {
     id: 2,
+    enabled: true,
     name: 'Create Bid Process Data',
     triggeredBy: ['FDM_IMPORT_PRICE_PREDICTIONS', 'SMG_IMPORT_PRICE_SCENARIOS'],
     workflowType: 'PREPARE_BID_PROCESS_DATA',
@@ -49,6 +51,7 @@ export const mockWorkflowSchemas: WorkflowSchemaWithProcesses[] = [
   },
   {
     id: 3,
+    enabled: true,
     name: 'Prepare Benchmarking of Day-Ahead Bid',
     triggeredBy: ['SMG_IMPORT_DAY_AHEAD_RESULT', 'SMG_IMPORT_DAY_AHEAD_PRICES'],
     workflowType: 'PREPARE_BID_PROCESS_DATA',
@@ -64,6 +67,7 @@ export const mockWorkflowSchemas: WorkflowSchemaWithProcesses[] = [
   },
   {
     id: 4,
+    enabled: false,
     name: 'Create RKOM collection config',
     triggeredBy: ['POWEROPS_RKOM_TRIGGER'],
     workflowType: 'POWEROPS_RKOM_PROCESS',

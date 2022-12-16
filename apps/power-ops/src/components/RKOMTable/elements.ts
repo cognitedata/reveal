@@ -8,6 +8,9 @@ export const StyledSequenceTable = styled.table`
   tr:first-child {
     border-top: none;
   }
+  tr:last-child {
+    border-bottom: none !important;
+  }
   tbody {
     display: flex;
     flex-direction: column;

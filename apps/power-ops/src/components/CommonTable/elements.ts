@@ -38,5 +38,8 @@ export const StyledTable = styled.table`
         color: var(--cogs-text-icon--medium);
       }
     }
+    tr:last-child {
+      border-bottom: 1px solid var(--cogs-bg-control--disabled);
+    }
   }
 `;

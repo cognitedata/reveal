@@ -7,7 +7,10 @@ import { convertWorkflowSchemaToEditable } from 'pages/WorkflowSchemas/utils';
 export default {
   component: WorkflowSchemaEditor,
   title: 'Components/Workflow Schema Editor',
-  argTypes: { onSave: { action: 'saved' } },
+  argTypes: {
+    onSave: { action: 'saved' },
+    onCancel: { action: 'canceled' },
+  },
   parameters: {
     layout: 'fullscreen',
   },
@@ -21,26 +24,26 @@ export const Example1 = Template.bind({});
 
 Example1.storyName = mockWorkflowSchemas[0].name;
 Example1.args = {
-  value: convertWorkflowSchemaToEditable(mockWorkflowSchemas[0]),
+  initialValue: convertWorkflowSchemaToEditable(mockWorkflowSchemas[0]),
 };
 
 export const Example2 = Template.bind({});
 
 Example2.storyName = mockWorkflowSchemas[1].name;
 Example2.args = {
-  value: convertWorkflowSchemaToEditable(mockWorkflowSchemas[1]),
+  initialValue: convertWorkflowSchemaToEditable(mockWorkflowSchemas[1]),
 };
 
 export const Example3 = Template.bind({});
 
 Example3.storyName = mockWorkflowSchemas[2].name;
 Example3.args = {
-  value: convertWorkflowSchemaToEditable(mockWorkflowSchemas[2]),
+  initialValue: convertWorkflowSchemaToEditable(mockWorkflowSchemas[2]),
 };
 
 export const Example4 = Template.bind({});
 
 Example4.storyName = mockWorkflowSchemas[3].name;
 Example4.args = {
-  value: convertWorkflowSchemaToEditable(mockWorkflowSchemas[3]),
+  initialValue: convertWorkflowSchemaToEditable(mockWorkflowSchemas[3]),
 };

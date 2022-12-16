@@ -5,6 +5,7 @@ import { useUpdateWorkflowSchema } from 'queries/useUpdateWorkflowSchema';
 import { useMemo } from 'react';
 import { useDeleteWorkflowSchema } from 'queries/useDeleteWorkflowSchema';
 import { useCreateWorkflowSchema } from 'queries/useCreateWorkflowSchema';
+import { WorkflowSchemaWithProcesses } from '@cognite/power-ops-api-types';
 
 export const WorkflowSchemasContainer = () => {
   const {
@@ -13,7 +14,7 @@ export const WorkflowSchemasContainer = () => {
   } = useFetchWorkflowSchemas();
 
   const {
-    mutate: handleCreate,
+    mutateAsync: handleCreate,
     isError: createError,
     isSuccess: createSuccessful,
   } = useCreateWorkflowSchema();
@@ -49,6 +50,11 @@ export const WorkflowSchemasContainer = () => {
     if (deleteSuccessful) toast.success('Workflow Schema Deleted Successfully');
   }, [deleteSuccessful]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleDuplicate = ({ id, ...toSave }: WorkflowSchemaWithProcesses) => {
+    return handleCreate({ ...toSave, name: `${toSave.name} Copy` });
+  };
+
   return (
     <>
       <ToastContainer autoClose={1500} />
@@ -58,6 +64,7 @@ export const WorkflowSchemasContainer = () => {
         <WorkflowSchemas
           workflowSchemas={workflowSchemas}
           onCreate={handleCreate}
+          onDuplicate={handleDuplicate}
           onSave={handleSave}
           onDelete={handleDelete}
         />

@@ -1,6 +1,3 @@
-// React Table already adds the key props
-/* eslint-disable react/jsx-key */
-
 import {
   useTable,
   useFilters,
@@ -10,6 +7,7 @@ import {
   Column,
   IdType,
   Row,
+  CellPropGetter,
 } from 'react-table';
 import { Flex, Pagination } from '@cognite/cogs.js';
 import { DefaultCommonTableRow } from 'components/CommonTable/DefaultCommonTableRow';
@@ -20,7 +18,7 @@ import { SortColumnIcon } from './SortColumnIcon';
 
 type CommonTableProps<T extends object> = {
   data: readonly T[];
-  columns: ReadonlyArray<Column<T>>;
+  columns: ReadonlyArray<Column<T> & { cellProps?: CellPropGetter<T> }>;
   showPagination?: boolean;
   pageSize?: number;
   initialExpanded?: Record<IdType<T>, boolean>;
@@ -64,7 +62,7 @@ export function CommonTable<T extends object>({
       <StyledTable {...getTableProps()}>
         <thead>
           {headerGroups.map(({ getHeaderGroupProps, headers }) => (
-            <tr {...getHeaderGroupProps()}>
+            <tr {...getHeaderGroupProps()} key={getHeaderGroupProps().key}>
               {headers.map(
                 ({
                   canSort,
@@ -76,6 +74,7 @@ export function CommonTable<T extends object>({
                 }) => (
                   <th
                     {...getHeaderProps(getSortByToggleProps())}
+                    key={getHeaderProps(getSortByToggleProps()).key}
                     className="cogs-body-2 strong"
                   >
                     <span>
