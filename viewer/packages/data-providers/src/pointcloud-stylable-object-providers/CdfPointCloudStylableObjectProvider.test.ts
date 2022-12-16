@@ -7,7 +7,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
 import { CompositeShape, Cylinder, Box } from '@reveal/utilities';
 import { CdfPointCloudStylableObjectProvider } from './CdfPointCloudStylableObjectProvider';
-import { CdfModelIdentifier } from '@reveal/data-providers';
+import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 
 const dummyAnnotationsResponse = {
   items: [
