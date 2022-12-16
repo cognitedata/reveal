@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
@@ -27,7 +27,6 @@ import {
   Size,
 } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { SchemaVisualizer } from '@platypus-app/components/SchemaVisualizer/SchemaVisualizer';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';

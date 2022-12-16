@@ -2,13 +2,15 @@ import styled from 'styled-components/macro';
 import { EditableChip } from '@platypus-app/components/EditableChip';
 import { Body } from '@cognite/cogs.js';
 
-export const FormLabel = styled(Body)`
+export const FormLabel = styled(Body)<{ required?: boolean }>`
   margin-bottom: 6px;
 
-  &:after {
+  ${(props) =>
+    props.required &&
+    `  &:after {
     content: ' *';
     color: var(--cogs-red);
-  }
+  }`}
 `;
 
 export const NameWrapper = styled.div`
