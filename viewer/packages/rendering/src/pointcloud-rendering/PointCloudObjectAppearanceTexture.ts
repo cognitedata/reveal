@@ -14,7 +14,7 @@ import {
 import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 
 export class PointCloudObjectAppearanceTexture {
-  private _objectStyleTexture: THREE.DataTexture;
+  private readonly _objectStyleTexture: THREE.DataTexture;
   private _needsReconstruction: boolean = true;
 
   private readonly _styledObjectSets: StyledPointCloudObjectCollection[] = [];
