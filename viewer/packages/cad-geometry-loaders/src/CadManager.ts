@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { Subscription, Observable } from 'rxjs';
 
 import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler,  } from './CadModelUpdateHandler';
+import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { LoadingState } from '@reveal/model-base';
 import { CadMaterialManager, RenderMode } from '@reveal/rendering';
 import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
