@@ -1038,7 +1038,6 @@ export class Cognite3DViewer {
    */
   requestRedraw(): void {
     this.revealManager.requestRedraw();
-    this.forceCameraNearFarPlanesUpdated();
   }
 
   /**

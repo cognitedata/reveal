@@ -31,6 +31,7 @@ export class LoadGltfUi {
         this._gizmos.forEach(gizmo => {
           gizmo.visible = value;
         });
+        this._viewer.forceCameraNearFarPlanesUpdated();
         this._viewer.requestRedraw();
       });
     ui.add(this._params, 'scaleStr').name('Scale models').onChange(scaleStr => {
@@ -38,10 +39,11 @@ export class LoadGltfUi {
         const scale = Number.parseFloat(scaleStr);
         console.log(scale);
         this._objects.forEach(object => object.scale.set(scale, scale, scale));
+        this._viewer.forceCameraNearFarPlanesUpdated();
         this._viewer.requestRedraw();
         this._params.scale = scale;
       }
-      catch  {
+      catch {
       }
     });
 
@@ -83,6 +85,7 @@ export class LoadGltfUi {
         mixer.update(clock.getDelta());
       });
       this._viewer.on('sceneRendered', () => {
+        this._viewer.forceCameraNearFarPlanesUpdated();
         this._viewer.requestRedraw(); // Render continuously
       });
       this._viewer.requestRedraw();
@@ -101,6 +104,7 @@ export class LoadGltfUi {
     this._gizmos.push(gizmo);
 
     gizmo.addEventListener('change', () => {
+      this._viewer.forceCameraNearFarPlanesUpdated();
       this._viewer.requestRedraw();
     });
     gizmo.addEventListener('dragging-changed', (event: any) => {
@@ -122,8 +126,8 @@ export class LoadGltfUi {
     const updatePose = () => {
       const { position, rotation } =
         this._viewer.cameraManager.getCameraState();
-        pointlight.position.copy(position);
-        pointlight.setRotationFromQuaternion(rotation);
+      pointlight.position.copy(position);
+      pointlight.setRotationFromQuaternion(rotation);
     };
     this._viewer.on('cameraChange', updatePose);
 

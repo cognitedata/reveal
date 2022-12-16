@@ -20,8 +20,8 @@ export class PointCloudObjectStylingUI {
   private _boundingBoxGroup: THREE.Group | undefined;
 
   constructor(uiFolder: dat.GUI,
-              model: CognitePointCloudModel,
-              viewer: Cognite3DViewer) {
+    model: CognitePointCloudModel,
+    viewer: Cognite3DViewer) {
     this._model = model;
     this._viewer = viewer;
 
@@ -59,7 +59,7 @@ export class PointCloudObjectStylingUI {
     uiFolder.add(state, 'showBoundingBoxes').name('Show object bounding boxes').onChange((value: boolean) => this.toggleObjectBoundingBoxes(value));
   }
 
-  toggleObjectBoundingBoxes (b: boolean) {
+  toggleObjectBoundingBoxes(b: boolean) {
     if (b) {
       this._boundingBoxGroup = new THREE.Group();
       this._model.traverseStylableObjects((object) => {
@@ -70,6 +70,7 @@ export class PointCloudObjectStylingUI {
     } else {
       this._boundingBoxGroup?.removeFromParent();
       this._boundingBoxGroup = undefined;
+      this._viewer.forceCameraNearFarPlanesUpdated();
     }
     this._viewer.requestRedraw();
   }
@@ -118,7 +119,7 @@ export class PointCloudObjectStylingUI {
         this._model.traverseStylableObjects(id => allAnnotationIds.push(id.annotationId));
         const selectedIds = allAnnotationIds.slice(state.from, state.from + numIndices);
 
-        const ids = state.annotationId !== 0 ? [state.annotationId]: selectedIds;
+        const ids = state.annotationId !== 0 ? [state.annotationId] : selectedIds;
 
         const objects = new AnnotationIdPointCloudObjectCollection(ids);
         const appearance = createAppearanceCb();
