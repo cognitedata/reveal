@@ -10,7 +10,7 @@ const ReleaseTag = ({ version }: ReleaseTagProp) => {
 
   return releaseState ? (
     <Flex gap={6} alignItems="center">
-      <Chip label={releaseState} size="x-small" />
+      <Chip selectable label={releaseState} size="x-small" />
     </Flex>
   ) : null;
 };

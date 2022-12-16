@@ -72,7 +72,7 @@ const SourceSystemDetails = () => {
                     <Title level="5">{t('tags')}</Title>
                     <StyledTagsContainer>
                       {sourceSystem.tags?.map((tag) => (
-                        <Chip size="x-small" label={tag} key={tag} />
+                        <Chip size="x-small" label={tag} key={tag} selectable />
                       ))}
                     </StyledTagsContainer>
                   </>

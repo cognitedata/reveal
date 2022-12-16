@@ -49,7 +49,9 @@ const CategorySidebarItem = ({
       type="ghost"
     >
       <span>{title}</span>
-      {count !== undefined && <Chip label={count} muted size="x-small" />}
+      {count !== undefined && (
+        <Chip label={count} muted selectable size="x-small" />
+      )}
     </StyledButton>
   );
 };

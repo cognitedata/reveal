@@ -176,6 +176,7 @@ const ExtractorDetails = () => {
                       label={t('v-version', {
                         version: getReleaseVersionCore(latestRelease?.version),
                       })}
+                      selectable
                       size="x-small"
                     />
                     <ReleaseTag version={latestRelease?.version}></ReleaseTag>
@@ -216,7 +217,7 @@ const ExtractorDetails = () => {
                     <Title level="5">{t('tags')}</Title>
                     <StyledTagsContainer>
                       {tags?.map((tag) => (
-                        <Chip size="x-small" label={tag} key={tag} />
+                        <Chip selectable size="x-small" label={tag} key={tag} />
                       ))}
                     </StyledTagsContainer>
                   </>

@@ -41,7 +41,11 @@ const ExtractorLibraryList = ({ items }: ExtractorLibraryListProps) => {
             <Title level="5">{item.name}</Title>
             <StyledMutedDescription>{item.description}</StyledMutedDescription>
             <StyledTagContainer>
-              <Chip label={t(`${item.category}_one`)} size="x-small" />
+              <Chip
+                label={t(`${item.category}_one`)}
+                selectable
+                size="x-small"
+              />
             </StyledTagContainer>
           </StyledExtractorContent>
         </StyledExtractorContainer>
