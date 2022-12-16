@@ -141,7 +141,6 @@ export class Cognite3DViewer {
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
   private _clippingNeedsUpdate: boolean = false;
-  private _updateBoundingBoxOnAnimate: boolean = false;
 
   private readonly spinner: Spinner;
 
@@ -649,7 +648,7 @@ export class Cognite3DViewer {
 
     const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this.recalculateBoundingBox();
+    this.forceCameraNearFarPlanesUpdated();
     this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
 
     return model3d;
@@ -679,7 +678,7 @@ export class Cognite3DViewer {
     const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
-    this.recalculateBoundingBox();
+    this.forceCameraNearFarPlanesUpdated();
 
     this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
 
@@ -766,7 +765,7 @@ export class Cognite3DViewer {
       throw new Error('Model is not added to viewer');
     }
     this._models.splice(modelIdx, 1);
-    this.recalculateBoundingBox();
+    this.forceCameraNearFarPlanesUpdated();
 
     switch (model.type) {
       case 'cad':
@@ -860,7 +859,7 @@ export class Cognite3DViewer {
     this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
     this.revealManager.requestRedraw();
-    this.recalculateBoundingBox();
+    this.forceCameraNearFarPlanesUpdated();
   }
 
   /**
@@ -883,7 +882,7 @@ export class Cognite3DViewer {
       this._extraObjects.splice(index, 1);
     }
     this.revealManager.requestRedraw();
-    this.recalculateBoundingBox();
+    this.forceCameraNearFarPlanesUpdated();
   }
 
   /**
@@ -1039,18 +1038,7 @@ export class Cognite3DViewer {
    */
   requestRedraw(): void {
     this.revealManager.requestRedraw();
-    this.recalculateBoundingBox();
-  }
-
-  /**
-   * Near and far planes are automatically updated when 3D models are added to or removed from the viewer,
-   * or when a redraw is requested. However, if the planes needs to be updated more often, this flag will
-   * enable bounding box update on every animate call. The flag is false by default.
-   *
-   * @param enabled If true the boundingBox will be updated on every animation frame.
-   */
-  updateboundingBoxOnAnimate(enabled: boolean): void {
-    this._updateBoundingBoxOnAnimate = enabled;
+    this.forceCameraNearFarPlanesUpdated();
   }
 
   /**
@@ -1236,6 +1224,34 @@ export class Cognite3DViewer {
     return this.intersectModels(offsetX, offsetY);
   }
 
+  /**
+   * Update near and far plane buffers by creating a combined bounding box from all objects in the scene.
+   * Note: this is automatically called when 3D models are added to or removed from the viewer.
+   */
+  public forceCameraNearFarPlanesUpdated(): void {
+    // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
+    if (this.isDisposed) {
+      return;
+    }
+
+    const { combinedBbox, bbox } = this._updateNearAndFarPlaneBuffers;
+
+    combinedBbox.makeEmpty();
+    this._models.forEach(model => {
+      model.getModelBoundingBox(bbox);
+      if (!bbox.isEmpty()) {
+        combinedBbox.union(bbox);
+      }
+    });
+
+    this._extraObjects.forEach(obj => {
+      bbox.setFromObject(obj);
+      if (!bbox.isEmpty()) {
+        combinedBbox.union(bbox);
+      }
+    });
+  }
+
   /** @private */
   private getModels(type: 'cad'): CogniteCadModel[];
   /** @private */
@@ -1268,9 +1284,6 @@ export class Cognite3DViewer {
     if (isVisible) {
       const camera = this.cameraManager.getCamera();
       TWEEN.update(time);
-      if (this._updateBoundingBoxOnAnimate) {
-        this.recalculateBoundingBox();
-      }
       this._activeCameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
       this.revealManager.update(camera);
 
@@ -1369,31 +1382,6 @@ export class Cognite3DViewer {
     const intersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
 
     return { intersection, modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox };
-  }
-
-  /** @private */
-  private recalculateBoundingBox() {
-    // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
-    if (this.isDisposed) {
-      return;
-    }
-
-    const { combinedBbox, bbox } = this._updateNearAndFarPlaneBuffers;
-
-    combinedBbox.makeEmpty();
-    this._models.forEach(model => {
-      model.getModelBoundingBox(bbox);
-      if (!bbox.isEmpty()) {
-        combinedBbox.union(bbox);
-      }
-    });
-
-    this._extraObjects.forEach(obj => {
-      bbox.setFromObject(obj);
-      if (!bbox.isEmpty()) {
-        combinedBbox.union(bbox);
-      }
-    });
   }
 
   /** @private */
