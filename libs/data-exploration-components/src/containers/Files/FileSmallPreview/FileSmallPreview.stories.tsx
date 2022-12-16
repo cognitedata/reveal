@@ -1,6 +1,6 @@
 import React from 'react';
 import { files } from '@data-exploration-components/stubs/files';
-import { sdkMock } from 'docs/stub';
+import { sdkMock } from '@data-exploration-components/docs/stub';
 import { FileSmallPreview } from './FileSmallPreview';
 import { assets } from '../../../stubs/assets';
 import { events } from '../../../stubs/events';
