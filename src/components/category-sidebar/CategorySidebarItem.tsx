@@ -57,11 +57,8 @@ const CategorySidebarItem = ({
 };
 
 const StyledButton = styled(Button)`
-  > span {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
+  display: flex;
+  justify-content: space-between;
 `;
 
 export default CategorySidebarItem;
