@@ -2,8 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { isMobileOrTablet } from '@reveal/utilities';
-import { isMobile } from './isMobileOrTablet';
+import { isMobile, isMobileOrTablet } from './isMobileOrTablet';
 
 export type DeviceDescriptor = {
   deviceType: 'desktop' | 'mobile' | 'tablet';
