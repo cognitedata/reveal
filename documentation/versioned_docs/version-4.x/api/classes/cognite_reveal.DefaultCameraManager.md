@@ -359,7 +359,7 @@ empty rotation field.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `state` | [`CameraState`](../modules/cognite_reveal.md#camerastate) | Camera state. * |
+| `state` | [`CameraState`](../modules/cognite_reveal.md#camerastate) | Camera state.  * |
 
 #### Returns
 

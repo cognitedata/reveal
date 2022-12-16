@@ -132,7 +132,7 @@ Represents a measurement of how much geometry can be loaded.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `highDetailProximityThreshold` | `number` | Sectors within this distance from the camera will always be loaded in high details.  **`Deprecated`**  This is only used for 3D models processed prior to the Reveal 3.0 release (Q1 2022). |
-| `maximumRenderCost` | `number` | Maximum render cost. This number can be thought of as triangle count, although the number doesn't match this directly. |
+| `maximumRenderCost` | `number` | Maximum render cost. This number can be thought of as triangle count, although the number  doesn't match this directly. |
 
 #### Defined in
 
@@ -192,8 +192,8 @@ ___
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `changeCameraTargetOnClick?` | `boolean` | Enables or disables change of camera target on mouse click. New target is then set to the point of the model under current cursor position.  Default is false. |
-| `mouseWheelAction?` | ``"zoomToTarget"`` \| ``"zoomPastCursor"`` \| ``"zoomToCursor"`` | Sets mouse wheel initiated action.  Modes:  'zoomToTarget' - zooms just to the current target (center of the screen) of the camera.  'zoomPastCursor' - zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects.  'zoomToCursor' - mouse wheel scroll zooms towards the point on the model where cursor is hovering over, doesn't allow going through objects.  Default is 'zoomPastCursor'. |
+| `changeCameraTargetOnClick?` | `boolean` | Enables or disables change of camera target on mouse click. New target is then set to the point of the model under current cursor position.    Default is false. |
+| `mouseWheelAction?` | ``"zoomToTarget"`` \| ``"zoomPastCursor"`` \| ``"zoomToCursor"`` | Sets mouse wheel initiated action.    Modes:    'zoomToTarget' - zooms just to the current target (center of the screen) of the camera.    'zoomPastCursor' - zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects.    'zoomToCursor' - mouse wheel scroll zooms towards the point on the model where cursor is hovering over, doesn't allow going through objects.    Default is 'zoomPastCursor'. |
 
 #### Defined in
 
@@ -235,7 +235,7 @@ ___
 | :------ | :------ | :------ |
 | `position?` | `THREE.Vector3` | Camera position in world space. |
 | `rotation?` | `THREE.Quaternion` | Camera local rotation in quaternion form. |
-| `target?` | `THREE.Vector3` | Camera target in world space. * |
+| `target?` | `THREE.Vector3` | Camera target in world space.  * |
 
 #### Defined in
 
@@ -398,8 +398,8 @@ ___
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `boundingBox?` | `THREE.Box3` | The bounds to load geometry within. By default this box is in CDF coordinate space which will be transformed into coordinates relative to the model using the the model transformation which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions), or set in [Cognite Fusion](https://fusion.cognite.com/).  **`See`**  [isBoundingBoxInModelCoordinates](cognite_reveal.md#isboundingboxinmodelcoordinates). |
-| `isBoundingBoxInModelCoordinates?` | `boolean` | When set, the geometry filter `boundingBox` will be considered to be in "Reveal/ThreeJS space". Rather than CDF space which is the default. When using Reveal space, the model transformation which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions), or set in [Cognite Fusion](https://fusion.cognite.com/). |
+| `boundingBox?` | `THREE.Box3` | The bounds to load geometry within. By default this box is in CDF coordinate space which  will be transformed into coordinates relative to the model using the the model transformation  which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions),  or set in [Cognite Fusion](https://fusion.cognite.com/).  **`See`**  [isBoundingBoxInModelCoordinates](cognite_reveal.md#isboundingboxinmodelcoordinates). |
+| `isBoundingBoxInModelCoordinates?` | `boolean` | When set, the geometry filter `boundingBox` will be considered to be in "Reveal/ThreeJS space".  Rather than CDF space which is the default. When using Reveal space, the model transformation  which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions),  or set in [Cognite Fusion](https://fusion.cognite.com/). |
 
 #### Defined in
 
@@ -450,11 +450,11 @@ Type for defining node appearance profiles to style a 3D CAD model.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `color?` | `Color` | Overrides the default color of the node in RGB. Black, or `new Color(0, 0, 0)` means no override. |
-| `outlineColor?` | [`NodeOutlineColor`](../enums/cognite_reveal.NodeOutlineColor.md) | When set, an outline is drawn around the node to make it stand out. |
-| `prioritizedForLoadingHint?` | `number` | When provided, this value can be used to prioritize certain areas of the 3D model to be loaded. This can be useful to prioritize key objects in the 3D model to always be loaded.  When non-zero, sectors containing geometry in the vicinity of the prioritized sectors are given an *extra* priority. Recommended values are in range 1 (somewhat higher priority to be loaded) to 10 (very likely to be loaded). Usually values around 4-5 is recommended.  Prioritized nodes are loaded at the expense of non-prioritized areas. There are no guarantees that the nodes are actually loaded, and the more prioritized areas/nodes provided, the less likely it is that the hint is obeyed.  Extra priority doesn't accumulate when sectors are prioritized because they intersect/contain several nodes.  **This is an advanced feature and not recommended for most users**  **`Version`**  Only works with 3D models converted later than Q4 2021. |
-| `renderGhosted?` | `boolean` | When set to true, the node is rendered ghosted, i.e. transparent with a fixed color. This has no effect if [renderInFront](cognite_reveal.md#renderinfront) is `true`. |
-| `renderInFront?` | `boolean` | When set to true, the node is rendered in front of all other nodes even if it's occluded. Note that this take precedence over [renderGhosted](cognite_reveal.md#renderghosted). |
+| `color?` | `Color` | Overrides the default color of the node in RGB. Black,  or `new Color(0, 0, 0)` means no override. |
+| `outlineColor?` | [`NodeOutlineColor`](../enums/cognite_reveal.NodeOutlineColor.md) | When set, an outline is drawn around the  node to make it stand out. |
+| `prioritizedForLoadingHint?` | `number` | When provided, this value can be used to prioritize certain areas of the  3D model to be loaded. This can be useful to prioritize key objects in the  3D model to always be loaded.    When non-zero, sectors containing geometry in the vicinity of the prioritized  sectors are given an *extra* priority. Recommended values are in range 1 (somewhat  higher priority to be loaded) to 10 (very likely to be loaded). Usually values around 4-5  is recommended.    Prioritized nodes are loaded at the expense of non-prioritized areas. There are no  guarantees that the nodes are actually loaded, and the more prioritized areas/nodes  provided, the less likely it is that the hint is obeyed.    Extra priority doesn't accumulate when sectors are prioritized because they intersect/contain  several nodes.    **This is an advanced feature and not recommended for most users**  **`Version`**  Only works with 3D models converted later than Q4 2021. |
+| `renderGhosted?` | `boolean` | When set to true, the node is rendered ghosted, i.e.  transparent with a fixed color. This has no effect if [renderInFront](cognite_reveal.md#renderinfront)  is `true`. |
+| `renderInFront?` | `boolean` | When set to true, the node is rendered in front  of all other nodes even if it's occluded.  Note that this take precedence over [renderGhosted](cognite_reveal.md#renderghosted). |
 | `visible?` | `boolean` | Overrides the visibility of the node. |
 
 #### Defined in
@@ -534,7 +534,7 @@ loaded at the same time.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `numberOfPoints` | `number` | Total number of points that can be loaded for all point clouds models accumulated. |
+| `numberOfPoints` | `number` | Total number of points that can be loaded for all point clouds models  accumulated. |
 
 #### Defined in
 
@@ -633,7 +633,7 @@ Options for [PropertyFilterNodeCollection](../classes/cognite_reveal.PropertyFil
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `requestPartitions?` | `number` | How many partitions to split the request into. More partitions can yield better performance for queries with very large result set (in order of magnitude 100.000 plus). Defaults to 1. |
+| `requestPartitions?` | `number` | How many partitions to split the request into. More partitions can yield better performance  for queries with very large result set (in order of magnitude 100.000 plus).  Defaults to 1. |
 
 #### Defined in
 
