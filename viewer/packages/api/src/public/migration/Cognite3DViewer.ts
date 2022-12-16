@@ -1043,10 +1043,9 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Near and far planes are automatically updated when 3D models are added to or removed from the viewer
-   * or when a redraw is requested. However, if models have animation that would move them outside the
-   * current bounding box or for other reasons will need the planes to be updated more often, this flag
-   * will enable bounding box update on every animate call. The flag is false by default.
+   * Near and far planes are automatically updated when 3D models are added to or removed from the viewer,
+   * or when a redraw is requested. However, if the planes needs to be updated more often, this flag will
+   * enable bounding box update on every animate call. The flag is false by default.
    *
    * @param enabled If true the boundingBox will be updated on every animation frame.
    */
