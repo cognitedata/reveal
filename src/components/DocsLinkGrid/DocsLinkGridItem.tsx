@@ -15,12 +15,10 @@ const DocsLinkGridItem = styled(
     </Button>
   )
 )`
-  & > span {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
   background-color: ${Colors['decorative--grayscale--200']};
   border-radius: 6px;
 
@@ -36,14 +34,6 @@ const DocsLinkGridItem = styled(
         color: ${Colors['surface--action--strong--default']};
       }
     }
-  }
-
-  > * {
-    color: ${Colors['text-icon--medium']};
-  }
-
-  svg {
-    color: inherit;
   }
 `;
 
