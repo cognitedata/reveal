@@ -8,6 +8,7 @@ import {
 } from '@cognite/reveal';
 import {
   CAMERA_ANIMATION_DURATION,
+  isCadIntersection,
   MINIMUM_BOUNDINGBOX_SIZE,
 } from '@data-exploration-app/containers/ThreeD/utils';
 
@@ -88,7 +89,10 @@ export function useViewerDoubleClickListener({
       );
       if (intersection) {
         const model = intersection.model;
-        if (model instanceof CogniteCadModel && 'treeIndex' in intersection) {
+        if (
+          model instanceof CogniteCadModel &&
+          isCadIntersection(intersection)
+        ) {
           const { treeIndex } = intersection;
           model.mapTreeIndexToNodeId(treeIndex).then(async (nodeId: number) => {
             const nodeBoundingBox = await fitCameraToNode(

@@ -29,6 +29,7 @@ import {
   ghostAsset,
   highlightAsset,
   highlightAssetMappedNodes,
+  isCadIntersection,
   removeAllStyles,
 } from './utils';
 
@@ -108,14 +109,14 @@ export const ThreeDView = ({ modelId }: Props) => {
     (intersection: Intersection | null) => {
       (async () => {
         let closestAssetId: number | undefined;
-        if (intersection) {
+        if (intersection && isCadIntersection(intersection)) {
           closestAssetId = await findClosestAsset(
             sdk,
             queryClient,
             threeDModel!,
             modelId,
             revisionId!,
-            intersection as CadIntersection
+            intersection
           );
         }
 
