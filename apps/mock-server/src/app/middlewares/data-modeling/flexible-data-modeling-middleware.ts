@@ -277,6 +277,7 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
         source: `
           ${graphQlQuery}
         `,
+        variableValues: query.variables || {},
       });
       res.jsonp(response);
     }
@@ -307,6 +308,7 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
         source: `
           ${graphQlQuery}
         `,
+        variableValues: query.variables || {},
       });
       res.jsonp(response);
     }

@@ -21,6 +21,7 @@ import {
   DataModelExternalIdValidator,
   Validator,
 } from '@platypus/platypus-core';
+import { DataModelNameValidator } from '@platypus-core/domain/data-model/validators/data-model-name-validator';
 
 export type DataModelDetailModalProps = {
   dataSets: DataSet[];
@@ -43,6 +44,7 @@ export type DataModelDetailModalProps = {
 export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
   const { t } = useTranslation('DataModelDetailModal');
   const [externalIdErrorMessage, setExternalIdErrorMessage] = useState();
+  const [nameErrorMessage, setNameErrorMessage] = useState();
 
   const dataSetOptions = props.dataSets.map(
     (item: DataSet) =>
@@ -55,6 +57,23 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
   const [selectedDataSet, setSelectedDataSet] = useState<
     OptionType<unknown> | undefined
   >(undefined);
+
+  const validateName = (value: string) => {
+    const validator = new Validator({ name: value });
+    validator.addRule(
+      'name',
+      new DataModelNameValidator({
+        validationMessage: t(
+          'data_model_name_error_message',
+          'May only contain numbers, letters, hyphens and underscores. Cannot start with a number, or contain more than 43 characters.'
+        ),
+      })
+    );
+    const result = validator.validate();
+    setNameErrorMessage(result.valid ? null : result.errors.name);
+
+    return result.valid;
+  };
 
   const validateExternalId = (value: string) => {
     const validator = new Validator({ externalId: value });
@@ -87,7 +106,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
     >
       <div>
         <label>
-          <FormLabel level={2} strong>
+          <FormLabel level={2} strong required>
             {t('modal_name_title', 'Name')}
           </FormLabel>
           <NameWrapper>
@@ -99,6 +118,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
               value={props.name}
               placeholder={t('modal_name_input_placeholder', 'Enter name')}
               onChange={(e) => {
+                validateName(e.target.value);
                 props.onNameChange(e.target.value);
               }}
               onKeyDown={(e) => {
@@ -106,7 +126,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
                   props.onSubmit();
                 }
               }}
-              error={props.hasInputError}
+              error={props.hasInputError || nameErrorMessage}
             />
           </NameWrapper>
         </label>
