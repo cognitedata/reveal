@@ -4,7 +4,23 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {}
+      "rules": {
+        "lodash/import-scope": "warn",
+        "no-only-tests/no-only-tests": "warn",
+        "testing-library/render-result-naming-convention": "warn",
+        "@typescript-eslint/ban-ts-comment": "warn",
+        "@typescript-eslint/no-non-null-asserted-optional-chain": "warn",
+        "no-param-reassign": "warn",
+        "no-control-regex": "warn",
+        "@typescript-eslint/no-empty-function": "warn",
+        "lodash/prefer-matches": "warn",
+        "lodash/prefer-noop": "warn",
+        "@typescript-eslint/no-shadow": "warn",
+        "no-unsafe-optional-chaining": "warn",
+        "@typescript-eslint/ban-types": "warn",
+        "testing-library/no-node-access": "warn",
+        "testing-library/no-wait-for-multiple-assertions": "warn"
+      }
     },
     {
       "files": ["*.ts", "*.tsx"],
