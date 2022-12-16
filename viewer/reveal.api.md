@@ -381,6 +381,7 @@ export class Cognite3DViewer {
     setClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
     setViewState(state: ViewerState): Promise<void>;
+    updateboundingBoxOnAnimate(enabled: boolean): void;
     worldToScreen(point: THREE_2.Vector3, normalize?: boolean): THREE_2.Vector2 | null;
 }
 
