@@ -5,7 +5,10 @@ import {
 } from '@cognite/annotations';
 import isBoolean from 'lodash/isBoolean';
 import isEmpty from 'lodash/isEmpty';
-import { ResourceType, ResourceFilterProps } from '@data-exploration-components/types';
+import {
+  ResourceType,
+  ResourceFilterProps,
+} from '@data-exploration-components/types';
 import { Metadata, IdEither, DateRange } from '@cognite/sdk';
 import {
   InternalAssetFilters,

@@ -1,6 +1,9 @@
 import { useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import { EventsProperties, getEventsAggregate } from '@data-exploration-components/domain/events';
+import {
+  EventsProperties,
+  getEventsAggregate,
+} from '@data-exploration-components/domain/events';
 import { queryKeys } from '@data-exploration-components/domain/queryKeys';
 import { useQuery, UseQueryOptions } from 'react-query';
 import isEmpty from 'lodash/isEmpty';
