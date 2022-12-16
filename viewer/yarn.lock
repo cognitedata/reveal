@@ -824,7 +824,7 @@ __metadata:
     jest-environment-jsdom: 29.3.1
     jest-extended: 3.2.0
     jest-image-snapshot: 6.1.0
-    jest-puppeteer: 6.1.1
+    jest-puppeteer: 6.2.0
     jsdom: 20.0.3
     lodash: 4.17.21
     loglevel: 1.8.1
@@ -8009,18 +8009,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-dev-server@npm:^6.1.1":
-  version: 6.1.1
-  resolution: "jest-dev-server@npm:6.1.1"
+"jest-dev-server@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "jest-dev-server@npm:6.2.0"
   dependencies:
     chalk: ^4.1.2
     cwd: ^0.10.0
     find-process: ^1.4.7
     prompts: ^2.4.2
-    spawnd: ^6.0.2
+    spawnd: ^6.2.0
     tree-kill: ^1.2.2
     wait-on: ^6.0.1
-  checksum: 933d28d13c2eed8109d97aae213da818cd715fe3b4d6e9825378a2210a920f019cc93674d4a85370154863f6badda686408e74f83fd738760aa062b2756e5e52
+  checksum: 44dc5be5a9a01f132838a3acbc7fee506a096f5b990fbca4a916280da27c707ea752be475ecf0e3dd019871bc6afd2ebdaff5d40ccd33e9a858bc2b6f7c65736
   languageName: node
   linkType: hard
 
@@ -8103,7 +8103,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-node@npm:>=24 <=27, jest-environment-node@npm:^27.4.4":
+"jest-environment-node@npm:>=24 <=27, jest-environment-node@npm:^27.5.1":
   version: 27.5.1
   resolution: "jest-environment-node@npm:27.5.1"
   dependencies:
@@ -8131,16 +8131,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-puppeteer@npm:^6.1.1":
-  version: 6.1.1
-  resolution: "jest-environment-puppeteer@npm:6.1.1"
+"jest-environment-puppeteer@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "jest-environment-puppeteer@npm:6.2.0"
   dependencies:
     chalk: ^4.1.2
     cwd: ^0.10.0
-    jest-dev-server: ^6.1.1
-    jest-environment-node: ^27.4.4
+    jest-dev-server: ^6.2.0
+    jest-environment-node: ^27.5.1
     merge-deep: ^3.0.3
-  checksum: bb7da88011e59d19b87dc91cff7cf4b585fb3cb9c463662265f3d2e7b9f2da53b804c1284dfe3da3c9e6e73bb777793304ebe8826e1946f4073a726fe3b7db00
+  checksum: 8b9922e9940d3bb651be203a0dc01fb6d8b22eb466e0e2c58270ab7152c6de45b6423e1e248a09b4da02d2e5514e6a564e6dded7529e0d343a4c8f75e3619f77
   languageName: node
   linkType: hard
 
@@ -8352,15 +8352,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-puppeteer@npm:6.1.1":
-  version: 6.1.1
-  resolution: "jest-puppeteer@npm:6.1.1"
+"jest-puppeteer@npm:6.2.0":
+  version: 6.2.0
+  resolution: "jest-puppeteer@npm:6.2.0"
   dependencies:
     expect-puppeteer: ^6.1.1
-    jest-environment-puppeteer: ^6.1.1
+    jest-environment-puppeteer: ^6.2.0
   peerDependencies:
     puppeteer: ">= 1.5.0"
-  checksum: 339b688bf52769c3226bde9e8f8f40e65c2abe48276819f15359de4d05f7a90a86291f7383352edc9e38dfdddb4b3db37957d09161d53bf0ac33df8c3f37d79f
+  checksum: 9e2c917b681bac4c319ff7fcb4c09ede4ac07458511f0cd3c244e2aee6efaf2d5484961a5b7b46dca6954c3debf42491a95f25bac0c8c58f4c360e7c2df0ff36
   languageName: node
   linkType: hard
 
@@ -11484,7 +11484,7 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"signal-exit@npm:^3.0.3, signal-exit@npm:^3.0.6, signal-exit@npm:^3.0.7":
+"signal-exit@npm:^3.0.3, signal-exit@npm:^3.0.7":
   version: 3.0.7
   resolution: "signal-exit@npm:3.0.7"
   checksum: a2f098f247adc367dffc27845853e9959b9e88b01cb301658cfe4194352d8d2bb32e18467c786a7fe15f1d44b233ea35633d076d5e737870b7139949d1ab6318
@@ -11654,14 +11654,14 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"spawnd@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "spawnd@npm:6.0.2"
+"spawnd@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "spawnd@npm:6.2.0"
   dependencies:
     exit: ^0.1.2
-    signal-exit: ^3.0.6
+    signal-exit: ^3.0.7
     tree-kill: ^1.2.2
-  checksum: 39060a101e908c07497e8bc1c8335cb93d2708c4c1065824653d2e8de788437c590bd32a6fc3b03ddf7ff937642f3870442b778814adef8526fbca3723092bdb
+  checksum: 527e4cc99e983f8e93d02acdb6f92a3aefa7fd669c0fcdea392f576a6533a91fd9f8cecb448023de29d23bd5b53454f59677e09da993b3f18b05a957c6c8ea63
   languageName: node
   linkType: hard
 
