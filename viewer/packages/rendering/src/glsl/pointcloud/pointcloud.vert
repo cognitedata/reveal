@@ -253,7 +253,7 @@ void main() {
 
 	float pointSize = 1.0;
 	float slope = tan(fov / 2.0);
-	float projFactor =  -0.5 * screenHeight / (slope * mvPosition.z);
+	float projFactor =  -0.5 / (point_size_unit_in_screen_height * slope * mvPosition.z);
 
 	// Scale point appropriately according to render size
 	float size = size * screenHeight * point_size_unit_in_screen_height;
