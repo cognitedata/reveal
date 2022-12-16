@@ -4,12 +4,12 @@ export default {
   transform: {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nrwl/react/babel'] }],
   },
-  transformIgnorePatterns: [
-    "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates|@cognite/unified-file-viewer)"
-  ],
-  moduleNameMapper: {
-    'canvas': 'jest-canvas-mock',
-  },
+  // transformIgnorePatterns: [
+  //   "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates|@cognite/unified-file-viewer)"
+  // ],
+  // moduleNameMapper: {
+  //   'canvas': 'jest-canvas-mock',
+  // },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/libs/data-exploration-components',
 };
