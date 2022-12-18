@@ -4,12 +4,10 @@ export default {
   transform: {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nrwl/react/babel'] }],
   },
-  // transformIgnorePatterns: [
-  //   "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates|@cognite/unified-file-viewer)"
-  // ],
-  // moduleNameMapper: {
-  //   'canvas': 'jest-canvas-mock',
-  // },
+  moduleNameMapper: {
+    '\\.(css|less)$': 'identity-obj-proxy',
+    'd3(.*)': '<rootDir>/../../node_modules/d3$1/dist/d3$1.min.js',
+  },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/libs/data-exploration-components',
 };
