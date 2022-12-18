@@ -67,14 +67,14 @@ const AssetsHighlightButton = ({
 
   const handleAssetHighlighting = () => {
     setAssetHighlightMode(!assetHighlightMode);
+    trackUsage(EXPLORATION.CLICK.EMPHASIZE_CLICKABLE_OBJECT, {
+      modelId: threeDModel?.modelId,
+    });
 
     if (!useOverlays || !overlayTool) return;
 
     overlayTool.visible = !labelsVisibility;
     setLabelsVisibility(!labelsVisibility);
-    trackUsage(EXPLORATION.CLICK.EMPHASIZE_CLICKABLE_OBJECT, {
-      modelId: threeDModel?.modelId,
-    });
   };
   return (
     <Tooltip content="Emphasize clickable objects" placement="right">

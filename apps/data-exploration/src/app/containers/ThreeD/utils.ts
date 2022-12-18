@@ -8,6 +8,7 @@ import {
   Cognite3DViewer,
   DefaultNodeAppearance,
   ViewerState,
+  PointCloudIntersection,
 } from '@cognite/reveal';
 import {
   CogniteClient,
@@ -432,4 +433,10 @@ export function mixColorsToCSS(
   return `rgb(${mixedColor.r * 255}, ${mixedColor.g * 255}, ${
     mixedColor.b * 255
   })`;
+}
+
+export function isCadIntersection(
+  intersection: CadIntersection | PointCloudIntersection
+): intersection is CadIntersection {
+  return (intersection as CadIntersection).treeIndex !== undefined;
 }
