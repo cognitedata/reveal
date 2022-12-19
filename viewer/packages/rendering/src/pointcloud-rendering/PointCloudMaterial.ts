@@ -342,11 +342,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.screenHeight = renderSize.y;
   }
 
-  updateMaterial(
-    octreeParams: OctreeMaterialParams,
-    visibilityTextureData: Uint8Array,
-    camera: Camera
-  ): void {
+  updateMaterial(octreeParams: OctreeMaterialParams, visibilityTextureData: Uint8Array, camera: Camera): void {
     if (camera.type === PERSPECTIVE_CAMERA) {
       this.fov = (camera as PerspectiveCamera).fov * (Math.PI / 180);
     } else {

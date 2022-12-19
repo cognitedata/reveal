@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2022 Cognite AS
+ */
 import { ResizeHandler } from './ResizeHandler';
 import { StationaryCameraManager } from '@reveal/camera-manager';
 
@@ -6,30 +9,34 @@ import { PerspectiveCamera, WebGLRenderer, Vector2 } from 'three';
 import { Mock } from 'moq.ts';
 
 describe(ResizeHandler.name, () => {
-
   const initialWidth = 1280;
   const initialHeight = 720;
-  let dimensions = { width: 0, height: 0 };
+  const dimensions = { width: 0, height: 0 };
 
   const camera = new PerspectiveCamera();
   const domElement = new Mock<HTMLCanvasElement>()
     .setup(p => p.parentElement)
-    .returns(new Mock<HTMLElement>()
-      .setup(p => p.clientWidth)
-      .returns(initialWidth)
-      .setup(p => p.clientHeight)
-      .returns(initialHeight)
-      .object())
+    .returns(
+      new Mock<HTMLElement>()
+        .setup(p => p.clientWidth)
+        .returns(initialWidth)
+        .setup(p => p.clientHeight)
+        .returns(initialHeight)
+        .object()
+    )
     .object();
   const renderer = new Mock<WebGLRenderer>()
     .setup(p => p.domElement)
     .returns(domElement)
     .setup(p => p.getSize)
-    .returns((v) => v.set(dimensions.width, dimensions.height))
+    .returns(v => v.set(dimensions.width, dimensions.height))
     .setup(p => p.getPixelRatio())
     .returns(1)
     .setup(p => p.setDrawingBufferSize)
-    .returns((w, h) => { dimensions.width = w; dimensions.height = h; })
+    .returns((w, h) => {
+      dimensions.width = w;
+      dimensions.height = h;
+    })
     .object();
   const cameraManager = new StationaryCameraManager(domElement, camera);
 
