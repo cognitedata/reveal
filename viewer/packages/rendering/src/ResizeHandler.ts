@@ -26,9 +26,9 @@ export class ResizeHandler {
 
   private _shouldResize: boolean = false;
 
-  constructor(renderer: WebGLRenderer, cameraManager: CameraManager, resizeOptions: ResizeHandlerOptions) {
+  constructor(renderer: WebGLRenderer, cameraManager: CameraManager, resizeOptions?: ResizeHandlerOptions) {
     this._stoppedCameraResolutionThreshold =
-      resizeOptions.renderResolutionThreshold ?? this._defaultResolutionThreshold;
+      resizeOptions?.renderResolutionThreshold ?? this._defaultResolutionThreshold;
     this._currentResolutionThreshold = this._stoppedCameraResolutionThreshold;
 
     this._resizeObserver = this.setupResizeListener(renderer);
