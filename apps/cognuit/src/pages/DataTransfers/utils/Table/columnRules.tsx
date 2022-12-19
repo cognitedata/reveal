@@ -33,6 +33,14 @@ export const dataTransfersColumnRules = ({
       filterIcon: 'Search',
     },
     {
+      key: 'source.datatype',
+      render: ({ value }: { value: any }) => {
+        return value;
+      },
+      Filter: Table.CheckboxColumnFilter(),
+      filter: 'arrayContains',
+    },
+    {
       key: 'status',
       render: ({
         value,

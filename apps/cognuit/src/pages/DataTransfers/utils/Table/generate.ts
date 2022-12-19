@@ -25,7 +25,7 @@ export function generatesDataTypesColumnsFromData(
       let title = getMappedColumnName(name, 'datatransfers');
 
       // Note: This might be removed in favour of adding a "subtitle" property to cogs.js table column header
-      if (parent) {
+      if (parent && !config.dontRenderParentColumns.includes(key)) {
         title += ` (${parent})`;
       }
 

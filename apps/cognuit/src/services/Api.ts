@@ -243,6 +243,14 @@ class Api {
       filter: RESTTransfersFilter
     ): Promise<DataTransferResponse[]> =>
       this.post(`${this.baseURL}/translations/filtertransfers`, filter),
+    triggerTranslation: async (
+      sourceObjectId: string,
+      targetProject: Project
+    ): Promise<ObjectGetResponse> =>
+      this.post(
+        `${this.baseURL}/objects/${sourceObjectId}/revisions/latest/translations`,
+        targetProject
+      ),
   };
 
   // Note - these refer to the Petrel Studio repository tree, so it is not used outside

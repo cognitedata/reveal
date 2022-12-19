@@ -33,7 +33,7 @@ export const MainHeader: React.FC = () => {
     <TopBar>
       <TopBar.Left>
         <TopBar.Logo
-          title="Discover"
+          title="Cognuit"
           logo={
             <Graphic
               type="Discover"
@@ -41,7 +41,6 @@ export const MainHeader: React.FC = () => {
               onClick={() => navigate('/')}
             />
           }
-          subtitle="Cognuit"
         />
         <TopBar.Navigation
           links={[

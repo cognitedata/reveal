@@ -31,6 +31,7 @@ const useDataTransfersQuery = ({
     },
     {
       enabled: enabled && isValid,
+      refetchInterval: 30000,
       onSuccess: (data) => {
         removeError();
         return data;

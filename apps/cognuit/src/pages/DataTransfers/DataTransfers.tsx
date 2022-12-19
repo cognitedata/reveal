@@ -94,6 +94,7 @@ const DataTransfers: React.FC = () => {
         columns={tableColumns}
         filterable
         locale={{ emptyText: renderNoDataText() }}
+        pagination={false}
       />
       <DetailViewWrapper>
         {selectedRecord && (

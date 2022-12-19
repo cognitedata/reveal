@@ -9,7 +9,6 @@ export default {
     'target.name',
     'target.last_updated',
   ],
-  filterableColumns: ['status', 'author'],
   mandatoryColumns: ['status', 'source.datatype', 'source.name'],
   nonSortableColumns: ['status'],
   ignoreColumns: [
@@ -35,6 +34,7 @@ export default {
     'source.project',
     'target.project',
   ],
+  dontRenderParentColumns: ['source.name', 'source.datatype', 'source.author'],
   keyColumn: 'id',
   columnOrder: [
     'status',

@@ -127,6 +127,7 @@ const Configurations = () => {
           renderSubRowComponent={ExpandedSubRow}
           onRowClick={handleRowClick}
           tableConfig={{ autoResetPage: false } as any}
+          pagination={false}
         />
       </ContentContainer>
     </>

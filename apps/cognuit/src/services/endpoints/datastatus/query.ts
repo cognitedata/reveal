@@ -15,7 +15,7 @@ const useDataStatusQuery = (
   const isValid = useIsTokenAndApiValid();
 
   const { data, ...rest } = useQuery(
-    DATATSTATUS_KEY.default,
+    [DATATSTATUS_KEY.default],
     () => {
       return api!.tags.getStatusTags();
     },

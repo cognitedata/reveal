@@ -19,6 +19,7 @@ const useConfigurationsQuery = () => {
     },
     {
       enabled: isValid,
+      refetchInterval: 20000,
       onSuccess: (data) => {
         removeError();
         return data;
