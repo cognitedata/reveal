@@ -283,7 +283,6 @@ export class Potree implements IPotree {
     const sceneNode = node.sceneNode;
     sceneNode.visible = true;
     sceneNode.material = pointCloud.material;
-    sceneNode.updateMatrix();
     sceneNode.matrixWorld.multiplyMatrices(pointCloud.matrixWorld, sceneNode.matrix);
 
     visibleNodes.push(node);
