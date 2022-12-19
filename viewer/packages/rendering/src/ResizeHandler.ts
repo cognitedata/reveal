@@ -21,8 +21,8 @@ export class ResizeHandler {
   private _currentResolutionThreshold: number;
   private _movingResolutionFactor: number = 1;
 
-  private _onCameraChangeCallback: () => void;
-  private _onCameraStopCallback: () => void;
+  private readonly _onCameraChangeCallback: () => void;
+  private readonly _onCameraStopCallback: () => void;
 
   private readonly _resizeObserver: ResizeObserver | undefined;
 
@@ -45,7 +45,6 @@ export class ResizeHandler {
       this._shouldResize = true;
     };
 
-
     this._renderer = renderer;
   }
 
@@ -64,7 +63,7 @@ export class ResizeHandler {
   }
 
   public setMovingCameraResolutionFactor(factor: number): void {
-      this._shouldResize = true;
+    this._shouldResize = true;
 
     if (factor === this._movingResolutionFactor) {
       return;
