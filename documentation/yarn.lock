@@ -182,7 +182,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.32.0, @azure/msal-browser@npm:^2.11.0":
+"@azure/msal-browser@npm:2.32.1":
+  version: 2.32.1
+  resolution: "@azure/msal-browser@npm:2.32.1"
+  dependencies:
+    "@azure/msal-common": ^9.0.1
+  checksum: 3afc8aa8c3dcf17a348cc69c6e15db5c6d7d89cf656b0c585687a8885db8f82340cc38a9d9c842e2871929b7c31ce7e3c2016385153a7ba68b7d8f8b1729368f
+  languageName: node
+  linkType: hard
+
+"@azure/msal-browser@npm:^2.11.0":
   version: 2.32.0
   resolution: "@azure/msal-browser@npm:2.32.0"
   dependencies:
@@ -195,6 +204,13 @@ __metadata:
   version: 9.0.0
   resolution: "@azure/msal-common@npm:9.0.0"
   checksum: e4b1fcff3a95a019761e62b6a3a7a8a5a67905826771ed262b8741efa719afb992db213b74b1000b1fee6faf8041189045fd32beb9d0e69961a7ee0980539546
+  languageName: node
+  linkType: hard
+
+"@azure/msal-common@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "@azure/msal-common@npm:9.0.1"
+  checksum: 2e23a356c5662c999bdb1ca9878a265ff15711f78bdb701c9f0b1c4667c107e45e4abb04fb7b5e27f9d9df788604fb0ef435639d29a4e791486ed7f53ac75095
   languageName: node
   linkType: hard
 
@@ -2000,7 +2016,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
-    "@azure/msal-browser": 2.32.0
+    "@azure/msal-browser": 2.32.1
     "@docusaurus/core": 2.2.0
     "@docusaurus/preset-classic": 2.2.0
     "@docusaurus/theme-live-codeblock": 2.2.0
@@ -2009,7 +2025,7 @@ __metadata:
     clsx: 1.2.1
     copyfiles: 2.4.1
     cross-env: 7.0.3
-    docusaurus-plugin-typedoc: 0.17.5
+    docusaurus-plugin-typedoc: 0.18.0
     ieee754: 1.2.1
     npm-to-yarn: 1.0.1
     query-string: 7.1.3
@@ -2019,10 +2035,10 @@ __metadata:
     replace: 1.2.2
     rimraf: 3.0.2
     styled-components: 5.3.6
-    typedoc: 0.23.21
-    typedoc-plugin-markdown: 3.13.6
+    typedoc: 0.23.22
+    typedoc-plugin-markdown: 3.14.0
     typedoc-plugin-no-inherit: 1.4.0
-    typescript: 4.9.3
+    typescript: 4.9.4
   languageName: unknown
   linkType: soft
 
@@ -5817,13 +5833,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-typedoc@npm:0.17.5":
-  version: 0.17.5
-  resolution: "docusaurus-plugin-typedoc@npm:0.17.5"
+"docusaurus-plugin-typedoc@npm:0.18.0":
+  version: 0.18.0
+  resolution: "docusaurus-plugin-typedoc@npm:0.18.0"
   peerDependencies:
-    typedoc: ">=0.22.0"
-    typedoc-plugin-markdown: ">=3.11.10"
-  checksum: 62af962dad33a413fe3b049b8a5642a3533f35d1cc6163e5db1a06d476b8eab77c4be9bea86c5ae9e30a0310039bb8730c18f1a87fcc8a4ef0c13ceba2ed8dd8
+    typedoc: ">=0.23.0"
+    typedoc-plugin-markdown: ">=3.13.0"
+  checksum: e5e8780888ad07e71e9c0a98024f4bee6e3e520c7a3417d6b4951aa91c0fb63caa19d1cd5e0712b75d0add7c1fabe2df36b910e3ecb6e4a914c679c0ff75fc16
   languageName: node
   linkType: hard
 
@@ -12419,14 +12435,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-plugin-markdown@npm:3.13.6":
-  version: 3.13.6
-  resolution: "typedoc-plugin-markdown@npm:3.13.6"
+"typedoc-plugin-markdown@npm:3.14.0":
+  version: 3.14.0
+  resolution: "typedoc-plugin-markdown@npm:3.14.0"
   dependencies:
     handlebars: ^4.7.7
   peerDependencies:
     typedoc: ">=0.23.0"
-  checksum: eae59997759f485b2a6f2c306dc6de47dc0b008acc4651d66a24b8ba31fc7fd7729b69ba0b1235aaab268931701510ef5af88588f9b3ea124166a2ca7b63f954
+  checksum: 6205600052185b4b193ab8a253d9df5ccbc95002c948a07f9024bcd26f0f23fbcc089fda4d6b4c8f4172f4eaca2bf9c32129989f6baaace7261cf4a0e41c976b
   languageName: node
   linkType: hard
 
@@ -12439,9 +12455,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.23.21":
-  version: 0.23.21
-  resolution: "typedoc@npm:0.23.21"
+"typedoc@npm:0.23.22":
+  version: 0.23.22
+  resolution: "typedoc@npm:0.23.22"
   dependencies:
     lunr: ^2.3.9
     marked: ^4.0.19
@@ -12451,27 +12467,27 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x
   bin:
     typedoc: bin/typedoc
-  checksum: 931520b21ae25ba8ea86111ea7c66f474468bb83cbe1d04c0ea19490f130ea44ba58b7ee4d12f7f02368cfe053ed1fa291c8843c466c8af383ef956de177360d
+  checksum: ac3a015e72d5e2dc6a3a2cca64572932a6d9d0ea26ee08e87c05e2244795087371a12b103f5f4c4f72d006f8893cd4dccd9addfbbce18577e2fb36c9c1d71be4
   languageName: node
   linkType: hard
 
-"typescript@npm:4.9.3":
-  version: 4.9.3
-  resolution: "typescript@npm:4.9.3"
+"typescript@npm:4.9.4":
+  version: 4.9.4
+  resolution: "typescript@npm:4.9.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 17b8f816050b412403e38d48eef0e893deb6be522d6dc7caf105e54a72e34daf6835c447735fd2b28b66784e72bfbf87f627abb4818a8e43d1fa8106396128dc
+  checksum: e782fb9e0031cb258a80000f6c13530288c6d63f1177ed43f770533fdc15740d271554cdae86701c1dd2c83b082cea808b07e97fd68b38a172a83dbf9e0d0ef9
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.9.3#~builtin<compat/typescript>":
-  version: 4.9.3
-  resolution: "typescript@patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=7ad353"
+"typescript@patch:typescript@4.9.4#~builtin<compat/typescript>":
+  version: 4.9.4
+  resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=7ad353"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: ef65c22622d864497d0a0c5db693523329b3284c15fe632e93ad9aa059e8dc38ef3bd767d6f26b1e5ecf9446f49bd0f6c4e5714a2eeaf352805dc002479843d1
+  checksum: 37f6e2c3c5e2aa5934b85b0fddbf32eeac8b1bacf3a5b51d01946936d03f5377fe86255d4e5a4ae628fd0cd553386355ad362c57f13b4635064400f3e8e05b9d
   languageName: node
   linkType: hard
 

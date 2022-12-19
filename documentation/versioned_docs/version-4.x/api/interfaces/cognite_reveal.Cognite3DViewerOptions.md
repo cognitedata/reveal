@@ -119,7 +119,7 @@ Style the loading indicator.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `opacity` | `number` | Opacity of the spinner in fractions. Valid values are between 0.2 and 1.0. Defaults to 1.0. |
+| `opacity` | `number` | Opacity of the spinner in fractions. Valid values are between  0.2 and 1.0. Defaults to 1.0. |
 | `placement` | ``"topLeft"`` \| ``"topRight"`` \| ``"bottomLeft"`` \| ``"bottomRight"`` | What corner the spinner should be placed in. Defaults top topLeft. |
 
 #### Defined in
@@ -163,7 +163,7 @@ Point cloud visualisation effects parameteres.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `edlOptions?` | ``"disabled"`` \| `Partial`<[`EdlOptions`](../modules/cognite_reveal.md#edloptions)\> | Eye Dome Lighting (EDL) effect, considerably improves depth perception of point cloud model. |
-| `pointBlending?` | `boolean` | Point blending effect, creates more "stable" texture on objects surfaces if point sizing is big enough. Can cause significant decrease in performance on some machines. |
+| `pointBlending?` | `boolean` | Point blending effect, creates more "stable" texture on objects surfaces if point sizing is  big enough. Can cause significant decrease in performance on some machines. |
 
 #### Defined in
 
