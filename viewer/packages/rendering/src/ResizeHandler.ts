@@ -9,7 +9,6 @@ import assert from 'assert';
 
 export type ResizeHandlerOptions = {
   renderResolutionThreshold?: number;
-  movingResolutionFactor?: number;
 };
 
 export class ResizeHandler {
@@ -20,7 +19,10 @@ export class ResizeHandler {
 
   private _stoppedCameraResolutionThreshold: number;
   private _currentResolutionThreshold: number;
-  private readonly _movingResolutionFactor: number = 1;
+  private _movingResolutionFactor: number = 1;
+
+  private _onCameraChangeCallback: () => void;
+  private _onCameraStopCallback: () => void;
 
   private readonly _resizeObserver: ResizeObserver | undefined;
 
@@ -34,21 +36,17 @@ export class ResizeHandler {
     this._resizeObserver = this.setupResizeListener(renderer);
     this._cameraManager = cameraManager;
 
+    this._onCameraChangeCallback = () => {
+      this._currentResolutionThreshold = this._movingResolutionFactor * this._stoppedCameraResolutionThreshold;
+      this._shouldResize = true;
+    };
+    this._onCameraStopCallback = () => {
+      this._currentResolutionThreshold = this._stoppedCameraResolutionThreshold;
+      this._shouldResize = true;
+    };
+
+
     this._renderer = renderer;
-
-    if (resizeOptions?.movingResolutionFactor) {
-      assert(resizeOptions.movingResolutionFactor > 0 && resizeOptions.movingResolutionFactor <= 1);
-      this._movingResolutionFactor = resizeOptions?.movingResolutionFactor;
-      this._cameraManager.on('cameraStop', () => {
-        this._currentResolutionThreshold = this._stoppedCameraResolutionThreshold;
-        this._shouldResize = true;
-      });
-
-      this._cameraManager.on('cameraChange', () => {
-        this._currentResolutionThreshold = this._stoppedCameraResolutionThreshold * this._movingResolutionFactor;
-        this._shouldResize = true;
-      });
-    }
   }
 
   public get needsRedraw(): boolean {
@@ -63,6 +61,26 @@ export class ResizeHandler {
     this._stoppedCameraResolutionThreshold = threshold;
     this._currentResolutionThreshold = threshold;
     this._shouldResize = true;
+  }
+
+  public setMovingCameraResolutionFactor(factor: number): void {
+      this._shouldResize = true;
+
+    if (factor === this._movingResolutionFactor) {
+      return;
+    }
+
+    assert(factor > 0 && factor <= 1);
+
+    if (factor !== 1) {
+      this._cameraManager.on('cameraChange', this._onCameraChangeCallback);
+      this._cameraManager.on('cameraStop', this._onCameraStopCallback);
+    } else {
+      this._cameraManager.off('cameraChange', this._onCameraChangeCallback);
+      this._cameraManager.off('cameraStop', this._onCameraStopCallback);
+    }
+
+    this._movingResolutionFactor = factor;
   }
 
   public handleResize(camera: PerspectiveCamera): void {

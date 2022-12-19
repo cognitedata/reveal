@@ -40,7 +40,8 @@ import {
   Cognite3DViewerOptions,
   Intersection,
   CadModelBudget,
-  CadIntersection
+  CadIntersection,
+  ResolutionOptions
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel } from '../types';
@@ -336,12 +337,17 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Limit the number of pixels on the screen. When the render area has more pixels than this max resolution,
-   * Reveal will automatically render to an image with at most the max resolution, scaled up to fit the render area.
-   * @param maxResolution
+   * Set options to control resolution of the viewer. This includes
+   * settings for max resolution and limiting resolution when moving the camera.
    */
-  setMaximumRenderResolution(maxResolution: number): void {
-    this._revealManagerHelper.revealManager.setResolutionThreshold(maxResolution);
+  setResolutionOptions(options: ResolutionOptions): void {
+    if (options.maxRenderResolution) {
+      this._revealManagerHelper.revealManager.setResolutionThreshold(options.maxRenderResolution);
+    }
+
+    if (options.movingCameraResolutionFactor) {
+      this._revealManagerHelper.revealManager.setMovingCameraResolutionFactor(options.movingCameraResolutionFactor);
+    }
   }
 
   /**
@@ -1462,7 +1468,6 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
     outputRenderTarget,
     rendererResolutionThreshold: resolutionCap,
-    movingCameraResolutionFactor: viewerOptions.movingCameraResolutionFactor,
     internal: {}
   };
 

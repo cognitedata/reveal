@@ -198,6 +198,11 @@ export class RevealManager {
     this.requestRedraw();
   }
 
+  public setMovingCameraResolutionFactor(factor: number): void {
+    this._resizeHandler.setMovingCameraResolutionFactor(factor);
+    this.requestRedraw();
+  }
+
   public render(camera: THREE.PerspectiveCamera): void {
     this._resizeHandler.handleResize(camera);
     this._pipelineExecutor.render(this._renderPipeline, camera);
