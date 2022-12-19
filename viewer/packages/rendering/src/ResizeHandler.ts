@@ -61,6 +61,7 @@ export class ResizeHandler {
 
   public setResolutionThreshold(threshold: number): void {
     this._stoppedCameraResolutionThreshold = threshold;
+    this._currentResolutionThreshold = threshold;
     this._shouldResize = true;
   }
 
