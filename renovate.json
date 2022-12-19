@@ -10,7 +10,7 @@
       ],
       // Prepare Renovate PRs before office hours
       "schedule": [
-        "after 6am and before 9am every weekday"
+        "after 6am and before 3pm every weekday"
       ]
     },
     {
