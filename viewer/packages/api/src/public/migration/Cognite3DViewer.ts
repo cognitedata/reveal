@@ -117,6 +117,7 @@ export class Cognite3DViewer {
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
   private readonly _renderer: THREE.WebGLRenderer;
+  private readonly _ownsRenderer: boolean;
 
   private readonly _pickingHandler: PickingHandler;
   private readonly _pointCloudPickingHandler: PointCloudPickingHandler;
@@ -216,6 +217,7 @@ export class Cognite3DViewer {
     }
     this._renderer = options.renderer ?? createRenderer();
     this._renderer.localClippingEnabled = true;
+    this._ownsRenderer = options.renderer === undefined;
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -384,7 +386,9 @@ export class Cognite3DViewer {
     this._image360ApiHelper?.dispose();
     this.domElement.removeChild(this.canvas);
     this._domElementResizeObserver.disconnect();
-    this.renderer.dispose();
+    if (this._ownsRenderer) {
+      this.renderer.dispose();
+    }
 
     this.spinner.dispose();
 
