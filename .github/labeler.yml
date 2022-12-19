@@ -1,0 +1,8 @@
+platypus:
+  - apps/platypus/**/*
+
+data-exploration:
+  - apps/data-exploration/*
+  - apps/data-exploration/**/*
+  - libs/data-exploration-components/*
+  - libs/data-exploration-components/**/*
