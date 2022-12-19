@@ -17,25 +17,24 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'data-exploration': "@cognite/cdf-data-exploration",
 ]
 
+// This is your FAS app identifier (repo) shared across both production and staging apps
+// in order to do a commit lookup (commits are shared between apps).
 static final Map<String, String> APPLICATIONS_REPO_IDS = [
   'platypus': "platypus",
   'data-exploration': "cdf-ui-data-exploration"
 ]
 
-// This is your FAS app identifier (repo) shared across both production and staging apps
-// in order to do a commit lookup (commits are shared between apps).
-static final String APPLICATION_REPO_ID = 'platypus'
-
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
-static final String SENTRY_PROJECT_NAME = 'platypus'
+static final Map<String, String> SENTRY_PROJECT_NAMES = [
+  'platypus': "platypus",
+  'data-exploration': "data-explorer"
+]
 
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
 // found on your Sentry's project page, or by going here:
 // https://docs.sentry.io/error-reporting/quickstart/?platform=browser
-//
-// If you omit this, then client errors WILL NOT BE REPORTED.
-static final String SENTRY_DSN = 'https://b37a75c7e26440009d63602ba2f02b9f@o124058.ingest.sentry.io/5996992'
+
 
 // Specify your locize.io project ID. If you do not have one of these, please
 // stop by #frontend to get a project created under the Cognite umbrella.
@@ -133,8 +132,6 @@ def pods = { body ->
     previewServer.pod(nodeVersion: NODE_VERSION) {
       fas.pod(
         nodeVersion: NODE_VERSION,
-        sentryProjectName: SENTRY_PROJECT_NAME,
-        sentryDsn: SENTRY_DSN,
         locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
       ) {
@@ -288,7 +285,8 @@ pods {
                   repo: APPLICATIONS_REPO_IDS[projects[i]],
                   baseVersion: params.version,
                   buildCommand: "yarn build production ${projects[i]}",
-                  shouldPublishSourceMap: false
+                  shouldPublishSourceMap: false,
+                  sentryProjectName: SENTRY_PROJECT_NAMES[projects[i]],
                 )
 
                 fas.publish(
