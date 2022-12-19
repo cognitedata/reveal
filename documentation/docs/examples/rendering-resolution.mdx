@@ -4,12 +4,37 @@ title: Resolution Control
 description: Section about how resolution is determined and how it can be controlled by the user
 ---
 
-# Resolution
+# Resolution Control
 
-Reveal will automatically limit its rendering resolution when renderering to a large surface for the sake of performance. This may result in unnecessarily low-detail renders on high-end devices with large monitors. To override Reveal's default resolution limit, users may call the `setMaximumRenderResolution` method on the `Cognite3DViewer` instance. The input is a number denoting the approximate number of pixels on the screen. To e.g. increase the rendering resolution to full HD (1920x1080), call the method with the value 1920 * 1080 = `2073600`.
+Reveal will automatically limit its rendering resolution when renderering to a large surface for the sake of performance. This may result in unnecessarily low-detail renders on high-end devices with large monitors.
+
+The user can use the `ResolutionOptions` type to control the rendering resolution. `ResolutionOptions` has the following fields:
+
+| Field                          | Field type                  | Description                                                                      |
+| ------------------------------ | --------------------------- | ----------------------------------- |
+| `maxRenderResolution`          | `number?`                   | Set the maximum render resolution                                                |
+| `movingCameraResolutionFactor` | `number?`                   | Set the factor that the max resolution is multiplied with when camera is moving. |
+
+The `ResolutionOptions` instance is applied to the viewer instance using the `setResolutionOptions` method on `Cognite3DViewer`.
+
+## Max Resolution
+
+To override Reveal's default resolution limit, users may call the `setResolutionOptions` method with `maxRenderResolution` set to a pixel count, e.g.
+
+```
+viewer.setResolutionOptions({ maxRenderResolution: 1.4e6 });
+```
+
+The value is a number denoting the desired count of pixels on the screen. To e.g. increase the rendering resolution to full HD (1920x1080), call the method with the value 1920 * 1080 = `2073600`.
 
 ## Decrease resolution on camera movement
 
-In order to improve the user experience for low-end devices, Reveal can be configured to lower the render resolution when the camera is moving, making the movement smoother. This can be done using the `movingCameraResolutionFactor` field in the `Cognite3DViewerOptions` object supplied to the viewer constructor. The field is a factor between 0 and 1 that is applied to the maximum render resolution when the camera is moving. Supplying e.g. a factor of 0.25 will divide the total number of pixels rendered by approximately four while moving.
+In order to improve the user experience for low-end devices, Reveal can be configured to lower the render resolution when the camera is moving, making the movement smoother. This can be done by calling the `setResolutionOptions` field with an object having the field `movingCameraResolutionFactor` set to a factor, e.g.
+
+```
+viewer.setResolutionOptions({ movingCameraResolutionFactor: 0.5 });
+```
+
+The factor must be between 0 and 1 and is multiplied into the maximum render resolution when the camera is moving. Supplying e.g. a factor of 0.25 will divide the total number of pixels rendered by approximately four while moving.
 
 If using a custom camera manager, be aware that this feature uses the current `CameraManager`'s `'cameraStop'` and `'cameraChange'` events to decide whether the camera is moving or not.
