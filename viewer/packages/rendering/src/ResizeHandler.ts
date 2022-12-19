@@ -5,6 +5,7 @@
 import { WebGLRenderer, PerspectiveCamera, Vector2 } from 'three';
 
 import { CameraManager } from '@reveal/camera-manager';
+import assert from 'assert';
 
 export type ResizeHandlerOptions = {
   renderResolutionThreshold?: number;
@@ -35,8 +36,9 @@ export class ResizeHandler {
 
     this._renderer = renderer;
 
-    if (resizeOptions.movingResolutionFactor) {
-      this._movingResolutionFactor = resizeOptions.movingResolutionFactor;
+    if (resizeOptions?.movingResolutionFactor) {
+      assert(resizeOptions.movingResolutionFactor > 0 && resizeOptions.movingResolutionFactor <= 1);
+      this._movingResolutionFactor = resizeOptions?.movingResolutionFactor;
       this._cameraManager.on('cameraStop', () => {
         this._currentResolutionThreshold = this._stoppedCameraResolutionThreshold;
         this._shouldResize = true;
