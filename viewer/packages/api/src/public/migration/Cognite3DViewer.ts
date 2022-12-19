@@ -652,7 +652,7 @@ export class Cognite3DViewer {
 
     const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this.forceCameraNearFarPlanesUpdated();
+    this.forceUpdateCameraNearAndFarBoundingBox();
     this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
 
     return model3d;
@@ -682,7 +682,7 @@ export class Cognite3DViewer {
     const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
-    this.forceCameraNearFarPlanesUpdated();
+    this.forceUpdateCameraNearAndFarBoundingBox();
 
     this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
 
@@ -769,7 +769,7 @@ export class Cognite3DViewer {
       throw new Error('Model is not added to viewer');
     }
     this._models.splice(modelIdx, 1);
-    this.forceCameraNearFarPlanesUpdated();
+    this.forceUpdateCameraNearAndFarBoundingBox();
 
     switch (model.type) {
       case 'cad':
@@ -863,7 +863,7 @@ export class Cognite3DViewer {
     this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
     this.revealManager.requestRedraw();
-    this.forceCameraNearFarPlanesUpdated();
+    this.forceUpdateCameraNearAndFarBoundingBox();
   }
 
   /**
@@ -886,7 +886,7 @@ export class Cognite3DViewer {
       this._extraObjects.splice(index, 1);
     }
     this.revealManager.requestRedraw();
-    this.forceCameraNearFarPlanesUpdated();
+    this.forceUpdateCameraNearAndFarBoundingBox();
   }
 
   /**
@@ -1228,10 +1228,11 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Update near and far plane buffers by creating a combined bounding box from all objects in the scene.
-   * Note: this is automatically called when 3D models are added to or removed from the viewer.
+   * Recalcualte the boundingbox used to determine near and far planes on the camera. This should only be
+   * necessary if you have custom objects whose bounds change, as the bounds will be automatically updated
+   * when models are added to or removed from the viewer.
    */
-  public forceCameraNearFarPlanesUpdated(): void {
+  public forceUpdateCameraNearAndFarBoundingBox(): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this.isDisposed) {
       return;

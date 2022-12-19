@@ -344,7 +344,7 @@ export class Cognite3DViewer {
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
     fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
-    forceCameraNearFarPlanesUpdated(): void;
+    forceUpdateCameraNearAndFarBoundingBox(): void;
     getClippingPlanes(): THREE_2.Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
