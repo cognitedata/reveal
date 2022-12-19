@@ -7,6 +7,7 @@ export default {
       tsconfig: '<rootDir>/tsconfig.spec.json',
     },
   },
+  moduleNameMapper:{"^uuid$": "uuid"},
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',

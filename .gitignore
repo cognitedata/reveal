@@ -15,6 +15,7 @@ apps/platypus-e2e/.nyc_output
 /dist
 /tmp
 /storybook-static
+build-storybook.log
 
 # misc
 .DS_Store

@@ -257,7 +257,7 @@ function SearchPage() {
           ) : (
             <ResourceTypeTabs
               showCount
-              globalFilters={filterMap}
+              globalFilters={filterMap as any}
               query={query}
               currentResourceType={currentResourceType || 'all'}
               setCurrentResourceType={(tab) => {

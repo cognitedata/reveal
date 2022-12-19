@@ -76,7 +76,7 @@ export default function NodePreview({
     externalId: assetInfo?.externalId,
   };
 
-  const { counts } = useRelatedResourceCounts(parentResource);
+  const { counts } = useRelatedResourceCounts(parentResource as any);
 
   let assetCount = counts.asset || '0';
   const assetCountWithoutSeparator = assetCount.split(',').join('');

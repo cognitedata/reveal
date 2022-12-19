@@ -1,0 +1,41 @@
+{
+  "sourceRoot": "libs/data-exploration-components/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/data-exploration-components",
+        "tsConfig": "libs/data-exploration-components/tsconfig.lib.json",
+        "project": "libs/data-exploration-components/package.json",
+        "entryFile": "libs/data-exploration-components/src/index.ts",
+        "external": ["react/jsx-runtime"],
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "assets": [
+          {
+            "glob": "libs/data-exploration-components/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/data-exploration-components/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/data-exploration-components"],
+      "options": {
+        "jestConfig": "libs/data-exploration-components/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

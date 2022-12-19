@@ -12,7 +12,7 @@ export default function FilterToggleButton({
 }) {
   const [resourceType] = useCurrentResourceType();
   const filter = useResourceFilter(resourceType);
-  const filterCount = countByFilter(filter);
+  const filterCount = countByFilter(filter as any);
 
   return (
     <Tooltip content="Filters">
