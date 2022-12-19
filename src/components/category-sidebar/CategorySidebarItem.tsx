@@ -57,8 +57,10 @@ const CategorySidebarItem = ({
 };
 
 const StyledButton = styled(Button)`
-  display: flex;
-  justify-content: space-between;
+  && {
+    display: flex;
+    justify-content: space-between;
+  }
 `;
 
 export default CategorySidebarItem;
