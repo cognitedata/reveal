@@ -58,11 +58,20 @@ describe('Cognite3DViewer', () => {
     nock.enableNetConnect();
   });
 
-  test('dispose disposes WebGL resources', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('dispose does not dispose of externally supplied renderer', () => {
     const disposeSpy = jest.spyOn(renderer, 'dispose');
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     viewer.dispose();
-    expect(disposeSpy).toBeCalledTimes(1);
+    expect(disposeSpy).toBeCalledTimes(0);
+  });
+
+  test('dispose disposes of sector culler', () => {
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    viewer.dispose();
     expect(_sectorCuller.dispose).toBeCalledTimes(1);
   });
 
