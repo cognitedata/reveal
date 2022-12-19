@@ -108,14 +108,16 @@ export class ResizeHandler {
 
     const newVirtualWidth = Math.round(virtualDomElementWidth * downScale);
     const newVirtualHeight = Math.round(virtualDomElementHeight * downScale);
+    const newAspectRatio = newVirtualWidth / newVirtualHeight;
 
-    if (newVirtualWidth === virtualFramebufferSize.x && newVirtualHeight === virtualFramebufferSize.y) {
-      return;
+    if (camera.aspect !== newAspectRatio) {
+      camera.aspect = newAspectRatio;
+      camera.updateProjectionMatrix();
     }
 
-    camera.aspect = newVirtualWidth / newVirtualHeight;
-    camera.updateProjectionMatrix();
-    this._renderer.setDrawingBufferSize(newVirtualWidth, newVirtualHeight, pixelRatio);
+    if (newVirtualWidth !== virtualFramebufferSize.x || newVirtualHeight !== virtualFramebufferSize.y) {
+      this._renderer.setDrawingBufferSize(newVirtualWidth, newVirtualHeight, pixelRatio);
+    }
   }
 
   dispose(): void {
