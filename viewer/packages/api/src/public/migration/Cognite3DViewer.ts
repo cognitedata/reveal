@@ -1125,6 +1125,7 @@ export class Cognite3DViewer {
 
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
     const originalDomeStyle = { ...this.domElement.style };
+    const originalAspectRatio = this.cameraManager.getCamera().aspect;
 
     try {
       // Position and scale domElement to match requested resolution.
@@ -1174,6 +1175,10 @@ export class Cognite3DViewer {
       this.domElement.style.left = originalDomeStyle.left;
       this.domElement.style.top = originalDomeStyle.top;
       this._domElementResizeObserver.observe(this._domElement);
+
+      if (this.cameraManager.getCamera().aspect !== originalAspectRatio) {
+        this.cameraManager.getCamera().aspect = originalAspectRatio;
+      }
 
       this.renderer.setSize(originalWidth, originalHeight);
       this.revealManager.render(this.cameraManager.getCamera());
