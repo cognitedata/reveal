@@ -88,60 +88,123 @@ export class SectorSceneImpl implements SectorScene {
     return accepted;
   }
 
+  /**
+   * Recursive intersection detection.
+   */
+  private detectIntersectingBounds(bounds: THREE.Box3, clusters: THREE.Box3[]): THREE.Box3[] {
+    const intersectingClusters: THREE.Box3[] = [];
+    const potentialJunkClusters: THREE.Box3[] = [];
+
+    clusters.forEach(cluster => {
+      if (bounds !== cluster) {
+        if (bounds.intersectsBox(cluster)) {
+          intersectingClusters.push(cluster);
+        } else {
+          potentialJunkClusters.push(cluster);
+        }
+      }
+    });
+
+    let outClusters = intersectingClusters;
+    if (potentialJunkClusters.length > 0) {
+      intersectingClusters.forEach(cluster => {
+        outClusters = outClusters.concat(this.detectIntersectingBounds(cluster, potentialJunkClusters));
+      });
+    }
+    return outClusters;
+  }
+
+  /**
+   * Use kmeans to group inputBounds into clusters.
+   *
+   * @param inBounds The bounds to be grouped into clusters.
+   * @returns Both the list of cluster bounds and the cluster with the highest node count
+   */
+  private generateClusters(inBounds: THREE.Box3[]): [THREE.Box3[], THREE.Box3] {
+    // Store the position of the min and max corners of each bound in 'nodes'
+    // Also generate a merged box of all bounds that is used to calculate centroid positions later
+    const nodes: number[][] = [];
+    const mergedBounds = new THREE.Box3();
+    inBounds.forEach(x => {
+      nodes.push(x.min.toArray(), x.max.toArray());
+      mergedBounds.union(x);
+    });
+
+    // Create a centroid for each "corner" of the mergedBounds + one for the center.
+    // This is mostly done because skmeans would return different clusters when it
+    // was allowed to pick centroids itself.
+    const { min, max } = mergedBounds;
+    const centerZ = min.z + (max.z - min.z) * 0.5;
+    const centroids: number[][] = [
+      [min.x, min.y, centerZ],
+      [min.x, max.y, centerZ],
+      [max.x, min.y, centerZ],
+      [max.x, max.y, centerZ],
+      [min.x + (max.x - min.x) * 0.5, min.y + (max.y - min.y) * 0.5, centerZ]
+    ];
+
+    // Use skmeans to group the corners into clusters
+    const numClusters = Math.min(nodes.length, centroids.length);
+    const result = skmeans(nodes, numClusters, centroids, 10);
+
+    // Count number of nodes in each cluster
+    const clusterCounts = new Array<number>(numClusters).fill(0);
+    result.idxs.map(x => clusterCounts[x]++);
+    const biggestClusterIndex = clusterCounts.reduce((max, count, idx) => (count > max.count ? { count, idx } : max), {
+      count: 0,
+      idx: -1
+    }).idx;
+
+    // For each cluster, create the combined bounds of all nodes that belong to it
+    const clusterBounds = clusterCounts.map(_ => new THREE.Box3());
+    result.idxs.forEach((cluster, idx) => {
+      clusterBounds[cluster].union(inBounds[Math.floor(idx / 2)]);
+    });
+
+    return [clusterBounds, clusterBounds[biggestClusterIndex]];
+  }
+
   private computeBoundsOfMostGeometry(): THREE.Box3 {
     if (this.root.children.length === 0) {
       return this.root.subtreeBoundingBox;
     }
 
-    // Determine all corners of the bboxes
     const allBounds: THREE.Box3[] = [];
-    const corners: number[][] = [];
-    traverseDepthFirst(this.root, x => {
-      if (x.children.length === 0) {
-        corners.push(x.subtreeBoundingBox.min.toArray(), x.subtreeBoundingBox.max.toArray());
-        allBounds.push(x.subtreeBoundingBox, x.subtreeBoundingBox);
-      }
-      return true;
-    });
-    // Cluster the corners into four groups and determine bounds of each cluster
-    const numClusters = Math.min(corners.length, 4);
-    const clusters = skmeans(corners, numClusters, 'kmpp', 10);
-    const clusterCounts = new Array<number>(clusters.idxs.length).fill(0);
-    const clusterBounds = clusterCounts.map(_ => new THREE.Box3());
-    clusters.idxs.map(x => clusterCounts[x]++);
-    const biggestCluster = clusterCounts.reduce(
-      (max, count, idx) => {
-        if (count > max.count) {
-          max.count = count;
-          max.idx = idx;
+    {
+      // Find all leaf bounds and count overall render cost
+      let allBoundsRenderCost = 0;
+      traverseDepthFirst(this.root, x => {
+        if (x.children.length === 0) {
+          allBoundsRenderCost += x.estimatedRenderCost;
+          allBounds.push(x.subtreeBoundingBox);
         }
-        return max;
-      },
-      { count: 0, idx: -1 }
-    ).idx;
-    clusters.idxs.forEach((cluster, idx) => {
-      clusterCounts[cluster]++;
-      clusterBounds[cluster].expandByPoint(allBounds[idx].min);
-      clusterBounds[cluster].expandByPoint(allBounds[idx].max);
-    });
-
-    const intersectingBounds = clusterBounds.filter((x, idx) => {
-      if (idx !== biggestCluster && x.intersectsBox(clusterBounds[biggestCluster])) {
         return true;
-      }
-      return false;
-    });
-    if (intersectingBounds.length > 0) {
-      // Overlapping clusters - assume it's because the model doesn't contain junk geometry
-      const merged = clusterBounds[biggestCluster].clone();
-      intersectingBounds.forEach(x => {
-        merged.expandByPoint(x.min);
-        merged.expandByPoint(x.max);
       });
-      return merged;
-    } else {
-      // Create bounds of the biggest cluster - assume the smallest one is junk geometry
-      return clusterBounds[biggestCluster];
+
+      // If more than 5% of the geometry is located in the root we return the full BoundingBox.
+      const rootGeomeryThreshold = allBoundsRenderCost * 0.05;
+      if (this.root.estimatedRenderCost > rootGeomeryThreshold) {
+        return this.root.subtreeBoundingBox;
+      }
     }
+
+    // Sort by diagonal length (ascending) and discard 1% of largest bounds
+    allBounds.sort((a, b) => {
+      return a.min.distanceTo(a.max) - b.min.distanceTo(b.max);
+    });
+    const validBounds = allBounds.slice(0, Math.ceil(allBounds.length * 0.99));
+
+    // Generate clusters from the valid bounds.
+    const [clusterBounds, biggestCluster] = this.generateClusters(validBounds);
+
+    // Find chains of intersecting bounds starting with the biggestCluster
+    const intersections = this.detectIntersectingBounds(biggestCluster, clusterBounds);
+
+    // Merge bounds into final bounding box.
+    const finalBounds = biggestCluster.clone();
+    intersections.forEach(cluster => {
+      finalBounds.union(cluster);
+    });
+    return finalBounds;
   }
 }

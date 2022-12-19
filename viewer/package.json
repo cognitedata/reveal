@@ -80,9 +80,9 @@
     "mixpanel-browser": "2.45.0",
     "path-browserify": "1.0.1",
     "proj4": "2.8.0",
-    "rxjs": "7.5.7",
+    "rxjs": "7.6.0",
     "skmeans": "0.11.3",
-    "three-stdlib": "2.19.0"
+    "three-stdlib": "2.20.4"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.32.1",
@@ -103,8 +103,8 @@
     "@types/skmeans": "0.11.3",
     "@types/stats": "0.16.30",
     "@types/tween.js": "18.5.1",
-    "@typescript-eslint/eslint-plugin": "5.44.0",
-    "@typescript-eslint/parser": "5.44.0",
+    "@typescript-eslint/eslint-plugin": "5.46.1",
+    "@typescript-eslint/parser": "5.46.1",
     "concurrently": "7.6.0",
     "cross-env": "7.0.3",
     "cross-var": "1.1.0",
@@ -126,7 +126,7 @@
     "jest-environment-jsdom": "29.3.1",
     "jest-extended": "3.2.0",
     "jest-image-snapshot": "6.1.0",
-    "jest-puppeteer": "6.1.1",
+    "jest-puppeteer": "6.2.0",
     "jsdom": "20.0.3",
     "moq.ts": "9.0.2",
     "nock": "13.2.9",
@@ -163,5 +163,6 @@
   },
   "files": [
     "./dist/*"
-  ]
+  ],
+  "packageManager": "yarn@3.3.0"
 }
