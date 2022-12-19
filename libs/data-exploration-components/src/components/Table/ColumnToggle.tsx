@@ -74,7 +74,10 @@ export function ColumnToggle<T extends TableData = any>({
   };
 
   const filteredColumns = allColumns().filter((column) =>
-    column.columnDef.header?.toString().toLowerCase().includes(searchInput)
+    column.columnDef.header
+      ?.toString()
+      .toLowerCase()
+      .includes(searchInput.toLowerCase())
   );
   const isSearchResultEmpty = filteredColumns.length === 0;
 
