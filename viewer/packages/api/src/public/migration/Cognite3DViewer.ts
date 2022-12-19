@@ -339,7 +339,7 @@ export class Cognite3DViewer {
   /**
    * Set options to control resolution of the viewer. This includes
    * settings for max resolution and limiting resolution when moving the camera.
-   * @param options Options to apply
+   * @param options Options to apply.
    */
   setResolutionOptions(options: ResolutionOptions): void {
     if (options.maxRenderResolution) {
