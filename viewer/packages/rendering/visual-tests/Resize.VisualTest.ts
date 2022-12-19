@@ -12,7 +12,10 @@ export default class ResizeVisualTestFixture extends StreamingVisualTestFixture 
   public setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
     const { renderer, camera } = testFixtureComponents;
     this.pipelineExecutor = new BasicPipelineExecutor(renderer);
-    const rr = new ResizeHandler(renderer, new StationaryCameraManager(renderer.domElement.parentElement!, camera), {
+
+    // Register a resize handler with a dummy camera manager, which will
+    // ensure the viewport is resized appropriately
+    new ResizeHandler(renderer, new StationaryCameraManager(renderer.domElement.parentElement!, camera), {
       renderResolutionThreshold: 100_000
     });
     const domElement = renderer.domElement.parentElement!;
