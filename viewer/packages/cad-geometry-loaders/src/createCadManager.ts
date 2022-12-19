@@ -5,7 +5,7 @@
 import { CadManager } from './CadManager';
 import { InternalRevealCadOptions } from './InternalRevealCadOptions';
 
-import { CadModelUpdateHandler } from '@reveal/cad-geometry-loaders';
+import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { CadMaterialManager } from '@reveal/rendering';
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 import { CadModelFactory } from '@reveal/cad-model';

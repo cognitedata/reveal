@@ -15,7 +15,8 @@ import {
   CognitePointCloudModel,
   CameraControlsOptions,
   DefaultCameraManager,
-  CogniteModel
+  CogniteModel,
+  AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
 import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -33,6 +34,7 @@ import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
 import { CustomCameraManager } from '../utils/CustomCameraManager';
 import { MeasurementUi } from '../utils/MeasurementUi';
 import { Image360UI } from '../utils/Image360UI';
+import { LoadGltfUi } from '../utils/LoadGltfUi';
 
 
 window.THREE = THREE;
@@ -124,8 +126,9 @@ export function Viewer() {
       // Add Stats.js overlay with FPS etc
       var stats = new Stats();
       stats.dom.style.position = 'absolute';
-      stats.dom.style.top = stats.dom.style.left = '';
-      stats.dom.style.right = stats.dom.style.bottom = '0px';
+      stats.dom.style.top = stats.dom.style.right = '';
+      stats.dom.style.bottom = '0px';
+      stats.dom.style.left = '0px';
       document.body.appendChild(stats.dom);
       viewer.on('beforeSceneRendered', () => stats.begin());
       viewer.on('sceneRendered', () => stats.end());
@@ -339,6 +342,7 @@ export function Viewer() {
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
+      new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event;
@@ -357,11 +361,17 @@ export function Viewer() {
               break;
             case 'pointcloud':
               {
-                const { point } = intersection;
+                const { point, model } = intersection;
                 console.log(`Clicked point assigned to the object with annotationId: ${intersection.annotationId} at`, point);
-                const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
-                sphere.position.copy(point);
-                viewer.addObject3D(sphere);
+                if (intersection.annotationId !== 0) {
+                  model.removeAllStyledObjectCollections();
+                  const selected = new AnnotationIdPointCloudObjectCollection([intersection.annotationId]);
+                  model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });  
+                } else {
+                  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
+                  sphere.position.copy(point);
+                  viewer.addObject3D(sphere);
+                }
               }
               break;
           }

@@ -17,19 +17,51 @@ The default implementation is [DefaultCameraManager](../classes/cognite_reveal.D
 
 - [`DefaultCameraManager`](../classes/cognite_reveal.DefaultCameraManager.md)
 
-## Properties
+## Methods
 
-### enabled
+### activate
 
-• `Optional` **enabled**: `boolean`
+▸ **activate**(`cameraManager?`): `void`
 
-Enables or disables camera manager. When disabled, camera manager shouldn't consume or react to any DOM events.
+Set this manager as active and enable controls.
+
+Should update CameraManager.enabled to reflect the state of the manager.
+Note that this is called automatically when a new CameraManager is set on the [Cognite3DViewer](../classes/cognite_reveal.Cognite3DViewer.md).
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `cameraManager?` | [`CameraManager`](cognite_reveal.CameraManager.md) | Previously used camera manager. |
+
+#### Returns
+
+`void`
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:81](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/CameraManager.ts#L81)
+[packages/camera-manager/src/CameraManager.ts:59](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L59)
 
-## Methods
+___
+
+### deactivate
+
+▸ **deactivate**(): `void`
+
+Deactivate this manager and disable controls.
+
+Should update CameraManager.enabled to reflect the state of the manager.
+Note that this is called automatically when a new CameraManager is set on the [Cognite3DViewer](../classes/cognite_reveal.Cognite3DViewer.md).
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/camera-manager/src/CameraManager.ts:67](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L67)
+
+___
 
 ### dispose
 
@@ -43,7 +75,7 @@ Enables or disables camera manager. When disabled, camera manager shouldn't cons
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:77](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/CameraManager.ts#L77)
+[packages/camera-manager/src/CameraManager.ts:107](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L107)
 
 ___
 
@@ -57,7 +89,7 @@ Moves camera to a place where the content of a bounding box is visible to the ca
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `boundingBox` | `Box3` | - |
+| `boundingBox` | `Box3` | The bounding box in world space. |
 | `duration?` | `number` | The duration of the animation moving the camera. |
 | `radiusFactor?` | `number` | The ratio of the distance from camera to center of box and radius of the box. |
 
@@ -67,7 +99,7 @@ Moves camera to a place where the content of a bounding box is visible to the ca
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:65](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/CameraManager.ts#L65)
+[packages/camera-manager/src/CameraManager.ts:95](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L95)
 
 ___
 
@@ -86,7 +118,7 @@ camera changes.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:21](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/CameraManager.ts#L21)
+[packages/camera-manager/src/CameraManager.ts:27](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L27)
 
 ___
 
@@ -104,7 +136,7 @@ Camera state: position, target and rotation.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:44](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/CameraManager.ts#L44)
+[packages/camera-manager/src/CameraManager.ts:50](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L50)
 
 ___
 
@@ -118,7 +150,7 @@ Unsubscribes from changes of the camera event.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | ``"cameraChange"`` | Name of the event. |
+| `event` | ``"cameraChange"`` | The event type. |
 | `callback` | [`CameraChangeDelegate`](../modules/cognite_reveal.md#camerachangedelegate) | Callback function to be unsubscribed. |
 
 #### Returns
@@ -127,7 +159,41 @@ Unsubscribes from changes of the camera event.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:57](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/CameraManager.ts#L57)
+[packages/camera-manager/src/CameraManager.ts:85](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L85)
+
+▸ **off**(`event`, `callback`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"cameraStop"`` |
+| `callback` | [`CameraStopDelegate`](../modules/cognite_reveal.md#camerastopdelegate) |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/camera-manager/src/CameraManager.ts:86](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L86)
+
+▸ **off**(`event`, `callback`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"cameraChange"`` \| ``"cameraStop"`` |
+| `callback` | [`CameraEventDelegate`](../modules/cognite_reveal.md#cameraeventdelegate) |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/camera-manager/src/CameraManager.ts:87](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L87)
 
 ___
 
@@ -135,13 +201,15 @@ ___
 
 ▸ **on**(`event`, `callback`): `void`
 
-Subscribes to changes of the camera event. This is used by Reveal to react on changes of the camera.
+Subscribes to events on this camera manager. There are several event types:
+'cameraChange' - Subscribes to changes of the camera. This is used by Reveal to react on changes of the camera.
+'cameraStop' - Subscribes to events indicating the camera has stopped
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | ``"cameraChange"`` | Name of the event. |
+| `event` | ``"cameraChange"`` | The event type. |
 | `callback` | [`CameraChangeDelegate`](../modules/cognite_reveal.md#camerachangedelegate) | Callback to be called when the event is fired. |
 
 #### Returns
@@ -150,7 +218,41 @@ Subscribes to changes of the camera event. This is used by Reveal to react on ch
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:51](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/CameraManager.ts#L51)
+[packages/camera-manager/src/CameraManager.ts:76](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L76)
+
+▸ **on**(`event`, `callback`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"cameraStop"`` |
+| `callback` | [`CameraStopDelegate`](../modules/cognite_reveal.md#camerastopdelegate) |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/camera-manager/src/CameraManager.ts:77](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L77)
+
+▸ **on**(`event`, `callback`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"cameraChange"`` \| ``"cameraStop"`` |
+| `callback` | [`CameraEventDelegate`](../modules/cognite_reveal.md#cameraeventdelegate) |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/camera-manager/src/CameraManager.ts:78](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L78)
 
 ___
 
@@ -182,7 +284,7 @@ cameraManager.setCameraState({ position, target });
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:38](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/CameraManager.ts#L38)
+[packages/camera-manager/src/CameraManager.ts:44](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L44)
 
 ___
 
@@ -207,4 +309,4 @@ Reveal performance affects frequency with which this method is called.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:73](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/CameraManager.ts#L73)
+[packages/camera-manager/src/CameraManager.ts:103](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/CameraManager.ts#L103)

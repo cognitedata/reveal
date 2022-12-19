@@ -34,7 +34,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/InvertedNodeCollection.ts:21](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L21)
+[packages/cad-styling/src/InvertedNodeCollection.ts:21](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L21)
 
 ## Properties
 
@@ -44,7 +44,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/InvertedNodeCollection.ts:15](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L15)
+[packages/cad-styling/src/InvertedNodeCollection.ts:15](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L15)
 
 ## Accessors
 
@@ -62,7 +62,7 @@ NodeCollection.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -80,7 +80,7 @@ NodeCollection.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/InvertedNodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L32)
+[packages/cad-styling/src/InvertedNodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L32)
 
 ## Methods
 
@@ -104,7 +104,7 @@ Always throws an error.
 
 #### Defined in
 
-[packages/cad-styling/src/InvertedNodeCollection.ts:58](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L58)
+[packages/cad-styling/src/InvertedNodeCollection.ts:58](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L58)
 
 ___
 
@@ -126,7 +126,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/InvertedNodeCollection.ts:47](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L47)
+[packages/cad-styling/src/InvertedNodeCollection.ts:47](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L47)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/InvertedNodeCollection.ts:36](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L36)
+[packages/cad-styling/src/InvertedNodeCollection.ts:36](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L36)
 
 ___
 
@@ -169,7 +169,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -194,7 +194,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -212,4 +212,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/InvertedNodeCollection.ts:51](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L51)
+[packages/cad-styling/src/InvertedNodeCollection.ts:51](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/InvertedNodeCollection.ts#L51)

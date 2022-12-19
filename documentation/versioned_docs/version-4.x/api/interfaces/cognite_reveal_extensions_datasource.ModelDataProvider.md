@@ -11,9 +11,9 @@ Provides data for 3D models.
 
 ## Hierarchy
 
-- `JsonFileProvider`
+- [`JsonFileProvider`](cognite_reveal_extensions_datasource.JsonFileProvider.md)
 
-- `BinaryFileProvider`
+- [`BinaryFileProvider`](cognite_reveal_extensions_datasource.BinaryFileProvider.md)
 
   ↳ **`ModelDataProvider`**
 
@@ -38,11 +38,11 @@ Downloads a binary blob.
 
 #### Overrides
 
-BinaryFileProvider.getBinaryFile
+[BinaryFileProvider](cognite_reveal_extensions_datasource.BinaryFileProvider.md).[getBinaryFile](cognite_reveal_extensions_datasource.BinaryFileProvider.md#getbinaryfile)
 
 #### Defined in
 
-[packages/data-providers/src/ModelDataProvider.ts:22](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/data-providers/src/ModelDataProvider.ts#L22)
+[packages/data-providers/src/ModelDataProvider.ts:22](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/data-providers/src/ModelDataProvider.ts#L22)
 
 ___
 
@@ -65,8 +65,8 @@ Download and parse a JSON file and return the resulting struct.
 
 #### Overrides
 
-JsonFileProvider.getJsonFile
+[JsonFileProvider](cognite_reveal_extensions_datasource.JsonFileProvider.md).[getJsonFile](cognite_reveal_extensions_datasource.JsonFileProvider.md#getjsonfile)
 
 #### Defined in
 
-[packages/data-providers/src/ModelDataProvider.ts:16](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/data-providers/src/ModelDataProvider.ts#L16)
+[packages/data-providers/src/ModelDataProvider.ts:16](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/data-providers/src/ModelDataProvider.ts#L16)

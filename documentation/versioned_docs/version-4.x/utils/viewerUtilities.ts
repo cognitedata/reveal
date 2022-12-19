@@ -20,7 +20,7 @@ export function resetViewerEventHandlers(viewer: Cognite3DViewer): void {
  * Resets state of model to the default state (i.e. appearance and styled sets)
  * @param model
  */
-export function resetCognite3DModel(model: CogniteCadModel): void {
+export function resetCogniteCadModel(model: CogniteCadModel): void {
   model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
   model.removeAllStyledNodeCollections();
 }

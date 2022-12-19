@@ -28,7 +28,7 @@ of the inserted boxes
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/AreaCollection.ts:16](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L16)
+[packages/cad-styling/src/prioritized/AreaCollection.ts:16](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L16)
 
 ## Methods
 
@@ -51,7 +51,7 @@ AreaCollection.
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/AreaCollection.ts:34](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L34)
+[packages/cad-styling/src/prioritized/AreaCollection.ts:34](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L34)
 
 ___
 
@@ -69,7 +69,7 @@ subset of boxes in the set returned from `areas`
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/AreaCollection.ts:23](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L23)
+[packages/cad-styling/src/prioritized/AreaCollection.ts:23](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L23)
 
 ___
 
@@ -95,7 +95,7 @@ A and B, and will thus be a valid representative set for the intersection of A a
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/AreaCollection.ts:43](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L43)
+[packages/cad-styling/src/prioritized/AreaCollection.ts:43](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L43)
 
 ___
 
@@ -117,4 +117,4 @@ Return whether the input box intersects the AreaCollection.
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/AreaCollection.ts:28](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L28)
+[packages/cad-styling/src/prioritized/AreaCollection.ts:28](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L28)
