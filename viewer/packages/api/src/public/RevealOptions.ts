@@ -9,7 +9,7 @@ import { InternalRevealCadOptions } from '@reveal/cad-geometry-loaders';
 
 /**
  * @property logMetrics Might be used to disable usage statistics.
- * @property movingResolutionFactor Factor with which the resolution (number of screen pixels) is scaled
+ * @property movingCameraResolutionFactor Factor with which the resolution (number of screen pixels) is scaled
  * when camera is moving
  * @property internal Internals are for internal usage only (like unit-testing).
  */
@@ -19,7 +19,7 @@ export type RevealOptions = {
   continuousModelStreaming?: boolean;
   outputRenderTarget?: { target: THREE.WebGLRenderTarget; autoSize?: boolean };
   rendererResolutionThreshold?: number;
-  movingResolutionFactor?: number;
+  movingCameraResolutionFactor?: number;
   internal?: {
     cad?: InternalRevealCadOptions;
   };
