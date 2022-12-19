@@ -334,11 +334,12 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Set resolution threshold.
-   * @param threshold
+   * Limit the number of pixels on the screen. When the render area has more pixels than this max resolution,
+   * Reveal will automatically render to an image with at most the max resolution, scaled up to fit the render area.
+   * @param maxResolution
    */
-  setResolutionThreshold(threshold: number): void {
-    this._revealManagerHelper.revealManager.setResolutionThreshold(threshold);
+  setMaximumRenderResolution(maxResolution: number): void {
+    this._revealManagerHelper.revealManager.setResolutionThreshold(maxResolution);
   }
 
   /**

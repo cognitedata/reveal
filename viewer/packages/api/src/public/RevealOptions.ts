@@ -9,7 +9,8 @@ import { InternalRevealCadOptions } from '@reveal/cad-geometry-loaders';
 
 /**
  * @property logMetrics Might be used to disable usage statistics.
- * @property nodeAppearanceProvider Style node by tree-index.
+ * @property movingResolutionFactor Factor with which the resolution (number of screen pixels) is scaled
+ * when camera is moving
  * @property internal Internals are for internal usage only (like unit-testing).
  */
 export type RevealOptions = {
