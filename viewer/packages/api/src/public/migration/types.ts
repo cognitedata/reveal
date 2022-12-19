@@ -225,6 +225,8 @@ export type CadIntersection = {
 /**
  * Options to control resolution of the viewer. This includes
  * settings for max resolution and limiting resolution when moving the camera.
+ *
+ * @module @cognite/reveal
  */
 export type ResolutionOptions = {
   /**
