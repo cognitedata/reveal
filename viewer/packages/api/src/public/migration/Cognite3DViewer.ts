@@ -1462,7 +1462,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
     outputRenderTarget,
     rendererResolutionThreshold: resolutionCap,
-    movingResolutionFactor: viewerOptions.movingResolutionFactor,
+    movingCameraResolutionFactor: viewerOptions.movingCameraResolutionFactor,
     internal: {}
   };
 

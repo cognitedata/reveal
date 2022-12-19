@@ -149,7 +149,7 @@ export function createRevealManager(
   );
   const resizeHandler = new ResizeHandler(renderer, cameraManager, {
     renderResolutionThreshold: revealOptions.rendererResolutionThreshold,
-    movingResolutionFactor: revealOptions.movingResolutionFactor
+    movingResolutionFactor: revealOptions.movingCameraResolutionFactor
   });
   const pointCloudManager = createPointCloudManager(
     modelMetadataProvider,
