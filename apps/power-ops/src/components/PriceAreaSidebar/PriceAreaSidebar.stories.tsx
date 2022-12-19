@@ -1,15 +1,15 @@
 import { Meta, Story } from '@storybook/react';
 import { within, userEvent } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
-import { Sidebar } from 'components/Sidebar/Sidebar';
+import { PriceAreaSidebarContent } from 'components/PriceAreaSidebar/PriceAreaSidebarContent';
 import { ComponentProps } from 'react';
 import { mockDayAheadMarketSidebarPlants } from 'utils/test/mockPlants';
 import { reactRouterDecorator } from 'utils/test/storyDecorators';
 import { SECTIONS } from 'types';
 
 export default {
-  component: Sidebar,
-  title: 'Components/Sidebar',
+  component: PriceAreaSidebarContent,
+  title: 'Components/Price Area Sidebar',
   argTypes: {
     onNavigate: { action: 'navigate' },
     onSearch: { action: 'search' },
@@ -17,9 +17,9 @@ export default {
   decorators: [reactRouterDecorator()],
 } as Meta;
 
-const Template: Story<ComponentProps<typeof Sidebar>> = (args) => (
-  <Sidebar {...args} />
-);
+const Template: Story<ComponentProps<typeof PriceAreaSidebarContent>> = (
+  args
+) => <PriceAreaSidebarContent {...args} />;
 
 export const Default = Template.bind({});
 

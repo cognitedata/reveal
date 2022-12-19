@@ -9,7 +9,8 @@ import { PAGES } from 'types';
 import { PriceArea } from 'pages/PriceArea';
 import { BalancingMarkets } from 'pages/BalancingMarkets';
 import { NotFoundPage } from 'pages/NotFound/NotFound';
-import { Workflows, WorkflowSingle } from 'pages/Workflows';
+import { WorkflowsContainer } from 'pages/Workflows';
+import { WorkflowSingleContainer } from 'pages/WorkflowSingle';
 import { Monitoring } from 'pages/Monitoring';
 import { DayAheadMarket } from 'pages/DayAheadMarket';
 import { WorkflowSchemasContainer } from 'pages/WorkflowSchemas';
@@ -35,8 +36,11 @@ const App = () => (
               path={PAGES.BALANCING_MARKETS}
               component={BalancingMarkets}
             />
-            <Route path={PAGES.WORKFLOWS_SINGLE} component={WorkflowSingle} />
-            <Route path={PAGES.WORKFLOWS} component={Workflows} />
+            <Route
+              path={PAGES.WORKFLOWS_SINGLE}
+              component={WorkflowSingleContainer}
+            />
+            <Route path={PAGES.WORKFLOWS} component={WorkflowsContainer} />
             <Route
               path={PAGES.WORKFLOW_SCHEMAS}
               component={WorkflowSchemasContainer}

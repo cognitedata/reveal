@@ -3,21 +3,20 @@ import { useMemo } from 'react';
 import { Column } from 'react-table';
 import { Detail } from '@cognite/cogs.js';
 import { StatusLabel } from 'components/StatusLabel/StatusLabel';
-import { ViewMoreButton } from 'components/ViewMoreButton/ViewMoreButton';
 import { OpenInFusion } from 'components/OpenInFusion/OpenInFusion';
 import { calculateDuration } from 'utils/utils';
-import { ProcessStatus, Workflow } from '@cognite/power-ops-api-types';
+import { Process, ProcessStatus } from '@cognite/power-ops-api-types';
 
 import { CellWrapper } from './elements';
 
-export const workflowsColumns: Column<Workflow>[] = [
+export const processColumns: Column<Process>[] = [
   {
     accessor: 'eventType',
     Header: 'Workflow Type / External ID',
     disableSortBy: true,
-    Cell: ({ row, value }) => (
+    Cell: ({ row }) => (
       <>
-        <div className="cogs-body-2 strong">{value}</div>
+        <div className="cogs-body-2 strong">{row.values.eventType}</div>
         <Detail
           style={{
             overflowWrap: 'anywhere',
@@ -72,7 +71,6 @@ export const workflowsColumns: Column<Workflow>[] = [
       useMemo(
         () => (
           <CellWrapper>
-            <ViewMoreButton eventExternalId={value} />
             <OpenInFusion type="event" endpoint="events" externalId={value} />
           </CellWrapper>
         ),

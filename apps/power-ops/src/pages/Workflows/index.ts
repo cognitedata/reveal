@@ -1,2 +1,1 @@
-export * from './Workflows';
-export * from './WorkflowSingle';
+export * from './WorkflowsContainer';

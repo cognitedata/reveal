@@ -1,7 +1,7 @@
 import { Loader } from '@cognite/cogs.js';
 import { useMetrics } from '@cognite/metrics';
 import { CommonSidebar } from 'components/CommonSidebar/CommonSidebar';
-import { Sidebar } from 'components/Sidebar/Sidebar';
+import { PriceAreaSidebarContent } from 'components/PriceAreaSidebar/PriceAreaSidebarContent';
 import debounce from 'lodash/debounce';
 import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
 import { useCallback } from 'react';
@@ -15,7 +15,7 @@ type Props = {
   onOpenClose: (open: boolean) => void;
 };
 
-const SidebarContainer = ({
+export const PriceAreaSidebarContainer = ({
   bidProcessEventExternalId,
   open,
   onOpenClose,
@@ -43,7 +43,7 @@ const SidebarContainer = ({
 
   return (
     <CommonSidebar
-      open={open}
+      initiallyOpen={open}
       onOpenCloseClick={(fromSearch = false) => {
         onOpenClose(!open);
         if (fromSearch) {
@@ -55,7 +55,7 @@ const SidebarContainer = ({
         }
       }}
     >
-      <Sidebar
+      <PriceAreaSidebarContent
         onNavigate={(section) => {
           if ([SECTIONS.TOTAL, SECTIONS.PRICE_SCENARIOS].includes(section)) {
             metrics.track(`click-sidebar-${section}-link`);
@@ -92,5 +92,3 @@ const SidebarContainer = ({
     </CommonSidebar>
   );
 };
-
-export default SidebarContainer;

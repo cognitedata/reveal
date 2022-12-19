@@ -1,17 +1,18 @@
-import { Button, Icon, Label, Tooltip } from '@cognite/cogs.js';
-import Editor, { BeforeMount } from '@monaco-editor/react';
+import { Button, Flex, Icon, Label, Tooltip } from '@cognite/cogs.js';
+import { BeforeMount } from '@monaco-editor/react';
 import { WorkflowSchemaEditable } from 'types';
 import { editor } from 'monaco-editor';
-import { ComponentProps, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import WorkflowJSONSchema from 'types/WorkflowSchemaEditable.schema.json';
 import { CommonHeader } from 'components/CommonHeader/CommonHeader';
+
+import { StyledEditor } from './elements';
 
 interface Props {
   initialValue: WorkflowSchemaEditable;
   onSave: (newValue: WorkflowSchemaEditable) => void;
   onHasUnsavedChanges?: (canSave: boolean) => void;
   onCancel?: (nextIndex: undefined, needSave: boolean) => void;
-  height: ComponentProps<typeof Editor>['height'];
 }
 
 const validateCode = (code: any): code is string => {
@@ -28,7 +29,6 @@ export const WorkflowSchemaEditor = ({
   onSave,
   onHasUnsavedChanges,
   onCancel,
-  height = 'calc(100vh - 61px - 61px)', // 61px is the Common Header used in both sides
 }: Props) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor>();
 
@@ -72,14 +72,13 @@ export const WorkflowSchemaEditor = ({
   }, [hasUnsavedChanges]);
 
   return (
-    <div>
+    <Flex direction="column" style={{ height: '100%' }}>
       <CommonHeader title={editedWorkflowSchema.name}>
         <Label variant={valid ? 'success' : 'danger'} style={{ margin: 0 }}>
           {valid ? 'Code valid' : 'Code invalid'}
         </Label>
       </CommonHeader>
-      <Editor
-        height={height}
+      <StyledEditor
         language="json"
         theme="powerOps"
         loading={<Icon type="Loader" />}
@@ -136,6 +135,6 @@ export const WorkflowSchemaEditor = ({
           </Button>
         </Tooltip>
       </CommonHeader>
-    </div>
+    </Flex>
   );
 };

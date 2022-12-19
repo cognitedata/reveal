@@ -10,8 +10,8 @@ import {
 import { useMetrics } from '@cognite/metrics';
 import { PriceScenariosContainer } from 'pages/PriceScenarios/PriceScenariosContainer';
 import { BidMatrixContainer } from 'components/BidMatrix/BidMatrixContainer';
-import DayAheadMarketHeaderContainer from 'components/DayAheadMarketHeader/DayAheadMarketHeaderContainer';
-import SidebarContainer from 'components/Sidebar/SidebarContainer';
+import { DayAheadMarketHeaderContainer } from 'components/DayAheadMarketHeader/DayAheadMarketHeaderContainer';
+import { PriceAreaSidebarContainer } from 'components/PriceAreaSidebar/PriceAreaSidebarContainer';
 import { NewDayAheadDataAvailableBar } from 'components/NewDayAheadDataAvailableBar/NewDayAheadDataAvailableBar';
 import { ShopQualityAssuranceModal } from 'components/ShopQualityAssuranceModal/ShopQualityAssuranceModal';
 import { useNewBidMatrixAvailable } from 'hooks/useNewBidMatrixAvailable';
@@ -30,7 +30,7 @@ export const PriceArea = () => {
     priceAreaExternalId: string;
   }>();
 
-  const [sidePanelOpen, setSidePanelOpen] = useState(true);
+  const [sidebarOpen, setSidePanelOpen] = useState(true);
 
   const [bidProcessEventExternalId, setBidProcessEventExternalId] =
     useState('');
@@ -60,12 +60,12 @@ export const PriceArea = () => {
         />
       )}
       <Container>
-        <SidebarContainer
+        <PriceAreaSidebarContainer
           bidProcessEventExternalId={bidProcessEventExternalId}
-          open={sidePanelOpen}
+          open={sidebarOpen}
           onOpenClose={setSidePanelOpen}
         />
-        <MainDiv sidePanelOpen={sidePanelOpen}>
+        <MainDiv sidebarOpen={sidebarOpen}>
           <Switch>
             <Route path={`${path}/${SECTIONS.PRICE_SCENARIOS}`}>
               <PriceScenariosContainer

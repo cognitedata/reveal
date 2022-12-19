@@ -17,4 +17,7 @@ export default createGlobalStyle`
       z-index: ${layers.MAXIMUM}
     }
   }
+  #root {
+    height: 100%;
+  }
 `;

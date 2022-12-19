@@ -40,6 +40,7 @@ export const StyledSequenceTable = styled.table`
 `;
 
 export const Main = styled.div`
+  display: flex;
   flex-direction: column;
   overflow: auto;
   height: 100%;

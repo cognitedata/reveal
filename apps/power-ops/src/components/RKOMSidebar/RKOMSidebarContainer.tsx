@@ -5,7 +5,7 @@ import { RKOMSidebar } from './RKOMSidebar';
 
 type Props = {
   open: boolean;
-  onOpenClose: (open: boolean) => void;
+  onOpenClose?: (open: boolean) => void;
 };
 
 const RKOMSidebarContainer = ({ open, onOpenClose }: Props) => {
@@ -13,10 +13,10 @@ const RKOMSidebarContainer = ({ open, onOpenClose }: Props) => {
 
   return (
     <CommonSidebar
-      open={open}
+      initiallyOpen={open}
       onOpenCloseClick={() => {
         metrics.track(`click-${open ? 'close' : 'open'}-rkom-sidebar`);
-        onOpenClose(!open);
+        onOpenClose?.(!open);
       }}
     >
       <RKOMSidebar

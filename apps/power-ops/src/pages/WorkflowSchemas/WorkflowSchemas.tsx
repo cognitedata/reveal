@@ -1,4 +1,4 @@
-import { Button, Flex, Row } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
 import { useCallback, useMemo, useState } from 'react';
 import { WorkflowSchemaEditor } from 'components/WorkflowSchemaEditor/WorkflowSchemaEditor';
 import { DeleteModal } from 'components/DeleteModal/DeleteModal';
@@ -17,6 +17,8 @@ import { WorkflowSchemaTable } from 'components/WorkflowSchemaTable/WorkflowSche
 import { UnsavedChangesModal } from 'components/UnsavedChangesModal/UnsavedChangesModal';
 import { flushSync } from 'react-dom';
 import { WorkflowSchemaEditable } from 'types';
+
+import { StyledRow } from './elements';
 
 interface Props {
   workflowSchemas: WorkflowSchemaWithProcesses[];
@@ -114,7 +116,7 @@ export const WorkflowSchemas = ({
         }}
         onCancel={() => setWorkflowSchemaToDelete(undefined)}
       />
-      <Row cols={2} gutter={0}>
+      <StyledRow cols={2} gutter={0}>
         <Flex direction="column">
           <CommonHeader title="Workflow Schemas">
             <Button
@@ -146,9 +148,6 @@ export const WorkflowSchemas = ({
           style={{
             borderLeft: '1px solid #D9D9D9',
             backgroundColor: 'var(--cogs-surface--medium)',
-            ...(selectedWorkflowSchemaIndex
-              ? {}
-              : { height: 'calc(100vh - 56px)' }),
           }}
         >
           {selectedWorkflowSchema ? (
@@ -159,8 +158,6 @@ export const WorkflowSchemas = ({
               onHasUnsavedChanges={setHasUnsavedChanges}
               onSave={onSaveMemoized}
               onCancel={handleSelect}
-              // calc(100vh - 61px - 61px) is the default, 56px is the top bar
-              height="calc(100vh - 61px - 61px - 56px)"
             />
           ) : (
             <CommonError
@@ -173,7 +170,7 @@ export const WorkflowSchemas = ({
             </CommonError>
           )}
         </Flex>
-      </Row>
+      </StyledRow>
     </>
   );
 };

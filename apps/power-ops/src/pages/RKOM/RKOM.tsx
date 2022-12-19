@@ -10,7 +10,7 @@ import { Container, MainDiv, MainContainer } from './elements';
 
 export const RKOM = () => {
   const { path } = useRouteMatch();
-  const [sidePanelOpen, setSidePanelOpen] = useState(true);
+  const [sideBarOpen, setSideBarOpen] = useState(true);
   const [filter, setFilter] = useState<RkomFilterType>();
 
   return (
@@ -22,11 +22,8 @@ export const RKOM = () => {
         disabledDownload
       />
       <Container>
-        <RKOMSidebarContainer
-          open={sidePanelOpen}
-          onOpenClose={setSidePanelOpen}
-        />
-        <MainDiv sidePanelOpen={sidePanelOpen}>
+        <RKOMSidebarContainer open={sideBarOpen} onOpenClose={setSideBarOpen} />
+        <MainDiv sidebarOpen={sideBarOpen}>
           <Switch>
             <Route path={PAGES.RKOM_BID}>
               <RKOMTableContainer filter={filter} onSelectBid={() => null} />

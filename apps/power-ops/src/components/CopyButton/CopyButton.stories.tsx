@@ -3,6 +3,7 @@ import { ComponentProps } from 'react';
 import { userEvent, within } from '@storybook/testing-library';
 import { CopyButton } from 'components/CopyButton/CopyButton';
 import { boxDecorator } from 'utils/test/storyDecorators';
+import { expect } from '@storybook/jest';
 
 const box = boxDecorator({
   height: 80,
@@ -46,3 +47,15 @@ CopyFailure.args = {
   onClick: async () => false,
 };
 CopyFailure.play = CopySuccess.play;
+
+export const SimpleText: Story<ComponentProps<typeof CopyButton.SimpleText>> = (
+  args
+) => <CopyButton.SimpleText {...args} value="copy text" />;
+
+SimpleText.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  const copyButton = canvas.getByLabelText('Copy text');
+  userEvent.hover(copyButton);
+  expect(await canvas.findByText('Copy to clipboard')).toBeInTheDocument();
+  userEvent.click(copyButton);
+};

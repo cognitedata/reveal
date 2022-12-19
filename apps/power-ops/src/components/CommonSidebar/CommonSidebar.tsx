@@ -4,15 +4,17 @@ import { PropsWithChildren, useState } from 'react';
 import { StyledPanel, Footer, Header } from './elements';
 
 interface Props {
-  open: boolean;
+  initiallyOpen?: boolean;
   onOpenCloseClick: () => void;
 }
 
 export const CommonSidebar = ({
-  open = true,
+  initiallyOpen = true,
   onOpenCloseClick,
   children,
 }: PropsWithChildren<Props>) => {
+  const [open, setOpen] = useState(initiallyOpen);
+
   const [resize, setResize] = useState(false);
 
   return (
@@ -25,7 +27,10 @@ export const CommonSidebar = ({
             type="secondary"
             aria-label="Open sidebar"
             icon="PanelRight"
-            onClick={onOpenCloseClick}
+            onClick={() => {
+              setOpen(!open);
+              onOpenCloseClick();
+            }}
           />
         </Header>
       )}
@@ -34,7 +39,10 @@ export const CommonSidebar = ({
           type="secondary"
           aria-label="Show or hide sidebar"
           icon={open ? 'PanelLeft' : 'PanelRight'}
-          onClick={onOpenCloseClick}
+          onClick={() => {
+            setOpen(!open);
+            onOpenCloseClick();
+          }}
         >
           {open && 'Hide'}
         </Button>

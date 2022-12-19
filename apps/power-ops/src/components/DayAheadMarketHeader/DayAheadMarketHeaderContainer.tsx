@@ -15,7 +15,7 @@ type Props = {
   onChangeBidProcessEventExternalId: (externalId: string) => void;
 };
 
-const DayAheadMarketHeaderContainer = ({
+export const DayAheadMarketHeaderContainer = ({
   bidProcessEventExternalId,
   onChangeBidProcessEventExternalId,
 }: Props) => {
@@ -106,5 +106,3 @@ const DayAheadMarketHeaderContainer = ({
     />
   );
 };
-
-export default DayAheadMarketHeaderContainer;

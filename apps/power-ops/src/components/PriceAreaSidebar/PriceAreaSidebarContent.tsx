@@ -1,4 +1,4 @@
-import { Detail } from '@cognite/cogs.js';
+import { Detail, Flex } from '@cognite/cogs.js';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { SECTIONS } from 'types';
@@ -21,7 +21,7 @@ type Props = {
   }[];
 };
 
-export const Sidebar = ({
+export const PriceAreaSidebarContent = ({
   plants,
   total,
   priceScenarios,
@@ -47,7 +47,7 @@ export const Sidebar = ({
   };
 
   return (
-    <>
+    <Flex direction="column" style={{ height: '100%' }}>
       <Header>
         <StyledSearch
           data-testid="plant-search-input"
@@ -103,6 +103,6 @@ export const Sidebar = ({
           </NavLink>
         ))}
       </PanelContent>
-    </>
+    </Flex>
   );
 };

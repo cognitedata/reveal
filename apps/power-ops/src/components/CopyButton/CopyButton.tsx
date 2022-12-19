@@ -36,3 +36,21 @@ export const CopyButton = ({ onClick, ...rest }: Props) => {
     </Tooltip>
   );
 };
+
+CopyButton.SimpleText = ({
+  value,
+  ...rest
+}: Omit<ComponentProps<typeof CopyButton>, 'onClick'> & { value: string }) => (
+  <CopyButton
+    {...rest}
+    onClick={async () => {
+      if (!value) return false;
+      try {
+        await navigator.clipboard.writeText(value);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }}
+  />
+);

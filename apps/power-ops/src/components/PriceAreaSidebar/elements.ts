@@ -48,8 +48,8 @@ export const Header = styled.span`
 `;
 
 export const PanelContent = styled.div`
-  padding: 16px;
-  max-height: calc(100% - 138px);
+  flex-grow: 1;
+  padding: 16px 16px 80px;
   width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;

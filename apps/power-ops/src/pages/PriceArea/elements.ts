@@ -1,17 +1,17 @@
 import styled from 'styled-components/macro';
 
-const sidePanelOpenedWidth = 280;
-const sidePanelClosedWidth = 68;
+const sidebarOpenedWidth = 280;
+const sidebarClosedWidth = 68;
 
-interface SidePanelProps {
-  sidePanelOpen: boolean;
+interface SidebarProps {
+  sidebarOpen: boolean;
 }
 
-export const MainDiv = styled.div<SidePanelProps>`
+export const MainDiv = styled.div<SidebarProps>`
   width: calc(
     100% -
       ${(props) =>
-        props.sidePanelOpen ? sidePanelOpenedWidth : sidePanelClosedWidth}px
+        props.sidebarOpen ? sidebarOpenedWidth : sidebarClosedWidth}px
   );
 
   transition-property: width, transform, left, right;
