@@ -42,8 +42,7 @@
       ],
       "addLabels": [
         "dependencies",
-        "auto-update",
-        "slack"
+        "auto-update"
       ],
       "prConcurrentLimit": 5
     },
