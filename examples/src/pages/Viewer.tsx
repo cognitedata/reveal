@@ -98,7 +98,6 @@ export function Viewer() {
         logMetrics: false,
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
-        movingResolutionFactor: 0.1,
         pointCloudEffects: {
           pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined),
           edlOptions: edlEnabled ? {
