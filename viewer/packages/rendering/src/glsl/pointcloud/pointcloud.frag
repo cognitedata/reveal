@@ -1,31 +1,17 @@
 precision highp float;
 precision highp int;
 
-uniform mat4 viewMatrix;
-uniform vec3 cameraPosition;
 
 uniform mat4 projectionMatrix;
-uniform float opacity;
 
-uniform float spacing;
 uniform float pcIndex;
-uniform float screenWidth;
-uniform float screenHeight;
 
 out vec4 outputColor;
-
-#ifdef highlight_point
-	uniform vec4 highlightedPointColor;
-#endif
 
 in vec3 vColor;
 
 #if !defined(color_type_point_index)
 	in float vOpacity;
-#endif
-
-#if defined(weighted_splats)
-	in float vLinearDepth;
 #endif
 
 #if !defined(paraboloid_point_shape) && defined(use_edl)
@@ -39,8 +25,6 @@ in vec3 vColor;
 #if defined(weighted_splats) || defined(paraboloid_point_shape)
 	in float vRadius;
 #endif
-
-float specularStrength = 1.0;
 
 void main() {
 	vec3 color = vColor;

@@ -13,9 +13,7 @@ in vec4 indices;
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
 
-uniform float screenWidth;
 uniform float screenHeight;
 uniform float fov;
 uniform float spacing;
@@ -29,15 +27,11 @@ uniform float octreeSize;
 uniform float opacity;
 uniform float level;
 uniform float vnStart;
-uniform bool isLeafNode;
 
 uniform vec2 intensityRange;
 uniform float intensityGamma;
 uniform float intensityContrast;
 uniform float intensityBrightness;
-uniform float rgbGamma;
-uniform float rgbContrast;
-uniform float rgbBrightness;
 
 uniform sampler2D visibleNodes;
 uniform sampler2D gradient;
@@ -154,7 +148,7 @@ float getLOD() {
 	float depth = level;
 
 	for (float i = 0.0; i <= 30.0; i++) {
-		float nodeSizeAtLevel = octreeSize  / pow(2.0, i + level + 0.0);
+		float nodeSizeAtLevel = octreeSize  / pow(2.0, i + level);
 
 		vec3 index3d = (position-offset) / nodeSizeAtLevel;
 		index3d = floor(index3d + 0.5);

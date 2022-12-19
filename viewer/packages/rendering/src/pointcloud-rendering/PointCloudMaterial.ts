@@ -352,14 +352,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
     } else {
       this.fov = Math.PI / 2; // will result in slope = 1 in the shader
     }
-    const renderTarget = renderer.getRenderTarget();
-    if (renderTarget !== null) {
-      this.screenWidth = renderTarget.width;
-      this.screenHeight = renderTarget.height;
-    } else {
-      this.screenWidth = renderer.domElement.clientWidth * pixelRatio;
-      this.screenHeight = renderer.domElement.clientHeight * pixelRatio;
-    }
+    this.screenWidth = renderer.domElement.clientWidth * pixelRatio;
+    this.screenHeight = renderer.domElement.clientHeight * pixelRatio;
 
     if (this.useDrawingBufferSize) {
       renderer.getDrawingBufferSize(PointCloudMaterial.helperVec2);
