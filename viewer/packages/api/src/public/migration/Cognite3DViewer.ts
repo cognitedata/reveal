@@ -1131,7 +1131,7 @@ export class Cognite3DViewer {
     const originalDomeStyle = { ...this.domElement.style };
 
     try {
-      //Pause animate while the screenshot renders to stop changes to active camera aspectratio
+      //Pause animate while the screenshot renders to stop changes to active camera aspect ratio
       cancelAnimationFrame(this.latestRequestId);
 
       // Position and scale domElement to match requested resolution.
