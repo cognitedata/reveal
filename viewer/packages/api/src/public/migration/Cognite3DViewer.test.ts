@@ -66,7 +66,7 @@ describe('Cognite3DViewer', () => {
     const disposeSpy = jest.spyOn(renderer, 'dispose');
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     viewer.dispose();
-    expect(disposeSpy).toBeCalledTimes(0);
+    expect(disposeSpy).not.toBeCalled();
   });
 
   test('dispose disposes of sector culler', () => {
