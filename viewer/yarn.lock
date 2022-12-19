@@ -840,12 +840,12 @@ __metadata:
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
     resize-observer-polyfill: 1.5.1
-    rxjs: 7.5.7
+    rxjs: 7.6.0
     shx: 0.3.4
     skmeans: 0.11.3
     stats.js: 0.17.0
     three: 0.146.0
-    three-stdlib: 2.19.0
+    three-stdlib: 2.20.4
     ts-jest: 29.0.3
     ts-loader: 9.4.2
     tsc-alias: 1.8.2
@@ -11160,12 +11160,12 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.5.7":
-  version: 7.5.7
-  resolution: "rxjs@npm:7.5.7"
+"rxjs@npm:7.6.0":
+  version: 7.6.0
+  resolution: "rxjs@npm:7.6.0"
   dependencies:
     tslib: ^2.1.0
-  checksum: edabcdb73b0f7e0f5f6e05c2077aff8c52222ac939069729704357d6406438acca831c24210db320aba269e86dbe1a400f3769c89101791885121a342fb15d9c
+  checksum: b3abbbfe1ddfd06fca9314b83cbd13bcddc3320429218136f75c79a4802ac430dd13873364aac1ded54fd457f8c77df332d205a92d8a1c61656565bb718c50af
   languageName: node
   linkType: hard
 
@@ -12143,9 +12143,9 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:2.19.0":
-  version: 2.19.0
-  resolution: "three-stdlib@npm:2.19.0"
+"three-stdlib@npm:2.20.4":
+  version: 2.20.4
+  resolution: "three-stdlib@npm:2.20.4"
   dependencies:
     "@babel/runtime": ^7.16.7
     "@types/offscreencanvas": ^2019.6.4
@@ -12160,7 +12160,7 @@ resolve@~1.19.0:
     zstddec: ^0.0.2
   peerDependencies:
     three: ">=0.122.0"
-  checksum: d2f8dc00c26cbbb5894a2272dd1e59f942031fe24b28e6f0754b1152beecb6e52ad3ab14aad6cd126721a93f5123a13cb3c94cbb14a935bc981b00d2468f0727
+  checksum: 10a64206d8f24dd272c6040c0abef72f71fc6746f75cefa3d2a9e7ab01959e6274f8f85d1e55a3ed0528779fd6b3b18e8d683e5216e31aade0b2eda24b379050
   languageName: node
   linkType: hard
 
