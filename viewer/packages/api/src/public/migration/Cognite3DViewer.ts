@@ -1228,8 +1228,8 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Recalcualte the boundingbox used to determine near and far planes on the camera. This should only be
-   * necessary if you have custom objects whose bounds change, as the bounds will be automatically updated
+   * Recalcualte the bounding box used to determine near and far planes on the camera. This should only be
+   * necessary if you have custom objects whose bounds change, as this calculation will be done automatically
    * when models are added to or removed from the viewer.
    */
   public forceUpdateCameraNearAndFarBoundingBox(): void {
