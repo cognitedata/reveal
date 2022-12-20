@@ -10,7 +10,7 @@ vec2 calculateObscurance(float depth, float screenWidth, float screenHeight, vec
 	float radius, vec2 vUv, sampler2D depthTexture, sampler2D logDepthTexture) {
 
 	vec2 uvRadius = radius / vec2(screenWidth / screenHeight * point_size_unit_per_screen_height,
-				      point_size_unit_per_screen_height );
+				      point_size_unit_per_screen_height);
 
 	float sum = 0.0;
 	float minNeighbourDepth = MAX_FLOAT;
