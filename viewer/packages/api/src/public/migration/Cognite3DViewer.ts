@@ -1128,7 +1128,16 @@ export class Cognite3DViewer {
     }
 
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
-    const originalDomeStyle = { ...this.domElement.style };
+    const originalDomeStyle = {
+      position: this.domElement.style.position,
+      width: this.domElement.style.width,
+      height: this.domElement.style.height,
+      flexGrow: this.domElement.style.flexGrow,
+      margin: this.domElement.style.margin,
+      padding: this.domElement.style.padding,
+      left: this.domElement.style.left,
+      top: this.domElement.style.top
+    };
 
     try {
       //Pause animate while the screenshot renders to stop changes to active camera aspect ratio
@@ -1140,6 +1149,7 @@ export class Cognite3DViewer {
       this.domElement.style.position = 'absolute';
       this.domElement.style.width = width + 'px';
       this.domElement.style.height = height + 'px';
+      this.domElement.style.flexGrow = '1';
       this.domElement.style.margin = '0px';
       this.domElement.style.padding = '0px';
       this.domElement.style.left = '0px';
@@ -1176,6 +1186,7 @@ export class Cognite3DViewer {
       this.domElement.style.position = originalDomeStyle.position;
       this.domElement.style.width = originalDomeStyle.width;
       this.domElement.style.height = originalDomeStyle.height;
+      this.domElement.style.flexGrow = originalDomeStyle.flexGrow;
       this.domElement.style.margin = originalDomeStyle.margin;
       this.domElement.style.padding = originalDomeStyle.padding;
       this.domElement.style.left = originalDomeStyle.left;
