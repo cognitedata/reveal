@@ -784,7 +784,7 @@ __metadata:
     "@types/glob": 8.0.0
     "@types/jest": 29.2.4
     "@types/jest-environment-puppeteer": 5.0.3
-    "@types/jest-image-snapshot": 5.1.0
+    "@types/jest-image-snapshot": 6.1.0
     "@types/jsdom": 20.0.1
     "@types/lodash": 4.14.191
     "@types/mixpanel-browser": 2.38.0
@@ -840,12 +840,12 @@ __metadata:
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
     resize-observer-polyfill: 1.5.1
-    rxjs: 7.5.7
+    rxjs: 7.8.0
     shx: 0.3.4
     skmeans: 0.11.3
     stats.js: 0.17.0
     three: 0.146.0
-    three-stdlib: 2.19.0
+    three-stdlib: 2.20.4
     ts-jest: 29.0.3
     ts-loader: 9.4.2
     tsc-alias: 1.8.2
@@ -2124,14 +2124,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest-image-snapshot@npm:5.1.0":
-  version: 5.1.0
-  resolution: "@types/jest-image-snapshot@npm:5.1.0"
+"@types/jest-image-snapshot@npm:6.1.0":
+  version: 6.1.0
+  resolution: "@types/jest-image-snapshot@npm:6.1.0"
   dependencies:
     "@types/jest": "*"
     "@types/pixelmatch": "*"
     ssim.js: ^3.1.1
-  checksum: b38b7a978637243499f2767511960bdaeace1a8ca15fadcd9a6988c3ab9a14fa1de4028b04790b89e5611bf7ce98ee4a574a5d99684682ae83239c2fbc8589aa
+  checksum: dfa85ad0a07aa45161ab644443befa6f8e761ce7b2f3cd61c3f350ea1b82d6f4cfefc4ccddf0b8719053fe6f9800eb735e62219f34febd64b6f02efda8ce6010
   languageName: node
   linkType: hard
 
@@ -11159,12 +11159,12 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.5.7":
-  version: 7.5.7
-  resolution: "rxjs@npm:7.5.7"
+"rxjs@npm:7.8.0":
+  version: 7.8.0
+  resolution: "rxjs@npm:7.8.0"
   dependencies:
     tslib: ^2.1.0
-  checksum: edabcdb73b0f7e0f5f6e05c2077aff8c52222ac939069729704357d6406438acca831c24210db320aba269e86dbe1a400f3769c89101791885121a342fb15d9c
+  checksum: 61b4d4fd323c1043d8d6ceb91f24183b28bcf5def4f01ca111511d5c6b66755bc5578587fe714ef5d67cf4c9f2e26f4490d4e1d8cabf9bd5967687835e9866a2
   languageName: node
   linkType: hard
 
@@ -12142,9 +12142,9 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:2.19.0":
-  version: 2.19.0
-  resolution: "three-stdlib@npm:2.19.0"
+"three-stdlib@npm:2.20.4":
+  version: 2.20.4
+  resolution: "three-stdlib@npm:2.20.4"
   dependencies:
     "@babel/runtime": ^7.16.7
     "@types/offscreencanvas": ^2019.6.4
@@ -12159,7 +12159,7 @@ resolve@~1.19.0:
     zstddec: ^0.0.2
   peerDependencies:
     three: ">=0.122.0"
-  checksum: d2f8dc00c26cbbb5894a2272dd1e59f942031fe24b28e6f0754b1152beecb6e52ad3ab14aad6cd126721a93f5123a13cb3c94cbb14a935bc981b00d2468f0727
+  checksum: 10a64206d8f24dd272c6040c0abef72f71fc6746f75cefa3d2a9e7ab01959e6274f8f85d1e55a3ed0528779fd6b3b18e8d683e5216e31aade0b2eda24b379050
   languageName: node
   linkType: hard
 
