@@ -72,10 +72,11 @@ export class ResizeHandler {
       throw Error('movingCameraResolutionFactor must be greater than 0 and less than or equal to 1');
     }
 
-    if (factor !== 1) {
+    // If changing from factor 1, register listeners
+    if (this._movingResolutionFactor === 1) {
       this._cameraManager.on('cameraChange', this._onCameraChangeCallback);
       this._cameraManager.on('cameraStop', this._onCameraStopCallback);
-    } else {
+    } else if (factor === 1) { // Else, if changing to 1, unregister listeners
       this._cameraManager.off('cameraChange', this._onCameraChangeCallback);
       this._cameraManager.off('cameraStop', this._onCameraStopCallback);
     }
