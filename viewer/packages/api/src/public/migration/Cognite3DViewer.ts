@@ -1131,7 +1131,7 @@ export class Cognite3DViewer {
     const originalDomeStyle = {
       position: this.domElement.style.position,
       width: this.domElement.style.width,
-      height: this.domElement.style.position,
+      height: this.domElement.style.height,
       flexGrow: this.domElement.style.flexGrow,
       margin: this.domElement.style.margin,
       padding: this.domElement.style.padding,
