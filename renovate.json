@@ -8,7 +8,7 @@
       "matchPackagePrefixes": [
         ""
       ],
-      // Prepare Renovate PRs before office hours
+      // Prepare Renovate PRs before and during our workday
       "schedule": [
         "after 6am and before 3pm every weekday"
       ]
