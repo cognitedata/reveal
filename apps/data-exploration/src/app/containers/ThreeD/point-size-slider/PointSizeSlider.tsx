@@ -7,22 +7,41 @@ import {
   Menu,
   Slider as CogsSlider,
 } from '@cognite/cogs.js';
-import { CognitePointCloudModel } from '@cognite/reveal';
+import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 import { ids } from '../../../../cogs-variables';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import styled from 'styled-components';
+import { SecondaryModelOptions, ThreeDContext } from '../ThreeDContext';
 
 type SliderProps = {
   pointCloudModel?: CognitePointCloudModel;
+  secondaryModels?: SecondaryModelOptions[];
+  viewer?: Cognite3DViewer;
 };
 
-export default function PointSizeSlider({ pointCloudModel }: SliderProps) {
+export default function PointSizeSlider({ pointCloudModel, secondaryModels, viewer }: SliderProps) {
   const [sliderValue, setSliderValue] = useState(pointCloudModel?.pointSize);
+  const loadedPointClouds: CognitePointCloudModel[] = pointCloudModel ? [pointCloudModel] : [];
 
-  if (!pointCloudModel) {
+  if (!viewer) {
     return null;
   }
+
+  secondaryModels?.forEach((modelData) => {
+    if (!modelData.applied) return;
+
+    const model = viewer.models.find((model) => model.modelId === modelData.modelId && model.revisionId === modelData.revisionId);
+
+    if (!(model instanceof CognitePointCloudModel)) return;
+
+    loadedPointClouds.push(model);
+  })
+
+  if (loadedPointClouds.length === 0) {
+    return null;
+  }
+
 
   return (
     <Dropdown
@@ -37,7 +56,7 @@ export default function PointSizeSlider({ pointCloudModel }: SliderProps) {
                 max={5}
                 step={0.1}
                 onChange={(v) => {
-                  pointCloudModel.pointSize = v;
+                  loadedPointClouds.forEach(model => model.pointSize = v);
                   setSliderValue(v);
                 }}
                 value={sliderValue}

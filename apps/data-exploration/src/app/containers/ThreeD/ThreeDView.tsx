@@ -263,7 +263,11 @@ export const ThreeDView = ({ modelId }: Props) => {
                     threeDModel={revealThreeDModel}
                   />
                   <StyledToolBarDivider />
-                  <PointSizeSlider pointCloudModel={pointCloudModel} />
+                  <PointSizeSlider
+                    pointCloudModel={pointCloudModel}
+                    secondaryModels={secondaryModels}
+                    viewer={revealViewer}
+                  />
                   {!assetDetailsExpanded && (
                     <AssetsHighlightButton
                       labelsVisibility={labelsVisibility}
