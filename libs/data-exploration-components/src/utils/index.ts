@@ -13,4 +13,3 @@ export * from './relationships';
 export * from './string';
 export * from './url';
 export * from './windowEvents';
-export * from './useLocalStorageState';

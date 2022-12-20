@@ -1,5 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   Row,
@@ -12,8 +12,9 @@ import {
   SortingState,
   OnChangeFn,
   ExpandedState,
+  ColumnOrderState,
 } from '@tanstack/react-table';
-import { useLocalStorageState } from '../../utils';
+import useLocalStorageState from 'use-local-storage-state';
 import { isElementHorizontallyInViewport } from '../../utils/isElementHorizontallyInViewport';
 import { ColumnToggle } from './ColumnToggle';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
@@ -43,6 +44,7 @@ import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from './LoadMore';
 import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import noop from 'lodash/noop';
 
 export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {
@@ -83,7 +85,7 @@ export function Table<T extends TableData>({
   id,
   data,
   columns,
-  onRowClick = () => {},
+  onRowClick = noop,
   onSort,
   enableSorting = false,
   manualSorting = true,
@@ -155,10 +157,15 @@ export function Table<T extends TableData>({
     }, {} as Record<string, boolean>);
   }, [hiddenColumns]);
 
-  const [columnVisibility, setColumnVisibility] = useLocalStorageState(
-    id,
-    initialHiddenColumns
+  const [columnVisibility, setColumnVisibility] = useLocalStorageState(id, {
+    defaultValue: initialHiddenColumns,
+  });
+
+  const [columnOrder, setColumnOrder] = useLocalStorageState<ColumnOrderState>(
+    `${id}-column-order`,
+    { defaultValue: [] }
   );
+  console.log({ columnOrder }, 'this is rerendering');
 
   const getRowId = React.useCallback(
     (originalRow: T, index: number, parent?: Row<T>) => {
@@ -171,37 +178,38 @@ export function Table<T extends TableData>({
     []
   );
 
-  const { getHeaderGroups, getRowModel, getAllLeafColumns, setColumnOrder } =
-    useReactTable<T>({
-      data,
-      columns: columns,
-      state: {
-        sorting,
-        columnVisibility,
-        expanded: expandedRows,
-        rowSelection: selectedRows || {},
-      },
-      getCoreRowModel: getCoreRowModel(),
-      getSortedRowModel: getSortedRowModel(),
-      getExpandedRowModel: getExpandedRowModel(),
-      onSortingChange: onSort,
-      onColumnVisibilityChange: setColumnVisibility,
-      onExpandedChange: onRowExpanded,
-      enableSorting: enableSorting,
-      manualSorting: manualSorting,
-      columnResizeMode: 'onChange',
-      enableHiding: true,
-      enableExpanding: enableExpanding,
-      defaultColumn: defaultColumn,
-      getRowCanExpand: getCanRowExpand,
-      getSubRows: getSubrowData,
-      getRowId: getRowId,
-      autoResetExpanded: false,
-      enableSortingRemoval: true,
-      // https://github.com/TanStack/table/issues/4289
-      // Fixes the weird behavior with the sorting actions on undefined and async data.
-      sortDescFirst: false,
-    });
+  const { getHeaderGroups, getRowModel, getAllLeafColumns } = useReactTable<T>({
+    data,
+    columns: columns,
+    state: {
+      sorting,
+      columnVisibility,
+      expanded: expandedRows,
+      columnOrder,
+      rowSelection: selectedRows || {},
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    onSortingChange: onSort,
+    onColumnOrderChange: setColumnOrder,
+    onColumnVisibilityChange: setColumnVisibility,
+    onExpandedChange: onRowExpanded,
+    enableSorting: enableSorting,
+    manualSorting: manualSorting,
+    columnResizeMode: 'onChange',
+    enableHiding: true,
+    enableExpanding: enableExpanding,
+    defaultColumn: defaultColumn,
+    getRowCanExpand: getCanRowExpand,
+    getSubRows: getSubrowData,
+    getRowId: getRowId,
+    autoResetExpanded: false,
+    enableSortingRemoval: true,
+    // https://github.com/TanStack/table/issues/4289
+    // Fixes the weird behavior with the sorting actions on undefined and async data.
+    sortDescFirst: false,
+  });
 
   useEffect(() => {
     if (scrollIntoViewRow) {
