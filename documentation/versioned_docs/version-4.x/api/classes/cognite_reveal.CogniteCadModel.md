@@ -1,23 +1,16 @@
 ---
-id: "cognite_reveal.Cognite3DModel"
-title: "Class: Cognite3DModel"
-sidebar_label: "Cognite3DModel"
+id: "cognite_reveal.CogniteCadModel"
+title: "Class: CogniteCadModel"
+sidebar_label: "CogniteCadModel"
 custom_edit_url: null
 ---
 
-[@cognite/reveal](../modules/cognite_reveal.md).Cognite3DModel
+[@cognite/reveal](../modules/cognite_reveal.md).CogniteCadModel
 
 Provides metadata needed to get asset mappings for a CDF 3D model
 
-## Hierarchy
-
-- `Object3D`
-
-  ↳ **`Cognite3DModel`**
-
 ## Implements
 
-- [`CogniteModelBase`](../interfaces/cognite_reveal.CogniteModelBase.md)
 - [`CdfModelNodeCollectionDataProvider`](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md)
 
 ## Properties
@@ -34,7 +27,7 @@ The CDF model ID of the model.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:57](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L57)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:75](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L75)
 
 ___
 
@@ -50,7 +43,7 @@ The CDF revision ID of the model.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:61](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L61)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:79](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L79)
 
 ___
 
@@ -58,17 +51,9 @@ ___
 
 • `Readonly` **type**: [`SupportedModelTypes`](../modules/cognite_reveal.md#supportedmodeltypes) = `'cad'`
 
-#### Implementation of
-
-[CogniteModelBase](../interfaces/cognite_reveal.CogniteModelBase.md).[type](../interfaces/cognite_reveal.CogniteModelBase.md#type)
-
-#### Overrides
-
-THREE.Object3D.type
-
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:26](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L26)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:26](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L26)
 
 ## Accessors
 
@@ -78,7 +63,7 @@ THREE.Object3D.type
 
 Returns the unit the coordinates for the model is stored. Returns an empty string
 if no unit has been stored.
-Note that coordinates in Reveal always are converted to meters using {@see modelUnitToMetersFactor}.
+Note that coordinates in Reveal always are converted to meters using [modelUnitToMetersFactor](cognite_reveal.CogniteCadModel.md#modelunittometersfactor).
 
 #### Returns
 
@@ -86,24 +71,24 @@ Note that coordinates in Reveal always are converted to meters using {@see model
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:40](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L40)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:40](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L40)
 
 ___
 
 ### modelUnitToMetersFactor
 
-• `get` **modelUnitToMetersFactor**(): `number`
+• `get` **modelUnitToMetersFactor**(): `undefined` \| `number`
 
 Returns the conversion factor that converts from model coordinates to meters. Note that this can
 return undefined if the model has been stored in an unsupported unit.
 
 #### Returns
 
-`number`
+`undefined` \| `number`
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:50](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L50)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:50](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L50)
 
 ___
 
@@ -123,7 +108,7 @@ Returns the number of nodes in the model.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:481](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L481)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:423](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L423)
 
 ___
 
@@ -139,7 +124,47 @@ Returns all currently registered node collections and associated appearance.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:123](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L123)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:127](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L127)
+
+___
+
+### visible
+
+• `get` **visible**(): `boolean`
+
+Returns the model visibility.
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:68](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L68)
+
+• `set` **visible**(`value`): `void`
+
+Sets the model visibility.
+
+**`Example`**
+
+```js
+model.visible = false
+```
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `value` | `boolean` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:61](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L61)
 
 ## Methods
 
@@ -185,7 +210,7 @@ model.assignStyledNodeCollection(visibleSet, { rendererGhosted: false });
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:154](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L154)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:158](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L158)
 
 ___
 
@@ -199,13 +224,9 @@ Cleans up used resources.
 
 `void`
 
-#### Implementation of
-
-[CogniteModelBase](../interfaces/cognite_reveal.CogniteModelBase.md).[dispose](../interfaces/cognite_reveal.CogniteModelBase.md#dispose)
-
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:314](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L314)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:247](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L247)
 
 ___
 
@@ -232,7 +253,7 @@ Tree index range of the subtree spanned by the ancestor at the
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:339](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L339)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:271](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L271)
 
 ___
 
@@ -268,7 +289,7 @@ const box = await model.getBoundingBoxByNodeId(nodeId);
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:422](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L422)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:364](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L364)
 
 ___
 
@@ -305,13 +326,13 @@ const box = await model.getBoundingBoxByTreeIndex(treeIndex);
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:457](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L457)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:399](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L399)
 
 ___
 
 ### getCameraConfiguration
 
-▸ **getCameraConfiguration**(): [`CameraConfiguration`](../modules/cognite_reveal.md#cameraconfiguration)
+▸ **getCameraConfiguration**(): `undefined` \| [`CameraConfiguration`](../modules/cognite_reveal.md#cameraconfiguration)
 
 Retrieves the camera position and target stored for the model. Typically this
 is used to store a good starting position for a model. Returns `undefined` if there
@@ -319,15 +340,39 @@ isn't any stored camera configuration for the model.
 
 #### Returns
 
-[`CameraConfiguration`](../modules/cognite_reveal.md#cameraconfiguration)
-
-#### Implementation of
-
-[CogniteModelBase](../interfaces/cognite_reveal.CogniteModelBase.md).[getCameraConfiguration](../interfaces/cognite_reveal.CogniteModelBase.md#getcameraconfiguration)
+`undefined` \| [`CameraConfiguration`](../modules/cognite_reveal.md#cameraconfiguration)
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:386](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L386)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:318](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L318)
+
+___
+
+### getCdfToDefaultModelTransformation
+
+▸ **getCdfToDefaultModelTransformation**(`out?`): `Matrix4`
+
+Gets transformation from CDF space to ThreeJS space,
+which includes any additional "default" transformations assigned to this model.
+Does not include any custom transformations set by CognitePointcloudmodel.setModelTransformation
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `out?` | `Matrix4` | Preallocated `THREE.Matrix4` (optional) |
+
+#### Returns
+
+`Matrix4`
+
+#### Implementation of
+
+[CdfModelNodeCollectionDataProvider](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md).[getCdfToDefaultModelTransformation](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md#getcdftodefaultmodeltransformation)
+
+#### Defined in
+
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:344](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L344)
 
 ___
 
@@ -336,7 +381,7 @@ ___
 ▸ **getDefaultNodeAppearance**(): [`NodeAppearance`](../modules/cognite_reveal.md#nodeappearance)
 
 Gets the default appearance for nodes that are not styled using
-[assignStyledNodeCollection](cognite_reveal.Cognite3DModel.md#assignstylednodecollection).
+[assignStyledNodeCollection](cognite_reveal.CogniteCadModel.md#assignstylednodecollection).
 
 #### Returns
 
@@ -344,7 +389,7 @@ Gets the default appearance for nodes that are not styled using
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:116](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L116)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:120](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L120)
 
 ___
 
@@ -379,13 +424,9 @@ const box = model.getModelBoundingBox();
 
 Model bounding box.
 
-#### Implementation of
-
-[CogniteModelBase](../interfaces/cognite_reveal.CogniteModelBase.md).[getModelBoundingBox](../interfaces/cognite_reveal.CogniteModelBase.md#getmodelboundingbox)
-
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:370](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L370)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:302](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L302)
 
 ___
 
@@ -393,7 +434,7 @@ ___
 
 ▸ **getModelTransformation**(`out?`): `Matrix4`
 
-Gets transformation matrix of the model.
+Gets transformation matrix that has previously been set with [setModelTransformation](cognite_reveal.CogniteCadModel.md#setmodeltransformation).
 
 #### Parameters
 
@@ -407,11 +448,11 @@ Gets transformation matrix of the model.
 
 #### Implementation of
 
-[CogniteModelBase](../interfaces/cognite_reveal.CogniteModelBase.md).[getModelTransformation](../interfaces/cognite_reveal.CogniteModelBase.md#getmodeltransformation)
+[CdfModelNodeCollectionDataProvider](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md).[getModelTransformation](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md#getmodeltransformation)
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:402](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L402)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:334](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L334)
 
 ___
 
@@ -433,7 +474,7 @@ Determines the range of tree indices for a given subtree.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:323](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L323)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:255](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L255)
 
 ___
 
@@ -466,7 +507,7 @@ Promise that is resolved once the iteration is done.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:474](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L474)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:416](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L416)
 
 ___
 
@@ -503,98 +544,7 @@ Promise that is resolved once the iteration is done.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:501](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L501)
-
-___
-
-### mapBoxFromCdfToModelCoordinates
-
-▸ **mapBoxFromCdfToModelCoordinates**(`box`, `out?`): `Box3`
-
-Maps from a 3D position in "CDF space" to coordinates in "ThreeJS model space".
-This is necessary because CDF has a right-handed Z-up coordinate system while ThreeJS
-uses a right-hand Y-up coordinate system. This function also accounts for transformation
-applied to the model.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `box` | `Box3` | The box in CDF model coordinates. |
-| `out?` | `Box3` | Optional preallocated buffer for storing the result. May be same input as `box`. |
-
-#### Returns
-
-`Box3`
-
-Transformed box.
-
-#### Implementation of
-
-CdfModelNodeCollectionDataProvider.mapBoxFromCdfToModelCoordinates
-
-#### Defined in
-
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:302](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L302)
-
-___
-
-### mapBoxFromModelToCdfCoordinates
-
-▸ **mapBoxFromModelToCdfCoordinates**(`box`, `out?`): `Box3`
-
-Maps from a 3D position in "ThreeJS model space" to coordinates in "CDF space".
-This is necessary because CDF has a right-handed Z-up coordinate system while ThreeJS
-uses a right-hand Y-up coordinate system. This function also accounts for transformation
-applied to the model.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `box` | `Box3` | The box in ThreeJS/model coordinates. |
-| `out?` | `Box3` | Optional preallocated buffer for storing the result. May be same input as `box`. |
-
-#### Returns
-
-`Box3`
-
-Transformed box.
-
-#### Implementation of
-
-CdfModelNodeCollectionDataProvider.mapBoxFromModelToCdfCoordinates
-
-#### Defined in
-
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:284](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L284)
-
-___
-
-### mapFromCdfToModelCoordinates
-
-▸ **mapFromCdfToModelCoordinates**(`p`, `out?`): `Vector3`
-
-Maps a position retrieved from the CDF API (e.g. 3D node information) to
-coordinates in "ThreeJS model space". This is necessary because CDF has a right-handed
-Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `p` | `Vector3` | The CDF coordinate to transform. |
-| `out?` | `Vector3` | Optional preallocated buffer for storing the result. May be `p`. |
-
-#### Returns
-
-`Vector3`
-
-Transformed position.
-
-#### Defined in
-
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:248](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L248)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:443](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L443)
 
 ___
 
@@ -604,7 +554,7 @@ ___
 
 Maps a single node ID to tree index. This is useful when you e.g. have a
 node ID from an asset mapping and want to highlight the given asset using
-[mapNodeIdsToTreeIndices](cognite_reveal.Cognite3DModel.md#mapnodeidstotreeindices) is recommended for better performance when
+[mapNodeIdsToTreeIndices](cognite_reveal.CogniteCadModel.md#mapnodeidstotreeindices) is recommended for better performance when
 mapping multiple IDs.
 
 **`Throws`**
@@ -625,7 +575,7 @@ TreeIndex of the provided node.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:529](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L529)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:471](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L471)
 
 ___
 
@@ -655,35 +605,7 @@ A list of tree indices corresponing to the elements in the input.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:515](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L515)
-
-___
-
-### mapPositionFromModelToCdfCoordinates
-
-▸ **mapPositionFromModelToCdfCoordinates**(`p`, `out?`): `Vector3`
-
-Maps from a 3D position in "ThreeJS model space" (e.g. a ray intersection coordinate)
-to coordinates in "CDF space". This is necessary because CDF has a right-handed
-Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.
-This function also accounts for transformation applied to the model.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `p` | `Vector3` | The ThreeJS coordinate to transform. |
-| `out?` | `Vector3` | Optional preallocated buffer for storing the result. May be `p`. |
-
-#### Returns
-
-`Vector3`
-
-Transformed position.
-
-#### Defined in
-
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:266](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L266)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:457](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L457)
 
 ___
 
@@ -692,7 +614,7 @@ ___
 ▸ **mapTreeIndexToNodeId**(`treeIndex`): `Promise`<`number`\>
 
 Maps a single tree index to node ID for use with the API. If you have multiple
-tree indices to map, [mapNodeIdsToTreeIndices](cognite_reveal.Cognite3DModel.md#mapnodeidstotreeindices) is recommended for better
+tree indices to map, [mapNodeIdsToTreeIndices](cognite_reveal.CogniteCadModel.md#mapnodeidstotreeindices) is recommended for better
 performance.
 
 **`Throws`**
@@ -713,7 +635,7 @@ TreeIndex of the provided node.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:555](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L555)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:497](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L497)
 
 ___
 
@@ -723,7 +645,7 @@ ___
 
 Maps a list of tree indices to node IDs for use with the Cognite SDK.
 This function is useful if you have a list of tree indices, e.g. from
-[iterateSubtreeByTreeIndex](cognite_reveal.Cognite3DModel.md#iteratesubtreebytreeindex), and want to perform
+[iterateSubtreeByTreeIndex](cognite_reveal.CogniteCadModel.md#iteratesubtreebytreeindex), and want to perform
 some operations on these nodes using the SDK.
 
 **`Throws`**
@@ -744,7 +666,7 @@ A list of node IDs corresponding to the elements of the input.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:543](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L543)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:485](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L485)
 
 ___
 
@@ -761,7 +683,7 @@ default appearance.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:186](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L186)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:190](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L190)
 
 ___
 
@@ -783,7 +705,7 @@ Resets the transformation for the nodes given.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:225](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L225)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:229](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L229)
 
 ___
 
@@ -806,7 +728,7 @@ Remove override transform of the node by tree index.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:234](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L234)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:238](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L238)
 
 ___
 
@@ -815,7 +737,7 @@ ___
 ▸ **setDefaultNodeAppearance**(`appearance`): `void`
 
 Sets the default appearance for nodes that are not styled using
-[assignStyledNodeCollection](cognite_reveal.Cognite3DModel.md#assignstylednodecollection). Updating the default style can be an
+[assignStyledNodeCollection](cognite_reveal.CogniteCadModel.md#assignstylednodecollection). Updating the default style can be an
 expensive operation, so use with care.
 
 #### Parameters
@@ -830,7 +752,7 @@ expensive operation, so use with care.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:108](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L108)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:112](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L112)
 
 ___
 
@@ -850,13 +772,9 @@ Sets transformation matrix of the model. This overrides the current transformati
 
 `void`
 
-#### Implementation of
-
-[CogniteModelBase](../interfaces/cognite_reveal.CogniteModelBase.md).[setModelTransformation](../interfaces/cognite_reveal.CogniteModelBase.md#setmodeltransformation)
-
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:394](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L394)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:326](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L326)
 
 ___
 
@@ -883,7 +801,7 @@ node isn't supported and might lead to undefined results.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:200](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L200)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:204](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L204)
 
 ___
 
@@ -907,7 +825,7 @@ Set override transform of the node by tree index.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:211](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L211)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:215](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L215)
 
 ___
 
@@ -926,7 +844,7 @@ Error if node collection isn't assigned to the model.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `nodeCollection` | [`NodeCollection`](cognite_reveal.NodeCollection.md) | Node collection previously added using [assignStyledNodeCollection](cognite_reveal.Cognite3DModel.md#assignstylednodecollection). |
+| `nodeCollection` | [`NodeCollection`](cognite_reveal.NodeCollection.md) | Node collection previously added using [assignStyledNodeCollection](cognite_reveal.CogniteCadModel.md#assignstylednodecollection). |
 
 #### Returns
 
@@ -934,4 +852,4 @@ Error if node collection isn't assigned to the model.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:172](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L172)
+[packages/cad-model/src/wrappers/CogniteCadModel.ts:176](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-model/src/wrappers/CogniteCadModel.ts#L176)

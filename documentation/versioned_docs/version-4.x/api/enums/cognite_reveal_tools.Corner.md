@@ -17,7 +17,7 @@ A corner of the viewer.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:100](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/AxisView/types.ts#L100)
+[packages/tools/src/AxisView/types.ts:100](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L100)
 
 ___
 
@@ -27,7 +27,7 @@ ___
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:101](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/AxisView/types.ts#L101)
+[packages/tools/src/AxisView/types.ts:101](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L101)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:99](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/AxisView/types.ts#L99)
+[packages/tools/src/AxisView/types.ts:99](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L99)
 
 ___
 
@@ -47,4 +47,4 @@ ___
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:98](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/AxisView/types.ts#L98)
+[packages/tools/src/AxisView/types.ts:98](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/AxisView/types.ts#L98)

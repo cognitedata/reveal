@@ -7,12 +7,12 @@ import * as THREE from 'three';
 import { Subscription, Observable } from 'rxjs';
 
 import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler, CadModelBudget } from '@reveal/cad-geometry-loaders';
+import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { LoadingState } from '@reveal/model-base';
 import { CadMaterialManager, RenderMode } from '@reveal/rendering';
 import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
-import { defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
+import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
 import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
 
 export class CadManager {
@@ -129,7 +129,7 @@ export class CadManager {
   }
 
   get needsRedraw(): boolean {
-    return this._needsRedraw;
+    return this._needsRedraw || [...this._cadModelMap.values()].some(m => m.needsRedraw);
   }
 
   updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {

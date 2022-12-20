@@ -16,4 +16,4 @@ When processing 3D models in CDF, two IDs associated with each 3D node; tree ind
 
 Tree indices are running numbers starting at 0 at the root 3D node increased by one for each traversed node. Node IDs are generated based on the name and placement in the node hierarchy. Node IDs are considered stable as long as the placement in the hierarchy is unchanged, while tree indices are not. For this reason, [Asset Mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) are based on node IDs.
 
-Reveal provides functionality for mapping between the two concepts by using `Cognite3DModel.mapNodeIdsToTreeIndices` and `Cognite3DModel.mapTreeIndicesToNodeIds`. Note however that these functions can be slow.
+Reveal provides functionality for mapping between the two concepts by using `CogniteCadModel.mapNodeIdsToTreeIndices` and `CogniteCadModel.mapTreeIndicesToNodeIds`. Note however that these functions can be slow.

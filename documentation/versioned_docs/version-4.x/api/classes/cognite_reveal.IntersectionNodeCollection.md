@@ -11,7 +11,7 @@ Node collection that is the intersection between a set of underlying node collec
 
 ## Hierarchy
 
-- `CombineNodeCollectionBase`
+- [`CombineNodeCollectionBase`](cognite_reveal.CombineNodeCollectionBase.md)
 
   ↳ **`IntersectionNodeCollection`**
 
@@ -29,11 +29,11 @@ Node collection that is the intersection between a set of underlying node collec
 
 #### Overrides
 
-CombineNodeCollectionBase.constructor
+[CombineNodeCollectionBase](cognite_reveal.CombineNodeCollectionBase.md).[constructor](cognite_reveal.CombineNodeCollectionBase.md#constructor)
 
 #### Defined in
 
-[packages/cad-styling/src/IntersectionNodeCollection.ts:22](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/IntersectionNodeCollection.ts#L22)
+[packages/cad-styling/src/IntersectionNodeCollection.ts:22](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/IntersectionNodeCollection.ts#L22)
 
 ## Properties
 
@@ -43,7 +43,7 @@ CombineNodeCollectionBase.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/IntersectionNodeCollection.ts:20](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/IntersectionNodeCollection.ts#L20)
+[packages/cad-styling/src/IntersectionNodeCollection.ts:20](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/IntersectionNodeCollection.ts#L20)
 
 ## Accessors
 
@@ -61,7 +61,7 @@ CombineNodeCollectionBase.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -79,7 +79,7 @@ CombineNodeCollectionBase.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:67](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L67)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:67](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L67)
 
 ## Methods
 
@@ -99,11 +99,11 @@ CombineNodeCollectionBase.isLoading
 
 #### Inherited from
 
-CombineNodeCollectionBase.add
+[CombineNodeCollectionBase](cognite_reveal.CombineNodeCollectionBase.md).[add](cognite_reveal.CombineNodeCollectionBase.md#add)
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:26](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L26)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:26](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L26)
 
 ___
 
@@ -119,11 +119,11 @@ Clears all underlying node collections.
 
 #### Inherited from
 
-CombineNodeCollectionBase.clear
+[CombineNodeCollectionBase](cognite_reveal.CombineNodeCollectionBase.md).[clear](cognite_reveal.CombineNodeCollectionBase.md#clear)
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:46](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L46)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:46](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L46)
 
 ___
 
@@ -131,17 +131,21 @@ ___
 
 ▸ **getAreas**(): [`AreaCollection`](../interfaces/cognite_reveal.AreaCollection.md)
 
+Returns areas surrounding the nodes in the collection. The areas
+are boxes in "ThreeJS coordinates". Note that not all
+implementations supports this.
+
 #### Returns
 
 [`AreaCollection`](../interfaces/cognite_reveal.AreaCollection.md)
 
 #### Overrides
 
-CombineNodeCollectionBase.getAreas
+[CombineNodeCollectionBase](cognite_reveal.CombineNodeCollectionBase.md).[getAreas](cognite_reveal.CombineNodeCollectionBase.md#getareas)
 
 #### Defined in
 
-[packages/cad-styling/src/IntersectionNodeCollection.ts:52](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/IntersectionNodeCollection.ts#L52)
+[packages/cad-styling/src/IntersectionNodeCollection.ts:52](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/IntersectionNodeCollection.ts#L52)
 
 ___
 
@@ -155,11 +159,11 @@ ___
 
 #### Inherited from
 
-CombineNodeCollectionBase.getIndexSet
+[CombineNodeCollectionBase](cognite_reveal.CombineNodeCollectionBase.md).[getIndexSet](cognite_reveal.CombineNodeCollectionBase.md#getindexset)
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:59](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L59)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:59](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L59)
 
 ___
 
@@ -177,7 +181,7 @@ CombineNodeCollectionBase.makeDirty
 
 #### Defined in
 
-[packages/cad-styling/src/IntersectionNodeCollection.ts:46](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/IntersectionNodeCollection.ts#L46)
+[packages/cad-styling/src/IntersectionNodeCollection.ts:46](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/IntersectionNodeCollection.ts#L46)
 
 ___
 
@@ -198,11 +202,11 @@ ___
 
 #### Inherited from
 
-CombineNodeCollectionBase.off
+[CombineNodeCollectionBase](cognite_reveal.CombineNodeCollectionBase.md).[off](cognite_reveal.CombineNodeCollectionBase.md#off)
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -223,11 +227,11 @@ ___
 
 #### Inherited from
 
-CombineNodeCollectionBase.on
+[CombineNodeCollectionBase](cognite_reveal.CombineNodeCollectionBase.md).[on](cognite_reveal.CombineNodeCollectionBase.md#on)
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -247,11 +251,11 @@ ___
 
 #### Inherited from
 
-CombineNodeCollectionBase.remove
+[CombineNodeCollectionBase](cognite_reveal.CombineNodeCollectionBase.md).[remove](cognite_reveal.CombineNodeCollectionBase.md#remove)
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:32](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L32)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L32)
 
 ___
 
@@ -265,8 +269,8 @@ ___
 
 #### Overrides
 
-CombineNodeCollectionBase.serialize
+[CombineNodeCollectionBase](cognite_reveal.CombineNodeCollectionBase.md).[serialize](cognite_reveal.CombineNodeCollectionBase.md#serialize)
 
 #### Defined in
 
-[packages/cad-styling/src/IntersectionNodeCollection.ts:26](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/IntersectionNodeCollection.ts#L26)
+[packages/cad-styling/src/IntersectionNodeCollection.ts:26](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/IntersectionNodeCollection.ts#L26)

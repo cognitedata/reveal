@@ -72,20 +72,20 @@ viewer.pointCloudBudget = { numberOfPoints: 500000 };
 
 ## Point shape
 
-You can set the point shape of each rendered point in the point cloud. Values are defined by `PotreePointShape` enum.
+You can set the point shape of each rendered point in the point cloud. Values are defined by `PointShape` enum.
 
 ```js runnable-4x
-// import { PotreePointShape } from '@cognite/reveal';
-model.pointShape = PotreePointShape.Square;
+// import { PointShape } from '@cognite/reveal';
+model.pointShape = PointShape.Square;
 ```
 
 ## Point color type
 
-You can specify in which way points should be colored. Values are defined by `PotreePointColorType` enum.
+You can specify in which way points should be colored. Values are defined by `PointColorType` enum.
 
 ```js runnable-4x
-// import { PotreePointColorType } from '@cognite/reveal'
-model.pointColorType = PotreePointColorType.Depth;
+// import { PointColorType } from '@cognite/reveal'
+model.pointColorType = PointColorType.Depth;
 ```
 
 Other useful coloring schemes are `Rgb` (color) , `Classification` (color by point class) and `Intensity`
@@ -93,8 +93,10 @@ Other useful coloring schemes are `Rgb` (color) , `Classification` (color by poi
 
 ## Point cloud post processing effects
 
-Users can enable various post processing effects for point cloud rendering. One of them is the "point blending" effect
-which produces a more "stable" rendering of surfaces within the point cloud model but it comes with a cost of
+### Point blending
+
+Users can enable the "point blending" effect
+which produces a more "stable" rendering of surfaces within the point cloud model, but it comes with a cost of
 decreased performance.
 
 <a target='_blank' href={useBaseUrl('/img/point-blending.jpg')}>
@@ -108,6 +110,39 @@ const viewer = new Cognite3DViewer(
     sdk: client,
     pointCloudEffects: {
       pointBlending: true
+    }
+  });
+```
+
+### Eye-Dome Lighting
+
+Eye-Dome Lighting (EDL) is enabled by default. It draws an outline along edges in the point cloud, making it easier to distinguish objects and features visually. It has a small performance impact.
+
+<a target='_blank' href={useBaseUrl('/img/pointcloud-edl.png')}>
+  <img src={useBaseUrl('/img/pointcloud-edl.png')} alt="Illustration of the Eye-Dome Lighting (EDL) effect. Left image is rendered without EDL, the right one is rendered with EDL, which is the default case." />
+</a>
+
+You may disable EDL by passing `'disabled'` as the value for `edlOptions` in `pointCloudEffects`:
+
+```js
+const viewer = new Cognite3DViewer(
+  {
+    sdk: client,
+    pointCloudEffects: {
+      edlOptions: 'disabled'
+    }
+  });
+```
+
+You may also alter the `radius` and the `strength` parameters of the effect. Any of these may be left unspecified, in which case they will be given a default value:
+
+
+```js
+const viewer = new Cognite3DViewer(
+  {
+    sdk: client,
+    pointCloudEffects: {
+      edlOptions: { radius: 2.2, strength: 0.5 }
     }
   });
 ```

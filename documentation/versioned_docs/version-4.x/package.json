@@ -10,9 +10,9 @@
     "replace-4.x": "yarn replace-4.x:copy-docs && yarn replace-4.x:update-runnable && yarn replace-4.x:update-site-imports"
   },
   "dependencies": {
-    "@cognite/reveal": "link:../../../viewer/dist",
-    "@cognite/sdk": "link:../../../viewer/node_modules/@cognite/sdk",
-    "@types/three": "link:../../../viewer/node_modules/@types/three",
-    "three": "link:../../../viewer/node_modules/three"
+    "@cognite/reveal": "4.0.0",
+    "@cognite/sdk": "7.13.0",
+    "@types/three": "0.146.0",
+    "three": "0.146.0"
   }
 }

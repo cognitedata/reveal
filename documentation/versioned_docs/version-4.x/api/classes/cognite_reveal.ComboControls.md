@@ -32,29 +32,9 @@ EventDispatcher.constructor
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:108](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L108)
+[packages/camera-manager/src/ComboControls.ts:208](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L208)
 
 ## Properties
-
-### EPSILON
-
-• **EPSILON**: `number` = `0.001`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:70](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L70)
-
-___
-
-### dampingFactor
-
-• **dampingFactor**: `number` = `0.25`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:48](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L48)
-
-___
 
 ### dispose
 
@@ -70,337 +50,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:71](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L71)
-
-___
-
-### dollyFactor
-
-• **dollyFactor**: `number` = `0.99`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:52](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L52)
-
-___
-
-### dynamicTarget
-
-• **dynamicTarget**: `boolean` = `true`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:49](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L49)
-
-___
-
-### enableDamping
-
-• **enableDamping**: `boolean` = `true`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:47](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L47)
-
-___
-
-### enableKeyboardNavigation
-
-• **enableKeyboardNavigation**: `boolean` = `true`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:61](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L61)
-
-___
-
-### enabled
-
-• **enabled**: `boolean` = `true`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:46](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L46)
-
-___
-
-### firstPersonRotationFactor
-
-• **firstPersonRotationFactor**: `number` = `0.4`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:58](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L58)
-
-___
-
-### keyboardDollySpeed
-
-• **keyboardDollySpeed**: `number` = `2`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:65](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L65)
-
-___
-
-### keyboardPanSpeed
-
-• **keyboardPanSpeed**: `number` = `10`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:66](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L66)
-
-___
-
-### keyboardRotationSpeedAzimuth
-
-• **keyboardRotationSpeedAzimuth**: `number` = `defaultKeyboardRotationSpeed`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:62](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L62)
-
-___
-
-### keyboardRotationSpeedPolar
-
-• **keyboardRotationSpeedPolar**: `number` = `defaultKeyboardRotationSpeed`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:63](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L63)
-
-___
-
-### keyboardSpeedFactor
-
-• **keyboardSpeedFactor**: `number` = `3`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:67](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L67)
-
-___
-
-### lookAtViewTarget
-
-• **lookAtViewTarget**: `boolean` = `false`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:76](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L76)
-
-___
-
-### maxAzimuthAngle
-
-• **maxAzimuthAngle**: `number` = `Infinity`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:56](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L56)
-
-___
-
-### maxDeltaDownscaleCoefficient
-
-• **maxDeltaDownscaleCoefficient**: `number` = `1`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:82](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L82)
-
-___
-
-### maxDeltaRatio
-
-• **maxDeltaRatio**: `number` = `8`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:80](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L80)
-
-___
-
-### maxPolarAngle
-
-• **maxPolarAngle**: `number` = `Math.PI`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:54](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L54)
-
-___
-
-### maxZoom
-
-• **maxZoom**: `number` = `Infinity`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:73](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L73)
-
-___
-
-### minAzimuthAngle
-
-• **minAzimuthAngle**: `number` = `-Infinity`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:55](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L55)
-
-___
-
-### minDeltaDownscaleCoefficient
-
-• **minDeltaDownscaleCoefficient**: `number` = `0.1`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:81](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L81)
-
-___
-
-### minDeltaRatio
-
-• **minDeltaRatio**: `number` = `1`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:79](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L79)
-
-___
-
-### minDistance
-
-• **minDistance**: `number` = `0.8`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:50](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L50)
-
-___
-
-### minPolarAngle
-
-• **minPolarAngle**: `number` = `0`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:53](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L53)
-
-___
-
-### minZoom
-
-• **minZoom**: `number` = `0`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:72](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L72)
-
-___
-
-### minZoomDistance
-
-• **minZoomDistance**: `number` = `0.4`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:51](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L51)
-
-___
-
-### mouseFirstPersonRotationSpeed
-
-• **mouseFirstPersonRotationSpeed**: `number`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:64](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L64)
-
-___
-
-### orthographicCameraDollyFactor
-
-• **orthographicCameraDollyFactor**: `number` = `0.3`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:74](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L74)
-
-___
-
-### panDollyMinDistanceFactor
-
-• **panDollyMinDistanceFactor**: `number` = `10.0`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:57](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L57)
-
-___
-
-### pinchEpsilon
-
-• **pinchEpsilon**: `number` = `2`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:68](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L68)
-
-___
-
-### pinchPanSpeed
-
-• **pinchPanSpeed**: `number` = `1`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:69](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L69)
-
-___
-
-### pointerRotationSpeedAzimuth
-
-• **pointerRotationSpeedAzimuth**: `number` = `defaultPointerRotationSpeed`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:59](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L59)
-
-___
-
-### pointerRotationSpeedPolar
-
-• **pointerRotationSpeedPolar**: `number` = `defaultPointerRotationSpeed`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:60](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L60)
-
-___
-
-### useScrollTarget
-
-• **useScrollTarget**: `boolean` = `false`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:77](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L77)
-
-___
-
-### zoomToCursor
-
-• **zoomToCursor**: `boolean` = `true`
-
-#### Defined in
-
-[packages/camera-manager/src/ComboControls.ts:78](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L78)
+[packages/camera-manager/src/ComboControls.ts:114](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L114)
 
 ## Accessors
 
@@ -419,7 +69,77 @@ resets to default value when `setState` method is called with no rotation value.
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:258](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L258)
+[packages/camera-manager/src/ComboControls.ts:346](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L346)
+
+___
+
+### enabled
+
+• `get` **enabled**(): `boolean`
+
+Returns true if these controls are enabled.
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[packages/camera-manager/src/ComboControls.ts:197](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L197)
+
+• `set` **enabled**(`enabled`): `void`
+
+Sets the enabled state of these controls.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `enabled` | `boolean` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/camera-manager/src/ComboControls.ts:204](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L204)
+
+___
+
+### options
+
+• `get` **options**(): `Readonly`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
+
+Gets current Combo Controls options.
+
+#### Returns
+
+`Readonly`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
+
+#### Defined in
+
+[packages/camera-manager/src/ComboControls.ts:181](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L181)
+
+• `set` **options**(`options`): `void`
+
+Sets Combo Controls options.
+
+Only the provided options will be changed, any undefined options will be kept as is.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `Partial`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\> |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/camera-manager/src/ComboControls.ts:190](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L190)
 
 ## Methods
 
@@ -433,7 +153,7 @@ resets to default value when `setState` method is called with no rotation value.
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:270](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L270)
+[packages/camera-manager/src/ComboControls.ts:358](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L358)
 
 ___
 
@@ -452,7 +172,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:233](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L233)
+[packages/camera-manager/src/ComboControls.ts:321](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L321)
 
 ___
 
@@ -472,7 +192,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:266](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L266)
+[packages/camera-manager/src/ComboControls.ts:354](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L354)
 
 ___
 
@@ -493,7 +213,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:241](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L241)
+[packages/camera-manager/src/ComboControls.ts:329](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L329)
 
 ___
 
@@ -513,7 +233,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:262](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L262)
+[packages/camera-manager/src/ComboControls.ts:350](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L350)
 
 ___
 
@@ -527,7 +247,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:274](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L274)
+[packages/camera-manager/src/ComboControls.ts:362](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L362)
 
 ___
 
@@ -548,4 +268,4 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:147](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/camera-manager/src/ComboControls.ts#L147)
+[packages/camera-manager/src/ComboControls.ts:247](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/camera-manager/src/ComboControls.ts#L247)

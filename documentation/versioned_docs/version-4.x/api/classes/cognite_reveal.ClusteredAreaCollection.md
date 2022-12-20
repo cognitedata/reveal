@@ -37,7 +37,7 @@ It uses simple heuristics to determine which boxes are to be merged.
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:16](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L16)
+[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:16](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L16)
 
 ## Methods
 
@@ -64,7 +64,7 @@ AreaCollection.
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:34](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L34)
+[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:34](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L34)
 
 ___
 
@@ -86,7 +86,7 @@ subset of boxes in the set returned from `areas`
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:20](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L20)
+[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:20](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L20)
 
 ___
 
@@ -116,7 +116,7 @@ A and B, and will thus be a valid representative set for the intersection of A a
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:38](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L38)
+[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:38](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L38)
 
 ___
 
@@ -142,4 +142,4 @@ Return whether the input box intersects the AreaCollection.
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:24](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L24)
+[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:24](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L24)

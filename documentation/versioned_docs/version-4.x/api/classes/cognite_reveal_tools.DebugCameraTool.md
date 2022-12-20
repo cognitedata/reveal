@@ -7,7 +7,7 @@ custom_edit_url: null
 
 [@cognite/reveal/tools](../modules/cognite_reveal_tools.md).DebugCameraTool
 
-Base class for tools attaching to a {@see Cognite3DViewer}.
+Base class for tools attaching to a Cognite3DViewer.
 
 ## Hierarchy
 
@@ -33,7 +33,7 @@ Base class for tools attaching to a {@see Cognite3DViewer}.
 
 #### Defined in
 
-[packages/tools/src/DebugCameraTool.ts:20](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/DebugCameraTool.ts#L20)
+[packages/tools/src/DebugCameraTool.ts:20](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/DebugCameraTool.ts#L20)
 
 ## Methods
 
@@ -53,7 +53,7 @@ Removes all elements and detaches from the viewer.
 
 #### Defined in
 
-[packages/tools/src/DebugCameraTool.ts:32](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/DebugCameraTool.ts#L32)
+[packages/tools/src/DebugCameraTool.ts:32](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/DebugCameraTool.ts#L32)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[packages/tools/src/DebugCameraTool.ts:43](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/DebugCameraTool.ts#L43)
+[packages/tools/src/DebugCameraTool.ts:43](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/DebugCameraTool.ts#L43)
 
 ___
 
@@ -94,7 +94,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
+[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
 
 ___
 
@@ -108,4 +108,4 @@ ___
 
 #### Defined in
 
-[packages/tools/src/DebugCameraTool.ts:37](https://github.com/cognitedata/reveal/blob/8cfa4004b/viewer/packages/tools/src/DebugCameraTool.ts#L37)
+[packages/tools/src/DebugCameraTool.ts:37](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/tools/src/DebugCameraTool.ts#L37)

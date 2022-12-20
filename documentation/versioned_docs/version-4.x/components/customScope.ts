@@ -1,4 +1,4 @@
-import * as THREE  from 'three';
+import * as THREE from 'three';
 
 import { Water } from 'three/examples/jsm/objects/Water';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';

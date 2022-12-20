@@ -61,7 +61,7 @@ class MyNodeCollection extends NodeCollection {
 
 const myNodes = new MyNodeCollection(model);
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-model.assignStyledNodeCollection(myNodes, { renderGhosted: false, color: [40, 200, 20] } );
+model.assignStyledNodeCollection(myNodes, { renderGhosted: false, color: new THREE.Color(0.15, 0.8, 0.08) } );
 ```
 
 See also [guide on (de)serializing node collections](cad-save-viewerstate#serializing-and-deserializing-custom-node-colletions).
