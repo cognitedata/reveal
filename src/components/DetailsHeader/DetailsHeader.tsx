@@ -55,7 +55,7 @@ const DetailsHeader = ({
                   <Flex gap={6} alignItems="center">
                     <StyledIconMuted type="Layers" />
                     <StyledBodyMuted>
-                      <Flex gap={2}>
+                      <Flex gap={8}>
                         <Flex gap={6} alignItems="center">
                           {t('version-n', {
                             version: getReleaseVersionCore(version),

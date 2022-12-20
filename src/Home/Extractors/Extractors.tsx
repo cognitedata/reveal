@@ -135,18 +135,20 @@ const Extractors = () => {
                   <ExtractorLibraryList items={filteredExtractorLibraryItems} />
                 ) : (
                   <StyledEmptyContainer>
-                    <Icon type="ListSearch" />
-                    <Title level={5}>{t('no-results')}</Title>
-                    <Body level={2}>
-                      {t(
-                        category
-                          ? `no-results-description-${category}`
-                          : 'no-results-description',
-                        {
-                          query: searchQuery,
-                        }
-                      )}
-                    </Body>
+                    <Icon size={24} type="ListSearch" />
+                    <Flex alignItems="center" direction="column" gap={2}>
+                      <Title level={5}>{t('no-results')}</Title>
+                      <Body level={2}>
+                        {t(
+                          category
+                            ? `no-results-description-${category}`
+                            : 'no-results-description',
+                          {
+                            query: searchQuery,
+                          }
+                        )}
+                      </Body>
+                    </Flex>
                   </StyledEmptyContainer>
                 )}
                 {!!searchQuery && <SearchHelper />}

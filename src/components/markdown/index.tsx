@@ -26,7 +26,6 @@ const Markdown = ({ content = '' }: MarkdownProps): JSX.Element => {
 const StyledMarkdownCode = styled.code`
   font-family: 'Source Code Pro', sans-serif;
   font-weight: 500;
-  padding: 1px 6px;
 `;
 
 export default Markdown;
