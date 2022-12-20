@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { Icon, Tabs } from '@cognite/cogs.js';
 import layers from 'utils/zindex';
 

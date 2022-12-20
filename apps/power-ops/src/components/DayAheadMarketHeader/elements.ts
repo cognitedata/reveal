@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { Button, Modal, Title } from '@cognite/cogs.js';
 
 export const StyledTitle = styled(Title)`

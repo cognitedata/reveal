@@ -8,7 +8,7 @@ interface RowWithCustomCellProps<D extends object> extends Row<D> {
   })[];
 }
 
-export const DefaultCommonTableRow = <T extends object>({
+export const DefaultCommonTableRow = <T extends { isSelected?: boolean }>({
   original,
   getRowProps,
   cells,

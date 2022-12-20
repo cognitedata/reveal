@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components/macro';
+import { createGlobalStyle } from 'styled-components';
 import layers from 'utils/zindex';
 import '@cognite/cogs.js/dist/cogs.css';
 

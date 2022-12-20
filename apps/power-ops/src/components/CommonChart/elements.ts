@@ -1,5 +1,5 @@
 import Plot from 'react-plotly.js';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import layers from 'utils/zindex';
 import { sizes } from 'styles/layout';
 import { Body } from '@cognite/cogs.js';

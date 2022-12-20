@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { sizes } from 'styles/layout';
 import { Title, Menu, TopBar } from '@cognite/cogs.js';
 import layers from 'utils/zindex';

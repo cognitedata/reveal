@@ -1,5 +1,5 @@
 import { Flex } from '@cognite/cogs.js';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 export const StyledCommonError = styled(Flex)`
   flex-direction: column;

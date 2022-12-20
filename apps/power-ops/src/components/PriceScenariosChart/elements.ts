@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { Title, Body } from '@cognite/cogs.js';
 import { sizes } from 'styles/layout';
 import layers from 'utils/zindex';

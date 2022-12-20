@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { Collapse, Flex } from '@cognite/cogs.js';
 
 export const Container = styled.div`

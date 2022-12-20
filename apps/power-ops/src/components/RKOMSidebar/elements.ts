@@ -1,5 +1,5 @@
 import { Button } from '@cognite/cogs.js';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 export const PanelContent = styled.div`
   padding: 16px;

@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const sidePanelOpenedWidth = 280;
 const sidePanelClosedWidth = 68;
