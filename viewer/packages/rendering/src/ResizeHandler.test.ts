@@ -43,6 +43,8 @@ describe(ResizeHandler.name, () => {
   beforeEach(() => {
     dimensions.width = initialWidth;
     dimensions.height = initialHeight;
+
+    jest.clearAllMocks();
   });
 
   test('signals redraw on resolution update', () => {
@@ -90,5 +92,41 @@ describe(ResizeHandler.name, () => {
 
     expect(() => resizeHandler.setMovingCameraResolutionFactor(1)).not.toThrow();
     expect(() => resizeHandler.setMovingCameraResolutionFactor(1.1)).toThrow();
+  });
+
+  test('callback registers both events only once on several non-one move factor updates', () => {
+    const resizeHandler = new ResizeHandler(renderer, cameraManager);
+    const onSpy = jest.spyOn(cameraManager, 'on');
+
+    resizeHandler.setMovingCameraResolutionFactor(0.5);
+    resizeHandler.setMovingCameraResolutionFactor(0.8);
+    resizeHandler.setMovingCameraResolutionFactor(0.2);
+    resizeHandler.setMovingCameraResolutionFactor(0.1);
+  });
+
+  test('callback unregisters when move factor is 1', () => {
+    const resizeHandler = new ResizeHandler(renderer, cameraManager);
+    const offSpy = jest.spyOn(cameraManager, 'off');
+
+    resizeHandler.setMovingCameraResolutionFactor(0.5);
+    expect(offSpy.mock.calls).toHaveLength(0);
+
+    resizeHandler.setMovingCameraResolutionFactor(1);
+    expect(offSpy.mock.calls).toHaveLength(2);
+  });
+
+  test('callback registers and registers correctly multiple times', () => {
+
+    const resizeHandler = new ResizeHandler(renderer, cameraManager);
+    const onSpy = jest.spyOn(cameraManager, 'on');
+    const offSpy = jest.spyOn(cameraManager, 'off');
+
+    resizeHandler.setMovingCameraResolutionFactor(0.5);
+    resizeHandler.setMovingCameraResolutionFactor(1);
+    resizeHandler.setMovingCameraResolutionFactor(0.5);
+    resizeHandler.setMovingCameraResolutionFactor(1);
+
+    expect(onSpy.mock.calls).toHaveLength(4);
+    expect(offSpy.mock.calls).toHaveLength(4);
   });
 });
