@@ -6,14 +6,12 @@ type DataNodeWithTitle = DataNode & {
 };
 
 export interface TreeDataNode extends DataNodeWithTitle {
-  isTreeDataNode: true;
   key: number; // treeIndex
   meta: Node3D;
   children?: CustomDataNode[];
 }
 
 export interface TreeLoadMoreNode extends DataNodeWithTitle {
-  isTreeDataNode: false;
   key: string;
   cursor: string;
   parent: {

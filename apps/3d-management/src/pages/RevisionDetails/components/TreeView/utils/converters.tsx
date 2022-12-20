@@ -15,7 +15,6 @@ export function treeDataNodeToSelectedNode(node: TreeDataNode): SelectedNode {
 export function node3dToTreeDataNode(items: Node3D[]): TreeDataNode[] {
   return items.map((item) => {
     return {
-      isTreeDataNode: true,
       key: item.treeIndex,
       title: <NodeWithInfoButton name={item.name || String(item.id)} />,
       meta: item,

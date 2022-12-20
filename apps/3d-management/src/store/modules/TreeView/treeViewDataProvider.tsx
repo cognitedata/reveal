@@ -129,7 +129,6 @@ function createLoadMoreOption({
   cursor: TreeLoadMoreNode['key'];
 }): TreeLoadMoreNode {
   return {
-    isTreeDataNode: false,
     key: `${parent.nodeId}_${cursor}`, // cursor uniqueness is not guaranteed by API
     cursor,
     title: <LoadMore />,
