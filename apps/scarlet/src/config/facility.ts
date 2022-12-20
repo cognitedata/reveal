@@ -1,6 +1,16 @@
 import config from 'utils/config';
 import { Facility } from 'types';
 
+/**
+ * id and datasetId for the facility objects can be obtained from CDF.
+ * Important: ensure that obtained CDF params match with its project
+
+ * id and datasetId can be found in following CDF view:
+ * explore data -> assets -> select project -> select facility
+ * You there find a summary containing "External ID" which is this context is the id,
+ * and the "Data Set" from what one can obtain the datasetId
+ */
+
 export const facilityList = (project: string): Facility[] =>
   [
     {

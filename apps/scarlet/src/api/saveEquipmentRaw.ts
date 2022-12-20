@@ -39,6 +39,7 @@ export const saveEquipmentRaw = async (
 
   try {
     await client.raw.insertRows(dbName, tableName, nomralizedData);
+    toast.success('Successfully exported data to RAW');
   } catch (e) {
     console.error(
       `Failed to insert rows. DB Name: ${dbName}, table: ${tableName}`,
@@ -46,7 +47,6 @@ export const saveEquipmentRaw = async (
     );
     toast.error('Failed to export data to RAW');
   }
-  toast.success('Successfully exported data to RAW');
 
   // await client.raw.deleteRows(dbName, tableName, [{ key: '' }]);
 };

@@ -33,8 +33,9 @@ export const deleteFieldRaw = async ({
       comp.componentElements.find((elem) => {
         if (elem.id === dataElement.id) {
           elemToDelete = elem;
-          componentType = comp.type;
           circuitId = comp.circuitId;
+          componentType =
+            comp.type === 'course' ? comp.name.toLowerCase() : comp.type;
           return true;
         }
         return false;
