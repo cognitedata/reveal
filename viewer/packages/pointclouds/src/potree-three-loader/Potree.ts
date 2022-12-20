@@ -108,8 +108,8 @@ export class Potree implements IPotree {
     if (!this._shouldLoad) {
       return {
         visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b)),
-        numVisiblePoints: pointClouds.map(p => p.visibleNodes.map(n => n.numPoints)
-          .reduce((a, b) => a + b))
+        numVisiblePoints: pointClouds
+          .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b))
           .reduce((a, b) => a + b),
         exceededMaxLoadsToGPU: false,
         nodeLoadFailed: false,
