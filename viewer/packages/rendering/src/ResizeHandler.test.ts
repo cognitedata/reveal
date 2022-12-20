@@ -81,4 +81,14 @@ describe(ResizeHandler.name, () => {
     expect(renderSize.x * renderSize.y).toBeLessThan(1.01 * newMaxResolution);
     expect(renderSize.x * renderSize.y).toBeGreaterThan(0.99 * newMaxResolution);
   });
+
+  test('throws on movingCameraFactor outside range', () => {
+    const resizeHandler = new ResizeHandler(renderer, cameraManager);
+
+    expect(() => resizeHandler.setMovingCameraResolutionFactor(0)).toThrow();
+    expect(() => resizeHandler.setMovingCameraResolutionFactor(-1)).toThrow();
+
+    expect(() => resizeHandler.setMovingCameraResolutionFactor(1)).not.toThrow();
+    expect(() => resizeHandler.setMovingCameraResolutionFactor(1.1)).toThrow();
+  });
 });

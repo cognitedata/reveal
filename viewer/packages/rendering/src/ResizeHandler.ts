@@ -68,7 +68,7 @@ export class ResizeHandler {
       return;
     }
 
-    if (factor > 0 && factor <= 1) {
+    if (factor <= 0 || factor > 1) {
       throw Error('movingCameraResolutionFactor must be greater than 0 and less than or equal to 1');
     }
 
