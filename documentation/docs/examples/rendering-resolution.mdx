@@ -13,7 +13,7 @@ The user can use the `ResolutionOptions` type to control the rendering resolutio
 | Field                          | Field type                  | Description                                                                      |
 | ------------------------------ | --------------------------- | ----------------------------------- |
 | `maxRenderResolution`          | `number?`                   | Set the maximum render resolution                                                |
-| `movingCameraResolutionFactor` | `number?`                   | Set the factor that the max resolution is multiplied with when camera is moving. |
+| `movingCameraResolutionFactor` | `number?`                   | Set the factor that the max resolution is multiplied with when camera is moving. Must be between 0 and 1.  Lower factor means lower resolution while camera is moving. |
 
 The `ResolutionOptions` instance is applied to the viewer instance using the `setResolutionOptions` method on `Cognite3DViewer`.
 
