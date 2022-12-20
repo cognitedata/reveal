@@ -116,7 +116,6 @@ describe(ResizeHandler.name, () => {
   });
 
   test('callback registers and registers correctly multiple times', () => {
-
     const resizeHandler = new ResizeHandler(renderer, cameraManager);
     const onSpy = jest.spyOn(cameraManager, 'on');
     const offSpy = jest.spyOn(cameraManager, 'off');

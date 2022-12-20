@@ -76,7 +76,8 @@ export class ResizeHandler {
     if (this._movingResolutionFactor === 1) {
       this._cameraManager.on('cameraChange', this._onCameraChangeCallback);
       this._cameraManager.on('cameraStop', this._onCameraStopCallback);
-    } else if (factor === 1) { // Else, if changing to 1, unregister listeners
+    } else if (factor === 1) {
+      // Else, if changing to 1, unregister listeners
       this._cameraManager.off('cameraChange', this._onCameraChangeCallback);
       this._cameraManager.off('cameraStop', this._onCameraStopCallback);
     }
