@@ -307,6 +307,11 @@ export function Viewer() {
         try {
           // @ts-expect-error
           viewer.revealManager._cadManager._cadModelUpdateHandler.updateLoadingHints({ suspendLoading: suspend })
+          // @ts-expect-error
+          viewer.revealManager._pointCloudManager._potreeInstance.shouldLoad = false;
+
+          const cameraHelper = new THREE.CameraHelper(viewer.cameraManager.getCamera().clone());
+          viewer.addObject3D(cameraHelper);
         }
         catch (error) {
           alert('Could not toggle suspend loading, check console for error');
