@@ -52,6 +52,7 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "@npm//@cognite/cogs.js",
     "@npm//i18next",
     "@npm//i18next-chained-backend",
     "@npm//i18next-localstorage-backend",

@@ -1,3 +1,9 @@
+## 0.7.0 - February 7 2022
+
+### Features
+
+- Added a cogs loader instead of a null as Suspense fallback.
+
 ## 0.6.0 - February 7 2022
 
 ### Features
