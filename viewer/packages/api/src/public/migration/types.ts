@@ -76,6 +76,8 @@ export interface Cognite3DViewerOptions {
    * To ensure managable performance, Reveal will by default set an upper threshold to limit
    * the resolution. Setting the {@link Cognite3DViewerOptions.rendererResolutionThreshold} will
    * set this upper limit of what resolution Reveal will allow.
+   *
+   * @deprecated Use {@link Cognite3DViewer.setResolutionOptions} instead.
    */
   rendererResolutionThreshold?: number;
 
@@ -218,6 +220,31 @@ export type CadIntersection = {
    * Distance from the camera to the intersection.
    */
   distanceToCamera: number;
+};
+
+/**
+ * Options to control resolution of the viewer. This includes
+ * settings for max resolution and limiting resolution when moving the camera.
+ *
+ * @module @cognite/reveal
+ */
+export type ResolutionOptions = {
+  /**
+   * Generally Reveal will follow the resolution given by the size
+   * of the encapsulating DOM element of the Canvas {@link Cognite3DViewerOptions.domElement}.
+   * To ensure managable performance, Reveal will by default set an upper threshold to limit
+   * the resolution. The `maxRenderResolution` option will
+   * directly control this upper limit. It corresponds to the number of pixels in the render target.
+   */
+  maxRenderResolution?: number;
+
+  /**
+   * A factor that will scale down the resolution when moving the camera. This can
+   * be used to achieve a better user experience on devices with limited hardware.
+   * Values must be greater than 0 and at most 1.
+   * A value of e.g. 0.25 will approximately divide the number of pixels on the screen by four.
+   */
+  movingCameraResolutionFactor?: number;
 };
 
 /**

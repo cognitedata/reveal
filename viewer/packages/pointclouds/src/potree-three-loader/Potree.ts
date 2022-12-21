@@ -135,7 +135,7 @@ export class Potree implements IPotree {
         spacing: pointCloud.pcoGeometry.spacing
       };
 
-      pointCloud.material.updateMaterial(octreeMaterialParams, visibilityTextureData, camera, renderer);
+      pointCloud.material.updateMaterial(octreeMaterialParams, visibilityTextureData, camera);
       pointCloud.updateVisibleBounds();
       pointCloud.updateBoundingBoxes();
     }
