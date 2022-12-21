@@ -6,7 +6,7 @@ import { ConsumedSector, LevelOfDetail, WantedSector, SectorMetadata } from '@re
 import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
 import { IMock, Mock } from 'moq.ts';
 import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
-import { log } from '@reveal/logger';
+import { Log } from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 
 describe(SectorDownloadScheduler.name, () => {
@@ -14,13 +14,12 @@ describe(SectorDownloadScheduler.name, () => {
   let currentLogLevel: LogLevelNumbers;
 
   beforeAll(() => {
-    console.log('Log = ', log);
-    currentLogLevel = log.getLevel();
-    log.setLevel('silent');
+    currentLogLevel = Log.getLevel();
+    Log.setLevel('silent');
   });
 
   afterAll(() => {
-    log.setLevel(currentLogLevel);
+    Log.setLevel(currentLogLevel);
   });
 
   beforeEach(() => {

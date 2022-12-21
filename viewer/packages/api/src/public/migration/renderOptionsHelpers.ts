@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { log } from '@reveal/logger';
+import { Log } from '@reveal/logger';
 import { AntiAliasingMode, defaultRenderOptions, SsaoParameters, SsaoSampleQuality } from '@reveal/rendering';
 import { assertNever, DeviceDescriptor } from '@reveal/utilities';
 import { PropType } from '../../utilities/reflection';
@@ -129,13 +129,13 @@ function restrictAntiAliasingModeBasedOnDevice(
     case 'msaa4':
     case 'msaa8':
     case 'msaa16':
-      log.warn(`Anti-aliasing mode '${antiAliasingHint}' is not supported on mobile devices, anti-aliasing disabled'`);
+      Log.warn(`Anti-aliasing mode '${antiAliasingHint}' is not supported on mobile devices, anti-aliasing disabled'`);
       return 'disabled';
     case 'msaa2+fxaa':
     case 'msaa4+fxaa':
     case 'msaa8+fxaa':
     case 'msaa16+fxaa':
-      log.warn(`Anti-aliasing mode '${antiAliasingHint}' is not supported on mobile devices, falling back to 'fxaa'`);
+      Log.warn(`Anti-aliasing mode '${antiAliasingHint}' is not supported on mobile devices, falling back to 'fxaa'`);
       return 'fxaa';
 
     case 'disabled':
@@ -160,7 +160,7 @@ function restrictSsaoOptionBasedOnDevice(
     case 'medium':
     case 'high':
     case 'veryhigh':
-      log.warn(`SSAO is not supported on mobile devices, disabling`);
+      Log.warn(`SSAO is not supported on mobile devices, disabling`);
       return 'disabled';
 
     case 'disabled':

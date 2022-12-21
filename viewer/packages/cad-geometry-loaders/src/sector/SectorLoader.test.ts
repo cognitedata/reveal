@@ -15,7 +15,7 @@ import { ModelStateHandler } from './ModelStateHandler';
 import { SectorRepository } from '@reveal/sector-loader';
 import { SectorLoader } from './SectorLoader';
 import { IMock, Mock } from 'moq.ts';
-import { log } from '@reveal/logger';
+import { Log } from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 import { CadNode } from '@reveal/cad-model';
 
@@ -36,12 +36,12 @@ describe('SectorLoader', () => {
   beforeAll(() => {
     const sectorRoot = generateV9SectorTree(2, 2);
     model = createCadModelMetadata(9, sectorRoot);
-    currentLogLevel = log.getLevel();
-    log.setLevel('silent');
+    currentLogLevel = Log.getLevel();
+    Log.setLevel('silent');
   });
 
   afterAll(() => {
-    log.setLevel(currentLogLevel);
+    Log.setLevel(currentLogLevel);
   });
 
   beforeEach(() => {
