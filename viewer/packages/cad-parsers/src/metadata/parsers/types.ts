@@ -14,8 +14,6 @@ export type CadSceneRootMetadata = {
   // readonly subRevisionId: number;
 };
 
-export type SceneSectorMetadata = BaseSceneSectorMetadata & GltfSceneSectorMetadata;
-
 export type BoundingBox = {
   readonly min: {
     x: number;
@@ -29,7 +27,7 @@ export type BoundingBox = {
   };
 };
 
-export type BaseSceneSectorMetadata = {
+export type SceneSectorMetadata = {
   readonly id: number;
   readonly parentId: number | null;
   readonly path: string;
@@ -39,9 +37,7 @@ export type BaseSceneSectorMetadata = {
 
   readonly boundingBox: BoundingBox;
   readonly geometryBoundingBox?: BoundingBox;
-};
 
-export type GltfSceneSectorMetadata = {
   readonly sectorFileName: string | null;
   readonly maxDiagonalLength: number;
   readonly minDiagonalLength: number;

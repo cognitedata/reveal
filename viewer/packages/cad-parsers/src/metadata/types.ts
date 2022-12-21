@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-export type BaseSectorMetadata = {
+export type SectorMetadata = {
   readonly id: number;
   readonly path: string;
   readonly depth: number;
@@ -12,11 +12,7 @@ export type BaseSectorMetadata = {
   readonly children: SectorMetadata[];
   readonly estimatedDrawCallCount: number;
   readonly estimatedRenderCost: number;
-};
 
-export type SectorMetadata = BaseSectorMetadata & GltfSectorMetadata;
-
-export type GltfSectorMetadata = {
   readonly sectorFileName: string | null;
   readonly maxDiagonalLength: number;
   readonly minDiagonalLength: number;
