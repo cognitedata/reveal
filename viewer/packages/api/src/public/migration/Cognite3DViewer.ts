@@ -1131,7 +1131,16 @@ export class Cognite3DViewer {
     }
 
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
-    const originalDomeStyle = { ...this.domElement.style };
+    const originalDomeStyle = {
+      position: this.domElement.style.position,
+      width: this.domElement.style.width,
+      height: this.domElement.style.height,
+      flexGrow: this.domElement.style.flexGrow,
+      margin: this.domElement.style.margin,
+      padding: this.domElement.style.padding,
+      left: this.domElement.style.left,
+      top: this.domElement.style.top
+    };
 
     try {
       // Position and scale domElement to match requested resolution.
