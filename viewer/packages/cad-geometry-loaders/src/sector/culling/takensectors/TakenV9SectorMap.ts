@@ -5,13 +5,13 @@ import { addSectorCost, DetermineSectorCostDelegate, PrioritizedWantedSector, Se
 import { CadModelBudget } from '../../../CadModelBudget';
 import { TakenSectorMapBase } from './TakenSectorMapBase';
 
-import { CadModelMetadata, V9SectorMetadata, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
+import { CadModelMetadata, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
 
 import assert from 'assert';
 
 export class TakenV9SectorMap extends TakenSectorMapBase {
-  private readonly determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>;
+  private readonly determineSectorCost: DetermineSectorCostDelegate<SectorMetadata>;
   private readonly _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
   private readonly _models = new Map<string, { modelMetadata: CadModelMetadata; sectorIds: Map<number, number> }>();
 
@@ -23,7 +23,7 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
     return Array.from(this._models.values()).map(cadModel => cadModel.modelMetadata);
   }
 
-  constructor(determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>) {
+  constructor(determineSectorCost: DetermineSectorCostDelegate<SectorMetadata>) {
     super();
     this.determineSectorCost = determineSectorCost;
   }
@@ -52,7 +52,7 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
       const sectorMetadata = model.scene.getSectorById(sectorId);
       assert(sectorMetadata !== undefined);
 
-      const sectorCost = this.determineSectorCost(sectorMetadata! as V9SectorMetadata, LevelOfDetail.Detailed);
+      const sectorCost = this.determineSectorCost(sectorMetadata!, LevelOfDetail.Detailed);
       addSectorCost(this._totalCost, sectorCost);
 
       sectorIds.set(sectorId, priority);
