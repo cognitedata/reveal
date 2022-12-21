@@ -3,12 +3,13 @@ import { Timeseries } from '@cognite/sdk';
 import {
   ResourceItem,
   convertResourceType,
+  DateRangeProps,
 } from '@data-exploration-components/types';
 import { TimeseriesTable } from '@data-exploration-components/containers/Timeseries';
 
 import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
 
-import { Flex } from '@cognite/cogs.js';
+import { Flex, Button, Divider } from '@cognite/cogs.js';
 
 import {
   SearchResultCountLabel,
@@ -23,21 +24,30 @@ import {
 } from '@data-exploration-components/domain/timeseries';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import { useResultCount } from '@data-exploration-components/components';
+import {
+  RangePicker,
+  useResultCount,
+} from '@data-exploration-components/components';
+import styled from 'styled-components';
+import { VerticalDivider } from '@data-exploration-components/components/Divider';
 
 export const TimeseriesSearchResults = ({
   query = '',
   filter = {},
   showCount = false,
   onClick,
+  dateRange,
+  onDateRangeChange,
   onFilterChange,
   selectedRow,
   relatedResourceType,
   enableAdvancedFilters,
+  showDatePicker = false,
   ...rest
 }: {
   query?: string;
   showCount?: boolean;
+
   enableAdvancedFilters?: boolean;
   initialView?: string;
   filter?: InternalTimeseriesFilters;
@@ -48,7 +58,7 @@ export const TimeseriesSearchResults = ({
   showDatePicker?: boolean;
   onClick: (item: Timeseries) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
-}) => {
+} & DateRangeProps) => {
   const api = convertResourceType('timeSeries');
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<Timeseries>(api, query, filter);
@@ -92,18 +102,36 @@ export const TimeseriesSearchResults = ({
         id="timeseries-search-results"
         selectedRows={selectedRow}
         query={query}
+        dateRange={dateRange}
+        onDateRangeChange={onDateRangeChange}
         tableHeaders={
-          <SearchResultToolbar
-            type="timeSeries"
-            showCount={showCount}
-            resultCount={
-              <SearchResultCountLabel
-                loadedCount={loadedDataCount}
-                totalCount={totalDataCount}
-                resourceType="timeSeries"
-              />
-            }
-          />
+          <TimeseriesHeaderContainer
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <SearchResultToolbar
+              type="timeSeries"
+              showCount={showCount}
+              resultCount={
+                <SearchResultCountLabel
+                  loadedCount={loadedDataCount}
+                  totalCount={totalDataCount}
+                  resourceType="timeSeries"
+                />
+              }
+            />
+            <Flex alignItems="center" gap={10}>
+              {showDatePicker && (
+                <RangePicker
+                  initialRange={dateRange}
+                  onRangeChanged={onDateRangeChange}
+                >
+                  <Button icon="XAxis">Chart Picker </Button>
+                </RangePicker>
+              )}
+              <VerticalDivider />
+            </Flex>
+          </TimeseriesHeaderContainer>
         }
         data={enableAdvancedFilters ? data : items}
         isDataLoading={enableAdvancedFilters ? isLoading : !isFetched}
@@ -129,3 +157,7 @@ export const TimeseriesSearchResults = ({
     </>
   );
 };
+
+const TimeseriesHeaderContainer = styled(Flex)`
+  flex: 1;
+`;

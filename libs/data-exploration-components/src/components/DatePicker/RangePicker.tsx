@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useMemo, useState, useRef } from 'react';
 import dayjs from 'dayjs';
+import noop from 'lodash/noop';
 import { Divider } from '@data-exploration-components/components';
 import {
   Dropdown,
@@ -23,12 +24,14 @@ export type RangePickerProps = {
   initialRange?: [Date, Date];
   onRangeChanged?: (dates: [Date, Date]) => void;
   buttonProps?: ButtonProps;
+  children?: React.ReactElement;
 };
 
 export const RangePicker = ({
   initialRange = TIME_SELECT['2Y'].getTime(),
-  onRangeChanged = () => {},
+  onRangeChanged = noop,
   buttonProps,
+  children,
 }: RangePickerProps) => {
   // Cogs is stupid af so we have to ref the span
   const spanRef = useRef<HTMLSpanElement>(null);
@@ -107,13 +110,17 @@ export const RangePicker = ({
 
   return (
     <Dropdown content={renderModePicker()} maxWidth="auto">
-      <Button icon="Calendar" {...buttonProps}>
-        <span ref={spanRef}>{`${dayjs(initialRange[0]).format(
-          'YYYY/MM/DD HH:mm'
-        )}`}</span>
-        <Icon type="ArrowRight" style={{ marginLeft: 8, marginRight: 8 }} />
-        <span>{`${dayjs(initialRange[1]).format('YYYY/MM/DD HH:mm')}`}</span>
-      </Button>
+      {children ? (
+        children
+      ) : (
+        <Button icon="Calendar" {...buttonProps}>
+          <span ref={spanRef}>{`${dayjs(initialRange[0]).format(
+            'YYYY/MM/DD HH:mm'
+          )}`}</span>
+          <Icon type="ArrowRight" style={{ marginLeft: 8, marginRight: 8 }} />
+          <span>{`${dayjs(initialRange[1]).format('YYYY/MM/DD HH:mm')}`}</span>
+        </Button>
+      )}
     </Dropdown>
   );
 };
