@@ -11,7 +11,7 @@ import { BinaryFileProvider } from '@reveal/data-providers';
 import { CadMaterialManager } from '@reveal/rendering';
 import { WantedSector } from '@reveal/cad-parsers';
 
-import log from '@reveal/logger';
+import { log } from '@reveal/logger';
 
 import { jest } from '@jest/globals';
 
@@ -49,8 +49,8 @@ describe(GltfSectorRepository.name, () => {
   });
 
   test('loadSector should gracefully handle errors from sectorLoader', async () => {
-    const currentLogLevel = log.default.getLevel();
-    log.default.setLevel('silent');
+    const currentLogLevel = log.getLevel();
+    log.setLevel('silent');
 
     const binaryFileProvider = createBinaryFileProviderMock();
     const materialManager = new Mock<CadMaterialManager>();
@@ -60,6 +60,6 @@ describe(GltfSectorRepository.name, () => {
     //Sector loader will throw since there is no valid materials for given object
     await expect(sectorRepository.loadSector(wantedSectorMock.object())).resolves.not.toThrow();
 
-    log.default.setLevel(currentLogLevel);
+    log.setLevel(currentLogLevel);
   });
 });

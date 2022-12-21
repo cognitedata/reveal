@@ -10,7 +10,7 @@ import { SectorCuller } from './SectorCuller';
 import { computeV9SectorCost } from './computeSectorCost';
 import { TakenV9SectorMap } from './takensectors';
 
-import log from '@reveal/logger';
+import { log } from '@reveal/logger';
 import { CadModelMetadata, SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
 import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
 import { PrioritizedArea } from '@reveal/cad-styling';
@@ -58,12 +58,12 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       input.prioritizedAreas
     );
     const takenSectorCount = takeSectorsWithinBudget(takenSectors, input, prioritizedSectors);
-    log.default.debug('Scheduled', takenSectorCount, 'of', prioritizedSectors.length, 'candidates');
+    log.debug('Scheduled', takenSectorCount, 'of', prioritizedSectors.length, 'candidates');
 
     const wanted = takenSectors.collectWantedSectors();
     const spentBudget = takenSectors.computeSpentBudget();
-    log.default.debug('Budget:', { ...input.budget });
-    log.default.debug('Spent:', { ...spentBudget });
+    log.debug('Budget:', { ...input.budget });
+    log.debug('Spent:', { ...spentBudget });
     return { spentBudget, wantedSectors: wanted };
   }
 

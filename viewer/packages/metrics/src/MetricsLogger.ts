@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import mixpanel from 'mixpanel-browser';
-import log from '@reveal/logger';
+import { log } from '@reveal/logger';
 
 import { TrackedEvents, EventProps } from './types';
 import throttle from 'lodash/throttle';

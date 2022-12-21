@@ -3,7 +3,7 @@
  */
 
 import { ConsumedSector, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
-import log from '@reveal/logger';
+import { log } from '@reveal/logger';
 import { DeferredPromise } from '@reveal/utilities';
 import assert from 'assert';
 
@@ -87,7 +87,7 @@ export class SectorDownloadScheduler {
     sectorIdentifier: string
   ) {
     const sectorDownload = downloadSector(sector).catch(error => {
-      log.default.error('Failed to load sector', sector, 'error:', error);
+      log.error('Failed to load sector', sector, 'error:', error);
       return {
         modelIdentifier: sector.modelIdentifier,
         metadata: sector.metadata,
