@@ -344,7 +344,6 @@ export class Cognite3DViewer {
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
     fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
-    forceUpdateCameraNearAndFarBoundingBox(): void;
     getClippingPlanes(): THREE_2.Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
@@ -370,6 +369,7 @@ export class Cognite3DViewer {
     on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
     get pointCloudBudget(): PointCloudBudget;
     set pointCloudBudget(budget: PointCloudBudget);
+    recalculateNearAndFarBoundingBox(): void;
     remove360Images(...image360Entities: Image360[]): Promise<void>;
     removeModel(model: CogniteModel): void;
     removeObject3D(object: THREE_2.Object3D): void;

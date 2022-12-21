@@ -652,7 +652,7 @@ export class Cognite3DViewer {
 
     const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this.recalculateCombinedBoundingBox();
+    this.recalculateNearAndFarBoundingBox();
     this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
 
     return model3d;
@@ -682,7 +682,7 @@ export class Cognite3DViewer {
     const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
-    this.recalculateCombinedBoundingBox();
+    this.recalculateNearAndFarBoundingBox();
 
     this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
 
@@ -769,7 +769,7 @@ export class Cognite3DViewer {
       throw new Error('Model is not added to viewer');
     }
     this._models.splice(modelIdx, 1);
-    this.recalculateCombinedBoundingBox();
+    this.recalculateNearAndFarBoundingBox();
 
     switch (model.type) {
       case 'cad':
@@ -863,7 +863,7 @@ export class Cognite3DViewer {
     this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
     this.revealManager.requestRedraw();
-    this.recalculateCombinedBoundingBox();
+    this.recalculateNearAndFarBoundingBox();
   }
 
   /**
@@ -886,7 +886,7 @@ export class Cognite3DViewer {
       this._extraObjects.splice(index, 1);
     }
     this.revealManager.requestRedraw();
-    this.recalculateCombinedBoundingBox();
+    this.recalculateNearAndFarBoundingBox();
   }
 
   /**
@@ -1234,7 +1234,7 @@ export class Cognite3DViewer {
    *
    * Note: If the camera is using fixed near and far planes, calling this function will have no effect.
    */
-  public recalculateCombinedBoundingBox(): void {
+  public recalculateNearAndFarBoundingBox(): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this.isDisposed) {
       return;
