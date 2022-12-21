@@ -8,9 +8,9 @@
       "matchPackagePrefixes": [
         ""
       ],
-      // Prepare Renovate PRs before office hours
+      // Prepare Renovate PRs before and during our workday
       "schedule": [
-        "after 6am and before 9am every weekday"
+        "after 6am and before 3pm every weekday"
       ]
     },
     {
@@ -42,8 +42,7 @@
       ],
       "addLabels": [
         "dependencies",
-        "auto-update",
-        "slack"
+        "auto-update"
       ],
       "prConcurrentLimit": 5
     },

@@ -12,7 +12,8 @@ import {
   CadMaterialManager,
   PointCloudMaterialManager,
   BasicPipelineExecutor,
-  DefaultRenderPipelineProvider
+  DefaultRenderPipelineProvider,
+  ResizeHandler
 } from '@reveal/rendering';
 import {
   CdfPointCloudStylableObjectProvider,
@@ -138,10 +139,7 @@ export function createRevealManager(
   const renderOptions: RenderOptions = revealOptions?.renderOptions ?? {};
   const cadMaterialManager = new CadMaterialManager();
   const pointCloudMaterialManager = new PointCloudMaterialManager();
-  const pipelineExecutor = new BasicPipelineExecutor(renderer, {
-    autoResizeRenderer: true,
-    resolutionThreshold: revealOptions.rendererResolutionThreshold
-  });
+  const pipelineExecutor = new BasicPipelineExecutor(renderer);
   const defaultRenderPipeline = new DefaultRenderPipelineProvider(
     cadMaterialManager,
     pointCloudMaterialManager,
@@ -149,6 +147,9 @@ export function createRevealManager(
     renderOptions,
     revealOptions.outputRenderTarget
   );
+  const resizeHandler = new ResizeHandler(renderer, cameraManager, {
+    renderResolutionThreshold: revealOptions.rendererResolutionThreshold
+  });
   const pointCloudManager = createPointCloudManager(
     modelMetadataProvider,
     modelDataProvider,
@@ -162,7 +163,14 @@ export function createRevealManager(
     ...revealOptions.internal?.cad,
     continuousModelStreaming: revealOptions.continuousModelStreaming
   });
-  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline, cameraManager);
+  return new RevealManager(
+    cadManager,
+    pointCloudManager,
+    pipelineExecutor,
+    defaultRenderPipeline,
+    resizeHandler,
+    cameraManager
+  );
 }
 
 /**
