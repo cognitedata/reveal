@@ -6,9 +6,12 @@ export class CameraUI {
   private readonly _viewer: Cognite3DViewer;
 
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
+
     this._viewer = viewer;
     const params = {
-      flyDuration: 5000
+      flyDuration: 5000,
+      maxResolution: 1.4e6,
+      movingCameraResolutionFactor: 1.0,
     };
     const actions = {
       saveCameraToUrl: () => this.saveCameraToUrl(),
@@ -20,6 +23,12 @@ export class CameraUI {
     ui.add(actions, 'restoreCameraFromUrl').name('Restore camera from URL');
     ui.add(params, 'flyDuration', 0, 20000, 250).name('Fly duration');
     ui.add(actions, 'flyToSavedPositionFromUrl').name('Fly to saved position');
+    ui.add(params, 'maxResolution', 0, 4e6, 1e5).name('Max resolution').onChange(value => {
+      viewer.setResolutionOptions({ maxRenderResolution: value });
+    });
+    ui.add(params, 'movingCameraResolutionFactor', 0, 1.0, 0.05).name('Camera move resolution factor').onChange(value => {
+      viewer.setResolutionOptions({ movingCameraResolutionFactor: value });
+    });
 
     if (this.hasCameraInUrl()) {
       // Hack - since adding a model will load a camera in our examples

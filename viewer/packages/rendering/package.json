@@ -11,6 +11,7 @@
     "@reveal/cad-model": "workspace:*",
     "@reveal/cad-parsers": "workspace:*",
     "@reveal/cad-styling": "workspace:*",
+    "@reveal/camera-manager": "workspace:*",
     "@reveal/logger": "workspace:*",
     "@reveal/pointcloud-styling": "workspace:*",
     "@reveal/utilities": "workspace:*"
