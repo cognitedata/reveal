@@ -75,7 +75,7 @@ export class InspectNodeUI {
           offset.addScaledVector(startPosition, -1.0);
           transform.makeTranslation(offset.x, offset.y, offset.z);
           model.setNodeTransformByTreeIndex(node.treeIndex, transform);
-          this._viewer.forceUpdateCameraNearAndFarBoundingBox();
+          this._viewer.recalculateNearAndFarBoundingBox();
           this._viewer.requestRedraw();
         });
         gizmo.addEventListener('dragging-changed', (event: any) => {

@@ -31,7 +31,7 @@ export class LoadGltfUi {
         this._gizmos.forEach(gizmo => {
           gizmo.visible = value;
         });
-        this._viewer.forceUpdateCameraNearAndFarBoundingBox();
+        this._viewer.recalculateNearAndFarBoundingBox();
         this._viewer.requestRedraw();
       });
     ui.add(this._params, 'scaleStr').name('Scale models').onChange(scaleStr => {
@@ -39,7 +39,7 @@ export class LoadGltfUi {
         const scale = Number.parseFloat(scaleStr);
         console.log(scale);
         this._objects.forEach(object => object.scale.set(scale, scale, scale));
-        this._viewer.forceUpdateCameraNearAndFarBoundingBox();
+        this._viewer.recalculateNearAndFarBoundingBox();
         this._viewer.requestRedraw();
         this._params.scale = scale;
       }
@@ -85,7 +85,7 @@ export class LoadGltfUi {
         mixer.update(clock.getDelta());
       });
       this._viewer.on('sceneRendered', () => {
-        this._viewer.forceUpdateCameraNearAndFarBoundingBox();
+        this._viewer.recalculateNearAndFarBoundingBox();
         this._viewer.requestRedraw(); // Render continuously
       });
       this._viewer.requestRedraw();
@@ -112,7 +112,7 @@ export class LoadGltfUi {
       //Disable active camera controls when drag is detected on gizmo
       const cameraManager = this._viewer.cameraManager;
       if (dragging) {
-        this._viewer.forceUpdateCameraNearAndFarBoundingBox();
+        this._viewer.recalculateNearAndFarBoundingBox();
         cameraManager.deactivate();
       } else {
         cameraManager.activate();

@@ -70,7 +70,7 @@ export class PointCloudObjectStylingUI {
     } else {
       this._boundingBoxGroup?.removeFromParent();
       this._boundingBoxGroup = undefined;
-      this._viewer.forceUpdateCameraNearAndFarBoundingBox();
+      this._viewer.recalculateNearAndFarBoundingBox();
     }
     this._viewer.requestRedraw();
   }

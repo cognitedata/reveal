@@ -652,7 +652,7 @@ export class Cognite3DViewer {
 
     const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this.forceUpdateCameraNearAndFarBoundingBox();
+    this.recalculateCombinedBoundingBox();
     this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
 
     return model3d;
@@ -682,7 +682,7 @@ export class Cognite3DViewer {
     const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
-    this.forceUpdateCameraNearAndFarBoundingBox();
+    this.recalculateCombinedBoundingBox();
 
     this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
 
@@ -769,7 +769,7 @@ export class Cognite3DViewer {
       throw new Error('Model is not added to viewer');
     }
     this._models.splice(modelIdx, 1);
-    this.forceUpdateCameraNearAndFarBoundingBox();
+    this.recalculateCombinedBoundingBox();
 
     switch (model.type) {
       case 'cad':
@@ -863,7 +863,7 @@ export class Cognite3DViewer {
     this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
     this.revealManager.requestRedraw();
-    this.forceUpdateCameraNearAndFarBoundingBox();
+    this.recalculateCombinedBoundingBox();
   }
 
   /**
@@ -886,7 +886,7 @@ export class Cognite3DViewer {
       this._extraObjects.splice(index, 1);
     }
     this.revealManager.requestRedraw();
-    this.forceUpdateCameraNearAndFarBoundingBox();
+    this.recalculateCombinedBoundingBox();
   }
 
   /**
@@ -1231,8 +1231,10 @@ export class Cognite3DViewer {
    * Recalcualte the bounding box used to determine near and far planes on the camera. This should only be
    * necessary if you have custom objects whose bounds change, as this calculation will be done automatically
    * when models are added to or removed from the viewer.
+   *
+   * Note: If the camera is using fixed near and far planes, calling this function will have no effect.
    */
-  public forceUpdateCameraNearAndFarBoundingBox(): void {
+  public recalculateCombinedBoundingBox(): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this.isDisposed) {
       return;
