@@ -40,7 +40,8 @@ import {
   Cognite3DViewerOptions,
   Intersection,
   CadModelBudget,
-  CadIntersection
+  CadIntersection,
+  ResolutionOptions
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel } from '../types';
@@ -333,6 +334,21 @@ export class Cognite3DViewer {
         customDataSource: options.customDataSource ? true : false
       }
     });
+  }
+
+  /**
+   * Set options to control resolution of the viewer. This includes
+   * settings for max resolution and limiting resolution when moving the camera.
+   * @param options Options to apply.
+   */
+  setResolutionOptions(options: ResolutionOptions): void {
+    if (options.maxRenderResolution) {
+      this._revealManagerHelper.revealManager.setResolutionThreshold(options.maxRenderResolution);
+    }
+
+    if (options.movingCameraResolutionFactor) {
+      this._revealManagerHelper.revealManager.setMovingCameraResolutionFactor(options.movingCameraResolutionFactor);
+    }
   }
 
   /**
