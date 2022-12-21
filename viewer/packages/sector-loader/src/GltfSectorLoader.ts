@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { ConsumedSector, V9SectorMetadata, WantedSector, filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
+import { ConsumedSector, WantedSector, filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/data-providers';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
@@ -24,7 +24,7 @@ export class GltfSectorLoader {
   }
 
   async loadSector(sector: WantedSector): Promise<ConsumedSector> {
-    const metadata = sector.metadata as V9SectorMetadata;
+    const { metadata } = sector;
     try {
       const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
         sector.modelBaseUrl,
