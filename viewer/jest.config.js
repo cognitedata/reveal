@@ -11,13 +11,11 @@ module.exports = () => {
   return {
     rootDir: '.',
     roots: ['<rootDir>'],
-    transform: {
-      // '^.+\\.(mjs|tsx?)$': ['ts-jest', { useESM: true, tsconfig: path.resolve(__dirname, './tsconfig.test.json') }]
-    },
-    preset: 'ts-jest/presets/js-with-ts-esm', // or other ESM presets
+    transform: {},
+    preset: 'ts-jest/presets/js-with-ts-esm',
     testRegex: '(.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
-    // extensionsToTreatAsEsm: ['.ts'],
     moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+    // Transform certain packages that don't export commonJS
     transformIgnorePatterns: ["node_modules/(?!(moq.ts|rxjs|random-seed)/)"],
     moduleNameMapper: {
       '\\.(frag|vert)$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/glslMocks.js'),
