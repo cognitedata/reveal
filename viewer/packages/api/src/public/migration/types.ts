@@ -77,7 +77,7 @@ export interface Cognite3DViewerOptions {
    * the resolution. Setting the {@link Cognite3DViewerOptions.rendererResolutionThreshold} will
    * set this upper limit of what resolution Reveal will allow.
    *
-   * @deprecated Use {@link setResolutionOptions} instead.
+   * @deprecated Use {@link Cognite3DViewer.setResolutionOptions} instead.
    */
   rendererResolutionThreshold?: number;
 

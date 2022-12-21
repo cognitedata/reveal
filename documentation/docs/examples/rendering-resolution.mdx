@@ -29,7 +29,7 @@ The value is a number denoting the desired count of pixels on the screen. To e.g
 
 ## Decrease resolution on camera movement
 
-In order to improve the user experience for low-end devices, Reveal can be configured to lower the render resolution when the camera is moving, making the movement smoother. This can be done by calling the `setResolutionOptions` field with an object having the field `movingCameraResolutionFactor` set to a factor, e.g.
+In order to improve the user experience for low-end devices, Reveal can be configured to lower the render resolution when the camera is moving, making the movement smoother. This can be done by calling the `setResolutionOptions` method with an object having the field `movingCameraResolutionFactor` set to a factor, e.g.
 
 ```
 viewer.setResolutionOptions({ movingCameraResolutionFactor: 0.5 });
