@@ -13,7 +13,13 @@ import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
 import { SupportedModelTypes, LoadingState } from '@reveal/model-base';
 import { CadManager, CadModelBudget } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
-import { RenderMode, RenderPipelineExecutor, CadMaterialManager, RenderPipelineProvider } from '@reveal/rendering';
+import {
+  RenderMode,
+  RenderPipelineExecutor,
+  CadMaterialManager,
+  RenderPipelineProvider,
+  ResizeHandler
+} from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import { CameraManager } from '@reveal/camera-manager';
@@ -37,6 +43,7 @@ export class RevealManager {
   private readonly _pointCloudManager: PointCloudManager;
   private readonly _pipelineExecutor: RenderPipelineExecutor;
   private readonly _renderPipeline: RenderPipelineProvider;
+  private readonly _resizeHandler: ResizeHandler;
 
   private _cameraInMotion: boolean = false;
 
@@ -57,12 +64,14 @@ export class RevealManager {
     pointCloudManager: PointCloudManager,
     pipelineExecutor: RenderPipelineExecutor,
     renderPipeline: RenderPipelineProvider,
+    resizeHandler: ResizeHandler,
     cameraManager: CameraManager
   ) {
     this._pipelineExecutor = pipelineExecutor;
     this._renderPipeline = renderPipeline;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
+    this._resizeHandler = resizeHandler;
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
 
     this._cameraManager = cameraManager;
@@ -105,6 +114,7 @@ export class RevealManager {
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
     this._pointCloudManager.resetRedraw();
+    this._resizeHandler.resetRedraw();
   }
 
   get materialManager(): CadMaterialManager {
@@ -112,7 +122,7 @@ export class RevealManager {
   }
 
   get needsRedraw(): boolean {
-    return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw;
+    return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw || this._resizeHandler.needsRedraw;
   }
 
   public update(camera: THREE.PerspectiveCamera): void {
@@ -183,7 +193,18 @@ export class RevealManager {
     }
   }
 
+  public setResolutionThreshold(threshold: number): void {
+    this._resizeHandler.setResolutionThreshold(threshold);
+    this.requestRedraw();
+  }
+
+  public setMovingCameraResolutionFactor(factor: number): void {
+    this._resizeHandler.setMovingCameraResolutionFactor(factor);
+    this.requestRedraw();
+  }
+
   public render(camera: THREE.PerspectiveCamera): void {
+    this._resizeHandler.handleResize(camera);
     this._pipelineExecutor.render(this._renderPipeline, camera);
     this.resetRedraw();
   }
