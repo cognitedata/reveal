@@ -64,12 +64,9 @@ module.exports = env => {
           use: ['file-loader']
         },
         {
-          test: /\.(glsl|vert|frag)$/,
-          exclude: '/node_modules/',
-          // type: 'asset/source',
-          // mimetype: 'text/plain'
-          use: ['raw-loader', 'glslify-loader']
-          // use: ['raw-loader']
+          test: /\.(glsl|vert|frag)$/i,
+          type: 'asset/source',
+          use: ['glslify-loader']
         },
         {
           test: /\.css$/,

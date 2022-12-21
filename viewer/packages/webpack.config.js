@@ -98,9 +98,9 @@ module.exports = env => {
           use: path.resolve('./visual-tests/globVisualTestLoader.js')
         },
         {
-          test: /\.(glsl|vert|frag)$/,
-          exclude: '/node_modules/',
-          use: ['raw-loader', 'glslify-loader']
+          test: /\.(glsl|vert|frag)$/i,
+          type: 'asset/source',
+          use: ['glslify-loader']
         },
         {
           test: /\.css$/,

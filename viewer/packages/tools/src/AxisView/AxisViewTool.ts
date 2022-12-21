@@ -25,6 +25,9 @@ import { Cognite3DViewer } from '@reveal/api';
 // const vertexShaderSource = require('./shaders/axisTool.vert').default;
 // const fragmentShaderSource = require('./shaders/axisTool.frag').default;
 
+import vertexShader from './shaders/axisTool.vert';
+import fragmentShader from './shaders/axisTool.frag';
+
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
 
@@ -251,8 +254,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const compass = new THREE.Mesh(
       compassPlaneGeometry,
       new THREE.RawShaderMaterial({
-        vertexShader: glsl(require('./shaders/axisTool.vert').default),
-        fragmentShader: glsl(require('./shaders/axisTool.frag').default),
+        vertexShader: glsl(vertexShader),
+        fragmentShader: glsl(fragmentShader),
         uniforms: {
           offset: { value: new THREE.Vector2() },
           scale: { value: new THREE.Vector2() },
@@ -344,8 +347,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     const face = new THREE.Mesh(
       this._boxFaceGeometry,
       new THREE.RawShaderMaterial({
-        vertexShader: glsl(require('./shaders/axisTool.vert').default),
-        fragmentShader: glsl(require('./shaders/axisTool.frag').default),
+        vertexShader: glsl(vertexShader),
+        fragmentShader: glsl(fragmentShader),
         uniforms: {
           offset: { value: new THREE.Vector2() },
           scale: { value: new THREE.Vector2() },

@@ -4,8 +4,65 @@
 
 import glsl from 'glslify';
 
-import sectorShaderSimpleMeshFrag from '../glsl/sector/simple.frag';
-import sectorShaderSimpleMeshVert from '../glsl/sector/simple.vert';
+import simpleMeshFrag from '../glsl/sector/simple.frag';
+import simpleMeshVert from '../glsl/sector/simple.vert';
+
+import meshFrag from '../glsl/sector/mesh.frag';
+import meshVert from '../glsl/sector/mesh.vert';
+
+import instancedMeshFrag from '../glsl/sector/instancedMesh.frag';
+import instancedMeshVert from '../glsl/sector/instancedMesh.vert';
+
+import boxFrag from '../glsl/sector/instancedMesh.frag';
+import boxVert from '../glsl/sector/instancedMesh.vert';
+
+import circleFrag from '../glsl/sector/primitives/circle.frag';
+import circleVert from '../glsl/sector/primitives/circle.vert';
+
+import coneFrag from '../glsl/sector/primitives/cone.frag';
+import coneVert from '../glsl/sector/primitives/cone.vert';
+
+import eccentricConeFrag from '../glsl/sector/primitives/eccentricCone.frag';
+import eccentricConeVert from '../glsl/sector/primitives/eccentricCone.vert';
+
+import ellipsoidSegmentFrag from '../glsl/sector/primitives/ellipsoidSegment.frag';
+import ellipsoidSegmentVert from '../glsl/sector/primitives/ellipsoidSegment.vert';
+
+import generalCylinderFrag from '../glsl/sector/primitives/generalCylinder.frag';
+import generalCylinderVert from '../glsl/sector/primitives/generalCylinder.vert';
+
+import generalRingFrag from '../glsl/sector/primitives/generalring.frag';
+import generalRingVert from '../glsl/sector/primitives/generalring.vert';
+
+import nutFrag from '../glsl/sector/instancedMesh.frag';
+import nutVert from '../glsl/sector/instancedMesh.vert';
+
+import quadFrag from '../glsl/sector/instancedMesh.frag';
+import quadVert from '../glsl/sector/instancedMesh.vert';
+
+import torusSegmentFrag from '../glsl/sector/primitives/torusSegment.frag';
+import torusSegmentVert from '../glsl/sector/primitives/torusSegment.vert';
+
+import trapeziumFrag from '../glsl/sector/primitives/cone.frag';
+import trapeziumVert from '../glsl/sector/primitives/cone.vert';
+
+import pointCloudNormalizeFrag from '../glsl/pointcloud/normalize.frag';
+import pointCloudNormalizeVert from '../glsl/pointcloud/normalize.vert';
+
+import pointCloudFrag from '../glsl/pointcloud/pointcloud.frag';
+import pointCloudVert from '../glsl/pointcloud/pointcloud.vert';
+
+import ssaoFrag from '../glsl/post-processing/pure-depth-ssao.frag';
+import ssaoVert from '../glsl/post-processing/passthrough.vert';
+
+import blitFrag from '../glsl/post-processing/blit.frag';
+import blitVert from '../glsl/post-processing/unit-orthographic-passthrough.vert';
+
+import depthBlendFrag from '../glsl/post-processing/depthBlendBlit.frag';
+import depthBlendVert from '../glsl/post-processing/unit-orthographic-passthrough.vert';
+
+import sectorCoverageFrag from '../glsl/sector/sectorCoverage.frag';
+import sectorCoverageVert from '../glsl/sector/sectorCoverage.vert';
 
 /**
  * Defines used to enable debugging features in shaders.
@@ -17,74 +74,69 @@ export const shaderDefines = {
   }
 };
 
-
-
 export const sectorShaders = {
   // ----------------
   // "Regular" meshes
   // ----------------
   simpleMesh: {
-    // fragment: glsl(sectorShaderSimpleMeshFrag.default),
-    fragment: glsl(sectorShaderSimpleMeshFrag.default /* (await import('../glsl/sector/mesh.frag')).default.default */),
-    vertex: glsl(sectorShaderSimpleMeshVert.default)
-    // fragment: glsl(await fetch('../glsl/sector/simple.frag').then(p => p.text())),
-    // vertex: glsl(await fetch('../glsl/sector/simple.vert').then(p => p.text()))
+    fragment: glsl(simpleMeshFrag),
+    vertex: glsl(simpleMeshVert)
   },
   detailedMesh: {
-    fragment: glsl(await fetch('../glsl/sector/mesh.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/mesh.vert').then(p => p.text()))
+    fragment: glsl(meshFrag),
+    vertex: glsl(meshVert)
   },
   instancedMesh: {
-    fragment: glsl(await fetch('../glsl/sector/instancedMesh.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/instancedMesh.vert').then(p => p.text()))
+    fragment: glsl(instancedMeshFrag),
+    vertex: glsl(instancedMeshVert)
   },
 
   // ----------------
   // Primitives
   // ----------------
   boxPrimitive: {
-    fragment: glsl(await fetch('../glsl/sector/instancedMesh.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/instancedMesh.vert').then(p => p.text()))
+    fragment: glsl(boxFrag),
+    vertex: glsl(boxVert)
   },
   circlePrimitive: {
-    fragment: glsl(await fetch('../glsl/sector/primitives/circle.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/primitives/circle.vert').then(p => p.text()))
+    fragment: glsl(circleFrag),
+    vertex: glsl(circleVert)
   },
   conePrimitive: {
-    fragment: glsl(await fetch('../glsl/sector/primitives/cone.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/primitives/cone.vert').then(p => p.text()))
+    fragment: glsl(coneFrag),
+    vertex: glsl(coneVert)
   },
   eccentricConePrimitive: {
-    fragment: glsl(await fetch('../glsl/sector/primitives/eccentricCone.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/primitives/eccentricCone.vert').then(p => p.text()))
+    fragment: glsl(eccentricConeFrag),
+    vertex: glsl(eccentricConeVert)
   },
   ellipsoidSegmentPrimitive: {
-    fragment: glsl(await fetch('../glsl/sector/primitives/ellipsoidSegment.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/primitives/ellipsoidSegment.vert').then(p => p.text()))
+    fragment: glsl(ellipsoidSegmentFrag),
+    vertex: glsl(ellipsoidSegmentVert)
   },
   generalCylinderPrimitive: {
-    fragment: glsl(await fetch('../glsl/sector/primitives/generalCylinder.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/primitives/generalCylinder.vert').then(p => p.text()))
+    fragment: glsl(generalCylinderFrag),
+    vertex: glsl(generalCylinderVert)
   },
   generalRingPrimitive: {
-    fragment: glsl(await fetch('../glsl/sector/primitives/generalring.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/primitives/generalring.vert').then(p => p.text()))
+    fragment: glsl(generalRingFrag),
+    vertex: glsl(generalRingVert)
   },
   nutPrimitive: {
-    fragment: glsl(await fetch('../glsl/sector/instancedMesh.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/instancedMesh.vert').then(p => p.text()))
+    fragment: glsl(nutFrag),
+    vertex: glsl(nutVert)
   },
   quadPrimitive: {
-    fragment: glsl(await fetch('../glsl/sector/instancedMesh.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/instancedMesh.vert').then(p => p.text()))
+    fragment: glsl(quadFrag),
+    vertex: glsl(quadVert)
   },
   torusSegmentPrimitive: {
-    fragment: glsl(await fetch('../glsl/sector/primitives/torusSegment.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/primitives/torusSegment.vert').then(p => p.text()))
+    fragment: glsl(torusSegmentFrag),
+    vertex: glsl(torusSegmentVert)
   },
   trapeziumPrimitive: {
-    fragment: glsl(await fetch('../glsl/sector/primitives/trapezium.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/sector/primitives/trapezium.vert').then(p => p.text()))
+    fragment: glsl(trapeziumFrag),
+    vertex: glsl(trapeziumVert)
   }
 };
 
@@ -93,12 +145,12 @@ export const sectorShaders = {
  */
 export const pointCloudShaders = {
   normalize: {
-    fragment: glsl(await fetch('../glsl/pointcloud/normalize.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/pointcloud/normalize.vert').then(p => p.text()))
+    fragment: glsl(pointCloudNormalizeFrag),
+    vertex: glsl(pointCloudNormalizeVert)
   },
   pointcloud: {
-    fragment: glsl(await fetch('../glsl/pointcloud/pointcloud.frag').then(p => p.text())),
-    vertex: glsl(await fetch('../glsl/pointcloud/pointcloud.vert').then(p => p.text()))
+    fragment: glsl(pointCloudFrag),
+    vertex: glsl(pointCloudVert)
   }
 };
 
@@ -106,24 +158,24 @@ export const pointCloudShaders = {
  * Screen space ambient occlusion shader
  */
 export const ssaoShaders = {
-  fragment: glsl(await fetch('../glsl/post-processing/pure-depth-ssao.frag').then(p => p.text())),
-  vertex: glsl(await fetch('../glsl/post-processing/passthrough.vert').then(p => p.text()))
+  fragment: glsl(ssaoFrag),
+  vertex: glsl(ssaoVert)
 };
 
 export const blitShaders = {
-  fragment: glsl(await fetch('../glsl/post-processing/blit.frag').then(p => p.text())),
-  vertex: glsl(await fetch('../glsl/post-processing/unit-orthographic-passthrough.vert').then(p => p.text()))
+  fragment: glsl(blitFrag),
+  vertex: glsl(blitVert)
 };
 
 export const depthBlendBlitShaders = {
-  fragment: glsl(await fetch('../glsl/post-processing/depthBlendBlit.frag').then(p => p.text())),
-  vertex: glsl(await fetch('../glsl/post-processing/unit-orthographic-passthrough.vert').then(p => p.text()))
+  fragment: glsl(depthBlendFrag),
+  vertex: glsl(depthBlendVert)
 };
 
 /**
  * Shaders use to estimate how many pixels a sector covers on screen.
  */
 export const coverageShaders = {
-  fragment: glsl(await fetch('../glsl/sector/sectorCoverage.frag').then(p => p.text())),
-  vertex: glsl(await fetch('../glsl/sector/sectorCoverage.vert').then(p => p.text()))
+  fragment: glsl(sectorCoverageFrag),
+  vertex: glsl(sectorCoverageVert)
 };
