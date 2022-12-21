@@ -9,7 +9,7 @@ export { CadModelClipper } from './src/metadata/CadModelClipper';
 
 export { SectorScene } from './src/utilities/types';
 
-export { SectorMetadata, V9SectorMetadata } from './src/metadata/types';
+export { SectorMetadata } from './src/metadata/types';
 
 export { SectorNode } from './src/sector/SectorNode';
 export { RootSectorNode } from './src/sector/RootSectorNode';

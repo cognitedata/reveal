@@ -72,6 +72,8 @@ export class Potree implements IPotree {
     UPDATE_THROTTLE_TIME_MS
   );
 
+  private _shouldLoad: boolean = true;
+
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
   lru = new LRU(this._pointBudget);
 
@@ -94,11 +96,27 @@ export class Potree implements IPotree {
     this._throttledUpdateFunc(pointClouds, camera, renderer);
   }
 
+  set shouldLoad(value: boolean) {
+    this._shouldLoad = value;
+  }
+
   private innerUpdatePointClouds(
     pointClouds: PointCloudOctree[],
     camera: Camera,
     renderer: WebGLRenderer
   ): IVisibilityUpdateResult {
+    if (!this._shouldLoad) {
+      return {
+        visibleNodes: pointClouds.map(p => p.visibleNodes).reduce((a, b) => a.concat(b)),
+        numVisiblePoints: pointClouds
+          .map(p => p.visibleNodes.map(n => n.numPoints).reduce((a, b) => a + b))
+          .reduce((a, b) => a + b),
+        exceededMaxLoadsToGPU: false,
+        nodeLoadFailed: false,
+        nodeLoadPromises: []
+      };
+    }
+
     const result = this.updateVisibility(pointClouds, camera, renderer);
 
     for (let i = 0; i < pointClouds.length; i++) {
@@ -283,7 +301,6 @@ export class Potree implements IPotree {
     const sceneNode = node.sceneNode;
     sceneNode.visible = true;
     sceneNode.material = pointCloud.material;
-    sceneNode.updateMatrix();
     sceneNode.matrixWorld.multiplyMatrices(pointCloud.matrixWorld, sceneNode.matrix);
 
     visibleNodes.push(node);
