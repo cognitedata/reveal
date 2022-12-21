@@ -17,7 +17,7 @@ describe(determineAntiAliasingMode.name, () => {
   let currentLogLevel: LogLevelNumbers;
 
   beforeAll(() => {
-    currentLogLevel = Log.default.getLevel();
+    currentLogLevel = Log.getLevel();
     Log.setLevel('ERROR');
   });
 
