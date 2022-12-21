@@ -2,15 +2,9 @@
   "extends": "./tsconfig.webpack.json",
   "compilerOptions": {
     "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "target": "ES2019",
-    "module": "esnext"
   },
   // https://github.com/jest-community/jest-extended/tree/main/examples/typescript/all
   "files": [
     "node_modules/jest-extended/types/index.d.ts"
-  ],
-  "exclude": [
-    "dist/**/*"
   ]
 }

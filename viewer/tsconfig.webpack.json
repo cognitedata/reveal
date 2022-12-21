@@ -8,8 +8,7 @@
     "sourceMap": true,
     "typeRoots": [
       "node_modules/@types",
-      "packages/api/src/@types",
-      "custom-typings"
+      "packages/api/src/@types"
     ]
   },
   // include is also used for eslint to understand which files should be linted
