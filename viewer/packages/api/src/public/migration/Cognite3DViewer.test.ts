@@ -218,12 +218,10 @@ describe('Cognite3DViewer', () => {
 
   test('beforeSceneRendered and sceneRendered triggers before/after rendering', () => {
     // Setup a fake rendering loop
-    const requestAnimationFrameSpy = jest
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation(cb => {
-        requestAnimationFrameCallback = cb;
-        return 1;
-      });
+    const requestAnimationFrameSpy = jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => {
+      requestAnimationFrameCallback = cb;
+      return 1;
+    });
     let requestAnimationFrameCallback: FrameRequestCallback | undefined;
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     const onBeforeRendered: BeforeSceneRenderedDelegate = jest.fn();

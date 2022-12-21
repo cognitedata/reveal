@@ -31,8 +31,7 @@ export async function createGlContext(
   canvas.width = width;
   canvas.height = height;
 
-  const context: WebGLRenderingContext = (await import('gl')
-    .then(p => p.default))(width, height, options);
+  const context: WebGLRenderingContext = (await import('gl').then(p => p.default))(width, height, options);
   Object.defineProperty(context, 'canvas', { get: () => canvas });
   // https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/drawBuffers
   Object.defineProperty(context, 'drawBuffers', { value: () => {} });

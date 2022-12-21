@@ -23,13 +23,14 @@ describe('CadModelUpdateHandler', () => {
       .object();
 
     mockCuller = {
-      determineSectors: jest.fn<(input: DetermineSectorsInput) => {
-        wantedSectors: WantedSector[];
-        spentBudget: SectorLoadingSpent;
-      }>(),
-      filterSectorsToLoad: jest.fn<(input: DetermineSectorsInput,
-                                    wantedSectorsBatch: WantedSector[]) =>
-      Promise<WantedSector[]>>(),
+      determineSectors: jest.fn<
+        (input: DetermineSectorsInput) => {
+          wantedSectors: WantedSector[];
+          spentBudget: SectorLoadingSpent;
+        }
+      >(),
+      filterSectorsToLoad:
+        jest.fn<(input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]) => Promise<WantedSector[]>>(),
       dispose: jest.fn()
     };
   });

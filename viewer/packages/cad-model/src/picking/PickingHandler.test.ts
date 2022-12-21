@@ -13,7 +13,6 @@ import { SceneHandler } from '@reveal/utilities';
 import { CadNode } from '../wrappers/CadNode';
 import { createGlContext } from '../../../../test-utilities';
 
-
 const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
 
 describe(PickingHandler.name, () => {

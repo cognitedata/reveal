@@ -13,11 +13,6 @@ import { ListResponse } from '@cognite/sdk';
 
 import { jest } from '@jest/globals';
 
-process.on('unhandledRejection', (reason) => {
-  console.log(reason);
-  throw reason;
-});
-
 describe('PopulateIndexSetFromPagedResponseHelper', () => {
   let helper: PopulateIndexSetFromPagedResponseHelper<number>;
   let notifyChangedCallback: () => void;
