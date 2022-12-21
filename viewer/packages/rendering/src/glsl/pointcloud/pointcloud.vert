@@ -1,6 +1,8 @@
 precision highp float;
 precision highp int;
 
+#pragma glslify: import('../base/pointSizeRelativeToScreen.glsl');
+
 #define max_clip_boxes 30
 
 in vec3 position;
@@ -252,7 +254,12 @@ void main() {
 
 	float pointSize = 1.0;
 	float slope = tan(fov / 2.0);
-	float projFactor =  -0.5 * screenHeight / (slope * mvPosition.z);
+	float projFactor =  -0.5 / (point_size_relative_to_screen_height * slope * mvPosition.z);
+
+	// Scale point appropriately according to render size
+	float size = size * screenHeight * point_size_relative_to_screen_height;
+	float minSize = minSize * screenHeight * point_size_relative_to_screen_height;
+	float maxSize = maxSize * screenHeight * point_size_relative_to_screen_height;
 
 	#if defined fixed_point_size
 		pointSize = size;
