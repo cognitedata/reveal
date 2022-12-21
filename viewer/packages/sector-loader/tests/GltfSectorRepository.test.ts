@@ -10,7 +10,6 @@ import { IMock, Mock } from 'moq.ts';
 import { BinaryFileProvider } from '@reveal/data-providers';
 import { CadMaterialManager } from '@reveal/rendering';
 import { WantedSector } from '@reveal/cad-parsers';
-
 import { Log } from '@reveal/logger';
 
 import { jest } from '@jest/globals';
