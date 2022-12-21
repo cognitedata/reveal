@@ -3,8 +3,7 @@ import React from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { response } from './resources';
 import { FilePreview } from './FilePreview';
-// @ts-ignore
-import pdfFileUrl from './pnid.pdf';
+// import pdfFileUrl from './pnid.pdf';
 
 const pdfFile = {
   id: 111,
@@ -31,11 +30,11 @@ const pdfSdkMock = {
   },
   files: {
     retrieve: async () => [pdfFile],
-    getDownloadUrls: async () => [
-      {
-        downloadUrl: pdfFileUrl,
-      },
-    ],
+    // getDownloadUrls: async () => [
+    //   {
+    //     downloadUrl: pdfFileUrl,
+    //   },
+    // ],
   },
 } as unknown as CogniteClient;
 

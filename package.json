@@ -148,7 +148,7 @@
     "lint": "./scripts/lint.sh",
     "lint:fix": "./scripts/lint.sh --fix",
     "storybook": "./scripts/storybook.sh",
-    "build-storybook": "nx run platypus:build-storybook",
+    "build-storybook": "./scripts/storybook-build.sh",
     "cdf": "node ./dist/apps/platypus-cdf-cli/main.js",
     "summarize-codecov": "istanbul report --dir coverage --include coverage/**/coverage-final.json json json-summary lcovonly text-summary json-summary cobertura",
     "cpdir": "cp -r ./apps/platypus-e2e/coverage  ./coverage/apps/platypus-e2e"

@@ -26,7 +26,9 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/data-exploration-components/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "libs/data-exploration-components/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
     "test": {
@@ -35,6 +37,37 @@
       "options": {
         "jestConfig": "libs/data-exploration-components/jest.config.ts",
         "passWithNoTests": true
+      }
+    },
+    "storybook": {
+      "executor": "@nrwl/storybook:storybook",
+      "options": {
+        "uiFramework": "@storybook/react",
+        "port": 4400,
+        "config": {
+          "configFolder": "libs/data-exploration-components/.storybook"
+        }
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@nrwl/storybook:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "uiFramework": "@storybook/react",
+        "outputPath": "storybook-static",
+        "config": {
+          "configFolder": "libs/data-exploration-components/.storybook"
+        }
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
       }
     }
   }

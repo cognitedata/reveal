@@ -3,10 +3,8 @@ import React from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { ocrResults, response } from '../resources';
 import { FilePreviewUFV } from './FilePreviewUFV';
-// @ts-ignore
-import pdfFileUrl from '../pnid.pdf';
-// @ts-ignore
-import longPdfFileUrl from '../multipageExample.pdf';
+// import pdfFileUrl from '../pnid.pdf';
+// import longPdfFileUrl from '../multipageExample.pdf';
 import testImageUrl from './test-image.png';
 import { annotations } from './stubs/annotations';
 
@@ -101,17 +99,17 @@ const pdfSdkMock = {
     retrieve: async (fileIds: { id: string }[]) => {
       return fileIds.map(({ id }) => ALL_FILES.find((item) => item.id === +id));
     },
-    getDownloadUrls: async (files: { id: number }[]) => {
-      return files.map(({ id }) => {
-        let fileUrl = testImageUrl;
-        if (id === 111) {
-          fileUrl = pdfFileUrl;
-        } else if (id === 222) {
-          fileUrl = longPdfFileUrl;
-        }
-        return { downloadUrl: fileUrl };
-      });
-    },
+    // getDownloadUrls: async (files: { id: number }[]) => {
+    //   return files.map(({ id }) => {
+    //     let fileUrl = testImageUrl;
+    //     if (id === 111) {
+    //       fileUrl = pdfFileUrl;
+    //     } else if (id === 222) {
+    //       fileUrl = longPdfFileUrl;
+    //     }
+    //     return { downloadUrl: fileUrl };
+    //   });
+    // },
   },
   annotations: {
     list: async () => ({ items: annotations }),

@@ -31,6 +31,12 @@ static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'data-exploration': "data-explorer"
 ]
 
+// Add apps/libs name to the list where you want the storybook preview to build.
+def PREVIEW_STORYBOOK = [
+  'platypus',
+  'data-exploration-components',
+]
+
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
 // found on your Sentry's project page, or by going here:
 // https://docs.sentry.io/error-reporting/quickstart/?platform=browser
@@ -189,13 +195,17 @@ pods {
 
             def projects = getAffectedProjects(isPullRequest, isMaster, isRelease)
 
-            if (projects.contains('platypus')) {
-              stageWithNotify("Build and deploy Storybook for: 'platypus'") {
+            for (int i = 0; i < projects.size(); i++) {
+              if (!PREVIEW_STORYBOOK.contains(projects[i])) {
+                continue;
+              }
+
+              stageWithNotify("Build and deploy Storybook for: ${projects[i]}") {
                 previewServer(
-                  prefix: 'storybook',
-                  commentPrefix: STORYBOOK_COMMENT_MARKER,
-                  buildCommand: "yarn build-storybook",
-                  buildFolder: 'storybook-static',
+                  prefix: "storybook-${projects[i]}",
+                  commentPrefix: "[storybook-server:${projects[i]}]\n",
+                  buildCommand: "yarn build-storybook ${projects[i]}",
+                  buildFolder: "storybook-static",
                 )
               }
             }
