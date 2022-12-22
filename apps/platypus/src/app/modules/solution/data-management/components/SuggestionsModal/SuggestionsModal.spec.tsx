@@ -178,7 +178,7 @@ describe('SuggestionsModal', () => {
       userEvent.click(await screen.findByText('name'));
       // table should update accordingly
       expect(
-        await screen.findByText('2, movie 2', undefined, { timeout: 1000 })
+        await screen.findByText('2, movie 2', undefined, { timeout: 2000 })
       ).toBeTruthy();
     });
 
