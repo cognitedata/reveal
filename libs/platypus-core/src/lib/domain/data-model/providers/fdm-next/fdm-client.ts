@@ -291,6 +291,7 @@ export class FdmClient implements FlexibleDataModelingClient {
       dataModelTypeDefs,
       dataModelVersion: { externalId, space, version },
       sort,
+      filter,
     } = dto;
     const operationName = this.queryBuilder.getOperationName(
       dataModelType.name,
@@ -303,11 +304,15 @@ export class FdmClient implements FlexibleDataModelingClient {
       hasNextPage,
       limit,
       sort,
+      filter,
     });
     return this.mixerApiService
       .runQuery({
         graphQlParams: {
           query,
+          variables: {
+            filter,
+          },
         },
         dataModelId: externalId,
         space,

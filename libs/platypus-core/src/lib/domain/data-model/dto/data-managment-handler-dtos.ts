@@ -10,6 +10,7 @@ export interface DataQueryingBaseDTO {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
   dataModelVersion: DataModelVersion;
+  filter?: QueryFilter;
   limit: number;
 }
 

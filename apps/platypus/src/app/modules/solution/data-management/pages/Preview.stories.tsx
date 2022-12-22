@@ -6,7 +6,7 @@ import {
   Group,
 } from '@platypus-app/components/Styles/storybook';
 import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { TypeList } from '../components/TypeList/TypeList';
 import {
   ColDef,
@@ -15,6 +15,8 @@ import {
   IDatasource,
   IGetRowsParams,
 } from 'ag-grid-community';
+import { Input } from '@cognite/cogs.js';
+import { AgGridReact } from 'ag-grid-react';
 
 const configMock = {
   columns: [
@@ -31,6 +33,10 @@ const configMock = {
       colDef: {
         pinned: 'left',
         width: 240,
+        filter: true,
+        headerComponentParams: {
+          enableMenu: true,
+        },
       },
     },
     {
@@ -276,6 +282,35 @@ export const DataPreview = () => (
 );
 
 export const DataPreviewInfiniteModel = () => {
+  const gridRef = useRef<AgGridReact>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const colsConfig = useMemo(
+    () => ({
+      ...configMock,
+      columns: [
+        {
+          ...configMock.columns[0],
+          colDef: {
+            filter: true,
+            filterParams: {
+              buttons: ['reset'],
+              debounceMs: 200,
+              filterOptions: ['contains', 'startsWith', 'endsWith'],
+              defaultOption: 'contains',
+              suppressAndOrCondition: true,
+            },
+          },
+        },
+        {
+          ...configMock.columns[1],
+          colDef: { filter: false },
+        },
+        ...configMock.columns.slice(2),
+      ],
+    }),
+    []
+  );
   const [data, setData] = useState(responseMock);
 
   const defaultColDef = useMemo<ColDef>(() => {
@@ -285,6 +320,14 @@ export const DataPreviewInfiniteModel = () => {
       sortable: true,
       resizable: true,
       floatingFilter: false,
+      suppressMenu: false,
+      filterParams: {
+        buttons: ['reset'],
+        debounceMs: 200,
+        filterOptions: ['contains', 'startsWith', 'endsWith'],
+        defaultOption: 'contains',
+        suppressAndOrCondition: true,
+      },
     };
   }, []);
   const getRowId = useCallback(function (params: GetRowIdParams) {
@@ -294,8 +337,6 @@ export const DataPreviewInfiniteModel = () => {
     const dataSource: IDatasource = {
       rowCount: undefined,
       getRows: (getRowsParams: IGetRowsParams) => {
-        console.log('asking new rows' + getRowsParams);
-
         const mockedData = sortData(getRowsParams.sortModel, responseMock);
 
         // At this point in your code, you would call the server.
@@ -321,10 +362,20 @@ export const DataPreviewInfiniteModel = () => {
       <Group>
         <GroupTitle>Default</GroupTitle>
         <div style={{ height: '600px' }}>
+          <Input
+            placeholder="Search"
+            name="searchQuery"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              gridRef.current?.api.onFilterChanged();
+            }}
+          />
           <div style={{ height: '100%' }}>
             <CogDataGrid
+              ref={gridRef}
               data={responseMock}
-              config={configMock}
+              config={colsConfig}
               defaultColDef={defaultColDef}
               rowSelection={'multiple'}
               rowModelType={'infinite'}
@@ -333,6 +384,9 @@ export const DataPreviewInfiniteModel = () => {
               maxConcurrentDatasourceRequests={2}
               infiniteInitialRowCount={1}
               maxBlocksInCache={2}
+              context={{
+                searchQuery,
+              }}
               getRowId={getRowId}
               onGridReady={onGridReady}
             />

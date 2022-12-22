@@ -100,7 +100,6 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
 
     const updatedProps = Object.assign(defaultGridOptions, props.gridOptions);
 
-    console.log(updatedProps, filteredProps, colDefs);
     return (
       <CogDataGridStyled
         theme={theme}

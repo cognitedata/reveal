@@ -1,21 +1,22 @@
 import {
-  NumberCellEditor,
-  BoolCellRenderer,
-  ListCellRenderer,
-  TextCellEditor,
-  CustomHeader,
-  CustomCellRenderer,
-} from '../../components';
-import {
   ColDef,
   GridOptions,
+  IFilterDef,
   ValueFormatterParams,
   ValueGetterParams,
 } from 'ag-grid-community';
 import merge from 'lodash/merge';
-import { GridConfig, ColumnDataType, ColumnTypes } from '../types';
+import {
+  BoolCellRenderer,
+  CustomCellRenderer,
+  CustomHeader,
+  ListCellRenderer,
+  NumberCellEditor,
+  TextCellEditor,
+  SelectCellEditor,
+} from '../../components';
+import { ColumnDataType, ColumnTypes, GridConfig } from '../types';
 import { decimalValueFormatter } from '../utils';
-import SelectCellEditor from '../../components/select-cell-editor';
 
 const cellClassRules = {
   'cog-table-cell-cell-empty': (params: { value: unknown }) =>
@@ -26,7 +27,7 @@ export class GridConfigService {
 
   getDefaultColDefConfig(theme: string): ColDef {
     return {
-      ...this.getColTypeProps('Link', theme),
+      ...this.getColTypeProps(ColumnDataType.Text, 'Link', theme),
 
       editable: false,
 
@@ -34,6 +35,7 @@ export class GridConfigService {
 
       sortable: true,
       filter: true,
+      suppressMenu: false,
       menuTabs: ['filterMenuTab'],
       cellEditor: 'textCellEditor',
       comparator(a, b) {
@@ -71,7 +73,6 @@ export class GridConfigService {
       // groupUseEntireRow: true,
       // readOnlyEdit: true,
       suppressCellSelection: false,
-      suppressMenuHide: false,
       enableCellExpressions: true,
       suppressAggFuncInHeader: true,
       rowHeight: 48,
@@ -94,7 +95,7 @@ export class GridConfigService {
         {
           booleanColType: {
             cellEditor: 'selectCellEditor',
-            ...this.getColTypeProps('Boolean', theme),
+            ...this.getColTypeProps(ColumnDataType.Boolean, 'Boolean', theme),
             cellEditorParams: {
               options: [
                 { label: 'Select value', value: null },
@@ -121,19 +122,37 @@ export class GridConfigService {
                 return value.externalId || value._externalId;
               }
             },
-            ...this.getColTypeProps('Link', theme),
+            ...this.getColTypeProps(ColumnDataType.Custom, 'Link', theme),
+          },
+          idColType: {
+            ...this.getColTypeProps(ColumnDataType.Id, 'String', theme),
           },
           textColType: {
             cellEditor: 'textCellEditor',
-            ...this.getColTypeProps('String', theme),
+            ...this.getColTypeProps(ColumnDataType.Text, 'String', theme),
           },
           largeTextColType: {
             cellEditor: 'textCellEditor',
-            ...this.getColTypeProps('String', theme),
+            ...this.getColTypeProps(ColumnDataType.Text, 'String', theme),
           },
           listColType: {
             cellRenderer: 'listCellRendererComponent',
             cellEditor: 'listCellRendererComponent',
+            filterParams: {
+              defaultOption: 'containsAny',
+              filterOptions: [
+                {
+                  displayKey: 'containsAny',
+                  displayName: 'Contains Any',
+                  predicate: () => true,
+                },
+                {
+                  displayKey: 'containsAll',
+                  displayName: 'Contains All',
+                  predicate: () => true,
+                },
+              ],
+            },
             valueGetter: (params: ValueGetterParams) => {
               if (
                 params.data === undefined ||
@@ -159,11 +178,11 @@ export class GridConfigService {
           },
           numberColType: {
             cellEditor: 'numberCellEditor',
-            ...this.getColTypeProps('Number', theme),
+            ...this.getColTypeProps(ColumnDataType.Number, 'Number', theme),
           },
           decimalColType: {
             cellEditor: 'decimalColType',
-            ...this.getColTypeProps('Number', theme),
+            ...this.getColTypeProps(ColumnDataType.Decimal, 'Number', theme),
             cellEditorParams: {
               allowDecimals: true,
             },
@@ -173,6 +192,10 @@ export class GridConfigService {
                 maximumFractionDigits: 2,
                 isFloat: true,
               }),
+          },
+          dateTimeColType: {
+            cellEditor: 'textCellEditor',
+            ...this.getColTypeProps(ColumnDataType.DateTime, 'Calendar', theme),
           },
           // default no auto header or cell editor
           defaultColType: {},
@@ -266,6 +289,10 @@ export class GridConfigService {
         dataTypeName = 'text';
         break;
       }
+      case ColumnDataType.Id: {
+        dataTypeName = 'id';
+        break;
+      }
       default: {
         dataTypeName = 'default';
       }
@@ -306,17 +333,99 @@ export class GridConfigService {
     });
   }
 
-  getColTypeProps(iconName: string, theme: string): ColDef {
+  getFilterParams(dataType: ColumnDataType | string) {
+    let filterName: IFilterDef['filter'] = 'agTextColumnFilter';
+    const filterParams = {
+      buttons: ['reset'],
+      debounceMs: 500,
+      filterOptions: ['equals', 'startsWith', 'blank', 'notBlank'],
+      defaultOption: 'equals',
+      suppressAndOrCondition: true,
+    };
+
+    switch (dataType) {
+      case ColumnDataType.Id: {
+        filterName = 'agTextColumnFilter';
+        filterParams.filterOptions = ['equals', 'blank', 'notBlank'];
+        break;
+      }
+      case ColumnDataType.Boolean: {
+        filterName = 'boolean';
+        filterParams.filterOptions = ['equals', 'blank', 'notBlank'];
+        break;
+      }
+      case ColumnDataType.Number: {
+        filterName = 'agNumberColumnFilter';
+        filterParams.filterOptions = [
+          'equals',
+          'inRange',
+          'blank',
+          'notBlank',
+          'lessThan',
+          'lessThanOrEqual',
+          'greaterThan',
+          'greaterThanOrEqual',
+        ];
+        break;
+      }
+      case ColumnDataType.Decimal: {
+        filterName = 'agNumberColumnFilter';
+        filterParams.filterOptions = [
+          'equals',
+          'inRange',
+          'blank',
+          'notBlank',
+          'lessThan',
+          'lessThanOrEqual',
+          'greaterThan',
+          'greaterThanOrEqual',
+        ];
+        break;
+      }
+      case ColumnDataType.DateTime: {
+        filterName = 'agDateColumnFilter';
+        filterParams.filterOptions = [
+          'equals',
+          'inRange',
+          'blank',
+          'notBlank',
+          'lessThan',
+          'lessThanOrEqual',
+          'greaterThan',
+          'greaterThanOrEqual',
+        ];
+        break;
+      }
+      case ColumnDataType.Custom: {
+        filterName = 'customColumnFilter';
+        break;
+      }
+      default: {
+        filterName = 'agTextColumnFilter';
+      }
+    }
+
+    return { filterName, filterParams };
+  }
+
+  private getColTypeProps(
+    dataType: ColumnDataType | string,
+    iconName: string,
+    theme: string
+  ): ColDef {
     if (theme === 'compact' || theme === 'basic-striped') {
       return {} as ColDef;
     }
+
+    const { filterName, filterParams } = this.getFilterParams(dataType);
 
     return {
       headerComponent: 'cogCustomHeader',
       headerComponentParams: {
         headerIcon: iconName,
-        enableMenu: false,
       },
+      filter: filterName,
+      filterParams,
     } as ColDef;
   }
 }

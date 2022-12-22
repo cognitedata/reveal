@@ -6,6 +6,7 @@ export interface KeyValueMap {
 }
 
 export enum ColumnDataType {
+  Id = 'ID',
   Text = 'TEXT',
   Number = 'NUMBER',
   Decimal = 'DECIMAL',

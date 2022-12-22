@@ -39,12 +39,21 @@ export interface ValidateDataModelDTO {
   breakingChangeInfo?: ValidateDataModelBreakingChangeInfoDTO;
 }
 
+export type FieldFilter = {
+  [filterName: string]: {
+    eq?: string | number;
+    isNull?: boolean;
+    in?: string[] | number[];
+    gt?: number;
+    lt?: number;
+    gte?: number;
+    lte?: number;
+    prefix?: string;
+  };
+};
+
 export type QueryFilter =
-  | {
-      [filterName: string]: {
-        eq: string | number;
-      };
-    }
+  | FieldFilter
   | { and: QueryFilter[] }
   | { or: QueryFilter[] };
 
@@ -66,4 +75,5 @@ export interface BuildListQueryDTO {
 export interface BuildSearchQueryDTO {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
+  filter?: QueryFilter;
 }

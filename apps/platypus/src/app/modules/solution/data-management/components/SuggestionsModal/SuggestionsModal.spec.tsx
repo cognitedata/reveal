@@ -167,21 +167,19 @@ describe('SuggestionsModal', () => {
           redux: mockReduxStore,
         }
       );
-
-      await waitFor(() => {
-        expect(screen.getByText('Movie')).toBeTruthy();
-      });
+      const movieColumn = await screen.findByText('Movie');
+      expect(movieColumn).toBeTruthy();
       expect(screen.getByText('Actor')).toBeTruthy();
       expect(screen.getByText('Higher quality')).toBeTruthy();
 
       // explore suggestion column
-      await userEvent.click(screen.getByText('Movie'));
+      userEvent.click(movieColumn);
       // choose suggestion column
-      await userEvent.click(screen.getByText('name'));
-      await waitFor(() => {
-        // table should update accordingly
-        expect(screen.getAllByText('2, movie 2')).toBeTruthy();
-      });
+      userEvent.click(await screen.findByText('name'));
+      // table should update accordingly
+      expect(
+        await screen.findByText('2, movie 2', undefined, { timeout: 1000 })
+      ).toBeTruthy();
     });
 
     it('select all approve and reject', async () => {

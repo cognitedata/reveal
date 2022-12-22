@@ -364,7 +364,9 @@ export class FdmV2Client implements FlexibleDataModelingClient {
       .runQuery({
         graphQlParams: {
           query,
-          variables: { filter },
+          variables: {
+            filter,
+          },
         },
         dataModelId: externalId,
         schemaVersion: version,
@@ -388,11 +390,13 @@ export class FdmV2Client implements FlexibleDataModelingClient {
     dataModelType,
     dataModelTypeDefs,
     limit,
+    filter,
     searchTerm,
   }: SearchDataDTO): Promise<CdfResourceInstance[]> {
     const query = this.queryBuilder.buildSearchQuery({
       dataModelType,
       dataModelTypeDefs,
+      filter,
     });
 
     return this.mixerApiService
@@ -402,6 +406,7 @@ export class FdmV2Client implements FlexibleDataModelingClient {
           variables: {
             first: limit,
             query: searchTerm,
+            ...(filter ? { filter } : {}),
           },
         },
         dataModelId: externalId,

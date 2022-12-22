@@ -153,6 +153,51 @@ describe('Platypus Data Preview Page - Preview', () => {
     ).should('have.text', 'Sic Dolor amet');
   });
 
+  it('should filter the data for selected type', () => {
+    cy.get('[data-testid="Post"]').click();
+    cy.get('[data-testid="Post"]').should('have.class', 'active');
+    cy.getBySel('data-preview-table').should('be.visible');
+
+    // wait for rows to render
+    cy.get('.ag-center-cols-container .ag-row').should('have.length', 3);
+
+    // on hover, the menu button should be visible
+    cy.get(
+      '.ag-header .ag-header-cell[col-id="title"] .ag-header-cell-menu-button'
+    ).should('exist');
+
+    // when opened, the filter panel should be displayed
+    cy.get(
+      '.ag-header .ag-header-cell[col-id="title"] .ag-header-cell-menu-button'
+    ).click({ force: true });
+    cy.get('.ag-popup .ag-filter .ag-input-field input.ag-text-field-input')
+      .first()
+      .should('be.visible');
+
+    // type the filter query and check the results, should filter after 500ms
+    cy.get('.ag-popup .ag-filter .ag-input-field input.ag-text-field-input')
+      .first()
+      .type('Sic Dolor amet');
+
+    // check the data
+    // check strings
+    // wait for rows to render
+    cy.get('.ag-center-cols-container .ag-row').should('have.length', 1);
+    cy.get(
+      '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="title"]'
+    ).should('have.text', 'Sic Dolor amet');
+
+    // clicking again should show filter form again and you should be able to reset the form
+    cy.get(
+      '.ag-header .ag-header-cell[col-id="title"] .ag-header-cell-menu-button'
+    ).click({ force: true });
+
+    // type the filter query and check the results, should filter after 500ms
+    cy.get('.ag-popup .ag-filter button[ref="resetFilterButton"]').click();
+
+    cy.get('.ag-center-cols-container .ag-row').should('have.length', 3);
+  });
+
   it('should search through primitive type list in the side panel', () => {
     cy.get('[data-testid="Post"]').click();
     cy.get('[data-testid="Post"]').should('have.class', 'active');

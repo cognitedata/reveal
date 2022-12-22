@@ -412,4 +412,121 @@
   padding: 0;
 }
 
+/********** FILTERS AND MENUS ***********/
+/* NOTE: Since we don't have any default theme, this styles are not included */
+/* I had to copy them from one of the built in themes from ag-grid */
+.cog-data-grid.cog-data-grid-default .ag-menu {
+  min-width: 220px;
+  background: white;
+  box-shadow: 0px 1px 16px 4px rgb(79 82 104 / 10%),
+    0px 1px 8px rgb(79 82 104 / 8%), 0px 1px 2px rgb(79 82 104 / 24%);
+  border-radius: 8px;
+  padding: 8px;
+  overflow: visible;
+}
+
+.cog-data-grid.cog-data-grid-default .ag-filter .ag-input-field,
+.cog-data-grid.cog-data-grid-default .ag-filter-select.ag-select {
+  border: 2px solid rgba(83, 88, 127, 0.16);
+  width: 100%;
+  display: inline-block;
+  border-radius: 6px;
+  height: 36px;
+  line-height: 36px;
+  padding: 0px 0px 0px 10px;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+}
+
+.cog-data-grid.cog-data-grid-default .ag-filter .ag-input-field:active,
+.cog-data-grid.cog-data-grid-default .ag-filter .ag-input-field:hover,
+.cog-data-grid.cog-data-grid-default .ag-filter .ag-input-field:focus,
+.cog-data-grid.cog-data-grid-default .ag-filter-select.ag-select:active,
+.cog-data-grid.cog-data-grid-default .ag-filter-select.ag-select:hover,
+.cog-data-grid.cog-data-grid-default .ag-filter-select.ag-select:focus {
+  border: 2px solid var(--cogs-midblue-3);
+}
+
+.cog-data-grid.cog-data-grid-default .ag-input-wrapper,
+.ag-picker-field-wrapper {
+  height: 100%;
+}
+
+.cog-data-grid.cog-data-grid-default .ag-filter .ag-input-field input {
+  outline: 0;
+  border: 0;
+}
+
+.cog-data-grid.cog-data-grid-default
+  button.ag-standard-button.ag-filter-apply-panel-button {
+  background: var(--cogs-btn-color-secondary, #efefef);
+  color: var(--cogs-btn-color-inverted, #404040);
+  border-radius: var(--cogs-btn-border-radius, 6px);
+  padding: 8px 16px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  border: 0;
+  flex: 1;
+  text-align: center;
+  align-content: center;
+}
+
+.cog-data-grid.cog-data-grid-default
+  button.ag-standard-button.ag-filter-apply-panel-button:hover {
+  background: var(--cogs-btn-color-secondary--hover, #d9d9d9);
+}
+
+.cog-data-grid.cog-data-grid-default .ag-header-cell-menu-button {
+  opacity: 1;
+  margin-left: 2px;
+}
+
+.cog-data-grid.cog-data-grid-default .ag-header-cell .menu-button,
+.cog-data-grid.cog-data-grid-default .ag-header-cell .filter-button {
+  display: none;
+  opacity: 0;
+}
+
+.cog-data-grid.cog-data-grid-default
+  .ag-header-cell.ag-header-cell-filtered:not(.ag-column-menu-visible):not(.ag-header-active)
+  .filter-button {
+  display: block;
+  opacity: 1;
+}
+
+.cog-data-grid.cog-data-grid-default
+  .ag-header-cell.ag-header-active
+  .menu-button,
+.cog-data-grid.cog-data-grid-default
+  .ag-header-cell.ag-column-menu-visible
+  .menu-button {
+  display: block;
+  opacity: 1;
+}
+
+.cog-data-grid.cog-data-grid-default .ag-select-list {
+  padding: 8px;
+  background: #fff;
+  margin-left: -10px;
+  background-color: white;
+  border-radius: 8px !important;
+  box-shadow: var(--cogs-elevation--overlay) !important;
+}
+
+.cog-data-grid.cog-data-grid-default .ag-select-list-item,
+.cog-data-grid.cog-data-grid-default .ag-list-item {
+  padding: 8px 12px;
+  color: var(--cogs-text-color);
+  border-radius: var(--cogs-border-radius--default);
+  display: block;
+  white-space: nowrap;
+}
+
+.cog-data-grid.cog-data-grid-default .ag-list-item.ag-active-item {
+  background-color: var(--cogs-midblue-7);
+}
+
 /**------------ END LARGE TABLE STYLES ----------*/

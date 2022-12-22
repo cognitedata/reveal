@@ -12,6 +12,8 @@ import {
 import { IDatasource, IGetRowsParams } from 'ag-grid-community';
 import { useRef } from 'react';
 
+import { convertToGraphQlFilters } from '../utils/list-data-source-utils';
+
 export type ListDataSourceProps = {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
@@ -47,6 +49,11 @@ export const useListDataSource = ({
         hasNextPage.current = false;
       }
 
+      const filter = convertToGraphQlFilters(
+        params.filterModel,
+        dataModelType.fields
+      );
+
       if (params.context.searchTerm) {
         return dataManagementHandler
           .searchData({
@@ -54,6 +61,7 @@ export const useListDataSource = ({
             dataModelTypeDefs,
             dataModelVersion,
             limit: 100,
+            filter,
             searchTerm: params.context.searchTerm,
           })
           .then((response) => {
@@ -83,6 +91,7 @@ export const useListDataSource = ({
             dataModelVersion,
             hasNextPage: hasNextPage.current,
             limit,
+            filter,
             sort,
           })
           .then((response) => {

@@ -14,8 +14,8 @@ export class MixerQueryBuilder {
     return `${operationType}${typeName}`;
   }
 
-  getFilterType(typeName: string): string {
-    return `_List${typeName}Filter`;
+  getFilterType(typeName: string, filterType: 'List' | 'Search'): string {
+    return `_${filterType}${typeName}Filter`;
   }
 
   buildListQuery(dto: BuildListQueryDTO): string {
@@ -42,7 +42,7 @@ export class MixerQueryBuilder {
         ? `${this.getOperationName(
             dataModelType.name,
             OPERATION_TYPE.LIST
-          )} ($filter: ${this.getFilterType(dataModelType.name)})`
+          )} ($filter: ${this.getFilterType(dataModelType.name, 'List')})`
         : ''
     } {
     ${this.getOperationName(
@@ -75,14 +75,21 @@ export class MixerQueryBuilder {
   buildSearchQuery({
     dataModelType,
     dataModelTypeDefs,
+    filter,
   }: BuildSearchQueryDTO): string {
     const operationName = this.getOperationName(
       dataModelType.name,
       OPERATION_TYPE.SEARCH
     );
 
-    return `query ${operationName}($first: Int, $query: String!) {
-    ${operationName}(first: $first, query: $query) {
+    const filterString = filter
+      ? `, $filter: ${this.getFilterType(dataModelType.name, 'Search')}`
+      : '';
+
+    return `query ${operationName}($first: Int, $query: String!${filterString}) {
+    ${operationName}(first: $first, query: $query${
+      filter ? ', filter: $filter' : ''
+    }) {
       items {
         externalId
         ${dataModelType.fields

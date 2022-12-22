@@ -5,6 +5,8 @@ import { Button, Icon, IconType } from '@cognite/cogs.js';
 interface CustomHeaderState {
   sortDirection: string;
   sortable: boolean;
+  enableMenu: boolean;
+  showFilterIcon: boolean;
 }
 export interface CustomHeaderProps extends IHeaderParams {
   headerIcon: IconType;
@@ -20,41 +22,59 @@ export class CustomHeader extends PureComponent<
   private menuButton: any;
   constructor(props: CustomHeaderProps) {
     super(props);
-
     this.state = {
       sortDirection: '',
       sortable: props.enableSorting!,
+      enableMenu: props.enableMenu === true,
+      showFilterIcon: this.props.column.isFilterActive(),
     };
 
     this.onSortRequested = this.onSortRequested.bind(this);
     this.onSortChanged = this.onSortChanged.bind(this);
     this.getSortDirection = this.getSortDirection.bind(this);
     this.onMenuClicked = this.onMenuClicked.bind(this);
+    this.onFilterChanged = this.onFilterChanged.bind(this);
   }
 
   componentDidMount() {
     this.onSortChanged();
     this.props.column.addEventListener('sortChanged', this.onSortChanged);
+    this.props.column.addEventListener('filterChanged', this.onFilterChanged);
   }
 
   componentWillUnmount() {
     this.props.column.removeEventListener('sortChanged', this.onSortChanged);
+    this.props.column.removeEventListener(
+      'filterChanged',
+      this.onFilterChanged
+    );
   }
 
   render() {
     const sortIndex = this.props.column.getSortIndex();
     return (
       <div className="ag-cell-label-container ag-header-cell-sorted-none">
-        {this.props.enableMenu && (
+        {this.state.enableMenu && (
           <span
             data-ref="eMenu"
             ref={(menuButton) => {
               this.menuButton = menuButton;
             }}
             onClick={this.onMenuClicked}
-            className="ag-header-icon ag-header-cell-menu-button ag-header-menu-always-show"
+            className={'ag-header-icon ag-header-cell-menu-button '}
+            aria-hidden="true"
           >
-            <Icon type="HamburgerMenu" />
+            <Button
+              size="small"
+              className="menu-button"
+              onClick={this.onMenuClicked}
+            >
+              <Icon type="EllipsisVertical" />
+            </Button>
+
+            <Button size="small" className="filter-button">
+              <Icon type="Filter" />
+            </Button>
           </span>
         )}
 
@@ -103,10 +123,6 @@ export class CustomHeader extends PureComponent<
           <span data-ref="eText" className="ag-header-cell-text">
             {this.props.displayName}
           </span>
-          <span
-            data-ref="eFilter"
-            className="ag-header-icon ag-header-label-icon ag-filter-icon ag-hidden"
-          ></span>
         </div>
       </div>
     );
@@ -114,11 +130,18 @@ export class CustomHeader extends PureComponent<
 
   onMenuClicked() {
     this.props.showColumnMenu(this.menuButton);
+    this.props.column.setMenuVisible(true);
   }
 
   onSortChanged() {
     this.setState({
       sortDirection: this.props.column.getSort() || '',
+    });
+  }
+
+  onFilterChanged() {
+    this.setState({
+      showFilterIcon: this.props.column.isFilterActive(),
     });
   }
 

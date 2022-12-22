@@ -13,7 +13,7 @@ interface SelectCellEditorProps extends ICellEditorParams {
   options: Option[];
 }
 
-export default class SelectCellEditor
+export class SelectCellEditor
   extends Component<SelectCellEditorProps, SelectCellEditorState>
   implements ICellEditor
 {
