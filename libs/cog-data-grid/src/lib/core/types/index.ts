@@ -60,8 +60,8 @@ export interface ColumnConfig {
 
 export interface GridConfig {
   columns: ColumnConfig[];
-  customFunctions: any[];
-  dataSources: any[];
+  customFunctions?: any[];
+  dataSources?: any[];
 }
 
 export interface ColumnTypes {

@@ -1,0 +1,104 @@
+import { CogDataTable } from '@cognite/cog-data-grid';
+import { Pagination } from '@cognite/cogs.js';
+import { DataModel, StorageProviderType } from '@platypus/platypus-core';
+import { RowClickedEvent } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+import {
+  useMemo,
+  useRef,
+  useCallback,
+  ForwardedRef,
+  useImperativeHandle,
+} from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDataModelsGridConfig } from '../../hooks/useDataModelsGridConfig';
+import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
+import { PaginationWrapper } from './elements';
+import React from 'react';
+import { useInjection } from '@platypus-app/hooks/useInjection';
+import { TOKENS } from '@platypus-app/di';
+
+const RESULTS_PER_PAGE = 25;
+
+export interface DataModelsTableProps {
+  dataModels: DataModel[];
+}
+
+export const DataModelsTable = React.forwardRef(
+  (props: DataModelsTableProps, forwardRef: ForwardedRef<AgGridReact>) => {
+    const gridRef = useRef<AgGridReact>(null);
+
+    useImperativeHandle(forwardRef, () => gridRef.current as any);
+
+    const localStorageProvider = useInjection(
+      TOKENS.storageProviderFactory
+    ).getProvider(StorageProviderType.localStorage);
+
+    const navigate = useNavigate();
+    const { getColDefs, getGridOptions } = useDataModelsGridConfig();
+
+    // eslint-disable-next-line
+    const colDefs = useMemo(() => getColDefs(), []);
+
+    // eslint-disable-next-line
+    const gridOptions = useMemo(() => getGridOptions(), []);
+
+    const dataModelsWithDrafts = useMemo(
+      () =>
+        localStorageProvider
+          .getKeys()
+          .filter((key: string) => key.endsWith('_drafts'))
+          .map((key: string) => key.replace('_drafts', '')),
+      [localStorageProvider]
+    );
+
+    const totalPages = useMemo(
+      () => Math.ceil(props.dataModels.length / RESULTS_PER_PAGE),
+      [props.dataModels.length]
+    );
+
+    const handleRowClicked = useCallback((event: RowClickedEvent) => {
+      const dataModel = event.data as DataModel;
+      navigate(
+        `/data-models/${dataModel.space}/${dataModel.id}/${DEFAULT_VERSION_PATH}`
+      );
+      // eslint-disable-next-line
+    }, []);
+
+    return (
+      <div style={{ flex: 1, overflow: 'hidden' }}>
+        <CogDataTable
+          ref={gridRef}
+          rowData={props.dataModels}
+          columnDefs={colDefs}
+          {...gridOptions}
+          context={{
+            dataModelsWithDrafts: dataModelsWithDrafts || [],
+          }}
+          wrapperStyle={{ height: 'calc(100% - 100px)' }}
+          theme={'basic-striped'}
+          pagination={true}
+          paginationPageSize={10}
+          suppressPaginationPanel={true}
+          onRowClicked={handleRowClicked}
+          onGridReady={(e) => e.api.sizeColumnsToFit()}
+        />
+        {totalPages > 1 ? (
+          <PaginationWrapper>
+            <Pagination
+              totalPages={totalPages}
+              itemsPerPage={RESULTS_PER_PAGE}
+              size={'small'}
+              hideItemsPerPage
+              onPageChange={(pageNumber) => {
+                if (gridRef && gridRef.current) {
+                  gridRef?.current?.api.paginationGoToPage(pageNumber);
+                }
+              }}
+            />
+          </PaginationWrapper>
+        ) : null}
+      </div>
+    );
+  }
+);

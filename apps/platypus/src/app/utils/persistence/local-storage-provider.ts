@@ -13,7 +13,7 @@ export class LocalStorageProvider implements StorageProvider {
 
   getKeys(): any {
     const keys = Object.keys(localStorage) || [];
-    return keys.map((key) => this.getActualKeyName(key));
+    return keys.map((key) => this.getActualKeyName(key)).filter((key) => key);
   }
 
   getItem(key: string): any {
@@ -56,10 +56,10 @@ export class LocalStorageProvider implements StorageProvider {
     return `${this.prefix}.${key}`;
   }
 
-  private getActualKeyName(key: string): string {
+  private getActualKeyName(key: string): string | null {
     const effectivePrefix = this.prefix + '.';
     if (key.startsWith(effectivePrefix))
       return key.substring(effectivePrefix.length);
-    return key;
+    return null;
   }
 }

@@ -1,10 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { generateId } from '@platypus-app/utils/uuid';
-import {
-  DataModelTypeDefsField,
-  DataModelTypeDefsType,
-  KeyValueMap,
-} from '@platypus/platypus-core';
+import { DataModelTypeDefsType, KeyValueMap } from '@platypus/platypus-core';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface DraftRowData extends KeyValueMap {
@@ -209,18 +205,20 @@ export const compatiblizeDraftRowsData = (
   dataModelType: DataModelTypeDefsType
 ): DraftRowData[] => {
   // omits fields not part of the type anymore and add newly added fields from the type
-  const compatibleDraftRows = draftRows.map((draftRowData: DraftRowData) => {
-    return dataModelType.fields.reduce((compatibleRowObj, field) => {
-      return {
-        ...compatibleRowObj,
-        externalId: draftRowData['externalId'],
-        _draftStatus: draftRowData['_draftStatus'],
-        _isDraftSelected: draftRowData['_isDraftSelected'] === true,
-        [field.name]:
-          field.name in draftRowData ? draftRowData[field.name] : null,
-      };
-    }, {} as DraftRowData);
-  });
+  const compatibleDraftRows = (draftRows || []).map(
+    (draftRowData: DraftRowData) => {
+      return dataModelType.fields.reduce((compatibleRowObj, field) => {
+        return {
+          ...compatibleRowObj,
+          externalId: draftRowData['externalId'],
+          _draftStatus: draftRowData['_draftStatus'],
+          _isDraftSelected: draftRowData['_isDraftSelected'] === true,
+          [field.name]:
+            field.name in draftRowData ? draftRowData[field.name] : null,
+        };
+      }, {} as DraftRowData);
+    }
+  );
 
   return compatibleDraftRows;
 };

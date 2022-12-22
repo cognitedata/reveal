@@ -13,12 +13,7 @@ import {
   ValueGetterParams,
 } from 'ag-grid-community';
 import merge from 'lodash/merge';
-import {
-  GridConfig,
-  ColumnDataType,
-  ColumnConfig,
-  ColumnTypes,
-} from '../types';
+import { GridConfig, ColumnDataType, ColumnTypes } from '../types';
 import { decimalValueFormatter } from '../utils';
 import SelectCellEditor from '../../components/select-cell-editor';
 
@@ -215,15 +210,16 @@ export class GridConfigService {
             headerName: columnConfig.label,
             type: columnConfig.columnType
               ? columnConfig.columnType
-              : this.getColumnType(columnConfig),
+              : this.getColumnType(columnConfig.dataType, columnConfig.isList),
             editable: true,
             resizable: true,
             cellClassRules: cellClassRules,
             width: userProvidedColDef.width || (index === 0 ? 240 : 200),
             cellRendererParams: {
-              listDataType: this.getColumnType(columnConfig).includes(
-                'listColType'
-              )
+              listDataType: this.getColumnType(
+                columnConfig.dataType,
+                columnConfig.isList
+              ).includes('listColType')
                 ? columnConfig.dataType
                 : ColumnDataType.Text,
             },
@@ -235,7 +231,7 @@ export class GridConfigService {
       .filter((col) => col);
   }
 
-  private getColumnType({ dataType, isList }: ColumnConfig): string[] {
+  getColumnType(dataType: ColumnDataType | string, isList = false): string[] {
     //Handle here for now, untill we migrate all column types
     let dataTypeName = this.normalizeName(dataType);
     const columnTypes: string[] = [];
@@ -310,8 +306,8 @@ export class GridConfigService {
     });
   }
 
-  private getColTypeProps(iconName: string, theme: string): ColDef {
-    if (theme === 'compact') {
+  getColTypeProps(iconName: string, theme: string): ColDef {
+    if (theme === 'compact' || theme === 'basic-striped') {
       return {} as ColDef;
     }
 

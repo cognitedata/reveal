@@ -23,6 +23,7 @@ export const CogDataGridStyled = (props: CogDataGridStyledProps) => {
     default: 'cog-data-grid-default',
     compact: 'cog-data-grid-compact',
     suggestions: 'cog-data-grid-suggestions',
+    'basic-striped': 'cog-data-grid-basic-striped',
   };
 
   const classNames = ['cog-data-grid', themeClasses[props.theme]];

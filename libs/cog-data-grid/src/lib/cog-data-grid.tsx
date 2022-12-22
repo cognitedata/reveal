@@ -23,7 +23,7 @@ import { ThemeNames } from './types';
 export interface CogDataGridProps extends AgGridReactProps {
   theme?: ThemeNames;
   data?: KeyValueMap[];
-  config: GridConfig;
+  config?: GridConfig;
   /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
   columnTypes?: ColumnTypes;
   gridOptions?: GridOptions;
@@ -36,6 +36,10 @@ export interface CogDataGridProps extends AgGridReactProps {
   wrapperStyle?: CSSProperties;
 }
 
+/**
+ * @deprecated This component is deprecated and will be removed soon.
+ * Instead we are going to use CogDataTable and use the service to share the configs
+ */
 export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
   (props: CogDataGridProps, ref: ForwardedRef<AgGridReact>) => {
     const [isGridInit, setIsGridInit] = useState(false);
@@ -48,7 +52,11 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
     ) as GridOptions;
 
     useEffect(() => {
-      const generatedColDefs = gridConfigService.buildColDefs(props.config);
+      if (!props.config && !isGridInit) {
+        setIsGridInit(true);
+        return;
+      }
+      const generatedColDefs = gridConfigService.buildColDefs(props.config!);
       setColDefs(generatedColDefs as any);
       setIsGridInit(true);
 
@@ -92,6 +100,7 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
 
     const updatedProps = Object.assign(defaultGridOptions, props.gridOptions);
 
+    console.log(updatedProps, filteredProps, colDefs);
     return (
       <CogDataGridStyled
         theme={theme}
@@ -101,7 +110,9 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
       >
         <AgGridReact
           ref={ref}
-          columnDefs={colDefs}
+          columnDefs={
+            !props.config && props.columnDefs ? props.columnDefs : colDefs
+          }
           icons={{
             sortAscending: () => {
               const domNode = document.createElement('div');
