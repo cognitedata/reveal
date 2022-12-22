@@ -5,8 +5,14 @@ export const BenchmarkingTypeFilterButton = styled(Button)`
   width: 100%;
   justify-content: flex-start;
 
-  .type-text {
-    white-space: nowrap;
+  .button-text {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .type-text {
+      white-space: nowrap;
+    }
   }
 
   .cogs-icon {
@@ -46,6 +52,8 @@ export const MenuItem = styled.div`
 export const BenchmarkingTypeFilterDropdown = styled.div`
   flex: 1;
   margin-right: 8px;
+  max-width: 260px;
+  min-width: 150px;
 
   .benchmarking-type-dropdown {
     min-width: 250px;

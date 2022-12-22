@@ -96,7 +96,7 @@ export const BenchmarkingTypeSelect = ({
           iconPlacement="right"
           aria-label="Type"
         >
-          <div>
+          <div className="button-text">
             <strong>Type:&nbsp;</strong>
             <span className="type-text">
               {value !== 'absolute' ? `Difference - ${value}` : 'Absolute'}
