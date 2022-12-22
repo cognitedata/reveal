@@ -17,7 +17,7 @@ module.exports = () => {
     roots: ['<rootDir>'],
     extensionsToTreatAsEsm: spec.extensionsToTreatAsEsm,
     transform: {
-      ...spec.transform,
+      ...spec.transform
     },
     testRegex: '(.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
     moduleFileExtensions: ['ts', 'js', 'json', 'node'],
