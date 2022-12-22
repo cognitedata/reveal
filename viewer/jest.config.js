@@ -7,12 +7,18 @@ const path = require('path');
 process.env.VERSION = 'test';
 process.env.MIXPANEL_TOKEN = 'test';
 
+const { jsWithTsESM: spec } = require('ts-jest/presets');
+
+spec.transform['^.+\\.m?[tj]sx?$'][1].tsconfig = 'tsconfig.test.json';
+
 module.exports = () => {
   return {
     rootDir: '.',
     roots: ['<rootDir>'],
-    transform: {},
-    preset: 'ts-jest/presets/js-with-ts-esm',
+    extensionsToTreatAsEsm: spec.extensionsToTreatAsEsm,
+    transform: {
+      ...spec.transform,
+    },
     testRegex: '(.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
     moduleFileExtensions: ['ts', 'js', 'json', 'node'],
     // Transform certain packages that don't export commonJS
