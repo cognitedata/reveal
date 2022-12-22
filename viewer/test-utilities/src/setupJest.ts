@@ -58,7 +58,8 @@ const consoleError = console.error.bind(console);
 (window as any).TextDecoder = TextDecoder;
 (window as any).TextEncoder = TextEncoder;
 
+import packageObject from '../../package.json';
+
 Object.assign(process.env, {
-  VERSION: '4.0'
-  // VERSION: require('../../package.json').version
+  VERSION: packageObject.version
 });
