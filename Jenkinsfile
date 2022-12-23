@@ -148,20 +148,6 @@ def pods = { body ->
             ])
 
             node(POD_LABEL) {
-              dir('main') {
-                stage('Checkout code') {
-                  checkout(scm)
-                }
-
-                stage('Delete comments') {
-                  deleteComments(PR_COMMENT_MARKER)
-                }
-
-                stage('Install dependencies') {
-                  yarn.setup()
-                }
-              }
-
               body()
             }
           }
@@ -177,13 +163,31 @@ pods {
     logErrors: isMaster || isRelease
   ) {
     dir('main') {
-      stage('git setup') {
-        // NX needs the references to the master in order to check affected projects.
-        withCredentials([usernamePassword(credentialsId: 'githubapp', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
-          sh("git config --global credential.helper '!f() { sleep 1; echo \"username=${GH_USER}\"; echo \"password=${GITHUB_TOKEN}\"; }; f'")
-          sh("git config --global safe.directory '*'")
-          sh("git fetch origin master:refs/remotes/origin/master")
-        }
+      stage('Checkout code') {
+        checkout(scm)
+      }
+
+      stage('Delete comments') {
+        deleteComments(PR_COMMENT_MARKER)
+      }
+
+      stage('Install dependencies') {
+        yarn.setup()
+      }
+
+      stage('Git setup') {
+          // NX needs the references to the master in order to check affected projects.
+          withCredentials([usernamePassword(credentialsId: 'githubapp', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
+            sh("git config --global credential.helper '!f() { sleep 1; echo \"username=${GH_USER}\"; echo \"password=${GITHUB_TOKEN}\"; }; f'")
+            sh("git fetch origin master:refs/remotes/origin/master")
+          }
+          // the fas container interacts with git when running npx commands.
+          // since the git checkout is done in a different container,
+          // the user permissions seem altered when git is executed from the fas container,
+          // therefore we need to mark the folder as safe
+          container("fas") {
+            sh("git config --global --add safe.directory ${env.WORKSPACE}/main")
+          }
       }
 
       parallel(
