@@ -60,6 +60,8 @@ export const FullscreenButton: React.FC<{ item: ResourceItem }> = ({
     trackUsage(EXPLORATION.CLICK.EXPAND_FULL_PAGE, item);
   };
 
+  if (!isPreview) return null;
+
   return (
     <Tooltip content={isPreview ? 'Open in fullscreen' : 'Close fullscreen'}>
       <Button
