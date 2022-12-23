@@ -181,6 +181,7 @@ pods {
         // NX needs the references to the master in order to check affected projects.
         withCredentials([usernamePassword(credentialsId: 'githubapp', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
           sh("git config --global credential.helper '!f() { sleep 1; echo \"username=${GH_USER}\"; echo \"password=${GITHUB_TOKEN}\"; }; f'")
+          sh("git config --global safe.directory '*'")
           sh("git fetch origin master:refs/remotes/origin/master")
         }
       }
