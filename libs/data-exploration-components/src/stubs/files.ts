@@ -377,4 +377,30 @@ export const files: FileInfo[] = [
     lastUpdatedTime: new Date(),
     createdTime: new Date(),
   },
+  {
+    id: 334418,
+    name: 'example.txt',
+    mimeType: 'text/plain',
+    uploaded: true,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+  },
+
+  {
+    id: 586501,
+    name: 'example.json',
+    mimeType: 'application/json',
+    uploaded: true,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+  },
+
+  {
+    id: 448724,
+    name: 'example.csv',
+    mimeType: 'text/csv',
+    uploaded: true,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+  },
 ];

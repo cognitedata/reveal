@@ -6,6 +6,7 @@ import ReactUnifiedViewer, {
   AnnotationType,
   ContainerConfig,
   getContainerConfigFromFileInfo,
+  isSupportedFileInfo,
   TooltipAnchorPosition,
   ToolType,
   UnifiedViewer,
@@ -14,11 +15,8 @@ import { Loader } from '@data-exploration-components/components';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { ResourceItem } from '@data-exploration-components/types';
-import {
-  isFilePreviewable,
-  lightGrey,
-  readablePreviewableFileTypes,
-} from '@data-exploration-components/utils';
+import { lightGrey } from '@data-exploration-components/utils';
+
 import { usePnIdOCRResultFilterQuery } from '../../../../domain/pnids/internal/hooks/usePnIdOCRResultFilterQuery';
 import { AnnotationHoverPreview } from './AnnotationHoverPreview';
 import { ActionTools } from './ActionTools';
@@ -96,6 +94,13 @@ export const FilePreviewUFV = ({
     ExtendedAnnotation[]
   >([]);
 
+  const { data: file, isFetched: isFileFetched } = useCdfItem<FileInfo>(
+    'files',
+    {
+      id: fileId,
+    }
+  );
+
   useEffect(() => {
     if (selectedAnnotations.length === 1) {
       const [annotation] = selectedAnnotations;
@@ -118,16 +123,9 @@ export const FilePreviewUFV = ({
     }
   }, [creatable]);
 
-  const { data: file, isFetched: fileFetched } = useCdfItem<FileInfo>('files', {
-    id: fileId,
-  });
-
-  const isMimeTypeSet = file && file.mimeType;
-  const canPreviewFile = file && isFilePreviewable(file);
-
   useEffect(() => {
     (async () => {
-      if (file?.id && file?.mimeType) {
+      if (file) {
         setContainer(
           await getContainerConfigFromFileInfo(sdk as any, file, {
             id: getContainerId(file.id),
@@ -138,7 +136,7 @@ export const FilePreviewUFV = ({
         );
       }
     })();
-  }, [file, file?.id, file?.mimeType, page, sdk]);
+  }, [file, page, sdk]);
 
   const onClickAnnotation = useCallback(
     (annotation: ExtendedAnnotation) =>
@@ -191,7 +189,7 @@ export const FilePreviewUFV = ({
     }
 
     const focusedAnnotation = annotations.find(
-      ({ id }) => String(id) === hoverId
+      ({ id: annotationId }) => String(annotationId) === hoverId
     );
     if (!focusedAnnotation) {
       return undefined;
@@ -201,7 +199,7 @@ export const FilePreviewUFV = ({
       {
         targetId: String(focusedAnnotation?.id),
         content: <AnnotationHoverPreview annotation={focusedAnnotation} />,
-        anchorTo: TooltipAnchorPosition.BOTTOM,
+        anchorTo: TooltipAnchorPosition.BOTTOM_CENTER,
       },
     ];
   }, [enableToolTips, hoverId, annotations]);
@@ -258,31 +256,16 @@ export const FilePreviewUFV = ({
 
   const handlePageChange = (pageNumber: number) => setPage(pageNumber);
 
-  if (!isMimeTypeSet) {
-    return (
-      <CenteredPlaceholder>
-        <h1>No preview</h1>
-        <p>
-          Please set a MIME type first. <br />
-          File types that can be previewed are: {readablePreviewableFileTypes()}
-        </p>
-      </CenteredPlaceholder>
-    );
+  if (!isFileFetched || container === undefined || file === undefined) {
+    return <Loader />;
   }
 
-  if (!canPreviewFile) {
+  if (!isSupportedFileInfo(file)) {
     return (
       <CenteredPlaceholder>
         <h1>No preview for this type of file</h1>
-        <p>
-          File types that can be previewed are: {readablePreviewableFileTypes()}
-        </p>
       </CenteredPlaceholder>
     );
-  }
-
-  if (!fileFetched || container === undefined) {
-    return <Loader />;
   }
 
   const toolProps = creatable ? RectangleToolProps : PanToolProps;

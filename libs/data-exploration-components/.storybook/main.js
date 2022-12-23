@@ -16,6 +16,10 @@ module.exports = {
     }
 
     // add your own webpack tweaks if needed
+    config.module.rules.push({
+      test: /\.pdf$/,
+      use: ['file-loader'],
+    });
 
     return config;
   },

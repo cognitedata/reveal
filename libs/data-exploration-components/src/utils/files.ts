@@ -2,6 +2,7 @@ import mime from 'mime-types';
 import { CogniteClient, FileInfo } from '@cognite/sdk';
 import lowerCase from 'lodash/lowerCase';
 import { Document } from '@data-exploration-components/domain/documents';
+import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
 
 export const getMIMEType = (fileURI: string) => mime.lookup(fileURI);
 
@@ -11,6 +12,9 @@ export const PREVIEWABLE_FILE_TYPES = [
   'tif',
   'tiff',
   'pdf',
+  'txt',
+  'json',
+  'csv',
 ];
 
 export const readablePreviewableFileTypes = () =>
@@ -25,8 +29,18 @@ export const readablePreviewableFileTypes = () =>
     return `${acc} or ${fileType}`;
   }, '');
 
-export const isFilePreviewable = (file?: FileInfo | Document) =>
-  isFileOfType(file, PREVIEWABLE_FILE_TYPES);
+export const isDocument = (item: Document | FileInfo): item is Document => {
+  return (item as Document).sourceFile !== undefined;
+};
+
+export const isFilePreviewable = (file?: FileInfo | Document) => {
+  if (file === undefined) return false;
+
+  if (isDocument(file)) {
+    return isSupportedFileInfo(file.sourceFile);
+  }
+  return isSupportedFileInfo(file);
+};
 
 export const isPreviewableImage = (file?: FileInfo | Document) =>
   isFileOfType(file, PREVIEWABLE_IMAGE_TYPES);

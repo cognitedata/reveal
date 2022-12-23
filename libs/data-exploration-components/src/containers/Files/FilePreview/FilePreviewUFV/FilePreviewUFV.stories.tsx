@@ -3,69 +3,124 @@ import React from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { ocrResults, response } from '../resources';
 import { FilePreviewUFV } from './FilePreviewUFV';
-// import pdfFileUrl from '../pnid.pdf';
-// import longPdfFileUrl from '../multipageExample.pdf';
-import testImageUrl from './test-image.png';
+// @ts-ignore
+import pdfFileUrl from '../mock/pnid.pdf';
+// @ts-ignore
+import longPdfFileUrl from '../mock/multipageExample.pdf';
+import testImageUrl from '../mock/test-image.png';
+import { mockTxt, mockJson, mockCsv } from '../mock/mockFiles';
 import { annotations } from './stubs/annotations';
 
 const VIEWER_ID = 'FilePreviewUFV-story';
 const APPLICATION_ID = 'data-exploration-components-storybook';
 
-const pdfFile = {
-  id: 111,
-  externalId: 'PH-ME-P-0153-001.pdf',
-  lastUpdatedTime: new Date(),
-  uploaded: false,
-  createdTime: new Date(),
-  name: 'Random File',
-  mimeType: 'application/pdf',
+const allMockFiles = {
+  pdfFile: {
+    id: 111,
+    externalId: 'PH-ME-P-0153-001.pdf',
+    lastUpdatedTime: new Date(),
+    uploaded: false,
+    createdTime: new Date(),
+    name: 'Random File',
+    mimeType: 'application/pdf',
+    url: pdfFileUrl,
+    hasEventAnnotations: true,
+  },
+
+  longPDF: {
+    id: 222,
+    externalId: 'PH-ME-P-0153-002.pdf',
+    lastUpdatedTime: new Date(),
+    uploaded: false,
+    createdTime: new Date(),
+    name: 'Random File',
+    mimeType: 'application/pdf',
+    url: longPdfFileUrl,
+    hasEventAnnotations: true,
+  },
+
+  testImage: {
+    id: 333,
+    lastUpdatedTime: new Date(),
+    uploaded: false,
+    createdTime: new Date(),
+    name: 'example.png',
+    mimeType: 'image/png',
+    url: testImageUrl,
+    hasEventAnnotations: true,
+  },
+
+  txtFile: {
+    id: 4,
+    lastUpdatedTime: new Date(),
+    uploaded: false,
+    createdTime: new Date(),
+    name: 'example.txt',
+    mimeType: 'text/plain',
+    url: mockTxt,
+    hasEventAnnotations: false,
+  },
+
+  jsonFile: {
+    id: 5,
+    lastUpdatedTime: new Date(),
+    uploaded: false,
+    createdTime: new Date(),
+    name: 'example.json',
+    mimeType: 'application/json',
+    url: mockJson,
+    hasEventAnnotations: false,
+  },
+
+  csvFile: {
+    id: 6,
+    lastUpdatedTime: new Date(),
+    uploaded: false,
+    createdTime: new Date(),
+    name: 'example.csv',
+    mimeType: 'text/csv',
+    url: mockCsv,
+    hasEventAnnotations: false,
+  },
+
+  unsupportedFileTypeFile: {
+    id: 444,
+    externalId: 'PH-ME-P-0153-001.random',
+    lastUpdatedTime: new Date(),
+    uploaded: false,
+    createdTime: new Date(),
+    name: 'Random File',
+    mimeType: 'random/random',
+    url: pdfFileUrl,
+    hasEventAnnotations: false,
+  },
+
+  fileWithoutMimeType: {
+    id: 555,
+    externalId: 'PH-ME-P-0153-001.random',
+    lastUpdatedTime: new Date(),
+    uploaded: false,
+    createdTime: new Date(),
+    name: 'Random File',
+    url: pdfFileUrl,
+    hasEventAnnotations: false,
+  },
 };
 
-const longPDF = {
-  id: 222,
-  externalId: 'PH-ME-P-0153-002.pdf',
-  lastUpdatedTime: new Date(),
-  uploaded: false,
-  createdTime: new Date(),
-  name: 'Random File',
-  mimeType: 'application/pdf',
-};
+const mockFilesList = Object.values(allMockFiles);
 
-const testImage = {
-  id: 333,
-  lastUpdatedTime: new Date(),
-  uploaded: false,
-  createdTime: new Date(),
-  name: 'Factory workers',
-  mimeType: 'image/png',
-};
+const getMockFiles = (ids: (number | string)[]) => {
+  const mockFiles = ids.map((id) =>
+    mockFilesList.find((f) => f.id === Number(id))
+  );
+  if (mockFiles.some((f) => f === undefined)) {
+    throw new Error(
+      `FilePreviewUFV.stories pdfSdkMock: Did not find all files width ids ${ids}`
+    );
+  }
 
-const unsupportedFileTypeFile = {
-  id: 444,
-  externalId: 'PH-ME-P-0153-001.random',
-  lastUpdatedTime: new Date(),
-  uploaded: false,
-  createdTime: new Date(),
-  name: 'Random File',
-  mimeType: 'random/random',
+  return mockFiles;
 };
-
-const fileWithoutMimeType = {
-  id: 555,
-  externalId: 'PH-ME-P-0153-001.random',
-  lastUpdatedTime: new Date(),
-  uploaded: false,
-  createdTime: new Date(),
-  name: 'Random File',
-};
-
-const ALL_FILES = [
-  pdfFile,
-  longPDF,
-  testImage,
-  unsupportedFileTypeFile,
-  fileWithoutMimeType,
-];
 
 const pdfSdkMock = {
   post: async (query: string, { data }: any) => {
@@ -73,43 +128,42 @@ const pdfSdkMock = {
       return { data: { items: [{ count: 1 }] } };
     }
     if (query.includes('files')) {
-      if (data?.items.length) {
-        return {
-          data: {
-            items: ALL_FILES.filter((item) => item.id === data.items[0].id),
-          },
-        };
-      } else {
+      if (!data?.items.length) {
         return [];
       }
+      return {
+        data: {
+          items: getMockFiles(data.items.map((f: any) => f.id)),
+        },
+      };
     }
     if (query.includes('events')) {
-      return { data: { items: response } };
+      const file = getMockFiles([
+        data.filter.metadata.CDF_ANNOTATION_file_id,
+      ])[0];
+      if (file?.hasEventAnnotations) {
+        return { data: { items: response } };
+      }
+      return { data: { items: [] } };
     }
     if (query.includes('ocr')) {
-      if (data.fileId === longPDF.id) {
+      if (data.fileId === allMockFiles.longPDF.id) {
         return { data: { items: ocrResults } };
       }
 
-      throw new Error('ocr results not available');
+      throw new Error('OCR data not available');
     }
     return { data: { items: [] } };
   },
   files: {
     retrieve: async (fileIds: { id: string }[]) => {
-      return fileIds.map(({ id }) => ALL_FILES.find((item) => item.id === +id));
+      return getMockFiles(fileIds.map(({ id }) => id));
     },
-    // getDownloadUrls: async (files: { id: number }[]) => {
-    //   return files.map(({ id }) => {
-    //     let fileUrl = testImageUrl;
-    //     if (id === 111) {
-    //       fileUrl = pdfFileUrl;
-    //     } else if (id === 222) {
-    //       fileUrl = longPdfFileUrl;
-    //     }
-    //     return { downloadUrl: fileUrl };
-    //   });
-    // },
+    getDownloadUrls: async (fileIds: { id: number }[]) => {
+      return getMockFiles(fileIds.map(({ id }) => id)).map((mockFile) => ({
+        downloadUrl: mockFile?.url,
+      }));
+    },
   },
   annotations: {
     list: async () => ({ items: annotations }),
@@ -127,13 +181,58 @@ export default {
   },
 };
 
-export const WithZoomControls: ComponentStory<typeof FilePreviewUFV> = (
-  args
-) => <FilePreviewUFV {...args} />;
-WithZoomControls.args = {
+export const SinglePagePdf: ComponentStory<typeof FilePreviewUFV> = (args) => (
+  <FilePreviewUFV {...args} />
+);
+SinglePagePdf.args = {
   id: VIEWER_ID,
   applicationId: APPLICATION_ID,
-  fileId: pdfFile.id,
+  fileId: allMockFiles.pdfFile.id,
+};
+
+export const MultiPagePdfWithOcr: ComponentStory<typeof FilePreviewUFV> = (
+  args
+) => <FilePreviewUFV {...args} />;
+MultiPagePdfWithOcr.args = {
+  id: VIEWER_ID,
+  applicationId: APPLICATION_ID,
+  fileId: allMockFiles.longPDF.id,
+};
+
+export const Png: ComponentStory<typeof FilePreviewUFV> = (args) => (
+  <FilePreviewUFV {...args} />
+);
+Png.args = {
+  id: VIEWER_ID,
+  applicationId: APPLICATION_ID,
+  fileId: allMockFiles.testImage.id,
+};
+
+export const Txt: ComponentStory<typeof FilePreviewUFV> = (args) => (
+  <FilePreviewUFV {...args} />
+);
+Txt.args = {
+  id: VIEWER_ID,
+  applicationId: APPLICATION_ID,
+  fileId: allMockFiles.txtFile.id,
+};
+
+export const Csv: ComponentStory<typeof FilePreviewUFV> = (args) => (
+  <FilePreviewUFV {...args} />
+);
+Csv.args = {
+  id: VIEWER_ID,
+  applicationId: APPLICATION_ID,
+  fileId: allMockFiles.csvFile.id,
+};
+
+export const Json: ComponentStory<typeof FilePreviewUFV> = (args) => (
+  <FilePreviewUFV {...args} />
+);
+Json.args = {
+  id: VIEWER_ID,
+  applicationId: APPLICATION_ID,
+  fileId: allMockFiles.jsonFile.id,
 };
 
 export const UnsupportedFileType: ComponentStory<typeof FilePreviewUFV> = (
@@ -142,7 +241,7 @@ export const UnsupportedFileType: ComponentStory<typeof FilePreviewUFV> = (
 UnsupportedFileType.args = {
   id: VIEWER_ID,
   applicationId: APPLICATION_ID,
-  fileId: unsupportedFileTypeFile.id,
+  fileId: allMockFiles.unsupportedFileTypeFile.id,
 };
 
 export const FileWithoutMimeType: ComponentStory<typeof FilePreviewUFV> = (
@@ -151,23 +250,5 @@ export const FileWithoutMimeType: ComponentStory<typeof FilePreviewUFV> = (
 FileWithoutMimeType.args = {
   id: VIEWER_ID,
   applicationId: APPLICATION_ID,
-  fileId: fileWithoutMimeType.id,
-};
-
-export const WithPagination: ComponentStory<typeof FilePreviewUFV> = (args) => (
-  <FilePreviewUFV {...args} />
-);
-WithPagination.args = {
-  id: VIEWER_ID,
-  applicationId: APPLICATION_ID,
-  fileId: longPDF.id,
-};
-
-export const Images: ComponentStory<typeof FilePreviewUFV> = (args) => (
-  <FilePreviewUFV {...args} />
-);
-Images.args = {
-  id: VIEWER_ID,
-  applicationId: APPLICATION_ID,
-  fileId: 333,
+  fileId: allMockFiles.fileWithoutMimeType.id,
 };

@@ -1947,15 +1947,15 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^5.8.0":
-  version "5.8.0"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-5.8.0.tgz#5314b3db755abbfda69e4937f79c2b817de58e5a"
-  integrity sha512-dslRprO1YqiuuAN+8A9U1Aqo2NXB6M7IQ4RqSUZCRqtKIOitaOtWqAHMDYRksTX/4GbpLPZCVw0fFtCuzlpLPg==
+"@cognite/unified-file-viewer@^7.2.1":
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-7.2.1.tgz#e772d2936fc4c27720bebf843dfc8a2aca71b6dd"
+  integrity sha512-4A+hvI8gc+cYfg8e+lPqg7V+LZGMK3XlNgNXzh4svGAQRxr9weZ2dtZTsLoY5Y8Ld/7/FpHr4LsYys6j41QHVA==
   dependencies:
     "@cognite/cogs.js" "7.0.3"
     "@cognite/sdk" "^7.13.0"
     chroma-js "^2.4.2"
-    konva "^8.3.9"
+    konva "^8.3.14"
     lodash "^4.17.21"
     mixpanel-browser "^2.45.0"
     pdf-lib "^1.17.1"
@@ -18700,7 +18700,7 @@ klona@^2.0.4, klona@^2.0.5:
   resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.5.tgz#d166574d90076395d9963aa7a928fabb8d76afbc"
   integrity sha512-pJiBpiXMbt7dkzXe8Ghj/u4FfXOOa98fPW+bihOJ4SjnoijweJrNThJfd3ifXpXhREjpoF2mZVH1GfS9LV3kHQ==
 
-konva@^8.3.9:
+konva@^8.3.14:
   version "8.3.14"
   resolved "https://registry.yarnpkg.com/konva/-/konva-8.3.14.tgz#691ecb6f4568c58818359af369f03e7438ea3640"
   integrity sha512-6I/TZppgY3Frs//AvZ87YVQLFxLywitb8wLS3qMM+Ih9e4QcB5Yy8br6eq7DdUzxPdbsYTz1FQBHzNxs08M1Tw==
