@@ -7,11 +7,26 @@ import {
 
 export const EventDetails = ({ event }: { event: CogniteEvent }) => (
   <GeneralDetails>
-    <GeneralDetails.Item name="Type" value={event.type} copyable />
-    <GeneralDetails.Item name="Sub type" value={event.subtype} copyable />
+    <GeneralDetails.Item
+      name="Type"
+      key={`${event.type}-${event.id}`}
+      value={event.type}
+      copyable
+    />
+    <GeneralDetails.Item
+      key={`${event.subtype}-${event.id}`}
+      name="Sub type"
+      value={event.subtype}
+      copyable
+    />
     <GeneralDetails.Item name="Description" value={event.description} />
-    <GeneralDetails.Item name="ID" value={event.id} copyable />
-    <GeneralDetails.Item name="External ID" value={event.externalId} copyable />
+    <GeneralDetails.Item key={event.id} name="ID" value={event.id} copyable />
+    <GeneralDetails.Item
+      key={event.externalId}
+      name="External ID"
+      value={event.externalId}
+      copyable
+    />
     <GeneralDetails.Item
       name="Start time"
       value={<TimeDisplay value={event.startTime} />}

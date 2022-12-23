@@ -7,10 +7,21 @@ import {
 
 export const SequenceDetails = ({ sequence }: { sequence: Sequence }) => (
   <GeneralDetails>
-    <GeneralDetails.Item name="Name" value={sequence.name} copyable />
-    <GeneralDetails.Item name="Description" value={sequence.description} />
-    <GeneralDetails.Item name="ID" value={sequence.id} copyable />
     <GeneralDetails.Item
+      key={sequence.name}
+      name="Name"
+      value={sequence.name}
+      copyable
+    />
+    <GeneralDetails.Item name="Description" value={sequence.description} />
+    <GeneralDetails.Item
+      key={sequence.id}
+      name="ID"
+      value={sequence.id}
+      copyable
+    />
+    <GeneralDetails.Item
+      key={sequence.externalId}
       name="External ID"
       value={sequence.externalId}
       copyable

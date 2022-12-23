@@ -9,11 +9,22 @@ import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastRe
 export function TimeseriesDetails({ timeseries }: { timeseries: Timeseries }) {
   return (
     <GeneralDetails>
-      <GeneralDetails.Item name="Name" value={timeseries.name} copyable />
+      <GeneralDetails.Item
+        name="Name"
+        key={timeseries.name}
+        value={timeseries.name}
+        copyable
+      />
       <GeneralDetails.Item name="Description" value={timeseries.description} />
       <GeneralDetails.Item name="Unit" value={timeseries.unit} />
-      <GeneralDetails.Item name="ID" value={timeseries.id} copyable />
       <GeneralDetails.Item
+        name="ID"
+        key={timeseries.id}
+        value={timeseries.id}
+        copyable
+      />
+      <GeneralDetails.Item
+        key={timeseries.externalId}
         name="External ID"
         value={timeseries.externalId}
         copyable

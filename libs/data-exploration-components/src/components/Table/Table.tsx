@@ -165,7 +165,6 @@ export function Table<T extends TableData>({
     `${id}-column-order`,
     { defaultValue: [] }
   );
-  console.log({ columnOrder }, 'this is rerendering');
 
   const getRowId = React.useCallback(
     (originalRow: T, index: number, parent?: Row<T>) => {

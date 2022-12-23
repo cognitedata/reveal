@@ -24,7 +24,7 @@ type DetailsItemProps = {
   copyable?: boolean;
   link?: string;
 };
-
+// If you enable the copyable props, Make sure to add the Unique key props  to the component wherever it is being used
 export const DetailsItem = ({
   name,
   value,
