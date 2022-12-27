@@ -813,7 +813,7 @@ __metadata:
     eslint-plugin-prettier: 4.2.1
     eslint-plugin-unused-imports: 2.0.0
     file-loader: 6.2.0
-    gl: 6.0.1
+    gl: 6.0.2
     glob: 8.0.3
     glslify: 7.1.1
     glslify-import: 3.1.0
@@ -6618,18 +6618,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gl@npm:6.0.1":
-  version: 6.0.1
-  resolution: "gl@npm:6.0.1"
+"gl@npm:6.0.2":
+  version: 6.0.2
+  resolution: "gl@npm:6.0.2"
   dependencies:
     bindings: ^1.5.0
     bit-twiddle: ^1.0.2
     glsl-tokenizer: ^2.1.5
-    nan: ^2.16.0
+    nan: ^2.17.0
     node-abi: ^3.26.0
     node-gyp: ^9.2.0
     prebuild-install: ^7.1.1
-  checksum: 5634fecc0f9c4c2a9cde49d186648d2c869bf518a3aed463d10bc51448e40d92ec561bbe2d45ed03e33537212cad11fa898ac6056fc2db52f82bfb57c0abb225
+  checksum: 6ee8aa009a984c17644df7803837fb35d98b9393423e7bdac60bbf3cb6d482cbb546376e3534042e94e189fc6f2c981f8f61964c1107ad9bc00f414680d7fa1a
   languageName: node
   linkType: hard
 
@@ -9593,12 +9593,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.16.0":
-  version: 2.16.0
-  resolution: "nan@npm:2.16.0"
+"nan@npm:^2.17.0":
+  version: 2.17.0
+  resolution: "nan@npm:2.17.0"
   dependencies:
     node-gyp: latest
-  checksum: cb16937273ea55b01ea47df244094c12297ce6b29b36e845d349f1f7c268b8d7c5abd126a102c5678a1e1afd0d36bba35ea0cc959e364928ce60561c9306064a
+  checksum: ec609aeaf7e68b76592a3ba96b372aa7f5df5b056c1e37410b0f1deefbab5a57a922061e2c5b369bae9c7c6b5e6eecf4ad2dac8833a1a7d3a751e0a7c7f849ed
   languageName: node
   linkType: hard
 
