@@ -208,21 +208,32 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     MetricsLogger.trackCadNodeTransformOverridden(treeIndices.count, transformMatrix);
     this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
 
-    // Metadata bounding boxes are in CDF space. Precompute the necessary transformation once.
-    const cdfTransformation = this.getModelTransformation().clone().multiply(this.getCdfToDefaultModelTransformation());
+    // Metadata bounding boxes are in CDF space. Precompute the necessary transformations once.
+    const cdfToModelTransform = this.getModelTransformation()
+      .clone()
+      .multiply(this.getCdfToDefaultModelTransformation());
+    const modelToCdfTransform = cdfToModelTransform.clone().invert();
+
+    // Convert the transform to CDF space
+    const transformMatrixCdf = modelToCdfTransform.clone().multiply(transformMatrix).multiply(cdfToModelTransform);
 
     // Update sector bounds
     for (const treeIndex of treeIndices.toArray()) {
-      // Determine the new node bounding box using the original bounding box and applied transform
+      // Compute the original bounding box in CDF space
       const nodeBoundingBox = await this.getBoundingBoxByTreeIndex(treeIndex);
-      nodeBoundingBox.applyMatrix4(transformMatrix);
-      nodeBoundingBox.applyMatrix4(cdfTransformation);
+      nodeBoundingBox.applyMatrix4(modelToCdfTransform);
 
       // Get the sectors that contain this node. Ideally, this should be a lookup performed by the server, but as of now
       // this map is built from loaded sectors. This means it will not work for objects that are not loaded yet.
       const sectorIds = this.cadNode.treeIndexToSectorsMap.get(treeIndex);
+
       if (sectorIds && sectorIds.size) {
-        this.customSectorBounds.registerTransformedNode(treeIndex, nodeBoundingBox, Array.from(sectorIds));
+        this.customSectorBounds.registerTransformedNode(
+          treeIndex,
+          transformMatrixCdf,
+          nodeBoundingBox,
+          Array.from(sectorIds)
+        );
       }
     }
     this.customSectorBounds.recomputeSectorBounds();
