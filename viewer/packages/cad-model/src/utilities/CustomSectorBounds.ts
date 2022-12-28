@@ -24,40 +24,52 @@ export class CustomSectorBounds {
     originalBoundingBox: THREE.Box3,
     inSectors: number[]
   ): void {
-    // Intersect the original node bounding box with the original sector bounds, and store the results for later
-    const originalBoundingBoxInSectors = new Map<number, THREE.Box3>();
-    inSectors.forEach(sectorId => {
-      let originalSectorBounds = this.originalSectorBounds.get(sectorId);
-      if (!originalSectorBounds) {
-        const nodeMetadata = this.cadNode.sectorScene.getSectorById(sectorId);
-        if (!nodeMetadata) {
-          throw new Error(`Failed to get sector bounds for sector with id ${sectorId}`);
+    let transformedNode = this.treeIndexToTransformedNodeMap.get(treeIndex);
+    if (transformedNode) {
+      // Update transform
+      transformedNode.currentTransform.copy(currentTransform);
+
+      // Mark affected sectors as dirty
+      inSectors.forEach(sectorId => {
+        this.sectorsWithInvalidBounds.add(sectorId);
+      });
+    } else {
+      // Intersect the original node bounding box with the original sector bounds, and store the results for later
+      const originalBoundingBoxInSectors = new Map<number, THREE.Box3>();
+      inSectors.forEach(sectorId => {
+        let originalSectorBounds = this.originalSectorBounds.get(sectorId);
+        if (!originalSectorBounds) {
+          const nodeMetadata = this.cadNode.sectorScene.getSectorById(sectorId);
+          if (!nodeMetadata) {
+            throw new Error(`Failed to get sector bounds for sector with id ${sectorId}`);
+          }
+          originalSectorBounds = nodeMetadata.subtreeBoundingBox;
         }
-        originalSectorBounds = nodeMetadata.subtreeBoundingBox;
+
+        const originalBoundingBoxInSector = originalBoundingBox.clone().intersect(originalSectorBounds);
+        if (!originalBoundingBoxInSector.isEmpty()) {
+          originalBoundingBoxInSectors.set(sectorId, originalBoundingBoxInSector);
+        }
+      });
+
+      transformedNode = { currentTransform, originalBoundingBoxInSectors };
+
+      // Update mapping from tree index to transformed node
+      this.treeIndexToTransformedNodeMap.set(treeIndex, transformedNode);
+
+      // Update mapping from sector id to transformed nodes
+      for (const sectorId of inSectors) {
+        const transformedNodesForSector = this.sectorIdToTransformedNodesMap.get(sectorId);
+        if (transformedNodesForSector) {
+          transformedNodesForSector.add(transformedNode);
+        } else {
+          this.sectorIdToTransformedNodesMap.set(sectorId, new Set<TransformedNode>([transformedNode]));
+        }
+
+        // Mark sector bounds as dirty
+        this.sectorsWithInvalidBounds.add(sectorId);
       }
-
-      const originalBoundingBoxInSector = originalBoundingBox.clone().intersect(originalSectorBounds);
-      if (!originalBoundingBoxInSector.isEmpty()) {
-        originalBoundingBoxInSectors.set(sectorId, originalBoundingBoxInSector);
-      }
-    });
-    const transformedNode = { currentTransform, originalBoundingBoxInSectors };
-
-    // Update mapping from tree index to transformed node
-    this.treeIndexToTransformedNodeMap.set(treeIndex, transformedNode);
-
-    // Update mapping from sector id to transformed nodes
-    inSectors.forEach(sectorId => {
-      const transformedNodesForSector = this.sectorIdToTransformedNodesMap.get(sectorId);
-      if (transformedNodesForSector) {
-        transformedNodesForSector.add(transformedNode);
-      } else {
-        this.sectorIdToTransformedNodesMap.set(sectorId, new Set<TransformedNode>([transformedNode]));
-      }
-
-      // Mark sector bounds as dirty
-      this.sectorsWithInvalidBounds.add(sectorId);
-    });
+    }
   }
 
   unregisterTransformedNode(treeIndex: number): void {
