@@ -14,6 +14,7 @@ import {
   decrementOrDeleteIndex
 } from '@reveal/utilities';
 import { Materials } from '@reveal/rendering';
+import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 
 type BatchedBuffer = {
   defragBuffer: DynamicDefragmentedBuffer<Uint8Array>;
@@ -33,7 +34,7 @@ export class GeometryBatchingManager {
     [4, Float32Array]
   ]);
 
-  constructor(group: THREE.Group, materials: Materials) {
+  constructor(group: THREE.Group, materials: Materials, private readonly treeIndexToSectorsMap: TreeIndexToSectorsMap) {
     this._batchedGeometriesGroup = group;
     this._materials = materials;
     this._instancedTypeMap = new Map();
@@ -132,6 +133,15 @@ export class GeometryBatchingManager {
 
     for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
       incrementOrInsertIndex(mesh.userData.treeIndices, treeIndexInterleavedAttribute.getX(i));
+    }
+
+    // Update mapping from tree indices to sector ids
+    if (!this.treeIndexToSectorsMap.isCompleted(sectorId, type)) {
+      for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
+        const treeIndex = treeIndexInterleavedAttribute.getX(i);
+        this.treeIndexToSectorsMap.set(treeIndex, sectorId);
+      }
+      this.treeIndexToSectorsMap.markCompleted(sectorId, type);
     }
 
     const sectorBatches = this._sectorMap.get(sectorId) ?? this.createSectorBatch(sectorId);

@@ -8,6 +8,7 @@ import { SectorRepository } from '@reveal/sector-loader';
 import { ParsedGeometry } from '@reveal/sector-parser';
 import { CadMaterialManager, NodeTransformProvider, RenderMode } from '@reveal/rendering';
 import { GeometryBatchingManager } from '../batching/GeometryBatchingManager';
+import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 
 import { Group, Object3D, Plane, Matrix4 } from 'three';
 
@@ -25,6 +26,7 @@ export class CadNode extends Object3D {
 
   private readonly _sourceTransform: Matrix4;
   private readonly _customTransform: Matrix4;
+  readonly treeIndexToSectorsMap = new TreeIndexToSectorsMap();
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
@@ -37,7 +39,11 @@ export class CadNode extends Object3D {
     batchedGeometryMeshGroup.name = 'Batched Geometry';
 
     const materials = materialManager.getModelMaterials(model.modelIdentifier);
-    this._geometryBatchingManager = new GeometryBatchingManager(batchedGeometryMeshGroup, materials);
+    this._geometryBatchingManager = new GeometryBatchingManager(
+      batchedGeometryMeshGroup,
+      materials,
+      this.treeIndexToSectorsMap
+    );
 
     this._rootSector = new RootSectorNode(model);
 

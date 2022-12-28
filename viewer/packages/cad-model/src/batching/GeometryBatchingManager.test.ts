@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { GeometryBatchingManager } from './GeometryBatchingManager';
 import { Mock } from 'moq.ts';
 import { Materials } from '@reveal/rendering';
+import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 
 describe(GeometryBatchingManager.name, () => {
   let geometryGroup: THREE.Group;
@@ -14,7 +15,7 @@ describe(GeometryBatchingManager.name, () => {
   beforeEach(() => {
     geometryGroup = new THREE.Group();
     const materials = new Mock<Materials>().object();
-    manager = new GeometryBatchingManager(geometryGroup, materials);
+    manager = new GeometryBatchingManager(geometryGroup, materials, new TreeIndexToSectorsMap());
   });
 
   test('batchGeometries() first time adds new geometry to group', () => {
