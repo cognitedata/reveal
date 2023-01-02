@@ -1,6 +1,6 @@
-# 
+#
 # Based on this article https://medium.com/emoteev-blog/10x-faster-ci-with-nx-and-github-actions-9a51fc4e82a6
-# 
+#
 # Control how many jobs run in parallel by changing jobIndex: [1, 2] and jobCount: 2
 # IMPORTANT - Make sure jobCount matches number of elements in jobIndex array
 
@@ -26,7 +26,7 @@ jobs:
           export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_READONLY_TOKEN}}")
           echo "::set-output name=NPMKEY::$NPMKEY"
         id: npm_auth_key
- 
+
       - name: Create .npmrc
         run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
 
@@ -60,7 +60,7 @@ jobs:
         with:
           path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-      
+
       - name: Cache Nx
         uses: actions/cache@v3
         with:
@@ -70,13 +70,13 @@ jobs:
             cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-
             cache-nx-${{ hashFiles('yarn.lock') }}-
       - run: git fetch --no-tags --prune --depth=1 origin master
-
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
         with:
           main-branch-name: 'master'
-      
+
       - name: nx run-many:${{ matrix.target }}
+        id: build
         run: node ./scripts/run-many.js ${{ matrix.target }} ${{ matrix.jobIndex }} ${{ env.jobCount }} ${{ env.NX_BASE }} ${{ env.NX_HEAD }}
         env:
           PROJECT: ${{ secrets.CLI_E2E_PROJECT }}
@@ -85,3 +85,37 @@ jobs:
           CLIENT_ID: ${{ secrets.CLI_E2E_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLI_E2E_CLIENT_SECRET }}
           TESTING_BASE_URL: http://localhost:4002
+
+      - uses: actions/upload-artifact@v3
+        if: steps.build.outputs.exit_code == 0 && matrix.target == 'test'
+        with:
+          name: codecov-data
+          path: ./coverage
+
+  codecov:
+    runs-on: ubuntu-latest
+    needs: distributed-task
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: codecov-data
+          path: ./coverage
+
+      - name: Combine CodeCov reports
+        run: |
+          yarn summarize-codecov
+
+      - name: Upload CodeCov reports
+        if: steps.build.outputs.exit_code == 0
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/coverage-final.json,./coverage/cobertura-coverage.xml,./coverage/coverage-summary.json

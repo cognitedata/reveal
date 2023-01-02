@@ -20,10 +20,18 @@ const projects =
     : array.slice(sliceSize * (jobIndex - 1));
 
 if (projects.length > 0) {
-  execSync(
-    `npx nx run-many --configuration=production --target=${target} --projects=${projects} --parallel`,
-    {
-      stdio: [0, 1, 2],
-    }
-  );
+  if (target === 'test') {
+    execSync(`yarn test ${projects}`,
+      {
+        stdio: [0, 1, 2]
+      }
+    );
+  } else {
+    execSync(
+      `npx nx run-many --configuration=production --target=${target} --projects=${projects} --parallel`,
+      {
+        stdio: [0, 1, 2],
+      }
+    );
+  }
 }
