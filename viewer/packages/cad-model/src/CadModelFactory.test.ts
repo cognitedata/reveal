@@ -11,6 +11,8 @@ import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, BlobOutputMe
 import { It, Mock } from 'moq.ts';
 import { GeometryFilter } from './types';
 
+import { jest } from '@jest/globals';
+
 describe('CadModelFactory', () => {
   let materialManager: CadMaterialManager;
   let factory: CadModelFactory;

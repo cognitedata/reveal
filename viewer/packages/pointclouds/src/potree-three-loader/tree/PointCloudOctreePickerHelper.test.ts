@@ -5,6 +5,8 @@ import * as THREE from 'three';
 import { PointCloudOctreePickerHelper, RenderedNode } from './PointCloudOctreePickerHelper';
 import { Mock } from 'moq.ts';
 
+import { jest } from '@jest/globals';
+
 describe('PointCloudOctreePickerHelper', () => {
   test('findHit() returns point data from pixel buffer with 1 non-zero value', () => {
     const dummyNode: RenderedNode = new Mock<RenderedNode>().object();

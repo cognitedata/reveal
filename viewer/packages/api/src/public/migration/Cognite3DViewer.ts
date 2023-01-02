@@ -58,7 +58,7 @@ import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source'
 import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
 
 import { CogniteClient } from '@cognite/sdk';
-import log from '@reveal/logger';
+import { Log } from '@reveal/logger';
 import {
   determineAntiAliasingMode,
   determineResolutionCap,
@@ -211,7 +211,7 @@ export class Cognite3DViewer {
   constructor(options: Cognite3DViewerOptions) {
     const threejsRequiredVersion = viewerPackageJson.peerDependencies.three.split('.')[1].toString();
     if (threejsRequiredVersion != THREE.REVISION) {
-      log.warn(
+      Log.warn(
         `The version of the dependency \"three\" is different from what Reveal expects, which may cause unexpected results.
         In case of unexpected issues, please set the version to ${viewerPackageJson.peerDependencies.three}`
       );
@@ -369,7 +369,7 @@ export class Cognite3DViewer {
         this.setLogLevel('silent');
         break;
       default:
-        log.setLevel(level);
+        Log.setLevel(level);
     }
   }
 

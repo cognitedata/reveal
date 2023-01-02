@@ -3,7 +3,13 @@
  */
 
 import { SectorCuller } from './sector/culling/SectorCuller';
+import { WantedSector } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
+import { DetermineSectorsInput, SectorLoadingSpent } from './sector/culling/types';
+
+import { Mock } from 'moq.ts';
+
+import { jest } from '@jest/globals';
 
 describe('CadModelUpdateHandler', () => {
   let mockCuller: SectorCuller;
@@ -11,9 +17,20 @@ describe('CadModelUpdateHandler', () => {
   beforeEach(() => {
     jest.useFakeTimers();
 
+    mockCuller = new Mock<SectorCuller>()
+      .setup(p => p.dispose)
+      .returns(jest.fn())
+      .object();
+
     mockCuller = {
-      determineSectors: jest.fn(),
-      filterSectorsToLoad: jest.fn(),
+      determineSectors: jest.fn<
+        (input: DetermineSectorsInput) => {
+          wantedSectors: WantedSector[];
+          spentBudget: SectorLoadingSpent;
+        }
+      >(),
+      filterSectorsToLoad:
+        jest.fn<(input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]) => Promise<WantedSector[]>>(),
       dispose: jest.fn()
     };
   });

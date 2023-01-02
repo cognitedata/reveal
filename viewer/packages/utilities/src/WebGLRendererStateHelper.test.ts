@@ -5,9 +5,12 @@ import * as THREE from 'three';
 import { createGlContext } from '../../../test-utilities';
 import { WebGLRendererStateHelper } from './WebGLRendererStateHelper';
 
+const glContext = await createGlContext(64, 64, { preserveDrawingBuffer: true });
+
+import { jest } from '@jest/globals';
+
 describe('WebGLRendererStateHelper', () => {
   let renderer: THREE.WebGLRenderer;
-  const glContext = createGlContext(64, 64, { preserveDrawingBuffer: true });
 
   beforeEach(() => {
     renderer = new THREE.WebGLRenderer({ context: glContext });

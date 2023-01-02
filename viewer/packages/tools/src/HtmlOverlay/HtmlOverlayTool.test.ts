@@ -15,6 +15,10 @@ import { CogniteClient } from '@cognite/sdk';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 import { Cognite3DViewer } from '@reveal/api';
 
+import { jest } from '@jest/globals';
+
+const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
+
 describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;
   let viewer: Cognite3DViewer;
@@ -28,7 +32,6 @@ describe(HtmlOverlayTool.name, () => {
       getToken: async () => 'dummy'
     });
     mockClientAuthentication(sdk);
-    const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     const canvas = document.createElement('canvas');
     fakeGetBoundingClientRect(canvas, 0, 0, 128, 128);
 
@@ -214,8 +217,8 @@ describe(HtmlOverlayTool.name, () => {
 
   test('screenspace clustering combines overlapping elements', () => {
     // Arrange
-    const createClusterElementCallback: HtmlOverlayCreateClusterDelegate = jest
-      .fn()
+    const createClusterElementCallback = jest
+      .fn<HtmlOverlayCreateClusterDelegate>()
       .mockReturnValue(document.createElement('div'));
     const options: HtmlOverlayToolOptions = {
       clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
@@ -243,7 +246,7 @@ describe(HtmlOverlayTool.name, () => {
   test('clear() removes composite elements', () => {
     // Arrange
     const compositeElement = document.createElement('div');
-    const createClusterElementCallback: HtmlOverlayCreateClusterDelegate = jest.fn().mockReturnValue(compositeElement);
+    const createClusterElementCallback = jest.fn<HtmlOverlayCreateClusterDelegate>().mockReturnValue(compositeElement);
     const options: HtmlOverlayToolOptions = {
       clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
     };

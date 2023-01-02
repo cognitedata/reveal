@@ -10,23 +10,26 @@ import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DViewer } from './Cognite3DViewer';
 
 import nock from 'nock';
+import { Mock } from 'moq.ts';
 import { BeforeSceneRenderedDelegate, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { createGlContext, mockClientAuthentication } from '../../../../../test-utilities';
 
-const sceneJson = require('./Cognite3DViewer.test-scene.json');
+import { jest } from '@jest/globals';
+
+const sceneJson = (await import('./Cognite3DViewer.test-scene.json.json')).default;
+
+const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
 
 describe('Cognite3DViewer', () => {
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest', project: 'dummy', getToken: async () => 'dummy' });
   mockClientAuthentication(sdk);
-  const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
 
   const renderer = new THREE.WebGLRenderer({ context });
   renderer.render = jest.fn();
-  const _sectorCuller: SectorCuller = {
-    determineSectors: jest.fn(),
-    filterSectorsToLoad: jest.fn(),
-    dispose: jest.fn()
-  };
+  const _sectorCuller = new Mock<SectorCuller>()
+    .setup(p => p.dispose)
+    .returns(jest.fn())
+    .object();
 
   beforeAll(() => {
     nock.disableNetConnect();
@@ -215,12 +218,10 @@ describe('Cognite3DViewer', () => {
 
   test('beforeSceneRendered and sceneRendered triggers before/after rendering', () => {
     // Setup a fake rendering loop
-    const requestAnimationFrameSpy: jest.SpyInstance<any, any> = jest
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation(cb => {
-        requestAnimationFrameCallback = cb;
-        return 1;
-      });
+    const requestAnimationFrameSpy = jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => {
+      requestAnimationFrameCallback = cb;
+      return 1;
+    });
     let requestAnimationFrameCallback: FrameRequestCallback | undefined;
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     const onBeforeRendered: BeforeSceneRenderedDelegate = jest.fn();
