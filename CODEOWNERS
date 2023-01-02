@@ -1,1 +1,28 @@
-* @cognitedata/development-experiences @cognitedata/development-experiences-externals
+## NOTE: Separate the apps/libs folder for respective teams in groups and the paths in ascending order!
+
+# NB: Avoid using 'markdown' as file format for this file --> use plain text or download 'CODEOWNERS' ext. on marketplace
+
+# General
+/.devcontainer/                   @cognitedata/development-experiences @cognitedata/explorers
+/.github/                         @cognitedata/development-experiences @cognitedata/explorers
+/.storybook/                      @cognitedata/development-experiences @cognitedata/explorers
+/.vscode/                         @cognitedata/development-experiences @cognitedata/explorers
+/scripts/                         @cognitedata/development-experiences @cognitedata/explorers
+/tools/                           @cognitedata/development-experiences @cognitedata/explorers
+/*                                @cognitedata/development-experiences @cognitedata/explorers
+
+# Team platypus
+apps/mock-server                  @cognitedata/development-experiences
+apps/platypus                     @cognitedata/development-experiences
+apps/platypus-cdf-cli             @cognitedata/development-experiences
+apps/platypus-e2e                 @cognitedata/development-experiences
+
+libs/cog-data-grid                @cognitedata/development-experiences
+libs/mock-data                    @cognitedata/development-experiences
+libs/platypus-common-utils        @cognitedata/development-experiences
+libs/platypus-core                @cognitedata/development-experiences
+
+# Team data-explorer
+apps/data-exploration             @cognitedata/explorers
+
+libs/data-exploration-components  @cognitedata/explorers
