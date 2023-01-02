@@ -163,6 +163,7 @@ export const RelatedResources = ({
             <RelationshipTable
               parentResource={parentResource}
               type={type}
+              isGroupingFilesEnabled={isGroupingFilesEnabled}
               {...props}
             />
           </>
@@ -192,7 +193,11 @@ export const RelatedResources = ({
         )}
 
         {selectedType?.value === 'annotatedWith' && (
-          <AnnotatedWithTable resource={parentResource} {...props} />
+          <AnnotatedWithTable
+            resource={parentResource}
+            isGroupingFilesEnabled={isGroupingFilesEnabled}
+            {...props}
+          />
         )}
       </TableOffsetHeightWrapper>
     </RelatedResourcesContainer>

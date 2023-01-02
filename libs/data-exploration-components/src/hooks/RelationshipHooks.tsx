@@ -201,7 +201,8 @@ export const useRelationships = (externalId?: string, type?: ResourceType) => {
 export const useInfiniteRelationshipsList = <T extends Resource>(
   resourceExternalId?: string,
   type?: ResourceType,
-  enabled = true
+  enabled = true,
+  limit: number = PAGE_SIZE
 ) => {
   const fetchEnabled = enabled && !!resourceExternalId;
   const [labelValue, setLabelValue] = useState<
@@ -250,7 +251,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   const { data: sourceData, ...sourceParams } = useInfiniteList<Relationship>(
     // @ts-ignore
     'relationships',
-    PAGE_SIZE,
+    limit,
     {
       sourceExternalIds: [resourceExternalId],
       targetTypes: [type],
@@ -283,7 +284,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   const { data: targetData, ...targetParams } = useInfiniteList<Relationship>(
     // @ts-ignore
     'relationships',
-    PAGE_SIZE,
+    limit,
     {
       targetExternalIds: [resourceExternalId],
       sourceTypes: [type],

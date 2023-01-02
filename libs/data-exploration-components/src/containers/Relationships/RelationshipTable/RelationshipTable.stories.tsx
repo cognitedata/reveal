@@ -17,4 +17,5 @@ Example.args = {
     type: 'asset',
     externalId: 'LOR_SWEDEN',
   },
+  isGroupingFilesEnabled: true,
 };

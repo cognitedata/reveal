@@ -6,8 +6,9 @@ import { InternalFilesFilters } from '@data-exploration-components/domain/files/
 import { docTypes } from './docTypes';
 
 type FileGroupingTableProps = {
+  data?: FileInfo[];
   query?: string;
-  filter: InternalFilesFilters;
+  filter?: InternalFilesFilters;
   currentView: string;
   setCurrentView: (view: string) => void;
   onItemClicked: (file: any) => void;
@@ -28,6 +29,7 @@ const convertFilesToDocs = (files: FileInfo[] = []): Document[] => {
 };
 
 const FileGroupingTable = ({
+  data,
   query,
   filter,
   onItemClicked,
@@ -38,7 +40,8 @@ const FileGroupingTable = ({
     filter,
     1000
   );
-  const docs: Document[] = convertFilesToDocs(files);
+
+  const docs: Document[] = convertFilesToDocs(data || files);
 
   return (
     <DocumentTable

@@ -14,12 +14,14 @@ export type RelatedResourceType =
 export const useRelatedResourceResults = <T,>(
   relatedResourceType: RelatedResourceType,
   type: ResourceType,
-  parentResource: ResourceItem
+  parentResource: ResourceItem,
+  limit?: number
 ) => {
   const { items = [], ...relationshipParams } = useInfiniteRelationshipsList(
     parentResource.externalId,
     type,
-    relatedResourceType === 'relationship'
+    relatedResourceType === 'relationship',
+    limit
   );
 
   return { items: items as unknown as T[], ...relationshipParams };
