@@ -22,8 +22,8 @@ target
 
 # yarn
 **/.yarn
-!**/.yarn/releases
-!**/.yarn/plugins
+!/viewer/.yarn/releases/
+!/viewer/.yarn/releases/*
 
 **/.env
 **/.cdf-env.json
