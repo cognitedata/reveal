@@ -4,7 +4,7 @@
 
 import { createRandomBox } from '../../../../test-utilities/src/createBoxes';
 
-import * as SeededRandom from 'random-seed';
+import SeededRandom from 'random-seed';
 import { unionBoxes } from './unionBoxes';
 
 import * as THREE from 'three';

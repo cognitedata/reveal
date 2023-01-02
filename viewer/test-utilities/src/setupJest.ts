@@ -4,7 +4,8 @@
 
 // fetch() polyfill
 import 'whatwg-fetch';
-import { TextDecoder } from 'util';
+import { jest } from '@jest/globals';
+import { TextDecoder, TextEncoder } from 'util';
 import ResizeObserver from 'resize-observer-polyfill';
 
 // Create document.currentScript required by potree-core
@@ -24,7 +25,7 @@ Object.defineProperty(window, 'location', {
   }
 });
 
-window.URL.createObjectURL = jest.fn();
+window.URL.createObjectURL = jest.fn<() => string>();
 
 // Mock Worker for web workers
 class StubWorker {
@@ -55,7 +56,10 @@ const consoleError = console.error.bind(console);
 };
 
 (window as any).TextDecoder = TextDecoder;
+(window as any).TextEncoder = TextEncoder;
+
+import packageObject from '../../package.json';
 
 Object.assign(process.env, {
-  VERSION: require('../../package.json').version
+  VERSION: packageObject.version
 });

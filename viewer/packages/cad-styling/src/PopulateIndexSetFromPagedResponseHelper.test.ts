@@ -11,6 +11,8 @@ import { sleep } from '../../../test-utilities';
 import { NumericRange } from '@reveal/utilities';
 import { ListResponse } from '@cognite/sdk';
 
+import { jest } from '@jest/globals';
+
 describe('PopulateIndexSetFromPagedResponseHelper', () => {
   let helper: PopulateIndexSetFromPagedResponseHelper<number>;
   let notifyChangedCallback: () => void;

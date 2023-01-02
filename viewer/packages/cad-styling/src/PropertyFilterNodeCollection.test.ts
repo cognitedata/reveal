@@ -11,6 +11,8 @@ import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionData
 
 import { Matrix4 } from 'three';
 
+import { jest } from '@jest/globals';
+
 describe(PropertyFilterNodeCollection.name, () => {
   let client: CogniteClient;
   let model: CdfModelNodeCollectionDataProvider;

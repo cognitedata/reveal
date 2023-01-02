@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
+    "target": "es2019"
+    "module": "esnext",
+    "moduleResolution": "node",
     "experimentalDecorators": true,
     "lib": [
       "ES2019",

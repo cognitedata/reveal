@@ -8,6 +8,8 @@ import { createGlContext } from '../../../test-utilities/src/createGlContext';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from './worldToViewport';
 
+import { jest } from '@jest/globals';
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
@@ -38,7 +40,7 @@ describe('worldToViewport', () => {
   let camera: THREE.PerspectiveCamera;
   let canvasRect: DOMRect;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvasRect = {
       width: 64,
       height: 64
@@ -55,7 +57,7 @@ describe('worldToViewport', () => {
     const canvas = document.createElement('canvas');
     jest.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(canvasRect);
 
-    const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
+    const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
     renderer = new THREE.WebGLRenderer({ context, canvas });
     renderer.setSize(64, 64);
   });

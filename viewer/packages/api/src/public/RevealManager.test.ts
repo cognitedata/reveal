@@ -14,14 +14,16 @@ import { It, Mock, SetPropertyExpression } from 'moq.ts';
 import { CameraManager } from '@reveal/camera-manager';
 import { PerspectiveCamera } from 'three';
 
+import { jest } from '@jest/globals';
+
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
   const stubDataProvider: ModelDataProvider = {} as any;
-  const sectorCuller: SectorCuller = {
-    determineSectors: jest.fn(),
-    filterSectorsToLoad: jest.fn(),
-    dispose: jest.fn()
-  };
+  const sectorCuller = new Mock<SectorCuller>()
+    .setup(p => p.dispose)
+    .returns(jest.fn())
+    .object();
+
   const annotationProvider = new Mock<PointCloudStylableObjectProvider>()
     .setup(p => p.getPointCloudObjects(It.IsAny()))
     .returns(Promise.resolve([]))

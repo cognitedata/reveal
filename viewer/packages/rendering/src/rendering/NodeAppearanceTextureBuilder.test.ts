@@ -13,6 +13,8 @@ import { IndexSet } from '@reveal/utilities';
 
 import { Color } from 'three';
 
+import { jest } from '@jest/globals';
+
 function toByteTuple(color: Color): [number, number, number] {
   return color.toArray().map(c => Math.round(c * 255)) as [number, number, number];
 }

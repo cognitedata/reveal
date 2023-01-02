@@ -6,6 +6,8 @@ import { StationaryCameraManager } from '@reveal/camera-manager';
 
 import { PerspectiveCamera, WebGLRenderer, Vector2 } from 'three';
 
+import { jest } from '@jest/globals';
+
 import { Mock } from 'moq.ts';
 
 describe(ResizeHandler.name, () => {
@@ -102,6 +104,8 @@ describe(ResizeHandler.name, () => {
     resizeHandler.setMovingCameraResolutionFactor(0.8);
     resizeHandler.setMovingCameraResolutionFactor(0.2);
     resizeHandler.setMovingCameraResolutionFactor(0.1);
+
+    expect(onSpy.mock.calls).toHaveLength(2);
   });
 
   test('callback unregisters when move factor is 1', () => {
