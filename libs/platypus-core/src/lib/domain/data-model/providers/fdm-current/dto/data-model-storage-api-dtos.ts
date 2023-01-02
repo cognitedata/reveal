@@ -15,7 +15,7 @@
 export type DmsModelProperty = {
   /**
    * The type of property field.
-   * Allowed types are text, json, boolean, float32, int, int64, timestamp, direct_relation.
+   * Allowed types are text, json, boolean, float32, float64, int, int64, timestamp, direct_relation.
    * You may also define array types for any of those types except direct_relation e.g. text[].
    */
   type: string;

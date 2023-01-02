@@ -95,7 +95,7 @@ describe('Data model services utils', () => {
 
       expect(typesMap).toEqual({
         Boolean: 'boolean',
-        Float: 'float32',
+        Float: 'float64',
         Int: 'int32',
         Int64: 'int64',
         JSONObject: 'json',
