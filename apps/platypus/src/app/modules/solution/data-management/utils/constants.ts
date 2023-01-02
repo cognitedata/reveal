@@ -19,5 +19,5 @@ export const COL_TYPES_MAP: KeyValueMap = {
   Timestamp: ColumnDataType.DateTime,
 };
 
-export const FILTER_OPTIONS_WITHOUT_INPUT = ['blank', 'notBlank'];
+export const FILTER_OPTIONS_WITHOUT_INPUT = ['Is empty', 'Is not empty'];
 export const FILTER_OPTIONS_WITH_RANGE_INPUT = ['inRange'];

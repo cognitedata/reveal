@@ -6,7 +6,7 @@ import {
   ChangeEvent,
   useMemo,
 } from 'react';
-import { IFilterParams } from 'ag-grid-community';
+import { IFilterOptionDef, IFilterParams } from 'ag-grid-community';
 import { Button, Input, OptionType, Select } from '@cognite/cogs.js';
 import debounce from 'lodash/debounce';
 import { gridConfigService } from '@cognite/cog-data-grid';
@@ -37,7 +37,7 @@ export const CustomColumnFilter = forwardRef((props: IFilterParams, ref) => {
     OptionType<typeof columnCustomFields[0]> | undefined
   >();
   const [selectedFilterOption, setSelectedFilterOption] = useState<
-    OptionType<string> | undefined
+    OptionType<string | IFilterOptionDef> | undefined
   >();
 
   const [input, setInput] = useState<string>();
@@ -79,12 +79,16 @@ export const CustomColumnFilter = forwardRef((props: IFilterParams, ref) => {
     selectedField?.value.type.name
   ] as string;
 
-  const filterOptions = gridConfigService
-    .getFilterParams(selectedFieldType)
-    .filterParams.filterOptions.map((option) => ({
-      label: getFilterOptionLabel(option),
-      value: option,
-    }));
+  const filterOptions: OptionType<string | IFilterOptionDef>[] =
+    gridConfigService
+      .getFilterParams(selectedFieldType)
+      .filterParams.filterOptions.map((option: string | any) => ({
+        label:
+          typeof option === 'string'
+            ? getFilterOptionLabel(option)
+            : option.displayName,
+        value: option,
+      }));
 
   const doesSelectedFilterOptionRequireRangeInput =
     selectedFilterOption &&
@@ -92,17 +96,26 @@ export const CustomColumnFilter = forwardRef((props: IFilterParams, ref) => {
 
   const doesSelectedFilterOptionRequireUserInput =
     selectedFilterOption &&
-    !FILTER_OPTIONS_WITHOUT_INPUT.includes(selectedFilterOption.label);
+    !FILTER_OPTIONS_WITHOUT_INPUT.includes(
+      (typeof selectedFilterOption.value === 'string'
+        ? selectedFilterOption.value
+        : selectedFilterOption.value?.displayName) || ''
+    );
 
   // expose AG Grid Filter Lifecycle callbacks
   useImperativeHandle(ref, () => {
     return {
       isFilterActive() {
         return (
-          !!selectedField &&
-          !!selectedFilterOption &&
-          (!!input ||
-            (rangeInput.gte !== undefined && rangeInput.lte !== undefined))
+          (!!selectedField &&
+            !!selectedFilterOption &&
+            (!!input ||
+              (rangeInput.gte !== undefined &&
+                rangeInput.lte !== undefined))) ||
+          (!!selectedField &&
+            !doesSelectedFilterOptionRequireUserInput &&
+            !doesSelectedFilterOptionRequireRangeInput &&
+            !input)
         );
       },
       getModel() {
@@ -110,15 +123,20 @@ export const CustomColumnFilter = forwardRef((props: IFilterParams, ref) => {
           return null;
         }
 
+        const selectedFilterOptionValue =
+          typeof selectedFilterOption!.value === 'string'
+            ? selectedFilterOption!.value
+            : selectedFilterOption!.value!.displayKey;
+
         return {
           filter: {
             [selectedField!.label]: {
-              [selectedFilterOption!.value as string]:
+              [selectedFilterOptionValue as string]:
                 doesSelectedFilterOptionRequireRangeInput ? rangeInput : input,
             },
           },
           filterType: selectedField!.label,
-          type: selectedFilterOption!.value,
+          type: selectedFilterOptionValue,
           filterTo: selectedField?.value.type.name,
         } as CustomFilterModel;
       },
@@ -182,11 +200,11 @@ export const CustomColumnFilter = forwardRef((props: IFilterParams, ref) => {
           'Select field...'
         )}
       />
-      <Select<string>
+      <Select<string | IFilterOptionDef>
         className="ag-custom-component-popup"
         disabled={!selectedField}
         options={filterOptions}
-        onChange={(option: OptionType<string>) => {
+        onChange={(option: OptionType<string | IFilterOptionDef>) => {
           setSelectedFilterOption(option);
         }}
         value={selectedFilterOption}

@@ -335,10 +335,25 @@ export class GridConfigService {
 
   getFilterParams(dataType: ColumnDataType | string) {
     let filterName: IFilterDef['filter'] = 'agTextColumnFilter';
-    const filterParams = {
+    const filterParams: ColDef['filterParams'] = {
       buttons: ['reset'],
       debounceMs: 500,
-      filterOptions: ['equals', 'startsWith', 'blank', 'notBlank'],
+      filterOptions: [
+        'equals',
+        'startsWith',
+        {
+          displayKey: 'blank',
+          displayName: 'Is empty',
+          predicate: () => true,
+          numberOfInputs: 0,
+        },
+        {
+          displayKey: 'notBlank',
+          displayName: 'Is not empty',
+          predicate: () => true,
+          numberOfInputs: 0,
+        },
+      ],
       defaultOption: 'equals',
       suppressAndOrCondition: true,
     };
@@ -346,12 +361,41 @@ export class GridConfigService {
     switch (dataType) {
       case ColumnDataType.Id: {
         filterName = 'agTextColumnFilter';
-        filterParams.filterOptions = ['equals', 'blank', 'notBlank'];
+
+        filterParams.filterOptions = [
+          'equals',
+          {
+            displayKey: 'blank',
+            displayName: 'Is empty',
+            predicate: () => true,
+            numberOfInputs: 0,
+          },
+          {
+            displayKey: 'notBlank',
+            displayName: 'Is not empty',
+            predicate: () => true,
+            numberOfInputs: 0,
+          },
+        ];
         break;
       }
       case ColumnDataType.Boolean: {
         filterName = 'boolean';
-        filterParams.filterOptions = ['equals', 'blank', 'notBlank'];
+        filterParams.filterOptions = [
+          'equals',
+          {
+            displayKey: 'blank',
+            displayName: 'Is empty',
+            predicate: () => true,
+            numberOfInputs: 0,
+          },
+          {
+            displayKey: 'notBlank',
+            displayName: 'Is not empty',
+            predicate: () => true,
+            numberOfInputs: 0,
+          },
+        ];
         break;
       }
       case ColumnDataType.Number: {
@@ -359,8 +403,18 @@ export class GridConfigService {
         filterParams.filterOptions = [
           'equals',
           'inRange',
-          'blank',
-          'notBlank',
+          {
+            displayKey: 'blank',
+            displayName: 'Is empty',
+            predicate: () => true,
+            numberOfInputs: 0,
+          },
+          {
+            displayKey: 'notBlank',
+            displayName: 'Is not empty',
+            predicate: () => true,
+            numberOfInputs: 0,
+          },
           'lessThan',
           'lessThanOrEqual',
           'greaterThan',
@@ -373,8 +427,18 @@ export class GridConfigService {
         filterParams.filterOptions = [
           'equals',
           'inRange',
-          'blank',
-          'notBlank',
+          {
+            displayKey: 'blank',
+            displayName: 'Is empty',
+            predicate: () => true,
+            numberOfInputs: 0,
+          },
+          {
+            displayKey: 'notBlank',
+            displayName: 'Is not empty',
+            predicate: () => true,
+            numberOfInputs: 0,
+          },
           'lessThan',
           'lessThanOrEqual',
           'greaterThan',
@@ -387,8 +451,18 @@ export class GridConfigService {
         filterParams.filterOptions = [
           'equals',
           'inRange',
-          'blank',
-          'notBlank',
+          {
+            displayKey: 'blank',
+            displayName: 'Is empty',
+            predicate: () => true,
+            numberOfInputs: 0,
+          },
+          {
+            displayKey: 'notBlank',
+            displayName: 'Is not empty',
+            predicate: () => true,
+            numberOfInputs: 0,
+          },
           'lessThan',
           'lessThanOrEqual',
           'greaterThan',
