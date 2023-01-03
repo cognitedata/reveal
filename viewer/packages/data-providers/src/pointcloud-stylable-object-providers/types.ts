@@ -20,23 +20,26 @@ export type PointCloudObject = PointCloudObjectMetadata & {
 
 /**
  * @public
- * Metadata for a single point cloud object.
+ * Metadata for a single point cloud object
  */
 export type PointCloudObjectMetadata = {
   /**
    * The CDF Annotation ID associated with the point cloud object.
    */
   annotationId: number;
+
   /**
    * The CDF Asset ID associated with the point cloud object, if any.
    *
-   * @deprecated
+   * @deprecated Use {@link PointCloudObjectMetadata.assetRef} instead.
    */
   assetId?: number;
+
   /**
    * Asset identifiers for asset associated with this point cloud object, if any.
    */
   assetRef?: AnnotationsAssetRef;
+
   /**
    * The bounding box of this annotation
    */
