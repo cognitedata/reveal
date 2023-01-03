@@ -54,6 +54,13 @@
         }
       }
     },
+    "release": {
+      "executor": "@theunderscorer/nx-semantic-release:semantic-release",
+      "options": {
+        "outputPath": "../../dist/libs/data-exploration-components"
+      },
+      "dependsOn": ["build"]
+    },
     "build-storybook": {
       "executor": "@nrwl/storybook:build",
       "outputs": ["{options.outputPath}"],
