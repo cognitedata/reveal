@@ -75,6 +75,7 @@ import PageTitle from 'components/PageTitle/PageTitle';
 import ErrorSidebar from 'components/ErrorSidebar/ErrorSidebar';
 import { WorkflowState } from 'models/calculation-results/types';
 import { Toolbar } from 'components/Common/SidebarElements';
+import DataProfilingSidebar from 'components/DataProfilingSidebar/DataProfilingSidebar';
 import EventSidebar from 'components/EventSidebar/EventSidebar';
 import { eventResultsAtom } from 'models/event-results/atom';
 import { EventResultEffects } from 'effects/events';
@@ -95,6 +96,7 @@ import {
 } from './hooks';
 
 const defaultTranslations = makeDefaultTranslations(
+  'Data Profiling',
   'Threshold',
   'Events',
   'Chart could not be saved!',
@@ -109,6 +111,8 @@ const ChartViewPage = () => {
   const [activeSidebar = '', setActiveSidebarQuery] =
     useSearchParam(ACTIVE_SIDEBAR_KEY);
   const [showContextMenu, setShowContextMenu] = useState(false);
+  const [showDataProfilingSidebar, setShowDataProfilingSidebar] =
+    useState(false);
   const [showThresholdSidebar, setShowThresholdSidebar] = useState(false);
   const [showErrorSidebar, setShowErrorSidebar] = useState(false);
   const [showEventSidebar, setShowEventSidebar] = useState(
@@ -307,6 +311,7 @@ const ChartViewPage = () => {
       const isSameSource = sourceId === selectedSourceId;
       const showMenu = isSameSource ? !showContextMenu : true;
       setShowContextMenu(showMenu);
+      setShowDataProfilingSidebar(false);
       setShowThresholdSidebar(false);
       setShowErrorSidebar(false);
       setShowEventSidebar(false);
@@ -315,9 +320,19 @@ const ChartViewPage = () => {
     [selectedSourceId, showContextMenu]
   );
 
+  const handleDataProfilingSidebarToggle = useCallback(() => {
+    setShowContextMenu(false);
+    setShowErrorSidebar(false);
+    setShowEventSidebar(false);
+    setShowThresholdSidebar(false);
+    setShowDataProfilingSidebar((prevState) => !prevState);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+  }, []);
+
   const handleThresholdSidebarToggle = useCallback(() => {
     setShowContextMenu(false);
     setShowErrorSidebar(false);
+    setShowDataProfilingSidebar(false);
     setShowEventSidebar(false);
     setShowThresholdSidebar((prevState) => !prevState);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
@@ -329,6 +344,7 @@ const ChartViewPage = () => {
       const showMenu = isSameSource ? !showErrorSidebar : true;
       setShowContextMenu(false);
       setShowThresholdSidebar(false);
+      setShowDataProfilingSidebar(false);
       setShowEventSidebar(false);
       setShowErrorSidebar(showMenu);
 
@@ -340,6 +356,7 @@ const ChartViewPage = () => {
   const handleEventSidebarToggle = useCallback(() => {
     setShowContextMenu(false);
     setShowErrorSidebar(false);
+    setShowDataProfilingSidebar(false);
     setShowThresholdSidebar(false);
     setShowEventSidebar((prevState) => !prevState);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
@@ -357,6 +374,11 @@ const ChartViewPage = () => {
 
   const handleCloseErrorSidebar = useCallback(() => {
     setShowErrorSidebar(false);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, []);
+
+  const handleCloseDataProfilingSidebar = useCallback(() => {
+    setShowDataProfilingSidebar(false);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
 
@@ -803,6 +825,13 @@ const ChartViewPage = () => {
             statisticsStatus={statisticsStatus}
           />
         )}
+        {showDataProfilingSidebar && (
+          <DataProfilingSidebar
+            visible={showDataProfilingSidebar}
+            onClose={handleCloseDataProfilingSidebar}
+            chart={chart}
+          />
+        )}
         {showThresholdSidebar && (
           <ThresholdSidebar
             visible={showThresholdSidebar}
@@ -833,6 +862,14 @@ const ChartViewPage = () => {
           />
         )}
         <Toolbar>
+          <Tooltip content={t['Data Profiling']} position="left">
+            <Button
+              icon="Profiling"
+              aria-label="Toggle data profiling sidebar"
+              toggled={showDataProfilingSidebar}
+              onClick={() => handleDataProfilingSidebarToggle()}
+            />
+          </Tooltip>
           <Tooltip content={t.Events} position="left">
             <Button
               icon="Events"

@@ -3,7 +3,9 @@ import {
   CalculationResult,
   Status,
   CreateStatisticsParams,
+  CreateDataProfilingParams,
   StatisticsResult,
+  DataProfilingResult,
   CreateThresholdsParams,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
@@ -23,12 +25,15 @@ import { getHash } from 'utils/hash';
 import {
   createCalculation,
   createStatistics,
+  createDataProfiling,
   createThreshold,
   fetchCalculationQueryResult,
   fetchCalculationResult,
   fetchCalculationStatus,
   fetchStatisticsResult,
   fetchStatisticsStatus,
+  fetchDataProfilingStatus,
+  fetchDataProfilingResult,
   fetchThresholdResult,
   waitForCalculationToFinish,
   waitForThresholdToFinish,
@@ -117,6 +122,49 @@ export const useCalculationQueryResult = (
       retryDelay: 1000,
       enabled: !!id,
       staleTime: 10000,
+      ...queryOpts,
+    }
+  );
+};
+
+export const useCreateDataProfiling = () => {
+  const sdk = useSDK();
+  return useMutation(
+    async (createDataProfilingParams: CreateDataProfilingParams) => {
+      return createDataProfiling(sdk, createDataProfilingParams);
+    }
+  );
+};
+
+export const useDataProfilingStatus = (
+  id: string | number,
+  queryOpts?: UseQueryOptions<Status>
+) => {
+  const sdk = useSDK();
+  return useQuery<Status>(
+    ['calculation', 'status', id],
+    () => fetchDataProfilingStatus(sdk, String(id)),
+    {
+      ...queryOpts,
+      retry: 1,
+      retryDelay: 1000,
+      enabled: !!id,
+    }
+  );
+};
+
+export const useDataProfilingResult = (
+  id: string | number,
+  queryOpts?: UseQueryOptions<DataProfilingResult>
+) => {
+  const sdk = useSDK();
+  return useQuery<DataProfilingResult>(
+    ['calculation', 'response', id],
+    () => fetchDataProfilingResult(sdk, String(id)),
+    {
+      retry: 1,
+      retryDelay: 1000,
+      enabled: !!id,
       ...queryOpts,
     }
   );

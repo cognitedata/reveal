@@ -59,6 +59,7 @@ export type ChartTimeSeries = {
   description?: string;
   range?: number[];
   statisticsCalls?: StatisticsCallRef[];
+  dataProfilingCalls?: dataProfilingCallRef[];
   createdAt: number;
 };
 
@@ -78,6 +79,7 @@ type ChartWorkflowBase = {
   range?: number[];
   calls?: CalculationCallRef[];
   statisticsCalls?: StatisticsCallRef[];
+  dataProfilingCalls?: dataProfilingCallRef[];
   createdAt?: number;
   attachTo?: string;
 };
@@ -118,6 +120,12 @@ type CalculationCallRef = {
 };
 
 type StatisticsCallRef = {
+  callId: string;
+  callDate: number;
+  hash?: number;
+};
+
+type dataProfilingCallRef = {
   callId: string;
   callDate: number;
   hash?: number;

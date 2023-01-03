@@ -786,6 +786,7 @@ export const cleanTimeseriesCollection = (tsCollection?: ChartTimeSeries[]) => {
     return {
       ...ts,
       statisticsCalls: undefined,
+      dataProfilingCalls: undefined,
     };
   }) as ChartTimeSeries[];
 };
@@ -795,6 +796,7 @@ export const cleanWorkflowCollection = (wfCollection?: ChartWorkflow[]) => {
     return {
       ...wf,
       statisticsCalls: undefined,
+      dataProfilingCalls: undefined,
       calls: undefined,
     };
   }) as ChartWorkflow[];

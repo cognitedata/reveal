@@ -7,8 +7,11 @@ import {
   StatisticsApi,
   ThresholdsApi,
   OperationsApi,
+  DataProfilingApi,
   CreateStatisticsParams,
+  CreateDataProfilingParams,
   StatisticsResult,
+  DataProfilingResult,
   Status,
   Configuration,
   Operation,
@@ -45,7 +48,7 @@ export const getBackendServiceBaseUrl = (cluster?: string) => {
     .filter(Boolean)
     .join('.');
 
-  return `https://${domain}/v4`;
+  return `https://${domain}/v4_1`;
 };
 
 async function getConfig(sdk: CogniteClient): Promise<Configuration> {
@@ -221,6 +224,62 @@ export async function waitForCalculationToFinish(
     // eslint-disable-next-line no-await-in-loop
     calculationStatus = await fetchCalculationStatus(sdk, id);
   }
+}
+
+export async function createDataProfiling(
+  sdk: CogniteClient,
+  createDataProfilingParams: CreateDataProfilingParams
+): Promise<Status> {
+  const config = await getConfig(sdk);
+  const api = new DataProfilingApi(config);
+  const { data } = await api.createDataProfilingCalculation(
+    sdk.project,
+    createDataProfilingParams
+  );
+  return data;
+}
+
+export async function fetchDataProfilingStatus(
+  sdk: CogniteClient,
+  id: string
+): Promise<Status> {
+  const config = await getConfig(sdk);
+  const api = new DataProfilingApi(config);
+  const { data } = await api.getDataProfilingCalculationStatus(sdk.project, id);
+  return data;
+}
+
+export async function fetchDataProfilingResult(
+  sdk: CogniteClient,
+  id: string | number
+): Promise<DataProfilingResult> {
+  const config = await getConfig(sdk);
+  const api = new DataProfilingApi(config);
+  const { data } = await api.getDataProfilingCalculationResult(
+    sdk.project,
+    String(id)
+  );
+  return data;
+}
+
+export async function waitForDataProfilingToFinish(
+  sdk: CogniteClient,
+  id: string
+) {
+  let dataProfilingStatus = await fetchDataProfilingStatus(sdk, id);
+
+  while (
+    (
+      [StatusStatusEnum.Pending, StatusStatusEnum.Running] as StatusStatusEnum[]
+    ).includes(dataProfilingStatus.status)
+  ) {
+    // eslint-disable-next-line no-await-in-loop
+    await sleep(1000);
+    // eslint-disable-next-line no-await-in-loop
+    dataProfilingStatus = await fetchDataProfilingStatus(sdk, id);
+  }
+
+  return dataProfilingStatus;
 }
 
 export async function createStatistics(
