@@ -8,7 +8,7 @@ import App from './app/App';
 import { getEnvironment } from '@data-exploration-app/utils/environment';
 import { environment } from './environment';
 
-if (environment.SENTRY_DSN) {
+if (environment.SENTRY_DSN && getEnvironment() === 'production') {
   Sentry.init({
     dsn: environment.SENTRY_DSN,
     // This is populated by the FAS build process. Change it if you want to
