@@ -5,20 +5,25 @@ import { PreviewPageHeader } from './PreviewPageHeader';
 import { DataModelTransformation } from '@platypus/platypus-core';
 import noop from 'lodash/noop';
 import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
+import * as flags from '@platypus-app/flags';
 
-jest.mock('@platypus-app/flags', () => {
-  return {
-    useManualPopulationFeatureFlag: () => ({
-      isEnabled: true,
-    }),
-    useDataManagementDeletionFeatureFlag: () => ({
-      isEnabled: true,
-    }),
-    useSuggestionsFeatureFlag: () => ({
-      isEnabled: true,
-    }),
-  };
+jest.mock('@platypus-app/flags');
+
+const mockedFlags = jest.mocked(flags);
+
+mockedFlags.useManualPopulationFeatureFlag.mockReturnValue({
+  isEnabled: true,
+  isClientReady: undefined,
 });
+mockedFlags.useDataManagementDeletionFeatureFlag.mockReturnValue({
+  isEnabled: true,
+  isClientReady: undefined,
+});
+mockedFlags.useSuggestionsFeatureFlag.mockReturnValue({
+  isEnabled: true,
+  isClientReady: undefined,
+});
+mockedFlags.useTransformationsFeatureFlag.mockReturnValue(true);
 
 jest.mock(
   '@platypus-app/modules/solution/data-management/hooks/useTransformations'
@@ -34,7 +39,7 @@ type UseQuery = ({
   isEnabled: boolean;
   typeName: string;
   version: string;
-}) => { data: DataModelTransformation[] };
+}) => { data: DataModelTransformation[] | undefined };
 
 /*
 Cast useTransformations to a jest.MockedFn so that we don't get typescript complaints
@@ -51,14 +56,14 @@ const mockedUseTransformations =
 jest.mock(
   '@platypus-app/modules/solution/data-management/components/TransformationDropdown',
   () => ({
-    TransformationDropdown: () => null,
+    TransformationDropdown: () => 'Bulk population',
   })
 );
 
 jest.mock(
   '@platypus-app/modules/solution/data-management/components/BulkPopulationButton',
   () => ({
-    BulkPopulationButton: () => null,
+    BulkPopulationButton: () => 'Bulk population',
   })
 );
 
@@ -104,6 +109,7 @@ describe('PreviewPageHeader', () => {
     );
 
     expect(screen.getByText(/add instance/i)).toBeTruthy();
+    expect(screen.getByText(/bulk population/i)).toBeTruthy();
     expect(screen.getByLabelText(/delete/i)).toBeTruthy();
   });
 
@@ -245,5 +251,38 @@ describe('PreviewPageHeader', () => {
     );
 
     expect(screen.queryByRole('searchbox')).toBeNull();
+  });
+
+  it('Does not show transformations button if flag is disabled', () => {
+    mockedUseTransformations.mockReturnValue({
+      data: undefined,
+    });
+
+    // disable transformations feature flag for this test
+    mockedFlags.useTransformationsFeatureFlag.mockReturnValueOnce(false);
+
+    render(
+      <PreviewPageHeader
+        dataModelExternalId="imdb"
+        draftRowsCount={0}
+        isDeleteButtonDisabled={false}
+        onAddTransformationClick={noop}
+        onCreateClick={noop}
+        onDeleteClick={noop}
+        onDraftRowsCountClick={noop}
+        onPublishedRowsCountClick={noop}
+        onSearchInputValueChange={noop}
+        onSuggestionsClick={noop}
+        publishedRowsCount={4}
+        shouldShowDraftRows
+        shouldShowPublishedRows
+        title="Lorem"
+        typeName="Movie"
+        version="2"
+      />
+    );
+
+    expect(screen.queryByText(/bulk population/i)).toBeNull();
+    expect(screen.getByText(/add instance/i)).toBeTruthy();
   });
 });

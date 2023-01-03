@@ -97,10 +97,10 @@ export const DataPreviewTable = forwardRef<
     const [, setSelectedPublishedRowsCount] = useState(0);
     const gridRef = useRef<AgGridReact>(null);
     const [fetchError, setFetchError] = useState(null);
-    const { isEnabled: enableManualPopulation } =
+    const { isEnabled: isManualPopulationEnabled } =
       useManualPopulationFeatureFlag();
-    const { isEnabled: enableSuggestions } = useSuggestionsFeatureFlag();
-    const { isEnabled: enableDeletion } =
+    const { isEnabled: isSuggestionsEnabled } = useSuggestionsFeatureFlag();
+    const { isEnabled: isDeletionEnabled } =
       useDataManagementDeletionFeatureFlag();
     const { data: dataModelVersions } =
       useDataModelVersions(dataModelExternalId);
@@ -212,8 +212,8 @@ export const DataPreviewTable = forwardRef<
         instanceIdCol,
         dataModelType,
         handleRowPublish,
-        enableDeletion,
-        enableManualPopulation
+        isDeletionEnabled,
+        isManualPopulationEnabled
       )
     );
 
@@ -418,7 +418,7 @@ export const DataPreviewTable = forwardRef<
   Technique borrowed from https://stackoverflow.com/a/64294316
   */
     const handleCellValueChanged = (e: ValueSetterParams) => {
-      if (!e.colDef.field || !enableManualPopulation) {
+      if (!e.colDef.field || !isManualPopulationEnabled) {
         return false;
       }
 
@@ -615,7 +615,7 @@ export const DataPreviewTable = forwardRef<
             version={version}
           />
         )}
-        {isSuggestionsModalVisible && enableSuggestions && (
+        {isSuggestionsModalVisible && isSuggestionsEnabled && (
           <SuggestionsModal
             defaultColumn={suggestionsColumn}
             onCancel={handleSuggestionsClose}
@@ -663,7 +663,7 @@ export const DataPreviewTable = forwardRef<
               ref={gridRef}
               gridOptions={{
                 alwaysMultiSort: false,
-                readOnlyEdit: !enableManualPopulation,
+                readOnlyEdit: !isManualPopulationEnabled,
                 enableCellChangeFlash: true,
                 rowModelType: 'infinite',
                 rowBuffer: pageSizeLimit / 2,

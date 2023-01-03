@@ -9,6 +9,7 @@ import {
   useManualPopulationFeatureFlag,
   useDataManagementDeletionFeatureFlag,
   useSuggestionsFeatureFlag,
+  useTransformationsFeatureFlag,
 } from '@platypus-app/flags';
 import * as S from './elements';
 import { useRef } from 'react';
@@ -53,13 +54,14 @@ export function PreviewPageHeader({
   version,
 }: Props) {
   const { t } = useTranslation('DataPreview');
-  const { isEnabled: enableManualPopulation } =
+  const isTransformationsEnabled = useTransformationsFeatureFlag();
+  const { isEnabled: isManualPopulationEnabled } =
     useManualPopulationFeatureFlag();
-  const { isEnabled: enableDelete } = useDataManagementDeletionFeatureFlag();
-  const { isEnabled: enableSuggestions } = useSuggestionsFeatureFlag();
+  const { isEnabled: isDeleteEnabled } = useDataManagementDeletionFeatureFlag();
+  const { isEnabled: isSuggestionsEnabled } = useSuggestionsFeatureFlag();
   const { data: transformations } = useTransformations({
     dataModelExternalId,
-    isEnabled: true,
+    isEnabled: isTransformationsEnabled,
     typeName,
     version,
   });
@@ -67,7 +69,26 @@ export function PreviewPageHeader({
 
   const tableHasRows = draftRowsCount > 0 || publishedRowsCount > 0;
   const shouldShowActions =
-    transformations && (transformations.length > 0 || tableHasRows);
+    (transformations && transformations.length > 0) || tableHasRows;
+
+  const renderTransformations = () => {
+    if (!isTransformationsEnabled) {
+      return false;
+    }
+
+    return transformations && transformations.length > 0 ? (
+      <TransformationDropdown
+        onAddClick={onAddTransformationClick}
+        dataModelExternalId={dataModelExternalId}
+        typeName={typeName}
+        version={version}
+      />
+    ) : (
+      <BulkPopulationButton onClick={onAddTransformationClick}>
+        {t('load-data-button', 'Bulk population')}
+      </BulkPopulationButton>
+    );
+  };
 
   return (
     <PageToolbar
@@ -157,10 +178,11 @@ export function PreviewPageHeader({
                 ref={searchInputRef}
                 type="search"
               />
-              <PageHeaderDivider />
             </>
           )}
-          {enableDelete && (
+          {(isDeleteEnabled || isManualPopulationEnabled) &&
+            publishedRowsCount > 0 && <PageHeaderDivider />}
+          {isDeleteEnabled && (
             <Button
               type="ghost"
               icon="Delete"
@@ -170,7 +192,7 @@ export function PreviewPageHeader({
               onClick={onDeleteClick}
             />
           )}
-          {enableManualPopulation && (
+          {isManualPopulationEnabled && (
             <Button
               data-cy="create-new-row-btn"
               type="primary"
@@ -181,8 +203,10 @@ export function PreviewPageHeader({
               {t('create-new-row', 'Add instance')}
             </Button>
           )}
-          {(enableDelete || enableManualPopulation) && <PageHeaderDivider />}
-          {enableSuggestions && (
+          {(isSuggestionsEnabled || isTransformationsEnabled) && (
+            <PageHeaderDivider />
+          )}
+          {isSuggestionsEnabled && (
             <S.SuggestionButton
               icon="LightBulb"
               aria-label="Suggestions"
@@ -196,18 +220,7 @@ export function PreviewPageHeader({
               Suggestions
             </S.SuggestionButton>
           )}
-          {transformations && transformations.length > 0 ? (
-            <TransformationDropdown
-              onAddClick={onAddTransformationClick}
-              dataModelExternalId={dataModelExternalId}
-              typeName={typeName}
-              version={version}
-            />
-          ) : (
-            <BulkPopulationButton onClick={onAddTransformationClick}>
-              {t('load-data-button', 'Bulk population')}
-            </BulkPopulationButton>
-          )}
+          {renderTransformations()}
         </Flex>
       )}
     </PageToolbar>
