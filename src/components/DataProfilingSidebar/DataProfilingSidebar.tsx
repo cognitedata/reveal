@@ -19,6 +19,8 @@ import {
   SourceSelect,
   // ReverseSwitch
 } from 'components/Common/SidebarElements';
+import { convertMillisecondsToSeconds } from './helpers';
+import Boxplot from './Boxplot';
 import Metrics from './Metrics';
 import Histogram from './Histogram';
 import { useDataProfiling } from './hooks';
@@ -53,7 +55,10 @@ const defaultTranslations = makeDefaultTranslations(
   'No histogram data available',
   'The number of data points in the selected source exceeds the 100000 limit.',
   'The selected source is empty.',
-  'Time in milliseconds'
+  'Time in seconds',
+  'No boxplot data available',
+  'The time delta histogram shows the distribution of time deltas. The y-axis gives the number of time deltas, and the x-axis gives the time delta value.',
+  'The density histogram shows the distribution of density. Density is calculated as follows: for each data point a time frame of 5 minutes is defined, and the number of data points in that time window gives the density. The y-axis gives the number of data points, and the x-axis gives the density value.'
 );
 
 type DistributionOptionType = {
@@ -167,12 +172,12 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
 
   const parseValue = (
     value: number | null | undefined,
-    unit: string | null = null
+    callback: null | ((num: number) => number | string)
   ): string | number => {
     if (value === null || value === undefined) {
       return '-';
     }
-    return unit ? `${value}${unit}` : value;
+    return (callback && callback(value)) || value;
   };
 
   return (
@@ -250,12 +255,14 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
             <>
               {/* Details block to display the profiling data */}
               <BlockSpacer>
+                <p>
+                  <b>{t.Gaps}</b>
+                </p>
                 <Metrics
-                  title={t.Gaps}
                   dataSource={[
                     {
                       label: t['Number of gaps'],
-                      value: parseValue(dataProfilingResults?.gaps_num),
+                      value: parseValue(dataProfilingResults?.gaps_num, null),
                       tooltip:
                         t[
                           'If time between two data points is more than 1.5 multiple of the inter quatile range (IQR) of all time deltas it is defined as a gap'
@@ -263,12 +270,18 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
                     },
                     {
                       label: t['Avg. gap length'],
-                      value: parseValue(dataProfilingResults?.gaps_avg, 'ms'),
+                      value: parseValue(
+                        dataProfilingResults?.gaps_avg,
+                        convertMillisecondsToSeconds
+                      ),
                       tooltip: t['Length of average gap'],
                     },
                     {
                       label: t['Max. gap length'],
-                      value: parseValue(dataProfilingResults?.gaps_max, 'ms'),
+                      value: parseValue(
+                        dataProfilingResults?.gaps_max,
+                        convertMillisecondsToSeconds
+                      ),
                       tooltip: t['Length of largest gap'],
                     },
                   ]}
@@ -276,14 +289,16 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
               </BlockSpacer>
 
               <BlockSpacer>
+                <p>
+                  <b>{t['Time Delta']}</b>
+                </p>
                 <Metrics
-                  title={t['Time Delta']}
                   dataSource={[
                     {
                       label: t['Time delta median'],
                       value: parseValue(
                         dataProfilingResults?.median_time_frequency,
-                        'ms'
+                        convertMillisecondsToSeconds
                       ),
                       tooltip:
                         t[
@@ -294,7 +309,7 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
                       label: t['Time delta spread'],
                       value: parseValue(
                         dataProfilingResults?.mad_time_frequency,
-                        'ms'
+                        convertMillisecondsToSeconds
                       ),
                       tooltip:
                         t[
@@ -306,45 +321,41 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
               </BlockSpacer>
 
               {/* Metric distribution selector */}
-              <SidebarFormLabel>
-                <b>{t['Metric distribution']}</b>
-              </SidebarFormLabel>
-              <SourceSelect
-                options={distributionOptions}
-                onChange={(distribution: DistributionOptionType) =>
-                  onSelectDistribution(distribution)
-                }
-                value={{
-                  value: selectedDistribution.value,
-                  label: selectedDistribution.label,
-                }}
-              />
+              <BlockSpacer>
+                <SidebarFormLabel>
+                  <b>{t['Metric distribution']}</b>
+                </SidebarFormLabel>
+                <SourceSelect
+                  options={distributionOptions}
+                  onChange={(distribution: DistributionOptionType) =>
+                    onSelectDistribution(distribution)
+                  }
+                  value={{
+                    value: selectedDistribution.value,
+                    label: selectedDistribution.label,
+                  }}
+                />
+              </BlockSpacer>
 
-              {/* Boxplot and Histogram */}
-              {/* <BlockSpacer>
-                                <Boxplot />
-                                <DataProfilingHistogram />
-                            </BlockSpacer> */}
-              {/* <BlockSpacer>
-                                <div
-                                    style={{
-                                        width: '100%',
-                                        height: '50px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        backgroundColor: 'var(--cogs-greyscale-grey1)'
-                                    }}>
-                                    <p style={{ margin: '0px' }}><b>{selectedDistribution.label} boxplot</b></p>
-                                </div>
-                            </BlockSpacer> */}
+              {/* Boxplot */}
+              <BlockSpacer>
+                <Boxplot
+                  noDataText={t['No boxplot data available']}
+                  data={
+                    selectedDistribution.value === 'density'
+                      ? dataProfilingResults?.density_boxplot
+                      : dataProfilingResults?.timedelta_boxplot
+                  }
+                />
+              </BlockSpacer>
 
+              {/* Density and timedelta histograms */}
               <BlockSpacer>
                 <Histogram
                   noDataText={t['No histogram data available']}
                   unitLabel={
                     selectedDistribution.value === 'timedelta'
-                      ? t['Time in milliseconds']
+                      ? t['Time in seconds']
                       : ''
                   }
                   data={
@@ -355,16 +366,32 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
                 />
               </BlockSpacer>
 
+              {/* Histogram description */}
+              {(dataProfilingResults?.density_histogram ||
+                dataProfilingResults?.timedelta_histogram) && (
+                <BlockSpacer>
+                  <Infobox showIcon={false}>
+                    {selectedDistribution.value === 'timedelta'
+                      ? t[
+                          'The time delta histogram shows the distribution of time deltas. The y-axis gives the number of time deltas, and the x-axis gives the time delta value.'
+                        ]
+                      : t[
+                          'The density histogram shows the distribution of density. Density is calculated as follows: for each data point a time frame of 5 minutes is defined, and the number of data points in that time window gives the density. The y-axis gives the number of data points, and the x-axis gives the density value.'
+                        ]}
+                  </Infobox>
+                </BlockSpacer>
+              )}
+
               {/* Sidebar switch */}
               {/* <BlockSpacer>
-                                <ReverseSwitch
-                                    name="show-gaps"
-                                    checked={showGaps}
-                                    onChange={() => onSwitchToggle()}
-                                >
-                                    <b>Show gaps</b>
-                                </ReverseSwitch>
-                            </BlockSpacer> */}
+                  <ReverseSwitch
+                      name="show-gaps"
+                      checked={showGaps}
+                      onChange={() => onSwitchToggle()}
+                  >
+                      <b>Show gaps</b>
+                  </ReverseSwitch>
+              </BlockSpacer> */}
             </>
           )}
         </ContentContainer>

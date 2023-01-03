@@ -30,7 +30,6 @@ const Template: Story<Props> = (args) => {
 export const All = Template.bind({});
 
 All.args = {
-  title: 'Gaps',
   dataSource: [
     {
       label: 'Number of gaps',

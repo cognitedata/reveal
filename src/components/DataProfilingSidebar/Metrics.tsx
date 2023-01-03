@@ -14,7 +14,6 @@ type Source = {
 };
 
 type Props = {
-  title: string;
   dataSource: Source[];
 };
 
@@ -22,9 +21,9 @@ const PointerCursor = styled.span`
   cursor: pointer;
 `;
 
-const Metrics: FunctionComponent<Props> = ({ title, dataSource }: Props) => {
+const Metrics: FunctionComponent<Props> = ({ dataSource }: Props) => {
   return (
-    <DetailsBlock title={title}>
+    <DetailsBlock title="">
       <List
         dataSource={dataSource}
         size="small"

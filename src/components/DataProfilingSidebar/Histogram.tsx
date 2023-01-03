@@ -9,6 +9,7 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
 import { DataProfilingResultResults } from '@cognite/calculation-backend';
 import { formatValueForDisplay } from 'utils/numbers';
+import EmptyState from './EmptyState';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -20,15 +21,6 @@ type Props = {
   unitLabel?: string;
 };
 
-const EmptyState = styled.div`
-  width: 100%;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--cogs-greyscale-grey1);
-`;
-
 const HistogramContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -36,14 +28,17 @@ const HistogramContainer = styled.div`
 
 const Histogram = ({ data, noDataText, unitLabel }: Props) => {
   if (!data || !data.length) {
-    return (
-      <EmptyState>
-        <span>
-          <b>{noDataText}</b>
-        </span>
-      </EmptyState>
-    );
+    return <EmptyState text={noDataText} />;
   }
+
+  const histogramData = data.map(
+    ({ quantity = NaN, range_start = NaN, range_end = NaN }) => ({
+      quantity,
+      ...(unitLabel
+        ? { range_start: range_start / 1000, range_end: range_end / 1000 }
+        : { range_start, range_end }),
+    })
+  );
 
   return (
     <HistogramContainer>
@@ -51,10 +46,10 @@ const Histogram = ({ data, noDataText, unitLabel }: Props) => {
         data={[
           {
             type: 'bar',
-            x: data.map(({ range_start = NaN }) => range_start),
-            y: data.map(({ quantity = NaN }) => quantity),
-            hovertext: data.map(
-              ({ quantity = NaN, range_start = NaN, range_end = NaN }) =>
+            x: histogramData.map(({ range_start }) => range_start),
+            y: histogramData.map(({ quantity }) => quantity),
+            hovertext: histogramData.map(
+              ({ quantity, range_start, range_end }) =>
                 `${quantity} between ${formatValueForDisplay(
                   range_start
                 )} and ${formatValueForDisplay(range_end)}`
@@ -74,8 +69,8 @@ const Histogram = ({ data, noDataText, unitLabel }: Props) => {
           bargap: 2,
           margin: { l: 40, r: 0, t: 0, b: 70 },
           xaxis: {
-            tickvals: data
-              .map(({ range_start = NaN }) => range_start)
+            tickvals: histogramData
+              .map(({ range_start }) => range_start)
               .map((x) => formatValueForDisplay(x)),
             ticks: 'outside',
             tickangle: 45,
