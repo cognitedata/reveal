@@ -1123,7 +1123,7 @@ export abstract class PointCloudObjectCollection {
     on(event: 'changed', listener: () => void): void;
 }
 
-// @public (undocumented)
+// @public
 export type PointCloudObjectMetadata = {
     annotationId: number;
     assetId?: number;
