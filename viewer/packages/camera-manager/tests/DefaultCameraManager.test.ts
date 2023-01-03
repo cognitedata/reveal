@@ -6,6 +6,8 @@ import * as THREE from 'three';
 import { DefaultCameraManager } from '../src/DefaultCameraManager';
 import { InputHandler } from '@reveal/utilities';
 
+import { jest } from '@jest/globals';
+
 describe(DefaultCameraManager.name, () => {
   const domElement = document.createElement('canvas');
   const mockRaycastFunction = async (_1: number, _2: number) => {

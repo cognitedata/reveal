@@ -4,6 +4,8 @@
 import * as THREE from 'three';
 import { TransformOverrideBuffer } from './TransformOverrideBuffer';
 
+import { jest } from '@jest/globals';
+
 describe('TransformOverrideBuffer', () => {
   const onGenerateNewTextureCb: (texture: THREE.DataTexture) => void = jest.fn();
 

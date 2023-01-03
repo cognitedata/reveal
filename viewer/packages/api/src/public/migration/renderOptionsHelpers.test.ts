@@ -10,19 +10,19 @@ import {
 import { PropType } from '../../utilities/reflection';
 import { DeviceDescriptor } from '@reveal/utilities';
 import { AntiAliasingMode } from '@reveal/rendering';
-import log from '@reveal/logger';
+import { Log } from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 
 describe(determineAntiAliasingMode.name, () => {
   let currentLogLevel: LogLevelNumbers;
 
   beforeAll(() => {
-    currentLogLevel = log.getLevel();
-    log.setLevel('ERROR');
+    currentLogLevel = Log.getLevel();
+    Log.setLevel('ERROR');
   });
 
   afterAll(() => {
-    log.setLevel(currentLogLevel);
+    Log.setLevel(currentLogLevel);
   });
 
   const mobileDevice: DeviceDescriptor = { deviceType: 'mobile' };

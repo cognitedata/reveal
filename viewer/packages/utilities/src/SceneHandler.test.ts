@@ -6,6 +6,8 @@ import { SceneHandler } from '..';
 
 import { createCadModel } from '../../../test-utilities';
 
+import { jest } from '@jest/globals';
+
 describe(SceneHandler.name, () => {
   test('Calling dispose correctly disposes all objects within the scene', () => {
     const box = new THREE.BoxGeometry(1, 1);

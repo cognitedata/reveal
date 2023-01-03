@@ -6,7 +6,7 @@ import { ConsumedSector, LevelOfDetail, WantedSector, SectorMetadata } from '@re
 import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
 import { IMock, Mock } from 'moq.ts';
 import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
-import Log from '@reveal/logger';
+import { Log } from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 
 describe(SectorDownloadScheduler.name, () => {

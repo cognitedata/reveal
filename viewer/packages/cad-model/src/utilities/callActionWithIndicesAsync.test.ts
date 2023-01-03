@@ -3,6 +3,8 @@
  */
 import { callActionWithIndicesAsync } from './callActionWithIndicesAsync';
 
+import { jest } from '@jest/globals';
+
 describe('test callActionWithIndicesAsync', () => {
   it('calls an action with specified indices range', async () => {
     const start = 10;

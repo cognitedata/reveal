@@ -11,7 +11,7 @@ import { CadSceneRootMetadata } from './types';
 
 import { createV9SceneSectorMetadata, createRandomBox } from '../../../../../test-utilities';
 
-import * as SeededRandom from 'random-seed';
+import SeededRandom from 'random-seed';
 
 describe('CadMetadataParserGltf', () => {
   test('Metadata without sectors, throws', () => {

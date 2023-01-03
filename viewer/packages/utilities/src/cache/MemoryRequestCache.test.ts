@@ -4,6 +4,8 @@
 
 import { MemoryRequestCache } from './MemoryRequestCache';
 
+import { jest } from '@jest/globals';
+
 describe('MemoryRequestCache', () => {
   beforeEach(() => {
     jest.resetAllMocks();

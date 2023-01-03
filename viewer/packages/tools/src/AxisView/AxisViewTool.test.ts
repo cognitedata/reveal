@@ -11,6 +11,10 @@ import { createGlContext, mockClientAuthentication } from '../../../../test-util
 import { AxisViewTool } from './AxisViewTool';
 import { defaultAxisBoxConfig } from './types';
 
+const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
+
+import { jest } from '@jest/globals';
+
 describe('AxisViewTool', () => {
   let canvasContainer: HTMLElement;
   let domSize: { height: number; width: number };
@@ -23,7 +27,6 @@ describe('AxisViewTool', () => {
       getToken: async () => 'dummy'
     });
     mockClientAuthentication(sdk);
-    const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     const renderer = new THREE.WebGLRenderer({ context });
     renderer.render = jest.fn();
 

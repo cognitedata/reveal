@@ -4,6 +4,8 @@
 
 import { EventTrigger } from './EventTrigger';
 
+import { jest } from '@jest/globals';
+
 describe('EventTrigger', () => {
   test('fire() triggers subscribed listeners', () => {
     const listener: (arg1: string, arg2: number) => void = jest.fn();

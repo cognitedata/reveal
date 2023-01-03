@@ -9,7 +9,7 @@ import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 import { StubNodeCollection } from './stubs/StubNodeCollection';
 import { UnionNodeCollection } from './UnionNodeCollection';
 
-import * as SeededRandom from 'random-seed';
+import SeededRandom from 'random-seed';
 
 import { createRandomBoxes } from '../../../test-utilities/src/createBoxes';
 

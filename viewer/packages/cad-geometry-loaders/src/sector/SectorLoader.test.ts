@@ -15,9 +15,11 @@ import { ModelStateHandler } from './ModelStateHandler';
 import { SectorRepository } from '@reveal/sector-loader';
 import { SectorLoader } from './SectorLoader';
 import { IMock, Mock } from 'moq.ts';
-import Log from '@reveal/logger';
+import { Log } from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 import { CadNode } from '@reveal/cad-model';
+
+import { jest } from '@jest/globals';
 
 describe('SectorLoader', () => {
   let culler: SectorCuller;
