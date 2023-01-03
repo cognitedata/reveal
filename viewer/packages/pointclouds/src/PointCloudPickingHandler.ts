@@ -8,6 +8,7 @@ import { IntersectInput } from '@reveal/model-base';
 import { PointCloudNode } from './PointCloudNode';
 
 import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-three-loader';
+import { AnnotationsAssetRef } from '@cognite/sdk';
 
 export interface IntersectPointCloudNodeResult {
   /**
@@ -35,9 +36,9 @@ export interface IntersectPointCloudNodeResult {
    */
   annotationId: number;
   /**
-   * assetId of the clicked object in the pointcloud, if any.
+   * asset reference of the clicked object in the pointcloud, if any.
    */
-  assetId?: number;
+  asset?: AnnotationsAssetRef;
 }
 
 export class PointCloudPickingHandler {
@@ -78,8 +79,8 @@ export class PointCloudPickingHandler {
         }
 
         const pointCloudObject = pointCloudNode.getStylableObjectMetadata(x.objectId);
-        const [annotationId, assetId] = pointCloudObject !== undefined ?
-          [pointCloudObject.annotationId, pointCloudObject.assetId] :
+        const [annotationId, asset] = pointCloudObject !== undefined ?
+          [pointCloudObject.annotationId, pointCloudObject.assetRef] :
           [0, undefined];
 
         const result: IntersectPointCloudNodeResult = {
@@ -89,7 +90,7 @@ export class PointCloudPickingHandler {
           pointCloudNode,
           object: x.object,
           annotationId: annotationId,
-          assetId: assetId
+          asset: asset
         };
         return result;
       });
