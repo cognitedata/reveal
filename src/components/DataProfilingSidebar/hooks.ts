@@ -104,6 +104,29 @@ export const useDataProfiling = (
     debouncedPrevDatesAsString &&
     debouncedPrevDatesAsString !== debouncedDatesAsString;
 
+  async function createDataProfiling(
+    params: CreateDataProfilingParams,
+    hash: number
+  ) {
+    if ('calculation_id' in params && params.calculation_id) {
+      await waitForCalculationToFinish(sdk, params.calculation_id);
+    }
+
+    memoizedCallFunction(params, {
+      onSuccess({ id: callId }) {
+        updateDataProfiling({
+          dataProfilingCalls: [
+            {
+              callDate: Date.now(),
+              callId,
+              hash,
+            },
+          ],
+        });
+      },
+    });
+  }
+
   useEffect(() => {
     if (!enabled) {
       return;
@@ -165,33 +188,7 @@ export const useDataProfiling = (
       return;
     }
 
-    async function createDataProfiling() {
-      if (
-        'calculation_id' in dataProfilingParameters &&
-        dataProfilingParameters.calculation_id
-      ) {
-        await waitForCalculationToFinish(
-          sdk,
-          dataProfilingParameters.calculation_id
-        );
-      }
-
-      memoizedCallFunction(dataProfilingParameters, {
-        onSuccess({ id: callId }) {
-          updateDataProfiling({
-            dataProfilingCalls: [
-              {
-                callDate: Date.now(),
-                callId,
-                hash: hashOfParams,
-              },
-            ],
-          });
-        },
-      });
-    }
-
-    createDataProfiling();
+    createDataProfiling(dataProfilingParameters, hashOfParams);
   }, [
     sdk,
     memoizedCallFunction,

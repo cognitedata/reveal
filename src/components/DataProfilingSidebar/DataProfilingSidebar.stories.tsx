@@ -4,7 +4,8 @@
 
 import { Meta, Story } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { RecoilRoot } from 'recoil';
+import chartAtom from 'models/chart/atom';
+import { RecoilRoot, useRecoilState } from 'recoil';
 import DataProfilingSidebar from './DataProfilingSidebar';
 
 type Props = React.ComponentProps<typeof DataProfilingSidebar>;
@@ -22,7 +23,13 @@ export default {
 } as Meta;
 
 const MockedDataProfilingSidebar = (args: any) => {
-  return <DataProfilingSidebar {...args} />;
+  const [, setChart] = useRecoilState(chartAtom);
+  const handleUpdateChart = () => {
+    setChart({
+      ...args?.chart,
+    });
+  };
+  return <DataProfilingSidebar {...args} updateChart={handleUpdateChart} />;
 };
 
 const Template: Story<Props> = (args) => {

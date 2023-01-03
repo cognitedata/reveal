@@ -33,12 +33,14 @@ export const All = Template.bind({});
 Empty.args = {
   noDataText: 'No histogram data available',
   unitLabel: '',
+  histogramType: 'density',
   data: [],
 };
 
 All.args = {
   noDataText: 'No histogram data available',
-  unitLabel: '',
+  unitLabel: 'Density',
+  histogramType: 'density',
   data: [
     {
       quantity: 1,

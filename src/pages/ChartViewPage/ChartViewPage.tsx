@@ -830,6 +830,7 @@ const ChartViewPage = () => {
             visible={showDataProfilingSidebar}
             onClose={handleCloseDataProfilingSidebar}
             chart={chart}
+            updateChart={setChart}
           />
         )}
         {showThresholdSidebar && (

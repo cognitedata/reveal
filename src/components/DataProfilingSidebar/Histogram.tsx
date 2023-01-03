@@ -19,6 +19,7 @@ type Props = {
     | DataProfilingResultResults['timedelta_histogram'];
   noDataText?: string;
   unitLabel?: string;
+  histogramType: 'timedelta' | 'density';
 };
 
 const HistogramContainer = styled.div`
@@ -26,7 +27,7 @@ const HistogramContainer = styled.div`
   justify-content: center;
 `;
 
-const Histogram = ({ data, noDataText, unitLabel }: Props) => {
+const Histogram = ({ data, noDataText, unitLabel, histogramType }: Props) => {
   if (!data || !data.length) {
     return <EmptyState text={noDataText} />;
   }
@@ -34,7 +35,7 @@ const Histogram = ({ data, noDataText, unitLabel }: Props) => {
   const histogramData = data.map(
     ({ quantity = NaN, range_start = NaN, range_end = NaN }) => ({
       quantity,
-      ...(unitLabel
+      ...(histogramType === 'timedelta'
         ? { range_start: range_start / 1000, range_end: range_end / 1000 }
         : { range_start, range_end }),
     })

@@ -17,19 +17,19 @@ import {
   ContentContainer,
   SidebarFormLabel,
   SourceSelect,
-  // ReverseSwitch
 } from 'components/Common/SidebarElements';
 import { convertMillisecondsToSeconds } from './helpers';
 import Boxplot from './Boxplot';
 import Metrics from './Metrics';
 import Histogram from './Histogram';
+import Calculations from './Calculations';
 import { useDataProfiling } from './hooks';
 
 type Props = {
   visible: boolean;
   onClose: () => void;
   chart: Chart;
-  // updateChart: (update: (c: Chart | undefined) => Chart) => void;
+  updateChart: (update: (c: Chart | undefined) => Chart) => void;
 };
 
 const defaultTranslations = makeDefaultTranslations(
@@ -58,7 +58,11 @@ const defaultTranslations = makeDefaultTranslations(
   'Time in seconds',
   'No boxplot data available',
   'The time delta histogram shows the distribution of time deltas. The y-axis gives the number of time deltas, and the x-axis gives the time delta value.',
-  'The density histogram shows the distribution of density. Density is calculated as follows: for each data point a time frame of 5 minutes is defined, and the number of data points in that time window gives the density. The y-axis gives the number of data points, and the x-axis gives the density value.'
+  'The density histogram shows the distribution of density. Density is calculated as follows: for each data point a time frame of 5 minutes is defined, and the number of data points in that time window gives the density. The y-axis gives the number of data points, and the x-axis gives the density value.',
+  'The selected source has less than two data points.',
+  'Data Points',
+  'Number of data points',
+  'Number of data points in the selected source'
 );
 
 type DistributionOptionType = {
@@ -89,6 +93,7 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
   visible,
   onClose,
   chart,
+  updateChart,
 }: Props) => {
   const t = {
     ...defaultTranslations,
@@ -125,12 +130,12 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
 
   const distributionOptions: DistributionOptionType[] = [
     {
-      value: 'density',
-      label: t.Density,
-    },
-    {
       value: 'timedelta',
       label: t.Timedelta,
+    },
+    {
+      value: 'density',
+      label: t.Density,
     },
   ];
 
@@ -139,7 +144,6 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
   >(null);
   const [selectedDistribution, setselectedDistribution] =
     useState<DistributionOptionType>(distributionOptions[0]);
-  // const [showGaps, setShowGaps] = useState<boolean>(false);
 
   let selectedSourceIcon;
   if (selectedSource) {
@@ -157,8 +161,6 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
     setselectedDistribution(distribution);
   };
 
-  // const onSwitchToggle = () => setShowGaps(prev => !prev);
-
   const {
     results: dataProfilingResults,
     status: dataProfilingStatus,
@@ -169,6 +171,14 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
     chart?.dateTo || new Date().toISOString(),
     visible
   );
+
+  const numberOfDataPoints = dataProfilingResults?.timedelta_histogram
+    ? 1 +
+      dataProfilingResults.timedelta_histogram.reduce(
+        (accumulator, item) => accumulator + item.quantity,
+        0
+      )
+    : 0;
 
   const parseValue = (
     value: number | null | undefined,
@@ -246,6 +256,17 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
                       <p>{t['The selected source is empty.']}</p>
                     </>
                   )}
+                  {dataProfilingError.includes('less than two') && (
+                    <>
+                      <p>
+                        {
+                          t[
+                            'The selected source has less than two data points.'
+                          ]
+                        }
+                      </p>
+                    </>
+                  )}
                 </Infobox>
               </BlockSpacer>
             </>
@@ -286,6 +307,17 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
                     },
                   ]}
                 />
+
+                {/* Sidebar Calculations */}
+                {dataProfilingResults && !!dataProfilingResults?.gaps_num && (
+                  <BlockSpacer>
+                    <Calculations
+                      chart={chart}
+                      updateChart={updateChart}
+                      source={selectedSource}
+                    />
+                  </BlockSpacer>
+                )}
               </BlockSpacer>
 
               <BlockSpacer>
@@ -320,6 +352,22 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
                 />
               </BlockSpacer>
 
+              <BlockSpacer>
+                <p>
+                  <b>{t['Data Points']}</b>
+                </p>
+                <Metrics
+                  dataSource={[
+                    {
+                      label: t['Number of data points'],
+                      value: numberOfDataPoints,
+                      tooltip:
+                        t['Number of data points in the selected source'],
+                    },
+                  ]}
+                />
+              </BlockSpacer>
+
               {/* Metric distribution selector */}
               <BlockSpacer>
                 <SidebarFormLabel>
@@ -341,6 +389,11 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
               <BlockSpacer>
                 <Boxplot
                   noDataText={t['No boxplot data available']}
+                  boxplotType={
+                    selectedDistribution.value === 'timedelta'
+                      ? 'timedelta'
+                      : 'density'
+                  }
                   data={
                     selectedDistribution.value === 'density'
                       ? dataProfilingResults?.density_boxplot
@@ -353,10 +406,15 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
               <BlockSpacer>
                 <Histogram
                   noDataText={t['No histogram data available']}
+                  histogramType={
+                    selectedDistribution.value === 'timedelta'
+                      ? 'timedelta'
+                      : 'density'
+                  }
                   unitLabel={
                     selectedDistribution.value === 'timedelta'
                       ? t['Time in seconds']
-                      : ''
+                      : t.Density
                   }
                   data={
                     selectedDistribution.value === 'density'
@@ -381,17 +439,6 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
                   </Infobox>
                 </BlockSpacer>
               )}
-
-              {/* Sidebar switch */}
-              {/* <BlockSpacer>
-                  <ReverseSwitch
-                      name="show-gaps"
-                      checked={showGaps}
-                      onChange={() => onSwitchToggle()}
-                  >
-                      <b>Show gaps</b>
-                  </ReverseSwitch>
-              </BlockSpacer> */}
             </>
           )}
         </ContentContainer>
