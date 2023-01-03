@@ -34,6 +34,10 @@ export interface IntersectPointCloudNodeResult {
    * annotationId of the clicked object within a pointcloud.
    */
   annotationId: number;
+  /**
+   * assetId of the clicked object in the pointcloud, if any.
+   */
+  assetId?: number;
 }
 
 export class PointCloudPickingHandler {
@@ -73,9 +77,10 @@ export class PointCloudPickingHandler {
           throw new Error(`Coulds not find PointCloudNode for intersected point`);
         }
 
-        const annotationId = pointCloudNode.octree.material.objectAppearanceTexture.convertObjectIdToAnnotationId(
-          x.objectId
-        );
+        const pointCloudObject = pointCloudNode.getStylableObjectMetadata(x.objectId);
+        const [annotationId, assetId] = pointCloudObject !== undefined ?
+          [pointCloudObject.annotationId, pointCloudObject.assetId] :
+          [0, undefined];
 
         const result: IntersectPointCloudNodeResult = {
           distance: x.position.distanceTo(camera.position),
@@ -83,7 +88,8 @@ export class PointCloudPickingHandler {
           pointIndex: x.pointIndex,
           pointCloudNode,
           object: x.object,
-          annotationId: annotationId
+          annotationId: annotationId,
+          assetId: assetId
         };
         return result;
       });
