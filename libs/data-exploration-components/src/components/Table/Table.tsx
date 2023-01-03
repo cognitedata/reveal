@@ -13,6 +13,7 @@ import {
   OnChangeFn,
   ExpandedState,
   ColumnOrderState,
+  ColumnSizingState,
 } from '@tanstack/react-table';
 import useLocalStorageState from 'use-local-storage-state';
 import { isElementHorizontallyInViewport } from '../../utils/isElementHorizontallyInViewport';
@@ -165,6 +166,10 @@ export function Table<T extends TableData>({
     `${id}-column-order`,
     { defaultValue: [] }
   );
+  const [columnSizing, setColumnSizing] =
+    useLocalStorageState<ColumnSizingState>(`${id}-column-sizing`, {
+      defaultValue: {},
+    });
 
   const getRowId = React.useCallback(
     (originalRow: T, index: number, parent?: Row<T>) => {
@@ -185,6 +190,7 @@ export function Table<T extends TableData>({
       columnVisibility,
       expanded: expandedRows,
       columnOrder,
+      columnSizing,
       rowSelection: selectedRows || {},
     },
     getCoreRowModel: getCoreRowModel(),
@@ -192,6 +198,8 @@ export function Table<T extends TableData>({
     getExpandedRowModel: getExpandedRowModel(),
     onSortingChange: onSort,
     onColumnOrderChange: setColumnOrder,
+    onColumnSizingChange: setColumnSizing,
+
     onColumnVisibilityChange: setColumnVisibility,
     onExpandedChange: onRowExpanded,
     enableSorting: enableSorting,
