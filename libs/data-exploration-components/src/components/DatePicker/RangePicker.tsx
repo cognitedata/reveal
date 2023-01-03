@@ -9,6 +9,7 @@ import {
   Icon,
   ButtonProps,
   SegmentedControl,
+  Flex,
 } from '@cognite/cogs.js';
 import { TIME_SELECT } from '@data-exploration-components/containers';
 import { PivotRangePicker } from './PivotRangePicker';
@@ -19,6 +20,7 @@ import {
   getPivotRangeAsDates,
 } from './Common';
 import { CalendarPicker } from './CalendarPicker';
+import styled from 'styled-components';
 
 export type RangePickerProps = {
   initialRange?: [Date, Date];
@@ -62,17 +64,7 @@ export const RangePicker = ({
   };
 
   const renderModePicker = () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 0 16px lightgrey',
-        padding: 16,
-        background: '#fff',
-        maxHeight,
-        overflow: 'auto',
-      }}
-    >
+    <DateModePicker maxHeight={maxHeight} direction="column" gap={8}>
       <SegmentedControl
         style={{ marginBottom: 8 }}
         currentKey={mode}
@@ -105,7 +97,7 @@ export const RangePicker = ({
         />
       )}
       <Divider.Horizontal />
-    </div>
+    </DateModePicker>
   );
 
   return (
@@ -124,3 +116,16 @@ export const RangePicker = ({
     </Dropdown>
   );
 };
+
+interface DateModePickerProps {
+  readonly maxHeight: number;
+}
+const DateModePicker = styled(Flex)<DateModePickerProps>`
+  border-radius: 8px;
+  box-shadow: 0 0 16px lightgrey;
+  padding: 16px;
+  overflow: auto;
+  background: white;
+  width: 375px;
+  max-height: ${(props) => props.maxHeight}px;
+`;
