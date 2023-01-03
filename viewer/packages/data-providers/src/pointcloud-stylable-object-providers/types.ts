@@ -14,8 +14,24 @@ export type CdfPointCloudObjectAnnotation = {
   region: IShape[];
 };
 
+export type PointCloudObject = PointCloudObjectMetadata & {
+  stylableObject: StylableObject;
+};
+
+/**
+ * @public
+ * Metadata for a single point cloud object.
+ */
 export type PointCloudObjectMetadata = {
+  /**
+   * The CDF Annotation ID associated with the point cloud object.
+   */
   annotationId: number;
+  /**
+   * The CDF Asset ID associated with the point cloud object, if any.
+   *
+   * @deprecated
+   */
   assetId?: number;
   /**
    * Asset identifiers for asset associated with this point cloud object, if any.
