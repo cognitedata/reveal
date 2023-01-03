@@ -59,8 +59,11 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     Tuple3<number>
   >([0, 0, 0]);
 
-  const getModelTransformation = React.useCallback(() => {
-    return props.model.getModelTransformation();
+  const getTotalModelTransformation = React.useCallback(() => {
+    return props.model
+      .getModelTransformation()
+      .clone()
+      .multiply(props.model.getCdfToDefaultModelTransformation());
   }, [props.model]);
 
   const setModelTransformation = (matrix: THREE.Matrix4) => {
@@ -70,8 +73,8 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   };
 
   useEffect(() => {
-    setInitialRotation(getModelTransformation());
-  }, [getModelTransformation]);
+    setInitialRotation(getTotalModelTransformation);
+  }, [getTotalModelTransformation]);
 
   const hasChanges = rotationAnglePiMultiplier.some((r) => r);
 
@@ -140,17 +143,14 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     if (rotationX || rotationY || rotationZ) {
       const progressMessage = message.loading('Uploading model rotation...');
       const rotationEuler = new THREE.Euler();
-      const tmpMatrix = getModelTransformation();
+      const tmpMatrix = getTotalModelTransformation();
 
-      // for pointcloud it just works without that
-      if (!(props.model instanceof CognitePointCloudModel)) {
-        // Undo the default 90 degrees on X axis shift
-        tmpMatrix.premultiply(
-          new THREE.Matrix4().makeRotationFromEuler(
-            new THREE.Euler(Math.PI / 2, 0, 0)
-          )
-        );
-      }
+      // Undo the default 90 degrees on X axis shift
+      tmpMatrix.premultiply(
+        new THREE.Matrix4().makeRotationFromEuler(
+          new THREE.Euler(Math.PI / 2, 0, 0)
+        )
+      );
 
       // Fetch actual location radians
       rotationEuler.setFromRotationMatrix(tmpMatrix);
@@ -173,7 +173,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
         });
         Sentry.captureException(e);
       } finally {
-        setInitialRotation(getModelTransformation());
+        setInitialRotation(getTotalModelTransformation());
         setRotationAnglePiMultiplier([0, 0, 0]);
       }
     }
