@@ -1,6 +1,11 @@
 import { CogniteClient, FileInfo } from '@cognite/sdk';
 import { isFileOfType, fetchFilePreviewURL } from '../files';
 
+jest.mock('@cognite/unified-file-viewer', () => {
+  return {
+    isSupportedFileInfo: jest.fn(() => true),
+  };
+});
 describe('FileUtils', () => {
   describe('isFileOfType', () => {
     it('should return the correct result for a file with MIME type', () => {
@@ -37,6 +42,7 @@ describe('FileUtils', () => {
         lastUpdatedTime: new Date(),
         createdTime: new Date(),
       };
+
       const result = isFileOfType(file, ['svg', 'jpeg']);
       expect(result).toBe(false);
     });
@@ -79,7 +85,7 @@ describe('FileUtils', () => {
       expect(result).toBe('https://download.file.com/fileId');
     });
 
-    it.only('should return a url for a PDF', async () => {
+    it('should return a url for a PDF', async () => {
       const file: FileInfo = {
         id: 1,
         mimeType: 'application/pdf',
