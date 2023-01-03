@@ -435,13 +435,13 @@ publish_fas(
     # Subdomain name used for the pull requests preview.
     preview_subdomain = "simconfig",
     # FAS production app id
-    production_app_id = "simconfig",
+    production_app_id = "cdf-simint-ui",
     # FAS app identifier (repo) shared across both production and staging apps
     repo_id = "cdf-simint-ui",
     # Sentry project name
     sentry_project_name = "simconfig",
     # FAS staging app id
-    staging_app_id = "simconfig-staging",
+    staging_app_id = "cdf-simint-ui-staging",
     versioning_strategy = "multi-branch",
     deps = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
         "@npm//vite",
