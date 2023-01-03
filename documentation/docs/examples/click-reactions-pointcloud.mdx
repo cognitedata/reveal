@@ -33,9 +33,9 @@ viewer.on('click', async event => {
 
 ## Getting information about object assigned to a clicked point
 Using Cognite's Annotations API, a user can define objects within a point cloud model.
-In order to retrieve information about a clicked object, users may get the `annotationId` that is assigned to each point.
-The `annotationId` is available in the `intersection` object returned from `viewer.getIntersectionFromPixel`.
-An annotation id of 0 means that the clicked point is not assigned to any object.
+In order to retrieve information about a clicked object, users may get the `annotationId` or the `assetId` that is assigned to each point.
+The `annotationId` and `assetId` are available in the `intersection` object returned from `viewer.getIntersectionFromPixel`.
+An annotation id of 0 means that the clicked point is not assigned to any object. `assetId` will only be defined if the annotation associated with the point is linked to an asset in CDF.
 
 ```js runnable
 viewer.on('click', async event => {
@@ -43,7 +43,7 @@ viewer.on('click', async event => {
     event.offsetX, event.offsetY
   );
   if (intersection) {
-     alert(`Clicked object: ${intersection.annotationId}`);
+     alert(`Clicked object with annotationId ${intersection.annotationId} and assetId ${intersection.assetId}`);
   };
 });
 ```
