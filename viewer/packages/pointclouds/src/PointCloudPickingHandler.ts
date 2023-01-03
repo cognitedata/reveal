@@ -79,9 +79,8 @@ export class PointCloudPickingHandler {
         }
 
         const pointCloudObject = pointCloudNode.getStylableObjectMetadata(x.objectId);
-        const [annotationId, asset] = pointCloudObject !== undefined ?
-          [pointCloudObject.annotationId, pointCloudObject.assetRef] :
-          [0, undefined];
+        const [annotationId, asset] =
+          pointCloudObject !== undefined ? [pointCloudObject.annotationId, pointCloudObject.assetRef] : [0, undefined];
 
         const result: IntersectPointCloudNodeResult = {
           distance: x.position.distanceTo(camera.position),

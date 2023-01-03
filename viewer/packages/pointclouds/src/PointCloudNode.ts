@@ -208,10 +208,10 @@ export class PointCloudNode extends Group {
 
   get stylableObjectAnnotationMetadata(): Iterable<PointCloudObjectMetadata> {
     return [...this._objectIdToAnnotationsMap.values()].map(a => ({
-        annotationId: a.annotationId,
-        assetId: a.assetRef?.id,
-        assetRef: a.assetRef,
-        boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld)
+      annotationId: a.annotationId,
+      assetId: a.assetRef?.id,
+      assetRef: a.assetRef,
+      boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld)
     }));
   }
 
