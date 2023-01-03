@@ -11,6 +11,8 @@ import { IndexSet } from '@reveal/utilities';
 import { NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { CogniteCadModel } from '@reveal/api';
 
+import { jest } from '@jest/globals';
+
 describe('TimelineTool', () => {
   let model: CogniteCadModel;
   let timelineTool: TimelineTool;

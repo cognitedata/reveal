@@ -380,6 +380,7 @@ export class Cognite3DViewer {
     setCameraManager(cameraManager: CameraManager): void;
     setClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
+    setResolutionOptions(options: ResolutionOptions): void;
     setViewState(state: ViewerState): Promise<void>;
     worldToScreen(point: THREE_2.Vector3, normalize?: boolean): THREE_2.Vector2 | null;
 }
@@ -403,6 +404,7 @@ export interface Cognite3DViewerOptions {
         edlOptions?: Partial<EdlOptions> | 'disabled';
     };
     renderer?: THREE.WebGLRenderer;
+    // @deprecated
     rendererResolutionThreshold?: number;
     renderTargetOptions?: {
         target: THREE.WebGLRenderTarget;
@@ -1204,6 +1206,12 @@ export function registerNodeCollectionType<T extends NodeCollection>(nodeCollect
 export type RelativePosition = {
     corner: Corner;
     padding: THREE_2.Vector2;
+};
+
+// @public
+export type ResolutionOptions = {
+    maxRenderResolution?: number;
+    movingCameraResolutionFactor?: number;
 };
 
 // @public (undocumented)

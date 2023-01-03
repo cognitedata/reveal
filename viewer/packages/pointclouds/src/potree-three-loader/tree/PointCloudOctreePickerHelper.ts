@@ -128,7 +128,7 @@ export class PointCloudOctreePickerHelper {
       };
 
       PointCloudOctreePickerHelper.updatePickMaterial(pickMaterial, octree.material);
-      pickMaterial.updateMaterial(octreeMaterialParams, visibilityTextureData, camera, renderer);
+      pickMaterial.updateMaterial(octreeMaterialParams, visibilityTextureData, camera);
 
       if (params.onBeforePickRender) {
         params.onBeforePickRender(pickMaterial, pickState.renderTarget);

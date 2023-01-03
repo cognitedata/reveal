@@ -8,6 +8,10 @@ import 'jest-extended';
 import { GltfSectorParser } from '../src/GltfSectorParser';
 import { RevealGeometryCollectionType } from '../src/types';
 
+// https://blog.logrocket.com/alternatives-dirname-node-js-es-modules/
+import url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
 describe(GltfSectorParser.name, () => {
   let parsedPrimitivesResult: { type: RevealGeometryCollectionType; geometryBuffer: THREE.BufferGeometry }[];
   let parser: GltfSectorParser;

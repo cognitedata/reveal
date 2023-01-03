@@ -5,6 +5,8 @@
 import { DisposedDelegate } from './types';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
+import { jest } from '@jest/globals';
+
 describe('Cognite3DViewerToolBase', () => {
   class MockedCognite3DViewerToolBase extends Cognite3DViewerToolBase {
     notifyRendered() {

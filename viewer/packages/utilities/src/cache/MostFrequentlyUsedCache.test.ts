@@ -4,6 +4,8 @@
 
 import { MostFrequentlyUsedCache } from './MostFrequentlyUsedCache';
 
+import { jest } from '@jest/globals';
+
 describe('MostFrequentlyUsedCache', () => {
   test('set within capacity, returns true', () => {
     const cache = new MostFrequentlyUsedCache<string, number>(1);

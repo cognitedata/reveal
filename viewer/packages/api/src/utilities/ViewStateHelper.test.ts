@@ -10,13 +10,16 @@ import { createGlContext, mockClientAuthentication } from '../../../../test-util
 
 import { CogniteClient } from '@cognite/sdk';
 
+import { jest } from '@jest/globals';
+
+const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
+
 describe(ViewStateHelper.name, () => {
   let viewer: Cognite3DViewer;
 
   beforeEach(() => {
     const sdk = new CogniteClient({ appId: 'reveal.test', project: 'dummy', getToken: async () => 'dummy' });
     mockClientAuthentication(sdk);
-    const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     const renderer = new THREE.WebGLRenderer({ context });
     renderer.render = jest.fn();
 

@@ -14,6 +14,8 @@ import { TreeIndexNodeCollection } from '@reveal/cad-styling';
 import range from 'lodash/range';
 import cloneDeep from 'lodash/cloneDeep';
 
+import { jest } from '@jest/globals';
+
 describe('CadMaterialManager', () => {
   let manager: CadMaterialManager;
 

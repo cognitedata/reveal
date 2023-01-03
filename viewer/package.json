@@ -45,12 +45,12 @@
     "clean:wasm": "cargo clean --manifest-path ./Cargo.toml",
     "retarget-types": "tsc-alias -p tsconfig.webpack.json -v true",
     "test": "yarn run test:wasm && yarn run test:ts",
-    "test:ts": "yarn run build:wasm-test && jest --maxWorkers=4",
+    "test:ts": "yarn run build:wasm-test && cross-env NODE_OPTIONS=--experimental-vm-modules jest --maxWorkers=4",
     "test:wasm": "yarn workspaces foreach run run-wasm-pack test --headless --chrome ./wasm",
     "test:visual:client": "cross-env JEST_PUPPETEER_CONFIG=visual-tests/jest-puppeteer.config.js jest --config=visual-tests/jest.config.js --verbose",
     "test:visual:server": "webpack-dev-server --config packages/webpack.config.js",
     "test:visual": "yarn run build:wasm && concurrently --passthrough-arguments -k -s \"first\" \"yarn run test:visual:client {@}\" \"yarn run test:visual:server\"",
-    "coverage": "yarn run build:wasm-test && jest --coverage",
+    "coverage": "yarn run build:wasm-test && cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache",
     "update-api": "api-extractor run --local && shx rm -rf api-extractor-temp/",
     "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
@@ -82,7 +82,7 @@
     "proj4": "2.8.0",
     "rxjs": "7.8.0",
     "skmeans": "0.11.3",
-    "three-stdlib": "2.20.4"
+    "three-stdlib": "2.21.1"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.32.1",
@@ -90,6 +90,7 @@
     "@microsoft/api-extractor": "^7.33.6",
     "@types/dat.gui": "0.7.7",
     "@types/expect-puppeteer": "5.0.2",
+    "@types/gl": "^6.0.2",
     "@types/glob": "8.0.0",
     "@types/jest": "29.2.4",
     "@types/jest-environment-puppeteer": "5.0.3",
@@ -103,8 +104,8 @@
     "@types/skmeans": "0.11.3",
     "@types/stats": "0.16.30",
     "@types/tween.js": "18.5.1",
-    "@typescript-eslint/eslint-plugin": "5.46.1",
-    "@typescript-eslint/parser": "5.46.1",
+    "@typescript-eslint/eslint-plugin": "5.47.1",
+    "@typescript-eslint/parser": "5.47.1",
     "concurrently": "7.6.0",
     "cross-env": "7.0.3",
     "cross-var": "1.1.0",
@@ -117,7 +118,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-unused-imports": "2.0.0",
     "file-loader": "6.2.0",
-    "gl": "6.0.1",
+    "gl": "6.0.2",
     "glob": "8.0.3",
     "glslify-loader": "2.0.0",
     "html-webpack-plugin": "5.5.0",
@@ -128,11 +129,11 @@
     "jest-image-snapshot": "6.1.0",
     "jest-puppeteer": "6.2.0",
     "jsdom": "20.0.3",
-    "moq.ts": "9.0.2",
+    "moq.ts": "10.0.2",
     "nock": "13.2.9",
     "prettier": "2.8.1",
     "process": "0.11.10",
-    "puppeteer": "19.4.0",
+    "puppeteer": "19.4.1",
     "random-seed": "0.3.0",
     "raw-loader": "4.0.2",
     "remove-files-webpack-plugin": "1.5.0",
@@ -164,5 +165,5 @@
   "files": [
     "./dist/*"
   ],
-  "packageManager": "yarn@3.3.0"
+  "packageManager": "yarn@3.3.1"
 }

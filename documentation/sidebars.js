@@ -38,6 +38,7 @@ module.exports = {
         'examples/cad-save-viewerstate',
         'examples/click-reactions-cad',
         'examples/click-reactions-pointcloud',
+        'examples/rendering-resolution',
         'examples/antialiasing',
         'examples/axisviewtool',
         'examples/timelinetool',

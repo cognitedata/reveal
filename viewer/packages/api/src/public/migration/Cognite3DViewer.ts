@@ -40,7 +40,8 @@ import {
   Cognite3DViewerOptions,
   Intersection,
   CadModelBudget,
-  CadIntersection
+  CadIntersection,
+  ResolutionOptions
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel } from '../types';
@@ -57,7 +58,7 @@ import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source'
 import { IntersectInput, SupportedModelTypes, LoadingState } from '@reveal/model-base';
 
 import { CogniteClient } from '@cognite/sdk';
-import log from '@reveal/logger';
+import { Log } from '@reveal/logger';
 import {
   determineAntiAliasingMode,
   determineResolutionCap,
@@ -210,7 +211,7 @@ export class Cognite3DViewer {
   constructor(options: Cognite3DViewerOptions) {
     const threejsRequiredVersion = viewerPackageJson.peerDependencies.three.split('.')[1].toString();
     if (threejsRequiredVersion != THREE.REVISION) {
-      log.warn(
+      Log.warn(
         `The version of the dependency \"three\" is different from what Reveal expects, which may cause unexpected results.
         In case of unexpected issues, please set the version to ${viewerPackageJson.peerDependencies.three}`
       );
@@ -336,6 +337,21 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Set options to control resolution of the viewer. This includes
+   * settings for max resolution and limiting resolution when moving the camera.
+   * @param options Options to apply.
+   */
+  setResolutionOptions(options: ResolutionOptions): void {
+    if (options.maxRenderResolution) {
+      this._revealManagerHelper.revealManager.setResolutionThreshold(options.maxRenderResolution);
+    }
+
+    if (options.movingCameraResolutionFactor) {
+      this._revealManagerHelper.revealManager.setMovingCameraResolutionFactor(options.movingCameraResolutionFactor);
+    }
+  }
+
+  /**
    * Returns reveal version installed.
    */
   getVersion(): string {
@@ -353,7 +369,7 @@ export class Cognite3DViewer {
         this.setLogLevel('silent');
         break;
       default:
-        log.setLevel(level);
+        Log.setLevel(level);
     }
   }
 
@@ -1128,7 +1144,16 @@ export class Cognite3DViewer {
     }
 
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
-    const originalDomeStyle = { ...this.domElement.style };
+    const originalDomeStyle = {
+      position: this.domElement.style.position,
+      width: this.domElement.style.width,
+      height: this.domElement.style.height,
+      flexGrow: this.domElement.style.flexGrow,
+      margin: this.domElement.style.margin,
+      padding: this.domElement.style.padding,
+      left: this.domElement.style.left,
+      top: this.domElement.style.top
+    };
 
     try {
       // Position and scale domElement to match requested resolution.
@@ -1161,7 +1186,7 @@ export class Cognite3DViewer {
       });
 
       // Draw screenshot. Again disregarding pixel ratio.
-      const outCanvas = await html2canvas(this.domElement, { scale: pixelRatioOverride });
+      const outCanvas = await html2canvas(this.domElement, { scale: pixelRatioOverride, foreignObjectRendering: true });
       return outCanvas.toDataURL();
     } finally {
       this.domElement.style.position = originalDomeStyle.position;

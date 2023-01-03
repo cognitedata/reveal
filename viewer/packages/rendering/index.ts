@@ -31,6 +31,8 @@ export { PointCloudMaterial, OctreeMaterialParams } from './src/pointcloud-rende
 
 export { DefaultRenderPipelineProvider } from './src/render-pipeline-providers/DefaultRenderPipelineProvider';
 export { CadGeometryRenderModePipelineProvider } from './src/render-pipeline-providers/CadGeometryRenderModePipelineProvider';
+
 export { BasicPipelineExecutor } from './src/pipeline-executors/BasicPipelineExecutor';
 export { RenderPipelineExecutor } from './src/RenderPipelineExecutor';
 export { RenderPipelineProvider } from './src/RenderPipelineProvider';
+export { ResizeHandler } from './src/ResizeHandler';
