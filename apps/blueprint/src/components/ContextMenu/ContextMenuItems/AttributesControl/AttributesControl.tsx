@@ -3,6 +3,7 @@ import { Asset, Timeseries } from '@cognite/sdk';
 import { ResourceAutoComplete } from 'components/ResourceAutoComplete';
 import { useState } from 'react';
 import { ShapeAttribute } from 'typings';
+import { ReactSortable } from 'react-sortablejs';
 
 import { AttributeDisplay } from './AttributesDisplay';
 import { AttributeForm } from './AttributesForm';
@@ -64,18 +65,27 @@ const AttributesControl = ({
           Add attribute
         </Button>
       </Flex>
-      {attributes?.map((attr) => (
-        <AttributeDisplay
-          key={attr.id}
-          attribute={attr}
-          onChange={(next) => {
-            onChange(attributes.map((a) => (a.id === next.id ? next : a)));
-          }}
-          onDelete={() => {
-            onChange(attributes.filter((a) => a.id !== attr.id));
-          }}
-        />
-      ))}
+      <ReactSortable<ShapeAttribute>
+        list={attributes}
+        setList={(nextList, _, { dragging }) => {
+          if (dragging) {
+            onChange(nextList);
+          }
+        }}
+      >
+        {attributes?.map((attr) => (
+          <AttributeDisplay
+            key={attr.id}
+            attribute={attr}
+            onChange={(next) => {
+              onChange(attributes.map((a) => (a.id === next.id ? next : a)));
+            }}
+            onDelete={() => {
+              onChange(attributes.filter((a) => a.id !== attr.id));
+            }}
+          />
+        ))}
+      </ReactSortable>
       {isAdding && (
         <AttributeForm
           defaultAssetExternalId={coreAssetExternalId}

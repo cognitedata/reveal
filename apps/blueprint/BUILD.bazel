@@ -70,6 +70,8 @@ DEPENDENCIES = [
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
     "@npm//chroma-js",
+    "@npm//sortablejs",
+    "@npm//react-sortablejs",
     "@npm//color",
     "@npm//dayjs",
     "@npm//filtrex",

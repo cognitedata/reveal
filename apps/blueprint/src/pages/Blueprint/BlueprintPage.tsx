@@ -269,20 +269,26 @@ const BlueprintPage: React.FC = () => {
           />
         </div>
         <Button
+          icon="Download"
+          aria-label="Download"
+          onClick={() => {
+            ornateViewer.current?.download(
+              blueprint?.name || 'untitled-blueprint'
+            );
+          }}
+        />
+        <Button
           icon={isMinimized ? 'Expand' : 'Collapse'}
           aria-label="Toggle minimized"
           onClick={() => toggleMinimized(!isMinimized)}
-        >
-          {isMinimized ? 'Maximize all' : 'Minimize all'}
-        </Button>
+        />
         {blueprintReference &&
           blueprintService?.getAccessRights(blueprintReference) === 'WRITE' && (
             <Button
+              icon="Save"
               onClick={() => onSave()}
               disabled={saveBlueprintMutation.isLoading}
-            >
-              Save
-            </Button>
+            />
           )}
         <Dropdown
           content={
