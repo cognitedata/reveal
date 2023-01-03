@@ -125,7 +125,7 @@ export const FilePreviewUFV = ({
 
   useEffect(() => {
     (async () => {
-      if (file) {
+      if (file && isSupportedFileInfo(file)) {
         setContainer(
           await getContainerConfigFromFileInfo(sdk as any, file, {
             id: getContainerId(file.id),
@@ -256,16 +256,16 @@ export const FilePreviewUFV = ({
 
   const handlePageChange = (pageNumber: number) => setPage(pageNumber);
 
-  if (!isFileFetched || container === undefined || file === undefined) {
-    return <Loader />;
-  }
-
-  if (!isSupportedFileInfo(file)) {
+  if (file !== undefined && !isSupportedFileInfo(file)) {
     return (
       <CenteredPlaceholder>
-        <h1>No preview for this type of file</h1>
+        <h1>No preview for this file type</h1>
       </CenteredPlaceholder>
     );
+  }
+
+  if (!isFileFetched || container === undefined || file === undefined) {
+    return <Loader />;
   }
 
   const toolProps = creatable ? RectangleToolProps : PanToolProps;
