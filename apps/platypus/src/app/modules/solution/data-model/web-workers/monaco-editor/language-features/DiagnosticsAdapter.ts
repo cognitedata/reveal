@@ -1,6 +1,18 @@
-import { editor, IDisposable } from 'monaco-editor';
-import { config } from './config';
-import { EditorInstance, ValidateFunction } from './types';
+import { DataModelValidationError } from '@platypus/platypus-core';
+import {
+  editor,
+  IDisposable,
+  MarkerSeverity,
+  Thenable,
+  Uri,
+} from 'monaco-editor';
+import { config } from '../../config';
+import { FdmGraphQLDmlWorker } from '../../FdmGraphQLDmlWorker';
+import { EditorInstance, ValidationMarker } from '../../types';
+
+export interface WorkerAccessor {
+  (...more: Uri[]): Thenable<FdmGraphQLDmlWorker>;
+}
 
 //#region DiagnosticsAdapter
 /**
@@ -15,23 +27,25 @@ export class DiagnosticsAdapter {
   constructor(
     private readonly _languageId: string,
     protected readonly editorInstance: EditorInstance,
-    private validateFn: ValidateFunction
+    private _worker: WorkerAccessor
   ) {
+    this._worker = _worker;
     const onModelAdd = (model: editor.IModel): void => {
       let handle: number;
+
+      const modelUri = model.uri.toString();
 
       // collect event listener handle so we can dispose later
       // add debounce and validate code in the editor
       // with the provided validator function
-      this._listener[model.uri.toString()] = model.onDidChangeContent(() => {
+      this._listener[modelUri] = model.onDidChangeContent(() => {
         window.clearTimeout(handle);
-        handle = window.setTimeout(
-          () => this._doValidate(editorInstance, model, model.getValue()),
-          500
-        );
+        handle = window.setTimeout(() => {
+          this._doValidate(model.uri, editorInstance, model, model.getValue());
+        }, 500);
       });
 
-      this._doValidate(editorInstance, model, model.getValue());
+      this._doValidate(model.uri, editorInstance, model, model.getValue());
     };
 
     const onModelRemoved = (model: editor.IModel): void => {
@@ -75,11 +89,38 @@ export class DiagnosticsAdapter {
 
   // wrapper that do the validation and set errors in monaco editor
   private async _doValidate(
+    resource: Uri,
     editorInstance: EditorInstance,
     model: editor.IModel,
     editorContent: string
   ): Promise<void> {
-    const markers = await this.validateFn(editorContent);
+    const worker = await this._worker(resource);
+
+    const diagnostics = await worker.doValidation(editorContent);
+
+    const markers = [] as ValidationMarker[];
+
+    // Monaco editor needs them as separate lines
+    (diagnostics as DataModelValidationError[]).forEach((validationError) => {
+      const locations = validationError.locations || [];
+
+      locations.forEach((validationErrorLocation) => {
+        const err = {
+          severity: validationError.extensions?.breakingChangeInfo
+            ? MarkerSeverity.Warning
+            : MarkerSeverity.Error,
+          startLineNumber: validationErrorLocation.line,
+          startColumn: 1,
+          endLineNumber: validationErrorLocation.line,
+          endColumn: validationErrorLocation.column,
+          message: validationError.message,
+        };
+
+        markers.push(err);
+      });
+    });
+
+    // return markers;
     editorInstance.setModelMarkers(model, config.languageId, markers);
   }
 }

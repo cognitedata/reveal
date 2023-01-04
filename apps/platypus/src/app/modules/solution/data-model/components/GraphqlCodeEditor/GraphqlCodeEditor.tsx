@@ -1,14 +1,30 @@
 import Editor, { Monaco } from '@monaco-editor/react';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { BuiltInType, DataModelValidationError } from '@platypus/platypus-core';
+import { BuiltInType } from '@platypus/platypus-core';
 import debounce from 'lodash/debounce';
-import { MarkerSeverity } from 'monaco-editor';
+import { Environment as MonacoEditorEnvironment } from 'monaco-editor';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { setupGraphql } from './utils/graphqlSetup';
-import { ValidationMarker } from './utils/types';
+
+// web workers stuff
+import { setupGraphql } from '../../web-workers';
+import GraphQlWorker from '../../web-workers/worker-loaders/graphqlWorkerLoader';
+import MonacoEditorWorker from '../../web-workers/worker-loaders/monacoLanguageServiceWorkerLoader';
+
+// point here so the context can be used
+declare const self: any;
+
+(self as any).MonacoEnvironment = {
+  getWorker(_: string, label: string) {
+    // // when graphql, load our custom web worker
+    if (label === 'graphql') {
+      return new GraphQlWorker();
+    }
+
+    // otherwise, load the default web worker from monaco
+    return new MonacoEditorWorker();
+  },
+} as MonacoEditorEnvironment;
 
 type Props = {
   code: string;
@@ -21,65 +37,14 @@ type Props = {
 };
 
 export const GraphqlCodeEditor = React.memo(
-  ({
-    code,
-    builtInTypes,
-    externalId,
-    space,
-    version,
-    disabled = false,
-    onChange,
-  }: Props) => {
+  ({ code, builtInTypes, externalId, disabled = false, onChange }: Props) => {
     const [editorValue, setEditorValue] = useState(code);
     const langProviders = useRef<any>(null);
 
-    const dataModelVersionHandler = useInjection(
-      TOKENS.dataModelVersionHandler
-    );
-
     const { track } = useMixpanel();
 
-    const validateFn = async (graphQLString: string) => {
-      const result = await dataModelVersionHandler.validate({
-        externalId,
-        space,
-        version,
-        schema: graphQLString,
-      });
-
-      if (result.isSuccess) {
-        return [];
-      }
-
-      const markers = [] as ValidationMarker[];
-
-      // Monaco editor needs them as separate lines
-      (result.error as DataModelValidationError[]).forEach(
-        (validationError) => {
-          const locations = validationError.locations || [];
-
-          locations.forEach((validationErrorLocation) => {
-            const err = {
-              severity: validationError.extensions?.breakingChangeInfo
-                ? MarkerSeverity.Warning
-                : MarkerSeverity.Error,
-              startLineNumber: validationErrorLocation.line,
-              startColumn: 1,
-              endLineNumber: validationErrorLocation.line,
-              endColumn: validationErrorLocation.column,
-              message: validationError.message,
-            };
-
-            markers.push(err);
-          });
-        }
-      );
-
-      return markers;
-    };
-
-    const editorWillMount = (monaco: Monaco) => {
-      langProviders.current = setupGraphql(monaco, builtInTypes, validateFn);
+    const editorWillMount = (monacoInstance: Monaco) => {
+      langProviders.current = setupGraphql(monacoInstance, builtInTypes);
     };
 
     const debouncedOnChange = useMemo(
@@ -121,11 +86,15 @@ export const GraphqlCodeEditor = React.memo(
             overviewRulerLanes: 0,
             renderLineHighlight: 'none',
             scrollBeyondLastLine: false,
+            autoIndent: 'full',
+            formatOnPaste: true,
+            formatOnType: true,
           }}
           language="graphql"
           value={editorValue}
           loading={<Spinner />}
           beforeMount={editorWillMount}
+          defaultLanguage="graphql"
           onChange={(value) => {
             const editCode = value || '';
             debouncedOnChange(editCode);

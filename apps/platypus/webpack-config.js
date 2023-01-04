@@ -99,8 +99,24 @@ module.exports = (config) => {
     config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
       './src/environments/mock/cogniteSdkSingleton.ts'
     );
-    return config;
+    return {
+      ...config,
+      plugins: [
+        ...config.plugins,
+        new MonacoWebpackPlugin({
+          publicPath: '',
+          languages: ['graphql'],
+        }),
+      ],
+    };
   }
+
+  config.entry = {
+    ...config.entry,
+    // 'monaco-editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
+    // 'graphql-lang.worker':
+    //   './src/app/modules/solution/data-model/components/GraphqlCodeEditor/utils/graphql.worker.ts',
+  };
 
   config.output.libraryTarget = 'system';
   config.output.chunkLoading = 'jsonp';
