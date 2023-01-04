@@ -130,8 +130,9 @@ Cypress.Commands.add(
       cy.get('@row').find(`[col-id="nonNull"]`).click();
     }
 
+    const typeSelector = `div[title="${typeName}"]`;
     // Wait for visualizer to be updated with new type
-    cy.get(`div#${typeName}.node`).should('be.visible').contains(fieldName);
+    cy.get(typeSelector).should('be.visible').contains(fieldName);
   }
 );
 Cypress.Commands.add(
@@ -155,7 +156,7 @@ Cypress.Commands.add(
       .type(value)
       .type('{enter}');
 
-    const typeSelector = `div#${typeName}.node`;
+    const typeSelector = `div[title="${typeName}"]`;
     // Wait for visualizer to be updated with new type before reloading page
     cy.get(typeSelector).should('be.visible').contains(value);
   }
@@ -180,7 +181,7 @@ Cypress.Commands.add('addDataModelType', (typeName: string) => {
   cy.get('@row').find(`div[col-id="name"]`).click();
   cy.get('@row').find(`[col-id="name"] input`).type('name').type('{enter}');
 
-  const typeSelector = `div#${typeName}.node`;
+  const typeSelector = `div[title="${typeName}"]`;
   // Wait for visualizer to be updated with new type before reloading page
   cy.get(typeSelector).should('be.visible').contains('name');
 });

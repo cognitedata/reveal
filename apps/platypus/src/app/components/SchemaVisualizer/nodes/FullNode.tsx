@@ -5,10 +5,20 @@ import {
 } from '@platypus-app/utils/graphql-utils';
 import { InputValueDefinitionNode, ObjectTypeDefinitionNode } from 'graphql';
 import styled from 'styled-components';
-import { getTypeDirective, capitalizeFirst } from '../utils';
+import {
+  getTypeDirective,
+  capitalizeFirst,
+  NODE_PROPERTY_ITEM_HEIGHT,
+} from '../utils';
 import { Header } from './Common';
 
-export const FullNode = ({ item }: { item: ObjectTypeDefinitionNode }) => {
+export const FullNode = ({
+  item,
+  fullRender = true,
+}: {
+  item: ObjectTypeDefinitionNode;
+  fullRender?: boolean;
+}) => {
   const typeDirective = getTypeDirective(item);
 
   return (
@@ -21,25 +31,38 @@ export const FullNode = ({ item }: { item: ObjectTypeDefinitionNode }) => {
           {capitalizeFirst(typeDirective)}
         </StyledLabel>
       </Header>
-      {item.fields?.map((el) => (
-        <PropertyItem key={el.name.value} data-cy="visualizer-type-field">
-          <Body level={2} className="property-name">
-            {getFieldType(el.type) === 'ID' ? (
-              <StyledMainID>{el.name.value}</StyledMainID>
-            ) : (
-              el.name.value
-            )}
-          </Body>
-          <div className="property-type">
-            {el.arguments && el.arguments.length > 0 && (
-              <Tooltip placement="bottom" content={renderTooltip(el.arguments)}>
-                <Icon type="Filter" className="filter-details" />
-              </Tooltip>
-            )}
-            <Body level={2}>{renderFieldType(el.type)}</Body>
-          </div>
-        </PropertyItem>
-      ))}
+      {fullRender ? (
+        item.fields?.map((el) => (
+          <PropertyItem key={el.name.value} data-cy="visualizer-type-field">
+            <Body level={2} className="property-name">
+              {getFieldType(el.type) === 'ID' ? (
+                <StyledMainID>{el.name.value}</StyledMainID>
+              ) : (
+                el.name.value
+              )}
+            </Body>
+            <div className="property-type">
+              {el.arguments && el.arguments.length > 0 && (
+                <Tooltip
+                  placement="bottom"
+                  content={renderTooltip(el.arguments)}
+                >
+                  <Icon type="Filter" className="filter-details" />
+                </Tooltip>
+              )}
+              <Body level={2}>{renderFieldType(el.type)}</Body>
+            </div>
+          </PropertyItem>
+        ))
+      ) : (
+        <div
+          style={{
+            marginTop: 8,
+            height: (item.fields?.length || 0) * NODE_PROPERTY_ITEM_HEIGHT,
+            background: 'var(--cogs-greyscale-grey2)',
+          }}
+        />
+      )}
     </>
   );
 };

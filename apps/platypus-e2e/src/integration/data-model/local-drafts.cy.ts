@@ -8,12 +8,12 @@ describe('Data Model Page - Local Drafts', () => {
   }
 
   function typeShouldNotExist(typeName: string) {
-    cy.get(`div#${typeName}.node`).should('not.exist');
+    cy.get(`div[title="${typeName}"]`).should('not.exist');
     cy.getBySel(`type-list-item-${typeName}`).should('not.exist');
   }
 
   function typeShouldExist(typeName: string) {
-    cy.get(`div#${typeName}.node`).should('exist');
+    cy.get(`div[title="${typeName}"]`).should('exist');
     cy.getBySel(`type-list-item-${typeName}`).should('exist');
   }
 

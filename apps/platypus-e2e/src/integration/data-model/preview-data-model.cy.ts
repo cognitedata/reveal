@@ -59,8 +59,8 @@ describe('Data Model Page - Existing Solution Preview', () => {
 
   it('should render the visualizer with mock data', () => {
     // Should render the visualizer
-    cy.get('div#Post.node').should('be.visible');
-    cy.get('div#Comment.node').should('be.visible');
+    cy.get('div[title="Post"]').should('be.visible');
+    cy.get('div[title="Comment"]').should('be.visible');
   });
 
   it('should enter the type in UI editor and add new field & see changes in visualizer', () => {
@@ -72,7 +72,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.addDataModelTypeField('Post', 'phone', 'String', true);
 
     // checks if visualizer updated with edited value
-    cy.get('div#Post')
+    cy.get('div[title="Post"]')
       .should('be.visible')
       .children()
       .getBySel('visualizer-type-field')
@@ -92,7 +92,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.getDataModelFieldRow('lastName').should('be.visible');
 
     // checks if visualizer updated with edited value
-    cy.get('div#Person')
+    cy.get('div[title="Person"]')
       .should('be.visible')
       .children()
       .getBySel('visualizer-type-field')
@@ -120,7 +120,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
     // should delete field "title"
     cy.getBySel('edit-schema-btn').should('be.visible').click();
     cy.get('button[aria-label="Delete field"').first().click();
-    cy.get('div#Post')
+    cy.get('div[title="Post"]')
       .find('[data-cy="visualizer-type-field"]')
       .first()
       .should('not.contain', 'title');
@@ -140,7 +140,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
       'not.contain',
       'Unable to visualize schema.'
     );
-    cy.get('div#Comment')
+    cy.get('div[title="Comment"]')
       .find('[data-cy="visualizer-type-field"]')
       .should('not.contain', 'Post');
   });
@@ -161,7 +161,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
       .type('{selectAll}')
       .type('User{enter}');
 
-    cy.get('div#Author.node')
+    cy.get('div[title="Author"]')
       .should('be.visible')
       .children()
       .last()
@@ -206,7 +206,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
     // should delete field "title"
     cy.getBySel('edit-schema-btn').should('be.visible').click();
     cy.get('button[aria-label="Delete field"').first().click();
-    cy.get('div#Post')
+    cy.get('div[title="Post"]')
       .find('[data-cy="visualizer-type-field"]')
       .first()
       .should('not.contain', 'title');

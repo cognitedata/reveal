@@ -59,19 +59,20 @@ export const getLinkedNodes = (
   schemas: SchemaDefinitionNode[]
 ) => {
   const schemaNode = schemas.find((schema) => schema.name.value === schemaName);
-  const linkedNodes: SchemaDefinitionNode[] = [];
+  const linkedNodes: { type: SchemaDefinitionNode; field?: string }[] = [];
   switch (schemaNode?.kind) {
     case 'ObjectTypeDefinition': {
-      const fieldsTypes = schemaNode?.fields?.map((el) =>
-        getFieldType(el.type)
-      );
+      const fieldsTypes = schemaNode?.fields?.map((el) => ({
+        type: getFieldType(el.type),
+        name: el.name.value,
+      }));
       if (fieldsTypes) {
-        fieldsTypes.forEach((name: string) => {
-          const type = schemas.find(
-            (schemaType) => schemaType.name.value === name
+        fieldsTypes.forEach(({ name, type }) => {
+          const typeDef = schemas.find(
+            (schemaType) => schemaType.name.value === type
           );
-          if (type) {
-            linkedNodes.push(type);
+          if (typeDef) {
+            linkedNodes.push({ type: typeDef, field: name });
           }
         });
       }
@@ -86,7 +87,7 @@ export const getLinkedNodes = (
           )
       );
       linkedInterfaces.forEach((type) => {
-        linkedNodes.push(type);
+        linkedNodes.push({ type });
       });
       break;
     }
@@ -96,7 +97,7 @@ export const getLinkedNodes = (
           (schema) => schema.name.value === type.name.value
         );
         if (schemaType) {
-          linkedNodes.push(schemaType);
+          linkedNodes.push({ type: schemaType });
         }
       });
       break;
