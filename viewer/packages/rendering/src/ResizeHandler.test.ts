@@ -148,6 +148,7 @@ describe(ResizeHandler.name, () => {
 
     const originalRenderResolution = getRendererResolution(renderer);
 
+    resizeHandler.setResolutionThreshold(0.5 * originalRenderResolution);
     resizeHandler.setMovingCameraResolutionFactor(0.25);
     cameraChangeEventHandler!(new Vector3(), new Vector3());
     resizeHandler.handleResize(cameraManager.getCamera());
