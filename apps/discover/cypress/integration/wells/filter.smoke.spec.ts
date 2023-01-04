@@ -328,13 +328,18 @@ describe('Wells sidebar filters', () => {
 
     cy.get('@spudDate').siblings().first().findAllByRole('tab').first().click();
 
-    const currentMonth = new Date().toLocaleString('default', {
-      month: 'long',
-    });
-    const currentYear = new Date().getFullYear();
-
-    cy.findByDisplayValue(currentYear).should('exist').select('2021');
-    cy.findByDisplayValue(currentMonth).should('exist').select('July');
+    // can't use year/month as we get range from backend spud date which might not contain latest dates.
+    // hence, using the safest class available from cogs.
+    cy.get('.rdrYearPicker')
+      .should('exist')
+      .find('select')
+      .should('exist')
+      .select('2021');
+    cy.get('.rdrMonthPicker')
+      .should('exist')
+      .find('select')
+      .should('exist')
+      .select('July');
     // accessing by class is wrong, but there was no other option in this case, until COGS provides a better accessor
     cy.get('.rdrDayNumber').contains('1').click();
     cy.get('.rdrDayNumber').contains('10').click();
