@@ -36,7 +36,7 @@ export class ResizeHandler {
     this._cameraManager = cameraManager;
 
     this._onCameraChangeCallback = () => {
-      this._currentResolutionThreshold = this._movingResolutionFactor * this._stoppedCameraResolutionThreshold;
+      this._currentResolutionThreshold = this._movingResolutionFactor * getPhysicalSize(renderer);
       this._shouldResize = true;
     };
     this._onCameraStopCallback = () => {
@@ -114,20 +114,17 @@ export class ResizeHandler {
     const virtualFramebufferSize = this._renderer.getSize(new Vector2());
     const pixelRatio = this._renderer.getPixelRatio();
 
-    const virtualDomElementWidth = domElement.clientWidth !== 0 ? domElement.clientWidth : canvas.clientWidth;
-    const virtualDomElementHeight = domElement.clientHeight !== 0 ? domElement.clientHeight : canvas.clientHeight;
-
-    const domElementPhysicalWidth = virtualDomElementWidth * pixelRatio;
-    const domElementPhysicalHeight = virtualDomElementHeight * pixelRatio;
-    const domElementPhysicalNumberOfPixels = domElementPhysicalWidth * domElementPhysicalHeight;
+    const domElementPhysicalNumberOfPixels = getPhysicalSize(this._renderer);
 
     const downScale =
       domElementPhysicalNumberOfPixels > this._currentResolutionThreshold
         ? Math.sqrt(this._currentResolutionThreshold / domElementPhysicalNumberOfPixels)
         : 1;
 
-    const newVirtualWidth = Math.round(virtualDomElementWidth * downScale);
-    const newVirtualHeight = Math.round(virtualDomElementHeight * downScale);
+    const [virtualWidth, virtualHeight] = getVirtualDomElementWidthAndHeight(canvas);
+
+    const newVirtualWidth = Math.round(virtualWidth * downScale);
+    const newVirtualHeight = Math.round(virtualHeight * downScale);
     const newAspectRatio = newVirtualWidth / newVirtualHeight;
 
     if (camera.aspect !== newAspectRatio) {
@@ -143,4 +140,22 @@ export class ResizeHandler {
   dispose(): void {
     this._resizeObserver?.disconnect();
   }
+}
+
+function getVirtualDomElementWidthAndHeight(canvas: HTMLElement): [number, number] {
+  const domElement = canvas.parentElement;
+  const virtualDomElementWidth = domElement?.clientWidth !== 0 ? domElement!.clientWidth : canvas.clientWidth;
+  const virtualDomElementHeight = domElement?.clientHeight !== 0 ? domElement!.clientHeight : canvas.clientHeight;
+
+  return [virtualDomElementWidth, virtualDomElementHeight];
+}
+
+function getPhysicalSize(renderer: WebGLRenderer): number {
+  const canvas = renderer.domElement;
+  const [virtualWidth, virtualHeight] = getVirtualDomElementWidthAndHeight(canvas);
+  const pixelRatio = renderer.getPixelRatio();
+
+  const domElementPhysicalWidth = virtualWidth * pixelRatio;
+  const domElementPhysicalHeight = virtualHeight * pixelRatio;
+  return domElementPhysicalWidth * domElementPhysicalHeight;
 }
