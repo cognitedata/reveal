@@ -1,4 +1,4 @@
-# Domain
+# Domain Layer
 
 This is where we keep all our domain logic
 
