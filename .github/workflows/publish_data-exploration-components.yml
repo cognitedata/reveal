@@ -11,11 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
 
       - name: configure git
         run: |
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Set NPMKEY variable
+        run: |
+          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_READONLY_TOKEN}}")
+          echo "::set-output name=NPMKEY::$NPMKEY"
+        id: npm_auth_key
+
+      - name: Create .npmrc
+        run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
 
       - name: Cache node modules
         id: cache-node-modules
@@ -27,8 +40,6 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
-
-      - run: yarn build prod data-exploration-components
 
       - run: npx nx run data-exploration-components:release
         env:
