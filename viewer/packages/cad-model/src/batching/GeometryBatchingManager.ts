@@ -14,13 +14,14 @@ import {
   decrementOrDeleteIndex
 } from '@reveal/utilities';
 import { Materials } from '@reveal/rendering';
+import { DrawCallBatchingManager } from './DrawCallBatchingManager';
 
 type BatchedBuffer = {
   defragBuffer: DynamicDefragmentedBuffer<Uint8Array>;
   mesh: THREE.InstancedMesh;
 };
 
-export class GeometryBatchingManager {
+export class GeometryBatchingManager implements DrawCallBatchingManager {
   private readonly _batchedGeometriesGroup: THREE.Group;
 
   private readonly _materials: Materials;
