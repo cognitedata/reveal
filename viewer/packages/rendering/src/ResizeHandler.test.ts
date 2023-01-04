@@ -2,13 +2,13 @@
  * Copyright 2022 Cognite AS
  */
 import { ResizeHandler } from './ResizeHandler';
-import { StationaryCameraManager } from '@reveal/camera-manager';
+import { CameraChangeDelegate, CameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 
-import { PerspectiveCamera, WebGLRenderer, Vector2 } from 'three';
+import { PerspectiveCamera, WebGLRenderer, Vector2, Vector3 } from 'three';
 
 import { jest } from '@jest/globals';
 
-import { Mock } from 'moq.ts';
+import { Mock, It } from 'moq.ts';
 
 describe(ResizeHandler.name, () => {
   const initialWidth = 1280;
@@ -132,4 +132,34 @@ describe(ResizeHandler.name, () => {
     expect(onSpy.mock.calls).toHaveLength(4);
     expect(offSpy.mock.calls).toHaveLength(4);
   });
+
+  test('movement factor is relative to max size', () => {
+    let cameraChangeEventHandler: CameraChangeDelegate;
+    const cameraManager = new Mock<CameraManager>()
+      .setup(p => p.on('cameraChange', It.IsAny()))
+      .callback(({ args: [_, eventHandler] }) => {
+        cameraChangeEventHandler = eventHandler;
+      })
+      .setup(p => p.getCamera())
+      .returns(camera)
+      .object();
+
+    const resizeHandler = new ResizeHandler(renderer, cameraManager);
+
+    const originalRenderResolution = getRendererResolution(renderer);
+
+    resizeHandler.setMovingCameraResolutionFactor(0.25);
+    cameraChangeEventHandler!(new Vector3(), new Vector3());
+    resizeHandler.handleResize(cameraManager.getCamera());
+
+    const afterFactorChangeResolution = getRendererResolution(renderer);
+
+    expect(afterFactorChangeResolution).toBe(0.25 * originalRenderResolution);
+  });
 });
+
+function getRendererResolution(renderer: WebGLRenderer): number {
+    const originalSize = new Vector2();
+    renderer.getSize(originalSize);
+    return originalSize.x * originalSize.y;
+}
