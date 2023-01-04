@@ -12,7 +12,7 @@ import {
 import styled from 'styled-components/macro';
 
 export const Toolbar = styled.aside`
-  && {
+  &&& {
     border-left: 1px solid var(--cogs-greyscale-grey4);
     width: 3.4375rem;
     background-color: white;
@@ -26,19 +26,19 @@ export const Toolbar = styled.aside`
 `;
 
 export const Sidebar = styled.aside<{ visible?: boolean }>`
-  && {
+  &&& {
     border-left: 1px solid var(--cogs-greyscale-grey4);
     visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
     width: ${(props) => (props.visible ? '400px' : 0)};
     min-width: ${(props) => (props.visible ? '400px' : 0)};
     transition: 0s linear 200ms, width 200ms ease;
-
     position: relative;
+    height: calc(100vh - 110px);
   }
 `;
 
 export const TopContainer = styled.header`
-  && {
+  &&& {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -48,7 +48,7 @@ export const TopContainer = styled.header`
 `;
 
 export const TopContainerTitle = styled.h2`
-  && {
+  &&& {
     font-size: 18px;
     font-weight: 600;
     display: flex;
@@ -63,31 +63,41 @@ export const TopContainerTitle = styled.h2`
 `;
 
 export const TopContainerAside = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  &&& {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 `;
 
 export const ContentOverflowWrapper = styled.article`
-  height: calc(100% - 32px);
-  overflow: auto;
+  &&& {
+    height: calc(100% - 32px);
+    overflow: auto;
+  }
 `;
 
 export const OverlayContentOverflowWrapper = styled.article`
-  height: calc(100% - 32px);
-  overflow: auto;
-  position: absolute;
-  top: 3.5rem;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.99);
+  &&& {
+    height: calc(100% - 32px);
+    overflow: auto;
+    position: absolute;
+    top: 3.5rem;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.99);
+  }
 `;
 
 export const ContentContainer = styled.div`
-  padding: 20px;
+  &&& {
+    padding: 20px;
+  }
 `;
 
 export const CollapsePanelTitle = styled.div`
-  max-width: 90%;
+  &&& {
+    max-width: 90%;
+  }
 `;
 
 export const SidebarCollapse = styled(Collapse)`
@@ -133,84 +143,94 @@ export const SidebarCollapse = styled(Collapse)`
 `;
 
 export const SidebarInnerCollapse = styled(Collapse)`
-  border: 0;
-  padding: 0;
-  margin: 0.5rem 0 0;
+  &&& {
+    border: 0;
+    padding: 0;
+    margin: 0.5rem 0 0;
 
-  .rc-collapse-item {
-    > .rc-collapse-header {
-      padding-left: 0;
-      padding-right: 0;
-      background: none;
-      border: 0;
-      justify-content: start;
-      flex-direction: row-reverse;
-      background-color: #f5f5f5;
-      font-weight: 500;
-      color: var(--cogs-text-icon--interactive--default);
+    .rc-collapse-item {
+      > .rc-collapse-header {
+        padding-left: 0;
+        padding-right: 0;
+        background: none;
+        border: 0;
+        justify-content: start;
+        flex-direction: row-reverse;
+        background-color: #f5f5f5;
+        font-weight: 500;
+        color: var(--cogs-text-icon--interactive--default);
 
-      .cogs-icon {
-        width: 12px !important;
-        margin-left: 0.5rem;
+        .cogs-icon {
+          width: 12px !important;
+          margin-left: 0.5rem;
+        }
+      }
+
+      > .rc-collapse-content {
+        padding-left: 0;
+        padding-right: 0;
+        background-color: #f5f5f5;
       }
     }
 
-    > .rc-collapse-content {
-      padding-left: 0;
-      padding-right: 0;
-      background-color: #f5f5f5;
+    .rc-collapse-content > .rc-collapse-content-box {
+      margin-top: 0;
     }
-  }
-
-  .rc-collapse-content > .rc-collapse-content-box {
-    margin-top: 0;
   }
 `;
 
 export const SidebarInnerBox = styled.div`
-  background-color: white;
-  border-radius: 4px;
-  font-size: 10px;
-  padding: 0.7rem 0.5rem;
-  margin: 1rem 0;
-  color: #000;
+  &&& {
+    background-color: white;
+    border-radius: 4px;
+    font-size: 10px;
+    padding: 0.7rem 0.5rem;
+    margin: 1rem 0;
+    color: #000;
 
-  p {
-    margin: 0;
-    line-height: 1.6;
+    p {
+      margin: 0;
+      line-height: 1.6;
+    }
   }
 `;
 
 export const SidebarChip = styled(Label)`
-  margin-top: 4px;
-  font-size: 12px;
-  font-weight: 500;
+  &&& {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 500;
 
-  &.cogs-label--variant-default {
-    color: var(--cogs-text-icon--status-undefined);
-    background: rgba(102, 102, 102, 0.1);
+    &.cogs-label--variant-default {
+      color: var(--cogs-text-icon--status-undefined);
+      background: rgba(102, 102, 102, 0.1);
+    }
   }
 `;
 
 export const SourceSelect = styled(Select)`
-  width: 100%;
-  .cogs-select--title {
-    padding-left: 6px;
-    > .cogs-icon {
-      background: ${(props) => props.iconBg || '#bfbfbf'};
-      color: white;
-      width: 20px !important;
-      padding: 2px;
-      border-radius: 4px;
+  &&& {
+    width: 100%;
+    .cogs-select--title {
+      padding-left: 6px;
+      > .cogs-icon {
+        background: ${(props) => props.iconBg || '#bfbfbf'};
+        color: white;
+        width: 20px !important;
+        padding: 2px;
+        border-radius: 4px;
+      }
     }
   }
 `;
 
 export const FilterSelect = styled(Select)`
-  width: 100%;
-  .cogs-select__menu {
-    right: 0;
-    min-width: 6.5rem;
+  &&& {
+    width: 100%;
+    .cogs-select__menu {
+      right: 0;
+      min-width: 6.5rem;
+    }
   }
 `;
 
