@@ -2,6 +2,7 @@ import { BoolCellRenderer, GridConfig } from '@cognite/cog-data-grid';
 import { Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { BuiltInType, DataModelTypeDefsField } from '@platypus/platypus-core';
+import { EditableCallbackParams } from 'ag-grid-community';
 import { FieldNameCellEditor } from '../components/TypeDefFields/cellEditors/FieldNameCellEditor';
 import { FieldTypeCellEditor } from '../components/TypeDefFields/cellEditors/FieldTypeCellEditor';
 import { FieldActionsCellRenderer } from '../components/TypeDefFields/cellRenderers/FieldActionsCellRenderer';
@@ -33,7 +34,16 @@ export const useTypeDefFieldsGrid = () => {
           displayOrder: 1,
           colDef: {
             width: 261,
-            editable: !props.disabled,
+            //// Don't allow user to select type while adding a new row before name is filled out
+            editable: (params: EditableCallbackParams) => {
+              if (
+                params.context.isCreatingNewField &&
+                params.data.name !== ''
+              ) {
+                return false;
+              }
+              return !props.disabled;
+            },
             sortable: false,
             suppressMovable: true,
             cellRenderer: FieldNameCellRenderer,
@@ -56,7 +66,12 @@ export const useTypeDefFieldsGrid = () => {
           displayOrder: 1,
           colDef: {
             width: 261,
-            editable: !props.disabled,
+            editable: (params: EditableCallbackParams) => {
+              if (params.context.isCreatingNewField) {
+                return false;
+              }
+              return !props.disabled;
+            },
             sortable: false,
             suppressMovable: true,
             suppressNavigable: false,

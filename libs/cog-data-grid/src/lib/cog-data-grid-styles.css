@@ -9,6 +9,11 @@
 /*------------- COMPACT THEME STYLES ------------*/
 .cog-data-grid.cog-data-grid-compact {
   --ag-cell-horizontal-padding: 4px;
+  
+}
+
+.cog-data-grid.cog-data-grid-compact .ag-cell{
+  overflow: visible;
 }
 
 

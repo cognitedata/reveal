@@ -99,7 +99,15 @@ Cypress.Commands.add(
     isRequired?: boolean
   ) => {
     // Add new type
-    cy.get('[aria-label="Add field"]').click();
+    cy.get('.ag-row-last [col-id="name"] .field-input')
+      .invoke('attr', 'data-cy-value')
+      .then((value) => {
+        if (value !== '' && value !== undefined) {
+          cy.get('[aria-label="Add field"]').click();
+        }
+      });
+
+    //This only works when cypress window is focused if you debug with --watch
     cy.get('.ag-row-last [col-id="name"]').click();
     cy.get('.ag-row-last [col-id="name"] [data-cy="schema-type-field"]')
       .click()

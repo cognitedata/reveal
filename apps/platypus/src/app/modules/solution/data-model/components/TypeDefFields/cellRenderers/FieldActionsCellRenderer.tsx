@@ -14,6 +14,9 @@ export const FieldActionsCellRenderer = React.memo(
     if (props.disabled) {
       return null;
     }
+    if (props.data.name !== '' && props.context.isCreatingNewField) {
+      return null;
+    }
 
     return (
       <DeleteFieldButton

@@ -20,11 +20,15 @@ export const BoolCellRenderer = React.memo((props: BoolCellRendererProps) => {
   };
 
   const shouldRenderCheckbox = props.displayControl === 'checkbox';
-  const shouldBeDisabled =
+  let shouldBeDisabled =
     // eslint-disable-next-line
     typeof props.disabled === 'function'
       ? props.disabled(props.data)
       : props.disabled === true;
+
+  if (props.context.isCreatingNewField) {
+    shouldBeDisabled = true;
+  }
 
   return (
     <div

@@ -14,7 +14,7 @@ import {
   ValueSetterParams,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTypeDefFieldsGrid } from '../../hooks/useTypeDefFieldsGrid';
 import { useTypeDefsKeyboardActions } from '../../hooks/useTypeDefsKeyboardActions';
 import { DataModelFieldsGrid } from './elements';
@@ -49,6 +49,7 @@ export const TypeDefFields = ({
   const gridRef = useRef<AgGridReact>(null);
   const gridService = useTypeDefFieldsGrid();
   const { onCellFocused } = useTypeDefsKeyboardActions();
+  const [isCreatingNewField, setIsCreatingNewField] = useState(false);
 
   const handleCellEditRequest = useCallback(
     (e: ValueSetterParams) => {
@@ -84,6 +85,7 @@ export const TypeDefFields = ({
 
       if (!fieldData.name && updatedCol === 'name' && e.newValue) {
         onFieldCreated(updatedFieldName, fieldData.id!);
+        setIsCreatingNewField(false);
       } else {
         onFieldUpdated(fieldData.name, updatedData);
       }
@@ -131,6 +133,8 @@ export const TypeDefFields = ({
 
     const idx = gridApi.getDisplayedRowCount() - 1;
 
+    setIsCreatingNewField(true);
+
     // wait until state was updated (redux) and then just focus the cell
     setTimeout(() => {
       gridApi.startEditingCell({
@@ -144,6 +148,7 @@ export const TypeDefFields = ({
     (field: DataModelTypeDefsField) => {
       const gridApi = (gridRef.current as any)!.api as GridApi;
       const totalRows = gridApi.getDisplayedRowCount();
+      setIsCreatingNewField(false);
 
       const addRowIfEmpty = () => {
         // if after removing all rows, the type has no fields
@@ -186,6 +191,7 @@ export const TypeDefFields = ({
       // if the type has no fields, create one and start editing
       if (!currentType.fields.length && gridRef.current) {
         handleFieldAddClick();
+        setIsCreatingNewField(true);
       }
     },
     [currentType.fields.length, handleFieldAddClick]
@@ -232,6 +238,7 @@ export const TypeDefFields = ({
           }) => displayName,
         }}
         context={{
+          isCreatingNewField: isCreatingNewField,
           typeFieldNames: currentType.fields.map((field) => ({
             id: field.id,
             name: field.name,
@@ -254,7 +261,7 @@ export const TypeDefFields = ({
         onCellFocused={onCellFocused}
         onGridSizeChanged={(e) => e.api.sizeColumnsToFit()}
       />
-      {!disabled && (
+      {!disabled && !isCreatingNewField && (
         <Button
           icon="Add"
           iconPlacement="left"

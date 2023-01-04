@@ -14,10 +14,16 @@ export const FieldNameCellRenderer = React.memo(
     if (props.colDef?.field === 'type' && props.data.type.list) {
       fieldName = `[${fieldName}] list`;
     }
+
+    const isDisabled =
+      props.disabled ||
+      (props.colDef?.field === 'type' && props.context.isCreatingNewField);
+
     const showDropDownArrow = props.showDropDownArrow === true;
+
     return (
       <div
-        className={`field-input ${props.disabled ? 'disabled' : ''}`}
+        className={`field-input ${isDisabled ? 'disabled' : ''}`}
         data-cy="schema-type-field"
         data-cy-value={fieldName}
       >
