@@ -1144,6 +1144,14 @@ export class Cognite3DViewer {
     }
 
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
+
+    // Remove this if once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
+    // Render everything a little bigger so that the outCanvas can be cropped later
+    if (includeUI) {
+      width++;
+      height++;
+    }
+
     const originalDomeStyle = {
       position: this.domElement.style.position,
       width: this.domElement.style.width,
@@ -1155,7 +1163,7 @@ export class Cognite3DViewer {
     };
 
     try {
-      //Pause animate while the screenshot renders to stop changes to active camera aspect ratio
+      // Pause animate while the screenshot renders to stop changes to active camera aspect ratio
       cancelAnimationFrame(this.latestRequestId);
 
       // Position and scale domElement to match requested resolution.
@@ -1193,8 +1201,23 @@ export class Cognite3DViewer {
         windowHeight: width,
         windowWidth: height,
         width,
-        height
+        height,
+        x: 0,
+        y: 0,
+        scrollX: 0,
+        scrollY: 0
       });
+
+      // Remove this block once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
+      // Crop away the 1px line created by svg convertion in html2canvas.
+      {
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = width - 1;
+        croppedCanvas.height = height - 1;
+        const ctx = croppedCanvas.getContext('2d');
+        ctx?.drawImage(outCanvas, -1, -1, width, height);
+        return croppedCanvas.toDataURL();
+      }
 
       return outCanvas.toDataURL();
     } finally {
