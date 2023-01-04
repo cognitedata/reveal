@@ -11,9 +11,11 @@
   "license": "Apache-2.0",
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
-    "Joachim Bjørne <joachim.bjorne@cognite.com>",
     "Christopher Tannum <christopher.tannum@cognite.com>",
-    "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
+    "Håkon Flatval <hakon.flatval@cognite.com>",
+    "Savelii Novikov <savelii.novikov@cognite.com>",
+    "Pramod S <pramod.s@cognite.com>",
+    "Astrid Kløve-Graue <astrid.graue@cognite.com>"
   ],
   "sideEffects": false,
   "main": "dist/index.js",
