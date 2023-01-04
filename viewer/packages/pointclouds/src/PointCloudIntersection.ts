@@ -30,7 +30,7 @@ export type PointCloudIntersection = {
    */
   annotationId: number;
   /**
-   * Asset Id of the intersected object within a pointcloud, if any.
+   * Reference to the asset associated to the intersected point cloud object, if any.
    */
   assetRef?: AnnotationsAssetRef;
 };
