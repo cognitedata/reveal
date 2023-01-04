@@ -2,7 +2,7 @@ import { Button } from '@cognite/cogs.js';
 import StatusTag from 'components/StatusTag';
 import { LineReview } from 'modules/lineReviews/types';
 import { PagePath } from 'pages/Menubar';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom-v5';
 import styled from 'styled-components';
 
 const Container = styled.div`

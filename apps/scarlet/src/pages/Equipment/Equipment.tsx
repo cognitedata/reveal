@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom-v5';
 import { toast, ToastContainer } from '@cognite/cogs.js';
 import { transformEquipmentData } from 'transformations';
 import { AppActionType } from 'types';

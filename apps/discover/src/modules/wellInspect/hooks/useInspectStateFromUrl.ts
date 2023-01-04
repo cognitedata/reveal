@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom-v5';
 
 import isEmpty from 'lodash/isEmpty';
 

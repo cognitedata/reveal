@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import styled from 'styled-components/macro';
 

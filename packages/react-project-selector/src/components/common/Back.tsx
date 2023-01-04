@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import { Box, Flex } from './index';
 

@@ -2,7 +2,7 @@ import { DATA_SETS_MAP } from 'domain/reportManager/internal/constants';
 import { useActiveReportsQuery } from 'domain/reportManager/internal/queries/useActiveReportsQuery';
 
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import navigation from 'constants/navigation';
 import { showGlobalSidePanel } from 'modules/global/reducer';

@@ -8,8 +8,8 @@ import { StandaloneHeader, Props } from '../StandaloneHeader';
 
 const mockGoBack = jest.fn();
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('react-router-dom-v5', () => ({
+  ...jest.requireActual('react-router-dom-v5'),
   useHistory: () => ({ goBack: mockGoBack }),
 }));
 

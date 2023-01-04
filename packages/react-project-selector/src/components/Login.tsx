@@ -4,7 +4,7 @@ import {
   Switch,
   Route,
   useHistory,
-} from 'react-router-dom';
+} from 'react-router-dom-v5';
 import { Loader } from '@cognite/cogs.js';
 import { getFlow } from '@cognite/auth-utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

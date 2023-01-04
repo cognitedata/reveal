@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Switch, Redirect, Route } from 'react-router-dom';
+import { Switch, Redirect, Route } from 'react-router-dom-v5';
 
 import { CollapsablePanel } from '@cognite/cogs.js';
 import { PerfMetrics } from '@cognite/metrics';

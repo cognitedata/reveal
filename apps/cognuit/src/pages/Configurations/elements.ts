@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Button, Body } from '@cognite/cogs.js';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom-v5';
 
 import type { ExpandedItemProps } from './types';
 

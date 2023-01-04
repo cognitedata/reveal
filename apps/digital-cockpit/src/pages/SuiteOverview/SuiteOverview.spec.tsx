@@ -6,8 +6,8 @@ import merge from 'lodash/merge';
 
 import SuiteOverview from './SuiteOverview';
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('react-router-dom-v5', () => ({
+  ...jest.requireActual('react-router-dom-v5'),
   useParams: () => ({ id: 'suite-1' }),
 }));
 const testSuiteKey = 'suite-1';

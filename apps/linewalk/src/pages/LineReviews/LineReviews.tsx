@@ -3,7 +3,7 @@ import { useAuthContext } from '@cognite/react-container';
 import uniq from 'lodash/uniq';
 import { LineReview, LineReviewStatus } from 'modules/lineReviews/types';
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom-v5';
 import styled from 'styled-components';
 import pickOnChangeOptionValue from 'utils/pickOnChangeOptionValue';
 import shamefulPendingPromise from 'utils/shamefulPendingPromise';

@@ -2,7 +2,7 @@ import { Button, Skeleton, Tooltip } from '@cognite/cogs.js';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { useFetchCDFResource } from 'queries/useFetchCDFResource';
 import { useFetchPowerOpsConfiguration } from 'queries/useFetchPowerOpsConfiguration';
-import { generatePath } from 'react-router-dom';
+import { generatePath } from 'react-router-dom-v5';
 import sidecar from 'utils/sidecar';
 
 const { cdfApiBaseUrl } = sidecar;

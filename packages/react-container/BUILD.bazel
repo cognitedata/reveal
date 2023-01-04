@@ -68,7 +68,7 @@ DEPENDENCIES = [
     "@npm//@tanstack/react-query",
     "@npm//@tanstack/react-query-devtools",
     "@npm//react-redux",
-    "@npm//react-router-dom",
+    "@npm//react-router-dom-v5",
     "@npm//redux",
     "@npm//web-vitals",
     "//packages/metrics",
@@ -93,7 +93,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/react-dom",
     "@npm//@types/react-i18next",
     "@npm//@types/react-redux",
-    "@npm//@types/react-router-dom",
+    "@npm//@types/react-router-dom-v5",
 ]
 
 # Dev dependencies from package.json

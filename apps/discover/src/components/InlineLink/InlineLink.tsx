@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import styled from 'styled-components/macro';
 

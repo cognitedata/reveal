@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import type { Range } from 'react-date-range';
 import { useMatch, useNavigate, useSearch } from 'react-location';
 import { useSelector } from 'react-redux';
-// import { useHistory } from 'react-router-dom';
 
 import { formatISO, parseISO, sub } from 'date-fns';
 import styled from 'styled-components/macro';

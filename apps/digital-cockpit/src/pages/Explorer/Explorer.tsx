@@ -1,5 +1,5 @@
 import AssetSearch from 'components/explorer/AssetSearch';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom-v5';
 import AssetHierarchy from 'components/explorer/AssetHierarchy';
 import { Asset } from '@cognite/sdk';
 import AssetTabs, { AssetTabKey } from 'components/explorer/AssetTabs';

@@ -7,7 +7,7 @@ import {
   useAssetRetrieveQuery,
 } from 'hooks/useQuery/useAssetQuery';
 import Loading from 'components/utils/Loading';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom-v5';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import noop from 'lodash/noop';
 import useAssetChildrenAggregates from 'hooks/useQuery/useAssetChildrenAggregates';

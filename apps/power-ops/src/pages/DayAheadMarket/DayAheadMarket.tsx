@@ -1,5 +1,5 @@
 import { Button, Loader } from '@cognite/cogs.js';
-import { Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom-v5';
 import { useFetchPriceAreas } from 'queries/useFetchPriceAreas';
 import { PAGES } from 'types';
 import { CommonError } from 'components/CommonError/CommonError';

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom-v5';
 import { A, Icon, Overline } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { getRootSuites } from 'store/suites/selectors';

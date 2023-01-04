@@ -3,7 +3,7 @@ import {
   getMockedSavedSearchWithFilters,
 } from 'domain/savedSearches/service/__fixtures/savedSearch';
 
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import { renderHook } from '@testing-library/react-hooks';
 
@@ -14,7 +14,7 @@ import {
   useSavedSearchNavigation,
 } from '../useSavedSearchNavigation';
 
-jest.mock('react-router-dom', () => ({
+jest.mock('react-router-dom-v5', () => ({
   useHistory: jest.fn(),
 }));
 

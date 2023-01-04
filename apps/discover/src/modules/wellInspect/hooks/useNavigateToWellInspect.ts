@@ -1,5 +1,5 @@
 import { batch, useDispatch } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom-v5';
 
 import navigation from 'constants/navigation';
 import { WellboreId, WellId } from 'modules/wellSearch/types';

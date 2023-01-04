@@ -3,7 +3,7 @@ import { MapContext } from 'components/Map/MapProvider';
 import { Scalars } from 'graphql/generated';
 import { PAGES } from 'pages/constants';
 import { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5';
 import { useSetRecoilState } from 'recoil';
 import { isEditModeAtom } from 'recoil/popupShared/isEditModeAtom';
 

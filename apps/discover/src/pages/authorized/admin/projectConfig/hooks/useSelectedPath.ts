@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom-v5';
 
 import head from 'lodash/head';
 

@@ -3,7 +3,7 @@ import { Suite } from 'store/suites/types';
 import { SuiteForm } from 'components/forms';
 import { useDispatch, useSelector } from 'react-redux';
 import { modalClose, modalOpen } from 'store/modals/actions';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import { RootDispatcher } from 'store/types';
 import { useMetrics } from 'utils/metrics';
 import { ApiClientContext } from 'providers/ApiClientProvider';

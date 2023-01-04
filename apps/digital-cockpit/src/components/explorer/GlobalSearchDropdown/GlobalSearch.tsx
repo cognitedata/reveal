@@ -5,7 +5,7 @@ import Loading from 'components/utils/Loading';
 import useFullScreenView from 'hooks/useFullScreenView';
 import { useGlobalSearchQuery } from 'hooks/useQuery/useGlobalSearchQuery';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import { ResourceType, SdkResourceType } from 'types/core';
 import { mapResourceTypeToLabel } from 'utils/resourceTypes';
 

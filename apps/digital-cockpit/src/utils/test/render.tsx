@@ -6,7 +6,7 @@ import { createMockCdfClient, createMockApiClient } from 'utils/test/client';
 import { CdfClientProvider } from 'providers/CdfClientProvider';
 import { ApiClientProvider } from 'providers/ApiClientProvider';
 import { TenantProvider } from 'providers/TenantProvider';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom-v5';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StoreState } from 'store/types';
 import { CdfClient } from 'utils/cdfClient';

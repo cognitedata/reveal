@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5';
 import { Loader, Title, Icon } from '@cognite/cogs.js';
 import Glider from 'react-glider';
 import { useSelector, useDispatch } from 'react-redux';

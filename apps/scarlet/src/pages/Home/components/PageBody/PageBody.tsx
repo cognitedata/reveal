@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { generatePath, useHistory, useParams } from 'react-router-dom';
+import { generatePath, useHistory, useParams } from 'react-router-dom-v5';
 import { getUnitListByFacility } from 'api';
 import { defaultFacility } from 'config';
 import { useApi, useAppContext, useFacility, useHomePageContext } from 'hooks';

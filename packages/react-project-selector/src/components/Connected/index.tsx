@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getFlow, removeFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import LoginContext from '../../context';
 import { Card, Flex, Box, Text, FatButton } from '../common';

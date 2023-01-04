@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { generatePath, useHistory } from 'react-router-dom';
+import { generatePath, useHistory } from 'react-router-dom-v5';
 import { useHomePageContext } from 'hooks';
 import { PAGES } from 'pages/Menubar';
 import { Facility } from 'types';

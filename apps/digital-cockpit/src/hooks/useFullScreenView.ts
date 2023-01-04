@@ -1,7 +1,7 @@
 import { CogniteInternalId } from '@cognite/sdk';
 import isNil from 'lodash/isNil';
 import { useMemo } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom-v5';
 
 export default () => {
   // get search query from url

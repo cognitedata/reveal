@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
-// import { useHistory } from 'react-router-dom';
 
 import { parseISO } from 'date-fns';
 import styled from 'styled-components/macro';

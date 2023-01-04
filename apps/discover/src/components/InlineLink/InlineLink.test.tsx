@@ -8,8 +8,8 @@ const onClick = jest.fn();
 
 const mockPush = jest.fn();
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('react-router-dom-v5', () => ({
+  ...jest.requireActual('react-router-dom-v5'),
   useHistory: () => ({ push: mockPush }),
 }));
 

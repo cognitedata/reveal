@@ -9,7 +9,7 @@ import {
   Popconfirm,
   Select,
 } from '@cognite/cogs.js';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import dayjs from 'dayjs';
 import StatusMessage from 'components/StatusMessage';
 import useDeleteBlueprintMutation from 'hooks/useMutation/useDeleteBlueprintMutation';

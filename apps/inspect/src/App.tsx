@@ -1,5 +1,5 @@
 import { Loader, ToastContainer } from '@cognite/cogs.js';
-import { Switch, Redirect, Route } from 'react-router-dom';
+import { Switch, Redirect, Route } from 'react-router-dom-v5';
 import { GlobalStyles } from 'GlobalStyles';
 import sidecar from 'utils/sidecar';
 import { Container, AuthConsumer } from '@cognite/react-container';

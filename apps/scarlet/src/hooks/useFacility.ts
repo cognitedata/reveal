@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5';
 import { useAuthContext } from '@cognite/react-container';
 import { facilityList } from 'config';
 

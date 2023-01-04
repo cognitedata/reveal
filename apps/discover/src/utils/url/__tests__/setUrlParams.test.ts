@@ -13,7 +13,7 @@ const setWindowLocation = (location: LocationDescriptor) => {
 const baseSearch = '?test=true';
 
 const mockReplace = jest.fn();
-jest.mock('react-router-dom', () => {
+jest.mock('react-router-dom-v5', () => {
   return {
     useHistory: () => ({
       replace: mockReplace,

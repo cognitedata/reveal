@@ -4,8 +4,11 @@ import {
   useAppInsightsContext,
   useTrackEvent,
 } from '@microsoft/applicationinsights-react-js';
-import { RouteComponentProps, WithRouterStatics } from 'react-router';
-import { withRouter } from 'react-router-dom';
+import {
+  RouteComponentProps,
+  WithRouterStatics,
+  withRouter,
+} from 'react-router';
 
 import { AzureTelemetryOptions, telemetryService } from './TelemetryService';
 

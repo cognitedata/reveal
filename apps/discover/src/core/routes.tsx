@@ -1,6 +1,10 @@
 import * as React from 'react';
-import { Route, RouteProps, Redirect } from 'react-router';
-import { BrowserRouter } from 'react-router-dom';
+import {
+  Route,
+  RouteProps,
+  Redirect,
+  BrowserRouter,
+} from 'react-router-dom-v5';
 
 import { Location } from 'history';
 

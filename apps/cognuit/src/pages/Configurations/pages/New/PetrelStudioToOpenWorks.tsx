@@ -2,7 +2,7 @@ import { useContext, useEffect, useState, useMemo, FC } from 'react';
 import { Button, Modal } from '@cognite/cogs.js';
 import { Source } from 'typings/interfaces';
 import APIErrorContext from 'contexts/APIErrorContext';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom-v5';
 import { CustomError } from 'services/CustomError';
 import {
   useProjectsBusinessTagsQuery,

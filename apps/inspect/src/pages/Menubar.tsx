@@ -1,4 +1,4 @@
-import { useHistory, Link, useLocation } from 'react-router-dom';
+import { useHistory, Link, useLocation } from 'react-router-dom-v5';
 import { TopBar } from '@cognite/cogs.js';
 import React from 'react';
 

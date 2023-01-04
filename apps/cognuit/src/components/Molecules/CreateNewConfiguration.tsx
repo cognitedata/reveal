@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from 'react';
 import { Button, Dropdown, Icon, Input, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom-v5';
 import { SessionType } from 'typings/interfaces';
 import { ThirdPartySystems } from 'types/globalTypes';
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { generatePath, useHistory, useLocation } from 'react-router-dom';
+import { generatePath, useHistory, useLocation } from 'react-router-dom-v5';
 import { Dropdown, Icon, Menu, Skeleton, TopBar } from '@cognite/cogs.js';
 import {
   LogoutButtonWithoutTranslation,

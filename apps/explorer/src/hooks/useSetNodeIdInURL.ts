@@ -1,5 +1,5 @@
 import { HOME_ROUTES } from 'pages/constants';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 export const useSetNodeIdInURL = () => {
   const history = useHistory();

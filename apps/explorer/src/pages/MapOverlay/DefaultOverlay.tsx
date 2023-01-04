@@ -3,7 +3,7 @@ import { ChangeLayerButtons } from 'components/ChangeLayerButtons/ChangeLayerBut
 import { AbsoluteHeader } from 'components/Header';
 import { SearchBarAndList } from 'components/SearchBarAndList/SearchBarAndList';
 import { PAGES } from 'pages/constants';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5';
 
 export const DefaultOverlay = () => (
   <>

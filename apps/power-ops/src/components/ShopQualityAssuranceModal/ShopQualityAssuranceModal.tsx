@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5';
 import { Body, Infobox, Icon } from '@cognite/cogs.js';
 import { useMetrics } from '@cognite/metrics';
 import { CommonTable } from 'components/CommonTable';

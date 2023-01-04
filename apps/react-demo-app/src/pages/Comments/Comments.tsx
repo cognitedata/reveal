@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Body, Title } from '@cognite/cogs.js';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5';
 
 import { PAGES } from '../Menubar';
 import { Container } from '../elements';

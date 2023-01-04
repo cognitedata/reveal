@@ -1,7 +1,6 @@
 import isString from 'lodash/isString';
 import qs from 'query-string';
-import { useHistory } from 'react-router';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom-v5';
 
 type ValidationFn = (value: string) => boolean;
 

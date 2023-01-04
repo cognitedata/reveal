@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import { Dropdown, TopBar, Menu, Button } from '@cognite/cogs.js';
 import capitalize from 'lodash/capitalize';
 

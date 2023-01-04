@@ -1,7 +1,7 @@
 import { useDocumentsByIdForFavoritesQuery } from 'domain/documents/internal/queries/useDocumentsByIdForFavoritesQuery';
 
 import * as React from 'react';
-import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
+import { Switch, Route, useHistory, useLocation } from 'react-router-dom-v5';
 
 import { Badge, Icon, Tabs } from '@cognite/cogs.js';
 import { FavoriteContent } from '@cognite/discover-api-types';

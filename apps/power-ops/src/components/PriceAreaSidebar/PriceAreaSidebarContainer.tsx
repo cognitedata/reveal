@@ -5,7 +5,7 @@ import { PriceAreaSidebarContent } from 'components/PriceAreaSidebar/PriceAreaSi
 import debounce from 'lodash/debounce';
 import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
 import { useCallback } from 'react';
-import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
+import { useLocation, useParams, useRouteMatch } from 'react-router-dom-v5';
 import { SECTIONS } from 'types';
 import { sortPlants } from 'utils/utils';
 

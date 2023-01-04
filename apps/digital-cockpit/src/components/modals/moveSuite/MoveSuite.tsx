@@ -11,7 +11,7 @@ import { Suite } from 'store/suites/types';
 import { suitesByKey } from 'store/suites/selectors';
 import { moveSuite as moveSuiteDispatcher } from 'store/suites/thunks';
 import SuitesTree from 'components/modals/SuitesTree';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import * as Sentry from '@sentry/browser';
 
 interface Props {

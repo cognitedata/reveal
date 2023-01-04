@@ -6,7 +6,7 @@ import {
   useLocation,
   useParams,
   useRouteMatch,
-} from 'react-router-dom';
+} from 'react-router-dom-v5';
 import { useMetrics } from '@cognite/metrics';
 import { PriceScenariosContainer } from 'pages/PriceScenarios/PriceScenariosContainer';
 import { BidMatrixContainer } from 'components/BidMatrix/BidMatrixContainer';

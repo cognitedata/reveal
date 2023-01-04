@@ -2,7 +2,7 @@ import { Loader } from '@cognite/cogs.js';
 import { NotFoundPage } from 'pages/NotFound/NotFound';
 import { PriceScenarios } from 'pages/PriceScenarios/PriceScenarios';
 import { useFetchBidProcessResultWithData } from 'queries/useFetchBidProcessResultWithData';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5';
 
 type Props = {
   bidProcessEventExternalId: string;

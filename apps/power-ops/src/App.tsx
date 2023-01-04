@@ -1,4 +1,4 @@
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom-v5';
 import { Container, Logout } from '@cognite/react-container';
 import GlobalStyles from 'global-styles';
 import sidecar from 'utils/sidecar';

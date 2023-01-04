@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { BenchmarkingFilters as BenchmarkingFiltersComponent } from 'components/BenchmarkingFilters/BenchmarkingFilters';
 import { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom-v5';
 import {
   BenchmarkingFilterType,
   BenchmarkingWaterCourses,

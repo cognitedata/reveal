@@ -1,6 +1,6 @@
 import { useUserRoles } from 'domain/user/internal/hooks/useUserRoles';
 
-import { Switch } from 'react-router-dom';
+import { Switch } from 'react-router-dom-v5';
 
 import { SIDECAR } from 'constants/app';
 import navigation from 'constants/navigation';

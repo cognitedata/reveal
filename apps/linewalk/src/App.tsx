@@ -1,5 +1,5 @@
 import GlobalStyles from 'global-styles';
-import { Switch, Redirect, Route } from 'react-router-dom';
+import { Switch, Redirect, Route } from 'react-router-dom-v5';
 import { Container } from '@cognite/react-container';
 import sidecar from 'utils/sidecar';
 import { MenuBar, PagePath } from 'pages/Menubar';

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5';
 import { useMetrics } from '@cognite/metrics';
 import { Loader } from '@cognite/cogs.js';
 import { useFetchBidMatrix } from 'queries/useFetchBidMatrix';

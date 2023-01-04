@@ -1,5 +1,5 @@
 import { batch, useDispatch } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom-v5';
 
 import { renderHook } from '@testing-library/react-hooks';
 
@@ -13,7 +13,7 @@ jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
+jest.mock('react-router-dom-v5', () => ({
   useHistory: jest.fn(),
   useLocation: jest.fn(),
 }));

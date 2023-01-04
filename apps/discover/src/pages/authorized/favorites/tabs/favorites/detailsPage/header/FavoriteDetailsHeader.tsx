@@ -1,7 +1,7 @@
 import { useIsOwner } from 'domain/user/internal/hooks/useIsOwner';
 
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import {
   ShareButton,

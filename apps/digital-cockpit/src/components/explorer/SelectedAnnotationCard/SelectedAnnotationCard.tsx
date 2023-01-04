@@ -1,7 +1,7 @@
 import { Body, Button, Icon } from '@cognite/cogs.js';
 import { OrnateAnnotation } from '@cognite/ornate';
 import { CSSProperties } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom-v5';
 import layers from 'utils/zindex';
 
 import { CloseButton, Wrapper } from './elements';

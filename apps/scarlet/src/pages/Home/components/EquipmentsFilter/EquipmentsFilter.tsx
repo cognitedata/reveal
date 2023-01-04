@@ -3,7 +3,7 @@ import { Icon, Select } from '@cognite/cogs.js';
 import { EquipmentStatus, EquipmentType } from 'types';
 import debounce from 'lodash/debounce';
 import queryString from 'query-string';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom-v5';
 
 import { transformSearchValue } from '../EquipmentList/utils';
 

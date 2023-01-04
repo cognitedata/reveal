@@ -1,7 +1,7 @@
 import { useMetrics } from '@cognite/metrics';
 import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
 import { useFetchProcessConfigurations } from 'queries/useFetchProcessConfigurations';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom-v5';
 import { downloadBidMatrices, formatDate } from 'utils/utils';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { DayAheadMarketHeader } from 'components/DayAheadMarketHeader/DayAheadMarketHeader';

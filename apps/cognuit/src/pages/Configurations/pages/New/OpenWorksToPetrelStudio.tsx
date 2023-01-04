@@ -11,7 +11,7 @@ import { AuthProvider, AuthContext } from '@cognite/react-container';
 import { ConfigurationOWtoPS, Project, Source } from 'typings/interfaces';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom-v5';
 import {
   ObjectGetResponse,
   RepositoryTreeResponse,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom-v5';
 // Here is where our custom render is being defined, so we don't need this check
 import { render, RenderOptions } from '@testing-library/react';
 import { I18nContainer } from '@cognite/react-i18n';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Body, Tooltip } from '@cognite/cogs.js';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom-v5';
 import SuiteAvatar from 'components/suiteAvatar/SuiteAvatar';
 import { Suite } from 'store/suites/types';
 

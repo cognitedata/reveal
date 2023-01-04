@@ -1,6 +1,6 @@
 import { HOME_ROUTES, PAGES } from 'pages/constants';
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom-v5';
 import { DefaultOverlay } from 'pages/MapOverlay/DefaultOverlay';
 import { Popup } from 'components/Map/Popup/Popup';
 import { useGetMapAndSearchData } from 'hooks/useGetMapAndSearchData';

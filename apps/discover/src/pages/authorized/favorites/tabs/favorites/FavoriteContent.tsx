@@ -6,7 +6,7 @@ import { useFavoritesQuery } from 'domain/favorites/internal/queries/useFavorite
 import { useIsOwner } from 'domain/user/internal/hooks/useIsOwner';
 
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';

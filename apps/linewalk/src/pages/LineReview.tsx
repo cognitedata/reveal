@@ -8,8 +8,7 @@ import SidePanel from 'components/SidePanel/SidePanel';
 import Konva from 'konva';
 import qs from 'query-string';
 import { useState } from 'react';
-import { useHistory, useParams } from 'react-router';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useParams, useLocation } from 'react-router-dom-v5';
 import styled from 'styled-components';
 import clamp from 'lodash/clamp';
 

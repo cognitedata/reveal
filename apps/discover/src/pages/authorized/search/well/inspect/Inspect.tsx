@@ -2,7 +2,7 @@ import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellIns
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom-v5';
 
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom-v5';
 
 import { configureI18n, I18nContainer } from '@cognite/react-i18n';
 import GlobalStyles from 'global-styles';

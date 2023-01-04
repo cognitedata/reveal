@@ -2,7 +2,7 @@ import { zipAndDownloadDocumentsByIds } from 'domain/documents/service/utils/uti
 import { useFavoriteQuery } from 'domain/favorites/internal/queries/useFavoriteQuery';
 
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5';
 
 import styled from 'styled-components/macro';
 

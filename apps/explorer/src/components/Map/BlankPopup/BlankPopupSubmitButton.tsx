@@ -5,7 +5,7 @@ import { Room } from 'graphql/generated';
 import { useRecoilValue } from 'recoil';
 import { blankFormState } from 'recoil/blankPopup/blankFormState';
 import { selectedTypeAtom } from 'recoil/blankPopup/blankPopupAtoms';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import { PAGES } from 'pages/constants';
 import { MAP_OBJECTS } from 'recoil/blankPopup/constants';
 

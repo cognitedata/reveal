@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Router } from 'react-router-dom';
+import { Router } from 'react-router-dom-v5';
 import merge from 'lodash/merge';
 import { Store } from 'redux';
 import { IntercomBootSettings } from '@cognite/intercom-helper';

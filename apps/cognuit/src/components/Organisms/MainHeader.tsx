@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import { Graphic, TopBar } from '@cognite/cogs.js';
 import sidecar from 'configs/sidecar';
 import { windowOpenNewTab } from 'utils/window';

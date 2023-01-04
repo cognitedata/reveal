@@ -1,4 +1,4 @@
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom-v5';
 import Home from 'pages/Home';
 import Explorer from 'pages/Explorer';
 import PageLayout from 'pages/PageLayout';

@@ -2,7 +2,7 @@ import { Icon, Input, Skeleton } from '@cognite/cogs.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SortOrder, UnitListItem } from 'types';
 import { useApi, useHomePageContext } from 'hooks';
-import { generatePath, useHistory } from 'react-router-dom';
+import { generatePath, useHistory } from 'react-router-dom-v5';
 import { PAGES } from 'pages/Menubar';
 import { getNumberEquipmentsPerUnit } from 'api';
 

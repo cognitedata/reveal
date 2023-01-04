@@ -1,4 +1,4 @@
-import { Switch, Redirect, Route } from 'react-router-dom';
+import { Switch, Redirect, Route } from 'react-router-dom-v5';
 import { NotFoundPage } from 'pages/App/NotFoundPage';
 import { Home } from 'pages/App/Home';
 import { Profile } from 'pages/App/Profile';

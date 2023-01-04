@@ -16,7 +16,7 @@ import { BlueprintDefinition, TimeSeriesTag } from 'typings';
 import { v4 as uuid } from 'uuid';
 import { PRESET_COLORS } from 'consts';
 import { AuthContext } from 'providers/AuthProvider';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom-v5';
 import TopBar from 'components/TopBar';
 import useFetchBlueprintDefinition from 'hooks/useQuery/useFetchBlueprintDefinitionQuery';
 import StatusMessage from 'components/StatusMessage';

@@ -5,7 +5,7 @@ import {
 } from 'graphql/generated';
 import { useGetURLSearchParams } from 'hooks/useGetURLSearchParams';
 import { HOME_ROUTES, PAGES } from 'pages/constants';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom-v5';
 import { getDataFromMapAndSearch } from 'utils/map/getDataFromMapAndSearch';
 import { LocationSelectorField } from 'components/LocationSelectorField/LocationSelectorField';
 import { LinkButton } from 'components/LinkButton/LinkButton';

@@ -6,7 +6,7 @@ import { useAssetRetrieveQuery } from 'hooks/useQuery/useAssetQuery';
 import { useDocumentDownloadUrl } from 'hooks/useQuery/useDocumentDownloadUrl';
 import useTimeSeriesQuery from 'hooks/useQuery/useTimeSeriesListQuery';
 import noop from 'lodash/noop';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom-v5';
 
 import DocumentPreview from '../DocumentPreview';
 import ShareButton from '../ShareButton';

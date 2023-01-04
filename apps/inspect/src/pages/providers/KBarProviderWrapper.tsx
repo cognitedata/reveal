@@ -6,7 +6,7 @@ import {
   KBarAnimator,
   KBarSearch,
 } from 'kbar';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import { RenderResults } from '../../components/RenderResults';
 

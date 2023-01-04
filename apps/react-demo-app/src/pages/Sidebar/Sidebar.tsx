@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Drawer } from '@cognite/cogs.js';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import { LogoutButton, useAuthContext } from '@cognite/react-container';
 
 import { Footer } from './Footer';

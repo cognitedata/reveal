@@ -1,5 +1,5 @@
 import { Button, Skeleton } from '@cognite/cogs.js';
-import { generatePath, useHistory, useLocation } from 'react-router-dom';
+import { generatePath, useHistory, useLocation } from 'react-router-dom-v5';
 import { useAppState, useFacility, useApi } from 'hooks';
 import { PAGES } from 'pages/Menubar';
 import { saveEquipmentRaw } from 'api';

@@ -1,7 +1,7 @@
 import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import noop from 'lodash/noop';
 import { convertToCancellablePromise } from 'utils/cancellablePromise';

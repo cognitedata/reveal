@@ -1,4 +1,4 @@
-import { Router } from 'react-router-dom';
+import { Router } from 'react-router-dom-v5';
 
 import { renderHook } from '@testing-library/react-hooks';
 import { createBrowserHistory, createLocation } from 'history';

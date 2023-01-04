@@ -1,6 +1,6 @@
 import { usePossibleTenant } from 'hooks';
 import { useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 export function useLink() {
   const history = useHistory();

@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom-v5';
 import { PAGES } from 'types';
 
 import { PanelContent, StyledButton } from './elements';

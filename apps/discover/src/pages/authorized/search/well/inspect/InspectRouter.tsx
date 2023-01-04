@@ -1,4 +1,4 @@
-import { Route, Redirect, Switch } from 'react-router-dom';
+import { Route, Redirect, Switch } from 'react-router-dom-v5';
 
 import navigation from 'constants/navigation';
 

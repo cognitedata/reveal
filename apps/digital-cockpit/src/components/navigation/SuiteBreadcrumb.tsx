@@ -4,7 +4,7 @@ import SuiteAvatar from 'components/suiteAvatar';
 import { useSelector } from 'react-redux';
 import { getSuitePath } from 'store/suites/selectors';
 import { Dropdown, Icon, Menu, Title } from '@cognite/cogs.js';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5';
 
 import {
   SuiteBreadcrumbContainer,

@@ -14,7 +14,7 @@ import { useMetrics } from 'utils/metrics';
 import { getConfigState } from 'store/config/selectors';
 import { getLayoutDeleteQueue } from 'store/layout/selectors';
 import { resetLayoutDeleteQueue } from 'store/layout/actions';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 interface Props {
   suiteItem: Suite;

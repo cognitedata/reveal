@@ -84,7 +84,7 @@ DEPENDENCIES = [
     "@npm//react-i18next",
     "@npm//@tanstack/react-query",
     "@npm//@tanstack/react-query-devtools",
-    "@npm//react-router-dom",
+    "@npm//react-router-dom-v5",
     "@npm//styled-components",
     "//packages/react-container",
     "//packages/react-document-search",
@@ -102,7 +102,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/react",
     "@npm//@types/react-dom",
     "@npm//@types/react-i18next",
-    "@npm//@types/react-router-dom",
+    "@npm//@types/react-router-dom-v5",
     "@npm//@types/sinon",
     "@npm//@types/styled-components",
 ]

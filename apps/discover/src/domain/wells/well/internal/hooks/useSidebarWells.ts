@@ -1,6 +1,6 @@
 import { LIMIT_WELLBORES_NUMBER } from 'domain/wells/constants';
 
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom-v5';
 
 import { RELATED_DOCUMENTS } from 'constants/navigation';
 

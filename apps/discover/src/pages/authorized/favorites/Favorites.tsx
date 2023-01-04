@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom-v5';
 
 import { Slider as CommentSlider } from '@cognite/react-comments';
 

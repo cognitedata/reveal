@@ -4,7 +4,7 @@ import { useClearAllFilters } from 'domain/savedSearches/internal/hooks/useClear
 import { useMemo } from 'react';
 import * as React from 'react';
 import { batch, useDispatch } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom-v5';
 
 import { ProductLogo, TopBar } from '@cognite/cogs.js';
 

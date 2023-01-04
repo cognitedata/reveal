@@ -1,7 +1,7 @@
 import { Flex, Label } from '@cognite/cogs.js';
 import { PAGES } from 'pages/constants';
 import { DATA_TYPES } from 'pages/MapOverlay/MapOverlayRouter';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5';
 import { useRecoilValue } from 'recoil';
 import { prevRoomEquipmentSelectAtom } from 'recoil/roomPopup/roomPopupAtoms';
 

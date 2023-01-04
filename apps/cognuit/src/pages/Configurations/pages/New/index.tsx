@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5';
 import { useQuery } from 'utils/functions';
 
 import { SessionType } from '../../../../typings/interfaces';

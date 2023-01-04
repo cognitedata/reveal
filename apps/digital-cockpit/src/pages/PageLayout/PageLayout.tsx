@@ -3,7 +3,7 @@ import AppHeader from 'components/navigation/AppHeader';
 import LeftSidebar from 'components/navigation/LeftSidebar';
 import ModalManager from 'components/modals/ModalManager';
 import GlobalComponents from 'components/navigation/GlobalComponents';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom-v5';
 import FullScreenModal from 'components/common/FullScreenModal';
 import useFullScreenView from 'hooks/useFullScreenView';
 import { Body, toast } from '@cognite/cogs.js';

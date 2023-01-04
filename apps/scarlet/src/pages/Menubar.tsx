@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5';
 import { TopBar } from '@cognite/cogs.js';
 
 export enum PAGES {

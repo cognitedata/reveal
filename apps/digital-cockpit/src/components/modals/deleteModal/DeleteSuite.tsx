@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { RootDispatcher } from 'store/types';
 import { deleteSuite, deleteFiles } from 'store/suites/thunks';

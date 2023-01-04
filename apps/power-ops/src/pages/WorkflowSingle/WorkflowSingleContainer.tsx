@@ -3,7 +3,7 @@ import { CogniteEvent, Relationship } from '@cognite/sdk';
 import { TableData } from '@cognite/cogs.js';
 import { EVENT_TYPES } from '@cognite/power-ops-api-types';
 import { calculateDuration } from 'utils/utils';
-import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
+import { useHistory, useParams, useRouteMatch } from 'react-router-dom-v5';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchProcesses } from 'queries/useFetchProcesses';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';

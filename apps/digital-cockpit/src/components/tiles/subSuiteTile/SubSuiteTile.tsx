@@ -10,7 +10,7 @@ import { getSuiteByKey } from 'store/suites/selectors';
 import { Suite } from 'store/suites/types';
 import { useSelector } from 'react-redux';
 import SuiteAvatar from 'components/suiteAvatar';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5';
 
 import TilePreviewImage from '../tilePreviewImage';
 

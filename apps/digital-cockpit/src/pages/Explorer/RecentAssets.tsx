@@ -4,7 +4,7 @@ import RecentAssetCard from 'components/explorer/RecentAssetCard';
 import NoData from 'components/utils/NoData';
 import moment from 'moment';
 import { useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import { RecentAsset, useRecentAssets } from 'hooks/useRecentAssets';
 
 import { NoDataWrapper, RecentAssetsWrapper } from './elements';

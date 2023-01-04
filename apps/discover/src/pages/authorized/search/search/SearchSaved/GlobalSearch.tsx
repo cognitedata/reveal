@@ -6,7 +6,7 @@ import { useUpdateSearchHistoryListQuery } from 'domain/searchHistory/internal/h
 import { SearchHistoryOptionType } from 'domain/searchHistory/internal/types';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import get from 'lodash/get';
 

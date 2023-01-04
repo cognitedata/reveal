@@ -3,7 +3,7 @@ import { ComponentProps } from 'react';
 import { userEvent, within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { authDecorator, reactQueryDecorator } from 'utils/test/storyDecorators';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom-v5';
 import { EVENT_STATUSES } from 'utils/utils';
 
 import { Workflows } from './Workflows';

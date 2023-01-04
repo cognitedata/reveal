@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom-v5';
 import { useQuery } from '@tanstack/react-query';
 import { AuthContext } from 'providers/AuthProvider';
 import StatusMessage from 'components/StatusMessage';

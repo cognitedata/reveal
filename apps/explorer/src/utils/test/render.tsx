@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom-v5';
 import { QueryClientWrapper } from '__mocks/queryClientWrapper';
 // Here is where our custom render is being defined, so we don't need this check
 import { render, RenderOptions } from '@testing-library/react';

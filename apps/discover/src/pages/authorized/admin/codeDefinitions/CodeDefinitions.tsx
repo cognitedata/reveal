@@ -11,7 +11,7 @@ import { useNptCodeDetailsQuery } from 'domain/wells/summaries/internal/queries/
 import { useNptCodesQuery } from 'domain/wells/summaries/internal/queries/useNptCodesQuery';
 
 import { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom-v5';
 
 import { CodeDefinitionsMenuItem } from './components/CodeDefinitionsMenuItem';
 import { CodeDefinitionsView } from './components/CodeDefinitionsView';

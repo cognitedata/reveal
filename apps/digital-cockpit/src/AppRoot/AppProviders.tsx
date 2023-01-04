@@ -1,5 +1,5 @@
 import React, { Suspense, useContext } from 'react';
-import { Router } from 'react-router-dom';
+import { Router } from 'react-router-dom-v5';
 import { ApiClient, CdfClient, createApiClient, createClient } from 'utils';
 import { TenantProvider } from 'providers/TenantProvider';
 import { CdfClientProvider } from 'providers/CdfClientProvider';

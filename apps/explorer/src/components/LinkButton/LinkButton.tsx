@@ -1,5 +1,5 @@
 import { Button, ButtonProps } from '@cognite/cogs.js';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5';
 
 interface Props extends ButtonProps {
   to: string;

@@ -1,4 +1,4 @@
-import { useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom-v5';
 import { PAGES } from 'pages/constants';
 
 export const usePageSettings = () => {

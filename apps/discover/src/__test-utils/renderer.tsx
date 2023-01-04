@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Modal from 'react-modal';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom-v5';
 
 import { QueryClient } from '@tanstack/react-query';
 import { RenderResult, RenderOptions } from '@testing-library/react';

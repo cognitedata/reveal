@@ -3,7 +3,7 @@ import RKOMHeaderContainer from 'components/RKOMHeader/RKOMHeaderContainer';
 import RKOMSidebarContainer from 'components/RKOMSidebar/RKOMSidebarContainer';
 import { RKOMTableContainer } from 'components/RKOMTable/RKOMTableContainer';
 import { useState } from 'react';
-import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom-v5';
 import { PAGES } from 'types';
 
 import { Container, MainDiv, MainContainer } from './elements';

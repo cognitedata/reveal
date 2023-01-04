@@ -1,5 +1,5 @@
 import { Button } from '@cognite/cogs.js';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom-v5';
 
 interface Props {
   eventExternalId: string;

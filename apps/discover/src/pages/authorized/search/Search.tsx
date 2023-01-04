@@ -8,7 +8,7 @@ import {
   Switch,
   useLocation,
   useHistory,
-} from 'react-router-dom';
+} from 'react-router-dom-v5';
 
 import get from 'lodash/get';
 

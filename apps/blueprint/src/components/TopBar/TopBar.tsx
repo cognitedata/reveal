@@ -1,7 +1,7 @@
 import { Avatar, Icon, TopBar } from '@cognite/cogs.js';
 import { AuthContext } from 'providers/AuthProvider';
 import { CSSProperties, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import styled from 'styled-components';
 
 import { LogoWrapper } from './elements';

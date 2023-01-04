@@ -1,4 +1,4 @@
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom-v5';
 import { mainPages } from 'configs/navigation';
 import sidecar from 'configs/sidecar';
 import GlobalStyles from 'global-styles';

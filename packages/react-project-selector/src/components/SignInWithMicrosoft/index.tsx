@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { saveFlow } from '@cognite/auth-utils';
 import { Button } from '@cognite/cogs.js';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import ErrorMsg from '../common/ErrorMsg';
 import LoginContext from '../../context';

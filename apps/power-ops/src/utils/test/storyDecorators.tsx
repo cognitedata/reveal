@@ -1,6 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, Route } from 'react-router-dom';
+import { MemoryRouter, Route } from 'react-router-dom-v5';
 import { AuthProvider } from '@cognite/react-container';
 import { PartialStoryFn } from '@storybook/csf';
 import { ReactFramework } from '@storybook/react';

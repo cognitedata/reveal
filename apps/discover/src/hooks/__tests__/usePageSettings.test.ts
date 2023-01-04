@@ -1,10 +1,10 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom-v5';
 
 import { renderHook } from '@testing-library/react-hooks';
 
 import { usePageSettings } from 'hooks/usePageSettings';
 
-jest.mock('react-router-dom', () => ({
+jest.mock('react-router-dom-v5', () => ({
   useLocation: jest.fn(),
 }));
 

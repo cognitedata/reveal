@@ -1,6 +1,6 @@
 import { useGetURLSearchParams } from 'hooks/useGetURLSearchParams';
 import { HOME_ROUTES, PAGES } from 'pages/constants';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom-v5';
 
 interface Props {
   id: string;

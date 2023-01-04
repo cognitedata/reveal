@@ -55,14 +55,14 @@ DEPENDENCIES = [
     "@npm//@microsoft/applicationinsights-react-js",
     "@npm//@microsoft/applicationinsights-web",
     "@npm//react",
-    "@npm//react-router-dom",
+    "@npm//react-router-dom-v5",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
     "@npm//@types/history",
     "@npm//@types/react",
-    "@npm//@types/react-router-dom",
+    "@npm//@types/react-router-dom-v5",
 ]
 
 # Dev dependencies from package.json

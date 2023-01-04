@@ -4,7 +4,7 @@ import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/
 
 import * as React from 'react';
 import { Button, Input, Title } from '@cognite/cogs.js';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5';
 import styled from 'styled-components';
 
 import { PAGES } from '../constants';

@@ -10,7 +10,7 @@ import { useMetrics } from 'utils/metrics';
 import { Board, Suite } from 'store/suites/types';
 import { suitesByKey } from 'store/suites/selectors';
 import { moveBoard as moveBoardDispatcher } from 'store/suites/thunks';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import { deleteLayoutItems } from 'store/layout/thunks';
 import * as Sentry from '@sentry/browser';
 

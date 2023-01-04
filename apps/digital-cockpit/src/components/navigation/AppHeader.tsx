@@ -19,7 +19,7 @@ import { CustomMenuItem, CustomMenuLink } from 'styles/common';
 import { useLink, usePossibleTenant } from 'hooks';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { clearGroupsFilter, setGroupsFilter } from 'store/groups/actions';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 import { useMetrics } from 'utils/metrics';
 import { modalOpen } from 'store/modals/actions';
 import { getConfigState } from 'store/config/selectors';

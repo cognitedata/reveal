@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useRef } from 'react';
 import { Graphic } from '@cognite/cogs.js';
-import { useHistory, useLocation, generatePath } from 'react-router-dom';
+import { useHistory, useLocation, generatePath } from 'react-router-dom-v5';
 import queryString from 'query-string';
 import { getEquipmentList } from 'api';
 import { useApi, useHomePageContext } from 'hooks';

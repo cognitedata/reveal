@@ -8,7 +8,7 @@ import {
   Loader,
   Tooltip,
 } from '@cognite/cogs.js';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom-v5';
 import { useQuery } from 'utils/functions';
 import { useConfigurationsQuery } from 'services/endpoints/configurations/query';
 import { useSourcesQuery } from 'services/endpoints/sources/query';

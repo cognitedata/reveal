@@ -3,7 +3,7 @@ import { RegularHeader } from 'components/Header';
 import { SearchBarAndList } from 'components/SearchBarAndList';
 import { PAGES } from 'pages/constants';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5';
 
 import { ErrorBody, ErrorHeader, MarginWrapper } from './elements';
 

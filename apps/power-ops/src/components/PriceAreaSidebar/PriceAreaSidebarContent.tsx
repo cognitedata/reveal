@@ -1,6 +1,6 @@
 import { Detail, Flex } from '@cognite/cogs.js';
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom-v5';
 import { SECTIONS } from 'types';
 
 import { Header, PanelContent, StyledSearch, StyledButton } from './elements';

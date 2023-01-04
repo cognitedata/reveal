@@ -5,7 +5,7 @@ import {
   Switch,
   useHistory,
   useLocation,
-} from 'react-router-dom';
+} from 'react-router-dom-v5';
 
 import { SegmentedControl } from '@cognite/cogs.js';
 import { Slider as CommentSlider } from '@cognite/react-comments';

@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom-v5';
 
 import isEmpty from 'lodash/isEmpty';
 import without from 'lodash/without';
