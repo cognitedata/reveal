@@ -14,10 +14,6 @@ export type CdfPointCloudObjectAnnotation = {
   region: IShape[];
 };
 
-export type PointCloudObject = PointCloudObjectMetadata & {
-  stylableObject: StylableObject;
-};
-
 /**
  * @public
  * Metadata for a single point cloud object
@@ -44,4 +40,8 @@ export type PointCloudObjectMetadata = {
    * The bounding box of this annotation
    */
   boundingBox: Box3;
+};
+
+export type PointCloudObject = PointCloudObjectMetadata & {
+  stylableObject: StylableObject;
 };
