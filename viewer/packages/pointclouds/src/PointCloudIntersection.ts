@@ -1,6 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
+import { AnnotationsAssetRef } from '@cognite/sdk';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 
 export type PointCloudIntersection = {
@@ -28,4 +29,8 @@ export type PointCloudIntersection = {
    * Annotation Id of the intersected object within a pointcloud. (0 if not applicable)
    */
   annotationId: number;
+  /**
+   * Reference to the asset associated to the intersected point cloud object, if any.
+   */
+  assetRef?: AnnotationsAssetRef;
 };

@@ -4,6 +4,7 @@
 
 ```ts
 
+import { AnnotationsAssetRef } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
@@ -1106,6 +1107,7 @@ export type PointCloudIntersection = {
     pointIndex: number;
     distanceToCamera: number;
     annotationId: number;
+    assetRef?: AnnotationsAssetRef;
 };
 
 // @public
@@ -1121,10 +1123,11 @@ export abstract class PointCloudObjectCollection {
     on(event: 'changed', listener: () => void): void;
 }
 
-// @public (undocumented)
+// @public
 export type PointCloudObjectMetadata = {
     annotationId: number;
     assetId?: number;
+    assetRef?: AnnotationsAssetRef;
     boundingBox: Box3;
 };
 
