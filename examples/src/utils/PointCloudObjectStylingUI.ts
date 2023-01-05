@@ -178,7 +178,7 @@ export class PointCloudObjectStylingUI {
       ui.add(state, key);
     }
 
-    ui.add(buttonActions, 'updateAssetRef').name('Update asset refernce');
+    ui.add(buttonActions, 'updateAssetRef').name('Update asset reference');
   }
 
   private createDefaultStyleUi(ui: dat.GUI) {
