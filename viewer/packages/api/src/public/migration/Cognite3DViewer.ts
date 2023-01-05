@@ -1144,11 +1144,18 @@ export class Cognite3DViewer {
     }
 
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
+
+    // Remove this block once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
+    // Render everything a little bigger so that the outCanvas can be cropped later
+    if (includeUI) {
+      width++;
+      height++;
+    }
+
     const originalDomeStyle = {
       position: this.domElement.style.position,
       width: this.domElement.style.width,
       height: this.domElement.style.height,
-      flexGrow: this.domElement.style.flexGrow,
       margin: this.domElement.style.margin,
       padding: this.domElement.style.padding,
       left: this.domElement.style.left,
@@ -1156,13 +1163,15 @@ export class Cognite3DViewer {
     };
 
     try {
+      // Pause animate while the screenshot renders to stop changes to active camera aspect ratio
+      cancelAnimationFrame(this.latestRequestId);
+
       // Position and scale domElement to match requested resolution.
       // Remove observer temporarily to stop animate from running resize in the background.
       this._domElementResizeObserver.unobserve(this._domElement);
-      this.domElement.style.position = 'fixed';
+      this.domElement.style.position = 'absolute';
       this.domElement.style.width = width + 'px';
       this.domElement.style.height = height + 'px';
-      this.domElement.style.flexGrow = '1';
       this.domElement.style.margin = '0px';
       this.domElement.style.padding = '0px';
       this.domElement.style.left = '0px';
@@ -1186,13 +1195,35 @@ export class Cognite3DViewer {
       });
 
       // Draw screenshot. Again disregarding pixel ratio.
-      const outCanvas = await html2canvas(this.domElement, { scale: pixelRatioOverride, foreignObjectRendering: true });
+      const outCanvas = await html2canvas(this.domElement, {
+        scale: pixelRatioOverride,
+        foreignObjectRendering: true,
+        windowHeight: width,
+        windowWidth: height,
+        width,
+        height,
+        x: 0,
+        y: 0,
+        scrollX: 0,
+        scrollY: 0
+      });
+
+      // Remove this block once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
+      // Crop away the 1px line created by svg conversion in html2canvas.
+      {
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = width - 1;
+        croppedCanvas.height = height - 1;
+        const ctx = croppedCanvas.getContext('2d');
+        ctx?.drawImage(outCanvas, -1, -1, width, height);
+        return croppedCanvas.toDataURL();
+      }
+
       return outCanvas.toDataURL();
     } finally {
       this.domElement.style.position = originalDomeStyle.position;
       this.domElement.style.width = originalDomeStyle.width;
       this.domElement.style.height = originalDomeStyle.height;
-      this.domElement.style.flexGrow = originalDomeStyle.flexGrow;
       this.domElement.style.margin = originalDomeStyle.margin;
       this.domElement.style.padding = originalDomeStyle.padding;
       this.domElement.style.left = originalDomeStyle.left;
@@ -1201,6 +1232,9 @@ export class Cognite3DViewer {
 
       this.renderer.setSize(originalWidth, originalHeight);
       this.revealManager.render(this.cameraManager.getCamera());
+
+      // Restart animate loop
+      this.latestRequestId = requestAnimationFrame(this._boundAnimate);
       this.requestRedraw();
     }
   }
@@ -1342,7 +1376,8 @@ export class Cognite3DViewer {
             point: result.point,
             pointIndex: result.pointIndex,
             distanceToCamera: result.distance,
-            annotationId: result.annotationId
+            annotationId: result.annotationId,
+            assetRef: result.assetRef
           };
           intersections.push(intersection);
           break;
