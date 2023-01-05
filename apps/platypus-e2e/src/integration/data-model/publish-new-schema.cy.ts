@@ -10,10 +10,16 @@ describe('Data Model Page - Publish new schema', () => {
     cy.visit('/platypus/data-models/blog/blog/latest/data');
   });
 
+  /* TODO: add these test cases for publish version modal for FDM v3 */
+  // it('should create data model and publish first version', () => {}
+  // it('should edit data model and publish non-breaking version', () => {}
+  // it('should edit data model and publish breaking version', () => {}
+
   it('should edit data model version and publish changes', () => {
     cy.addDataModelType('Team');
 
     cy.getBySel('publish-schema-btn').click();
+    cy.getBySel('modal-ok-button').click();
 
     // A toast message should notify user when schema has been published successfully
     cy.getBySel('toast-title').should('have.text', 'Data model updated');
@@ -74,9 +80,7 @@ describe('Data Model Page - Publish new schema', () => {
 
     cy.getBySel('publish-schema-btn').click();
 
-    cy.getBySelLike('modal-title').contains('Breaking changes in data model');
-    cy.getBySelLike('modal-ok-button').contains('Publish new version');
-
+    cy.getBySel('breaking-changes-container').should('exist');
     cy.getBySel('modal-ok-button').click();
 
     // A toast message should notify user when schema has been published successfully
@@ -134,6 +138,7 @@ describe('Data Model Page - Publish new schema', () => {
 
     cy.addDataModelTypeField('Person', 'name', 'String');
     cy.getBySel('publish-schema-btn').click();
+    cy.getBySel('modal-ok-button').click();
 
     // we should see version select dropdown with latest
     cy.getBySel('schema-version-select').contains('Latest');

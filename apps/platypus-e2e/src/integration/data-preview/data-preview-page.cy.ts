@@ -259,9 +259,7 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.get('button').contains('Delete type').should('be.visible').click();
     cy.getBySel('modal-ok-button').should('contain', 'Delete Type').click();
     cy.getBySel('publish-schema-btn').click();
-    cy.getBySel('modal-ok-button')
-      .should('contain', 'Publish new version')
-      .click();
+    cy.getBySel('modal-ok-button').click();
 
     cy.visit(
       '/platypus/data-models/blog/blog/latest/data/data-management/preview'

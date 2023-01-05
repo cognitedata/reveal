@@ -144,6 +144,7 @@ describe('Data Model Page - Local Drafts', () => {
   it('publishes draft', () => {
     cy.addDataModelType('Currency');
     cy.getBySel('publish-schema-btn').click();
+    cy.getBySel('modal-ok-button').click();
 
     // A toast message should notify user when schema has been published successfully
     cy.getBySel('toast-title').should('have.text', 'Data model updated');

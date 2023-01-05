@@ -182,17 +182,18 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.get('[aria-label="Code editor"]').click();
     cy.get('.monaco-editor textarea:first').should('be.visible');
     cy.getBySel('edit-schema-btn').should('be.visible').click();
+
+    // removed closing `}` because monaco editor puts it automatically
     cy.get('.monaco-editor textarea:first').type(`
       type Test {
         user: User!
-      }
       `);
 
     cy.getBySel('publish-schema-btn').click();
 
     // breaking changes dialog should be displayed even before publishing
     cy.getBySelLike('toast-title').contains(
-      'Error: could not update data model'
+      'Error: could not validate data model'
     );
     cy.getBySelLike('toast-body').contains(
       'Your Data Model GraphQL schema contains errors.'
@@ -214,6 +215,6 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.getBySel('publish-schema-btn').click();
 
     // breaking changes dialog should be displayed even before publishing
-    cy.getBySelLike('modal-title').contains('Breaking changes in data model');
+    cy.getBySel('breaking-changes-container').should('exist');
   });
 });

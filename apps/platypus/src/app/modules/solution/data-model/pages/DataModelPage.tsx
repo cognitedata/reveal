@@ -14,6 +14,9 @@ import {
   DataModelVersion,
   Result,
   getDataModelEndpointUrl,
+  PublishDataModelVersionDTO,
+  DataManagementHandler,
+  PlatypusError,
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
@@ -44,6 +47,10 @@ import { getProject } from '@cognite/cdf-utilities';
 import { getCogniteSDKClient } from '../../../../../environments/cogniteSdk';
 import { ToggleVisualizer } from '../components/ToggleVisualizer/ToggleVisualizer';
 import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
+import {
+  PublishVersionModal,
+  VersionType,
+} from '../components/PublishVersionModal';
 
 const MAX_TYPES_VISUALIZABLE = 30;
 
@@ -92,6 +99,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const [updating, setUpdating] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
   const [showEndpointModal, setShowEndpointModal] = useState(false);
+  const [showPublishModal, setShowPublishModal] = useState(false);
 
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
@@ -131,29 +139,108 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSaveOrPublish = async () => {
+  const handleClickPublish = async () => {
+    setUpdating(true);
+
     try {
-      const publishNewVersion =
-        breakingChanges || !dataModelVersions || dataModelVersions.length === 0;
-      let version = selectedDataModelVersion?.version;
+      const dataModelValidationResult = await dataModelVersionHandler.validate({
+        ...selectedDataModelVersion,
+        space: dataModelExternalId,
+        schema: graphQlSchema,
+        version: selectedDataModelVersion?.version,
+      });
+
+      if (dataModelValidationResult.isFailure) {
+        const error = PlatypusError.fromDataModelValidationError(
+          dataModelValidationResult.errorValue()
+        );
+
+        if ((error?.type as ErrorType) === 'BREAKING_CHANGE') {
+          setBreakingChanges(error.message);
+          setShowPublishModal(true);
+        } else if (error?.type as ErrorType) {
+          Notification({
+            type: 'error',
+            title: 'Error: could not validate data model',
+            message: error.message,
+            validationErrors: error.errors || [],
+          });
+        }
+      } else {
+        setShowPublishModal(true);
+      }
+    } catch (error) {
+      Notification({
+        type: 'error',
+        title: 'Error: could not validate data model',
+        message: t(
+          'schema_validation_error',
+          `Validation of the data model failed. ${error}`
+        ),
+      });
+    }
+
+    setUpdating(false);
+  };
+
+  const getVersionType = (): VersionType => {
+    if (
+      !dataModelVersions ||
+      dataModelVersions.length === 0 ||
+      (dataModelVersions.length === 1 && !dataModelVersions[0].schema)
+    )
+      return 'FIRST';
+    if (breakingChanges) return 'BREAKING';
+    return 'NON_BREAKING';
+  };
+
+  const getSuggestedVersion = () => {
+    if (getVersionType() === 'FIRST') return '1';
+
+    const publishedVersions =
+      dataModelVersions?.map((ver) => ver.version) || [];
+    const currentVersion = parseInt(selectedDataModelVersion.version, 10);
+
+    let suggestedVersion =
+      !isNaN(currentVersion) &&
+      !publishedVersions.includes(`${currentVersion + 1}`)
+        ? currentVersion + 1
+        : publishedVersions.length + 1;
+
+    while (publishedVersions.includes(`${suggestedVersion}`))
+      suggestedVersion += 1;
+
+    return `${suggestedVersion}`;
+  };
+
+  const handleSaveOrPublish = async (newVersion: string) => {
+    try {
+      const version = selectedDataModelVersion?.version;
       const draftVersion = version;
       let result: Result<DataModelVersion>;
+      const publishNewVersion =
+        breakingChanges ||
+        !dataModelVersions ||
+        dataModelVersions.length === 0 ||
+        newVersion !== version;
 
       if (publishNewVersion) {
         setUpdating(true);
-        version = dataModelVersions?.length
-          ? (parseInt(selectedDataModelVersion?.version) + 1).toString()
-          : '1';
         result = await dataModelVersionHandler.publish(
           {
             ...selectedDataModelVersion,
             externalId: dataModelExternalId,
             schema: graphQlSchema,
-            version: version,
+            version: newVersion,
           },
           'NEW_VERSION'
         );
-        setBreakingChanges('');
+
+        if (breakingChanges) {
+          track('BreakingChanges', {
+            dataModel: dataModelExternalId,
+          });
+        }
       } else {
         setSaving(true);
         result = await dataModelVersionHandler.publish(
@@ -161,15 +248,13 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
             ...selectedDataModelVersion,
             externalId: dataModelExternalId,
             schema: graphQlSchema,
-            version: version,
+            version: newVersion,
           },
           'PATCH'
         );
       }
 
-      if ((result.error?.type as ErrorType) === 'BREAKING_CHANGE') {
-        setBreakingChanges(result.error.message);
-      } else if (result.error?.type as ErrorType) {
+      if (result.error?.type as ErrorType) {
         Notification({
           type: 'error',
           title: 'Error: could not update data model',
@@ -222,7 +307,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
             }_toast_title`,
             `Data model ${publishNewVersion ? 'published' : 'updated'}`
           ),
-          message: `${t('version', 'Version')} ${version} ${t(
+          message: `${t('version', 'Version')} ${newVersion} ${t(
             'of_your_data_model_was_successfully',
             'of your data model was successfully'
           )} ${
@@ -248,6 +333,8 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     // Must be located here to work correctly with Promt.
     setUpdating(false);
     setSaving(false);
+    setShowPublishModal(false);
+    setBreakingChanges('');
   };
 
   const handleDiscardClick = () => {
@@ -267,7 +354,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
             latestDataModelVersion={latestDataModelVersion}
             localDraft={localDraft}
             onDiscardClick={handleDiscardClick}
-            onPublishClick={handleSaveOrPublish}
+            onPublishClick={handleClickPublish}
             onEndpointClick={() => setShowEndpointModal(true)}
             title={t('data_model_title', 'Data model')}
             onDataModelVersionSelect={handleDataModelVersionSelect}
@@ -335,17 +422,20 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
         />
       )}
 
-      {breakingChanges && (
-        <BreakingChangesModal
+      {showPublishModal && (
+        <PublishVersionModal
+          versionType={getVersionType()}
+          suggestedVersion={getSuggestedVersion()}
+          currentVersion={`${selectedDataModelVersion.version || '1'}`}
+          publishedVersions={dataModelVersions?.map((ver) => ver.version) || []}
           breakingChanges={breakingChanges}
-          onCancel={() => setBreakingChanges('')}
-          onUpdate={() => {
-            handleSaveOrPublish();
-            track('BreakingChanges', {
-              dataModel: dataModelExternalId,
-            });
+          onCancel={() => {
+            setBreakingChanges('');
+            setShowPublishModal(false);
           }}
+          onUpdate={handleSaveOrPublish}
           isUpdating={updating}
+          isSaving={saving}
         />
       )}
     </>

@@ -196,6 +196,8 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.addDataModelTypeField('Post', 'floatField', 'Float');
 
     cy.getBySel('publish-schema-btn').click();
+    cy.getBySel('modal-ok-button').click();
+
     cy.getBySel('toast-title').should('have.text', 'Data model updated');
 
     cy.visit(
@@ -235,6 +237,8 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.addDataModelTypeField('Post', 'floatField', 'Float');
 
     cy.getBySel('publish-schema-btn').click();
+    cy.getBySel('modal-ok-button').click();
+
     cy.getBySel('toast-title').should('have.text', 'Data model updated');
 
     cy.visit(
