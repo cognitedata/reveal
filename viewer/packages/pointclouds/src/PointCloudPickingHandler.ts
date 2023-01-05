@@ -38,7 +38,7 @@ export interface IntersectPointCloudNodeResult {
   /**
    * asset reference of the clicked object in the pointcloud, if any.
    */
-  asset?: AnnotationsAssetRef;
+  assetRef?: AnnotationsAssetRef;
 }
 
 export class PointCloudPickingHandler {
@@ -89,7 +89,7 @@ export class PointCloudPickingHandler {
           pointCloudNode,
           object: x.object,
           annotationId: annotationId,
-          asset: asset
+          assetRef: asset
         };
         return result;
       });

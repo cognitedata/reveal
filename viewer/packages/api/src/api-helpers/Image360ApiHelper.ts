@@ -59,7 +59,6 @@ export class Image360ApiHelper {
     inputHandler.on('click', enter360Image);
 
     const exit360ImageOnEscapeKey = (event: KeyboardEvent) => this.exit360ImageOnEscape(event);
-    domElement.addEventListener('keydown', exit360ImageOnEscapeKey);
 
     this._domEventHandlers = {
       setHoverIconEventHandler,
@@ -112,6 +111,8 @@ export class Image360ApiHelper {
     }
     this._transitionInProgress = false;
     this._interactionState.lastImage360Entered = image360Entity;
+    this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
+
     this._requestRedraw();
   }
 
@@ -206,6 +207,7 @@ export class Image360ApiHelper {
       position,
       target: new THREE.Vector3(0, 0, -1).applyQuaternion(rotation).add(position)
     });
+    this._domElement.removeEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
   }
 
   public dispose(): void {
