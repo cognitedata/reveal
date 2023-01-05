@@ -1143,6 +1143,7 @@ export class Cognite3DViewer {
       throw new Error('Viewer is disposed');
     }
 
+    const customRenderTarget = this.renderer.getRenderTarget();
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
 
     // Remove this block once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
@@ -1183,6 +1184,9 @@ export class Cognite3DViewer {
       // Disregard pixelRatio to get the screenshot in requested resolution.
       const pixelRatioOverride = 1;
       this.renderer.setDrawingBufferSize(width, height, pixelRatioOverride);
+      if (customRenderTarget) {
+        this.revealManager.setOutputRenderTarget(null);
+      }
       this.revealManager.render(screenshotCamera);
       if (!includeUI) return this.canvas.toDataURL();
 
@@ -1229,6 +1233,14 @@ export class Cognite3DViewer {
       this.domElement.style.left = originalDomeStyle.left;
       this.domElement.style.top = originalDomeStyle.top;
       this._domElementResizeObserver.observe(this._domElement);
+
+      if (customRenderTarget) {
+        this.revealManager.setOutputRenderTarget(customRenderTarget);
+
+        const context = this.renderer.getContext();
+        context?.clear(context.COLOR_BUFFER_BIT);
+        context?.clear(context.DEPTH_BUFFER_BIT);
+      }
 
       this.renderer.setSize(originalWidth, originalHeight);
       this.revealManager.render(this.cameraManager.getCamera());

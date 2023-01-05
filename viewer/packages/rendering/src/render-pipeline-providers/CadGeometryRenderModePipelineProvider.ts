@@ -10,8 +10,9 @@ import { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { getLayerMask, RenderLayer, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
 import { RenderMode } from '../rendering/RenderMode';
 import { SceneHandler } from '@reveal/utilities';
+import { SettableRenderTarget } from '../rendering/SettableRenderTarget';
 
-export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider {
+export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
   private readonly _materialManager: CadMaterialManager;
   private readonly _cadModels: {
     cadNode: THREE.Object3D;
@@ -36,9 +37,6 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
     this._geometryPass = new GeometryPass(sceneHandler.scene, materialManager, renderMode, layerMask);
   }
 
-  // TODO 2022-05-11 christjt: This should ideally set in the constructor,
-  // but this is hard since it is initialized before v8 sector culler
-  // which creates the render target
   public setOutputRenderTarget(target: THREE.WebGLRenderTarget | null, autoSizeRenderTarget = true): void {
     this._outputRenderTarget = target;
     this._autoSizeRenderTarget = autoSizeRenderTarget;

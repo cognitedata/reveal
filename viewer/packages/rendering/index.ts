@@ -36,3 +36,4 @@ export { BasicPipelineExecutor } from './src/pipeline-executors/BasicPipelineExe
 export { RenderPipelineExecutor } from './src/RenderPipelineExecutor';
 export { RenderPipelineProvider } from './src/RenderPipelineProvider';
 export { ResizeHandler } from './src/ResizeHandler';
+export { SettableRenderTarget } from './src/rendering/SettableRenderTarget';
