@@ -242,7 +242,8 @@ export type ResolutionOptions = {
    * A factor that will scale down the resolution when moving the camera. This can
    * be used to achieve a better user experience on devices with limited hardware.
    * Values must be greater than 0 and at most 1.
-   * A value of e.g. 0.25 will approximately divide the number of pixels on the screen by four.
+   * This factor is applied to the number of physical pixels of the canvas.
+   * A value of e.g. 0.25 will approximately divide the number of pixels rendered on the screen by four.
    */
   movingCameraResolutionFactor?: number;
 };
