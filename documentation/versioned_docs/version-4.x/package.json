@@ -12,7 +12,7 @@
   "dependencies": {
     "@cognite/reveal": "4.0.0",
     "@cognite/sdk": "7.13.0",
-    "@types/three": "0.146.0",
-    "three": "0.146.0"
+    "@types/three": "0.147.0",
+    "three": "0.147.0"
   }
 }
