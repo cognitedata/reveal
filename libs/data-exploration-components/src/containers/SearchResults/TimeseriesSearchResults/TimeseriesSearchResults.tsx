@@ -9,7 +9,7 @@ import { TimeseriesTable } from '@data-exploration-components/containers/Timeser
 
 import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
 
-import { Flex, Button, Divider } from '@cognite/cogs.js';
+import { Flex, Button } from '@cognite/cogs.js';
 
 import {
   SearchResultCountLabel,

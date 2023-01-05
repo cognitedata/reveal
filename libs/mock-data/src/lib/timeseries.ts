@@ -266,6 +266,7 @@ export const timeseriesMockData = [
     lastUpdatedTime: 1630592054507,
   },
   {
+    // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
     id: 577157147986637811,
     externalId: 'Test',
     name: 'TEST_MOTOR_FREQUENCY',
@@ -273,6 +274,7 @@ export const timeseriesMockData = [
     metadata: {},
     isStep: false,
     securityCategories: [],
+    // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
     assetId: 464232851524267211,
     dataSetId: 4585729553373087,
     createdTime: 1585894495890,

@@ -1,7 +1,4 @@
-import {
-  useInfiniteRelationshipsList,
-  Resource,
-} from '@data-exploration-components/hooks/RelationshipHooks';
+import { useInfiniteRelationshipsList } from '@data-exploration-components/hooks/RelationshipHooks';
 import { ResourceType, ResourceItem } from '@data-exploration-components/types';
 
 export type RelatedResourceType =

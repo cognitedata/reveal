@@ -34,7 +34,6 @@ import {
 } from './utils';
 
 import {
-  CadIntersection,
   CogniteCadModel,
   CognitePointCloudModel,
   Intersection,
