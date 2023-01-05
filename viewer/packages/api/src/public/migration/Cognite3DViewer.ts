@@ -1233,7 +1233,7 @@ export class Cognite3DViewer {
       this.renderer.setSize(originalWidth, originalHeight);
       this.revealManager.render(this.cameraManager.getCamera());
 
-      //Restart animate loop
+      // Restart animate loop
       this.latestRequestId = requestAnimationFrame(this._boundAnimate);
       this.requestRedraw();
     }
