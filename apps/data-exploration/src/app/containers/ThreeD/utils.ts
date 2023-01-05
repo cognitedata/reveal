@@ -9,6 +9,7 @@ import {
   DefaultNodeAppearance,
   ViewerState,
   PointCloudIntersection,
+  CognitePointCloudModel,
 } from '@cognite/reveal';
 import {
   CogniteClient,
@@ -439,4 +440,15 @@ export function isCadIntersection(
   intersection: CadIntersection | PointCloudIntersection
 ): intersection is CadIntersection {
   return (intersection as CadIntersection).treeIndex !== undefined;
+}
+
+export function updateAllPointCloudsPointSize(
+  viewer: Cognite3DViewer,
+  pointSize: number
+) {
+  viewer.models.forEach((model) => {
+    if (!(model instanceof CognitePointCloudModel)) return;
+
+    model.pointSize = pointSize;
+  });
 }

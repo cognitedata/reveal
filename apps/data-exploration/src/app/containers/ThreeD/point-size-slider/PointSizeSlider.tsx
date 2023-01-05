@@ -9,45 +9,43 @@ import {
 } from '@cognite/cogs.js';
 import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 import { ids } from '../../../../cogs-variables';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
-import { SecondaryModelOptions } from '../ThreeDContext';
+import { ThreeDContext } from '../ThreeDContext';
+import { updateAllPointCloudsPointSize } from '../utils';
 
 type SliderProps = {
   pointCloudModel?: CognitePointCloudModel;
-  secondaryModels?: SecondaryModelOptions[];
   viewer?: Cognite3DViewer;
 };
 
+const DEFAULT_POINT_SIZE = 2;
+
 export default function PointSizeSlider({
   pointCloudModel,
-  secondaryModels,
   viewer,
 }: SliderProps) {
-  const [sliderValue, setSliderValue] = useState(pointCloudModel?.pointSize);
-  const loadedPointClouds: CognitePointCloudModel[] = pointCloudModel
-    ? [pointCloudModel]
-    : [];
+  const { secondaryModels } = useContext(ThreeDContext);
+  const [sliderValue, setSliderValue] = useState(DEFAULT_POINT_SIZE);
+  const [isSecondaryPointCloudLoaded, setIsSecondaryPointCloudLoaded] =
+    useState(false);
 
-  if (!viewer) {
-    return null;
-  }
+  useEffect(() => {
+    const appliedModels = secondaryModels.filter((model) => model.applied);
 
-  secondaryModels?.forEach((modelData) => {
-    if (!modelData.applied) return;
+    Promise.all(
+      appliedModels.map((model) =>
+        viewer?.determineModelType(model.modelId, model.revisionId)
+      )
+    ).then((modelTypes) => {
+      setIsSecondaryPointCloudLoaded(
+        modelTypes.some((modelType) => modelType === 'pointcloud')
+      );
+    });
+  }, [secondaryModels, isSecondaryPointCloudLoaded, viewer]);
 
-    const model = viewer.models.find(
-      ({ modelId, revisionId }) =>
-        modelId === modelData.modelId && revisionId === modelData.revisionId
-    );
-
-    if (!(model instanceof CognitePointCloudModel)) return;
-
-    loadedPointClouds.push(model);
-  });
-
-  if (loadedPointClouds.length === 0) {
+  if (!(isSecondaryPointCloudLoaded || pointCloudModel) || !viewer) {
     return null;
   }
 
@@ -63,9 +61,9 @@ export default function PointSizeSlider({
                 min={0.01}
                 max={5}
                 step={0.1}
-                onChange={(v) => {
-                  loadedPointClouds.forEach((model) => (model.pointSize = v));
-                  setSliderValue(v);
+                onChange={(pointSizeValue) => {
+                  updateAllPointCloudsPointSize(viewer, pointSizeValue);
+                  setSliderValue(pointSizeValue);
                 }}
                 value={sliderValue}
               />
