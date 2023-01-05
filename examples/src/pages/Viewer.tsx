@@ -61,6 +61,7 @@ export function Viewer() {
       Default: DefaultCameraManager;
       Custom: CustomCameraManager;
     }
+    let pointCloudObjectsUi: PointCloudObjectStylingUI;
 
     async function main() {
       const project = urlParams.get('project');
@@ -217,7 +218,7 @@ export function Viewer() {
           const modelIndex = modelUi.pointCloudModels.length
           new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelIndex}`), model);
           pointCloudUi.applyToAllModels();
-          new PointCloudObjectStylingUI(gui.addFolder(`Point cloud object styling #${modelIndex}`), model, viewer);
+          pointCloudObjectsUi = new PointCloudObjectStylingUI(gui.addFolder(`Point cloud objects #${modelIndex}`), model, viewer, client);
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
@@ -367,8 +368,9 @@ export function Viewer() {
             case 'pointcloud':
               {
                 const { point, model } = intersection;
-                console.log(`Clicked point assigned to the object with annotationId: ${intersection.annotationId} at`, point);
+                console.log(`Clicked point assigned to the object with annotationId: ${intersection.annotationId} and assetId: ${intersection?.assetRef?.id} at`, point);
                 if (intersection.annotationId !== 0) {
+                  pointCloudObjectsUi.updateSelectedAnnotation(intersection.annotationId);
                   model.removeAllStyledObjectCollections();
                   const selected = new AnnotationIdPointCloudObjectCollection([intersection.annotationId]);
                   model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });  

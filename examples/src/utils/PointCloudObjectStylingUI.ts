@@ -11,22 +11,52 @@ import {
   DefaultPointCloudAppearance,
   PointCloudObjectMetadata
 } from '@cognite/reveal';
+import { AnnotationModel, AnnotationsBoundingVolume, AnnotationsObjectDetection, AnnotationStatus, AnnotationType, CogniteClient } from '@cognite/sdk';
+
 
 export class PointCloudObjectStylingUI {
 
   private readonly _model: CognitePointCloudModel;
   private readonly _viewer: Cognite3DViewer;
+  private readonly _client: CogniteClient;
 
   private _boundingBoxGroup: THREE.Group | undefined;
+  private _selectedAnnotation: AnnotationModel | undefined;
+  private _selectedAnnotationFolder: dat.GUI;
+  private _selectedAnnotationUiState: {
+    id: number,
+    createdTime: string,
+    annotationStatus: string,
+    annotationType: AnnotationType;
+    creatingApp: string;
+    creatingAppVersion: string;
+    creatingUser: string | null;
+    assetRef: number;
+  } = {
+    id: 0,
+    createdTime: '',
+    annotationStatus: '',
+    annotationType: '',
+    creatingApp: '',
+    creatingAppVersion: '',
+    creatingUser: '',
+    assetRef: 0,
+  };
 
   constructor(uiFolder: dat.GUI,
               model: CognitePointCloudModel,
-              viewer: Cognite3DViewer) {
+              viewer: Cognite3DViewer,
+              client: CogniteClient) {
     this._model = model;
     this._viewer = viewer;
+    this._client = client;
 
+    
     this.createDefaultStyleUi(uiFolder.addFolder('Default styling'));
     this.createByObjectIndexUi(uiFolder.addFolder('By object index styling'));
+    this._selectedAnnotationFolder = uiFolder.addFolder('Selected annotation');
+
+    this.createAnnotationUi(this._selectedAnnotationFolder);
 
     const state = {
       showBoundingBoxes: false
@@ -57,6 +87,23 @@ export class PointCloudObjectStylingUI {
     uiFolder.add(actions, 'reset').name('Reset all styled objects');
     uiFolder.add(actions, 'randomColors').name('Set random for objects');
     uiFolder.add(state, 'showBoundingBoxes').name('Show object bounding boxes').onChange((value: boolean) => this.toggleObjectBoundingBoxes(value));
+  }
+
+  async updateSelectedAnnotation(annotationId: number | undefined) {
+    const { _client: client, _selectedAnnotationUiState: state} = this;
+
+    if (!annotationId) { 
+      this._selectedAnnotation = undefined; 
+      return;
+    }
+
+    const annotation = (await client.annotations.retrieve([{id: annotationId}]))[0];
+
+    if (annotation) {
+      this._selectedAnnotation = annotation;
+      this.updateLastAnnotationState(annotation);
+      this._selectedAnnotationFolder.updateDisplay();
+    } 
   }
 
   toggleObjectBoundingBoxes (b: boolean) {
@@ -93,6 +140,50 @@ export class PointCloudObjectStylingUI {
       const clone: PointCloudAppearance = { ...appearance };
       return clone;
     };
+  }
+
+  private cleanFolder(folder: dat.GUI) {
+    folder.__controllers.forEach(folder.remove);
+    Object.values(folder.__folders).forEach(folder.removeFolder);
+  }
+
+  private updateLastAnnotationState(annotation: AnnotationModel) {
+    const {_selectedAnnotationUiState: state} = this;
+
+    state.id = annotation.id;
+    state.createdTime = annotation.createdTime.toDateString();
+    state.creatingApp = annotation.creatingApp;
+    state.assetRef = (annotation.data as AnnotationsBoundingVolume).assetRef?.id ?? -1;
+    state.annotationStatus = annotation.status;
+    state.annotationType = annotation.annotationType;
+    state.creatingUser = annotation.creatingUser;
+    state.creatingAppVersion = annotation.creatingAppVersion;
+  }
+
+  private createAnnotationUi(ui: dat.GUI) {
+    const {_selectedAnnotationUiState: state} = this;
+    const buttonActions = {
+      updateAssetRef: async () => {
+        const { _selectedAnnotation } = this;
+
+        if (!_selectedAnnotation) return;
+        
+        await this._client.annotations.update([{id: _selectedAnnotation.id, update: {
+            data: {
+              set: {
+                ..._selectedAnnotation.data,
+                assetRef: { id: state.assetRef }
+              }
+            }
+          }}]);
+      }
+    }
+
+    for (const key of Object.keys(state)) {
+      ui.add(state, key);
+    }
+
+    ui.add(buttonActions, 'updateAssetRef').name('Update asset refernce');
   }
 
   private createDefaultStyleUi(ui: dat.GUI) {
