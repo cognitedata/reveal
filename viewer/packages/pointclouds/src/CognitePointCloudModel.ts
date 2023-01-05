@@ -303,7 +303,7 @@ export class CognitePointCloudModel {
    * @returns The number of stylable objects
    */
   get stylableObjectCount(): number {
-    return this.pointCloudNode.stylableObjects.length;
+    return this.pointCloudNode.stylableObjectCount;
   }
 
   /**
