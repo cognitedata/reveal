@@ -160,7 +160,7 @@ describe(ResizeHandler.name, () => {
 });
 
 function getRendererResolution(renderer: WebGLRenderer): number {
-    const originalSize = new Vector2();
-    renderer.getSize(originalSize);
-    return originalSize.x * originalSize.y;
+  const originalSize = new Vector2();
+  renderer.getSize(originalSize);
+  return originalSize.x * originalSize.y;
 }
