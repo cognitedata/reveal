@@ -11,7 +11,7 @@ import {
   DefaultPointCloudAppearance,
   PointCloudObjectMetadata
 } from '@cognite/reveal';
-import { AnnotationModel, AnnotationsBoundingVolume, AnnotationsObjectDetection, AnnotationStatus, AnnotationType, CogniteClient } from '@cognite/sdk';
+import { AnnotationModel, AnnotationsBoundingVolume, AnnotationType, CogniteClient } from '@cognite/sdk';
 
 
 export class PointCloudObjectStylingUI {
@@ -140,11 +140,6 @@ export class PointCloudObjectStylingUI {
       const clone: PointCloudAppearance = { ...appearance };
       return clone;
     };
-  }
-
-  private cleanFolder(folder: dat.GUI) {
-    folder.__controllers.forEach(folder.remove);
-    Object.values(folder.__folders).forEach(folder.removeFolder);
   }
 
   private updateLastAnnotationState(annotation: AnnotationModel) {
