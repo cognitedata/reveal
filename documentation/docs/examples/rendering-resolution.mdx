@@ -35,6 +35,6 @@ In order to improve the user experience for low-end devices, Reveal can be confi
 viewer.setResolutionOptions({ movingCameraResolutionFactor: 0.5 });
 ```
 
-The factor must be between 0 and 1 and is multiplied into the maximum render resolution when the camera is moving. Supplying e.g. a factor of 0.25 will divide the total number of pixels rendered by approximately four while moving.
+The factor must be between 0 and 1 and is multiplied into the render resolution of the canvas when the camera is moving. Supplying e.g. a factor of 0.25 will divide the total number of pixels rendered by approximately four while moving.
 
 If using a custom camera manager, be aware that this feature uses the current `CameraManager`'s `'cameraStop'` and `'cameraChange'` events to decide whether the camera is moving or not.
