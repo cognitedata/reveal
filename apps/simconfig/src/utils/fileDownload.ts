@@ -10,7 +10,7 @@ export const downloadModelFile = async (
 ) => {
   const { simulator, modelName, version, fileName } = modelFileMetaData;
   const url = new URL(
-    `/${project}/models/${modelName}/versions/${version}/file`,
+    `apps/v1/projects/${project}/simconfig/models/${modelName}/versions/${version}/file`,
     baseUrl
   );
   const { searchParams } = url;
