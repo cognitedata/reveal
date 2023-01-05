@@ -794,7 +794,7 @@ __metadata:
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
     "@types/stats": 0.16.30
-    "@types/three": 0.147.0
+    "@types/three": 0.148.0
     "@types/tween.js": 18.5.1
     "@typescript-eslint/eslint-plugin": 5.47.1
     "@typescript-eslint/parser": 5.47.1
@@ -2372,12 +2372,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.147.0":
-  version: 0.147.0
-  resolution: "@types/three@npm:0.147.0"
+"@types/three@npm:0.148.0":
+  version: 0.148.0
+  resolution: "@types/three@npm:0.148.0"
   dependencies:
     "@types/webxr": "*"
-  checksum: 34c1e2a7a46921c4b88248ebe846957934e7daf78d0c7eda74266e3274d65694324c7cab379a22d05f34dd2d9a314b84a87640952b776404725d49478c7030ec
+  checksum: c5747a8cc353c8560196052f1a035c7d641e4a953ac63c1c8d9d91c5489da2dbe8b9c4b70670eef891f8597e9ae882c450e6270abe49e807920644abdea08ddb
   languageName: node
   linkType: hard
 
