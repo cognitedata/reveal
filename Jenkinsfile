@@ -179,7 +179,12 @@ pods {
           // NX needs the references to the master in order to check affected projects.
           withCredentials([usernamePassword(credentialsId: 'githubapp', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
             sh("git config --global credential.helper '!f() { sleep 1; echo \"username=${GH_USER}\"; echo \"password=${GITHUB_TOKEN}\"; }; f'")
-            sh("git fetch origin master:refs/remotes/origin/master")
+            if (isPullRequest) {
+              sh("git fetch origin ${env.CHANGE_TARGET}:refs/remotes/origin/${env.CHANGE_TARGET}")
+            } else {
+              // NOTE: I am suspecting that 'master' has to be changed with ${env.BRANCH_NAME} to work for release- branches
+              sh("git fetch origin master:refs/remotes/origin/master")
+            }
           }
           // the fas container interacts with git when running npx commands.
           // since the git checkout is done in a different container,
@@ -263,7 +268,12 @@ pods {
         'Release': {
           container('fas') {
             if (isPullRequest) {
-              print 'No FAS deploy on PR branch'
+              print 'No FAS deployment on PR branch'
+              return;
+            }
+
+            if (!isMaster || !isRelease) {
+              print 'No FAS deployment on feature branch'
               return;
             }
 
