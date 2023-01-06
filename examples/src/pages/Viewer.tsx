@@ -268,27 +268,27 @@ export function Viewer() {
         switch (value) {
           case 'fullScreen':
             canvasWrapperRef.current!.style.position = 'relative';
-            canvasWrapperRef.current!.style.width = '100%';
-            canvasWrapperRef.current!.style.height = '100%';
-            canvasWrapperRef.current!.style.flexGrow = '1';
-            canvasWrapperRef.current!.style.left = '0px';
-            canvasWrapperRef.current!.style.top = '0px';
+            canvasWrapperRef.current!.style.width = '';
+            canvasWrapperRef.current!.style.height = '';
+            canvasWrapperRef.current!.style.left = '';
+            canvasWrapperRef.current!.style.top = '';
+            canvasWrapperRef.current!.style.flexGrow = '';
             break;
           case 'halfScreen':
-            canvasWrapperRef.current!.style.position = 'relative';
+            canvasWrapperRef.current!.style.position = 'absolute';
             canvasWrapperRef.current!.style.width = '50%';
             canvasWrapperRef.current!.style.height = '100%';
-            canvasWrapperRef.current!.style.flexGrow = '1';
             canvasWrapperRef.current!.style.left = '25%';
-            canvasWrapperRef.current!.style.top = '0px';
+            canvasWrapperRef.current!.style.top = '0%';
+            canvasWrapperRef.current!.style.flexGrow = '1';
             break;
           case 'quarterScreen':
             canvasWrapperRef.current!.style.position = 'absolute';
-            canvasWrapperRef.current!.style.flexGrow = '0.5';
             canvasWrapperRef.current!.style.width = '50%';
             canvasWrapperRef.current!.style.height = '50%';
             canvasWrapperRef.current!.style.left = '25%';
             canvasWrapperRef.current!.style.top = '25%';
+            canvasWrapperRef.current!.style.flexGrow = '0.5';
             break;
         }
       });
@@ -373,7 +373,7 @@ export function Viewer() {
                   pointCloudObjectsUi.updateSelectedAnnotation(intersection.annotationId);
                   model.removeAllStyledObjectCollections();
                   const selected = new AnnotationIdPointCloudObjectCollection([intersection.annotationId]);
-                  model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });  
+                  model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
                 } else {
                   const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
                   sphere.position.copy(point);
