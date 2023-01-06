@@ -352,8 +352,9 @@ void main() {
                 gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
                 return;
         }
-
+#if !defined(color_type_point_index)
         if (any(greaterThan(styleColor, vec3(0.0)))) {
                 vColor = 0.5 * (styleColor + vColor);
         }
+#endif
 }
