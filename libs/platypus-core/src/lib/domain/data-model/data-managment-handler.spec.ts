@@ -28,6 +28,7 @@ describe('DataManagementHandlerTest', () => {
   ];
 
   const mockSearchData = jest.fn();
+  const mockGetDataById = jest.fn();
 
   const fdmClientMock = {
     createTransformation: jest
@@ -40,6 +41,7 @@ describe('DataManagementHandlerTest', () => {
       .fn()
       .mockImplementation(() => Promise.resolve(fetchDataResponseMock)),
     searchData: mockSearchData,
+    getDataByExternalId: mockGetDataById,
     fetchPublishedRowsCount: jest.fn().mockImplementationOnce(() =>
       Promise.resolve({
         Person: 0,
@@ -69,8 +71,8 @@ describe('DataManagementHandlerTest', () => {
       cursor: 'abcd',
       dataModelType: mockType,
       dataModelTypeDefs: { types: [mockType] },
-      hasNextPage: true,
       limit: 100,
+      nestedLimit: 2,
       dataModelVersion: {
         externalId: 'testExternalId',
         version: '1',
@@ -111,6 +113,34 @@ describe('DataManagementHandlerTest', () => {
 
     expect(response.isSuccess).toBe(true);
     expect(response.getValue()).toEqual(['foo']);
+  });
+
+  it('should get data by id', async () => {
+    const service = createInstance();
+    const mockType = {
+      name: 'Person',
+      fields: [],
+    };
+    mockGetDataById.mockImplementationOnce(() => {
+      return Promise.resolve(['result']);
+    });
+
+    const response = await service.getDataById({
+      dataModelType: mockType,
+      dataModelTypeDefs: { types: [mockType] },
+      dataModelVersion: {
+        externalId: 'testExternalId',
+        version: '1',
+        space: 'testSpace',
+        schema: '',
+        status: DataModelVersionStatus.PUBLISHED,
+      },
+      nestedLimit: 100,
+      externalId: 'foo',
+    });
+
+    expect(response.isSuccess).toBe(true);
+    expect(response.getValue()).toEqual(['result']);
   });
 
   it('rejects with failed Result if search fails', async () => {

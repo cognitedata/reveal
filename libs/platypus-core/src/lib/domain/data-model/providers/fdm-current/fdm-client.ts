@@ -23,6 +23,7 @@ import {
   PublishDataModelVersionDTO,
   IngestInstanceDTO,
   SearchDataDTO,
+  GetByExternalIdDTO,
 } from '../../dto';
 import { TransformationApiService } from '../../services';
 import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
@@ -339,13 +340,13 @@ export class FdmV2Client implements FlexibleDataModelingClient {
   fetchData(dto: ListDataDTO): Promise<PaginatedResponse> {
     const {
       cursor,
-      hasNextPage,
       limit,
       dataModelType,
       dataModelTypeDefs,
       dataModelVersion: { externalId, version },
       filter,
       sort,
+      nestedLimit,
     } = dto;
     const operationName = this.queryBuilder.getOperationName(
       dataModelType.name,
@@ -355,10 +356,10 @@ export class FdmV2Client implements FlexibleDataModelingClient {
       cursor,
       dataModelType,
       dataModelTypeDefs,
-      hasNextPage,
       limit,
       filter,
       sort,
+      nestedLimit,
     });
     return this.mixerApiService
       .runQuery({
@@ -422,6 +423,46 @@ export class FdmV2Client implements FlexibleDataModelingClient {
         return response.items;
       })
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
+  }
+
+  getDataByExternalId(dto: GetByExternalIdDTO): Promise<CdfResourceInstance> {
+    const {
+      externalId,
+      nestedCursors,
+      nestedLimit,
+      dataModelType,
+      dataModelTypeDefs,
+      dataModelVersion: { externalId: dataModelExternalId, version },
+      nestedFilters,
+      limitFields,
+    } = dto;
+    const operationName = this.queryBuilder.getOperationName(
+      dataModelType.name,
+      OPERATION_TYPE.GET
+    );
+    const query = this.queryBuilder.buildGetByExternalIdQuery({
+      spaceId: dataModelExternalId,
+      externalId,
+      nestedCursors,
+      dataModelType,
+      dataModelTypeDefs,
+      nestedLimit,
+      nestedFilters,
+      limitFields,
+    });
+    return this.mixerApiService
+      .runQuery({
+        graphQlParams: {
+          query,
+          variables: nestedFilters,
+        },
+        dataModelId: dataModelExternalId,
+        schemaVersion: version,
+      })
+      .then((result) => {
+        const response = result.data[operationName];
+        return response.items[0];
+      });
   }
 
   /**

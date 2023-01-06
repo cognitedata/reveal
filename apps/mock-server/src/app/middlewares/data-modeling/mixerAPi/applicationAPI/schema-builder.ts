@@ -107,6 +107,10 @@ export class SchemaServiceGraphqlApiBuilder {
       startCursor: String
       endCursor: String
   }
+    input InstanceRef {
+      spaceExternalId: String!
+      externalId: String! 
+  }
     `;
   }
 
@@ -335,6 +339,10 @@ export class SchemaServiceGraphqlApiBuilder {
           first: Int
           after: String
           query: String!
+        ): ${this.capitalize(table)}Connection
+
+        get${table}ById(
+          instance: InstanceRef!
         ): ${this.capitalize(table)}Connection
 
         aggregate${table}(

@@ -43,11 +43,11 @@ export const usePreviewTableData = (
       return await dataManagementHandler
         .fetchData({
           cursor: '',
-          hasNextPage: false,
           dataModelType,
           dataModelTypeDefs,
           dataModelVersion: selectedDataModelVersion,
           limit: 1000, // currently just assume taking the first 1000 items
+          nestedLimit: 2,
         })
         .then((response) => {
           return response.getValue().items as DMSRecord[];

@@ -65,15 +65,28 @@ export type QuerySort = {
 export interface BuildListQueryDTO {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
+  nestedLimit: number;
   limit: number;
   cursor: string;
-  hasNextPage: boolean;
   sort?: QuerySort;
   filter?: QueryFilter;
+  limitFields?: string[];
+}
+
+export interface BuildGetByExternalIdQueryDTO {
+  spaceId: string;
+  externalId: string;
+  dataModelType: DataModelTypeDefsType;
+  dataModelTypeDefs: DataModelTypeDefs;
+  nestedLimit: number;
+  nestedCursors?: { [key in string]: string };
+  nestedFilters?: { [key in string]: QueryFilter };
+  limitFields?: string[];
 }
 
 export interface BuildSearchQueryDTO {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
+  limitFields?: string[];
   filter?: QueryFilter;
 }

@@ -16,17 +16,28 @@ export interface DataQueryingBaseDTO {
 
 export interface ListDataDTO extends DataQueryingBaseDTO {
   cursor: string;
-  hasNextPage: boolean;
   filter?: QueryFilter;
   sort?: QuerySort;
+  nestedLimit: number;
 }
 
 export interface SearchDataDTO extends DataQueryingBaseDTO {
+  filter?: QueryFilter;
   searchTerm: string;
 }
 
-export interface SearchDataDTO extends DataQueryingBaseDTO {
-  searchTerm: string;
+export interface GetByExternalIdDTO {
+  dataModelType: DataModelTypeDefsType;
+  dataModelTypeDefs: DataModelTypeDefs;
+  dataModelVersion: DataModelVersion;
+  externalId: string;
+  nestedLimit: number;
+  nestedCursors?: { [key in string]: string };
+  nestedFilters?: { [key in string]: QueryFilter };
+  /**
+   * What fields to include for query (if specified only these fields will be queried)
+   */
+  limitFields?: string[];
 }
 
 export interface FetchPublishedRowsCountDTO {

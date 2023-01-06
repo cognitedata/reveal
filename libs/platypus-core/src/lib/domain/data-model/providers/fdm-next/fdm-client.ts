@@ -18,6 +18,7 @@ import {
   RunQueryDTO,
   SearchDataDTO,
   UpdateDataModelDTO,
+  GetByExternalIdDTO,
 } from '../../dto';
 
 import {
@@ -285,12 +286,12 @@ export class FdmClient implements FlexibleDataModelingClient {
   fetchData(dto: ListDataDTO): Promise<PaginatedResponse> {
     const {
       cursor,
-      hasNextPage,
       limit,
       dataModelType,
       dataModelTypeDefs,
       dataModelVersion: { externalId, space, version },
       sort,
+      nestedLimit,
       filter,
     } = dto;
     const operationName = this.queryBuilder.getOperationName(
@@ -301,9 +302,9 @@ export class FdmClient implements FlexibleDataModelingClient {
       cursor,
       dataModelType,
       dataModelTypeDefs,
-      hasNextPage,
       limit,
       sort,
+      nestedLimit,
       filter,
     });
     return this.mixerApiService
@@ -329,6 +330,46 @@ export class FdmClient implements FlexibleDataModelingClient {
           },
           items: response.items,
         };
+      });
+  }
+
+  getDataByExternalId(dto: GetByExternalIdDTO): Promise<CdfResourceInstance> {
+    const {
+      externalId,
+      nestedCursors,
+      nestedLimit,
+      dataModelType,
+      dataModelTypeDefs,
+      dataModelVersion: { space, version, externalId: dataModelId },
+      nestedFilters,
+      limitFields,
+    } = dto;
+    const operationName = this.queryBuilder.getOperationName(
+      dataModelType.name,
+      OPERATION_TYPE.GET
+    );
+    const query = this.queryBuilder.buildGetByExternalIdQuery({
+      spaceId: space,
+      externalId,
+      nestedCursors,
+      dataModelType,
+      dataModelTypeDefs,
+      nestedLimit,
+      nestedFilters,
+      limitFields,
+    });
+    return this.mixerApiService
+      .runQuery({
+        graphQlParams: {
+          query,
+          variables: nestedFilters,
+        },
+        dataModelId,
+        schemaVersion: version,
+      })
+      .then((result) => {
+        const response = result.data[operationName];
+        return response.items[0];
       });
   }
 

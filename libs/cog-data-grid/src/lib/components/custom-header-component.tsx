@@ -94,7 +94,7 @@ export class CustomHeader extends PureComponent<
             (this.state.sortDirection === 'asc' ? '' : 'ag-hidden')
           }
         >
-          <Button size="small" variant="ghost" onClick={this.onSortRequested}>
+          <Button size="small" type="ghost" onClick={this.onSortRequested}>
             <Icon type="SortAscending" />
           </Button>
         </span>
@@ -105,7 +105,7 @@ export class CustomHeader extends PureComponent<
             (this.state.sortDirection === 'desc' ? '' : 'ag-hidden')
           }
         >
-          <Button size="small" variant="ghost" onClick={this.onSortRequested}>
+          <Button size="small" type="ghost" onClick={this.onSortRequested}>
             <Icon type="SortDescending" />
           </Button>
         </span>

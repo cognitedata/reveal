@@ -101,6 +101,23 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
 
       return paginateCollection(items, filterParams.first, filterParams.after);
     };
+    resolvers.Query[`get${capitalize(table)}ById`] = (prm, filterParams) => {
+      let items = fetchAndQueryData({
+        globalDb: params.db,
+        templateDb,
+        isBuiltInType: false,
+        schemaType: storageTableName,
+        isFetchingObject: false,
+        filterParams: filterParams,
+        parsedSchema: params.parsedSchema,
+      });
+
+      if (filterParams.sort) {
+        items = sortCollection(items, filterParams.sort);
+      }
+
+      return paginateCollection(items, filterParams.first, filterParams.after);
+    };
 
     const tableResolver = {};
 
@@ -264,6 +281,15 @@ function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
     if (filterParams._filter) {
       filterParams.filter = filterParams._filter;
       delete filterParams._filter;
+    }
+    if (filterParams.instance) {
+      filterParams.filter = {
+        and: [
+          { externalId: { eq: filterParams.instance.externalId } },
+          ...(filterParams.filter ? [filterParams.filter] : []),
+        ],
+      };
+      delete filterParams.instance;
     }
     const filters =
       filterParams && filterParams.filter ? filterParams.filter : {};

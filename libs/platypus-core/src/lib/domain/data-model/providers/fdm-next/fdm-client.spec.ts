@@ -200,7 +200,7 @@ describe('FDM v3 Client', () => {
           status: DataModelVersionStatus.PUBLISHED,
         },
         limit: 10,
-        hasNextPage: false,
+        nestedLimit: 10,
         dataModelType: {
           name: 'Person',
           fields: [],

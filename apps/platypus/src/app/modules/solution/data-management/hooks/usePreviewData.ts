@@ -1,4 +1,8 @@
-import { DataModelTypeDefsType, PlatypusError } from '@platypus/platypus-core';
+import {
+  DataModelTypeDefsType,
+  PlatypusError,
+  QueryFilter,
+} from '@platypus/platypus-core';
 import { useQuery } from '@tanstack/react-query';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
@@ -18,10 +22,22 @@ export const usePreviewData = (
     dataModelExternalId: string;
     dataModelType: DataModelTypeDefsType;
     externalId: string;
+    nestedFilters?: {
+      [x: string]: QueryFilter;
+    };
+    limitFields?: string[];
+    nestedLimit?: number;
   },
   options?: { enabled?: boolean }
 ) => {
-  const { dataModelExternalId, dataModelType, externalId } = params;
+  const {
+    dataModelExternalId,
+    dataModelType,
+    externalId,
+    nestedFilters,
+    nestedLimit = 10,
+    limitFields,
+  } = params;
 
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
@@ -45,23 +61,26 @@ export const usePreviewData = (
   return useQuery<KeyValueMap | null>(
     QueryKeys.PREVIEW_DATA(
       dataModelExternalId,
-      selectedDataModelVersion.version,
       dataModelType?.name,
-      externalId
+      selectedDataModelVersion.version,
+      externalId,
+      nestedLimit,
+      nestedFilters,
+      limitFields
     ),
-    () => {
+    async () => {
       return dataManagementHandler
-        .fetchData({
-          cursor: '',
+        .getDataById({
+          externalId: externalId,
+          nestedFilters,
           dataModelType: dataModelType,
           dataModelTypeDefs: dataModelTypeDefs,
           dataModelVersion: selectedDataModelVersion,
-          filter: { externalId: { eq: externalId } },
-          hasNextPage: false,
-          limit: 1,
+          nestedLimit,
+          limitFields,
         })
         .then((response) => {
-          return response.getValue().items[0];
+          return response.getValue();
         })
         .catch((e) => {
           throw new PlatypusError(
@@ -73,6 +92,8 @@ export const usePreviewData = (
           );
         });
     },
-    options
+    {
+      ...options,
+    }
   );
 };

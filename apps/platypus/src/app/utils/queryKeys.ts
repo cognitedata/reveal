@@ -1,3 +1,5 @@
+import { QueryFilter } from '@platypus/platypus-core';
+
 export const QueryKeys = {
   TOKEN: ['TOKEN'] as const,
   GROUPS: ['GROUPS'] as const,
@@ -27,9 +29,23 @@ export const QueryKeys = {
     dataModelExternalId: string,
     type: string,
     version: string,
-    externalId: string
+    externalId: string,
+    nestedLimit: number,
+    filters?: {
+      [x: string]: QueryFilter;
+    },
+    limitFields?: string[]
   ) =>
-    ['PREVIEW_DATA', dataModelExternalId, type, version, externalId] as const,
+    [
+      'PREVIEW_DATA',
+      dataModelExternalId,
+      type,
+      version,
+      externalId,
+      nestedLimit,
+      filters,
+      limitFields,
+    ] as const,
   SUGGESTIONS_DATA: (
     selectedColumn: string,
     selectedSourceColumns: string[],

@@ -369,14 +369,8 @@ export const DataPreviewTable = forwardRef<
         };
 
         if (fieldType.type.list) {
-          const isCustomListTypeCell = fieldType.type.custom;
-
-          const cellData = event.value.map((item: any) =>
-            isCustomListTypeCell ? item.externalId : item
-          );
-
           setSidebarData({
-            value: cellData,
+            externalId: event.data.externalId,
             fieldName: event.colDef.field,
             type: 'list',
           });
@@ -656,7 +650,9 @@ export const DataPreviewTable = forwardRef<
           data={sidebarData}
           onClose={() => setSidebarData(undefined)}
           dataModelTypeName={dataModelType.name}
-          dataModelExternalId={dataModelExternalId}
+          dataModelType={dataModelType}
+          dataModelTypeDefs={dataModelTypeDefs}
+          dataModelVersion={selectedDataModelVersion}
         >
           <StyledDataPreviewTable data-cy="data-preview-table">
             <CogDataGrid

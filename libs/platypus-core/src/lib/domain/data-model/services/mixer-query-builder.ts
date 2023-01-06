@@ -1,21 +1,37 @@
-import { mixerApiBuiltInTypes } from '../constants';
 import { isInlineType } from '../utils';
 
 import { DataModelTypeDefsField, DataModelTypeDefsType } from '../types';
-import { BuildListQueryDTO, BuildSearchQueryDTO } from '../dto';
+import {
+  BuildGetByExternalIdQueryDTO,
+  BuildListQueryDTO,
+  BuildSearchQueryDTO,
+  QuerySort,
+} from '../dto';
+import { mixerApiBuiltInTypes } from '../constants';
 
 export enum OPERATION_TYPE {
   LIST = 'list',
   SEARCH = 'search',
+  GET = 'get',
 }
 
 export class MixerQueryBuilder {
   getOperationName(typeName: string, operationType: OPERATION_TYPE): string {
-    return `${operationType}${typeName}`;
+    switch (operationType) {
+      case OPERATION_TYPE.GET:
+        return `${operationType}${typeName}ById`;
+      default:
+        return `${operationType}${typeName}`;
+    }
   }
 
-  getFilterType(typeName: string, filterType: 'List' | 'Search'): string {
-    return `_${filterType}${typeName}Filter`;
+  getFilterType(typeName: string, operationType: OPERATION_TYPE): string {
+    switch (operationType) {
+      case OPERATION_TYPE.SEARCH:
+        return `_Search${typeName}Filter`;
+      default:
+        return `_List${typeName}Filter`;
+    }
   }
 
   buildListQuery(dto: BuildListQueryDTO): string {
@@ -24,40 +40,36 @@ export class MixerQueryBuilder {
       dataModelTypeDefs,
       limit,
       cursor,
-      hasNextPage,
-      filter,
       sort,
+      nestedLimit,
+      limitFields,
     } = dto;
-    const pagination = hasNextPage
-      ? `first: ${limit}, after: "${cursor}"`
-      : `first: ${limit}`;
-    const sortString = sort
-      ? `, sort: {${sort.fieldName}: ${sort.sortType}}`
-      : ``;
-    const filterString = filter
-      ? `(filter: $filter, ${pagination} ${sortString})`
-      : `(${pagination} ${sortString})`;
-    return `query ${
-      filter
-        ? `${this.getOperationName(
-            dataModelType.name,
-            OPERATION_TYPE.LIST
-          )} ($filter: ${this.getFilterType(dataModelType.name, 'List')})`
-        : ''
-    } {
+    const queryName = this.buildQueryString(
+      dataModelType.name,
+      OPERATION_TYPE.LIST,
+      { filter: this.getFilterType(dataModelType.name, OPERATION_TYPE.LIST) }
+    );
+    const paramString = this.buildFilterAndPaginationParamString(
+      { limit, cursor: cursor },
+      'filter',
+      sort
+    );
+    return `query ${queryName} {
     ${this.getOperationName(
       dataModelType.name,
       OPERATION_TYPE.LIST
-    )}${filterString} {
+    )}${paramString} {
       items {
         externalId
         ${dataModelType.fields
+          .filter((el) => (limitFields ? limitFields.includes(el.name) : true))
           .map((field) =>
             this.buildQueryItem(
               field,
               dataModelTypeDefs.types.find(
                 (typeDef) => typeDef.name === field.type.name
-              )
+              ),
+              { limit: nestedLimit }
             )
           )
           .join('\n')}
@@ -72,27 +84,92 @@ export class MixerQueryBuilder {
   }`;
   }
 
+  buildGetByExternalIdQuery(dto: BuildGetByExternalIdQueryDTO): string {
+    const {
+      spaceId,
+      externalId,
+      dataModelType,
+      dataModelTypeDefs,
+      nestedCursors = {},
+      nestedFilters = {},
+      nestedLimit,
+      limitFields,
+    } = dto;
+    const queryName = this.buildQueryString(
+      dataModelType.name,
+      OPERATION_TYPE.GET,
+      dataModelType.fields
+        .filter(
+          (el) => nestedFilters[el.name] && el.type.custom && el.type.list
+        )
+        .reduce(
+          (prev, curr) => ({
+            ...prev,
+            [curr.name]: this.getFilterType(
+              curr.type.name,
+              OPERATION_TYPE.LIST
+            ),
+          }),
+          {} as {
+            [key in string]: string;
+          }
+        )
+    );
+    return `query ${queryName} {
+    ${this.getOperationName(
+      dataModelType.name,
+      OPERATION_TYPE.GET
+    )} (instance: { spaceExternalId: "${spaceId}", externalId: "${externalId}" }) {
+      items {
+        externalId
+        ${dataModelType.fields
+          .filter((el) => (limitFields ? limitFields.includes(el.name) : true))
+          .map((field) =>
+            this.buildQueryItem(
+              field,
+              dataModelTypeDefs.types.find(
+                (typeDef) => typeDef.name === field.type.name
+              ),
+              {
+                limit: nestedLimit,
+                cursor: nestedCursors[field.name],
+                pageInfo: true,
+              },
+              nestedFilters[field.name] ? field.name : undefined
+            )
+          )
+          .join('\n')}
+      }
+    }
+  }`;
+  }
+
   buildSearchQuery({
     dataModelType,
     dataModelTypeDefs,
+    limitFields,
     filter,
   }: BuildSearchQueryDTO): string {
     const operationName = this.getOperationName(
       dataModelType.name,
       OPERATION_TYPE.SEARCH
     );
+    const queryName = this.buildQueryString(
+      dataModelType.name,
+      OPERATION_TYPE.SEARCH,
+      {
+        first: 'Int',
+        query: 'String!',
+        filter: this.getFilterType(dataModelType.name, OPERATION_TYPE.SEARCH),
+      }
+    );
 
-    const filterString = filter
-      ? `, $filter: ${this.getFilterType(dataModelType.name, 'Search')}`
-      : '';
-
-    return `query ${operationName}($first: Int, $query: String!${filterString}) {
-    ${operationName}(first: $first, query: $query${
-      filter ? ', filter: $filter' : ''
-    }) {
+    return `query ${queryName} {
+    ${operationName}(first: $first, query: $query, filter: $filter) {
       items {
         externalId
         ${dataModelType.fields
+          .filter((el) => (limitFields ? limitFields.includes(el.name) : true))
           .map((field) =>
             this.buildQueryItem(
               field,
@@ -109,7 +186,13 @@ export class MixerQueryBuilder {
 
   private buildQueryItem(
     field: DataModelTypeDefsField,
-    fieldTypeDef?: DataModelTypeDefsType
+    fieldTypeDef?: DataModelTypeDefsType,
+    pagination: { limit: number; cursor?: string; pageInfo?: boolean } = {
+      limit: 2,
+      cursor: '',
+      pageInfo: false,
+    },
+    filterName?: string
   ): string {
     const isPrimitive = mixerApiBuiltInTypes
       .filter((t) => t.type === 'SCALAR')
@@ -130,9 +213,68 @@ export class MixerQueryBuilder {
     }
 
     if (field.type.list) {
-      return `${field.name} { items { externalId } }`;
+      const paramString = this.buildFilterAndPaginationParamString(
+        pagination,
+        filterName,
+        undefined
+      );
+      return `${field.name} ${paramString} { items { externalId } ${
+        pagination.pageInfo
+          ? `
+      pageInfo {
+        startCursor
+        hasPreviousPage
+        hasNextPage
+        endCursor
+      }`
+          : ''
+      }}`;
     }
 
     return `${field.name} { externalId }`;
+  }
+
+  /**
+   * builds the parameter string
+   * @param filter the filter parameter name (i.e. 'filter1'), you dont need the $
+   * @param sort the sort conditions
+   * @param pagination the pagination (limit and cursor)
+   */
+  private buildFilterAndPaginationParamString(
+    pagination: { limit: number; cursor?: string },
+    filterName?: string,
+    sort?: QuerySort
+  ) {
+    const paginationString = pagination.cursor
+      ? `first: ${pagination.limit}, after: "${pagination.cursor}"`
+      : `first: ${pagination.limit}`;
+    const sortString = sort
+      ? `, sort: {${sort.fieldName}: ${sort.sortType}}`
+      : ``;
+    const filterString = filterName
+      ? `(filter: $${filterName}, ${paginationString} ${sortString})`
+      : `(${paginationString} ${sortString})`;
+
+    return filterString;
+  }
+
+  /**
+   * builds the query operation string
+   * @param dataModelTypeName
+   * @param operationType
+   * @param filterNamesAndType the filterName and mapped type name i.e. { 'actors': this.getFilterType('Actor') }
+   */
+  private buildQueryString(
+    dataModelTypeName: string,
+    operationType: OPERATION_TYPE,
+    filterNamesAndType: { [key in string]: string } = {}
+  ) {
+    return `${this.getOperationName(dataModelTypeName, operationType)} ${
+      Object.keys(filterNamesAndType).length > 0
+        ? `(${Object.entries(filterNamesAndType)
+            .map(([name, type]) => `$${name}: ${type}`)
+            .join(' ,')})`
+        : ''
+    }`;
   }
 }

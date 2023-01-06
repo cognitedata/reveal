@@ -95,6 +95,26 @@ export const buildDmsV3QueryResolvers = (params: BuildQueryResolversParams) => {
 
       return paginateCollection(items, filterParams.first, filterParams.after);
     };
+    resolvers.Query[`get${capitalize(table)}ById`] = (prm, filterParams) => {
+      let items = fetchAndQueryData({
+        globalDb: params.db,
+        templateDb: instancesDb,
+        isBuiltInType: false,
+        schemaType: {
+          space: params.space,
+          view: table,
+        },
+        isFetchingObject: false,
+        filterParams: filterParams,
+        parsedSchema: params.parsedSchema,
+      });
+
+      if (filterParams.sort) {
+        items = sortCollection(items, filterParams.sort);
+      }
+
+      return paginateCollection(items, filterParams.first, filterParams.after);
+    };
 
     const tableResolver = {};
 

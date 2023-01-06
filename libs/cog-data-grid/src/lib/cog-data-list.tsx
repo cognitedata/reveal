@@ -1,6 +1,6 @@
 import { Body, Flex } from '@cognite/cogs.js';
 import { ColDef, ICellRendererParams } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
 import { ForwardedRef, forwardRef } from 'react';
 
 const CellRenderer = (params: ICellRendererParams<Row, string>) => (
@@ -35,13 +35,13 @@ type Row = {
   value: PrimitiveTypes;
 };
 
-type CogDataListProps = {
-  listData: PrimitiveTypesListData;
-};
+interface CogDataListProps extends AgGridReactProps {
+  listData?: PrimitiveTypesListData;
+}
 
 export const CogDataList = forwardRef<AgGridReact, CogDataListProps>(
   (props: CogDataListProps, ref: ForwardedRef<AgGridReact>) => {
-    const rowData = props.listData.map((value) => ({
+    const rowData = (props.listData || []).map((value) => ({
       value: value?.toString(),
     }));
 
@@ -56,6 +56,7 @@ export const CogDataList = forwardRef<AgGridReact, CogDataListProps>(
         rowStyle={{
           borderBottom: '1px solid var(--cogs-border--muted)',
         }}
+        {...props}
       />
     );
   }

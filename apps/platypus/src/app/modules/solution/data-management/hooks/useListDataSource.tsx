@@ -85,14 +85,14 @@ export const useListDataSource = ({
 
         return dataManagementHandler
           .fetchData({
-            cursor: cursor.current,
+            cursor: hasNextPage.current ? cursor.current : '',
             dataModelType,
             dataModelTypeDefs,
             dataModelVersion,
-            hasNextPage: hasNextPage.current,
             limit,
             filter,
             sort,
+            nestedLimit: 2,
           })
           .then((response) => {
             const result = response.getValue();

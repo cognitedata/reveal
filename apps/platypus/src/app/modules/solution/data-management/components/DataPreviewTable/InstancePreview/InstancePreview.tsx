@@ -11,10 +11,11 @@ export const InstancePreview = (props: {
 }) => {
   const { dataModelExternalId, dataModelType, externalId } = props;
 
-  const { data } = usePreviewData({
+  const { data: previewData } = usePreviewData({
     dataModelExternalId,
     dataModelType,
     externalId,
+    nestedLimit: 2,
   });
 
   const nonRelationshipValues = useMemo(() => {
@@ -32,11 +33,11 @@ export const InstancePreview = (props: {
 
   return (
     <>
-      {data ? (
+      {previewData ? (
         <CogDataList
           data-cy="instance-values"
           listData={[{ name: 'externalId' }, ...nonRelationshipValues].map(
-            (key) => `${key.name}: ${data[key.name]}`
+            (key) => `${key.name}: ${previewData[key.name]}`
           )}
         />
       ) : (

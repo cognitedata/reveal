@@ -9,7 +9,7 @@ import React, { useMemo, useState } from 'react';
 import { usePreviewData } from '../../../hooks/usePreviewData';
 
 const PROPERTY_TO_SHOW = 3;
-const DEBOUNCE_HOVER_TIME = 3;
+const DEBOUNCE_HOVER_TIME = 500;
 
 export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
   const { t } = useTranslation('CustomCellRenderer');
@@ -33,11 +33,26 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
       ),
     [dataModelTypeDefs, dataModelType, props.colDef]
   );
+
+  const nonListAndRelationshipValues = useMemo(() => {
+    if (!columnType) {
+      return [];
+    }
+    return [
+      { name: 'externalId' },
+      ...columnType.fields.filter((el) => !el.type.list && !el.type.custom),
+    ];
+  }, [columnType]);
+
   const { data: previewData, refetch } = usePreviewData(
     {
       dataModelExternalId,
       dataModelType: columnType!,
       externalId: props.value,
+      nestedLimit: 0,
+      limitFields: nonListAndRelationshipValues
+        .slice(0, PROPERTY_TO_SHOW)
+        .map((el) => el.name),
     },
     { enabled: false }
   );
@@ -52,16 +67,6 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
       });
     }, DEBOUNCE_HOVER_TIME);
   };
-
-  const nonListAndRelationshipValues = useMemo(() => {
-    if (!columnType) {
-      return [];
-    }
-    return [
-      { name: 'externalId' },
-      ...columnType.fields.filter((el) => !el.type.list && !el.type.custom),
-    ];
-  }, [columnType]);
 
   if (!props.value) {
     return null;

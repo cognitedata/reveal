@@ -74,7 +74,7 @@ describe('Platypus Data Preview Page - Preview', () => {
       '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="tags"]',
       'Lorem'
     ).dblclick();
-    ['tags (2) for Post', 'Lorem', 'Ipsum'].forEach((text) => {
+    ['tags for Post', 'Lorem', 'Ipsum'].forEach((text) => {
       cy.getBySel('data-preview-side-panel').contains(text);
     });
 
@@ -90,7 +90,7 @@ describe('Platypus Data Preview Page - Preview', () => {
     )
       .contains('987')
       .dblclick();
-    ['comments (4) for Post', '987', '995', '996', '997'].forEach((text) => {
+    ['comments for Post', '987', '995', '996', '997'].forEach((text) => {
       cy.getBySel('data-preview-side-panel').contains(text);
     });
 

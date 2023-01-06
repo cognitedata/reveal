@@ -2,7 +2,6 @@ import {
   ConflictMode,
   CreateDataModelDTO,
   CreateDataModelTransformationDTO,
-  CreateDataModelVersionDTO,
   DeleteDataModelDTO,
   DeleteInstancesDTO,
   ListDataDTO,
@@ -19,6 +18,7 @@ import {
   RunQueryDTO,
   SearchDataDTO,
   UpdateDataModelDTO,
+  GetByExternalIdDTO,
 } from '../dto';
 
 import {
@@ -118,6 +118,12 @@ export interface FlexibleDataModelingClient {
    * @param dto
    */
   searchData(dto: SearchDataDTO): Promise<CdfResourceInstance[]>;
+
+  /**
+   * Returns a result based on an externalId for a type
+   * @param dto
+   */
+  getDataByExternalId(dto: GetByExternalIdDTO): Promise<CdfResourceInstance>;
 
   /**
    * Ingest data model type instances (data).

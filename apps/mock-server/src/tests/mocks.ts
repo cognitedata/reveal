@@ -77,6 +77,11 @@ type PageInfo {
   endCursor: String
 }
 
+input InstanceRef {
+  spaceExternalId: String!
+  externalId: String! 
+}
+
 type Post {
   externalId: ID!
   title: String!
@@ -317,6 +322,8 @@ type Query {
     query: String!
   ): PostConnection
 
+  getPostById( instance:InstanceRef! ): PostConnection
+
   aggregatePost(
     fields: [_SearchPostFields!]
 
@@ -343,6 +350,8 @@ type Query {
     query: String!
   ): UserConnection
 
+  getUserById( instance:InstanceRef! ): UserConnection
+
   aggregateUser(
     fields: [_SearchUserFields!]
 
@@ -368,6 +377,8 @@ type Query {
     after: String
     query: String!
   ): CommentConnection
+
+  getCommentById( instance:InstanceRef! ): CommentConnection
 
   aggregateComment(
     fields: [_SearchCommentFields!]

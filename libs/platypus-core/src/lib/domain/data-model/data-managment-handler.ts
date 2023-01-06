@@ -11,6 +11,7 @@ import {
   IngestInstancesResponseDTO,
   PublishedRowsCountMap,
   SearchDataDTO,
+  GetByExternalIdDTO,
 } from './dto';
 
 import { PaginatedResponse } from './types';
@@ -47,6 +48,13 @@ export class DataManagementHandler {
   searchData(dto: SearchDataDTO) {
     return this.fdmClient
       .searchData(dto)
+      .then((result) => Result.ok(result))
+      .catch((error) => Promise.reject(Result.fail(error)));
+  }
+
+  getDataById(dto: GetByExternalIdDTO) {
+    return this.fdmClient
+      .getDataByExternalId(dto)
       .then((result) => Result.ok(result))
       .catch((error) => Promise.reject(Result.fail(error)));
   }
