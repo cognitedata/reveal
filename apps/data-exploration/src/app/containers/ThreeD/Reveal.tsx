@@ -167,13 +167,15 @@ export function Reveal({
             onViewerClick(intersection);
           }
 
-          clearTimeout(clickTimer.current);
+          // In node types package >18, the types for 'clearTimeout' also allows for NodeJS.Timeout.
+          // Super strange that they have not already done so initially.
+          clearTimeout(clickTimer.current as any);
           numOfClicks.current = 0;
         }, 250);
       }
       if (numOfClicks.current === 2) {
         // it is the second click in double-click event
-        clearTimeout(clickTimer.current);
+        clearTimeout(clickTimer.current as any);
         numOfClicks.current = 0;
       }
     },
