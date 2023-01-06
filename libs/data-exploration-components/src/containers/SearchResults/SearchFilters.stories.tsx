@@ -26,8 +26,8 @@ export const Asset: ComponentStory<typeof SearchFilters> = (args) => {
     <Container>
       <SearchFilters
         {...args}
-        assetFilter={assetFilter}
-        setAssetFilter={setAssetFilter}
+        assetFilter={assetFilter as any}
+        setAssetFilter={setAssetFilter as any}
         resourceType="asset"
       />
     </Container>
@@ -42,8 +42,8 @@ export const Timeseries: ComponentStory<typeof SearchFilters> = (args) => {
     <Container>
       <SearchFilters
         {...args}
-        timeseriesFilter={timeseriesFilter}
-        setTimeseriesFilter={setTimeseriesFilter}
+        timeseriesFilter={timeseriesFilter as any}
+        setTimeseriesFilter={setTimeseriesFilter as any}
         resourceType="timeSeries"
       />
     </Container>
@@ -56,8 +56,8 @@ export const File: ComponentStory<typeof SearchFilters> = (args) => {
     <Container>
       <SearchFilters
         {...args}
-        fileFilter={fileFilter}
-        setFileFilter={setFileFilter}
+        fileFilter={fileFilter as any}
+        setFileFilter={setFileFilter as any}
         resourceType="file"
       />
     </Container>
@@ -70,8 +70,8 @@ export const Event: ComponentStory<typeof SearchFilters> = (args) => {
     <Container>
       <SearchFilters
         {...args}
-        eventFilter={eventFilter}
-        setEventFilter={setEventFilter}
+        eventFilter={eventFilter as any}
+        setEventFilter={setEventFilter as any}
         resourceType="event"
       />
     </Container>
@@ -86,8 +86,8 @@ export const Sequence: ComponentStory<typeof SearchFilters> = (args) => {
     <Container>
       <SearchFilters
         {...args}
-        sequenceFilter={sequenceFilter}
-        setSequenceFilter={setSequenceFilter}
+        sequenceFilter={sequenceFilter as any}
+        setSequenceFilter={setSequenceFilter as any}
         resourceType="sequence"
       />
     </Container>

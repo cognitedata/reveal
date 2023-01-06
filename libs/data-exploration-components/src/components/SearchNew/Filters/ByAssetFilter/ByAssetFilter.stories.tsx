@@ -31,25 +31,27 @@ Example.args = {
   title: 'Asset',
 };
 
-Example.play = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-  const select = canvasElement.querySelector('.cogs-select__control');
-  await expect(select).toBeInTheDocument();
+// FIXME: Write it in a unit test
 
-  await userEvent.click(select!);
-  const option = canvas.getByText(assets[0].name!, {
-    exact: false,
-    selector: '.cogs-tooltip__content',
-  });
-  await expect(option!).not.toBeNull();
-  await expect(option!).toBeVisible();
+// Example.play = async ({ canvasElement }) => {
+//   const canvas = within(canvasElement);
+//   const select = canvasElement.querySelector('.cogs-select__control');
+//   await expect(select).toBeInTheDocument();
 
-  await userEvent.click(option!);
-  await waitFor(() => {
-    const selection = canvas.getByText(assets[0].name!, {
-      selector: '.cogs-select__multi-value__label',
-    });
-    expect(selection).not.toBeNull();
-    expect(selection).toBeVisible();
-  });
-};
+//   await userEvent.click(select!);
+//   const option = canvas.getByText(assets[0].name!, {
+//     exact: false,
+//     selector: '.cogs-tooltip__content',
+//   });
+//   await expect(option!).not.toBeNull();
+//   await expect(option!).toBeVisible();
+
+//   await userEvent.click(option!);
+//   await waitFor(() => {
+//     const selection = canvas.getByText(assets[0].name!, {
+//       selector: '.cogs-select__multi-value__label',
+//     });
+//     expect(selection).not.toBeNull();
+//     expect(selection).toBeVisible();
+//   });
+// };

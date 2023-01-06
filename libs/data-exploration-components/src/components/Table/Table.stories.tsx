@@ -39,7 +39,7 @@ const exampleColumns: ColumnDef<DataType>[] = [
     header: 'Column 2',
     accessorKey: 'col2',
     cell: (props) => {
-      return <span> {props?.getValue()}</span>;
+      return <> {props?.getValue()}</>;
     },
   },
   {
@@ -48,9 +48,9 @@ const exampleColumns: ColumnDef<DataType>[] = [
     cell: ({ cell }) => {
       const { row } = cell;
       return (
-        <span>
+        <>
           {row.getAllCells()[1].getValue()} {cell.getValue()}
-        </span>
+        </>
       );
     },
   },

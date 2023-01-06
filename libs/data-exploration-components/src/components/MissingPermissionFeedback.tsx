@@ -16,14 +16,14 @@ export default function MissingPermissionFeedback(props: Props) {
 
   const context = useContext(AppContext);
   const { data: groupPermission } = usePermissions(
-    context?.flow!,
+    context?.flow! as any,
     'groupAcl',
     undefined,
     undefined,
     { enabled: !!context?.flow }
   );
   const { data: hasPermission } = usePermissions(
-    context?.flow!,
+    context?.flow! as any,
     key,
     type,
     undefined,

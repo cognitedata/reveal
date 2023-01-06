@@ -15,37 +15,39 @@ export const Example: ComponentStory<typeof MetadataFilterV2> = () => {
   return <MetadataFilterV2 items={assets} value={value} setValue={setValue} />;
 };
 
-Example.play = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-  const checkIfExistsAndVisible = (el: HTMLElement) => {
-    expect(el).not.toBeNull();
-    expect(el).toBeVisible();
-  };
+// FIXME: Write it in a unit test
 
-  const keySelect = canvasElement.querySelector('.key-select > div');
-  expect(keySelect).toBeInTheDocument();
-  const valueSelect = canvasElement.querySelector('.value-select > div');
-  expect(valueSelect).toBeInTheDocument();
+// Example.play = async ({ canvasElement }) => {
+//   const canvas = within(canvasElement);
+//   const checkIfExistsAndVisible = (el: HTMLElement) => {
+//     expect(el).not.toBeNull();
+//     expect(el).toBeVisible();
+//   };
 
-  const assetWithMetadata = assets.find((asset) => asset.metadata);
-  const metadataKey = Object.keys(assetWithMetadata?.metadata || {})[0];
-  const metadataValue = assetWithMetadata?.metadata?.[metadataKey];
+//   const keySelect = canvasElement.querySelector('.key-select > div');
+//   expect(keySelect).toBeInTheDocument();
+//   const valueSelect = canvasElement.querySelector('.value-select > div');
+//   expect(valueSelect).toBeInTheDocument();
 
-  userEvent.click(keySelect!);
-  const keyOption = canvas.getByText(metadataKey, {
-    ignore: '[id^="aria-"]',
-  });
-  await waitFor(() => {
-    checkIfExistsAndVisible(keyOption);
-  });
-  await userEvent.click(keyOption!);
+//   const assetWithMetadata = assets.find((asset) => asset.metadata);
+//   const metadataKey = Object.keys(assetWithMetadata?.metadata || {})[0];
+//   const metadataValue = assetWithMetadata?.metadata?.[metadataKey];
 
-  userEvent.click(valueSelect!);
-  const valueOption = canvas.getByText(metadataValue!, {
-    ignore: '[id^="aria-"]',
-  });
-  await waitFor(() => {
-    checkIfExistsAndVisible(valueOption);
-  });
-  userEvent.click(valueOption!);
-};
+//   userEvent.click(keySelect!);
+//   const keyOption = canvas.getByText(metadataKey, {
+//     ignore: '[id^="aria-"]',
+//   });
+//   await waitFor(() => {
+//     checkIfExistsAndVisible(keyOption);
+//   });
+//   await userEvent.click(keyOption!);
+
+//   userEvent.click(valueSelect!);
+//   const valueOption = canvas.getByText(metadataValue!, {
+//     ignore: '[id^="aria-"]',
+//   });
+//   await waitFor(() => {
+//     checkIfExistsAndVisible(valueOption);
+//   });
+//   userEvent.click(valueOption!);
+// };

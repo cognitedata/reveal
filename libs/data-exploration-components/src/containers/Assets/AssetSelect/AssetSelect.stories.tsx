@@ -13,7 +13,7 @@ export const Example = () => {
     <AssetSelect
       selectedAssetIds={selectedIds}
       onAssetSelected={(item) => {
-        setSelectedIds(item);
+        setSelectedIds(item?.map(({ value }) => value));
         action('onAssetSelected')(item);
       }}
     />
@@ -26,7 +26,7 @@ export const ExampleMulti = () => {
       isMulti
       selectedAssetIds={selectedIds}
       onAssetSelected={(item) => {
-        setSelectedIds(item);
+        setSelectedIds(item?.map(({ value }) => value));
         action('onAssetSelected')(item);
       }}
     />

@@ -13,5 +13,9 @@ export const Simple: ComponentStory<typeof ErrorFeedback> = (args) => (
   </div>
 );
 Simple.args = {
-  error: { message: 'Event Id not found', requestId: '232423-4234-423432' },
+  error: {
+    message: 'Event Id not found',
+    status: 404,
+    requestId: '232423-4234-423432',
+  },
 };

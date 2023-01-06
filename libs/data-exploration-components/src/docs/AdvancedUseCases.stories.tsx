@@ -10,8 +10,8 @@ import { Wrapper } from './utils';
 
 export const ResourcesLargeTables = () => (
   <Splitter percentage secondaryMinSize={50}>
-    <AssetTable items={assets} onItemClicked={action('onItemClicked')} />
-    <FileTable items={files} onItemClicked={action('onItemClicked')} />
+    <AssetTable id="test" data={assets} />
+    <FileTable data={files as any} id="test" />
   </Splitter>
 );
 ResourcesLargeTables.decorators = [

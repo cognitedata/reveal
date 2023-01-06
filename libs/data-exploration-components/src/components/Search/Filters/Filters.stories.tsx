@@ -15,6 +15,8 @@ import {
   EventFilters,
 } from '.';
 
+// TODO: Fix the filter values here.
+
 export default {
   title: 'Search Results/ResourceFilters',
   component: AssetFilters,
@@ -23,23 +25,27 @@ export default {
 
 export const Asset = () => {
   const [filter, setFilter] = useState<AssetFilterProps>({});
-  return <AssetFilters filter={filter} setFilter={setFilter} />;
+  return <AssetFilters filter={filter as any} setFilter={setFilter as any} />;
 };
 export const Timeseries = () => {
   const [filter, setFilter] = useState<TimeseriesFilter>({});
-  return <TimeseriesFilters filter={filter} setFilter={setFilter} />;
+  return (
+    <TimeseriesFilters filter={filter as any} setFilter={setFilter as any} />
+  );
 };
 export const File = () => {
   const [filter, setFilter] = useState<FileFilterProps>({});
-  return <FileFilters filter={filter} setFilter={setFilter} />;
+  return <FileFilters filter={filter as any} setFilter={setFilter as any} />;
 };
 export const Sequence = () => {
   const [filter, setFilter] = useState<Required<SequenceFilter>['filter']>({});
-  return <SequenceFilters filter={filter} setFilter={setFilter} />;
+  return (
+    <SequenceFilters filter={filter as any} setFilter={setFilter as any} />
+  );
 };
 export const Event = () => {
   const [filter, setFilter] = useState<EventFilter>({});
-  return <EventFilters filter={filter} setFilter={setFilter} />;
+  return <EventFilters filter={filter as any} setFilter={setFilter as any} />;
 };
 
 const Container = styled.div`

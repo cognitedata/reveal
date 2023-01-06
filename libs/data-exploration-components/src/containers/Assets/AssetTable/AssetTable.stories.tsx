@@ -22,16 +22,13 @@ export const Example: ComponentStory<typeof AssetTable> = (args) => (
 );
 Example.args = {
   data: assets,
-  onItemClicked: action('onItemClicked'),
 };
 
 export const ExampleSingleSelect: ComponentStory<typeof AssetTable> = (
   args
 ) => <AssetTable {...args} />;
 ExampleSingleSelect.args = {
-  selectionMode: 'single',
   data: assets,
-  onItemClicked: action('onItemClicked'),
 };
 
 const Container = styled.div`

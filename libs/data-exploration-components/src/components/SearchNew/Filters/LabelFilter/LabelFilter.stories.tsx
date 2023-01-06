@@ -1,5 +1,6 @@
 import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
+import { OptionValue } from '../types';
 import { LabelFilterV2 } from './LabelFilter';
 
 export default {
@@ -14,7 +15,7 @@ export default {
 };
 
 export const Example: ComponentStory<typeof LabelFilterV2> = (args) => {
-  const [value, setValue] = useState<{ externalId: string }[] | undefined>(
+  const [value, setValue] = useState<OptionValue<string>[] | undefined>(
     undefined
   );
   return <LabelFilterV2 {...args} value={value} setValue={setValue} />;
