@@ -35,7 +35,7 @@ type Row = {
   value: PrimitiveTypes;
 };
 
-interface CogDataListProps extends AgGridReactProps {
+export interface CogDataListProps extends AgGridReactProps {
   listData?: PrimitiveTypesListData;
 }
 
