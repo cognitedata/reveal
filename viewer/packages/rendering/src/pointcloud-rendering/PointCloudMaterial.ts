@@ -103,7 +103,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   private readonly _gradient = SpectralGradient;
   private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
 
-  private readonly _objectAppearanceTexture = new PointCloudObjectAppearanceTexture(
+  private _objectAppearanceTexture = new PointCloudObjectAppearanceTexture(
     OBJECT_STYLING_TEXTURE_WIDTH,
     OBJECT_STYLING_TEXTURE_HEIGHT
   );
@@ -285,6 +285,11 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   get objectAppearanceTexture(): PointCloudObjectAppearanceTexture {
     return this._objectAppearanceTexture;
+  }
+
+  set objectAppearanceTexture(texture: PointCloudObjectAppearanceTexture) {
+    this._objectAppearanceTexture = texture;
+    this.uniforms.objectIdLUT = makeUniform('t', this._objectAppearanceTexture.objectStyleTexture);
   }
 
   get classification(): PointClassification {
