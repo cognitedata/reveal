@@ -1556,7 +1556,7 @@ function determineMetricsMode(viewerOptions: Cognite3DViewerOptions): MetricsMod
       return MetricsMode.DetailedMetrics;
     case undefined:
       // Deprecated mode
-      return (viewerOptions.logMetrics ?? true) ? MetricsMode.AnonymousMetrics : MetricsMode.NoMetrics;
+      return viewerOptions.logMetrics ?? true ? MetricsMode.AnonymousMetrics : MetricsMode.NoMetrics;
 
     default:
       throw new Error(`Unsupported 'usageMetricsMode' '${viewerOptions.usageMetricsMode}'`);

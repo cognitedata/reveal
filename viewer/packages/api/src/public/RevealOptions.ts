@@ -9,7 +9,7 @@ import { InternalRevealCadOptions } from '@reveal/cad-geometry-loaders';
 import { MetricsMode } from '@reveal/metrics';
 
 /**
- * @property metricsMode                  
+ * @property metricsMode
  * @property movingCameraResolutionFactor Factor with which the resolution (number of screen pixels) is scaled
  * when camera is moving.
  * @property internal Internals are for internal usage only (like unit-testing).

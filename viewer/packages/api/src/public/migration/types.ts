@@ -33,7 +33,7 @@ export interface Cognite3DViewerOptions {
   /** An existing DOM element that we will render canvas into. */
   domElement?: HTMLElement;
 
-  /** 
+  /**
    * When true (default), anonymous metrics will be collected to allow Cognite to understand how Reveal
    * is sued.
    * @deprecated Replaced by {@link usageMetricsMode). Will be removed in 5.0.
@@ -44,7 +44,7 @@ export interface Cognite3DViewerOptions {
    * Defines how usage metrics is collected by Reveal. The metrics are collected using Mixpanel.
    * - 'none' - No metrics are collected.
    * - 'anonymous' - Anonymous information is collected. No tracking of "flows" through the application or cross-session tracking.
-   * - 'detailed' - Detailed metrics potentially identifying the user is collected. Cross-session cookies are used. This mode might require user consent, 
+   * - 'detailed' - Detailed metrics potentially identifying the user is collected. Cross-session cookies are used. This mode might require user consent,
    * and is only recommended for Cognite applications.
    * Defaults to 'anonymous'.
    */

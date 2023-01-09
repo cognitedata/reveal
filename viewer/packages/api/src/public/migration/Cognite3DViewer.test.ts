@@ -264,6 +264,8 @@ describe('Cognite3DViewer', () => {
   });
 
   test('construct viewer with with logMetrics and usageMetricsMode, fails', () => {
-    expect(() => new Cognite3DViewer({sdk, renderer, _sectorCuller, logMetrics: true, usageMetricsMode: 'detailed'})).toThrowError();
+    expect(
+      () => new Cognite3DViewer({ sdk, renderer, _sectorCuller, logMetrics: true, usageMetricsMode: 'detailed' })
+    ).toThrowError();
   });
 });
