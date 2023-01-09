@@ -84,7 +84,8 @@
     "proj4": "2.8.0",
     "rxjs": "7.8.0",
     "skmeans": "0.11.3",
-    "three-stdlib": "2.21.1"
+    "three-stdlib": "2.21.1",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.32.1",
@@ -106,6 +107,7 @@
     "@types/skmeans": "0.11.3",
     "@types/stats": "0.16.30",
     "@types/tween.js": "18.5.1",
+    "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "5.47.1",
     "@typescript-eslint/parser": "5.47.1",
     "concurrently": "7.6.0",

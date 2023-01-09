@@ -8,22 +8,9 @@ import { Log } from '@reveal/logger';
 
 import { TrackedEvents, EventProps } from './types';
 import throttle from 'lodash/throttle';
-
-/**
- * Source: https://stackoverflow.com/a/2117523/167251
- */
-function generateUuidv4(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c == 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
+import { v4 as uuid } from 'uuid';
 
 const { VERSION, MIXPANEL_TOKEN } = process.env;
-
-// Don't identify users in MixPanel to avoid GDPR problems
-const mixpanelDistinctId = 'reveal-single-user';
 
 /**
  * Specifies what type of metrics to send to Mixpanel.
@@ -54,6 +41,9 @@ interface MixpanelInitializer {
 }
 
 class AnonymousMixpanelInitializer implements MixpanelInitializer {
+  // Don't identify users in MixPanel to avoid GDPR problems
+  private static readonly MixpanelDistinctId = 'reveal-single-user';
+
   private static readonly Config: Partial<Config> = {
     batch_requests: true,
     disable_cookie: true,
@@ -89,11 +79,11 @@ class AnonymousMixpanelInitializer implements MixpanelInitializer {
     // Reset device ID (even if we don't send it)
     mixpanel.reset();
 
-    mixpanel.identify(mixpanelDistinctId);
+    mixpanel.identify(AnonymousMixpanelInitializer.MixpanelDistinctId);
 
-    // Use a random identifier because we want to don't track users over multiple sessions to not
-    // violate GDPR.
-    return { sessionId: generateUuidv4() };
+    // Use a random identifier per session because we want to don't track users 
+    // over multiple sessions to not violate GDPR.
+    return { sessionId: uuid() };
   }
 }
 
