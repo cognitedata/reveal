@@ -134,6 +134,9 @@ export class MetricsLogger {
   static init(metricsMode: MetricsMode, project: string, applicationId: string, eventProps: EventProps): void {
     if (this.globalMetricsLogger === undefined) {
       switch (metricsMode) {
+        case MetricsMode.NoMetrics:
+          break;
+          
         case MetricsMode.AnonymousMetrics: {
           const { sessionId } = new AnonymousMixpanelInitializer().init();
           this.globalMetricsLogger = new MetricsLogger(sessionId, project, applicationId, eventProps);
