@@ -1,3 +1,5 @@
+import { getUrl } from '../../utils/url';
+
 const checkQueryExplorer = (query: string, expectedResult: any) => {
   cy.setQueryExplorerQuery(query);
   cy.clickQueryExplorerExecuteQuery();
@@ -7,7 +9,7 @@ const checkQueryExplorer = (query: string, expectedResult: any) => {
 describe('Data Model Page - Publish new schema', () => {
   beforeEach(() => {
     cy.request('http://localhost:4200/reset');
-    cy.visit('/platypus/data-models/blog/blog/latest/data');
+    cy.visit(getUrl('/blog/blog/latest/data'));
   });
 
   /* TODO: add these test cases for publish version modal for FDM v3 */
@@ -36,7 +38,7 @@ describe('Data Model Page - Publish new schema', () => {
     // );
 
     // Navigate to Query explorer page and make sure that we can run queries against updated schema
-    cy.visit('/platypus/data-models/blog/blog/latest/data/query-explorer');
+    cy.visit(getUrl('/blog/blog/latest/data/query-explorer'));
 
     // const query = `
     //     query {
@@ -99,7 +101,7 @@ describe('Data Model Page - Publish new schema', () => {
     cy.getBySel('schema-version-select').contains('Latest');
 
     // Navigate to Query explorer page and make sure that we can run queries against updated schema
-    cy.visit('/platypus/data-models/blog/blog/latest/data/query-explorer');
+    cy.visit(getUrl('/blog/blog/latest/data/query-explorer'));
 
     const query = `
     query {
@@ -120,13 +122,16 @@ describe('Data Model Page - Publish new schema', () => {
   });
 
   it('should only show the published data model version after the localDraft is published', () => {
-    cy.visit('/platypus');
+    cy.visit(getUrl(''));
 
     cy.getBySel('create-data-model-btn').click();
     cy.getBySel('input-data-model-name').type('cypress-test');
     cy.getBySel('modal-ok-button').click();
     // we should be redirected to /dashboard
-    cy.url().should('include', '/data-models/cypress-test/cypress-test/latest');
+    cy.url().should(
+      'include',
+      '/data-models-previous/cypress-test/cypress-test/latest'
+    );
     cy.getCogsToast('success').contains('Data Model successfully created');
 
     // we should see version select dropdown with draft

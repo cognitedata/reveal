@@ -1,12 +1,12 @@
 import { useTransformationsFeatureFlag } from './useTransformations';
 import { useFlag } from '../../environments/useFlag';
-import { useFDMV3 } from './useFDMV3';
+import { isFDMv3 } from './isFDMv3';
 
 jest.mock('../../environments/useFlag');
-jest.mock('./useFDMV3');
+jest.mock('./isFDMv3');
 
 const mockedUseFlag = jest.mocked(useFlag);
-const mockedUseFDMV3 = jest.mocked(useFDMV3);
+const mockedisFDMv3 = jest.mocked(isFDMv3);
 
 describe('useTransformationsFeatureFlag', () => {
   it('returns false if feature flag is disabled', () => {
@@ -25,7 +25,7 @@ describe('useTransformationsFeatureFlag', () => {
       isEnabled: true,
       isClientReady: undefined,
     });
-    mockedUseFDMV3.mockReturnValue(true);
+    mockedisFDMv3.mockReturnValue(true);
 
     const isEnabled = useTransformationsFeatureFlag();
 
@@ -37,7 +37,7 @@ describe('useTransformationsFeatureFlag', () => {
       isEnabled: true,
       isClientReady: undefined,
     });
-    mockedUseFDMV3.mockReturnValue(false);
+    mockedisFDMv3.mockReturnValue(false);
 
     const isEnabled = useTransformationsFeatureFlag();
 

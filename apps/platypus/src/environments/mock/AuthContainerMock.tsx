@@ -19,7 +19,7 @@ export const AuthContainerMock = ({ children }: AuthContainerProps) => {
 
   const cogniteClient: CogniteClient = new CogniteClient({
     appId: config.APP_APP_ID,
-    project: 'mock',
+    project: 'platypus',
     noAuthMode: true,
     baseUrl: window.location.origin,
     getToken: async () => 'mock',

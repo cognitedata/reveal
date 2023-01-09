@@ -15,12 +15,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { useEffect, useRef } from 'react';
-import {
-  useNavigate,
-  useLocation,
-  Navigate,
-  useSearchParams,
-} from 'react-router-dom';
+import { useLocation, Navigate, useSearchParams } from 'react-router-dom';
 import {
   DataPreviewTable,
   DataPreviewTableRef,
@@ -31,6 +26,7 @@ import { useDraftRows } from '../hooks/useDraftRows';
 import { useDataManagementPageUI } from '../hooks/useDataManagemenPageUI';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 export interface PreviewProps {
   dataModelExternalId: string;
@@ -93,7 +89,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     if (!typeFromQuery && dataModelTypeDefs.types.length > 0) {
       const firstAvailableType = dataModelTypeDefs.types[0];
       navigate(
-        `/data-models/${dataModel?.space}/${dataModelExternalId}/${selectedDataModelVersion.version}/data/data-management/preview?type=${firstAvailableType.name}`
+        `/${dataModel?.space}/${dataModelExternalId}/${selectedDataModelVersion.version}/data/data-management/preview?type=${firstAvailableType.name}`
       );
     }
   }

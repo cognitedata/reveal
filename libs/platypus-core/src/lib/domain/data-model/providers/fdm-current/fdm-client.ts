@@ -61,6 +61,7 @@ export class FdmV2Client implements FlexibleDataModelingClient {
   private validationErrorDataMapper: DataModelValidationErrorDataMapper;
   private mixerBindingsBuilderService: MixerBindingsBuilder;
   private dmsBuilderService: DmsModelBuilder;
+  version = 'beta';
 
   constructor(
     private mixerApiService: MixerApiService,

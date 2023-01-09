@@ -1,12 +1,12 @@
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useDataSets } from '@platypus-app/hooks/useDataSets';
 import { useDataModelMutation } from './hooks/useDataModelMutation';
 import { DataUtils } from '@platypus/platypus-core';
 import { DataModelDetailModal } from '../../components/DataModelDetailModal/DataModelDetailModal';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
   const [dataModelName, setDataModelName] = useState('');
@@ -72,7 +72,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
             ),
           });
           navigate(
-            `/data-models/${result.getValue().space}/${
+            `/${result.getValue().space}/${
               result.getValue().id
             }/${DEFAULT_VERSION_PATH}`
           );

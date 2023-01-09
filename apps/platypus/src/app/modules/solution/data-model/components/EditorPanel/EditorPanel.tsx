@@ -16,7 +16,7 @@ import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataM
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
-import { useFDMV3, useUIEditorFeatureFlag } from '@platypus-app/flags';
+import { isFDMv3, useUIEditorFeatureFlag } from '@platypus-app/flags';
 
 const GraphqlCodeEditor = React.lazy(() =>
   import('../GraphqlCodeEditor/GraphqlCodeEditor').then((module) => ({
@@ -41,7 +41,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
 }) => {
   const { t } = useTranslation('EditorPanel');
   const { isEnabled: isUIEditorFlagEnabled } = useUIEditorFeatureFlag();
-  const isFDMV3 = useFDMV3();
+  const isFDMV3 = isFDMv3();
 
   // always show the ui editor for fdm v2 users
   // for fdm v3 users, only show the ui editor if the feature toggle is on.

@@ -1,13 +1,15 @@
+import { getUrl } from '../../utils/url';
+
 describe('Data Model Page - Toggle Schema Visualizer', () => {
   const createNewDataModel = (dataModelName: string) => {
-    cy.visit('/platypus');
+    cy.visit(getUrl(''));
 
     cy.getBySel('create-data-model-btn').click();
     cy.getBySel('input-data-model-name').type(dataModelName);
     cy.getBySel('modal-ok-button').click();
     cy.url().should(
       'include',
-      `/data-models/${dataModelName}/${dataModelName}/latest`
+      `/data-models-previous/${dataModelName}/${dataModelName}/latest`
     );
     cy.getCogsToast('success').contains('Data Model successfully created');
 
@@ -16,7 +18,7 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
 
   beforeEach(() => {
     cy.request('http://localhost:4200/reset');
-    cy.visit('/platypus/data-models/blog/blog/latest/data');
+    cy.visit(getUrl('/blog/blog/latest/data'));
   });
 
   it('should test toggling schema visualizer due to excess types', () => {
@@ -38,7 +40,7 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
 
     cy.getBySel('schema-visualizer-toggle-btn').should('be.visible').click();
     cy.getBySel('schema-visualizer-err-ctr').should('be.visible');
-    cy.visit('/platypus/data-models/blog/blog/latest/data');
+    cy.visit(getUrl('/blog/blog/latest/data'));
     cy.getBySel('schema-visualizer-err-ctr').should('be.visible');
     cy.getBySel('schema-visualizer-toggle-btn').should('be.visible').click();
     cy.getBySel('schema-visualizer-err-ctr').should('not.exist');
@@ -57,12 +59,10 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
 
     cy.getBySel('schema-visualizer-toggle-btn').should('be.visible').click();
     cy.getBySel('schema-visualizer-err-ctr').should('be.visible');
-    cy.visit(
-      `/platypus/data-models/${newModelName}/${newModelName}/latest/data`
-    );
+    cy.visit(getUrl(`/${newModelName}/${newModelName}/latest/data`));
     cy.getBySel('schema-visualizer-err-ctr').should('be.visible');
 
-    cy.visit('/platypus/data-models/blog/blog/latest/data');
+    cy.visit(getUrl('/blog/blog/latest/data'));
     cy.getBySel('schema-visualizer-err-ctr').should('not.exist');
   });
 });

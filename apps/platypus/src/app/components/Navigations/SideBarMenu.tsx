@@ -1,6 +1,7 @@
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { Icon, IconType, Tooltip } from '@cognite/cogs.js';
 import * as S from './elements';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 export type SideBarItem = {
   icon: IconType;
@@ -24,7 +25,7 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
 
   const navigate = useNavigate();
 
-  const baseNavigationRoute = `/data-models/${space}/${dataModelExternalId}/${version}`;
+  const baseNavigationRoute = `/${space}/${dataModelExternalId}/${version}`;
 
   const getNextRoute = (slug: string) => {
     return `${baseNavigationRoute}/data/${slug}`;

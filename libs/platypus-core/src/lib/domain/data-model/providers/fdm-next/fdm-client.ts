@@ -52,6 +52,7 @@ export class FdmClient implements FlexibleDataModelingClient {
   private validationErrorDataMapper: DataModelValidationErrorDataMapper;
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
   private queryBuilder: MixerQueryBuilder;
+  version = 'stable';
 
   constructor(
     spacesApi: SpacesApiService,

@@ -1,7 +1,9 @@
+import { getUrl } from '../../utils/url';
+
 describe('Data Model Page - Local Drafts', () => {
   function createDataModel(name: string) {
     // Create new data model
-    cy.visit('/platypus');
+    cy.visit(getUrl(''));
     cy.getBySel('create-data-model-btn').click();
     cy.getBySel('input-data-model-name').type(name);
     cy.getBySel('modal-ok-button').click();
@@ -19,7 +21,7 @@ describe('Data Model Page - Local Drafts', () => {
 
   beforeEach(() => {
     cy.request('http://localhost:4200/reset');
-    cy.visit('/platypus/data-models/blog/blog/latest/data');
+    cy.visit(getUrl('/blog/blog/latest/data'));
   });
 
   it('persists unpublished changes after page refresh', () => {
@@ -93,8 +95,8 @@ describe('Data Model Page - Local Drafts', () => {
     cy.addDataModelType('Currency');
     cy.ensureCurrentVersionIsDraft();
 
-    cy.visit('/platypus/');
-    cy.visit('/platypus/data-models/blog/blog/latest/data');
+    cy.visit(getUrl(''));
+    cy.visit(getUrl('/blog/blog/latest/data'));
 
     cy.getBySel('schema-version-select')
       .click()
@@ -163,7 +165,7 @@ describe('Data Model Page - Local Drafts', () => {
 
   it('Loads only drafts owned by Data Model ', () => {
     // Edit current data model and create a draft
-    cy.visit('/platypus/data-models/blog/blog/latest/data');
+    cy.visit(getUrl('/blog/blog/latest/data'));
     cy.addDataModelType('Currency');
 
     // Go back to Data Models Page and Create new Data Model

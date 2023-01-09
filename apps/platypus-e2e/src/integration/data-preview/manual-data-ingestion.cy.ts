@@ -1,10 +1,10 @@
+import { getUrl } from '../../utils/url';
+
 describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
     cy.request('http://localhost:4200/reset');
-    cy.visit(
-      '/platypus/data-models/blog/blog/latest/data/data-management/preview'
-    );
+    cy.visit(getUrl('/blog/blog/latest/data/data-management/preview'));
   });
 
   it('should create draft row in table and publish it', () => {
@@ -33,7 +33,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.get('[data-testid="User"]').click();
     cy.get('[data-testid="User"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
-    cy.intercept('POST', 'api/v1/projects/mock/datamodelstorage/nodes').as(
+    cy.intercept('POST', 'api/v1/projects/platypus/datamodelstorage/nodes').as(
       'ingestNodes'
     );
     cy.get('div[role="gridcell"][col-id="name"]')
@@ -55,7 +55,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.get('[data-testid="Post"]').click();
     cy.get('[data-testid="Post"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
-    cy.intercept('POST', 'api/v1/projects/mock/datamodelstorage/nodes').as(
+    cy.intercept('POST', 'api/v1/projects/platypus/datamodelstorage/nodes').as(
       'ingestNodes'
     );
 
@@ -187,7 +187,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
   });
 
   it('should add 0 as an input to numeric cells in data preview table', () => {
-    cy.visit('/platypus/data-models/blog/blog/latest');
+    cy.visit(getUrl('/blog/blog/latest'));
 
     cy.getBySel('edit-schema-btn').should('be.visible').click();
     cy.getBySel('type-list-item-Post').should('be.visible').click();
@@ -201,7 +201,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.getBySel('toast-title').should('have.text', 'Data model updated');
 
     cy.visit(
-      '/platypus/data-models/blog/blog/latest/data/data-management/preview?type=Post'
+      getUrl('/blog/blog/latest/data/data-management/preview?type=Post')
     );
 
     cy.getBySel('create-new-row-btn').click({ force: true });
@@ -227,7 +227,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
   });
 
   it('should clear non-required cells in data preview table', () => {
-    cy.visit('/platypus/data-models/blog/blog/latest');
+    cy.visit(getUrl('/blog/blog/latest'));
 
     cy.getBySel('edit-schema-btn').should('be.visible').click();
     cy.getBySel('type-list-item-Post').should('be.visible').click();
@@ -242,7 +242,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.getBySel('toast-title').should('have.text', 'Data model updated');
 
     cy.visit(
-      '/platypus/data-models/blog/blog/latest/data/data-management/preview?type=Post'
+      getUrl('/blog/blog/latest/data/data-management/preview?type=Post')
     );
 
     cy.getBySel('create-new-row-btn').click({ force: true });

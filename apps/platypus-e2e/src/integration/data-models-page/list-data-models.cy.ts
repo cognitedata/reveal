@@ -1,8 +1,10 @@
+import { getUrl } from '../../utils/url';
+
 describe('Platypus Data Models Page - List Data Models', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
     cy.request('http://localhost:4200/reset');
-    cy.visit('/platypus');
+    cy.visit(getUrl(''));
   });
 
   it('should display title', () => {

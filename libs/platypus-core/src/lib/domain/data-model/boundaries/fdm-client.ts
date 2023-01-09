@@ -31,6 +31,7 @@ import {
 } from '../types';
 
 export interface FlexibleDataModelingClient {
+  version: string;
   /**
    * Lists the available Data Models
    * @returns

@@ -13,11 +13,11 @@ import {
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { DataModelVersion } from '@platypus/platypus-core';
-import { useNavigate } from 'react-router-dom';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { Flex } from '@cognite/cogs.js';
 import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
 import { DOCS_LINKS } from '@platypus-app/constants';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 export interface QueryExplorerPageProps {
   dataModelExternalId: string;
@@ -43,7 +43,7 @@ export const QueryExplorerPage = ({
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     navigate(
-      `/data-models/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/data/query-explorer`,
+      `/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/data/query-explorer`,
       { replace: true }
     );
   };

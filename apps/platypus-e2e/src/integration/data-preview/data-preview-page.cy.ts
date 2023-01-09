@@ -1,10 +1,10 @@
+import { getUrl } from '../../utils/url';
+
 describe('Platypus Data Preview Page - Preview', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
     cy.request('http://localhost:4200/reset');
-    cy.visit(
-      '/platypus/data-models/blog/blog/latest/data/data-management/preview'
-    );
+    cy.visit(getUrl('/blog/blog/latest/data/data-management/preview'));
   });
 
   it('should load page', () => {
@@ -253,7 +253,7 @@ describe('Platypus Data Preview Page - Preview', () => {
   });
 
   it('should show the latest label on the correct version', () => {
-    cy.visit('/platypus/data-models/blog/blog/latest');
+    cy.visit(getUrl('/blog/blog/latest'));
     cy.getBySel('edit-schema-btn').should('be.visible').click();
     cy.get('[aria-label="Additional actions for TypeWithoutData"]').click();
     cy.get('button').contains('Delete type').should('be.visible').click();
@@ -261,9 +261,7 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.getBySel('publish-schema-btn').click();
     cy.getBySel('modal-ok-button').click();
 
-    cy.visit(
-      '/platypus/data-models/blog/blog/latest/data/data-management/preview'
-    );
+    cy.visit(getUrl('/blog/blog/latest/data/data-management/preview'));
     cy.getBySel('schema-version-select').click();
     cy.get('.cogs-menu button:first')
       .should('contain', 'v. 2')

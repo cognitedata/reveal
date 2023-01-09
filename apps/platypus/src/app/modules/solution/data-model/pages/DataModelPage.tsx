@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Flex } from '@cognite/cogs.js';
@@ -51,6 +49,7 @@ import {
   PublishVersionModal,
   VersionType,
 } from '../components/PublishVersionModal';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 const MAX_TYPES_VISUALIZABLE = 30;
 
@@ -118,7 +117,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     dataModelTypeDefsBuilder.clear();
     navigate(
-      `/data-models/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/data`,
+      `/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/data`,
       { replace: true }
     );
   };
@@ -281,7 +280,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
 
           refetchDataModelVersions();
           navigate(
-            `/data-models/${dataModel?.space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}/data`,
+            `/${dataModel?.space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}/data`,
             { replace: true }
           );
         } else {

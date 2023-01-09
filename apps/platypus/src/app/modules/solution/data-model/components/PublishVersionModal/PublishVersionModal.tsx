@@ -1,10 +1,7 @@
 import { Body, Button, Flex, Input, Radio } from '@cognite/cogs.js';
 import { ModalDialog } from '@platypus-app/components/ModalDialog';
-import { USE_FDM_V3_LOCALSTORAGE_KEY } from '@platypus-app/constants';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
+import { isFDMv3 } from '@platypus-app/flags';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { StorageProviderType } from '@platypus/platypus-core';
 import { useState, useEffect } from 'react';
 import { StyledBreakingChanges } from './elements';
 
@@ -30,10 +27,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
   );
   const [error, setError] = useState('');
 
-  const localStorageProvider = useInjection(
-    TOKENS.storageProviderFactory
-  ).getProvider(StorageProviderType.localStorage);
-  const isFDMV3 = localStorageProvider.getItem(USE_FDM_V3_LOCALSTORAGE_KEY);
+  const isFDMV3 = isFDMv3();
 
   const MINIMUM_CHANGES_VISIBLE = 4;
   const [showAllChanges, setShowAllChanges] = useState(false);

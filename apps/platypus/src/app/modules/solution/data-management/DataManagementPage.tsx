@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
@@ -18,6 +18,7 @@ import { Flex } from '@cognite/cogs.js';
 import { DOCS_LINKS } from '@platypus-app/constants';
 import { useDraftRows } from './hooks/useDraftRows';
 import { useDataModelState } from '../hooks/useDataModelState';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';
 
@@ -70,7 +71,7 @@ export const DataManagementPage = ({
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     navigate(
-      `/data-models/${dataModelVersion.space}/${dataModelExternalId}/${dataModelVersion.version}/data/data-management/preview?type=${selectedTypeName}`
+      `/${dataModelVersion.space}/${dataModelExternalId}/${dataModelVersion.version}/data/data-management/preview?type=${selectedTypeName}`
     );
     setSelectedVersionNumber(dataModelVersion.version);
     clearState();

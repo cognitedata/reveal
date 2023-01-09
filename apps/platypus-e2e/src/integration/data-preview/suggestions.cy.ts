@@ -1,10 +1,10 @@
+import { getUrl } from '../../utils/url';
+
 describe('Platypus Data Preview Page - Suggestions', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
     cy.request('http://localhost:4200/reset');
-    cy.visit(
-      '/platypus/data-models/blog/blog/latest/data/data-management/preview'
-    );
+    cy.visit(getUrl('/blog/blog/latest/data/data-management/preview'));
   });
 
   it('should be able to open and close modal', () => {

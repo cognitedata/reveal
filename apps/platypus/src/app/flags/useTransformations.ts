@@ -1,12 +1,12 @@
 import { useFlag } from '../../environments/useFlag';
-import { useFDMV3 } from './useFDMV3';
+import { isFDMv3 } from './isFDMv3';
 
 export const useTransformationsFeatureFlag = () => {
   const { isEnabled } = useFlag('DEVX_TRANSFORMATIONS_UI', {
     fallback: false,
   });
 
-  const isFDMV3 = useFDMV3();
+  const isFDMV3 = isFDMv3();
 
   // If the feature flag is disabled, hide the transformations UI.
   if (!isEnabled) {

@@ -10,13 +10,13 @@ import {
   ForwardedRef,
   useImperativeHandle,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useDataModelsGridConfig } from '../../hooks/useDataModelsGridConfig';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { PaginationWrapper } from './elements';
 import React from 'react';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
+import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 const RESULTS_PER_PAGE = 25;
 
@@ -59,9 +59,7 @@ export const DataModelsTable = React.forwardRef(
 
     const handleRowClicked = useCallback((event: RowClickedEvent) => {
       const dataModel = event.data as DataModel;
-      navigate(
-        `/data-models/${dataModel.space}/${dataModel.id}/${DEFAULT_VERSION_PATH}`
-      );
+      navigate(`/${dataModel.space}/${dataModel.id}/${DEFAULT_VERSION_PATH}`);
       // eslint-disable-next-line
     }, []);
 
