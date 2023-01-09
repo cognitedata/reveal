@@ -55,29 +55,29 @@ mod tests {
     }
 
     #[wasm_bindgen_test]
-    fn identity_oriented_box_does_not_contain_cardinal_unit_vectors() {
+    fn identity_oriented_box_does_not_contain_doubled_cardinal_unit_vectors() {
         let ob = OrientedBox::new(DMat4::identity(), 0);
-        assert!(!ob.contains_point(&vec3(1.0, 0.0, 0.0)));
-        assert!(!ob.contains_point(&vec3(0.0, 1.0, 0.0)));
-        assert!(!ob.contains_point(&vec3(0.0, 0.0, 1.0)));
+        assert!(!ob.contains_point(&vec3(2.0, 0.0, 0.0)));
+        assert!(!ob.contains_point(&vec3(0.0, 2.0, 0.0)));
+        assert!(!ob.contains_point(&vec3(0.0, 0.0, 2.0)));
     }
 
     #[wasm_bindgen_test]
     fn translated_oriented_box_contains_only_translated_origin() {
         let ob = OrientedBox::new(
-            nalgebra_glm::inverse(&translate(&DMat4::identity(), &vec3(1.0, 1.0, 1.0))),
+            nalgebra_glm::inverse(&translate(&DMat4::identity(), &vec3(2.0, 2.0, 2.0))),
             0,
         );
         assert!(!ob.contains_point(&vec3(0.0, 0.0, 0.0)));
-        assert!(ob.contains_point(&vec3(1.0, 1.0, 1.0)));
+        assert!(ob.contains_point(&vec3(2.0, 2.0, 2.0)));
     }
 
     #[wasm_bindgen_test]
     fn scaled_oriented_box_contains_only_points_in_scaled_direction() {
         let ob = OrientedBox::new(inverse(&scale(&DMat4::identity(), &vec3(3.0, 1.0, 1.0))), 0);
-        assert!(ob.contains_point(&vec3(1.0, 0.0, 0.0)));
-        assert!(!ob.contains_point(&vec3(0.0, 1.0, 0.0)));
-        assert!(!ob.contains_point(&vec3(0.0, 0.0, 1.0)));
+        assert!(ob.contains_point(&vec3(2.0, 0.0, 0.0)));
+        assert!(!ob.contains_point(&vec3(0.0, 2.0, 0.0)));
+        assert!(!ob.contains_point(&vec3(0.0, 0.0, 2.0)));
     }
 
     #[wasm_bindgen_test]
@@ -88,9 +88,9 @@ mod tests {
         ));
 
         let ob = OrientedBox::new(matrix, 0);
-        assert!(!ob.contains_point(&vec3(1.0, 0.0, 0.0)));
-        assert!(!ob.contains_point(&vec3(0.0, 1.0, 0.0)));
-        assert!(ob.contains_point(&vec3(0.0, 0.0, 1.0)));
+        assert!(!ob.contains_point(&vec3(2.0, 0.0, 0.0)));
+        assert!(!ob.contains_point(&vec3(0.0, 2.0, 0.0)));
+        assert!(ob.contains_point(&vec3(0.0, 0.0, 2.0)));
     }
 
     #[wasm_bindgen_test]
@@ -98,8 +98,8 @@ mod tests {
         let original_box = OrientedBox::new(DMat4::identity(), 0);
         let bounding_box = original_box.create_bounding_box();
 
-        assert!(comp_max(&abs(&(bounding_box.min - vec3(-0.5, -0.5, -0.5)))) < 1e-2);
-        assert!(comp_max(&abs(&(bounding_box.max - vec3(0.5, 0.5, 0.5)))) < 1e-2);
+        assert!(comp_max(&abs(&(bounding_box.min - vec3(-1.0, -1.0, -1.0)))) < 1e-2);
+        assert!(comp_max(&abs(&(bounding_box.max - vec3(1.0, 1.0, 1.0)))) < 1e-2);
     }
 
     #[wasm_bindgen_test]
