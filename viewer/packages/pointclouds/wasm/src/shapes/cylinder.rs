@@ -29,12 +29,13 @@ impl Cylinder {
         let axis_option_0 = vec3(1.0, 0.0, 0.0);
         let axis_option_1 = vec3(0.0, 1.0, 0.0);
 
-        let chosen_axis =
-            if dot(&axis_option_0, &half_axis_vec).abs() < dot(&axis_option_1, &half_axis_vec).abs() {
-                axis_option_0
-            } else {
-                axis_option_1
-            };
+        let chosen_axis = if dot(&axis_option_0, &half_axis_vec).abs()
+            < dot(&axis_option_1, &half_axis_vec).abs()
+        {
+            axis_option_0
+        } else {
+            axis_option_1
+        };
 
         let perp_vector_0: DVec3 = chosen_axis.cross(&half_axis_vec).normalize() * self.radius;
         let perp_vector_1: DVec3 = perp_vector_0.cross(&half_axis_vec).normalize() * self.radius;
