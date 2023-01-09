@@ -325,6 +325,7 @@ export class Cognite3DViewer {
       constructorOptions: {
         ...pick(options, [
           'logMetrics',
+          'usageMetricsMode',
           'antiAliasingHint',
           'ssaoQualityHint',
           'enableEdges',

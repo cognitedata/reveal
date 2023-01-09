@@ -96,7 +96,7 @@ export function Viewer() {
         sdk: client,
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
-        logMetrics: false,
+        usageMetricsMode: 'none',
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         pointCloudEffects: {
