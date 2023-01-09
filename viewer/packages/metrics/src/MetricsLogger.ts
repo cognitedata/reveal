@@ -145,6 +145,9 @@ export class MetricsLogger {
           this.globalMetricsLogger = new MetricsLogger(sessionId, project, applicationId, eventProps);
           break;
         }
+
+        default:
+          throw new Error(`Unsupported metrics mode '${metricsMode}'`);
       }
     } else {
       Log.warn('Mixpanel metrics already initialized.');
