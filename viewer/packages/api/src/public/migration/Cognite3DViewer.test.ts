@@ -262,4 +262,8 @@ describe('Cognite3DViewer', () => {
     expect(cameraState.position).not.toEqual(originalCameraPosition);
     expect(cameraState.target).not.toEqual(originalCameraTarget);
   });
+
+  test('construct viewer with with logMetrics and usageMetricsMode, fails', () => {
+    expect(() => new Cognite3DViewer({sdk, renderer, _sectorCuller, logMetrics: true, usageMetricsMode: 'detailed'})).toThrowError();
+  });
 });

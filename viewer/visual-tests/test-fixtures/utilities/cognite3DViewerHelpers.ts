@@ -16,7 +16,7 @@ export async function createCognite3DViewer(
   if (urlParams.has('modelId') && urlParams.has('revisionId')) {
     const client = await getApplicationSDK(urlParams);
 
-    return new Cognite3DViewer({ sdk: client, logMetrics: false, onLoading, renderer: renderer });
+    return new Cognite3DViewer({ sdk: client, usageMetricsMode: 'none', onLoading, renderer: renderer });
   }
 
   const client = new CogniteClient({
@@ -28,7 +28,7 @@ export async function createCognite3DViewer(
   return new Cognite3DViewer({
     sdk: client,
     _localModels: true,
-    logMetrics: false,
+    usageMetricsMode: 'none',
     onLoading,
     pointCloudEffects: { edlOptions: 'disabled' },
     renderer: renderer

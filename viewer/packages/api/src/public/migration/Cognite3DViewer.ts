@@ -25,7 +25,7 @@ import {
   BeforeSceneRenderedDelegate
 } from '@reveal/utilities';
 
-import { MetricsLogger } from '@reveal/metrics';
+import { MetricsLogger, MetricsMode } from '@reveal/metrics';
 import { PickingHandler, CadModelSectorLoadStatistics, CogniteCadModel } from '@reveal/cad-model';
 import {
   PointCloudIntersection,
@@ -1523,7 +1523,8 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
     enabled: viewerOptions.enableEdges ?? defaultRenderOptions.edgeDetectionParameters.enabled
   };
 
-  revealOptions.logMetrics = viewerOptions.logMetrics;
+  const metricsMode: MetricsMode = determineMetricsMode(viewerOptions);
+  revealOptions.metricsMode = metricsMode;
 
   const edlOptions = createCompleteEdlOptions(viewerOptions.pointCloudEffects?.edlOptions);
 
@@ -1539,4 +1540,25 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
     }
   };
   return revealOptions;
+}
+
+function determineMetricsMode(viewerOptions: Cognite3DViewerOptions): MetricsMode {
+  if (viewerOptions.logMetrics !== undefined && viewerOptions.usageMetricsMode !== undefined) {
+    throw new Error(`Cannot provide both 'logMetrics' and 'usageMetricsMode'`);
+  }
+
+  switch (viewerOptions.usageMetricsMode) {
+    case 'none':
+      return MetricsMode.NoMetrics;
+    case 'anonymous':
+      return MetricsMode.AnonymousMetrics;
+    case 'detailed':
+      return MetricsMode.DetailedMetrics;
+    case undefined:
+      // Deprecated mode
+      return (viewerOptions.logMetrics ?? true) ? MetricsMode.AnonymousMetrics : MetricsMode.NoMetrics;
+
+    default:
+      throw new Error(`Unsupported 'usageMetricsMode' '${viewerOptions.usageMetricsMode}'`);
+  }
 }

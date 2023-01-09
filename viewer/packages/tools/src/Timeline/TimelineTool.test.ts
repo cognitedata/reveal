@@ -12,6 +12,7 @@ import { NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { CogniteCadModel } from '@reveal/api';
 
 import { jest } from '@jest/globals';
+import { MetricsMode } from '@reveal/metrics/src/MetricsLogger';
 
 describe('TimelineTool', () => {
   let model: CogniteCadModel;
@@ -24,7 +25,7 @@ describe('TimelineTool', () => {
   let kf3Appearance: NodeAppearance;
 
   beforeAll(() => {
-    MetricsLogger.init(false, '', '', {});
+    MetricsLogger.init(MetricsMode.NoMetrics, '', '', {});
   });
 
   beforeEach(() => {

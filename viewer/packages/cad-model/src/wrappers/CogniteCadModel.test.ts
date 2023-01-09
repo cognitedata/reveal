@@ -8,7 +8,7 @@ import { CogniteCadModel } from './CogniteCadModel';
 import { DefaultNodeAppearance, NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { NodesApiClient } from '@reveal/nodes-api';
 
-import { MetricsLogger } from '@reveal/metrics';
+import { MetricsLogger, MetricsMode } from '@reveal/metrics';
 import { createCadModel } from '../../../../test-utilities';
 import { It, Mock } from 'moq.ts';
 
@@ -17,7 +17,7 @@ describe(CogniteCadModel.name, () => {
   let mockApiClient: Mock<NodesApiClient>;
 
   beforeAll(() => {
-    MetricsLogger.init(false, '', '', {});
+    MetricsLogger.init(MetricsMode.NoMetrics, '', '', {});
   });
 
   beforeEach(() => {

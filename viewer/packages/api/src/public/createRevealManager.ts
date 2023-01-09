@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { RevealOptions } from './RevealOptions';
 import { RevealManager } from './RevealManager';
 
-import { MetricsLogger } from '@reveal/metrics';
+import { MetricsLogger, MetricsMode } from '@reveal/metrics';
 import {
   RenderOptions,
   CadMaterialManager,
@@ -132,7 +132,7 @@ export function createRevealManager(
   cameraManager: CameraManager,
   revealOptions: RevealOptions = {}
 ): RevealManager {
-  MetricsLogger.init(revealOptions.logMetrics !== false, project, applicationId, {
+  MetricsLogger.init(revealOptions.metricsMode || MetricsMode.Default, project, applicationId, {
     constructorOptions: revealOptions
   });
 

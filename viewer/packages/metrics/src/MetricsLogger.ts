@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import mixpanel from 'mixpanel-browser';
+import mixpanel, { Config } from 'mixpanel-browser';
 import { Log } from '@reveal/logger';
 
 import { TrackedEvents, EventProps } from './types';
@@ -25,6 +25,89 @@ const { VERSION, MIXPANEL_TOKEN } = process.env;
 // Don't identify users in MixPanel to avoid GDPR problems
 const mixpanelDistinctId = 'reveal-single-user';
 
+/**
+ * Specifies what type of metrics to send to Mixpanel.
+ */
+export enum MetricsMode {
+  /**
+   * No metrics is sent to Mixpanel.
+   */
+  NoMetrics = 1,
+  /**
+   * Only anonymous metrics is sent to Mixpanel, no information about location, IP, hardware
+   * is sent to Mixpanel and no cookies are used.
+   */
+  AnonymousMetrics = 2,
+  /**
+   * Detailed metrics are sent to Mixpanel, including IP, location, hardware. Cookies are used
+   * to track users between sessions.
+   */
+  DetailedMetrics = 3,
+  /**
+   * Details to {@link AnonymousMetrics}.
+   */
+  Default = AnonymousMetrics
+}
+
+interface MixpanelInitializer {
+  init(): { sessionId: string };
+}
+
+class AnonymousMixpanelInitializer implements MixpanelInitializer {
+  private static readonly Config: Partial<Config> = {
+    batch_requests: true,
+    disable_cookie: true,
+    disable_persistence: true,
+    // Don't send IP which disables geolocation
+    ip: false,
+    // Avoid sending a bunch of properties that might help identifying a user
+    property_blacklist: [
+      // https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel#profile-properties-javascript
+      '$city',
+      '$region',
+      'mp_country_code',
+      '$geo_source',
+      '$timezone',
+      'mp_lib',
+      '$lib_version',
+      '$device_id',
+      '$user_id',
+      '$current_url',
+      '$screen_width',
+      '$screen_height',
+      '$referrer',
+      '$referring_domain',
+      '$initial_referrer',
+      '$initial_referring_domain'
+    ]
+  };
+
+  init(): { sessionId: string } {
+    // Even though mixpanel has an opt out property, the mixpanel object
+    // used by Metrics is not available here, so we have our own way of opting out.
+    mixpanel.init(MIXPANEL_TOKEN!, AnonymousMixpanelInitializer.Config);
+    // Reset device ID (even if we don't send it)
+    mixpanel.reset();
+
+    mixpanel.identify(mixpanelDistinctId);
+
+    // Use a random identifier because we want to don't track users over multiple sessions to not
+    // violate GDPR.
+    return { sessionId: generateUuidv4() };
+  }
+}
+
+class IdentifiedUserMixpanelInitializer implements MixpanelInitializer {
+  private static readonly Config: Partial<Config> = {
+    batch_requests: true
+  };
+
+  init(): { sessionId: string } {
+    mixpanel.init(MIXPANEL_TOKEN!, IdentifiedUserMixpanelInitializer.Config);
+    return { sessionId: mixpanel.get_distinct_id() };
+  }
+}
+
 export class MetricsLogger {
   private readonly _sessionProps: {
     VERSION: string;
@@ -38,63 +121,33 @@ export class MetricsLogger {
 
   public static globalMetricsLogger: MetricsLogger;
 
-  private constructor(project: string, applicationId: string, eventProps: EventProps) {
-    // Even though mixpanel has an opt out property, the mixpanel object
-    // used by Metrics is not available here, so we have our own way of opting out.
-
-    mixpanel.init(MIXPANEL_TOKEN!, {
-      batch_requests: true,
-      disable_cookie: true,
-      disable_persistence: true,
-      // Don't send IP which disables geolocation
-      ip: false,
-      // Avoid sending a bunch of properties that might help identifying a user
-      property_blacklist: [
-        // https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel#profile-properties-javascript
-        '$city',
-        '$region',
-        'mp_country_code',
-        '$geo_source',
-        '$timezone',
-        'mp_lib',
-        '$lib_version',
-        '$device_id',
-        '$user_id',
-        '$current_url',
-        '$screen_width',
-        '$screen_height',
-        '$referrer',
-        '$referring_domain',
-        '$initial_referrer',
-        '$initial_referring_domain'
-      ]
-    });
-    // Reset device ID (even if we don't send it)
-    mixpanel.reset();
-
-    mixpanel.identify(mixpanelDistinctId);
-
+  private constructor(sessionId: string, project: string, applicationId: string, eventProps: EventProps) {
     this._sessionProps = {
       VERSION: VERSION!,
-      project: 'unknown',
-      application: 'unknown',
-      // Use a random identifier because we want to don't track users over multiple sessions to not
-      // violate GDPR.
-      sessionId: generateUuidv4()
+      project: project ?? 'unknown',
+      application: applicationId ?? 'unknown',
+      sessionId
     };
-
-    if (project) {
-      this._sessionProps.project = project;
-    }
-    if (applicationId) {
-      this._sessionProps.application = applicationId;
-    }
     this.innerTrackEvent('init', eventProps);
   }
 
-  static init(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps): void {
-    if (this.globalMetricsLogger === undefined && logMetrics) {
-      this.globalMetricsLogger = new MetricsLogger(project, applicationId, eventProps);
+  static init(metricsMode: MetricsMode, project: string, applicationId: string, eventProps: EventProps): void {
+    if (this.globalMetricsLogger === undefined) {
+      switch (metricsMode) {
+        case MetricsMode.AnonymousMetrics: {
+          const { sessionId } = new AnonymousMixpanelInitializer().init();
+          this.globalMetricsLogger = new MetricsLogger(sessionId, project, applicationId, eventProps);
+          break;
+        }
+
+        case MetricsMode.DetailedMetrics: {
+          const { sessionId } = new IdentifiedUserMixpanelInitializer().init();
+          this.globalMetricsLogger = new MetricsLogger(sessionId, project, applicationId, eventProps);
+          break;
+        }
+      }
+    } else {
+      Log.warn('Mixpanel metrics already initialized.');
     }
   }
 

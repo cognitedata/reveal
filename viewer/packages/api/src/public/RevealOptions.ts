@@ -6,15 +6,16 @@ import * as THREE from 'three';
 
 import { RenderOptions } from '@reveal/rendering';
 import { InternalRevealCadOptions } from '@reveal/cad-geometry-loaders';
+import { MetricsMode } from '@reveal/metrics';
 
 /**
- * @property logMetrics Might be used to disable usage statistics.
+ * @property metricsMode                  
  * @property movingCameraResolutionFactor Factor with which the resolution (number of screen pixels) is scaled
  * when camera is moving.
  * @property internal Internals are for internal usage only (like unit-testing).
  */
 export type RevealOptions = {
-  logMetrics?: boolean;
+  metricsMode?: MetricsMode;
   renderOptions?: RenderOptions;
   continuousModelStreaming?: boolean;
   outputRenderTarget?: { target: THREE.WebGLRenderTarget; autoSize?: boolean };

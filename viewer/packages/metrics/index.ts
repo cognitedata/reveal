@@ -1,4 +1,4 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export { MetricsLogger } from './src/MetricsLogger';
+export { MetricsLogger, MetricsMode } from './src/MetricsLogger';
