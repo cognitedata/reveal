@@ -1,5 +1,5 @@
 {
-  "name": "@cognite/cdf-simint-ui",
+  "name": "@cognite/simconfig-app",
   "version": "1.5.3",
   "private": true,
   "scripts": {
