@@ -68,7 +68,7 @@ const RADIUS_SCALE_FACTOR: f64 = 1.15;
 const MAX_RADIUS_INCREASE_METER: f64 = 0.06;
 
 fn create_cylinder(input: InputCylinder, id: u16) -> Box<shapes::Cylinder> {
-    let radius = (input.radius * RADIUS_SCALE_FACTOR).max(input.radius + MAX_RADIUS_INCREASE_METER);
+    let radius = (input.radius * RADIUS_SCALE_FACTOR).min(input.radius + MAX_RADIUS_INCREASE_METER);
     Box::new(shapes::Cylinder::new(
         vec3(input.center_a[0], input.center_a[1], input.center_a[2]),
         vec3(input.center_b[0], input.center_b[1], input.center_b[2]),
