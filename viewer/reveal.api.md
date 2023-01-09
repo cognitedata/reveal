@@ -398,6 +398,7 @@ export interface Cognite3DViewerOptions {
         placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
         opacity: number;
     };
+    // @deprecated
     logMetrics?: boolean;
     onLoading?: OnLoadingCallback;
     pointCloudEffects?: {
@@ -413,6 +414,7 @@ export interface Cognite3DViewerOptions {
     };
     sdk: CogniteClient;
     ssaoQualityHint?: 'medium' | 'high' | 'veryhigh' | 'disabled';
+    usageMetricsMode?: 'none' | 'anonymous' | 'detailed';
 }
 
 // @public
