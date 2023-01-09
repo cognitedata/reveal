@@ -25,21 +25,21 @@ impl Cylinder {
     }
 
     fn get_scaled_orthogonal_basis(&self) -> DMat3 {
-        let axis_vec = self.center_a - self.center_b;
+        let half_axis_vec = (self.center_a - self.center_b) / 2.0;
         let axis_option_0 = vec3(1.0, 0.0, 0.0);
         let axis_option_1 = vec3(0.0, 1.0, 0.0);
 
         let chosen_axis =
-            if dot(&axis_option_0, &axis_vec).abs() < dot(&axis_option_1, &axis_vec).abs() {
+            if dot(&axis_option_0, &half_axis_vec).abs() < dot(&axis_option_1, &half_axis_vec).abs() {
                 axis_option_0
             } else {
                 axis_option_1
             };
 
-        let perp_vector_0: DVec3 = chosen_axis.cross(&axis_vec).normalize() * 2.0 * self.radius;
-        let perp_vector_1: DVec3 = perp_vector_0.cross(&axis_vec).normalize() * 2.0 * self.radius;
+        let perp_vector_0: DVec3 = chosen_axis.cross(&half_axis_vec).normalize() * self.radius;
+        let perp_vector_1: DVec3 = perp_vector_0.cross(&half_axis_vec).normalize() * self.radius;
 
-        DMat3::from_columns(&[axis_vec, perp_vector_0, perp_vector_1])
+        DMat3::from_columns(&[half_axis_vec, perp_vector_0, perp_vector_1])
     }
 }
 
@@ -73,7 +73,7 @@ impl Shape for Cylinder {
         let scaled_basis = self.get_scaled_orthogonal_basis();
         let matrix = create_transform_from_axes(&scaled_basis, &center);
 
-        BoundingBox::get_transformed_unit_cube(&matrix)
+        BoundingBox::get_transformed_base_cube(&matrix)
     }
 
     fn get_object_id(&self) -> u16 {

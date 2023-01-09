@@ -22,13 +22,13 @@ impl shape::Shape for OrientedBox {
     fn contains_point(&self, point: &DVec3) -> bool {
         let transformed_point =
             vec4_to_vec3(&(self.inv_instance_matrix * vec4(point.x, point.y, point.z, 1.0)));
-        BoundingBox::get_unit_bounding_box().contains_point(&transformed_point)
+        BoundingBox::get_base_cube_bounding_box().contains_point(&transformed_point)
     }
 
     fn create_bounding_box(&self) -> BoundingBox {
         let instance_matrix = inverse(&self.inv_instance_matrix);
 
-        BoundingBox::get_transformed_unit_cube(&instance_matrix)
+        BoundingBox::get_transformed_base_cube(&instance_matrix)
     }
 
     fn get_object_id(&self) -> u16 {
