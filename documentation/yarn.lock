@@ -3086,7 +3086,7 @@ __metadata:
   dependencies:
     "@cognite/reveal": 4.0.0
     "@cognite/sdk": 7.13.0
-    "@types/three": 0.147.1
+    "@types/three": 0.148.0
     three: 0.148.0
   languageName: unknown
   linkType: soft
@@ -3720,12 +3720,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.147.1":
-  version: 0.147.1
-  resolution: "@types/three@npm:0.147.1"
+"@types/three@npm:0.148.0":
+  version: 0.148.0
+  resolution: "@types/three@npm:0.148.0"
   dependencies:
     "@types/webxr": "*"
-  checksum: 7ba64eb1cc0922a5edbad21bff71fd7a87a4a67e643edeacc7790097071b2b6b97b34e47137d305e48607d4895cf94eef5d8be366489788dd85fcd4795008cd1
+  checksum: c5747a8cc353c8560196052f1a035c7d641e4a953ac63c1c8d9d91c5489da2dbe8b9c4b70670eef891f8597e9ae882c450e6270abe49e807920644abdea08ddb
   languageName: node
   linkType: hard
 
