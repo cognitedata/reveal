@@ -1,6 +1,6 @@
 import Typography from 'antd/lib/typography';
 import { Body, Flex, Icon, Label } from '@cognite/cogs.js';
-import { notification } from 'antd';
+import { CopyButton } from '@cognite/cdf-utilities';
 import {
   BasicInfoPane,
   NoDataText,
@@ -10,12 +10,10 @@ import {
   EDIT_DATASET_HELP_DOC,
   getGovernedStatus,
 } from 'utils';
-import copy from 'copy-to-clipboard';
 
 import { useTranslation } from 'common/i18n';
 import moment from 'moment';
 import DatasetProperty from './DatasetProperty';
-import { TabbableButton } from 'components/tabbable-button';
 import styled from 'styled-components';
 import InfoTooltip from 'components/InfoTooltip';
 interface BasicInfoCardProps {
@@ -43,13 +41,6 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
 
   const { statusVariant, statusI18nKey } = getGovernedStatus(consoleGoverned);
 
-  const handleCopy = (copiedText: string) => {
-    copy(copiedText);
-    notification.success({
-      message: t('copy-notification'),
-    });
-  };
-
   return (
     <BasicInfoPane>
       <DatasetProperty
@@ -64,12 +55,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
               {writeProtected && <Icon type="Lock" />}
               <Body level={1}>{name}</Body>
             </Flex>
-            <TabbableButton
-              aria-label={t('copy-name')}
-              onClick={() => handleCopy(name)}
-            >
-              <Icon type="Copy" />
-            </TabbableButton>
+            <CopyButton aria-label={t('copy-name')} content={name} />
           </Flex>
         }
       />
@@ -113,12 +99,10 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
         value={
           <Flex gap={8} alignItems="center" justifyContent="space-between">
             <Body level={1}>{id}</Body>
-            <TabbableButton
+            <CopyButton
               aria-label={t('copy-dataset-id')}
-              onClick={() => handleCopy(id.toString())}
-            >
-              <Icon type="Copy" />
-            </TabbableButton>
+              content={id.toString()}
+            />
           </Flex>
         }
       />
@@ -132,12 +116,10 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
           externalId ? (
             <Flex gap={8} alignItems="center" justifyContent="space-between">
               <Body level={1}>{externalId}</Body>
-              <TabbableButton
+              <CopyButton
                 aria-label={t('copy-external-id')}
-                onClick={() => handleCopy(externalId)}
-              >
-                <Icon type="Copy" />
-              </TabbableButton>
+                content={externalId}
+              />
             </Flex>
           ) : (
             <NoDataText className="mute">{t('external-id-no')}</NoDataText>
@@ -184,17 +166,17 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
               consoleOwners?.length ? (
                 consoleOwners.map((owner) => (
                   <div key={owner.name}>
-                    <Body level={1}>{owner.name}</Body>
-                    <Flex gap={8} alignItems="center">
-                      <Body level={1}>
-                        <a href={`mailto:${owner.email}`}>{owner.email}</a>
-                      </Body>
-                      <TabbableButton
+                    <Flex alignItems="center" justifyContent="space-between">
+                      <Flex direction="column" justifyContent="flex-start">
+                        <Body level={1}>{owner.name}</Body>
+                        <Body level={1}>
+                          <a href={`mailto:${owner.email}`}>{owner.email}</a>
+                        </Body>
+                      </Flex>
+                      <CopyButton
                         aria-label={t('copy-owner-email')}
-                        onClick={() => handleCopy(owner.email)}
-                      >
-                        <Icon type="Copy" />
-                      </TabbableButton>
+                        content={owner.email}
+                      />
                     </Flex>
                   </div>
                 ))
