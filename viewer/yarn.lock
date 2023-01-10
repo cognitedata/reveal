@@ -775,7 +775,7 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": 2.32.1
-    "@cognite/sdk": 7.14.0
+    "@cognite/sdk": 7.14.1
     "@microsoft/api-extractor": ^7.33.6
     "@tweenjs/tween.js": 18.6.4
     "@types/dat.gui": 0.7.7
@@ -859,7 +859,7 @@ __metadata:
     whatwg-fetch: 3.6.2
     workerize-loader: 2.0.2
   peerDependencies:
-    "@cognite/sdk": 7.14.0
+    "@cognite/sdk": 7.14.1
     three: 0.148.0
   languageName: unknown
   linkType: soft
@@ -877,15 +877,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:7.14.0":
-  version: 7.14.0
-  resolution: "@cognite/sdk@npm:7.14.0"
+"@cognite/sdk@npm:7.14.1":
+  version: 7.14.1
+  resolution: "@cognite/sdk@npm:7.14.1"
   dependencies:
     "@cognite/sdk-core": ^4.8.2
     "@types/geojson": ^7946.0.8
     geojson: ^0.5.0
     lodash: ^4.17.11
-  checksum: 1ffff19a5e8fb9d801372e986b47eb036632c2562d0db7437709dc167ff3d3c4bd52b38765365c377372de4871c3eff5c8bec76116655fed25517ee2f050ad85
+  checksum: 736e3937eea70cf8c00c9de62fc4b636a9c8c9dfc64f2e1a033224fffc9fdc7f48b2d993e12294f8306dc4ecac56ecac117f77ad554a77ac18cfe48bdaadef04
   languageName: node
   linkType: hard
 
