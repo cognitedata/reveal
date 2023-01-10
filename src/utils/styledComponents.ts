@@ -433,7 +433,6 @@ export const SectionLine = styled.div`
 export const ContentWrapper = styled.div<{ $backgroundColor?: string }>`
   padding: 24px;
   min-height: 300px;
-  height: 100%;
   background-color: ${({ $backgroundColor }) => $backgroundColor || '#FFF'};
 
   .ant-card-body {
@@ -441,6 +440,6 @@ export const ContentWrapper = styled.div<{ $backgroundColor?: string }>`
   }
 
   .margin-right-bottom {
-    margin: 0 24px 24px 0;
+    margin: 0 12px 12px 0;
   }
 `;

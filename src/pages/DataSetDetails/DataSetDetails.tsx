@@ -242,9 +242,7 @@ const DataSetDetails = (): JSX.Element => {
           );
         }
         case 'data': {
-          return (
-            <ExploreData loading={loading} dataSetId={Number(dataSetId)} />
-          );
+          return <ExploreData dataSetId={Number(dataSetId)} />;
         }
         case 'lineage': {
           return (

@@ -433,11 +433,11 @@ export const createInternalLink = (path?: string | number) => {
 };
 
 export const isEmptyDataset = (
-  assets: number,
-  events: number,
-  files: number,
-  sequences: number,
-  timeseries: number
+  assets: number | undefined,
+  events: number | undefined,
+  files: number | undefined,
+  sequences: number | undefined,
+  timeseries: number | undefined
 ) => {
   return (
     assets === 0 &&

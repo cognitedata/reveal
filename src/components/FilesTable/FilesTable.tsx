@@ -3,6 +3,7 @@ import { getContainer, ContentView } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 import { FileInfo } from '@cognite/sdk';
+import { Icon } from '@cognite/cogs.js';
 
 interface FilesTableProps {
   data: FileInfo[] | undefined;

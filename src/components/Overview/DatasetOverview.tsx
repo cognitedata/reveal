@@ -125,11 +125,14 @@ const DatasetOverview = ({
   return (
     <ContentWrapper $backgroundColor="#FAFAFA">
       <Row>
-        <Col span={15}>
+        <Col span={15} style={{ minWidth: 940 }}>
           <Row>
             <Col span={24}>
               <StyledCard className="margin-right-bottom">
-                <StyledFlex justifyContent="space-between" alignItems="center">
+                <StyledActionTitle
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
                   <Title level={5}>{t('description')}</Title>
                   <Button
                     type="link"
@@ -139,7 +142,7 @@ const DatasetOverview = ({
                   >
                     {t('edit')}
                   </Button>
-                </StyledFlex>
+                </StyledActionTitle>
                 <Divider />
                 <ContentView>
                   {isEditEnabled ? (
@@ -187,18 +190,15 @@ const DatasetOverview = ({
           <Row>
             <Col span={12}>
               <StyledCard className="margin-right-bottom">
-                <Flex justifyContent="space-between" alignItems="center">
-                  <StyledCardTitle level={5}>
-                    {t('tab-overview')}
-                  </StyledCardTitle>
-                  <Button
-                    type="link"
-                    onClick={() => onActiveTabChange('data')}
-                    style={{ marginRight: 12 }}
-                  >
+                <StyledActionTitle
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Title level={5}>{t('tab-overview')}</Title>
+                  <Button type="link" onClick={() => onActiveTabChange('data')}>
                     {t('view')}
                   </Button>
-                </Flex>
+                </StyledActionTitle>
                 <Divider />
                 <Row style={{ padding: 12 }}>
                   <Col span={24}>
@@ -295,9 +295,7 @@ const DatasetOverview = ({
             </Col>
             <Col span={12}>
               <StyledCard className="margin-right-bottom">
-                <StyledCardTitle level={5}>
-                  {t('tab-access-control')}
-                </StyledCardTitle>
+                <StyledTitle level={5}>{t('tab-access-control')}</StyledTitle>
                 <Divider />
                 <Flex
                   alignItems="center"
@@ -324,7 +322,7 @@ const DatasetOverview = ({
         </Col>
         <Col span={9}>
           <StyledCard>
-            <StyledCardTitle level={5}>{t('summary')}</StyledCardTitle>
+            <StyledTitle level={5}>{t('summary')}</StyledTitle>
             <Divider />
             <BasicInfoCard dataSet={dataSet} />
           </StyledCard>
@@ -352,6 +350,7 @@ const StyledProgressBar = styled.div<{
 
 const StyledCard = styled(Card)`
   height: auto;
+  min-width: 450px;
 
   .ant-card-body {
     padding: 0;
@@ -369,12 +368,12 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const StyledCardTitle = styled(Title)`
+const StyledTitle = styled(Title)`
   padding: 16px 24px;
 `;
 
-const StyledFlex = styled(Flex)`
-  padding: 16px 24px;
+const StyledActionTitle = styled(Flex)`
+  padding: 8px 24px;
 `;
 
 export default DatasetOverview;

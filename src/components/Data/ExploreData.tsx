@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Spin from 'antd/lib/spin';
 import Tabs from 'antd/lib/tabs';
 import {
   filesCounter,
@@ -25,7 +24,6 @@ import EventsProfile from 'components/EventsProfile';
 import { Flex, Icon } from '@cognite/cogs.js';
 import { Input } from 'antd';
 import useDebounce from 'hooks/useDebounce';
-import { useFlag } from '@cognite/react-feature-flags';
 import { TableFilter } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { useFormik } from 'formik';
@@ -36,7 +34,6 @@ import { ResourcesFilters, useResourcesSearch } from 'hooks/useResourcesSearch';
 const { TabPane } = Tabs;
 
 interface ExploreDataProps {
-  loading: boolean;
   dataSetId: number;
 }
 
@@ -47,7 +44,7 @@ export type ExploreDataResourceTypes =
   | 'sequences'
   | 'timeseries';
 
-const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
+const ExploreData = ({ dataSetId }: ExploreDataProps) => {
   const { t } = useTranslation();
   const [activeResourceTabKey, setActiveResourceTabKey] = useState<
     ExploreDataResourceTypes | undefined
@@ -122,14 +119,33 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<ResourcesFilters>({});
   const debouncedQuery = useDebounce(query, 100);
-  const { isEnabled } = useFlag('data-catalog');
 
   const {
-    assets: { data: assetsData, isLoading: isAssetsLoading },
-    events: { data: eventsData, isLoading: isEventsLoading },
-    files: { data: filesData, isLoading: isFilesLoading },
-    sequences: { data: sequencesData, isLoading: isSequencesLoading },
-    timeseries: { data: timeseriesData, isLoading: isTimeseriesLoading },
+    assets: {
+      data: assetsData,
+      isLoading: isAssetsLoading,
+      isFetched: isAssetsFetched,
+    },
+    events: {
+      data: eventsData,
+      isLoading: isEventsLoading,
+      isFetched: isEventsFetched,
+    },
+    files: {
+      data: filesData,
+      isLoading: isFilesLoading,
+      isFetched: isFilesFetched,
+    },
+    sequences: {
+      data: sequencesData,
+      isLoading: isSequencesLoading,
+      isFetched: isSequencesFetched,
+    },
+    timeseries: {
+      data: timeseriesData,
+      isLoading: isTimeseriesLoading,
+      isFetched: isTimeseriesFetched,
+    },
   } = useResourcesSearch({
     dataSetId,
     query: debouncedQuery,
@@ -218,184 +234,185 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
   };
 
   if (
+    !isAssetsLoading &&
+    !isEventsLoading &&
+    !isFilesLoading &&
+    !isSequencesLoading &&
+    !isTimeseriesLoading &&
     isEmptyDataset(
-      assetCount,
-      eventsCount,
-      filesCount,
-      sequencesCount,
-      timeseriesCount
+      assetsData?.length,
+      eventsData?.length,
+      filesData?.length,
+      sequencesData?.length,
+      timeseriesData?.length
     )
   ) {
     return <EmptyDataState />;
   }
 
   return (
-    <Spin spinning={loading}>
-      <ContentWrapper>
-        <DetailsPane>
-          {isEnabled && (
-            <Flex direction="column" gap={8}>
-              <Flex
-                display="inline-flex"
-                gap={8}
-                alignItems="center"
-                style={{ marginLeft: 10 }}
-              >
+    <ContentWrapper>
+      <DetailsPane>
+        <Flex direction="column">
+          <Flex
+            display="inline-flex"
+            gap={8}
+            alignItems="center"
+            style={{ marginBottom: 6 }}
+          >
+            <Input
+              value={query}
+              prefix={<Icon type="Search" />}
+              placeholder={t('search')}
+              onChange={(evt) => {
+                const searchText = evt.currentTarget.value;
+                trackUsage({ e: 'data.sets.detail.data', searchText });
+                setQuery(searchText);
+              }}
+              style={{ width: 312 }}
+              allowClear
+            />
+            <TableFilter
+              onClear={onClearFilters}
+              onApply={onApplyFilters}
+              visible={isFilterVisible}
+              onVisibleChange={() => setIsFilterVisible(!isFilterVisible)}
+              menuTitle={t('filter-by')}
+            >
+              <StyledTableFilterSection>
+                <label
+                  className="cogs-body-2 strong"
+                  htmlFor="externalIdPrefix"
+                >
+                  {t('external-id')}
+                </label>
                 <Input
-                  value={query}
-                  prefix={<Icon type="Search" />}
-                  placeholder={t('search')}
-                  onChange={(evt) => {
-                    const searchText = evt.currentTarget.value;
-                    trackUsage({ e: 'data.sets.detail.data', searchText });
-                    setQuery(searchText);
-                  }}
-                  style={{ width: 312 }}
+                  id="externalIdPrefix"
+                  name="externalIdPrefix"
+                  onChange={formik.handleChange}
+                  value={formik.values.externalIdPrefix}
+                  placeholder={t('starts-with')}
                   allowClear
                 />
-                <TableFilter
-                  onClear={onClearFilters}
-                  onApply={onApplyFilters}
-                  visible={isFilterVisible}
-                  onVisibleChange={() => setIsFilterVisible(!isFilterVisible)}
-                  menuTitle={t('filter-by')}
-                >
-                  <StyledTableFilterSection>
-                    <label
-                      className="cogs-body-2 strong"
-                      htmlFor="externalIdPrefix"
-                    >
-                      {t('external-id')}
-                    </label>
-                    <Input
-                      id="externalIdPrefix"
-                      name="externalIdPrefix"
-                      onChange={formik.handleChange}
-                      value={formik.values.externalIdPrefix}
-                      placeholder={t('starts-with')}
-                      allowClear
-                    />
-                  </StyledTableFilterSection>
-                </TableFilter>
-                <StyledItemCount level={2}>
-                  {getSearchResultsCount()} of {getTotalResultsCount()}
-                </StyledItemCount>
-              </Flex>
-              <AppliedFilters
-                items={Object.entries(appliedFilters).map(([key, value]) => ({
-                  key,
-                  label: t(key as keyof ResourcesFilters, {
-                    value,
-                  }),
-                  onClick: () => clearFilter(key as keyof ResourcesFilters),
-                }))}
-                onClear={onClearFilters}
+              </StyledTableFilterSection>
+            </TableFilter>
+            <StyledItemCount level={2}>
+              {getSearchResultsCount()} of {getTotalResultsCount()}
+            </StyledItemCount>
+          </Flex>
+          <AppliedFilters
+            items={Object.entries(appliedFilters).map(([key, value]) => ({
+              key,
+              label: t(key as keyof ResourcesFilters, {
+                value,
+              }),
+              onClick: () => clearFilter(key as keyof ResourcesFilters),
+            }))}
+            onClear={onClearFilters}
+          />
+        </Flex>
+        <Tabs
+          animated={false}
+          defaultActiveKey="assets"
+          size="large"
+          activeKey={activeResourceTabKey}
+          onChange={activeResourceTabChangeHandler}
+        >
+          <TabPane
+            tab={
+              <TabTitle
+                title={t('assets')}
+                iconType="Assets"
+                label={assetCount.toLocaleString()}
+                disabled={assetCount === 0}
+                isTooltip={assetCount < 0}
+                resource="assets"
               />
-            </Flex>
-          )}
-          <Tabs
-            animated={false}
-            defaultActiveKey="assets"
-            size="large"
-            activeKey={activeResourceTabKey}
-            onChange={activeResourceTabChangeHandler}
+            }
+            key="assets"
+            disabled={assetCount === 0}
           >
-            <TabPane
-              tab={
-                <TabTitle
-                  title={t('assets')}
-                  iconType="Assets"
-                  label={assetCount.toLocaleString()}
-                  disabled={assetCount === 0}
-                  isTooltip={assetCount < 0}
-                  resource="assets"
-                />
-              }
-              key="assets"
-              disabled={assetCount === 0}
-            >
-              <AssetsTable data={assetsData} isLoading={isAssetsLoading} />
-            </TabPane>
-            <TabPane
-              tab={
-                <TabTitle
-                  title={t('events')}
-                  iconType="Events"
-                  label={eventsCount.toLocaleString()}
-                  disabled={eventsCount === 0}
-                  isTooltip={eventsCount < 0}
-                  resource="events"
-                />
-              }
-              key="events"
-              disabled={eventsCount === 0}
-            >
-              <EventsTable
-                dataSetId={dataSetId}
-                setExploreView={setExploreView}
-                data={eventsData}
-                isLoading={isEventsLoading}
+            <AssetsTable data={assetsData} isLoading={isAssetsLoading} />
+          </TabPane>
+          <TabPane
+            tab={
+              <TabTitle
+                title={t('events')}
+                iconType="Events"
+                label={eventsCount.toLocaleString()}
+                disabled={eventsCount === 0}
+                isTooltip={eventsCount < 0}
+                resource="events"
               />
-            </TabPane>
-            <TabPane
-              tab={
-                <TabTitle
-                  title={t('files')}
-                  iconType="Document"
-                  label={filesCount.toLocaleString()}
-                  disabled={filesCount === 0}
-                  isTooltip={filesCount < 0}
-                  resource="files"
-                />
-              }
-              key="files"
-              disabled={filesCount === 0}
-            >
-              <FilesTable data={filesData} isLoading={isFilesLoading} />
-            </TabPane>
-            <TabPane
-              tab={
-                <TabTitle
-                  title={t('sequence_other')}
-                  iconType="Sequences"
-                  label={sequencesCount.toLocaleString()}
-                  disabled={sequencesCount === 0}
-                  isTooltip={sequencesCount < 0}
-                  resource="sequences"
-                />
-              }
-              key="sequences"
-              disabled={sequencesCount === 0}
-            >
-              <SequencesTable
-                data={sequencesData}
-                isLoading={isSequencesLoading}
+            }
+            key="events"
+            disabled={eventsCount === 0}
+          >
+            <EventsTable
+              dataSetId={dataSetId}
+              setExploreView={setExploreView}
+              data={eventsData}
+              isLoading={isEventsLoading}
+            />
+          </TabPane>
+          <TabPane
+            tab={
+              <TabTitle
+                title={t('files')}
+                iconType="Document"
+                label={filesCount.toLocaleString()}
+                disabled={filesCount === 0}
+                isTooltip={filesCount < 0}
+                resource="files"
               />
-            </TabPane>
-            <TabPane
-              tab={
-                <TabTitle
-                  title={t('time-series')}
-                  iconType="Timeseries"
-                  label={timeseriesCount.toLocaleString()}
-                  disabled={timeseriesCount === 0}
-                  isTooltip={timeseriesCount < 0}
-                  resource="timeseries"
-                />
-              }
-              key="timeseries"
-              disabled={timeseriesCount === 0}
-            >
-              <TimeseriesTable
-                data={timeseriesData}
-                isLoading={isTimeseriesLoading}
+            }
+            key="files"
+            disabled={filesCount === 0}
+          >
+            <FilesTable data={filesData} isLoading={isFilesLoading} />
+          </TabPane>
+          <TabPane
+            tab={
+              <TabTitle
+                title={t('sequence_other')}
+                iconType="Sequences"
+                label={sequencesCount.toLocaleString()}
+                disabled={sequencesCount === 0}
+                isTooltip={sequencesCount < 0}
+                resource="sequences"
               />
-            </TabPane>
-          </Tabs>
-          {exploreView.visible && renderExploreView()}
-        </DetailsPane>
-      </ContentWrapper>
-    </Spin>
+            }
+            key="sequences"
+            disabled={sequencesCount === 0}
+          >
+            <SequencesTable
+              data={sequencesData}
+              isLoading={isSequencesLoading}
+            />
+          </TabPane>
+          <TabPane
+            tab={
+              <TabTitle
+                title={t('time-series')}
+                iconType="Timeseries"
+                label={timeseriesCount.toLocaleString()}
+                disabled={timeseriesCount === 0}
+                isTooltip={timeseriesCount < 0}
+                resource="timeseries"
+              />
+            }
+            key="timeseries"
+            disabled={timeseriesCount === 0}
+          >
+            <TimeseriesTable
+              data={timeseriesData}
+              isLoading={isTimeseriesLoading}
+            />
+          </TabPane>
+        </Tabs>
+        {exploreView.visible && renderExploreView()}
+      </DetailsPane>
+    </ContentWrapper>
   );
 };
 
