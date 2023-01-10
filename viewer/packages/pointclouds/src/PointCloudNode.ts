@@ -233,7 +233,8 @@ export class PointCloudNode extends Group {
   }
 
   set clippingPlanes(clippingPlanes: THREE.Plane[]) {
-    this._octree.material.clippingPlanes = clippingPlanes;
+    this._octree.setModelClippingPlane(clippingPlanes);
+    this._needsRedraw = true;
   }
 
   assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudObjectCollection): void {
