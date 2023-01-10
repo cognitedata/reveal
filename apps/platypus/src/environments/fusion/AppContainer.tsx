@@ -9,6 +9,8 @@ import {
 } from '@cognite/cdf-utilities';
 import '../../set-public-path';
 import GlobalStyles from '@platypus-app/GlobalStyles';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import { translations } from '@platypus-app/common/i18n';
 
 type AppContainerProps = {
   sidecar?: unknown;
@@ -20,12 +22,14 @@ export const AppContainer = ({ children, store }: AppContainerProps) => {
   const env = getEnv();
 
   return (
-    <ReduxProvider store={store}>
-      <GlobalStyles>
-        <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
-          <SubAppWrapper title="Data Models">{children}</SubAppWrapper>
-        </AuthWrapper>
-      </GlobalStyles>
-    </ReduxProvider>
+    <I18nWrapper translations={translations} defaultNamespace="platypus">
+      <ReduxProvider store={store}>
+        <GlobalStyles>
+          <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
+            <SubAppWrapper title="Data Models">{children}</SubAppWrapper>
+          </AuthWrapper>
+        </GlobalStyles>
+      </ReduxProvider>
+    </I18nWrapper>
   );
 };

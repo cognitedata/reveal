@@ -6,6 +6,7 @@
     "@azure/msal-node": "^1.3.3",
     "@babel/helper-environment-visitor": "^7.16.5",
     "@cognite/annotations": "^1.1.0",
+    "@cognite/cdf-i18n-utils": "^0.6.0",
     "@cognite/cdf-sdk-singleton": "^0.8.2",
     "@cognite/cdf-ui-cli": "^1.1.1",
     "@cognite/cdf-utilities": "^1.11.0",
@@ -152,7 +153,11 @@
     "build-storybook": "./scripts/storybook-build.sh",
     "cdf": "node ./dist/apps/platypus-cdf-cli/main.js",
     "summarize-codecov": "istanbul report --dir coverage --include coverage/**/coverage-final.json json json-summary lcovonly text-summary json-summary cobertura",
-    "cpdir": "cp -r ./apps/platypus-e2e/coverage  ./coverage/apps/platypus-e2e"
+    "cpdir": "cp -r ./apps/platypus-e2e/coverage  ./coverage/apps/platypus-e2e",
+    "i18n-pull": "./scripts/i18n.sh pull",
+    "i18n-remove-deleted": "./scripts/i18n.sh remove-deleted",
+    "i18n-push": "./scripts/i18n.sh push",
+    "i18n-sort": "./scripts/i18n.sh sort"
   },
   "nyc": {
     "reporter": [

@@ -19,3 +19,8 @@ declare module 'worker-loader*' {
 
   export = WebpackWorker;
 }
+
+declare module '*.json' {
+  const value: any;
+  export default value;
+}
