@@ -65,7 +65,9 @@ export const DocumentNamePreview = ({
           <DocumentIcon file={fileIconMapper[file.mimeType]} />
         )}
       </DocumentIconWrapper>
-      <HighlightCell text={fileName} query={query} />
+      <EllipsisText level={2} strong lines={2}>
+        <HighlightCell text={fileName} query={query} />
+      </EllipsisText>
     </Flex>
   );
 };
