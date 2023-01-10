@@ -8,6 +8,10 @@ import ErrorToast from 'components/ErrorToast/ErrorToast';
 import ConnectedAppBar from 'components/AppBar/ConnectedAppBar';
 import config from 'config/config';
 import SecondaryTopBar from 'components/SecondaryTopBar/SecondaryTopBar';
+import { getProject, getCluster, getEnv } from '@cognite/cdf-utilities';
+import { getFlow } from '@cognite/auth-utils';
+import { useUserInfo } from 'hooks/useUserInfo';
+import { identifyUserForMetrics } from 'services/metrics';
 import TenantSelectorView from './TenantSelector/TenantSelector';
 import UserProfile from './UserProfile/UserProfile';
 import ChartListPage from './ChartListPage/ChartListPage';
@@ -37,7 +41,17 @@ const RouteWithFirebase = ({
 }: PropsRouteWithFirebase): JSX.Element => {
   const { isFetched: firebaseDone, isError: isFirebaseError } =
     useFirebaseInit(true);
+  const project = getProject();
+  const cluster = getCluster();
+  const env = getEnv();
+  const { options } = getFlow(project, env);
+  const { data: user } = useUserInfo();
   const Component = element;
+
+  React.useEffect(() => {
+    // options.directory tells if it is AAD tenant
+    identifyUserForMetrics(user, project, cluster, options?.directory);
+  }, [project, cluster, user]);
 
   if (!firebaseDone) {
     return <Loader />;

@@ -1,6 +1,8 @@
 import config from 'config/config';
 import mixpanel from 'mixpanel-browser';
 import { isDevelopment, isProduction, isStaging } from 'utils/environment';
+import { UserInfo } from 'hooks/useUserInfo';
+import * as Sentry from '@sentry/react';
 
 const mixpanelConfig = {
   prefix: 'Charts',
@@ -47,3 +49,26 @@ export function stopTimer(eventName: string, properties = {}) {
   if (!config.mixpanelToken) return;
   trackUsage(eventName, properties);
 }
+
+export const identifyUserForMetrics = (
+  user: UserInfo | undefined,
+  project: string,
+  cluster: string,
+  azureADTenant?: string
+) => {
+  if (user) {
+    if (config.mixpanelToken) {
+      mixpanel.identify(user.mail || user.displayName || user.id);
+      mixpanel.people.set({ $name: user.displayName, $email: user.mail });
+      mixpanel.people.union('Projects', project);
+      mixpanel.people.union('Clusters', cluster);
+      if (azureADTenant)
+        mixpanel.people.union('Azure AD Tenants', azureADTenant);
+    }
+    Sentry.setUser({
+      email: user.mail,
+      id: user.id,
+      username: user.displayName,
+    });
+  }
+};

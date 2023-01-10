@@ -1,7 +1,7 @@
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { useQuery } from 'react-query';
 
-type UserInfo = {
+export type UserInfo = {
   businessPhones: string[];
   displayName: string;
   givenName: string;
