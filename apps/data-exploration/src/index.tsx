@@ -12,10 +12,10 @@ if (environment.SENTRY_DSN && getEnvironment() === 'production') {
   Sentry.init({
     dsn: environment.SENTRY_DSN,
     // This is populated by the FAS build process. Change it if you want to
-    // source this information from somewhere else.
+    // source this information from somewhere else
     release: environment.APP_RELEASE_ID,
     // This is populated by react-scripts. However, this can be overridden by
-    // the app's build process if you wish.
+    // the app's build process if you wish
     environment: getEnvironment(),
   });
 }

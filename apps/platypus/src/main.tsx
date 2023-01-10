@@ -6,7 +6,7 @@ import AppWrapper from './AppWrapper';
 import { environment } from './environments/environment';
 
 // Fusion UI will expect this lifecycle events to be exported
-// When running app on local env as standalone app, we don't need it
+// when running app on local env as standalone app, we don't need it
 const noop = () => '';
 let lifecycles = {
   mount: noop,

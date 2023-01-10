@@ -164,6 +164,7 @@ pods {
   ) {
     dir('main') {
       stage('Checkout code') {
+        echo sh(script: 'env|sort', returnStdout: true)
         checkout(scm)
       }
 
@@ -272,10 +273,11 @@ pods {
               return;
             }
 
-            if (!isMaster || !isRelease) {
-              print 'No FAS deployment on feature branch'
-              return;
-            }
+            // env.branchname is not working <--- need to get that sorted out!
+            // if (!isMaster || !isRelease) {
+            //   print 'No FAS deployment on feature branch'
+            //   return;
+            // }
 
             def projects = getAffectedProjects(isPullRequest, isMaster, isRelease) 
 
