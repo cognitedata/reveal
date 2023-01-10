@@ -9,7 +9,7 @@ import { RelationshipLabels } from '@data-exploration-components/types';
 import { ResourceTableColumns } from '../../../components';
 import { useDocumentsMetadataKeys } from '../../../domain';
 import { FileNamePreview } from './FileNamePreview';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, SortingState } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 
 const visibleColumns = ['name', 'mimeType', 'uploadedTime'];
@@ -24,6 +24,8 @@ export type FileWithRelationshipLabels = RelationshipLabels & FileInfo;
 export const FileTable = (props: FileTableProps) => {
   const { query } = props;
   const { data: metadataKeys } = useDocumentsMetadataKeys();
+
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const metadataColumns: ColumnDef<FileInfo>[] = useMemo(() => {
     return (metadataKeys || []).map((key: string) =>
@@ -69,6 +71,10 @@ export const FileTable = (props: FileTableProps) => {
     <Table<FileInfo>
       columns={columns}
       hiddenColumns={hiddenColumns}
+      enableSorting
+      manualSorting={false}
+      sorting={sorting}
+      onSort={setSorting}
       {...props}
     />
   );
