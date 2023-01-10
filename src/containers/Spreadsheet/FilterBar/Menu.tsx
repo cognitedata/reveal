@@ -31,17 +31,11 @@ export const Menu = (): JSX.Element => {
     },
     { type: 'divider' },
     {
-      type: 'group',
-      label: t('spreadsheet-menu-danger-zone'),
-      children: [
-        {
-          key: 'delete',
-          icon: <Icon type="Delete" />,
-          label: t('spreadsheet-menu-delete-table'),
-          danger: true,
-          onClick: () => setIsDeleteModalOpen(true),
-        },
-      ],
+      key: 'delete',
+      icon: <Icon type="Delete" />,
+      label: t('spreadsheet-menu-delete-table'),
+      danger: true,
+      onClick: () => setIsDeleteModalOpen(true),
     },
   ];
 
