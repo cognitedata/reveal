@@ -53,9 +53,6 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
     visible: false,
   });
 
-  // const { data } = useUserInformation();
-  // const email = data?.email;
-
   const [assetCount, setAssetCount] = useState<number>(0);
   const [eventsCount, setEventsCount] = useState<number>(0);
   const [sequencesCount, setSequencesCount] = useState<number>(0);
@@ -121,31 +118,11 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
   const debouncedQuery = useDebounce(query, 100);
 
   const {
-    assets: {
-      data: assetsData,
-      isLoading: isAssetsLoading,
-      isFetched: isAssetsFetched,
-    },
-    events: {
-      data: eventsData,
-      isLoading: isEventsLoading,
-      isFetched: isEventsFetched,
-    },
-    files: {
-      data: filesData,
-      isLoading: isFilesLoading,
-      isFetched: isFilesFetched,
-    },
-    sequences: {
-      data: sequencesData,
-      isLoading: isSequencesLoading,
-      isFetched: isSequencesFetched,
-    },
-    timeseries: {
-      data: timeseriesData,
-      isLoading: isTimeseriesLoading,
-      isFetched: isTimeseriesFetched,
-    },
+    assets: { data: assetsData, isLoading: isAssetsLoading },
+    events: { data: eventsData, isLoading: isEventsLoading },
+    files: { data: filesData, isLoading: isFilesLoading },
+    sequences: { data: sequencesData, isLoading: isSequencesLoading },
+    timeseries: { data: timeseriesData, isLoading: isTimeseriesLoading },
   } = useResourcesSearch({
     dataSetId,
     query: debouncedQuery,
