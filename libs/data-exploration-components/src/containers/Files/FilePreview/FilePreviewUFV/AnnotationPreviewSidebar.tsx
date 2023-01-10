@@ -32,7 +32,7 @@ import {
   useCreateAnnotation,
   useDeleteAnnotation,
   useUpdateAnnotations,
-} from '@data-exploration-components/domain/annotations';
+} from '@data-exploration-lib/domain-layer';
 import {
   getExtendedAnnotationDescription,
   getExtendedAnnotationLabel,
@@ -46,7 +46,7 @@ import {
 } from './migration/utils';
 import ReviewTagBar from './ReviewTagBar';
 import FilePreviewSidebar from './FilePreviewSidebar';
-import { ExtendedAnnotation } from './types';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 type Props = {
   file?: FileInfo;

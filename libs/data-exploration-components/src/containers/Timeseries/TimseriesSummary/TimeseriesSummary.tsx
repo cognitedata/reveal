@@ -1,7 +1,7 @@
 import { Timeseries } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 import { useResourceResults } from '@data-exploration-components/containers';
-import { InternalSequenceFilters } from '@data-exploration-components/domain/sequence';
+import { InternalSequenceFilters } from '@data-exploration-lib/domain-layer';
 import { Table } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
 import { convertResourceType } from '@data-exploration-components/types';

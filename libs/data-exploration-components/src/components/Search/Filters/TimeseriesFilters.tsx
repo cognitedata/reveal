@@ -9,8 +9,8 @@ import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldTimeseriesFilters } from '@data-exploration-components/domain/timeseries';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { OldTimeseriesFilters } from '@data-exploration-lib/domain-layer';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
 
 export const TimeseriesFilters = ({

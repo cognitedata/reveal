@@ -6,12 +6,10 @@ import {
   useResetSequenceFilters,
   useSequenceFilters,
 } from '@data-exploration-app/store/filter';
-import {
-  MetadataFilterV2,
-  transformNewFilterToOldFilter,
-} from '@cognite/data-exploration';
+import { MetadataFilterV2 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 export const SequenceFilters = ({ ...rest }) => {
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();

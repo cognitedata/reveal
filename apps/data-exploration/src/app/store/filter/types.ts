@@ -6,7 +6,7 @@ import {
   InternalFilesFilters,
   InternalSequenceFilters,
   InternalTimeseriesFilters,
-} from '@cognite/data-exploration';
+} from '@data-exploration-lib/domain-layer';
 
 export type Filters = {
   asset: InternalAssetFilters;

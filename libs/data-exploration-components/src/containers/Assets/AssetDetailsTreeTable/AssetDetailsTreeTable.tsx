@@ -10,7 +10,7 @@ import {
 import { HighlightCell, ResourceTableColumns } from '../../../components';
 import { Table } from '../../../components';
 
-import { useRootAssetsQuery } from '../../../domain';
+import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
 import { DASH } from '../../../utils';
 
 import { AssetWithRelationshipLabels } from '../AssetTable/AssetTable';
@@ -19,7 +19,7 @@ import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import {
   InternalAssetTreeData,
   useAssetsMetadataKeys,
-} from '@data-exploration-components/domain/assets';
+} from '@data-exploration-lib/domain-layer';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
 

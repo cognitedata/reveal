@@ -1,13 +1,13 @@
 import { CogniteEvent } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { InternalSequenceFilters } from '@data-exploration-components/domain/sequence';
+import { InternalSequenceFilters } from '@data-exploration-lib/domain-layer';
 import { Table } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
 
 import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
 import { SummaryCard } from '@data-exploration-components/components/SummaryCard/SummaryCard';
-import { useEventsSearchResultQuery } from '@data-exploration-components/domain/events';
+import { useEventsSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryCard/utils';
 import { noop } from 'lodash';
 

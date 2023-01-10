@@ -16,7 +16,7 @@ import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { RootAsset } from '@data-exploration-components/components/RootAsset';
 import isEmpty from 'lodash/isEmpty';
 import { ResourceTableColumns } from '../../../components';
-import { useTimeseriesMetadataKeys } from '../../../domain';
+import { useTimeseriesMetadataKeys } from '@data-exploration-lib/domain-layer';
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;

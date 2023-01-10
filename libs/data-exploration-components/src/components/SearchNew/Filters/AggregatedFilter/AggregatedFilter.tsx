@@ -2,7 +2,7 @@ import React from 'react';
 import { Select } from '@data-exploration-components/components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
-import { NIL_FILTER_VALUE } from '@data-exploration-components/domain/constants';
+import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { OptionType } from '@cognite/cogs.js';

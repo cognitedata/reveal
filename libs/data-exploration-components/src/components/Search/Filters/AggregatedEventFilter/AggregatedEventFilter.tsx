@@ -9,8 +9,8 @@ import { Select } from '@data-exploration-components/components';
 import {
   InternalEventsFilters,
   OldEventsFilters,
-} from '@data-exploration-components/domain/events';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+} from '@data-exploration-lib/domain-layer';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 type EventFieldForAggregate = 'type' | 'subtype' | 'dataSetId';
 

@@ -13,8 +13,8 @@ import {
 import { HighlightCell, ResourceTableColumns } from '../../../components';
 import { Table } from '../../../components';
 import { EmptyState } from '../../../components/EmpyState/EmptyState';
-import { useSearchAssetTree } from '../../../domain';
-import { useRootAssetsQuery } from '../../../domain';
+import { useSearchAssetTree } from '@data-exploration-lib/domain-layer';
+import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
 import { DASH } from '../../../utils';
 import { AssetWithRelationshipLabels } from '../AssetTable/AssetTable';
 import { useRootTree, useSearchTree, useRootPath } from './hooks';
@@ -23,7 +23,7 @@ import {
   InternalAssetFilters,
   InternalAssetTreeData,
   useAssetsMetadataKeys,
-} from '@data-exploration-components/domain/assets';
+} from '@data-exploration-lib/domain-layer';
 import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
 

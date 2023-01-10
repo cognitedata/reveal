@@ -48,8 +48,8 @@ import {
   isTaggedAnnotationAnnotation,
   isTaggedEventAnnotation,
 } from '../containers/Files/FilePreview/FilePreviewUFV/migration/utils';
-import { TaggedAnnotation } from '../containers/Files/FilePreview/FilePreviewUFV/types';
-import { useAnnotations } from '../domain/annotations';
+import { useAnnotations } from '@data-exploration-lib/domain-layer';
+import { TaggedAnnotation } from '@data-exploration-lib/core';
 
 const PAGE_SIZE = 20;
 

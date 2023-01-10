@@ -3,7 +3,7 @@ import * as React from 'react';
 import { RootAssetButton } from './RootAssetButton';
 import { useCallback } from 'react';
 import { Asset } from '@cognite/sdk';
-import { useRootAssetQuery } from '@data-exploration-components/domain/assets/service/queries/useRootAssetQuery';
+import { useRootAssetQuery } from '@data-exploration-lib/domain-layer';
 import { LoadingState } from './LoadingState';
 import { openAssetInNewTab } from '@data-exploration-components/utils/assets';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';

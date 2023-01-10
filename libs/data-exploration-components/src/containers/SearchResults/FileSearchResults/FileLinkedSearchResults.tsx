@@ -7,13 +7,13 @@ import {
   MetadataFilterV2,
 } from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from '@data-exploration-components/domain/types';
+import { InternalCommonFilters } from '@data-exploration-lib/domain-layer';
 import { useDebounce } from 'use-debounce';
-import { InternalFilesFilters } from '@data-exploration-components/domain/files';
+import { InternalFilesFilters } from '@data-exploration-lib/domain-layer';
 import { convertResourceType } from '@data-exploration-components/types';
 import { useResourceResults } from '../SearchResultLoader';
 import { FileTable } from '@data-exploration-components/containers/Files';

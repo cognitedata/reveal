@@ -11,8 +11,8 @@ import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedA
 import getExtendedAnnotationsFromCogniteAnnotations from './getExtendedAnnotationsFromCogniteAnnotations';
 import { isNotUndefined } from '@data-exploration-components/utils';
 import { getExtendedAnnotationPage } from './migration/utils';
-import { ExtendedAnnotation } from './types';
-import { useAnnotations } from '../../../../domain/annotations';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { useAnnotations } from '@data-exploration-lib/domain-layer';
 import { getContainerId, getStyledAnnotationFromAnnotation } from './utils';
 
 // The maximum difference the corresponding sides of two bounding boxes may

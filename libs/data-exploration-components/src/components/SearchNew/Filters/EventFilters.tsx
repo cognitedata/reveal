@@ -6,8 +6,8 @@ import { AggregatedEventFilterV2 } from './AggregatedEventFilter/AggregatedEvent
 import { DateFilterV2 } from './DateFilter/DateFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { InternalEventsFilters } from '@data-exploration-components/domain/events';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { InternalEventsFilters } from '@data-exploration-lib/domain-layer';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 export const EventFilters = ({
   filter,

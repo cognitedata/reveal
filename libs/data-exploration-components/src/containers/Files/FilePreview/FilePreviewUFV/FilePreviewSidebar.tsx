@@ -14,7 +14,7 @@ import {
   isFileAnnotation,
   isSuggestedAnnotation,
 } from './migration/utils';
-import { ExtendedAnnotation } from './types';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 interface FilePreviewSidebarProps {
   fileIcon?: React.ReactNode;

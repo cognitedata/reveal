@@ -12,7 +12,7 @@ import {
   isFileAnnotation,
   isSuggestedAnnotation,
 } from './migration/utils';
-import { ExtendedAnnotation } from './types';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 const FileReview = ({
   annotations,

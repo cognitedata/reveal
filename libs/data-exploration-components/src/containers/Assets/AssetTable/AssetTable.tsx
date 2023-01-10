@@ -10,7 +10,7 @@ import { RelationshipLabels } from '@data-exploration-components/types';
 
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { ResourceTableColumns } from '../../../components';
-import { useAssetsMetadataKeys } from '../../../domain';
+import { useAssetsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import { ThreeDModelCell } from './ThreeDModelCell';
 import { RootAsset } from '@data-exploration-components/components/RootAsset';
 

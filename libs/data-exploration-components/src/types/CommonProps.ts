@@ -19,7 +19,7 @@ import {
   OldFilesFilters,
   OldEventsFilters,
   OldSequenceFilters,
-} from '@data-exploration-components/domain/index';
+} from '@data-exploration-lib/domain-layer';
 
 export type SmallPreviewProps = {
   actions?: React.ReactNode[];

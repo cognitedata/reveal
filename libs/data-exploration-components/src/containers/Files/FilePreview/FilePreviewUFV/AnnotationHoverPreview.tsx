@@ -5,7 +5,7 @@ import {
   getExtendedAnnotationLabel,
   isSuggestedAnnotation,
 } from './migration/utils';
-import { ExtendedAnnotation } from './types';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 type Props = {
   annotation: ExtendedAnnotation;

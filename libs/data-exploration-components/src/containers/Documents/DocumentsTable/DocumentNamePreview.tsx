@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document } from '@data-exploration-components/domain/documents';
+import { InternalDocument } from '@data-exploration-lib/domain-layer';
 import styled from 'styled-components';
 import Highlighter from 'react-highlight-words';
 import {
@@ -24,7 +24,7 @@ export const DocumentNamePreview = ({
   query,
 }: {
   fileName: string;
-  file: Document;
+  file: InternalDocument;
   query: string | undefined;
 }) => {
   const isPreviewable = isFilePreviewable(file);

@@ -10,10 +10,10 @@ import {
   AggregatedFilterV2,
   BooleanFilter,
   MetadataFilterV2,
-  transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 export const TimeseriesFilters = ({ ...rest }) => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();

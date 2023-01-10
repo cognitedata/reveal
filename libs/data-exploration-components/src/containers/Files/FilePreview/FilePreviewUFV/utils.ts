@@ -4,8 +4,8 @@ import {
   AnnotationType,
   RectangleAnnotation,
 } from '@cognite/unified-file-viewer';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { getResourceTypeFromExtendedAnnotation } from './migration/utils';
-import { ExtendedAnnotation } from './types';
 
 export const getContainerId = (fileId: number) => {
   return String(fileId);

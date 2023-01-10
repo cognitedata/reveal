@@ -4,8 +4,8 @@ import { BooleanFilter } from './BooleanFilter/BooleanFilter';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { InternalTimeseriesFilters } from '@data-exploration-components/domain/timeseries';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { InternalTimeseriesFilters } from '@data-exploration-lib/domain-layer';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 export const TimeseriesFilters = ({
   filter,

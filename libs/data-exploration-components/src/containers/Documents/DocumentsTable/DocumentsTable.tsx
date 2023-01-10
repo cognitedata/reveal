@@ -9,9 +9,9 @@ import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentContentPreview } from './DocumentContentPreview';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import {
-  Document,
+  InternalDocument,
   useDocumentsMetadataKeys,
-} from '@data-exploration-components/domain/documents';
+} from '@data-exploration-lib/domain-layer';
 import { DASH } from '@data-exploration-components/utils';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Body } from '@cognite/cogs.js';
@@ -22,7 +22,7 @@ import {
   ResourceTableColumns,
 } from '@data-exploration-components/components';
 
-export type DocumentWithRelationshipLabels = Document;
+export type DocumentWithRelationshipLabels = InternalDocument;
 
 // TODO: Might need to add RelationshipLabels at some point.
 export type DocumentTableProps = Omit<
@@ -41,7 +41,7 @@ const visibleColumns = [
   'rootAsset',
 ];
 
-const RootAssetCell = ({ row }: { row: Row<Document> }) => {
+const RootAssetCell = ({ row }: { row: Row<InternalDocument> }) => {
   const assetId = row.original?.assetIds?.length && row.original.assetIds[0];
 
   if (!assetId) {
@@ -84,7 +84,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         {
           accessorKey: 'content',
           header: 'Content',
-          cell: ({ row }: { row: Row<Document> }) => {
+          cell: ({ row }: { row: Row<InternalDocument> }) => {
             return (
               <DocumentContentPreview document={row.original} query={query} />
             );
@@ -95,7 +95,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           accessorKey: 'author',
           id: 'author',
           header: 'Author',
-          cell: ({ row }: { row: Row<Document> }) => {
+          cell: ({ row }: { row: Row<InternalDocument> }) => {
             return <Body level={2}>{row.original.author || DASH}</Body>;
           },
         },
@@ -115,14 +115,14 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           // You do not have to add an id field if accessor is given a string.
           accessorKey: 'type',
           header: 'File type',
-          cell: ({ row }: { row: Row<Document> }) => {
+          cell: ({ row }: { row: Row<InternalDocument> }) => {
             return <Body level={2}>{row.original.type}</Body>;
           },
         },
         {
           accessorKey: 'modifiedTime',
           header: 'Last updated',
-          cell: ({ row }: { row: Row<Document> }) => (
+          cell: ({ row }: { row: Row<InternalDocument> }) => (
             <Body level={2}>
               <TimeDisplay value={row.original.modifiedTime} />
             </Body>
@@ -132,7 +132,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         {
           id: 'rootAsset',
           header: 'Root asset',
-          cell: ({ row }: { row: Row<Document> }) => {
+          cell: ({ row }: { row: Row<InternalDocument> }) => {
             return <RootAssetCell row={row} />;
           },
           enableSorting: false,

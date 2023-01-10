@@ -1,6 +1,6 @@
 import React from 'react';
 import { Label } from '@cognite/cogs.js';
-import { useSequenceSearchAggregateQuery } from '@data-exploration-components/domain/sequence';
+import { useSequenceSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
 import { ResourceTypeTitle, TabContainer } from './elements';
 import { getTabCountLabel } from '@data-exploration-components/utils';
 

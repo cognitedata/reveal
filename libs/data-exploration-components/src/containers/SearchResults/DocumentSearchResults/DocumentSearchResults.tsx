@@ -8,10 +8,10 @@ import {
 import { DocumentsTable } from '@data-exploration-components/containers/Documents';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import {
-  Document,
+  InternalDocument,
   InternalDocumentFilter,
   useDocumentSearchResultQuery,
-} from '@data-exploration-components/domain/documents';
+} from '@data-exploration-lib/domain-layer';
 import { FileInfo } from '@cognite/sdk';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { UploadButton } from '@data-exploration-components/components/Buttons/UploadButton/UploadButton';
@@ -22,14 +22,14 @@ import { AppContext } from '@data-exploration-components/context/AppContext';
 import { DocumentUploaderModal } from '@data-exploration-components/containers/Documents/DocumentUploader/DocumentUploaderModal';
 
 import { VerticalDivider } from '@data-exploration-components/components/Divider';
-import { useDocumentFilteredAggregateCount } from '@data-exploration-components/domain/documents/service/queries/aggregates/useDocumentFilteredAggregateCount';
+import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { ResourceTypes } from '@data-exploration-components/types';
 
 export interface DocumentSearchResultsProps {
   query?: string;
   filter: InternalDocumentFilter;
-  onClick: (item: Document) => void;
+  onClick: (item: InternalDocument) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   onFileClicked?: (file: FileInfo) => boolean;
   selectedRow?: Record<string | number, boolean>;

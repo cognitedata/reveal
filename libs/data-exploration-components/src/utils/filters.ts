@@ -15,7 +15,7 @@ import {
   InternalEventsFilters,
   InternalFilesFilters,
   InternalSequenceFilters,
-} from '@data-exploration-components/domain/index';
+} from '@data-exploration-lib/domain-layer';
 
 export const annotationInteralIdFilter = (
   fileId: number,

@@ -7,8 +7,8 @@ import { useQuery } from 'react-query';
 import { Select } from '@data-exploration-components/components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
-import { InternalEventsFilters } from '@data-exploration-components/domain/events';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { InternalEventsFilters } from '@data-exploration-lib/domain-layer';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 

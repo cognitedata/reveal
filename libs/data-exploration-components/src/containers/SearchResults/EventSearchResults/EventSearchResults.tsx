@@ -17,7 +17,7 @@ import {
   InternalEventsFilters,
   useEventsSearchResultQuery,
   useEventsSearchAggregateQuery,
-} from '@data-exploration-components/domain/events';
+} from '@data-exploration-lib/domain-layer';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { useResultCount } from '@data-exploration-components/components';

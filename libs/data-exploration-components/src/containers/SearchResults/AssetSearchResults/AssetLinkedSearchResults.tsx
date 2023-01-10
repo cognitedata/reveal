@@ -4,15 +4,15 @@ import { MetadataFilterV2 } from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AssetTable } from '@data-exploration-components/containers/Assets';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import {
   InternalAssetFilters,
   useAssetsSearchResultQuery,
-} from '@data-exploration-components/domain/assets';
+} from '@data-exploration-lib/domain-layer';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
-import { InternalCommonFilters } from '@data-exploration-components/domain/types';
+import { InternalCommonFilters } from '@data-exploration-lib/domain-layer';
 import { useDebounce } from 'use-debounce';
 import { convertResourceType } from '@data-exploration-components/types';
 import { useResourceResults } from '../SearchResultLoader';

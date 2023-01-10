@@ -11,7 +11,7 @@ import {
   getResourceTypeFromExtendedAnnotation,
   isSuggestedAnnotation,
 } from './migration/utils';
-import { ExtendedAnnotation } from './types';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 const ReviewTagBar = ({
   annotation,

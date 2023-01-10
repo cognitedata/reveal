@@ -6,7 +6,7 @@ import { CUSTOM_FILTER_TITLE } from './constants';
 import {
   NIL_FILTER_VALUE,
   NIL_FILTER_LABEL,
-} from '@data-exploration-components/domain/constants';
+} from '@data-exploration-lib/domain-layer';
 
 export const getTitle = (input: string) => {
   return CUSTOM_FILTER_TITLE[input] || startCase(input);

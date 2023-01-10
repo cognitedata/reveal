@@ -7,7 +7,7 @@ import {
 } from '@data-exploration-components/components/Table/Table';
 import { RelationshipLabels } from '@data-exploration-components/types';
 import { ResourceTableColumns } from '../../../components';
-import { useDocumentsMetadataKeys } from '../../../domain';
+import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import { FileNamePreview } from './FileNamePreview';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';

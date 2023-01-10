@@ -3,8 +3,11 @@ import {
   AnnotationType as UfvAnnotationType,
   getDefaultStylesByResourceType,
 } from '@cognite/unified-file-viewer';
+import {
+  ExtendedAnnotation,
+  TaggedAnnotationAnnotation,
+} from '@data-exploration-lib/core';
 import { getTaggedAnnotationAnnotation } from '../migration/utils';
-import { ExtendedAnnotation, TaggedAnnotationAnnotation } from '../types';
 import { getBoundingBoxFromAnnotationData, getRefResourceType } from './utils';
 
 const getRectangleAnnotationFromCogniteAnnotation = (

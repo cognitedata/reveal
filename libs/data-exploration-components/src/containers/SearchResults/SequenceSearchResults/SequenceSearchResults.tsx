@@ -16,7 +16,7 @@ import {
   InternalSequenceFilters,
   useSequenceSearchAggregateQuery,
   useSequenceSearchResultQuery,
-} from '@data-exploration-components/domain/sequence';
+} from '@data-exploration-lib/domain-layer';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { useResultCount } from '@data-exploration-components/components';

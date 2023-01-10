@@ -21,7 +21,7 @@ import {
   InternalAssetFilters,
   useAssetsSearchAggregateQuery,
   useAssetsSearchResultQuery,
-} from '@data-exploration-components/domain/assets';
+} from '@data-exploration-lib/domain-layer';
 import { useResultCount } from '@data-exploration-components/components';
 import { VerticalDivider } from '@data-exploration-components/components/Divider';
 

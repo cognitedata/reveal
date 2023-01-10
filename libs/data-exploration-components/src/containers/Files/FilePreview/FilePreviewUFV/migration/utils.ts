@@ -18,7 +18,7 @@ import {
   TaggedAnnotationAnnotation,
   TaggedEventAnnotation,
   TaggedLocalAnnotation,
-} from '../types';
+} from '@data-exploration-lib/core';
 
 export const getExtendedAnnotationPage = (
   annotation: ExtendedAnnotation

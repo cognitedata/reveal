@@ -5,7 +5,7 @@ import groupBy from 'lodash/groupBy';
 import {
   DetailedMapping,
   useDetailedMappingsByAssetIdQuery,
-} from '@data-exploration-components/domain/threeD';
+} from '@data-exploration-lib/domain-layer';
 import { createLink } from '@cognite/cdf-utilities';
 import { DASH } from '../../../utils';
 import { TimeDisplay } from '@data-exploration-components/components/TimeDisplay/TimeDisplay';

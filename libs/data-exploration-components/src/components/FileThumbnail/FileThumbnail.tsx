@@ -3,10 +3,14 @@ import { useFilePreviewURL } from '@data-exploration-components/hooks/sdk';
 import { Body, DocumentIcon } from '@cognite/cogs.js';
 import { Loader } from '@data-exploration-components/components';
 import { FileInfo } from '@cognite/sdk';
-import { Document } from '@data-exploration-components/domain/documents';
 import Styled from 'styled-components';
+import { InternalDocument } from '@data-exploration-lib/domain-layer';
 
-export const FileThumbnail = ({ file }: { file: FileInfo | Document }) => {
+export const FileThumbnail = ({
+  file,
+}: {
+  file: FileInfo | InternalDocument;
+}) => {
   const { data: filePreviewUrl, isError, isFetching } = useFilePreviewURL(file);
 
   if (filePreviewUrl) {

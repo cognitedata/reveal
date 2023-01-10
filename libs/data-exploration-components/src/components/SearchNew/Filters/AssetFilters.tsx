@@ -5,8 +5,8 @@ import { LabelFilterV2 } from './LabelFilter/LabelFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { InternalAssetFilters } from '@data-exploration-components/domain/assets';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { InternalAssetFilters } from '@data-exploration-lib/domain-layer';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFiltersV2 = ({

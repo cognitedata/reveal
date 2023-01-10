@@ -18,7 +18,7 @@ import {
 import { useQueries } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { calculateGranularity } from '@data-exploration-components/containers';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 

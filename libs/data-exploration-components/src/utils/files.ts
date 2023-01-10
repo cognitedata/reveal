@@ -1,8 +1,9 @@
 import mime from 'mime-types';
 import { CogniteClient, FileInfo } from '@cognite/sdk';
 import lowerCase from 'lodash/lowerCase';
-import { Document } from '@data-exploration-components/domain/documents';
 import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
+// import { InternalDocument } from '@data-exploration-lib/domain-layer';
+type InternalDocument = any;
 
 export const getMIMEType = (fileURI: string) => mime.lookup(fileURI);
 
@@ -29,11 +30,13 @@ export const readablePreviewableFileTypes = () =>
     return `${acc} or ${fileType}`;
   }, '');
 
-export const isDocument = (item: Document | FileInfo): item is Document => {
-  return (item as Document).sourceFile !== undefined;
+export const isDocument = (
+  item: InternalDocument | FileInfo
+): item is InternalDocument => {
+  return (item as InternalDocument).sourceFile !== undefined;
 };
 
-export const isFilePreviewable = (file?: FileInfo | Document) => {
+export const isFilePreviewable = (file?: FileInfo | InternalDocument) => {
   if (file === undefined) return false;
 
   if (isDocument(file)) {
@@ -42,10 +45,13 @@ export const isFilePreviewable = (file?: FileInfo | Document) => {
   return isSupportedFileInfo(file);
 };
 
-export const isPreviewableImage = (file?: FileInfo | Document) =>
+export const isPreviewableImage = (file?: FileInfo | InternalDocument) =>
   isFileOfType(file, PREVIEWABLE_IMAGE_TYPES);
 
-export const isFileOfType = (file?: FileInfo | Document, type?: string[]) => {
+export const isFileOfType = (
+  file?: FileInfo | InternalDocument,
+  type?: string[]
+) => {
   const { mimeType = '', name = '' } = file || {};
   const fileExt = name.includes('.')
     ? lowerCase(name.substring(name.lastIndexOf('.') + 1))
@@ -57,7 +63,7 @@ export const isFileOfType = (file?: FileInfo | Document, type?: string[]) => {
 
 export async function fetchFilePreviewURL(
   sdk: CogniteClient,
-  file: FileInfo | Document
+  file: FileInfo | InternalDocument
 ) {
   if (!isFilePreviewable(file)) return undefined;
 

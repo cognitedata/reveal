@@ -16,7 +16,7 @@ import { Ellipsis } from '@data-exploration-components/components/Ellipsis/Ellip
 import {
   NIL_FILTER_LABEL,
   NIL_FILTER_VALUE,
-} from '@data-exploration-components/domain/constants';
+} from '@data-exploration-lib/domain-layer';
 
 const NIL_FILTER_OPTION: OptionType<string> = {
   label: NIL_FILTER_LABEL,

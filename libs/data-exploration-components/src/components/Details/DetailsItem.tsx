@@ -10,7 +10,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { useClipboard } from '@data-exploration-components/hooks';
 import { DASH } from '@data-exploration-components/utils';
-import { DetailedMapping } from '@data-exploration-components/domain/threeD';
+import { DetailedMapping } from '@data-exploration-lib/domain-layer';
 import {
   ThreeDModelCellDropdown,
   ThreeDModelCellLink,

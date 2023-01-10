@@ -21,7 +21,7 @@ import {
   InternalTimeseriesFilters,
   useTimeseriesSearchAggregateQuery,
   useTimeseriesSearchResultQuery,
-} from '@data-exploration-components/domain/timeseries';
+} from '@data-exploration-lib/domain-layer';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import {

@@ -16,7 +16,7 @@ import {
   useInfinite3DModels,
 } from '@data-exploration-components/hooks';
 import { Model3D } from '@cognite/sdk';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 type ResultProps = {
   api: 'list' | 'search';

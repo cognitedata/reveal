@@ -24,7 +24,7 @@ import {
   OldEventsFilters,
   OldTimeseriesFilters,
   OldSequenceFilters,
-} from '@data-exploration-components/domain/index';
+} from '@data-exploration-lib/domain-layer';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: absolute;

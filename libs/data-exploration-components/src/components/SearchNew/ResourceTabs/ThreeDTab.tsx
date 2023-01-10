@@ -5,7 +5,7 @@ import {
   useInfinite3DModels,
 } from '@data-exploration-components/hooks';
 import { Model3D } from '@cognite/sdk';
-import { MORE_THAN_MAX_RESULT_LIMIT } from '@data-exploration-components/domain/constants';
+import { MORE_THAN_MAX_RESULT_LIMIT } from '@data-exploration-lib/domain-layer';
 import { ResourceTypeTitle, TabContainer } from './elements';
 import { getTabCountLabel } from '@data-exploration-components/utils';
 

@@ -1,4 +1,4 @@
-import { InternalCommonFilters } from '@cognite/data-exploration';
+import { InternalCommonFilters } from '@data-exploration-lib/domain-layer';
 import { selector, useRecoilState, useResetRecoilState } from 'recoil';
 
 import { globalFilterAtom } from '../atoms';

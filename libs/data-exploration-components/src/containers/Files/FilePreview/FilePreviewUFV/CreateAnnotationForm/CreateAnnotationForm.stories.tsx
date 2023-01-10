@@ -1,7 +1,9 @@
-import { getExtendedAnnotationFixture } from '@data-exploration-components/domain/annotations/internal/__fixtures/mockExtendedAnnotation';
+import {
+  ExtendedAnnotation,
+  getExtendedAnnotationFixture,
+} from '@data-exploration-lib/core';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ExtendedAnnotation } from '../types';
 import { CreateAnnotationForm } from './CreateAnnotationForm';
 
 export default {

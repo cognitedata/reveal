@@ -12,11 +12,11 @@ import {
   AggregatedFilterV2,
   DateFilterV2,
   MetadataFilterV2,
-  transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { CogniteEvent } from '@cognite/sdk/dist/src';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
   const [eventFilter, setEventFilter] = useEventsFilters();

@@ -4,7 +4,7 @@ import {
   TimeDisplay,
   GeneralDetails,
 } from '@data-exploration-components/components';
-import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-components/domain/threeD';
+import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
 
 type Props = {
   asset: Asset;

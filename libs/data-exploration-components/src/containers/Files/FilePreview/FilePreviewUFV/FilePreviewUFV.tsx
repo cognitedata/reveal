@@ -17,7 +17,7 @@ import styled from 'styled-components';
 import { ResourceItem } from '@data-exploration-components/types';
 import { lightGrey } from '@data-exploration-components/utils';
 
-import { usePnIdOCRResultFilterQuery } from '../../../../domain/pnids/internal/hooks/usePnIdOCRResultFilterQuery';
+import { usePnIdOCRResultFilterQuery } from '@data-exploration-lib/domain-layer';
 import { AnnotationHoverPreview } from './AnnotationHoverPreview';
 import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
@@ -33,7 +33,7 @@ import {
   ANNOTATION_SOURCE_KEY,
   AnnotationSource,
   ExtendedAnnotation,
-} from './types';
+} from '@data-exploration-lib/core';
 import { getContainerId } from './utils';
 import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
 

@@ -10,7 +10,7 @@ import { getSummaryCardItems } from '@data-exploration-components/components/Sum
 import { useResourceResults } from '@data-exploration-components/containers';
 import { convertResourceType } from '@data-exploration-components/types';
 import { FileInfo } from '@cognite/sdk';
-import { InternalFilesFilters } from '@data-exploration-components/domain/files';
+import { InternalFilesFilters } from '@data-exploration-lib/domain-layer';
 
 export const FileSummary = ({
   query = '',

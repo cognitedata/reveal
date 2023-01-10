@@ -1,6 +1,6 @@
-import { Document } from '@data-exploration-components/domain/documents';
+import { InternalDocument } from '@data-exploration-lib/domain-layer';
 
-export const mockDocument: Document = {
+export const mockDocument: InternalDocument = {
   id: 1,
   externalId: 'SKA-AK-P-XB-2930-001.png',
   name: 'SKA-AK-P-XB-2930-001.png',
@@ -19,7 +19,7 @@ export const mockDocument: Document = {
   },
 };
 
-export const mockDocument2: Document = {
+export const mockDocument2: InternalDocument = {
   id: 2,
   externalId: 'random.pdf',
   name: 'random long name for pdf.pdf',
@@ -33,4 +33,4 @@ export const mockDocument2: Document = {
   createdTime: new Date().getTime(),
 };
 // This is the normalized version (Document) of DocumentSearchItem from sdk.
-export const documents: Document[] = [mockDocument, mockDocument2];
+export const documents: InternalDocument[] = [mockDocument, mockDocument2];

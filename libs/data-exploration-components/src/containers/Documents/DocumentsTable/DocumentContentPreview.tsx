@@ -1,18 +1,15 @@
 import React from 'react';
-import {
-  Document,
-  getHighlightContent,
-  getFocusedHighlightContent,
-} from '@data-exploration-components/domain/documents';
+import { InternalDocument } from '@data-exploration-lib/domain-layer';
 import styled from 'styled-components';
 import { HighlightCell } from '@data-exploration-components/components';
 import { Body, Flex } from '@cognite/cogs.js';
+import { getFocusedHighlightContent, getHighlightContent } from './utils';
 
 export const DocumentContentPreview = ({
   document,
   query,
 }: {
-  document: Document;
+  document: InternalDocument;
   query: string | undefined;
 }) => {
   const highlightContent = getHighlightContent(document);

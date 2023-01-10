@@ -7,8 +7,8 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldSequenceFilters } from '@data-exploration-components/domain/sequence';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { OldSequenceFilters } from '@data-exploration-lib/domain-layer';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
 
 export const SequenceFilters = ({

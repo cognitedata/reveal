@@ -18,12 +18,15 @@ import {
   TimeseriesTab,
   SequenceTab,
   ThreeDTab,
+} from '@cognite/data-exploration';
+
+import {
   useAssetsMetadataKeys,
   useTimeseriesMetadataKeys,
   useDocumentsMetadataKeys,
   useEventsMetadataKeys,
   useSequencesMetadataKeys,
-} from '@cognite/data-exploration';
+} from '@data-exploration-lib/domain-layer';
 
 import { Colors, Flex, Tabs } from '@cognite/cogs.js';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';

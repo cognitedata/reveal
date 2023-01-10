@@ -15,7 +15,7 @@ import {
   setExtendedAnnotationDescription,
   setExtendedAnnotationLabel,
 } from '../migration/utils';
-import { ExtendedAnnotation } from '../types';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 const getResourceIdEither = (
   annotation?: ExtendedAnnotation

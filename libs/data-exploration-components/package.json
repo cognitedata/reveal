@@ -9,6 +9,8 @@
     "test-storybook": "test-storybook --url http://localhost:9009",
     "chromatic": "npx chromatic",
     "semantic-release": "semantic-release"
+  },
+  "dependencies": {
+    "@data-exploration-lib/domain-layer": "*"
   }
-  
 }

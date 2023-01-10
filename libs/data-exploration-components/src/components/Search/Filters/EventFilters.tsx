@@ -10,8 +10,8 @@ import { DateFilter } from './DateFilter/DateFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldEventsFilters } from '@data-exploration-components/domain/events';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { OldEventsFilters } from '@data-exploration-lib/domain-layer';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
 
 export const EventFilters = ({

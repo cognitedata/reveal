@@ -26,6 +26,7 @@
               "@platypus-app",
               "@data-exploration-app",
               "@data-exploration-components",
+              "@data-exploration-lib/domain-layer",
               "@platypus-core",
               "@cognite/platypus-cdf-cli",
               "@cognite/data-exploration"

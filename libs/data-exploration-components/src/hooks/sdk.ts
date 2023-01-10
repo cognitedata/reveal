@@ -16,7 +16,7 @@ import {
   isFileOfType,
   fetchFilePreviewURL,
 } from '@data-exploration-components/utils';
-import { Document } from '@data-exploration-components/domain/documents';
+import { InternalDocument } from '@data-exploration-lib/domain-layer';
 
 const post = (sdk: CogniteClient, path: string, data: any) =>
   sdk
@@ -94,7 +94,7 @@ export const useFileIcon = (file: FileInfo) => {
   );
 };
 
-export const useFilePreviewURL = (file: FileInfo | Document) => {
+export const useFilePreviewURL = (file: FileInfo | InternalDocument) => {
   const sdk = useSDK();
 
   return useQuery(

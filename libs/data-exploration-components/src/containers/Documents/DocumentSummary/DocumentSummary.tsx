@@ -1,9 +1,9 @@
 import { ColumnDef, Row } from '@tanstack/react-table';
 import {
-  Document,
+  InternalDocument,
   InternalDocumentFilter,
   useDocumentSearchResultQuery,
-} from '@data-exploration-components/domain/documents';
+} from '@data-exploration-lib/domain-layer';
 
 import { Table } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
@@ -25,7 +25,7 @@ export const DocumentSummary = ({
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
-  onRowClick?: (row: Document) => void;
+  onRowClick?: (row: InternalDocument) => void;
 }) => {
   const { results, isLoading } = useDocumentSearchResultQuery({
     query,
@@ -39,13 +39,13 @@ export const DocumentSummary = ({
         {
           accessorKey: 'content',
           header: 'Content',
-          cell: ({ row }: { row: Row<Document> }) => {
+          cell: ({ row }: { row: Row<InternalDocument> }) => {
             return (
               <DocumentContentPreview document={row.original} query={query} />
             );
           },
         },
-      ] as ColumnDef<Document>[],
+      ] as ColumnDef<InternalDocument>[],
     [query]
   );
 

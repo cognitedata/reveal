@@ -10,8 +10,8 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldAssetFilters } from '@data-exploration-components/domain/assets';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { OldAssetFilters } from '@data-exploration-lib/domain-layer';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props

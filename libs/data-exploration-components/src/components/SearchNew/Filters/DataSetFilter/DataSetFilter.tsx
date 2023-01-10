@@ -8,7 +8,7 @@ import {
 } from '@data-exploration-components/types';
 import { DataSetWCount } from '@data-exploration-components/hooks/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { useResourceTypeDataSetAggregate } from '@data-exploration-components/domain/dataSets/internal/hooks/useResourceTypeDataSetAggregate';
+import { useResourceTypeDataSetAggregate } from '@data-exploration-lib/domain-layer';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 
 import { OptionValue } from '../types';

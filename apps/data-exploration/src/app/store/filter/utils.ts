@@ -1,12 +1,12 @@
-import {
-  COMMON_FILTER_KEYS,
-  InternalCommonFilters,
-} from '@cognite/data-exploration';
 import { globalFilterAtom } from '@data-exploration-app/store/filter';
 import {
   GlobalFilter,
   GlobalFilterKeys,
 } from '@data-exploration-app/store/filter/types';
+import {
+  COMMON_FILTER_KEYS,
+  InternalCommonFilters,
+} from '@data-exploration-lib/domain-layer';
 import includes from 'lodash/includes';
 import isArray from 'lodash/isArray';
 import { DefaultValue, GetRecoilValue, SetRecoilState } from 'recoil';

@@ -10,13 +10,15 @@ import {
 import { BaseFilterCollapse } from '@data-exploration-app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
   AggregatedFilterV2,
-  InternalAssetFilters,
   LabelFilterV2,
   MetadataFilterV2,
-  transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+import {
+  InternalAssetFilters,
+  transformNewFilterToOldFilter,
+} from '@data-exploration-lib/domain-layer';
 
 // TODO: Move to domain layer
 export const useAssetMetadataKeys = (

@@ -7,15 +7,17 @@ import {
   useResetDocumentFilters,
 } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import {
-  MultiSelectFilterNew,
   useDocumentAggregateAuthorQuery,
   useDocumentAggregateSourceQuery,
   useDocumentSearchResultQuery,
-} from '@cognite/data-exploration';
-import { useDocumentAggregateFileTypeQuery } from '@data-exploration-app/domain/document/service/queries/aggregates/useDocumentAggregateFileTypeQuery';
+  useDocumentAggregateFileTypeQuery,
+} from '@data-exploration-lib/domain-layer';
 
 import { useFilterEmptyState } from '@data-exploration-app/store';
-import { MetadataFilterV2 } from '@cognite/data-exploration';
+import {
+  MetadataFilterV2,
+  MultiSelectFilterNew,
+} from '@cognite/data-exploration';
 import isEmpty from 'lodash/isEmpty';
 
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';

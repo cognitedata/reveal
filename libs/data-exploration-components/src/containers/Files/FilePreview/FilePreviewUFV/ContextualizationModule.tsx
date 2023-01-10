@@ -13,7 +13,7 @@ import {
   lightGrey,
 } from '@data-exploration-components/utils';
 import { isExtendedEventAnnotation } from './migration/utils';
-import { ExtendedAnnotation } from './types';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 export const ContextualizationData = ({
   selectedAnnotation,

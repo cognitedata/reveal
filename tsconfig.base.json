@@ -34,6 +34,9 @@
         "apps/platypus/src/environments/environment.ts"
       ],
       "@platypus-core/*": ["libs/platypus-core/src/lib/*"],
+      "@data-exploration-lib/domain-layer": [
+        "libs/data-exploration/domain-layer/src/index.ts"
+      ],
       "@platypus/mock-data": ["libs/mock-data/src/index.ts"],
       "@platypus/platypus-common-utils": [
         "libs/platypus-common-utils/src/index.ts"

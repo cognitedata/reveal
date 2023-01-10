@@ -10,7 +10,7 @@ import { RelationshipLabels } from '@data-exploration-components/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { ResourceTableColumns } from '../../../components';
-import { useEventsMetadataKeys } from '../../../domain';
+import { useEventsMetadataKeys } from '@data-exploration-lib/domain-layer';
 
 export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 

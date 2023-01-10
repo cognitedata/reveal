@@ -22,7 +22,7 @@ import {
   isApprovedAnnotation,
   isSuggestedAnnotation,
 } from '../migration/utils';
-import { ExtendedAnnotation } from '../types';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 interface AnnotationsListProps {
   annotations: ExtendedAnnotation[];

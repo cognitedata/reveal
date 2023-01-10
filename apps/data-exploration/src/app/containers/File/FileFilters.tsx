@@ -12,10 +12,10 @@ import {
   LabelFilterV2,
   MetadataFilterV2,
   StringFilterV2,
-  transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 export const FileFilters = ({ ...rest }) => {
   const [fileFilter, setFileFilter] = useFileFilters();

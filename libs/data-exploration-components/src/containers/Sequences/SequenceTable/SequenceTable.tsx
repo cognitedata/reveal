@@ -9,7 +9,7 @@ import { RelationshipLabels } from '@data-exploration-components/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { ResourceTableColumns } from '../../../components';
-import { useSequencesMetadataKeys } from '../../../domain';
+import { useSequencesMetadataKeys } from '@data-exploration-lib/domain-layer';
 
 export type SequenceWithRelationshipLabels = Sequence & RelationshipLabels;
 

@@ -9,8 +9,8 @@ import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldFilesFilters } from '@data-exploration-components/domain/files';
-import { transformNewFilterToOldFilter } from '@data-exploration-components/domain/transformers';
+import { OldFilesFilters } from '@data-exploration-lib/domain-layer';
+import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
 
 export const FileFilters = ({

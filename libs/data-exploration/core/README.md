@@ -1,6 +1,6 @@
 # data-exploration-core
 
-This library was generated with [Nx](https://nx.dev).
+This library is to store all the "leaf"/base code that other libraries can re-use.
 
 ## Building
 
