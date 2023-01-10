@@ -1,14 +1,14 @@
 import { Select, SelectProps } from '@cognite/cogs.js';
-import { FilterTitle } from './FilterTitle';
-// Note: use MultiSelectFilterNew filter from component libs. this is going to be removed in near future.
-export const MultiSelectFilter = ({
+import { FilterTitleNew } from './FilterTitleNew';
+
+export const MultiSelectFilterNew = ({
   title,
   values,
   ...rest
 }: SelectProps<any> & { title: string; values?: string[] }) => {
   return (
     <>
-      <FilterTitle>{title}</FilterTitle>
+      <FilterTitleNew>{title}</FilterTitleNew>
       <Select
         {...rest}
         onChange={(newValue: { value: string; label: string }[]) => {

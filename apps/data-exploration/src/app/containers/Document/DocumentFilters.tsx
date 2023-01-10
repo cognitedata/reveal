@@ -7,13 +7,13 @@ import {
   useResetDocumentFilters,
 } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import {
+  MultiSelectFilterNew,
   useDocumentAggregateAuthorQuery,
   useDocumentAggregateSourceQuery,
   useDocumentSearchResultQuery,
 } from '@cognite/data-exploration';
 import { useDocumentAggregateFileTypeQuery } from '@data-exploration-app/domain/document/service/queries/aggregates/useDocumentAggregateFileTypeQuery';
 
-import { MultiSelectFilter } from '@data-exploration-app/components/Filters/MultiSelectFilter';
 import { useFilterEmptyState } from '@data-exploration-app/store';
 import { MetadataFilterV2 } from '@cognite/data-exploration';
 import isEmpty from 'lodash/isEmpty';
@@ -48,7 +48,7 @@ export const DocumentFilter = ({ ...rest }) => {
       {...rest}
     >
       <TempMultiSelectFix>
-        <MultiSelectFilter
+        <MultiSelectFilterNew
           title="File type"
           options={fileTypeItems}
           isDisabled={isFileTypeError}
@@ -59,7 +59,7 @@ export const DocumentFilter = ({ ...rest }) => {
           }}
           values={documentFilter.type}
         />
-        <MultiSelectFilter
+        <MultiSelectFilterNew
           title="Author"
           options={authorOptions}
           isDisabled={isAuthorError}
@@ -70,7 +70,7 @@ export const DocumentFilter = ({ ...rest }) => {
           }}
           values={documentFilter.author}
         />
-        <MultiSelectFilter
+        <MultiSelectFilterNew
           title="Source"
           options={sourceItems}
           isDisabled={isSourceError}

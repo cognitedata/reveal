@@ -19,6 +19,7 @@ export {
   SequenceTab,
   ThreeDTab,
   NumberFilter,
+  MultiSelectFilterNew,
 } from './SearchNew';
 export * from './InfoGrid/InfoGrid';
 export * from './FilterForm/FilterForm';
