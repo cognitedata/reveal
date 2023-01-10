@@ -20,8 +20,12 @@ module.exports = () => {
       '\\.(frag|vert)$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/glslMocks.js'),
       '\\.css$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/cssMock.js'),
       '\\.svg$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/svgMock.js'),
-      '\\.wasm$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/wasmMock.js')
-    },
+      '\\.wasm$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/wasmMock.js'),
+        // Force module uuid to resolve with the CJS entry point, because Jest does not support package.json.exports. See https://github.com/uuidjs/uuid/issues/451
+        // https://stackoverflow.com/a/73203803
+        "uuid": require.resolve('uuid'),
+      }
+        },
     coverageDirectory: './coverage',
     collectCoverageFrom: [
       '!**/.*.test.ts',
