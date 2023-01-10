@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { trackEvent } from '@cognite/cdf-route-tracker';
 
 import { Button, Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -74,13 +75,17 @@ const DownloadTableModal = ({
         rowCount !== fetchRowCount ? (
           <Button
             disabled={!isItValidRowNumber(rowCount)}
-            onClick={() => setFetchRowCount(rowCount)}
+            onClick={() => {
+              trackEvent('RAW.Explorer.PrepareFile');
+              setFetchRowCount(rowCount);
+            }}
             type="primary"
           >
             {t('download-table-modal-button-create-file')}
           </Button>
         ) : (
           <CSVLink
+            onClick={() => trackEvent('RAW.Explorer.DownloadCSV')}
             filename={`cognite-${databaseName}-${tableName}.csv`}
             data={onDownloadData}
           >
