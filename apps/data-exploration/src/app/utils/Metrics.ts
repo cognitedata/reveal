@@ -7,23 +7,24 @@ export const trackUsage = (
   metadata?: { [key: string]: any }
 ) => {
   // eslint-disable-next-line no-unsafe-optional-chaining
-  const { host } = window?.location;
-  // eslint-disable-next-line no-unsafe-optional-chaining
   const { pathname } = window?.location;
-  if (!host || !pathname) {
+  if (!pathname) {
     return;
   }
-
   const pathWithoutTenant = pathname.substring(pathname.indexOf('/', 1));
 
-  // eslint-disable-next-line lodash/prefer-includes
-  if (host.indexOf('localhost') === -1) {
-    trackEvent(`DataExplorer.${event}`, {
-      ...metadata,
-      version: 1,
-      appVersion: process.env.REACT_APP_VERSION,
-      location: window.location.pathname,
-      pathname: pathWithoutTenant,
-    });
+  const options = {
+    ...metadata,
+    version: 1,
+    appVersion: process.env.REACT_APP_VERSION,
+    location: window.location.pathname,
+    pathname: pathWithoutTenant,
+  };
+  const eventName = `DataExplorer.${event}`;
+  if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
+    console.log('Metrics.track', { eventName, ...options });
   }
+
+  trackEvent(eventName, options);
 };
