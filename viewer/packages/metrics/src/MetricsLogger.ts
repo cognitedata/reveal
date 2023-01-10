@@ -81,7 +81,7 @@ class AnonymousMixpanelInitializer implements MixpanelInitializer {
 
     mixpanel.identify(AnonymousMixpanelInitializer.MixpanelDistinctId);
 
-    // Use a random identifier per session because we want to don't track users 
+    // Use a random identifier per session because we want to don't track users
     // over multiple sessions to not violate GDPR.
     return { sessionId: uuid() };
   }
