@@ -1989,13 +1989,14 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^7.2.1":
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-7.8.0.tgz#3086dafb771e03c64e10389b9e82871ebaa3bca1"
-  integrity sha512-Nks6ThKpcwbW948mhIsCe9Uk5Ci8t0gqRIRQC/J26zS68+ia/ZxL+72jNmgtHpxDUt+WBk83TAEWQpsOR5NUyg==
+"@cognite/unified-file-viewer@^7.13.1":
+  version "7.13.1"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-7.13.1.tgz#592c087325533a0d449748420900c9673fe6eae3"
+  integrity sha512-HfOwuPZOvarhU7x0Knsrb/UVFbE5ObhGNbVrXMN6Dfr/TCq7QeLe1eZSAoeHxOoiGFmD/kwQSqGjmWCLO1u1KQ==
   dependencies:
     "@cognite/cogs.js" "7.0.3"
     "@cognite/sdk" "^7.13.0"
+    "@mathigon/euclid" "^1.1.6"
     chroma-js "^2.4.2"
     konva "^8.3.14"
     lodash "^4.17.21"
@@ -3507,6 +3508,26 @@
   integrity sha512-f9319YG1A/3ysgUE3bqCHEd7g+3ZZ71MWlwEc42mpnLVYXgfJJgtu1XAyBB4Kz8FmqmnFe9caopDqKeMMMAU6g==
   dependencies:
     "@lezer/common" "^1.0.0"
+
+"@mathigon/core@1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@mathigon/core/-/core-1.1.4.tgz#72d467393578461e5768726d7e5586e08ba3b6ae"
+  integrity sha512-AEyJ5OOqgBTo7qaRjFJMk4slN9acOyjX5z0WfaqoTdQFX74klA0P6IZaBFrVLmu3s9V3PEZU7d3huC5DIWQ8Nw==
+
+"@mathigon/euclid@^1.1.6":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@mathigon/euclid/-/euclid-1.1.6.tgz#a24c19ec09aa8d9ecf2650a48737d76447254785"
+  integrity sha512-pNvxclAml3Qy1i3Q+l6RxYT8nWTVtSqz5Mgh4O/vYFw37rIt0L69DcfInoxG0DJDvxsrYl8c/tVtnCB6LZ4V6w==
+  dependencies:
+    "@mathigon/core" "1.1.4"
+    "@mathigon/fermat" "1.1.4"
+
+"@mathigon/fermat@1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@mathigon/fermat/-/fermat-1.1.4.tgz#91748e3a562451f852c20f082a2e912a4ddeef8b"
+  integrity sha512-njsUMiU2BI40N/8FvACT0DS+Kyf/+tWMEyCoaPX9v8RIAC4FfFvK6lWVzKsJEVxJCanQRhvz9Jm1Pt/zBSa89w==
+  dependencies:
+    "@mathigon/core" "1.1.4"
 
 "@mdx-js/mdx@^1.6.22":
   version "1.6.22"
@@ -16335,7 +16356,7 @@ https-proxy-agent@5.0.0:
     agent-base "6"
     debug "4"
 
-https-proxy-agent@5.0.1, https-proxy-agent@^5.0.0, https-proxy-agent@^5.0.1:
+https-proxy-agent@5.0.1, https-proxy-agent@^5.0.0:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/https-proxy-agent/-/https-proxy-agent-5.0.1.tgz#c59ef224a04fe8b754f3db0063a25ea30d0005d6"
   integrity sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==
