@@ -377,7 +377,7 @@
     "jest-preview": "^0.2.5",
     "jest-styled-components": "^7.1.0",
     "jest-transform-stub": "^2.0.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jss-rtl": "^0.3.0",
     "jwk-to-pem": "^2.0.5",
     "kill-port": "^1.6.1",
