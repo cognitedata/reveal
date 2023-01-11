@@ -34,12 +34,6 @@ export class PointCloudMaterialManager {
     return material;
   }
 
-  /* initializeClippingPlanes() {
-    for (const modelIdentifier of this._modelsMaterialsMap.keys()) {
-      this.initializeClippingPlanesForPointCloud(modelIdentifier);
-    }
-  } */
-
   initializeClippingPlanesForPointCloud(modelIdentifier: symbol): void {
     const material = this.getModelMaterial(modelIdentifier);
 
