@@ -4,8 +4,9 @@ import styled from 'styled-components';
 import { Button, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
 import noop from 'lodash/noop';
 import { SummaryCardWrapper } from '@data-exploration-components/components/Table/elements';
+import { VerticalDivider } from '../Divider';
 
-interface SummaryCardProps {
+interface SummaryHeaderProps {
   icon?: IconType;
   title: string;
   onAllResultsClick?: (
@@ -13,23 +14,22 @@ interface SummaryCardProps {
   ) => void;
   children?: React.ReactElement;
 }
-export function SummaryCard({
+export function SummaryHeader({
   icon,
   title,
   onAllResultsClick = noop,
-  children,
-}: SummaryCardProps) {
+}: SummaryHeaderProps) {
   return (
-    <SummaryCardWrapper>
-      <StyledFlex justifyContent="space-between">
-        <Flex alignItems="center" gap={8}>
-          {icon && (
-            <IconWrapper>
-              <Icon type={icon} />
-            </IconWrapper>
-          )}
-          <Title level={5}>{title}</Title>
-        </Flex>
+    <StyledFlex justifyContent="space-between">
+      <Flex alignItems="center" gap={8}>
+        {icon && (
+          <IconWrapper>
+            <Icon type={icon} />
+          </IconWrapper>
+        )}
+        <Title level={5}>{title}</Title>
+      </Flex>
+      <Flex alignItems="center" gap={10}>
         <Button
           icon="ArrowRight"
           iconPlacement="right"
@@ -38,16 +38,15 @@ export function SummaryCard({
           {' '}
           All results
         </Button>
-      </StyledFlex>
-      {children}
-    </SummaryCardWrapper>
+        <VerticalDivider />
+      </Flex>
+    </StyledFlex>
   );
 }
 
 const StyledFlex = styled(Flex)`
-  border-bottom: 1px solid var(--cogs-border--muted);
   align-items: center;
-  padding: 16px;
+  flex: 1;
 `;
 const IconWrapper = styled.div`
   padding: 12px;

@@ -32,16 +32,7 @@ export type DocumentTableProps = Omit<
   query?: string;
 };
 
-const visibleColumns = [
-  'name',
-  'content',
-  'type',
-  'modifiedTime',
-  'createdTime',
-  'rootAsset',
-];
-
-const RootAssetCell = ({ row }: { row: Row<InternalDocument> }) => {
+export const RootAssetCell = ({ row }: { row: Row<InternalDocument> }) => {
   const assetId = row.original?.assetIds?.length && row.original.assetIds[0];
 
   if (!assetId) {
@@ -50,6 +41,15 @@ const RootAssetCell = ({ row }: { row: Row<InternalDocument> }) => {
 
   return <RootAsset assetId={assetId} maxWidth={300} />;
 };
+
+const visibleColumns = [
+  'name',
+  'content',
+  'type',
+  'modifiedTime',
+  'createdTime',
+  'rootAsset',
+];
 
 export const DocumentsTable = (props: DocumentTableProps) => {
   const { query } = props;

@@ -1,14 +1,24 @@
-import { Timeseries } from '@cognite/sdk';
+import { Timeseries, TimeseriesFilter } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 import { useResourceResults } from '@data-exploration-components/containers';
-import { InternalSequenceFilters } from '@data-exploration-lib/domain-layer';
-import { Table } from '@data-exploration-components/components/Table';
+
+import {
+  ResourceTableColumns,
+  SummaryCardWrapper,
+  Table,
+} from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
 import { convertResourceType } from '@data-exploration-components/types';
 
-import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
-import { SummaryCard } from '@data-exploration-components/components/SummaryCard/SummaryCard';
-import { getSummaryCardItems } from '@data-exploration-components/components/SummaryCard/utils';
+import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
+import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
+import { useGetHiddenColumns } from '@data-exploration-components/hooks';
+import { RootAsset } from '@data-exploration-components/components';
+import {
+  useTimeseriesMetadataKeys,
+  InternalTimeseriesFilters,
+} from '@data-exploration-lib/domain-layer';
 
 export const TimeseriesSummary = ({
   query = '',
@@ -17,7 +27,7 @@ export const TimeseriesSummary = ({
   onRowClick,
 }: {
   query?: string;
-  filter: InternalSequenceFilters;
+  filter: InternalTimeseriesFilters;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
@@ -30,32 +40,62 @@ export const TimeseriesSummary = ({
     query,
     filter
   );
-  const columns = useMemo(
-    () =>
-      [
-        Table.Columns.name(query),
-        Table.Columns.description(query),
-      ] as ColumnDef<Timeseries>[],
-    [query]
-  );
+
+  const { data: metadataKeys } = useTimeseriesMetadataKeys();
+
+  const metadataColumns: ColumnDef<Timeseries>[] = useMemo(() => {
+    return (metadataKeys || []).map((key: string) =>
+      ResourceTableColumns.metadata(key)
+    );
+  }, [metadataKeys]);
+
+  const columns = useMemo(() => {
+    return [
+      Table.Columns.name(query),
+      Table.Columns.description(query),
+      Table.Columns.unit,
+      Table.Columns.lastUpdatedTime,
+      {
+        header: 'Last reading',
+        accessorKey: 'lastReading',
+        cell: ({ row }) => {
+          return <TimeseriesLastReading timeseriesId={row.original.id} />;
+        },
+      },
+      Table.Columns.created,
+      Table.Columns.id(query),
+      Table.Columns.isString,
+      Table.Columns.isStep,
+      Table.Columns.dataSet,
+      {
+        ...Table.Columns.rootAsset,
+        accessorKey: 'assetId',
+        cell: ({ getValue }) => <RootAsset assetId={getValue<number>()} />,
+      },
+      ...metadataColumns,
+    ] as ColumnDef<Timeseries>[];
+  }, [query, metadataColumns]);
+  const hiddenColumns = useGetHiddenColumns(columns, ['name', 'description']);
 
   return (
-    <SummaryCard
-      icon="Timeseries"
-      title="Time series"
-      onAllResultsClick={onAllResultsClick}
-    >
-      {isLoading ? (
-        <EmptyState isLoading={isLoading} title="Loading results" />
-      ) : (
-        <Table
-          onRowClick={onRowClick}
-          data={getSummaryCardItems(items)}
-          id="timseries-summary-table"
-          columns={columns}
-          enableColumnResizing={false}
-        />
-      )}
-    </SummaryCard>
+    <SummaryCardWrapper>
+      <Table
+        id="timeseries-summary-table"
+        columns={columns}
+        hiddenColumns={hiddenColumns}
+        columnSelectionLimit={2}
+        data={getSummaryCardItems(items)}
+        isDataLoading={isLoading}
+        tableHeaders={
+          <SummaryHeader
+            icon="Timeseries"
+            title="Time series"
+            onAllResultsClick={onAllResultsClick}
+          />
+        }
+        enableColumnResizing={false}
+        onRowClick={onRowClick}
+      />
+    </SummaryCardWrapper>
   );
 };

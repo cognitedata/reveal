@@ -69,6 +69,7 @@ export interface TableProps<T extends Record<string, any>>
   scrollIntoViewRow?: string | number; //Scroll into center row when the selectedRows changes
   onSort?: OnChangeFn<SortingState>;
   sorting?: SortingState;
+  columnSelectionLimit?: number;
   onRowClick?: (
     row: T,
     evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -87,6 +88,7 @@ export function Table<T extends TableData>({
   data,
   columns,
   onRowClick = noop,
+  columnSelectionLimit,
   onSort,
   enableSorting = false,
   manualSorting = true,
@@ -264,6 +266,12 @@ export function Table<T extends TableData>({
     if (!data || data.length === 0) {
       return <EmptyState body="Please, refine your filters" />;
     }
+    if (
+      Object.values(columnVisibility).filter((col) => !col).length ===
+      columns.length
+    ) {
+      return <EmptyState body="Please, select your columns" />;
+    }
 
     return (
       <ContainerInside>
@@ -376,6 +384,7 @@ export function Table<T extends TableData>({
           {!hideColumnToggle && (
             <StyledFlex>
               <ColumnToggle<T>
+                columnSelectionLimit={columnSelectionLimit}
                 onColumnOrderChanged={setColumnOrder}
                 allColumns={getAllLeafColumns}
                 toggleAllColumnsVisible={handleToggleAllVisibility}

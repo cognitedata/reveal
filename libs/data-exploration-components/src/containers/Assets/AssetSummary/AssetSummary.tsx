@@ -1,16 +1,30 @@
 import { Asset } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { InternalSequenceFilters } from '@data-exploration-lib/domain-layer';
-import { Table } from '@data-exploration-components/components/Table';
+import {
+  InternalSequenceFilters,
+  useAssetsMetadataKeys,
+  useAssetsSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
+import {
+  ResourceTableColumns,
+  SummaryCardWrapper,
+  Table,
+} from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
 
-import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
-import { SummaryCard } from '@data-exploration-components/components/SummaryCard/SummaryCard';
+import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 
-import { useAssetsSearchResultQuery } from '@data-exploration-lib/domain-layer';
-import { getSummaryCardItems } from '@data-exploration-components/components/SummaryCard/utils';
-import { noop } from 'lodash';
+import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import noop from 'lodash/noop';
+
+import {
+  AssetTable,
+  AssetWithRelationshipLabels,
+} from '../AssetTable/AssetTable';
+import { RootAsset } from '@data-exploration-components/components';
+import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
+import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 
 export const AssetSummary = ({
   query = '',
@@ -29,32 +43,74 @@ export const AssetSummary = ({
     query,
     assetFilter: filter,
   });
+  const { data: metadataKeys } = useAssetsMetadataKeys();
+
+  const metadataColumns: ColumnDef<AssetWithRelationshipLabels>[] =
+    useMemo(() => {
+      return (metadataKeys || []).map((key: string) =>
+        ResourceTableColumns.metadata(key)
+      );
+    }, [metadataKeys]);
+
   const columns = useMemo(
     () =>
       [
         Table.Columns.name(query),
         Table.Columns.description(query),
-      ] as ColumnDef<Asset>[],
-    [query]
+        Table.Columns.externalId(query),
+        {
+          ...Table.Columns.rootAsset,
+          cell: ({ getValue }) => (
+            <RootAsset
+              externalLink={false}
+              assetId={getValue<number>()}
+              onClick={onRowClick}
+            />
+          ),
+          enableSorting: false,
+        },
+        {
+          accessorKey: 'id',
+          header: '3D availability',
+          cell: ({ getValue }) => (
+            <ThreeDModelCell assetId={getValue<number>()} />
+          ),
+          size: 300,
+          enableSorting: false,
+        },
+        Table.Columns.created,
+        {
+          ...Table.Columns.labels,
+          enableSorting: false,
+        },
+        ...metadataColumns,
+      ] as ColumnDef<AssetWithRelationshipLabels>[],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [metadataColumns, query]
   );
 
+  const hiddenColumns = useGetHiddenColumns(columns, ['name', 'description']);
+
   return (
-    <SummaryCard
-      icon="Assets"
-      title="Assets"
-      onAllResultsClick={onAllResultsClick}
-    >
-      {isLoading ? (
-        <EmptyState isLoading={isLoading} title="Loading results" />
-      ) : (
-        <Table
-          data={getSummaryCardItems(data)}
-          id="assets-summary-table"
-          columns={columns}
-          enableColumnResizing={false}
-          onRowClick={onRowClick}
-        />
-      )}
-    </SummaryCard>
+    <SummaryCardWrapper>
+      <Table
+        id="asset-summary-table"
+        columns={columns}
+        query={query}
+        hiddenColumns={hiddenColumns}
+        data={getSummaryCardItems(data)}
+        columnSelectionLimit={2}
+        isDataLoading={isLoading}
+        tableHeaders={
+          <SummaryHeader
+            icon="Assets"
+            title="Assets"
+            onAllResultsClick={onAllResultsClick}
+          />
+        }
+        enableColumnResizing={false}
+        onRowClick={onRowClick}
+      />
+    </SummaryCardWrapper>
   );
 };

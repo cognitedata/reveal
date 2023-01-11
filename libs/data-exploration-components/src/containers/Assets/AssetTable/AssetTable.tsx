@@ -13,13 +13,13 @@ import { ResourceTableColumns } from '../../../components';
 import { useAssetsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import { ThreeDModelCell } from './ThreeDModelCell';
 import { RootAsset } from '@data-exploration-components/components/RootAsset';
+import noop from 'lodash/noop';
 
 export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
 
 const visibleColumns = ['name', 'rootId'];
-
 export const AssetTable = ({
-  onRowClick = () => {},
+  onRowClick = noop,
   data,
   query,
   ...rest

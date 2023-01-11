@@ -27,7 +27,7 @@ import { HighlightCell } from './HighlightCell';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { MetadataHeaderText } from './elements';
-import { MAX_COLUMN_SELECTION } from './constants';
+import { MAX_COLUMN_SELECTION } from '@cognite/data-exploration';
 
 export interface ColumnToggleProps<T extends TableData = any> {
   allColumns: () => Column<T, unknown>[];
@@ -35,6 +35,7 @@ export interface ColumnToggleProps<T extends TableData = any> {
   onColumnOrderChanged: (updater: Updater<ColumnOrderState>) => void;
   tableId: string;
   onResetSelectedColumns: () => void;
+  columnSelectionLimit?: number;
 }
 
 const style = {
@@ -59,6 +60,7 @@ export function ColumnToggle<T extends TableData = any>({
   allColumns,
   onColumnOrderChanged,
   onResetSelectedColumns,
+  columnSelectionLimit = MAX_COLUMN_SELECTION,
 }: ColumnToggleProps<T>) {
   const [searchInput, setSearchInput] = useState('');
   const [tab, setTab] = useState('All');
@@ -84,6 +86,7 @@ export function ColumnToggle<T extends TableData = any>({
   const selectedColumns = filteredColumns.filter((column) =>
     column.getIsVisible()
   );
+
   const selectedTabColumns = useMemo(() => {
     return tab === 'All' ? filteredColumns : selectedColumns;
   }, [tab, filteredColumns, selectedColumns]);
@@ -96,10 +99,10 @@ export function ColumnToggle<T extends TableData = any>({
     return item.getIsVisible() ? accumulator + 1 : accumulator;
   }, 0);
   const isSelectedCountLimitExceedingMaxValue =
-    selectedColumnsCount >= MAX_COLUMN_SELECTION;
+    selectedColumnsCount >= columnSelectionLimit;
 
   const handleColumnChange = (column: Column<T>) => (nextState: boolean) => {
-    if (nextState === true && selectedColumnsCount >= MAX_COLUMN_SELECTION) {
+    if (nextState === true && selectedColumnsCount >= columnSelectionLimit) {
       return;
     }
 
@@ -109,6 +112,7 @@ export function ColumnToggle<T extends TableData = any>({
       isSelected: !column.getIsVisible(),
     });
   };
+  const isSelectedItemsEmpty = tab === 'Selected' && selectedColumnsCount === 0;
 
   const shouldDisableUnselectedColumnOnMaxLimit = (column: Column<T>) =>
     isSelectedCountLimitExceedingMaxValue && !column.getIsVisible();
@@ -188,7 +192,7 @@ export function ColumnToggle<T extends TableData = any>({
               )}
             </MenuItemsWrapper>
 
-            {isSearchResultEmpty && (
+            {(isSelectedItemsEmpty || isSearchResultEmpty) && (
               <EmptyStateContainer alignItems="center" justifyContent="center">
                 <EmptyText>No options</EmptyText>
               </EmptyStateContainer>
@@ -197,8 +201,10 @@ export function ColumnToggle<T extends TableData = any>({
             {!isSearchResultEmpty && isSelectedCountLimitExceedingMaxValue && (
               <Footer>
                 <WarningInfobar>
-                  Due to performance reasons, the max amount of columns that can
-                  be selected is 20.{' '}
+                  Due to{' '}
+                  {columnSelectionLimit === 2 ? 'usability' : 'performance'}{' '}
+                  reasons, the max amount of columns that can be selected is{' '}
+                  {columnSelectionLimit}.{' '}
                   <StyledResetSpan onClick={onResetSelectedColumns}>
                     Reset to default
                   </StyledResetSpan>

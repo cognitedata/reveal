@@ -12,7 +12,6 @@ import { ResourceTableColumns } from '../../../components';
 import { useSequencesMetadataKeys } from '@data-exploration-lib/domain-layer';
 
 export type SequenceWithRelationshipLabels = Sequence & RelationshipLabels;
-
 const visibleColumns = [
   'name',
   'externalId',
@@ -22,6 +21,7 @@ const visibleColumns = [
 ];
 export const SequenceTable = ({
   query,
+
   ...rest
 }: Omit<TableProps<SequenceWithRelationshipLabels | Sequence>, 'columns'> &
   RelationshipLabels) => {

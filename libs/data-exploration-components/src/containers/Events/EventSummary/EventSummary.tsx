@@ -1,15 +1,22 @@
-import { CogniteEvent } from '@cognite/sdk';
+import { CogniteEvent, EventFilter } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { InternalSequenceFilters } from '@data-exploration-lib/domain-layer';
-import { Table } from '@data-exploration-components/components/Table';
+import {
+  ResourceTableColumns,
+  SummaryCardWrapper,
+  Table,
+} from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
 
-import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
-import { SummaryCard } from '@data-exploration-components/components/SummaryCard/SummaryCard';
-import { useEventsSearchResultQuery } from '@data-exploration-lib/domain-layer';
-import { getSummaryCardItems } from '@data-exploration-components/components/SummaryCard/utils';
-import { noop } from 'lodash';
+import {
+  useEventsMetadataKeys,
+  useEventsSearchResultQuery,
+  InternalEventsFilters,
+} from '@data-exploration-lib/domain-layer';
+import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import noop from 'lodash/noop';
+import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
+import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 
 export const EventSummary = ({
   query = '',
@@ -18,7 +25,7 @@ export const EventSummary = ({
   onRowClick = noop,
 }: {
   query?: string;
-  filter: InternalSequenceFilters;
+  filter: InternalEventsFilters;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
@@ -28,33 +35,56 @@ export const EventSummary = ({
     query,
     eventsFilters: filter,
   });
+  const { data: metadataKeys } = useEventsMetadataKeys();
+
+  const metadataColumns: ColumnDef<CogniteEvent>[] = useMemo(() => {
+    return (metadataKeys || []).map((key: string) =>
+      ResourceTableColumns.metadata(key)
+    );
+  }, [metadataKeys]);
 
   const columns = useMemo(
     () =>
       [
-        Table.Columns.type(query),
+        Table.Columns.type(),
+        Table.Columns.subtype,
         Table.Columns.description(query),
+        Table.Columns.externalId(query),
+        Table.Columns.lastUpdatedTime,
+        Table.Columns.created,
+        Table.Columns.id(query),
+        Table.Columns.dataSet,
+        Table.Columns.startTime,
+        Table.Columns.endTime,
+        Table.Columns.source,
+        Table.Columns.assets,
+        ...metadataColumns,
       ] as ColumnDef<CogniteEvent>[],
-    [query]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [query, metadataColumns]
   );
 
+  const hiddenColumns = useGetHiddenColumns(columns, ['type', 'description']);
+
   return (
-    <SummaryCard
-      icon="Events"
-      title="Events"
-      onAllResultsClick={onAllResultsClick}
-    >
-      {isLoading ? (
-        <EmptyState isLoading={isLoading} title="Loading results" />
-      ) : (
-        <Table
-          onRowClick={onRowClick}
-          data={getSummaryCardItems(data)}
-          id="events-summary-table"
-          columns={columns}
-          enableColumnResizing={false}
-        />
-      )}
-    </SummaryCard>
+    <SummaryCardWrapper>
+      <Table
+        columns={columns}
+        hiddenColumns={hiddenColumns}
+        data={getSummaryCardItems(data)}
+        columnSelectionLimit={2}
+        id="events-summary-table"
+        isDataLoading={isLoading}
+        tableHeaders={
+          <SummaryHeader
+            icon="Events"
+            title="Events"
+            onAllResultsClick={onAllResultsClick}
+          />
+        }
+        enableColumnResizing={false}
+        onRowClick={onRowClick}
+      />
+    </SummaryCardWrapper>
   );
 };

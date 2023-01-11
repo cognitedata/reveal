@@ -12,17 +12,19 @@ import { FileNamePreview } from './FileNamePreview';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 
-const visibleColumns = ['name', 'mimeType', 'uploadedTime'];
 export type FileTableProps = Omit<
   TableProps<FileWithRelationshipLabels>,
   'columns'
 > &
   RelationshipLabels & {
     query?: string;
+    visibleColumns?: string[];
   };
+
+const defaultVisibleColumns = ['name', 'mimeType', 'uploadedTime'];
 export type FileWithRelationshipLabels = RelationshipLabels & FileInfo;
 export const FileTable = (props: FileTableProps) => {
-  const { query } = props;
+  const { query, visibleColumns = defaultVisibleColumns } = props;
   const { data: metadataKeys } = useDocumentsMetadataKeys();
 
   const [sorting, setSorting] = React.useState<SortingState>([]);

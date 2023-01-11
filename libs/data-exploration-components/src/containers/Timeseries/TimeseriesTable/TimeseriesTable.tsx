@@ -27,12 +27,11 @@ export interface TimeseriesTableProps
     DateRangeProps {
   hideEmptyData?: boolean;
 }
-
 const visibleColumns = ['name', 'description', 'data', 'lastUpdatedTime'];
-
 export const TimeseriesTable = ({
   dateRange: dateRangeProp,
   hideEmptyData = false,
+
   query,
   ...props
 }: TimeseriesTableProps) => {
