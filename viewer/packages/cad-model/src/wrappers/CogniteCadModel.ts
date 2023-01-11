@@ -336,9 +336,10 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
-   * Sets the clipping planes for this model only
+   * Sets the clipping planes for this model. They will be combined with the
+   * global clipping planes.
    */
-  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  setModelClippingPlanes(clippingPlanes: THREE.Plane[]): void {
     this.cadNode.clippingPlanes = clippingPlanes;
   }
 
