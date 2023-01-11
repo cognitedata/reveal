@@ -24,9 +24,9 @@ Clipping planes can both be applied to all models (global clipping planes) or to
 
 ### Single, fixed clipping plane
 
-Clipping planes are defined by providing zero or more [`THREE.Plane`](https://threejs.org/docs/#api/en/math/Plane)
-to `Cognite3DViewer.setClippingPlanes`. The clipping planes are activated for all models and
-replaces any active clipping planes.
+Global clipping planes are defined by providing zero or more [`THREE.Plane`](https://threejs.org/docs/#api/en/math/Plane)
+to `Cognite3DViewer.setGlobalClippingPlanes`. The clipping planes are activated for all models and
+replaces any active global clipping planes.
 
 Typically, [setFromNormalAndCoplanarPoint](https://threejs.org/docs/#api/en/math/Plane.setFromNormalAndCoplanarPoint)
 is used to create clipping planes. This function accepts a direction that defines the orientation of
@@ -71,7 +71,7 @@ setInterval(() => {
 
 :::note
 Updating `THREE.Plane`-instances will not trigger data loading. To manually trigger data loading after doing
-substantial changes to the clipping planes, use `Cognite3DViewer.setClippingPlanes`. Note that the example
+substantial changes to the clipping planes, use `Cognite3DViewer.setGlobalClippingPlanes`. Note that the example
 above performs substantial changes to the planes without loading data. In a real application it's recommended
 to not load data during animation, but initiate data after an animation is completed.
 :::
@@ -128,6 +128,23 @@ controls.addEventListener('hoveroff', () => {
   draggerMaterial.color.set('white');
   viewer.requestRedraw();
 });
+```
+
+### Clipping plane for individual models
+
+Clipping planes can also be applied to individual models. To do so, the user may call `setModelClippingPlanes` on the model object. Model clipping planes can be combined with global clipping planes:
+
+```js runnable
+const orientation1 = new THREE.Vector3(0, 1, 0);
+const point1 = new THREE.Vector3(0, 55, 0);
+const plane1 = new THREE.Plane().setFromNormalAndCoplanarPoint(orientation1, point1);
+
+const orientation2 = new THREE.Vector3(0, -1, 0);
+const point2 = new THREE.Vector3(0, 65, 0);
+const plane2 = new THREE.Plane().setFromNormalAndCoplanarPoint(orientation2, point2);
+
+viewer.setGlobalClippingPlanes([plane1])
+model.setModelClippingPlanes([plane2]);
 ```
 
 ### CAD geometry filter
