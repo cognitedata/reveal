@@ -58,7 +58,8 @@ export {
   SceneRenderedDelegate,
   PointerEventDelegate,
   PointerEventData,
-  DisposedDelegate
+  DisposedDelegate,
+  CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 
 export { PointCloudObjectMetadata } from '../packages/data-providers';

@@ -4,7 +4,8 @@
 
 import { Matrix4 } from 'three';
 
-import { cadFromCdfToThreeMatrix } from '@reveal/data-providers';
+// The below is equal to new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
+export const cadFromCdfToThreeMatrix = new Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
 
 /**
  * The transformation matrix from CDF coordinates to ThreeJS/Reveal.
