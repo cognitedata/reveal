@@ -136,7 +136,6 @@ export class Cognite3DViewer {
   private readonly _mouseHandler: InputHandler;
 
   private readonly _models: CogniteModel[] = [];
-  private readonly _extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
 
@@ -873,7 +872,6 @@ export class Cognite3DViewer {
       return;
     }
     object.updateMatrixWorld(true);
-    this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
     this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
@@ -894,10 +892,6 @@ export class Cognite3DViewer {
       return;
     }
     this._sceneHandler.removeCustomObject(object);
-    const index = this._extraObjects.indexOf(object);
-    if (index >= 0) {
-      this._extraObjects.splice(index, 1);
-    }
     this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
   }
@@ -1448,7 +1442,7 @@ export class Cognite3DViewer {
       }
     });
 
-    this._extraObjects.forEach(obj => {
+    this._sceneHandler.customObjects.forEach(obj => {
       bbox.setFromObject(obj);
       if (!bbox.isEmpty()) {
         combinedBbox.union(bbox);
