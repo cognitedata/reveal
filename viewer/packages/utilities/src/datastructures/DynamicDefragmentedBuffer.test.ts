@@ -213,6 +213,32 @@ describe('DynamicDefragmentedBuffer', () => {
     expect(addResultTwo.updateRange.byteCount).toBe(15);
   });
 
+  test('forcing resize / reallocation should properly scale the defragmented buffer', () => {
+    const buffer = new DynamicDefragmentedBuffer(8, Uint8Array);
+
+    const mockData = new Uint8Array([0, 1, 2, 3]);
+
+    buffer.add(mockData);
+
+    buffer.forceReallocation();
+
+    expect(buffer.bufferView.length).toBe(16);
+
+    expect(buffer.bufferView[0]).toBe(mockData[0]);
+    expect(buffer.bufferView[1]).toBe(mockData[1]);
+    expect(buffer.bufferView[2]).toBe(mockData[2]);
+    expect(buffer.bufferView[3]).toBe(mockData[3]);
+
+    buffer.forceReallocation(3);
+
+    expect(buffer.bufferView.length).toBe(48);
+
+    expect(buffer.bufferView[0]).toBe(mockData[0]);
+    expect(buffer.bufferView[1]).toBe(mockData[1]);
+    expect(buffer.bufferView[2]).toBe(mockData[2]);
+    expect(buffer.bufferView[3]).toBe(mockData[3]);
+  });
+
   test('deleting two middle batches should correctly defragment the buffer', () => {
     const result = new DynamicDefragmentedBuffer(8, Float32Array);
     const addsOne = new Float32Array([0, 1]);

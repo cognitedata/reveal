@@ -3,12 +3,12 @@
  */
 
 import {
-  StreamingTestFixtureComponents,
-  StreamingVisualTestFixture
-} from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+  ViewerTestFixtureComponents,
+  ViewerVisualTestFixture
+} from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
-export default class BatchingVisualTest extends StreamingVisualTestFixture {
-  public setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
+export default class BatchingVisualTest extends ViewerVisualTestFixture {
+  public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
     return Promise.resolve();
   }
 }

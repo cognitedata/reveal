@@ -9,8 +9,8 @@ import { ParsedGeometry } from '@reveal/sector-parser';
 import { CadMaterialManager, NodeTransformProvider, RenderMode } from '@reveal/rendering';
 
 import { Group, Object3D, Plane, Matrix4 } from 'three';
-import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
 import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
+import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
 
 export class CadNode extends Object3D {
   private readonly _cadModelMetadata: CadModelMetadata;
@@ -41,7 +41,7 @@ export class CadNode extends Object3D {
 
     const materials = materialManager.getModelMaterials(model.modelIdentifier);
     // this._geometryBatchingManager = new GeometryBatchingManager(batchedGeometryMeshGroup, materials);
-    this._geometryBatchingManager = new MultiBufferBatchingManager();
+    this._geometryBatchingManager = new MultiBufferBatchingManager(batchedGeometryMeshGroup, materials);
     this._rootSector = new RootSectorNode(model);
 
     this._rootSector.add(batchedGeometryMeshGroup);
