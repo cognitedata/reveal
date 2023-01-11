@@ -965,7 +965,7 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Returns the current active global clipping planes
+   * Returns the current active global clipping planes.
    */
   getGlobalClippingPlanes(): THREE.Plane[] {
     return this.revealManager.clippingPlanes.map(p => p.clone());

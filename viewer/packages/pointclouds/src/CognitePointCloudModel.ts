@@ -227,7 +227,6 @@ export class CognitePointCloudModel {
     this.pointCloudNode.pointShape = shape;
   }
 
-
   /**
    * Sets the clipping planes for this model. They will be combined with the
    * global clipping planes.

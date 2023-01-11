@@ -59,24 +59,23 @@ export class PointCloudOctree extends PointCloudTree {
     this.material.heightMax = this.pcoGeometry.tightBoundingBox.max.clone().applyMatrix4(this.matrixWorld).y;
   }
 
-  public setGlobalClippingPlane(planes: Plane[]) {
+  public setGlobalClippingPlane(planes: Plane[]): void {
     this._globalClippingPlanes = planes.map(p => p.clone());
     this.updateClippingPlanes();
   }
 
-  public setModelClippingPlane(planes: Plane[]) {
+  public setModelClippingPlane(planes: Plane[]): void {
     this._localClippingPlanes = planes.map(p => p.clone());
     this.updateClippingPlanes();
   }
 
-  public updateClippingPlanes() {
-    this.material.clippingPlanes = [...this._globalClippingPlanes,
-                                    ...this._localClippingPlanes];
+  public updateClippingPlanes(): void {
+    this.material.clippingPlanes = [...this._globalClippingPlanes, ...this._localClippingPlanes];
 
     this.material.defines = {
       ...this.material.defines,
       NUM_CLIPPING_PLANES: this.material.clippingPlanes.length
-    }
+    };
     this.material.needsUpdate = true;
   }
 

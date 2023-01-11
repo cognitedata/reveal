@@ -81,8 +81,7 @@ export class CadNode extends Object3D {
   }
 
   set clippingPlanes(planes: Plane[]) {
-    this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier,
-                                                 planes);
+    this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier, planes);
   }
 
   get cadModelMetadata(): CadModelMetadata {
