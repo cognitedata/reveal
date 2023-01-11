@@ -823,7 +823,7 @@ __metadata:
     jest: 29.3.1
     jest-canvas-mock: 2.4.0
     jest-environment-jsdom: 29.3.1
-    jest-extended: 3.2.1
+    jest-extended: 3.2.2
     jest-image-snapshot: 6.1.0
     jest-puppeteer: 6.2.0
     jsdom: 20.0.3
@@ -833,7 +833,7 @@ __metadata:
     moq.ts: 10.0.2
     nock: 13.2.9
     path-browserify: 1.0.1
-    prettier: 2.8.1
+    prettier: 2.8.2
     process: 0.11.10
     proj4: 2.8.0
     puppeteer: 19.4.1
@@ -8154,9 +8154,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-extended@npm:3.2.1":
-  version: 3.2.1
-  resolution: "jest-extended@npm:3.2.1"
+"jest-extended@npm:3.2.2":
+  version: 3.2.2
+  resolution: "jest-extended@npm:3.2.2"
   dependencies:
     jest-diff: ^29.0.0
     jest-get-type: ^29.0.0
@@ -8165,7 +8165,7 @@ __metadata:
   peerDependenciesMeta:
     jest:
       optional: true
-  checksum: fbcbeace957b5789c4998bdf460d997fd2266b98ca6b23f8af560f7e46357f76fc50acfa56e410191f7755b1c83995623554105620e24517673d21ca7de2f67b
+  checksum: 7fea5f742747a3d37b9c055f21efb7990f818fec15a7f2ef4e60fe8d98a36e878a98d0fd660c5afd9570b469d90a1a8a14f45f8c003d07201322bcbcf7db1579
   languageName: node
   linkType: hard
 
@@ -10385,12 +10385,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.8.1":
-  version: 2.8.1
-  resolution: "prettier@npm:2.8.1"
+"prettier@npm:2.8.2":
+  version: 2.8.2
+  resolution: "prettier@npm:2.8.2"
   bin:
     prettier: bin-prettier.js
-  checksum: 4f21a0f1269f76fb36f54e9a8a1ea4c11e27478958bf860661fb4b6d7ac69aac1581f8724fa98ea3585e56d42a2ea317a17ff6e3324f40cb11ff9e20b73785cc
+  checksum: 740c56c2128d587d656ea1dde9bc9c3503dfc94db4f3ac387259215eeb2e216680bdad9d18a0c9feecc6b42cfa188d6fa777df4c36c1d00cedd4199074fbfbd2
   languageName: node
   linkType: hard
 

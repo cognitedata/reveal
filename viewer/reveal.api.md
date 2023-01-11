@@ -238,7 +238,7 @@ export interface CameraManager {
 }
 
 // @public
-export type CameraManagerEventType = typeof CAMERA_MANAGER_EVENT_TYPE_LIST[number];
+export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[number];
 
 // @public
 export class CameraManagerHelper {

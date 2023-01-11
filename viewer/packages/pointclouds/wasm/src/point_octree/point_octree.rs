@@ -42,19 +42,19 @@ mod tests {
 
     use wasm_bindgen_test::wasm_bindgen_test;
 
-    fn create_random_points_in_unit_box(num_points: u32) -> Vec<Vec3WithIndex> {
+    fn create_random_points_in_base_box(num_points: u32) -> Vec<Vec3WithIndex> {
         let mut rng = ChaCha8Rng::seed_from_u64(0xbaadf00d);
 
         let mut points = Vec::<Vec3WithIndex>::with_capacity(num_points as usize);
 
-        let unit_box = BoundingBox::get_unit_bounding_box();
+        let base_box = BoundingBox::get_base_cube_bounding_box();
 
         for i in 0..num_points {
             points.push(Vec3WithIndex {
                 vec: vec3(
-                    rng.gen_range(unit_box.min.x..unit_box.max.x),
-                    rng.gen_range(unit_box.min.y..unit_box.max.y),
-                    rng.gen_range(unit_box.min.z..unit_box.max.z),
+                    rng.gen_range(base_box.min.x..base_box.max.x),
+                    rng.gen_range(base_box.min.y..base_box.max.y),
+                    rng.gen_range(base_box.min.z..base_box.max.z),
                 ),
                 index: i as usize,
             });
@@ -68,11 +68,11 @@ mod tests {
         const NUM_POINTS: u32 = 1_000;
         const OBJECT_ID: u16 = 42;
 
-        let mut points = create_random_points_in_unit_box(NUM_POINTS);
+        let mut points = create_random_points_in_base_box(NUM_POINTS);
 
         let shape: Box<dyn Shape> =
             Box::<OrientedBox>::new(OrientedBox::new(DMat4::identity(), OBJECT_ID));
-        let bounding_box = BoundingBox::get_transformed_unit_cube(&DMat4::identity());
+        let bounding_box = BoundingBox::get_transformed_base_cube(&DMat4::identity());
         let array = Uint16Array::new_with_length(NUM_POINTS);
 
         let octree = PointOctree::new(bounding_box.clone(), &mut points);
@@ -89,10 +89,10 @@ mod tests {
         const NUM_POINTS: u32 = 1_000;
         const OBJECT_ID: u16 = 42;
 
-        let mut points = create_random_points_in_unit_box(NUM_POINTS);
+        let mut points = create_random_points_in_base_box(NUM_POINTS);
 
-        let box_matrix = translate(&DMat4::identity(), &vec3(1.0, 0.0, 0.0));
-        let bounding_box = BoundingBox::get_transformed_unit_cube(&box_matrix);
+        let box_matrix = translate(&DMat4::identity(), &vec3(2.0, 0.0, 0.0));
+        let bounding_box = BoundingBox::get_transformed_base_cube(&box_matrix);
         let shape: Box<dyn Shape> =
             Box::<OrientedBox>::new(OrientedBox::new(box_matrix, OBJECT_ID));
         let array = Uint16Array::new_with_length(NUM_POINTS);
