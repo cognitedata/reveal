@@ -9,7 +9,6 @@ import { IPotree } from '../types/IPotree';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
-import { combineClippingPlanes } from '@reveal/utilities';
 
 import { RenderLayer, PointCloudMaterial, PointSizeType, DEFAULT_MIN_NODE_PIXEL_SIZE } from '@reveal/rendering';
 import { makeOnBeforeRender } from '../utils/utils';
@@ -71,13 +70,12 @@ export class PointCloudOctree extends PointCloudTree {
   }
 
   public updateClippingPlanes() {
-    const combinedClippingPlanes = combineClippingPlanes(this._globalClippingPlanes,
-                                                         this._localClippingPlanes);
-    this.material.clippingPlanes = combinedClippingPlanes;
+    this.material.clippingPlanes = [...this._globalClippingPlanes,
+                                    ...this._localClippingPlanes];
 
     this.material.defines = {
       ...this.material.defines,
-      NUM_CLIPPING_PLANES: combinedClippingPlanes.length
+      NUM_CLIPPING_PLANES: this.material.clippingPlanes.length
     }
     this.material.needsUpdate = true;
   }
