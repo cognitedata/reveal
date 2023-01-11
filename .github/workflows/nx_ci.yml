@@ -66,11 +66,12 @@ jobs:
           restore-keys: |
             cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-
             cache-nx-${{ hashFiles('yarn.lock') }}-
-      - run: git fetch --no-tags --prune --depth=1 origin master
+      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
+
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
         with:
-          main-branch-name: 'master'
+          main-branch-name:  ${{ github.base_ref }}
 
       - name: nx run-many:${{ matrix.target }}
         id: build
