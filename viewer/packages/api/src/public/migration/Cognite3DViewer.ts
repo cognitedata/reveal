@@ -928,32 +928,40 @@ export class Cognite3DViewer {
    * ```js
    * // Hide pixels with values less than 0 in the x direction
    * const plane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values greater than 20 in the x direction
    *  const plane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 20);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values less than 0 in the x direction or greater than 0 in the y direction
    * const xPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
    * const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-   * viewer.setClippingPlanes([xPlane, yPlane]);
+   * viewer.setGlobalClippingPlanes([xPlane, yPlane]);
    * ```
    * ```js
    * // Hide pixels behind an arbitrary, non axis-aligned plane
    *  const plane = new THREE.Plane(new THREE.Vector3(1.5, 20, -19), 20);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Disable clipping planes
-   *  viewer.setClippingPlanes([]);
+   *  viewer.setGlobalClippingPlanes([]);
    * ```
    */
-  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  setGlobalClippingPlanes(clippingPlanes: THREE.Plane[]): void {
     this.revealManager.clippingPlanes = clippingPlanes;
     this._clippingNeedsUpdate = true;
+  }
+
+  /**
+   * Sets per-pixel clipping planes. Pixels behind any of the planes will be sliced away.
+   * @deprecated Use {@link Cognite3DViewer.setGlobalClippingPlanes} instead.
+   */
+  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    this.setGlobalClippingPlanes(clippingPlanes);
   }
 
   /**
@@ -961,7 +969,7 @@ export class Cognite3DViewer {
    * @deprecated Use {@link Cognite3DViewer.getGlobalClippingPlanes} instead.
    */
   getClippingPlanes(): THREE.Plane[] {
-    return this.revealManager.clippingPlanes.map(p => p.clone());
+    return this.getGlobalClippingPlanes();
   }
 
   /**
