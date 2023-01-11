@@ -112,6 +112,7 @@ export const TimeseriesTable = ({
         enableHiding: false,
       },
       Table.Columns.description(query),
+      Table.Columns.externalId(query),
       {
         ...Table.Columns.unit,
         enableSorting: false,
