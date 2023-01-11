@@ -1,4 +1,4 @@
-use nalgebra_glm::{vec3, DMat4};
+use nalgebra_glm::{scaling, vec3, DMat4};
 use std::vec::Vec;
 
 use crate::linalg::BoundingBox;
@@ -64,11 +64,11 @@ pub fn parse_points(
     point_vec
 }
 
-const RADIUS_SCALE_FACTOR: f64 = 1.15;
+const SHAPE_SCALE_FACTOR: f64 = 1.15;
 const MAX_RADIUS_INCREASE_METER: f64 = 0.06;
 
 fn create_cylinder(input: InputCylinder, id: u16) -> Box<shapes::Cylinder> {
-    let radius = (input.radius * RADIUS_SCALE_FACTOR).min(input.radius + MAX_RADIUS_INCREASE_METER);
+    let radius = (input.radius * SHAPE_SCALE_FACTOR).min(input.radius + MAX_RADIUS_INCREASE_METER);
     Box::new(shapes::Cylinder::new(
         vec3(input.center_a[0], input.center_a[1], input.center_a[2]),
         vec3(input.center_b[0], input.center_b[1], input.center_b[2]),
@@ -78,10 +78,13 @@ fn create_cylinder(input: InputCylinder, id: u16) -> Box<shapes::Cylinder> {
 }
 
 fn create_box(input: InputOrientedBox, id: u16) -> Box<shapes::OrientedBox> {
-    Box::new(shapes::OrientedBox::new(
-        DMat4::from_column_slice(&input.inv_instance_matrix),
-        id,
-    ))
+    let matrix = DMat4::from_column_slice(&input.inv_instance_matrix);
+    let scaled_matrix = scaling(&vec3(
+        1.0 / SHAPE_SCALE_FACTOR,
+        1.0 / SHAPE_SCALE_FACTOR,
+        1.0 / SHAPE_SCALE_FACTOR,
+    )) * matrix;
+    Box::new(shapes::OrientedBox::new(scaled_matrix, id))
 }
 
 fn create_shape(obj: InputShape) -> Result<Box<dyn shapes::Shape>, String> {
