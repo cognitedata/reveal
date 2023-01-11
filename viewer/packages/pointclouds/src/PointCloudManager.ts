@@ -94,7 +94,7 @@ export class PointCloudManager {
   }
 
   set clippingPlanes(planes: THREE.Plane[]) {
-    this._materialManager.clippingPlanes = planes;
+    this._pointCloudNodes.forEach(node => node.octree.setGlobalClippingPlane(planes));
     this.requestRedraw();
   }
 
@@ -131,7 +131,7 @@ export class PointCloudManager {
     this._loadingStateHandler.onModelAdded();
 
     this._modelSubject.next({ modelIdentifier, operation: 'add' });
-    this._materialManager.setClippingPlanesForPointCloud(modelIdentifier.revealInternalId);
+    this._materialManager.initializeClippingPlanesForPointCloud(modelIdentifier.revealInternalId);
 
     return pointCloudNode;
   }

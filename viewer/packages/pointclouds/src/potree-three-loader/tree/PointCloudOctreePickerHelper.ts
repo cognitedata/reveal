@@ -206,6 +206,11 @@ export class PointCloudOctreePickerHelper {
     pickMaterial.maxSize = nodeMaterial.maxSize;
     pickMaterial.classification = nodeMaterial.classification;
     pickMaterial.objectAppearanceTexture = nodeMaterial.objectAppearanceTexture;
+
+    pickMaterial.clippingPlanes = nodeMaterial.clippingPlanes;
+    pickMaterial.clipping = nodeMaterial.clipping;
+    pickMaterial.clipIntersection = nodeMaterial.clipIntersection;
+    pickMaterial.defines = nodeMaterial.defines;
   }
 
   public static updatePickRenderTarget(pickState: IPickState, width: number, height: number): void {

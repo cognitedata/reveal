@@ -20,7 +20,7 @@ import {
 } from '@cognite/reveal';
 import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
-import { ClippingUI } from '../utils/ClippingUI';
+import { ClippingUIs } from '../utils/ClippingUIs';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { BulkHtmlOverlayUI } from '../utils/BulkHtmlOverlayUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
@@ -209,6 +209,7 @@ export function Viewer() {
         totalBounds.expandByPoint(bounds.min);
         totalBounds.expandByPoint(bounds.max);
         clippingUi.updateWorldBounds(totalBounds);
+        clippingUi.addModel(model);
 
         viewer.loadCameraFromModel(model);
         if (model instanceof CogniteCadModel) {
@@ -326,7 +327,7 @@ export function Viewer() {
         modelUi.cadModels.forEach(m => m.setDefaultNodeAppearance({ visible: !hide }));
       });
 
-      const clippingUi = new ClippingUI(gui.addFolder('Clipping'), planes => viewer.setClippingPlanes(planes));
+      const clippingUi = new ClippingUIs(gui.addFolder('Clipping'), viewer)
       new CameraUI(viewer, gui.addFolder('Camera'));
       const pointCloudUi = new PointCloudUi(viewer, gui.addFolder('Point clouds'));
       await modelUi.restoreModelsFromUrl();

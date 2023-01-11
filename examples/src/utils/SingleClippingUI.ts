@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import dat from 'dat.gui';
 
-export class ClippingUI {
+export class SingleClippingUI {
   private readonly _xUi: dat.GUIController;
   private readonly _yUi: dat.GUIController;
   private readonly _zUi: dat.GUIController;
@@ -28,7 +28,7 @@ export class ClippingUI {
     this._updateSlicingPlanesCallback = updateSlicingPlanesCallback;
   }
 
-  updateWorldBounds(bounds: THREE.Box3) {
+  updateBounds(bounds: THREE.Box3) {
     this._xUi.min(bounds.min.x);
     this._xUi.max(bounds.max.x);
     this._yUi.min(bounds.min.y);
@@ -40,12 +40,6 @@ export class ClippingUI {
     this._xUi.step(size.x / 100.0);
     this._yUi.step(size.y / 100.0);
     this._zUi.step(size.z / 100.0);
-  }
-
-  private orderOfMagnitude(v: number): number {
-    const epsilon = 0.00001;
-    const order = Math.floor(Math.log(v) / Math.LN10 + epsilon);
-    return Math.pow(10, order);
   }
 
   private createGui(ui: dat.GUI) {
