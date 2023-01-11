@@ -13,7 +13,7 @@ describe(Box.name, () => {
     const box = new Box(new Matrix4().identity());
     const boundingBox = box.createBoundingBox();
 
-    expect(boundingBox.min.distanceTo(new Vector3(-0.5, -0.5, -0.5))).toBeLessThan(EPSILON);
-    expect(boundingBox.max.distanceTo(new Vector3(0.5, 0.5, 0.5))).toBeLessThan(EPSILON);
+    expect(boundingBox.min.distanceTo(new Vector3(-1.0, -1.0, -1.0))).toBeLessThan(EPSILON);
+    expect(boundingBox.max.distanceTo(new Vector3(1.0, 1.0, 1.0))).toBeLessThan(EPSILON);
   });
 });
