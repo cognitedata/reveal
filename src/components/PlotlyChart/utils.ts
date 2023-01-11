@@ -709,70 +709,101 @@ export function generateLayout({
         const { endTime } = eventItem;
 
         const eventSelected = isEventSelected(storedSelectedEvents, eventItem);
-
+        const eventHasDuration = Number(endTime) - Number(startTime);
+        const nonZeroDurationEvent = [
+          {
+            // Event rect left border
+            visible: showEvent,
+            xref: 'x0',
+            yref: `paper`,
+            x0: startTime,
+            x1: startTime,
+            y0: 0,
+            y1: 1,
+            type: 'line',
+            line: {
+              width: eventSelected ? 1.5 : 0,
+              color: eventSelected ? shapeColor : '#ffffff',
+            },
+          },
+          {
+            // Event rect right border
+            visible: showEvent,
+            xref: 'x0',
+            yref: `paper`,
+            x0: endTime,
+            x1: endTime,
+            y0: 0,
+            y1: 1,
+            type: 'line',
+            line: {
+              width: eventSelected ? 1.5 : 0,
+              color: eventSelected ? shapeColor : '#ffffff',
+            },
+          },
+          {
+            // Event rect
+            visible: showEvent,
+            xref: 'x0',
+            yref: `paper`,
+            x0: startTime,
+            x1: endTime,
+            y0: 0,
+            y1: 1,
+            type: 'rect',
+            fillcolor: hexToRGBA(shapeColor, eventSelected ? 0.3 : 0.1),
+            line: { width: 0 },
+          },
+          {
+            // Bottom shade rect
+            visible: showEvent,
+            type: 'rect',
+            xref: 'x0',
+            yref: 'paper',
+            x0: startTime,
+            x1: endTime,
+            y0: 0,
+            y1: 0.01,
+            line: {
+              width: 0,
+            },
+            fillcolor: eventSelected ? shapeColor : hexToRGBA(shapeColor, 0.7),
+          },
+        ];
+        const zeroDurationEvent = [
+          {
+            // Event rect left border
+            visible: showEvent,
+            xref: 'x0',
+            yref: `paper`,
+            x0: startTime,
+            x1: startTime,
+            y0: 0,
+            y1: 1,
+            type: 'line',
+            line: {
+              width: eventSelected ? 2.5 : 1.5,
+              color: shapeColor,
+            },
+          },
+          {
+            // Event rect right border
+            visible: showEvent,
+            xref: 'x0',
+            yref: `paper`,
+            x0: endTime,
+            x1: endTime,
+            y0: 0,
+            y1: 1,
+            type: 'line',
+            line: {
+              width: eventSelected ? 2.5 : 1.5,
+              color: shapeColor,
+            },
+          },
+        ];
         (layout.shapes as any[]).push(
-          ...[
-            {
-              // Event rect left border
-              visible: showEvent,
-              xref: 'x0',
-              yref: `paper`,
-              x0: startTime,
-              x1: startTime,
-              y0: 0,
-              y1: 1,
-              type: 'line',
-              line: {
-                width: eventSelected ? 1.5 : 0,
-                color: eventSelected ? shapeColor : '#ffffff',
-              },
-            },
-            {
-              // Event rect right border
-              visible: showEvent,
-              xref: 'x0',
-              yref: `paper`,
-              x0: endTime,
-              x1: endTime,
-              y0: 0,
-              y1: 1,
-              type: 'line',
-              line: {
-                width: eventSelected ? 1.5 : 0,
-                color: eventSelected ? shapeColor : '#ffffff',
-              },
-            },
-            {
-              // Event rect
-              visible: showEvent,
-              xref: 'x0',
-              yref: `paper`,
-              x0: startTime,
-              x1: endTime,
-              y0: 0,
-              y1: 1,
-              type: 'rect',
-              fillcolor: hexToRGBA(shapeColor, eventSelected ? 0.3 : 0.1),
-              line: { width: 0 },
-            },
-            {
-              // Bottom shade rect
-              visible: showEvent,
-              type: 'rect',
-              xref: 'x0',
-              yref: 'paper',
-              x0: startTime,
-              x1: endTime,
-              y0: 0,
-              y1: 0.01,
-              line: {
-                width: 0,
-              },
-              fillcolor: eventSelected
-                ? shapeColor
-                : hexToRGBA(shapeColor, 0.7),
-            },
-          ]
+          ...(eventHasDuration ? nonZeroDurationEvent : zeroDurationEvent)
         );
       });
     });
