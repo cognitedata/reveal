@@ -103,7 +103,7 @@ export class ViewStateHelper {
 
   private getClippingPlanesState(): ClippingPlanesState[] {
     return this._viewer
-      .getClippingPlanes()
+      .getGlobalClippingPlanes()
       .map(p => ({ nx: p.normal.x, ny: p.normal.y, nz: p.normal.z, constant: p.constant }));
   }
 
@@ -155,6 +155,6 @@ export class ViewStateHelper {
 
   private setClippingPlanesState(clippingPlanes: ClippingPlanesState[]) {
     const planes = clippingPlanes.map(p => new THREE.Plane().setComponents(p.nx, p.ny, p.nz, p.constant));
-    this._viewer.setClippingPlanes(planes);
+    this._viewer.setGlobalClippingPlanes(planes);
   }
 }

@@ -34,7 +34,7 @@ describe(ViewStateHelper.name, () => {
       clippingPlanes: [new THREE.Plane().setComponents(1, 2, 3, 4), new THREE.Plane().setComponents(-1, -2, -3, -4)]
     };
     viewer.cameraManager.setCameraState({ position: original.cameraPosition, target: original.cameraTarget });
-    viewer.setClippingPlanes(original.clippingPlanes);
+    viewer.setGlobalClippingPlanes(original.clippingPlanes);
 
     // Act
     const state = viewer.getViewState();
@@ -42,13 +42,13 @@ describe(ViewStateHelper.name, () => {
       position: new THREE.Vector3(-10, -10, -10),
       target: new THREE.Vector3(10, 10, 10)
     });
-    viewer.setClippingPlanes([]);
+    viewer.setGlobalClippingPlanes([]);
     viewer.setViewState(state);
 
     // Assert
     const cameraState = viewer.cameraManager.getCameraState();
     expect(cameraState.position.distanceTo(original.cameraPosition)).toBeLessThan(1e-5);
     expect(cameraState.target.distanceTo(original.cameraTarget)).toBeLessThan(1e-5);
-    expect(viewer.getClippingPlanes()).toEqual(original.clippingPlanes);
+    expect(viewer.getGlobalClippingPlanes()).toEqual(original.clippingPlanes);
   });
 });

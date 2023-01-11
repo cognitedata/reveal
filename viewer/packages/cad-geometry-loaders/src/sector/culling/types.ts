@@ -12,7 +12,7 @@ import { CadNode } from '@reveal/cad-model';
 
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;
-  clippingPlanes: THREE.Plane[];
+  modelClippingPlanes: THREE.Plane[][];
   cadModelsMetadata: CadModelMetadata[];
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;
