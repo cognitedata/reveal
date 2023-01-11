@@ -23,7 +23,7 @@ export class Box implements IShape {
   }
 
   createBoundingBox(): Box3 {
-    const baseBox = new Box3(new Vector3(-0.5, -0.5, -0.5), new Vector3(0.5, 0.5, 0.5));
+    const baseBox = new Box3(new Vector3(-1.0, -1.0, -1.0), new Vector3(1.0, 1.0, 1.0));
     const instanceMatrix = this._invInstanceMatrix.clone().invert();
 
     return baseBox.applyMatrix4(instanceMatrix);
