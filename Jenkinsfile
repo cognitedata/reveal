@@ -110,6 +110,12 @@ pods {
         }
     }
 
+    stage("Git config") {
+      container('fas') {
+        sh("git config --global --add safe.directory ${env.WORKSPACE}/main")
+      }
+    }
+
     parallel(
       'Lint': {
         container('fas') {
