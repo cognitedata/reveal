@@ -13,3 +13,4 @@ Point cloud objects can be stored as annotations in CDF. We currently support tw
 **Boxes** are represented by 16-number arrays. It is the elements of the instance transformation matrix of that box in row-major order. The base (identity) box is the axis-aligned box spanned between (-1, -1, -1), (1, 1, 1).
 
 These shapes are stored in the CDF coordinate system when coming from CDF.
+Note that the radius of the cylinder and the size of the box is increased slightly when checking for contained points, for the purpose of actually enclosing all points belonging to the object.
