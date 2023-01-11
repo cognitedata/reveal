@@ -1371,7 +1371,7 @@ export class Cognite3DViewer {
       normalizedCoords,
       camera: this.cameraManager.getCamera(),
       renderer: this.renderer,
-      clippingPlanes: this.getClippingPlanes(),
+      clippingPlanes: this.getGlobalClippingPlanes(),
       domElement: this.renderer.domElement
     };
     const cadResults = await this._pickingHandler.intersectCadNodes(
