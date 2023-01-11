@@ -150,6 +150,17 @@ export class CadMaterialManager {
     return wrapper.nodeAppearanceTextureBuilder.getDefaultAppearance();
   }
 
+  getModelClippingPlanes(modelIdentifier: string): THREE.Plane[] {
+    const materialWrapper = this.materialsMap.get(modelIdentifier);
+    if (materialWrapper === undefined) {
+      throw new Error(
+        `Materials for model ${modelIdentifier} has not been added, call ${this.addModelMaterials.name} first`
+      );
+    }
+
+    return materialWrapper.perModelClippingPlanes;
+  }
+
   setModelClippingPlanes(modelIdentifier: string, clippingPlanes: THREE.Plane[]): void {
     const materialWrapper = this.materialsMap.get(modelIdentifier);
     if (materialWrapper === undefined) {

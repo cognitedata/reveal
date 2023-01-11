@@ -80,6 +80,10 @@ export class CadNode extends Object3D {
     this._materialManager.setModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier, appearance);
   }
 
+  get clippingPlanes(): Plane[] {
+    return this._materialManager.getModelClippingPlanes(this._cadModelMetadata.modelIdentifier);
+  }
+
   set clippingPlanes(planes: Plane[]) {
     this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier, planes);
   }
