@@ -228,6 +228,14 @@ export class CognitePointCloudModel {
   }
 
   /**
+   * Sets the clipping planes for this model. They will be combined with the
+   * global clipping planes.
+   */
+  setModelClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    this.pointCloudNode.clippingPlanes = clippingPlanes;
+  }
+
+  /**
    * Gets default point appearance
    */
   getDefaultPointCloudAppearance(): PointCloudAppearance {

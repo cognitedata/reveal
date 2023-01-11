@@ -23,7 +23,7 @@ export default class ClippingPointCloudVisualTest extends ViewerVisualTestFixtur
       return Promise.resolve();
     }
 
-    viewer.setClippingPlanes([
+    viewer.setGlobalClippingPlanes([
       new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0))
     ]);
 
