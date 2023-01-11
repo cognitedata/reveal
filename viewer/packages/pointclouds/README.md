@@ -20,7 +20,7 @@ The `styling` folder contains code related to styling point cloud objects, inclu
 
 ### Styling
 
-- **Shape**: A primitive 3D shape, e.g. an oriented box or a cylinder.
+- **Shape**: A primitive 3D shape, e.g. an oriented box or a cylinder. See the README in the `data-providers` package for information about concrete conventions regarding these shapes.
 - **Stylable Object**: A point cloud object that can be styled. Represented by one or more **shapes** in 3D space. Assigning a style to a stylable object results in all points contained in any of the object's shapes attaining that style. Stylable objects are obtained from an instance of `PointCloudStylableObjectProvider` interface defined in the `data-providers` class.
 - **Annotation**: The CDF resource type used for storing descriptions of stylable point cloud objects. One annotation corresponds to one object, and may consist of many primitive **shapes**. The `CdfPointCloudStylableObjectProvider` class in the `data-providers` package provides stylable objects from the CDF Annotations API.
 - **Annotation ID**: ID uniquely referring to one annotation in CDF.
