@@ -11,7 +11,7 @@ export class ClippingUIs {
   constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer) {
     this._rootUi = uiFolder;
     const globalFolder = uiFolder.addFolder('Global');
-    this._globalUi = new SingleClippingUI(globalFolder, planes => viewer.setClippingPlanes(planes));
+    this._globalUi = new SingleClippingUI(globalFolder, planes => viewer.setGlobalClippingPlanes(planes));
   }
 
   updateWorldBounds(bounds: THREE.Box3) {
@@ -21,7 +21,7 @@ export class ClippingUIs {
   addModel(model: CogniteCadModel | CognitePointCloudModel) {
     this._modelCount++;
     const modelFolder = this._rootUi.addFolder(`Model #${this._modelCount}`);
-    const clippingUi = new SingleClippingUI(modelFolder, planes => model.setClippingPlanes(planes));
+    const clippingUi = new SingleClippingUI(modelFolder, planes => model.setModelClippingPlanes(planes));
     clippingUi.updateBounds(model.getModelBoundingBox());
   }
 }
