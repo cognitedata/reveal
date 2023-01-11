@@ -25,7 +25,5 @@ export const PREVIEWABLE_FILE_TYPES = [
   ...PREVIEWABLE_DOCUMENT_TYPES,
 ];
 
-export const SEARCHABLE_DOCUMENT_TYPES = ['pdf'];
-
 // The retrieved URL becomes invalid in 30 seconds so refetch will trigger after every 25 seconds
 export const FILE_URL_REFETCH_INTERVAL = 25000;

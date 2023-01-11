@@ -55,7 +55,8 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
   const { extractedAnnotations } = useExtractedAnnotations(file);
   const { data: annotationsFromEvents } = useEventAnnotations(file);
   const { data: annotationsFromAnnotations } = useAnnotations(file);
-  const { ocrSearchResultAnnotations } = useOCRSearchResults(file, searchQuery);
+  const { ocrSearchResultAnnotations, ocrResultsAvailable } =
+    useOCRSearchResults(file, currentPage, searchQuery);
 
   const { annotations, popovers, onStageClick } = useUnifiedFileViewerState({
     file,
@@ -130,6 +131,7 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
         fileViewerRef={ref}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        enableSearch={ocrResultsAvailable}
       />
       <Paginator
         containerConfig={containerConfig}

@@ -8,7 +8,9 @@ export const SearchBar = ({
   searchQuery: string;
   setSearchQuery: (page: string) => void;
 }) => {
-  const [expandSearch, setExpandSearch] = useState<boolean>(false);
+  const [expandSearch, setExpandSearch] = useState<boolean>(
+    Boolean(searchQuery)
+  );
 
   const handleCloseSearch = () => {
     setExpandSearch(false);

@@ -4,34 +4,52 @@ import { FileInfo } from '@cognite/sdk';
 import { OCRAnnotation } from '@cognite/unified-file-viewer';
 import { retrieveOCRResults } from '../utils/retrieveOCRResults';
 
+export type OCRSearchResponse = { annotations: OCRAnnotation[] };
+
 export const useOCRSearchResults = (
   file: FileInfo | undefined,
+  page: number,
   query: string
-): { ocrSearchResultAnnotations: OCRAnnotation[] } => {
+): {
+  ocrSearchResultAnnotations: OCRAnnotation[];
+  ocrResultsAvailable: boolean;
+} => {
   const sdk = useSDK();
-  const [ocrAnnotations, setOCRAnnotations] = useState<OCRAnnotation[]>([]);
+  const [ocrResponse, setOCRResponse] = useState<OCRSearchResponse[]>([]);
 
   useEffect(() => {
     (async () => {
-      if (file && query !== '') {
-        const ocrResults = await retrieveOCRResults(sdk, file.id);
-        setOCRAnnotations(ocrResults);
+      if (file?.id) {
+        const ocrResults = await retrieveOCRResults(sdk, file?.id);
+        setOCRResponse(ocrResults);
       }
     })();
-  }, [file, query, setOCRAnnotations]);
+  }, [file?.id]);
 
-  const ocrSearchResultAnnotations = useMemo(
-    () =>
-      ocrAnnotations.filter(
-        (boundingBox) =>
-          query.length !== 0 &&
-          query
-            .toLowerCase()
-            .split(',')
-            .some((el) => boundingBox.text.toLowerCase().includes(el))
-      ),
-    [ocrAnnotations, query]
-  );
+  const ocrSearchResultAnnotations = useMemo(() => {
+    const currentPage = page ? page - 1 : 0;
+    const currentPageOcrAnnotations =
+      ocrResponse[currentPage]?.annotations ?? [];
 
-  return { ocrSearchResultAnnotations };
+    return currentPageOcrAnnotations.filter(
+      (boundingBox) =>
+        query.length !== 0 &&
+        getSanitizedQueryPartials(query).some((partialQuery) =>
+          boundingBox.text.toLowerCase().includes(partialQuery)
+        )
+    );
+  }, [ocrResponse, page, query]);
+
+  return {
+    ocrSearchResultAnnotations,
+    ocrResultsAvailable: Boolean(ocrResponse) && Boolean(ocrResponse.length),
+  };
+};
+
+const getSanitizedQueryPartials = (query: string) => {
+  return query
+    .toLowerCase()
+    .split(',') // separate query items by comma
+    .map((partialQuery) => partialQuery.trim()) // trim white space
+    .filter((partialQuery) => partialQuery !== ''); // remove empty string
 };

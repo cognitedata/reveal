@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { SearchBar } from './SearchBar';
-import { SEARCHABLE_DOCUMENT_TYPES } from '../constants';
 import { useFileUrl } from '../hooks/useFileUrl';
 
 export const ActionTools = ({
@@ -12,17 +11,14 @@ export const ActionTools = ({
   fileViewerRef,
   searchQuery,
   setSearchQuery,
+  enableSearch,
 }: {
   file: FileInfo;
   fileViewerRef: UnifiedViewer | undefined;
-
   searchQuery: string;
   setSearchQuery: (page: string) => void;
+  enableSearch: boolean;
 }): JSX.Element | null => {
-  const { mimeType = '', name = '' } = file ?? {};
-  const query = mimeType + name.slice(0, name.lastIndexOf('.'));
-  const showSearch = SEARCHABLE_DOCUMENT_TYPES.some((el) => query.includes(el));
-
   const { fileUrl } = useFileUrl(file);
 
   if (!fileUrl) return null;
@@ -57,7 +53,7 @@ export const ActionTools = ({
   return (
     <ToolBar>
       <ToolContainer>
-        {showSearch && (
+        {enableSearch && (
           <SearchBar
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}

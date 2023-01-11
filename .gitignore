@@ -38,3 +38,6 @@ results/
 
 # Cypress
 cypress/videos
+
+## IDE
+.idea
