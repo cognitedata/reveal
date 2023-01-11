@@ -12,6 +12,7 @@ useful to isolate interesting parts of the model and hide obscuring geometry. Re
 in arbitrary position and orientation. When clipping planes are active,
 the amount of geometry loaded might be reduced since culled geometry doesn't need
 to be loaded (or rather loaded in a lower detail level).
+Clipping planes can both be applied to all models (global clipping planes) or to models individually (model clipping planes).
 
 <video preload="auto" autoPlay="autoplay" loop controls>
   <source src={useBaseUrl('/img/cad-clipping.webm')} />
@@ -36,7 +37,7 @@ code will create a clipping plane that only accepts geometry below `Y = 55`:
 const orientation = new THREE.Vector3(0, -1, 0);
 const point = new THREE.Vector3(0, 55, 0);
 const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(orientation, point);
-viewer.setClippingPlanes([plane]);
+viewer.setGlobalClippingPlanes([plane]);
 ```
 
 ### Animated clipping plane
@@ -54,7 +55,7 @@ const orientation = new THREE.Vector3(0, -1, 0);
 const point = new THREE.Vector3(0, bbox.max.y, 0);
 const plane = new THREE.Plane();
 plane.setFromNormalAndCoplanarPoint(orientation, point);
-viewer.setClippingPlanes([plane]);
+viewer.setGlobalClippingPlanes([plane]);
 
 const start = performance.now();
 setInterval(() => {
@@ -100,7 +101,7 @@ viewer.addObject3D(draggerMesh);
 const orientation = new THREE.Vector3(0, -1, 0);
 const plane = new THREE.Plane();
 plane.setFromNormalAndCoplanarPoint(orientation, initialDragPosition);
-viewer.setClippingPlanes([plane]);
+viewer.setGlobalClippingPlanes([plane]);
 
 
 // Handle drag events
