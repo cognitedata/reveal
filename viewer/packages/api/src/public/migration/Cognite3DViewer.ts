@@ -958,6 +958,7 @@ export class Cognite3DViewer {
 
   /**
    * Sets per-pixel clipping planes. Pixels behind any of the planes will be sliced away.
+   * @param clippingPlanes
    * @deprecated Use {@link Cognite3DViewer.setGlobalClippingPlanes} instead.
    */
   setClippingPlanes(clippingPlanes: THREE.Plane[]): void {

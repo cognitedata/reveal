@@ -14,7 +14,7 @@ export function createDetermineSectorInput(
   models: CadModelMetadata | CadModelMetadata[],
   budget?: CadModelBudget
 ): DetermineSectorsInput {
-  const modelArray = Array.isArray(models) ? models : [models]
+  const modelArray = Array.isArray(models) ? models : [models];
   const determineSectorsInput: DetermineSectorsInput = {
     camera,
     modelClippingPlanes: new Array(modelArray.length).fill([]),
