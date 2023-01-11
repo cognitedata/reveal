@@ -10,7 +10,10 @@ import { useEventAnnotations } from '../../hooks';
 import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
 import getExtendedAnnotationsFromCogniteAnnotations from './getExtendedAnnotationsFromCogniteAnnotations';
 import { isNotUndefined } from '@data-exploration-components/utils';
-import { getExtendedAnnotationPage } from './migration/utils';
+import {
+  getExtendedAnnotationPage,
+  getExtendedAnnotationStatus,
+} from './migration/utils';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useAnnotations } from '@data-exploration-lib/domain-layer';
 import { getContainerId, getStyledAnnotationFromAnnotation } from './utils';
@@ -65,6 +68,9 @@ export const useUnifiedFileViewerAnnotations = ({
           isSimilarBoundingBox(MAX_BOUNDING_BOX_DIFFERENCE)
         ),
       ]
+        .filter(
+          (annotation) => getExtendedAnnotationStatus(annotation) !== 'rejected'
+        )
         .filter((annotation) => {
           if (page === 1) {
             return (

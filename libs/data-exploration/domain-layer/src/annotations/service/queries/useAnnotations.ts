@@ -11,9 +11,8 @@ export const useAnnotations = (fileId: number) => {
           annotatedResourceType: 'file',
           annotatedResourceIds: [{ id: fileId }],
         },
-        limit: 1000,
       })
-      .autoPagingToArray()
+      .autoPagingToArray({ limit: Infinity })
   );
   return {
     ...result,

@@ -3,7 +3,7 @@ import {
   CogniteAnnotation,
 } from '@cognite/annotations';
 import { AnnotationModel } from '@cognite/sdk';
-import { pickBy } from 'lodash';
+import pickBy from 'lodash/pickBy';
 import { AnnotationStatus } from '@cognite/sdk';
 import {
   ResourceItem,
@@ -51,6 +51,24 @@ export const getExtendedAnnotationDescription = (
   ) {
     // @ts-expect-error
     return annotation.metadata.data.description;
+  }
+
+  throw new Error('Unsupported annotation source');
+};
+
+export const getExtendedAnnotationStatus = (
+  annotation: ExtendedAnnotation
+): string | undefined => {
+  if (isExtendedEventAnnotation(annotation)) {
+    return annotation.metadata.status;
+  }
+
+  if (
+    isExtendedAnnotationAnnotation(annotation) ||
+    isExtendedLocalAnnotation(annotation)
+  ) {
+    // @ts-expect-error
+    return annotation.metadata.status;
   }
 
   throw new Error('Unsupported annotation source');
