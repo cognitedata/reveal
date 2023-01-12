@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import get from 'lodash/get';
+import { useFlag } from '@cognite/react-feature-flags';
 import { toast, Loader, Button, Tooltip } from '@cognite/cogs.js';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { useIsChartOwner } from 'hooks/user';
@@ -108,6 +109,13 @@ const defaultTranslations = makeDefaultTranslations(
 const keys = translationKeys(defaultTranslations);
 
 const ChartViewPage = () => {
+  const { isEnabled: isDataProfilingEnabled } = useFlag(
+    'CHARTS_UI_DATAPROFILING',
+    {
+      fallback: false,
+      forceRerender: true,
+    }
+  );
   const [activeSidebar = '', setActiveSidebarQuery] =
     useSearchParam(ACTIVE_SIDEBAR_KEY);
   const [showContextMenu, setShowContextMenu] = useState(false);
@@ -863,14 +871,16 @@ const ChartViewPage = () => {
           />
         )}
         <Toolbar>
-          <Tooltip content={t['Data Profiling']} position="left">
-            <Button
-              icon="Profiling"
-              aria-label="Toggle data profiling sidebar"
-              toggled={showDataProfilingSidebar}
-              onClick={() => handleDataProfilingSidebarToggle()}
-            />
-          </Tooltip>
+          {isDataProfilingEnabled && (
+            <Tooltip content={t['Data Profiling']} position="left">
+              <Button
+                icon="Profiling"
+                aria-label="Toggle data profiling sidebar"
+                toggled={showDataProfilingSidebar}
+                onClick={() => handleDataProfilingSidebarToggle()}
+              />
+            </Tooltip>
+          )}
           <Tooltip content={t.Events} position="left">
             <Button
               icon="Events"
