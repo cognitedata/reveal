@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Tooltip as CogsTooltip, Modal as CogsModal } from '@cognite/cogs.js';
 import { getContainer } from 'utils/utils';
 import ConfigProvider from 'antd/lib/config-provider';
 import { ids } from 'cogs-variables';
@@ -11,6 +11,11 @@ import { ids } from 'cogs-variables';
 CogsTooltip.defaultProps = {
   ...CogsTooltip.defaultProps,
   appendTo: getContainer,
+};
+
+CogsModal.defaultProps = {
+  ...CogsModal.defaultProps,
+  getContainer: getContainer,
 };
 
 export function GlobalStyles(props: { children: React.ReactNode }) {
