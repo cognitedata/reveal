@@ -238,7 +238,7 @@ export interface CameraManager {
 }
 
 // @public
-export type CameraManagerEventType = typeof CAMERA_MANAGER_EVENT_TYPE_LIST[number];
+export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[number];
 
 // @public
 export class CameraManagerHelper {
@@ -345,7 +345,9 @@ export class Cognite3DViewer {
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
     fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
+    // @deprecated
     getClippingPlanes(): THREE_2.Plane[];
+    getGlobalClippingPlanes(): THREE_2.Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
     getVersion(): string;
@@ -379,7 +381,9 @@ export class Cognite3DViewer {
         alpha?: number;
     }): void;
     setCameraManager(cameraManager: CameraManager): void;
+    // @deprecated
     setClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
+    setGlobalClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
     setResolutionOptions(options: ResolutionOptions): void;
     setViewState(state: ViewerState): Promise<void>;
@@ -450,6 +454,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren?: boolean): Promise<number>;
     readonly revisionId: number;
     setDefaultNodeAppearance(appearance: NodeAppearance): void;
+    setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setModelTransformation(matrix: THREE_2.Matrix4): void;
     setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4): void;
     setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean): Promise<number>;
@@ -497,6 +502,7 @@ export class CognitePointCloudModel {
     readonly revisionId: number;
     setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void;
     setDefaultPointCloudAppearance(appearance: PointCloudAppearance): void;
+    setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setModelTransformation(transformationMatrix: THREE_2.Matrix4): void;
     // (undocumented)
     get stylableObjectCount(): number;

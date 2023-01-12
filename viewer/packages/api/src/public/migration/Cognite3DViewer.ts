@@ -136,7 +136,6 @@ export class Cognite3DViewer {
   private readonly _mouseHandler: InputHandler;
 
   private readonly _models: CogniteModel[] = [];
-  private readonly _extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
 
@@ -873,7 +872,6 @@ export class Cognite3DViewer {
       return;
     }
     object.updateMatrixWorld(true);
-    this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
     this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
@@ -894,10 +892,6 @@ export class Cognite3DViewer {
       return;
     }
     this._sceneHandler.removeCustomObject(object);
-    const index = this._extraObjects.indexOf(object);
-    if (index >= 0) {
-      this._extraObjects.splice(index, 1);
-    }
     this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
   }
@@ -928,38 +922,55 @@ export class Cognite3DViewer {
    * ```js
    * // Hide pixels with values less than 0 in the x direction
    * const plane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values greater than 20 in the x direction
    *  const plane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 20);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values less than 0 in the x direction or greater than 0 in the y direction
    * const xPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
    * const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-   * viewer.setClippingPlanes([xPlane, yPlane]);
+   * viewer.setGlobalClippingPlanes([xPlane, yPlane]);
    * ```
    * ```js
    * // Hide pixels behind an arbitrary, non axis-aligned plane
    *  const plane = new THREE.Plane(new THREE.Vector3(1.5, 20, -19), 20);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Disable clipping planes
-   *  viewer.setClippingPlanes([]);
+   *  viewer.setGlobalClippingPlanes([]);
    * ```
    */
-  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  setGlobalClippingPlanes(clippingPlanes: THREE.Plane[]): void {
     this.revealManager.clippingPlanes = clippingPlanes;
     this._clippingNeedsUpdate = true;
   }
 
   /**
-   * Returns the current active clipping planes.
+   * Sets per-pixel clipping planes. Pixels behind any of the planes will be sliced away.
+   * @param clippingPlanes
+   * @deprecated Use {@link Cognite3DViewer.setGlobalClippingPlanes} instead.
+   */
+  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    this.setGlobalClippingPlanes(clippingPlanes);
+  }
+
+  /**
+   * Returns the current active global clipping planes.
+   * @deprecated Use {@link Cognite3DViewer.getGlobalClippingPlanes} instead.
    */
   getClippingPlanes(): THREE.Plane[] {
+    return this.getGlobalClippingPlanes();
+  }
+
+  /**
+   * Returns the current active global clipping planes.
+   */
+  getGlobalClippingPlanes(): THREE.Plane[] {
     return this.revealManager.clippingPlanes.map(p => p.clone());
   }
 
@@ -1355,7 +1366,7 @@ export class Cognite3DViewer {
       normalizedCoords,
       camera: this.cameraManager.getCamera(),
       renderer: this.renderer,
-      clippingPlanes: this.getClippingPlanes(),
+      clippingPlanes: this.getGlobalClippingPlanes(),
       domElement: this.renderer.domElement
     };
     const cadResults = await this._pickingHandler.intersectCadNodes(
@@ -1434,7 +1445,7 @@ export class Cognite3DViewer {
       }
     });
 
-    this._extraObjects.forEach(obj => {
+    this._sceneHandler.customObjects.forEach(obj => {
       bbox.setFromObject(obj);
       if (!bbox.isEmpty()) {
         combinedBbox.union(bbox);

@@ -20,7 +20,7 @@ import {
 } from '@cognite/reveal';
 import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
-import { ClippingUI } from '../utils/ClippingUI';
+import { ClippingUIs } from '../utils/ClippingUIs';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
 import { BulkHtmlOverlayUI } from '../utils/BulkHtmlOverlayUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
@@ -209,6 +209,7 @@ export function Viewer() {
         totalBounds.expandByPoint(bounds.min);
         totalBounds.expandByPoint(bounds.max);
         clippingUi.updateWorldBounds(totalBounds);
+        clippingUi.addModel(model);
 
         viewer.loadCameraFromModel(model);
         if (model instanceof CogniteCadModel) {
@@ -268,25 +269,25 @@ export function Viewer() {
         switch (value) {
           case 'fullScreen':
             canvasWrapperRef.current!.style.position = 'relative';
-            canvasWrapperRef.current!.style.width = '100%';
-            canvasWrapperRef.current!.style.height = '100%';
-            canvasWrapperRef.current!.style.flexGrow = '1';
-            canvasWrapperRef.current!.style.left = '0px';
-            canvasWrapperRef.current!.style.top = '0px';
+            canvasWrapperRef.current!.style.width = '';
+            canvasWrapperRef.current!.style.height = '';
+            canvasWrapperRef.current!.style.flexGrow = '';
+            canvasWrapperRef.current!.style.left = '';
+            canvasWrapperRef.current!.style.top = '';
             break;
           case 'halfScreen':
-            canvasWrapperRef.current!.style.position = 'relative';
+            canvasWrapperRef.current!.style.position = 'absolute';
             canvasWrapperRef.current!.style.width = '50%';
             canvasWrapperRef.current!.style.height = '100%';
             canvasWrapperRef.current!.style.flexGrow = '1';
             canvasWrapperRef.current!.style.left = '25%';
-            canvasWrapperRef.current!.style.top = '0px';
+            canvasWrapperRef.current!.style.top = '0%';
             break;
           case 'quarterScreen':
             canvasWrapperRef.current!.style.position = 'absolute';
-            canvasWrapperRef.current!.style.flexGrow = '0.5';
             canvasWrapperRef.current!.style.width = '50%';
             canvasWrapperRef.current!.style.height = '50%';
+            canvasWrapperRef.current!.style.flexGrow = '0.5';
             canvasWrapperRef.current!.style.left = '25%';
             canvasWrapperRef.current!.style.top = '25%';
             break;
@@ -326,7 +327,7 @@ export function Viewer() {
         modelUi.cadModels.forEach(m => m.setDefaultNodeAppearance({ visible: !hide }));
       });
 
-      const clippingUi = new ClippingUI(gui.addFolder('Clipping'), planes => viewer.setClippingPlanes(planes));
+      const clippingUi = new ClippingUIs(gui.addFolder('Clipping'), viewer)
       new CameraUI(viewer, gui.addFolder('Camera'));
       const pointCloudUi = new PointCloudUi(viewer, gui.addFolder('Point clouds'));
       await modelUi.restoreModelsFromUrl();
@@ -373,7 +374,7 @@ export function Viewer() {
                   pointCloudObjectsUi.updateSelectedAnnotation(intersection.annotationId);
                   model.removeAllStyledObjectCollections();
                   const selected = new AnnotationIdPointCloudObjectCollection([intersection.annotationId]);
-                  model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });  
+                  model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
                 } else {
                   const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
                   sphere.position.copy(point);

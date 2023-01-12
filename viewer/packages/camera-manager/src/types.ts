@@ -120,4 +120,4 @@ export const CAMERA_MANAGER_EVENT_TYPE_LIST = ['cameraChange', 'cameraStop'] as 
 /**
  * Union type of the supported camera manager event types
  */
-export type CameraManagerEventType = typeof CAMERA_MANAGER_EVENT_TYPE_LIST[number];
+export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[number];
