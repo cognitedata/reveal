@@ -115,7 +115,7 @@ export class CognitePointCloudModel {
   /**
    * Map point from CDF to model space, taking the model's custom transformation into account
    * @param point Point to compute transformation from
-   * @param out Optional pre-allocated box
+   * @param out Optional pre-allocated point
    */
   mapPointFromCdfToModelCoordinates(point: THREE.Vector3, out: THREE.Vector3 = new THREE.Vector3()): THREE.Vector3 {
     const cdfToModelTransformation = this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
@@ -124,6 +124,8 @@ export class CognitePointCloudModel {
 
   /**
    * Map bounding box from CDF to model space, taking the model's custom transformation into account
+   * @param box Box to compute transformation from
+   * @param out Optional pre-allocated box
    */
   mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out: THREE.Box3 = new THREE.Box3()): THREE.Box3 {
     const cdfToModelTransformation = this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
