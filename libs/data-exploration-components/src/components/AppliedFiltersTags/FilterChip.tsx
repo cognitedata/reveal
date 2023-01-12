@@ -1,11 +1,13 @@
-import { Button, IconType, Label, Tooltip } from '@cognite/cogs.js';
+import { IconType, Tooltip } from '@cognite/cogs.js';
 import { COMMON_FILTER_KEYS } from '@data-exploration-lib/domain-layer';
+
 import includes from 'lodash/includes';
 import React from 'react';
-import styled from 'styled-components';
+
+import { CloseButton, StyledChip, Title } from './elements';
 import { getTitle } from './utils';
 
-interface Props {
+export interface Props {
   name: string;
   value: string;
   icon?: IconType;
@@ -32,6 +34,7 @@ export const FilterChip: React.FC<Props> = ({
         selectable={Boolean(onClick)}
         size="medium"
         icon={isCommonKeyName ? undefined : icon}
+        data-testid="filter-chip"
       >
         <Title>{text}</Title>
         {Boolean(onClick) && <CloseButton onClick={onClick} />}
@@ -39,28 +42,3 @@ export const FilterChip: React.FC<Props> = ({
     </Tooltip>
   );
 };
-
-const StyledChip = styled(Label)`
-  && {
-    width: fit-content;
-    max-height: 28px;
-  }
-`;
-const CloseButton = styled(Button).attrs({
-  icon: 'Close',
-  'aria-label': 'Close filter',
-  type: 'ghost',
-  size: 'small',
-})`
-  &:hover {
-    background: transparent !important;
-  }
-`;
-
-const Title = styled.div`
-  max-width: 300px;
-  text-overflow: ellipsis;
-  display: block !important;
-  white-space: nowrap;
-  overflow: hidden;
-`;

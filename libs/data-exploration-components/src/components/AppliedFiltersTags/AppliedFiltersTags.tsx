@@ -1,12 +1,13 @@
 import { Flex, IconType } from '@cognite/cogs.js';
-import { isArray, isEqual } from 'lodash';
+import isArray from 'lodash/isArray';
+import isEqual from 'lodash/isEqual';
 import React from 'react';
 import styled from 'styled-components';
 import { NewFiltersType } from '@data-exploration-components/types';
 import { FilterChip } from './FilterChip';
 import { formatValue } from './utils';
 
-interface Props {
+export interface Props {
   filter: NewFiltersType;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   icon?: IconType;
