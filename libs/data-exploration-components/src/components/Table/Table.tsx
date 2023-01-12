@@ -1,5 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 import React, { useEffect, useMemo, useRef } from 'react';
+import merge from 'lodash/merge';
 
 import {
   Row,
@@ -161,8 +162,16 @@ export function Table<T extends TableData>({
   }, [hiddenColumns]);
 
   const [columnVisibility, setColumnVisibility] = useLocalStorageState(id, {
-    defaultValue: initialHiddenColumns,
+    defaultValue: {},
   });
+
+  /**
+   * The initialHiddenColumns are updated multiple times when the metadata columns are fetched.
+   * We need to listen to those changes and update the initial state properly
+   * */
+  useEffect(() => {
+    setColumnVisibility(merge(initialHiddenColumns, columnVisibility));
+  }, [initialHiddenColumns]);
 
   const [columnOrder, setColumnOrder] = useLocalStorageState<ColumnOrderState>(
     `${id}-column-order`,
