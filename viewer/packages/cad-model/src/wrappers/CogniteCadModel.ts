@@ -354,6 +354,26 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
+   * Map point from CDF to model space, taking the model's custom transformation into account
+   * @param point Point to compute transformation from
+   * @param out Optional pre-allocated box
+   */
+  mapPointFromCdfToModelCoordinates(point: THREE.Vector3, out: THREE.Vector3 = new THREE.Vector3()): THREE.Vector3 {
+    const cdfToModelTransformation =
+      this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
+    return out.copy(point).applyMatrix4(cdfToModelTransformation);
+  }
+
+  /**
+   * Map bounding box from CDF to model space, taking the model's custom transformation into account
+   */
+  mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out: THREE.Box3 = new THREE.Box3()): THREE.Box3 {
+    const cdfToModelTransformation =
+      this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
+    return out.copy(box).applyMatrix4(cdfToModelTransformation);
+  }
+
+  /**
    * Fetches a bounding box from the CDF by the nodeId.
    * @param nodeId
    * @param box Optional. Used to write result to.
