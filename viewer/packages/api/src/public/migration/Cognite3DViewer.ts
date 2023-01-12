@@ -1156,13 +1156,6 @@ export class Cognite3DViewer {
 
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
 
-    // Remove this block once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
-    // Render everything a little bigger so that the outCanvas can be cropped later
-    if (includeUI) {
-      width++;
-      height++;
-    }
-
     const originalDomeStyle = {
       position: this.domElement.style.position,
       width: this.domElement.style.width,
@@ -1218,17 +1211,6 @@ export class Cognite3DViewer {
         scrollX: 0,
         scrollY: 0
       });
-
-      // Remove this block once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
-      // Crop away the 1px line created by svg conversion in html2canvas.
-      {
-        const croppedCanvas = document.createElement('canvas');
-        croppedCanvas.width = width - 1;
-        croppedCanvas.height = height - 1;
-        const ctx = croppedCanvas.getContext('2d');
-        ctx?.drawImage(outCanvas, -1, -1, width, height);
-        return croppedCanvas.toDataURL();
-      }
 
       return outCanvas.toDataURL();
     } finally {
