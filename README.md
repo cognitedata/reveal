@@ -135,11 +135,7 @@ cd viewer/dist
 npm unlink
 ```
 
-In case when you need to change and test the latest changes in parser-worker
-consult [parser-worker/README.md](parser-worker/README.md)
-
 ## Releasing Reveal
 
 See [RELEASING.md](RELEASING.md) for details on how to releasing NPM packages and update
 documentation on release.
-
