@@ -1196,7 +1196,7 @@ export class Cognite3DViewer {
       const pixelRatioOverride = 1;
       this.renderer.setDrawingBufferSize(width, height, pixelRatioOverride);
       if (customRenderTarget) {
-        // To esure that the render is done to the screenshot canvas, we clear the custom
+        // To ensure that the render is done to the screenshot canvas, we clear the custom
         // render target. This will make the renderer fall back to use the default canvas.
         this.revealManager.setOutputRenderTarget(null);
       }
