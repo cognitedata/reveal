@@ -6,6 +6,12 @@ import { renderComponent } from '../../../__test-utils/renderer';
 
 import { AppliedFiltersTags, Props } from '../AppliedFiltersTags';
 
+jest.mock('@cognite/unified-file-viewer', () => {
+  return {
+    isSupportedFileInfo: jest.fn(() => true),
+  };
+});
+
 describe('AppliedFiltersTags', () => {
   const testInit = (props: Props) => {
     return renderComponent(AppliedFiltersTags, props);

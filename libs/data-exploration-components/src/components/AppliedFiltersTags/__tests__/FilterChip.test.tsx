@@ -8,6 +8,12 @@ import { renderComponent } from '../../../__test-utils/renderer';
 
 import { FilterChip, Props } from '../FilterChip';
 
+jest.mock('@cognite/unified-file-viewer', () => {
+  return {
+    isSupportedFileInfo: jest.fn(() => true),
+  };
+});
+
 describe('FilterChip', () => {
   const defaultProps: Props = {
     name: 'test-name',

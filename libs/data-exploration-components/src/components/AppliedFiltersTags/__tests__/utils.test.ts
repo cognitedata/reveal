@@ -6,6 +6,12 @@ import {
 import { CUSTOM_FILTER_TITLE } from '../constants';
 import { formatValue, getTitle } from '../utils';
 
+jest.mock('@cognite/unified-file-viewer', () => {
+  return {
+    isSupportedFileInfo: jest.fn(() => true),
+  };
+});
+
 describe('utils', () => {
   describe('getTitle', () => {
     it('should return pre-defined filter title', () => {
