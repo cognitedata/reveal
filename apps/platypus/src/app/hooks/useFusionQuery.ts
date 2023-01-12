@@ -27,7 +27,14 @@ export function useFusionQuery() {
     if (!env && !cluster && ref.current) {
       params.set('cluster', ref.current.cluster);
       params.set('env', ref.current.env);
-      setSearchParams(params);
+      /*
+      use replace, otherwise we'll add an entry to the history stack after clicking a
+      data model from the list, so the browser back button will take you back to the URL
+      without the search params and they'll just be added again
+      */
+      setSearchParams(params, {
+        replace: true,
+      });
     }
   });
 }
