@@ -642,7 +642,6 @@ describe('GraphQlUtilsServiceTest', () => {
         },
       ]);
     });
-
     it('validates @mapping directive for objects when extended SDL validation is enabled', () => {
       const service = createInstance();
 

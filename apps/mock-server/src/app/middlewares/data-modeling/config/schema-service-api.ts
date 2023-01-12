@@ -251,8 +251,7 @@ type Query {
     since: Timestamp
     until: Timestamp
   ): [Statistic]
-  validateGraphQlDmlVersion(graphQlDmlVersion: GraphQlDmlVersionUpsert!): UpsertGraphQlDmlVersionResult!
-  listGraphQlDmlVersions(space: String, filter: GraphQlDmlVersionFilter, sort: [GraphQlDmlVersionSort!]): GraphQlDmlVersionConnection
+  listGraphQlDmlVersions(limit: Int, cursor: String): GraphQlDmlVersionConnection
 }
 
 input QueryStatistic {

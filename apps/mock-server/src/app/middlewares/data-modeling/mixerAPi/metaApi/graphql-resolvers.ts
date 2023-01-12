@@ -72,6 +72,10 @@ export const graphQlMetaApiResolvers = (
           items = sortCollection(items, filterParams.sort);
         }
 
+        if (filterParams.limit) {
+          items = items.slice(0, filterParams.limit);
+        }
+
         const results = items.map((item) => ({
           ...item,
           graphQlDml: item.metadata.graphQlDml,
@@ -133,47 +137,6 @@ export const graphQlMetaApiResolvers = (
             originalError: null,
             extensions: breakingChanges[0].extensions,
           });
-        }
-
-        return [];
-      },
-      validateGraphQlDmlVersion: async (prm, req) => {
-        const { space, externalId, version, graphQlDml } =
-          req.graphQlDmlVersion;
-
-        const dataModelsStore = CdfDatabaseService.from(
-          db,
-          'datamodels'
-        ).getState();
-
-        const currentSchemaVersion = dataModelsStore.find(
-          (item) =>
-            // eslint-disable-next-line
-            item.externalId === externalId &&
-            item.space === space &&
-            item.version.toString() === version.toString()
-        ) as any;
-
-        if (!currentSchemaVersion) {
-          return [];
-        }
-
-        const breakingChanges = await validateBreakingChanges(
-          graphQlDml,
-          currentSchemaVersion.metadata.graphQlDml,
-          'upsertGraphQlDmlVersion'
-        );
-
-        if (breakingChanges.length) {
-          throw new GraphQLError(
-            breakingChanges[0].message,
-            null,
-            null,
-            null,
-            null,
-            null,
-            breakingChanges[0].extensions
-          );
         }
 
         return [];

@@ -52,9 +52,8 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
   );
 
   const { data: dataModelVersionList } = useDataModelVersions(externalId);
-  const { graphQlSchema, builtInTypes } = useSelector<DataModelState>(
-    (state) => state.dataModel
-  );
+  const { graphQlSchema, builtInTypes, currentTypeName, typeDefs } =
+    useSelector<DataModelState>((state) => state.dataModel);
 
   const isUIDisabled = editorMode === SchemaEditorMode.View || isPublishing;
   const { setGraphQlSchema } = useDataModelState();
@@ -95,6 +94,8 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             key={`graphql-code-editor-version-${dataModelVersionList?.length}`}
             builtInTypes={builtInTypes}
             externalId={externalId}
+            currentTypeName={currentTypeName}
+            typeDefs={typeDefs}
             space={space}
             version={version}
             code={graphQlSchema}

@@ -74,8 +74,13 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     selectedVersionNumber,
     typeDefs,
   } = useSelector<DataModelState>((state) => state.dataModel);
-  const { setEditorMode, setGraphQlSchema, setIsDirty, parseGraphQLSchema } =
-    useDataModelState();
+  const {
+    setEditorMode,
+    setGraphQlSchema,
+    setIsDirty,
+    parseGraphQLSchema,
+    setCurrentTypeName,
+  } = useDataModelState();
   const { removeLocalDraft, getLocalDraft } =
     useLocalDraft(dataModelExternalId);
 
@@ -396,6 +401,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
                   <SchemaVisualizer
                     active={currentTypeName || undefined}
                     graphQLSchemaString={graphQlSchema}
+                    onNodeClick={(nodeName) => setCurrentTypeName(nodeName)}
                     isVisualizerOn={
                       typeDefs.types.length <= MAX_TYPES_VISUALIZABLE ||
                       isVisualizerOn

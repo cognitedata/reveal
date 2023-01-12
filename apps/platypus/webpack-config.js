@@ -104,7 +104,7 @@ module.exports = (config) => {
       plugins: [
         ...config.plugins,
         new MonacoWebpackPlugin({
-          publicPath: '',
+          publicPath: '/',
           languages: ['graphql'],
         }),
       ],
@@ -161,7 +161,9 @@ module.exports = (config) => {
     .filter((plugin) => plugin.constructor.name !== 'IndexHtmlWebpackPlugin');
 
   // This ensures Monaco is able to load its web workers
-  config.plugins.push(new MonacoWebpackPlugin({ publicPath: '' }));
+  config.plugins.push(
+    new MonacoWebpackPlugin({ publicPath: '/', languages: ['graphql'] })
+  );
 
   return config;
 };

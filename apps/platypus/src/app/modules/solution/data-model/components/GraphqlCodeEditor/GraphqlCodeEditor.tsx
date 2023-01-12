@@ -1,9 +1,12 @@
 import Editor, { Monaco } from '@monaco-editor/react';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { BuiltInType } from '@platypus/platypus-core';
+import { BuiltInType, DataModelTypeDefs } from '@platypus/platypus-core';
 import debounce from 'lodash/debounce';
-import { Environment as MonacoEditorEnvironment } from 'monaco-editor';
+import {
+  Environment as MonacoEditorEnvironment,
+  editor as MonacoEditor,
+} from 'monaco-editor';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 // web workers stuff
@@ -30,6 +33,8 @@ declare const self: any;
 
 type Props = {
   code: string;
+  currentTypeName: string | null;
+  typeDefs: DataModelTypeDefs | null;
   builtInTypes: BuiltInType[];
   externalId: string;
   space: string;
@@ -39,9 +44,18 @@ type Props = {
 };
 
 export const GraphqlCodeEditor = React.memo(
-  ({ code, builtInTypes, externalId, disabled = false, onChange }: Props) => {
+  ({
+    code,
+    currentTypeName,
+    typeDefs,
+    builtInTypes,
+    externalId,
+    disabled = false,
+    onChange,
+  }: Props) => {
     const [editorValue, setEditorValue] = useState(code);
     const langProviders = useRef<any>(null);
+    const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
 
     const { track } = useMixpanel();
 
@@ -49,6 +63,12 @@ export const GraphqlCodeEditor = React.memo(
       langProviders.current = setupGraphql(monacoInstance, builtInTypes, {
         useExtendedSdl: isFDMv3(),
       });
+    };
+
+    const handleEditorDidMount = (
+      editor: MonacoEditor.IStandaloneCodeEditor
+    ) => {
+      editorRef.current = editor;
     };
 
     const debouncedOnChange = useMemo(
@@ -61,6 +81,26 @@ export const GraphqlCodeEditor = React.memo(
         debouncedOnChange.cancel();
       };
     }, [debouncedOnChange]);
+
+    useEffect(() => {
+      if (currentTypeName && editorRef.current && typeDefs) {
+        const selectedType = typeDefs?.types.find(
+          (typeDef) => typeDef.name === currentTypeName
+        );
+
+        if (selectedType?.location) {
+          // scroll the editor to this line
+          editorRef.current.revealLine(selectedType.location.line);
+          // set the focus there
+          editorRef.current.setPosition({
+            column: selectedType?.location.column,
+            lineNumber: selectedType?.location.line,
+          });
+        }
+      }
+
+      // eslint-disable-next-line
+    }, [currentTypeName]);
 
     useEffect(() => {
       setEditorValue(code);
@@ -88,7 +128,6 @@ export const GraphqlCodeEditor = React.memo(
             renderValidationDecorations: 'on',
             readOnly: disabled,
             overviewRulerLanes: 0,
-            renderLineHighlight: 'none',
             scrollBeyondLastLine: false,
             autoIndent: 'full',
             formatOnPaste: true,
@@ -98,6 +137,7 @@ export const GraphqlCodeEditor = React.memo(
           value={editorValue}
           loading={<Spinner />}
           beforeMount={editorWillMount}
+          onMount={handleEditorDidMount}
           defaultLanguage="graphql"
           onChange={(value) => {
             const editCode = value || '';

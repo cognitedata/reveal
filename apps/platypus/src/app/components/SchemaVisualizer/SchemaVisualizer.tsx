@@ -55,10 +55,12 @@ export const SchemaVisualizer = React.memo(
     graphQLSchemaString,
     active,
     isVisualizerOn,
+    onNodeClick,
   }: {
     graphQLSchemaString?: string;
     active?: string;
     isVisualizerOn: boolean;
+    onNodeClick: (nodeName: string) => void;
     /* Customize the Visualizer rendering */
   }) => {
     const { t } = useTranslation('Schema Visualizer');
@@ -188,6 +190,14 @@ export const SchemaVisualizer = React.memo(
             id={item.id}
             key={item.id}
             title={item.title}
+            onClick={() => {
+              if (
+                item.kind === 'ObjectTypeDefinition' ||
+                item.kind === 'InterfaceTypeDefinition'
+              ) {
+                onNodeClick(item.title);
+              }
+            }}
             onMouseEnter={() => {
               // Highlight links when hovering a node
               setHighlightedIds(

@@ -70,7 +70,7 @@ describe('MixerApi Test', () => {
   };
 
   beforeEach(() => {
-    db = mockDataSample;
+    db = JSON.parse(JSON.stringify(mockDataSample));
 
     server = createServer(db, {
       version: 1,
@@ -83,7 +83,7 @@ describe('MixerApi Test', () => {
       .set('Accept', 'application/json')
       .send({
         query: `query {
-          listGraphQlDmlVersions(space: "blog") {
+          listGraphQlDmlVersions(limit: 100) {
             items {
               space
               externalId
@@ -101,7 +101,8 @@ describe('MixerApi Test', () => {
 
     // by default, API will return just the latest version
     // since mock
-    const expectedSchema = { ...db.datamodels[1] };
+    const expectedSchema = { ...db.datamodels[0] };
+
     expect(response.statusCode).toEqual(200);
     expect(qryResult.data.listGraphQlDmlVersions.items.length).toEqual(1);
     expect(qryResult.data.listGraphQlDmlVersions.items[0]).toEqual(

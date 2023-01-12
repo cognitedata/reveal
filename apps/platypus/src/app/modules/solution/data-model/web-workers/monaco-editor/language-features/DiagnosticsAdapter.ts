@@ -100,6 +100,13 @@ export class DiagnosticsAdapter {
 
     const markers = [] as ValidationMarker[];
 
+    // if no errors, we have valid graphql schema
+    // put it in cache and parse the type defs
+    // so we can use it later for other stuff
+    if (!diagnostics.length && editorContent) {
+      await worker.setGraphQlSchema(editorContent);
+    }
+
     // Monaco editor needs them as separate lines
     (diagnostics as DataModelValidationError[]).forEach((validationError) => {
       const locations = validationError.locations || [];

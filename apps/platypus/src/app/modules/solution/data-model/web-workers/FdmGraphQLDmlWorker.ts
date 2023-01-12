@@ -1,5 +1,9 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
-import { BuiltInType, mixerApiBuiltInTypes } from '@platypus/platypus-core';
+import {
+  BuiltInType,
+  DataModelTypeDefs,
+  mixerApiBuiltInTypes,
+} from '@platypus/platypus-core';
 import type { worker } from 'monaco-editor';
 import { IFdmGraphQLDmlWorkerOptions } from './types';
 import prettierStandalone from 'prettier/standalone';
@@ -9,6 +13,9 @@ import { CodeCompletionService } from './language-service';
 export class FdmGraphQLDmlWorker {
   private _ctx: worker.IWorkerContext;
   private codeCompletionService: CodeCompletionService;
+
+  private lastValidGraphQlSchema: string | null = null;
+  private dataModelTypeDefs: DataModelTypeDefs | null = null;
 
   constructor(
     ctx: worker.IWorkerContext,
@@ -66,6 +73,21 @@ export class FdmGraphQLDmlWorker {
       plugins: [prettierGraphqlParser],
       tabWidth: 2,
     });
+  }
+
+  public async setGraphQlSchema(graphQlString: string) {
+    try {
+      this.lastValidGraphQlSchema = graphQlString;
+      const graphQlUtils = new GraphQlUtilsService();
+      this.dataModelTypeDefs = graphQlUtils.parseSchema(
+        this.lastValidGraphQlSchema
+      );
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      this.dataModelTypeDefs = null;
+      this.lastValidGraphQlSchema = null;
+    }
   }
 }
 

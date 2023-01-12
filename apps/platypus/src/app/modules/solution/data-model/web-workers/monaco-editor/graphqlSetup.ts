@@ -21,6 +21,17 @@ export const setupGraphql = (
   const disposables: IDisposable[] = [];
   const providers: IDisposable[] = [];
 
+  // Provide a custom folding region support
+  monaco.languages.setLanguageConfiguration('graphql', {
+    folding: {
+      offSide: false,
+      markers: {
+        start: new RegExp(/^#region/),
+        end: new RegExp(/^#endregion/),
+      },
+    },
+  });
+
   const client = new WorkerManager({
     languageId: 'graphql',
     options: options,
