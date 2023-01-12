@@ -115,6 +115,7 @@ DEPENDENCIES = [
     "@npm//styled-components",
     "@npm//yup",
     "//packages/metrics",
+    "//packages/react-feature-flags",
     "//packages/auth-utils",
     "//packages/sidecar",
     "//packages/z-index",

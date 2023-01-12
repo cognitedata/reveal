@@ -8,6 +8,7 @@ import styled from 'styled-components/macro';
 
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
+import { FlagProvider } from '@cognite/react-feature-flags';
 
 import { MenuBar } from 'components/Menubar';
 import { useTitle } from 'hooks/useTitle';
@@ -18,6 +19,7 @@ import {
 } from 'store/app/selectors';
 import { useAppDispatch } from 'store/hooks';
 import { simconfigApiPropertiesSlice } from 'store/simconfigApiProperties';
+import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { identifyUser } from 'utils/metrics/tracking';
 import sidecar from 'utils/sidecar';
 
@@ -30,6 +32,7 @@ export default function App() {
   const { client, authState, reauthenticate } = useAuthContext();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const isInitialized = useSelector(selectIsInitialized);
+  const project = useSelector(selectProject);
 
   simconfigApiPropertiesSlice.actions.setProperties({
     baseUrl: sidecar.cdfApiBaseUrl,
@@ -83,13 +86,20 @@ export default function App() {
         location={location}
         routes={routes(dispatch, client.project)}
       >
-        <RoutedAppContainer>
-          <MenuBar />
-          <Content>
-            <ToastContainer />
-            <Outlet />
-          </Content>
-        </RoutedAppContainer>
+        <FlagProvider
+          apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+          appName="simconfig"
+          projectName={project}
+          disableMetrics
+        >
+          <RoutedAppContainer>
+            <MenuBar />
+            <Content>
+              <ToastContainer />
+              <Outlet />
+            </Content>
+          </RoutedAppContainer>
+        </FlagProvider>
       </Router>
     </>
   );

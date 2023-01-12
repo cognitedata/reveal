@@ -17,6 +17,7 @@ import {
   toast,
 } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
+import { useFlag } from '@cognite/react-feature-flags';
 import type {
   CalculationRun,
   CalculationTemplate,
@@ -77,6 +78,7 @@ export function CalculationList({
   const [shouldPoll, setShouldPoll] = useState<boolean>(false);
   const [shouldPollOnDelete, setShouldPollOnDelete] = useState<boolean>(false);
   const [triggeredRuns, setTriggeredRuns] = useState<TriggeredRunInfo>();
+  const { isEnabled: isCustomCalculationEnabled } = useFlag('SIMCONFIG_UDC');
 
   const [deletedExternalIds, setDeletedExternalIds] = useState<string[]>([]);
 
@@ -91,7 +93,7 @@ export function CalculationList({
     const deleteFeature = capabilities.capabilities.find(
       (feature) => feature.name === 'Delete'
     );
-    return deleteFeature?.capabilities?.every(
+    return deleteFeature?.capabilities.every(
       (capability) => capability.enabled
     );
   }, [capabilities]);
@@ -288,7 +290,7 @@ export function CalculationList({
     };
 
   if (showConfigured) {
-    const configuredCalculations = modelCalculations.modelCalculationList
+    const configuredCalculationsList = modelCalculations.modelCalculationList
       .slice()
       .sort(
         (
@@ -296,6 +298,12 @@ export function CalculationList({
           { configuration: { calculationName: b } }: ModelCalculation
         ) => a.localeCompare(b)
       );
+    const configuredCalculations = isCustomCalculationEnabled
+      ? configuredCalculationsList
+      : configuredCalculationsList.filter(
+          (calculation) =>
+            calculation.configuration.calculationType !== 'UserDefined'
+        );
     return !configuredCalculations.length ? (
       <GraphicContainer>
         <Graphic type="RuleMonitoring" /> No configured calculations
@@ -502,19 +510,21 @@ export function CalculationList({
     </GraphicContainer>
   ) : (
     <NonConfiguredCalculationList>
-      <>
-        <Link to="UserDefined/new-calculation/configuration">
-          <Button
-            className="configure-calculation"
-            icon="Settings"
-            size="small"
-            type="primary"
-          >
-            Configure
-          </Button>
-        </Link>
-        <span className="name">Create custom calculation</span>
-      </>
+      {isCustomCalculationEnabled && (
+        <>
+          <Link to="UserDefined/new-calculation/configuration">
+            <Button
+              className="configure-calculation"
+              icon="Settings"
+              size="small"
+              type="primary"
+            >
+              Configure
+            </Button>
+          </Link>
+          <span className="name">Create custom calculation</span>
+        </>
+      )}
       {nonConfiguredCalculations
         .sort((a: CalculationType, b: CalculationType) => a.localeCompare(b))
         .map((calculationType) => (
