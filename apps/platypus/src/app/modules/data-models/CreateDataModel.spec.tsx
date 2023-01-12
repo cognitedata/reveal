@@ -67,7 +67,7 @@ describe('CreateDataModel', () => {
 
   it('Sends auto-generated external ID when creating data model', () => {
     render(<CreateDataModel onCancel={noop} />);
-    const dataModelName = 'My Data Model';
+    const dataModelName = 'My_Data_Model';
 
     userEvent.type(
       screen.getByLabelText('Name', { exact: false }),
@@ -89,7 +89,7 @@ describe('CreateDataModel', () => {
 
   it('Sends custom external ID when creating data model', () => {
     render(<CreateDataModel onCancel={noop} />);
-    const dataModelName = 'My Data Model';
+    const dataModelName = 'My_Data_Model';
 
     userEvent.type(
       screen.getByLabelText('Name', { exact: false }),

@@ -182,7 +182,8 @@ export class FdmClient implements FlexibleDataModelingClient {
                 this.dataModelDataMapper.deserialize(dataModelResponse.result)
               );
             }
-          });
+          })
+          .catch((err: PlatypusError) => reject(err));
       });
     });
   }

@@ -83,7 +83,9 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
       title={props.title}
       onCancel={props.onCancel}
       onOk={props.onSubmit}
-      okDisabled={!props.name || !props.name.trim()}
+      okDisabled={
+        !props.name.trim() || externalIdErrorMessage || nameErrorMessage
+      }
       okButtonName={t('confirm', 'Confirm')}
       okProgress={props.isLoading}
       okType="primary"

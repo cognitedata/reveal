@@ -38,7 +38,7 @@ describe('DataModelSettingsModal', () => {
       version: '',
       space: 'testDataModel-1',
     };
-    const newName = 'New name';
+    const newName = 'New_Name';
     const newDescription = 'New description';
     const handleRequestClose = jest.fn();
     render(

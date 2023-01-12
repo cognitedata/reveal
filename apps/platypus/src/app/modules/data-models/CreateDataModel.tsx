@@ -11,7 +11,6 @@ import { useNavigate } from '@platypus-app/flags/useNavigate';
 export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
   const [dataModelName, setDataModelName] = useState('');
   const [dataModelDescription, setDataModelDescription] = useState('');
-  const [hasInputError, setHasInputError] = useState(false);
   const [externalId, setExternalId] = useState('');
   const [isExternalIdDirty, setIsExternalIdDirty] = useState(false);
   const navigate = useNavigate();
@@ -29,10 +28,6 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
 
     if (!isExternalIdDirty) {
       setExternalId(DataUtils.convertToExternalId(value));
-    }
-
-    if (hasInputError) {
-      setHasInputError(false);
     }
   };
 
@@ -55,7 +50,6 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
           }
 
           if (result.isFailure) {
-            setHasInputError(true);
             Notification({
               type: 'error',
               message: result.error.message,
@@ -86,7 +80,6 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
       dataSets={dataSets || []}
       description={dataModelDescription || ''}
       externalId={externalId}
-      hasInputError={hasInputError}
       isDataSetsFetchError={isDataSetsFetchError}
       isDataSetsLoading={isDataSetsLoading}
       isLoading={create.isLoading}
@@ -96,7 +89,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
       onDescriptionChange={(value) => setDataModelDescription(value)}
       onNameChange={handleNameChange}
       onSubmit={handleSubmit}
-      title={t('modal-title', 'Create Data Model')}
+      title={t('data_model_create_modal_title', 'Create Data Model')}
     />
   );
 };
