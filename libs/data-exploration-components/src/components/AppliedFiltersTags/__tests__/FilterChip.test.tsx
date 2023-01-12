@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/extend-expect';
 
 import { screen } from '@testing-library/react';
 
-import { COMMON_FILTER_KEYS } from '@data-exploration-components/domain/constants';
+import { COMMON_FILTER_KEYS } from '@data-exploration-lib/domain-layer';
 
 import { renderComponent } from '../../../__test-utils/renderer';
 

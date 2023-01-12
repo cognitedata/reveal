@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/extend-expect';
 import {
   NIL_FILTER_LABEL,
   NIL_FILTER_VALUE,
-} from '@data-exploration-components/domain/constants';
+} from '@data-exploration-lib/domain-layer';
 import { CUSTOM_FILTER_TITLE } from '../constants';
 import { formatValue, getTitle } from '../utils';
 

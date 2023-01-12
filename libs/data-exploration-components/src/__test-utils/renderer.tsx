@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import render, { CogniteRenderOptions } from '@platypus-app/tests/render';
 
-export const renderComponent = <PropsType,>(
+export const renderComponent = <PropsType extends object>(
   component: React.FC<PropsType>,
   props: PropsType,
   options?: CogniteRenderOptions
