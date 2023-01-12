@@ -76,7 +76,7 @@ export const DataModelsTable = React.forwardRef(
           wrapperStyle={{ height: 'calc(100% - 100px)' }}
           theme={'basic-striped'}
           pagination={true}
-          paginationPageSize={10}
+          paginationPageSize={RESULTS_PER_PAGE}
           suppressPaginationPanel={true}
           onRowClicked={handleRowClicked}
           onGridReady={(e) => e.api.sizeColumnsToFit()}
@@ -90,7 +90,7 @@ export const DataModelsTable = React.forwardRef(
               hideItemsPerPage
               onPageChange={(pageNumber) => {
                 if (gridRef && gridRef.current) {
-                  gridRef?.current?.api.paginationGoToPage(pageNumber);
+                  gridRef?.current?.api.paginationGoToPage(pageNumber - 1);
                 }
               }}
             />
