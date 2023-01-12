@@ -22,6 +22,7 @@ import {
 } from '../dto';
 
 import {
+  BuiltInType,
   CdfResourceInstance,
   DataModel,
   DataModelTransformation,
@@ -101,6 +102,17 @@ export interface FlexibleDataModelingClient {
     dto: PublishDataModelVersionDTO,
     validateBreakingChanges?: boolean
   ): Promise<DataModelValidationError[]>;
+
+  /**
+   * Validates Graphql string
+   * Checks for sytax errors, unsupported features
+   * @param graphql
+   * @param builtInTypes
+   */
+  validateGraphql(
+    graphql: string,
+    builtInTypes: BuiltInType[]
+  ): DataModelValidationError[];
 
   /**
    * Run GraphQL query against a Data Model Version

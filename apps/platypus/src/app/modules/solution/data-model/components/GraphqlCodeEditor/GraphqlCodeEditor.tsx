@@ -11,6 +11,8 @@ import { setupGraphql } from '../../web-workers';
 import GraphQlWorker from '../../web-workers/worker-loaders/graphqlWorkerLoader';
 import MonacoEditorWorker from '../../web-workers/worker-loaders/monacoLanguageServiceWorkerLoader';
 
+import { isFDMv3 } from '@platypus-app/flags';
+
 // point here so the context can be used
 declare const self: any;
 
@@ -44,7 +46,9 @@ export const GraphqlCodeEditor = React.memo(
     const { track } = useMixpanel();
 
     const editorWillMount = (monacoInstance: Monaco) => {
-      langProviders.current = setupGraphql(monacoInstance, builtInTypes);
+      langProviders.current = setupGraphql(monacoInstance, builtInTypes, {
+        useExtendedSdl: isFDMv3(),
+      });
     };
 
     const debouncedOnChange = useMemo(

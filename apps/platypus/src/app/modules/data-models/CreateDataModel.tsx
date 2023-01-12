@@ -28,7 +28,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
     setDataModelName(value);
 
     if (!isExternalIdDirty) {
-      setExternalId(DataUtils.convertToCamelCase(value));
+      setExternalId(DataUtils.convertToExternalId(value));
     }
 
     if (hasInputError) {

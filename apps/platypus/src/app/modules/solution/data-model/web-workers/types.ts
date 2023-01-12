@@ -6,7 +6,7 @@ export type ValidationMarker = editor.IMarkerData;
 
 export interface IFdmGraphQLDmlWorkerOptions {
   languageId: string;
-  options?: any;
+  options?: { useExtendedSdl: boolean };
 }
 
 export interface WorkerAccessor {

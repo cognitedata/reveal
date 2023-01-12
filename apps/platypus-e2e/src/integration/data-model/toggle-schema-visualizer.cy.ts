@@ -45,7 +45,7 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
     cy.getBySel('schema-visualizer-toggle-btn').should('be.visible').click();
     cy.getBySel('schema-visualizer-err-ctr').should('not.exist');
 
-    const newModelName = 'cypress-test';
+    const newModelName = 'cypress_test';
     createNewDataModel(newModelName);
 
     cy.get('[aria-label="Code editor"]').click();

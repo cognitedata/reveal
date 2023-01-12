@@ -11,4 +11,16 @@ export const mixerApiBuiltInTypes = [
   { name: 'Timestamp', type: 'SCALAR', dmsType: 'timestamp' },
   { name: 'JSONObject', type: 'SCALAR', dmsType: 'json' },
   { name: 'TimeSeries', type: 'SCALAR', dmsType: 'text' },
+  {
+    name: 'view',
+    type: 'DIRECTIVE',
+    body: '(space: String, name: String, version: String)',
+    fieldDirective: false,
+  },
+  {
+    name: 'mapping',
+    type: 'DIRECTIVE',
+    body: '(space: String, container: String, containerPropertyIdentifier: String)',
+    fieldDirective: true,
+  },
 ] as BuiltInType[];

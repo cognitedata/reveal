@@ -1,6 +1,6 @@
 import * as platypusCli from './platypus-cli';
 
-//Return datetime like 2022-07-18-1320 to work with API data model naming rules
+//Return datetime like 2022_07_18_1320 to work with API data model naming rules
 const getDatamodelNameTimeAppendix = () => {
   const date = new Date();
   return date
@@ -9,8 +9,9 @@ const getDatamodelNameTimeAppendix = () => {
       timeStyle: 'short',
       hour12: false,
     })
-    .replace(', ', '-')
-    .replace(':', '');
+    .replace(', ', '_')
+    .replace(':', '')
+    .replaceAll('-', '_');
 };
 
 describe('platpus-cli', () => {
@@ -49,9 +50,8 @@ describe('platpus-cli', () => {
   // });
 
   describe('cdf data-models publish', () => {
-    jest.setTimeout(50000);
     it('can publish data models and list', async () => {
-      const dataModelName = `cdf-cli-publish-e2e-test-${getDatamodelNameTimeAppendix()}`;
+      const dataModelName = `cdf_cli_publish_e2e_test_${getDatamodelNameTimeAppendix()}`;
       const dataModelExternalId = dataModelName;
 
       let output = await platypusCli.dataModelsCreate(
@@ -92,6 +92,6 @@ describe('platpus-cli', () => {
   // });
 
   afterAll(async () => {
-    platypusCli.logout();
+    return platypusCli.logout();
   });
 });

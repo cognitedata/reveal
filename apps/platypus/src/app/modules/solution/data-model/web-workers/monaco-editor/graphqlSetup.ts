@@ -7,19 +7,23 @@ import { WorkerManager } from './workerManager';
 import { FdmGraphQLDmlWorker } from '../FdmGraphQLDmlWorker';
 import { DiagnosticsAdapter } from './language-features';
 import { DocumentFormattingAdapter } from './language-features/DocumentFormattingAdapter';
-import { CodeCompletionProvider } from './language-features/CodeCompletitionProvider';
+import { CodeCompletionProvider } from './language-features/CodeCompletionProvider';
 
 /**
  * File that is used to setup or wire up web worker and all monaco stuff
  */
-export const setupGraphql = (monaco: Monaco, builtInTypes: BuiltInType[]) => {
+export const setupGraphql = (
+  monaco: Monaco,
+  builtInTypes: BuiltInType[],
+  options: { useExtendedSdl: boolean }
+) => {
   const editorInstance: EditorInstance = monaco.editor;
   const disposables: IDisposable[] = [];
   const providers: IDisposable[] = [];
 
   const client = new WorkerManager({
     languageId: 'graphql',
-    options: {},
+    options: options,
   });
   disposables.push(client);
 

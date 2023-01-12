@@ -31,7 +31,7 @@ export class FdmMixerApiService {
   lastUpdatedTime
   `;
   constructor(private readonly cdfClient: CogniteClient) {
-    this.mixerApiPath = `/api/v1/projects/${this.cdfClient.project}/schema/graphql`;
+    this.mixerApiPath = `/api/v1/projects/${this.cdfClient.project}/dml/graphql`;
   }
 
   listDataModelVersions(
@@ -39,7 +39,7 @@ export class FdmMixerApiService {
     filter?: DataModelVersionFilter,
     sort?: DataModelVersionSort
   ): Promise<GraphQlDmlVersionDTO[]> {
-    let dataModelsFromSpaceFilter = '';
+    let dataModelsFromSpaceFilter = '(limit: 100)';
     const queryVariables = {} as KeyValueMap;
 
     if (space || filter) {
@@ -48,14 +48,16 @@ export class FdmMixerApiService {
       if (space) {
         filters.push(`space: "${space}"`);
       }
+
+      // currently MixerApi does not support filters
       if (filter) {
-        queryVariables['filter'] = filter;
-        filters.push(`filter: $filter`);
+        // queryVariables['filter'] = filter;
+        // filters.push(`filter: $filter`);
       }
 
       dataModelsFromSpaceFilter = filters.length
-        ? `(${filters.join(',')})`
-        : '';
+        ? `(limit: 100, ${filters.join(',')})`
+        : '(limit: 100)';
     }
 
     const listDataModelsQuery = `
@@ -65,7 +67,9 @@ export class FdmMixerApiService {
         : ''
     } {
       listGraphQlDmlVersions${dataModelsFromSpaceFilter} {
-        ${this.dataModelVersionFields}
+        items {
+          ${this.dataModelVersionFields}
+        }
       }
     }
     `;
@@ -77,7 +81,15 @@ export class FdmMixerApiService {
 
     return this.runGraphQlQuery(this.mixerApiPath, reqDto)
       .then((response) => {
-        return response.data.data.listGraphQlDmlVersions;
+        let items = response.data.data.listGraphQlDmlVersions.items;
+
+        if (filter?.externalId) {
+          items = items.filter(
+            (item: any) => item.externalId === filter.externalId?.eq
+          );
+        }
+
+        return items;
       })
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
@@ -207,6 +219,6 @@ export class FdmMixerApiService {
     version: string,
     baseUrl: string
   ) => {
-    return `${baseUrl}/api/v1/projects/${projectName}/schema/api/${space}/${dataModelExternalId}/${version}/graphql`;
+    return `${baseUrl}/api/v1/projects/${projectName}/userapis/spaces/${space}/datamodels/${dataModelExternalId}/versions/${version}/graphql`;
   };
 }

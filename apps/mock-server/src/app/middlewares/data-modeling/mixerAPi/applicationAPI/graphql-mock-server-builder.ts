@@ -36,17 +36,16 @@ export const buildMockServer = (
   const store = CdfDatabaseService.from(db, storeKey);
 
   const templateTables = parser.getTableNames(schema, '');
-  const modifiedSchema = schemaBuilder.sanitizeSchema(schema);
 
   const parsedSchema = parser.buildGraphQlSchema(
     `
     ${schemaBuilder.getBuiltInTypes()}
-    ${modifiedSchema}
+    ${schema}
     `
   );
 
   const graphQlSchema = schemaBuilder.buildSchema(
-    modifiedSchema,
+    schema,
     parsedSchema,
     templateTables
   );
@@ -163,7 +162,11 @@ export const buildMixerApiGraphQlServersFromMockDb = (db: CdfMockDatabase) => {
   ).getState() as any[];
   if (dataModelsMock?.length) {
     dataModelsMock.forEach((dataModelVersion) => {
-      if (!dataModelVersion.version || !dataModelVersion.metadata.graphQlDml) {
+      if (
+        !dataModelVersion.version ||
+        (!dataModelVersion.metadata.graphQlDml &&
+          dataModelVersion.metadata.graphQlDml !== null)
+      ) {
         console.warn(
           `Missing version or graphqlRepresentation. Can not create graphql mock for ${JSON.stringify(
             dataModelVersion,

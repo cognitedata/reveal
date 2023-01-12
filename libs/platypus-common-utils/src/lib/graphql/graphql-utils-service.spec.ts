@@ -527,5 +527,180 @@ describe('GraphQlUtilsServiceTest', () => {
         },
       ]);
     });
+
+    it('validates @view directiv for objects when extended SDL validation is enabled', () => {
+      const service = createInstance();
+
+      const schemaWithInvalidViewDirective = `
+      type Employee @view(space: false, name: 123, version: false){
+        name: String
+      }
+      `;
+
+      const result = service.validate(
+        schemaWithInvalidViewDirective,
+        mixerApiBuiltInTypes,
+        { useExtendedSdl: true }
+      );
+
+      expect(result).toEqual([
+        {
+          message: 'Space argument must be of type String',
+          status: 400,
+          errorMessage: 'Space argument must be of type String',
+          typeName: undefined,
+          fieldName: undefined,
+          locations: [
+            {
+              line: 2,
+              column: 27,
+            },
+          ],
+        },
+        {
+          message: 'Name argument must be of type String',
+          status: 400,
+          errorMessage: 'Name argument must be of type String',
+          typeName: undefined,
+          fieldName: undefined,
+          locations: [
+            {
+              line: 2,
+              column: 41,
+            },
+          ],
+        },
+        {
+          message: 'Version argument must be of type string',
+          status: 400,
+          errorMessage: 'Version argument must be of type string',
+          typeName: undefined,
+          fieldName: undefined,
+          locations: [
+            {
+              line: 2,
+              column: 52,
+            },
+          ],
+        },
+      ]);
+    });
+    it('validates @view directiv for interfaces when extended SDL validation is enabled', () => {
+      const service = createInstance();
+
+      const schemaWithInvalidViewDirective = `
+      interface Person @view(space: false, name: 123, version: false){
+        name: String
+      } 
+      `;
+
+      const result = service.validate(
+        schemaWithInvalidViewDirective,
+        mixerApiBuiltInTypes,
+        { useExtendedSdl: true }
+      );
+
+      expect(result).toEqual([
+        {
+          message: 'Space argument must be of type String',
+          status: 400,
+          errorMessage: 'Space argument must be of type String',
+          typeName: undefined,
+          fieldName: undefined,
+          locations: [
+            {
+              line: 2,
+              column: 30,
+            },
+          ],
+        },
+        {
+          message: 'Name argument must be of type String',
+          status: 400,
+          errorMessage: 'Name argument must be of type String',
+          typeName: undefined,
+          fieldName: undefined,
+          locations: [
+            {
+              line: 2,
+              column: 44,
+            },
+          ],
+        },
+        {
+          message: 'Version argument must be of type string',
+          status: 400,
+          errorMessage: 'Version argument must be of type string',
+          typeName: undefined,
+          fieldName: undefined,
+          locations: [
+            {
+              line: 2,
+              column: 55,
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('validates @mapping directive for objects when extended SDL validation is enabled', () => {
+      const service = createInstance();
+
+      const schemaWithInvalidViewDirective = `
+      type Movie {
+        title: String @mapping(container: false, space: false, containerPropertyIdentifier: false)
+      }
+      `;
+
+      const result = service.validate(
+        schemaWithInvalidViewDirective,
+        mixerApiBuiltInTypes,
+        { useExtendedSdl: true }
+      );
+
+      expect(result).toEqual([
+        {
+          message: 'Container argument must be of type String',
+          status: 400,
+          errorMessage: 'Container argument must be of type String',
+          typeName: undefined,
+          fieldName: undefined,
+          locations: [
+            {
+              line: 3,
+              column: 32,
+            },
+          ],
+        },
+        {
+          message: 'Space argument must be of type String',
+          status: 400,
+          errorMessage: 'Space argument must be of type String',
+          typeName: undefined,
+          fieldName: undefined,
+          locations: [
+            {
+              line: 3,
+              column: 50,
+            },
+          ],
+        },
+        {
+          message:
+            'containerPropertyIdentifier argument must be of type String',
+          status: 400,
+          errorMessage:
+            'containerPropertyIdentifier argument must be of type String',
+          typeName: undefined,
+          fieldName: undefined,
+          locations: [
+            {
+              line: 3,
+              column: 64,
+            },
+          ],
+        },
+      ]);
+    });
   });
 });

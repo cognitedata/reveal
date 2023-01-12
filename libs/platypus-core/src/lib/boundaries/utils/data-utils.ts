@@ -11,12 +11,19 @@ export class DataUtils {
     return Array.isArray(obj);
   }
 
-  static convertToCamelCase(input: string): string {
-    const regex = /\s+(\w)?/gi;
-
-    return input
+  static convertToExternalId(input: string): string {
+    const externalId = input
+      // trim whitespace
       .trim()
-      .toLowerCase()
-      .replace(regex, (match, letter) => letter.toUpperCase());
+      // replace spaces and hyphens with underscores
+      .replaceAll(/[\s-]/g, '_')
+      // remove anything but a-zA-Z from beginning
+      .replace(/^[^a-zA-Z]*/, '')
+      // remove anything but a-zA-Z0-9 from end
+      .replace(/[^a-zA-Z0-9]*$/, '')
+      // remove anything but a-zA-Z0-9_ from middle
+      .replaceAll(/[^a-zA-Z0-9_]*/g, '');
+
+    return externalId;
   }
 }

@@ -72,10 +72,16 @@ export const graphQlMetaApiResolvers = (
           items = sortCollection(items, filterParams.sort);
         }
 
-        return items.map((item) => ({
+        const results = items.map((item) => ({
           ...item,
           graphQlDml: item.metadata.graphQlDml,
         }));
+
+        // return { items: results };
+        return {
+          items: results,
+          edges: results.map((result) => ({ node: result })),
+        };
       },
       getApisByIds: (prm, filterParams) => {
         const filters = { ...filterParams };
@@ -377,7 +383,7 @@ export const graphQlMetaApiResolvers = (
           );
         }
 
-        return { result: { ...dataModelVersion, graphQlDml }, errors: [] };
+        return { result: { ...dataModelVersion, graphQlDml }, errors: null };
       },
     },
   };

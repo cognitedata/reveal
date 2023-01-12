@@ -60,15 +60,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
 
   const validateName = (value: string) => {
     const validator = new Validator({ name: value });
-    validator.addRule(
-      'name',
-      new DataModelNameValidator({
-        validationMessage: t(
-          'data_model_name_error_message',
-          'May only contain numbers, letters, hyphens and underscores. Cannot start with a number, or contain more than 43 characters.'
-        ),
-      })
-    );
+    validator.addRule('name', new DataModelNameValidator());
     const result = validator.validate();
     setNameErrorMessage(result.valid ? null : result.errors.name);
 
@@ -77,15 +69,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
 
   const validateExternalId = (value: string) => {
     const validator = new Validator({ externalId: value });
-    validator.addRule(
-      'externalId',
-      new DataModelExternalIdValidator({
-        validationMessage: t(
-          'external_id_error_message',
-          'May only contain numbers, letters, hyphens and underscores'
-        ),
-      })
-    );
+    validator.addRule('externalId', new DataModelExternalIdValidator());
     const result = validator.validate();
 
     setExternalIdErrorMessage(result.valid ? null : result.errors.externalId);

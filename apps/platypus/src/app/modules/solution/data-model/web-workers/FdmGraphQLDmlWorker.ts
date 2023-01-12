@@ -4,18 +4,18 @@ import type { worker } from 'monaco-editor';
 import { IFdmGraphQLDmlWorkerOptions } from './types';
 import prettierStandalone from 'prettier/standalone';
 import prettierGraphqlParser from 'prettier/parser-graphql';
-import { CodeCompletitionService } from './language-service';
+import { CodeCompletionService } from './language-service';
 
 export class FdmGraphQLDmlWorker {
   private _ctx: worker.IWorkerContext;
-  private codeCompletitionService: CodeCompletitionService;
+  private codeCompletionService: CodeCompletionService;
 
   constructor(
     ctx: worker.IWorkerContext,
-    createData: IFdmGraphQLDmlWorkerOptions
+    private createData: IFdmGraphQLDmlWorkerOptions
   ) {
     this._ctx = ctx;
-    this.codeCompletitionService = new CodeCompletitionService();
+    this.codeCompletionService = new CodeCompletionService();
   }
 
   public async doValidation(graphqlCode: string) {
@@ -24,7 +24,11 @@ export class FdmGraphQLDmlWorker {
         return [];
       }
       const graphQlUtils = new GraphQlUtilsService();
-      const markers = graphQlUtils.validate(graphqlCode, mixerApiBuiltInTypes);
+      const markers = graphQlUtils.validate(
+        graphqlCode,
+        mixerApiBuiltInTypes,
+        this.createData.options
+      );
       return markers;
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -39,10 +43,11 @@ export class FdmGraphQLDmlWorker {
     builtInTypes: BuiltInType[]
   ) {
     try {
-      return this.codeCompletitionService.getCompletitions(
+      return this.codeCompletionService.getCompletions(
         graphQlString,
         textUntilPosition,
-        builtInTypes
+        builtInTypes,
+        !!this.createData.options?.useExtendedSdl
       );
     } catch (err) {
       // eslint-disable-next-line no-console

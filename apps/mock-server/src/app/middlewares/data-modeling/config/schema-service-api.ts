@@ -252,7 +252,7 @@ type Query {
     until: Timestamp
   ): [Statistic]
   validateGraphQlDmlVersion(graphQlDmlVersion: GraphQlDmlVersionUpsert!): UpsertGraphQlDmlVersionResult!
-  listGraphQlDmlVersions(space: String, filter: GraphQlDmlVersionFilter, sort: [GraphQlDmlVersionSort!]): [GraphQlDmlVersion!]!
+  listGraphQlDmlVersions(space: String, filter: GraphQlDmlVersionFilter, sort: [GraphQlDmlVersionSort!]): GraphQlDmlVersionConnection
 }
 
 input QueryStatistic {
@@ -334,6 +334,12 @@ scalar Timestamp
 "Represents a 64-bit integer value. Note that some consumers as JavaScript only supports [-(2^53)+1, (2^53)-1]."
 scalar Int64
 
+
+directive @view(space: String, name: String, version: String) on OBJECT | INTERFACE
+
+directive @mapping(space: String, container: String, containerPropertyIdentifier: String) on FIELD_DEFINITION
+
+
 type UpsertGraphQlDmlVersionResult {
   errors: [Error!]
   result: GraphQlDmlVersion
@@ -351,6 +357,17 @@ type GraphQlDmlVersion {
 
   createdTime: Timestamp
   lastUpdatedTime: Timestamp
+}
+
+type GraphQlDmlVersionConnection {
+  edges: [GraphQlDmlVersionEdge]!
+  items: [GraphQlDmlVersion]!
+  pageInfo: PageInfo!
+}
+
+type GraphQlDmlVersionEdge {
+  node: GraphQlDmlVersion!
+  cursor: String!
 }
 
 input GraphQlDmlVersionUpsert {

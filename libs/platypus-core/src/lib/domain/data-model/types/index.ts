@@ -42,6 +42,7 @@ export type BuiltInType = {
   dmsType?: string;
   fieldDirective?: boolean;
   type: 'SCALAR' | 'DIRECTIVE' | 'OBJECT' | 'ENUM';
+  body?: string;
 };
 
 export type PaginatedResponse = {

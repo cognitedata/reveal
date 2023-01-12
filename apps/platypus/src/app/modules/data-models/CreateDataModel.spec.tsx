@@ -41,7 +41,7 @@ describe('CreateDataModel', () => {
     );
 
     expect(screen.getByTestId('external-id-field')).toHaveTextContent(
-      'myDataModel'
+      'My_Data_Model'
     );
   });
 
@@ -56,12 +56,12 @@ describe('CreateDataModel', () => {
     userEvent.clear(screen.getByLabelText('External ID'));
     userEvent.type(
       screen.getByLabelText('External ID'),
-      'my-data-model{enter}'
+      'My_Data_Model{enter}'
     );
     userEvent.type(screen.getByLabelText('Name', { exact: false }), ' etc');
 
     expect(screen.getByTestId('external-id-field')).toHaveTextContent(
-      'my-data-model'
+      'My_Data_Model'
     );
   });
 
@@ -81,7 +81,7 @@ describe('CreateDataModel', () => {
     );
 
     expect(mockMutate.mock.calls[0][0]).toEqual({
-      externalId: 'myDataModel',
+      externalId: 'My_Data_Model',
       name: dataModelName,
       description: '',
     });
@@ -99,7 +99,7 @@ describe('CreateDataModel', () => {
     userEvent.clear(screen.getByLabelText('External ID'));
     userEvent.type(
       screen.getByLabelText('External ID'),
-      'my-data-model{enter}'
+      'My_Data_Model{enter}'
     );
     userEvent.click(
       screen.getByRole('button', {
@@ -109,7 +109,7 @@ describe('CreateDataModel', () => {
     );
 
     expect(mockMutate.mock.calls[0][0]).toEqual({
-      externalId: 'my-data-model',
+      externalId: 'My_Data_Model',
       name: dataModelName,
       description: '',
     });

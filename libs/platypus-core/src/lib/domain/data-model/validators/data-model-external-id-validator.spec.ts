@@ -20,8 +20,8 @@ describe('DataModelExternalIdValidator', () => {
   it('validates string with "-"', () => {
     const validator = createInstance();
 
-    const result = validator.validate('name', 'valid-name');
-    expect(result.valid).toBe(true);
+    const result = validator.validate('name', 'invalid-name');
+    expect(result.valid).toBe(false);
   });
 
   it('validates string following camelCase naming convention', () => {

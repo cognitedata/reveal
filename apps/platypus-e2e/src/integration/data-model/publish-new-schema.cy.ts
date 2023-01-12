@@ -130,7 +130,7 @@ describe('Data Model Page - Publish new schema', () => {
     // we should be redirected to /dashboard
     cy.url().should(
       'include',
-      '/data-models-previous/cypress-test/cypress-test/latest'
+      '/data-models-previous/cypress_test/cypress_test/latest'
     );
     cy.getCogsToast('success').contains('Data Model successfully created');
 

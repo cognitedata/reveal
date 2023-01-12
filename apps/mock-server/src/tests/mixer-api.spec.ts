@@ -47,7 +47,7 @@ describe('MixerApi Test', () => {
     }
 
     return request(server)
-      .post('/schema/graphql')
+      .post('/dml/graphql')
       .set('Accept', 'application/json')
       .send({
         query: `mutation createUpdateDataModel($dmCreate: GraphQlDmlVersionUpsert!) {
@@ -64,13 +64,7 @@ describe('MixerApi Test', () => {
         }
         `,
         variables: {
-          dmCreate: {
-            space: 'test',
-            externalId: 'test-solution',
-            name: 'test-solution',
-            description: 'Test solution',
-            version: '1',
-          },
+          dmCreate: reqObj,
         },
       });
   };
@@ -85,19 +79,21 @@ describe('MixerApi Test', () => {
 
   it('Should fetch the available data models', async () => {
     const response = await request(server)
-      .post('/schema/graphql')
+      .post('/dml/graphql')
       .set('Accept', 'application/json')
       .send({
         query: `query {
           listGraphQlDmlVersions(space: "blog") {
-            space
-            externalId
-            version
-            name
-            description
-            graphQlDml
-            createdTime
-            lastUpdatedTime
+            items {
+              space
+              externalId
+              version
+              name
+              description
+              graphQlDml
+              createdTime
+              lastUpdatedTime
+            }
         }
     }`,
       });
@@ -107,8 +103,8 @@ describe('MixerApi Test', () => {
     // since mock
     const expectedSchema = { ...db.datamodels[1] };
     expect(response.statusCode).toEqual(200);
-    expect(qryResult.data.listGraphQlDmlVersions.length).toEqual(1);
-    expect(qryResult.data.listGraphQlDmlVersions[0]).toEqual(
+    expect(qryResult.data.listGraphQlDmlVersions.items.length).toEqual(1);
+    expect(qryResult.data.listGraphQlDmlVersions.items[0]).toEqual(
       expect.objectContaining({
         version: expectedSchema.version,
         externalId: expectedSchema.externalId,
@@ -133,7 +129,7 @@ describe('MixerApi Test', () => {
 
   it('Should query applications graphql with nodes and edges', async () => {
     const response = await request(server)
-      .post('/schema/api/blog/blog/1/graphql')
+      .post('/userapis/spaces/blog/datamodels/blog/versions/1/graphql')
       .set('Accept', 'application/json')
       .send({
         query: `query {
@@ -148,6 +144,7 @@ describe('MixerApi Test', () => {
     }`,
       });
     const qryResult = response.body;
+
     const expectedResponse = {
       name: 'John Doe',
       externalId: '123',
@@ -161,7 +158,7 @@ describe('MixerApi Test', () => {
 
   it('Should query applications graphql with items', async () => {
     const response = await request(server)
-      .post('/schema/api/blog/blog/1/graphql')
+      .post('/userapis/spaces/blog/datamodels/blog/versions/1/graphql')
       .set('Accept', 'application/json')
       .send({
         query: `query {

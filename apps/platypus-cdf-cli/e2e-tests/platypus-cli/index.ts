@@ -18,7 +18,8 @@ export async function dataModelsPublish(
     '--file',
     file,
     '--allow-breaking-change',
-    allowBreakingChange
+    allowBreakingChange,
+    '--verbose'
   );
 }
 
@@ -40,7 +41,7 @@ export async function dataModelsCreate(
     args.push('--data-set-id', dataSetId);
   }
 
-  return await runCommand(...args);
+  return await runCommand(...args, '--verbose');
 }
 
 export async function dataModelsDelete(externalId: string) {
@@ -58,10 +59,11 @@ export function login() {
     '--client-id',
     process.env.CLIENT_ID,
     '--client-secret',
-    process.env.CLIENT_SECRET
+    process.env.CLIENT_SECRET,
+    '--verbose'
   );
 }
 
 export async function logout() {
-  return runCommand('logout');
+  return runCommand('logout', '--verbose');
 }

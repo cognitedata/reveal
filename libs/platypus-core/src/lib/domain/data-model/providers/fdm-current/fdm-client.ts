@@ -35,6 +35,7 @@ import {
   DataModelTransformation,
   DataModelTypeDefsType,
   CdfResourceInstance,
+  BuiltInType,
 } from '../../types';
 import {
   DataModelDataMapper,
@@ -174,7 +175,8 @@ export class FdmV2Client implements FlexibleDataModelingClient {
    * @param dto CreateDataModelDTO
    */
   createDataModel(dto: CreateDataModelDTO): Promise<DataModel> {
-    const externalId = dto.externalId || DataUtils.convertToCamelCase(dto.name);
+    const externalId =
+      dto.externalId || DataUtils.convertToExternalId(dto.name);
 
     return this.dmsApiService.applySpaces([{ externalId }]).then(async () => {
       const createApiResponse = await this.mixerApiService.upsertApi({
@@ -317,6 +319,21 @@ export class FdmV2Client implements FlexibleDataModelingClient {
     );
 
     return dataModelErrors;
+  }
+
+  /**
+   * Validates Graphql
+   * Checks for sytax errors, unsupported features
+   * @param graphql
+   * @param builtInTypes
+   */
+  validateGraphql(
+    graphql: string,
+    builtInTypes: BuiltInType[]
+  ): DataModelValidationError[] {
+    return this.graphqlService.validate(graphql, builtInTypes, {
+      useExtendedSdl: false,
+    });
   }
 
   /**

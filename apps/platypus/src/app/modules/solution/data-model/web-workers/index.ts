@@ -17,7 +17,7 @@
  *    * graphql.worker - this is the actual web worker file
  *    * WorkerLoader files - those are needed so we can load the web workers using webpack (https://webpack.js.org/guides/web-workers/)
  * * FdmGraphQLDmlWorker - The implementation for the worker extracted as a separate class so it is reused
- * * language-service - a facade used in the web worker for features like code completition, formatting..etc.
+ * * language-service - a facade used in the web worker for features like code completion, formatting..etc.
  */
 export * from './types';
 export * from './monaco-editor/graphqlSetup';

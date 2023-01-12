@@ -35,7 +35,9 @@ import {
   ValidationRule,
 } from 'graphql/validation';
 import { validateSDL } from 'graphql/validation/validate';
+import { MappingDirectiveValidator } from './validation/MappingDirectiveValidator';
 import { NotSupportedFeaturesRule } from './validation/NotSupportedFeaturesRule';
+import { ViewDirectiveValidator } from './validation/ViewDirectiveValidator';
 
 export class GraphQlUtilsService implements IGraphQlUtilsService {
   private schemaAst: DocumentApi | null = null;
@@ -314,17 +316,24 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
   validate(
     graphQlString: string,
-    builtInTypes: BuiltInType[]
+    builtInTypes: BuiltInType[],
+    options?: {
+      useExtendedSdl: boolean;
+    }
   ): DataModelValidationError[] {
     const generateBuiltIntTypes = () => {
       return builtInTypes.map((builtInType) => {
         if (builtInType.type === 'DIRECTIVE' && !builtInType.fieldDirective) {
-          return `directive @${builtInType.name} on OBJECT`;
+          return `directive @${builtInType.name}${
+            builtInType.body ? builtInType.body : ''
+          } on OBJECT | INTERFACE`;
         } else if (
           builtInType.type === 'DIRECTIVE' &&
           builtInType.fieldDirective
         ) {
-          return `directive @${builtInType.name} on FIELD_DEFINITION`;
+          return `directive @${builtInType.name}${
+            builtInType.body ? builtInType.body : ''
+          } on FIELD_DEFINITION`;
         } else if (builtInType.type === 'OBJECT') {
           return `type ${builtInType.name} {}`;
         } else {
@@ -354,6 +363,11 @@ type Query {
     const customValidationRules = [
       NotSupportedFeaturesRule,
     ] as ValidationRule[];
+
+    if (options && options.useExtendedSdl) {
+      customValidationRules.push(ViewDirectiveValidator);
+      customValidationRules.push(MappingDirectiveValidator);
+    }
 
     let errors = [];
     let doc: DocumentNode;

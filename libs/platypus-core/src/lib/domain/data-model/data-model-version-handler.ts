@@ -65,7 +65,7 @@ export class DataModelVersionHandler {
     dto: CreateDataModelVersionDTO,
     validateBreakingChanges = true
   ): Promise<Result<DataModelValidationError[]>> {
-    const errors = this.graphqlService.validate(
+    const errors = this.fdmClient.validateGraphql(
       dto.schema,
       mixerApiBuiltInTypes
     );

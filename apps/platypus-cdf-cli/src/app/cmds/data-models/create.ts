@@ -35,7 +35,7 @@ export const commandArgs = [
     type: CommandArgumentType.STRING,
     required: true,
     promptDefaultValue: (commandArgs) => {
-      return DataUtils.convertToCamelCase(commandArgs['name']);
+      return DataUtils.convertToExternalId(commandArgs['name']);
     },
     example:
       'cdf data-models create "My DM" --external-id="DM1" Create a data model with the name "My DM" and external-id "DM1"',

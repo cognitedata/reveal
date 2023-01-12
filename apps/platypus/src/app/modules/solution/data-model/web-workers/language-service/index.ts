@@ -1,1 +1,1 @@
-export * from './CodeCompletitionService';
+export * from './CodeCompletionService';

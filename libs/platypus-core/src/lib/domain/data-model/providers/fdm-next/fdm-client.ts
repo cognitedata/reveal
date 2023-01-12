@@ -22,6 +22,7 @@ import {
 } from '../../dto';
 
 import {
+  BuiltInType,
   CdfResourceInstance,
   DataModel,
   DataModelTransformation,
@@ -46,8 +47,6 @@ import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
 import { compareDataModelVersions } from '../../utils';
 
 export class FdmClient implements FlexibleDataModelingClient {
-  private spacesApi: SpacesApiService;
-  private mixerApiService: FdmMixerApiService;
   private dataModelDataMapper: DataModelDataMapper;
   private validationErrorDataMapper: DataModelValidationErrorDataMapper;
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
@@ -55,8 +54,8 @@ export class FdmClient implements FlexibleDataModelingClient {
   version = 'stable';
 
   constructor(
-    spacesApi: SpacesApiService,
-    mixerApiService: FdmMixerApiService,
+    private spacesApi: SpacesApiService,
+    private mixerApiService: FdmMixerApiService,
     private graphqlService: IGraphQlUtilsService
   ) {
     this.spacesApi = spacesApi;
@@ -155,7 +154,7 @@ export class FdmClient implements FlexibleDataModelingClient {
    */
   createDataModel(dto: CreateDataModelDTO): Promise<DataModel> {
     const space: SpaceDTO = {
-      space: dto.space || DataUtils.convertToCamelCase(dto.name),
+      space: dto.space || DataUtils.convertToExternalId(dto.name),
       name: dto.name,
     };
 
@@ -167,7 +166,7 @@ export class FdmClient implements FlexibleDataModelingClient {
 
         const dataModelDto: DataModelDTO = {
           space: spaceInstance.space,
-          externalId: dto.externalId || DataUtils.convertToCamelCase(dto.name),
+          externalId: dto.externalId || DataUtils.convertToExternalId(dto.name),
           name: dto.name,
           description: dto.description,
           version: '1',
@@ -176,7 +175,7 @@ export class FdmClient implements FlexibleDataModelingClient {
         this.mixerApiService
           .upsertVersion(dataModelDto)
           .then((dataModelResponse) => {
-            if (dataModelResponse.errors.length) {
+            if (dataModelResponse.errors?.length) {
               reject(dataModelResponse.errors);
             } else {
               resolve(
@@ -218,7 +217,7 @@ export class FdmClient implements FlexibleDataModelingClient {
     return this.mixerApiService
       .upsertVersion(createDTO)
       .then((upsertResult) => {
-        if (upsertResult.errors.length) {
+        if (upsertResult.errors?.length) {
           return Promise.reject(
             new PlatypusError(
               `An error has occured. Data model was not published.`,
@@ -247,6 +246,10 @@ export class FdmClient implements FlexibleDataModelingClient {
   async validateDataModel(
     dto: PublishDataModelVersionDTO
   ): Promise<DataModelValidationError[]> {
+    // TODO skipping validation while we integrate with V3 Mixer API
+    // test needs updating too when this is fixed
+    return [];
+
     const typeDefs = this.graphqlService.parseSchema(dto.schema);
 
     const validationErrors = await this.mixerApiService.validateVersion({
@@ -265,6 +268,20 @@ export class FdmClient implements FlexibleDataModelingClient {
     return dataModelValidationErrors;
   }
 
+  /**
+   * Validates Graphql
+   * Checks for sytax errors, unsupported features
+   * @param graphql
+   * @param builtInTypes
+   */
+  validateGraphql(
+    graphql: string,
+    builtInTypes: BuiltInType[]
+  ): DataModelValidationError[] {
+    return this.graphqlService.validate(graphql, builtInTypes, {
+      useExtendedSdl: true,
+    });
+  }
   /**
    * Run GraphQL query against a Data Model Version
    * @param dto
@@ -378,8 +395,43 @@ export class FdmClient implements FlexibleDataModelingClient {
    * Returns the search results from a given query.
    * @param dto
    */
-  searchData(dto: SearchDataDTO): Promise<CdfResourceInstance[]> {
-    throw 'Not implemented';
+  searchData({
+    dataModelVersion: { externalId, version },
+    dataModelType,
+    dataModelTypeDefs,
+    limit,
+    filter,
+    searchTerm,
+  }: SearchDataDTO): Promise<CdfResourceInstance[]> {
+    const query = this.queryBuilder.buildSearchQuery({
+      dataModelType,
+      dataModelTypeDefs,
+      filter,
+    });
+
+    return this.mixerApiService
+      .runQuery({
+        graphQlParams: {
+          query,
+          variables: {
+            first: limit,
+            query: searchTerm,
+            ...(filter ? { filter } : {}),
+          },
+        },
+        dataModelId: externalId,
+        schemaVersion: version,
+      })
+      .then((result) => {
+        const operationName = this.queryBuilder.getOperationName(
+          dataModelType.name,
+          OPERATION_TYPE.SEARCH
+        );
+
+        const response = result.data[operationName];
+        return response.items;
+      })
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
   /**

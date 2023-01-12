@@ -22,7 +22,7 @@ export interface DataModelVersionSort {
 }
 
 export interface UpsertDataModelResult {
-  errors: Error[];
+  errors: Error[] | null;
   result: GraphQlDmlVersionDTO;
 }
 

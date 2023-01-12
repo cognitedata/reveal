@@ -6,7 +6,7 @@ import {
 export class DataModelExternalIdValidator extends ValidationRule {
   validate(field: string, value: string): ValidatorResult {
     const allowedCharactersRegex =
-      /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,41}[a-zA-Z0-9]?$/;
+      /^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$/;
 
     if (!allowedCharactersRegex.test(value)) {
       return {
@@ -14,7 +14,7 @@ export class DataModelExternalIdValidator extends ValidationRule {
         errors: {
           [field]:
             field +
-            ' is not valid. It must match the pattern ^[a-zA-Z0-9][a-zA-Z0-9_-]{0,41}[a-zA-Z0-9]?$',
+            ' is not valid. It must match the pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$',
         },
       } as ValidatorResult;
     }

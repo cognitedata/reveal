@@ -42,7 +42,7 @@ export class WorkerManager {
         // passed in to the create() method
         createData: {
           languageId: config.languageId,
-          options: this._options,
+          options: this._options.options,
         },
       });
 

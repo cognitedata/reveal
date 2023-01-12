@@ -84,6 +84,9 @@ export interface IGraphQlUtilsService {
    * an empty array if no errors were encountered and the document is valid. */
   validate(
     graphQlString: string,
-    builtInTypes: BuiltInType[]
+    builtInTypes: BuiltInType[],
+    options?: {
+      useExtendedSdl: boolean;
+    }
   ): DataModelValidationError[];
 }

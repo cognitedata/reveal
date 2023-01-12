@@ -253,6 +253,18 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
     res.jsonp(response);
   });
 
+  fdmServiceRouter.post('/dml/graphql', async (req, res) => {
+    const query = req.body;
+
+    const response = await graphql({
+      schema: metaApiGraphqlMockServer,
+      source: query.query,
+      variableValues: query.variables,
+    });
+
+    res.jsonp(response);
+  });
+
   fdmServiceRouter.post(
     '/schema/api/:externalId/:version/graphql',
     async (req, res) => {
@@ -284,7 +296,7 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
   );
 
   fdmServiceRouter.post(
-    '/schema/api/:space/:externalId/:version/graphql',
+    '/userapis/spaces/:space/datamodels/:externalId/versions/:version/graphql',
     async (req, res) => {
       const space = req.params.space.toString();
       const externalId = req.params.externalId.toString();
