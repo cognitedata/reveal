@@ -47,7 +47,7 @@ export const EventFilters = ({
           setFilter({ ...filter, type: newValue });
         }}
         title="Type"
-        value={filter.type}
+        value={String(filter.type)}
       />
       <DateFilter
         title="Start Time"
@@ -90,7 +90,7 @@ export const EventFilters = ({
             setFilter({ ...filter, subtype: newValue });
           }}
           title="Sub-type"
-          value={filter.subtype}
+          value={String(filter.subtype)}
         />
         <ByAssetFilter
           value={filter.assetSubtreeIds?.map(({ value }) => value)}

@@ -5,12 +5,13 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import { InternalEventsFilters } from '../types';
+import isArray from 'lodash/isArray';
 
 export type EventsProperties = {
   assetIds: number[];
   dataSetId: number[];
-  type: string;
-  subtype: string;
+  type: string | string[];
+  subtype: string | string[];
   source: string[];
   externalId: string;
   description: string;
@@ -46,8 +47,20 @@ export const mapFiltersToEventsAdvancedFilters = (
         return acc;
       }, [] as number[]);
     })
-    .equals('type', type)
-    .equals('subtype', subtype)
+    .in('type', () => {
+      // this condition need to be removed when remove the legacy implementation
+      if (type && !isArray(type)) {
+        return [type];
+      }
+      return type;
+    })
+    .in('subtype', () => {
+      // this condition need to be removed when remove the legacy implementation
+      if (subtype && !isArray(subtype)) {
+        return [subtype];
+      }
+      return subtype;
+    })
     .in('source', () => {
       if (source) {
         return [source];

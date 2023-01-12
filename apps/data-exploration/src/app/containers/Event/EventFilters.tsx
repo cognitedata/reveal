@@ -16,12 +16,14 @@ import {
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { CogniteEvent } from '@cognite/sdk/dist/src';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
   const [eventFilter, setEventFilter] = useEventsFilters();
   const resetEventFilters = useResetEventsFilters();
   const isFiltersEmpty = useFilterEmptyState('event');
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const { data: items = [] } = useList<CogniteEvent>('events', {
     filter: transformNewFilterToOldFilter(eventFilter),
@@ -39,12 +41,13 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
       <TempMultiSelectFix>
         <AggregatedEventFilterV2
           field="type"
-          filter={eventFilter}
+          filter={isAdvancedFiltersEnabled ? {} : eventFilter}
           setValue={(newValue) => {
             setEventFilter({ type: newValue });
           }}
           title="Type"
-          value={eventFilter.type}
+          value={eventFilter.type || []}
+          isMulti={isAdvancedFiltersEnabled}
         />
         <DateFilterV2
           title="Start time"
@@ -72,12 +75,13 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
         />
         <AggregatedEventFilterV2
           field="subtype"
-          filter={eventFilter}
+          filter={isAdvancedFiltersEnabled ? {} : eventFilter}
           setValue={(newValue) => {
             setEventFilter({ subtype: newValue });
           }}
           title="Sub-type"
-          value={eventFilter.subtype}
+          value={eventFilter.subtype || []}
+          isMulti={isAdvancedFiltersEnabled}
         />
         {/* <ByAssetFilter
         value={eventF.assetSubtreeIds?.map(el => (el as InternalId).id)}

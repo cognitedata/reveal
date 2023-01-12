@@ -4,13 +4,18 @@ import { useSDK } from '@cognite/sdk-provider';
 import { aggregateKey } from '@cognite/sdk-react-query-hooks';
 import { useQuery } from 'react-query';
 
-import { Select } from '@data-exploration-components/components';
+import {
+  MultiSelectFilterNew,
+  Select,
+} from '@data-exploration-components/components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
 import { InternalEventsFilters } from '@data-exploration-lib/domain-layer';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
 
 type EventFieldForAggregate = 'type' | 'subtype' | 'dataSetId';
 
@@ -41,12 +46,14 @@ export const AggregatedEventFilterV2 = ({
   title,
   setValue,
   value,
+  isMulti = false,
 }: {
   field: EventFieldForAggregate;
   filter: InternalEventsFilters;
   title: string;
-  setValue: (newValue?: string) => void;
-  value?: string;
+  setValue: (newValue?: string | string[]) => void;
+  value?: string | string[];
+  isMulti?: boolean;
 }): JSX.Element => {
   const { data = [] } = useEventAggregate('uniqueValues', field, filter);
   const trackUsage = useMetrics();
@@ -61,23 +68,42 @@ export const AggregatedEventFilterV2 = ({
 
   return (
     <>
-      <FilterFacetTitle>{title}</FilterFacetTitle>
-      <Select
-        creatable
-        value={value ? { value, label: value } : undefined}
-        onChange={(item) => {
-          if (item) {
-            handleUpdate((item as { value: string }).value);
-          } else {
-            handleUpdate(undefined);
-          }
-        }}
-        {...reactSelectCogsStylingProps}
-        options={[...data].map(({ value: eventType }) => ({
-          value: eventType,
-          label: String(eventType),
-        }))}
-      />
+      {isMulti && isArray(value) ? (
+        <MultiSelectFilterNew
+          title={title}
+          creatable
+          options={[...data].map(({ value: eventType }) => ({
+            value: eventType,
+            label: String(eventType),
+          }))}
+          values={value}
+          onChange={(items: string[]) => {
+            if (items) {
+              setValue(items);
+            }
+          }}
+        />
+      ) : (
+        <>
+          <FilterFacetTitle>{title}</FilterFacetTitle>
+          <Select
+            creatable
+            value={isString(value) ? { value: value, label: value } : undefined}
+            onChange={(item) => {
+              if (item) {
+                handleUpdate((item as { value: string }).value);
+              } else {
+                handleUpdate(undefined);
+              }
+            }}
+            {...reactSelectCogsStylingProps}
+            options={[...data].map(({ value: eventType }) => ({
+              value: eventType,
+              label: String(eventType),
+            }))}
+          />
+        </>
+      )}
     </>
   );
 };
