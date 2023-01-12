@@ -1156,6 +1156,7 @@ export class Cognite3DViewer {
 
     const customRenderTarget = this.renderer.getRenderTarget();
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
+    const originalPixelRatio = this._renderer.getPixelRatio();
 
     // Remove this block once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
     // Render everything a little bigger so that the outCanvas can be cropped later
@@ -1255,7 +1256,7 @@ export class Cognite3DViewer {
         context?.clear(context.DEPTH_BUFFER_BIT);
       }
 
-      this.renderer.setSize(originalWidth, originalHeight);
+      this.renderer.setDrawingBufferSize(originalWidth, originalHeight, originalPixelRatio);
       this.revealManager.render(this.cameraManager.getCamera());
 
       // Restart animate loop
