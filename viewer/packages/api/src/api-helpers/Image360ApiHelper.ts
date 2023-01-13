@@ -133,6 +133,7 @@ export class Image360ApiHelper {
     const currentFromOpacity = fromVisualizationCube.opacity;
     await Promise.all([
       this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
+      this._image360Navigation.resetZoom(),
       this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
     ]);
 
