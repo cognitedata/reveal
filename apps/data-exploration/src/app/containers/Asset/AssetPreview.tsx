@@ -137,7 +137,9 @@ export const AssetPreview = ({
               assetId={assetId}
               rootAssetId={asset.rootId}
               activeIds={[asset.id]}
-              onAssetClicked={(newAsset: Asset) => openAsset(newAsset.id)}
+              onAssetClicked={(newAsset: Asset) => {
+                openAsset(newAsset.id, undefined, 'asset');
+              }}
               selectionMode={mode}
               onSelect={onSelect}
               isSelected={isSelected}

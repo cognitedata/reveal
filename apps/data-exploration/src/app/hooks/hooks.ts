@@ -124,7 +124,11 @@ export const useCurrentResourceType = (): [
 
 export const useCurrentResourceId = (): [
   number | undefined,
-  (type: number | undefined, replace?: boolean) => void
+  (
+    resourceId: number | undefined,
+    replace?: boolean,
+    resourceType?: ResourceType
+  ) => void
 ] => {
   const [type] = useCurrentResourceType();
   const navigate = useNavigate();
@@ -139,7 +143,8 @@ export const useCurrentResourceId = (): [
 
   const setCurrentResourceId = (
     newResourceId?: number,
-    replaceHistory = false
+    replaceHistory = false,
+    newResourceType?: ResourceType
   ) => {
     const search = qs.parse(location.search, opts);
     if (!newResourceId) {
@@ -147,16 +152,28 @@ export const useCurrentResourceId = (): [
         replace: replaceHistory,
       });
     } else {
-      navigate(
-        createLink(
-          `/explore/search/${type}/${newResourceId}${
-            tabType ? `/${tabType}` : ''
-          }`,
-          search,
-          opts
-        ),
-        { replace: replaceHistory }
-      );
+      // Use this when we want to navigate to a different resource type than the current resource type.
+      if (newResourceType && newResourceType !== type) {
+        navigate(
+          createLink(
+            `/explore/search/${newResourceType}/${newResourceId}`,
+            search,
+            opts
+          ),
+          { replace: replaceHistory }
+        );
+      } else {
+        navigate(
+          createLink(
+            `/explore/search/${type}/${newResourceId}${
+              tabType ? `/${tabType}` : ''
+            }`,
+            search,
+            opts
+          ),
+          { replace: replaceHistory }
+        );
+      }
     }
   };
   return [idNumber, setCurrentResourceId];
