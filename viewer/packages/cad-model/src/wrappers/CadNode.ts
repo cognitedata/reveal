@@ -40,7 +40,6 @@ export class CadNode extends Object3D {
     batchedGeometryMeshGroup.name = 'Batched Geometry';
 
     const materials = materialManager.getModelMaterials(model.modelIdentifier);
-    // this._geometryBatchingManager = new GeometryBatchingManager(batchedGeometryMeshGroup, materials);
     this._geometryBatchingManager = new MultiBufferBatchingManager(batchedGeometryMeshGroup, materials);
     this._rootSector = new RootSectorNode(model);
 
