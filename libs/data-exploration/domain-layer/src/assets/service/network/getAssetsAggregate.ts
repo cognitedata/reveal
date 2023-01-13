@@ -4,13 +4,10 @@ import {
   CursorResponse,
   AssetFilterProps,
 } from '@cognite/sdk';
-import { AssetsProperties } from '@data-exploration-lib/domain-layer';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
 import {
-  DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
-  MORE_THAN_MAX_RESULT_LIMIT,
+  AssetsProperties,
+  AdvancedFilter,
 } from '@data-exploration-lib/domain-layer';
-import isEmpty from 'lodash/isEmpty';
 
 export const getAssetsAggregate = (
   sdk: CogniteClient,
@@ -22,35 +19,6 @@ export const getAssetsAggregate = (
     advancedFilter?: AdvancedFilter<AssetsProperties>;
   }
 ) => {
-  // If there are query or filters, use advanced filter result counts with max limit(1000)
-  if (!isEmpty(filter) || !isEmpty(advancedFilter)) {
-    return sdk
-      .post<CursorResponse<AggregateResponse[]>>(
-        `/api/v1/projects/${sdk.project}/assets/list`,
-        {
-          headers: {
-            'cdf-version': 'alpha',
-          },
-          data: {
-            limit: DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
-            filter,
-            advancedFilter,
-            aggregatedProperties: ['path'],
-          },
-        }
-      )
-      .then(({ data }) => {
-        const { items, nextCursor } = data;
-        const listCount = nextCursor
-          ? MORE_THAN_MAX_RESULT_LIMIT
-          : items.length;
-
-        return {
-          items: [{ count: listCount }],
-        };
-      });
-  }
-
   return sdk
     .post<CursorResponse<AggregateResponse[]>>(
       `/api/v1/projects/${sdk.project}/assets/aggregate`,
@@ -59,8 +27,8 @@ export const getAssetsAggregate = (
           'cdf-version': 'alpha',
         },
         data: {
-          // filter,
-          // advancedFilter,
+          filter,
+          advancedFilter,
         },
       }
     )

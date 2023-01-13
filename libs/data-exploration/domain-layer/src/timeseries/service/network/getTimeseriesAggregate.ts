@@ -4,13 +4,10 @@ import {
   CursorResponse,
   TimeseriesFilter,
 } from '@cognite/sdk';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
 import {
-  DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
-  MORE_THAN_MAX_RESULT_LIMIT,
+  AdvancedFilter,
+  TimeseriesProperties,
 } from '@data-exploration-lib/domain-layer';
-import { TimeseriesProperties } from '@data-exploration-lib/domain-layer';
-import isEmpty from 'lodash/isEmpty';
 
 export const getTimeseriesAggregate = (
   sdk: CogniteClient,
@@ -22,34 +19,6 @@ export const getTimeseriesAggregate = (
     advancedFilter?: AdvancedFilter<TimeseriesProperties>;
   }
 ) => {
-  // If there are query or filters, use advanced filter result counts with max limit(1000)
-  if (!isEmpty(filter) || !isEmpty(advancedFilter)) {
-    return sdk
-      .post<CursorResponse<AggregateResponse[]>>(
-        `/api/v1/projects/${sdk.project}/timeseries/list`,
-        {
-          headers: {
-            'cdf-version': 'alpha',
-          },
-          data: {
-            limit: DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
-            filter,
-            advancedFilter,
-          },
-        }
-      )
-      .then(({ data }) => {
-        const { items, nextCursor } = data;
-        const listCount = nextCursor
-          ? MORE_THAN_MAX_RESULT_LIMIT
-          : items.length;
-
-        return {
-          items: [{ count: listCount }],
-        };
-      });
-  }
-
   return sdk
     .post<CursorResponse<AggregateResponse[]>>(
       `/api/v1/projects/${sdk.project}/timeseries/aggregate`,
@@ -58,8 +27,8 @@ export const getTimeseriesAggregate = (
           'cdf-version': 'alpha',
         },
         data: {
-          // filter,
-          // advancedFilter,
+          filter,
+          advancedFilter,
         },
       }
     )

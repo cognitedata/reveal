@@ -4,13 +4,10 @@ import {
   CursorResponse,
   SequenceFilter,
 } from '@cognite/sdk';
-import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
 import {
-  DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
-  MORE_THAN_MAX_RESULT_LIMIT,
+  AdvancedFilter,
+  SequenceProperties,
 } from '@data-exploration-lib/domain-layer';
-import { SequenceProperties } from '@data-exploration-lib/domain-layer';
-import isEmpty from 'lodash/isEmpty';
 
 export const getSequenceAggregate = (
   sdk: CogniteClient,
@@ -22,34 +19,6 @@ export const getSequenceAggregate = (
     advancedFilter?: AdvancedFilter<SequenceProperties>;
   }
 ) => {
-  // If there are query or filters, use advanced filter result counts with max limit(1000)
-  if (!isEmpty(filter) || !isEmpty(advancedFilter)) {
-    return sdk
-      .post<CursorResponse<AggregateResponse[]>>(
-        `/api/v1/projects/${sdk.project}/sequences/list`,
-        {
-          headers: {
-            'cdf-version': 'alpha',
-          },
-          data: {
-            limit: DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
-            filter,
-            advancedFilter,
-          },
-        }
-      )
-      .then(({ data }) => {
-        const { items, nextCursor } = data;
-        const listCount = nextCursor
-          ? MORE_THAN_MAX_RESULT_LIMIT
-          : items.length;
-
-        return {
-          items: [{ count: listCount }],
-        };
-      });
-  }
-
   return sdk
     .post<CursorResponse<AggregateResponse[]>>(
       `/api/v1/projects/${sdk.project}/sequences/aggregate`,
@@ -58,8 +27,8 @@ export const getSequenceAggregate = (
           'cdf-version': 'alpha',
         },
         data: {
-          // filter,
-          // advancedFilter,
+          filter,
+          advancedFilter,
         },
       }
     )
