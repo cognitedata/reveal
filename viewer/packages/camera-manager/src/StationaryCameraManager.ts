@@ -80,7 +80,7 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement.removeEventListener('pointerdown', this.enableDragging);
     this._domElement.removeEventListener('pointerup', this.disableDragging);
     this._domElement.removeEventListener('pointerout', this.disableDragging);
-    this._domElement.addEventListener('wheel', this.zoomCamera);
+    this._domElement.removeEventListener('wheel', this.zoomCamera);
   }
 
   on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
@@ -173,55 +173,37 @@ export class StationaryCameraManager implements CameraManager {
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
 
-    console.log(THREE.MathUtils.radToDeg(this._camera.rotation.x).toFixed(2));
-    console.log(THREE.MathUtils.radToDeg(this._camera.rotation.y).toFixed(2));
-    console.log(THREE.MathUtils.radToDeg(this._camera.rotation.z).toFixed(2));
-    console.log('-----------------------------------------------------------');
-
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   };
 
   private readonly zoomCamera = (event: WheelEvent) => {
     const sensitivityScaler = 0.05;
-    const preCursorRay = this.getMouseRay(event).normalize();
+    const preCursorRay = this.getCursorRay(event).normalize();
 
     const lastFov = this._camera.fov;
-    const newFov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
-
     this._camera.fov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
     this._camera.updateProjectionMatrix();
 
-    if (this._camera.fov == lastFov) return;
+    //When zooming in the camera is rotated towards the mouse cursor position
+    if (this._camera.fov < lastFov) {
+      const postCursorRay = this.getCursorRay(event).normalize();
+      const rotationDelta = new THREE.Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
 
-    const postCursorRay = this.getMouseRay(event).normalize();
+      const forwardVector = this._camera.getWorldDirection(new THREE.Vector3()).clone();
+      forwardVector.applyQuaternion(rotationDelta);
+      const targetWorldCoordinates = new THREE.Vector3().addVectors(
+        this._camera.position,
+        forwardVector.multiplyScalar(1)
+      );
+      this._camera.lookAt(targetWorldCoordinates);
+    }
 
-    ////--------------------------------
-    const quatRotation = new THREE.Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
-    const eulerRotation = new THREE.Euler().setFromQuaternion(quatRotation, 'ZYX');
-    const cameraRotation = new THREE.Euler().setFromQuaternion(this._camera.quaternion, 'XYZ');
-
-    // cameraRotation.x += eulerRotation.x;
-    // cameraRotation.y += eulerRotation.y;
-    // // cameraRotation.z += eulerRotation.z;
-    // cameraRotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, cameraRotation.x));
-    // this._camera.quaternion.setFromEuler(cameraRotation);
-
-    ////--------------------------------
-
-    // const cameraZRotation = this._camera.rotation.z;
-    // this._camera.applyQuaternion(quatRotation);
-    // this._camera.rotation.z = cameraZRotation;
-
-    console.log(THREE.MathUtils.radToDeg(this._camera.rotation.x).toFixed(2));
-    console.log(THREE.MathUtils.radToDeg(this._camera.rotation.y).toFixed(2));
-    console.log(THREE.MathUtils.radToDeg(this._camera.rotation.z).toFixed(2));
-    console.log('...........................................................');
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   };
 
-  private getMouseRay(event: WheelEvent) {
+  private getCursorRay(event: WheelEvent) {
     const { width, height } = this._domElement.getBoundingClientRect();
-    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(event.offsetX, event.offsetY, width, height);
+    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(event.clientX, event.clientY, width, height);
     const ray = new THREE.Vector3(ndcCoordinates.x, ndcCoordinates.y, 1)
       .unproject(this._camera)
       .sub(this._camera.position);
