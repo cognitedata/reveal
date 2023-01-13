@@ -70,15 +70,17 @@ const getAssetIdsFromTaggedAnnotations = (
         }
         // @ts-expect-error
         if (taggedAnnotation.annotation.data.assetRef.id) {
-          // @ts-expect-error
-          currentEdit.assetIds.add(taggedAnnotation.annotation.assetRef.id);
+          currentEdit.assetIds.add(
+            // @ts-expect-error
+            taggedAnnotation.annotation.data.assetRef.id
+          );
         }
 
         // @ts-expect-error
         if (taggedAnnotation.annotation.data.assetRef.externalId) {
           currentEdit.assetExternalIds.add(
             // @ts-expect-error
-            taggedAnnotation.annotation.assetRef.externalId
+            taggedAnnotation.annotation.data.assetRef.externalId
           );
         }
 
