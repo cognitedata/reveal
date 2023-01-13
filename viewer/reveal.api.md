@@ -4,6 +4,7 @@
 
 ```ts
 
+import { AnnotationsAssetRef } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
@@ -237,7 +238,7 @@ export interface CameraManager {
 }
 
 // @public
-export type CameraManagerEventType = typeof CAMERA_MANAGER_EVENT_TYPE_LIST[number];
+export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[number];
 
 // @public
 export class CameraManagerHelper {
@@ -344,7 +345,9 @@ export class Cognite3DViewer {
     fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
     fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
+    // @deprecated
     getClippingPlanes(): THREE_2.Plane[];
+    getGlobalClippingPlanes(): THREE_2.Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
     getVersion(): string;
@@ -378,7 +381,9 @@ export class Cognite3DViewer {
         alpha?: number;
     }): void;
     setCameraManager(cameraManager: CameraManager): void;
+    // @deprecated
     setClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
+    setGlobalClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
     setResolutionOptions(options: ResolutionOptions): void;
     setViewState(state: ViewerState): Promise<void>;
@@ -436,8 +441,10 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange>;
     iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void>;
     iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void>;
+    mapBoxFromCdfToModelCoordinates(box: THREE_2.Box3, out?: THREE_2.Box3): THREE_2.Box3;
     mapNodeIdsToTreeIndices(nodeIds: CogniteInternalId[]): Promise<number[]>;
     mapNodeIdToTreeIndex(nodeId: CogniteInternalId): Promise<number>;
+    mapPointFromCdfToModelCoordinates(point: THREE_2.Vector3, out?: THREE_2.Vector3): THREE_2.Vector3;
     mapTreeIndexToNodeId(treeIndex: number): Promise<CogniteInternalId>;
     mapTreeIndicesToNodeIds(treeIndices: number[]): Promise<CogniteInternalId[]>;
     readonly modelId: number;
@@ -449,6 +456,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren?: boolean): Promise<number>;
     readonly revisionId: number;
     setDefaultNodeAppearance(appearance: NodeAppearance): void;
+    setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setModelTransformation(matrix: THREE_2.Matrix4): void;
     setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4): void;
     setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean): Promise<number>;
@@ -482,6 +490,8 @@ export class CognitePointCloudModel {
     getModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
     isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
+    mapBoxFromCdfToModelCoordinates(box: THREE_2.Box3, out?: THREE_2.Box3): THREE_2.Box3;
+    mapPointFromCdfToModelCoordinates(point: THREE_2.Vector3, out?: THREE_2.Vector3): THREE_2.Vector3;
     // (undocumented)
     readonly modelId: number;
     get pointColorType(): PointColorType;
@@ -496,6 +506,7 @@ export class CognitePointCloudModel {
     readonly revisionId: number;
     setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void;
     setDefaultPointCloudAppearance(appearance: PointCloudAppearance): void;
+    setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setModelTransformation(transformationMatrix: THREE_2.Matrix4): void;
     // (undocumented)
     get stylableObjectCount(): number;
@@ -1106,6 +1117,7 @@ export type PointCloudIntersection = {
     pointIndex: number;
     distanceToCamera: number;
     annotationId: number;
+    assetRef?: AnnotationsAssetRef;
 };
 
 // @public
@@ -1121,10 +1133,11 @@ export abstract class PointCloudObjectCollection {
     on(event: 'changed', listener: () => void): void;
 }
 
-// @public (undocumented)
+// @public
 export type PointCloudObjectMetadata = {
     annotationId: number;
     assetId?: number;
+    assetRef?: AnnotationsAssetRef;
     boundingBox: Box3;
 };
 

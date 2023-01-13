@@ -62,10 +62,12 @@ export class SectorLoader {
     }
 
     const cadModels = input.models;
+    const visibleCadModels = cadModels.filter(x => x.visible);
 
     const sectorCullerInput: DetermineSectorsInput = {
       ...input,
-      cadModelsMetadata: cadModels.filter(x => x.visible).map(x => x.cadModelMetadata)
+      cadModelsMetadata: visibleCadModels.map(x => x.cadModelMetadata),
+      modelClippingPlanes: visibleCadModels.map(m => [...input.clippingPlanes, ...m.clippingPlanes])
     };
 
     if (sectorCullerInput.cadModelsMetadata.length <= 0) {

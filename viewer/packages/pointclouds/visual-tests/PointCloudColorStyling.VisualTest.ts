@@ -30,7 +30,7 @@ class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
     const cdfAnnotations = [
       {
         annotationId: 123,
-        region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.04)]
+        region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.03478)]
       }
     ];
 

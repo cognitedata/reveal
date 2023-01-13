@@ -136,7 +136,6 @@ export class Cognite3DViewer {
   private readonly _mouseHandler: InputHandler;
 
   private readonly _models: CogniteModel[] = [];
-  private readonly _extraObjects: THREE.Object3D[] = [];
 
   private isDisposed = false;
 
@@ -873,7 +872,6 @@ export class Cognite3DViewer {
       return;
     }
     object.updateMatrixWorld(true);
-    this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
     this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
@@ -894,10 +892,6 @@ export class Cognite3DViewer {
       return;
     }
     this._sceneHandler.removeCustomObject(object);
-    const index = this._extraObjects.indexOf(object);
-    if (index >= 0) {
-      this._extraObjects.splice(index, 1);
-    }
     this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
   }
@@ -928,38 +922,55 @@ export class Cognite3DViewer {
    * ```js
    * // Hide pixels with values less than 0 in the x direction
    * const plane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values greater than 20 in the x direction
    *  const plane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 20);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values less than 0 in the x direction or greater than 0 in the y direction
    * const xPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
    * const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-   * viewer.setClippingPlanes([xPlane, yPlane]);
+   * viewer.setGlobalClippingPlanes([xPlane, yPlane]);
    * ```
    * ```js
    * // Hide pixels behind an arbitrary, non axis-aligned plane
    *  const plane = new THREE.Plane(new THREE.Vector3(1.5, 20, -19), 20);
-   * viewer.setClippingPlanes([plane]);
+   * viewer.setGlobalClippingPlanes([plane]);
    * ```
    * ```js
    * // Disable clipping planes
-   *  viewer.setClippingPlanes([]);
+   *  viewer.setGlobalClippingPlanes([]);
    * ```
    */
-  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+  setGlobalClippingPlanes(clippingPlanes: THREE.Plane[]): void {
     this.revealManager.clippingPlanes = clippingPlanes;
     this._clippingNeedsUpdate = true;
   }
 
   /**
-   * Returns the current active clipping planes.
+   * Sets per-pixel clipping planes. Pixels behind any of the planes will be sliced away.
+   * @param clippingPlanes
+   * @deprecated Use {@link Cognite3DViewer.setGlobalClippingPlanes} instead.
+   */
+  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    this.setGlobalClippingPlanes(clippingPlanes);
+  }
+
+  /**
+   * Returns the current active global clipping planes.
+   * @deprecated Use {@link Cognite3DViewer.getGlobalClippingPlanes} instead.
    */
   getClippingPlanes(): THREE.Plane[] {
+    return this.getGlobalClippingPlanes();
+  }
+
+  /**
+   * Returns the current active global clipping planes.
+   */
+  getGlobalClippingPlanes(): THREE.Plane[] {
     return this.revealManager.clippingPlanes.map(p => p.clone());
   }
 
@@ -1144,11 +1155,18 @@ export class Cognite3DViewer {
     }
 
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
+
+    // Remove this block once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
+    // Render everything a little bigger so that the outCanvas can be cropped later
+    if (includeUI) {
+      width++;
+      height++;
+    }
+
     const originalDomeStyle = {
       position: this.domElement.style.position,
       width: this.domElement.style.width,
       height: this.domElement.style.height,
-      flexGrow: this.domElement.style.flexGrow,
       margin: this.domElement.style.margin,
       padding: this.domElement.style.padding,
       left: this.domElement.style.left,
@@ -1156,13 +1174,15 @@ export class Cognite3DViewer {
     };
 
     try {
+      // Pause animate while the screenshot renders to stop changes to active camera aspect ratio
+      cancelAnimationFrame(this.latestRequestId);
+
       // Position and scale domElement to match requested resolution.
       // Remove observer temporarily to stop animate from running resize in the background.
       this._domElementResizeObserver.unobserve(this._domElement);
-      this.domElement.style.position = 'fixed';
+      this.domElement.style.position = 'absolute';
       this.domElement.style.width = width + 'px';
       this.domElement.style.height = height + 'px';
-      this.domElement.style.flexGrow = '1';
       this.domElement.style.margin = '0px';
       this.domElement.style.padding = '0px';
       this.domElement.style.left = '0px';
@@ -1186,13 +1206,35 @@ export class Cognite3DViewer {
       });
 
       // Draw screenshot. Again disregarding pixel ratio.
-      const outCanvas = await html2canvas(this.domElement, { scale: pixelRatioOverride, foreignObjectRendering: true });
+      const outCanvas = await html2canvas(this.domElement, {
+        scale: pixelRatioOverride,
+        foreignObjectRendering: true,
+        windowHeight: width,
+        windowWidth: height,
+        width,
+        height,
+        x: 0,
+        y: 0,
+        scrollX: 0,
+        scrollY: 0
+      });
+
+      // Remove this block once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
+      // Crop away the 1px line created by svg conversion in html2canvas.
+      {
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = width - 1;
+        croppedCanvas.height = height - 1;
+        const ctx = croppedCanvas.getContext('2d');
+        ctx?.drawImage(outCanvas, -1, -1, width, height);
+        return croppedCanvas.toDataURL();
+      }
+
       return outCanvas.toDataURL();
     } finally {
       this.domElement.style.position = originalDomeStyle.position;
       this.domElement.style.width = originalDomeStyle.width;
       this.domElement.style.height = originalDomeStyle.height;
-      this.domElement.style.flexGrow = originalDomeStyle.flexGrow;
       this.domElement.style.margin = originalDomeStyle.margin;
       this.domElement.style.padding = originalDomeStyle.padding;
       this.domElement.style.left = originalDomeStyle.left;
@@ -1201,6 +1243,9 @@ export class Cognite3DViewer {
 
       this.renderer.setSize(originalWidth, originalHeight);
       this.revealManager.render(this.cameraManager.getCamera());
+
+      // Restart animate loop
+      this.latestRequestId = requestAnimationFrame(this._boundAnimate);
       this.requestRedraw();
     }
   }
@@ -1321,7 +1366,7 @@ export class Cognite3DViewer {
       normalizedCoords,
       camera: this.cameraManager.getCamera(),
       renderer: this.renderer,
-      clippingPlanes: this.getClippingPlanes(),
+      clippingPlanes: this.getGlobalClippingPlanes(),
       domElement: this.renderer.domElement
     };
     const cadResults = await this._pickingHandler.intersectCadNodes(
@@ -1342,7 +1387,8 @@ export class Cognite3DViewer {
             point: result.point,
             pointIndex: result.pointIndex,
             distanceToCamera: result.distance,
-            annotationId: result.annotationId
+            annotationId: result.annotationId,
+            assetRef: result.assetRef
           };
           intersections.push(intersection);
           break;
@@ -1399,7 +1445,7 @@ export class Cognite3DViewer {
       }
     });
 
-    this._extraObjects.forEach(obj => {
+    this._sceneHandler.customObjects.forEach(obj => {
       bbox.setFromObject(obj);
       if (!bbox.isEmpty()) {
         combinedBbox.union(bbox);

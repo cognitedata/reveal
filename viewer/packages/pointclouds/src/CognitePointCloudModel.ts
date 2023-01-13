@@ -113,6 +113,26 @@ export class CognitePointCloudModel {
   }
 
   /**
+   * Map point from CDF to model space, taking the model's custom transformation into account
+   * @param point Point to compute transformation from
+   * @param out Optional pre-allocated point
+   */
+  mapPointFromCdfToModelCoordinates(point: THREE.Vector3, out: THREE.Vector3 = new THREE.Vector3()): THREE.Vector3 {
+    const cdfToModelTransformation = this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
+    return out.copy(point).applyMatrix4(cdfToModelTransformation);
+  }
+
+  /**
+   * Map bounding box from CDF to model space, taking the model's custom transformation into account
+   * @param box Box to compute transformation from
+   * @param out Optional pre-allocated box
+   */
+  mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out: THREE.Box3 = new THREE.Box3()): THREE.Box3 {
+    const cdfToModelTransformation = this.getModelTransformation().multiply(this.getCdfToDefaultModelTransformation());
+    return out.copy(box).applyMatrix4(cdfToModelTransformation);
+  }
+
+  /**
    * Sets a visible filter on points of a given class.
    * @param pointClass ASPRS classification class code. Either one of the well known
    * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
@@ -228,6 +248,14 @@ export class CognitePointCloudModel {
   }
 
   /**
+   * Sets the clipping planes for this model. They will be combined with the
+   * global clipping planes.
+   */
+  setModelClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    this.pointCloudNode.clippingPlanes = clippingPlanes;
+  }
+
+  /**
    * Gets default point appearance
    */
   getDefaultPointCloudAppearance(): PointCloudAppearance {
@@ -303,7 +331,7 @@ export class CognitePointCloudModel {
    * @returns The number of stylable objects
    */
   get stylableObjectCount(): number {
-    return this.pointCloudNode.stylableObjects.length;
+    return this.pointCloudNode.stylableObjectCount;
   }
 
   /**
