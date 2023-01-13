@@ -12,4 +12,6 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/libs/platypus-core',
+  collectCoverage: true,
+  collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
 };

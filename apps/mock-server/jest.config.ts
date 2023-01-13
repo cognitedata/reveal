@@ -14,4 +14,6 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/apps/mock-server',
+  collectCoverage: true,
+  collectCoverageFrom: ['./src/app/**/*.{ts,tsx}'],
 };

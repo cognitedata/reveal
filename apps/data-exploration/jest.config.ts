@@ -8,4 +8,6 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/data-exploration',
   setupFilesAfterEnv: ['./src/setupTests.js'],
+  collectCoverage: true,
+  collectCoverageFrom: ['./src/app/**/*.{ts,tsx}'],
 };

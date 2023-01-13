@@ -7,4 +7,6 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/libs/cog-data-grid',
+  collectCoverage: true,
+  collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
 };

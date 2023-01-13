@@ -60,13 +60,15 @@ jobs:
           # Run the cypress tests
           command: yarn nx e2e platypus-e2e
 
-      - name: Combine CodeCov reports
-        run: |
-          yarn cpdir
-          yarn summarize-codecov
+      # Disabling codecov from here, to not interfere with nx_ci
+      # - name: Combine CodeCov reports
+      #   run: |
+      #     yarn cpdir
+      #     yarn summarize-codecov
 
-      - name: Upload CodeCov reports
-        uses: codecov/codecov-action@v2
+      - name: Upload CodeCov reports for Platypus E2E
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/coverage-final.json,./coverage/cobertura-coverage.xml,./coverage/coverage-summary.json
+          flags: platypus-e2e
+          files: ./apps/platypus-e2e/coverage/coverage-final.json,./apps/platypus-e2e/coverage/clover.xml,./apps/platypus-e2e/coverage/coverage-summary.json

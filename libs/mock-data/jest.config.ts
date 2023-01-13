@@ -13,4 +13,6 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/libs/mock-data',
+  collectCoverage: true,
+  collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
 };

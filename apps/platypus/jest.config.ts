@@ -9,4 +9,6 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/platypus',
   setupFilesAfterEnv: ['./src/app/setupTests.ts'],
+  collectCoverage: true,
+  collectCoverageFrom: ['./src/app/**/*.{ts,tsx}'],
 };
