@@ -3,18 +3,18 @@
  */
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import * as THREE from 'three';
-import { GeometryBatchingManager } from './GeometryBatchingManager';
 import { Mock } from 'moq.ts';
 import { Materials } from '@reveal/rendering';
+import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
 
-describe(GeometryBatchingManager.name, () => {
+describe(MultiBufferBatchingManager.name, () => {
   let geometryGroup: THREE.Group;
-  let manager: GeometryBatchingManager;
+  let manager: MultiBufferBatchingManager;
 
   beforeEach(() => {
     geometryGroup = new THREE.Group();
     const materials = new Mock<Materials>().object();
-    manager = new GeometryBatchingManager(geometryGroup, materials);
+    manager = new MultiBufferBatchingManager(geometryGroup, materials);
   });
 
   test('batchGeometries() first time adds new geometry to group', () => {
