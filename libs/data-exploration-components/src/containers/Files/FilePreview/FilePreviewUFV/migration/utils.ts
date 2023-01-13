@@ -56,24 +56,6 @@ export const getExtendedAnnotationDescription = (
   throw new Error('Unsupported annotation source');
 };
 
-export const getExtendedAnnotationStatus = (
-  annotation: ExtendedAnnotation
-): string | undefined => {
-  if (isExtendedEventAnnotation(annotation)) {
-    return annotation.metadata.status;
-  }
-
-  if (
-    isExtendedAnnotationAnnotation(annotation) ||
-    isExtendedLocalAnnotation(annotation)
-  ) {
-    // @ts-expect-error
-    return annotation.metadata.status;
-  }
-
-  throw new Error('Unsupported annotation source');
-};
-
 export const isExtendedLocalAnnotation = (
   annotation: ExtendedAnnotation
 ): annotation is ExtendedAnnotation<TaggedLocalAnnotation> =>
@@ -502,12 +484,28 @@ export const isSuggestedTaggedAnnotation = (annotation: TaggedAnnotation) => {
   return false;
 };
 
+export const isRejectedTaggedAnnotation = (annotation: TaggedAnnotation) => {
+  if (isTaggedEventAnnotation(annotation)) {
+    return annotation.status === 'deleted';
+  }
+
+  if (isTaggedAnnotationAnnotation(annotation)) {
+    return annotation.status === 'rejected';
+  }
+
+  return false;
+};
+
 export const isApprovedAnnotation = (annotation: ExtendedAnnotation) => {
   return isApprovedTaggedAnnotation(annotation.metadata);
 };
 
 export const isSuggestedAnnotation = (annotation: ExtendedAnnotation) => {
   return isSuggestedTaggedAnnotation(annotation.metadata);
+};
+
+export const isRejectedAnnotation = (annotation: ExtendedAnnotation) => {
+  return isRejectedTaggedAnnotation(annotation.metadata);
 };
 
 export const isAssetAnnotation = (annotation: ExtendedAnnotation) => {

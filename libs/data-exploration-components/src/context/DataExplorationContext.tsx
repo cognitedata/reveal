@@ -8,7 +8,7 @@ import { FileContextualizationContextProvider } from '@data-exploration-componen
 import { SDKProvider } from '@cognite/sdk-provider';
 import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { Flow, AppContextProvider, OverrideURLMap } from './AppContext';
-import { Tooltip, Tabs } from '@cognite/cogs.js';
+import { Tooltip, Tabs, Modal as CogsModal } from '@cognite/cogs.js';
 import { MetricsMetadata } from '@data-exploration-components/hooks/useMetrics';
 import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration-components/components/DragDropContainer/constants';
 
@@ -47,6 +47,16 @@ export const DataExplorationProvider = ({
       ...Tabs.defaultProps,
       getPopupContainer: () =>
         document.getElementsByClassName(styleScopeId).item(0)!,
+    };
+
+    // @ts-expect-error
+    CogsModal.defaultProps = {
+      // @ts-expect-error
+      ...CogsModal.defaultProps,
+      getContainer: () =>
+        document.getElementsByClassName(styleScopeId).item(0)!,
+      // todo: remove once cogs.js is updated to version 8.0
+      appElement: document.getElementsByClassName(styleScopeId).item(0)!,
     };
 
     // create a custom portal for drag-drop

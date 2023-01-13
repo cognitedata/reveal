@@ -12,7 +12,7 @@ import getExtendedAnnotationsFromCogniteAnnotations from './getExtendedAnnotatio
 import { isNotUndefined } from '@data-exploration-components/utils';
 import {
   getExtendedAnnotationPage,
-  getExtendedAnnotationStatus,
+  isRejectedAnnotation,
 } from './migration/utils';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useAnnotations } from '@data-exploration-lib/domain-layer';
@@ -68,9 +68,7 @@ export const useUnifiedFileViewerAnnotations = ({
           isSimilarBoundingBox(MAX_BOUNDING_BOX_DIFFERENCE)
         ),
       ]
-        .filter(
-          (annotation) => getExtendedAnnotationStatus(annotation) !== 'rejected'
-        )
+        .filter((annotation) => !isRejectedAnnotation(annotation))
         .filter((annotation) => {
           if (page === 1) {
             return (

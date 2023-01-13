@@ -12,6 +12,7 @@ import {
   getFileExternalIdFromExtendedAnnotation,
   getFileIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
+  isApprovedAnnotation,
   isAssetAnnotation,
   isExtendedLocalAnnotation,
 } from '../../utils';
@@ -23,11 +24,16 @@ export const persistAssetIds = async (
   sdk: CogniteClient,
   annotations: ExtendedAnnotation[]
 ) => {
+  const approvedAnnotations = annotations.filter((annotation) =>
+    isApprovedAnnotation(annotation)
+  );
   const fileIds = uniq(
-    annotations.map(getFileIdFromExtendedAnnotation).filter(isNotUndefined)
+    approvedAnnotations
+      .map(getFileIdFromExtendedAnnotation)
+      .filter(isNotUndefined)
   ).map((id) => ({ id }));
   const fileExternalIds = uniq(
-    annotations
+    approvedAnnotations
       .map(getFileExternalIdFromExtendedAnnotation)
       .filter(isNotUndefined)
   ).map((externalId) => ({ externalId }));
@@ -42,7 +48,7 @@ export const persistAssetIds = async (
   // https://github.com/cognitedata/cognite-annotations/blob/0d22f229a3e5caac92916abc6f0450135e00de43/typescript/src/ContextAnnotationUtils.ts#L28-L87
 
   const assetIds = uniq(
-    annotations
+    approvedAnnotations
       .filter(isAssetAnnotation)
       .map(getResourceIdFromExtendedAnnotation)
   ).filter(isNotUndefined);
