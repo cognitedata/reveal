@@ -441,8 +441,10 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange>;
     iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void>;
     iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void>;
+    mapBoxFromCdfToModelCoordinates(box: THREE_2.Box3, out?: THREE_2.Box3): THREE_2.Box3;
     mapNodeIdsToTreeIndices(nodeIds: CogniteInternalId[]): Promise<number[]>;
     mapNodeIdToTreeIndex(nodeId: CogniteInternalId): Promise<number>;
+    mapPointFromCdfToModelCoordinates(point: THREE_2.Vector3, out?: THREE_2.Vector3): THREE_2.Vector3;
     mapTreeIndexToNodeId(treeIndex: number): Promise<CogniteInternalId>;
     mapTreeIndicesToNodeIds(treeIndices: number[]): Promise<CogniteInternalId[]>;
     readonly modelId: number;
@@ -488,6 +490,8 @@ export class CognitePointCloudModel {
     getModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
     isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
+    mapBoxFromCdfToModelCoordinates(box: THREE_2.Box3, out?: THREE_2.Box3): THREE_2.Box3;
+    mapPointFromCdfToModelCoordinates(point: THREE_2.Vector3, out?: THREE_2.Vector3): THREE_2.Vector3;
     // (undocumented)
     readonly modelId: number;
     get pointColorType(): PointColorType;
