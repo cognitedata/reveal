@@ -174,11 +174,6 @@ export class StationaryCameraManager implements CameraManager {
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   };
 
-  resetZoom(): void {
-    this._camera.fov = this._defaultFOV;
-    this._camera.updateProjectionMatrix();
-  }
-
   private readonly zoomCamera = (event: WheelEvent) => {
     const sensitivityScaler = 0.05;
     const preCursorRay = this.getCursorRay(event).normalize();
