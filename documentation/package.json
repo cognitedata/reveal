@@ -19,6 +19,7 @@
     "build": "cross-env NODE_OPTIONS=--max_old_space_size=4096 docusaurus build",
     "build:fast": "cross-env NODE_OPTIONS=--max_old_space_size=4096 docusaurus build --no-minify",
     "swizzle": "docusaurus swizzle",
+    "ws:removeFiles": "rimraf",
     "ws:copyfiles": "copyfiles",
     "ws:replace": "replace"
   },
@@ -45,7 +46,7 @@
     "docusaurus-plugin-typedoc": "0.18.0",
     "replace": "1.2.2",
     "rimraf": "3.0.2",
-    "typedoc": "0.23.23",
+    "typedoc": "0.23.24",
     "typedoc-plugin-markdown": "3.14.0",
     "typedoc-plugin-no-inherit": "1.4.0",
     "typescript": "4.9.4"

@@ -4,15 +4,16 @@
   "private": true,
   "author": "Christopher Tannum <christopher.tannum@cognite.com>",
   "scripts": {
+    "replace-4.x:delete-old": "yarn ws:removeFiles \"./versioned_docs/version-4.x/!(package.json)\"",
     "replace-4.x:copy-docs": "yarn ws:copyfiles -u 1 -e \"./docs/**/*.json\" -e \"./docs/**/*.lock\" \"./docs/**/*\" \"./versioned_docs/version-4.x/\"",
     "replace-4.x:update-site-imports": "yarn ws:replace \"'@site/docs/\" \"'@site/versioned_docs/version-4.x/\" ./versioned_docs/version-4.x/ --include '*.ts*,*.mdx' -r",
     "replace-4.x:update-runnable": "yarn ws:replace '^```(js[x]?) runnable$' '```$1 runnable-4x' ./versioned_docs/version-4.x/ --include '*.mdx' -r",
-    "replace-4.x": "yarn replace-4.x:copy-docs && yarn replace-4.x:update-runnable && yarn replace-4.x:update-site-imports"
+    "replace-4.x": "yarn replace-4.x:delete-old && yarn replace-4.x:copy-docs && yarn replace-4.x:update-runnable && yarn replace-4.x:update-site-imports"
   },
   "dependencies": {
     "@cognite/reveal": "4.0.0",
     "@cognite/sdk": "7.13.0",
-    "@types/three": "0.146.0",
-    "three": "0.146.0"
+    "@types/three": "0.148.0",
+    "three": "0.148.0"
   }
 }

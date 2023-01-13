@@ -134,13 +134,13 @@ function determineCandidateSectorsByModel(
   cameraProjectionMatrix: THREE.Matrix4,
   input: DetermineSectorsInput
 ) {
-  return cadModelsMetadata.reduce((result, model) => {
+  return cadModelsMetadata.reduce((result, model, i) => {
     const sectors = determineCandidateSectors(
       cameraWorldInverseMatrix,
       cameraProjectionMatrix,
       model.modelMatrix,
       model.scene,
-      input.clippingPlanes
+      input.modelClippingPlanes[i]
     );
     result.set(model, sectors);
     return result;

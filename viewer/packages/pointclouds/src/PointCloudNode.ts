@@ -20,7 +20,7 @@ export class PointCloudNode extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
   private readonly _octree: PointCloudOctree;
 
-  private readonly _annotations: PointCloudObject[];
+  private readonly _objectIdToAnnotationsMap: Map<number, PointCloudObject>;
   private readonly _classificationHandler: ClassificationHandler;
 
   private _needsRedraw: boolean = false;
@@ -53,7 +53,7 @@ export class PointCloudNode extends Group {
     this.name = 'PointCloudNode';
     this._cameraConfiguration = cameraConfiguration;
 
-    this._annotations = annotations;
+    this._objectIdToAnnotationsMap = createObjectIdToAnnotationsMap(annotations);
     this._classificationHandler = new ClassificationHandler(this._octree.material, classificationInfo);
 
     this.matrixAutoUpdate = false;
@@ -207,17 +207,20 @@ export class PointCloudNode extends Group {
   }
 
   get stylableObjectAnnotationMetadata(): Iterable<PointCloudObjectMetadata> {
-    return this._annotations.map(a => {
-      return {
-        annotationId: a.annotationId,
-        assetId: a.assetId,
-        boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld)
-      };
-    });
+    return [...this._objectIdToAnnotationsMap.values()].map(a => ({
+      annotationId: a.annotationId,
+      assetId: a.assetRef?.id,
+      assetRef: a.assetRef,
+      boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld)
+    }));
   }
 
-  get stylableObjects(): PointCloudObject[] {
-    return this._annotations;
+  getStylableObjectMetadata(objectId: number): PointCloudObjectMetadata | undefined {
+    return this._objectIdToAnnotationsMap.get(objectId);
+  }
+
+  get stylableObjectCount(): number {
+    return this._objectIdToAnnotationsMap.size;
   }
 
   get defaultAppearance(): CompletePointCloudAppearance {
@@ -229,6 +232,11 @@ export class PointCloudNode extends Group {
     this._needsRedraw = true;
   }
 
+  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+    this._octree.setModelClippingPlane(clippingPlanes);
+    this._needsRedraw = true;
+  }
+
   assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudObjectCollection): void {
     this._octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
     this._needsRedraw = true;
@@ -237,4 +245,12 @@ export class PointCloudNode extends Group {
   removeAllStyledPointCloudObjects(): void {
     this._octree.material.objectAppearanceTexture.removeAllStyledObjectSets();
   }
+}
+
+function createObjectIdToAnnotationsMap(annotations: PointCloudObject[]): Map<number, PointCloudObject> {
+  const map = new Map();
+  for (const annotation of annotations) {
+    map.set(annotation.stylableObject.objectId, annotation);
+  }
+  return map;
 }

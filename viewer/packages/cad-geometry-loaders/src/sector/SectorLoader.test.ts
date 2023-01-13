@@ -57,7 +57,9 @@ describe('SectorLoader', () => {
       .setup(p => p.visible)
       .returns(true)
       .setup(p => p.loadSector)
-      .returns(value => repository.loadSector(value));
+      .returns(value => repository.loadSector(value))
+      .setup(p => p.clippingPlanes)
+      .returns([]);
 
     input = {
       camera: new THREE.PerspectiveCamera(),
@@ -140,7 +142,9 @@ describe('SectorLoader', () => {
           first = false;
           return Promise.reject('Could not load sector');
         } else return repository.loadSector(value);
-      });
+      })
+      .setup(p => p.clippingPlanes)
+      .returns([]);
 
     input.models = [cadNodeMock.object()];
 

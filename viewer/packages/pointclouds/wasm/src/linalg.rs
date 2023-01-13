@@ -31,29 +31,28 @@ impl BoundingBox {
         min2(&self.min, &point) == self.min && max2(&self.max, &point) == self.max
     }
 
-    pub fn get_centered_unit_cube_corner(corner_index: u32) -> DVec4 {
+    pub fn get_base_cube_corner(corner_index: u32) -> DVec4 {
         vec4(
-            if (corner_index & 1) == 0 { -0.5 } else { 0.5 },
-            if (corner_index & 2) == 0 { -0.5 } else { 0.5 },
-            if (corner_index & 4) == 0 { -0.5 } else { 0.5 },
+            if (corner_index & 1) == 0 { -1.0 } else { 1.0 },
+            if (corner_index & 2) == 0 { -1.0 } else { 1.0 },
+            if (corner_index & 4) == 0 { -1.0 } else { 1.0 },
             1.0,
         )
     }
 
-    pub fn get_transformed_unit_cube(matrix: &DMat4) -> Self {
+    pub fn get_transformed_base_cube(matrix: &DMat4) -> Self {
         let bounding_box = (0..8)
             .map(|i: u32| {
-                let unit_corner = BoundingBox::get_centered_unit_cube_corner(i);
+                let unit_corner = BoundingBox::get_base_cube_corner(i);
                 let transformed_corner = matrix * unit_corner;
                 vec4_to_vec3(&transformed_corner)
             })
             .collect();
-
         bounding_box
     }
 
-    pub fn get_unit_bounding_box() -> Self {
-        let points = (0..8).map(|i| vec4_to_vec3(&BoundingBox::get_centered_unit_cube_corner(i)));
+    pub fn get_base_cube_bounding_box() -> Self {
+        let points = (0..8).map(|i| vec4_to_vec3(&BoundingBox::get_base_cube_corner(i)));
         let min_point: DVec3 = points.clone().reduce(|v0, v1| min2(&v0, &v1)).unwrap();
         let max_point: DVec3 = points.reduce(|v0, v1| max2(&v0, &v1)).unwrap();
         BoundingBox {
