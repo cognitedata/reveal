@@ -836,7 +836,7 @@ __metadata:
     prettier: 2.8.2
     process: 0.11.10
     proj4: 2.8.0
-    puppeteer: 19.4.1
+    puppeteer: 19.5.0
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -10586,9 +10586,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:19.4.1":
-  version: 19.4.1
-  resolution: "puppeteer-core@npm:19.4.1"
+"puppeteer-core@npm:19.5.0":
+  version: 19.5.0
+  resolution: "puppeteer-core@npm:19.5.0"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
@@ -10600,20 +10600,20 @@ __metadata:
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
     ws: 8.11.0
-  checksum: f4db1aa1d1e642356744bed2dc49ff7960a8b530d147ace1fe067937433ae40234ea973260b9b264d53a2f2297f53df796d008d4756f735b3f0a64a69724eaba
+  checksum: 0cdac5c54dc9933f4e819ed57ecaa7dc93861937606ba1fab87365c4935a4709543f472e4c9f7eb3c09bf414dceee61acf41c983ab000f06bcf7339615082cd1
   languageName: node
   linkType: hard
 
-"puppeteer@npm:19.4.1":
-  version: 19.4.1
-  resolution: "puppeteer@npm:19.4.1"
+"puppeteer@npm:19.5.0":
+  version: 19.5.0
+  resolution: "puppeteer@npm:19.5.0"
   dependencies:
     cosmiconfig: 8.0.0
     https-proxy-agent: 5.0.1
     progress: 2.0.3
     proxy-from-env: 1.1.0
-    puppeteer-core: 19.4.1
-  checksum: 14b6bd8d5f73f389e5bf424df6a89c346b7a8a8d0326b6aa3670e447a98b638b9091f46b6980515d56152b916a4e7be49c21f25fe7bb5c66828e02466a891f57
+    puppeteer-core: 19.5.0
+  checksum: 4193e7e5f6b8bb42fae823f836e37058410d14fd92e384fcd1a361dbeab9a753065f97bcecad29bdd5e574404b75ccaf26e8a7598514c8e36265a3b1d9663eec
   languageName: node
   linkType: hard
 
