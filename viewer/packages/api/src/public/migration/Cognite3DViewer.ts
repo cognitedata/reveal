@@ -1199,18 +1199,7 @@ export class Cognite3DViewer {
       });
 
       // Draw screenshot. Again disregarding pixel ratio.
-      const outCanvas = await html2canvas(this.domElement, {
-        scale: pixelRatioOverride,
-        foreignObjectRendering: true,
-        windowHeight: width,
-        windowWidth: height,
-        width,
-        height,
-        x: 0,
-        y: 0,
-        scrollX: 0,
-        scrollY: 0
-      });
+      const outCanvas = await html2canvas(this.domElement, { scale: pixelRatioOverride, foreignObjectRendering: true });
 
       return outCanvas.toDataURL();
     } finally {
