@@ -93,6 +93,22 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     this._sectorBatches.delete(sectorId);
   }
 
+  public dispose(): void {
+    for (const sectorId of this._sectorBatches.keys()) {
+      this.removeSectorBatches(sectorId);
+    }
+
+    for (const { buffers } of this._instanceBatches.values()) {
+      buffers.forEach(batchBuffer => {
+        this._batchGroup.remove(batchBuffer.mesh);
+        batchBuffer.mesh.geometry.dispose();
+      });
+    }
+
+    this._sectorBatches.clear();
+    this._instanceBatches.clear();
+  }
+
   private removeTreeIndicesFromMeshUserData(
     mesh: THREE.Mesh,
     updateRange: { byteOffset: number; byteCount: number },
@@ -111,10 +127,6 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       const treeIndex = treeIndexAttribute.getX(i);
       decrementOrDeleteIndex(mesh.userData.treeIndices, treeIndex);
     }
-  }
-
-  public dispose(): void {
-    throw new Error('Method not implemented.');
   }
 
   private processGeometries(parsedGeometry: Required<ParsedGeometry>, sectorBatch: SectorBatch) {
