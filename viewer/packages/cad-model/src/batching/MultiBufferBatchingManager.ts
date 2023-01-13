@@ -42,8 +42,8 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   constructor(
     batchGroup: Group,
     materials: Materials,
-    private readonly initialBufferSize = 64,
-    private readonly numberOfInstanceBatches = 1
+    private readonly initialBufferSize = 1024,
+    private readonly numberOfInstanceBatches = 2
   ) {
     this._sectorBatches = new Map();
     this._instanceBatches = new Map();
@@ -55,11 +55,12 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     if (this._sectorBatches.has(sectorId)) {
       return;
     }
+    const sectorBatch = this.createSectorBatch(sectorId);
     geometryBatchingQueue.forEach(parsedGeometry => {
       if (parsedGeometry.instanceId === undefined) {
         return;
       }
-      this.processGeometries(parsedGeometry as Required<ParsedGeometry>, sectorId);
+      this.processGeometries(parsedGeometry as Required<ParsedGeometry>, sectorBatch);
     });
   }
 
@@ -73,26 +74,18 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     sectorBatch.instanceBatches.forEach(({ batchBuffer, batchId, instanceCount }) => {
       const { buffer, mesh } = batchBuffer;
 
+      const instanceAttributes = GeometryBufferUtils.getAttributes(mesh.geometry, InterleavedBufferAttribute);
       const batchUpdateRange = buffer.getRangeForBatchId(batchId);
-      console.log(batchUpdateRange);
-      this.removeTreeIndicesFromMeshUserData(mesh, batchUpdateRange);
+      this.removeTreeIndicesFromMeshUserData(mesh, batchUpdateRange, instanceAttributes);
 
       const defragBufferUpdateRange = buffer.remove(batchId);
-      console.log(defragBufferUpdateRange);
-      const instanceAttributes = GeometryBufferUtils.getAttributes(mesh.geometry, InterleavedBufferAttribute);
-      console.log('********');
 
-      const asd =
-        defragBufferUpdateRange.byteCount > batchUpdateRange.byteCount
-          ? defragBufferUpdateRange.byteCount
-          : batchUpdateRange.byteCount;
       this.updateInstanceAttributes(instanceAttributes, {
         byteOffset: defragBufferUpdateRange.byteOffset,
-        byteCount: asd
+        byteCount: defragBufferUpdateRange.byteCount
       });
 
       mesh.count -= instanceCount;
-      // console.log(mesh.count);
 
       mesh.visible = mesh.count > 0;
     });
@@ -102,13 +95,12 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
 
   private removeTreeIndicesFromMeshUserData(
     mesh: THREE.Mesh,
-    updateRange: { byteOffset: number; byteCount: number }
+    updateRange: { byteOffset: number; byteCount: number },
+    instanceAttributes: { name: string; attribute: InterleavedBufferAttribute }[]
   ): void {
     const { byteOffset, byteCount } = updateRange;
 
-    const interleavedAttributes = GeometryBufferUtils.getAttributes(mesh.geometry, InterleavedBufferAttribute);
-
-    const treeIndexAttribute = this.getTreeIndexAttribute(interleavedAttributes);
+    const treeIndexAttribute = this.getTreeIndexAttribute(instanceAttributes);
     const typedArray = treeIndexAttribute.data.array as TypedArray;
     const instanceByteSize = treeIndexAttribute.data.stride * typedArray.BYTES_PER_ELEMENT;
 
@@ -125,8 +117,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     throw new Error('Method not implemented.');
   }
 
-  private processGeometries(parsedGeometry: Required<ParsedGeometry>, sectorId: number) {
-    const sectorBatch = this.createSectorBatch(sectorId);
+  private processGeometries(parsedGeometry: Required<ParsedGeometry>, sectorBatch: SectorBatch) {
     const instanceBatch = this.getOrCreateInstanceBatch(parsedGeometry);
     this.batchInstanceAttributes(parsedGeometry.geometryBuffer, parsedGeometry.instanceId, instanceBatch, sectorBatch);
   }
@@ -212,7 +203,6 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     const newCount = updateRange.byteCount / typeSize;
 
     const { offset: oldOffset, count: oldCount } = attribute.data.updateRange;
-
     if (oldCount === -1) {
       attribute.data.updateRange = { offset: newOffset, count: newCount };
       attribute.data.needsUpdate = true;
