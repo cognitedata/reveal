@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { checkUrl } from '@cognite/cdf-utilities';
+import { checkUrl, Envs } from '@cognite/cdf-utilities';
 import i18next, { InitOptions, Resource } from 'i18next';
 import I18NextLocizeBackend from 'i18next-locize-backend';
 import { locizePlugin } from 'locize';
@@ -41,7 +41,17 @@ const initializeTranslations = (
   if (typeof useLocizeBackend === 'boolean') {
     shouldUseLocizeBackend = useLocizeBackend;
   } else if (Array.isArray(useLocizeBackend) && useLocizeBackend.length > 0) {
-    shouldUseLocizeBackend = useLocizeBackend.some((env) => checkUrl(env));
+    shouldUseLocizeBackend = useLocizeBackend.some((env) =>
+      /**`
+       * NOTE
+       * In an update to checkUrl (incorrectly released on a minor version),
+       * the type of the argument has changed to Envs.
+       * We should update the types here as well.
+       * However, since it's going to be a breaking change,
+       * I've skipped it for now, and am just overwriting the type here.
+       */
+      checkUrl(env as Envs)
+    );
   }
 
   const commonI18nOptions: Pick<

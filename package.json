@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-i18n-utils",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "license": "UNLICENSED",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,7 +21,7 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@cognite/cdf-utilities": "^1.4.6",
+    "@cognite/cdf-utilities": "^2.0.0",
     "cross-spawn": "^7.0.3",
     "dotenv": "^16.0.0",
     "i18next": "^21.6.13",
