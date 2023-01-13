@@ -116,6 +116,7 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
         <Table<DataSource>
           id="metadata-table"
           data={filteredMetadata}
+          enableCopying
           enableSorting
           sorting={sorting}
           onSort={setSorting}

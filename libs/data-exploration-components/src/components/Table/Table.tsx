@@ -39,14 +39,16 @@ import {
   MetadataHeaderText,
 } from './elements';
 
-import { Body, Flex } from '@cognite/cogs.js';
+import { Body, Button, Flex, toast } from '@cognite/cogs.js';
 
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from './LoadMore';
 import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { useClipboard } from '@data-exploration-components/hooks';
 import noop from 'lodash/noop';
+import { DASH } from '@data-exploration-components/utils';
 
 export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {
@@ -78,6 +80,7 @@ export interface TableProps<T extends Record<string, any>>
   getCanRowExpand?: (row: Row<T>) => boolean;
   getSubrowData?: (originalRow: T, index: number) => undefined | T[];
   onRowExpanded?: OnChangeFn<ExpandedState>;
+  enableCopying?: boolean;
 }
 
 export type TableData = Record<string, any>;
@@ -87,6 +90,7 @@ Table.Columns = ResourceTableColumns;
 export function Table<T extends TableData>({
   id,
   data,
+  enableCopying = false,
   columns,
   onRowClick = noop,
   columnSelectionLimit,
@@ -122,8 +126,19 @@ export function Table<T extends TableData>({
     []
   );
 
+  // const [cop]
+  const { hasCopied, onCopy } = useClipboard();
+
   const tbodyRef = useRef<HTMLDivElement>(null);
   const trackUsage = useMetrics();
+
+  const handleCopy = (value: string) => {
+    if (value === '' || value === DASH) return;
+
+    onCopy(value);
+
+    toast.success('Item Successfully copied');
+  };
 
   // To add the navigation in the row
   const handleKeyDown = (
@@ -353,6 +368,7 @@ export function Table<T extends TableData>({
                   className={row.getIsSelected() ? 'selected' : ''}
                 >
                   {row.getVisibleCells().map((cell) => {
+                    const dataValue = cell.getValue<string>();
                     return (
                       <Td
                         {...{
@@ -362,12 +378,31 @@ export function Table<T extends TableData>({
                           },
                         }}
                       >
-                        <Body level={2} className="cell-content">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
+                        <Flex
+                          justifyContent="space-between"
+                          alignItems="center"
+                          gap={4}
+                        >
+                          <Body level={3}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </Body>
+
+                          {enableCopying && (
+                            <Button
+                              className="copying-button"
+                              size="small"
+                              disabled={dataValue === DASH || dataValue === ''}
+                              onClick={() =>
+                                handleCopy(cell.getValue<string>())
+                              }
+                            >
+                              {hasCopied ? 'Copied' : 'Copy'}
+                            </Button>
                           )}
-                        </Body>
+                        </Flex>
                       </Td>
                     );
                   })}

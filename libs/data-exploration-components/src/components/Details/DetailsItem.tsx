@@ -36,11 +36,11 @@ export const DetailsItem = ({
       ? value
       : '';
 
-  const { hasCopied, onCopy } = useClipboard(clipboardValue);
+  const { hasCopied, onCopy } = useClipboard();
   const trackUsage = useMetrics();
 
   const handleOnClickCopy = () => {
-    onCopy();
+    onCopy(clipboardValue.toString());
     toast.success('Copied to clipboard');
     trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.COPY_TO_CLIPBOARD, { name });
   };

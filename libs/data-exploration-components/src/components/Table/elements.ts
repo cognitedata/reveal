@@ -156,7 +156,15 @@ export const Tbody = styled.div`
 export const Td = styled.div`
   word-wrap: break-word;
   padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
   font-size: 14px;
+  .copying-button {
+    display: none;
+  }
+  &:hover .copying-button {
+    display: block;
+  }
 `;
 
 export const ThWrapper = styled.div`

@@ -198,7 +198,7 @@ export interface UseClipboardOptions {
 /**
  * React hook to copy content to clipboard
  *
- * @param initialValue the text or value to copy
+ *
  * @param {Number} [optionsOrTimeout=1500] optionsOrTimeout - delay (in ms) to switch back to initial state once copied.
  * @param {Object} optionsOrTimeout
  * @param {string} optionsOrTimeout.format - set the desired MIME type
@@ -207,22 +207,22 @@ export interface UseClipboardOptions {
  *
  */
 export function useClipboard(
-  initialValue: string | number,
   optionsOrTimeout: number | UseClipboardOptions = {}
 ) {
   const [hasCopied, setHasCopied] = useState(false);
-
-  const [value, setValue] = useState(initialValue);
 
   const { timeout = 1500, ...copyOptions } =
     typeof optionsOrTimeout === 'number'
       ? { timeout: optionsOrTimeout }
       : optionsOrTimeout;
 
-  const onCopy = useCallback(() => {
-    const didCopy = copy(`${value}`, copyOptions);
-    setHasCopied(didCopy);
-  }, [value, copyOptions]);
+  const onCopy = useCallback(
+    (value: string) => {
+      const didCopy = copy(`${value}`, copyOptions);
+      setHasCopied(didCopy);
+    },
+    [copyOptions]
+  );
 
   useEffect(() => {
     let timeoutId: number | null = null;
@@ -240,7 +240,7 @@ export function useClipboard(
     };
   }, [timeout, hasCopied]);
 
-  return { value, setValue, onCopy, hasCopied };
+  return { onCopy, hasCopied };
 }
 
 export function useGetHiddenColumns<T>(
