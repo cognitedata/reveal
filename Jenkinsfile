@@ -268,6 +268,11 @@ pods {
 
         'Release': {
           container('fas') {
+            print "branch name: ${env.BRANCH_NAME}";
+            print "change id: ${env.CHANGE_ID}";
+            print "isMaster: ${isMaster}";
+            print "isRelease: ${isRelease}";
+
             if (isPullRequest) {
               print 'No FAS deployment on PR branch'
               return;
