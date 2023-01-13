@@ -22,6 +22,8 @@ import {
   Validator,
 } from '@platypus/platypus-core';
 import { DataModelNameValidator } from '@platypus-core/domain/data-model/validators/data-model-name-validator';
+import { DataModelNameValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-name-validator-v2';
+import { isFDMv3 } from '@platypus-app/flags';
 
 export type DataModelDetailModalProps = {
   dataSets: DataSet[];
@@ -46,6 +48,8 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
   const [externalIdErrorMessage, setExternalIdErrorMessage] = useState();
   const [nameErrorMessage, setNameErrorMessage] = useState();
 
+  const isFDMV3 = isFDMv3();
+
   const dataSetOptions = props.dataSets.map(
     (item: DataSet) =>
       ({
@@ -60,7 +64,10 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
 
   const validateName = (value: string) => {
     const validator = new Validator({ name: value });
-    validator.addRule('name', new DataModelNameValidator());
+    const dataModelNameValidator = isFDMV3
+      ? new DataModelNameValidator()
+      : new DataModelNameValidatorV2();
+    validator.addRule('name', dataModelNameValidator);
     const result = validator.validate();
     setNameErrorMessage(result.valid ? null : result.errors.name);
 

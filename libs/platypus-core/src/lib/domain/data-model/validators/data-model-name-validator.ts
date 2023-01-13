@@ -3,18 +3,21 @@ import {
   ValidatorResult,
 } from '../../../boundaries/validation';
 
+const MAX_LENGTH = 255;
+
+/*
+This validation rule is for DMS V3.
+
+For DMS and Mixer API V2, we have DataModelNameValidatorV2.
+*/
 export class DataModelNameValidator extends ValidationRule {
   validate(field: string, value: string): ValidatorResult {
-    const allowedCharactersRegex =
-      /(?!^(cdf|dms|pg3|shared|system|node|edge)$)(^[a-zA-Z][a-zA-Z0-9_-]{0,41}[a-zA-Z0-9]?$)/;
-
-    if (!allowedCharactersRegex.test(value)) {
+    if (value.length > MAX_LENGTH) {
       return {
         valid: false,
         errors: {
           [field]:
-            field +
-            ' is not valid. It must match the pattern (?!^(cdf|dms|pg3|shared|system|node|edge)$)(^[a-zA-Z][a-zA-Z0-9_-]{0,41}[a-zA-Z0-9]?$)',
+            field + ' is not valid. It should be 255 characters or less.',
         },
       } as ValidatorResult;
     }

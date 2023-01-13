@@ -5,39 +5,28 @@ describe('DataModelNameValidator', () => {
     return new DataModelNameValidator();
   };
 
-  it('should work', () => {
-    const validator = createInstance();
-    expect(validator).toBeTruthy();
-  });
-
-  it('does not validate names longer than 43 characters', () => {
+  it('validates a valid name', () => {
     const validator = createInstance();
 
-    const result = validator.validate(
-      'name',
-      'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-    );
-    expect(result.valid).toBe(false);
-  });
-
-  it('not validate names starting with a number ', () => {
-    const validator = createInstance();
-
-    const result = validator.validate('name', '9-test');
-    expect(result.valid).toBe(false);
-  });
-
-  it('validates names containing "_"', () => {
-    const validator = createInstance();
-
-    const result = validator.validate('name', 'test_name');
+    const result = validator.validate('name', 'My Data Model Name!');
     expect(result.valid).toBe(true);
   });
 
-  it('validates names containing "-"', () => {
+  it('validates valid names with 255 or less characters', () => {
     const validator = createInstance();
 
-    const result = validator.validate('name', 'test-name');
+    const name = new Array(255).fill('x').join('');
+
+    const result = validator.validate('name', name);
     expect(result.valid).toBe(true);
+  });
+
+  it('validates invalid names with more than 255 characters', () => {
+    const validator = createInstance();
+
+    const name = new Array(256).fill('x').join('');
+
+    const result = validator.validate('name', name);
+    expect(result.valid).toBe(false);
   });
 });
