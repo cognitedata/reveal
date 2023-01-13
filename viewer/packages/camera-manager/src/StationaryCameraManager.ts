@@ -26,14 +26,12 @@ export class StationaryCameraManager implements CameraManager {
   private _defaultFOV: number;
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private _isDragging = false;
-  private readonly _camEuler: THREE.Euler;
 
   constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
     this._domElement = domElement;
     this._camera = camera;
     this._defaultFOV = camera.fov;
     this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
-    this._camEuler = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
   }
 
   getCamera(): THREE.PerspectiveCamera {
@@ -184,7 +182,7 @@ export class StationaryCameraManager implements CameraManager {
     this._camera.fov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
     this._camera.updateProjectionMatrix();
 
-    //When zooming in the camera is rotated towards the mouse cursor position
+    //When zooming in the camera is rotated towards the cursor position
     if (this._camera.fov < lastFov) {
       const postCursorRay = this.getCursorRay(event).normalize();
       const rotationDelta = new THREE.Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
