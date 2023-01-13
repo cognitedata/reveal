@@ -68,11 +68,6 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
     return { batchId: batchId, bufferIsReallocated: isReallocated, updateRange: { byteOffset, byteCount } };
   }
 
-  public forceReallocation(sizeScale = 2): void {
-    const currentLength = this._bufferView.length;
-    this.allocateNewBuffer(currentLength * sizeScale);
-  }
-
   public remove(batchId: number): {
     byteOffset: number;
     byteCount: number;
