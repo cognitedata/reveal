@@ -182,20 +182,19 @@ export class StationaryCameraManager implements CameraManager {
     this._camera.fov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
     this._camera.updateProjectionMatrix();
 
+    if (this._camera.fov === lastFov) return;
+
     // When zooming in the camera is rotated towards the cursor position
-    if (this._camera.fov < lastFov) {
-      const postCursorRay = this.getCursorRay(event).normalize();
-      const arcBetweenRays = new THREE.Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
-      const forwardVector = this._camera.getWorldDirection(new THREE.Vector3()).clone();
+    const postCursorRay = this.getCursorRay(event).normalize();
+    const arcBetweenRays = new THREE.Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
+    const forwardVector = this._camera.getWorldDirection(new THREE.Vector3()).clone();
 
-      forwardVector.applyQuaternion(arcBetweenRays);
-      const targetWorldCoordinates = new THREE.Vector3().addVectors(
-        this._camera.position,
-        forwardVector.multiplyScalar(1)
-      );
-      this._camera.lookAt(targetWorldCoordinates);
-    }
-
+    forwardVector.applyQuaternion(arcBetweenRays);
+    const targetWorldCoordinates = new THREE.Vector3().addVectors(
+      this._camera.position,
+      forwardVector.multiplyScalar(1)
+    );
+    this._camera.lookAt(targetWorldCoordinates);
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   };
 
