@@ -29,14 +29,21 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     const model = await this._client.revisions3D.retrieve(modelId, revisionId);
 
     const modelMatrix = new THREE.Matrix4();
+
     if (model.rotation) {
       modelMatrix.makeRotationFromEuler(new THREE.Euler(...model.rotation));
     }
-    if (model.translation) {
-      const translation = new THREE.Vector3().fromArray(model.translation);
+    if ((model as any).scale) {
+      const scale = new THREE.Vector3().fromArray(model.scale as [number, number, number]);
+      const scaleMatrix = new THREE.Matrix4().makeScale(...scale.toArray());
+      modelMatrix.multiply(scaleMatrix);
+    }
+    if ((model as any).translation) {
+      const translation = new THREE.Vector3().fromArray(model.translation as [number, number, number]);
       const translationMatrix = new THREE.Matrix4().makeTranslation(...translation.toArray());
       modelMatrix.multiply(translationMatrix);
     }
+
     applyDefaultModelTransformation(modelMatrix, format);
     return modelMatrix;
   }
