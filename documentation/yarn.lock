@@ -182,12 +182,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.32.1":
-  version: 2.32.1
-  resolution: "@azure/msal-browser@npm:2.32.1"
+"@azure/msal-browser@npm:2.32.2":
+  version: 2.32.2
+  resolution: "@azure/msal-browser@npm:2.32.2"
   dependencies:
-    "@azure/msal-common": ^9.0.1
-  checksum: 3afc8aa8c3dcf17a348cc69c6e15db5c6d7d89cf656b0c585687a8885db8f82340cc38a9d9c842e2871929b7c31ce7e3c2016385153a7ba68b7d8f8b1729368f
+    "@azure/msal-common": ^9.0.2
+  checksum: a88608160bc7ed27137fc7325f804d9b807d1fb0b1708a263c49f62ef4bb8bd6fa231b078a7bed4a38e3ebd815f8395c915253d77872934b4ea603aee42fe9ad
   languageName: node
   linkType: hard
 
@@ -207,10 +207,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:^9.0.1":
-  version: 9.0.1
-  resolution: "@azure/msal-common@npm:9.0.1"
-  checksum: 2e23a356c5662c999bdb1ca9878a265ff15711f78bdb701c9f0b1c4667c107e45e4abb04fb7b5e27f9d9df788604fb0ef435639d29a4e791486ed7f53ac75095
+"@azure/msal-common@npm:^9.0.2":
+  version: 9.0.2
+  resolution: "@azure/msal-common@npm:9.0.2"
+  checksum: 5a44d23b1d0f80d3e2221d157c1bd48bdfd19f5a4ac2fc58c73c52ffd25868c1760ea27ad0408931e07f552adc19764757bf91f7bec59258d9d931274df15657
   languageName: node
   linkType: hard
 
@@ -2016,7 +2016,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
-    "@azure/msal-browser": 2.32.1
+    "@azure/msal-browser": 2.32.2
     "@docusaurus/core": 2.2.0
     "@docusaurus/preset-classic": 2.2.0
     "@docusaurus/remark-plugin-npm2yarn": ^2.2.0
