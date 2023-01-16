@@ -1,6 +1,9 @@
 /*!
  * Copyright 2023 Cognite AS
  */
+import assert from 'assert';
+import minBy from 'lodash/minBy';
+import { BufferGeometry, Group, InstancedMesh, InterleavedBufferAttribute, RawShaderMaterial } from 'three';
 import { Materials } from '@reveal/rendering';
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import {
@@ -9,7 +12,6 @@ import {
   incrementOrInsertIndex,
   TypedArray
 } from '@reveal/utilities';
-import { BufferGeometry, Group, InstancedMesh, InterleavedBufferAttribute, RawShaderMaterial } from 'three';
 import { GeometryBufferUtils } from '../utilities/GeometryBufferUtils';
 import { getShaderMaterial } from '../utilities/getShaderMaterial';
 import { DrawCallBatchingManager } from './DrawCallBatchingManager';
@@ -57,6 +59,8 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     }
     const sectorBatch = this.createSectorBatch(sectorId);
     geometryBatchingQueue.forEach(parsedGeometry => {
+      // If instanceId is undefined, then the current geometry is a unique mesh
+      // and should not be runtime batched.
       if (parsedGeometry.instanceId === undefined) {
         return;
       }
@@ -227,15 +231,10 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     attribute.data.updateRange = { offset, count };
   }
 
-  private getBatchBufferToFill(instanceBatch: InstanceBatch) {
-    return instanceBatch.buffers.sort((a, b) => {
-      const aBufferSize = a.buffer.bufferView.length;
-      const bBufferSize = b.buffer.bufferView.length;
-      if (aBufferSize !== bBufferSize) {
-        return aBufferSize - bBufferSize;
-      }
-      return a.buffer.length - b.buffer.length;
-    })[0];
+  private getBatchBufferToFill(instanceBatch: InstanceBatch): BatchBuffer {
+    const smallestBuffer = minBy(instanceBatch.buffers, batchBuffer => batchBuffer.buffer.bufferView.length);
+    assert(smallestBuffer !== undefined);
+    return smallestBuffer;
   }
 
   private getOrCreateInstanceBatch(parsedGeometry: Required<ParsedGeometry>) {

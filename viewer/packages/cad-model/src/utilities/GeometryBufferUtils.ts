@@ -26,7 +26,7 @@ export class GeometryBufferUtils {
   public static copyGeometryWithBufferAttributes(geometry: BufferGeometry): THREE.BufferGeometry {
     const newGeometry = new BufferGeometry();
 
-    this.getAttributes(geometry, BufferAttribute).forEach(namedAttribute => {
+    GeometryBufferUtils.getAttributes(geometry, BufferAttribute).forEach(namedAttribute => {
       newGeometry.setAttribute(namedAttribute.name, namedAttribute.attribute);
     });
 
@@ -73,7 +73,10 @@ export class GeometryBufferUtils {
 
     for (let i = 1; i < instanceAttributes.length; i++) {
       const instanceAttributeBufferView = instanceAttributes[i].attribute.array;
-      assert(interleavedBufferView.buffer.byteLength === (instanceAttributeBufferView as TypedArray).buffer.byteLength);
+      assert(
+        interleavedBufferView.buffer === (instanceAttributeBufferView as TypedArray).buffer,
+        'Instance attributes must be interleaved'
+      );
     }
     return interleavedBufferView;
   }
