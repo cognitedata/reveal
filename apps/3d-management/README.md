@@ -4,6 +4,21 @@ This repo contains the "3D Models" app. You can see it by navigating to [http://
 
 Previously known as [console/glados](https://github.com/cognitedata/console) subapp.
 
+## Development environment setup
+
+### Local desktop
+
+To set up a full local development environment on your machine, please read setup 
+instructions for frontend development here: https://cognitedata.atlassian.net/wiki/spaces/AD/pages/147424318/The+Definitive+Onboarding+Guide+for+Application+Developers
+
+### Devcontainer
+
+An alternative is to use a devcontainer environment for this repo in VSCode. This can be loaded either locally in Docker (https://code.visualstudio.com/docs/devcontainers/containers), or in Github Codespaces (https://docs.github.com/en/codespaces/overview).
+
+## npm setup
+
+Regardless of what dev environment setup you choose above, you need a NPM account, and you need to be logged in to npm. See step 4 under "Account access on the "onboarding guide" link above, for npm account and login instructions.
+
 ## Local development
 
 1. Clone repo.
