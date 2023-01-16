@@ -136,10 +136,18 @@ def getAffectedProjects(boolean isPullRequest = true, boolean isMaster = false, 
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
+      locizeApiKey = secretEnvVar(
+        key: 'LOCIZE_API_KEY',
+        secretName: 'fusion-locize-api-key',
+        secretKey: 'FUSION_LOCIZE_API_KEY'
+      )
       fas.pod(
         nodeVersion: NODE_VERSION,
         locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
+        envVars: [
+          locizeApiKey,
+        ]
       ) {
         codecov.pod {
           testcafe.pod() {
@@ -262,6 +270,7 @@ pods {
                 def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
                 pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${projects[i]}")
               }
+
             }
           }
         },
@@ -329,6 +338,16 @@ pods {
                   channel: SLACK_CHANNEL,
                   message: "Deployment of ${env.BRANCH_NAME} complete for: ${projects[i]}!"
                 )
+              }
+
+
+              if(projects[i] == "platypus"){
+                stageWithNotify('Save missing keys to locize') {
+                  sh("yarn i18n-push")
+                }
+                stageWithNotify('Remove deleted keys from locize') {
+                  sh("yarn i18n-remove-deleted")
+                }
               }
             }
           }
