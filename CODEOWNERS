@@ -3,13 +3,14 @@
 # NB: Avoid using 'markdown' as file format for this file --> use plain text or download 'CODEOWNERS' ext. on marketplace
 
 # General
-/.devcontainer/                   @cognitedata/development-experiences @cognitedata/explorers
-/.github/                         @cognitedata/development-experiences @cognitedata/explorers
-/.storybook/                      @cognitedata/development-experiences @cognitedata/explorers
-/.vscode/                         @cognitedata/development-experiences @cognitedata/explorers
-/scripts/                         @cognitedata/development-experiences @cognitedata/explorers
-/tools/                           @cognitedata/development-experiences @cognitedata/explorers
-/*                                @cognitedata/development-experiences @cognitedata/explorers
+/.devcontainer/                   @cognitedata/fusion-maintainers
+/.github/                         @cognitedata/fusion-maintainers
+/.storybook/                      @cognitedata/fusion-maintainers
+/.vscode/                         @cognitedata/fusion-maintainers
+/bin/                             @cognitedata/fusion-maintainers
+/scripts/                         @cognitedata/fusion-maintainers
+/tools/                           @cognitedata/fusion-maintainers
+/*                                @cognitedata/fusion-maintainers
 
 # Team platypus
 apps/mock-server                  @cognitedata/development-experiences
