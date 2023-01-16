@@ -25,7 +25,8 @@ viewer.on('click', async event => {
     event.offsetX, event.offsetY
   );
   if (intersection) {
-    const toPresent = { treeIndex: intersection.treeIndex, nodeId: intersection.nodeID, point: intersection.point };
+    const nodeId = await model.mapTreeIndexToNodeId(intersection.treeIndex);
+    const toPresent = { treeIndex: intersection.treeIndex, nodeId, point: intersection.point };
     alert(`Clicked object!: ${JSON.stringify(toPresent)}`);
   };
 });
