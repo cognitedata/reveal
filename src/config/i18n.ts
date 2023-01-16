@@ -8,6 +8,7 @@ import LocalStorageBackend from 'i18next-localstorage-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { isDevelopment, isPR, isProduction } from 'utils/environment';
 import config from 'config/config';
+import { SELECTED_LANGUAGE_LS_KEY } from '@cognite/cdf-utilities';
 
 if (!config.locizeProjectId) throw new Error('Locize is not configured!');
 
@@ -32,6 +33,10 @@ const locizeOptions = {
   version: isProduction ? 'production' : 'latest',
   allowedAddOrUpdateHosts: ['localhost'],
 };
+
+const langDetectKey = config.isFusion
+  ? SELECTED_LANGUAGE_LS_KEY
+  : 'chartsLanguage';
 
 i18n.options.react = reactOptions;
 setI18n(i18n);
@@ -77,7 +82,7 @@ i18n
     defaultNS: 'global',
     detection: {
       order: ['localStorage'],
-      lookupLocalStorage: 'chartsLanguage',
+      lookupLocalStorage: langDetectKey,
       caches: ['localStorage'],
       htmlTag: document.documentElement,
     },
