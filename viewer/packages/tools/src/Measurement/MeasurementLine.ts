@@ -10,11 +10,14 @@ export class MeasurementLine {
   private readonly _meshes: THREE.Group;
   private readonly _fixedWidthLineMaterial: LineMaterial;
   private readonly _adaptiveWidthLineMaterial: LineMaterial;
-  private readonly _position: Float32Array;
+  private readonly _startPos: THREE.Vector3;
+  private readonly _endpoint: THREE.Vector3;
 
   constructor(lineWidth: number, lineColor: THREE.Color, startPoint: THREE.Vector3) {
-    this._position = new Float32Array(6);
     this._geometry = new LineGeometry();
+
+    this._startPos = startPoint;
+    this._endpoint = new THREE.Vector3();
 
     //Adaptive Line width
     this._adaptiveWidthLineMaterial = new LineMaterial({
@@ -45,7 +48,7 @@ export class MeasurementLine {
       this._adaptiveWidthLineMaterial.resolution = this._fixedWidthLineMaterial.resolution = resolution;
     };
     this._meshes.add(onBeforeRenderTrigger);
-    this.startLine(startPoint);
+    this.startLine();
   }
 
   dispose(): void {
@@ -67,11 +70,10 @@ export class MeasurementLine {
    * @param endPoint Second point of the line to end the measurement.
    */
   updateLine(endPoint: THREE.Vector3): void {
-    this._position[3] = endPoint.x;
-    this._position[4] = endPoint.y;
-    this._position[5] = endPoint.z;
-    //Update the line geometry end point.
-    this._geometry.setPositions(this._position);
+    this._endpoint.copy(endPoint);
+    this._meshes.position.copy(this.getMidPointOnLine());
+    this._meshes.lookAt(endPoint);
+    this._meshes.scale.set(0, 0, endPoint.distanceTo(this._startPos));
   }
 
   /**
@@ -79,9 +81,7 @@ export class MeasurementLine {
    * @returns Return distance between start & end point of the line.
    */
   getMeasuredDistance(): number {
-    const startPoint = new THREE.Vector3(this._position[0], this._position[1], this._position[2]);
-    const endPoint = new THREE.Vector3(this._position[3], this._position[4], this._position[5]);
-    return endPoint.distanceTo(startPoint);
+    return this._endpoint.distanceTo(this._startPos);
   }
 
   /**
@@ -89,13 +89,7 @@ export class MeasurementLine {
    * @returns Returns mid point between start and end points.
    */
   getMidPointOnLine(): THREE.Vector3 {
-    const startPoint = new THREE.Vector3(this._position[0], this._position[1], this._position[2]);
-    const endPoint = new THREE.Vector3(this._position[3], this._position[4], this._position[5]);
-    let direction = endPoint.clone().sub(startPoint);
-    const length = direction.length();
-    direction = direction.normalize().multiplyScalar(length * 0.5);
-
-    return startPoint.clone().add(direction);
+    return this._endpoint.clone().add(this._startPos).multiplyScalar(0.5);
   }
 
   /**
@@ -116,14 +110,9 @@ export class MeasurementLine {
 
   /**
    * Generate line geometry and create the mesh.
-   * @param point Point from where the line will be generated.
    */
-  private startLine(point: THREE.Vector3): void {
-    this._position[0] = this._position[3] = point.x;
-    this._position[1] = this._position[4] = point.y;
-    this._position[2] = this._position[5] = point.z;
-
-    this._geometry.setPositions(this._position);
+  private startLine(): void {
+    this._geometry.setPositions([0, 0, -0.5, 0, 0, 0.5]);
 
     const adaptiveMesh = new Line2(this._geometry, this._adaptiveWidthLineMaterial);
     //Assign bounding sphere & box for the line to support raycasting.
