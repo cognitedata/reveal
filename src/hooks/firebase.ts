@@ -17,7 +17,9 @@ const cacheOption = {
 
 export const useFirebaseInit = (enabled: boolean) => {
   const sdk = useSDK();
-  const url = useAppsApiBaseUrl();
+  // @ts-ignore
+  const sdkClientBaseUrl = sdk.httpClient.getBaseUrl();
+  const url = useAppsApiBaseUrl(sdkClientBaseUrl);
   const project = getProject();
   const { flow } = getFlow();
 

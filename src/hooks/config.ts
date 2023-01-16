@@ -23,9 +23,11 @@ export const useCluster = () => {
   return [cluster ? decodeURIComponent(cluster) : undefined, setCluster];
 };
 
-export const useAppsApiBaseUrl = (): string => {
+export const useAppsApiBaseUrl = (sdkClientBaseUrl: string): string => {
   const cluster = getCluster();
-  const env = parseEnvFromCluster(cluster);
+  const clusterEnv = parseEnvFromCluster(cluster);
+  const env =
+    clusterEnv === '' ? parseEnvFromCluster(sdkClientBaseUrl) : clusterEnv;
   const stagingPart = isProduction ? '' : 'staging';
   const url = ['apps-api', stagingPart, env, 'cognite', 'ai']
     .filter(Boolean)

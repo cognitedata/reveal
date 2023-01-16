@@ -33,6 +33,7 @@ import {
 import { isProduction } from 'utils/environment';
 import { WorkflowResult } from 'models/calculation-results/types';
 import envConfig from 'config/config';
+import { parseEnvFromCluster } from '@cognite/login-utils';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -54,9 +55,14 @@ export const getBackendServiceBaseUrl = (cluster?: string) => {
 async function getConfig(sdk: CogniteClient): Promise<Configuration> {
   await sdk.get('/api/v1/token/inspect');
   const { Authorization } = sdk.getDefaultRequestHeaders();
-  const cluster = envConfig.isFusion
+  const clusterEnv = envConfig.isFusion
     ? getEnv()
     : (queryString.parse(window.location.search)[CLUSTER_KEY] as string);
+
+  // @ts-ignore
+  const sdkClientBaseUrl = sdk.httpClient.getBaseUrl();
+  const cluster =
+    clusterEnv === '' ? parseEnvFromCluster(sdkClientBaseUrl) : clusterEnv;
 
   if (!Authorization) {
     throw new Error('Authorization header missing');
