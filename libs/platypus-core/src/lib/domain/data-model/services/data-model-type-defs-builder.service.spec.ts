@@ -154,6 +154,7 @@ describe('DataModelTypeDefsBuilderService Test', () => {
     })),
     clear: jest.fn(),
     validate: jest.fn(),
+    setType: jest.fn(),
   } as IGraphQlUtilsService;
 
   const createInstance = () => {

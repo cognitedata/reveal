@@ -585,7 +585,7 @@ describe('GraphQlUtilsServiceTest', () => {
         },
       ]);
     });
-    it('validates @view directiv for interfaces when extended SDL validation is enabled', () => {
+    it('validates @view directive for interfaces when extended SDL validation is enabled', () => {
       const service = createInstance();
 
       const schemaWithInvalidViewDirective = `
@@ -642,60 +642,57 @@ describe('GraphQlUtilsServiceTest', () => {
         },
       ]);
     });
-    it('validates @mapping directive for objects when extended SDL validation is enabled', () => {
+
+    it('should validate unimplemented interface types', () => {
       const service = createInstance();
 
-      const schemaWithInvalidViewDirective = `
-      type Movie {
-        title: String @mapping(container: false, space: false, containerPropertyIdentifier: false)
+      const schemaWithUnimplementedInterface = `interface Describable {
+        name: String
+        description: String
       }
-      `;
-
+      
+      interface Assignable {
+        assignedTo: String
+      }
+      
+      type Person implements Describable & Assignable {
+        id: ID!
+        name: String!
+        
+      }`;
       const result = service.validate(
-        schemaWithInvalidViewDirective,
-        mixerApiBuiltInTypes,
-        { useExtendedSdl: true }
+        schemaWithUnimplementedInterface,
+        mixerApiBuiltInTypes
       );
 
       expect(result).toEqual([
         {
-          message: 'Container argument must be of type String',
+          message:
+            'Interface field Describable.description expected but Person does not provide it.',
           status: 400,
-          errorMessage: 'Container argument must be of type String',
-          typeName: undefined,
-          fieldName: undefined,
+          errorMessage:
+            'Interface field Describable.description expected but Person does not provide it.',
+          typeName: 'Person',
+          fieldName: 'id',
           locations: [
             {
-              line: 3,
-              column: 32,
-            },
-          ],
-        },
-        {
-          message: 'Space argument must be of type String',
-          status: 400,
-          errorMessage: 'Space argument must be of type String',
-          typeName: undefined,
-          fieldName: undefined,
-          locations: [
-            {
-              line: 3,
-              column: 50,
+              line: 10,
+              column: 7,
             },
           ],
         },
         {
           message:
-            'containerPropertyIdentifier argument must be of type String',
+            'Interface field Assignable.assignedTo expected but Person does not provide it.',
           status: 400,
           errorMessage:
-            'containerPropertyIdentifier argument must be of type String',
-          typeName: undefined,
-          fieldName: undefined,
+            'Interface field Assignable.assignedTo expected but Person does not provide it.',
+          typeName: 'Person',
+          fieldName: 'id',
           locations: [
             {
-              line: 3,
-              column: 64,
+              line: 10,
+              column: 7,
             },
           ],
         },

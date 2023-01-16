@@ -44,6 +44,13 @@ export interface IGraphQlUtilsService {
   removeType(typeName: string): void;
 
   /**
+   * Set complete type object into AST
+   * @param typeName
+   * @param type
+   */
+  setType(typeName: string, type: DataModelTypeDefsType): void;
+
+  /**
    * Adds new field for the specified type into AST
    * @param typeName
    * @param fieldName

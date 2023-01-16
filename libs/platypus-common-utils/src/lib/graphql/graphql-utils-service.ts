@@ -97,6 +97,17 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     return this.toSolutionDataModelType(type, typeNames);
   }
 
+  setType(typeName: string, type: DataModelTypeDefsType): void {
+    this.createIfEmpty();
+    this.schemaAst!.createObjectType({
+      name: typeName,
+      directives: type.directives,
+      description: type.description,
+      interfaces: type.interfaces,
+      fields: type.fields,
+    });
+  }
+
   removeType(typeName: string): void {
     this.createIfEmpty();
     this.schemaAst!.removeType(typeName);
@@ -253,7 +264,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       arguments: this.mapArguments(field.getArguments()),
       location: field.node.loc
         ? {
-            line: field.node.loc.startToken.line,
+            line: field.node.loc.endToken.line,
             column: field.node.loc.endToken.column,
           }
         : undefined,
@@ -370,7 +381,7 @@ type Query {
     }
 
     let errors = [];
-    let doc: DocumentNode;
+    let doc: DocumentNode | null = null;
 
     try {
       doc = parse(schemaToValidate);
@@ -386,7 +397,14 @@ type Query {
         Object.freeze(customValidationRules)
       ).map((err) => err);
     } catch (err) {
-      errors = [err];
+      if (doc) {
+        errors = this.handleValidationErrorsThrownAsExceptions(
+          doc,
+          (err as Error).message
+        );
+      } else {
+        errors = [err];
+      }
     }
 
     return errors.map((err) =>
@@ -424,5 +442,58 @@ type Query {
         column: loc.column,
       })),
     };
+  }
+
+  private handleValidationErrorsThrownAsExceptions(
+    document: DocumentNode,
+    errorMessage: string
+  ): GraphQLError[] {
+    const interfaceUnimplmentedFieldsRegex =
+      /^Interface field.*expected but.*does not provide it./gm;
+    if (errorMessage.match(interfaceUnimplmentedFieldsRegex)) {
+      let m;
+      const errors = [] as GraphQLError[];
+
+      while (
+        (m = interfaceUnimplmentedFieldsRegex.exec(errorMessage)) !== null
+      ) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (m.index === interfaceUnimplmentedFieldsRegex.lastIndex) {
+          interfaceUnimplmentedFieldsRegex.lastIndex++;
+        }
+
+        // The result can be accessed through the `m`-variable.
+        m.forEach((match) => {
+          const [missingField, typeName] = match
+            .replace(/^Interface field/g, '')
+            .replace(/expected but/g, '')
+            .replace(/does not provide it.$/g, '')
+            .replace(/\s{2,}/g, ' ')
+            .trim()
+            .split(' ');
+
+          const typeNodeIndex = document.definitions.findIndex(
+            (node) =>
+              (node.kind === Kind.OBJECT_TYPE_DEFINITION ||
+                node.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
+              node.name.value === (typeName as string)
+          );
+          if (typeNodeIndex !== -1) {
+            errors.push(
+              new GraphQLError(match, {
+                nodes: [document.definitions[typeNodeIndex]],
+                extensions: {
+                  field: missingField,
+                },
+              })
+            );
+          }
+        });
+      }
+
+      return errors;
+    }
+
+    return [new GraphQLError(errorMessage)];
   }
 }
