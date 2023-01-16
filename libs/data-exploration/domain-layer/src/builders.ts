@@ -17,12 +17,16 @@ type LeafFilter<T> =
   | Exists
   | ContainsAny<T>
   | ContainsAll<T>
-  | Search;
+  | Search
+  | InAssetSubTree<T>;
 type BoolFilter<T> = And<T> | Or<T> | Not<T>;
 
 type And<T> = { and: AdvancedFilter<T>[] };
 type Or<T> = { or: AdvancedFilter<T>[] };
 type Not<T> = { not: AdvancedFilter<T> };
+type InAssetSubTree<T> = {
+  inAssetSubtree: { property: Property; values: T[keyof T] };
+};
 
 type Equals<T> = {
   equals: { property: Property; value: T[keyof T] };
@@ -182,6 +186,25 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
         ...this.filters,
         {
           in: {
+            property,
+            values,
+          },
+        },
+      ];
+    }
+
+    return this;
+  }
+  inAssetSubtree<K extends keyof T>(key: K, input?: AdvancedFilterInput<T, K>) {
+    const values = this.getValue(input);
+
+    if (values !== undefined) {
+      const property = this.getProperty(key);
+
+      this.filters = [
+        ...this.filters,
+        {
+          inAssetSubtree: {
             property,
             values,
           },

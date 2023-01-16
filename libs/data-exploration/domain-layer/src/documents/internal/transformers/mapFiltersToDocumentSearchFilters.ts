@@ -9,6 +9,7 @@ export type DocumentProperties = {
   type: string[];
   externalId: string;
   id: number[];
+  assetIds: number[];
   [key: `sourceFile|metadata|${string}`]: string;
 };
 
@@ -22,6 +23,7 @@ export const mapFiltersToDocumentSearchFilters = (
     createdTime,
     lastUpdatedTime,
     assetSubtreeIds,
+
     internalId,
     metadata,
   }: InternalDocumentFilter,
@@ -38,14 +40,7 @@ export const mapFiltersToDocumentSearchFilters = (
         return acc;
       }, [] as number[]);
     })
-    .containsAny('sourceFile|assetIds', () => {
-      return assetSubtreeIds?.reduce((acc, { value }) => {
-        if (typeof value === 'number') {
-          return [...acc, value];
-        }
-        return acc;
-      }, [] as number[]);
-    })
+
     .in('author', author)
     .in('sourceFile|source', source)
     .in('type', type)
@@ -54,6 +49,14 @@ export const mapFiltersToDocumentSearchFilters = (
         return [internalId];
       }
       return undefined;
+    })
+    .inAssetSubtree('assetIds', () => {
+      return assetSubtreeIds?.reduce((acc, { value }) => {
+        if (typeof value === 'number') {
+          return [...acc, value];
+        }
+        return acc;
+      }, [] as number[]);
     })
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
