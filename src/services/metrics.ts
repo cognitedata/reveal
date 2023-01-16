@@ -8,8 +8,14 @@ const mixpanelConfig = {
   prefix: 'Charts',
 };
 
-if (config.mixpanelToken) {
-  mixpanel.init(config.mixpanelToken, { debug: isDevelopment });
+const { hostname } = window.location;
+const isPreviewLink = hostname.includes('fusion-pr-preview');
+const configToApply = { ...config };
+if (!configToApply.mixpanelToken && isPreviewLink) {
+  configToApply.mixpanelToken = '741a2c6ee88f7a1191cce6515493a541';
+}
+if (configToApply.mixpanelToken) {
+  mixpanel.init(configToApply.mixpanelToken, { debug: isDevelopment });
 } else if (isProduction || isStaging) {
   throw new Error('Mixpanel token must be present outside of development!');
 } else {
