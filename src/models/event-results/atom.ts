@@ -30,3 +30,13 @@ export const activeEventFilterIdAtom = atom<string>({
   key: 'activeEventFilterIdAtom',
   default: '',
 });
+
+/**
+ * Active Event ID
+ * ====================
+ * Active event (single instance) to show full details of the event
+ */
+export const activeEventIdAtom = atom<number | undefined>({
+  key: 'activeEventIdAtom',
+  default: undefined,
+});

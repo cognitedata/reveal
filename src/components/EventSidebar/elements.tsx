@@ -23,18 +23,26 @@ const activeBoxWarningStyles = css<{ $active: boolean }>`
 `;
 
 export const EventDetails = styled.aside<{ $active: boolean }>`
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
   border: 1px solid #d9d9d9;
   background-color: #fafafa;
   border-radius: 0.5rem;
-  padding: 1rem 1rem 0.5rem;
+  padding: 0.5rem;
 
   ${(props) => (props.$active ? activeBoxStyles : '')};
 
-  .cogs-body-2 {
+  .cogs-micro {
     text-overflow: ellipsis;
-    width: 100%;
+    width: calc(100% - 8px);
     overflow: hidden;
+
+    [class^='cogs-body-'],
+    [class^='cogs-body-'] a,
+    [class^='cogs-body-'] span,
+    a {
+      font-size: var(--cogs-micro-font-size);
+      line-height: var(--cogs-micro-line-height);
+    }
   }
 
   .hint {
@@ -47,7 +55,26 @@ export const EventDetails = styled.aside<{ $active: boolean }>`
     ${(props) => (props.$active ? activeBoxWarningStyles : '')};
   }
 
-  .ant-row {
+  .ant-row:not(:last-child) {
     margin-bottom: 10px;
   }
+`;
+
+export const EventDetailBox = styled.section`
+  background-color: #fafafa;
+  border-radius: 8px;
+  margin-bottom: 8px;
+
+  > h5 {
+    border-bottom: 1px solid #d9d9d9;
+    padding: 16px 12px;
+  }
+
+  > article {
+    padding: 16px 12px;
+  }
+`;
+
+export const MetadataWrapItem = styled.p`
+  word-break: break-word;
 `;

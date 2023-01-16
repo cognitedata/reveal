@@ -13,7 +13,7 @@ export default {
 
 const Template: Story<Props> = (args) => {
   return (
-    <div style={{ width: '400px' }}>
+    <div style={{ width: '354px' }}>
       <EventInfoBox {...args} />
     </div>
   );
@@ -85,5 +85,7 @@ Translated.args = {
     'Sub type': 'サブタイプ',
     Type: 'タイプ',
     Updated: '更新しました',
+    Back: '戻る',
+    'View details': '詳細を見る',
   },
 };

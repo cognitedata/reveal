@@ -103,3 +103,21 @@ export const useLinkedAsset = (
     { enabled: enabled && !!timeseriesExternalId }
   );
 };
+
+export const useCdfEvent = (eventId?: number, enabled = true) => {
+  const sdk = useSDK();
+
+  return useQuery(
+    ['event', 'eventId', eventId],
+    async () => {
+      const event = await sdk.events.retrieve([{ id: eventId! }]);
+
+      if (!event) {
+        return undefined;
+      }
+
+      return event[0];
+    },
+    { enabled: enabled && !!eventId }
+  );
+};

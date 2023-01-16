@@ -2,16 +2,18 @@
  * Event InfoBox
  */
 
-import { useCallback } from 'react';
+import { MouseEvent, useCallback } from 'react';
 import { Col, Row } from 'antd';
 import dayjs from 'dayjs';
-import { Body } from '@cognite/cogs.js';
-import { CogniteEvent, Timestamp } from '@cognite/sdk';
+import { Button, Micro } from '@cognite/cogs.js';
+import { CogniteEvent } from '@cognite/sdk';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { LoadingRow } from 'components/Common/SidebarElements';
+import { AssetsItem } from '@cognite/data-exploration';
+import { formatDate } from 'utils/date';
 import { EventDetails } from './elements';
 
-const defaultTranslations = makeDefaultTranslations(
+export const defaultTranslations = makeDefaultTranslations(
   'Type',
   'Sub type',
   'Updated',
@@ -20,25 +22,24 @@ const defaultTranslations = makeDefaultTranslations(
   'Start',
   'End',
   'External ID',
-  'Root asset'
+  'Root asset',
+  'Back',
+  'View details'
 );
 
 type Props = {
   event: Partial<CogniteEvent>;
   onToggleEvent: (id: number | undefined) => void;
+  onViewEvent: (id: number | undefined) => void;
   loading?: boolean;
   selected?: boolean;
   translations?: typeof defaultTranslations;
 };
 
-const formatDate = (date: Date | Timestamp | undefined) => {
-  if (!date) return '';
-  return dayjs(date).format('MM.DD.YYYY HH:mm');
-};
-
 const EventInfoBox = ({
   event,
   onToggleEvent,
+  onViewEvent,
   selected = false,
   loading = false,
   translations,
@@ -49,28 +50,37 @@ const EventInfoBox = ({
     ...translations,
   };
 
-  const toggleSelection = useCallback(() => {
+  const handleToggleSelection = useCallback(() => {
     onToggleEvent(event.id);
   }, []);
 
+  const handleViewEvent = useCallback(
+    (e: MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      onViewEvent(event.id);
+    },
+    [event, onViewEvent]
+  );
+
   return (
-    <EventDetails $active={selected} onClick={toggleSelection}>
+    <EventDetails $active={selected} onClick={handleToggleSelection}>
       {loading ? (
-        <LoadingRow lines={4} />
+        <LoadingRow lines={3} />
       ) : (
         <>
           <Row>
             <Col span={12}>
-              <Body level={2}>{t.Type}:</Body>
-              <Body level={2} strong>
+              <Micro as="div">{t.Type}:</Micro>
+              <Micro as="div" strong>
                 {event.type}
-              </Body>
+              </Micro>
             </Col>
             <Col span={12}>
-              <Body level={2}>{t['Sub type']}:</Body>
-              <Body level={2} strong>
+              <Micro as="div">{t['Sub type']}:</Micro>
+              <Micro as="div" strong>
                 {event.subtype}
-              </Body>
+              </Micro>
             </Col>
           </Row>
           {diff <= 0 ? (
@@ -86,30 +96,47 @@ const EventInfoBox = ({
           )}
           <Row>
             <Col span={12}>
-              <Body level={2}>{t.Start}:</Body>
-              <Body level={2} strong>
+              <Micro as="div">{t.Start}:</Micro>
+              <Micro as="div" strong>
                 {formatDate(event.startTime)}
-              </Body>
+              </Micro>
             </Col>
             <Col span={12}>
-              <Body level={2}>{t.End}:</Body>
-              <Body level={2} strong>
+              <Micro as="div">{t.End}:</Micro>
+              <Micro as="div" strong>
                 {formatDate(event.endTime)}
-              </Body>
+              </Micro>
             </Col>
           </Row>
           <Row>
             <Col span={12}>
-              <Body level={2}>{t['External ID']}:</Body>
-              <Body level={2} strong>
+              <Micro as="div">{t['External ID']}:</Micro>
+              <Micro as="div" strong title={event.externalId}>
                 {event.externalId}
-              </Body>
+              </Micro>
             </Col>
             <Col span={12}>
-              <Body level={2}>{t['Root asset']}:</Body>
-              <Body level={2} strong>
-                WIP
-              </Body>
+              <Micro as="div">
+                {event.id && (
+                  <AssetsItem
+                    assetIds={event.assetIds}
+                    type="event"
+                    linkId={event.id}
+                  />
+                )}
+              </Micro>
+            </Col>
+          </Row>
+          <Row justify="end">
+            <Col>
+              <Button
+                type="primary"
+                size="small"
+                onClick={(evt) => handleViewEvent(evt)}
+                toggled
+              >
+                {t['View details']}
+              </Button>
             </Col>
           </Row>
         </>

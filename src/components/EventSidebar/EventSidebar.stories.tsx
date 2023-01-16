@@ -68,14 +68,7 @@ Empty.args = {
     updatedAt: 1651753181691,
     id: 'f6280002-ebc7-43f4-9bc5-30bd46b2f758',
     version: 1,
-    eventFilters: [
-      {
-        id: 'ebc7-43f4-9bc5-30bd46b2f758',
-        name: `Event Filter Storybook`,
-        visible: true,
-        filters: {},
-      },
-    ],
+    eventFilters: [],
   },
   eventData: [
     {
@@ -111,18 +104,7 @@ WithResults.args = {
     updatedAt: 1651753181691,
     id: 'f6280002-ebc7-43f4-9bc5-30bd46b2f758',
     version: 1,
-    eventFilters: [
-      {
-        id: 'ebc7-43f4-9bc5-30bd46b2f758',
-        name: `Event Filter Storybook`,
-        visible: true,
-        filters: {
-          metadata: {
-            type: 'deferment',
-          },
-        },
-      },
-    ],
+    eventFilters: [],
   },
   eventData: [
     {

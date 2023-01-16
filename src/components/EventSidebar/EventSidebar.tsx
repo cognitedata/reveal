@@ -5,7 +5,7 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { isNil, omit, omitBy } from 'lodash';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import {
   Button,
   Collapse,
@@ -15,7 +15,6 @@ import {
   Popconfirm,
   Tooltip,
 } from '@cognite/cogs.js';
-import { CogniteEvent } from '@cognite/sdk';
 
 import {
   ExpandIcon,
@@ -27,7 +26,6 @@ import {
   ContentContainer,
   SidebarHeaderActions,
   SidebarCollapse,
-  OverlayContentOverflowWrapper,
   CollapsePanelTitle,
   SidebarFooterActions,
   ReverseSwitch,
@@ -42,16 +40,8 @@ import {
   removeChartEventFilter,
   updateEventFiltersProperties,
 } from 'models/chart/updates-event-filters';
-import {
-  activeEventFilterIdAtom,
-  selectedEventsAtom,
-} from 'models/event-results/atom';
-import { activeEventFilterResultsSelector } from 'models/event-results/selectors';
-import {
-  ChartEventResults,
-  EventsCollection,
-  EventsEntry,
-} from 'models/event-results/types';
+import { activeEventFilterIdAtom } from 'models/event-results/atom';
+import { ChartEventResults } from 'models/event-results/types';
 import { StyleButton } from 'components/StyleButton/StyleButton';
 import { Col, Row } from 'antd';
 import { ColorDropdown } from 'components/AppearanceDropdown/AppearanceDropdown';
@@ -59,7 +49,10 @@ import ClickBoundary from 'components/EditableText/ClickBoundary';
 import { DEFAULT_EVENT_COLOR } from 'utils/colors';
 import EventFilterForm from './EventFilterForm';
 import EventInfoBox from './EventInfoBox';
-import { isEventSelected } from './helpers';
+import EventResultsSidebar from './EventResultsSidebar';
+import EventDetailsSidebar, {
+  defaultTranslations as eventDetailDefaultTranslations,
+} from './EventDetailSidebar';
 
 type Props = {
   visible: boolean;
@@ -74,8 +67,7 @@ const defaultTranslation = makeDefaultTranslations(
   'Hide',
   'New event filter',
   'Event results',
-  'Add new filter',
-  'Back'
+  'Add new filter'
 );
 
 const EventSidebar = memo(
@@ -85,14 +77,9 @@ const EventSidebar = memo(
     ]);
 
     const [showEventResults, setShowEventResults] = useState(false);
-
-    const [selectedEvents, setSelectedEvents] =
-      useRecoilState(selectedEventsAtom);
+    const [showEventDetail, setShowEventDetail] = useState(false);
 
     const [, setActiveEventFilterId] = useRecoilState(activeEventFilterIdAtom);
-    const activeEventFilterResults = useRecoilValue(
-      activeEventFilterResultsSelector
-    );
 
     const handleToggleAccordian = (key: any) => {
       setActiveKeys(key);
@@ -106,6 +93,14 @@ const EventSidebar = memo(
 
     const eventInfoTranslation = {
       ...useTranslations(EventInfoBox.translationKeys, 'EventInfoBox').t,
+    };
+
+    const eventDetailTranslation = {
+      ...eventDetailDefaultTranslations,
+      ...useTranslations(
+        Object.keys(eventDetailDefaultTranslations),
+        'EventDetailBox'
+      ).t,
     };
 
     const handleAddEventFilters = () => {
@@ -170,25 +165,16 @@ const EventSidebar = memo(
       );
     };
 
+    /** View result list sidebar */
     const toggleShowSearchResults = useCallback((id: string) => {
       setActiveEventFilterId(id);
       setShowEventResults((prevState) => !prevState);
     }, []);
 
-    const handleSetSelectedEventItems = useCallback(
-      (id: number | undefined) => {
-        if (!id) return;
-        setSelectedEvents((prevVals: EventsCollection) => {
-          const isSelected = prevVals.find((evt: EventsEntry) => evt.id === id);
-          if (isSelected) {
-            return prevVals.filter((val: EventsEntry) => val.id !== id);
-          }
-
-          return [{ id }, ...prevVals];
-        });
-      },
-      [selectedEvents, setSelectedEvents]
-    );
+    /** View single event details sidebar */
+    const toggleShowEventDetail = useCallback(() => {
+      setShowEventDetail((prevState) => !prevState);
+    }, []);
 
     useEffect(() => {
       if (!chart.eventFilters || chart.eventFilters === undefined) {
@@ -350,35 +336,17 @@ const EventSidebar = memo(
           </ContentContainer>
         </ContentOverflowWrapper>
         {showEventResults && eventData && (
-          <OverlayContentOverflowWrapper>
-            <ContentContainer>
-              <SidebarHeaderActions>
-                <Button
-                  onClick={() => toggleShowSearchResults('')}
-                  icon="ArrowLeft"
-                  size="small"
-                  aria-label="Back"
-                >
-                  {t.Back}
-                </Button>
-              </SidebarHeaderActions>
-              {activeEventFilterResults &&
-                activeEventFilterResults.results?.map((event: CogniteEvent) => {
-                  const eventSelected = isEventSelected(selectedEvents, event);
-
-                  return (
-                    <EventInfoBox
-                      loading={activeEventFilterResults.isLoading}
-                      key={event.id}
-                      event={event}
-                      selected={!!eventSelected}
-                      onToggleEvent={handleSetSelectedEventItems}
-                      translations={eventInfoTranslation}
-                    />
-                  );
-                })}
-            </ContentContainer>
-          </OverlayContentOverflowWrapper>
+          <EventResultsSidebar
+            onCloseEventResults={toggleShowSearchResults}
+            onShowEventDetail={toggleShowEventDetail}
+            translations={eventInfoTranslation}
+          />
+        )}
+        {showEventDetail && eventData && (
+          <EventDetailsSidebar
+            onCloseEventDetail={toggleShowEventDetail}
+            translations={eventDetailTranslation}
+          />
         )}
       </Sidebar>
     );

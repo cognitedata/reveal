@@ -29,8 +29,8 @@ export const Sidebar = styled.aside<{ visible?: boolean }>`
   &&& {
     border-left: 1px solid var(--cogs-greyscale-grey4);
     visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
-    width: ${(props) => (props.visible ? '400px' : 0)};
-    min-width: ${(props) => (props.visible ? '400px' : 0)};
+    width: ${(props) => (props.visible ? '354px' : 0)};
+    min-width: ${(props) => (props.visible ? '354px' : 0)};
     transition: 0s linear 200ms, width 200ms ease;
     position: relative;
     height: calc(100vh - 110px);
@@ -195,11 +195,25 @@ export const SidebarInnerBox = styled.div`
   }
 `;
 
-export const SidebarChip = styled(Label)`
+export const SidebarChip = styled(Label)<{ $small?: boolean }>`
   &&& {
     margin-top: 4px;
     font-size: 12px;
     font-weight: 500;
+    padding: ${(props) => `${props.$small ? `2px 6px` : `4px 8px`}`};
+    vertical-align: ${(props) => `${props.$small ? `sub` : ``}`};
+
+    .cogs-label--icon {
+      &.cogs-label--icon-left {
+        margin-right: ${(props) => `${props.$small ? `3px` : `6px`}`};
+      }
+
+      .cogs-label--icon,
+      .cogs-icon {
+        width: ${(props) => `${props.$small ? `10px` : `16px`}`};
+        height: ${(props) => `${props.$small ? `10px` : `16px`}`};
+      }
+    }
 
     &.cogs-label--variant-default {
       color: var(--cogs-text-icon--status-undefined);
@@ -235,8 +249,11 @@ export const FilterSelect = styled(Select)`
 `;
 
 export const SidebarHeaderActions = styled.header`
-  display: flex;
-  margin-bottom: 1rem;
+  &&& {
+    display: flex;
+    margin-bottom: 1rem;
+    justify-content: space-between;
+  }
 `;
 
 export const SidebarFooterActions = styled.footer`
@@ -269,6 +286,23 @@ export const LoadingWrap = styled.div`
 
   > div:first-child {
     margin-right: 1rem;
+  }
+`;
+
+export const SmallSelect = styled(Select)`
+  &&& {
+    .cogs-select__control {
+      min-height: 24px;
+      border-width: 1px;
+    }
+
+    .cogs-select--title {
+      line-height: 16px;
+    }
+
+    .cogs-select__indicator {
+      padding: 5px;
+    }
   }
 `;
 
