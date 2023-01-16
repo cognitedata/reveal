@@ -35,7 +35,7 @@ describe(MultiBufferBatchingManager.name, () => {
     manager.batchGeometries(geometries3, 3);
 
     expect(geometryGroup.children.length).toBe(numberOfInstanceBuffers);
-    expect(sum(geometryGroup.children.map(mesh => mesh as THREE.InstancedMesh).map(mesh => mesh.count))).toBe(60);
+    expect(sum(geometryGroup.children.map(mesh => (mesh as THREE.InstancedMesh).count))).toBe(60);
   });
 
   test('batchGeometries() adds new geometry to group for new geometry type', () => {
