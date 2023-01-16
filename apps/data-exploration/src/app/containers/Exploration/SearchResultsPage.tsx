@@ -275,8 +275,10 @@ function SearchPage() {
         <MainContainer $isFilterFeatureEnabled>
           <Wrapper>
             <StyledSplitter
-              primaryMinSize={420}
-              secondaryInitialSize={700}
+              percentage
+              primaryMinSize={30}
+              secondaryMinSize={40}
+              secondaryInitialSize={50}
               primaryIndex={0}
             >
               <Flex
