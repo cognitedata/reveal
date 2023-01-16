@@ -1158,13 +1158,6 @@ export class Cognite3DViewer {
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
     const originalPixelRatio = this._renderer.getPixelRatio();
 
-    // Remove this block once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
-    // Render everything a little bigger so that the outCanvas can be cropped later
-    if (includeUI) {
-      width++;
-      height++;
-    }
-
     const originalDomeStyle = {
       position: this.domElement.style.position,
       width: this.domElement.style.width,
