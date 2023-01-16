@@ -24,6 +24,7 @@ export class StationaryCameraManager implements CameraManager {
   private readonly _cameraChangedListeners: Array<CameraChangeDelegate> = [];
   private readonly _domElement: HTMLElement;
   private _defaultFOV: number;
+  private readonly _minFOV: number;
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private _isDragging = false;
 
@@ -31,11 +32,16 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement = domElement;
     this._camera = camera;
     this._defaultFOV = camera.fov;
+    this._minFOV = 10.0;
     this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
   }
 
   getCamera(): THREE.PerspectiveCamera {
     return this._camera;
+  }
+
+  get defaultFOV(): number {
+    return this._defaultFOV;
   }
 
   // Stationary camera only reacts to rotation being set
@@ -78,7 +84,7 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement.removeEventListener('pointerdown', this.enableDragging);
     this._domElement.removeEventListener('pointerup', this.disableDragging);
     this._domElement.removeEventListener('pointerout', this.disableDragging);
-    this._domElement.addEventListener('wheel', this.zoomCamera);
+    this._domElement.removeEventListener('wheel', this.zoomCamera);
   }
 
   on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
@@ -138,6 +144,11 @@ export class StationaryCameraManager implements CameraManager {
     });
   }
 
+  setFOV(fov: number): void {
+    this._camera.fov = THREE.MathUtils.clamp(fov, this._minFOV, this._defaultFOV);
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
+  }
+
   update(_: number, boundingBox: THREE.Box3): void {
     CameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
   }
@@ -176,7 +187,10 @@ export class StationaryCameraManager implements CameraManager {
 
   private readonly zoomCamera = (event: WheelEvent) => {
     const sensitivityScaler = 0.05;
-    this._camera.fov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
+    this._camera.fov = Math.min(
+      Math.max(this._camera.fov + event.deltaY * sensitivityScaler, this._minFOV),
+      this._defaultFOV
+    );
     this._camera.updateProjectionMatrix();
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   };
