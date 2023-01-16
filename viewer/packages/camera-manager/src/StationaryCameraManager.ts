@@ -176,24 +176,21 @@ export class StationaryCameraManager implements CameraManager {
 
   private readonly zoomCamera = (event: WheelEvent) => {
     const sensitivityScaler = 0.05;
-    const preCursorRay = this.getCursorRay(event).normalize();
-    const lastFov = this._camera.fov;
+    const newFov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
 
-    this._camera.fov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
+    if (this._camera.fov === newFov) return;
+
+    const preCursorRay = this.getCursorRay(event).normalize();
+    this._camera.fov = newFov;
     this._camera.updateProjectionMatrix();
 
-    if (this._camera.fov === lastFov) return;
-
-    // When zooming in the camera is rotated towards the cursor position
+    // When zooming the camera is rotated towards the cursor position
     const postCursorRay = this.getCursorRay(event).normalize();
     const arcBetweenRays = new THREE.Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
     const forwardVector = this._camera.getWorldDirection(new THREE.Vector3()).clone();
 
     forwardVector.applyQuaternion(arcBetweenRays);
-    const targetWorldCoordinates = new THREE.Vector3().addVectors(
-      this._camera.position,
-      forwardVector.multiplyScalar(1)
-    );
+    const targetWorldCoordinates = new THREE.Vector3().addVectors(this._camera.position, forwardVector);
     this._camera.lookAt(targetWorldCoordinates);
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   };
