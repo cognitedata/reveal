@@ -1215,7 +1215,6 @@ export class Cognite3DViewer {
       // Draw screenshot. Again disregarding pixel ratio.
       const outCanvas = await html2canvas(this.domElement, {
         scale: pixelRatioOverride,
-        foreignObjectRendering: true,
         windowHeight: width,
         windowWidth: height,
         width,
@@ -1225,17 +1224,6 @@ export class Cognite3DViewer {
         scrollX: 0,
         scrollY: 0
       });
-
-      // Remove this block once https://github.com/niklasvh/html2canvas/pull/2832 is resolved
-      // Crop away the 1px line created by svg conversion in html2canvas.
-      {
-        const croppedCanvas = document.createElement('canvas');
-        croppedCanvas.width = width - 1;
-        croppedCanvas.height = height - 1;
-        const ctx = croppedCanvas.getContext('2d');
-        ctx?.drawImage(outCanvas, -1, -1, width, height);
-        return croppedCanvas.toDataURL();
-      }
 
       return outCanvas.toDataURL();
     } finally {
