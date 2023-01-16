@@ -10,20 +10,32 @@ import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
   DataModelVersion,
+  KeyValueMap,
 } from '@platypus/platypus-core';
+import { CogDataList } from '@cognite/cog-data-grid';
 
-export type DataPreviewSidebarData = {
-  type: 'custom' | 'list';
-  fieldName: string;
-  externalId: string;
-  fieldType?: DataModelTypeDefsType;
-};
+export type DataPreviewSidebarData =
+  | {
+      type: 'custom';
+      externalId: string;
+      fieldName: string;
+      fieldType: DataModelTypeDefsType;
+    }
+  | {
+      type: 'list';
+      externalId: string;
+      fieldName: string;
+    }
+  | {
+      type: 'json';
+      fieldName: string;
+      json: KeyValueMap;
+    };
 
 export type CollapsiblePanelContainerProps = {
   children: ReactElement;
   data: DataPreviewSidebarData | undefined;
   onClose: VoidFunction;
-  dataModelTypeName: string;
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
   dataModelVersion: DataModelVersion;
@@ -35,7 +47,6 @@ export const CollapsiblePanelContainer: React.FC<
   children,
   data,
   onClose,
-  dataModelTypeName,
   dataModelTypeDefs,
   dataModelVersion,
   dataModelType,
@@ -44,7 +55,8 @@ export const CollapsiblePanelContainer: React.FC<
     if (!data) {
       return null;
     }
-    if (data?.type === 'list') {
+
+    if (data.type === 'list') {
       return (
         <ListPreview
           externalId={data.externalId}
@@ -54,16 +66,23 @@ export const CollapsiblePanelContainer: React.FC<
           dataModelVersion={dataModelVersion}
         />
       );
+    } else if (data.type === 'json') {
+      const listData = Object.keys(data.json).map(
+        (key) => `${key}: ${data.json[key]}`
+      );
+
+      return <CogDataList data-cy="instance-values" listData={listData} />;
     } else {
       return (
         <InstancePreview
           externalId={data.externalId}
-          dataModelType={data.fieldType!}
+          dataModelType={data.fieldType}
           dataModelExternalId={dataModelVersion.externalId}
         />
       );
     }
   };
+
   return (
     <S.CollapsablePanelContainer>
       <CollapsablePanel
@@ -72,7 +91,7 @@ export const CollapsiblePanelContainer: React.FC<
             title={
               <SidePanelTitle
                 fieldName={data?.fieldName || ''}
-                dataModelTypeName={dataModelTypeName}
+                dataModelTypeName={dataModelType.name}
               />
             }
             onCloseClick={onClose}

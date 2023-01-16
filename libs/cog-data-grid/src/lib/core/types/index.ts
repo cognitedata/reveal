@@ -6,19 +6,20 @@ export interface KeyValueMap {
 }
 
 export enum ColumnDataType {
-  Id = 'ID',
-  Text = 'TEXT',
-  Number = 'NUMBER',
-  Decimal = 'DECIMAL',
-  Date = 'DATE',
-  Time = 'TIME',
-  DateTime = 'DATE_TIME',
-  Currency = 'CURRENCY',
-  Percentage = 'PERCENTAGE',
-  Duration = 'DURATION',
   Boolean = 'BOOLEAN',
-  Dynamic = 'DYNAMIC',
+  Currency = 'CURRENCY',
   Custom = 'CUSTOM',
+  Date = 'DATE',
+  DateTime = 'DATE_TIME',
+  Decimal = 'DECIMAL',
+  Duration = 'DURATION',
+  Dynamic = 'DYNAMIC',
+  Id = 'ID',
+  Json = 'JSON',
+  Number = 'NUMBER',
+  Percentage = 'PERCENTAGE',
+  Text = 'TEXT',
+  Time = 'TIME',
 }
 
 export enum ColumnRuleType {

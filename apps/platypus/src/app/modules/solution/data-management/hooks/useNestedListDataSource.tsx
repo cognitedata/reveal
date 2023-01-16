@@ -5,6 +5,7 @@ import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
   DataModelVersion,
+  KeyValueMap,
   PlatypusError,
   Result,
 } from '@platypus/platypus-core';
@@ -88,12 +89,18 @@ export const useNestedListDataSource = ({
               (onError || noop)(result.errorValue());
             });
         } else {
+          // could be a list of primitives or of JSON objects; if the latter, stringify
+          const listData = (
+            defaultData![field] as string[] | KeyValueMap[]
+          ).map((item) =>
+            typeof item === 'object' ? JSON.stringify(item) : item
+          );
+
           const results = searchTerm
-            ? (defaultData![field] as string[]).filter(
-                (el: PrimitiveTypes) =>
-                  `${el}`.toLowerCase() === `${searchTerm}`.toLowerCase()
+            ? listData.filter((el: PrimitiveTypes) =>
+                `${el}`.toLowerCase().includes(`${searchTerm}`.toLowerCase())
               )
-            : (defaultData![field] as string[]);
+            : listData;
           const callbackData = results.map((el: PrimitiveTypes) => ({
             value: el,
           }));

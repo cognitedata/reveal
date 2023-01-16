@@ -58,10 +58,10 @@ export const buildGridConfig = (
   instanceIdCol: string,
   dataModelType: DataModelTypeDefsType,
   onRowAdd: (row: KeyValueMap) => void,
-  enableDeletion: boolean,
-  enableManualPopulation: boolean
+  isDeletionEnabled: boolean,
+  isManualPopulationEnabled: boolean
 ): GridConfig => {
-  const columns: ColumnConfig[] = enableDeletion
+  const columns: ColumnConfig[] = isDeletionEnabled
     ? [
         {
           label: '',
@@ -120,7 +120,10 @@ export const buildGridConfig = (
           // Mixer API supports sorting only on primitives (not array and not custom types)
           sortable: !field.type.custom && !isList,
           filter: getColFilter(field),
-          editable: enableManualPopulation && !isList,
+          editable:
+            isManualPopulationEnabled &&
+            !isList &&
+            dataType !== ColumnDataType.Json,
           cellEditorParams: {
             isRequired: field.nonNull || field.type.nonNull,
           },

@@ -351,12 +351,18 @@ export const DataPreviewTable = forwardRef<
         if (!event.colDef.field) {
           return;
         }
+
         const fieldType = dataModelType.fields.find(
           (field) => field.name === event.colDef.field
         );
 
         // externalID for example is not in the dataModelType.fields
         if (!fieldType) {
+          return;
+        }
+
+        if ((fieldType.type.list && event.value.length === 0) || !event.value) {
+          setSidebarData(undefined);
           return;
         }
 
@@ -376,13 +382,19 @@ export const DataPreviewTable = forwardRef<
           });
 
           handleColumnVisibility();
+        } else if (fieldType.type.name === 'JSONObject') {
+          setSidebarData({
+            fieldName: event.colDef.field,
+            json: event.value,
+            type: 'json',
+          });
+
+          handleColumnVisibility();
         } else if (fieldType.type.custom) {
           const targetFieldType = dataModelTypeDefs.types.find(
             (type) => type.name === fieldType.type.name
           );
-          if (!event.value) {
-            setSidebarData(undefined);
-          } else if (targetFieldType) {
+          if (targetFieldType) {
             setSidebarData({
               externalId: event.value,
               fieldName: event.colDef.field,
@@ -649,7 +661,6 @@ export const DataPreviewTable = forwardRef<
         <CollapsiblePanelContainer
           data={sidebarData}
           onClose={() => setSidebarData(undefined)}
-          dataModelTypeName={dataModelType.name}
           dataModelType={dataModelType}
           dataModelTypeDefs={dataModelTypeDefs}
           dataModelVersion={selectedDataModelVersion}

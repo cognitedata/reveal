@@ -12,10 +12,11 @@ export const INSTANCE_TYPE_DEFS_FIELD: DataModelTypeDefsField = {
 
 export const COL_TYPES_MAP: KeyValueMap = {
   Boolean: ColumnDataType.Boolean,
-  String: ColumnDataType.Text,
+  Float: ColumnDataType.Decimal,
   Int: ColumnDataType.Number,
   Int64: ColumnDataType.Number,
-  Float: ColumnDataType.Decimal,
+  JSONObject: ColumnDataType.Json,
+  String: ColumnDataType.Text,
   Timestamp: ColumnDataType.DateTime,
 };
 

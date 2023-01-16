@@ -23,7 +23,7 @@ export const ListCellRenderer = (props: IListCellRendererProps) => {
   return (
     <Flex justifyContent={'space-between'}>
       <ListCellValueText>{getText()}</ListCellValueText>
-      {props.value.length > 0 && <Icon type="List" />}
+      {props.value.length > 0 && <Icon style={{ flexShrink: 0 }} type="List" />}
     </Flex>
   );
 };
@@ -34,8 +34,10 @@ const printType = (value: any, type: ColumnDataType) => {
       return value.toLocaleString(undefined, {
         minimumFractionDigits: 2,
       });
-    case 'CUSTOM':
+    case ColumnDataType.Custom:
       return value.externalId;
+    case ColumnDataType.Json:
+      return JSON.stringify(value);
     default:
       return value.toString();
   }

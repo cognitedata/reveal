@@ -15,6 +15,7 @@ import {
   TextCellEditor,
   SelectCellEditor,
 } from '../../components';
+import { JsonCellRenderer } from '../../components/json-cell-renderer';
 import { ColumnDataType, ColumnTypes, GridConfig } from '../types';
 import { decimalValueFormatter } from '../utils';
 
@@ -83,13 +84,14 @@ export class GridConfigService {
       },
       components: {
         checkboxRendererComponent: BoolCellRenderer,
-        numberCellEditor: NumberCellEditor,
-        listCellRendererComponent: ListCellRenderer,
-        decimalColType: NumberCellEditor,
-        textCellEditor: TextCellEditor,
-        customRendererComponent: CustomCellRenderer,
         cogCustomHeader: CustomHeader,
+        customRendererComponent: CustomCellRenderer,
+        decimalColType: NumberCellEditor,
+        jsonCellRenderer: JsonCellRenderer,
+        listCellRendererComponent: ListCellRenderer,
+        numberCellEditor: NumberCellEditor,
         selectCellEditor: SelectCellEditor,
+        textCellEditor: TextCellEditor,
       },
       columnTypes: merge(
         {
@@ -126,6 +128,10 @@ export class GridConfigService {
           },
           idColType: {
             ...this.getColTypeProps(ColumnDataType.Id, 'String', theme),
+          },
+          jsonColType: {
+            cellRenderer: 'jsonCellRenderer',
+            ...this.getColTypeProps(ColumnDataType.Json, 'Code', theme),
           },
           textColType: {
             cellEditor: 'textCellEditor',
@@ -291,6 +297,10 @@ export class GridConfigService {
       }
       case ColumnDataType.Id: {
         dataTypeName = 'id';
+        break;
+      }
+      case ColumnDataType.Json: {
+        dataTypeName = 'json';
         break;
       }
       default: {
