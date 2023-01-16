@@ -28,6 +28,7 @@ export default {
       action: 'Changed Workflow Type filter value',
     },
     onStatusValueChanged: { action: 'Changed Status filter value' },
+    onSearchQueryValueChanged: { action: 'Change search query value' },
   },
   args: {
     workflowTypes: [
@@ -105,4 +106,9 @@ Interactions.play = async ({ canvasElement, args }) => {
   const status = await canvas.findByText('Running');
   await userEvent.click(status);
   expect(args.onStatusValueChanged).toBeCalled();
+
+  // Test search query value
+  const search = await canvas.findByRole('searchbox');
+  await userEvent.type(search, 'test query');
+  expect(args.onSearchQueryValueChanged).toBeCalled();
 };

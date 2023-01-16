@@ -9,6 +9,7 @@ import { useFetchWorkflowSchemas } from 'queries/useFetchWorkflowSchemas';
 import { useFetchWorkflowTypes } from 'queries/useFetchWorkflowTypes';
 import queryString from 'query-string';
 import { EVENT_STATUSES } from 'utils/utils';
+import debounce from 'lodash/debounce';
 
 import { Workflows } from './Workflows';
 
@@ -36,6 +37,18 @@ export const WorkflowsContainer = () => {
   const [statusFilterValue, setStatusFilterValue] = useState<
     OptionType<string>[]
   >([]);
+
+  const [searchQueryValue, setSearchQueryValue] = useState<string>('');
+  const [searchInputValue, setSearchInputValue] = useState<string>('');
+
+  const debouncedSearch = useMemo(() => {
+    return debounce(setSearchQueryValue, 300);
+  }, []);
+
+  const handleSearch = (value: string) => {
+    setSearchInputValue(value);
+    debouncedSearch(value);
+  };
 
   const isWorkflowEvent = async (needle: string): Promise<boolean> => {
     return !!(
@@ -68,6 +81,7 @@ export const WorkflowsContainer = () => {
 
   const filteredWorkflows = useMemo(() => {
     return workflows.filter(
+      // Filter workflows by filters
       (workflow) =>
         Object.values(workflow).some((value) =>
           workflowTypeFilterValue.length
@@ -82,7 +96,14 @@ export const WorkflowsContainer = () => {
                 .map((filter) => filter.label.toLowerCase())
                 .includes(String(value).toLowerCase())
             : true
-        )
+        ) &&
+        // Filter workflows by search query
+        (workflow.eventExternalId
+          .toLowerCase()
+          .includes(searchQueryValue.toLowerCase()) ||
+          workflow.eventType
+            .toLowerCase()
+            .includes(searchQueryValue.toLowerCase()))
     );
   }, [workflows, search]);
 
@@ -92,7 +113,7 @@ export const WorkflowsContainer = () => {
     if (parsedURL.workflowType) {
       setWorkflowTypeFilterValue(
         parsedURL.workflowType
-          ?.toString()
+          .toString()
           .split(',')
           .map((filter) => {
             return { label: filter, value: filter };
@@ -102,7 +123,7 @@ export const WorkflowsContainer = () => {
     if (parsedURL.status) {
       setStatusFilterValue(
         parsedURL.status
-          ?.toString()
+          .toString()
           .split(',')
           .map((filter) => {
             return {
@@ -111,6 +132,12 @@ export const WorkflowsContainer = () => {
             };
           })
       );
+    }
+
+    // Get search query from the URL
+    if (parsedURL.searchQuery) {
+      setSearchQueryValue(parsedURL.searchQuery.toString());
+      setSearchInputValue(parsedURL.searchQuery.toString());
     }
 
     // Fetch Workflows list
@@ -125,8 +152,8 @@ export const WorkflowsContainer = () => {
     };
   }, []);
 
-  // Add filters to the URL
   useEffect(() => {
+    // Add filters to the URL
     if (workflowTypeFilterValue.length) {
       urlParams.set(
         'workflowType',
@@ -144,15 +171,27 @@ export const WorkflowsContainer = () => {
       urlParams.delete('status');
     }
 
+    // Add search query to the URL
+    if (searchQueryValue) {
+      urlParams.set('searchQuery', searchQueryValue);
+    } else {
+      urlParams.delete('searchQuery');
+    }
+
     history.replace({
       pathname: `${match.path}`,
       search: urlParams.toString(),
     });
-  }, [workflowTypeFilterValue, statusFilterValue]);
+  }, [workflowTypeFilterValue, statusFilterValue, searchQueryValue]);
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, []);
 
   return (
     <Workflows
-      workflows={filteredWorkflows}
       workflowTypes={
         workflowTypes?.map(({ workflowType }) => ({
           label: workflowType,
@@ -160,13 +199,16 @@ export const WorkflowsContainer = () => {
         })) || []
       }
       selectedWorkflowTypes={workflowTypeFilterValue}
-      onWorkflowTypeValueChanged={setWorkflowTypeFilterValue}
       workflowStatuses={EVENT_STATUSES.map((status: string) => ({
         label: status,
         value: status,
       }))}
       selectedWorkflowStatuses={statusFilterValue}
+      workflows={filteredWorkflows}
+      searchQueryValue={searchInputValue}
+      onWorkflowTypeValueChanged={setWorkflowTypeFilterValue}
       onStatusValueChanged={setStatusFilterValue}
+      onSearchQueryValueChanged={handleSearch}
     />
   );
 };

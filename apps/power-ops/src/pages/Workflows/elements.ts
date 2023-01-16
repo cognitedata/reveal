@@ -38,6 +38,27 @@ export const SearchAndFilter = styled.div`
       min-width: fit-content;
     }
   }
+
+  .cogs-input-container {
+    margin-right: 8px;
+
+    .cogs-input {
+      min-width: 300px;
+      background-color: var(--cogs-bg-control--secondary);
+
+      &:not(.focus-visible) {
+        border: none;
+      }
+    }
+
+    .cogs-icon {
+      color: var(--cogs-text-icon--muted);
+    }
+
+    button {
+      background: transparent;
+    }
+  }
 `;
 
 export const CellWrapper = styled.div`

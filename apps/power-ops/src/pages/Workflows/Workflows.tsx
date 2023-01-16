@@ -1,4 +1,4 @@
-import { Graphic, Label, OptionType, Select } from '@cognite/cogs.js';
+import { Graphic, Label, OptionType, Select, Input } from '@cognite/cogs.js';
 import { CommonTable } from 'components/CommonTable';
 import { Workflow } from '@cognite/power-ops-api-types';
 
@@ -11,12 +11,14 @@ type Props = {
   workflowStatuses: { label: string; value: string }[];
   selectedWorkflowStatuses: OptionType<string>[];
   workflows: Workflow[];
+  searchQueryValue: string;
   onWorkflowTypeValueChanged: (
     selectedWorkflowTypes: OptionType<string>[]
   ) => void;
   onStatusValueChanged: (
     selectedWorkflowStatuses: OptionType<string>[]
   ) => void;
+  onSearchQueryValueChanged: (searchQueryValue: string) => void;
 };
 export const Workflows = ({
   workflowTypes,
@@ -24,12 +26,27 @@ export const Workflows = ({
   workflowStatuses,
   selectedWorkflowStatuses,
   workflows,
+  searchQueryValue,
   onWorkflowTypeValueChanged,
   onStatusValueChanged,
+  onSearchQueryValueChanged,
 }: Props) => {
   return (
     <Container>
       <SearchAndFilter>
+        <Input
+          type="search"
+          placeholder="Search"
+          icon="Search"
+          iconPlacement="left"
+          onChange={(e) => onSearchQueryValueChanged(e.target.value)}
+          value={searchQueryValue}
+          clearable={{
+            callback: () => {
+              onSearchQueryValueChanged('');
+            },
+          }}
+        />
         <Select
           theme="grey"
           title="Workflow type:"
