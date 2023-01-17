@@ -37,5 +37,5 @@ export type ResourceTableHashMap = {
   id: ColumnWithQuery;
   metadata: MetadataColumn;
 } & {
-  [key in typeof ColumnKeys[number]]: TableColumnDef;
+  [key in (typeof ColumnKeys)[number]]: TableColumnDef;
 };

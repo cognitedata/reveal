@@ -34,7 +34,7 @@ export const CustomColumnFilter = forwardRef((props: IFilterParams, ref) => {
   ).fields;
 
   const [selectedField, setSelectedField] = useState<
-    OptionType<typeof columnCustomFields[0]> | undefined
+    OptionType<(typeof columnCustomFields)[0]> | undefined
   >();
   const [selectedFilterOption, setSelectedFilterOption] = useState<
     OptionType<string | IFilterOptionDef> | undefined
@@ -186,10 +186,10 @@ export const CustomColumnFilter = forwardRef((props: IFilterParams, ref) => {
 
   return (
     <S.CustomColumnFilter>
-      <Select<typeof columnCustomFields[0]>
+      <Select<(typeof columnCustomFields)[0]>
         className="ag-custom-component-popup"
         options={fieldOptions}
-        onChange={(option: OptionType<typeof columnCustomFields[0]>) => {
+        onChange={(option: OptionType<(typeof columnCustomFields)[0]>) => {
           setSelectedFilterOption(undefined);
           setInput(undefined);
           setSelectedField(option);
