@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { assertNever } from '@reveal/utilities';
+import { assertNever, pixelToNormalizedDeviceCoordinates } from '@reveal/utilities';
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
@@ -187,11 +187,31 @@ export class StationaryCameraManager implements CameraManager {
 
   private readonly zoomCamera = (event: WheelEvent) => {
     const sensitivityScaler = 0.05;
-    this._camera.fov = Math.min(
-      Math.max(this._camera.fov + event.deltaY * sensitivityScaler, this._minFOV),
-      this._defaultFOV
-    );
+    const newFov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, this._minFOV), this._defaultFOV);
+
+    if (this._camera.fov === newFov) return;
+
+    const preCursorRay = this.getCursorRay(event).normalize();
+    this._camera.fov = newFov;
     this._camera.updateProjectionMatrix();
+
+    // When zooming the camera is rotated towards the cursor position
+    const postCursorRay = this.getCursorRay(event).normalize();
+    const arcBetweenRays = new THREE.Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
+    const forwardVector = this._camera.getWorldDirection(new THREE.Vector3()).clone();
+
+    forwardVector.applyQuaternion(arcBetweenRays);
+    const targetWorldCoordinates = new THREE.Vector3().addVectors(this._camera.position, forwardVector);
+    this._camera.lookAt(targetWorldCoordinates);
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
   };
+
+  private getCursorRay(event: WheelEvent) {
+    const { width, height } = this._domElement.getBoundingClientRect();
+    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(event.clientX, event.clientY, width, height);
+    const ray = new THREE.Vector3(ndcCoordinates.x, ndcCoordinates.y, 1)
+      .unproject(this._camera)
+      .sub(this._camera.position);
+    return ray;
+  }
 }
