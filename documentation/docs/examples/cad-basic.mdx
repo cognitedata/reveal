@@ -73,6 +73,14 @@ To also reclaim memory and permanently unloading the model, use
 viewer.removeModel(model)
 ```
 
+## Default CDF transformation
+
+On loading a model revision, Reveal automatically retrieves and applies the transformation stored in CDF for that revision. The transformation is composed of the `translation`, `rotation` and `scale` fields in the revision data, which may be set using the [CDF Rest API](https://docs.cognite.com/api/v1/#tag/3D-Model-Revisions/operation/update3DRevisions). The transformation is applied to every vertex/point in the input data; each vertex is first scaled, then rotated, and finally translated.
+
+The `rotation` component is specified as an array of three floating point numbers. The elements are the rotation angles in radians around the X, Y and Z axes respectively. The vertices are first rotated around its X axis, then its Y axis (which has potentially been rotated by the first rotation), then its Z axis (which may have been rotated by the other two).
+
+Aftewards, the model is transformed from CDF coordinates to Reveal coordinates. Since the default CDF transformation described above is applied _before_ the CDF-to-Reveal coordinate transformation, it happens in [_CDF_ space](/docs/#a-note-on-coordinate-systems).
+
 ## Setting custom background image
 
 The recommended way to set a custom background image for Reveal is to add the image as background to the DOM and make the background color transparent by applying an alpha value of 0.
