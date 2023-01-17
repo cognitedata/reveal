@@ -41,7 +41,7 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     if ((model as any).translation) {
       const translation = new THREE.Vector3().fromArray(model.translation as [number, number, number]);
       const translationMatrix = new THREE.Matrix4().makeTranslation(...translation.toArray());
-      modelMatrix.multiply(translationMatrix);
+      modelMatrix.premultiply(translationMatrix);
     }
 
     applyDefaultModelTransformation(modelMatrix, format);
