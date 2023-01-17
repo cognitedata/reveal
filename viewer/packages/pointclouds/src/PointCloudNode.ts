@@ -245,6 +245,10 @@ export class PointCloudNode extends Group {
   removeAllStyledPointCloudObjects(): void {
     this._octree.material.objectAppearanceTexture.removeAllStyledObjectSets();
   }
+
+  dispose(): void {
+    this._octree.dispose();
+  }
 }
 
 function createObjectIdToAnnotationsMap(annotations: PointCloudObject[]): Map<number, PointCloudObject> {
