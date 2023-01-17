@@ -29,6 +29,10 @@ const Template: Story<ComponentProps<typeof RKOMHeader>> = (args) => (
 
 export const Default = Template.bind({});
 
+dayjs.updateLocale('en', {
+  weekStart: 1,
+});
+
 Default.args = {
   lastUpdated: formatDate(new Date('2022-11-10T09:01:04.797Z').toISOString()),
   priceAreaOptions: [1, 2, 3, 4, 5].map((i) => ({
@@ -42,6 +46,11 @@ Default.args = {
   downloading: false,
   productValue: productOptions[0],
   deliveryWeekValue: dayjs('2022-11-25').startOf('week').format('YYYY-MM-DD'),
+  rkomMarketConfig: {
+    marketConfiguration: {
+      start_of_week: '1',
+    },
+  },
 };
 
 export const BidSelected = Template.bind({});

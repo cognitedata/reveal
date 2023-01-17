@@ -6,7 +6,7 @@ import {
   DeliveryWeekButton,
   MenuItem,
 } from 'components/DeliveryWeekSelect/elements';
-import { deliveryWeekOptions } from 'pages/RKOM/utils';
+import { getDeliveryWeekOptions } from 'pages/RKOM/utils';
 
 dayjs.extend(isoWeek);
 
@@ -19,13 +19,13 @@ interface Props
   value: string;
   /** Change event. The value is the initial date of the week formatted as YYYY-MM-DD */
   onChange: (value: string) => void;
-  options?: typeof deliveryWeekOptions;
+  options: ReturnType<typeof getDeliveryWeekOptions>;
 }
 
 export const DeliveryWeekSelect = ({
   value,
   onChange,
-  options = deliveryWeekOptions,
+  options,
   ...rest
 }: Props) => {
   const [open, setOpen] = useState(false);

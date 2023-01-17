@@ -1,7 +1,13 @@
 import { Button, Select } from '@cognite/cogs.js';
+import { RkomConfig } from '@cognite/power-ops-api-types';
 import { CommonHeader } from 'components/CommonHeader/CommonHeader';
 import { DeliveryWeekSelect } from 'components/DeliveryWeekSelect/DeliveryWeekSelect';
-import { auctionOptions, blockOptions, productOptions } from 'pages/RKOM/utils';
+import {
+  auctionOptions,
+  blockOptions,
+  getDeliveryWeekOptions,
+  productOptions,
+} from 'pages/RKOM/utils';
 
 import { VerticalSeparator } from './elements';
 
@@ -32,6 +38,7 @@ type Props = {
   downloading: boolean;
   onDownloadButtonClick: () => void;
   disabledDownload: boolean;
+  rkomMarketConfig: RkomConfig;
 };
 
 export const RKOMHeader = ({
@@ -50,6 +57,7 @@ export const RKOMHeader = ({
   downloading,
   onDownloadButtonClick,
   disabledDownload = true,
+  rkomMarketConfig,
 }: Props) => (
   <CommonHeader title="RKOM" titleLabel={`Last Updated: ${lastUpdated}`}>
     <Select
@@ -102,6 +110,7 @@ export const RKOMHeader = ({
       data-testid="delivery-week-select"
       value={deliveryWeekValue}
       onChange={onDeliveryWeekValueChange}
+      options={getDeliveryWeekOptions(rkomMarketConfig.marketConfiguration)}
     />
     <VerticalSeparator />
     <Button

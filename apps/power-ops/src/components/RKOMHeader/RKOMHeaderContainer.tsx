@@ -2,19 +2,18 @@ import { RKOMHeader } from 'components/RKOMHeader/RKOMHeader';
 import {
   auctionOptions,
   blockOptions,
-  firstDayofDefaultWeek,
-  friday1200,
+  getFirstDayofDefaultWeek,
+  getLocalizedWeekDays,
   productOptions,
-  thursday1200,
-  today,
 } from 'pages/RKOM/utils';
 import dayjs from 'dayjs';
 import { useFetchPriceAreaOptions } from 'queries/useFetchPriceAreas';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router-dom-v5';
 import { useFetchRKOMBids } from 'queries/useFetchRKOMBids';
 import { RkomFilterType } from '@cognite/power-ops-api-types';
 import { formatDate } from 'utils/utils';
+import { useFetchRKOMConfig } from 'queries/useFetchRKOMConfiguration';
 
 type Props = {
   filter?: RkomFilterType;
@@ -31,29 +30,29 @@ const RKOMHeaderContainer = ({
 }: Props) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
-  const { data: rkomBids, status: rkomBidsStatus } = useFetchRKOMBids(filter);
   const urlParams = new URLSearchParams(search);
 
+  const { data: rkomConfig } = useFetchRKOMConfig();
+  const { data: rkomBids, status: rkomBidsStatus } = useFetchRKOMBids(filter);
   const { data: priceAreaOptions, status } = useFetchPriceAreaOptions();
+
+  const { today, friday1200, thursday1200 } = useMemo(
+    () => getLocalizedWeekDays(rkomConfig?.marketConfiguration),
+    [rkomConfig]
+  );
+
+  const firstDayofDefaultWeek = useMemo(
+    () =>
+      getFirstDayofDefaultWeek(rkomConfig?.marketConfiguration).format(
+        'YYYY-MM-DD'
+      ),
+    [rkomConfig]
+  );
 
   const [downloading, setDownloading] = useState(false);
 
   const [priceAreaValue, setPriceAreaValue] =
     useState<typeof priceAreaOptions[number]>();
-
-  useEffect(() => {
-    if (status !== 'success' || priceAreaOptions.length === 0) return;
-    if (urlParams.get('priceAreaIds[]')) {
-      const found = priceAreaOptions.find(
-        (o) => o.value === urlParams.get('priceAreaIds[]')
-      );
-      if (found) {
-        setPriceAreaValue(found);
-        return;
-      }
-    }
-    setPriceAreaValue(priceAreaOptions[0]);
-  }, [status]);
 
   const [auctionValue, setAuctionValue] = useState<
     typeof auctionOptions[number]
@@ -71,6 +70,7 @@ const RKOMHeaderContainer = ({
       ? auctionOptions[0]
       : auctionOptions[1];
   });
+
   const [blockValue, setBlockValue] = useState<typeof blockOptions[number]>(
     () => {
       // if it exists from URL, fill it up
@@ -83,6 +83,7 @@ const RKOMHeaderContainer = ({
       return blockOptions[0];
     }
   );
+
   const [productValue, setProductValue] = useState<
     typeof productOptions[number]
   >(() => {
@@ -95,13 +96,24 @@ const RKOMHeaderContainer = ({
     return productOptions[0];
   });
   const [deliveryWeekValue, setdeliveryWeekValue] = useState(() => {
-    if (urlParams.get('startDate')) {
-      return dayjs(urlParams.get('startDate'), 'YYYY-MM-DD').format(
-        'YYYY-MM-DD'
-      );
-    }
-    return firstDayofDefaultWeek.format('YYYY-MM-DD');
+    return urlParams.get('startDate')
+      ? dayjs(urlParams.get('startDate'), 'YYYY-MM-DD').format('YYYY-MM-DD')
+      : firstDayofDefaultWeek;
   });
+
+  useEffect(() => {
+    if (status !== 'success' || priceAreaOptions.length === 0) return;
+    if (urlParams.get('priceAreaIds[]')) {
+      const found = priceAreaOptions.find(
+        (o) => o.value === urlParams.get('priceAreaIds[]')
+      );
+      if (found) {
+        setPriceAreaValue(found);
+        return;
+      }
+    }
+    setPriceAreaValue(priceAreaOptions[0]);
+  }, [status]);
 
   useEffect(() => {
     if (!priceAreaValue?.value) return;
@@ -136,11 +148,11 @@ const RKOMHeaderContainer = ({
 
   const handleDownloadButtonClick = async () => {
     setDownloading(true);
-    await onDownloadButtonClick();
+    onDownloadButtonClick();
     setDownloading(false);
   };
 
-  return (
+  return rkomConfig ? (
     <RKOMHeader
       lastUpdated={
         rkomBidsStatus === 'success' && rkomBids.length > 0
@@ -161,8 +173,9 @@ const RKOMHeaderContainer = ({
       downloading={downloading}
       onDownloadButtonClick={handleDownloadButtonClick}
       disabledDownload={downloading || disabledDownload}
+      rkomMarketConfig={rkomConfig}
     />
-  );
+  ) : null;
 };
 
 export default RKOMHeaderContainer;
