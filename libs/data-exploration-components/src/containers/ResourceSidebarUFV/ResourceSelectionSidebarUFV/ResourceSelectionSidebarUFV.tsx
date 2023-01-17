@@ -25,6 +25,7 @@ import {
   OldTimeseriesFilters,
   OldSequenceFilters,
 } from '@data-exploration-lib/domain-layer';
+import zIndex from '../../../utils/zIndex';
 
 const Drawer = styled.div<{ visible: boolean }>`
   position: absolute;
@@ -32,7 +33,7 @@ const Drawer = styled.div<{ visible: boolean }>`
   right: 0;
   width: ${(props) => (props.visible ? '80vw' : '0')};
   height: 100%;
-  z-index: 4;
+  z-index: ${zIndex.DRAWER};
   background: #fff;
   transition: 0.3s all;
   && > div {
@@ -48,7 +49,7 @@ const Overlay = styled.div<{ visible: boolean }>`
   right: 0;
   width: 100vw;
   height: 100%;
-  z-index: 3;
+  z-index: ${zIndex.OVERLAY};
   display: ${(props) => (props.visible ? 'block' : 'none')};
   background-color: ${(props) =>
     props.visible ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0,0,0,0)'};

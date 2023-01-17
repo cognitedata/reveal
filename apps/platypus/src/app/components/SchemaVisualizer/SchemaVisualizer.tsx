@@ -34,7 +34,7 @@ import {
   SchemaDefinitionNode,
 } from '../../utils/graphql-utils';
 
-import { ZIndex } from '../../utils/zIndex';
+import zIndex from '../../utils/zIndex';
 import { SmallNode } from './nodes/SmallNode';
 import { FullNode } from './nodes/FullNode';
 import { InterfaceNode } from './nodes/InterfaceNode';
@@ -233,7 +233,7 @@ export const SchemaVisualizer = React.memo(
           );
         }
         const style: CSSProperties = {
-          zIndex: 100,
+          zIndex: zIndex.MAXIMUM,
           strokeWidth: 1,
           stroke: Colors['greyscale-grey5'].hex(),
         };
@@ -417,12 +417,12 @@ const Wrapper = styled(Flex)`
 
   .toolbar {
     margin: 16px auto;
-    z-index: ${ZIndex.Toolbar};
+    z-index: ${zIndex.TOOLBAR};
   }
 
   .indicator {
     fill: var(--cogs-purple-3);
-    z-index: 10;
+    z-index: ${zIndex.INDICATOR};
   }
 `;
 
@@ -458,7 +458,7 @@ export const NodeWrapper = styled.div<ITypeItem>`
     props.isActive ? 'var(--cogs-midblue-4)' : 'var(--cogs-greyscale-grey5)'};
   border-radius: 4px;
   box-shadow: 0px 0px 12px var(--cogs-greyscale-grey3);
-  z-index: 1;
+  z-index: ${zIndex.MINIMUM};
 
   &&:hover {
     border-color: var(--cogs-border-inverted);
@@ -476,5 +476,5 @@ const WrappedSpinner = styled.div`
   background: var(--cogs-bg-canvas);
   width: 100%;
   height: 100%;
-  z-index: ${ZIndex.Toolbar};
+  z-index: ${zIndex.TOOLBAR};
 `;

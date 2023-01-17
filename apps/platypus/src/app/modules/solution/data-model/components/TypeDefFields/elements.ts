@@ -1,5 +1,5 @@
 import { Button } from '@cognite/cogs.js';
-import { ZIndex } from '@platypus-app/utils/zIndex';
+import zIndex from '@platypus-app/utils/zIndex';
 import styled from 'styled-components';
 
 export const DataModelFieldsGrid = styled.div`
@@ -13,7 +13,7 @@ export const DataModelFieldsGrid = styled.div`
   }
 
   .ag-popup-editor {
-    z-index: ${ZIndex.Popup};
+    z-index: ${zIndex.POPUP};
   }
 
   .ag-header-cell.col-txt-center .ag-header-cell-label {

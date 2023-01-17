@@ -2002,6 +2002,11 @@
     styled-components "^5.3.5"
     uuid "^8.3.2"
 
+"@cognite/z-index@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@cognite/z-index/-/z-index-0.2.3.tgz#98fd4adfa76230839290f468ef56548e29b8bb1d"
+  integrity sha512-9GVcFleCdtPrtOKbjIq4f1M7t9ZXRznS6OIsxNbOszyIqA0KhsSrmc2rGI1/nRkmDD6zgMtpECSS2sEPENK2Vg==
+
 "@colors/colors@1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"

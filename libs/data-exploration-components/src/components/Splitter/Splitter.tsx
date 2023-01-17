@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { SIDEBAR_RESIZE_EVENT } from '@data-exploration-components/utils';
 import handle from '../../assets/handle.svg';
+import zIndex from '../../utils/zIndex';
 
 export type SplitterProps = {
   secondaryMinSize?: number;
@@ -99,7 +100,7 @@ const SplitterWrapper = styled.div(
       content: url(${handle});
       position: absolute;
       isolation: isolate;
-      z-index: 1;
+      z-index: ${zIndex.MINIMUM};
       top: 50%;
       left: -6px;
       width: 12px;

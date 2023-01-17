@@ -2,14 +2,14 @@ import { createLayers } from '@cognite/z-index';
 
 const LAYERS = [
   'MAXIMUM',
-  'POPUP',
 
-  'TOOLBAR',
-  'INDICATOR',
+  'OVERLAY',
+
   /** The default z-index for all components */
   'DEFAULT',
 
-  'MODEL_CONTENT',
+  'FILTER',
+
   'MINIMUM',
 ] as const;
 

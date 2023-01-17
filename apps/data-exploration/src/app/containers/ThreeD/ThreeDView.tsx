@@ -52,6 +52,7 @@ import MouseWheelAction from '@data-exploration-app/containers/ThreeD/components
 import LoadSecondaryModels from '@data-exploration-app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
 import OverlayTool from '@data-exploration-app/containers/ThreeD/components/OverlayTool';
 import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';
+import zIndex from '../../utils/zIndex';
 
 type Props = {
   modelId: number;
@@ -376,7 +377,7 @@ const SidebarContainer = styled(Flex)`
   height: auto;
   top: 30px;
   left: 30px;
-  z-index: 100;
+  z-index: ${zIndex.MAXIMUM};
   overflow: hidden;
 `;
 

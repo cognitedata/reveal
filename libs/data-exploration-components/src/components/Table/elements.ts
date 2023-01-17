@@ -1,5 +1,6 @@
 import { Detail, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import zIndex from '../../utils/zIndex';
 
 const defaultRowHeight = '48px';
 
@@ -97,7 +98,7 @@ export const Thead = styled.div<{ isStickyHeader?: boolean }>`
   position: ${({ isStickyHeader }) => (isStickyHeader ? 'sticky' : 'relative')};
   top: 0;
   background: inherit;
-  z-index: 1;
+  z-index: ${zIndex.MINIMUM};
   height: ${defaultRowHeight};
 `;
 

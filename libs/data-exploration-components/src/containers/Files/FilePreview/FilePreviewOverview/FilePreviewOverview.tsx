@@ -35,6 +35,7 @@ import {
   FileItem,
   TimeseriesItem,
 } from './FilePreviewOverviewItems';
+import zIndex from '../../../../utils/zIndex';
 
 const Sidebar = styled.div`
   display: flex;
@@ -42,7 +43,7 @@ const Sidebar = styled.div`
   align-items: flex-start;
   padding: 24px 16px;
   box-sizing: border-box;
-  z-index: 1;
+  z-index: ${zIndex.MINIMUM};
   background: #fff;
   width: 100%;
   height: 100%;

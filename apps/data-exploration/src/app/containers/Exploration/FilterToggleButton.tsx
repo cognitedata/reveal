@@ -4,6 +4,7 @@ import { Button, Tooltip } from '@cognite/cogs.js';
 import { useResourceFilter } from '@data-exploration-app/context/ResourceSelectionContext';
 import { useCurrentResourceType } from '@data-exploration-app/hooks/hooks';
 import { countByFilter } from '@cognite/data-exploration';
+import zIndex from '../../utils/zIndex';
 
 export default function FilterToggleButton({
   toggleOpen,
@@ -16,7 +17,7 @@ export default function FilterToggleButton({
 
   return (
     <Tooltip content="Filters">
-      <Badge count={filterCount} style={{ zIndex: 2 }}>
+      <Badge count={filterCount} style={{ zIndex: zIndex.FILTER }}>
         <Button
           icon="Configure"
           aria-label="Select Filters"

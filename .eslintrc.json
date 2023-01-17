@@ -57,7 +57,7 @@
 
         // Needs to removed one by one
 
-        "@cognite/no-number-z-index": ["off"],
+        // "@cognite/no-number-z-index": ["off"],
         "@cognite/no-sdk-submodule-imports": ["off"],
         "@cognite/no-unissued-todos": ["off"],
         "@cognite/require-hellip": ["off"],

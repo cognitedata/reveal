@@ -5,6 +5,7 @@ import {
 } from '@cognite/reveal';
 import { EventTrigger } from './EventTrigger';
 import * as THREE from 'three';
+import zIndex from '../../../utils/zIndex';
 
 export type SmartLabel = {
   text: string;
@@ -246,7 +247,7 @@ export class SmartOverlayTool {
             transform: translate(-50%, -50%);
             touch-action: none;
             user-select: none;
-            z-index: 1;
+            z-index: ${zIndex.MINIMUM};
 
             width: ${circleSize}px;
             height: ${circleSize}px;
@@ -283,7 +284,7 @@ export class SmartOverlayTool {
             transition: opacity 0.5s;
             transition-delay: 0.1s;
             opacity: 0;
-            z-index: 10;
+            z-index: ${zIndex.OVERLAY};
             `;
 
     return textOverlay;

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import zIndex from '../../utils/zIndex';
 
 export const AssetNodeWrapper = styled.div`
   .node-item {
@@ -14,7 +15,7 @@ export const AssetNodeWrapper = styled.div`
   & .node-item-header {
     position: relative;
     & .node-icon {
-      z-index: 100;
+      z-index: ${zIndex.MAXIMUM};
       position: absolute;
       top: 8px;
       left: 10px;
