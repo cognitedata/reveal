@@ -30,8 +30,8 @@ export const EventTable = ({
   const columns = useMemo(
     () =>
       [
-        { ...Table.Columns.type(), enableHiding: false },
-        Table.Columns.subtype,
+        { ...Table.Columns.type(query), enableHiding: false },
+        Table.Columns.subtype(query),
         Table.Columns.description(query),
         Table.Columns.externalId(query),
         Table.Columns.lastUpdatedTime,
@@ -46,7 +46,7 @@ export const EventTable = ({
         },
         Table.Columns.startTime,
         Table.Columns.endTime,
-        Table.Columns.source,
+        Table.Columns.source(query),
         {
           ...Table.Columns.assets,
           enableSorting: false,

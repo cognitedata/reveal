@@ -1,5 +1,6 @@
 import { AdvancedFilterBuilder, AdvancedFilter } from '../../../builders';
 import { InternalDocumentFilter } from '../types';
+import { isNumeric } from '@data-exploration-lib/core';
 
 export type DocumentProperties = {
   'sourceFile|datasetId': number[];
@@ -8,7 +9,8 @@ export type DocumentProperties = {
   'sourceFile|source': string[];
   type: string[];
   externalId: string;
-  id: number[];
+  id: number;
+  metadata: string;
   assetIds: number[];
   [key: `sourceFile|metadata|${string}`]: string;
 };
@@ -23,11 +25,10 @@ export const mapFiltersToDocumentSearchFilters = (
     createdTime,
     lastUpdatedTime,
     assetSubtreeIds,
-
     internalId,
     metadata,
   }: InternalDocumentFilter,
-  _query?: string
+  query?: string
 ): AdvancedFilter<DocumentProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<DocumentProperties>();
 
@@ -44,12 +45,7 @@ export const mapFiltersToDocumentSearchFilters = (
     .in('author', author)
     .in('sourceFile|source', source)
     .in('type', type)
-    .in('id', () => {
-      if (internalId) {
-        return [internalId];
-      }
-      return undefined;
-    })
+    .equals('id', internalId)
     .inAssetSubtree('assetIds', () => {
       return assetSubtreeIds?.reduce((acc, { value }) => {
         if (typeof value === 'number') {
@@ -76,19 +72,27 @@ export const mapFiltersToDocumentSearchFilters = (
 
   builder.and(filterBuilder);
 
-  // This is not working as expected with the documents api search endpoint -- investigate this further.
-  // if (query) {
-  //   const searchQueryBuilder = new AdvancedFilterBuilder<DocumentProperties>();
+  if (query) {
+    const searchQueryBuilder = new AdvancedFilterBuilder<DocumentProperties>();
+    /* eslint-disable @typescript-eslint/ban-ts-comment */
+    // @ts-ignore the builder types will be refactored in future the "ts-ignore" is harmless in this case
+    searchQueryBuilder.search('sourceFile|name', query);
+    // @ts-ignore
+    searchQueryBuilder.search('content', query);
+    // @ts-ignore
+    searchQueryBuilder.prefix('sourceFile|metadata', query);
 
-  //   searchQueryBuilder.in('id', () => {
-  //     if (query && isNumeric(query)) {
-  //       return [Number(query)];
-  //     }
-  //   });
-  //   searchQueryBuilder.prefix('externalId', query);
+    if (isNumeric(query)) {
+      searchQueryBuilder.equals('id', Number(query));
+    }
 
-  //   builder.or(searchQueryBuilder);
-  // }
+    searchQueryBuilder.prefix('externalId', query);
+
+    // @ts-ignore
+    searchQueryBuilder.prefix('sourceFile|source', query);
+
+    builder.or(searchQueryBuilder);
+  }
 
   return new AdvancedFilterBuilder<DocumentProperties>().and(builder).build();
 };

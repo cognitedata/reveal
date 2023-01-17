@@ -3,7 +3,6 @@ import {
   InternalSequenceFilters,
   mapFiltersToSequenceAdvancedFilters,
   mapInternalFilterToSequenceFilter,
-  // useSequenceSearchQueryMetadataKeysQuery,
   useSequenceAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseQueryOptions } from 'react-query';
@@ -18,18 +17,8 @@ export const useSequenceSearchAggregateQuery = (
   },
   options?: UseQueryOptions
 ) => {
-  // const searchQueryMetadataKeys = useSequenceSearchQueryMetadataKeysQuery(
-  //   query,
-  //   filter
-  // );
-
   const advancedFilter = useMemo(
-    () =>
-      mapFiltersToSequenceAdvancedFilters(
-        filter,
-        // searchQueryMetadataKeys,
-        query
-      ),
+    () => mapFiltersToSequenceAdvancedFilters(filter, query),
     [filter, query]
   );
 

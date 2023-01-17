@@ -3,7 +3,6 @@ import {
   InternalTimeseriesFilters,
   mapFiltersToTimeseriesAdvancedFilters,
   mapInternalFilterToTimeseriesFilter,
-  // useTimeseriesSearchQueryMetadataKeysQuery,
   useTimeseriesAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseQueryOptions } from 'react-query';
@@ -18,18 +17,8 @@ export const useTimeseriesSearchAggregateQuery = (
   },
   options?: UseQueryOptions
 ) => {
-  // const searchQueryMetadataKeys = useTimeseriesSearchQueryMetadataKeysQuery(
-  //   query,
-  //   filter
-  // );
-
   const advancedFilter = useMemo(
-    () =>
-      mapFiltersToTimeseriesAdvancedFilters(
-        filter,
-        // searchQueryMetadataKeys,
-        query
-      ),
+    () => mapFiltersToTimeseriesAdvancedFilters(filter, query),
     [filter, query]
   );
 

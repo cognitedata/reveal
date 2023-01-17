@@ -1,12 +1,11 @@
 import { DEFAULT_GLOBAL_TABLE_RESULT_LIMIT } from '@data-exploration-lib/domain-layer';
 import { useMemo } from 'react';
 import { TableSortBy } from '@data-exploration-lib/domain-layer';
-import { useEventsListQuery } from '../../service/queries/useEventsListQuery';
-import { mapFiltersToEventsAdvancedFilters } from '../transformers/mapFiltersToEventsAdvancedFilters';
-import { mapTableSortByToEventSortFields } from '../transformers/mapTableSortByToEventSortFields';
+import { useEventsListQuery } from '../../service';
+import { mapFiltersToEventsAdvancedFilters } from '../transformers';
+import { mapTableSortByToEventSortFields } from '../transformers';
 import { InternalEventsFilters } from '../types';
-// import { useEventsSearchQueryMetadataKeysQuery } from './useEventsMetadataKeysQuery';
-import { mapInternalFilterToEventsFilter } from '../transformers/mapInternalFilterToEventsFilter';
+import { mapInternalFilterToEventsFilter } from '../transformers';
 import { UseInfiniteQueryOptions } from 'react-query';
 
 export const useEventsSearchResultQuery = (
@@ -21,23 +20,13 @@ export const useEventsSearchResultQuery = (
   },
   options?: UseInfiniteQueryOptions
 ) => {
-  // const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(
-  //   query,
-  //   eventsFilters
-  // );
-
   const filter = useMemo(
     () => mapInternalFilterToEventsFilter(eventsFilters),
     [eventsFilters]
   );
 
   const advancedFilter = useMemo(
-    () =>
-      mapFiltersToEventsAdvancedFilters(
-        eventsFilters,
-        // searchQueryMetadataKeys,
-        query
-      ),
+    () => mapFiltersToEventsAdvancedFilters(eventsFilters, query),
     [eventsFilters, query]
   );
 

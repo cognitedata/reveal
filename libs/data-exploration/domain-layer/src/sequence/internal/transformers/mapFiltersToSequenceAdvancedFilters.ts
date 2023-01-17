@@ -12,7 +12,8 @@ export type SequenceProperties = {
   externalId: string;
   name: string;
   description: string;
-  id: number[];
+  id: number;
+  metadata: string;
   [key: `metadata|${string}`]: string;
 };
 
@@ -25,7 +26,6 @@ export const mapFiltersToSequenceAdvancedFilters = (
     metadata,
     internalId,
   }: InternalSequenceFilters,
-  // searchQueryMetadataKeys?: Record<string, string>,
   query?: string
 ): AdvancedFilter<SequenceProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<SequenceProperties>();
@@ -39,12 +39,7 @@ export const mapFiltersToSequenceAdvancedFilters = (
         return acc;
       }, [] as number[]);
     })
-    .in('id', () => {
-      if (internalId) {
-        return [internalId];
-      }
-      return undefined;
-    })
+    .equals('id', internalId)
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,
@@ -72,18 +67,11 @@ export const mapFiltersToSequenceAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    // if (searchQueryMetadataKeys) {
-    //   for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-    //     searchQueryBuilder.prefix(`metadata|${key}`, value);
-    //   }
-    // }
+    searchQueryBuilder.prefix(`metadata`, query);
 
-    searchQueryBuilder.in('id', () => {
-      if (query && isNumeric(query)) {
-        return [Number(query)];
-      }
-      return undefined;
-    });
+    if (isNumeric(query)) {
+      searchQueryBuilder.equals('id', Number(query));
+    }
     searchQueryBuilder.prefix('externalId', query);
 
     builder.or(searchQueryBuilder);

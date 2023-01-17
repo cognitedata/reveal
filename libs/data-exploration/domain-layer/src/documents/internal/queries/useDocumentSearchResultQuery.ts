@@ -44,7 +44,6 @@ export const useDocumentSearchResultQuery = (
       filter: transformFilter as any,
       sort,
       limit,
-      query,
     },
     { ...options }
   );

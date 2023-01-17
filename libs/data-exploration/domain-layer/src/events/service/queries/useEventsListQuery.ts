@@ -6,7 +6,7 @@ import { queryKeys } from '@data-exploration-lib/domain-layer';
 import { InternalSortBy } from '@data-exploration-lib/domain-layer';
 import { useMemo } from 'react';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
-import { getEventsList } from '../network/getEventsList';
+import { getEventsList } from '../network';
 
 export const useEventsListQuery = (
   {

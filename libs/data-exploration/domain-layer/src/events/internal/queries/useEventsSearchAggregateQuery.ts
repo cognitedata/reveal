@@ -3,7 +3,6 @@ import {
   InternalEventsFilters,
   mapFiltersToEventsAdvancedFilters,
   mapInternalFilterToEventsFilter,
-  // useEventsSearchQueryMetadataKeysQuery,
   useEventsAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseQueryOptions } from 'react-query';
@@ -18,18 +17,8 @@ export const useEventsSearchAggregateQuery = (
   },
   options?: UseQueryOptions
 ) => {
-  // const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(
-  //   query,
-  //   eventsFilters
-  // );
-
   const advancedFilter = useMemo(
-    () =>
-      mapFiltersToEventsAdvancedFilters(
-        eventsFilters,
-        // searchQueryMetadataKeys,
-        query
-      ),
+    () => mapFiltersToEventsAdvancedFilters(eventsFilters, query),
     [eventsFilters, query]
   );
 

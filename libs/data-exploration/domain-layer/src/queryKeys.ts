@@ -57,18 +57,9 @@ export const queryKeys = {
   documents: () => [...queryKeys.all, 'documents'] as const,
   documentsSearch: (
     filter?: any,
-    query?: string,
     localLimit?: number,
     sort?: DocumentSortItem[]
-  ) =>
-    [
-      ...queryKeys.documents(),
-      'search',
-      filter,
-      localLimit,
-      query,
-      sort,
-    ] as const,
+  ) => [...queryKeys.documents(), 'search', filter, localLimit, sort] as const,
   documentsAggregate: () => [...queryKeys.documents(), 'aggregates'] as const,
   documentsAggregateCount: () =>
     [...queryKeys.documentsAggregate(), 'count'] as const,

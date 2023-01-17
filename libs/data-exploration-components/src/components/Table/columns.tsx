@@ -108,12 +108,33 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       },
     };
   },
-  subtype: {
-    accessorKey: 'subtype',
-    header: 'Subtype',
-    cell: ({ getValue }) => {
-      return <HighlightCell lines={1} text={getValue<string>() || DASH} />;
-    },
+  subtype: (query?: string) => {
+    return {
+      accessorKey: 'subtype',
+      header: 'Subtype',
+      cell: ({ getValue }) => {
+        return (
+          <HighlightCell
+            lines={1}
+            text={getValue<string>() || DASH}
+            query={query}
+          />
+        );
+      },
+    };
+  },
+  source: (query?: string) => {
+    return {
+      accessorKey: 'source',
+      header: 'Source',
+      cell: ({ getValue }) => (
+        <HighlightCell
+          text={getValue<string>() || DASH}
+          lines={1}
+          query={query}
+        />
+      ),
+    };
   },
   created: {
     header: 'Created',
@@ -160,12 +181,18 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       <HighlightCell text={getValue<string>() || DASH} lines={1} />
     ),
   },
-  unit: {
-    header: 'Unit',
-    accessorKey: 'unit',
-    cell: ({ getValue }) => (
-      <HighlightCell text={getValue<string>() || DASH} lines={1} />
-    ),
+  unit: (query?: string) => {
+    return {
+      header: 'Unit',
+      accessorKey: 'unit',
+      cell: ({ getValue }) => (
+        <HighlightCell
+          text={getValue<string>() || DASH}
+          lines={1}
+          query={query}
+        />
+      ),
+    };
   },
   isString: {
     header: 'Is string',
@@ -300,13 +327,6 @@ export const ResourceTableColumns: ResourceTableHashMap = {
           DASH
         )}
       </Body>
-    ),
-  },
-  source: {
-    accessorKey: 'source',
-    header: 'Source',
-    cell: ({ getValue }) => (
-      <HighlightCell text={getValue<string>() || DASH} lines={1} />
     ),
   },
   columns: {

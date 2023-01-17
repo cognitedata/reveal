@@ -8,7 +8,7 @@ import { AssetWithRelationshipLabels } from '@data-exploration-components/contai
 import { FileWithRelationshipLabels } from '@data-exploration-components/containers/Files/FileTable/FileTable';
 import { ColumnKeys } from './constants';
 
-// We recreated these types on our side to be less dependant on react-table.
+// We recreated these types on our side to be less dependent on react-table.
 // This is same to ColumnSort from react-table
 export type TableSortBy = {
   id: string;
@@ -34,7 +34,10 @@ export type ResourceTableHashMap = {
   description: ColumnWithQuery;
   externalId: ColumnWithQuery;
   type: ColumnWithQuery;
+  subtype: ColumnWithQuery;
   id: ColumnWithQuery;
+  unit: ColumnWithQuery;
+  source: ColumnWithQuery;
   metadata: MetadataColumn;
 } & {
   [key in (typeof ColumnKeys)[number]]: TableColumnDef;

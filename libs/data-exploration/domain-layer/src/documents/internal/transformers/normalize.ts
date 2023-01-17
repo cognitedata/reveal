@@ -7,7 +7,7 @@ export const normalize = (
 ): InternalDocument[] => {
   return documentSearchAPIResult.map((documentSearchItem) => {
     const item = documentSearchItem.item;
-    const documentName = item.sourceFile.name;
+    const documentName = item?.sourceFile?.name;
     const highlight = documentSearchItem.highlight;
 
     return {

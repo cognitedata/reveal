@@ -9,7 +9,6 @@ import {
 import { InternalAssetFilters } from '../types';
 import { TableSortBy } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
-// import { useAssetsSearchQueryMetadataKeysQuery } from './useAssetsMetadataKeysQuery';
 
 export const useAssetsSearchResultQuery = (
   {
@@ -23,18 +22,8 @@ export const useAssetsSearchResultQuery = (
   },
   options?: UseInfiniteQueryOptions
 ) => {
-  // const searchQueryMetadataKeys = useAssetsSearchQueryMetadataKeysQuery(
-  //   query,
-  //   assetFilter
-  // );
-
   const advancedFilter = useMemo(
-    () =>
-      mapFiltersToAssetsAdvancedFilters(
-        assetFilter,
-        // searchQueryMetadataKeys,
-        query
-      ),
+    () => mapFiltersToAssetsAdvancedFilters(assetFilter, query),
     [assetFilter, query]
   );
 

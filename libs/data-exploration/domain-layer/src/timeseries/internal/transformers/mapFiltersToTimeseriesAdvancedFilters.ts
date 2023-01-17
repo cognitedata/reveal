@@ -13,10 +13,11 @@ export type TimeseriesProperties = {
   unit: string;
   externalId: string;
   name: string;
-  id: number[];
+  id: number;
   isStep: boolean;
   isString: boolean;
   description: string;
+  metadata: string;
   [key: `metadata|${string}`]: string;
 };
 
@@ -32,7 +33,6 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     isString,
     internalId,
   }: InternalTimeseriesFilters,
-  // searchQueryMetadataKeys?: Record<string, string>,
   query?: string
 ): AdvancedFilter<TimeseriesProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<TimeseriesProperties>();
@@ -51,12 +51,7 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
         .equals('unit', unit === NIL_FILTER_VALUE ? undefined : unit)
         .notExists('unit', unit === NIL_FILTER_VALUE)
     )
-    .in('id', () => {
-      if (internalId) {
-        return [internalId];
-      }
-      return undefined;
-    })
+    .equals('id', internalId)
     .equals('isStep', isStep)
     .equals('isString', isString)
     .prefix('externalId', externalIdPrefix)
@@ -86,18 +81,14 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    // if (searchQueryMetadataKeys) {
-    //   for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-    //     searchQueryBuilder.prefix(`metadata|${key}`, value);
-    //   }
-    // }
+    searchQueryBuilder.prefix(`metadata`, query);
 
-    searchQueryBuilder.in('id', () => {
-      if (query && isNumeric(query)) {
-        return [Number(query)];
-      }
-      return undefined;
-    });
+    if (isNumeric(query)) {
+      searchQueryBuilder.equals('id', Number(query));
+    }
+
+    searchQueryBuilder.prefix('unit', query);
+
     searchQueryBuilder.prefix('externalId', query);
 
     builder.or(searchQueryBuilder);

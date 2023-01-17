@@ -10,11 +10,9 @@ export const useDocumentSearchQuery = (
   {
     filter,
     limit,
-    query,
     sort,
   }: {
     filter?: DocumentFilter;
-    query?: string;
     limit?: number;
     sort?: DocumentSortItem[];
   } = {},
@@ -25,14 +23,13 @@ export const useDocumentSearchQuery = (
   const localLimit = limit || DEFAULT_GLOBAL_TABLE_RESULT_LIMIT;
 
   return useInfiniteQuery(
-    queryKeys.documentsSearch(filter, query, localLimit, sort),
+    queryKeys.documentsSearch(filter, localLimit, sort),
     ({ pageParam }) =>
       search(
         {
           limit: localLimit,
           filter,
           sort,
-          search: { query: query || '', highlight: true },
           cursor: pageParam,
         },
         sdk

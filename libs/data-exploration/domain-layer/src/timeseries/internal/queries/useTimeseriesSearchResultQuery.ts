@@ -7,7 +7,6 @@ import {
   mapInternalFilterToTimeseriesFilter,
   mapTableSortByToTimeseriesSortFields,
   useTimeseriesListQuery,
-  // useTimeseriesSearchQueryMetadataKeysQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
 
@@ -23,18 +22,8 @@ export const useTimeseriesSearchResultQuery = (
   },
   options?: UseInfiniteQueryOptions
 ) => {
-  // const searchQueryMetadataKeys = useTimeseriesSearchQueryMetadataKeysQuery(
-  //   query,
-  //   filter
-  // );
-
   const advancedFilter = useMemo(
-    () =>
-      mapFiltersToTimeseriesAdvancedFilters(
-        filter,
-        // searchQueryMetadataKeys,
-        query
-      ),
+    () => mapFiltersToTimeseriesAdvancedFilters(filter, query),
     [filter, query]
   );
 

@@ -53,7 +53,7 @@ export const TimeseriesSummary = ({
     return [
       Table.Columns.name(query),
       Table.Columns.description(query),
-      Table.Columns.unit,
+      Table.Columns.unit(query),
       Table.Columns.lastUpdatedTime,
       {
         header: 'Last reading',

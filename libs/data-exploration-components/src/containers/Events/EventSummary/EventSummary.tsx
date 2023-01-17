@@ -46,8 +46,8 @@ export const EventSummary = ({
   const columns = useMemo(
     () =>
       [
-        Table.Columns.type(),
-        Table.Columns.subtype,
+        Table.Columns.type(query),
+        Table.Columns.subtype(query),
         Table.Columns.description(query),
         Table.Columns.externalId(query),
         Table.Columns.lastUpdatedTime,
@@ -56,7 +56,7 @@ export const EventSummary = ({
         Table.Columns.dataSet,
         Table.Columns.startTime,
         Table.Columns.endTime,
-        Table.Columns.source,
+        Table.Columns.source(query),
         Table.Columns.assets,
         ...metadataColumns,
       ] as ColumnDef<CogniteEvent>[],

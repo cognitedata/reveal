@@ -14,7 +14,8 @@ export type AssetsProperties = {
   labels: string[];
   description: string;
   name: string;
-  id: number[];
+  id: number;
+  metadata: string;
   [key: `metadata|${string}`]: string;
 };
 
@@ -29,7 +30,6 @@ export const mapFiltersToAssetsAdvancedFilters = (
     metadata,
     internalId,
   }: InternalAssetFilters,
-  // searchQueryMetadataKeys?: Record<string, string>,
   query?: string
 ): AdvancedFilter<AssetsProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<AssetsProperties>();
@@ -69,12 +69,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
         })
         .notExists('source', source === NIL_FILTER_VALUE)
     )
-    .in('id', () => {
-      if (internalId) {
-        return [internalId];
-      }
-      return undefined;
-    })
+    .equals('id', internalId)
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,
@@ -102,20 +97,18 @@ export const mapFiltersToAssetsAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    // if (searchQueryMetadataKeys) {
-    //   for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-    //     searchQueryBuilder.prefix(`metadata|${key}`, value);
-    //   }
-    // }
 
-    searchQueryBuilder.in('id', () => {
-      if (query && isNumeric(query)) {
-        return [Number(query)];
-      }
-      return undefined;
-    });
+    searchQueryBuilder.prefix(`metadata`, query);
+
+    if (isNumeric(query)) {
+      searchQueryBuilder.equals('id', Number(query));
+    }
 
     searchQueryBuilder.prefix('externalId', query);
+    // @ts-ignore
+    // the type here is a bit wrong, will be refactored in later PRs
+    searchQueryBuilder.prefix('source', query);
+    searchQueryBuilder.containsAny('labels', [query]);
 
     builder.or(searchQueryBuilder);
   }

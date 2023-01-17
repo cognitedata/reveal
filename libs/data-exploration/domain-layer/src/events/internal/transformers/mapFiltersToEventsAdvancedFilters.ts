@@ -15,7 +15,8 @@ export type EventsProperties = {
   source: string[];
   externalId: string;
   description: string;
-  id: number[];
+  id: number;
+  metadata: string;
   [key: `metadata|${string}`]: string;
 };
 
@@ -33,7 +34,6 @@ export const mapFiltersToEventsAdvancedFilters = (
     metadata,
     internalId,
   }: InternalEventsFilters,
-  // searchQueryMetadataKeys?: Record<string, string>,
   query?: string
 ): AdvancedFilter<EventsProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<EventsProperties>();
@@ -67,12 +67,7 @@ export const mapFiltersToEventsAdvancedFilters = (
       }
       return undefined;
     })
-    .in('id', () => {
-      if (internalId) {
-        return [internalId];
-      }
-      return undefined;
-    })
+    .equals('id', internalId)
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,
@@ -116,18 +111,16 @@ export const mapFiltersToEventsAdvancedFilters = (
      * We want to filter all the metadata keys with the search query, to give a better result
      * to the user when using our search.
      */
-    // if (searchQueryMetadataKeys) {
-    //   for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-    //     searchQueryBuilder.prefix(`metadata|${key}`, value);
-    //   }
-    // }
+    searchQueryBuilder.prefix(`metadata`, query);
 
-    searchQueryBuilder.in('id', () => {
-      if (query && isNumeric(query)) {
-        return [Number(query)];
-      }
-      return undefined;
-    });
+    searchQueryBuilder.prefix('type', query);
+    searchQueryBuilder.prefix('subtype', query);
+    // @ts-ignore
+    searchQueryBuilder.prefix('source', source);
+
+    if (isNumeric(query)) {
+      searchQueryBuilder.equals('id', Number(query));
+    }
     searchQueryBuilder.prefix('externalId', query);
 
     builder.or(searchQueryBuilder);

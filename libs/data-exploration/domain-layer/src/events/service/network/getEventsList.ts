@@ -6,7 +6,7 @@ import {
 } from '@cognite/sdk';
 import { EventsProperties } from '@data-exploration-lib/domain-layer';
 import { InternalSortBy } from '@data-exploration-lib/domain-layer';
-import { normalizeEvents } from '../transformers/normalize';
+import { normalizeEvents } from '../transformers';
 import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
 
 export const getEventsList = (

@@ -3,7 +3,6 @@ import {
   InternalAssetFilters,
   mapFiltersToAssetsAdvancedFilters,
   mapInternalFilterToAssetFilter,
-  // useAssetsSearchQueryMetadataKeysQuery,
   useAssetsAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseQueryOptions } from 'react-query';
@@ -18,18 +17,8 @@ export const useAssetsSearchAggregateQuery = (
   },
   options?: UseQueryOptions
 ) => {
-  // const searchQueryMetadataKeys = useAssetsSearchQueryMetadataKeysQuery(
-  //   query,
-  //   assetsFilters
-  // );
-
   const advancedFilter = useMemo(
-    () =>
-      mapFiltersToAssetsAdvancedFilters(
-        assetsFilters,
-        // searchQueryMetadataKeys,
-        query
-      ),
+    () => mapFiltersToAssetsAdvancedFilters(assetsFilters, query),
     [assetsFilters, query]
   );
 

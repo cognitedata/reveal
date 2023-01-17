@@ -27,7 +27,6 @@ export const useDocumentFilteredAggregateCount = ({
       return getDocumentAggregateCount(
         {
           filter: transformFilter as any,
-          ...(query ? { search: { query } } : {}),
         },
         sdk
       );

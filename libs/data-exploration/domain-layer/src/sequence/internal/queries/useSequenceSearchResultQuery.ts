@@ -8,7 +8,6 @@ import {
   mapInternalFilterToSequenceFilter,
   mapTableSortByToSequenceSortFields,
   useSequenceListQuery,
-  // useSequenceSearchQueryMetadataKeysQuery,
 } from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
 
@@ -24,18 +23,8 @@ export const useSequenceSearchResultQuery = (
   },
   options?: UseInfiniteQueryOptions
 ) => {
-  // const searchQueryMetadataKeys = useSequenceSearchQueryMetadataKeysQuery(
-  //   query,
-  //   filter
-  // );
-
   const advancedFilter = useMemo(
-    () =>
-      mapFiltersToSequenceAdvancedFilters(
-        filter,
-        // searchQueryMetadataKeys,
-        query
-      ),
+    () => mapFiltersToSequenceAdvancedFilters(filter, query),
     [filter, query]
   );
 

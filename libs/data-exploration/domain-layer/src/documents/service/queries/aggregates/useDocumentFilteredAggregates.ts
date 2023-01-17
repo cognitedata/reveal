@@ -28,7 +28,6 @@ export const useDocumentFilteredAggregates = (
           properties: aggregates,
           limit: 10000,
           filter: transformFilter as any,
-          ...(query ? { search: { query } } : {}),
         },
         sdk
       );

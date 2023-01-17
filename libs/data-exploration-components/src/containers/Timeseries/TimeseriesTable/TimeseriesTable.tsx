@@ -113,7 +113,7 @@ export const TimeseriesTable = ({
       Table.Columns.description(query),
       Table.Columns.externalId(query),
       {
-        ...Table.Columns.unit,
+        ...Table.Columns.unit(query),
         enableSorting: false,
       },
       sparkLineColumn,
