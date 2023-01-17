@@ -790,7 +790,6 @@ __metadata:
     "@types/lodash": 4.14.191
     "@types/mixpanel-browser": 2.38.0
     "@types/node": 18.11.3
-    "@types/proj4": 2.5.2
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
     "@types/stats": 0.16.30
@@ -835,7 +834,6 @@ __metadata:
     path-browserify: 1.0.1
     prettier: 2.8.2
     process: 0.11.10
-    proj4: 2.8.1
     puppeteer: 19.5.2
     random-seed: 0.3.0
     raw-loader: 4.0.2
@@ -2269,13 +2267,6 @@ __metadata:
   version: 2.4.4
   resolution: "@types/prettier@npm:2.4.4"
   checksum: 2c2cc57efd49c7d8907415a72f96c84a6dd8696dd3bf8aa4ca3a667427bebf71cbfbc912673624bdfc935d272d1c008c639cf155f6449315990a4dc110f0d216
-  languageName: node
-  linkType: hard
-
-"@types/proj4@npm:2.5.2":
-  version: 2.5.2
-  resolution: "@types/proj4@npm:2.5.2"
-  checksum: f70fb89fe1e234faa164b57095624e054ead1b14653b1eb04e1aa50489ae9a6a30c90518efe571d53f5fcc12a25bee61e8cf8d9cc79b5a01586d051bdad4a992
   languageName: node
   linkType: hard
 
@@ -9258,13 +9249,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mgrs@npm:1.0.0":
-  version: 1.0.0
-  resolution: "mgrs@npm:1.0.0"
-  checksum: 98b9fa3caff9986868344567996f8dcc833f939c2e140507a00e2ce9a96ef7eaeb81933a749222a2b7bcbc1a4bb6ada6120dda3a5b6af6d72ae332d8990956b9
-  languageName: node
-  linkType: hard
-
 "micromatch@npm:^4.0.0, micromatch@npm:^4.0.4":
   version: 4.0.4
   resolution: "micromatch@npm:4.0.4"
@@ -10483,16 +10467,6 @@ __metadata:
   version: 2.0.3
   resolution: "progress@npm:2.0.3"
   checksum: f67403fe7b34912148d9252cb7481266a354bd99ce82c835f79070643bb3c6583d10dbcfda4d41e04bbc1d8437e9af0fb1e1f2135727878f5308682a579429b7
-  languageName: node
-  linkType: hard
-
-"proj4@npm:2.8.1":
-  version: 2.8.1
-  resolution: "proj4@npm:2.8.1"
-  dependencies:
-    mgrs: 1.0.0
-    wkt-parser: ^1.3.1
-  checksum: 247abcb9e74195822a0e3b05e225e127071cec81783a478b27c3bed239b91a5702a3506253906693ee59923b1cbcb63406f49894281f0aedb07cf785685f040c
   languageName: node
   linkType: hard
 
@@ -13158,13 +13132,6 @@ typescript@~4.8.4:
   version: 2.0.0
   resolution: "wildcard@npm:2.0.0"
   checksum: 1f4fe4c03dfc492777c60f795bbba597ac78794f1b650d68f398fbee9adb765367c516ebd4220889b6a81e9626e7228bbe0d66237abb311573c2ee1f4902a5ad
-  languageName: node
-  linkType: hard
-
-"wkt-parser@npm:^1.3.1":
-  version: 1.3.2
-  resolution: "wkt-parser@npm:1.3.2"
-  checksum: 35318a7fb3ef848b9bc9b29fa58d9b9371f8e47354f2a1325cfc9968b1b390334804a963751a5daeaf7d421b735fd85d3fe34d73a44ba2432e1ee5932c87d269
   languageName: node
   linkType: hard
 

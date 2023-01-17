@@ -12,7 +12,6 @@ import { EptJson, EptSchemaEntry } from '../loading/EptJson';
 import { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
 import { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
 
-import proj4 from 'proj4';
 import { ModelDataProvider, StylableObject } from '@reveal/data-providers';
 import { toVector3, toBox3 } from './translationUtils';
 
@@ -41,8 +40,6 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
   private readonly _schema: EptSchemaEntry[];
 
   private _root: PointCloudEptGeometryNode | undefined;
-
-  private readonly _projection: string | null;
 
   get loader(): EptBinaryLoader {
     return this._loader;
@@ -110,27 +107,6 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     this._boundingBox = toBox3(bounds);
     this._tightBoundingBox = toBox3(boundsConforming);
     this._offset = toVector3([0, 0, 0]);
-
-    this._projection = null;
-
-    if (info.srs && info.srs.horizontal) {
-      this._projection = info.srs.authority + ':' + info.srs.horizontal;
-    }
-
-    if (info.srs?.wkt) {
-      if (!this._projection) this._projection = info.srs.wkt;
-    }
-
-    if (this._projection) {
-      // TODO [mschuetz]: named projections that proj4 can't handle seem to cause problems.
-      // remove them for now
-
-      try {
-        proj4(this._projection);
-      } catch (e) {
-        this._projection = null;
-      }
-    }
 
     this._spacing = (this._boundingBox.max.x - this._boundingBox.min.x) / this._span;
 
