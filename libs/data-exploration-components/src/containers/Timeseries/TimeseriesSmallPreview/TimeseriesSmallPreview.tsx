@@ -18,6 +18,7 @@ import {
   SelectableItemProps,
 } from '@data-exploration-components/types';
 import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
+import { TimeOptions } from '../types';
 
 export const TimeseriesSmallPreview = ({
   timeseriesId,
@@ -120,8 +121,14 @@ export const TimeseriesSmallPreview = ({
           height={150}
           numberOfPoints={300}
           showContextGraph={false}
-          timeOptions={['1H', '1D', '1W', '1M', '1Y']}
-          defaultOption="1Y"
+          timeOptions={[
+            TimeOptions['1H'],
+            TimeOptions['1D'],
+            TimeOptions['1W'],
+            TimeOptions['1M'],
+            TimeOptions['1Y'],
+          ]}
+          defaultOption={TimeOptions['1Y']}
         />
       </InfoCell>
 

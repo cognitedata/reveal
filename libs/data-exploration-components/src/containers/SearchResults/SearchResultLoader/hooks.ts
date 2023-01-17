@@ -17,8 +17,8 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import { useQueries } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { calculateGranularity } from '@data-exploration-components/containers';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import { calculateGranularity } from '../../Timeseries/utils/calculateGranularity';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 

@@ -25,6 +25,7 @@ import {
 import styled from 'styled-components';
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
+import { TimeOptions } from '@data-exploration-components/containers/Timeseries/types';
 
 export type TimeseriesPreviewTabType =
   | 'details'
@@ -126,6 +127,11 @@ export const TimeseriesPreview = ({
                       showCustomRangePicker
                       dateRange={dateRange}
                       onDateRangeChange={setDateRange}
+                      timeOptionShortcut={[
+                        TimeOptions['1D'],
+                        TimeOptions['1W'],
+                        TimeOptions['1Y'],
+                      ]}
                     />
                   </TimeseriesChartWrapper>
                   <TimeseriesDetails timeseries={timeseries} />

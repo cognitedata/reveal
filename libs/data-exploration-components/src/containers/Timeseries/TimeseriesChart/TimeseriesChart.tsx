@@ -14,29 +14,18 @@ import {
   DateRangeProps,
   ResourceTypes,
 } from '@data-exploration-components/types';
-import { OptionType, Select } from '@cognite/cogs.js';
+import { Button, OptionType, Select } from '@cognite/cogs.js';
 import { ParentSize } from '@visx/responsive';
 
 import styled from 'styled-components';
 import { DatapointAggregates, Datapoints } from '@cognite/sdk';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
-
-export type TIME_OPTION_KEY =
-  | '10Y'
-  | '5Y'
-  | '2Y'
-  | '1Y'
-  | '1M'
-  | '1W'
-  | '1D'
-  | '12H'
-  | '6H'
-  | '1H'
-  | '15M';
+import { calculateGranularity } from '../utils/calculateGranularity';
+import { TimeOptions } from '../types';
 
 export const TIME_SELECT: {
-  [key in TIME_OPTION_KEY]: {
+  [key in TimeOptions]: {
     label: string;
     getTime: () => [Date, Date];
   };
@@ -111,8 +100,8 @@ export const TIME_SELECT: {
       dayjs().startOf('seconds').toDate(),
     ],
   },
-  '15M': {
-    label: '15M',
+  '15Min': {
+    label: '15Min',
     getTime: () => [
       dayjs().subtract(15, 'minutes').startOf('seconds').toDate(),
       dayjs().startOf('seconds').toDate(),
@@ -125,13 +114,14 @@ export type TimeseriesChartProps = {
   height?: number;
   numberOfPoints?: number;
   showContextGraph?: boolean;
-  timeOptions?: TIME_OPTION_KEY[];
-  defaultOption?: TIME_OPTION_KEY;
+  timeOptions?: TimeOptions[];
+  defaultOption?: TimeOptions;
   cacheToDate?: boolean;
   showCustomRangePicker?: boolean;
   enableTooltipPreview?: boolean;
   disableStep?: boolean;
   disabled?: boolean;
+  timeOptionShortcut?: TimeOptions[];
   onDataFetched?: (data?: DatapointAggregates | Datapoints) => void;
 } & Omit<
   LineChartProps,
@@ -149,7 +139,7 @@ export const TimeseriesChart = ({
   timeseriesId,
   height,
   numberOfPoints = 20,
-  timeOptions = ['15M', '1H', '6H', '12H', '1D', '1M', '1Y', '2Y', '5Y', '10Y'],
+  timeOptions = Object.values(TimeOptions),
   defaultOption,
   cacheToDate = true,
   showCustomRangePicker = false,
@@ -158,10 +148,11 @@ export const TimeseriesChart = ({
   disabled = false,
   disableStep = false,
   onDataFetched,
+  timeOptionShortcut,
   ...otherProps
 }: TimeseriesChartProps) => {
   const sdk = useSDK();
-  const [timePeriod, setTimePeriod] = useState<TIME_OPTION_KEY | undefined>(
+  const [timePeriod, setTimePeriod] = useState<TimeOptions | undefined>(
     defaultOption || (dateRange ? undefined : timeOptions[0])
   );
   const trackUsage = useMetrics();
@@ -193,6 +184,16 @@ export const TimeseriesChart = ({
       setPresetZoomDomain(TIME_SELECT[timePeriod].getTime());
     }
   }, [timePeriod, cacheToDate]);
+
+  const handleSelectOnChange = ({ value }: OptionType<TimeOptions>) => {
+    if (value) {
+      setTimePeriod(value);
+    }
+    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.TIME_PERIOD, {
+      resourceType,
+      value,
+    });
+  };
 
   const {
     data: overallData,
@@ -264,27 +265,30 @@ export const TimeseriesChart = ({
       </ParentSize>
 
       <SpacedRow>
-        {!disableStep && timeOptions.length > 1 && (
-          <StyledSelect
-            title="Step:"
-            value={
-              timePeriod && {
-                label: timePeriod,
-                value: timePeriod,
+        {!disableStep && (
+          <>
+            {(timeOptionShortcut || []).map((shortcut: TimeOptions) => (
+              <Button
+                type="secondary"
+                toggled={timePeriod === shortcut}
+                onClick={() => setTimePeriod(shortcut)}
+              >
+                {shortcut}
+              </Button>
+            ))}
+            <StyledSelect
+              title="Other:"
+              value={
+                timePeriod && {
+                  label: timePeriod,
+                  value: timePeriod,
+                }
               }
-            }
-            options={timeSelectOptions}
-            onChange={({ value }: OptionType<TIME_OPTION_KEY>) => {
-              if (value) {
-                setTimePeriod(value);
-              }
-              trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.TIME_PERIOD, {
-                resourceType,
-                value,
-              });
-            }}
-            width={250}
-          />
+              options={timeSelectOptions}
+              onChange={handleSelectOnChange}
+              width={250}
+            />
+          </>
         )}
         {showCustomRangePicker && (
           <RangePicker
@@ -306,41 +310,6 @@ export const TimeseriesChart = ({
       </SpacedRow>
     </>
   );
-};
-
-/**
- * Calculates the `granularity` for a timeseries request
- *
- * @param domain Domain [utc int, utc int]
- * @param pps points to show
- */
-export const calculateGranularity = (domain: number[], pps: number) => {
-  const diff = domain[1] - domain[0];
-  for (let i = 1; i <= 60; i += 1) {
-    const points = diff / (1000 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}s`;
-    }
-  }
-  for (let i = 1; i <= 60; i += 1) {
-    const points = diff / (1000 * 60 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}m`;
-    }
-  }
-  for (let i = 1; i < 24; i += 1) {
-    const points = diff / (1000 * 60 * 60 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}h`;
-    }
-  }
-  for (let i = 1; i < 100; i += 1) {
-    const points = diff / (1000 * 60 * 60 * 24 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}day`;
-    }
-  }
-  return 'day';
 };
 
 const StyledSelect = styled(Select)`
