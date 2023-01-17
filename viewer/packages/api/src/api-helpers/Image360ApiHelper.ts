@@ -202,7 +202,7 @@ export class Image360ApiHelper {
     const to = { fov: fovTo };
     const delay = duration * 0.25;
     const tween = new TWEEN.Tween(from)
-      .to(to, duration * 0.75)
+      .to(to, duration * 0.5)
       .onUpdate(() => {
         camera.setFOV(from.fov);
       })
