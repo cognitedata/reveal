@@ -4,7 +4,6 @@
 
 import fs from 'fs';
 
-import 'jest-extended';
 import { GltfSectorParser } from '../src/GltfSectorParser';
 import { RevealGeometryCollectionType } from '../src/types';
 
