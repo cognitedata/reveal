@@ -34,12 +34,12 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
       modelMatrix.makeRotationFromEuler(new THREE.Euler(...model.rotation));
     }
     if ((model as any).scale) {
-      const scale = new THREE.Vector3().fromArray(model.scale as [number, number, number]);
+      const scale = new THREE.Vector3().fromArray((model as any).scale as [number, number, number]);
       const scaleMatrix = new THREE.Matrix4().makeScale(...scale.toArray());
       modelMatrix.multiply(scaleMatrix);
     }
     if ((model as any).translation) {
-      const translation = new THREE.Vector3().fromArray(model.translation as [number, number, number]);
+      const translation = new THREE.Vector3().fromArray((model as any).translation as [number, number, number]);
       const translationMatrix = new THREE.Matrix4().makeTranslation(...translation.toArray());
       modelMatrix.premultiply(translationMatrix);
     }
