@@ -187,7 +187,10 @@ export class StationaryCameraManager implements CameraManager {
 
   private readonly zoomCamera = (event: WheelEvent) => {
     const sensitivityScaler = 0.05;
-    const newFov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, this._minFOV), this._defaultFOV);
+    const newFov = Math.min(
+      Math.max(this._camera.fov + event.deltaY * sensitivityScaler, this._minFOV),
+      this._defaultFOV
+    );
 
     if (this._camera.fov === newFov) return;
 
