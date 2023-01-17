@@ -141,6 +141,7 @@ export class PointCloudManager {
     if (index === -1) {
       throw new Error('Point cloud is not added - cannot remove it');
     }
+    node.dispose();
     this._pointCloudNodes.splice(index, 1);
 
     this._materialManager.removeModelMaterial(node.modelIdentifier);
@@ -150,6 +151,10 @@ export class PointCloudManager {
 
   dispose(): void {
     this._pointCloudFactory.dispose();
+    this._pointCloudNodes.forEach(n => {
+      this._materialManager.removeModelMaterial(n.modelIdentifier);
+      n.dispose();
+    });
   }
 
   private loadedModelsObservable() {
