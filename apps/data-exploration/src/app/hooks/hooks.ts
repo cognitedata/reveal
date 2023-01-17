@@ -147,6 +147,7 @@ export const useCurrentResourceId = (): [
     newResourceType?: ResourceType
   ) => {
     const search = qs.parse(location.search, opts);
+
     if (!newResourceId) {
       navigate(createLink(`/explore/search/${type}`, search, opts), {
         replace: replaceHistory,
@@ -201,7 +202,10 @@ export const useOnPreviewTabChange = (tabType?: string, type?: string) => {
           .join('/')}/${newTab}`,
         qs.parse(location.search)
       ),
-      { state: { history: location.state?.history }, replace: true }
+      {
+        state: { history: location.state?.history },
+        replace: true,
+      }
     );
     trackUsage('Exploration.Details.TabChange', {
       type,

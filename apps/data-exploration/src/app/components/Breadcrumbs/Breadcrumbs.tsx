@@ -2,6 +2,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { Breadcrumb } from '@cognite/cogs.js';
 import { removeProjectFromPath } from '@data-exploration-app/utils/URLUtils';
 import { useLocation, useNavigate } from 'react-router-dom';
+import qs from 'query-string';
 import styled from 'styled-components';
 
 type BreadcrumbsProps = {
@@ -19,12 +20,15 @@ export const Breadcrumbs = ({ currentResource }: BreadcrumbsProps) => {
     const history = [...(location.state?.history || [])];
     history.splice(index, history.length - index);
 
-    navigate(createLink(removeProjectFromPath(path)), {
-      state: {
-        history,
-      },
-      replace: true,
-    });
+    navigate(
+      createLink(removeProjectFromPath(path), qs.parse(location.search)),
+      {
+        state: {
+          history,
+        },
+        replace: true,
+      }
+    );
   };
 
   return (

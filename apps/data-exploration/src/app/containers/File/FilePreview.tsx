@@ -17,12 +17,12 @@ import { CogniteError, FileInfo } from '@cognite/sdk';
 import { EditFileButton } from '@data-exploration-app/components/TitleRowActions/EditFileButton';
 import styled from 'styled-components';
 import { Colors, Body, Tabs } from '@cognite/cogs.js';
-
+import qs from 'query-string';
 import {
   ResourceDetailsTabs,
   TabTitle,
 } from '@data-exploration-app/containers/ResourceDetails';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import {
@@ -55,6 +55,7 @@ export const FilePreview = ({
     ResourceSelectionContext
   );
   const navigate = useNavigate();
+  const location = useLocation();
   const isActive = resourcesState.some(
     // eslint-disable-next-line lodash/prefer-matches
     (el) => el.state === 'active' && el.id === fileId && el.type === 'file'
@@ -183,7 +184,12 @@ export const FilePreview = ({
                   creatable={editMode}
                   contextualization={writeAccess}
                   onItemClicked={(item) =>
-                    navigate(createLink(`/explore/${item.type}/${item.id}`))
+                    navigate(
+                      createLink(
+                        `/explore/${item.type}/${item.id}`,
+                        qs.parse(location.search)
+                      )
+                    )
                   }
                 />
               </PreviewTabWrapper>

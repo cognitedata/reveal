@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
+import qs from 'query-string';
 import {
   useRelatedResourceCounts,
   ResourceType,
@@ -12,6 +13,7 @@ import ResourceSelectionContext from '@data-exploration-app/context/ResourceSele
 import { RelatedResources } from '@data-exploration-app/containers/ResourceDetails/RelatedResources/RelatedResources';
 import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
+import { useLocation } from 'react-router-dom';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };
@@ -38,6 +40,7 @@ const ResourceDetailTabContent = ({
   type: ResourceType;
 }) => {
   const navigateWithHistory = useNavigateWithHistory(resource);
+  const location = useLocation();
 
   const { mode, onSelect, resourcesState } = useContext(
     ResourceSelectionContext
@@ -56,7 +59,9 @@ const ResourceDetailTabContent = ({
       type={type}
       parentResource={resource}
       onItemClicked={(id: number) => {
-        navigateWithHistory(createLink(`/explore/${type}/${id}`));
+        navigateWithHistory(
+          createLink(`/explore/${type}/${id}`, qs.parse(location.search))
+        );
       }}
       selectionMode={mode}
       onSelect={onSelect}
