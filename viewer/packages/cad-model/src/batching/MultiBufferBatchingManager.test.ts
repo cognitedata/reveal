@@ -68,7 +68,7 @@ describe(MultiBufferBatchingManager.name, () => {
 
     manager.removeSectorBatches(1);
 
-    expect(geometryGroup.children[0].visible).toBeFalse();
+    expect(geometryGroup.children.filter(mesh => mesh.visible).length).toBe(1);
     expect(sum(geometryGroup.children.map(mesh => mesh as THREE.InstancedMesh).map(mesh => mesh.count))).toBe(20);
   });
 
@@ -101,7 +101,7 @@ describe(MultiBufferBatchingManager.name, () => {
   test('removeSectorBatches() preserves indices added more than once', () => {
     const treeIndices1 = [10, 20];
     const treeIndices2 = [30, 40];
-    const treeIndices3 = [40, 50];
+    const treeIndices3 = [10, 50];
 
     const geometries1 = [
       createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices1, 0)
@@ -117,11 +117,11 @@ describe(MultiBufferBatchingManager.name, () => {
     manager.batchGeometries(geometries2, 2);
     manager.batchGeometries(geometries3, 3);
 
-    manager.removeSectorBatches(2);
+    manager.removeSectorBatches(3);
 
-    expect(geometryGroup.children[1].userData.treeIndices.size).toBe(2);
-    expect(geometryGroup.children[1].userData.treeIndices.keys()).toContain(treeIndices3[0]);
-    expect(geometryGroup.children[1].userData.treeIndices.keys()).toContain(treeIndices3[1]);
+    expect(geometryGroup.children[0].userData.treeIndices.size).toBe(2);
+    expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(treeIndices1[0]);
+    expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(treeIndices1[1]);
   });
 
   test('removeSectorBatches() ignores invalid sectorId', () => {

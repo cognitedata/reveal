@@ -232,7 +232,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   }
 
   private getBatchBufferToFill(instanceBatch: InstanceBatch): BatchBuffer {
-    const smallestBuffer = minBy(instanceBatch.buffers, batchBuffer => batchBuffer.buffer.bufferView.length);
+    const smallestBuffer = minBy(instanceBatch.buffers, batchBuffer => batchBuffer.buffer.length);
     assert(smallestBuffer !== undefined);
     return smallestBuffer;
   }
