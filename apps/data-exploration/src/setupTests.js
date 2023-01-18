@@ -1,4 +1,5 @@
 /* eslint no-console: 0 */
+import '@testing-library/jest-dom';
 import { configure } from 'enzyme';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import 'regenerator-runtime/runtime';
@@ -13,7 +14,9 @@ jest.mock('mixpanel-browser', () => {
     },
   };
 });
-jest.mock('@data-exploration-app/utils/Metrics');
+jest.mock('@data-exploration-app/utils/Metrics', () => ({
+  trackUsage: jest.fn(),
+}));
 jest.mock('@cognite/cdf-utilities', () => ({
   createLink: jest.fn(),
 }));

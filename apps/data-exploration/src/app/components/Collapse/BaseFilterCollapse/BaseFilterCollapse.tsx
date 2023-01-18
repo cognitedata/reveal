@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { Collapse, Container, Panel } from './elements';
-import { FilterHeader } from './BaseFilterHeader';
+import { BaseFilterHeader } from './BaseFilterHeader';
 import { ResetButton } from '@data-exploration-app/components/Buttons/ResetButton';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
@@ -41,7 +41,7 @@ export const BaseFilterCollapse = ({
   );
 };
 
-interface BaseFilterPanelProps {
+export interface BaseFilterPanelProps {
   children: React.ReactNode;
   title: string;
   infoContent?: string;
@@ -61,7 +61,7 @@ export const BaseFilterPanel = ({
       {...rest}
       header={
         <Container>
-          <FilterHeader title={title} infoContent={infoContent} />
+          <BaseFilterHeader title={title} infoContent={infoContent} />
           {!hideResetButton && (
             <ResetButton
               onClick={() => {

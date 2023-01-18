@@ -10,6 +10,7 @@ export const MultiSelectFilter = ({
     <>
       <FilterTitle>{title}</FilterTitle>
       <Select
+        data-testid="multi-select-filter"
         {...rest}
         onChange={(newValue: { value: string; label: string }[]) => {
           const tempValue = newValue?.map(({ value }) => value);

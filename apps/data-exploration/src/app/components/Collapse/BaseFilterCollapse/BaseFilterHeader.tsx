@@ -24,12 +24,12 @@ const BaseSubtitle = styled(Detail)`
   }
 `;
 
-interface Props {
+export interface Props {
   title?: string;
   handleFilterClick?: () => void;
   infoContent?: string;
 }
-export const FilterHeader: React.FC<React.PropsWithChildren<Props>> =
+export const BaseFilterHeader: React.FC<React.PropsWithChildren<Props>> =
   React.memo(({ title, infoContent, handleFilterClick }) => {
     return (
       <Content>
@@ -40,7 +40,7 @@ export const FilterHeader: React.FC<React.PropsWithChildren<Props>> =
           Filters
           {infoContent && (
             <Tooltip content={infoContent}>
-              <Icon type="Info" size={12} />
+              <Icon type="Info" size={12} data-testid="header-info-icon" />
             </Tooltip>
           )}
         </BaseSubtitle>
