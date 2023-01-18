@@ -48,16 +48,14 @@ export class StationaryCameraManager implements CameraManager {
   setCameraState(state: CameraState): void {
     const rotation = state.rotation ?? this._camera.quaternion;
     this._camera.quaternion.copy(rotation);
-    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
   }
 
   getCameraState(): Required<CameraState> {
-    const unitForward = new THREE.Vector3(0, 0, -1);
-    unitForward.applyQuaternion(this._camera.quaternion);
     return {
       position: this._camera.position,
       rotation: this._camera.quaternion,
-      target: unitForward.add(this._camera.position)
+      target: this.getTarget()
     };
   }
 
@@ -182,7 +180,7 @@ export class StationaryCameraManager implements CameraManager {
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
 
-    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
   };
 
   private readonly zoomCamera = (event: WheelEvent) => {
@@ -206,7 +204,7 @@ export class StationaryCameraManager implements CameraManager {
     forwardVector.applyQuaternion(arcBetweenRays);
     const targetWorldCoordinates = new THREE.Vector3().addVectors(this._camera.position, forwardVector);
     this._camera.lookAt(targetWorldCoordinates);
-    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
   };
 
   private getCursorRay(event: WheelEvent) {
@@ -216,5 +214,11 @@ export class StationaryCameraManager implements CameraManager {
       .unproject(this._camera)
       .sub(this._camera.position);
     return ray;
+  }
+
+  private getTarget(): THREE.Vector3 {
+    const unitForward = new THREE.Vector3(0, 0, -1);
+    unitForward.applyQuaternion(this._camera.quaternion);
+    return unitForward.add(this._camera.position);
   }
 }
