@@ -165,11 +165,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
 
     const sourceInstanceAttributes = GeometryBufferUtils.getAttributes(bufferGeometry, InterleavedBufferAttribute);
 
-    const treeIndexInterleavedAttribute = this.getTreeIndexAttribute(sourceInstanceAttributes);
-
-    for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
-      incrementOrInsertIndex(batchBuffer.mesh.userData.treeIndices, treeIndexInterleavedAttribute.getX(i));
-    }
+    this.addTreeIndicesToMeshUserData(sourceInstanceAttributes, batchBuffer);
 
     if (bufferIsReallocated) {
       this.reallocateBufferGeometry(batchBuffer);
@@ -182,6 +178,17 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
 
     batchBuffer.mesh.visible = true;
     batchBuffer.mesh.count += instanceCount;
+  }
+
+  private addTreeIndicesToMeshUserData(
+    sourceInstanceAttributes: { name: string; attribute: InterleavedBufferAttribute }[],
+    batchBuffer: BatchBuffer
+  ) {
+    const treeIndexInterleavedAttribute = this.getTreeIndexAttribute(sourceInstanceAttributes);
+
+    for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
+      incrementOrInsertIndex(batchBuffer.mesh.userData.treeIndices, treeIndexInterleavedAttribute.getX(i));
+    }
   }
 
   private reallocateBufferGeometry({ buffer, mesh }: BatchBuffer) {
