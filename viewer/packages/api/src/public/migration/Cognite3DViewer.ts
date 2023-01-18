@@ -1154,7 +1154,10 @@ export class Cognite3DViewer {
       throw new Error('Viewer is disposed');
     }
 
+    const customRenderTarget = this.renderer.getRenderTarget();
     const { width: originalWidth, height: originalHeight } = this.renderer.getSize(new THREE.Vector2());
+    const originalPixelRatio = this._renderer.getPixelRatio();
+
     const originalDomeStyle = {
       position: this.domElement.style.position,
       width: this.domElement.style.width,
@@ -1186,6 +1189,11 @@ export class Cognite3DViewer {
       // Disregard pixelRatio to get the screenshot in requested resolution.
       const pixelRatioOverride = 1;
       this.renderer.setDrawingBufferSize(width, height, pixelRatioOverride);
+      if (customRenderTarget) {
+        // To ensure that the render is done to the screenshot canvas, we clear the custom
+        // render target. This will make the renderer fall back to use the default canvas.
+        this.revealManager.setOutputRenderTarget(null);
+      }
       this.revealManager.render(screenshotCamera);
       if (!includeUI) return this.canvas.toDataURL();
 
@@ -1221,7 +1229,15 @@ export class Cognite3DViewer {
       this.domElement.style.top = originalDomeStyle.top;
       this._domElementResizeObserver.observe(this._domElement);
 
-      this.renderer.setSize(originalWidth, originalHeight);
+      if (customRenderTarget) {
+        //Restore render target and clear the default canvas.
+        this.revealManager.setOutputRenderTarget(customRenderTarget);
+        const context = this.renderer.getContext();
+        context?.clear(context.COLOR_BUFFER_BIT);
+        context?.clear(context.DEPTH_BUFFER_BIT);
+      }
+
+      this.renderer.setDrawingBufferSize(originalWidth, originalHeight, originalPixelRatio);
       this.revealManager.render(this.cameraManager.getCamera());
 
       // Restart animate loop
