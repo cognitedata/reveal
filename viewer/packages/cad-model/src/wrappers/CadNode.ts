@@ -7,9 +7,10 @@ import { SectorScene, CadModelMetadata, RootSectorNode, WantedSector, ConsumedSe
 import { SectorRepository } from '@reveal/sector-loader';
 import { ParsedGeometry } from '@reveal/sector-parser';
 import { CadMaterialManager, NodeTransformProvider, RenderMode } from '@reveal/rendering';
-import { GeometryBatchingManager } from '../batching/GeometryBatchingManager';
 
 import { Group, Object3D, Plane, Matrix4 } from 'three';
+import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
+import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
 
 export class CadNode extends Object3D {
   private readonly _cadModelMetadata: CadModelMetadata;
@@ -21,7 +22,7 @@ export class CadNode extends Object3D {
   // from the scene. Also possible to make the same thing only inside GeometryBatchingManager and RootSectorNode.
   private _rootSector: RootSectorNode;
   private _sectorScene: SectorScene;
-  private _geometryBatchingManager?: GeometryBatchingManager;
+  private _geometryBatchingManager?: DrawCallBatchingManager;
 
   private readonly _sourceTransform: Matrix4;
   private readonly _customTransform: Matrix4;
@@ -39,8 +40,7 @@ export class CadNode extends Object3D {
     batchedGeometryMeshGroup.name = 'Batched Geometry';
 
     const materials = materialManager.getModelMaterials(model.modelIdentifier);
-    this._geometryBatchingManager = new GeometryBatchingManager(batchedGeometryMeshGroup, materials);
-
+    this._geometryBatchingManager = new MultiBufferBatchingManager(batchedGeometryMeshGroup, materials);
     this._rootSector = new RootSectorNode(model);
 
     this._rootSector.add(batchedGeometryMeshGroup);
