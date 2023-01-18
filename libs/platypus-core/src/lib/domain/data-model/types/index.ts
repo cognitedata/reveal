@@ -37,12 +37,18 @@ export interface DataModelVersion {
   space: string;
 }
 
+export type DirectiveParameter = {
+  name: string;
+  kind: 'type' | 'field' | 'version' | 'space';
+};
+
 export type BuiltInType = {
   name: string;
   dmsType?: string;
   fieldDirective?: boolean;
   type: 'SCALAR' | 'DIRECTIVE' | 'OBJECT' | 'ENUM';
   body?: string;
+  directiveParameters?: DirectiveParameter[];
 };
 
 export type PaginatedResponse = {

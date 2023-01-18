@@ -15,12 +15,22 @@ export const mixerApiBuiltInTypes = [
     name: 'view',
     type: 'DIRECTIVE',
     body: '(space: String, name: String, version: String)',
+    directiveParameters: [
+      { name: 'space', kind: 'space' },
+      { name: 'name', kind: 'type' },
+      { name: 'version', kind: 'version' },
+    ],
     fieldDirective: false,
   },
   {
     name: 'mapping',
     type: 'DIRECTIVE',
     body: '(space: String, container: String, containerPropertyIdentifier: String)',
+    directiveParameters: [
+      { name: 'container', kind: 'type' },
+      { name: 'containerPropertyIdentifier', kind: 'field' },
+      { name: 'space', kind: 'space' },
+    ],
     fieldDirective: true,
   },
 ] as BuiltInType[];

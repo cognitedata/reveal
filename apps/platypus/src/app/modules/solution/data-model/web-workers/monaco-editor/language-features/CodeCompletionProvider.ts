@@ -34,12 +34,8 @@ export class CodeCompletionProvider implements CompletionItemProvider {
       endColumn: position.column,
     });
 
-    // get the code as string from code editor
-    const graphQlString = model.getValue();
-
     const worker = await this._worker(resource);
     const suggestions = await worker.doComplete(
-      graphQlString,
       textUntilPosition,
       this.builtInTypes
     );

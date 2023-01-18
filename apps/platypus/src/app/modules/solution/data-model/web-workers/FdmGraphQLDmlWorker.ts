@@ -54,16 +54,15 @@ export class FdmGraphQLDmlWorker {
   }
 
   public async doComplete(
-    graphQlString: string,
     textUntilPosition: string,
     builtInTypes: BuiltInType[]
   ) {
     try {
       return this.codeCompletionService.getCompletions(
-        graphQlString,
         textUntilPosition,
         builtInTypes,
-        !!this.createData.options?.useExtendedSdl
+        !!this.createData.options?.useExtendedSdl,
+        this.dataModelTypeDefs
       );
     } catch (err) {
       // eslint-disable-next-line no-console
