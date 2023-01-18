@@ -15,6 +15,7 @@ import GraphQlWorker from '../../web-workers/worker-loaders/graphqlWorkerLoader'
 import MonacoEditorWorker from '../../web-workers/worker-loaders/monacoLanguageServiceWorkerLoader';
 
 import { isFDMv3 } from '@platypus-app/flags';
+import { StyledEditor } from './elements';
 
 // point here so the context can be used
 declare const self: any;
@@ -120,7 +121,7 @@ export const GraphqlCodeEditor = React.memo(
     }, []);
 
     return (
-      <div style={{ height: 'calc(100% - 56px)' }}>
+      <StyledEditor>
         <Editor
           options={{
             minimap: { enabled: false },
@@ -145,7 +146,7 @@ export const GraphqlCodeEditor = React.memo(
             setEditorValue(editCode);
           }}
         />
-      </div>
+      </StyledEditor>
     );
   }
 );

@@ -8,6 +8,7 @@ import { FdmGraphQLDmlWorker } from '../FdmGraphQLDmlWorker';
 import { DiagnosticsAdapter } from './language-features';
 import { DocumentFormattingAdapter } from './language-features/DocumentFormattingAdapter';
 import { CodeCompletionProvider } from './language-features/CodeCompletionProvider';
+import { HoverAdapter } from './language-features/HoverAdapter';
 
 /**
  * File that is used to setup or wire up web worker and all monaco stuff
@@ -69,6 +70,15 @@ export const setupGraphql = (
         new DocumentFormattingAdapter(worker)
       )
     );
+
+    if (options.useExtendedSdl) {
+      providers.push(
+        monaco.languages.registerHoverProvider(
+          config.languageId,
+          new HoverAdapter(worker)
+        )
+      );
+    }
   }
 
   registerProviders();

@@ -73,3 +73,18 @@ export type CompletionItem = {
 export type CompletionList = {
   suggestions: CompletionItem[];
 };
+
+export type LocationTypesMap = Record<
+  string,
+  { name: string; kind: 'type' | 'field'; typeName: string }
+>;
+
+export type HoverItem = {
+  content: string;
+  range: {
+    startLineNumber: number;
+    startColumn: number;
+    endLineNumber: number;
+    endColumn: number;
+  };
+};

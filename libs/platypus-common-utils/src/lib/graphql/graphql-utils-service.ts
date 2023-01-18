@@ -29,6 +29,7 @@ import {
   ObjectTypeApi,
   DirectiveApi,
   InputValueApi,
+  field,
 } from 'graphql-extra';
 import {
   validate as validateFromGql,
@@ -104,7 +105,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       directives: type.directives,
       description: type.description,
       interfaces: type.interfaces,
-      fields: type.fields,
+      // keep JSON parse otherwise you will get max callstack exceeded
+      fields: type.fields.map((field) => JSON.parse(JSON.stringify(field))),
     });
   }
 
@@ -186,7 +188,12 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
     const mappedTypes: DataModelTypeDefsType[] = types
       // We will only parse Objects types for now
-      .filter((type) => type && type.kind === Kind.OBJECT_TYPE_DEFINITION)
+      .filter(
+        (type) =>
+          type &&
+          (type.kind === Kind.OBJECT_TYPE_DEFINITION ||
+            type.kind === Kind.INTERFACE_TYPE_DEFINITION)
+      )
       .map((type) => {
         const typeDef = type as ObjectTypeDefinitionNode;
         const typeApi = objectTypeApi(typeDef);
