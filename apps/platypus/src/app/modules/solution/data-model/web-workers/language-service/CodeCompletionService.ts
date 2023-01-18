@@ -35,7 +35,7 @@ export class CodeCompletionService {
         (type) => !type.fieldDirective
       );
 
-      // // extract all current custom types from code editor
+      // extract all current custom types from code editor
       dataModelTypeDefs?.types.forEach((type) =>
         customTypes.push({
           name: type.name,
@@ -43,8 +43,24 @@ export class CodeCompletionService {
         })
       );
 
-      // graphql sdl v3 code completion
+      // suggest existing views in the editor when the user
+      // tries to implement an interface.
+      if (
+        textUntilPosition
+          .trim()
+          .match(/type\s{1,}[A-Z][a-zA-Z0-9_]+\s{1,}implements/)
+      ) {
+        return {
+          suggestions: this.getCodeCompletionItems(
+            textUntilPosition,
+            customTypes,
+            'OBJECT'
+          ),
+        };
+      }
+
       if (useExtendedSdl) {
+        // graphql sdl v3 code completion
         // capture type/interface level directive
         if (
           textUntilPosition

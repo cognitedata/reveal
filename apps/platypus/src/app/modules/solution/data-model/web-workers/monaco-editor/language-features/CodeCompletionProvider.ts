@@ -13,7 +13,7 @@ import CompletionList = languages.CompletionList;
  */
 export class CodeCompletionProvider implements CompletionItemProvider {
   // Run this function when the period or open parenthesis is typed
-  triggerCharacters = [':', '[', ']', '@', '(', ',', '"'];
+  triggerCharacters = [':', '[', ']', '@', '(', ',', '"', ' '];
 
   constructor(
     private readonly _worker: WorkerAccessor,

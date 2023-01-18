@@ -207,6 +207,96 @@ const dataModelTypeDefs = {
         column: 1,
       },
     },
+    {
+      name: 'FullName',
+      fields: [
+        {
+          id: 'first',
+          name: 'first',
+          type: {
+            name: 'String',
+            list: false,
+            nonNull: true,
+            custom: false,
+          },
+          nonNull: true,
+          directives: [],
+          arguments: [],
+          location: {
+            line: 16,
+            column: 18,
+          },
+        },
+        {
+          id: 'last',
+          name: 'last',
+          type: {
+            name: 'String',
+            list: false,
+            nonNull: true,
+            custom: false,
+          },
+          nonNull: true,
+          directives: [],
+          arguments: [],
+          location: {
+            line: 17,
+            column: 17,
+          },
+        },
+        {
+          id: 'middle',
+          name: 'middle',
+          type: {
+            name: 'String',
+            list: false,
+            nonNull: false,
+            custom: false,
+          },
+          nonNull: false,
+          directives: [],
+          arguments: [],
+          location: {
+            line: 18,
+            column: 13,
+          },
+        },
+      ],
+      interfaces: [],
+      directives: [],
+      location: {
+        line: 15,
+        column: 1,
+      },
+    },
+    {
+      name: 'Greeting',
+      fields: [
+        {
+          id: 'phrase',
+          name: 'phrase',
+          type: {
+            name: 'String',
+            list: false,
+            nonNull: false,
+            custom: false,
+          },
+          nonNull: false,
+          directives: [],
+          arguments: [],
+          location: {
+            line: 22,
+            column: 11,
+          },
+        },
+      ],
+      interfaces: [],
+      directives: [],
+      location: {
+        line: 21,
+        column: 1,
+      },
+    },
   ],
 };
 
@@ -363,6 +453,79 @@ describe('CodeCompletionServiceTest', () => {
 
     expect(completionList).toEqual({
       suggestions: [],
+    });
+  });
+
+  it('should suggest custom types when someone types "implements" for a new type in v2', () => {
+    const completionList = getCompletionList({
+      ...doCompletePropsTypeLevelMock,
+      useExtendedSdl: false,
+      textUntilPosition: 'type Hello implements ',
+    });
+
+    expect(completionList).toEqual({
+      suggestions: [
+        {
+          label: 'Person',
+          kind: 5,
+          insertText: 'Person',
+          insertTextRules: 4,
+        },
+        {
+          label: 'Name',
+          kind: 5,
+          insertText: 'Name',
+          insertTextRules: 4,
+        },
+        {
+          label: 'FullName',
+          kind: 5,
+          insertText: 'FullName',
+          insertTextRules: 4,
+        },
+        {
+          label: 'Greeting',
+          kind: 5,
+          insertText: 'Greeting',
+          insertTextRules: 4,
+        },
+      ],
+    });
+  });
+
+  it('should suggest custom types when someone types "implements" for a new type in v3', () => {
+    const completionList = getCompletionList({
+      ...doCompletePropsTypeLevelMock,
+      textUntilPosition: 'type Hello implements ',
+    });
+
+    expect(completionList).toEqual({
+      suggestions: [
+        {
+          label: 'Person',
+          kind: 5,
+          insertText: 'Person',
+          insertTextRules: 4,
+        },
+        {
+          label: 'Name',
+          kind: 5,
+          insertText: 'Name',
+          insertTextRules: 4,
+        },
+        {
+          label: 'FullName',
+          kind: 5,
+          insertText: 'FullName',
+          insertTextRules: 4,
+        },
+        {
+          label: 'Greeting',
+          kind: 5,
+          insertText: 'Greeting',
+          insertTextRules: 4,
+        },
+      ],
     });
   });
 });
