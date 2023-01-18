@@ -80,6 +80,7 @@ import DataProfilingSidebar from 'components/DataProfilingSidebar/DataProfilingS
 import EventSidebar from 'components/EventSidebar/EventSidebar';
 import { eventResultsAtom } from 'models/event-results/atom';
 import { EventResultEffects } from 'effects/events';
+import MonitoringSidebar from 'components/MonitoringSidebar/MonitoringSidebar';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -98,6 +99,7 @@ import {
 
 const defaultTranslations = makeDefaultTranslations(
   'Data Profiling',
+  'Monitoring',
   'Threshold',
   'Events',
   'Chart could not be saved!',
@@ -109,6 +111,10 @@ const defaultTranslations = makeDefaultTranslations(
 const keys = translationKeys(defaultTranslations);
 
 const ChartViewPage = () => {
+  const { isEnabled: isMonitoringEnabled } = useFlag('CHARTS_UI_MONITORING', {
+    fallback: false,
+    forceRerender: true,
+  });
   const { isEnabled: isDataProfilingEnabled } = useFlag(
     'CHARTS_UI_DATAPROFILING',
     {
@@ -122,6 +128,7 @@ const ChartViewPage = () => {
   const [showDataProfilingSidebar, setShowDataProfilingSidebar] =
     useState(false);
   const [showThresholdSidebar, setShowThresholdSidebar] = useState(false);
+  const [showMonitoringSidebar, setShowMonitoringSidebar] = useState(false);
   const [showErrorSidebar, setShowErrorSidebar] = useState(false);
   const [showEventSidebar, setShowEventSidebar] = useState(
     activeSidebar === 'events'
@@ -323,6 +330,7 @@ const ChartViewPage = () => {
       setShowThresholdSidebar(false);
       setShowErrorSidebar(false);
       setShowEventSidebar(false);
+      setShowMonitoringSidebar(false);
       setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
     },
     [selectedSourceId, showContextMenu]
@@ -333,6 +341,7 @@ const ChartViewPage = () => {
     setShowErrorSidebar(false);
     setShowEventSidebar(false);
     setShowThresholdSidebar(false);
+    setShowMonitoringSidebar(false);
     setShowDataProfilingSidebar((prevState) => !prevState);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   }, []);
@@ -342,7 +351,18 @@ const ChartViewPage = () => {
     setShowErrorSidebar(false);
     setShowDataProfilingSidebar(false);
     setShowEventSidebar(false);
+    setShowMonitoringSidebar(false);
     setShowThresholdSidebar((prevState) => !prevState);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+  }, []);
+
+  const handleMonitoringSidebarToggle = useCallback(() => {
+    setShowContextMenu(false);
+    setShowErrorSidebar(false);
+    setShowEventSidebar(false);
+    setShowThresholdSidebar(false);
+    setShowDataProfilingSidebar(false);
+    setShowMonitoringSidebar((prevState) => !prevState);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   }, []);
 
@@ -366,6 +386,7 @@ const ChartViewPage = () => {
     setShowErrorSidebar(false);
     setShowDataProfilingSidebar(false);
     setShowThresholdSidebar(false);
+    setShowMonitoringSidebar(false);
     setShowEventSidebar((prevState) => !prevState);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   }, []);
@@ -387,6 +408,11 @@ const ChartViewPage = () => {
 
   const handleCloseDataProfilingSidebar = useCallback(() => {
     setShowDataProfilingSidebar(false);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, []);
+
+  const handleCloseMonitoringSidebar = useCallback(() => {
+    setShowMonitoringSidebar(false);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
 
@@ -870,6 +896,14 @@ const ChartViewPage = () => {
             eventData={eventData}
           />
         )}
+
+        {showMonitoringSidebar && (
+          <MonitoringSidebar
+            visible={showMonitoringSidebar}
+            onClose={handleCloseMonitoringSidebar}
+          />
+        )}
+
         <Toolbar>
           {isDataProfilingEnabled && (
             <Tooltip content={t['Data Profiling']} position="left">
@@ -897,6 +931,16 @@ const ChartViewPage = () => {
               onClick={() => handleThresholdSidebarToggle()}
             />
           </Tooltip>
+          {isMonitoringEnabled && (
+            <Tooltip content={t.Monitoring} position="left">
+              <Button
+                icon="Alarm"
+                aria-label="Toggle monitoring sidebar"
+                toggled={showMonitoringSidebar}
+                onClick={() => handleMonitoringSidebarToggle()}
+              />
+            </Tooltip>
+          )}
         </Toolbar>
       </ChartViewContainer>
     </>

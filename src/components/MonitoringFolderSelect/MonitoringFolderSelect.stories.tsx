@@ -28,7 +28,7 @@ const Template: Story<Props> = (args) => {
   });
   return (
     <div style={{ width: '400px' }}>
-      <MonitoringFolderSelect control={control} {...args} />
+      <MonitoringFolderSelect control={control} inputName={args.inputName} />
     </div>
   );
 };
