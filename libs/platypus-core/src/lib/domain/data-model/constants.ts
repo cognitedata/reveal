@@ -25,10 +25,10 @@ export const mixerApiBuiltInTypes = [
   {
     name: 'mapping',
     type: 'DIRECTIVE',
-    body: '(space: String, container: String, containerPropertyIdentifier: String)',
+    body: '(space: String, container: String, property: String)',
     directiveParameters: [
       { name: 'container', kind: 'type' },
-      { name: 'containerPropertyIdentifier', kind: 'field' },
+      { name: 'property', kind: 'field' },
       { name: 'space', kind: 'space' },
     ],
     fieldDirective: true,

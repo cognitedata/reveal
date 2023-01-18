@@ -50,11 +50,11 @@ export function MappingDirectiveValidator(
             }
             break;
 
-          case 'containerPropertyIdentifier':
+          case 'property':
             if (!argumentIsString(argument)) {
               context.reportError(
                 new GraphQLError(
-                  `containerPropertyIdentifier argument must be of type String`,
+                  `property argument must be of type String`,
                   argument
                 )
               );

@@ -186,7 +186,7 @@ export class HoverProviderService {
         (arg) => arg.name === 'container'
       );
       const fieldArg = directive?.arguments?.find(
-        (arg) => arg.name === 'containerPropertyIdentifier'
+        (arg) => arg.name === 'property'
       );
       const spaceArg = directive?.arguments?.find(
         (arg) => arg.name === 'space'

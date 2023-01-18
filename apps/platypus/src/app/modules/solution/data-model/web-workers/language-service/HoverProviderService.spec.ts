@@ -29,7 +29,7 @@ type Person implements Describable & Assignable & UserName @view {
   name: String!
   description: String
   assignedTo: String
-  mappedField: String @mapping(container:"Test",containerPropertyIdentifier: "field")
+  mappedField: String @mapping(container:"Test",property: "field")
   ownedField: Int
   posts: [Post]
 }
@@ -243,7 +243,7 @@ const dataModelMock = {
                   },
                 },
                 {
-                  name: 'containerPropertyIdentifier',
+                  name: 'property',
                   value: {
                     kind: 'StringValue',
                     value: 'field',
@@ -512,7 +512,7 @@ describe('HoverProviderService Test', () => {
       name: String!
       description: String
       assignedTo: String
-      mappedField: String @mapping(container: "Test", containerPropertyIdentifier: "field")
+      mappedField: String @mapping(container: "Test", property: "field")
       ownedField: Int
       posts: [Post]
     }`;

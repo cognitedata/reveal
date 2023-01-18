@@ -179,7 +179,7 @@ const dataModelTypeDefs = {
                   },
                 },
                 {
-                  name: 'containerPropertyIdentifier',
+                  name: 'property',
                   value: {
                     kind: 'StringValue',
                     value: 'title',
@@ -315,8 +315,7 @@ const doCompletePropsParametersMock = {
 };
 
 const doCompletePropsParameterValueMock = {
-  textUntilPosition:
-    '    phrase: String @mapping(container:"Name",containerPropertyIdentifier:"',
+  textUntilPosition: '    phrase: String @mapping(container:"Name",property:"',
   builtInTypes: mixerApiBuiltInTypes,
   useExtendedSdl: true,
   dataModelTypeDefs,
@@ -403,9 +402,9 @@ describe('CodeCompletionServiceTest', () => {
           insertTextRules: 4,
         },
         {
-          label: 'containerPropertyIdentifier',
+          label: 'property',
           kind: 7,
-          insertText: 'containerPropertyIdentifier:',
+          insertText: 'property:',
           insertTextRules: 4,
         },
       ],

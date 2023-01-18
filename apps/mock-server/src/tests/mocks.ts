@@ -84,7 +84,7 @@ input InstanceRef {
 
 directive @view(space: String, name: String, version: String) on OBJECT | INTERFACE
 
-directive @mapping(space: String, container: String, containerPropertyIdentifier: String) on FIELD_DEFINITION
+directive @mapping(space: String, container: String, property: String) on FIELD_DEFINITION
 
 type Post {
   externalId: ID!
