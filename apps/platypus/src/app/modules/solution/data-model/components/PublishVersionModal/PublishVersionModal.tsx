@@ -5,7 +5,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useState, useEffect } from 'react';
 import { StyledBreakingChanges } from './elements';
 
-export type VersionType = 'FIRST' | 'NON_BREAKING' | 'BREAKING';
+export type VersionType = 'FIRST' | 'SUBSEQUENT';
 
 export interface PublishVersionModalProps {
   versionType: VersionType;
@@ -23,7 +23,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
   const { t } = useTranslation('SolutionPublishVersionModal');
   const [version, setVersion] = useState(props.suggestedVersion);
   const [keepCurrentVersion, setKeepCurrentVersion] = useState(
-    props.versionType !== 'BREAKING' ? true : false
+    !props.breakingChanges
   );
   const [error, setError] = useState('');
 

@@ -26,7 +26,7 @@ export const FirstVersion = () => (
 export const NonBreakingVersion = () => (
   <Wrapper>
     <PublishVersionModal
-      versionType={'NON_BREAKING'}
+      versionType={'SUBSEQUENT'}
       suggestedVersion={'2'}
       currentVersion={'2'}
       publishedVersions={[]}
@@ -42,7 +42,7 @@ export const NonBreakingVersion = () => (
 export const BreakingVersion = () => (
   <Wrapper>
     <PublishVersionModal
-      versionType={'BREAKING'}
+      versionType={'SUBSEQUENT'}
       suggestedVersion={'3'}
       currentVersion={'2'}
       publishedVersions={[]}

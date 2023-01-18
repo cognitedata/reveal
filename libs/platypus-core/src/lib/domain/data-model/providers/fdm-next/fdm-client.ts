@@ -101,9 +101,22 @@ export class FdmClient implements FlexibleDataModelingClient {
           );
         }
 
-        return results
-          .map((result) => this.dataModelVersionDataMapper.deserialize(result))
-          .sort(compareDataModelVersions);
+        return (
+          results
+            /*
+            With DMS V3, a version 1 of a data model is created with an empty schema when
+            the data model is created. We hide this from the user so that they don't see
+            a v1 "draft" and a v1 "published" when they first create a data model. We
+            hide it by filtering out versions with an empty schema, which in effect will
+            be version 1. Once the user adds something to the schema, the version will
+            no longer be filtered out.
+            */
+            .filter((result) => !!result.graphQlDml)
+            .map((result) =>
+              this.dataModelVersionDataMapper.deserialize(result)
+            )
+            .sort(compareDataModelVersions)
+        );
       });
   }
 

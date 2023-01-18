@@ -106,7 +106,7 @@ export class DataModelVersionHandler {
 
     const publishDataModelVersionDto: PublishDataModelVersionDTO = {
       ...dto,
-      space: dto.externalId,
+      space: dto.space || dto.externalId,
       createdTime: dto.createdTime || Date.now(),
       lastUpdatedTime: dto.lastUpdatedTime || Date.now(),
       status: dto.status || DataModelVersionStatus.PUBLISHED,

@@ -12,15 +12,12 @@ import {
   DataModelVersion,
   Result,
   getDataModelEndpointUrl,
-  PublishDataModelVersionDTO,
-  DataManagementHandler,
   PlatypusError,
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useDataModelState } from '../../hooks/useDataModelState';
 import { SchemaEditorMode } from '../types';
-import { BreakingChangesModal } from '../components/BreakingChangesModal';
 import { EditorPanel } from '../components/EditorPanel';
 import { DataModelHeader } from '../components/DataModelHeader';
 import {
@@ -103,7 +100,8 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const [updating, setUpdating] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
   const [showEndpointModal, setShowEndpointModal] = useState(false);
-  const [showPublishModal, setShowPublishModal] = useState(false);
+  const [publishModalVersionType, setPublishModalVersionType] =
+    useState<VersionType | null>(null);
 
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
@@ -153,6 +151,10 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
         schema: graphQlSchema,
         version: selectedDataModelVersion?.version,
       });
+      const versionType: VersionType =
+        dataModelVersions && dataModelVersions?.length > 0
+          ? 'SUBSEQUENT'
+          : 'FIRST';
 
       if (dataModelValidationResult.isFailure) {
         const error = PlatypusError.fromDataModelValidationError(
@@ -161,7 +163,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
 
         if ((error?.type as ErrorType) === 'BREAKING_CHANGE') {
           setBreakingChanges(error.message);
-          setShowPublishModal(true);
+          setPublishModalVersionType(versionType);
         } else if (error?.type as ErrorType) {
           Notification({
             type: 'error',
@@ -171,7 +173,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
           });
         }
       } else {
-        setShowPublishModal(true);
+        setPublishModalVersionType(versionType);
       }
     } catch (error) {
       Notification({
@@ -187,19 +189,8 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     setUpdating(false);
   };
 
-  const getVersionType = (): VersionType => {
-    if (
-      !dataModelVersions ||
-      dataModelVersions.length === 0 ||
-      (dataModelVersions.length === 1 && !dataModelVersions[0].schema)
-    )
-      return 'FIRST';
-    if (breakingChanges) return 'BREAKING';
-    return 'NON_BREAKING';
-  };
-
   const getSuggestedVersion = () => {
-    if (getVersionType() === 'FIRST') return '1';
+    if (publishModalVersionType === 'FIRST') return '1';
 
     const publishedVersions =
       dataModelVersions?.map((ver) => ver.version) || [];
@@ -337,7 +328,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     // Must be located here to work correctly with Promt.
     setUpdating(false);
     setSaving(false);
-    setShowPublishModal(false);
+    setPublishModalVersionType(null);
     setBreakingChanges('');
   };
 
@@ -427,16 +418,16 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
         />
       )}
 
-      {showPublishModal && (
+      {publishModalVersionType && (
         <PublishVersionModal
-          versionType={getVersionType()}
+          versionType={publishModalVersionType}
           suggestedVersion={getSuggestedVersion()}
           currentVersion={`${selectedDataModelVersion.version || '1'}`}
           publishedVersions={dataModelVersions?.map((ver) => ver.version) || []}
           breakingChanges={breakingChanges}
           onCancel={() => {
             setBreakingChanges('');
-            setShowPublishModal(false);
+            setPublishModalVersionType(null);
           }}
           onUpdate={handleSaveOrPublish}
           isUpdating={updating}
