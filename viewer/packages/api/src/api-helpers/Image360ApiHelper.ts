@@ -128,11 +128,15 @@ export class Image360ApiHelper {
     const toPosition = new THREE.Vector3().setFromMatrixPosition(to360Entity.transform);
     const length = new THREE.Vector3().subVectors(toPosition, fromPosition).length();
 
+    const toZoom = this._image360Navigation.defaultFOV;
+    const fromZoom = this._image360Navigation.getCamera().fov;
+
     setPreTransitionState();
 
     const currentFromOpacity = fromVisualizationCube.opacity;
     await Promise.all([
       this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
+      this.tweenVisualizationZoom(this._image360Navigation, fromZoom, toZoom, alphaTweenDuration),
       this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
     ]);
 
@@ -177,6 +181,32 @@ export class Image360ApiHelper {
         entity.image360Visualization.opacity = from.alpha;
         this._requestRedraw();
       })
+      .easing(num => TWEEN.Easing.Quintic.InOut(num))
+      .start(TWEEN.now());
+
+    return new Promise(resolve => {
+      tween.onComplete(() => {
+        tween.stop();
+        resolve();
+      });
+    });
+  }
+
+  private tweenVisualizationZoom(
+    camera: StationaryCameraManager,
+    fovFrom: number,
+    fovTo: number,
+    duration: number
+  ): Promise<void> {
+    const from = { fov: fovFrom };
+    const to = { fov: fovTo };
+    const delay = duration * 0.25;
+    const tween = new TWEEN.Tween(from)
+      .to(to, duration * 0.5)
+      .onUpdate(() => {
+        camera.setFOV(from.fov);
+      })
+      .delay(delay)
       .easing(num => TWEEN.Easing.Quintic.InOut(num))
       .start(TWEEN.now());
 
