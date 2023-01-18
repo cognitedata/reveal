@@ -1,5 +1,14 @@
-import { Collapse, Label } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import {
+  Button,
+  Col,
+  Collapse,
+  Icon,
+  Input,
+  Label,
+  Select,
+} from '@cognite/cogs.js';
+import { SourceSelect } from 'components/Common/SidebarElements';
 
 export const SidebarChip = styled(Label)`
   margin-left: 1em;
@@ -37,4 +46,185 @@ export const SidebarCollapseWrapped = styled(Collapse)`
       margin-bottom: 15px;
     }
   }
+`;
+
+export const FormTitle = styled.h2`
+  &&& {
+    font-size: 18px;
+    font-weight: 600;
+  }
+`;
+
+export const FormInput = styled(Input)`
+  &&& {
+    margin-bottom: 1em;
+  }
+`;
+
+export const FormSelect = styled(Select)`
+  &&& {
+    margin-bottom: 1em;
+  }
+`;
+
+export const FormSelectColor = styled(SourceSelect)`
+  &&& {
+    margin-bottom: 1em;
+  }
+`;
+
+export const FieldTitle = styled.div`
+  &&& {
+    font-weight: 600;
+    margin-bottom: 0.5em;
+  }
+`;
+
+export const FieldTitleInfo = styled(FieldTitle)`
+  &&&:after {
+    content: '?';
+    color: white;
+    background: #3f56b5;
+    border-radius: 60%;
+    padding: 0em 0.25em;
+    margin-left: 0.5em;
+    position: relative;
+    font-size: 0.8em;
+  }
+`;
+
+export const FieldTitleRequired = styled(FieldTitle)`
+  &&&:after {
+    content: '*';
+    margin-left: 2px;
+    color: var(--cogs-midorange-1);
+  }
+`;
+
+export const FieldHelperText = styled(Col)`
+  &&& {
+    position: relative;
+    top: -14px;
+    font-size: 90%;
+  }
+`;
+
+export const NotificationBox = styled.div`
+  &&& {
+    margin: 0.8em 0em;
+  }
+`;
+
+export const NotificationEmail = styled.span`
+  &&& {
+    font-weight: 600;
+  }
+`;
+
+export const FullWidthButton = styled(Button)`
+  &&& {
+    width: 100%;
+  }
+`;
+
+export const InfoBoxHeadingContainer = styled.div`
+  font-weight: bold;
+  margin-bottom: 1em;
+`;
+
+export const InfoBoxHeadingIcon = styled(Icon)`
+  postion: relative;
+  top: -10px;
+  color: #fff;
+  border-radius: 50%;
+  padding: 0.2em 0.2em;
+  width: 1.5em;
+  height: 1.2em;
+  margin-right: 0.8em;
+`;
+
+export const InfoBoxHeadingIconRed = styled(InfoBoxHeadingIcon)`
+  background: var(--cogs-text-icon--status-critical);
+`;
+
+export const InfoBoxHeadingIconSuccess = styled(InfoBoxHeadingIcon)`
+  background: var(--cogs-green);
+`;
+
+export const StyledError = styled.div`
+  margin-top: 1em;
+  padding: 1em;
+  background: rgba(223, 64, 55, 0.06);
+  border: 1px solid rgba(223, 66, 55, 0.2);
+  border-radius: 8px;
+`;
+
+export const StyledSuccess = styled.div`
+  margin-top: 1em;
+  padding: 1em;
+  background: rgba(57, 162, 99, 0.1);
+  border: 1px solid rgba(57, 162, 99, 0.2);
+  border-radius: 8px;
+`;
+
+export const ClientCredentialsWrapper = styled.div`
+  &&& {
+    padding: 1em;
+    margin-bottom: 1em;
+    background: var(--cogs-greyscale-grey2);
+    border-radius: 8px;
+  }
+`;
+
+export const ClientCredentialsWrapperError = styled(StyledError)`
+  &&& {
+    margin-bottom: 1em;
+  }
+`;
+
+export const ClientCredentialsWrapperSuccess = styled(StyledSuccess)`
+  &&& {
+    margin-bottom: 1em;
+  }
+`;
+
+export const Divider = styled.div`
+  &&& {
+    margin-bottom: 1em;
+    text-align: center;
+  }
+`;
+
+export const DividerText = styled.span`
+  &&& {
+    width: 50px;
+    background: white;
+    position: relative;
+    padding: 0 10px;
+    font-weight: 600;
+  }
+`;
+
+export const Line = styled.div`
+  &&& {
+    width: 100%;
+    border-bottom: 1px solid lightgray;
+    position: relative;
+    top: 12px;
+  }
+`;
+
+export const SuccessContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  position: relative;
+  top: -3em;
+  background: white;
+`;
+export const SuccessIconContainer = styled.div`
+  text-align: center;
+  width: 200px;
+  height: 100px;
 `;

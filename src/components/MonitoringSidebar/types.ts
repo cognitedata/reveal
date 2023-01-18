@@ -3,7 +3,6 @@ export type MonitoringChannel = {
   id: string;
   monitoringTasks: number;
   granularity: number;
-  frequency: number;
 };
 
 export type CreateMonitoringJobStates =
@@ -66,8 +65,32 @@ export type CreateMonitoringTaskFormData = {
   evaluateEvery: number;
   minimumDurationType: { label: string; value: string };
   minimumDuration: number;
-  useCdfCredentials: true;
+  useCdfCredentials: boolean;
   clientSecret: string;
   clientId: string;
   folder: undefined | { label: string; value: string };
+};
+
+export type MonitoringTask = {
+  id: number;
+  externalId: string;
+  channelId: number;
+  interval: number;
+  overlap: number;
+  model: {
+    externalId: string;
+    granularity: string;
+    threshold: number;
+    timeseriesId: number;
+  };
+};
+
+export type MonitoringFolderTasks = {
+  folderExtID: string;
+  tasks: MonitoringTask[];
+  count: number;
+};
+
+export type MonitoringFolderTasksListPayload = {
+  items: MonitoringFolderTasks[];
 };
