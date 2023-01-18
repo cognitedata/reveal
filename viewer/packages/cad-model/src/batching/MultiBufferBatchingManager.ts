@@ -16,25 +16,47 @@ import { GeometryBufferUtils } from '../utilities/GeometryBufferUtils';
 import { getShaderMaterial } from '../utilities/getShaderMaterial';
 import { DrawCallBatchingManager } from './DrawCallBatchingManager';
 
+/**
+ * Maps all the instances(by and id: string) that a sector has to a SectorInstanceData that point to underlying batches
+ */
 type SectorBatch = {
   instanceBatches: Map<string, SectorInstanceData>;
 };
 
+/**
+ * Contains information of a specific instance in a specific sector.
+ * batchBuffer is a reference to the underlying buffer, and batchId
+ * is a reference to the position and size of the data within the underlying DefragmentedBuffer
+ */
 type SectorInstanceData = {
   batchBuffer: BatchBuffer;
   batchId: number;
   instanceCount: number;
 };
 
+/**
+ * References all the underlying data buffers for a specific instance
+ */
 type InstanceBatch = {
   buffers: BatchBuffer[];
 };
 
+/**
+ * Structure containing the DefragmentedBuffer (where the data is actually stored), and the mesh
+ * which uses this buffer.
+ */
 type BatchBuffer = {
   mesh: InstancedMesh;
   buffer: DynamicDefragmentedBuffer<Uint8Array>;
 };
 
+/**
+ * The objective of this class is to batch together instances
+ * of the same type from different sectors.
+ * This is done to reduce the number of draw calls that have to be issued during rendering.
+ * Essentially this works by allocating n (numberOfInstanceBatches) buffers for each unique instanced type
+ * and continually filling / ejecting data from those buffers when new sectors are added / removed.
+ */
 export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   private readonly _sectorBatches: Map<number, SectorBatch>;
   private readonly _instanceBatches: Map<string, InstanceBatch>;
