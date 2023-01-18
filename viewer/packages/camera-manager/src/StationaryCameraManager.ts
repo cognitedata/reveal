@@ -144,7 +144,7 @@ export class StationaryCameraManager implements CameraManager {
 
   setFOV(fov: number): void {
     this._camera.fov = THREE.MathUtils.clamp(fov, this._minFOV, this._defaultFOV);
-    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
   }
 
   update(_: number, boundingBox: THREE.Box3): void {
