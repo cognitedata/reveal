@@ -23,7 +23,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
   const { t } = useTranslation('SolutionPublishVersionModal');
   const [version, setVersion] = useState(props.suggestedVersion);
   const [keepCurrentVersion, setKeepCurrentVersion] = useState(
-    !props.breakingChanges
+    !props.breakingChanges && props.versionType !== 'FIRST'
   );
   const [error, setError] = useState('');
 
