@@ -12,6 +12,7 @@ export const transformEquipmentToRaw = (
       key: getRawDataElemKey({
         unitId,
         typeName,
+        equipmentId,
         elemConfigKey: elem.config.key,
       }),
       columns: {
@@ -37,6 +38,7 @@ export const transformEquipmentToRaw = (
             unitId,
             typeName,
             componentType,
+            equipmentId,
             circuitId: component.circuitId,
             elemConfigKey: elem.config.key,
           }),
@@ -63,15 +65,17 @@ export const getRawDataElemKey = ({
   unitId,
   typeName,
   componentType,
+  equipmentId,
   circuitId,
   elemConfigKey,
 }: {
   unitId: string;
   typeName: string;
   componentType?: string;
+  equipmentId: string;
   circuitId?: string;
   elemConfigKey: string;
 }) =>
   componentType
     ? `${unitId}_${typeName}_${componentType}_${circuitId}_${elemConfigKey}`
-    : `${unitId}_${typeName}_${elemConfigKey}`;
+    : `${unitId}_${typeName}_${equipmentId}_${elemConfigKey}`;

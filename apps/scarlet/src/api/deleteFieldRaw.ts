@@ -9,6 +9,7 @@ export const deleteFieldRaw = async ({
   client,
   detection,
   equipment,
+  equipmentId,
   facility,
   unitId,
   dataElement,
@@ -16,6 +17,7 @@ export const deleteFieldRaw = async ({
   client: CogniteClient;
   detection: Detection;
   equipment: EquipmentData;
+  equipmentId: string;
   facility: Facility;
   unitId: string;
   dataElement: DataElement;
@@ -49,6 +51,7 @@ export const deleteFieldRaw = async ({
     unitId,
     typeName,
     componentType,
+    equipmentId,
     circuitId,
     elemConfigKey: elemToDelete.config.key,
   });

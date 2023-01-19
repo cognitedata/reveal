@@ -84,6 +84,7 @@ export const DataSource = ({
           client,
           detection,
           equipment: appState.equipment.data!,
+          equipmentId: appState.equipmentId,
           facility: appState.facility!,
           unitId: appState.unitId,
           dataElement,
