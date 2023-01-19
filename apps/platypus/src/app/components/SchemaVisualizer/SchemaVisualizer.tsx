@@ -216,6 +216,7 @@ export const SchemaVisualizer = React.memo(
           </NodeWrapper>
         );
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [active, links, showHeaderOnly]
     );
 

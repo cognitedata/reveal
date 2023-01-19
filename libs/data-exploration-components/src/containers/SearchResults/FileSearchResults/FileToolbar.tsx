@@ -23,9 +23,6 @@ export const FileToolbar = ({
   totalCount = 0,
 }: {
   onFileClicked?: (file: FileInfo) => boolean;
-  isHaveParent?: boolean;
-  isGroupingFilesEnabled?: boolean;
-  relatedResourceType?: RelatedResourceType;
   allowEdit?: boolean;
   showCount?: boolean;
   loadedCount?: number;

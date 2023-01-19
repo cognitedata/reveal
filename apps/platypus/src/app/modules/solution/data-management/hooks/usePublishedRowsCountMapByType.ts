@@ -48,6 +48,7 @@ export const usePublishedRowsCountMapByType = ({
       try {
         const result = await dataManagementHandler.fetchPublishedRowsCount(dto);
         return result.getValue();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (errResponse: any) {
         const error = errResponse.error;
         Notification({

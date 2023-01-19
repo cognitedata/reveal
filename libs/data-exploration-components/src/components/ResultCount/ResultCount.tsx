@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-prop-types */
 import React from 'react';
 import {
   useSearch,
@@ -18,7 +19,7 @@ import {
 import { Model3D } from '@cognite/sdk';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
-type ResultProps = {
+export type ResultProps = {
   api: 'list' | 'search';
   type: ResourceType;
   filter?: any;

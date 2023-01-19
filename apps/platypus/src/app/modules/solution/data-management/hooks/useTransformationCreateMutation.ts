@@ -30,6 +30,7 @@ export default function useTransformationCreateMutation() {
 
   return useMutation<
     DataModelTransformation,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
     TransformationCreateMutationDTO
   >(
@@ -86,6 +87,7 @@ export default function useTransformationCreateMutation() {
           dataModel: dataModelExternalId,
         });
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (error: any) => {
         errorLogger.log(error);
         Notification({ type: 'error', message: error.message });

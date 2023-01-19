@@ -34,9 +34,6 @@ export const EventSearchResults = ({
   query?: string;
   filter?: InternalEventsFilters;
   showCount?: boolean;
-  showRelatedResources?: boolean;
-  relatedResourceType?: RelatedResourceType;
-  parentResource?: ResourceItem;
   enableAdvancedFilters?: boolean;
   onClick: (item: CogniteEvent) => void;
   selectedRow?: Record<string | number, boolean>;

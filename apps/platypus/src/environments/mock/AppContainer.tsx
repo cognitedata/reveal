@@ -5,7 +5,6 @@ import { AuthContainerMock } from './AuthContainerMock';
 import '@cognite/cogs.js/dist/cogs.css';
 
 type AppContainerProps = {
-  sidecar?: unknown;
   store: Store;
   children: React.ReactNode;
 };

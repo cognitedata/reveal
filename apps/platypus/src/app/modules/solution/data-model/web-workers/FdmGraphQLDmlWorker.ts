@@ -13,6 +13,12 @@ import {
   HoverProviderService,
 } from './language-service';
 
+type LocationTypeDefInfo = {
+  name: string;
+  kind: 'type' | 'field';
+  typeName: string;
+};
+
 export class FdmGraphQLDmlWorker {
   private _ctx: worker.IWorkerContext;
   private codeCompletionService: CodeCompletionService;
@@ -20,10 +26,7 @@ export class FdmGraphQLDmlWorker {
 
   private lastValidGraphQlSchema: string | null = null;
   private dataModelTypeDefs: DataModelTypeDefs | null = null;
-  private locationTypeDefMap = {} as Record<
-    string,
-    { name: string; kind: 'type' | 'field'; typeName: string }
-  >;
+  private locationTypeDefMap = {} as Record<string, LocationTypeDefInfo>;
 
   constructor(
     ctx: worker.IWorkerContext,
@@ -91,7 +94,10 @@ export class FdmGraphQLDmlWorker {
         this.lastValidGraphQlSchema
       );
 
-      const parsedLocationTypeDefMap = {} as Record<string, any>;
+      const parsedLocationTypeDefMap = {} as Record<
+        string,
+        LocationTypeDefInfo
+      >;
 
       this.dataModelTypeDefs.types.forEach((typeDef) => {
         if (typeDef.location) {

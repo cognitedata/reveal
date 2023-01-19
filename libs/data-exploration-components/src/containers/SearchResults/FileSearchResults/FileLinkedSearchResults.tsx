@@ -119,8 +119,6 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
               <FileGroupingTable
                 query={debouncedQuery}
                 filter={filesFilter}
-                currentView={currentView}
-                setCurrentView={setCurrentView}
                 onItemClicked={(file) => onClick(file)}
               />
             </GroupingTableWrapper>

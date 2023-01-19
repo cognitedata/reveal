@@ -74,8 +74,6 @@ export function RelationshipFileTable({
           </GroupingTableHeader>
           <FileGroupingTable
             data={items}
-            currentView={currentView}
-            setCurrentView={setCurrentView}
             onItemClicked={(file) => onItemClicked(file.id)}
           />
         </GroupingTableContainer>

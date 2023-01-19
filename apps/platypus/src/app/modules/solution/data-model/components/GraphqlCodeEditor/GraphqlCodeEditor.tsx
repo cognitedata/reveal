@@ -38,8 +38,6 @@ type Props = {
   typeDefs: DataModelTypeDefs | null;
   builtInTypes: BuiltInType[];
   externalId: string;
-  space: string;
-  version: string;
   disabled?: boolean;
   onChange: (code: string) => void;
 };

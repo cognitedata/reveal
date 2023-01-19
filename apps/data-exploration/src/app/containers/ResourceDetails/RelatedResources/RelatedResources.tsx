@@ -173,7 +173,6 @@ export const RelatedResources = ({
           <LinkedResourceTable
             isGroupingFilesEnabled={isGroupingFilesEnabled}
             enableAdvancedFilter={isAdvancedFiltersEnabled}
-            excludeParentResource
             parentResource={parentResource}
             type={type}
             {...props}

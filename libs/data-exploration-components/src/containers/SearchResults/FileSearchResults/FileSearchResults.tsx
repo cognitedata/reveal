@@ -62,8 +62,6 @@ export const FileSearchResults = ({
       showCount={showCount}
       loadedCount={items.length}
       totalCount={itemCount}
-      isHaveParent={Boolean(parentResource)}
-      relatedResourceType={relatedResourceType}
       onFileClicked={(file) => {
         onClick(file);
         return true;

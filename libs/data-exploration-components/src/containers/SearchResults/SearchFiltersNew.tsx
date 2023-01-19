@@ -46,7 +46,6 @@ export const SearchFiltersNew = ({
 {
   resourceType: ResourceType;
   visible?: boolean;
-  allowHide?: boolean;
 } & Required<ResourceFilterProps> &
   SetResourceFilterProps) => {
   // Re-enable all the commented code when 'all filters' is improved by design.

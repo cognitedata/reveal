@@ -13,7 +13,6 @@ import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { translations } from '@platypus-app/common/i18n';
 
 type AppContainerProps = {
-  sidecar?: unknown;
   store: Store;
   children: React.ReactNode;
 };

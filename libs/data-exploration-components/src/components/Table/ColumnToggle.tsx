@@ -31,9 +31,7 @@ import { MAX_COLUMN_SELECTION } from '@cognite/data-exploration';
 
 export interface ColumnToggleProps<T extends TableData = any> {
   allColumns: () => Column<T, unknown>[];
-  toggleAllColumnsVisible: (visible: boolean) => void;
   onColumnOrderChanged: (updater: Updater<ColumnOrderState>) => void;
-  tableId: string;
   onResetSelectedColumns: () => void;
   columnSelectionLimit?: number;
 }

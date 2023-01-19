@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import {
   DataModelTypeDefs,

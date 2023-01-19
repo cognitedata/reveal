@@ -90,8 +90,6 @@ export const AnnotatedWithTable = ({
           </GroupingTableHeader>
           <FileGroupingTable
             data={items}
-            currentView={currentView}
-            setCurrentView={setCurrentView}
             onItemClicked={(file) => onItemClicked(file.id)}
           />
         </GroupingTableContainer>

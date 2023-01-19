@@ -55,6 +55,24 @@
         "lodash/prefer-is-nil": ["off"],
         "lodash/prefer-get": ["off"],
 
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_"
+          }
+        ],
+        "no-only-tests/no-only-tests": "error"
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": [
+        "plugin:@nrwl/nx/typescript",
+        "plugin:testing-library/react",
+        "plugin:react-hooks/recommended"
+      ],
+      "rules": {
         // Needs to removed one by one
 
         // "@cognite/no-number-z-index": ["off"],
@@ -103,33 +121,10 @@
         "prefer-const": ["off"],
         "prefer-destructuring": ["off"],
         "prefer-exponentiation-operator": ["off"],
-        "prefer-promise-reject-errors": ["off"],
-        "react/function-component-definition": ["off"],
-        "react/jsx-curly-brace-presence": ["off"],
-        "react/jsx-key": ["off"],
-        "react/jsx-no-constructed-context-values": ["off"],
-        "react/jsx-no-useless-fragment": ["off"],
-        "react/no-array-index-key": ["off"],
-        "react/no-unused-prop-types": ["off"],
-        "react/prop-types": ["off"],
-        "react/react-in-jsx-scope": ["off"],
+        "prefer-promise-reject-errors": ["off"]
 
         //
-
-        "@typescript-eslint/no-unused-vars": [
-          "error",
-          {
-            "argsIgnorePattern": "^_",
-            "varsIgnorePattern": "^_"
-          }
-        ],
-        "no-only-tests/no-only-tests": "error"
       }
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
-      "rules": {}
     },
     {
       "files": ["*.tsx"],
@@ -146,7 +141,7 @@
           }
         ],
         "react/jsx-uses-react": "off",
-        "react/react-in-jsx-scope": "off",
+
         "no-param-reassign": [
           "error",
           {
@@ -176,8 +171,19 @@
         "no-shadow": "off",
         "@typescript-eslint/no-shadow": "error",
         "@typescript-eslint/no-non-null-assertion": "off",
-        "react/jsx-no-useless-fragment": "off",
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        //
+
+        "react/function-component-definition": ["off"],
+        "react/jsx-curly-brace-presence": ["off"],
+        "react/jsx-key": ["off"],
+        "react/jsx-no-constructed-context-values": ["off"],
+        "react/jsx-no-useless-fragment": ["off"],
+
+        // "react/no-unused-prop-types": ["error"],
+        "react/prop-types": ["off"],
+        "react/react-in-jsx-scope": ["off"]
+        //
       }
     },
     {

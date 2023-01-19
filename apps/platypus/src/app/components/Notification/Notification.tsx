@@ -44,8 +44,8 @@ export const Notification = ({
         }}
       >
         <ul>
-          {validationErrors.map((err, idx) => (
-            <li key={idx}>{err.message}</li>
+          {validationErrors.map((err) => (
+            <li key={err.message}>{err.message}</li>
           ))}
         </ul>
       </div>

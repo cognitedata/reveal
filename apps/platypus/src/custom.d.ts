@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /** This is the built in way how to load the web workers using webpack is with worker-loader
  * https://v4.webpack.js.org/loaders/worker-loader/#integrating-with-typescript
  * https://v4.webpack.js.org/loaders/worker-loader/#cross-origin-policy

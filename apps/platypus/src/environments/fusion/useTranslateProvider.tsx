@@ -13,6 +13,7 @@ export const useTranslateProvider = (namespace: string) => {
         ...options,
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

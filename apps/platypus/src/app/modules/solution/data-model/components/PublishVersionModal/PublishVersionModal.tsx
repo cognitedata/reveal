@@ -81,6 +81,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
     }
 
     setError('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [version, t, isFDMV3, props.publishedVersions]);
 
   return (

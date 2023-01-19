@@ -20,7 +20,6 @@ export const LinkedResourceTable = ({
   enableAdvancedFilter,
 }: // ...selectionMode
 {
-  excludeParentResource?: boolean;
   type: ResourceType;
   isGroupingFilesEnabled?: boolean;
   enableAdvancedFilter?: boolean;

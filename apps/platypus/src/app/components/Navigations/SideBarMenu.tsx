@@ -2,6 +2,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { Icon, IconType, Tooltip } from '@cognite/cogs.js';
 import * as S from './elements';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
+import uniqueId from 'lodash/uniqueId';
 
 export type SideBarItem = {
   icon: IconType;
@@ -70,7 +71,7 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
                 content={item.tooltip}
                 arrow={false}
                 delay={250}
-                key={`${item.slug}-${index}`}
+                key={`${item.slug}-${uniqueId()}`}
               >
                 {renderIcon(item)}
               </Tooltip>

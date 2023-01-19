@@ -68,7 +68,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     return () => {
       clearState();
     };
-  }, []);
+  }, [clearState]);
 
   const { t } = useTranslation('DataPreview');
   const doesSupportRead = useCapabilities('transformationsAcl', [

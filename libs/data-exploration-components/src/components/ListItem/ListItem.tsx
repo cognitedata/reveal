@@ -6,6 +6,7 @@ import { lightGrey } from '@data-exploration-components/utils';
 type WrapperProps = {
   selected?: boolean;
   bordered?: boolean;
+  // eslint-disable-next-line react/no-unused-prop-types
   isClickable?: boolean;
 };
 

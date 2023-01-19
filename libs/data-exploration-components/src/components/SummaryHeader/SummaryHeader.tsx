@@ -12,7 +12,6 @@ interface SummaryHeaderProps {
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
-  children?: React.ReactElement;
 }
 export function SummaryHeader({
   icon,

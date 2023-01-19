@@ -9,8 +9,6 @@ type FileGroupingTableProps = {
   data?: FileInfo[];
   query?: string;
   filter?: InternalFilesFilters;
-  currentView: string;
-  setCurrentView: (view: string) => void;
   onItemClicked: (file: any) => void;
 };
 

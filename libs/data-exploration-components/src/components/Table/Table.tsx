@@ -434,8 +434,6 @@ export function Table<T extends TableData>({
                 columnSelectionLimit={columnSelectionLimit}
                 onColumnOrderChanged={setColumnOrder}
                 allColumns={getAllLeafColumns}
-                toggleAllColumnsVisible={handleToggleAllVisibility}
-                tableId={id}
                 onResetSelectedColumns={handleResetSelectedColumns}
               />
             </StyledFlex>

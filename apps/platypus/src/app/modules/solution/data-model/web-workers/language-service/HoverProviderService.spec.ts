@@ -2,6 +2,8 @@ import { DOCUMENTATION_LINK } from './constants';
 import { HoverProviderService } from './HoverProviderService';
 import { LocationTypesMap } from './types';
 
+// keep it here, in case if the test needs to be updated, you will need this schema to regenerate the test data bellow
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const graphQlSchemaMock = `
 interface Describable {
   name: String
