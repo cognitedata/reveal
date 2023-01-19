@@ -57,7 +57,6 @@ export const useCreateMonitoringJob = () => {
   return useMutation(
     async (payload: CreateMonitoringTaskPayload) => {
       await sdk.get('/api/v1/token/inspect');
-
       const response = await sdk
         .post<SessionAPIResponse>(
           `apps/v1/projects/${sdk.project}/charts/monitoring/monitoringTasks`,
@@ -68,6 +67,7 @@ export const useCreateMonitoringJob = () => {
         .then(({ data }) => {
           return data;
         });
+
       return response;
     },
     {

@@ -6,6 +6,7 @@ import { Button, Select, toast } from '@cognite/cogs.js';
 import { makeDefaultTranslations } from 'utils/translations';
 import { delay, head } from 'lodash';
 import styled from 'styled-components';
+import { CogniteError } from '@cognite/sdk';
 import { useCreateMonitoringFolder, useMonitoringFolders } from './hooks';
 
 const defaultTranslations = makeDefaultTranslations(
@@ -40,9 +41,13 @@ const MonitoringFolderSelect: React.FC<Props> = ({
 
   useEffect(() => {
     if (createMonitoringJobError) {
-      toast.error(createMonitoringJobErrorText, {
-        toastId: 'create-monitoring-job-error',
-      });
+      const allErrors: CogniteError =
+        createMonitoringJobErrorMsg as CogniteError;
+      const messages = allErrors
+        .toJSON()
+        .message.errors.map((err: any) => err.message)
+        .join(',');
+      toast.error(`${createMonitoringJobErrorText} ${messages}`);
     }
   }, [
     createMonitoringJobError,
@@ -62,7 +67,7 @@ const MonitoringFolderSelect: React.FC<Props> = ({
   ) => {
     if (name !== '') {
       createMonitoringJob({
-        folderExternalID: `charts-folder-${name}`,
+        folderExternalID: `${name}`,
         folderName: `${name}`,
       });
       e.preventDefault();
@@ -94,7 +99,11 @@ const MonitoringFolderSelect: React.FC<Props> = ({
     injectInputChangeListener();
   }, []);
 
-  const showCreateButton = name.length > 0;
+  const showCreateButton =
+    !folderList?.find((folder) => {
+      return folder.name === name;
+    }) && name.length > 0;
+
   return (
     <Controller
       control={control}

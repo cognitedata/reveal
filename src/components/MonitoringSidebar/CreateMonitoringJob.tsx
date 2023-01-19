@@ -7,8 +7,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { head } from 'lodash';
 import { useUserInfo } from 'hooks/useUserInfo';
+import { CogniteError } from '@cognite/sdk';
 import { FormTitle } from './elements';
 import CreateMonitoringJobStep1 from './CreateMonitoringJobStep1';
+import CreateMonitoringJobStep2 from './CreateMonitoringJobStep2';
+import CreateMonitoringJobStep3 from './CreateMonitoringJobStep3';
 
 import { useCreateMonitoringJob, useCreateSessionNonce } from './hooks';
 import {
@@ -55,6 +58,7 @@ const CreateMonitoringJob = ({
     data: _createMonitoringJobData,
     mutate: createMonitoringJob,
     isError: createMonitoringJobError,
+    error: createMonitoringJobErrorData,
   } = useCreateMonitoringJob();
 
   const [step, setStep] = useState(1);
@@ -202,16 +206,27 @@ const CreateMonitoringJob = ({
       setStep(step + 1);
     }
     if (createMonitoringJobError) {
-      toast.error(t['Unable to create monitoring job']);
+      const allErrors: CogniteError =
+        createMonitoringJobErrorData as CogniteError;
+      const messages = allErrors
+        .toJSON()
+        .message.errors.map((err: any) => err.message)
+        .join(',');
+      const builtInMessage = t['Unable to create monitoring job'];
+      toast.error(`${builtInMessage} ${messages}`);
       setFormStatus('READY');
     }
-  }, [createMonitoringJobError, createMonitoringJobSuccess]);
+  }, [
+    createMonitoringJobError,
+    createMonitoringJobSuccess,
+    createMonitoringJobErrorData,
+  ]);
 
-  /* const formDataProcessing = [
+  const formDataProcessing = [
     'NONCE_CREATING',
     'NONCE_CREATED_DATA_SUBMITTED',
     'NONCE_CREATED',
-  ].includes(formStatus); */
+  ].includes(formStatus);
 
   const renderSteps = (): JSX.Element => {
     return (
@@ -223,17 +238,17 @@ const CreateMonitoringJob = ({
             onNext={onNext}
           />
         )}
-        {/* step === 2 && (
+        {step === 2 && (
           <CreateMonitoringJobStep2
             existingFormData={steppedFormValues}
             onBack={onBack}
             onNext={onNext}
             isFormSubmitting={formDataProcessing}
           />
-        ) */}
-        {/* step === 3 && (
+        )}
+        {step === 3 && (
           <CreateMonitoringJobStep3 onViewMonitoringJob={onViewMonitoringJob} />
-        ) */}
+        )}
       </>
     );
   };
