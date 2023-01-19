@@ -1,10 +1,17 @@
 import { SearchRequestOptions } from 'domain/documents/service/network/searchDocument';
 import { LIMIT_WELLBORES_NUMBER } from 'domain/wells/constants';
+import { useWellInspectSelectedWellboresExternalIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboresExternalIds';
 
-import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
+import isEmpty from 'lodash/isEmpty';
 
-export const useRelatedDocumentsFilter = () => {
-  const wellboreIds = useWellInspectSelectedWellboreIds();
+import { EMPTY_OBJECT } from 'constants/empty';
+
+export const useRelatedDocumentsFilter = (): SearchRequestOptions => {
+  const assetExternalIds = useWellInspectSelectedWellboresExternalIds();
+
+  if (isEmpty(assetExternalIds)) {
+    return EMPTY_OBJECT;
+  }
 
   const relatedDocumentFilters: SearchRequestOptions = {
     filter: {
@@ -12,7 +19,7 @@ export const useRelatedDocumentsFilter = () => {
         {
           containsAny: {
             property: ['assetExternalIds'],
-            values: wellboreIds.slice(0, LIMIT_WELLBORES_NUMBER),
+            values: assetExternalIds.slice(0, LIMIT_WELLBORES_NUMBER),
           },
         },
       ],
