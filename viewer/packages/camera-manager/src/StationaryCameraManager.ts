@@ -164,13 +164,13 @@ export class StationaryCameraManager implements CameraManager {
     this._stopEventTrigger.dispose();
   }
 
-  private readonly enableDragging = (_: PointerEvent) => {
+  private enableDragging(_: PointerEvent) {
     this._isDragging = true;
-  };
+  }
 
-  private readonly disableDragging = (_: PointerEvent) => {
+  private disableDragging(_: PointerEvent) {
     this._isDragging = false;
-  };
+  }
 
   private readonly onPointerUp = (event: PointerEvent) => {
     const eventIndex = this._downEventCache.findIndex(downEvent => event.pointerId === downEvent.pointerId);
@@ -190,7 +190,7 @@ export class StationaryCameraManager implements CameraManager {
     this.rotateCamera(event);
   };
 
-  private readonly rotateCamera = (event: PointerEvent) => {
+  private rotateCamera(event: PointerEvent) {
     if (!this._isDragging) {
       return;
     }
@@ -206,9 +206,9 @@ export class StationaryCameraManager implements CameraManager {
     this._camera.quaternion.setFromEuler(euler);
 
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
-  };
+  }
 
-  private readonly pinchCamera = (moveEvent: PointerEvent) => {
+  private pinchCamera(moveEvent: PointerEvent) {
     if (this._downEventCache.length < 2) {
       return;
     }
@@ -239,7 +239,7 @@ export class StationaryCameraManager implements CameraManager {
     if (screenSize > 0) {
       this.setFOV(this._camera.fov - (distanceDelta * 100) / screenSize);
     }
-  };
+  }
 
   private readonly zoomCamera = (event: WheelEvent) => {
     const sensitivityScaler = 0.05;
