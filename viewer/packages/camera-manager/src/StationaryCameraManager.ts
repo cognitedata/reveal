@@ -27,6 +27,7 @@ export class StationaryCameraManager implements CameraManager {
   private readonly _minFOV: number;
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private _isDragging = false;
+  private _downEventCache: Array<PointerEvent> = [];
 
   constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
     this._domElement = domElement;
@@ -70,18 +71,18 @@ export class StationaryCameraManager implements CameraManager {
     this._camera.aspect = cameraManager.getCamera().aspect;
     this._camera.updateProjectionMatrix();
 
-    this._domElement.addEventListener('pointermove', this.rotateCamera);
-    this._domElement.addEventListener('pointerdown', this.enableDragging);
-    this._domElement.addEventListener('pointerup', this.disableDragging);
-    this._domElement.addEventListener('pointerout', this.disableDragging);
+    this._domElement.addEventListener('pointerup', this.onPointerUp);
+    this._domElement.addEventListener('pointerdown', this.onPointerDown);
+    this._domElement.addEventListener('pointermove', this.onPointerMove);
+    this._domElement.addEventListener('pointerout', this.onPointerOut);
     this._domElement.addEventListener('wheel', this.zoomCamera);
   }
 
   deactivate(): void {
-    this._domElement.removeEventListener('pointermove', this.rotateCamera);
-    this._domElement.removeEventListener('pointerdown', this.enableDragging);
-    this._domElement.removeEventListener('pointerup', this.disableDragging);
-    this._domElement.removeEventListener('pointerout', this.disableDragging);
+    this._domElement.removeEventListener('pointerup', this.onPointerUp);
+    this._domElement.removeEventListener('pointerdown', this.onPointerDown);
+    this._domElement.removeEventListener('pointermove', this.onPointerMove);
+    this._domElement.removeEventListener('pointerout', this.onPointerOut);
     this._domElement.removeEventListener('wheel', this.zoomCamera);
   }
 
@@ -165,6 +166,26 @@ export class StationaryCameraManager implements CameraManager {
     this._isDragging = false;
   };
 
+  private readonly onPointerUp = (event: PointerEvent) => {
+    this.removeCachedEvent(event);
+    this.disableDragging(event);
+  };
+
+  private readonly onPointerDown = (event: PointerEvent) => {
+    this._downEventCache.push(event);
+    this.enableDragging(event);
+  };
+
+  private readonly onPointerMove = (event: PointerEvent) => {
+    this.pinchCamera(event);
+    this.rotateCamera(event);
+  };
+
+  private readonly onPointerOut = (event: PointerEvent) => {
+    this.removeCachedEvent(event);
+    this.disableDragging(event);
+  };
+
   private readonly rotateCamera = (event: PointerEvent) => {
     if (!this._isDragging) {
       return;
@@ -181,6 +202,36 @@ export class StationaryCameraManager implements CameraManager {
     this._camera.quaternion.setFromEuler(euler);
 
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
+  };
+
+  private readonly pinchCamera = (moveEvent: PointerEvent) => {
+    if (this._downEventCache.length < 2) {
+      return;
+    }
+
+    const getEuclideanDistance = (eventOne: PointerEvent, eventTwo: PointerEvent): number => {
+      const dx = eventOne.clientX - eventTwo.clientX,
+        dy = eventOne.clientY - eventTwo.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    const preMoveDistance = getEuclideanDistance(this._downEventCache[0], this._downEventCache[1]);
+    const downEventIndex = this._downEventCache.findIndex(event => event.pointerId === moveEvent.pointerId);
+    const preMoveEvent = this._downEventCache[downEventIndex];
+    this._downEventCache[downEventIndex] = moveEvent;
+    const postMoveDistance = getEuclideanDistance(this._downEventCache[0], this._downEventCache[1]);
+    const distanceDelta = postMoveDistance - preMoveDistance;
+
+    // To stop FOV stuttering we only update if the
+    // change in distance is above a small threshold.
+    const sensitivityThreshold = 1.0;
+    if (Math.abs(distanceDelta) < sensitivityThreshold) {
+      this._downEventCache[downEventIndex] = preMoveEvent;
+      return;
+    }
+
+    const fovScale = 0.1;
+    this.setFOV(this._camera.fov - distanceDelta * fovScale);
   };
 
   private readonly zoomCamera = (event: WheelEvent) => {
@@ -220,5 +271,12 @@ export class StationaryCameraManager implements CameraManager {
     const unitForward = new THREE.Vector3(0, 0, -1);
     unitForward.applyQuaternion(this._camera.quaternion);
     return unitForward.add(this._camera.position);
+  }
+
+  private removeCachedEvent(event: PointerEvent): void {
+    const eventIndex = this._downEventCache.findIndex(downEvent => event.pointerId === downEvent.pointerId);
+    if (eventIndex > -1) {
+      this._downEventCache.splice(eventIndex, 1);
+    }
   }
 }
