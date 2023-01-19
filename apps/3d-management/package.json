@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-3d-management",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "private": true,
   "scripts": {
     "start": "cross-env BROWSER=none WDS_SOCKET_PORT=3033 WDS_SOCKET_HOST=localhost PORT=3033 HTTPS=true SKIP_PREFLIGHT_CHECK=true rescripts start",
@@ -23,7 +23,7 @@
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
     "@cognite/react-feature-flags": "^0.0.2",
     "@cognite/reveal": "^4.0.0",
-    "@cognite/sdk": "^6.3.1",
+    "@cognite/sdk": "^7.14.0",
     "@cognite/sdk-provider": "^1.0.0",
     "@cognite/sdk-react-query-hooks": "^6.0.2",
     "@cognite/z-index": "^0.1.0",
