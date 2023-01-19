@@ -383,7 +383,10 @@ export function Table<T extends TableData>({
                           alignItems="center"
                           gap={4}
                         >
-                          <Body level={3}>
+                          <Body
+                            level={3}
+                            style={{ width: cell.column.getSize() }}
+                          >
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()

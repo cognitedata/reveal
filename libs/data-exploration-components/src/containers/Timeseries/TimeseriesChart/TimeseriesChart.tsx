@@ -265,7 +265,7 @@ export const TimeseriesChart = ({
       </ParentSize>
 
       <SpacedRow>
-        {!disableStep && (
+        {!disableStep && timeOptions.length > 0 && (
           <>
             {(timeOptionShortcut || []).map((shortcut: TimeOptions) => (
               <Button
