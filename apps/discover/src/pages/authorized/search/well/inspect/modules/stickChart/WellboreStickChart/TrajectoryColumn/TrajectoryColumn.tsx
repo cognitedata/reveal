@@ -74,7 +74,7 @@ export const TrajectoryColumn: React.FC<
     }, [trajectoryCurves]);
 
     if (!selectedCurve) {
-      return null;
+      return <div {...dragHandleProps} />;
     }
 
     return (
