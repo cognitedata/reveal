@@ -74,8 +74,8 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement.addEventListener('pointerdown', this.onPointerDown);
     this._domElement.addEventListener('pointermove', this.onPointerMove);
     this._domElement.addEventListener('wheel', this.zoomCamera);
-    // The handler for pointerup is used for the pointercancel, pointerout and pointerleave events,
-    //  since these four events have the same semantics in this application.
+    // The handler for pointerup is used for the pointercancel, pointerout
+    // and pointerleave events, as these have the same semantics.
     this._domElement.addEventListener('pointerup', this.onPointerUp);
     this._domElement.addEventListener('pointerout', this.onPointerUp);
     this._domElement.addEventListener('pointercancel', this.onPointerUp);
