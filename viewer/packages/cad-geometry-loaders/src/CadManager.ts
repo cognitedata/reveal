@@ -96,6 +96,11 @@ export class CadManager {
         sectorNode.add(sector.group);
       }
       sectorNode.updateGeometry(sector.group, sector.levelOfDetail);
+
+      if (sector.group) {
+        cadModel.setModelRenderLayers(sectorNode.group);
+      }
+
       this.markNeedsRedraw();
     };
 
