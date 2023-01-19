@@ -7,7 +7,6 @@ import styled from 'styled-components';
 
 import { UPLOAD_MODAL_WIDTH } from 'utils/constants';
 import { getContainer, trimFileExtension } from 'utils/utils';
-import { useCSVUpload } from 'hooks/csv-upload';
 import { useActiveTableContext } from 'contexts';
 
 import Modal from 'components/Modal/Modal';
@@ -16,6 +15,7 @@ import CreateTableModalPrimaryKeyStep from 'components/CreateTableModal/CreateTa
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 import Dropzone from 'components/Dropzone/Dropzone';
 import { useTranslation } from 'common/i18n';
+import { DEFAULT_FILE_PROPS, useUpload } from 'hooks/upload';
 
 interface UploadCsvProps {
   setCSVModalVisible(value: boolean, tableChanged?: boolean): void;
@@ -29,29 +29,33 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     useState<PrimaryKeyMethod>();
 
   const { database, table } = useActiveTableContext();
+
   const {
     uploadPercentage,
     columns,
-    isUpload,
-    isUploadCompleted,
-    isUploadFailed,
-    isParsing,
     onConfirmUpload,
-  } = useCSVUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
+    isUploadError,
+    isUploadInProgress,
+    isUploadSuccess,
+    uploadStatus,
+  } = useUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
 
-  const onCancelUpload = () => {
-    if (file && isParsing && !isUploadCompleted) {
+  const handleCancel = () => {
+    if (file && isUploadInProgress) {
       notification.info({
         message: t('file-upload-notification_cancel'),
         key: 'file-upload',
       });
     }
-    setCSVModalVisible(false, isUpload);
+    setCSVModalVisible(false, uploadStatus && uploadStatus !== 'in-progress');
   };
 
   const onOk = () => {
-    if (isUploadCompleted) setCSVModalVisible(false, true);
-    else onConfirmUpload(database, table);
+    if (isUploadSuccess || isUploadError) {
+      setCSVModalVisible(false, true);
+    } else {
+      onConfirmUpload?.(database, table);
+    }
   };
 
   const selectPrimaryKeyMethod =
@@ -62,9 +66,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     };
 
   const fileProps = {
-    name: 'file',
-    accept: '.csv',
-    multiple: false,
+    ...DEFAULT_FILE_PROPS,
     handleManualRemove() {
       setFile(undefined);
     },
@@ -74,46 +76,49 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   };
 
   const okButtonProps = {
-    loading: isUpload,
-    disabled: !file || isUpload,
+    loading: isUploadInProgress,
+    disabled: !uploadStatus || uploadStatus === 'in-progress',
   };
 
-  const okText = isUploadCompleted
-    ? t('file-upload-modal-button-ok')
-    : t('file-upload-modal-button-add');
-  const isStepAddFile = !file;
-  const isStepChooseColumn = file && !(isUpload || isUploadCompleted);
-  const isStepUpload = file && (isUpload || isUploadCompleted);
+  const okText =
+    uploadStatus === 'error' || uploadStatus === 'success'
+      ? t('file-upload-modal-button-ok')
+      : t('file-upload-modal-button-add');
 
   const renderModalContent = () => {
-    if (isStepAddFile) return <Dropzone {...fileProps} />;
-    if (isStepUpload)
-      return (
-        <CreateTableModalUploadStep
-          fileName={file?.name ? trimFileExtension(file.name) : ''}
-          isUploadFailed={isUploadFailed}
-          isUploadCompleted={isUploadCompleted}
-          onCancel={onCancelUpload}
-          progression={uploadPercentage}
-        />
-      );
-    if (isStepChooseColumn)
-      return (
-        <CreateTableModalPrimaryKeyStep
-          columns={columns}
-          selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
-          selectPrimaryKeyMethod={selectPrimaryKeyMethod}
-          selectedColumnIndex={selectedColumnIndex}
-          selectColumnAsPrimaryKey={(index: number) =>
-            setSelectedColumnIndex(index)
-          }
-        />
-      );
+    switch (uploadStatus) {
+      case undefined:
+        return <Dropzone {...fileProps} />;
+      case 'ready':
+        return (
+          <CreateTableModalPrimaryKeyStep
+            columns={columns}
+            selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
+            selectPrimaryKeyMethod={selectPrimaryKeyMethod}
+            selectedColumnIndex={selectedColumnIndex}
+            selectColumnAsPrimaryKey={(index: number) =>
+              setSelectedColumnIndex(index)
+            }
+          />
+        );
+      case 'in-progress':
+      case 'error':
+      case 'success':
+        return (
+          <CreateTableModalUploadStep
+            fileName={file?.name ? trimFileExtension(file.name) : ''}
+            isUploadError={isUploadError}
+            isUploadSuccess={isUploadSuccess}
+            onCancel={handleCancel}
+            progression={uploadPercentage}
+          />
+        );
+    }
   };
 
   const footer = (
     <StyledModalFooter>
-      <Button type="ghost" onClick={onCancelUpload}>
+      <Button type="ghost" onClick={handleCancel}>
         {t('cancel')}
       </Button>
       <Button type="primary" onClick={onOk} {...okButtonProps}>
@@ -127,7 +132,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
       visible
       title={<Title level={5}>{t('file-upload-modal-title')}</Title>}
       onOk={onOk}
-      onCancel={onCancelUpload}
+      onCancel={handleCancel}
       getContainer={getContainer}
       width={UPLOAD_MODAL_WIDTH}
       footer={footer}

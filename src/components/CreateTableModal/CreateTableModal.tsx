@@ -6,9 +6,10 @@ import { notification } from 'antd';
 import { useFormik } from 'formik';
 import styled from 'styled-components';
 
+import { Trans, useTranslation } from 'common/i18n';
+import { useUpload } from 'hooks/upload';
 import { useCreateTable } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
-import { useCSVUpload } from 'hooks/csv-upload';
 import { trimFileExtension } from 'utils/utils';
 import { CREATE_TABLE_MODAL_WIDTH } from 'utils/constants';
 
@@ -17,7 +18,6 @@ import Modal, { ModalProps } from 'components/Modal/Modal';
 import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
 import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
 import CreateTableModalUploadStep from './CreateTableModalUploadStep';
-import { Trans, useTranslation } from 'common/i18n';
 
 export enum CreateTableModalStep {
   CreationMode = 'creationMode',
@@ -42,7 +42,6 @@ type CreateTableFormValues = {
 type CreateTableModalProps = {
   databaseName: string;
   tables: RawDBTable[];
-  onReset: () => void;
 } & Omit<ModalProps, 'children' | 'onOk' | 'title' | 'width'>;
 
 const CreateTableModal = ({
@@ -50,7 +49,6 @@ const CreateTableModal = ({
   onCancel,
   tables,
   visible,
-  onReset,
   ...modalProps
 }: CreateTableModalProps): JSX.Element => {
   const { t } = useTranslation();
@@ -73,12 +71,13 @@ const CreateTableModal = ({
 
   const {
     columns,
-    isParsing,
-    isUploadFailed,
-    isUploadCompleted,
     onConfirmUpload,
     uploadPercentage,
-  } = useCSVUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
+    isUploadError,
+    isUploadInProgress,
+    isUploadSuccess,
+    uploadStatus,
+  } = useUpload(file, selectedPrimaryKeyMethod, selectedColumnIndex);
 
   const { errors, handleBlur, handleChange, handleSubmit, values, resetForm } =
     useFormik<CreateTableFormValues>({
@@ -103,7 +102,7 @@ const CreateTableModal = ({
       !(selectedColumnIndex >= 0));
 
   function handleCancel(): void {
-    if (file && isParsing && !isUploadCompleted) {
+    if (file && isUploadInProgress) {
       notification.info({
         message: t('create-table-modal-file-upload-notification_cancel'),
         key: 'file-upload',
@@ -124,7 +123,7 @@ const CreateTableModal = ({
         onSuccess: () => {
           if (selectedCreationMode === CreationMode.Upload) {
             setCreateTableModalStep(CreateTableModalStep.Upload);
-            onConfirmUpload(databaseName, values.tableName);
+            onConfirmUpload?.(databaseName, values.tableName);
           } else {
             notification.success({
               message: t('table-created-notification_success', {
@@ -195,39 +194,40 @@ const CreateTableModal = ({
   }
 
   function renderCreateTableModalStep(): JSX.Element | undefined {
-    if (createTableModalStep === CreateTableModalStep.CreationMode) {
-      return (
-        <CreateTableModalCreationModeStep
-          isCreatingTable={isCreatingTable}
-          selectedCreationMode={selectedCreationMode}
-          selectCreationMode={selectCreationMode}
-          setFile={selectFile}
-        />
-      );
-    }
-    if (createTableModalStep === CreateTableModalStep.PrimaryKey) {
-      return (
-        <CreateTableModalPrimaryKeyStep
-          columns={columns}
-          selectedColumnIndex={selectedColumnIndex}
-          selectColumnAsPrimaryKey={(index: number) =>
-            setSelectedColumnIndex(index)
-          }
-          selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
-          selectPrimaryKeyMethod={selectPrimaryKeyMethod}
-        />
-      );
-    }
-    if (createTableModalStep === CreateTableModalStep.Upload) {
-      return (
-        <CreateTableModalUploadStep
-          fileName={file?.name ? trimFileExtension(file.name) : ''}
-          isUploadFailed={isUploadFailed}
-          isUploadCompleted={isUploadCompleted}
-          onCancel={handleCancel}
-          progression={uploadPercentage}
-        />
-      );
+    switch (uploadStatus) {
+      case undefined:
+        return (
+          <CreateTableModalCreationModeStep
+            isCreatingTable={isCreatingTable}
+            selectedCreationMode={selectedCreationMode}
+            selectCreationMode={selectCreationMode}
+            setFile={selectFile}
+          />
+        );
+      case 'ready':
+        return (
+          <CreateTableModalPrimaryKeyStep
+            columns={columns}
+            selectedColumnIndex={selectedColumnIndex}
+            selectColumnAsPrimaryKey={(index: number) =>
+              setSelectedColumnIndex(index)
+            }
+            selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
+            selectPrimaryKeyMethod={selectPrimaryKeyMethod}
+          />
+        );
+      case 'in-progress':
+      case 'error':
+      case 'success':
+        return (
+          <CreateTableModalUploadStep
+            fileName={file?.name ? trimFileExtension(file.name) : ''}
+            isUploadError={isUploadError}
+            isUploadSuccess={isUploadSuccess}
+            onCancel={handleCancel}
+            progression={uploadPercentage}
+          />
+        );
     }
   }
 
@@ -241,7 +241,7 @@ const CreateTableModal = ({
                 {t('cancel')}
               </StyledCancelButton>
             ) : (
-              (isUploadCompleted || isUploadFailed) && (
+              (isUploadSuccess || isUploadError) && (
                 <Button onClick={handleCancel} type="primary">
                   {t('create-table-modal-button-ok')}
                 </Button>
@@ -274,10 +274,6 @@ const CreateTableModal = ({
         title={<Title level={5}>{t('create-table-modal-title')}</Title>}
         visible={visible}
         {...modalProps}
-        afterClose={() => {
-          modalProps?.afterClose && modalProps.afterClose();
-          onReset();
-        }}
         width={CREATE_TABLE_MODAL_WIDTH}
       >
         {createTableModalStep !== CreateTableModalStep.Upload && (

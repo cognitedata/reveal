@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { Body, Button, Colors, Overline } from '@cognite/cogs.js';
+import { Body, Button, Colors, Icon, Overline } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { CustomIcon } from 'components/CustomIcon';
 import Message, { MessageType } from 'components/Message/Message';
 import {
   SIDE_PANEL_TRANSITION_DURATION,
@@ -13,28 +12,28 @@ import { useTranslation } from 'common/i18n';
 
 type CreateTableModalUploadStepProps = {
   fileName?: string;
-  isUploadFailed?: boolean;
-  isUploadCompleted?: boolean;
   onCancel: () => void;
   progression?: number;
+  isUploadError?: boolean;
+  isUploadSuccess?: boolean;
 };
 
 const CreateTableModalUploadStep = ({
   fileName,
-  isUploadFailed = false,
-  isUploadCompleted = false,
   onCancel,
   progression = 0,
+  isUploadError,
+  isUploadSuccess,
 }: CreateTableModalUploadStepProps): JSX.Element => {
   const { t } = useTranslation();
-  const percentage = isUploadCompleted ? 100 : progression;
+  const percentage = isUploadSuccess ? 100 : progression;
 
   let messageContent = t('create-table-modal-file-upload-message_ongoing');
   let messageType: MessageType = 'info';
-  if (isUploadFailed) {
+  if (isUploadError) {
     messageContent = t('create-table-modal-file-upload-message_error');
     messageType = 'error';
-  } else if (isUploadCompleted) {
+  } else if (isUploadSuccess) {
     messageContent = t('create-table-modal-file-upload-message_success');
     messageType = 'success';
   }
@@ -43,10 +42,7 @@ const CreateTableModalUploadStep = ({
     <>
       <Message message={messageContent} type={messageType} />
       <StyledUploadStepWrapper>
-        <CustomIcon
-          icon="DocumentIcon"
-          style={{ height: 40, marginRight: 16 }}
-        />
+        <StyledDocumentIcon type="Document" size={40} />
         <StyledProgressionWrapper>
           <StyledProgressionInfo>
             <StyledFileName level={3} strong>
@@ -58,18 +54,23 @@ const CreateTableModalUploadStep = ({
           </StyledProgressionInfo>
           <StyledProgressionBarWrapper>
             <StyledProgressionBar
-              $isUploadCompleted={isUploadCompleted}
+              $isUploadSuccess={isUploadSuccess}
               $percentage={percentage}
             />
           </StyledProgressionBarWrapper>
         </StyledProgressionWrapper>
-        {!isUploadCompleted && !isUploadFailed && (
+        {!isUploadSuccess && !isUploadError && (
           <StyledCloseButton icon="Close" onClick={onCancel} type="ghost" />
         )}
       </StyledUploadStepWrapper>
     </>
   );
 };
+
+const StyledDocumentIcon = styled(Icon)`
+  color: ${Colors['border--muted']};
+  margin-right: 16px;
+`;
 
 const StyledUploadStepWrapper = styled.div`
   align-items: center;
@@ -109,11 +110,11 @@ const StyledProgressionBarWrapper = styled.div`
 `;
 
 const StyledProgressionBar = styled.div<{
-  $isUploadCompleted: boolean;
+  $isUploadSuccess?: boolean;
   $percentage: number;
 }>`
-  background-color: ${({ $isUploadCompleted }) =>
-    $isUploadCompleted ? '#2E8551' : Colors['bg-status-small--accent'].hex()};
+  background-color: ${({ $isUploadSuccess }) =>
+    $isUploadSuccess ? '#2E8551' : Colors['bg-status-small--accent'].hex()};
   border-radius: 4px;
   height: 8px;
   transition: width ${SIDE_PANEL_TRANSITION_DURATION}s

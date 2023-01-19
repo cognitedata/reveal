@@ -5,9 +5,10 @@ import { RawDB } from '@cognite/sdk/';
 import styled from 'styled-components';
 
 import { RawExplorerContext } from 'contexts';
-import { useAllTables } from 'hooks/sdk-queries';
+import { useAllTables, useTableRows } from 'hooks/sdk-queries';
 
 import SidePanelDatabaseListItemTooltip from './SidePanelDatabaseListItemTooltip';
+import { useActiveTable } from 'hooks/table-tabs';
 
 type SidePanelDatabaseListItemProps = {
   name: string;
@@ -73,9 +74,18 @@ const SidePanelDatabaseListItem = ({
 }: SidePanelDatabaseListItemProps): JSX.Element => {
   const { setSelectedSidePanelDatabase } = useContext(RawExplorerContext);
 
-  const { data, hasNextPage } = useAllTables({
-    database: name,
-  });
+  const [[activeDatabase, activeTable] = []] = useActiveTable();
+  const { isFetched, isError } = useTableRows(
+    { database: activeDatabase!, table: activeTable!, pageSize: 100 },
+    { enabled: !!activeDatabase && !!activeTable }
+  );
+
+  const { data, hasNextPage } = useAllTables(
+    {
+      database: name,
+    },
+    { enabled: isFetched || isError || !activeDatabase || !activeTable }
+  );
 
   const tables = useMemo(
     () =>
