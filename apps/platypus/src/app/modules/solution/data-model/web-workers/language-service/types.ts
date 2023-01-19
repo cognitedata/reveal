@@ -46,6 +46,12 @@ export enum CompletionItemInsertTextRule {
   InsertAsSnippet = 4,
 }
 
+/** We can not use the ones from Monaco, so this are the exact same one from there */
+export enum MarkerSeverity {
+  Warning = 4,
+  Error = 8,
+}
+
 export type CompletionItem = {
   label: string;
   kind: CompletionItemKind;
@@ -79,12 +85,63 @@ export type LocationTypesMap = Record<
   { name: string; kind: 'type' | 'field'; typeName: string }
 >;
 
+export type CodeEditorRange = {
+  /**
+   * Line number on which the range starts (starts at 1).
+   */
+  readonly startLineNumber: number;
+  /**
+   * Column on which the range starts in line `startLineNumber` (starts at 1).
+   */
+  readonly startColumn: number;
+  /**
+   * Line number on which the range ends.
+   */
+  readonly endLineNumber: number;
+  /**
+   * Column on which the range ends in line `endLineNumber`.
+   */
+  readonly endColumn: number;
+};
+
 export type HoverItem = {
   content: string;
-  range: {
-    startLineNumber: number;
-    startColumn: number;
-    endLineNumber: number;
-    endColumn: number;
-  };
+  range: CodeEditorRange;
+};
+
+/** Item returned from DiagnosticsAdapter (MarkerData) */
+export type DiagnosticItem = {
+  startLineNumber: number;
+  startColumn: number;
+  endLineNumber: number;
+  endColumn: number;
+  message: string;
+  // eslint-disable-next-line
+  code?: string | any;
+  source?: string;
+};
+
+export type CodeActionsOptions = {
+  lineCount: number;
+  lastLineLength: number;
+};
+
+export type CodeActionEditItem = {
+  range: CodeEditorRange;
+  text: string;
+};
+export type CodeActionEdit = {
+  edits: {
+    edit: CodeActionEditItem;
+  }[];
+};
+
+// Type used by monaco-editor (can not use the one directly in worker)
+// had to create this type
+export type EditorCodeAction = {
+  title: string;
+  diagnostics: DiagnosticItem[];
+  kind: string;
+  edit: CodeActionEdit;
+  isPreferred: boolean;
 };

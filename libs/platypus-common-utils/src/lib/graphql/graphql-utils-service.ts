@@ -18,7 +18,6 @@ import {
   DocumentNode,
   Kind,
 } from 'graphql';
-
 import {
   documentApi,
   DocumentApi,
@@ -29,13 +28,13 @@ import {
   ObjectTypeApi,
   DirectiveApi,
   InputValueApi,
-  field,
 } from 'graphql-extra';
 import {
   validate as validateFromGql,
   ValidationRule,
 } from 'graphql/validation';
 import { validateSDL } from 'graphql/validation/validate';
+
 import { MappingDirectiveValidator } from './validation/MappingDirectiveValidator';
 import { NotSupportedFeaturesRule } from './validation/NotSupportedFeaturesRule';
 import { ViewDirectiveValidator } from './validation/ViewDirectiveValidator';

@@ -43,6 +43,10 @@
             {
               "replace": "apps/platypus/src/environments/cogniteSdk.ts",
               "with": "apps/platypus/src/environments/fusion/cogniteSdk.ts"
+            },
+            {
+              "replace": "apps/platypus/src/environments/useTranslateProvider.tsx",
+              "with": "apps/platypus/src/environments/fusion/useTranslateProvider.tsx"
             }
           ],
           "optimization": false,
@@ -124,6 +128,10 @@
             {
               "replace": "apps/platypus/src/environments/cogniteSdk.ts",
               "with": "apps/platypus/src/environments/fusion/cogniteSdk.ts"
+            },
+            {
+              "replace": "apps/platypus/src/environments/useTranslateProvider.tsx",
+              "with": "apps/platypus/src/environments/fusion/useTranslateProvider.tsx"
             }
           ],
           "optimization": false,

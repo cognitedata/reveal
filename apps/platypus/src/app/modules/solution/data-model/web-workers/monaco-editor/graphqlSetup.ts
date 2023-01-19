@@ -5,7 +5,7 @@ import { config } from '../config';
 import { EditorInstance, WorkerAccessor } from '../types';
 import { WorkerManager } from './workerManager';
 import { FdmGraphQLDmlWorker } from '../FdmGraphQLDmlWorker';
-import { DiagnosticsAdapter } from './language-features';
+import { CodeActionProvider, DiagnosticsAdapter } from './language-features';
 import { DocumentFormattingAdapter } from './language-features/DocumentFormattingAdapter';
 import { CodeCompletionProvider } from './language-features/CodeCompletionProvider';
 import { HoverAdapter } from './language-features/HoverAdapter';
@@ -76,6 +76,12 @@ export const setupGraphql = (
         monaco.languages.registerHoverProvider(
           config.languageId,
           new HoverAdapter(worker)
+        )
+      );
+      providers.push(
+        monaco.languages.registerCodeActionProvider(
+          config.languageId,
+          new CodeActionProvider(worker)
         )
       );
     }

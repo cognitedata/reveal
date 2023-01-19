@@ -9,9 +9,15 @@ import { IFdmGraphQLDmlWorkerOptions } from './types';
 import prettierStandalone from 'prettier/standalone';
 import prettierGraphqlParser from 'prettier/parser-graphql';
 import {
+  CodeActionsService,
   CodeCompletionService,
   HoverProviderService,
 } from './language-service';
+import {
+  CodeActionsOptions,
+  CodeEditorRange,
+  DiagnosticItem,
+} from './language-service/types';
 
 type LocationTypeDefInfo = {
   name: string;
@@ -23,6 +29,7 @@ export class FdmGraphQLDmlWorker {
   private _ctx: worker.IWorkerContext;
   private codeCompletionService: CodeCompletionService;
   private hoverProviderService: HoverProviderService;
+  private codeActionsService: CodeActionsService;
 
   private lastValidGraphQlSchema: string | null = null;
   private dataModelTypeDefs: DataModelTypeDefs | null = null;
@@ -35,6 +42,7 @@ export class FdmGraphQLDmlWorker {
     this._ctx = ctx;
     this.codeCompletionService = new CodeCompletionService();
     this.hoverProviderService = new HoverProviderService();
+    this.codeActionsService = new CodeActionsService();
   }
 
   public async doValidation(graphqlCode: string) {
@@ -153,6 +161,20 @@ export class FdmGraphQLDmlWorker {
       console.error(err);
       return null;
     }
+  }
+
+  public getCodeAction(
+    graphQlCode: string,
+    range: CodeEditorRange,
+    diagnostics: DiagnosticItem[],
+    options: CodeActionsOptions
+  ) {
+    return this.codeActionsService.getCodeActions(
+      graphQlCode,
+      range,
+      diagnostics,
+      options
+    );
   }
 }
 
