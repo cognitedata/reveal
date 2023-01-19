@@ -9,6 +9,7 @@ import Dropzone from 'components/Dropzone/Dropzone';
 import CreateTableModalOption from './CreateTableModalOption';
 import { CreationMode } from './CreateTableModal';
 import { useTranslation } from 'common/i18n';
+import { DEFAULT_FILE_PROPS } from 'hooks/upload';
 
 type CreateTableModalCreationModeStepProps = {
   isCreatingTable: boolean;
@@ -25,13 +26,11 @@ const CreateTableModalCreationModeStep = ({
 }: CreateTableModalCreationModeStepProps): JSX.Element => {
   const { t } = useTranslation();
   const fileProps = {
-    accept: '.csv',
+    ...DEFAULT_FILE_PROPS,
     beforeUpload: () => false,
     handleManualRemove: () => {
       setFile(undefined);
     },
-    multiple: false,
-    name: 'file',
     onChange: (info: UploadChangeParam) => {
       const file = info.fileList[0];
       if (file?.originFileObj) {

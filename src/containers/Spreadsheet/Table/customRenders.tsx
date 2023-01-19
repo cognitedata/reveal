@@ -12,7 +12,6 @@ import {
 
 import ColumnIcon, { COLUMN_ICON_WIDTH } from 'components/ColumnIcon';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { CustomIcon } from 'components/CustomIcon';
 import UploadCSV from 'components/UploadCSV';
 import { useQueryClient } from 'react-query';
 import { rowKey } from 'hooks/sdk-queries';
@@ -88,6 +87,12 @@ const TooltipWrapper = styled.p`
   margin-bottom: 0px;
 `;
 
+const StyledIcon = styled(Icon).attrs({
+  size: 40,
+})`
+  color: ${Colors['border--muted']};
+`;
+
 const Box = styled.div`
   width: 280px;
   padding: 28px;
@@ -100,27 +105,15 @@ const Box = styled.div`
   .cogs-title-5 {
     margin-bottom: 16px;
   }
-  .icon-hover {
-    display: none;
-  }
   .text-icon {
     color: ${Colors['greyscale-grey4'].hex()};
     min-height: 50px;
   }
-  .icon {
-    display: initial;
-  }
   &:hover {
     background-color: ${Colors['midblue-7'].hex()};
     border-color: ${Colors['midblue-3'].hex()};
-    .icon-hover {
-      display: initial;
-    }
-    .icon {
-      display: none;
-    }
-    .text-icon {
-      color: ${Colors['midblue-3'].hex()};
+    ${StyledIcon} {
+      color: ${Colors['border--interactive--hover']};
     }
   }
 `;
@@ -150,11 +143,10 @@ export const EmptyRender = (): JSX.Element => {
       <Flex wrap="wrap" justifyContent="center">
         <Box onClick={() => setCSVModalVisible(true)}>
           <p style={{ height: 50 }}>
-            <CustomIcon className="icon" icon="DocumentIconDisabled" />
-            <CustomIcon className="icon-hover" icon="DocumentIconHover" />
+            <StyledIcon type="Document" />
           </p>
           <Title level={5}>
-            {t('spreadsheet-table-empty-button-upload-csv')}
+            {t('spreadsheet-table-empty-button-upload-file')}
           </Title>
           <Button icon="Upload" iconPlacement="right" type="primary">
             {t('spreadsheet-table-empty-button-add-data')}
@@ -167,7 +159,7 @@ export const EmptyRender = (): JSX.Element => {
         >
           <Box>
             <p className="text-icon">
-              <Icon size={40} type="Code" />
+              <StyledIcon type="Code" />
             </p>
             <Title level={5}>
               <Flex alignItems="center" justifyContent="center">
