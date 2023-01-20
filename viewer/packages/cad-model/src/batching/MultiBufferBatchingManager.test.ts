@@ -4,9 +4,10 @@
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import * as THREE from 'three';
 import { Mock } from 'moq.ts';
-import { Materials } from '@reveal/rendering';
+import { Materials, StyledTreeIndexSets } from '@reveal/rendering';
 import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
 import sum from 'lodash/sum';
+import { IndexSet } from '@reveal/utilities';
 
 describe(MultiBufferBatchingManager.name, () => {
   let geometryGroup: THREE.Group;
@@ -15,7 +16,13 @@ describe(MultiBufferBatchingManager.name, () => {
   beforeEach(() => {
     geometryGroup = new THREE.Group();
     const materials = new Mock<Materials>().object();
-    manager = new MultiBufferBatchingManager(geometryGroup, materials, 1024, numberOfInstanceBuffers);
+    const styledIndexSets: StyledTreeIndexSets = {
+      back: new IndexSet(),
+      ghost: new IndexSet(),
+      inFront: new IndexSet(),
+      visible: new IndexSet()
+    };
+    manager = new MultiBufferBatchingManager(geometryGroup, materials, styledIndexSets, 1024, numberOfInstanceBuffers);
   });
 
   test('batchGeometries() first time adds new geometry to group', () => {
