@@ -46,7 +46,7 @@ export const DocumentNamePreview = ({
             )}
           </DocumentIconWrapper>
 
-          <EllipsisText level={2} strong lines={2}>
+          <EllipsisText level={2} lines={2}>
             <Highlighter
               searchWords={(query || '').split(' ')}
               textToHighlight={fileName || ''}
@@ -65,7 +65,7 @@ export const DocumentNamePreview = ({
           <DocumentIcon file={fileIconMapper[file.mimeType]} />
         )}
       </DocumentIconWrapper>
-      <EllipsisText level={2} strong lines={2}>
+      <EllipsisText level={2} lines={2}>
         <HighlightCell text={fileName} query={query} />
       </EllipsisText>
     </Flex>
