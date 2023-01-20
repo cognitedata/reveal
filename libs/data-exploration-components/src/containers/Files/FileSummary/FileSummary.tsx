@@ -2,6 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import {
   ResourceTableColumns,
+  SummaryCardWrapper,
   Table,
 } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
@@ -77,22 +78,24 @@ export const FileSummary = ({
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'content']);
 
   return (
-    <Table
-      columns={columns}
-      hiddenColumns={hiddenColumns}
-      data={getSummaryCardItems(results)}
-      isDataLoading={isLoading}
-      id="file-summary-table"
-      onRowClick={onRowClick}
-      columnSelectionLimit={2}
-      enableColumnResizing={false}
-      tableHeaders={
-        <SummaryHeader
-          icon="Document"
-          title="Files"
-          onAllResultsClick={onAllResultsClick}
-        />
-      }
-    />
+    <SummaryCardWrapper>
+      <Table
+        columns={columns}
+        hiddenColumns={hiddenColumns}
+        data={getSummaryCardItems(results)}
+        isDataLoading={isLoading}
+        id="file-summary-table"
+        onRowClick={onRowClick}
+        columnSelectionLimit={2}
+        enableColumnResizing={false}
+        tableHeaders={
+          <SummaryHeader
+            icon="Document"
+            title="Files"
+            onAllResultsClick={onAllResultsClick}
+          />
+        }
+      />
+    </SummaryCardWrapper>
   );
 };
