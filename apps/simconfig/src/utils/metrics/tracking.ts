@@ -4,7 +4,7 @@ import type { TrackingEventNames } from './constants';
 
 const metrics = Metrics.create('SIMCONFIG');
 
-const domainsWithDoNotTrack = ['localhost'];
+const domainsWithDoNotTrack = ['localhost', 'dev.fusion.cogniteapp.com'];
 
 const isDoNotTrackDomain = () =>
   domainsWithDoNotTrack.some((doNotTrackDomain) =>

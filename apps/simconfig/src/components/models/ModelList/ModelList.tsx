@@ -40,7 +40,7 @@ export function ModelList({ modelFiles, className }: ModelListProps) {
             }
             role="link"
             to={createLink(
-              `/${project}/simint/model-library/models/${encodeURIComponent(
+              `/simint/model-library/models/${encodeURIComponent(
                 modelFile.metadata.simulator
               )}/${encodeURIComponent(modelFile.metadata.modelName)}`
             )}

@@ -66,20 +66,13 @@ export default function App() {
       // @ts-ignore
       routes={routes(dispatch, client.project)}
     >
-      <FlagProvider
-        apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-        appName="simconfig"
-        projectName={project}
-        disableMetrics
-      >
-        <RoutedAppContainer>
-          <MenuBar />
-          <Content>
-            <ToastContainer />
-            <Outlet />
-          </Content>
-        </RoutedAppContainer>
-      </FlagProvider>
+      <RoutedAppContainer>
+        <MenuBar />
+        <Content>
+          <ToastContainer />
+          <Outlet />
+        </Content>
+      </RoutedAppContainer>
     </Router>
   );
 }

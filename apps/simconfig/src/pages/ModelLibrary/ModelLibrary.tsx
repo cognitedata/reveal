@@ -84,7 +84,7 @@ export function ModelLibrary() {
     const firstFile = modelFileList[0];
     navigate({
       to: createLink(
-        `/${project}/simint/model-library/models/${encodeURIComponent(
+        `/simint/model-library/models/${encodeURIComponent(
           firstFile.source
         )}/${encodeURIComponent(firstFile.metadata.modelName)}`
       ),
@@ -96,7 +96,7 @@ export function ModelLibrary() {
     <ModelLibraryContainer data-cy="model-library-container">
       <ModelLibrarySidebar>
         <div className="new-model">
-          <Link to={createLink(`/${project}/simint/model-library/new-model`)}>
+          <Link to={createLink(`/simint/model-library/new-model`)}>
             <Button
               icon="Add"
               type="secondary"

@@ -39,7 +39,7 @@ export function MenuBar() {
               }),
               onClick: () => {
                 navigate({
-                  to: createLink(`/${project}/simint/model-library`),
+                  to: createLink(`/simint/model-library`),
                 });
               },
             },
@@ -52,7 +52,7 @@ export function MenuBar() {
               onClick: () => {
                 trackUsage(TRACKING_EVENTS.RUN_BROWSER_VIEW, {});
                 navigate({
-                  to: createLink(`/${project}/simint/calculations/runs`),
+                  to: createLink(`/simint/calculations/runs`),
                 });
               },
             },
