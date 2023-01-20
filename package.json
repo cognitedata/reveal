@@ -1,5 +1,6 @@
 {
-  "name": "platypus",
+  "name": "fusion",
+  "description": "This monorepository provides centralized management of Cognite Data Fusion Platform applications and reusable packages.",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

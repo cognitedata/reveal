@@ -2,7 +2,7 @@
   "changelog": true,
   "npm": true,
   "github": false,
-  "repositoryUrl": "https://github.com/cognitedata/platypus",
+  "repositoryUrl": "https://github.com/cognitedata/fusion",
   "branches": [
     "master"
   ]

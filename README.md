@@ -1,9 +1,9 @@
-# Platypus (codename)
+# Fusion
 
 [![Confluence](https://img.shields.io/badge/Confluence-blue)](https://cog.link/devx)
-[![codecov](https://codecov.io/gh/cognitedata/platypus/branch/master/graph/badge.svg?token=ClP7PLfMI8)](https://codecov.io/gh/cognitedata/platypus)
+[![codecov](https://codecov.io/gh/cognitedata/fusion/branch/master/graph/badge.svg?token=ClP7PLfMI8)](https://codecov.io/gh/cognitedata/fusion)
 
-Our aim is to make it easier for application developer to develop app by reducing cost, friction and learning curve for them. Codename Platypus will help us achieve the same.
+This monorepository provides centralized management of Cognite Data Fusion Platform applications and reusable packages.
 
 ## Setup
 
@@ -11,9 +11,7 @@ First, Install Nx with npm:
 
 Make sure the nx is on version 13.x.x!
 
-```
-npm install -g nx
-```
+`npm install -g nx`
 
 Then you can install the node_modules by running
 
@@ -22,18 +20,6 @@ yarn
 ```
 
 _Note: If you're on an Apple M1 machine, make sure your Node version is >= 16_
-
-## Authentication
-
-### UI (quick-start)
-
-Make sure you have access to the `cogniteappdev.onmicrosoft.com` tenant. If not, as #topic-appdev` and someone can add you.
-
-After, visit the staging [URL](http://platypus.staging.cogniteapp.com) and click `Advance Azure options` and enter `cogniteappdev.onmicrosoft.com` as Azure Tenant ID and press **Login with Microsoft Azure** button, after that you will be taken to a page where you need to select **Platypus** as the project and login.
-
-### CLI
-
-See the detailed section for authentication for [more info](./apps/platypus-cdf-cli/LOGIN.md)
 
 ## NX CLI
 
