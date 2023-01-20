@@ -44,13 +44,17 @@ export const useSearchAssetTree = ({
 
   const { data: parentAssets, refetch } = useQuery<
     Record<string, InternalAssetTreeData>
-  >([queryKeys.assets(), 'parent-assets'], () => {
-    return sdkClient.assets
-      .retrieve(parentIds.map((id) => ({ id })))
-      .then((response) => {
-        return keyBy(response, 'id');
-      });
-  });
+  >(
+    [queryKeys.assets(), 'parent-assets'],
+    () => {
+      return sdkClient.assets
+        .retrieve(parentIds.map((id) => ({ id })))
+        .then((response) => {
+          return keyBy(response, 'id');
+        });
+    },
+    { enabled: !!parentIds.length }
+  );
 
   useEffect(() => {
     // We use the 'refetch' function to get the data when new parentIds arrive instead of updating the query key
@@ -68,6 +72,6 @@ export const useSearchAssetTree = ({
       return { data: concatParents(tree), ...rest };
     }
 
-    return { data: [], ...rest };
+    return { data, ...rest };
   }, [parentAssets, data, rest]);
 };
