@@ -11,7 +11,7 @@ export function TimeseriesDetails({ timeseries }: { timeseries: Timeseries }) {
     <GeneralDetails>
       <GeneralDetails.Item
         name="Name"
-        key={timeseries.name}
+        key={`Name${timeseries.name}`}
         value={timeseries.name}
         copyable
       />
@@ -19,12 +19,12 @@ export function TimeseriesDetails({ timeseries }: { timeseries: Timeseries }) {
       <GeneralDetails.Item name="Unit" value={timeseries.unit} />
       <GeneralDetails.Item
         name="ID"
-        key={timeseries.id}
+        key={`ID${timeseries.id}`}
         value={timeseries.id}
         copyable
       />
       <GeneralDetails.Item
-        key={timeseries.externalId}
+        key={`External_ID${timeseries.externalId}`}
         name="External ID"
         value={timeseries.externalId}
         copyable

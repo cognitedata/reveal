@@ -269,6 +269,7 @@ export const TimeseriesChart = ({
           <>
             {(timeOptionShortcut || []).map((shortcut: TimeOptions) => (
               <Button
+                key={shortcut}
                 type="secondary"
                 toggled={timePeriod === shortcut}
                 onClick={() => setTimePeriod(shortcut)}
@@ -293,8 +294,7 @@ export const TimeseriesChart = ({
         {showCustomRangePicker && (
           <RangePicker
             buttonProps={{
-              type: timePeriod ? 'secondary' : 'primary',
-              variant: 'outline',
+              type: 'tertiary',
             }}
             initialRange={presetZoom}
             onRangeChanged={(range) => {

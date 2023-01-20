@@ -94,7 +94,7 @@ export const DatePickerInput = ({
   date: Date;
   onDateChange: (_date: Date) => void;
 } & Omit<ButtonProps, 'ref'>) => (
-  <DatePickerButtonWrapper icon="Calendar" variant="outline" {...props}>
+  <DatePickerButtonWrapper icon="Calendar" type="tertiary" {...props}>
     <ReactDatePicker
       open={false}
       dateFormat="yyyy-MM-dd HH:mm"

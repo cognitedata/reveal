@@ -87,7 +87,9 @@ export const PivotRangePicker = ({
             className="cogs-select__control"
           >
             {options.map((duration) => (
-              <option value={duration.value}>{duration.label}</option>
+              <option value={duration.value} key={duration.value}>
+                {duration.label}
+              </option>
             ))}
           </select>
         </PivotRangeUnit>
@@ -106,8 +108,10 @@ export const PivotRangePicker = ({
           }}
           className="cogs-select__control"
         >
-          {directions.map((direction) => (
-            <option value={direction.value}>{direction.label}</option>
+          {directions.map((directionValue) => (
+            <option value={directionValue.value} key={directionValue.label}>
+              {directionValue.label}
+            </option>
           ))}
         </select>
       </PivotRangeDirection>

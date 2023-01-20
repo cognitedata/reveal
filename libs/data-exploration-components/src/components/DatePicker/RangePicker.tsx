@@ -64,7 +64,7 @@ export const RangePicker = ({
   };
 
   const renderModePicker = () => (
-    <DateModePicker maxHeight={maxHeight} direction="column" gap={8}>
+    <DateModePicker maxheight={maxHeight} direction="column" gap={8}>
       <SegmentedControl
         style={{ marginBottom: 8 }}
         currentKey={mode}
@@ -118,7 +118,7 @@ export const RangePicker = ({
 };
 
 interface DateModePickerProps {
-  readonly maxHeight: number;
+  readonly maxheight: number;
 }
 const DateModePicker = styled(Flex)<DateModePickerProps>`
   border-radius: 8px;
@@ -127,5 +127,5 @@ const DateModePicker = styled(Flex)<DateModePickerProps>`
   overflow: auto;
   background: white;
   width: 375px;
-  max-height: ${(props) => props.maxHeight}px;
+  max-height: ${(props) => props.maxheight}px;
 `;
