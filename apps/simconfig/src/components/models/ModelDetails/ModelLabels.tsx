@@ -122,7 +122,7 @@ export function ModelLabels({
       <LabelsModal isOpen={isOpen} setOpen={setOpen} />
       <LabelsLine>
         {selectedLabels.length > 0 &&
-          selectedLabels.map((label) => (
+          selectedLabels.slice(0, 2).map((label) => (
             <LabelItem key={label.value}>
               {' '}
               <span className="label-name">{label.label}</span>
@@ -205,6 +205,7 @@ export function ModelLabels({
         >
           <AddLabelButton
             icon="Tag"
+            size="large"
             type="ghost"
             onClick={() => {
               const [dropdownInput] = document.querySelectorAll(
@@ -213,27 +214,20 @@ export function ModelLabels({
               inputRef.current = dropdownInput as HTMLInputElement;
               inputRef.current.focus();
             }}
-          >
-            Add label
-          </AddLabelButton>
+          />
         </Dropdown>
       </LabelsLine>
     </ModelLabelsContainer>
   );
 }
 
-const ModelLabelsContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding-right: 25px;
-  margin-bottom: 1em;
-`;
+const ModelLabelsContainer = styled.div``;
 
 const LabelsLine = styled.div`
-  margin-right: 10px;
   width: 80%;
+  margin-right: 0.5em;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-content: center;
   align-self: center;
   vertical-align: center;
@@ -244,7 +238,6 @@ const LabelsLine = styled.div`
 `;
 
 const LabelItem = styled(Label)`
-  margin-bottom: 1em;
   color: #396bd7;
   height: 28px;
   background-color: rgba(64, 120, 240, 0.1);

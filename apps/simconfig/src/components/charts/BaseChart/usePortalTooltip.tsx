@@ -58,11 +58,13 @@ export function usePortalTooltip({
     (event: React.MouseEvent<SVGRectElement>) => {
       const { x } = localPoint(event, event) ?? { x: 0 };
       const xValue = xScale.invert(x - margin.left);
+      // @ts-ignore
       const index = bisect.center(data, xValue);
       const value = getY(data[index]);
       const { left, top } = event.currentTarget.getBoundingClientRect();
       if (cleanupTimeout.current === undefined) {
         cleanupTimeout.current = setTimeout(() => {
+          // @ts-ignore
           const selector = `.${Array.from(event.target.classList).join('.')}`;
           const isHovered = document.querySelector(selector)?.matches(':hover');
           if (!isHovered) {

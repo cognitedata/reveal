@@ -5,12 +5,12 @@ import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
 import { Switch, toast } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 import { useUpsertCalculationMutation } from '@cognite/simconfig-api-sdk/rtk';
 
 import { Editor } from 'components/shared/Editor';
 import { Wizard } from 'components/shared/Wizard';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { DataSamplingStep } from 'pages/CalculationConfiguration/steps/DataSamplingStep';
 import { ScheduleStep } from 'pages/CalculationConfiguration/steps/ScheduleStep';
 import { SummaryStep } from 'pages/CalculationConfiguration/steps/SummaryStep';
@@ -41,7 +41,7 @@ export function CustomCalculationBuilder({
 }: CustomCalculationBuilderProps) {
   const [isJsonModeEnabled, setJsonModeEnabled] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { authState } = useAuthContext();
+  const { data: user } = useUserInfo();
   const [upsertCalculation] = useUpsertCalculationMutation();
 
   function isValidCalculation(str: string): UserDefined | boolean {
@@ -62,7 +62,7 @@ export function CustomCalculationBuilder({
     ) {
       const update = {
         ...(JSON.parse(calculationConfiguration) as UserDefined),
-        userEmail: authState?.email ?? '',
+        userEmail: user?.mail ?? '',
       };
       setCalculation(update);
       setValues(update);

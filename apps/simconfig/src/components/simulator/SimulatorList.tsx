@@ -45,7 +45,6 @@ export function SimulatorList({
                 />
               </div>
             }
-            // eslint-disable-next-line react/no-array-index-key
             key={`${
               simulator.connectorName ?? Math.random()
             }-simulator-list-entry-collapse`}

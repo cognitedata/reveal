@@ -2,21 +2,18 @@ import { useEffect } from 'react';
 import { Outlet, ReactLocation, Router } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import GlobalStyles from 'global-styles';
 import { routes } from 'routes';
 import styled from 'styled-components/macro';
 
 import { Loader, ToastContainer } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
 import { FlagProvider } from '@cognite/react-feature-flags';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { MenuBar } from 'components/Menubar';
 import { useTitle } from 'hooks/useTitle';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { appSlice } from 'store/app';
-import {
-  selectIsAuthenticated,
-  selectIsInitialized,
-} from 'store/app/selectors';
+import { selectIsInitialized } from 'store/app/selectors';
 import { useAppDispatch } from 'store/hooks';
 import { simconfigApiPropertiesSlice } from 'store/simconfigApiProperties';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
@@ -29,8 +26,8 @@ const location = new ReactLocation();
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const { client, authState, reauthenticate } = useAuthContext();
-  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const client = useSDK();
+  const { data: user } = useUserInfo();
   const isInitialized = useSelector(selectIsInitialized);
   const project = useSelector(selectProject);
 
@@ -40,11 +37,7 @@ export default function App() {
   enhanceSimconfigApiEndpoints();
 
   useEffect(() => {
-    if (!client || !authState?.authenticated) {
-      return;
-    }
-
-    identifyUser(authState.email);
+    identifyUser(user?.mail);
 
     dispatch(appSlice.actions.setIsAuthenticated(true));
 
@@ -57,51 +50,37 @@ export default function App() {
     );
 
     dispatch(appSlice.actions.setIsInitialized(true));
-  }, [authState, client, dispatch]);
+  }, [user, client, dispatch]);
 
-  if (!client || !isInitialized) {
-    return null;
-  }
-
-  if (!isAuthenticated && reauthenticate) {
-    const handleReauth = () => {
-      try {
-        reauthenticate();
-      } catch (e) {
-        console.error('Re-authentication failed:', e);
-        window.location.href = '/';
-      }
-    };
-    handleReauth();
+  if (!isInitialized) {
     return null;
   }
 
   return (
-    <>
-      <GlobalStyles />
-      <Router
-        basepath={`/${client.project}`}
-        defaultPendingElement={<Loader />}
-        defaultPendingMs={50}
-        location={location}
-        routes={routes(dispatch, client.project)}
+    <Router
+      basepath={`/${client.project}`}
+      defaultPendingElement={<Loader />}
+      defaultPendingMs={50}
+      location={location}
+      // fusion-migration
+      // @ts-ignore
+      routes={routes(dispatch, client.project)}
+    >
+      <FlagProvider
+        apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+        appName="simconfig"
+        projectName={project}
+        disableMetrics
       >
-        <FlagProvider
-          apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-          appName="simconfig"
-          projectName={project}
-          disableMetrics
-        >
-          <RoutedAppContainer>
-            <MenuBar />
-            <Content>
-              <ToastContainer />
-              <Outlet />
-            </Content>
-          </RoutedAppContainer>
-        </FlagProvider>
-      </Router>
-    </>
+        <RoutedAppContainer>
+          <MenuBar />
+          <Content>
+            <ToastContainer />
+            <Outlet />
+          </Content>
+        </RoutedAppContainer>
+      </FlagProvider>
+    </Router>
   );
 }
 
@@ -115,7 +94,7 @@ function RoutedApp({
 
 const RoutedAppContainer = styled(RoutedApp)`
   display: flex;
-  height: 100vh;
+  height: 100%;
   flex-flow: column nowrap;
 `;
 

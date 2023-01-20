@@ -1,18 +1,26 @@
 import { Link } from 'react-location';
 
+import format from 'date-fns/format';
 import styled from 'styled-components/macro';
 
+import { createLink, getProject } from '@cognite/cdf-utilities';
 import { Graphic } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
-
-import { hashCode } from 'utils/stringUtils';
 
 interface ModelListProps {
   modelFiles: ModelFile[];
   className?: string;
 }
 
+const isModelActive = (modelName: string) => {
+  const encodedModelName = encodeURIComponent(modelName);
+  const path = window.location.pathname;
+  return path.split('/').includes(encodedModelName);
+};
+
 export function ModelList({ modelFiles, className }: ModelListProps) {
+  const project = getProject();
+
   if (!modelFiles.length) {
     return (
       <EmptyState>
@@ -27,21 +35,29 @@ export function ModelList({ modelFiles, className }: ModelListProps) {
       {modelFiles.map((modelFile) => (
         <li key={modelFile.id}>
           <Link
-            getActiveProps={() => ({ className: 'active' })}
+            className={
+              isModelActive(modelFile.metadata.modelName) ? `active` : undefined
+            }
             role="link"
-            to={`/model-library/models/${encodeURIComponent(
-              modelFile.metadata.simulator
-            )}/${encodeURIComponent(modelFile.metadata.modelName)}`}
+            to={createLink(
+              `/${project}/simint/model-library/models/${encodeURIComponent(
+                modelFile.metadata.simulator
+              )}/${encodeURIComponent(modelFile.metadata.modelName)}`
+            )}
           >
             <div className="model">
-              <SimulatorIcon
-                content={modelFile.metadata.simulator.substring(0, 2)}
-                gradientOffset={hashCode(modelFile.metadata.modelName) % 360}
-                role="none"
-              />
               <div className="metadata">
                 <div className="name">{modelFile.metadata.modelName}</div>
-                <div className="version">v{modelFile.metadata.version}</div>
+                <div className="version">
+                  Version {modelFile.metadata.version}
+                </div>
+                <ul>
+                  <li>{modelFile.metadata.simulator}</li>
+                  <li>{modelFile.metadata.unitSystem}</li>
+                  <li>
+                    {format(new Date(modelFile.createdTime), 'yyyy-MM-dd')}
+                  </li>
+                </ul>
               </div>
             </div>
           </Link>
@@ -65,62 +81,41 @@ const ModelListElement = styled.ul`
     padding: 12px;
     transition: all 0.1s ease-out;
     box-shadow: inset 0 0 0 1px var(--cogs-border-default);
+    background: #fafafa;
     &:hover {
       background: var(--cogs-white);
-      box-shadow: inset 0 0 0 2.5px var(--cogs-primary);
+      box-shadow: inset 0 0 0 1px var(--cogs-primary);
     }
     &.active {
-      box-shadow: none;
-      /* box-shadow: inset 0 0 0 1.5px var(--cogs-primary) !important; */
-      background: var(--cogs-midblue-7);
-      color: var(--cogs-text-color);
+      box-shadow: inset 0 0 0 1px var(--cogs-primary);
+      background: rgba(74, 103, 251, 0.08);
     }
     .model {
       display: flex;
       overflow: hidden;
       align-items: center;
       .metadata {
-        flex: 1 1 auto;
-        display: flex;
-        overflow: hidden;
-        padding-left: 12px;
+        color: var(--cogs-text-color-secondary);
         .name {
-          flex: 1 1 auto;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
           font-weight: bold;
+          font-weight: 16px;
+        }
+        ul {
+          padding: 0;
+          margin: 0;
+          display: flex;
+          li {
+            margin: 0;
+            &:not(:last-child) {
+              &::after {
+                content: '•';
+                margin-left: 5px;
+                margin-right: 5px;
+              }
+            }
+          }
         }
       }
-    }
-  }
-`;
-
-interface SimulatorIconProps {
-  content: string;
-  gradientOffset?: number;
-}
-
-const SimulatorIcon = styled.span<SimulatorIconProps>`
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  color: var(--cogs-primary);
-  border: 1px solid var(--cogs-primary);
-  border-radius: var(--cogs-border-radius--default);
-  /* filter: hue-rotate(${(props) => props.gradientOffset ?? 0}deg); */
-  &::after {
-    content: '${(props) => props.content}';
-  }
-  .active & {
-    border-width: 0;
-    /* background: var(--cogs-gradient-midnightblue); */
-    background: var(--cogs-primary);
-    &::after {
-      color: var(--cogs-white);
     }
   }
 `;

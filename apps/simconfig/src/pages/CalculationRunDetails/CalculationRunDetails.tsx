@@ -9,8 +9,8 @@ import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
 import { Button, Collapse, Graphic, Skeleton, toast } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
 import type { CogniteEvent, Sequence } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import type {
   CalculationRunMetadata,
   DefinitionMap,
@@ -31,7 +31,7 @@ import { calculationSchema } from './constants';
 import type { AppLocationGenerics } from 'routes';
 
 export function CalculationRunDetails() {
-  const { client } = useAuthContext();
+  const client = useSDK();
   const project = useSelector(selectProject);
   const {
     params: { runId },

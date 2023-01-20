@@ -1,16 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
-import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
+import { createLink, getProject } from '@cognite/cdf-utilities';
 import { Button, Input, Skeleton } from '@cognite/cogs.js';
 import { useGetModelFileListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelDetails, ModelList } from 'components/models';
 import { capabilitiesSlice } from 'store/capabilities';
 import { useAppDispatch } from 'store/hooks';
-import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
@@ -20,7 +19,8 @@ import type { AppLocationGenerics } from 'routes';
 
 export function ModelLibrary() {
   const dispatch = useAppDispatch();
-  const project = useSelector(selectProject);
+  const project = getProject();
+
   const {
     data: { definitions },
     params: { modelName, simulator },
@@ -83,9 +83,11 @@ export function ModelLibrary() {
   if (!modelName && modelFileList.length > 0) {
     const firstFile = modelFileList[0];
     navigate({
-      to: `/model-library/models/${encodeURIComponent(
-        firstFile.source
-      )}/${encodeURIComponent(firstFile.metadata.modelName)}`,
+      to: createLink(
+        `/${project}/simint/model-library/models/${encodeURIComponent(
+          firstFile.source
+        )}/${encodeURIComponent(firstFile.metadata.modelName)}`
+      ),
       replace: true,
     });
   }
@@ -94,7 +96,7 @@ export function ModelLibrary() {
     <ModelLibraryContainer data-cy="model-library-container">
       <ModelLibrarySidebar>
         <div className="new-model">
-          <Link to="/model-library/new-model">
+          <Link to={createLink(`/${project}/simint/model-library/new-model`)}>
             <Button
               icon="Add"
               type="secondary"
@@ -103,7 +105,7 @@ export function ModelLibrary() {
                 trackUsage(TRACKING_EVENTS.NEW_MODEL, { simulator });
               }}
             >
-              New model
+              Create model
             </Button>
           </Link>
         </div>
@@ -114,7 +116,7 @@ export function ModelLibrary() {
               icon="Search"
               maxLength={64}
               name="modelName"
-              placeholder="Filter by model name"
+              placeholder="Find model name"
               size="small"
               title=""
               fullWidth
@@ -185,6 +187,7 @@ const ModelLibrarySidebar = styled.aside`
     padding: 24px;
     padding-top: 12px;
     overflow: auto;
+    height: 52vh;
   }
 `;
 

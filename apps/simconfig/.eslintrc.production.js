@@ -1,5 +1,9 @@
 module.exports = {
-  ignorePatterns: ['!.eslintrc.js', '!.eslintrc.production.js'],
+  ignorePatterns: [
+    '!.eslintrc.js',
+    '!.eslintrc.production.js',
+    'config-overrides.js',
+  ],
   extends: [
     '../../.eslintrc',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',

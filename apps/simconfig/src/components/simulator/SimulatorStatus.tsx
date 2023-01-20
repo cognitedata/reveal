@@ -105,12 +105,12 @@ const SimulatorStatusContainer = styled.div`
 
 const SimulatorTooltip = styled(Tooltip).attrs(() => ({
   placement: 'bottom-end',
-  theme: 'dark',
+  theme: 'light',
   trigger: 'click',
   elevated: true,
   interactive: true,
 }))`
   .tippy-content {
-    padding: 0;
+    padding: 0 !important;
   }
 `;

@@ -106,7 +106,7 @@ export function CustomCalculationConfiguration() {
     <CustomCalculationBuilder
       calculation={calculation}
       dataSetId={modelFile.dataSetId}
-      modelName={modelName}
+      modelName={modelFile.metadata.modelName}
       project={project}
       setCalculation={setCalculation}
       simulator={simulator}

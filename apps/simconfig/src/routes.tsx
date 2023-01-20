@@ -48,46 +48,38 @@ export function routes(
 ): Route<AppLocationGenerics>[] {
   return [
     {
-      path: 'model-library',
-      loader: async () => ({
-        definitions: (
-          await dispatch(api.endpoints.getDefinitions.initiate({ project }))
-        ).data,
-      }),
-      meta: {
-        title: () => 'Model library',
-      },
+      path: 'simint',
       children: [
         {
-          path: '/',
-          element: <ModelLibrary />,
-        },
-        {
-          path: 'models',
+          path: 'model-library',
+          loader: async () => ({
+            definitions: (
+              await dispatch(api.endpoints.getDefinitions.initiate({ project }))
+            ).data,
+          }),
+          meta: {
+            title: () => 'Model library',
+          },
           children: [
             {
-              path: ':simulator',
+              path: '/',
+              element: <ModelLibrary />,
+            },
+            {
+              path: 'models',
               children: [
                 {
-                  path: ':modelName',
+                  path: ':simulator',
                   children: [
                     {
-                      path: '/',
-                      element: <ModelLibrary />,
-                    },
-                    {
-                      path: 'calculations/:calculationType',
+                      path: ':modelName',
                       children: [
                         {
                           path: '/',
-                          element: <CalculationDetails />,
+                          element: <ModelLibrary />,
                         },
                         {
-                          path: 'configuration',
-                          element: <CalculationConfiguration />,
-                        },
-                        {
-                          path: ':userDefined',
+                          path: 'calculations/:calculationType',
                           children: [
                             {
                               path: '/',
@@ -95,59 +87,72 @@ export function routes(
                             },
                             {
                               path: 'configuration',
-                              element: <CustomCalculationConfiguration />,
+                              element: <CalculationConfiguration />,
+                            },
+                            {
+                              path: ':userDefined',
+                              children: [
+                                {
+                                  path: '/',
+                                  element: <CalculationDetails />,
+                                },
+                                {
+                                  path: 'configuration',
+                                  element: <CustomCalculationConfiguration />,
+                                },
+                              ],
                             },
                           ],
                         },
+                        {
+                          path: ':selectedTab',
+                          element: <ModelLibrary />,
+                        },
                       ],
                     },
-                    {
-                      path: ':selectedTab',
-                      element: <ModelLibrary />,
-                    },
                   ],
+                },
+              ],
+            },
+            {
+              path: 'new-model',
+              element: <NewModel />,
+              meta: {
+                title: () => 'New model',
+              },
+            },
+          ],
+        },
+        {
+          path: 'logout',
+        },
+        {
+          path: 'calculations',
+          loader: async () => ({
+            definitions: (
+              await dispatch(api.endpoints.getDefinitions.initiate({ project }))
+            ).data,
+          }),
+          children: [
+            {
+              path: 'runs',
+              children: [
+                {
+                  path: '/',
+                  element: <CalculationRuns />,
+                },
+                {
+                  path: ':runId',
+                  element: <CalculationRunDetails />,
                 },
               ],
             },
           ],
         },
         {
-          path: 'new-model',
-          element: <NewModel />,
-          meta: {
-            title: () => 'New model',
-          },
+          element: <Navigate to="model-library" replace />,
         },
       ],
-    },
-    {
-      path: 'logout',
-    },
-    {
-      path: 'calculations',
-      loader: async () => ({
-        definitions: (
-          await dispatch(api.endpoints.getDefinitions.initiate({ project }))
-        ).data,
-      }),
-      children: [
-        {
-          path: 'runs',
-          children: [
-            {
-              path: '/',
-              element: <CalculationRuns />,
-            },
-            {
-              path: ':runId',
-              element: <CalculationRunDetails />,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      element: <Navigate to="model-library" replace />,
     },
   ];
 }

@@ -154,84 +154,85 @@ export function ModelDetails({
     <ModelDetailsContainer>
       <div className="header">
         <div className="metadata">
-          <ul>
-            <li>{definitions?.type.simulator[modelFile.metadata.simulator]}</li>
-            <li>
-              {definitions?.type.unitSystem[modelFile.metadata.unitSystem]}
-            </li>
-            {modelFile.metadata.modelType && (
-              <li>{definitions?.type.model[modelFile.metadata.modelType]}</li>
-            )}
-            {!isDeletionInProgress && (
+          <div>
+            <span className="model-name">{modelFile.metadata.modelName}</span>
+            <ul>
               <li>
-                {isDeleteEnabled ? (
-                  <Dropdown
-                    content={
-                      <Menu>
-                        <Menu.Item
-                          onClick={() => {
-                            setShouldShowDeleteConfirmModal(true);
-                          }}
-                        >
-                          <Icon type="Delete" /> Delete model
-                        </Menu.Item>
-                      </Menu>
-                    }
+                {definitions?.type.simulator[modelFile.metadata.simulator]},{' '}
+              </li>
+              <li>
+                {definitions?.type.unitSystem[modelFile.metadata.unitSystem]},
+              </li>
+              {modelFile.metadata.modelType && (
+                <li>{definitions?.type.model[modelFile.metadata.modelType]}</li>
+              )}
+              {isDeletionInProgress ? (
+                <li>
+                  <Label size="medium" variant="danger">
+                    <Icon type="Loader" />
+                    &nbsp;&nbsp; Deletion in progress
+                  </Label>
+                </li>
+              ) : undefined}
+              {modelFile.deletionStatus?.erroredResources?.length ? (
+                <li>
+                  <Label size="large" variant="danger">
+                    Partial deleted model, some of the resources are not deleted
+                  </Label>
+                </li>
+              ) : undefined}
+            </ul>
+          </div>
+
+          {!isDeletionInProgress && isDeleteEnabled ? (
+            <Dropdown
+              content={
+                <Menu>
+                  <Menu.Item
+                    onClick={() => {
+                      setShouldShowDeleteConfirmModal(true);
+                    }}
                   >
-                    <Button
-                      aria-label="Actions"
-                      icon="EllipsisHorizontal"
-                      size="small"
-                    />
-                  </Dropdown>
-                ) : undefined}
-              </li>
-            )}
-            {isDeletionInProgress ? (
-              <li>
-                <Label size="medium" variant="danger">
-                  <Icon type="Loader" />
-                  &nbsp;&nbsp; Deletion in progress
-                </Label>
-              </li>
-            ) : undefined}
-            {modelFile.deletionStatus?.erroredResources?.length ? (
-              <li>
-                <Label size="large" variant="danger">
-                  Partial deleted model, some of the resources are not deleted
-                </Label>
-              </li>
-            ) : undefined}
-          </ul>
-          <h2>
-            <strong>{modelFile.metadata.modelName}</strong>
-          </h2>
-        </div>
-        {!(selectedTab === 'new-version') && (
-          <Link to="../new-version">
-            <Button
-              className="new-version-btn"
-              icon="Add"
-              size="large"
-              type="primary"
-              onClick={() => {
-                trackUsage(TRACKING_EVENTS.NEW_MODEL_VERSION, {
-                  simulator,
-                  modelName: decodeURI(modelName),
-                });
-              }}
+                    <Icon type="Delete" /> Delete model
+                  </Menu.Item>
+                </Menu>
+              }
             >
-              New version
-            </Button>
-          </Link>
-        )}
+              <Button
+                aria-label="Actions"
+                icon="ChevronDown"
+                size="small"
+                type="ghost"
+              />
+            </Dropdown>
+          ) : undefined}
+        </div>
+        <div style={{ display: 'flex' }}>
+          {isLabelsEnabled && (
+            <ModelLabels
+              modelFile={modelFile}
+              refetchModelFiles={refetchModelFiles}
+            />
+          )}
+          {!(selectedTab === 'new-version') && (
+            <Link to="../new-version">
+              <Button
+                icon="Add"
+                size="large"
+                type="primary"
+                onClick={() => {
+                  trackUsage(TRACKING_EVENTS.NEW_MODEL_VERSION, {
+                    simulator,
+                    modelName: decodeURI(modelName),
+                  });
+                }}
+              >
+                New version
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
-      {isLabelsEnabled && (
-        <ModelLabels
-          modelFile={modelFile}
-          refetchModelFiles={refetchModelFiles}
-        />
-      )}
       <Tabs
         activeKey={selectedTab}
         tabBarExtraContent={extraContent[selectedTab] ?? null}
@@ -315,18 +316,22 @@ const ModelDetailsContainer = styled.main`
   flex: 1 1 auto;
   overflow: auto;
   padding: 24px 0 0 24px;
+  height: 20vh;
   .header {
     display: flex;
     justify-content: space-between;
     padding-right: 20px;
-    .new-version-btn {
-      width: 225px;
-    }
     .metadata {
       margin-bottom: 12px;
+      display: flex;
 
       align-items: baseline;
       gap: 12px;
+
+      .model-name {
+        font-weight: bold;
+        font-size: 16px;
+      }
       h2 {
         margin: 0;
         font-size: 36px;
@@ -334,19 +339,16 @@ const ModelDetailsContainer = styled.main`
       ul {
         list-style: none;
         margin: 0;
-        font-weight: bold;
         padding: 0;
         display: flex;
         align-items: center;
-        // gap: 12px;
-        font-size: 10px;
+        font-size: 12px;
         li {
           margin: 0;
+          margin-right: 0.2em;
           padding: 0;
-          text-transform: uppercase;
           &:not(:last-child) {
             &::after {
-              content: '•';
               margin-left: 5px;
               margin-right: 5px;
             }

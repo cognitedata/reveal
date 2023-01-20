@@ -11,7 +11,7 @@ import styled from 'styled-components/macro';
 
 import { AutoComplete, Button } from '@cognite/cogs.js';
 import type { AutoCompleteProps } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
+import { useSDK } from '@cognite/sdk-provider';
 
 import TimeseriesSelectorOption from './TimeSeriesSelectorOption';
 import TimeseriesSelectorOptionContainer from './TimeSeriesSelectorOptionContainer';
@@ -31,6 +31,8 @@ interface TimeSeriesSelectorProps extends AutoCompleteProps {
 
 function MenuList(props: MenuListComponentProps<TimeseriesOption, false>) {
   const { children, selectProps } = props;
+  // fusion-migration
+  // @ts-ignore
   const { MenuListFooter = null } = selectProps.components;
   return (
     <components.MenuList {...props}>
@@ -81,13 +83,10 @@ function TimeseriesSelector({
   const [pagination, setPagination] = useState<number>(10);
   const [queryString, setQueryString] = useState('');
   const [queryResult, setQueryResult] = useState<TimeseriesOption[]>();
-  const { client } = useAuthContext();
+  const client = useSDK();
 
   useEffect(() => {
     const getValue = async () => {
-      if (!client) {
-        return;
-      }
       const item = await getTimeseriesOptionByExternalId(client, value);
       if (item) {
         setSelectedValue(item);
@@ -106,9 +105,6 @@ function TimeseriesSelector({
       setPagination(10);
       if (queryString.length < 2) {
         setQueryResult([]);
-        return;
-      }
-      if (!client) {
         return;
       }
       const result = await timeseriesSearch({

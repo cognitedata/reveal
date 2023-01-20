@@ -1,7 +1,7 @@
 // config here is ONLY for local dev
 window.__cogniteSidecar = {
   // FakeIdp is used for e2e tests fake authentication
-  cdfApiBaseUrl: 'https://azure-dev.cognitedata.com',
+  cdfApiBaseUrl: 'https://westeurope-1.cognitedata.com',
   fakeIdp: [
     {
       roles: [],

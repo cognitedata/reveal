@@ -16,7 +16,6 @@ import {
   Tooltip,
   toast,
 } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
 import { useFlag } from '@cognite/react-feature-flags';
 import type {
   CalculationRun,
@@ -34,6 +33,7 @@ import {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { GraphicContainer } from 'components/shared/elements';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { CalculationDescriptionInfoDrawer } from 'pages/CalculationConfiguration/steps/infoDrawers/CalculationDescriptionInfoDrawer';
 import { selectCapabilities } from 'store/capabilities/selectors';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
@@ -74,7 +74,7 @@ export function CalculationList({
   const [runModelCalculations] = useRunModelCalculationMutation();
   const [deleteModelCalculation, { isSuccess: isDeleteSuccess }] =
     useDeleteModelCalculationMutation();
-  const { authState } = useAuthContext();
+  const { data: user } = useUserInfo();
   const [shouldPoll, setShouldPoll] = useState<boolean>(false);
   const [shouldPollOnDelete, setShouldPollOnDelete] = useState<boolean>(false);
   const [triggeredRuns, setTriggeredRuns] = useState<TriggeredRunInfo>();
@@ -90,12 +90,15 @@ export function CalculationList({
   const capabilities = useSelector(selectCapabilities);
 
   const isDeleteEnabled = useMemo(() => {
-    const deleteFeature = capabilities.capabilities.find(
+    const deleteFeature = capabilities.capabilities?.find(
       (feature) => feature.name === 'Delete'
     );
-    return deleteFeature?.capabilities.every(
-      (capability) => capability.enabled
-    );
+    if (deleteFeature?.capabilities) {
+      return deleteFeature.capabilities.every(
+        (capability) => capability.enabled
+      );
+    }
+    return false;
   }, [capabilities]);
 
   const {
@@ -256,7 +259,7 @@ export function CalculationList({
       externalId: string
     ) =>
     async () => {
-      if (!authState?.email) {
+      if (!user?.mail) {
         toast.error('No user email found, please refresh and try again');
         return;
       }
@@ -272,7 +275,7 @@ export function CalculationList({
         project,
         simulator,
         runModelCalculationRequestModel: {
-          userEmail: authState.email,
+          userEmail: user.mail,
           calculationType: calcType,
           userDefinedType: calcTypeUserDefined,
         },

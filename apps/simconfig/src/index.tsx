@@ -1,45 +1,21 @@
-import * as Sentry from '@sentry/browser';
+/* eslint-disable @typescript-eslint/naming-convention */
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-import ReactDOM from 'react-dom/client';
+import './set-public-path';
+import cdfApp from 'cdfApp';
+import singleSpaReact from 'single-spa-react';
 
-import { Metrics } from '@cognite/metrics';
+const lifecycles = singleSpaReact({
+  React,
+  ReactDOM,
+  rootComponent: cdfApp,
+  // @ts-ignore
+  errorBoundary() {
+    // eslint-disable-line
+    // Customize the root error boundary for your microfrontend here.
+    return <span>An error occured in your app</span>;
+  },
+});
 
-import AppRoot from 'components/app/AppRoot';
-import config from 'utils/config';
-import { logMetadata } from 'utils/logMetadata';
-
-import '@cognite/cogs.js/dist/cogs.css';
-
-import * as serviceWorker from './serviceWorker';
-
-logMetadata();
-
-if (process.env.REACT_APP_SENTRY_DSN) {
-  // Instantiate Sentry project
-  Sentry.init({
-    dsn: process.env.REACT_APP_SENTRY_DSN,
-    // This is populated by the FAS build process. Change it if you want to
-    // source this information from somewhere else.
-    release: process.env.REACT_APP_RELEASE_ID,
-    // This is populated by react-scripts. However, this can be overridden by
-    // the app's build process if you wish.
-    environment: config.env,
-  });
-}
-
-if (process.env.REACT_APP_MIXPANEL_TOKEN) {
-  // Instantiate Mixpanel project
-  Metrics.init({
-    mixpanelToken: process.env.REACT_APP_MIXPANEL_TOKEN || '',
-    debug: process.env.REACT_APP_MIXPANEL_DEBUG === 'true',
-    environment: config.env,
-  });
-}
-
-const root = ReactDOM.createRoot(document.getElementById('root')!);
-root.render(<AppRoot />);
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+export const { bootstrap, mount, unmount } = lifecycles;

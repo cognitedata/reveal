@@ -162,6 +162,32 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
               <Icon type="Document" />
               {modelFile.metadata.fileName}
             </div>
+          </div>
+          <div className="actions">
+            <div className="charts-link">
+              <Button
+                disabled={!boundaryConditions?.chartsUrl}
+                href={boundaryConditions?.chartsUrl}
+                icon="LineChart"
+                size="small"
+                target="_blank"
+                type="link"
+              >
+                View in Charts
+              </Button>
+            </div>
+            <div className="download-link">
+              <Button
+                disabled={isModelFileDownloading}
+                icon="Download"
+                loading={isModelFileDownloading}
+                size="small"
+                type="link"
+                onClick={onDownloadClicked}
+              >
+                Download
+              </Button>
+            </div>
             {Object.keys(additionalMetadata).length ? (
               <div className="more-info">
                 <ModelMetaTooltip
@@ -191,38 +217,10 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
                     onClick={() => {
                       setIsAdditionMetaInfoTooltipEnabled(true);
                     }}
-                  >
-                    More Info{' '}
-                  </Button>
+                  />
                 </ModelMetaTooltip>
               </div>
             ) : undefined}
-          </div>
-          <div className="actions">
-            <div className="charts-link">
-              <Button
-                disabled={!boundaryConditions?.chartsUrl}
-                href={boundaryConditions?.chartsUrl}
-                icon="LineChart"
-                size="small"
-                target="_blank"
-                type="tertiary"
-              >
-                View in Charts
-              </Button>
-            </div>
-            <div className="download-link">
-              <Button
-                disabled={isModelFileDownloading}
-                icon="Download"
-                loading={isModelFileDownloading}
-                size="small"
-                type="primary"
-                onClick={onDownloadClicked}
-              >
-                Download
-              </Button>
-            </div>
           </div>
         </div>
       </ModelVersionProperties>
@@ -261,10 +259,8 @@ const ModelVersionProperties = styled.main`
       }
     }
     .actions {
-      flex: 0 0 auto;
       display: flex;
       align-items: center;
-      gap: 12px;
     }
   }
   .charts-link,

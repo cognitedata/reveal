@@ -7,7 +7,6 @@ import styled from 'styled-components/macro';
 import * as Yup from 'yup';
 
 import { Button, Icon, Infobox, Skeleton, toast } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
 import type {
   AggregateType,
   CalculationTemplate,
@@ -28,6 +27,7 @@ import {
 import { Wizard } from 'components/shared/Wizard';
 import { HEARTBEAT_POLL_INTERVAL } from 'components/simulator/constants';
 import { useTitle } from 'hooks/useTitle';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 
 import { AdvancedStep } from './steps/AdvancedStep';
@@ -42,7 +42,7 @@ import type { AppLocationGenerics } from 'routes';
 import type { ObjectSchema, ValidationError } from 'yup';
 
 export function CalculationConfiguration() {
-  const { authState } = useAuthContext();
+  const { data: user } = useUserInfo();
 
   const project = useSelector(selectProject);
   const {
@@ -202,18 +202,22 @@ export function CalculationConfiguration() {
   return (
     <CalculationConfigurationContainer>
       <header>
-        <h2>
-          <strong>{nameFromConfiguration ?? calculationName}</strong>{' '}
-          Configuration for {modelFile.metadata.modelName}
-        </h2>
-        {isEditing ? (
-          <Link to="..">
-            <Button icon="Info">Calculation details</Button>
-          </Link>
-        ) : null}
-        <Link to={modelLibraryPath}>
-          <Button icon="ArrowLeft">Return to model library</Button>
-        </Link>
+        <div className="header-container">
+          <p>
+            <strong>{nameFromConfiguration ?? calculationName}</strong>{' '}
+            Configuration for {modelFile.metadata.modelName}
+          </p>
+          <div className="header-options">
+            {isEditing ? (
+              <Link to="..">
+                <Button icon="Info">Calculation details</Button>
+              </Link>
+            ) : null}
+            <Link to={modelLibraryPath}>
+              <Button icon="ArrowLeft">Return to model library</Button>
+            </Link>
+          </div>
+        </div>
       </header>
       {modelFile.metadata.modelType ? (
         <Formik
@@ -229,7 +233,7 @@ export function CalculationConfiguration() {
                 dataSetId,
                 calculationTemplateModel: {
                   ...values,
-                  userEmail: authState?.email ?? values.userEmail,
+                  userEmail: user?.mail ?? values.userEmail,
                 },
               }).unwrap();
               toast.success('The calculation was successfully configured.', {
@@ -395,22 +399,27 @@ const CalculationConfigurationContainer = styled.main`
   padding: 24px;
 
   header {
-    display: flex;
+    .header-container {
+      width: calc(100% - 3rem);
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.2em;
+      align-items: center;
+    }
+    .header-options a {
+      margin-right: 1em;
+    }
     align-items: center;
     column-gap: 12px;
     padding: 1.5rem 0;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(5px);
-
     transform: translate(0, 0); // resets position:fixed (x,y) origin
-    width: calc(100% - 3rem);
+    width: 100%;
     position: fixed;
-    top: 3.5rem;
-    z-index: 3;
-
-    > h2 {
-      flex: 1 1 auto;
-    }
+    top: 7rem;
+    padding-bottom: 2.7em;
+    z-index: 8;
   }
 
   .cogs-infobox {
@@ -663,7 +672,8 @@ const getCalculationTemplateSchema = ({
     .defined();
 
   const outputTimeSeries = Yup.array().ensure().defined();
-
+  // fusion-migration
+  // @ts-ignore
   return Yup.object({
     schedule,
     dataSampling,

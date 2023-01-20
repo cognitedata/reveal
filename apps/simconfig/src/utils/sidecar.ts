@@ -16,7 +16,8 @@ const PROD = false;
 
 const CLUSTER: CDFCluster =
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  (process.env.REACT_APP_CLUSTER as CDFCluster) ?? ('azure-dev' as CDFCluster);
+  (process.env.REACT_APP_CLUSTER as CDFCluster) ??
+  ('westeurope-1' as CDFCluster);
 const LOCAL_SERVICE = Boolean(process.env.REACT_APP_LOCAL_SERVICE) || false;
 // #
 // #

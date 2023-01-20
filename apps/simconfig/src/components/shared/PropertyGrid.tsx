@@ -10,7 +10,7 @@ import { getFormattedSciNumber } from 'utils/numberUtils';
 
 export interface PropertyGridProps<T> {
   entries: Record<string, T>;
-  formatEntry?: ({ key, entry }: { key: string; entry: T }) => JSX.Element;
+  formatEntry: ({ key, entry }: { key: string; entry: T }) => JSX.Element;
   sortEntries?: boolean;
 }
 
@@ -30,8 +30,8 @@ export function PropertyGrid<T>({
     <PropertyGridContainer>
       {getEntries().map(([key, entry]) => (
         <React.Fragment key={`property-grid-${key}`}>
+          <dd>{formatEntry({ key, entry })}</dd>
           <dt>{key}</dt>
-          <dd>{formatEntry?.({ key, entry }) ?? entry}</dd>
         </React.Fragment>
       ))}
     </PropertyGridContainer>

@@ -43,11 +43,6 @@ export function ModelVersionList({
 
   return (
     <ModelVersionListContainer>
-      <ModelVersionListHeaderContainer>
-        <div>Version</div>
-        <div>Description</div>
-        <div>Created</div>
-      </ModelVersionListHeaderContainer>
       <Collapse
         defaultActiveKey={
           typeof search.id === 'string'
@@ -60,45 +55,48 @@ export function ModelVersionList({
           <Collapse.Panel
             header={
               <div className="version-header">
-                <span className="version">{modelFile.metadata.version}</span>
-                <span className="description">
-                  {modelFile.metadata.description.length >= 50 ? (
-                    <>
-                      {`${modelFile.metadata.description.slice(0, 50)}…`}
-                      <Tooltip
-                        content={modelFile.metadata.description}
-                        maxWidth={200}
-                      >
-                        <Icon type="Info" />
-                      </Tooltip>
-                    </>
-                  ) : (
-                    modelFile.metadata.description || '(no description)'
-                  )}
-                  {modelFile.metadata.errorMessage && (
-                    <Tooltip content={modelFile.metadata.errorMessage}>
-                      <Label className="error-label" size="small">
-                        <Icon type="Info" />
-                        Error
-                      </Label>
+                <div className="entry">
+                  <div className="description">Version</div>
+                  <div className="value">{modelFile.metadata.version}</div>
+                </div>
+
+                <div className="entry">
+                  <div className="description">Description</div>
+                  <div className="value">
+                    {modelFile.metadata.description.length >= 50 ? (
+                      <>
+                        {`${modelFile.metadata.description.slice(0, 50)}…`}
+                        <Tooltip
+                          content={modelFile.metadata.description}
+                          maxWidth={200}
+                        >
+                          <Icon type="Info" />
+                        </Tooltip>
+                      </>
+                    ) : (
+                      modelFile.metadata.description || '(no description)'
+                    )}
+                  </div>
+                </div>
+
+                <div className="entry">
+                  <div className="description">Created</div>
+                  <div className="value">
+                    <Tooltip
+                      content={formatISO9075(parseISO(modelFile.createdTime))}
+                    >
+                      <>
+                        {formatDistance(
+                          parseISO(modelFile.createdTime),
+                          new Date(),
+                          {
+                            addSuffix: true,
+                          }
+                        )}
+                      </>
                     </Tooltip>
-                  )}
-                </span>
-                <span className="distance">
-                  <Tooltip
-                    content={formatISO9075(parseISO(modelFile.createdTime))}
-                  >
-                    <>
-                      {formatDistance(
-                        parseISO(modelFile.createdTime),
-                        new Date(),
-                        {
-                          addSuffix: true,
-                        }
-                      )}
-                    </>
-                  </Tooltip>
-                </span>
+                  </div>
+                </div>
               </div>
             }
             key={`${modelFile.id}-model-version`}
@@ -111,31 +109,23 @@ export function ModelVersionList({
   );
 }
 
-const ModelVersionListHeaderContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 9fr 3.1fr;
-  padding-top: 13px;
-  padding-bottom: 13px;
-  background-color: #fafafa;
-  margin-bottom: 16px;
-  font-size: 12px;
-  padding-left: 40px;
-  border-bottom: 1px solid #d9d9d9;
-`;
-
 const ModelVersionListContainer = styled.div`
   .version-header {
+    .entry {
+      .description {
+        color: rgba(0, 0, 0, 0.55);
+        font-size: 12px;
+      }
+      .value {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.9);
+      }
+    }
+
     display: grid;
     width: 100%;
     grid-template-columns: 1fr 9fr 3fr;
     color: #333333;
-    .version,
-    .description {
-      font-size: 16px;
-    }
-    .version {
-      font-weight: bold;
-    }
     .error-label {
       border: 2px solid rgba(223, 66, 55, 0.2);
       border-radius: 4px;
@@ -150,14 +140,12 @@ const ModelVersionListContainer = styled.div`
     }
   }
   .rc-collapse-item {
-    background-color: #f5f5f5;
+    background-color: #fafafa;
     border-radius: 8px;
     margin-bottom: 8px;
-    border-top: none;
+    border-top: none !important;
   }
-  .rc-collapse {
-    background-color: transparent;
-  }
+
   .rc-collapse-header {
     padding: 12px !important;
   }

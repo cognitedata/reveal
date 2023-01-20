@@ -1,6 +1,6 @@
 {
-  "name": "@cognite/simconfig-app",
-  "version": "1.5.5",
+  "name": "@cognite/cdf-simint-ui",
+  "version": "1.5.7",
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",
@@ -64,5 +64,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "dependencies": {}
 }

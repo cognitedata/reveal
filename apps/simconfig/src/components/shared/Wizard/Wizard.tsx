@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState } from 'react';
 
 import classNames from 'classnames';
@@ -188,6 +189,7 @@ const WizardContainer = styled.div`
   display: flex;
   flex-flow: column nowrap;
   width: 98%;
+  padding-top: 1.5rem;
 
   .rc-tabs {
     overflow: visible;
@@ -209,8 +211,7 @@ const WizardProgressContainer = styled.div`
   width: calc(100% - 3rem);
   position: fixed;
   z-index: 4;
-  top: 8.75rem;
-  padding-bottom: 1rem;
+  top: 13.5rem;
 `;
 
 const WizardStepIcons = styled.div<{ steps: number; iconSize: number }>`

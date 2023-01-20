@@ -3,12 +3,12 @@ import { useEffect, useReducer } from 'react';
 
 import { format, formatISO9075, sub } from 'date-fns';
 
-import { useAuthContext } from '@cognite/react-container';
 import type {
   CogniteClient,
   CogniteExternalId,
   DatapointAggregate,
 } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import type { AggregateType } from '@cognite/simconfig-api-sdk/rtk';
 
 import type { ScheduleRepeat, ValueOptionType } from './types';
@@ -61,7 +61,7 @@ interface UseTimeseriesProps<
 export function useTimeseries(
   props: UseTimeseriesProps<TimeseriesAggregate[]>
 ) {
-  const { client } = useAuthContext();
+  const client = useSDK();
   const [state, dispatch] = useReducer<
     Reducer<TimeseriesState, TimeseriesAction>
   >(timeseriesReducer, getTimeseriesInitialState());

@@ -7,8 +7,8 @@ import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
 import { Button, Input, Select, toast } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
 import type { DataSet } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import type {
   CreateMetadata,
   DefinitionMap,
@@ -28,9 +28,9 @@ import {
 import { FileInput } from 'components/forms/controls/FileInput';
 import { HEARTBEAT_POLL_INTERVAL } from 'components/simulator/constants';
 import { SimulatorStatusLabel } from 'components/simulator/SimulatorStatusLabel';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { selectCapabilities } from 'store/capabilities/selectors';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
-import { isAuthenticated } from 'utils/authUtils';
 import {
   getFileExtensionFromFileName,
   getSelectEntriesFromMap,
@@ -114,7 +114,8 @@ export function ModelForm({
   const capabilities = useSelector(selectCapabilities);
   const inputFile = useRef<HTMLInputElement>(null);
   const [datasets, setDatasets] = useState<DataSet[]>();
-  const { authState, client } = useAuthContext();
+  const client = useSDK();
+  const { data: user } = useUserInfo();
 
   // state to find which simulator was selected after uploading the model file
   const [selectedSimulator, setSelectedSimulator] = useState<Simulator>();
@@ -173,10 +174,8 @@ export function ModelForm({
 
   useEffect(() => {
     const getDatasets = async () => {
-      if (client) {
-        const { items } = await client.datasets.list();
-        setDatasets(items);
-      }
+      const { items } = await client.datasets.list();
+      setDatasets(items);
     };
     void getDatasets();
   }, [client]);
@@ -206,7 +205,7 @@ export function ModelForm({
     if (!file) {
       throw new Error('Model file is missing');
     }
-    if (!isAuthenticated(authState)) {
+    if (!user) {
       throw new Error('User is not authenticated');
     }
     // simulator name is chosen based on the extension of the filename
@@ -219,7 +218,7 @@ export function ModelForm({
     // User e-mail is always set to the currently logged in user, incuding for new versions
     const metadata: CreateMetadata | UpdateMetadata = {
       ...formMetadata,
-      userEmail: authState.email,
+      userEmail: user.mail,
       simulator,
     };
 
@@ -246,7 +245,7 @@ export function ModelForm({
         source: simulator,
       };
       const response = await createModel({
-        project: authState.project,
+        project,
         createModelFileRequestModel: getTypedFormData({
           boundaryConditions,
           labels,
@@ -263,7 +262,7 @@ export function ModelForm({
         metadata;
 
       const response = await updateModelVersion({
-        project: authState.project,
+        project,
         updateModelFileVersionRequestModel: getTypedFormData({
           file,
           metadata: {
@@ -451,7 +450,9 @@ export function ModelForm({
                   title="Model type"
                   value={{
                     value: metadata.modelType,
-                    label: definitions?.type.model[metadata.modelType],
+                    label: metadata.modelType
+                      ? definitions?.type.model[metadata.modelType]
+                      : null,
                   }}
                   closeMenuOnSelect
                   required
