@@ -12,8 +12,14 @@ import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDCon
 import SecondaryModelDropdown from '@data-exploration-app/containers/ThreeD/title/SecondaryModelDropdown';
 
 export const ThreeDTitle = ({ id }: { id: number }): JSX.Element => {
-  const { revisionId, secondaryModels, setSecondaryModels, viewer } =
-    useContext(ThreeDContext);
+  const {
+    revisionId,
+    secondaryModels,
+    setSecondaryModels,
+    cubemap360Images,
+    setCubemap360Images,
+    viewer,
+  } = useContext(ThreeDContext);
 
   const { data: apiThreeDModel, error: modelError, isSuccess } = use3DModel(id);
 
@@ -66,6 +72,8 @@ export const ThreeDTitle = ({ id }: { id: number }): JSX.Element => {
                 mainRevision={revision}
                 secondaryModels={secondaryModels}
                 setSecondaryModels={setSecondaryModels}
+                cubemap360Images={cubemap360Images}
+                setCubemap360Images={setCubemap360Images}
                 viewer={viewer}
               />
             ),

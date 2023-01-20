@@ -36,6 +36,7 @@ import {
 import {
   CogniteCadModel,
   CognitePointCloudModel,
+  Image360,
   Intersection,
 } from '@cognite/reveal';
 import { AssetPreviewSidebar } from './AssetPreviewSidebar';
@@ -52,6 +53,7 @@ import MouseWheelAction from '@data-exploration-app/containers/ThreeD/components
 import LoadSecondaryModels from '@data-exploration-app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
 import OverlayTool from '@data-exploration-app/containers/ThreeD/components/OverlayTool';
 import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';
+import LoadImages360 from './load-secondary-models/LoadImages360';
 import zIndex from '../../utils/zIndex';
 
 type Props = {
@@ -81,6 +83,7 @@ export const ThreeDView = ({ modelId }: Props) => {
     secondaryModels,
     viewState,
     setViewState,
+    cubemap360Images,
     selectedAssetId,
     setSelectedAssetId,
     overlayTool,
@@ -91,6 +94,10 @@ export const ThreeDView = ({ modelId }: Props) => {
   const initialUrlViewState = useMemo(() => viewState, []);
 
   const [nodesSelectable, setNodesSelectable] = useState<boolean>(true);
+
+  const [imageEntities, setImageEntities] = useState<
+    { siteId: string; images: Image360[] }[]
+  >([]);
 
   useEffect(() => {
     if (viewer && setViewState) {
@@ -242,6 +249,12 @@ export const ThreeDView = ({ modelId }: Props) => {
               <>
                 <LoadSecondaryModels
                   secondaryModels={secondaryModels}
+                  viewer={revealViewer}
+                />
+                <LoadImages360
+                  images360={cubemap360Images}
+                  imageEntities={imageEntities}
+                  setImageEntities={setImageEntities}
                   viewer={revealViewer}
                 />
                 <MouseWheelAction

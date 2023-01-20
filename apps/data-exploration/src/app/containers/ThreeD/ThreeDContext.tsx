@@ -22,6 +22,7 @@ import {
   THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY as SECONDARY_MODELS_KEY,
   THREE_D_REVISION_ID_QUERY_PARAMETER_KEY as REVISION_KEY,
   THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY as HL_MODE_KEY,
+  THREE_D_CUBEMAP_360_IMAGES_QUERY_PARAMETER_KEY as CUBEMAP_360_IMAGES_KEY,
 } from './utils';
 import { useDefault3DModelRevision } from './hooks';
 import { Loader } from '@cognite/cogs.js';
@@ -33,6 +34,14 @@ export type SecondaryModelOptions = {
   modelId: number;
   revisionId: number;
   applied?: boolean;
+};
+
+export type CubemapDatasetOptions = {
+  siteId: string;
+  siteName: string;
+  applied?: boolean;
+  rotationMatrix?: THREE.Matrix4;
+  translationMatrix?: THREE.Matrix4;
 };
 
 export type SlicingState = {
@@ -69,6 +78,8 @@ type ThreeDContext = {
   setTab: Dispatch<SetStateAction<ResourceTabType | undefined>>;
   secondaryModels: SecondaryModelOptions[];
   setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
+  cubemap360Images: CubemapDatasetOptions[];
+  setCubemap360Images: Dispatch<SetStateAction<CubemapDatasetOptions[]>>;
 };
 
 const DETAILS_COLUMN_WIDTH = '@cognite/3d-details-column-width';
@@ -92,6 +103,8 @@ export const ThreeDContext = createContext<ThreeDContext>({
   secondaryModels: [],
   setSecondaryModels: noop,
   setAssetHighlightMode: noop,
+  cubemap360Images: [],
+  setCubemap360Images: noop,
 });
 ThreeDContext.displayName = 'ThreeDContext';
 
@@ -149,6 +162,23 @@ const getInitialState = () => {
     }
   })();
 
+  const cubemap360Images = (() => {
+    const searchParams = initialParams.get(CUBEMAP_360_IMAGES_KEY);
+    try {
+      if (searchParams) {
+        const cubemaps = JSON.parse(searchParams) as Pick<
+          CubemapDatasetOptions,
+          // TODO: add rotationMatrix & translationMatrix once it is available from backend
+          'siteId' | 'siteName'
+        >[];
+        return cubemaps.map((cubemap) => ({ ...cubemap, applied: true }));
+      }
+      return [];
+    } catch {
+      return [];
+    }
+  })();
+
   const splitterColumnWidth = (() => {
     try {
       const lsNumber = parseInt(
@@ -178,6 +208,7 @@ const getInitialState = () => {
     splitterColumnWidth,
     secondaryModels,
     assetHighlightMode,
+    cubemap360Images,
   };
 };
 
@@ -197,6 +228,7 @@ export const ThreeDContextProvider = ({
     secondaryModels: initialSecondaryModels,
     revisionId: initialRevisionId,
     assetHighlightMode: initialAssetHighlightMode,
+    cubemap360Images: initialCubemap360Images,
   } = useMemo(() => getInitialState(), []);
 
   const [viewer, setViewer] = useState<Cognite3DViewer | undefined>();
@@ -227,6 +259,9 @@ export const ThreeDContextProvider = ({
   const [secondaryModels, setSecondaryModels] = useState<
     SecondaryModelOptions[]
   >(initialSecondaryModels);
+  const [cubemap360Images, setCubemap360Images] = useState<
+    CubemapDatasetOptions[]
+  >(initialCubemap360Images);
   const [assetHighlightMode, setAssetHighlightMode] = useState<boolean>(
     initialAssetHighlightMode
   );
@@ -321,6 +356,8 @@ export const ThreeDContextProvider = ({
         setSecondaryModels,
         assetHighlightMode,
         setAssetHighlightMode,
+        cubemap360Images,
+        setCubemap360Images,
       }}
     >
       {children}

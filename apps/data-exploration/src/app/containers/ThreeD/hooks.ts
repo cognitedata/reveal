@@ -23,6 +23,7 @@ import {
   CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
+  Image360,
 } from '@cognite/reveal';
 
 export type ThreeDModelsResponse = {
@@ -420,6 +421,7 @@ export const fetchAssetDetails = (
 };
 
 export const SECONDARY_MODEL_BASE_QUERY_KEY = 'reveal-secondary-model';
+export const IMAGES_360_BASE_QUERY_KEY = 'reveal-360-images';
 
 export const getSecondaryModelQueryKey = (
   modelId: number,
@@ -467,6 +469,88 @@ export const getSecondaryModelQueryFn =
       );
       if (modelToRemove) {
         viewer.removeModel(modelToRemove);
+      }
+    }
+
+    return applied;
+  };
+
+export const getImages360QueryKey = (siteId: string) => [
+  IMAGES_360_BASE_QUERY_KEY,
+  siteId,
+];
+
+export const getImages360AppliedStateQueryKey = (
+  siteId: string,
+  applied?: boolean,
+  rotationMatrix?: THREE.Matrix4,
+  translationMatrix?: THREE.Matrix4
+) => [
+  ...getImages360QueryKey(siteId),
+  applied,
+  rotationMatrix,
+  translationMatrix,
+];
+
+export const getImages360QueryFn =
+  (
+    queryClient: QueryClient,
+    viewer: Cognite3DViewer,
+    siteId: string,
+    applied?: boolean,
+    imageEntities?: { siteId: string; images: Image360[] }[],
+    setImageEntities?: (
+      entities: { siteId: string; images: Image360[] }[]
+    ) => void,
+    rotationMatrix?: THREE.Matrix4,
+    translationMatrix?: THREE.Matrix4
+  ) =>
+  async () => {
+    if (
+      applied === undefined ||
+      imageEntities === undefined ||
+      setImageEntities === undefined
+    ) {
+      return undefined;
+    }
+
+    queryClient.invalidateQueries(
+      getImages360AppliedStateQueryKey(
+        siteId,
+        !applied,
+        rotationMatrix,
+        translationMatrix
+      )
+    );
+
+    const hasAdded = imageEntities.some(({ siteId: tmId }) => siteId === tmId);
+
+    if (applied && !hasAdded) {
+      const collectionTransform = translationMatrix?.multiply(rotationMatrix!);
+      const images360Set = await viewer.add360ImageSet(
+        'events',
+        { site_id: siteId },
+        { collectionTransform, preMultipliedRotation: true }
+      );
+      setImageEntities(
+        imageEntities.concat({
+          siteId: siteId,
+          images: images360Set.image360Entities,
+        })
+      );
+    } else if (!applied && hasAdded) {
+      const images360ToRemove = imageEntities.find(
+        ({ siteId: tmId }) => siteId === tmId
+      );
+      if (images360ToRemove) {
+        await viewer.remove360Images(...images360ToRemove.images);
+        imageEntities.splice(
+          imageEntities.findIndex(
+            (images360ToRemove) => images360ToRemove.siteId === siteId
+          ),
+          1
+        );
+        setImageEntities(imageEntities);
       }
     }
 

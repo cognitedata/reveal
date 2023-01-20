@@ -11,23 +11,30 @@ import {
   ThreeDModelsResponse,
   useInfinite3DModels,
 } from '@cognite/data-exploration';
+import { useEventsSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
-import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import {
+  CubemapDatasetOptions,
+  SecondaryModelOptions,
+} from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import { MainThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/MainThreeDModelMenuItem';
 import { SecondaryThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
 import { Revision3DWithIndex } from '@data-exploration-app/containers/ThreeD/hooks';
 import { TableNoResults } from '@cognite/cdf-utilities';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { Images360MenuItem } from '@data-exploration-app/containers/ThreeD/title/Images360MenuItem';
 
 type SecondaryModelDropdownProps = {
   mainModel: Model3D;
   mainRevision: Revision3DWithIndex;
   secondaryModels: SecondaryModelOptions[];
   setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
+  cubemap360Images: CubemapDatasetOptions[];
+  setCubemap360Images: Dispatch<SetStateAction<CubemapDatasetOptions[]>>;
   viewer: Cognite3DViewer;
 };
 
@@ -36,11 +43,15 @@ const SecondaryModelDropdown = ({
   mainRevision,
   secondaryModels,
   setSecondaryModels,
+  cubemap360Images,
+  setCubemap360Images,
   viewer,
 }: SecondaryModelDropdownProps): JSX.Element => {
   const [searchQuery, setSearchQuery] = useState('');
   const [tempSecondaryModels, setTempSecondaryModels] =
     useState(secondaryModels);
+  const [tempCubemap360Images, setTempCubemap360Images] =
+    useState(cubemap360Images);
 
   const canApply = useMemo(
     () =>
@@ -52,6 +63,45 @@ const SecondaryModelDropdown = ({
       ),
     [secondaryModels, tempSecondaryModels]
   );
+
+  const canApplyImages360 = useMemo(
+    () =>
+      tempCubemap360Images.some(({ applied, siteId }) =>
+        cubemap360Images.some(
+          ({ applied: tApplied, siteId: tmId }) =>
+            siteId === tmId && applied !== tApplied
+        )
+      ),
+    [cubemap360Images, tempCubemap360Images]
+  );
+
+  const { data: cubemapDatasets } = useEventsSearchResultQuery({
+    eventsFilters: {
+      type: 'scan',
+    },
+  });
+
+  const cubemapSiteIds = useMemo(() => {
+    const results: { siteId: string; siteName: string }[] = [];
+    if (cubemapDatasets.length > 0) {
+      cubemapDatasets.reduce((previous, current) => {
+        if (previous.metadata!.site_id !== current.metadata!.site_id) {
+          if (
+            !results.some(
+              (siteDetails) => siteDetails.siteId === current.metadata!.site_id
+            )
+          ) {
+            results.push({
+              siteId: current.metadata!.site_id,
+              siteName: current.metadata!.site_name,
+            });
+          }
+        }
+        return current;
+      });
+    }
+    return results;
+  }, [cubemapDatasets]);
 
   const {
     data: modelData = { pages: [] as ThreeDModelsResponse[] },
@@ -84,10 +134,39 @@ const SecondaryModelDropdown = ({
   }, [models, searchQuery]);
 
   const handleApply = (): void => {
-    setSecondaryModels([...tempSecondaryModels]);
-    trackUsage(EXPLORATION.CLICK.APPLY_MODEL, {
-      resourceType: '3D',
-    });
+    if (canApply) {
+      setSecondaryModels(tempSecondaryModels);
+      trackUsage(EXPLORATION.CLICK.APPLY_MODEL, {
+        resourceType: '3D',
+      });
+    }
+    if (canApplyImages360) {
+      setCubemap360Images(tempCubemap360Images);
+    }
+  };
+
+  const handleChangeImages360 = (nextState: CubemapDatasetOptions): void => {
+    setTempCubemap360Images((prevState) => [
+      ...prevState.filter(
+        ({ siteId: testSiteId }) => nextState.siteId !== testSiteId
+      ),
+      {
+        ...nextState,
+      },
+    ]);
+
+    if (
+      !cubemap360Images.some(
+        (siteDetails) => nextState.siteId === siteDetails.siteId
+      )
+    ) {
+      setCubemap360Images((prevState) => [
+        ...prevState,
+        {
+          ...nextState,
+        },
+      ]);
+    }
   };
 
   const handleChange = (nextState: SecondaryModelOptions): void => {
@@ -117,7 +196,7 @@ const SecondaryModelDropdown = ({
   };
 
   return (
-    <Menu>
+    <MenuWrapper>
       <StyledInput
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="Search"
@@ -128,15 +207,38 @@ const SecondaryModelDropdown = ({
       )}
       <Menu.Divider />
       <StyledSecondaryModelListContainer>
+        {viewer && cubemapSiteIds.length ? (
+          <>
+            <Menu.Header>360 Images</Menu.Header>
+            {cubemapSiteIds.map((cubemap) => (
+              <Images360MenuItem
+                key={cubemap.siteId}
+                siteId={cubemap.siteId}
+                siteName={cubemap.siteName}
+                options={
+                  tempCubemap360Images.find(
+                    ({ siteId }) => siteId === cubemap.siteId
+                  )!
+                }
+                onChange={handleChangeImages360}
+              />
+            ))}
+          </>
+        ) : (
+          <></>
+        )}
+      </StyledSecondaryModelListContainer>
+      <Menu.Divider />
+      <StyledSecondaryModelListContainer>
         {viewer && filteredModels.length ? (
           <>
             <Menu.Header>Additional Model</Menu.Header>
-            {filteredModels.map((m) => (
+            {filteredModels.map((model) => (
               <SecondaryThreeDModelMenuItem
-                key={m.id}
-                model={m}
+                key={model.id}
+                model={model}
                 options={tempSecondaryModels.find(
-                  ({ modelId }) => modelId === m.id
+                  ({ modelId }) => modelId === model.id
                 )}
                 onChange={handleChange}
               />
@@ -153,20 +255,24 @@ const SecondaryModelDropdown = ({
       </StyledSecondaryModelListContainer>
       <Menu.Divider />
       <StyledApplyButton
-        disabled={!canApply}
+        disabled={!canApply && !canApplyImages360}
         onClick={handleApply}
         type="primary"
       >
         Apply
       </StyledApplyButton>
-    </Menu>
+    </MenuWrapper>
   );
 };
+
+const MenuWrapper = styled(Menu)`
+  max-height: calc(100vh - 200px);
+`;
 
 const StyledSecondaryModelListContainer = styled.div`
   margin: -4px -8px;
   padding: 4px 8px;
-  max-height: 60vh;
+  max-height: 30vh;
   overflow-y: auto;
 `;
 
