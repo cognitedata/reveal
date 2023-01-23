@@ -82,7 +82,7 @@ export class FdmGraphQLDmlWorker {
     }
   }
 
-  async doFormat(graphqlCode: string): Promise<string | null> {
+  public async doFormat(graphqlCode: string): Promise<string | null> {
     if (!graphqlCode) {
       return null;
     }
@@ -169,11 +169,13 @@ export class FdmGraphQLDmlWorker {
     diagnostics: DiagnosticItem[],
     options: CodeActionsOptions
   ) {
+    this.setGraphQlSchema(graphQlCode);
     return this.codeActionsService.getCodeActions(
       graphQlCode,
       range,
       diagnostics,
-      options
+      options,
+      this.dataModelTypeDefs
     );
   }
 }
