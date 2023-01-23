@@ -779,7 +779,19 @@ export interface Image360 {
 // @public
 export interface Image360Collection {
     readonly image360Entities: Image360[];
+    off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
+    // (undocumented)
+    off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
+    on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
+    // (undocumented)
+    on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
 }
+
+// @public
+export type Image360EnteredDelegate = () => void;
+
+// @public
+export type Image360ExitedDelegate = () => void;
 
 // @public
 export interface Image360Visualization {
