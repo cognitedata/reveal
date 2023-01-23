@@ -17,8 +17,8 @@ export class Image360ApiHelper {
   private _transitionInProgress: boolean = false;
 
   private readonly _interactionState: {
-    lastHoveredState?: Image360Entity;
-    lastImage360Entered?: Image360Entity;
+    currentImage360Hovered?: Image360Entity;
+    currentImage360Entered?: Image360Entity;
   };
 
   private readonly _domEventHandlers: {
@@ -78,11 +78,18 @@ export class Image360ApiHelper {
   }
 
   public async remove360Images(entities: Image360[]): Promise<void> {
+    if (
+      this._interactionState.currentImage360Entered !== undefined &&
+      entities.includes(this._interactionState.currentImage360Entered)
+    ) {
+      this.exit360Image();
+    }
     await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
+    this._requestRedraw();
   }
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
-    const lastEntered360ImageEntity = this._interactionState.lastImage360Entered;
+    const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
 
     if (lastEntered360ImageEntity === image360Entity) {
       this._requestRedraw();
@@ -110,7 +117,7 @@ export class Image360ApiHelper {
       ]);
     }
     this._transitionInProgress = false;
-    this._interactionState.lastImage360Entered = image360Entity;
+    this._interactionState.currentImage360Entered = image360Entity;
     this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
 
     this._requestRedraw();
@@ -128,11 +135,15 @@ export class Image360ApiHelper {
     const toPosition = new THREE.Vector3().setFromMatrixPosition(to360Entity.transform);
     const length = new THREE.Vector3().subVectors(toPosition, fromPosition).length();
 
+    const toZoom = this._image360Navigation.defaultFOV;
+    const fromZoom = this._image360Navigation.getCamera().fov;
+
     setPreTransitionState();
 
     const currentFromOpacity = fromVisualizationCube.opacity;
     await Promise.all([
       this._image360Navigation.moveTo(toPosition, cameraTransitionDuration),
+      this.tweenVisualizationZoom(this._image360Navigation, fromZoom, toZoom, alphaTweenDuration),
       this.tweenVisualizationAlpha(from360Entity, currentFromOpacity, 0, alphaTweenDuration)
     ]);
 
@@ -188,6 +199,32 @@ export class Image360ApiHelper {
     });
   }
 
+  private tweenVisualizationZoom(
+    camera: StationaryCameraManager,
+    fovFrom: number,
+    fovTo: number,
+    duration: number
+  ): Promise<void> {
+    const from = { fov: fovFrom };
+    const to = { fov: fovTo };
+    const delay = duration * 0.25;
+    const tween = new TWEEN.Tween(from)
+      .to(to, duration * 0.5)
+      .onUpdate(() => {
+        camera.setFOV(from.fov);
+      })
+      .delay(delay)
+      .easing(num => TWEEN.Easing.Quintic.InOut(num))
+      .start(TWEEN.now());
+
+    return new Promise(resolve => {
+      tween.onComplete(() => {
+        tween.stop();
+        resolve();
+      });
+    });
+  }
+
   private set360CameraManager() {
     if (this._activeCameraManager.innerCameraManager !== this._image360Navigation) {
       this._cachedCameraManager = this._activeCameraManager.innerCameraManager;
@@ -197,9 +234,9 @@ export class Image360ApiHelper {
 
   public exit360Image(): void {
     this._image360Facade.allIconsVisibility = true;
-    if (this._interactionState.lastImage360Entered !== undefined) {
-      this._interactionState.lastImage360Entered.image360Visualization.visible = false;
-      this._interactionState.lastImage360Entered = undefined;
+    if (this._interactionState.currentImage360Entered !== undefined) {
+      this._interactionState.currentImage360Entered.image360Visualization.visible = false;
+      this._interactionState.currentImage360Entered = undefined;
     }
     const { position, rotation } = this._image360Navigation.getCameraState();
     this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
@@ -261,7 +298,7 @@ export class Image360ApiHelper {
       entity.icon.hoverSpriteVisible = true;
     }
 
-    if (entity === this._interactionState.lastHoveredState) {
+    if (entity === this._interactionState.currentImage360Hovered) {
       return;
     }
 
@@ -271,7 +308,7 @@ export class Image360ApiHelper {
     }
 
     this._requestRedraw();
-    this._interactionState.lastHoveredState = entity;
+    this._interactionState.currentImage360Hovered = entity;
   }
 
   private async exit360ImageOnEscape(event: KeyboardEvent) {
@@ -279,7 +316,7 @@ export class Image360ApiHelper {
       return;
     }
 
-    const lastEntered = this._interactionState.lastImage360Entered;
+    const lastEntered = this._interactionState.currentImage360Entered;
     if (lastEntered !== undefined) {
       const transitionOutDuration = 600;
       const currentOpacity = lastEntered.image360Visualization.opacity;

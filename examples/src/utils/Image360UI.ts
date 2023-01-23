@@ -32,7 +32,8 @@ export class Image360UI {
     const params = {
       siteId: '',
       add: add360ImageSet,
-      premultipliedRotation: true
+      premultipliedRotation: true,
+      remove: removeAll360Images
     };
 
     optionsFolder.add(params, 'siteId').name('Site ID');
@@ -57,6 +58,8 @@ export class Image360UI {
       viewer.requestRedraw();
     });
 
+    gui.add(params, 'remove').name('Remove all 360 images');
+
     async function add360ImageSet(){
       const rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(rotation.x, rotation.y, rotation.z), rotation.radians);
       const translationMatrix = new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
@@ -64,6 +67,10 @@ export class Image360UI {
       const set = await viewer.add360ImageSet('events', {site_id: params.siteId}, {collectionTransform, preMultipliedRotation: params.premultipliedRotation});
       entities = entities.concat(set.image360Entities);
       viewer.requestRedraw();
+    }
+
+    async function removeAll360Images(){
+      await viewer.remove360Images(...entities);
     }
   }
 

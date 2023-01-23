@@ -23,7 +23,8 @@ export * from './src/pointcloud-rendering/PointCloudObjectIdMaps';
 export { DEFAULT_CLASSIFICATION } from './src/pointcloud-rendering/classification';
 
 export { RenderMode } from './src/rendering/RenderMode';
-export { RenderLayer } from './src/utilities/renderUtilities';
+export { RenderLayer, setModelRenderLayers } from './src/utilities/renderUtilities';
+export { StyledTreeIndexSets } from './src/utilities/types';
 export { coverageShaders } from './src/rendering/shaders';
 
 export { Materials } from './src/rendering/materials';
@@ -36,3 +37,4 @@ export { BasicPipelineExecutor } from './src/pipeline-executors/BasicPipelineExe
 export { RenderPipelineExecutor } from './src/RenderPipelineExecutor';
 export { RenderPipelineProvider } from './src/RenderPipelineProvider';
 export { ResizeHandler } from './src/ResizeHandler';
+export { SettableRenderTarget } from './src/rendering/SettableRenderTarget';

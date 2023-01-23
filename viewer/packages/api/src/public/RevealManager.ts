@@ -18,7 +18,8 @@ import {
   RenderPipelineExecutor,
   CadMaterialManager,
   RenderPipelineProvider,
-  ResizeHandler
+  ResizeHandler,
+  SettableRenderTarget
 } from '@reveal/rendering';
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
@@ -42,7 +43,7 @@ export class RevealManager {
   private readonly _cadManager: CadManager;
   private readonly _pointCloudManager: PointCloudManager;
   private readonly _pipelineExecutor: RenderPipelineExecutor;
-  private readonly _renderPipeline: RenderPipelineProvider;
+  private readonly _renderPipeline: RenderPipelineProvider & SettableRenderTarget;
   private readonly _resizeHandler: ResizeHandler;
 
   private _cameraInMotion: boolean = false;
@@ -63,7 +64,7 @@ export class RevealManager {
     cadManager: CadManager,
     pointCloudManager: PointCloudManager,
     pipelineExecutor: RenderPipelineExecutor,
-    renderPipeline: RenderPipelineProvider,
+    renderPipeline: RenderPipelineProvider & SettableRenderTarget,
     resizeHandler: ResizeHandler,
     cameraManager: CameraManager
   ) {
@@ -115,6 +116,10 @@ export class RevealManager {
     this._cadManager.resetRedraw();
     this._pointCloudManager.resetRedraw();
     this._resizeHandler.resetRedraw();
+  }
+
+  public setOutputRenderTarget(target: THREE.WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
+    this._renderPipeline.setOutputRenderTarget(target, autoSizeRenderTarget);
   }
 
   get materialManager(): CadMaterialManager {

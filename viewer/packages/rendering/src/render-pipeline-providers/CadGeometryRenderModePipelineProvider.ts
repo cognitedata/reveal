@@ -7,16 +7,12 @@ import { CadMaterialManager } from '../CadMaterialManager';
 import { GeometryPass } from '../render-passes/GeometryPass';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { getLayerMask, RenderLayer, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
+import { getLayerMask, RenderLayer } from '../utilities/renderUtilities';
 import { RenderMode } from '../rendering/RenderMode';
 import { SceneHandler } from '@reveal/utilities';
+import { SettableRenderTarget } from '../rendering/SettableRenderTarget';
 
-export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider {
-  private readonly _materialManager: CadMaterialManager;
-  private readonly _cadModels: {
-    cadNode: THREE.Object3D;
-    modelIdentifier: string;
-  }[];
+export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
   private readonly _renderTargetData: { currentRenderSize: THREE.Vector2 };
   private readonly _geometryPass: GeometryPass;
   private _outputRenderTarget: THREE.WebGLRenderTarget | null = null;
@@ -26,8 +22,6 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
 
   constructor(renderMode: RenderMode, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
     this.scene = sceneHandler.scene;
-    this._materialManager = materialManager;
-    this._cadModels = sceneHandler.cadModels;
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1)
     };
@@ -36,9 +30,6 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
     this._geometryPass = new GeometryPass(sceneHandler.scene, materialManager, renderMode, layerMask);
   }
 
-  // TODO 2022-05-11 christjt: This should ideally set in the constructor,
-  // but this is hard since it is initialized before v8 sector culler
-  // which creates the render target
   public setOutputRenderTarget(target: THREE.WebGLRenderTarget | null, autoSizeRenderTarget = true): void {
     this._outputRenderTarget = target;
     this._autoSizeRenderTarget = autoSizeRenderTarget;
@@ -46,7 +37,6 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     this.updateRenderTargetSizes(renderer);
-    setupCadModelsGeometryLayers(this._materialManager, this._cadModels);
     renderer.setRenderTarget(this._outputRenderTarget);
     yield this._geometryPass;
   }

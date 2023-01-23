@@ -3,35 +3,46 @@
  */
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import * as THREE from 'three';
-import { GeometryBatchingManager } from './GeometryBatchingManager';
 import { Mock } from 'moq.ts';
-import { Materials } from '@reveal/rendering';
+import { Materials, StyledTreeIndexSets } from '@reveal/rendering';
+import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
+import sum from 'lodash/sum';
+import { IndexSet } from '@reveal/utilities';
 
-describe(GeometryBatchingManager.name, () => {
+describe(MultiBufferBatchingManager.name, () => {
   let geometryGroup: THREE.Group;
-  let manager: GeometryBatchingManager;
-
+  let manager: MultiBufferBatchingManager;
+  const numberOfInstanceBuffers = 2;
   beforeEach(() => {
     geometryGroup = new THREE.Group();
     const materials = new Mock<Materials>().object();
-    manager = new GeometryBatchingManager(geometryGroup, materials);
+    const styledIndexSets: StyledTreeIndexSets = {
+      back: new IndexSet(),
+      ghost: new IndexSet(),
+      inFront: new IndexSet(),
+      visible: new IndexSet()
+    };
+    manager = new MultiBufferBatchingManager(geometryGroup, materials, styledIndexSets, 1024, numberOfInstanceBuffers);
   });
 
   test('batchGeometries() first time adds new geometry to group', () => {
     const geometries = [createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)];
     manager.batchGeometries(geometries, 1);
 
-    expect(geometryGroup.children.length).toBe(1);
+    expect(geometryGroup.children.length).toBe(numberOfInstanceBuffers);
   });
 
   test('batchGeometries() second time with same geometry type doesnt add new geometry to group', () => {
     const geometries1 = [createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 10, 0)];
     const geometries2 = [createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 20, 0)];
+    const geometries3 = [createParsedGeometry(RevealGeometryCollectionType.BoxCollection, 30, 0)];
+
     manager.batchGeometries(geometries1, 1);
     manager.batchGeometries(geometries2, 2);
+    manager.batchGeometries(geometries3, 3);
 
-    expect(geometryGroup.children.length).toBe(1);
-    expect((geometryGroup.children[0] as THREE.InstancedMesh).count).toBe(30);
+    expect(geometryGroup.children.length).toBe(numberOfInstanceBuffers);
+    expect(sum(geometryGroup.children.map(mesh => (mesh as THREE.InstancedMesh).count))).toBe(60);
   });
 
   test('batchGeometries() adds new geometry to group for new geometry type', () => {
@@ -40,7 +51,7 @@ describe(GeometryBatchingManager.name, () => {
     manager.batchGeometries(geometries1, 1);
     manager.batchGeometries(geometries2, 2);
 
-    expect(geometryGroup.children.length).toBe(2);
+    expect(geometryGroup.children.length).toBe(2 * numberOfInstanceBuffers);
   });
 
   test('batchGeometries() adds relevant tree indices to mesh', () => {
@@ -64,7 +75,8 @@ describe(GeometryBatchingManager.name, () => {
 
     manager.removeSectorBatches(1);
 
-    expect((geometryGroup.children[0] as THREE.InstancedMesh).count).toBe(20);
+    expect(geometryGroup.children.filter(mesh => mesh.visible).length).toBe(1);
+    expect(sum(geometryGroup.children.map(mesh => mesh as THREE.InstancedMesh).map(mesh => mesh.count))).toBe(20);
   });
 
   test('removeSectorBatches() removes only relevant treeIndices', () => {
@@ -83,18 +95,20 @@ describe(GeometryBatchingManager.name, () => {
 
     manager.removeSectorBatches(1);
 
-    for (const i of treeIndices2) {
-      expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(i);
-    }
+    expect(geometryGroup.children[0].userData.treeIndices.size).toBe(0);
 
-    for (const i of treeIndices1) {
-      expect(geometryGroup.children[0].userData.treeIndices.keys()).not.toContain(i);
-    }
+    expect(geometryGroup.children[1].userData.treeIndices.keys()).not.toContain(treeIndices1[0]);
+    expect(geometryGroup.children[1].userData.treeIndices.keys()).not.toContain(treeIndices1[1]);
+    expect(geometryGroup.children[1].userData.treeIndices.keys()).not.toContain(treeIndices1[2]);
+    expect(geometryGroup.children[1].userData.treeIndices.keys()).toContain(treeIndices2[0]);
+    expect(geometryGroup.children[1].userData.treeIndices.keys()).toContain(treeIndices2[1]);
+    expect(geometryGroup.children[1].userData.treeIndices.keys()).toContain(treeIndices2[2]);
   });
 
   test('removeSectorBatches() preserves indices added more than once', () => {
     const treeIndices1 = [10, 20];
-    const treeIndices2 = [20, 30];
+    const treeIndices2 = [30, 40];
+    const treeIndices3 = [10, 50];
 
     const geometries1 = [
       createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices1, 0)
@@ -102,15 +116,19 @@ describe(GeometryBatchingManager.name, () => {
     const geometries2 = [
       createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices2, 0)
     ];
+    const geometries3 = [
+      createParsedGeometryWithTreeIndices(RevealGeometryCollectionType.BoxCollection, treeIndices3, 0)
+    ];
 
     manager.batchGeometries(geometries1, 1);
     manager.batchGeometries(geometries2, 2);
+    manager.batchGeometries(geometries3, 3);
 
-    manager.removeSectorBatches(1);
+    manager.removeSectorBatches(3);
 
-    for (const i of treeIndices2) {
-      expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(i);
-    }
+    expect(geometryGroup.children[0].userData.treeIndices.size).toBe(2);
+    expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(treeIndices1[0]);
+    expect(geometryGroup.children[0].userData.treeIndices.keys()).toContain(treeIndices1[1]);
   });
 
   test('removeSectorBatches() ignores invalid sectorId', () => {

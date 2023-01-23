@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { assertNever } from '@reveal/utilities';
+import { assertNever, pixelToNormalizedDeviceCoordinates } from '@reveal/utilities';
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
@@ -24,6 +24,7 @@ export class StationaryCameraManager implements CameraManager {
   private readonly _cameraChangedListeners: Array<CameraChangeDelegate> = [];
   private readonly _domElement: HTMLElement;
   private _defaultFOV: number;
+  private readonly _minFOV: number;
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private _isDragging = false;
 
@@ -31,6 +32,7 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement = domElement;
     this._camera = camera;
     this._defaultFOV = camera.fov;
+    this._minFOV = 10.0;
     this._stopEventTrigger = new DebouncedCameraStopEventTrigger(this);
   }
 
@@ -38,20 +40,22 @@ export class StationaryCameraManager implements CameraManager {
     return this._camera;
   }
 
+  get defaultFOV(): number {
+    return this._defaultFOV;
+  }
+
   // Stationary camera only reacts to rotation being set
   setCameraState(state: CameraState): void {
     const rotation = state.rotation ?? this._camera.quaternion;
     this._camera.quaternion.copy(rotation);
-    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
   }
 
   getCameraState(): Required<CameraState> {
-    const unitForward = new THREE.Vector3(0, 0, -1);
-    unitForward.applyQuaternion(this._camera.quaternion);
     return {
       position: this._camera.position,
       rotation: this._camera.quaternion,
-      target: unitForward.add(this._camera.position)
+      target: this.getTarget()
     };
   }
 
@@ -78,7 +82,7 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement.removeEventListener('pointerdown', this.enableDragging);
     this._domElement.removeEventListener('pointerup', this.disableDragging);
     this._domElement.removeEventListener('pointerout', this.disableDragging);
-    this._domElement.addEventListener('wheel', this.zoomCamera);
+    this._domElement.removeEventListener('wheel', this.zoomCamera);
   }
 
   on(eventType: CameraManagerEventType, callback: CameraEventDelegate): void {
@@ -138,6 +142,11 @@ export class StationaryCameraManager implements CameraManager {
     });
   }
 
+  setFOV(fov: number): void {
+    this._camera.fov = THREE.MathUtils.clamp(fov, this._minFOV, this._defaultFOV);
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
+  }
+
   update(_: number, boundingBox: THREE.Box3): void {
     CameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
   }
@@ -171,13 +180,45 @@ export class StationaryCameraManager implements CameraManager {
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
 
-    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
   };
 
   private readonly zoomCamera = (event: WheelEvent) => {
     const sensitivityScaler = 0.05;
-    this._camera.fov = Math.min(Math.max(this._camera.fov + event.deltaY * sensitivityScaler, 10), this._defaultFOV);
+    const newFov = Math.min(
+      Math.max(this._camera.fov + event.deltaY * sensitivityScaler, this._minFOV),
+      this._defaultFOV
+    );
+
+    if (this._camera.fov === newFov) return;
+
+    const preCursorRay = this.getCursorRay(event).normalize();
+    this._camera.fov = newFov;
     this._camera.updateProjectionMatrix();
-    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this._camera.position));
+
+    // When zooming the camera is rotated towards the cursor position
+    const postCursorRay = this.getCursorRay(event).normalize();
+    const arcBetweenRays = new THREE.Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
+    const forwardVector = this._camera.getWorldDirection(new THREE.Vector3()).clone();
+
+    forwardVector.applyQuaternion(arcBetweenRays);
+    const targetWorldCoordinates = new THREE.Vector3().addVectors(this._camera.position, forwardVector);
+    this._camera.lookAt(targetWorldCoordinates);
+    this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
   };
+
+  private getCursorRay(event: WheelEvent) {
+    const { width, height } = this._domElement.getBoundingClientRect();
+    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(event.clientX, event.clientY, width, height);
+    const ray = new THREE.Vector3(ndcCoordinates.x, ndcCoordinates.y, 1)
+      .unproject(this._camera)
+      .sub(this._camera.position);
+    return ray;
+  }
+
+  private getTarget(): THREE.Vector3 {
+    const unitForward = new THREE.Vector3(0, 0, -1);
+    unitForward.applyQuaternion(this._camera.quaternion);
+    return unitForward.add(this._camera.position);
+  }
 }
