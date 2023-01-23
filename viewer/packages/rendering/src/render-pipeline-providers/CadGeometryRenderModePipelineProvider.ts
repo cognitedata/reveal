@@ -7,17 +7,12 @@ import { CadMaterialManager } from '../CadMaterialManager';
 import { GeometryPass } from '../render-passes/GeometryPass';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { getLayerMask, RenderLayer, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
+import { getLayerMask, RenderLayer } from '../utilities/renderUtilities';
 import { RenderMode } from '../rendering/RenderMode';
 import { SceneHandler } from '@reveal/utilities';
 import { SettableRenderTarget } from '../rendering/SettableRenderTarget';
 
 export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider, SettableRenderTarget {
-  private readonly _materialManager: CadMaterialManager;
-  private readonly _cadModels: {
-    cadNode: THREE.Object3D;
-    modelIdentifier: string;
-  }[];
   private readonly _renderTargetData: { currentRenderSize: THREE.Vector2 };
   private readonly _geometryPass: GeometryPass;
   private _outputRenderTarget: THREE.WebGLRenderTarget | null = null;
@@ -27,8 +22,6 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
 
   constructor(renderMode: RenderMode, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
     this.scene = sceneHandler.scene;
-    this._materialManager = materialManager;
-    this._cadModels = sceneHandler.cadModels;
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1)
     };
@@ -44,7 +37,6 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     this.updateRenderTargetSizes(renderer);
-    setupCadModelsGeometryLayers(this._materialManager, this._cadModels);
     renderer.setRenderTarget(this._outputRenderTarget);
     yield this._geometryPass;
   }
