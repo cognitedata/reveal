@@ -28,7 +28,7 @@
     "@sentry/browser": "^6.2.3",
     "@xmldom/xmldom": "~0.7.7",
     "antd": "^4.15.4",
-    "date-fns": "^2.19.0",
+    "date-fns": "^2.29.3",
     "ejs": "^3.1.7",
     "exifr": "^6.2.0",
     "file-saver": "^2.0.5",
