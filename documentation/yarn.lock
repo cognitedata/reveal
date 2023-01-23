@@ -2034,7 +2034,7 @@ __metadata:
     react-dom: 18.2.0
     react-live: 3.1.1
     replace: 1.2.2
-    rimraf: 4.0.4
+    rimraf: 4.1.1
     styled-components: 5.3.6
     typedoc: 0.23.24
     typedoc-plugin-markdown: 3.14.0
@@ -11185,12 +11185,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:4.0.4":
-  version: 4.0.4
-  resolution: "rimraf@npm:4.0.4"
+"rimraf@npm:4.1.1":
+  version: 4.1.1
+  resolution: "rimraf@npm:4.1.1"
   bin:
     rimraf: dist/cjs/src/bin.js
-  checksum: a3296ea15c79fe3da0bae06a484dd8b8ec1e6d3044b02f05ce27575ef23c856e37eef6e71a668ce0e263da594a05ace1e88be6f42200f1fbbf433b57121bae32
+  checksum: f52d46f59c1a532b3d0f73cb5228ff8f7df4ee87b9df95cf655788ea186c935b5c6ab4c45b66f8de5ed1e3690f58ff83f9a5b0ba1ae2e76a9bf36415f37732f7
   languageName: node
   linkType: hard
 
