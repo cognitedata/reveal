@@ -73,7 +73,7 @@ The `Image360Collection` exposes events `image360Entered` and `image360Exited` f
 Subscribing to the events can look like
 ```ts
 const image360Collection = viewer.add360ImageSet('events', { site_id: 'site-S01-area-a03' });
-image360Collection.on('image360Entered', () => { alert('360 Image mode entered'); } );
-image360Collection.on('image360Exited', () => {alert('Exited from 360 Image mode');});
+image360Collection.on('image360Entered', () => { alert('360 Image mode entered'); });
+image360Collection.on('image360Exited', () => { alert('Exited from 360 Image mode'); });
 ```
   
