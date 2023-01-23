@@ -128,7 +128,8 @@ export const mapFiltersToEventsAdvancedFilters = (
     searchQueryBuilder.prefix('subtype', query);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    searchQueryBuilder.prefix('source', source);
+    // the type here is a bit wrong, will be refactored in later PRs
+    searchQueryBuilder.prefix('source', query);
 
     if (isNumeric(query)) {
       searchQueryBuilder.equals('id', Number(query));
