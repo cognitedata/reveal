@@ -16,19 +16,22 @@ import { createGenericTabularDataSlice } from 'src/store/genericTabularDataSlice
 import { getFakeQueuedJob } from 'src/api/vision/detectionModels/detectionUtils';
 import { ProcessState } from 'src/modules/Process/store/types';
 
-export const BUILT_IN_MODEL_COUNT = 4; // ocr, tagdetection, objectdetection, gaugereader
+export const BUILT_IN_MODEL_COUNT = 5; // ocr, tagdetection, objectdetection, people detection, gaugereader
 
 const initialDetectionModelParameters = {
   ocr: {
-    useCache: true,
+    threshold: 0.4,
   },
   tagDetection: {
-    useCache: true,
+    threshold: 0.4,
     partialMatch: true,
     assetSubtreeIds: [],
   },
   objectDetection: {
-    threshold: 0.8,
+    threshold: 0.4,
+  },
+  peopleDetection: {
+    threshold: 0.4,
   },
   gaugeReader: {
     gaugeType: 'analog',
@@ -84,6 +87,12 @@ export const initialState: ProcessState = {
       type: VisionDetectionModelType.ObjectDetection,
       settings: initialDetectionModelParameters.objectDetection,
       unsavedSettings: initialDetectionModelParameters.objectDetection,
+    },
+    {
+      modelName: 'People detection',
+      type: VisionDetectionModelType.PeopleDetection,
+      settings: initialDetectionModelParameters.peopleDetection,
+      unsavedSettings: initialDetectionModelParameters.peopleDetection,
     },
     {
       modelName: 'Gauge reader',
@@ -143,6 +152,10 @@ const processSlice = createGenericTabularDataSlice({
           case VisionDetectionModelType.ObjectDetection:
             item.unsavedSettings =
               initialDetectionModelParameters.objectDetection;
+            break;
+          case VisionDetectionModelType.PeopleDetection:
+            item.unsavedSettings =
+              initialDetectionModelParameters.peopleDetection;
             break;
           case VisionDetectionModelType.GaugeReader:
             item.unsavedSettings = initialDetectionModelParameters.gaugeReader;

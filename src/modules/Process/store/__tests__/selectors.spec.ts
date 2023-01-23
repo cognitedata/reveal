@@ -198,7 +198,7 @@ describe('Test file process selectors', () => {
         100, 200, 500,
       ]);
       expect(selectJobIdsByFileId(mockProcessState, 2)).toEqual([
-        100, 200, 300, 500,
+        100, 200, 300, 500, 600,
       ]);
       expect(selectJobIdsByFileId(mockProcessState, 12)).toEqual([
         100, 200, 400,
@@ -251,7 +251,9 @@ describe('Test file process selectors', () => {
 
       const jobsFor2 = jobs.find((job) => job.fileId === '2')?.jobs;
       expect(jobsFor2).not.toEqual({});
-      expect(jobsFor2?.map((job) => job.jobId)).toEqual([100, 200, 300, 500]);
+      expect(jobsFor2?.map((job) => job.jobId)).toEqual([
+        100, 200, 300, 500, 600,
+      ]);
     });
   });
 
@@ -357,13 +359,13 @@ describe('Test file process selectors', () => {
       expect(annotationBadgeProps1.text?.status).toEqual('Queued'); // ocr
       expect(annotationBadgeProps1.objects?.status).toEqual('Running'); // ObjectDetection
       expect(annotationBadgeProps1.tag?.status).toEqual('Completed'); // TagDetection
-      expect(annotationBadgeProps1.gdpr?.status).toEqual('Running');
+      expect(annotationBadgeProps1.gdpr?.status).toBeUndefined(); // PeopleDetection
 
       const annotationBadgeProps2 = getAnnotationStatuses(mockProcessState, 2);
       expect(annotationBadgeProps2.text?.status).toEqual('Queued'); // ocr
       expect(annotationBadgeProps2.objects?.status).toEqual('Running'); // ObjectDetection
       expect(annotationBadgeProps2.tag?.status).toEqual('Completed'); // TagDetection
-      expect(annotationBadgeProps2.gdpr?.status).toEqual('Running');
+      expect(annotationBadgeProps2.gdpr?.status).toEqual('Completed'); // PeopleDetection
 
       const annotationBadgeProps12 = getAnnotationStatuses(
         mockProcessState,
@@ -372,7 +374,7 @@ describe('Test file process selectors', () => {
       expect(annotationBadgeProps12.text?.status).toEqual('Queued'); // ocr
       expect(annotationBadgeProps12.objects?.status).toEqual('Running'); // ObjectDetection
       expect(annotationBadgeProps12.tag?.status).toEqual('Failed'); // TagDetection
-      expect(annotationBadgeProps12.gdpr?.status).toEqual('Running');
+      expect(annotationBadgeProps12.gdpr?.status).toBeUndefined(); // PeopleDetection
     });
   });
 

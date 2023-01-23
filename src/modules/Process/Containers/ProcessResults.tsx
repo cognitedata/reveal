@@ -56,8 +56,19 @@ import {
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { ContextMenuContainer } from 'src/modules/Explorer/Containers/ContextMenuContainer';
+import { useContextMenu } from 'src/modules/Common/hooks/useContextMenu';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
+  const {
+    contextMenuDataItem,
+    contextMenuAnchorPoint,
+    showContextMenu,
+    setContextMenuDataItem,
+    setContextMenuAnchorPoint,
+    setShowContextMenu,
+  } = useContextMenu();
+
   const dispatch = useDispatch();
   const history = useHistory();
   const focusedFileId = useSelector(
@@ -155,6 +166,21 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     [dispatch]
   );
 
+  const handleContextMenuOpen = useCallback(
+    (event: MouseEvent, item: TableDataItem) => {
+      event.preventDefault();
+      setContextMenuDataItem(item);
+      setContextMenuAnchorPoint({
+        x: event.pageX,
+        y: event.pageY,
+      });
+      setShowContextMenu(true);
+      dispatch(cancelFileDetailsEdit());
+      dispatch(setFocusedFileId(item.id));
+    },
+    []
+  );
+
   const handleRowSelect = useCallback(
     (item: TableDataItem, selected: boolean) => {
       dispatch(setFileSelectState(item.id, selected));
@@ -212,6 +238,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         onItemSelect={handleRowSelect}
         isSelected={useIsSelectedInProcess}
         isActionDisabled={useProcessFilesSelected}
+        onItemRightClick={handleContextMenuOpen}
       />
     ),
     []
@@ -269,6 +296,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
                   {...otherProps}
                   onItemSelect={handleRowSelect}
                   onItemClick={handleItemClick}
+                  onItemRightClick={handleContextMenuOpen}
                   focusedId={focusedFileId}
                   selectedIds={selectedFileIds}
                   allRowsSelected={allFilesSelected}
@@ -288,6 +316,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
                 {...otherProps}
                 onItemSelect={handleRowSelect}
                 onItemClick={handleItemClick}
+                onItemRightClick={handleContextMenuOpen}
                 focusedId={focusedFileId}
                 selectedIds={selectedFileIds}
                 allRowsSelected={allFilesSelected}
@@ -308,6 +337,12 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           );
         }}
       </PaginationWrapper>
+      {showContextMenu && contextMenuDataItem && (
+        <ContextMenuContainer
+          rowData={contextMenuDataItem}
+          position={contextMenuAnchorPoint}
+        />
+      )}
     </>
   );
 };

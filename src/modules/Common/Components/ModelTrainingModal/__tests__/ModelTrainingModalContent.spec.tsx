@@ -114,6 +114,15 @@ describe('ModelTrainingModalContent', () => {
           { id: 4, text: 'valve' },
         ],
       },
+      {
+        id: 3,
+        name: 'three.JPEG',
+        mimeType: 'image/jpeg',
+        annotations: [
+          { id: 3, text: 'pump' },
+          { id: 4, text: 'valve' },
+        ],
+      },
     ] as MockDataType[];
     const { props, annotationState } = getMockData(data);
 

@@ -23,7 +23,7 @@ const getPageTitle = (requestedPathName: string) => {
   const requestedPage = requestedPathName.split('/').pop();
   switch (requestedPage) {
     case 'explore':
-      return 'Vision Explore';
+      return 'Image and video management';
     case 'process':
       return 'Contextualize Imagery Data';
     case 'models':

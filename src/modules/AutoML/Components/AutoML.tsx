@@ -1,6 +1,6 @@
 /* eslint-disable @cognite/no-number-z-index */
-import { Divider } from '@cognite/data-exploration';
 import React, { useEffect, useState } from 'react';
+import { Divider } from '@cognite/data-exploration';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
@@ -50,15 +50,20 @@ const AutoML = () => {
         exportFormat
       );
       if (data?.modelUrl) {
-        const res = await fetch(data.modelUrl, {
-          method: 'GET',
-        });
-        const blob = await res.blob();
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.setAttribute('download', `${selectedModelId}.${format}`);
-        document.body.appendChild(link);
-        link.click();
+        try {
+          const res = await fetch(data.modelUrl, {
+            method: 'GET',
+          });
+          const blob = await res.blob();
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.setAttribute('download', `${selectedModelId}.${format}`);
+          document.body.appendChild(link);
+          link.click();
+        } catch (_e) {
+          // if the download fails try to download by opening a new tab
+          window.open(data?.modelUrl, '_blank')?.focus();
+        }
       }
       setDownloadingModel(false);
     }

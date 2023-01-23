@@ -1,6 +1,7 @@
 import { GenericTabularState } from 'src/store/genericTabularDataSlice';
 import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
 import { FileInfo } from '@cognite/sdk';
+import { PageSize } from 'src/modules/Common/Components/FileTable/types';
 
 export type ExplorerFileState = Omit<
   FileInfo,
@@ -38,6 +39,14 @@ export type ExplorerState = GenericTabularState & {
     filter: VisionFileFilterProps;
     query: string;
     focusedFileId: number | null;
+    sortMeta: {
+      sortKey?: string;
+      reverse?: boolean;
+      // this default key will override by the last selected choice for the Timestamp column
+      defaultTimestampKey?: string;
+      currentPage: number;
+      pageSize: PageSize;
+    };
   };
   percentageScanned: number;
 };

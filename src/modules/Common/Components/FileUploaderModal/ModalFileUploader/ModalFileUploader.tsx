@@ -76,7 +76,8 @@ export type ModalFileUploaderProps = {
   onUploadFailure?: (error: string) => void;
   onCancel?: () => void;
   beforeUploadStart?: (fileList: CogsFileInfo[]) => void;
-  onFinishUploadAndProcess: () => void;
+  onFinishUpload: (processAfter: boolean) => void;
+  deleteFileOnCDF: (id: number) => void;
 };
 
 // vaguely described from console output
@@ -148,7 +149,11 @@ const updateUploadStatus = (fileList: CogsFileInfo[]) => {
   if (fileList.find(({ status }) => status === 'uploading')) {
     return STATUS.STARTED;
   }
-  if (fileList.find(({ status }) => status === 'idle')) {
+  if (
+    fileList.find(
+      ({ status }) => status === 'idle' || status === 'metadata created'
+    )
+  ) {
     return STATUS.READY_TO_START;
   }
   if (fileList.length && fileList.every(({ status }) => status === 'done')) {
@@ -166,7 +171,8 @@ export const ModalFileUploader = ({
   onCancel = () => {},
   beforeUploadStart = () => {},
   onFileListChange = () => {},
-  onFinishUploadAndProcess,
+  onFinishUpload,
+  deleteFileOnCDF,
   ...props
 }: ModalFileUploaderProps) => {
   const sdk = useSDK();
@@ -195,9 +201,16 @@ export const ModalFileUploader = ({
 
   const uploadFileAtIndex = (index: number) => {
     const file = fileList[index];
-    if (file.status === 'idle' || file.status === 'paused') {
+    if (
+      file.status === 'idle' ||
+      file.status === 'paused' ||
+      file.status === 'metadata created'
+    ) {
       if (file.status === 'idle' && file instanceof File) {
         uploadFile(file);
+      } else if (file.status === 'metadata created') {
+        clearCDFUploadMetadata(file);
+        uploadFile(file as CogsFile);
       } else if (file.status === 'paused' && file instanceof File) {
         resumeFileUpload(file);
       }
@@ -226,6 +239,17 @@ export const ModalFileUploader = ({
       currentUpload.cancel();
       currentUpload.meta.reset();
       delete currentUploads[file.uid];
+    }
+  };
+
+  const clearCDFUploadMetadata = (file: CogsFile | CogsFileInfo) => {
+    if (
+      file.cdfId &&
+      (file.status === 'uploading' ||
+        file.status === 'paused' ||
+        file.status === 'metadata created')
+    ) {
+      deleteFileOnCDF(file.cdfId);
     }
   };
 
@@ -341,6 +365,8 @@ export const ModalFileUploader = ({
       }
 
       const { uploadUrl, id } = fileMetadata;
+      // eslint-disable-next-line no-param-reassign
+      file.cdfId = id;
 
       currentUploads[file.uid] = await GCSUploader({
         file,
@@ -389,8 +415,13 @@ export const ModalFileUploader = ({
         message.error(
           `Unable to upload ${file.name} on server. ${e.errorMessage} | code: ${e.status}`
         );
-        // eslint-disable-next-line no-param-reassign
-        file.status = 'idle';
+        if (file.cdfId) {
+          // eslint-disable-next-line no-param-reassign
+          file.status = 'metadata created';
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          file.status = 'idle';
+        }
       }
     }
 
@@ -416,8 +447,13 @@ export const ModalFileUploader = ({
         setCursor(-1);
         setFileList((list) =>
           list.map((file) => {
-            if (file.status === 'uploading' || file.status === 'paused') {
+            if (
+              file.status === 'uploading' ||
+              file.status === 'paused' ||
+              file.status === 'metadata created'
+            ) {
               clearLocalUploadMetadata(file);
+              clearCDFUploadMetadata(file);
               // eslint-disable-next-line no-param-reassign
               file.status = 'idle';
               // eslint-disable-next-line no-param-reassign
@@ -433,24 +469,26 @@ export const ModalFileUploader = ({
   };
 
   const removeFiles = () => {
+    fileList.forEach((file) => {
+      clearCDFUploadMetadata(file);
+    });
     setFileList([]);
   };
 
   const removeFile = (file: CogsFileInfo) => {
+    clearCDFUploadMetadata(file);
     clearLocalUploadMetadata(file);
     setFileList((list) => list.filter((el) => el.uid !== file.uid));
   };
 
-  const onCloseModal = () => {
+  const onCancelModal = () => {
     removeFiles();
     onCancel();
   };
 
   const onFinish = () => {
-    onCloseModal();
-    if (processAfter || !enableProcessAfter) {
-      onFinishUploadAndProcess();
-    }
+    removeFiles();
+    onFinishUpload(processAfter);
   };
 
   const [UploadButton, CancelButton, RemoveAllButton] = getUploadControls(
@@ -458,8 +496,9 @@ export const ModalFileUploader = ({
     startUpload,
     stopUpload,
     removeFiles,
-    onCloseModal,
-    onFinish
+    onCancelModal,
+    onFinish,
+    fileList
   );
   return (
     <div>

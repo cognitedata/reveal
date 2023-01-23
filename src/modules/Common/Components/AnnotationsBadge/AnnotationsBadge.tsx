@@ -5,7 +5,7 @@ import {
   AnnotationsBadgeStatuses,
   AnnotationStatuses,
 } from 'src/modules/Common/types';
-import { showBadge, showGDPRBadge } from './utils';
+import { showBadge } from './utils';
 
 const setBadge = (count: number, statuses?: AnnotationStatuses) => {
   if (statuses?.status === 'Running') {
@@ -44,7 +44,7 @@ export function AnnotationsBadge(
   const showTag = showBadge(badgeCounts.assets, badgeStatuses.tag);
   const showText = showBadge(badgeCounts.text, badgeStatuses.text);
   const showObjects = showBadge(badgeCounts.objects, badgeStatuses.objects);
-  const showGdpr = showGDPRBadge(badgeCounts.gdpr);
+  const showGdpr = showBadge(badgeCounts.gdpr, badgeStatuses.gdpr);
   return (
     <>
       {badgeCounts.assets !== undefined && showTag && (

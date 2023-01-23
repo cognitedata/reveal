@@ -19,8 +19,9 @@ export interface DatasetValidationType {
 export const fileTypesValid = (files: VisionFile[]) => {
   return files.every(
     (item) =>
-      ['.png', '.jpeg', '.jpg'].includes(path.extname(item.name)) &&
-      ['png', 'jpeg'].includes(mime.extension(item?.mimeType || '') || '')
+      ['.png', '.jpeg', '.jpg'].includes(
+        path.extname(item.name.toLowerCase())
+      ) && ['png', 'jpeg'].includes(mime.extension(item?.mimeType || '') || '')
   );
 };
 

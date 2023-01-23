@@ -7,6 +7,7 @@ import {
   SegmentedControl,
   Title,
 } from '@cognite/cogs.js';
+import { InputNumber } from 'antd';
 import React from 'react';
 import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
 import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/AssetSelector';
@@ -60,23 +61,26 @@ export const content = (modelIndex: number) => {
         .unsavedSettings as ParamsTagDetection
   );
 
-  const onUseCacheChange = (key: string) => {
-    const newParams = {
-      modelIndex,
-      params: {
-        useCache: key === 'true',
-        partialMatch: params.partialMatch,
-        assetSubtreeIds: params.assetSubtreeIds,
-      },
-    };
-    dispatch(setUnsavedDetectionModelSettings(newParams));
-  };
+  const isValidThreshold = params.threshold >= 0.4 && params.threshold <= 1.0;
 
+  const onThresholdChange = (value: number) => {
+    if (isValidThreshold) {
+      const newParams = {
+        modelIndex,
+        params: {
+          threshold: value,
+          partialMatch: params.partialMatch,
+          assetSubtreeIds: params.assetSubtreeIds,
+        },
+      };
+      dispatch(setUnsavedDetectionModelSettings(newParams));
+    }
+  };
   const onPartialMatchChange = (key: string) => {
     const newParams = {
       modelIndex,
       params: {
-        useCache: params.useCache,
+        threshold: params.threshold,
         partialMatch: key === 'true',
         assetSubtreeIds: params.assetSubtreeIds,
       },
@@ -88,7 +92,7 @@ export const content = (modelIndex: number) => {
     const newParams = {
       modelIndex,
       params: {
-        useCache: params.useCache,
+        threshold: params.threshold,
         partialMatch: params.partialMatch,
         assetSubtreeIds: assets || [],
       },
@@ -113,27 +117,41 @@ export const content = (modelIndex: number) => {
                 </tr>
                 <tr>
                   <td>
-                    <Detail>Use cached results</Detail>
+                    <Detail>Confidence threshold</Detail>
                     <Tooltip
                       wrapped
-                      content="If True, uses cached result if the file has previously been analyzed."
+                      content="Threshold for minimum confidence the model has on a detected object"
                     >
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
                     </Tooltip>
                   </td>
                   <th>
-                    <SegmentedControl
-                      style={{ marginRight: 24 }}
-                      currentKey={params.useCache ? 'true' : 'false'}
-                      onButtonClicked={onUseCacheChange}
-                    >
-                      <SegmentedControl.Button key="true">
-                        True
-                      </SegmentedControl.Button>
-                      <SegmentedControl.Button key="false">
-                        False
-                      </SegmentedControl.Button>
-                    </SegmentedControl>
+                    <Row>
+                      <input
+                        type="range"
+                        min={0.4}
+                        max={1}
+                        value={params.threshold}
+                        onChange={(e) =>
+                          onThresholdChange(parseFloat(e.target.value))
+                        }
+                        step={0.05}
+                      />
+                      <InputNumber
+                        type="number"
+                        min={0.4}
+                        max={1}
+                        step={0.05}
+                        value={params.threshold}
+                        onChange={onThresholdChange}
+                        // TODO: switch back to the Input component in cogs.js once the issue in
+                        // https://cognitedata.slack.com/archives/C011E10CW2F/p1655890641506019?thread_ts=1655888255.471469&cid=C011E10CW2F
+                        // is resolved
+                        // size="large"
+                        // width={80}
+                        // style={{ height: '40px', MozAppearance: 'textfield' }}
+                      />
+                    </Row>
                   </th>
                 </tr>
                 <tr>

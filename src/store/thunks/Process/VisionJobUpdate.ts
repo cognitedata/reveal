@@ -11,7 +11,7 @@ import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { convertVisionJobResultItemToUnsavedVisionAnnotation } from 'src/api/vision/detectionModels/converters';
+import { convertVisionJobResultsToUnsavedVisionAnnotations } from 'src/api/vision/detectionModels/converters';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotation,
@@ -97,22 +97,11 @@ export const VisionJobUpdate = createAsyncThunk<
         [];
 
       // save new prediction results as annotations
-      let unsavedAnnotations: UnsavedVisionAnnotation<VisionAnnotationDataType>[] =
-        [];
-      newVisionJobResults.forEach((results) => {
-        const { annotations: jobAnnotations } = results;
-
-        if (jobAnnotations && jobAnnotations.length) {
-          const unsavedAnnotationsForFile =
-            convertVisionJobResultItemToUnsavedVisionAnnotation(
-              results,
-              job.type
-            );
-          unsavedAnnotations = unsavedAnnotations.concat(
-            unsavedAnnotationsForFile
-          );
-        }
-      });
+      const unsavedAnnotations: UnsavedVisionAnnotation<VisionAnnotationDataType>[] =
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          newVisionJobResults,
+          job.type
+        );
 
       if (unsavedAnnotations.length) {
         const savedAnnotationResponse = await dispatch(

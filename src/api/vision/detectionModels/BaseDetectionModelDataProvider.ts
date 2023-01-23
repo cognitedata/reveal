@@ -7,22 +7,28 @@ import {
 
 // tag and ocr api quite similar that's why this base class exists
 // in further, when api will be normalized, all these provides should be removed in favor
-// of using some one generic provider like that one
+// of using someone generic provider like that one
+
 export abstract class BaseDetectionModelDataProvider
   implements DetectionModelDataProvider
 {
   protected abstract url: string;
+  protected abstract features: string[];
+  protected abstract getParams: (params?: {}) => {};
+  protected customHeaders = {};
 
   postJob(fileIds: number[], parameters?: DetectionModelParams) {
     return sdk
       .post<VisionJobResponse>(this.url, {
+        headers: this.customHeaders,
         data: {
           items: fileIds.map((id) => {
             return {
               fileId: id,
             };
           }),
-          ...parameters,
+          features: this.features,
+          parameters: this.getParams(parameters),
         },
       })
       .then((response) => {

@@ -63,6 +63,10 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   .cogs-pagination-input {
     -moz-appearance: textfield !important;
   }
+
+  .cogs-popconfirm--content{
+    white-space: pre !important
+  }
 `;
 
 export default GlobalStyle;

@@ -36,7 +36,7 @@ describe('Test ProcessFileUploadModalContainer.spec.tsx', () => {
 
     await waitFor(() => {
       expect(realStore.getState().processSlice.fileIds).toContain(1);
-      expect(queryByText(/Upload Files/i)).toBeInTheDocument();
+      expect(queryByText(/Finish Uploading/i)).not.toBeInTheDocument();
     });
   });
 
@@ -67,7 +67,7 @@ describe('Test ProcessFileUploadModalContainer.spec.tsx', () => {
       expect(realStore.getState().processSlice.fileIds).toEqual(
         expect.arrayContaining([1, 2])
       );
-      expect(queryByText(/Upload Files/i)).toBeInTheDocument();
+      expect(queryByText(/Finish Uploading/i)).not.toBeInTheDocument();
     });
   });
 });
