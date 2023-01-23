@@ -95,7 +95,6 @@ export class Image360ApiHelper {
     }
     await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
     this._requestRedraw();
-    this._imageCollection!.events.disposed.fire();
   }
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
@@ -268,8 +267,9 @@ export class Image360ApiHelper {
       this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
     }
 
-    this._imageCollection!.events.image360Exited.fire();
-    this._imageCollection!.events.disposed.fire();
+    if (this._imageCollection) {
+      this._imageCollection.dispose();
+    }
     this._image360Navigation.dispose();
   }
 

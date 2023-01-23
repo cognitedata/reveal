@@ -90,4 +90,9 @@ export class DefaultImage360Collection implements Image360Collection {
         assertNever(event, `Unsupported event: '${event}'`);
     }
   }
+
+  dispose(): void {
+    this._events.image360Entered.unsubscribeAll();
+    this._events.image360Exited.unsubscribeAll();
+  }
 }
