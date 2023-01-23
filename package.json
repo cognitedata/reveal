@@ -84,7 +84,7 @@
     "@types/jest": "^26.0.23",
     "@types/jszip": "^3.4.1",
     "@types/lodash": "^4.14.168",
-    "@types/lodash-es": "^4.17.4",
+    "@types/lodash-es": "^4.17.6",
     "@types/mapbox-gl": "^2.1.2",
     "@types/mime-types": "^2.1.1",
     "@types/node": "^14.14.37",
