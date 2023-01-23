@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { createRenderTriangle, WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
-import { CogniteColors, RevealColors } from './types';
+import { CogniteColors, RevealColors, StyledTreeIndexSets } from './types';
 import {
   BlendOptions,
   BlitEffect,
@@ -230,16 +230,6 @@ export enum RenderLayer {
   Default = 0
 }
 
-export function setupCadModelsGeometryLayers(
-  materialManager: CadMaterialManager,
-  cadModels?: {
-    cadNode: THREE.Object3D;
-    modelIdentifier: string;
-  }[]
-): void {
-  cadModels?.forEach(cadModel => setModelRenderLayers(cadModel, materialManager));
-}
-
 export function getLayerMask(renderLayer: number): number {
   return ((1 << renderLayer) | 0) >>> 0;
 }
@@ -266,35 +256,23 @@ export function hasStyledNodes(
   return { back: totalBackIndices > 0, ghost: totalGhostIndices > 0, inFront: totalInFrontIndices > 0 };
 }
 
-function setModelRenderLayers(
-  cadModels: {
-    cadNode: THREE.Object3D;
-    modelIdentifier: string;
-  },
-  materialManager: CadMaterialManager
-) {
-  const { cadNode: model, modelIdentifier } = cadModels;
-
-  const backSet = materialManager.getModelBackTreeIndices(modelIdentifier);
-  const ghostSet = materialManager.getModelGhostedTreeIndices(modelIdentifier);
-  const inFrontSet = materialManager.getModelInFrontTreeIndices(modelIdentifier);
-  const visibleSet = materialManager.getModelVisibleTreeIndices(modelIdentifier);
-
-  model.traverse(node => {
+export function setModelRenderLayers(rootNode: THREE.Object3D, stylingSets: StyledTreeIndexSets): void {
+  const { back, ghost, inFront, visible } = stylingSets;
+  rootNode.traverse(node => {
     node.layers.disableAll();
     const objectTreeIndices = node.userData?.treeIndices as Map<number, number> | undefined;
     if (objectTreeIndices === undefined) {
       return;
     }
 
-    if (visibleSet.hasIntersectionWith(objectTreeIndices)) {
-      if (backSet.hasIntersectionWith(objectTreeIndices)) {
+    if (visible.hasIntersectionWith(objectTreeIndices)) {
+      if (back.hasIntersectionWith(objectTreeIndices)) {
         node.layers.enable(RenderLayer.Back);
       }
-      if (ghostSet.hasIntersectionWith(objectTreeIndices)) {
+      if (ghost.hasIntersectionWith(objectTreeIndices)) {
         node.layers.enable(RenderLayer.Ghost);
       }
-      if (inFrontSet.hasIntersectionWith(objectTreeIndices)) {
+      if (inFront.hasIntersectionWith(objectTreeIndices)) {
         node.layers.enable(RenderLayer.InFront);
       }
     }
