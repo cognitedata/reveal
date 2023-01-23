@@ -33,7 +33,7 @@
     "exifr": "^6.2.0",
     "file-saver": "^2.0.5",
     "immer": "^9.0.6",
-    "jszip": "^3.6.0",
+    "jszip": "^3.10.1",
     "loader-utils": "^1.4.1",
     "lodash-es": "^4.17.21",
     "mapbox-gl": "1.13.1",
