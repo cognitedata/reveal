@@ -4,7 +4,7 @@
 import assert from 'assert';
 import minBy from 'lodash/minBy';
 import { BufferGeometry, Group, InstancedMesh, InterleavedBufferAttribute, RawShaderMaterial } from 'three';
-import { Materials } from '@reveal/rendering';
+import { Materials, setModelRenderLayers, StyledTreeIndexSets } from '@reveal/rendering';
 import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import {
   decrementOrDeleteIndex,
@@ -62,10 +62,12 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
   private readonly _instanceBatches: Map<string, InstanceBatch>;
   private readonly _materials: Materials;
   private readonly _batchGroup: Group;
+  private readonly _styledTreeIndexSets: StyledTreeIndexSets;
 
   constructor(
     batchGroup: Group,
     materials: Materials,
+    styleTreeIndexSets: StyledTreeIndexSets,
     private readonly initialBufferSize = 1024,
     private readonly numberOfInstanceBatches = 2
   ) {
@@ -73,6 +75,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     this._instanceBatches = new Map();
     this._materials = materials;
     this._batchGroup = batchGroup;
+    this._styledTreeIndexSets = styleTreeIndexSets;
   }
 
   public batchGeometries(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void {
@@ -114,6 +117,8 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       mesh.count -= instanceCount;
 
       mesh.visible = mesh.count > 0;
+
+      setModelRenderLayers(batchBuffer.mesh, this._styledTreeIndexSets);
     });
 
     this._sectorBatches.delete(sectorId);
@@ -200,6 +205,8 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
 
     batchBuffer.mesh.visible = true;
     batchBuffer.mesh.count += instanceCount;
+
+    setModelRenderLayers(batchBuffer.mesh, this._styledTreeIndexSets);
   }
 
   private addTreeIndicesToMeshUserData(
