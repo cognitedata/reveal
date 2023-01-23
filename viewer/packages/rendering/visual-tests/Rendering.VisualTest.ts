@@ -106,7 +106,7 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
       return;
     }
 
-    if (stepPipelineExecutor.timings.length > 0) {
+    if (stepPipelineExecutor.timings !== undefined && stepPipelineExecutor.timings.length > 0) {
       if (this.timings.length >= 20) {
         const frameTime = this.timings.reduce((sum, current) => sum + current, 0) / this.timings.length;
         this.guiData.frameTime = frameTime;
