@@ -11,6 +11,7 @@ import {
   TimeseriesChart,
   Metadata,
   TimeseriesDetails,
+  TIME_SELECT,
 } from '@cognite/data-exploration';
 import {
   ResourceDetailsTabs,
@@ -48,7 +49,9 @@ export const TimeseriesPreview = ({
   const activeTab = tabType || 'details';
 
   const tabChange = useOnPreviewTabChange(tabType, 'timeseries');
-  const [dateRange, setDateRange] = useDateRange();
+  const [dateRange, setDateRange] = React.useState<[Date, Date]>(() =>
+    TIME_SELECT['2Y'].getTime()
+  );
   const [, openPreview] = useCurrentResourceId();
 
   const handlePreviewClose = () => {
