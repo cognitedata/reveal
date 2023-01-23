@@ -10,7 +10,7 @@ import { RenderMode } from '../rendering/RenderMode';
 import { RenderOptions } from '../rendering/types';
 import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
-import { createRenderTarget, hasStyledNodes, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
+import { createRenderTarget, hasStyledNodes } from '../utilities/renderUtilities';
 import { CadGeometryRenderTargets } from './types';
 
 type CadGeometryRenderPasses = {
@@ -86,7 +86,6 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
     this._rendererStateHelper.setClearColor(renderer.getClearColor(new THREE.Color()), 0);
 
     this.updateRenderTargetSizes(renderer);
-    setupCadModelsGeometryLayers(this._materialManager, this._cadModels);
   }
 
   private initializeRenderTargets(multisampleCount: number): CadGeometryRenderTargets {
