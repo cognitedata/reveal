@@ -28,9 +28,11 @@ export const FileDetailsContainer = (props: {
       {info.geoLocation && (
         <FileDetailFieldView
           id="geoLocation"
-          title="Longitude, latitude: "
+          title="Latitude, longitude: "
           placeholder="None Set"
-          value={info.geoLocation?.geometry.coordinates.join(', ')}
+          value={[...info.geoLocation?.geometry.coordinates]
+            .reverse()
+            .join(', ')}
           copyable
         />
       )}

@@ -147,6 +147,9 @@ export const makeSelectJobStatusForFile = () =>
         if (job.type === VisionDetectionModelType.TagDetection) {
           annotationBadgeProps.tag = statusData;
         }
+        if (job.type === VisionDetectionModelType.PeopleDetection) {
+          annotationBadgeProps.gdpr = statusData;
+        }
         if (
           [
             VisionDetectionModelType.ObjectDetection,
@@ -155,7 +158,6 @@ export const makeSelectJobStatusForFile = () =>
           ].includes(job.type)
         ) {
           annotationBadgeProps.objects = statusData;
-          annotationBadgeProps.gdpr = statusData;
         }
       });
       return annotationBadgeProps as AnnotationsBadgeStatuses;

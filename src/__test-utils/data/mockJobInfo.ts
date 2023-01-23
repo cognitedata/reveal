@@ -1,23 +1,23 @@
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { JobState } from 'src/modules/Process/store/types';
 
-export const jobIds: number[] = [100, 200, 300, 400, 500];
+export const jobIds: number[] = [100, 200, 300, 400, 500, 600];
 export const filesWithJobs: Record<number, { jobIds: number[] }> = {
   1: { jobIds: [100, 200, 500] },
-  2: { jobIds: [100, 200, 300, 500] },
-  3: { jobIds: [100, 200, 300, 500] },
-  4: { jobIds: [100, 200, 300, 500] },
-  5: { jobIds: [100, 200, 300, 500] },
-  6: { jobIds: [100, 200, 300, 500] },
-  7: { jobIds: [100, 200, 300] },
-  8: { jobIds: [100, 200, 300] },
-  9: { jobIds: [100, 200, 300] },
+  2: { jobIds: [100, 200, 300, 500, 600] },
+  3: { jobIds: [100, 200, 300, 500, 600] },
+  4: { jobIds: [100, 200, 300, 500, 600] },
+  5: { jobIds: [100, 200, 300, 500, 600] },
+  6: { jobIds: [100, 200, 300, 500, 600] },
+  7: { jobIds: [100, 200, 300, 600] },
+  8: { jobIds: [100, 200, 300, 600] },
+  9: { jobIds: [100, 200, 300, 600] },
   10: { jobIds: [100, 200, 400] },
   11: { jobIds: [100, 200, 400] },
   12: { jobIds: [100, 200, 400] },
-  13: { jobIds: [300] },
+  13: { jobIds: [300, 600] },
   14: { jobIds: [400] },
-  15: { jobIds: [300, 400] },
+  15: { jobIds: [300, 400, 600] },
 };
 export const queuedJob: JobState = {
   jobId: 100,
@@ -177,12 +177,43 @@ export const partiallyCompletedJob: JobState = {
   ],
 };
 
+export const completedPeopleDetectionJob: JobState = {
+  jobId: 600,
+  type: VisionDetectionModelType.PeopleDetection,
+  status: 'Completed',
+  createdTime: 1643352030229,
+  statusTime: 1643352030229,
+  startTime: 1643352030660,
+  fileIds: [2, 3, 4, 5, 6, 7, 8, 9, 13, 15],
+  completedFileIds: [2, 3, 4, 5, 6, 7, 8, 9, 13, 15],
+  items: [
+    {
+      fileId: 7185641115449787,
+      predictions: {
+        peoplePredictions: [
+          {
+            boundingBox: {
+              xMax: 0.5155458450317383,
+              xMin: 0.3443277180194855,
+              yMax: 0.6282840967178345,
+              yMin: 0.07562699913978577,
+            },
+            confidence: 0.8164102435112,
+            label: 'person',
+          },
+        ],
+      },
+    },
+  ],
+};
+
 export const jobState: Record<number, JobState> = {
   100: queuedJob,
   200: runningJob,
   300: completedJob,
   400: failedJob,
   500: partiallyCompletedJob,
+  600: completedPeopleDetectionJob,
 };
 
 export const allFileIdsWithJob400 = [10, 11, 12, 14, 15];

@@ -117,6 +117,17 @@ export function FileTableExplorer(props: FileListTableProps<TableDataItem>) {
     onClick: ({ rowData }: { rowData: TableDataItem }) => {
       props.onItemClick(rowData as ResultData);
     },
+    onContextMenu: ({
+      event,
+      rowData,
+    }: {
+      event: React.SyntheticEvent;
+      rowData: TableDataItem;
+    }) => {
+      if (props.onItemRightClick) {
+        props.onItemRightClick(event as unknown as MouseEvent, rowData);
+      }
+    },
   };
 
   const loadingAnnotations = useSelector(

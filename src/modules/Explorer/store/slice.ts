@@ -19,6 +19,7 @@ import {
   resetSortPagination,
 } from 'src/modules/Explorer/store/utils';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { PageSize } from 'src/modules/Common/Components/FileTable/types';
 
 const initialState: ExplorerState = {
   focusedFileId: null,
@@ -48,6 +49,13 @@ const initialState: ExplorerState = {
     filter: {},
     query: '',
     focusedFileId: null,
+    sortMeta: {
+      sortKey: '',
+      reverse: false,
+      currentPage: 1,
+      pageSize: DEFAULT_PAGE_SIZE,
+      defaultTimestampKey: SortKeys.createdTime,
+    },
   },
   percentageScanned: 0,
 };
@@ -106,6 +114,20 @@ const explorerReducer = createGenericTabularDataSlice({
       }
       state.exploreModal.query = action.payload;
     },
+
+    setExploreModalSortKey(state, action: PayloadAction<string>) {
+      state.exploreModal.sortMeta.sortKey = action.payload;
+    },
+    setExploreModalReverse(state, action: PayloadAction<boolean>) {
+      state.exploreModal.sortMeta.reverse = action.payload;
+    },
+    setExploreModalCurrentPage(state, action: PayloadAction<number>) {
+      state.exploreModal.sortMeta.currentPage = action.payload;
+    },
+    setExploreModalPageSize(state, action: PayloadAction<PageSize>) {
+      state.exploreModal.sortMeta.pageSize = action.payload;
+    },
+
     setExplorerFilter(state, action: PayloadAction<VisionFileFilterProps>) {
       if (!isEqual(state.filter, action.payload)) resetSortPagination(state);
       state.filter = action.payload;
@@ -209,6 +231,10 @@ export const {
   showFileMetadata,
   setExplorerQueryString,
   setExplorerModalQueryString,
+  setExploreModalSortKey,
+  setExploreModalReverse,
+  setExploreModalCurrentPage,
+  setExploreModalPageSize,
   setExplorerFilter,
   toggleExplorerFilterView,
   setExplorerFileUploadModalVisibility,

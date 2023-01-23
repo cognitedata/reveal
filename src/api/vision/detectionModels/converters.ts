@@ -9,17 +9,26 @@ import {
   ImageObjectDetectionBoundingBox,
   Status,
 } from 'src/api/annotation/types';
+import { isLegacyJobResultItem } from 'src/api/vision/detectionModels/detectionUtils';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
+import {
+  isImageAssetLinkData,
+  isImageExtractedTextData,
+  isImageKeypointCollectionData,
+  isImageObjectDetectionData,
+} from 'src/modules/Common/types/typeGuards';
 
 import {
   GaugeReaderJobAnnotation,
+  LegacyVisionJobResultItem,
   ObjectDetectionJobAnnotation,
   TagDetectionJobAnnotation,
   TextDetectionJobAnnotation,
   VisionDetectionModelType,
+  VisionExtractPredictions,
   VisionJobAnnotation,
   VisionJobResultItem,
 } from './types';
@@ -194,7 +203,7 @@ export function convertVisionJobAnnotationToImageKeypointCollection(
 }
 
 export function convertVisionJobResultItemToUnsavedVisionAnnotation(
-  visionJobResultItem: VisionJobResultItem,
+  visionJobResultItem: LegacyVisionJobResultItem,
   visionDetectionModelType: VisionDetectionModelType
 ): UnsavedVisionAnnotation<VisionAnnotationDataType>[] {
   const commonProperties = {
@@ -251,19 +260,23 @@ export function convertVisionJobResultItemToUnsavedVisionAnnotation(
             }
             case VisionDetectionModelType.GaugeReader: {
               // Gauge reader output consist of a bounding box and a keypoint collection
-              const annotationDataBoundingBox =
-                convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
-                  visionJobAnnotation
-                );
-              if (annotationDataBoundingBox) {
-                return annotationDataBoundingBox
-                  ? {
-                      annotationType:
-                        CDFAnnotationTypeEnum.ImagesObjectDetection,
-                      data: annotationDataBoundingBox,
-                      ...commonProperties,
-                    }
-                  : null;
+
+              // to differentiate between Bounding box and keypoint collections
+              if (validBoundingBox(visionJobAnnotation)) {
+                const annotationDataBoundingBox =
+                  convertVisionJobAnnotationToImageObjectDetectionBoundingBox(
+                    visionJobAnnotation
+                  );
+                if (annotationDataBoundingBox) {
+                  return annotationDataBoundingBox
+                    ? {
+                        annotationType:
+                          CDFAnnotationTypeEnum.ImagesObjectDetection,
+                        data: annotationDataBoundingBox,
+                        ...commonProperties,
+                      }
+                    : null;
+                }
               }
               const annotationDataKeypointCollection =
                 convertVisionJobAnnotationToImageKeypointCollection(
@@ -316,4 +329,94 @@ export function convertVisionJobResultItemToUnsavedVisionAnnotation(
         )
         .flat();
   return unsavedVisionAnnotations;
+}
+
+export function convertVisionJobResultsToUnsavedVisionAnnotations(
+  jobResultItems: VisionJobResultItem[],
+  jobType: VisionDetectionModelType
+) {
+  return jobResultItems
+    .map((jobResult) => {
+      const commonProperties = {
+        annotatedResourceId: jobResult.fileId,
+        status: Status.Suggested,
+      };
+      if (isLegacyJobResultItem(jobResult)) {
+        // todo: remove this check once all endpoints moved to annotate service
+        const unsavedAnnotationsForFile =
+          convertVisionJobResultItemToUnsavedVisionAnnotation(
+            jobResult,
+            jobType
+          );
+        return unsavedAnnotationsForFile;
+      }
+
+      const allPredictions: VisionExtractPredictions = jobResult.predictions;
+
+      const predictionKeys = Object.keys(
+        allPredictions
+      ) as (keyof VisionExtractPredictions)[];
+
+      return predictionKeys
+        .map((predictionKey) => {
+          const visionJobPredictions = allPredictions[predictionKey];
+
+          if (!(visionJobPredictions && visionJobPredictions.length)) {
+            return [];
+          }
+
+          const unsavedVisionAnnotations: UnsavedVisionAnnotation<VisionAnnotationDataType>[] =
+            visionJobPredictions.map(
+              (jobPrediction: VisionAnnotationDataType) => {
+                if (isImageAssetLinkData(jobPrediction)) {
+                  return {
+                    annotationType: CDFAnnotationTypeEnum.ImagesAssetLink,
+                    data: { ...jobPrediction },
+                    ...commonProperties,
+                  };
+                }
+                if (isImageExtractedTextData(jobPrediction)) {
+                  return {
+                    annotationType: CDFAnnotationTypeEnum.ImagesTextRegion,
+                    data: { ...jobPrediction },
+                    ...commonProperties,
+                  };
+                }
+                if (isImageKeypointCollectionData(jobPrediction)) {
+                  return {
+                    annotationType:
+                      CDFAnnotationTypeEnum.ImagesKeypointCollection,
+                    data: { ...jobPrediction },
+                    ...commonProperties,
+                  };
+                }
+                if (isImageObjectDetectionData(jobPrediction)) {
+                  return {
+                    annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
+                    data: { ...jobPrediction },
+                    ...commonProperties,
+                  };
+                }
+                return {
+                  annotationType: CDFAnnotationTypeEnum.ImagesClassification,
+                  data: { ...jobPrediction },
+                  ...commonProperties,
+                };
+              }
+            );
+          return unsavedVisionAnnotations;
+        })
+        .reduce((acc, next) => {
+          if (next.length) {
+            return acc.concat(next);
+          }
+          return acc;
+        }, []);
+    })
+    .reduce((acc, next) => {
+      if (next.length) {
+        return acc.concat(next);
+      }
+      return acc;
+    }, []);
 }

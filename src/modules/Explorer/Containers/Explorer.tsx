@@ -32,16 +32,27 @@ import { FilterSidePanel } from 'src/modules/FilterSidePanel/Containers/FilterSi
 import FilterToggleButton from 'src/modules/FilterSidePanel/Components/FilterToggleButton';
 import { ExplorerToolbarContainer } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
 import { cancelFileDetailsEdit } from 'src/modules/FileDetails/slice';
+import { ContextMenuContainer } from 'src/modules/Explorer/Containers/ContextMenuContainer';
+import { useContextMenu } from 'src/modules/Common/hooks/useContextMenu';
 import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
 
 const Explorer = () => {
+  const {
+    contextMenuDataItem,
+    contextMenuAnchorPoint,
+    showContextMenu,
+    setContextMenuDataItem,
+    setContextMenuAnchorPoint,
+    setShowContextMenu,
+  } = useContextMenu();
+
   const history = useHistory();
   const dispatch = useDispatch();
 
   const queryClient = new QueryClient();
 
   const [reFetchProp, setReFetchProp] = useState(false);
-  const reFetch = () => setReFetchProp((i) => !i);
+  const reFetch = useCallback(() => setReFetchProp((i) => !i), []);
 
   const showFilter = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.showFilter
@@ -89,6 +100,22 @@ const Explorer = () => {
     []
   );
 
+  const handleContextMenuOpen = useCallback(
+    (event: MouseEvent, item: TableDataItem) => {
+      event.preventDefault();
+      setContextMenuDataItem(item);
+      setContextMenuAnchorPoint({
+        x: event.pageX,
+        y: event.pageY,
+      });
+      setShowContextMenu(true);
+      dispatch(cancelFileDetailsEdit());
+      dispatch(FetchFilesById([item.id]));
+      dispatch(setFocusedFileId(item.id));
+    },
+    []
+  );
+
   const handleRowSelect = useCallback(
     (item: TableDataItem, selected: boolean) => {
       dispatch(setExplorerFileSelectState({ fileId: item.id, selected }));
@@ -112,9 +139,9 @@ const Explorer = () => {
 
   return (
     <VerticalContainer>
-      <StatusToolBar current="Vision Explore" />
+      <StatusToolBar current="Image and video management" />
       <Deselect />
-      <ExplorerFileUploadModalContainer />
+      <ExplorerFileUploadModalContainer refetch={reFetch} />
       <ExplorerFileDownloadModalContainer />
       <Wrapper>
         <QueryClientProvider client={queryClient}>
@@ -156,6 +183,7 @@ const Explorer = () => {
                 selectedIds={selectedFileIds}
                 isLoading={isLoading}
                 onItemClick={handleItemClick}
+                onItemRightClick={handleContextMenuOpen}
                 onItemSelect={handleRowSelect}
               />
             </ViewContainer>
@@ -171,6 +199,12 @@ const Explorer = () => {
                 />
               </QueryClientProvider>
             </DrawerContainer>
+          )}
+          {showContextMenu && contextMenuDataItem && (
+            <ContextMenuContainer
+              rowData={contextMenuDataItem}
+              position={contextMenuAnchorPoint}
+            />
           )}
           <ExplorerBulkEditModalContainer />
           <ExplorerModelTrainingModalContainer />

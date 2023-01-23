@@ -1,6 +1,10 @@
 // todo: unused component
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Button, Icon, Title } from '@cognite/cogs.js';
+import {
+  CogsFile,
+  CogsFileInfo,
+} from 'src/modules/Common/Components/FileUploader/FilePicker/types';
 import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
 
 export const getUploadControls = (
@@ -8,12 +12,17 @@ export const getUploadControls = (
   onUploadStart: () => unknown,
   onUploadStop: () => unknown,
   onRemoveFiles: () => unknown,
-  onCloseModal: () => unknown,
-  onFinish: () => unknown
+  onCancelModal: () => unknown,
+  onFinish: () => unknown,
+  fileList: Array<CogsFileInfo | CogsFile>
 ) => {
   let UploadButton;
   let CancelButton;
   let RemoveAllButton;
+
+  const disableRemoveAll = useMemo(() => {
+    return fileList.some((file) => file.status === 'done');
+  }, [fileList]);
 
   switch (uploadStatus) {
     case STATUS.NO_FILES:
@@ -23,7 +32,7 @@ export const getUploadControls = (
         </Button>
       );
       CancelButton = (
-        <Button type="secondary" onClick={onCloseModal}>
+        <Button type="secondary" onClick={onCancelModal}>
           Cancel
         </Button>
       );
@@ -40,12 +49,16 @@ export const getUploadControls = (
         </Button>
       );
       CancelButton = (
-        <Button type="secondary" onClick={onCloseModal}>
+        <Button type="secondary" onClick={onCancelModal}>
           Cancel
         </Button>
       );
       RemoveAllButton = (
-        <Button type="ghost-danger" onClick={onRemoveFiles}>
+        <Button
+          type="ghost-danger"
+          onClick={onRemoveFiles}
+          disabled={disableRemoveAll}
+        >
           Remove all
         </Button>
       );

@@ -16,9 +16,7 @@ import {
 } from './modelDetailsStyles';
 
 export const description = () => {
-  return (
-    <Detail>Detects people, recognizable shapes and labels accordingly.</Detail>
-  );
+  return <Detail>Detects recognizable shapes and labels accordingly.</Detail>;
 };
 export const badge = (modelName: string, hideText: boolean = false) => {
   return (
@@ -49,9 +47,7 @@ export const content = (modelIndex: number) => {
         .unsavedSettings as ParamsObjectDetection
   );
 
-  const isValidThreshold = !!(
-    params.threshold >= 0.4 && params.threshold <= 1.0
-  );
+  const isValidThreshold = params.threshold >= 0.4 && params.threshold <= 1.0;
 
   const onThresholdChange = (value: number) => {
     if (isValidThreshold) {
