@@ -735,7 +735,7 @@ export class Cognite3DViewer {
       preMultipliedRotation
     );
 
-    return { image360Entities };
+    return image360Entities;
   }
 
   /**

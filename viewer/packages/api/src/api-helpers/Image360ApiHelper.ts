@@ -5,7 +5,13 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
 import { CogniteClient, Metadata } from '@cognite/sdk';
-import { Image360Entity, Image360EntityFactory, Image360Facade } from '@reveal/360-images';
+import {
+  DefaultImage360Collection,
+  Image360Collection,
+  Image360Entity,
+  Image360EntityFactory,
+  Image360Facade
+} from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import { InputHandler, pixelToNormalizedDeviceCoordinates, PointerEventData, SceneHandler } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
@@ -31,6 +37,8 @@ export class Image360ApiHelper {
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
   private _cachedCameraManager: CameraManager;
+
+  private _imageCollection: DefaultImage360Collection | undefined;
 
   constructor(
     cogniteClient: CogniteClient,
@@ -71,13 +79,15 @@ export class Image360ApiHelper {
     eventFilter: { [key: string]: string },
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
-  ): Promise<Image360Entity[]> {
+  ): Promise<Image360Collection> {
     const entities = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
     this._requestRedraw();
-    return entities;
+    this._imageCollection = new DefaultImage360Collection(entities);
+    return this._imageCollection;
   }
 
   public async remove360Images(entities: Image360[]): Promise<void> {
+    this._imageCollection!.events.disposed.fire();
     await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
   }
 
@@ -114,6 +124,7 @@ export class Image360ApiHelper {
     this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
 
     this._requestRedraw();
+    this._imageCollection!.events.image360Entered.fire();
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
@@ -238,6 +249,7 @@ export class Image360ApiHelper {
       target: new THREE.Vector3(0, 0, -1).applyQuaternion(rotation).add(position)
     });
     this._domElement.removeEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
+    this._imageCollection!.events.image360Exited.fire();
   }
 
   public dispose(): void {
@@ -249,6 +261,8 @@ export class Image360ApiHelper {
       this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
     }
 
+    this._imageCollection!.events.image360Exited.fire();
+    this._imageCollection!.events.disposed.fire();
     this._image360Navigation.dispose();
   }
 
