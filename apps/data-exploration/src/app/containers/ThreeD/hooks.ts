@@ -527,10 +527,11 @@ export const getImages360QueryFn =
 
     if (applied && !hasAdded) {
       const collectionTransform = translationMatrix?.multiply(rotationMatrix!);
+      // By default rotation are not premultiplied with models
       const images360Set = await viewer.add360ImageSet(
         'events',
         { site_id: siteId },
-        { collectionTransform, preMultipliedRotation: true }
+        { collectionTransform, preMultipliedRotation: false }
       );
       setImageEntities(
         imageEntities.concat({
