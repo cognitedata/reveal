@@ -58,6 +58,7 @@ export const useDatabases = (
       sdk.raw.listDatabases({ cursor: pageParam, limit: 100 }),
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
+      staleTime: 0,
       ...options,
     }
   );
@@ -80,6 +81,7 @@ export const useTables = (
         .then((response) => response),
     {
       ...options,
+      staleTime: 0,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
   );
