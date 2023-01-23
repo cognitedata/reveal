@@ -10251,10 +10251,10 @@ date-and-time@^2.0.0:
   resolved "https://registry.yarnpkg.com/date-and-time/-/date-and-time-2.1.0.tgz#007efa9624684457259f19348b442e45128a6f1c"
   integrity sha512-X/b2gM7e8zQ7siiE0DhRLeNMpuCkIqec5Jnx4GMk/HWB71a6e5Lz48mH9/GIS/hpLsBRFZfMF1gjXBkY0vq5oA==
 
-date-fns@^2.0.1, date-fns@^2.15.0, date-fns@^2.16.1, date-fns@^2.19.0:
-  version "2.21.3"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.21.3.tgz#8f5f6889d7a96bbcc1f0ea50239b397a83357f9b"
-  integrity sha512-HeYdzCaFflc1i4tGbj7JKMjM4cKGYoyxwcIIkHzNgCkX8xXDNJDZXgDDVchIWpN4eQc3lH37WarduXFZJOtxfw==
+date-fns@^2.0.1, date-fns@^2.15.0, date-fns@^2.16.1, date-fns@^2.29.3:
+  version "2.29.3"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.3.tgz#27402d2fc67eb442b511b70bbdf98e6411cd68a8"
+  integrity sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==
 
 dayjs@^1.11.1:
   version "1.11.4"
