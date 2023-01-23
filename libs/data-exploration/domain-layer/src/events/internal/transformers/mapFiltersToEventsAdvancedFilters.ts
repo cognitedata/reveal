@@ -115,6 +115,7 @@ export const mapFiltersToEventsAdvancedFilters = (
 
     searchQueryBuilder.prefix('type', query);
     searchQueryBuilder.prefix('subtype', query);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     searchQueryBuilder.prefix('source', source);
 

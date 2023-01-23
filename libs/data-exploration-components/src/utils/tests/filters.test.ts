@@ -1,4 +1,4 @@
-import { countByFilter } from '../filters';
+import { countByFilter, extractSources } from '../filters';
 
 describe('FilterUtils', () => {
   describe('countByFilter', () => {
@@ -51,6 +51,23 @@ describe('FilterUtils', () => {
       };
       const result = countByFilter(filter);
       expect(result).toBe(3);
+    });
+  });
+
+  describe('extractSources', () => {
+    it('should extract sources from objects', () => {
+      const items = [
+        { id: 1, source: 'source 1' },
+        { id: 2, source: 'source 2' },
+        { id: 3, source: 'source 2' },
+        { id: 4, source: 'source 3' },
+      ];
+
+      expect(extractSources(items)).toEqual([
+        'source 1',
+        'source 2',
+        'source 3',
+      ]);
     });
   });
 });

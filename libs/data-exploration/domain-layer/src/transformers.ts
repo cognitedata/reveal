@@ -1,6 +1,8 @@
 import take from 'lodash/take';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
+import head from 'lodash/head';
+import unset from 'lodash/unset';
 
 import { InternalAssetData } from './assets';
 import { MAX_METADATA_KEYS } from './constants';
@@ -68,6 +70,23 @@ export const transformNewFilterToOldFilter = <T>(
       },
     };
   }
+
+  /**
+   * Here, `source` is supposed to be a string value.
+   * Since now we filter by multiple sources, passing an array result in a request error.
+   * Hence, set the source to the first value of sources.
+   */
+  if (filter.sources) {
+    filter = {
+      ...filter,
+      source: (head(filter.sources) as { value: string }).value,
+    };
+  }
+
+  /**
+   * `sources` is not supported in the old filter.
+   */
+  unset(filter, 'sources');
 
   return filter as T;
 };

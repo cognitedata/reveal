@@ -9,16 +9,21 @@ import {
 } from '@data-exploration-app/store/filter';
 import { BaseFilterCollapse } from '@data-exploration-app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
-  AggregatedFilterV2,
   LabelFilterV2,
   MetadataFilterV2,
+  extractSources,
+  AggregatedFilterV2,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 import {
   InternalAssetFilters,
+  NIL_FILTER_LABEL,
+  NIL_FILTER_VALUE,
   transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
+import { MultiSelectFilter } from '@data-exploration-app/components/Filters/MultiSelectFilter';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 
 // TODO: Move to domain layer
 export const useAssetMetadataKeys = (
@@ -62,6 +67,8 @@ export const AssetFilters = ({ ...rest }) => {
 
   const { data: metadataKeys = [] } = useAssetMetadataKeys(assetFilters);
 
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
+
   return (
     <BaseFilterCollapse.Panel
       title="Assets"
@@ -81,18 +88,46 @@ export const AssetFilters = ({ ...rest }) => {
           }
           addNilOption
         />
-        <AggregatedFilterV2
-          title="Source"
-          items={items}
-          aggregator="source"
-          value={assetFilters.source}
-          setValue={(newSource) =>
-            setAssetFilters({
-              source: newSource,
-            })
-          }
-          addNilOption
-        />
+
+        {isAdvancedFiltersEnabled ? (
+          <MultiSelectFilter
+            title="Source"
+            options={extractSources(items).map((option) => ({
+              label: option,
+              value: option,
+            }))}
+            value={assetFilters.sources}
+            onChange={(newSources) =>
+              setAssetFilters({
+                /**
+                 * The types are not unified between this filter and DocumentFilters.
+                 * The same MultiSelectFilter component is used in both places.
+                 * That's why this additional logic is placed here.
+                 * This should be fixed.
+                 */
+                sources: newSources.map((item) => ({
+                  label: item === NIL_FILTER_VALUE ? NIL_FILTER_LABEL : item,
+                  value: item,
+                })),
+              })
+            }
+            addNilOption
+          />
+        ) : (
+          <AggregatedFilterV2
+            title="Source"
+            items={items}
+            aggregator="source"
+            value={assetFilters.source}
+            setValue={(newSource) =>
+              setAssetFilters({
+                source: newSource,
+              })
+            }
+            addNilOption
+          />
+        )}
+
         <MetadataFilterV2
           items={items}
           keys={metadataKeys}

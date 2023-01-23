@@ -15,3 +15,4 @@ export * from './NumberFilter/NumberFilter';
 export * from './SequenceFilters';
 export * from './StringFilter/StringFilter';
 export * from './TimeseriesFilters';
+export * from './Filters';

@@ -21,6 +21,7 @@ import {
   FilterType,
 } from '@data-exploration-components/utils';
 import styled from 'styled-components';
+import noop from 'lodash/noop';
 
 const TRANSITION_TIME = 200;
 interface IFilterIcon {
@@ -94,7 +95,7 @@ const FilterIconWithCount = ({ filter }: IFilterIcon) => {
 export const SearchFilters = ({
   visible = true,
   allowHide = true,
-  closeFilters = () => {},
+  closeFilters = noop,
   resourceType,
   assetFilter,
   setAssetFilter,

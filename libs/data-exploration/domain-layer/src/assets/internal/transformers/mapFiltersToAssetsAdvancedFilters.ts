@@ -2,8 +2,8 @@ import { isNumeric } from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
+  NIL_FILTER_VALUE,
 } from '@data-exploration-lib/domain-layer';
-import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import { InternalAssetFilters } from '../types';
 
 export type AssetsProperties = {
@@ -25,7 +25,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
     createdTime,
     lastUpdatedTime,
     externalIdPrefix,
-    source,
+    sources,
     labels,
     metadata,
     internalId,
@@ -62,12 +62,18 @@ export const mapFiltersToAssetsAdvancedFilters = (
     .or(
       new AdvancedFilterBuilder<AssetsProperties>()
         .in('source', () => {
-          if (source && source !== NIL_FILTER_VALUE) {
-            return [source];
-          }
-          return undefined;
+          return sources?.reduce((acc, { value }) => {
+            if (value !== NIL_FILTER_VALUE) {
+              return [...acc, value];
+            }
+            return acc;
+          }, [] as string[]);
         })
-        .notExists('source', source === NIL_FILTER_VALUE)
+        .notExists('labels', () => {
+          return Boolean(
+            sources?.find(({ value }) => value === NIL_FILTER_VALUE)
+          );
+        })
     )
     .equals('id', internalId)
     .prefix('externalId', externalIdPrefix)
@@ -105,6 +111,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
     }
 
     searchQueryBuilder.prefix('externalId', query);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // the type here is a bit wrong, will be refactored in later PRs
     searchQueryBuilder.prefix('source', query);

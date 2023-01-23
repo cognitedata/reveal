@@ -179,7 +179,7 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
   in<K extends keyof T>(key: K, input?: AdvancedFilterInput<T, K>) {
     const values = this.getValue(input);
 
-    if (values !== undefined) {
+    if (values !== undefined && !isEmpty(values)) {
       const property = this.getProperty(key);
 
       this.filters = [

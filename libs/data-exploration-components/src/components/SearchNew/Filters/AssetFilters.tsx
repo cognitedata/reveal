@@ -1,4 +1,3 @@
-import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { useAssetMetadataKeys } from '@data-exploration-components/hooks/MetadataAggregateHooks';
 import { LabelFilterV2 } from './LabelFilter/LabelFilter';

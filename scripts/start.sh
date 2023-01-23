@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Note: Insert values for these tokens, like so:
 #  export FOO="${FOO:-[some-default-value-here]}"
