@@ -29,7 +29,7 @@ export interface InternalEventsData {
 export interface InternalEventsFilters extends InternalCommonFilters {
   startTime?: DateRange;
   endTime?: NullableProperty<DateRange>;
-  source?: string;
+  sources?: { label?: string; value: string }[];
   // string type is for legacy implementation, need to be removed later
   type?: string | string[];
   subtype?: string | string[];

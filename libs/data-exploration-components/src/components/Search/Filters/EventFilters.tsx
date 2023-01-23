@@ -13,6 +13,7 @@ import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 import { OldEventsFilters } from '@data-exploration-lib/domain-layer';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
+import head from 'lodash/head';
 
 export const EventFilters = ({
   filter,
@@ -105,11 +106,11 @@ export const EventFilters = ({
           title="Source"
           items={items}
           aggregator="source"
-          value={filter.source}
+          value={head(filter.sources)?.value}
           setValue={(newSource) =>
             setFilter({
               ...filter,
-              source: newSource,
+              sources: [{ value: String(newSource) }],
             })
           }
         />

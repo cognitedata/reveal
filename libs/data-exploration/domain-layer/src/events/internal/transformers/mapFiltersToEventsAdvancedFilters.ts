@@ -2,6 +2,7 @@ import { isNumeric } from '@data-exploration-lib/core';
 import {
   AdvancedFilter,
   AdvancedFilterBuilder,
+  NIL_FILTER_VALUE,
 } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import { InternalEventsFilters } from '../types';
@@ -30,7 +31,7 @@ export const mapFiltersToEventsAdvancedFilters = (
     startTime,
     endTime,
     subtype,
-    source,
+    sources,
     metadata,
     internalId,
   }: InternalEventsFilters,
@@ -61,12 +62,22 @@ export const mapFiltersToEventsAdvancedFilters = (
       }
       return subtype;
     })
-    .in('source', () => {
-      if (source) {
-        return [source];
-      }
-      return undefined;
-    })
+    .or(
+      new AdvancedFilterBuilder<EventsProperties>()
+        .in('source', () => {
+          return sources?.reduce((acc, { value }) => {
+            if (value !== NIL_FILTER_VALUE) {
+              return [...acc, value];
+            }
+            return acc;
+          }, [] as string[]);
+        })
+        .notExists('source', () => {
+          return Boolean(
+            sources?.find(({ value }) => value === NIL_FILTER_VALUE)
+          );
+        })
+    )
     .equals('id', internalId)
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {

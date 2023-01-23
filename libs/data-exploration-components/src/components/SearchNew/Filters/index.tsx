@@ -16,3 +16,4 @@ export * from './SequenceFilters';
 export * from './StringFilter/StringFilter';
 export * from './TimeseriesFilters';
 export * from './Filters';
+export * from './SourceFilter';

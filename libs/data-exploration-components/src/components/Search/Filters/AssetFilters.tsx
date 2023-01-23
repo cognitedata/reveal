@@ -13,6 +13,7 @@ import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 import { OldAssetFilters } from '@data-exploration-lib/domain-layer';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
+import head from 'lodash/head';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFilters = ({
@@ -59,11 +60,11 @@ export const AssetFilters = ({
         title="Source"
         items={items}
         aggregator="source"
-        value={filter.source}
+        value={head(filter.sources)?.value}
         setValue={(newSource) =>
           setFilter({
             ...filter,
-            source: newSource,
+            sources: [{ value: String(newSource) }],
           })
         }
       />

@@ -6,6 +6,7 @@ import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 import { InternalAssetFilters } from '@data-exploration-lib/domain-layer';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import head from 'lodash/head';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFiltersV2 = ({
@@ -39,11 +40,11 @@ export const AssetFiltersV2 = ({
         title="Source"
         items={items}
         aggregator="source"
-        value={filter.source}
+        value={head(filter.sources)?.value}
         setValue={(newSource) =>
           setFilter({
             ...filter,
-            source: newSource,
+            sources: [{ value: String(newSource) }],
           })
         }
       />

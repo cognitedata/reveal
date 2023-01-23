@@ -26,10 +26,6 @@ export interface InternalAssetFilters extends InternalCommonFilters {
   labels?: { label?: string; value: string }[];
   metadata?: { key: string; value: string }[];
   sources?: { label?: string; value: string }[];
-  /**
-   * @deprecated use sources instead.
-   */
-  source?: string;
 }
 
 export interface OldAssetFilters

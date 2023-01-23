@@ -69,7 +69,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
             return acc;
           }, [] as string[]);
         })
-        .notExists('labels', () => {
+        .notExists('source', () => {
           return Boolean(
             sources?.find(({ value }) => value === NIL_FILTER_VALUE)
           );

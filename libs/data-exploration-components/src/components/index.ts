@@ -20,6 +20,7 @@ export {
   ThreeDTab,
   NumberFilter,
   MultiSelectFilterNew,
+  SourceFilter,
 } from './SearchNew';
 export * from './InfoGrid/InfoGrid';
 export * from './FilterForm/FilterForm';
@@ -39,6 +40,7 @@ export * from './ResourceIcons/ResourceIcons';
 export * from './GridTable/GridTable';
 export * from './Details';
 export * from './FileDownloadAnchor';
+export * from './MultiSelectFilter';
 
 export * from './DataSetSelect';
 export * from './FileThumbnail';

@@ -8,6 +8,7 @@ import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 import { InternalEventsFilters } from '@data-exploration-lib/domain-layer';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import head from 'lodash/head';
 
 export const EventFilters = ({
   filter,
@@ -78,11 +79,11 @@ export const EventFilters = ({
         title="Source"
         items={items}
         aggregator="source"
-        value={filter.source}
+        value={head(filter.sources)?.value}
         setValue={(newSource) =>
           setFilter({
             ...filter,
-            source: newSource,
+            sources: [{ value: String(newSource) }],
           })
         }
       />

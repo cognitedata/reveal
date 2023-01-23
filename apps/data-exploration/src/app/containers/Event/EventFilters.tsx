@@ -12,6 +12,7 @@ import {
   AggregatedFilterV2,
   DateFilterV2,
   MetadataFilterV2,
+  SourceFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { CogniteEvent } from '@cognite/sdk/dist/src';
@@ -92,16 +93,15 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
           })
         }
       /> */}
-        <AggregatedFilterV2
-          title="Source"
+        <SourceFilter
           items={items}
-          aggregator="source"
-          value={eventFilter.source}
-          setValue={(newSource) =>
+          value={eventFilter.sources}
+          onChange={(newSources) =>
             setEventFilter({
-              source: newSource,
+              sources: newSources,
             })
           }
+          isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
         />
         <MetadataFilterV2
           items={items}
