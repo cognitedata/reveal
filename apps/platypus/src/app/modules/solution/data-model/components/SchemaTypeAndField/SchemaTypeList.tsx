@@ -192,7 +192,7 @@ const ChevronButton = styled(Button)`
 const Tag = styled.span`
   padding: 2px 6px;
   background: rgba(110, 133, 252, 0.12);
-  color: #2b3a88;
+  color: var(--cogs-midblue-1);
   border-radius: 4px;
   font-weight: 500;
   font-size: 12px;

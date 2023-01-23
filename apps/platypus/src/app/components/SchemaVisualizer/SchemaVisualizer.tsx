@@ -37,7 +37,6 @@ import {
 import zIndex from '../../utils/zIndex';
 import { SmallNode } from './nodes/SmallNode';
 import { FullNode } from './nodes/FullNode';
-import { InterfaceNode } from './nodes/InterfaceNode';
 import { UnionNode } from './nodes/UnionNode';
 import { VisualizerToolbar } from './VisualizerToolbar';
 import { Spinner } from '../Spinner/Spinner';
@@ -175,7 +174,14 @@ export const SchemaVisualizer = React.memo(
             break;
           }
           case 'InterfaceTypeDefinition': {
-            content = <InterfaceNode key={item.name.value} item={item} />;
+            content = (
+              <FullNode
+                key={item.name.value}
+                item={item}
+                fullRender={fullRender}
+                isInterface
+              />
+            );
             break;
           }
           case 'UnionTypeDefinition': {

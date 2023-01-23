@@ -3,7 +3,11 @@ import {
   getFieldType,
   renderFieldType,
 } from '@platypus-app/utils/graphql-utils';
-import { InputValueDefinitionNode, ObjectTypeDefinitionNode } from 'graphql';
+import {
+  InputValueDefinitionNode,
+  InterfaceTypeDefinitionNode,
+  ObjectTypeDefinitionNode,
+} from 'graphql';
 import styled from 'styled-components';
 import {
   getTypeDirective,
@@ -15,9 +19,11 @@ import { Header } from './Common';
 export const FullNode = ({
   item,
   fullRender = true,
+  isInterface = false,
 }: {
-  item: ObjectTypeDefinitionNode;
+  item: ObjectTypeDefinitionNode | InterfaceTypeDefinitionNode;
   fullRender?: boolean;
+  isInterface?: boolean;
 }) => {
   const typeDirective = getTypeDirective(item);
 
@@ -27,7 +33,7 @@ export const FullNode = ({
         <Title level={5} style={{ flex: 1 }}>
           {item.name.value}
         </Title>
-        <StyledLabel variant={'normal'} size="small">
+        <StyledLabel variant={isInterface ? 'warning' : 'normal'} size="small">
           {capitalizeFirst(typeDirective)}
         </StyledLabel>
       </Header>
@@ -91,7 +97,7 @@ const StyledMainID = styled.span`
 const StyledLabel = styled(Label)`
   height: 20px;
   width: auto;
-  color: #2b3a88;
+  ${(props) => props.variant === 'normal' && 'color: var(--cogs-midblue-1);'}
 `;
 
 const PropertyItem = styled.div`

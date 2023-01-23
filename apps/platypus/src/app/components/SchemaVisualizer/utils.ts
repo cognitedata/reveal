@@ -1,5 +1,9 @@
 import { SimulationLinkDatum } from 'd3';
-import { Kind, ObjectTypeDefinitionNode } from 'graphql';
+import {
+  InterfaceTypeDefinitionNode,
+  Kind,
+  ObjectTypeDefinitionNode,
+} from 'graphql';
 import { Node } from '../Graph/Graph';
 import { getFieldType, SchemaDefinitionNode } from '../../utils/graphql-utils';
 
@@ -97,8 +101,13 @@ export const isTypeATemplate = (item: ObjectTypeDefinitionNode) => {
   );
 };
 
-export const getTypeDirective = (item: ObjectTypeDefinitionNode): string => {
+export const getTypeDirective = (
+  item: ObjectTypeDefinitionNode | InterfaceTypeDefinitionNode
+): string => {
   if (!item.directives || !item.directives.length) {
+    if (item.kind === Kind.INTERFACE_TYPE_DEFINITION) {
+      return 'Interface';
+    }
     return 'Type';
   }
 

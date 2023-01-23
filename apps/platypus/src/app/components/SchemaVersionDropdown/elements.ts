@@ -30,7 +30,9 @@ export const MenuItem = styled(Menu.Item)<{ selected: boolean }>`
 
 export const VersionTag = styled.span<{ status: DataModelVersionStatus }>`
   color: ${(props) =>
-    props.status === DataModelVersionStatus.DRAFT ? '#595959' : '#2B3A88'};
+    props.status === DataModelVersionStatus.DRAFT
+      ? 'var(--cogs-greyscale-grey7)'
+      : 'var(--cogs-midblue-1)'};
   background: ${(props) =>
     props.status === DataModelVersionStatus.DRAFT
       ? 'rgba(102, 102, 102, 0.12)'
