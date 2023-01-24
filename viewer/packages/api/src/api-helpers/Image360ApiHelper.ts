@@ -131,11 +131,9 @@ export class Image360ApiHelper {
     this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
 
     this._requestRedraw();
-    this._imageCollection.map(imageCollection => {
-      if (imageCollection.image360Entities.includes(image360Entity)) {
-        imageCollection.events.image360Entered.fire(image360Entity);
-      }
-    });
+    this._imageCollection
+        .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
+        .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
@@ -250,11 +248,9 @@ export class Image360ApiHelper {
   public exit360Image(): void {
     this._image360Facade.allIconsVisibility = true;
     if (this._interactionState.currentImage360Entered !== undefined) {
-      this._imageCollection.map(imageCollection => {
-        if (imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered!)) {
-          imageCollection.events.image360Exited.fire();
-        }
-      });
+this._imageCollection
+        .filter(imageCollection => imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered))
+        .forEach(imageCollection => imageCollection.events.image360Exited.fire());
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
     }
