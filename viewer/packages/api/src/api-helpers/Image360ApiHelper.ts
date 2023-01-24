@@ -248,11 +248,9 @@ export class Image360ApiHelper {
   public exit360Image(): void {
     this._image360Facade.allIconsVisibility = true;
     if (this._interactionState.currentImage360Entered !== undefined) {
-      this._imageCollection.map(imageCollection => {
-        if (imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered!)) {
-          imageCollection.events.image360Exited.fire();
-        }
-      });
+this._imageCollection
+        .filter(imageCollection => imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered))
+        .forEach(imageCollection => imageCollection.events.image360Exited.fire());
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
     }
