@@ -1,4 +1,4 @@
-import { getUrl } from '../../utils/url';
+import { getFDMVersion, getUrl } from '../../utils';
 
 describe('Data Model Page - Toggle Schema Visualizer', () => {
   const createNewDataModel = (dataModelName: string) => {
@@ -6,14 +6,15 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
 
     cy.getBySel('create-data-model-btn').click();
     cy.getBySel('input-data-model-name').type(dataModelName);
-    cy.getBySel('modal-ok-button').click();
-    cy.url().should(
-      'include',
-      `/data-models-previous/${dataModelName}/${dataModelName}/latest`
-    );
-    cy.getCogsToast('success').contains('Data Model successfully created');
 
-    cy.getBySel('schema-version-select').contains('Local draft');
+    // if V3, select space
+    if (getFDMVersion() === 'V3') {
+      cy.selectSpace('cypress-test-space');
+    }
+
+    cy.getBySel('modal-ok-button').click();
+
+    cy.getCogsToast('success').contains('Data Model successfully created');
   };
 
   beforeEach(() => {
@@ -23,7 +24,10 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
 
   it('should test toggling schema visualizer due to excess types', () => {
     cy.getBySel('edit-schema-btn').should('be.visible').click();
-    cy.get('[aria-label="Code editor"]').click();
+
+    if (getFDMVersion() === 'V2') {
+      cy.get('[aria-label="Code editor"]').click();
+    }
 
     let gqlSchema = ``;
 
@@ -48,7 +52,9 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
     const newModelName = 'cypress_test';
     createNewDataModel(newModelName);
 
-    cy.get('[aria-label="Code editor"]').click();
+    if (getFDMVersion() === 'V2') {
+      cy.get('[aria-label="Code editor"]').click();
+    }
 
     cy.get('.monaco-editor textarea:first')
       .should('be.visible')

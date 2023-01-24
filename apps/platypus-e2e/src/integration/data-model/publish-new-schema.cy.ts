@@ -128,10 +128,7 @@ describe('Data Model Page - Publish new schema', () => {
     cy.getBySel('input-data-model-name').type('cypress-test');
     cy.getBySel('modal-ok-button').click();
     // we should be redirected to /dashboard
-    cy.url().should(
-      'include',
-      '/data-models-previous/cypress_test/cypress_test/latest'
-    );
+    cy.url().should('include', getUrl('/cypress_test/cypress_test/latest'));
     cy.getCogsToast('success').contains('Data Model successfully created');
 
     // we should see version select dropdown with draft

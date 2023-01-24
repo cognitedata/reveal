@@ -4,11 +4,15 @@ on:
     paths:
       - 'apps/platypus/**'
       - 'apps/mock-server/**'
+      - 'apps/platypus-e2e/**'
       - 'libs/platypus-core/**'
       - 'libs/platypus-common-utils/**'
       - 'yarn.lock'
 jobs:
   platypus-tests:
+    strategy:
+      matrix:
+        configuration: ['mockV2', 'mockV3']
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -58,7 +62,7 @@ jobs:
           # wait for 1 minute for the server to respond
           wait-on-timeout: 60
           # Run the cypress tests
-          command: yarn nx e2e platypus-e2e
+          command: yarn nx run platypus-e2e:e2e:${{ matrix.configuration }}
 
       # Disabling codecov from here, to not interfere with nx_ci
       # - name: Combine CodeCov reports
@@ -70,5 +74,5 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          flags: platypus-e2e
+          flags: platypus-e2e-${{ matrix.configuration }}
           files: ./apps/platypus-e2e/coverage/coverage-final.json,./apps/platypus-e2e/coverage/clover.xml,./apps/platypus-e2e/coverage/coverage-summary.json

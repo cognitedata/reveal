@@ -1,2 +1,7 @@
-export const getUrl = (url: string) => `/platypus/data-models-previous${url}`;
-export const getV3Url = (url: string) => `/platypus/data-models${url}`;
+import { getFDMVersion } from './get-fdm-version';
+
+export const getUrl = (url: string) => {
+  return getFDMVersion() === 'V3'
+    ? `/platypus/data-models${url}`
+    : `/platypus/data-models-previous${url}`;
+};

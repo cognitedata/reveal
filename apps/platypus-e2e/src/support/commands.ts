@@ -45,6 +45,7 @@ declare namespace Cypress {
     ensureCurrentVersionIsDraft(): void;
     ensureCurrentVersionIsNotDraft(): void;
     mockUserToken(): void;
+    selectSpace(name: string): void;
   }
 }
 //
@@ -88,6 +89,22 @@ Cypress.Commands.add('assertQueryExplorerResult', (expectedResult) => {
       JSON.stringify(expectedResult, null, 2)
     );
   });
+});
+
+Cypress.Commands.add('selectSpace', (name) => {
+  cy.get('.cogs-select__placeholder').contains('Select space').click();
+  cy.getBySel('create-space-btn').click();
+  cy.getBySel('input-data-model-space').type(name);
+  cy.getBySelLike('modal-title')
+    .contains('Create new space')
+    .parents('.cogs-modal-content')
+    .children('.buttons')
+    .children('[data-cy="modal-ok-button"]')
+    .click();
+  // newly created space is auto selected, so we don't have to select it via dropdown again
+  cy.getBySelLike('modal-title')
+    .contains('Create new space')
+    .should('not.exist');
 });
 
 Cypress.Commands.add(

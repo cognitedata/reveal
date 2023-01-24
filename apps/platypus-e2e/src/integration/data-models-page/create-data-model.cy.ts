@@ -1,4 +1,4 @@
-import { getUrl } from '../../utils/url';
+import { getFDMVersion, getUrl } from '../../utils';
 
 describe('Platypus Data Models Page - Create Data Model', () => {
   beforeEach(() => {
@@ -15,11 +15,21 @@ describe('Platypus Data Models Page - Create Data Model', () => {
     cy.getBySelLike('modal-title').contains('Create Data Model');
     cy.getBySel('input-data-model-name').type('cypress-test');
 
+    // if V3, select space
+    if (getFDMVersion() === 'V3') {
+      cy.selectSpace('cypress-test-space');
+    }
+
     cy.getBySel('modal-ok-button').click();
+
     // we should be redirected to /dashboard
     cy.url().should(
       'include',
-      '/data-models-previous/cypress_test/cypress_test/latest'
+      getUrl(
+        `/${
+          getFDMVersion() === 'V2' ? 'cypress_test' : 'cypress-test-space'
+        }/cypress_test/latest`
+      )
     );
     cy.getCogsToast('success').contains('Data Model successfully created');
 
