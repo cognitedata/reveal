@@ -378,34 +378,39 @@ export function Table<T extends TableData>({
                           },
                         }}
                       >
-                        <Flex
-                          justifyContent="space-between"
-                          alignItems="center"
-                          gap={4}
+                        <Body
+                          level={3}
+                          /**Be careful when modify/remove this width and structure.
+                           * this affects to the scenarios which we have
+                           * to render canvas/svg element on a cell (ex: time-series preview chart)
+                           * */
+                          style={{ width: cell.column.getSize() }}
                         >
-                          <Body
-                            level={3}
-                            style={{ width: cell.column.getSize() }}
+                          <Flex
+                            justifyContent="flex-start"
+                            alignItems="center"
+                            gap={4}
                           >
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()
                             )}
-                          </Body>
-
-                          {enableCopying && (
-                            <Button
-                              className="copying-button"
-                              size="small"
-                              disabled={dataValue === DASH || dataValue === ''}
-                              onClick={() =>
-                                handleCopy(cell.getValue<string>())
-                              }
-                            >
-                              {hasCopied ? 'Copied' : 'Copy'}
-                            </Button>
-                          )}
-                        </Flex>
+                            {enableCopying && (
+                              <Button
+                                className="copying-button"
+                                size="small"
+                                disabled={
+                                  dataValue === DASH || dataValue === ''
+                                }
+                                onClick={() =>
+                                  handleCopy(cell.getValue<string>())
+                                }
+                              >
+                                {hasCopied ? 'Copied' : 'Copy'}
+                              </Button>
+                            )}
+                          </Flex>
+                        </Body>
                       </Td>
                     );
                   })}
