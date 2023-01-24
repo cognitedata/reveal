@@ -14,7 +14,7 @@ def APPLICATIONS = [
 static final Map<String, String> PRODUCTION_APP_IDS = [
   'platypus': "cdf-solutions-ui",
   'data-exploration': "cdf-data-exploration",
-  'coding-conventions': 'cdf-conding-conventions',
+  'coding-conventions': 'cdf-coding-conventions',
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
