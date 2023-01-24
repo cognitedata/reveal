@@ -97,6 +97,7 @@ export class Image360ApiHelper {
       this.exit360Image();
     }
 
+    const imageCollectionToRemove: DefaultImage360Collection[] = [];
     this._imageCollection.forEach(imageCollection => {
       pullAll(
         imageCollection.image360Entities,
@@ -104,9 +105,13 @@ export class Image360ApiHelper {
       );
       if (imageCollection.image360Entities.length === 0) {
         imageCollection.dispose();
-        pull(this._imageCollection, imageCollection);
+        imageCollectionToRemove.push(imageCollection);
       }
     });
+
+    if (imageCollectionToRemove.length > 0) {
+      pullAll(this._imageCollection, imageCollectionToRemove);
+    }
 
     await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
     this._requestRedraw();
