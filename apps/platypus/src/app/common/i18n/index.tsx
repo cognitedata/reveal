@@ -1,4 +1,4 @@
-import * as en from '@platypus-app/common/i18n/en/platypus.json';
+import * as en from './en/platypus.json';
 
 /**
  * Platypus app translations

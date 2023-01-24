@@ -1,5 +1,5 @@
 {
-  "npmScope": "platypus",
+  "npmScope": "fusion",
   "affected": {
     "defaultBase": "master"
   },
@@ -23,6 +23,7 @@
       "application": {
         "style": "css",
         "linter": "eslint",
+        "bundler": "webpack",
         "babel": true
       },
       "component": {

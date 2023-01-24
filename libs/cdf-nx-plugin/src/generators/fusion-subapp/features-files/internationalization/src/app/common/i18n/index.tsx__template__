@@ -1,0 +1,8 @@
+import * as en from './en/<%= projectName %>.json';
+
+/**
+ * <%= projectName %> app translations
+ */
+export const translations = {
+  en: { "<%= projectName %>": en },
+};

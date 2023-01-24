@@ -54,7 +54,6 @@
         "lodash/prefer-constant": ["off"],
         "lodash/prefer-is-nil": ["off"],
         "lodash/prefer-get": ["off"],
-
         "@typescript-eslint/no-unused-vars": [
           "error",
           {
@@ -73,9 +72,6 @@
         "plugin:react-hooks/recommended"
       ],
       "rules": {
-        // Needs to removed one by one
-
-        // "@cognite/no-number-z-index": ["off"],
         "@cognite/no-sdk-submodule-imports": ["off"],
         "@cognite/no-unissued-todos": ["off"],
         "@cognite/require-hellip": ["off"],
@@ -122,8 +118,6 @@
         "prefer-destructuring": ["off"],
         "prefer-exponentiation-operator": ["off"],
         "prefer-promise-reject-errors": ["off"]
-
-        //
       }
     },
     {
@@ -141,7 +135,6 @@
           }
         ],
         "react/jsx-uses-react": "off",
-
         "no-param-reassign": [
           "error",
           {
@@ -172,23 +165,23 @@
         "@typescript-eslint/no-shadow": "error",
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-explicit-any": "off",
-        //
-
         "react/function-component-definition": ["off"],
         "react/jsx-curly-brace-presence": ["off"],
         "react/jsx-key": ["off"],
         "react/jsx-no-constructed-context-values": ["off"],
         "react/jsx-no-useless-fragment": ["off"],
-
-        // "react/no-unused-prop-types": ["error"],
         "react/prop-types": ["off"],
         "react/react-in-jsx-scope": ["off"]
-        //
       }
     },
     {
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nrwl/nx/javascript"],
+      "rules": {}
+    },
+    {
+      "files": "*.json",
+      "parser": "jsonc-eslint-parser",
       "rules": {}
     }
   ]
