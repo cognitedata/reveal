@@ -1,4 +1,4 @@
-# coding-conventions
+# coding conventions
 
 ## Further steps:
 
