@@ -788,7 +788,7 @@ export interface Image360Collection {
 }
 
 // @public
-export type Image360EnteredDelegate = () => void;
+export type Image360EnteredDelegate = (image360: Image360) => void;
 
 // @public
 export type Image360ExitedDelegate = () => void;
