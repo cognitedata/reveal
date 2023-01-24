@@ -16,7 +16,6 @@ import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import { InputHandler, pixelToNormalizedDeviceCoordinates, PointerEventData, SceneHandler } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { Image360 } from '@reveal/360-images/src/Image360';
-import pull from 'lodash/pull';
 import pullAll from 'lodash/pullAll';
 
 export class Image360ApiHelper {
