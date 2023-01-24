@@ -55,6 +55,7 @@ import OverlayTool from '@data-exploration-app/containers/ThreeD/components/Over
 import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';
 import LoadImages360 from './load-secondary-models/LoadImages360';
 import zIndex from '../../utils/zIndex';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 type Props = {
   modelId: number;
@@ -131,6 +132,9 @@ export const ThreeDView = ({ modelId }: Props) => {
           setSelectedAssetId(closestAssetId);
         } else if (!closestAssetId) {
           setSelectedAssetId(undefined);
+          trackUsage(EXPLORATION.CLICK.UNCLICKABLE_OBJECT, {
+            modelId: threeDModel?.modelId,
+          });
         }
       })();
     },
