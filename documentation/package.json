@@ -25,9 +25,12 @@
   },
   "dependencies": {
     "@azure/msal-browser": "2.32.2",
+    "@codemirror/lang-javascript": "^6.1.2",
     "@docusaurus/core": "2.2.0",
     "@docusaurus/preset-classic": "2.2.0",
     "@docusaurus/theme-live-codeblock": "2.2.0",
+    "@uiw/codemirror-theme-atomone": "^4.19.7",
+    "@uiw/react-codemirror": "^4.19.7",
     "clsx": "1.2.1",
     "cross-env": "7.0.3",
     "ieee754": "1.2.1",

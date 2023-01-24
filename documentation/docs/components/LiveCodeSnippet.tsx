@@ -1,48 +1,25 @@
 import * as React from 'react';
-import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
-import { PrismTheme } from 'prism-react-renderer';
-import clsx from 'clsx';
 
-import styles from './styles.module.css';
-import oceanicNext from 'prism-react-renderer/themes/oceanicNext';
-import useBaseUrl from '@docusaurus/useBaseUrl';
-const defaultCodeTheme = oceanicNext;
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { atomone } from '@uiw/codemirror-theme-atomone';
 
 // Replacement for "import { customScope } from './customScope'" to avoid
 // build issues with React Server-side Rendering
 // which fails due to "window" not being defined in NodeJS
 const customScope =
   typeof window === 'undefined'
-    ? {
-      urls: [],
-    }
+  ? {
+    urls: [],
+  }
     : require('./customScope').customScope;
 
 export type LiveCodeSnippetProps = {
   children: string;
 };
 
-export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
-  const scope = {
-    ...customScope,
-    ...Object.keys(customScope.urls).reduce((acc, key) => {
-      acc[key] = useBaseUrl(customScope.urls[key]);
-      return acc;
-    }, {} as any),
-  };
-
-  const { children } = props;
-  return (
-    <LiveProvider
-      code={children}
-      transpileOptions={{
-        transforms: {
-          classes: false,
-          asyncAwait: false
-        }
-      }}
-      transformCode={(code: string) => {
-        const fullCode = `
+function transformCode(code: string): string {
+  return `
             // make these things to be available in live-editor
             const viewer = window.viewer;
             const model = window.model;
@@ -64,32 +41,28 @@ export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
             }
             // User code starts here!
             ${code}`;
-        return `
-          <button
-            type="button"
-            className="button button--primary button--lg"
-            onClick={() => \{${fullCode}\}}
-          >
-            Run
-          </button>
-        `;
-      }}
-      scope={{ ...scope }}
-      theme={defaultCodeTheme}
-    >
-      <div
-        className={clsx(
-          styles.codeSnippetHeader,
-          styles.codeSnippetEditorHeader
-        )}
-      >
-        Live Editor
-      </div>
-      <LiveEditor className={styles.codeSnippetEditor} />
-      <div className={styles.codeSnippetPreview}>
-        <LivePreview />
-        <LiveError />
-      </div>
-    </LiveProvider>
-  );
 }
+
+function onRunCode(code: string) {
+  const transformedCode = transformCode(code);
+  const customScopeNames = Object.keys(customScope);
+  const customScopeValues = Object.values(customScope);
+  new Function(...customScopeNames, transformedCode)(...customScopeValues);
+}
+
+export const LiveCodeSnippet = (props: LiveCodeSnippetProps) => {
+
+  // const [code, setCode] = useState(props.children);
+  let code: string = props.children;
+  function setCode(newCode: string) {
+    code = newCode;
+  }
+
+  return (<><CodeMirror
+              value={props.children}
+              theme={atomone}
+              onChange={setCode}
+              basicSetup={{lineNumbers: false, foldGutter: false}}
+
+              extensions={[javascript({})]} /><button onClick={() => onRunCode(code)}>Run</button></>);
+};
