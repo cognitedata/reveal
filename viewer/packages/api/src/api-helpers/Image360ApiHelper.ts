@@ -131,11 +131,9 @@ export class Image360ApiHelper {
     this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
 
     this._requestRedraw();
-    this._imageCollection.map(imageCollection => {
-      if (imageCollection.image360Entities.includes(image360Entity)) {
-        imageCollection.events.image360Entered.fire(image360Entity);
-      }
-    });
+    this._imageCollection
+        .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
+        .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
