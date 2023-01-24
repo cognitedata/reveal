@@ -38,7 +38,7 @@ export class Image360ApiHelper {
   private readonly _image360Navigation: StationaryCameraManager;
   private _cachedCameraManager: CameraManager;
 
-  private _imageCollection: DefaultImage360Collection | undefined;
+  private readonly _imageCollection: DefaultImage360Collection[] = [];
 
   constructor(
     cogniteClient: CogniteClient,
@@ -82,8 +82,9 @@ export class Image360ApiHelper {
   ): Promise<Image360Collection> {
     const entities = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
     this._requestRedraw();
-    this._imageCollection = new DefaultImage360Collection(entities);
-    return this._imageCollection;
+    const imageCollection = new DefaultImage360Collection(entities);
+    this._imageCollection.push(imageCollection);
+    return imageCollection;
   }
 
   public async remove360Images(entities: Image360[]): Promise<void> {
@@ -130,7 +131,11 @@ export class Image360ApiHelper {
     this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
 
     this._requestRedraw();
-    this._imageCollection!.events.image360Entered.fire();
+    this._imageCollection.map(imageCollection => {
+      if (imageCollection.image360Entities.includes(image360Entity)) {
+        imageCollection.events.image360Entered.fire();
+      }
+    });
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
@@ -245,6 +250,11 @@ export class Image360ApiHelper {
   public exit360Image(): void {
     this._image360Facade.allIconsVisibility = true;
     if (this._interactionState.currentImage360Entered !== undefined) {
+      this._imageCollection.map(imageCollection => {
+        if (imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered!)) {
+          imageCollection.events.image360Exited.fire();
+        }
+      });
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
     }
@@ -255,7 +265,6 @@ export class Image360ApiHelper {
       target: new THREE.Vector3(0, 0, -1).applyQuaternion(rotation).add(position)
     });
     this._domElement.removeEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
-    this._imageCollection!.events.image360Exited.fire();
   }
 
   public dispose(): void {
@@ -267,9 +276,9 @@ export class Image360ApiHelper {
       this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
     }
 
-    if (this._imageCollection) {
-      this._imageCollection.dispose();
-    }
+    this._imageCollection.forEach(imageCollection => {
+      imageCollection.dispose();
+    });
     this._image360Navigation.dispose();
   }
 
