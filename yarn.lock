@@ -2169,12 +2169,10 @@
   integrity sha512-mOBGkW4qxgGyUniquCdAFvMJOPsmc3c3uDz/PtzgI3gKfJvZnGir9FZb7ezdzv3PiL7MparM/uLg/P9iJ0cK4A==
 
 "@cognite/eslint-config@link:packages/eslint-config":
-  version "0.0.0"
-  uid ""
+  version "3.2.0"
 
 "@cognite/eslint-plugin@link:packages/eslint-plugin":
-  version "0.0.0"
-  uid ""
+  version "2.1.0"
 
 "@cognite/fas-tools@^1.3.3":
   version "1.3.3"
@@ -31365,9 +31363,9 @@ typescript@^3.7.4:
   integrity sha512-w6fIxVE/H1PkLKcCPsFqKE7Kv7QUwhU8qQY2MueZXWx5cPZdwFupLgKK3vntcK98BtNHZtAF4LA/yl2a7k8R6Q==
 
 ua-parser-js@^0.7.30:
-  version "0.7.31"
-  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.31.tgz#649a656b191dffab4f21d5e053e27ca17cbff5c6"
-  integrity sha512-qLK/Xe9E2uzmYI3qLeOmI0tEOt+TBBQyUIAh4aAgU05FVYzeZrKUdkAZfBNVGRaHVgV0TDkdEngJSw/SyQchkQ==
+  version "0.7.33"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.33.tgz#1d04acb4ccef9293df6f70f2c3d22f3030d8b532"
+  integrity sha512-s8ax/CeZdK9R/56Sui0WM6y9OFREJarMRHqLB2EwkovemBxNQ+Bqu8GAsUnVcXKgphb++ghr/B2BZx4mahujPw==
 
 uglify-js@^3.1.4:
   version "3.16.3"
