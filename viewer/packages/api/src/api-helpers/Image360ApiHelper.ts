@@ -16,6 +16,8 @@ import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import { InputHandler, pixelToNormalizedDeviceCoordinates, PointerEventData, SceneHandler } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { Image360 } from '@reveal/360-images/src/Image360';
+import pull from 'lodash/pull';
+import pullAll from 'lodash/pullAll';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
@@ -94,6 +96,18 @@ export class Image360ApiHelper {
     ) {
       this.exit360Image();
     }
+
+    this._imageCollection.forEach(imageCollection => {
+      pullAll(
+        imageCollection.image360Entities,
+        entities.map(entity => entity as Image360Entity)
+      );
+      if (imageCollection.image360Entities.length === 0) {
+        imageCollection.dispose();
+        pull(this._imageCollection, imageCollection);
+      }
+    });
+
     await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
     this._requestRedraw();
   }
@@ -132,8 +146,8 @@ export class Image360ApiHelper {
 
     this._requestRedraw();
     this._imageCollection
-        .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
-        .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
+      .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
+      .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
@@ -248,8 +262,10 @@ export class Image360ApiHelper {
   public exit360Image(): void {
     this._image360Facade.allIconsVisibility = true;
     if (this._interactionState.currentImage360Entered !== undefined) {
-this._imageCollection
-        .filter(imageCollection => imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered))
+      this._imageCollection
+        .filter(imageCollection =>
+          imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered!)
+        )
         .forEach(imageCollection => imageCollection.events.image360Exited.fire());
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
@@ -275,6 +291,7 @@ this._imageCollection
     this._imageCollection.forEach(imageCollection => {
       imageCollection.dispose();
     });
+    this._imageCollection.splice(0);
     this._image360Navigation.dispose();
   }
 

@@ -2,9 +2,10 @@
  * Copyright 2023 Cognite AS
  */
 
-import { assertNever, DisposedDelegate, EventTrigger } from '@reveal/utilities';
+import { assertNever, EventTrigger } from '@reveal/utilities';
 import { Image360 } from './Image360';
 import { Image360Collection } from './Image360Collection';
+import { Image360Entity } from './Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from './types';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
@@ -17,11 +18,11 @@ export class DefaultImage360Collection implements Image360Collection {
   /**
    * A list containing all the 360 images in this set.
    */
-  readonly image360Entities: Image360[];
+  readonly image360Entities: Image360Entity[];
 
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
-    image360Exited: new EventTrigger<Image360ExitedDelegate>(),
+    image360Exited: new EventTrigger<Image360ExitedDelegate>()
   };
 
   /**
@@ -35,7 +36,7 @@ export class DefaultImage360Collection implements Image360Collection {
   }
 
   constructor(entities: Image360[]) {
-    this.image360Entities = entities;
+    this.image360Entities = entities as Image360Entity[];
   }
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:
@@ -51,7 +52,7 @@ export class DefaultImage360Collection implements Image360Collection {
    * @param event `Image360Events` event
    * @param callback Callback to 360 image events
    */
-  on(event: Image360Events, callback: Image360EnteredDelegate | Image360ExitedDelegate | DisposedDelegate): void {
+  on(event: Image360Events, callback: Image360EnteredDelegate | Image360ExitedDelegate): void {
     switch (event) {
       case 'image360Entered':
         this._events.image360Entered.subscribe(callback as Image360EnteredDelegate);
@@ -76,7 +77,7 @@ export class DefaultImage360Collection implements Image360Collection {
    * @param event `Image360Events` event
    * @param callback Callback to 360 image events
    */
-  off(event: Image360Events, callback: Image360EnteredDelegate | Image360ExitedDelegate | DisposedDelegate): void {
+  off(event: Image360Events, callback: Image360EnteredDelegate | Image360ExitedDelegate): void {
     switch (event) {
       case 'image360Entered':
         this._events.image360Entered.unsubscribe(callback as Image360EnteredDelegate);
@@ -90,6 +91,8 @@ export class DefaultImage360Collection implements Image360Collection {
   }
 
   dispose(): void {
+    this.image360Entities.forEach(image360Entity => image360Entity.dispose());
+    this.image360Entities.splice(0);
     this._events.image360Entered.unsubscribeAll();
     this._events.image360Exited.unsubscribeAll();
   }
