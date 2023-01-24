@@ -54,6 +54,8 @@ const getEquipmentComponentType = (
       return EquipmentComponentType.SHELL;
     case 'channel':
       return EquipmentComponentType.CHANNEL;
+    case 'course':
+      return EquipmentComponentType.COURSE;
   }
   return undefined;
 };
