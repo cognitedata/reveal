@@ -3,13 +3,14 @@ import { Link, useMatch, useNavigate } from 'react-location';
 
 import styled from 'styled-components/macro';
 
-import { createLink, getProject } from '@cognite/cdf-utilities';
+import { getProject } from '@cognite/cdf-utilities';
 import { Button, Input, Skeleton } from '@cognite/cogs.js';
 import { useGetModelFileListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelDetails, ModelList } from 'components/models';
 import { capabilitiesSlice } from 'store/capabilities';
 import { useAppDispatch } from 'store/hooks';
+import { createCdfLink } from 'utils/createCdfLink';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
@@ -71,7 +72,7 @@ export function ModelLibrary() {
   const deleteHandleOnModelLibrary = () => {
     setIsModelFileDeleted(false);
     navigate({
-      to: '/model-library/',
+      to: createCdfLink('/model-library/'),
       replace: true,
     });
   };
@@ -83,8 +84,8 @@ export function ModelLibrary() {
   if (!modelName && modelFileList.length > 0) {
     const firstFile = modelFileList[0];
     navigate({
-      to: createLink(
-        `/simint/model-library/models/${encodeURIComponent(
+      to: createCdfLink(
+        `/model-library/models/${encodeURIComponent(
           firstFile.source
         )}/${encodeURIComponent(firstFile.metadata.modelName)}`
       ),
@@ -96,7 +97,7 @@ export function ModelLibrary() {
     <ModelLibraryContainer data-cy="model-library-container">
       <ModelLibrarySidebar>
         <div className="new-model">
-          <Link to={createLink(`/simint/model-library/new-model`)}>
+          <Link to={createCdfLink(`/model-library/new-model`)}>
             <Button
               icon="Add"
               type="secondary"
@@ -187,7 +188,7 @@ const ModelLibrarySidebar = styled.aside`
     padding: 24px;
     padding-top: 12px;
     overflow: auto;
-    height: 52vh;
+    height: calc(100vh - 20.8rem);
   }
 `;
 

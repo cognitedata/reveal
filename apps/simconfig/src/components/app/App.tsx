@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Outlet, ReactLocation, Router } from 'react-location';
 import { useSelector } from 'react-redux';
 
+import GlobalStyles from 'global-styles';
 import { routes } from 'routes';
 import styled from 'styled-components/macro';
 
@@ -57,23 +58,33 @@ export default function App() {
   }
 
   return (
-    <Router
-      basepath={`/${client.project}`}
-      defaultPendingElement={<Loader />}
-      defaultPendingMs={50}
-      location={location}
-      // fusion-migration
-      // @ts-ignore
-      routes={routes(dispatch, client.project)}
-    >
-      <RoutedAppContainer>
-        <MenuBar />
-        <Content>
-          <ToastContainer />
-          <Outlet />
-        </Content>
-      </RoutedAppContainer>
-    </Router>
+    <>
+      <GlobalStyles />
+      <Router
+        basepath={`/${client.project}`}
+        defaultPendingElement={<Loader />}
+        defaultPendingMs={50}
+        location={location}
+        // fusion-migration
+        // @ts-ignore
+        routes={routes(dispatch, client.project)}
+      >
+        <FlagProvider
+          apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+          appName="simconfig"
+          projectName={project}
+          disableMetrics
+        >
+          <RoutedAppContainer>
+            <MenuBar />
+            <Content>
+              <ToastContainer />
+              <Outlet />
+            </Content>
+          </RoutedAppContainer>
+        </FlagProvider>
+      </Router>
+    </>
   );
 }
 

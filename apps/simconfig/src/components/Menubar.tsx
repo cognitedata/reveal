@@ -2,18 +2,17 @@ import { useState } from 'react';
 import { useMatchRoute, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { createLink, getProject } from '@cognite/cdf-utilities';
 import { TopBar } from '@cognite/cogs.js';
 
 import { SimulatorStatus } from 'components/simulator/SimulatorStatus';
 import { selectCapabilities } from 'store/capabilities/selectors';
+import { createCdfLink } from 'utils/createCdfLink';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
 import { LabelsModal } from './LabelsModal';
 
 export function MenuBar() {
-  const project = getProject();
   const capabilities = useSelector(selectCapabilities);
   const [isOpen, setOpen] = useState<boolean>(false);
   const matchRoute = useMatchRoute();
@@ -34,25 +33,25 @@ export function MenuBar() {
             {
               name: 'Model library',
               isActive: !!matchRoute({
-                to: `/${project}/simint/model-library`,
+                to: createCdfLink('/model-library'),
                 fuzzy: true,
               }),
               onClick: () => {
                 navigate({
-                  to: createLink(`/simint/model-library`),
+                  to: createCdfLink('/model-library'),
                 });
               },
             },
             {
               name: 'Run browser',
               isActive: !!matchRoute({
-                to: `/${project}/simint/calculations/runs`,
+                to: createCdfLink('/calculations/runs'),
                 fuzzy: true,
               }),
               onClick: () => {
                 trackUsage(TRACKING_EVENTS.RUN_BROWSER_VIEW, {});
                 navigate({
-                  to: createLink(`/simint/calculations/runs`),
+                  to: createCdfLink('/calculations/runs'),
                 });
               },
             },

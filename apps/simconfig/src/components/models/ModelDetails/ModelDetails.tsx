@@ -226,9 +226,7 @@ export function ModelDetails({
                     modelName: decodeURI(modelName),
                   });
                 }}
-              >
-                New version
-              </Button>
+              />
             </Link>
           )}
         </div>
@@ -261,7 +259,7 @@ export function ModelDetails({
           key="calculations"
           tab={
             <>
-              <Icon type="Timeseries" /> Calculations
+              <Icon type="Function" /> Calculations
             </>
           }
         >

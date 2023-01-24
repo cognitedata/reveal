@@ -3,9 +3,10 @@ import { Link } from 'react-location';
 import format from 'date-fns/format';
 import styled from 'styled-components/macro';
 
-import { createLink, getProject } from '@cognite/cdf-utilities';
 import { Graphic } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
+
+import { createCdfLink } from 'utils/createCdfLink';
 
 interface ModelListProps {
   modelFiles: ModelFile[];
@@ -19,8 +20,6 @@ const isModelActive = (modelName: string) => {
 };
 
 export function ModelList({ modelFiles, className }: ModelListProps) {
-  const project = getProject();
-
   if (!modelFiles.length) {
     return (
       <EmptyState>
@@ -39,8 +38,8 @@ export function ModelList({ modelFiles, className }: ModelListProps) {
               isModelActive(modelFile.metadata.modelName) ? `active` : undefined
             }
             role="link"
-            to={createLink(
-              `/simint/model-library/models/${encodeURIComponent(
+            to={createCdfLink(
+              `/model-library/models/${encodeURIComponent(
                 modelFile.metadata.simulator
               )}/${encodeURIComponent(modelFile.metadata.modelName)}`
             )}

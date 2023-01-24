@@ -3,6 +3,7 @@ import { useNavigate } from 'react-location';
 import styled from 'styled-components/macro';
 
 import { ModelForm } from 'components/forms/ModelForm';
+import { createCdfLink } from 'utils/createCdfLink';
 
 export function NewModel() {
   const navigate = useNavigate();
@@ -13,9 +14,11 @@ export function NewModel() {
       <ModelForm
         onUpload={({ modelName, simulator }) => {
           navigate({
-            to: `/model-library/models/${encodeURIComponent(
-              simulator
-            )}/${encodeURIComponent(modelName)}`,
+            to: createCdfLink(
+              `/model-library/models/${encodeURIComponent(
+                simulator
+              )}/${encodeURIComponent(modelName)}`
+            ),
             replace: true,
           });
         }}

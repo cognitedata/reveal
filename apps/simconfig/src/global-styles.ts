@@ -19,6 +19,9 @@ export default createGlobalStyle`
   -moz-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
+}
 
+.Toastify__toast-container {
+  margin-top: 6.5rem;
 }
 `;

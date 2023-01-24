@@ -123,7 +123,7 @@ export function ModelLabels({
       <LabelsLine>
         {selectedLabels.length > 0 &&
           selectedLabels.slice(0, 2).map((label) => (
-            <LabelItem key={label.value}>
+            <LabelItem key={label.value} marginLeft={8}>
               {' '}
               <span className="label-name">{label.label}</span>
               <Icon
@@ -136,6 +136,36 @@ export function ModelLabels({
               />
             </LabelItem>
           ))}
+
+        {selectedLabels.length > 2 && (
+          <Dropdown
+            content={
+              <Menu>
+                {selectedLabels
+                  .slice(2, selectedLabels.length)
+                  .map((label, idx) => (
+                    <LabelItem key={label.value} marginTop={idx !== 0 ? 8 : 0}>
+                      {' '}
+                      <span className="label-name">{label.label}</span>
+                      <Icon
+                        className="remove-label-icon"
+                        type="Close"
+                        onClick={() => {
+                          removeLabelFromModel(label.value);
+                          toast.success('Label is removed');
+                        }}
+                      />
+                    </LabelItem>
+                  ))}
+              </Menu>
+            }
+          >
+            <LabelItem marginLeft={8}>
+              +{selectedLabels.length - 2}
+              <Icon type="ChevronDown" />
+            </LabelItem>
+          </Dropdown>
+        )}
 
         <Dropdown
           content={
@@ -206,7 +236,6 @@ export function ModelLabels({
           <AddLabelButton
             icon="Tag"
             size="large"
-            type="ghost"
             onClick={() => {
               const [dropdownInput] = document.querySelectorAll(
                 '.add-label-button input'
@@ -231,13 +260,13 @@ const LabelsLine = styled.div`
   align-content: center;
   align-self: center;
   vertical-align: center;
-
-  span:not(:first-child) {
-    margin-left: 8px;
-  }
 `;
 
-const LabelItem = styled(Label)`
+const LabelItem = styled(Label)<{
+  marginLeft?: number;
+  marginRight?: number;
+  marginTop?: number;
+}>`
   color: #396bd7;
   height: 28px;
   background-color: rgba(64, 120, 240, 0.1);
@@ -246,6 +275,9 @@ const LabelItem = styled(Label)`
   &:hover {
     background-color: rgba(64, 120, 240, 0.2);
   }
+  margin-left: ${(p) => p.marginLeft}px;
+  margin-right: ${(p) => p.marginRight}px;
+  margin-top: ${(p) => p.marginTop}px;
   .cogs-icon {
     cursor: pointer;
     margin-left: 9.5px;
@@ -261,6 +293,7 @@ const AddLabelButton = styled(Button)`
   color: #4a67fb;
   border: 0;
   height: 28px;
+  margin-left: 8px !important;
 `;
 
 const CreateLabelButton = styled(Button)`
