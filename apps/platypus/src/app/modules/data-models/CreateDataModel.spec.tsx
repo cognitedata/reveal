@@ -6,6 +6,23 @@ import userEvent from '@testing-library/user-event';
 import { CreateDataModel } from './CreateDataModel';
 import noop from 'lodash/noop';
 
+jest.mock('@platypus-app/hooks/useSpaces', () => {
+  return {
+    useSpaces: () => ({
+      data: [
+        {
+          space: 'My_Space_1',
+          name: 'My_Space_1',
+          createdTime: 12345678,
+          lastUpdatedTime: 12345678,
+        },
+      ],
+      isLoading: true,
+      isError: false,
+    }),
+  };
+});
+
 jest.mock('../../hooks/useDataSets', () => {
   return {
     useDataSets: () => ({
@@ -73,10 +90,12 @@ describe('CreateDataModel', () => {
       screen.getByLabelText('Name', { exact: false }),
       dataModelName
     );
+    userEvent.click(screen.getByText('Select space'));
+    userEvent.click(screen.getByText('My_Space_1'));
     userEvent.click(
       screen.getByRole('button', {
         hidden: true,
-        name: 'Confirm',
+        name: 'Create',
       })
     );
 
@@ -84,6 +103,7 @@ describe('CreateDataModel', () => {
       externalId: 'My_Data_Model',
       name: dataModelName,
       description: '',
+      space: 'My_Space_1',
     });
   });
 
@@ -101,10 +121,12 @@ describe('CreateDataModel', () => {
       screen.getByLabelText('External ID'),
       'My_Data_Model{enter}'
     );
+    userEvent.click(screen.getByText('Select space'));
+    userEvent.click(screen.getByText('My_Space_1'));
     userEvent.click(
       screen.getByRole('button', {
         hidden: true,
-        name: 'Confirm',
+        name: 'Create',
       })
     );
 
@@ -112,6 +134,7 @@ describe('CreateDataModel', () => {
       externalId: 'My_Data_Model',
       name: dataModelName,
       description: '',
+      space: 'My_Space_1',
     });
   });
 });

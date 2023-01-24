@@ -57,4 +57,5 @@ export const QueryKeys = {
       selectedSourceColumns,
       selectedTargetColumns,
     ] as const,
+  SPACES_LIST: ['SPACES_LIST'] as const,
 };

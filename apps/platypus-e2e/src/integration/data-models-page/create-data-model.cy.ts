@@ -14,6 +14,7 @@ describe('Platypus Data Models Page - Create Data Model', () => {
     cy.getBySel('create-data-model-btn').click();
     cy.getBySelLike('modal-title').contains('Create Data Model');
     cy.getBySel('input-data-model-name').type('cypress-test');
+
     cy.getBySel('modal-ok-button').click();
     // we should be redirected to /dashboard
     cy.url().should(

@@ -17,6 +17,7 @@ export class DataModelNameValidator extends ValidationRule {
         valid: false,
         errors: {
           [field]:
+            this.validationMessage ||
             field + ' is not valid. It should be 255 characters or less.',
         },
       } as ValidatorResult;

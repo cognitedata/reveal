@@ -29,11 +29,12 @@ import {
   DataModelValidationError,
   DataModelVersion,
   PaginatedResponse,
+  SpaceInstance,
 } from '../../types';
 
 import { FlexibleDataModelingClient } from '../../boundaries/fdm-client';
 import { SpacesApiService } from './services/data-modeling-api';
-import { SpaceDTO } from './dto/dms-space-dtos';
+import { ListSpacesDTO, SpaceDTO } from './dto/dms-space-dtos';
 import { DataModelDTO } from './dto/dms-data-model-dtos';
 import { DataModelDataMapper } from './data-mappers';
 import { DataUtils } from '../../../../boundaries/utils/data-utils';
@@ -166,39 +167,27 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @param dto CreateDataModelDTO
    */
   createDataModel(dto: CreateDataModelDTO): Promise<DataModel> {
-    const space: SpaceDTO = {
+    const dataModelDto: DataModelDTO = {
       space: dto.space || DataUtils.convertToExternalId(dto.name),
+      externalId: dto.externalId || DataUtils.convertToExternalId(dto.name),
       name: dto.name,
+      description: dto.description,
+      version: '1',
     };
 
-    return new Promise((resolve, reject) => {
-      this.spacesApi.upsert([space]).then((response) => {
-        const spaceInstance = Array.isArray(response.items)
-          ? response.items[0]
-          : response.items;
-
-        const dataModelDto: DataModelDTO = {
-          space: spaceInstance.space,
-          externalId: dto.externalId || DataUtils.convertToExternalId(dto.name),
-          name: dto.name,
-          description: dto.description,
-          version: '1',
-        };
-
-        this.mixerApiService
-          .upsertVersion(dataModelDto)
-          .then((dataModelResponse) => {
-            if (dataModelResponse.errors?.length) {
-              reject(dataModelResponse.errors);
-            } else {
-              resolve(
-                this.dataModelDataMapper.deserialize(dataModelResponse.result)
-              );
-            }
-          })
-          .catch((err: PlatypusError) => reject(err));
+    return this.createSpace({
+      space: dataModelDto.space,
+    })
+      .then(() => this.mixerApiService.upsertVersion(dataModelDto))
+      .then((dataModelResponse) => {
+        if (dataModelResponse.errors?.length) {
+          return Promise.reject(dataModelResponse.errors);
+        } else {
+          return Promise.resolve(
+            this.dataModelDataMapper.deserialize(dataModelResponse.result)
+          );
+        }
       });
-    });
   }
 
   /**
@@ -480,6 +469,23 @@ export class FdmClient implements FlexibleDataModelingClient {
     dto: CreateDataModelTransformationDTO
   ): Promise<DataModelTransformation> {
     throw 'Not implemented';
+  }
+
+  /**
+   * Fetch all spaces.
+   */
+  getSpaces(dto?: ListSpacesDTO): Promise<SpaceInstance[]> {
+    return this.spacesApi
+      .list(dto)
+      .then((response) => Promise.resolve(response.items));
+  }
+
+  /**
+   * Creates a new space for data models.
+   * @param dto
+   */
+  createSpace(dto: SpaceDTO): Promise<SpaceInstance> {
+    return this.spacesApi.upsert([dto]).then((res) => res.items[0]);
   }
 
   /**

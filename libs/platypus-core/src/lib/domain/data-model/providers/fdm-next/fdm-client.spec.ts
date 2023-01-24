@@ -1,5 +1,9 @@
 import { PublishDataModelVersionDTO } from '../../dto';
-import { DataModelTypeDefsType, DataModelVersionStatus } from '../../types';
+import {
+  DataModelTypeDefsType,
+  DataModelVersionStatus,
+  SpaceDTO,
+} from '../../types';
 import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
 import { FdmClient } from './fdm-client';
 
@@ -11,9 +15,12 @@ const graphqlServiceMock = {
 
 const spacesApiMock = {
   working: {
-    upsert: jest.fn(() =>
-      Promise.resolve({ items: [{ space: 'Test', name: 'Test' }] })
+    list: jest.fn(() =>
+      Promise.resolve({
+        items: [{ space: 'test-space', name: 'Test_Space_Name' }],
+      })
     ),
+    upsert: jest.fn((dto: SpaceDTO[]) => Promise.resolve({ items: dto })),
   },
 } as any;
 
@@ -57,12 +64,6 @@ describe('FDM v3 Client', () => {
         description: 'Test',
         space: 'Test',
       });
-      expect(spacesApi.upsert).toHaveBeenCalledWith([
-        {
-          space: 'Test',
-          name: 'Test',
-        },
-      ]);
       expect(mixerApi.upsertVersion).toHaveBeenCalledWith({
         space: 'Test',
         externalId: 'Test',
@@ -219,6 +220,47 @@ describe('FDM v3 Client', () => {
       expect(mixerApi.runQuery).toHaveBeenCalledWith(
         expect.objectContaining(expectedReqDto)
       );
+    });
+  });
+
+  describe('should fetch spaces', () => {
+    test('sends correct payload', async () => {
+      const spacesApi = spacesApiMock.working;
+      const mixerApi = mixerApiMock.working;
+      const graphqlService = graphqlServiceMock.working;
+      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+
+      const spaces = await fdmClient.getSpaces({});
+
+      expect(spacesApi.list).toHaveBeenCalled();
+      expect(spaces).toStrictEqual([
+        { space: 'test-space', name: 'Test_Space_Name' },
+      ]);
+    });
+  });
+
+  describe('should create new space', () => {
+    test('sends correct payload', async () => {
+      const spacesApi = spacesApiMock.working;
+      const mixerApi = mixerApiMock.working;
+      const graphqlService = graphqlServiceMock.working;
+      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+
+      const newSpace = await fdmClient.createSpace({
+        space: 'testSpace',
+        name: 'testSpaceName',
+      });
+
+      expect(spacesApi.upsert).toHaveBeenCalledWith([
+        {
+          space: 'testSpace',
+          name: 'testSpaceName',
+        },
+      ]);
+      expect(newSpace).toStrictEqual({
+        space: 'testSpace',
+        name: 'testSpaceName',
+      });
     });
   });
 });

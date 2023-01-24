@@ -20,6 +20,7 @@ import {
   UpdateDataModelDTO,
   GetByExternalIdDTO,
 } from '../dto';
+import { ListSpacesDTO } from '../providers/fdm-next/dto/dms-space-dtos';
 
 import {
   BuiltInType,
@@ -29,6 +30,8 @@ import {
   DataModelValidationError,
   DataModelVersion,
   PaginatedResponse,
+  SpaceDTO,
+  SpaceInstance,
 } from '../types';
 
 export interface FlexibleDataModelingClient {
@@ -161,6 +164,17 @@ export interface FlexibleDataModelingClient {
   createTransformation(
     dto: CreateDataModelTransformationDTO
   ): Promise<DataModelTransformation>;
+
+  /**
+   * Fetch all spaces.
+   */
+  getSpaces(dto?: ListSpacesDTO): Promise<SpaceInstance[]>;
+
+  /**
+   * Creates a new space for data models.
+   * @param dto
+   */
+  createSpace(dto: SpaceDTO): Promise<SpaceInstance>;
 
   /**
    * Fetches the number of published rows by type

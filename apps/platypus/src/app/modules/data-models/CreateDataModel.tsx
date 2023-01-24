@@ -10,6 +10,7 @@ import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
   const [dataModelName, setDataModelName] = useState('');
+  const [space, setSpace] = useState('');
   const [dataModelDescription, setDataModelDescription] = useState('');
   const [externalId, setExternalId] = useState('');
   const [isExternalIdDirty, setIsExternalIdDirty] = useState(false);
@@ -39,6 +40,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
   const handleSubmit = () => {
     create.mutate(
       {
+        space,
         externalId,
         name: dataModelName.trim(),
         description: dataModelDescription,
@@ -89,6 +91,8 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
       onDescriptionChange={(value) => setDataModelDescription(value)}
       onNameChange={handleNameChange}
       onSubmit={handleSubmit}
+      space={space}
+      onSpaceChange={setSpace}
       title={t('data_model_create_modal_title', 'Create Data Model')}
     />
   );

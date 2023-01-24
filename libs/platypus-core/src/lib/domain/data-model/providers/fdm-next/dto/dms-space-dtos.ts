@@ -1,5 +1,10 @@
 import { Filter } from './filters';
 
+export interface ListSpacesDTO {
+  cursor?: string;
+  limit?: number;
+}
+
 export interface SpaceDTO {
   space: string;
   description?: string;

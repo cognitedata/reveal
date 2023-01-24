@@ -35,6 +35,8 @@ import {
   DataModelTransformation,
   DataModelTypeDefsType,
   CdfResourceInstance,
+  SpaceDTO,
+  SpaceInstance,
   BuiltInType,
 } from '../../types';
 import {
@@ -54,6 +56,7 @@ import { DmsApiService, DmsModelBuilder } from './services/data-model-storage';
 import { MixerApiService, MixerBindingsBuilder } from './services/mixer-api';
 import { MixerQueryBuilder, OPERATION_TYPE } from '../../services';
 import { compareDataModelVersions } from '../../utils';
+import { ListSpacesDTO } from '../fdm-next/dto/dms-space-dtos';
 
 export class FdmV2Client implements FlexibleDataModelingClient {
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
@@ -550,6 +553,21 @@ export class FdmV2Client implements FlexibleDataModelingClient {
     dto: CreateDataModelTransformationDTO
   ): Promise<DataModelTransformation> {
     return this.transformationApiService.createTransformation(dto);
+  }
+
+  /**
+   * Fetch all spaces.
+   */
+  getSpaces(dto?: ListSpacesDTO): Promise<SpaceInstance[]> {
+    throw 'Not implemented';
+  }
+
+  /**
+   * Creates a new space for data models.
+   * @param dto
+   */
+  createSpace(dto: SpaceDTO): Promise<SpaceInstance> {
+    throw 'Not implemented';
   }
 
   /**

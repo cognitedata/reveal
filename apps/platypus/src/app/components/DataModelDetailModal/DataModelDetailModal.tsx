@@ -9,12 +9,7 @@ import {
 import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import {
-  FormLabel,
-  InputDetail,
-  NameWrapper,
-  StyledEditableChip,
-} from './elements';
+import { InputDetail, NameWrapper, StyledEditableChip } from './elements';
 import { DataSet } from '@cognite/sdk';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import {
@@ -22,14 +17,16 @@ import {
   Validator,
 } from '@platypus/platypus-core';
 import { DataModelNameValidator } from '@platypus-core/domain/data-model/validators/data-model-name-validator';
+import { DataModelSpaceSelect } from '../DataModelSpaceSelect/DataModelSpaceSelect';
 import { DataModelNameValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-name-validator-v2';
 import { isFDMv3 } from '@platypus-app/flags';
+import { FormLabel } from '../FormLabel/FormLabel';
 
 export type DataModelDetailModalProps = {
-  dataSets: DataSet[];
   description: string;
   externalId: string;
   hasInputError?: boolean;
+  dataSets: DataSet[];
   isDataSetsLoading?: boolean;
   isDataSetsFetchError?: boolean;
   isExternalIdLocked?: boolean;
@@ -41,14 +38,15 @@ export type DataModelDetailModalProps = {
   onExternalIdChange?: (value: string) => void;
   onNameChange: (value: string) => void;
   title: string;
+  space?: string;
+  onSpaceChange?: (value: string) => void;
 };
 
 export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
   const { t } = useTranslation('DataModelDetailModal');
+  const isFDMV3 = isFDMv3();
   const [externalIdErrorMessage, setExternalIdErrorMessage] = useState();
   const [nameErrorMessage, setNameErrorMessage] = useState();
-
-  const isFDMV3 = isFDMv3();
 
   const dataSetOptions = props.dataSets.map(
     (item: DataSet) =>
@@ -91,11 +89,14 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
       onCancel={props.onCancel}
       onOk={props.onSubmit}
       okDisabled={
-        !props.name.trim() || externalIdErrorMessage || nameErrorMessage
+        !props.name.trim() ||
+        externalIdErrorMessage ||
+        (isFDMV3 && !props.space)
       }
-      okButtonName={t('confirm', 'Confirm')}
+      okButtonName={t('create', 'Create')}
       okProgress={props.isLoading}
       okType="primary"
+      data-cy="create-data-model-modal-content"
     >
       <div>
         <label>
@@ -156,6 +157,14 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
             )}
           ></Textarea>
         </label>
+
+        <DataModelSpaceSelect
+          onSpaceSelect={(selectedSpace) =>
+            props.onSpaceChange?.(selectedSpace)
+          }
+          preSelectedSpace={props.space}
+        />
+
         {/* Temporarily hidden until backend support is available */}
         {false && (
           <>

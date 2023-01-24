@@ -10,8 +10,9 @@ import {
   FetchDataModelDTO,
   UpdateDataModelDTO,
 } from './dto';
+import { ListSpacesDTO } from './providers/fdm-next/dto/dms-space-dtos';
 
-import { DataModel } from './types';
+import { DataModel, SpaceDTO, SpaceInstance } from './types';
 
 export class DataModelsHandler {
   constructor(private fdmClient: FlexibleDataModelingClient) {}
@@ -104,5 +105,39 @@ export class DataModelsHandler {
 
         return Result.fail(err);
       });
+  }
+
+  async getSpaces(dto?: ListSpacesDTO): Promise<Result<SpaceInstance[]>> {
+    try {
+      const spaces = await this.fdmClient.getSpaces(dto);
+
+      return Result.ok(spaces);
+    } catch (err) {
+      if ((err as PlatypusError).code === 401) {
+        return Result.fail({
+          name: (err as PlatypusError).message,
+        });
+      }
+
+      return Result.fail(err);
+    }
+  }
+
+  async createSpace(dto: SpaceDTO): Promise<Result<SpaceInstance>> {
+    try {
+      const space = await this.fdmClient.createSpace(dto);
+      return Result.ok(space);
+    } catch (err) {
+      if (
+        (err as PlatypusError).code === 400 ||
+        (err as PlatypusError).code === 409
+      ) {
+        return Result.fail({
+          name: (err as PlatypusError).message,
+        });
+      }
+
+      return Result.fail(err);
+    }
   }
 }

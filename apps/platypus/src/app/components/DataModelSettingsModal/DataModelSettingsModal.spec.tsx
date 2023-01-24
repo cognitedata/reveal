@@ -59,7 +59,7 @@ describe('DataModelSettingsModal', () => {
     userEvent.click(
       screen.getByRole('button', {
         hidden: true,
-        name: 'Confirm',
+        name: 'Create',
       })
     );
 
@@ -67,6 +67,7 @@ describe('DataModelSettingsModal', () => {
       description: newDescription,
       externalId: 'testDataModel',
       name: newName,
+      space: 'testDataModel-1',
     });
 
     expect(handleRequestClose).toHaveBeenCalledTimes(1);

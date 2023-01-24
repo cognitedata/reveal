@@ -1,6 +1,8 @@
+import { Result } from '@platypus-core/boundaries/types';
 import { FlexibleDataModelingClient } from './boundaries';
 import { DataModelsHandler } from './data-models-handler';
 import { CreateDataModelDTO } from './dto';
+import { SpaceDTO } from './types';
 
 describe('DataModelsHandlerTest', () => {
   const fdmClientMock = {
@@ -8,6 +10,14 @@ describe('DataModelsHandlerTest', () => {
     listDataModels: jest.fn().mockImplementation(() => Promise.resolve([])),
     updateDataModel: jest.fn().mockImplementation(() => Promise.resolve([])),
     deleteDataModel: jest.fn().mockImplementation(() => Promise.resolve([])),
+    getSpaces: jest
+      .fn()
+      .mockImplementation(() =>
+        Promise.resolve([{ space: 'test-space', name: 'Test_Space_Name' }])
+      ),
+    createSpace: jest
+      .fn()
+      .mockImplementation((dto: SpaceDTO) => Promise.resolve(dto)),
   } as any as FlexibleDataModelingClient;
 
   const createInstance = () => {
@@ -59,5 +69,34 @@ describe('DataModelsHandlerTest', () => {
     };
     await service.delete(reqDto);
     expect(fdmClientMock.deleteDataModel).toBeCalledWith(reqDto);
+  });
+
+  it('should fetch all spaces', async () => {
+    const service = createInstance();
+    const result = await service.getSpaces();
+    const spaces = result.getValue();
+
+    expect(fdmClientMock.getSpaces).toBeCalled();
+    expect(spaces).toStrictEqual([
+      { space: 'test-space', name: 'Test_Space_Name' },
+    ]);
+  });
+
+  it('should create new space', async () => {
+    const service = createInstance();
+    const result = await service.createSpace({
+      space: 'testSpace',
+      name: 'testSpaceName',
+    });
+    const newSpace = result.getValue();
+
+    expect(fdmClientMock.createSpace).toBeCalledWith({
+      space: 'testSpace',
+      name: 'testSpaceName',
+    });
+    expect(newSpace).toStrictEqual({
+      space: 'testSpace',
+      name: 'testSpaceName',
+    });
   });
 });
