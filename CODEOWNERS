@@ -27,3 +27,6 @@ libs/platypus-core                @cognitedata/development-experiences
 apps/data-exploration             @cognitedata/explorers
 
 libs/data-exploration-components  @cognitedata/explorers
+
+# Coding conventions
+apps/coding-conventions           @deep-cognite @CimStordal

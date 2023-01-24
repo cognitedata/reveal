@@ -7,9 +7,11 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './queryClient';
 
 import Routes from './Routes';
+import { getProject } from '@cognite/cdf-utilities';
 
 function App() {
-  const tenant = 'coding-conventions';
+  const project = getProject();
+  const basename = `${project}/coding-conventions`;
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -17,7 +19,7 @@ function App() {
       <ToastContainer />
       <StyledWrapper>
         <Router
-          basename={tenant}
+          basename={basename}
           window={window}
           children={
             <StyledPage>

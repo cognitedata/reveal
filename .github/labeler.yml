@@ -10,3 +10,7 @@ data-explorer:
   - libs/data-exploration-components/*
   - libs/data-exploration-components/**/*
   - libs/data-exploration/**
+
+coding-conventions:
+  - apps/coding-conventions/*
+  - apps/coding-conventions/**/*

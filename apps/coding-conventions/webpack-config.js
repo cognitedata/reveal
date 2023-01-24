@@ -4,6 +4,9 @@ const PrefixWrap = require('postcss-prefixwrap');
 const { styleScope } = require('./src/styleScope');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
+const CSS_REGEX = /\.css$/;
+const LESS_REGEX = /\.less$/;
+
 const replaceStyleLoaders = (config) => {
   const cssRegex = /\.(css|less)$/;
 
@@ -12,6 +15,7 @@ const replaceStyleLoaders = (config) => {
     inQuestion.rules &&
     inQuestion.rules.find &&
     inQuestion.rules.find((rule) => Array.isArray(rule.oneOf));
+
   const cssMatcher = (inQuestion) =>
     inQuestion.test && inQuestion.test.toString() === cssRegex.toString();
 
@@ -46,11 +50,7 @@ const replaceStyleLoaders = (config) => {
         postcssOptions: {
           plugins: [
             PrefixWrap(`.${styleScope}`, {
-              ignoredSelectors: [
-                ':root',
-                '.monaco-aria-container',
-                '[data-reach-tooltip]',
-              ],
+              ignoredSelectors: [':root', '.monaco-aria-container'],
             }),
           ],
         },
@@ -66,9 +66,26 @@ const replaceStyleLoaders = (config) => {
       {
         oneOf: [
           {
-            test: cssRegex,
+            test: CSS_REGEX,
             use: getStyleLoader(),
             sideEffects: true,
+          },
+          {
+            test: LESS_REGEX,
+            use: [
+              ...getStyleLoader(),
+              {
+                loader: 'less-loader',
+                options: {
+                  lessOptions: {
+                    modifyVars: {
+                      'root-entry-name': 'default',
+                    },
+                    javascriptEnabled: true,
+                  },
+                },
+              },
+            ],
           },
           ...match.rules.find((rule) => Array.isArray(rule.oneOf)).oneOf,
         ],
@@ -87,7 +104,19 @@ const replaceStyleLoaders = (config) => {
 
 module.exports = (config) => {
   const nodeEnv = process.env.NODE_ENV || 'production';
-  console.log(`Custom webpack config(${nodeEnv}) for Platypus was loaded...`);
+  console.log(
+    `Custom webpack config(${nodeEnv}) for Data Exploration was loaded...`
+  );
+
+  config.externals = {
+    'single-spa': 'single-spa',
+    '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
+    '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
+  };
+
+  config = replaceStyleLoaders(config);
+
+  config.resolve.fallback = { path: require.resolve('path-browserify') };
 
   if (
     nodeEnv === 'mock' ||
@@ -99,30 +128,28 @@ module.exports = (config) => {
     config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
       './src/cogniteSdk.ts'
     );
-    return {
-      ...config,
-      plugins: [
-        ...config.plugins,
-        new MonacoWebpackPlugin({
-          publicPath: '/',
-          languages: ['graphql'],
-        }),
-      ],
-    };
   }
 
-  config.entry = {
-    ...config.entry,
-    // 'monaco-editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
-    // 'graphql-lang.worker':
-    //   './src/app/modules/solution/data-model/components/GraphqlCodeEditor/utils/graphql.worker.ts',
-  };
+  if (nodeEnv === 'development') {
+    // Temp fix to devserver and hmr
+    config.devServer.allowedHosts = 'all';
+    config.devServer.headers['Access-Control-Allow-Origin'] = '*';
+    config.devServer.https = true;
+    config.devServer.port = 3010;
+
+    config.devServer.static = {
+      watch: {
+        followSymlinks: true,
+      },
+    };
+  }
 
   config.output.libraryTarget = 'system';
   config.output.chunkLoading = 'jsonp';
   config.output.filename = ({ chunk: { name } }) => {
     return name === 'main' ? 'index.js' : '[name].js';
   };
+
   // config.output.chunkFilename = 'static/js/[name].[contenthash:8].chunk.js';
 
   config.plugins.push(
@@ -130,11 +157,6 @@ module.exports = (config) => {
       React: 'react',
     })
   );
-
-  config.externals = {
-    'single-spa': 'single-spa',
-    '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
-  };
 
   // If this is not set, you will get following error
   // application '@cognite/cdf-solutions-ui' died in status LOADING_SOURCE_CODE: Automatic publicPath is not supported in this browser
@@ -148,7 +170,6 @@ module.exports = (config) => {
     delete config.optimization['runtimeChunk'];
   }
 
-  config = replaceStyleLoaders(config);
   config.module.rules.push({
     test: /\.(woff|woff2|eot|ttf|svg)$/,
     loader: 'file-loader',
@@ -161,9 +182,7 @@ module.exports = (config) => {
     .filter((plugin) => plugin.constructor.name !== 'IndexHtmlWebpackPlugin');
 
   // This ensures Monaco is able to load its web workers
-  config.plugins.push(
-    new MonacoWebpackPlugin({ publicPath: '/', languages: ['graphql'] })
-  );
+  config.plugins.push(new MonacoWebpackPlugin({ publicPath: '' }));
 
   return config;
 };
