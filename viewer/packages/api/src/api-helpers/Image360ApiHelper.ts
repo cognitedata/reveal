@@ -133,7 +133,7 @@ export class Image360ApiHelper {
     this._requestRedraw();
     this._imageCollection.map(imageCollection => {
       if (imageCollection.image360Entities.includes(image360Entity)) {
-        imageCollection.events.image360Entered.fire();
+        imageCollection.events.image360Entered.fire(image360Entity);
       }
     });
   }
