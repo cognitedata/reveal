@@ -330,9 +330,10 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
       const insideCameraPlanes =
         nearPlane.distanceToPoint(position3D) >= 0.0 && farPlane.distanceToPoint(position3D) <= 0.0;
+      const insideClippingPlanes = clippingPlanesContainPoint(this._viewer.getGlobalClippingPlanes(), position3D);
       const { x, y } = worldToViewportCoordinates(canvas, camera, position3D);
 
-      if (insideCameraPlanes) {
+      if (insideCameraPlanes && insideClippingPlanes) {
         state.position2D.set(x, y);
         state.visible = true;
       } else {
@@ -511,4 +512,8 @@ function createElementBounds(element: HtmlOverlayElement, out?: THREE.Box2) {
   out.min.set(state.position2D.x, state.position2D.y);
   out.max.set(state.position2D.x + state.width, state.position2D.y + state.height);
   return out;
+}
+
+function clippingPlanesContainPoint(planes: THREE.Plane[], point: THREE.Vector3) {
+  return planes.every(p => p.distanceToPoint(point) > 0);
 }
