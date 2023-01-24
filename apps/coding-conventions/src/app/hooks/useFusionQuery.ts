@@ -22,7 +22,6 @@ export function useFusionQuery() {
       };
     }
   }, [cluster, env]);
-  
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (!env && !cluster && ref.current) {

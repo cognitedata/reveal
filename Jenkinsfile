@@ -2,7 +2,11 @@
 
 // This is all the applications in the monorepo. Register your application name here
 // in addition to updating the 'PROPECTION_APP_IDS' & 'PREVIEW_PACKAGE_NAMES'
-def APPLICATIONS = ['platypus', 'data-exploration']
+def APPLICATIONS = [
+  'platypus',
+  'data-exploration',
+  'coding-conventions',
+]
 
 // This is your FAS production app id.
 // At this time, there is no production build for the demo app.
@@ -10,25 +14,29 @@ def APPLICATIONS = ['platypus', 'data-exploration']
 static final Map<String, String> PRODUCTION_APP_IDS = [
   'platypus': "cdf-solutions-ui",
   'data-exploration': "cdf-data-exploration",
+  'coding-conventions': 'cdf-conding-conventions',
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
   'data-exploration': "@cognite/cdf-data-exploration",
+  'coding-conventions': "@cognite/cdf-coding-conventions",
 ]
 
 // This is your FAS app identifier (repo) shared across both production and staging apps
 // in order to do a commit lookup (commits are shared between apps).
 static final Map<String, String> APPLICATIONS_REPO_IDS = [
   'platypus': "platypus",
-  'data-exploration': "cdf-ui-data-exploration"
+  'data-exploration': "cdf-ui-data-exploration",
+  'coding-conventions': "fusion",
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
 // one (or do not have access to Sentry), stop by #frontend to ask for help. :)
 static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'platypus': "platypus",
-  'data-exploration': "data-explorer"
+  'data-exploration': "data-explorer",
+  'coding-conventions': "coding-conventions"
 ]
 
 // Add apps/libs name to the list where you want the storybook preview to build.
