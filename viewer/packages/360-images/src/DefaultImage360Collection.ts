@@ -22,7 +22,6 @@ export class DefaultImage360Collection implements Image360Collection {
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
     image360Exited: new EventTrigger<Image360ExitedDelegate>(),
-    disposed: new EventTrigger<DisposedDelegate>()
   };
 
   /**
@@ -31,7 +30,6 @@ export class DefaultImage360Collection implements Image360Collection {
   get events(): {
     image360Entered: EventTrigger<Image360EnteredDelegate>;
     image360Exited: EventTrigger<Image360ExitedDelegate>;
-    disposed: EventTrigger<DisposedDelegate>;
   } {
     return this._events;
   }
