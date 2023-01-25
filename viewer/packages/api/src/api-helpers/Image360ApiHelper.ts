@@ -5,11 +5,18 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
 import { CogniteClient, Metadata } from '@cognite/sdk';
-import { Image360Entity, Image360EntityFactory, Image360Facade } from '@reveal/360-images';
+import {
+  DefaultImage360Collection,
+  Image360Collection,
+  Image360Entity,
+  Image360EntityFactory,
+  Image360Facade
+} from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import { InputHandler, pixelToNormalizedDeviceCoordinates, PointerEventData, SceneHandler } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { Image360 } from '@reveal/360-images/src/Image360';
+import pullAll from 'lodash/pullAll';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
@@ -31,6 +38,8 @@ export class Image360ApiHelper {
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
   private _cachedCameraManager: CameraManager;
+
+  private readonly _imageCollection: DefaultImage360Collection[] = [];
 
   constructor(
     cogniteClient: CogniteClient,
@@ -71,10 +80,12 @@ export class Image360ApiHelper {
     eventFilter: { [key: string]: string },
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
-  ): Promise<Image360Entity[]> {
+  ): Promise<Image360Collection> {
     const entities = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
     this._requestRedraw();
-    return entities;
+    const imageCollection = new DefaultImage360Collection(entities);
+    this._imageCollection.push(imageCollection);
+    return imageCollection;
   }
 
   public async remove360Images(entities: Image360[]): Promise<void> {
@@ -84,6 +95,20 @@ export class Image360ApiHelper {
     ) {
       this.exit360Image();
     }
+
+    this._imageCollection.forEach(imageCollection =>
+      pullAll(
+        imageCollection.image360Entities,
+        entities.map(entity => entity as Image360Entity)
+      )
+    );
+
+    const imageCollectionsToRemove = this._imageCollection.filter(
+      collection => collection.image360Entities.length === 0
+    );
+    pullAll(this._imageCollection, imageCollectionsToRemove);
+    imageCollectionsToRemove.forEach(collection => collection.dispose());
+
     await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
     this._requestRedraw();
   }
@@ -121,6 +146,9 @@ export class Image360ApiHelper {
     this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
 
     this._requestRedraw();
+    this._imageCollection
+      .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
+      .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
@@ -235,6 +263,11 @@ export class Image360ApiHelper {
   public exit360Image(): void {
     this._image360Facade.allIconsVisibility = true;
     if (this._interactionState.currentImage360Entered !== undefined) {
+      this._imageCollection
+        .filter(imageCollection =>
+          imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered!)
+        )
+        .forEach(imageCollection => imageCollection.events.image360Exited.fire());
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
     }
@@ -256,6 +289,8 @@ export class Image360ApiHelper {
       this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
     }
 
+    this._imageCollection.forEach(imageCollection => imageCollection.dispose());
+    this._imageCollection.splice(0);
     this._image360Navigation.dispose();
   }
 
