@@ -19,7 +19,7 @@ export interface InternalTimeseriesData {
 export interface InternalTimeseriesFilters extends InternalCommonFilters {
   isStep?: boolean;
   isString?: boolean;
-  unit?: string;
+  unit?: string | string[];
   metadata?: { key: string; value: string }[];
 }
 

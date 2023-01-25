@@ -1,5 +1,5 @@
 import { AppContext } from '@data-exploration-components/context/AppContext';
-import { noop } from 'lodash';
+import noop from 'lodash/noop';
 import { useContext } from 'react';
 
 export type MetricsMetadata = {

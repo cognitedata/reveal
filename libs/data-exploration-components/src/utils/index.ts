@@ -7,6 +7,7 @@ export * from './dateTime';
 export * from './events';
 export * from './files';
 export * from './filters';
+export * from './getTimeseriesFilterUnit';
 export * from './id';
 export * from './numbers';
 export * from './relationships';

@@ -17,6 +17,7 @@ export const AppContext = React.createContext<{
   flow: Flow;
   overrideURLMap?: OverrideURLMap;
   userInfo: any;
+  isAdvancedFiltersEnabled: boolean;
   trackUsage?: (event: string, metadata?: MetricsMetadata) => void;
 } | null>(null);
 
@@ -25,15 +26,25 @@ export const AppContextProvider = ({
   flow,
   overrideURLMap,
   userInfo,
+  isAdvancedFiltersEnabled,
   trackUsage,
 }: {
   children: any;
   flow: Flow;
   overrideURLMap?: OverrideURLMap;
   userInfo: any;
+  isAdvancedFiltersEnabled: boolean;
   trackUsage?: (event: string, metadata?: MetricsMetadata) => void;
 }) => (
-  <AppContext.Provider value={{ flow, overrideURLMap, userInfo, trackUsage }}>
+  <AppContext.Provider
+    value={{
+      flow,
+      overrideURLMap,
+      userInfo,
+      isAdvancedFiltersEnabled,
+      trackUsage,
+    }}
+  >
     {children}
   </AppContext.Provider>
 );

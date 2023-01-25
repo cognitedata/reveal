@@ -1,5 +1,4 @@
 import React from 'react';
-import { useList } from '@cognite/sdk-react-query-hooks';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
@@ -9,9 +8,14 @@ import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
-import { OldTimeseriesFilters } from '@data-exploration-lib/domain-layer';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import {
+  OldTimeseriesFilters,
+  useTimeseriesList,
+} from '@data-exploration-lib/domain-layer';
 import { ResourceTypes } from '@data-exploration-components/types';
+import { AggregatedMultiselectFilter } from '@data-exploration-components/components/SearchNew';
+import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
+import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';
 
 export const TimeseriesFilters = ({
   filter,
@@ -21,10 +25,11 @@ export const TimeseriesFilters = ({
   setFilter: (newFilter: OldTimeseriesFilters) => void;
 }) => {
   const resourceType = ResourceTypes.TimeSeries;
-  const { data: items = [] } = useList<any>('timeseries', {
-    filter: transformNewFilterToOldFilter(filter),
-    limit: 1000,
-  });
+
+  const isAdvancedFiltersEnabled = useAdvancedFiltersEnabled();
+
+  const { items } = useTimeseriesList(filter, isAdvancedFiltersEnabled);
+  const unit = filter.unit;
 
   return (
     <div>
@@ -81,13 +86,24 @@ export const TimeseriesFilters = ({
             })
           }
         />
-        <AggregatedFilter
-          items={items}
-          aggregator="unit"
-          title="Unit"
-          value={filter.unit}
-          setValue={(newValue) => setFilter({ ...filter, unit: newValue })}
-        />
+        {isAdvancedFiltersEnabled ? (
+          <AggregatedMultiselectFilter
+            items={items}
+            aggregator="unit"
+            title="Unit"
+            addNilOption
+            value={getTimeseriesFilterUnit(unit)}
+            setValue={(newValue) => setFilter({ ...filter, unit: newValue })}
+          />
+        ) : (
+          <AggregatedFilter
+            items={items}
+            aggregator="unit"
+            title="Unit"
+            value={unit ? String(unit) : unit}
+            setValue={(newValue) => setFilter({ ...filter, unit: newValue })}
+          />
+        )}
         <MetadataFilter
           items={items}
           value={filter.metadata}

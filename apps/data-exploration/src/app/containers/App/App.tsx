@@ -14,6 +14,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useUserInformation } from '@data-exploration-app/hooks/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 
 const Spinner = () => <Loader />;
 const Exploration = React.lazy(
@@ -28,6 +29,7 @@ export default function App() {
   const sdk = useSDK();
   const { flow } = getFlow();
   const { data: userInfo } = useUserInformation();
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   return (
     <Suspense fallback={<Spinner />}>
@@ -45,6 +47,7 @@ export default function App() {
                     '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
                 }}
                 trackUsage={trackUsage}
+                isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
               >
                 <Routes>
                   <Route path="/explore/*" element={<Exploration />} />

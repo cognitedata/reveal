@@ -4,13 +4,14 @@ import {
   AdvancedFilter,
   AdvancedFilterBuilder,
 } from '@data-exploration-lib/domain-layer';
+import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import { InternalTimeseriesFilters } from '../types';
 
 export type TimeseriesProperties = {
   assetIds: number[];
   dataSetId: number[];
-  unit: string;
+  unit: string | string[];
   externalId: string;
   name: string;
   id: number;
@@ -48,8 +49,21 @@ export const mapFiltersToTimeseriesAdvancedFilters = (
     })
     .or(
       new AdvancedFilterBuilder<TimeseriesProperties>()
-        .equals('unit', unit === NIL_FILTER_VALUE ? undefined : unit)
-        .notExists('unit', unit === NIL_FILTER_VALUE)
+        .in('unit', () => {
+          // this condition need to be removed when remove the legacy implementation
+          if (unit && !isArray(unit)) {
+            return [unit];
+          }
+          return unit;
+        })
+        .notExists('unit', () => {
+          if (!unit) return false;
+          if (isArray(unit)) {
+            return unit.includes(NIL_FILTER_VALUE);
+          }
+
+          return unit === NIL_FILTER_VALUE;
+        })
     )
     .equals('id', internalId)
     .equals('isStep', isStep)

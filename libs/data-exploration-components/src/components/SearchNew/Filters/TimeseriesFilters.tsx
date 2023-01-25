@@ -1,11 +1,15 @@
 import React from 'react';
-import { useList } from '@cognite/sdk-react-query-hooks';
 import { BooleanFilter } from './BooleanFilter/BooleanFilter';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { InternalTimeseriesFilters } from '@data-exploration-lib/domain-layer';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import {
+  InternalTimeseriesFilters,
+  useTimeseriesList,
+} from '@data-exploration-lib/domain-layer';
+import { AggregatedMultiselectFilter } from './AggregatedMultiselectFilter/AggregatedMultiselectFilter';
+import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
+import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';
 
 export const TimeseriesFilters = ({
   filter,
@@ -15,10 +19,10 @@ export const TimeseriesFilters = ({
   filter: InternalTimeseriesFilters;
   setFilter: (newFilter: InternalTimeseriesFilters) => void;
 }) => {
-  const { data: items = [] } = useList<any>('timeseries', {
-    filter: transformNewFilterToOldFilter(filter),
-    limit: 1000,
-  });
+  const isAdvancedFiltersEnabled = useAdvancedFiltersEnabled();
+
+  const { items } = useTimeseriesList(filter, isAdvancedFiltersEnabled);
+  const unit = filter.unit;
 
   return (
     <BaseFilterCollapse.Panel title="Time series" {...rest}>
@@ -43,13 +47,24 @@ export const TimeseriesFilters = ({
         }
       />
 
-      <AggregatedFilterV2
-        items={items}
-        aggregator="unit"
-        title="Unit"
-        value={filter.unit}
-        setValue={(newValue) => setFilter({ ...filter, unit: newValue })}
-      />
+      {isAdvancedFiltersEnabled ? (
+        <AggregatedMultiselectFilter
+          items={items}
+          aggregator="unit"
+          title="Unit"
+          addNilOption
+          value={getTimeseriesFilterUnit(unit)}
+          setValue={(newValue) => setFilter({ ...filter, unit: newValue })}
+        />
+      ) : (
+        <AggregatedFilterV2
+          items={items}
+          aggregator="unit"
+          title="Unit"
+          value={unit ? String(unit) : unit}
+          setValue={(newValue) => setFilter({ ...filter, unit: newValue })}
+        />
+      )}
 
       <MetadataFilterV2
         items={items}

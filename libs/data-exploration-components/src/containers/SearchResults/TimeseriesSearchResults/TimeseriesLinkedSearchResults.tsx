@@ -1,5 +1,4 @@
 import { Timeseries } from '@cognite/sdk';
-import { useList } from '@cognite/sdk-react-query-hooks';
 import {
   AggregatedFilterV2,
   DateFilterV2,
@@ -7,7 +6,7 @@ import {
   TableSortBy,
 } from '@data-exploration-components/components';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import { useTimeseriesList } from '@data-exploration-lib/domain-layer';
 import React, { useMemo, useState } from 'react';
 import { PreviewFilterDropdown } from '@data-exploration-components/components/PreviewFilter/PreviewFilterDropdown';
 import { DefaultPreviewFilter } from '@data-exploration-components/components/PreviewFilter/PreviewFilter';
@@ -36,10 +35,7 @@ const LinkedAssetFilter = ({
   filter: InternalTimeseriesFilters;
   onFilterChange: (newValue: InternalTimeseriesFilters) => void;
 }) => {
-  const { data: items = [] } = useList<any>('timeseries', {
-    filter: transformNewFilterToOldFilter(filter),
-    limit: 1000,
-  });
+  const { items } = useTimeseriesList(filter);
 
   return (
     <PreviewFilterDropdown>
@@ -47,7 +43,7 @@ const LinkedAssetFilter = ({
         items={items}
         aggregator="unit"
         title="Unit"
-        value={filter.unit}
+        value={filter.unit ? String(filter.unit) : filter.unit}
         setValue={(newValue) => onFilterChange({ unit: newValue })}
       />
 

@@ -18,7 +18,7 @@ import {
   NIL_FILTER_VALUE,
 } from '@data-exploration-lib/domain-layer';
 
-const NIL_FILTER_OPTION: OptionType<string> = {
+export const NIL_FILTER_OPTION: OptionType<string> = {
   label: NIL_FILTER_LABEL,
   value: NIL_FILTER_VALUE,
 };

@@ -19,6 +19,7 @@ export type DataExplorationProviderProps = {
   userInfo: any;
   styleScopeId?: string;
   trackUsage?: (event: string, metadata?: MetricsMetadata) => void;
+  isAdvancedFiltersEnabled?: boolean;
 };
 
 export const DataExplorationProvider = ({
@@ -29,6 +30,7 @@ export const DataExplorationProvider = ({
   userInfo,
   styleScopeId,
   trackUsage,
+  isAdvancedFiltersEnabled = false,
 }: DataExplorationProviderProps & {
   children: React.ReactNode;
 }) => {
@@ -86,6 +88,7 @@ export const DataExplorationProvider = ({
           flow={flow}
           overrideURLMap={overrideURLMap}
           userInfo={userInfo}
+          isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
           trackUsage={trackUsage}
         >
           <FileContextualizationContextProvider>
