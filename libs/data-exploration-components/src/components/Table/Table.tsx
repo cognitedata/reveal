@@ -46,9 +46,9 @@ import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from './LoadMore';
 import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
-import { useClipboard } from '@data-exploration-components/hooks';
 import noop from 'lodash/noop';
-import { DASH } from '@data-exploration-components/utils';
+
+import { CopyToClipboardIconButton } from './CopyToClipboardIconButton';
 
 export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {
@@ -126,19 +126,8 @@ export function Table<T extends TableData>({
     []
   );
 
-  // const [cop]
-  const { hasCopied, onCopy } = useClipboard();
-
   const tbodyRef = useRef<HTMLDivElement>(null);
   const trackUsage = useMetrics();
-
-  const handleCopy = (value: string) => {
-    if (value === '' || value === DASH) return;
-
-    onCopy(value);
-
-    toast.success('Item Successfully copied');
-  };
 
   // To add the navigation in the row
   const handleKeyDown = (
@@ -395,19 +384,9 @@ export function Table<T extends TableData>({
                               cell.column.columnDef.cell,
                               cell.getContext()
                             )}
+
                             {enableCopying && (
-                              <Button
-                                className="copying-button"
-                                size="small"
-                                disabled={
-                                  dataValue === DASH || dataValue === ''
-                                }
-                                onClick={() =>
-                                  handleCopy(cell.getValue<string>())
-                                }
-                              >
-                                {hasCopied ? 'Copied' : 'Copy'}
-                              </Button>
+                              <CopyToClipboardIconButton value={dataValue} />
                             )}
                           </Flex>
                         </Body>

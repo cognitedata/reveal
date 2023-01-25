@@ -144,6 +144,13 @@ export const Tr = styled.div`
     background: transparent;
     cursor: unset;
   }
+
+  .copying-button {
+    display: none;
+  }
+  &:hover .copying-button {
+    display: block;
+  }
 `;
 
 export const Tbody = styled.div`
@@ -160,12 +167,6 @@ export const Td = styled.div`
   display: flex;
   justify-content: space-between;
   font-size: 14px;
-  .copying-button {
-    display: none;
-  }
-  &:hover .copying-button {
-    display: block;
-  }
 `;
 
 export const ThWrapper = styled.div`
