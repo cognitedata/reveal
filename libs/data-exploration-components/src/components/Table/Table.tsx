@@ -37,9 +37,10 @@ import {
   SubTableWrapper,
   Tbody,
   MetadataHeaderText,
+  TableDataBody,
 } from './elements';
 
-import { Body, Button, Flex, toast } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
@@ -367,29 +368,15 @@ export function Table<T extends TableData>({
                           },
                         }}
                       >
-                        <Body
-                          level={3}
-                          /**Be careful when modify/remove this width and structure.
-                           * this affects to the scenarios which we have
-                           * to render canvas/svg element on a cell (ex: time-series preview chart)
-                           * */
-                          style={{ width: cell.column.getSize() }}
-                        >
-                          <Flex
-                            justifyContent="flex-start"
-                            alignItems="center"
-                            gap={4}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-
-                            {enableCopying && (
-                              <CopyToClipboardIconButton value={dataValue} />
-                            )}
-                          </Flex>
-                        </Body>
+                        <TableDataBody level={3}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                          {enableCopying && (
+                            <CopyToClipboardIconButton value={dataValue} />
+                          )}
+                        </TableDataBody>
                       </Td>
                     );
                   })}

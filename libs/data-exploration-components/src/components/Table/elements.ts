@@ -1,4 +1,4 @@
-import { Detail, Flex } from '@cognite/cogs.js';
+import { Body, Detail, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import zIndex from '../../utils/zIndex';
 
@@ -164,9 +164,13 @@ export const Tbody = styled.div`
 export const Td = styled.div`
   word-wrap: break-word;
   padding: 8px 12px;
-  display: flex;
-  justify-content: space-between;
   font-size: 14px;
+`;
+
+export const TableDataBody = styled(Body)`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 export const ThWrapper = styled.div`
