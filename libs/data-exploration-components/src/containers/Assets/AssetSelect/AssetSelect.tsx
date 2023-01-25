@@ -6,12 +6,14 @@ import {
   useList,
 } from '@cognite/sdk-react-query-hooks';
 import { useDebounce } from 'use-debounce';
-import { MultiSelect } from '@data-exploration-components/components';
+import { MultiSelectFilterNew } from '@data-exploration-components/components';
 import { Props, OptionTypeBase } from 'react-select';
 import { Theme } from '@cognite/cogs.js';
 import { OptionValue } from '@data-exploration-components/components/SearchNew/Filters/types';
+import noop from 'lodash/noop';
 
 export type AssetSelectProps = Omit<Props<OptionTypeBase>, 'theme'> & {
+  title: string;
   onAssetSelected?: (input?: OptionValue<number>[]) => void;
   selectedAssetIds?: number[];
   rootOnly?: boolean;
@@ -19,7 +21,8 @@ export type AssetSelectProps = Omit<Props<OptionTypeBase>, 'theme'> & {
 };
 
 export const AssetSelect = ({
-  onAssetSelected = () => {},
+  title,
+  onAssetSelected = noop,
   selectedAssetIds,
   rootOnly,
   cogsTheme,
@@ -81,43 +84,22 @@ export const AssetSelect = ({
         },
       ];
 
-  const getSelectedItemValues = () => {
-    const selectedItemArr = selectedItems
-      ? selectedItems.map((el) => ({
-          value: el.id,
-          label: el.name,
-        }))
-      : undefined;
-    return selectedItemArr;
-  };
+  const selectedItemValues = (selectedItems || []).map((el) => ({
+    value: el.id,
+    label: el.name,
+  }));
 
   return (
-    <MultiSelect
+    <MultiSelectFilterNew
+      title={title}
       isClearable
-      styles={{
-        container: (style) => ({
-          ...style,
-          width: '100%',
-        }),
-      }}
       {...extraProps}
       isLoading={isLoading || isRootLoading}
-      value={getSelectedItemValues()}
-      onInputChange={(input) => setQuery(input)}
+      values={selectedItemValues}
+      onInputChange={(input: React.SetStateAction<string>) => setQuery(input)}
       options={values}
-      cogsTheme={cogsTheme}
-      onChange={(selected) => {
-        if (!selected) {
-          onAssetSelected(undefined);
-        } else if (selected.length !== undefined) {
-          if (selected.length === 0) {
-            onAssetSelected(undefined);
-          } else {
-            onAssetSelected(selected as OptionValue<number>[]);
-          }
-        } else {
-          onAssetSelected(selected as OptionValue<number>[]);
-        }
+      onChange={(_: string, selected: OptionValue<number>[]) => {
+        onAssetSelected(selected);
       }}
     />
   );

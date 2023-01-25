@@ -1,6 +1,5 @@
 import React from 'react';
 import { AssetSelect } from '@data-exploration-components/containers/Assets';
-import { FilterFacetTitle } from '../FilterFacetTitle';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
@@ -24,14 +23,12 @@ export const ByAssetFilterV2 = ({
   };
 
   return (
-    <>
-      <FilterFacetTitle>{title}</FilterFacetTitle>
-      <AssetSelect
-        isMulti
-        selectedAssetIds={value}
-        onAssetSelected={setFilterByAsset}
-        cogsTheme="grey"
-      />
-    </>
+    <AssetSelect
+      title={title}
+      isMulti
+      selectedAssetIds={value}
+      onAssetSelected={setFilterByAsset}
+      cogsTheme="grey"
+    />
   );
 };

@@ -11,6 +11,7 @@ export const Example = () => {
   const [selectedIds, setSelectedIds] = useState<number[] | undefined>();
   return (
     <AssetSelect
+      title="Asset"
       selectedAssetIds={selectedIds}
       onAssetSelected={(item) => {
         setSelectedIds(item?.map(({ value }) => value));
@@ -23,6 +24,7 @@ export const ExampleMulti = () => {
   const [selectedIds, setSelectedIds] = useState<number[] | undefined>();
   return (
     <AssetSelect
+      title="Asset"
       isMulti
       selectedAssetIds={selectedIds}
       onAssetSelected={(item) => {

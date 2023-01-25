@@ -1,5 +1,4 @@
 import React from 'react';
-import { Body } from '@cognite/cogs.js';
 import { AssetSelect } from '@data-exploration-components/containers/Assets';
 
 export const ByAssetFilter = ({
@@ -16,21 +15,13 @@ export const ByAssetFilter = ({
   };
 
   return (
-    <>
-      <Body
-        level={4}
-        style={{ marginBottom: 5, marginTop: 10 }}
-        className="title"
-      >
-        {title}
-      </Body>
-      <AssetSelect
-        isMulti
-        selectedAssetIds={value}
-        onAssetSelected={(input) =>
-          setFilterByAsset(input?.map(({ value }) => value))
-        }
-      />
-    </>
+    <AssetSelect
+      title={title}
+      isMulti
+      selectedAssetIds={value}
+      onAssetSelected={(input) =>
+        setFilterByAsset(input?.map(({ value }) => value))
+      }
+    />
   );
 };

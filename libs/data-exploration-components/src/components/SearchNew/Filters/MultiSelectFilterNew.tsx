@@ -1,11 +1,15 @@
-import { Select, SelectProps } from '@cognite/cogs.js';
+import { OptionType, Select, SelectProps } from '@cognite/cogs.js';
+import isString from 'lodash/isString';
 import { FilterTitleNew } from './FilterTitleNew';
 
-export const MultiSelectFilterNew = ({
+export const MultiSelectFilterNew = <T,>({
   title,
   values,
   ...rest
-}: SelectProps<any> & { title: string; values?: string[] }) => {
+}: SelectProps<any> & {
+  title: string;
+  values?: string[] | OptionType<T>[];
+}) => {
   return (
     <>
       <FilterTitleNew>{title}</FilterTitleNew>
@@ -13,12 +17,14 @@ export const MultiSelectFilterNew = ({
         {...rest}
         onChange={(newValue: { value: string; label: string }[]) => {
           const tempValue = newValue?.map(({ value }) => value);
-          rest.onChange(tempValue);
+          rest.onChange(tempValue, newValue);
         }}
-        value={values?.map((item) => ({
-          label: item,
-          value: item,
-        }))}
+        value={values?.map((item) => {
+          if (isString(item)) {
+            return { label: item, value: item };
+          }
+          return item;
+        })}
         isMulti
         isSearchable
         isClearable
