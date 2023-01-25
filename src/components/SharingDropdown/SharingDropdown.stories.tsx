@@ -12,7 +12,7 @@ export default {
 } as Meta;
 
 const Template: Story<ComponentProps<typeof SharingDropdown>> = (args) => (
-  <Flex style={{ width: 600 }}>
+  <Flex style={{ width: 600, height: '300px' }}>
     <div style={{ flexGrow: 1 }} />
     <SharingDropdown {...args} />
   </Flex>

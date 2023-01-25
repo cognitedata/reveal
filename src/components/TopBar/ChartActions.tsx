@@ -1,6 +1,5 @@
 import { ComponentProps, useEffect, useState } from 'react';
-import styled from 'styled-components/macro';
-import { Button, Dropdown, Popconfirm, toast, Tooltip } from '@cognite/cogs.js';
+import { Button, Dropdown, Popconfirm, toast } from '@cognite/cogs.js';
 import { useNavigate } from 'react-router-dom';
 import { useDeleteChart, useUpdateChart } from 'hooks/charts-storage';
 import { duplicate, updateChartDateRange } from 'models/chart/updates';
@@ -22,7 +21,6 @@ import { createInternalLink } from 'utils/link';
 import { isProduction } from 'utils/environment';
 import { currentDateRangeLocale } from 'config/locale';
 import ConnectedSharingDropdown from 'components/SharingDropdown/ConnectedSharingDropdown';
-import config from 'config/config';
 import {
   StyledMenu,
   HorizontalDivider,
@@ -161,133 +159,72 @@ export const ChartActions = () => {
     return <></>;
   }
 
-  if (config.isFusion) {
-    const popperOptions = {
-      modifiers: [
-        {
-          name: 'offset',
-          options: {
-            offset: [-550, 10],
-          },
+  const popperOptions = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [-550, 10],
         },
-      ],
-    };
-    return (
-      <>
-        <Dropdown
-          content={
-            <StyledMenu className="downloadChartHide">
-              <StyledMenuButton type="ghost">
-                <ConnectedSharingDropdown
-                  label={t.Share}
-                  popperOptions={popperOptions}
-                />
-              </StyledMenuButton>
-              <StyledMenuButton type="ghost">
-                <DownloadDropdown
-                  label={t['Download Chart']}
-                  translations={dropdownTranslations}
-                  onDownloadCalculations={
-                    isProduction ? undefined : handleDownloadCalculations
-                  }
-                  onDownloadImage={handleDownloadImage}
-                  onCsvDownload={() => setIsCSVModalVisible(true)}
-                />
-              </StyledMenuButton>
-              <StyledMenuDuplicate
-                icon="Duplicate"
-                type="ghost"
-                onClick={handleDuplicateChart}
-              >
-                {t.Duplicate}
-              </StyledMenuDuplicate>
-              <HorizontalDivider />
-              <PopupContainer>
-                <Popconfirm
-                  content={
-                    <PopupText>
-                      {t['Are you sure you want to delete this chart?']}
-                    </PopupText>
-                  }
-                  onConfirm={handleDeleteChart}
-                  disabled={!isOwner}
-                >
-                  <StyledMenuButtonDelete
-                    icon="Delete"
-                    type="ghost"
-                    onClick={() => {}}
-                  >
-                    {t['Delete chart']}
-                  </StyledMenuButtonDelete>
-                </Popconfirm>
-              </PopupContainer>
-            </StyledMenu>
-          }
-        >
-          <Button icon="EllipsisHorizontal" iconPlacement="right">
-            Actions
-          </Button>
-        </Dropdown>
-        <CSVModal
-          isOpen={isCSVModalVisible}
-          onClose={() => setIsCSVModalVisible(false)}
-          translations={CSVModalTranslations}
-          dateFrom={new Date(chart.dateFrom)}
-          dateTo={new Date(chart.dateTo)}
-          onDateChange={handleDateChange}
-          locale={currentDateRangeLocale()}
-        />
-      </>
-    );
-  }
-
+      },
+    ],
+  };
   return (
-    <div
-      className="cogs-topbar--item downloadChartHide"
-      style={{ padding: '0 3px' }}
-    >
-      <Tooltip content={t.Share}>
-        <ConnectedSharingDropdown />
-      </Tooltip>
-      <Divider />
-      <Tooltip content={t['Download Chart']}>
-        <DownloadDropdown
-          translations={dropdownTranslations}
-          onDownloadCalculations={
-            isProduction ? undefined : handleDownloadCalculations
-          }
-          onDownloadImage={handleDownloadImage}
-          onCsvDownload={() => setIsCSVModalVisible(true)}
-        />
-      </Tooltip>
-      <Divider />
-      <Tooltip content={t.Duplicate}>
-        <Button
-          icon="Copy"
-          type="ghost"
-          onClick={handleDuplicateChart}
-          aria-label="copy"
-        />
-      </Tooltip>
-      <Divider />
-      <Tooltip content={t.Delete}>
-        <Popconfirm
-          content={
-            <div style={{ margin: '1em' }}>
-              {t['Are you sure you want to delete this chart?']}
-            </div>
-          }
-          onConfirm={handleDeleteChart}
-          disabled={!isOwner}
-        >
-          <Button
-            icon="Delete"
-            type="ghost"
-            disabled={!isOwner}
-            aria-label="delete"
-          />
-        </Popconfirm>
-      </Tooltip>
+    <>
+      <Dropdown
+        content={
+          <StyledMenu className="downloadChartHide">
+            <StyledMenuButton type="ghost">
+              <ConnectedSharingDropdown
+                label={t.Share}
+                popperOptions={popperOptions}
+              />
+            </StyledMenuButton>
+            <StyledMenuButton type="ghost">
+              <DownloadDropdown
+                label={t['Download Chart']}
+                translations={dropdownTranslations}
+                onDownloadCalculations={
+                  isProduction ? undefined : handleDownloadCalculations
+                }
+                onDownloadImage={handleDownloadImage}
+                onCsvDownload={() => setIsCSVModalVisible(true)}
+              />
+            </StyledMenuButton>
+            <StyledMenuDuplicate
+              icon="Duplicate"
+              type="ghost"
+              onClick={handleDuplicateChart}
+            >
+              {t.Duplicate}
+            </StyledMenuDuplicate>
+            <HorizontalDivider />
+            <PopupContainer>
+              <Popconfirm
+                content={
+                  <PopupText>
+                    {t['Are you sure you want to delete this chart?']}
+                  </PopupText>
+                }
+                onConfirm={handleDeleteChart}
+                disabled={!isOwner}
+              >
+                <StyledMenuButtonDelete
+                  icon="Delete"
+                  type="ghost"
+                  onClick={() => {}}
+                >
+                  {t['Delete chart']}
+                </StyledMenuButtonDelete>
+              </Popconfirm>
+            </PopupContainer>
+          </StyledMenu>
+        }
+      >
+        <Button icon="EllipsisHorizontal" iconPlacement="right">
+          Actions
+        </Button>
+      </Dropdown>
       <CSVModal
         isOpen={isCSVModalVisible}
         onClose={() => setIsCSVModalVisible(false)}
@@ -297,12 +234,6 @@ export const ChartActions = () => {
         onDateChange={handleDateChange}
         locale={currentDateRangeLocale()}
       />
-    </div>
+    </>
   );
 };
-
-const Divider = styled.div`
-  border-left: 1px solid var(--cogs-greyscale-grey3);
-  height: 24px;
-  margin: 0 3px;
-`;

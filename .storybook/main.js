@@ -28,6 +28,15 @@ module.exports = {
       'node_modules',
     ];
 
+    // In the Legacy Charts, @cognite/cdf-sdk-singleton is not available since
+    // Fusion injects it via single SPA. Therefore in Legacy Charts we use
+    // a fallback instead - the "mocked" SDK uses functions with the same names,
+    // but adjusted to Legacy Charts use-case.
+    config.resolve.fallback = {
+      ...(config.resolve.fallback || {}),
+      "@cognite/cdf-sdk-singleton": path.resolve("../__mocks__/sdk.ts")
+    }
+
     return config;
   },
 };

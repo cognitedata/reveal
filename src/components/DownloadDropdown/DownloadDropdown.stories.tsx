@@ -13,7 +13,9 @@ export default {
 } as Meta;
 
 const Template: Story<ComponentProps<typeof DownloadDropdown>> = (args) => (
-  <DownloadDropdown {...args} />
+  <div style={{ height: '300px' }}>
+    <DownloadDropdown {...args} />
+  </div>
 );
 
 export const DevOrStaging = Template.bind({});

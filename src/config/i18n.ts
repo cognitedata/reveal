@@ -34,10 +34,6 @@ const locizeOptions = {
   allowedAddOrUpdateHosts: ['localhost'],
 };
 
-const langDetectKey = config.isFusion
-  ? SELECTED_LANGUAGE_LS_KEY
-  : 'chartsLanguage';
-
 i18n.options.react = reactOptions;
 setI18n(i18n);
 
@@ -82,7 +78,7 @@ i18n
     defaultNS: 'global',
     detection: {
       order: ['localStorage'],
-      lookupLocalStorage: langDetectKey,
+      lookupLocalStorage: SELECTED_LANGUAGE_LS_KEY,
       caches: ['localStorage'],
       htmlTag: document.documentElement,
     },

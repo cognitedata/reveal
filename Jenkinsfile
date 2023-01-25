@@ -1,13 +1,5 @@
 @Library('jenkins-helpers') _
 
-// This is your FAS staging app id. Staging deployments are protected by Cognite
-// IAP, meaning they're only accessible to Cogniters.
-static final String STAGING_APP_ID = 'charts-dev'
-
-// This is your FAS production app id.
-// At this time, there is no production build for the demo app.
-static final String PRODUCTION_APP_ID = 'charts'
-
 // This is your FAS app id to be used in Fusion.
 // At this point, Fusion enforces all sub-app packages to be prefixed with cdf-.
 static final String FUSION_APP_ID = 'cdf-charts-ui'
@@ -39,27 +31,14 @@ static final String NODE_VERSION = 'node:14'
 static final Map<String, String> CONTEXTS = [
   checkout: 'continuous-integration/jenkins/checkout',
   setup: 'continuous-integration/jenkins/setup',
-  lint: 'continuous-integration/jenkins/lint',
-  unitTests: 'continuous-integration/jenkins/unit-tests',
-  buildStaging: 'continuous-integration/jenkins/build-staging',
-  publishStaging: 'continuous-integration/jenkins/publish-staging',
-  buildProduction: 'continuous-integration/jenkins/build-production',
   buildFusion: 'continuous-integration/jenkins/build-fusion',
-  publishProduction: 'continuous-integration/jenkins/publish-production',
-  buildPreview: 'continuous-integration/jenkins/build-preview',
   buildFusionPreview: 'continuous-integration/jenkins/build-fusion-preview',
-  publishPreview: 'continuous-integration/jenkins/publish-preview',
   publishFusion: 'continuous-integration/jenkins/publish-fusion'
 ]
 
 // Copy these before installing dependencies so that we don't have to
 // copy the entire node_modules directory tree as well.
 static final String[] DIRS = [
-  'lint',
-  'unit-tests',
-  'preview',
-  'staging',
-  'production',
   'fusion',
   'fusion-preview'
 ]
@@ -120,158 +99,52 @@ pods {
     slackChannel: SLACK_CHANNEL,
     logErrors: true
   ) {
-    withEnv(["REACT_APP_COMMIT_REF=${scmVars.GIT_COMMIT}"]) {
-      threadPool(
-        tasks: [
-          // // -----------------------
-          // // - LEGACY CHARTS TASKS -
-          // // -----------------------
-
-          // TODO(DEGR-903): temporarily disabling non-Fusion builds
-          // 'Preview': {
-          //   dir('preview') {
-          //     stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
-          //       fas.build(
-          //         appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
-          //         repo: APPLICATION_REPO_ID,
-          //         buildCommand: 'yarn build:legacy',
-          //         shouldExecute: environment.isPullRequest,
-          //       )
-          //     }
-          //   }
-          // },
-
-          // TODO(DEGR-903): temporarily disabling non-Fusion builds
-          // 'Staging': {
-          //   dir('staging') {
-          //     stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
-          //       fas.build(
-          //         appId: STAGING_APP_ID,
-          //         repo: APPLICATION_REPO_ID,
-          //         buildCommand: 'yarn build:legacy',
-          //         shouldExecute: environment.isStaging,
-          //       )
-          //     }
-          //   }
-          // },
-
-          // TODO(DEGR-903): temporarily disabling non-Fusion builds
-          // 'Production': {
-          //   dir('production') {
-          //     stageWithNotify('Build for production', CONTEXTS.buildProduction) {
-          //       fas.build(
-          //         appId: PRODUCTION_APP_ID,
-          //         repo: APPLICATION_REPO_ID,
-          //         buildCommand: 'yarn build:legacy',
-          //         shouldExecute: environment.isProduction,
-          //       )
-          //     }
-          //   }
-          // },
-
-          // // -----------------------
-          // // - FUSION CHARTS TASKS -
-          // // -----------------------
-
-          'Preview Fusion': {
-            dir('fusion-preview') {
-              stageWithNotify('Build for preview - Fusion', CONTEXTS.buildFusionPreview) {
-                if (!environment.isPullRequest) {
-                  print "No PR previews for release builds"
-                  return;
+      withEnv(["REACT_APP_COMMIT_REF=${scmVars.GIT_COMMIT}"]) {
+        threadPool(
+          tasks: [
+            'Preview Fusion': {
+              dir('fusion-preview') {
+                stageWithNotify('Build for preview - Fusion', CONTEXTS.buildFusionPreview) {
+                  if (!environment.isPullRequest) {
+                    print "No PR previews for release builds"
+                    return;
+                  }
+                  def package_name = "@cognite/${FUSION_APP_ID}";
+                  def prefix = jenkinsHelpersUtil.determineRepoName();
+                  def domain = "fusion-preview";
+                  previewServer(
+                    buildCommand: 'yarn build',
+                    buildFolder: 'build',
+                    prefix: prefix,
+                    repo: domain
+                  )
+                  deleteComments("[FUSION_PREVIEW_URL]")
+                  def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+                  pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
                 }
-                def package_name = "@cognite/${FUSION_APP_ID}";
-                def prefix = jenkinsHelpersUtil.determineRepoName();
-                def domain = "fusion-preview";
-                previewServer(
-                  buildCommand: 'yarn build:fusion',
-                  buildFolder: 'build',
-                  prefix: prefix,
-                  repo: domain
-                )
-                deleteComments("[FUSION_PREVIEW_URL]")
-                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
-                pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
               }
-            }
-          },
+            },
 
-          'Fusion': {
-            dir('fusion') {
-              stageWithNotify('Build for Fusion', CONTEXTS.buildFusion) {
-                if (environment.isPullRequest) {
-                  println "Skipping Fusion Charts build for pull requests"
-                  return
+            'Fusion': {
+              dir('fusion') {
+                stageWithNotify('Build for Fusion', CONTEXTS.buildFusion) {
+                  if (environment.isPullRequest) {
+                    println "Skipping Fusion Charts build for pull requests"
+                    return
+                  }
+                  fas.build(
+                    appId: FUSION_APP_ID,
+                    repo: APPLICATION_REPO_ID,
+                    buildCommand: 'yarn build',
+                    shouldPublishSourceMap: false,
+                  )
                 }
-                fas.build(
-                  appId: FUSION_APP_ID,
-                  repo: APPLICATION_REPO_ID,
-                  buildCommand: 'yarn build:fusion',
-                  shouldPublishSourceMap: false,
-                )
               }
-            }
-          },
-        ],
-        workers: 2, // TODO(DEGR-903) - change it to 5 when re-enabling legacy charts tasks
-      )
-    }
-
-    // TODO(DEGR-903): temporarily disabling non-Fusion builds
-    // stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
-    //   if (!environment.isPullRequest) {
-    //     print 'Not a PR, no need to preview'
-    //     return
-    //   }
-    //   deleteComments(PR_COMMENT_MARKER)
-    //   dir('preview') {
-    //     fas.publish(
-    //       previewSubdomain: PRODUCTION_APP_ID
-    //     )
-    //   }
-    // }
-
-    // TODO(DEGR-903): temporarily disabling non-Fusion builds
-    // stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
-    //   if (!environment.isStaging) {
-    //     print 'Not pushing to staging, no need to preview'
-    //     return
-    //   }
-    //   dir('staging') {
-    //     fas.publish()
-    //   }
-
-    //   // in 'single-branch' mode we always publish 'staging' and 'master' builds
-    //   // from the main branch, but we only need to notify about one of them.
-    //   // so it is ok to skip this message in that case
-    //   //
-    //   // note: the actual deployment of each is determined by versionSpec in FAS
-    //   if (VERSIONING_STRATEGY != 'single-branch') {
-    //     dir('main') {
-    //       slack.send(
-    //         channel: SLACK_CHANNEL,
-    //           message: "Deployment of ${env.BRANCH_NAME} complete!"
-    //       )
-    //     }
-    //   }
-    // }
-
-    // TODO(DEGR-903): temporarily disabling non-Fusion builds
-    // if (environment.isProduction && PRODUCTION_APP_ID) {
-    //   stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
-    //     dir('production') {
-    //       fas.publish()
-    //     }
-
-    //     dir('main') {
-    //       slack.send(
-    //         channel: SLACK_CHANNEL,
-    //         message: "Deployment of ${env.BRANCH_NAME} complete!"
-    //       )
-    //     }
-    //   }
-    // }
-
+            },
+          ],
+          workers: 2,
+        )
+      }
       if (isRelease) {
       stageWithNotify('Publish Fusion build', CONTEXTS.publishFusion) {
         dir('fusion') {

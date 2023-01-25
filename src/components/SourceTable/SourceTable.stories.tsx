@@ -5,6 +5,7 @@ import { Meta, Story } from '@storybook/react';
 import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { ComponentProps } from 'react';
 import { DatapointsSummary } from 'utils/units';
+import { makeDefaultTranslations } from 'utils/translations';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -12,6 +13,22 @@ import { MemoryRouter } from 'react-router';
 import SourceTable from './SourceTable';
 
 const queryClient = new QueryClient();
+
+const defaultTranslation = makeDefaultTranslations(
+  'Style',
+  'Name',
+  'Status',
+  'Tag',
+  'Description',
+  'Min',
+  'Max',
+  'Mean',
+  'Unit',
+  'P&IDs',
+  'Remove',
+  'Info',
+  'More'
+);
 
 export default {
   component: SourceTable,
@@ -26,7 +43,7 @@ export default {
 } as Meta;
 
 const Template: Story<ComponentProps<typeof SourceTable>> = (args) => (
-  <SourceTable {...args} />
+  <SourceTable {...args} headerTranslations={defaultTranslation} />
 );
 
 export const WorkspaceTable = Template.bind({});

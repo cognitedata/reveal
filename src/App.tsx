@@ -87,7 +87,7 @@ const queryClient = new QueryClient({
 const env = getEnv();
 const project = getProject();
 
-export const RootAppFusion = () => {
+export const RootApp = () => {
   return (
     <FlagProvider
       apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"

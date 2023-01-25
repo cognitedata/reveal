@@ -5,8 +5,6 @@ import PageLayout from 'components/Layout/PageLayout';
 import { useFirebaseInit } from 'hooks/firebase';
 import * as Sentry from '@sentry/react';
 import ErrorToast from 'components/ErrorToast/ErrorToast';
-import ConnectedAppBar from 'components/AppBar/ConnectedAppBar';
-import config from 'config/config';
 import SecondaryTopBar from 'components/SecondaryTopBar/SecondaryTopBar';
 import { getProject, getCluster, getEnv } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/auth-utils';
@@ -24,10 +22,7 @@ import FileViewPage from './FileViewPage/FileViewPage';
  * Legacy Charts is only Charts so it does not have this param.
  */
 const getPath = (basePath: string = '') => {
-  const { isFusion } = config;
-  const newPath = isFusion
-    ? `/:project/:subAppPath/${basePath}`
-    : `/:project/${basePath}`;
+  const newPath = `/:project/:subAppPath/${basePath}`;
   return newPath;
 };
 
@@ -58,7 +53,6 @@ const RouteWithFirebase = ({
   }
 
   if (isFirebaseError) {
-    // TODO(DEGR-902): toast is not properly styled
     toast.error(
       <ErrorToast
         title="Failed to load Firebase"
@@ -73,7 +67,6 @@ const RouteWithFirebase = ({
   }
   return (
     <PageLayout className="PageLayout">
-      {!config.isFusion && <ConnectedAppBar />}
       {enableSecondaryNavBar && <SecondaryTopBar />}
       <main>
         <Component />

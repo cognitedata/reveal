@@ -23,7 +23,7 @@ import {
 } from '@cognite/calculation-backend';
 import { getEnv } from '@cognite/cdf-utilities';
 
-import { BACKEND_SERVICE_URL_KEY, CLUSTER_KEY } from 'utils/constants';
+import { BACKEND_SERVICE_URL_KEY } from 'utils/constants';
 import {
   CogniteClient,
   DatapointAggregate,
@@ -32,8 +32,6 @@ import {
 } from '@cognite/sdk';
 import { isProduction } from 'utils/environment';
 import { WorkflowResult } from 'models/calculation-results/types';
-import envConfig from 'config/config';
-import { parseEnvFromCluster } from '@cognite/login-utils';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -41,7 +39,6 @@ const backendServiceBaseUrlFromQuery = queryString.parse(
   window.location.search
 )[BACKEND_SERVICE_URL_KEY] as string;
 
-// TODO(DEGR-832)
 export const getBackendServiceBaseUrl = (cluster?: string) => {
   const stagingPart = isProduction ? '' : 'staging';
 
@@ -55,14 +52,10 @@ export const getBackendServiceBaseUrl = (cluster?: string) => {
 async function getConfig(sdk: CogniteClient): Promise<Configuration> {
   await sdk.get('/api/v1/token/inspect');
   const { Authorization } = sdk.getDefaultRequestHeaders();
-  const clusterEnv = envConfig.isFusion
-    ? getEnv()
-    : (queryString.parse(window.location.search)[CLUSTER_KEY] as string);
+  const cluster = getEnv();
 
   // @ts-ignore
   const sdkClientBaseUrl = sdk.httpClient.getBaseUrl();
-  const cluster =
-    clusterEnv === '' ? parseEnvFromCluster(sdkClientBaseUrl) : clusterEnv;
 
   if (!Authorization) {
     throw new Error('Authorization header missing');

@@ -14,9 +14,13 @@ export default {
   title: 'Components/Appearance Dropdown',
 } as Meta;
 
-const Template: Story<Props> = (args) => <AppearanceDropdown {...args} />;
+const Template: Story<Props> = (args) => (
+  <div style={{ height: '300px' }}>
+    <AppearanceDropdown {...args} />
+  </div>
+);
 const ColorMenu: Story<ColorDdProps> = (args) => (
-  <div style={{ maxWidth: '15rem' }}>
+  <div style={{ height: '300px' }}>
     <ColorDropdown {...args} />
   </div>
 );

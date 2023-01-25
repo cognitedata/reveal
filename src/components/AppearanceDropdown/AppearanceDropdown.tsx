@@ -5,6 +5,8 @@ import { trackUsage } from 'services/metrics';
 
 import { makeDefaultTranslations } from 'utils/translations';
 import { Interpolation, LineStyle } from 'models/chart/types';
+import InterpolationLinearIcon from 'assets/Linear.svg';
+import InterpolationStepIcon from 'assets/Step.svg';
 import {
   DropdownWrapper,
   MenuWrapper,
@@ -13,10 +15,6 @@ import {
   WeightLine,
   TypeLine,
 } from './elements';
-// @ts-ignore
-import { ReactComponent as InterpolationLinearIcon } from '../../assets/Linear.svg';
-// @ts-ignore
-import { ReactComponent as InterpolationStepIcon } from '../../assets/Step.svg';
 
 type AppearanceDropdownProps = {
   selectedColor: string;
@@ -113,12 +111,11 @@ const InterpolationPreview = ({
   iconImage: any;
   label: string;
 }) => {
-  const IconImage = iconImage;
   return (
     <PreviewContainer
       style={{ display: 'flex', alignItems: 'center', marginRight: 15 }}
     >
-      <IconImage style={{ transform: `scale(1.37)` }} alt={label} />
+      <img src={iconImage} style={{ transform: `scale(1.37)` }} alt={label} />
     </PreviewContainer>
   );
 };
@@ -240,14 +237,14 @@ const InterpolationDropdown = ({
   const interpolationOptions: {
     value: Interpolation;
     label: string;
-    image: JSX.Element;
+    image: any;
   }[] = [
     {
       value: 'linear',
       label: 'linear',
-      image: InterpolationLinearIcon as JSX.Element,
+      image: InterpolationLinearIcon,
     },
-    { value: 'hv', label: 'step', image: InterpolationStepIcon as JSX.Element },
+    { value: 'hv', label: 'step', image: InterpolationStepIcon },
   ];
 
   return (

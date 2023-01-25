@@ -8,7 +8,6 @@ import {
 import get from 'lodash/get';
 import { useFlag } from '@cognite/react-feature-flags';
 import { toast, Loader, Button, Tooltip } from '@cognite/cogs.js';
-import { useUserInfo } from 'hooks/useUserInfo';
 import { useIsChartOwner } from 'hooks/user';
 import { useParams } from 'react-router-dom';
 import NodeEditor from 'components/NodeEditor/NodeEditor';
@@ -44,7 +43,6 @@ import DetailsSidebar from 'components/DetailsSidebar/DetailsSidebar';
 import ThresholdSidebar from 'components/Thresholds/ThresholdSidebar';
 import SearchSidebar from 'components/Search/SearchSidebar';
 import { getEntryColor } from 'utils/colors';
-import config from 'config/config';
 
 import { v4 as uuidv4 } from 'uuid';
 import { Elements } from 'react-flow-renderer';
@@ -66,8 +64,6 @@ import { flow } from 'lodash';
 import { getUnitConverter } from 'utils/units';
 import { timeseriesSummaries } from 'models/timeseries-results/selectors';
 
-import { isProduction } from 'utils/environment';
-import { currentDateRangeLocale } from 'config/locale';
 import { chartSources } from 'models/chart/selectors';
 import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
 import ChartViewPageSecondaryAppBar from 'pages/ChartViewPage/ChartViewPageSecondaryAppBar';
@@ -135,7 +131,6 @@ const ChartViewPage = () => {
   );
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY);
   const { chartId = '' } = useParams<{ chartId: string }>();
-  const { data: login } = useUserInfo();
 
   /**
    * Get local initialized chart
@@ -176,11 +171,6 @@ const ChartViewPage = () => {
     ...useTranslations(keys, 'ChartView').t,
   };
 
-  const { t: ChartViewHeaderTranslations } = useTranslations(
-    ChartViewHeader.translationKeys,
-    'ChartView'
-  );
-
   /**
    * Translations for Source Table
    */
@@ -200,7 +190,6 @@ const ChartViewPage = () => {
 
   const calledOnceEffect = useRef(false);
   const [showSearch, setShowSearch] = useState(true);
-  const showHeader = !config.isFusion;
 
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
@@ -760,30 +749,6 @@ const ChartViewPage = () => {
           <SearchSidebar visible={showSearch} onClose={handleCloseSearch} />
         )}
         <ContentWrapper showSearch={showSearch}>
-          {showHeader && (
-            <ChartViewHeader
-              userId={login?.id}
-              isOwner={isChartOwner}
-              stackedMode={stackedMode}
-              setStackedMode={setStackedMode}
-              showSearch={showSearch}
-              showYAxis={showYAxis}
-              showMinMax={showMinMax}
-              showGridlines={showGridlines}
-              mergeUnits={mergeUnits}
-              dateFrom={new Date(chart.dateFrom)}
-              dateTo={new Date(chart.dateTo)}
-              handleOpenSearch={handleOpenSearch}
-              handleClickNewWorkflow={handleClickNewWorkflow}
-              handleImportCalculationsClick={
-                isProduction ? undefined : handleImportCalculationsClick
-              }
-              handleSettingsToggle={handleSettingsToggle}
-              handleDateChange={handleDateChange}
-              translations={ChartViewHeaderTranslations}
-              locale={currentDateRangeLocale()}
-            />
-          )}
           <ChartContainer>
             <SplitPaneLayout defaultSize={200}>
               <TopPaneWrapper className="chart">

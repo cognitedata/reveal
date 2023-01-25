@@ -17,7 +17,7 @@ import singleSpaReact from 'single-spa-react';
 
 import config from 'config/config';
 import { isDevelopment, isPR } from './utils/environment';
-import { RootAppFusion } from './AppFusion';
+import { RootApp } from './App';
 
 import './set-public-path';
 
@@ -32,7 +32,7 @@ if (isDevelopment || isPR) {
 const lifecycles = singleSpaReact({
   React,
   ReactDOM,
-  rootComponent: RootAppFusion,
+  rootComponent: RootApp,
   errorBoundary() {
     return <span>An error occurred in your app</span>;
   },
