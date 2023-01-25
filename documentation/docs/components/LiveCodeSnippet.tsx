@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
-import { atomone } from '@uiw/codemirror-theme-atomone';
+import { material } from '@uiw/codemirror-theme-material';
 import styles from './styles.module.css';
 import clsx from 'clsx';
 
@@ -66,7 +66,7 @@ export const LiveCodeSnippet = (props: LiveCodeSnippetProps) => {
     </div>
     <CodeMirror
       value={props.children}
-      theme={atomone}
+      theme={material}
       onChange={setCode}
       basicSetup={{ lineNumbers: false, foldGutter: false, autocompletion: false }}
       className={styles.cmEditor}
