@@ -77,4 +77,10 @@ export {
   StyledPointCloudObjectCollection
 } from '../packages/pointcloud-styling';
 
-export { Image360, Image360Visualization, Image360Collection } from '../packages/360-images';
+export {
+  Image360,
+  Image360Visualization,
+  Image360Collection,
+  Image360EnteredDelegate,
+  Image360ExitedDelegate
+} from '../packages/360-images';
