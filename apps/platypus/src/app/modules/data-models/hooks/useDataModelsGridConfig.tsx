@@ -18,6 +18,7 @@ export const useDataModelsGridConfig = () => {
         editable: false,
         filter: false,
         sortable: true,
+        resizable: true,
       },
       icons: {
         // We need to use this icons, however we can get them only as React components

@@ -10,6 +10,8 @@ export const TypeList = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
 `;
 
 export const FilterContainer = styled.div`

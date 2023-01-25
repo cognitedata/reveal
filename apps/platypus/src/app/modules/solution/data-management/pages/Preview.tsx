@@ -27,6 +27,8 @@ import { useDataManagementPageUI } from '../hooks/useDataManagemenPageUI';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { directive } from 'graphql-extra';
+import { mixerApiInlineTypeDirectiveName } from '@platypus-core/domain/data-model';
 
 export interface PreviewProps {
   dataModelExternalId: string;
@@ -148,9 +150,17 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
           <TypeList
             placeholder="Filter"
             dataModelExternalId={dataModelExternalId}
-            items={dataModelTypeDefs.types.filter(
-              (type) => !type.directives?.length // if it has directive, that means that it is inline types
-            )}
+            // if it has directive, that means that it is inline types
+            items={dataModelTypeDefs.types.filter((type) => {
+              return (
+                !type.directives?.length ||
+                (type.directives?.length &&
+                  !type.directives.some(
+                    (typeDirective) =>
+                      typeDirective.name === mixerApiInlineTypeDirectiveName
+                  ))
+              );
+            })}
             selectedTypeName={selectedType?.name}
             onClick={(item) => {
               newQueryParameters.set('type', item.name);

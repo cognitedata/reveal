@@ -43,14 +43,22 @@ export const DataModelsTable = React.forwardRef(
     // eslint-disable-next-line
     const gridOptions = useMemo(() => getGridOptions(), []);
 
-    const dataModelsWithDrafts = useMemo(
-      () =>
-        localStorageProvider
-          .getKeys()
-          .filter((key: string) => key.endsWith('_drafts'))
-          .map((key: string) => key.replace('_drafts', '')),
-      [localStorageProvider]
-    );
+    const dataModelsWithDrafts = useMemo(() => {
+      const modelsWithDrafts = localStorageProvider
+        .getKeys()
+        .filter((key: string) => key.endsWith('_drafts'))
+        .filter((key: string) => {
+          const contents = localStorageProvider.getItem(key);
+          if (!contents || (Array.isArray(contents) && !contents.length)) {
+            return false;
+          }
+
+          return true;
+        })
+        .map((key: string) => key.replace('_drafts', ''));
+
+      return modelsWithDrafts;
+    }, [localStorageProvider]);
 
     const totalPages = useMemo(
       () => Math.ceil(props.dataModels.length / RESULTS_PER_PAGE),

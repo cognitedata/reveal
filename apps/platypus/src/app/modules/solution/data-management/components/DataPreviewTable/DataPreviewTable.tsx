@@ -14,7 +14,6 @@ import {
   DeleteInstancesDTO,
   KeyValueMap,
   PlatypusError,
-  QuerySort,
 } from '@platypus/platypus-core';
 import {
   CellDoubleClickedEvent,
@@ -22,7 +21,6 @@ import {
   ColDef,
   GridReadyEvent,
   RowDataUpdatedEvent,
-  SortChangedEvent,
   ValueSetterParams,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
