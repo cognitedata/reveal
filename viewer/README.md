@@ -52,23 +52,12 @@ start();
 ## Installation
 
 ```bash
-npm install @cognite/reveal
+npm install @cognite/reveal @cognite/sdk three@<version>
 ```
 
-There are 2 different types of projects:
+Please find the correct version of ThreeJS in the release documentation on Github. We only guarantee support for the exact ThreeJS version specified there.
 
-1. These where CDN is available (no restrictive Content-Security-Policy is set)
-2. Projects with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
-that forbids to fetch scripts from apps-cdn.cognitedata.com.
-
-By default, Reveal tries to fetch its worker/wasm files from `apps-cdn.cognitedata.com`.
-If there is no CSP in your project or `apps-cdn.cognitedata.com` is whitelisted, then it will just work without any additional steps.
-
-In case if you see an error like that:
-
-> Refused to load the script 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.1.0/reveal.parser.worker.js' because it violates the following Content Security Policy directive: "script-src 'self' https://localhost:* blob:"
-
-See the next steps in our [documentation](https://cognitedata.github.io/reveal-docs/docs/installation#installation-for-projects-with-content-security-policy).
+See [our documentation](https://cognitedata.github.io/reveal-docs/docs/examples/cad-basic) for usage.
 
 ## Prerequisites
 
@@ -177,7 +166,7 @@ For more information about visual tests, see [visual-tests/README.md](visual-tes
 
 ### Recommended package folder structure
     ├── app                   # Runnable app
-      └──index.ts             # Entry point for runnable app
+    │ └──index.ts             # Entry point for runnable app
     ├── src                   # Source code for package
     ├── wasm                  # Rust/Webassembly source code for package
     ├── test                  # Automated tests
