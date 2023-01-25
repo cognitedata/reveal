@@ -84,7 +84,7 @@ const skyBox = new THREE.Mesh(
   new THREE.MeshBasicMaterial({
     side: THREE.BackSide,
     // Skybox texture from http://freepanorama.blogspot.com/2010/01/sky7-spherical.html
-    map: new THREE.TextureLoader().load(skyUrl),
+    map: new THREE.TextureLoader().load(urls.skyUrl),
   })
 );
 skyBox.position.copy(modelCenterAtSeaLevel);
@@ -131,7 +131,7 @@ const skyBox = new THREE.Mesh(
   new THREE.MeshBasicMaterial({
     side: THREE.BackSide,
     // Skybox texture from http://freepanorama.blogspot.com/2010/01/sky7-spherical.html
-    map: new THREE.TextureLoader().load(skyUrl),
+    map: new THREE.TextureLoader().load(urls.skyUrl),
   })
 );
 skyBox.position.copy(modelCenterAtSeaLevel);
