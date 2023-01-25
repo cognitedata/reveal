@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Button, Title } from '@cognite/cogs.js';
+import { A, Button, Title } from '@cognite/cogs.js';
 import { Table } from '@data-exploration-components/components/Table';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import {
@@ -12,6 +12,7 @@ import {
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { useDebounceTrackUsage } from '@data-exploration-components/hooks/useTrackDebounce';
+import { isValidUrl } from '@data-exploration-components/utils';
 
 // TODO  Needs to be removed once implemented in our library
 interface DataSource {
@@ -38,6 +39,17 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
           header: 'Value',
           accessorKey: 'value',
           maxSize: undefined,
+          cell: ({ getValue }) => {
+            const value = getValue<string>();
+            if (isValidUrl(value)) {
+              return (
+                <A href={value} target="_blank" rel="noopener">
+                  {value}
+                </A>
+              );
+            }
+            return value;
+          },
         },
       ] as ColumnDef<DataSource>[],
     []

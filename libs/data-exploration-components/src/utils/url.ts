@@ -35,3 +35,12 @@ export const getEnvironment = () => {
   }
   return 'production';
 };
+
+export const isValidUrl = (value: string) => {
+  try {
+    new URL(value);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
