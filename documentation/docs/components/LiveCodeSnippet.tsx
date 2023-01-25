@@ -11,9 +11,9 @@ import clsx from 'clsx';
 // which fails due to "window" not being defined in NodeJS
 const customScope =
   typeof window === 'undefined'
-  ? {
-    urls: [],
-  }
+    ? {
+      urls: [],
+    }
     : require('./customScope').customScope;
 
 export type LiveCodeSnippetProps = {
