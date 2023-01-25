@@ -5,15 +5,14 @@ import {
 import { FilterFacetTitle } from '../FilterFacetTitle';
 import { reactSelectCogsStylingProps } from '../elements';
 import {
+  EventProperty,
   InternalEventsFilters,
-  useEventsAggregateUniqueValuesQuery,
+  useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
-
-type EventFieldForAggregate = 'type' | 'subtype' | 'dataSetId';
 
 export const AggregatedEventFilterV2 = ({
   field,
@@ -23,7 +22,7 @@ export const AggregatedEventFilterV2 = ({
   value,
   isMulti = false,
 }: {
-  field: EventFieldForAggregate;
+  field: EventProperty;
   filter: InternalEventsFilters;
   title: string;
   setValue: (newValue?: string | string[]) => void;
@@ -32,12 +31,7 @@ export const AggregatedEventFilterV2 = ({
 }): JSX.Element => {
   const trackUsage = useMetrics();
 
-  const { data = [] } = useEventsAggregateUniqueValuesQuery({
-    filter,
-    aggregateOptions: {
-      fields: [field],
-    },
-  });
+  const { data = [] } = useEventsUniqueValuesByProperty(field, filter);
 
   const handleUpdate = (newValue?: string): void => {
     setValue(newValue && newValue.length > 0 ? newValue : undefined);

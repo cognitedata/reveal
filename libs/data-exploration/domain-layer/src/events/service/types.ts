@@ -33,7 +33,7 @@ export type EventsAggregateRequestPayload = EventsAggregateFilters &
   };
 
 export interface EventsAggregateProperty {
-  property: EventMetadataProperty;
+  property: [EventProperty] | EventMetadataProperty;
 }
 
 export interface EventsAggregateUniquePropertiesResponse
@@ -50,5 +50,7 @@ export interface EventsMetadataAggregateResponse extends AggregateResponse {
   value: string;
   values: string[];
 }
+
+export type EventProperty = 'type' | 'subtype' | 'dataSetId';
 
 export type EventMetadataProperty = ['metadata', string];
