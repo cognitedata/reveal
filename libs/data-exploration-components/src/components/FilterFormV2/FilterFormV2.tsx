@@ -21,7 +21,11 @@ export type FilterFormProps = {
   };
   lockedFilters?: string[];
   setFilters: (filter: { key: string; value: string }[]) => void;
-  useAggregates?: boolean;
+  useAggregateMetadataValues?: (key?: string | null) => {
+    data: any;
+    isFetching: boolean;
+    isFetched: boolean;
+  };
 };
 
 // NOTE: This component is super confusing and complicated. Subject to refactoring.
@@ -32,7 +36,7 @@ export const FilterFormV2 = ({
   filters = [],
   lockedFilters = [],
   setFilters = () => {},
-  useAggregates = false,
+  useAggregateMetadataValues,
 }: FilterFormProps) => {
   const [editingKeys, setEditingKeys] = useState<string[]>([]);
 
@@ -115,7 +119,7 @@ export const FilterFormV2 = ({
         setFilter={(newKey, newValue) => {
           handleSetMetadataFilter(newKey, newValue);
         }}
-        useAggregates={useAggregates}
+        useAggregateMetadataValues={useAggregateMetadataValues}
       />
       <Tags>
         {filters.map(({ key, value }) => {

@@ -20,21 +20,25 @@ export const MetadataFilterV2 = <
   keys,
   value,
   setValue,
-  useAggregates = false,
+  useAggregateMetadataValues,
 }: {
   items: T[];
   keys?: { value: string; count: number }[];
   value: { key: string; value: string }[] | undefined;
   setValue: (newValue: { key: string; value: string }[] | undefined) => void;
-  useAggregates?: boolean;
+  useAggregateMetadataValues?: (key?: string | null) => {
+    data: any;
+    isFetching: boolean;
+    isFetched: boolean;
+  };
 }) => {
   const trackUsage = useMetrics();
   const metadata = useMemo(() => {
-    if (!useAggregates) {
+    if (!useAggregateMetadataValues) {
       return mergeUniqueMetadataKeys(items);
     }
     return {};
-  }, [useAggregates, items]);
+  }, [useAggregateMetadataValues, items]);
 
   const setFilter = (newFilters: { key: string; value: string }[]) => {
     setValue(newFilters);
@@ -65,7 +69,7 @@ export const MetadataFilterV2 = <
         keys={keys}
         filters={value}
         setFilters={setFilter}
-        useAggregates={useAggregates}
+        useAggregateMetadataValues={useAggregateMetadataValues}
       />
     </>
   );

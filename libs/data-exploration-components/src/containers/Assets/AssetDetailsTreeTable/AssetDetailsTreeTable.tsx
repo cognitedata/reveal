@@ -13,7 +13,6 @@ import { Table } from '../../../components';
 import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
 import { DASH } from '../../../utils';
 
-import { AssetWithRelationshipLabels } from '../AssetTable/AssetTable';
 import { useRootPath } from '../AssetTreeTable/hooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import {
@@ -43,7 +42,7 @@ export const AssetDetailsTreeTable = ({
   TableStateProps) => {
   const [rootExpanded, setRootExpanded] = useState<ExpandedState>({});
 
-  const { data: metadataKeys } = useAssetsMetadataKeys();
+  const { data: metadataKeys = [] } = useAssetsMetadataKeys();
 
   const rootExpandedKeys = useMemo(() => {
     return Object.keys(rootExpanded).reduce((previousValue, currentValue) => {
@@ -53,12 +52,9 @@ export const AssetDetailsTreeTable = ({
 
   const rootAssetTree = useRootAssetsQuery(rootExpandedKeys, rootAssetId);
 
-  const metadataColumns: ColumnDef<AssetWithRelationshipLabels>[] =
-    useMemo(() => {
-      return (metadataKeys || []).map((key: string) =>
-        ResourceTableColumns.metadata(key)
-      );
-    }, [metadataKeys]);
+  const metadataColumns = useMemo(() => {
+    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
+  }, [metadataKeys]);
 
   const columns = React.useMemo(
     () =>

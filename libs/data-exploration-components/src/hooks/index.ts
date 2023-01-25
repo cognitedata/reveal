@@ -1,5 +1,4 @@
 export * from './CustomHooks';
-export * from './MetadataAggregateHooks';
 export * from './objectDetection';
 export * from './RelatedResourcesHooks';
 export * from './RelationshipHooks';

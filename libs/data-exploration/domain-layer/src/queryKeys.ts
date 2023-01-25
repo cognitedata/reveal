@@ -39,7 +39,10 @@ export const queryKeys = {
   aggregateAssets: (input?: any[]) =>
     [...queryKeys.assets(), ...(input || []), 'aggregate'] as const,
   retrieveAsset: (id: number) => [...queryKeys.assets(), 'asset', id] as const,
-  assetsMetadata: () => [...queryKeys.assets(), 'metadata', 'keys'] as const,
+  assetsMetadata: (filter?: any) =>
+    [...queryKeys.assets(), 'metadata', 'keys', filter] as const,
+  assetsMetadataValues: (metadataKey: string, filter?: any) =>
+    [...queryKeys.assets(), 'metadata', 'values', metadataKey, filter] as const,
   listBasicAssetMappings: (id: number) =>
     [...queryKeys.retrieveAsset(id), 'basic-mappings'] as const,
   listDetailedAssetMappings: (id: number) =>

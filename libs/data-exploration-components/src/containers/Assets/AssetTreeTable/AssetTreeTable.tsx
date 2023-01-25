@@ -55,7 +55,7 @@ export const AssetTreeTable = ({
   const [rootExpanded, setRootExpanded] = useState<ExpandedState>({});
   const [searchExpanded, setSearchExpanded] = useState<ExpandedState>({});
 
-  const { data: metadataKeys } = useAssetsMetadataKeys();
+  const { data: metadataKeys = [] } = useAssetsMetadataKeys();
 
   const rootExpandedKeys = useMemo(() => {
     return Object.keys(rootExpanded).reduce((previousValue, currentValue) => {
@@ -81,12 +81,9 @@ export const AssetTreeTable = ({
     );
   }, [query, filter]);
 
-  const metadataColumns: ColumnDef<AssetWithRelationshipLabels>[] =
-    useMemo(() => {
-      return (metadataKeys || []).map((key: string) =>
-        ResourceTableColumns.metadata(key)
-      );
-    }, [metadataKeys]);
+  const metadataColumns = useMemo(() => {
+    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
+  }, [metadataKeys]);
 
   const columns = React.useMemo(
     () =>

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Select } from '@data-exploration-components/components';
-import { useAssetMetadataValues } from '@data-exploration-components/hooks/MetadataAggregateHooks';
 import { reactSelectCogsStylingProps } from '@data-exploration-components/components/SearchNew/Filters/elements';
 import { DISABLE_VALUE_TOOLTIP } from './constants';
 import { Tooltip } from '@cognite/cogs.js';
 import { FilterItemWrapper } from './elements';
+import { useAssetsMetadataValuesAggregateQuery } from '@data-exploration-lib/domain-layer';
 
 export const FilterItem = ({
   metadata,
@@ -13,7 +13,11 @@ export const FilterItem = ({
   setFilter,
   initialKey,
   initialValue,
-  useAggregates = false,
+  useAggregateMetadataValues = () => ({
+    data: [],
+    isFetching: false,
+    isFetched: false,
+  }),
 }: {
   metadata: {
     [key: string]: string[];
@@ -29,7 +33,11 @@ export const FilterItem = ({
 
   initialKey?: string;
   initialValue?: string;
-  useAggregates?: boolean;
+  useAggregateMetadataValues?: (key?: string | null) => {
+    data: any;
+    isFetching: boolean;
+    isFetched: boolean;
+  };
 }) => {
   const [selectedKey, setSelectedKey] = React.useState<string | null>();
   const [selectedValue, setSelectedValue] = React.useState<string | null>();
@@ -49,9 +57,7 @@ export const FilterItem = ({
     data: metadataValues = [],
     isFetching,
     isFetched,
-  } = useAssetMetadataValues(selectedKey || null, {
-    enabled: useAggregates && !!selectedKey,
-  });
+  } = useAggregateMetadataValues(selectedKey);
 
   const options = Object.keys(categories)
     .sort((a, b) => {
@@ -73,7 +79,7 @@ export const FilterItem = ({
     }));
 
   const getMetadataValues = (key: string) =>
-    useAggregates && isFetched
+    isFetched
       ? metadataValues.map((el: any) => ({
           label: `${el.value} (${el.count})`,
           value: el.value,

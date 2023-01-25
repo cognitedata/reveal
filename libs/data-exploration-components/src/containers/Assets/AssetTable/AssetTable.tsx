@@ -24,14 +24,11 @@ export const AssetTable = ({
   query,
   ...rest
 }: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'>) => {
-  const { data: metadataKeys } = useAssetsMetadataKeys();
+  const { data: metadataKeys = [] } = useAssetsMetadataKeys();
 
-  const metadataColumns: ColumnDef<AssetWithRelationshipLabels>[] =
-    useMemo(() => {
-      return (metadataKeys || []).map((key: string) =>
-        ResourceTableColumns.metadata(key)
-      );
-    }, [metadataKeys]);
+  const metadataColumns = useMemo(() => {
+    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
+  }, [metadataKeys]);
 
   const columns = useMemo(
     () =>

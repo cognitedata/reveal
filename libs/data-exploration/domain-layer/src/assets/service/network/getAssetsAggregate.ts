@@ -1,35 +1,18 @@
-import {
-  AggregateResponse,
-  CogniteClient,
-  CursorResponse,
-  AssetFilterProps,
-} from '@cognite/sdk';
-import {
-  AssetsProperties,
-  AdvancedFilter,
-} from '@data-exploration-lib/domain-layer';
+import { CogniteClient, CursorResponse } from '@cognite/sdk';
+import { AssetsAggregateRequestPayload } from '@data-exploration-lib/domain-layer';
 
-export const getAssetsAggregate = (
+export const getAssetsAggregate = <ResponseItemType>(
   sdk: CogniteClient,
-  {
-    filter,
-    advancedFilter,
-  }: {
-    filter?: AssetFilterProps;
-    advancedFilter?: AdvancedFilter<AssetsProperties>;
-  }
+  payload?: AssetsAggregateRequestPayload
 ) => {
   return sdk
-    .post<CursorResponse<AggregateResponse[]>>(
+    .post<CursorResponse<ResponseItemType[]>>(
       `/api/v1/projects/${sdk.project}/assets/aggregate`,
       {
         headers: {
           'cdf-version': 'alpha',
         },
-        data: {
-          filter,
-          advancedFilter,
-        },
+        data: payload,
       }
     )
     .then(({ data }) => {

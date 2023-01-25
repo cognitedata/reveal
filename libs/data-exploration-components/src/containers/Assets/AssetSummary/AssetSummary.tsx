@@ -18,10 +18,7 @@ import { SummaryHeader } from '@data-exploration-components/components/SummaryHe
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import noop from 'lodash/noop';
 
-import {
-  AssetTable,
-  AssetWithRelationshipLabels,
-} from '../AssetTable/AssetTable';
+import { AssetWithRelationshipLabels } from '../AssetTable/AssetTable';
 import { RootAsset } from '@data-exploration-components/components';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
@@ -43,14 +40,11 @@ export const AssetSummary = ({
     query,
     assetFilter: filter,
   });
-  const { data: metadataKeys } = useAssetsMetadataKeys();
+  const { data: metadataKeys = [] } = useAssetsMetadataKeys();
 
-  const metadataColumns: ColumnDef<AssetWithRelationshipLabels>[] =
-    useMemo(() => {
-      return (metadataKeys || []).map((key: string) =>
-        ResourceTableColumns.metadata(key)
-      );
-    }, [metadataKeys]);
+  const metadataColumns = useMemo(() => {
+    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
+  }, [metadataKeys]);
 
   const columns = useMemo(
     () =>

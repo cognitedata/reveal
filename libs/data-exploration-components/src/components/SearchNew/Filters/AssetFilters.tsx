@@ -1,10 +1,13 @@
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { useAssetMetadataKeys } from '@data-exploration-components/hooks/MetadataAggregateHooks';
 import { LabelFilterV2 } from './LabelFilter/LabelFilter';
 import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { InternalAssetFilters } from '@data-exploration-lib/domain-layer';
+import {
+  InternalAssetFilters,
+  useAssetsMetadataKeysAggregateQuery,
+  useAssetsMetadataValuesAggregateQuery,
+} from '@data-exploration-lib/domain-layer';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 import head from 'lodash/head';
 
@@ -22,7 +25,8 @@ export const AssetFiltersV2 = ({
     limit: 1000,
   });
 
-  const { data: metadataKeys = [] } = useAssetMetadataKeys(filter);
+  const { data: metadataKeys = [] } =
+    useAssetsMetadataKeysAggregateQuery(filter);
 
   return (
     <BaseFilterCollapse.Panel title="Assets" {...rest}>
@@ -58,7 +62,7 @@ export const AssetFiltersV2 = ({
             metadata: newMetadata,
           })
         }
-        useAggregates
+        useAggregateMetadataValues={useAssetsMetadataValuesAggregateQuery}
       />
     </BaseFilterCollapse.Panel>
   );
