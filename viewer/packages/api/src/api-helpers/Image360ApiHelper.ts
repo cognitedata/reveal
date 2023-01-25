@@ -292,9 +292,7 @@ export class Image360ApiHelper {
       this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
     }
 
-    this._imageCollection.forEach(imageCollection => {
-      imageCollection.dispose();
-    });
+    this._imageCollection.forEach(imageCollection => imageCollection.dispose());
     this._imageCollection.splice(0);
     this._image360Navigation.dispose();
   }
