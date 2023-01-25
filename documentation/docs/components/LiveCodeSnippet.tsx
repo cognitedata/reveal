@@ -68,7 +68,10 @@ export const LiveCodeSnippet = (props: LiveCodeSnippetProps) => {
       value={props.children}
       theme={material}
       onChange={setCode}
-      basicSetup={{ lineNumbers: false, foldGutter: false, autocompletion: false }}
+      basicSetup={{ lineNumbers: false,
+                    foldGutter: false,
+                    autocompletion: false,
+                    highlightActiveLine: false }}
       className={styles.cmEditor}
       extensions={[javascript({})]} />
     <button type="button"
