@@ -19,4 +19,4 @@ A list containing all the 360 images in this set.
 
 #### Defined in
 
-[packages/360-images/src/Image360Collection.ts:14](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/360-images/src/Image360Collection.ts#L14)
+[packages/360-images/src/Image360Collection.ts:14](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/360-images/src/Image360Collection.ts#L14)
