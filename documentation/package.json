@@ -26,6 +26,8 @@
   "dependencies": {
     "@azure/msal-browser": "2.32.2",
     "@codemirror/lang-javascript": "6.1.2",
+    "@codemirror/language": "6.4.0",
+    "@codemirror/view": "6.7.3",
     "@docusaurus/core": "2.2.0",
     "@docusaurus/preset-classic": "2.2.0",
     "@docusaurus/theme-live-codeblock": "2.2.0",

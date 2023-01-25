@@ -2032,7 +2032,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/lang-javascript@npm:^6.1.2":
+"@codemirror/lang-javascript@npm:6.1.2":
   version: 6.1.2
   resolution: "@codemirror/lang-javascript@npm:6.1.2"
   dependencies:
@@ -2047,7 +2047,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/language@npm:^6.0.0":
+"@codemirror/language@npm:6.4.0, @codemirror/language@npm:^6.0.0":
   version: 6.4.0
   resolution: "@codemirror/language@npm:6.4.0"
   dependencies:
@@ -2102,7 +2102,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/view@npm:^6.0.0, @codemirror/view@npm:^6.6.0":
+"@codemirror/view@npm:6.7.3, @codemirror/view@npm:^6.0.0, @codemirror/view@npm:^6.6.0":
   version: 6.7.3
   resolution: "@codemirror/view@npm:6.7.3"
   dependencies:
@@ -2127,15 +2127,17 @@ __metadata:
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
     "@azure/msal-browser": 2.32.2
-    "@codemirror/lang-javascript": ^6.1.2
+    "@codemirror/lang-javascript": 6.1.2
+    "@codemirror/language": 6.4.0
+    "@codemirror/view": 6.7.3
     "@docusaurus/core": 2.2.0
     "@docusaurus/preset-classic": 2.2.0
     "@docusaurus/remark-plugin-npm2yarn": ^2.2.0
     "@docusaurus/theme-live-codeblock": 2.2.0
     "@types/react": 18.0.27
     "@types/styled-components": 5.1.26
-    "@uiw/codemirror-theme-material": ^4.19.7
-    "@uiw/react-codemirror": ^4.19.7
+    "@uiw/codemirror-theme-material": 4.19.7
+    "@uiw/react-codemirror": 4.19.7
     clsx: 1.2.1
     copyfiles: 2.4.1
     cross-env: 7.0.3
@@ -3923,7 +3925,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-theme-material@npm:^4.19.7":
+"@uiw/codemirror-theme-material@npm:4.19.7":
   version: 4.19.7
   resolution: "@uiw/codemirror-theme-material@npm:4.19.7"
   dependencies:
@@ -3947,7 +3949,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/react-codemirror@npm:^4.19.7":
+"@uiw/react-codemirror@npm:4.19.7":
   version: 4.19.7
   resolution: "@uiw/react-codemirror@npm:4.19.7"
   dependencies:
