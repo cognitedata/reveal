@@ -8,16 +8,28 @@ export const ThreeDPage = () => {
   const { id: threeDIdString = '' } = useParams<{
     id: string;
   }>();
-  const threeDId = parseInt(threeDIdString, 10);
+  const is360Image = threeDIdString.endsWith('img360');
+  const modelId = is360Image ? undefined : parseInt(threeDIdString, 10);
+  const image360SiteId = is360Image
+    ? threeDIdString.slice(0, threeDIdString.length - 6)
+    : undefined;
   const [revisionId] = useSearchParamString('revisionId');
 
-  if (!threeDIdString || !Number.isFinite(threeDId)) {
+  if ((!threeDIdString || !Number.isFinite(modelId)) && !image360SiteId) {
     return null;
   }
 
   return (
-    <ThreeDContextProvider key={`${threeDId}.${revisionId}`} modelId={threeDId}>
-      <ThreeDView key={threeDId} modelId={threeDId} />
+    <ThreeDContextProvider
+      key={is360Image ? image360SiteId : `${modelId}.${revisionId}`}
+      modelId={modelId}
+      image360SiteId={image360SiteId}
+    >
+      <ThreeDView
+        key={modelId ?? image360SiteId}
+        modelId={modelId}
+        image360SiteId={image360SiteId}
+      />
     </ThreeDContextProvider>
   );
 };

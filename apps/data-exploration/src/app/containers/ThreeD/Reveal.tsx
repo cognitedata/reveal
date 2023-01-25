@@ -10,6 +10,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
 import { use3DModel } from './hooks';
 import {
+  PointerEventDelegate,
   CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
@@ -20,12 +21,12 @@ import { Alert } from 'antd';
 import { useQuery } from 'react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import RevealErrorFeedback from './RevealErrorFeedback';
-import { PointerEventDelegate } from '@cognite/reveal';
 import { usePrevious } from '@cognite/data-exploration';
 import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
 import { ThreeDContext } from './ThreeDContext';
 import { toast } from '@cognite/cogs.js';
 import RevealErrorToast from './RevealErrorToast';
+import { Vector3 } from 'three';
 
 type ChildProps = {
   threeDModel?: CogniteCadModel;
@@ -34,8 +35,9 @@ type ChildProps = {
 };
 
 type Props = {
-  modelId: number;
-  revisionId: number;
+  modelId?: number;
+  revisionId?: number;
+  image360SiteId?: string;
   nodesSelectable: boolean;
   initialViewerState?: ViewerState;
   onViewerClick?: (intersection: Intersection | null) => void;
@@ -46,6 +48,7 @@ export function Reveal({
   children,
   modelId,
   revisionId,
+  image360SiteId,
   nodesSelectable,
   initialViewerState,
   onViewerClick,
@@ -101,22 +104,64 @@ export function Reveal({
       }
       let model;
 
-      try {
-        model = await viewer.addModel({
-          modelId,
-          revisionId,
-        });
-      } catch {
-        return Promise.reject({
-          message:
-            'The selected 3D Model is not supported and can not be loaded.',
-        });
+      const lastCameraPositionVec = new Vector3();
+      const reusableVec = new Vector3();
+
+      if (modelId && revisionId) {
+        try {
+          model = await viewer.addModel({
+            modelId,
+            revisionId,
+          });
+        } catch {
+          return Promise.reject({
+            message:
+              'The selected 3D Model is not supported and can not be loaded.',
+          });
+        }
+
+        viewer.loadCameraFromModel(model);
       }
 
-      viewer.loadCameraFromModel(model);
       if (initialViewerState) {
+        const { x, y, z } = initialViewerState.camera!.position;
+
         viewer.setViewState(initialViewerState);
+        lastCameraPositionVec.set(x, y, z);
       }
+
+      if (image360SiteId) {
+        let images;
+        try {
+          images = await viewer.add360ImageSet('events', {
+            site_id: image360SiteId,
+          });
+        } catch {
+          return Promise.reject({
+            message:
+              'The selected 360 Image is not supported and can not be loaded.',
+          });
+        }
+
+        const currentImage360 = initialViewerState
+          ? images.image360Entities.find(
+              ({ transform }) =>
+                lastCameraPositionVec.distanceToSquared(
+                  reusableVec.setFromMatrixPosition(transform)
+                ) === 0
+            )
+          : images.image360Entities[0];
+
+        if (currentImage360) {
+          viewer.enter360Image(currentImage360);
+          viewer.cameraManager.setCameraState({
+            position: reusableVec.setFromMatrixPosition(
+              currentImage360.transform
+            ),
+          });
+        }
+      }
+
       const threeDModel = model instanceof CogniteCadModel ? model : undefined;
       const pointCloudModel =
         model instanceof CognitePointCloudModel ? model : undefined;
@@ -198,7 +243,10 @@ export function Reveal({
     nodesSelectable: nodesSelectable,
   });
 
-  if (isModelError || (isModelFetched && !apiThreeDModel) || !revisionId) {
+  if (
+    (isModelError || (isModelFetched && !apiThreeDModel) || !revisionId) &&
+    !image360SiteId
+  ) {
     return (
       <Alert
         type="error"

@@ -6,4 +6,5 @@
 
 project="${1:-platypus}"
 
-nx lint ${project}
+nx lint ${project} $2
+

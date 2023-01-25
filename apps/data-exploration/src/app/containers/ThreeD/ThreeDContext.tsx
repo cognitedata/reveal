@@ -214,9 +214,11 @@ const getInitialState = () => {
 
 export const ThreeDContextProvider = ({
   modelId,
+  image360SiteId,
   children,
 }: {
-  modelId: number;
+  modelId?: number;
+  image360SiteId?: string;
   children?: React.ReactNode;
 }) => {
   const {
@@ -319,7 +321,7 @@ export const ThreeDContextProvider = ({
     }
   }, [splitterColumnWidth]);
 
-  if (error) {
+  if (error && !image360SiteId) {
     return <>Could not find a revision for model id {modelId}</>;
   }
 

@@ -31,6 +31,7 @@ import { FetchQueryOptions, QueryClient } from 'react-query';
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY = 'slicingState';
+export const THREE_D_IMAGE_360_STATE_QUERY_PARAMETER_KEY = 'img360State';
 export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
 export const THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY = 'expanded';
 export const THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY = 'hl_mode';
@@ -41,6 +42,8 @@ export const THREE_D_CUBEMAP_360_IMAGES_QUERY_PARAMETER_KEY =
 
 export const MINIMUM_BOUNDINGBOX_SIZE = 0.001;
 export const CAMERA_ANIMATION_DURATION = 500;
+
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export const getAssetQueryKey = (assetId: number) => [
   'cdf',

@@ -58,9 +58,10 @@ import zIndex from '../../utils/zIndex';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 type Props = {
-  modelId: number;
+  modelId?: number;
+  image360SiteId?: string;
 };
-export const ThreeDView = ({ modelId }: Props) => {
+export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
   const useOverlays = useFlagAssetMappingsOverlays();
@@ -117,7 +118,7 @@ export const ThreeDView = ({ modelId }: Props) => {
     (intersection: Intersection | null) => {
       (async () => {
         let closestAssetId: number | undefined;
-        if (intersection && isCadIntersection(intersection)) {
+        if (intersection && isCadIntersection(intersection) && modelId) {
           closestAssetId = await findClosestAsset(
             sdk,
             queryClient,
@@ -224,13 +225,13 @@ export const ThreeDView = ({ modelId }: Props) => {
     }
   }, [queryClient, sdk, selectedAssetId, threeDModel, viewer]);
 
-  if (!revisionId) {
+  if (!revisionId && !image360SiteId) {
     return null;
   }
 
   return (
     <>
-      <ThreeDTitle id={modelId} />
+      <ThreeDTitle id={modelId} image360SiteId={image360SiteId} />
       <PreviewContainer>
         <StyledSplitter
           secondaryInitialSize={splitterColumnWidth}
@@ -239,8 +240,9 @@ export const ThreeDView = ({ modelId }: Props) => {
         >
           <Reveal
             key={`${modelId}.${revisionId}`}
+            image360SiteId={image360SiteId}
             modelId={modelId}
-            revisionId={revisionId}
+            revisionId={revisionId ?? -1}
             nodesSelectable={nodesSelectable && !assetDetailsExpanded}
             initialViewerState={initialUrlViewState}
             onViewerClick={onViewerClick}
@@ -297,6 +299,7 @@ export const ThreeDView = ({ modelId }: Props) => {
                     viewerModel={revealThreeDModel || pointCloudModel}
                   />
                   <PointToPointMeasurementButton
+                    model={revealThreeDModel ?? pointCloudModel}
                     viewer={revealViewer}
                     nodesSelectable={nodesSelectable}
                     setNodesSelectable={setNodesSelectable}

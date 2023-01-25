@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
-import { ThreeDModelsResponse } from '@data-exploration-app/containers/ThreeD/hooks';
+import {
+  ThreeDModelsResponse,
+  useInfinite360Images,
+} from '@data-exploration-app/containers/ThreeD/hooks';
 import { Loader } from '@cognite/cogs.js';
 import {
   ThreeDGridPreview,
@@ -10,7 +13,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeGrid as Grid } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import { Alert } from 'antd';
-import { ResourceType, useInfinite3DModels } from '@cognite/data-exploration';
+import { useInfinite3DModels } from '@cognite/data-exploration';
 import styled from 'styled-components';
 
 export const ThreeDSearchResults = ({
@@ -28,6 +31,8 @@ export const ThreeDSearchResults = ({
     isFetchingNextPage: isFetchingMore,
   } = useInfinite3DModels();
 
+  const images360Data = useInfinite360Images();
+
   useEffect(() => {
     if (canFetchMore && !isFetchingMore) {
       fetchMore();
@@ -39,7 +44,16 @@ export const ThreeDSearchResults = ({
     [] as Model3D[]
   );
 
-  const filteredModels = models.filter((model) =>
+  const filteredModels = [
+    ...images360Data.map<Model3DWithType>((img360Data) => {
+      return {
+        type: 'img360',
+        name: img360Data.siteName,
+        siteId: img360Data.siteId,
+      };
+    }),
+    ...models,
+  ].filter((model) =>
     model.name.toLowerCase().includes(query?.toLowerCase() || '')
   );
 
@@ -106,10 +120,12 @@ export const ThreeDSearchResults = ({
                 >
                   {({ columnIndex, rowIndex, data, style }) => {
                     const { list } = data;
-                    const item = list[rowIndex * columnCount + columnIndex];
+                    const item = list[
+                      rowIndex * columnCount + columnIndex
+                    ] as Model3DWithType;
                     const modelItem = {
                       ...item,
-                      type: 'threeD' as ResourceType,
+                      type: item?.type ?? 'threeD',
                     };
                     return item ? (
                       <ThreeDGridPreview

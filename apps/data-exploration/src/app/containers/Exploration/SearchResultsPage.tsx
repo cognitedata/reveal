@@ -68,6 +68,7 @@ import {
   useFilterSidebarState,
 } from '@data-exploration-app/store';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { Model3DWithType } from '../ThreeD/ThreeDGridPreview';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${
@@ -375,8 +376,16 @@ function SearchPage() {
                   )}
                   {currentResourceType === 'threeD' && (
                     <ThreeDSearchResults
-                      onClick={(item: ResourceItem) => {
-                        navigate(createLink(`/explore/threeD/${item.id}`));
+                      onClick={(item: Model3DWithType) => {
+                        navigate(
+                          createLink(
+                            `/explore/threeD/${
+                              item?.type === 'img360'
+                                ? item?.siteId + 'img360'
+                                : item.id
+                            }`
+                          )
+                        );
                       }}
                       query={query}
                     />

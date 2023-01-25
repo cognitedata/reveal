@@ -25,6 +25,8 @@ import {
   CognitePointCloudModel,
   Image360,
 } from '@cognite/reveal';
+import { useMemo } from 'react';
+import { useEventsSearchResultQuery } from '@data-exploration-lib/domain-layer';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];
@@ -48,13 +50,15 @@ export type AugmentedMappingResponse = {
 export const use3DModel = (id: number | undefined) => {
   const sdk = useSDK();
 
-  return useQuery<Model3D>(
+  return useQuery<Model3D | undefined>(
     ['cdf', '3d', 'model', id],
     async () => {
-      const models = await sdk.get(
-        `/api/v1/projects/${sdk.project}/3d/models/${id}`
-      );
-      return models.data;
+      if (id) {
+        const models = await sdk.models3D.retrieve(id);
+
+        return models;
+      }
+      return;
     },
     { enabled: Boolean(id) }
   );
@@ -67,57 +71,62 @@ export type Revision3DWithIndex = Revision3D & { index: number };
 type RevisionOpts<T> = UseQueryOptions<Revision3DWithIndex[], unknown, T>;
 
 export const useRevisions = <T = Revision3DWithIndex[]>(
-  modelId: number,
+  modelId?: number,
   opts?: Omit<RevisionOpts<T>, 'queryKey' | 'queryFn'>
 ) => {
   const sdk = useSDK();
+
   return useQuery(
     getRevisionKey(modelId),
     () =>
-      sdk.revisions3D
-        .list(modelId)
-        .autoPagingToArray({ limit: -1 })
-        .then((res) =>
-          res.map((r, rIndex) => ({ ...r, index: res.length - rIndex }))
-        ),
+      modelId
+        ? sdk.revisions3D
+            .list(modelId)
+            .autoPagingToArray({ limit: -1 })
+            .then((res) =>
+              res.map((r, rIndex) => ({ ...r, index: res.length - rIndex }))
+            )
+        : [],
     opts
   );
 };
 
 export const useDefault3DModelRevision = (
-  modelId: number,
+  modelId?: number,
   opts?: Omit<
     RevisionOpts<Revision3DWithIndex | undefined>,
     'queryKey' | 'queryFn' | 'select'
   >
 ) => {
-  return useRevisions(modelId!, {
+  return useRevisions(modelId, {
     select: (revisions = []) =>
-      revisions.find((r) => r.published) ||
-      revisions.reduce((prev, current) =>
-        prev.createdTime > current.createdTime ? prev : current
-      ),
+      revisions.find((r) => r.published) ??
+      (revisions.length > 0
+        ? revisions.reduce((prev, current) =>
+            prev.createdTime > current.createdTime ? prev : current
+          )
+        : undefined),
     ...opts,
   });
 };
 
 export const useRevision = (
-  modelId: number,
-  revisionId: number,
+  modelId?: number,
+  revisionId?: number,
   opts?: Omit<
     RevisionOpts<Revision3DWithIndex | undefined>,
     'queryKey' | 'queryFn' | 'select'
   >
 ) => {
-  return useRevisions(modelId!, {
+  return useRevisions(modelId, {
     select: (revisions = []) => revisions.find((r) => r.id === revisionId),
     ...opts,
   });
 };
 
 export const useRevisionIndex = (
-  modelId: number,
-  revisionId: number,
+  modelId?: number,
+  revisionId?: number,
   opts?: Omit<
     RevisionOpts<number | undefined>,
     'queryKey' | 'queryFn' | 'select'
@@ -150,6 +159,38 @@ export const use3DModelThumbnail = (url?: string) => {
     },
     { enabled: Boolean(url) }
   );
+};
+
+export const useInfinite360Images = () => {
+  const { data: cubemapDatasets } = useEventsSearchResultQuery({
+    eventsFilters: {
+      type: 'scan',
+    },
+  });
+
+  const cubemapSiteIds = useMemo(() => {
+    const results: { siteId: string; siteName: string }[] = [];
+    if (cubemapDatasets.length > 0) {
+      cubemapDatasets.reduce((previous, current) => {
+        if (previous.metadata!.site_id !== current.metadata!.site_id) {
+          if (
+            !results.some(
+              (siteDetails) => siteDetails.siteId === current.metadata!.site_id
+            )
+          ) {
+            results.push({
+              siteId: current.metadata!.site_id,
+              siteName: current.metadata!.site_name,
+            });
+          }
+        }
+        return current;
+      });
+    }
+    return results;
+  }, [cubemapDatasets]);
+
+  return cubemapSiteIds;
 };
 
 export const useInfiniteAssetMappings = (

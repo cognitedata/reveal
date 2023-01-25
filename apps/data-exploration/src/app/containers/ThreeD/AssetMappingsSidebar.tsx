@@ -19,8 +19,8 @@ import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
 
 type ThreeDSidebarProps = {
-  modelId: number;
-  revisionId: number;
+  modelId?: number;
+  revisionId?: number;
   selectedAssetId?: number;
   setSelectedAssetId: (assetId?: number) => void;
   viewer: Cognite3DViewer;

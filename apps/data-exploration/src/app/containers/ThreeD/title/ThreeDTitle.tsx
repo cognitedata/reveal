@@ -11,7 +11,13 @@ import {
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import SecondaryModelDropdown from '@data-exploration-app/containers/ThreeD/title/SecondaryModelDropdown';
 
-export const ThreeDTitle = ({ id }: { id: number }): JSX.Element => {
+export const ThreeDTitle = ({
+  id,
+  image360SiteId,
+}: {
+  id?: number;
+  image360SiteId?: string;
+}): JSX.Element => {
   const {
     revisionId,
     secondaryModels,
@@ -23,28 +29,24 @@ export const ThreeDTitle = ({ id }: { id: number }): JSX.Element => {
 
   const { data: apiThreeDModel, error: modelError, isSuccess } = use3DModel(id);
 
-  const { data: revision, error: revisionError } = useRevision(
-    id,
-    revisionId!,
-    {
-      enabled: isSuccess && !!revisionId,
-    }
-  );
+  const { data: revision, error: revisionError } = useRevision(id, revisionId, {
+    enabled: isSuccess && !!revisionId,
+  });
 
-  const { data: revisionIndex } = useRevisionIndex(id, revisionId!, {
+  const { data: revisionIndex } = useRevisionIndex(id, revisionId, {
     enabled: !!revisionId,
   });
 
   const goBackFallback = createLink('/explore/search/threeD');
 
   const error = modelError || revisionError;
-  if (error) {
+  if (error && !image360SiteId) {
     return (
       <>
-        <PageTitle title={id.toString()} />
+        <PageTitle title={id?.toString() ?? image360SiteId ?? 'No title'} />
         <SecondaryTopbar
           goBackFallback={goBackFallback}
-          title={id.toString()}
+          title={id?.toString() ?? image360SiteId ?? 'No title'}
         />
         <Alert type="error" message="Error" description={`${error}`} />
       </>
@@ -53,23 +55,26 @@ export const ThreeDTitle = ({ id }: { id: number }): JSX.Element => {
 
   return (
     <>
-      <PageTitle title={apiThreeDModel?.name} />
+      <PageTitle title={image360SiteId ?? apiThreeDModel?.name ?? 'No title'} />
       <SecondaryTopbar
         goBackFallback={goBackFallback}
-        title={apiThreeDModel?.name || id.toString()}
+        title={
+          image360SiteId ?? apiThreeDModel?.name ?? id?.toString() ?? 'No title'
+        }
         subtitle={
-          revisionIndex && Number.isFinite(revisionIndex)
+          revisionId && revisionIndex && Number.isFinite(revisionIndex)
             ? `Revision ${revisionIndex}`
+            : image360SiteId
+            ? '360 Image'
             : undefined
         }
         dropdownProps={
-          apiThreeDModel &&
-          revision &&
           viewer && {
             content: (
               <SecondaryModelDropdown
                 mainModel={apiThreeDModel}
                 mainRevision={revision}
+                mainImage360SiteId={image360SiteId}
                 secondaryModels={secondaryModels}
                 setSecondaryModels={setSecondaryModels}
                 cubemap360Images={cubemap360Images}

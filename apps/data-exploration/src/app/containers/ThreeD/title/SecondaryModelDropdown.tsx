@@ -11,7 +11,6 @@ import {
   ThreeDModelsResponse,
   useInfinite3DModels,
 } from '@cognite/data-exploration';
-import { useEventsSearchResultQuery } from '@data-exploration-lib/domain-layer';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
@@ -22,15 +21,19 @@ import {
 } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import { MainThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/MainThreeDModelMenuItem';
 import { SecondaryThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
-import { Revision3DWithIndex } from '@data-exploration-app/containers/ThreeD/hooks';
+import {
+  Revision3DWithIndex,
+  useInfinite360Images,
+} from '@data-exploration-app/containers/ThreeD/hooks';
 import { TableNoResults } from '@cognite/cdf-utilities';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { Images360MenuItem } from '@data-exploration-app/containers/ThreeD/title/Images360MenuItem';
 
 type SecondaryModelDropdownProps = {
-  mainModel: Model3D;
-  mainRevision: Revision3DWithIndex;
+  mainModel?: Model3D;
+  mainRevision?: Revision3DWithIndex;
+  mainImage360SiteId?: string;
   secondaryModels: SecondaryModelOptions[];
   setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
   cubemap360Images: CubemapDatasetOptions[];
@@ -41,6 +44,7 @@ type SecondaryModelDropdownProps = {
 const SecondaryModelDropdown = ({
   mainModel,
   mainRevision,
+  mainImage360SiteId,
   secondaryModels,
   setSecondaryModels,
   cubemap360Images,
@@ -75,33 +79,15 @@ const SecondaryModelDropdown = ({
     [cubemap360Images, tempCubemap360Images]
   );
 
-  const { data: cubemapDatasets } = useEventsSearchResultQuery({
-    eventsFilters: {
-      type: 'scan',
-    },
-  });
+  const cubemapSiteIds = useInfinite360Images();
 
-  const cubemapSiteIds = useMemo(() => {
-    const results: { siteId: string; siteName: string }[] = [];
-    if (cubemapDatasets.length > 0) {
-      cubemapDatasets.reduce((previous, current) => {
-        if (previous.metadata!.site_id !== current.metadata!.site_id) {
-          if (
-            !results.some(
-              (siteDetails) => siteDetails.siteId === current.metadata!.site_id
-            )
-          ) {
-            results.push({
-              siteId: current.metadata!.site_id,
-              siteName: current.metadata!.site_name,
-            });
-          }
-        }
-        return current;
-      });
-    }
-    return results;
-  }, [cubemapDatasets]);
+  const filteredCubemapSiteIds = useMemo(() => {
+    return cubemapSiteIds.filter(
+      ({ siteName, siteId }) =>
+        siteName.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        siteId !== mainImage360SiteId
+    );
+  }, [cubemapSiteIds, searchQuery]);
 
   const {
     data: modelData = { pages: [] as ThreeDModelsResponse[] },
@@ -120,11 +106,11 @@ const SecondaryModelDropdown = ({
     () =>
       modelData.pages
         .reduce((accl, t) => accl.concat(t.items), [] as Model3D[])
-        .filter(({ id: tId }) => tId !== mainModel.id)
+        .filter(({ id: tId }) => tId !== mainModel?.id)
         .sort((a, b) =>
           a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
         ),
-    [modelData, mainModel.id]
+    [modelData, mainModel]
   );
 
   const filteredModels = useMemo(() => {
@@ -207,10 +193,10 @@ const SecondaryModelDropdown = ({
       )}
       <Menu.Divider />
       <StyledSecondaryModelListContainer>
-        {viewer && cubemapSiteIds.length ? (
+        {viewer && filteredCubemapSiteIds.length ? (
           <>
             <Menu.Header>360 Images</Menu.Header>
-            {cubemapSiteIds.map((cubemap) => (
+            {filteredCubemapSiteIds.map((cubemap) => (
               <Images360MenuItem
                 key={cubemap.siteId}
                 siteId={cubemap.siteId}

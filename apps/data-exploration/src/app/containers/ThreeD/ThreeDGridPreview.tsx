@@ -12,22 +12,27 @@ import {
   Title,
   Graphic,
   Tooltip,
+  Illustrations,
 } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { Model3D } from '@cognite/sdk';
 import { ResourceType } from '@cognite/data-exploration';
-import { useCurrentResourceId } from '@data-exploration-app/hooks/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { PartialBy } from './utils';
 
-export type Model3DWithType = Model3D & {
-  type: ResourceType;
+export type Model3DWithType = PartialBy<
+  Model3D,
+  'metadata' | 'dataSetId' | 'createdTime' | 'id'
+> & {
+  type: ResourceType | 'img360';
+  siteId?: string;
 };
 
 type ThreeDGridPreviewProps = {
   item: Model3DWithType;
   query: string;
   name: string;
-  modelId: number;
+  modelId?: number;
   style?: React.CSSProperties;
   onClick: (item: Model3DWithType) => void;
 };
@@ -43,8 +48,6 @@ export const ThreeDGridPreview = ({
   const { data, isFetched } = use3DModelThumbnail(revision?.thumbnailURL);
 
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
-  const [activeId] = useCurrentResourceId();
-  const isSelected = activeId === item.id;
 
   useEffect(() => {
     if (data) {
@@ -93,10 +96,15 @@ export const ThreeDGridPreview = ({
         trackUsage('Exploration.Preview.ThreeDModel', { name, modelId });
       }}
     >
-      <GridItemWrapper isSelected={isSelected}>
+      <GridItemWrapper isSelected={false}>
         <Thumbnail>
-          {revision?.thumbnailURL && image}
-          {!revision?.thumbnailURL && <Graphic type="ThreeDModel" />}
+          {item?.type === 'img360' ? (
+            <Illustrations.Solo type="ImagePicture" />
+          ) : revision?.thumbnailURL ? (
+            image
+          ) : (
+            <Graphic type="ThreeDModel" color="white" />
+          )}
         </Thumbnail>
         <Tooltip content={name} arrow={false}>
           <Title level={6}>

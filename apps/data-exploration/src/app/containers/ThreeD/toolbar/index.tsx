@@ -4,6 +4,7 @@ import { Button, Tooltip } from '@cognite/cogs.js';
 import {
   Cognite3DViewer,
   CogniteCadModel,
+  CogniteModel,
   CognitePointCloudModel,
   MeasurementTool,
 } from '@cognite/reveal';
@@ -104,10 +105,12 @@ export const FocusAssetButton = ({
 
 export const PointToPointMeasurementButton = ({
   viewer,
+  model,
   nodesSelectable,
   setNodesSelectable,
 }: {
   viewer: Cognite3DViewer;
+  model?: CogniteModel;
   nodesSelectable: boolean;
   setNodesSelectable: (selectable: boolean) => void;
 }) => {
@@ -118,6 +121,8 @@ export const PointToPointMeasurementButton = ({
       },
     });
   }, [viewer]);
+
+  if (!model) return <></>;
 
   const enterMeasurementMode = () => {
     viewer.domElement.style.cursor = 'crosshair';
