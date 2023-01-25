@@ -73,7 +73,7 @@ export const LiveCodeSnippet = (props: LiveCodeSnippetProps) => {
       extensions={[javascript({})]} />
     <button type="button"
             onClick={() => onRunCode(code)}
-            className="button button--primary button--lg">
+            className={clsx("button button--primary button--lg", styles.runButton)}>
       Run
     </button>
   </>);

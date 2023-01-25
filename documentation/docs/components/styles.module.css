@@ -15,3 +15,7 @@
     font-family: var(--ifm-font-family-monospace);
     margin-bottom: 10px;
 }
+
+.runButton {
+    margin-bottom: 15px;
+}
