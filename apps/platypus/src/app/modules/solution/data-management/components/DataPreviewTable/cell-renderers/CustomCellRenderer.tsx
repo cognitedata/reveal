@@ -110,6 +110,7 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
           debounchedSearch();
         }
       }}
+      appendTo={document.getElementById('dataPreviewTableWrapper')!}
       onHide={() => setIsHovered(false)}
     >
       <Tag>{props.value}</Tag>

@@ -663,7 +663,10 @@ export const DataPreviewTable = forwardRef<
           dataModelTypeDefs={dataModelTypeDefs}
           dataModelVersion={selectedDataModelVersion}
         >
-          <StyledDataPreviewTable data-cy="data-preview-table">
+          <StyledDataPreviewTable
+            data-cy="data-preview-table"
+            id="dataPreviewTableWrapper"
+          >
             <CogDataGrid
               ref={gridRef}
               gridOptions={{

@@ -12,6 +12,9 @@
   
 }
 
+
+.cog-data-grid.cog-data-grid-compact  .ag-header-cell-comp-wrapper,
+.cog-data-grid.cog-data-grid-compact .ag-header-cell,
 .cog-data-grid.cog-data-grid-compact .ag-cell{
   overflow: visible;
 }
@@ -199,6 +202,7 @@
 .cog-data-grid.cog-data-grid-default .ag-cell {
   padding: var(--ag-cell-vertical-padding) var(--ag-cell-horizontal-padding);
   line-height: var(--ag-cell-line-height);
+  overflow: visible;
 }
 
 

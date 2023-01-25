@@ -97,8 +97,14 @@ export const useTypeDefFieldsGrid = () => {
         {
           property: 'nonNull',
           label: (
-            <div style={{ width: 'inherit' }}>
-              <Tooltip content={t('field_label_req_tooltip', 'Required')}>
+            <div
+              style={{ width: 'inherit' }}
+              title={t('field_label_req_tooltip', 'Required')}
+            >
+              <Tooltip
+                content={t('field_label_req_tooltip', 'Required')}
+                appendTo={document.querySelector('[data-cy="editor_panel"]')!}
+              >
                 <span
                   style={{
                     width: 'inherit',
