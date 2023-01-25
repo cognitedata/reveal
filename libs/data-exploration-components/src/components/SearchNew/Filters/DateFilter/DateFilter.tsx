@@ -99,14 +99,20 @@ export const DateFilterV2 = ({
         break;
       }
       case 'before': {
+        const previousMinValue = value?.min && new Date(value.min).getTime();
         if (!value || value.max !== endDate.valueOf()) {
-          finalValue = { max: endDate.valueOf() };
+          finalValue = {
+            max: previousMinValue || endDate.valueOf(),
+          };
         }
         break;
       }
       case 'after': {
+        const previousMaxValue = value?.max && new Date(value?.max).getTime();
         if (!value || value.min !== endDate.valueOf()) {
-          finalValue = { min: endDate.valueOf() };
+          finalValue = {
+            min: previousMaxValue || endDate.valueOf(),
+          };
         }
         break;
       }
