@@ -96,13 +96,16 @@ export class Image360ApiHelper {
       this.exit360Image();
     }
 
-    this._imageCollection.forEach(imageCollection => pullAll(
+    this._imageCollection.forEach(imageCollection =>
+      pullAll(
         imageCollection.image360Entities,
         entities.map(entity => entity as Image360Entity)
       )
     );
-    
-    const imageCollectionsToRemove = this._imageCollection.filter(collection => collection.image360Entities.length === 0);
+
+    const imageCollectionsToRemove = this._imageCollection.filter(
+      collection => collection.image360Entities.length === 0
+    );
     pullAll(this._imageCollection, imageCollectionsToRemove);
     imageCollectionsToRemove.forEach(collection => collection.dispose());
 

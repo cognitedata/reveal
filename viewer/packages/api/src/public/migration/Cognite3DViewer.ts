@@ -729,13 +729,13 @@ export class Cognite3DViewer {
     const collectionTransform = add360ImageOptions?.collectionTransform ?? new THREE.Matrix4();
     const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
 
-    const image360Entities = await this._image360ApiHelper.add360ImageSet(
+    const image360Collection = await this._image360ApiHelper.add360ImageSet(
       eventFilter,
       collectionTransform,
       preMultipliedRotation
     );
 
-    return image360Entities;
+    return image360Collection;
   }
 
   /**
