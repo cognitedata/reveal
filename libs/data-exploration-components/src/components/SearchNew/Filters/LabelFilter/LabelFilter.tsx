@@ -52,7 +52,7 @@ export const LabelFilterV2 = ({
         <FilterFacetTitle>Labels</FilterFacetTitle>
         <MultiSelect
           options={labels.map((label) => ({
-            label: String(value),
+            label: String(label.value),
             value: String(label.value),
           }))}
           cogsTheme="grey"

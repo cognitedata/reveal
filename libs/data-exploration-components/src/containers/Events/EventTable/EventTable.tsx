@@ -19,12 +19,10 @@ export const EventTable = ({
   query,
   ...rest
 }: Omit<TableProps<EventWithRelationshipLabels>, 'columns'>) => {
-  const { data: metadataKeys } = useEventsMetadataKeys();
+  const { data: metadataKeys = [] } = useEventsMetadataKeys();
 
-  const metadataColumns: ColumnDef<CogniteEvent>[] = useMemo(() => {
-    return (metadataKeys || []).map((key: string) =>
-      ResourceTableColumns.metadata(key)
-    );
+  const metadataColumns = useMemo(() => {
+    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
   }, [metadataKeys]);
 
   const columns = useMemo(

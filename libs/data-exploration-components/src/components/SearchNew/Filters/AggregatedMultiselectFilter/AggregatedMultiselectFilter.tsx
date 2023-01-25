@@ -26,6 +26,11 @@ export const AggregatedMultiselectFilter = <T extends {}>({
     [items, aggregator]
   );
 
+  const selectedValues = value?.map((el) => ({
+    label: el,
+    value: el,
+  }));
+
   const handleOnChange = (item: string[]) => {
     if (item) {
       setValue(item);
@@ -41,7 +46,7 @@ export const AggregatedMultiselectFilter = <T extends {}>({
       title={title}
       creatable
       options={sourceArray}
-      values={value}
+      value={selectedValues}
       onChange={handleOnChange}
       addNilOption={addNilOption}
     />

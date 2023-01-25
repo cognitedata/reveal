@@ -5,7 +5,7 @@ import isUndefined from 'lodash/isUndefined';
 
 export const isNilOption = <ValueType>({ value }: OptionType<ValueType>) => {
   if (!isUndefined(value) && isString(value)) {
-    return true;
+    return false;
   }
-  return false;
+  return true;
 };

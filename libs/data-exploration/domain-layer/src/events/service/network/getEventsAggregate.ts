@@ -1,35 +1,18 @@
-import {
-  AggregateResponse,
-  CogniteClient,
-  CursorResponse,
-  EventFilter,
-} from '@cognite/sdk';
-import {
-  AdvancedFilter,
-  EventsProperties,
-} from '@data-exploration-lib/domain-layer';
+import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
+import { EventsAggregateRequestPayload } from '@data-exploration-lib/domain-layer';
 
-export const getEventsAggregate = (
+export const getEventsAggregate = <ResponseType = AggregateResponse>(
   sdk: CogniteClient,
-  {
-    filter,
-    advancedFilter,
-  }: {
-    filter?: EventFilter;
-    advancedFilter?: AdvancedFilter<EventsProperties>;
-  }
+  payload?: EventsAggregateRequestPayload
 ) => {
   return sdk
-    .post<CursorResponse<AggregateResponse[]>>(
+    .post<CursorResponse<ResponseType[]>>(
       `/api/v1/projects/${sdk.project}/events/aggregate`,
       {
         headers: {
           'cdf-version': 'alpha',
         },
-        data: {
-          filter,
-          advancedFilter,
-        },
+        data: payload,
       }
     )
     .then(({ data }) => {

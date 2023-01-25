@@ -18,13 +18,20 @@ import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { CogniteEvent } from '@cognite/sdk/dist/src';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import {
+  transformNewFilterToOldFilter,
+  useEventsMetadataKeysAggregateQuery,
+  useEventsMetadataValuesAggregateQuery,
+} from '@data-exploration-lib/domain-layer';
 
 export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
   const [eventFilter, setEventFilter] = useEventsFilters();
   const resetEventFilters = useResetEventsFilters();
   const isFiltersEmpty = useFilterEmptyState('event');
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
+
+  const { data: metadataKeys = [] } =
+    useEventsMetadataKeysAggregateQuery(eventFilter);
 
   const { data: items = [] } = useList<CogniteEvent>('events', {
     filter: transformNewFilterToOldFilter(eventFilter),
@@ -85,14 +92,14 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
           isMulti={isAdvancedFiltersEnabled}
         />
         {/* <ByAssetFilter
-        value={eventF.assetSubtreeIds?.map(el => (el as InternalId).id)}
-        setValue={newValue =>
-          setFilter({
-            ...filter,
-            assetSubtreeIds: newValue?.map(id => ({ id })),
-          })
-        }
-      /> */}
+          value={eventF.assetSubtreeIds?.map((el) => (el as InternalId).id)}
+          setValue={(newValue) =>
+            setFilter({
+              ...filter,
+              assetSubtreeIds: newValue?.map((id) => ({ id })),
+            })
+          }
+        /> */}
         <SourceFilter
           items={items}
           value={eventFilter.sources}
@@ -105,12 +112,14 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
         />
         <MetadataFilterV2
           items={items}
+          keys={metadataKeys}
           value={eventFilter.metadata}
           setValue={(newMetadata) =>
             setEventFilter({
               metadata: newMetadata,
             })
           }
+          useAggregateMetadataValues={useEventsMetadataValuesAggregateQuery}
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>
