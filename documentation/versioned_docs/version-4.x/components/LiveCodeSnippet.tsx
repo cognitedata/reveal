@@ -1,10 +1,42 @@
 import * as React from 'react';
+import { useState } from 'react';
 
 import CodeMirror from '@uiw/react-codemirror';
+import { syntaxTree } from '@codemirror/language';
+import { EditorView } from '@codemirror/view';
 import { javascript } from '@codemirror/lang-javascript';
 import { material } from '@uiw/codemirror-theme-material';
 import styles from './styles.module.css';
 import clsx from 'clsx';
+
+import { linter, Diagnostic } from "@codemirror/lint";
+
+
+function createLintProvider(setHasError: (hasError: boolean) => void) {
+  function lintProvider(view: EditorView): readonly Diagnostic[] {
+    const diagnostics: Diagnostic[] = [];
+    let anyError = false;
+    syntaxTree(view.state).iterate({
+      enter: (node) => {
+        if (node.type.isError) {
+          anyError = true;
+          diagnostics.push({
+            from: node.from,
+            to: node.to,
+            severity: "error",
+            message: "Syntax error",
+          });
+        }
+      },
+    });
+
+    setHasError(anyError);
+
+    return diagnostics;
+  }
+
+  return lintProvider;
+}
 
 // Replacement for "import { customScope } from './customScope'" to avoid
 // build issues with React Server-side Rendering
@@ -59,6 +91,10 @@ export const LiveCodeSnippet = (props: LiveCodeSnippetProps) => {
     code = newCode;
   }
 
+  let [buttonEnabled, setButtonEnabled] = useState(true);
+
+  const lintProvider = createLintProvider(v => setButtonEnabled(!v));
+
   return (<>
     <div className={clsx(styles.codeSnippetHeader,
                          styles.codeSnippetEditorHeader)}>
@@ -73,8 +109,9 @@ export const LiveCodeSnippet = (props: LiveCodeSnippetProps) => {
                     autocompletion: false,
                     highlightActiveLine: false }}
       className={styles.cmEditor}
-      extensions={[javascript({})]} />
+      extensions={[javascript({}), linter(lintProvider)]} />
     <button type="button"
+            disabled={!buttonEnabled}
             onClick={() => onRunCode(code)}
             className={clsx("button button--primary button--lg", styles.runButton)}>
       Run
