@@ -7,6 +7,7 @@ import {
 } from '@cognite/cdf-utilities';
 import './set-public-path';
 import App from './app/App';
+import GlobalStyles from './GlobalStyles';
 
 export const AppWrapper = () => {
   const projectName = 'coding-conventions';
@@ -14,10 +15,12 @@ export const AppWrapper = () => {
   const env = getEnv();
 
   return (
-    <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
-      <SubAppWrapper title={projectName}>
-        <App />
-      </SubAppWrapper>
-    </AuthWrapper>
+    <GlobalStyles>
+      <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
+        <SubAppWrapper title={projectName}>
+          <App />
+        </SubAppWrapper>
+      </AuthWrapper>
+    </GlobalStyles>
   );
 };

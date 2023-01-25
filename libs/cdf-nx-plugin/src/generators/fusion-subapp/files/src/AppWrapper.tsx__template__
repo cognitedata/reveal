@@ -5,8 +5,11 @@ import {
   getEnv,
   getProject,
 } from '@cognite/cdf-utilities';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+
 import './set-public-path';
 import App from './app/App';
+import GlobalStyles from './GlobalStyles';
 
 <% if (internationalization) { %>
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
@@ -14,17 +17,26 @@ import { translations } from './app/common/i18n';
 <% } %>
 
 export const AppWrapper = () => {
-    const projectName = "<%= projectName %>";
-    const project = getProject();
-    const env = getEnv();
-  
-    return (
-        <% if (internationalization) { %><I18nWrapper translations={translations} defaultNamespace={projectName}><% } %>
-         <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
-            <SubAppWrapper title={projectName}>
-                <App />
-            </SubAppWrapper>
+  const projectName = "<%= projectName %>";
+  const project = getProject();
+  const env = getEnv();
+
+  useEffect(() => {
+    cogsStyles.use();
+    return () => {
+      cogsStyles.unuse();
+    };
+  }, []);
+
+  return (
+    <GlobalStyles>
+      <% if (internationalization) { %><I18nWrapper translations={translations} defaultNamespace={projectName}><% } %>
+        <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
+          <SubAppWrapper title={projectName}>
+              <App />
+          </SubAppWrapper>
         </AuthWrapper>
-        <% if (internationalization) { %></I18nWrapper><% } %>
-    );
-  };
+      <% if (internationalization) { %></I18nWrapper><% } %>
+    </GlobalStyles>
+  );
+};
