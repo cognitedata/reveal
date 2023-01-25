@@ -1,30 +1,30 @@
 import * as React from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 
-import { RootAssetLabel } from './elements';
+import { RootAssetLabel, RootAssetButtonWrapper } from './elements';
 
 export interface RootAssetButtonProps {
   label: string;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
-  maxWidth?: number;
+  onClick: React.MouseEventHandler<HTMLDivElement>;
   externalLink?: boolean;
 }
 
 export const RootAssetButton: React.FC<RootAssetButtonProps> = ({
   label,
   onClick,
-  maxWidth,
   externalLink = true,
 }) => {
   return (
-    <Button
-      icon={externalLink ? 'ArrowUpRight' : 'ArrowRight'}
-      iconPlacement="right"
-      type="link"
+    <RootAssetButtonWrapper
+      className="cogs-btn cogs-btn-link"
+      role="button"
       onClick={onClick}
     >
-      <RootAssetLabel maxwidth={maxWidth}>{label}</RootAssetLabel>
-    </Button>
+      <RootAssetLabel>{label}</RootAssetLabel>
+      <div>
+        <Icon type={externalLink ? 'ArrowUpRight' : 'ArrowRight'} />
+      </div>
+    </RootAssetButtonWrapper>
   );
 };

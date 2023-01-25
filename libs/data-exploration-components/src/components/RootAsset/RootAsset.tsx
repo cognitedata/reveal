@@ -12,21 +12,20 @@ import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constan
 export interface RootAssetProps {
   assetId: number;
   onClick?: (rootAsset: Asset) => void;
-  maxWidth?: number;
   externalLink?: boolean;
 }
 
 export const RootAsset: React.FC<RootAssetProps> = ({
   assetId,
   onClick = openAssetInNewTab,
-  maxWidth,
+
   externalLink,
 }) => {
   const { data: rootAsset, isLoading } = useRootAssetQuery(assetId);
   const trackUsage = useMetrics();
 
   const handleClick = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       event.stopPropagation();
 
       if (rootAsset) {
@@ -51,7 +50,6 @@ export const RootAsset: React.FC<RootAssetProps> = ({
     <RootAssetButton
       label={rootAsset.name}
       onClick={handleClick}
-      maxWidth={maxWidth}
       externalLink={externalLink}
     />
   );

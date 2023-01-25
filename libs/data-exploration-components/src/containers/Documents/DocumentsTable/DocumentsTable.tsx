@@ -39,7 +39,7 @@ export const RootAssetCell = ({ row }: { row: Row<InternalDocument> }) => {
     return <>{DASH}</>;
   }
 
-  return <RootAsset assetId={assetId} maxWidth={300} />;
+  return <RootAsset assetId={assetId} />;
 };
 
 const visibleColumns = [

@@ -21,17 +21,6 @@ export const Ellipsis = () => {
   return <RootAssetButton label="Long root asset" onClick={handleClick} />;
 };
 
-export const MaxWidth = () => {
-  const label = 'Test root asset label';
-
-  return (
-    <>
-      <RootAssetButton label={label} onClick={handleClick} maxWidth={60} />
-      <RootAssetButton label={label} onClick={handleClick} maxWidth={120} />
-    </>
-  );
-};
-
 const Container = styled.div`
   padding: 20px;
   display: flex;
