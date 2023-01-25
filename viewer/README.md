@@ -166,7 +166,7 @@ For more information about visual tests, see [visual-tests/README.md](visual-tes
 
 ### Recommended package folder structure
     ├── app                   # Runnable app
-      └──index.ts             # Entry point for runnable app
+    │ └──index.ts             # Entry point for runnable app
     ├── src                   # Source code for package
     ├── wasm                  # Rust/Webassembly source code for package
     ├── test                  # Automated tests
