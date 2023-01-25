@@ -5,7 +5,7 @@ import { aggregateKey } from '@cognite/sdk-react-query-hooks';
 import { useQuery } from 'react-query';
 
 import {
-  MultiSelectFilterNew,
+  MultiSelectFilter,
   Select,
 } from '@data-exploration-components/components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
@@ -66,44 +66,44 @@ export const AggregatedEventFilterV2 = ({
     });
   };
 
+  if (isMulti && isArray(value)) {
+    return (
+      <MultiSelectFilter
+        title={title}
+        creatable
+        options={data.map(({ value: eventType }) => ({
+          value: String(eventType),
+          label: String(eventType),
+        }))}
+        values={value}
+        onChange={(items) => {
+          if (items) {
+            setValue(items);
+          }
+        }}
+      />
+    );
+  }
+
   return (
     <>
-      {isMulti && isArray(value) ? (
-        <MultiSelectFilterNew
-          title={title}
-          creatable
-          options={[...data].map(({ value: eventType }) => ({
-            value: eventType,
-            label: String(eventType),
-          }))}
-          values={value}
-          onChange={(items: string[]) => {
-            if (items) {
-              setValue(items);
-            }
-          }}
-        />
-      ) : (
-        <>
-          <FilterFacetTitle>{title}</FilterFacetTitle>
-          <Select
-            creatable
-            value={isString(value) ? { value: value, label: value } : undefined}
-            onChange={(item) => {
-              if (item) {
-                handleUpdate((item as { value: string }).value);
-              } else {
-                handleUpdate(undefined);
-              }
-            }}
-            {...reactSelectCogsStylingProps}
-            options={[...data].map(({ value: eventType }) => ({
-              value: eventType,
-              label: String(eventType),
-            }))}
-          />
-        </>
-      )}
+      <FilterFacetTitle>{title}</FilterFacetTitle>
+      <Select
+        creatable
+        value={isString(value) ? { value: value, label: value } : undefined}
+        onChange={(item) => {
+          if (item) {
+            handleUpdate((item as { value: string }).value);
+          } else {
+            handleUpdate(undefined);
+          }
+        }}
+        {...reactSelectCogsStylingProps}
+        options={data.map(({ value: eventType }) => ({
+          value: eventType,
+          label: String(eventType),
+        }))}
+      />
     </>
   );
 };

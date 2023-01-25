@@ -11,7 +11,6 @@ export * from './FileFilters';
 export * from './Filters';
 export * from './LabelFilter/LabelFilter';
 export * from './MetadataFilter/MetadataFilter';
-export * from './MultiSelectFilterNew';
 export * from './NumberFilter/NumberFilter';
 export * from './SequenceFilters';
 export * from './StringFilter/StringFilter';

@@ -12,9 +12,9 @@ import { useResourceTypeDataSetAggregate } from '@data-exploration-lib/domain-la
 import { OptionValue } from '../types';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
-import { MultiSelectFilterNew } from '../MultiSelectFilterNew';
+import { MultiSelectFilter } from '@data-exploration-components/components';
 
-const formatOption = (dataset: DataSetWCount) => {
+const formatOption = (dataset: DataSetWCount): OptionType<number> => {
   const name = dataset?.name || '';
   const label = name.length > 0 ? name : `${dataset.id}`;
   return {
@@ -42,10 +42,6 @@ export const DataSetFilterV2 = ({
     }
   );
 
-  const setDataSetFilter = (newValue?: OptionType<number>[]) => {
-    setValue(newValue as OptionValue<number>[]);
-  };
-
   const { data: datasetOptions, isError } = useResourceTypeDataSetAggregate(
     resourceType ? convertResourceType(resourceType) : undefined
   );
@@ -65,13 +61,13 @@ export const DataSetFilterV2 = ({
         'Error fetching datasets, please make sure you have datasetsAcl:READ'
       }
     >
-      <MultiSelectFilterNew
+      <MultiSelectFilter
         title="Data set"
         options={datasetOptions?.map(formatOption) || []}
         isDisabled={isError}
-        onChange={(_: any, newValues: OptionType<number>[]) => {
+        onChange={(_, newValues) => {
           if (newValues) {
-            setDataSetFilter(newValues);
+            setValue(newValues);
           }
           trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.DATA_SET_FILTER, {
             ...newValues,

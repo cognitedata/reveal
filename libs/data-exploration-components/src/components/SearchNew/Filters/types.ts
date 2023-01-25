@@ -9,7 +9,7 @@ export type CommonFilterFacets = {
   externalIdPrefix?: string;
 };
 
-export type OptionValue<T extends string | number> = {
+export type OptionValue<ValueType> = {
   label?: string;
-  value: T;
+  value: ValueType;
 };

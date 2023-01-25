@@ -20,6 +20,7 @@ export interface SourceFilterProps<T> {
 export const SourceFilter = <T,>({
   items,
   isAdvancedFiltersEnabled,
+  onChange,
   ...rest
 }: SourceFilterProps<T>) => {
   const options = React.useMemo(() => {
@@ -43,7 +44,7 @@ export const SourceFilter = <T,>({
         items={items}
         value={head(rest.value)?.value}
         setValue={(newSource) =>
-          rest.onChange([
+          onChange([
             {
               label: newSource,
               value: String(newSource),
@@ -60,6 +61,7 @@ export const SourceFilter = <T,>({
       {...rest}
       title="Source"
       options={options}
+      onChange={(_, newSources) => onChange(newSources)}
     />
   );
 };

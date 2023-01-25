@@ -20,7 +20,6 @@ export {
   SequenceTab,
   ThreeDTab,
   NumberFilter,
-  MultiSelectFilterNew,
   SourceFilter,
 } from './SearchNew';
 export * from './InfoGrid/InfoGrid';

@@ -6,11 +6,11 @@ import {
   useList,
 } from '@cognite/sdk-react-query-hooks';
 import { useDebounce } from 'use-debounce';
-import { MultiSelectFilterNew } from '@data-exploration-components/components';
 import { Props, OptionTypeBase } from 'react-select';
 import { Theme } from '@cognite/cogs.js';
 import { OptionValue } from '@data-exploration-components/components/SearchNew/Filters/types';
 import noop from 'lodash/noop';
+import { MultiSelectFilter } from '@data-exploration-components/components';
 
 export type AssetSelectProps = Omit<Props<OptionTypeBase>, 'theme'> & {
   title: string;
@@ -90,15 +90,15 @@ export const AssetSelect = ({
   }));
 
   return (
-    <MultiSelectFilterNew
+    <MultiSelectFilter
       title={title}
       isClearable
       {...extraProps}
       isLoading={isLoading || isRootLoading}
       values={selectedItemValues}
-      onInputChange={(input: React.SetStateAction<string>) => setQuery(input)}
+      onInputChange={setQuery}
       options={values}
-      onChange={(_: string, selected: OptionValue<number>[]) => {
+      onChange={(_, selected) => {
         onAssetSelected(selected);
       }}
     />

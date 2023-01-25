@@ -1,12 +1,14 @@
+import get from 'lodash/get';
+
 export const mapAggregateDataToSourceData = <T extends object>(
   aggregateData: T[],
   aggregator: string
 ) => {
-  const sources: Set<string | number> = new Set();
+  const sources: Set<string> = new Set();
 
   aggregateData.forEach((el) => {
     if (aggregator in el) {
-      sources.add((el as any)[aggregator] as string | number);
+      sources.add(get(el, aggregator));
     }
   });
 

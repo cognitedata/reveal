@@ -5,7 +5,7 @@ import {
 } from '@data-exploration-components/components';
 import { FilterTitle } from './FilterTitle';
 
-// Note: use MultiSelectFilterNew filter from component libs. this is going to be removed in near future.
+// Note: use MultiSelectFilter filter from component libs. this is going to be removed in near future.
 
 import { OptionValue } from '@data-exploration-components/components/SearchNew/Filters/types';
 

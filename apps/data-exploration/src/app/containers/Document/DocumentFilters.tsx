@@ -11,13 +11,11 @@ import {
   useDocumentAggregateSourceQuery,
   useDocumentSearchResultQuery,
   useDocumentAggregateFileTypeQuery,
+  InternalDocumentFilter,
 } from '@data-exploration-lib/domain-layer';
 
 import { useFilterEmptyState } from '@data-exploration-app/store';
-import {
-  MetadataFilterV2,
-  MultiSelectFilterNew,
-} from '@cognite/data-exploration';
+import { MetadataFilterV2, MultiSelectFilter } from '@cognite/data-exploration';
 import isEmpty from 'lodash/isEmpty';
 
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
@@ -41,6 +39,15 @@ export const DocumentFilter = ({ ...rest }) => {
   const { data: sourceItems, isError: isSourceError } =
     useDocumentAggregateSourceQuery();
 
+  const updateDocumentFilter = <ValueType,>(
+    key: keyof InternalDocumentFilter,
+    newValue?: ValueType[]
+  ) => {
+    setDocumentFilter({
+      [key]: isEmpty(newValue) ? undefined : newValue,
+    });
+  };
+
   return (
     <BaseFilterCollapse.Panel
       title="Files"
@@ -50,46 +57,38 @@ export const DocumentFilter = ({ ...rest }) => {
       {...rest}
     >
       <TempMultiSelectFix>
-        <MultiSelectFilterNew
+        <MultiSelectFilter
           title="File type"
           options={fileTypeItems}
           isDisabled={isFileTypeError}
-          onChange={(newValue: string[]) => {
-            setDocumentFilter({
-              type: newValue && newValue.length > 0 ? newValue : undefined,
-            });
+          onChange={(newValue) => {
+            updateDocumentFilter('type', newValue);
           }}
           values={documentFilter.type}
         />
-        <MultiSelectFilterNew
+        <MultiSelectFilter
           title="Author"
           options={authorOptions}
           isDisabled={isAuthorError}
-          onChange={(newValue: string[]) => {
-            setDocumentFilter({
-              author: newValue && newValue.length > 0 ? newValue : undefined,
-            });
+          onChange={(newValue) => {
+            updateDocumentFilter('author', newValue);
           }}
           values={documentFilter.author}
         />
-        <MultiSelectFilterNew
+        <MultiSelectFilter
           title="Source"
           options={sourceItems}
           isDisabled={isSourceError}
-          onChange={(newValue: string[]) => {
-            setDocumentFilter({
-              source: newValue && newValue.length > 0 ? newValue : undefined,
-            });
+          onChange={(newValue) => {
+            updateDocumentFilter('source', newValue);
           }}
           values={documentFilter.source}
         />
         <MetadataFilterV2
           items={resultWithMetadata}
           value={documentFilter.metadata}
-          setValue={(newMetadata) => {
-            setDocumentFilter({
-              metadata: isEmpty(newMetadata) ? undefined : newMetadata,
-            });
+          setValue={(newValue) => {
+            updateDocumentFilter('metadata', newValue);
           }}
         />
       </TempMultiSelectFix>
