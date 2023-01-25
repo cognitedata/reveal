@@ -67,8 +67,9 @@ const AssetsHighlightButton = ({
 
   const handleAssetHighlighting = () => {
     setAssetHighlightMode(!assetHighlightMode);
-    trackUsage(EXPLORATION.CLICK.EMPHASIZE_CLICKABLE_OBJECT, {
+    trackUsage(EXPLORATION.THREED_SELECT.EMPHASIZE_CLICKABLE_OBJECT, {
       modelId: threeDModel?.modelId,
+      resourceType: '3D',
     });
 
     if (!useOverlays || !overlayTool) return;

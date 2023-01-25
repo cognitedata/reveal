@@ -17,6 +17,7 @@ import { Asset } from '@cognite/sdk';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
 import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 type ThreeDSidebarProps = {
   modelId?: number;
@@ -93,7 +94,9 @@ export const AssetMappingsSidebar = ({
       expanded={expanded}
       onFocus={() => {
         setExpanded(true);
-        trackUsage('Exploration.Preview.AssetMapping');
+        trackUsage(EXPLORATION.THREED_ACTION.ASSET_LIST_SELECT, {
+          resourceType: '3D',
+        });
       }}
     >
       <Flex gap={5} justifyContent="flex-end" alignItems="center">
@@ -111,7 +114,10 @@ export const AssetMappingsSidebar = ({
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
-            trackUsage('Exploration.Action.Search', { name: query });
+            trackUsage(EXPLORATION.THREED_ACTION.ASSET_SEARCH, {
+              name: query,
+              resourceType: '3D',
+            });
           }}
           placeholder={asset?.name || `Search (${isMac ? '⌘' : 'Ctrl'} + K)`}
           fullWidth
@@ -129,7 +135,9 @@ export const AssetMappingsSidebar = ({
               } else {
                 setExpanded(false);
               }
-              trackUsage('Exploration.Preview.AssetMapping');
+              trackUsage(EXPLORATION.THREED_ACTION.ASSET_PREVIEW_CLOSE, {
+                resourceType: '3D',
+              });
             }}
           >
             {query ? 'Clear' : 'Close'}
@@ -145,7 +153,10 @@ export const AssetMappingsSidebar = ({
           onClick={(e) => {
             handleAssetClick(e);
             setExpanded(false);
-            trackUsage('Exploration.Action.Select', { selectedAssetId });
+            trackUsage(EXPLORATION.THREED_ACTION.ASSET_SELECTED, {
+              selectedAssetId,
+              resourceType: '3D',
+            });
           }}
           itemCount={items?.length ?? 0}
           isItemLoaded={(i) => i < (items?.length || 0)}

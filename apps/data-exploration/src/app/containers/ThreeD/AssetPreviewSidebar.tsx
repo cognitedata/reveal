@@ -3,6 +3,7 @@ import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPrevie
 import { Tooltip, Button } from '@cognite/cogs.js';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 export const AssetPreviewSidebar = ({
   assetId,
@@ -20,7 +21,10 @@ export const AssetPreviewSidebar = ({
         aria-label="close-assets-preview-button"
         onClick={() => {
           onClose();
-          trackUsage('Exploration.Preview.ThreeDModel', { assetId });
+          trackUsage(EXPLORATION.THREED_ACTION.ASSET_SELECTED, {
+            assetId,
+            resourceType: '3D',
+          });
         }}
       />
     </Tooltip>

@@ -28,7 +28,7 @@ const HelpButton = (): JSX.Element => {
           type="ghost"
           aria-label="help-button"
           onClick={() => {
-            trackUsage(EXPLORATION.CLICK.HELP, {
+            trackUsage(EXPLORATION.THREED_SELECT.NAVIGATION_HELP, {
               resourceType: '3D',
             });
           }}

@@ -36,7 +36,10 @@ const ShareButton = ({
       </div>,
       { toastId: 'url-state-clipboard' }
     );
-    trackUsage(EXPLORATION.COPY.URL_TO_CLIPBOARD, { resourceType: '3D', path });
+    trackUsage(EXPLORATION.THREED_SELECT.COPY_URL_TO_CLIPBOARD, {
+      resourceType: '3D',
+      path,
+    });
   };
 
   return (

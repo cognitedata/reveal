@@ -31,7 +31,6 @@ export const HomeButton = () => {
         aria-label="Home"
         onClick={() => {
           navigate(createLink(`/explore/search/threeD`));
-          trackUsage('Exploration.Preview.ThreeDModel');
         }}
       />
     </Tooltip>
@@ -57,7 +56,9 @@ export const ExpandButton = ({
         onClick={() => {
           const boundingBox = model.getModelBoundingBox(undefined, true);
           viewer.fitCameraToBoundingBox(boundingBox);
-          trackUsage('Exploration.Preview.FitToView');
+          trackUsage(EXPLORATION.THREED_SELECT.FIT_TO_VIEW, {
+            resourceType: '3D',
+          });
         }}
         type="ghost"
       />
@@ -144,7 +145,10 @@ export const PointToPointMeasurementButton = ({
     } else {
       enterMeasurementMode();
     }
-    trackUsage(EXPLORATION.CLICK.MEASURING_TOOL, { show: nodesSelectable });
+    trackUsage(EXPLORATION.THREED_SELECT.MEASURING_TOOL, {
+      show: nodesSelectable,
+      resourceType: '3D',
+    });
   };
 
   return (

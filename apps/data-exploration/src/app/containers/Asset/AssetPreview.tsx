@@ -26,6 +26,7 @@ import ResourceSelectionContext from '@data-exploration-app/context/ResourceSele
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 export type AssetPreviewTabType =
   | 'details'

@@ -12,6 +12,7 @@ import { AugmentedMapping } from './hooks';
 import { prepareSearchString, grepContains } from './utils';
 import { CogniteError } from '@cognite/sdk';
 import noop from 'lodash/noop';
+import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 
 const FeedbackFlex = styled(Flex)`
   padding-top: 30px;
@@ -128,8 +129,9 @@ export const AssetMappingsList = ({
                         key={filteredAssets[index].assetId}
                         onClick={() => {
                           onClick(filteredAssets[index].assetId);
-                          trackUsage('Exploration.Action.Select', {
+                          trackUsage(EXPLORATION.THREED_ACTION.ASSET_SELECTED, {
                             selectedAssetId,
+                            resourceType: '3D',
                           });
                         }}
                         onKeyDown={() => onClick(filteredAssets[index].assetId)}

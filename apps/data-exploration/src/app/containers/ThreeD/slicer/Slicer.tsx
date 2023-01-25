@@ -73,7 +73,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
           type="ghost"
           aria-label="slice-button"
           onClick={() => {
-            trackUsage(EXPLORATION.CLICK.SLICE);
+            trackUsage(EXPLORATION.THREED_SELECT.SLICE, { resourceType: '3D' });
           }}
         />
       </Tooltip>

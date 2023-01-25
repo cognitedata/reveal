@@ -67,8 +67,18 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const useOverlays = useFlagAssetMappingsOverlays();
 
   useEffect(() => {
-    trackUsage('3DPreview.Open', { modelId });
+    trackUsage(EXPLORATION.THREED_ACTION.MODEL_SELECTED, {
+      modelId,
+      resourceType: '3D',
+    });
   }, [modelId]);
+
+  useEffect(() => {
+    trackUsage(EXPLORATION.THREED_ACTION.IMAGE_360_SELECTED, {
+      image360SiteId,
+      resourceType: '3D',
+    });
+  }, [image360SiteId]);
 
   const context = useContext(ThreeDContext);
   const {
@@ -106,7 +116,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
       const fn = debounce(() => {
         const currentState = viewer.getViewState();
         setViewState({ camera: currentState.camera });
-      }, 500);
+      }, 250);
       viewer.on('sceneRendered', fn);
       return () => viewer.off('sceneRendered', fn);
     }
@@ -131,10 +141,15 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
 
         if (closestAssetId && closestAssetId !== selectedAssetId) {
           setSelectedAssetId(closestAssetId);
+          trackUsage(EXPLORATION.THREED_ACTION.ASSET_SELECTED, {
+            closestAssetId,
+            resourceType: '3D',
+          });
         } else if (!closestAssetId) {
           setSelectedAssetId(undefined);
-          trackUsage(EXPLORATION.CLICK.UNCLICKABLE_OBJECT, {
+          trackUsage(EXPLORATION.THREED_SELECT.UNCLICKABLE_OBJECT, {
             modelId: threeDModel?.modelId,
+            resourceType: '3D',
           });
         }
       })();

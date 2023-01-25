@@ -122,12 +122,15 @@ const SecondaryModelDropdown = ({
   const handleApply = (): void => {
     if (canApply) {
       setSecondaryModels(tempSecondaryModels);
-      trackUsage(EXPLORATION.CLICK.APPLY_MODEL, {
+      trackUsage(EXPLORATION.THREED_ACTION.SECONDARY_MODEL_SELECTED, {
         resourceType: '3D',
       });
     }
     if (canApplyImages360) {
       setCubemap360Images(tempCubemap360Images);
+      trackUsage(EXPLORATION.THREED_ACTION.SECONDARY_IMAGE_360_SELECTED, {
+        resourceType: '3D',
+      });
     }
   };
 
