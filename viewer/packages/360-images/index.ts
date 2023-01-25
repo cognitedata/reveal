@@ -8,3 +8,5 @@ export { Image360Facade } from './src/Image360Facade';
 export { Image360EntityFactory } from './src/Image360EntityFactory';
 export { Image360Entity } from './src/Image360Entity';
 export { Image360Visualization } from './src/Image360Visualization';
+export { Image360EnteredDelegate, Image360ExitedDelegate } from './src/types';
+export { DefaultImage360Collection } from './src/DefaultImage360Collection';
