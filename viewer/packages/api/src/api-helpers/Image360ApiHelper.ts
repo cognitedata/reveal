@@ -96,21 +96,15 @@ export class Image360ApiHelper {
       this.exit360Image();
     }
 
-    const imageCollectionToRemove: DefaultImage360Collection[] = [];
-    this._imageCollection.forEach(imageCollection => {
-      pullAll(
+    this._imageCollection.forEach(imageCollection => pullAll(
         imageCollection.image360Entities,
         entities.map(entity => entity as Image360Entity)
-      );
-      if (imageCollection.image360Entities.length === 0) {
-        imageCollection.dispose();
-        imageCollectionToRemove.push(imageCollection);
-      }
-    });
-
-    if (imageCollectionToRemove.length > 0) {
-      pullAll(this._imageCollection, imageCollectionToRemove);
-    }
+      )
+    );
+    
+    const imageCollectionsToRemove = this._imageCollection.filter(collection => collection.image360Entities.length === 0);
+    pullAll(this._imageCollection, imageCollectionsToRemove);
+    imageCollectionsToRemove.forEach(collection => collection.dispose());
 
     await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
     this._requestRedraw();
