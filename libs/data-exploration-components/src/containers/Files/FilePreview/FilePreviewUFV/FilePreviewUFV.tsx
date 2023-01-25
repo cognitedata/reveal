@@ -36,6 +36,7 @@ import {
 } from '@data-exploration-lib/core';
 import { getContainerId } from './utils';
 import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
+import { Flex } from '@cognite/cogs.js';
 
 export type FilePreviewUFVProps = {
   id: string;
@@ -87,6 +88,8 @@ export const FilePreviewUFV = ({
   const [pendingAnnotations, setPendingAnnotations] = useState<
     ExtendedAnnotation[]
   >([]);
+  const [showResourcePreviewSidebar, setShowResourcePreviewSidebar] =
+    React.useState<boolean>(false);
   const sdk = useSDK();
 
   const [isAnnotationsShown, setIsAnnotationsShown] = useState<boolean>(true);
@@ -271,8 +274,8 @@ export const FilePreviewUFV = ({
   const toolProps = creatable ? RectangleToolProps : PanToolProps;
 
   return (
-    <FullHeightWrapper>
-      <FullHeightWrapper>
+    <FullHeightWrapper justifyContent="flex-end">
+      <UFVWrapper>
         <ReactUnifiedViewer
           applicationId={applicationId}
           id={id}
@@ -293,9 +296,12 @@ export const FilePreviewUFV = ({
           setSearchQuery={setSearchQuery}
           enableDownload={showDownload}
           enableSearch={showControls && resultsAvailable}
+          showSideBar={showSideBar}
+          showResourcePreviewSidebar={showResourcePreviewSidebar}
+          setShowResourcePreviewSidebar={setShowResourcePreviewSidebar}
         />
-      </FullHeightWrapper>
-      {showSideBar && (
+      </UFVWrapper>
+      {showSideBar && showResourcePreviewSidebar && (
         <SidebarWrapper>
           <AnnotationPreviewSidebar
             file={file}
@@ -316,19 +322,20 @@ export const FilePreviewUFV = ({
   );
 };
 
-const FullHeightWrapper = styled.div`
+const UFVWrapper = styled.div`
   display: flex;
   flex: 1;
   height: 100%;
   position: relative;
+`;
+const FullHeightWrapper = styled(Flex)`
+  height: 100%;
 `;
 
 const SidebarWrapper = styled.div`
   box-sizing: content-box;
   height: 100%;
   max-width: 360px;
-  overflow: auto;
-  flex-grow: 0;
   border-left: 1px solid ${lightGrey};
   background-color: white;
 `;

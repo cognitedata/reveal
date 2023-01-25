@@ -5,6 +5,9 @@ import { Button, Dropdown, Flex, Menu } from '@cognite/cogs.js';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { SearchBar } from './SearchBar';
 import { useFileDownloadUrl } from './hooks';
+import { IconButton } from '../../../../components';
+import noop from 'lodash/noop';
+import { HIDE_DETAILS, SHOW_DETAILS } from './constants';
 
 export const ActionTools = ({
   file,
@@ -13,6 +16,9 @@ export const ActionTools = ({
   setSearchQuery,
   enableSearch = true,
   enableDownload = true,
+  showSideBar = true,
+  showResourcePreviewSidebar = false,
+  setShowResourcePreviewSidebar = noop,
 }: {
   file: FileInfo;
   fileViewerRef?: UnifiedViewer;
@@ -20,6 +26,9 @@ export const ActionTools = ({
   setSearchQuery: (page: string) => void;
   enableSearch?: boolean;
   enableDownload?: boolean;
+  showSideBar?: boolean;
+  showResourcePreviewSidebar?: boolean;
+  setShowResourcePreviewSidebar?: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element | null => {
   const fileUrl = useFileDownloadUrl(file.id);
 
@@ -45,6 +54,18 @@ export const ActionTools = ({
           <SearchBar
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+          />
+        )}
+        {showSideBar && (
+          <IconButton
+            icon={showResourcePreviewSidebar ? 'PanelRight' : 'PanelLeft'}
+            tooltipContent={
+              showResourcePreviewSidebar ? HIDE_DETAILS : SHOW_DETAILS
+            }
+            aria-label="Toggle file preview sidebar view"
+            onClick={() => {
+              setShowResourcePreviewSidebar((prevState) => !prevState);
+            }}
           />
         )}
         {enableDownload && (
