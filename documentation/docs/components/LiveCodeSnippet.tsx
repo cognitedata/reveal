@@ -3,6 +3,8 @@ import * as React from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { atomone } from '@uiw/codemirror-theme-atomone';
+import styles from './styles.module.css';
+import clsx from 'clsx';
 
 // Replacement for "import { customScope } from './customScope'" to avoid
 // build issues with React Server-side Rendering
@@ -52,17 +54,27 @@ function onRunCode(code: string) {
 
 export const LiveCodeSnippet = (props: LiveCodeSnippetProps) => {
 
-  // const [code, setCode] = useState(props.children);
   let code: string = props.children;
   function setCode(newCode: string) {
     code = newCode;
   }
 
-  return (<><CodeMirror
-              value={props.children}
-              theme={atomone}
-              onChange={setCode}
-              basicSetup={{lineNumbers: false, foldGutter: false}}
-
-              extensions={[javascript({})]} /><button onClick={() => onRunCode(code)}>Run</button></>);
+  return (<>
+    <div className={clsx(styles.codeSnippetHeader,
+                         styles.codeSnippetEditorHeader)}>
+      Live Editor
+    </div>
+    <CodeMirror
+      value={props.children}
+      theme={atomone}
+      onChange={setCode}
+      basicSetup={{lineNumbers: false, foldGutter: false}}
+      className={styles.cmEditor}
+      extensions={[javascript({})]} />
+    <button type="button"
+            onClick={() => onRunCode(code)}
+            className="button button--primary button--lg">
+      Run
+    </button>
+  </>);
 };
