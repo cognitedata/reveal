@@ -23,9 +23,9 @@ export const queryKeys = {
   // EVENTS
   events: () => [...queryKeys.all, 'events'] as const,
   eventsMetadataValues: (metadataKey: string, filter?: any) =>
-    [...queryKeys.assets(), 'metadata', 'values', metadataKey, filter] as const,
+    [...queryKeys.events(), 'metadata', 'values', metadataKey, filter] as const,
   eventsUniqueValues: (property: string, filter?: any) =>
-    [...queryKeys.assets(), 'unique-values', property, filter] as const,
+    [...queryKeys.events(), 'unique-values', property, filter] as const,
   listEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || [])] as const,
   aggregateEvents: (input?: any[]) =>
