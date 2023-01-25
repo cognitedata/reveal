@@ -308,7 +308,8 @@ export function ModelDetails({
   );
 }
 
-const ModelDetailsContainer = styled.main`
+// not using main as cdf-simint-ui-style-scope overrides main to be display block
+const ModelDetailsContainer = styled.div`
   display: flex;
   flex-flow: column nowrap;
   flex: 1 1 auto;

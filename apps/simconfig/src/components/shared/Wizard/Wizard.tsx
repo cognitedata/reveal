@@ -7,6 +7,8 @@ import styled from 'styled-components/macro';
 
 import { Button } from '@cognite/cogs.js';
 
+import { LAYER } from '../../../utils/zIndex';
+
 import type { WizardStepProps } from './WizardStep';
 import { WizardStep } from './WizardStep';
 import { WizardStepIcon } from './WizardStepIcon';
@@ -210,7 +212,7 @@ const WizardProgressContainer = styled.div`
   transform: translate(0, 0); // resets position:fixed (x,y) origin
   width: calc(100% - 3rem);
   position: fixed;
-  z-index: 4;
+  z-index: ${LAYER.WIZARD_PROGRESS_CONTAINER};
   top: 13.5rem;
 `;
 

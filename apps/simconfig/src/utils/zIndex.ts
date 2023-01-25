@@ -5,6 +5,8 @@ export const LAYER = createLayers([
 
   'TOOLTIP',
   'DEFAULT',
+  'WIZARD_PROGRESS_CONTAINER',
+  'CALCULATION_CONFIGURATION_HEADER',
 
   'BOTTOM',
 ] as const);

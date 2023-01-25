@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import { useGlobalStyles } from '@cognite/cdf-utilities';
-import { Tooltip as CogsTooltip, Loader, Modal } from '@cognite/cogs.js';
+import {
+  Tooltip as CogsTooltip,
+  DateRange,
+  Drawer,
+  Loader,
+  Modal,
+} from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs-without-fonts.css';
 
 const STYLE_SCOPE = 'cdf-simint-ui-style-scope';
@@ -22,6 +28,18 @@ CogsTooltip.defaultProps = {
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 Modal.defaultProps = {
   ...Modal.defaultProps,
+  getContainer,
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+Drawer.defaultProps = {
+  ...Drawer.defaultProps,
+  getContainer,
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+DateRange.defaultProps = {
+  ...DateRange.defaultProps,
   getContainer,
 };
 

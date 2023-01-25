@@ -30,6 +30,8 @@ import { useTitle } from 'hooks/useTitle';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 
+import { LAYER } from '../../utils/zIndex';
+
 import { AdvancedStep } from './steps/AdvancedStep';
 import { DataSamplingStep } from './steps/DataSamplingStep';
 import { InputStep } from './steps/InputStep';
@@ -419,7 +421,7 @@ const CalculationConfigurationContainer = styled.main`
     position: fixed;
     top: 7rem;
     padding-bottom: 2.7em;
-    z-index: 8;
+    z-index: ${LAYER.CALCULATION_CONFIGURATION_HEADER}; // less than WIZARD_PROGRESS_CONTAINER
   }
 
   .cogs-infobox {
