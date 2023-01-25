@@ -4,11 +4,15 @@ import {
   Input,
   Title as CogsTitle,
 } from '@cognite/cogs.js';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { Card } from '../components/Card/Card';
+import { ConventionsContainer } from '../containers/ConventionsContainer';
+import { Page } from './elements';
 
 export const HomePage = () => {
+  const navigate = useNavigate();
+
   return (
     <Page>
       <Header>
@@ -21,23 +25,7 @@ export const HomePage = () => {
       </Header>
 
       <Content>
-        {/* <SearchInput placeholder="Filter by name..." /> */}
-
-        <Card
-          title="File name"
-          subtitle="Extract file type"
-          onClick={() => {
-            console.log('HI');
-          }}
-        />
-
-        <Card
-          title="Assets"
-          subtitle="Extract file type"
-          onClick={() => {
-            console.log('HI');
-          }}
-        />
+        <ConventionsContainer />
       </Content>
     </Page>
   );
@@ -74,12 +62,6 @@ const Subtitle = styled(Body)`
   padding-top: 4px;
 `;
 
-const Page = styled.main`
-  height: 100vh;
-`;
-
 const SearchInput = styled(Input)`
-  margin-bottom: 16px !important;
   border: 2px solid rgba(83, 88, 127, 0.16) !important;
-  width: 256px !important;
 `;

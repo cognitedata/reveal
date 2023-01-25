@@ -1,27 +1,47 @@
-import { Body, Button, Icon, Title as CogsTitle } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Detail,
+  Icon,
+  IconType,
+  Title as CogsTitle,
+} from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 interface Props {
+  icon: IconType;
   title: string;
   subtitle: string;
+  structure?: string;
   onClick?: () => void;
 }
 
-export const Card: React.FC<Props> = ({ title, subtitle, onClick }) => {
+export const Card: React.FC<Props> = ({
+  icon,
+  title,
+  subtitle,
+  structure,
+  onClick,
+}) => {
   return (
     <Container onClick={onClick} role="button">
       <Header>
-        <Icon size={18} type="Document" />
+        <Icon size={18} type={icon} />
         <Title>{title}</Title>
         <Subtitle>{subtitle}</Subtitle>
       </Header>
+
+      <Divider />
+      <Detail>
+        Structure: {structure ? <>{structure}</> : <i>unspecified</i>}
+      </Detail>
     </Container>
   );
 };
 
 const Container = styled.div`
   min-width: 270px;
-  height: 130px;
+  height: 160px;
   border-radius: 10px;
   box-shadow: 0px 1px 8px rgba(79, 82, 104, 0.1),
     0px 1px 1px rgba(79, 82, 104, 0.1);
@@ -56,6 +76,14 @@ const Title = styled(CogsTitle).attrs({ level: 5 })`
   margin-top: 8px !important;
 `;
 
-const Subtitle = styled(Body).attrs({ level: 3 })`
+const Subtitle = styled(Body).attrs((args) => ({ level: args.level || 3 }))`
   margin-top: 8px;
+`;
+
+const Divider = styled.div`
+  height: 1px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  width: 100%;
+  background-color: #d9d9d9;
 `;
