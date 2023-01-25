@@ -6,3 +6,4 @@ export * from './useSearchAssetTree';
 export * from './useRootAssetsQuery';
 export * from './useAssetsMetadataKeysAggregateQuery';
 export * from './useAssetsMetadataValuesAggregateQuery';
+export * from './useAssetsUniqueValuesByProperty';

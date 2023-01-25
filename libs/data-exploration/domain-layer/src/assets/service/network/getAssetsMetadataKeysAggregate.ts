@@ -1,5 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
 import {
+  AssetMetadataProperty,
   AssetsAggregateFilters,
   AssetsAggregateUniquePropertiesResponse,
   AssetsMetadataAggregateResponse,
@@ -17,7 +18,7 @@ export const getAssetsMetadataKeysAggregate = (
     path: ['metadata'],
   }).then(({ items }) => {
     return items.map(({ count, value }) => {
-      const metadataKey = value.property[1];
+      const metadataKey = (value.property as AssetMetadataProperty)[1];
       return {
         count,
         value: metadataKey,

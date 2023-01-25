@@ -1,4 +1,9 @@
-import { AssetAggregateResult, Label, Metadata } from '@cognite/sdk';
+import {
+  AssetAggregateResult,
+  Label,
+  Metadata,
+  UniqueValuesAggregateResponse,
+} from '@cognite/sdk';
 import { InternalCommonFilters } from '../../types';
 
 export type InternalAssetData = {

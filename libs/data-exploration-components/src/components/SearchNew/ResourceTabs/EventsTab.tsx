@@ -1,8 +1,12 @@
-import React from 'react';
 import { Label } from '@cognite/cogs.js';
-import { useEventsSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
+import {
+  mapFiltersToEventsAdvancedFilters,
+  mapInternalFilterToEventsFilter,
+  useEventsAggregateCountQuery,
+} from '@data-exploration-lib/domain-layer';
 import { ResourceTypeTitle, TabContainer } from './elements';
 import { getTabCountLabel } from '@data-exploration-components/utils';
+import { useMemo } from 'react';
 
 type Props = {
   query?: string;
@@ -11,19 +15,17 @@ type Props = {
 };
 
 export const EventsTab = ({ query, filter, showCount = false }: Props) => {
-  const {
-    data: { count },
-  } = useEventsSearchAggregateQuery({
-    eventsFilters: filter,
-    query,
-  });
+  const { data, ...rest } = useEventsAggregateCountQuery(
+    { eventsFilters: filter, query },
+    { keepPreviousData: true }
+  );
 
   return (
     <TabContainer>
       <ResourceTypeTitle>{'Events'}</ResourceTypeTitle>
       {showCount && (
         <Label size="small" variant="unknown">
-          {getTabCountLabel(count)}
+          {getTabCountLabel(data?.count || 0)}
         </Label>
       )}
     </TabContainer>

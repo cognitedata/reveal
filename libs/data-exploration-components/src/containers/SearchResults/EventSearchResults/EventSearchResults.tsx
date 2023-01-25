@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CogniteEvent } from '@cognite/sdk';
 import {
   SearchResultCountLabel,
@@ -15,8 +15,8 @@ import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedR
 
 import {
   InternalEventsFilters,
+  useEventsAggregateCountQuery,
   useEventsSearchResultQuery,
-  useEventsSearchAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
@@ -59,7 +59,7 @@ export const EventSearchResults = ({
       },
       { enabled: enableAdvancedFilters }
     );
-  const { data: aggregateData } = useEventsSearchAggregateQuery(
+  const { data: countData } = useEventsAggregateCountQuery(
     {
       eventsFilters: filter,
       query,
@@ -69,7 +69,7 @@ export const EventSearchResults = ({
 
   const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
   const totalDataCount = enableAdvancedFilters
-    ? aggregateData.count
+    ? countData?.count || 0
     : itemCount;
 
   return (

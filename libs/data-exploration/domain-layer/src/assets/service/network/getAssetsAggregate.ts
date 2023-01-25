@@ -1,12 +1,12 @@
-import { CogniteClient, CursorResponse } from '@cognite/sdk';
+import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
 import { AssetsAggregateRequestPayload } from '@data-exploration-lib/domain-layer';
 
-export const getAssetsAggregate = <ResponseItemType>(
+export const getAssetsAggregate = <ResponseType = AggregateResponse>(
   sdk: CogniteClient,
   payload?: AssetsAggregateRequestPayload
 ) => {
   return sdk
-    .post<CursorResponse<ResponseItemType[]>>(
+    .post<CursorResponse<ResponseType[]>>(
       `/api/v1/projects/${sdk.project}/assets/aggregate`,
       {
         headers: {

@@ -4,7 +4,7 @@ import { queryKeys } from '@data-exploration-lib/domain-layer';
 import { useQuery, UseQueryOptions } from 'react-query';
 import isEmpty from 'lodash/isEmpty';
 import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
-import { AggregateResponse, AssetFilterProps } from '@cognite/sdk';
+import { AssetFilterProps } from '@cognite/sdk';
 import {
   AssetsProperties,
   getAssetsAggregate,
@@ -25,7 +25,7 @@ export const useAssetsAggregateQuery = (
   const { data, ...rest } = useQuery(
     queryKeys.aggregateAssets([advancedFilter, filter]),
     () => {
-      return getAssetsAggregate<AggregateResponse>(sdk, {
+      return getAssetsAggregate(sdk, {
         filter,
         advancedFilter,
       });

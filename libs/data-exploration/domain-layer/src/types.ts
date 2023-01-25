@@ -21,3 +21,7 @@ export type TableSortBy = {
   id: string;
   desc: boolean;
 };
+
+export type EventAggreateOptions = {
+  fields: ('type' | 'subtype' | 'dataSetId')[];
+};

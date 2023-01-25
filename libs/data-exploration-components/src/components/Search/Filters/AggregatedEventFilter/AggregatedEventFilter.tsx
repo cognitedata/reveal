@@ -26,11 +26,11 @@ const useEventAggregate = (
   filter?: any
 ) => {
   const sdk = useSDK();
-  filter = transformNewFilterToOldFilter(filter);
+  const transformedfilter: any = transformNewFilterToOldFilter(filter);
 
   return useQuery(eventAggregateKey(aggregate, field, filter), async () =>
     sdk.events.aggregate.uniqueValues({
-      filter,
+      filter: transformedfilter,
       fields: [field],
     })
   );

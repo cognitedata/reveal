@@ -1,13 +1,18 @@
-import { useMemo } from 'react';
+import { useSDK } from '@cognite/sdk-provider';
+import {
+  getEventsAggregateCount,
+  queryKeys,
+} from '@data-exploration-lib/domain-layer';
+import { useQuery, UseQueryOptions } from 'react-query';
+
 import {
   InternalEventsFilters,
   mapFiltersToEventsAdvancedFilters,
   mapInternalFilterToEventsFilter,
-  useEventsAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
-import { UseQueryOptions } from 'react-query';
+import { useMemo } from 'react';
 
-export const useEventsSearchAggregateQuery = (
+export const useEventsAggregateCountQuery = (
   {
     query,
     eventsFilters,
@@ -15,8 +20,11 @@ export const useEventsSearchAggregateQuery = (
     query?: string;
     eventsFilters: InternalEventsFilters;
   },
+
   options?: UseQueryOptions
 ) => {
+  const sdk = useSDK();
+
   const advancedFilter = useMemo(
     () => mapFiltersToEventsAdvancedFilters(eventsFilters, query),
     [eventsFilters, query]
@@ -27,11 +35,16 @@ export const useEventsSearchAggregateQuery = (
     [eventsFilters]
   );
 
-  return useEventsAggregateQuery(
-    {
-      filter,
-      advancedFilter,
+  return useQuery(
+    queryKeys.aggregateEvents([advancedFilter, filter, 'count']),
+    () => {
+      return getEventsAggregateCount(sdk, {
+        filter,
+        advancedFilter,
+      });
     },
-    { ...options, keepPreviousData: true }
+    {
+      ...(options as any),
+    }
   );
 };

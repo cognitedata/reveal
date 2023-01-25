@@ -9,7 +9,7 @@ import {
 import { OptionValue } from '../types';
 import head from 'lodash/head';
 
-export interface SourceFilterProps<T> {
+export interface SourceFilterProps<T extends { source?: string }> {
   items: T[];
   value?: OptionValue<string>[];
   onChange: (newSources: OptionValue<string>[]) => void;
@@ -17,7 +17,7 @@ export interface SourceFilterProps<T> {
   isAdvancedFiltersEnabled?: boolean;
 }
 
-export const SourceFilter = <T,>({
+export const SourceFilter = <T extends { source?: string }>({
   items,
   isAdvancedFiltersEnabled,
   onChange,

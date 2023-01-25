@@ -33,7 +33,7 @@ export type AssetsAggregateRequestPayload = AssetsAggregateFilters &
   };
 
 export interface AssetsAggregateProperty {
-  property: string[];
+  property: [AssetProperty] | AssetMetadataProperty;
 }
 
 export interface AssetsAggregateUniquePropertiesResponse
@@ -50,3 +50,7 @@ export interface AssetsMetadataAggregateResponse extends AggregateResponse {
   value: string;
   values: string[];
 }
+
+export type AssetProperty = 'labels' | 'source';
+
+export type AssetMetadataProperty = ['metadata', string];

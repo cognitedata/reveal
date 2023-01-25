@@ -16,8 +16,8 @@ import {
   transformNewFilterToOldFilter,
   useAssetsMetadataKeysAggregateQuery,
   useAssetsMetadataValuesAggregateQuery,
+  useAssetsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
-
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 
 export const AssetFilters = ({ ...rest }) => {
@@ -25,15 +25,32 @@ export const AssetFilters = ({ ...rest }) => {
   const resetAssetFilters = useResetAssetFilters();
   const isFiltersEmpty = useFilterEmptyState('asset');
 
-  const { data: items = [] } = useList<any>('assets', {
-    filter: transformNewFilterToOldFilter(assetFilters),
-    limit: 1000,
-  });
+  const { data: items = [], isFetched: isAssetFetched } = useList<any>(
+    'assets',
+    {
+      filter: transformNewFilterToOldFilter(assetFilters),
+      limit: 1000,
+    }
+  );
+
+  const { data: sources = [], isFetched: isSourceFetched } =
+    useAssetsUniqueValuesByProperty('source', assetFilters);
 
   const { data: metadataKeys = [] } =
     useAssetsMetadataKeysAggregateQuery(assetFilters);
 
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
+
+  if (!isSourceFetched || !isAssetFetched) {
+    return null;
+  }
+
+  const mappedSources = sources.reduce(
+    (list: { source: string }[], current: any) => {
+      return [...list, { source: current.value }];
+    },
+    []
+  );
 
   return (
     <BaseFilterCollapse.Panel
@@ -56,7 +73,7 @@ export const AssetFilters = ({ ...rest }) => {
         />
 
         <SourceFilter
-          items={items}
+          items={mappedSources}
           value={assetFilters.sources}
           onChange={(newSources) =>
             setAssetFilters({
