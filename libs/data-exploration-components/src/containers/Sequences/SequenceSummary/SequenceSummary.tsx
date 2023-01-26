@@ -16,10 +16,11 @@ import { convertResourceType } from '@data-exploration-components/types';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
+import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 
 export const SequenceSummary = ({
   query = '',
-  filter = {},
+  filter = EMPTY_OBJECT,
   onAllResultsClick,
   onRowClick,
 }: {
@@ -33,10 +34,10 @@ export const SequenceSummary = ({
   const api = convertResourceType('sequence');
 
   const { isLoading, items } = useResourceResults<Sequence>(api, query, filter);
-  const { data: metadataKeys } = useSequencesMetadataKeys();
+  const { data: metadataKeys = [] } = useSequencesMetadataKeys();
 
-  const metadataColumns: ColumnDef<Sequence>[] = useMemo(() => {
-    return (metadataKeys || []).map((key: string) =>
+  const metadataColumns = useMemo(() => {
+    return metadataKeys.map((key: string) =>
       ResourceTableColumns.metadata(key)
     );
   }, [metadataKeys]);

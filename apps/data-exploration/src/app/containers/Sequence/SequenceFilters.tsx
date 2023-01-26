@@ -9,12 +9,19 @@ import {
 import { MetadataFilterV2 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+import {
+  transformNewFilterToOldFilter,
+  useSequencesMetadataValuesAggregateQuery,
+  useSequencesMetadataKeysAggregateQuery,
+} from '@data-exploration-lib/domain-layer';
 
 export const SequenceFilters = ({ ...rest }) => {
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
   const resetSequenceFilters = useResetSequenceFilters();
   const isFiltersEmpty = useFilterEmptyState('sequence');
+
+  const { data: metadataKeys = [] } =
+    useSequencesMetadataKeysAggregateQuery(sequenceFilter);
 
   const { data: items = [] } = useList<any>('sequences', {
     filter: transformNewFilterToOldFilter(sequenceFilter),
@@ -31,6 +38,7 @@ export const SequenceFilters = ({ ...rest }) => {
     >
       <TempMultiSelectFix>
         <MetadataFilterV2
+          keys={metadataKeys}
           items={items}
           value={sequenceFilter.metadata}
           setValue={(newMetadata) =>
@@ -38,6 +46,7 @@ export const SequenceFilters = ({ ...rest }) => {
               metadata: newMetadata,
             })
           }
+          useAggregateMetadataValues={useSequencesMetadataValuesAggregateQuery}
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

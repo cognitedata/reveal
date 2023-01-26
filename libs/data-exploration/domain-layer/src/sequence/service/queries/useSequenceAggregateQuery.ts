@@ -7,17 +7,18 @@ import { SequenceFilter } from '@cognite/sdk';
 import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
 import {
   SequenceProperties,
-  getSequenceAggregate,
+  getSequencesAggregate,
 } from '@data-exploration-lib/domain-layer';
+import { EMPTY_OBJECT } from '@data-exploration-lib/core';
 
 export const useSequenceAggregateQuery = (
   {
     filter,
     advancedFilter,
   }: {
-    filter?: Required<SequenceFilter>['filter'];
+    filter?: SequenceFilter['filter'];
     advancedFilter?: AdvancedFilter<SequenceProperties>;
-  } = {},
+  } = EMPTY_OBJECT,
   options?: UseQueryOptions
 ) => {
   const sdk = useSDK();
@@ -25,7 +26,7 @@ export const useSequenceAggregateQuery = (
   const { data, ...rest } = useQuery(
     queryKeys.aggregateSequence([advancedFilter, filter]),
     () => {
-      return getSequenceAggregate(sdk, {
+      return getSequencesAggregate(sdk, {
         filter,
         advancedFilter,
       });

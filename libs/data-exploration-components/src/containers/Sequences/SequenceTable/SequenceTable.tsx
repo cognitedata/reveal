@@ -25,10 +25,11 @@ export const SequenceTable = ({
   ...rest
 }: Omit<TableProps<SequenceWithRelationshipLabels | Sequence>, 'columns'> &
   RelationshipLabels) => {
-  const { data: metadataKeys } = useSequencesMetadataKeys();
+  const { data: metadataKeys = [] } = useSequencesMetadataKeys();
+  console.log(metadataKeys);
 
-  const metadataColumns: ColumnDef<Sequence>[] = useMemo(() => {
-    return (metadataKeys || []).map((key: string) =>
+  const metadataColumns = useMemo(() => {
+    return metadataKeys.map((key: string) =>
       ResourceTableColumns.metadata(key)
     );
   }, [metadataKeys]);

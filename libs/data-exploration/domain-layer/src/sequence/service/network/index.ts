@@ -1,2 +1,4 @@
 export * from './getSequenceList';
-export * from './getSequenceAggregate';
+export * from './getSequencesAggregate';
+export * from './getSequencesMetadataValuesAggregate';
+export * from './getSequencesMetadataKeyAggregate';
