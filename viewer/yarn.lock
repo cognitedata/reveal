@@ -856,7 +856,7 @@ __metadata:
     whatwg-fetch: 3.6.2
     workerize-loader: 2.0.2
   peerDependencies:
-    "@cognite/sdk": 7.15.0
+    "@cognite/sdk": ^7.16.0
     three: 0.148.0
   languageName: unknown
   linkType: soft
