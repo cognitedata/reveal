@@ -19,7 +19,7 @@ import {
 
 import {
   InternalTimeseriesFilters,
-  useTimeseriesSearchAggregateQuery,
+  useTimeseriesAggregateCountQuery,
   useTimeseriesSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 import { TableSortBy } from '@data-exploration-components/components/Table';
@@ -81,17 +81,17 @@ export const TimeseriesSearchResults = ({
       { enabled: enableAdvancedFilters }
     );
 
-  const { data: aggregateData } = useTimeseriesSearchAggregateQuery(
+  const { data: countData } = useTimeseriesAggregateCountQuery(
     {
+      timeseriesFilters: filter,
       query,
-      filter,
     },
     { enabled: enableAdvancedFilters }
   );
 
   const loadedDataCount = enableAdvancedFilters ? data.length : items.length;
   const totalDataCount = enableAdvancedFilters
-    ? aggregateData.count
+    ? countData?.count || 0
     : itemCount;
 
   return (

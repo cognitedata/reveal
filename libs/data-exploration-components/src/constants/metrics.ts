@@ -27,6 +27,7 @@ const SELECT = {
   TIME_RANGE: `${DATA_EXPLORATION}.Select.TimeRange`,
   AGGREGATE_FILTER: `${DATA_EXPLORATION}.Select.AggregateFilter`,
   AGGREGATE_EVENT_FILTER: `${DATA_EXPLORATION}.Select.AggregateEventFilter`,
+  AGGREGATE_TIMESERIES_FILTER: `${DATA_EXPLORATION}.Select.AggregateTimeseriesFilter`,
   ASSET_FILTER: `${DATA_EXPLORATION}.Select.AssetFilter`,
   DATE_FILTER: `${DATA_EXPLORATION}.Select.DateFilter`,
   LABEL_FILTER: `${DATA_EXPLORATION}.Select.LabelFilter`,

@@ -5,16 +5,11 @@ import {
   useResetTimeseriesFilters,
   useTimeseriesFilters,
 } from '@data-exploration-app/store/filter';
-import {
-  AggregatedFilterV2,
-  BooleanFilter,
-  getTimeseriesFilterUnit,
-  MetadataFilterV2,
-} from '@cognite/data-exploration';
+import { BooleanFilter, MetadataFilterV2 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 import { useTimeseriesList } from '@data-exploration-lib/domain-layer';
-import { AggregatedMultiselectFilter } from '@data-exploration-components/components/SearchNew';
+import { AggregatedTimeseriesFilterV2 } from '@data-exploration-components/components/SearchNew';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 
 export const TimeseriesFilters = ({ ...rest }) => {
@@ -27,7 +22,7 @@ export const TimeseriesFilters = ({ ...rest }) => {
     timeseriesFilter,
     isAdvancedFiltersEnabled
   );
-  const unit = timeseriesFilter.unit;
+
   return (
     <BaseFilterCollapse.Panel
       title="Time series"
@@ -55,25 +50,17 @@ export const TimeseriesFilters = ({ ...rest }) => {
             })
           }
         />
-        {isAdvancedFiltersEnabled ? (
-          <AggregatedMultiselectFilter
-            items={items}
-            aggregator="unit"
-            title="Unit"
-            addNilOption
-            value={getTimeseriesFilterUnit(unit)}
-            setValue={(newValue) => setTimeseriesFilter({ unit: newValue })}
-          />
-        ) : (
-          <AggregatedFilterV2
-            items={items}
-            aggregator="unit"
-            title="Unit"
-            addNilOption
-            value={unit ? String(unit) : unit}
-            setValue={(newValue) => setTimeseriesFilter({ unit: newValue })}
-          />
-        )}
+
+        <AggregatedTimeseriesFilterV2
+          field="unit"
+          filter={isAdvancedFiltersEnabled ? {} : timeseriesFilter}
+          setValue={(newValue) => {
+            setTimeseriesFilter({ unit: newValue });
+          }}
+          title="Unit"
+          value={timeseriesFilter.unit || []}
+          isMulti={isAdvancedFiltersEnabled}
+        />
 
         <MetadataFilterV2
           items={items}

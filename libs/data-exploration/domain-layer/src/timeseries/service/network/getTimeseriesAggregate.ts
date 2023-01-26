@@ -1,35 +1,18 @@
-import {
-  AggregateResponse,
-  CogniteClient,
-  CursorResponse,
-  TimeseriesFilter,
-} from '@cognite/sdk';
-import {
-  AdvancedFilter,
-  TimeseriesProperties,
-} from '@data-exploration-lib/domain-layer';
+import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
+import { TimeseriesAggregateRequestPayload } from '@data-exploration-lib/domain-layer';
 
-export const getTimeseriesAggregate = (
+export const getTimeseriesAggregate = <ResponseType = AggregateResponse>(
   sdk: CogniteClient,
-  {
-    filter,
-    advancedFilter,
-  }: {
-    filter?: TimeseriesFilter;
-    advancedFilter?: AdvancedFilter<TimeseriesProperties>;
-  }
+  payload?: TimeseriesAggregateRequestPayload
 ) => {
   return sdk
-    .post<CursorResponse<AggregateResponse[]>>(
+    .post<CursorResponse<ResponseType[]>>(
       `/api/v1/projects/${sdk.project}/timeseries/aggregate`,
       {
         headers: {
           'cdf-version': 'alpha',
         },
-        data: {
-          filter,
-          advancedFilter,
-        },
+        data: payload,
       }
     )
     .then(({ data }) => {

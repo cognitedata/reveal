@@ -10,6 +10,7 @@ import isEmpty from 'lodash/isEmpty';
 import { EventFilter } from '@cognite/sdk';
 import { AdvancedFilter } from '@data-exploration-lib/domain-layer';
 
+// TODO: is it used anymore?
 export const useEventsAggregateQuery = (
   {
     filter,

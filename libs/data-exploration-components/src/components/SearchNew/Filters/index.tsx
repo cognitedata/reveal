@@ -1,4 +1,5 @@
 export * from './AggregatedEventFilter/AggregatedEventFilter';
+export * from './AggregatedTimeseriesFilter/AggregatedTimeseriesFilter';
 export * from './AggregatedFilter/AggregatedFilter';
 export * from './AggregatedMultiselectFilter/AggregatedMultiselectFilter';
 export * from './AssetFilters';

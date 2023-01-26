@@ -27,6 +27,8 @@ export const queryKeys = {
     [...queryKeys.timeseries(), 'metadata', 'keys'] as const,
   aggregateTimeseries: (input?: any[]) =>
     [...queryKeys.timeseries(), ...(input || []), 'aggregate'] as const,
+  timeseriesUniqueValues: (property: string, filter?: any) =>
+    [...queryKeys.timeseries(), 'unique-values', property, filter] as const,
 
   // EVENTS
   events: () => [...queryKeys.all, 'events'] as const,

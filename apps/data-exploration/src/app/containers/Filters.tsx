@@ -3,6 +3,7 @@ import React from 'react';
 import { BaseFilterCollapse } from '../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import styled from 'styled-components';
 import { ResourceType } from '@cognite/data-exploration';
+
 import { AssetFilters } from './Asset/AssetFilters';
 import { EventFilters } from './Event/EventFilters';
 import { CommonFilter } from './Common/CommonFilter';
