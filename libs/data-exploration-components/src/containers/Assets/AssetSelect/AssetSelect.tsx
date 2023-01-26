@@ -95,7 +95,7 @@ export const AssetSelect = ({
       isClearable
       {...extraProps}
       isLoading={isLoading || isRootLoading}
-      values={selectedItemValues}
+      value={selectedItemValues}
       onInputChange={setQuery}
       options={values}
       onChange={(_, selected) => {

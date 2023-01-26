@@ -45,7 +45,7 @@ export const DataSetFilterV2 = ({
   const { data: datasetOptions, isError } = useResourceTypeDataSetAggregate(
     resourceType ? convertResourceType(resourceType) : undefined
   );
-  const selectedValues: OptionType<number>[] = (currentDataSets || []).map(
+  const selectedValues: OptionValue<number>[] = (currentDataSets || []).map(
     (el) => ({
       label: String(el.name),
       value: el.id,
@@ -74,7 +74,7 @@ export const DataSetFilterV2 = ({
             resourceType,
           });
         }}
-        values={selectedValues}
+        value={selectedValues}
       />
     </Tooltip>
   );

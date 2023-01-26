@@ -60,6 +60,23 @@ export const BaseSelect = <ValueType,>({
     ...rest,
     styles: {
       ...rest.styles,
+      multiValue: (styles, styleProps) => ({
+        ...styles,
+        ...(rest.styles &&
+          rest.styles.multiValue &&
+          rest.styles.multiValue(styles, styleProps)),
+        background: 'var(--cogs-surface--status-success--muted--default)',
+        color: 'var(--cogs-text-icon--status-success)',
+        borderRadius: 4,
+      }),
+      multiValueLabel: (styles, styleProps) => ({
+        ...styles,
+        ...(rest.styles &&
+          rest.styles.multiValueLabel &&
+          rest.styles.multiValueLabel(styles, styleProps)),
+        color: 'var(--cogs-text-icon--status-success)',
+        fontWeight: 500,
+      }),
       control: (styles, styleProps) => ({
         ...styles,
         ...(rest.styles &&

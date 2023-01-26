@@ -13,12 +13,13 @@ import {
 
 import { FilterTitle } from './elements';
 import { OptionValue } from '../SearchNew/Filters/types';
-import { isNilOption } from './utils';
+import { getValue, isNilOption } from './utils';
 
 export interface MultiSelectFilterProps<ValueType>
   extends Omit<MultiSelectProps<ValueType>, 'onChange'> {
   title?: string;
   value?: OptionValue<ValueType>[];
+  values?: ValueType[];
   options: OptionType<ValueType>[];
   onChange: (
     selectedValues: ValueType[],
@@ -29,6 +30,7 @@ export interface MultiSelectFilterProps<ValueType>
 export const MultiSelectFilter = <ValueType,>({
   title,
   value,
+  values,
   onChange,
   ...rest
 }: MultiSelectFilterProps<ValueType>) => {
@@ -50,7 +52,7 @@ export const MultiSelectFilter = <ValueType,>({
       <MultiSelect
         {...rest}
         data-testid="multi-select-filter"
-        value={value as OptionType<ValueType>[]}
+        value={getValue(value, values)}
         onChange={handleChange}
         isSearchable
         isClearable
