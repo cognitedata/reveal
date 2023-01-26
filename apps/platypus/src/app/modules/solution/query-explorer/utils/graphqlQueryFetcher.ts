@@ -28,7 +28,9 @@ export default {
           resolve(result.getValue().data);
         })
         .catch((error) => {
-          Notification({ type: 'error', message: error.message });
+          if (error.code !== 409) {
+            Notification({ type: 'error', message: error.message });
+          }
           reject(error);
         });
     });

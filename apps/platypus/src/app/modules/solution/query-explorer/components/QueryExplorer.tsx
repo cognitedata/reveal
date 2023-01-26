@@ -75,12 +75,8 @@ export const QueryExplorer = ({
         setIsReady(true);
         setGqlSchema(buildClientSchema(result as IntrospectionQuery));
       })
-      .catch((error: any) => {
+      .catch(() => {
         setIsReady(true);
-        Notification({
-          type: 'error',
-          message: error.message,
-        });
       });
   }, [
     isReady,
@@ -98,14 +94,15 @@ export const QueryExplorer = ({
   return (
     <QueryExplorerContainer>
       <GraphiQL
-        fetcher={(graphQlParams) =>
-          graphQlQueryFetcher.fetcher(
-            graphQlParams,
-            dataModelExternalId,
-            schemaVersion,
-            space
-          )
-        }
+        fetcher={(graphQlParams) => {
+          return graphQlQueryFetcher
+            .fetcher(graphQlParams, dataModelExternalId, schemaVersion, space)
+            .catch(() => {
+              // there are other places that handles errors.
+              // need to remove this when fully migrated to V3
+              return;
+            });
+        }}
         onEditQuery={handleEditQuery}
         onEditVariables={handleEditVariables}
         query={explorerQuery}

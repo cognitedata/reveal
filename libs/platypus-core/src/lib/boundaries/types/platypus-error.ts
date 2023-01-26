@@ -124,6 +124,19 @@ export class PlatypusError {
           platypusErrorMsg.type = 'NOT_FOUND';
           break;
         }
+
+        // Checking for the case in v2 when the data model does not
+        // have a published version yet
+        // need to remove this when fully migrated to V3
+        if (
+          scopedMsg.includes(
+            'Could not find api version for api with externalId = '
+          ) &&
+          scopedMsg.includes('and version = 1')
+        ) {
+          platypusErrorMsg.code = 409;
+        }
+
         platypusErrorMsg.message = err.errorMessage
           ? err.errorMessage
           : scopedMsg;
