@@ -39,10 +39,10 @@ async function main() {
   const viewer = new Cognite3DViewer({ sdk: client, domElement });
 
     // load a model and add it on 3d scene
-    // https://console.cognitedata.com/publicdata/3d-models/4715379429968321/revisions/5688854005909501
+    // https://publicdata.fusion.cognite.com/publicdata/3d-models/5564365369975452/revisions/2817572261344477
     const model = await viewer.addModel({
-      modelId: 4715379429968321,
-      revisionId: 5688854005909501,
+      modelId: 5564365369975452,
+      revisionId: 2817572261344477,
     });
     viewer.loadCameraFromModel(model);
 
