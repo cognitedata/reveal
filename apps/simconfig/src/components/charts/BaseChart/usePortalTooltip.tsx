@@ -175,6 +175,7 @@ export function usePortalTooltip({
 
 const TooltipStyled = styled(Tooltip)`
   font-size: 11px !important;
+  font-family: 'Inter';
   display: flex;
   flex-flow: column nowrap;
   row-gap: 6px;

@@ -17,6 +17,7 @@ import { CalculationRunTypeIndicator } from 'components/models/CalculationList/C
 import { CalculationStatusIndicator } from 'components/models/CalculationList/CalculationStatusIndicator';
 import { CalculationTimeLabel } from 'components/models/CalculationList/CalculationTimeLabel';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+import { createCdfLink } from 'utils/createCdfLink';
 
 import { CalculationRunsListContainer } from './styles';
 
@@ -141,21 +142,23 @@ function ExpansionMenu({
       )}
       <Menu.Divider />
       <Link
-        to={`/model-library/models/${encodeURIComponent(
-          run.metadata.simulator
-        )}/${encodeURIComponent(run.metadata.modelName)}`}
+        to={createCdfLink(
+          `/model-library/models/${encodeURIComponent(
+            run.metadata.simulator
+          )}/${encodeURIComponent(run.metadata.modelName)}`
+        )}
       >
         <Menu.Item>
           <Icon type="DataSource" /> View model
         </Menu.Item>
       </Link>
       <Link
-        to={`/model-library/models/${encodeURIComponent(
+        to={createCdfLink(`/model-library/models/${encodeURIComponent(
           run.metadata.simulator
         )}/${encodeURIComponent(
           run.metadata.modelName
         )}/calculations/${encodeURIComponent(run.metadata.calcType)}
-        /${run.metadata.calcType === 'UserDefined' ? calculationType : ''}`}
+        /${run.metadata.calcType === 'UserDefined' ? calculationType : ''}`)}
       >
         <Menu.Item>
           <Icon type="Settings" /> View configuration

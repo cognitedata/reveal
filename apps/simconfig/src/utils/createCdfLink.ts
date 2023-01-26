@@ -1,3 +1,4 @@
 import { createLink } from '@cognite/cdf-utilities';
 
-export const createCdfLink = (path: string) => createLink(`/simint/${path}`);
+export const createCdfLink = (path: string) =>
+  createLink(`/simint/${path}`).replace(/\s+/g, '');
