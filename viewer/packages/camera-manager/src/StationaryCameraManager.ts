@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
 import pull from 'lodash/pull';
+import remove from 'lodash/remove';
 
 import { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
@@ -18,7 +19,6 @@ import {
   CameraStopDelegate
 } from './types';
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
-import _ from 'lodash/remove';
 
 export class StationaryCameraManager implements CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
@@ -174,7 +174,7 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   private readonly onPointerUp = (event: PointerEvent) => {
-    _.remove(this._downEventCache, cachedEvent => {
+    remove(this._downEventCache, cachedEvent => {
       return cachedEvent.pointerId === event.pointerId;
     });
     this.disableDragging(event);
