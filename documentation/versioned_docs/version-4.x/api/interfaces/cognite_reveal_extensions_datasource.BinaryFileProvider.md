@@ -32,4 +32,4 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:11](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/data-providers/src/types.ts#L11)
+[packages/data-providers/src/types.ts:11](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/data-providers/src/types.ts#L11)
