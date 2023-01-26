@@ -12,7 +12,7 @@ export const Container = styled.span`
   }
 
   .cogs-switch {
-    background-color: var(--cogs-surface--action--muted--default);
+    background-color: var(--cogs-bg-control--secondary);
     padding: 0 10px;
     border-radius: 6px;
     min-width: 150px;

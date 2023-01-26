@@ -33,8 +33,9 @@ Default.play = async ({ canvasElement, args }) => {
   userEvent.click(typeCell);
   expect(args.onSelect).toBeCalledWith(0, false);
 
-  const switchElement = canvas.getByTitle('enabled-2');
-  userEvent.click(switchElement);
+  const switchElement = await canvas.findAllByRole('cell');
+  // eslint-disable-next-line testing-library/no-node-access
+  userEvent.click(switchElement[8].children[0]);
   expect(args.onSave).toBeCalledWith({
     ...mockWorkflowSchemas[2],
     enabled: !mockWorkflowSchemas[2].enabled,

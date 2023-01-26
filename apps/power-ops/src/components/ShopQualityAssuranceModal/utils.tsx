@@ -1,7 +1,7 @@
 import { Column, CellProps } from 'react-table';
 import { SOLVER_STATUS_TYPES, ShopRunPenalties } from 'types';
 import { CogniteEvent } from '@cognite/sdk';
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js-v9';
 import { OpenInFusion } from 'components/OpenInFusion/OpenInFusion';
 import { CellWrapper } from 'pages/Workflows/elements';
 import { useMemo } from 'react';
@@ -42,13 +42,9 @@ export const shopRunPenaltiesColumns: Column<ShopRunPenalties>[] = [
     Header: 'Solver Status',
     Cell: ({ value }) =>
       value === SOLVER_STATUS_TYPES.INFEASIBLE ? (
-        <Label size="medium" variant="danger">
-          {value}
-        </Label>
+        <Chip size="medium" type="danger" label={value} />
       ) : (
-        <Label size="medium" variant="success">
-          {value}
-        </Label>
+        <Chip size="medium" type="success" label={value} />
       ),
   },
   {

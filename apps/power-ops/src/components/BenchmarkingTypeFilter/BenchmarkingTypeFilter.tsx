@@ -1,4 +1,4 @@
-import { Dropdown, Menu, Detail } from '@cognite/cogs.js';
+import { Dropdown, Menu, Detail } from '@cognite/cogs.js-v9';
 import { useState } from 'react';
 import {
   BenchmarkingTypeFilterButton,
@@ -34,17 +34,14 @@ export const BenchmarkingTypeSelect = ({
         }}
         onHide={() => setOpen(false)}
         content={
-          <Menu
-            onClick={() => {
-              setOpen(!open);
-              dropDownInstance?.hide();
-            }}
-            style={{ marginTop: '8px' }}
-          >
+          <Menu>
             <Menu.Item
-              selected={value === 'absolute'}
-              onClick={() => onChange('absolute')}
-              appendIcon={value === 'absolute' ? 'Checkmark' : undefined}
+              toggled={value === 'absolute'}
+              onClick={() => {
+                onChange('absolute');
+                dropDownInstance?.hide();
+              }}
+              css={{}}
             >
               Absolute
             </Menu.Item>
@@ -55,12 +52,13 @@ export const BenchmarkingTypeSelect = ({
                   {filterOptions.map((method) => {
                     return (
                       <Menu.Item
-                        selected={value === method.value}
+                        toggled={value === method.value}
                         key={method.value}
-                        appendIcon={
-                          value === method.value ? 'Checkmark' : undefined
-                        }
-                        onClick={() => onChange(method.value)}
+                        onClick={() => {
+                          onChange(method.value);
+                          dropDownInstance?.hide();
+                        }}
+                        css={{}}
                       >
                         {method.label}
                       </Menu.Item>
@@ -72,6 +70,10 @@ export const BenchmarkingTypeSelect = ({
               <MenuItem
                 aria-selected={value !== 'absolute'}
                 aria-label="Difference"
+                onClick={() => {
+                  setOpen(!open);
+                  dropDownInstance?.hide();
+                }}
               >
                 <div>
                   Difference
@@ -88,21 +90,19 @@ export const BenchmarkingTypeSelect = ({
         }
       >
         <BenchmarkingTypeFilterButton
-          data-testid="benchmarking-type-button"
-          className="benchmarking-type-button"
-          type={open ? 'tertiary' : 'secondary'}
+          theme="grey"
+          title="Type:"
+          value={
+            value !== 'absolute'
+              ? {
+                  value: `Difference - ${value}`,
+                  label: `Difference - ${value}`,
+                }
+              : { value: 'Absolute', label: 'Absolute' }
+          }
+          disableTyping
           onClick={() => setOpen(!open)}
-          icon={open ? 'ChevronUp' : 'ChevronDown'}
-          iconPlacement="right"
-          aria-label="Type"
-        >
-          <div className="button-text">
-            <strong>Type:&nbsp;</strong>
-            <span className="type-text">
-              {value !== 'absolute' ? `Difference - ${value}` : 'Absolute'}
-            </span>
-          </div>
-        </BenchmarkingTypeFilterButton>
+        />
       </Dropdown>
     </BenchmarkingTypeFilterDropdown>
   );

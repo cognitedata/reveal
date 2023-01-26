@@ -1,4 +1,4 @@
-import { Button, Skeleton } from '@cognite/cogs.js';
+import { Button, Skeleton } from '@cognite/cogs.js-v9';
 import { RKOMBidSequenceTable } from 'components/RKOMBidSequenceTable/RKOMBidSequenceTable';
 import { StyledSequenceTable } from 'components/RKOMTable/elements';
 import { useFetchRKOMBidSequence } from 'queries/useFetchRKOMBidSequence';

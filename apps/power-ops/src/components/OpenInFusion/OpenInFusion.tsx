@@ -1,4 +1,4 @@
-import { Button, Skeleton, Tooltip } from '@cognite/cogs.js';
+import { Button, Skeleton, Tooltip } from '@cognite/cogs.js-v9';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { useFetchCDFResource } from 'queries/useFetchCDFResource';
 import { useFetchPowerOpsConfiguration } from 'queries/useFetchPowerOpsConfiguration';
@@ -68,7 +68,7 @@ export const OpenInFusion = ({
         icon="ExternalLink"
         aria-label="open-in-fusion"
         type="ghost"
-        href={link()}
+        onClick={() => window.open(`${link()}`)}
         target="_blank"
       />
     </Tooltip>

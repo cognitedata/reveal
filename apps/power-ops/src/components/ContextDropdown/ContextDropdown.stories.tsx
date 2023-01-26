@@ -20,11 +20,12 @@ export const Default = Template.bind({});
 Default.args = {
   dropdownMenuProps: { style: { minWidth: 150 } },
   items: [
-    { children: 'Duplicate', appendIcon: 'Duplicate' },
+    { children: 'Duplicate', icon: 'Duplicate', css: {} },
     {
       children: 'Delete',
-      appendIcon: 'Delete',
+      icon: 'Delete',
       style: { color: 'var(--cogs-text-icon--status-critical)' },
+      css: {},
     },
   ],
 };

@@ -1,4 +1,4 @@
-import { Body, Detail } from '@cognite/cogs.js';
+import { Body, Detail } from '@cognite/cogs.js-v9';
 import React from 'react';
 
 import { Container, StyledPlot } from './elements';

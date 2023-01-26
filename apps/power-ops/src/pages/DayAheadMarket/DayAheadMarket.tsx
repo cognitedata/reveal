@@ -1,4 +1,4 @@
-import { Button, Loader } from '@cognite/cogs.js';
+import { Button, Loader } from '@cognite/cogs.js-v9';
 import { Redirect } from 'react-router-dom-v5';
 import { useFetchPriceAreas } from 'queries/useFetchPriceAreas';
 import { PAGES } from 'types';
@@ -11,7 +11,10 @@ export const DayAheadMarket = () => {
     return <Loader infoTitle="Loading Price Areas" darkMode={false} />;
   if (status === 'error' || priceAreas.length === 0) {
     return (
-      <CommonError title="No price areas found">
+      <CommonError
+        title="No price areas found"
+        illustrationType="MapPlaceLocation"
+      >
         <div>
           It seems no price areas have been configured in your CDF project.
         </div>

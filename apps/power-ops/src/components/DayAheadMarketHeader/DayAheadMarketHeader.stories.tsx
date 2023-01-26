@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
-import { screen, userEvent, within } from '@storybook/testing-library';
+import { userEvent, within } from '@storybook/testing-library';
 import { DayAheadMarketHeader } from 'components/DayAheadMarketHeader/DayAheadMarketHeader';
 import {
   mockDayAheadMarketHeaderData,
@@ -42,37 +42,38 @@ const Template: Story<ComponentProps<typeof DayAheadMarketHeader>> = (args) => (
 export const Default = Template.bind({});
 
 export const Downloading = Template.bind({});
-
 Downloading.args = {
   downloading: true,
 };
 
-export const ConfirmationModal = Template.bind({});
+export const MethodSelector = Template.bind({});
+MethodSelector.decorators = [box];
+MethodSelector.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  const methodSelector = await canvas.findByText('Method:');
+  userEvent.click(methodSelector);
+};
 
+export const ConfirmationModal = Template.bind({});
 ConfirmationModal.args = {
   showConfirmDownloadModal: true,
 };
 ConfirmationModal.decorators = [box];
-ConfirmationModal.play = async ({ canvasElement }) => {
+ConfirmationModal.play = async ({ canvasElement, args }) => {
   const canvas = within(canvasElement);
-  const modal = canvas.getByTestId('confirm-download-modal');
+  const modal = await canvas.findByText(
+    'Are you sure you want to download this bid?'
+  );
   expect(modal).toBeInTheDocument();
-  expect(canvas.getByText('Download anyway')).toBeInTheDocument();
-};
+  expect(await canvas.findByText('Download anyway')).toBeInTheDocument();
 
-export const ConfirmationModalInteraction = Template.bind({});
-ConfirmationModalInteraction.decorators = [box];
-ConfirmationModalInteraction.args = ConfirmationModal.args;
-ConfirmationModalInteraction.play = ({ args }) => {
-  const modal = within(screen.getByTestId('confirm-download-modal'));
-  const downloadButton = modal.getByText('Download anyway');
+  const closeButton = await canvas.findAllByRole('button', { hidden: true });
+  userEvent.click(closeButton[3]);
+  const downloadButton = await canvas.findByText('Download anyway');
   userEvent.click(downloadButton);
   expect(args.onDownloadMatrix).toBeCalledWith(
     mockProcessConfigurations[0].bidProcessEventExternalId
   );
-  expect(args.onChangeShowConfirmDownloadModal).toBeCalledWith(false);
-  const closeButton = modal.getAllByRole('button', { hidden: true })[0];
-  userEvent.click(closeButton);
   expect(args.onChangeShowConfirmDownloadModal).toBeCalledWith(false);
 };
 
@@ -80,11 +81,11 @@ export const Interactions = Template.bind({});
 Interactions.decorators = [box];
 Interactions.play = async ({ canvasElement, args }) => {
   const canvas = within(canvasElement);
-  const downloadButton = canvas.getByText('Download');
+  const downloadButton = await canvas.findByText('Download');
   userEvent.click(downloadButton);
   expect(args.onDownloadButtonClick).toBeCalled();
 
-  const methodSelector = canvas.getByText('Method:');
+  const methodSelector = await canvas.findByText('Method:');
   userEvent.click(methodSelector);
   const newMethod = await canvas.findByText('Price independent');
   userEvent.click(newMethod);

@@ -1,11 +1,11 @@
-import { Button, LabelProps, LabelSize, LabelVariants } from '@cognite/cogs.js';
+import { ChipProps, ChipSize, Button, Modal } from '@cognite/cogs.js-v9';
 import { useMemo, useState } from 'react';
 
-import { StyledLabel, InfoSpan, StyledModal } from './elements';
+import { StyledChip, InfoSpan, CustomFooter } from './elements';
 
-type Props = LabelProps & {
+type Props = ChipProps & {
   status: 'RUNNING' | 'FINISHED' | 'FAILED' | string;
-  size?: LabelSize;
+  size?: ChipSize;
   icon?: string;
   modalContent?: {
     title: string;
@@ -13,15 +13,15 @@ type Props = LabelProps & {
   };
 };
 
-const variant: Record<string, LabelVariants> = {
+const variant: Record<string, string> = {
   FAILED: 'danger',
-  RUNNING: 'normal',
+  RUNNING: 'neutral',
   FINISHED: 'success',
 };
 
 export const StatusLabel = ({
   status,
-  size = 'medium',
+  size = 'small',
   icon,
   modalContent,
   style,
@@ -34,7 +34,7 @@ export const StatusLabel = ({
       return icon;
     }
     return undefined;
-  }, []);
+  }, [status]);
 
   const handleOnClick = () => {
     setShowModal(true);
@@ -43,48 +43,42 @@ export const StatusLabel = ({
   return (
     <>
       {modalContent && (
-        <StyledModal
+        <Modal
           title={modalContent.title}
           visible={showModal}
-          testId="more-info-modal"
-          appElement={
-            document.getElementById('root') ?? document.documentElement
-          }
+          data-testid="more-info-modal"
           getContainer={() =>
             document.getElementById('root') ?? document.documentElement
           }
+          hideFooter
           onCancel={() => setShowModal(false)}
-          footer={
-            <div className="cogs-modal-footer-buttons">
-              <Button
-                iconPlacement="left"
-                icon="Copy"
-                type="secondary"
-                onClick={() => {
-                  if (modalContent.message) {
-                    navigator.clipboard.writeText(modalContent.message);
-                  }
-                }}
-              >
-                Copy
-              </Button>
-            </div>
-          }
-          width={900}
         >
           <InfoSpan>{modalContent.message.replaceAll('\\n', '\n')}</InfoSpan>
-        </StyledModal>
+          <CustomFooter>
+            <Button
+              type="ghost"
+              icon="Copy"
+              iconPlacement="left"
+              onClick={() => {
+                if (modalContent.message) {
+                  navigator.clipboard.writeText(modalContent.message);
+                }
+              }}
+            >
+              Copy
+            </Button>
+          </CustomFooter>
+        </Modal>
       )}
-      <StyledLabel
+      <StyledChip
         style={style}
         onClick={modalContent && handleOnClick}
         size={size}
-        variant={variant[status] ?? 'unknown'}
+        type={variant[status] ?? 'default'}
         icon={labelIcon}
         iconPlacement="right"
-      >
-        {status.charAt(0) + status.substring(1).toLowerCase()}
-      </StyledLabel>
+        label={status.charAt(0) + status.substring(1).toLowerCase()}
+      />
     </>
   );
 };

@@ -1,35 +1,13 @@
-import { Button } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js-v9';
 import styled from 'styled-components';
 
-export const BenchmarkingTypeFilterButton = styled(Button)`
-  width: 100%;
-  justify-content: flex-start;
-
-  .button-text {
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    .type-text {
-      white-space: nowrap;
-    }
-  }
-
-  .cogs-icon {
-    color: var(--cogs-greyscale-grey6);
-    margin-left: auto;
-  }
-
-  :focus {
-    border: 2px solid var(--cogs-border--status-neutral--strong);
-    :hover {
-      background-color: transparent;
-    }
-  }
-
-  :hover {
-    background: var(--cogs-btn-color-secondary);
+export const BenchmarkingTypeFilterButton = styled(Select)`
+  .cogs-select__control {
     cursor: default;
+  }
+
+  .cogs-select__menu {
+    display: none;
   }
 `;
 
@@ -51,12 +29,14 @@ export const MenuItem = styled.div`
 
 export const BenchmarkingTypeFilterDropdown = styled.div`
   flex: 1;
-  margin-right: 8px;
   max-width: 260px;
-  min-width: 150px;
+
+  .cogs-menu {
+    min-width: 250px;
+  }
 
   .benchmarking-type-dropdown {
-    min-width: 250px;
+    min-width: 150px;
 
     .cogs-detail {
       color: var(--cogs-text-icon--muted);
@@ -65,7 +45,7 @@ export const BenchmarkingTypeFilterDropdown = styled.div`
     }
 
     .cogs-menu-item {
-      &.selected:hover {
+      &.toggled:hover {
         background-color: var(--cogs-surface--interactive--toggled-default);
       }
     }

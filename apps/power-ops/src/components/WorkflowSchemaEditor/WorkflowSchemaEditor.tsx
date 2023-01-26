@@ -1,4 +1,4 @@
-import { Button, Flex, Icon, Label, Tooltip } from '@cognite/cogs.js';
+import { Button, Flex, Icon, Chip, Tooltip } from '@cognite/cogs.js-v9';
 import { BeforeMount } from '@monaco-editor/react';
 import { WorkflowSchemaEditable } from 'types';
 import { editor } from 'monaco-editor';
@@ -74,9 +74,11 @@ export const WorkflowSchemaEditor = ({
   return (
     <Flex direction="column" style={{ height: '100%' }}>
       <CommonHeader title={editedWorkflowSchema.name}>
-        <Label variant={valid ? 'success' : 'danger'} style={{ margin: 0 }}>
-          {valid ? 'Code valid' : 'Code invalid'}
-        </Label>
+        <Chip
+          type={valid ? 'success' : 'danger'}
+          style={{ margin: 0 }}
+          label={valid ? 'Code valid' : 'Code invalid'}
+        />
       </CommonHeader>
       <StyledEditor
         language="json"

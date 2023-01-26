@@ -1,4 +1,4 @@
-import { Detail } from '@cognite/cogs.js';
+import { Detail } from '@cognite/cogs.js-v9';
 import dayjs from 'dayjs';
 import { TableData } from 'types';
 import { HeadlessTable } from 'components/HeadlessTable';
@@ -67,10 +67,7 @@ export const BidMatrix = ({
           <Detail>
             {/* TODO(POWEROPS-297): Replace with water value */}
             <div style={{ height: '16px' }} />
-            {/* <Label size="small" variant="unknown">
-                Water value
-                  155 NOK
-                </Label> */}
+            {/* <Chip size="small" label="Water value 155 NOK" /> */}
           </Detail>
         </div>
       </StyledHeader>

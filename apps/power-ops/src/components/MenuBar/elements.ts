@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { sizes } from 'styles/layout';
-import { Title, Menu, TopBar } from '@cognite/cogs.js';
+import { Title, Menu, TopBar } from '@cognite/cogs.js-v9';
 import layers from 'utils/zindex';
 
 export const StyledTopBar = styled(TopBar)`
@@ -13,8 +13,9 @@ export const StyledTopBar = styled(TopBar)`
       padding-right: 32px;
     }
   }
-  .cogs-icon {
-    z-index: ${layers.MAXIMUM};
+
+  .cogs-tabs {
+    position: static;
   }
 
   .day-ahead-market-dropdown,

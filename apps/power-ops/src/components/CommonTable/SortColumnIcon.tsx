@@ -1,4 +1,4 @@
-import { Icon } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js-v9';
 
 export const SortColumnIcon = ({
   isSorted,

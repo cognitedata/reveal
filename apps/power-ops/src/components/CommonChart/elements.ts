@@ -2,7 +2,7 @@ import Plot from 'react-plotly.js';
 import styled from 'styled-components';
 import layers from 'utils/zindex';
 import { sizes } from 'styles/layout';
-import { Body } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js-v9';
 
 export const Container = styled.span`
   display: flex;

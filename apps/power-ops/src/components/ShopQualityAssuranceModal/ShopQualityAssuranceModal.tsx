@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom-v5';
-import { Body, Infobox, Icon } from '@cognite/cogs.js';
+import { Modal, Infobox } from '@cognite/cogs.js-v9';
 import { useMetrics } from '@cognite/metrics';
 import { CommonTable } from 'components/CommonTable';
 import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
 import { ShopRunPenalties } from 'types';
 
 import { shopPenaltiesExceedLimit, shopRunPenaltiesColumns } from './utils';
-import { StyledModal, StyledInfobar } from './elements';
+import { StyledInfobar } from './elements';
 
 type Props = {
   bidProcessEventExternalId: string;
@@ -71,17 +71,16 @@ export const ShopQualityAssuranceModal = ({
         Shop run penalties are above the recommended limit
       </StyledInfobar>
 
-      <StyledModal
-        testId="shop-run-penalties-modal"
+      <Modal
+        data-testid="shop-run-penalties-modal"
         visible={showShopRunPenaltiesModal}
-        title={<Body strong>Shop run penalties</Body>}
-        width={840}
+        title="Shop run penalties"
         onCancel={() => setShowShopRunPenaltiesModal(false)}
-        closeIcon={<Icon data-testid="close-modal-icon" type="CloseLarge" />}
-        appElement={document.getElementById('root') ?? document.documentElement}
         getContainer={() =>
           document.getElementById('root') ?? document.documentElement
         }
+        size="large"
+        hideFooter
       >
         <Infobox type="danger" title="Penalties are above set limit">
           Based on the output of shop run penalties, we advise you to re-run
@@ -94,7 +93,7 @@ export const ShopQualityAssuranceModal = ({
           showPagination={false}
           pageSize={shopRunPenaltiesData.length}
         />
-      </StyledModal>
+      </Modal>
     </>
   ) : null;
 };

@@ -1,0 +1,42 @@
+diff --git a/node_modules/@cognite/cogs.js-v9/.DS_Store b/node_modules/@cognite/cogs.js-v9/.DS_Store
+new file mode 100644
+index 0000000..3a2060f
+Binary files /dev/null and b/node_modules/@cognite/cogs.js-v9/.DS_Store differ
+diff --git a/node_modules/@cognite/cogs.js-v9/dist/esm/Components/Switch/Switch.js b/node_modules/@cognite/cogs.js-v9/dist/esm/Components/Switch/Switch.js
+index ced711c..74dc095 100644
+--- a/node_modules/@cognite/cogs.js-v9/dist/esm/Components/Switch/Switch.js
++++ b/node_modules/@cognite/cogs.js-v9/dist/esm/Components/Switch/Switch.js
+@@ -61,7 +61,7 @@ var Switch = function Switch(_a) {
+         className: 'cogs-switch__track'
+       },
+       input: {
+-        id: id,
++        id: name,
+         'aria-describedby': name,
+         'aria-label': label,
+         name: name,
+@@ -71,7 +71,6 @@ var Switch = function Switch(_a) {
+     }
+   }), label && React.createElement("span", {
+     className: "cogs-switch__label",
+-    id: name
+   }, label));
+ };
+ 
+diff --git a/node_modules/@cognite/cogs.js-v9/dist/esm/Components/Tabs/Tabs.js b/node_modules/@cognite/cogs.js-v9/dist/esm/Components/Tabs/Tabs.js
+index 8f610fc..eb7a862 100644
+--- a/node_modules/@cognite/cogs.js-v9/dist/esm/Components/Tabs/Tabs.js
++++ b/node_modules/@cognite/cogs.js-v9/dist/esm/Components/Tabs/Tabs.js
+@@ -169,9 +169,10 @@ Tabs.Tab = function (_a) {
+       tabRef = _a.tabRef,
+       rest = __rest(_a, ["chipRight", "chipLeft", "className", "disabled", "dropdown", "iconRight", "iconLeft", "tabKey", "label", "tabRef"]);
+ 
+-  return dropdown ? React.createElement(Dropdown, __assign({}, dropdown, {
++  return dropdown ? React.createElement(Dropdown, __assign({}, {
++    offset: [2, 2],
++  }, dropdown, {
+     disabled: disabled,
+-    offset: [2, 2]
+   }), React.createElement(TabUnstyled, __assign({
+     ref: tabRef,
+     className: classNames('cogs', 'cogs-tabs__list__tab', disabled && 'cogs-tabs__list__tab--disabled', className),

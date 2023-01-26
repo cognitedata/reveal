@@ -1,4 +1,4 @@
-import { Flex } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js-v9';
 import styled from 'styled-components';
 
 export const StyledCommonError = styled(Flex)`
@@ -7,7 +7,7 @@ export const StyledCommonError = styled(Flex)`
   justify-content: center;
   flex-grow: 1;
 
-  .cogs-graphic {
+  .cogs-illustration {
     margin-bottom: 32px;
   }
 
@@ -19,7 +19,7 @@ export const StyledCommonError = styled(Flex)`
     text-align: center;
   }
 
-  .cogs-btn {
+  .cogs-button {
     margin-top: 24px;
   }
 `;

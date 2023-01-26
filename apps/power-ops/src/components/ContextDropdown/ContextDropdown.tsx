@@ -1,10 +1,10 @@
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js-v9';
 import uniqueId from 'lodash/uniqueId';
 import { ComponentProps, useState } from 'react';
 
 interface Props extends ComponentProps<typeof Dropdown> {
   recordId: string;
-  dropdownMenuProps?: ComponentProps<typeof Menu>;
+  dropdownMenuProps?: Omit<ComponentProps<typeof Menu>, 'children'>;
   items?: ComponentProps<typeof Menu.Item>[];
 }
 
@@ -25,7 +25,7 @@ export const ContextDropdown = ({
           items.length > 0 ? (
             <Menu {...dropdownMenuProps}>
               {items.map((props) => (
-                <Menu.Item key={uniqueId(recordId)} {...props} />
+                <Menu.Item key={uniqueId(recordId)} {...props} css={{}} />
               ))}
             </Menu>
           ) : null

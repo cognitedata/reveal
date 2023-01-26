@@ -1,14 +1,9 @@
-import { Body, Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, Modal } from '@cognite/cogs.js-v9';
 import { formatDate } from 'utils/utils';
 import { BidProcessConfiguration } from '@cognite/power-ops-api-types';
 import { CommonHeader } from 'components/CommonHeader/CommonHeader';
 
-import {
-  StyledModal,
-  VerticalSeparator,
-  MethodItem,
-  MethodButton,
-} from './elements';
+import { VerticalSeparator, MethodItem, MethodButton } from './elements';
 import { formatMethod } from './utils';
 
 interface Props {
@@ -42,28 +37,22 @@ export const DayAheadMarketHeader = ({
 }: Props) => {
   return (
     <>
-      <StyledModal
-        appElement={document.getElementById('root') ?? document.documentElement}
+      <Modal
         getContainer={() =>
           document.getElementById('root') ?? document.documentElement
         }
-        testId="confirm-download-modal"
         visible={showConfirmDownloadModal}
-        title={<Body strong>Are you sure you want to download this bid?</Body>}
+        title="Are you sure you want to download this bid?"
         okText="Download anyway"
         onCancel={() => onChangeShowConfirmDownloadModal(false)}
         onOk={async () => {
           onChangeShowConfirmDownloadModal(false);
           await onDownloadMatrix(bidProcessExternalId);
         }}
-        width={620}
       >
-        <Body level={2}>
-          We have registered high shop run penalties for this bid and would
-          advise against downloading and sending it. Are you sure you want to
-          proceed?
-        </Body>
-      </StyledModal>
+        We have registered high shop run penalties for this bid and would advise
+        against downloading and sending it. Are you sure you want to proceed?
+      </Modal>
       <CommonHeader
         title={`Price Area ${priceAreaName}`}
         titleLabel={`Matrix generation started: ${startDate}`}
@@ -72,11 +61,12 @@ export const DayAheadMarketHeader = ({
           <>
             <div>
               <Dropdown
+                hideOnSelect
                 content={
                   <Menu data-testid="method-selector-menu">
                     {processConfigurations.map((config, i) => (
                       <Menu.Item
-                        selected={
+                        toggled={
                           config.bidProcessEventExternalId ===
                           bidProcessExternalId
                         }
@@ -87,6 +77,7 @@ export const DayAheadMarketHeader = ({
                           )
                         }
                         data-testid={`method-selector-menu-item-${i}`}
+                        css={{}}
                       >
                         <MethodItem>
                           <div>
@@ -99,8 +90,6 @@ export const DayAheadMarketHeader = ({
                                 )}
                             </p>
                           </div>
-                          {config.bidProcessEventExternalId ===
-                            bidProcessExternalId && <Icon type="Checkmark" />}
                         </MethodItem>
                       </Menu.Item>
                     ))}

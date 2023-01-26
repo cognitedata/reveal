@@ -1,4 +1,4 @@
-import { Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-v9';
 import styled from 'styled-components';
 
 export const PanelContent = styled.div`
@@ -23,13 +23,14 @@ export const PanelContent = styled.div`
 
 export const StyledButton = styled(Button)`
   width: 100%;
-  align-items: center;
-  justify-content: left;
-  font-weight: 600;
-  font-family: Inter;
   margin-bottom: 8px;
 
   p {
+    width: 100%;
+    text-align: left;
+    font-weight: 600;
+    font-family: 'Inter';
+    text-align: left;
     margin: 0;
     white-space: nowrap;
     overflow: hidden;

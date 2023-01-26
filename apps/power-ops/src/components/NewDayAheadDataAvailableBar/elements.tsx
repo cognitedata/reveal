@@ -1,4 +1,4 @@
-import { Infobar } from '@cognite/cogs.js';
+import { Infobar } from '@cognite/cogs.js-v9';
 import styled from 'styled-components';
 
 export const StyledInfobar = styled(Infobar)`

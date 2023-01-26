@@ -23,6 +23,7 @@ import zip from 'lodash/zip';
 import chunk from 'lodash/chunk';
 import { useMetrics } from '@cognite/metrics';
 import { DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
+import { Tabs } from '@cognite/cogs.js-v9';
 
 import {
   getActiveColumns,
@@ -32,8 +33,7 @@ import {
 import {
   Main,
   PriceScenariosContainer,
-  StyledIcon,
-  StyledTabs,
+  StyledTab,
   StyledTable,
 } from './elements';
 
@@ -308,26 +308,30 @@ export const PriceScenarios = ({ bidProcessResult }: Props) => {
           }
           tableData={tableData}
         />
-        <StyledTabs
+        <Tabs
           defaultActiveKey={SECTIONS.TOTAL}
           activeKey={activeTab}
-          onChange={(activeKey: string) => handleTabClickEvent(activeKey)}
+          onTabClick={(activeKey) => handleTabClickEvent(activeKey)}
         >
-          <StyledTabs.TabPane key={SECTIONS.TOTAL} tab="Total" />
-          {bidProcessResult?.priceScenarios.map((scenario, index) => {
-            return (
-              <StyledTabs.TabPane
+          {[
+            <StyledTab
+              key={SECTIONS.TOTAL}
+              tabKey={SECTIONS.TOTAL}
+              label="Total"
+              aria-selected={activeTab === 'total'}
+            />,
+            ...bidProcessResult.priceScenarios.map((scenario, index) => (
+              <StyledTab
                 key={scenario.priceTsExternalId}
-                tab={
-                  <>
-                    <StyledIcon type="Stop" color={pickChartColor(index)} />
-                    {scenario.name}
-                  </>
-                }
+                tabKey={scenario.priceTsExternalId}
+                iconLeft="Stop"
+                label={scenario.name}
+                theme={{ color: pickChartColor(index) }}
+                aria-selected={activeTab === scenario.priceTsExternalId}
               />
-            );
-          })}
-        </StyledTabs>
+            )),
+          ]}
+        </Tabs>
       </PriceScenariosContainer>
       <StyledTable>
         {tableColumns && tableData && (

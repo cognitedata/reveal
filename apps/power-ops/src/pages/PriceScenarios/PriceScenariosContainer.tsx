@@ -1,4 +1,4 @@
-import { Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js-v9';
 import { NotFoundPage } from 'pages/NotFound/NotFound';
 import { PriceScenarios } from 'pages/PriceScenarios/PriceScenarios';
 import { useFetchBidProcessResultWithData } from 'queries/useFetchBidProcessResultWithData';

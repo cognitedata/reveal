@@ -9,7 +9,7 @@ import {
   Row,
   CellPropGetter,
 } from 'react-table';
-import { Flex, Pagination } from '@cognite/cogs.js';
+import { Flex, Pagination } from '@cognite/cogs.js-v9';
 import { DefaultCommonTableRow } from 'components/CommonTable/DefaultCommonTableRow';
 import { Fragment } from 'react';
 

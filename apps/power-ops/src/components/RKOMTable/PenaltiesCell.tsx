@@ -1,4 +1,4 @@
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js-v9';
 import { CellProps } from 'react-table';
 
 export const PenaltiesCell = <T extends object>({
@@ -11,11 +11,6 @@ export const PenaltiesCell = <T extends object>({
         ––––
       </span>
     );
-  if (value)
-    return (
-      <Label variant="danger" size="small">
-        {value}
-      </Label>
-    );
+  if (value) return <Chip type="danger" size="small" label={value} />;
   return null;
 };

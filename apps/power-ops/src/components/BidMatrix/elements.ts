@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { Title } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js-v9';
 
 const GeneralTableStyles = css`
   overflow: hidden;
@@ -75,7 +75,7 @@ export const StyledHeader = styled.div`
       text-align: left;
     }
 
-    .cogs-label {
+    .cogs-chip {
       margin-left: 8px;
     }
   }

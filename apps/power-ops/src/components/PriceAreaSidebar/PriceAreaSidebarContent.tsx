@@ -1,4 +1,4 @@
-import { Detail, Flex } from '@cognite/cogs.js';
+import { Detail, Flex } from '@cognite/cogs.js-v9';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom-v5';
 import { SECTIONS } from 'types';

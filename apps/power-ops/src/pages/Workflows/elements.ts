@@ -13,8 +13,8 @@ export const EmptyStateContainer = styled.div`
     margin-bottom: 4px;
   }
 
-  .cogs-graphic,
-  .cogs-label {
+  .cogs-illustration,
+  .cogs-chip {
     margin: 16px 0;
   }
 
@@ -67,7 +67,7 @@ export const CellWrapper = styled.div`
   max-width: fit-content;
   margin-left: auto;
 
-  .cogs-btn {
+  .cogs-button {
     margin-right: 4px;
   }
 `;

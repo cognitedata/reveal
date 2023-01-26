@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Collapse, Flex } from '@cognite/cogs.js';
+import { Collapse, Flex } from '@cognite/cogs.js-v9';
 
 export const Container = styled.div`
   padding: 16px;
@@ -14,8 +14,8 @@ export const EmptyStateContainer = styled.div`
     margin-bottom: 4px;
   }
 
-  .cogs-graphic,
-  .cogs-label {
+  .cogs-illustration,
+  .cogs-chip {
     margin: 16px 0;
   }
 
@@ -58,7 +58,7 @@ export const FlexContainer = styled(Flex)`
       }
     }
 
-    .cogs-btn {
+    .cogs-button {
       border-radius: 0 6px 6px 0;
       &:not(:hover) {
         background: var(--cogs-surface--interactive--disabled--alt);
@@ -119,7 +119,7 @@ export const Header = styled.span`
     }
   }
 
-  .cogs-label {
+  .cogs-chip {
     margin-left: auto;
   }
 `;
@@ -130,7 +130,7 @@ export const CellWrapper = styled.div`
   max-width: fit-content;
   margin-left: auto;
 
-  .cogs-btn {
+  .cogs-button {
     margin-right: 4px;
   }
 `;

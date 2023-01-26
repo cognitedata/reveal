@@ -35,7 +35,7 @@ export const Opened = Template.bind({});
 
 Opened.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  const select = canvas.getByLabelText('Type');
+  const select = await canvas.findByText('Type:');
   userEvent.click(select);
   const subMenu = await canvas.findByText('Difference');
   userEvent.hover(subMenu);

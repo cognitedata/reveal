@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { Column } from 'react-table';
-import { Detail } from '@cognite/cogs.js';
+import { Detail } from '@cognite/cogs.js-v9';
 import { StatusLabel } from 'components/StatusLabel/StatusLabel';
 import { ViewMoreButton } from 'components/ViewMoreButton/ViewMoreButton';
 import { OpenInFusion } from 'components/OpenInFusion/OpenInFusion';

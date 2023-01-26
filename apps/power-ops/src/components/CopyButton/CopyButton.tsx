@@ -1,4 +1,4 @@
-import { Button, Tooltip } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js-v9';
 import { ComponentProps, useState } from 'react';
 
 interface Props

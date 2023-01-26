@@ -1,5 +1,6 @@
-import { Icon } from '@cognite/cogs.js';
 import { CellProps } from 'react-table';
+
+import { StyledIcon } from './elements';
 
 export const ExpanderCell = <T extends object>({
   row: {
@@ -33,10 +34,7 @@ export const ExpanderCell = <T extends object>({
     )}
     <span {...getToggleRowExpandedProps()}>
       {canExpand && (
-        <Icon
-          type={isExpanded ? 'ChevronDown' : 'ChevronRight'}
-          style={{ verticalAlign: 'text-top', marginRight: 8 }}
-        />
+        <StyledIcon type={isExpanded ? 'ChevronDown' : 'ChevronRight'} />
       )}
       <span className={depth === 0 ? 'strong' : ''}>{cell.value}</span>
     </span>

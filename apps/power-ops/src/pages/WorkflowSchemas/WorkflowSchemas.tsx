@@ -1,4 +1,4 @@
-import { Button, Flex } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js-v9';
 import { useCallback, useMemo, useState } from 'react';
 import { WorkflowSchemaEditor } from 'components/WorkflowSchemaEditor/WorkflowSchemaEditor';
 import { DeleteModal } from 'components/DeleteModal/DeleteModal';
@@ -116,7 +116,7 @@ export const WorkflowSchemas = ({
         }}
         onCancel={() => setWorkflowSchemaToDelete(undefined)}
       />
-      <StyledRow cols={2} gutter={0}>
+      <StyledRow cols={2} gap={0}>
         <Flex direction="column">
           <CommonHeader title="Workflow Schemas">
             <Button
@@ -164,6 +164,7 @@ export const WorkflowSchemas = ({
               title="No Schema selected"
               buttonText="Create New"
               onButtonClick={handleCreate}
+              illustrationType="Code"
             >
               Please select a workflow schema from the panel.
               <br /> Or create a new schema.

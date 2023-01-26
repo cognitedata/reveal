@@ -1,11 +1,11 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { Column } from 'react-table';
-import { Detail } from '@cognite/cogs.js';
+import { Detail } from '@cognite/cogs.js-v9';
 import { StatusLabel } from 'components/StatusLabel/StatusLabel';
 import { OpenInFusion } from 'components/OpenInFusion/OpenInFusion';
 import { calculateDuration } from 'utils/utils';
-import { Process, ProcessStatus } from '@cognite/power-ops-api-types';
+import { ErrorLog, Process } from '@cognite/power-ops-api-types';
 
 import { CellWrapper } from './elements';
 
@@ -29,10 +29,22 @@ export const processColumns: Column<Process>[] = [
     ),
   },
   {
-    accessor: 'status',
     Header: 'Status',
-    Cell: ({ value }: { value: ProcessStatus }) =>
-      useMemo(() => <StatusLabel status={value} />, [value]),
+    accessor: (values: Process & { errorLog?: ErrorLog }) => {
+      if (values.errorLog) {
+        return (
+          <StatusLabel
+            status={values.status}
+            modalContent={{
+              title: 'Error log',
+              message: values.errorLog.message,
+            }}
+            icon="ArrowUpRight"
+          />
+        );
+      }
+      return <StatusLabel status={values.status} />;
+    },
   },
   {
     accessor: 'eventCreationTime',

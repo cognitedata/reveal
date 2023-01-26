@@ -10,8 +10,9 @@ export const Header = styled.div`
   border-bottom: 1px solid var(--cogs-bg-control--disabled);
   top: 56px;
 
-  .cogs-label {
+  .cogs-chip {
     margin: 4px 0 0 0;
+    max-width: none;
   }
 
   .cogs-select {
@@ -31,5 +32,9 @@ export const Header = styled.div`
     display: flex;
     align-items: center;
     margin-left: auto;
+  }
+
+  .cogs-tooltip {
+    display: none;
   }
 `;

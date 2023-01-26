@@ -70,14 +70,16 @@ export const WorkflowSchemaTable = ({
           items: ({ isSelected, ...original }) => [
             {
               children: 'Duplicate',
-              appendIcon: 'Duplicate',
+              icon: 'Duplicate',
               onClick: () => onDuplicate(original),
+              css: {},
             },
             {
               children: 'Delete',
-              appendIcon: 'Delete',
+              icon: 'Delete',
               style: { color: 'var(--cogs-text-icon--status-critical)' },
               onClick: () => onDelete(original),
+              css: {},
             },
           ],
         }),

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { CogniteEvent, Relationship } from '@cognite/sdk';
-import { TableData } from '@cognite/cogs.js';
+import { TableData } from '@cognite/cogs.js-v9';
 import { EVENT_TYPES } from '@cognite/power-ops-api-types';
 import { calculateDuration } from 'utils/utils';
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom-v5';

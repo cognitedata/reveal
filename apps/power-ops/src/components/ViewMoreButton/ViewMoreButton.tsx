@@ -1,4 +1,4 @@
-import { Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-v9';
 import { useHistory, useRouteMatch } from 'react-router-dom-v5';
 
 interface Props {

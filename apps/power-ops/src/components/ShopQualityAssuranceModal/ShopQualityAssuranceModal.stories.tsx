@@ -58,6 +58,6 @@ export const Interactions = Template.bind({});
 Interactions.play = async ({ canvasElement, ...args }) => {
   const canvas = within(canvasElement);
   await OpenDialog.play!({ canvasElement, ...args });
-  const closeButton = await canvas.findByTestId('close-modal-icon');
+  const closeButton = await canvas.findByLabelText('Close');
   userEvent.click(closeButton);
 };

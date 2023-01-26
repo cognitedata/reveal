@@ -1,7 +1,7 @@
 import { useFetchBenchmarkingSequences } from 'queries/useFetchBenchmarkingData';
 import { BenchmarkingFilterType } from '@cognite/power-ops-api-types';
 import { CommonChart } from 'components/CommonChart/CommonChart';
-import { Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js-v9';
 import { CommonError } from 'components/CommonError/CommonError';
 import { ComponentProps, useMemo, useState } from 'react';
 import { PlotMouseEvent } from 'plotly.js';

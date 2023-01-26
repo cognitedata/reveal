@@ -50,7 +50,7 @@ index 65e0a7e..18021f5 100644
 +    fill:"currentColor"
    }));
  };
- 
+
 diff --git a/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderDescending.js b/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderDescending.js
 index 5abe138..6c13c53 100644
 --- a/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderDescending.js

@@ -30,7 +30,7 @@ export default {
     metricFilterOptions: metricFilterOptionsMock,
     timeFrameOptions,
     timeFrameValue: timeFrameOptions[0],
-    showFirstRuns: true,
+    showFirstRuns: false,
   },
   parameters: {
     design: {
@@ -56,9 +56,7 @@ OpenWaterCourseFilter.play = async ({ canvasElement }) => {
 export const OpenWaterTypeFilter = Template.bind({});
 OpenWaterTypeFilter.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  const typeSelectFilter = await canvas.findByTestId(
-    'benchmarking-type-button'
-  );
+  const typeSelectFilter = await canvas.findByText('Type:');
   userEvent.click(typeSelectFilter);
 };
 
@@ -94,9 +92,7 @@ Interactions.play = async ({ canvasElement, args }) => {
   expect(args.onWatercourseValueChange).toBeCalled();
 
   // Test type dropdown filter
-  const typeSelectFilter = await canvas.findByTestId(
-    'benchmarking-type-button'
-  );
+  const typeSelectFilter = await canvas.findByText('Type:');
   userEvent.click(typeSelectFilter);
   const selectedType = await canvas.findByText('Absolute');
   userEvent.click(selectedType);
@@ -119,7 +115,7 @@ Interactions.play = async ({ canvasElement, args }) => {
   expect(args.onTimeFrameValueChange).toBeCalled();
 
   // Test show first runs control
-  const showFirstRunsSwitch = await canvas.findByTestId('show-first-runs');
+  const showFirstRunsSwitch = await canvas.findByText('Show first runs');
   userEvent.click(showFirstRunsSwitch);
   expect(args.onShowFirstRunsChange).toBeCalled();
 };

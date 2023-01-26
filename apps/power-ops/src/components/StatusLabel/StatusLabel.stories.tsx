@@ -60,9 +60,11 @@ Interactions.args = {
 
 Interactions.play = async ({ canvasElement, args }) => {
   const canvas = within(canvasElement);
-  const button = canvas.getByText('Failed');
-  userEvent.click(button);
-  const modal = await canvas.findByTestId('more-info-modal');
+  const chip = await canvas.findByRole('button', {
+    name: args.modalContent.title,
+  });
+  userEvent.click(chip);
+  const modal = await canvas.findByText(args.modalContent.message);
   expect(modal).toBeInTheDocument();
   const errorLog = await canvas.findByText(args.modalContent!.message);
   expect(errorLog).toBeInTheDocument();

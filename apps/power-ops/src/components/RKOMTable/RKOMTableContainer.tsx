@@ -1,4 +1,4 @@
-import { Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js-v9';
 import { RkomFilterType } from '@cognite/power-ops-api-types';
 import { CommonError } from 'components/CommonError/CommonError';
 import { Main } from 'components/RKOMTable/elements';

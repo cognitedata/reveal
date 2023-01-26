@@ -1,3 +1,4 @@
+import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export const StyledSequenceTable = styled.table`
@@ -48,4 +49,9 @@ export const Main = styled.div`
   .main {
     padding: 8px 16px 0 16px;
   }
+`;
+
+export const StyledIcon = styled(Icon)`
+  vertical-align: text-top;
+  margin-right: 8px;
 `;

@@ -1,4 +1,4 @@
-import { Body, Modal } from '@cognite/cogs.js';
+import { Modal } from '@cognite/cogs.js-v9';
 import { ComponentProps } from 'react';
 
 export const DeleteModal = ({
@@ -6,17 +6,16 @@ export const DeleteModal = ({
   ...rest
 }: Omit<
   ComponentProps<typeof Modal>,
-  'children' | 'appElement' | 'testId'
+  'children' | 'additionalActions' | 'size'
 >) => (
   <Modal
-    testId="delete-modal"
+    data-testid="delete-modal"
     title={['Delete', title].filter(Boolean).join(' ')}
-    appElement={document.getElementById('root') ?? document.documentElement}
     getContainer={() =>
       document.getElementById('root') ?? document.documentElement
     }
     {...rest}
   >
-    <Body>Do you really want to delete{title && ` this ${title}`}?</Body>
+    Do you really want to delete{title && ` this ${title}`}?
   </Modal>
 );

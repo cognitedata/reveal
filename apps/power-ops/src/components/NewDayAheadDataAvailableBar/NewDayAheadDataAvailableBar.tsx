@@ -1,4 +1,4 @@
-import { Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-v9';
 import { ComponentProps } from 'react';
 
 import { StyledInfobar } from './elements';

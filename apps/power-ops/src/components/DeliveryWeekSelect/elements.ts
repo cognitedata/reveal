@@ -1,22 +1,15 @@
-import { Button } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js-v9';
 import styled from 'styled-components';
 
-export const DeliveryWeekButton = styled(Button)`
-  :focus {
-    border: 2px solid var(--cogs-border--status-neutral--strong);
+export const DeliveryWeekButton = styled(Select)`
+  max-width: 220px;
 
-    :hover {
-      background-color: transparent;
-    }
-  }
-
-  :hover {
-    background: var(--cogs-btn-color-secondary);
+  .cogs-select__control {
     cursor: default;
   }
 
-  .delivery-week-item {
-    margin-right: 14px;
+  .cogs-select__menu {
+    display: none;
   }
 `;
 

@@ -4,11 +4,11 @@ import {
   Button,
   Collapse,
   Detail,
-  Graphic,
   Icon,
+  Illustrations,
   Input,
   TableData,
-} from '@cognite/cogs.js';
+} from '@cognite/cogs.js-v9';
 import { Process } from '@cognite/power-ops-api-types';
 import { CopyButton } from 'components/CopyButton/CopyButton';
 import { CommonTable } from 'components/CommonTable';
@@ -70,7 +70,7 @@ export const WorkflowSingle = ({
               postfix={
                 <CopyButton.SimpleText
                   value={workflowEvent.externalId}
-                  className="cogs-btn-tiny"
+                  className="cogs-button--size-small"
                   data-testid="copy-button"
                 />
               }
@@ -144,7 +144,7 @@ export const WorkflowSingle = ({
           <CommonTable data={processes} columns={processColumns} />
         ) : (
           <EmptyStateContainer className="processes">
-            <Graphic type="Search" />
+            <Illustrations.Solo type="Code" />
             <div className="cogs-title-5">No processes available</div>
             <div className="cogs-body-2">
               There are currently no processes in progress

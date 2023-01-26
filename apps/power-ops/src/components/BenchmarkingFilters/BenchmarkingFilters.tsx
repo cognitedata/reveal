@@ -1,4 +1,4 @@
-import { Select, Switch } from '@cognite/cogs.js';
+import { Select, Switch } from '@cognite/cogs.js-v9';
 import { BenchmarkingTypeSelect } from 'components/BenchmarkingTypeFilter/BenchmarkingTypeFilter';
 import { BenchmarkingWaterCourses } from '@cognite/power-ops-api-types';
 import { BenchmarkingTypeOption } from 'types';
@@ -80,11 +80,12 @@ export const BenchmarkingFilters = ({
     <Switch
       data-testid="show-first-runs"
       checked={showFirstRuns}
-      onChange={onShowFirstRunsChange}
+      onChange={(_event: any, checked: boolean) =>
+        onShowFirstRunsChange(checked)
+      }
       name="showFirstRuns"
-      size="small"
-    >
-      Show first runs
-    </Switch>
+      size="x-small"
+      label="Show first runs"
+    />
   </Container>
 );

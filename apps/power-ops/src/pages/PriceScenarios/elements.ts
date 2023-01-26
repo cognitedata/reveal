@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Icon, Tabs } from '@cognite/cogs.js';
+import { Tabs } from '@cognite/cogs.js-v9';
 import layers from 'utils/zindex';
 
 export const Main = styled.div`
@@ -23,17 +23,16 @@ export const PriceScenariosContainer = styled.div`
   height: fit-content;
   padding: 24px 16px 0 16px;
   margin-top: 16px;
-`;
 
-export const StyledTabs = styled(Tabs)`
-  background: none;
-  .rc-tabs-nav-list {
-    margin: auto;
+  .cogs-tabs {
+    background: none;
   }
 `;
 
-export const StyledIcon = styled(Icon)`
-  color: ${(props) => props.color};
+export const StyledTab = styled(Tabs.Tab)`
+  .cogs-icon {
+    color: ${(props) => props.theme.color};
+  }
 `;
 
 const colWidth = 140;

@@ -1,4 +1,10 @@
-import { Graphic, Label, OptionType, Select, Input } from '@cognite/cogs.js';
+import {
+  Illustrations,
+  Chip,
+  OptionType,
+  Select,
+  Input,
+} from '@cognite/cogs.js-v9';
 import { CommonTable } from 'components/CommonTable';
 import { Workflow } from '@cognite/power-ops-api-types';
 
@@ -74,7 +80,7 @@ export const Workflows = ({
         <CommonTable data={workflows} columns={workflowsColumns} />
       ) : (
         <EmptyStateContainer className="workflows">
-          <Graphic type="Search" />
+          <Illustrations.Solo type="Code" />
           <div className="cogs-title-5">No results available</div>
           <div className="cogs-body-2">
             There are currently no workflows in progress
@@ -82,9 +88,9 @@ export const Workflows = ({
           <div>
             {[...selectedWorkflowStatuses, ...selectedWorkflowTypes].map(
               (filter) => (
-                <Label
+                <Chip
                   key={filter.value}
-                  variant="normal"
+                  type="neutral"
                   icon="Close"
                   iconPlacement="right"
                   size="medium"
@@ -99,15 +105,13 @@ export const Workflows = ({
                       selectedWorkflowTypes.filter((value) => value !== filter)
                     );
                   }}
-                >
-                  {filter.value}
-                </Label>
+                  label={filter.value}
+                />
               )
             )}
             {!![...selectedWorkflowStatuses, ...selectedWorkflowTypes]
               .length && (
-              <Label
-                variant="unknown"
+              <Chip
                 icon="Close"
                 iconPlacement="right"
                 size="medium"
@@ -116,9 +120,8 @@ export const Workflows = ({
                   onStatusValueChanged([]);
                   onWorkflowTypeValueChanged([]);
                 }}
-              >
-                <span className="cogs-body-2">Clear all</span>
-              </Label>
+                label={<span className="cogs-body-2">Clear all</span>}
+              />
             )}
           </div>
         </EmptyStateContainer>

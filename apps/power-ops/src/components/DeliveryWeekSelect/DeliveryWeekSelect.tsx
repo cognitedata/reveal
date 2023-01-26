@@ -1,4 +1,4 @@
-import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Dropdown, Menu } from '@cognite/cogs.js-v9';
 import dayjs from 'dayjs';
 import { ComponentProps, useState } from 'react';
 import isoWeek from 'dayjs/plugin/isoWeek';
@@ -34,15 +34,16 @@ export const DeliveryWeekSelect = ({
     <Dropdown
       hideOnSelect
       content={
-        <Menu className="delivery-week-dropdown" onClick={() => setOpen(!open)}>
+        <Menu className="delivery-week-dropdown">
           {options.map(({ startDate, weekNumber, endDate }) => {
             const startDateJs = dayjs(startDate);
             const endDateJs = dayjs(endDate);
             return (
               <Menu.Item
-                selected={startDate === value}
+                toggled={startDate === value}
                 key={weekNumber}
                 onClick={() => onChange(startDate)}
+                css={{}}
               >
                 <MenuItem>
                   <div>
@@ -52,7 +53,6 @@ export const DeliveryWeekSelect = ({
                       {endDateJs.format('DD MMM, YYYY')}
                     </p>
                   </div>
-                  {startDate === value && <Icon type="Checkmark" />}
                 </MenuItem>
               </Menu.Item>
             );
@@ -62,19 +62,18 @@ export const DeliveryWeekSelect = ({
       {...rest}
     >
       <DeliveryWeekButton
-        className="delivery-week-button"
-        type={open ? 'tertiary' : 'secondary'}
+        data-testid="delivery-week-button"
+        theme="grey"
+        title="Delivery Week:"
+        disableTyping
         onClick={() => setOpen(!open)}
-      >
-        <div className="delivery-week-item">
-          <strong>Delivery Week:&nbsp;</strong>
-          {value && `Week ${dayjs(value).isoWeek()}`}
-        </div>
-        <Icon
-          type={open ? 'ChevronUp' : 'ChevronDown'}
-          style={{ color: 'hsl(0,0%,50%)' }}
-        />
-      </DeliveryWeekButton>
+        value={
+          value && {
+            value: `Week ${dayjs(value).isoWeek()}`,
+            label: `Week ${dayjs(value).isoWeek()}`,
+          }
+        }
+      />
     </Dropdown>
   );
 };

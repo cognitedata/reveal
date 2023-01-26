@@ -4,7 +4,7 @@ import { DayAheadBenchmarkingChartContainer } from 'components/DayAheadBenchmark
 import { BenchmarkingTypeOption } from 'types';
 import { useState } from 'react';
 import { CommonError } from 'components/CommonError/CommonError';
-import { Flex, Loader } from '@cognite/cogs.js';
+import { Flex, Loader } from '@cognite/cogs.js-v9';
 import { useFetchBenchmarkingFilters } from 'queries/useFetchBenchmarkingFilters';
 
 import { Main } from './elements';
@@ -38,7 +38,7 @@ export const MethodPerformanceContainer = ({
           height: '100%',
         }}
       >
-        <CommonError title="No data available">
+        <CommonError title="No data found" illustrationType="Sequence">
           There is no benchmarking data
           <br />
           available in CDF for this project.

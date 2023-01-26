@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Title, Body } from '@cognite/cogs.js';
+import { Title, Body } from '@cognite/cogs.js-v9';
 import { sizes } from 'styles/layout';
 import layers from 'utils/zindex';
 import Plot from 'react-plotly.js';

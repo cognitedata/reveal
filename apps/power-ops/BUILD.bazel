@@ -77,7 +77,7 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
-    "@npm//@cognite/cogs.js",
+    "@npm//@cognite/cogs.js-v9",
     "@npm//@cognite/sdk",
     "@npm//@monaco-editor/react",
     "@npm//@sentry/browser",
@@ -237,6 +237,7 @@ vite_build(
     ],
     env = {
         "INLINE_RUNTIME_CHUNK": "false",
+        "NODE_OPTIONS": "--max_old_space_size=8192",
     },
     output_dir = True,
 )
@@ -437,7 +438,7 @@ start_storybook(
     data = [
         "chdir-workspace.js",
         # Bazel needs to give access @tippyjs in cogs.js
-        "@npm//@cognite/cogs.js",
+        "@npm//@cognite/cogs.js-v9",
     ],
     tags = [
         # This tag instructs ibazel to pipe into stdin a event describing actions.

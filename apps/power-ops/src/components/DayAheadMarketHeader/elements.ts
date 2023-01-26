@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button, Modal, Title } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js-v9';
 
 export const StyledTitle = styled(Title)`
   font-family: 'Inter';
@@ -15,7 +15,7 @@ export const Header = styled.span`
   border-bottom: 1px solid var(--cogs-bg-control--disabled);
   top: 56px;
 
-  .cogs-label {
+  .cogs-chip {
     margin: 4px 0 0 0;
   }
 
@@ -23,26 +23,6 @@ export const Header = styled.span`
     display: flex;
     align-items: center;
     margin-left: auto;
-  }
-`;
-
-export const StyledModal = styled(Modal)`
-  border-radius: 12px;
-  font-family: 'Inter';
-  margin-top: 30vh;
-
-  .cogs-modal-header {
-    border: none;
-    padding: 0 0 10px 0;
-  }
-
-  .cogs-modal-content {
-    padding: 12px 0;
-  }
-
-  .cogs-modal-footer {
-    border: none;
-    padding: 18px 0 0 0;
   }
 `;
 
@@ -59,19 +39,10 @@ export const MethodItem = styled.div`
   font-family: 'Inter';
   font-weight: 500;
 
-  &::not(.selected) {
-    color: var(--cogs-text-icon--medium);
-  }
-
   p {
     color: var(--cogs-text-icon--muted);
     margin: 0;
     font-weight: 400;
-  }
-
-  .cogs-icon {
-    margin: 0 0 0 8px;
-    align-items: flex-start;
   }
 `;
 

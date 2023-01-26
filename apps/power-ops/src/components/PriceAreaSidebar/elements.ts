@@ -1,4 +1,4 @@
-import { Button, Input } from '@cognite/cogs.js';
+import { Button, Input } from '@cognite/cogs.js-v9';
 import styled from 'styled-components';
 
 const sidePanelOpenedWidth = 280;
@@ -34,7 +34,7 @@ export const Header = styled.span`
   top: 0;
   position: sticky;
 
-  .cogs-label {
+  .cogs-chip {
     margin: 4px 0 0 0;
   }
 
@@ -89,13 +89,14 @@ export const StyledSearch = styled(Input)`
 
 export const StyledButton = styled(Button)`
   width: 100%;
-  align-items: center;
-  justify-content: left;
-  font-weight: 600;
-  font-family: Inter;
   margin-bottom: 8px;
 
   p {
+    width: 100%;
+    text-align: left;
+    font-weight: 600;
+    font-family: 'Inter';
+    text-align: left;
     margin: 0;
     white-space: nowrap;
     overflow: hidden;

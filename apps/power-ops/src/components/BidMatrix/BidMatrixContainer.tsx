@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom-v5';
 import { useMetrics } from '@cognite/metrics';
-import { Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js-v9';
 import { useFetchBidMatrix } from 'queries/useFetchBidMatrix';
 import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
 import { useFetchScenarioPrice } from 'queries/useFetchScenarioPrice';

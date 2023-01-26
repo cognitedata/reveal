@@ -1,4 +1,4 @@
-import { Switch } from '@cognite/cogs.js';
+import { Switch } from '@cognite/cogs.js-v9';
 import { CellProps, Renderer } from 'react-table';
 
 interface Props<D extends Record<string, any>> {
@@ -17,6 +17,8 @@ export const SwitchCell =
         name={`${String(property)}-${id}`}
         title={`${String(property)}-${id}`}
         checked={value}
-        onChange={(newValue) => onChange({ ...original, [property]: newValue })}
+        onChange={(event: any, newValue: any) =>
+          onChange({ ...original, [property]: newValue })
+        }
       />
     );

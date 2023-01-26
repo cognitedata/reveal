@@ -47,7 +47,7 @@ export const Header = styled.span`
   top: 0;
   position: sticky;
 
-  .cogs-label {
+  .cogs-chip {
     margin: 4px 0 0 0;
   }
 

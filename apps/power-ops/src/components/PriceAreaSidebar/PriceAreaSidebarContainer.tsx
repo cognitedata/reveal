@@ -1,4 +1,4 @@
-import { Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js-v9';
 import { useMetrics } from '@cognite/metrics';
 import { CommonSidebar } from 'components/CommonSidebar/CommonSidebar';
 import { PriceAreaSidebarContent } from 'components/PriceAreaSidebar/PriceAreaSidebarContent';

@@ -1,4 +1,4 @@
-import { Button, Select } from '@cognite/cogs.js';
+import { Button, Select } from '@cognite/cogs.js-v9';
 import { RkomConfig } from '@cognite/power-ops-api-types';
 import { CommonHeader } from 'components/CommonHeader/CommonHeader';
 import { DeliveryWeekSelect } from 'components/DeliveryWeekSelect/DeliveryWeekSelect';

@@ -1,4 +1,4 @@
-import { Label, Title } from '@cognite/cogs.js';
+import { Chip, Title } from '@cognite/cogs.js-v9';
 import { ComponentProps } from 'react';
 
 import { Header } from './elements';
@@ -18,11 +18,7 @@ export const CommonHeader = ({
     <Header {...rest}>
       <div>
         <Title level={5}>{title}</Title>
-        {titleLabel && (
-          <Label size="small" variant="unknown">
-            {titleLabel}
-          </Label>
-        )}
+        {titleLabel && <Chip size="small" label={titleLabel} />}
       </div>
       <div className="right-side">{children}</div>
     </Header>

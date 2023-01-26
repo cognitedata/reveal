@@ -4,7 +4,7 @@ import { CogniteEvent } from '@cognite/sdk';
 import { EVENT_TYPES, WORKFLOW_TYPES } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchWorkflows } from 'queries/useFetchWorkflows';
-import { OptionType } from '@cognite/cogs.js';
+import { OptionType } from '@cognite/cogs.js-v9';
 import { useFetchWorkflowSchemas } from 'queries/useFetchWorkflowSchemas';
 import { useFetchWorkflowTypes } from 'queries/useFetchWorkflowTypes';
 import queryString from 'query-string';

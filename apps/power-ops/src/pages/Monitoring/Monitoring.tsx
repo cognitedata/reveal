@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { useMetrics } from '@cognite/metrics';
 import { useFetchSnifferJobs } from 'queries/useFetchSnifferJobs';
-import { Flex, Label, Button } from '@cognite/cogs.js';
+import { Flex, Chip, Button } from '@cognite/cogs.js-v9';
 import { useStartAllSnifferJobs } from 'queries/useStartAllSnifferJobs';
 import { useStopAllSnifferJobs } from 'queries/useStopAllSnifferJobs';
 
@@ -72,8 +72,8 @@ export const Monitoring = () => {
                       : 'No events found'}
                   </td>
                   <td>
-                    <Label
-                      variant={
+                    <Chip
+                      type={
                         // eslint-disable-next-line no-nested-ternary
                         job.status === 'running'
                           ? 'success'
@@ -81,9 +81,8 @@ export const Monitoring = () => {
                           ? 'danger'
                           : 'warning'
                       }
-                    >
-                      {job.status}
-                    </Label>
+                      label={job.status}
+                    />
                   </td>
                 </tr>
                 <tr>

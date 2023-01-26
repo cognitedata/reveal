@@ -1,6 +1,6 @@
 import { WorkflowSchemas } from 'pages/WorkflowSchemas/WorkflowSchemas';
 import { useFetchWorkflowSchemas } from 'queries/useFetchWorkflowSchemas';
-import { Loader, toast, ToastContainer } from '@cognite/cogs.js';
+import { Loader, toast, ToastContainer } from '@cognite/cogs.js-v9';
 import { useUpdateWorkflowSchema } from 'queries/useUpdateWorkflowSchema';
 import { useMemo } from 'react';
 import { useDeleteWorkflowSchema } from 'queries/useDeleteWorkflowSchema';

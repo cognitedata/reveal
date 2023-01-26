@@ -1,12 +1,13 @@
-import { Infobar, Button } from '@cognite/cogs.js';
+import { Infobar } from '@cognite/cogs.js-v9';
 import sidecar from 'utils/sidecar';
+
+import { StyledButton } from './elements';
 
 export const EnvironmentInfoBar = () => {
   return (
     <Infobar type="warning">
       Dev environment
-      <Button
-        style={{ marginLeft: '16px' }}
+      <StyledButton
         icon="ArrowUpRight"
         iconPlacement="right"
         size="small"
@@ -18,7 +19,7 @@ export const EnvironmentInfoBar = () => {
         }
       >
         Open Prod
-      </Button>
+      </StyledButton>
     </Infobar>
   );
 };
