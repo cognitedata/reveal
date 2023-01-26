@@ -90,7 +90,7 @@ export const AssetSelect = ({
   }));
 
   return (
-    <MultiSelectFilter
+    <MultiSelectFilter<number>
       title={title}
       isClearable
       {...extraProps}

@@ -61,7 +61,7 @@ export const DataSetFilterV2 = ({
         'Error fetching datasets, please make sure you have datasetsAcl:READ'
       }
     >
-      <MultiSelectFilter
+      <MultiSelectFilter<number>
         title="Data set"
         options={datasetOptions?.map(formatOption) || []}
         isDisabled={isError}

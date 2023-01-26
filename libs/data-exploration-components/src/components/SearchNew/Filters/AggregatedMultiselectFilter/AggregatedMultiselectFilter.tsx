@@ -39,9 +39,8 @@ export const AggregatedMultiselectFilter = <T extends {}>({
   return (
     <MultiSelectFilter
       title={title}
-      creatable
       options={sourceArray}
-      values={value}
+      value={value}
       onChange={handleOnChange}
       addNilOption={addNilOption}
     />

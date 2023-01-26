@@ -56,7 +56,7 @@ export const SourceFilter = <T extends { source?: string }>({
   }
 
   return (
-    <MultiSelectFilter
+    <MultiSelectFilter<string>
       addNilOption
       {...rest}
       title="Source"

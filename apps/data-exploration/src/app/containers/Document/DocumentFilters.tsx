@@ -64,7 +64,7 @@ export const DocumentFilter = ({ ...rest }) => {
           onChange={(newValue) => {
             updateDocumentFilter('type', newValue);
           }}
-          values={documentFilter.type}
+          value={documentFilter.type}
         />
         <MultiSelectFilter
           title="Author"
@@ -73,7 +73,7 @@ export const DocumentFilter = ({ ...rest }) => {
           onChange={(newValue) => {
             updateDocumentFilter('author', newValue);
           }}
-          values={documentFilter.author}
+          value={documentFilter.author}
         />
         <MultiSelectFilter
           title="Source"
@@ -82,7 +82,7 @@ export const DocumentFilter = ({ ...rest }) => {
           onChange={(newValue) => {
             updateDocumentFilter('source', newValue);
           }}
-          values={documentFilter.source}
+          value={documentFilter.source}
         />
         <MetadataFilterV2
           items={resultWithMetadata}

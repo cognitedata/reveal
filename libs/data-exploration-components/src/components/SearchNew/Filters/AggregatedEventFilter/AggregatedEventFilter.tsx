@@ -13,6 +13,7 @@ import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
+import { useMemo } from 'react';
 
 export const AggregatedEventFilterV2 = ({
   field,
@@ -33,6 +34,13 @@ export const AggregatedEventFilterV2 = ({
 
   const { data = [] } = useEventsUniqueValuesByProperty(field, filter);
 
+  const options = useMemo(() => {
+    return data.map(({ value: eventType, count }) => ({
+      label: `${String(eventType)} (${count})`,
+      value: String(eventType),
+    }));
+  }, [data]);
+
   const handleUpdate = (newValue?: string): void => {
     setValue(newValue && newValue.length > 0 ? newValue : undefined);
     trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_EVENT_FILTER, {
@@ -45,12 +53,8 @@ export const AggregatedEventFilterV2 = ({
     return (
       <MultiSelectFilter
         title={title}
-        creatable
-        options={data.map(({ value: eventType }) => ({
-          value: String(eventType),
-          label: String(eventType),
-        }))}
-        values={value}
+        options={options}
+        value={value}
         onChange={(items) => {
           if (items) {
             setValue(items);

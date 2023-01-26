@@ -3,6 +3,8 @@ import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
+import has from 'lodash/has';
+
 import { OptionValue } from '../SearchNew/Filters/types';
 
 export const isNilOption = <ValueType>({ value }: OptionType<ValueType>) => {
@@ -12,16 +14,17 @@ export const isNilOption = <ValueType>({ value }: OptionType<ValueType>) => {
   return false;
 };
 
-export const getValue = <ValueType>(
-  value?: OptionValue<ValueType>[],
-  values?: ValueType[]
+export const formatValue = <ValueType>(
+  value?: ValueType[] | OptionValue<ValueType>[]
 ): OptionType<ValueType>[] | undefined => {
-  if (value) {
-    return value as OptionType<ValueType>[];
-  }
+  return value?.map((el) => {
+    if (has(el, 'value')) {
+      return el as OptionType<ValueType>;
+    }
 
-  return values?.map((el) => ({
-    label: String(el),
-    value: el,
-  }));
+    return {
+      label: String(el),
+      value: el,
+    } as OptionType<ValueType>;
+  });
 };
