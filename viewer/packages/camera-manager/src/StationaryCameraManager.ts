@@ -18,7 +18,7 @@ import {
   CameraStopDelegate
 } from './types';
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
-import _ from 'lodash';
+import _ from 'lodash/remove';
 
 export class StationaryCameraManager implements CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
