@@ -18,6 +18,7 @@ import {
   CameraStopDelegate
 } from './types';
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
+import _ from 'lodash';
 
 export class StationaryCameraManager implements CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
@@ -173,10 +174,9 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   private readonly onPointerUp = (event: PointerEvent) => {
-    const eventIndex = this._downEventCache.findIndex(downEvent => event.pointerId === downEvent.pointerId);
-    if (eventIndex > -1) {
-      this._downEventCache.splice(eventIndex, 1);
-    }
+    _.remove(this._downEventCache, cachedEvent => {
+      return cachedEvent.pointerId === event.pointerId;
+    });
     this.disableDragging(event);
   };
 
@@ -213,31 +213,23 @@ export class StationaryCameraManager implements CameraManager {
       return;
     }
 
-    const getEuclideanDistance = (eventOne: PointerEvent, eventTwo: PointerEvent): number => {
-      const dx = eventOne.clientX - eventTwo.clientX,
-        dy = eventOne.clientY - eventTwo.clientY;
-      return Math.sqrt(dx * dx + dy * dy);
-    };
-
-    const preMoveDistance = getEuclideanDistance(this._downEventCache[0], this._downEventCache[1]);
-    const downEventIndex = this._downEventCache.findIndex(event => event.pointerId === moveEvent.pointerId);
-    const preMoveEvent = this._downEventCache[downEventIndex];
-    this._downEventCache[downEventIndex] = moveEvent;
-    const postMoveDistance = getEuclideanDistance(this._downEventCache[0], this._downEventCache[1]);
-    const distanceDelta = postMoveDistance - preMoveDistance;
+    const indexOfMoveEvent = this._downEventCache.findIndex(event => event.pointerId === moveEvent.pointerId);
+    const preMoveDownEvent = this._downEventCache[indexOfMoveEvent];
+    const distanceDelta = this.calculateDownEventDistance(moveEvent, indexOfMoveEvent);
 
     // To stop FOV stuttering we only update if the
     // change in distance is above a small threshold.
     const sensitivityThreshold = 1.0;
     if (Math.abs(distanceDelta) < sensitivityThreshold) {
-      this._downEventCache[downEventIndex] = preMoveEvent;
+      this._downEventCache[indexOfMoveEvent] = preMoveDownEvent;
       return;
     }
 
     const { width, height } = this._domElement.getBoundingClientRect();
     const screenSize = Math.sqrt(width * width + height * height);
     if (screenSize > 0) {
-      this.setFOV(this._camera.fov - (distanceDelta * 100) / screenSize);
+      const percentage = (distanceDelta * 100) / screenSize;
+      this.setFOV(this._camera.fov + percentage);
     }
   }
 
@@ -278,5 +270,18 @@ export class StationaryCameraManager implements CameraManager {
     const unitForward = new THREE.Vector3(0, 0, -1);
     unitForward.applyQuaternion(this._camera.quaternion);
     return unitForward.add(this._camera.position);
+  }
+
+  private calculateDownEventDistance(moveEvent: PointerEvent, indexOfMoveEvent: number): number {
+    const getEuclideanDistance = (eventOne: PointerEvent, eventTwo: PointerEvent): number => {
+      const dx = eventOne.clientX - eventTwo.clientX;
+      const dy = eventOne.clientY - eventTwo.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    const preMoveDistance = getEuclideanDistance(this._downEventCache[0], this._downEventCache[1]);
+    this._downEventCache[indexOfMoveEvent] = moveEvent;
+    const postMoveDistance = getEuclideanDistance(this._downEventCache[0], this._downEventCache[1]);
+    return preMoveDistance - postMoveDistance;
   }
 }
