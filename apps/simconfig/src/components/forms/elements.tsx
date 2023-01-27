@@ -160,9 +160,8 @@ export function NumberField({
       error={errorText}
       name={name}
       step={props.step ?? 'any'}
-      // XXX Cogs.js hack to ensure input is wrapped in container element
-      // eslint-disable-next-line react/jsx-no-useless-fragment
-      title={title ?? <></>}
+      // obsolete: XXX Cogs.js hack to ensure input is wrapped in container element => removed for DEGR-1398
+      title={title}
       type="number"
       value={value}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

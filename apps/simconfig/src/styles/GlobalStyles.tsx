@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
+
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
+  Dropdown as CogsDropdown,
   Tooltip as CogsTooltip,
   DateRange,
   Drawer,
@@ -22,6 +24,13 @@ export const getContainer = () => {
 // This will override the appendTo prop on all Tooltips used from cogs
 CogsTooltip.defaultProps = {
   ...CogsTooltip.defaultProps,
+  appendTo: getContainer,
+};
+
+// This will override the appendTo prop on all Dropdown used from cogs
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+CogsDropdown.defaultProps = {
+  ...CogsDropdown.defaultProps,
   appendTo: getContainer,
 };
 

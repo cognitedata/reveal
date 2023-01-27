@@ -194,7 +194,8 @@ const WizardContainer = styled.div`
   padding-top: 1.5rem;
 
   .rc-tabs {
-    overflow: visible;
+    // need better overriding technique: https://cognitedata.atlassian.net/browse/DEGR-1394
+    overflow: visible !important; // cdf-simint-ui-style-scope overrides rc-tabs for hidden, hence important
     flex: 1 1 auto;
     display: flex;
     flex-flow: column nowrap;

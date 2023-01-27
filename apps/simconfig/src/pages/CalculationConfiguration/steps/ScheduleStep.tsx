@@ -91,7 +91,6 @@ export function ScheduleStep() {
           <FormRow>
             <label htmlFor="schedule-step-calendar">Start</label>
             <Dropdown
-              appendTo={document.body}
               content={
                 <Menu>
                   <Field
