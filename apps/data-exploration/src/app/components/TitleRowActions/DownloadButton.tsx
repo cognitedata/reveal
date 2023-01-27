@@ -75,11 +75,7 @@ function MetadataDownload({ item: { id, type } }: Props) {
 }
 
 function FileDownloadMenuItem({ item: { id } }: Props) {
-  return (
-    <Menu.Item>
-      <FileDownloadAnchor text={<>Download original file</>} id={{ id }} />
-    </Menu.Item>
-  );
+  return <FileDownloadAnchor text={<>Download original file</>} id={{ id }} />;
 }
 
 function FileDownloadButton({ item }: Props) {
@@ -91,6 +87,7 @@ function FileDownloadButton({ item }: Props) {
     { enabled: downloading }
   );
 
+  // Handles downloading metadata as JSON
   useEffect(() => {
     if (downloading && isFetched) {
       const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(

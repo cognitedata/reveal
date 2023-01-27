@@ -1,9 +1,10 @@
 import React from 'react';
-import { Icon, Colors } from '@cognite/cogs.js';
+import { Icon, Colors, Tooltip, Menu } from '@cognite/cogs.js';
 import { IdEither, FileInfo } from '@cognite/sdk';
 import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
+import styled from 'styled-components';
 
 export function FileDownloadAnchor({
   id,
@@ -37,28 +38,57 @@ export function FileDownloadAnchor({
     if (errorFeedback) {
       return errorFeedback;
     }
-    return <Icon style={{ color: Colors.danger }} type="Error" />;
+
+    const tooltipText = infoError
+      ? 'Please create a file with a valid id.'
+      : 'Nothing to download. You must upload a file first.';
+
+    return (
+      <Menu.Item disabled>
+        <Tooltip content={tooltipText}>
+          <StyledError>
+            <span>Download original file</span>
+            <Icon type="Info" />
+          </StyledError>
+        </Tooltip>
+      </Menu.Item>
+    );
   }
   if (!infoFetched || !linkFetched) {
     if (loadingFeedback) {
       return loadingFeedback;
     }
     return (
-      <Icon style={{ color: Colors['greyscale-grey4'].hex() }} type="Loader" />
+      <Menu.Item>
+        <Icon
+          style={{ color: Colors['greyscale-grey4'].hex() }}
+          type="Loader"
+        />
+      </Menu.Item>
     );
   }
   if (infoFetched && linkFetched) {
     return (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href={fileLink?.downloadUrl}
-        download={fileInfo?.name}
-      >
-        {text || fileInfo?.name}
-      </a>
+      <Menu.Item>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={fileLink?.downloadUrl}
+          download={fileInfo?.name}
+        >
+          {text || fileInfo?.name}
+        </a>
+      </Menu.Item>
     );
   }
 
   return null;
 }
+
+const StyledError = styled.span`
+  display: inline-flex;
+  i {
+    margin-left: 4px;
+    margin-right: 0;
+  }
+`;
