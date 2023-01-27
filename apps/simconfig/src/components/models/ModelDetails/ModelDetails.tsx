@@ -27,6 +27,7 @@ import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
 import DeleteConfirmModal from './DeleteConfirmModal';
+import { Divider } from './elements';
 import { ModelLabels } from './ModelLabels';
 
 import type { AppLocationGenerics } from 'routes';
@@ -214,6 +215,7 @@ export function ModelDetails({
               refetchModelFiles={refetchModelFiles}
             />
           )}
+          <Divider />
           {!(selectedTab === 'new-version') && (
             <Link to="../new-version">
               <Button
@@ -226,7 +228,9 @@ export function ModelDetails({
                     modelName: decodeURI(modelName),
                   });
                 }}
-              />
+              >
+                New version
+              </Button>
             </Link>
           )}
         </div>

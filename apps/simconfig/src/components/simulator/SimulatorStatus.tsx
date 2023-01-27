@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Label, Skeleton, Tooltip } from '@cognite/cogs.js';
+import { Button, Skeleton, Tooltip } from '@cognite/cogs.js';
 import { useGetSimulatorsListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import {
@@ -76,16 +76,15 @@ export function SimulatorStatus() {
           <SimulatorTooltip
             content={<SimulatorList simulators={simulatorsOverflow} />}
           >
-            <Label
+            <Button
               aria-label="Show additional simulators"
-              className="cogs-label--is-interactive"
-              size="small"
-              variant="unknown"
+              icon="ChevronDown"
+              iconPlacement="right"
             >
               +
               {simulatorsList.simulators.length -
                 HEADER_VISIBLE_SIMULATORS_COUNT}
-            </Label>
+            </Button>
           </SimulatorTooltip>
         </div>
       ) : null}
@@ -105,7 +104,6 @@ const SimulatorStatusContainer = styled.div`
 
 const SimulatorTooltip = styled(Tooltip).attrs(() => ({
   placement: 'bottom-end',
-  theme: 'light',
   trigger: 'click',
   elevated: true,
   interactive: true,
