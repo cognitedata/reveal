@@ -8,15 +8,22 @@ import {
 import { BooleanFilter, MetadataFilterV2 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import { useTimeseriesList } from '@data-exploration-lib/domain-layer';
-import { AggregatedTimeseriesFilterV2 } from '@data-exploration-components/components/SearchNew';
+import {
+  useTimeseriesList,
+  useTimeseriesMetadataKeysAggregateQuery,
+  useTimeseriesMetadataValuesAggregateQuery,
+} from '@data-exploration-lib/domain-layer';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
+import { AggregatedTimeseriesFilterV2 } from '@data-exploration-components/components/SearchNew';
 
 export const TimeseriesFilters = ({ ...rest }) => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
   const resetTimeseriesFilters = useResetTimeseriesFilters();
   const isFiltersEmpty = useFilterEmptyState('timeseries');
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
+
+  const { data: metadataKeys = [] } =
+    useTimeseriesMetadataKeysAggregateQuery(timeseriesFilter);
 
   const { items } = useTimeseriesList(
     timeseriesFilter,
@@ -64,12 +71,14 @@ export const TimeseriesFilters = ({ ...rest }) => {
 
         <MetadataFilterV2
           items={items}
+          keys={metadataKeys}
           value={timeseriesFilter.metadata}
           setValue={(newMetadata) =>
             setTimeseriesFilter({
               metadata: newMetadata,
             })
           }
+          useAggregateMetadataValues={useTimeseriesMetadataValuesAggregateQuery}
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

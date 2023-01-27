@@ -15,13 +15,11 @@ export type TimeseriesAggregateOptions =
     }
   | {
       aggregate: 'count';
-      // TODO: remove [string[]] when api fixed.
-      properties?: [TimeseriesAggregateProperty] | [string[]];
+      properties?: [TimeseriesAggregateProperty];
     }
   | {
       aggregate: 'approximateCardinality' | 'uniqueValues';
-      // TODO: remove [string[]] when api fixed.
-      properties: [TimeseriesAggregateProperty] | [string[]];
+      properties: [TimeseriesAggregateProperty];
     };
 
 export type TimeseriesAggregateRequestPayload = TimeseriesAggregateFilters &
@@ -29,14 +27,17 @@ export type TimeseriesAggregateRequestPayload = TimeseriesAggregateFilters &
     path?: string[];
   };
 
-export interface TimeseriesAggregateProperty {
-  property: [TimeseriesProperty] | TimeseriesMetadataProperty;
-}
+export type TimeseriesAggregateProperty =
+  | [TimeseriesProperty]
+  | TimeseriesMetadataProperty;
 
 export interface TimeseriesAggregateUniquePropertiesResponse
   extends AggregateResponse {
-  value: TimeseriesAggregateProperty;
-  values: [TimeseriesAggregateProperty];
+  values: [
+    {
+      property: TimeseriesAggregateProperty;
+    }
+  ];
 }
 
 export interface TimeseriesAggregateUniqueValuesResponse

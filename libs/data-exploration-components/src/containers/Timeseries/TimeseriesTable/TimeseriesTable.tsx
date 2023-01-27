@@ -36,7 +36,7 @@ export const TimeseriesTable = ({
   ...props
 }: TimeseriesTableProps) => {
   const { data, ...rest } = props;
-  const { data: metadataKeys } = useTimeseriesMetadataKeys();
+  const { data: metadataKeys = [] } = useTimeseriesMetadataKeys();
 
   const [dateRange, setDateRange] = useState(
     dateRangeProp || TIME_SELECT['1Y'].getTime()
@@ -62,10 +62,8 @@ export const TimeseriesTable = ({
     setEmptyTimeseriesMap(emptyTimeseriesMap);
   }, [data]);
 
-  const metadataColumns: ColumnDef<Timeseries>[] = useMemo(() => {
-    return (metadataKeys || []).map((key: string) =>
-      ResourceTableColumns.metadata(key)
-    );
+  const metadataColumns = useMemo(() => {
+    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
   }, [metadataKeys]);
 
   const columns = useMemo(() => {

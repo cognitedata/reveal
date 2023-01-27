@@ -23,10 +23,18 @@ export const queryKeys = {
   timeseries: () => [...queryKeys.all, 'timeseries'] as const,
   listTimeseries: (input?: any[]) =>
     [...queryKeys.timeseries(), ...(input || [])] as const,
-  timeseriesMetadata: () =>
-    [...queryKeys.timeseries(), 'metadata', 'keys'] as const,
   aggregateTimeseries: (input?: any[]) =>
     [...queryKeys.timeseries(), ...(input || []), 'aggregate'] as const,
+  timeseriesMetadata: (filter?: any) =>
+    [...queryKeys.timeseries(), 'metadata', 'keys', filter] as const,
+  timeseriesMetadataValues: (metadataKey: string, filter?: any) =>
+    [
+      ...queryKeys.timeseries(),
+      'metadata',
+      'values',
+      metadataKey,
+      filter,
+    ] as const,
   timeseriesUniqueValues: (property: string, filter?: any) =>
     [...queryKeys.timeseries(), 'unique-values', property, filter] as const,
 

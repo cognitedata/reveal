@@ -41,12 +41,10 @@ export const TimeseriesSummary = ({
     filter
   );
 
-  const { data: metadataKeys } = useTimeseriesMetadataKeys();
+  const { data: metadataKeys = [] } = useTimeseriesMetadataKeys();
 
-  const metadataColumns: ColumnDef<Timeseries>[] = useMemo(() => {
-    return (metadataKeys || []).map((key: string) =>
-      ResourceTableColumns.metadata(key)
-    );
+  const metadataColumns = useMemo(() => {
+    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
   }, [metadataKeys]);
 
   const columns = useMemo(() => {
