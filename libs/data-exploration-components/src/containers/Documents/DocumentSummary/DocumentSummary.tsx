@@ -13,18 +13,18 @@ import {
 } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
 
-import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
-
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import {
   DocumentContentPreview,
-  DocumentsTable,
   DocumentWithRelationshipLabels,
   DocumentNamePreview,
   RootAssetCell,
 } from '@data-exploration-components/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import { DASH } from '@data-exploration-components/utils';
+import {
+  DASH,
+  getMetadataValueByKey,
+} from '@data-exploration-components/utils';
 import { Body } from '@cognite/cogs.js';
 import { TimeDisplay } from '@data-exploration-components/components';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
@@ -50,9 +50,8 @@ export const DocumentSummary = ({
 
   const metadataColumns = useMemo(() => {
     return (metadataKeys || []).map((key: string) =>
-      ResourceTableColumns.metadata(
-        key,
-        (row) => row?.sourceFile?.metadata?.[key] || DASH
+      ResourceTableColumns.metadata(key, (row) =>
+        getMetadataValueByKey(key, row?.sourceFile?.metadata)
       )
     );
   }, [metadataKeys]);

@@ -12,7 +12,10 @@ import {
   InternalDocument,
   useDocumentsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
-import { DASH } from '@data-exploration-components/utils';
+import {
+  DASH,
+  getMetadataValueByKey,
+} from '@data-exploration-components/utils';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Body } from '@cognite/cogs.js';
 
@@ -57,9 +60,8 @@ export const DocumentsTable = (props: DocumentTableProps) => {
 
   const metadataColumns = useMemo(() => {
     return (metadataKeys || []).map((key: string) =>
-      ResourceTableColumns.metadata(
-        key,
-        (row) => row?.sourceFile?.metadata?.[key] || DASH
+      ResourceTableColumns.metadata(key, (row: any) =>
+        getMetadataValueByKey(key, row?.sourceFile?.metadata)
       )
     );
   }, [metadataKeys]);

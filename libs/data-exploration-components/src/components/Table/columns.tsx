@@ -22,6 +22,7 @@ import {
 
 import {
   DASH,
+  getMetadataValueByKey,
   isNumber,
   mapFileType,
   METADATA_KEY_SEPARATOR,
@@ -392,7 +393,9 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     return {
       id: `metadata${METADATA_KEY_SEPARATOR}${key}`,
       accessorFn: (row) =>
-        accessorFn ? accessorFn(row) : row?.metadata?.[key] || DASH,
+        accessorFn
+          ? accessorFn(row)
+          : getMetadataValueByKey(key, row?.metadata),
       header: key,
       meta: {
         isMetadata: true,
