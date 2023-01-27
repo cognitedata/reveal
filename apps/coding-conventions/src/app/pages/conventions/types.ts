@@ -1,39 +1,44 @@
-export type TagPartType = 'Range' | 'Regex' | 'Hardcoded';
+type UID = string;
+export type TagTypes = 'Range' | 'Regex' | 'Abbreviation';
+export type TagDefinitions = TagHardcoded | TagRange | TagRegex;
 
-export type Tagpart = {
-  name: string;
-  tagDefinition: string;
-  selectionRange: { start: number; end: number };
-  definitions: TagSubPart[];
+export type Convention = {
+  id: UID;
+  keyword: string; // NN
+  range: {
+    start: number;
+    end: number;
+  };
+  name?: string; // System
+  definitions?: TagDefinitions[];
+  dependency?: UID;
 };
 
-export type TagSubPart =
-  | TagSubPartHardcoded
-  | TagSubPartRange
-  | TagSubPartRegex;
+export type System = {
+  id: UID;
+  title: string;
+  subtitle?: string;
+  structure?: string;
+  conventions: Convention[];
+};
 
-export type TagSubPartBase = {
+export type Common = {
+  id: UID;
   description: string;
-  type: TagPartType;
-  optional: boolean;
-  dependencies: string[];
+  type: TagTypes;
+  optional?: boolean;
+  dependsOn?: UID;
 };
 
-export type TagSubPartHardcoded = TagSubPartBase & {
-  keyToMatch: string;
+export type TagHardcoded = Common & {
+  key: string;
 };
 
-export type TagSubPartRange = TagSubPartBase & {
-  minValue: number;
-  maxValue: number;
-  minimumCharacterLength: number; // used for padding with 0s
+export type TagRange = Common & {
+  value: [number, number];
+  minimumCharacterLength?: number; // used for padding with 0s
 };
 
-export type TagSubPartRegex = TagSubPartBase & {
-  regexToMatch: string;
+export type TagRegex = Common & {
+  regex: string;
 };
-
-// --- Tag (Overall tag information)
-// list of tag parts, each pointing to a part of the tag
-// each tag part has a list of definitions
-// of which there are 3 types: hardcoded, range, regex

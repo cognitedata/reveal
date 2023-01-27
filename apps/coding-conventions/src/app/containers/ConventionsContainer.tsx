@@ -20,7 +20,7 @@ export const ConventionsContainer = () => {
       {dummyConventions.map((item) => (
         <Card
           key={item.id}
-          icon={item.icon as IconType}
+          // icon={item.icon as IconType}
           title={item.title}
           subtitle={item.subtitle}
           structure={item.structure}

@@ -2,11 +2,12 @@ import React from 'react';
 import { Body, Button, Flex } from '@cognite/cogs.js';
 
 interface Props {
+  okText?: string;
   onOk?: () => void;
   onCancel?: () => void;
 }
 
-const ModalFooter: React.FC<Props> = ({ onOk, onCancel }) => {
+const ModalFooter: React.FC<Props> = ({ okText, onOk, onCancel }) => {
   return (
     <Flex alignItems="center" justifyContent="space-between">
       <Flex gap={8}>
@@ -14,7 +15,7 @@ const ModalFooter: React.FC<Props> = ({ onOk, onCancel }) => {
           Cancel
         </Button>
         <Button type="primary" onClick={() => onOk?.()}>
-          Create
+          {okText || 'Create'}
         </Button>
       </Flex>
     </Flex>

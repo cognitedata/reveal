@@ -9,9 +9,9 @@ import {
 import styled from 'styled-components';
 
 interface Props {
-  icon: IconType;
+  icon?: IconType;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   structure?: string;
   onClick?: () => void;
 }
@@ -26,7 +26,7 @@ export const Card: React.FC<Props> = ({
   return (
     <Container onClick={onClick} role="button">
       <Header>
-        <Icon size={18} type={icon} />
+        <Icon size={18} type={icon || 'Document'} />
         <Title>{title}</Title>
         <Subtitle>{subtitle}</Subtitle>
       </Header>

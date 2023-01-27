@@ -1,7 +1,7 @@
 import { Input, Button } from '@cognite/cogs.js';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Tagpart } from './types';
+import { Convention } from './types';
 
 const createTagPart = (
   selectedText: string,
@@ -16,7 +16,7 @@ const createTagPart = (
   };
 };
 
-const highlightSelection = (tagPart: Tagpart, remove = false) => {
+const highlightSelection = (tagPart: Convention, remove = false) => {
   const inputField = document.getElementById(
     'tagDefinition'
   ) as HTMLInputElement;
@@ -31,10 +31,7 @@ const highlightSelection = (tagPart: Tagpart, remove = false) => {
     inputField.selectionEnd !== null &&
     inputField.selectionStart !== inputField.selectionEnd
   ) {
-    inputField.setSelectionRange(
-      tagPart.selectionRange.start,
-      tagPart.selectionRange.end
-    );
+    inputField.setSelectionRange(tagPart.range.start, tagPart.range.end);
     inputField.focus();
     console.log('Highlight');
   }
@@ -42,7 +39,7 @@ const highlightSelection = (tagPart: Tagpart, remove = false) => {
 
 const DefineSchema = () => {
   const [tagDefinition, setTagDefinition] = useState('');
-  const [data, setData] = useState([] as Tagpart[]);
+  const [data, setData] = useState([] as Convention[]);
 
   // Name
   // Type (Filename, assetTag)
@@ -68,7 +65,7 @@ const DefineSchema = () => {
         inputField.selectionEnd
       );
       inputField.setSelectionRange(0, 0);
-      setData([...data, newTagPart]);
+      // setData([...data, newTagPart]);
     }
   };
 
@@ -94,7 +91,7 @@ const DefineSchema = () => {
       <div>
         {data.map((item, index) => (
           <div key={index} onMouseEnter={() => highlightSelection(item)}>
-            <h1>{item.tagDefinition}</h1>
+            {/* <h1>{item.tagDefinition}</h1> */}
           </div>
         ))}
       </div>
