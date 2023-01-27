@@ -26,7 +26,6 @@ export const SequenceTable = ({
 }: Omit<TableProps<SequenceWithRelationshipLabels | Sequence>, 'columns'> &
   RelationshipLabels) => {
   const { data: metadataKeys = [] } = useSequencesMetadataKeys();
-  console.log(metadataKeys);
 
   const metadataColumns = useMemo(() => {
     return metadataKeys.map((key: string) =>

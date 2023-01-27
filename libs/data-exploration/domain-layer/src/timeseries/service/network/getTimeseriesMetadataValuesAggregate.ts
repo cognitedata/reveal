@@ -15,7 +15,11 @@ export const getTimeseriesMetadataValuesAggregate = (
   return getTimeseriesAggregate<TimeseriesAggregateUniqueValuesResponse>(sdk, {
     ...filters,
     aggregate: 'uniqueValues',
-    properties: [['metadata', metadataKey]],
+    properties: [
+      {
+        property: ['metadata', metadataKey],
+      },
+    ],
   }).then(({ items }) => {
     return items.map((item) => {
       return {

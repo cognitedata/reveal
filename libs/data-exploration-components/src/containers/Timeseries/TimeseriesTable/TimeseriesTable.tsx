@@ -63,7 +63,9 @@ export const TimeseriesTable = ({
   }, [data]);
 
   const metadataColumns = useMemo(() => {
-    return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
+    return metadataKeys.map((key) =>
+      ResourceTableColumns.metadata(String(key))
+    );
   }, [metadataKeys]);
 
   const columns = useMemo(() => {

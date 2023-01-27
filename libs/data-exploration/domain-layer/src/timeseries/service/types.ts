@@ -27,17 +27,13 @@ export type TimeseriesAggregateRequestPayload = TimeseriesAggregateFilters &
     path?: string[];
   };
 
-export type TimeseriesAggregateProperty =
-  | [TimeseriesProperty]
-  | TimeseriesMetadataProperty;
+export interface TimeseriesAggregateProperty {
+  property: [TimeseriesProperty] | TimeseriesMetadataProperty;
+}
 
 export interface TimeseriesAggregateUniquePropertiesResponse
   extends AggregateResponse {
-  values: [
-    {
-      property: TimeseriesAggregateProperty;
-    }
-  ];
+  values: [TimeseriesAggregateProperty];
 }
 
 export interface TimeseriesAggregateUniqueValuesResponse

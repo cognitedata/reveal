@@ -16,7 +16,11 @@ export const getSequencesMetadataValuesAggregate = (
   return getSequencesAggregate<SequencesAggregateUniqueValuesResponse>(sdk, {
     ...filters,
     aggregate: 'uniqueValues',
-    properties: [['metadata', metadataKey]],
+    properties: [
+      {
+        property: ['metadata', metadataKey],
+      },
+    ],
   }).then(({ items }) => {
     return items.map((item) => {
       return {

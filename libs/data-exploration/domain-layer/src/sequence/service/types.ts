@@ -19,7 +19,7 @@ export type SequencesAggregateOptions =
     }
   | {
       aggregate: 'approximateCardinality' | 'uniqueValues';
-      properties: [string[]];
+      properties: [SequencesAggregateProperty];
     };
 
 export type SequencesAggregateRequestPayload = SequencesAggregateFilters &
@@ -33,7 +33,6 @@ export interface SequencesAggregateProperty {
 
 export interface SequencesAggregateUniquePropertiesResponse
   extends AggregateResponse {
-  value: SequencesAggregateProperty;
   values: [SequencesAggregateProperty];
 }
 

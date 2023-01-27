@@ -6,7 +6,7 @@ export const useTimeseriesMetadataKeys = () => {
   const { data, ...rest } = useTimeseriesMetadataKeysAggregateQuery();
 
   const metadataKeys = useMemo(() => {
-    return data?.map(({ value }) => value);
+    return data?.map(({ values }) => values);
   }, [data]);
 
   return {

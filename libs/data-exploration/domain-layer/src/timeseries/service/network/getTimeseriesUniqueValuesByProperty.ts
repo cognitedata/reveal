@@ -15,6 +15,10 @@ export const getTimeseriesUniqueValuesByProperty = (
   return getTimeseriesAggregate<TimeseriesAggregateUniqueValuesResponse>(sdk, {
     ...filters,
     aggregate: 'uniqueValues',
-    properties: [[property]],
+    properties: [
+      {
+        property: [property],
+      },
+    ],
   }).then(({ items }) => items);
 };
