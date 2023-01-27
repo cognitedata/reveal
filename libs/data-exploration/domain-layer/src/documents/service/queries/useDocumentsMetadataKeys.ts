@@ -1,12 +1,12 @@
-import { useSDK } from '@cognite/sdk-provider';
-
-import { useQuery } from 'react-query';
-import { queryKeys } from '../../../queryKeys';
-import { getMetadataKeys } from '../network/getMetadataKeys';
+import { useMemo } from 'react';
+import { useDocumentsMetadataKeysAggregateQuery } from './useDocumentsMetadataKeysAggregateQuery';
 
 export const useDocumentsMetadataKeys = () => {
-  const sdk = useSDK();
-  return useQuery(queryKeys.documentsMetadata(), () => {
-    return getMetadataKeys(sdk);
-  });
+  const { data, ...rest } = useDocumentsMetadataKeysAggregateQuery();
+
+  const metadataKeys = useMemo(() => {
+    return data?.map(({ value }) => value);
+  }, [data]);
+
+  return { data: metadataKeys, ...rest };
 };

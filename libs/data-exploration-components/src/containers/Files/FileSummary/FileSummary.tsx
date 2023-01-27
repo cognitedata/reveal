@@ -40,7 +40,7 @@ export const FileSummary = ({
 
   const { data: metadataKeys } = useDocumentsMetadataKeys();
 
-  const metadataColumns: ColumnDef<FileInfo>[] = useMemo(() => {
+  const metadataColumns = useMemo(() => {
     return (metadataKeys || []).map((key: string) =>
       ResourceTableColumns.metadata(key)
     );

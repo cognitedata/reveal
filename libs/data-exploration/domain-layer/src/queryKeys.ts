@@ -94,4 +94,6 @@ export const queryKeys = {
 
   documentsMetadata: () =>
     [...queryKeys.documents(), 'metadata', 'keys'] as const,
+  documentsMetadataValues: (metadataKey: string) =>
+    [...queryKeys.documents(), 'metadata', metadataKey, 'values'] as const,
 } as const;

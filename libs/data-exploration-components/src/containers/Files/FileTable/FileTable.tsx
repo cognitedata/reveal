@@ -29,7 +29,7 @@ export const FileTable = (props: FileTableProps) => {
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const metadataColumns: ColumnDef<FileInfo>[] = useMemo(() => {
+  const metadataColumns = useMemo(() => {
     return (metadataKeys || []).map((key: string) =>
       ResourceTableColumns.metadata(key)
     );

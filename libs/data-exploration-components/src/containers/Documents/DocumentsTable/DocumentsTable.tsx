@@ -55,15 +55,14 @@ export const DocumentsTable = (props: DocumentTableProps) => {
   const { query } = props;
   const { data: metadataKeys } = useDocumentsMetadataKeys();
 
-  const metadataColumns: ColumnDef<DocumentWithRelationshipLabels>[] =
-    useMemo(() => {
-      return (metadataKeys || []).map((key: string) =>
-        ResourceTableColumns.metadata(
-          key,
-          (row) => row?.sourceFile?.metadata?.[key] || DASH
-        )
-      );
-    }, [metadataKeys]);
+  const metadataColumns = useMemo(() => {
+    return (metadataKeys || []).map((key: string) =>
+      ResourceTableColumns.metadata(
+        key,
+        (row) => row?.sourceFile?.metadata?.[key] || DASH
+      )
+    );
+  }, [metadataKeys]);
 
   const columns = useMemo(
     () =>

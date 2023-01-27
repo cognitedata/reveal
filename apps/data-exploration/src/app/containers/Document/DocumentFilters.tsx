@@ -12,6 +12,8 @@ import {
   useDocumentSearchResultQuery,
   useDocumentAggregateFileTypeQuery,
   InternalDocumentFilter,
+  useDocumentsMetadataKeysAggregateQuery,
+  useDocumentsMetadataValuesAggregateQuery,
 } from '@data-exploration-lib/domain-layer';
 
 import { useFilterEmptyState } from '@data-exploration-app/store';
@@ -31,6 +33,8 @@ export const DocumentFilter = ({ ...rest }) => {
     ...document,
     metadata: document.sourceFile.metadata,
   }));
+
+  const { data: metadataKeys = [] } = useDocumentsMetadataKeysAggregateQuery();
 
   const { data: authorOptions, isError: isAuthorError } =
     useDocumentAggregateAuthorQuery();
@@ -86,10 +90,12 @@ export const DocumentFilter = ({ ...rest }) => {
         />
         <MetadataFilterV2
           items={resultWithMetadata}
+          keys={metadataKeys}
           value={documentFilter.metadata}
           setValue={(newValue) => {
             updateDocumentFilter('metadata', newValue);
           }}
+          useAggregateMetadataValues={useDocumentsMetadataValuesAggregateQuery}
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

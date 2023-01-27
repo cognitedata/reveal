@@ -48,15 +48,14 @@ export const DocumentSummary = ({
   });
   const { data: metadataKeys } = useDocumentsMetadataKeys();
 
-  const metadataColumns: ColumnDef<DocumentWithRelationshipLabels>[] =
-    useMemo(() => {
-      return (metadataKeys || []).map((key: string) =>
-        ResourceTableColumns.metadata(
-          key,
-          (row) => row?.sourceFile?.metadata?.[key] || DASH
-        )
-      );
-    }, [metadataKeys]);
+  const metadataColumns = useMemo(() => {
+    return (metadataKeys || []).map((key: string) =>
+      ResourceTableColumns.metadata(
+        key,
+        (row) => row?.sourceFile?.metadata?.[key] || DASH
+      )
+    );
+  }, [metadataKeys]);
 
   const columns = useMemo(
     () =>
