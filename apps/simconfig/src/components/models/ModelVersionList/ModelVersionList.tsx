@@ -19,6 +19,8 @@ interface ModelVersionListProps {
   modelName: string;
 }
 
+const DESCRIPTION_CUTOFF_LENGTH = 125;
+
 export function ModelVersionList({
   modelName,
   simulator,
@@ -63,12 +65,16 @@ export function ModelVersionList({
                 <div className="entry">
                   <div className="description">Description</div>
                   <div className="value">
-                    {modelFile.metadata.description.length >= 50 ? (
+                    {modelFile.metadata.description.length >=
+                    DESCRIPTION_CUTOFF_LENGTH ? (
                       <>
-                        {`${modelFile.metadata.description.slice(0, 50)}…`}
+                        {`${modelFile.metadata.description.slice(
+                          0,
+                          DESCRIPTION_CUTOFF_LENGTH
+                        )}…`}
                         <Tooltip
                           content={modelFile.metadata.description}
-                          maxWidth={200}
+                          maxWidth={300}
                         >
                           <Icon type="Info" />
                         </Tooltip>
