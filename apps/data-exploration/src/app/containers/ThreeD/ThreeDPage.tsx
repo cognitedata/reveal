@@ -1,8 +1,8 @@
+import { useSearchParamString } from '@cognite/data-exploration';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { ThreeDContextProvider } from './ThreeDContext';
 import { ThreeDView } from './ThreeDView';
-import { useSearchParamString } from '@data-exploration-app/utils/URLUtils';
 
 export const ThreeDPage = () => {
   const { id: threeDIdString = '' } = useParams<{

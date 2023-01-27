@@ -1,3 +1,4 @@
+import { useEventAnnotations } from '@data-exploration-lib/domain-layer';
 import React from 'react';
 import { FileInfo, Asset, CogniteError } from '@cognite/sdk';
 import styled from 'styled-components';
@@ -26,7 +27,6 @@ import {
   FilePreviewUFV,
 } from '@data-exploration-components/containers/Files';
 import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
-import { useEventAnnotations } from '../../hooks';
 
 export const FileSmallPreviewUFV = ({
   fileId,

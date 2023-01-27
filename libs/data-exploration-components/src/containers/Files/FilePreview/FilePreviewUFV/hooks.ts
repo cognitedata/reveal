@@ -6,7 +6,6 @@ import {
 } from '@cognite/unified-file-viewer';
 import { useMemo } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { useEventAnnotations } from '../../hooks';
 import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
 import getExtendedAnnotationsFromCogniteAnnotations from './getExtendedAnnotationsFromCogniteAnnotations';
 import { isNotUndefined } from '@data-exploration-components/utils';
@@ -17,6 +16,7 @@ import {
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useAnnotations } from '@data-exploration-lib/domain-layer';
 import { getContainerId, getStyledAnnotationFromAnnotation } from './utils';
+import { useEventAnnotations } from '@data-exploration-lib/domain-layer';
 
 // The maximum difference the corresponding sides of two bounding boxes may
 // have. If all differences are below this value, for all sides of the bounding

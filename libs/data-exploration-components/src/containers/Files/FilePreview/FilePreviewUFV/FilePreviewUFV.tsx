@@ -7,18 +7,17 @@ import ReactUnifiedViewer, {
   ContainerConfig,
   getContainerConfigFromFileInfo,
   isSupportedFileInfo,
-  TooltipAnchorPosition,
   ToolType,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
 import { Loader } from '@data-exploration-components/components';
+import useTooltips from '@data-exploration-components/containers/Files/FilePreview/FilePreviewUFV/useTooltips';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { ResourceItem } from '@data-exploration-components/types';
 import { lightGrey } from '@data-exploration-components/utils';
 
 import { usePnIdOCRResultFilterQuery } from '@data-exploration-lib/domain-layer';
-import { AnnotationHoverPreview } from './AnnotationHoverPreview';
 import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import {
@@ -186,26 +185,16 @@ export const FilePreviewUFV = ({
     return [...annotationSearchResult];
   }, [isAnnotationsShown, annotations, annotationSearchResult]);
 
-  const tooltips = useMemo(() => {
-    if (!enableToolTips) {
-      return [];
-    }
-
-    const focusedAnnotation = annotations.find(
-      ({ id: annotationId }) => String(annotationId) === hoverId
-    );
-    if (!focusedAnnotation) {
-      return undefined;
-    }
-
-    return [
-      {
-        targetId: String(focusedAnnotation?.id),
-        content: <AnnotationHoverPreview annotation={focusedAnnotation} />,
-        anchorTo: TooltipAnchorPosition.BOTTOM_CENTER,
-      },
-    ];
-  }, [enableToolTips, hoverId, annotations]);
+  const tooltips = useTooltips({
+    isTooltipsEnabled: enableToolTips,
+    // NOTE: Once support for annotations from Events API has been removed, we can
+    // actually access the file id directly from the annotation. This does not work currently
+    // though because the Event API annotations might not hav the file id set (and only the external id)
+    fileId,
+    annotations: annotations,
+    hoverId: hoverId,
+    selectedAnnotations: selectedAnnotations,
+  });
 
   const onStageClick = useCallback(() => {
     setSelectedAnnotations([]);

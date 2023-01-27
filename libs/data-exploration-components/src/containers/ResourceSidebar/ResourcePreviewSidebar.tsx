@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Button, Graphic } from '@cognite/cogs.js';
 import { AssetSmallPreview } from '@data-exploration-components/containers/Assets';
-import { FileSmallPreview } from '@data-exploration-components/containers/Files';
+import { FileSmallPreviewUFV } from '@data-exploration-components/containers/Files';
 import { SequenceSmallPreview } from '@data-exploration-components/containers/Sequences';
 import { TimeseriesSmallPreview } from '@data-exploration-components/containers/Timeseries';
 import { EventSmallPreview } from '@data-exploration-components/containers/Events';
@@ -69,7 +69,7 @@ export const ResourcePreviewSidebar = ({
       }
       case 'file': {
         content = (
-          <FileSmallPreview
+          <FileSmallPreviewUFV
             hideTitle={hideTitle}
             fileId={item.id}
             {...commonProps}

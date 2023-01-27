@@ -26,7 +26,7 @@ import {
   ResourceIcons,
 } from '@data-exploration-components/components';
 import { TimeseriesSmallPreview } from '@data-exploration-components/containers/Timeseries';
-import { FileSmallPreview } from '@data-exploration-components/containers/Files';
+import { FileSmallPreviewUFV } from '@data-exploration-components/containers/Files';
 import {
   SelectableItemProps,
   SmallPreviewProps,
@@ -120,7 +120,7 @@ export const AssetSmallPreview = ({
   if (selected) {
     let content: React.ReactNode = null;
     if (selected.type === 'files') {
-      content = <FileSmallPreview fileId={selected.id} />;
+      content = <FileSmallPreviewUFV fileId={selected.id} />;
     }
     if (selected.type === 'timeseries') {
       content = <TimeseriesSmallPreview timeseriesId={selected.id} />;

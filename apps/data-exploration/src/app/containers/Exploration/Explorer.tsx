@@ -1,3 +1,4 @@
+import { CanvasPage } from '@data-exploration-app/containers/Canvas/CanvasPage';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ResourceSelectorProviderUFV } from '@cognite/data-exploration';
@@ -27,6 +28,7 @@ export const Explorer = () => {
           <Route path="/:resourceType/:id" element={<ResourceDetailsPage />}>
             <Route path=":tabType" element={<ResourceDetailsPage />} />
           </Route>
+          <Route path="/canvas" element={<CanvasPage />} />
           <Route path="/" element={<SearchRedirect />} />
         </Routes>
       </ResourceSelectorProviderUFV>

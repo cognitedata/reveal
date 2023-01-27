@@ -106,4 +106,10 @@ export const queryKeys = {
     [...queryKeys.documents(), 'metadata', 'keys'] as const,
   documentsMetadataValues: (metadataKey: string) =>
     [...queryKeys.documents(), 'metadata', metadataKey, 'values'] as const,
+
+  // Annotations
+  annotations: () => [...queryKeys.all, 'annotations'] as const,
+  annotationsPagedFileReferences: (
+    pagedFileReferences: { id: number; page: number | undefined }[]
+  ) => [...queryKeys.annotations(), pagedFileReferences] as const,
 } as const;
