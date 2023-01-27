@@ -93,6 +93,11 @@ const SecondaryModelDropdown = ({
     );
   }, [images360Data, mainImage360SiteId, searchQuery]);
 
+  const mainImage360Data = useMemo(
+    () => images360Data.find((img360) => img360.siteId === mainImage360SiteId),
+    [images360Data, mainImage360SiteId]
+  );
+
   const {
     data: modelData = { pages: [] as ThreeDModelsResponse[] },
     fetchNextPage: fetchMore,
@@ -203,9 +208,11 @@ const SecondaryModelDropdown = ({
         placeholder="Search"
         value={searchQuery}
       />
-      {mainModel && mainRevision && (
-        <MainThreeDModelMenuItem model={mainModel} revision={mainRevision} />
-      )}
+      <MainThreeDModelMenuItem
+        model={mainModel}
+        image360SiteData={mainImage360Data}
+        revision={mainRevision}
+      />
       <Menu.Divider />
       <StyledSecondaryModelListContainer>
         {viewer && filteredImages360SiteIds.length ? (

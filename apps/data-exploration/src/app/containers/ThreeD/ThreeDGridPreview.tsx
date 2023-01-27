@@ -17,8 +17,6 @@ import {
 import Highlighter from 'react-highlight-words';
 import { Model3D } from '@cognite/sdk';
 import { ResourceType } from '@cognite/data-exploration';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { PartialBy } from './utils';
 
 export type Model3DWithType = PartialBy<

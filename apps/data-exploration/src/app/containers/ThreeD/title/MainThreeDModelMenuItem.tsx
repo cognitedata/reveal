@@ -5,6 +5,7 @@ import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
 import {
+  Image360SiteData,
   Revision3DWithIndex,
   useRevisions,
 } from '@data-exploration-app/containers/ThreeD/hooks';
@@ -16,34 +17,43 @@ import {
 } from '@data-exploration-app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
 import ThreeDTimestamp from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
-import { getStateUrl } from '@data-exploration-app/containers/ThreeD/utils';
+import {
+  getMainModelSubtitle,
+  getMainModelTitle,
+  getStateUrl,
+} from '@data-exploration-app/containers/ThreeD/utils';
 import { useNavigate } from 'react-router-dom';
 
 export const MainThreeDModelMenuItem = ({
   model,
+  image360SiteData,
   revision,
 }: {
-  model: Model3D;
-  revision: Revision3DWithIndex;
+  model?: Model3D;
+  image360SiteData?: Image360SiteData;
+  revision?: Revision3DWithIndex;
 }) => {
-  const { viewState, assetDetailsExpanded, selectedAssetId, secondaryModels } =
-    useContext(ThreeDContext);
+  const {
+    viewState,
+    assetDetailsExpanded,
+    selectedAssetId,
+    secondaryModels,
+    images360,
+    slicingState,
+    assetHighlightMode,
+  } = useContext(ThreeDContext);
 
-  const { data: revisions = [], isFetched } = useRevisions(model.id);
+  const { data: revisions = [], isFetched } = useRevisions(model?.id);
 
   const navigate = useNavigate();
 
   const menuItemContent = (
     <Flex alignItems="flex-start" direction="column">
       <Body level={2} strong>
-        {model.name}
+        {getMainModelTitle(model, image360SiteData)}
       </Body>
       <StyledMainThreeDModelDetail>
-        <>
-          {`Revision ${revision.index} - ${
-            revision.published ? 'Published' : 'Unpublished'
-          }`}
-        </>
+        <>{getMainModelSubtitle(!!image360SiteData, revision)}</>
       </StyledMainThreeDModelDetail>
     </Flex>
   );
@@ -62,18 +72,21 @@ export const MainThreeDModelMenuItem = ({
         <Menu>
           {revisions?.map(({ createdTime, id, index, published }) => (
             <StyledRevisionMenuItem
-              $isSelected={id === revision.id}
-              appendIcon={id === revision.id ? 'Checkmark' : undefined}
+              $isSelected={id === revision?.id}
+              appendIcon={id === revision?.id ? 'Checkmark' : undefined}
               key={id}
               onClick={() => {
-                if (id !== revision.id) {
+                if (id !== revision?.id) {
                   navigate(
                     getStateUrl({
                       revisionId: id,
                       viewState,
+                      slicingState,
                       selectedAssetId,
                       assetDetailsExpanded,
                       secondaryModels,
+                      images360,
+                      assetHighlightMode,
                     })
                   );
                 }
@@ -81,7 +94,7 @@ export const MainThreeDModelMenuItem = ({
             >
               <StyledMenuItemContent alignItems="flex-start" direction="column">
                 <StyledSecondaryThreeDModelBody
-                  $isSelected={id === revision.id}
+                  $isSelected={id === revision?.id}
                 >
                   Revision {index}
                 </StyledSecondaryThreeDModelBody>

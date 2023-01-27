@@ -332,12 +332,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                     />
                   )}
                   <StyledToolBarDivider />
-                  <ShareButton
-                    viewState={viewState}
-                    selectedAssetId={selectedAssetId}
-                    assetDetailsExpanded={assetDetailsExpanded}
-                    secondaryModels={secondaryModels}
-                  />
+                  <ShareButton />
                   <HelpButton />
                 </StyledToolBar>
                 <SidebarContainer gap={15}>

@@ -18,7 +18,7 @@ import {
   useQuery,
   UseQueryOptions,
 } from 'react-query';
-import { prepareSearchString } from './utils';
+import { IMAGE_360_POSITION_THRESHOLD, prepareSearchString } from './utils';
 import {
   CogniteCadModel,
   Cognite3DViewer,
@@ -26,6 +26,7 @@ import {
   Image360Collection,
 } from '@cognite/reveal';
 import { useMemo } from 'react';
+import { Vector3 } from 'three';
 import _ from 'lodash';
 import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
@@ -49,6 +50,11 @@ export interface AugmentedMapping extends AssetMapping3D {
 export type AugmentedMappingResponse = {
   items: AugmentedMapping[];
   nextCursor?: string;
+};
+
+export type Image360SiteData = {
+  siteId: string;
+  siteName: string;
 };
 
 export const use3DModel = (id: number | undefined) => {
@@ -163,6 +169,29 @@ export const use3DModelThumbnail = (url?: string) => {
     },
     { enabled: Boolean(url) }
   );
+};
+
+export const useImage360 = (siteId?: string): Image360SiteData | undefined => {
+  const { data: images360Data } = useEventsSearchResultQuery({
+    eventsFilters: {
+      type: 'scan',
+      metadata: [
+        {
+          key: 'site_id',
+          value: siteId ?? '',
+        },
+      ],
+    },
+  });
+
+  if (!siteId || images360Data.length === 0) return;
+
+  const img360 = images360Data[0];
+  const image360SiteData: Image360SiteData = {
+    siteId,
+    siteName: img360.metadata?.site_name ?? 'No site name',
+  };
+  return image360SiteData;
 };
 
 export const useInfinite360Images = () => {
@@ -591,6 +620,21 @@ export const getImages360QueryFn =
         { site_id: siteId },
         { collectionTransform, preMultipliedRotation: false }
       );
+
+      const cameraPosition = viewer.cameraManager.getCameraState().position;
+      const reusableVec = new Vector3();
+
+      const currentImage360 = images360Set.image360Entities.find(
+        ({ transform }) =>
+          cameraPosition.distanceToSquared(
+            reusableVec.setFromMatrixPosition(transform)
+          ) < IMAGE_360_POSITION_THRESHOLD
+      );
+
+      if (currentImage360) {
+        viewer.enter360Image(currentImage360);
+      }
+
       setImageEntities(
         imageEntities.concat({
           siteId: siteId,

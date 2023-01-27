@@ -38,7 +38,7 @@ export type SecondaryModelOptions = {
 
 export type Image360DatasetOptions = {
   siteId: string;
-  siteName: string;
+  siteName?: string;
   applied?: boolean;
   rotationMatrix?: THREE.Matrix4;
   translationMatrix?: THREE.Matrix4;
@@ -169,7 +169,7 @@ const getInitialState = () => {
         const cubemaps = JSON.parse(searchParams) as Pick<
           Image360DatasetOptions,
           // TODO: add rotationMatrix & translationMatrix once it is available from backend
-          'siteId' | 'siteName'
+          'siteId'
         >[];
         return cubemaps.map((cubemap) => ({ ...cubemap, applied: true }));
       }
@@ -295,6 +295,7 @@ export const ThreeDContextProvider = ({
         slicingState,
         assetDetailsExpanded,
         secondaryModels,
+        images360,
         assetHighlightMode,
       })
     );
@@ -306,6 +307,7 @@ export const ThreeDContextProvider = ({
     slicingState,
     secondaryModels,
     assetHighlightMode,
+    images360,
   ]);
 
   useEffect(() => {

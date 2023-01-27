@@ -16,13 +16,17 @@ import {
   BoundingBox3D,
   CogniteInternalId,
   Node3D,
+  Model3D,
 } from '@cognite/sdk';
 import {
   fetchAssetDetails,
   fetchAssetMappingsByAssetIdQuery,
   fetchClosestAssetIdQuery,
+  Image360SiteData,
+  Revision3DWithIndex,
 } from '@data-exploration-app/containers/ThreeD/hooks';
 import {
+  Image360DatasetOptions,
   SecondaryModelOptions,
   SlicingState,
 } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
@@ -31,7 +35,6 @@ import { FetchQueryOptions, QueryClient } from 'react-query';
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY = 'slicingState';
-export const THREE_D_IMAGE_360_STATE_QUERY_PARAMETER_KEY = 'img360State';
 export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
 export const THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY = 'expanded';
 export const THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY = 'hl_mode';
@@ -41,6 +44,7 @@ export const THREE_D_CUBEMAP_360_IMAGES_QUERY_PARAMETER_KEY = 'images360';
 
 export const MINIMUM_BOUNDINGBOX_SIZE = 0.001;
 export const CAMERA_ANIMATION_DURATION = 500;
+export const IMAGE_360_POSITION_THRESHOLD = 0.0001;
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
@@ -341,6 +345,7 @@ export const getStateUrl = ({
   assetDetailsExpanded,
   selectedAssetId,
   secondaryModels,
+  images360,
   assetHighlightMode,
 }: {
   revisionId?: number;
@@ -349,6 +354,7 @@ export const getStateUrl = ({
   selectedAssetId?: number;
   assetDetailsExpanded?: boolean;
   secondaryModels?: SecondaryModelOptions[];
+  images360?: Image360DatasetOptions[];
   assetHighlightMode?: boolean;
 }) => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -392,6 +398,20 @@ export const getStateUrl = ({
     );
   } else {
     searchParams.delete(THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY);
+  }
+
+  if (images360) {
+    const selectedImages360 = images360
+      .filter((img360) => !!img360.applied)
+      .map((img360) => ({
+        siteId: img360.siteId,
+      }));
+    searchParams.set(
+      THREE_D_CUBEMAP_360_IMAGES_QUERY_PARAMETER_KEY,
+      JSON.stringify(selectedImages360)
+    );
+  } else {
+    searchParams.delete(THREE_D_CUBEMAP_360_IMAGES_QUERY_PARAMETER_KEY);
   }
 
   if (viewState) {
@@ -455,4 +475,25 @@ export function updateAllPointCloudsPointSize(
 
     model.pointSize = pointSize;
   });
+}
+export function getMainModelTitle(
+  model?: Model3D,
+  image360Data?: Image360SiteData
+): string {
+  return (
+    model?.name ?? model?.id.toString() ?? image360Data?.siteName ?? 'No title'
+  );
+}
+
+export function getMainModelSubtitle(
+  isImage360?: boolean,
+  modelRevision?: Revision3DWithIndex
+): string {
+  if (isImage360) {
+    return '360 Image';
+  } else {
+    return `Revision ${modelRevision?.index} - ${
+      modelRevision?.published ? 'Published' : 'Unpublished'
+    }`;
+  }
 }

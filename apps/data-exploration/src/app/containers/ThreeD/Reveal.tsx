@@ -27,6 +27,7 @@ import { ThreeDContext } from './ThreeDContext';
 import { toast } from '@cognite/cogs.js';
 import RevealErrorToast from './RevealErrorToast';
 import { Vector3 } from 'three';
+import { IMAGE_360_POSITION_THRESHOLD } from './utils';
 
 type ChildProps = {
   threeDModel?: CogniteCadModel;
@@ -148,7 +149,7 @@ export function Reveal({
               ({ transform }) =>
                 lastCameraPositionVec.distanceToSquared(
                   reusableVec.setFromMatrixPosition(transform)
-                ) === 0
+                ) < IMAGE_360_POSITION_THRESHOLD
             )
           : images.image360Entities[0];
 

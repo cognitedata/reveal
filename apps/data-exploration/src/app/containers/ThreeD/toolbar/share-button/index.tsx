@@ -1,29 +1,34 @@
 import { Button, Tooltip, toast } from '@cognite/cogs.js';
 import { ViewerState } from '@cognite/reveal';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import {
+  SecondaryModelOptions,
+  ThreeDContext,
+} from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import { getStateUrl } from '@data-exploration-app/containers/ThreeD/utils';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useContext } from 'react';
 
-type ShareButtonProps = {
-  viewState?: ViewerState;
-  selectedAssetId?: number;
-  assetDetailsExpanded?: boolean;
-  secondaryModels?: SecondaryModelOptions[];
-};
+const ShareButton = (): JSX.Element => {
+  const {
+    viewState,
+    selectedAssetId,
+    assetDetailsExpanded,
+    secondaryModels,
+    images360,
+    assetHighlightMode,
+    revisionId,
+  } = useContext(ThreeDContext);
 
-const ShareButton = ({
-  viewState,
-  selectedAssetId,
-  assetDetailsExpanded,
-  secondaryModels,
-}: ShareButtonProps): JSX.Element => {
   const handleShare = async () => {
     const path = getStateUrl({
+      revisionId,
       viewState,
       selectedAssetId,
       assetDetailsExpanded,
       secondaryModels,
+      images360: images360,
+      assetHighlightMode,
     });
     const link = `${window.location.origin}${path}`;
     await navigator.clipboard.writeText(`${link}`);
