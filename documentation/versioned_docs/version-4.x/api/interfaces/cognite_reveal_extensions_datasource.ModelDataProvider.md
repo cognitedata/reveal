@@ -42,7 +42,7 @@ Downloads a binary blob.
 
 #### Defined in
 
-[packages/data-providers/src/ModelDataProvider.ts:22](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/data-providers/src/ModelDataProvider.ts#L22)
+[packages/data-providers/src/ModelDataProvider.ts:22](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/data-providers/src/ModelDataProvider.ts#L22)
 
 ___
 
@@ -69,4 +69,4 @@ Download and parse a JSON file and return the resulting struct.
 
 #### Defined in
 
-[packages/data-providers/src/ModelDataProvider.ts:16](https://github.com/cognitedata/reveal/blob/fba2eed2/viewer/packages/data-providers/src/ModelDataProvider.ts#L16)
+[packages/data-providers/src/ModelDataProvider.ts:16](https://github.com/cognitedata/reveal/blob/7a5de3c9/viewer/packages/data-providers/src/ModelDataProvider.ts#L16)

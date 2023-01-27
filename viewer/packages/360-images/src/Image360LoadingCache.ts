@@ -4,6 +4,7 @@
 
 import { Image360Entity } from './Image360Entity';
 import pull from 'lodash/pull';
+import findLast from 'lodash/findLast';
 
 export class Image360LoadingCache {
   private readonly _loaded360Images: Image360Entity[];
@@ -38,8 +39,7 @@ export class Image360LoadingCache {
     await load360Image;
 
     if (this._loaded360Images.length === this._cacheSize) {
-      const cachePurgedEntity = this._loaded360Images.pop();
-      cachePurgedEntity?.unload360Image();
+      this.purgeLastRecentlyUsedInvisibleEntity();
     }
 
     this._loaded360Images.unshift(entity);
@@ -51,5 +51,14 @@ export class Image360LoadingCache {
       await this._inFlightEntities.get(entity);
     }
     pull(this._loaded360Images, entity);
+  }
+
+  private purgeLastRecentlyUsedInvisibleEntity() {
+    const entityToPurge = findLast(this._loaded360Images, entity => !entity.image360Visualization.visible);
+    if (entityToPurge === undefined) {
+      throw new Error('Unable to purge 360 image from cache due to too many visible instances');
+    }
+    pull(this._loaded360Images, entityToPurge);
+    entityToPurge.unload360Image();
   }
 }

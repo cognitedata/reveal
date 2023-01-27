@@ -54,12 +54,14 @@ vec3 computeWorldNormalFromDepth(sampler2D depthTexture, vec2 resolution, vec2 u
   vec2 verticalSampleUv = verticalSampleCondition ? uv2 : uv4;
 
   vec3 viewPos = viewPosFromDepth(sampleDepth, vUv);
-  
+
   vec3 viewPos1 = (horizontalSampleCondition == verticalSampleCondition) ? viewPosFromDepth(horizontalSampleDepth, horizontalSampleUv) : viewPosFromDepth(verticalSampleDepth, verticalSampleUv);
   vec3 viewPos2 = (horizontalSampleCondition == verticalSampleCondition) ? viewPosFromDepth(verticalSampleDepth, verticalSampleUv) : viewPosFromDepth(horizontalSampleDepth, horizontalSampleUv);
 
   return normalize(cross(viewPos1 - viewPos, viewPos2 - viewPos));
 }
+
+float LARGE_DISTANCE_SAMPLE_FACTOR = 0.05;
 
 void main(){
   float d = texture(tDepth, vUv).r;
@@ -70,9 +72,11 @@ void main(){
 
   vec3 viewPosition = viewPosFromDepth(d, vUv);
 
-  vec3 randomVec = normalize(vec3(rand2d(vUv), rand2d(vUv * 3.0), rand2d(vUv * 5.0)));
+  float distanceFactor = max(length(viewPosition) * LARGE_DISTANCE_SAMPLE_FACTOR, 1.0);
 
-  vec3 tangent = normalize(randomVec - viewNormal * dot(randomVec, viewNormal));
+  vec3 covector = normalize(vec3(rand2d(vUv), rand2d(vUv * 3.0), rand2d(vUv * 5.0)));
+
+  vec3 tangent = normalize(covector - viewNormal * dot(covector, viewNormal));
 
   vec3 bitangent = cross(viewNormal, tangent);
 
@@ -80,12 +84,11 @@ void main(){
 
   float occlusion = 0.0;
 
-  for (int i = 0; i < MAX_KERNEL_SIZE; i++){
-    
+  for (int i = 0; i < MAX_KERNEL_SIZE; i++) {
     vec3 sampleVector = TBN * kernel[i];
-    sampleVector = viewPosition + sampleVector * sampleRadius;
+    vec3 samplePosition = viewPosition + sampleVector * sampleRadius * distanceFactor;
 
-    vec4 offset = projMatrix * vec4(sampleVector, 1.0);
+    vec4 offset = projMatrix * vec4(samplePosition, 1.0);
     offset.xyz /= offset.w;
     offset.xyz = offset.xyz * 0.5 + 0.5;
 
@@ -94,7 +97,7 @@ void main(){
 
     float rangeCheck = smoothstep(0.0, 1.0, sampleRadius / length(viewPosition - realPos));
 
-    occlusion += (realPos.z >= sampleVector.z + bias ? 1.0 : 0.0) * rangeCheck;
+    occlusion += (realPos.z >= samplePosition.z + bias ? 1.0 : 0.0) * rangeCheck;
   }
 
   float occlusionFactor = 1.0 - clamp(occlusion / float(MAX_KERNEL_SIZE), 0.0, 1.0);
