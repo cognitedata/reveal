@@ -36,8 +36,7 @@ export const AssetFilters = ({ ...rest }) => {
   const { data: sources = [], isFetched: isSourceFetched } =
     useAssetsUniqueValuesByProperty('source', assetFilters);
 
-  const { data: metadataKeys = [] } =
-    useAssetsMetadataKeysAggregateQuery(assetFilters);
+  const { data: metadataKeys = [] } = useAssetsMetadataKeysAggregateQuery();
 
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 

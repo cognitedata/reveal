@@ -20,8 +20,7 @@ export const SequenceFilters = ({ ...rest }) => {
   const resetSequenceFilters = useResetSequenceFilters();
   const isFiltersEmpty = useFilterEmptyState('sequence');
 
-  const { data: metadataKeys = [] } =
-    useSequencesMetadataKeysAggregateQuery(sequenceFilter);
+  const { data: metadataKeys = [] } = useSequencesMetadataKeysAggregateQuery();
 
   const { data: items = [] } = useList<any>('sequences', {
     filter: transformNewFilterToOldFilter(sequenceFilter),

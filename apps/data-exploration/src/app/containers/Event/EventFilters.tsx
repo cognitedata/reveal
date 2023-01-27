@@ -30,8 +30,7 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
   const isFiltersEmpty = useFilterEmptyState('event');
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
-  const { data: metadataKeys = [] } =
-    useEventsMetadataKeysAggregateQuery(eventFilter);
+  const { data: metadataKeys = [] } = useEventsMetadataKeysAggregateQuery();
 
   const { data: items = [] } = useList<CogniteEvent>('events', {
     filter: transformNewFilterToOldFilter(eventFilter),

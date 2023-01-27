@@ -22,8 +22,7 @@ export const TimeseriesFilters = ({ ...rest }) => {
   const isFiltersEmpty = useFilterEmptyState('timeseries');
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
-  const { data: metadataKeys = [] } =
-    useTimeseriesMetadataKeysAggregateQuery(timeseriesFilter);
+  const { data: metadataKeys = [] } = useTimeseriesMetadataKeysAggregateQuery();
 
   const { items } = useTimeseriesList(
     timeseriesFilter,
