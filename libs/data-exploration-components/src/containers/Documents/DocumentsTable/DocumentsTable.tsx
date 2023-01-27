@@ -138,6 +138,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           },
           enableSorting: false,
         },
+        Table.Columns.assets,
         Table.Columns.externalId(query),
         Table.Columns.id(query),
         ...metadataColumns,

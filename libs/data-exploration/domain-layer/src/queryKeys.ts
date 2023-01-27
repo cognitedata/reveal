@@ -1,4 +1,5 @@
-import { DocumentSortItem } from '@cognite/sdk/dist/src';
+import { DocumentSortItem, IdEither } from '@cognite/sdk/dist/src';
+import { queryType } from 'graphql-extra';
 
 export const queryKeys = {
   all: ['cdf'] as const,
@@ -53,6 +54,7 @@ export const queryKeys = {
 
   // ASSETS
   assets: () => [...queryKeys.all, 'assets'] as const,
+  assetByIds: (ids?: IdEither[]) => [...queryKeys.assets(), ids],
   rootAsset: (assetId: number) =>
     [...queryKeys.assets(), assetId, 'rootParent'] as const,
   rootAssets: () => [...queryKeys.all, 'rootAssets'],

@@ -1,19 +1,10 @@
-import {
-  Body,
-  Button,
-  Dropdown,
-  Flex,
-  Label,
-  Menu,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { Body, Button, Flex, Tooltip } from '@cognite/cogs.js';
 import { DataSet, Asset } from '@cognite/sdk';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import capitalize from 'lodash/capitalize';
 import uniqueId from 'lodash/uniqueId';
 import React from 'react';
-
-import styled, { css } from 'styled-components';
+import { StyledLabel, StyledButton } from './elements';
 
 import {
   HighlightCell,
@@ -31,6 +22,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { useGetRootAsset } from '@data-exploration-components/hooks';
 import { RootAssetCell } from './RootAssetCell';
 import { ResourceTableHashMap } from './types';
+import { DirectAssets } from './DirectAssets';
 
 // TODO: this whole approach needs to be refactored a bit, especially the usage of hooks and stuff
 export const ResourceTableColumns: ResourceTableHashMap = {
@@ -225,67 +217,17 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     },
   },
   assets: {
-    header: 'Asset(s)',
+    header: 'Direct Asset(s)',
     accessorKey: 'assetId',
+    enableSorting: false,
     cell: ({ getValue, row }) => {
       const data = row.original;
-      const ids = getValue()
-        ? [{ id: getValue<number>() }]
+      const assetIdValue = getValue<number>();
+      const ids = assetIdValue
+        ? [{ id: assetIdValue }]
         : data.assetIds?.map((val) => ({ id: val }));
 
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const { data: items, isFetched } = useCdfItems<Asset>(
-        'assets',
-        ids || [],
-        true,
-        { enabled: Boolean(data.assetIds) || Boolean(data.assetId) }
-      );
-
-      const hasData = items && items?.length > 0 && isFetched;
-
-      if (!hasData) {
-        return null;
-      }
-
-      if (items.length === 1) {
-        const rootAsset = items[0];
-        return (
-          <Button
-            onClick={(e) => e.stopPropagation()}
-            type="link"
-            target="_blank"
-            href={createLink(`/explore/asset/${rootAsset.id}`)}
-            icon="ArrowUpRight"
-            iconPlacement="right"
-          >
-            <StyledButton>{rootAsset.name}</StyledButton>
-          </Button>
-        );
-      }
-
-      return (
-        <Dropdown
-          openOnHover
-          content={
-            <Menu>
-              {items?.map((item) => (
-                <Menu.Item
-                  onClick={(e) => e.stopPropagation()}
-                  href={createLink(`/explore/asset/${item.id}`)}
-                  target="_blank"
-                  key={item.id}
-                >
-                  {item.name}
-                </Menu.Item>
-              ))}
-            </Menu>
-          }
-        >
-          <Button icon="ChevronDown" iconPlacement="right">
-            {items?.length} Asset(s)
-          </Button>
-        </Dropdown>
-      );
+      return <DirectAssets ids={ids} data={data} />;
     },
   },
   startTime: {
@@ -403,20 +345,3 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     };
   },
 };
-
-const ellipsistyles = css`
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledLabel = styled(Label)`
-  display: block;
-  ${ellipsistyles};
-`;
-
-export const StyledButton = styled.div`
-  ${ellipsistyles};
-  max-width: 80px;
-`;

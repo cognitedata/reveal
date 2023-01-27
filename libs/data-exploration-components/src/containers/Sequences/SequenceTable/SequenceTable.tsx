@@ -56,6 +56,7 @@ export const SequenceTable = ({
           ...Table.Columns.asset,
           enableSorting: false,
         },
+        Table.Columns.assets,
         Table.Columns.dataSet,
         ...metadataColumns,
       ] as ColumnDef<Sequence>[],

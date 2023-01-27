@@ -63,6 +63,7 @@ export const FileTable = (props: FileTableProps) => {
         Table.Columns.source(query),
         Table.Columns.assets,
         Table.Columns.labels,
+        Table.Columns.assets,
         ...metadataColumns,
       ] as ColumnDef<FileInfo>[],
     [query, metadataColumns]

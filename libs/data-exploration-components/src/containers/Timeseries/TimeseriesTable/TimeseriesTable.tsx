@@ -147,6 +147,7 @@ export const TimeseriesTable = ({
         cell: ({ getValue }) => <RootAsset assetId={getValue<number>()} />,
         enableSorting: false,
       },
+      Table.Columns.assets,
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];
   }, [query, metadataColumns, dateRange]);

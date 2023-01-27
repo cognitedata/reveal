@@ -1,5 +1,5 @@
-import { Body, Detail, Flex } from '@cognite/cogs.js';
-import styled from 'styled-components';
+import { Detail, Flex, Label, Body } from '@cognite/cogs.js';
+import styled, { css } from 'styled-components';
 import zIndex from '../../utils/zIndex';
 
 const defaultRowHeight = '48px';
@@ -197,4 +197,21 @@ export const LoadMoreButtonWrapper = styled(Flex)`
 export const MetadataHeaderText = styled(Detail)`
   font-weight: 400 !important;
   color: var(--cogs-text-icon--muted) !important;
+`;
+
+const ellipsistyles = css`
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+export const StyledLabel = styled(Label)`
+  display: block;
+  ${ellipsistyles};
+`;
+
+export const StyledButton = styled.div`
+  ${ellipsistyles};
+  max-width: 80px;
 `;

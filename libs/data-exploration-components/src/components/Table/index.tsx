@@ -7,3 +7,4 @@ export * from './SortIcon';
 export * from './constants';
 export * from './elements';
 export * from './types';
+export * from './DirectAssets';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGetRootAsset } from '@data-exploration-components/hooks';
 import { Button } from '@cognite/cogs.js';
-import { StyledButton } from './columns';
+import { StyledButton } from './elements';
 import { createLink } from '@cognite/cdf-utilities';
 
 type Props = {
