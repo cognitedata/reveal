@@ -16,7 +16,7 @@ import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
 import {
-  CubemapDatasetOptions,
+  Image360DatasetOptions,
   SecondaryModelOptions,
 } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import { MainThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/MainThreeDModelMenuItem';
@@ -36,8 +36,8 @@ type SecondaryModelDropdownProps = {
   mainImage360SiteId?: string;
   secondaryModels: SecondaryModelOptions[];
   setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
-  cubemap360Images: CubemapDatasetOptions[];
-  setCubemap360Images: Dispatch<SetStateAction<CubemapDatasetOptions[]>>;
+  images360: Image360DatasetOptions[];
+  setImages360: Dispatch<SetStateAction<Image360DatasetOptions[]>>;
   viewer: Cognite3DViewer;
 };
 
@@ -47,15 +47,14 @@ const SecondaryModelDropdown = ({
   mainImage360SiteId,
   secondaryModels,
   setSecondaryModels,
-  cubemap360Images,
-  setCubemap360Images,
+  images360,
+  setImages360,
   viewer,
 }: SecondaryModelDropdownProps): JSX.Element => {
   const [searchQuery, setSearchQuery] = useState('');
   const [tempSecondaryModels, setTempSecondaryModels] =
     useState(secondaryModels);
-  const [tempCubemap360Images, setTempCubemap360Images] =
-    useState(cubemap360Images);
+  const [tempCubemap360Images, setTempCubemap360Images] = useState(images360);
 
   const canApply = useMemo(
     () =>
@@ -71,12 +70,12 @@ const SecondaryModelDropdown = ({
   const canApplyImages360 = useMemo(
     () =>
       tempCubemap360Images.some(({ applied, siteId }) =>
-        cubemap360Images.some(
+        images360.some(
           ({ applied: tApplied, siteId: tmId }) =>
             siteId === tmId && applied !== tApplied
         )
       ),
-    [cubemap360Images, tempCubemap360Images]
+    [images360, tempCubemap360Images]
   );
 
   const {
@@ -142,14 +141,14 @@ const SecondaryModelDropdown = ({
       });
     }
     if (canApplyImages360) {
-      setCubemap360Images(tempCubemap360Images);
+      setImages360(tempCubemap360Images);
       trackUsage(EXPLORATION.THREED_ACTION.SECONDARY_IMAGE_360_SELECTED, {
         resourceType: '3D',
       });
     }
   };
 
-  const handleChangeImages360 = (nextState: CubemapDatasetOptions): void => {
+  const handleChangeImages360 = (nextState: Image360DatasetOptions): void => {
     setTempCubemap360Images((prevState) => [
       ...prevState.filter(
         ({ siteId: testSiteId }) => nextState.siteId !== testSiteId
@@ -160,11 +159,9 @@ const SecondaryModelDropdown = ({
     ]);
 
     if (
-      !cubemap360Images.some(
-        (siteDetails) => nextState.siteId === siteDetails.siteId
-      )
+      !images360.some((siteDetails) => nextState.siteId === siteDetails.siteId)
     ) {
-      setCubemap360Images((prevState) => [
+      setImages360((prevState) => [
         ...prevState,
         {
           ...nextState,
@@ -214,14 +211,14 @@ const SecondaryModelDropdown = ({
         {viewer && filteredImages360SiteIds.length ? (
           <>
             <Menu.Header>360 Images</Menu.Header>
-            {filteredImages360SiteIds.map((images360) => (
+            {filteredImages360SiteIds.map((images360Item) => (
               <Images360MenuItem
-                key={images360.siteId}
-                siteId={images360.siteId}
-                siteName={images360.siteName}
+                key={images360Item.siteId}
+                siteId={images360Item.siteId}
+                siteName={images360Item.siteName}
                 options={
                   tempCubemap360Images.find(
-                    ({ siteId }) => siteId === images360.siteId
+                    ({ siteId }) => siteId === images360Item.siteId
                   )!
                 }
                 onChange={handleChangeImages360}

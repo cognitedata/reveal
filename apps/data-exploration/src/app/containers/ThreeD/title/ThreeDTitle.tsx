@@ -22,8 +22,8 @@ export const ThreeDTitle = ({
     revisionId,
     secondaryModels,
     setSecondaryModels,
-    cubemap360Images,
-    setCubemap360Images,
+    images360,
+    setImages360,
     viewer,
   } = useContext(ThreeDContext);
 
@@ -77,8 +77,8 @@ export const ThreeDTitle = ({
                 mainImage360SiteId={image360SiteId}
                 secondaryModels={secondaryModels}
                 setSecondaryModels={setSecondaryModels}
-                cubemap360Images={cubemap360Images}
-                setCubemap360Images={setCubemap360Images}
+                images360={images360}
+                setImages360={setImages360}
                 viewer={viewer}
               />
             ),

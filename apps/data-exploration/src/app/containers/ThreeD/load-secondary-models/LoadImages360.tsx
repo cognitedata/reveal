@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Cognite3DViewer, Image360 } from '@cognite/reveal';
+import { Cognite3DViewer, Image360Collection } from '@cognite/reveal';
 import { useQueries, useQueryClient, UseQueryOptions } from 'react-query';
 
 import {
@@ -8,15 +8,17 @@ import {
   getImages360QueryFn,
   IMAGES_360_BASE_QUERY_KEY,
 } from '@data-exploration-app/containers/ThreeD/hooks';
-import { CubemapDatasetOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import * as THREE from 'three';
 
 type LoadImages360Props = {
-  images360: CubemapDatasetOptions[];
-  imageEntities: { siteId: string; images: Image360[] }[];
+  images360: Image360DatasetOptions[];
+  imageEntities: { siteId: string; images: Image360Collection }[];
   setImageEntities: (
-    entities: { siteId: string; images: Image360[] }[]
+    entities: { siteId: string; images: Image360Collection }[]
   ) => void;
+  is360ImagesMode: boolean;
+  setIs360ImagesMode: (mode: boolean) => void;
   viewer: Cognite3DViewer;
 };
 
@@ -24,6 +26,8 @@ const LoadImages360 = ({
   images360,
   imageEntities,
   setImageEntities,
+  is360ImagesMode,
+  setIs360ImagesMode,
   viewer,
 }: LoadImages360Props): JSX.Element => {
   const queryClient = useQueryClient();
@@ -37,8 +41,8 @@ const LoadImages360 = ({
         | number
         | boolean
         | THREE.Matrix4
-        | { siteId: string; images: Image360[] }[]
-        | ((entities: { siteId: string; images: Image360[] }[]) => void)
+        | { siteId: string; images: Image360Collection }[]
+        | ((entities: { siteId: string; images: Image360Collection }[]) => void)
         | undefined
       )[]
     >[]
@@ -57,6 +61,8 @@ const LoadImages360 = ({
         applied,
         imageEntities,
         setImageEntities,
+        is360ImagesMode,
+        setIs360ImagesMode,
         rotationMatrix,
         translationMatrix
       ),

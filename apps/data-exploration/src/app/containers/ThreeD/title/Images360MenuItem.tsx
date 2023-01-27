@@ -1,7 +1,7 @@
 import { Body, Checkbox, Flex, Menu, Colors } from '@cognite/cogs.js';
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { CubemapDatasetOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
 export const Images360MenuItem = ({
   siteId,
@@ -11,8 +11,8 @@ export const Images360MenuItem = ({
 }: {
   siteId: string;
   siteName: string;
-  onChange: (nextState: CubemapDatasetOptions) => void;
-  options: CubemapDatasetOptions;
+  onChange: (nextState: Image360DatasetOptions) => void;
+  options: Image360DatasetOptions;
 }) => {
   useEffect(() => {
     if (!options) {

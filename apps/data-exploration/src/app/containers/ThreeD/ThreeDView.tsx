@@ -36,7 +36,7 @@ import {
 import {
   CogniteCadModel,
   CognitePointCloudModel,
-  Image360,
+  Image360Collection,
   Intersection,
 } from '@cognite/reveal';
 import { AssetPreviewSidebar } from './AssetPreviewSidebar';
@@ -99,7 +99,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     secondaryModels,
     viewState,
     setViewState,
-    cubemap360Images,
+    images360,
     selectedAssetId,
     setSelectedAssetId,
     overlayTool,
@@ -112,8 +112,10 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const [nodesSelectable, setNodesSelectable] = useState<boolean>(true);
 
   const [imageEntities, setImageEntities] = useState<
-    { siteId: string; images: Image360[] }[]
+    { siteId: string; images: Image360Collection }[]
   >([]);
+
+  const [is360ImagesMode, setIs360ImagesMode] = useState<boolean>(false);
 
   useEffect(() => {
     if (viewer && setViewState) {
@@ -277,9 +279,11 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                   viewer={revealViewer}
                 />
                 <LoadImages360
-                  images360={cubemap360Images}
+                  images360={images360}
                   imageEntities={imageEntities}
                   setImageEntities={setImageEntities}
+                  is360ImagesMode={is360ImagesMode}
+                  setIs360ImagesMode={setIs360ImagesMode}
                   viewer={revealViewer}
                 />
                 <MouseWheelAction
@@ -291,21 +295,35 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                   onLabelClick={onLabelClick}
                 />
                 <StyledToolBar>
-                  <ExpandButton
-                    viewer={revealViewer}
-                    model={revealThreeDModel || pointCloudModel}
-                  />
-                  <FocusAssetButton
-                    selectedAssetId={selectedAssetId}
-                    viewer={revealViewer}
-                    threeDModel={revealThreeDModel}
-                  />
-                  <StyledToolBarDivider />
-                  <PointSizeSlider
-                    pointCloudModel={pointCloudModel}
-                    viewer={revealViewer}
-                  />
-                  {!assetDetailsExpanded && (
+                  {!is360ImagesMode && (
+                    <>
+                      <ExpandButton
+                        viewer={revealViewer}
+                        model={revealThreeDModel || pointCloudModel}
+                      />
+                      <FocusAssetButton
+                        selectedAssetId={selectedAssetId}
+                        viewer={revealViewer}
+                        threeDModel={revealThreeDModel}
+                      />
+                      <StyledToolBarDivider />
+                      <PointSizeSlider
+                        pointCloudModel={pointCloudModel}
+                        viewer={revealViewer}
+                      />
+                      <Slicer
+                        viewer={revealViewer}
+                        viewerModel={revealThreeDModel || pointCloudModel}
+                      />
+                      <PointToPointMeasurementButton
+                        model={revealThreeDModel ?? pointCloudModel}
+                        viewer={revealViewer}
+                        nodesSelectable={nodesSelectable}
+                        setNodesSelectable={setNodesSelectable}
+                      />
+                    </>
+                  )}
+                  {!assetDetailsExpanded && !is360ImagesMode && (
                     <AssetsHighlightButton
                       labelsVisibility={labelsVisibility}
                       setLabelsVisibility={setLabelsVisibility}
@@ -313,16 +331,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                       threeDModel={revealThreeDModel}
                     />
                   )}
-                  <Slicer
-                    viewer={revealViewer}
-                    viewerModel={revealThreeDModel || pointCloudModel}
-                  />
-                  <PointToPointMeasurementButton
-                    model={revealThreeDModel ?? pointCloudModel}
-                    viewer={revealViewer}
-                    nodesSelectable={nodesSelectable}
-                    setNodesSelectable={setNodesSelectable}
-                  />
                   <StyledToolBarDivider />
                   <ShareButton
                     viewState={viewState}

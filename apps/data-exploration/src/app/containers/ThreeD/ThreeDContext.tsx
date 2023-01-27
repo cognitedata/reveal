@@ -36,7 +36,7 @@ export type SecondaryModelOptions = {
   applied?: boolean;
 };
 
-export type CubemapDatasetOptions = {
+export type Image360DatasetOptions = {
   siteId: string;
   siteName: string;
   applied?: boolean;
@@ -78,8 +78,8 @@ type ThreeDContext = {
   setTab: Dispatch<SetStateAction<ResourceTabType | undefined>>;
   secondaryModels: SecondaryModelOptions[];
   setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
-  cubemap360Images: CubemapDatasetOptions[];
-  setCubemap360Images: Dispatch<SetStateAction<CubemapDatasetOptions[]>>;
+  images360: Image360DatasetOptions[];
+  setImages360: Dispatch<SetStateAction<Image360DatasetOptions[]>>;
 };
 
 const DETAILS_COLUMN_WIDTH = '@cognite/3d-details-column-width';
@@ -103,8 +103,8 @@ export const ThreeDContext = createContext<ThreeDContext>({
   secondaryModels: [],
   setSecondaryModels: noop,
   setAssetHighlightMode: noop,
-  cubemap360Images: [],
-  setCubemap360Images: noop,
+  images360: [],
+  setImages360: noop,
 });
 ThreeDContext.displayName = 'ThreeDContext';
 
@@ -162,12 +162,12 @@ const getInitialState = () => {
     }
   })();
 
-  const cubemap360Images = (() => {
+  const images360 = (() => {
     const searchParams = initialParams.get(CUBEMAP_360_IMAGES_KEY);
     try {
       if (searchParams) {
         const cubemaps = JSON.parse(searchParams) as Pick<
-          CubemapDatasetOptions,
+          Image360DatasetOptions,
           // TODO: add rotationMatrix & translationMatrix once it is available from backend
           'siteId' | 'siteName'
         >[];
@@ -208,7 +208,7 @@ const getInitialState = () => {
     splitterColumnWidth,
     secondaryModels,
     assetHighlightMode,
-    cubemap360Images,
+    images360,
   };
 };
 
@@ -230,7 +230,7 @@ export const ThreeDContextProvider = ({
     secondaryModels: initialSecondaryModels,
     revisionId: initialRevisionId,
     assetHighlightMode: initialAssetHighlightMode,
-    cubemap360Images: initialCubemap360Images,
+    images360: initialImages360,
   } = useMemo(() => getInitialState(), []);
 
   const [viewer, setViewer] = useState<Cognite3DViewer | undefined>();
@@ -261,9 +261,8 @@ export const ThreeDContextProvider = ({
   const [secondaryModels, setSecondaryModels] = useState<
     SecondaryModelOptions[]
   >(initialSecondaryModels);
-  const [cubemap360Images, setCubemap360Images] = useState<
-    CubemapDatasetOptions[]
-  >(initialCubemap360Images);
+  const [images360, setImages360] =
+    useState<Image360DatasetOptions[]>(initialImages360);
   const [assetHighlightMode, setAssetHighlightMode] = useState<boolean>(
     initialAssetHighlightMode
   );
@@ -358,8 +357,8 @@ export const ThreeDContextProvider = ({
         setSecondaryModels,
         assetHighlightMode,
         setAssetHighlightMode,
-        cubemap360Images,
-        setCubemap360Images,
+        images360,
+        setImages360,
       }}
     >
       {children}

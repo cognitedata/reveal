@@ -23,9 +23,10 @@ import {
   CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
-  Image360,
+  Image360Collection,
 } from '@cognite/reveal';
 import { useMemo } from 'react';
+import _ from 'lodash';
 import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
   useEventsSearchResultQuery,
@@ -553,10 +554,12 @@ export const getImages360QueryFn =
     viewer: Cognite3DViewer,
     siteId: string,
     applied?: boolean,
-    imageEntities?: { siteId: string; images: Image360[] }[],
+    imageEntities?: { siteId: string; images: Image360Collection }[],
     setImageEntities?: (
-      entities: { siteId: string; images: Image360[] }[]
+      entities: { siteId: string; images: Image360Collection }[]
     ) => void,
+    is360ImagesMode?: boolean,
+    setIs360ImagesMode?: (mode: boolean) => void,
     rotationMatrix?: THREE.Matrix4,
     translationMatrix?: THREE.Matrix4
   ) =>
@@ -591,15 +594,25 @@ export const getImages360QueryFn =
       setImageEntities(
         imageEntities.concat({
           siteId: siteId,
-          images: images360Set.image360Entities,
+          images: images360Set,
         })
       );
+      images360Set.on('image360Entered', () => {
+        setIs360ImagesMode?.(true);
+      });
+      images360Set.on('image360Exited', () => {
+        setIs360ImagesMode?.(false);
+      });
     } else if (!applied && hasAdded) {
       const images360ToRemove = imageEntities.find(
         ({ siteId: tmId }) => siteId === tmId
       );
       if (images360ToRemove) {
-        await viewer.remove360Images(...images360ToRemove.images);
+        images360ToRemove.images.off('image360Entered', _.noop);
+        images360ToRemove.images.off('image360Exited', _.noop);
+        await viewer.remove360Images(
+          ...images360ToRemove.images.image360Entities
+        );
         imageEntities.splice(
           imageEntities.findIndex(
             (images360ToRemove) => images360ToRemove.siteId === siteId
