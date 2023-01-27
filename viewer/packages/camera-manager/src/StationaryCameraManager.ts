@@ -227,10 +227,12 @@ export class StationaryCameraManager implements CameraManager {
 
     const { width, height } = this._domElement.getBoundingClientRect();
     const screenSize = Math.sqrt(width * width + height * height);
-    if (screenSize > 0) {
-      const percentage = (distanceDelta * 100) / screenSize;
-      this.setFOV(this._camera.fov + percentage);
+    if (screenSize <= 0) {
+      return;
     }
+
+    const percentage = (distanceDelta * 100) / screenSize;
+    this.setFOV(this._camera.fov + percentage);
   }
 
   private readonly zoomCamera = (event: WheelEvent) => {
