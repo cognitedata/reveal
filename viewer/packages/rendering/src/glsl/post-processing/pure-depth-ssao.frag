@@ -81,8 +81,6 @@ void main(){
 
   float occlusion = 0.0;
 
-  float minNormDot = 0.0;
-
   for (int i = 0; i < MAX_KERNEL_SIZE; i++) {
     vec3 sampleVector = TBN * kernel[i];
     vec3 samplePosition = viewPosition + sampleVector * sampleRadius * distanceFactor;
@@ -96,8 +94,7 @@ void main(){
 
     float rangeCheck = smoothstep(0.0, 1.0, sampleRadius / length(viewPosition - realPos));
 
-    occlusion += ((realPos.z >= samplePosition.z + bias) ? 1.0 : 0.0) * rangeCheck;
-    minNormDot += dot(sampleVector, viewNormal) / float(MAX_KERNEL_SIZE);
+    occlusion += (realPos.z >= samplePosition.z + bias ? 1.0 : 0.0) * rangeCheck;
   }
 
   float occlusionFactor = 1.0 - clamp(occlusion / float(MAX_KERNEL_SIZE), 0.0, 1.0);
