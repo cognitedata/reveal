@@ -50,6 +50,8 @@ export const MetadataContainer = styled(FlexColumn)`
   span {
     line-height: ${sizes.normal};
   }
+
+  overflow: auto;
 `;
 
 export const ActionContainer = styled(FlexRow)`
@@ -74,6 +76,7 @@ export const TextContainer = styled.div`
   align-items: center;
   width: 100%;
   border-radius: 4px;
+  overflow: auto;
 `;
 
 export const PathContainer = styled(TextContainer)`

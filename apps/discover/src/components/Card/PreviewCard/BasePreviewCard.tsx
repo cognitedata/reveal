@@ -25,6 +25,7 @@ interface Props {
   actions?: React.ReactElement;
   collapsible?: boolean;
   icon?: IconType;
+  hideCopyToClipboardButton?: boolean;
 }
 export const BasePreviewCard: React.FC<React.PropsWithChildren<Props>> = ({
   title,
@@ -33,6 +34,7 @@ export const BasePreviewCard: React.FC<React.PropsWithChildren<Props>> = ({
   actions,
   collapsible,
   icon,
+  hideCopyToClipboardButton,
 }) => {
   const [isCollapsed, setCollapsed] = React.useState(false);
 
@@ -53,17 +55,19 @@ export const BasePreviewCard: React.FC<React.PropsWithChildren<Props>> = ({
                   aria-label="Minimize"
                 />
               )}
-              <TooltipContainer
-                content="Copy to Clipboard"
-                key={title}
-                placement="right"
-              >
-                <CopyToClipboardContainer text={title}>
-                  <CopyIconContainer>
-                    <CopyIcon type="Copy" />
-                  </CopyIconContainer>
-                </CopyToClipboardContainer>
-              </TooltipContainer>
+              {!hideCopyToClipboardButton && (
+                <TooltipContainer
+                  content="Copy to Clipboard"
+                  key={title}
+                  placement="right"
+                >
+                  <CopyToClipboardContainer text={title}>
+                    <CopyIconContainer>
+                      <CopyIcon type="Copy" />
+                    </CopyIconContainer>
+                  </CopyToClipboardContainer>
+                </TooltipContainer>
+              )}
             </PreviewTitleAlignItems>
             {handleCloseClick && (
               <CloseButton

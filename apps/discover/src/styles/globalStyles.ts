@@ -189,6 +189,15 @@ export const GlobalStyles = createGlobalStyle`
     display: none;
   }
 
+  .map-metadata-layer .mapboxgl-popup-content {
+    padding: 0;
+    background: transparent;
+  }
+
+  .map-metadata-layer .mapboxgl-popup-tip {
+    display: none;
+  }
+
   .mapbox-popup {
     z-index: ${layers.MAP_TOP_BUTTONS};
 

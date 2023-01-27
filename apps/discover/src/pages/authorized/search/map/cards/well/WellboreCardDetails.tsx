@@ -6,7 +6,7 @@ import { FavoriteContentWells } from 'modules/favorite/types';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { WellboreId, WellId } from 'modules/wellSearch/types';
-import { FlexColumn } from 'styles/layout';
+import { FlexColumn, MarginBottomNormalContainer } from 'styles/layout';
 
 import { WellboreRow, WellboreTitle } from './elements';
 import { WellboreDetailIcon } from './WellboreDetailIcon';
@@ -30,24 +30,28 @@ export const WellboreCardDetails: React.FC<{
     navigateToWellInspect({ wellIds: [wellId], wellboreIds: [wellboreId] });
   };
 
-  return (
-    <FlexColumn>
-      {wellbores && wellbores.length > 0 && (
-        <>
-          <PathHeader>{t('Wellbores')}</PathHeader>
-          {wellbores?.map((wellbore) => (
-            <WellboreRow key={wellbore.id}>
-              <WellboreTitle>{wellbore.name}</WellboreTitle>
-              <WellboreDetailIcon
-                favoriteWellIds={favoriteWellIds}
-                wellId={wellId}
-                wellboreId={wellbore.id}
-                navigateInspect={handleClickView}
-              />
-            </WellboreRow>
-          ))}
-        </>
-      )}
-    </FlexColumn>
-  );
+  if (wellbores && wellbores.length > 0) {
+    return (
+      <MarginBottomNormalContainer>
+        <FlexColumn>
+          <>
+            <PathHeader>{t('Wellbores')}</PathHeader>
+            {wellbores?.map((wellbore) => (
+              <WellboreRow key={wellbore.id}>
+                <WellboreTitle>{wellbore.name}</WellboreTitle>
+                <WellboreDetailIcon
+                  favoriteWellIds={favoriteWellIds}
+                  wellId={wellId}
+                  wellboreId={wellbore.id}
+                  navigateInspect={handleClickView}
+                />
+              </WellboreRow>
+            ))}
+          </>
+        </FlexColumn>
+      </MarginBottomNormalContainer>
+    );
+  }
+
+  return null;
 };

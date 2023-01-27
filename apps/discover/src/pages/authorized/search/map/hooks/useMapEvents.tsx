@@ -9,8 +9,10 @@ import {
   MapMouseEvent,
   Popup,
 } from 'maplibre-gl';
+import { createRoot } from 'react-dom/client';
 import { log } from 'utils/log';
 
+import { ProjectConfigMapLayers } from '@cognite/discover-api-types';
 import { MapEvent } from '@cognite/react-map';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
@@ -30,6 +32,7 @@ import {
 import { useSavedSearch } from '../../../../../domain/savedSearches/internal/hooks';
 import { useProjectConfigByKey } from '../../../../../hooks/useProjectConfig';
 import { useMapDrawMode } from '../../../../../modules/map/selectors';
+import { LayerMetadata } from '../cards/layerMetadata/LayerMetadata';
 import {
   DOCUMENT_MARKER,
   GROUPED_CLUSTER_LAYER_ID,
@@ -54,6 +57,14 @@ const filterPopup = new Popup({
   anchor: 'top',
   focusAfterOpen: true,
   closeOnMove: true,
+});
+
+const layerMetadataPopup = new Popup({
+  closeButton: false,
+  closeOnClick: true,
+  className: 'map-metadata-layer',
+  anchor: 'top',
+  focusAfterOpen: true,
 });
 
 const getHoverPopupCoords = (e: MapLayerMouseEvent): [number, number] => {
@@ -152,6 +163,22 @@ export const useMapEvents = () => {
   const { data: documentConfig } = useProjectConfigByKey(Modules.DOCUMENTS);
   const patchSavedSearch = useSavedSearch();
   const drawMode = useMapDrawMode();
+  const { data: mapConfig } = useProjectConfigByKey('map');
+
+  const selectableLayers: string[] = (mapConfig?.layers || []).reduce(
+    (result, currentValue: ProjectConfigMapLayers) => {
+      if (currentValue.isInteractive) {
+        return [
+          ...result,
+          ...(currentValue.mapLayers || []).map(
+            (mapLayer) => mapLayer!.id as string
+          ),
+        ];
+      }
+      return result;
+    },
+    [] as string[]
+  );
 
   const onMouseEnterFilterableMapLayer = (e: MapMouseEvent) => {
     if (drawMode !== 'draw_polygon') {
@@ -250,6 +277,48 @@ export const useMapEvents = () => {
     }
   };
 
+  const onLayerClicked = (event: MapLayerMouseEvent) => {
+    // eslint-disable-next-line testing-library/render-result-naming-convention
+    const layers = event.target.queryRenderedFeatures(event.point, {
+      layers: [
+        ...selectableLayers,
+        GROUPED_CLUSTER_LAYER_ID,
+        UNCLUSTERED_LAYER_ID,
+      ],
+    });
+
+    // Prevent opening dialog if we click on any of the default layers.
+    if (
+      layers.find(
+        (layer) =>
+          layer.layer.id === GROUPED_CLUSTER_LAYER_ID ||
+          layer.layer.id === UNCLUSTERED_LAYER_ID
+      )
+    ) {
+      return;
+    }
+
+    const topLayer = layers[0];
+
+    const placeholder = document.createElement('div');
+
+    const root = createRoot(placeholder);
+    root.render(
+      <LayerMetadata
+        onCloseClick={() => {
+          layerMetadataPopup?.remove();
+        }}
+        properties={topLayer.properties || {}}
+        title={topLayer.layer.id}
+      />
+    );
+
+    layerMetadataPopup
+      .setLngLat(event.lngLat)
+      .setDOMContent(placeholder)
+      .addTo(event.target);
+  };
+
   // Note: This is causing way to many redux dispatch.
   // figure out why this is needed, and if it can be done differently.
   // const handleMouseDown = () => {
@@ -322,8 +391,8 @@ export const useMapEvents = () => {
     }
   };
 
-  const events: MapEvent[] = useMemo(
-    (): MapEvent[] => [
+  const events: MapEvent[] = useMemo((): MapEvent[] => {
+    return [
       // Cluster
 
       {
@@ -387,6 +456,31 @@ export const useMapEvents = () => {
           : undefined,
         callback: onMouseLeaveFilterableMapLayer,
       },
+      {
+        type: 'mouseenter',
+        layers: selectableLayers,
+        callback: (e: MapMouseEvent) => {
+          const canvas = e.target.getCanvas();
+          canvas.style.cursor = 'pointer';
+        },
+      },
+      {
+        type: 'mouseleave',
+        layers: selectableLayers,
+        callback: (e: MapMouseEvent) => {
+          const canvas = e.target.getCanvas();
+          canvas.style.cursor = '';
+        },
+      },
+      {
+        type: 'click',
+        layers: [
+          ...selectableLayers,
+          UNCLUSTERED_LAYER_ID,
+          GROUPED_CLUSTER_LAYER_ID,
+        ],
+        callback: onLayerClicked,
+      },
 
       // Map
 
@@ -404,9 +498,8 @@ export const useMapEvents = () => {
           hoverPopup.remove();
         },
       },
-    ],
-    [drawMode]
-  );
+    ];
+  }, [drawMode, selectableLayers]);
 
   return events;
 };
