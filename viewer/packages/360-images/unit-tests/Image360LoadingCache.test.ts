@@ -38,6 +38,8 @@ describe(Image360LoadingCache.name, () => {
     const entityMock1 = new Mock<Image360Entity>()
       .setup(p => p.load360Image())
       .returns(deferredPromise1)
+      .setup(p => p.image360Visualization.visible)
+      .returns(false)
       .setup(p => p.dispose())
       .returns()
       .setup(p => p.unload360Image())
@@ -48,6 +50,8 @@ describe(Image360LoadingCache.name, () => {
     const entityMock2 = new Mock<Image360Entity>()
       .setup(p => p.load360Image())
       .returns(deferredPromise2)
+      .setup(p => p.image360Visualization.visible)
+      .returns(false)
       .setup(p => p.dispose())
       .returns()
       .object();
@@ -68,5 +72,58 @@ describe(Image360LoadingCache.name, () => {
     expect(entityLoadingCache.currentlyLoadingEntities.size).toBe(0);
     expect(entityLoadingCache.cachedEntities.length).toBe(1);
     expect(entityLoadingCache.cachedEntities.includes(entityMock2)).toBeTruthy();
+  });
+
+  test('cache should not purge visible 360 images', async () => {
+    const cacheSize = 2;
+    const entityLoadingCache = new Image360LoadingCache(cacheSize);
+
+    const deferredPromise1 = new DeferredPromise<void>();
+    const entityMock1 = new Mock<Image360Entity>()
+      .setup(p => p.load360Image())
+      .returns(deferredPromise1)
+      .setup(p => p.dispose())
+      .returns()
+      .setup(p => p.image360Visualization.visible)
+      .returns(true)
+      .setup(p => p.unload360Image())
+      .returns()
+      .object();
+
+    const deferredPromise2 = new DeferredPromise<void>();
+    const entityMock2 = new Mock<Image360Entity>()
+      .setup(p => p.load360Image())
+      .returns(deferredPromise2)
+      .setup(p => p.dispose())
+      .returns()
+      .setup(p => p.image360Visualization.visible)
+      .returns(false)
+      .setup(p => p.unload360Image())
+      .returns()
+      .object();
+
+    const deferredPromise3 = new DeferredPromise<void>();
+    const entityMock3 = new Mock<Image360Entity>()
+      .setup(p => p.load360Image())
+      .returns(deferredPromise2)
+      .setup(p => p.dispose())
+      .returns()
+      .object();
+
+    const preLoad1 = entityLoadingCache.cachedPreload(entityMock1);
+    const preLoad2 = entityLoadingCache.cachedPreload(entityMock2);
+
+    deferredPromise1.resolve();
+    deferredPromise2.resolve();
+    await Promise.all([preLoad1, preLoad2]);
+
+    const preLoad3 = entityLoadingCache.cachedPreload(entityMock3);
+    deferredPromise3.resolve();
+    await preLoad3;
+
+    expect(entityLoadingCache.cachedEntities.length).toBe(2);
+
+    expect(entityLoadingCache.cachedEntities.includes(entityMock1)).toBeTruthy();
+    expect(entityLoadingCache.cachedEntities.includes(entityMock3)).toBeTruthy();
   });
 });
