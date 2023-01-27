@@ -81,27 +81,35 @@ export function DataSamplingStep() {
   const lcAggregateType =
     values.logicalCheck.aggregateType ?? 'stepInterpolation';
 
-  const timeseries = useMemo(
+  const ssdTimeseries = useMemo(
     () => [
       {
         externalId: values.steadyStateDetection.externalId,
         aggregateType: ssdAggregateType,
       },
+    ],
+    [ssdAggregateType, values.steadyStateDetection.externalId]
+  );
+
+  const lcTimeseries = useMemo(
+    () => [
       {
         externalId: values.logicalCheck.externalId,
         aggregateType: lcAggregateType,
       },
     ],
-    [
-      lcAggregateType,
-      ssdAggregateType,
-      values.logicalCheck.externalId,
-      values.steadyStateDetection.externalId,
-    ]
+    [lcAggregateType, values.logicalCheck.externalId]
   );
 
-  const timeseriesState = useTimeseries({
-    timeseries,
+  const ssdTimeseriesState = useTimeseries({
+    timeseries: ssdTimeseries,
+    granularity,
+    window,
+    endOffset,
+  });
+
+  const lcTimeseriesState = useTimeseries({
+    timeseries: lcTimeseries,
     granularity,
     window,
     endOffset,
@@ -113,7 +121,7 @@ export function DataSamplingStep() {
       : 15;
 
   const steadyStateDetectionTimeseriesState =
-    timeseriesState.timeseries[values.steadyStateDetection.externalId];
+    ssdTimeseriesState.timeseries[values.steadyStateDetection.externalId];
   const steadyStateDetectionChart = useMemo(
     () => (
       <ParentSizeModern>
@@ -151,7 +159,7 @@ export function DataSamplingStep() {
   );
 
   const logicalCheckTimeseriesState =
-    timeseriesState.timeseries[values.logicalCheck.externalId];
+    lcTimeseriesState.timeseries[values.logicalCheck.externalId];
   const logicalCheckChart = useMemo(
     () => (
       <ParentSizeModern>
@@ -323,20 +331,20 @@ export function DataSamplingStep() {
           </div>
           <div
             className={classNames('chart', 'short', {
-              isLoading: timeseriesState.isLoading,
+              isLoading: lcTimeseriesState.isLoading,
               isEmpty:
-                !timeseriesState.isLoading &&
-                timeseriesState.timeseries[values.logicalCheck.externalId]
+                !lcTimeseriesState.isLoading &&
+                lcTimeseriesState.timeseries[values.logicalCheck.externalId]
                   ?.datapoints &&
                 !(
-                  (timeseriesState.timeseries[values.logicalCheck.externalId]
+                  (lcTimeseriesState.timeseries[values.logicalCheck.externalId]
                     ?.datapoints.length ?? 0) >= 2
                 ),
             })}
           >
-            {timeseriesState.isLoading && <LoaderOverlay />}
+            {lcTimeseriesState.isLoading && <LoaderOverlay />}
             {values.logicalCheck.externalId &&
-            (timeseriesState.timeseries[values.logicalCheck.externalId]
+            (lcTimeseriesState.timeseries[values.logicalCheck.externalId]
               ?.datapoints.length ?? 0) >= 2
               ? logicalCheckChart
               : null}
@@ -401,20 +409,20 @@ export function DataSamplingStep() {
           </div>
           <div
             className={classNames('chart', {
-              isLoading: timeseriesState.isLoading,
+              isLoading: ssdTimeseriesState.isLoading,
               isEmpty:
-                !timeseriesState.isLoading &&
-                timeseriesState.timeseries[
+                !ssdTimeseriesState.isLoading &&
+                ssdTimeseriesState.timeseries[
                   values.steadyStateDetection.externalId
                 ]?.datapoints &&
                 !(
-                  (timeseriesState.timeseries[
+                  (ssdTimeseriesState.timeseries[
                     values.steadyStateDetection.externalId
                   ]?.datapoints.length ?? 0) >= 2
                 ),
             })}
           >
-            {timeseriesState.isLoading && <LoaderOverlay />}
+            {ssdTimeseriesState.isLoading && <LoaderOverlay />}
             {(steadyStateDetectionTimeseriesState?.datapoints.length ?? 0) >= 2
               ? steadyStateDetectionChart
               : null}
