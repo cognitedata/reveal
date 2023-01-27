@@ -202,6 +202,13 @@ export class ComboControls extends EventDispatcher {
    * Sets the enabled state of these controls.
    */
   set enabled(enabled: boolean) {
+    if (enabled === true && this._enabled === false) {
+      this.addEventListeners();
+    }
+    if (enabled === false && this._enabled === true) {
+      this.removeEventListeners();
+    }
+
     this._enabled = enabled;
   }
 
@@ -215,29 +222,10 @@ export class ComboControls extends EventDispatcher {
     // rotation
     this._spherical.setFromVector3(camera.position);
     this._sphericalEnd.copy(this._spherical);
-    domElement.addEventListener('pointerdown', this.onPointerDown);
-    domElement.addEventListener('touchstart', this.onTouchStart);
-    domElement.addEventListener('wheel', this.onMouseWheel);
-    domElement.addEventListener('contextmenu', this.onContextMenu);
-
-    // canvas has no blur/focus by default, but it's possible to set tabindex on it,
-    // in that case events will be fired (we don't set tabindex here, but still support that case)
-    domElement.addEventListener('focus', this.onFocusChanged);
-    domElement.addEventListener('blur', this.onFocusChanged);
-
-    window.addEventListener('pointerup', this.onMouseUp);
-    window.addEventListener('pointerdown', this.onFocusChanged);
+    this.addEventListeners();
 
     this.dispose = () => {
-      domElement.removeEventListener('pointerdown', this.onPointerDown);
-      domElement.removeEventListener('wheel', this.onMouseWheel);
-      domElement.removeEventListener('touchstart', this.onTouchStart);
-      domElement.removeEventListener('contextmenu', this.onContextMenu);
-      domElement.removeEventListener('focus', this.onFocusChanged);
-      domElement.removeEventListener('blur', this.onFocusChanged);
-
-      window.removeEventListener('pointerup', this.onMouseUp);
-      window.removeEventListener('pointerdown', this.onFocusChanged);
+      this.removeEventListeners();
 
       // dipose all keyboard events registered. REV-461!
       this._keyboard.dispose();
@@ -980,5 +968,36 @@ export class ComboControls extends EventDispatcher {
 
   private isIdentityQuaternion(q: THREE.Quaternion) {
     return q.x === 0 && q.y === 0 && q.z === 0 && q.w === 1;
+  }
+
+  private addEventListeners() {
+    const { _domElement: domElement } = this;
+
+    domElement.addEventListener('pointerdown', this.onPointerDown);
+    domElement.addEventListener('touchstart', this.onTouchStart);
+    domElement.addEventListener('wheel', this.onMouseWheel);
+    domElement.addEventListener('contextmenu', this.onContextMenu);
+
+    // canvas has no blur/focus by default, but it's possible to set tabindex on it,
+    // in that case events will be fired (we don't set tabindex here, but still support that case)
+    domElement.addEventListener('focus', this.onFocusChanged);
+    domElement.addEventListener('blur', this.onFocusChanged);
+
+    window.addEventListener('pointerup', this.onMouseUp);
+    window.addEventListener('pointerdown', this.onFocusChanged);
+  }
+
+  private removeEventListeners() {
+    const { _domElement: domElement } = this;
+
+    domElement.removeEventListener('pointerdown', this.onPointerDown);
+    domElement.removeEventListener('wheel', this.onMouseWheel);
+    domElement.removeEventListener('touchstart', this.onTouchStart);
+    domElement.removeEventListener('contextmenu', this.onContextMenu);
+    domElement.removeEventListener('focus', this.onFocusChanged);
+    domElement.removeEventListener('blur', this.onFocusChanged);
+
+    window.removeEventListener('pointerup', this.onMouseUp);
+    window.removeEventListener('pointerdown', this.onFocusChanged);
   }
 }

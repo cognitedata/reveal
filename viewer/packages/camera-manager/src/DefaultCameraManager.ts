@@ -233,8 +233,8 @@ export class DefaultCameraManager implements CameraManager {
     if (this.isEnabled) return;
 
     this.isEnabled = true;
+    this.setCameraControlsOptions(this._cameraControlsOptions);
     this._controls.enabled = true;
-    this.setupControls();
 
     if (cameraManager) {
       const previousState = cameraManager.getCameraState();
@@ -615,23 +615,14 @@ export class DefaultCameraManager implements CameraManager {
 
       if (wantNewScrollTarget && isZoomToCursor) {
         scrollStarted = true;
-        let newTarget: THREE.Vector3;
 
-        // Disable controls to prevent camera from moving while picking is happening.
-        // await is not working as expected because event itself is not awaited.
-        try {
-          this._controls.enabled = false;
-          const pointerEventData = {
-            offsetX: domElementRelativeOffset.offsetX,
-            offsetY: domElementRelativeOffset.offsetY,
-            button: e.button
-          };
+        const pointerEventData = {
+          offsetX: domElementRelativeOffset.offsetX,
+          offsetY: domElementRelativeOffset.offsetY,
+          button: e.button
+        };
 
-          newTarget = await this.calculateNewTarget(pointerEventData);
-        } finally {
-          this._controls.enabled = this.isEnabled;
-        }
-
+        const newTarget = await this.calculateNewTarget(pointerEventData);
         this._controls.setScrollTarget(newTarget);
       }
     };
