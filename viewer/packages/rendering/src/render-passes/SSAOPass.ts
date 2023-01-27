@@ -65,8 +65,8 @@ export class SSAOPass implements RenderPass {
   private createKernel(kernelSize: number): THREE.Vector3[] {
     const result: THREE.Vector3[] = [];
     for (let i = 0; i < kernelSize; i++) {
-      const sample = new THREE.Vector3();
-      while (sample.length() < 1.0) {
+      const sample = new THREE.Vector3(1, 1, 1);
+      while (sample.length() > 1.0) {
         // Ensure some distance in samples
         sample.x = Math.random() * 2 - 1;
         sample.y = Math.random() * 2 - 1;
