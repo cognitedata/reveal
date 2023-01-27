@@ -79,15 +79,20 @@ const SecondaryModelDropdown = ({
     [cubemap360Images, tempCubemap360Images]
   );
 
-  const cubemapSiteIds = useInfinite360Images();
+  const {
+    images360Data,
+    hasNextPage: canFetchMoreImages360Data,
+    fetchNextPage: fetchMoreImages360Data,
+    isFetchingNextPage: isFetchingMoreImages360Data,
+  } = useInfinite360Images();
 
-  const filteredCubemapSiteIds = useMemo(() => {
-    return cubemapSiteIds.filter(
+  const filteredImages360SiteIds = useMemo(() => {
+    return images360Data.filter(
       ({ siteName, siteId }) =>
         siteName.toLowerCase().includes(searchQuery.toLowerCase()) &&
         siteId !== mainImage360SiteId
     );
-  }, [cubemapSiteIds, searchQuery]);
+  }, [images360Data, mainImage360SiteId, searchQuery]);
 
   const {
     data: modelData = { pages: [] as ThreeDModelsResponse[] },
@@ -101,6 +106,16 @@ const SecondaryModelDropdown = ({
       fetchMore();
     }
   }, [canFetchMore, fetchMore, isFetchingMore]);
+
+  useEffect(() => {
+    if (canFetchMoreImages360Data && !isFetchingMoreImages360Data) {
+      fetchMoreImages360Data();
+    }
+  }, [
+    canFetchMoreImages360Data,
+    fetchMoreImages360Data,
+    isFetchingMoreImages360Data,
+  ]);
 
   const models = useMemo(
     () =>
@@ -196,17 +211,17 @@ const SecondaryModelDropdown = ({
       )}
       <Menu.Divider />
       <StyledSecondaryModelListContainer>
-        {viewer && filteredCubemapSiteIds.length ? (
+        {viewer && filteredImages360SiteIds.length ? (
           <>
             <Menu.Header>360 Images</Menu.Header>
-            {filteredCubemapSiteIds.map((cubemap) => (
+            {filteredImages360SiteIds.map((images360) => (
               <Images360MenuItem
-                key={cubemap.siteId}
-                siteId={cubemap.siteId}
-                siteName={cubemap.siteName}
+                key={images360.siteId}
+                siteId={images360.siteId}
+                siteName={images360.siteName}
                 options={
                   tempCubemap360Images.find(
-                    ({ siteId }) => siteId === cubemap.siteId
+                    ({ siteId }) => siteId === images360.siteId
                   )!
                 }
                 onChange={handleChangeImages360}

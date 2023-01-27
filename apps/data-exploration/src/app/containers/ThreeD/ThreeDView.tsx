@@ -67,17 +67,21 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const useOverlays = useFlagAssetMappingsOverlays();
 
   useEffect(() => {
-    trackUsage(EXPLORATION.THREED_ACTION.MODEL_SELECTED, {
-      modelId,
-      resourceType: '3D',
-    });
+    if (modelId) {
+      trackUsage(EXPLORATION.THREED_ACTION.MODEL_SELECTED, {
+        modelId,
+        resourceType: '3D',
+      });
+    }
   }, [modelId]);
 
   useEffect(() => {
-    trackUsage(EXPLORATION.THREED_ACTION.IMAGE_360_SELECTED, {
-      image360SiteId,
-      resourceType: '3D',
-    });
+    if (image360SiteId) {
+      trackUsage(EXPLORATION.THREED_ACTION.IMAGE_360_SELECTED, {
+        image360SiteId,
+        resourceType: '3D',
+      });
+    }
   }, [image360SiteId]);
 
   const context = useContext(ThreeDContext);

@@ -26,7 +26,10 @@ import {
   Image360,
 } from '@cognite/reveal';
 import { useMemo } from 'react';
-import { useEventsSearchResultQuery } from '@data-exploration-lib/domain-layer';
+import {
+  DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
+  useEventsSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];
@@ -162,17 +165,23 @@ export const use3DModelThumbnail = (url?: string) => {
 };
 
 export const useInfinite360Images = () => {
-  const { data: cubemapDatasets } = useEventsSearchResultQuery({
+  const {
+    data: images360Datasets,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useEventsSearchResultQuery({
     eventsFilters: {
       type: 'scan',
     },
+    limit: DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
   });
 
-  const cubemapSiteIds = useMemo(() => {
+  const images360Data = useMemo(() => {
     const results: { siteId: string; siteName: string }[] = [];
-    if (cubemapDatasets.length > 0) {
-      cubemapDatasets.reduce((previous, current) => {
-        if (previous.metadata!.site_id !== current.metadata!.site_id) {
+    if (images360Datasets.length > 0) {
+      images360Datasets.reduce((previous, current) => {
+        if (previous.metadata?.site_id !== current.metadata!.site_id) {
           if (
             !results.some(
               (siteDetails) => siteDetails.siteId === current.metadata!.site_id
@@ -188,9 +197,14 @@ export const useInfinite360Images = () => {
       });
     }
     return results;
-  }, [cubemapDatasets]);
+  }, [images360Datasets]);
 
-  return cubemapSiteIds;
+  return {
+    images360Data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  };
 };
 
 export const useInfiniteAssetMappings = (

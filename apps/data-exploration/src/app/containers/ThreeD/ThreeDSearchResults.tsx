@@ -31,13 +31,28 @@ export const ThreeDSearchResults = ({
     isFetchingNextPage: isFetchingMore,
   } = useInfinite3DModels();
 
-  const images360Data = useInfinite360Images();
+  const {
+    images360Data,
+    hasNextPage: canFetchMoreImage360Data,
+    fetchNextPage: fetchMoreImage360Data,
+    isFetchingNextPage: isFetchingMoreImage360Data,
+  } = useInfinite360Images();
 
   useEffect(() => {
     if (canFetchMore && !isFetchingMore) {
       fetchMore();
     }
   }, [canFetchMore, fetchMore, isFetchingMore]);
+
+  useEffect(() => {
+    if (canFetchMoreImage360Data && !isFetchingMoreImage360Data) {
+      fetchMoreImage360Data();
+    }
+  }, [
+    canFetchMoreImage360Data,
+    fetchMoreImage360Data,
+    isFetchingMoreImage360Data,
+  ]);
 
   const models = modelData.pages.reduce(
     (accl, t) => accl.concat(t.items),

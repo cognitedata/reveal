@@ -13,10 +13,12 @@ export const useEventsSearchResultQuery = (
     query,
     eventsFilters,
     eventsSortBy,
+    limit,
   }: {
     query?: string;
     eventsFilters: InternalEventsFilters;
     eventsSortBy?: TableSortBy[];
+    limit?: number;
   },
   options?: UseInfiniteQueryOptions
 ) => {
@@ -40,7 +42,7 @@ export const useEventsSearchResultQuery = (
       filter,
       advancedFilter,
       sort,
-      limit: DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
+      limit: limit ?? DEFAULT_GLOBAL_TABLE_RESULT_LIMIT,
     },
     {
       ...options,
