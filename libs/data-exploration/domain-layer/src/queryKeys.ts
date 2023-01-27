@@ -48,10 +48,10 @@ export const queryKeys = {
     [...queryKeys.events(), ...(input || [])] as const,
   aggregateEvents: (input?: any[]) =>
     [...queryKeys.events(), ...(input || []), 'aggregate'] as const,
+  eventsMetadata: (filter?: any) =>
+    [...queryKeys.events(), 'metadata', 'keys', filter] as const,
 
   // ASSETS
-  eventsMetadata: (filter?: any) =>
-    [...queryKeys.assets(), 'metadata', 'keys', filter] as const,
   assets: () => [...queryKeys.all, 'assets'] as const,
   rootAsset: (assetId: number) =>
     [...queryKeys.assets(), assetId, 'rootParent'] as const,
