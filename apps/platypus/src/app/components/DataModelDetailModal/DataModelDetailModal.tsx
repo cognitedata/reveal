@@ -82,17 +82,16 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
     return result.valid;
   };
 
+  const isSubmitDisabled =
+    !props.name.trim() || externalIdErrorMessage || (isFDMV3 && !props.space);
+
   return (
     <ModalDialog
       visible
       title={props.title}
       onCancel={props.onCancel}
       onOk={props.onSubmit}
-      okDisabled={
-        !props.name.trim() ||
-        externalIdErrorMessage ||
-        (isFDMV3 && !props.space)
-      }
+      okDisabled={isSubmitDisabled}
       okButtonName={t('create', 'Create')}
       okProgress={props.isLoading}
       okType="primary"
@@ -116,7 +115,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
                 props.onNameChange(e.target.value);
               }}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === 'Enter' && !isSubmitDisabled) {
                   props.onSubmit();
                 }
               }}

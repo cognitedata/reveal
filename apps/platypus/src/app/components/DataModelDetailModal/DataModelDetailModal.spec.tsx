@@ -104,4 +104,139 @@ describe('DataModelDetailModal', () => {
 
     expect(screen.getByText(/name is not valid/i)).toBeTruthy();
   });
+
+  it("disables submit button if there's a space but no name", () => {
+    mockedIsFDMv3.mockReturnValueOnce(true);
+    const onSubmit = jest.fn();
+
+    render(
+      <DataModelDetailModal
+        dataSets={[]}
+        description=""
+        externalId=""
+        name=""
+        onCancel={noop}
+        onDescriptionChange={noop}
+        onNameChange={noop}
+        onSubmit={onSubmit}
+        space="my_space"
+        title=""
+      />
+    );
+
+    userEvent.click(
+      screen.getByRole('button', {
+        hidden: true,
+        name: 'Create',
+      })
+    );
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("disables submit button if there's a name but no space", () => {
+    mockedIsFDMv3.mockReturnValueOnce(true);
+    const onSubmit = jest.fn();
+
+    render(
+      <DataModelDetailModal
+        dataSets={[]}
+        description=""
+        externalId=""
+        name="My Data Model"
+        onCancel={noop}
+        onDescriptionChange={noop}
+        onNameChange={noop}
+        onSubmit={onSubmit}
+        space=""
+        title=""
+      />
+    );
+
+    userEvent.click(
+      screen.getByRole('button', {
+        hidden: true,
+        name: 'Create',
+      })
+    );
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("enables submit button if there's a name and a space", () => {
+    mockedIsFDMv3.mockReturnValueOnce(true);
+    const onSubmit = jest.fn();
+
+    render(
+      <DataModelDetailModal
+        dataSets={[]}
+        description=""
+        externalId=""
+        name="My Data Model"
+        onCancel={noop}
+        onDescriptionChange={noop}
+        onNameChange={noop}
+        onSubmit={onSubmit}
+        space="my_space"
+        title=""
+      />
+    );
+
+    userEvent.click(
+      screen.getByRole('button', {
+        hidden: true,
+        name: 'Create',
+      })
+    );
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it("submits on enter press if there's a name and a space", () => {
+    mockedIsFDMv3.mockReturnValueOnce(true);
+    const onSubmit = jest.fn();
+
+    render(
+      <DataModelDetailModal
+        dataSets={[]}
+        description=""
+        externalId=""
+        name="My Data Model"
+        onCancel={noop}
+        onDescriptionChange={noop}
+        onNameChange={noop}
+        onSubmit={onSubmit}
+        space="my_space"
+        title=""
+      />
+    );
+
+    userEvent.type(screen.getByLabelText(/name/i), '{enter}');
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not submit form without a name when user presses enter', () => {
+    mockedIsFDMv3.mockReturnValueOnce(true);
+    const onSubmit = jest.fn();
+
+    render(
+      <DataModelDetailModal
+        dataSets={[]}
+        description=""
+        externalId=""
+        name=""
+        onCancel={noop}
+        onDescriptionChange={noop}
+        onNameChange={noop}
+        onSubmit={onSubmit}
+        space="my_space"
+        title=""
+      />
+    );
+
+    userEvent.type(screen.getByLabelText(/name/i), '{enter}');
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
 });
