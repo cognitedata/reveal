@@ -68,15 +68,9 @@ void main(){
 
   vec3 viewNormal = computeWorldNormalFromDepth(tDepth, vec2(float(textureSize.x), float(textureSize.y)), vUv, d);
 
-  float cosAngle = abs(dot(viewNormal, vec3(0.0, 0.0, 1.0)));
-  float sinAngle = length(cross(viewNormal, vec3(0.0, 0.0, 1.0)));
-  // float tanAngle = sinAngle / cosAngle;
-  float secAngle = clamp(cosAngle / sinAngle, 1e-2, 1.0);
-
   vec3 viewPosition = viewPosFromDepth(d, vUv);
-  float distanceFactor = length(viewPosition) / 50.0;
+  float distanceFactor = max(length(viewPosition) / 20.0, 1.0);
 
-  // vec3 covector = abs(dot(vec3(1.0, 0.0, 0.0), viewNormal)) < abs(dot(vec3(0.0, 1.0, 0.0), viewNormal)) ? vec3(1.0, 0.0, 0.0) : vec3(0.0, 1.0, 0.0);
   vec3 covector = normalize(vec3(rand2d(vUv), rand2d(vUv * 3.0), rand2d(vUv * 5.0)));
 
   vec3 tangent = normalize(covector - viewNormal * dot(covector, viewNormal));
@@ -90,9 +84,7 @@ void main(){
   float minNormDot = 0.0;
 
   for (int i = 0; i < MAX_KERNEL_SIZE; i++) {
-    vec3 kvec = kernel[i];
-    // kvec.z = abs(kvec.z);
-    vec3 sampleVector = TBN * kvec;
+    vec3 sampleVector = TBN * kernel[i];
     vec3 samplePosition = viewPosition + sampleVector * sampleRadius * distanceFactor;
 
     vec4 offset = projMatrix * vec4(samplePosition, 1.0);
@@ -104,14 +96,11 @@ void main(){
 
     float rangeCheck = smoothstep(0.0, 1.0, sampleRadius / length(viewPosition - realPos));
 
-    occlusion += ((realPos.z >= samplePosition.z + bias * (1.0 / secAngle) * distanceFactor) ? 1.0 : 0.0) * rangeCheck;
-    // occlusion += ((realPos.z >= sampleVector.z + bias) ? 1.0 : 0.0) * rangeCheck;
+    occlusion += ((realPos.z >= samplePosition.z + bias) ? 1.0 : 0.0) * rangeCheck;
     minNormDot += dot(sampleVector, viewNormal) / float(MAX_KERNEL_SIZE);
   }
 
   float occlusionFactor = 1.0 - clamp(occlusion / float(MAX_KERNEL_SIZE), 0.0, 1.0);
 
   outputColor = vec4(occlusionFactor);
-  // outputColor = vec4(viewNormal.xy, minNormDot, 1.0);
-  // outputColor = vec4(TBN * kernel[MAX_KERNEL_SIZE - 1], 1.0);
 }
