@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-data-exploration",
-  "version": "2.2.0",
+  "version": "2.4.0",
   "scripts": {
     "start": "../../scripts/start.sh dev data-exploration",
     "build": "../../scripts/build.sh production data-exploration",
