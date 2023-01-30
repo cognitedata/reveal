@@ -155,7 +155,7 @@ export class ComboControls extends EventDispatcher {
     pointerRotationSpeedPolar: defaultPointerRotationSpeed,
     enableKeyboardNavigation: true,
     keyboardRotationSpeedAzimuth: defaultKeyboardRotationSpeed,
-    keyboardRotationSpeedPolar: defaultKeyboardRotationSpeed,
+    keyboardRotationSpeedPolar: defaultKeyboardRotationSpeed * 0.8,
     mouseFirstPersonRotationSpeed: defaultPointerRotationSpeed * 2,
     keyboardDollySpeed: 2,
     keyboardPanSpeed: 10,
@@ -646,7 +646,9 @@ export class ComboControls extends EventDispatcher {
       _sphericalEnd.makeSafe();
       polarAngle = _sphericalEnd.phi - oldPhi;
       _sphericalEnd.phi = oldPhi;
-      this.rotateFirstPersonMode(azimuthAngle, polarAngle);
+
+      const compensationForPolarAngleFactor = Math.sin(Math.PI / 2 - Math.abs(_sphericalEnd.phi - Math.PI / 2));
+      this.rotateFirstPersonMode(azimuthAngle * compensationForPolarAngleFactor, polarAngle);
     }
 
     const speedFactor = _keyboard.isPressed('shift') ? this._options.keyboardSpeedFactor : 1;
