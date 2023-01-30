@@ -38,6 +38,10 @@ export class Image360VisualizationBox implements Image360Visualization {
     });
   }
 
+  get visible(): boolean {
+    return this._visualizationState.visible;
+  }
+
   set visible(isVisible: boolean) {
     this._visualizationState.visible = isVisible;
 
