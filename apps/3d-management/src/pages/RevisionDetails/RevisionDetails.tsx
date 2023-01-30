@@ -29,6 +29,7 @@ import { Revision3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import ThreeDViewerErrorBoundary from './components/ThreeDViewer/ThreeDViewerErrorFallback';
+import { FileLink } from './components/FileLink/FileLink';
 
 export const PUBLISH_STATUS_HINT = `
   Publishing a Revision makes this version of
@@ -236,6 +237,14 @@ export default function RevisionDetails(props: Props) {
             </Tooltip>
           </div>
           <div>{revisionId}</div>
+        </DetailsRowFlex>
+        <DetailsRowFlex>
+          <div>
+            <b>Source File: </b>
+          </div>
+          <div>
+            <FileLink fileId={revision.fileId} />
+          </div>
         </DetailsRowFlex>
         <DetailsRowFlex>
           <div>
