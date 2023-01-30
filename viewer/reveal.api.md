@@ -549,7 +549,7 @@ export class ComboControls extends EventDispatcher {
     // (undocumented)
     dispose: () => void;
     get enabled(): boolean;
-    set enabled(enabled: boolean);
+    set enabled(newEnabledValue: boolean);
     // (undocumented)
     getScrollTarget: () => Vector3;
     // (undocumented)
