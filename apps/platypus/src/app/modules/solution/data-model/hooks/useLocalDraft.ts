@@ -3,8 +3,8 @@ import { useInjection } from '@platypus-app/hooks/useInjection';
 import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 import { DataModelVersion, StorageProviderType } from '@platypus/platypus-core';
 
-export const useLocalDraft = (dataModelId: string) => {
-  const DRAFT_KEY = getLocalDraftKey(dataModelId);
+export const useLocalDraft = (dataModelId: string, dataModelSpace: string) => {
+  const DRAFT_KEY = getLocalDraftKey(dataModelId, dataModelSpace);
   const localStorageProvider = useInjection(
     TOKENS.storageProviderFactory
   ).getProvider(StorageProviderType.localStorage);

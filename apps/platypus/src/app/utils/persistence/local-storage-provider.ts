@@ -5,7 +5,11 @@ import {
 } from '@platypus/platypus-core';
 
 export class LocalStorageProvider implements StorageProvider {
-  private prefix = STORAGE_PROVIDER_CONSTANTS.PREFIX;
+  private appName = STORAGE_PROVIDER_CONSTANTS.APP_NAME;
+  private orgName = STORAGE_PROVIDER_CONSTANTS.ORG_NAME;
+  private subAppName = STORAGE_PROVIDER_CONSTANTS.SUB_APP_NAME;
+
+  constructor(private project: string) {}
 
   clear(): void {
     localStorage.clear();
@@ -52,12 +56,19 @@ export class LocalStorageProvider implements StorageProvider {
     localStorage.setItem(this.getQualifiedKeyName(key), JSON.stringify(value));
   }
 
+  private getPrefix() {
+    return [this.orgName, this.appName, this.subAppName, this.project].join(
+      STORAGE_PROVIDER_CONSTANTS.DELIMITER
+    );
+  }
+
   private getQualifiedKeyName(key: string): string {
-    return `${this.prefix}.${key}`;
+    return `${this.getPrefix()}${STORAGE_PROVIDER_CONSTANTS.DELIMITER}${key}`;
   }
 
   private getActualKeyName(key: string): string | null {
-    const effectivePrefix = this.prefix + '.';
+    const effectivePrefix =
+      this.getPrefix() + STORAGE_PROVIDER_CONSTANTS.DELIMITER;
     if (key.startsWith(effectivePrefix))
       return key.substring(effectivePrefix.length);
     return null;

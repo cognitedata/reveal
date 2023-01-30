@@ -1,7 +1,4 @@
-import { getCogniteSDKClient } from '../../environments/cogniteSdk';
-
 export const isFDMv3 = (pathName = window.location.pathname) => {
-  const sdkClient = getCogniteSDKClient();
-
-  return !pathName.startsWith(`/${sdkClient.project}/data-models-previous`);
+  // pathname is something like '/<project_name>/data-models-previous/'
+  return pathName.split('/')[2] !== 'data-models-previous';
 };

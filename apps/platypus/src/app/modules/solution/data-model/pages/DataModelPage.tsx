@@ -47,6 +47,7 @@ import {
   VersionType,
 } from '../components/PublishVersionModal';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
+import { getKeyForDataModel } from '@platypus-app/utils/local-storage-utils';
 
 const MAX_TYPES_VISUALIZABLE = 30;
 
@@ -78,10 +79,12 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     parseGraphQLSchema,
     setCurrentTypeName,
   } = useDataModelState();
-  const { removeLocalDraft, getLocalDraft } =
-    useLocalDraft(dataModelExternalId);
-
   const { data: dataModel } = useDataModel(dataModelExternalId);
+
+  const { removeLocalDraft, getLocalDraft } = useLocalDraft(
+    dataModelExternalId,
+    dataModel?.space || ''
+  );
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
@@ -127,7 +130,11 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
 
   const [isVisualizerOn, setIsVisualizerOn] = usePersistedState(
     true,
-    `${dataModelExternalId}::isVisualizerOn`
+    getKeyForDataModel(
+      dataModel?.space || '',
+      dataModelExternalId,
+      'isVisualizerOn'
+    )
   );
 
   // Use this hook as init livecycle
@@ -343,6 +350,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
         <PageContentLayout.Header>
           <DataModelHeader
             dataModelExternalId={dataModelExternalId}
+            dataModelSpace={dataModel?.space || ''}
             dataModelVersions={dataModelVersions}
             isSaving={saving}
             isUpdating={updating}

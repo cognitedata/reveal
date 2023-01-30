@@ -20,6 +20,7 @@ import { DOCS_LINKS } from '@platypus-app/constants';
 
 export interface DataModelHeaderProps {
   dataModelExternalId: string;
+  dataModelSpace: string;
   dataModelVersions: DataModelVersion[] | undefined;
   isSaving: boolean;
   isUpdating: boolean;
@@ -35,6 +36,7 @@ export interface DataModelHeaderProps {
 
 export const DataModelHeader = ({
   dataModelExternalId,
+  dataModelSpace,
   dataModelVersions,
   isSaving,
   isUpdating,
@@ -69,7 +71,7 @@ export const DataModelHeader = ({
   } = useDataModelState();
 
   const { getRemoteAndLocalSchemas, removeLocalDraft, setLocalDraft } =
-    useLocalDraft(dataModelExternalId);
+    useLocalDraft(dataModelExternalId, dataModelSpace);
 
   const getDataModelHeaderSchemas = () => {
     /*

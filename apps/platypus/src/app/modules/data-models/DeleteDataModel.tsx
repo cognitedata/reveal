@@ -48,7 +48,9 @@ export const DeleteDataModel = ({
           ),
         });
 
-        localStorageProvider.removeItem(getLocalDraftKey(dataModel.id));
+        localStorageProvider.removeItem(
+          getLocalDraftKey(dataModel.id, dataModel.space)
+        );
         queryClient.removeQueries(QueryKeys.DATA_MODEL(dataModel.id));
         queryClient.removeQueries(
           QueryKeys.DATA_MODEL_VERSION_LIST(dataModel.id)

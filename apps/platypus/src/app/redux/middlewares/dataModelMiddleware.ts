@@ -30,7 +30,8 @@ export const graphQlSchemaLocalStorageMiddleware =
       store.dispatch(actions.setIsDirty(true));
 
       const DRAFT_KEY = getLocalDraftKey(
-        state.dataModel.selectedDataModelVersion.externalId
+        state.dataModel.selectedDataModelVersion.externalId,
+        state.dataModel.selectedDataModelVersion.space
       );
 
       // get drafts from localStorage
