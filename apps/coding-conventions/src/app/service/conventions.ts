@@ -1,4 +1,4 @@
-import { System } from '../pages/conventions/types';
+import { System } from '../types';
 
 export const dummyConventions: System[] = [
   {

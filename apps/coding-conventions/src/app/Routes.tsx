@@ -1,8 +1,7 @@
 import React from 'react';
 import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
-import { HomePage } from './pages/HomePage';
 import { useFusionQuery } from './hooks/useFusionQuery';
-import { ContentionsPage } from './pages/conventions/ConventionsPage';
+import { ConventionsPage } from './pages/ConventionsPage';
 
 const Routes = () => {
   useFusionQuery();
@@ -10,9 +9,8 @@ const Routes = () => {
   return (
     <ReactRoutes>
       <Route path="/" element={<Outlet />}>
-        <Route index element={<HomePage />} />
-
-        <Route path="/conventions/:id" element={<HomePage />} />
+        <Route index element={<ConventionsPage />} />
+        <Route path="/conventions/:id" element={<ConventionsPage />} />
       </Route>
     </ReactRoutes>
   );

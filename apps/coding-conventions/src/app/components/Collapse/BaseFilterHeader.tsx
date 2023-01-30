@@ -10,8 +10,7 @@ import {
   Flex,
   Select,
 } from '@cognite/cogs.js';
-import { Convention } from '../../pages/conventions/types';
-import { ContentionsPage } from '../../pages/conventions/ConventionsPage';
+import { Convention } from '../../types';
 
 const Content = styled.div`
   display: flex;

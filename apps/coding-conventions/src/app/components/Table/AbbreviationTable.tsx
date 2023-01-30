@@ -1,6 +1,6 @@
 import { Table } from '@cognite/cogs.js';
 import { useState } from 'react';
-import { Convention } from '../../pages/conventions/types';
+import { Convention } from '../../types';
 
 interface Props {
   convention: Convention;

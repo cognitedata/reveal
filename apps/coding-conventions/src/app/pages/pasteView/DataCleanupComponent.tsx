@@ -71,43 +71,33 @@ export function Table({ columns, data }: any) {
           )}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map(
-            (
-              row: {
-                getRowProps: () => JSX.IntrinsicAttributes &
-                  React.ClassAttributes<HTMLTableRowElement> &
-                  React.HTMLAttributes<HTMLTableRowElement>;
-                cells: any[];
-              },
-              i: any
-            ) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td
+          {rows.map((row, i: any) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map((cell) => {
+                  return (
+                    <td
+                      // @ts-ignore
+                      {...cell.getCellRangeSelectionProps()}
+                      {...cell.getCellProps()}
+                      style={
                         // @ts-ignore
-                        {...cell.getCellRangeSelectionProps()}
-                        {...cell.getCellProps()}
-                        style={
-                          // @ts-ignore
-                          cellsSelected[cell.id]
-                            ? {
-                                backgroundColor: '#6beba8',
-                                userSelect: 'none',
-                              }
-                            : { backgroundColor: 'white', userSelect: 'none' }
-                        }
-                      >
-                        {cell.render('Cell')}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            }
-          )}
+                        cellsSelected[cell.id]
+                          ? {
+                              backgroundColor: '#6beba8',
+                              userSelect: 'none',
+                            }
+                          : { backgroundColor: 'white', userSelect: 'none' }
+                      }
+                    >
+                      {cell.render('Cell')}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

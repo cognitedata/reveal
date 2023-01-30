@@ -8,17 +8,15 @@ import {
 } from '@cognite/cogs.js';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { Modal } from '../components/Modal/Modal';
-import ModalFooter from '../components/Modal/ModalFooter';
-import { AbbreviationTable } from '../components/Table/AbbreviationTable';
-import { Convention, TagTypes } from '../pages/conventions/types';
+import { AbbreviationTable } from '../../components/Table/AbbreviationTable';
+import { Convention, TagTypes } from '../../types';
 
 interface Props {
   selectedConvention?: Convention;
   conventions?: Convention[];
   onChange: (item: Convention) => void;
 }
-export const ManageSelectedConvention: React.FC<Props> = ({
+export const ConventionItem: React.FC<Props> = ({
   conventions,
   selectedConvention,
   onChange,
@@ -33,21 +31,8 @@ export const ManageSelectedConvention: React.FC<Props> = ({
     return null;
   }
 
-  const handleOnSaveClick = () => {
-    onChange(convention);
-  };
-
   return (
     <Flex gap={8} direction="column">
-      {/* <Input
-        placeholder="Name"
-        value={convention.name}
-        onChange={(e) => {
-          const { value } = e.target;
-          setConvention((prevState) => ({ ...prevState!, name: value }));
-        }}
-      /> */}
-
       <SegmentedControl
         currentKey={currentKey}
         onButtonClicked={(nextKey: any) => setCurrentKey(nextKey)}

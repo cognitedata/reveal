@@ -8,8 +8,8 @@ import {
   StyledTrashIcon,
 } from './elements';
 import { BaseFilterHeader } from './BaseFilterHeader';
-import { Convention } from '../../pages/conventions/types';
-import { colors } from '../../colors';
+import { colors } from '../../utils/colors';
+import { Convention } from '../../types';
 
 // Might need this in the near future. Leaving for now
 const CollapseIcon: React.FC<{ isActive?: boolean }> = ({ isActive }) => {
@@ -39,8 +39,6 @@ export const BaseFilterCollapse = ({
   onChange,
   ...rest
 }: BaseFilterCollapseProps) => {
-  // const [activeKeys, setActiveKeys] = React.useState<string[]>([]);
-
   const Icon = editMode ? TrashIcon : CollapseIcon;
 
   return (

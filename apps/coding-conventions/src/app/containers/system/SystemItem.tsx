@@ -16,7 +16,7 @@ interface Props {
   onClick?: () => void;
 }
 
-export const Card: React.FC<Props> = ({
+export const SystemItem: React.FC<Props> = ({
   icon,
   title,
   subtitle,
@@ -55,17 +55,6 @@ const Container = styled.div`
       0px 2px 6px 1px rgba(79, 82, 104, 0.12);
   }
 `;
-
-// const Actions = styled.div`
-//   display: flex;
-//   width: 100%;
-//   align-items: center;
-//   margin: 0 auto;
-//   justify-content: flex-end;
-//   position: absolute;
-//   bottom: 16px;
-//   right: 16px;
-// `;
 
 const Header = styled.div`
   display: flex;

@@ -1,2 +1,2 @@
 declare module 'react-table-plugins';
-declare module '*';
+// declare module '*';
