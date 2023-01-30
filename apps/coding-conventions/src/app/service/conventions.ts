@@ -19,7 +19,56 @@ export const dummyConventions: System[] = [
           {
             key: '10',
             id: 'system-10',
-            description: 'PC',
+            description: 'Drilling Systems',
+            type: 'Abbreviation',
+          },
+          {
+            key: '11',
+            id: 'system-11',
+            description: 'Drilling process Systems',
+            type: 'Abbreviation',
+          },
+          {
+            key: '12',
+            id: 'system-12',
+            description: 'Drilling wellcontroll systems',
+            type: 'Abbreviation',
+          },
+          {
+            key: '13',
+            id: 'system-13',
+            description: 'Riser and well system',
+            type: 'Abbreviation',
+          },
+          {
+            key: '14',
+            id: 'system-14',
+            description: 'Riser operations ssytems',
+            type: 'Abbreviation',
+          },
+          {
+            key: '15',
+            id: 'system-15',
+            description: 'Well related production systems topside',
+            type: 'Abbreviation',
+          },
+          {
+            key: '16',
+            id: 'system-16',
+            description: 'Gas and water injection well ssytem topside',
+            type: 'Abbreviation',
+          },
+          {
+            key: '17',
+            id: 'system-17',
+            description:
+              'subsea production system - installation, maintenance and workover systems',
+            type: 'Abbreviation',
+          },
+          {
+            key: '18',
+            id: 'system-18',
+            description: 'Not defined',
             type: 'Abbreviation',
           },
           {
@@ -42,8 +91,8 @@ export const dummyConventions: System[] = [
           {
             type: 'Abbreviation',
             key: '10',
-            description: 'CPU',
-            id: '123',
+            description: 'Derrick/mast and hoisting ',
+            id: 'subsystem-10',
             dependsOn: 'system-10',
           },
         ],

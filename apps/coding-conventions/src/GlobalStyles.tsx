@@ -6,6 +6,7 @@ import {
   Loader,
   Modal,
   Dropdown,
+  Drawer,
 } from '@cognite/cogs.js';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 
@@ -35,6 +36,11 @@ Modal.defaultProps = {
 Dropdown.defaultProps = {
   ...Dropdown.defaultProps,
   appendTo: getContainer,
+};
+
+Drawer.defaultProps = {
+  ...Drawer.defaultProps,
+  getContainer,
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {

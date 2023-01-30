@@ -12,7 +12,7 @@ const Routes = () => {
       <Route path="/" element={<Outlet />}>
         <Route index element={<HomePage />} />
 
-        <Route path="/conventions/:id" element={<ContentionsPage />} />
+        <Route path="/conventions/:id" element={<HomePage />} />
       </Route>
     </ReactRoutes>
   );

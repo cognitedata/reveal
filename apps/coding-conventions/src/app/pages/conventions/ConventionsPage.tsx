@@ -13,24 +13,26 @@ import { uniqueId } from 'lodash';
 import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Header } from '../../components/Header/Header';
+import { colors } from '../../colors';
+import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse';
+import { VerticalDivider } from '../../components/Divider';
 import { ManageSelectedConvention } from '../../containers/ManageSelectedConvention';
 import { dummyConventions } from '../../service/conventions';
 import { Page } from '../elements';
 import { Convention } from './types';
 
-export const ContentionsPage = () => {
-  const { id } = useParams();
-  const convention = dummyConventions.find((item) => item.id === id)!;
+interface Props {
+  id: string;
+}
 
-  const [visible, setVisible] = useState(false);
-  const toggleVisibility = () => setVisible((prevState) => !prevState);
+export const ContentionsPage: React.FC<Props> = ({ id }) => {
+  const [activeKeys, setActiveKeys] = useState<string[]>([]);
 
-  const selectedConventionId = useRef<string | null>(null);
+  const system = dummyConventions.find((item) => item.id === id)!;
 
   const [selectMode, setSelectMode] = useState(false);
   const [conventions, setConventions] = useState<Convention[]>(
-    convention.conventions
+    system.conventions
   );
 
   const handleSelectionChange = (newSelection: Selection | null) => {
@@ -62,36 +64,31 @@ export const ContentionsPage = () => {
 
   const renderStructureText = () => {
     if (selectMode || conventions.length === 0) {
-      return <Text>{convention?.structure}</Text>;
+      return <Text>{system?.structure}</Text>;
     }
 
     const content = [];
 
-    for (let i = 0; i < convention!.structure!.length; i++) {
+    for (let i = 0; i < system!.structure!.length; i++) {
       const selection = conventions.find((item) => {
         return item.range.start === i;
       });
 
       if (selection) {
         content.push(
-          <Tooltip
-            content={selection.name}
-            disabled={!selection.name}
+          <SelectedText
+            $color={colors[selection.range.start]}
+            onClick={() => {
+              setActiveKeys([selection.id]);
+            }}
             key={`${selection.range.start}-${selection.range.end}`}
           >
-            <SelectedText
-              onClick={() => {
-                selectedConventionId.current = selection.id;
-                toggleVisibility();
-              }}
-            >
-              {selection.keyword}
-            </SelectedText>
-          </Tooltip>
+            {selection.keyword}
+          </SelectedText>
         );
         i = selection.range.end - 1;
       } else {
-        content.push(<Text key={i}>{convention!.structure!.charAt(i)}</Text>);
+        content.push(<Text key={i}>{system!.structure!.charAt(i)}</Text>);
       }
     }
 
@@ -99,20 +96,36 @@ export const ContentionsPage = () => {
   };
 
   return (
-    <Page>
-      <Header
-        title="Mark conventions"
-        subtitle="Proceed to group the structure text by selecting/marking the keywords that ... with your mouse, followed by pressing the complete button"
-        breadcrumbs={[
-          {
-            title: 'Coding conventions',
-            link: createLink('/coding-conventions'),
-          },
-          { title: convention!.title },
-        ]}
-      />
+    <>
+      <Header>
+        <Title level={4}>Coding conventions for "File name"</Title>
+        <Flex gap={8} alignItems="center">
+          <Button
+            onClick={() => setSelectMode((prevMode) => !prevMode)}
+            icon={selectMode ? 'Checkmark' : 'Edit'}
+            type={selectMode ? 'primary' : 'secondary'}
+            aria-label="Edit mode"
+          >
+            {selectMode ? 'Done' : ''}
+          </Button>
+          {!selectMode && (
+            <>
+              <Button icon="Play" type="primary">
+                Run
+              </Button>
+              <VerticalDivider />
+              <Button icon="Close" aria-label="Close" />
+            </>
+          )}
+        </Flex>
+      </Header>
 
       <Content>
+        {selectMode && (
+          <SelectionContainer>
+            Mark/select the characters below to form a convention group:
+          </SelectionContainer>
+        )}
         <Container>
           <Title
             onDoubleClick={() =>
@@ -133,55 +146,58 @@ export const ContentionsPage = () => {
           >
             {renderStructureText()}
           </Title>
-
-          <Button
-            onClick={() => setSelectMode((prevMode) => !prevMode)}
-            icon={selectMode ? 'Checkmark' : 'Edit'}
-            type={selectMode ? 'primary' : 'secondary'}
-          />
         </Container>
 
-        {selectMode && conventions.length > 0 && (
-          <SelectionContainer>
-            Selected:
-            {conventions
-              .sort((a, b) => a.range.start - b.range.start)
-              .map((selection) => (
-                <Tooltip
-                  key={selection.id}
-                  content={`Range: ${selection.range.start}-${selection.range.end}`}
-                  position="bottom"
-                >
-                  <KeywordLabel>{selection.keyword}</KeywordLabel>
-                </Tooltip>
-              ))}
-          </SelectionContainer>
-        )}
-      </Content>
-
-      {/* This needs to be wrapped, we expect the modal to be (un)mouted for each selection */}
-      {visible && (
-        <ManageSelectedConvention
-          conventions={conventions}
-          selectedConvention={
-            selectedConventionId.current
-              ? conventions.find(
-                  (item) => item.id === selectedConventionId.current
-                )
-              : undefined
-          }
-          onChange={(updatedConvention) => {
-            setConventions((prevState) => {
-              return [
-                ...prevState.filter((item) => item.id !== updatedConvention.id),
-                updatedConvention,
-              ];
-            });
+        <BaseFilterCollapse
+          editMode={selectMode}
+          activeKeys={selectMode ? [] : activeKeys}
+          onChange={(keys) => {
+            setActiveKeys(keys);
           }}
-          toggleVisibility={toggleVisibility}
-        />
-      )}
-    </Page>
+          onIconClick={() => {
+            console.log('HEY');
+          }}
+        >
+          {conventions
+            .sort((a, b) => a.range.start - b.range.start)
+            .map((convention) => (
+              <BaseFilterCollapse.Panel
+                key={convention.id}
+                editMode={selectMode}
+                conventions={conventions}
+                convention={convention}
+                onChange={(updatedConvention) => {
+                  setConventions((prevState) => {
+                    return [
+                      ...prevState.filter(
+                        (item) => item.id !== updatedConvention.id
+                      ),
+                      updatedConvention,
+                    ];
+                  });
+                }}
+              >
+                {!selectMode && (
+                  <ManageSelectedConvention
+                    conventions={conventions}
+                    selectedConvention={convention}
+                    onChange={(updatedConvention) => {
+                      setConventions((prevState) => {
+                        return [
+                          ...prevState.filter(
+                            (item) => item.id !== updatedConvention.id
+                          ),
+                          updatedConvention,
+                        ];
+                      });
+                    }}
+                  />
+                )}
+              </BaseFilterCollapse.Panel>
+            ))}
+        </BaseFilterCollapse>
+      </Content>
+    </>
   );
 };
 
@@ -190,14 +206,13 @@ const SelectionContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 8px;
 `;
 
 const Content = styled.section`
-  padding: 24px 156px;
-  margin-top: 200px;
+  /* margin-top: 20px; */
   display: flex;
   align-items: center;
+  padding: 16px;
 `;
 
 const Container = styled.div`
@@ -205,10 +220,11 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   gap: 16px;
+  padding-bottom: 24px;
 `;
 
-const SelectedText = styled.div`
-  border: 2px solid grey;
+const SelectedText = styled.div<{ $color: string }>`
+  border: 2px solid ${(props) => props.$color};
   display: inline-block;
   white-space: pre;
   border-radius: 4px;
@@ -237,4 +253,16 @@ const KeywordLabel = styled(Label).attrs({
     box-shadow: 0px 1px 8px rgba(79, 82, 104, 0.1),
       0px 1px 1px rgba(79, 82, 104, 0.1);
   }
+`;
+
+const Header = styled.div`
+  border-top: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+  height: 70px;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 8px;
+  margin-bottom: 16px;
 `;
