@@ -134,9 +134,13 @@ export function Reveal({
       if (image360SiteId) {
         let images;
         try {
-          images = await viewer.add360ImageSet('events', {
-            site_id: image360SiteId,
-          });
+          images = await viewer.add360ImageSet(
+            'events',
+            {
+              site_id: image360SiteId,
+            },
+            { preMultipliedRotation: false }
+          );
         } catch {
           return Promise.reject({
             message:
