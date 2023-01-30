@@ -71,15 +71,15 @@ export const DocumentSummary = ({
             );
           },
         },
-        {
-          accessorKey: 'content',
-          header: 'Content',
-          cell: ({ row }: { row: Row<InternalDocument> }) => {
-            return (
-              <DocumentContentPreview document={row.original} query={query} />
-            );
-          },
-        },
+        // {
+        //   accessorKey: 'content',
+        //   header: 'Content',
+        //   cell: ({ row }: { row: Row<InternalDocument> }) => {
+        //     return (
+        //       <DocumentContentPreview document={row.original} query={query} />
+        //     );
+        //   },
+        // },
         {
           accessorKey: 'author',
           id: 'author',
@@ -130,7 +130,7 @@ export const DocumentSummary = ({
       ] as ColumnDef<DocumentWithRelationshipLabels>[],
     [query, metadataColumns]
   );
-  const hiddenColumns = useGetHiddenColumns(columns, ['name', 'content']);
+  const hiddenColumns = useGetHiddenColumns(columns, ['name' /*'content'*/]);
   return (
     <SummaryCardWrapper>
       <Table
