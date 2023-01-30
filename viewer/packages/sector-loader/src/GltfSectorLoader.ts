@@ -11,6 +11,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
 
 import assert from 'assert';
+import { AbortableFileProvider } from '@reveal/data-providers/src/types';
 
 export class GltfSectorLoader {
   private readonly _gltfSectorParser: GltfSectorParser;
@@ -91,10 +92,18 @@ export class GltfSectorLoader {
         modelIdentifier: sector.modelIdentifier,
         geometryBatchingQueue: geometryBatchingQueue
       };
-    } catch (error) {
-      MetricsLogger.trackError(error as Error, { moduleName: 'GltfSectorLoader', methodName: 'loadSector' });
-      throw error;
+    } catch (e) {
+      const error = e as Error;
+      if (error?.name !== 'AbortError') {
+        MetricsLogger.trackError(error, { moduleName: 'GltfSectorLoader', methodName: 'loadSector' });
+      }
+      throw e;
     }
+  }
+
+  public clear(): void {
+    const abortableRequest = this._sectorFileProvider as unknown as AbortableFileProvider;
+    abortableRequest?.abortFileRequest();
   }
 
   private createTreeIndexSet(geometry: THREE.BufferGeometry): Map<number, number> {

@@ -11,6 +11,10 @@ export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 }
 
+export interface AbortableFileProvider {
+  abortFileRequest(): void;
+}
+
 export interface Image360DescriptorProvider<T> {
   get360ImageDescriptors(metadataFilter: T): Promise<Image360Descriptor[]>;
 }

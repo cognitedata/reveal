@@ -3,17 +3,24 @@
  */
 import { CogniteClient } from '@cognite/sdk';
 import { ModelDataProvider } from '../ModelDataProvider';
+import { AbortableFileProvider } from '../types';
 
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
-export class CdfModelDataProvider implements ModelDataProvider {
+export class CdfModelDataProvider implements ModelDataProvider, AbortableFileProvider {
   private readonly client: CogniteClient;
   private authenticationPromise: Promise<string | undefined>;
+  private readonly abortController: AbortController;
 
   constructor(client: CogniteClient) {
     this.client = client;
     this.authenticationPromise = client.authenticate();
+    this.abortController = new AbortController();
+  }
+
+  public abortFileRequest(): void {
+    this.abortController.abort();
   }
 
   public async getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer> {
@@ -23,7 +30,14 @@ export class CdfModelDataProvider implements ModelDataProvider {
       Accept: '*/*'
     };
 
-    const response = await this.fetchWithRetry(url, { headers, method: 'GET' }).catch(_err => {
+    const response = await this.fetchWithRetry(url, {
+      headers,
+      signal: this.abortController.signal,
+      method: 'GET'
+    }).catch(e => {
+      if (e.name === 'AbortError') {
+        throw e;
+      }
       throw Error('Could not download binary file');
     });
     return response.arrayBuffer();
@@ -51,10 +65,15 @@ export class CdfModelDataProvider implements ModelDataProvider {
         }
 
         return response;
-      } catch (err) {
+      } catch (e) {
         // Keep first error only
-        if (error !== undefined) {
-          error = err as Error;
+        if (error === undefined) {
+          error = e as Error;
+
+          //Stop retries if the request has been aborted
+          if (error.name === 'AbortError') {
+            throw error;
+          }
         }
       }
     }

@@ -75,6 +75,7 @@ export class GltfSectorRepository implements SectorRepository {
   }
 
   clearCache(): void {
+    this._gltfSectorLoader.clear();
     this._gltfCache.clear();
   }
 
