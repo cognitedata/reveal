@@ -8,7 +8,7 @@ import orderBy from 'lodash/orderBy';
 import zipWith from 'lodash/zipWith';
 import range from 'lodash/range';
 
-import { CogniteClient, CogniteEvent, EventFilter, FileInfo, ListResponse, Metadata } from '@cognite/sdk';
+import { CogniteClient, CogniteEvent, EventFilter, FileInfo, Metadata } from '@cognite/sdk';
 import { Image360Descriptor, Image360Face } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import assert from 'assert';
@@ -62,36 +62,13 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
 
   private async listEvents(filter: EventFilter): Promise<CogniteEvent[]> {
     const partitions = 10;
-    return (
-      await Promise.all(
-        range(1, partitions + 1).map(async index => {
-          const result = () => this._client.events.list({ filter, limit: 1000, partition: `${index}/${partitions}` });
-          const pageGenerator = this.loadCursorToCompletion(result);
-          const pages = await this.combinePages(pageGenerator);
-          return pages.flat();
-        })
-      )
-    ).flat();
-  }
-
-  private async combinePages(gen: AsyncGenerator<CogniteEvent[]>): Promise<CogniteEvent[]> {
-    const result: CogniteEvent[] = [];
-    for await (const events of gen) {
-      result.push(...events);
-    }
-    return result;
-  }
-
-  private async *loadCursorToCompletion(
-    listResponse: () => Promise<ListResponse<CogniteEvent[]>>
-  ): AsyncGenerator<CogniteEvent[]> {
-    let current: (() => Promise<ListResponse<CogniteEvent[]>>) | undefined = listResponse;
-
-    while (current !== undefined) {
-      const currentResponse: ListResponse<CogniteEvent[]> = await current();
-      yield currentResponse.items;
-      current = currentResponse.next;
-    }
+    const partitionedRequests = range(1, partitions + 1).flatMap(async index =>
+      this._client.events
+        .list({ filter, limit: 1000, partition: `${index}/${partitions}` })
+        .autoPagingToArray({ limit: Infinity })
+    );
+    const result = await Promise.all(partitionedRequests);
+    return result.flat();
   }
 
   private async getFileInfos(siteId: string, stationId: string): Promise<FileInfo[]> {
