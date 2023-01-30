@@ -201,15 +201,15 @@ export class ComboControls extends EventDispatcher {
   /**
    * Sets the enabled state of these controls.
    */
-  set enabled(enabled: boolean) {
-    if (enabled === true && this._enabled === false) {
+  set enabled(newEnabledValue: boolean) {
+    if (newEnabledValue && !this._enabled) {
       this.addEventListeners();
     }
-    if (enabled === false && this._enabled === true) {
+    if (!newEnabledValue && this._enabled) {
       this.removeEventListeners();
     }
 
-    this._enabled = enabled;
+    this._enabled = newEnabledValue;
   }
 
   constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
