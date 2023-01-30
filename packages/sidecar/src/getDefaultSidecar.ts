@@ -75,7 +75,6 @@ export const getDefaultSidecar = (
         cluster,
         localService
       );
-
       return { ...result, [service.key]: url };
     }, {} as Record<keyof LocalServices, string>);
 

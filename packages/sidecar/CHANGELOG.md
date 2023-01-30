@@ -1,3 +1,7 @@
+## 0.5.0 Mar 24 2022
+
+- Bump version to release previously [unreleased changes](https://github.com/cognitedata/applications/pull/2355/files)
+
 ## 0.4.1 Mar 24 2022
 
 - Add fake-idp to service list
