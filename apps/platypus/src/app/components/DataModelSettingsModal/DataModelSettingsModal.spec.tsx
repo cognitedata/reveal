@@ -59,7 +59,7 @@ describe('DataModelSettingsModal', () => {
     userEvent.click(
       screen.getByRole('button', {
         hidden: true,
-        name: 'Create',
+        name: 'Update',
       })
     );
 

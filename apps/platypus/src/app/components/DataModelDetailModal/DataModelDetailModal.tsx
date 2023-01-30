@@ -31,6 +31,8 @@ export type DataModelDetailModalProps = {
   isDataSetsFetchError?: boolean;
   isExternalIdLocked?: boolean;
   isLoading?: boolean;
+  isSpaceDisabled?: boolean;
+  okButtonName?: string;
   name: string;
   onCancel: () => void;
   onSubmit: () => void;
@@ -92,7 +94,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
       onCancel={props.onCancel}
       onOk={props.onSubmit}
       okDisabled={isSubmitDisabled}
-      okButtonName={t('create', 'Create')}
+      okButtonName={props.okButtonName}
       okProgress={props.isLoading}
       okType="primary"
       data-cy="create-data-model-modal-content"
@@ -158,6 +160,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
         </label>
 
         <DataModelSpaceSelect
+          isDisabled={props.isSpaceDisabled}
           onSpaceSelect={(selectedSpace) =>
             props.onSpaceChange?.(selectedSpace)
           }

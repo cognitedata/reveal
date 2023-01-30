@@ -40,7 +40,9 @@ export const DataModelSettingsModal = (props: DataModelSettingsModalProps) => {
       externalId={props.dataModel.id}
       isExternalIdLocked
       isLoading={update.isLoading}
+      isSpaceDisabled
       name={name || ''}
+      okButtonName={t('data_model_settings_modal_ok_button', 'Update')}
       onCancel={props.onRequestClose}
       onDescriptionChange={(value) => setDescription(value)}
       onNameChange={(value) => setName(value)}

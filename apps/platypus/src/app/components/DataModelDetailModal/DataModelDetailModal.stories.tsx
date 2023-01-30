@@ -29,3 +29,6 @@ Base.args = {
 
 export const LockedExternalId = Template.bind({});
 LockedExternalId.args = { ...Base.args, isExternalIdLocked: true };
+
+export const SpacesDisabled = Template.bind({});
+SpacesDisabled.args = { ...Base.args, isSpaceDisabled: true };

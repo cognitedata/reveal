@@ -15,6 +15,7 @@ import { FormLabel } from '../FormLabel/FormLabel';
 import { useSpaces } from '@platypus-app/hooks/useSpaces';
 
 export type DataModelSpaceSelectProps = {
+  isDisabled?: boolean;
   onSpaceSelect: (selectedSpace: string) => void;
   preSelectedSpace?: string;
 };
@@ -79,6 +80,7 @@ export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
 
       <Select
         fullWidth
+        disabled={props.isDisabled}
         name="space"
         data-cy="select-space-dropdown"
         options={spaceOptions}
@@ -118,14 +120,16 @@ export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
             : undefined
         }
       />
-      <InputDetail>
-        <StyledDetail>
-          {t(
-            'modal_space_description',
-            'You need to select a space where your data model will be stored.'
-          )}
-        </StyledDetail>
-      </InputDetail>
+      {!props.isDisabled && (
+        <InputDetail>
+          <StyledDetail>
+            {t(
+              'modal_space_description',
+              'You need to select a space where your data model will be stored.'
+            )}
+          </StyledDetail>
+        </InputDetail>
+      )}
 
       <CreateNewSpaceModal
         visible={showCreateSpaceModal}

@@ -86,6 +86,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
       isDataSetsLoading={isDataSetsLoading}
       isLoading={create.isLoading}
       name={dataModelName}
+      okButtonName={t('data_model_create_modal_ok_button', 'Create')}
       onCancel={onCancel}
       onExternalIdChange={handleExternalIdChange}
       onDescriptionChange={(value) => setDataModelDescription(value)}
