@@ -8,27 +8,18 @@ def APPLICATIONS = [
   'coding-conventions',
 ]
 
-// This is your FAS production app id.
-// At this time, there is no production build for the demo app.
-// static final String PRODUCTION_APP_ID = 'cdf-solutions-ui'
-static final Map<String, String> PRODUCTION_APP_IDS = [
-  'platypus': "cdf-solutions-ui",
-  'data-exploration': "cdf-data-exploration",
-  'coding-conventions': 'cdf-coding-conventions',
+// This is the Firebase site mapping.
+// See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_firebase_hosting/sites.tf
+static final Map<String, String> FIREBASE_APP_SITES = [
+  'platypus': 'platypus',
+  'data-exploration': 'data-exploration',
+  'coding-conventions': 'coding-conventions',
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
   'data-exploration': "@cognite/cdf-data-exploration",
   'coding-conventions': "@cognite/cdf-coding-conventions",
-]
-
-// This is your FAS app identifier (repo) shared across both production and staging apps
-// in order to do a commit lookup (commits are shared between apps).
-static final Map<String, String> APPLICATIONS_REPO_IDS = [
-  'platypus': "platypus",
-  'data-exploration': "cdf-ui-data-exploration",
-  'coding-conventions': "fusion",
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -81,11 +72,15 @@ static final String SLACK_CHANNEL = 'alerts-platypus'
 //    which are named release-[NNN].
 //
 // No other options are supported at this time.
-// static final String VERSIONING_STRATEGY = 'single-branch'
+static final Map<String, String> VERSIONING_STRATEGY = [
+  'platypus': 'single-branch',
+  'coding-conventions': 'single-branch',
+  'data-exploration': 'multi-branch',
+]
 
 // == End of customization. Everything below here is common. == \\
 
-static final String NODE_VERSION = 'node:14'
+static final String NODE_VERSION = 'node:18'
 
 static final String PR_COMMENT_MARKER = '[pr-server]\n'
 static final String STORYBOOK_COMMENT_MARKER = '[storybook-server]\n'
@@ -121,10 +116,10 @@ def getAffectedProjects(boolean isPullRequest = true, boolean isMaster = false, 
     // Using the NX's affected tree to determine which applications were changed in the branch.
     // The 'base' value is derived from the NX documentation, see: https://nx.dev/recipes/ci/monorepo-ci-jenkins
     if (isPullRequest) {
-      affected = sh(script: "npx nx print-affected --base=origin/${env.CHANGE_TARGET} --plain --target=${target} --select=${select}", returnStdout: true)
+      affected = sh(script: "./node_modules/.bin/nx print-affected --base=origin/${env.CHANGE_TARGET} --plain --target=${target} --select=${select}", returnStdout: true)
     }
     if (isMaster) {
-      affected = sh(script: "npx nx print-affected --base=HEAD~1 --plain --target=${target} --select=${select}", returnStdout: true)
+      affected = sh(script: "./node_modules/.bin/nx print-affected --base=HEAD~1 --plain --target=${target} --select=${select}", returnStdout: true)
     }
 
     if (!affected) {
@@ -149,12 +144,20 @@ def pods = { body ->
         secretName: 'fusion-locize-api-key',
         secretKey: 'FUSION_LOCIZE_API_KEY'
       )
-      fas.pod(
+      appHosting.pod(
         nodeVersion: NODE_VERSION,
         locizeProjectId: LOCIZE_PROJECT_ID,
         mixpanelToken: MIXPANEL_TOKEN,
         envVars: [
           locizeApiKey,
+          envVar(
+            key: 'REACT_APP_LOCIZE_PROJECT_ID',
+            value: LOCIZE_PROJECT_ID
+          ),
+          envVar(
+            key: 'REACT_APP_MIXPANEL_TOKEN',
+            value: MIXPANEL_TOKEN
+          )
         ]
       ) {
         codecov.pod {
@@ -203,24 +206,30 @@ pods {
               sh("git fetch origin master:refs/remotes/origin/master")
             }
           }
-          // the fas container interacts with git when running npx commands.
+          // the apphosting container interacts with git when running npx commands.
           // since the git checkout is done in a different container,
-          // the user permissions seem altered when git is executed from the fas container,
+          // the user permissions seem altered when git is executed from the node container,
           // therefore we need to mark the folder as safe
-          container("fas") {
+          container('apphosting') {
             sh("git config --global --add safe.directory ${env.WORKSPACE}/main")
           }
       }
 
+      def projects;
+      stage('Get affected projects') {
+        container('apphosting') {
+          projects = getAffectedProjects(isPullRequest, isMaster, isRelease)
+        }
+      }
+      
+
       parallel(
         'Storybook': {
-          container('fas') {
+          container('apphosting') {
             if (!isPullRequest) {
               print 'No storybook reviews for release builds'
               return;
             }
-
-            def projects = getAffectedProjects(isPullRequest, isMaster, isRelease)
 
             for (int i = 0; i < projects.size(); i++) {
               if (!PREVIEW_STORYBOOK.contains(projects[i])) {
@@ -240,13 +249,11 @@ pods {
         },
 
         'Preview': {
-          container('fas') {
+          container('apphosting') {
             if (!isPullRequest) {
               print 'No PR previews for release builds'
               return
             }
-
-            def projects = getAffectedProjects(isPullRequest, isMaster, isRelease)
 
             deleteComments('[FUSION_PREVIEW_URL]')
 
@@ -278,38 +285,33 @@ pods {
                 def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
                 pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${projects[i]}")
               }
-
             }
           }
         },
 
         'Release': {
-          container('fas') {
+          container('apphosting') {
             print "branch name: ${env.BRANCH_NAME}";
             print "change id: ${env.CHANGE_ID}";
             print "isMaster: ${isMaster}";
             print "isRelease: ${isRelease}";
 
             if (isPullRequest) {
-              print 'No FAS deployment on PR branch'
+              print 'No deployment on PR branch'
               return;
             }
 
-            // env.branchname is not working <--- need to get that sorted out!
-            // if (!isMaster || !isRelease) {
-            //   print 'No FAS deployment on feature branch'
-            //   return;
-            // }
-
-            def projects = getAffectedProjects(isPullRequest, isMaster, isRelease) 
-
             for (int i = 0; i < projects.size(); i++) {
-              def productionAppId = PRODUCTION_APP_IDS[projects[i]];
+              def firebaseSiteName = FIREBASE_APP_SITES[projects[i]];
 
-              if (productionAppId == null) {
+              if (firebaseSiteName == null) {
                 print "No release available for: ${projects[i]}"
                 continue;
               }
+
+              final boolean isReleaseBranch = env.BRANCH_NAME.startsWith("release-${projects[i]}")
+              final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY[project[i]] == 'single-branch';
+              final boolean releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
 
               // Run the yarn install in the app in cases of local packages.json
               dir("apps/${projects[i]}") {
@@ -318,28 +320,13 @@ pods {
                 }
               }
 
-              if (!fileExists("apps/${projects[i]}/package.json")) {
-                throw new Error("App '${projects[i]}' is missing package.json file with a version number!")
-              }
-
-              // Get the local application package version to be used as base to FAS publish.
-              def appPackageString = sh(script: "cat apps/${projects[i]}/package.json", returnStdout: true)
-              def params = readJSON text: appPackageString
-
-              print "Reading version ${params.version} for ${projects[i]} with repoId: ${APPLICATIONS_REPO_IDS[projects[i]]}"
-
               stageWithNotify("Publish production build: ${projects[i]}") {
-                fas.build(
-                  appId: productionAppId,
-                  repo: APPLICATIONS_REPO_IDS[projects[i]],
-                  baseVersion: params.version,
+                appHosting(
+                  appName: firebaseSiteName,
+                  environment: releaseToProd ? 'production' : 'staging',
+                  firebaseJson: 'build/firebase.json',
                   buildCommand: "yarn build production ${projects[i]}",
-                  shouldPublishSourceMap: false,
-                  sentryProjectName: SENTRY_PROJECT_NAMES[projects[i]],
-                )
-
-                fas.publish(
-                  shouldPublishSourceMap: false
+                  buildFolder: 'build',
                 )
 
                 slack.send(
@@ -347,7 +334,6 @@ pods {
                   message: "Deployment of ${env.BRANCH_NAME} complete for: ${projects[i]}!"
                 )
               }
-
 
               if(projects[i] == "platypus"){
                 stageWithNotify('Save missing keys to locize') {

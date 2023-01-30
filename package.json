@@ -72,7 +72,7 @@
     "conf": "^10.0.3",
     "configstore": "5.0.1",
     "copy-to-clipboard": "^3.3.3",
-    "copy-webpack-plugin": "^10.0.0",
+    "copy-webpack-plugin": "^11.0.0",
     "core-js": "^3.6.5",
     "d3": "^7.1.1",
     "d3-array": "^2.12.1",

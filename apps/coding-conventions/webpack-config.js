@@ -3,6 +3,7 @@ const { edit, remove, getPaths } = require('@rescripts/utilities');
 const PrefixWrap = require('postcss-prefixwrap');
 const { styleScope } = require('./src/styleScope');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const CSS_REGEX = /\.css$/;
 const LESS_REGEX = /\.less$/;
@@ -155,6 +156,9 @@ module.exports = (config) => {
   config.plugins.push(
     new webpack.ProvidePlugin({
       React: 'react',
+    }),
+    new CopyPlugin({
+      patterns: ['./firebase.json'],
     })
   );
 
