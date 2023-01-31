@@ -11,6 +11,7 @@ import { CasingAssemblyInternal } from '../types';
 import { isLiner } from '../utils/isLiner';
 
 import { formatDiameter } from './formatDiameter';
+import { normalizeCasingCementing } from './normalizeCasingCementing';
 import { normalizeCasingComponent } from './normalizeCasingComponent';
 
 export const normalizeCasingAssembly = (
@@ -24,6 +25,7 @@ export const normalizeCasingAssembly = (
     originalMeasuredDepthTop,
     originalMeasuredDepthBase,
     components,
+    cementing,
     ...rest
   } = rawCasingAssemby;
 
@@ -62,5 +64,12 @@ export const normalizeCasingAssembly = (
     components: components?.map((component) =>
       normalizeCasingComponent(component, userPreferredUnit)
     ),
+    cementing:
+      cementing &&
+      normalizeCasingCementing(
+        cementing,
+        originalMeasuredDepthBase,
+        userPreferredUnit
+      ),
   };
 };

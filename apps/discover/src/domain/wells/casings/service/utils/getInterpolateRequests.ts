@@ -1,6 +1,7 @@
 import { toIdentifierWithMatchingId } from 'domain/wells/utils/toIdentifierWithMatchingId';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
+import compact from 'lodash/compact';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 import { toDistanceUnit } from 'utils/units/toDistanceUnit';
@@ -26,9 +27,17 @@ export const getInterpolateRequests = (
     const measuredDepths = wellboreCasingSchematics.flatMap(
       ({ casingAssemblies }) =>
         casingAssemblies.flatMap(
-          ({ originalMeasuredDepthBase, originalMeasuredDepthTop }) => [
+          ({
+            originalMeasuredDepthBase,
+            originalMeasuredDepthTop,
+            cementing,
+          }) => [
             originalMeasuredDepthBase.value,
             originalMeasuredDepthTop.value,
+            ...compact([
+              cementing?.topMeasuredDepth?.value,
+              cementing?.baseMeasuredDepth?.value,
+            ]),
           ]
         )
     );

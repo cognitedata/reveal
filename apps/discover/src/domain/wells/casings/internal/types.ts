@@ -5,6 +5,7 @@ import {
   CasingAssembly,
   Distance,
   CasingComponent,
+  CasingCementing,
 } from '@cognite/sdk-wells';
 
 export interface CasingSchematicInternal
@@ -34,16 +35,19 @@ export interface CasingAssemblyInternal
   insideDiameterFormatted: string;
   isLiner: boolean;
   components?: Array<CasingComponentInternal>;
+  cementing?: CasingCementingInternal;
 }
 
 export interface CasingAssemblyWithTvd extends CasingAssembly {
   trueVerticalDepthTop?: Distance;
   trueVerticalDepthBase?: Distance;
+  cementing?: CasingCementingWithTvd;
 }
 
 export interface CasingAssemblyInternalWithTvd extends CasingAssemblyInternal {
   trueVerticalDepthTop?: ConvertedDistance;
   trueVerticalDepthBase?: ConvertedDistance;
+  cementing?: CasingCementingInternalWithTvd;
 }
 
 export interface CasingComponentInternal
@@ -60,4 +64,20 @@ export interface CasingComponentInternal
   topMeasuredDepth?: ConvertedDistance;
   baseMeasuredDepth?: ConvertedDistance;
   linearWeight?: LinearWeight;
+}
+
+export interface CasingCementingInternal {
+  topMeasuredDepth?: ConvertedDistance;
+  baseMeasuredDepth?: ConvertedDistance;
+}
+
+export interface CasingCementingWithTvd extends CasingCementing {
+  topTrueVerticalDepth?: Distance;
+  baseTrueVerticalDepth?: Distance;
+}
+
+export interface CasingCementingInternalWithTvd
+  extends CasingCementingInternal {
+  topTrueVerticalDepth?: ConvertedDistance;
+  baseTrueVerticalDepth?: ConvertedDistance;
 }

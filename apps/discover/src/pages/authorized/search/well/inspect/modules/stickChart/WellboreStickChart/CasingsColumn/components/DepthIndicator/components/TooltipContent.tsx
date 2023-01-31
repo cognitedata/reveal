@@ -4,9 +4,8 @@ import isUndefined from 'lodash/isUndefined';
 
 import { Body, Menu } from '@cognite/cogs.js';
 
-import { CasingAssemblyView } from '../../../../types';
-
-import { TooptipSection } from './elements';
+import { CasingAssemblyView } from '../../../../../types';
+import { TooptipSection } from '../elements';
 
 export const TooltipContent: React.FC<CasingAssemblyView> = ({
   measuredDepthTop,

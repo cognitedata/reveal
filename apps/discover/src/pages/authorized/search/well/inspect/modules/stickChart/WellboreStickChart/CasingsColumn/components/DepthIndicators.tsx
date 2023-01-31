@@ -36,8 +36,6 @@ export const DepthIndicators = React.forwardRef<
   ) => {
     const getScaledDepth = useScaledDepth(scaleBlocks);
 
-    const isMdScale = depthMeasurementType === DepthMeasurementUnit.MD;
-
     const depthIndicatorsReducer = useCallback(
       (
         depthIndicators: JSX.Element[],
@@ -46,38 +44,19 @@ export const DepthIndicators = React.forwardRef<
         _: any,
         flip = false
       ) => {
-        const {
-          id,
-          measuredDepthTop,
-          measuredDepthBase,
-          trueVerticalDepthTop,
-          trueVerticalDepthBase,
-        } = casingAssembly;
-
-        const depthTop = isMdScale ? measuredDepthTop : trueVerticalDepthTop;
-        const depthBase = isMdScale ? measuredDepthBase : trueVerticalDepthBase;
-
-        if (!depthTop || !depthBase) {
-          return EMPTY_ARRAY;
-        }
-
-        const depthTopScaled = getScaledDepth(depthTop.value);
-        const heightScaled = getScaledDepth(depthBase.value - depthTop.value);
-
         return [
           ...depthIndicators,
           <DepthIndicator
-            key={id}
+            key={casingAssembly.id}
             casingAssembly={casingAssembly}
-            depthTopScaled={depthTopScaled}
-            depthBase={depthBase.value}
-            heightScaled={heightScaled}
             flip={flip}
             isOverlapping={isDepthLabelOverlapping(
               casingAssemblies,
               index,
               getScaledDepth
             )}
+            depthMeasurementType={depthMeasurementType}
+            scaler={getScaledDepth}
           />,
         ];
       },

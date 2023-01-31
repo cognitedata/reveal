@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import { DEPTH_SEGMENT_COLOR } from './constants';
+import { DEPTH_SEGMENT_COLOR } from '../constants';
 import {
   DepthIndicatorLine,
   DepthIndicatorLineWrapper,
   SideLine,
   TriangleBottom,
-} from './elements';
+} from '../elements';
 
 const Start: React.FC<{
   height: string;

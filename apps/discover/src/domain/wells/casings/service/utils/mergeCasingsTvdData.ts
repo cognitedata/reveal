@@ -18,7 +18,7 @@ export const mergeCasingsTvdData = (
 
   const casingAssemblies = casingSchematic.casingAssemblies.map(
     (casingAssembly) => {
-      const { originalMeasuredDepthTop, originalMeasuredDepthBase } =
+      const { originalMeasuredDepthTop, originalMeasuredDepthBase, cementing } =
         casingAssembly;
 
       const tvdData: Partial<CasingAssemblyWithTvd> = {};
@@ -35,6 +35,28 @@ export const mergeCasingsTvdData = (
 
       if (!isUndefined(tvdBase)) {
         tvdData.trueVerticalDepthBase = { value: tvdBase, unit };
+      }
+
+      if (cementing) {
+        const {
+          topMeasuredDepth: cementingTop,
+          baseMeasuredDepth: cementingBase,
+        } = cementing;
+
+        const cementingTopTvd =
+          cementingTop && getTvdForMd(cementingTop, trueVerticalDepths);
+        const cementingBaseTvd =
+          cementingBase && getTvdForMd(cementingBase, trueVerticalDepths);
+
+        tvdData.cementing = {
+          ...cementing,
+          topTrueVerticalDepth: isUndefined(cementingTopTvd)
+            ? undefined
+            : { value: cementingTopTvd, unit },
+          baseTrueVerticalDepth: isUndefined(cementingBaseTvd)
+            ? undefined
+            : { value: cementingBaseTvd, unit },
+        };
       }
 
       return {

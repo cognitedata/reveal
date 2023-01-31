@@ -5,6 +5,7 @@ import { Menu } from '@cognite/cogs.js';
 import { Center } from 'styles/layout';
 
 import {
+  CEMENT_COLOR,
   DEPTH_INDICATOR_END_HEIGHT,
   DEPTH_INDICATOR_LINE_WIDTH,
   DEPTH_INDICATOR_SPACING,
@@ -88,6 +89,19 @@ export const SideLine = styled.div`
   margin-bottom: -${DEPTH_INDICATOR_LINE_WIDTH};
   margin-left: 6px;
   float: left;
+`;
+
+export const CementIndicator = styled.div`
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-right: 12px solid ${CEMENT_COLOR};
+  margin-left: 10px;
+  float: left;
+  ${(props: { top: number; height: number }) => `
+    margin-top: ${props.top}px;
+    border-top: ${props.height}px solid ${CEMENT_COLOR};
+  `}
 `;
 
 export const TooptipSection = styled(Menu.Item)`

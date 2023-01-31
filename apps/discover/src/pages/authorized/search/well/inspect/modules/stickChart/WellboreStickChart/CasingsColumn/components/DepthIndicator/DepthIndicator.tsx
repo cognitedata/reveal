@@ -3,29 +3,27 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import isUndefined from 'lodash/isUndefined';
 import layers from 'utils/zindex';
 
-import { Tooltip } from 'components/PopperTooltip';
+import { DepthMeasurementUnit } from 'constants/units';
 
 import { CasingAssemblyView } from '../../../../types';
 import { getDepthTagDisplayDepth } from '../../../../utils/getDepthTagDisplayDepth';
+import { DEFAULT_DEPTH_MEASUREMENT_TYPE } from '../../../constants';
 import { CasingDepthTag } from '../DepthTag';
 
-import { DEPTH_INDICATOR_END_HEIGHT, TOOLTIP_PLACEMENT } from './constants';
-import { DepthSegment } from './DepthSegment';
+import { Casing } from './components/Casing';
+import { Cement } from './components/Cement';
 import {
   DepthIndicatorWrapper,
   DescriptionFlipped,
   DescriptionUnflipped,
-  FlipHorizontal,
 } from './elements';
-import { TooltipContent } from './TooltipContent';
 
 export interface DepthIndicatorProps {
   casingAssembly: CasingAssemblyView;
-  depthTopScaled: number;
-  depthBase: number;
-  heightScaled: number;
   flip?: boolean;
   isOverlapping?: boolean;
+  depthMeasurementType?: DepthMeasurementUnit;
+  scaler: (value: number) => number;
 }
 
 /**
@@ -33,25 +31,28 @@ export interface DepthIndicatorProps {
  */
 export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   casingAssembly,
-  depthTopScaled,
-  depthBase,
-  heightScaled,
   flip = false,
   isOverlapping = false,
+  depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
+  scaler,
 }) => {
   const depthIndicatorRef = useRef<HTMLElement>(null);
 
   const [zIndex, setZIndex] = useState<number>(layers.MAIN_LAYER);
   const [depthMarkerWidth, setDepthMarkerWidth] = useState<number>();
 
-  const depthSegmentStartHeight = `${depthTopScaled}px`;
-  const depthSegmentMiddleHeight = `calc(${heightScaled}px - ${DEPTH_INDICATOR_END_HEIGHT})`;
+  const isMdScale = depthMeasurementType === DepthMeasurementUnit.MD;
 
-  const { isLiner, outsideDiameterFormatted } = casingAssembly;
+  const {
+    outsideDiameterFormatted,
+    measuredDepthBase,
+    trueVerticalDepthBase,
+    cementing,
+  } = casingAssembly;
 
-  const tooltipContent = <TooltipContent {...casingAssembly} />;
-
-  const DescriptionWrapper = flip ? DescriptionFlipped : DescriptionUnflipped;
+  const depthBase = isMdScale
+    ? measuredDepthBase.value
+    : trueVerticalDepthBase?.value;
 
   const updateDepthMarkerWidth = useCallback(
     () => setDepthMarkerWidth(depthIndicatorRef.current?.offsetLeft),
@@ -59,6 +60,8 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   );
 
   useEffect(() => updateDepthMarkerWidth(), [updateDepthMarkerWidth]);
+
+  const DescriptionWrapper = flip ? DescriptionFlipped : DescriptionUnflipped;
 
   return (
     <DepthIndicatorWrapper
@@ -73,22 +76,20 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
       onMouseEnter={() => setZIndex(layers.TOOLTIP_HOVERED)}
       onMouseLeave={() => setZIndex(layers.MAIN_LAYER)}
     >
-      <DepthSegment.Start height={depthSegmentStartHeight} />
-      <Tooltip
-        followCursor
-        content={tooltipContent}
-        placement={TOOLTIP_PLACEMENT}
-      >
-        <FlipHorizontal flip={flip}>
-          <DepthSegment.Middle
-            height={depthSegmentMiddleHeight}
-            isLiner={isLiner}
-          />
-          <DepthSegment.End />
-        </FlipHorizontal>
-      </Tooltip>
+      <Cement
+        cementing={cementing}
+        depthMeasurementType={depthMeasurementType}
+        scaler={scaler}
+      />
 
-      {!isUndefined(depthMarkerWidth) && (
+      <Casing
+        casingAssembly={casingAssembly}
+        flip={flip}
+        depthMeasurementType={depthMeasurementType}
+        scaler={scaler}
+      />
+
+      {!isUndefined(depthBase) && !isUndefined(depthMarkerWidth) && (
         <CasingDepthTag
           content={getDepthTagDisplayDepth(depthBase)}
           depthMarkerWidth={depthMarkerWidth}
