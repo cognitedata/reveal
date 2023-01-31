@@ -101,7 +101,7 @@
     "@types/random-seed": "0.3.3",
     "@types/skmeans": "0.11.3",
     "@types/stats": "0.16.30",
-    "@types/three": "0.148.1",
+    "@types/three": "0.149.0",
     "@types/tween.js": "18.5.1",
     "@typescript-eslint/eslint-plugin": "5.48.2",
     "@typescript-eslint/parser": "5.48.2",
