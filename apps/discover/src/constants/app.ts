@@ -98,10 +98,6 @@ export const SIDECAR = {
 
   locize: {},
   disableTranslations: true,
-  intercomSettings: {
-    app_id: 'ou1uyk2p',
-    hide_default_launcher: true,
-  },
   mixpanel:
     sidecarOverrides?.mixpanel ||
     process.env.REACT_APP_MIXPANEL_TOKEN ||

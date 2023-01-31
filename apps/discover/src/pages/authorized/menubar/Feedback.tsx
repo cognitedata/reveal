@@ -2,20 +2,15 @@ import * as React from 'react';
 
 import styled from 'styled-components/macro';
 
-import { Dropdown, Menu, TopBar } from '@cognite/cogs.js';
-import { intercomHelper } from '@cognite/intercom-helper';
+import { Dropdown, Menu, TopBar, A, Icon, Flex } from '@cognite/cogs.js';
 
 import GeneralFeedback from 'components/Modals/general-feedback';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useTranslation } from 'hooks/useTranslation';
 
+export const ZENDESK_ENDPOINT =
+  'https://cognite.zendesk.com/hc/en-us/requests/new';
 const MenuContainer = styled.div``;
-
-interface ChatModel {
-  id: string;
-  value: string;
-  onClick: () => void;
-}
 
 export const Feedback: React.FC = () => {
   const { t } = useTranslation('global');
@@ -24,21 +19,6 @@ export const Feedback: React.FC = () => {
 
   const [feedbackIsVisible, setFeedbackIsVisible] =
     React.useState<boolean>(false);
-
-  const contactMenuItems: ChatModel[] = [
-    {
-      id: 'feedback',
-      value: t('Feedback'),
-      onClick: () => setFeedbackIsVisible(true),
-    },
-    {
-      id: 'help',
-      value: t('Help'),
-      onClick: () => {
-        intercomHelper.show(true);
-      },
-    },
-  ];
 
   const handleFeedbackIconClick = () => {
     setShowDropdown(true);
@@ -49,18 +29,37 @@ export const Feedback: React.FC = () => {
     <MenuContainer>
       {showDropdown && (
         <Menu>
-          {contactMenuItems.map((item) => (
-            <Menu.Item
-              key={item.id}
-              onClick={() => {
-                metrics.track(`click-${item.value.toLowerCase()}-menu-item`);
-                item.onClick();
-                setShowDropdown(false);
-              }}
+          <Menu.Item
+            key="feedback"
+            onClick={() => {
+              metrics.track(`click-feedback-menu-item`);
+              setFeedbackIsVisible(true);
+              setShowDropdown(false);
+            }}
+          >
+            {t('Feedback')}
+          </Menu.Item>
+          <Menu.Item
+            key="support"
+            onClick={() => {
+              metrics.track(`click-help-menu-item`);
+              setShowDropdown(false);
+            }}
+          >
+            <A
+              href={ZENDESK_ENDPOINT}
+              rel="noopener noreferrer"
+              target="_blank"
             >
-              {item.value}
-            </Menu.Item>
-          ))}
+              <Flex alignItems="center">
+                {t('Support')}
+                <Icon
+                  type="ArrowUpRight"
+                  style={{ marginRight: 0, marginLeft: '4px' }}
+                />
+              </Flex>
+            </A>
+          </Menu.Item>
         </Menu>
       )}
     </MenuContainer>

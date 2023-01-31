@@ -124,5 +124,5 @@ window.__cogniteSidecar = {
       // customExpiry: Math.floor(new Date().getTime() / 1000) + 15, // expire after 15 seconds
     },
   ],
-  disableIntercom: false,
+  disableIntercom: true,
 };
