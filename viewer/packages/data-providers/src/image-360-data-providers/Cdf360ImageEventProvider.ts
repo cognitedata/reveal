@@ -84,7 +84,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
 
         return { ...eventDescriptor, faceDescriptors };
       })
-      .filter(image360Descriptor => image360Descriptor.faceDescriptors.length !== 6);
+      .filter(image360Descriptor => image360Descriptor.faceDescriptors.length === 6);
   }
 
   private async listEvents(filter: EventFilter): Promise<CogniteEvent[]> {
