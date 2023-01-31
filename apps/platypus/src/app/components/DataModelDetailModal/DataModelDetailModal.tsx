@@ -21,6 +21,7 @@ import { DataModelSpaceSelect } from '../DataModelSpaceSelect/DataModelSpaceSele
 import { DataModelNameValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-name-validator-v2';
 import { isFDMv3 } from '@platypus-app/flags';
 import { FormLabel } from '../FormLabel/FormLabel';
+import { DataModelExternalIdValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-external-id-validator-v2';
 
 export type DataModelDetailModalProps = {
   description: string;
@@ -76,7 +77,10 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
 
   const validateExternalId = (value: string) => {
     const validator = new Validator({ externalId: value });
-    validator.addRule('externalId', new DataModelExternalIdValidator());
+    const dataModelExternalIdValidator = isFDMV3
+      ? new DataModelExternalIdValidator()
+      : new DataModelExternalIdValidatorV2();
+    validator.addRule('externalId', dataModelExternalIdValidator);
     const result = validator.validate();
 
     setExternalIdErrorMessage(result.valid ? null : result.errors.externalId);
