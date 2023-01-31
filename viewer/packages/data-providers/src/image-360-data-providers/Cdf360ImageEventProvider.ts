@@ -7,9 +7,10 @@ import groupBy from 'lodash/groupBy';
 import orderBy from 'lodash/orderBy';
 import zipWith from 'lodash/zipWith';
 import range from 'lodash/range';
+import uniqBy from 'lodash/uniqBy';
 
-import { CogniteClient, CogniteEvent, EventFilter, FileInfo, Metadata } from '@cognite/sdk';
-import { Image360Descriptor, Image360Face } from '../types';
+import { CogniteClient, CogniteEvent, EventFilter, FileFilterProps, FileInfo, Metadata } from '@cognite/sdk';
+import { Image360Descriptor, Image360EventDescriptor, Image360Face } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import assert from 'assert';
 
@@ -35,8 +36,12 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   }
 
   public async get360ImageDescriptors(metadataFilter: Metadata): Promise<Image360Descriptor[]> {
-    const image360Events = await this.listEvents({ metadata: metadataFilter });
-    return image360Events
+    const [events, files] = await Promise.all([
+      this.listEvents({ metadata: metadataFilter }),
+      this.listFiles({ metadata: metadataFilter })
+    ]);
+
+    return events
       .map(image360Event => image360Event.metadata as Event360Metadata)
       .map(eventMetadata => this.parseEventMetadata(eventMetadata));
   }
@@ -60,6 +65,19 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     return faces;
   }
 
+  private mergeDescriptors(files: FileInfo[], events: CogniteEvent[]) {
+    const eventMetadatas = events
+      .map(event => event.metadata)
+      .filter((metadata): metadata is Event360Metadata => !!metadata);
+
+    const asd = uniqBy(eventMetadatas, p => p.station_id).reduce((map, obj) => {
+      map.set(obj.station_id, obj);
+      return map;
+    }, new Map());
+
+    console.log(asd);
+  }
+
   private async listEvents(filter: EventFilter): Promise<CogniteEvent[]> {
     const partitions = 10;
     const partitionedRequests = range(1, partitions + 1).flatMap(async index =>
@@ -68,6 +86,16 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
         .autoPagingToArray({ limit: Infinity })
     );
     const result = await Promise.all(partitionedRequests);
+    return result.flat();
+  }
+
+  private async listFiles(filter: FileFilterProps): Promise<FileInfo[]> {
+    const partitions = 10;
+    const partitionedRequest = range(1, partitions + 1).flatMap(async index => {
+      const req = { filter, limit: 1000, partition: `${index}/${partitions}` };
+      return this._client.files.list(req).autoPagingToArray({ limit: Infinity });
+    });
+    const result = await Promise.all(partitionedRequest);
     return result.flat();
   }
 
@@ -114,7 +142,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     );
   }
 
-  private parseEventMetadata(eventMetadata: Event360Metadata): Image360Descriptor {
+  private parseEventMetadata(eventMetadata: Event360Metadata): Image360EventDescriptor {
     return {
       collectionId: eventMetadata.site_id,
       collectionLabel: eventMetadata.site_name,
