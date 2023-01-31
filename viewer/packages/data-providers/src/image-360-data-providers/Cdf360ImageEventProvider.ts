@@ -6,8 +6,9 @@ import * as THREE from 'three';
 import groupBy from 'lodash/groupBy';
 import orderBy from 'lodash/orderBy';
 import zipWith from 'lodash/zipWith';
+import range from 'lodash/range';
 
-import { CogniteClient, FileInfo, Metadata } from '@cognite/sdk';
+import { CogniteClient, CogniteEvent, EventFilter, FileInfo, Metadata } from '@cognite/sdk';
 import { Image360Descriptor, Image360Face } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import assert from 'assert';
@@ -34,8 +35,8 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   }
 
   public async get360ImageDescriptors(metadataFilter: Metadata): Promise<Image360Descriptor[]> {
-    const image360Events = await this._client.events.list({ filter: { metadata: metadataFilter }, limit: 1000 });
-    return image360Events.items
+    const image360Events = await this.listEvents({ metadata: metadataFilter });
+    return image360Events
       .map(image360Event => image360Event.metadata as Event360Metadata)
       .map(eventMetadata => this.parseEventMetadata(eventMetadata));
   }
@@ -57,6 +58,17 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     });
 
     return faces;
+  }
+
+  private async listEvents(filter: EventFilter): Promise<CogniteEvent[]> {
+    const partitions = 10;
+    const partitionedRequests = range(1, partitions + 1).flatMap(async index =>
+      this._client.events
+        .list({ filter, limit: 1000, partition: `${index}/${partitions}` })
+        .autoPagingToArray({ limit: Infinity })
+    );
+    const result = await Promise.all(partitionedRequests);
+    return result.flat();
   }
 
   private async getFileInfos(siteId: string, stationId: string): Promise<FileInfo[]> {

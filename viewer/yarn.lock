@@ -775,7 +775,7 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": 2.32.2
-    "@cognite/sdk": 7.16.0
+    "@cognite/sdk": 7.18.0
     "@microsoft/api-extractor": ^7.33.6
     "@tweenjs/tween.js": 18.6.4
     "@types/dat.gui": 0.7.7
@@ -787,12 +787,12 @@ __metadata:
     "@types/jest-image-snapshot": 6.1.0
     "@types/jsdom": 20.0.1
     "@types/lodash": 4.14.191
-    "@types/mixpanel-browser": 2.38.0
+    "@types/mixpanel-browser": 2.38.1
     "@types/node": 18.11.3
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
     "@types/stats": 0.16.30
-    "@types/three": 0.148.0
+    "@types/three": 0.148.1
     "@types/tween.js": 18.5.1
     "@typescript-eslint/eslint-plugin": 5.48.2
     "@typescript-eslint/parser": 5.48.2
@@ -833,7 +833,7 @@ __metadata:
     path-browserify: 1.0.1
     prettier: 2.8.2
     process: 0.11.10
-    puppeteer: 19.5.2
+    puppeteer: 19.6.1
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -874,15 +874,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:7.16.0":
-  version: 7.16.0
-  resolution: "@cognite/sdk@npm:7.16.0"
+"@cognite/sdk@npm:7.18.0":
+  version: 7.18.0
+  resolution: "@cognite/sdk@npm:7.18.0"
   dependencies:
     "@cognite/sdk-core": ^4.8.2
     "@types/geojson": ^7946.0.8
     geojson: ^0.5.0
     lodash: ^4.17.11
-  checksum: 626c338916ece13dbfae183644c39b00f5c6773ca03f950619189bd00bfd331aa91a0b7efe3a511a003cb2708eb642726f5e4fce59337b1de2284f9eeb1f5c61
+  checksum: 59b98e980faa35e61045d7c0717334f8d2d3c4cd03f8050d129d228a5aed14013846321f2b9df25863994acb9b633dadf2c0504c185e6d0743788a2dc395464f
   languageName: node
   linkType: hard
 
@@ -2202,10 +2202,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mixpanel-browser@npm:2.38.0":
-  version: 2.38.0
-  resolution: "@types/mixpanel-browser@npm:2.38.0"
-  checksum: 1ade271188446005644cf10b65af554a9a75bd2008b827db4cdcfb2eedf858e2426a4d3d21ccf5b0a25a8590f8c3095da25549cfb7765077002e03e64afa9f0a
+"@types/mixpanel-browser@npm:2.38.1":
+  version: 2.38.1
+  resolution: "@types/mixpanel-browser@npm:2.38.1"
+  checksum: ff32a3ca24d62a7e71d68f943b15e825899627c94b107df99196ed12321f9f3eaa4c717fed900627e1d377e3e5b44cffa503317ac0f6f9b89eb906dddc1aebbb
   languageName: node
   linkType: hard
 
@@ -2346,12 +2346,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.148.0":
-  version: 0.148.0
-  resolution: "@types/three@npm:0.148.0"
+"@types/three@npm:0.148.1":
+  version: 0.148.1
+  resolution: "@types/three@npm:0.148.1"
   dependencies:
     "@types/webxr": "*"
-  checksum: c5747a8cc353c8560196052f1a035c7d641e4a953ac63c1c8d9d91c5489da2dbe8b9c4b70670eef891f8597e9ae882c450e6270abe49e807920644abdea08ddb
+  checksum: 166eb03b80ece4d400641c17cc74a9ad28331dc1f255964dee3d9bead9a4d46e2c287beb1f65a44254b224163a8102f4fe1d50685c896c7fb84fd01c11c43e2d
   languageName: node
   linkType: hard
 
@@ -5275,10 +5275,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"devtools-protocol@npm:0.0.1068969":
-  version: 0.0.1068969
-  resolution: "devtools-protocol@npm:0.0.1068969"
-  checksum: 53b9c8d661e4148eaf8e990f03902fb3a2cceb06044f661013b6c92dd48ece397ef49fd18401775823c9a33069b4b535502f2559d4f99c74a6bdcb71582b6c8a
+"devtools-protocol@npm:0.0.1082910":
+  version: 0.0.1082910
+  resolution: "devtools-protocol@npm:0.0.1082910"
+  checksum: 62b95b58f33c09412ea715826a184b81f5afe10c63945d444bf18f8455b0eaf16e5a4c4aa0a1f797f710e36b8e2d31c32938084371967662a51043fa9ebddd80
   languageName: node
   linkType: hard
 
@@ -10565,13 +10565,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:19.5.2":
-  version: 19.5.2
-  resolution: "puppeteer-core@npm:19.5.2"
+"puppeteer-core@npm:19.6.1":
+  version: 19.6.1
+  resolution: "puppeteer-core@npm:19.6.1"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
-    devtools-protocol: 0.0.1068969
+    devtools-protocol: 0.0.1082910
     extract-zip: 2.0.1
     https-proxy-agent: 5.0.1
     proxy-from-env: 1.1.0
@@ -10579,20 +10579,20 @@ __metadata:
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
     ws: 8.11.0
-  checksum: f9b05252f98655f211d20eeffbbe74187830f8e9110ccf6874a12be8f04b6862edda0b5ed71b25c868c3d22f82317cf066fe798035f9103a63319bc9ef6f4928
+  checksum: 6235d81ddb2cb5116eff8f3c3b4e45e12f778ed673885bdf308327cb20b98eac5a0ecaea16d2582dcae51c495d5650376a99e384ffdca7dce1084e1cc9503bd5
   languageName: node
   linkType: hard
 
-"puppeteer@npm:19.5.2":
-  version: 19.5.2
-  resolution: "puppeteer@npm:19.5.2"
+"puppeteer@npm:19.6.1":
+  version: 19.6.1
+  resolution: "puppeteer@npm:19.6.1"
   dependencies:
     cosmiconfig: 8.0.0
     https-proxy-agent: 5.0.1
     progress: 2.0.3
     proxy-from-env: 1.1.0
-    puppeteer-core: 19.5.2
-  checksum: 64559112d3c2215c17e1aa2033f862a6d0d5c3b26d31f2eb32d04c16ef8d101e13c2196d1a77b89ede7e6eca0ad77cf473bae73ff7f10e7d83543812405f4269
+    puppeteer-core: 19.6.1
+  checksum: acdf750da962ac089e30d5688f260b5164fcd9f4447e1e5daa237633a492a69da2cd2859e732688cdb725c2b4393196674d7fedd66a008cbfaa945a00001b0cf
   languageName: node
   linkType: hard
 
