@@ -12,6 +12,7 @@ import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/u
 
 import assert from 'assert';
 import { AbortableFileProvider } from '@reveal/data-providers/src/types';
+import { Log } from '@reveal/logger';
 
 export class GltfSectorLoader {
   private readonly _gltfSectorParser: GltfSectorParser;
@@ -94,16 +95,23 @@ export class GltfSectorLoader {
       };
     } catch (e) {
       const error = e as Error;
-      if (error?.name !== 'AbortError') {
+      if (error?.name === 'AbortError') {
+        Log.info('Abort Error:', error.message);
+      } else {
         MetricsLogger.trackError(error, { moduleName: 'GltfSectorLoader', methodName: 'loadSector' });
       }
       throw e;
     }
   }
 
+  public abortLoad(sector: WantedSector): void {
+    const abortableRequest = this._sectorFileProvider as unknown as AbortableFileProvider;
+    abortableRequest?.abortFileRequest(sector.modelBaseUrl, sector.metadata.sectorFileName!);
+  }
+
   public clear(): void {
     const abortableRequest = this._sectorFileProvider as unknown as AbortableFileProvider;
-    abortableRequest?.abortFileRequest();
+    abortableRequest?.abortAll();
   }
 
   private createTreeIndexSet(geometry: THREE.BufferGeometry): Map<number, number> {

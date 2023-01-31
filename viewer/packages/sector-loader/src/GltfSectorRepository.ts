@@ -48,6 +48,7 @@ export class GltfSectorRepository implements SectorRepository {
     }
 
     if (sector.levelOfDetail === LevelOfDetail.Discarded) {
+      this._gltfSectorLoader.abortLoad(sector);
       return this.getEmptyDiscardedSector(sector.modelIdentifier, metadata);
     }
 

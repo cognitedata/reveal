@@ -12,7 +12,8 @@ export interface BinaryFileProvider {
 }
 
 export interface AbortableFileProvider {
-  abortFileRequest(): void;
+  abortFileRequest(baseUrl: string, fileName: string): void;
+  abortAll(): void;
 }
 
 export interface Image360DescriptorProvider<T> {

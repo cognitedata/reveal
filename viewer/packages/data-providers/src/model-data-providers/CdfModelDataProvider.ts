@@ -11,16 +11,29 @@ import { AbortableFileProvider } from '../types';
 export class CdfModelDataProvider implements ModelDataProvider, AbortableFileProvider {
   private readonly client: CogniteClient;
   private authenticationPromise: Promise<string | undefined>;
-  private readonly abortController: AbortController;
+  private readonly abortControllers: Map<string, AbortController>;
 
   constructor(client: CogniteClient) {
     this.client = client;
     this.authenticationPromise = client.authenticate();
-    this.abortController = new AbortController();
+    this.abortControllers = new Map();
   }
 
-  public abortFileRequest(): void {
-    this.abortController.abort();
+  public abortFileRequest(baseUrl: string, fileName: string): void {
+    const url = `${baseUrl}/${fileName}`;
+    const abortController = this.abortControllers.get(url);
+
+    if (abortController) {
+      abortController.abort();
+      this.abortControllers.delete(url);
+    }
+  }
+
+  public abortAll(): void {
+    this.abortControllers.forEach(abortController => {
+      abortController.abort();
+    });
+    this.abortControllers.clear();
   }
 
   public async getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer> {
@@ -30,16 +43,24 @@ export class CdfModelDataProvider implements ModelDataProvider, AbortableFilePro
       Accept: '*/*'
     };
 
+    const abortController = new AbortController();
+    this.abortControllers.set(url, abortController);
+
     const response = await this.fetchWithRetry(url, {
       headers,
-      signal: this.abortController.signal,
+      signal: abortController.signal,
       method: 'GET'
-    }).catch(e => {
-      if (e.name === 'AbortError') {
-        throw e;
-      }
-      throw Error('Could not download binary file');
-    });
+    })
+      .catch(e => {
+        if (e.name === 'AbortError') {
+          throw e;
+        }
+        throw Error('Could not download binary file');
+      })
+      .finally(() => {
+        this.abortControllers.delete(url);
+      });
+
     return response.arrayBuffer();
   }
 
