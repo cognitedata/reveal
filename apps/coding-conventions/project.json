@@ -16,10 +16,7 @@
         "main": "apps/coding-conventions/src/main.tsx",
         "polyfills": "apps/coding-conventions/src/polyfills.ts",
         "tsConfig": "apps/coding-conventions/tsconfig.app.json",
-        "assets": [
-          "apps/coding-conventions/src/favicon.ico",
-          "apps/coding-conventions/src/assets"
-        ],
+        "assets": ["apps/coding-conventions/src/favicon.ico"],
         "styles": [],
         "scripts": [],
         "webpackConfig": "apps/coding-conventions/webpack-config.js"
