@@ -64,26 +64,15 @@ export default function ThreeDViewerSidebar(props: Props) {
     const { viewer } = props;
     const { position, target } = viewer.cameraManager.getCameraState();
 
-    // Get camera position and target for upload
-    if (props.model instanceof CogniteCadModel) {
-      const cdfTransformation = props.model
-        .getModelTransformation()
-        .clone()
-        .multiply(props.model.getCdfToDefaultModelTransformation());
-      position.applyMatrix4(cdfTransformation);
-      target.applyMatrix4(cdfTransformation);
-    } else {
-      // TODO 2022-09-21 larsmoa: Replace with map-functions in Reveal 4.0
+    // Get inverse transformation matrix to compute camera position and target in model space
+    const inverseModelMatrix = props.model
+      .getModelTransformation()
+      .clone()
+      .multiply(props.model.getCdfToDefaultModelTransformation())
+      .invert();
 
-      // Get inverse transformation matrix to compute camera position and target in model space
-      const inverseModelMatrix = props.model
-        .getModelTransformation()
-        .clone()
-        .multiply(props.model.getCdfToDefaultModelTransformation())
-        .invert();
-      position.applyMatrix4(inverseModelMatrix);
-      target.applyMatrix4(inverseModelMatrix);
-    }
+    position.applyMatrix4(inverseModelMatrix);
+    target.applyMatrix4(inverseModelMatrix);
 
     await updateRevisionMutation({
       modelId: props.model.modelId,

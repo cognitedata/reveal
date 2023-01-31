@@ -59,11 +59,8 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     Tuple3<number>
   >([0, 0, 0]);
 
-  const getTotalModelTransformation = React.useCallback(() => {
-    return props.model
-      .getModelTransformation()
-      .clone()
-      .multiply(props.model.getCdfToDefaultModelTransformation());
+  const getLocalModelTransformation = React.useCallback(() => {
+    return props.model.getModelTransformation();
   }, [props.model]);
 
   const setModelTransformation = (matrix: THREE.Matrix4) => {
@@ -73,8 +70,8 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   };
 
   useEffect(() => {
-    setInitialRotation(getTotalModelTransformation);
-  }, [getTotalModelTransformation]);
+    setInitialRotation(getLocalModelTransformation);
+  }, [getLocalModelTransformation]);
 
   const hasChanges = rotationAnglePiMultiplier.some((r) => r);
 
@@ -129,7 +126,9 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   const onCancelClicked = () => {
     setModelTransformation(initialRotation!);
 
-    props.viewer.fitCameraToModel(props.model, 0);
+    if (!rotationAnglePiMultiplier.every((c) => c === 0)) {
+      props.viewer.fitCameraToModel(props.model, 0);
+    }
 
     setRotationAnglePiMultiplier([0, 0, 0]);
     props.onClose();
@@ -143,7 +142,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     if (rotationX || rotationY || rotationZ) {
       const progressMessage = message.loading('Uploading model rotation...');
       const rotationEuler = new THREE.Euler();
-      const tmpMatrix = getTotalModelTransformation();
+      const tmpMatrix = getLocalModelTransformation();
 
       // Undo the default 90 degrees on X axis shift
       tmpMatrix.premultiply(
@@ -173,7 +172,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
         });
         Sentry.captureException(e);
       } finally {
-        setInitialRotation(getTotalModelTransformation());
+        setInitialRotation(getLocalModelTransformation());
         setRotationAnglePiMultiplier([0, 0, 0]);
       }
     }
