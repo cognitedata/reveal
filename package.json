@@ -443,6 +443,7 @@
     "@types/react-virtualized/@types/react": "18.0.9",
     "@types/react-table/@types/react": "18.0.9",
     "@cognite/cogs.js/@types/react": "18.0.9",
-    "@cognite/sdk-core/@azure/msal-browser": "2.11.0"
+    "@cognite/sdk-core/@azure/msal-browser": "2.11.0",
+    "@mui/joy": "5.0.0-alpha.56"
   }
 }
