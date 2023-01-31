@@ -31,7 +31,7 @@
           "budgets": []
         },
         "preview": {
-          "optimization": true,
+          "optimization": false,
           "outputHashing": "all",
           "sourceMap": true,
           "extractCss": true,
@@ -42,7 +42,7 @@
           "budgets": []
         },
         "production": {
-          "optimization": true,
+          "optimization": false,
           "outputHashing": "all",
           "sourceMap": true,
           "extractCss": true,
