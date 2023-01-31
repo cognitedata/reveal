@@ -100,6 +100,17 @@ export class MeasurementManager {
   }
 
   /**
+   * Updates the measuring line clipping planes
+   * @param clippingPlanes current active global clipping planes.
+   */
+  updateLineClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    this._line.updateLineClippingPlanes(clippingPlanes);
+    if (this._labelElement) {
+      this._labelElement.hidden = !this._line.meshes.visible;
+    }
+  }
+
+  /**
    * Update current line width.
    * @param lineWidth Width of the measuring line mesh.
    */
