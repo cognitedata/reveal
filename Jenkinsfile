@@ -232,15 +232,16 @@ pods {
             }
 
             for (int i = 0; i < projects.size(); i++) {
-              if (!PREVIEW_STORYBOOK.contains(projects[i])) {
+              def project = projects[i];
+              if (!PREVIEW_STORYBOOK.contains(project)) {
                 continue;
               }
 
-              stageWithNotify("Build and deploy Storybook for: ${projects[i]}") {
+              stageWithNotify("Build and deploy Storybook for: ${project}") {
                 previewServer(
-                  prefix: "storybook-${projects[i]}",
-                  commentPrefix: "[storybook-server:${projects[i]}]\n",
-                  buildCommand: "yarn build-storybook ${projects[i]}",
+                  prefix: "storybook-${project}",
+                  commentPrefix: "[storybook-server:${project}]\n",
+                  buildCommand: "yarn build-storybook ${project}",
                   buildFolder: "storybook-static",
                 )
               }
@@ -258,32 +259,33 @@ pods {
             deleteComments('[FUSION_PREVIEW_URL]')
 
             for (int i = 0; i < projects.size(); i++) {
-              def packageName = PREVIEW_PACKAGE_NAMES[projects[i]]
+              def project = projects[i];
+              def packageName = PREVIEW_PACKAGE_NAMES[project]
 
               if (packageName == null) {
-                print "No preview available for: ${projects[i]}"
+                print "No preview available for: ${project}"
                 continue
               }
 
-              dir("apps/${projects[i]}") {
+              dir("apps/${project}") {
                 // Run the yarn install in the app in cases of local packages.json file
                 if (fileExists("yarn.lock")) {
                   yarn.setup()
                 }
               }
 
-              stageWithNotify("Build and deploy PR for: ${projects[i]}") {
-                def prefix = "${jenkinsHelpersUtil.determineRepoName()}-${projects[i]}"
+              stageWithNotify("Build and deploy PR for: ${project}") {
+                def prefix = "${jenkinsHelpersUtil.determineRepoName()}-${project}"
                 def domain = 'fusion-preview'
                 previewServer(
                   repo: domain,
                   prefix: prefix,
-                  buildCommand: "yarn build preview ${projects[i]}",
+                  buildCommand: "yarn build preview ${project}",
                   buildFolder: "build",
                 )
                 deleteComments(PR_COMMENT_MARKER)
                 def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
-                pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${projects[i]}")
+                pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${project}")
               }
             }
           }
@@ -302,40 +304,41 @@ pods {
             }
 
             for (int i = 0; i < projects.size(); i++) {
-              def firebaseSiteName = FIREBASE_APP_SITES[projects[i]];
+              def project = projects[i];
+              def firebaseSiteName = FIREBASE_APP_SITES[project];
 
               if (firebaseSiteName == null) {
-                print "No release available for: ${projects[i]}"
+                print "No release available for: ${project}"
                 continue;
               }
 
-              final boolean isReleaseBranch = env.BRANCH_NAME.startsWith("release-${projects[i]}")
-              final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY[project[i]] == 'single-branch';
+              final boolean isReleaseBranch = env.BRANCH_NAME.startsWith("release-${project}")
+              final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY[project] == 'single-branch';
               final boolean releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
 
               // Run the yarn install in the app in cases of local packages.json
-              dir("apps/${projects[i]}") {
+              dir("apps/${project}") {
                 if (fileExists("yarn.lock")) {
                   yarn.setup()
                 }
               }
 
-              stageWithNotify("Publish production build: ${projects[i]}") {
+              stageWithNotify("Publish production build: ${project}") {
                 appHosting(
                   appName: firebaseSiteName,
                   environment: releaseToProd ? 'production' : 'staging',
                   firebaseJson: 'build/firebase.json',
-                  buildCommand: "yarn build production ${projects[i]}",
+                  buildCommand: "yarn build production ${project}",
                   buildFolder: 'build',
                 )
 
                 slack.send(
                   channel: SLACK_CHANNEL,
-                  message: "Deployment of ${env.BRANCH_NAME} complete for: ${projects[i]}!"
+                  message: "Deployment of ${env.BRANCH_NAME} complete for: ${project}!"
                 )
               }
 
-              if(projects[i] == "platypus"){
+              if(project == "platypus"){
                 stageWithNotify('Save missing keys to locize') {
                   sh("yarn i18n-push")
                 }
