@@ -16,7 +16,7 @@ export interface Image360DescriptorProvider<T> {
 }
 
 export interface Image360FileProvider {
-  get360ImageFiles(image360Descriptor: Image360Descriptor): Promise<Image360Face[]>;
+  get360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]>;
 }
 
 export type Image360Descriptor = Image360EventDescriptor & {
@@ -36,12 +36,11 @@ export type Image360EventDescriptor = {
 
 export type Image360Face = {
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
-  mimeType: 'image/jpeg' | 'image/png';
   data: ArrayBuffer;
 };
 
 export type Image360FileDescriptor = {
-  fileId: string;
+  fileId: number;
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
   mimeType: 'image/jpeg' | 'image/png';
 };

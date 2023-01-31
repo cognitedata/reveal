@@ -62,7 +62,7 @@ export class Image360Entity implements Image360 {
    */
   public async load360Image(): Promise<void> {
     await this._imageProvider
-      .get360ImageFiles(this._image360Metadata)
+      .get360ImageFiles(this._image360Metadata.faceDescriptors)
       .then(faces => this._image360VisualzationBox.loadImages(faces));
     this._image360VisualzationBox.visible = false;
   }

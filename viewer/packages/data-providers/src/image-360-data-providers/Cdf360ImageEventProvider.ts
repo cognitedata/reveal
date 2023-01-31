@@ -8,11 +8,11 @@ import orderBy from 'lodash/orderBy';
 import zipWith from 'lodash/zipWith';
 import range from 'lodash/range';
 import uniqBy from 'lodash/uniqBy';
+import head from 'lodash/head';
 
 import { CogniteClient, CogniteEvent, EventFilter, FileFilterProps, FileInfo, Metadata } from '@cognite/sdk';
-import { Image360Descriptor, Image360EventDescriptor, Image360Face } from '../types';
+import { Image360Descriptor, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
 import { Image360Provider } from '../Image360Provider';
-import assert from 'assert';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
@@ -41,23 +41,19 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
       this.listFiles({ metadata: metadataFilter })
     ]);
 
-    return events
-      .map(image360Event => image360Event.metadata as Event360Metadata)
-      .map(eventMetadata => this.parseEventMetadata(eventMetadata));
+    return this.mergeDescriptors(files, events);
   }
 
-  public async get360ImageFiles(image360Descriptor: Image360Descriptor): Promise<Image360Face[]> {
-    const { collectionId, id } = image360Descriptor;
-    const fileInfos = await this.getFileInfos(collectionId, id);
-    const fileIds = fileInfos.map(fileInfo => {
-      return { id: fileInfo.id };
+  public async get360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]> {
+    const fileIds = image360FaceDescriptors.map(image360FaceDescriptor => {
+      return { id: image360FaceDescriptor.fileId };
     });
     const fileBuffers = await this.getFileBuffers(fileIds);
 
-    const faces = zipWith(fileInfos, fileBuffers, (fileInfo, fileBuffer) => {
+    const faces = zipWith(image360FaceDescriptors, fileBuffers, (image360FaceDescriptor, fileBuffer) => {
       return {
-        face: fileInfo.metadata!.face,
-        mimeType: fileInfo.mimeType,
+        face: image360FaceDescriptor.face,
+        mimeType: image360FaceDescriptor.mimeType,
         data: fileBuffer
       } as Image360Face;
     });
@@ -65,17 +61,30 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     return faces;
   }
 
-  private mergeDescriptors(files: FileInfo[], events: CogniteEvent[]) {
-    const eventMetadatas = events
+  private mergeDescriptors(files: FileInfo[], events: CogniteEvent[]): Image360Descriptor[] {
+    const eventDescriptors = events
       .map(event => event.metadata)
-      .filter((metadata): metadata is Event360Metadata => !!metadata);
+      .filter((metadata): metadata is Event360Metadata => !!metadata)
+      .map(metadata => this.parseEventMetadata(metadata));
 
-    const asd = uniqBy(eventMetadatas, p => p.station_id).reduce((map, obj) => {
-      map.set(obj.station_id, obj);
-      return map;
-    }, new Map());
+    const uniqueEventDescriptors = uniqBy(eventDescriptors, eventDescriptor => eventDescriptor.id);
 
-    console.log(asd);
+    return uniqueEventDescriptors
+      .map(eventDescriptor => {
+        const stationFileInfos = files.filter(fileInfo => fileInfo.metadata?.station_id === eventDescriptor.id);
+        const fileInfoSet = this.getNewestFileInfoSet(stationFileInfos);
+
+        const faceDescriptors = fileInfoSet.map(fileInfo => {
+          return {
+            face: fileInfo.metadata!.face,
+            mimeType: fileInfo.mimeType!,
+            fileId: fileInfo.id
+          } as Image360FileDescriptor;
+        });
+
+        return { ...eventDescriptor, faceDescriptors };
+      })
+      .filter(image360Descriptor => image360Descriptor.faceDescriptors.length !== 6);
   }
 
   private async listEvents(filter: EventFilter): Promise<CogniteEvent[]> {
@@ -99,37 +108,25 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     return result.flat();
   }
 
-  private async getFileInfos(siteId: string, stationId: string): Promise<FileInfo[]> {
-    const fileInfos = await this._client.files.list({
-      filter: {
-        uploaded: true,
-        metadata: {
-          site_id: siteId,
-          station_id: stationId,
-          image_type: 'cubemap'
-        }
-      }
-    });
-
-    assert(fileInfos.items.length > 0);
-
+  private getNewestFileInfoSet(fileInfos: FileInfo[]) {
     if (hasTimestamp()) {
       return getNewestTimestamp();
     }
 
-    assert(fileInfos.items.length === 6);
-
-    return fileInfos.items;
+    return fileInfos;
 
     function hasTimestamp() {
-      return fileInfos.items[0].metadata?.timestamp !== undefined;
+      return fileInfos[0].metadata?.timestamp !== undefined;
     }
 
     function getNewestTimestamp() {
-      const sets = groupBy(fileInfos.items, fileInfo => fileInfo.metadata!.timestamp);
-      const ordered = orderBy(Object.entries(sets), fileInfoEntry => parseInt(fileInfoEntry[0]), 'desc');
-      assert(ordered[0][1].length === 6);
-      return ordered[0][1];
+      const sets = groupBy(fileInfos, fileInfo => fileInfo.metadata!.timestamp);
+
+      const ordered = orderBy(Object.entries(sets), fileInfoEntry => parseInt(fileInfoEntry[0]), 'desc')
+        .map(timeStampSets => timeStampSets[1])
+        .filter(fileInfoSets => fileInfoSets.length === 6);
+
+      return head(ordered) ?? [];
     }
   }
 
