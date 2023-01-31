@@ -1,3 +1,7 @@
+## 2.0.0 Jan 30 2023
+
+- Added support to custom headers in Perf Metrics init
+
 ## 1.3.1 Aug 2 2022
 
 - Added exception logging to network requests made by metrics

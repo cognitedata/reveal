@@ -93,7 +93,11 @@ const ProvideMetricsComponent = ({ sidecar, authState }: Props) => {
       if (authToken && frontendMetricsBaseUrl) {
         PerfMetrics.initialize(
           `${frontendMetricsBaseUrl}/${tenant}`,
-          authToken,
+          new Headers({
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+            'x-cdp-project': tenant,
+          }),
           tenant
         );
         PerfMetrics.enable();

@@ -43,13 +43,21 @@ describe('PerfMetrics', () => {
   });
 
   it('should not run any performance marker when Perfmetrics is disabled', () => {
-    PerfMetrics.initialize('http://example.com', 'test', 'project');
+    PerfMetrics.initialize(
+      'http://example.com',
+      new global.Headers(),
+      'project'
+    );
     PerfMetrics.trackPerfStart('test');
     expect(performance.mark).toHaveBeenCalledTimes(0);
   });
 
   it('should run the internal performance marker when event tracking starts', () => {
-    PerfMetrics.initialize('http://example.com', 'test', 'project');
+    PerfMetrics.initialize(
+      'http://example.com',
+      new global.Headers(),
+      'project'
+    );
     PerfMetrics.enable();
     PerfMetrics.trackPerfStart('test');
     expect(performance.mark).toHaveBeenCalledWith('test');
@@ -57,7 +65,11 @@ describe('PerfMetrics', () => {
   });
 
   it('should run the internal performance measure marker when event tracking ends', () => {
-    PerfMetrics.initialize('http://example.com', 'test', 'project');
+    PerfMetrics.initialize(
+      'http://example.com',
+      new global.Headers(),
+      'project'
+    );
     PerfMetrics.enable();
     PerfMetrics.trackPerfStart('test');
     return new Promise((resolve) => {
@@ -74,7 +86,11 @@ describe('PerfMetrics', () => {
 
   // eslint-disable-next-line jest/no-disabled-tests
   it.skip('should post results to the API', () => {
-    PerfMetrics.initialize('http://example.com', 'test', 'project');
+    PerfMetrics.initialize(
+      'http://example.com',
+      new global.Headers(),
+      'project'
+    );
     PerfMetrics.enable();
     PerfMetrics.trackPerfStart('test');
     return new Promise((resolve) => {

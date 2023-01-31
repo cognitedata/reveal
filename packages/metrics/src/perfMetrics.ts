@@ -13,8 +13,6 @@ const perfMetricsInstance = (() => {
   let enabled = false;
   const monitoredData: { [key: string]: PerfMonitorResultsData } = {};
   let registeredMonitors: { [key: string]: PerfMonitor } = Object.freeze({});
-  let accessToken: string;
-  let project: string;
   let applicationId: string | undefined;
   let initialized = false;
   let headers: Headers;
@@ -25,19 +23,15 @@ const perfMetricsInstance = (() => {
    * Initialize the PerfMetrics instance
    *
    * @param {string} url : URL to the frontend metrics service
-   * @param {string} accessToken : Current user's access token
-   * @param {string} project : Current project/tenant id
+   * @param {string} requestHeaders : Request headers
    * @param {string} appId : Current app id (for legacy projects only)
    * */
   function initialize(
     url: string,
-    token: string,
-    tenant: string,
+    requestHeaders: Headers,
     appId?: string
   ): void {
     frontendMetricsBaseUrl = url;
-    accessToken = token;
-    project = tenant;
     applicationId = appId;
 
     const observer = new PerformanceObserver((list) =>
@@ -46,11 +40,7 @@ const perfMetricsInstance = (() => {
     observer.observe({ entryTypes: ['mark', 'measure'] });
     initialized = true;
 
-    headers = new Headers({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-      'x-cdp-project': project,
-    });
+    headers = requestHeaders;
 
     if (applicationId) {
       headers.set('x-cdp-app', applicationId);
