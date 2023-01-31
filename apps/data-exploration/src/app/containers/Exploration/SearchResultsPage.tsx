@@ -277,7 +277,7 @@ function SearchPage() {
           <Wrapper>
             <StyledSplitter
               percentage
-              primaryMinSize={30}
+              primaryMinSize={20}
               secondaryMinSize={40}
               secondaryInitialSize={50}
               primaryIndex={0}
