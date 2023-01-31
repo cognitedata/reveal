@@ -345,7 +345,8 @@ export function DataSamplingStep() {
             {lcTimeseriesState.isLoading && <LoaderOverlay />}
             {values.logicalCheck.externalId &&
             (lcTimeseriesState.timeseries[values.logicalCheck.externalId]
-              ?.datapoints.length ?? 0) >= 2
+              ?.datapoints.length ?? 0) >= 2 &&
+            !lcTimeseriesState.isLoading
               ? logicalCheckChart
               : null}
           </div>
@@ -423,7 +424,8 @@ export function DataSamplingStep() {
             })}
           >
             {ssdTimeseriesState.isLoading && <LoaderOverlay />}
-            {(steadyStateDetectionTimeseriesState?.datapoints.length ?? 0) >= 2
+            {(steadyStateDetectionTimeseriesState?.datapoints.length ?? 0) >=
+              2 && !ssdTimeseriesState.isLoading
               ? steadyStateDetectionChart
               : null}
           </div>
