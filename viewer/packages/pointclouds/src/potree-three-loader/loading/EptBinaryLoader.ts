@@ -133,7 +133,7 @@ function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
   addAttributeIfPresent<Uint8Array>(Uint8Array, 'classification', 1, data.classification);
   addAttributeIfPresent<Uint16Array>(Uint16Array, 'objectId', 1, data.objectId);
 
-  geometry.attributes.indices.normalized = true;
+  (geometry.attributes.indices as THREE.BufferAttribute).normalized = true;
 
   return geometry;
 }
