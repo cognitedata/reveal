@@ -19,7 +19,7 @@ export const normalizeWellboreByWell = (
   wellboresColorMap: ColorMap = {},
   waterDepth?: Distance
 ): WellboreInternal => {
-  const { matchingId, name, datum } = rawWellbore;
+  const { matchingId, name, datum, kickoffMeasuredDepth } = rawWellbore;
 
   return {
     ...rawWellbore,
@@ -32,5 +32,8 @@ export const normalizeWellboreByWell = (
     title: getWellboreTitle(rawWellbore),
     datum: datum && normalizeDatum(datum, userPreferredUnit),
     color: wellboresColorMap[name] || DEFAULT_WELLBORE_COLOR,
+    kickoffMeasuredDepth:
+      kickoffMeasuredDepth &&
+      convertDistance(kickoffMeasuredDepth, userPreferredUnit),
   };
 };

@@ -4,7 +4,10 @@ import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/typ
 import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
 import { NptInternalWithTvd } from 'domain/wells/npt/internal/types';
 import { TrajectoryWithData } from 'domain/wells/trajectory/internal/types';
-import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
+import {
+  KickoffDepth,
+  WellboreInternal,
+} from 'domain/wells/wellbore/internal/types';
 import {
   WellTopSurfaceDepthInternal,
   WellTopSurfaceInternal,
@@ -38,6 +41,7 @@ export interface WellboreStickChartData {
   measurementsData: DataWithLoadingStatus<DepthMeasurementWithData[]>;
   holeSectionsData: DataWithLoadingStatus<HoleSectionView[]>;
   mudWeightData: DataWithLoadingStatus<DepthMeasurementWithData[]>;
+  kickoffDepth: DataWithLoadingStatus<KickoffDepth>;
 }
 
 export interface ColumnVisibilityProps {

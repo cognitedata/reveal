@@ -81,6 +81,7 @@ export const WELL_QUERY_KEY = {
   WELLS_ONE: [WELLS, 'wells'],
   WELLS_CACHE: [WELLS, 'wells', 'cache'],
   WELLBORES_CACHE: [WELLBORES, 'wellbores', 'cache'],
+  KICKOFF_DEPTHS: [WELLBORES, 'kickoffdepths', 'cache'],
   CASINGS: [WELLS, 'casings'],
   CASINGS_CACHE: [WELLS, 'casings', 'cache'],
   CASINGS_WITH_TVD_CACHE: [WELLS, 'casings', 'tvd', 'cache'],

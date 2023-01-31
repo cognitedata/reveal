@@ -75,6 +75,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   measurementsData,
   holeSectionsData,
   mudWeightData,
+  kickoffDepth,
   /**
    * Other props
    */
@@ -204,6 +205,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
               <TrajectoryColumn
                 key={ChartColumn.TRAJECTORY}
                 {...trajectoryData}
+                kickoffDepth={kickoffDepth.data}
                 scaleBlocks={scaleBlocks}
                 curveColor={wellboreColor}
                 depthMeasurementType={depthMeasurementType}

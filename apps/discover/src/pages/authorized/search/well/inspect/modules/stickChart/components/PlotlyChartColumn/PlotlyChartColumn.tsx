@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import { PlotData } from 'plotly.js';
@@ -19,6 +19,7 @@ export interface PlotlyChartColumnProps
     Pick<ChartProps, 'axisNames'> {
   id: string;
   data?: Partial<PlotData>[];
+  secondaryData?: Partial<PlotData>[];
   scaleBlocks: number[];
   header: string | JSX.Element;
   chartHeader: string | JSX.Element;
@@ -38,7 +39,8 @@ export const PlotlyChartColumn: React.FC<
   ({
     isVisible = true,
     id,
-    data = EMPTY_ARRAY,
+    data: primaryData = EMPTY_ARRAY,
+    secondaryData = EMPTY_ARRAY,
     axisNames,
     scaleBlocks,
     header,
@@ -56,6 +58,11 @@ export const PlotlyChartColumn: React.FC<
     const [expanded, setExpanded] = useState(false);
     const [lastExpandedState, setLastExpandedState] = useState(false);
     const [showChart, setShowChart] = useState(false);
+
+    const data = useMemo(
+      () => [...primaryData, ...secondaryData],
+      [primaryData, secondaryData]
+    );
 
     useEffect(() => {
       if (isEmpty(data)) {

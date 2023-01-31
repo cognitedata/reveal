@@ -28,5 +28,5 @@ export const adapTrajectoryDataToChart = (
     })
   );
 
-  return head(chartData) || [];
+  return head(chartData) || EMPTY_ARRAY;
 };
