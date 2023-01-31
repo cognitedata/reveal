@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { DEFAULT_MARGIN_V } from 'utils';
 import { useUserInformation } from 'hooks/useUserInformation';
+import { getOrganizedRevisionLogs } from '../../../utils/getOrganizedRevisionLogs';
 
 const EXTERNAL_LOG_NAME = {
   'reveal-optimizer': 'Web-Optimizer',
@@ -51,17 +52,7 @@ export function RevisionLogs({ logs, isLoading }: Props) {
   const formatDate = (date) => dayjs(date).format('YYYY-MM-DD HH:mm');
 
   // order by category of pipeline (the type is given as 3d-optimizer/status), so 3d-optimizer is the category
-  const organizedLogs = logs.reduce((prev, log) => {
-    const { timestamp, type, info } = log;
-    const [category, status] = type.split('/');
-    if (!prev[category]) {
-      // eslint-disable-next-line no-param-reassign
-      prev[category] = [{ timestamp, type: status, info }];
-    } else {
-      prev[category].push({ timestamp, type: status, info });
-    }
-    return prev;
-  }, {});
+  const organizedLogs = getOrganizedRevisionLogs(logs);
 
   // make sure they are uniq and visible
   const visibleLogs = {};
