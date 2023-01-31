@@ -139,7 +139,7 @@
     "resize-observer-polyfill": "1.5.1",
     "shx": "0.3.4",
     "stats.js": "0.17.0",
-    "three": "0.148.0",
+    "three": "0.149.0",
     "ts-jest": "29.0.5",
     "ts-loader": "9.4.2",
     "tsc-alias": "1.8.2",
@@ -154,7 +154,7 @@
   },
   "peerDependencies": {
     "@cognite/sdk": "^7.16.0",
-    "three": "0.148.0"
+    "three": "0.149.0"
   },
   "glslify": {
     "transform": [

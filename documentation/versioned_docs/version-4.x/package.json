@@ -14,6 +14,6 @@
     "@cognite/reveal": "4.1.0",
     "@cognite/sdk": "7.18.0",
     "@types/three": "0.148.1",
-    "three": "0.148.0"
+    "three": "0.149.0"
   }
 }
