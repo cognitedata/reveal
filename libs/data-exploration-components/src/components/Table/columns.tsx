@@ -1,10 +1,11 @@
-import { Body, Button, Flex, Tooltip } from '@cognite/cogs.js';
-import { DataSet, Asset } from '@cognite/sdk';
+import { Body, Flex, Tooltip } from '@cognite/cogs.js';
+import { DataSet } from '@cognite/sdk';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import capitalize from 'lodash/capitalize';
 import uniqueId from 'lodash/uniqueId';
 import React from 'react';
-import { StyledLabel, StyledButton } from './elements';
+import { StyledLabel } from './elements';
+import { RootAsset } from '@data-exploration-components/components/RootAsset';
 
 import {
   HighlightCell,
@@ -18,9 +19,6 @@ import {
   mapFileType,
   METADATA_KEY_SEPARATOR,
 } from '@data-exploration-components/utils';
-import { createLink } from '@cognite/cdf-utilities';
-import { useGetRootAsset } from '@data-exploration-components/hooks';
-import { RootAssetCell } from './RootAssetCell';
 import { ResourceTableHashMap } from './types';
 import { DirectAssets } from './DirectAssets';
 
@@ -87,6 +85,25 @@ export const ResourceTableColumns: ResourceTableHashMap = {
           />
         );
       },
+    };
+  },
+  rootAsset: (externalLink = true, onClick) => {
+    return {
+      accessorFn: (resourceData) => resourceData.assetId || resourceData.rootId,
+      header: 'Root asset',
+      id: 'rootAsset',
+      cell: ({ getValue }) => {
+        const value = getValue<number | undefined>();
+
+        return (
+          <RootAsset
+            externalLink={externalLink}
+            onClick={onClick}
+            assetId={value}
+          />
+        );
+      },
+      enableSorting: false,
     };
   },
   id: (query?: string) => {
@@ -282,17 +299,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       </Body>
     ),
   },
-  rootAsset: {
-    accessorFn: (resourceData) => resourceData.assetId || resourceData.rootId,
-    header: 'Root asset',
-    id: 'rootAsset',
-    cell: ({ getValue }) => {
-      const value = getValue<number | undefined>();
-      if (!value) return <>{DASH}</>;
-      return <RootAssetCell value={value} />;
-    },
-    enableSorting: false,
-  },
+
   relationshipLabels: {
     accessorKey: 'relationshipLabels',
     header: 'Relationship labels',

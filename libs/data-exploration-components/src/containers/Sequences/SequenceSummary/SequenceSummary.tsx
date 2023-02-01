@@ -51,7 +51,7 @@ export const SequenceSummary = ({
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         Table.Columns.id(query),
-        Table.Columns.rootAsset,
+        Table.Columns.rootAsset(),
         Table.Columns.dataSet,
         ...metadataColumns,
       ] as ColumnDef<Sequence>[],

@@ -13,7 +13,6 @@ export const ColumnKeys = [
   'mimeType',
   'uploadedTime',
   'columns',
-  'rootAsset',
   'relationshipLabels',
 ] as const;
 

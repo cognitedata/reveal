@@ -14,7 +14,6 @@ import { getSummaryCardItems } from '@data-exploration-components/components/Sum
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { RootAsset } from '@data-exploration-components/components';
 import {
   useTimeseriesMetadataKeys,
   InternalTimeseriesFilters,
@@ -67,11 +66,7 @@ export const TimeseriesSummary = ({
       Table.Columns.isString,
       Table.Columns.isStep,
       Table.Columns.dataSet,
-      {
-        ...Table.Columns.rootAsset,
-        accessorKey: 'assetId',
-        cell: ({ getValue }) => <RootAsset assetId={getValue<number>()} />,
-      },
+      Table.Columns.rootAsset(),
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];
   }, [query, metadataColumns]);

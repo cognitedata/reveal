@@ -12,7 +12,6 @@ import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { ResourceTableColumns } from '../../../components';
 import { useAssetsMetadataKeys } from '@data-exploration-lib/domain-layer';
 import { ThreeDModelCell } from './ThreeDModelCell';
-import { RootAsset } from '@data-exploration-components/components/RootAsset';
 import noop from 'lodash/noop';
 
 export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
@@ -39,17 +38,7 @@ export const AssetTable = ({
         },
         Table.Columns.description(query),
         Table.Columns.externalId(query),
-        {
-          ...Table.Columns.rootAsset,
-          cell: ({ getValue }) => (
-            <RootAsset
-              externalLink={false}
-              assetId={getValue<number>()}
-              onClick={onRowClick}
-            />
-          ),
-          enableSorting: false,
-        },
+        Table.Columns.rootAsset(false, onRowClick),
         {
           accessorKey: 'id',
           header: '3D availability',

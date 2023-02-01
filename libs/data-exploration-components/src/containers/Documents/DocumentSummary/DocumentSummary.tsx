@@ -15,10 +15,8 @@ import React, { useMemo } from 'react';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import {
-  DocumentContentPreview,
   DocumentWithRelationshipLabels,
   DocumentNamePreview,
-  RootAssetCell,
 } from '@data-exploration-components/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import {
@@ -118,11 +116,8 @@ export const DocumentSummary = ({
         },
         Table.Columns.created,
         {
-          id: 'rootAsset',
-          header: 'Root asset',
-          cell: ({ row }: { row: Row<InternalDocument> }) => {
-            return <RootAssetCell row={row} />;
-          },
+          ...Table.Columns.rootAsset(),
+          accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
         Table.Columns.externalId(query),
         Table.Columns.id(query),

@@ -13,7 +13,6 @@ import { TimeseriesChart } from '..';
 import { Body } from '@cognite/cogs.js';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { RootAsset } from '@data-exploration-components/components/RootAsset';
 import isEmpty from 'lodash/isEmpty';
 import { ResourceTableColumns } from '../../../components';
 import { useTimeseriesMetadataKeys } from '@data-exploration-lib/domain-layer';
@@ -143,7 +142,7 @@ export const TimeseriesTable = ({
         ...Table.Columns.dataSet,
         enableSorting: false,
       },
-      Table.Columns.rootAsset,
+      Table.Columns.rootAsset(),
       Table.Columns.assets,
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];

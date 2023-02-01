@@ -8,9 +8,10 @@ import { LoadingState } from './LoadingState';
 import { openAssetInNewTab } from '@data-exploration-components/utils/assets';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { DASH } from '@data-exploration-components/utils';
 
 export interface RootAssetProps {
-  assetId: number;
+  assetId?: number;
   onClick?: (rootAsset: Asset) => void;
   externalLink?: boolean;
 }
@@ -18,7 +19,6 @@ export interface RootAssetProps {
 export const RootAsset: React.FC<RootAssetProps> = ({
   assetId,
   onClick = openAssetInNewTab,
-
   externalLink,
 }) => {
   const { data: rootAsset, isLoading } = useRootAssetQuery(assetId);
@@ -37,13 +37,14 @@ export const RootAsset: React.FC<RootAssetProps> = ({
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
     [onClick, rootAsset]
   );
+  if (!assetId) return <>{DASH}</>;
 
   if (isLoading) {
     return <LoadingState />;
   }
 
   if (!rootAsset) {
-    return null;
+    return <>{DASH}</>;
   }
 
   return (

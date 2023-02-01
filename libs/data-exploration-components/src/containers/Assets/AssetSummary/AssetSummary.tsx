@@ -52,17 +52,7 @@ export const AssetSummary = ({
         Table.Columns.name(query),
         Table.Columns.description(query),
         Table.Columns.externalId(query),
-        {
-          ...Table.Columns.rootAsset,
-          cell: ({ getValue }) => (
-            <RootAsset
-              externalLink={false}
-              assetId={getValue<number>()}
-              onClick={onRowClick}
-            />
-          ),
-          enableSorting: false,
-        },
+        Table.Columns.rootAsset(false, onRowClick),
         {
           accessorKey: 'id',
           header: '3D availability',

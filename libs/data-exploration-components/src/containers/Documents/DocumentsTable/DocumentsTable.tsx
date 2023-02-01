@@ -21,7 +21,6 @@ import { Body } from '@cognite/cogs.js';
 
 import {
   TimeDisplay,
-  RootAsset,
   ResourceTableColumns,
 } from '@data-exploration-components/components';
 
@@ -33,16 +32,6 @@ export type DocumentTableProps = Omit<
   'columns'
 > & {
   query?: string;
-};
-
-export const RootAssetCell = ({ row }: { row: Row<InternalDocument> }) => {
-  const assetId = row.original?.assetIds?.length && row.original.assetIds[0];
-
-  if (!assetId) {
-    return <>{DASH}</>;
-  }
-
-  return <RootAsset assetId={assetId} />;
 };
 
 const visibleColumns = [
@@ -132,12 +121,8 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         },
         Table.Columns.created,
         {
-          id: 'rootAsset',
-          header: 'Root asset',
-          cell: ({ row }: { row: Row<InternalDocument> }) => {
-            return <RootAssetCell row={row} />;
-          },
-          enableSorting: false,
+          ...Table.Columns.rootAsset(),
+          accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
         Table.Columns.assets,
         Table.Columns.externalId(query),
