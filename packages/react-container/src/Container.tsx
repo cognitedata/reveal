@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Router } from 'react-router-dom-v5';
-import merge from 'lodash/merge';
 import { Store } from 'redux';
-import { IntercomBootSettings } from '@cognite/intercom-helper';
 import { ErrorBoundary } from '@cognite/react-errors';
 import { withI18nSuspense } from '@cognite/react-i18n';
 import { SentryProps } from '@cognite/react-sentry';
@@ -15,7 +13,6 @@ import {
   TranslationWrapper,
   TenantSelectorWrapper,
   AuthContainer,
-  IntercomContainer,
 } from './components';
 import { createBrowserHistory } from './internal';
 import { ConditionalReduxProvider } from './providers';
@@ -27,7 +24,6 @@ const { REACT_APP_API_KEY_PROJECT: project } = process.env;
 
 type Props = React.PropsWithChildren<{
   store?: Store;
-  intercomSettings?: IntercomBootSettings;
   sentrySettings?: SentryProps;
   sidecar: ContainerSidecarConfig;
 }>;
@@ -36,14 +32,12 @@ const RawContainer: React.FC<Props> = ({
   children,
   store,
   sidecar,
-  intercomSettings,
   sentrySettings,
 }) => {
   const {
     applicationId,
     disableLoopDetector,
     disableSentry,
-    disableIntercom,
     disableReactQuery,
     reactQueryDevtools,
   } = sidecar;
@@ -83,26 +77,13 @@ const RawContainer: React.FC<Props> = ({
             authError={refreshPage}
             project={projectOrApiKeyTenant}
           >
-            <IntercomContainer
-              intercomSettings={merge(
-                {},
-                intercomSettings,
-                sidecar.intercomSettings
-              )}
-              project={projectOrApiKeyTenant}
-              sidecar={sidecar}
-              disabled={disableIntercom}
-            >
-              <>
-                <ProvideMetrics sidecar={sidecar} />
-                <ConditionalReduxProvider store={store}>
-                  {/* <ErrorBoundary instanceId="container-root"> */}
-                  <ErrorBoundary>
-                    <Router history={history}>{children}</Router>
-                  </ErrorBoundary>
-                </ConditionalReduxProvider>
-              </>
-            </IntercomContainer>
+            <ProvideMetrics sidecar={sidecar} />
+            <ConditionalReduxProvider store={store}>
+              {/* <ErrorBoundary instanceId="container-root"> */}
+              <ErrorBoundary>
+                <Router history={history}>{children}</Router>
+              </ErrorBoundary>
+            </ConditionalReduxProvider>
           </AuthContainer>
         </ConditionalSentry>
       </ConditionalQueryClientProvider>

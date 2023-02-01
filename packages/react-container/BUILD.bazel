@@ -73,7 +73,6 @@ DEPENDENCIES = [
     "@npm//web-vitals",
     "//packages/metrics",
     "//packages/storage",
-    "//packages/intercom-helper",
     "//packages/react-errors",
     "//packages/react-i18n",
     "//packages/react-sentry",

@@ -8,7 +8,6 @@ export enum PAGES {
   HOME = '/home',
   INFO = '/info',
   SDK = '/sdk',
-  INTERCOM = '/intercom',
   COMMENTS = '/comments',
   COMMENTS_DRAWER = '/comments/drawer',
   COMMENTS_SLIDER = '/comments/slider',
@@ -64,11 +63,6 @@ export const MenuBar = () => {
               name: 'Documents',
               isActive: active === PAGES.DOCUMENTS,
               onClick: handleNavigate(PAGES.DOCUMENTS),
-            },
-            {
-              name: 'Intercom',
-              isActive: active === PAGES.INTERCOM,
-              onClick: handleNavigate(PAGES.INTERCOM),
             },
           ]}
         />

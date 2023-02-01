@@ -1,3 +1,11 @@
+## 9.0.0 January 30 2023
+
+- BREAKING: Removed Intercom
+
+## 8.0.0
+
+- missing information here
+
 ## 7.0.1 November 02 2022
 
 - Fix bug that resulted in loading screen stuck after redirecting from login

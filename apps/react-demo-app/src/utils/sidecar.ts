@@ -80,10 +80,6 @@ const getAadApplicationId = (cluster: string) => {
       ],
     },
   ],
-  intercomSettings: {
-    app_id: 'ou1uyk2p',
-    hide_default_launcher: true,
-  },
   enableUserManagement: true,
   ...((window as any).__cogniteSidecar || {}),
 } as SidecarConfig;

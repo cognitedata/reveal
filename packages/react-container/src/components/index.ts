@@ -1,6 +1,5 @@
 export * from './AuthProvider/AuthContainer';
 export * from './ConditionalWrapper';
-export * from './Intercom';
 export * from './Logout';
 export * from './LogoutButton';
 export * from './LoopDetector';

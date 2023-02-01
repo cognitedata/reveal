@@ -9,7 +9,6 @@ import CommentSlider from 'pages/Comments/CommentSliderPage';
 import NotFoundPage from 'pages/Error404';
 import Home from 'pages/Home';
 import Info from 'pages/Info';
-import Intercom from 'pages/Intercom';
 import { MenuBar, PAGES } from 'pages/Menubar';
 import DocumentSearch from 'pages/DocumentSearch';
 
@@ -22,7 +21,6 @@ const App = () => (
       <Route path={PAGES.HOME} render={() => <Home />} />
       <Route path={PAGES.INFO} render={() => <Info />} />
       <Route path={PAGES.SDK} render={() => <CogniteSDK />} />
-      <Route path={PAGES.INTERCOM} render={() => <Intercom />} />
       <Route path={PAGES.LOGOUT} render={() => <Logout />} />
       <Route path={PAGES.COMMENTS} exact render={() => <Comments />} />
       <Route path={PAGES.COMMENTS_DRAWER} render={() => <CommentDrawer />} />
