@@ -143,12 +143,7 @@ export const TimeseriesTable = ({
         ...Table.Columns.dataSet,
         enableSorting: false,
       },
-      {
-        ...Table.Columns.rootAsset,
-        accessorKey: 'assetId',
-        cell: ({ getValue }) => <RootAsset assetId={getValue<number>()} />,
-        enableSorting: false,
-      },
+      Table.Columns.rootAsset,
       Table.Columns.assets,
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];

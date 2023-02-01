@@ -218,7 +218,8 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   assets: {
     header: 'Direct Asset(s)',
-    accessorKey: 'assetId',
+    accessorFn: (resourceData) => resourceData.assetId,
+    id: 'directAsset',
     enableSorting: false,
     cell: ({ getValue, row }) => {
       const data = row.original;
@@ -281,39 +282,16 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       </Body>
     ),
   },
-  asset: {
-    accessorKey: 'assetId',
-    header: 'Root asset',
-    cell: ({ getValue }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const { data: rootAsset, isLoading } = useGetRootAsset(
-        getValue<number>()!
-      );
-
-      return isLoading || rootAsset?.name ? (
-        <Button
-          type="link"
-          onClick={(e) => e.stopPropagation()}
-          target="_blank"
-          href={createLink(`/explore/asset/${getValue()}`)}
-          icon="ArrowUpRight"
-          iconPlacement="right"
-        >
-          <StyledButton>{rootAsset?.name}</StyledButton>
-        </Button>
-      ) : (
-        DASH
-      );
-    },
-  },
   rootAsset: {
-    accessorKey: 'rootId',
+    accessorFn: (resourceData) => resourceData.assetId || resourceData.rootId,
     header: 'Root asset',
+    id: 'rootAsset',
     cell: ({ getValue }) => {
       const value = getValue<number | undefined>();
       if (!value) return <>{DASH}</>;
       return <RootAssetCell value={value} />;
     },
+    enableSorting: false,
   },
   relationshipLabels: {
     accessorKey: 'relationshipLabels',

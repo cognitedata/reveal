@@ -51,10 +51,7 @@ export const SequenceTable = ({
           ...Table.Columns.id(query),
           enableSorting: false,
         },
-        {
-          ...Table.Columns.asset,
-          enableSorting: false,
-        },
+        Table.Columns.rootAsset,
         Table.Columns.assets,
         Table.Columns.dataSet,
         ...metadataColumns,
