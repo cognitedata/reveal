@@ -1,3 +1,4 @@
+import { createLink } from '@cognite/cdf-utilities';
 import {
   Button,
   Drawer,
@@ -7,6 +8,7 @@ import {
   Select,
 } from '@cognite/cogs.js';
 import { useState } from 'react';
+import { redirect, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { AbbreviationTable } from '../../components/Table/AbbreviationTable';
 import { Convention, TagTypes } from '../../types';
@@ -21,10 +23,11 @@ export const ConventionItem: React.FC<Props> = ({
   selectedConvention,
   onChange,
 }) => {
+  const navigate = useNavigate();
+
   const [convention, setConvention] = useState<Convention | undefined>(
     selectedConvention
   );
-
   const [currentKey, setCurrentKey] = useState<TagTypes>('Abbreviation');
 
   if (!convention) {
@@ -44,6 +47,13 @@ export const ConventionItem: React.FC<Props> = ({
         <SegmentedControl.Button key="Regex">Regex</SegmentedControl.Button>
       </SegmentedControl>
 
+      <Button
+        style={{ alignSelf: 'flex-end' }}
+        onClick={() => navigate('/edit/' + convention.id)}
+        icon={'Edit'}
+        type={'secondary'}
+        aria-label="Edit mode"
+      ></Button>
       <AbbreviationTable convention={convention} conventions={conventions} />
     </Flex>
   );

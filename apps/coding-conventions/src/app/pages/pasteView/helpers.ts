@@ -29,7 +29,8 @@ export const splitIntoColumnAndRow = (
 export const handleOnPasteEvent = (
   e: ClipboardEvent,
   selectedCellIds: any,
-  cellsById: any
+  cellsById: any,
+  updateMyData: any
 ) => {
   if (!e.clipboardData) return;
   const pastedData = e.clipboardData.getData('Text');
@@ -50,7 +51,7 @@ export const handleOnPasteEvent = (
       pastedData,
       uniqueRowLength,
       uniqueColumnLength,
-      ' '
+      '\t'
     );
   }
 
@@ -60,6 +61,6 @@ export const handleOnPasteEvent = (
     const cellValue = Array.isArray(dataToPaste)
       ? dataToPaste[cellIndex]
       : dataToPaste;
-    row.values[column.id] = cellValue;
+    updateMyData(row.index, column.id, cellValue);
   });
 };
