@@ -77,6 +77,17 @@ export class MeasurementLine {
   }
 
   /**
+   * Updates the measuring line clipping planes
+   * @param clippingPlanes current active global clipping planes.
+   */
+  updateLineClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    const visible =
+      !this.clippingPlanesContainPoint(clippingPlanes, this._startPos) ||
+      !this.clippingPlanesContainPoint(clippingPlanes, this._endpoint);
+    this._meshes.visible = !visible;
+  }
+
+  /**
    * Get the distance between the measuring line start point & end point.
    * @returns Return distance between start & end point of the line.
    */
@@ -127,5 +138,9 @@ export class MeasurementLine {
 
     this._meshes.add(adaptiveMesh);
     this._meshes.add(fixedMesh);
+  }
+
+  private clippingPlanesContainPoint(planes: THREE.Plane[], point: THREE.Vector3) {
+    return planes.every(p => p.distanceToPoint(point) > 0);
   }
 }

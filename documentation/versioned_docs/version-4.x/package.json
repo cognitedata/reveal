@@ -11,7 +11,7 @@
     "replace-4.x": "yarn replace-4.x:delete-old && yarn replace-4.x:copy-docs && yarn replace-4.x:update-runnable && yarn replace-4.x:update-site-imports"
   },
   "dependencies": {
-    "@cognite/reveal": "4.1.0",
+    "@cognite/reveal": "4.1.1",
     "@cognite/sdk": "7.18.0",
     "@types/three": "0.148.1",
     "three": "0.148.0"
