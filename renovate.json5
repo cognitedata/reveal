@@ -16,7 +16,9 @@
     {
       "matchPackagePrefixes": [
         "@cognite/sdk",
-        "@cognite/reveal"
+        "@cognite/reveal",
+        "three",
+        "@types/three"
       ],
       "matchPaths": ["documentation/versioned_docs/*/package.json"],
       "enabled": false
