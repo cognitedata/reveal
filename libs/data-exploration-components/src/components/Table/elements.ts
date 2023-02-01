@@ -171,6 +171,7 @@ export const TableDataBody = styled(Body)`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  gap: 4px;
 `;
 
 export const ThWrapper = styled.div`

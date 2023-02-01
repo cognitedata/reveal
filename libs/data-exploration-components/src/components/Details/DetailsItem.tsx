@@ -9,7 +9,7 @@ import { DataSet } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { useClipboard } from '@data-exploration-components/hooks';
-import { DASH } from '@data-exploration-components/utils';
+import { COPIED_TEXT, DASH } from '@data-exploration-components/utils';
 import { DetailedMapping } from '@data-exploration-lib/domain-layer';
 import {
   ThreeDModelCellDropdown,
@@ -41,7 +41,7 @@ export const DetailsItem = ({
 
   const handleOnClickCopy = () => {
     onCopy(clipboardValue.toString());
-    toast.success('Copied to clipboard');
+    toast.success(COPIED_TEXT);
     trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.COPY_TO_CLIPBOARD, { name });
   };
 
