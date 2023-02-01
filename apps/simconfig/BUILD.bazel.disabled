@@ -403,7 +403,7 @@ copy_to_bin(
 )
 
 react_app_rewired(
-    name = "build",
+    name = "build_simint",
     args = [
         "--node_options=--require=./$(execpath chdir.js)",
         "--max_old_space_size=2000",
