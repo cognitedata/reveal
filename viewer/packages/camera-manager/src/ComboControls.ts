@@ -443,7 +443,8 @@ export class ComboControls extends EventDispatcher {
       const factor = isFirefox ? 1 : 40;
       delta = event.deltaY / factor;
     }
-    const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
+    const convertedEvent = event as MouseEvent as PointerEvent;
+    const domElementRelativeOffset = clickOrTouchEventOffset(convertedEvent, this._domElement);
 
     const { x, y } = this.convertPixelCoordinatesToNormalized(
       domElementRelativeOffset.offsetX,

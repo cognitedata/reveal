@@ -584,7 +584,8 @@ export class DefaultCameraManager implements CameraManager {
       // Added because cameraControls are disabled when doing picking, so
       // preventDefault could be not called on wheel event and produce unwanted scrolling.
       e.preventDefault();
-      const domElementRelativeOffset = clickOrTouchEventOffset(e, this._domElement);
+      const convertedEvent = e as MouseEvent as PointerEvent;
+      const domElementRelativeOffset = clickOrTouchEventOffset(convertedEvent, this._domElement);
 
       const currentTime = performance.now();
       const currentMousePosition = new THREE.Vector2(
