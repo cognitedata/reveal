@@ -1615,6 +1615,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/data-providers@workspace:packages/data-providers"
   dependencies:
+    "@reveal/logger": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft

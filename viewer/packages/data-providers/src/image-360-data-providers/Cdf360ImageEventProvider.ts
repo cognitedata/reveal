@@ -13,6 +13,7 @@ import head from 'lodash/head';
 import { CogniteClient, CogniteEvent, EventFilter, FileFilterProps, FileInfo, Metadata } from '@cognite/sdk';
 import { Image360Descriptor, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
 import { Image360Provider } from '../Image360Provider';
+import { Log } from '@reveal/logger';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
@@ -41,7 +42,16 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
       this.listFiles({ metadata: metadataFilter })
     ]);
 
-    return this.mergeDescriptors(files, events);
+    const image360Descriptors = this.mergeDescriptors(files, events);
+
+    if (events.length !== image360Descriptors.length) {
+      Log.warn(
+        `WARNING: There are ${events.length - image360Descriptors.length} rejected 360 images due to invalid data.`,
+        '\nThis is typically due to missing files for the images of the cube map.'
+      );
+    }
+
+    return image360Descriptors;
   }
 
   public async get360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]> {
