@@ -471,10 +471,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   private onClipping() {
     const clippingPlanes = this._viewer.getGlobalClippingPlanes();
-    if (clippingPlanes.length > 0) {
-      this._measurements.forEach(measurement => {
-        measurement.updateLineClippingPlanes(clippingPlanes);
-      });
-    }
+    this._measurements.forEach(measurement => {
+      measurement.updateLineClippingPlanes(clippingPlanes);
+    });
   }
 }
