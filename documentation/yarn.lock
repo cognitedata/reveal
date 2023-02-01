@@ -2132,7 +2132,7 @@ __metadata:
     "@codemirror/view": 6.7.3
     "@docusaurus/core": 2.3.0
     "@docusaurus/preset-classic": 2.3.0
-    "@docusaurus/remark-plugin-npm2yarn": 2.3.0
+    "@docusaurus/remark-plugin-npm2yarn": ^2.3.0
     "@types/react": 18.0.27
     "@types/styled-components": 5.1.26
     "@uiw/codemirror-theme-material": 4.19.7
@@ -2142,7 +2142,6 @@ __metadata:
     cross-env: 7.0.3
     docusaurus-plugin-typedoc: 0.18.0
     ieee754: 1.2.1
-    npm-to-yarn: 1.2.1
     query-string: 8.1.0
     react: 18.2.0
     react-dom: 18.2.0
@@ -2717,7 +2716,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/remark-plugin-npm2yarn@npm:2.3.0":
+"@docusaurus/remark-plugin-npm2yarn@npm:^2.3.0":
   version: 2.3.0
   resolution: "@docusaurus/remark-plugin-npm2yarn@npm:2.3.0"
   dependencies:
@@ -9272,7 +9271,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"npm-to-yarn@npm:1.2.1, npm-to-yarn@npm:^1.0.1":
+"npm-to-yarn@npm:^1.0.1":
   version: 1.2.1
   resolution: "npm-to-yarn@npm:1.2.1"
   checksum: 7a4a0774968a22ec2f11cff99c21d1ef201232dff38a5ffab253b9a45faf8c9639c1163a314c64b5e7258c85b9311b8c8d9468bea2042de4ba534309b388c1f4

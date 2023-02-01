@@ -58,7 +58,7 @@ module.exports = {
           editUrl:
             'https://github.com/cognitedata/reveal/blob/master/documentation',
           remarkPlugins: [
-            require('@docusaurus/remark-plugin-npm2yarn'),
+            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
             require('./src/plugins/remark-runnable-reveal-demo'),
           ],
           showLastUpdateTime: true,
