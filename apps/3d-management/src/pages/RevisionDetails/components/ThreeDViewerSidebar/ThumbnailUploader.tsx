@@ -31,7 +31,8 @@ export function ThumbnailUploader({ style, viewer, model, ...props }: Props) {
     try {
       const base64 = await viewer.getScreenshot(
         screenshotWidth,
-        screenshotHeight
+        screenshotHeight,
+        false
       );
       setThumbnailUri(base64);
       const blob = base64ToBlob(base64);
