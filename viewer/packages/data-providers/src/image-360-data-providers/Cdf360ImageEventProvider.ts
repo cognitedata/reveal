@@ -39,7 +39,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   public async get360ImageDescriptors(metadataFilter: Metadata): Promise<Image360Descriptor[]> {
     const [events, files] = await Promise.all([
       this.listEvents({ metadata: metadataFilter }),
-      this.listFiles({ metadata: metadataFilter })
+      this.listFiles({ metadata: metadataFilter, uploaded: true })
     ]);
 
     const image360Descriptors = this.mergeDescriptors(files, events);
@@ -47,7 +47,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     if (events.length !== image360Descriptors.length) {
       Log.warn(
         `WARNING: There are ${events.length - image360Descriptors.length} rejected 360 images due to invalid data.`,
-        '\nThis is typically due to missing files for the images of the cube map.'
+        '\nThis is typically due to duplicate events or missing files for the images of the cube map.'
       );
     }
 
@@ -82,6 +82,11 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     return uniqueEventDescriptors
       .map(eventDescriptor => {
         const stationFileInfos = files.filter(fileInfo => fileInfo.metadata?.station_id === eventDescriptor.id);
+
+        if (stationFileInfos.length < 6) {
+          return { ...eventDescriptor, faceDescriptors: [] };
+        }
+
         const fileInfoSet = this.getNewestFileInfoSet(stationFileInfos);
 
         const faceDescriptors = fileInfoSet.map(fileInfo => {
