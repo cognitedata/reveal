@@ -15,6 +15,7 @@ import {
   ExpandedState,
   ColumnOrderState,
   ColumnSizingState,
+  VisibilityState,
 } from '@tanstack/react-table';
 import useLocalStorageState from 'use-local-storage-state';
 import { isElementHorizontallyInViewport } from '../../utils/isElementHorizontallyInViewport';
@@ -50,6 +51,7 @@ import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import noop from 'lodash/noop';
 
 import { CopyToClipboardIconButton } from './CopyToClipboardIconButton';
+import { getProject } from '@cognite/cdf-utilities';
 
 export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {
@@ -166,9 +168,10 @@ export function Table<T extends TableData>({
     }, {} as Record<string, boolean>);
   }, [hiddenColumns]);
 
-  const [columnVisibility, setColumnVisibility] = useLocalStorageState(id, {
-    defaultValue: {},
-  });
+  const [columnVisibility, setColumnVisibility] =
+    useLocalStorageState<VisibilityState>(id, {
+      defaultValue: {},
+    });
 
   /**
    * The initialHiddenColumns are updated multiple times when the metadata columns are fetched.
@@ -263,7 +266,9 @@ export function Table<T extends TableData>({
   const handleClickLoadMore = () => {
     if (!fetchMore) return;
     fetchMore();
-    trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.LOAD_MORE, { table: id });
+    trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.LOAD_MORE, {
+      table: id,
+    });
   };
 
   const handleResetSelectedColumns = () => {
@@ -271,6 +276,11 @@ export function Table<T extends TableData>({
   };
 
   const loadMoreProps = { isLoadingMore, hasNextPage, fetchMore };
+
+  const allLeafColumns = getAllLeafColumns();
+  const noColumnsVisible = useMemo(() => {
+    return allLeafColumns.every((col) => !col.getIsVisible());
+  }, [allLeafColumns]);
 
   const renderTableContent = () => {
     if (isDataLoading) {
@@ -280,10 +290,7 @@ export function Table<T extends TableData>({
     if (!data || data.length === 0) {
       return <EmptyState body="Please, refine your filters" />;
     }
-    if (
-      Object.values(columnVisibility).filter((col) => !col).length ===
-      columns.length
-    ) {
+    if (noColumnsVisible) {
       return <EmptyState body="Please, select your columns" />;
     }
 
