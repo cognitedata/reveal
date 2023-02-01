@@ -2202,9 +2202,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/reveal@npm:4.1.0":
-  version: 4.1.0
-  resolution: "@cognite/reveal@npm:4.1.0"
+"@cognite/reveal@npm:4.1.1":
+  version: 4.1.1
+  resolution: "@cognite/reveal@npm:4.1.1"
   dependencies:
     "@tweenjs/tween.js": 18.6.4
     assert: 2.0.0
@@ -2221,9 +2221,9 @@ __metadata:
     skmeans: 0.11.3
     three-stdlib: 2.21.1
   peerDependencies:
-    "@cognite/sdk": 7.15.0
+    "@cognite/sdk": ^7.16.0
     three: 0.148.0
-  checksum: 6d7917e5fcb5cb53982d6f86fda23befb185c53c20cbe598fbf7f992a2abfc973b18902c5f6af1cab1a74893e7a49d65c09572b0f2fb7aed478bd6e1e89ca6d7
+  checksum: 73e1d435419ca1962261b34e4a38eab0f8b9e3e5a8f23e2812ae1c8eadc861c32f75288503d50559bd6f8eca61ccea61bb13427dbcd418ad95946538aea395a9
   languageName: node
   linkType: hard
 
@@ -3208,7 +3208,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal-documentation/v4@workspace:versioned_docs/version-4.x"
   dependencies:
-    "@cognite/reveal": 4.1.0
+    "@cognite/reveal": 4.1.1
     "@cognite/sdk": 7.18.0
     "@types/three": 0.148.1
     three: 0.148.0
