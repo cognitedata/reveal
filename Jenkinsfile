@@ -2,7 +2,7 @@
 
 // This is all the applications in the monorepo. Register your application name here
 // in addition to updating the 'PROPECTION_APP_IDS' & 'PREVIEW_PACKAGE_NAMES'
-def APPLICATIONS = [
+static final String[] APPLICATIONS = [
   'platypus',
   'data-exploration',
   'coding-conventions',
@@ -31,7 +31,7 @@ static final Map<String, String> SENTRY_PROJECT_NAMES = [
 ]
 
 // Add apps/libs name to the list where you want the storybook preview to build.
-def PREVIEW_STORYBOOK = [
+static final String[] PREVIEW_STORYBOOK = [
   'platypus',
   'data-exploration-components',
 ]
@@ -94,16 +94,16 @@ final boolean isPullRequest = !!env.CHANGE_ID
  *
  * @return Array List of affected items
  */
-def getAffectedProjects(boolean isPullRequest = true, boolean isMaster = false, boolean isRelease = false) {
+def getAffectedProjects(boolean isPullRequest = true, boolean isMaster = false, boolean isRelease = false, String[] applications) {
   if (isRelease) {
-    for (int i = 0; i < APPLICATIONS.size(); i++) {
-      if (env.BRANCH_NAME.contains(APPLICATIONS[i])) {
-        print "[AFFECTED]: Found release application: ${APPLICATIONS[i]}"
-        return APPLICATIONS[i].split() // splitting to turn a string into an array (e.g., 'platypus' -> [platypus])
+    for (int i = 0; i < applications.size(); i++) {
+      if (env.BRANCH_NAME.contains(applications[i])) {
+        print "[AFFECTED]: Found release application: ${applications[i]}"
+        return applications[i].split() // splitting to turn a string into an array (e.g., 'platypus' -> [platypus])
       }
     }
 
-    print "[AFFECTED]: No matching applications found in release branch name, try either of: ${APPLICATIONS.join(', ')}"
+    print "[AFFECTED]: No matching applications found in release branch name, try either of: ${applications.join(', ')}"
     return []
   }
 
@@ -218,7 +218,7 @@ pods {
       def projects;
       stage('Get affected projects') {
         container('apphosting') {
-          projects = getAffectedProjects(isPullRequest, isMaster, isRelease)
+          projects = getAffectedProjects(isPullRequest, isMaster, isRelease, APPLICATIONS)
         }
       }
       
