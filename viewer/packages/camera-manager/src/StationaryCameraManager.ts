@@ -29,6 +29,8 @@ export class StationaryCameraManager implements CameraManager {
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private _isDragging = false;
   private _downEventCache: Array<PointerEvent> = [];
+  private _lastCursorPosition: THREE.Vector2 = new THREE.Vector2();
+  private _draggingPointer: number | undefined;
 
   constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
     this._domElement = domElement;
@@ -177,35 +179,62 @@ export class StationaryCameraManager implements CameraManager {
     remove(this._downEventCache, cachedEvent => {
       return cachedEvent.pointerId === event.pointerId;
     });
-    this.disableDragging(event);
+    if (event.pointerId === this._draggingPointer) {
+      if (this._downEventCache.length === 0) {
+        this.disableDragging(event);
+        this._draggingPointer = undefined;
+      } else {
+        const {pointerId, clientX, clientY } = this._downEventCache[0];
+        this._draggingPointer = pointerId;
+        this._lastCursorPosition.set(clientX, clientY);
+      }
+    }
   };
 
   private readonly onPointerDown = (event: PointerEvent) => {
     this._downEventCache.push(event);
-    this.enableDragging(event);
+    
+    if (this._draggingPointer === undefined) {
+      this._lastCursorPosition.set(event.clientX, event.clientY);
+      this._draggingPointer = event.pointerId;
+      this.enableDragging(event);
+    }
   };
 
   private readonly onPointerMove = (event: PointerEvent) => {
-    this.pinchCamera(event);
-    this.rotateCamera(event);
+    const pointerIndex = this._downEventCache.findIndex((ev) => ev.pointerId === event.pointerId);
+
+    this._downEventCache[pointerIndex] = event;
+
+    if (event.pointerId === this._draggingPointer) {
+      this.pinchCamera(event);
+      this.rotateCamera(event);
+    }
   };
 
   private rotateCamera(event: PointerEvent) {
     if (!this._isDragging) {
       return;
     }
+    event.preventDefault();
 
-    const { movementX, movementY } = event;
+    const { _lastCursorPosition } = this;
+
+    const deltaX = event.clientX - _lastCursorPosition.x;
+    const deltaY = event.clientY - _lastCursorPosition.y;
+    
     const sensitivityScaler = 0.0015;
 
     const euler = new THREE.Euler().setFromQuaternion(this._camera.quaternion, 'YXZ');
 
-    euler.x -= -movementY * sensitivityScaler * (this._camera.fov / this._defaultFOV);
-    euler.y -= -movementX * sensitivityScaler * (this._camera.fov / this._defaultFOV);
+    euler.x -= -deltaY * sensitivityScaler * (this._camera.fov / this._defaultFOV);
+    euler.y -= -deltaX * sensitivityScaler * (this._camera.fov / this._defaultFOV);
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
 
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
+    
+    this._lastCursorPosition.set(event.clientX, event.clientY);
   }
 
   private pinchCamera(moveEvent: PointerEvent) {
