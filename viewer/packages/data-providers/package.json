@@ -7,6 +7,7 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
+    "@reveal/logger": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }

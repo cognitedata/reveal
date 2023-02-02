@@ -32,7 +32,7 @@ export class Image360UI {
     const params = {
       siteId: '',
       add: add360ImageSet,
-      premultipliedRotation: true,
+      premultipliedRotation: false,
       remove: removeAll360Images
     };
 
