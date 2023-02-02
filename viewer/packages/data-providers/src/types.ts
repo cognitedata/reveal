@@ -8,12 +8,7 @@ export interface JsonFileProvider {
 }
 
 export interface BinaryFileProvider {
-  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
-}
-
-export interface AbortableFileProvider {
-  abortFileRequest(baseUrl: string, fileName: string): void;
-  abortAll(): void;
+  getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
 export interface Image360DescriptorProvider<T> {

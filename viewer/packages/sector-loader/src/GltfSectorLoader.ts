@@ -11,7 +11,6 @@ import { MetricsLogger } from '@reveal/metrics';
 import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
 
 import assert from 'assert';
-import { AbortableFileProvider } from '@reveal/data-providers/src/types';
 import { Log } from '@reveal/logger';
 
 export class GltfSectorLoader {
@@ -25,12 +24,13 @@ export class GltfSectorLoader {
     this._materialManager = materialManager;
   }
 
-  async loadSector(sector: WantedSector): Promise<ConsumedSector> {
+  async loadSector(sector: WantedSector, abortSignal: AbortSignal): Promise<ConsumedSector> {
     const { metadata } = sector;
     try {
       const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
         sector.modelBaseUrl,
-        metadata.sectorFileName!
+        metadata.sectorFileName!,
+        abortSignal
       );
 
       const group = new AutoDisposeGroup();
@@ -102,16 +102,6 @@ export class GltfSectorLoader {
       }
       throw e;
     }
-  }
-
-  public abortLoad(sector: WantedSector): void {
-    const abortableRequest = this._sectorFileProvider as unknown as AbortableFileProvider;
-    abortableRequest?.abortFileRequest(sector.modelBaseUrl, sector.metadata.sectorFileName!);
-  }
-
-  public clear(): void {
-    const abortableRequest = this._sectorFileProvider as unknown as AbortableFileProvider;
-    abortableRequest?.abortAll();
   }
 
   private createTreeIndexSet(geometry: THREE.BufferGeometry): Map<number, number> {

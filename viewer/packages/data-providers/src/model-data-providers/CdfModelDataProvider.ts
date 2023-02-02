@@ -3,63 +3,36 @@
  */
 import { CogniteClient } from '@cognite/sdk';
 import { ModelDataProvider } from '../ModelDataProvider';
-import { AbortableFileProvider } from '../types';
 
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
-export class CdfModelDataProvider implements ModelDataProvider, AbortableFileProvider {
+export class CdfModelDataProvider implements ModelDataProvider {
   private readonly client: CogniteClient;
   private authenticationPromise: Promise<string | undefined>;
-  private readonly abortControllers: Map<string, AbortController>;
 
   constructor(client: CogniteClient) {
     this.client = client;
     this.authenticationPromise = client.authenticate();
-    this.abortControllers = new Map();
   }
 
-  public abortFileRequest(baseUrl: string, fileName: string): void {
-    const url = `${baseUrl}/${fileName}`;
-    const abortController = this.abortControllers.get(url);
-
-    if (abortController) {
-      abortController.abort();
-      this.abortControllers.delete(url);
-    }
-  }
-
-  public abortAll(): void {
-    this.abortControllers.forEach(abortController => {
-      abortController.abort();
-    });
-    this.abortControllers.clear();
-  }
-
-  public async getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer> {
+  public async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
     const url = `${baseUrl}/${fileName}`;
     const headers = {
       ...this.client.getDefaultRequestHeaders(),
       Accept: '*/*'
     };
 
-    const abortController = new AbortController();
-    this.abortControllers.set(url, abortController);
-
     const response = await this.fetchWithRetry(url, {
       headers,
-      signal: abortController.signal,
+      signal: abortSignal,
       method: 'GET'
-    })
-      .catch(e => {
-        if (e.name === 'AbortError') {
-          throw e;
-        }
-        throw Error('Could not download binary file');
-      })
-      .finally(() => {
-        this.abortControllers.delete(url);
-      });
+    }).catch(e => {
+      if (e.name === 'AbortError') {
+        throw e;
+      }
+      throw Error('Could not download binary file');
+    });
 
     return response.arrayBuffer();
   }
