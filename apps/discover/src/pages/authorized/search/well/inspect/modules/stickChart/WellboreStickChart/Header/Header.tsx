@@ -1,3 +1,5 @@
+import { DrillingDays } from 'domain/wells/wellbore/internal/types';
+
 import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
@@ -8,6 +10,7 @@ import { WellboreData, WellboreStickChartData } from '../../types';
 
 import { RigNames } from './components/RigNames';
 import { TotalDrillingDays } from './components/TotalDrillingDays';
+import { WellboreDrillingDays } from './components/WellboreDrillingDays';
 import {
   HeaderData,
   HeaderWrapper,
@@ -19,19 +22,18 @@ import {
 interface HeaderProps
   extends Pick<
       WellboreData,
-      | 'wellName'
-      | 'wellboreName'
-      | 'uniqueWellboreIdentifier'
-      | 'totalDrillingDays'
+      'wellName' | 'wellboreName' | 'uniqueWellboreIdentifier'
     >,
-    Pick<WellboreStickChartData, 'rigNames'> {}
+    Pick<WellboreStickChartData, 'rigNames'> {
+  drillingDaysData?: DrillingDays;
+}
 
 export const Header: React.FC<HeaderProps> = ({
   wellName,
   wellboreName,
   uniqueWellboreIdentifier,
-  totalDrillingDays,
   rigNames,
+  drillingDaysData,
 }) => {
   return (
     <HeaderWrapper>
@@ -41,12 +43,13 @@ export const Header: React.FC<HeaderProps> = ({
           {!isEmpty(uniqueWellboreIdentifier) && (
             <WellboreUBI>{`(${uniqueWellboreIdentifier})`}</WellboreUBI>
           )}
+          <TotalDrillingDays days={drillingDaysData?.total} />
         </HeaderData>
 
         <HeaderData>
           <WellboreName>{wellboreName}</WellboreName>
           <RigNames rigNames={rigNames} />
-          <TotalDrillingDays totalDrillingDays={totalDrillingDays} />
+          <WellboreDrillingDays days={drillingDaysData?.wellbore} />
         </HeaderData>
       </FlexColumn>
     </HeaderWrapper>

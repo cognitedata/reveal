@@ -36,3 +36,8 @@ export interface KickoffPoint extends KickoffDepth {
   equivalentDepartureMD: number;
   equivalentDepartureTVD: number;
 }
+export interface DrillingDays {
+  wellboreMatchingId: string;
+  wellbore: number;
+  total: number;
+}

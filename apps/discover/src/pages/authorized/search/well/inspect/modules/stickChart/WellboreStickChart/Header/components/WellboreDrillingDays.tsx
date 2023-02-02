@@ -5,11 +5,11 @@ import { Tooltip } from '@cognite/cogs.js';
 
 import { HeaderLabel } from '../elements';
 
-export interface TotalDrillingDaysProps {
+export interface WellboreDrillingDaysProps {
   days?: number;
 }
 
-export const TotalDrillingDays: React.FC<TotalDrillingDaysProps> = ({
+export const WellboreDrillingDays: React.FC<WellboreDrillingDaysProps> = ({
   days,
 }) => {
   if (isNil(days)) {
@@ -17,7 +17,7 @@ export const TotalDrillingDays: React.FC<TotalDrillingDaysProps> = ({
   }
 
   return (
-    <Tooltip placement="bottom" content="Total drilling days">
+    <Tooltip placement="bottom" content="Wellbore drilling days">
       <HeaderLabel>
         {days} {pluralize('day', days)}
       </HeaderLabel>

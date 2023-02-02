@@ -113,6 +113,7 @@ export const WELL_QUERY_KEY = {
   HOLE_SECTIONS_WITH_TVD: [WELLS, 'holeSections', 'tvd'],
   RIG_OPERATIONS: [WELLS, 'rigOperations'],
   WELL_PROPERTY_FILTERS: [WELLS, 'summaries', 'wellProperties', 'filter'],
+  DRILLING_DAYS: [WELLS, 'drillingDays', 'cache'],
 };
 
 const SEARCH_HISTORY = 'searchHistory';

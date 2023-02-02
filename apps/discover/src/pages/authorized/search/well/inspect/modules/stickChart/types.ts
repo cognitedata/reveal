@@ -6,6 +6,7 @@ import { NptInternalWithTvd } from 'domain/wells/npt/internal/types';
 import { TrajectoryWithData } from 'domain/wells/trajectory/internal/types';
 import {
   KickoffDepth,
+  DrillingDays,
   WellboreInternal,
 } from 'domain/wells/wellbore/internal/types';
 import {
@@ -22,7 +23,7 @@ import { EVENT_TYPES } from './WellboreStickChart/constants';
 export interface WellboreData
   extends Pick<
     WellboreInternal,
-    'wellWaterDepth' | 'totalDrillingDays' | 'uniqueWellboreIdentifier'
+    'wellWaterDepth' | 'uniqueWellboreIdentifier'
   > {
   wellboreMatchingId: string;
   wellName: string;
@@ -42,6 +43,7 @@ export interface WellboreStickChartData {
   holeSectionsData: DataWithLoadingStatus<HoleSectionView[]>;
   mudWeightData: DataWithLoadingStatus<DepthMeasurementWithData[]>;
   kickoffDepth: DataWithLoadingStatus<KickoffDepth>;
+  drillingDays?: DataWithLoadingStatus<DrillingDays>;
 }
 
 export interface ColumnVisibilityProps {

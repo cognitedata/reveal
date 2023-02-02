@@ -11,6 +11,7 @@ import { useNdsData } from './useNdsData';
 import { useNptData } from './useNptData';
 import { useRigNames } from './useRigNames';
 import { useTrajectoryData } from './useTrajectoryData';
+import { useDrillingDaysData } from './useWellboreDrillingDays';
 
 export const useWellboreStickChartData = () => {
   const rigNames = useRigNames();
@@ -23,6 +24,7 @@ export const useWellboreStickChartData = () => {
   const holeSectionsData = useHoleSectionsData();
   const mudWeightData = useMudWeightData();
   const kickoffDepths = useKickoffDepths();
+  const drillingDaysData = useDrillingDaysData();
 
   return (wellboreMatchingId: string): WellboreStickChartData => ({
     rigNames: rigNames[wellboreMatchingId],
@@ -47,5 +49,9 @@ export const useWellboreStickChartData = () => {
     ),
     mudWeightData: getDataWithLoadingStatus(mudWeightData, wellboreMatchingId),
     kickoffDepth: getDataWithLoadingStatus(kickoffDepths, wellboreMatchingId),
+    drillingDays: getDataWithLoadingStatus(
+      drillingDaysData,
+      wellboreMatchingId
+    ),
   });
 };
