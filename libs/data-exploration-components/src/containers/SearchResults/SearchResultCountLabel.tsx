@@ -1,7 +1,8 @@
-import React from 'react';
+import styled from 'styled-components/macro';
 import { ResourceType } from '@data-exploration-components/types';
-import { Label } from '@cognite/cogs.js';
+import { Flex, Label } from '@cognite/cogs.js';
 import { getSearchResultCountLabel } from '@data-exploration-components/utils/string';
+import { EllipsisText } from '@data-exploration-components/components';
 
 export const SearchResultCountLabel = ({
   loadedCount,
@@ -14,7 +15,20 @@ export const SearchResultCountLabel = ({
 }) => {
   return (
     <Label variant="normal">
-      {getSearchResultCountLabel(loadedCount, totalCount, resourceType)}
+      <StyledSpan>
+        {getSearchResultCountLabel(loadedCount, totalCount, resourceType)}
+      </StyledSpan>
     </Label>
   );
 };
+
+const StyledSpan = styled.span`
+  min-width: 16px;
+  display: block; /* Fallback for non-webkit */
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+  text-overflow: ellipsis;
+`;

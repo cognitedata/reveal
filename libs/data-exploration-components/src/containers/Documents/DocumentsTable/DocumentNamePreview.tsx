@@ -17,6 +17,8 @@ import { DocumentIcon, Flex } from '@cognite/cogs.js';
 const DocumentIconWrapper = styled.div`
   height: 32px;
   width: 32px;
+  display: flex;
+  align-items: center;
 `;
 export const DocumentNamePreview = ({
   fileName,

@@ -40,10 +40,11 @@ const VerticalDivider = styled.div`
   width: 1px;
   height: 16px;
   background-color: var(--cogs-border--muted);
-  margin: 0 8px 0 2px;
+  margin: 0 8px 0 0;
 `;
 
 const StyledSpacedRow = styled(SpacedRow)`
-  align-items: center;
-  padding-bottom: 0;
+  // We need 'important' here to keep divider centered.
+  align-items: center !important;
+  padding-bottom: 0 !important;
 `;
