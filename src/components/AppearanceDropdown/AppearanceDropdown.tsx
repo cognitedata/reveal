@@ -5,8 +5,7 @@ import { trackUsage } from 'services/metrics';
 
 import { makeDefaultTranslations } from 'utils/translations';
 import { Interpolation, LineStyle } from 'models/chart/types';
-import InterpolationLinearIcon from 'assets/Linear.svg';
-import InterpolationStepIcon from 'assets/Step.svg';
+import { InterpolationStepIcon, InterpolationLinearIcon } from './Icons';
 import {
   DropdownWrapper,
   MenuWrapper,
@@ -111,11 +110,16 @@ const InterpolationPreview = ({
   iconImage: any;
   label: string;
 }) => {
+  const SvgIcon = iconImage;
   return (
     <PreviewContainer
       style={{ display: 'flex', alignItems: 'center', marginRight: 15 }}
     >
-      <img src={iconImage} style={{ transform: `scale(1.37)` }} alt={label} />
+      <SvgIcon
+        src={iconImage}
+        style={{ transform: `scale(1.37)` }}
+        alt={label}
+      />
     </PreviewContainer>
   );
 };
