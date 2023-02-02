@@ -53,7 +53,7 @@ export default function ModelRevisions(props: Props) {
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [deletionModalVisible, setDeletionModalVisible] = useState(false);
   const [renameModalVisible, setRenameModalVisible] = useState(false);
-  const [newName, setNewName] = useState('');
+  const [newName, setNewName] = useState(props.model.name);
 
   const { mutate: deleteModelMutation } = useDeleteModelMutation();
   const { mutate: updateModelMutation } = useUpdateModelMutation();
@@ -117,7 +117,6 @@ export default function ModelRevisions(props: Props) {
     }
 
     setRenameModalVisible(false);
-    setNewName('');
   };
 
   const updateNewName = (event) => {
@@ -221,7 +220,10 @@ export default function ModelRevisions(props: Props) {
       <Modal
         visible={renameModalVisible}
         onOk={renameModel}
-        onCancel={() => setRenameModalVisible(false)}
+        onCancel={() => {
+          setRenameModalVisible(false);
+          setNewName(props.model.name);
+        }}
         title={`Rename ${props.model.name}`}
         getContainer={getContainer}
       >
@@ -229,7 +231,7 @@ export default function ModelRevisions(props: Props) {
         <Input
           fullWidth
           placeholder="New Name"
-          value={newName || props.model.name}
+          value={newName || ''}
           onChange={updateNewName}
         />
       </Modal>
