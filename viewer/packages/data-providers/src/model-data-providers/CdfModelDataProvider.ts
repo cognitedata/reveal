@@ -28,7 +28,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
       signal: abortSignal,
       method: 'GET'
     }).catch(e => {
-      if (e.name === 'AbortError') {
+      if (e?.name === 'AbortError') {
         throw e;
       }
       throw Error('Could not download binary file');

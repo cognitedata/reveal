@@ -144,8 +144,12 @@ export class CadNode extends Object3D {
     return this._materialManager.getRenderMode();
   }
 
-  public loadSector(sector: WantedSector, abortSignal: AbortSignal): Promise<ConsumedSector> {
-    return this._sectorRepository.loadSector(sector, abortSignal);
+  public loadSector(sector: WantedSector): { consumedSector: Promise<ConsumedSector>; abortDowload: () => void } {
+    const abortController = new AbortController();
+    const abort = () => {
+      abortController.abort();
+    };
+    return { consumedSector: this._sectorRepository.loadSector(sector, abortController.signal), abortDowload: abort };
   }
 
   /**
