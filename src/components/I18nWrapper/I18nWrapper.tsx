@@ -6,12 +6,12 @@ import I18NextLocizeBackend from 'i18next-locize-backend';
 import { locizePlugin } from 'locize';
 import { initReactI18next, useTranslation } from 'react-i18next';
 
+import { LOCIZE_PROJECT_ID } from '../../common/constants';
 import {
-  LOCIZE_PROJECT_ID,
   getLanguage,
   lowercasePostProcessor,
   uppercasePostProcessor,
-} from '../..';
+} from '../../utils';
 
 type I18nWrapperProps = {
   children: React.ReactNode;
