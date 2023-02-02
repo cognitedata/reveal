@@ -65,6 +65,15 @@ const PanToolProps = {
   tool: ToolType.PAN,
 };
 
+const INITIAL_VIEWPORT_CENTER = {
+  x: 0.5 * MAX_CONTAINER_WIDTH,
+  y: 0.5 * MAX_CONTAINER_HEIGHT,
+};
+const INITIAL_VIEWPORT_SIZE = {
+  width: 1.2 * MAX_CONTAINER_WIDTH,
+  height: 1.2 * MAX_CONTAINER_HEIGHT,
+};
+
 export const FilePreviewUFV = ({
   id,
   applicationId,
@@ -275,6 +284,10 @@ export const FilePreviewUFV = ({
           onClick={onStageClick}
           shouldShowZoomControls={showControls}
           onUpdateRequest={handleUpdateRequest}
+          initialViewport={{
+            ...INITIAL_VIEWPORT_CENTER,
+            ...INITIAL_VIEWPORT_SIZE,
+          }}
           {...toolProps}
         />
         <Pagination container={container} onPageChange={handlePageChange} />
