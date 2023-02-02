@@ -32,6 +32,7 @@ export class Image360LoadingCache {
     if (inflightEntity !== undefined) {
       return inflightEntity;
     }
+
     const load360Image = entity.load360Image();
     this._inFlightEntities.set(entity, load360Image);
 
