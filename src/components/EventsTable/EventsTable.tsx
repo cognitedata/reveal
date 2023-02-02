@@ -1,75 +1,64 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
-import Table from 'antd/lib/table';
-import { CogniteEvent } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { createLink } from '@cognite/cdf-utilities';
-import handleError from 'utils/handleError';
-import { getContainer } from 'utils/shared';
-import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
-import ColumnWrapper from '../ColumnWrapper';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
+import { Button, Flex } from '@cognite/cogs.js';
+import { getContainer, ContentView, ExploreViewConfig } from 'utils';
 import { useTranslation } from 'common/i18n';
+import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
+import { CogniteEvent } from '@cognite/sdk/dist/src';
 
 interface EventsPreviewProps {
   dataSetId: number;
+  setExploreView?: (value: ExploreViewConfig) => void;
+  isLoading: boolean;
+  data: CogniteEvent[] | undefined;
 }
 
-const EventsPreview = ({ dataSetId }: EventsPreviewProps) => {
+const EventsPreview = ({
+  dataSetId,
+  data = [],
+  isLoading,
+  setExploreView = () => {},
+}: EventsPreviewProps) => {
   const { t } = useTranslation();
-  const [events, setEvents] = useState<CogniteEvent[]>();
+  const { eventColumns } = useResourceTableColumns();
 
-  useEffect(() => {
-    sdk.events
-      .list({ filter: { dataSetIds: [{ id: dataSetId }] } })
-      .then((res) => {
-        setEvents(res.items);
-      })
-      .catch((e) => {
-        handleError({ message: t('fetch-events-failed'), ...e });
-      });
-  }, [dataSetId, t]);
-
-  const eventsColumns = [
-    {
-      title: t('type'),
-      dataIndex: 'type',
-      key: 'type',
-    },
-    {
-      title: t('subtype'),
-      dataIndex: 'subtype',
-      key: 'subtype',
-    },
-    {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'id',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('action_other'),
-      render: (record: CogniteEvent) => (
-        <span>
-          <Link to={createLink(`/explore/event/${record.id}`)}>
-            {t('view')}
-          </Link>
-        </span>
-      ),
-    },
-  ];
+  const handleViewEvents = () => {
+    setExploreView({
+      visible: true,
+      type: 'events-profile',
+      id: dataSetId,
+    });
+  };
 
   return (
-    <div id="#events">
-      <ItemLabel>{t('events')}</ItemLabel>
+    <ContentView id="eventsTableId">
+      <Flex justifyContent="flex-end">
+        <Button type="secondary" size="small" onClick={handleViewEvents}>
+          {`${t('view')} ${t('events').toLocaleLowerCase()}`}
+        </Button>
+      </Flex>
       <Table
-        rowKey="id"
-        columns={eventsColumns}
-        dataSource={events}
-        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
+        rowKey="key"
+        loading={isLoading}
+        // The types are interfaces instead of type, can't get them to work
+        // with the types defined in the library. The components worked and
+        // still work fine, therefore I think it's safe to provide any.
+        columns={eventColumns as any}
+        dataSource={data as any}
+        onChange={(_pagination, _filters) => {
+          // TODO: Implement sorting
+        }}
         getPopupContainer={getContainer}
+        emptyContent={
+          <TableNoResults
+            title={t('no-records')}
+            content={t('no-search-records', {
+              $: '',
+            })}
+          />
+        }
+        appendTooltipTo={getContainer()}
       />
-    </div>
+    </ContentView>
   );
 };
 

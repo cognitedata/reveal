@@ -7,9 +7,8 @@ import {
 } from 'react';
 import { Icon } from '@cognite/cogs.js';
 import Table from 'antd/lib/table';
-import Timeline from 'antd/lib/timeline';
 import {
-  LineageDot,
+  LineageSection,
   LineageSubTitle,
   LineageTitle,
 } from 'utils/styledComponents';
@@ -57,8 +56,10 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
   }, [getRawTableExtpipeLastUpdateTime]);
 
   return (
-    <Timeline.Item dot={<LineageDot />}>
-      <LineageTitle>{t('raw-table_other')}</LineageTitle>
+    <LineageSection>
+      <LineageTitle>
+        {t('raw-table_other', { postProcess: 'uppercase' })}
+      </LineageTitle>
       <LineageSubTitle>{t('extpipe-raw-tables-title')}</LineageSubTitle>
       {isExtpipesFetched ? (
         <Table
@@ -74,6 +75,6 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
       ) : (
         <Icon type="Loader" />
       )}
-    </Timeline.Item>
+    </LineageSection>
   );
 };

@@ -1,74 +1,43 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
-import Table from 'antd/lib/table';
-import { FileInfo } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { createLink } from '@cognite/cdf-utilities';
-import { getContainer } from 'utils/shared';
-import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
-import handleError from 'utils/handleError';
-import ColumnWrapper from '../ColumnWrapper';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
+import { getContainer, ContentView } from 'utils';
 import { useTranslation } from 'common/i18n';
+import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
+import { FileInfo } from '@cognite/sdk';
 
-interface filesTableProps {
-  dataSetId: number;
+interface FilesTableProps {
+  data: FileInfo[] | undefined;
+  isLoading: boolean;
 }
 
-const FilesTable = ({ dataSetId }: filesTableProps) => {
+const FilesTable = ({ data = [], isLoading }: FilesTableProps) => {
   const { t } = useTranslation();
-  const [files, setFiles] = useState<FileInfo[]>();
-
-  useEffect(() => {
-    sdk.files
-      .list({ filter: { dataSetIds: [{ id: dataSetId }] } })
-      .then((res) => {
-        setFiles(res.items);
-      })
-      .catch((e) => {
-        handleError({ message: t('fetch-files-failed'), ...e });
-      });
-  }, [dataSetId, t]);
-
-  const filesColumns = [
-    {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'name',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('source_one'),
-      dataIndex: 'source',
-      key: 'source',
-    },
-    {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'id',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('action_other'),
-      render: (record: FileInfo) => (
-        <span>
-          <Link to={createLink(`/explore/file/${record.id}`)}>{t('view')}</Link>
-        </span>
-      ),
-    },
-  ];
+  const { fileColumns } = useResourceTableColumns();
 
   return (
-    <div id="#files">
-      <ItemLabel>{t('files')}</ItemLabel>
+    <ContentView id="filesTableId">
       <Table
-        rowKey="id"
-        columns={filesColumns}
-        dataSource={files}
-        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
+        rowKey="key"
+        loading={isLoading}
+        // The types are interfaces instead of type, can't get them to work
+        // with the types defined in the library. The components worked and
+        // still work fine, therefore I think it's safe to provide any.
+        columns={fileColumns as any}
+        dataSource={data as any}
+        onChange={(_pagination, _filters) => {
+          // TODO: Implement sorting
+        }}
         getPopupContainer={getContainer}
+        emptyContent={
+          <TableNoResults
+            title={t('no-records')}
+            content={t('no-search-records', {
+              $: '',
+            })}
+          />
+        }
+        appendTooltipTo={getContainer()}
       />
-    </div>
+    </ContentView>
   );
 };
 

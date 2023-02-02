@@ -3,7 +3,7 @@ import theme from 'styles/theme';
 import Input from 'antd/lib/input';
 import Card from 'antd/lib/card';
 import Table from 'antd/lib/table';
-import { Button, Input as CogsInput } from '@cognite/cogs.js';
+import { Button, Colors, Input as CogsInput } from '@cognite/cogs.js';
 import Tag from 'antd/lib/tag';
 import Select from 'antd/lib/select';
 import Menu from 'antd/lib/menu';
@@ -131,7 +131,8 @@ export const BlockedInformationWrapper = styled(InformationWrapper)`
 `;
 
 export const ContentView = styled.div`
-  padding-left: 20px;
+  padding: 24px;
+  min-height: 300px;
 `;
 
 export const ItemLabel = styled.h4`
@@ -182,22 +183,9 @@ export const NoDataText = styled.p`
   font-style: italic;
 `;
 
-export const LineageDot = styled.div`
-  height: 10px;
-  width: 10px;
-  border-radius: 20px;
-  background: #4a67fb;
-`;
-export const EmptyLineageDot = styled.div`
-  height: 10px;
-  width: 10px;
-  border-radius: 20px;
-  background: ${theme.disabledColor};
-`;
-
 export const LineageTitle = styled.h5`
   font-size: 16px;
-  text-transform: uppercase;
+  font-weight: 600;
 `;
 
 export const LineageSubTitle = styled.p`
@@ -248,7 +236,7 @@ export const RawCreateButton = styled(Button)`
 `;
 
 export const BasicInfoPane = styled.div`
-  padding-left: 20px;
+  padding: 12px;
   display: inline-block;
   width: 100%;
 `;
@@ -261,9 +249,16 @@ export const SeperatorLine = styled.div`
 
 export const DetailsPane = styled.div`
   height: 100%;
-  padding-left: 20px;
   display: inline-block;
   width: 100%;
+
+  .ant-card-body {
+    padding: 0 !important;
+  }
+
+  .ant-tabs-nav::before {
+    border-bottom: none;
+  }
 `;
 
 export const PaneTitle = styled.h4`
@@ -410,5 +405,41 @@ export const RequiredFieldLabel = styled(FieldLabel)`
   :before {
     content: '*  ';
     color: red;
+  }
+`;
+
+export const Divider = styled.div`
+  background-color: ${Colors['bg-control--disabled']};
+  height: 1px;
+  width: 100%;
+`;
+
+export const LineageSection = styled(Card)`
+  .ant-card-body {
+    padding: 0;
+  }
+
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  padding: 24px;
+`;
+
+export const SectionLine = styled.div`
+  transform: rotate(90deg);
+  width: 32px;
+  border: 6px solid rgba(83, 88, 127, 0.16);
+`;
+
+export const ContentWrapper = styled.div<{ $backgroundColor?: string }>`
+  padding: 24px;
+  min-height: 300px;
+  background-color: ${({ $backgroundColor }) => $backgroundColor || '#FFF'};
+
+  .ant-card-body {
+    padding: 0;
+  }
+
+  .margin-right-bottom {
+    margin: 0 12px 12px 0;
   }
 `;

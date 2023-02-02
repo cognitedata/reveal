@@ -10,6 +10,8 @@ import consoleStyle from './global.css';
 import { styleScope } from 'styles/styleScope';
 import { getContainer } from 'utils/shared';
 
+import antdTheme from './antd-theme.less';
+
 // This will override the appendTo prop on all Tooltips used from cogs
 // @ts-ignore
 CogsTooltip.defaultProps = {
@@ -21,7 +23,7 @@ CogsTooltip.defaultProps = {
 notification.config({ getContainer });
 
 export default function GlobalStyles(props: { children: ReactNode }) {
-  useGlobalStyles([antdStyle, cogsStyles, consoleStyle]);
+  useGlobalStyles([antdStyle, cogsStyles, antdTheme, consoleStyle]);
 
   return (
     <ConfigProvider getPopupContainer={getContainer}>

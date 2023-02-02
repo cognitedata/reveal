@@ -5,13 +5,11 @@ import {
   useState,
 } from 'react';
 import Table from 'antd/lib/table';
-import Timeline from 'antd/lib/timeline';
 import { getContainer } from 'utils/shared';
 import {
-  EmptyLineageDot,
-  LineageDot,
   LineageSubTitle,
   LineageTitle,
+  LineageSection,
 } from '../../utils/styledComponents';
 import { useConsumerTableColumns } from './ConsumerTableColumns';
 import { Consumer, DataSet } from '../../utils/types';
@@ -37,16 +35,10 @@ const ConsumerTable: FunctionComponent<ConsumerTableProps> = ({
   }, [dataSet]);
 
   return (
-    <Timeline.Item
-      dot={
-        consumerList && consumerList.length ? (
-          <LineageDot />
-        ) : (
-          <EmptyLineageDot />
-        )
-      }
-    >
-      <LineageTitle>{t('data-consumer_other')}</LineageTitle>
+    <LineageSection>
+      <LineageTitle>
+        {t('data-consumer_other', { postProcess: 'uppercase' })}
+      </LineageTitle>
       <LineageSubTitle>{t('lineage-data-consumers-subtitle')}</LineageSubTitle>
       <Table
         columns={ConsumerTableColumns}
@@ -57,7 +49,7 @@ const ConsumerTable: FunctionComponent<ConsumerTableProps> = ({
         }
         getPopupContainer={getContainer}
       />
-    </Timeline.Item>
+    </LineageSection>
   );
 };
 

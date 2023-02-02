@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Icons, Loader } from '@cognite/cogs.js';
+import { Icon, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
@@ -27,7 +27,7 @@ const AccessCheck = ({ children }: AccessCheckProps): JSX.Element => {
     return (
       <NoAccessContent>
         <Warning>
-          <Icons.WarningFilled />
+          <Icon type="WarningFilled" />
           <div>{t('access-check-insufficient-access-rights')}</div>
         </Warning>
         <Instructions>{t('access-check-instructions')}</Instructions>

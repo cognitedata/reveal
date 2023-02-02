@@ -1,22 +1,24 @@
 import GlobalStyles from 'styles/GlobalStyles';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import {
   AuthWrapper,
+  createLink,
   getEnv,
   getProject,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Navigate, Routes } from 'react-router-dom';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
 import AccessCheck from 'AccessCheck';
 import { translations } from 'common/i18n';
-import styled from 'styled-components';
+import { FlagProvider } from '@cognite/react-feature-flags';
+import { trackUsage } from 'utils';
 
 const DataSetsList = lazy(() => import('pages/DataSetsList/DataSetsList'));
 const DataSetDetails = lazy(
@@ -37,26 +39,26 @@ const App = () => {
   const projectName = getProject();
   const env = getEnv();
 
+  useEffect(() => {
+    trackUsage({ e: 'data.sets.navigate' });
+  }, []);
+
   return (
-    <I18nWrapper
-      flagProviderProps={{
-        apiToken: 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE',
-        appName,
-        projectName,
-      }}
-      translations={translations}
-      defaultNamespace="data-sets"
-    >
-      <QueryClientProvider client={queryClient}>
-        <GlobalStyles>
-          <SubAppWrapper title="Data Sets">
-            <AuthWrapper
-              loadingScreen={<Loader />}
-              login={() => loginAndAuthIfNeeded(projectName, env)}
-            >
-              <SDKProvider sdk={sdk}>
-                <DataSetsContextProvider>
-                  <PageWrapper>
+    <I18nWrapper translations={translations} defaultNamespace="data-sets">
+      <FlagProvider
+        apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+        appName={appName}
+        projectName={projectName}
+      >
+        <QueryClientProvider client={queryClient}>
+          <GlobalStyles>
+            <SubAppWrapper title="Data Catalog">
+              <AuthWrapper
+                loadingScreen={<Loader />}
+                login={() => loginAndAuthIfNeeded(projectName, env)}
+              >
+                <SDKProvider sdk={sdk}>
+                  <DataSetsContextProvider>
                     <BrowserRouter>
                       <Suspense fallback={<Loader />}>
                         <AccessCheck>
@@ -69,28 +71,31 @@ const App = () => {
                               path="/:tenant/:appPath/data-set/:dataSetId"
                               element={<DataSetDetails />}
                             />
+                            {/* We used to use the /data-sets route, now we're redirecting */}
+                            {/* to /data-catalog instead, this basically sets up a redirect. */}
+                            <Route
+                              path="/:tenant/data-sets"
+                              element={
+                                <Navigate
+                                  replace
+                                  to={createLink('/data-catalog')}
+                                />
+                              }
+                            />
                           </Routes>
                         </AccessCheck>
                       </Suspense>
                     </BrowserRouter>
-                  </PageWrapper>
-                </DataSetsContextProvider>
-              </SDKProvider>
-            </AuthWrapper>
-          </SubAppWrapper>
-        </GlobalStyles>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+                  </DataSetsContextProvider>
+                </SDKProvider>
+              </AuthWrapper>
+            </SubAppWrapper>
+          </GlobalStyles>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </FlagProvider>
     </I18nWrapper>
   );
 };
-
-const PageWrapper = styled.div`
-  padding: 20px;
-
-  @media (min-width: 992px) {
-    padding: 20px 50px;
-  }
-`;
 
 export default App;

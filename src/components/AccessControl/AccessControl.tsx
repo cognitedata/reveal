@@ -1,10 +1,11 @@
 import Spin from 'antd/lib/spin';
 import { isOidcEnv } from 'utils/shared';
 import { useCdfGroups } from 'actions';
-import { TitleOrnament, MiniInfoTitle } from 'utils/styledComponents';
+import { CREATE_GROUP_ACCESS_DOC, ContentWrapper } from 'utils';
 import Owners from './Owners';
 import GroupsWithAccess from './GroupsWithAccess';
 import { useTranslation } from 'common/i18n';
+import { Body, Title } from '@cognite/cogs.js';
 
 interface AccessControlProps {
   dataSetId: number;
@@ -18,37 +19,35 @@ const AccessControl = ({ dataSetId, writeProtected }: AccessControlProps) => {
   const { groups = [], isLoading } = useCdfGroups();
 
   return (
-    <Spin spinning={isLoading}>
-      {writeProtected && (
-        <>
-          <MiniInfoTitle style={{ marginTop: '20px' }}>
-            {t('access-control-owners-of-this-data-set')}
-          </MiniInfoTitle>
-          <TitleOrnament />
-          <p>{t('access-control-p1')}</p>
-          <Owners dataSetId={dataSetId} groups={groups} isOidcEnv={isOidc} />
-        </>
-      )}
-      <MiniInfoTitle style={{ marginTop: '20px' }}>
-        {t('access-control-groups-with-access-scoped')}
-      </MiniInfoTitle>
-      <TitleOrnament />
-      <GroupsWithAccess
-        dataSetId={dataSetId}
-        groups={groups ?? []}
-        isOidcEnv={isOidc}
-      />
-      <p style={{ marginTop: '20px' }}>
-        {t('access-control-p2')}
-        <a
-          href="https://docs.cognite.com/cdf/access/guides/create_groups.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {t('access-control-learn-more-about-scoping')}
-        </a>
-      </p>
-    </Spin>
+    <ContentWrapper>
+      <Spin spinning={isLoading}>
+        {writeProtected && (
+          <>
+            <Title level={4}>
+              {t('access-control-owners-of-this-data-set')}
+            </Title>
+            <Body level={2}>{t('access-control-p1')}</Body>
+            <Owners dataSetId={dataSetId} groups={groups} isOidcEnv={isOidc} />
+          </>
+        )}
+        <Title level={4}>{t('access-control-groups-with-access-scoped')}</Title>
+        <GroupsWithAccess
+          dataSetId={dataSetId}
+          groups={groups ?? []}
+          isOidcEnv={isOidc}
+        />
+        <Body level={2}>
+          {t('access-control-p2')}{' '}
+          <a
+            href={CREATE_GROUP_ACCESS_DOC}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('access-control-learn-more-about-scoping')}
+          </a>
+        </Body>
+      </Spin>
+    </ContentWrapper>
   );
 };
 

@@ -1,10 +1,9 @@
-import { getStringCdfEnv } from 'utils/shared';
-import sdk from '@cognite/cdf-sdk-singleton';
 import { RawWithUpdateTime } from 'components/Lineage/Lineage';
 import { RawExtpipeWithUpdateTime } from 'components/Lineage/Extpipe/ExtpipeRawTables';
 import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
 import { NoStyleList } from 'utils/styledComponents';
 import { useTranslation } from 'common/i18n';
+import { createLink } from '@cognite/cdf-utilities';
 
 export const useRawTableColumns = () => {
   const { t } = useTranslation();
@@ -15,30 +14,37 @@ export const useRawTableColumns = () => {
       key: 'databaseName',
       render: (row: RawWithUpdateTime) => (
         <a
-          href={`/${sdk.project}/raw/${row.databaseName}${
-            getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
-          }`}
+          href={createLink(`/raw`, {
+            activeTable: `["${row.databaseName}","${row.tableName}",null]`,
+            tabs: `[["${row.databaseName}","${row.tableName}",null]]`,
+          })}
           target="_blank"
           rel="noopener noreferrer"
         >
           {row.databaseName}
         </a>
       ),
+      sorter: (a: RawExtpipeWithUpdateTime, b: RawExtpipeWithUpdateTime) => {
+        return a.databaseName.localeCompare(b.databaseName);
+      },
     },
     {
       title: t('lineage-raw-table-column-tableName'),
       key: 'tableName',
       render: (row: RawWithUpdateTime) => (
         <a
-          href={`/${sdk.project}/raw/${row.databaseName}/${row.tableName}${
-            getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
-          }`}
+          href={createLink(`/raw`, {
+            activeTable: `["${row.databaseName}","${row.tableName}",null]`,
+            tabs: `[["${row.databaseName}","${row.tableName}",null]]`,
+          })}
           target="_blank"
           rel="noopener noreferrer"
         >
           {row.tableName}
         </a>
       ),
+      sorter: (a: RawExtpipeWithUpdateTime, b: RawExtpipeWithUpdateTime) =>
+        a.tableName.localeCompare(b.tableName),
     },
     {
       title: t('lineage-raw-table-column-lastUpdate'),
@@ -49,41 +55,7 @@ export const useRawTableColumns = () => {
 
   const rawTablesColumnsWithExtpipe = () => {
     return [
-      {
-        title: t('lineage-raw-table-column-databaseName'),
-        key: 'databaseName',
-        render: (row: RawExtpipeWithUpdateTime) => (
-          <a
-            href={`/${sdk.project}/raw/${row.databaseName}${
-              getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
-            }`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {row.databaseName}
-          </a>
-        ),
-        sorter: (a: RawExtpipeWithUpdateTime, b: RawExtpipeWithUpdateTime) => {
-          return a.databaseName.localeCompare(b.databaseName);
-        },
-      },
-      {
-        title: t('lineage-raw-table-column-tableName'),
-        key: 'tableName',
-        render: (row: RawExtpipeWithUpdateTime) => (
-          <a
-            href={`/${sdk.project}/raw/${row.databaseName}/${row.tableName}${
-              getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
-            }`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {row.tableName}
-          </a>
-        ),
-        sorter: (a: RawExtpipeWithUpdateTime, b: RawExtpipeWithUpdateTime) =>
-          a.tableName.localeCompare(b.tableName),
-      },
+      ...rawTablesColumns.slice(0, 2),
       {
         title: t('lineage-raw-table-column-extpipe'),
         key: 'extpipe',
@@ -106,11 +78,7 @@ export const useRawTableColumns = () => {
           );
         },
       },
-      {
-        title: t('lineage-raw-table-column-lastUpdate'),
-        dataIndex: 'lastUpdate',
-        key: 'lastUpdateTime',
-      },
+      ...rawTablesColumns.slice(2, 3),
     ];
   };
   return { rawTablesColumns, rawTablesColumnsWithExtpipe };

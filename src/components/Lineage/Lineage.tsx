@@ -2,17 +2,19 @@ import { useCallback, useEffect, useState } from 'react';
 import { RawTable } from 'utils/types';
 import Table from 'antd/lib/table';
 import Spin from 'antd/lib/spin';
-import Timeline from 'antd/lib/timeline';
 import Typography from 'antd/lib/typography';
+
 import sdk from '@cognite/cdf-sdk-singleton';
+import { Flex } from '@cognite/cogs.js';
 import { getJetfireUrl, getContainer } from 'utils/shared';
 import { JetfireApi } from 'jetfire/JetfireApi';
 import {
-  ContentView,
-  LineageDot,
   LineageSubTitle,
   LineageTitle,
   NoDataText,
+  SectionLine,
+  LineageSection,
+  ContentWrapper,
 } from 'utils/styledComponents';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -145,66 +147,91 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
     const hasExtractorAccounts =
       extractorAccounts != null && extractorAccounts.length >= 1;
     return (
-      <ContentView>
-        <Timeline>
+      <ContentWrapper $backgroundColor="#FAFAFA">
+        <Flex gap={10} direction="column">
           {hasSources ? (
-            <Timeline.Item dot={<LineageDot />}>
-              <LineageTitle>{t('source_one')}</LineageTitle>
-              <LineageSubTitle>{t('lineage-source-text')}</LineageSubTitle>
-              <Source sourceNames={sourceNames} />
-            </Timeline.Item>
+            <>
+              <LineageSection>
+                <LineageTitle>
+                  {t('source_one', { postProcess: 'uppercase' })}
+                </LineageTitle>
+                <LineageSubTitle>{t('lineage-source-text')}</LineageSubTitle>
+                <Source sourceNames={sourceNames} />
+              </LineageSection>
+              <SectionLine />
+            </>
           ) : null}
           {hasExtractorAccounts ? (
-            <Timeline.Item dot={<LineageDot />}>
-              <LineageTitle>{t('extractor_one')}</LineageTitle>
-              <LineageSubTitle>{t('lineage-extractor-text')}</LineageSubTitle>
-              <Extractor extractorAccounts={extractorAccounts} />
-            </Timeline.Item>
+            <>
+              <LineageSection>
+                <LineageTitle>
+                  {t('extractor_one', { postProcess: 'uppercase' })}
+                </LineageTitle>
+                <LineageSubTitle>{t('lineage-extractor-text')}</LineageSubTitle>
+                <Extractor extractorAccounts={extractorAccounts} />
+              </LineageSection>
+              <SectionLine />
+            </>
           ) : null}
+
           <ExtpipeTable
             dataSetWithExtpipes={dataSetWithExtpipes}
             extractorAccounts={extractorAccounts}
             isExtpipesFetched={isExtpipesFetched}
             sourceNames={sourceNames}
           />
+          <SectionLine />
           <ExtpipeRawTables
             dataSet={dataSetWithExtpipes}
             isExtpipesFetched={isExtpipesFetched}
           />
-          {usedTransformations && (
-            <Timeline.Item dot={<LineageDot />}>
-              <LineageTitle>{t('transformation_one')}</LineageTitle>
-              <LineageSubTitle>
-                {t('lineage-transformations-subtitle')}
-              </LineageSubTitle>
-              <strong>{t}</strong>
 
-              {disableTransformations ? (
-                <NoDataText>{t('lineage-transformations-disabled')}</NoDataText>
-              ) : (
-                <Table
-                  columns={transformationsColumns(onDeleteTransformationClick)}
-                  dataSource={transformationsData}
-                  pagination={{ pageSize: 5 }}
-                  rowKey="id"
-                  getPopupContainer={getContainer}
-                />
-              )}
-              {getExternalTransformations()}
-            </Timeline.Item>
+          {usedTransformations && (
+            <>
+              <SectionLine />
+              <LineageSection>
+                <LineageTitle>
+                  {t('transformation_one', { postProcess: 'uppercase' })}
+                </LineageTitle>
+                <LineageSubTitle>
+                  {t('lineage-transformations-subtitle')}
+                </LineageSubTitle>
+                <strong>{t}</strong>
+
+                {disableTransformations ? (
+                  <NoDataText>
+                    {t('lineage-transformations-disabled')}
+                  </NoDataText>
+                ) : (
+                  <Table
+                    columns={transformationsColumns(
+                      onDeleteTransformationClick
+                    )}
+                    dataSource={transformationsData}
+                    pagination={{ pageSize: 5 }}
+                    rowKey="id"
+                    getPopupContainer={getContainer}
+                  />
+                )}
+                {getExternalTransformations()}
+              </LineageSection>
+            </>
           )}
           {isFlagConsumers && (
-            <ConsumerTable dataSet={dataSetWithExtpipes.dataSet} />
+            <>
+              <SectionLine />
+              <ConsumerTable dataSet={dataSetWithExtpipes.dataSet} />
+            </>
           )}
-        </Timeline>
-      </ContentView>
+        </Flex>
+      </ContentWrapper>
     );
   }
 
   return (
-    <ContentView>
+    <ContentWrapper>
       <Spin />
-    </ContentView>
+    </ContentWrapper>
   );
 };
 

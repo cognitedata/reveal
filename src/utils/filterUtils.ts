@@ -2,30 +2,46 @@ import { notification } from 'antd';
 import isString from 'lodash/isString';
 import { DataSetWithExtpipes } from 'actions';
 import { useTranslation } from 'common/i18n';
+import { GovernanceStatus } from 'components/table-filters';
 
 export const useHandleFilters = () => {
   const { t } = useTranslation();
 
   const handleGovernanceFilter = (
-    qualityFilter: string,
+    governanceFilter: GovernanceStatus[],
     dataSetsList: DataSetWithExtpipes[]
   ) => {
-    if (qualityFilter === 'governed') {
-      return dataSetsList.filter(
-        (set) => set.dataSet.metadata.consoleGoverned === true
-      );
+    let filteredDataSetsList: DataSetWithExtpipes[] = [];
+    if (!governanceFilter.length) {
+      filteredDataSetsList = dataSetsList;
+    } else {
+      if (governanceFilter.includes('governed')) {
+        filteredDataSetsList = filteredDataSetsList.concat(
+          dataSetsList.filter(
+            (set) => set.dataSet.metadata.consoleGoverned === true
+          )
+        );
+      }
+      if (governanceFilter.includes('ungoverned')) {
+        filteredDataSetsList = filteredDataSetsList.concat(
+          dataSetsList.filter(
+            (set) => set.dataSet.metadata.consoleGoverned === false
+          )
+        );
+      }
+      if (governanceFilter.includes('not-defined')) {
+        filteredDataSetsList = filteredDataSetsList.concat(
+          dataSetsList.filter(
+            (set) => set.dataSet.metadata.consoleGoverned === undefined
+          )
+        );
+      }
     }
-    if (qualityFilter === 'ungoverned') {
-      return dataSetsList.filter(
-        (set) => set.dataSet.metadata.consoleGoverned === false
-      );
-    }
-    return dataSetsList;
+    return filteredDataSetsList;
   };
 
   const handleDataSetsSearch = (
     searchValue: string | RegExp,
-    setSearchValue: (arg0: string) => void,
     dataSetsList: DataSetWithExtpipes[]
   ) => {
     if (searchValue !== '') {
@@ -50,7 +66,6 @@ export const useHandleFilters = () => {
         );
       } catch (e) {
         notification.error({ message: t('invalid-search-value') });
-        setSearchValue('');
         return dataSetsList;
       }
     }
@@ -72,19 +87,14 @@ export const useHandleFilters = () => {
 
   const handleDataSetsFilters = (
     showArchived: boolean,
-    searchValue: string | RegExp,
-    setSearchValue: (arg0: string) => void,
-    qualityFilter: string,
+    searchValue: string | RegExp = '',
+    governanceFilter: GovernanceStatus[] = [],
     dataSets: DataSetWithExtpipes[]
   ) => {
     const archiveDataSets = handleArchivedFilter(showArchived, dataSets);
-    const searchDataSets = handleDataSetsSearch(
-      searchValue,
-      setSearchValue,
-      archiveDataSets
-    );
+    const searchDataSets = handleDataSetsSearch(searchValue, archiveDataSets);
     const filteredDataSets = handleGovernanceFilter(
-      qualityFilter,
+      governanceFilter,
       searchDataSets
     );
 

@@ -5,15 +5,6 @@ import { Source, SourceProps } from '../Source/Source';
 import { LineageSubTitle } from '../../../utils/styledComponents';
 import { useTranslation } from 'common/i18n';
 
-const ExtpipeSourceExtractorTitle = styled.h4`
-  text-transform: uppercase;
-`;
-const Wrapper = styled.div`
-  margin: 1rem 0 1rem 2rem;
-  ul:not(:last-child) {
-    margin-bottom: 2rem;
-  }
-`;
 export type ExtpipeSourceExtractorProps = SourceProps & ExtractorProps;
 
 export const ExtpipeSourceExtractor: FunctionComponent<ExtpipeSourceExtractorProps> =
@@ -37,3 +28,14 @@ export const ExtpipeSourceExtractor: FunctionComponent<ExtpipeSourceExtractorPro
       </Wrapper>
     );
   };
+
+const ExtpipeSourceExtractorTitle = styled.h4`
+  text-transform: uppercase;
+`;
+
+const Wrapper = styled.div`
+  margin: 1rem 0 1rem 2rem;
+  ul:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+`;

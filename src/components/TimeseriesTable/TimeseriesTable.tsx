@@ -1,88 +1,46 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
-import Table from 'antd/lib/table';
-import { Timeseries } from '@cognite/sdk';
-import { createLink } from '@cognite/cdf-utilities';
-import handleError from 'utils/handleError';
-import { getContainer } from 'utils/shared';
-import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
-import sdk from '@cognite/cdf-sdk-singleton';
-import ColumnWrapper from '../ColumnWrapper';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
+import { getContainer, ContentView } from 'utils';
 import { useTranslation } from 'common/i18n';
+import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
+import { Timeseries } from '@cognite/sdk';
 
 interface TimeseriesPreviewProps {
-  dataSetId: number;
+  data: Timeseries[] | undefined;
+  isLoading: boolean;
 }
 
-const TimeseriesPreview = ({ dataSetId }: TimeseriesPreviewProps) => {
+const TimeseriesPreview = ({
+  data = [],
+  isLoading,
+}: TimeseriesPreviewProps) => {
   const { t } = useTranslation();
-  const [timeseries, setTimeseries] = useState<Timeseries[]>();
-
-  useEffect(() => {
-    sdk.timeseries
-      .list({ filter: { dataSetIds: [{ id: dataSetId }] } })
-      .then((res) => setTimeseries(res.items))
-      .catch((e) =>
-        handleError({ message: t('fetch-timeseries-failed'), ...e })
-      );
-  }, [dataSetId, t]);
-
-  const timeseriesColumns = [
-    {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'name',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'id',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('external-id'),
-      dataIndex: 'externalId',
-      key: 'externalId',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('description'),
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: t('asset-id'),
-      dataIndex: 'assetId',
-      key: 'assetId',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('action_other'),
-      render: (record: Timeseries) => {
-        return (
-          <span>
-            <Link to={createLink(`/explore/timeSeries/${record.id}`)}>
-              {t('view')}
-            </Link>
-          </span>
-        );
-      },
-    },
-  ];
+  const { timeseriesColumns } = useResourceTableColumns();
 
   return (
-    <div id="#timeseries">
-      <ItemLabel>{t('time-series')}</ItemLabel>
+    <ContentView id="timeseriesTableId">
       <Table
-        rowKey="id"
-        columns={timeseriesColumns}
-        dataSource={timeseries}
-        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
+        rowKey="key"
+        loading={isLoading}
+        // The types are interfaces instead of type, can't get them to work
+        // with the types defined in the library. The components worked and
+        // still work fine, therefore I think it's safe to provide any.
+        columns={timeseriesColumns as any}
+        dataSource={data as any}
+        onChange={(_pagination, _filters) => {
+          // TODO: Implement sorting
+        }}
         getPopupContainer={getContainer}
+        emptyContent={
+          <TableNoResults
+            title={t('no-records')}
+            content={t('no-search-records', {
+              $: '',
+            })}
+          />
+        }
+        appendTooltipTo={getContainer()}
       />
-    </div>
+    </ContentView>
   );
 };
 

@@ -1,24 +1,21 @@
+import Typography from 'antd/lib/typography';
+import { Body, Flex, Icon, Label } from '@cognite/cogs.js';
+import { CopyButton } from '@cognite/cdf-utilities';
 import {
   BasicInfoPane,
-  PaneTitle,
-  ItemLabel,
-  ItemValue,
   NoDataText,
-  ThinBorderLine,
-  ApprovedDot,
-  UnApprovedDot,
-  LabelTag,
-} from 'utils/styledComponents';
-import moment from 'moment';
-import { DataSet } from 'utils/types';
-import Typography from 'antd/lib/typography';
-import Tag from 'antd/lib/tag';
-import WriteProtectedIcon from '../WriteProtectedIcon';
-import InfoTooltip from '../InfoTooltip';
+  DataSet,
+  CREATE_DATASET_DOC,
+  EDIT_DATASET_DOC,
+  EDIT_DATASET_HELP_DOC,
+  getGovernedStatus,
+} from 'utils';
+
 import { useTranslation } from 'common/i18n';
-
-const { Text } = Typography;
-
+import moment from 'moment';
+import DatasetProperty from './DatasetProperty';
+import styled from 'styled-components';
+import InfoTooltip from 'components/InfoTooltip';
 interface BasicInfoCardProps {
   dataSet: DataSet;
 }
@@ -42,130 +39,230 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
     archived = false,
   } = metadata;
 
+  const { statusVariant, statusI18nKey } = getGovernedStatus(consoleGoverned);
+
   return (
     <BasicInfoPane>
-      <PaneTitle>{t('basic-information')}</PaneTitle>
-      <ItemLabel>{t('name')}</ItemLabel>{' '}
-      <ItemValue>
-        {writeProtected && <WriteProtectedIcon />}
-        {name}
-      </ItemValue>
-      <ItemLabel>{t('data-set-id')}</ItemLabel>{' '}
-      <InfoTooltip
-        tooltipText={
-          <span data-testid="id-tooltip">
-            {t('basic-info-tooltip-data-set-id')}
-          </span>
+      <DatasetProperty
+        label={
+          <Body level={2} className="mute">
+            {t('name')}
+          </Body>
         }
-        url="https://docs.cognite.com/cdf/data_governance/guides/datasets/create_data_sets.html#step-3a-ingest-new-data-into-the-data-set"
-        urlTitle={t('learn-more-in-our-docs')}
-        showIcon={false}
-      >
-        <Tag color="blue" style={{ marginBottom: '10px' }}>
-          <Text copyable={{ text: String(id) }}>{id}</Text>
-        </Tag>
-      </InfoTooltip>
-      <ItemLabel>{t('external-id')}</ItemLabel>
-      <ItemValue>
-        {externalId ? (
-          <Typography.Paragraph ellipsis={{ rows: 1, expandable: true }}>
-            {externalId}
-          </Typography.Paragraph>
-        ) : (
-          <NoDataText>{t('external-id-no')}</NoDataText>
-        )}
-      </ItemValue>
-      <ThinBorderLine />
-      <ItemLabel>{t('description')}</ItemLabel>
-      <ItemValue>
-        <Typography.Paragraph ellipsis={{ rows: 2, expandable: true }}>
-          {description}
-        </Typography.Paragraph>
-      </ItemValue>
-      {metadata && (
-        <>
-          <ItemLabel>
+        value={
+          <Flex gap={8} alignItems="center" justifyContent="space-between">
+            <Flex gap={8} alignItems="center">
+              {writeProtected && <Icon type="Lock" />}
+              <Body level={1}>{name}</Body>
+            </Flex>
+            <CopyButton aria-label={t('copy-name')} content={name} />
+          </Flex>
+        }
+      />
+      <DatasetProperty
+        label={
+          <Body level={2} className="mute">
+            {t('description')}
+          </Body>
+        }
+        value={
+          <Body level={1}>
+            <Typography.Paragraph
+              ellipsis={{ rows: 2, expandable: true, symbol: 'view more' }}
+              style={{ margin: 0 }}
+            >
+              {description}
+            </Typography.Paragraph>
+          </Body>
+        }
+      />
+      <DatasetProperty
+        label={
+          <Flex gap={6} direction="row" alignItems="center">
+            <Body level={2} className="mute">
+              {t('data-set-id')}
+            </Body>
             <InfoTooltip
-              title={t('governance-status')}
-              tooltipText={t('basic-info-tooltip-governance-status')}
-              url="https://docs.cognite.com/cdf/data_governance/guides/datasets/edit_explore_data_sets.html#explore-data-sets"
+              tooltipText={
+                <span data-testid="id-tooltip">
+                  {t('basic-info-tooltip-data-set-id')}{' '}
+                </span>
+              }
+              url={CREATE_DATASET_DOC}
               urlTitle={t('learn-more-in-our-docs')}
               showIcon={false}
+            >
+              <HelpIcon type="Help" />
+            </InfoTooltip>
+          </Flex>
+        }
+        value={
+          <Flex gap={8} alignItems="center" justifyContent="space-between">
+            <Body level={1}>{id}</Body>
+            <CopyButton
+              aria-label={t('copy-dataset-id')}
+              content={id.toString()}
             />
-          </ItemLabel>
-          <ItemValue>
-            {consoleGoverned !== undefined ? (
-              <>
-                {consoleGoverned ? (
-                  <>
-                    <ApprovedDot />
-                    {t('governed')}
-                  </>
-                ) : (
-                  <span>
-                    <UnApprovedDot />
-                    {t('ungoverned')}
-                  </span>
-                )}
-              </>
-            ) : (
-              <NoDataText>{t('quality-not-defined')}</NoDataText>
-            )}
-          </ItemValue>
-
-          <ItemLabel>
-            {t('owner')}
-            {Array.isArray(consoleOwners) && consoleOwners.length > 1 && 's'}
-          </ItemLabel>
-          {Array.isArray(consoleOwners) && consoleOwners.length > 0 ? (
-            consoleOwners.map((owner) => (
-              <span key={owner.name}>
-                <ItemValue>{owner.name}</ItemValue>
-                <ItemValue>
-                  <a href={`mailto:${owner.email}`}>{owner.email}</a>
-                </ItemValue>
-              </span>
-            ))
+          </Flex>
+        }
+      />
+      <DatasetProperty
+        label={
+          <Body level={2} className="mute">
+            {t('external-id')}
+          </Body>
+        }
+        value={
+          externalId ? (
+            <Flex gap={8} alignItems="center" justifyContent="space-between">
+              <Body level={1}>{externalId}</Body>
+              <CopyButton
+                aria-label={t('copy-external-id')}
+                content={externalId}
+              />
+            </Flex>
           ) : (
-            <NoDataText>{t('no-owners-set')}</NoDataText>
-          )}
-          <ItemLabel>{t('label_other')}</ItemLabel>
-          <ItemValue>
-            {Array.isArray(consoleLabels) && consoleLabels.length > 0 ? (
-              <>
-                {consoleLabels.map((tag) => (
-                  <LabelTag key={tag}>{tag}</LabelTag>
-                ))}
-              </>
-            ) : (
-              <NoDataText>{t('no-labels-assigned')}</NoDataText>
-            )}
-          </ItemValue>
+            <NoDataText className="mute">{t('external-id-no')}</NoDataText>
+          )
+        }
+      />
+      {metadata && (
+        <>
+          <DatasetProperty
+            label={
+              <Flex gap={6} direction="row" alignItems="center">
+                <Body level={2} className="mute">
+                  {t('governance-status')}
+                </Body>
+                <InfoTooltip
+                  tooltipText={
+                    <span data-testid="id-tooltip">
+                      {t('basic-info-tooltip-governance-status')}{' '}
+                    </span>
+                  }
+                  url={EDIT_DATASET_DOC}
+                  urlTitle={t('learn-more-in-our-docs')}
+                  showIcon={false}
+                >
+                  <HelpIcon type="Help" />
+                </InfoTooltip>
+              </Flex>
+            }
+            value={
+              <div>
+                <Label size="medium" variant={statusVariant}>
+                  {t(statusI18nKey)}
+                </Label>
+              </div>
+            }
+          />
+          <DatasetProperty
+            label={
+              <Body level={2} className="mute">
+                {consoleOwners?.length ? t('owner') : t('owner_other')}
+              </Body>
+            }
+            value={
+              consoleOwners?.length ? (
+                consoleOwners.map((owner) => (
+                  <div key={owner.name}>
+                    <Flex alignItems="center" justifyContent="space-between">
+                      <Flex direction="column" justifyContent="flex-start">
+                        <Body level={1}>{owner.name}</Body>
+                        <Body level={1}>
+                          <a href={`mailto:${owner.email}`}>{owner.email}</a>
+                        </Body>
+                      </Flex>
+                      <CopyButton
+                        aria-label={t('copy-owner-email')}
+                        content={owner.email}
+                      />
+                    </Flex>
+                  </div>
+                ))
+              ) : (
+                <NoDataText className="mute">{t('no-owners-set')}</NoDataText>
+              )
+            }
+          />
+
+          <DatasetProperty
+            label={
+              <Body level={2} className="mute">
+                {t('label_other')}
+              </Body>
+            }
+            value={
+              consoleLabels?.length ? (
+                <Flex gap={6} alignItems="center" direction="row" wrap="wrap">
+                  {consoleLabels.map((tag) => (
+                    <Label size="medium" variant="default">
+                      {tag}
+                    </Label>
+                  ))}
+                </Flex>
+              ) : (
+                <NoDataText className="mute">
+                  {t('no-labels-assigned')}
+                </NoDataText>
+              )
+            }
+          />
         </>
       )}
-      <ThinBorderLine />
-      <ItemLabel>{t('created-by')}</ItemLabel>
-      <ItemValue>
-        {consoleCreatedBy ? (
-          <>{consoleCreatedBy.username}</>
-        ) : (
-          <NoDataText>{t('not-available')}</NoDataText>
-        )}
-      </ItemValue>
-      <ItemLabel>{t('last-updated')}</ItemLabel>
-      <ItemValue>{moment(lastUpdatedTime).calendar()}</ItemValue>
+
+      <DatasetProperty
+        label={
+          <Body level={2} className="mute">
+            {t('created-by')}
+          </Body>
+        }
+        value={
+          consoleCreatedBy ? (
+            <Body level={1}>{consoleCreatedBy.username}</Body>
+          ) : (
+            <NoDataText className="mute">{t('not-available')}</NoDataText>
+          )
+        }
+      />
+
+      <DatasetProperty
+        label={
+          <Body level={2} className="mute">
+            {t('last-updated')}
+          </Body>
+        }
+        value={<Body level={1}>{moment(lastUpdatedTime).calendar()}</Body>}
+      />
+
       {archived && (
-        <InfoTooltip
-          tooltipText={t('basic-info-tooltip-data-set-archived')}
-          url="https://docs.cognite.com/cdf/data_governance/guides/datasets/edit_explore_data_sets.html"
-          urlTitle={t('learn-more-in-our-docs')}
-          showIcon={false}
-        >
-          <Tag color="red">{t('archived')}</Tag>
-        </InfoTooltip>
+        <DatasetProperty
+          value={
+            <Flex gap={6} direction="row" alignItems="center">
+              <InfoTooltip
+                tooltipText={
+                  <span data-testid="id-tooltip">
+                    {t('basic-info-tooltip-data-set-archived')}{' '}
+                  </span>
+                }
+                url={EDIT_DATASET_HELP_DOC}
+                urlTitle={t('learn-more-in-our-docs')}
+                showIcon={false}
+              >
+                <Label size="medium" variant="danger">
+                  {t('archived')}
+                </Label>
+              </InfoTooltip>
+            </Flex>
+          }
+        />
       )}
     </BasicInfoPane>
   );
 };
+
+const HelpIcon = styled(Icon)`
+  margin-top: 3px;
+`;
 
 export default BasicInfoCard;

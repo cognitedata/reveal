@@ -48,8 +48,7 @@ describe('FilterUtils', () => {
       const res = result.current.handleDataSetsFilters(
         false,
         'extpi',
-        jest.fn(),
-        'all',
+        undefined,
         dataSetsWithExtpipes
       );
       expect(res.length).toEqual(1);
@@ -60,8 +59,7 @@ describe('FilterUtils', () => {
       const res = result.current.handleDataSetsFilters(
         false,
         'external_999',
-        jest.fn(),
-        'all',
+        undefined,
         dataSetsWithExtpipes
       );
       expect(res.length).toEqual(1);
@@ -72,8 +70,7 @@ describe('FilterUtils', () => {
       const res = result.current.handleDataSetsFilters(
         false,
         'baz',
-        jest.fn(),
-        'all',
+        undefined,
         dataSetsWithExtpipes
       );
       expect(res.length).toEqual(1);

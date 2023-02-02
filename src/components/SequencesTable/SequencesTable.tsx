@@ -1,75 +1,43 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
-import Table from 'antd/lib/table';
-import { Sequence } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { createLink } from '@cognite/cdf-utilities';
-import { handleError } from 'utils/handleError';
-import { getContainer } from 'utils/shared';
-import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
-import ColumnWrapper from '../ColumnWrapper';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
+import { getContainer, ContentView } from 'utils';
 import { useTranslation } from 'common/i18n';
+import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
+import { Sequence } from '@cognite/sdk';
 
 interface sequencesTableProps {
-  dataSetId: number;
+  data: Sequence[] | undefined;
+  isLoading: boolean;
 }
 
-const SequencesTable = ({ dataSetId }: sequencesTableProps) => {
+const SequencesTable = ({ data = [], isLoading }: sequencesTableProps) => {
   const { t } = useTranslation();
-  const [sequences, setSequences] = useState<Sequence[]>();
-
-  const sequencesColumns = [
-    {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'name',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'id',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('description'),
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: t('action_other'),
-      render: (record: Sequence) => (
-        <span>
-          <Link to={createLink(`/explore/sequence/${record.id}`)}>
-            {t('view')}
-          </Link>
-        </span>
-      ),
-    },
-  ];
-  useEffect(() => {
-    sdk.sequences
-      .list({ filter: { dataSetIds: [{ id: dataSetId }] } })
-      .then((res) => {
-        setSequences(res.items);
-      })
-      .catch((e) => {
-        handleError({ message: t('fetch-sequences-failed'), ...e });
-      });
-  }, [dataSetId, t]);
+  const { sequenceColumns } = useResourceTableColumns();
 
   return (
-    <div id="#sequences">
-      <ItemLabel>{t('sequence_other')}</ItemLabel>
+    <ContentView id="sequencesTableId">
       <Table
-        rowKey="id"
-        columns={sequencesColumns}
-        dataSource={sequences}
-        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
+        rowKey="key"
+        loading={isLoading}
+        // The types are interfaces instead of type, can't get them to work
+        // with the types defined in the library. The components worked and
+        // still work fine, therefore I think it's safe to provide any.
+        columns={sequenceColumns as any}
+        dataSource={data as any}
+        onChange={(_pagination, _filters) => {
+          // TODO: Implement sorting
+        }}
         getPopupContainer={getContainer}
+        emptyContent={
+          <TableNoResults
+            title={t('no-records')}
+            content={t('no-search-records', {
+              $: '',
+            })}
+          />
+        }
+        appendTooltipTo={getContainer()}
       />
-    </div>
+    </ContentView>
   );
 };
 

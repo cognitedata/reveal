@@ -19,7 +19,7 @@ interface AggregateObject {
   value: string;
 }
 
-const AGGREGATE_EVENTS_PATH = `/api/playground/projects/${sdk.project}/events/aggregate`;
+const AGGREGATE_EVENTS_PATH = `/api/v1/projects/${sdk.project}/events/aggregate`;
 
 const EventsProfile = (props: EventsProfileProps) => {
   const { t } = useTranslation();
@@ -43,7 +43,7 @@ const EventsProfile = (props: EventsProfileProps) => {
     sdk
       .post(AGGREGATE_EVENTS_PATH, {
         data: {
-          filter: { dataSetIds: [props.dataSetId] },
+          filter: { dataSetIds: [{ id: props.dataSetId }] },
           fields: ['type'],
           aggregate: 'values',
         },
@@ -57,7 +57,7 @@ const EventsProfile = (props: EventsProfileProps) => {
     sdk
       .post(AGGREGATE_EVENTS_PATH, {
         data: {
-          filter: { dataSetIds: [props.dataSetId] },
+          filter: { dataSetIds: [{ id: props.dataSetId }] },
           fields: ['subtype'],
           aggregate: 'values',
         },
