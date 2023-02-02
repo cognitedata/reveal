@@ -50,7 +50,7 @@ const getUpdater =
   (sdk: CogniteClient, project: string) => async (g: Group) => {
     const projectData = await sdk.projects.retrieve(project);
     // @ts-ignore sdk type not up to date wrt source
-    const { name, sourceId, source, capabilities, id } = g;
+    const { name, sourceId, source, capabilities, id, metadata } = g;
     const defaultGroup = projectData?.defaultGroupId === id;
     let groupAccountIds: number[];
     try {
@@ -63,7 +63,7 @@ const getUpdater =
 
     const [newGroup] = await sdk.groups.create([
       // @ts-ignore
-      { name, sourceId, source, capabilities },
+      { name, sourceId, source, capabilities, metadata },
     ]);
 
     if (groupAccountIds.length > 0) {
