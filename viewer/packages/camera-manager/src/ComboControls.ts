@@ -393,7 +393,7 @@ export class ComboControls extends EventDispatcher {
     }
   };
 
-  private readonly onMouseDown = (event: MouseEvent) => {
+  private readonly onMouseDown = (event: PointerEvent) => {
     if (!this._enabled) {
       return;
     }
@@ -443,8 +443,7 @@ export class ComboControls extends EventDispatcher {
       const factor = isFirefox ? 1 : 40;
       delta = event.deltaY / factor;
     }
-    const convertedEvent = event as MouseEvent as PointerEvent;
-    const domElementRelativeOffset = clickOrTouchEventOffset(convertedEvent, this._domElement);
+    const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
 
     const { x, y } = this.convertPixelCoordinatesToNormalized(
       domElementRelativeOffset.offsetX,
@@ -516,10 +515,10 @@ export class ComboControls extends EventDispatcher {
     }
   };
 
-  private readonly startMouseRotation = (initialEvent: MouseEvent) => {
+  private readonly startMouseRotation = (initialEvent: PointerEvent) => {
     let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
 
-    const onMouseMove = (event: MouseEvent) => {
+    const onMouseMove = (event: PointerEvent) => {
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
       const deltaOffset = previousOffset.clone().sub(newOffset);
       this._accumulatedMouseMove.add(deltaOffset);
@@ -535,10 +534,10 @@ export class ComboControls extends EventDispatcher {
     window.addEventListener('pointerup', onMouseUp, { passive: false });
   };
 
-  private readonly startMousePan = (initialEvent: MouseEvent) => {
+  private readonly startMousePan = (initialEvent: PointerEvent) => {
     let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
 
-    const onMouseMove = (event: MouseEvent) => {
+    const onMouseMove = (event: PointerEvent) => {
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
       const xDifference = newOffset.x - previousOffset.x;
       const yDifference = newOffset.y - previousOffset.y;

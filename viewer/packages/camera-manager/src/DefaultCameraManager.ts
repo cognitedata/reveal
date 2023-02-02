@@ -58,7 +58,7 @@ export class DefaultCameraManager implements CameraManager {
   private isEnabled = true;
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
-  private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
+  private _onClick: ((event: PointerEvent) => void) | undefined = undefined;
   private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
 
   private static readonly AnimationDuration = 300;
@@ -511,7 +511,7 @@ export class DefaultCameraManager implements CameraManager {
 
   /**
    * Calculates new camera target based on cursor position.
-   * @param event MouseEvent that contains pointer location data.
+   * @param event PointerEvent that contains pointer location data.
    */
   private async calculateNewTarget(event: PointerEventData): Promise<THREE.Vector3> {
     const { offsetX, offsetY } = event;
@@ -584,8 +584,7 @@ export class DefaultCameraManager implements CameraManager {
       // Added because cameraControls are disabled when doing picking, so
       // preventDefault could be not called on wheel event and produce unwanted scrolling.
       e.preventDefault();
-      const convertedEvent = e as MouseEvent as PointerEvent;
-      const domElementRelativeOffset = clickOrTouchEventOffset(convertedEvent, this._domElement);
+      const domElementRelativeOffset = clickOrTouchEventOffset(e, this._domElement);
 
       const currentTime = performance.now();
       const currentMousePosition = new THREE.Vector2(
