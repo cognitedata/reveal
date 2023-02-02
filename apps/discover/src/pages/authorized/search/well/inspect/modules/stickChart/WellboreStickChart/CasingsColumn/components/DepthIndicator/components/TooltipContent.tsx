@@ -1,10 +1,9 @@
 import * as React from 'react';
 
-import isUndefined from 'lodash/isUndefined';
-
 import { Body, Menu } from '@cognite/cogs.js';
 
 import { CasingAssemblyView } from '../../../../../types';
+import { visualizeDistance } from '../../../../../utils/visualizeDistance';
 import { TooptipSection } from '../elements';
 
 export const TooltipContent: React.FC<CasingAssemblyView> = ({
@@ -13,48 +12,67 @@ export const TooltipContent: React.FC<CasingAssemblyView> = ({
   trueVerticalDepthTop,
   trueVerticalDepthBase,
   isLiner,
+  cementing,
 }) => {
   const assemblyType = isLiner ? 'Liner' : 'Casing';
 
   return (
     <Menu>
       <TooptipSection>
-        <Body level={3} strong>
-          Assembly Type:
-        </Body>
-        <Body level={3}>{assemblyType}</Body>
+        <Title>Assembly Type:</Title>
+        <Content>{assemblyType}</Content>
       </TooptipSection>
 
       <TooptipSection>
-        <Body level={3} strong>
-          Depth (MD):
-        </Body>
-        <Body level={3}>
-          Top Depth (MD): {`${measuredDepthTop.value} ${measuredDepthTop.unit}`}
-        </Body>
-        <Body level={3}>
-          Bottom Depth (MD):{' '}
-          {`${measuredDepthBase.value} ${measuredDepthBase.unit}`}
-        </Body>
+        <Title>Depth (MD):</Title>
+        <Content>Top Depth (MD): {visualizeDistance(measuredDepthTop)}</Content>
+        <Content>
+          Bottom Depth (MD): {visualizeDistance(measuredDepthBase)}
+        </Content>
       </TooptipSection>
 
       <TooptipSection>
-        <Body level={3} strong>
-          Depth (TVD):
-        </Body>
-        <Body level={3}>
-          Top Depth (TVD):{' '}
-          {isUndefined(trueVerticalDepthTop)
-            ? 'N/A'
-            : `${trueVerticalDepthTop.value} ${trueVerticalDepthTop.unit}`}
-        </Body>
-        <Body level={3}>
+        <Title>Depth (TVD):</Title>
+        <Content>
+          Top Depth (TVD): {visualizeDistance(trueVerticalDepthTop)}
+        </Content>
+        <Content>
+          Bottom Depth (TVD): {visualizeDistance(trueVerticalDepthBase)}
+        </Content>
+      </TooptipSection>
+
+      <TooptipSection>
+        <Title>Cement Depth (MD):</Title>
+        <Content>
+          Top Depth (MD): {visualizeDistance(cementing?.topMeasuredDepth)}
+        </Content>
+        <Content>
+          Bottom Depth (MD): {visualizeDistance(cementing?.baseMeasuredDepth)}
+        </Content>
+      </TooptipSection>
+
+      <TooptipSection>
+        <Title>Cement Depth (TVD):</Title>
+        <Content>
+          Top Depth (TVD): {visualizeDistance(cementing?.topTrueVerticalDepth)}
+        </Content>
+        <Content>
           Bottom Depth (TVD):{' '}
-          {isUndefined(trueVerticalDepthBase)
-            ? 'N/A'
-            : `${trueVerticalDepthBase.value} ${trueVerticalDepthBase.unit}`}
-        </Body>
+          {visualizeDistance(cementing?.baseTrueVerticalDepth)}
+        </Content>
       </TooptipSection>
     </Menu>
   );
+};
+
+const Title: React.FC<React.PropsWithChildren> = ({ children }) => {
+  return (
+    <Body level={3} strong>
+      {children}
+    </Body>
+  );
+};
+
+const Content: React.FC<React.PropsWithChildren> = ({ children }) => {
+  return <Body level={3}>{children}</Body>;
 };

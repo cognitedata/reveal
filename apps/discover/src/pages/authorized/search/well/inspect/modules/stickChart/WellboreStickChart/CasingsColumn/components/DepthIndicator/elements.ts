@@ -98,6 +98,7 @@ export const CementIndicator = styled.div`
   border-right: 12px solid ${CEMENT_COLOR};
   margin-left: 10px;
   float: left;
+  opacity: 0.4;
   ${(props: { top: number; height: number }) => `
     margin-top: ${props.top}px;
     border-top: ${props.height}px solid ${CEMENT_COLOR};
