@@ -47,7 +47,7 @@ const defaultTranslations = makeDefaultTranslations(
   'Spread measured by using the median absolute deviation (MAD) of time deltas (time difference between two consecutive points)',
   'Time delta median',
   'Median of the time deltas (time difference between two consecutive points)',
-  'Metric distribution',
+  'Metric Distribution',
   'Density',
   'Timedelta',
   'Gaps',
@@ -371,7 +371,7 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
               {/* Metric distribution selector */}
               <BlockSpacer>
                 <SidebarFormLabel>
-                  <b>{t['Metric distribution']}</b>
+                  <b>{t['Metric Distribution']}</b>
                 </SidebarFormLabel>
                 <SourceSelect
                   options={distributionOptions}
