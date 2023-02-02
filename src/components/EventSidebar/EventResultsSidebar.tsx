@@ -20,6 +20,7 @@ import {
   selectedEventsAtom,
 } from 'models/event-results/atom';
 import { Col, Row } from 'antd';
+import { orderBy } from 'lodash';
 import EventInfoBox from './EventInfoBox';
 import { isEventSelected } from './helpers';
 
@@ -30,8 +31,8 @@ type Props = {
 };
 
 const sortOptions = [
-  { value: 'new' as const, label: 'Newest' },
-  { value: 'old' as const, label: 'Oldest' },
+  { value: 'desc' as const, label: 'Newest' },
+  { value: 'asc' as const, label: 'Oldest' },
 ];
 
 const EventResultsSidebar = memo(
@@ -41,22 +42,31 @@ const EventResultsSidebar = memo(
       activeEventFilterResultsSelector
     );
 
+    const [sortOption, setSortOption] = useState<typeof sortOptions[number]>(
+      sortOptions[1]
+    );
+
     const [selectedEvents, setSelectedEvents] =
       useRecoilState(selectedEventsAtom);
 
     const [activeEvent, setActiveEvent] = useRecoilState(activeEventIdAtom);
 
-    const selectedEventResults = activeEventFilterResults?.results?.filter(
-      (event) => isEventSelected(selectedEvents, event)
+    const selectedEventResults = orderBy(
+      activeEventFilterResults?.results?.filter((event) =>
+        isEventSelected(selectedEvents, event)
+      ),
+      ['startTime'],
+      [sortOption.value]
     );
 
-    const remainingEventResults = activeEventFilterResults?.results?.filter(
-      (event) => !isEventSelected(selectedEvents, event)
+    const remainingEventResults = orderBy(
+      activeEventFilterResults?.results?.filter(
+        (event) => !isEventSelected(selectedEvents, event)
+      ),
+      ['startTime'],
+      [sortOption.value]
     );
 
-    const [sortOption, setSortOption] = useState<typeof sortOptions[number]>(
-      sortOptions[1]
-    );
     const handleSortList = (option: typeof sortOption) => {
       setSortOption(option);
     };
