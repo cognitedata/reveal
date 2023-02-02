@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { assertNever, pixelToNormalizedDeviceCoordinates } from '@reveal/utilities';
+import { assertNever, clickOrTouchEventOffset, pixelToNormalizedDeviceCoordinates } from '@reveal/utilities';
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
@@ -236,6 +236,9 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   private readonly zoomCamera = (event: WheelEvent) => {
+    // Added to prevent browser scrolling when zooming
+    event.preventDefault();
+
     const sensitivityScaler = 0.05;
     const newFov = Math.min(
       Math.max(this._camera.fov + event.deltaY * sensitivityScaler, this._minFOV),
@@ -261,7 +264,8 @@ export class StationaryCameraManager implements CameraManager {
 
   private getCursorRay(event: WheelEvent) {
     const { width, height } = this._domElement.getBoundingClientRect();
-    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(event.clientX, event.clientY, width, height);
+    const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
+    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
     const ray = new THREE.Vector3(ndcCoordinates.x, ndcCoordinates.y, 1)
       .unproject(this._camera)
       .sub(this._camera.position);
