@@ -48,8 +48,6 @@ PUBLIC = glob([
     "public/**/*.png",
 ])
 
-BUILD = glob(["build/*"])
-
 RAW_ENV = {
     "GENERATE_SOURCEMAP": "false",
     "BROWSER": "none",
@@ -397,13 +395,8 @@ react_app_rewired(
     ],
 )
 
-copy_to_bin(
-    name = "copy_build_to_bin",
-    srcs = BUILD,
-)
-
 react_app_rewired(
-    name = "build_simint",
+    name = "build",
     args = [
         "--node_options=--require=./$(execpath chdir.js)",
         "--max_old_space_size=2000",
@@ -411,12 +404,10 @@ react_app_rewired(
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
         "chdir-workspace.js",
-        ":copy_build_to_bin",
     ],
     env = RAW_ENV,
     output_dir = True,
     tags = [
-        "manual",
         # This tag instructs ibazel to pipe into stdin a event describing actions.
         # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
         # So use this to prevent EOF.
