@@ -325,7 +325,7 @@ export class PointCloudOctreePickerHelper {
     if (!points) throw new Error('Point cloud not found');
 
     return this.helperVec3
-      .fromBufferAttribute(points.geometry.attributes['position'], pIndex)
+      .fromBufferAttribute(points.geometry.attributes['position'] as THREE.BufferAttribute, pIndex)
       .applyMatrix4(points.matrixWorld);
   }
 

@@ -21,9 +21,9 @@ export class Image360EntityFactory<T> {
   ): Promise<Image360Entity[]> {
     const event360Metadatas = await this._image360DataProvider.get360ImageDescriptors(dataProviderFilter);
     return event360Metadatas.map(
-      event360Metadata =>
+      image360Descriptor =>
         new Image360Entity(
-          event360Metadata,
+          image360Descriptor,
           this._sceneHandler,
           this._image360DataProvider,
           postTransform,

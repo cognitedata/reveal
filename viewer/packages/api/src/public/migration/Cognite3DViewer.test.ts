@@ -16,7 +16,7 @@ import { createGlContext, mockClientAuthentication } from '../../../../../test-u
 
 import { jest } from '@jest/globals';
 
-const sceneJson = (await import('./Cognite3DViewer.test-scene.json.json')).default;
+const sceneJson = (await import('./Cognite3DViewer.test-scene.json.json', { assert: { type: 'json' } })).default;
 
 const context = await createGlContext(64, 64, { preserveDrawingBuffer: true });
 

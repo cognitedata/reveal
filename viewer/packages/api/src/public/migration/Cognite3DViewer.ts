@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import viewerPackageJson from '../../../../../package.json';
+import viewerPackageJson from '../../../../../package.json' assert { type: 'json' };
 
 import TWEEN from '@tweenjs/tween.js';
 import { Subscription, fromEventPattern } from 'rxjs';
@@ -1134,7 +1134,7 @@ export class Cognite3DViewer {
    * `html2canvas` is used to draw UI and this has some limitations on what CSS properties it is able to render. See {@link https://html2canvas.hertzen.com/documentation the html2canvas documentation} for details.
    * @param width Width of the final image. Default is current canvas size.
    * @param height Height of the final image. Default is current canvas size.
-   * @param includeUI If false the screenshot will include only the rendered 3D.
+   * @param includeUI If false the screenshot will include only the rendered 3D. Default is true.
    * @returns A {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs Data URL} of the image ('image/png').
    * @example
    * ```js

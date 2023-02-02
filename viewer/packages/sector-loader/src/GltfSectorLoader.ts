@@ -111,7 +111,7 @@ export class GltfSectorLoader {
     const treeIndexSet = new Map<number, number>();
 
     for (let i = 0; i < treeIndexAttribute.count; i++) {
-      incrementOrInsertIndex(treeIndexSet, treeIndexAttribute.getX(i));
+      incrementOrInsertIndex(treeIndexSet, (treeIndexAttribute as THREE.BufferAttribute).getX(i));
     }
 
     return treeIndexSet;

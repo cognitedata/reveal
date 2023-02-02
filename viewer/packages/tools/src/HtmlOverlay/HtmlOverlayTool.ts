@@ -426,7 +426,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     for (const [htmlElement, element] of this._htmlOverlays.entries()) {
       const { state } = element;
       const elementBounds = createElementBounds(element);
-      if (!state.visible || !elementBounds.intersectsBox(canvasBounds)) {
+      if (!state.visible || !elementBounds.intersectsBox(canvasBounds) || htmlElement.hidden) {
         continue;
       }
       grid.insert(elementBounds, { htmlElement, ...element });
