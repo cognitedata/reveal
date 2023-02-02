@@ -23,7 +23,8 @@ describe(Image360EntityFactory.name, () => {
           transformations: {
             translation: new THREE.Matrix4(),
             rotation: new THREE.Matrix4()
-          }
+          },
+          faceDescriptors: []
         },
         {
           id: '1',
@@ -33,7 +34,8 @@ describe(Image360EntityFactory.name, () => {
           transformations: {
             translation: new THREE.Matrix4(),
             rotation: new THREE.Matrix4()
-          }
+          },
+          faceDescriptors: []
         },
         {
           id: '2',
@@ -43,7 +45,8 @@ describe(Image360EntityFactory.name, () => {
           transformations: {
             translation: new THREE.Matrix4(),
             rotation: new THREE.Matrix4()
-          }
+          },
+          faceDescriptors: []
         }
       ]);
 
