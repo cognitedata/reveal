@@ -33,13 +33,13 @@ export const DocumentNamePreview = ({
 
   if (isPreviewable) {
     return (
-      <Popover
-        content={<FileThumbnail file={file} />}
-        title={fileName}
-        trigger="hover"
-        placement="topLeft"
-      >
-        <Flex gap={4} alignItems="center">
+      <Flex gap={4} alignItems="center">
+        <Popover
+          content={<FileThumbnail file={file} />}
+          title={fileName}
+          trigger="hover"
+          placement="topLeft"
+        >
           <DocumentIconWrapper>
             {file?.mimeType && (
               <DocumentIcon
@@ -47,16 +47,16 @@ export const DocumentNamePreview = ({
               />
             )}
           </DocumentIconWrapper>
+        </Popover>
 
-          <EllipsisText level={2} lines={2}>
-            <Highlighter
-              searchWords={(query || '').split(' ')}
-              textToHighlight={fileName || ''}
-              autoEscape
-            />
-          </EllipsisText>
-        </Flex>
-      </Popover>
+        <EllipsisText level={2} lines={2}>
+          <Highlighter
+            searchWords={(query || '').split(' ')}
+            textToHighlight={fileName || ''}
+            autoEscape
+          />
+        </EllipsisText>
+      </Flex>
     );
   }
 
