@@ -4,10 +4,10 @@ export class AutoTerminatingWorker {
   private timeoutId: number | undefined = undefined;
   private terminated: boolean = false;
 
-  constructor(private readonly wrappedWorker: Worker, private readonly maxIdle: number) {}
+  constructor(private wrappedWorker: Worker | undefined, private readonly maxIdle: number) {}
 
   public get worker(): Worker {
-    return this.wrappedWorker;
+    return this.wrappedWorker!;
   }
 
   get isTerminated(): boolean {
@@ -17,7 +17,8 @@ export class AutoTerminatingWorker {
   markIdle(): void {
     this.timeoutId = window.setTimeout(() => {
       this.terminated = true;
-      this.wrappedWorker.terminate();
+      this.wrappedWorker!.terminate();
+      this.wrappedWorker = undefined;
     }, this.maxIdle);
   }
 
