@@ -22,6 +22,8 @@ export class PointCloudOctreePicker {
       this.pickState.material.dispose();
       this.pickState.renderTarget.dispose();
     }
+
+    this.pickState = undefined;
   }
 
   pick(camera: Camera, ray: Ray, octrees: PointCloudOctree[], params: Partial<PickParams> = {}): PickPoint | null {
