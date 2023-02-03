@@ -66,7 +66,7 @@ export class Potree implements IPotree {
   private readonly _modelDataProvider: ModelDataProvider;
   private readonly _materialManager: PointCloudMaterialManager;
 
-  private readonly _throttledUpdateFunc = throttle(
+  private _throttledUpdateFunc = throttle(
     (pointClouds: PointCloudOctree[], camera: THREE.Camera, renderer: WebGLRenderer) =>
       this.innerUpdatePointClouds(pointClouds, camera, renderer),
     UPDATE_THROTTLE_TIME_MS
@@ -80,6 +80,14 @@ export class Potree implements IPotree {
   constructor(modelDataProvider: ModelDataProvider, pointCloudMaterialManager: PointCloudMaterialManager) {
     this._modelDataProvider = modelDataProvider;
     this._materialManager = pointCloudMaterialManager;
+  }
+
+  reset(): void {
+    this._throttledUpdateFunc = throttle(
+      (pointClouds: PointCloudOctree[], camera: THREE.Camera, renderer: WebGLRenderer) =>
+        this.innerUpdatePointClouds(pointClouds, camera, renderer),
+      UPDATE_THROTTLE_TIME_MS
+    );
   }
 
   async loadPointCloud(
