@@ -116,6 +116,7 @@ export const AssetDetailsTreeTable = ({
           cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
           size: 300,
         },
+        Table.Columns.source(),
         ...metadataColumns,
       ] as ColumnDef<InternalAssetTreeData>[],
     [metadataColumns]

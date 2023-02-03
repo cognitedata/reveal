@@ -67,6 +67,7 @@ export const AssetSummary = ({
           ...Table.Columns.labels,
           enableSorting: false,
         },
+        Table.Columns.source(query),
         ...metadataColumns,
       ] as ColumnDef<AssetWithRelationshipLabels>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
