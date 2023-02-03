@@ -29,6 +29,8 @@ import { TableNoResults } from '@cognite/cdf-utilities';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { Images360MenuItem } from '@data-exploration-app/containers/ThreeD/title/Images360MenuItem';
+import { DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT } from '@data-exploration-lib/domain-layer';
+import { SECONDARY_MODEL_DISPLAY_LIMIT } from '../utils';
 
 type SecondaryModelDropdownProps = {
   mainModel?: Model3D;
@@ -51,6 +53,11 @@ const SecondaryModelDropdown = ({
   setImages360,
   viewer,
 }: SecondaryModelDropdownProps): JSX.Element => {
+  const [numOfModelToDisplay, setNumOfModelToDisplay] = useState<number>(
+    SECONDARY_MODEL_DISPLAY_LIMIT
+  );
+  const [numOfImages360ToDisplay, setNumOfImages360ToDisplay] =
+    useState<number>(SECONDARY_MODEL_DISPLAY_LIMIT);
   const [searchQuery, setSearchQuery] = useState('');
   const [tempSecondaryModels, setTempSecondaryModels] =
     useState(secondaryModels);
@@ -103,7 +110,7 @@ const SecondaryModelDropdown = ({
     fetchNextPage: fetchMore,
     hasNextPage: canFetchMore,
     isFetchingNextPage: isFetchingMore,
-  } = useInfinite3DModels();
+  } = useInfinite3DModels(DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT);
 
   useEffect(() => {
     if (canFetchMore && !isFetchingMore) {
@@ -201,6 +208,26 @@ const SecondaryModelDropdown = ({
     }
   };
 
+  const handleSecondaryModelScroll = (e: any) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    const offset = numOfModelToDisplay + SECONDARY_MODEL_DISPLAY_LIMIT;
+    if (scrollTop + clientHeight >= scrollHeight) {
+      if (offset < filteredModels.length) {
+        setNumOfModelToDisplay(offset);
+      }
+    }
+  };
+
+  const handleImages360Scroll = (e: any) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    const offset = numOfImages360ToDisplay + SECONDARY_MODEL_DISPLAY_LIMIT;
+    if (scrollTop + clientHeight >= scrollHeight) {
+      if (offset < filteredImages360SiteIds.length) {
+        setNumOfImages360ToDisplay(offset);
+      }
+    }
+  };
+
   return (
     <MenuWrapper>
       <StyledInput
@@ -214,34 +241,34 @@ const SecondaryModelDropdown = ({
         revision={mainRevision}
       />
       <Menu.Divider />
-      <StyledSecondaryModelListContainer>
+      <StyledSecondaryModelListContainer onScroll={handleImages360Scroll}>
         {viewer && filteredImages360SiteIds.length ? (
           <>
             <Menu.Header>360 Images</Menu.Header>
-            {filteredImages360SiteIds.map((images360Item) => (
-              <Images360MenuItem
-                key={images360Item.siteId}
-                siteId={images360Item.siteId}
-                siteName={images360Item.siteName}
-                options={
-                  tempCubemap360Images.find(
+            {filteredImages360SiteIds
+              .slice(0, numOfImages360ToDisplay)
+              .map((images360Item) => (
+                <Images360MenuItem
+                  key={images360Item.siteId}
+                  siteId={images360Item.siteId}
+                  siteName={images360Item.siteName}
+                  options={tempCubemap360Images.find(
                     ({ siteId }) => siteId === images360Item.siteId
-                  )!
-                }
-                onChange={handleChangeImages360}
-              />
-            ))}
+                  )}
+                  onChange={handleChangeImages360}
+                />
+              ))}
           </>
         ) : (
           <></>
         )}
       </StyledSecondaryModelListContainer>
       <Menu.Divider />
-      <StyledSecondaryModelListContainer>
+      <StyledSecondaryModelListContainer onScroll={handleSecondaryModelScroll}>
         {viewer && filteredModels.length ? (
           <>
             <Menu.Header>Additional Model</Menu.Header>
-            {filteredModels.map((model) => (
+            {filteredModels.slice(0, numOfModelToDisplay).map((model) => (
               <SecondaryThreeDModelMenuItem
                 key={model.id}
                 model={model}

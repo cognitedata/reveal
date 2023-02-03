@@ -12,7 +12,7 @@ export const Images360MenuItem = ({
   siteId: string;
   siteName: string;
   onChange: (nextState: Image360DatasetOptions) => void;
-  options: Image360DatasetOptions;
+  options?: Image360DatasetOptions;
 }) => {
   useEffect(() => {
     if (!options) {

@@ -46,6 +46,8 @@ export const MINIMUM_BOUNDINGBOX_SIZE = 0.001;
 export const CAMERA_ANIMATION_DURATION = 500;
 export const IMAGE_360_POSITION_THRESHOLD = 0.0001;
 
+export const SECONDARY_MODEL_DISPLAY_LIMIT = 20;
+
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export const getAssetQueryKey = (assetId: number) => [
