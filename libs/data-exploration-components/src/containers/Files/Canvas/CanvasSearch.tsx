@@ -1,5 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { FileInfo } from '@cognite/sdk/dist/src/index';
+import { PagedFileReference } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import React, { useState, useEffect, useCallback } from 'react';
 import debounce from 'lodash/debounce';
 
@@ -9,7 +10,7 @@ import styled from 'styled-components';
 import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
 
 type CanvasSearchProps = {
-  onItemClick: (file: FileInfo) => void;
+  onItemClick: (file: PagedFileReference) => void;
 };
 
 const SEARCH_DEBOUNCE_MS = 300;
@@ -87,7 +88,7 @@ const CanvasSearch: React.FC<CanvasSearchProps> = ({
               <Menu.Item
                 key={file.id}
                 onClick={() => {
-                  onItemClick(file);
+                  onItemClick({ id: file.id, page: 1 });
                   setValue('');
                   setIsExpanded(false);
                 }}

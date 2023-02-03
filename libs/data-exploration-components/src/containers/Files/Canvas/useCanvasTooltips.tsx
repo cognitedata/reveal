@@ -9,17 +9,21 @@ type UseTooltipsParams = {
   annotations: ExtendedAnnotation[];
   selectedAnnotation: ExtendedAnnotation | undefined;
   clickedContainer: PagedFileReference | undefined;
+
+  onAddFile: (file: PagedFileReference) => void;
 };
 
 const useCanvasTooltips = ({
   annotations,
   selectedAnnotation,
   clickedContainer,
+  onAddFile,
 }: UseTooltipsParams) => {
   const hoverTooltips = useCanvasAssetTooltips(selectedAnnotation);
   const fileLinkTooltips = useCanvasFileLinkTooltips({
     annotations,
     selectedAnnotation,
+    onAddFile,
   });
   const fileContainerTooltips =
     useCanvasFileContainerTooltips(clickedContainer);

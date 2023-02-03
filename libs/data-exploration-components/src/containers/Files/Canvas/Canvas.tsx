@@ -98,6 +98,7 @@ export const Canvas = ({
                 page: pagedFileReference.page,
                 maxWidth: MAX_CONTAINER_WIDTH,
                 maxHeight: MAX_CONTAINER_HEIGHT,
+                fontSize: 72,
                 onClick: (e: UnifiedViewerMouseEvent) => {
                   e.cancelBubble = true;
                   setInteractionState({
@@ -153,10 +154,27 @@ export const Canvas = ({
     onMouseOut: onAnnotationMouseOut,
   });
 
+  const onAddFile = useCallback(
+    (pagedFileReference: PagedFileReference) => {
+      addFile(pagedFileReference);
+      toast.success(
+        <div>
+          <h4>Document added to your workspace</h4>
+        </div>,
+        {
+          toastId: `canvas-file-added-${pagedFileReference.id}`,
+          position: 'top-right',
+        }
+      );
+    },
+    [addFile]
+  );
+
   const tooltips = useCanvasTooltips({
     annotations: annotations,
     selectedAnnotation,
     clickedContainer,
+    onAddFile,
   });
 
   const onStageClick = useCallback(() => {
@@ -195,16 +213,6 @@ export const Canvas = ({
     );
   }
 
-  const onSearchItemClick = (file: FileInfo) => {
-    addFile({ id: file.id, page: 1 });
-    toast.success(
-      <div>
-        <h4>Document added to your workspace</h4>
-      </div>,
-      { toastId: `canvas-file-added-${file.id}`, position: 'top-right' }
-    );
-  };
-
   return (
     <FullHeightWrapper>
       <FullHeightWrapper>
@@ -218,7 +226,7 @@ export const Canvas = ({
           shouldShowZoomControls
           setRef={onRef}
         />
-        <CanvasSearch onItemClick={onSearchItemClick} />
+        <CanvasSearch onItemClick={onAddFile} />
       </FullHeightWrapper>
     </FullHeightWrapper>
   );

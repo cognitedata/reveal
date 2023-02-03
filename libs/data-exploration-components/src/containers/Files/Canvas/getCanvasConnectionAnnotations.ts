@@ -103,6 +103,7 @@ export const getCanvasConnectionAnnotations = ({
               style: {
                 stroke: 'blue',
                 strokeWidth: 20,
+                opacity: 0.5,
                 lineType: isRegionToRegionLink
                   ? LineType.RIGHT_ANGLES
                   : LineType.STRAIGHT,

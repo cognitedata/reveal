@@ -7,20 +7,25 @@ import {
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
 } from '@data-exploration-components/containers/Files/FilePreview/FilePreviewUFV/migration/utils';
-import { useCanvasFilesFromUrl } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
+import {
+  PagedFileReference,
+  useCanvasFilesFromUrl,
+} from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import React, { useMemo } from 'react';
 
 type UseFileLinkTooltipsParams = {
   annotations: ExtendedAnnotation[];
   selectedAnnotation: ExtendedAnnotation | undefined;
+  onAddFile: (file: PagedFileReference) => void;
 };
 
 const useCanvasFileLinkTooltips = ({
   annotations,
   selectedAnnotation,
+  onAddFile,
 }: UseFileLinkTooltipsParams) => {
-  const { files, addFile } = useCanvasFilesFromUrl();
+  const { files } = useCanvasFilesFromUrl();
 
   return useMemo(() => {
     if (selectedAnnotation === undefined) {
@@ -76,7 +81,7 @@ const useCanvasFileLinkTooltips = ({
               type="ghost"
               icon="DocumentPlus"
               onClick={() =>
-                addFile({
+                onAddFile({
                   id: resourceId,
                   page: 1,
                 })
@@ -90,7 +95,7 @@ const useCanvasFileLinkTooltips = ({
         shouldPositionStrictly: true,
       },
     ];
-  }, [annotations, selectedAnnotation, addFile, files]);
+  }, [annotations, selectedAnnotation, onAddFile, files]);
 };
 
 export default useCanvasFileLinkTooltips;
