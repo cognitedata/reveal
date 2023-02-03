@@ -698,5 +698,31 @@ describe('GraphQlUtilsServiceTest', () => {
         },
       ]);
     });
+
+    it('should validate type name for pascal case', () => {
+      const service = createInstance();
+
+      const schemaWithUnimplementedInterface = `type movie {
+        name: String
+      }`;
+      const result = service.validate(
+        schemaWithUnimplementedInterface,
+        mixerApiBuiltInTypes
+      );
+
+      expect(result).toEqual([
+        {
+          message: 'Type name "movie" must be PascalCase',
+          status: 400,
+          errorMessage: 'Type name "movie" must be PascalCase',
+          locations: [
+            {
+              line: 1,
+              column: 6,
+            },
+          ],
+        },
+      ]);
+    });
   });
 });

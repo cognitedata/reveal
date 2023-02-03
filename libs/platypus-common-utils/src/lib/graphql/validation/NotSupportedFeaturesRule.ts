@@ -1,9 +1,12 @@
+import { DataModelTypeNameValidator } from '@platypus/platypus-core';
 import {
   ASTVisitor,
   EnumTypeDefinitionNode,
   FieldDefinitionNode,
   GraphQLError,
   InputObjectTypeDefinitionNode,
+  InterfaceTypeDefinitionNode,
+  ObjectTypeDefinitionNode,
   ObjectTypeExtensionNode,
   TypeDefinitionNode,
   UnionTypeDefinitionNode,
@@ -17,6 +20,8 @@ export function NotSupportedFeaturesRule(
   const schema = context.getSchema();
 
   return {
+    InterfaceTypeDefinition: checkInterfaceTypeDef,
+    ObjectTypeDefinition: checkObjectTypeDef,
     FieldDefinition: checkFieldDef,
     EnumTypeDefinition: checkForEnums,
     ObjectTypeExtension: checkForTypeExtension,
@@ -42,6 +47,42 @@ export function NotSupportedFeaturesRule(
 
   function checkForEnums(node: EnumTypeDefinitionNode) {
     context.reportError(new GraphQLError(`Enums are not supported.`, node));
+  }
+
+  function checkObjectTypeDef(node: ObjectTypeDefinitionNode) {
+    const typeNameValidator = new DataModelTypeNameValidator();
+    const validationResult = typeNameValidator.validate(
+      `Type name "${node.name.value}"`,
+      node.name.value
+    );
+
+    if (!validationResult.valid) {
+      context.reportError(
+        new GraphQLError(
+          validationResult.errors[`Type name "${node.name.value}"`] ||
+            'Invalid type name',
+          node.name
+        )
+      );
+    }
+  }
+
+  function checkInterfaceTypeDef(node: InterfaceTypeDefinitionNode) {
+    const typeNameValidator = new DataModelTypeNameValidator();
+    const validationResult = typeNameValidator.validate(
+      `Interface name "${node.name.value}"`,
+      node.name.value
+    );
+
+    if (!validationResult.valid) {
+      context.reportError(
+        new GraphQLError(
+          validationResult.errors[`Interface name "${node.name.value}"`] ||
+            'Invalid interface name',
+          node.name
+        )
+      );
+    }
   }
 
   function checkFieldDef(node: FieldDefinitionNode) {
