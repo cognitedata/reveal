@@ -9,16 +9,13 @@
 /*------------- COMPACT THEME STYLES ------------*/
 .cog-data-grid.cog-data-grid-compact {
   --ag-cell-horizontal-padding: 4px;
-  
 }
 
-
-.cog-data-grid.cog-data-grid-compact  .ag-header-cell-comp-wrapper,
+.cog-data-grid.cog-data-grid-compact .ag-header-cell-comp-wrapper,
 .cog-data-grid.cog-data-grid-compact .ag-header-cell,
-.cog-data-grid.cog-data-grid-compact .ag-cell{
+.cog-data-grid.cog-data-grid-compact .ag-cell {
   overflow: visible;
 }
-
 
 /*------------- BASIC STRIPED THEME STYLES ------------*/
 .cog-data-grid.cog-data-grid-basic-striped {
@@ -45,7 +42,6 @@
   /* --ag-cell-line-height: 22px; */
 
   height: 100%;
-
 }
 
 .cog-data-grid.cog-data-grid-basic-striped .ag-row,
@@ -53,13 +49,15 @@
   border-bottom: 1px solid var(--ag-border-color);
 }
 
-.cog-data-grid.cog-data-grid-basic-striped .ag-header-cell{
+.cog-data-grid.cog-data-grid-basic-striped .ag-header-cell {
   padding: 0 var(--ag-cell-horizontal-padding);
   line-height: var(--ag-cell-line-height);
   font-weight: 500;
 }
 
-.cog-data-grid.cog-data-grid-basic-striped .ag-header-cell .ag-sort-indicator-container {
+.cog-data-grid.cog-data-grid-basic-striped
+  .ag-header-cell
+  .ag-sort-indicator-container {
   display: inline-block;
   margin-left: 15px;
   line-height: var(--ag-cell-line-height);
@@ -83,8 +81,8 @@
   --ag-borders: none;
   /* then add back a border between rows */
   --ag-borders-row: dashed 1px;
-  --ag-border-color: var(--cogs-greyscale-grey4, #D9D9D9);
-  --ag-row-border-color: var(--cogs-greyscale-grey4, #D9D9D9);
+  --ag-border-color: var(--cogs-greyscale-grey4, #d9d9d9);
+  --ag-row-border-color: var(--cogs-greyscale-grey4, #d9d9d9);
 }
 
 .cog-data-grid.cog-data-grid-suggestions .ag-row,
@@ -202,10 +200,7 @@
 .cog-data-grid.cog-data-grid-default .ag-cell {
   padding: var(--ag-cell-vertical-padding) var(--ag-cell-horizontal-padding);
   line-height: var(--ag-cell-line-height);
-  overflow: visible;
 }
-
-
 
 .cog-data-grid.cog-data-grid-default .ag-header-cell {
   padding-top: unset;
@@ -500,7 +495,9 @@
 }
 
 .cog-data-grid.cog-data-grid-default
-  .ag-header-cell.ag-header-cell-filtered:not(.ag-column-menu-visible):not(.ag-header-active)
+  .ag-header-cell.ag-header-cell-filtered:not(.ag-column-menu-visible):not(
+    .ag-header-active
+  )
   .filter-button {
   display: block;
   opacity: 1;
