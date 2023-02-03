@@ -57,7 +57,12 @@ describe('SectorLoader', () => {
       .setup(p => p.visible)
       .returns(true)
       .setup(p => p.loadSector)
-      .returns(value => repository.loadSector(value))
+      .returns(value => {
+        return {
+          consumedSector: repository.loadSector(value),
+          abortDowload: () => {}
+        };
+      })
       .setup(p => p.clippingPlanes)
       .returns([]);
 
@@ -140,8 +145,8 @@ describe('SectorLoader', () => {
       .returns(value => {
         if (first) {
           first = false;
-          return Promise.reject('Could not load sector');
-        } else return repository.loadSector(value);
+          return { consumedSector: Promise.reject('Could not load sector'), abortDowload: () => {} };
+        } else return { consumedSector: repository.loadSector(value), abortDowload: () => {} };
       })
       .setup(p => p.clippingPlanes)
       .returns([]);
