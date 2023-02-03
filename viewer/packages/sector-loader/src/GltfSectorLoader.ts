@@ -24,7 +24,7 @@ export class GltfSectorLoader {
     this._materialManager = materialManager;
   }
 
-  async loadSector(sector: WantedSector, abortSignal: AbortSignal): Promise<ConsumedSector> {
+  async loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
     const { metadata } = sector;
     try {
       const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
