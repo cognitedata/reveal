@@ -76,15 +76,59 @@ type PageInfo {
   startCursor: String
   endCursor: String
 }
-
 input InstanceRef {
   spaceExternalId: String!
-  externalId: String! 
+  externalId: String!
 }
 
-directive @view(space: String, name: String, version: String) on OBJECT | INTERFACE
+"""
+Specifies that a type is a view type.
 
-directive @mapping(space: String, container: String, property: String) on FIELD_DEFINITION
+* space: Overrides the space, which by default is the same as the data model.
+* name: Overrides the name of the view, which by default is the same as the externalId.
+* version: Overrides the version of the view, which by default is the same as the data model version.
+"""
+directive @view(
+  space: String,
+  name: String,
+  version: String
+) on OBJECT | INTERFACE
+
+"""
+Overrides the mapping of a field. Can only be used in a view type and can not be used on derived fields.
+
+* space: Overrides the space, which by default is the same as the data model space.
+* container: Overrides the container externalId, which by default is the same as the externalId of the view postfixed with 'Container'.
+* property: Overrides the container property identifier being mapped.
+"""
+directive @mapping(
+  space: String,
+  container: String,
+  property: String
+) on FIELD_DEFINITION
+
+input _DirectRelationRef {
+  space: String!
+  externalId: String!
+}
+
+enum _RelationDirection {
+  INWARDS
+  OUTWARDS
+}
+
+"""
+Defines the relation field's details
+
+* name: Overrides the name property of the relation definition. This is merely metadata, and should not be confused with the property identifier!
+* direction: The direction to follow the edges filtered by 'type'.
+* type: Specifies the edge type, namespaced by 'space', where the 'externalId' corresponds to the edge type name.
+"""
+directive @relation(
+  type: _DirectRelationRef!
+  name: String
+  direction: _RelationDirection
+) on FIELD_DEFINITION
 
 type Post {
   externalId: ID!
@@ -326,7 +370,7 @@ type Query {
     query: String!
   ): PostConnection
 
-  getPostById( instance:InstanceRef! ): PostConnection
+  getPostById(instance: InstanceRef!): PostConnection
 
   aggregatePost(
     fields: [_SearchPostFields!]
@@ -354,7 +398,7 @@ type Query {
     query: String!
   ): UserConnection
 
-  getUserById( instance:InstanceRef! ): UserConnection
+  getUserById(instance: InstanceRef!): UserConnection
 
   aggregateUser(
     fields: [_SearchUserFields!]
@@ -382,7 +426,7 @@ type Query {
     query: String!
   ): CommentConnection
 
-  getCommentById( instance:InstanceRef! ): CommentConnection
+  getCommentById(instance: InstanceRef!): CommentConnection
 
   aggregateComment(
     fields: [_SearchCommentFields!]

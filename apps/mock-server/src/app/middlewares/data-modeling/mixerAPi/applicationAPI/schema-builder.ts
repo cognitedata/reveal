@@ -1,5 +1,6 @@
 import { IntrospectionObjectType, IntrospectionQuery } from 'graphql';
 import { getType } from '../../../../utils';
+import { mixerApiV3CustomDirectives } from '../../config/schema-service-api';
 
 export class SchemaServiceGraphqlApiBuilder {
   private typeSearchFieldsMap = {};
@@ -24,6 +25,8 @@ export class SchemaServiceGraphqlApiBuilder {
     ${this.generateTypeConnection(tablesList)}
     ${this.generateQueries(tablesList)}
     `;
+
+    // console.log(generatedSchema);
 
     return generatedSchema;
   }
@@ -113,9 +116,7 @@ export class SchemaServiceGraphqlApiBuilder {
   }
 
 
-directive @view(space: String, name: String, version: String) on OBJECT | INTERFACE
-
-directive @mapping(space: String, container: String, property: String) on FIELD_DEFINITION
+${mixerApiV3CustomDirectives}
 
     `;
   }
@@ -160,11 +161,30 @@ directive @mapping(space: String, container: String, property: String) on FIELD_
         }
       });
 
-      extendedSchema = extendedSchema.replace(
-        new RegExp('type ' + table + '\\s{1,}\\{', 'gmi'),
-        `type ${table} {
+      // eslint-disable-next-line
+      const regex = new RegExp('((type|interface) ' + table + ')( .*{)', 'gm');
+
+      let m;
+
+      while ((m = regex.exec(extendedSchema)) !== null) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (m.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+
+        // The result can be accessed through the `m`-variable.
+        m.forEach((match, groupIndex) => {
+          // only process group with index 1, it contains exactly what we need
+          // eslint-disable-next-line lodash/prefer-includes
+          if (match && match.indexOf(table) !== -1 && groupIndex === 0) {
+            extendedSchema = extendedSchema.replace(
+              match,
+              `${match}
         externalId: ID!`
-      );
+            );
+          }
+        });
+      }
     });
 
     return extendedSchema;

@@ -1,3 +1,47 @@
+export const mixerApiV3CustomDirectives = `
+
+"""
+Specifies that a type is a view type.
+
+* space: Overrides the space, which by default is the same as the data model.
+* name: Overrides the name of the view, which by default is the same as the externalId.
+* version: Overrides the version of the view, which by default is the same as the data model version.
+"""
+directive @view(space: String, name: String, version: String) on OBJECT | INTERFACE
+
+"""
+Overrides the mapping of a field. Can only be used in a view type and can not be used on derived fields.
+
+* space: Overrides the space, which by default is the same as the data model space.
+* container: Overrides the container externalId, which by default is the same as the externalId of the view postfixed with 'Container'.
+* property: Overrides the container property identifier being mapped.
+"""
+directive @mapping(space: String, container: String, property: String) on FIELD_DEFINITION
+
+input _DirectRelationRef {
+  space: String!
+  externalId: String!
+}
+
+enum _RelationDirection {
+  INWARDS
+  OUTWARDS
+}
+
+"""
+Defines the relation field's details
+
+* name: Overrides the name property of the relation definition. This is merely metadata, and should not be confused with the property identifier!
+* direction: The direction to follow the edges filtered by 'type'.
+* type: Specifies the edge type, namespaced by 'space', where the 'externalId' corresponds to the edge type name.
+"""
+directive @relation(
+  type: _DirectRelationRef!
+  name: String
+  direction: _RelationDirection
+) on FIELD_DEFINITION
+`;
+
 export const schemaServiceGraphqlApi = `
 directive @specifiedBy(url: String!) on SCALAR
 type Api {
@@ -333,10 +377,7 @@ scalar Timestamp
 "Represents a 64-bit integer value. Note that some consumers as JavaScript only supports [-(2^53)+1, (2^53)-1]."
 scalar Int64
 
-
-directive @view(space: String, name: String, version: String) on OBJECT | INTERFACE
-
-directive @mapping(space: String, container: String, property: String) on FIELD_DEFINITION
+${mixerApiV3CustomDirectives}
 
 
 type UpsertGraphQlDmlVersionResult {

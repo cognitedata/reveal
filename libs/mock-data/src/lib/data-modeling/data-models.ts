@@ -27,4 +27,18 @@ export const fdmDataModelsMockData = [
     createdTime: 1625702400001,
     lastUpdatedTime: 1625702400004,
   },
+  {
+    space: 'test-space',
+    externalId: 'test',
+    id: 'test',
+    name: 'test',
+    description: 'test',
+    version: '1-alpha',
+    metadata: {
+      graphQlDml:
+        'interface Describable {\n  name: String\n  description: String\n}\n\ninterface Assignable {\n  assignedTo: String\n}\n\n\ninterface UserName {\n    """\n    The name of the User.\n    """\n    name: String!\n}\n\n\ntype Person implements Describable & Assignable & UserName @view {\n  """\n  The id of the Person.\n  """\n  id: ID!\n  name: String!\n  description: String\n  assignedTo: String\n  mappedField: String @mapping(container:"Test", property: "field")\n  ownedField: Int\n  posts: [Post]\n}\n\ntype Post {\n  id: ID!\n  body: String!\n  author: Person\n}\n\n',
+    },
+    createdTime: 1625702400001,
+    lastUpdatedTime: 1625702400004,
+  },
 ];

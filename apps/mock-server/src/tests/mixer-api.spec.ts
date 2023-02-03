@@ -104,7 +104,7 @@ describe('MixerApi Test', () => {
     const expectedSchema = { ...db.datamodels[0] };
 
     expect(response.statusCode).toEqual(200);
-    expect(qryResult.data.listGraphQlDmlVersions.items.length).toEqual(1);
+    expect(qryResult.data.listGraphQlDmlVersions.items.length).toEqual(2);
     expect(qryResult.data.listGraphQlDmlVersions.items[0]).toEqual(
       expect.objectContaining({
         version: expectedSchema.version,
