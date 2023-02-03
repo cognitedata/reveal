@@ -107,6 +107,15 @@ const Extpipes: FunctionComponent<Props> = () => {
   };
 
   if (errorExtpipes) {
+    if (errorExtpipes.status === 403) {
+      return (
+        <ErrorFeedback
+          onClick={handleErrorDialogClick}
+          fallbackTitle={t('list-extaction-pipelines-error-403')}
+          btnText="Retry"
+        />
+      );
+    }
     return (
       <ErrorFeedback
         btnText="Retry"
