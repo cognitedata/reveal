@@ -1,8 +1,8 @@
+import { CogniteError } from '@cognite/sdk';
 import { FieldValues } from 'react-hook-form';
-import { ErrorObj } from 'model/SDKErrors';
 
 export const translateServerErrorMessage = <TFieldValues extends FieldValues>(
-  data: ErrorObj | undefined,
+  data: CogniteError | undefined,
   errMsg: Record<string, string>
 ): { field: keyof TFieldValues; message: string } => {
   if (data?.message === 'Some externalIds persist in database') {

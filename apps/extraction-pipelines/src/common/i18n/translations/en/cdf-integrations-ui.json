@@ -143,6 +143,8 @@
   "not-defined": "Not defined",
   "not-valid": "Not valid",
   "notification_one": "Notification",
+  "list-extaction-pipelines-error-403": "You do not have the required permissions to list extraction pipelines",
+
   "notification_other": "Notifications",
   "notification-alert-info": "Sends alerts {{duration}} after no detected activity.",
   "notification-run-alert": "Alerts contacts when runs fail.",

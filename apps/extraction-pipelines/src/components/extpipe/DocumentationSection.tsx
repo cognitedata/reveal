@@ -73,7 +73,7 @@ export const DocumentationSection: FunctionComponent<
           trackUsage({ t: 'EditField.Rejected', field: 'documentation' });
           setError('server', {
             type: 'server',
-            message: error.data?.message,
+            message: error?.message,
             //@ts-ignore
             shouldFocus: true,
           });

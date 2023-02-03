@@ -17,6 +17,7 @@ import { Range } from '@cognite/cogs.js';
 import { useEffect } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { DEFAULT_RUN_LIMIT } from 'utils/constants';
+import { CogniteError } from '@cognite/sdk';
 
 export const getRunsKey = (params: CreateRunFilterParam) => [
   'runs',
@@ -30,11 +31,7 @@ export const useRuns = (
 ) => {
   const sdk = useSDK();
   const data = createRunsFilter(params);
-  return useInfiniteQuery<
-    RunsAPIResponse,
-    Error & { status: number },
-    { items: RunApi[] }
-  >(
+  return useInfiniteQuery<RunsAPIResponse, CogniteError, { items: RunApi[] }>(
     getRunsKey(params),
     ({ pageParam }) => {
       return getFilteredRuns(sdk, {
