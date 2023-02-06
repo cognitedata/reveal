@@ -798,7 +798,7 @@ __metadata:
     "@typescript-eslint/parser": 5.50.0
     assert: 2.0.0
     async-mutex: 0.4.0
-    comlink: 4.3.1
+    comlink: 4.4.0
     concurrently: 7.6.0
     cross-env: 7.0.3
     cross-var: 1.1.0
@@ -4771,10 +4771,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"comlink@npm:4.3.1":
-  version: 4.3.1
-  resolution: "comlink@npm:4.3.1"
-  checksum: 557360a6558708c55aff74a25f834bfb9bfca8a42444682c4d5aead57681534a0206202be2a2760b4de124c3ba6d485b08978b6d5469cb3d26bf1438ee28a4f1
+"comlink@npm:4.4.0":
+  version: 4.4.0
+  resolution: "comlink@npm:4.4.0"
+  checksum: 429dc83e36d35c3dfd17e86343142ed3526fe2310a18f3816d0380eb9a162b50272bb40f7426e1c5a1f04f44203a178b60a4a0bcabed01d675d91474c53788f7
   languageName: node
   linkType: hard
 
