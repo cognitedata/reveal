@@ -3,10 +3,9 @@
  */
 import * as THREE from 'three';
 import { Image360Provider } from '../Image360Provider';
-import { Image360Descriptor, Image360Face } from '../types';
+import { Image360Descriptor, Image360Face, Image360FileDescriptor } from '../types';
 
 type Local360ImagesDescriptor = {
-  imageFolder: string;
   translation: {
     x: number;
     y: number;
@@ -17,6 +16,12 @@ type Local360ImagesDescriptor = {
     y: number;
     z: number;
   };
+  faces: [
+    {
+      face: string;
+      id: number;
+    }
+  ];
 };
 
 export class Local360ImageProvider implements Image360Provider<unknown> {
@@ -31,7 +36,7 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
     });
     const local360ImagesDescriptor: Local360ImagesDescriptor[] = await response.json();
 
-    return local360ImagesDescriptor.map(localDescriptor => {
+    return local360ImagesDescriptor.map((localDescriptor, index) => {
       const translation = new THREE.Matrix4().makeTranslation(
         localDescriptor.translation.x,
         localDescriptor.translation.y,
@@ -40,28 +45,31 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
       const rotation = new THREE.Matrix4().makeRotationFromEuler(
         new THREE.Euler(localDescriptor.rotation.x, localDescriptor.rotation.y, localDescriptor.rotation.z)
       );
-      return {
-        id: localDescriptor.imageFolder,
-        label: localDescriptor.imageFolder,
+
+      const image360Descriptor: Image360Descriptor = {
+        id: index.toString(),
+        label: index.toString(),
         collectionId: 'local',
         collectionLabel: 'local',
         transformations: {
           translation,
           rotation
-        }
-      } as Image360Descriptor;
+        },
+        faceDescriptors: localDescriptor.faces.map(p => {
+          return { face: p.face, fileId: p.id, mimeType: 'image/png' } as Image360FileDescriptor;
+        })
+      };
+
+      return image360Descriptor;
     });
   }
-  get360ImageFiles(image360Descriptor: Image360Descriptor): Promise<Image360Face[]> {
-    const imageFacesName = ['left', 'right', 'top', 'bottom', 'front', 'back'];
-
+  get360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]> {
     return Promise.all(
-      imageFacesName.map(async name => {
-        const binaryData = await (await fetch(`${this._modelUrl}/${image360Descriptor.id}/${name}.png`)).arrayBuffer();
+      image360FaceDescriptors.map(async image360FaceDescriptor => {
+        const binaryData = await (await fetch(`${this._modelUrl}/${image360FaceDescriptor.fileId}.png`)).arrayBuffer();
         return {
           data: binaryData,
-          face: name,
-          mimeType: 'image/png'
+          face: image360FaceDescriptor.face
         } as Image360Face;
       })
     );

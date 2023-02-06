@@ -71,7 +71,6 @@
     "@tweenjs/tween.js": "18.6.4",
     "assert": "2.0.0",
     "async-mutex": "0.4.0",
-    "comlink": "4.3.1",
     "glslify": "7.1.1",
     "glslify-import": "3.1.0",
     "html2canvas": "^1.4.1",
@@ -103,8 +102,8 @@
     "@types/stats": "0.16.30",
     "@types/three": "0.149.0",
     "@types/tween.js": "18.5.1",
-    "@typescript-eslint/eslint-plugin": "5.49.0",
-    "@typescript-eslint/parser": "5.49.0",
+    "@typescript-eslint/eslint-plugin": "5.50.0",
+    "@typescript-eslint/parser": "5.50.0",
     "concurrently": "7.6.0",
     "cross-env": "7.0.3",
     "cross-var": "1.1.0",
@@ -132,7 +131,7 @@
     "nock": "13.3.0",
     "prettier": "2.8.2",
     "process": "0.11.10",
-    "puppeteer": "19.6.2",
+    "puppeteer": "19.6.3",
     "random-seed": "0.3.0",
     "raw-loader": "4.0.2",
     "remove-files-webpack-plugin": "1.5.0",
@@ -143,7 +142,7 @@
     "ts-jest": "29.0.5",
     "ts-loader": "9.4.2",
     "tsc-alias": "1.8.2",
-    "typescript": "4.9.4",
+    "typescript": "4.9.5",
     "wasm-pack": "0.10.3",
     "webpack": "5.75.0",
     "webpack-cli": "5.0.1",
@@ -164,5 +163,5 @@
   "files": [
     "./dist/*"
   ],
-  "packageManager": "yarn@3.3.1"
+  "packageManager": "yarn@3.4.1"
 }

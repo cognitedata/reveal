@@ -6,8 +6,8 @@ import { SceneHandler } from '@reveal/utilities';
 import * as THREE from 'three';
 
 export class Image360Icon extends THREE.Group {
-  private readonly MIN_PIXEL_SIZE = 32;
-  private readonly MAX_PIXEL_SIZE = 128;
+  private readonly MIN_PIXEL_SIZE = 16;
+  private readonly MAX_PIXEL_SIZE = 64;
   private readonly _hoverSprite: THREE.Sprite;
   private readonly _outerSprite: THREE.Sprite;
   private readonly _sceneHandler: SceneHandler;
