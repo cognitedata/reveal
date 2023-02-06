@@ -1,5 +1,4 @@
 import { Column, Updater, ColumnOrderState } from '@tanstack/table-core';
-import take from 'lodash/take';
 import React, { useState, Suspense, useMemo } from 'react';
 import {
   Button,
@@ -89,10 +88,6 @@ export function ColumnToggle<T extends TableData = any>({
     return tab === 'All' ? filteredColumns : selectedColumns;
   }, [tab, filteredColumns, selectedColumns]);
 
-  const slicedColumns = useMemo(() => {
-    return take(selectedTabColumns, 100);
-  }, [selectedTabColumns]);
-
   const selectedColumnsCount = allColumns().reduce((accumulator, item) => {
     return item.getIsVisible() ? accumulator + 1 : accumulator;
   }, 0);
@@ -156,7 +151,7 @@ export function ColumnToggle<T extends TableData = any>({
                 onDragEnd={onColumnOrderChanged}
                 isCustomPortal
               >
-                {slicedColumns.map((column) => {
+                {selectedTabColumns.map((column) => {
                   return (
                     <MenutItemDrag key={column.id} isDragEnabled={!searchInput}>
                       <StyledLabel>
@@ -183,11 +178,6 @@ export function ColumnToggle<T extends TableData = any>({
                   );
                 })}
               </DragDropContainer>
-              {selectedTabColumns.length - slicedColumns.length > 0 && (
-                <Menu.Footer>
-                  And {selectedTabColumns.length - slicedColumns.length} more...
-                </Menu.Footer>
-              )}
             </MenuItemsWrapper>
 
             {(isSelectedItemsEmpty || isSearchResultEmpty) && (
