@@ -21,6 +21,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   private _faceMaterials: THREE.MeshBasicMaterial[] | undefined;
   private readonly _sceneHandler: SceneHandler;
   private readonly _visualizationState: VisualizationState;
+  private readonly _textureLoader: THREE.TextureLoader;
 
   get opacity(): number {
     return this._visualizationState.opacity;
@@ -74,6 +75,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   constructor(worldTransform: THREE.Matrix4, sceneHandler: SceneHandler) {
     this._worldTransform = worldTransform;
     this._sceneHandler = sceneHandler;
+    this._textureLoader = new THREE.TextureLoader();
     this._visualizationState = {
       opacity: 1,
       renderOrder: 3,
@@ -83,8 +85,7 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   public async loadImages(faces: Image360Face[]): Promise<void> {
-    const loader = new THREE.TextureLoader();
-    const faceTextures = await getTextures();
+    const faceTextures = await this.loadFaceTextures(faces);
 
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 
@@ -107,25 +108,27 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.visible = this._visualizationState.visible;
     this._sceneHandler.addCustomObject(this._visualizationMesh);
 
-    function getTextures() {
-      return Promise.all(
-        faces.map(async image360Face => {
-          const blob = new Blob([image360Face.data]);
-          const url = window.URL.createObjectURL(blob);
-          const faceTexture = await loader.loadAsync(url);
+    return Promise.resolve();
 
-          // Need to horizontally flip the texture since it is being rendered inside a cube
-          faceTexture.center.set(0.5, 0.5);
-          faceTexture.repeat.set(-1, 1);
-          return { side: image360Face.face, faceTexture };
-        })
-      );
-    }
     function getFaceTexture(side: Image360Face['face']) {
       const face = faceTextures.find(p => p.side === side);
       assert(face !== undefined);
       return face.faceTexture;
     }
+  }
+
+  private loadFaceTextures(faces: Image360Face[]) {
+    return Promise.all(
+      faces.map(async image360Face => {
+        const blob = new Blob([image360Face.data], { type: image360Face.mimeType });
+        const url = window.URL.createObjectURL(blob);
+        const faceTexture = await this._textureLoader.loadAsync(url);
+        // Need to horizontally flip the texture since it is being rendered inside a cube
+        faceTexture.center.set(0.5, 0.5);
+        faceTexture.repeat.set(-1, 1);
+        return { side: image360Face.face, faceTexture };
+      })
+    );
   }
 
   public unloadImages(): void {

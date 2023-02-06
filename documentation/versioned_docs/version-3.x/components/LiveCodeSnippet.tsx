@@ -66,8 +66,8 @@ function transformCode(code: string): string {
 
             if (viewer) {
               resetViewerEventHandlers(viewer);
-              if (model instanceof CogniteCadModel) {
-                resetCogniteCadModel(model);
+              if (model instanceof Cognite3DModel) {
+                resetCognite3DModel(model);
               }
             } else {
               alert('Login is required to run examples');

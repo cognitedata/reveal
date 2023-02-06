@@ -73,21 +73,20 @@ export class InputHandler {
 
     const startOffset = new Vector2();
 
-    const onUp = (e: MouseEvent | TouchEvent) => {
+    const onUp = (e: PointerEvent) => {
       this.handleClickEvent(e, startOffset, pointerDown, validClick, pointerDownTimestamp);
 
       pointerDown = false;
       validClick = false;
 
       // up
-      domElement.removeEventListener('mouseup', onUp);
-      domElement.removeEventListener('touchend', onUp);
+      domElement.removeEventListener('pointerup', onUp);
 
       // add back onHover
-      domElement.addEventListener('mousemove', this.onHoverCallback);
+      domElement.addEventListener('pointermove', this.onHoverCallback);
     };
 
-    const onDown = (e: MouseEvent | TouchEvent) => {
+    const onDown = (e: PointerEvent) => {
       pointerDown = true;
       validClick = true;
       pointerDownTimestamp = e.timeStamp;
@@ -96,23 +95,21 @@ export class InputHandler {
       startOffset.set(offsetX, offsetY);
 
       // up
-      domElement.addEventListener('mouseup', onUp);
-      domElement.addEventListener('touchend', onUp);
+      domElement.addEventListener('pointerup', onUp);
 
       // no more onHover
-      domElement.removeEventListener('mousemove', this.onHoverCallback);
+      domElement.removeEventListener('pointermove', this.onHoverCallback);
     };
 
     // down
-    domElement.addEventListener('mousedown', onDown);
-    domElement.addEventListener('touchstart', onDown);
+    domElement.addEventListener('pointerdown', onDown);
 
     // on hover callback
-    domElement.addEventListener('mousemove', this.onHoverCallback);
+    domElement.addEventListener('pointermove', this.onHoverCallback);
   }
 
   private isProperClick(
-    e: MouseEvent | TouchEvent,
+    e: PointerEvent,
     startOffset: Vector2,
     pointerDown: boolean,
     validClick: boolean,
@@ -131,7 +128,7 @@ export class InputHandler {
   }
 
   private handleClickEvent(
-    e: MouseEvent | TouchEvent,
+    e: PointerEvent,
     startOffset: Vector2,
     pointerDown: boolean,
     validClick: boolean,
@@ -149,7 +146,7 @@ export class InputHandler {
     }
   }
 
-  private readonly onHoverCallback = debounce((e: MouseEvent) => {
+  private readonly onHoverCallback = debounce((e: PointerEvent) => {
     this._events.hover.fire(clickOrTouchEventOffset(e, this.domElement));
   }, 100);
 }
