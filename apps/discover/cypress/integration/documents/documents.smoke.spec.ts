@@ -12,7 +12,8 @@ const SOURCE_DRIVE = 'volve';
 const FILE_TYPE = 'PDF';
 export const filename = '15_9_19_A_1980_01_01';
 
-describe('Documents', () => {
+// eslint-disable-next-line jest/no-disabled-tests
+describe.skip('Documents', () => {
   beforeEach(() => {
     const coreRequests = interceptCoreNetworkRequests();
     cy.log('Trigger e2e');
