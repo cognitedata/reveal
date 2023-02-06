@@ -49,5 +49,11 @@ export const EventDetails = ({ event }: { event: CogniteEvent }) => (
       name="Updated at"
       value={<TimeDisplay value={event.lastUpdatedTime} />}
     />
+    <GeneralDetails.Item
+      key={event.source}
+      name="Source"
+      value={event.source}
+      copyable
+    />
   </GeneralDetails>
 );

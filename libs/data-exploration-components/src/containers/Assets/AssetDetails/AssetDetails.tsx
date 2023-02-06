@@ -49,6 +49,12 @@ export const AssetDetails = ({ asset }: Props) => {
       <GeneralDetails.LabelsItem
         labels={asset.labels?.map((label) => label.externalId)}
       />
+      <GeneralDetails.Item
+        name="Source"
+        key={asset.source}
+        value={asset.source}
+        copyable
+      />
     </GeneralDetails>
   );
 };
