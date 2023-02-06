@@ -8,14 +8,16 @@ export const InstancePreview = (props: {
   externalId: string;
   dataModelExternalId: string;
   dataModelType: DataModelTypeDefsType;
+  space: string;
 }) => {
-  const { dataModelExternalId, dataModelType, externalId } = props;
+  const { dataModelExternalId, dataModelType, externalId, space } = props;
 
   const { data: previewData } = usePreviewData({
     dataModelExternalId,
     dataModelType,
     externalId,
     nestedLimit: 2,
+    space,
   });
 
   const nonRelationshipValues = useMemo(() => {

@@ -14,12 +14,13 @@ const DEBOUNCE_HOVER_TIME = 500;
 export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
   const { t } = useTranslation('CustomCellRenderer');
   const [_, setIsHovered] = useState(false);
-  const { dataModelExternalId, dataModelType, dataModelTypeDefs } =
+  const { dataModelExternalId, dataModelType, dataModelTypeDefs, space } =
     props.context as {
       dataModelExternalId: string;
-      version: string;
       dataModelType: DataModelTypeDefsType;
       dataModelTypeDefs: DataModelTypeDefs;
+      space: string;
+      version: string;
     };
 
   const columnType = useMemo(
@@ -53,6 +54,7 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
       limitFields: nonListAndRelationshipValues
         .slice(0, PROPERTY_TO_SHOW)
         .map((el) => el.name),
+      space,
     },
     { enabled: false }
   );

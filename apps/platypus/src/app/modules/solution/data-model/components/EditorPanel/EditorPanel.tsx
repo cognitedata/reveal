@@ -51,7 +51,10 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
     isUIEditorVisible ? 'ui' : 'code'
   );
 
-  const { data: dataModelVersionList } = useDataModelVersions(externalId);
+  const { data: dataModelVersionList } = useDataModelVersions(
+    externalId,
+    space
+  );
   const { graphQlSchema, builtInTypes, currentTypeName, typeDefs } =
     useSelector<DataModelState>((state) => state.dataModel);
 

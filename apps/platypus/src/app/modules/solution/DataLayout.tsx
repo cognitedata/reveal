@@ -31,8 +31,9 @@ const QueryExplorerPage = lazy<any>(() =>
 
 export const DataLayout = () => {
   const { t } = useTranslation('SolutionDataModel');
-  const { dataModelExternalId } = useParams<{
+  const { dataModelExternalId, space } = useParams<{
     dataModelExternalId: string;
+    space: string;
   }>();
 
   const sideBarMenuItems: SideBarItem[] = [
@@ -74,7 +75,12 @@ export const DataLayout = () => {
       >
         <Route
           index
-          element={<DataModelPage dataModelExternalId={dataModelExternalId} />}
+          element={
+            <DataModelPage
+              dataModelExternalId={dataModelExternalId}
+              space={space}
+            />
+          }
         />
         <Route
           path="/data"
@@ -87,19 +93,28 @@ export const DataLayout = () => {
           <Route
             index
             element={
-              <DataModelPage dataModelExternalId={dataModelExternalId} />
+              <DataModelPage
+                dataModelExternalId={dataModelExternalId}
+                space={space}
+              />
             }
           />
           <Route
             path="data-management/:subSolutionPage"
             element={
-              <DataManagementPage dataModelExternalId={dataModelExternalId} />
+              <DataManagementPage
+                dataModelExternalId={dataModelExternalId}
+                space={space}
+              />
             }
           />
           <Route
             path="query-explorer"
             element={
-              <QueryExplorerPage dataModelExternalId={dataModelExternalId} />
+              <QueryExplorerPage
+                dataModelExternalId={dataModelExternalId}
+                space={space}
+              />
             }
           />
         </Route>

@@ -72,7 +72,6 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @returns
    */
   listDataModels(): Promise<DataModel[]> {
-    // by default if no externalId or space is provided
     // mixerApi will return the latest version of all data models (unique data models)
     return this.mixerApiService.listDataModelVersions().then((dataModels) => {
       return dataModels.map((item) =>
@@ -89,9 +88,7 @@ export class FdmClient implements FlexibleDataModelingClient {
     dto: ListDataModelVersionsDTO
   ): Promise<DataModelVersion[]> {
     return this.mixerApiService
-      .listDataModelVersions(dto.space, {
-        externalId: { eq: dto.externalId },
-      })
+      .getDataModelVersionsById(dto.space!, dto.externalId)
       .then((results) => {
         if (!results || !results.length) {
           return Promise.reject(
@@ -128,9 +125,7 @@ export class FdmClient implements FlexibleDataModelingClient {
    */
   fetchDataModel(dto: FetchDataModelDTO): Promise<DataModel> {
     return this.mixerApiService
-      .listDataModelVersions(dto.space!, {
-        externalId: { eq: dto.dataModelId },
-      })
+      .getDataModelVersionsById(dto.space, dto.dataModelId)
       .then((dataModels) => {
         return this.dataModelDataMapper.deserialize(dataModels[0]);
       });

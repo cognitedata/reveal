@@ -4,6 +4,7 @@ import { DataModelVersion, DataModelVersionStatus } from '../types';
 export interface FetchDataModelVersionDTO {
   /** Data Model externalId */
   externalId: string;
+  space: string;
   version: string;
 }
 

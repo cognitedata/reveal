@@ -296,6 +296,7 @@ type Query {
     until: Timestamp
   ): [Statistic]
   listGraphQlDmlVersions(limit: Int, cursor: String): GraphQlDmlVersionConnection
+  graphQlDmlVersionsById(space: String!, externalId: String!): GraphQlDmlVersionConnection
 }
 
 input QueryStatistic {

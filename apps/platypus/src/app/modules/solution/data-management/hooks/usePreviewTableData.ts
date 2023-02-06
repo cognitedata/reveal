@@ -15,14 +15,18 @@ import {
 
 export const usePreviewTableData = (
   dataModelExternalId: string,
+  space: string,
   version: string,
   dataModelType?: DataModelTypeDefsType,
   dataModelTypeDefs?: DataModelTypeDefs
 ) => {
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
 
-  const { data: dataModel } = useDataModel(dataModelExternalId);
-  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
+  const { data: dataModelVersions } = useDataModelVersions(
+    dataModelExternalId,
+    space
+  );
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
     version,

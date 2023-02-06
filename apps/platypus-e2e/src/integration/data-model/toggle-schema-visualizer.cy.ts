@@ -1,5 +1,7 @@
 import { getFDMVersion, getUrl } from '../../utils';
 
+const SPACE = 'cypress-test-space';
+
 describe('Data Model Page - Toggle Schema Visualizer', () => {
   const createNewDataModel = (dataModelName: string) => {
     cy.visit(getUrl(''));
@@ -9,7 +11,7 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
 
     // if V3, select space
     if (getFDMVersion() === 'V3') {
-      cy.selectSpace('cypress-test-space');
+      cy.selectSpace(SPACE);
     }
 
     cy.getBySel('modal-ok-button').click();
@@ -65,7 +67,7 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
 
     cy.getBySel('schema-visualizer-toggle-btn').should('be.visible').click();
     cy.getBySel('schema-visualizer-err-ctr').should('be.visible');
-    cy.visit(getUrl(`/${newModelName}/${newModelName}/latest/data`));
+    cy.visit(getUrl(`/${SPACE}/${newModelName}/latest/data`));
     cy.getBySel('schema-visualizer-err-ctr').should('be.visible');
 
     cy.visit(getUrl('/blog/blog/latest/data'));

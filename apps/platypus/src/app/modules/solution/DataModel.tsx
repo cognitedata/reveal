@@ -19,7 +19,7 @@ const DataPage = lazy(() =>
 export const DataModel = () => {
   const { t } = useTranslation('DataModel');
 
-  const { dataModelExternalId, version } = useParams();
+  const { dataModelExternalId, space, version } = useParams();
   const {
     setCurrentTypeName,
     setSelectedVersionNumber,
@@ -35,14 +35,14 @@ export const DataModel = () => {
     isLoading: isDataModelLoading,
     isError: hasDataModelError,
     isSuccess: isDataModelLoaded,
-  } = useDataModel(dataModelExternalId);
+  } = useDataModel(dataModelExternalId!, space!);
 
   const {
     data: dataModelVersions,
     isLoading: areDataModelVersionsLoading,
     isError: hasDataModelVersionError,
     isSuccess: areDataModelVersionsLoaded,
-  } = useDataModelVersions(dataModelExternalId);
+  } = useDataModelVersions(dataModelExternalId!, space!);
 
   // Keep this here, we need to have this loaded before any other child page is being loaded
   // Otherwise you will end up having race condition and unpredictable state

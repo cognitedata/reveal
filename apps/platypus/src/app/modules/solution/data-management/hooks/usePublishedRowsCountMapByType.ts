@@ -18,16 +18,21 @@ import { QueryKeys } from '@platypus-app/utils/queryKeys';
 export const usePublishedRowsCountMapByType = ({
   dataModelExternalId,
   dataModelTypes,
+  space,
 }: {
   dataModelExternalId: string;
   dataModelTypes: DataModelTypeDefsType[];
+  space: string;
 }) => {
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
-  const { data: dataModel } = useDataModel(dataModelExternalId);
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
-  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
+  const { data: dataModelVersions } = useDataModelVersions(
+    dataModelExternalId,
+    space
+  );
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
     dataModelVersions || [],

@@ -12,6 +12,7 @@ export type TypeListProps = {
   placeholder?: string;
   onClick: (item: DataModelTypeDefsType) => void;
   dataModelExternalId: string;
+  space: string;
 };
 
 export const TypeList = ({
@@ -20,6 +21,7 @@ export const TypeList = ({
   onClick,
   selectedTypeName,
   dataModelExternalId,
+  space,
 }: TypeListProps) => {
   const [filter, setFilter] = useState('');
 
@@ -27,6 +29,7 @@ export const TypeList = ({
     usePublishedRowsCountMapByType({
       dataModelExternalId,
       dataModelTypes: items || [],
+      space,
     });
 
   return (

@@ -21,18 +21,23 @@ import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 export interface QueryExplorerPageProps {
   dataModelExternalId: string;
+  space: string;
 }
 
 export const QueryExplorerPage = ({
   dataModelExternalId,
+  space,
 }: QueryExplorerPageProps) => {
   const { t } = useTranslation('SolutionMonitoring');
   const navigate = useNavigate();
-  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
+  const { data: dataModelVersions } = useDataModelVersions(
+    dataModelExternalId,
+    space
+  );
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
-  const { data: dataModel } = useDataModel(dataModelExternalId);
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,

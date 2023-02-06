@@ -16,8 +16,8 @@ import { DataModelSettingsModal } from '@platypus-app/components/DataModelSettin
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 export const NavigationDataModel = () => {
-  const { dataModelExternalId } = useParams();
-  const { data: dataModel } = useDataModel(dataModelExternalId);
+  const { dataModelExternalId, space } = useParams();
+  const { data: dataModel } = useDataModel(dataModelExternalId!, space!);
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
   const navigate = useNavigate();
 

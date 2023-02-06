@@ -53,9 +53,13 @@ const MAX_TYPES_VISUALIZABLE = 30;
 
 export interface DataModelPageProps {
   dataModelExternalId: string;
+  space: string;
 }
 
-export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
+export const DataModelPage = ({
+  dataModelExternalId,
+  space,
+}: DataModelPageProps) => {
   const navigate = useNavigate();
 
   const { t } = useTranslation('SolutionDataModel');
@@ -63,7 +67,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const { track } = useMixpanel();
 
   const { data: dataModelVersions, refetch: refetchDataModelVersions } =
-    useDataModelVersions(dataModelExternalId);
+    useDataModelVersions(dataModelExternalId, space);
   const queryClient = useQueryClient();
   const {
     currentTypeName,
@@ -79,7 +83,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     parseGraphQLSchema,
     setCurrentTypeName,
   } = useDataModelState();
-  const { data: dataModel } = useDataModel(dataModelExternalId);
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const { removeLocalDraft, getLocalDraft } = useLocalDraft(
     dataModelExternalId,

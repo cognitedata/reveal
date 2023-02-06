@@ -81,7 +81,39 @@ export const graphQlMetaApiResolvers = (
           graphQlDml: item.metadata.graphQlDml,
         }));
 
-        // return { items: results };
+        return {
+          items: results,
+          edges: results.map((result) => ({ node: result })),
+        };
+      },
+      graphQlDmlVersionsById: (prm, params) => {
+        let dataModelVersions = fetchAndQueryData({
+          globalDb: db,
+          templateDb: {},
+          isBuiltInType: true,
+          schemaType: 'datamodels',
+          isFetchingObject: false,
+          filterParams: {
+            filter: {
+              space: { eq: params.space },
+            },
+          },
+        });
+
+        dataModelVersions = sortCollection(dataModelVersions, [
+          { createdTime: 'DESC' },
+        ]);
+        // get unique data models
+        dataModelVersions = dataModelVersions.filter(
+          (dataModelVersion) =>
+            dataModelVersion.externalId === params.externalId
+        );
+
+        const results = dataModelVersions.map((dataModelVersion) => ({
+          ...dataModelVersion,
+          graphQlDml: dataModelVersion.metadata.graphQlDml,
+        }));
+
         return {
           items: results,
           edges: results.map((result) => ({ node: result })),

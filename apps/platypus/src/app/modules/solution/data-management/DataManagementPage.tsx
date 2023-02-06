@@ -30,10 +30,12 @@ const PreviewPage = lazy<any>(() =>
 
 export interface DataManagementPageProps {
   dataModelExternalId: string;
+  space: string;
 }
 
 export const DataManagementPage = ({
   dataModelExternalId,
+  space,
 }: DataManagementPageProps) => {
   const { t } = useTranslation('SolutionDataPreview');
 
@@ -44,7 +46,10 @@ export const DataManagementPage = ({
   const initialPage: TabType = (subSolutionPage as TabType) || 'preview';
   const [tab] = useState<TabType>(initialPage);
 
-  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
+  const { data: dataModelVersions } = useDataModelVersions(
+    dataModelExternalId,
+    space
+  );
 
   const navigate = useNavigate();
 
@@ -52,7 +57,7 @@ export const DataManagementPage = ({
     (state) => state.dataModel
   );
 
-  const { data: dataModel } = useDataModel(dataModelExternalId);
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,

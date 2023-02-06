@@ -27,14 +27,14 @@ import { useDataManagementPageUI } from '../hooks/useDataManagemenPageUI';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
-import { directive } from 'graphql-extra';
 import { mixerApiInlineTypeDirectiveName } from '@platypus-core/domain/data-model';
 
 export interface PreviewProps {
   dataModelExternalId: string;
+  space: string;
 }
 
-export const Preview = ({ dataModelExternalId }: PreviewProps) => {
+export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -46,18 +46,22 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     (state) => state.dataModel
   );
 
-  const { data: dataModel } = useDataModel(dataModelExternalId);
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
-  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
+  const { data: dataModelVersions } = useDataModelVersions(
+    dataModelExternalId,
+    space
+  );
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
     dataModelVersions || [],
     dataModelExternalId,
-    dataModel?.space || ''
+    space
   );
   const dataModelTypeDefs = useDataModelTypeDefs(
     dataModelExternalId,
-    selectedVersionNumber
+    selectedVersionNumber,
+    space
   );
   const selectedTypeNameFromQuery = getQueryParameter('type');
   const { selectedType, isTransformationModalOpen, transformationId } =
@@ -172,6 +176,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
                 item
               );
             }}
+            space={space}
           />
         }
         content={

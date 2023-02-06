@@ -22,6 +22,7 @@ export const useSuggestionsResult = ({
   const { data: sourceRecords, isFetching: isFetchingSource } =
     usePreviewTableData(
       dataModelInfo.dataModelExternalId,
+      dataModelInfo.space,
       dataModelInfo.version,
       dataModelInfo.dataModelType,
       dataModelInfo.dataModelTypeDefs
@@ -29,6 +30,7 @@ export const useSuggestionsResult = ({
   const { data: targetRecords, isFetching: isFetchingTarget } =
     usePreviewTableData(
       dataModelInfo.dataModelExternalId,
+      dataModelInfo.space,
       dataModelInfo.version,
       targetTypeDef,
       dataModelInfo.dataModelTypeDefs

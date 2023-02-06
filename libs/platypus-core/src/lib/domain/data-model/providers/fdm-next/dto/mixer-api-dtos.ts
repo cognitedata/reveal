@@ -9,18 +9,6 @@ export interface GraphQlDmlVersionDTO {
   lastUpdatedTime?: string | number;
 }
 
-export interface DataModelVersionFilter {
-  externalId?: {
-    eq?: string;
-    in?: string[];
-  };
-  //Todo https://github.com/cognitedata/schema-service/pull/567/files
-}
-
-export interface DataModelVersionSort {
-  createdTime: 'ASCENDING' | 'DESCENDING';
-}
-
 export interface UpsertDataModelResult {
   errors: Error[] | null;
   result: GraphQlDmlVersionDTO;

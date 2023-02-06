@@ -100,13 +100,15 @@ export const DataPreviewTable = forwardRef<
     const { isEnabled: isSuggestionsEnabled } = useSuggestionsFeatureFlag();
     const { isEnabled: isDeletionEnabled } =
       useDataManagementDeletionFeatureFlag();
-    const { data: dataModelVersions } =
-      useDataModelVersions(dataModelExternalId);
+    const { data: dataModelVersions } = useDataModelVersions(
+      dataModelExternalId,
+      space
+    );
     const selectedDataModelVersion = useSelectedDataModelVersion(
       version,
       dataModelVersions || [],
       dataModelExternalId,
-      space || ''
+      space
     );
 
     const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
@@ -168,6 +170,7 @@ export const DataPreviewTable = forwardRef<
     } = usePublishedRowsCountMapByType({
       dataModelExternalId,
       dataModelTypes: dataModelTypeDefs.types,
+      space,
     });
     const deleteRowsMutation = useNodesDeleteMutation({
       dataModelExternalId,
@@ -694,6 +697,7 @@ export const DataPreviewTable = forwardRef<
                   dataModelType,
                   dataModelTypeDefs,
                   searchTerm,
+                  space,
                   version,
                 },
                 onCellEditingStarted: handleCellEditingStarted,

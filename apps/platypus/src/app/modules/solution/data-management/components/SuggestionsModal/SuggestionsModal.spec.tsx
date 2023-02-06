@@ -14,8 +14,9 @@ jest.mock(
   '@platypus-app/modules/solution/data-management/hooks/usePreviewTableData',
   () => ({
     usePreviewTableData: (
-      _: any,
-      _2: any,
+      _: any, // dataModelExternalId
+      _2: any, // space
+      _3: any, // version
       dataModelType: DataModelTypeDefsType
     ) =>
       dataModelType?.name === 'Movie'

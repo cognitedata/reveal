@@ -32,33 +32,36 @@ export const useDataModels = () => {
   );
 };
 
-export const useDataModel = (dataModelExternalId?: string) => {
+export const useDataModel = (dataModelExternalId: string, space: string) => {
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
 
   return useQuery(
-    QueryKeys.DATA_MODEL(dataModelExternalId || ''),
+    QueryKeys.DATA_MODEL(dataModelExternalId),
     async () =>
       await dataModelHandlerFuncWrapper<DataModel>(() =>
         dataModelsHandler.fetch({
-          dataModelId: dataModelExternalId || '',
+          dataModelId: dataModelExternalId,
+          space,
         })
-      ),
-    { enabled: !!dataModelExternalId }
+      )
   );
 };
 
-export const useDataModelVersions = (dataModelExternalId?: string) => {
+export const useDataModelVersions = (
+  dataModelExternalId: string,
+  space: string
+) => {
   const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
 
   return useQuery(
-    QueryKeys.DATA_MODEL_VERSION_LIST(dataModelExternalId || ''),
+    QueryKeys.DATA_MODEL_VERSION_LIST(dataModelExternalId),
     async () =>
       await dataModelHandlerFuncWrapper<DataModelVersion[]>(() =>
         dataModelVersionHandler.versions({
           externalId: dataModelExternalId || '',
+          space,
         })
-      ),
-    { enabled: !!dataModelExternalId }
+      )
   );
 };
 
@@ -102,14 +105,18 @@ export const useSelectedDataModelVersion = (
 
 export const useDataModelTypeDefs = (
   dataModelExternalId: string,
-  selectedVersionNumber: string
+  selectedVersionNumber: string,
+  space: string
 ) => {
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
   );
   const errorLogger = useErrorLogger();
-  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
-  const { data: dataModel } = useDataModel(dataModelExternalId);
+  const { data: dataModelVersions } = useDataModelVersions(
+    dataModelExternalId,
+    space
+  );
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,

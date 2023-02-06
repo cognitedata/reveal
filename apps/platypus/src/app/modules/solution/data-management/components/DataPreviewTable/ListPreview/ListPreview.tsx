@@ -76,6 +76,7 @@ export const ListPreview: React.FC<ListPreviewProps> = ({
     dataModelType,
     nestedLimit: PAGE_LIMIT,
     limitFields: [field],
+    space: dataModelVersion.space,
   });
 
   useEffect(() => {

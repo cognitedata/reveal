@@ -78,6 +78,7 @@ export const CollapsiblePanelContainer: React.FC<
           externalId={data.externalId}
           dataModelType={data.fieldType}
           dataModelExternalId={dataModelVersion.externalId}
+          space={dataModelVersion.space}
         />
       );
     }

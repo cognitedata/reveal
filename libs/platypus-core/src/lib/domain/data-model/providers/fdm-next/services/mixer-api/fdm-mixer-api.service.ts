@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { CogniteClient } from '@cognite/sdk';
-import {
-  KeyValueMap,
-  PlatypusError,
-  SdkError,
-} from '@platypus-core/boundaries/types';
+import { PlatypusError, SdkError } from '@platypus-core/boundaries/types';
 import {
   GraphQlQueryParams,
   GraphQLQueryResponse,
@@ -12,8 +8,6 @@ import {
   ValidateDataModelDTO,
 } from '../../../../dto';
 import {
-  DataModelVersionFilter,
-  DataModelVersionSort,
   GraphQlDmlVersionDTO,
   UpsertDataModelResult,
 } from '../../dto/mixer-api-dtos';
@@ -34,39 +28,10 @@ export class FdmMixerApiService {
     this.mixerApiPath = `/api/v1/projects/${this.cdfClient.project}/dml/graphql`;
   }
 
-  listDataModelVersions(
-    space?: string,
-    filter?: DataModelVersionFilter,
-    sort?: DataModelVersionSort
-  ): Promise<GraphQlDmlVersionDTO[]> {
-    let dataModelsFromSpaceFilter = '(limit: 100)';
-    const queryVariables = {} as KeyValueMap;
-
-    if (space || filter) {
-      const filters = [];
-
-      if (space) {
-        filters.push(`space: "${space}"`);
-      }
-
-      // currently MixerApi does not support filters
-      if (filter) {
-        // queryVariables['filter'] = filter;
-        // filters.push(`filter: $filter`);
-      }
-
-      dataModelsFromSpaceFilter = filters.length
-        ? `(limit: 100, ${filters.join(',')})`
-        : '(limit: 100)';
-    }
-
+  listDataModelVersions(): Promise<GraphQlDmlVersionDTO[]> {
     const listDataModelsQuery = `
-    query ${
-      Object.keys(queryVariables).length
-        ? `($filter: GraphQlDmlVersionFilter)`
-        : ''
-    } {
-      listGraphQlDmlVersions${dataModelsFromSpaceFilter} {
+    query listDataModelVersions($limit: Int) {
+      listGraphQlDmlVersions(limit: $limit) {
         items {
           ${this.dataModelVersionFields}
         }
@@ -76,20 +41,43 @@ export class FdmMixerApiService {
 
     const reqDto = {
       query: listDataModelsQuery,
-      variables: queryVariables,
+      variables: {
+        limit: 1000,
+      },
     } as GraphQlQueryParams;
 
     return this.runGraphQlQuery(this.mixerApiPath, reqDto)
       .then((response) => {
-        let items = response.data.data.listGraphQlDmlVersions.items;
+        return response.data.data.listGraphQlDmlVersions.items;
+      })
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
+  }
 
-        if (filter?.externalId) {
-          items = items.filter(
-            (item: any) => item.externalId === filter.externalId?.eq
-          );
+  getDataModelVersionsById(
+    space: string,
+    externalId: string
+  ): Promise<GraphQlDmlVersionDTO[]> {
+    const query = `
+    query getDataModelVersionsById($space:String!, $externalId:String!) {
+      graphQlDmlVersionsById(space: $space, externalId: $externalId) {
+        items {
+          ${this.dataModelVersionFields}
         }
+      }
+    }
+    `;
 
-        return items;
+    const reqDto = {
+      query,
+      variables: {
+        space,
+        externalId,
+      },
+    } as GraphQlQueryParams;
+
+    return this.runGraphQlQuery(this.mixerApiPath, reqDto)
+      .then((response) => {
+        return response.data.data.graphQlDmlVersionsById.items;
       })
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }

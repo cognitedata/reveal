@@ -27,6 +27,7 @@ export const usePreviewData = (
     };
     limitFields?: string[];
     nestedLimit?: number;
+    space: string;
   },
   options?: { enabled?: boolean }
 ) => {
@@ -37,6 +38,7 @@ export const usePreviewData = (
     nestedFilters,
     nestedLimit = 10,
     limitFields,
+    space,
   } = params;
 
   const { selectedVersionNumber } = useSelector<DataModelState>(
@@ -44,11 +46,15 @@ export const usePreviewData = (
   );
   const dataModelTypeDefs = useDataModelTypeDefs(
     dataModelExternalId,
-    selectedVersionNumber
+    selectedVersionNumber,
+    space
   );
 
-  const { data: dataModel } = useDataModel(dataModelExternalId);
-  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
+  const { data: dataModelVersions } = useDataModelVersions(
+    dataModelExternalId,
+    space
+  );
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
