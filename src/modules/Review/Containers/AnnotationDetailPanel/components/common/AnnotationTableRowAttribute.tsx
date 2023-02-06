@@ -20,7 +20,7 @@ export const AnnotationTableRowAttribute = ({
 
       {Object.entries(reviewAnnotation.annotation.attributes || []).map(
         ([key, value]) => (
-          <StyledDetail>
+          <StyledDetail key={key}>
             {key}: {value.value}
           </StyledDetail>
         )

@@ -211,7 +211,7 @@ describe('Test process reducers', () => {
 
     describe('action setUnsavedDetectionModelSettings', () => {
       test('set Unsaved Detection Model Settings for OCR', () => {
-        const modelIndex: number = 0;
+        const modelIndex = 0;
         const params: ParamsOCR = { threshold: 0.5 };
         const newState = reducer(
           mockProcessState,
@@ -226,7 +226,7 @@ describe('Test process reducers', () => {
       });
 
       test('set Unsaved Detection Model Settings for Tag Detection', () => {
-        const modelIndex: number = 1;
+        const modelIndex = 1;
         const params: ParamsTagDetection = {
           threshold: 0.5,
           partialMatch: false,
@@ -245,7 +245,7 @@ describe('Test process reducers', () => {
       });
 
       test('set Unsaved Detection Model Settings for Object Detection', () => {
-        const modelIndex: number = 2;
+        const modelIndex = 2;
         const params: ParamsObjectDetection = {
           threshold: 0.6,
         };
@@ -262,7 +262,7 @@ describe('Test process reducers', () => {
       });
 
       test('set Unsaved Detection Model Settings for Custom Model', () => {
-        const modelIndex: number = 3;
+        const modelIndex = 3;
         const params: ParamsCustomModel = {
           modelName: 'test custom model',
           isValid: true,
@@ -281,7 +281,7 @@ describe('Test process reducers', () => {
       });
 
       test('app should not crash if model index is not available', () => {
-        const modelIndex: number = 4;
+        const modelIndex = 4;
         const params: ParamsCustomModel = {
           modelName: 'test custom model',
           isValid: true,

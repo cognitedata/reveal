@@ -42,7 +42,7 @@ export class LegacyAnnotationApi {
     const result: LegacyAnnotation[] = [];
     let remaining: number | undefined = limitVar;
     let cursor: string | undefined;
-    let currentLimit: number = 1000;
+    let currentLimit = 1000;
 
     while (remaining === undefined || remaining > 0) {
       if (remaining !== undefined) {

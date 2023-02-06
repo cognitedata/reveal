@@ -1,4 +1,3 @@
-/* eslint-disable @cognite/no-number-z-index */
 import { FileInfo } from '@cognite/sdk';
 import { Body, DocumentIcon, Button, Icon } from '@cognite/cogs.js';
 import { Loader, useFileIcon } from '@cognite/data-exploration';

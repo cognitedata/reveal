@@ -71,7 +71,7 @@ export const VirtualizedReviewAnnotations = <T,>({
       while (true) {
         // Step [2]: Get the parent component back. It will be the object
         // the `getNodeData` function constructed, so you can read any data from it.
-        // @ts-ignore
+        // @ts-ignore: yield expression
         const parent = yield;
 
         for (let i = 0; i < parent.node.children.length; i++) {
@@ -101,7 +101,6 @@ export const VirtualizedReviewAnnotations = <T,>({
       setOpen(!isOpen);
     };
     return (
-      // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
       <div style={{ cursor: 'pointer', ...style }} onClick={handleClick}>
         {React.createElement(
           component,

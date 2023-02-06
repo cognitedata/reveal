@@ -22,6 +22,7 @@ import store from 'src/store';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import rootStyles from './styles/index.css';
+import { DataExplorationWrapper } from './DataExplorationWrapper';
 
 const App = () => {
   const subAppName = 'cdf-vision-subapp';
@@ -40,7 +41,14 @@ const App = () => {
     };
   }, []);
 
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 10 * 60 * 1000, // Pretty long
+      },
+    },
+  });
 
   const project = getProject();
   const env = getEnv();
@@ -60,11 +68,13 @@ const App = () => {
             >
               <QueryClientProvider client={queryClient}>
                 <ReduxProvider store={store}>
-                  <SubAppWrapper title="Cognite Vision">
-                    <Router history={history}>
-                      <Routes />
-                    </Router>
-                  </SubAppWrapper>
+                  <DataExplorationWrapper>
+                    <SubAppWrapper title="Cognite Vision">
+                      <Router history={history}>
+                        <Routes />
+                      </Router>
+                    </SubAppWrapper>
+                  </DataExplorationWrapper>
                 </ReduxProvider>
               </QueryClientProvider>
             </FlagProvider>

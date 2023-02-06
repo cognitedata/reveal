@@ -10,7 +10,7 @@ export class OCRDetectionDataProvider extends BaseDetectionModelDataProvider {
 
   features = [DetectionModelTypeFeatureMapping[VisionDetectionModelType.OCR]];
 
-  getParams = (params?: {}) => {
+  getParams = (params?: object) => {
     return { textDetectionParameters: { ...params } };
   };
 }

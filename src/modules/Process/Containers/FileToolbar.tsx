@@ -1,4 +1,3 @@
-/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
 import {

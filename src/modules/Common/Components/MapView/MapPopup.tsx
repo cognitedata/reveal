@@ -21,14 +21,11 @@ export const MapPopup = ({
   onClose,
   actionDisabled,
 }: {
-  item: TableDataItem | undefined;
+  item: TableDataItem;
   style?: React.CSSProperties;
   actionDisabled: boolean;
   onClose: () => void;
 }) => {
-  if (!item) {
-    return <div />;
-  }
   const dispatch = useDispatch();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { menuActions, rowKey, ...fileInfo } = item;

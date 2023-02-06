@@ -1,4 +1,3 @@
-/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import { Button, SegmentedControl, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';

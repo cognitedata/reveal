@@ -206,7 +206,7 @@ export const AnnotationDetailPanelHotKeys = ({
 
   const deleteSelectedAnnotation = useCallback(() => {
     if (nodeTree.length) {
-      let annotationId: string;
+      let annotationId = '';
       const activeNode = getActiveNode(nodeTree);
       if (
         activeNode &&
@@ -224,7 +224,6 @@ export const AnnotationDetailPanelHotKeys = ({
         );
       };
 
-      // @ts-ignore
       if (annotationId) {
         modalRef.current = Modal.confirm({
           title: 'Confirm Delete',

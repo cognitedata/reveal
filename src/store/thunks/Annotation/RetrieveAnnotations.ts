@@ -9,7 +9,7 @@ import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
 import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
-import { cognitePlaygroundClient as sdk } from 'src/api/annotation/CognitePlaygroundClient';
+import sdk from '@cognite/cdf-sdk-singleton';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],

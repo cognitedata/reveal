@@ -1,4 +1,3 @@
-/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import { Modal } from 'antd';
 import { Button } from '@cognite/cogs.js';

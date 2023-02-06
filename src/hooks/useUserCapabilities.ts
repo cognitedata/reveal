@@ -16,7 +16,7 @@ export const useUserCapabilities = (acls: Array<AccessPermission>) => {
       group.capabilities.forEach((cap) => {
         if (acl.acl in cap) {
           acl.actions.forEach((action, index) => {
-            // @ts-ignore
+            // @ts-ignore : no proper index type for CogniteCapabilities
             if (cap[acl.acl].actions.includes(action)) {
               // eslint-disable-next-line no-param-reassign
               acl.actions[index] = '';

@@ -30,7 +30,7 @@ export const FileDetailsContainer = (props: {
           id="geoLocation"
           title="Latitude, longitude: "
           placeholder="None Set"
-          value={[...info.geoLocation?.geometry.coordinates]
+          value={[...(info.geoLocation?.geometry.coordinates || [])]
             .reverse()
             .join(', ')}
           copyable

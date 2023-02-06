@@ -85,8 +85,9 @@ export const ProcessToolBar = () => {
   };
 
   const [isModalOpen, setModalOpen] = useState(false);
-  const [customModels, setCustomModels] =
-    useState<AutoMLModelCore[] | undefined>();
+  const [customModels, setCustomModels] = useState<
+    AutoMLModelCore[] | undefined
+  >();
 
   const disableAddFiles = !isPollingFinished;
   const disableModelSelection = !processFiles.length || !isPollingFinished;
@@ -279,13 +280,13 @@ const ProcessToolBarElement = styled.div<ToolBarElemProps>`
     props.active ? 'rgba(74, 103, 251, 0.1)' : '#fafafa'};
   border: 0.5px solid ${(props) => (props.active ? '#4a67fb' : '#dcdcdc')};
 `;
-/* eslint-disable @cognite/no-number-z-index */
+
 const ToolContainer = styled.div`
   display: flex;
   width: fit-content;
   z-index: 1;
 `;
-/* eslint-enable @cognite/no-number-z-index */
+
 const ElementTitle = styled.div`
   display: flex;
   width: 100%;

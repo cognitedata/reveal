@@ -256,7 +256,6 @@ const CarouselContainer = styled.div`
   }
 `;
 
-/* eslint-disable @cognite/no-number-z-index */
 const NavigationIconContainer = styled.div`
   height: 32px;
   width: 20px;
@@ -298,4 +297,3 @@ const NavigateLeft = styled(NavigationIconContainer)`
 const NavigateRight = styled(NavigationIconContainer)`
   right: 12px;
 `;
-/* eslint-enable @cognite/no-number-z-index */

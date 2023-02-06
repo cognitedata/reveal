@@ -96,7 +96,7 @@ export const updateBulk = createAsyncThunk<
   } else {
     const payload: {
       id: number;
-      update: {};
+      update: object;
     }[] = selectedFiles.map((file) => {
       /**
        * API limitations:

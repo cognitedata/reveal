@@ -5,8 +5,9 @@ export interface FilePickerContextValue {
   onError: (error: Error) => unknown;
 }
 
-export const FilePickerContext =
-  React.createContext<FilePickerContextValue | undefined>(undefined);
+export const FilePickerContext = React.createContext<
+  FilePickerContextValue | undefined
+>(undefined);
 
 export function useFilePickerContext() {
   const context = React.useContext(FilePickerContext);

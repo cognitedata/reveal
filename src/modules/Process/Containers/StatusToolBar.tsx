@@ -31,25 +31,27 @@ const CustomBreadCrumb = (props: any) => {
   const { current, previous } = props;
   return (
     <Text style={{ fontSize: '14px' }} level={3}>
-      <Breadcrumb separator=" ">
+      <Breadcrumb separator="/">
         <Breadcrumb.Item
           onClick={() => history.push(getLink(workflowRoutes.home))}
         >
-          <span style={{ cursor: 'pointer' }}> CDF /</span>
+          <span style={{ cursor: 'pointer' }}>CDF</span>
         </Breadcrumb.Item>
 
-        <Breadcrumb.Item onClick={() => history.goBack()}>
-          {previous === 'process' && (
+        {previous === 'process' && (
+          <Breadcrumb.Item onClick={() => history.goBack()}>
             <span style={{ cursor: 'pointer' }}>
-              Contextualize Imagery Data /
+              Contextualize Imagery Data
             </span>
-          )}
-          {previous === 'explorer' && current === 'Review' && (
+          </Breadcrumb.Item>
+        )}
+        {previous === 'explorer' && current === 'Review' && (
+          <Breadcrumb.Item onClick={() => history.goBack()}>
             <span style={{ cursor: 'pointer' }}>
-              Image and video management /
+              Image and video management
             </span>
-          )}
-        </Breadcrumb.Item>
+          </Breadcrumb.Item>
+        )}
 
         {current && (
           <Breadcrumb.Item>

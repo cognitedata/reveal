@@ -39,7 +39,7 @@ export class MockedCogniteClient {
       search: {
         name: string;
       };
-    }): Promise<any[]> =>
+    }): Promise<never[]> =>
       new Promise((resolve, reject) => {
         if (body.filter) {
           reject(new Error('Filter not handled'));
@@ -53,7 +53,7 @@ export class MockedCogniteClient {
         };
         parentIds: number[];
       };
-    }): Promise<{ items: any[] }> =>
+    }): Promise<{ items: never[] }> =>
       new Promise((resolve, reject) => {
         if (body.filter) {
           reject(new Error('Filter not handled'));

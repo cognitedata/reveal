@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-disabled-tests */
 import { initialState } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { getInitialState } from 'src/__test-utils/store.utils';
 import { CombinedState } from '@reduxjs/toolkit';

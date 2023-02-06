@@ -50,8 +50,9 @@ const circlePaintSelected: MapboxGL.CirclePaint = {
 
 export const MapView = (props: FileMapTableProps<TableDataItem>) => {
   const [selectedFile, setSelectedFile] = useState<ResultData | undefined>();
-  const [popupState, setPopupState] =
-    useState<'open' | 'hidden' | 'close'>('close');
+  const [popupState, setPopupState] = useState<'open' | 'hidden' | 'close'>(
+    'close'
+  );
   const [mapActive, setMapActive] = useState<boolean>(true);
   const [center, setCenter] = useState<[number, number]>();
   const [zoom] = useState<[number] | undefined>([2]);
@@ -136,6 +137,12 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
     }
   });
 
+  const selectedFileObj = useMemo(() => {
+    return files.find(
+      (element: TableDataItem) => element.id === selectedFile?.id
+    );
+  }, [files, selectedFile?.id]);
+
   return (
     <Container>
       <div>
@@ -194,13 +201,15 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
               anchor="bottom"
               offset={[0, -10]}
             >
-              <MapPopup
-                item={files.find(
-                  (element: TableDataItem) => element.id === selectedFile!.id
-                )}
-                onClose={() => setPopupState('close')}
-                actionDisabled={!!props.selectedIds.length}
-              />
+              {selectedFileObj ? (
+                <MapPopup
+                  item={selectedFileObj}
+                  onClose={() => setPopupState('close')}
+                  actionDisabled={!!props.selectedIds.length}
+                />
+              ) : (
+                <div />
+              )}
             </Popup>
           ) : undefined}
         </Mapbox>

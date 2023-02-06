@@ -1,4 +1,3 @@
-/* eslint-disable @cognite/no-number-z-index */
 import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileToolbar } from 'src/modules/Process/Containers/FileToolbar';

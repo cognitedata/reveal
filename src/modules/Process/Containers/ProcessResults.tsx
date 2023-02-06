@@ -136,7 +136,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
 
   const processTableRowData: ResultData[] = useMemo(
     () =>
-      processFiles.map((file) => ({
+      processFiles.map((file: FileInfo) => ({
         ...file,
         menuActions,
         mimeType: file.mimeType || '',
@@ -156,7 +156,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   // since explorer modal clears the anntation state when it's loading its own annotations
 
   const handleItemClick = useCallback(
-    (item: TableDataItem, showFileDetailsOnClick: boolean = true) => {
+    (item: TableDataItem, showFileDetailsOnClick = true) => {
       dispatch(cancelFileDetailsEdit());
       dispatch(setFocusedFileId(item.id));
       if (showFileDetailsOnClick) {

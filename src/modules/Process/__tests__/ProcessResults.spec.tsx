@@ -42,10 +42,10 @@ describe('ProcessResults', () => {
       },
     });
 
-    const { getByText } = testRenderer(TestComponent, store, props);
+    testRenderer(TestComponent, store, props);
 
     expect(
-      getByText('First select from existing files or upload new')
+      screen.getByText('First select from existing files or upload new')
     ).toBeInTheDocument();
   });
 
@@ -71,12 +71,12 @@ describe('ProcessResults', () => {
     it('should render unprocessed file list when files uploaded or added', async () => {
       // test table entries
 
-      const { getAllByRole } = testRenderer(TestComponent, store, props);
+      testRenderer(TestComponent, store, props);
 
       expect(screen.getByText(fileOne.name)).toBeInTheDocument();
       expect(screen.getByText(fileTwo.name)).toBeInTheDocument();
 
-      const table = getAllByRole('table')[0]; // get the first and only table element
+      const table = screen.getAllByRole('table')[0]; // get the first and only table element
 
       expect(table).toBeInTheDocument();
 

@@ -1,4 +1,3 @@
-// eslint-disable-next-line jest/no-mocks-import
 import { MOCK_PROJECT_NAME } from 'src/__mocks__/MockedCogniteClient';
 import { validatePersistedState } from 'src/utils/localStorage/validatePersistedState';
 import { APP_STATE_VERSION } from 'src/utils/localStorage/LocalStorage';

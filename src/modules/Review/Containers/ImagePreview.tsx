@@ -30,7 +30,7 @@ import {
   isImageObjectDetectionPolylineData,
 } from 'src/modules/Common/types/typeGuards';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
-import { AnnotationChangeById } from '@cognite/sdk-playground';
+import { AnnotationChangeById } from '@cognite/sdk';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import {
   clearTemporaryRegion,

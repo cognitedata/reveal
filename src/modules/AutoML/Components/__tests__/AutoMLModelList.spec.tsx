@@ -19,7 +19,7 @@ describe('AutoMLModelList', () => {
     testRenderer(TestComponent, undefined, props);
 
     expect(screen.queryByTestId('loading-animation-icon')).toBeNull();
-    expect(screen.queryByTestId('no-model-msg')).toBeInTheDocument();
+    expect(screen.getByTestId('no-model-msg')).toBeInTheDocument();
   });
 
   it('should render model list', async () => {

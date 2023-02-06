@@ -14,7 +14,7 @@ export abstract class BaseDetectionModelDataProvider
 {
   protected abstract url: string;
   protected abstract features: string[];
-  protected abstract getParams: (params?: {}) => {};
+  protected abstract getParams: (params?: object) => object;
   protected customHeaders = {};
 
   postJob(fileIds: number[], parameters?: DetectionModelParams) {

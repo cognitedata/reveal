@@ -382,7 +382,7 @@ describe('Test get tag for updated', () => {
 
 describe('Test get tag for new', () => {
   test('if assetId is in assetsDetails', () => {
-    const assetId: number = 1;
+    const assetId = 1;
     const expectedTag = (
       <Tag key={assetId} color="green">
         {assetsDetails[assetId].name}
@@ -392,7 +392,7 @@ describe('Test get tag for new', () => {
   });
 
   test('if assetId not found in assetsDetails', () => {
-    const assetId: number = 5;
+    const assetId = 5;
     const expectedTag = <Tag key={assetId} color="green" />;
     expect(getTagForNew({ assetId, assetsDetails })).toStrictEqual(expectedTag);
   });

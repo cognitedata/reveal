@@ -15,8 +15,9 @@ export const DirectoryPanel = ({
    * if unsaved directory defined: directory update with the new value
    */
   const { directory } = bulkEditUnsaved;
-  const [newDirectory, setNewDirectory] =
-    useState<string | undefined>(directory);
+  const [newDirectory, setNewDirectory] = useState<string | undefined>(
+    directory
+  );
   const validDirectoryPrefix = useMemo(
     () =>
       validateDirectoryPrefix({

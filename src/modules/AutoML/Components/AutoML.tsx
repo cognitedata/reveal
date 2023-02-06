@@ -1,4 +1,3 @@
-/* eslint-disable @cognite/no-number-z-index */
 import React, { useEffect, useState } from 'react';
 import { Divider } from '@cognite/data-exploration';
 import { useDispatch } from 'react-redux';

@@ -1,4 +1,3 @@
-/* eslint-disable @cognite/no-number-z-index */
 import React, { useCallback, useEffect, useState } from 'react';
 import { Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';

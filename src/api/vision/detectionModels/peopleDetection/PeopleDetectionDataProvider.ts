@@ -12,7 +12,7 @@ export class PeopleDetectionDataProvider extends BaseDetectionModelDataProvider 
     DetectionModelTypeFeatureMapping[VisionDetectionModelType.PeopleDetection],
   ];
 
-  getParams = (params?: {}) => {
+  getParams = (params?: object) => {
     return { peopleDetectionParameters: { ...params } };
   };
 }

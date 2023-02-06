@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-/* eslint-disable @cognite/no-number-z-index */
 import React, { useState } from 'react';
 import {
   Button,
@@ -188,7 +187,7 @@ const StyledTitle = styled(Title)`
   display: flex;
   width: 100%;
   height: 100%;
-  color: '#00000073';
+  color: #00000073;
   justify-content: center;
   align-items: center;
 `;

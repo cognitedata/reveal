@@ -7,7 +7,7 @@ import { StatusColors } from 'src/constants/Colors';
 
 export const AutoMLStatusBadge = (props: {
   status: JobStatus;
-  errorMessage?: String;
+  errorMessage?: string;
   large?: boolean;
 }) => {
   const background =

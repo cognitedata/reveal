@@ -1,4 +1,4 @@
-import { AnnotatedResourceType } from '@cognite/sdk-playground';
+import { AnnotatedResourceType } from '@cognite/sdk';
 
 export const CREATING_APP = 'Fusion: Vision';
 export const CREATING_APP_VERSION = '0.0.1';

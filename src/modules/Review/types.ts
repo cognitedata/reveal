@@ -55,7 +55,7 @@ export type VisionOptionType<T> = OptionType<T> & {
   icon?: string;
 };
 
-export type Tool = typeof tools[keyof typeof tools];
+export type Tool = (typeof tools)[keyof typeof tools];
 
 /**
  * New Vision Review Types

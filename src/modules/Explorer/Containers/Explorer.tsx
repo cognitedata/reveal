@@ -1,4 +1,3 @@
-/* eslint-disable @cognite/no-number-z-index */
 import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { VerticalContainer } from 'src/modules/Common/Components/VerticalContainer';
@@ -89,7 +88,7 @@ const Explorer = () => {
   }, []);
 
   const handleItemClick = useCallback(
-    (item: TableDataItem, showFileDetailsOnClick: boolean = true) => {
+    (item: TableDataItem, showFileDetailsOnClick = true) => {
       dispatch(cancelFileDetailsEdit());
       dispatch(FetchFilesById([item.id]));
       dispatch(setFocusedFileId(item.id));
@@ -189,7 +188,6 @@ const Explorer = () => {
             </ViewContainer>
           </TablePanel>
           {showMetadata && focusedFileId && (
-            // eslint-disable-next-line  @cognite/no-number-z-index
             <DrawerContainer style={{ zIndex: 2 }}>
               <QueryClientProvider client={queryClient}>
                 <FileDetails

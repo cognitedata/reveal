@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-disabled-tests */
 import { ReviewState } from 'src/modules/Review/store/review/types';
 
 import { initialState as filesInitialState } from 'src/modules/Common/store/files/slice';

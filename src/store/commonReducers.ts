@@ -26,7 +26,7 @@ const selectAllFilesFromListWithFilter = (
     Object.keys(filter).forEach((filterKey) => {
       switch (filterKey) {
         case 'geoLocation': {
-          const geoLocationAvailable = filter!.geoLocation;
+          const geoLocationAvailable = filter?.geoLocation;
           const allFiles = fileIds.map(
             (id) => state.files.byId[id]
           ) as FileState[];

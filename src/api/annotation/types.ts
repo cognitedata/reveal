@@ -1,5 +1,9 @@
-import { CogniteInternalId, ExternalId, InternalId } from '@cognite/sdk';
-import { AnnotationStatus } from '@cognite/sdk-playground';
+import {
+  CogniteInternalId,
+  ExternalId,
+  InternalId,
+  AnnotationStatus,
+} from '@cognite/sdk';
 
 // Constants
 export enum RegionShape {

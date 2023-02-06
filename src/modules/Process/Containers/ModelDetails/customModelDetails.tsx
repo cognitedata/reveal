@@ -1,7 +1,10 @@
 import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ParamsCustomModel } from 'src/api/vision/detectionModels/types';
+import {
+  DetectionModelParams,
+  ParamsCustomModel,
+} from 'src/api/vision/detectionModels/types';
 import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsObjectDetection } from 'src/constants/Colors';
@@ -64,10 +67,7 @@ export const badge = ({
   );
 };
 
-export const content = (
-  modelIndex: number,
-  customModels?: AutoMLModelCore[]
-) => {
+const Content = (modelIndex: number, customModels?: AutoMLModelCore[]) => {
   const [verifyingModel, setVerifyingModel] = useState<boolean>();
   const dispatch = useDispatch();
   const params: ParamsCustomModel = useSelector(
@@ -108,7 +108,7 @@ export const content = (
     }
   };
 
-  const onThresholdChange = (value: number) => {
+  const onThresholdChange = (value: number | null) => {
     if (isValidThreshold) {
       const newParams = {
         modelIndex,
@@ -116,7 +116,7 @@ export const content = (
           ...params,
           modelJobId: params.modelJobId,
           threshold: value,
-        },
+        } as DetectionModelParams,
       };
       dispatch(setUnsavedDetectionModelSettings(newParams));
     }
@@ -256,6 +256,8 @@ export const content = (
     </ModelDetailSettingContainer>
   );
 };
+
+export const content = Content;
 
 const ModelSelectContainer = styled.div`
   display: flex;

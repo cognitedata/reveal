@@ -4,14 +4,13 @@ import {
   VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
 
-export const fileProcessUpdate =
-  createAction<{
-    fileIds: number[];
-    job: VisionJob;
-    modelType: VisionDetectionModelType;
-    completedFileIds: number[];
-    failedFileIds: number[];
-  }>('fileProcessUpdate');
+export const fileProcessUpdate = createAction<{
+  fileIds: number[];
+  job: VisionJob;
+  modelType: VisionDetectionModelType;
+  completedFileIds: number[];
+  failedFileIds: number[];
+}>('fileProcessUpdate');
 
 export const clearFileState = createAction<number[]>('clearFileState');
 

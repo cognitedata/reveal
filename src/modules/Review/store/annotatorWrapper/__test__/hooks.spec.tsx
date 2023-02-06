@@ -153,7 +153,7 @@ describe('Test useIsCurrentKeypointCollectionComplete hook', () => {
       },
     });
     testRenderer(TestComponent, storeWithNoKeypointsAdded, { fileId: 1 });
-    expect(screen.queryByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
+    expect(screen.getByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
   });
 
   describe('When a tempKeypointCollection is selected', () => {
@@ -168,7 +168,7 @@ describe('Test useIsCurrentKeypointCollectionComplete hook', () => {
       testRenderer(TestComponent, storeWithCompletedCollection, {
         fileId: 1,
       });
-      expect(screen.queryByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
+      expect(screen.getByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
     });
 
     describe('when keypointCollectionTemplate is found', () => {
@@ -180,7 +180,7 @@ describe('Test useIsCurrentKeypointCollectionComplete hook', () => {
         testRenderer(TestComponent, storeWithCompletedCollection, {
           fileId: 1,
         });
-        expect(screen.queryByTestId(COMPLETED_ID)).toBeInTheDocument();
+        expect(screen.getByTestId(COMPLETED_ID)).toBeInTheDocument();
       });
 
       test('When some of the keypoints in current collection were added', () => {
@@ -192,7 +192,7 @@ describe('Test useIsCurrentKeypointCollectionComplete hook', () => {
           },
         });
         testRenderer(TestComponent, storeWithSomeKeypointsAdded, { fileId: 1 });
-        expect(screen.queryByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
+        expect(screen.getByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
       });
 
       test('When no keypoints in current collection were added', () => {
@@ -204,7 +204,7 @@ describe('Test useIsCurrentKeypointCollectionComplete hook', () => {
           },
         });
         testRenderer(TestComponent, storeWithNoKeypointsAdded, { fileId: 1 });
-        expect(screen.queryByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
+        expect(screen.getByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
       });
     });
   });

@@ -47,7 +47,7 @@ import {
   VisionReviewAnnotation,
 } from 'src/modules/Review/types';
 import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from 'src/modules/Review/store/review/utils';
-import { AnnotationChangeById } from '@cognite/sdk-playground';
+import { AnnotationChangeById } from '@cognite/sdk';
 
 /**
  * Converts array of VisionAnnotations to Array of AnnotatorRegions
@@ -220,9 +220,9 @@ export const convertVisionReviewAnnotationToRegions = (
 
 export const getVisionAnnotationDataFromRegion = (
   region: AnnotatorRegion
-): VisionAnnotationDataType | ReviewKeypoint | {} => {
+): VisionAnnotationDataType | ReviewKeypoint | object => {
   const labelOrText = region.annotationLabelOrText;
-  let data: VisionAnnotationDataType | ReviewKeypoint | {} = {};
+  let data: VisionAnnotationDataType | ReviewKeypoint | object = {};
   if (isAnnotatorBoxRegion(region)) {
     switch (region.annotationType) {
       case CDFAnnotationTypeEnum.ImagesAssetLink: {
@@ -395,7 +395,7 @@ export const convertAnnotatorRegionToAnnotationChangeProperties = (
     update: {
       data: { set: annotationData },
     },
-  };
+  } as AnnotationChangeById;
 };
 
 // todo: add test cases VIS-891

@@ -4,7 +4,7 @@ import React from 'react';
 import { getRealStore } from 'src/__test-utils/store.utils';
 import { testRenderer } from 'src/__test-utils/renderer';
 import { ProcessState } from 'src/modules/Process/store/types';
-import { fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { ProcessFileUploadModalContainer } from 'src/modules/Process/Containers/ProcessFileUploadModalContainer';
 
 jest.mock('src/modules/Common/Components/FileUploaderModal/FileUploaderModal');
@@ -21,22 +21,25 @@ describe('Test ProcessFileUploadModalContainer.spec.tsx', () => {
     };
 
     const realStore = getRealStore({ processSlice: mockProcessState });
-    const { getByTestId, queryByText } = testRenderer(TestComponent, realStore);
+    testRenderer(TestComponent, realStore);
 
-    expect(queryByText(/Upload Files/i)).toBeInTheDocument();
-    fireEvent.click(getByTestId('upload'));
+    expect(screen.getByText(/Upload Files/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('upload'));
 
     await waitFor(() =>
       expect(realStore.getState().processSlice.uploadedFileIds).toContain(1)
     );
 
-    expect(queryByText(/Upload Files/i)).not.toBeInTheDocument();
-    expect(queryByText(/Finish Uploading/i)).toBeInTheDocument();
-    fireEvent.click(getByTestId('finish-upload'));
+    expect(screen.queryByText(/Upload Files/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Finish Uploading/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('finish-upload'));
 
     await waitFor(() => {
       expect(realStore.getState().processSlice.fileIds).toContain(1);
-      expect(queryByText(/Finish Uploading/i)).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Finish Uploading/i)).not.toBeInTheDocument();
     });
   });
 
@@ -50,24 +53,27 @@ describe('Test ProcessFileUploadModalContainer.spec.tsx', () => {
 
     const realStore = getRealStore({ processSlice: mockProcessState });
 
-    const { getByTestId, queryByText } = testRenderer(TestComponent, realStore);
+    testRenderer(TestComponent, realStore);
 
-    expect(queryByText(/Upload Files/i)).toBeInTheDocument();
-    fireEvent.click(getByTestId('upload'));
+    expect(screen.getByText(/Upload Files/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('upload'));
 
     await waitFor(() =>
       expect(realStore.getState().processSlice.uploadedFileIds).toContain(2)
     );
 
-    expect(queryByText(/Upload Files/i)).not.toBeInTheDocument();
-    expect(queryByText(/Finish Uploading/i)).toBeInTheDocument();
-    fireEvent.click(getByTestId('finish-upload'));
+    expect(screen.queryByText(/Upload Files/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Finish Uploading/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('finish-upload'));
 
     await waitFor(() => {
       expect(realStore.getState().processSlice.fileIds).toEqual(
         expect.arrayContaining([1, 2])
       );
-      expect(queryByText(/Finish Uploading/i)).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Finish Uploading/i)).not.toBeInTheDocument();
     });
   });
 });

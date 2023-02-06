@@ -1,4 +1,4 @@
-import { AnnotationModel } from '@cognite/sdk-playground';
+import { AnnotationModel } from '@cognite/sdk';
 
 export const invalidCDFAnnotation1: AnnotationModel = {
   id: 8482378845365,

@@ -3,7 +3,10 @@ import { InputNumber } from 'antd';
 import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { ParamsOCR } from 'src/api/vision/detectionModels/types';
+import {
+  DetectionModelParams,
+  ParamsOCR,
+} from 'src/api/vision/detectionModels/types';
 import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsOCR } from 'src/constants/Colors';
@@ -20,7 +23,7 @@ export const description = () => {
   return <Detail>Looks for strings of text and numbers.</Detail>;
 };
 
-export const badge = (modelName: string, hideText: boolean = false) => {
+export const badge = (modelName: string, hideText = false) => {
   return (
     <Button
       icon="String"
@@ -35,7 +38,7 @@ export const badge = (modelName: string, hideText: boolean = false) => {
   );
 };
 
-export const content = (modelIndex: number) => {
+const Content = (modelIndex: number) => {
   const dispatch = useDispatch();
 
   const modelName = useSelector(
@@ -51,13 +54,13 @@ export const content = (modelIndex: number) => {
 
   const isValidThreshold = params.threshold >= 0.4 && params.threshold <= 1.0;
 
-  const onThresholdChange = (value: number) => {
+  const onThresholdChange = (value: number | null) => {
     if (isValidThreshold) {
       const newParams = {
         modelIndex,
         params: {
           threshold: value,
-        },
+        } as DetectionModelParams,
       };
       dispatch(setUnsavedDetectionModelSettings(newParams));
     }
@@ -144,3 +147,4 @@ export const content = (modelIndex: number) => {
     </ModelDetailSettingContainer>
   );
 };
+export const content = Content;

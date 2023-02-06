@@ -1,14 +1,13 @@
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
-import { FileInfo } from '@cognite/sdk';
-import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
-import { splitListIntoChunks } from 'src/utils/generalUtils';
 import {
   AnnotationFilterRequest,
   AnnotationStatus,
-} from '@cognite/sdk-playground';
-import { cognitePlaygroundClient } from 'src/api/annotation/CognitePlaygroundClient';
+  FileInfo,
+} from '@cognite/sdk';
+import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
+import { splitListIntoChunks } from 'src/utils/generalUtils';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { convertCDFAnnotationToVisionAnnotations } from './converters';
-
 const getAnnotations = async (
   annotationLabelOrText?: string,
   annotationState?: string,
@@ -26,7 +25,7 @@ const getAnnotations = async (
     limit: 1000,
   };
 
-  const annotations = await cognitePlaygroundClient.annotations
+  const annotations = await sdk.annotations
     .list(filterPayload)
     .autoPagingToArray({ limit: Infinity });
 

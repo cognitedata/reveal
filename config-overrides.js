@@ -1,24 +1,26 @@
 const { override, useBabelRc } = require('customize-cra');
 const PrefixWrap = require('postcss-prefixwrap');
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
-
-const styleScope= require('./src/styles/styleScope');
+const { colors, ids } = require('./src/cogs-variables.js');
 
 const CSS_REGEX = /\.css$/;
 const LESS_REGEX = /\.less$/;
 
 const cssRegexMatcher = (rule) =>
-  rule.test && rule.test.toString() === CSS_REGEX.toString();
+    rule.test && rule.test.toString() === CSS_REGEX.toString();
 
 const replaceStyleLoaders = (config) => {
   const styleLoaders = [
     {
       loader: 'style-loader',
       options: {
-        // use esModules to propery load and unload the styles in the dom when
+        // use esModules to properly load and unload the styles in the dom when
         // the root app is mounted / unmounted
         esModule: true,
         injectType: 'lazyStyleTag',
+        insert: function insertAtTop(element) { // without this Styled components will not have the required specificity, breaking styles
+          var parent = document.querySelector('head');
+          parent.insertBefore(element, parent.firstChild);
+        },
       },
     },
     {
@@ -36,7 +38,7 @@ const replaceStyleLoaders = (config) => {
       options: {
         postcssOptions: {
           plugins: [
-            PrefixWrap(`.${styleScope}`, {
+            PrefixWrap(`.${ids.styleScope}`, {
               ignoredSelectors: [':root'],
             }),
           ],
@@ -63,6 +65,7 @@ const replaceStyleLoaders = (config) => {
               options: {
                 lessOptions: {
                   modifyVars: {
+                    ...colors,
                     'root-entry-name': 'default',
                   },
                   javascriptEnabled: true,
@@ -72,10 +75,10 @@ const replaceStyleLoaders = (config) => {
           ],
         },
         ...config.module.rules
-          .find((rule) => Array.isArray(rule.oneOf))
-          .oneOf.filter((rule) => {
-            return !cssRegexMatcher(rule);
-          }),
+            .find((rule) => Array.isArray(rule.oneOf))
+            .oneOf.filter((rule) => {
+              return !cssRegexMatcher(rule);
+            }),
       ],
     },
   ];
@@ -107,24 +110,42 @@ module.exports = {
     // Removing html-webpack-plugin.
     // https://single-spa.js.org/docs/faq/#create-react-app
     config.plugins = config.plugins.filter(
-      (plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin'
+        (plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin'
     );
 
     config.plugins = config.plugins.filter(
-      (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
+        (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
     );
 
-    // polyfill node core modules ex: path for webpack 5
-    config.plugins = [...config.plugins,  new NodePolyfillPlugin()];
+    config.resolve.fallback = {
+      'path': 'path-browserify',
+      'react/jsx-runtime': 'react/jsx-runtime.js',
+      'react/jsx-dev-runtime': 'react/jsx-dev-runtime.js',
+    };
 
     // Setting shared in-browser modules as webpack externals. This will
     // exclude these dependencies from the output bundle.
     // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
     config.externals = {
+      react: 'react',
+      'react-dom': 'react-dom',
       'single-spa': 'single-spa',
       '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
       '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
     };
+
+    // remove source map warning (see : https://github.com/facebook/create-react-app/discussions/11767#discussioncomment-3416044)
+    // todo: remove once data-exploration-components is properly updated to >5 versions
+    config.ignoreWarnings = [
+      function ignoreSourcemapsloaderWarnings(warning) {
+        return (
+            warning.module &&
+            warning.module.resource.includes("node_modules") &&
+            warning.details &&
+            warning.details.includes("source-map-loader")
+        );
+      },
+    ];
 
     return config;
   }),
@@ -140,6 +161,11 @@ module.exports = {
       // Configuring webpack-dev-server for HTTPS as we are developing on HTTPS.
       // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
       config.https = true;
+      config.port = 8000;
+
+      config.static.watch = {
+        followSymlinks: true,
+      };
 
       return config;
     };

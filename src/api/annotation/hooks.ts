@@ -1,7 +1,6 @@
-import { AnnotationFilterRequest } from '@cognite/sdk-playground';
 import { useQuery } from 'react-query';
-import { InternalId } from '@cognite/sdk';
-import { cognitePlaygroundClient } from './CognitePlaygroundClient';
+import { AnnotationFilterRequest, InternalId } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
 
 /**
  * ## Example
@@ -15,7 +14,7 @@ import { cognitePlaygroundClient } from './CognitePlaygroundClient';
 export const useAnnotationsListQuery = (filter: AnnotationFilterRequest) => {
   return useQuery(
     ['annotationsListQuery', filter],
-    () => cognitePlaygroundClient.annotations.list(filter),
+    () => sdk.annotations.list(filter),
     {}
   );
 };
@@ -31,7 +30,7 @@ export const useAnnotationsListQuery = (filter: AnnotationFilterRequest) => {
 export const useAnnotationsRetrieveQuery = (ids: InternalId[]) => {
   return useQuery(
     ['annotationsCreateQuery', ids],
-    () => cognitePlaygroundClient.annotations.retrieve(ids),
+    () => sdk.annotations.retrieve(ids),
     {}
   );
 };

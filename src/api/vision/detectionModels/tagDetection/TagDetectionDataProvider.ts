@@ -12,7 +12,7 @@ export class TagDetectionDataProvider extends BaseDetectionModelDataProvider {
     DetectionModelTypeFeatureMapping[VisionDetectionModelType.TagDetection],
   ];
 
-  getParams = (params?: {}) => {
+  getParams = (params?: object) => {
     return { assetTagDetectionParameters: { ...params } };
   };
 }

@@ -4,9 +4,9 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { AnnotationChangeById } from '@cognite/sdk-playground';
-import { cognitePlaygroundClient as sdk } from 'src/api/annotation/CognitePlaygroundClient';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
+import { AnnotationChangeById } from '@cognite/sdk';
 
 /**
  * ## Example

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { ReactElement, ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
@@ -20,7 +19,7 @@ type Props<T> = {
   children?: ReactNode;
 };
 
-export const WrappedWithProviders = <T extends unknown>({
+export const WrappedWithProviders = <T,>({
   store,
   props,
   children,
@@ -31,7 +30,7 @@ export const WrappedWithProviders = <T extends unknown>({
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <Provider store={store || getMockedStore()}>
-          {React.cloneElement(children as ReactElement, { ...(props as {}) })}
+          {React.cloneElement(children as ReactElement, props)}
         </Provider>
         <ToastContainer />
       </QueryClientProvider>
@@ -39,14 +38,14 @@ export const WrappedWithProviders = <T extends unknown>({
   );
 };
 
-const StyleWrapper = ({ props, children }: any) => (
+const StyleWrapper = ({ props, children }: never) => (
   <div className={ids.styleScope}>
-    {React.cloneElement(children as ReactElement, { ...(props as {}) })}
+    {React.cloneElement(children as ReactElement, props)}
   </div>
 );
 
-export const testRenderer = <T extends unknown>(
-  component: React.FC<any>,
+export const testRenderer = <T,>(
+  component: React.FC<never>,
   store?: Store,
   props?: T
 ): RenderResult => {
@@ -60,8 +59,8 @@ export const testRenderer = <T extends unknown>(
 
 // Use this function to render components with cogs.js Modals
 // as they need additional style wrapping
-export const testRendererModals = <T extends unknown>(
-  component: React.FC<any>,
+export const testRendererModals = <T,>(
+  component: React.FC<never>,
   store?: Store,
   props?: T
 ): RenderResult => {

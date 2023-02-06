@@ -1,18 +1,34 @@
 module.exports = {
+  env: {
+    jest: true,
+    browser: true,
+    node: true,
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
   extends: [
-    '@cognite',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react/recommended',
     'plugin:testing-library/react',
     'plugin:lodash/recommended',
     'plugin:testcafe/recommended',
+    'plugin:prettier/recommended',
+    'prettier',
   ],
   parser: '@typescript-eslint/parser',
-  plugins: ['@cognite', 'testing-library', 'lodash', 'testcafe'],
+  plugins: [
+    '@typescript-eslint',
+    'react-hooks',
+    'testing-library',
+    'lodash',
+    'testcafe',
+    'prettier',
+  ],
   rules: {
-    '@cognite/no-unissued-todos': [
-      'off',
-      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
-    ],
-
     'arrow-body-style': ['off'],
     'no-plusplus': ['off'],
     'max-classes-per-file': ['off'],
@@ -23,6 +39,7 @@ module.exports = {
     'react/static-property-placement': ['off'],
     'react/state-in-constructor': ['off'],
     'react/require-default-props': ['off'],
+    'react/display-name': ['off'],
 
     'jest/expect-expect': ['off'],
     'jest/no-test-callback': ['off'],
@@ -36,6 +53,8 @@ module.exports = {
     'lodash/prefer-is-nil': ['off'],
     'lodash/prefer-get': ['off'],
     'lodash/prefer-matches': ['off'],
+
+    'react-hooks/rules-of-hooks': 'error',
 
     '@typescript-eslint/no-unused-vars': [
       'error',
@@ -53,5 +72,20 @@ module.exports = {
       'error',
       { functions: false, variables: false },
     ],
+    '@typescript-eslint/ban-ts-comment': [
+      'error',
+      {
+        'ts-ignore': 'allow-with-description',
+        'ts-nocheck': 'allow-with-description',
+        'ts-expect-error': 'off',
+      },
+    ],
+    // todo: fix these rules - [VIS-1075]
+    'no-empty-function': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/no-explicit-any': ['off', { ignoreRestArgs: true }],
+    '@typescript-eslint/no-non-null-assertion': ['off'],
+    'testing-library/no-node-access': 'off',
+    'react-hooks/exhaustive-deps': ['off'],
   },
 };

@@ -43,8 +43,9 @@ export const Keypoints = ({
   creationInProgress: (inProgress: boolean) => void;
   options?: { createNew?: { text?: string } };
 }) => {
-  const [newKeypoints, setNewKeypoints] =
-    useState<NewKeypoints | undefined>(undefined);
+  const [newKeypoints, setNewKeypoints] = useState<NewKeypoints | undefined>(
+    undefined
+  );
   const keypointPanelRef = useRef<HTMLDivElement | null>(null);
 
   const allKeypointCollections: (PredefinedKeypointCollection & {

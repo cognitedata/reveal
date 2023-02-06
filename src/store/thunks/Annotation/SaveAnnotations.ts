@@ -11,8 +11,8 @@ import {
   CREATING_APP,
   CREATING_APP_VERSION,
 } from 'src/constants/annotationMetadata';
-import { cognitePlaygroundClient as sdk } from 'src/api/annotation/CognitePlaygroundClient';
 import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
+import sdk from '@cognite/cdf-sdk-singleton';
 
 export const SaveAnnotations = createAsyncThunk<
   VisionAnnotation<VisionAnnotationDataType>[],

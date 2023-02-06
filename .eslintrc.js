@@ -13,5 +13,18 @@ module.exports = {
         patterns: ['../*'],
       },
     ],
+    'no-param-reassign': [
+      'error',
+      {
+        props: true,
+        ignorePropertyModificationsFor: [
+          'draft',
+          'state',
+          'prev',
+          'accumulator',
+        ],
+      },
+    ],
   },
+  ignorePatterns: ['.eslintrc.js', 'config-overrides.js'],
 };

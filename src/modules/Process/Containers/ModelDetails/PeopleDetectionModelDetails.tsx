@@ -2,6 +2,7 @@ import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  DetectionModelParams,
   ParamsObjectDetection,
   ParamsPersonDetection,
 } from 'src/api/vision/detectionModels/types';
@@ -24,7 +25,7 @@ import {
 export const description = () => {
   return <Detail>Detects people</Detail>;
 };
-export const badge = (modelName: string, hideText: boolean = false) => {
+export const badge = (modelName: string, hideText = false) => {
   return (
     <Button
       icon="User"
@@ -39,7 +40,7 @@ export const badge = (modelName: string, hideText: boolean = false) => {
   );
 };
 
-export const content = (modelIndex: number) => {
+const Content = (modelIndex: number) => {
   const dispatch = useDispatch();
 
   const modelName = useSelector(
@@ -55,13 +56,13 @@ export const content = (modelIndex: number) => {
 
   const isValidThreshold = params.threshold >= 0.4 && params.threshold <= 1.0;
 
-  const onThresholdChange = (value: number) => {
+  const onThresholdChange = (value: number | null) => {
     if (isValidThreshold) {
       const newParams = {
         modelIndex,
         params: {
           threshold: value,
-        },
+        } as DetectionModelParams,
       };
       dispatch(setUnsavedDetectionModelSettings(newParams));
     }
@@ -151,3 +152,5 @@ export const content = (modelIndex: number) => {
     </ModelDetailSettingContainer>
   );
 };
+
+export const content = Content;

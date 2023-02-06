@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-disabled-tests */
 import { initialState } from 'src/modules/Common/store/annotation/slice';
 import { AnnotationState } from 'src/modules/Common/store/annotation/types';
 import {

@@ -7,7 +7,7 @@ import {
 } from 'src/modules/Common/Components/FileUploader/FilePicker/types';
 import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
 
-export const getUploadControls = (
+const GetUploadControls = (
   uploadStatus: STATUS,
   onUploadStart: () => unknown,
   onUploadStop: () => unknown,
@@ -106,3 +106,5 @@ export const getUploadControls = (
 
   return [UploadButton, CancelButton, RemoveAllButton];
 };
+
+export const getUploadControls = GetUploadControls;

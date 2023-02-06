@@ -84,10 +84,10 @@ describe('ProcessToolBar', () => {
         // test Text Detection is selected.
         expect(within(el).getByText('Text detection')).toBeInTheDocument();
         expect(
-          within(el).getByText('Asset tag detection')
+          within(el).queryByText('Asset tag detection')
         ).not.toBeInTheDocument();
         expect(
-          within(el).getByText('Object detection')
+          within(el).queryByText('Object detection')
         ).not.toBeInTheDocument();
       });
 

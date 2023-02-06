@@ -94,7 +94,6 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
             inFocus={inFocus}
           >
             {loading && (
-              // eslint-disable-next-line @cognite/no-number-z-index
               <PreviewLoader style={{ zIndex: 1000 }} isVideo={isVideo(file)}>
                 <Spin />
               </PreviewLoader>
@@ -177,7 +176,6 @@ type PreviewProps = {
 interface PreviewLoaderProps {
   isVideo: boolean;
 }
-// eslint-disable-next-line @cognite/no-number-z-index
 const PreviewLoader = styled.div<PreviewLoaderProps>`
   width: ${(props) => (props.isVideo ? '100%' : 'calc(100% - 50px)')};
   height: 100%;

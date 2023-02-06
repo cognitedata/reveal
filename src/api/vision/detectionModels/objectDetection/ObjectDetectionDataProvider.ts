@@ -16,7 +16,7 @@ export class ObjectDetectionDataProvider extends BaseDetectionModelDataProvider 
     DetectionModelTypeFeatureMapping[VisionDetectionModelType.ObjectDetection],
   ];
 
-  getParams = (params?: {}) => {
+  getParams = (params?: object) => {
     return { industrialObjectDetectionParameters: { ...params } };
   };
 }

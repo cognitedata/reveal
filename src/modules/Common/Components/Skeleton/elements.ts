@@ -42,5 +42,5 @@ export const Circle = styled(Rectangle)`
 
   // This way we can prevent using % in the border-radius as that could
   // make it oval.
-  border-radius: ${(props: CircleProps) => props.diameter || '3em'}; ;
+  border-radius: ${(props: CircleProps) => props.diameter || '3em'};
 `;

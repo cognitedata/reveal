@@ -29,7 +29,7 @@ export const description = () => {
     </Detail>
   );
 };
-export const badge = (modelName: string, hideText: boolean = false) => {
+export const badge = (modelName: string, hideText = false) => {
   return (
     <Button
       icon="Scan"
@@ -44,7 +44,7 @@ export const badge = (modelName: string, hideText: boolean = false) => {
   );
 };
 
-export const content = (modelIndex: number) => {
+export const Content = (modelIndex: number) => {
   const dispatch = useDispatch();
   const params: ParamsGaugeReader = useSelector(
     ({ processSlice }: RootState) =>
@@ -135,3 +135,5 @@ export const content = (modelIndex: number) => {
     </ModelDetailSettingContainer>
   );
 };
+
+export const content = Content;

@@ -1,6 +1,5 @@
 import { Annotator, AnnotatorTool } from '@cognite/react-image-annotate';
-import { FileInfo, InternalId } from '@cognite/sdk';
-import { AnnotationChangeById } from '@cognite/sdk-playground';
+import { AnnotationChangeById, FileInfo, InternalId } from '@cognite/sdk';
 import React, {
   Dispatch,
   ReactText,

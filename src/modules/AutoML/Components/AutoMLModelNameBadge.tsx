@@ -1,4 +1,3 @@
-/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { ColorsObjectDetection } from 'src/constants/Colors';

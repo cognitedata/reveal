@@ -1,10 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { InternalId } from '@cognite/sdk';
-import { AnnotationFilterRequest } from '@cognite/sdk-playground';
+import { AnnotationFilterRequest, InternalId } from '@cognite/sdk';
 import { ANNOTATED_RESOURCE_TYPE } from 'src/constants/annotationMetadata';
-import { cognitePlaygroundClient as sdk } from 'src/api/annotation/CognitePlaygroundClient';
+import sdk from '@cognite/cdf-sdk-singleton';
 
 const BATCH_SIZE = 10;
 

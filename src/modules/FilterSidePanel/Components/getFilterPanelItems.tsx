@@ -105,7 +105,6 @@ export const getFilterPanelItems = (
     clear: () => {
       setFilter({
         ...filter,
-        // @ts-ignore
         directoryPrefix: undefined,
       });
     },

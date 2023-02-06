@@ -7,7 +7,7 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { AnnotationModel } from '@cognite/sdk-playground';
+import { AnnotationModel } from '@cognite/sdk';
 
 export const convertCDFAnnotationToVisionAnnotations = (
   annotations: AnnotationModel[]

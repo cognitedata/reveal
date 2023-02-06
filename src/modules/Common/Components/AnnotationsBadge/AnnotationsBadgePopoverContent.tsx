@@ -12,7 +12,7 @@ export function AnnotationsBadgePopoverContent(
   badgeCounts: AnnotationsBadgeCounts,
   badgeStatuses: AnnotationsBadgeStatuses
 ) {
-  const row = (data: any, showFlag: boolean = false) => {
+  const row = (data: any, showFlag = false) => {
     return (
       <Container>
         <Button

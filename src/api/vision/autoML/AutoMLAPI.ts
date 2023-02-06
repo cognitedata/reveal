@@ -94,7 +94,7 @@ export class AutoMLAPI {
 
   public static deleteAutoMLJob = async (
     id: number
-  ): Promise<{} | undefined> => {
+  ): Promise<object | undefined> => {
     const data = {
       data: {
         modelJobId: id,

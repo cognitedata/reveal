@@ -20,7 +20,7 @@ describe('AutoMLModelPage', () => {
   it('should render message when no models selected', async () => {
     testRenderer(TestComponent, undefined, undefined);
     expect(screen.queryByTestId('model-page-loading')).toBeNull();
-    expect(screen.queryByTestId('model-page-placeholder')).toBeInTheDocument();
+    expect(screen.getByTestId('model-page-placeholder')).toBeInTheDocument();
   });
 
   it('should render loading state when model is loading', async () => {
@@ -29,7 +29,7 @@ describe('AutoMLModelPage', () => {
     };
 
     testRenderer(TestComponent, undefined, props);
-    expect(screen.queryByTestId('model-page-loading')).toBeInTheDocument();
+    expect(screen.getByTestId('model-page-loading')).toBeInTheDocument();
     expect(screen.queryByTestId('model-page-placeholder')).toBeNull();
   });
 
@@ -39,6 +39,6 @@ describe('AutoMLModelPage', () => {
     testRenderer(TestComponent, undefined, props);
     expect(screen.queryByTestId('model-page-loading')).toBeNull();
     expect(screen.queryByTestId('model-page-placeholder')).toBeNull();
-    expect(screen.queryByText('Model information')).toBeInTheDocument();
+    expect(screen.getByText('Model information')).toBeInTheDocument();
   });
 });

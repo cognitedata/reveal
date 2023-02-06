@@ -12,7 +12,10 @@ import React from 'react';
 import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
 import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/AssetSelector';
 import { useDispatch, useSelector } from 'react-redux';
-import { ParamsTagDetection } from 'src/api/vision/detectionModels/types';
+import {
+  DetectionModelParams,
+  ParamsTagDetection,
+} from 'src/api/vision/detectionModels/types';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsTagDetection } from 'src/constants/Colors';
 import TagdetectionIllustration from 'src/assets/visualDescriptions/TagdetectionIllustration.svg';
@@ -32,7 +35,7 @@ export const description = () => {
     </Detail>
   );
 };
-export const badge = (modelName: string, hideText: boolean = false) => {
+export const badge = (modelName: string, hideText = false) => {
   return (
     <Button
       icon="Assets"
@@ -47,7 +50,7 @@ export const badge = (modelName: string, hideText: boolean = false) => {
   );
 };
 
-export const content = (modelIndex: number) => {
+const Content = (modelIndex: number) => {
   const dispatch = useDispatch();
 
   const modelName = useSelector(
@@ -63,7 +66,7 @@ export const content = (modelIndex: number) => {
 
   const isValidThreshold = params.threshold >= 0.4 && params.threshold <= 1.0;
 
-  const onThresholdChange = (value: number) => {
+  const onThresholdChange = (value: number | null) => {
     if (isValidThreshold) {
       const newParams = {
         modelIndex,
@@ -71,7 +74,7 @@ export const content = (modelIndex: number) => {
           threshold: value,
           partialMatch: params.partialMatch,
           assetSubtreeIds: params.assetSubtreeIds,
-        },
+        } as DetectionModelParams,
       };
       dispatch(setUnsavedDetectionModelSettings(newParams));
     }
@@ -229,3 +232,5 @@ export const content = (modelIndex: number) => {
     </ModelDetailSettingContainer>
   );
 };
+
+export const content = Content;

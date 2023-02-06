@@ -1,4 +1,3 @@
-/* eslint-disable @cognite/no-number-z-index */
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';

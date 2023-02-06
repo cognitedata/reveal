@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck : issue with antd less imports
 import { ids } from 'src/cogs-variables';
 import React, { useEffect } from 'react';
 import {
@@ -20,7 +20,7 @@ import alertStyle from 'antd/es/alert/style/index.less';
 // import avatarStyle from 'antd/es/avatar/style/index.less';
 // import backTopStyle from 'antd/es/back-top/style/index.less';
 // import badgeStyle from 'antd/es/badge/style/index.less';
-// import breadcrumbStyle from 'antd/es/breadcrumb/style/index.less';
+import breadcrumbStyle from 'antd/es/breadcrumb/style/index.less';
 // import buttonStyle from 'antd/es/button/style/index.less';
 // import calendarStyle from 'antd/es/calendar/style/index.less';
 // import cardStyle from 'antd/es/card/style/index.less';
@@ -87,7 +87,7 @@ const styles = [
   alertStyle,
   // avatarStyle,
   // badgeStyle,
-  // breadcrumbStyle,
+  breadcrumbStyle,
   // buttonStyle,
   // cardStyle,
   // checkboxStyle,

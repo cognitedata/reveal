@@ -15,7 +15,7 @@ export type AnnotationIds = {
 
 export type BulkEditUnsavedState = {
   metadata?: Metadata;
-  keepOriginalMetadata?: Boolean;
+  keepOriginalMetadata?: boolean;
   labels?: Label[];
   assetIds?: AssetIds;
   annotationIds?: AnnotationIds;

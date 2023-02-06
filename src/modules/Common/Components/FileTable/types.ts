@@ -42,7 +42,7 @@ export type GridViewProps<T> = {
   emptyRenderer: () => JSX.Element;
 };
 
-export type PageSize = typeof RANGE_OPTIONS[number];
+export type PageSize = (typeof RANGE_OPTIONS)[number];
 
 export type SortPaginate = {
   sortKey?: string;

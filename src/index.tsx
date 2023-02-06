@@ -9,7 +9,6 @@ const lifecycles = singleSpaReact({
   React,
   ReactDOM,
   rootComponent: App,
-  // @ts-ignore
   errorBoundary() {
     // eslint-disable-line
     // Customize the root error boundary for your microfrontend here.
