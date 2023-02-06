@@ -91,4 +91,5 @@ export type SidecarConfig = ApiBaseUrls & {
     disabled: boolean;
     position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
   };
+  defaultAzureDirectory?: string;
 };

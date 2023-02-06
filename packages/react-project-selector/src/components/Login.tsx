@@ -36,6 +36,7 @@ type LoginProps = {
   move: (project: string) => void;
   isProduction: boolean;
   hideLegacyAuth: boolean;
+  defaultAzureDirectory?: string;
 };
 
 const cache = new QueryClient({
@@ -56,6 +57,7 @@ const LoginOuter = ({
   move,
   isProduction,
   hideLegacyAuth,
+  defaultAzureDirectory,
 }: LoginProps) => {
   return (
     <LoginContext.Provider
@@ -69,6 +71,7 @@ const LoginOuter = ({
         isProduction,
         appName,
         hideLegacyAuth,
+        defaultAzureDirectory,
       }}
     >
       <QueryClientProvider client={cache}>
@@ -104,7 +107,8 @@ const withLegacyDisabledFallback =
   };
 
 const Login = () => {
-  const { cluster, clientId, hideLegacyAuth } = useContext(LoginContext);
+  const { cluster, clientId, hideLegacyAuth, defaultAzureDirectory } =
+    useContext(LoginContext);
   const [, setSavedTenants] = useSavedTenants();
   const history = useHistory();
   const {
@@ -151,7 +155,7 @@ const Login = () => {
         {
           clientId,
           cluster,
-          directory: getFlow().options?.directory,
+          directory: getFlow().options?.directory || defaultAzureDirectory,
           prompt: 'none',
         },
         { onSettled: saveTenantInLS }

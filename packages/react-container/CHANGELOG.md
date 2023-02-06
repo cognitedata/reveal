@@ -1,3 +1,7 @@
+## 9.1.0 February 06 2023
+
+- add `defaultAzureDirectory` to support single tenant setup
+
 ## 9.0.0 January 30 2023
 
 - BREAKING: Removed Intercom

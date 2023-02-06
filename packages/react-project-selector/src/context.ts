@@ -10,6 +10,7 @@ type LoginContextType = {
   move: (project: string) => void;
   isProduction: boolean;
   hideLegacyAuth: boolean;
+  defaultAzureDirectory?: string;
 };
 
 const LoginContext = createContext<LoginContextType>(undefined!);

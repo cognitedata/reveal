@@ -22,7 +22,7 @@ const SignInWithMicrosoft = ({
   login,
   isLoading,
 }: SignInWithMicrosoftProps) => {
-  const { cluster, clientId, clusters, hideLegacyAuth } =
+  const { cluster, clientId, clusters, hideLegacyAuth, defaultAzureDirectory } =
     useContext(LoginContext);
 
   const history = useHistory();
@@ -30,7 +30,7 @@ const SignInWithMicrosoft = ({
   const onContinue = () => {
     saveFlow('AZURE_AD', {});
     commitLoginPage('signInWithMicrosoft');
-    login({ cluster, clientId });
+    login({ cluster, clientId, directory: defaultAzureDirectory });
   };
 
   return (

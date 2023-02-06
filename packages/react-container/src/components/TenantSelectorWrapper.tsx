@@ -52,6 +52,7 @@ export function TenantSelectorWrapper({ sidecar }: Props) {
     availableClusters,
     fakeIdp,
     disableLegacyLogin,
+    defaultAzureDirectory,
   } = sidecar;
 
   const handleSubmit = async (selectedProject: string) => {
@@ -91,6 +92,7 @@ export function TenantSelectorWrapper({ sidecar }: Props) {
         move={handleSubmit}
         isProduction={isProduction}
         hideLegacyAuth={disableLegacyLogin ?? false}
+        defaultAzureDirectory={defaultAzureDirectory}
       />
       {fakeIdp && (
         <div

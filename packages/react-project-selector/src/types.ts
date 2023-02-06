@@ -13,7 +13,7 @@ export type Cluster = {
 export type LoginParams = {
   clientId: string;
   cluster: string | undefined;
-  directory?: string | undefined;
+  directory?: string;
   prompt?: 'select_account' | 'none';
 };
 

@@ -1,3 +1,7 @@
+## 0.3.0 February 06 2023
+
+- add `defaultAzureDirectory` to support single tenant setup
+
 ## 0.2.0 August 26 2022
 
 Implement support for the "disableLegacyAuth" sidecar property, which forces the user into the OIDC login flow
