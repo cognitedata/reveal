@@ -43,7 +43,7 @@ export const Header: React.FC<HeaderProps> = ({
           {!isEmpty(uniqueWellboreIdentifier) && (
             <WellboreUBI>{`(${uniqueWellboreIdentifier})`}</WellboreUBI>
           )}
-          <TotalDrillingDays days={drillingDaysData?.total} />
+          <TotalDrillingDays days={drillingDaysData?.cumulativeTotal} />
         </HeaderData>
 
         <HeaderData>

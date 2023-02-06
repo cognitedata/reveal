@@ -18,7 +18,7 @@ export const TotalDrillingDays: React.FC<TotalDrillingDaysProps> = ({
 
   return (
     <Tooltip placement="bottom" content="Total drilling days">
-      <HeaderLabel>
+      <HeaderLabel variant="unknown">
         {days} {pluralize('day', days)}
       </HeaderLabel>
     </Tooltip>

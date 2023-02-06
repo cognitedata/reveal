@@ -38,6 +38,7 @@ export interface KickoffPoint extends KickoffDepth {
 }
 export interface DrillingDays {
   wellboreMatchingId: string;
-  wellbore: number;
-  total: number;
+  wellbore?: number;
+  total?: number;
+  cumulativeTotal?: number;
 }

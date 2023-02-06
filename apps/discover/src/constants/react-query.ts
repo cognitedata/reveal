@@ -80,6 +80,7 @@ export const WELL_QUERY_KEY = {
   ALL: [WELLS, 'allWells'],
   WELLS_ONE: [WELLS, 'wells'],
   WELLS_CACHE: [WELLS, 'wells', 'cache'],
+  WELLS_BY_IDS: [WELLS, 'wells', 'byIds', 'cache'],
   WELLBORES_CACHE: [WELLBORES, 'wellbores', 'cache'],
   KICKOFF_DEPTHS: [WELLBORES, 'kickoffdepths', 'cache'],
   CASINGS: [WELLS, 'casings'],
@@ -113,7 +114,6 @@ export const WELL_QUERY_KEY = {
   HOLE_SECTIONS_WITH_TVD: [WELLS, 'holeSections', 'tvd'],
   RIG_OPERATIONS: [WELLS, 'rigOperations'],
   WELL_PROPERTY_FILTERS: [WELLS, 'summaries', 'wellProperties', 'filter'],
-  DRILLING_DAYS: [WELLS, 'drillingDays', 'cache'],
 };
 
 const SEARCH_HISTORY = 'searchHistory';
