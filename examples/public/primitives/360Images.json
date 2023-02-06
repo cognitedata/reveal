@@ -1,6 +1,5 @@
 [
   {
-    "imageFolder": "river",
     "translation": {
       "x": 5,
       "y": 3,
@@ -10,10 +9,35 @@
       "x": 0,
       "y": 0,
       "z": 0
-    }
+    },
+    "faces": [
+      {
+        "face": "back",
+        "id": 0
+      },
+      {
+        "face": "bottom",
+        "id": 1
+      },
+      {
+        "face": "front",
+        "id": 2
+      },
+      {
+        "face": "left",
+        "id": 3
+      },
+      {
+        "face": "right",
+        "id": 4
+      },
+      {
+        "face": "top",
+        "id": 5
+      }
+    ]
   },
   {
-    "imageFolder": "river",
     "translation": {
       "x": 10,
       "y": 3,
@@ -23,10 +47,35 @@
       "x": 0,
       "y": 0,
       "z": 0
-    }
+    },
+    "faces": [
+      {
+        "face": "back",
+        "id": 0
+      },
+      {
+        "face": "bottom",
+        "id": 1
+      },
+      {
+        "face": "front",
+        "id": 2
+      },
+      {
+        "face": "left",
+        "id": 3
+      },
+      {
+        "face": "right",
+        "id": 4
+      },
+      {
+        "face": "top",
+        "id": 5
+      }
+    ]
   },
   {
-    "imageFolder": "river",
     "translation": {
       "x": 10,
       "y": 3,
@@ -36,10 +85,35 @@
       "x": 0,
       "y": 0,
       "z": 0
-    }
+    },
+    "faces": [
+      {
+        "face": "back",
+        "id": 0
+      },
+      {
+        "face": "bottom",
+        "id": 1
+      },
+      {
+        "face": "front",
+        "id": 2
+      },
+      {
+        "face": "left",
+        "id": 3
+      },
+      {
+        "face": "right",
+        "id": 4
+      },
+      {
+        "face": "top",
+        "id": 5
+      }
+    ]
   },
   {
-    "imageFolder": "river",
     "translation": {
       "x": 5,
       "y": 3,
@@ -49,6 +123,32 @@
       "x": 0,
       "y": 0,
       "z": 0
-    }
+    },
+    "faces": [
+      {
+        "face": "back",
+        "id": 0
+      },
+      {
+        "face": "bottom",
+        "id": 1
+      },
+      {
+        "face": "front",
+        "id": 2
+      },
+      {
+        "face": "left",
+        "id": 3
+      },
+      {
+        "face": "right",
+        "id": 4
+      },
+      {
+        "face": "top",
+        "id": 5
+      }
+    ]
   }
 ]

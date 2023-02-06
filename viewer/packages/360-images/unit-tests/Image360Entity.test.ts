@@ -19,7 +19,8 @@ describe(Image360Entity.name, () => {
       transformations: {
         translation: new THREE.Matrix4(),
         rotation: new THREE.Matrix4()
-      }
+      },
+      faceDescriptors: []
     };
 
     const addedSprites: THREE.Sprite[] = [];
@@ -67,7 +68,8 @@ describe(Image360Entity.name, () => {
       transformations: {
         translation: new THREE.Matrix4(),
         rotation: new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 2), 123)
-      }
+      },
+      faceDescriptors: []
     };
 
     const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addCustomObject(It.IsAny())).returns();
