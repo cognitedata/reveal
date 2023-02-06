@@ -187,21 +187,20 @@ export class StationaryCameraManager implements CameraManager {
   };
 
   private readonly onPointerMove = (event: PointerEvent) => {
-
     if (this._pointerEventCache.length > 1) {
       this.pinchZoomAndRotate(event);
     } else {
-      const lastEvent = this._pointerEventCache.find((ev) => ev.pointerId === event.pointerId)!;
+      const lastEvent = this._pointerEventCache.find(ev => ev.pointerId === event.pointerId)!;
 
       this.rotateCamera(event, lastEvent);
     }
 
     // Update last move event
-    const pointerIndex = this._pointerEventCache.findIndex((ev) => ev.pointerId === event.pointerId);
+    const pointerIndex = this._pointerEventCache.findIndex(ev => ev.pointerId === event.pointerId);
     this._pointerEventCache[pointerIndex] = event;
   };
 
-  private rotateCamera(moveEvent: PointerEvent, lastMoveEvent: PointerEvent ) {
+  private rotateCamera(moveEvent: PointerEvent, lastMoveEvent: PointerEvent) {
     if (!this._isDragging) {
       return;
     }
@@ -209,7 +208,7 @@ export class StationaryCameraManager implements CameraManager {
 
     const deltaX = moveEvent.clientX - lastMoveEvent.clientX;
     const deltaY = moveEvent.clientY - lastMoveEvent.clientY;
-    
+
     const sensitivityScaler = 0.0015;
 
     const euler = new THREE.Euler().setFromQuaternion(this._camera.quaternion, 'YXZ');
@@ -227,10 +226,10 @@ export class StationaryCameraManager implements CameraManager {
       return;
     }
 
-    const secondFingerPointer = this._pointerEventCache.find((ev) => ev.pointerId !== moveEvent.pointerId)!;
+    const secondFingerPointer = this._pointerEventCache.find(ev => ev.pointerId !== moveEvent.pointerId)!;
 
     // Rotate with anchor to middle point between first and second finger.
-    const lastMoveEvent = this._pointerEventCache.find((ev) => ev.pointerId === moveEvent.pointerId)!;
+    const lastMoveEvent = this._pointerEventCache.find(ev => ev.pointerId === moveEvent.pointerId)!;
 
     const lastMiddlePoint = new PointerEvent('pointermove', {
       clientX: (lastMoveEvent.clientX + secondFingerPointer.clientX) / 2,
@@ -240,9 +239,9 @@ export class StationaryCameraManager implements CameraManager {
       clientX: (moveEvent.clientX + secondFingerPointer.clientX) / 2,
       clientY: (moveEvent.clientY + secondFingerPointer.clientY) / 2
     });
-    
+
     this.rotateCamera(middlePoint, lastMiddlePoint);
-   
+
     const distanceDelta = this.calculatePinchZoomDistanceDelta(moveEvent, secondFingerPointer);
 
     const { width, height } = this._domElement.getBoundingClientRect();
@@ -299,7 +298,7 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   private calculatePinchZoomDistanceDelta(firstPointerEvent: PointerEvent, secondPointerEvent: PointerEvent): number {
-    const lastFirstPointerEvent = this._pointerEventCache.find((ev) => firstPointerEvent.pointerId === ev.pointerId)!;
+    const lastFirstPointerEvent = this._pointerEventCache.find(ev => firstPointerEvent.pointerId === ev.pointerId)!;
 
     const preMoveDistance = getEuclideanDistance(lastFirstPointerEvent, secondPointerEvent);
     const postMoveDistance = getEuclideanDistance(firstPointerEvent, secondPointerEvent);
@@ -308,8 +307,8 @@ export class StationaryCameraManager implements CameraManager {
   }
 }
 
-function getEuclideanDistance (eventOne: PointerEvent, eventTwo: PointerEvent): number {
+function getEuclideanDistance(eventOne: PointerEvent, eventTwo: PointerEvent): number {
   const dx = eventOne.clientX - eventTwo.clientX;
   const dy = eventOne.clientY - eventTwo.clientY;
   return Math.sqrt(dx * dx + dy * dy);
-};
+}
