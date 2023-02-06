@@ -281,7 +281,7 @@ export class StationaryCameraManager implements CameraManager {
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
   };
 
-  private getCursorRay(event: MouseEvent) {
+  private getCursorRay(event: WheelEvent) {
     const { width, height } = this._domElement.getBoundingClientRect();
     const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
     const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
