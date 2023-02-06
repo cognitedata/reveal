@@ -16,3 +16,5 @@ export const CURVES_TO_SHOW_KICKOFF_POINT = [
   TrajectoryCurve.MD_ED,
   TrajectoryCurve.TVD_ED,
 ];
+
+export const KICK_OFF_POINT_MARKER_SIZE = 8;

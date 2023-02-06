@@ -13,7 +13,10 @@ import { EMPTY_ARRAY } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 
-import { CURVES_TO_SHOW_KICKOFF_POINT } from '../WellboreStickChart/TrajectoryColumn/constants';
+import {
+  CURVES_TO_SHOW_KICKOFF_POINT,
+  KICK_OFF_POINT_MARKER_SIZE,
+} from '../WellboreStickChart/TrajectoryColumn/constants';
 import { TrajectoryCurve } from '../WellboreStickChart/TrajectoryColumn/types';
 
 interface Props {
@@ -66,7 +69,7 @@ export const useTrajectoryColumnSecondaryData = ({
         y: [isMdScale ? measuredDepth : trueVerticalDepth],
         marker: {
           color: shadeColor(curveColor, -25),
-          size: 20,
+          size: KICK_OFF_POINT_MARKER_SIZE,
         },
         hoverinfo: 'y',
       },
