@@ -23,9 +23,9 @@ target
 # yarn
 documentation/.yarn/
 documentation/docs/.yarn/
-viewer/.yarn/
-!viewer/.yarn/releases/
-!viewer/.yarn/releases/*
+viewer/.yarn/*
+!/viewer/.yarn/releases
+!/viewer/.yarn/releases/*
 
 **/.env
 **/.cdf-env.json
