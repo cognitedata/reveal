@@ -21,8 +21,10 @@ target
 **/yarn-error.log*
 
 # yarn
-**/.yarn
-!/viewer/.yarn/releases/
+documentation/.yarn/
+documentation/docs/.yarn/
+viewer/.yarn/*
+!/viewer/.yarn/releases
 !/viewer/.yarn/releases/*
 
 **/.env
