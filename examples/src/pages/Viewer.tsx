@@ -16,8 +16,7 @@ import {
   CameraControlsOptions,
   DefaultCameraManager,
   CogniteModel,
-  AnnotationIdPointCloudObjectCollection,
-  StationaryCameraManager
+  AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
 import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
