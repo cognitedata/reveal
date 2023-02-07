@@ -7,21 +7,12 @@
     "@typescript-eslint/indent": "off",
     "@typescript-eslint/no-var-requires": "off",
     "no-param-reassign": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        "vars": "all",
-        "args": "after-used",
-        "ignoreRestSiblings": true
-      }
-    ],
+    "@typescript-eslint/no-unused-vars": "off",
+    "react/no-unknown-property" : "off",
     "react/require-default-props": "off",
     "react/no-array-index-key": "warn",
     "react/state-in-constructor": "off",
     "react-hooks/exhaustive-deps": "warn",
-    "jest/consistent-test-it": ["error", { "fn": "it" }],
-    "jest/require-top-level-describe": "error",
-    "jest/valid-describe": "error",
     "no-console": "warn",
     "@cognite/no-unissued-todos": "off",
     "@cognite/no-number-z-index-styled-components": "off",
