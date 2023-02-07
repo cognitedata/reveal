@@ -8,7 +8,6 @@ import { useQueryCache } from 'react-query';
 import { logsKey, callKey } from 'utils/queryKeys';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import { useCall, useLogs } from 'utils/hooks';
-import NoLogs from './icons/emptyLogs';
 
 type Props = {
   onCancel: () => void;
