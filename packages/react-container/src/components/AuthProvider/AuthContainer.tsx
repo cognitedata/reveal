@@ -54,6 +54,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
     fakeIdp,
     aadCdfScopes,
     AADTenantID,
+    defaultAzureDirectory,
   } = sidecar;
 
   useEffect(() => {
@@ -66,7 +67,10 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
         aadApplicationId,
         fakeIdp,
         cdfScopes: aadCdfScopes,
-        aadTenantId: projectFlow.options?.directory || AADTenantID,
+        aadTenantId:
+          projectFlow.options?.directory ||
+          AADTenantID ||
+          defaultAzureDirectory,
       });
 
       const sdkClient = new CogniteClient({
