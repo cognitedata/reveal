@@ -271,7 +271,7 @@ export function AdvancedStep({ isDisabled }: StepProps) {
                   <div className="title">Method</div>
                   <Field
                     as={Select}
-                    isDisabled={isDisabled}
+                    disabled={isDisabled}
                     name="estimateBHP.method"
                     options={bhpEstimationMethodOptions}
                     value={bhpEstimationMethodOptions.find(

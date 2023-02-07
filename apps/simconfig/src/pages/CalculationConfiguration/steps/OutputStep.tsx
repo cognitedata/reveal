@@ -94,7 +94,7 @@ export function OutputStep({ isDisabled }: StepProps) {
                 <div className="title">Unit</div>
                 <Field
                   as={Select}
-                  isDisabled={isDisabled}
+                  disabled={isDisabled}
                   name={`outputTimeSeries.${index}.unit`}
                   options={unitTypeOptions[unitType]}
                   value={unitTypeOptions[unitType].find(

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -107,6 +108,9 @@ export function CalculationConfiguration() {
     { skip: !simulatorConnector?.connectorName }
   );
 
+  // unmemoized time was causing refetch of runs
+  const eventEndTime = useMemo(() => formatISO(new Date()), []);
+
   const {
     data: calculationsRunList,
     isFetching: isFetchingCalculationsRunList,
@@ -116,7 +120,7 @@ export function CalculationConfiguration() {
     modelName,
     simulator,
     calculationType,
-    eventEndTime: formatISO(new Date()),
+    eventEndTime,
     limit: 1,
   });
 
@@ -675,6 +679,7 @@ const getCalculationTemplateSchema = ({
 
   const outputTimeSeries = Yup.array().ensure().defined();
   // fusion-migration
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return Yup.object({
     schedule,
