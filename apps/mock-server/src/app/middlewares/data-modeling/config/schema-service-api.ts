@@ -440,14 +440,21 @@ enum SortOrder {
   DESCENDING
 }
 
+enum ErrorKind {
+  COMPILE_ERROR
+  DIFF_ERROR
+}
+
 type Error {
   message: String!
+  kind: ErrorKind!
+  hint: String
   location: SourceLocationRange!
 }
 
 type SourceLocationRange {
   start: SourceLocation!
-  end: SourceLocation!
+  end: SourceLocation
 }
 
 type SourceLocation {
@@ -456,8 +463,5 @@ type SourceLocation {
 
   "1 indexed"
   column: Int!
-
-  "Character offset in to the source file"
-  offset: Int
 }
 `;

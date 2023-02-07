@@ -53,7 +53,15 @@ describe('MixerApi Test', () => {
         query: `mutation createUpdateDataModel($dmCreate: GraphQlDmlVersionUpsert!) {
           upsertGraphQlDmlVersion(graphQlDmlVersion: $dmCreate) {
             errors {
+              kind
               message
+              hint
+              location {
+                start {
+                  line
+                  column
+                }
+              }
             }
             result {
               externalId

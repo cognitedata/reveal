@@ -15,12 +15,15 @@ export interface UpsertDataModelResult {
 }
 
 type Error = {
+  kind: string;
   message: string;
+  hint: string;
   location: SourceLocationRange;
 };
+
 type SourceLocationRange = {
   start: SourceLocation;
-  end: SourceLocation;
+  end?: SourceLocation;
 };
 
 type SourceLocation = {

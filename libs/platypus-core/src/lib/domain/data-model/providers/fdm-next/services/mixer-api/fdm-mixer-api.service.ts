@@ -90,7 +90,15 @@ export class FdmMixerApiService {
         mutation createUpdateDataModel($dmCreate: GraphQlDmlVersionUpsert!) {
           upsertGraphQlDmlVersion(graphQlDmlVersion: $dmCreate) {
             errors {
+              kind
               message
+              hint
+              location {
+                start {
+                  line
+                  column
+                }
+              }
             }
             result {
               ${this.dataModelVersionFields}

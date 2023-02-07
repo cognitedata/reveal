@@ -289,8 +289,6 @@ export const graphQlMetaApiResolvers = (
         const { space, externalId, version, name, description, graphQlDml } =
           req.graphQlDmlVersion;
 
-        // not available in the specs, will be added later?
-        let conflictMode = req.conflictMode || 'NEW_VERSION';
         const serverKey = createMockServerKey(
           `${space}_${externalId}`,
           version
@@ -316,19 +314,7 @@ export const graphQlMetaApiResolvers = (
           version,
         });
 
-        if (
-          dbDataModelVersion &&
-          !dbDataModelVersion.metadata.graphQlDml &&
-          conflictMode === 'NEW_VERSION'
-        ) {
-          conflictMode = 'PATCH';
-        }
-
-        if (
-          conflictMode !== 'NEW_VERSION' &&
-          dbDataModelVersion &&
-          dbDataModelVersion.metadata.graphQlDml
-        ) {
+        if (dbDataModelVersion && dbDataModelVersion.metadata.graphQlDml) {
           const breakingChanges = await validateBreakingChanges(
             graphQlDml,
             dbDataModelVersion.metadata.graphQlDml as string,
@@ -348,17 +334,7 @@ export const graphQlMetaApiResolvers = (
           }
         }
 
-        if (conflictMode === 'NEW_VERSION') {
-          dataModelsStore.insert(dataModelVersion);
-        } else if (dataModelVersion) {
-          dataModelVersion.lastUpdatedTime = Date.now();
-          dataModelVersion.metadata.graphQlDml = graphQlDml;
-
-          dataModelsStore.updateBy(
-            { id: dbDataModelVersion.id },
-            dataModelVersion
-          );
-        }
+        dataModelsStore.insert(dataModelVersion);
 
         if (graphQlDml) {
           graphQlServers[serverKey] = buildMockServer(
