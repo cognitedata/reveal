@@ -2,8 +2,7 @@ import React, { useState, useEffect, SyntheticEvent } from 'react';
 import { Modal, Input, Form, Alert } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import { useMutation, useQueryCache } from 'react-query';
-
-import { createFunctionCall } from 'utils/api';
+import { createFunctionCall, isOIDCFlow } from 'utils/api';
 import FunctionCallStatus from 'components/FunctionCallStatus';
 import FunctionCallResponse from 'components/FunctionCallResponse';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
@@ -32,7 +31,6 @@ type Props = {
 
 export default function CallFunctionModal({ id, closeModal }: Props) {
   const queryCache = useQueryCache();
-
   const [updateInterval, setUpdateInteval] = useState<number | false>(1000);
   const [inputData, setInputData] = useState('');
   // The statefull `callId` could be replaced with wrapping the
@@ -76,6 +74,18 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
   }, [callId, running]);
 
   const validJSONMessage = <div style={{ color: 'green' }}>JSON is valid</div>;
+  const JSONCheckMessage = !canParseInputData(inputData)
+    ? 'Input data must be a valid JSON object'
+    : validJSONMessage;
+  const helpMessage = inputData ? (
+    JSONCheckMessage
+  ) : (
+    <span>
+      <b>Warning: </b>Secrets or other confidential information should not be
+      passed via the data object. There is a dedicated secrets object in the
+      request body to &quot;Create functions&quot; for this purpose.
+    </span>
+  );
 
   const handleInputDataChange = (evt: { target: { value: string } }) => {
     setInputData(evt.target.value);
@@ -93,7 +103,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
     e.stopPropagation();
     const formattedInputData =
       inputData === '' ? undefined : JSON.parse(inputData);
-    createCall({ id, data: formattedInputData });
+    createCall({ id, data: formattedInputData, isOIDC: isOIDCFlow() });
   };
 
   return (
@@ -125,12 +135,8 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
         <Form.Item
           label="Input data"
           validateStatus={canParseInputData(inputData) ? 'success' : 'error'}
-          help={
-            !canParseInputData(inputData)
-              ? 'Input data must be a valid JSON object'
-              : validJSONMessage
-          }
-          hasFeedback
+          help={helpMessage}
+          hasFeedback={!!inputData && inputData.length > 0}
         >
           <Input.TextArea
             rows={4}

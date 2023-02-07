@@ -28,4 +28,5 @@ export const allCallsPrefix = '/function/calls';
 export const sortFunctionKey = '/functions/calls-for-sorting';
 export const allFunctionsKey = '/functions';
 export const allSchedulesKey = '/functions/schedules';
+export const limitsKey = '/functions/limits';
 export const functionPrefix = '/function';

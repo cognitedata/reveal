@@ -1,17 +1,18 @@
-import sdk from 'sdk-singleton';
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { QueryKey } from 'react-query';
 import {
-  CreateSchedule,
   CogFunctionUpload,
   CogFunction,
   GetCallArgs,
   CallResponse,
   GetCallsArgs,
   Call,
+  CreateScheduleApiParams,
 } from 'types';
-import { FileUploadResponse } from '@cognite/cdf-sdk-singleton';
+import { FileUploadResponse } from '@cognite/sdk';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadGCS from '@cognite/gcs-browser-upload';
+import { getProject } from '@cognite/cdf-utilities';
 import { sleep } from 'helpers';
 import { newestCall } from './sorting';
 
@@ -24,12 +25,9 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
   }
   const filter = scheduleId ? { scheduleId } : {};
   return sdk
-    .post(
-      `/api/playground/projects/${sdk.project}/functions/${id}/calls/list`,
-      {
-        data: { filter },
-      }
-    )
+    .post(`/api/v1/projects/${getProject()}/functions/${id}/calls/list`, {
+      data: { filter },
+    })
     .then(response => response.data?.items);
 };
 
@@ -57,9 +55,7 @@ export const getCall = (_: QueryKey, { id, callId }: GetCallArgs) => {
     throw new Error('callId missing');
   }
   return sdk
-    .get(
-      `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}`
-    )
+    .get(`/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}`)
     .then(response => response.data);
 };
 
@@ -76,7 +72,7 @@ export const getResponse = (_: QueryKey, { id, callId }: GetResponseArgs) => {
   }
   return sdk
     .get(
-      `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/response`
+      `/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}/response`
     )
     .then(response => response?.data?.response);
 };
@@ -90,50 +86,66 @@ export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
   }
   return sdk
     .get(
-      `/api/playground/projects/${sdk.project}/functions/${id}/calls/${callId}/logs`
+      `/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}/logs`
     )
     .then(response => response?.data?.items);
 };
 
-export const createFunctionCall = ({
+export const createFunctionCall = async ({
   id,
   data,
+  isOIDC,
 }: {
   id: number;
   data: any;
+  isOIDC?: boolean;
 }): Promise<CallResponse> => {
   if (!id) {
     throw new Error('id missing');
   }
+
+  const { nonce } = isOIDC && (await createSession());
   return sdk
-    .post(`/api/playground/projects/${sdk.project}/functions/${id}/call`, {
-      data: { data: data || {} },
+    .post(`/api/v1/projects/${getProject()}/functions/${id}/call`, {
+      data: { data: data || {}, nonce },
     })
     .then(response => response?.data);
 };
 
-export const createSchedule = (schedule: CreateSchedule) =>
-  sdk
-    .post(`/api/playground/projects/${sdk.project}/functions/schedules`, {
-      data: { items: [schedule] },
+export const createSchedule = async ({
+  schedule,
+  clientCredentials,
+}: CreateScheduleApiParams) => {
+  const { nonce } =
+    !!clientCredentials && (await createSession(clientCredentials));
+  return sdk
+    .post(`/api/v1/projects/${getProject()}/functions/schedules`, {
+      data: { items: [{ ...schedule, nonce }] },
     })
     .then(response => response?.data);
+};
+
+// Get the input data for scheduling item
+export const getScheduleData = (scheduleId: number) => {
+  return sdk
+    .get(
+      `/api/v1/projects/${getProject()}/functions/schedules/${scheduleId}/input_data`
+    )
+    .then(response => response.data?.data);
+};
 
 export const deleteSchedule = (id: number) =>
   sdk
-    .post(
-      `/api/playground/projects/${sdk.project}/functions/schedules/delete`,
-      {
-        data: { items: [{ id }] },
-      }
-    )
+    .post(`/api/v1/projects/${getProject()}/functions/schedules/delete`, {
+      data: { items: [{ id }] },
+    })
     .then(response => response?.data);
 
 const createFunction = (
   cogfunction: CogFunctionUpload
 ): Promise<CogFunction> => {
   return sdk
-    .post(`/api/playground/projects/${sdk.project}/functions`, {
+    .post(`/api/v1/projects/${getProject()}/functions`, {
       data: { items: [cogfunction] },
     })
     .then(response => response?.data);
@@ -149,7 +161,7 @@ export const deleteFunction = async ({
     throw new Error('id missing');
   }
   const deleteResponse = await sdk
-    .post(`/api/playground/projects/${sdk.project}/functions/delete`, {
+    .post(`/api/v1/projects/${getProject()}/functions/delete`, {
       data: { items: [{ id }] },
     })
     .then(response => response?.data);
@@ -233,4 +245,22 @@ export const uploadFunction = async ({
     await sdk.files.delete([{ id: fileId }]);
     throw e;
   }
+};
+
+export const createSession = (clientCredentials?: {
+  clientId: string;
+  clientSecret: string;
+}) => {
+  return sdk
+    .post(`/api/v1/projects/${getProject()}/sessions`, {
+      data: {
+        items: [clientCredentials || { tokenExchange: true }],
+      },
+    })
+    .then(response => response?.data.items[0]);
+};
+
+export const isOIDCFlow = () => {
+  const { flow } = getFlow();
+  return flow !== 'COGNITE_AUTH';
 };

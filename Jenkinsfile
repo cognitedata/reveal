@@ -5,7 +5,7 @@ static final String STORYBOOK_COMMENT_MARKER = "📖[storybook-server]\n"
 static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
 // deploySpinnakerPipelineConfigs {}
 static final String APP_ID = 'cdf-functions-ui'
-static final String APPLICATION_REPO_ID = 'functions-ui'
+static final String APPLICATION_REPO_ID = 'cdf-ui-functions'
 static final String NODE_VERSION = 'node:12'
 static final String VERSIONING_STRATEGY = "single-branch"
 static final String SENTRY_PROJECT_NAME = "watchtower"
@@ -33,7 +33,7 @@ def pods = { body ->
         // If you don't want codecoverage, then you can just remove this.
         testcafe.pod() {
           properties([
-            buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '20'))
+            
           ])
 
           node(POD_LABEL) {
@@ -51,7 +51,7 @@ pods {
   def gitAuthor
   def getTitle
   def isPullRequest = !!env.CHANGE_ID
-  def isRelease = env.BRANCH_NAME == 'master'
+  def isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'release-staging'
 
   def context_checkout = "continuous-integration/jenkins/checkout"
   def context_install = "continuous-integration/jenkins/install"
@@ -106,14 +106,18 @@ pods {
             print "No PR previews for release builds"
             return;
           }
-          stageWithNotify('Build and deploy PR') {
-            previewServer(
-              buildCommand: 'yarn build:preview',
-              prefix: 'pr',
-              buildFolder: 'build',
-              commentPrefix: PR_COMMENT_MARKER
-            )
-          }
+          def package_name = "@cognite/cdf-functions-ui";
+          def prefix = jenkinsHelpersUtil.determineRepoName();
+          def domain = "fusion-preview";
+          previewServer(
+            buildCommand: 'yarn build',
+            buildFolder: 'build',
+            prefix: prefix,
+            repo: domain
+          )
+          deleteComments("[FUSION_PREVIEW_URL]")
+          def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+          pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
         },
         'Storybook': {
           if(!isPullRequest) {

@@ -12,7 +12,7 @@ import {
   Col,
   notification,
 } from 'antd';
-import { Button, Icon, Tooltip } from '@cognite/cogs.js';
+import { Button, Icon, Dropdown, Tooltip, Menu } from '@cognite/cogs.js';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
 import Link from 'components/Link';
@@ -33,6 +33,11 @@ import {
 } from 'utils/formValidations';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import { allFunctionsKey } from 'utils/queryKeys';
+import { CogFunctionLimit, Runtime } from 'types';
+import FunctionMetadata, {
+  MetaType,
+} from 'components/FunctionModals/FunctionMetadata';
+import { useLimits } from 'utils/hooks';
 
 export interface Secret {
   key: string;
@@ -59,8 +64,25 @@ const StyledForm = styled(Form)`
   }
 `;
 
+export type RuntimeOption = { label: string; value: Runtime };
+
+const runtimes: RuntimeOption[] = [
+  { label: 'Python 3.7', value: 'py37' },
+  { label: 'Python 3.8', value: 'py38' },
+  { label: 'Python 3.9', value: 'py39' },
+];
+
+const limitDefaults: CogFunctionLimit = {
+  timeoutMinutes: 10,
+  cpuCores: { default: 0.25, max: 0.6, min: 0.1 },
+  memoryGb: { default: 1, max: 2.5, min: 0.1 },
+  runtimes: ['py37', 'py38', 'py39'],
+  responseSizeMb: 1,
+};
+
 export default function UploadFunctionModal({ onCancel }: Props) {
   const queryCache = useQueryCache();
+  const { data: limits = limitDefaults } = useLimits();
 
   const [doUploadFunction, { isLoading, isError, error }] = useMutation(
     uploadFunction,
@@ -89,8 +111,10 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   const [file, setFile] = useState<UploadFile>();
   const [fileTouched, setFileTouched] = useState(false);
   const [secrets, setSecrets] = useState([] as Secret[]);
-  const [cpu, setCpu] = useState('0.25');
-  const [memory, setMemory] = useState('1');
+  const [cpu, setCpu] = useState(String(limits.cpuCores.default));
+  const [memory, setMemory] = useState(String(limits.memoryGb.default));
+  const [runtime, setRuntime] = useState<RuntimeOption>(runtimes[1]);
+  const [metadata, setMetadata] = useState([] as MetaType[]);
 
   const addSecret = () => {
     setSecrets(prevSecrets => [
@@ -111,10 +135,10 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     const { idx } = evt.target.dataset;
     const changeField = evt.target.name;
     const updatedSecrets = [...secrets];
-    if (changeField === 'key') {
+    if (changeField === 'secret_key') {
       updatedSecrets[idx].key = evt.target.value;
       updatedSecrets[idx].keyTouched = true;
-    } else if (changeField === 'value') {
+    } else if (changeField === 'secret_value') {
       updatedSecrets[idx].value = evt.target.value;
       updatedSecrets[idx].valueTouched = true;
     }
@@ -158,15 +182,21 @@ export default function UploadFunctionModal({ onCancel }: Props) {
             (accl, s) => ({ ...accl, [s.key]: s.value }),
             {}
           ),
+          metadata: metadata.reduce(
+            (accl, s) => ({ ...accl, [s.key]: s.value }),
+            {}
+          ),
           description,
+          runtime: runtime.value,
         },
         file: file!,
       });
     }
   };
 
-  const checkCPU = checkFloat(0.1, 0.6);
-  const checkMemory = checkFloat(0.1, 2.5);
+  const checkCPU = checkFloat(limits.cpuCores.min, limits.cpuCores.max);
+  const checkMemory = checkFloat(limits.memoryGb.min, limits.memoryGb.max);
+  const isAKS = limits?.vendor === 'aks';
 
   const canBeSubmitted =
     !!file &&
@@ -253,9 +283,9 @@ export default function UploadFunctionModal({ onCancel }: Props) {
               Must be a zip file with at least a Python file called{' '}
               <b>handler.py </b>
               with a function named <b>handle</b> with any of following
-              arguments: <b>data</b>, <b>client</b> and <b>secrets</b>. More
-              information can be found{' '}
-              <Link href="https://docs.cognite.com/api/playground/#tag/Functions">
+              arguments: <b>data</b>, <b>client</b> <b>secrets</b> and{' '}
+              <b>metadata</b>. More information can be found{' '}
+              <Link href="https://docs.cognite.com/api/v1/#tag/Functions">
                 here.
               </Link>
             </p>
@@ -377,6 +407,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 max="0.6"
                 value={cpu}
                 onChange={handleCpuChange}
+                disabled={isAKS}
                 allowClear
               />
             </Form.Item>
@@ -394,8 +425,26 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 min="0.1"
                 max="2.5"
                 onChange={handleMemoryChange}
+                disabled={isAKS}
                 allowClear
               />
+            </Form.Item>
+            <Form.Item label="Runtime">
+              <Dropdown
+                content={
+                  <Menu>
+                    {runtimes.map(rt => (
+                      <Menu.Item key={rt.value} onClick={() => setRuntime(rt)}>
+                        {rt.label}
+                      </Menu.Item>
+                    ))}
+                  </Menu>
+                }
+              >
+                <Button icon="ChevronDownCompact" iconPlacement="right">
+                  {runtime.label}
+                </Button>
+              </Dropdown>
             </Form.Item>
             <Form.Item label="Secrets">
               {secrets.map((s: Secret, index) => (
@@ -423,7 +472,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                     >
                       <Input
                         value={s.key}
-                        name="key"
+                        name="secret_key"
                         data-idx={index}
                         allowClear
                         onChange={handleSecretChange}
@@ -447,7 +496,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                     >
                       <Input
                         value={s.value}
-                        name="value"
+                        name="secret_value"
                         data-idx={index}
                         allowClear
                         onChange={handleSecretChange}
@@ -457,7 +506,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                   <Col span={2}>
                     <Form.Item label="-">
                       <Button
-                        icon="Minus"
+                        id="btnDeleteSecret"
+                        icon="Delete"
                         onClick={() => removeSecret(index)}
                       />
                     </Form.Item>
@@ -472,6 +522,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 </Button>
               )}
             </Form.Item>
+            <FunctionMetadata metadata={metadata} setMetadata={setMetadata} />
           </Col>
         </Row>
       </StyledForm>

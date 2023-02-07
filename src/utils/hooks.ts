@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig, useQueryCache } from 'react-query';
+import { useQuery, QueryConfig, useQueryCache, useMutation } from 'react-query';
 import {
   CogFunction,
   GetCallsArgs,
@@ -7,8 +7,12 @@ import {
   CallResponse,
   Log,
   Schedule,
+  CogFunctionLimit,
 } from 'types';
-import sdk from 'sdk-singleton';
+import sdk, { getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
+import camelCase from 'lodash/camelCase';
+import mapKeys from 'lodash/mapKeys';
 import {
   allFunctionsKey,
   allSchedulesKey,
@@ -18,8 +22,16 @@ import {
   logsKey,
   responseKey,
   sortFunctionKey,
+  limitsKey,
 } from './queryKeys';
-import { getCalls, getCall, getResponse, getLogs, getLatestCalls } from './api';
+import {
+  getCalls,
+  getCall,
+  getResponse,
+  getLogs,
+  getLatestCalls,
+  getScheduleData,
+} from './api';
 
 export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) => {
   const cache = useQueryCache();
@@ -27,7 +39,7 @@ export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) => {
     [allFunctionsKey],
     () =>
       sdk
-        .get(`/api/playground/projects/${sdk.project}/functions`)
+        .get(`/api/v1/projects/${getProject()}/functions`)
         .then(r => r.data?.items),
     {
       onSuccess: functions => {
@@ -49,7 +61,7 @@ export const useFunction = (
     functionKey({ id }),
     () =>
       sdk
-        .get(`/api/playground/projects/${sdk.project}/functions/${id}`)
+        .get(`/api/v1/projects/${getProject()}/functions/${id}`)
         .then(r => r.data),
     config
   );
@@ -58,11 +70,37 @@ export const useSchedules = (config?: QueryConfig<Schedule[], unknown>) =>
     [allSchedulesKey],
     () =>
       sdk
-        .get(`/api/playground/projects/${sdk.project}/functions/schedules`)
+        .get(`/api/v1/projects/${getProject()}/functions/schedules`, {
+          params: { limit: 1000 },
+        })
         .then(r => r.data?.items),
     config
   );
 
+type ObjectType = Record<string, any>;
+export const useRetriveScheduleInputData = (
+  scheduleId: number,
+  config?: QueryConfig<ObjectType, unknown>
+) => {
+  return useQuery<ObjectType>(
+    [allSchedulesKey, scheduleId],
+    () => getScheduleData(scheduleId),
+    config
+  );
+};
+export const useLimits = (config?: QueryConfig<CogFunctionLimit, unknown>) =>
+  useQuery<CogFunctionLimit>(
+    [limitsKey],
+    () =>
+      sdk
+        .get(`/api/v1/projects/${getProject()}/functions/limits`, {
+          params: { vendor: true },
+        })
+        .then(
+          r => mapKeys(r.data, (_, key) => camelCase(key)) as CogFunctionLimit
+        ),
+    config
+  );
 export const useCalls = (
   args: GetCallsArgs,
   config?: QueryConfig<Call[], unknown>
@@ -106,4 +144,48 @@ export const useRefreshApp = () => {
   return () => {
     cache.invalidateQueries();
   };
+};
+
+export const useUserInformation = () => {
+  return useQuery('user-info', getUserInformation);
+};
+
+type ActivationResponse = {
+  status: 'activated' | 'inactive' | 'requested';
+};
+type ActivationError = {
+  message: string;
+};
+
+export const useCheckActivateFunction = (
+  config?: QueryConfig<ActivationResponse, ActivationError>
+) => {
+  const project = getProject();
+  return useQuery<ActivationResponse, ActivationError>(
+    ['activation', project],
+    () =>
+      sdk
+        .get(`api/v1/projects/${project}/functions/status`)
+        .then(res => res.data),
+    config
+  );
+};
+
+export const useActivateFunction = (
+  config?: QueryConfig<ActivationResponse, ActivationError>
+) => {
+  const cache = useQueryCache();
+  const project = getProject();
+  return useMutation<ActivationResponse, ActivationError>(
+    () =>
+      sdk
+        .post(`/api/v1/projects/${project}/functions/status`)
+        .then(res => res.data),
+    {
+      ...config,
+      onSuccess: data => {
+        cache.setQueryData(['activation', project], data);
+      },
+    }
+  );
 };

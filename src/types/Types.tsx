@@ -23,6 +23,8 @@ export interface Relationship {
   relationshipType: RelationshipType;
 }
 
+export type Runtime = 'py37' | 'py38' | 'py39' | 'py310' | 'py311' | 'py312'; // Future proofing.
+
 export interface CogFunctionUpload {
   name: string;
   fileId: number;
@@ -32,13 +34,34 @@ export interface CogFunctionUpload {
   memory?: number;
   cpu?: number;
   secrets?: {};
+  metadata?: {};
   externalId?: string;
+  runtime?: Runtime;
 }
+
 export interface CogFunction extends CogFunctionUpload {
   id: number;
   createdTime: number;
   status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
   error?: Error;
+  runtimeVersion?: string;
+}
+
+export interface CogFunctionLimit {
+  timeoutMinutes: number;
+  cpuCores: {
+    default: number;
+    max: number;
+    min: number;
+  };
+  memoryGb: {
+    default: number;
+    max: number;
+    min: number;
+  };
+  runtimes: Runtime[];
+  responseSizeMb: number;
+  vendor?: string;
 }
 
 export interface Error {
@@ -68,6 +91,11 @@ export interface Log {
   message: string;
 }
 
+export interface ClientCredentials {
+  clientId: string;
+  clientSecret: string;
+}
+
 export interface CreateSchedule {
   name: string;
   description?: string;
@@ -75,6 +103,11 @@ export interface CreateSchedule {
   functionId?: number;
   cronExpression: string;
   data?: {};
+}
+
+export interface CreateScheduleApiParams {
+  schedule: CreateSchedule;
+  clientCredentials?: ClientCredentials;
 }
 export interface Schedule extends CreateSchedule {
   id: number;

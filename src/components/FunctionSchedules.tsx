@@ -1,15 +1,16 @@
 import React from 'react';
 import moment from 'moment';
 import cronstrue from 'cronstrue';
-import { Table, Alert, List, Popover } from 'antd';
-import { Button } from '@cognite/cogs.js';
+import { Table, Alert, List } from 'antd';
 
 import { Schedule } from 'types';
 
 import DeleteScheduleButton from 'components/buttons/DeleteScheduleButton';
 import CreateScheduleButton from 'components/buttons/CreateScheduleButton';
+import ViewInputDataButton from 'components/buttons/ViewInputDataButton';
 import LoadingIcon from 'components/LoadingIcon';
 import { useSchedules } from 'utils/hooks';
+import { isOIDCFlow } from 'utils/api';
 import FunctionCalls from './FunctionCalls';
 
 const scheduleTableColumns = [
@@ -18,7 +19,7 @@ const scheduleTableColumns = [
     key: 'scheduleInfo',
     render: (s: Schedule) => {
       return (
-        <List.Item>
+        <List.Item style={{ verticalAlign: 'middle' }}>
           <List.Item.Meta title={s.name} description={s.description} />
         </List.Item>
       );
@@ -49,15 +50,7 @@ const scheduleTableColumns = [
     title: 'Input Data',
     key: 'inputData',
     render: (s: Schedule) => {
-      if (Object.keys(s.data || {}).length !== 0) {
-        const dataDisplay = <pre>{JSON.stringify(s.data, null, 2)}</pre>;
-        return (
-          <Popover content={dataDisplay}>
-            <Button type="link">View Input Data</Button>
-          </Popover>
-        );
-      }
-      return null;
+      return <ViewInputDataButton id={s.id} />;
     },
   },
   {
@@ -108,7 +101,9 @@ export default function FunctionSchedules({ externalId, id }: Props) {
 
   return (
     <>
-      {externalId ? <CreateScheduleButton externalId={externalId} /> : null}
+      {isOIDCFlow() || externalId ? (
+        <CreateScheduleButton externalId={externalId} id={id} />
+      ) : null}
       <Table
         rowKey={s => s.id.toString()}
         pagination={{ pageSize: 25 }}

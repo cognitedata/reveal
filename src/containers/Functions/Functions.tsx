@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Row, Collapse, Input, Pagination, Select } from 'antd';
+import { Row, Collapse, Input, Pagination, Select, Alert } from 'antd';
 import { Colors, Button, Icon } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
@@ -12,7 +12,14 @@ import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
 import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
 import UploadFunctionButton from 'components/buttons/UploadFunctionButton';
 
-import { useFunctions, useMultipleCalls, useRefreshApp } from 'utils/hooks';
+import {
+  useActivateFunction,
+  useCheckActivateFunction,
+  useFunctions,
+  useMultipleCalls,
+  useRefreshApp,
+} from 'utils/hooks';
+import { Loader } from 'components/Common';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -20,9 +27,21 @@ const CollapseDiv = styled.div`
   }
 `;
 
+const FunctionActivationAlert = styled(Alert)`
+  margin: 2rem 0;
+`;
+
 const FUNCTIONS_PER_PAGE = 10;
 
 function Functions() {
+  const {
+    data: activation,
+    isLoading,
+    isError,
+    error: activationError,
+  } = useCheckActivateFunction();
+  const [mutate] = useActivateFunction();
+
   const refresh = useRefreshApp();
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -36,7 +55,7 @@ function Functions() {
     data: functions,
     isFetching,
     isFetched: functionsDone,
-  } = useFunctions();
+  } = useFunctions({ enabled: !isError && activation?.status === 'activated' });
 
   const functionIds = functions
     ?.sort(({ id: id1 }, { id: id2 }) => id1 - id2)
@@ -59,6 +78,46 @@ function Functions() {
       .toLowerCase()
       .includes(functionFilter.toLowerCase())
   );
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return (
+      <FunctionActivationAlert
+        type="error"
+        message="Error Occured"
+        showIcon
+        description={activationError?.message}
+      />
+    );
+  }
+
+  if (activation?.status === 'inactive') {
+    return (
+      <FunctionActivationAlert
+        type="error"
+        message="Cognite Functions is not activated for the project"
+        showIcon
+        description={<Button onClick={() => mutate()}>Activate</Button>}
+      />
+    );
+  }
+  if (activation?.status === 'requested') {
+    return (
+      <FunctionActivationAlert
+        showIcon
+        description={
+          <span>
+            Cognite Functions is getting ready. This might take some time.
+          </span>
+        }
+        message="Activation in Progress"
+        type="warning"
+      />
+    );
+  }
 
   return (
     <>
@@ -125,13 +184,7 @@ function Functions() {
                     return (
                       <Panel
                         key={id}
-                        header={
-                          <FunctionPanelHeader
-                            id={id}
-                            name={name}
-                            externalId={externalId}
-                          />
-                        }
+                        header={<FunctionPanelHeader id={id} name={name} />}
                       >
                         <FunctionPanelContent
                           id={id}
@@ -149,7 +202,7 @@ function Functions() {
             total={filteredFunctions?.length}
             defaultPageSize={FUNCTIONS_PER_PAGE}
             onChange={page => setCurrentPage(page)}
-            style={{ float: 'right' }}
+            style={{ float: 'right', marginTop: '8px' }}
           />
         </CollapseDiv>
       </div>

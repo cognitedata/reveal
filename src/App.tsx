@@ -4,21 +4,25 @@ import { ReactQueryDevtools } from 'react-query-devtools';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { ThemeProvider } from 'styled-components';
-
-import { ClientSDKProvider } from '@cognite/gearbox/dist/components/ClientSDKProvider';
+import { SDKProvider } from '@cognite/sdk-provider';
 import GlobalStyle from 'styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import sdk from 'sdk-singleton';
-import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
-// import Routes from './routes';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  SubAppWrapper,
+  AuthWrapper,
+  getEnv,
+  getProject,
+} from '@cognite/cdf-utilities';
 import RootApp from 'containers/App';
 import AntStyles from 'components/AntStyles';
 import { Loader } from 'components/Common';
 import theme from './styles/theme';
-import { setupSentry } from './utils/sentry';
 import rootStyles from './styles/index.css';
 
 export default () => {
+  const env = getEnv();
+  const project = getProject();
   const history = createBrowserHistory();
 
   const queryCache = new QueryCache({
@@ -33,7 +37,6 @@ export default () => {
   useEffect(() => {
     cogsStyles.use();
     rootStyles.use();
-    setupSentry();
     return () => {
       cogsStyles.unuse();
       rootStyles.unuse();
@@ -45,11 +48,10 @@ export default () => {
       <AntStyles>
         <SubAppWrapper>
           <AuthWrapper
-            subAppName="functions-ui"
-            showLoader
             loadingScreen={<Loader />}
+            login={() => loginAndAuthIfNeeded(project, env)}
           >
-            <ClientSDKProvider client={sdk}>
+            <SDKProvider sdk={sdk}>
               <ThemeProvider theme={theme}>
                 <Router history={history}>
                   <Switch>
@@ -58,7 +60,7 @@ export default () => {
                 </Router>
               </ThemeProvider>
               <GlobalStyle theme={theme} />
-            </ClientSDKProvider>
+            </SDKProvider>
           </AuthWrapper>
         </SubAppWrapper>
       </AntStyles>

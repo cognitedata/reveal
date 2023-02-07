@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 
-import CreateScheduleModal from 'components/FunctionModals/CreateScheduleModal';
+import ScheduleInputDataModal from '../FunctionModals/ScheduleInputDataModal';
 
 type Props = {
   id: number;
-  externalId?: string;
 };
 
-export default function CreateScheduleButton({ id, externalId }: Props) {
+export default function ViewInputDataButton({ id }: Props) {
   const [showModal, setShowModal] = useState(false);
 
   return (
     <>
       <Button
-        type="primary"
         style={{
           justifyContent: 'center',
         }}
@@ -23,14 +21,10 @@ export default function CreateScheduleButton({ id, externalId }: Props) {
           setShowModal(true);
         }}
       >
-        Create Schedule
+        View input
       </Button>
       {showModal ? (
-        <CreateScheduleModal
-          id={id}
-          externalId={externalId}
-          onCancel={() => setShowModal(false)}
-        />
+        <ScheduleInputDataModal id={id} onCancel={() => setShowModal(false)} />
       ) : null}
     </>
   );

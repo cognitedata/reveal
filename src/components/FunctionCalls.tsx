@@ -46,7 +46,7 @@ const callTableColumns = [
               .utc(endTime.diff(startTime))
               .add(1, 'second')
               .startOf('second');
-            return <>{duration.format('mm:ss')} m</>;
+            return <>{duration.format('mm[m ]ss[s]')}</>;
           }}
         />
       );

@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router';
 import { mount } from 'enzyme';
 
 import TestWrapper from 'utils/TestWrapper';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { sleep } from 'helpers';
 import { setConsole } from 'react-query';
 import FunctionLogsModal from './FunctionLogsModal';
@@ -70,12 +70,12 @@ describe('FunctionLogsModal', () => {
     await sleep(100);
     expect(sdk.get).toHaveBeenNthCalledWith(
       1,
-      '/api/playground/projects/mockProject/functions/1/calls/2/logs'
+      '/api/v1/projects/mockProject/functions/1/calls/2/logs'
     );
 
     expect(sdk.get).toHaveBeenNthCalledWith(
       2,
-      '/api/playground/projects/mockProject/functions/1/calls/2'
+      '/api/v1/projects/mockProject/functions/1/calls/2'
     );
 
     const result = wrapper.find('.ant-modal-content');

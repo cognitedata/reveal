@@ -8,6 +8,12 @@ configure({ adapter: new Adapter() });
 
 jest.mock('utils/Metrics');
 
+jest.mock('@cognite/cdf-utilities', () => {
+  return {
+    getProject: jest.fn().mockReturnValue('mockProject'),
+  };
+});
+
 let consoleWrittenTo;
 
 let originalLog;
