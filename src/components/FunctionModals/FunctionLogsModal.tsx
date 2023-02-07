@@ -8,6 +8,7 @@ import { useQueryCache } from 'react-query';
 import { logsKey, callKey } from 'utils/queryKeys';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import { useCall, useLogs } from 'utils/hooks';
+import NoLogs from './icons/emptyLogs';
 
 type Props = {
   onCancel: () => void;
@@ -42,6 +43,14 @@ function ModalBody({ logs, call, errors, fetched }: BodyProps) {
           </>
         }
       />
+    );
+  }
+  if (logs?.length === 0) {
+    return (
+      <>
+        <p>No logs were returned from this function call</p>
+        <NoLogs />
+      </>
     );
   }
 
