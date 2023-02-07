@@ -45,7 +45,6 @@ function ModalBody({ logs, call, errors, fetched }: BodyProps) {
       />
     );
   }
-
   if (logs?.length === 0) {
     return (
       <>
@@ -103,6 +102,7 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
     isFetched: isLogsFetched,
     error: logError,
   } = useLogs({ id, callId });
+
   const {
     data: call,
     isFetching: callFetching,

@@ -8,7 +8,7 @@ const addLoaders = config => {
 
   //Matchers to find the array of rules and css-file loader
   const loadersMatcher = inQuestion =>
-    inQuestion.rules &&
+    inQuestion.rules && Array.isArray(inQuestion.rules) &&
     inQuestion.rules.find(rule => Array.isArray(rule.oneOf));
   const cssMatcher = inQuestion =>
     inQuestion.test && inQuestion.test.toString() === cssRegex.toString();
@@ -41,9 +41,11 @@ const addLoaders = config => {
     {
       loader: "postcss-loader",
       options: {
-        plugins: [PrefixWrap(`.${ids.styleScope}`, {
-          ignoredSelectors: [":root"],
-        })],
+        postcssOptions: {
+          plugins: [PrefixWrap(`.${ids.styleScope}`, {
+            ignoredSelectors: [":root"],
+          })]
+        }
       },
     },
   ];
@@ -105,6 +107,13 @@ module.exports = [
           reportFilename: 'size-report/report.html',
           openAnalyzer: false
         })])
+
+      config.module.rules.push({
+        test: /\.m?js/,
+        resolve: {
+            fullySpecified: false
+        }
+      })
       config.externals = {
         react: 'react',
         'react-dom': 'react-dom',

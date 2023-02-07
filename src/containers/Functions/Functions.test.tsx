@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { MemoryRouter } from 'react-router';
 import { CogFunction, Call } from 'types/Types';
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { cleanup, render, screen, fireEvent } from '@testing-library/react';
 
 import { sleep } from 'helpers';
 import TestWrapper from 'utils/TestWrapper';
@@ -59,14 +59,30 @@ jest.mock('@cognite/cdf-sdk-singleton', () => ({
 
 jest.mock('@cognite/cdf-utilities', () => ({
   PageTitle: () => null,
-  getProject: jest.fn().mockReturnValue('mockProject'),
+  getProject: () => 'mockProject',
 }));
 
 const wrap = (node: React.ReactNode) =>
   render(<TestWrapper>{node}</TestWrapper>);
 
+const loadMock = sdkToMock => {
+  jest.spyOn(sdkToMock, 'get').mockImplementation((url: string) => {
+    if (url.includes('/status')) {
+      return Promise.resolve({
+        data: { status: 'activated' },
+      });
+    }
+    return Promise.resolve({
+      data: { items: [mockFunction, mockFunction2] },
+    });
+  });
+};
+
 describe('Functions', () => {
-  beforeEach(() => (sdk.get as any).mockClear());
+  beforeEach(() => {
+    (sdk.get as any).mockClear();
+    cleanup();
+  });
   it('renders without crashing', () => {
     expect(() => {
       const div = document.createElement('div');
@@ -80,9 +96,12 @@ describe('Functions', () => {
     }).not.toThrow();
   });
 
-  it('should load functions and calls upon mount', async () => {
+  it('should load functions and calls upon mount and refresh them', async () => {
     const useEffect = jest.spyOn(React, 'useEffect');
-    wrap(<Functions />);
+    // sdk.get = jest.fn();
+    loadMock(sdk);
+
+    const { unmount, container } = wrap(<Functions />);
 
     await sleep(100);
 
@@ -90,34 +109,20 @@ describe('Functions', () => {
     expect(sdk.get).toHaveBeenCalled();
 
     expect(sdk.get).toHaveBeenCalledWith(
-      '/api/v1/projects/mockProject/functions'
+      'api/v1/projects/mockProject/functions/status'
     );
-  });
-
-  it('should refresh functions when button is clicked', async () => {
-    wrap(<Functions />);
-    await sleep(100);
-
-    expect(sdk.get).toHaveBeenCalledWith(
-      '/api/v1/projects/mockProject/functions'
-    );
-
-    await sleep(100);
 
     const refreshButton = screen.getByRole('button', {
       name: /refresh/i,
     });
-
     fireEvent.click(refreshButton);
     expect(refreshButton).toBeDefined();
 
     expect(sdk.get).toHaveBeenCalledWith(
       '/api/v1/projects/mockProject/functions'
     );
-  });
 
-  it('should update functions shown if search field is filled', async () => {
-    const { container } = wrap(<Functions />);
+    // 'should update functions shown if search field is filled'
     expect(await screen.findAllByText('testFunc')).toHaveLength(1);
 
     const functionsDisplayed = container.getElementsByClassName(
@@ -134,25 +139,23 @@ describe('Functions', () => {
     );
 
     expect(functionsDisplayedAfterSearch).toHaveLength(1);
-  });
 
-  it('search field is case insensitive', async () => {
-    const { container } = wrap(<Functions />);
+    fireEvent.change(search, { target: { value: '' } });
 
-    expect(await screen.findAllByText('testFunc')).toHaveLength(1);
+    // 'search field is case insensitive'
 
-    const functionsDisplayed = container.getElementsByClassName(
+    const functionsDisplayed1 = container.getElementsByClassName(
       'ant-collapse-item'
     );
-    expect(functionsDisplayed.length).toBe(2);
-    const search = screen.getByPlaceholderText(
+    expect(functionsDisplayed1.length).toBe(2);
+    const search1 = screen.getByPlaceholderText(
       'Search by name, external id, or owner'
     );
-    fireEvent.change(search, { target: { value: 'SECOND' } });
-    const functionsDisplayedAfterSearch = container.getElementsByClassName(
+    fireEvent.change(search1, { target: { value: 'SECOND' } });
+    const functionsDisplayedAfterSearch1 = container.getElementsByClassName(
       'ant-collapse-item'
     );
 
-    expect(functionsDisplayedAfterSearch).toHaveLength(1);
+    expect(functionsDisplayedAfterSearch1).toHaveLength(1);
   });
 });
