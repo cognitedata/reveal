@@ -6,6 +6,8 @@ import * as THREE from 'three';
 import { Image360Entity } from './Image360Entity';
 import { SceneHandler } from '@reveal/utilities';
 import { Image360Descriptor, Image360Provider } from '@reveal/data-providers';
+import { Image360CollectionIcons } from './visuals/Image360CollectionIcons';
+import { Vector3 } from 'three';
 
 export class Image360EntityFactory<T> {
   private readonly _sceneHandler: SceneHandler;
@@ -20,6 +22,12 @@ export class Image360EntityFactory<T> {
     preMultipliedRotation: boolean
   ): Promise<Image360Entity[]> {
     const event360Metadatas = await this._image360DataProvider.get360ImageDescriptors(dataProviderFilter);
+
+    const positions = event360Metadatas
+      .map(image360Descriptor => this.computeTransform(image360Descriptor, preMultipliedRotation, postTransform))
+      .map(p => new Vector3().setFromMatrixPosition(p));
+
+    new Image360CollectionIcons(positions, this._sceneHandler);
 
     return event360Metadatas.map(image360Descriptor => {
       const worldTransform = this.computeTransform(image360Descriptor, preMultipliedRotation, postTransform);

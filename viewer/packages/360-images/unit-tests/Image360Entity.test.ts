@@ -35,22 +35,19 @@ describe(Image360Entity.name, () => {
       image360Descriptor,
       mockSceneHandler.object(),
       mock360ImageProvider.object(),
-      new THREE.Matrix4(),
-      true
+      new THREE.Matrix4()
     );
     new Image360Entity(
       image360Descriptor,
       mockSceneHandler.object(),
       mock360ImageProvider.object(),
-      new THREE.Matrix4(),
-      true
+      new THREE.Matrix4()
     );
     new Image360Entity(
       image360Descriptor,
       mockSceneHandler.object(),
       mock360ImageProvider.object(),
-      new THREE.Matrix4(),
-      true
+      new THREE.Matrix4()
     );
 
     expect(addedSprites.length).toBe(3);
@@ -81,8 +78,7 @@ describe(Image360Entity.name, () => {
       image360Descriptor,
       mockSceneHandler.object(),
       mock360ImageProvider.object(),
-      testTranslation.clone(),
-      true
+      testTranslation.clone()
     );
 
     const expectedPreMultipliedTransform = testTranslation.clone().multiply(new THREE.Matrix4().makeRotationY(Math.PI));
@@ -92,8 +88,7 @@ describe(Image360Entity.name, () => {
       image360Descriptor,
       mockSceneHandler.object(),
       mock360ImageProvider.object(),
-      testTranslation.clone(),
-      false
+      testTranslation.clone()
     );
 
     const expectedNonPreMultipliedTransform = testTranslation
