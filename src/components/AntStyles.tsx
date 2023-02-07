@@ -140,7 +140,7 @@ export default function AntStyles(props: { children: React.Node }) {
         document.getElementsByClassName(ids.styleScope).item(0)!
       }
     >
-      <div className="functions-ui-style-scope">{props.children}</div>
+      <div className="cdf-functions-ui-style-scope">{props.children}</div>
     </ConfigProvider>
   );
 }
