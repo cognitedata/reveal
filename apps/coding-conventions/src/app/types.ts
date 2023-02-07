@@ -4,6 +4,16 @@ export type TagDefinitions = TagHardcoded | TagRange | TagRegex;
 
 export type Resource = 'files' | 'assets';
 
+export type System = {
+  id: UID;
+  title: string;
+  resource: Resource;
+  description?: string;
+  structure: string;
+  conventions: Convention[];
+  updatedAt?: Date;
+};
+
 export type Convention = {
   id: UID;
   keyword: string; // NN
@@ -15,16 +25,6 @@ export type Convention = {
   dependency?: UID;
   updatedAt?: Date;
   systemId: string;
-};
-
-export type System = {
-  id: UID;
-  title: string;
-  resource: Resource;
-  description?: string;
-  structure: string;
-  conventions: Convention[];
-  updatedAt?: Date;
 };
 
 export type Common = {

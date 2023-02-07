@@ -1,14 +1,15 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { memoize } from 'lodash';
 import React, { useEffect } from 'react';
 import { useTable } from 'react-table';
-import { useCellRangeSelection } from 'react-table-plugins';
 import styled from 'styled-components';
-import { handleOnPasteEvent } from './helpers';
+import { getCellById, handleOnPasteEvent } from './helpers';
 
 const MAX_COLUMNS = 8;
 const MIN_ROW_LENGTH = 50;
 const NEW_ROW_COUNT = 50;
+export const SPLITROWCOL = 'row-column-';
 
 const EditableCell = ({
   value: initialValue,
@@ -16,21 +17,17 @@ const EditableCell = ({
   column: { id },
   updateMyData,
 }: any) => {
-  const [value, setValue] = React.useState(initialValue);
-
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+    updateMyData(index, id, e.target.value);
   };
 
-  const onBlur = () => {
-    updateMyData(index, id, value);
-  };
-
-  React.useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
-  return <input value={value} onChange={onChange} onBlur={onBlur} />;
+  return (
+    <input
+      value={initialValue}
+      onChange={onChange}
+      id={index + SPLITROWCOL + id}
+    />
+  );
 };
 
 const defaultColumn = {
@@ -109,79 +106,73 @@ export function Table({ columns, dataSource: inputData }: any) {
     );
   };
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    // @ts-ignore
-    state: { selectedCellIds, currentSelectedCellIds, isSelectingCells },
-    // @ts-ignore
-    getCellsBetweenId,
-    // @ts-ignore
-    setSelectedCellIds,
-    // @ts-ignore
-    cellsById,
-  } = useTable(
-    {
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable({
       columns: newColumns,
       data,
-      cellIdSplitBy: 'cols_rows',
       defaultColumn,
       initialState: {
         // @ts-ignore
         selectedCellIds: {},
       },
       updateMyData,
-    },
-    useCellRangeSelection
-  );
+    });
 
-  const cellsSelected = { ...currentSelectedCellIds, ...selectedCellIds };
+  const [selectedStartId, setSelectedStartId] = React.useState('');
+  const [selectedCellIdsState, setSelectedCellIdsState] = React.useState<
+    string[]
+  >([]);
+  const [lastVisitedCellId, setLastVisitedCellId] = React.useState('');
 
   const onPaste = (e: ClipboardEvent) => {
     if (e.clipboardData === null) {
       return;
     }
-    if (Object.keys(selectedCellIds).length === 0) {
+    if (selectedCellIdsState.length === 0) {
       return;
     }
     e.preventDefault();
-    handleOnPasteEvent(e, selectedCellIds, cellsById, updateMyData);
-    setSelectedCellIds({});
+    handleOnPasteEvent(e, selectedCellIdsState, rows, updateMyData);
+    setSelectedCellIdsState([]);
   };
 
+  // on control + a to select all cells
   const onKeyPressHandling = (e: KeyboardEvent) => {
-    // on control + a to select all cells
     if ((e.ctrlKey && e.key === 'a') || (e.metaKey && e.key === 'a')) {
       e.preventDefault();
-      const allCellIds = Object.keys(cellsById);
-      const cellMap = allCellIds.reduce((acc: any, cellId: string) => {
-        acc[cellId] = true;
-        return acc;
-      }, {});
-      setSelectedCellIds(cellMap);
+      const allCellIds = rows.reduce((acc: any, row: any) => {
+        const cellIds = row.cells.map(
+          (cell: any) => row.id + SPLITROWCOL + cell.column.id
+        );
+        return [...acc, ...cellIds];
+      }, []);
+      setSelectedCellIdsState(allCellIds);
     }
     // on backspace to delete content of all selected cells
-    if (e.key === 'Backspace' && Object.keys(selectedCellIds).length > 0) {
+    if (e.key === 'Backspace' && selectedCellIdsState.length > 0) {
+      if (
+        selectedCellIdsState.length === 1 &&
+        document.activeElement?.tagName === 'INPUT'
+      ) {
+        return;
+      }
+
       e.preventDefault();
-      const cellIds = Object.keys(selectedCellIds);
-      const cells = cellIds.map((cellId) => cellsById[cellId]);
+      const cellIds = selectedCellIdsState;
+      const cells = cellIds.map((cellId) => getCellById(rows, cellId));
 
       cells.forEach((cell) => {
         const { row, column } = cell;
         const cellValue = '';
         updateMyData(row.index, column.id, cellValue);
       });
-      setSelectedCellIds({});
+      setSelectedCellIdsState([]);
     }
 
     // on control + c to copy selected cells
     if ((e.ctrlKey && e.key === 'c') || (e.metaKey && e.key === 'c')) {
       e.preventDefault();
-      console.log('selectedCellIds', selectedCellIds);
-      if (Object.keys(selectedCellIds).length === 0) {
+      if (selectedCellIdsState.length === 0) {
         const currentCell = e.target as HTMLInputElement;
         const cellValue = currentCell.value;
         navigator.clipboard.writeText(cellValue);
@@ -189,22 +180,19 @@ export function Table({ columns, dataSource: inputData }: any) {
       }
 
       const SEPERATORCHAR = '\t';
-      const cellIds = Object.keys(selectedCellIds);
-      const cells = cellIds.map((cellId) => cellsById[cellId]);
+      const cellIds = selectedCellIdsState;
+      const cells = cellIds.map((cellId) => getCellById(rows, cellId));
 
-      // for each cell, get the value and add to text, separated by tab and new line
       const text = cells.reduce((acc: string, cell: any, index: number) => {
         const { row, column } = cell;
         const cellValue = row.values[column.id] || '';
 
         if (index === 0) {
           acc += cellValue;
-          // if the previous cell is not in the same row, add new line
         } else if (cells[index - 1].row.index !== row.index) {
           acc +=
             `
-` + cellValue;
-          // if the previous cell is in the same row, add space
+    ` + cellValue;
         } else {
           acc += SEPERATORCHAR + cellValue;
         }
@@ -222,12 +210,95 @@ export function Table({ columns, dataSource: inputData }: any) {
       document.removeEventListener('paste', onPaste);
       document.removeEventListener('keydown', onKeyPressHandling);
     };
-  }, [selectedCellIds]);
+  }, [selectedCellIdsState]);
+
+  const findInBetweenCells = (startId: string, endId: string) => {
+    const table = document.getElementById('table');
+    const startCell = table?.querySelector(`[id="${startId}"]`);
+    const endCell = table?.querySelector(`[id="${endId}"]`);
+
+    if (!startCell || !endCell) {
+      return [];
+    }
+
+    const startCellRect = startCell.getBoundingClientRect();
+    const endCellRect = endCell.getBoundingClientRect();
+
+    const topLeft = {
+      x: Math.min(startCellRect.x, endCellRect.x),
+      y: Math.min(startCellRect.y, endCellRect.y),
+    };
+    const bottomRight = {
+      x: Math.max(startCellRect.x, endCellRect.x),
+      y: Math.max(startCellRect.y, endCellRect.y),
+    };
+
+    const allCells = table?.querySelectorAll('input');
+    const allCellsArray = Array.from(allCells || []);
+
+    const inBetweenCells = allCellsArray.filter((cell) => {
+      const cellRect = cell.getBoundingClientRect();
+      return (
+        cellRect.x >= topLeft.x &&
+        cellRect.x <= bottomRight.x &&
+        cellRect.y >= topLeft.y &&
+        cellRect.y <= bottomRight.y
+      );
+    });
+
+    return inBetweenCells.map((cell) => cell.id);
+  };
+
+  const handlePointerDown = (e: any) => {
+    setSelectedStartId(e.target.id);
+    setSelectedCellIdsState([e.target.id]);
+  };
+
+  React.useEffect(() => {
+    if (selectedStartId !== '') {
+      document.body.style.userSelect = 'none';
+    } else {
+      document.body.style.userSelect = 'auto';
+    }
+  }, [selectedStartId]);
+
+  const handlePointerUp = (e: any) => {
+    setSelectedStartId('');
+  };
+
+  const findInBetweenCellsMemorized = memoize(findInBetweenCells);
+
+  const handlePointerMove = (e: any) => {
+    if (selectedStartId === '') {
+      return;
+    }
+    if (e.target.id === lastVisitedCellId) {
+      return;
+    }
+
+    const newIds = findInBetweenCellsMemorized(selectedStartId, e.target.id);
+    setSelectedCellIdsState(newIds);
+    setLastVisitedCellId(e.target.id);
+  };
+
+  const handlePointerLeave = (e: any) => {
+    if (selectedStartId === '') {
+      return;
+    }
+    setSelectedStartId('');
+  };
 
   return (
     <div className="App">
       <TableContainer onScroll={handleScroll}>
-        <table {...getTableProps()}>
+        <table
+          {...getTableProps()}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          onPointerMove={handlePointerMove}
+          onPointerLeave={handlePointerLeave}
+          id="table"
+        >
           <thead>
             {headerGroups.map(
               (headerGroup: {
@@ -252,20 +323,24 @@ export function Table({ columns, dataSource: inputData }: any) {
               return (
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
+                    const color = selectedCellIdsState.includes(
+                      row.index + SPLITROWCOL + cell.column.id
+                    )
+                      ? 'red'
+                      : 'white';
                     return (
                       <td
-                        // @ts-ignore
-                        {...cell.getCellRangeSelectionProps()}
                         {...cell.getCellProps()}
-                        style={
-                          // @ts-ignore
-                          cellsSelected[cell.id]
-                            ? {
-                                backgroundColor: '#6beba8',
-                                userSelect: 'none',
-                              }
-                            : { backgroundColor: 'white', userSelect: 'none' }
+                        key={
+                          row.index +
+                          SPLITROWCOL +
+                          cell.column.id +
+                          'color-' +
+                          color
                         }
+                        style={{
+                          backgroundColor: color,
+                        }}
                       >
                         {cell.render('Cell')}
                       </td>
