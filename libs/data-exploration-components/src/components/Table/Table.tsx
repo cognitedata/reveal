@@ -201,7 +201,12 @@ export function Table<T extends TableData>({
     []
   );
 
-  const { getHeaderGroups, getRowModel, getAllLeafColumns } = useReactTable<T>({
+  const {
+    getHeaderGroups,
+    getRowModel,
+    getAllLeafColumns,
+    getIsSomeColumnsVisible,
+  } = useReactTable<T>({
     data,
     columns: columns,
     state: {
@@ -218,7 +223,6 @@ export function Table<T extends TableData>({
     onSortingChange: onSort,
     onColumnOrderChange: setColumnOrder,
     onColumnSizingChange: setColumnSizing,
-
     onColumnVisibilityChange: setColumnVisibility,
     onExpandedChange: onRowExpanded,
     enableSorting: enableSorting,
@@ -277,11 +281,6 @@ export function Table<T extends TableData>({
 
   const loadMoreProps = { isLoadingMore, hasNextPage, fetchMore };
 
-  const allLeafColumns = getAllLeafColumns();
-  const noColumnsVisible = useMemo(() => {
-    return allLeafColumns.every((col) => !col.getIsVisible());
-  }, [allLeafColumns]);
-
   const renderTableContent = () => {
     if (isDataLoading) {
       return <EmptyState isLoading title="Loading results" />;
@@ -290,7 +289,7 @@ export function Table<T extends TableData>({
     if (!data || data.length === 0) {
       return <EmptyState body="Please, refine your filters" />;
     }
-    if (noColumnsVisible) {
+    if (!getIsSomeColumnsVisible()) {
       return <EmptyState body="Please, select your columns" />;
     }
 
