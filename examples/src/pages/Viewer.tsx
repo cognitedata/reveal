@@ -61,7 +61,6 @@ export function Viewer() {
     let cameraManagers: {
       Default: DefaultCameraManager;
       Custom: CustomCameraManager;
-      Stationary: StationaryCameraManager;
     }
     let pointCloudObjectsUi: PointCloudObjectStylingUI;
 
@@ -146,8 +145,7 @@ export function Viewer() {
 
       cameraManagers = {
         Default: viewer.cameraManager as DefaultCameraManager,
-        Custom: new CustomCameraManager(canvasWrapperRef.current!, new THREE.PerspectiveCamera(5, 1., 0.01, 1000)),
-        Stationary: new StationaryCameraManager(canvasWrapperRef.current!, viewer.cameraManager.getCamera())
+        Custom: new CustomCameraManager(canvasWrapperRef.current!, new THREE.PerspectiveCamera(5, 1., 0.01, 1000))
       };
       cameraManagers.Custom.deactivate();
 
@@ -338,14 +336,14 @@ export function Viewer() {
 
       const controlsGui = gui.addFolder('Camera controls');
       const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
-      const cameraManagerTypes = ['Default', 'Custom', 'Stationary'];
+      const cameraManagerTypes = ['Default', 'Custom'];
       controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), mouseWheelAction: value });
       });
       controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
-      controlsGui.add(guiState.controls, 'cameraManager', cameraManagerTypes).name('Camera manager type').onFinishChange((value: ('Default' | 'Custom' | 'Stationary')) => {
+      controlsGui.add(guiState.controls, 'cameraManager', cameraManagerTypes).name('Camera manager type').onFinishChange((value: ('Default' | 'Custom')) => {
         viewer.setCameraManager(cameraManagers[value]);
       });
 
