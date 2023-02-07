@@ -193,12 +193,13 @@ describe(SectorDownloadScheduler.name, () => {
       return createConsumedSectorMock(sector).object();
     };
 
-    const loadSectorMock = (sector: WantedSector): DownloadRequest => {
-      return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
-    };
-
     const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
-      return { sector, downloadSector: loadSectorMock };
+      return {
+        sector,
+        downloadSector: (sector: WantedSector): DownloadRequest => {
+          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
+        }
+      };
     });
 
     // Act
