@@ -10,7 +10,7 @@ jest.mock('utils/Metrics');
 
 jest.mock('@cognite/cdf-utilities', () => {
   return {
-    getProject: jest.fn().mockReturnValue('mockProject'),
+    getProject: () => 'mockProject',
   };
 });
 

@@ -38,20 +38,11 @@ function ModalBody({ logs, call, errors, fetched }: BodyProps) {
           <>
             <p>There was an error fetching the logs.</p>
             {errors?.map((e, i) => (
-              <ErrorFeedback key={`Error-Feedback-${i}`} error={e} />
+              <ErrorFeedback key={i} error={e} />
             ))}
           </>
         }
       />
-    );
-  }
-
-  if (logs?.length === 0) {
-    return (
-      <>
-        <p>No logs were returned from this function call</p>
-        <NoLogs />
-      </>
     );
   }
 
@@ -103,6 +94,7 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
     isFetched: isLogsFetched,
     error: logError,
   } = useLogs({ id, callId });
+
   const {
     data: call,
     isFetching: callFetching,

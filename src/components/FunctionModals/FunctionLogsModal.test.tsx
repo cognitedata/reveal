@@ -39,21 +39,12 @@ describe('FunctionLogsModal', () => {
   });
 
   it('downloads and displays logs', async () => {
-    sdk.get.mockReset();
 
-    sdk.get.mockResolvedValueOnce({
-      data: {
-        items: [
-          { message: 'Fetching all assets ...', timestamp: 1601310912576 },
-          {
-            message: 'Found 285337 assets in 44.29713797569275 seconds',
-            timestamp: 1601310956873,
-          },
-        ],
-      },
-    });
+    /*
+    
+    // This part was not being used anywhere
 
-    sdk.get.mockResolvedValueOnce({
+    jest.fn(sdk.get).mockResolvedValueOnce({
       data: {
         endTime: 1601125177860,
         functionId: 1967465730947121,
@@ -61,7 +52,22 @@ describe('FunctionLogsModal', () => {
         startTime: 1601125132796,
         status: 'Failed',
       },
-    });
+    });*/
+
+
+    jest.spyOn(sdk,'get').mockImplementation(
+      () => Promise.resolve({
+        data: {
+          items: [
+            { message: 'Fetching all assets ...', timestamp: 1601310912576 },
+            {
+              message: 'Found 285337 assets in 44.29713797569275 seconds',
+              timestamp: 1601310956873,
+            },
+          ],
+        },
+      })
+    );
 
     const wrapper = wrap(
       <FunctionLogsModal onCancel={jest.fn()} id={1} callId={2} />
@@ -92,8 +98,7 @@ describe('FunctionLogsModal', () => {
       error: () => {},
     });
 
-    sdk.get.mockReset();
-    sdk.get.mockRejectedValue('log error');
+    jest.spyOn(sdk, 'get').mockRejectedValue('log error'); 
     const wrapper = wrap(
       <FunctionLogsModal onCancel={jest.fn()} id={1} callId={2} />
     );
