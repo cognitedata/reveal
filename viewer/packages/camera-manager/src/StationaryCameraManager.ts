@@ -190,8 +190,7 @@ export class StationaryCameraManager implements CameraManager {
     if (this._pointerEventCache.length > 1) {
       this.pinchZoomAndRotate(event);
     } else {
-      const lastEvent = this._pointerEventCache.find(ev => ev.pointerId === event.pointerId)!;
-
+      const lastEvent = this._pointerEventCache.find(cachedPointerEvent => cachedPointerEvent.pointerId === event.pointerId)!;
       this.rotateCamera(event, lastEvent);
     }
 
