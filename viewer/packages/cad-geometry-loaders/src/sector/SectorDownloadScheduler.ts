@@ -8,33 +8,26 @@ import { DeferredPromise } from '@reveal/utilities';
 import assert from 'assert';
 import remove from 'lodash/remove';
 
+export type DownloadRequest = {
+  consumedSector: Promise<ConsumedSector>;
+  abortDowload: () => void;
+};
+
 export type SectorDownloadData = {
   sector: WantedSector;
-  downloadSector: (sector: WantedSector) => {
-    consumedSector: Promise<ConsumedSector>;
-    abortDowload: () => void;
-  };
+  downloadSector: (sector: WantedSector) => DownloadRequest;
 };
 
 type QueuedSectorData = {
   sector: WantedSector;
-  downloadSector: (sector: WantedSector) => {
-    consumedSector: Promise<ConsumedSector>;
-    abortDowload: () => void;
-  };
+  downloadSector: (sector: WantedSector) => DownloadRequest;
   queuedDeferredPromise: DeferredPromise<ConsumedSector>;
 };
 
 export class SectorDownloadScheduler {
   private readonly _maxConcurrentSectorDownloads: number;
 
-  private readonly _pendingSectorDownloads: Map<
-    string,
-    {
-      consumedSector: Promise<ConsumedSector>;
-      abortDowload: () => void;
-    }
-  >;
+  private readonly _pendingSectorDownloads: Map<string, DownloadRequest>;
   private readonly _queuedSectorDownloads: Map<string, QueuedSectorData>;
   private readonly _sectorDownloadQueue: string[];
 
@@ -100,10 +93,7 @@ export class SectorDownloadScheduler {
   private getOrAddToQueuedDownloads(
     sector: WantedSector,
     sectorIdentifier: string,
-    downloadSector: (sector: WantedSector) => {
-      consumedSector: Promise<ConsumedSector>;
-      abortDowload: () => void;
-    }
+    downloadSector: (sector: WantedSector) => DownloadRequest
   ): Promise<ConsumedSector> {
     const queuedSector = this._queuedSectorDownloads.get(sectorIdentifier);
 
@@ -124,26 +114,20 @@ export class SectorDownloadScheduler {
   }
 
   private addSectorToPendingDownloads(
-    downloadSector: (sector: WantedSector) => {
-      consumedSector: Promise<ConsumedSector>;
-      abortDowload: () => void;
-    },
+    downloadSector: (sector: WantedSector) => DownloadRequest,
     sector: WantedSector,
     sectorIdentifier: string
   ): Promise<ConsumedSector> {
     const sectorDownload = downloadSector(sector);
-    sectorDownload.consumedSector.catch(error => {
+    sectorDownload.consumedSector = sectorDownload.consumedSector.catch(error => {
       Log.error('Failed to load sector', sector, 'error:', error);
       return {
-        consumedSector: {
-          modelIdentifier: sector.modelIdentifier,
-          metadata: sector.metadata,
-          levelOfDetail: LevelOfDetail.Discarded,
-          group: undefined,
-          instancedMeshes: undefined
-        } as ConsumedSector,
-        abortDowload: () => {}
-      };
+        modelIdentifier: sector.modelIdentifier,
+        metadata: sector.metadata,
+        levelOfDetail: LevelOfDetail.Discarded,
+        group: undefined,
+        instancedMeshes: undefined
+      } as ConsumedSector;
     });
     this._pendingSectorDownloads.set(sectorIdentifier, sectorDownload);
     this.processNextQueuedSectorDownload(sectorDownload.consumedSector, sectorIdentifier);

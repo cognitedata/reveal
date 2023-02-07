@@ -19,5 +19,5 @@ export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider 
    * @param baseUrl     Base URL of the model.
    * @param fileName    Filename of binary file.
    */
-  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
+  getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }

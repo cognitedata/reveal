@@ -5,7 +5,7 @@
 import { ConsumedSector, LevelOfDetail, WantedSector, SectorMetadata } from '@reveal/cad-parsers';
 import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
 import { IMock, Mock } from 'moq.ts';
-import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
+import { DownloadRequest, SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
 import { Log } from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 
@@ -35,7 +35,12 @@ describe(SectorDownloadScheduler.name, () => {
     };
 
     const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
-      return { sector, downloadSector: downloadSectorMock };
+      return {
+        sector,
+        downloadSector: (sector: WantedSector) => {
+          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
+        }
+      };
     });
 
     // Act
@@ -57,10 +62,20 @@ describe(SectorDownloadScheduler.name, () => {
 
     // Act
     const firstBatch = sectorDownloadScheduler.queueSectorBatchForDownload([
-      { sector: wantedSectors[0], downloadSector: downloadSectorMock }
+      {
+        sector: wantedSectors[0],
+        downloadSector: (sector: WantedSector) => {
+          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
+        }
+      }
     ]);
     const secondBatch = sectorDownloadScheduler.queueSectorBatchForDownload([
-      { sector: wantedSectors[0], downloadSector: downloadSectorMock }
+      {
+        sector: wantedSectors[0],
+        downloadSector: (sector: WantedSector) => {
+          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
+        }
+      }
     ]);
 
     // Assert
@@ -89,7 +104,12 @@ describe(SectorDownloadScheduler.name, () => {
     };
 
     const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
-      return { sector, downloadSector: downloadSectorMock };
+      return {
+        sector,
+        downloadSector: (sector: WantedSector) => {
+          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
+        }
+      };
     });
 
     // Act
@@ -127,7 +147,12 @@ describe(SectorDownloadScheduler.name, () => {
     };
 
     const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
-      return { sector, downloadSector: downloadSectorMock };
+      return {
+        sector,
+        downloadSector: (sector: WantedSector) => {
+          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
+        }
+      };
     });
 
     // Act
@@ -168,8 +193,12 @@ describe(SectorDownloadScheduler.name, () => {
       return createConsumedSectorMock(sector).object();
     };
 
+    const loadSectorMock = (sector: WantedSector): DownloadRequest => {
+      return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
+    };
+
     const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
-      return { sector, downloadSector: downloadSectorMock };
+      return { sector, downloadSector: loadSectorMock };
     });
 
     // Act
