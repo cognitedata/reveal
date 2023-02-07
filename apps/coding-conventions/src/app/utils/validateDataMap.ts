@@ -1,6 +1,6 @@
-import { SystemTypes } from '../types';
+import { Resource } from '../types';
 
-export const validateDataMap = new Map<SystemTypes, () => string[]>();
+export const validateDataMap = new Map<Resource, () => string[]>();
 
 const fetchFileNames = () => {
   // change this to fetch from the API But then we need to fill in some dummy data.

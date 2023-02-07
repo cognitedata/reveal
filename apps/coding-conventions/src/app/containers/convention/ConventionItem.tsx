@@ -16,21 +16,16 @@ import { Convention, TagTypes } from '../../types';
 interface Props {
   selectedConvention?: Convention;
   conventions?: Convention[];
-  onChange: (item: Convention) => void;
 }
 export const ConventionItem: React.FC<Props> = ({
   conventions,
   selectedConvention,
-  onChange,
 }) => {
   const navigate = useNavigate();
 
-  const [convention, setConvention] = useState<Convention | undefined>(
-    selectedConvention
-  );
   const [currentKey, setCurrentKey] = useState<TagTypes>('Abbreviation');
 
-  if (!convention) {
+  if (!selectedConvention) {
     return null;
   }
 
@@ -49,12 +44,16 @@ export const ConventionItem: React.FC<Props> = ({
 
       <Button
         style={{ alignSelf: 'flex-end' }}
-        onClick={() => navigate('/edit/' + convention.id)}
+        onClick={() => navigate('/edit/' + selectedConvention.id)}
         icon={'Edit'}
         type={'secondary'}
         aria-label="Edit mode"
       ></Button>
-      <AbbreviationTable convention={convention} conventions={conventions} />
+
+      <AbbreviationTable
+        selectedConvention={selectedConvention}
+        conventions={conventions}
+      />
     </Flex>
   );
 };

@@ -23,22 +23,22 @@ export const StructureText: React.FC<Props> = ({
 
   for (let i = 0; i < text.length; i++) {
     const selection = conventions.find((item) => {
-      return item.range.start === i;
+      return item.start === i;
     });
 
     if (selection) {
       content.push(
         <SelectedText
-          $color={colors[selection.range.start]}
+          $color={colors[selection.start]}
           onClick={() => {
             onClick?.(selection.id);
           }}
-          key={`${selection.range.start}-${selection.range.end}`}
+          key={`${selection.start}-${selection.end}`}
         >
           {selection.keyword}
         </SelectedText>
       );
-      i = selection.range.end - 1;
+      i = selection.end - 1;
     } else {
       content.push(<Text key={i}>{text.charAt(i)}</Text>);
     }

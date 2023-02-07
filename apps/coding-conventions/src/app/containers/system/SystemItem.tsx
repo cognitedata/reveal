@@ -7,54 +7,38 @@ import {
   Title as CogsTitle,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { Card } from '../../components/Card';
 
 interface Props {
   icon?: IconType;
   title: string;
-  subtitle?: string;
-  structure?: string;
+  description?: string;
+  structure: string;
   onClick?: () => void;
 }
 
 export const SystemItem: React.FC<Props> = ({
   icon,
   title,
-  subtitle,
+  description,
   structure,
   onClick,
 }) => {
   return (
-    <Container onClick={onClick} role="button">
+    <Card onClick={onClick}>
       <Header>
         <Icon size={18} type={icon || 'Document'} />
         <Title>{title}</Title>
-        <Subtitle>{subtitle}</Subtitle>
+        <Subtitle>{description}</Subtitle>
       </Header>
 
       <Divider />
       <Detail>
         Structure: {structure ? <>{structure}</> : <i>unspecified</i>}
       </Detail>
-    </Container>
+    </Card>
   );
 };
-
-const Container = styled.div`
-  min-width: 270px;
-  height: 160px;
-  border-radius: 10px;
-  box-shadow: 0px 1px 8px rgba(79, 82, 104, 0.1),
-    0px 1px 1px rgba(79, 82, 104, 0.1);
-  padding: 20px;
-  cursor: pointer;
-
-  transition: all 300ms;
-
-  &:hover {
-    box-shadow: 0px 6px 20px 2px rgba(79, 82, 104, 0.06),
-      0px 2px 6px 1px rgba(79, 82, 104, 0.12);
-  }
-`;
 
 const Header = styled.div`
   display: flex;

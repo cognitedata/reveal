@@ -42,7 +42,8 @@ describe('backtracking Validation', () => {
     const listOfValidTags = ['1', '10'];
     const conventions: Convention[] = [
       {
-        range: { start: 7, end: 9 },
+        start: 7,
+        end: 9,
         keyword: 'NN',
         id: 'ABC',
         name: 'System',
@@ -69,7 +70,8 @@ describe('backtracking Validation', () => {
     const listOfValidTags = ['10ABC2', '102', '10'];
     const conventions: Convention[] = [
       {
-        range: { start: 0, end: 2 },
+        start: 0,
+        end: 2,
         keyword: 'NN',
         id: 'ABC',
         name: 'System',
@@ -84,7 +86,8 @@ describe('backtracking Validation', () => {
         ],
       },
       {
-        range: { start: 2, end: 5 },
+        start: 2,
+        end: 5,
         keyword: 'NN',
         id: 'ABCD',
         optional: true,
@@ -99,7 +102,8 @@ describe('backtracking Validation', () => {
         ],
       },
       {
-        range: { start: 5, end: 6 },
+        start: 5,
+        end: 6,
         keyword: 'NN',
         id: 'ABCDE',
         optional: true,
@@ -127,7 +131,8 @@ describe('backtracking Validation', () => {
     const listOFInvalidTags = ['102', '10', '10AB2', 'ABC2'];
     const conventions: Convention[] = [
       {
-        range: { start: 0, end: 2 },
+        start: 0,
+        end: 2,
         keyword: 'NN',
         id: 'ABC',
         name: 'System',
@@ -142,7 +147,8 @@ describe('backtracking Validation', () => {
         ],
       },
       {
-        range: { start: 2, end: 5 },
+        start: 2,
+        end: 5,
         keyword: 'NN',
         id: 'ABCD',
         name: 'Non Optional field',
@@ -156,7 +162,8 @@ describe('backtracking Validation', () => {
         ],
       },
       {
-        range: { start: 5, end: 6 },
+        start: 5,
+        end: 6,
         keyword: 'NN',
         id: 'ABCDE',
         optional: true,

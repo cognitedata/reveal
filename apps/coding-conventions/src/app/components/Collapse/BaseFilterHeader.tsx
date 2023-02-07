@@ -11,6 +11,7 @@ import {
   Select,
 } from '@cognite/cogs.js';
 import { Convention } from '../../types';
+import { useDependentConvention } from '../../hooks/useDependentConvention';
 
 const Content = styled.div`
   display: flex;
@@ -45,9 +46,11 @@ export interface Props {
 export const BaseFilterHeader: React.FC<React.PropsWithChildren<Props>> =
   React.memo(
     ({ conventions, convention, onChange, editMode, handleFilterClick }) => {
-      return (
-        <Content>
-          {editMode ? (
+      const dependentConvention = useDependentConvention();
+
+      if (editMode) {
+        return (
+          <Content>
             <Flex alignItems="center" gap={8}>
               <Body level={2}>Name:</Body>
               <Input
@@ -73,7 +76,7 @@ export const BaseFilterHeader: React.FC<React.PropsWithChildren<Props>> =
                         label:
                           conventions?.find(
                             (item) => item.id === convention.dependency
-                          )?.name || '',
+                          )?.name || 'NA',
                         value: convention.dependency,
                       }
                     : undefined
@@ -97,22 +100,21 @@ export const BaseFilterHeader: React.FC<React.PropsWithChildren<Props>> =
                 }}
               />
             </Flex>
-          ) : (
-            <>
-              <BaseTitle
-                level={6}
-                onClick={handleFilterClick && handleFilterClick}
-              >
-                {convention?.name || convention.keyword}
-              </BaseTitle>
-              <BaseSubtitle>
-                Keyword: {convention.keyword} • Position:{' '}
-                {convention.range.start}-{convention.range.end} • Dependency:{' '}
-                {convention.dependency ?? 'N/A'} • Definitions:{' '}
-                {convention.definitions?.length ?? 0}
-              </BaseSubtitle>
-            </>
-          )}
+          </Content>
+        );
+      }
+
+      return (
+        <Content>
+          <BaseTitle level={6} onClick={handleFilterClick && handleFilterClick}>
+            {convention?.name || convention.keyword}
+          </BaseTitle>
+          <BaseSubtitle>
+            Keyword: {convention.keyword} • Position: {convention.start}-
+            {convention.end} • Dependency:{' '}
+            {dependentConvention(convention.dependency)?.keyword ?? 'N/A'} •
+            Definitions: {convention.definitions?.length ?? 0}
+          </BaseSubtitle>
         </Content>
       );
     }

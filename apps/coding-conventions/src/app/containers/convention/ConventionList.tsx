@@ -9,12 +9,14 @@ interface Props {
   activeKeys: string[];
   onKeysChange: (keys: string[]) => void;
   onConventionChange: (updatedConvention: Convention) => void;
+  onConventionDeleteClick?: (deletedConvention: Convention) => void;
 }
 export const ConventionList: React.FC<Props> = ({
   conventions,
   activeKeys,
   onKeysChange,
   onConventionChange,
+  onConventionDeleteClick,
   editMode,
 }) => {
   return (
@@ -30,7 +32,7 @@ export const ConventionList: React.FC<Props> = ({
         }}
       >
         {conventions
-          .sort((a, b) => a.range.start - b.range.start)
+          .sort((a, b) => a.start - b.start)
           .map((convention) => (
             <BaseFilterCollapse.Panel
               key={convention.id}
@@ -45,9 +47,6 @@ export const ConventionList: React.FC<Props> = ({
                 <ConventionItem
                   conventions={conventions}
                   selectedConvention={convention}
-                  onChange={(updatedConvention) => {
-                    onConventionChange(updatedConvention);
-                  }}
                 />
               )}
             </BaseFilterCollapse.Panel>

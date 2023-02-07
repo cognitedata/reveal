@@ -4,7 +4,7 @@ import { Row } from 'react-table';
 import { Convention } from '../../types';
 
 interface Props {
-  convention: Convention;
+  selectedConvention: Convention;
   conventions?: Convention[];
 }
 
@@ -22,22 +22,20 @@ const defaultColumns = [
 const dependencyColumns = [
   {
     Header: 'Dependency',
-    key: 'dependsOn',
+    key: 'dependency',
   },
   ...defaultColumns,
 ];
 
 const RenderSubTable = ({
   row,
-  convention,
-  conventions,
+  selectedConvention,
 }: {
   row: Row<any>;
-  conventions?: Convention[];
-  convention: Convention;
+  selectedConvention: Convention;
 }) => {
   const memoTable = useMemo(() => {
-    const data = convention.definitions?.filter(
+    const data = selectedConvention.definitions?.filter(
       (item) => item.dependsOn === row.original.id
     );
 
@@ -48,9 +46,9 @@ const RenderSubTable = ({
         columns={defaultColumns}
       />
     );
-  }, [row.original.id, convention.definitions]);
+  }, [row.original.id, selectedConvention.definitions]);
 
-  if (!convention?.dependency) {
+  if (!selectedConvention?.dependency) {
     return null;
   }
 
@@ -58,22 +56,22 @@ const RenderSubTable = ({
 };
 
 export const AbbreviationTable: React.FC<Props> = ({
-  convention,
+  selectedConvention,
   conventions,
 }) => {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
-  const isDependantConvention = !!convention.dependency;
+  const isDependantConvention = !!selectedConvention.dependency;
 
   const abbreviationDefinitions = (
     (isDependantConvention
       ? conventions
-          ?.find((item) => item.id === convention.dependency)
+          ?.find((item) => item.id === selectedConvention.dependency)
           ?.definitions?.filter((item) =>
-            convention.definitions?.some(
+            selectedConvention.definitions?.some(
               (subitem) => item.id === subitem.dependsOn
             )
           )
-      : convention.definitions) || []
+      : selectedConvention.definitions) || []
   ).filter((item) => item.type === 'Abbreviation');
 
   useEffect(() => {
@@ -87,8 +85,8 @@ export const AbbreviationTable: React.FC<Props> = ({
   }, []);
 
   const columns = useMemo(
-    () => (convention.dependency ? dependencyColumns : defaultColumns),
-    [convention.dependency]
+    () => (selectedConvention.dependency ? dependencyColumns : defaultColumns),
+    [selectedConvention.dependency]
   );
 
   return (
@@ -107,8 +105,7 @@ export const AbbreviationTable: React.FC<Props> = ({
         isDependantConvention
           ? (row) => (
               <RenderSubTable
-                convention={convention}
-                conventions={conventions}
+                selectedConvention={selectedConvention}
                 row={row}
               />
             )

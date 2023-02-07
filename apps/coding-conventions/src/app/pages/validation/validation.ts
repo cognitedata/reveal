@@ -24,7 +24,7 @@ const getValidTag = (tag: string, conventions: Convention[]): string | null => {
 };
 
 export const validate = (system: System, tags?: string[]): string[] => {
-  const fetchData = validateDataMap.get(system.type) || (() => []);
+  const fetchData = validateDataMap.get(system.resource) || (() => []);
   const dataToValidate = tags ? tags : fetchData();
   const conventions = getConventionsWithSeperators(system);
 
@@ -49,10 +49,8 @@ const newHardCodedSeperator = (
   end: number
 ): Convention => {
   return {
-    range: {
-      start: start,
-      end: end,
-    },
+    start: start,
+    end: end,
     keyword: text,
     id: 'hardcoded-seperator' + start + ':' + end,
     name: 'Hardcoded seperator',
@@ -79,8 +77,8 @@ export const getConventionsWithSeperators = (system: System): Convention[] => {
   let lastInd = 0;
   system.conventions.forEach((convention) => {
     // get the start and stop index of the convention
-    const start = convention.range.start;
-    const end = convention.range.end;
+    const start = convention.start;
+    const end = convention.end;
     if (start > lastInd) {
       // if there is a seperator between the last convention and this one, add it to the newConventions
       const seperator = schema.slice(lastInd, start);

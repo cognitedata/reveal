@@ -7,7 +7,7 @@ import { Drawer } from '../components/Drawer';
 import { ConventionView } from '../containers/convention/ConventionView';
 
 export const ConventionsPage = () => {
-  const { id } = useParams();
+  const { systemId } = useParams();
 
   const navigate = useNavigate();
 
@@ -25,10 +25,10 @@ export const ConventionsPage = () => {
       <Drawer
         title="Coding conventions for 'file name'"
         width="50%"
-        visible={!!id}
+        visible={!!systemId}
         onCancel={() => navigate('/')}
       >
-        {id && <ConventionView id={id} />}
+        {systemId && <ConventionView id={systemId} />}
       </Drawer>
     </Page>
   );

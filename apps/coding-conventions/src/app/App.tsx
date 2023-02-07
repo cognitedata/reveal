@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { ToastContainer } from '@cognite/cogs.js';
@@ -13,10 +13,15 @@ import { QueryClient } from 'react-query';
 import { getProject } from '@cognite/cdf-utilities';
 
 import Routes from './Routes';
+import { Database } from './service/storage/Database';
 
 function App() {
   const project = getProject();
   const basename = `${project}/coding-conventions`;
+
+  useEffect(() => {
+    Database.init();
+  }, []);
 
   const queryClientNormal = new QueryClient({
     defaultOptions: {

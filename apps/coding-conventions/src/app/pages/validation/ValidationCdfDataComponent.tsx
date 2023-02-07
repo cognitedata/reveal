@@ -4,7 +4,7 @@ import { validate } from './validation';
 import { useEffect, useState } from 'react';
 import { Asset, DataSet, FileInfo } from '@cognite/sdk';
 import { Centered, Container, RightSide, Scrollable } from './styles';
-import { System, SystemTypes } from '../../types';
+import { System, Resource } from '../../types';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
 
@@ -24,8 +24,8 @@ const ValidationCdfDataComponent = (props: Props) => {
   const [shouldShow, setShouldShow] = useState('none');
   const { data: datasets } = useList<DataSet>('datasets', { limit: 100 });
 
-  const options = getAccessorFields(props.system?.type || 'files');
-  const resourceType = props.system?.type || 'files';
+  const options = getAccessorFields(props.system?.resource || 'files');
+  const resourceType = props.system?.resource || 'files';
 
   const filter =
     selectedDataSets && selectedDataSets.length > 0
@@ -138,7 +138,7 @@ const ValidationCdfDataComponent = (props: Props) => {
   );
 };
 
-const getAccessorFields = (resourceGroup: SystemTypes) => {
+const getAccessorFields = (resourceGroup: Resource) => {
   switch (resourceGroup) {
     case 'assets':
       return [

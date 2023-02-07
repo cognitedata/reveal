@@ -13,7 +13,7 @@ const Routes = () => {
       <Route path="/" element={<Outlet />}>
         <Route index element={<ConventionsPage />} />
         <Route path="/edit/:id" element={<EditTablePage />} />
-        <Route path="/conventions/:id" element={<ConventionsPage />} />
+        <Route path="/conventions/:systemId" element={<ConventionsPage />} />
         <Route path="/validations/:id" element={<ValidationsPage />} />
       </Route>
     </ReactRoutes>

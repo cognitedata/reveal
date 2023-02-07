@@ -47,7 +47,9 @@ export const BaseFilterCollapse = ({
       activeKey={activeKeys}
       // Might be we will support collapse in the near future! Leaving this here.
       onChange={(keys) => {
-        onChange(keys as unknown as string[]);
+        if (!editMode) {
+          onChange(keys as unknown as string[]);
+        }
       }}
       ghost
       expandIcon={(props) => {
@@ -93,7 +95,7 @@ export const BaseFilterPanel = ({
           />
         </Container>
       }
-      $color={colors[convention.range.start]}
+      $color={colors[convention.start]}
     >
       {children}
     </Panel>

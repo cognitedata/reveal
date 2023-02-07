@@ -1,32 +1,47 @@
+import { Flex, Icon, Loader } from '@cognite/cogs.js';
 import { useNavigate } from 'react-router-dom';
+import { Card, EmptyCard } from '../../components/Card';
 import { dummyConventions } from '../../service/conventions';
+import { useSystemListQuery } from '../../service/hooks/query/useSystemListQuery';
 import { SystemItem } from './SystemItem';
 
 interface Props {
-  toggleVisibility: () => void;
+  onCreateClick: () => void;
 }
 
-export const SystemList: React.FC<Props> = ({ toggleVisibility }) => {
+export const SystemList: React.FC<Props> = ({ onCreateClick }) => {
   const navigate = useNavigate();
+
+  const { data, isLoading } = useSystemListQuery();
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <>
-      {dummyConventions.map((item) => (
+      {data?.map((item) => (
         <SystemItem
           key={item.id}
           // icon={item.icon as IconType}
           title={item.title}
-          subtitle={item.subtitle}
+          description={item.description}
           structure={item.structure}
           onClick={() => {
-            if (item.structure) {
-              navigate(`/conventions/${item.id}`);
-            } else {
-              toggleVisibility();
-            }
+            navigate(`/conventions/${item.id}`);
           }}
         />
       ))}
+
+      <EmptyCard onClick={onCreateClick}>
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          style={{ height: '100%' }}
+        >
+          <Icon type="Plus" size={48} />
+        </Flex>
+      </EmptyCard>
     </>
   );
 };

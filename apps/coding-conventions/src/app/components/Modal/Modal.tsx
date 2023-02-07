@@ -19,8 +19,8 @@ const CustomModal = styled(CogsModal)<{
   flex-direction: column;
 
   .cogs-modal-close {
-    top: 24px;
-    right: 24px;
+    top: 6px !important;
+    right: 6px !important;
     opacity: 0.5;
     cursor: pointer;
   }

@@ -1,5 +1,4 @@
 import { Title, toast } from '@cognite/cogs.js';
-import uniqueId from 'lodash/uniqueId';
 import { HintText } from '../../components/Info/HintText';
 import { StructureText } from '../../components/Text/StructureText';
 import { Convention } from '../../types';
@@ -10,7 +9,7 @@ interface Props {
   conventions: Convention[];
   structureText: string;
   onKeysChange: (keys: string[]) => void;
-  onConventionCreate: (newConvention: Convention) => void;
+  onConventionCreate: (newConvention: Omit<Convention, 'id'>) => void;
 }
 export const ConventionHeader: React.FC<Props> = ({
   conventions,
@@ -25,21 +24,27 @@ export const ConventionHeader: React.FC<Props> = ({
     const startOffset = newSelection.getRangeAt(0).startOffset;
     const endOffset = newSelection.getRangeAt(0).endOffset;
 
-    if (startOffset === endOffset) return;
+    if (
+      startOffset === endOffset ||
+      startOffset > endOffset ||
+      startOffset > structureText.length ||
+      newSelection.toString().includes(' ') ||
+      newSelection.toString().includes('-')
+    ) {
+      alert('Invalid selection');
+      return;
+    }
 
-    for (const { range } of conventions) {
-      if (startOffset < range.end && range.start < endOffset) {
+    for (const { start, end } of conventions) {
+      if (startOffset < end && start < endOffset) {
         throw new Error('Selection on these ranges have already been made.');
       }
     }
 
     onConventionCreate({
-      id: uniqueId(),
       keyword: newSelection.toString(),
-      range: {
-        start: startOffset,
-        end: endOffset,
-      },
+      start: startOffset,
+      end: endOffset,
     });
   };
 
@@ -61,7 +66,7 @@ export const ConventionHeader: React.FC<Props> = ({
             const currentSelection = window.getSelection();
             handleSelectionChange(currentSelection);
           } catch (error: any) {
-            toast.error(error.message, { position: 'bottom-center' });
+            alert(error.message);
           }
         }}
       >

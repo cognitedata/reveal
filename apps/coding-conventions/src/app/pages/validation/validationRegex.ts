@@ -28,7 +28,7 @@ type SubComponentsInRegex = {
 };
 
 export const validate = (system: System) => {
-  const fetchData = validateDataMap.get(system.type) || (() => []);
+  const fetchData = validateDataMap.get(system.resource) || (() => []);
   const dataToValidate = fetchData();
   const regexForSubComponents = generateRegexForSubComponents(
     system.conventions
@@ -50,10 +50,10 @@ export const validate = (system: System) => {
 };
 
 const generateRegexForSubComponents = (conventions: Convention[]) => {
-  const subregexes = conventions.map((SubSystem: Convention) => {
+  const subregexes = conventions.map((convention: Convention) => {
     const regexList: RegexMapping[] = [];
 
-    SubSystem.definitions?.forEach((definition: TagDefinitions) => {
+    convention.definitions?.forEach((definition: TagDefinitions) => {
       if (definition.type === 'Abbreviation') {
         regexList.push({
           regex: (definition as TagHardcoded).key,
@@ -85,9 +85,9 @@ const generateRegexForSubComponents = (conventions: Convention[]) => {
 
     return {
       childRegexList: regexList,
-      dependsOn: SubSystem.dependency,
-      id: SubSystem.id,
-      range: SubSystem.range,
+      dependsOn: convention.dependency,
+      id: convention.id,
+      range: { start: convention.start, end: convention.end },
     } as SubComponentsInRegex;
   });
   return subregexes;

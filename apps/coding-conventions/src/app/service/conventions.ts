@@ -4,15 +4,13 @@ export const dummyConventions: System[] = [
   {
     id: '123',
     title: 'File name',
-    type: 'files',
-    subtitle: 'Extract file type',
+    description: 'Extract file type',
     structure: 'ZZZZZZ NN-NN-NN NNN',
+    resource: 'files',
     conventions: [
       {
-        range: {
-          start: 7,
-          end: 9,
-        },
+        start: 7,
+        end: 9,
         keyword: 'NN',
         id: 'ABC',
         name: 'System',
@@ -81,10 +79,8 @@ export const dummyConventions: System[] = [
         ],
       },
       {
-        range: {
-          start: 10,
-          end: 12,
-        },
+        start: 10,
+        end: 12,
         keyword: 'NN',
         id: 'XYZ',
         name: 'Subsystem',
@@ -121,10 +117,8 @@ export const dummyConventions: System[] = [
         dependency: 'ABC',
       },
       {
-        range: {
-          start: 13,
-          end: 15,
-        },
+        start: 13,
+        end: 15,
         keyword: 'NN',
         id: 'CDE',
         name: 'Unit Number',
