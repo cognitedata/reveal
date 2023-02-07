@@ -131,7 +131,7 @@ module.exports = (config) => {
     );
   }
 
-  if (nodeEnv === 'development') {
+  if (nodeEnv === 'development' && config.devServer) {
     // Temp fix to devserver and hmr
     config.devServer.allowedHosts = 'all';
     config.devServer.headers['Access-Control-Allow-Origin'] = '*';
