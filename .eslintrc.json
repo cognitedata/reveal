@@ -10,7 +10,7 @@
     "@typescript-eslint/no-unused-vars": "off",
     "react/no-unknown-property" : "off",
     "react/require-default-props": "off",
-    "react/no-array-index-key": "warn",
+    "react/no-array-index-key": "off",
     "react/state-in-constructor": "off",
     "react-hooks/exhaustive-deps": "warn",
     "no-console": "warn",
