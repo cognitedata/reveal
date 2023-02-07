@@ -6,6 +6,7 @@ import { Convention } from '../../types';
 import { DrawerHeader } from '../../components/Drawer';
 import { ConventionList } from './ConventionList';
 import { ConventionHeader } from './ConventionHeader';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   id: string;
@@ -19,6 +20,7 @@ export const ConventionView: React.FC<Props> = ({ id }) => {
   const [conventions, setConventions] = useState<Convention[]>(
     system?.conventions || []
   );
+  const navigate = useNavigate();
 
   const handleConventionChange = (updatedConvention: Convention) => {
     setConventions((prevState) => {
@@ -46,7 +48,11 @@ export const ConventionView: React.FC<Props> = ({ id }) => {
         </Button>
         {!selectMode && (
           <>
-            <Button icon="Play" type="primary">
+            <Button
+              icon="Play"
+              type="primary"
+              onClick={() => navigate('/validations/' + id)}
+            >
               Test
             </Button>
             <VerticalDivider />

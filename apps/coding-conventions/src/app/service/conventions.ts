@@ -4,6 +4,7 @@ export const dummyConventions: System[] = [
   {
     id: '123',
     title: 'File name',
+    type: 'files',
     subtitle: 'Extract file type',
     structure: 'ZZZZZZ NN-NN-NN NNN',
     conventions: [
@@ -96,6 +97,13 @@ export const dummyConventions: System[] = [
             dependsOn: 'system-10',
           },
           {
+            type: 'Regex',
+            description: 'regex to verify that this also works ',
+            id: 'subsystem-regextjings',
+            dependsOn: 'system-10',
+            regex: '[a-zA-Z]{2}',
+          },
+          {
             type: 'Abbreviation',
             key: '11',
             description: 'Derrick/mast and hoisting ',
@@ -111,6 +119,30 @@ export const dummyConventions: System[] = [
           },
         ],
         dependency: 'ABC',
+      },
+      {
+        range: {
+          start: 13,
+          end: 15,
+        },
+        keyword: 'NN',
+        id: 'CDE',
+        name: 'Unit Number',
+        definitions: [
+          {
+            type: 'Abbreviation',
+            key: 'AV',
+            description: 'very weird unit',
+            id: 'unitNumber-AB2c',
+          },
+          {
+            type: 'Range',
+            value: [0, 10],
+            minimumCharacterLength: 2,
+            description: 'Unit Number',
+            id: 'unitNumber-0-10',
+          },
+        ],
       },
     ],
   },

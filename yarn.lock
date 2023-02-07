@@ -7914,6 +7914,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/to-regex-range@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@types/to-regex-range/-/to-regex-range-5.0.0.tgz#e7fede4a8bdfbacf2cda7dea96a632d704187c8c"
+  integrity sha512-JVEX6EhsdirYL82Lao7H4l9ODcf6a23XpNG9s8lz+nD0+ftZ9sMrfUbogbuznbAihiya4J0WNTQ1pZxbCYRQAA==
+
 "@types/tough-cookie@*":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@types/tough-cookie/-/tough-cookie-4.0.2.tgz#6286b4c7228d58ab7866d19716f3696e03a09397"

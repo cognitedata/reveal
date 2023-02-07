@@ -1,6 +1,16 @@
 type UID = string;
 export type TagTypes = 'Range' | 'Regex' | 'Abbreviation';
+export type SystemTypes = 'files' | 'assets';
 export type TagDefinitions = TagHardcoded | TagRange | TagRegex;
+
+export type System = {
+  id: UID;
+  title: string;
+  type: SystemTypes;
+  subtitle?: string;
+  structure?: string;
+  conventions: Convention[];
+};
 
 export type Convention = {
   id: UID;
@@ -9,17 +19,10 @@ export type Convention = {
     start: number;
     end: number;
   };
+  optional?: boolean;
   name?: string; // System
   definitions?: TagDefinitions[];
   dependency?: UID;
-};
-
-export type System = {
-  id: UID;
-  title: string;
-  subtitle?: string;
-  structure?: string;
-  conventions: Convention[];
 };
 
 export type Common = {
