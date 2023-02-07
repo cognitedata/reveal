@@ -62,27 +62,21 @@ jest.mock('@cognite/cdf-utilities', () => ({
   getProject: () => 'mockProject',
 }));
 
-
-
 const wrap = (node: React.ReactNode) =>
   render(<TestWrapper>{node}</TestWrapper>);
 
-
-const loadMock = (sdk) => {
-  jest.spyOn(sdk,'get').mockImplementation(
-    (url: string) => {
-      if (url.includes('/status')) {
-        return Promise.resolve({
-          data: { status: 'activated' },
-        });
-      }
+const loadMock = sdkToMock => {
+  jest.spyOn(sdkToMock, 'get').mockImplementation((url: string) => {
+    if (url.includes('/status')) {
       return Promise.resolve({
-        data: { items: [mockFunction, mockFunction2] },
+        data: { status: 'activated' },
       });
     }
-  );
-}
-
+    return Promise.resolve({
+      data: { items: [mockFunction, mockFunction2] },
+    });
+  });
+};
 
 describe('Functions', () => {
   beforeEach(() => {
@@ -104,20 +98,19 @@ describe('Functions', () => {
 
   it('should load functions and calls upon mount and refresh them', async () => {
     const useEffect = jest.spyOn(React, 'useEffect');
-    //sdk.get = jest.fn();
-    loadMock(sdk)
+    // sdk.get = jest.fn();
+    loadMock(sdk);
 
-    const {unmount, container} = wrap(<Functions />);
+    const { unmount, container } = wrap(<Functions />);
 
     await sleep(100);
 
     expect(useEffect).toHaveBeenCalled();
     expect(sdk.get).toHaveBeenCalled();
-    
+
     expect(sdk.get).toHaveBeenCalledWith(
       'api/v1/projects/mockProject/functions/status'
     );
-
 
     const refreshButton = screen.getByRole('button', {
       name: /refresh/i,
@@ -128,7 +121,6 @@ describe('Functions', () => {
     expect(sdk.get).toHaveBeenCalledWith(
       '/api/v1/projects/mockProject/functions'
     );
-
 
     // 'should update functions shown if search field is filled'
     expect(await screen.findAllByText('testFunc')).toHaveLength(1);
@@ -165,8 +157,5 @@ describe('Functions', () => {
     );
 
     expect(functionsDisplayedAfterSearch1).toHaveLength(1);
-
-
   });
-
 });

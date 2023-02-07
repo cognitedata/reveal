@@ -39,7 +39,6 @@ describe('FunctionLogsModal', () => {
   });
 
   it('downloads and displays logs', async () => {
-
     /*
     
     // This part was not being used anywhere
@@ -52,11 +51,10 @@ describe('FunctionLogsModal', () => {
         startTime: 1601125132796,
         status: 'Failed',
       },
-    });*/
+    }); */
 
-
-    jest.spyOn(sdk,'get').mockImplementation(
-      () => Promise.resolve({
+    jest.spyOn(sdk, 'get').mockImplementation(() =>
+      Promise.resolve({
         data: {
           items: [
             { message: 'Fetching all assets ...', timestamp: 1601310912576 },
@@ -98,7 +96,7 @@ describe('FunctionLogsModal', () => {
       error: () => {},
     });
 
-    jest.spyOn(sdk, 'get').mockRejectedValue('log error'); 
+    jest.spyOn(sdk, 'get').mockRejectedValue('log error');
     const wrapper = wrap(
       <FunctionLogsModal onCancel={jest.fn()} id={1} callId={2} />
     );
