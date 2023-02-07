@@ -14,6 +14,7 @@ export const dummyConventions: System[] = [
         keyword: 'NN',
         id: 'ABC',
         name: 'System',
+        systemId: '123',
         definitions: [
           {
             key: '10',
@@ -83,6 +84,7 @@ export const dummyConventions: System[] = [
         end: 12,
         keyword: 'NN',
         id: 'XYZ',
+        systemId: '123',
         name: 'Subsystem',
         definitions: [
           {
@@ -121,6 +123,7 @@ export const dummyConventions: System[] = [
         end: 15,
         keyword: 'NN',
         id: 'CDE',
+        systemId: '123',
         name: 'Unit Number',
         definitions: [
           {

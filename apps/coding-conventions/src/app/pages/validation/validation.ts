@@ -54,6 +54,7 @@ const newHardCodedSeperator = (
     keyword: text,
     id: 'hardcoded-seperator' + start + ':' + end,
     name: 'Hardcoded seperator',
+    systemId: 'N/A',
     definitions: [
       {
         type: 'Abbreviation',

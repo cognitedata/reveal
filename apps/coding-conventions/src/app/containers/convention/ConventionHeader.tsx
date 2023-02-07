@@ -9,7 +9,9 @@ interface Props {
   conventions: Convention[];
   structureText: string;
   onKeysChange: (keys: string[]) => void;
-  onConventionCreate: (newConvention: Omit<Convention, 'id'>) => void;
+  onConventionCreate: (
+    newConvention: Omit<Convention, 'id' | 'systemId'>
+  ) => void;
 }
 export const ConventionHeader: React.FC<Props> = ({
   conventions,

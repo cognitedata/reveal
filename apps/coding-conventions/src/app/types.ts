@@ -14,6 +14,7 @@ export type Convention = {
   definitions?: TagDefinitions[];
   dependency?: UID;
   updatedAt?: Date;
+  systemId: string;
 };
 
 export type System = {

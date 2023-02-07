@@ -8,7 +8,7 @@ export const useConventionCreateMutate = () => {
   const { systemId } = useParams();
 
   return useMutation(
-    (data: Omit<Convention, 'id' | 'conventions'>) => {
+    (data: Omit<Convention, 'id' | 'conventions' | 'systemId'>) => {
       if (!systemId) {
         throw new Error('Missing system id');
       }
@@ -28,10 +28,9 @@ export const useConventionCreateMutate = () => {
           systemId,
         ]);
 
-        client.setQueryData<Omit<Convention, 'id' | 'conventions'>[]>(
-          ['convention', systemId],
-          (old) => [...(old || []), newConvention]
-        );
+        client.setQueryData<
+          Omit<Convention, 'id' | 'conventions' | 'systemId'>[]
+        >(['convention', systemId], (old) => [...(old || []), newConvention]);
 
         return { previousTodos };
       },

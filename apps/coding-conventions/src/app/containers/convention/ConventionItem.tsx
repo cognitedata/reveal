@@ -8,7 +8,7 @@ import {
   Select,
 } from '@cognite/cogs.js';
 import { useState } from 'react';
-import { redirect, useNavigate } from 'react-router-dom';
+import { redirect, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AbbreviationTable } from '../../components/Table/AbbreviationTable';
 import { Convention, TagTypes } from '../../types';
@@ -22,6 +22,7 @@ export const ConventionItem: React.FC<Props> = ({
   selectedConvention,
 }) => {
   const navigate = useNavigate();
+  const { systemId } = useParams();
 
   const [currentKey, setCurrentKey] = useState<TagTypes>('Abbreviation');
 
@@ -44,7 +45,9 @@ export const ConventionItem: React.FC<Props> = ({
 
       <Button
         style={{ alignSelf: 'flex-end' }}
-        onClick={() => navigate('/edit/' + selectedConvention.id)}
+        onClick={() =>
+          navigate(`/conventions/${systemId}/edit/${selectedConvention.id}`)
+        }
         icon={'Edit'}
         type={'secondary'}
         aria-label="Edit mode"

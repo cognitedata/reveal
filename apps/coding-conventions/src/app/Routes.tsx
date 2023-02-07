@@ -3,7 +3,7 @@ import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
 import { useFusionQuery } from './hooks/useFusionQuery';
 import { ConventionsPage } from './pages/ConventionsPage';
 import { ValidationsPage } from './pages/validation/ValidationsPage';
-import { EditTablePage } from './pages/pasteView/EditTablePage';
+import { EditPage } from './pages/edit/EditPage';
 
 const Routes = () => {
   useFusionQuery();
@@ -12,7 +12,10 @@ const Routes = () => {
     <ReactRoutes>
       <Route path="/" element={<Outlet />}>
         <Route index element={<ConventionsPage />} />
-        <Route path="/edit/:id" element={<EditTablePage />} />
+        <Route
+          path="/conventions/:systemId/edit/:conventionId"
+          element={<EditPage />}
+        />
         <Route path="/conventions/:systemId" element={<ConventionsPage />} />
         <Route path="/validations/:id" element={<ValidationsPage />} />
       </Route>

@@ -57,7 +57,9 @@ export const ConventionView: React.FC<Props> = () => {
     });
   };
 
-  const handleConventionCreate = (newConvention: Omit<Convention, 'id'>) => {
+  const handleConventionCreate = (
+    newConvention: Omit<Convention, 'id' | 'systemId'>
+  ) => {
     createConvention({
       keyword: newConvention.keyword,
       start: newConvention.start,
