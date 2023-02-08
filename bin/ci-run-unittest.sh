@@ -11,7 +11,7 @@
 
 test_output=$(yarn $1 2>&1);
 test_exit_code=$?
-test_output_filtered=$(echo "$test_output" |head -n -7|egrep -v 'PASS|rescripts|yarn');
+test_output_filtered=$(echo "$test_output" |head -n -7|egrep -v 'PASS|react-app-rewired|yarn');
 test_output_length=${#test_output_filtered};
 
 if (( $test_output_length > 0 )); then
