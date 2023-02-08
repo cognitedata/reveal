@@ -4,27 +4,28 @@ import type { TrackingEventNames } from './constants';
 
 const metrics = Metrics.create('SIMCONFIG');
 
-const domainsWithDoNotTrack = [
+const EXCLUDED_DOMAINS_FROM_TRACKING = Object.freeze([
   'localhost',
   'dev.fusion.cogniteapp.com',
-  'fusion.cognite.com',
-  'next-release.fusion.cognite.com',
-];
+]);
 
-const isDoNotTrackDomain = () =>
-  domainsWithDoNotTrack.some((doNotTrackDomain) =>
-    window.location.href.includes(doNotTrackDomain)
+const isTrackingEnabledForDomain = () =>
+  !EXCLUDED_DOMAINS_FROM_TRACKING.some((excludedDomain) =>
+    window.location.href.includes(excludedDomain)
   );
+
+const isStagingOrProductionEnv = () =>
+  ['staging', 'production'].includes(process.env.REACT_APP_ENV ?? '');
 
 const SHOULD_TRACK_METRICS = Boolean(
   process.env.REACT_APP_MIXPANEL_TOKEN &&
-    !isDoNotTrackDomain() &&
-    ['staging', 'production'].includes(process.env.REACT_APP_ENV ?? '')
+    isTrackingEnabledForDomain() &&
+    isStagingOrProductionEnv()
 );
 
-export const identifyUser = (emailId = 'unknown@org.com') => {
-  if (emailId && SHOULD_TRACK_METRICS) {
-    Metrics.identify(emailId);
+export const identifyUser = (userId = 'unknown@org.com') => {
+  if (SHOULD_TRACK_METRICS) {
+    Metrics.identify(userId);
   }
 };
 

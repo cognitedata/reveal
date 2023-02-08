@@ -38,7 +38,7 @@ export default function App() {
   enhanceSimconfigApiEndpoints();
 
   useEffect(() => {
-    identifyUser(user?.mail);
+    identifyUser(user?.mail || user?.displayName || user?.id);
 
     dispatch(appSlice.actions.setIsAuthenticated(true));
 
