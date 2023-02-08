@@ -21,13 +21,18 @@ export const SearchBar = ({
   return isOpen ? (
     <Input
       postfix={
-        <Button icon="Close" aria-label="Close" onClick={handleCloseSearch} />
+        <Button
+          icon="Close"
+          type="ghost"
+          aria-label="Close"
+          onClick={handleCloseSearch}
+        />
       }
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
       autoFocus
     />
   ) : (
-    <Button icon="Search" aria-label="Search" onClick={onOpen} />
+    <Button icon="Search" type="ghost" aria-label="Search" onClick={onOpen} />
   );
 };

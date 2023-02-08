@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileInfo } from '@cognite/sdk';
 import styled from 'styled-components';
-import { Button, Dropdown, Flex, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Flex, Menu, ToolBar } from '@cognite/cogs.js';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { SearchBar } from './SearchBar';
 import { useFileDownloadUrl } from './hooks';
@@ -48,52 +48,48 @@ export const ActionTools = ({
   };
 
   return (
-    <ToolBar>
-      <Flex gap={5}>
-        {enableSearch && (
-          <SearchBar
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          />
-        )}
-        {showSideBar && (
-          <IconButton
-            icon={showResourcePreviewSidebar ? 'PanelRight' : 'PanelLeft'}
-            tooltipContent={
-              showResourcePreviewSidebar ? HIDE_DETAILS : SHOW_DETAILS
-            }
-            aria-label="Toggle file preview sidebar view"
-            onClick={() => {
-              setShowResourcePreviewSidebar((prevState) => !prevState);
-            }}
-          />
-        )}
-        {enableDownload && (
-          <Dropdown
-            content={
-              <Menu>
-                <Menu.Item
-                  href={fileUrl}
-                  download={file.name}
-                  style={{ color: 'unset' }}
-                >
-                  Original File
-                </Menu.Item>
-                <Menu.Item onClick={handleDownloadFileWithAnnotations}>
-                  File with Annotations
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Button icon="Download" aria-label="Download" />
-          </Dropdown>
-        )}
-      </Flex>
-    </ToolBar>
+    <ToolBarActions direction="horizontal">
+      {enableSearch && (
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      )}
+      {showSideBar && (
+        <IconButton
+          icon={showResourcePreviewSidebar ? 'PanelRight' : 'PanelLeft'}
+          tooltipContent={
+            showResourcePreviewSidebar ? HIDE_DETAILS : SHOW_DETAILS
+          }
+          aria-label="Toggle file preview sidebar view"
+          onClick={() => {
+            setShowResourcePreviewSidebar((prevState) => !prevState);
+          }}
+          type="ghost"
+        />
+      )}
+      {enableDownload && (
+        <Dropdown
+          content={
+            <Menu>
+              <Menu.Item
+                href={fileUrl}
+                download={file.name}
+                style={{ color: 'unset' }}
+              >
+                Original File
+              </Menu.Item>
+              <Menu.Item onClick={handleDownloadFileWithAnnotations}>
+                File with Annotations
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <Button icon="Download" aria-label="Download" />
+        </Dropdown>
+      )}
+    </ToolBarActions>
   );
 };
 
-const ToolBar = styled.div`
+const ToolBarActions = styled(ToolBar)`
   position: absolute;
   isolation: isolate;
   right: 10px;
