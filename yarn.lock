@@ -1928,26 +1928,26 @@
     babel-plugin-syntax-jsx "^6.18.0"
     lodash "^4.17.11"
 
-"@cognite/cdf-i18n-utils@^0.6.0":
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-i18n-utils/-/cdf-i18n-utils-0.6.3.tgz#f1f9119468fea15c89741964d874a2b6be0cff64"
-  integrity sha512-dKgP61FhGPaMZHHGkU2F/bNBvB7U3X90pkasKNkzmKuyvF4XEEydZhzyGo1EfQ4EiNmUR6H8FZy2ZO2hEc2ItQ==
+"@cognite/cdf-i18n-utils@0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-i18n-utils/-/cdf-i18n-utils-0.6.1.tgz#f8a2776d199a57fb8a0192d29b590d2a59f45973"
+  integrity sha512-y6KhBQt+hW8GJ+1WALCn2RVXeuz/23UtmeM8ZNEAHLR2Nbnsc0zhemUu9slCf23yix6ZTKKkNEpBhvIkJXkpwA==
   dependencies:
-    "@cognite/cdf-utilities" "^3.0.0"
+    "@cognite/cdf-utilities" "^2.0.0"
     cross-spawn "^7.0.3"
     dotenv "^16.0.0"
     i18next "^21.6.13"
     i18next-locize-backend "^5.0.1"
     locize "^2.3.0"
-    locize-cli "^7.13.2"
+    locize-cli "^7.10.1"
     node-fetch "^2.6.7"
     react-i18next "^11.15.6"
     yargs "^17.4.1"
 
-"@cognite/cdf-utilities@^1.17.0":
-  version "1.17.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.17.0.tgz#9d08b88eb4bc058bce2bbf6a47cdf6c8721c7201"
-  integrity sha512-w8PtVBnoXgv2ggpKnWfvvPCMwKiZIasyTXRcSUAOr8DnfauHHLnfa5zgYjFxe3qVl1ukVUa7w8IdlOJy0ho1Xg==
+"@cognite/cdf-utilities@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-2.0.0.tgz#f3e54b519916dede76c9b1f8fc70ca349f231d5d"
+  integrity sha512-3FBV0aqH4GeYiUISrtuoVNu+fv4uZa5YQ/zLOAuPW1YTmA2+6AmYfOS1MCk+UsFth+31Mvm5NZvlcfIzh5wB5A==
   dependencies:
     "@codemirror/autocomplete" "^6.0.0"
     "@codemirror/commands" "^6.0.0"
@@ -1965,58 +1965,7 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
-"@cognite/cdf-utilities@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-3.0.0.tgz#a2e46069a9116905637f0319256e33a8a2c2aa6b"
-  integrity sha512-WxzBbvsjoeXZgHjaOz7XOqjxPLBIQbBrgGtMPu8LKJlBTf+e2LrEvZTlzLf3oG0W0JeiMmubhZl2JefioSFGcQ==
-  dependencies:
-    "@codemirror/autocomplete" "^6.0.0"
-    "@codemirror/commands" "^6.0.0"
-    "@codemirror/lang-sql" "^6.3.0"
-    "@codemirror/language" "^6.0.0"
-    "@codemirror/lint" "^6.0.0"
-    "@codemirror/search" "^6.0.0"
-    "@codemirror/state" "^6.0.0"
-    "@codemirror/view" "^6.0.0"
-    "@uiw/codemirror-themes" "^4.11.4"
-    "@uiw/react-codemirror" "^4.11.4"
-    antd "^4.22.4"
-    copy-to-clipboard "^3.3.2"
-    query-string "^7.0.1"
-    styled-components "^5.3.3"
-
-"@cognite/cogs.js@^7.12.1":
-  version "7.14.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.14.2.tgz#13400e4771fdcd614750b840e760435d8f50ed01"
-  integrity sha512-aT0D8AAiY/H7YZg5TuMQXKkN6j7u5hVBJajK+D5+xs4V/gdK678RODufKdEgCTQ9XcVcC0SmuZz8TMZ+WgdNqQ==
-  dependencies:
-    "@emotion/react" "^11.9.3"
-    "@emotion/styled" "^11.9.3"
-    "@mui/joy" "^5.0.0-alpha.36"
-    "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.4.3"
-    axios "^0.21.2"
-    classnames "^2.3.1"
-    color "^3.1.2"
-    csstype "^2.6.7"
-    dayjs "^1.9.7"
-    deepdash "^5.3.9"
-    focus-visible "^5.1.0"
-    match-sorter "^6.3.0"
-    rc-collapse "^1.11.8"
-    rc-drawer "^4.1.0"
-    rc-slider "^9.5.4"
-    rc-tabs "^11.16.1"
-    react-date-range "^1.1.3"
-    react-modal "^3.11.2"
-    react-select "^3.1.0"
-    react-table "^7.6.0"
-    react-toastify "^6.0.9"
-    resize-observer-polyfill "^1.5.1"
-    tippy.js "6.2.0"
-    ts-dedent "^2.2.0"
-
-"@cognite/cogs.js@^7.14.7":
+"@cognite/cogs.js@^7.12.1", "@cognite/cogs.js@^7.14.7":
   version "7.14.7"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.14.7.tgz#a5d4c9cdbbb9617acfbd870897b10c4fa36768a2"
   integrity sha512-IU1YOQAi7+WqEzKCKIzYuQUreVwYm5oOOwpWGRBG0/uW4SYFSHNg2cVxM+u3NbfbZuJVXVM0JwpG6lDl6YrXeg==
@@ -8619,7 +8568,7 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
-locize-cli@^7.13.2:
+locize-cli@^7.10.1:
   version "7.13.2"
   resolved "https://registry.yarnpkg.com/locize-cli/-/locize-cli-7.13.2.tgz#d17c5d2ef263b76b9bb500001d6b443b3ba1beb0"
   integrity sha512-HZt0wtoSdYhx2ar9orumFUdiLY7JsYQkb740bEMkeB5mnpm6vCIOhZONxH4+i7AzSPrrGN/5i/YyDJpB+OTFPw==
