@@ -116,7 +116,6 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<ResourcesFilters>({});
   const debouncedQuery = useDebounce(query, 100);
-  const [useSearch, setUseSearch] = useState(false);
 
   const {
     assets: { data: assetsData, isLoading: isAssetsLoading },
@@ -217,7 +216,7 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
     !isFilesLoading &&
     !isSequencesLoading &&
     !isTimeseriesLoading &&
-    !useSearch &&
+    !debouncedQuery &&
     isEmptyDataset(
       assetsData?.length,
       eventsData?.length,
@@ -247,7 +246,6 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
                 const searchText = evt.currentTarget.value;
                 trackUsage({ e: 'data.sets.detail.data', searchText });
                 setQuery(searchText);
-                setUseSearch(true);
               }}
               style={{ width: 312 }}
               allowClear
