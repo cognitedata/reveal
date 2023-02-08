@@ -25,24 +25,16 @@ export const AssetFilters = ({ ...rest }) => {
   const resetAssetFilters = useResetAssetFilters();
   const isFiltersEmpty = useFilterEmptyState('asset');
 
-  const { data: items = [], isFetched: isAssetFetched } = useList<any>(
-    'assets',
-    {
-      filter: transformNewFilterToOldFilter(assetFilters),
-      limit: 1000,
-    }
-  );
+  const { data: items = [] } = useList<any>('assets', {
+    filter: transformNewFilterToOldFilter(assetFilters),
+    limit: 1000,
+  });
 
-  const { data: sources = [], isFetched: isSourceFetched } =
-    useAssetsUniqueValuesByProperty('source', assetFilters);
+  const { data: sources = [] } = useAssetsUniqueValuesByProperty('source');
 
   const { data: metadataKeys = [] } = useAssetsMetadataKeysAggregateQuery();
 
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
-
-  if (!isSourceFetched || !isAssetFetched) {
-    return null;
-  }
 
   const mappedSources = sources.reduce(
     (list: { source: string }[], current: any) => {

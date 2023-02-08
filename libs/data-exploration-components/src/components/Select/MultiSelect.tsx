@@ -16,5 +16,5 @@ export interface MultiSelectProps<ValueType>
 }
 
 export const MultiSelect = <ValueType,>(props: MultiSelectProps<ValueType>) => {
-  return <BaseSelect {...props} isMulti />;
+  return <BaseSelect {...props} isMulti closeMenuOnSelect={false} />;
 };

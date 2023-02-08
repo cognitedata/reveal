@@ -66,6 +66,7 @@ export const AggregatedFilterV2 = <T,>({
           label: String(el),
         }))}
         addNilOption={addNilOption}
+        closeMenuOnSelect={false}
       />
     </>
   );
