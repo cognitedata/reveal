@@ -74,6 +74,8 @@ export default function GroupDrawer({ group, onClose }: Props) {
           sourceId: group?.sourceId,
           // @ts-ignore
           source: group?.source,
+          // @ts-ignore
+          metadata: group?.metadata,
         }}
       >
         <Form.Item
