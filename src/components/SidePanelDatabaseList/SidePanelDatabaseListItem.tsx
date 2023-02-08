@@ -9,9 +9,11 @@ import { useAllTables, useTableRows } from 'hooks/sdk-queries';
 
 import SidePanelDatabaseListItemTooltip from './SidePanelDatabaseListItemTooltip';
 import { useActiveTable } from 'hooks/table-tabs';
+import { useSleep } from 'utils/utils';
 
 type SidePanelDatabaseListItemProps = {
   name: string;
+  delayTableCount?: number;
 };
 
 const StyledNavigationIcon = styled(Icon)`
@@ -71,8 +73,13 @@ const StyledTableCount = styled(Detail)`
 
 const SidePanelDatabaseListItem = ({
   name,
+  delayTableCount = 0,
 }: SidePanelDatabaseListItemProps): JSX.Element => {
   const { setSelectedSidePanelDatabase } = useContext(RawExplorerContext);
+  const { isSuccess: enableCount } = useSleep(
+    delayTableCount,
+    `table-count-delay: ${name}`
+  );
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
   const { isFetched, isError } = useTableRows(
@@ -80,11 +87,15 @@ const SidePanelDatabaseListItem = ({
     { enabled: !!activeDatabase && !!activeTable }
   );
 
-  const { data, hasNextPage } = useAllTables(
+  const { data, hasNextPage, isLoading } = useAllTables(
     {
       database: name,
     },
-    { enabled: isFetched || isError || !activeDatabase || !activeTable }
+    {
+      enabled:
+        enableCount &&
+        (isFetched || isError || !activeDatabase || !activeTable),
+    }
   );
 
   const tables = useMemo(
@@ -109,8 +120,13 @@ const SidePanelDatabaseListItem = ({
       >
         <StyledDatabaseIcon type="DataSource" />
         <StyledDatabaseName level={3}>{name}</StyledDatabaseName>
-        {!hasNextPage && (
-          <StyledTableCount strong>{tables.length}</StyledTableCount>
+        {isLoading ? (
+          <Icon type="Loader" />
+        ) : (
+          data &&
+          !hasNextPage && (
+            <StyledTableCount strong>{tables.length}</StyledTableCount>
+          )
         )}
         <StyledNavigationIcon type="ChevronRight" />
       </StyledSidePanelDatabaseListItemWrapper>
