@@ -95,12 +95,6 @@ export const getNodeWidth = (_node: SchemaDefinitionNode & Node) => {
   return NODE_WIDTH;
 };
 
-export const isTypeATemplate = (item: ObjectTypeDefinitionNode) => {
-  return item.directives?.some(
-    (el) => el.name.value.toLowerCase() === 'template'
-  );
-};
-
 export const getTypeDirective = (
   item: ObjectTypeDefinitionNode | InterfaceTypeDefinitionNode
 ): string => {

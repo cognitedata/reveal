@@ -174,14 +174,18 @@ export const SchemaVisualizer = React.memo(
             break;
           }
           case 'InterfaceTypeDefinition': {
-            content = (
-              <FullNode
-                key={item.name.value}
-                item={item}
-                fullRender={fullRender}
-                isInterface
-              />
-            );
+            if (showHeaderOnly) {
+              content = <SmallNode key={item.name.value} item={item} />;
+            } else {
+              content = (
+                <FullNode
+                  key={item.name.value}
+                  item={item}
+                  fullRender={fullRender}
+                  isInterface
+                />
+              );
+            }
             break;
           }
           case 'UnionTypeDefinition': {
