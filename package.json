@@ -5,8 +5,6 @@
   "scripts": {
     "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=3080 WDS_SOCKET_HOST=localhost PORT=3080 react-app-rewired --max_old_space_size=2000 start",
     "build": "react-app-rewired --max_old_space_size=4096 build",
-    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-data-sets -o index.js -d ./build",
-    "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "react-app-rewired test",
     "lint": "yarn prettier && yarn eslint",
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
@@ -46,7 +44,6 @@
   },
   "devDependencies": {
     "@cognite/babel-plugin-styled-components": "^1.10.7",
-    "@cognite/cdf-ui-cli": "^1.1.1",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.1.2",
