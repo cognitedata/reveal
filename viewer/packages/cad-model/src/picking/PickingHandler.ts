@@ -94,13 +94,16 @@ export class PickingHandler {
     const release = await this._mutex.acquire();
     // Get CadNodes which are visible
     const visibleCadNodes = cadNodes.filter(node => node.visible);
+    // Filter nodes which cannot hit pick point
+    const filteredCadNodes = this.filterOutOfBoundCadNodes(visibleCadNodes, input);
 
     try {
-      for (const cadNode of visibleCadNodes) {
+      for (const cadNodeData of filteredCadNodes) {
         // Make current CadNode visible & hide others
         visibleCadNodes.forEach(p => (p.visible = false));
-        cadNode.visible = true;
-        const result = await this.intersectCadNode(cadNode, input, async);
+        cadNodeData.cadNode.visible = true;
+
+        const result = await this.intersectCadNode(cadNodeData.cadNode, input, async);
         if (result) {
           results.push(result);
         }
@@ -113,7 +116,35 @@ export class PickingHandler {
     }
   }
 
-  public async intersectCadNode(
+  private filterOutOfBoundCadNodes(cadNodes: CadNode[], input: IntersectInput) {
+    // Ensure the ray overlaps any point on the given models bounding box.
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(input.normalizedCoords, input.camera);
+    const ray = raycaster.ray;
+
+    const getWorldSpaceNodeBounds = (node: CadNode) =>
+      node.sectorScene.root.subtreeBoundingBox.clone().applyMatrix4(node.cadModelMetadata.modelMatrix);
+
+    // Remove all cadNodes that cannot be hit. Avoid a raycast against them
+    const candidateCadNodes = (
+      cadNodes
+        .map(cadNode => {
+          return {
+            cadNode: cadNode,
+            intersectPosition: ray.intersectBox(getWorldSpaceNodeBounds(cadNode), new THREE.Vector3())
+          };
+        })
+        .filter(x => x.intersectPosition !== null) as { cadNode: CadNode; intersectPosition: THREE.Vector3 }[]
+    ).sort(
+      (x, y) =>
+        x.intersectPosition.distanceToSquared(input.camera.position) -
+        y.intersectPosition.distanceToSquared(input.camera.position)
+    );
+
+    return candidateCadNodes;
+  }
+
+  private async intersectCadNode(
     cadNode: CadNode,
     input: IntersectInput,
     async: boolean
