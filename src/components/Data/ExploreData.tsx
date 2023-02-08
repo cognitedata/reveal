@@ -216,6 +216,7 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
     !isFilesLoading &&
     !isSequencesLoading &&
     !isTimeseriesLoading &&
+    !debouncedQuery &&
     isEmptyDataset(
       assetsData?.length,
       eventsData?.length,
