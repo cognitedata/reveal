@@ -8,6 +8,7 @@ import { SceneHandler } from '@reveal/utilities';
 import { Image360Descriptor, Image360Provider } from '@reveal/data-providers';
 import { Image360CollectionIcons } from './visuals/Image360CollectionIcons';
 import { Vector3 } from 'three';
+import zip from 'lodash/zip';
 
 export class Image360EntityFactory<T> {
   private readonly _sceneHandler: SceneHandler;
@@ -27,12 +28,23 @@ export class Image360EntityFactory<T> {
       .map(image360Descriptor => this.computeTransform(image360Descriptor, preMultipliedRotation, postTransform))
       .map(p => new Vector3().setFromMatrixPosition(p));
 
-    new Image360CollectionIcons(positions, this._sceneHandler);
+    const collectionIcons = new Image360CollectionIcons(this._sceneHandler);
+    const icons = collectionIcons.getImage360Icons(positions);
 
-    return event360Metadatas.map(image360Descriptor => {
-      const worldTransform = this.computeTransform(image360Descriptor, preMultipliedRotation, postTransform);
-      return new Image360Entity(image360Descriptor, this._sceneHandler, this._image360DataProvider, worldTransform);
-    });
+    return zip(event360Metadatas, icons)
+      .filter(([image360Descriptor, icon]) => {
+        return image360Descriptor !== undefined && icon !== undefined;
+      })
+      .map(([image360Descriptor, icon]) => {
+        const worldTransform = this.computeTransform(image360Descriptor!, preMultipliedRotation, postTransform);
+        return new Image360Entity(
+          image360Descriptor!,
+          this._sceneHandler,
+          this._image360DataProvider,
+          worldTransform,
+          icon!
+        );
+      });
   }
 
   private computeTransform(

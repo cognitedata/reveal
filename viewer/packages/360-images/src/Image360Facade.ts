@@ -6,7 +6,6 @@ import pull from 'lodash/pull';
 
 import { Image360Entity } from './Image360Entity';
 import { Image360EntityFactory } from './Image360EntityFactory';
-import { Image360Icon } from './Image360Icon';
 import { Image360LoadingCache } from './Image360LoadingCache';
 
 export class Image360Facade<T> {
@@ -56,12 +55,6 @@ export class Image360Facade<T> {
     camera: THREE.Camera
   ): Image360Entity | undefined {
     this._rayCaster.setFromCamera(coords, camera);
-    const intersections = this._rayCaster.intersectObjects<Image360Icon>(
-      this._image360Entities.map(p => p.icon),
-      false
-    );
-    if (intersections.length > 0) {
-      return this._image360Entities.filter(p => p.icon === intersections[0].object)[0];
-    }
+    return this._image360Entities.filter(entity => entity.icon.intersect(this._rayCaster.ray) !== null)[0];
   }
 }

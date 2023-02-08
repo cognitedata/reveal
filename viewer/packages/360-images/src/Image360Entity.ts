@@ -46,13 +46,14 @@ export class Image360Entity implements Image360 {
     image360Metadata: Image360Descriptor,
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
-    transform: THREE.Matrix4
+    transform: THREE.Matrix4,
+    icon: Image360Icon
   ) {
     this._imageProvider = imageProvider;
     this._image360Metadata = image360Metadata;
 
     this._transform = transform;
-    this._image360Icon = new Image360Icon(this._transform, sceneHandler);
+    this._image360Icon = icon;
     this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
   }
 

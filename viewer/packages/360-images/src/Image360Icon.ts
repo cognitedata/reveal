@@ -2,73 +2,58 @@
  * Copyright 2022 Cognite AS
  */
 
-import { SceneHandler } from '@reveal/utilities';
+import { AttributeDataAccessor, SceneHandler } from '@reveal/utilities';
 import * as THREE from 'three';
+import { Ray, Sphere, Vector3 } from 'three';
 
-export class Image360Icon extends THREE.Group {
+export class Image360Icon {
   private readonly MIN_PIXEL_SIZE = 16;
   private readonly MAX_PIXEL_SIZE = 64;
   private readonly _hoverSprite: THREE.Sprite;
-  private readonly _outerSprite: THREE.Sprite;
-  private readonly _sceneHandler: SceneHandler;
-  constructor(modelToWorldTransform: THREE.Matrix4, sceneHandler: SceneHandler) {
-    super();
-
-    this._sceneHandler = sceneHandler;
+  private readonly _alphaAttributeAccessor: AttributeDataAccessor<Uint8ClampedArray>;
+  private readonly _position: THREE.Vector3;
+  constructor(
+    position: THREE.Vector3,
+    sceneHandler: SceneHandler,
+    alphaAttributeAccessor: AttributeDataAccessor<Uint8ClampedArray>
+  ) {
+    this._alphaAttributeAccessor = alphaAttributeAccessor;
 
     this._hoverSprite = this.createHoverSprite();
+    this._hoverSprite.position.copy(position);
     this._hoverSprite.visible = false;
 
-    this._outerSprite = this.createOuterRingsSprite();
+    this._position = position;
 
-    this.setupAdaptiveScaling(modelToWorldTransform);
+    this.setupAdaptiveScaling(position);
 
-    this.add(this._outerSprite);
-    this.add(this._hoverSprite);
-    this.applyMatrix4(modelToWorldTransform);
+    sceneHandler.addCustomObject(this._hoverSprite);
+  }
 
-    sceneHandler.addCustomObject(this);
+  set visible(visible: boolean) {
+    const alpha = visible ? 255 : 0;
+    this._alphaAttributeAccessor.set([alpha]);
   }
 
   set hoverSpriteVisible(visible: boolean) {
     this._hoverSprite.visible = visible;
   }
 
-  public raycast(raycaster: THREE.Raycaster, intersects: THREE.Intersection<THREE.Object3D<THREE.Event>>[]): void {
-    if (this.visible === false) {
-      return;
-    }
-    const intersections: THREE.Intersection[] = [];
-    this._outerSprite.raycast(raycaster, intersections);
-    if (intersections.length > 0) {
-      const obj = intersections[0];
-      obj.object = this;
-      intersects.push(obj);
-    }
+  public intersect(ray: Ray): Vector3 | null {
+    const sphere = new Sphere(this._position, 0.5 * this._hoverSprite.scale.x);
+    return ray.intersectSphere(sphere, new Vector3());
   }
 
   public dispose(): void {
-    this._sceneHandler.removeCustomObject(this);
-
     this._hoverSprite.material.map?.dispose();
     this._hoverSprite.material.dispose();
     this._hoverSprite.geometry.dispose();
-
-    this._outerSprite.material.map?.dispose();
-    this._outerSprite.material.dispose();
-    this._outerSprite.geometry.dispose();
   }
 
-  private setupAdaptiveScaling(modelToWorldTransform: THREE.Matrix4): void {
+  private setupAdaptiveScaling(position: THREE.Vector3): void {
     const base = new THREE.Vector4();
     const offset = new THREE.Vector4();
     const transform = new THREE.Matrix4();
-
-    this._outerSprite.onBeforeRender = (renderer: THREE.WebGLRenderer, _1: THREE.Scene, camera: THREE.Camera) => {
-      const adaptiveScale = computeAdaptiveScaling(renderer, camera, this.MAX_PIXEL_SIZE, this.MIN_PIXEL_SIZE);
-      this._outerSprite.scale.set(adaptiveScale, adaptiveScale, 1.0);
-      this._outerSprite.updateMatrixWorld();
-    };
 
     this._hoverSprite.onBeforeRender = (renderer: THREE.WebGLRenderer, _1: THREE.Scene, camera: THREE.Camera) => {
       const adaptiveScale = computeAdaptiveScaling(renderer, camera, this.MAX_PIXEL_SIZE, this.MIN_PIXEL_SIZE);
@@ -84,7 +69,7 @@ export class Image360Icon extends THREE.Group {
     ): number {
       const clientHeight = renderer.domElement.clientHeight;
 
-      transform.copy(modelToWorldTransform);
+      transform.makeTranslation(position.x, position.y, position.z);
       transform.premultiply(camera.matrixWorldInverse);
 
       base.set(0, 0, 0, 1);
@@ -104,40 +89,6 @@ export class Image360Icon extends THREE.Group {
         : screenHeight < minHeight
         ? minHeight / screenHeight
         : 1.0;
-    }
-  }
-
-  private createOuterRingsSprite(): THREE.Sprite {
-    const canvas = document.createElement('canvas');
-    const textureSize = this.MAX_PIXEL_SIZE;
-    canvas.width = textureSize;
-    canvas.height = textureSize;
-
-    const context = canvas.getContext('2d')!;
-    drawInnerCircle();
-    drawOuterCircle();
-
-    const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: true });
-    const sprite = new THREE.Sprite(spriteMaterial);
-    sprite.updateMatrixWorld();
-    sprite.renderOrder = 5;
-    return sprite;
-
-    function drawOuterCircle() {
-      context.beginPath();
-      context.lineWidth = textureSize / 16;
-      context.strokeStyle = '#FFFFFF';
-      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth / 2 - 2, 0, 2 * Math.PI);
-      context.stroke();
-    }
-
-    function drawInnerCircle() {
-      context.beginPath();
-      context.lineWidth = textureSize / 8;
-      context.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
-      context.shadowColor = 'red';
-      context.stroke();
     }
   }
 
