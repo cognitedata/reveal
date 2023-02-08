@@ -133,6 +133,7 @@ describe('hooks', () => {
         name: 'test-group',
         capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
         isDeleted: false,
+        metadata: { foo: 'bar' },
       };
       await update(oldGroup);
       expect(sdk.groups.listServiceAccounts).toHaveBeenCalled();
@@ -140,6 +141,7 @@ describe('hooks', () => {
         {
           name: 'test-group',
           capabilities: [{ assetsAcl: { scope: { all: {} }, actions: [] } }],
+          metadata: { foo: 'bar' },
         },
       ]);
       expect(sdk.projects.updateProject).not.toHaveBeenCalled();
