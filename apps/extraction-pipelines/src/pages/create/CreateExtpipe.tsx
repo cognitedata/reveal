@@ -110,12 +110,12 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
         },
         onError: (errorRes, variables) => {
           const serverErrorMessage =
-            translateServerErrorMessage<AddExtpipeFormInput>(errorRes?.data, {
+            translateServerErrorMessage<AddExtpipeFormInput>(errorRes, {
               externalId: t('external-id-already-exist', {
                 externalId: variables.extpipeInfo.externalId,
               }),
               contacts: t('contact-must-provide'),
-              server: errorRes?.data?.message ?? t('try-again-later'),
+              server: errorRes?.message ?? t('try-again-later'),
             });
           trackUsage({
             t: 'Create.Rejected',

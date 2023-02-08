@@ -1,13 +1,13 @@
-import { DataSet, IdEither } from '@cognite/sdk';
+import { CogniteError, DataSet, IdEither } from '@cognite/sdk';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { SDKError } from 'model/SDKErrors';
+
 import { DataSetModel } from 'model/DataSetModel';
 import { getDataSets } from 'utils/DataSetAPI';
 import { useSDK } from '@cognite/sdk-provider';
 
 export const useDataSets = (dataSetIds: IdEither[]) => {
   const sdk = useSDK();
-  return useQuery<DataSetModel[], SDKError>(
+  return useQuery<DataSetModel[], CogniteError>(
     ['data-sets', dataSetIds],
     () => {
       return getDataSets(sdk, dataSetIds);

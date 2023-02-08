@@ -1,11 +1,11 @@
 import React from 'react';
-import { ErrorVariations } from 'model/SDKErrors';
 import { useTranslation } from 'common';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
+import { CogniteError } from '@cognite/sdk';
 
 type Props = {
-  error?: ErrorVariations | null;
+  error?: CogniteError | null;
   onCreate?: () => void;
 };
 

@@ -2,37 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 import { CenterFullVH } from 'components/styled';
 import { Button, Icon, Title } from '@cognite/cogs.js';
-import { ErrorObj, ErrorVariations } from 'model/SDKErrors';
+
 import { useTranslation } from 'common';
+import { CogniteError } from '@cognite/sdk';
+
 interface ErrorFeedbackProps {
-  error: ErrorVariations;
+  error?: CogniteError;
   onClick?: () => void;
   btnText?: string;
   fallbackTitle?: string;
   contentText?: string;
 }
-
-const findErrorText = (error: ErrorVariations): ErrorObj | null => {
-  if (error.error) {
-    return {
-      code: error.error.code,
-      message: error.error.message,
-    };
-  }
-  if (error.data) {
-    return {
-      code: error.data.code,
-      message: error.data.message,
-    };
-  }
-  if (error.code && error.message) {
-    return {
-      code: error.code,
-      message: error.message,
-    };
-  }
-  return null;
-};
 
 export const ErrorFeedback = (props: ErrorFeedbackProps) => {
   const { t } = useTranslation();
@@ -44,11 +24,11 @@ export const ErrorFeedback = (props: ErrorFeedbackProps) => {
     contentText = '',
   } = props;
   let showBtn = true;
-  const errorObj = findErrorText(error);
-  const title = errorObj?.code ?? fallbackTitle;
-  const message = errorObj?.message ?? contentText;
 
-  if (errorObj?.code === 403 || errorObj?.code === 401) {
+  const title = error?.status ?? fallbackTitle;
+  const message = error?.message ?? contentText;
+
+  if (error?.status === 403 || error?.status === 401) {
     showBtn = false;
   }
 

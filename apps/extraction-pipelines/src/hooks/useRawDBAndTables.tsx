@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query';
-import { SDKError } from 'model/SDKErrors';
 import { getRawDBsAndTables } from 'utils/RawDataBaseAPI';
-import { RawDB, RawDBTable } from '@cognite/sdk';
+import { CogniteError, RawDB, RawDBTable } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
 export type DatabaseWithTablesItem = {
@@ -10,7 +9,7 @@ export type DatabaseWithTablesItem = {
 };
 export const useRawDBAndTables = () => {
   const sdk = useSDK();
-  return useQuery<DatabaseWithTablesItem[], SDKError>(
+  return useQuery<DatabaseWithTablesItem[], CogniteError>(
     'raw-db-tables',
     () => {
       return getRawDBsAndTables(sdk);

@@ -1,13 +1,14 @@
 import { useInfiniteQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { getExtpipes } from 'utils/ExtpipesAPI';
-import { SDKError } from 'model/SDKErrors';
+
 import { ExtpipeAPIResponse } from 'model/ExtpipeAPIResponse';
 import { useEffect } from 'react';
+import { CogniteError } from '@cognite/sdk';
 
 export const useExtpipes = (limit: number = 50) => {
   const sdk = useSDK();
-  return useInfiniteQuery<ExtpipeAPIResponse, SDKError>(
+  return useInfiniteQuery<ExtpipeAPIResponse, CogniteError>(
     ['extpipes', { limit }],
     async ({ pageParam: cursor }) => getExtpipes(sdk, { limit, cursor }),
     {

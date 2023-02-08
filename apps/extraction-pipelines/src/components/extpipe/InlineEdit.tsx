@@ -16,9 +16,9 @@ import { ColumnForm, Hint, StyledInput, StyledLabel } from 'components/styled';
 import { CloseButton, EditButton, SaveButton } from 'components/styled';
 import { Colors } from '@cognite/cogs.js';
 import { trackUsage } from 'utils/Metrics';
-import { ErrorVariations } from 'model/SDKErrors';
 import { AddInfo } from './AddInfo';
 import { useTranslation } from 'common';
+import { CogniteError } from '@cognite/sdk';
 
 export interface InlineEditProps<Fields> {
   defaultValues: DefaultValues<Fields>;
@@ -66,7 +66,7 @@ const InlineEdit = <Fields extends FieldValues>({
     const items = updateFn(field);
     trackUsage({ t: 'EditField.Save', field: name });
     await mutate(items, {
-      onError: (err: ErrorVariations) => {
+      onError: (err: CogniteError) => {
         trackUsage({ t: 'EditField.Rejected', field: name });
         setErrorMessage(
           err?.duplicated

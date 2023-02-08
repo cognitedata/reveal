@@ -7,9 +7,9 @@ import {
 import { useSDK } from '@cognite/sdk-provider';
 import { deleteExtractionPipeline, getExtpipeById } from 'utils/ExtpipesAPI';
 import { Extpipe } from 'model/Extpipe';
-import { ErrorVariations, SDKError } from 'model/SDKErrors';
 import { RouterParams } from 'routing/RoutingConfig';
 import { useParams } from 'react-router-dom';
+import { CogniteError } from '@cognite/sdk';
 
 export const useSelectedExtpipeId = () => {
   return parseInt(useParams<RouterParams>().id ?? '', 10);
@@ -17,7 +17,7 @@ export const useSelectedExtpipeId = () => {
 
 const useExtpipeById = (extpipeId?: number) => {
   const sdk = useSDK();
-  return useQuery<Extpipe, SDKError>(
+  return useQuery<Extpipe, CogniteError>(
     ['extpipe', extpipeId],
     () => {
       return getExtpipeById(sdk, extpipeId!);
@@ -33,10 +33,7 @@ export const useSelectedExtpipe = () => {
 };
 
 export const useDeletePipeline = (
-  opts?: Omit<
-    UseMutationOptions<unknown, ErrorVariations, number>,
-    'mutationFn'
-  >
+  opts?: Omit<UseMutationOptions<unknown, CogniteError, number>, 'mutationFn'>
 ) => {
   const sdk = useSDK();
   const qc = useQueryClient();
