@@ -15,6 +15,7 @@ export interface CreateDataModelDTO {
 }
 export interface UpdateDataModelDTO extends CreateDataModelDTO {
   externalId: string;
+  version?: string;
 }
 
 export interface DeleteDataModelDTO {

@@ -35,7 +35,7 @@ describe('DataModelSettingsModal', () => {
       name: 'Test DataModel',
       owners: [],
       updatedTime: 1635936707155,
-      version: '',
+      version: '1',
       space: 'testDataModel-1',
     };
     const newName = 'New_Name';
@@ -68,6 +68,7 @@ describe('DataModelSettingsModal', () => {
       externalId: 'testDataModel',
       name: newName,
       space: 'testDataModel-1',
+      version: '1',
     });
 
     expect(handleRequestClose).toHaveBeenCalledTimes(1);

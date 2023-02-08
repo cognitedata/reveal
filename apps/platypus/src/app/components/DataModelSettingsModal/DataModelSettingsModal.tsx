@@ -24,6 +24,7 @@ export const DataModelSettingsModal = (props: DataModelSettingsModalProps) => {
         externalId: props.dataModel.id,
         name: name || '',
         space,
+        version: props.dataModel.version,
       },
       {
         onSuccess: () => {

@@ -190,7 +190,33 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @param dto CreateDataModelDTO
    */
   updateDataModel(dto: UpdateDataModelDTO): Promise<DataModel> {
-    throw 'Not implemented';
+    if (!dto.space) {
+      throw 'space required to update data model with FDM V3';
+    }
+
+    if (!dto.version) {
+      throw 'version required to update data model with FDM V3';
+    }
+
+    const upsertDto: GraphQlDmlVersionDTO = {
+      description: dto.description,
+      externalId: dto.externalId,
+      name: dto.name,
+      space: dto.space,
+      version: dto.version,
+    };
+
+    return this.mixerApiService
+      .upsertVersion(upsertDto)
+      .then((dataModelResponse) => {
+        if (dataModelResponse.errors?.length) {
+          return Promise.reject(dataModelResponse.errors);
+        } else {
+          return Promise.resolve(
+            this.dataModelDataMapper.deserialize(dataModelResponse.result)
+          );
+        }
+      });
   }
 
   /**
