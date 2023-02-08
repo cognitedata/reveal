@@ -123,7 +123,7 @@ export class PickingHandler {
     const ray = raycaster.ray;
 
     const getWorldSpaceNodeBounds = (node: CadNode) =>
-      node.sectorScene.root.subtreeBoundingBox.clone().applyMatrix4(node.cadModelMetadata.modelMatrix);
+      node.cadModelMetadata.scene.root.subtreeBoundingBox.clone().applyMatrix4(node.cadModelMetadata.modelMatrix);
 
     // Remove all cadNodes that cannot be hit. Avoid a raycast against them
     const candidateCadNodes = (
