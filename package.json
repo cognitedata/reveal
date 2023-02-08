@@ -20,7 +20,7 @@
   "dependencies": {
     "@cognite/acl-protos": "^0.16.5",
     "@cognite/cdf-i18n-utils": "^0.1.1",
-    "@cognite/cdf-utilities": "^1.4.6",
+    "@cognite/cdf-utilities": "~1.13.1",
     "@cognite/cogs.js": "^5.17.0",
     "@cognite/login-utils": "^2.0.0",
     "@cognite/metrics": "^1.2.1",
