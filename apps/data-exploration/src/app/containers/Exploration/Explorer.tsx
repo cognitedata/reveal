@@ -1,7 +1,7 @@
 import { CanvasPage } from '@data-exploration-app/containers/Canvas/CanvasPage';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { ResourceSelectorProviderUFV } from '@cognite/data-exploration';
+import { ResourceSelectorProvider } from '@cognite/data-exploration';
 import styled from 'styled-components';
 import { ResourceDetailsPage } from '@data-exploration-app/containers/ResourceDetails';
 import SearchRedirect from './SearchRedirect';
@@ -16,7 +16,7 @@ export const Explorer = () => {
 
   return (
     <AppWrapper>
-      <ResourceSelectorProviderUFV>
+      <ResourceSelectorProvider>
         <Routes>
           <Route path="/search" element={<SearchResultsPage />}>
             <Route path=":resourceType" element={<SearchResultsPage />}>
@@ -31,7 +31,7 @@ export const Explorer = () => {
           <Route path="/canvas" element={<CanvasPage />} />
           <Route path="/" element={<SearchRedirect />} />
         </Routes>
-      </ResourceSelectorProviderUFV>
+      </ResourceSelectorProvider>
     </AppWrapper>
   );
 };

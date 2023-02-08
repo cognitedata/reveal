@@ -6,10 +6,10 @@ import {
   getFileIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
-} from '@data-exploration-components/containers/Files/FilePreview/FilePreviewUFV/migration/utils';
+} from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import React, { useMemo } from 'react';
-import { TooltipContainer } from '../../Canvas/TooltipContainer';
+import { TooltipContainer } from '../Canvas/TooltipContainer';
 
 const useFileLinkTooltips = (
   isEnabled: boolean,

@@ -4,15 +4,10 @@ export {
   useResourcePreview,
   ResourcePreviewProvider,
 } from './ResourcePreviewContext';
-export * from './ResourcePreviewContextUFV';
-export {
-  useResourceSelector,
-  ResourceSelectorProvider,
-} from './ResourceSelectorContext';
-export * from './ResourceSelectorContextUFV';
+export * from './ResourcePreviewContext';
+export { useResourceSelector } from './ResourceSelectorContext';
+export * from './ResourceSelectorContext';
 export * from './FileContextualization';
 export * from './sdk';
 export { default as ResourcePreviewContext } from './ResourcePreviewContext';
-export { default as ResourcePreviewContextUFV } from './ResourcePreviewContextUFV';
 export { default as ResourceSelectorContext } from './ResourceSelectorContext';
-export { default as ResourceSelectorContextUFV } from './ResourcePreviewContextUFV';

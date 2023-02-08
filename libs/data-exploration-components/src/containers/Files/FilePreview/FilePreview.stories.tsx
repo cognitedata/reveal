@@ -1,14 +1,14 @@
 import { ComponentStory } from '@storybook/react';
 import React from 'react';
 import { CogniteClient } from '@cognite/sdk';
-import { ocrResults, response } from '../resources';
-import { FilePreviewUFV } from './FilePreviewUFV';
+import { ocrResults, response } from './resources';
+import { FilePreview } from './FilePreview';
 // @ts-ignore
-import pdfFileUrl from '../mock/pnid.pdf';
+import pdfFileUrl from './mock/pnid.pdf';
 // @ts-ignore
-import longPdfFileUrl from '../mock/multipageExample.pdf';
-import testImageUrl from '../mock/test-image.png';
-import { mockTxt, mockJson, mockCsv } from '../mock/mockFiles';
+import longPdfFileUrl from './mock/multipageExample.pdf';
+import testImageUrl from './mock/test-image.png';
+import { mockTxt, mockJson, mockCsv } from './mock/mockFiles';
 import { annotations } from './stubs/annotations';
 
 const VIEWER_ID = 'FilePreviewUFV-story';
@@ -172,7 +172,7 @@ const pdfSdkMock = {
 
 export default {
   title: 'Files/FilePreviewUFV',
-  component: FilePreviewUFV,
+  component: FilePreview,
   parameters: {
     options: {
       enableShortcuts: false,
@@ -181,8 +181,8 @@ export default {
   },
 };
 
-export const SinglePagePdf: ComponentStory<typeof FilePreviewUFV> = (args) => (
-  <FilePreviewUFV {...args} />
+export const SinglePagePdf: ComponentStory<typeof FilePreview> = (args) => (
+  <FilePreview {...args} />
 );
 SinglePagePdf.args = {
   id: VIEWER_ID,
@@ -190,17 +190,17 @@ SinglePagePdf.args = {
   fileId: allMockFiles.pdfFile.id,
 };
 
-export const MultiPagePdfWithOcr: ComponentStory<typeof FilePreviewUFV> = (
+export const MultiPagePdfWithOcr: ComponentStory<typeof FilePreview> = (
   args
-) => <FilePreviewUFV {...args} />;
+) => <FilePreview {...args} />;
 MultiPagePdfWithOcr.args = {
   id: VIEWER_ID,
   applicationId: APPLICATION_ID,
   fileId: allMockFiles.longPDF.id,
 };
 
-export const Png: ComponentStory<typeof FilePreviewUFV> = (args) => (
-  <FilePreviewUFV {...args} />
+export const Png: ComponentStory<typeof FilePreview> = (args) => (
+  <FilePreview {...args} />
 );
 Png.args = {
   id: VIEWER_ID,
@@ -208,8 +208,8 @@ Png.args = {
   fileId: allMockFiles.testImage.id,
 };
 
-export const Txt: ComponentStory<typeof FilePreviewUFV> = (args) => (
-  <FilePreviewUFV {...args} />
+export const Txt: ComponentStory<typeof FilePreview> = (args) => (
+  <FilePreview {...args} />
 );
 Txt.args = {
   id: VIEWER_ID,
@@ -217,8 +217,8 @@ Txt.args = {
   fileId: allMockFiles.txtFile.id,
 };
 
-export const Csv: ComponentStory<typeof FilePreviewUFV> = (args) => (
-  <FilePreviewUFV {...args} />
+export const Csv: ComponentStory<typeof FilePreview> = (args) => (
+  <FilePreview {...args} />
 );
 Csv.args = {
   id: VIEWER_ID,
@@ -226,8 +226,8 @@ Csv.args = {
   fileId: allMockFiles.csvFile.id,
 };
 
-export const Json: ComponentStory<typeof FilePreviewUFV> = (args) => (
-  <FilePreviewUFV {...args} />
+export const Json: ComponentStory<typeof FilePreview> = (args) => (
+  <FilePreview {...args} />
 );
 Json.args = {
   id: VIEWER_ID,
@@ -235,18 +235,18 @@ Json.args = {
   fileId: allMockFiles.jsonFile.id,
 };
 
-export const UnsupportedFileType: ComponentStory<typeof FilePreviewUFV> = (
+export const UnsupportedFileType: ComponentStory<typeof FilePreview> = (
   args
-) => <FilePreviewUFV {...args} />;
+) => <FilePreview {...args} />;
 UnsupportedFileType.args = {
   id: VIEWER_ID,
   applicationId: APPLICATION_ID,
   fileId: allMockFiles.unsupportedFileTypeFile.id,
 };
 
-export const FileWithoutMimeType: ComponentStory<typeof FilePreviewUFV> = (
+export const FileWithoutMimeType: ComponentStory<typeof FilePreview> = (
   args
-) => <FilePreviewUFV {...args} />;
+) => <FilePreview {...args} />;
 FileWithoutMimeType.args = {
   id: VIEWER_ID,
   applicationId: APPLICATION_ID,

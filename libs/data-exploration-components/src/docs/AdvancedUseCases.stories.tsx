@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
-import { action } from '@storybook/addon-actions';
 import { assets } from '@data-exploration-components/stubs/assets';
 import { files } from '@data-exploration-components/stubs/files';
 import { PartialStoryFn } from '@storybook/addons';

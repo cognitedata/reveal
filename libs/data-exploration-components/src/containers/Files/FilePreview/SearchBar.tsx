@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Input } from '@cognite/cogs.js';
-import { useDisclosure } from '../../../../hooks';
+import { useDisclosure } from '../../../hooks/index';
 
 export const SearchBar = ({
   searchQuery,

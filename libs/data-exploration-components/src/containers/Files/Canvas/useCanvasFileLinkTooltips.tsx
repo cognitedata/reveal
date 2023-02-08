@@ -6,7 +6,7 @@ import {
   getResourceExternalIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
-} from '@data-exploration-components/containers/Files/FilePreview/FilePreviewUFV/migration/utils';
+} from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
 import {
   PagedFileReference,
   useCanvasFilesFromUrl,

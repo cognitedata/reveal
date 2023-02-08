@@ -1,9 +1,9 @@
 import React from 'react';
 import { files } from '@data-exploration-components/stubs/files';
 import { sdkMock } from '@data-exploration-components/docs/stub';
-import { FileSmallPreviewUFV } from './FileSmallPreviewUFV';
+import { FileSmallPreview } from './FileSmallPreview';
 import { events } from '@data-exploration-components/stubs/events';
-import { assets } from '../../../../stubs/assets';
+import { assets } from '../../../stubs/assets';
 
 const tempSdk = {
   ...sdkMock,
@@ -32,9 +32,9 @@ const tempSdk = {
 };
 
 export default {
-  title: 'Files/FileSmallPreviewUFV',
-  component: FileSmallPreviewUFV,
+  title: 'Files/FileSmallPreview',
+  component: FileSmallPreview,
   explorerConfig: { sdkMockOverride: tempSdk },
 };
 
-export const Example = () => <FileSmallPreviewUFV fileId={files[0].id} />;
+export const Example = () => <FileSmallPreview fileId={files[0].id} />;

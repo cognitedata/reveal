@@ -1,40 +1,32 @@
-import { ResourcePreviewSidebar } from '@data-exploration-components/containers';
-import React, { useContext } from 'react';
+import { ResourcePreviewSidebar } from '@data-exploration-components/containers/index';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
 
 import { FileInfo } from '@cognite/sdk';
-import {
-  AnnotationStatus,
-  CogniteAnnotation,
-  CogniteAnnotationPatch,
-  linkFileToAssetIds,
-} from '@cognite/annotations';
-import { useSDK } from '@cognite/sdk-provider';
-import {
-  ProposedCogniteAnnotation,
-  useSelectedAnnotations,
-  useZoomControls,
-} from '@cognite/react-picture-annotation';
-import { AppContext } from '@data-exploration-components/context/AppContext';
-import AnnotationsList from '@data-exploration-components/components/AnnotationsList';
-import { useDisclosure } from '@data-exploration-components/hooks';
+import AnnotationsList from './AnnotationsList/index';
+import { useDisclosure } from '@data-exploration-components/hooks/index';
 import { useReviewFile } from '../hooks';
 import DiagramReviewStatus from './DiagramStatus';
 import FileReview from './FileReview';
+import {
+  isAssetAnnotation,
+  isFileAnnotation,
+  isSuggestedAnnotation,
+} from './migration/utils';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 interface FilePreviewSidebarProps {
   fileIcon?: React.ReactNode;
   file?: FileInfo;
-  annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
-  approveAnnotations: (updatePatch: CogniteAnnotationPatch[]) => void;
+  annotations: ExtendedAnnotation[];
+  approveAnnotations: (annotations: ExtendedAnnotation[]) => void;
   viewingAnnotations?: 'assets' | 'files';
   setViewingAnnotations: (type: 'assets' | 'files' | undefined) => void;
-  setZoomedAnnotation: (
-    zoomedAnnotation: CogniteAnnotation | undefined
-  ) => void;
   setIsAnnotationsShown: (isAnnotationsShown: boolean) => void;
   isAnnotationsShown: boolean;
+  reset: () => void;
+  setSelectedAnnotations: (annotations: ExtendedAnnotation[]) => void;
 }
 
 const FilePreviewSidebar = ({
@@ -44,64 +36,54 @@ const FilePreviewSidebar = ({
   approveAnnotations,
   viewingAnnotations,
   setViewingAnnotations,
-  setZoomedAnnotation,
   setIsAnnotationsShown,
   isAnnotationsShown,
+  reset,
+  setSelectedAnnotations,
 }: FilePreviewSidebarProps) => {
-  const sdk = useSDK();
-  const context = useContext(AppContext);
-  const email = context?.userInfo?.email || 'UNKNOWN';
-
-  const { setSelectedAnnotations } = useSelectedAnnotations();
-  const { reset } = useZoomControls();
-
   const { onApproveFile } = useReviewFile(file?.id);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const onApproveAllAnnotations = async () => {
-    const unhandledAnnotations = annotations.filter(
-      (a) => a.status === 'unhandled'
-    ) as Array<CogniteAnnotation>;
-    const updatePatch = unhandledAnnotations.map((annotation) => ({
-      id: Number(annotation.id),
-      annotation,
-      update: {
-        status: {
-          set: 'verified' as AnnotationStatus,
-        },
-        checkedBy: {
-          set: email,
-        },
-      },
-    }));
-    approveAnnotations(updatePatch);
+    const unhandledAnnotations = annotations.filter(isSuggestedAnnotation);
+    await approveAnnotations(unhandledAnnotations);
     await onApproveFile();
-    await linkFileToAssetIds(sdk, unhandledAnnotations);
     setSelectedAnnotations([]);
     onClose();
   };
 
   const handleGoBack = () => {
     setViewingAnnotations(undefined);
-    setZoomedAnnotation(undefined);
     reset?.();
   };
+
+  const filteredAnnotations = useMemo(() => {
+    return annotations.filter((annotation) => {
+      if (viewingAnnotations === 'assets') {
+        return isAssetAnnotation(annotation);
+      }
+
+      if (viewingAnnotations === 'files') {
+        return isFileAnnotation(annotation);
+      }
+
+      return false;
+    });
+  }, [viewingAnnotations, annotations]);
 
   if (viewingAnnotations) {
     return (
       <AnnotationsList
-        annotations={annotations.filter((an) =>
-          viewingAnnotations === 'assets'
-            ? an.resourceType === 'asset'
-            : an.resourceType === 'file'
-        )}
+        annotations={filteredAnnotations}
         type={viewingAnnotations}
         goBack={handleGoBack}
-        setZoomedAnnotation={setZoomedAnnotation}
+        reset={reset}
+        setSelectedAnnotations={setSelectedAnnotations}
       />
     );
   }
+
   return (
     <>
       <Modal

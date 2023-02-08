@@ -1,7 +1,3 @@
-import {
-  AnnotationStatus as EventAnnotationStatus,
-  CogniteAnnotation,
-} from '@cognite/annotations';
 import { AnnotationModel } from '@cognite/sdk';
 import pickBy from 'lodash/pickBy';
 import { AnnotationStatus } from '@cognite/sdk';
@@ -9,24 +5,19 @@ import {
   ResourceItem,
   ResourceItemState,
   ResourceType,
-} from '../../../../../types';
+} from '../../../../types/index';
 import {
   ANNOTATION_SOURCE_KEY,
   AnnotationSource,
   ExtendedAnnotation,
   TaggedAnnotation,
   TaggedAnnotationAnnotation,
-  TaggedEventAnnotation,
   TaggedLocalAnnotation,
 } from '@data-exploration-lib/core';
 
 export const getExtendedAnnotationPage = (
   annotation: ExtendedAnnotation
 ): number | undefined => {
-  if (isExtendedEventAnnotation(annotation)) {
-    return annotation.metadata.page;
-  }
-
   if (
     isExtendedAnnotationAnnotation(annotation) ||
     isExtendedLocalAnnotation(annotation)
@@ -41,10 +32,6 @@ export const getExtendedAnnotationPage = (
 export const getExtendedAnnotationDescription = (
   annotation: ExtendedAnnotation
 ): string | undefined => {
-  if (isExtendedEventAnnotation(annotation)) {
-    return annotation.metadata.description;
-  }
-
   if (
     isExtendedAnnotationAnnotation(annotation) ||
     isExtendedLocalAnnotation(annotation)
@@ -61,11 +48,6 @@ export const isExtendedLocalAnnotation = (
 ): annotation is ExtendedAnnotation<TaggedLocalAnnotation> =>
   annotation.metadata[ANNOTATION_SOURCE_KEY] === AnnotationSource.LOCAL;
 
-export const isExtendedEventAnnotation = (
-  annotation: ExtendedAnnotation
-): annotation is ExtendedAnnotation<TaggedEventAnnotation> =>
-  annotation.metadata[ANNOTATION_SOURCE_KEY] === AnnotationSource.EVENTS;
-
 export const isExtendedAnnotationAnnotation = (
   annotation: ExtendedAnnotation
 ): annotation is ExtendedAnnotation<TaggedAnnotationAnnotation> =>
@@ -74,10 +56,6 @@ export const isExtendedAnnotationAnnotation = (
 export const getResourceIdFromTaggedAnnotation = (
   annotation: TaggedAnnotation
 ) => {
-  if (isTaggedEventAnnotation(annotation)) {
-    return annotation.resourceId;
-  }
-
   if (
     isTaggedAnnotationAnnotation(annotation) ||
     isTaggedLocalAnnotation(annotation)
@@ -102,38 +80,10 @@ export const getResourceIdFromExtendedAnnotation = (
   return getResourceIdFromTaggedAnnotation(annotation.metadata);
 };
 
-export const mapAnnotationStatusToEventAnnotationStatus = (
-  status: AnnotationStatus
-): EventAnnotationStatus => {
-  if (status === 'approved') {
-    return 'verified';
-  }
-
-  if (status === 'rejected') {
-    return 'deleted';
-  }
-
-  if (status === 'suggested') {
-    return 'unhandled';
-  }
-
-  throw new Error(`Unsupported annotation status: ${status}`);
-};
-
 export const setExtendedAnnotationStatus = (
   annotation: ExtendedAnnotation,
   status: AnnotationStatus
 ) => {
-  if (isExtendedEventAnnotation(annotation)) {
-    return {
-      ...annotation,
-      metadata: {
-        ...annotation.metadata,
-        status: mapAnnotationStatusToEventAnnotationStatus(status),
-      },
-    };
-  }
-
   if (isExtendedAnnotationAnnotation(annotation)) {
     return {
       ...annotation,
@@ -155,18 +105,6 @@ export const setExtendedAnnotationResource = (
 ): ExtendedAnnotation => {
   if (resource.type !== 'asset' && resource.type !== 'file') {
     return annotation;
-  }
-
-  if (isExtendedEventAnnotation(annotation)) {
-    return {
-      ...annotation,
-      metadata: {
-        ...annotation.metadata,
-        resourceType: resource.type,
-        resourceId: resource.id,
-        resourceExternalId: resource.externalId,
-      },
-    };
   }
 
   // NOTE: we're (ab-)using the fact that we currently only can switch
@@ -233,10 +171,6 @@ export const setExtendedAnnotationResource = (
 export const getExtendedAnnotationLabel = (
   annotation: ExtendedAnnotation
 ): string => {
-  if (isExtendedEventAnnotation(annotation)) {
-    return annotation.metadata.label ?? '';
-  }
-
   if (
     isExtendedAnnotationAnnotation(annotation) ||
     isExtendedLocalAnnotation(annotation)
@@ -252,16 +186,6 @@ export const setExtendedAnnotationLabel = (
   annotation: ExtendedAnnotation,
   label: string
 ): ExtendedAnnotation => {
-  if (isExtendedEventAnnotation(annotation)) {
-    return {
-      ...annotation,
-      metadata: {
-        ...annotation.metadata,
-        label,
-      },
-    };
-  }
-
   if (isExtendedAnnotationAnnotation(annotation)) {
     return {
       ...annotation,
@@ -295,16 +219,6 @@ export const setExtendedAnnotationDescription = (
   annotation: ExtendedAnnotation,
   description: string
 ): ExtendedAnnotation => {
-  if (isExtendedEventAnnotation(annotation)) {
-    return {
-      ...annotation,
-      metadata: {
-        ...annotation.metadata,
-        description,
-      },
-    };
-  }
-
   if (isExtendedAnnotationAnnotation(annotation)) {
     return {
       ...annotation,
@@ -337,10 +251,6 @@ export const setExtendedAnnotationDescription = (
 export const getFileIdFromExtendedAnnotation = (
   annotation: ExtendedAnnotation
 ): number | undefined => {
-  if (isExtendedEventAnnotation(annotation)) {
-    return annotation.metadata.fileId;
-  }
-
   if (
     isExtendedAnnotationAnnotation(annotation) ||
     isExtendedLocalAnnotation(annotation)
@@ -354,30 +264,9 @@ export const getFileIdFromExtendedAnnotation = (
   return undefined;
 };
 
-export const getFileExternalIdFromExtendedAnnotation = (
-  annotation: ExtendedAnnotation
-): string | undefined => {
-  if (isExtendedEventAnnotation(annotation)) {
-    return annotation.metadata.fileExternalId;
-  }
-
-  if (
-    isExtendedAnnotationAnnotation(annotation) ||
-    isExtendedLocalAnnotation(annotation)
-  ) {
-    return undefined;
-  }
-
-  return undefined;
-};
-
 export const getResourceExternalIdFromTaggedAnnotation = (
   taggedAnnotation: TaggedAnnotation
 ) => {
-  if (isTaggedEventAnnotation(taggedAnnotation)) {
-    return taggedAnnotation.resourceExternalId;
-  }
-
   if (
     isTaggedAnnotationAnnotation(taggedAnnotation) ||
     isTaggedLocalAnnotation(taggedAnnotation)
@@ -407,17 +296,6 @@ export const getResourceExternalIdFromExtendedAnnotation = (
 export const getResourceTypeFromTaggedAnnotation = (
   taggedAnnotation: TaggedAnnotation
 ): ResourceType | undefined => {
-  if (isTaggedEventAnnotation(taggedAnnotation)) {
-    if (
-      taggedAnnotation.resourceType === 'asset' ||
-      taggedAnnotation.resourceType === 'file'
-    ) {
-      return taggedAnnotation.resourceType;
-    }
-
-    return undefined;
-  }
-
   if (
     isTaggedAnnotationAnnotation(taggedAnnotation) ||
     isTaggedLocalAnnotation(taggedAnnotation)
@@ -461,10 +339,6 @@ export const getResourceItemStateFromExtendedAnnotation = (
 };
 
 export const isApprovedTaggedAnnotation = (annotation: TaggedAnnotation) => {
-  if (isTaggedEventAnnotation(annotation)) {
-    return annotation.status === 'verified';
-  }
-
   if (isTaggedAnnotationAnnotation(annotation)) {
     return annotation.status === 'approved';
   }
@@ -473,10 +347,6 @@ export const isApprovedTaggedAnnotation = (annotation: TaggedAnnotation) => {
 };
 
 export const isSuggestedTaggedAnnotation = (annotation: TaggedAnnotation) => {
-  if (isTaggedEventAnnotation(annotation)) {
-    return annotation.status === 'unhandled';
-  }
-
   if (isTaggedAnnotationAnnotation(annotation)) {
     return annotation.status === 'suggested';
   }
@@ -485,10 +355,6 @@ export const isSuggestedTaggedAnnotation = (annotation: TaggedAnnotation) => {
 };
 
 export const isRejectedTaggedAnnotation = (annotation: TaggedAnnotation) => {
-  if (isTaggedEventAnnotation(annotation)) {
-    return annotation.status === 'deleted';
-  }
-
   if (isTaggedAnnotationAnnotation(annotation)) {
     return annotation.status === 'rejected';
   }
@@ -509,10 +375,6 @@ export const isRejectedAnnotation = (annotation: ExtendedAnnotation) => {
 };
 
 export const isAssetAnnotation = (annotation: ExtendedAnnotation) => {
-  if (isExtendedEventAnnotation(annotation)) {
-    return annotation.metadata.resourceType === 'asset';
-  }
-
   if (
     isExtendedAnnotationAnnotation(annotation) ||
     isExtendedLocalAnnotation(annotation)
@@ -524,10 +386,6 @@ export const isAssetAnnotation = (annotation: ExtendedAnnotation) => {
 };
 
 export const isFileAnnotation = (annotation: ExtendedAnnotation) => {
-  if (isExtendedEventAnnotation(annotation)) {
-    return annotation.metadata.resourceType === 'file';
-  }
-
   if (
     isExtendedAnnotationAnnotation(annotation) ||
     isExtendedLocalAnnotation(annotation)
@@ -538,15 +396,6 @@ export const isFileAnnotation = (annotation: ExtendedAnnotation) => {
   return false;
 };
 
-export const getTaggedEventAnnotation = (
-  annotation: CogniteAnnotation
-): TaggedEventAnnotation => {
-  return {
-    ...annotation,
-    [ANNOTATION_SOURCE_KEY]: AnnotationSource.EVENTS,
-  };
-};
-
 export const getTaggedAnnotationAnnotation = (
   annotation: AnnotationModel
 ): TaggedAnnotationAnnotation => {
@@ -554,12 +403,6 @@ export const getTaggedAnnotationAnnotation = (
     ...annotation,
     [ANNOTATION_SOURCE_KEY]: AnnotationSource.ANNOTATIONS,
   };
-};
-
-export const isTaggedEventAnnotation = (
-  taggedAnnotation: TaggedAnnotation
-): taggedAnnotation is TaggedEventAnnotation => {
-  return taggedAnnotation[ANNOTATION_SOURCE_KEY] === AnnotationSource.EVENTS;
 };
 
 export const isTaggedAnnotationAnnotation = (

@@ -6,7 +6,6 @@ import {
   getResourceIdFromExtendedAnnotation,
   isAssetAnnotation,
   isExtendedAnnotationAnnotation,
-  isExtendedEventAnnotation,
   isExtendedLocalAnnotation,
 } from '../../utils';
 
@@ -14,10 +13,6 @@ export const useDeleteAnnotation = (options: any) => {
   const sdk = useSDK();
   const { mutate } = useMutation(async (annotation: ExtendedAnnotation) => {
     const deleteAnnotationPromise = (() => {
-      if (isExtendedEventAnnotation(annotation)) {
-        return sdk.events.delete([{ id: annotation.metadata.id }]);
-      }
-
       if (isExtendedAnnotationAnnotation(annotation)) {
         return sdk.annotations.delete([{ id: annotation.metadata.id }]);
       }

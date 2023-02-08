@@ -1,75 +1,69 @@
-import React, { useContext, useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import {
   Button,
   Title,
   Body,
-  Collapse,
   Menu,
   toast,
-  Modal,
   Detail,
   Flex,
 } from '@cognite/cogs.js';
 import {
-  useSelectedAnnotations,
-  ProposedCogniteAnnotation,
-  useExtractFromCanvas,
-  useZoomControls,
-} from '@cognite/react-picture-annotation';
-import { Divider, InfoCell } from '@data-exploration-components/components';
-import { Dropdown, Pagination, Spin, Breadcrumb } from 'antd';
-import {
-  AnnotationStatus,
-  CogniteAnnotation,
-  CogniteAnnotationPatch,
-  convertAnnotationsToEvents,
-  hardDeleteAnnotations,
-  updateAnnotations,
-  linkFileToAssetIds,
-  AnnotationResourceType,
-} from '@cognite/annotations';
+  Divider,
+  InfoCell,
+} from '@data-exploration-components/components/index';
+import { Dropdown, Pagination, Spin, Breadcrumb, Modal } from 'antd';
 import styled from 'styled-components';
 import { useResourceSelector } from '@data-exploration-components/context/ResourceSelectorContext';
 import {
-  ResourceItemState,
   ResourceItem,
   convertResourceType,
-  ResourceType,
-} from '@data-exploration-components/types';
-import { useCreate } from '@data-exploration-components/hooks/sdk';
-import { useQueryClient, useMutation } from 'react-query';
+} from '@data-exploration-components/types/index';
+import { useQueryClient } from 'react-query';
 import {
   sleep,
-  lightGrey,
   SIDEBAR_RESIZE_EVENT,
-} from '@data-exploration-components/utils';
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteEvent, EventChange, FileInfo } from '@cognite/sdk';
-import { ResourcePreviewSidebar } from '@data-exploration-components/containers';
+} from '@data-exploration-components/utils/index';
+import { FileInfo, AnnotationStatus } from '@cognite/sdk';
+import { ResourcePreviewSidebar } from '@data-exploration-components/containers/index';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { AppContext } from '@data-exploration-components/context/AppContext';
 import capitalize from 'lodash/capitalize';
-import { useDisclosure } from '@data-exploration-components/hooks';
-
-import { ContextualizationData } from './ContextualizationModule';
+import { useDisclosure } from '@data-exploration-components/hooks/index';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
+import {
+  useCreateAnnotation,
+  useDeleteAnnotation,
+  useUpdateAnnotations,
+} from '@data-exploration-lib/domain-layer';
+import {
+  getExtendedAnnotationDescription,
+  getExtendedAnnotationLabel,
+  getResourceExternalIdFromExtendedAnnotation,
+  getResourceIdFromExtendedAnnotation,
+  getResourceItemStateFromExtendedAnnotation,
+  getResourceTypeFromExtendedAnnotation,
+  isExtendedLocalAnnotation,
+  setExtendedAnnotationResource,
+  setExtendedAnnotationStatus,
+} from './migration/utils';
 import ReviewTagBar from './ReviewTagBar';
 import FilePreviewSidebar from './FilePreviewSidebar';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 type Props = {
   file?: FileInfo;
   contextualization: boolean;
   onItemClicked?: (item: ResourceItem) => void;
   setPendingAnnotations: React.Dispatch<
-    React.SetStateAction<ProposedCogniteAnnotation[]>
+    React.SetStateAction<ExtendedAnnotation[]>
   >;
-  setZoomedAnnotation: (
-    zoomedAnnotation: CogniteAnnotation | undefined
-  ) => void;
   setIsAnnotationsShown: (isAnnotationShown: boolean) => void;
   isAnnotationsShown: boolean;
-  annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
+  annotations: ExtendedAnnotation[];
   fileIcon?: React.ReactNode;
+  reset: () => void;
+  selectedAnnotations: ExtendedAnnotation[];
+  setSelectedAnnotations: (annotations: ExtendedAnnotation[]) => void;
 };
 
 interface AnnotationModalStateProps {
@@ -84,17 +78,15 @@ const AnnotationPreviewSidebar = ({
   setIsAnnotationsShown,
   isAnnotationsShown,
   setPendingAnnotations,
-  setZoomedAnnotation,
   contextualization,
   onItemClicked,
   annotations,
   fileIcon,
+  reset,
+  selectedAnnotations,
+  setSelectedAnnotations,
 }: Props) => {
   const client = useQueryClient();
-  const sdk = useSDK();
-  const context = useContext(AppContext);
-  const email = context?.userInfo?.email || 'UNKNOWN';
-
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
 
   const [annotationModalState, setAnnotationModalState] =
@@ -109,44 +101,34 @@ const AnnotationPreviewSidebar = ({
     'assets' | 'files' | undefined
   >();
 
-  const { selectedAnnotations = [], setSelectedAnnotations } =
-    useSelectedAnnotations();
-  const { reset } = useZoomControls();
-
   const selectedAnnotation = selectedAnnotations?.length
     ? selectedAnnotations[currentIndex || 0]
     : undefined;
 
-  const extractFromCanvas = useExtractFromCanvas();
-
   const { openResourceSelector } = useResourceSelector();
 
-  const selectedAnnotationId = selectedAnnotation
-    ? selectedAnnotation.id
-    : undefined;
-
-  const isPendingAnnotation = typeof selectedAnnotationId === 'string';
+  const isPendingAnnotation =
+    selectedAnnotation !== undefined &&
+    isExtendedLocalAnnotation(selectedAnnotation);
 
   useEffect(() => {
     setEditing(false);
     window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT));
-  }, [selectedAnnotationId]);
+  }, [selectedAnnotation?.id]);
 
   useEffect(() => {
     setCurrentIndex(0);
     window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT));
   }, [selectedAnnotations?.length]);
 
-  let annotationPreview: string | undefined;
-  if (selectedAnnotation && extractFromCanvas) {
-    const { xMin, yMin, xMax, yMax } = selectedAnnotation?.box;
-    annotationPreview = extractFromCanvas(xMin, yMin, xMax - xMin, yMax - yMin);
-  }
-
   const isEditingMode = isPendingAnnotation || editing;
 
   const onSuccess = (action: string) => {
     const invalidate = () => {
+      if (file !== undefined) {
+        client.invalidateQueries(`annotations-file-${file.id}`);
+      }
+
       client.invalidateQueries([
         'sdk-react-query-hooks',
         'cdf',
@@ -190,93 +172,45 @@ const AnnotationPreviewSidebar = ({
     toast.success(`Tag ${action} successfully`);
   };
 
-  const { mutate: createEvent } = useCreate('events', {
+  const createAnnotation = useCreateAnnotation({
     onSuccess: () => onSuccess('created'),
   });
 
-  const { mutate: updateEvent } = useMutation(
-    (updates: EventChange) => sdk.events.update([updates]),
-    {
-      onSuccess: () => onSuccess('saved'),
+  const updateAnnotations = useUpdateAnnotations({
+    onSuccess: () => onSuccess('saved'),
+  });
+
+  const approveAnnotations = useUpdateAnnotations({
+    onSuccess: () => onSuccess('approved'),
+  });
+
+  const deleteAnnotation = useDeleteAnnotation({
+    onSuccess: () => onSuccess('deleted'),
+  });
+
+  const onSaveAnnotation = (annotation: ExtendedAnnotation) => {
+    if (isExtendedLocalAnnotation(annotation)) {
+      return createAnnotation(annotation);
     }
-  );
 
-  const { mutate: deleteAnnotations } = useMutation(
-    (deletedAnnotations: CogniteAnnotation[]) =>
-      hardDeleteAnnotations(sdk, deletedAnnotations),
-    {
-      onSuccess: () => onSuccess('deleted'),
+    return updateAnnotations([annotation]);
+  };
+
+  const handleSave = () => {
+    if (selectedAnnotation) {
+      onSaveAnnotation(selectedAnnotation);
     }
-  );
-
-  const { mutate: updateAnnotationStatus } = useMutation(
-    (update: { annotation: CogniteAnnotation; status: AnnotationStatus }) =>
-      updateAnnotations(sdk, [
-        {
-          id: update.annotation.id,
-          annotation: update.annotation,
-          update: {
-            status: {
-              set: update.status,
-            },
-            checkedBy: {
-              set: email,
-            },
-          },
-        },
-      ]),
-    {
-      onSuccess: () => onSuccess('updated'),
-    }
-  );
-
-  const { mutate: approveAnnotations } = useMutation(
-    (update: CogniteAnnotationPatch[]) => updateAnnotations(sdk, update),
-    {
-      onSuccess: () => onSuccess('approved'),
-    }
-  );
-
-  const onSaveAnnotation = (
-    annotation: ProposedCogniteAnnotation | CogniteAnnotation,
-    savedItem: any
-  ) => {
-    if (typeof annotation.id === 'string') {
-      if (savedItem.name && !annotation.label) {
-        annotation.label = savedItem.name;
-      }
-      if (savedItem.description && !annotation.description) {
-        annotation.description = savedItem.description;
-      }
-      const event = convertAnnotationsToEvents([annotation])[0];
-      event.id = undefined;
-      createEvent(event);
-    } else {
-      const event = convertAnnotationsToEvents([annotation])[0] as CogniteEvent;
-      const update: EventChange = {
-        id: event.id,
-        update: {},
-      };
-      if (event.description) {
-        update.update.description = { set: event.description };
-      }
-      if (event.metadata) {
-        update.update.metadata = {
-          set: event.metadata,
-        };
-      }
-
-      if (Object.keys(update.update).length > 0) {
-        updateEvent(update);
-      }
+    setEditing(false);
+    if (isPendingAnnotation) {
+      setSelectedAnnotations([]);
     }
   };
 
   const onUpdateAnnotationStatus = (
-    annotation: CogniteAnnotation,
+    annotation: ExtendedAnnotation,
     status: AnnotationStatus
   ) => {
-    const isApprove = status === 'verified';
+    const isApprove = status === 'approved';
     const okText = isApprove ? 'Approve tag' : 'Reject tag';
     const content = isApprove ? (
       <Body level={2} strong>
@@ -294,8 +228,7 @@ const AnnotationPreviewSidebar = ({
       okText,
       content,
       onOk: async () => {
-        updateAnnotationStatus({ annotation, status });
-        await linkFileToAssetIds(sdk, [annotation]);
+        updateAnnotations([setExtendedAnnotationStatus(annotation, status)]);
         setSelectedAnnotations([]);
         onModalClose();
       },
@@ -304,43 +237,33 @@ const AnnotationPreviewSidebar = ({
     onOpen();
   };
 
-  const onDeleteAnnotation = (
-    annotation: CogniteAnnotation | ProposedCogniteAnnotation
-  ) => {
+  const onDeleteAnnotation = (annotation: ExtendedAnnotation) => {
     setPendingAnnotations((pendingAnnotations) => {
       if (pendingAnnotations.find((el) => el.id === annotation.id)) {
         return pendingAnnotations.filter((el) => el.id !== annotation.id);
       }
       return pendingAnnotations;
     });
-    if (Number.isFinite(annotation.id)) {
+    if (isExtendedLocalAnnotation(annotation)) {
+      // If this is a local annotation, just deselect it
+      setSelectedAnnotations(
+        selectedAnnotations.filter((el) => el.id !== annotation.id)
+      );
+    } else {
+      // Otherwise, the annotation may be deleted using the SDK
       setAnnotationModalState({
         title: 'Are you sure?',
         content: (
           <span>
-            This annotations will be deleted. However, you can always
+            These annotations will be deleted. However, you can always
             re-contextualize the file.
           </span>
         ),
         onOk: async () => {
-          if (
-            annotation.resourceType === 'asset' &&
-            annotation?.resourceId &&
-            file
-          ) {
-            await sdk.files.update([
-              {
-                id: file.id,
-                update: {
-                  assetIds: {
-                    remove: [annotation.resourceId],
-                  },
-                },
-              },
-            ]);
-          }
-          deleteAnnotations([annotation as CogniteAnnotation]);
+          deleteAnnotation(annotation);
+          setPendingAnnotations([]);
           setSelectedAnnotations([]);
+          onModalClose();
         },
         onCancel: onModalClose,
       });
@@ -349,50 +272,49 @@ const AnnotationPreviewSidebar = ({
   };
 
   const onLinkResource = useCallback(() => {
+    const resourceItemState =
+      selectedAnnotation !== undefined &&
+      getResourceItemStateFromExtendedAnnotation(selectedAnnotation, 'selected')
+        ? getResourceItemStateFromExtendedAnnotation(
+            selectedAnnotation,
+            'selected'
+          )
+        : undefined;
+
     openResourceSelector({
+      resourceTypes: ['asset', 'file'],
       selectionMode: 'single',
       onSelect: (item) => {
+        if (selectedAnnotation === undefined) {
+          return;
+        }
+
         setSelectedAnnotations([
-          {
-            ...selectedAnnotation!,
-            resourceType: item.type as AnnotationResourceType, // added to solve type error!
-            resourceExternalId: item.externalId,
-            resourceId: item.id,
-          },
+          setExtendedAnnotationResource(selectedAnnotation, item),
         ]);
       },
-      initialItemState: selectedAnnotation
-        ? [
-            {
-              type: selectedAnnotation.resourceType,
-              id: selectedAnnotation.resourceId,
-              state: 'selected',
-            } as ResourceItemState,
-          ]
-        : undefined,
-      header: annotationPreview && (
-        <Collapse defaultActiveKey={[]}>
-          <Collapse.Panel key="preview" header="Annotation Preview">
-            <PreviewImage src={annotationPreview} alt="preview" />
-          </Collapse.Panel>
-        </Collapse>
-      ),
+      initialItemState:
+        resourceItemState !== undefined ? [resourceItemState] : undefined,
     });
-  }, [
-    openResourceSelector,
-    selectedAnnotation,
-    annotationPreview,
-    setSelectedAnnotations,
-  ]);
+  }, [openResourceSelector, selectedAnnotation, setSelectedAnnotations]);
 
   const isLinked =
-    !!selectedAnnotation?.resourceId ||
-    !!selectedAnnotation?.resourceExternalId;
+    selectedAnnotation !== undefined &&
+    (getResourceIdFromExtendedAnnotation(selectedAnnotation) !== undefined ||
+      getResourceExternalIdFromExtendedAnnotation(selectedAnnotation) !==
+        undefined);
   const type = isLinked
-    ? (selectedAnnotation?.resourceType as ResourceType)
+    ? getResourceTypeFromExtendedAnnotation(selectedAnnotation)
     : undefined;
   const apiType = type ? convertResourceType(type) : 'assets';
-  const { resourceExternalId, resourceId } = selectedAnnotation || {};
+  const resourceId =
+    selectedAnnotation !== undefined
+      ? getResourceIdFromExtendedAnnotation(selectedAnnotation)
+      : undefined;
+  const resourceExternalId =
+    selectedAnnotation !== undefined
+      ? getResourceExternalIdFromExtendedAnnotation(selectedAnnotation)
+      : undefined;
 
   const { data: item, isLoading } = useCdfItem<{ id: number }>(
     apiType,
@@ -406,7 +328,7 @@ const AnnotationPreviewSidebar = ({
     annotation,
     onClose,
   }: {
-    annotation: CogniteAnnotation | ProposedCogniteAnnotation;
+    annotation: ExtendedAnnotation;
     onClose: () => void;
   }) => {
     const menuOptions = () => (
@@ -440,7 +362,9 @@ const AnnotationPreviewSidebar = ({
               />
               <Breadcrumb>
                 <Breadcrumb.Item>{capitalize(type)}</Breadcrumb.Item>
-                <Breadcrumb.Item>{annotation.label || 'N/A'}</Breadcrumb.Item>
+                <Breadcrumb.Item>
+                  {getExtendedAnnotationLabel(annotation) || 'N/A'}
+                </Breadcrumb.Item>
               </Breadcrumb>
             </BreadcrumbContainer>
             <Flex direction="row">
@@ -481,12 +405,12 @@ const AnnotationPreviewSidebar = ({
               ''
             )}
             <Flex justifyContent="space-between">
-              <Title level={5}>{annotation.label} </Title>
+              <Title level={5}>
+                {getExtendedAnnotationLabel(annotation) || 'N/A'}
+              </Title>
             </Flex>
             <Body level={2}>
-              {annotation.description ||
-                (item as { description?: string })?.description ||
-                'N/A'}
+              {getExtendedAnnotationDescription(annotation)}
             </Body>
           </InfoCell>
           {contextualization && (
@@ -494,16 +418,10 @@ const AnnotationPreviewSidebar = ({
               <ReviewTagBar
                 annotation={annotation}
                 onApprove={(curAnnotation) =>
-                  onUpdateAnnotationStatus(
-                    curAnnotation as CogniteAnnotation,
-                    'verified'
-                  )
+                  onUpdateAnnotationStatus(curAnnotation, 'approved')
                 }
                 onReject={(curAnnotation) =>
-                  onUpdateAnnotationStatus(
-                    curAnnotation as CogniteAnnotation,
-                    'deleted'
-                  )
+                  onUpdateAnnotationStatus(curAnnotation, 'rejected')
                 }
               />
             </InfoCell>
@@ -558,14 +476,6 @@ const AnnotationPreviewSidebar = ({
               }}
             />
           }
-          footer={
-            <>
-              <ContextualizationData
-                selectedAnnotation={selectedAnnotation}
-                extractFromCanvas={extractFromCanvas}
-              />
-            </>
-          }
           content={
             isEditingMode ? (
               <CreateAnnotationForm
@@ -577,16 +487,7 @@ const AnnotationPreviewSidebar = ({
                 onDelete={() => {
                   onDeleteAnnotation(selectedAnnotation);
                 }}
-                onSave={(savedItem: any) => {
-                  if (selectedAnnotation) {
-                    onSaveAnnotation(selectedAnnotation, savedItem);
-                  }
-                  setEditing(false);
-                  if (isPendingAnnotation) {
-                    setSelectedAnnotations([]);
-                  }
-                }}
-                previewImageSrc={annotationPreview}
+                onSave={handleSave}
                 onCancel={
                   isPendingAnnotation ? undefined : () => setEditing(false)
                 }
@@ -603,12 +504,19 @@ const AnnotationPreviewSidebar = ({
       annotations={annotations}
       file={file}
       fileIcon={fileIcon}
-      approveAnnotations={approveAnnotations}
+      approveAnnotations={(annotations: ExtendedAnnotation[]) =>
+        approveAnnotations(
+          annotations.map((annotation) =>
+            setExtendedAnnotationStatus(annotation, 'approved')
+          )
+        )
+      }
       viewingAnnotations={viewingAnnotations}
       setViewingAnnotations={setViewingAnnotations}
-      setZoomedAnnotation={setZoomedAnnotation}
       setIsAnnotationsShown={setIsAnnotationsShown}
       isAnnotationsShown={isAnnotationsShown}
+      reset={reset}
+      setSelectedAnnotations={setSelectedAnnotations}
     />
   );
 };
@@ -629,17 +537,6 @@ const BreadcrumbContainer = styled.div`
   & > nav.ant-breadcrumb {
     margin-top: 8px;
   }
-`;
-
-const PreviewImage = styled.img`
-  max-height: 200px;
-  padding: 12px;
-  background: ${lightGrey};
-  width: auto;
-  object-fit: contain;
-  display: block;
-  align-self: flex-start;
-  margin-bottom: 16px;
 `;
 
 export { AnnotationPreviewSidebar };

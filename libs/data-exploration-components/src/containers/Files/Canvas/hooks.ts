@@ -4,9 +4,9 @@ import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useAnnotationsMultiple } from '@data-exploration-lib/domain-layer';
 import zip from 'lodash/zip';
 import { useMemo } from 'react';
-import getExtendedAnnotationsFromAnnotationsApi from '../FilePreview/FilePreviewUFV/Annotations/getExtendedAnnotationsFromAnnotationsApi';
+import getExtendedAnnotationsFromAnnotationsApi from '../FilePreview/Annotations/getExtendedAnnotationsFromAnnotationsApi';
 import { isNotUndefined } from '@data-exploration-components/utils';
-import { getStyledAnnotationFromAnnotation } from '../FilePreview/FilePreviewUFV/utils';
+import { getStyledAnnotationFromAnnotation } from '../FilePreview/utils';
 import { isNotUndefinedTuple } from './isNotUndefinedTuple';
 
 type useCanvasAnnotationsParams = {

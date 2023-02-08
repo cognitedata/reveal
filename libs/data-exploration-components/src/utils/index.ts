@@ -1,4 +1,3 @@
-export * from './annotations';
 export * from './colors';
 export * from './common';
 export * from './compare';

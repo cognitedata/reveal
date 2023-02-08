@@ -1,35 +1,10 @@
-import { CogniteAnnotation } from '@cognite/annotations';
 import { Colors } from '@cognite/cogs.js';
-import {
-  AnnotationType,
-  RectangleAnnotation,
-} from '@cognite/unified-file-viewer';
+import { AnnotationType } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { getResourceTypeFromExtendedAnnotation } from './migration/utils';
 
 export const getContainerId = (fileId: number) => {
   return String(fileId);
-};
-export const convertUFVAnnotationToLegacyCogniteAnnotation = (
-  annotation: RectangleAnnotation,
-  label: string
-): CogniteAnnotation => {
-  return {
-    createdTime: new Date(),
-    label,
-    lastUpdatedTime: new Date(),
-    source: '',
-    status: 'unhandled',
-    version: 0,
-    id: +annotation.id,
-    type: 'asset',
-    box: {
-      xMax: annotation.x + annotation.width,
-      xMin: annotation.x,
-      yMax: annotation.y + annotation.height,
-      yMin: annotation.y,
-    },
-  };
 };
 
 export const getStyledAnnotationFromAnnotation = (

@@ -137,6 +137,7 @@ export const ResourceSelectionSidebar = ({
               setCurrentResourceType={(tab) =>
                 setActiveKey(tab as ResourceType)
               }
+              resourceTypes={resourceTypes}
             />
             <Wrapper>
               <SearchFilters

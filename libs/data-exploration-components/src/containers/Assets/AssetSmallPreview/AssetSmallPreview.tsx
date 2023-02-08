@@ -26,7 +26,7 @@ import {
   ResourceIcons,
 } from '@data-exploration-components/components';
 import { TimeseriesSmallPreview } from '@data-exploration-components/containers/Timeseries';
-import { FileSmallPreviewUFV } from '@data-exploration-components/containers/Files';
+import { FileSmallPreview } from '@data-exploration-components/containers/Files';
 import {
   SelectableItemProps,
   SmallPreviewProps,
@@ -34,7 +34,14 @@ import {
 import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import { createLink } from '@cognite/cdf-utilities';
 import { lightGrey } from '@data-exploration-components/utils';
+import styled from 'styled-components';
+import { EmptyState } from '../../../components/EmpyState/EmptyState';
 
+const RowItemTitleContainer = styled.div`
+  display: flex;
+  padding-bottom: 8px;
+  border-bottom: 1px solid ${lightGrey};
+`;
 const RowItem = ({
   style,
   title,
@@ -53,20 +60,39 @@ const RowItem = ({
         marginLeft: 8,
       }}
       title={
-        <div
-          style={{
-            display: 'flex',
-            paddingBottom: 8,
-            borderBottom: `1px solid ${lightGrey}`,
-          }}
-        >
+        <RowItemTitleContainer>
           <span>{title}</span>
-        </div>
+        </RowItemTitleContainer>
       }
       bordered={false}
     />
   </div>
 );
+
+const BackButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+const CenteredBody = styled(Body)`
+  align-items: center;
+  display: flex;
+`;
+const ExtrasContainer = styled.div`
+  position: absolute;
+  top: 16px;
+  right: 16px;
+`;
+const AssetTitle = styled(Title)`
+  display: flex;
+  align-items: center;
+`;
+const AssetNameLabel = styled.span`
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 5px;
+`;
+
 export const AssetSmallPreview = ({
   assetId,
   actions,
@@ -115,12 +141,14 @@ export const AssetSmallPreview = ({
     return <Loader />;
   }
   if (!asset) {
-    return <>Asset {assetId} not found!</>;
+    return (
+      <EmptyState isLoading={false} title={`Asset ${assetId} not found`} />
+    );
   }
   if (selected) {
     let content: React.ReactNode = null;
     if (selected.type === 'files') {
-      content = <FileSmallPreviewUFV fileId={selected.id} />;
+      content = <FileSmallPreview fileId={selected.id} />;
     }
     if (selected.type === 'timeseries') {
       content = <TimeseriesSmallPreview timeseriesId={selected.id} />;
@@ -128,7 +156,7 @@ export const AssetSmallPreview = ({
     return (
       <InfoGrid noBorders>
         <InfoCell noBorders>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <BackButtonContainer>
             <Button
               onClick={() => setSelected(undefined)}
               type="ghost"
@@ -136,7 +164,7 @@ export const AssetSmallPreview = ({
             >
               BACK TO {asset.name.toLocaleUpperCase()}
             </Button>
-          </div>
+          </BackButtonContainer>
         </InfoCell>
         {content}
       </InfoGrid>
@@ -151,50 +179,24 @@ export const AssetSmallPreview = ({
             color: Colors['greyscale-grey6'].hex(),
           }}
         >
-          <Body
-            level={2}
-            strong
-            style={{
-              alignItems: 'center',
-              display: 'flex',
-            }}
-          >
+          <CenteredBody level={2} strong>
             {statusText}
-          </Body>
+          </CenteredBody>
         </InfoCell>
       )}
-      {extras && (
-        <div style={{ position: 'absolute', top: '16px', right: '16px' }}>
-          {extras}
-        </div>
-      )}
+      {extras && <ExtrasContainer>{extras}</ExtrasContainer>}
       {!hideTitle && asset.name && (
         <InfoCell noPadding noBorders>
-          <Title
-            level={5}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
+          <AssetTitle level={5}>
             <ResourceIcons.Asset />
             <A
               href={createLink(`/explore/asset/${assetId}`)}
               target="_blank"
               rel="noopener"
             >
-              <span
-                style={{
-                  flex: 1,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  margin: '0 5px',
-                }}
-              >
-                {asset.name}→
-              </span>
+              <AssetNameLabel>{asset.name}→</AssetNameLabel>
             </A>
-          </Title>
+          </AssetTitle>
         </InfoCell>
       )}
 

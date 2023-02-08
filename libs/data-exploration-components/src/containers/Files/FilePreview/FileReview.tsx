@@ -1,22 +1,26 @@
-import { CogniteAnnotation } from '@cognite/annotations';
-import { Body, Button, Icon } from '@cognite/cogs.js';
-import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
+import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Tooltip } from 'antd';
-import { ResourceIcons } from '@data-exploration-components/components';
+import { ResourceIcons } from '@data-exploration-components/components/index';
 import { AppContext } from '@data-exploration-components/context/AppContext';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
+import {
+  getResourceExternalIdFromExtendedAnnotation,
+  getResourceIdFromExtendedAnnotation,
+  isAssetAnnotation,
+  isFileAnnotation,
+  isSuggestedAnnotation,
+} from './migration/utils';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 const FileReview = ({
   annotations,
   onApprove,
   onTypeClick,
 }: {
-  annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
-  onApprove: (
-    _annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>
-  ) => void;
+  annotations: ExtendedAnnotation[];
+  onApprove: (_annotations: ExtendedAnnotation[]) => void;
   onTypeClick: (type: 'assets' | 'files') => void;
 }) => {
   const context = useContext(AppContext);
@@ -38,23 +42,17 @@ const FileReview = ({
   const labelsAccess = labelsReadAcl && labelsWriteAcl;
 
   const linkedAnnotations = annotations.filter(
-    (an) => !!an.resourceId || !!an.resourceExternalId
+    (annotation) =>
+      getResourceIdFromExtendedAnnotation(annotation) !== undefined ||
+      getResourceExternalIdFromExtendedAnnotation(annotation) !== undefined
   );
-  const pendingAnnotations = annotations.filter(
-    (a) => a.status === 'unhandled'
-  );
-
-  const assetAnnotations = annotations.filter(
-    (a) => a.resourceType === 'asset'
-  );
-
-  const fileAnnotations = annotations.filter((a) => a.resourceType === 'file');
-  const pendingAssetAnnotations = pendingAnnotations.filter(
-    (a) => a.resourceType === 'asset'
-  );
-  const pendingFileAnnotations = pendingAnnotations.filter(
-    (a) => a.resourceType === 'file'
-  );
+  const suggestedAnnotations = annotations.filter(isSuggestedAnnotation);
+  const assetAnnotations = annotations.filter(isAssetAnnotation);
+  const fileAnnotations = annotations.filter(isFileAnnotation);
+  const suggestedAssetAnnotations =
+    suggestedAnnotations.filter(isAssetAnnotation);
+  const suggestedFileAnnotations =
+    suggestedAnnotations.filter(isFileAnnotation);
 
   return (
     <ReviewTagWrapper>
@@ -71,7 +69,7 @@ const FileReview = ({
 
         <Body level={2}>{linkedAnnotations.length}</Body>
       </div>
-      {pendingAnnotations.length ? (
+      {suggestedAnnotations.length ? (
         <Tooltip
           title={
             !labelsAccess &&
@@ -86,14 +84,14 @@ const FileReview = ({
               type="tertiary"
               disabled={!labelsAccess}
             >
-              Approve {pendingAnnotations.length} new tags
+              Approve {suggestedAnnotations.length} new tags
             </Button>
           </ButtonWrapper>
         </Tooltip>
       ) : null}
 
       <StyledTag onClick={() => onTypeClick('assets')}>
-        <IconWrapper>
+        <Flex justifyContent="space-between">
           <ResourceIcons
             style={{
               marginTop: '-5px',
@@ -104,22 +102,22 @@ const FileReview = ({
           <Body style={{ color: '#4255BB' }} level={2} strong>
             Assets
           </Body>
-          {pendingAssetAnnotations.length ? (
+          {suggestedAssetAnnotations.length ? (
             <Body
               level={2}
               style={{ color: '#4255BB', opacity: '0.7', marginLeft: '5px' }}
             >
-              {pendingAssetAnnotations.length} new
+              {suggestedAssetAnnotations.length} new
             </Body>
           ) : null}
-        </IconWrapper>
-        <CountWrapper>
+        </Flex>
+        <Flex>
           <Body level={5}>{assetAnnotations.length}</Body>
           <Icon type="ChevronRight" style={{ marginTop: '3px' }} />
-        </CountWrapper>
+        </Flex>
       </StyledTag>
       <StyledTag onClick={() => onTypeClick('files')}>
-        <IconWrapper>
+        <Flex justifyContent="space-between">
           <ResourceIcons
             style={{
               marginTop: '-5px',
@@ -130,19 +128,19 @@ const FileReview = ({
           <Body style={{ color: '#4255BB' }} level={2} strong>
             Diagrams
           </Body>
-          {pendingFileAnnotations.length ? (
+          {suggestedFileAnnotations.length ? (
             <Body
               level={2}
               style={{ color: '#4255BB', opacity: '0.7', marginLeft: '5px' }}
             >
-              {pendingFileAnnotations.length} new{' '}
+              {suggestedFileAnnotations.length} new{' '}
             </Body>
           ) : null}
-        </IconWrapper>
-        <CountWrapper>
+        </Flex>
+        <Flex>
           <Body level={5}>{fileAnnotations.length}</Body>
           <Icon type="ChevronRight" style={{ marginTop: '3px' }} />
-        </CountWrapper>
+        </Flex>
       </StyledTag>
     </ReviewTagWrapper>
   );
@@ -180,13 +178,4 @@ const StyledTag = styled.div`
 const ButtonWrapper = styled.div`
   margin: 6px 0px 6px;
   width: 100%;
-`;
-
-const IconWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const CountWrapper = styled.div`
-  display: flex;
 `;

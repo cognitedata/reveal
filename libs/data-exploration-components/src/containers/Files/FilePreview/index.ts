@@ -1,1 +1,1 @@
-export * from './FilePreviewOverview/FilePreviewOverview';
+export * from './FilePreview';

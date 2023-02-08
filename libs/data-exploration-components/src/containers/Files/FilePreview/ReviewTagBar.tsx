@@ -1,29 +1,34 @@
-import { CogniteAnnotation } from '@cognite/annotations';
 import { A, Body, Button, Icon } from '@cognite/cogs.js';
-import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
-import { ResourceIcons } from '@data-exploration-components/components';
-import { ResourceType } from '@data-exploration-components/index';
+import { ResourceIcons } from '@data-exploration-components/components/index';
+import { ResourceType } from '@cognite/data-exploration';
 import React from 'react';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
-import { capitalizeFirstLetter } from '@data-exploration-components/utils';
+import { capitalizeFirstLetter } from '@data-exploration-components/utils/index';
+import {
+  getExtendedAnnotationLabel,
+  getResourceIdFromExtendedAnnotation,
+  getResourceTypeFromExtendedAnnotation,
+  isSuggestedAnnotation,
+} from './migration/utils';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 const ReviewTagBar = ({
   annotation,
   onApprove,
   onReject,
 }: {
-  annotation: CogniteAnnotation | ProposedCogniteAnnotation;
-  onApprove: (
-    annotation: CogniteAnnotation | ProposedCogniteAnnotation
-  ) => void;
-  onReject: (annotation: CogniteAnnotation | ProposedCogniteAnnotation) => void;
+  annotation: ExtendedAnnotation;
+  onApprove: (annotation: ExtendedAnnotation) => void;
+  onReject: (annotation: ExtendedAnnotation) => void;
 }) => (
   <ReviewTagWrapper>
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      {annotation?.resourceType && (
+      {getResourceTypeFromExtendedAnnotation(annotation) && (
         <ResourceIcons
-          type={annotation?.resourceType as ResourceType}
+          type={
+            getResourceTypeFromExtendedAnnotation(annotation) as ResourceType
+          }
           style={{
             background: 'white',
             color: 'black',
@@ -32,17 +37,21 @@ const ReviewTagBar = ({
         />
       )}
       <Body level={2} strong>
-        {annotation?.resourceType
-          ? capitalizeFirstLetter(annotation?.resourceType)
+        {getResourceTypeFromExtendedAnnotation(annotation)
+          ? capitalizeFirstLetter(
+              getResourceTypeFromExtendedAnnotation(annotation)
+            )
           : 'Unlinked tag'}
       </Body>
     </div>
     <StyledTag>
-      {annotation?.label || 'N/A'}{' '}
-      {annotation.resourceId ? (
+      {getExtendedAnnotationLabel(annotation) || 'N/A'}{' '}
+      {getResourceIdFromExtendedAnnotation(annotation) ? (
         <A
           href={createLink(
-            `/explore/${annotation.resourceType}/${annotation.resourceId}`
+            `/explore/${getResourceTypeFromExtendedAnnotation(
+              annotation
+            )}/${getResourceIdFromExtendedAnnotation(annotation)}`
           )}
           target="_blank"
           rel="noopener"
@@ -55,7 +64,7 @@ const ReviewTagBar = ({
       ) : undefined}
     </StyledTag>
 
-    {annotation.status === 'unhandled' && (
+    {isSuggestedAnnotation(annotation) && (
       <>
         <ButtonWrapper>
           <Button

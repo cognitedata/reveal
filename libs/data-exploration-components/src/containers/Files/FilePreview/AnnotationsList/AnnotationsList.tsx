@@ -11,11 +11,11 @@ import {
   SegmentedControl,
 } from '@cognite/cogs.js';
 import { Breadcrumb } from 'antd';
-import { ResourceIcons } from '@data-exploration-components/components';
+import { ResourceIcons } from '@data-exploration-components/components/index';
 import capitalize from 'lodash/capitalize';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
-import { isNotUndefined } from '@data-exploration-components/utils';
+import { isNotUndefined } from '@data-exploration-components/utils/index';
 import {
   getExtendedAnnotationLabel,
   getResourceIdFromExtendedAnnotation,

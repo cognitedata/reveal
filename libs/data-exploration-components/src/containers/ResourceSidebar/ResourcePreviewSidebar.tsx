@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Button, Graphic } from '@cognite/cogs.js';
 import { AssetSmallPreview } from '@data-exploration-components/containers/Assets';
-import { FileSmallPreviewUFV } from '@data-exploration-components/containers/Files';
+import { FileSmallPreview } from '@data-exploration-components/containers/Files';
 import { SequenceSmallPreview } from '@data-exploration-components/containers/Sequences';
 import { TimeseriesSmallPreview } from '@data-exploration-components/containers/Timeseries';
 import { EventSmallPreview } from '@data-exploration-components/containers/Events';
@@ -25,23 +25,26 @@ type Props = {
   hideContent?: boolean;
 } & Partial<SelectableItemProps>;
 
+const Centered = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+`;
+const ResourcePreviewPlaceholder = () => {
+  return (
+    <Centered>
+      <Graphic type="Search" />
+      <p>No resource to preview.</p>
+    </Centered>
+  );
+};
+
 export const ResourcePreviewSidebar = ({
   item,
   closable = true,
-  placeholder = (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        height: '100%',
-      }}
-    >
-      <Graphic type="Search" />
-      <p>No resource to preview.</p>
-    </div>
-  ),
+  placeholder = ResourcePreviewPlaceholder(),
   header,
   actions,
   footer,
@@ -69,7 +72,7 @@ export const ResourcePreviewSidebar = ({
       }
       case 'file': {
         content = (
-          <FileSmallPreviewUFV
+          <FileSmallPreview
             hideTitle={hideTitle}
             fileId={item.id}
             {...commonProps}

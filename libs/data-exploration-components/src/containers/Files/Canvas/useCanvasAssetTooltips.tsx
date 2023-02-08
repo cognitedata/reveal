@@ -6,7 +6,7 @@ import {
   getExtendedAnnotationLabel,
   getResourceIdFromExtendedAnnotation,
   isAssetAnnotation,
-} from '@data-exploration-components/containers/Files/FilePreview/FilePreviewUFV/migration/utils';
+} from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import styled from 'styled-components';
 

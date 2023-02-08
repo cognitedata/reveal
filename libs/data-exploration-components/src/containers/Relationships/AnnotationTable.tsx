@@ -21,7 +21,7 @@ import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import {
   getResourceExternalIdFromTaggedAnnotation,
   getResourceIdFromTaggedAnnotation,
-} from '../Files/FilePreview/FilePreviewUFV/migration/utils';
+} from '../Files/FilePreview/migration/utils';
 
 type Props = {
   fileId: number;

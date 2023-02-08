@@ -7,8 +7,7 @@ import {
 import { useMemo } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
-import getExtendedAnnotationsFromCogniteAnnotations from './getExtendedAnnotationsFromCogniteAnnotations';
-import { isNotUndefined } from '@data-exploration-components/utils';
+import { isNotUndefined } from '@data-exploration-components/utils/index';
 import {
   getExtendedAnnotationPage,
   isRejectedAnnotation,
@@ -16,7 +15,6 @@ import {
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useAnnotations } from '@data-exploration-lib/domain-layer';
 import { getContainerId, getStyledAnnotationFromAnnotation } from './utils';
-import { useEventAnnotations } from '@data-exploration-lib/domain-layer';
 
 // The maximum difference the corresponding sides of two bounding boxes may
 // have. If all differences are below this value, for all sides of the bounding
@@ -43,8 +41,6 @@ export const useUnifiedFileViewerAnnotations = ({
   onMouseOver,
   onMouseOut,
 }: useUnifiedFileViewerAnnotationsProps): ExtendedAnnotation[] => {
-  const persistedAnnotations = useEventAnnotations(fileId);
-
   // NOTE: We are filtering out annotations originating from the migratin script.
   // When we remove support for the Events API, we can remove this filter.
   const annotationsApiAnnotations = useAnnotations(fileId).data.filter(
@@ -55,10 +51,6 @@ export const useUnifiedFileViewerAnnotations = ({
   return useMemo(
     () =>
       [
-        ...getExtendedAnnotationsFromCogniteAnnotations(
-          persistedAnnotations,
-          getContainerId(fileId)
-        ),
         ...getExtendedAnnotationsFromAnnotationsApi(
           annotationsApiAnnotations,
           getContainerId(fileId)
@@ -130,7 +122,6 @@ export const useUnifiedFileViewerAnnotations = ({
       fileId,
       hoverId,
       pendingAnnotations,
-      persistedAnnotations,
       annotationsApiAnnotations,
       page,
     ]

@@ -1,34 +1,11 @@
-import {
-  CogniteAnnotation,
-  convertAnnotationsToEvents,
-} from '@cognite/annotations';
 import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient, CogniteEvent, EventChange } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
 import { AnnotationChangeById } from '@cognite/sdk/dist/src/types';
-import omit from 'lodash/omit';
 import { useMutation } from 'react-query';
 
 import { persistAssetIds } from './useCreateAnnotation';
-import {
-  isExtendedAnnotationAnnotation,
-  isExtendedEventAnnotation,
-} from '../../utils';
-import {
-  ANNOTATION_SOURCE_KEY,
-  ExtendedAnnotation,
-  isNotUndefined,
-} from '@data-exploration-lib/core';
-
-const persistEventChanges = async (
-  sdk: CogniteClient,
-  eventChanges: EventChange[]
-): Promise<CogniteEvent[] | undefined> => {
-  if (eventChanges.length === 0) {
-    return undefined;
-  }
-
-  return sdk.events.update(eventChanges);
-};
+import { isExtendedAnnotationAnnotation } from '../../utils';
+import { ExtendedAnnotation, isNotUndefined } from '@data-exploration-lib/core';
 
 const persistAnnotationChanges = async (
   sdk: CogniteClient,
@@ -45,42 +22,6 @@ export const useUpdateAnnotations = (options: any) => {
   const sdk = useSDK();
   const { mutate } = useMutation(async (annotations: ExtendedAnnotation[]) => {
     return Promise.all([
-      persistEventChanges(
-        sdk,
-        annotations
-          .filter(isExtendedEventAnnotation)
-          .map((extendedEventAnnotation) => {
-            const eventAnnotation: CogniteAnnotation = omit(
-              extendedEventAnnotation.metadata,
-              ANNOTATION_SOURCE_KEY
-            );
-            const event = convertAnnotationsToEvents([eventAnnotation])[0];
-
-            if (event.id === undefined) {
-              throw new Error('Event id is undefined');
-            }
-
-            const eventChange: EventChange = {
-              id: event.id,
-              update: {},
-            };
-            if (event.description) {
-              eventChange.update.description = { set: event.description };
-            }
-            if (event.metadata) {
-              eventChange.update.metadata = {
-                set: event.metadata,
-              };
-            }
-
-            if (Object.keys(eventChange.update).length > 0) {
-              return eventChange;
-            }
-
-            return undefined;
-          })
-          .filter(isNotUndefined)
-      ),
       persistAnnotationChanges(
         sdk,
         annotations

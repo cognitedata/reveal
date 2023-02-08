@@ -5,7 +5,7 @@ import { Button, Dropdown, Flex, Menu, ToolBar } from '@cognite/cogs.js';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { SearchBar } from './SearchBar';
 import { useFileDownloadUrl } from './hooks';
-import { IconButton } from '../../../../components';
+import { IconButton } from '../../../components/index';
 import noop from 'lodash/noop';
 import { HIDE_DETAILS, SHOW_DETAILS } from './constants';
 

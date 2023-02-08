@@ -1,24 +1,13 @@
-import {
-  CogniteAnnotation,
-  PendingCogniteAnnotation,
-} from '@cognite/annotations';
 import { AnnotationModel } from '@cognite/sdk';
 
 import { Annotation, RectangleAnnotation } from '@cognite/unified-file-viewer';
 import { ANNOTATION_SOURCE_KEY } from '../constants';
 
-export interface ProposedCogniteAnnotation extends PendingCogniteAnnotation {
-  id: string;
-}
 export enum AnnotationSource {
   LOCAL = 'local',
   EVENTS = 'events',
   ANNOTATIONS = 'annotations',
 }
-
-export type TaggedEventAnnotation = {
-  [ANNOTATION_SOURCE_KEY]: AnnotationSource.EVENTS;
-} & CogniteAnnotation;
 
 export type TaggedAnnotationAnnotation = {
   [ANNOTATION_SOURCE_KEY]: AnnotationSource.ANNOTATIONS;
@@ -32,7 +21,6 @@ export type TaggedLocalAnnotation = {
 >;
 
 export type TaggedAnnotation =
-  | TaggedEventAnnotation
   | TaggedAnnotationAnnotation
   | TaggedLocalAnnotation;
 

@@ -1,23 +1,47 @@
 import React from 'react';
 import { Input, Button, Title, Icon, Body } from '@cognite/cogs.js';
-import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import styled from 'styled-components';
-import { Loader, SpacedRow } from '@data-exploration-components/components';
-import { CogniteAnnotation } from '@cognite/annotations';
-import { renderTitle, lightGrey } from '@data-exploration-components/utils';
+import {
+  Loader,
+  SpacedRow,
+} from '@data-exploration-components/components/index';
+import {
+  renderTitle,
+  lightGrey,
+} from '@data-exploration-components/utils/index';
 import { useCdfItem, SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { IdEither } from '@cognite/sdk';
-import { convertResourceType } from '@data-exploration-components/types';
+import { convertResourceType } from '@data-exploration-components/types/index';
+import {
+  getExtendedAnnotationDescription,
+  getExtendedAnnotationLabel,
+  getResourceExternalIdFromExtendedAnnotation,
+  getResourceIdFromExtendedAnnotation,
+  getResourceTypeFromExtendedAnnotation,
+  setExtendedAnnotationDescription,
+  setExtendedAnnotationLabel,
+} from '../migration/utils';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
-const getId = (
-  annotation?: ProposedCogniteAnnotation | CogniteAnnotation
+const getResourceIdEither = (
+  annotation?: ExtendedAnnotation
 ): IdEither | undefined => {
-  if (annotation?.resourceExternalId) {
-    return { externalId: annotation.resourceExternalId };
+  if (annotation === undefined) {
+    return undefined;
   }
-  if (annotation?.resourceId) {
-    return { id: annotation?.resourceId };
+
+  const externalId = getResourceExternalIdFromExtendedAnnotation(annotation);
+  if (externalId) {
+    return {
+      externalId,
+    };
   }
+
+  const id = getResourceIdFromExtendedAnnotation(annotation);
+  if (id) {
+    return { id };
+  }
+
   return undefined;
 };
 
@@ -31,22 +55,19 @@ export const CreateAnnotationForm = ({
   previewImageSrc,
   children,
 }: {
-  annotation: ProposedCogniteAnnotation | CogniteAnnotation;
-  updateAnnotation: (
-    _annotation: ProposedCogniteAnnotation | CogniteAnnotation
-  ) => void;
+  annotation: ExtendedAnnotation;
+  updateAnnotation: (_annotation: ExtendedAnnotation) => void;
   onDelete: () => void;
   onCancel?: () => void;
-  onSave: (item: any) => void;
+  onSave: () => void;
   onLinkResource: () => void;
   previewImageSrc?: string;
   children?: React.ReactNode;
 }) => {
-  const id = getId(annotation);
-  // @ts-ignore
+  const id = getResourceIdEither(annotation);
+  const resourceType = getResourceTypeFromExtendedAnnotation(annotation);
   const api: SdkResourceType | undefined =
-    // @ts-ignore
-    annotation.resourceType && convertResourceType(annotation.resourceType);
+    resourceType && convertResourceType(resourceType);
 
   const enabled = !!api && !!id;
   const { data: item, isFetched } = useCdfItem<any>(api!, id!, { enabled });
@@ -56,8 +77,8 @@ export const CreateAnnotationForm = ({
   }
 
   let buttonText = <>Not linked to a Resource</>;
-  if (annotation.resourceType) {
-    switch (annotation.resourceType) {
+  if (resourceType) {
+    switch (resourceType) {
       case 'asset': {
         buttonText = (
           <>
@@ -111,7 +132,7 @@ export const CreateAnnotationForm = ({
       {previewImageSrc && <PreviewImage src={previewImageSrc} alt="preview" />}
       <Body>{buttonText}</Body>
       <Button onClick={onLinkResource}>
-        {annotation.resourceType ? (
+        {resourceType ? (
           <>
             <Icon type="Edit" /> Edit Resource Link
           </>
@@ -124,24 +145,33 @@ export const CreateAnnotationForm = ({
       <Input
         variant="noBorder"
         placeholder="Label"
-        value={annotation.label}
+        value={getExtendedAnnotationLabel(annotation)}
         onChange={(e) =>
-          updateAnnotation({ ...annotation, label: e.target.value })
+          updateAnnotation(
+            setExtendedAnnotationLabel(annotation, e.target.value)
+          )
         }
       />
       <Input
         variant="noBorder"
         placeholder="Description"
-        value={annotation.description}
+        value={getExtendedAnnotationDescription(annotation)}
         onChange={(e) =>
-          updateAnnotation({
-            ...annotation,
-            description: e.target.value,
-          })
+          updateAnnotation(
+            setExtendedAnnotationDescription(annotation, e.target.value)
+          )
         }
       />
       <SpacedRow style={{ gap: '10px' }}>
-        <Button onClick={onSave} type="primary" icon="Save">
+        <Button
+          onClick={onSave}
+          type="primary"
+          icon="Save"
+          disabled={
+            getExtendedAnnotationLabel(annotation) === undefined ||
+            getExtendedAnnotationLabel(annotation).length === 0
+          }
+        >
           Save
         </Button>
         <div style={{ flex: 1 }} />

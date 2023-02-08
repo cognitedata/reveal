@@ -10,12 +10,12 @@ import ReactUnifiedViewer, {
   ToolType,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
-import { Loader } from '@data-exploration-components/components';
-import useTooltips from '@data-exploration-components/containers/Files/FilePreview/FilePreviewUFV/useTooltips';
+import { Loader } from '@data-exploration-components/components/index';
+import useTooltips from '@data-exploration-components/containers/Files/FilePreview/useTooltips';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { ResourceItem } from '@data-exploration-components/types';
-import { lightGrey } from '@data-exploration-components/utils';
+import { ResourceItem } from '@data-exploration-components/types/index';
+import { lightGrey } from '@data-exploration-components/utils/index';
 
 import { usePnIdOCRResultFilterQuery } from '@data-exploration-lib/domain-layer';
 import { ActionTools } from './ActionTools';
@@ -37,7 +37,7 @@ import { getContainerId } from './utils';
 import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
 import { Flex } from '@cognite/cogs.js';
 
-export type FilePreviewUFVProps = {
+type FilePreviewProps = {
   id: string;
   applicationId: string;
   fileId: number;
@@ -74,7 +74,7 @@ const INITIAL_VIEWPORT_SIZE = {
   height: 1.2 * MAX_CONTAINER_HEIGHT,
 };
 
-export const FilePreviewUFV = ({
+export const FilePreview = ({
   id,
   applicationId,
   fileId,
@@ -87,7 +87,7 @@ export const FilePreviewUFV = ({
   showSideBar = true,
   enableZoomToAnnotation = true,
   enableToolTips = true,
-}: FilePreviewUFVProps) => {
+}: FilePreviewProps) => {
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
   const [page, setPage] = useState(1);
   const [container, setContainer] = useState<FileContainerProps>();

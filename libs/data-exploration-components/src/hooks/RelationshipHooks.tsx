@@ -1,5 +1,4 @@
 import {
-  useList,
   useCdfItems,
   useAggregate,
   useInfiniteList,
@@ -11,11 +10,7 @@ import {
   ResourceItem,
   convertResourceType,
 } from '@data-exploration-components/types';
-import {
-  formatNumber,
-  annotationInteralIdFilter,
-  annotationExternalIdFilter,
-} from '@data-exploration-components/utils';
+import { formatNumber } from '@data-exploration-components/utils';
 import { useEffect, useContext, useMemo, useState } from 'react';
 import {
   ExternalId,
@@ -24,30 +19,20 @@ import {
   Sequence,
   Timeseries,
   FileInfo,
-  IdEither,
 } from '@cognite/sdk';
 import flatten from 'lodash/flatten';
-import {
-  ANNOTATION_METADATA_PREFIX as PREFIX,
-  ANNOTATION_EVENT_TYPE,
-  CURRENT_VERSION,
-  convertEventsToAnnotations,
-} from '@cognite/annotations';
 import uniqueBy from 'lodash/uniqBy';
 import { AppContext } from '@data-exploration-components/context/AppContext';
-import { useUniqueCdfItems } from '@data-exploration-components/hooks';
-import { getBoundingBoxFromAnnotationIfDefined } from '../containers/Files/FilePreview/FilePreviewUFV/Annotations';
+import { getBoundingBoxFromAnnotationIfDefined } from '../containers/Files/FilePreview/Annotations';
 import {
   getResourceExternalIdFromTaggedAnnotation,
   getResourceIdFromTaggedAnnotation,
   getResourceTypeFromTaggedAnnotation,
   getTaggedAnnotationAnnotation,
-  getTaggedEventAnnotation,
   isApprovedTaggedAnnotation,
   isSuggestedTaggedAnnotation,
   isTaggedAnnotationAnnotation,
-  isTaggedEventAnnotation,
-} from '../containers/Files/FilePreview/FilePreviewUFV/migration/utils';
+} from '../containers/Files/FilePreview/migration/utils';
 import { useAnnotations } from '@data-exploration-lib/domain-layer';
 import { TaggedAnnotation } from '@data-exploration-lib/core';
 
@@ -393,31 +378,18 @@ export const useTaggedAnnotationsByResourceType = (
     { enabled }
   );
 
-  const byInternalId = useList<CogniteEvent>('events', {
-    filter: annotationInteralIdFilter(fileId, resourceType),
-  });
-
-  const byExternalId = useList<CogniteEvent>(
-    'events',
-    {
-      filter: annotationExternalIdFilter(file.externalId!, resourceType),
-    },
-    { enabled: !!file.externalId }
-  );
-
-  const { data: annotationsApiAnnotations } = useAnnotations(fileId);
+  const {
+    data: annotationsApiAnnotations,
+    isFetching,
+    isFetched,
+    isError,
+  } = useAnnotations(fileId);
 
   const annotations = useMemo(
     () =>
       uniqueBy(
         [
           ...[
-            ...convertEventsToAnnotations(byExternalId.data || []).map(
-              getTaggedEventAnnotation
-            ),
-            ...convertEventsToAnnotations(byInternalId.data || []).map(
-              getTaggedEventAnnotation
-            ),
             ...annotationsApiAnnotations
               .map(getTaggedAnnotationAnnotation)
               .filter(
@@ -432,10 +404,6 @@ export const useTaggedAnnotationsByResourceType = (
           ),
         ],
         (taggedAnnotation) => {
-          if (isTaggedEventAnnotation(taggedAnnotation)) {
-            return taggedAnnotation.box;
-          }
-
           if (isTaggedAnnotationAnnotation(taggedAnnotation)) {
             return getBoundingBoxFromAnnotationIfDefined(taggedAnnotation);
           }
@@ -443,75 +411,14 @@ export const useTaggedAnnotationsByResourceType = (
           return undefined;
         }
       ),
-    [
-      byInternalId.data,
-      byExternalId.data,
-      annotationsApiAnnotations,
-      resourceType,
-    ]
+    [annotationsApiAnnotations, resourceType]
   );
 
   return {
     data: annotations,
-    isFetched:
-      byInternalId.isFetched && (byExternalId.isFetched || !file.externalId),
-    isError: byInternalId.isError || byExternalId.isError,
-    isFetching: byInternalId.isFetching || byExternalId.isFetching,
-  };
-};
-
-export const useFilesAnnotatedWithResource = (
-  resource: ResourceItem,
-  enabled = true
-) => {
-  const byInternalId = useList<CogniteEvent>(
-    'events',
-    {
-      filter: {
-        type: ANNOTATION_EVENT_TYPE,
-        metadata: {
-          [`${PREFIX}version`]: `${CURRENT_VERSION}`,
-          [`${PREFIX}resource_id`]: `${resource.id}`,
-          [`${PREFIX}resource_type`]: `${resource.type}`,
-        },
-      },
-    },
-    { enabled }
-  );
-
-  const byExternalId = useList<CogniteEvent>(
-    'events',
-    {
-      filter: {
-        type: ANNOTATION_EVENT_TYPE,
-        metadata: {
-          [`${PREFIX}version`]: `${CURRENT_VERSION}`,
-          [`${PREFIX}resource_external_id`]: `${resource.externalId}`,
-          [`${PREFIX}resource_type`]: `${resource.type}`,
-        },
-      },
-    },
-    { enabled: enabled && !!resource.externalId }
-  );
-
-  const annotations = useMemo(
-    () =>
-      uniqueBy(
-        [...(byExternalId.data || []), ...(byInternalId.data || [])].filter(
-          ({ metadata = {} }) => metadata[`${PREFIX}_status`] !== 'deleted'
-        ),
-        'metadata.CDF_ANNOTATION_box'
-      ),
-    [byInternalId.data, byExternalId.data]
-  );
-
-  return {
-    data: annotations,
-    isFetched:
-      byInternalId.isFetched &&
-      (byExternalId.isFetched || !resource.externalId),
-    isError: byInternalId.isError || byExternalId.isError,
-    isFetching: byInternalId.isFetching || byExternalId.isFetching,
+    isFetched,
+    isFetching,
+    isError,
   };
 };
 
@@ -564,48 +471,6 @@ export const useTaggedAnnotationCount = (
   return { data: count, ...rest };
 };
 
-export const useFilesAnnotatedWithResourceCount = (
-  resource: ResourceItem,
-  enabled = true
-) => {
-  const { data: annotations, ...rest } = useFilesAnnotatedWithResource(
-    resource,
-    enabled
-  );
-
-  const fileIds = useMemo(
-    () =>
-      uniqueBy(
-        annotations.map(({ metadata = {} }) => {
-          if (metadata[`${PREFIX}file_external_id`]) {
-            return {
-              externalId: metadata[`${PREFIX}file_external_id`],
-            };
-          }
-          if (metadata[`${PREFIX}file_id`]) {
-            return { id: parseInt(metadata[`${PREFIX}file_id`], 10) };
-          }
-          return undefined;
-        }),
-        (
-          i:
-            | { id: number; externalId: undefined }
-            | { id: undefined; externalId: string }
-            | undefined
-        ) => i?.externalId || i?.id
-      ).filter(Boolean) as IdEither[],
-    [annotations]
-  );
-
-  const { data: items = [] } = useUniqueCdfItems<FileInfo>(
-    'files',
-    fileIds,
-    true
-  );
-
-  return { data: items.length, ...rest };
-};
-
 export const useRelatedResourceCount = (
   resource: ResourceItem,
   tabType: ResourceType
@@ -613,7 +478,6 @@ export const useRelatedResourceCount = (
   const isAsset = resource.type === 'asset';
   const isFile = resource.type === 'file';
   const isAssetTab = tabType === 'asset';
-  const isFileTab = tabType === 'file';
 
   const { data: linkedResourceCount, isFetched: isLinkedResourceFetched } =
     useAggregate(
@@ -642,15 +506,11 @@ export const useRelatedResourceCount = (
   const { data: annotationCount, isFetched: isAnnotationFetched } =
     useTaggedAnnotationCount(resource.id, tabType, isFile);
 
-  const { data: annotatedWithCount, isFetched: isAnnotatedWithFetched } =
-    useFilesAnnotatedWithResourceCount(resource, isFileTab);
-
   const isFetched =
     isLinkedResourceFetched &&
     isRelationshipFetched &&
     isResourceFetched &&
-    isAnnotationFetched &&
-    isAnnotatedWithFetched;
+    isAnnotationFetched;
 
   let count = relationships.length;
 
@@ -672,10 +532,6 @@ export const useRelatedResourceCount = (
     count += annotationCount;
   }
 
-  if (isFileTab && annotatedWithCount) {
-    count += annotatedWithCount;
-  }
-
   return {
     count: formatNumber(count),
     relationshipCount: relationships.length,
@@ -685,7 +541,7 @@ export const useRelatedResourceCount = (
       ? Math.max((linkedResourceCount?.count ?? 1) - 1, 0)
       : linkedResourceCount?.count,
     annotationCount,
-    annotatedWithCount,
+    annotatedWithCount: 0,
     isFetched,
   };
 };

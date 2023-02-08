@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
 import {
-  FilePreviewUFV as CogniteFilePreview,
+  FilePreview as CogniteFilePreview,
   ErrorFeedback,
   Loader,
   FileDetails,

@@ -28,7 +28,7 @@ import { toast, Flex } from '@cognite/cogs.js';
 import {
   MAX_CONTAINER_HEIGHT,
   MAX_CONTAINER_WIDTH,
-} from '../FilePreview/FilePreviewUFV/constants';
+} from '../FilePreview/constants';
 import { useCanvasAnnotations } from './hooks';
 
 export type MultiFileViewerProps = {

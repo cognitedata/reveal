@@ -1,4 +1,3 @@
-import { useEventAnnotations } from '@data-exploration-lib/domain-layer';
 import React from 'react';
 import { FileInfo, Asset, CogniteError } from '@cognite/sdk';
 import styled from 'styled-components';
@@ -13,22 +12,23 @@ import {
   ListItem,
   SpacedRow,
   ResourceIcons,
-} from '@data-exploration-components/components';
+} from '@data-exploration-components/components/index';
 import {
   isFilePreviewable,
   getIdParam,
-} from '@data-exploration-components/utils';
+} from '@data-exploration-components/utils/index';
 import {
   SmallPreviewProps,
   SelectableItemProps,
-} from '@data-exploration-components/types';
+} from '@data-exploration-components/types/index';
 import {
   FileDetails,
-  FilePreviewUFV,
-} from '@data-exploration-components/containers/Files';
+  FilePreview,
+} from '@data-exploration-components/containers/Files/index';
 import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
+import { useAnnotations } from '@data-exploration-lib/domain-layer';
 
-export const FileSmallPreviewUFV = ({
+export const FileSmallPreview = ({
   fileId,
   actions,
   extras,
@@ -56,26 +56,31 @@ export const FileSmallPreviewUFV = ({
     isSelected,
     onSelect
   );
-  const annotations = useEventAnnotations(fileId);
+  const annotations = useAnnotations(fileId).data;
 
   const fileIds = annotations
-    .map((annotation) =>
-      annotation.resourceType === 'file'
-        ? annotation.resourceExternalId || annotation.resourceId
-        : false
-    )
-    .filter((fileIdOrExternalId): fileIdOrExternalId is number | string =>
-      Boolean(fileIdOrExternalId)
-    );
+    .map((annotation) => {
+      if (annotation.annotationType === 'diagrams.FileLink') {
+        // NOTE: This is due to too wide types in the SDK
+        // @ts-expect-error
+        return annotation.data.fileRef.id;
+      }
+
+      return false;
+    })
+    .filter((fileId) => Boolean(fileId));
+
   const assetIds = annotations
-    .map((annotation) =>
-      annotation.resourceType === 'asset'
-        ? annotation.resourceExternalId || annotation.resourceId
-        : false
-    )
-    .filter((assetIdOrExternalId): assetIdOrExternalId is number | string =>
-      Boolean(assetIdOrExternalId)
-    );
+    .map((annotation) => {
+      if (annotation.annotationType === 'diagrams.AssetLink') {
+        // NOTE: This is due to too wide types in the SDK
+        // @ts-expect-error
+        return annotation.data.assetRef.id;
+      }
+
+      return false;
+    })
+    .filter((assetId) => Boolean(assetId));
 
   const { data: files } = useCdfItems<FileInfo>(
     'files',
@@ -154,8 +159,8 @@ export const FileSmallPreviewUFV = ({
       {hasPreview && (
         <InfoCell noBorders>
           <Preview>
-            <FilePreviewUFV
-              applicationId={'FileSmallPreviewUFV'}
+            <FilePreview
+              applicationId={'FileSmallPreview'}
               id={`file-small-preview-${file.id}`}
               fileId={file.id}
               creatable={false}

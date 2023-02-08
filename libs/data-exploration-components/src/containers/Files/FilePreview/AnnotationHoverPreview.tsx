@@ -1,31 +1,31 @@
 import React from 'react';
 import styled from 'styled-components';
-import { CogniteAnnotation } from '@cognite/annotations';
-import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { Body, Colors, Detail } from '@cognite/cogs.js';
+import {
+  getExtendedAnnotationLabel,
+  isSuggestedAnnotation,
+} from './migration/utils';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 type Props = {
-  annotation: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
+  annotation: ExtendedAnnotation;
 };
 
-export const AnnotationHoverPreview = (props: Props) => {
-  const { annotation } = props;
+export const AnnotationHoverPreview = ({ annotation }: Props) => {
+  const annotationLabel = getExtendedAnnotationLabel(annotation) || 'N/A';
   return (
     <Wrapper>
-      {annotation[0]?.status === 'unhandled' && <NewLabel strong>New</NewLabel>}
-      <Body
-        level={2}
-        strong
-        style={{
-          color: Colors.white.hex(),
-        }}
-      >
-        {annotation[0]?.label?.length ? annotation[0]?.label : 'N/A'}
-      </Body>
+      {isSuggestedAnnotation(annotation) && <NewLabel strong>New</NewLabel>}
+      <StyledBody level={2} strong>
+        {annotationLabel}
+      </StyledBody>
     </Wrapper>
   );
 };
 
+const StyledBody = styled(Body)`
+  color: ${Colors.white.hex()} !important;
+`;
 const Wrapper = styled.div`
   display: flex;
   align-items: center;

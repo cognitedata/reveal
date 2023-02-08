@@ -1,8 +1,3 @@
-import {
-  ANNOTATION_METADATA_PREFIX as PREFIX,
-  getIdFilter,
-  getExternalIdFilter,
-} from '@cognite/annotations';
 import isBoolean from 'lodash/isBoolean';
 import isEmpty from 'lodash/isEmpty';
 import {
@@ -17,28 +12,6 @@ import {
   InternalSequenceFilters,
 } from '@data-exploration-lib/domain-layer';
 import get from 'lodash/get';
-
-export const annotationInteralIdFilter = (
-  fileId: number,
-  resourceType?: ResourceType
-) => {
-  const filter = getIdFilter(fileId);
-  if (resourceType) {
-    filter.metadata[`${PREFIX}resource_type`] = resourceType;
-  }
-  return filter;
-};
-
-export const annotationExternalIdFilter = (
-  id: string,
-  resourceType?: ResourceType
-) => {
-  const filter = getExternalIdFilter(id);
-  if (resourceType) {
-    filter.metadata[`${PREFIX}resource_type`] = resourceType;
-  }
-  return filter;
-};
 
 export type FiltersWithResourceType = Required<ResourceFilterProps> & {
   resourceType: ResourceType;
