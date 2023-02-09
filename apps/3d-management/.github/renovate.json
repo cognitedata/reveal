@@ -1,0 +1,13 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>cognitedata/renovate-config",
+    "schedule:after 6am and before 3pm every weekday"
+      ],
+  "prConcurrentLimit": 5,
+  "labels": ["dependencies",
+             "auto-update"
+             ],
+  "prCreation": "not-pending",
+  "timezone": "Europe/Oslo"
+}
