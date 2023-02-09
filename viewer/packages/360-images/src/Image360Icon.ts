@@ -12,6 +12,7 @@ export class Image360Icon {
   private readonly _hoverSprite: THREE.Sprite;
   private readonly _alphaAttributeAccessor: AttributeDataAccessor<Uint8ClampedArray>;
   private readonly _position: THREE.Vector3;
+  private readonly _sceneHandler: SceneHandler;
   constructor(
     position: THREE.Vector3,
     sceneHandler: SceneHandler,
@@ -28,6 +29,7 @@ export class Image360Icon {
     this.setupAdaptiveScaling(position);
 
     sceneHandler.addCustomObject(this._hoverSprite);
+    this._sceneHandler = sceneHandler;
   }
 
   set visible(visible: boolean) {
@@ -50,6 +52,8 @@ export class Image360Icon {
   }
 
   public dispose(): void {
+    this._sceneHandler.removeCustomObject(this._hoverSprite);
+    this._hoverSprite.onBeforeRender = () => {};
     this._hoverSprite.material.map?.dispose();
     this._hoverSprite.material.dispose();
     this._hoverSprite.geometry.dispose();
