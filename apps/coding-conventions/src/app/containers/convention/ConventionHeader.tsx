@@ -3,6 +3,7 @@ import { HintText } from '../../components/Info/HintText';
 import { StructureText } from '../../components/Text/StructureText';
 import { Convention } from '../../types';
 import { Container } from './elements';
+import React from 'react';
 
 interface Props {
   editMode?: boolean;
