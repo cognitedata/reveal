@@ -1,14 +1,13 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useParams } from 'react-router-dom';
 
 import {
   AssetDetails,
-  AssetDetailsTreeTable,
   Loader,
   ErrorFeedback,
   Metadata,
-  ResourceItem,
+  ResourceTypes,
 } from '@cognite/data-exploration';
 import { Tabs } from '@cognite/cogs.js';
 import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
@@ -22,11 +21,10 @@ import {
   useCurrentResourceId,
   useOnPreviewTabChange,
 } from '@data-exploration-app/hooks/hooks';
-import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
 import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
 import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { AssetHierarchyTab } from './AssetHierarchyTab';
 
 export type AssetPreviewTabType =
   | 'details'
@@ -64,20 +62,6 @@ export const AssetPreview = ({
     trackUsage('Exploration.Preview.Asset', { assetId });
   }, [assetId]);
 
-  const { mode, onSelect, resourcesState } = useContext(
-    ResourceSelectionContext
-  );
-
-  const isSelected = (item: ResourceItem) => {
-    return resourcesState.some(
-      (el) =>
-        // eslint-disable-next-line lodash/prefer-matches
-        el.state === 'selected' && el.id === item.id && el.type === item.type
-    );
-  };
-
-  const openAsset = useCurrentResourceId()[1];
-
   const {
     data: asset,
     isFetched,
@@ -112,14 +96,14 @@ export const AssetPreview = ({
     <>
       <Breadcrumbs currentResource={{ title: asset.name }} />
       <ResourceTitleRow
-        item={{ id: assetId, type: 'asset' }}
+        item={{ id: assetId, type: ResourceTypes.Asset }}
         title={asset.name}
         afterDefaultActions={actions}
         hideDefaultCloseActions={hideDefaultCloseActions}
       />
       <ResourceDetailsTabs
         parentResource={{
-          type: 'asset',
+          type: ResourceTypes.Asset,
           id: asset.id,
           externalId: asset.externalId,
           title: asset.name,
@@ -134,18 +118,7 @@ export const AssetPreview = ({
             </DetailsTabWrapper>
           </Tabs.TabPane>,
           <Tabs.TabPane tab={<TabTitle>Hierarchy</TabTitle>} key="children">
-            <AssetDetailsTreeTable
-              assetId={assetId}
-              rootAssetId={asset.rootId}
-              activeIds={[asset.id]}
-              onAssetClicked={(newAsset: Asset) => {
-                openAsset(newAsset.id, undefined, 'asset');
-              }}
-              selectionMode={mode}
-              onSelect={onSelect}
-              isSelected={isSelected}
-              selectedRows={{ [assetId]: true }}
-            />
+            <AssetHierarchyTab asset={asset} />
           </Tabs.TabPane>,
         ]}
       />

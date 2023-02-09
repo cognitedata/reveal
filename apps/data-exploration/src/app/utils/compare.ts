@@ -1,6 +1,7 @@
 import isObject from 'lodash/isObject';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
+import { ResourceItem, ResourceItemState } from '@cognite/data-exploration';
 
 export const isObjectEmpty = <T extends Record<string, unknown>>(
   object?: T
@@ -20,4 +21,16 @@ export const isObjectEmpty = <T extends Record<string, unknown>>(
   });
 
   return isAllPropertiesInObjectEmpty;
+};
+
+export const isResourceSelected = (
+  resource: ResourceItem,
+  resourcesState: ResourceItemState[]
+): boolean => {
+  return resourcesState.some(
+    (element) =>
+      element.state === 'selected' &&
+      element.id === resource.id &&
+      element.type === resource.type
+  );
 };
