@@ -89,7 +89,7 @@ export class GltfSectorParser {
         break;
     }
 
-    return { type: geometryType, geometryBuffer: bufferGeometry };
+    return { type: geometryType, geometryBuffer: bufferGeometry, texture: payload.texture };
   }
 
   private async processInstancedTriangleMesh(payload: GeometryProcessingPayload): Promise<ParsedGeometry> {
@@ -205,6 +205,14 @@ export class GltfSectorParser {
       THREE.InterleavedBuffer
     );
 
+    const texture = this.getDiffuseTexture(
+      json,
+      glbHeaderData,
+      data,
+      primitive);
+
+    payload.texture = texture;
+
     function attributeNameTransformer(attributeName: string) {
       switch (attributeName) {
         case 'COLOR_0':
@@ -213,10 +221,39 @@ export class GltfSectorParser {
           return 'position';
         case '_treeIndex':
           return 'treeIndex';
+        case 'TEXCOORD_0':
+          return 'uv';
         default:
           throw new Error();
       }
     }
+  }
+
+  private getDiffuseTexture(
+    json: GltfJson,
+    glbHeaderData: GlbHeaderData,
+    data: ArrayBuffer,
+    primitive: Primitive): THREE.Texture | undefined {
+    if (primitive.material === undefined) {
+      return undefined;
+    }
+
+    const image = json.images[json.textures[primitive.material].source];
+
+    const offsetToBinChunk = glbHeaderData.byteOffsetToBinContent;
+    const bufferView = json.bufferViews[image.bufferView];
+    const byteOffsetInData = offsetToBinChunk + (bufferView.byteOffset ?? 0);
+    const newView = data.slice(byteOffsetInData, byteOffsetInData + bufferView.byteLength);
+
+    const texture = new THREE.Texture();
+    const blob = new Blob([newView], { type: image.mimeType });
+
+    createImageBitmap(blob).then(bitmap => {
+      texture.image = bitmap;
+      texture.needsUpdate = true;
+    });
+
+    return texture;
   }
 
   private async getVertexBuffer(

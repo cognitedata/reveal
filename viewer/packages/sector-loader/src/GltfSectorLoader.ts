@@ -76,6 +76,9 @@ export class GltfSectorLoader {
             });
             break;
           case RevealGeometryCollectionType.TriangleMesh:
+            if (parsedGeometry.texture !== undefined) {
+              materials.triangleMesh.uniforms.tDiffuse = { value: parsedGeometry.texture };
+            }
             this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
             break;
           default:
@@ -110,7 +113,9 @@ export class GltfSectorLoader {
     return treeIndexSet;
   }
 
-  private createMesh(group: AutoDisposeGroup, geometry: THREE.BufferGeometry, material: THREE.RawShaderMaterial) {
+  private createMesh(group: AutoDisposeGroup,
+                     geometry: THREE.BufferGeometry,
+                     material: THREE.RawShaderMaterial) {
     const mesh = new THREE.Mesh(geometry, material);
     group.add(mesh);
     mesh.frustumCulled = false;

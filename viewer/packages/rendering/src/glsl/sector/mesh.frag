@@ -9,11 +9,13 @@ precision highp float;
 #pragma glslify: import('../treeIndex/treeIndexPacking.glsl')
 
 uniform sampler2D matCapTexture;
+uniform sampler2D tDiffuse;
 uniform lowp int renderMode;
 
 in vec3 v_color;
 in vec3 v_viewPosition;
 in vec4 v_nodeAppearanceTexel;
+in vec2 v_uv;
 
 in highp vec2 v_treeIndexPacked;
 
@@ -27,5 +29,6 @@ void main()
 
     vec4 color = determineColor(v_color, appearance);
     vec3 normal = derivateNormal(v_viewPosition);
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.TriangleMesh);
+    // updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.TriangleMesh);
+    outputColor = vec4(texture(tDiffuse, v_uv).rgb, color.a);
 }
