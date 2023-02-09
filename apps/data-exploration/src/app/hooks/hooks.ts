@@ -16,8 +16,7 @@ import { useQuery } from 'react-query';
 import isArray from 'lodash/isArray';
 
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { SEARCH_KEY } from '../utils/constants';
-import { FILTER } from '@data-exploration-app/store/filter/constants';
+import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 
@@ -31,7 +30,8 @@ const getSetItems =
     navigate: NavigateFunction
   ) =>
   (newItems: string | string[]) => {
-    const search = qs.parse(location.search, opts);
+    const search = getSearchParams(location.search);
+
     navigate(
       {
         pathname: location.pathname,
@@ -56,7 +56,7 @@ export function useQueryString(
   const location = useLocation();
   const navigate = useNavigate();
 
-  const search = qs.parse(location.search, opts);
+  const search = getSearchParams(location.search);
   const item = (search[key] || '') as string;
 
   const queryString = React.useMemo(() => decodeURIComponent(item), [item]);
@@ -92,12 +92,10 @@ export const useCurrentResourceType = (): [
   const { resourceType } = useParams<{
     resourceType: ResourceType;
   }>();
+
   const setCurrentResourceType = React.useCallback(
     (newResourceType?: ResourceType, resourceId?: number) => {
-      const { [SEARCH_KEY]: query, [FILTER]: filter } = qs.parse(
-        location.search,
-        opts
-      );
+      const search = getSearchParams(location.search);
 
       navigate(
         createLink(
@@ -108,10 +106,7 @@ export const useCurrentResourceType = (): [
           ]
             .filter(Boolean)
             .join(''),
-          {
-            [SEARCH_KEY]: query,
-            ...(filter && { [FILTER]: filter }),
-          },
+          search,
           opts
         )
       );
@@ -146,7 +141,7 @@ export const useCurrentResourceId = (): [
     replaceHistory = false,
     newResourceType?: ResourceType
   ) => {
-    const search = qs.parse(location.search, opts);
+    const search = getSearchParams(location.search);
 
     if (!newResourceId) {
       navigate(createLink(`/explore/search/${type}`, search, opts), {

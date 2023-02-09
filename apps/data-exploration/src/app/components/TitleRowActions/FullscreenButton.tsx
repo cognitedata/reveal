@@ -3,10 +3,8 @@ import { Button, Tooltip } from '@cognite/cogs.js';
 import { ResourceItem } from '@cognite/data-exploration';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { FilePreviewTabType } from '@data-exploration-app/containers/File/FilePreview';
-import { useQueryString } from '@data-exploration-app/hooks/hooks';
-import { FILTER } from '@data-exploration-app/store/filter/constants';
-import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 export const FullscreenButton: React.FC<{ item: ResourceItem }> = ({
@@ -16,11 +14,11 @@ export const FullscreenButton: React.FC<{ item: ResourceItem }> = ({
   const location = useLocation();
   const isPreview = location.pathname.includes('/search');
 
-  const [query] = useQueryString(SEARCH_KEY);
-  const [filter] = useQueryString(FILTER);
   const { tabType } = useParams<{
     tabType: FilePreviewTabType;
   }>();
+
+  const search = getSearchParams(location.search);
 
   const goToPreview = () => {
     navigate(
@@ -28,10 +26,7 @@ export const FullscreenButton: React.FC<{ item: ResourceItem }> = ({
         `/explore/search/${item.type}/${item.id}${
           tabType ? `/${tabType}` : ''
         }`,
-        {
-          [SEARCH_KEY]: query,
-          ...(filter && { [FILTER]: filter }),
-        }
+        search
       ),
       {
         state: {
@@ -46,10 +41,7 @@ export const FullscreenButton: React.FC<{ item: ResourceItem }> = ({
     navigate(
       createLink(
         `/explore/${item.type}/${item.id}${tabType ? `/${tabType}` : ''}`,
-        {
-          [SEARCH_KEY]: query,
-          ...(filter && { [FILTER]: filter }),
-        }
+        search
       ),
       {
         state: {

@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import qs from 'query-string';
 import {
   useRelatedResourceCounts,
   ResourceType,
@@ -14,6 +13,7 @@ import { RelatedResources } from '@data-exploration-app/containers/ResourceDetai
 import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
 import { useLocation } from 'react-router-dom';
+import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };
@@ -54,14 +54,14 @@ const ResourceDetailTabContent = ({
     );
   };
 
+  const search = getSearchParams(location.search);
+
   return (
     <RelatedResources
       type={type}
       parentResource={resource}
       onItemClicked={(id: number) => {
-        navigateWithHistory(
-          createLink(`/explore/${type}/${id}`, qs.parse(location.search))
-        );
+        navigateWithHistory(createLink(`/explore/${type}/${id}`, search));
       }}
       selectionMode={mode}
       onSelect={onSelect}

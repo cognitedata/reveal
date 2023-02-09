@@ -61,12 +61,12 @@ export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
             setCommonFilter({ lastUpdatedTime: newValue || undefined })
           }
         />
-        {/*  WIP
-      <MetadataFilter
-        items={[]}
-        value={commonFilter.metadata}
-        setValue={newValue => onChange({ metadata: newValue })}
-      /> */}
+        {/* WIP */}
+        {/* <MetadataFilter
+          items={[]}
+          value={commonFilter.metadata}
+          setValue={newValue => onChange({ metadata: newValue })}
+        /> */}
         <StringFilterV2
           title="External ID"
           value={commonFilter.externalIdPrefix}

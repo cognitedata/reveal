@@ -50,3 +50,9 @@ export const createLink = (
 export const removeProjectFromPath = (path: string) => {
   return `/${path.split('/').slice(2).join('/')}`;
 };
+
+export const getSearchParams = (searchParams: string) => {
+  const params = new URLSearchParams(searchParams);
+  const entries = params.entries();
+  return Object.fromEntries(entries);
+};
