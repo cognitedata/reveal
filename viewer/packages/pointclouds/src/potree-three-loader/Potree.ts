@@ -83,6 +83,7 @@ export class Potree implements IPotree {
   }
 
   reset(): void {
+    // Reset the throttle function, to make sure all references to a deleted model are released
     this._throttledUpdateFunc = throttle(
       (pointClouds: PointCloudOctree[], camera: THREE.Camera, renderer: WebGLRenderer) =>
         this.innerUpdatePointClouds(pointClouds, camera, renderer),
