@@ -205,11 +205,7 @@ export class GltfSectorParser {
       THREE.InterleavedBuffer
     );
 
-    const texture = this.getDiffuseTexture(
-      json,
-      glbHeaderData,
-      data,
-      primitive);
+    const texture = this.getDiffuseTexture(json, glbHeaderData, data, primitive);
 
     payload.texture = texture;
 
@@ -233,7 +229,8 @@ export class GltfSectorParser {
     json: GltfJson,
     glbHeaderData: GlbHeaderData,
     data: ArrayBuffer,
-    primitive: Primitive): THREE.Texture | undefined {
+    primitive: Primitive
+  ): THREE.Texture | undefined {
     if (primitive.material === undefined) {
       return undefined;
     }
