@@ -53,6 +53,10 @@ export class PointCloudPickingHandler {
     this._picker = new PointCloudOctreePicker(renderer);
   }
 
+  dispose(): void {
+    this._picker.dispose();
+  }
+
   intersectPointClouds(nodes: PointCloudNode[], input: IntersectInput): IntersectPointCloudNodeResult[] {
     const { normalizedCoords, camera } = input;
     this._normalized.set(normalizedCoords.x, normalizedCoords.y);
