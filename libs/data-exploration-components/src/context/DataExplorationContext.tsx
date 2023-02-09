@@ -4,7 +4,6 @@ import { ResourcePreviewProvider } from '@data-exploration-components/context/Re
 import { ResourceSelectorProvider } from '@data-exploration-components/context/ResourceSelectorContext';
 import { FileContextualizationContextProvider } from '@data-exploration-components/context/FileContextualization';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { Flow, AppContextProvider, OverrideURLMap } from './AppContext';
 import { Tooltip, Tabs, Modal as CogsModal } from '@cognite/cogs.js';
 import { MetricsMetadata } from '@data-exploration-components/hooks/useMetrics';
@@ -70,32 +69,19 @@ export const DataExplorationProvider = ({
 
   return (
     <SDKProvider sdk={sdk}>
-      <CogniteFileViewer.Provider
-        // The addition of Annotations API requires a bump in the sdk which react-picture-annotations
-        // does not support yet. We'll be removing the old file viewer within days so this is a temporary
-        // solution until then
-        sdk={sdk}
-        disableAutoFetch
-        overrideURLMap={{
-          ...(overrideURLMap?.pdfjsWorkerSrc && {
-            pdfjsWorkerSrc: overrideURLMap?.pdfjsWorkerSrc,
-          }),
-        }}
+      <AppContextProvider
+        flow={flow}
+        overrideURLMap={overrideURLMap}
+        userInfo={userInfo}
+        isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
+        trackUsage={trackUsage}
       >
-        <AppContextProvider
-          flow={flow}
-          overrideURLMap={overrideURLMap}
-          userInfo={userInfo}
-          isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
-          trackUsage={trackUsage}
-        >
-          <FileContextualizationContextProvider>
-            <ResourcePreviewProvider>
-              <ResourceSelectorProvider>{children}</ResourceSelectorProvider>
-            </ResourcePreviewProvider>
-          </FileContextualizationContextProvider>
-        </AppContextProvider>
-      </CogniteFileViewer.Provider>
+        <FileContextualizationContextProvider>
+          <ResourcePreviewProvider>
+            <ResourceSelectorProvider>{children}</ResourceSelectorProvider>
+          </ResourcePreviewProvider>
+        </FileContextualizationContextProvider>
+      </AppContextProvider>
     </SDKProvider>
   );
 };

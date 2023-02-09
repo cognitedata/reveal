@@ -11,7 +11,6 @@ import {
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { useSDK } from '@cognite/sdk-provider';
-import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, FileInfo } from '@cognite/sdk';
 import { EditFileButton } from '@data-exploration-app/components/TitleRowActions/EditFileButton';
@@ -134,75 +133,66 @@ export const FilePreview = ({
 
   return (
     <>
-      <CogniteFileViewer.Provider
-        sdk={sdk as any}
-        disableAutoFetch
-        overrideURLMap={{
-          pdfjsWorkerSrc:
-            '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+      <Breadcrumbs currentResource={{ title: fileInfo.name }} />
+      <ResourceTitleRow
+        item={{ id: fileId!, type: resourceType || 'file' }}
+        title={fileInfo.name}
+        beforeDefaultActions={
+          <>
+            <EditFileButton
+              item={{ type: 'file', id: fileId! }}
+              isActive={editMode}
+              onClick={() => {
+                setEditMode((mode) => !mode);
+              }}
+            />
+          </>
+        }
+        afterDefaultActions={actions}
+      />
+      <ResourceDetailsTabs
+        parentResource={{
+          type: 'file',
+          id: fileId,
+          externalId: fileInfo.externalId,
+          title: fileInfo.name,
         }}
-      >
-        <Breadcrumbs currentResource={{ title: fileInfo.name }} />
-        <ResourceTitleRow
-          item={{ id: fileId!, type: resourceType || 'file' }}
-          title={fileInfo.name}
-          beforeDefaultActions={
-            <>
-              <EditFileButton
-                item={{ type: 'file', id: fileId! }}
-                isActive={editMode}
-                onClick={() => {
-                  setEditMode((mode) => !mode);
-                }}
-              />
-            </>
-          }
-          afterDefaultActions={actions}
-        />
-        <ResourceDetailsTabs
-          parentResource={{
-            type: 'file',
-            id: fileId,
-            externalId: fileInfo.externalId,
-            title: fileInfo.name,
-          }}
-          tab={activeTab}
-          onTabChange={onTabChange}
-          additionalTabs={[
-            <Tabs.TabPane tab={<TabTitle>Preview</TabTitle>} key="preview">
-              <PreviewTabWrapper>
-                {editMode && (
-                  <Banner>
-                    <Body level={3}>You have entered editing mode.</Body>
-                  </Banner>
-                )}
-                <CogniteFilePreview
-                  key={fileId}
-                  id={`${APPLICATION_ID}-${fileId}`}
-                  applicationId={APPLICATION_ID}
-                  fileId={fileId!}
-                  creatable={editMode}
-                  contextualization={writeAccess}
-                  onItemClicked={(item) =>
-                    navigate(
-                      createLink(
-                        `/explore/${item.type}/${item.id}`,
-                        qs.parse(location.search)
-                      )
+        tab={activeTab}
+        onTabChange={onTabChange}
+        additionalTabs={[
+          <Tabs.TabPane tab={<TabTitle>Preview</TabTitle>} key="preview">
+            <PreviewTabWrapper>
+              {editMode && (
+                <Banner>
+                  <Body level={3}>You have entered editing mode.</Body>
+                </Banner>
+              )}
+              <CogniteFilePreview
+                key={fileId}
+                id={`${APPLICATION_ID}-${fileId}`}
+                applicationId={APPLICATION_ID}
+                fileId={fileId!}
+                creatable={editMode}
+                contextualization={writeAccess}
+                onItemClicked={(item) =>
+                  navigate(
+                    createLink(
+                      `/explore/${item.type}/${item.id}`,
+                      qs.parse(location.search)
                     )
-                  }
-                />
-              </PreviewTabWrapper>
-            </Tabs.TabPane>,
-            <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="info">
-              <DetailsTabWrapper>
-                <FileDetails file={fileInfo} />
-                <Metadata metadata={fileInfo.metadata} />
-              </DetailsTabWrapper>
-            </Tabs.TabPane>,
-          ]}
-        />
-      </CogniteFileViewer.Provider>
+                  )
+                }
+              />
+            </PreviewTabWrapper>
+          </Tabs.TabPane>,
+          <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="info">
+            <DetailsTabWrapper>
+              <FileDetails file={fileInfo} />
+              <Metadata metadata={fileInfo.metadata} />
+            </DetailsTabWrapper>
+          </Tabs.TabPane>,
+        ]}
+      />
     </>
   );
 };

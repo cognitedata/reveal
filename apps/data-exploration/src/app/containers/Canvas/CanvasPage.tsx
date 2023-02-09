@@ -1,7 +1,6 @@
 import { PageTitle } from '@cognite/cdf-utilities';
 import { Button, Title, Flex } from '@cognite/cogs.js';
 import { ResourceIcons } from '@cognite/data-exploration';
-import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useSDK } from '@cognite/sdk-provider';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { TitleRowWrapper } from '@data-exploration-app/components/ResourceTitleRow';
@@ -25,39 +24,30 @@ export const CanvasPage = () => {
   return (
     <>
       <PageTitle title="Multiple files" />
-      <CogniteFileViewer.Provider
-        sdk={sdk as any}
-        disableAutoFetch
-        overrideURLMap={{
-          pdfjsWorkerSrc:
-            '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
-        }}
-      >
-        <TitleRowWrapper>
-          <PreviewLinkWrapper>
-            <Flex alignItems="center">
-              <ResourceIcons type="file" style={{ marginRight: '10px' }} />
-              <Name level="3">Multiple files</Name>
-            </Flex>
-          </PreviewLinkWrapper>
+      <TitleRowWrapper>
+        <PreviewLinkWrapper>
+          <Flex alignItems="center">
+            <ResourceIcons type="file" style={{ marginRight: '10px' }} />
+            <Name level="3">Multiple files</Name>
+          </Flex>
+        </PreviewLinkWrapper>
 
-          <StyledGoBackWrapper>
-            <Button
-              icon={'Download'}
-              aria-label="Download"
-              onClick={onDownloadPress}
-            />
-          </StyledGoBackWrapper>
-        </TitleRowWrapper>
-        <PreviewTabWrapper>
-          <Canvas
-            id={APPLICATION_ID_CANVAS}
-            applicationId={APPLICATION_ID_CANVAS}
-            files={files}
-            onRef={setUnifiedViewerRef}
+        <StyledGoBackWrapper>
+          <Button
+            icon={'Download'}
+            aria-label="Download"
+            onClick={onDownloadPress}
           />
-        </PreviewTabWrapper>
-      </CogniteFileViewer.Provider>
+        </StyledGoBackWrapper>
+      </TitleRowWrapper>
+      <PreviewTabWrapper>
+        <Canvas
+          id={APPLICATION_ID_CANVAS}
+          applicationId={APPLICATION_ID_CANVAS}
+          files={files}
+          onRef={setUnifiedViewerRef}
+        />
+      </PreviewTabWrapper>
     </>
   );
 };
