@@ -56,13 +56,12 @@ export class Image360Facade<T> {
     camera: THREE.Camera
   ): Image360Entity | undefined {
     this._rayCaster.setFromCamera(coords, camera);
-    const ray = this._rayCaster.ray;
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     const cameraPosition = camera.position.clone();
 
     const intersections = this._image360Entities
       .filter(hasVisibleIcon)
-      .map(getIntersection)
+      .map(entity => getIntersection(entity, this._rayCaster.ray))
       .filter(hasIntersection)
       .map(intersectionToCameraSpace)
       .filter(isInFrontOfCamera)
@@ -75,7 +74,7 @@ export class Image360Facade<T> {
       return entity.icon.visible;
     }
 
-    function getIntersection(entity: Image360Entity): [Image360Entity, THREE.Vector3 | null] {
+    function getIntersection(entity: Image360Entity, ray: THREE.Ray): [Image360Entity, THREE.Vector3 | null] {
       return [entity, entity.icon.intersect(ray)];
     }
 
