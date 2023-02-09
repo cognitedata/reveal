@@ -5,7 +5,7 @@
 import { ConsumedSector, LevelOfDetail, WantedSector, SectorMetadata } from '@reveal/cad-parsers';
 import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
 import { IMock, Mock } from 'moq.ts';
-import { DownloadRequest, SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
+import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
 import { Log } from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 
@@ -196,7 +196,7 @@ describe(SectorDownloadScheduler.name, () => {
     const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
       return {
         sector,
-        downloadSector: (sector: WantedSector): DownloadRequest => {
+        downloadSector: (sector: WantedSector) => {
           return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
         }
       };
