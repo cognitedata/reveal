@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom-v5';
-import { TopBar } from '@cognite/cogs.js';
+import { Label, TopBar } from '@cognite/cogs.js';
+
+import { version } from '../../package.json';
 
 export enum PAGES {
   HOME = '/',
@@ -16,5 +18,8 @@ export const MenuBar = () => (
         <TopBar.Logo title="Cognite Scarlet" />
       </Link>
     </TopBar.Left>
+    <TopBar.Right>
+      <Label>{version}</Label>
+    </TopBar.Right>
   </TopBar>
 );

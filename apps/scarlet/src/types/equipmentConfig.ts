@@ -6,9 +6,21 @@ import {
 } from '.';
 
 export enum EquipmentType {
-  AIR_COOLER = 'air_cooler',
-  EXCHANGER = 'exchanger',
+  EQUIPMENT_DEFAULT = 'equipment_default',
+  AIR_RECEIVER = 'air_receiver',
+  EXCHANGER_DOUBLE_PIPE = 'exchanger_double_pipe',
+  INCINERATOR = 'incinerator',
+  REACTOR = 'reactor',
+  BOILER_PROCESS_STEAM_GENERATOR = 'boiler_process_steam_generator',
+  DRUM = 'drum',
+  EXCHANGER_AIR_COOLED = 'exchanger_air_cooler',
+  EXCHANGER_SHELL_TUBE = 'exchanger_shell_tube',
+  FILTER_STRAINER = 'filter_strainer',
+  FLARE_STACK = 'flare_stack',
+  TOWER = 'tower',
   VESSEL = 'vessel',
+  EXCHANGER = 'exchanger',
+  AIR_COOLER = 'air_cooler',
 }
 
 export type ComponentGroup = {

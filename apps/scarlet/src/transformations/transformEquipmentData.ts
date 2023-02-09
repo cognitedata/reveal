@@ -264,10 +264,8 @@ const getComponentElements = (
     (item) => item.type === component.type
   );
 
-  if (!componentConfig)
-    throw Error(
-      `Component config is not set for ${equipmentType}:${component.type}`
-    );
+  // With equpiment type based spec definitions, we can't guarantee a component config will be present.
+  if (!componentConfig) return [];
 
   const componentElements = componentConfig.componentElementKeys
     .map((dataElementKey) => {
