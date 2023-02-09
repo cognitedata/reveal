@@ -110,7 +110,7 @@ export class Image360Icon {
     const context = canvas.getContext('2d')!;
     drawHoverSelector();
 
-    const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: true });
+    const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false });
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.updateMatrixWorld();
     sprite.renderOrder = 5;
