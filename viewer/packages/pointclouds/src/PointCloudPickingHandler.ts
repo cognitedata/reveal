@@ -53,7 +53,7 @@ export class PointCloudPickingHandler {
     this._picker = new PointCloudOctreePicker(renderer);
   }
 
-  reset(): void {
+  dispose(): void {
     this._picker.dispose();
   }
 
