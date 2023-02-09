@@ -6,7 +6,7 @@ import {
 } from '@data-exploration-components/components/Table/Table';
 
 import { DocumentNamePreview } from './DocumentNamePreview';
-// import { DocumentContentPreview } from './DocumentContentPreview';
+import { DocumentContentPreview } from './DocumentContentPreview';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import {
   InternalDocument,
@@ -36,7 +36,7 @@ export type DocumentTableProps = Omit<
 
 const visibleColumns = [
   'name',
-  // 'content',
+  'content',
   'type',
   'modifiedTime',
   'createdTime',
@@ -71,17 +71,16 @@ export const DocumentsTable = (props: DocumentTableProps) => {
             );
           },
         },
-        // disabled for now, the API does not give us the highlights anymore
-        // {
-        //   accessorKey: 'content',
-        //   header: 'Content',
-        //   cell: ({ row }: { row: Row<InternalDocument> }) => {
-        //     return (
-        //       <DocumentContentPreview document={row.original} query={query} />
-        //     );
-        //   },
-        //   enableSorting: false,
-        // },
+        {
+          accessorKey: 'content',
+          header: 'Content',
+          cell: ({ row }: { row: Row<InternalDocument> }) => {
+            return (
+              <DocumentContentPreview document={row.original} query={query} />
+            );
+          },
+          enableSorting: false,
+        },
         {
           accessorKey: 'author',
           id: 'author',

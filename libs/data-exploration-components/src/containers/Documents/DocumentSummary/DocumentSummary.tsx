@@ -17,6 +17,7 @@ import { getSummaryCardItems } from '@data-exploration-components/components/Sum
 import {
   DocumentWithRelationshipLabels,
   DocumentNamePreview,
+  DocumentContentPreview,
 } from '@data-exploration-components/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import {
@@ -69,15 +70,15 @@ export const DocumentSummary = ({
             );
           },
         },
-        // {
-        //   accessorKey: 'content',
-        //   header: 'Content',
-        //   cell: ({ row }: { row: Row<InternalDocument> }) => {
-        //     return (
-        //       <DocumentContentPreview document={row.original} query={query} />
-        //     );
-        //   },
-        // },
+        {
+          accessorKey: 'content',
+          header: 'Content',
+          cell: ({ row }: { row: Row<InternalDocument> }) => {
+            return (
+              <DocumentContentPreview document={row.original} query={query} />
+            );
+          },
+        },
         {
           accessorKey: 'author',
           id: 'author',
@@ -125,7 +126,7 @@ export const DocumentSummary = ({
       ] as ColumnDef<DocumentWithRelationshipLabels>[],
     [query, metadataColumns]
   );
-  const hiddenColumns = useGetHiddenColumns(columns, ['name' /*'content'*/]);
+  const hiddenColumns = useGetHiddenColumns(columns, ['name', 'content']);
   return (
     <SummaryCardWrapper>
       <Table

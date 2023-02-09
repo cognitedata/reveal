@@ -11,10 +11,12 @@ export const useDocumentSearchQuery = (
     filter,
     limit,
     sort,
+    highlight = true,
   }: {
     filter?: DocumentFilter;
     limit?: number;
     sort?: DocumentSortItem[];
+    highlight?: boolean;
   } = {},
   options: UseInfiniteQueryOptions = {}
 ) => {
@@ -30,6 +32,7 @@ export const useDocumentSearchQuery = (
           limit: localLimit,
           filter,
           sort,
+          highlight,
           cursor: pageParam,
         },
         sdk
