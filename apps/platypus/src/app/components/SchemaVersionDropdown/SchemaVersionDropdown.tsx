@@ -43,12 +43,9 @@ export function SchemaVersionDropdown({
   const [isOpen, setOpen] = useState(false);
   const dateUtils = useInjection(TOKENS.dateUtils);
 
-  const latestVersion =
-    versions
-      .filter((v) => v.status === DataModelVersionStatus.PUBLISHED)
-      .sort((a, b) => {
-        return Number(b.version) - Number(a.version);
-      })[0]?.version || '99999';
+  const latest =
+    versions.filter((v) => v.status === DataModelVersionStatus.PUBLISHED)[0] ||
+    {};
 
   return (
     <div data-cy="schema-version-select">
@@ -79,7 +76,7 @@ export function SchemaVersionDropdown({
                 <Flex alignItems="center" style={{ flex: '1 1 100px' }}>
                   <Body
                     level={2}
-                    style={{ width: 50, textAlign: 'left' }}
+                    style={{ marginRight: 16, textAlign: 'left' }}
                   >{`v. ${schemaObj.version}`}</Body>
                   {dateUtils.isValid(schemaObj.lastUpdatedTime as number) ? (
                     <LastTimeText level={2}>
@@ -91,7 +88,7 @@ export function SchemaVersionDropdown({
                 </Flex>
                 <VersionType
                   status={schemaObj.status}
-                  isLatest={schemaObj.version === latestVersion}
+                  isLatest={schemaObj.version === latest.version}
                 />
               </MenuItem>
             ))}
@@ -112,7 +109,7 @@ export function SchemaVersionDropdown({
             <Flex alignItems="center" style={{ margin: '0 10px' }}>
               <VersionType
                 status={selectedVersion.status}
-                isLatest={selectedVersion.version === latestVersion}
+                isLatest={selectedVersion.version === latest.version}
               />
             </Flex>
             <Icon type="ChevronDown" />

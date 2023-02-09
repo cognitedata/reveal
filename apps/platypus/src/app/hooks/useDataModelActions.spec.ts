@@ -44,7 +44,7 @@ describe('useDataModelActions', () => {
         '4'
       );
 
-      expect(selectedDataModelVersion.version).toBe('4');
+      expect(selectedDataModelVersion.version).toBe('3');
     });
 
     it('returns a default if there are no published versions', () => {

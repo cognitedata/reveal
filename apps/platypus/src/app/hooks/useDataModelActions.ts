@@ -92,9 +92,7 @@ export const useSelectedDataModelVersion = (
 
   // if version number is "latest"
   if (selectedVersionNumber === DEFAULT_VERSION_PATH) {
-    return dataModelVersions.sort((a, b) =>
-      +a.version < +b.version ? 1 : -1
-    )[0];
+    return dataModelVersions[0];
   } else {
     // else find matching version number
     return dataModelVersions.find(
