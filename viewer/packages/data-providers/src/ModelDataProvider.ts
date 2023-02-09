@@ -18,6 +18,7 @@ export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider 
    * Downloads a binary blob.
    * @param baseUrl     Base URL of the model.
    * @param fileName    Filename of binary file.
+   * @param abortSignal Optional abort signal that can be used to cancel an in progress fetch.
    */
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
