@@ -3,6 +3,7 @@
  */
 import * as THREE from 'three';
 import pull from 'lodash/pull';
+import first from 'lodash/first';
 
 import { Image360Entity } from './Image360Entity';
 import { Image360EntityFactory } from './Image360EntityFactory';
@@ -55,6 +56,56 @@ export class Image360Facade<T> {
     camera: THREE.Camera
   ): Image360Entity | undefined {
     this._rayCaster.setFromCamera(coords, camera);
-    return this._image360Entities.filter(entity => entity.icon.intersect(this._rayCaster.ray) !== null)[0];
+    const ray = this._rayCaster.ray;
+    const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
+    const cameraPosition = camera.position.clone();
+
+    const intersections = this._image360Entities
+      .filter(hasVisibleIcon)
+      .map(getIntersection)
+      .filter(hasIntersection)
+      .map(intersectionToCameraSpace)
+      .filter(isInFrontOfCamera)
+      .sort(byDistanceToCamera)
+      .map(selectEntity);
+
+    return first(intersections);
+
+    function hasVisibleIcon(entity: Image360Entity) {
+      return entity.icon.visible;
+    }
+
+    function getIntersection(entity: Image360Entity): [Image360Entity, THREE.Vector3 | null] {
+      return [entity, entity.icon.intersect(ray)];
+    }
+
+    function hasIntersection(
+      entityIntersection: [Image360Entity, THREE.Vector3 | null]
+    ): entityIntersection is [Image360Entity, THREE.Vector3] {
+      const intersection = entityIntersection[1];
+      return intersection !== null;
+    }
+
+    function intersectionToCameraSpace([entity, intersectionPoint]: [Image360Entity, THREE.Vector3 | null]): [
+      Image360Entity,
+      THREE.Vector3
+    ] {
+      return [entity, intersectionPoint!.sub(cameraPosition)];
+    }
+
+    function isInFrontOfCamera([_, intersectionPoint]: [Image360Entity, THREE.Vector3]): boolean {
+      return intersectionPoint.dot(cameraDirection) > 0;
+    }
+
+    function byDistanceToCamera(
+      [_0, a]: [Image360Entity, THREE.Vector3],
+      [_1, b]: [Image360Entity, THREE.Vector3]
+    ): number {
+      return a.length() - b.length();
+    }
+
+    function selectEntity([entity, _]: [Image360Entity, THREE.Vector3]): Image360Entity {
+      return entity;
+    }
   }
 }

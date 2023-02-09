@@ -35,6 +35,11 @@ export class Image360Icon {
     this._alphaAttributeAccessor.set([alpha]);
   }
 
+  get visible(): boolean {
+    const alpha = this._alphaAttributeAccessor.at(0)!;
+    return alpha > 0;
+  }
+
   set hoverSpriteVisible(visible: boolean) {
     this._hoverSprite.visible = visible;
   }
