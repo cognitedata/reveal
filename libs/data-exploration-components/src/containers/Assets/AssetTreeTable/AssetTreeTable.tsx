@@ -1,5 +1,6 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
+import isEmpty from 'lodash/isEmpty';
 import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import { Asset } from '@cognite/sdk';
 import {
@@ -10,13 +11,17 @@ import {
   SelectableItemsProps,
   TableStateProps,
 } from '@data-exploration-components/types';
+import styled from 'styled-components/macro';
 import { HighlightCell, ResourceTableColumns } from '../../../components';
 import { Table } from '../../../components';
 import { EmptyState } from '../../../components/EmpyState/EmptyState';
-import { useSearchAssetTree } from '@data-exploration-lib/domain-layer';
+import {
+  InternalAssetDataWithMatchingLabels,
+  useSearchAssetTree,
+} from '@data-exploration-lib/domain-layer';
 import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
+import { MatchingLabelsComponent } from '../../../components/Table/components/MatchingLabels';
 import { DASH } from '../../../utils';
-import { AssetWithRelationshipLabels } from '../AssetTable/AssetTable';
 import { useRootTree, useSearchTree, useRootPath } from './hooks';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import {
@@ -121,13 +126,13 @@ export const AssetTreeTable = ({
               <HighlightCell
                 text={getValue<string>() || DASH}
                 lines={1}
-                query={query}
+                query={''}
               />
             </div>
           ),
         },
-        Table.Columns.description(query),
-        Table.Columns.externalId(query),
+        Table.Columns.description(),
+        Table.Columns.externalId(),
         {
           id: 'childCount',
           header: startFromRoot ? 'Direct children' : 'Results under asset',
@@ -149,7 +154,7 @@ export const AssetTreeTable = ({
           cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
           size: 300,
         },
-        Table.Columns.source(query),
+        Table.Columns.source(),
         ...metadataColumns,
       ] as ColumnDef<InternalAssetTreeData>[],
     [query, startFromRoot, metadataColumns]
@@ -294,7 +299,34 @@ export const AssetTreeTable = ({
             setSearchExpanded(expanded);
           }
         }}
+        renderRowSubComponent={SubRow}
       />
     </Suspense>
+  );
+};
+
+const LabelMatcherWrapper = styled.div`
+  display: flex;
+  padding: 0 12px 8px;
+`;
+
+const SubRow = (row: Row<InternalAssetDataWithMatchingLabels>) => {
+  if (isEmpty(row.original.matchingLabels)) {
+    return null;
+  }
+
+  return (
+    <LabelMatcherWrapper
+      key={`matching-label-${row.id}`}
+      style={{ paddingLeft: `calc(${row.depth * 2}rem + 12px)` }}
+    >
+      {row.original.matchingLabels && (
+        <MatchingLabelsComponent
+          exact={row.original.matchingLabels.exact}
+          partial={row.original.matchingLabels.partial}
+          fuzzy={row.original.matchingLabels.fuzzy}
+        />
+      )}
+    </LabelMatcherWrapper>
   );
 };

@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Body, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
 import Highlighter from 'react-highlight-words';
-import { useIsOverflow } from '@data-exploration-components/hooks';
+import { useIsOverflow } from '../../../hooks';
 
 export const HighlightCell = React.memo(
   ({

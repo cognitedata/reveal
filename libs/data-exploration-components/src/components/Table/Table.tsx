@@ -19,7 +19,7 @@ import {
 } from '@tanstack/react-table';
 import useLocalStorageState from 'use-local-storage-state';
 import { isElementHorizontallyInViewport } from '../../utils/isElementHorizontallyInViewport';
-import { ColumnToggle } from './ColumnToggle';
+import { ColumnToggle } from './components/ColumnToggle';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 import {
@@ -28,6 +28,9 @@ import {
   StyledTable,
   LoadMoreButtonWrapper,
   Tr,
+  HeaderRow,
+  MainRowContainer,
+  MainRowSubContainer,
   ThWrapper,
   Th,
   Td,
@@ -43,9 +46,9 @@ import {
 
 import { Flex } from '@cognite/cogs.js';
 
-import { SortIcon } from './SortIcon';
+import { SortIcon } from './components/SortIcon';
 import { ResourceTableColumns } from './columns';
-import { LoadMore, LoadMoreProps } from './LoadMore';
+import { LoadMore, LoadMoreProps } from './components/LoadMore';
 import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import noop from 'lodash/noop';
@@ -84,6 +87,7 @@ export interface TableProps<T extends Record<string, any>>
   getSubrowData?: (originalRow: T, index: number) => undefined | T[];
   onRowExpanded?: OnChangeFn<ExpandedState>;
   enableCopying?: boolean;
+  renderRowSubComponent?: (row: Row<T>) => React.ReactNode;
 }
 
 export type TableData = Record<string, any>;
@@ -119,6 +123,7 @@ export function Table<T extends TableData>({
   getSubrowData,
   enableExpanding,
   onRowExpanded,
+  renderRowSubComponent,
 }: TableProps<T>) {
   const defaultColumn: Partial<ColumnDef<T, unknown>> = useMemo(
     () => ({
@@ -298,7 +303,7 @@ export function Table<T extends TableData>({
         <StyledTable id={id} className="data-exploration-table">
           <Thead isStickyHeader={stickyHeader}>
             {getHeaderGroups().map((headerGroup) => (
-              <Tr key={headerGroup.id}>
+              <HeaderRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <Th
                     {...{
@@ -349,44 +354,53 @@ export function Table<T extends TableData>({
                     </ThWrapper>
                   </Th>
                 ))}
-              </Tr>
+              </HeaderRow>
             ))}
           </Thead>
           <Tbody ref={tbodyRef}>
             {getRowModel().rows.map((row) => {
               return (
-                <Tr
-                  key={row.id}
-                  id={row.id}
-                  tabIndex={0}
-                  onClick={(evt) => onRowClick(row.original, evt)}
-                  onKeyDown={(evt) => handleKeyDown(evt, row)}
-                  className={row.getIsSelected() ? 'selected' : ''}
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    const dataValue = cell.getValue<string>();
-                    return (
-                      <Td
-                        {...{
-                          key: cell.id,
-                          style: {
-                            width: cell.column.getSize(),
-                          },
-                        }}
-                      >
-                        <TableDataBody level={3}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                          {enableCopying && (
-                            <CopyToClipboardIconButton value={dataValue} />
-                          )}
-                        </TableDataBody>
-                      </Td>
-                    );
-                  })}
-                </Tr>
+                <>
+                  <Tr
+                    key={row.id}
+                    id={row.id}
+                    tabIndex={0}
+                    onClick={(evt) => onRowClick(row.original, evt)}
+                    onKeyDown={(evt) => handleKeyDown(evt, row)}
+                    className={row.getIsSelected() ? 'selected' : ''}
+                  >
+                    <MainRowContainer>
+                      {row.getVisibleCells().map((cell) => {
+                        const dataValue = cell.getValue<string>();
+                        return (
+                          <Td
+                            {...{
+                              key: cell.id,
+                              style: {
+                                width: cell.column.getSize(),
+                              },
+                            }}
+                          >
+                            <TableDataBody level={3}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                              {enableCopying && (
+                                <CopyToClipboardIconButton value={dataValue} />
+                              )}
+                            </TableDataBody>
+                          </Td>
+                        );
+                      })}
+                    </MainRowContainer>
+                    {renderRowSubComponent && (
+                      <MainRowSubContainer>
+                        {renderRowSubComponent(row)}
+                      </MainRowSubContainer>
+                    )}
+                  </Tr>
+                </>
               );
             })}
           </Tbody>

@@ -1,5 +1,4 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { FileInfo } from '@cognite/sdk/dist/src/index';
 import ReactUnifiedViewer, {
   Annotation,
   ContainerConfig,

@@ -2,8 +2,11 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useEffect, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { queryKeys } from '../../../queryKeys';
-import { InternalAssetTreeData, InternalAssetFilters } from '../../internal';
-import { useAssetsSearchResultQuery } from '../../internal';
+import {
+  InternalAssetTreeData,
+  InternalAssetFilters,
+  useAssetsSearchResultWithLabelsQuery,
+} from '../../internal';
 import keyBy from 'lodash/keyBy';
 import { buildTree } from '../utils/buildTree';
 import { concatParents } from '../utils/concatParents';
@@ -20,7 +23,7 @@ export const useSearchAssetTree = ({
 }) => {
   const sdkClient = useSDK();
 
-  const { data, ...rest } = useAssetsSearchResultQuery({
+  const { data, ...rest } = useAssetsSearchResultWithLabelsQuery({
     query,
     assetFilter,
     sortBy: sortBy,

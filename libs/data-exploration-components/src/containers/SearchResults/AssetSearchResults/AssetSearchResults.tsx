@@ -19,8 +19,8 @@ import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import {
   InternalAssetFilters,
+  useAssetsSearchResultWithLabelsQuery,
   useAssetsSearchAggregateQuery,
-  useAssetsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 import { useResultCount } from '@data-exploration-components/components';
 import { VerticalDivider } from '@data-exploration-components/components/Divider';
@@ -63,7 +63,7 @@ export const AssetSearchResults = ({
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
-    useAssetsSearchResultQuery(
+    useAssetsSearchResultWithLabelsQuery(
       {
         query,
         assetFilter: filter,
@@ -71,6 +71,7 @@ export const AssetSearchResults = ({
       },
       { enabled: enableAdvancedFilters }
     );
+
   const { data: aggregateData } = useAssetsSearchAggregateQuery(
     {
       assetsFilters: filter,

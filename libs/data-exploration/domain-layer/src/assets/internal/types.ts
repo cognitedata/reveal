@@ -1,7 +1,13 @@
 import { AssetAggregateResult, Label, Metadata } from '@cognite/sdk';
 import { InternalCommonFilters } from '../../types';
 
-export type InternalAssetData = {
+export interface MatchingLabels {
+  exact: string[];
+  partial: string[];
+  fuzzy: string[];
+}
+
+export interface InternalAssetData {
   id: number;
   rootId: number;
   parentExternalId?: string;
@@ -16,9 +22,15 @@ export type InternalAssetData = {
   source?: string;
   labels?: Label[];
   aggregates?: AssetAggregateResult;
-};
+  labelsFlattened?: string[]; //added this extra prop to flatten labels
+}
 
-export interface InternalAssetTreeData extends InternalAssetData {
+export interface InternalAssetDataWithMatchingLabels extends InternalAssetData {
+  matchingLabels?: MatchingLabels; // INFO: This is only optional for now, to not crash the legacy types -_-
+}
+
+export interface InternalAssetTreeData
+  extends InternalAssetDataWithMatchingLabels {
   children?: InternalAssetTreeData[];
 }
 

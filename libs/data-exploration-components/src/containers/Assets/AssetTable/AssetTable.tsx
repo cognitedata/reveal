@@ -1,6 +1,6 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
+import isEmpty from 'lodash/isEmpty';
 import React, { useMemo } from 'react';
-import { Asset } from '@cognite/sdk';
 
 import {
   Table,
@@ -9,12 +9,18 @@ import {
 import { RelationshipLabels } from '@data-exploration-components/types';
 
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
+import styled from 'styled-components';
 import { ResourceTableColumns } from '../../../components';
-import { useAssetsMetadataKeys } from '@data-exploration-lib/domain-layer';
+import {
+  InternalAssetDataWithMatchingLabels,
+  useAssetsMetadataKeys,
+} from '@data-exploration-lib/domain-layer';
+import { MatchingLabelsComponent } from '../../../components/Table/components/MatchingLabels';
 import { ThreeDModelCell } from './ThreeDModelCell';
 import noop from 'lodash/noop';
 
-export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
+export type AssetWithRelationshipLabels = RelationshipLabels &
+  InternalAssetDataWithMatchingLabels;
 
 const visibleColumns = ['name', 'rootId'];
 export const AssetTable = ({
@@ -33,11 +39,11 @@ export const AssetTable = ({
     () =>
       [
         {
-          ...Table.Columns.name(query),
+          ...Table.Columns.name(),
           enableHiding: false,
         },
-        Table.Columns.description(query),
-        Table.Columns.externalId(query),
+        Table.Columns.description(),
+        Table.Columns.externalId(),
         Table.Columns.rootAsset(false, onRowClick),
         {
           accessorKey: 'id',
@@ -53,7 +59,7 @@ export const AssetTable = ({
           ...Table.Columns.labels,
           enableSorting: false,
         },
-        Table.Columns.source(query),
+        Table.Columns.source(),
         ...metadataColumns,
       ] as ColumnDef<AssetWithRelationshipLabels>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,12 +69,36 @@ export const AssetTable = ({
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
-    <Table<Asset>
+    <Table<InternalAssetDataWithMatchingLabels>
       data={data || []}
       columns={columns}
       onRowClick={onRowClick}
       hiddenColumns={hiddenColumns}
+      renderRowSubComponent={SubRow}
       {...rest}
     />
+  );
+};
+
+const LabelMatcherWrapper = styled.div`
+  display: flex;
+  padding: 0 12px 8px;
+`;
+
+const SubRow = (row: Row<InternalAssetDataWithMatchingLabels>) => {
+  if (isEmpty(row.original.matchingLabels)) {
+    return null;
+  }
+
+  return (
+    <LabelMatcherWrapper key={`matching-label-${row.id}`}>
+      {row.original.matchingLabels && (
+        <MatchingLabelsComponent
+          exact={row.original.matchingLabels.exact}
+          partial={row.original.matchingLabels.partial}
+          fuzzy={row.original.matchingLabels.fuzzy}
+        />
+      )}
+    </LabelMatcherWrapper>
   );
 };

@@ -2,8 +2,8 @@ import { createLink } from '@cognite/cdf-utilities';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { Asset, FileInfo, IdEither, Sequence, Timeseries } from '@cognite/sdk';
 import { CogniteEvent } from '@cognite/unified-file-viewer';
-import { RelationshipLabels } from '@data-exploration-components/types';
-import { StyledButton } from './elements';
+import { RelationshipLabels } from '../../../types';
+import { StyledButton } from '../elements';
 import React from 'react';
 import {
   InternalAssetData,

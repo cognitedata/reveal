@@ -15,7 +15,7 @@ import {
 } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
-import { TableData } from './Table';
+import { TableData } from '../Table';
 
 import {
   DragDropContainer,
@@ -23,9 +23,9 @@ import {
   WithDragHandleProps,
 } from '@data-exploration-components/components/DragDropContainer';
 import { HighlightCell } from './HighlightCell';
-import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
-import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
-import { MetadataHeaderText } from './elements';
+import { useMetrics } from '../../../hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '../../../constants/metrics';
+import { MetadataHeaderText } from '../elements';
 import { MAX_COLUMN_SELECTION } from '@cognite/data-exploration';
 
 export interface ColumnToggleProps<T extends TableData = any> {

@@ -13,6 +13,8 @@ export const concatParents = (
               ...(asset?.children || []),
               ...(currentValue?.children || []),
             ]),
+            matchingLabels:
+              asset?.matchingLabels || currentValue.matchingLabels,
           };
         }
 

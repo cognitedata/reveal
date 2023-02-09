@@ -106,8 +106,9 @@ export const Tr = styled.div`
   color: inherit;
   border-bottom: 1px solid var(--cogs-border--muted);
   display: flex;
+  flex-direction: column;
   width: 100%;
-  align-items: center;
+  justify-content: center;
   height: 100%;
   min-height: ${defaultRowHeight};
   padding: 0 8px;
@@ -151,6 +152,22 @@ export const Tr = styled.div`
   &:hover .copying-button {
     display: block;
   }
+`;
+
+export const HeaderRow = styled(Tr)`
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+export const MainRowContainer = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+`;
+
+export const MainRowSubContainer = styled.div`
+  width: 100%;
 `;
 
 export const Tbody = styled.div`

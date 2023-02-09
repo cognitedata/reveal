@@ -20,7 +20,7 @@ import {
   METADATA_KEY_SEPARATOR,
 } from '@data-exploration-components/utils';
 import { ResourceTableHashMap } from './types';
-import { DirectAssets } from './DirectAssets';
+import { DirectAssets } from './components/DirectAssets';
 
 // TODO: this whole approach needs to be refactored a bit, especially the usage of hooks and stuff
 export const ResourceTableColumns: ResourceTableHashMap = {
