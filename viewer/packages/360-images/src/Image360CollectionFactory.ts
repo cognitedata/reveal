@@ -5,9 +5,9 @@
 import { Image360Descriptor, Image360Provider } from '@reveal/data-providers';
 import { SceneHandler } from '@reveal/utilities';
 import zip from 'lodash/zip';
-import { Matrix4, Vector3 } from 'three';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from './Image360Entity';
+import { Image360Icon } from './Image360Icon';
 import { Image360CollectionIcons } from './visuals/Image360CollectionIcons';
 
 export class Image360CollectionFactory<T> {
@@ -23,48 +23,33 @@ export class Image360CollectionFactory<T> {
     postTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
   ): Promise<DefaultImage360Collection> {
-    const event360Metadatas = await this._image360DataProvider.get360ImageDescriptors(dataProviderFilter);
-
-    const positions = event360Metadatas
-      .map(image360Descriptor => this.computeTransform(image360Descriptor, preMultipliedRotation, postTransform))
-      .map(p => new Vector3().setFromMatrixPosition(p));
+    const event360Descriptors = await this._image360DataProvider.get360ImageDescriptors(
+      dataProviderFilter,
+      preMultipliedRotation
+    );
+    event360Descriptors.forEach(image360Descriptor => image360Descriptor.transform.premultiply(postTransform));
 
     const collectionIcons = new Image360CollectionIcons(this._sceneHandler);
-    const icons = collectionIcons.initializeImage360Icons(positions);
+    const icons = collectionIcons.initializeImage360Icons(event360Descriptors.map(descriptor => descriptor.transform));
 
-    const entities = zip(event360Metadatas, icons)
-      .filter(([image360Descriptor, icon]) => {
-        return image360Descriptor !== undefined && icon !== undefined;
-      })
-      .map(([image360Descriptor, icon]) => {
-        const worldTransform = this.computeTransform(image360Descriptor!, preMultipliedRotation, postTransform);
+    const entities = zip(event360Descriptors, icons)
+      .filter(isDefined)
+      .map(([descriptor, icon]) => {
         return new Image360Entity(
-          image360Descriptor!,
+          descriptor,
           this._sceneHandler,
           this._image360DataProvider,
-          worldTransform,
+          descriptor.transform,
           icon!
         );
       });
 
     return new DefaultImage360Collection(entities, collectionIcons);
-  }
 
-  private computeTransform(
-    image360Metadata: Image360Descriptor,
-    preComputedRotation: boolean,
-    postTransform: THREE.Matrix4
-  ): THREE.Matrix4 {
-    const { translation, rotation } = image360Metadata.transformations;
-
-    const entityTransform = translation.clone();
-
-    if (!preComputedRotation) {
-      entityTransform.multiply(rotation.clone().multiply(new Matrix4().makeRotationY(Math.PI / 2)));
-    } else {
-      entityTransform.multiply(new Matrix4().makeRotationY(Math.PI));
+    function isDefined(
+      pair: [Image360Descriptor | undefined, Image360Icon | undefined]
+    ): pair is [Image360Descriptor, Image360Icon] {
+      return pair[0] !== undefined && pair[1] !== undefined;
     }
-
-    return postTransform.clone().multiply(entityTransform);
   }
 }

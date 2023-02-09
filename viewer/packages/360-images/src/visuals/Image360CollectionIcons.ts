@@ -11,6 +11,7 @@ import {
   CanvasTexture,
   Color,
   GLSL3,
+  Matrix4,
   Points,
   RawShaderMaterial,
   Vector2,
@@ -37,7 +38,8 @@ export class Image360CollectionIcons {
     this._sceneHandler = sceneHandler;
   }
 
-  public initializeImage360Icons(positions: Vector3[]): Image360Icon[] {
+  public initializeImage360Icons(transforms: Matrix4[]): Image360Icon[] {
+    const positions = transforms.map(transform => new Vector3().setFromMatrixPosition(transform));
     const alphaBuffer = new Uint8ClampedArray(positions.map(_ => 255));
     this._geometry.setFromPoints(positions);
 
