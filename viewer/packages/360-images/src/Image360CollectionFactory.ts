@@ -1,27 +1,28 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Copyright 2023 Cognite AS
  */
-import * as THREE from 'three';
 
-import { Image360Entity } from './Image360Entity';
-import { SceneHandler } from '@reveal/utilities';
 import { Image360Descriptor, Image360Provider } from '@reveal/data-providers';
-import { Image360CollectionIcons } from './visuals/Image360CollectionIcons';
-import { Vector3 } from 'three';
+import { SceneHandler } from '@reveal/utilities';
 import zip from 'lodash/zip';
+import { Matrix4, Vector3 } from 'three';
+import { DefaultImage360Collection } from './DefaultImage360Collection';
+import { Image360Entity } from './Image360Entity';
+import { Image360CollectionIcons } from './visuals/Image360CollectionIcons';
 
-export class Image360EntityFactory<T> {
-  private readonly _sceneHandler: SceneHandler;
+export class Image360CollectionFactory<T> {
   private readonly _image360DataProvider: Image360Provider<T>;
+  private readonly _sceneHandler: SceneHandler;
   constructor(image360DataProvider: Image360Provider<T>, sceneHandler: SceneHandler) {
     this._image360DataProvider = image360DataProvider;
     this._sceneHandler = sceneHandler;
   }
+
   public async create(
     dataProviderFilter: T,
     postTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
-  ): Promise<Image360Entity[]> {
+  ): Promise<DefaultImage360Collection> {
     const event360Metadatas = await this._image360DataProvider.get360ImageDescriptors(dataProviderFilter);
 
     const positions = event360Metadatas
@@ -31,7 +32,7 @@ export class Image360EntityFactory<T> {
     const collectionIcons = new Image360CollectionIcons(this._sceneHandler);
     const icons = collectionIcons.getImage360Icons(positions);
 
-    return zip(event360Metadatas, icons)
+    const entities = zip(event360Metadatas, icons)
       .filter(([image360Descriptor, icon]) => {
         return image360Descriptor !== undefined && icon !== undefined;
       })
@@ -45,6 +46,8 @@ export class Image360EntityFactory<T> {
           icon!
         );
       });
+
+    return new DefaultImage360Collection(entities);
   }
 
   private computeTransform(
@@ -57,9 +60,9 @@ export class Image360EntityFactory<T> {
     const entityTransform = translation.clone();
 
     if (!preComputedRotation) {
-      entityTransform.multiply(rotation.clone().multiply(new THREE.Matrix4().makeRotationY(Math.PI / 2)));
+      entityTransform.multiply(rotation.clone().multiply(new Matrix4().makeRotationY(Math.PI / 2)));
     } else {
-      entityTransform.multiply(new THREE.Matrix4().makeRotationY(Math.PI));
+      entityTransform.multiply(new Matrix4().makeRotationY(Math.PI));
     }
 
     return postTransform.clone().multiply(entityTransform);
