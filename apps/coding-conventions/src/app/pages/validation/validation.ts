@@ -2,7 +2,7 @@ import {
   Convention,
   System,
   TagDefinitions,
-  TagHardcoded,
+  TagAbbreviation,
   TagRange,
   TagRegex,
 } from '../../types';
@@ -156,7 +156,7 @@ export const backTrackingIsValid = (
     (matches: MatchedDefinition[], definition: TagDefinitions) => {
       let regexString = 'NOTAMATCH';
       if (definition.type === 'Abbreviation') {
-        regexString = `^(${(definition as TagHardcoded).key})`;
+        regexString = `^(${(definition as TagAbbreviation).key})`;
       } else if (definition.type === 'Regex') {
         regexString = `^(${(definition as TagRegex).regex})`;
       } else if (definition.type === 'Range') {

@@ -2,7 +2,7 @@ import {
   Convention,
   System,
   TagDefinitions,
-  TagHardcoded,
+  TagAbbreviation,
   TagRange,
   TagRegex,
 } from '../../types';
@@ -56,7 +56,7 @@ const generateRegexForSubComponents = (conventions: Convention[]) => {
     convention.definitions?.forEach((definition: TagDefinitions) => {
       if (definition.type === 'Abbreviation') {
         regexList.push({
-          regex: (definition as TagHardcoded).key,
+          regex: (definition as TagAbbreviation).key,
           dependsOn: definition.dependsOn,
           id: definition.id,
         });

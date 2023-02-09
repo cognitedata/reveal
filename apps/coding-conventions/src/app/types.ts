@@ -1,6 +1,6 @@
 type UID = string;
 export type TagTypes = 'Range' | 'Regex' | 'Abbreviation';
-export type TagDefinitions = TagHardcoded | TagRange | TagRegex;
+export type TagDefinitions = TagAbbreviation | TagRange | TagRegex;
 
 export type Resource = 'files' | 'assets';
 
@@ -35,7 +35,7 @@ export type Common = {
   dependsOn?: UID;
 };
 
-export type TagHardcoded = Common & {
+export type TagAbbreviation = Common & {
   key: string;
 };
 

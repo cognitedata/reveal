@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { Button } from '@cognite/cogs.js';
 import { memoize } from 'lodash';
 import React, { useEffect } from 'react';
 import { useTable } from 'react-table';
@@ -45,7 +46,11 @@ const addNewRows = (setter: (a: any) => void, count?: number) => {
   });
 };
 
-export function Table({ columns, dataSource: inputData }: any) {
+export function Table({
+  columns,
+  dataSource: inputData,
+  onSaveDataClick,
+}: any) {
   const [data, setData] = React.useState(inputData);
   const [newColumns, setNewColumns] = React.useState(columns);
 
@@ -92,15 +97,23 @@ export function Table({ columns, dataSource: inputData }: any) {
     }
   };
 
-  const updateMyData = (rowIndex: number, columnId: number, value: string) => {
+  const updateMyData = (rowIndex: number, columnId: string, value: string) => {
     setData((old: any[]) =>
       old.map((row, index) => {
         if (index === rowIndex) {
+          if (columnId === 'key') {
+            return {
+              ...old[rowIndex],
+              id: 'idRow' + rowIndex,
+              [columnId]: value,
+            };
+          }
           return {
             ...old[rowIndex],
             [columnId]: value,
           };
         }
+
         return row;
       })
     );
@@ -290,6 +303,9 @@ export function Table({ columns, dataSource: inputData }: any) {
 
   return (
     <div className="App">
+      <RightSideButton>
+        <Button onClick={() => onSaveDataClick(data)}>Save</Button>
+      </RightSideButton>
       <TableContainer onScroll={handleScroll}>
         <table
           {...getTableProps()}
@@ -359,4 +375,17 @@ export function Table({ columns, dataSource: inputData }: any) {
 const TableContainer = styled.div`
   overflow-y: scroll;
   height: 500px;
+`;
+
+const RightSideButton = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-left: 1px solid #e6e6e6;
+  cursor: pointer;
 `;
