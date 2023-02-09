@@ -30,7 +30,7 @@ export class Image360CollectionFactory<T> {
       .map(p => new Vector3().setFromMatrixPosition(p));
 
     const collectionIcons = new Image360CollectionIcons(this._sceneHandler);
-    const icons = collectionIcons.getImage360Icons(positions);
+    const icons = collectionIcons.initializeImage360Icons(positions);
 
     const entities = zip(event360Metadatas, icons)
       .filter(([image360Descriptor, icon]) => {
@@ -47,7 +47,7 @@ export class Image360CollectionFactory<T> {
         );
       });
 
-    return new DefaultImage360Collection(entities);
+    return new DefaultImage360Collection(entities, collectionIcons);
   }
 
   private computeTransform(

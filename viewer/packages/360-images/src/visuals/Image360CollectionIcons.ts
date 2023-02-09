@@ -22,19 +22,46 @@ import { Image360Icon } from '../Image360Icon';
 
 export class Image360CollectionIcons {
   private readonly _sceneHandler: SceneHandler;
+  private readonly _geometry: BufferGeometry;
+  private readonly _material: RawShaderMaterial;
+  private readonly _points: Points;
+
   constructor(sceneHandler: SceneHandler) {
+    const geometry = new BufferGeometry();
+    const material = this.initializeIconsMaterial();
+    const points = this.initializePoints(geometry, material);
+
+    this._geometry = geometry;
+    this._material = material;
+    this._points = points;
     this._sceneHandler = sceneHandler;
   }
 
-  public getImage360Icons(positions: Vector3[]): Image360Icon[] {
+  public initializeImage360Icons(positions: Vector3[]): Image360Icon[] {
     const alphaBuffer = new Uint8ClampedArray(positions.map(_ => 255));
-    const geometry = new BufferGeometry();
-    geometry.setFromPoints(positions);
+    this._geometry.setFromPoints(positions);
 
     const alphaAttribute = new BufferAttribute(alphaBuffer, 1, true);
-    geometry.setAttribute('alpha', alphaAttribute);
+    this._geometry.setAttribute('alpha', alphaAttribute);
 
-    const material = new RawShaderMaterial({
+    this._sceneHandler.addCustomObject(this._points);
+
+    return positions.map((position, index) => {
+      const instanceAlphaView = new Uint8ClampedArray(alphaBuffer.buffer, index, 1);
+      const alphaAttributeAccessor = new AttributeDataAccessor(instanceAlphaView, alphaAttribute);
+      return new Image360Icon(position, this._sceneHandler, alphaAttributeAccessor);
+    });
+  }
+
+  public dispose(): void {
+    this._sceneHandler.removeCustomObject(this._points);
+    this._geometry.dispose();
+    this._material.uniforms.map.value.dispose();
+    this._material.dispose();
+  }
+
+  private initializeIconsMaterial(): RawShaderMaterial {
+    return new RawShaderMaterial({
       uniforms: {
         map: { value: this.createOuterRingsTexture() },
         colorTint: { value: new Color(1, 1, 1) },
@@ -47,21 +74,16 @@ export class Image360CollectionIcons {
       glslVersion: GLSL3,
       transparent: true
     });
+  }
 
+  private initializePoints(geometry: BufferGeometry, material: RawShaderMaterial): Points {
     const points = new Points(geometry, material);
     points.renderOrder = 4;
-    this._sceneHandler.addCustomObject(points);
-
     points.onBeforeRender = renderer => {
       renderer.getSize(material.uniforms.renderSize.value);
       material.uniforms.renderDownScale.value = material.uniforms.renderSize.value.x / renderer.domElement.clientWidth;
     };
-
-    return positions.map((position, index) => {
-      const instanceAlphaView = new Uint8ClampedArray(alphaBuffer.buffer, index, 1);
-      const alphaAttributeAccessor = new AttributeDataAccessor(instanceAlphaView, alphaAttribute);
-      return new Image360Icon(position, this._sceneHandler, alphaAttributeAccessor);
-    });
+    return points;
   }
 
   private createOuterRingsTexture(): CanvasTexture {

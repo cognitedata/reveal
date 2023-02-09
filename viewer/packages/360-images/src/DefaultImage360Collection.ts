@@ -7,6 +7,7 @@ import pull from 'lodash/pull';
 import { Image360Collection } from './Image360Collection';
 import { Image360Entity } from './Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from './types';
+import { Image360CollectionIcons } from './visuals/Image360CollectionIcons';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -24,6 +25,7 @@ export class DefaultImage360Collection implements Image360Collection {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
     image360Exited: new EventTrigger<Image360ExitedDelegate>()
   };
+  private readonly _icons: Image360CollectionIcons;
 
   /**
    * The events from the image collection.
@@ -35,8 +37,9 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._events;
   }
 
-  constructor(entities: Image360Entity[]) {
+  constructor(entities: Image360Entity[], icons: Image360CollectionIcons) {
     this.image360Entities = entities;
+    this._icons = icons;
   }
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:
@@ -106,6 +109,7 @@ export class DefaultImage360Collection implements Image360Collection {
   public dispose(): void {
     this.image360Entities.forEach(image360Entity => image360Entity.dispose());
     this.image360Entities.splice(0);
+    this._icons.dispose();
     this._events.image360Entered.unsubscribeAll();
     this._events.image360Exited.unsubscribeAll();
   }
