@@ -52,7 +52,7 @@ export class SectorDownloadScheduler {
       const sectorIdentifier = this.getSectorIdentifier(sector.modelIdentifier, sector.metadata.id);
 
       if (sector.levelOfDetail === LevelOfDetail.Discarded) {
-        const discardedSector = this.abortLoadOfDiscardedSector(sectorIdentifier);
+        const discardedSector = this.abortLoadOfDiscardedSector(sector, sectorIdentifier);
         if (discardedSector) {
           return discardedSector;
         }
@@ -71,19 +71,33 @@ export class SectorDownloadScheduler {
     });
   }
 
-  private abortLoadOfDiscardedSector(sectorIdentifier: string): Promise<ConsumedSector> | null {
+  private createDiscardedConsumedSector(sector: WantedSector): ConsumedSector {
+    return {
+      modelIdentifier: sector.modelIdentifier,
+      metadata: sector.metadata,
+      levelOfDetail: LevelOfDetail.Discarded,
+      group: undefined,
+      instancedMeshes: undefined
+    };
+  }
+
+  private abortLoadOfDiscardedSector(sector: WantedSector, sectorIdentifier: string): Promise<ConsumedSector> | null {
+    // Abort pending downloads
     const pendingSector = this._pendingSectorDownloads.get(sectorIdentifier);
     if (pendingSector !== undefined) {
       pendingSector.abortDowload();
       return pendingSector.consumedSector;
     }
 
+    // Remove (and resolve) dowlowload request in queue
     const queuedSector = this._queuedSectorDownloads.get(sectorIdentifier);
     if (queuedSector !== undefined) {
       remove(this._sectorDownloadQueue, sectorQueueIdentifier => {
         return sectorQueueIdentifier === sectorIdentifier;
       });
       this._queuedSectorDownloads.delete(sectorIdentifier);
+      queuedSector.queuedDeferredPromise.resolve(this.createDiscardedConsumedSector(sector));
+
       return queuedSector.queuedDeferredPromise;
     }
 
@@ -121,13 +135,7 @@ export class SectorDownloadScheduler {
     const sectorDownload = downloadSector(sector);
     sectorDownload.consumedSector = sectorDownload.consumedSector.catch(error => {
       Log.error('Failed to load sector', sector, 'error:', error);
-      return {
-        modelIdentifier: sector.modelIdentifier,
-        metadata: sector.metadata,
-        levelOfDetail: LevelOfDetail.Discarded,
-        group: undefined,
-        instancedMeshes: undefined
-      } as ConsumedSector;
+      return this.createDiscardedConsumedSector(sector);
     });
     this._pendingSectorDownloads.set(sectorIdentifier, sectorDownload);
     this.processNextQueuedSectorDownload(sectorDownload.consumedSector, sectorIdentifier);

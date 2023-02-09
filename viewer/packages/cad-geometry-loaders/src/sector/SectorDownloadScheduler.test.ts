@@ -223,9 +223,58 @@ describe(SectorDownloadScheduler.name, () => {
       }
     });
   });
+
+  test('Discarded sectors should be aborted or removed from dowload queue', async () => {
+    // Setup
+    const wantedSectors = createMockWantedSectors(21, 'TestModelIdentifier');
+    const discardedSectors = createMockWantedSectors(21, 'TestModelIdentifier', LevelOfDetail.Discarded);
+    let abortCount = 0;
+
+    const stalledDownload = new DeferredPromise<void>();
+    const dowloadSectorMock = async (sector: WantedSector) => {
+      await stalledDownload;
+      return createConsumedSectorMock(sector).object();
+    };
+
+    const downloadSector = (sector: WantedSector) => {
+      return {
+        consumedSector: dowloadSectorMock(sector),
+        abortDowload: () => {
+          abortCount++;
+        }
+      };
+    };
+
+    const wantedSectorsDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
+      return { sector, downloadSector };
+    });
+
+    const discardedSectorDownloadData: SectorDownloadData[] = discardedSectors.map(sector => {
+      return { sector, downloadSector };
+    });
+
+    // Act
+    const firstLoadBatch = sectorDownloadScheduler.queueSectorBatchForDownload(wantedSectorsDownloadData);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(20);
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(1);
+
+    sectorDownloadScheduler.queueSectorBatchForDownload(discardedSectorDownloadData);
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(20);
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
+    expect(abortCount).toBe(20);
+
+    stalledDownload.resolve();
+    await Promise.all(firstLoadBatch);
+
+    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(0);
+  });
 });
 
-function createMockWantedSectors(numberOfSectors: number, modelIdentifier: string): WantedSector[] {
+function createMockWantedSectors(
+  numberOfSectors: number,
+  modelIdentifier: string,
+  levelOfDetail = LevelOfDetail.Detailed
+): WantedSector[] {
   return Array.from(Array(numberOfSectors).keys()).map((_, index) => {
     return new Mock<WantedSector>()
       .setup(p => p.metadata)
@@ -237,6 +286,8 @@ function createMockWantedSectors(numberOfSectors: number, modelIdentifier: strin
       )
       .setup(p => p.modelIdentifier)
       .returns(modelIdentifier)
+      .setup(p => p.levelOfDetail)
+      .returns(levelOfDetail)
       .object();
   });
 }
@@ -253,6 +304,6 @@ function createConsumedSectorMock(wantedSector: WantedSector): IMock<ConsumedSec
         .object()
     )
     .setup(p => p.levelOfDetail)
-    .returns(LevelOfDetail.Detailed);
+    .returns(wantedSector.levelOfDetail);
   return consumedSector;
 }
