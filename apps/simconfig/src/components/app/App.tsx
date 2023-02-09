@@ -42,7 +42,11 @@ export default function App() {
       return;
     }
 
-    identifyUser(user.mail || user.displayName || user.id);
+    identifyUser({
+      userId: user.mail || user.displayName || user.id,
+      project,
+      email: user.mail,
+    });
 
     dispatch(appSlice.actions.setIsAuthenticated(true));
 
@@ -55,7 +59,7 @@ export default function App() {
     );
 
     dispatch(appSlice.actions.setIsInitialized(true));
-  }, [user, client, dispatch]);
+  }, [user, client, project, dispatch]);
 
   if (!isInitialized) {
     return null;

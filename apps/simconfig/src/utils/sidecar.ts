@@ -77,6 +77,7 @@ window.__cogniteSidecar = {
   applicationId: 'simconfig',
   applicationName: 'Simulator Configuration App (staging)',
   docsSiteBaseUrl: 'https://docs.cognite.com',
+  mixpanel: process.env.REACT_APP_MIXPANEL_TOKEN,
 };
 
 export default window.__cogniteSidecar;
