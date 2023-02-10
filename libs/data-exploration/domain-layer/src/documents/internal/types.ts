@@ -7,7 +7,8 @@ import {
   LabelList,
   DocumentHighlight,
 } from '@cognite/sdk';
-import { InternalCommonFilters } from '../../types';
+
+import { InternalCommonFilters, MatchingLabels } from '../../types';
 
 // Flattened version of 'DocumentSearchItem' from cognite/sdk
 export interface InternalDocument {
@@ -30,6 +31,10 @@ export interface InternalDocument {
   sourceFile: DocumentSourceFile;
   geoLocation?: DocumentGeoJsonGeometry;
   highlight?: DocumentHighlight;
+}
+
+export interface InternalDocumentWithMatchingLabels extends InternalDocument {
+  matchingLabels?: MatchingLabels; // INFO: This is only optional for now, to not crash the legacy types -_-
 }
 
 export interface InternalDocumentFilter extends InternalCommonFilters {

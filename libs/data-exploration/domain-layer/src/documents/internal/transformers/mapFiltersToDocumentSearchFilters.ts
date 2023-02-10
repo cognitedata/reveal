@@ -90,6 +90,8 @@ export const mapFiltersToDocumentSearchFilters = (
 
     // @ts-ignore
     searchQueryBuilder.prefix('sourceFile|source', query);
+    // @ts-ignore
+    searchQueryBuilder.containsAny('labels', [{ externalId: query }]);
 
     builder.or(searchQueryBuilder);
   }

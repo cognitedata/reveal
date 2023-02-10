@@ -17,8 +17,5 @@ export const normalizeAssets = (assets: Asset[]): InternalAssetData[] => {
     source: asset.source,
     labels: asset.labels,
     aggregates: asset.aggregates,
-    labelsFlattened: asset.labels
-      ? asset.labels.map((label) => label.externalId)
-      : undefined,
   }));
 };

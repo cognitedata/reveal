@@ -16,7 +16,6 @@ export interface InternalAssetData {
   source?: string;
   labels?: Label[];
   aggregates?: AssetAggregateResult;
-  labelsFlattened?: string[]; //added this extra prop to flatten labels
 }
 
 export interface InternalAssetDataWithMatchingLabels extends InternalAssetData {

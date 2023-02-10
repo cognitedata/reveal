@@ -2,6 +2,7 @@ import { useDeepMemo } from '@data-exploration-lib/core';
 import { UseInfiniteQueryOptions } from 'react-query';
 import { TableSortBy } from '../../../types';
 import { extractMatchingLabels } from '../../../utils/extractMatchingLabels';
+import { extractMatchingLabelsFromCogniteLabels } from '../../../utils/extractMatchingLabelsFromCogniteLabels';
 import { InternalAssetFilters } from '../types';
 import { useAssetsSearchResultQuery } from './useAssetsSearchResultQuery';
 
@@ -41,8 +42,8 @@ export const useAssetsSearchResultWithLabelsQuery = (
               label: 'External ID',
             },
             {
-              key: 'labelsFlattened',
-              label: 'Label',
+              key: 'labels',
+              customMatcher: extractMatchingLabelsFromCogniteLabels,
             },
           ]),
         };

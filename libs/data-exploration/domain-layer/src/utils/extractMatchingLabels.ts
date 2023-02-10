@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import { MatchingLabels } from '@data-exploration-lib/domain-layer';
@@ -10,6 +11,12 @@ export const extractMatchingLabels = (
     | {
         key: string;
         label?: string;
+        useSubstringMatch?: boolean; // INFO: if you want to check for substring instead of prefix
+        customMatcher?: (
+          value: any,
+          query: string,
+          matchers: MatchingLabels
+        ) => void;
       }
   )[],
   fallbackFuzzyMatch?: string
@@ -29,8 +36,19 @@ export const extractMatchingLabels = (
 
   properties.forEach((property) => {
     const value =
-      typeof property === 'string' ? data[property] : data[property.key];
+      typeof property === 'string'
+        ? get(data, property)
+        : get(data, property.key);
+
     if (value) {
+      if (typeof property !== 'string' && property.customMatcher) {
+        property.customMatcher(value, query, matchers);
+        return;
+      }
+
+      const useSubstringMatch =
+        typeof property !== 'string' && property.useSubstringMatch;
+
       switch (typeof value) {
         case 'number': {
           if (isExactMatch(value, query)) {
@@ -41,7 +59,7 @@ export const extractMatchingLabels = (
         case 'string': {
           if (isExactMatch(value, query)) {
             matchers.exact.push(getKey(property));
-          } else if (isPartialMatch(value, query)) {
+          } else if (isPartialMatch(value, query, useSubstringMatch)) {
             matchers.partial.push(getKey(property));
           }
           break;
@@ -57,7 +75,7 @@ export const extractMatchingLabels = (
 
               if (isExactMatch(childValue, query)) {
                 matchers.exact.push(`${getKey(property)} ${childKey}`);
-              } else if (isPartialMatch(childValue, query)) {
+              } else if (isPartialMatch(childValue, query, useSubstringMatch)) {
                 matchers.partial.push(`${getKey(property)} ${childKey}`);
               }
             });
@@ -69,7 +87,7 @@ export const extractMatchingLabels = (
               }
               if (isExactMatch(childValue, query)) {
                 matchers.exact.push(`${getKey(property)} ${childValue}`);
-              } else if (isPartialMatch(childValue, query)) {
+              } else if (isPartialMatch(childValue, query, useSubstringMatch)) {
                 matchers.partial.push(`${getKey(property)} ${childValue}`);
               }
             });
@@ -83,14 +101,21 @@ export const extractMatchingLabels = (
     }
   });
 
-  if (isEmpty(matchers.exact) && isEmpty(matchers.partial)) {
+  if (
+    isEmpty(matchers.exact) &&
+    isEmpty(matchers.partial) &&
+    isEmpty(matchers.fuzzy)
+  ) {
     matchers.fuzzy.push(fallbackFuzzyMatch || 'Name or Description');
   }
 
   return matchers;
 };
 
-const isExactMatch = (value: string | number, query: string): boolean => {
+export const isExactMatch = (
+  value: string | number,
+  query: string
+): boolean => {
   if (typeof value === 'number' && Number(query)) {
     return value === Number(query);
   }
@@ -98,6 +123,13 @@ const isExactMatch = (value: string | number, query: string): boolean => {
   return value.toString().toLowerCase() === query.toLowerCase();
 };
 
-const isPartialMatch = (value: string, query: string): boolean => {
-  return (value as string).toLowerCase().startsWith(query.toLowerCase());
+export const isPartialMatch = (
+  value: string,
+  query: string,
+  checkSubstring?: boolean
+): boolean => {
+  if (checkSubstring) {
+    return value.toString().toLowerCase().includes(query.toLowerCase());
+  }
+  return value.toString().toLowerCase().startsWith(query.toLowerCase());
 };

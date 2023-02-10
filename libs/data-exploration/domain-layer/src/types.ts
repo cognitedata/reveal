@@ -27,3 +27,9 @@ export type TableSortBy = {
   id: string;
   desc: boolean;
 };
+
+export interface MatchingLabels {
+  exact: string[];
+  partial: string[];
+  fuzzy: string[];
+}

@@ -1,4 +1,4 @@
-import { extractMatchingLabels } from '../extractMatchingLabels';
+import { extractMatchingLabels, isExactMatch } from '../extractMatchingLabels';
 
 describe('extractMatchingLabels', function () {
   it('should return correct result', () => {
@@ -48,6 +48,29 @@ describe('extractMatchingLabels', function () {
       exact: [],
       partial: [],
       fuzzy: ['Name or Description'],
+    });
+
+    // custom label and matcher per property
+    expect(
+      extractMatchingLabels(
+        { test: 'aBcde', test2: { externalId: 'abc' } },
+        'abc',
+        [
+          'test',
+          {
+            key: 'test2',
+            customMatcher: (value, query, matchers) => {
+              if (isExactMatch(value.externalId, query)) {
+                matchers.exact.push('New custom label');
+              }
+            },
+          },
+        ]
+      )
+    ).toEqual({
+      exact: ['New custom label'],
+      partial: ['test'],
+      fuzzy: [],
     });
   });
 });

@@ -76,7 +76,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           header: 'Content',
           cell: ({ row }: { row: Row<InternalDocument> }) => {
             return (
-              <DocumentContentPreview document={row.original} query={query} />
+              <DocumentContentPreview document={row.original} query={''} />
             );
           },
           enableSorting: false,
@@ -124,8 +124,8 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
         Table.Columns.assets,
-        Table.Columns.externalId(query),
-        Table.Columns.id(query),
+        Table.Columns.externalId(),
+        Table.Columns.id(),
         ...metadataColumns,
       ] as ColumnDef<DocumentWithRelationshipLabels>[],
     [query, metadataColumns]
