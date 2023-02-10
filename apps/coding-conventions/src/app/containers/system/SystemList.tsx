@@ -1,7 +1,6 @@
 import { Flex, Icon, Loader } from '@cognite/cogs.js';
 import { useNavigate } from 'react-router-dom';
-import { Card, EmptyCard } from '../../components/Card';
-import { dummyConventions } from '../../service/conventions';
+import { EmptyCard } from '../../components/Card';
 import { useSystemListQuery } from '../../service/hooks/query/useSystemListQuery';
 import { SystemItem } from './SystemItem';
 
@@ -20,18 +19,20 @@ export const SystemList: React.FC<Props> = ({ onCreateClick }) => {
 
   return (
     <>
-      {data?.map((item) => (
-        <SystemItem
-          key={item.id}
-          // icon={item.icon as IconType}
-          title={item.title}
-          description={item.description}
-          structure={item.structure}
-          onClick={() => {
-            navigate(`/conventions/${item.id}`);
-          }}
-        />
-      ))}
+      {(data || [])
+        .sort((a, b) => (a.updatedAt > b.updatedAt ? 1 : -1))
+        .map((item) => (
+          <SystemItem
+            key={item.id}
+            resource={item.resource}
+            title={item.title}
+            description={item.description}
+            structure={item.structure}
+            onClick={() => {
+              navigate(`/conventions/${item.id}`);
+            }}
+          />
+        ))}
 
       <EmptyCard onClick={onCreateClick}>
         <Flex

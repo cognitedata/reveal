@@ -10,8 +10,7 @@ export type System = {
   resource: Resource;
   description?: string;
   structure: string;
-  conventions: Convention[];
-  updatedAt?: Date;
+  updatedAt: Date;
 };
 
 export type Convention = {

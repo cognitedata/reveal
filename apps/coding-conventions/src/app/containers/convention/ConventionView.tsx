@@ -109,19 +109,26 @@ export const ConventionView: React.FC<Props> = () => {
         ) : (
           <>
             <Button
+              icon="MagicWand"
+              type="secondary"
+              onClick={() => navigate('test')}
+            >
+              Test
+            </Button>
+            <Button
+              icon="Play"
+              type="primary"
+              onClick={() => navigate('validate')}
+            >
+              Validate
+            </Button>
+            <VerticalDivider />
+            <Button
               onClick={() => handleDoneClick()}
               icon={'Edit'}
               type={'secondary'}
               aria-label="Edit mode"
             />
-            <Button
-              icon="Play"
-              type="primary"
-              onClick={() => navigate('/validations/')}
-            >
-              Test
-            </Button>
-            <VerticalDivider />
             <Button
               icon="Close"
               aria-label="Close"

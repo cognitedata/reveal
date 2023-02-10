@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 
 export const Card = styled.div.attrs({ role: 'button' })`
+  position: relative;
   min-width: 270px;
+  max-width: 270px;
   height: 160px;
   border-radius: 10px;
   box-shadow: 0px 1px 8px rgba(79, 82, 104, 0.1),

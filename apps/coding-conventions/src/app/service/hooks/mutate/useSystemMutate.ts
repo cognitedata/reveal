@@ -6,7 +6,7 @@ export const useSystemMutate = () => {
   const client = useQueryClient();
 
   return useMutation(
-    (data: Omit<System, 'id' | 'conventions'>) => {
+    (data: Omit<System, 'id' | 'updatedAt'>) => {
       return Database.createSystem(
         data.title,
         data.resource,

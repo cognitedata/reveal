@@ -7,6 +7,7 @@ import {
   Modal,
   Dropdown,
   Drawer,
+  Select,
 } from '@cognite/cogs.js';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 
@@ -36,6 +37,11 @@ Modal.defaultProps = {
 Dropdown.defaultProps = {
   ...Dropdown.defaultProps,
   appendTo: getContainer,
+};
+
+Select.defaultProps = {
+  ...Select.defaultProps,
+  menuPortalTarget: getContainer(),
 };
 
 Drawer.defaultProps = {

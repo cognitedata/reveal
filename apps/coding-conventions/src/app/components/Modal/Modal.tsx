@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
 import { Modal as CogsModal, ModalProps } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -6,10 +7,13 @@ import { getContainer } from '../../../GlobalStyles';
 const CustomModal = styled(CogsModal)<{
   $modalWidth?: string;
   $modalHeight?: string;
+  $modalMaxHeight?: string;
 }>`
   width: ${({ $modalWidth }) => $modalWidth || '95%'} !important;
   margin: 1rem auto;
-  height: ${({ $modalHeight }) => $modalHeight || '95%'};
+  ${({ $modalHeight }) => $modalHeight && `height: ${$modalHeight};`};
+  ${({ $modalMaxHeight }) =>
+    $modalMaxHeight && `max-height: ${$modalMaxHeight};`}
   overflow: hidden;
   padding: 0 !important;
 
@@ -73,11 +77,13 @@ const CustomModal = styled(CogsModal)<{
 interface Props extends ModalProps {
   modalHeight?: string;
   modalWidth?: string;
+  modalMaxHeight?: string;
 }
 
 export const Modal: React.FC<Props> = ({
   children,
   modalHeight,
+  modalMaxHeight,
   modalWidth,
   ...rest
 }) => {
@@ -85,6 +91,7 @@ export const Modal: React.FC<Props> = ({
     <CustomModal
       $modalWidth={modalWidth}
       $modalHeight={modalHeight}
+      $modalMaxHeight={modalMaxHeight}
       getContainer={getContainer}
       appElement={document.body}
       {...rest}

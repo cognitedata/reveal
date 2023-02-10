@@ -5,8 +5,8 @@ import {
   TagAbbreviation,
   TagRange,
   TagRegex,
-} from '../../types';
-import { validateDataMap } from '../../utils/validateDataMap';
+} from '../types';
+import { validateDataMap } from './validateDataMap';
 import toRegexRange from 'to-regex-range';
 
 export type BackTrackInterface = {
@@ -23,14 +23,22 @@ const getValidTag = (tag: string, conventions: Convention[]): string | null => {
   return null;
 };
 
-export const validate = (system: System, tags?: string[]): string[] => {
-  const fetchData = validateDataMap.get(system.resource) || (() => []);
+export const validate = (
+  system: System,
+  conventions: Convention[],
+  tags?: string[]
+): string[] => {
+  const fetchData = validateDataMap.get('files') || (() => []);
   const dataToValidate = tags ? tags : fetchData();
-  const conventions = getConventionsWithSeperators(system);
+
+  const transformedConventions = getConventionsWithSeperators(
+    system,
+    conventions
+  );
 
   const validTags = dataToValidate.reduce(
     (result: string[], current: string) => {
-      const validTag = getValidTag(current, conventions);
+      const validTag = getValidTag(current, transformedConventions);
       if (validTag) {
         return [...result, validTag];
       } else {
@@ -66,7 +74,10 @@ const newHardCodedSeperator = (
   };
 };
 
-export const getConventionsWithSeperators = (system: System): Convention[] => {
+export const getConventionsWithSeperators = (
+  system: System,
+  conventions: Convention[]
+): Convention[] => {
   if (!system.structure) {
     return [];
   }
@@ -76,7 +87,7 @@ export const getConventionsWithSeperators = (system: System): Convention[] => {
 
   const newConventions: Convention[] = [];
   let lastInd = 0;
-  system.conventions.forEach((convention) => {
+  conventions.forEach((convention) => {
     // get the start and stop index of the convention
     const start = convention.start;
     const end = convention.end;

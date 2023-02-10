@@ -1,14 +1,17 @@
-import { dummyConventions } from '../../../service/conventions';
-import { Convention } from '../../../types';
+import { Convention } from '../../types';
 import {
   backTrackingIsValid,
   BackTrackInterface,
   getConventionsWithSeperators,
   validate,
 } from '../validation';
+import { systemFixtures, conventionFixtures } from '../../__fixtures/general';
 
 describe('backtracking Validation', () => {
-  const system = dummyConventions.find((item) => item.id === '123');
+  const system = systemFixtures.find((item) => item.id === '123');
+  const conventions = conventionFixtures.filter(
+    (item) => item.systemId === '123'
+  );
 
   it('should return valid tags', () => {
     const listOfValidTags = [
@@ -20,18 +23,25 @@ describe('backtracking Validation', () => {
     expect(system).not.toBeUndefined();
     if (!system) return;
 
-    expect(validate(system)).toEqual(listOfValidTags);
+    expect(validate(system, conventions)).toEqual(listOfValidTags);
   });
 
   it('should not be valid if we dont include seperators', () => {
     const listOfValidTags = ['ZZZZZZ 101010 NNN'];
     expect(system).not.toBeUndefined();
     if (!system) return;
-    const conventions = getConventionsWithSeperators(system);
+    const transformedConventions = getConventionsWithSeperators(
+      system,
+      conventions
+    );
 
     listOfValidTags.forEach((item) => {
       const previousMatches: BackTrackInterface[] = [];
-      const isValid = backTrackingIsValid(item, conventions, previousMatches);
+      const isValid = backTrackingIsValid(
+        item,
+        transformedConventions,
+        previousMatches
+      );
 
       expect(isValid).toBe(false);
     });

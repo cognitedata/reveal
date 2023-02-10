@@ -2,15 +2,17 @@ import {
   Body,
   Button,
   Detail,
+  Flex,
   Icon,
   IconType,
   Title as CogsTitle,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Card } from '../../components/Card';
+import { Resource } from '../../types';
 
 interface Props {
-  icon?: IconType;
+  resource: Resource;
   title: string;
   description?: string;
   structure: string;
@@ -18,7 +20,7 @@ interface Props {
 }
 
 export const SystemItem: React.FC<Props> = ({
-  icon,
+  resource,
   title,
   description,
   structure,
@@ -27,15 +29,15 @@ export const SystemItem: React.FC<Props> = ({
   return (
     <Card onClick={onClick}>
       <Header>
-        <Icon size={18} type={icon || 'Document'} />
+        <Icon size={18} type={resource === 'files' ? 'Document' : 'Assets'} />
         <Title>{title}</Title>
-        <Subtitle>{description}</Subtitle>
+        <Subtitle>{description || 'No description found...'}</Subtitle>
       </Header>
 
-      <Divider />
-      <Detail>
+      {/* <Divider /> */}
+      <FooterText>
         Structure: {structure ? <>{structure}</> : <i>unspecified</i>}
-      </Detail>
+      </FooterText>
     </Card>
   );
 };
@@ -59,4 +61,12 @@ const Divider = styled.div`
   margin-bottom: 8px;
   width: 100%;
   background-color: #d9d9d9;
+`;
+
+const FooterText = styled(Detail)`
+  margin-bottom: auto;
+  font-style: italic;
+
+  position: absolute;
+  bottom: 16px;
 `;

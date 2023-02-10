@@ -5,8 +5,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { SystemView } from '../containers/system/SystemView';
 import { Drawer } from '../components/Drawer';
 import { ConventionView } from '../containers/convention/ConventionView';
+import { Modal } from '../components/Modal/Modal';
+import { ConventionTest } from '../containers/convention/ConventionTest';
+import { ConventionValidation } from '../containers/convention/ConventionValidation';
 
-export const ConventionsPage = () => {
+interface Props {
+  validate?: boolean;
+  test?: boolean;
+}
+export const ConventionsPage: React.FC<Props> = ({ validate, test }) => {
   const { systemId } = useParams();
 
   const navigate = useNavigate();
@@ -18,13 +25,34 @@ export const ConventionsPage = () => {
         subtitle="All the coding conventions for the resources in your company"
         breadcrumbs={[{ title: 'Coding Conventions' }]}
       />
+
       <Content>
         <SystemView />
       </Content>
 
+      <Modal
+        title="Test run validation"
+        visible={!!test}
+        modalHeight="300px"
+        modalWidth="500px"
+        onCancel={() => navigate(`/conventions/${systemId}`)}
+      >
+        {test && <ConventionTest />}
+      </Modal>
+
+      <Modal
+        title="Validate on data"
+        visible={!!validate}
+        modalWidth="600px"
+        modalMaxHeight="700px"
+        onCancel={() => navigate(`/conventions/${systemId}`)}
+      >
+        {validate && <ConventionValidation />}
+      </Modal>
+
       <Drawer
         title="Coding conventions for 'file name'"
-        width="50%"
+        width={'50%'}
         visible={!!systemId}
         onCancel={() => navigate('/')}
       >
