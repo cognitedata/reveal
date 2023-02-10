@@ -1,3 +1,3 @@
-export * from './useAssetsFilteredListQuery';
+export * from './useAssetsSearchResultQuery';
 export * from './useAssetsSearchAggregateQuery';
 export * from './useAssetsSearchResultWithLabelsQuery';

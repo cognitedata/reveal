@@ -1,5 +1,5 @@
+import { useEffect, useMemo, useState } from 'react';
 import { Timeseries } from '@cognite/sdk';
-import React, { useEffect, useMemo, useState } from 'react';
 import {
   DateRangeProps,
   RelationshipLabels,
@@ -11,13 +11,17 @@ import {
 import { TIME_SELECT } from '@data-exploration-components/containers';
 import { TimeseriesChart } from '..';
 import { Body } from '@cognite/cogs.js';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import isEmpty from 'lodash/isEmpty';
 import { ResourceTableColumns } from '../../../components';
-import { useTimeseriesMetadataKeys } from '@data-exploration-lib/domain-layer';
+import {
+  InternalTimeseriesDataWithMatchingLabels,
+  useTimeseriesMetadataKeys,
+} from '@data-exploration-lib/domain-layer';
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
-
+import { MatchingLabelsComponent } from '@data-exploration-components/components/Table/components/MatchingLabels';
+import styled from 'styled-components/macro';
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 
 export interface TimeseriesTableProps
@@ -106,13 +110,13 @@ export const TimeseriesTable = ({
     };
     return [
       {
-        ...Table.Columns.name(query),
+        ...Table.Columns.name(),
         enableHiding: false,
       },
-      Table.Columns.description(query),
-      Table.Columns.externalId(query),
+      Table.Columns.description(),
+      Table.Columns.externalId(),
       {
-        ...Table.Columns.unit(query),
+        ...Table.Columns.unit(),
         enableSorting: false,
       },
       sparkLineColumn,
@@ -127,7 +131,7 @@ export const TimeseriesTable = ({
       },
       Table.Columns.created,
       {
-        ...Table.Columns.id(query),
+        ...Table.Columns.id(),
         enableSorting: false,
       },
       {
@@ -159,7 +163,32 @@ export const TimeseriesTable = ({
       columns={columns}
       data={hideEmptyData ? timeseriesWithDatapoints : data}
       hiddenColumns={hiddenColumns}
+      renderRowSubComponent={SubRow}
       {...rest}
     />
   );
 };
+
+// We should put this component in a common place.
+const SubRow = (row: Row<InternalTimeseriesDataWithMatchingLabels>) => {
+  if (isEmpty(row.original.matchingLabels)) {
+    return null;
+  }
+
+  return (
+    <LabelMatcherWrapper key={`matching-label-${row.id}`}>
+      {row.original.matchingLabels && (
+        <MatchingLabelsComponent
+          exact={row.original.matchingLabels.exact}
+          partial={row.original.matchingLabels.partial}
+          fuzzy={row.original.matchingLabels.fuzzy}
+        />
+      )}
+    </LabelMatcherWrapper>
+  );
+};
+
+const LabelMatcherWrapper = styled.div`
+  display: flex;
+  padding: 0 12px 8px;
+`;

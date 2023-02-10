@@ -1,33 +1,35 @@
 import { useDeepMemo } from '@data-exploration-lib/core';
+import {
+  InternalTimeseriesFilters,
+  useTimeseriesSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
 import { UseInfiniteQueryOptions } from 'react-query';
 import { TableSortBy } from '../../../types';
 import { extractMatchingLabels } from '../../../utils/extractMatchingLabels';
-import { InternalAssetFilters } from '../types';
-import { useAssetsSearchResultQuery } from './useAssetsSearchResultQuery';
 
-export const useAssetsSearchResultWithLabelsQuery = (
+export const useTimeseriesSearchResultWithLabelsQuery = (
   {
     query,
-    assetFilter = {},
+    filter,
     sortBy,
   }: {
     query?: string;
-    assetFilter: InternalAssetFilters;
+    filter: InternalTimeseriesFilters;
     sortBy?: TableSortBy[];
   },
   options?: UseInfiniteQueryOptions
 ) => {
-  const { data, ...rest } = useAssetsSearchResultQuery(
-    { query, assetFilter, sortBy },
+  const { data, ...rest } = useTimeseriesSearchResultQuery(
+    { query, filter, sortBy },
     options
   );
 
   const mappedData = useDeepMemo(() => {
     if (data && query) {
-      return data.map((asset) => {
+      return data.map((timeseries) => {
         return {
-          ...asset,
-          matchingLabels: extractMatchingLabels(asset, query, [
+          ...timeseries,
+          matchingLabels: extractMatchingLabels(timeseries, query, [
             {
               key: 'id',
               label: 'ID',
@@ -35,14 +37,10 @@ export const useAssetsSearchResultWithLabelsQuery = (
             'name',
             'description',
             'metadata',
-            'source',
+            'unit',
             {
               key: 'externalId',
               label: 'External ID',
-            },
-            {
-              key: 'labelsFlattened',
-              label: 'Label',
             },
           ]),
         };

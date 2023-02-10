@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Timeseries } from '@cognite/sdk';
 import {
   ResourceItem,
@@ -20,7 +20,7 @@ import {
 import {
   InternalTimeseriesFilters,
   useTimeseriesAggregateCountQuery,
-  useTimeseriesSearchResultQuery,
+  useTimeseriesSearchResultWithLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { TableSortBy } from '@data-exploration-components/components/Table';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
@@ -72,7 +72,7 @@ export const TimeseriesSearchResults = ({
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
-    useTimeseriesSearchResultQuery(
+    useTimeseriesSearchResultWithLabelsQuery(
       {
         query,
         filter,

@@ -10,6 +10,12 @@ export type InternalCommonFilters = {
   internalId?: number;
 };
 
+export interface MatchingLabels {
+  exact: string[];
+  partial: string[];
+  fuzzy: string[];
+}
+
 export type Order = 'asc' | 'desc';
 
 export type InternalSortBy = {

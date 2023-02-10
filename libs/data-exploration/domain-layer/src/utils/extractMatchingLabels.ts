@@ -1,6 +1,6 @@
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
-import { MatchingLabels } from '../assets';
+import { MatchingLabels } from '@data-exploration-lib/domain-layer';
 
 export const extractMatchingLabels = (
   data: Record<string, any>,

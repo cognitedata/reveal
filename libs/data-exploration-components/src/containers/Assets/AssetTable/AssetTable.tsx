@@ -1,6 +1,6 @@
+import { useMemo } from 'react';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import isEmpty from 'lodash/isEmpty';
-import React, { useMemo } from 'react';
 
 import {
   Table,

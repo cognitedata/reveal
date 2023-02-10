@@ -1,5 +1,5 @@
 import { CogniteExternalId, CogniteInternalId, Metadata } from '@cognite/sdk';
-import { InternalCommonFilters } from '../../types';
+import { InternalCommonFilters, MatchingLabels } from '../../types';
 export interface InternalTimeseriesData {
   id: number;
   lastUpdatedTime: Date;
@@ -14,6 +14,11 @@ export interface InternalTimeseriesData {
   assetId?: number;
   dataSetId?: CogniteInternalId;
   securityCategories?: number[];
+}
+
+export interface InternalTimeseriesDataWithMatchingLabels
+  extends InternalTimeseriesData {
+  matchingLabels?: MatchingLabels; // INFO: This is only optional for now, to not crash the legacy types -_-
 }
 
 export interface InternalTimeseriesFilters extends InternalCommonFilters {

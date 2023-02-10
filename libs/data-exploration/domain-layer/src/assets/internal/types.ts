@@ -1,11 +1,5 @@
 import { AssetAggregateResult, Label, Metadata } from '@cognite/sdk';
-import { InternalCommonFilters } from '../../types';
-
-export interface MatchingLabels {
-  exact: string[];
-  partial: string[];
-  fuzzy: string[];
-}
+import { InternalCommonFilters, MatchingLabels } from '../../types';
 
 export interface InternalAssetData {
   id: number;
