@@ -59,8 +59,12 @@ const SidePanelDatabaseListContent = ({
   return (
     <>
       {filteredDatabaseList.length > 0 ? (
-        filteredDatabaseList.map(({ name }) => (
-          <SidePanelDatabaseListItem key={name} name={name} />
+        filteredDatabaseList.map(({ name }, index) => (
+          <SidePanelDatabaseListItem
+            key={name}
+            name={name}
+            delayTableCount={50 * (index + 1)}
+          />
         ))
       ) : (
         <StyledNoItemsWrapper>

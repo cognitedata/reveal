@@ -2,6 +2,7 @@ import { Count } from 'hooks/profiling-service';
 import handleError from './handleError';
 import { styleScope } from 'styles/styleScope';
 import { RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR } from './constants';
+import { QueryKey, useQuery, UseQueryOptions } from 'react-query';
 
 const nameToAclTypeMap = {
   '3d': 'threedAcl',
@@ -97,10 +98,21 @@ export const getActionLabel = (capability: string, action: string) => {
 };
 
 export const sleep = (ms: number) => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(ms), ms);
+  return new Promise<void>((resolve) => {
+    setTimeout(() => resolve(), ms);
   });
 };
+
+export const useSleep = (
+  ms: number,
+  id: string,
+  options?: UseQueryOptions<void>
+) =>
+  useQuery(['sleep', id] as QueryKey, () => sleep(ms), {
+    ...options,
+    cacheTime: 0,
+    staleTime: Infinity,
+  });
 
 export const trimFileExtension = (fullName: string): string => {
   return fullName.split('.').slice(0, -1).join('.');
