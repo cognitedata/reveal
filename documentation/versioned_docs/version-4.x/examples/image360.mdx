@@ -75,7 +75,7 @@ Subscribing to the events can look like
 const image360Collection = await viewer.add360ImageSet('events', { site_id: 'site-S01-area-a03' });
 image360Collection.on('image360Entered', (image360: Image360) => {
     const position = new THREE.Vector3();
-    position.setFromMatrixPosition(image360);
+    position.setFromMatrixPosition(image360.transform);
     alert('360 Image mode entered at Image position: ', position);
   });
 image360Collection.on('image360Exited', () => { alert('Exited from 360 Image mode'); });
