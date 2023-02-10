@@ -3,10 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { sectorShaders, shaderDefines } from './shaders';
+import { sectorShaders } from './shaders';
 import { RenderMode } from './RenderMode';
-
-import matCapTextureImage from './matCapTextureData';
 
 export interface Materials {
   // Materials
@@ -25,6 +23,8 @@ export interface Materials {
   instancedMesh: THREE.RawShaderMaterial;
   triangleMesh: THREE.RawShaderMaterial;
   simple: THREE.RawShaderMaterial;
+  // Textured materials
+  [key: string]: THREE.RawShaderMaterial;
 }
 
 export function createMaterials(
@@ -32,10 +32,9 @@ export function createMaterials(
   clippingPlanes: THREE.Plane[],
   overrideColorPerTreeIndex: THREE.DataTexture,
   transformOverrideIndexTexture: THREE.DataTexture,
-  transformOverrideLookupTexture: THREE.DataTexture
+  transformOverrideLookupTexture: THREE.DataTexture,
+  matCapTexture: THREE.Texture
 ): Materials {
-  const matCapTexture = new THREE.Texture(matCapTextureImage);
-  matCapTexture.needsUpdate = true;
 
   const boxMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Box)',
@@ -278,7 +277,7 @@ export function createMaterials(
   };
 
   for (const material of Object.values(allMaterials)) {
-    updateDefinesAndUniforms(
+    initializeDefinesAndUniforms(
       material,
       overrideColorPerTreeIndex,
       transformOverrideIndexTexture,
@@ -293,7 +292,7 @@ export function createMaterials(
   };
 }
 
-function updateDefinesAndUniforms(
+export function initializeDefinesAndUniforms(
   material: THREE.RawShaderMaterial,
   overrideColorPerTreeIndex: THREE.DataTexture,
   transformOverrideIndexTexture: THREE.DataTexture,
@@ -311,7 +310,9 @@ function updateDefinesAndUniforms(
   );
   const oldUniforms = material.uniforms;
   material.setValues({
-    ...shaderDefines,
+    defines: {
+      ...material.defines
+    },
     uniforms: {
       ...oldUniforms,
       renderMode: {

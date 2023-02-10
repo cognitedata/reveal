@@ -76,10 +76,16 @@ export class GltfSectorLoader {
             });
             break;
           case RevealGeometryCollectionType.TriangleMesh:
-            if (parsedGeometry.texture !== undefined) {
-              materials.triangleMesh.uniforms.tDiffuse = { value: parsedGeometry.texture };
+            let material = materials.triangleMesh;
+            if (parsedGeometry.texture !== undefined &&
+              parsedGeometry.geometryBuffer.attributes['uv'] !== undefined) {
+
+              material = this._materialManager.addTexturedMeshMaterial(sector.modelIdentifier,
+                                                                       sector.metadata.id,
+                                                                       parsedGeometry.texture);
             }
-            this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
+
+            this.createMesh(group, parsedGeometry.geometryBuffer, material);
             break;
           default:
             assertNever(type);

@@ -15,15 +15,23 @@ uniform sampler2D transformOverrideTexture;
 uniform sampler2D colorDataTexture;
 uniform lowp int renderMode;
 
-in vec3 position;
-in vec3 color;
-in float treeIndex;
+#if defined(IS_TEXTURED)
 in vec2 uv;
+#else
+in vec3 color;
+#endif
 
-out vec3 v_color;
+in vec3 position;
+in float treeIndex;
+
 out vec3 v_viewPosition;
 out vec4 v_nodeAppearanceTexel;
+
+#if defined(IS_TEXTURED)
 out vec2 v_uv;
+#else
+out vec3 v_color;
+#endif
 
 out highp vec2 v_treeIndexPacked;
 
@@ -36,7 +44,6 @@ void main() {
 
     v_nodeAppearanceTexel = appearance.colorTexel;
     v_treeIndexPacked = packTreeIndex(treeIndex);
-    v_color = color;
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       treeIndex,
@@ -48,6 +55,12 @@ void main() {
 
     vec4 modelViewPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4(position, 1.0);
     v_viewPosition = modelViewPosition.xyz;
+
+#if defined(IS_TEXTURED)
     v_uv = uv;
+#else
+    v_color = color;
+#endif
+
     gl_Position = projectionMatrix * modelViewPosition;
 }

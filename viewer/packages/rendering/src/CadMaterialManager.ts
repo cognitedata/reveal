@@ -7,16 +7,20 @@ import * as THREE from 'three';
 import { NodeAppearanceTextureBuilder } from './rendering/NodeAppearanceTextureBuilder';
 import { NodeTransformTextureBuilder } from './transform/NodeTransformTextureBuilder';
 import { NodeTransformProvider } from './transform/NodeTransformProvider';
-import { createMaterials, Materials } from './rendering/materials';
+import { createMaterials, Materials, initializeDefinesAndUniforms } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 
 import { NodeAppearance, NodeAppearanceProvider } from '@reveal/cad-styling';
 import { IndexSet, EventTrigger, assertNever } from '@reveal/utilities';
 
+import matCapTextureImage from './rendering/matCapTextureData';
+
 import throttle from 'lodash/throttle';
+import assert from 'assert';
 
 interface MaterialsWrapper {
   materials: Materials;
+  matCapTexture: THREE.Texture;
   perModelClippingPlanes: THREE.Plane[];
   nodeAppearanceProvider: NodeAppearanceProvider;
   nodeTransformProvider: NodeTransformProvider;
@@ -93,13 +97,18 @@ export class CadMaterialManager {
     nodeAppearanceProvider.on('changed', updateMaterialsCallback);
     nodeTransformProvider.on('changed', updateTransformsCallback);
 
+    const matCapTexture = new THREE.Texture(matCapTextureImage);
+    matCapTexture.needsUpdate = true;
+
     const materials = createMaterials(
       this._renderMode,
       this._clippingPlanes,
       nodeAppearanceTextureBuilder.overrideColorPerTreeIndexTexture,
       nodeTransformTextureBuilder.overrideTransformIndexTexture,
-      nodeTransformTextureBuilder.transformLookupTexture
+      nodeTransformTextureBuilder.transformLookupTexture,
+      matCapTexture
     );
+
     this.materialsMap.set(modelIdentifier, {
       materials,
       perModelClippingPlanes: [],
@@ -108,10 +117,40 @@ export class CadMaterialManager {
       nodeAppearanceTextureBuilder,
       nodeTransformTextureBuilder,
       updateMaterialsCallback,
-      updateTransformsCallback
+      updateTransformsCallback,
+      matCapTexture
     });
 
     this.updateClippingPlanesForModel(modelIdentifier);
+  }
+
+  addTexturedMeshMaterial(modelIdentifier: string, sectorId: number, texture: THREE.Texture): THREE.RawShaderMaterial {
+
+    const modelData = this.materialsMap.get(modelIdentifier);
+
+    if (modelData === undefined) {
+      throw new Error(`Model identifier: ${modelIdentifier} not found`);
+    }
+
+    const newMaterial = modelData?.materials.triangleMesh.clone();
+    newMaterial.uniforms.tDiffuse = { value: texture };
+    newMaterial.defines.IS_TEXTURED = true;
+
+    this.initializeDefinesAndUniforms(modelIdentifier, newMaterial);
+
+    newMaterial.needsUpdate = true;
+
+    const materialName = toTextureMaterialName(sectorId);
+    modelData.materials[materialName] = newMaterial;
+
+    return newMaterial;
+  }
+
+  removeTexturedMeshMaterial(modelIdentifier: string, sectorId: number) {
+    const modelData = this.materialsMap.get(modelIdentifier);
+    if (modelData) {
+      delete modelData.materials[toTextureMaterialName(sectorId)];
+    }
   }
 
   removeModelMaterials(modelIdentifier: string): void {
@@ -292,22 +331,29 @@ export class CadMaterialManager {
   private triggerMaterialsChanged() {
     this._events.materialsChanged.fire();
   }
+
+  private initializeDefinesAndUniforms(modelIdentifier: string, material: THREE.RawShaderMaterial) {
+    const materialData = this.materialsMap.get(modelIdentifier);
+
+    assert(materialData !== undefined);
+
+    initializeDefinesAndUniforms(
+      material,
+      materialData.nodeAppearanceTextureBuilder.overrideColorPerTreeIndexTexture,
+      materialData.nodeTransformTextureBuilder.overrideTransformIndexTexture,
+      materialData.nodeTransformTextureBuilder.transformLookupTexture,
+      materialData.matCapTexture,
+      this._renderMode);
+  }
 }
 
 function applyToModelMaterials(materials: Materials, callback: (material: THREE.RawShaderMaterial) => void) {
-  callback(materials.box);
-  callback(materials.circle);
-  callback(materials.generalRing);
-  callback(materials.nut);
-  callback(materials.quad);
-  callback(materials.cone);
-  callback(materials.eccentricCone);
-  callback(materials.sphericalSegment);
-  callback(materials.torusSegment);
-  callback(materials.generalCylinder);
-  callback(materials.trapezium);
-  callback(materials.ellipsoidSegment);
-  callback(materials.instancedMesh);
-  callback(materials.triangleMesh);
-  callback(materials.simple);
+  console.log('Applying change to all materials: ', Object.keys(materials));
+  for (const material of Object.values(materials)) {
+    callback(material);
+  }
+}
+
+function toTextureMaterialName(sectorId: number) {
+  return `texturedMaterial_${sectorId}`;
 }
