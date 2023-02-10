@@ -35,7 +35,6 @@ export function createMaterials(
   transformOverrideLookupTexture: THREE.DataTexture,
   matCapTexture: THREE.Texture
 ): Materials {
-
   const boxMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Box)',
     clipping: true,

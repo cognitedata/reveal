@@ -125,7 +125,6 @@ export class CadMaterialManager {
   }
 
   addTexturedMeshMaterial(modelIdentifier: string, sectorId: number, texture: THREE.Texture): THREE.RawShaderMaterial {
-
     const modelData = this.materialsMap.get(modelIdentifier);
 
     if (modelData === undefined) {
@@ -343,7 +342,8 @@ export class CadMaterialManager {
       materialData.nodeTransformTextureBuilder.overrideTransformIndexTexture,
       materialData.nodeTransformTextureBuilder.transformLookupTexture,
       materialData.matCapTexture,
-      this._renderMode);
+      this._renderMode
+    );
   }
 }
 
