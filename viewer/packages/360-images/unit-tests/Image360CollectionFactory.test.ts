@@ -6,24 +6,21 @@ import * as THREE from 'three';
 
 import { Image360Provider } from '@reveal/data-providers';
 import { It, Mock } from 'moq.ts';
-import { Image360EntityFactory } from '../src/Image360EntityFactory';
 import { SceneHandler } from '@reveal/utilities';
+import { Image360CollectionFactory } from '../src/Image360CollectionFactory';
 
-describe(Image360EntityFactory.name, () => {
+describe(Image360CollectionFactory.name, () => {
   test('Calling create should produce a valid image360Entity', async () => {
     const mock360ImageProvider = new Mock<Image360Provider<string>>();
     mock360ImageProvider
-      .setup(p => p.get360ImageDescriptors(It.IsAny()))
+      .setup(p => p.get360ImageDescriptors(It.IsAny(), It.IsAny()))
       .returnsAsync([
         {
           id: '0',
           label: 'test_0',
           collectionId: '0',
           collectionLabel: 'testCollection',
-          transformations: {
-            translation: new THREE.Matrix4(),
-            rotation: new THREE.Matrix4()
-          },
+          transform: new THREE.Matrix4(),
           faceDescriptors: []
         },
         {
@@ -31,10 +28,7 @@ describe(Image360EntityFactory.name, () => {
           label: 'test_1',
           collectionId: '0',
           collectionLabel: 'testCollection',
-          transformations: {
-            translation: new THREE.Matrix4(),
-            rotation: new THREE.Matrix4()
-          },
+          transform: new THREE.Matrix4(),
           faceDescriptors: []
         },
         {
@@ -42,19 +36,19 @@ describe(Image360EntityFactory.name, () => {
           label: 'test_2',
           collectionId: '0',
           collectionLabel: 'testCollection',
-          transformations: {
-            translation: new THREE.Matrix4(),
-            rotation: new THREE.Matrix4()
-          },
+          transform: new THREE.Matrix4(),
           faceDescriptors: []
         }
       ]);
 
     const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addCustomObject(It.IsAny())).returns();
 
-    const image360EntityFactory = new Image360EntityFactory(mock360ImageProvider.object(), mockSceneHandler.object());
-    const entities = await image360EntityFactory.create('someString', new THREE.Matrix4(), true);
+    const image360EntityFactory = new Image360CollectionFactory(
+      mock360ImageProvider.object(),
+      mockSceneHandler.object()
+    );
+    const collection = await image360EntityFactory.create('someString', new THREE.Matrix4(), true);
 
-    expect(entities.length).toBe(3);
+    expect(collection.image360Entities.length).toBe(3);
   });
 });
