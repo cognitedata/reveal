@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 
 import { Icon, Label } from '@cognite/cogs.js';
 
-import { FlexRow, sizes } from 'styles/layout';
+import { Center, FlexRow, sizes } from 'styles/layout';
 
 export const FilterItemWrapper = styled(FlexRow)`
   height: 36px;
@@ -73,4 +73,17 @@ export const FooterWrapper = styled.div`
   border-top: 2px solid var(--cogs-greyscale-grey4);
   padding-top: 6px;
   margin-top: ${sizes.extraSmall};
+`;
+
+export const UnifyScalesSwitchWrapper = styled(Center)`
+  padding: ${sizes.small};
+  padding-right: 0;
+  margin-top: ${sizes.extraSmall};
+`;
+
+export const UnifyScalesLabel = styled.div`
+  display: flex;
+  width: 100%;
+  padding-right: ${sizes.normal};
+  margin-top: 2px;
 `;

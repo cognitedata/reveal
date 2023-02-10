@@ -1,18 +1,37 @@
 import { useMaxDepthData } from 'domain/wells/trajectory/internal/hooks/useMaxDepthData';
+import { useMaxDepthDataUnified } from 'domain/wells/trajectory/internal/hooks/useMaxDepthDataUnified';
+import { useWellInspectWellbores } from 'domain/wells/well/internal/hooks/useWellInspectWellbores';
 import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
 
-import { useDeepMemo } from 'hooks/useDeep';
+import { DepthMeasurementUnit } from 'constants/units';
 import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 
-export const useMaxDepths = () => {
+export const useMaxDepths = ({
+  isUnifiedScale,
+  depthMeasurementType,
+}: {
+  isUnifiedScale: boolean;
+  depthMeasurementType: DepthMeasurementUnit;
+}) => {
+  const wellbores = useWellInspectWellbores();
   const wellboreIds = useWellInspectWellboreIds();
 
-  const { data, isLoading } = useMaxDepthData({ wellboreIds });
+  const { data: maxDepthsUnified, isLoading: isMaxDepthsUnifiedLoading } =
+    useMaxDepthDataUnified({ wellbores, depthMeasurementType });
 
-  return useDeepMemo(() => {
+  const { data: maxDepths, isLoading: isMaxDepthsLoading } = useMaxDepthData({
+    wellboreIds,
+  });
+
+  if (isUnifiedScale) {
     return {
-      data: keyByWellbore(data),
-      isLoading,
+      data: keyByWellbore(maxDepthsUnified),
+      isLoading: isMaxDepthsUnifiedLoading,
     };
-  }, [data, isLoading]);
+  }
+
+  return {
+    data: keyByWellbore(maxDepths),
+    isLoading: isMaxDepthsLoading,
+  };
 };

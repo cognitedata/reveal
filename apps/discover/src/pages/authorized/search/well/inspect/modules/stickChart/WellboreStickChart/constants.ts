@@ -63,3 +63,5 @@ export const DEFAULT_VISIBLE_COLUMNS = DEFAULT_COLUMN_ORDER.filter(
 export const EVENT_TYPES = ['npt', 'nds'] as const;
 
 export const HIGHLIGHTED_EVENTS_STORAGE_KEY = 'HIGHLIGHTED_EVENTS_STORAGE_KEY';
+
+export const UNIFY_SCALES_SWITCH_TEXT = 'Align scales';

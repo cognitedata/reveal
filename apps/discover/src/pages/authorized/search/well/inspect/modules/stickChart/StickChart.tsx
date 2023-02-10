@@ -42,8 +42,6 @@ const StickChart: React.FC = () => {
 
   const { data: depthUnit } = useUserPreferencesMeasurement();
 
-  const { data: maxDepths, isLoading } = useMaxDepths();
-
   const getWellboreStickChartData = useWellboreStickChartData();
 
   const [columnVisibility, setColumnVisibility] = useState(
@@ -54,6 +52,8 @@ const StickChart: React.FC = () => {
   const [depthMeasurementType, setDepthMeasurementType] = useState(
     DEFAULT_DEPTH_MEASUREMENT_TYPE
   );
+
+  const [isUnifiedScale, setUnifiedScale] = useState(true);
 
   const [pressureUnit, setPressureUnit] = useState(DEFAULT_PRESSURE_UNIT);
 
@@ -67,6 +67,11 @@ const StickChart: React.FC = () => {
 
   const [measurementTypesSelection, setMeasurementTypesSelection] =
     useState<BooleanMap>();
+
+  const { data: maxDepths, isLoading } = useMaxDepths({
+    isUnifiedScale,
+    depthMeasurementType,
+  });
 
   const handleColumnVisibilityChange = useCallback(
     (column: ChartColumn, visibility: boolean) => {
@@ -93,9 +98,11 @@ const StickChart: React.FC = () => {
       <FilterBar
         columnOrder={columnOrder}
         depthMeasurementType={depthMeasurementType}
+        isUnifiedScale={isUnifiedScale}
         pressureUnit={pressureUnit}
         onPressureUnitChange={setPressureUnit}
         onChangeDepthMeasurementType={setDepthMeasurementType}
+        onToggleUnifyScale={setUnifiedScale}
         onNptCodesChange={setNptCodesSelection}
         onNdsCodesChange={setNdsRiskTypesSelection}
         onSummaryVisibilityChange={setSummaryVisibility}

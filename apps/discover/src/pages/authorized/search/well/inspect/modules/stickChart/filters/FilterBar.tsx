@@ -23,11 +23,13 @@ import { SummaryFilterItem } from './SummaryFilterItem';
 interface FilterBarProps {
   columnOrder: ChartColumn[];
   depthMeasurementType: DepthMeasurementUnit;
+  isUnifiedScale: boolean;
   pressureUnit: PressureUnit;
   onPressureUnitChange: (unit: PressureUnit) => void;
   onChangeDepthMeasurementType: (
     depthMeasurementType: DepthMeasurementUnit
   ) => void;
+  onToggleUnifyScale: (isUnifiedScale: boolean) => void;
   onNptCodesChange: (selection: NptCodesSelection) => void;
   onNdsCodesChange: (selection: NdsRiskTypesSelection) => void;
   onSummaryVisibilityChange: (selection: BooleanMap) => void;
@@ -40,9 +42,11 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
   ({
     columnOrder,
     depthMeasurementType,
+    isUnifiedScale,
     pressureUnit,
     onPressureUnitChange,
     onChangeDepthMeasurementType,
+    onToggleUnifyScale,
     onNptCodesChange,
     onNdsCodesChange,
     onSummaryVisibilityChange,
@@ -75,7 +79,9 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
           <DepthFilterItem
             key={ChartColumn.DEPTH}
             depthMeasurementType={depthMeasurementType}
-            onChange={onChangeDepthMeasurementType}
+            isUnifiedScale={isUnifiedScale}
+            onChangeDepthMeasurementType={onChangeDepthMeasurementType}
+            onToggleUnifyScale={onToggleUnifyScale}
           />
 
           <FilterItem

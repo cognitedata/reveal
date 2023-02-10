@@ -1,51 +1,80 @@
 import React from 'react';
 
-import { Icon } from '@cognite/cogs.js';
+import { Icon, Switch } from '@cognite/cogs.js';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { Dropdown } from 'components/Dropdown';
 import { DepthMeasurementUnit } from 'constants/units';
-import { useDeepMemo } from 'hooks/useDeep';
 
 import { Option } from '../components/Option';
 import { ChartColumn } from '../types';
-import { DEPTH_MEASUREMENT_TYPES } from '../WellboreStickChart/constants';
+import {
+  DEPTH_MEASUREMENT_TYPES,
+  UNIFY_SCALES_SWITCH_TEXT,
+} from '../WellboreStickChart/constants';
 
-import { DropDownIconStyler, MultiSelectIconWrapper } from './elements';
+import {
+  DropDownIconStyler,
+  MultiSelectIconWrapper,
+  UnifyScalesLabel,
+  UnifyScalesSwitchWrapper,
+} from './elements';
 import { FilterItem } from './FilterItem';
 
 export interface DepthFilterItemProps {
   depthMeasurementType: DepthMeasurementUnit;
-  onChange: (depthMeasurementType: DepthMeasurementUnit) => void;
+  isUnifiedScale: boolean;
+  onChangeDepthMeasurementType: (
+    depthMeasurementType: DepthMeasurementUnit
+  ) => void;
+  onToggleUnifyScale: (isUnifiedScale: boolean) => void;
 }
 
 export const DepthFilterItem: React.FC<
   WithDragHandleProps<DepthFilterItemProps>
-> = React.memo(({ depthMeasurementType, onChange, ...dragHandleProps }) => {
-  const DropdownContent = useDeepMemo(() => {
-    return (
+> = React.memo(
+  ({
+    depthMeasurementType,
+    isUnifiedScale,
+    onChangeDepthMeasurementType,
+    onToggleUnifyScale,
+    ...dragHandleProps
+  }) => {
+    const DropdownContent = (
       <Dropdown.Menu>
         {DEPTH_MEASUREMENT_TYPES.map((option) => (
           <Option
             key={option}
             option={option}
             isSelected={option === depthMeasurementType}
-            onChange={onChange}
+            onChange={onChangeDepthMeasurementType}
           />
         ))}
+
+        <Dropdown.Menu.Divider />
+
+        <UnifyScalesSwitchWrapper>
+          <UnifyScalesLabel>{UNIFY_SCALES_SWITCH_TEXT}</UnifyScalesLabel>
+          <Switch
+            name={UNIFY_SCALES_SWITCH_TEXT}
+            size="small"
+            checked={isUnifiedScale}
+            onChange={onToggleUnifyScale}
+          />
+        </UnifyScalesSwitchWrapper>
       </Dropdown.Menu>
     );
-  }, [depthMeasurementType]);
 
-  return (
-    <FilterItem column={ChartColumn.DEPTH} {...dragHandleProps}>
-      <DropDownIconStyler>
-        <Dropdown appendTo={document.body} content={DropdownContent}>
-          <MultiSelectIconWrapper>
-            <Icon type="Configure" />
-          </MultiSelectIconWrapper>
-        </Dropdown>
-      </DropDownIconStyler>
-    </FilterItem>
-  );
-});
+    return (
+      <FilterItem column={ChartColumn.DEPTH} {...dragHandleProps}>
+        <DropDownIconStyler>
+          <Dropdown appendTo={document.body} content={DropdownContent}>
+            <MultiSelectIconWrapper>
+              <Icon type="Configure" />
+            </MultiSelectIconWrapper>
+          </Dropdown>
+        </DropDownIconStyler>
+      </FilterItem>
+    );
+  }
+);
