@@ -104,6 +104,7 @@ export class Image360ApiHelper {
     const image360Visualization = image360Entity.image360Visualization;
     image360Visualization.visible = true;
     this._image360Facade.allIconsVisibility = true;
+    this._image360Facade.allHoverIconsVisibility = false;
     image360Entity.icon.visible = false;
 
     this._transitionInProgress = true;

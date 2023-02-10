@@ -34,6 +34,7 @@ export class Image360Icon {
     this._hoverSprite.visible = false;
 
     const renderHook = new Mesh();
+    renderHook.frustumCulled = false;
 
     this.setupAdaptiveScaling(position, sceneHandler, renderHook);
 
@@ -51,6 +52,7 @@ export class Image360Icon {
 
   get visible(): boolean {
     const alpha = this._alphaAttributeAccessor.at(0)!;
+    this._renderHook.visible = alpha > 0;
     return alpha > 0;
   }
 
@@ -65,10 +67,10 @@ export class Image360Icon {
 
   public dispose(): void {
     this._sceneHandler.removeCustomObject(this._hoverSprite);
-    this._hoverSprite.material.map?.dispose();
     this._hoverSprite.material.dispose();
     this._hoverSprite.geometry.dispose();
 
+    this._alphaAttributeAccessor.set([0]);
     this._sceneHandler.removeCustomObject(this._renderHook);
     this._renderHook.onBeforeRender = () => {};
   }
@@ -90,6 +92,9 @@ export class Image360Icon {
     ) {
       const pos = new THREE.Vector4(position.x, position.y, position.z, 1);
       const posNdc = pos.clone().applyMatrix4(camera.matrixWorldInverse).applyMatrix4(camera.projectionMatrix);
+      if (Math.abs(posNdc.w) < 0.00001) {
+        return 1.0;
+      }
       const renderSize = renderer.getSize(new THREE.Vector2());
       const pointSize = (renderSize.y * camera.projectionMatrix.elements[5] * 0.5) / posNdc.w;
       const downSize = renderSize.x / renderer.domElement.clientWidth;

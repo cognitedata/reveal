@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { Cognite3DViewer, Image360 } from "@cognite/reveal";
 import * as dat from 'dat.gui';
+import { drop } from 'lodash';
 
 export class Image360UI {
   constructor(viewer: Cognite3DViewer, gui: dat.GUI){
