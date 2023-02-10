@@ -19,7 +19,7 @@ Production ([fusion.cognite.com](fusion.cognite.com/)), staging ([next-release.f
 1. Bump version in [package.json](./package.json) according to Semver and create a PR. See [this Stackexchange answer](https://softwareengineering.stackexchange.com/a/255201) for guidance on versioning for apps.
 1. Get someone to review PR and merge to master.
 1. Wait for [Jenkins](https://cd.jenkins.cognite.ai/blue/organizations/jenkins/cognitedata-cd%2Fcdf-3d-management/activity) to finish build after merge
-1. Update the `cdf-3d-management`-entry of the respective configuration under [packages/fas-apps/config](https://github.com/cognitedata/cdf-hub/tree/master/packages/fas-apps/config) to match version.
+1. Update the `cdf-3d-management`-entry of the respective configuration under [packages/sub-apps/config](https://github.com/cognitedata/cdf-ui-hub/tree/master/packages/sub-apps/config) to match version.
 1. Create PR, merge - after merge the change should be automatically deployed to the respective environment(s).
 1. For production release only:
    1. Manually verify that the build works at https://staging.fusion.cognite.com/
