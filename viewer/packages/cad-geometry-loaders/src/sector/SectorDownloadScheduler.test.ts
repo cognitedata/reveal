@@ -2,12 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ConsumedSector, LevelOfDetail, WantedSector, SectorMetadata } from '@reveal/cad-parsers';
+import { ConsumedSector, LevelOfDetail, SectorMetadata, WantedSector } from '@reveal/cad-parsers';
+import { Log } from '@reveal/logger';
 import { DeferredPromise } from '@reveal/utilities/src/DeferredPromise';
+import { LogLevelNumbers } from 'loglevel';
 import { IMock, Mock } from 'moq.ts';
 import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
-import { Log } from '@reveal/logger';
-import { LogLevelNumbers } from 'loglevel';
 
 describe(SectorDownloadScheduler.name, () => {
   let sectorDownloadScheduler: SectorDownloadScheduler;
@@ -231,15 +231,21 @@ describe(SectorDownloadScheduler.name, () => {
     let abortCount = 0;
 
     const stalledDownload = new DeferredPromise<void>();
-    const dowloadSectorMock = async (sector: WantedSector) => {
+    const dowloadSectorMock = async (sector: WantedSector, abortSignal?: AbortSignal) => {
       await stalledDownload;
+      if (abortSignal?.aborted) {
+        // Simulate fetch failing due to abort
+        return createDiscardedConsumedSectorMock(sector);
+      }
       return createConsumedSectorMock(sector).object();
     };
 
     const downloadSector = (sector: WantedSector) => {
+      const abortController = new AbortController();
       return {
-        consumedSector: dowloadSectorMock(sector),
+        consumedSector: dowloadSectorMock(sector, abortController.signal),
         abortDowload: () => {
+          abortController.abort();
           abortCount++;
         }
       };
@@ -264,9 +270,11 @@ describe(SectorDownloadScheduler.name, () => {
     expect(abortCount).toBe(20);
 
     stalledDownload.resolve();
-    await Promise.all(firstLoadBatch);
+    const resolvedSectors = await Promise.all(firstLoadBatch);
 
-    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(0);
+    resolvedSectors.forEach(sector => {
+      expect(sector.levelOfDetail).toBe(LevelOfDetail.Discarded);
+    });
   });
 });
 
@@ -306,4 +314,14 @@ function createConsumedSectorMock(wantedSector: WantedSector): IMock<ConsumedSec
     .setup(p => p.levelOfDetail)
     .returns(wantedSector.levelOfDetail);
   return consumedSector;
+}
+
+function createDiscardedConsumedSectorMock(sector: WantedSector): ConsumedSector {
+  return {
+    modelIdentifier: sector.modelIdentifier,
+    metadata: sector.metadata,
+    levelOfDetail: LevelOfDetail.Discarded,
+    group: undefined,
+    instancedMeshes: undefined
+  };
 }
