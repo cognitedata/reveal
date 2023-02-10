@@ -33,7 +33,7 @@ export type EventTreeNodeSelected<T = TreeDataNode> = {
 
 export type CheckInfo = {
   event: 'check';
-  node: EventDataNode;
+  node: EventDataNode<unknown>;
   checked: boolean;
   nativeEvent: MouseEvent;
   checkedNodes: CustomDataNode[];

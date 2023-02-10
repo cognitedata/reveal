@@ -18,10 +18,10 @@ export const FileLink = ({ fileId }: { fileId: number }) => {
 
   if (file.error) {
     if (file.error.status === 400) {
-      return <>{FILE_NOT_FOUND_ERROR}</>;
+      return <>{FILE_NOT_FOUND_ERROR} </>;
     }
     if (file.error.status === 403) {
-      return <>{RESTRICTED_FILE_ERROR}</>;
+      return <>{RESTRICTED_FILE_ERROR} </>;
     }
   }
 
@@ -33,7 +33,7 @@ export const FileLink = ({ fileId }: { fileId: number }) => {
     );
   }
 
-  return <></>;
+  return null;
 };
 
 const ViewFileButton = styled(Button)`

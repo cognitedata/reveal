@@ -138,7 +138,7 @@ export default function ThreeDViewerSidebar(props: Props) {
               name="ghostMode"
               size="small"
               onChange={(nextState) => dispatch(toggleGhostMode(nextState))}
-              value={ghostModeEnabled}
+              checked={ghostModeEnabled}
             >
               Ghost mode
             </Switch>

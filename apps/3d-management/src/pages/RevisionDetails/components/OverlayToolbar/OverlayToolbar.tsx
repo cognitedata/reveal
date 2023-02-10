@@ -61,14 +61,10 @@ export function OverlayToolbar({
   const [measurementTool, setMeasurementToolState] = useState<MeasurementTool>(
     new MeasurementTool(viewer)
   );
-  const [
-    measurementEventsSubscribed,
-    setMeasurementEventsSubscribed,
-  ] = useState(false);
-  const [
-    cameraControlsOptions,
-    setCameraControlsOptionsState,
-  ] = useState<CameraControlsOptions>(cameraManager.getCameraControlsOptions());
+  const [measurementEventsSubscribed, setMeasurementEventsSubscribed] =
+    useState(false);
+  const [cameraControlsOptions, setCameraControlsOptionsState] =
+    useState<CameraControlsOptions>(cameraManager.getCameraControlsOptions());
 
   useEffect(() => {
     if (viewer) {

@@ -80,9 +80,13 @@ const DetailsRowFlex = styled(Flex)`
   }
 `;
 
+type RevisionDetailsParams = {
+  modelId: string;
+  revisionId: string;
+};
 export default function RevisionDetails() {
   const metrics = useMetrics('3D.Revisions');
-  const props = useParams();
+  const params = useParams<RevisionDetailsParams>();
   const navigate = useNavigate();
 
   const { flow } = getFlow();
@@ -96,8 +100,8 @@ export default function RevisionDetails() {
     isFetched: isFetchedDeleteCapabilities,
   } = usePermissions(flow, 'threedAcl', 'DELETE');
 
-  const revisionId: number = Number(props.revisionId);
-  const modelId: number = Number(props.modelId);
+  const revisionId: number = Number(params.revisionId);
+  const modelId: number = Number(params.modelId);
 
   const [showLogs, setShowLogs] = useState(false);
   const [deletionModalVisible, setDeletionModalVisible] = useState(false);
@@ -109,15 +113,11 @@ export default function RevisionDetails() {
     revisionId,
   });
 
-  const {
-    mutate: updateRevisionMutation,
-    isLoading: updateInProgress,
-  } = useUpdateRevisionMutation();
+  const { mutate: updateRevisionMutation, isLoading: updateInProgress } =
+    useUpdateRevisionMutation();
 
-  const {
-    mutate: deleteRevisionMutation,
-    isLoading: deletionInProgress,
-  } = useDeleteRevisionMutation();
+  const { mutate: deleteRevisionMutation, isLoading: deletionInProgress } =
+    useDeleteRevisionMutation();
 
   const revision = (revisionsQuery.data || []).find(
     (el) => el.id === revisionId
@@ -326,7 +326,7 @@ export default function RevisionDetails() {
 
       <Modal
         title="Confirm Deletion"
-        visible={deletionModalVisible}
+        open={deletionModalVisible}
         onOk={deleteRevision}
         onCancel={() => setDeletionModalVisible(false)}
         width="400px"

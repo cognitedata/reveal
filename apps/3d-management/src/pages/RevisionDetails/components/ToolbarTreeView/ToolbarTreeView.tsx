@@ -28,6 +28,7 @@ import ErrorBoundary from 'components/ErrorBoundary';
 import { Button, Title } from '@cognite/cogs.js';
 import { useViewerNodeClickListener } from 'pages/RevisionDetails/components/ToolbarTreeView/hooks/useViewerNodeClickListener';
 import { useFilteredNodesHighlights } from 'pages/RevisionDetails/components/ToolbarTreeView/hooks/useFilteredNodesHighlights';
+import { FallbackProps } from 'react-error-boundary';
 import { NodeInfoModal } from './NodeInfoModal';
 
 import { useResizeHandler } from './hooks/useResizeHander';
@@ -157,6 +158,33 @@ export type ToolbarTreeViewProps = { style?: React.CSSProperties } & Omit<
   'height' | 'onNodeInfoRequested'
 >;
 
+const FallbackComponent = ({ error, resetErrorBoundary }: FallbackProps) => {
+  return (
+    <div role="alert" style={{ maxHeight: '100%', textAlign: 'left' }}>
+      <Title level={4}>Something went wrong.</Title>
+
+      <div style={{ margin: '16px 0' }}>
+        <p>We have been notified and will fix it.</p>
+        <Button onClick={resetErrorBoundary} type="primary">
+          Reload component
+        </Button>
+      </div>
+
+      <pre
+        style={{
+          textAlign: 'left',
+          whiteSpace: 'pre-wrap',
+          maxWidth: '100%',
+          maxHeight: '100%',
+          overflow: 'auto',
+        }}
+      >
+        {error.message}
+      </pre>
+    </div>
+  );
+};
+
 export function ToolbarTreeView({ style, ...restProps }: ToolbarTreeViewProps) {
   const treeViewContainer = useRef<HTMLDivElement>(null);
   const { height: treeViewHeight } = useResizeHandler(treeViewContainer);
@@ -167,34 +195,7 @@ export function ToolbarTreeView({ style, ...restProps }: ToolbarTreeViewProps) {
   >(undefined);
 
   return (
-    <ErrorBoundary
-      FallbackComponent={({ error, resetErrorBoundary }) => {
-        return (
-          <div role="alert" style={{ maxHeight: '100%', textAlign: 'left' }}>
-            <Title level={4}>Something went wrong.</Title>
-
-            <div style={{ margin: '16px 0' }}>
-              <p>We have been notified and will fix it.</p>
-              <Button onClick={resetErrorBoundary} type="primary">
-                Reload component
-              </Button>
-            </div>
-
-            <pre
-              style={{
-                textAlign: 'left',
-                whiteSpace: 'pre-wrap',
-                maxWidth: '100%',
-                maxHeight: '100%',
-                overflow: 'auto',
-              }}
-            >
-              {error.message}
-            </pre>
-          </div>
-        );
-      }}
-    >
+    <ErrorBoundary FallbackComponent={FallbackComponent}>
       <Container
         style={style}
         ref={treeViewContainer}
@@ -215,7 +216,7 @@ export function ToolbarTreeView({ style, ...restProps }: ToolbarTreeViewProps) {
       <NodeInfoModal
         treeIndex={nodeInfoTreeIndex}
         onClose={() => setInfoModalOpen(false)}
-        visible={infoModalOpen}
+        open={infoModalOpen}
       />
     </ErrorBoundary>
   );

@@ -3,10 +3,8 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom/extend-expect';
-// import 'styled-components/macro';
-import { configure } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
-// import 'babel-polyfill';
+import Enzyme from 'enzyme';
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 
 export interface Global {
   document: Document;
@@ -29,7 +27,7 @@ jest.mock('@cognite/sdk-react-query-hooks', () => {
   };
 });
 
-configure({ adapter: new Adapter() });
+Enzyme.configure({ adapter: new Adapter() });
 
 // Create document.currentScript required by potree-core
 Object.defineProperty(document, 'currentScript', {

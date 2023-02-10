@@ -130,6 +130,7 @@ class ModelsTable extends React.Component<Props> {
     });
   };
 
+  // eslint-disable-next-line react/no-unused-class-component-methods
   handleReset = (clearFilters) => () => {
     clearFilters();
   };
@@ -154,6 +155,13 @@ class ModelsTable extends React.Component<Props> {
   clearSorting = () => {
     this.props.setModelTableState({ sorter: undefined });
   };
+
+  footer = () => (
+    <TableOperations>
+      <Button onClick={this.clearSorting}>Clear Sorting</Button>
+      <Button onClick={this.props.refresh}>Refresh</Button>
+    </TableOperations>
+  );
 
   render() {
     return (
@@ -187,12 +195,7 @@ class ModelsTable extends React.Component<Props> {
               <EmptyState type="ThreeDModel" text="No 3D models available" />
             ),
           }}
-          footer={() => (
-            <TableOperations>
-              <Button onClick={this.clearSorting}>Clear Sorting</Button>
-              <Button onClick={this.props.refresh}>Refresh</Button>
-            </TableOperations>
-          )}
+          footer={this.footer}
         />
       </>
     );

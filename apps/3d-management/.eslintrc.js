@@ -8,5 +8,8 @@ module.exports = {
     ],
     'no-console': 'off',
     'no-debugger': 'off',
+
+    'testing-library/no-node-access': ['warn'],
+    'no-loss-of-precision': ['warn'],
   },
 };

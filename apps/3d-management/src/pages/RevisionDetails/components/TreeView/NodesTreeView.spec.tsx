@@ -116,9 +116,8 @@ function TreeViewStateful({
 }: Partial<NodesTreeViewProps>) {
   const [checkedKeys, setCheckedKeys] = React.useState(initialCheckedKeys);
   const [expandedKeys, setExpandedKeys] = React.useState(initialExpandedKeys);
-  const [selectedNodes, setSelectedNodes] = React.useState<SelectedNode[]>(
-    initialSelectedNodes
-  );
+  const [selectedNodes, setSelectedNodes] =
+    React.useState<SelectedNode[]>(initialSelectedNodes);
 
   return (
     // fixme that's not good at all that keyboard handlers just don't work without that magic focus id
@@ -167,10 +166,10 @@ describe('NodesTreeView test cases', () => {
     // more info https://kentcdodds.com/blog/fix-the-not-wrapped-in-act-warning#how-to-fix-the-act-warning
     await screen.findByText('RootNode');
 
-    expect(screen.queryByText('RootNode')).toBeInTheDocument();
-    expect(screen.queryByText('0-0')).toBeInTheDocument();
-    expect(screen.queryByText('0-0-1-0')).toBeInTheDocument();
-    expect(screen.queryByText('0-2')).toBeInTheDocument();
+    expect(screen.getByText('RootNode')).toBeInTheDocument();
+    expect(screen.getByText('0-0')).toBeInTheDocument();
+    expect(screen.getByText('0-0-1-0')).toBeInTheDocument();
+    expect(screen.getByText('0-2')).toBeInTheDocument();
     expect(screen.queryAllByText(LOAD_MORE)).toHaveLength(2);
   });
 
@@ -184,9 +183,9 @@ describe('NodesTreeView test cases', () => {
 
     userEvent.click(loadMoreOptions[0]);
 
-    expect(onSelect).toBeCalledTimes(0);
-    expect(loadSiblings).toBeCalledTimes(1);
-    expect(loadSiblings).toBeCalledWith(
+    expect(onSelect).toHaveBeenCalledTimes(0);
+    expect(loadSiblings).toHaveBeenCalledTimes(1);
+    expect(loadSiblings).toHaveBeenCalledWith(
       expect.objectContaining({
         parent: {
           nodeId: 3,
@@ -207,14 +206,14 @@ describe('NodesTreeView test cases', () => {
 
       userEvent.click(await screen.findByText('0-0'));
 
-      expect(onSelect).toBeCalledTimes(1);
-      expect(onSelect).toBeCalledWith([1]);
+      expect(onSelect).toHaveBeenCalledTimes(1);
+      expect(onSelect).toHaveBeenCalledWith([1]);
       onSelect.mockReset();
 
       userEvent.click(screen.getByText('RootNode'));
 
-      expect(onSelect).toBeCalledTimes(1);
-      expect(onSelect).toBeCalledWith([0]);
+      expect(onSelect).toHaveBeenCalledTimes(1);
+      expect(onSelect).toHaveBeenCalledWith([0]);
     });
 
     it('selects multiple nodes with ctrl+click', async () => {
@@ -233,15 +232,15 @@ describe('NodesTreeView test cases', () => {
 
       userEvent.click(screen.getByText('0-2'), { ctrlKey: true });
 
-      expect(onSelect).toBeCalledTimes(1);
-      expect(onSelect).toBeCalledWith([1, 21]);
+      expect(onSelect).toHaveBeenCalledTimes(1);
+      expect(onSelect).toHaveBeenCalledWith([1, 21]);
       onSelect.mockReset();
 
       // unselect
       userEvent.click(screen.getByText('0-2'), { ctrlKey: true });
 
-      expect(onSelect).toBeCalledTimes(1);
-      expect(onSelect).toBeCalledWith([1]);
+      expect(onSelect).toHaveBeenCalledTimes(1);
+      expect(onSelect).toHaveBeenCalledWith([1]);
     });
 
     describe('Range of nodes with shift+click', () => {
@@ -257,7 +256,7 @@ describe('NodesTreeView test cases', () => {
         );
         userEvent.click(await screen.findByText('0-0-0'));
 
-        expect(onSelect).toBeCalledWith([2]);
+        expect(onSelect).toHaveBeenCalledWith([2]);
 
         userEvent.click(screen.getByText('0-1'), { shiftKey: true });
 
@@ -269,7 +268,7 @@ describe('NodesTreeView test cases', () => {
         userEvent.click(screen.getByText('RootNode'), { shiftKey: true });
 
         expect(onSelect).toHaveBeenNthCalledWith(3, [0, 1, 2]);
-        expect(onSelect).toBeCalledTimes(3);
+        expect(onSelect).toHaveBeenCalledTimes(3);
       });
     });
   });
@@ -295,7 +294,7 @@ describe('NodesTreeView test cases', () => {
           key: TrackedKeys.ArrowUp,
         }); // moved to 0-0
 
-        expect(onSelect).toBeCalledWith([1]);
+        expect(onSelect).toHaveBeenCalledWith([1]);
 
         // after ctrl click
         userEvent.click(screen.getByText('0-0-1-1'), { ctrlKey: true });
@@ -336,7 +335,7 @@ describe('NodesTreeView test cases', () => {
           shiftKey: true,
         }); // moved to 0-0
         expect(onSelect).toHaveBeenNthCalledWith(9, [1, 2, 3]);
-        expect(onSelect).toBeCalledTimes(9);
+        expect(onSelect).toHaveBeenCalledTimes(9);
       });
 
       it('respects expanded state', async () => {
@@ -354,11 +353,12 @@ describe('NodesTreeView test cases', () => {
         onSelect.mockReset();
 
         fireEvent.focus(screen.queryByTestId(treeViewFocusContainerId)!);
+        // eslint-disable-next-line testing-library/no-node-access
         fireEvent.keyDown(document.activeElement!, {
           key: TrackedKeys.ArrowUp,
         }); // moved to 0-0-1
-        expect(onSelect).toBeCalledTimes(1);
-        expect(onSelect).toBeCalledWith([3]);
+        expect(onSelect).toHaveBeenCalledTimes(1);
+        expect(onSelect).toHaveBeenCalledWith([3]);
       });
 
       it('selects the root node if nothing is selected', async () => {
@@ -375,8 +375,8 @@ describe('NodesTreeView test cases', () => {
         fireEvent.keyDown(document.activeElement!, {
           key: TrackedKeys.ArrowUp,
         });
-        expect(onSelect).toBeCalledTimes(1);
-        expect(onSelect).toBeCalledWith([0]);
+        expect(onSelect).toHaveBeenCalledTimes(1);
+        expect(onSelect).toHaveBeenCalledWith([0]);
       });
     });
 
@@ -400,7 +400,7 @@ describe('NodesTreeView test cases', () => {
           key: TrackedKeys.ArrowDown,
         }); // moved to 0-0-1-0
 
-        expect(onSelect).toBeCalledWith([4]);
+        expect(onSelect).toHaveBeenCalledWith([4]);
 
         // after ctrl click
         userEvent.click(screen.getByText('0-1'), { ctrlKey: true });
@@ -441,7 +441,7 @@ describe('NodesTreeView test cases', () => {
           shiftKey: true,
         }); // moved to 0-2-0
         expect(onSelect).toHaveBeenNthCalledWith(9, [11, 21, 22]);
-        expect(onSelect).toBeCalledTimes(9);
+        expect(onSelect).toHaveBeenCalledTimes(9);
       });
 
       it('respects expanded state', async () => {
@@ -473,7 +473,7 @@ describe('NodesTreeView test cases', () => {
           key: TrackedKeys.ArrowDown,
         }); // moved to 0-1
 
-        expect(onSelect).toBeCalledTimes(4);
+        expect(onSelect).toHaveBeenCalledTimes(4);
         expect(onSelect).toHaveBeenNthCalledWith(1, [1]);
         expect(onSelect).toHaveBeenNthCalledWith(2, [2]);
         expect(onSelect).toHaveBeenNthCalledWith(3, [3]);
@@ -494,8 +494,8 @@ describe('NodesTreeView test cases', () => {
         fireEvent.keyDown(document.activeElement!, {
           key: TrackedKeys.ArrowDown,
         });
-        expect(onSelect).toBeCalledTimes(1);
-        expect(onSelect).toBeCalledWith([0]);
+        expect(onSelect).toHaveBeenCalledTimes(1);
+        expect(onSelect).toHaveBeenCalledWith([0]);
       });
     });
 
@@ -553,8 +553,8 @@ describe('NodesTreeView test cases', () => {
       fireEvent.keyDown(document.activeElement!, {
         key: TrackedKeys.Escape,
       });
-      expect(onSelect).toBeCalledTimes(1);
-      expect(onSelect).toBeCalledWith([]);
+      expect(onSelect).toHaveBeenCalledTimes(1);
+      expect(onSelect).toHaveBeenCalledWith([]);
     });
 
     it('toggles the selected nodes on SPACE/ENTER is pressed', async () => {
@@ -572,8 +572,8 @@ describe('NodesTreeView test cases', () => {
       fireEvent.keyDown(document.activeElement!, {
         key: TrackedKeys[' '],
       });
-      expect(onCheck).toBeCalledTimes(1);
-      expect(onCheck).toBeCalledWith(
+      expect(onCheck).toHaveBeenCalledTimes(1);
+      expect(onCheck).toHaveBeenCalledWith(
         // eslint-disable-next-line prettier/prettier
         [/* 0, */ 1, 2, 3, 4, 5, /* 11, */ 21, 22]
       );
@@ -608,7 +608,7 @@ describe('NodesTreeView test cases', () => {
         // eslint-disable-next-line prettier/prettier
         [/* 0, 1, 2, 3, 4, 5, */ 11, 22, 21]
       );
-      expect(onCheck).toBeCalledTimes(2);
+      expect(onCheck).toHaveBeenCalledTimes(2);
     });
   });
 });

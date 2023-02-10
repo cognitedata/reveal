@@ -45,6 +45,9 @@ const azSortByKey = (key) => (a, b) => {
   return 0;
 };
 
+const Property = () => <b>Property</b>;
+const Value = () => <b>Value</b>;
+
 export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
   const defaultCdfMetaTabKey = 'cdfMetaTabKey';
   const [activeTabKey, setActiveTabKey] = useState<null | string>(null);
@@ -180,6 +183,18 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
     }));
   };
 
+  const columns = getColumns([
+    {
+      title: Property,
+      key: 'key',
+      defaultSortOrder: 'ascend',
+    },
+    {
+      title: Value,
+      key: 'value',
+    },
+  ]);
+
   return (
     <Modal
       width={800}
@@ -209,17 +224,7 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
         <Table
           dataSource={getTableDataSource(activeTabKey || defaultCdfMetaTabKey)}
           rowKey={(item) => item.key}
-          columns={getColumns([
-            {
-              title: () => <b>Property</b>,
-              key: 'key',
-              defaultSortOrder: 'ascend',
-            },
-            {
-              title: () => <b>Value</b>,
-              key: 'value',
-            },
-          ])}
+          columns={columns}
           pagination={false}
         />
       </TableWrapper>

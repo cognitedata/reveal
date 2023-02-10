@@ -29,6 +29,7 @@ export function getInitialState(): TreeViewState {
 }
 
 export default function treeDataReducer(
+  // eslint-disable-next-line default-param-last
   prevState: TreeViewState = getInitialState(),
   action: Actions
 ): TreeViewState {

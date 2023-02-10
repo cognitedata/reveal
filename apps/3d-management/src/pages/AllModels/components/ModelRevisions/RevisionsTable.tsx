@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import EmptyState from 'pages/AllModels/components/EmptyState/index';
 import { getContainer } from 'utils';
 import { TableOperations } from 'pages/AllModels/components/TableOperations';
-import Status from 'components/Status/index';
+import Status from 'components/Status';
 import Thumbnail from 'components/Thumbnail';
 import { Revision3D } from '@cognite/sdk';
 import { ThumbnailPreviewIcon } from 'components/ThumbnailPreviewIcon';
@@ -100,6 +100,13 @@ export function RevisionsTable(props: Props) {
     });
   };
 
+  const footer = () => (
+    <TableOperations>
+      <Button onClick={clearAll}>Clear Sorting and Filters</Button>
+      {props.refresh ? <Button onClick={props.refresh}>Refresh</Button> : null}
+    </TableOperations>
+  );
+
   return (
     <Table
       loading={!props.revisions}
@@ -119,14 +126,7 @@ export function RevisionsTable(props: Props) {
         ),
       }}
       getPopupContainer={getContainer}
-      footer={() => (
-        <TableOperations>
-          <Button onClick={clearAll}>Clear Sorting and Filters</Button>
-          {props.refresh ? (
-            <Button onClick={props.refresh}>Refresh</Button>
-          ) : null}
-        </TableOperations>
-      )}
+      footer={footer}
     />
   );
 }

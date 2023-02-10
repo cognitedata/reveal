@@ -69,7 +69,7 @@ export default function AllModels() {
 
   const isFormFilled = newModelName.length > 0;
 
-  const expandedRowRender = (model) => (
+  const expandedRowRender = (model: Model3D) => (
     <ModelRevisions model={model} {...props} />
   );
 
@@ -88,14 +88,10 @@ export default function AllModels() {
   };
 
   const { flow } = getFlow();
-  const {
-    data: hasThreedCreateCapability,
-    isFetched: isFetchedThreedCreate,
-  } = usePermissions(flow, 'threedAcl', 'CREATE');
-  const {
-    data: hasFilesWriteCapability,
-    isFetched: isFetchedFilesWrite,
-  } = usePermissions(flow, 'filesAcl', 'WRITE');
+  const { data: hasThreedCreateCapability, isFetched: isFetchedThreedCreate } =
+    usePermissions(flow, 'threedAcl', 'CREATE');
+  const { data: hasFilesWriteCapability, isFetched: isFetchedFilesWrite } =
+    usePermissions(flow, 'filesAcl', 'WRITE');
 
   const showAddModelButton =
     hasThreedCreateCapability && hasFilesWriteCapability;
@@ -205,7 +201,7 @@ export default function AllModels() {
       />
       <Modal
         title="Insert New Model"
-        visible={isModalVisible}
+        open={isModalVisible}
         footer={null}
         closable={false}
         maskClosable={false}

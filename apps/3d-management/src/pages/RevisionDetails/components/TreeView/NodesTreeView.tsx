@@ -2,10 +2,6 @@ import React, { MutableRefObject } from 'react';
 import { Tree, TreeProps } from 'antd';
 import { SelectedNode, TreeIndex } from 'store/modules/TreeView';
 import {
-  INFO_BTN_CLASSNAME,
-  TREE_NODE_CLASSNAME,
-} from 'pages/RevisionDetails/components/TreeView/NodeWithInfoButton';
-import {
   calcRangeKeys,
   convertKeysToSelectedNodes,
 } from 'pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
@@ -17,6 +13,7 @@ import {
   TreeLoadMoreNode,
 } from './types';
 import { useKeyboardHandler } from './hooks/useKeyboardHandler';
+import { INFO_BTN_CLASSNAME, TREE_NODE_CLASSNAME } from './constants';
 
 type ModifiedTreeProps = {
   treeData: Array<TreeDataNode>;
@@ -212,8 +209,8 @@ const NodesTreeView = React.forwardRef<
     if (!treeData.length) {
       return <div />;
     }
-
     return (
+      // @ts-ignore - cannot fix type easily
       <TreeStyled
         ref={forwardedRef as any}
         className="TREE"

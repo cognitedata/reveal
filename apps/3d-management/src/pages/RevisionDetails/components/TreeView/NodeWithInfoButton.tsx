@@ -1,8 +1,6 @@
 import React from 'react';
 import { Icon } from '@cognite/cogs.js';
-
-export const INFO_BTN_CLASSNAME = 'tree-view-info-btn';
-export const TREE_NODE_CLASSNAME = 'tree-view-node';
+import { INFO_BTN_CLASSNAME, TREE_NODE_CLASSNAME } from './constants';
 
 type Props = {
   name: string;

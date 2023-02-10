@@ -8,6 +8,7 @@ function getInitialState(): ToolbarState {
 }
 
 export default function toolbarReducer(
+  // eslint-disable-next-line default-param-last
   state: ToolbarState = getInitialState(),
   action: Actions
 ): ToolbarState {

@@ -34,7 +34,7 @@ const ButtonRow = styled.div`
   .left-button {
     align-self: start;
     margin-right: 12px;
-    margin-left: 0px;
+    margin-left: 0;
   }
   .right-button {
     align-self: end;
@@ -64,18 +64,12 @@ export default function ModelRevisions({ model }: Props) {
   const revisionsQuery = useRevisions(model.id);
 
   const { flow } = getFlow();
-  const {
-    data: hasThreedDeleteCapability,
-    isFetched: isFetchedThreedDelete,
-  } = usePermissions(flow, 'threedAcl', 'DELETE');
-  const {
-    data: hasThreedCreateCapability,
-    isFetched: isFetchedThreedCreate,
-  } = usePermissions(flow, 'threedAcl', 'CREATE');
-  const {
-    data: hasFilesWriteCapability,
-    isFetched: isFetchedFilesWrite,
-  } = usePermissions(flow, 'filesAcl', 'WRITE');
+  const { data: hasThreedDeleteCapability, isFetched: isFetchedThreedDelete } =
+    usePermissions(flow, 'threedAcl', 'DELETE');
+  const { data: hasThreedCreateCapability, isFetched: isFetchedThreedCreate } =
+    usePermissions(flow, 'threedAcl', 'CREATE');
+  const { data: hasFilesWriteCapability, isFetched: isFetchedFilesWrite } =
+    usePermissions(flow, 'filesAcl', 'WRITE');
 
   const showDeleteModelButton = hasThreedDeleteCapability;
   const showButtons = hasThreedCreateCapability && hasFilesWriteCapability;
@@ -186,7 +180,7 @@ export default function ModelRevisions({ model }: Props) {
       />
       <Modal
         title="Upload New Revision"
-        visible={uploadModalVisible}
+        open={uploadModalVisible}
         footer={null}
         onCancel={hideUploadModal}
         width="800px"
@@ -209,7 +203,7 @@ export default function ModelRevisions({ model }: Props) {
       </Modal>
       <Modal
         title="Confirm Deletion"
-        visible={deletionModalVisible}
+        open={deletionModalVisible}
         onOk={deleteModel}
         onCancel={() => setDeletionModalVisible(false)}
         width="400px"
@@ -219,7 +213,7 @@ export default function ModelRevisions({ model }: Props) {
         <strong> {model.name}</strong>? This action cannot be undone.
       </Modal>
       <Modal
-        visible={renameModalVisible}
+        open={renameModalVisible}
         onOk={renameModel}
         onCancel={() => {
           setRenameModalVisible(false);

@@ -6,16 +6,16 @@ import { RevisionIds } from 'utils/types';
 import { HttpError } from '@cognite/sdk';
 import { getOrganizedRevisionLogs } from '../../utils/getOrganizedRevisionLogs';
 
-const fetchLogs = ({ modelId, revisionId }: RevisionIds) => async (): Promise<
-  RevisionLog3D[]
-> => {
-  const {
-    data: { items },
-  } = await sdk.get<{ items: RevisionLog3D[] }>(
-    `api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/logs?severity=3`
-  );
-  return items;
-};
+const fetchLogs =
+  ({ modelId, revisionId }: RevisionIds) =>
+  async (): Promise<RevisionLog3D[]> => {
+    const {
+      data: { items },
+    } = await sdk.get<{ items: RevisionLog3D[] }>(
+      `api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/logs?severity=3`
+    );
+    return items;
+  };
 
 const QUERY_REFETCH_INTERVAL_MILLISECONDS = 7000;
 
@@ -36,12 +36,11 @@ export function useRevisionLogs(args: RevisionIds) {
           return false;
         }
         const organizedRevisionLogs = getOrganizedRevisionLogs(data);
-        const processCompleted = Object.values(
-          organizedRevisionLogs
-        ).every((revisionLogCategory) =>
-          revisionLogCategory.some(
-            (revisionLog) => revisionLog.type.toLowerCase() === 'success'
-          )
+        const processCompleted = Object.values(organizedRevisionLogs).every(
+          (revisionLogCategory) =>
+            revisionLogCategory.some(
+              (revisionLog) => revisionLog.type.toLowerCase() === 'success'
+            )
         );
         if (data?.length && processCompleted) {
           return false;

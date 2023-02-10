@@ -7,7 +7,7 @@ import {
   ToolbarTreeViewProps,
 } from 'pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
 
-import { Cognite3DViewer, Cognite3DModel } from '@cognite/reveal';
+import { Cognite3DViewer, CogniteCadModel } from '@cognite/reveal';
 
 import { toolbarTreeViewMswHandlers } from 'pages/RevisionDetails/components/ToolbarTreeView/__testUtils__/toolbarTreeViewMswHandlers';
 import {
@@ -30,7 +30,7 @@ const viewerMock = {} as Cognite3DViewer;
 const modelMock = {
   modelId: fixtureModelId,
   revisionId: fixtureRevisionId,
-} as Cognite3DModel;
+} as CogniteCadModel;
 
 function ToolbarTreeViewWrapper(
   props: Omit<ToolbarTreeViewProps, 'width' | 'model' | 'viewer'>
@@ -51,7 +51,7 @@ describe('ToolbarTreeView test cases', () => {
   afterAll(() => server.close());
 
   it('loads root node and its children on mount', async () => {
-    renderWithProviders(<ToolbarTreeViewWrapper />);
+    renderWithProviders(<ToolbarTreeViewWrapper nodesClickable />);
     expect(await screen.findByText('RootNode')).toBeInTheDocument();
     expect(await screen.findByText('Cube')).toBeInTheDocument();
     expect(await screen.findByText('Camera')).toBeInTheDocument();
@@ -62,7 +62,7 @@ describe('ToolbarTreeView test cases', () => {
   });
 
   it('loads node children when expand button is clicked', async () => {
-    renderWithProviders(<ToolbarTreeViewWrapper />);
+    renderWithProviders(<ToolbarTreeViewWrapper nodesClickable />);
     await screen.findByText('Cube');
     const expandBtn = screen
       .getAllByRole('img')
@@ -79,7 +79,7 @@ describe('ToolbarTreeView test cases', () => {
   });
 
   it('loads more children when "Load more" button is clicked', async () => {
-    renderWithProviders(<ToolbarTreeViewWrapper />);
+    renderWithProviders(<ToolbarTreeViewWrapper nodesClickable />);
     userEvent.click(await screen.findByText('Load more...'));
     expect(await screen.findByText('Fake child')).toBeInTheDocument();
   });

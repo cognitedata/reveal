@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Badge } from 'antd';
+import styled from 'styled-components';
 
 const mapStatusToBadge = {
   Done: 'success',
@@ -21,9 +22,13 @@ export const mapStatusToColor = {
 const Status = ({ status }) => (
   <span>
     <Badge status={mapStatusToBadge[status] || 'error'} />
-    {status}
+    <StatusText>{status}</StatusText>
   </span>
 );
+
+const StatusText = styled.span`
+  margin-left: 8px;
+`;
 
 Status.propTypes = {
   status: PropTypes.string.isRequired,

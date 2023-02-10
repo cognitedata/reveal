@@ -60,6 +60,7 @@ export default function ThreeDViewerErrorBoundary(props: { children: any }) {
       {...props}
       FallbackComponent={ThreeDViewerErrorFallback}
       onError={(error) => {
+        // eslint-disable-next-line no-console
         console.error('ThreeD: ', error);
         logToSentry(error);
       }}

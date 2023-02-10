@@ -222,8 +222,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
 
 const RotationContainer = styled.div`
   min-width: 236px;
-  box-shadow: 0px 8px 16px 4px rgba(0, 0, 0, 0.04),
-    0px 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 16px 4px rgba(0, 0, 0, 0.04), 0 2px 12px rgba(0, 0, 0, 0.08);
   border: var(--cogs-border-default);
   padding: 12px;
   border-radius: 8px;
