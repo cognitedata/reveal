@@ -76,7 +76,7 @@ const image360Collection = await viewer.add360ImageSet('events', { site_id: 'sit
 image360Collection.on('image360Entered', (image360: Image360) => {
     const position = new THREE.Vector3();
     position.setFromMatrixPosition(image360.transform);
-    alert('360 Image mode entered at Image position: ', position);
+    alert(`360 Image mode entered at Image position: ${JSON.stringify(position)}`);
   });
 image360Collection.on('image360Exited', () => { alert('Exited from 360 Image mode'); });
 ```
