@@ -46,7 +46,6 @@ export const RelatedResources = ({
     assetIdCount,
     annotationCount,
     hasMoreRelationships,
-    annotatedWithCount,
     isFetched,
   } = useRelatedResourceCount(parentResource, type);
 
@@ -90,17 +89,6 @@ export const RelatedResources = ({
           label: `Annotations (${annotationCount})`,
           value: 'annotation',
           count: annotationCount,
-        },
-        ...types,
-      ];
-    }
-
-    if (type === 'file') {
-      types = [
-        {
-          label: `Appears in (${annotatedWithCount})`,
-          value: 'annotatedWith',
-          count: annotatedWithCount,
         },
         ...types,
       ];

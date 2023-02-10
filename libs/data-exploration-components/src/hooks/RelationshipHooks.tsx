@@ -541,7 +541,6 @@ export const useRelatedResourceCount = (
       ? Math.max((linkedResourceCount?.count ?? 1) - 1, 0)
       : linkedResourceCount?.count,
     annotationCount,
-    annotatedWithCount: 0,
     isFetched,
   };
 };
