@@ -84,7 +84,12 @@ export const SchemaVisualizer = React.memo(
       }
 
       if (!isVisualizerOn) {
-        setErrorMessage('Data model preview is currently turned off');
+        setErrorMessage(
+          t(
+            'visualizer_preview_off',
+            'Data model preview is currently turned off'
+          )
+        );
         setIsLoaded(true);
         return [];
       }
@@ -94,7 +99,12 @@ export const SchemaVisualizer = React.memo(
         return definitions;
       } catch {
         // TODO: Add sentry
-        setErrorMessage("There's a validation error in your data model.");
+        setErrorMessage(
+          t(
+            'visualizer_validation_error',
+            "There's a validation error in your data model."
+          )
+        );
         setIsLoaded(true);
         return [];
       }
@@ -314,7 +324,7 @@ export const SchemaVisualizer = React.memo(
             <Title level={5} style={{ textAlign: 'center', marginBottom: 16 }}>
               {t('failed_to_load', 'Unable to visualize the Data Model.')}
             </Title>
-            <i>{t('failed_to_load_description', errorMessage)}</i>
+            <i>{errorMessage}</i>
           </Flex>
         ) : (
           <Graph<SchemaDefinitionNode>

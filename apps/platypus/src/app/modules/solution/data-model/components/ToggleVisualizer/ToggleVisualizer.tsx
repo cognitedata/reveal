@@ -28,8 +28,8 @@ export function ToggleVisualizer({
         onClick={() => setIsVisualizerOn(!isVisualizerOn)}
       >
         {isVisualizerOn
-          ? t('toggle-visualizer-btn-text', 'Turn off preview')
-          : t('toggle-visualizer-btn-text', 'Turn on preview')}
+          ? t('toggle-visualizer-btn-off', 'Turn off preview')
+          : t('toggle-visualizer-btn-on', 'Turn on preview')}
       </StyledButton>
     </StyledLabel>
   );
