@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 import { Cognite3DViewer, Image360 } from "@cognite/reveal";
 import * as dat from 'dat.gui';
-import { drop } from 'lodash';
 
 export class Image360UI {
   constructor(viewer: Cognite3DViewer, gui: dat.GUI){
@@ -31,7 +30,7 @@ export class Image360UI {
     };
 
     const params = {
-      siteId: 'helideck-site-2',
+      siteId: '',
       add: add360ImageSet,
       premultipliedRotation: false,
       remove: removeAll360Images
@@ -60,8 +59,6 @@ export class Image360UI {
     });
 
     gui.add(params, 'remove').name('Remove all 360 images');
-
-    add360ImageSet();
 
     async function add360ImageSet(){
       const rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(rotation.x, rotation.y, rotation.z), rotation.radians);
