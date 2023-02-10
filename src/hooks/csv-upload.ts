@@ -5,7 +5,7 @@ import { CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { notification } from 'antd';
 import PapaParse from 'papaparse';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 import { useTranslation } from 'common/i18n';
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
