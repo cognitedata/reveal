@@ -22,6 +22,8 @@ import { AttributeDataAccessor, SceneHandler } from '@reveal/utilities';
 import { Image360Icon } from '../Image360Icon';
 
 export class Image360CollectionIcons {
+  private readonly MIN_PIXEL_SIZE = 16;
+  private readonly MAX_PIXEL_SIZE = 64;
   private readonly _sceneHandler: SceneHandler;
   private readonly _geometry: BufferGeometry;
   private readonly _material: RawShaderMaterial;
@@ -51,7 +53,13 @@ export class Image360CollectionIcons {
     return positions.map((position, index) => {
       const instanceAlphaView = new Uint8ClampedArray(alphaBuffer.buffer, index, 1);
       const alphaAttributeAccessor = new AttributeDataAccessor(instanceAlphaView, alphaAttribute);
-      return new Image360Icon(position, this._sceneHandler, alphaAttributeAccessor);
+      return new Image360Icon(
+        position,
+        this._sceneHandler,
+        alphaAttributeAccessor,
+        this.MIN_PIXEL_SIZE,
+        this.MAX_PIXEL_SIZE
+      );
     });
   }
 
@@ -68,7 +76,8 @@ export class Image360CollectionIcons {
         map: { value: this.createOuterRingsTexture() },
         colorTint: { value: new Color(1, 1, 1) },
         renderSize: { value: new Vector2(1, 1) },
-        renderDownScale: { value: 1 }
+        renderDownScale: { value: 1 },
+        pixelSizeRange: { value: new Vector2(this.MIN_PIXEL_SIZE, this.MAX_PIXEL_SIZE) }
       },
       vertexShader: glsl(image360IconVert),
       fragmentShader: glsl(image360IconFrag),

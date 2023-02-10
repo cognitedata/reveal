@@ -4,32 +4,43 @@
 
 import { AttributeDataAccessor, SceneHandler } from '@reveal/utilities';
 import * as THREE from 'three';
-import { Ray, Sphere, Vector3 } from 'three';
+import { Mesh, Ray, Sphere, Vector3 } from 'three';
+import { clamp } from 'three/src/math/MathUtils';
 
 export class Image360Icon {
-  private readonly MIN_PIXEL_SIZE = 16;
-  private readonly MAX_PIXEL_SIZE = 64;
   private readonly _hoverSprite: THREE.Sprite;
   private readonly _alphaAttributeAccessor: AttributeDataAccessor<Uint8ClampedArray>;
   private readonly _position: THREE.Vector3;
   private readonly _sceneHandler: SceneHandler;
+  private _adaptiveScale = 1;
+  private readonly _renderHook: THREE.Mesh;
+  private readonly _minPixelSize: number;
+  private readonly _maxPixelSize: number;
+
   constructor(
     position: THREE.Vector3,
     sceneHandler: SceneHandler,
-    alphaAttributeAccessor: AttributeDataAccessor<Uint8ClampedArray>
+    alphaAttributeAccessor: AttributeDataAccessor<Uint8ClampedArray>,
+    minPixelSize: number,
+    maxPixelSize: number
   ) {
+    this._minPixelSize = minPixelSize;
+    this._maxPixelSize = maxPixelSize;
     this._alphaAttributeAccessor = alphaAttributeAccessor;
 
     this._hoverSprite = this.createHoverSprite();
     this._hoverSprite.position.copy(position);
     this._hoverSprite.visible = false;
 
-    this._position = position;
+    const renderHook = new Mesh();
 
-    this.setupAdaptiveScaling(position);
+    this.setupAdaptiveScaling(position, sceneHandler, renderHook);
 
     sceneHandler.addCustomObject(this._hoverSprite);
+
+    this._position = position;
     this._sceneHandler = sceneHandler;
+    this._renderHook = renderHook;
   }
 
   set visible(visible: boolean) {
@@ -47,63 +58,48 @@ export class Image360Icon {
   }
 
   public intersect(ray: Ray): Vector3 | null {
-    const sphere = new Sphere(this._position, 0.5 * this._hoverSprite.scale.x);
+    const sphere = new Sphere(this._position, 0.5 * this._adaptiveScale);
     return ray.intersectSphere(sphere, new Vector3());
   }
 
   public dispose(): void {
     this._sceneHandler.removeCustomObject(this._hoverSprite);
-    this._hoverSprite.onBeforeRender = () => {};
     this._hoverSprite.material.map?.dispose();
     this._hoverSprite.material.dispose();
     this._hoverSprite.geometry.dispose();
+
+    this._sceneHandler.removeCustomObject(this._renderHook);
+    this._renderHook.onBeforeRender = () => {};
   }
 
-  private setupAdaptiveScaling(position: THREE.Vector3): void {
-    const base = new THREE.Vector4();
-    const offset = new THREE.Vector4();
-    const transform = new THREE.Matrix4();
-
-    this._hoverSprite.onBeforeRender = (renderer: THREE.WebGLRenderer, _1: THREE.Scene, camera: THREE.Camera) => {
-      const adaptiveScale = computeAdaptiveScaling(renderer, camera, this.MAX_PIXEL_SIZE, this.MIN_PIXEL_SIZE);
-      this._hoverSprite.scale.set(adaptiveScale, adaptiveScale, 1.0);
+  private setupAdaptiveScaling(position: THREE.Vector3, sceneHandler: SceneHandler, renderHook: Mesh): void {
+    renderHook.onBeforeRender = (renderer: THREE.WebGLRenderer, _1: THREE.Scene, camera: THREE.Camera) => {
+      this._adaptiveScale = computeAdaptiveScaling(renderer, camera, this._maxPixelSize, this._minPixelSize);
+      this._hoverSprite.scale.set(this._adaptiveScale, this._adaptiveScale, 1.0);
       this._hoverSprite.updateMatrixWorld();
     };
+
+    sceneHandler.addCustomObject(renderHook);
 
     function computeAdaptiveScaling(
       renderer: THREE.WebGLRenderer,
       camera: THREE.Camera,
       maxHeight: number,
       minHeight: number
-    ): number {
-      const clientHeight = renderer.domElement.clientHeight;
-
-      transform.makeTranslation(position.x, position.y, position.z);
-      transform.premultiply(camera.matrixWorldInverse);
-
-      base.set(0, 0, 0, 1);
-      offset.set(0, 0.5, 0, 1);
-
-      base.applyMatrix4(transform);
-      offset.add(base);
-
-      base.applyMatrix4(camera.projectionMatrix);
-      offset.applyMatrix4(camera.projectionMatrix);
-
-      const ndcHeight = Math.abs(offset.y / offset.w - base.y / base.w);
-      const screenHeight = ndcHeight * clientHeight;
-
-      return screenHeight > maxHeight
-        ? maxHeight / screenHeight
-        : screenHeight < minHeight
-        ? minHeight / screenHeight
-        : 1.0;
+    ) {
+      const pos = new THREE.Vector4(position.x, position.y, position.z, 1);
+      const posNdc = pos.clone().applyMatrix4(camera.matrixWorldInverse).applyMatrix4(camera.projectionMatrix);
+      const renderSize = renderer.getSize(new THREE.Vector2());
+      const pointSize = (renderSize.y * camera.projectionMatrix.elements[5] * 0.5) / posNdc.w;
+      const downSize = renderSize.x / renderer.domElement.clientWidth;
+      const clampedSize = clamp(pointSize, minHeight * downSize, maxHeight * downSize);
+      return clampedSize / pointSize;
     }
   }
 
   private createHoverSprite(): THREE.Sprite {
     const canvas = document.createElement('canvas');
-    const textureSize = this.MAX_PIXEL_SIZE;
+    const textureSize = this._maxPixelSize;
     canvas.width = textureSize;
     canvas.height = textureSize;
 
