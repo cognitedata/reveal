@@ -10,6 +10,13 @@ const VALID_FILE_ID = 123;
 const INVALID_FILE_ID = 456;
 const RESTRICTED_FILE_ID = 789;
 
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...(jest.requireActual('react-router-dom') as any),
+  useNavigate: () => mockedUsedNavigate,
+}));
+
 jest.mock('hooks/files/useFiles', () => ({
   useFiles: (fileIds: number[]) => {
     switch (fileIds[0]) {

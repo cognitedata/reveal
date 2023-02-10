@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { Card, message, Modal } from 'antd';
 import { Tooltip, Button, Flex, Icon } from '@cognite/cogs.js';
-import { RouteComponentProps } from 'react-router-dom';
 import { APP_TITLE, getContainer, DEFAULT_MARGIN_V } from 'utils';
 import { useMetrics } from 'hooks/useMetrics';
 import React, { useState } from 'react';
@@ -28,6 +27,7 @@ import { useModels } from 'hooks/models/useModels';
 import { Revision3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { useNavigate, useParams } from 'react-router-dom';
 import ThreeDViewerErrorBoundary from './components/ThreeDViewer/ThreeDViewerErrorFallback';
 import { FileLink } from './components/FileLink/FileLink';
 
@@ -80,13 +80,10 @@ const DetailsRowFlex = styled(Flex)`
   }
 `;
 
-type Props = RouteComponentProps<{
-  modelId: string;
-  revisionId: string;
-}>;
-
-export default function RevisionDetails(props: Props) {
+export default function RevisionDetails() {
   const metrics = useMetrics('3D.Revisions');
+  const props = useParams();
+  const navigate = useNavigate();
 
   const { flow } = getFlow();
 
@@ -99,8 +96,8 @@ export default function RevisionDetails(props: Props) {
     isFetched: isFetchedDeleteCapabilities,
   } = usePermissions(flow, 'threedAcl', 'DELETE');
 
-  const revisionId: number = Number(props.match.params.revisionId);
-  const modelId: number = Number(props.match.params.modelId);
+  const revisionId: number = Number(props.revisionId);
+  const modelId: number = Number(props.modelId);
 
   const [showLogs, setShowLogs] = useState(false);
   const [deletionModalVisible, setDeletionModalVisible] = useState(false);
@@ -179,7 +176,7 @@ export default function RevisionDetails(props: Props) {
 
   const deleteRevision = async () => {
     // navigate out before it's deleted, otherwise 404 component will be flashed for a moment
-    props.history.push(createLink(`/3d-models`));
+    navigate(createLink(`/3d-models`));
     await deleteRevisionMutation({ revisionId, modelId });
     message.success('Revision successfully deleted');
     metrics.track('Delete');

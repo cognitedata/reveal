@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { lazy, useState } from 'react';
 import styled from 'styled-components';
 import zIndex from 'utils/zIndex';
 import { Revision3DStatus, Revision3D } from '@cognite/sdk';
-import { LazyWrapper } from 'components/LazyWrapper';
 import Thumbnail from 'components/Thumbnail';
 
 import { CloseCircleFilled, PlayCircleFilled } from '@ant-design/icons';
+import { FallbackWrapper } from 'components/FallbackWrapper';
 import { ThreeDViewerProps } from '../ThreeDViewer/ThreeDViewer.d';
 
 const ERROR_TEXT: Record<Revision3DStatus, string> = {
@@ -67,11 +67,10 @@ type Props = {
   canBeViewed: boolean;
 };
 
-const ThreeDViewer = (props: ThreeDViewerProps) =>
-  LazyWrapper(props, () => import('../ThreeDViewer'));
+const ThreeDViewer = lazy(() => import('../ThreeDViewer'));
 
 const MemoizedThreeDViewer = React.memo(
-  (props: ThreeDViewerProps) => <ThreeDViewer {...props} />,
+  (props: ThreeDViewerProps) => FallbackWrapper(ThreeDViewer, props),
   // eslint-disable-next-line prefer-arrow-callback
   function areEqual(prevProps, nextProps) {
     if (

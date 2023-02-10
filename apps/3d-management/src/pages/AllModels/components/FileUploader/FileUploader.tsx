@@ -37,6 +37,8 @@ enum STATUS {
   STARTING,
   STARTED,
   PAUSED,
+  SUCCEEDED,
+  FAILED,
 }
 
 const defaultState = {
@@ -48,6 +50,7 @@ type Props = {
   onUploadSuccess: (fileId: number) => void;
   onUploadFailure: () => void;
   onCancel: () => void;
+  onDone?: () => void;
   beforeUploadStart?: () => Promise<void>;
 };
 
@@ -199,6 +202,10 @@ class FileUploader extends React.Component<Props, State> {
         throw new Error(`File with id=${id} is never marked as uploaded`);
       }
       this.props.onUploadSuccess(fileInfo.id);
+      this.setState((prev) => ({
+        ...prev,
+        uploadStatus: STATUS.SUCCEEDED,
+      }));
     } catch (e: any) {
       if (e.status === 401) {
         // eslint-disable-next-line no-alert
@@ -210,10 +217,21 @@ class FileUploader extends React.Component<Props, State> {
         logToSentry(e);
         message.error(`Unable to upload ${file.name} on server.`);
       }
+      // manually setting the file status to error
+      this.setState((prev) => {
+        const updatedFileList = prev.fileList;
+        if (updatedFileList) {
+          updatedFileList[0].status = 'error';
+        }
+        return {
+          ...prev,
+          fileList: updatedFileList,
+          uploadStatus: STATUS.FAILED,
+        };
+      });
     }
 
     this.currentUpload.meta.reset(); // clears the locally stored metadata
-    this.setState(defaultState);
   };
 
   onCancelClicked = () => {
@@ -302,6 +320,15 @@ class FileUploader extends React.Component<Props, State> {
         uploaderButton = (
           <Button type="primary" onClick={this.unpauseUpload}>
             Continue Upload
+          </Button>
+        );
+        break;
+      case STATUS.SUCCEEDED:
+      case STATUS.FAILED:
+        uploaderButton = (
+          // this button should close the modal
+          <Button type="primary" onClick={this.props.onDone}>
+            Done
           </Button>
         );
         break;

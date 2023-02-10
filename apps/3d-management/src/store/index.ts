@@ -1,7 +1,6 @@
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { isProduction } from '@cognite/cdf-utilities';
-import { connectRouter, routerMiddleware } from 'connected-react-router';
 import ReduxThunk from 'redux-thunk';
 
 import AppReducer from 'store/modules/App';
@@ -10,16 +9,15 @@ import TreeViewReducer from './modules/TreeView';
 
 export * from './types';
 
-const createRootReducer = (browserHistory) =>
+const createRootReducer = () =>
   combineReducers({
-    router: connectRouter(browserHistory),
     app: AppReducer, // fixme: ridiculous naming - should be modelsTable or something
     treeView: TreeViewReducer,
     toolbar: toolbarReducer,
   });
 
-export default function configureStore(browserHistory, initialState = {}) {
-  const middlewares = [routerMiddleware(browserHistory), ReduxThunk];
+export default function configureStore(initialState = {}) {
+  const middlewares = [ReduxThunk];
   const composeEnhancers = !isProduction()
     ? composeWithDevTools({
         name: '3d-management',
@@ -27,7 +25,7 @@ export default function configureStore(browserHistory, initialState = {}) {
     : compose;
 
   return createStore(
-    createRootReducer(browserHistory),
+    createRootReducer(),
     initialState,
     composeEnhancers(applyMiddleware(...middlewares))
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFiles } from 'hooks/files/useFiles';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
@@ -9,11 +9,11 @@ export const FILE_NOT_FOUND_ERROR = 'File not found';
 export const RESTRICTED_FILE_ERROR = 'Insufficient access rights';
 
 export const FileLink = ({ fileId }: { fileId: number }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const file = useFiles([fileId]);
 
   const onClickFile = () => {
-    history.push(createLink(`/explore/file/${fileId}/info`));
+    navigate(createLink(`/explore/file/${fileId}/info`));
   };
 
   if (file.error) {

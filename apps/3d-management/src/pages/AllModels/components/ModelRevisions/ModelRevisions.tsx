@@ -1,7 +1,6 @@
-import { RouteComponentProps } from 'react-router';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useMetrics } from 'hooks/useMetrics';
-import React, { useState } from 'react';
 import { Model3D } from '@cognite/sdk';
 import { DEFAULT_MARGIN_V, getContainer } from 'utils';
 import PermissioningHintWrapper from 'components/PermissioningHintWrapper';
@@ -17,6 +16,7 @@ import { useCreateRevisionMutation, useRevisions } from 'hooks/revisions';
 
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { useNavigate } from 'react-router-dom';
 import { RevisionsTable } from './RevisionsTable';
 
 const RevisionWrapper = styled.div`
@@ -43,23 +43,25 @@ const ButtonRow = styled.div`
   }
 `;
 
-type Props = RouteComponentProps & {
+type Props = {
   model: Model3D;
 };
 
-export default function ModelRevisions(props: Props) {
+export default function ModelRevisions({ model }: Props) {
   const metrics = useMetrics('3D');
+  const navigate = useNavigate();
 
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [deletionModalVisible, setDeletionModalVisible] = useState(false);
   const [renameModalVisible, setRenameModalVisible] = useState(false);
-  const [newName, setNewName] = useState(props.model.name);
+  const [newName, setNewName] = useState(model.name);
 
   const { mutate: deleteModelMutation } = useDeleteModelMutation();
   const { mutate: updateModelMutation } = useUpdateModelMutation();
 
   const { mutate: createRevision } = useCreateRevisionMutation();
-  const revisionsQuery = useRevisions(props.model.id);
+
+  const revisionsQuery = useRevisions(model.id);
 
   const { flow } = getFlow();
   const {
@@ -104,14 +106,14 @@ export default function ModelRevisions(props: Props) {
 
   const deleteModel = () => {
     metrics.track('Models.Delete');
-    deleteModelMutation({ id: props.model.id });
+    deleteModelMutation({ id: model.id });
     setDeletionModalVisible(false);
   };
 
   const renameModel = () => {
-    if (newName !== props.model.name && newName !== '') {
+    if (newName !== model.name && newName !== '') {
       updateModelMutation({
-        id: props.model.id,
+        id: model.id,
         name: newName,
       });
     }
@@ -162,7 +164,7 @@ export default function ModelRevisions(props: Props) {
 
       <Card style={{ width: '100%' }}>
         <Thumbnail
-          modelId={props.model.id}
+          modelId={model.id}
           width="400px"
           style={{
             display: 'block',
@@ -175,8 +177,8 @@ export default function ModelRevisions(props: Props) {
       <RevisionsTable
         revisions={revisionsQuery.data || []}
         onRowClick={(revisionId) => {
-          props.history.push(
-            createLink(`/3d-models/${props.model.id}/revisions/${revisionId}`)
+          navigate(
+            createLink(`/3d-models/${model.id}/revisions/${revisionId}`)
           );
           metrics.track('Revisions.View');
         }}
@@ -194,14 +196,13 @@ export default function ModelRevisions(props: Props) {
           onUploadSuccess={async (fileId) => {
             await createRevision({
               fileId,
-              modelId: props.model.id,
+              modelId: model.id,
             });
             message.success('Revision created');
-            hideUploadModal();
             metrics.track('Revisions.New');
           }}
           onUploadFailure={() => {
-            hideUploadModal();
+            refresh();
           }}
           onCancel={hideUploadModal}
         />
@@ -215,16 +216,16 @@ export default function ModelRevisions(props: Props) {
         getContainer={getContainer}
       >
         Are you sure you want to delete
-        <strong> {props.model.name}</strong>? This action cannot be undone.
+        <strong> {model.name}</strong>? This action cannot be undone.
       </Modal>
       <Modal
         visible={renameModalVisible}
         onOk={renameModel}
         onCancel={() => {
           setRenameModalVisible(false);
-          setNewName(props.model.name);
+          setNewName(model.name);
         }}
-        title={`Rename ${props.model.name}`}
+        title={`Rename ${model.name}`}
         getContainer={getContainer}
       >
         <p>Please Type the new name of this model: </p>
