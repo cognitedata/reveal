@@ -4,7 +4,7 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 import { useSDK } from '@cognite/sdk-provider';
 import { notification } from 'antd';
 import { chunk, isArray } from 'lodash';
-import uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 import { useTranslation } from 'common/i18n';
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
