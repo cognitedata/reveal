@@ -19,6 +19,7 @@ export class Image360Icon {
 
   constructor(
     position: THREE.Vector3,
+    hoverIconTexture: THREE.CanvasTexture,
     sceneHandler: SceneHandler,
     alphaAttributeAccessor: AttributeDataAccessor<Uint8ClampedArray>,
     minPixelSize: number,
@@ -28,7 +29,7 @@ export class Image360Icon {
     this._maxPixelSize = maxPixelSize;
     this._alphaAttributeAccessor = alphaAttributeAccessor;
 
-    this._hoverSprite = this.createHoverSprite();
+    this._hoverSprite = this.createHoverSprite(hoverIconTexture);
     this._hoverSprite.position.copy(position);
     this._hoverSprite.visible = false;
 
@@ -97,34 +98,11 @@ export class Image360Icon {
     }
   }
 
-  private createHoverSprite(): THREE.Sprite {
-    const canvas = document.createElement('canvas');
-    const textureSize = this._maxPixelSize;
-    canvas.width = textureSize;
-    canvas.height = textureSize;
-
-    const context = canvas.getContext('2d')!;
-    drawHoverSelector();
-
-    const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false });
+  private createHoverSprite(hoverIconTexture: THREE.CanvasTexture): THREE.Sprite {
+    const spriteMaterial = new THREE.SpriteMaterial({ map: hoverIconTexture, depthTest: false });
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.updateMatrixWorld();
     sprite.renderOrder = 5;
     return sprite;
-
-    function drawHoverSelector() {
-      const outerCircleLineWidth = textureSize / 16;
-      const innerCircleLineWidth = textureSize / 8;
-      context.beginPath();
-      context.fillStyle = '#FC2574';
-      context.arc(
-        textureSize / 2,
-        textureSize / 2,
-        textureSize / 2 - outerCircleLineWidth - 2 * innerCircleLineWidth,
-        0,
-        2 * Math.PI
-      );
-      context.fill();
-    }
   }
 }

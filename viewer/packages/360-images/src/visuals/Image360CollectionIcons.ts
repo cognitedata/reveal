@@ -28,16 +28,19 @@ export class Image360CollectionIcons {
   private readonly _geometry: BufferGeometry;
   private readonly _material: RawShaderMaterial;
   private readonly _points: Points;
+  private readonly _hoverIconTexture: CanvasTexture;
 
   constructor(sceneHandler: SceneHandler) {
     const geometry = new BufferGeometry();
     const material = this.initializeIconsMaterial();
     const points = this.initializePoints(geometry, material);
+    const hoverIconTexture = this.createHoverIconTexture();
 
     this._geometry = geometry;
     this._material = material;
     this._points = points;
     this._sceneHandler = sceneHandler;
+    this._hoverIconTexture = hoverIconTexture;
   }
 
   public initializeImage360Icons(transforms: Matrix4[]): Image360Icon[] {
@@ -55,6 +58,7 @@ export class Image360CollectionIcons {
       const alphaAttributeAccessor = new AttributeDataAccessor(instanceAlphaView, alphaAttribute);
       return new Image360Icon(
         position,
+        this._hoverIconTexture,
         this._sceneHandler,
         alphaAttributeAccessor,
         this.MIN_PIXEL_SIZE,
@@ -124,6 +128,33 @@ export class Image360CollectionIcons {
       context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
       context.shadowColor = 'red';
       context.stroke();
+    }
+  }
+
+  private createHoverIconTexture(): CanvasTexture {
+    const canvas = document.createElement('canvas');
+    const textureSize = this.MAX_PIXEL_SIZE;
+    canvas.width = textureSize;
+    canvas.height = textureSize;
+
+    const context = canvas.getContext('2d')!;
+    drawHoverSelector();
+
+    return new CanvasTexture(canvas);
+
+    function drawHoverSelector() {
+      const outerCircleLineWidth = textureSize / 16;
+      const innerCircleLineWidth = textureSize / 8;
+      context.beginPath();
+      context.fillStyle = '#FC2574';
+      context.arc(
+        textureSize / 2,
+        textureSize / 2,
+        textureSize / 2 - outerCircleLineWidth - 2 * innerCircleLineWidth,
+        0,
+        2 * Math.PI
+      );
+      context.fill();
     }
   }
 }
