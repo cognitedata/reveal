@@ -205,9 +205,7 @@ export class GltfSectorParser {
       THREE.InterleavedBuffer
     );
 
-    const texture = this.getDiffuseTexture(json, glbHeaderData, data, primitive);
-
-    payload.texture = texture;
+    payload.texture = await this.getDiffuseTexture(json, glbHeaderData, data, primitive);
 
     function attributeNameTransformer(attributeName: string) {
       switch (attributeName) {
@@ -225,12 +223,12 @@ export class GltfSectorParser {
     }
   }
 
-  private getDiffuseTexture(
+  private async getDiffuseTexture(
     json: GltfJson,
     glbHeaderData: GlbHeaderData,
     data: ArrayBuffer,
     primitive: Primitive
-  ): THREE.Texture | undefined {
+  ): Promise<THREE.Texture | undefined> {
     if (primitive.material === undefined) {
       return undefined;
     }
@@ -245,12 +243,11 @@ export class GltfSectorParser {
     const texture = new THREE.Texture();
     const blob = new Blob([newView], { type: image.mimeType });
 
-    createImageBitmap(blob).then(bitmap => {
+    return createImageBitmap(blob).then(bitmap => {
       texture.image = bitmap;
       texture.needsUpdate = true;
+      return texture;
     });
-
-    return texture;
   }
 
   private async getVertexBuffer(
