@@ -143,6 +143,7 @@ export class PointCloudManager {
     }
     node.dispose();
     this._pointCloudNodes.splice(index, 1);
+    this._potreeInstance.reset();
 
     this._materialManager.removeModelMaterial(node.modelIdentifier);
 

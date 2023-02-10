@@ -124,7 +124,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
   createPointCloudFactory(): PointCloudFactory {
     return new PointCloudFactory(
-      this.modelDataProvider,
+      this.potreeInstance,
       new DummyPointCloudStylableObjectProvider(),
       new LocalPointClassificationsProvider(),
       this._pcMaterialManager
