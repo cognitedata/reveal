@@ -76,6 +76,8 @@ export class Image360Icon {
   }
 
   private setupAdaptiveScaling(position: THREE.Vector3, sceneHandler: SceneHandler, renderHook: Mesh): void {
+    const ndcPosition = new THREE.Vector4();
+    const renderSize = new THREE.Vector2();
     renderHook.onBeforeRender = (renderer: THREE.WebGLRenderer, _1: THREE.Scene, camera: THREE.Camera) => {
       this._adaptiveScale = computeAdaptiveScaling(renderer, camera, this._maxPixelSize, this._minPixelSize);
       this._hoverSprite.scale.set(this._adaptiveScale, this._adaptiveScale, 1.0);
@@ -90,15 +92,19 @@ export class Image360Icon {
       maxHeight: number,
       minHeight: number
     ) {
-      const pos = new THREE.Vector4(position.x, position.y, position.z, 1);
-      const posNdc = pos.clone().applyMatrix4(camera.matrixWorldInverse).applyMatrix4(camera.projectionMatrix);
-      if (Math.abs(posNdc.w) < 0.00001) {
+      ndcPosition.set(position.x, position.y, position.z, 1);
+      ndcPosition.applyMatrix4(camera.matrixWorldInverse).applyMatrix4(camera.projectionMatrix);
+      if (Math.abs(ndcPosition.w) < 0.00001) {
         return 1.0;
       }
-      const renderSize = renderer.getSize(new THREE.Vector2());
-      const pointSize = (renderSize.y * camera.projectionMatrix.elements[5] * 0.5) / posNdc.w;
-      const downSize = renderSize.x / renderer.domElement.clientWidth;
-      const clampedSize = clamp(pointSize, minHeight * downSize, maxHeight * downSize);
+      renderer.getSize(renderSize);
+      const pointSize = (renderSize.y * camera.projectionMatrix.elements[5] * 0.5) / ndcPosition.w;
+      const resolutionDownSampleFactor = renderSize.x / renderer.domElement.clientWidth;
+      const clampedSize = clamp(
+        pointSize,
+        minHeight * resolutionDownSampleFactor,
+        maxHeight * resolutionDownSampleFactor
+      );
       return clampedSize / pointSize;
     }
   }
