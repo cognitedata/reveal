@@ -99,6 +99,12 @@ export class PickingHandler {
 
     try {
       for (const cadNodeData of filteredCadNodes) {
+        // Skip cad node when hit distance is further than already hit node.
+        const minIntersectCadNodeDistance = cadNodeData.intersectPosition.distanceTo(input.camera.position);
+        if (results.some(cadNodeResult => cadNodeResult.distance < minIntersectCadNodeDistance)) {
+          continue;
+        }
+
         // Make current CadNode visible & hide others
         visibleCadNodes.forEach(p => (p.visible = false));
         cadNodeData.cadNode.visible = true;
