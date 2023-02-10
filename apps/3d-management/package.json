@@ -109,7 +109,7 @@
     "source-map-explorer": "^2.5.3",
     "style-loader": "^1.3.0",
     "systemjs-webpack-interop": "^2.3.6",
-    "typescript": "4.9.3"
+    "typescript": "4.9.5"
   },
   "resolutions": {
     "@types/react": "^17.0.2",
