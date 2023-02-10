@@ -58,7 +58,7 @@ export const MeasurementsFilterItem: React.FC<
       return (
         <FooterWrapper>
           <FilterSubmenu<PressureUnit>
-            title="Pressure unit"
+            title="Unit"
             selectedOption={pressureUnit}
             options={PRESSURE_UNITS}
             onChange={onPressureUnitChange}

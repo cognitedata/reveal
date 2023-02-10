@@ -97,7 +97,7 @@ export const TrajectoryColumn: React.FC<
           id="trajectory-column"
           isVisible={isVisible}
           isLoading={isLoading || (!isEmpty(data) && !selectedCurve)}
-          header={ChartColumn.TRAJECTORY}
+          columnHeader={ChartColumn.TRAJECTORY}
           scaleBlocks={scaleBlocks}
           chartHeader={
             <TrajectoryCurveSelector

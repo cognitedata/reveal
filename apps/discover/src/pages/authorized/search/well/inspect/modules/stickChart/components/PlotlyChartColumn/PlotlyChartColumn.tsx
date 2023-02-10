@@ -21,8 +21,8 @@ export interface PlotlyChartColumnProps
   data?: Partial<PlotData>[];
   secondaryData?: Partial<PlotData>[];
   scaleBlocks: number[];
-  header: string | JSX.Element;
-  chartHeader: string | JSX.Element;
+  columnHeader: string | JSX.Element;
+  chartHeader?: string | JSX.Element;
   isLoading?: boolean;
   emptySubtitle?: string;
   actionMessage?: string;
@@ -43,7 +43,7 @@ export const PlotlyChartColumn: React.FC<
     secondaryData = EMPTY_ARRAY,
     axisNames,
     scaleBlocks,
-    header,
+    columnHeader,
     chartHeader,
     isLoading,
     emptySubtitle,
@@ -134,7 +134,7 @@ export const PlotlyChartColumn: React.FC<
         id={id}
         expanded={expanded}
         widthExpanded={chartWidth}
-        header={header}
+        header={columnHeader}
         disableExpandButton={isEmpty(data) || Boolean(actionMessage)}
         onToggleExpand={handleToggleExpand}
         {...dragHandleProps}

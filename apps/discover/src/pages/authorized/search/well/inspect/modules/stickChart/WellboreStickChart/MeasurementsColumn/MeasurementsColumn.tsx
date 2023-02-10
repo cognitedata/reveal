@@ -13,7 +13,6 @@ import { WithDragHandleProps } from 'components/DragDropContainer';
 import { EMPTY_ARRAY } from 'constants/empty';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { PlotlyChartColumn } from '../../components/PlotlyChartColumn';
 import { ChartColumn, ColumnVisibilityProps } from '../../types';
@@ -47,8 +46,6 @@ export const MeasurementsColumn: React.FC<
     isVisible = true,
     ...dragHandleProps
   }) => {
-    const { data: depthUnit } = useUserPreferencesMeasurement();
-
     const chartDataMD = useDeepMemo(() => {
       const data = head(filterMdIndexedDepthMeasurements(allData));
 
@@ -84,11 +81,6 @@ export const MeasurementsColumn: React.FC<
       );
     }, [chartData, measurementTypesSelection]);
 
-    const axisNames = {
-      x: `Pressure (${pressureUnit})`,
-      y: `Depth (${depthUnit})`,
-    };
-
     const getEmptySubtitle = () => {
       if (measurementTypesSelection && isEmpty(measurementTypesSelection)) {
         return NO_OPTIONS_SELECTED_TEXT;
@@ -105,9 +97,8 @@ export const MeasurementsColumn: React.FC<
         isVisible={isVisible}
         data={filteredChartData}
         isLoading={isLoading}
-        header={ChartColumn.MEASUREMENTS}
-        chartHeader="Depth vs Pressure"
-        axisNames={axisNames}
+        columnHeader={ChartColumn.MEASUREMENTS}
+        axisNames={{ x: pressureUnit }}
         scaleBlocks={scaleBlocks}
         emptySubtitle={getEmptySubtitle()}
         chartWidth={DEFAULT_CHART_WIDTH / 2}
