@@ -1,4 +1,3 @@
-import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/transformers/sortCasingAssembliesByMDBase';
 import { CasingSchematicInternalWithTvd } from 'domain/wells/casings/internal/types';
 
 import { CasingAssemblyView } from '../types';
@@ -11,11 +10,9 @@ export const adaptToCasingsColumnData = (
   return casingsData.flatMap((data) => {
     const { wellboreMatchingId, casingAssemblies } = data;
 
-    const adaptedCasingAssemblies = adaptCasingAssembliesDataToView(
+    return adaptCasingAssembliesDataToView(
       wellboreMatchingId,
       casingAssemblies
     );
-
-    return sortCasingAssembliesByMDBase(adaptedCasingAssemblies);
   });
 };
