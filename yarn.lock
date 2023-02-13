@@ -2993,7 +2993,7 @@
     classnames "^2.3.1"
     prop-types "^15.6.2"
 
-"@visx/group@2.1.0", "@visx/group@^2.1.0":
+"@visx/group@2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@visx/group/-/group-2.1.0.tgz#65d4a72feb20dd09443f73cdc12ad5fb339792ef"
   integrity sha512-bZKa54yVjGYPZZhzYHLz4AVlidSr4ET9B/xmSa7nnictMJWr7e/IuZThB/bMfDQlgdtvhcfTgs+ZluySc5SBUg==
@@ -3002,7 +3002,7 @@
     classnames "^2.3.1"
     prop-types "^15.6.2"
 
-"@visx/group@3.0.0":
+"@visx/group@3.0.0", "@visx/group@^3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@visx/group/-/group-3.0.0.tgz#e7f9752599bcc7e141ff5317a2a9a502577ab8df"
   integrity sha512-SFjXhTMcsaVAb1/TVL1KM5vn8gQTIVgSx0ATdDl4BJSFp2ym1lO8LY4jpV4SFweaHnWxVwrrfGLTn5QsYnvmjQ==
