@@ -4,23 +4,18 @@ import {
   SearchResultCountLabel,
   SearchResultToolbar,
   useResourceResults,
-} from '@data-exploration-components/containers/SearchResults';
-import {
-  convertResourceType,
-  ResourceItem,
-} from '@data-exploration-components/types';
-import { EventTable } from '@data-exploration-components/containers/Events';
-
-import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
+} from '../../../containers/SearchResults';
+import { convertResourceType } from '../../../types';
+import { EventTable } from '../../../containers/Events';
 
 import {
   InternalEventsFilters,
   useEventsAggregateCountQuery,
-  useEventsSearchResultQuery,
+  useEventsSearchResultWithLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
-import { TableSortBy } from '@data-exploration-components/components/Table';
-import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
-import { useResultCount } from '@data-exploration-components/components';
+import { TableSortBy } from '../../../components/Table';
+import { AppliedFiltersTags } from '../../../components/AppliedFiltersTags/AppliedFiltersTags';
+import { useResultCount } from '../../../components';
 
 export const EventSearchResults = ({
   query = '',
@@ -51,7 +46,7 @@ export const EventSearchResults = ({
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, hasNextPage, fetchNextPage, isPreviousData } =
-    useEventsSearchResultQuery(
+    useEventsSearchResultWithLabelsQuery(
       {
         query,
         eventsFilters: filter,

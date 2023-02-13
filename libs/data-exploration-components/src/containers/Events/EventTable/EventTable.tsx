@@ -9,8 +9,11 @@ import {
 import { RelationshipLabels } from '@data-exploration-components/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { ResourceTableColumns } from '../../../components';
-import { useEventsMetadataKeys } from '@data-exploration-lib/domain-layer';
+import { ResourceTableColumns, SubRowMatchingLabel } from '../../../components';
+import {
+  InternalEventDataWithMatchingLabels,
+  useEventsMetadataKeys,
+} from '@data-exploration-lib/domain-layer';
 
 export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 
@@ -28,14 +31,14 @@ export const EventTable = ({
   const columns = useMemo(
     () =>
       [
-        { ...Table.Columns.type(query), enableHiding: false },
-        Table.Columns.subtype(query),
-        Table.Columns.description(query),
-        Table.Columns.externalId(query),
+        { ...Table.Columns.type(), enableHiding: false },
+        Table.Columns.subtype(),
+        Table.Columns.description(),
+        Table.Columns.externalId(),
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         {
-          ...Table.Columns.id(query),
+          ...Table.Columns.id(),
           enableSorting: false,
         },
         {
@@ -44,7 +47,7 @@ export const EventTable = ({
         },
         Table.Columns.startTime,
         Table.Columns.endTime,
-        Table.Columns.source(query),
+        Table.Columns.source(),
         {
           ...Table.Columns.assets,
           enableSorting: false,
@@ -58,9 +61,10 @@ export const EventTable = ({
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
-    <Table<CogniteEvent>
+    <Table<InternalEventDataWithMatchingLabels>
       columns={columns}
       hiddenColumns={hiddenColumns}
+      renderRowSubComponent={SubRowMatchingLabel}
       {...rest}
     />
   );

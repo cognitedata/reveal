@@ -7,7 +7,7 @@ import {
   NullableProperty,
   Timestamp,
 } from '@cognite/sdk';
-import { InternalCommonFilters } from '../../types';
+import { InternalCommonFilters, MatchingLabels } from '../../types';
 
 export interface InternalEventsData {
   id: number;
@@ -39,4 +39,9 @@ export interface InternalEventsFilters extends InternalCommonFilters {
 export interface OldEventsFilters
   extends Omit<InternalEventsFilters, 'metadata'> {
   metadata?: Metadata;
+}
+
+export interface InternalEventDataWithMatchingLabels
+  extends InternalEventsData {
+  matchingLabels?: MatchingLabels; // INFO: This is only optional for now, to not crash the legacy types -_-
 }
