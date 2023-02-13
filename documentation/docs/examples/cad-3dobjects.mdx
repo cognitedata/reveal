@@ -67,7 +67,6 @@ function onLoaded(gltf) {
       intersection.point.y += (objectBounds.max.y - objectBounds.min.y) * 0.5;
       clonedScene.position.copy(intersection.point);
       viewer.addObject3D(clonedScene);
-      console.log(clonedScene);
     }
   });
 
