@@ -54,7 +54,7 @@
     "@cognite/babel-plugin-styled-components": "^1.10.7",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
     "@testing-library/jest-dom": "^5.11.10",
-    "@testing-library/react": "^10.4.9",
+    "@testing-library/react": "^13.0.0",
     "@types/jest": "^26.0.23",
     "@types/lodash": "^4.14.177",
     "@types/node": "^18.0.0",
