@@ -1,0 +1,45 @@
+{
+  "name": "data-exploration-containers",
+  "sourceRoot": "libs/data-exploration/containers/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/data-exploration/containers/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "build": {
+      "executor": "@nrwl/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/data-exploration/containers",
+        "tsConfig": "libs/data-exploration/containers/tsconfig.lib.json",
+        "project": "libs/data-exploration/containers/package.json",
+        "entryFile": "libs/data-exploration/containers/src/index.ts",
+        "external": ["react/jsx-runtime"],
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "compiler": "babel",
+        "assets": [
+          {
+            "glob": "libs/data-exploration/containers/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/data-exploration/containers/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
