@@ -58,7 +58,7 @@ const consoleError = console.error.bind(console);
 (window as any).TextDecoder = TextDecoder;
 (window as any).TextEncoder = TextEncoder;
 
-import packageObject from '../../package.json';
+import packageObject from '../../package.json' assert { type: 'json' };
 
 Object.assign(process.env, {
   VERSION: packageObject.version

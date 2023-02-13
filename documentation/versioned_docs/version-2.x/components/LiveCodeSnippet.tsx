@@ -1,94 +1,66 @@
 import * as React from 'react';
-import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
+
+import CodeMirror from '@uiw/react-codemirror';
+import { syntaxTree } from '@codemirror/language';
+import { EditorView } from '@codemirror/view';
+import { javascript } from '@codemirror/lang-javascript';
+import { material } from '@uiw/codemirror-theme-material';
+import styles from './styles.module.css';
 import clsx from 'clsx';
 
-import styles from './styles.module.css';
-import oceanicNext from 'prism-react-renderer/themes/oceanicNext';
-import useBaseUrl from '@docusaurus/useBaseUrl';
-const defaultCodeTheme = oceanicNext;
+import { linter, Diagnostic } from "@codemirror/lint";
 
-// Replacement for "import { customScope } from './customScope'" to avoid
-// build issues with React Server-side Rendering
-// which fails due to "window" not being defined in NodeJS
-const customScope =
-  typeof window === 'undefined'
-    ? {
-      urls: [],
-    }
-    : require('./customScope').customScope;
+function createLintProvider(setHasError: (hasError: boolean) => void) {
+  function lintProvider(view: EditorView): readonly Diagnostic[] {
+    const diagnostics: Diagnostic[] = [];
+    let anyError = false;
+    syntaxTree(view.state).iterate({
+      enter: (node) => {
+        if (node.type.isError) {
+          anyError = true;
+          diagnostics.push({
+            from: node.from,
+            to: node.to,
+            severity: "error",
+            message: "Syntax error",
+          });
+        }
+      },
+    });
+
+    setHasError(anyError);
+
+    return diagnostics;
+  }
+
+  return lintProvider;
+}
 
 export type LiveCodeSnippetProps = {
   children: string;
 };
 
-export function LiveCodeSnippet(props: LiveCodeSnippetProps) {
-  const scope = {
-    ...customScope,
-    ...Object.keys(customScope.urls).reduce((acc, key) => {
-      acc[key] = useBaseUrl(customScope.urls[key]);
-      return acc;
-    }, {} as any),
-  };
+export const LiveCodeSnippet = (props: LiveCodeSnippetProps) => {
+  const lintProvider = createLintProvider(_ => {});
 
-  const { children } = props;
-  return (
-    <LiveProvider
-      code={children}
-      transpileOptions={{
-        transforms: {
-          classes: false,
-          asyncAwait: false
-        }
-      }}
-      transformCode={(code: string) => {
-        const fullCode = `
-            // make these things to be available in live-editor
-            const viewer = window.viewer;
-            const model = window.model;
-            const sdk = window.sdk;
-
-            const viewerEl = document.getElementById('demo-wrapper');
-            if (viewerEl) {
-              viewerEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
-            }
-
-            if (viewer) {
-              resetViewerEventHandlers(viewer);
-              if (model instanceof Cognite3DModel) {
-                resetCognite3DModel(model);
-              }
-            } else {
-              alert('Live code examples are not supported for this version of the documentation');
-              return;
-            }
-            // User code starts here!
-            ${code}`;
-        return `
-          <button
-            type="button"
-            className="button button--primary button--lg"
-            onClick={() => \{${fullCode}\}}
-          >
-            Run
-          </button>
-        `;
-      }}
-      scope={{ ...scope }}
-      theme={defaultCodeTheme}
-    >
-      <div
-        className={clsx(
-          styles.codeSnippetHeader,
-          styles.codeSnippetEditorHeader
-        )}
-      >
-        Live Editor
-      </div>
-      <LiveEditor className={styles.codeSnippetEditor} />
-      <div className={styles.codeSnippetPreview}>
-        <LivePreview />
-        <LiveError />
-      </div>
-    </LiveProvider>
-  );
-}
+  return (<>
+    <div className={clsx(styles.codeSnippetHeader,
+                         styles.codeSnippetEditorHeader)}>
+      Live Editor
+    </div>
+    <CodeMirror
+      value={props.children}
+      theme={material}
+      basicSetup={{ lineNumbers: false,
+                    foldGutter: false,
+                    autocompletion: false,
+                    highlightActiveLine: false }}
+      className={styles.cmEditor}
+      extensions={[javascript({}), linter(lintProvider)]} />
+    <button  type="button"
+             disabled={true}
+             className={clsx("button button--danger", styles.runButton)}>
+      Running code not supported for version 2
+    </button>
+  </>);
+};

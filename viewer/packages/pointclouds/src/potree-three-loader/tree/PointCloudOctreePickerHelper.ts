@@ -143,6 +143,8 @@ export class PointCloudOctreePickerHelper {
 
       renderer.render(pickState.scene, camera);
 
+      // Reset children, avoid keeping references to point cloud nodes
+      pickState.scene.children = [];
       nodes.forEach(node => renderedNodes.push({ node, octree }));
     }
     return renderedNodes;
@@ -325,7 +327,7 @@ export class PointCloudOctreePickerHelper {
     if (!points) throw new Error('Point cloud not found');
 
     return this.helperVec3
-      .fromBufferAttribute(points.geometry.attributes['position'], pIndex)
+      .fromBufferAttribute(points.geometry.attributes['position'] as THREE.BufferAttribute, pIndex)
       .applyMatrix4(points.matrixWorld);
   }
 

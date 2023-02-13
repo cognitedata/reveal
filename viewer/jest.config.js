@@ -23,6 +23,7 @@ module.exports = () => {
       '\\.wasm$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/wasmMock.js')
     },
     coverageDirectory: './coverage',
+    coverageProvider: 'v8',
     collectCoverageFrom: [
       '!**/.*.test.ts',
       '!**/*.VisualTest.ts',

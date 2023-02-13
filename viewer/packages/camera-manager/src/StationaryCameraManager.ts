@@ -2,11 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { assertNever, pixelToNormalizedDeviceCoordinates } from '@reveal/utilities';
+import { assertNever, clickOrTouchEventOffset, pixelToNormalizedDeviceCoordinates } from '@reveal/utilities';
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
 import pull from 'lodash/pull';
+import remove from 'lodash/remove';
 
 import { CameraManager } from './CameraManager';
 import { CameraManagerHelper } from './CameraManagerHelper';
@@ -27,6 +28,7 @@ export class StationaryCameraManager implements CameraManager {
   private readonly _minFOV: number;
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private _isDragging = false;
+  private _pointerEventCache: Array<PointerEvent> = [];
 
   constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
     this._domElement = domElement;
@@ -70,18 +72,24 @@ export class StationaryCameraManager implements CameraManager {
     this._camera.aspect = cameraManager.getCamera().aspect;
     this._camera.updateProjectionMatrix();
 
-    this._domElement.addEventListener('pointermove', this.rotateCamera);
-    this._domElement.addEventListener('pointerdown', this.enableDragging);
-    this._domElement.addEventListener('pointerup', this.disableDragging);
-    this._domElement.addEventListener('pointerout', this.disableDragging);
+    this._domElement.addEventListener('pointerdown', this.onPointerDown);
+    this._domElement.addEventListener('pointermove', this.onPointerMove);
     this._domElement.addEventListener('wheel', this.zoomCamera);
+    // The handler for pointerup is used for the pointercancel, pointerout
+    // and pointerleave events, as these have the same semantics.
+    this._domElement.addEventListener('pointerup', this.onPointerUp);
+    this._domElement.addEventListener('pointerout', this.onPointerUp);
+    this._domElement.addEventListener('pointercancel', this.onPointerUp);
+    this._domElement.addEventListener('pointerleave', this.onPointerUp);
   }
 
   deactivate(): void {
-    this._domElement.removeEventListener('pointermove', this.rotateCamera);
-    this._domElement.removeEventListener('pointerdown', this.enableDragging);
-    this._domElement.removeEventListener('pointerup', this.disableDragging);
-    this._domElement.removeEventListener('pointerout', this.disableDragging);
+    this._domElement.removeEventListener('pointerdown', this.onPointerDown);
+    this._domElement.removeEventListener('pointermove', this.onPointerMove);
+    this._domElement.removeEventListener('pointerup', this.onPointerUp);
+    this._domElement.removeEventListener('pointerout', this.onPointerUp);
+    this._domElement.removeEventListener('pointercancel', this.onPointerUp);
+    this._domElement.removeEventListener('pointerleave', this.onPointerUp);
     this._domElement.removeEventListener('wheel', this.zoomCamera);
   }
 
@@ -157,33 +165,100 @@ export class StationaryCameraManager implements CameraManager {
     this._stopEventTrigger.dispose();
   }
 
-  private readonly enableDragging = (_: PointerEvent) => {
+  private enableDragging(_: PointerEvent) {
     this._isDragging = true;
-  };
+  }
 
-  private readonly disableDragging = (_: PointerEvent) => {
+  private disableDragging(_: PointerEvent) {
     this._isDragging = false;
+  }
+
+  private readonly onPointerUp = (event: PointerEvent) => {
+    remove(this._pointerEventCache, cachedEvent => {
+      return cachedEvent.pointerId === event.pointerId;
+    });
+
+    if (this._pointerEventCache.length === 0) this.disableDragging(event);
   };
 
-  private readonly rotateCamera = (event: PointerEvent) => {
+  private readonly onPointerDown = (event: PointerEvent) => {
+    this._pointerEventCache.push(event);
+    this.enableDragging(event);
+  };
+
+  private readonly onPointerMove = (event: PointerEvent) => {
+    if (this._pointerEventCache.length > 1) {
+      this.pinchZoomAndRotate(event);
+    } else {
+      const lastEvent = this._pointerEventCache.find(
+        cachedPointerEvent => cachedPointerEvent.pointerId === event.pointerId
+      )!;
+      this.rotateCamera(event, lastEvent);
+    }
+
+    // Update last move event
+    const pointerIndex = this._pointerEventCache.findIndex(ev => ev.pointerId === event.pointerId);
+    this._pointerEventCache[pointerIndex] = event;
+  };
+
+  private rotateCamera(moveEvent: PointerEvent, lastMoveEvent: PointerEvent) {
     if (!this._isDragging) {
       return;
     }
+    moveEvent.preventDefault();
 
-    const { movementX, movementY } = event;
+    const deltaX = moveEvent.clientX - lastMoveEvent.clientX;
+    const deltaY = moveEvent.clientY - lastMoveEvent.clientY;
+
     const sensitivityScaler = 0.0015;
 
     const euler = new THREE.Euler().setFromQuaternion(this._camera.quaternion, 'YXZ');
 
-    euler.x -= -movementY * sensitivityScaler * (this._camera.fov / this._defaultFOV);
-    euler.y -= -movementX * sensitivityScaler * (this._camera.fov / this._defaultFOV);
+    euler.x -= -deltaY * sensitivityScaler * (this._camera.fov / this._defaultFOV);
+    euler.y -= -deltaX * sensitivityScaler * (this._camera.fov / this._defaultFOV);
     euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
     this._camera.quaternion.setFromEuler(euler);
 
     this._cameraChangedListeners.forEach(cb => cb(this._camera.position, this.getTarget()));
-  };
+  }
+
+  private pinchZoomAndRotate(moveEvent: PointerEvent) {
+    if (this._pointerEventCache.length < 2) {
+      return;
+    }
+
+    const secondFingerPointer = this._pointerEventCache.find(ev => ev.pointerId !== moveEvent.pointerId)!;
+
+    // Rotate with anchor to middle point between first and second finger.
+    const lastMoveEvent = this._pointerEventCache.find(ev => ev.pointerId === moveEvent.pointerId)!;
+
+    const lastMiddlePoint = new PointerEvent('pointermove', {
+      clientX: (lastMoveEvent.clientX + secondFingerPointer.clientX) / 2,
+      clientY: (lastMoveEvent.clientY + secondFingerPointer.clientY) / 2
+    });
+    const middlePoint = new PointerEvent('pointermove', {
+      clientX: (moveEvent.clientX + secondFingerPointer.clientX) / 2,
+      clientY: (moveEvent.clientY + secondFingerPointer.clientY) / 2
+    });
+
+    this.rotateCamera(middlePoint, lastMiddlePoint);
+
+    const distanceDelta = this.calculatePinchZoomDistanceDelta(moveEvent, secondFingerPointer);
+
+    const { width, height } = this._domElement.getBoundingClientRect();
+    const screenSize = Math.sqrt(width * width + height * height);
+    if (screenSize <= 0) {
+      return;
+    }
+
+    const percentage = (distanceDelta * 100) / screenSize;
+    this.setFOV(this._camera.fov + percentage);
+  }
 
   private readonly zoomCamera = (event: WheelEvent) => {
+    // Added to prevent browser scrolling when zooming
+    event.preventDefault();
+
     const sensitivityScaler = 0.05;
     const newFov = Math.min(
       Math.max(this._camera.fov + event.deltaY * sensitivityScaler, this._minFOV),
@@ -209,7 +284,8 @@ export class StationaryCameraManager implements CameraManager {
 
   private getCursorRay(event: WheelEvent) {
     const { width, height } = this._domElement.getBoundingClientRect();
-    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(event.clientX, event.clientY, width, height);
+    const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
+    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
     const ray = new THREE.Vector3(ndcCoordinates.x, ndcCoordinates.y, 1)
       .unproject(this._camera)
       .sub(this._camera.position);
@@ -221,4 +297,19 @@ export class StationaryCameraManager implements CameraManager {
     unitForward.applyQuaternion(this._camera.quaternion);
     return unitForward.add(this._camera.position);
   }
+
+  private calculatePinchZoomDistanceDelta(firstPointerEvent: PointerEvent, secondPointerEvent: PointerEvent): number {
+    const lastFirstPointerEvent = this._pointerEventCache.find(ev => firstPointerEvent.pointerId === ev.pointerId)!;
+
+    const preMoveDistance = getEuclideanDistance(lastFirstPointerEvent, secondPointerEvent);
+    const postMoveDistance = getEuclideanDistance(firstPointerEvent, secondPointerEvent);
+
+    return preMoveDistance - postMoveDistance;
+  }
+}
+
+function getEuclideanDistance(eventOne: PointerEvent, eventTwo: PointerEvent): number {
+  const dx = eventOne.clientX - eventTwo.clientX;
+  const dy = eventOne.clientY - eventTwo.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
 }
