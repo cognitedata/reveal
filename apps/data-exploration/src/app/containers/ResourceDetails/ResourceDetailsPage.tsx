@@ -16,7 +16,7 @@ const resourcePageType = {
   file: FilePage,
   sequence: SequencePage,
   threeD: ThreeDPage,
-  document: DocumentPage,
+  document: DocumentPage, // TODO: remove, not needed anymore
 };
 
 export const ResourceDetailsPage = () => {

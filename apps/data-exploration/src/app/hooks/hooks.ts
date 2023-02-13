@@ -82,6 +82,25 @@ export function useQueryStringArray(
   return [items, getSetItems(key, push, location, navigate)];
 }
 
+export const useCurrentSearchResourceTypeFromLocation = () => {
+  const location = useLocation();
+  // sample path: "/dss-dev/explore/search/asset"
+  const path = location.pathname;
+
+  const splittedPath = path.split('/');
+  if (splittedPath.includes('search') && splittedPath.length >= 5) {
+    // TODO: try to get rid of `ResourceType` type later!
+    return splittedPath[4] as ResourceType;
+  }
+
+  if (!splittedPath.includes('search') && splittedPath.length >= 4) {
+    return splittedPath[3] as ResourceType;
+  }
+
+  return undefined;
+};
+
+// TODO: try to get rid of `ResourceType` type later!
 export const useCurrentResourceType = (): [
   ResourceType | undefined,
   (type?: ResourceType, resourceId?: number) => void
@@ -89,9 +108,9 @@ export const useCurrentResourceType = (): [
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { resourceType } = useParams<{
-    resourceType: ResourceType;
-  }>();
+  // Here we can not use useParams, because SearchResultsPageV2 do not know about
+  // dynamic routes anymore like `:resourceType`. This is hopefuly a temporary solution.
+  const resourceType = useCurrentSearchResourceTypeFromLocation();
 
   const setCurrentResourceType = React.useCallback(
     (newResourceType?: ResourceType, resourceId?: number) => {
@@ -115,6 +134,18 @@ export const useCurrentResourceType = (): [
   );
 
   return [resourceType, setCurrentResourceType];
+};
+
+export const useSelectedResourceId = (): number | undefined => {
+  const params = useParams();
+  const selectedRoute = params['*'];
+  const splittedParams = selectedRoute?.split('/');
+
+  return splittedParams &&
+    splittedParams?.length > 0 &&
+    Number.isFinite(parseInt(splittedParams[0], 10))
+    ? parseInt(splittedParams[0], 10)
+    : undefined;
 };
 
 export const useCurrentResourceId = (): [

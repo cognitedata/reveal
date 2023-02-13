@@ -20,7 +20,7 @@ export const SequenceTab = ({ query, filter, showCount = false }: Props) => {
 
   return (
     <TabContainer>
-      <ResourceTypeTitle>{'Sequence'}</ResourceTypeTitle>
+      <ResourceTypeTitle>{'Sequences'}</ResourceTypeTitle>
       {showCount && (
         <Label size="small" variant="unknown">
           {getTabCountLabel(count)}
