@@ -32,8 +32,14 @@ export const useSequenceSearchResultWithMatchingLabelsQuery = (
               key: 'id',
               label: 'ID',
             },
-            'name',
-            'description',
+            {
+              key: 'name',
+              useSubstringMatch: true,
+            },
+            {
+              key: 'description',
+              useSubstringMatch: true,
+            },
             'metadata',
             {
               key: 'externalId',

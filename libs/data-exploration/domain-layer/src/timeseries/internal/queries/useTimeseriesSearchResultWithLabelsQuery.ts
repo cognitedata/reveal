@@ -34,8 +34,14 @@ export const useTimeseriesSearchResultWithLabelsQuery = (
               key: 'id',
               label: 'ID',
             },
-            'name',
-            'description',
+            {
+              key: 'name',
+              useSubstringMatch: true,
+            },
+            {
+              key: 'description',
+              useSubstringMatch: true,
+            },
             'metadata',
             'unit',
             {

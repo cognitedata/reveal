@@ -33,8 +33,14 @@ export const useAssetsSearchResultWithLabelsQuery = (
               key: 'id',
               label: 'ID',
             },
-            'name',
-            'description',
+            {
+              key: 'name',
+              useSubstringMatch: true,
+            },
+            {
+              key: 'description',
+              useSubstringMatch: true,
+            },
             'metadata',
             'source',
             {

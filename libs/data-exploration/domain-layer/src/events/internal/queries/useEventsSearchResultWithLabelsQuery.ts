@@ -36,7 +36,10 @@ export const useEventsSearchResultWithLabelsQuery = (
               key: 'externalId',
               label: 'External ID',
             },
-            'description',
+            {
+              key: 'description',
+              useSubstringMatch: true,
+            },
             'metadata',
             'source',
             'type',
