@@ -800,6 +800,7 @@ export class Cognite3DViewer {
         const pcModel = model as CognitePointCloudModel;
         this._sceneHandler.removePointCloudModel(pcModel.pointCloudNode);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
+        this._pointCloudPickingHandler.dispose();
         break;
 
       default:

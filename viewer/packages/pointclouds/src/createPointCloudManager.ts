@@ -27,7 +27,7 @@ export function createPointCloudManager(
 
   const potreeInstance = new Potree(modelDataProvider, pointCloudMaterialManager);
   const pointCloudFactory = new PointCloudFactory(
-    modelDataProvider,
+    potreeInstance,
     pointCloudStylableObjectProvider,
     classificationsProvider,
     pointCloudMaterialManager
