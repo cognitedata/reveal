@@ -32,6 +32,9 @@
       "@data-exploration-lib/domain-layer": [
         "libs/data-exploration/domain-layer/src/index.ts"
       ],
+      "@data-exploration/components": [
+        "libs/data-exploration/components/src/index.ts"
+      ],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
       "@platypus-app/*": [
         "apps/platypus/src/app/*",
