@@ -38,7 +38,7 @@ export const Images360MenuItem = ({
       <Checkbox
         checked={!!options?.applied}
         name={`site-${siteId}`}
-        onChange={(checked) => handleClickModelMenuItem(checked)}
+        onChange={(_, checked) => handleClickModelMenuItem(!!checked)}
       />
       <Flex alignItems="flex-start" direction="column">
         <StyledImages360Body $isSelected={options?.applied}>
@@ -48,7 +48,7 @@ export const Images360MenuItem = ({
     </StyledMenuItemContent>
   );
 
-  return <Menu.Item>{menuItemContent}</Menu.Item>;
+  return <Menu.Item css={{}}>{menuItemContent}</Menu.Item>;
 };
 
 export const StyledMenuItemContent = styled(Flex)`

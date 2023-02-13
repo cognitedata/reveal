@@ -1,4 +1,4 @@
-import { Body, Tag, Tooltip } from '@cognite/cogs.js';
+import { Body, Flex, Icon, Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
   DataModelTypeDefs,
@@ -115,7 +115,10 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
       appendTo={document.getElementById('dataPreviewTableWrapper')!}
       onHide={() => setIsHovered(false)}
     >
-      <Tag>{props.value}</Tag>
+      <Flex gap={4} alignItems="center">
+        {props.value && <Icon type="Link" />}
+        <span>{props.value}</span>
+      </Flex>
     </Tooltip>
   );
 });

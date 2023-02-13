@@ -13,7 +13,7 @@ const Horizontal: React.FC<DragHandleIconProps> = ({
       type="DragHandleHorizontal"
       {...dragHandleProps}
       {...iconProps}
-      style={{ flexShrink: 0 }}
+      // style={{ flexShrink: 0 }}
     />
   );
 };
@@ -27,7 +27,7 @@ const Vertical: React.FC<DragHandleIconProps> = ({
       type="DragHandleVertical"
       {...dragHandleProps}
       {...iconProps}
-      style={{ flexShrink: 0 }}
+      // style={{ flexShrink: 0 }}
     />
   );
 };

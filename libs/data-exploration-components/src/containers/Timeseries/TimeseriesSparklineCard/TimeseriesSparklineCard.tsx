@@ -97,7 +97,7 @@ const TimeseriesText = styled(Body)`
 
 const TimeseriesName = styled(TimeseriesText)`
   cursor: pointer;
-  color: ${Colors['midblue-3'].hex()};
+  color: var(--cogs-text-icon--interactive--default);
   &:hover {
     text-decoration: underline;
   }

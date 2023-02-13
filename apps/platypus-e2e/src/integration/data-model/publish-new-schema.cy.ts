@@ -21,7 +21,7 @@ describe('Data Model Page - Publish new schema', () => {
     cy.addDataModelType('Team');
 
     cy.getBySel('publish-schema-btn').click();
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
 
     // A toast message should notify user when schema has been published successfully
     cy.getBySel('toast-title').should('have.text', 'Data model updated');
@@ -83,7 +83,7 @@ describe('Data Model Page - Publish new schema', () => {
     cy.getBySel('publish-schema-btn').click();
 
     cy.getBySel('breaking-changes-container').should('exist');
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
 
     // A toast message should notify user when schema has been published successfully
     cy.getBySel('toast-title').should('have.text', 'Data model published');
@@ -126,7 +126,7 @@ describe('Data Model Page - Publish new schema', () => {
 
     cy.getBySel('create-data-model-btn').click();
     cy.getBySel('input-data-model-name').type('cypress-test');
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
     // we should be redirected to /dashboard
     cy.url().should('include', getUrl('/cypress_test/cypress_test/latest'));
     cy.getCogsToast('success').contains('Data Model successfully created');
@@ -136,11 +136,11 @@ describe('Data Model Page - Publish new schema', () => {
 
     cy.getBySel('no-types-add-type-btn').click();
     cy.getBySel('type-name-input').type('Person');
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
 
     cy.addDataModelTypeField('Person', 'name', 'String');
     cy.getBySel('publish-schema-btn').click();
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
 
     // we should see version select dropdown with latest
     cy.getBySel('schema-version-select').contains('Latest');

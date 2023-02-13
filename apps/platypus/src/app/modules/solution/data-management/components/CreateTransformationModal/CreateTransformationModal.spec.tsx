@@ -97,7 +97,7 @@ describe('CreateTransformationModal', () => {
 
     expect(
       screen.getByRole('button', { name: 'Next', hidden: true })
-    ).toHaveAttribute('disabled');
+    ).toHaveClass('cogs-button--disabled');
   });
 
   it('Enables submit button if a relationship is selected', () => {
@@ -119,7 +119,7 @@ describe('CreateTransformationModal', () => {
 
     expect(
       screen.getByRole('button', { name: 'Next', hidden: true })
-    ).not.toHaveAttribute('disabled');
+    ).not.toHaveClass('cogs-button--disabled');
   });
 
   it('Sets transformation name for loading data', () => {

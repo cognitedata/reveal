@@ -11,8 +11,10 @@ export const FilterEmptyState: React.FC<FilterEmptyStateProps> = ({
   text = 'No options',
 }) => {
   return (
-    <Menu.Item>
-      <EmptyStateText>{text}</EmptyStateText>
-    </Menu.Item>
+    <Menu>
+      <Menu.Item>
+        <EmptyStateText>{text}</EmptyStateText>
+      </Menu.Item>
+    </Menu>
   );
 };

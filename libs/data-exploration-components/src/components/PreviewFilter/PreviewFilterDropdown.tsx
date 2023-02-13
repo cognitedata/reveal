@@ -6,7 +6,7 @@ export const PreviewFilterDropdown: React.FC<
   React.PropsWithChildren<Record<string, unknown>>
 > = ({ children }) => {
   return (
-    <Dropdown content={<StyledMenu>{children}</StyledMenu>}>
+    <Dropdown content={<StyledMenu>{children as any}</StyledMenu>}>
       <Button icon="Filter" iconPlacement="right"></Button>
     </Dropdown>
   );

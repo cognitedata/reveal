@@ -50,7 +50,7 @@ describe('CreateDataModel', () => {
   });
 
   it('Fills in external ID value when user types in name', () => {
-    render(<CreateDataModel onCancel={noop} />);
+    render(<CreateDataModel onCancel={noop} visible />);
 
     userEvent.type(
       screen.getByLabelText('Name', { exact: false }),
@@ -63,7 +63,7 @@ describe('CreateDataModel', () => {
   });
 
   it('Does not auto update external ID after user has altered it', () => {
-    render(<CreateDataModel onCancel={noop} />);
+    render(<CreateDataModel onCancel={noop} visible />);
 
     userEvent.type(
       screen.getByLabelText('Name', { exact: false }),
@@ -83,7 +83,7 @@ describe('CreateDataModel', () => {
   });
 
   it('Sends auto-generated external ID when creating data model', () => {
-    render(<CreateDataModel onCancel={noop} />);
+    render(<CreateDataModel onCancel={noop} visible />);
     const dataModelName = 'My_Data_Model';
 
     userEvent.type(
@@ -108,7 +108,7 @@ describe('CreateDataModel', () => {
   });
 
   it('Sends custom external ID when creating data model', () => {
-    render(<CreateDataModel onCancel={noop} />);
+    render(<CreateDataModel onCancel={noop} visible />);
     const dataModelName = 'My_Data_Model';
 
     userEvent.type(

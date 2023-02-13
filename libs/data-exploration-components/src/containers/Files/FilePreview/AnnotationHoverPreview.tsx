@@ -24,18 +24,18 @@ export const AnnotationHoverPreview = ({ annotation }: Props) => {
 };
 
 const StyledBody = styled(Body)`
-  color: ${Colors.white.hex()} !important;
+  color: ${Colors['text-icon--on-contrast--strong']} !important;
 `;
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
-  background-color: ${Colors['greyscale-grey10'].hex()};
+  background-color: var(--cogs-decorative--grayscale--100);
   border-radius: 6px;
   padding: 6px;
 `;
 const NewLabel = styled(Detail)`
-  background-color: ${Colors['midblue-6'].hex()};
-  color: ${Colors['midblue-2'].hex()};
+  background-color: var(--cogs-decorative--blue--600);
+  color: var(--cogs-decorative--blue--200);
   border-radius: 4px;
   padding: 2px 6px;
   margin-right: 8px;

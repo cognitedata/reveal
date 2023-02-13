@@ -1,33 +1,29 @@
-import { Label } from '@cognite/cogs.js';
-import {
-  mapFiltersToEventsAdvancedFilters,
-  mapInternalFilterToEventsFilter,
-  useEventsAggregateCountQuery,
-} from '@data-exploration-lib/domain-layer';
-import { ResourceTypeTitle, TabContainer } from './elements';
+import React from 'react';
+import { Tabs } from '@cognite/cogs.js';
+import { useEventsAggregateCountQuery } from '@data-exploration-lib/domain-layer';
+
 import { getTabCountLabel } from '@data-exploration-components/utils';
-import { useMemo } from 'react';
+import { ResourceTabProps } from './types';
 
-type Props = {
-  query?: string;
-  filter?: any;
-  showCount?: boolean;
-};
-
-export const EventsTab = ({ query, filter, showCount = false }: Props) => {
-  const { data, ...rest } = useEventsAggregateCountQuery(
+export const EventsTab = ({
+  query,
+  filter,
+  showCount = false,
+  ...rest
+}: ResourceTabProps) => {
+  const { data } = useEventsAggregateCountQuery(
     { eventsFilters: filter, query },
     { keepPreviousData: true }
   );
 
-  return (
-    <TabContainer>
-      <ResourceTypeTitle>{'Events'}</ResourceTypeTitle>
-      {showCount && (
-        <Label size="small" variant="unknown">
-          {getTabCountLabel(data?.count || 0)}
-        </Label>
-      )}
-    </TabContainer>
-  );
+  const chipRightProps = showCount
+    ? {
+        chipRight: {
+          label: getTabCountLabel(data?.count || 0),
+          size: 'x-small',
+        },
+      }
+    : {};
+
+  return <Tabs.Tab label="Events" {...chipRightProps} {...rest} />;
 };

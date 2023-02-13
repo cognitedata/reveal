@@ -1,5 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
-import { Button } from '@cognite/cogs.js';
+import { Button, Link } from '@cognite/cogs.js';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import {
   PagedFileReference,
@@ -27,11 +27,9 @@ const useCanvasFileContainerTooltips = (
         ),
         content: (
           <TooltipContainer>
-            <Button
+            <Link
               href={createLink(`/explore/file/${clickedContainer.id}`)}
               target="_blank"
-              type="ghost"
-              icon="ExternalLink"
             />
             <Button
               icon="Close"

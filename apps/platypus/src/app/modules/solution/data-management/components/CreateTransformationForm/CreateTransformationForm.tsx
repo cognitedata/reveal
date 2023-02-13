@@ -55,7 +55,7 @@ export const CreateTransformationForm = (
       </Row>
 
       {props.relationships && props.relationships.length > 0 && (
-        <Row>
+        <Row style={{ marginBottom: 120 }}>
           <Column>
             <Label>
               {t(

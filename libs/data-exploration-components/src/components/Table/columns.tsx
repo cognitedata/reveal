@@ -1,5 +1,5 @@
-import { Body, Flex, Tooltip } from '@cognite/cogs.js';
-import { DataSet } from '@cognite/sdk';
+import { Body, Flex, Tooltip, Link } from '@cognite/cogs.js';
+import { DataSet, Asset } from '@cognite/sdk';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import capitalize from 'lodash/capitalize';
 import uniqueId from 'lodash/uniqueId';
@@ -166,9 +166,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       <Flex gap={2} wrap="wrap">
         {getValue<{ externalId: string }[]>()?.map((label) => (
           <Tooltip content={label.externalId} key={uniqueId()}>
-            <StyledLabel variant="unknown" size="small">
-              {label.externalId}
-            </StyledLabel>
+            <StyledLabel size="small" label={label.externalId} />
           </Tooltip>
         ))}
       </Flex>
@@ -308,9 +306,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       <Flex gap={2} wrap="wrap">
         {getValue<string[]>()?.map((label: string) => (
           <Tooltip content={label} key={uniqueId()}>
-            <StyledLabel variant="unknown" size="small">
-              {label}
-            </StyledLabel>
+            <StyledLabel size="x-small" label={label} />
           </Tooltip>
         ))}
       </Flex>

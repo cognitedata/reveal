@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 
 import { SortActionWrapper } from '../elements';
 import { SortDirection } from '../types';
@@ -33,14 +33,13 @@ export const SortAction: React.FC<SortActionProps> = ({
 
   return (
     <SortActionWrapper>
-      <Label
+      <Chip
         data-testid="sort-action"
         icon={icon}
+        label={`Sort ${text}`}
         iconPlacement="right"
         onClick={handleToggleSortMethod}
-      >
-        Sort {text}
-      </Label>
+      />
     </SortActionWrapper>
   );
 };

@@ -15,7 +15,7 @@ export const BoolCellRenderer = React.memo((props: BoolCellRendererProps) => {
   const rowIdx = props.rowIndex;
 
   // Leave it like this, component has react memo anyway
-  const checkedHandler = (isChecked: boolean) => {
+  const checkedHandler = (_: unknown, isChecked?: boolean | string) => {
     props.node.setDataValue(colId, isChecked);
   };
 

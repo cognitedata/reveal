@@ -10,7 +10,7 @@ describe('Platypus Data Preview Page - Suggestions', () => {
   it('should be able to open and close modal', () => {
     cy.getBySel('suggestions-button').should('contain.text', 'Suggestions');
     cy.getBySel('suggestions-button').click();
-    cy.getBySel('modal-cancel-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-ghost').click();
   });
 
   it('should be able to see suggestions with incomplete direct relationship', () => {
@@ -35,7 +35,9 @@ describe('Platypus Data Preview Page - Suggestions', () => {
       .type('{enter}', { force: true });
     cy.get('input#select-all').click({ force: true });
     cy.get('button[data-testid="accept-selection"]').click({ force: true });
-    cy.getBySel('modal-ok-button').click({ force: true });
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click({
+      force: true,
+    });
 
     cy.get('.ReactModal__Content').should('not.exist');
   });

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { HorizontalDivider, StyledInfobox } from '../elements';
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 
 export const OperatorsTab: React.FC = () => {
   return (
@@ -14,17 +14,18 @@ export const OperatorsTab: React.FC = () => {
         </span>
       </StyledInfobox>
       <p>
-        <Label size="small">+</Label> Searches for multiple terms. (Searching
-        “And”)
+        <Chip size="small" label="+" type="neutral" /> Searches for multiple
+        terms. (Searching “And”)
       </p>
       <p>
         <span style={{ display: 'inline-flex', flexDirection: 'row' }}>
-          <Label
+          <Chip
             size="small"
+            label="|"
+            type="neutral"
             style={{ marginBottom: 'auto', marginRight: '6px' }}
-          >
-            |
-          </Label>{' '}
+          />
+
           <span>
             Broaden your results. ANY of your search terms can be present
             (Searching “EITHER”, “OR”)
@@ -32,29 +33,29 @@ export const OperatorsTab: React.FC = () => {
         </span>
       </p>
       <p>
-        <Label size="small">-</Label> Excludes documents containing a specific
-        word
+        <Chip size="small" label="-" type="neutral" />
+        Excludes documents containing a specific word
       </p>
 
       <HorizontalDivider />
 
       <p>
-        <Label size="small">Production + Report</Label> returns documents
-        containing both “Production” <strong>AND</strong> “Report” in the
-        filename or content.
+        <Chip size="small" label="Production + Report" type="neutral" /> returns
+        documents containing both “Production” <strong>AND</strong> “Report” in
+        the filename or content.
       </p>
       <p>
-        <Label size="small">Production | Report</Label> returns documents
-        containing <strong>EITHER</strong> “Production” <strong>AND/OR</strong>{' '}
-        “Report” in the filename or content. (Documents containing both
-        production and report will be higher than the ones containing only
-        report.)
+        <Chip size="small" label="Production | Report" type="neutral" /> returns
+        documents containing <strong>EITHER</strong> “Production”{' '}
+        <strong>AND/OR</strong> “Report” in the filename or content. (Documents
+        containing both production and report will be higher than the ones
+        containing only report.)
       </p>
       <p>
-        <Label size="small">Production - Report</Label> returns documents
-        containing the word “Production” but <strong>NOT</strong> the word
-        “Report”. (No space between the <Label size="small">-</Label> and the
-        term you wish to exclude.)
+        <Chip size="small" label="Production - Report" type="neutral" />
+        returns documents containing the word “Production” but{' '}
+        <strong>NOT</strong> the word “Report”. (No space between the{' '}
+        <Chip size="small" label="-" /> and the term you wish to exclude.)
       </p>
     </div>
   );

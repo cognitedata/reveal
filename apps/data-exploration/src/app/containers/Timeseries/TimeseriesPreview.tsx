@@ -122,7 +122,7 @@ export const TimeseriesPreview = ({
             tab={activeTab}
             onTabChange={tabChange}
             additionalTabs={[
-              <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">
+              <Tabs.Tab label="Details" tabKey="details">
                 <DetailsTabWrapper>
                   <TimeseriesChartWrapper>
                     <TimeseriesChart
@@ -140,7 +140,7 @@ export const TimeseriesPreview = ({
                   <TimeseriesDetails timeseries={timeseries} />
                   <Metadata metadata={timeseries.metadata} />
                 </DetailsTabWrapper>
-              </Tabs.TabPane>,
+              </Tabs.Tab>,
             ]}
           />
         </TimeseriesWrapper>

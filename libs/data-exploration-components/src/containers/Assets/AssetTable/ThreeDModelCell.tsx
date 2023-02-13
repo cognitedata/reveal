@@ -45,12 +45,13 @@ export const ThreeDModelCellDropdown = ({
   return (
     <Dropdown
       content={
-        <Menu onClick={(e) => e.stopPropagation()}>
+        <Menu>
           <Menu.Header>Models</Menu.Header>
 
           {Object.entries(mappingGroups).map(([id, mappings]) =>
             mappings.map((mapping) => (
               <Menu.Item
+                css={{}}
                 key={id}
                 href={createLink(`/explore/threeD/${id}`, {
                   selectedAssetId: assetId,
@@ -72,7 +73,7 @@ export const ThreeDModelCellDropdown = ({
       <Button
         icon="ChevronDown"
         iconPlacement="right"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: any) => e.stopPropagation()}
         size="small"
         type="ghost"
       />

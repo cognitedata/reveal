@@ -1,5 +1,4 @@
 import { ICellRendererParams } from 'ag-grid-community';
-import React from 'react';
 import { DraftRowData } from '@platypus-app/redux/reducers/global/dataManagementReducer';
 import { Checkbox } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -14,11 +13,11 @@ export const CheckboxCellRenderer = (params: ICellRendererParams) => {
     ? `row_${rowData.externalId}`
     : `row_${params.node.id}`;
 
-  const handleChange = (checkedStatus: boolean) => {
+  const handleChange = (_: unknown, checkedStatus?: boolean | string) => {
     if (isDraftRow) {
       params.node.setDataValue('_isDraftSelected', checkedStatus);
     } else {
-      params.node.setSelected(checkedStatus);
+      params.node.setSelected(!!checkedStatus);
     }
   };
 

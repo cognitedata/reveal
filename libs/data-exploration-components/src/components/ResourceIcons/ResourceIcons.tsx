@@ -1,24 +1,24 @@
 import React from 'react';
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 import { ResourceType } from '@data-exploration-components/types';
 
 const AssetIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label variant="normal" icon="Assets" style={style} />
+  <Chip icon="Assets" style={style} />
 );
 const TimeseriesIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label variant="normal" icon="Timeseries" style={style} />
+  <Chip icon="Timeseries" style={style} />
 );
 const FileIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label variant="normal" icon="Document" style={style} />
+  <Chip icon="Document" style={style} />
 );
 const SequenceIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label variant="normal" icon="Sequences" style={style} />
+  <Chip icon="Sequences" style={style} />
 );
 const EventIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label variant="normal" icon="Events" style={style} />
+  <Chip icon="Events" style={style} />
 );
 const ThreeDIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label variant="normal" icon="Cube" style={style} />
+  <Chip icon="Cube" style={style} />
 );
 
 export const ResourceIcons = ({

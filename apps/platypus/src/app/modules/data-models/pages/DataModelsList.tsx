@@ -87,9 +87,10 @@ export const DataModelsList = () => {
       ) : (
         renderEmptyList()
       )}
-      {isCreateModalVisible && (
-        <CreateDataModel onCancel={() => setIsCreateModalVisible(false)} />
-      )}
+      <CreateDataModel
+        onCancel={() => setIsCreateModalVisible(false)}
+        visible={isCreateModalVisible}
+      />
       {dataModelToDelete && (
         <DeleteDataModel
           dataModel={dataModelToDelete}

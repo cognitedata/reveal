@@ -146,7 +146,9 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
 
     cy.getBySel('btn-pagetoolbar-delete').click();
     cy.getBySel('data-row-confirm-deletion-checkbox').click();
-    cy.getBySel('modal-ok-button').click();
+    cy.get(
+      '.cogs-modal-footer-buttons > .cogs-button--type-destructive'
+    ).click();
 
     cy.get('div[role="gridcell"][col-id="body"]')
       .should('be.visible')
@@ -182,7 +184,9 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
 
     cy.getBySel('btn-pagetoolbar-delete').first().click();
     cy.getBySel('data-row-confirm-deletion-checkbox').first().click();
-    cy.getBySel('modal-ok-button').first().click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-destructive')
+      .first()
+      .click();
     cy.getBySel('draft-row').should('not.exist');
   });
 
@@ -196,7 +200,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.addDataModelTypeField('Post', 'floatField', 'Float');
 
     cy.getBySel('publish-schema-btn').click();
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
 
     cy.getBySel('toast-title').should('have.text', 'Data model updated');
 
@@ -237,7 +241,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.addDataModelTypeField('Post', 'floatField', 'Float');
 
     cy.getBySel('publish-schema-btn').click();
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
 
     cy.getBySel('toast-title').should('have.text', 'Data model updated');
 

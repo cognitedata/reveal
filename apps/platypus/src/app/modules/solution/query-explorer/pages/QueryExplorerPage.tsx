@@ -78,7 +78,7 @@ export const QueryExplorerPage = ({
           />
         ) : (
           <BasicPlaceholder
-            type="Documents"
+            type="EmptyStateFolderSad"
             title="Query explorer is not available due to a data model is not found. Please publish one."
             size={300}
           />

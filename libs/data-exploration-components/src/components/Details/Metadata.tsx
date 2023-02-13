@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { A, Button, Title } from '@cognite/cogs.js';
+import { Button, Title, Link } from '@cognite/cogs.js';
 import { Table } from '@data-exploration-components/components/Table';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
 import {
@@ -43,9 +43,9 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
             const value = getValue<string>();
             if (isValidUrl(value)) {
               return (
-                <A href={value} target="_blank" rel="noopener">
+                <Link alignVertically="left" href={value} target="_blank">
                   {value}
-                </A>
+                </Link>
               );
             }
             return value;
@@ -115,7 +115,6 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
             onChange={handleFilterInputOnChange}
           />
           <Button
-            name="hideEmpty"
             type="secondary"
             size="small"
             onClick={handleOnClickHideEmpty}

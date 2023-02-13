@@ -16,21 +16,21 @@ export const DocLinkButtonGroup = ({
   return (
     <>
       <S.ButtonWrapper>
-        <Button
-          aria-label={t('btn_link_cli_docs', 'CLI docs')}
-          href={DOCS_LINKS.CLI}
-          type="ghost"
-          icon="CLI"
-          target="_blank"
-        />
+        <a href={DOCS_LINKS.CLI} target="_blank" rel="noreferrer">
+          <Button
+            aria-label={t('btn_link_cli_docs', 'CLI docs')}
+            type="ghost"
+            icon="CLI"
+          />
+        </a>
       </S.ButtonWrapper>
-      <Button
-        aria-label={t('btn_link_docs', 'Visit docs page')}
-        href={docsLinkUrl}
-        type="ghost"
-        icon="Documentation"
-        target="_blank"
-      />
+      <a href={docsLinkUrl} target="_blank" rel="noreferrer">
+        <Button
+          aria-label={t('btn_link_docs', 'Visit docs page')}
+          type="ghost"
+          icon="Documentation"
+        />
+      </a>
     </>
   );
 };

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+
 import { Upload, Modal, message } from 'antd';
+// @ts-ignore
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse } from '@cognite/sdk';
 import { UploadFile } from 'antd/lib/upload/interface';

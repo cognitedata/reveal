@@ -1,5 +1,4 @@
-import { Body } from '@cognite/cogs.js';
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
+import { Body, Modal } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 type BaseModalProps = {
@@ -23,13 +22,13 @@ export const TypeDeleteModal = ({
   };
 
   return (
-    <ModalDialog
+    <Modal
       title={t('delete_type', 'Delete Type')}
-      okButtonName={t('delete_type', 'Delete Type')}
-      okType="primary"
+      okText={t('delete_type', 'Delete Type')}
       onOk={onDeleteType}
       visible={visible}
       onCancel={closeModal}
+      destructive
     >
       <Body level={2}>
         {t(
@@ -37,6 +36,6 @@ export const TypeDeleteModal = ({
           `Are you sure you want to delete the type “${typeValue}”?`
         )}
       </Body>
-    </ModalDialog>
+    </Modal>
   );
 };

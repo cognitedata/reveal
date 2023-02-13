@@ -14,14 +14,14 @@ export const AssetNodeWrapper = styled.div`
   }
   & .node-item-header {
     position: relative;
-    & .node-icon {
+    & .node-icon .cogs-icon {
       z-index: ${zIndex.MAXIMUM};
       position: absolute;
       top: 8px;
       left: 10px;
       cursor: pointer;
     }
-    & .node-icon.loading-icon {
+    & .node-icon.loading-icon .cogs-icon {
       cursor: auto;
     }
   }

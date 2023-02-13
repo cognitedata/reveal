@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 import { Body, Tooltip } from '@cognite/cogs.js';
-import styled, { css } from 'styled-components';
 import Highlighter from 'react-highlight-words';
 import { useIsOverflow } from '../../../hooks';
+import { EllipsisText } from '..';
 
 export const HighlightCell = React.memo(
   ({
@@ -39,16 +39,4 @@ export const HighlightCell = React.memo(
       </EllipsisText>
     );
   }
-);
-
-export const EllipsisText = styled(Body)(
-  ({ lines = 1 }: { lines?: number }) => css`
-    display: block; /* Fallback for non-webkit */
-    display: -webkit-box;
-    -webkit-line-clamp: ${lines};
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    word-break: break-all;
-    text-overflow: ellipsis;
-  `
 );

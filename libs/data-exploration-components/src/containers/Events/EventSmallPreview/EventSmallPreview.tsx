@@ -12,6 +12,7 @@ import { Title, Body, Colors } from '@cognite/cogs.js';
 import { renderTitle } from '@data-exploration-components/utils';
 import { ResourceIcons } from '@data-exploration-components/components/ResourceIcons/ResourceIcons';
 import { EventDetails } from '@data-exploration-components/containers/Events';
+import noop from 'lodash/noop';
 import {
   SmallPreviewProps,
   SelectableItemProps,
@@ -26,7 +27,7 @@ export const EventSmallPreview = ({
   statusText,
   selectionMode = 'none',
   isSelected = false,
-  onSelect = () => {},
+  onSelect = noop,
 }: {
   eventId: number;
 } & SmallPreviewProps &
@@ -70,7 +71,7 @@ export const EventSmallPreview = ({
           containerStyles={{
             display: 'flex',
             alignItems: 'center',
-            color: Colors['greyscale-grey6'].hex(),
+            color: Colors['decorative--grayscale--600'],
           }}
         >
           <Body

@@ -100,7 +100,7 @@ export const DataModel = () => {
     return (
       <div data-testid="data_model_not_found">
         <BasicPlaceholder
-          type="Documents"
+          type="EmptyStateFolderSad"
           title={t(
             'data_model_not_found',
             'Something went wrong, we were not able to load the Data Model!'

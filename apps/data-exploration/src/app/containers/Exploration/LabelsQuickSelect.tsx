@@ -53,8 +53,7 @@ export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
         <LabelButton
           key={label}
           size="small"
-          type="primary"
-          variant={appliedLabelFilters.includes(label) ? 'default' : 'outline'}
+          type={appliedLabelFilters.includes(label) ? 'primary' : 'tertiary'}
           onClick={() => setLabel(label)}
         >
           {label}

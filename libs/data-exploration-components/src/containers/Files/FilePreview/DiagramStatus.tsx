@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { Icon, Label, LabelVariants } from '@cognite/cogs.js';
+import { Icon, Chip, ChipType, ChipProps } from '@cognite/cogs.js';
 import { Tooltip } from 'antd';
 import {
   PENDING_LABEL,
@@ -14,7 +14,7 @@ type Props = { fileId: number };
 
 export type ReviewStatus = {
   status: string;
-  variant: LabelVariants;
+  variant: keyof typeof ChipType;
   label: string;
   tooltip: string;
 };
@@ -34,7 +34,7 @@ export const approvalDetails: { [key: string]: ReviewStatus } = {
   },
   unknown: {
     status: 'No tags detected',
-    variant: 'unknown',
+    variant: 'default',
     label: 'No tags detected',
     tooltip: 'No tags were found in the diagram',
   },
@@ -67,11 +67,12 @@ export default function DiagramReviewStatus({ fileId }: Props) {
     }
   }, [error, file]);
 
+  const chipProps: Pick<ChipProps, 'label' | 'icon'> = isFetched
+    ? { label: fileStatus.label }
+    : { icon: 'Loader' };
   return (
     <Tooltip title={fileStatus.tooltip}>
-      <Label size="small" variant={fileStatus.variant}>
-        {isFetched ? fileStatus.label : <Icon type="Loader" />}
-      </Label>
+      <Chip size="small" type={fileStatus.variant} {...chipProps} />
     </Tooltip>
   );
 }

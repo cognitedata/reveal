@@ -54,12 +54,7 @@ export const NestedFilter: React.FC<NestedFilterProps> = ({
         />
       }
     >
-      <Button
-        icon="ChevronDown"
-        iconPlacement="right"
-        style={{ width }}
-        block={fullWidth}
-      >
+      <Button icon="ChevronDown" iconPlacement="right" style={{ width }}>
         <FilterButtonText data-testid="filter-button">
           {getFilterButtonText(selection)}
         </FilterButtonText>

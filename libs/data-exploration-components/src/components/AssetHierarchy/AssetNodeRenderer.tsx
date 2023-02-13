@@ -86,12 +86,12 @@ const AssetNodeRenderer: React.FC<AssetNodeRendererProps> = ({
 
   const renderAssetLoading = (asset: Asset) => (
     <div
-      className={`node-item-header node-name ${
+      className={`node-item-header node-name node-icon loading-icon ${
         isSelected(asset) ? 'selected' : ''
       }`}
       key={asset.id}
     >
-      <Icon type="Loader" className="node-icon loading-icon" size={14} />
+      <Icon type="Loader" size={14} />
       {asset.name}
     </div>
   );
@@ -102,8 +102,8 @@ const AssetNodeRenderer: React.FC<AssetNodeRendererProps> = ({
     }
     if (currentNode.state?.isLoadingChildren) {
       return (
-        <p className="node-name">
-          <Icon type="Loader" className="node-icon loading-icon" size={14} />
+        <p className="node-name node-icon loading-icon">
+          <Icon type="Loader" size={14} />
         </p>
       );
     }
@@ -154,18 +154,17 @@ const AssetNodeRenderer: React.FC<AssetNodeRendererProps> = ({
   return (
     // render as expandable item
     <div className="node-item" onDoubleClick={handleExpand}>
-      <span className="node-item-header">
-        <Icon
-          type={`Chevron${isExpanded ? 'Down' : 'Right'}Small`}
-          className="node-icon"
-          tabIndex={deepness}
-          onClick={handleExpand}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleExpand();
-            }
-          }}
-        />
+      <span
+        className="node-item-header node-icon"
+        tabIndex={deepness}
+        onClick={handleExpand}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleExpand();
+          }
+        }}
+      >
+        <Icon type={`Chevron${isExpanded ? 'Down' : 'Right'}Small`} />
         {renderName(asset, deepness)}
 
         {isExpanded ? childrenNodes : null}

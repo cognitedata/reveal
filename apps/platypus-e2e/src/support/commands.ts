@@ -95,16 +95,13 @@ Cypress.Commands.add('selectSpace', (name) => {
   cy.get('.cogs-select__placeholder').contains('Select space').click();
   cy.getBySel('create-space-btn').click();
   cy.getBySel('input-data-model-space').type(name);
-  cy.getBySelLike('modal-title')
-    .contains('Create new space')
-    .parents('.cogs-modal-content')
-    .children('.buttons')
-    .children('[data-cy="modal-ok-button"]')
+  cy.getBySel('input-data-model-space')
+    .parents('.cogs-modal')
+    .find('.cogs-modal-footer-buttons > .cogs-button--type-primary')
+    .should('be.visible')
     .click();
   // newly created space is auto selected, so we don't have to select it via dropdown again
-  cy.getBySelLike('modal-title')
-    .contains('Create new space')
-    .should('not.exist');
+  cy.getBySel('input-data-model-space').should('not.exist');
 });
 
 Cypress.Commands.add(
@@ -185,7 +182,9 @@ Cypress.Commands.add('addDataModelType', (typeName: string) => {
   cy.getBySel('edit-schema-btn').should('be.visible').click();
   cy.getBySel('add-type-btn').should('be.visible').click();
   cy.getBySel('type-name-input').should('be.visible').type(typeName);
-  cy.getBySel('modal-ok-button').should('be.visible').click();
+  cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary')
+    .should('be.visible')
+    .click();
   // // get cell renderer and click to focus and activate the cell editor
   // cy.get('.ag-row-last div[col-id="name"]').click();
   // cy.getBySel('schema-type-field').type('name').type('{enter}');
@@ -206,7 +205,9 @@ Cypress.Commands.add('addDataModelType', (typeName: string) => {
 Cypress.Commands.add('deleteDataModelType', (typeName: string) => {
   cy.get(`[aria-label="Additional actions for ${typeName}"]`).click();
   cy.get('button').contains('Delete type').should('be.visible').click();
-  cy.getBySel('modal-ok-button').should('contain', 'Delete Type').click();
+  cy.get('.cogs-button--type-destructive')
+    .should('contain', 'Delete Type')
+    .click();
 });
 
 Cypress.Commands.add('getDataModelFieldRow', (fieldName: string) => {

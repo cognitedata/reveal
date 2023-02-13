@@ -1,4 +1,4 @@
-import { Icon } from '@cognite/cogs.js';
+import { Flex, Icon } from '@cognite/cogs.js';
 import { ICellRendererParams } from 'ag-grid-community';
 import React from 'react';
 
@@ -27,19 +27,15 @@ export const FieldNameCellRenderer = React.memo(
         data-cy="schema-type-field"
         data-cy-value={fieldName}
       >
-        <span className="input-value">
-          {fieldName}{' '}
-          {showDropDownArrow && (
-            <Icon
-              type="ChevronDown"
-              style={{
-                color: 'var(--cogs-greyscale-grey6)',
-                float: 'right',
-                marginTop: '8px',
-              }}
-            />
-          )}
-        </span>
+        <Flex
+          className="input-value"
+          alignItems="center"
+          justifyContent="space-between"
+          style={{ display: 'flex' }}
+        >
+          <span>{fieldName}</span>{' '}
+          {showDropDownArrow && <Icon type="ChevronDown" />}
+        </Flex>
       </div>
     );
   },

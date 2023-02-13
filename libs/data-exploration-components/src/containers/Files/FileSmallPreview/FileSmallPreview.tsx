@@ -2,7 +2,7 @@ import React from 'react';
 import { FileInfo, Asset, CogniteError } from '@cognite/sdk';
 import styled from 'styled-components';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { Icon, Title, Badge, Body, Colors } from '@cognite/cogs.js';
+import { Icon, Title, Chip, Body, Colors } from '@cognite/cogs.js';
 import uniq from 'lodash/uniq';
 import {
   Loader,
@@ -116,7 +116,7 @@ export const FileSmallPreview = ({
           containerStyles={{
             display: 'flex',
             alignItems: 'center',
-            color: Colors['greyscale-grey6'].hex(),
+            color: Colors['decorative--grayscale--600'],
           }}
         >
           <Body
@@ -186,13 +186,13 @@ export const FileSmallPreview = ({
             }}
             title={
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Icon type="Assets" style={{ marginRight: '4px' }} />
+                <StyledIcon type="Assets" />
                 <span>Detected asset tags</span>
               </div>
             }
             bordered={false}
           >
-            <Badge text={`${assets.length}`} />
+            <Chip label={`${assets.length}`} />
           </ListItem>
         )}
 
@@ -206,13 +206,13 @@ export const FileSmallPreview = ({
             }}
             title={
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Icon type="Assets" style={{ marginRight: '4px' }} />
+                <StyledIcon type="Assets" />
                 <span>Detected file tags</span>
               </div>
             }
             bordered={false}
           >
-            <Badge text={`${files.length}`} />
+            <Chip label={`${files.length}`} />
           </ListItem>
         )}
         {!assets && !files && <p>No Tags Detected</p>}
@@ -225,4 +225,8 @@ export const FileSmallPreview = ({
 
 const Preview = styled.div`
   height: 300px;
+`;
+
+const StyledIcon = styled(Icon)`
+  margin-right: 4px;
 `;

@@ -49,15 +49,18 @@ export function TransformationDropdown({
                   </Menu.Header>
                   {groupedTransformations[key].transformations.map(
                     (transformation) => (
-                      <StyledMenuItem
+                      <Menu.Item
+                        css={{}}
                         key={transformation.id}
                         onClick={() => {
                           setIsTransformationModalOpen(true, transformation.id);
                         }}
+                        icon="ExternalLink"
+                        iconPlacement="right"
+                        style={{ width: 240 }}
                       >
                         {transformation.name}
-                        <Icon type="ExternalLink" />
-                      </StyledMenuItem>
+                      </Menu.Item>
                     )
                   )}
                   <Menu.Divider />
@@ -81,13 +84,6 @@ export function TransformationDropdown({
     </Dropdown>
   );
 }
-
-const StyledMenuItem = styled(Menu.Item)`
-  && {
-    width: 246px;
-    justify-content: space-between;
-  }
-`;
 
 const AddNewButton = styled(Button)`
   && {

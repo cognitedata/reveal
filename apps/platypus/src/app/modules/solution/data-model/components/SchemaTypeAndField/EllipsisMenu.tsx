@@ -1,4 +1,4 @@
-import { Button, Menu, Dropdown, Icon } from '@cognite/cogs.js';
+import { Button, Menu, Dropdown } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useState, MouseEvent } from 'react';
 import styled from 'styled-components';
@@ -37,12 +37,20 @@ export const EllipsisMenu = ({
       onClickOutside={() => setDropdownVisibility(false)}
       content={
         <Menu style={{ width: 200, height: 80 }}>
-          <Menu.Item onClick={onRenameClick}>
-            <Icon type="Edit" />
+          <Menu.Item
+            css={{}}
+            onClick={onRenameClick}
+            icon="Edit"
+            iconPlacement="left"
+          >
             {t('rename_type', 'Rename type')}
           </Menu.Item>
-          <Menu.Item onClick={onDeleteClick}>
-            <Icon type="Delete" />
+          <Menu.Item
+            css={{}}
+            onClick={onDeleteClick}
+            icon="Delete"
+            iconPlacement="left"
+          >
             {t('delete_type', 'Delete type')}
           </Menu.Item>
         </Menu>

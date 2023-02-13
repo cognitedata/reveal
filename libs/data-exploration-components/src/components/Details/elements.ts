@@ -8,7 +8,7 @@ export const MetadataCard = styled.div`
 
 export const MetadataHeader = styled.div`
   padding: 16px 12px;
-  height: 53px;
+  max-height: 53px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -35,6 +35,7 @@ export const MetadataTableContainer = styled.div`
 
 export const FilterContainer = styled.div`
   display: flex;
+  height: 100%;
   margin-bottom: 16px;
 
   .cogs-input {

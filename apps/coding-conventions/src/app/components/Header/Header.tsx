@@ -1,7 +1,7 @@
 import { createLink } from '@cognite/cdf-utilities';
 import {
   Body,
-  Breadcrumb as CogsBreadcrumb,
+  Breadcrumbs as CogsBreadcrumb,
   Input,
   Title as CogsTitle,
 } from '@cognite/cogs.js';

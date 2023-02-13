@@ -1,5 +1,5 @@
 import React from 'react';
-import { Label } from '@cognite/cogs.js';
+import { Tabs } from '@cognite/cogs.js';
 import {
   ThreeDModelsResponse,
   useInfinite3DModels,
@@ -8,13 +8,13 @@ import { Model3D } from '@cognite/sdk';
 import { MORE_THAN_MAX_RESULT_LIMIT } from '@data-exploration-lib/domain-layer';
 import { ResourceTypeTitle, TabContainer } from './elements';
 import { getTabCountLabel } from '@data-exploration-components/utils';
+import { ResourceTabProps } from './types';
 
-type Props = {
-  query?: string;
-  showCount?: boolean;
-};
-
-export const ThreeDTab = ({ query, showCount = false }: Props) => {
+export const ThreeDTab = ({
+  query,
+  showCount = false,
+  ...rest
+}: ResourceTabProps) => {
   const { data: modelData = { pages: [] as ThreeDModelsResponse[] } } =
     useInfinite3DModels(undefined, {
       enabled: true,
@@ -34,14 +34,9 @@ export const ThreeDTab = ({ query, showCount = false }: Props) => {
       ? MORE_THAN_MAX_RESULT_LIMIT
       : filteredModels.length;
 
-  return (
-    <TabContainer>
-      <ResourceTypeTitle>{'3D'}</ResourceTypeTitle>
-      {showCount && (
-        <Label size="small" variant="unknown">
-          {getTabCountLabel(count)}
-        </Label>
-      )}
-    </TabContainer>
-  );
+  const chipRightProps = showCount
+    ? { chipRight: { label: getTabCountLabel(count), size: 'x-small' } }
+    : {};
+
+  return <Tabs.Tab label="3D" {...chipRightProps} {...rest} />;
 };

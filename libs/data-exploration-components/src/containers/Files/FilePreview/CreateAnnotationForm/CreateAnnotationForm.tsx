@@ -82,8 +82,7 @@ export const CreateAnnotationForm = ({
       case 'asset': {
         buttonText = (
           <>
-            Linked to <Icon type="Assets" style={{ marginLeft: 4 }} />{' '}
-            {item?.name || 'Asset'}
+            Linked to <Icon type="Assets" /> {item?.name || 'Asset'}
           </>
         );
         break;
@@ -91,8 +90,7 @@ export const CreateAnnotationForm = ({
       case 'timeSeries': {
         buttonText = (
           <>
-            Linked to <Icon type="Timeseries" style={{ marginLeft: 4 }} />{' '}
-            {item?.name || 'Time series'}
+            Linked to <Icon type="Timeseries" /> {item?.name || 'Time series'}
           </>
         );
         break;
@@ -100,8 +98,7 @@ export const CreateAnnotationForm = ({
       case 'sequence': {
         buttonText = (
           <>
-            Linked to <Icon type="GridFilled" style={{ marginLeft: 4 }} />{' '}
-            {item?.name || 'Sequence'}
+            Linked to <Icon type="GridFilled" /> {item?.name || 'Sequence'}
           </>
         );
         break;
@@ -109,8 +106,7 @@ export const CreateAnnotationForm = ({
       case 'file': {
         buttonText = (
           <>
-            Linked to <Icon type="Document" style={{ marginLeft: 4 }} />{' '}
-            {item?.name || 'File'}
+            Linked to <Icon type="Document" /> {item?.name || 'File'}
           </>
         );
         break;
@@ -118,7 +114,7 @@ export const CreateAnnotationForm = ({
       case 'event': {
         buttonText = (
           <>
-            Linked to <Icon type="Events" style={{ marginLeft: 4 }} />{' '}
+            Linked to <Icon type="Events" />{' '}
             {item ? renderTitle(item) : 'Event'}
           </>
         );
@@ -177,11 +173,11 @@ export const CreateAnnotationForm = ({
         <div style={{ flex: 1 }} />
         {onCancel && <Button onClick={onCancel}>Cancel</Button>}
         {!onCancel ? (
-          <Button onClick={onDelete} type="danger">
+          <Button onClick={onDelete} type="destructive">
             Cancel
           </Button>
         ) : (
-          <Button onClick={onDelete} icon="Delete" type="danger" />
+          <Button onClick={onDelete} icon="Delete" type="destructive" />
         )}
       </SpacedRow>
       {children}

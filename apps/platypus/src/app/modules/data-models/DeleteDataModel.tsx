@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Checkbox } from '@cognite/cogs.js';
+import { Checkbox, Modal } from '@cognite/cogs.js';
 
 import { DataModel, StorageProviderType } from '@platypus/platypus-core';
 
@@ -7,7 +7,6 @@ import { Notification } from '@platypus-app/components/Notification/Notification
 
 import { useTranslation } from '../../hooks/useTranslation';
 import { TOKENS } from '@platypus-app/di';
-import { StyledModalDialog } from './elements';
 import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useQueryClient } from '@tanstack/react-query';
@@ -62,7 +61,7 @@ export const DeleteDataModel = ({
   };
 
   return (
-    <StyledModalDialog
+    <Modal
       visible={dataModel ? true : false}
       title={t('delete_data_model', 'Delete Data Model')}
       onCancel={() => {
@@ -70,10 +69,10 @@ export const DeleteDataModel = ({
         setConfirmDelete(false);
       }}
       onOk={() => onDeleteDataModel(dataModel.id)}
-      okDisabled={!confirmDelete}
-      okButtonName={t('delete', 'Delete')}
-      okProgress={deleting}
-      okType="danger"
+      okDisabled={!confirmDelete || deleting}
+      okText={t('delete', 'Delete')}
+      icon={deleting ? 'Loader' : undefined}
+      destructive
     >
       <div>
         {t(
@@ -103,6 +102,6 @@ export const DeleteDataModel = ({
           </span>
         </div>
       </div>
-    </StyledModalDialog>
+    </Modal>
   );
 };

@@ -47,11 +47,11 @@ export const ListItem = ({
 const additionalStyles = ({ selected, isClickable }: WrapperProps) => {
   if (selected) {
     return css`
-      background: ${Colors['midblue-6'].hex()};
-      color: ${Colors['midblue-2'].hex()};
+      background: ${Colors['decorative--blue--600']};
+      color: ${Colors['decorative--blue--200']};
 
       &&:hover {
-        background: ${Colors['midblue-6'].hex()};
+        background: ${Colors['decorative--blue--600']};
       }
     `;
   }

@@ -4,7 +4,9 @@ import { Body, Checkbox, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
-import ThreeDTimestamp from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
+import ThreeDTimestamp, {
+  formatTime,
+} from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
 import { useRevisions } from '@data-exploration-app/containers/ThreeD/hooks';
 import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
@@ -59,7 +61,7 @@ export const SecondaryThreeDModelMenuItem = ({
         checked={!!options?.applied}
         disabled={!revisions?.length}
         name={`model-${model.id}`}
-        onChange={(c) => handleClickModelMenuItem(c)}
+        onChange={(_, c) => handleClickModelMenuItem(!!c)}
       />
       <Flex alignItems="flex-start" direction="column">
         <StyledSecondaryThreeDModelBody $isSelected={options?.applied}>
@@ -82,7 +84,7 @@ export const SecondaryThreeDModelMenuItem = ({
 
   if (!isFetched || revisions?.length === 0) {
     return (
-      <Menu.Item appendIcon={!isFetched ? 'Loader' : undefined}>
+      <Menu.Item css={{}} icon={!isFetched ? 'Loader' : undefined}>
         {menuItemContent}
       </Menu.Item>
     );
@@ -93,30 +95,18 @@ export const SecondaryThreeDModelMenuItem = ({
       content={
         <StyledMenu>
           {revisions?.map(({ createdTime, id, index, published }) => (
-            <StyledRevisionMenuItem
-              $isSelected={id === options?.revisionId}
-              appendIcon={id === options?.revisionId ? 'Checkmark' : undefined}
+            <Menu.Item
+              toggled={id === options?.revisionId}
+              description={
+                published
+                  ? 'Published'
+                  : `Created: ${formatTime(createdTime.getTime())}`
+              }
               key={id}
               onClick={() => handleSelectRevision(id)}
             >
-              <StyledMenuItemContent alignItems="flex-start" direction="column">
-                <StyledSecondaryThreeDModelBody
-                  $isSelected={id === options?.revisionId}
-                >
-                  Revision {index}
-                </StyledSecondaryThreeDModelBody>
-                <StyledSecondaryThreeDModelDetail>
-                  {published ? (
-                    'Published'
-                  ) : (
-                    <>
-                      Created:{' '}
-                      <ThreeDTimestamp timestamp={createdTime.getTime()} />
-                    </>
-                  )}
-                </StyledSecondaryThreeDModelDetail>
-              </StyledMenuItemContent>
-            </StyledRevisionMenuItem>
+              Revision {index}
+            </Menu.Item>
           ))}
         </StyledMenu>
       }

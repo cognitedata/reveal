@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button, ButtonProps } from '@cognite/cogs.js';
 
-export interface LoadMoreProps extends ButtonProps {
+export type LoadMoreProps = {
   hasNextPage?: boolean;
   isLoadingMore?: boolean;
   fetchMore?: Function;
   text?: string;
-}
+};
 
 export const LoadMore: React.FC<LoadMoreProps> = ({
   hasNextPage = false,

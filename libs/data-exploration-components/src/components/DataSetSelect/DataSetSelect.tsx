@@ -142,6 +142,6 @@ export const DataSetSelect = ({
 
 const DataSetSelector = styled(Select)`
   li.ant-select-selection__choice {
-    border: 1px solid ${Colors['greyscale-grey7'].hex()};
+    border: 1px solid ${Colors['decorative--grayscale--700']};
   }
 `;

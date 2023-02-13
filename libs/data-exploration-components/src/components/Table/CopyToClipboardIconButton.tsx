@@ -20,7 +20,7 @@ export const CopyToClipboardIconButton = ({ value }: { value: string }) => {
     <Button
       className="copying-button"
       size="small"
-      variant="ghost"
+      type="ghost"
       icon={hasCopied ? 'Checkmark' : 'Copy'}
       disabled={value === DASH || value === ''}
       onClick={() => handleCopy(value)}

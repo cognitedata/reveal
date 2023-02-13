@@ -1,5 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
-import { Button } from '@cognite/cogs.js';
+import { Button, Link } from '@cognite/cogs.js';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import { useCanvasFilesFromUrl } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
 import {
@@ -72,7 +72,7 @@ const useFileLinkTooltips = (
         targetId: String(selectedAnnotation.id),
         content: (
           <TooltipContainer>
-            <Button
+            <Link
               href={createLink(`/explore/canvas`, {
                 files: serialize([
                   { id: fileId, page: shamefulPageNumber },
@@ -80,11 +80,9 @@ const useFileLinkTooltips = (
                 ]),
               })}
               target="_blank"
-              type="ghost"
-              icon="DocumentPlus"
             >
               Open side-by-side
-            </Button>
+            </Link>
           </TooltipContainer>
         ),
         anchorTo: TooltipAnchorPosition.TOP_RIGHT,

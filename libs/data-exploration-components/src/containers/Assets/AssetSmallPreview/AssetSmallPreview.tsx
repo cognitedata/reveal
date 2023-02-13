@@ -9,7 +9,7 @@ import {
   Icon,
   Button,
   Title,
-  Badge,
+  Chip,
   Colors,
   Body,
   A,
@@ -176,7 +176,7 @@ export const AssetSmallPreview = ({
         <InfoCell
           noBorders
           containerStyles={{
-            color: Colors['greyscale-grey6'].hex(),
+            color: 'var(--cogs-text-icon--muted)',
           }}
         >
           <CenteredBody level={2} strong>
@@ -223,13 +223,13 @@ export const AssetSmallPreview = ({
                   }}
                   title={
                     <Flex>
-                      <Icon type="Document" style={{ marginRight: '4px' }} />
+                      <StyledIcon type="Document" />
                       <Title level={6}>P&IDs</Title>
                     </Flex>
                   }
                   bordered={false}
                 >
-                  <Badge text={`${files.length}`} />
+                  <Chip label={`${files.length}`} />
                 </ListItem>
               }
             >
@@ -262,13 +262,13 @@ export const AssetSmallPreview = ({
                   }}
                   title={
                     <Flex>
-                      <Icon type="Timeseries" style={{ marginRight: '4px' }} />
+                      <StyledIcon type="Timeseries" />
                       <Title level={6}>Time series</Title>
                     </Flex>
                   }
                   bordered={false}
                 >
-                  <Badge text={`${timeseries.length}`} />
+                  <Chip label={`${timeseries.length}`} />
                 </ListItem>
               }
             >
@@ -292,3 +292,7 @@ export const AssetSmallPreview = ({
     </InfoGrid>
   );
 };
+
+const StyledIcon = styled(Icon)`
+  margin-right: 4px;
+`;

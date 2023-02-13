@@ -1,4 +1,4 @@
-import { Flex, Label } from '@cognite/cogs.js';
+import { Chip, Flex } from '@cognite/cogs.js';
 import { MatchingLabels } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import React from 'react';
@@ -12,27 +12,32 @@ export const MatchingLabelsComponent: React.FC<MatchingLabels> = ({
   return (
     <Flex gap={4}>
       {!isEmpty(exact) && (
-        <Label size="small" icon="MagicWand" variant={'success'}>
-          {`Exact match: ${exact
+        <Chip
+          label={`Exact match: ${exact
             .map((item) => capitalizeFirstLetter(item))
             .join(', ')}`}
-        </Label>
+          size="x-small"
+          icon="MagicWand"
+          type={'success'}
+        />
       )}
 
       {!isEmpty(partial) && (
-        <Label size="small" variant={'unknown'}>
-          {`Partial match: ${partial
+        <Chip
+          label={`Partial match: ${partial
             .map((item) => capitalizeFirstLetter(item))
             .join(', ')}`}
-        </Label>
+          size="x-small"
+        />
       )}
 
       {!isEmpty(fuzzy) && (
-        <Label size="small" variant={'unknown'}>
-          {`Fuzzy match: ${fuzzy
+        <Chip
+          label={`Fuzzy match: ${fuzzy
             .map((item) => capitalizeFirstLetter(item))
             .join(', ')}`}
-        </Label>
+          size="x-small"
+        />
       )}
     </Flex>
   );

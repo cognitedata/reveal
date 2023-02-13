@@ -66,7 +66,7 @@ describe('Platypus Data Preview Page - Preview', () => {
 
     // check custom col types
     cy.get(
-      '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="user"] .cogs-tag'
+      '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="user"]'
     ).should('have.text', '123');
 
     // click to open side panel with list of primitives
@@ -257,9 +257,13 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.getBySel('edit-schema-btn').should('be.visible').click();
     cy.get('[aria-label="Additional actions for TypeWithoutData"]').click();
     cy.get('button').contains('Delete type').should('be.visible').click();
-    cy.getBySel('modal-ok-button').should('contain', 'Delete Type').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-destructive')
+      .should('contain', 'Delete Type')
+      .click();
     cy.getBySel('publish-schema-btn').click();
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary')
+      .should('contain', 'Publish')
+      .click();
 
     cy.visit(getUrl('/blog/blog/latest/data/data-management/preview'));
     cy.getBySel('schema-version-select').click();

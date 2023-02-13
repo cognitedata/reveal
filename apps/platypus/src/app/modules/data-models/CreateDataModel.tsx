@@ -8,7 +8,13 @@ import { DataUtils } from '@platypus/platypus-core';
 import { DataModelDetailModal } from '../../components/DataModelDetailModal/DataModelDetailModal';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 
-export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
+export const CreateDataModel = ({
+  onCancel,
+  visible,
+}: {
+  onCancel: VoidFunction;
+  visible: boolean;
+}) => {
   const [dataModelName, setDataModelName] = useState('');
   const [space, setSpace] = useState('');
   const [dataModelDescription, setDataModelDescription] = useState('');
@@ -79,6 +85,7 @@ export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
 
   return (
     <DataModelDetailModal
+      visible={visible}
       dataSets={dataSets || []}
       description={dataModelDescription || ''}
       externalId={externalId}

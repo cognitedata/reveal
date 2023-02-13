@@ -53,6 +53,7 @@ export const TypeColumnSelect = ({
                 return (
                   // only string types are supported
                   <Menu.Item
+                    css={{}}
                     key={el}
                     onClick={() => {
                       onChange(xor(selected, [el]));
@@ -62,10 +63,13 @@ export const TypeColumnSelect = ({
                         ? 'var(--cogs-text-icon--interactive--default)'
                         : 'inherit',
                     }}
+                    icon="String"
+                    iconPlacement="left"
                   >
-                    <Icon type="String" />{' '}
-                    <div style={{ flex: 1, textAlign: 'left' }}>{el}</div>
-                    {isSelected && <Icon type="Checkmark" />}
+                    <Flex alignItems="center" justifyContent="space-between">
+                      {el}
+                      {isSelected && <Icon type="Checkmark" />}
+                    </Flex>
                   </Menu.Item>
                 );
               })}
@@ -93,9 +97,9 @@ export const TypeColumnSelect = ({
                 {selected.length === 1 && (
                   <Icon
                     type="String"
-                    style={{
-                      color: 'var(--cogs-text-icon--medium)',
-                    }}
+                    // style={{
+                    //   color: 'var(--cogs-text-icon--medium)',
+                    // }}
                   />
                 )}
                 <Body

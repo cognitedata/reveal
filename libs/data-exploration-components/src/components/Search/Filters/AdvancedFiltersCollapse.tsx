@@ -119,13 +119,13 @@ const StyledCollapse = styled.div`
       .ant-collapse-header {
         padding-left: 0;
         .ant-collapse-header-text {
-          color: ${Colors.midblue.hex()};
+          color: ${Colors['text-icon--interactive--default']};
         }
         .ant-collapse-expand-icon {
           .cogs-icon {
             right: unset;
             left: 80px;
-            color: ${Colors.midblue.hex()};
+            color: ${Colors['text-icon--interactive--default']};
           }
         }
       }

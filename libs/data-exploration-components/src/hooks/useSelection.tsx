@@ -41,7 +41,7 @@ export const useSelectionButton = (
         key={`${item.id}-select-button`}
         type={isSelected ? 'secondary' : 'primary'}
         icon={isSelected ? 'Minus' : 'Plus'}
-        size={small ? 'small' : 'default'}
+        size={small ? 'small' : 'medium'}
         onClick={() => {
           onSelect();
         }}
@@ -58,7 +58,7 @@ export const useSelectionButton = (
         onClick={() => {
           onSelect();
         }}
-        size={small ? 'small' : 'default'}
+        size={small ? 'small' : 'medium'}
         icon="Plus"
       >
         {isSelected ? 'Current Selection' : `Select ${resourceName}`}
@@ -81,14 +81,14 @@ export const useSelectionCheckbox = (
     return (
       <Button
         key={`${id}-select-button`}
-        onClick={(e) => {
+        onClick={(e: any) => {
           e.stopPropagation();
           onSelect();
         }}
         style={{
           background: isSelected
-            ? Colors['midblue-7'].hex()
-            : Colors['greyscale-grey2'].hex(),
+            ? Colors['surface--action--strong--default']
+            : Colors['surface--action--muted--default--alt'],
         }}
         icon="Checkmark"
       />
@@ -97,8 +97,7 @@ export const useSelectionCheckbox = (
   return (
     <Checkbox
       key={`${id}-select-button`}
-      value={isSelected}
-      onClick={(e) => e.stopPropagation()}
+      checked={isSelected}
       onChange={() => {
         onSelect();
       }}

@@ -1,5 +1,5 @@
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
-import { Tooltip, Button, Flex, Label } from '@cognite/cogs.js';
+import { Tooltip, Button, Flex, Chip } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { PageHeaderDivider } from '../DataPreviewTable/elements';
 import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown';
@@ -108,20 +108,16 @@ export function PreviewPageHeader({
                   )
             }`}
           >
-            <Label
+            <Chip
               onClick={onPublishedRowsCountClick}
-              variant="default"
-              size="medium"
-              style={{ marginLeft: '8px' }}
-            >
-              <span
-                style={{
-                  opacity: !shouldShowPublishedRows ? '0.2' : '1.0',
-                }}
-              >
-                {publishedRowsCount}
-              </span>
-            </Label>
+              size="small"
+              type="neutral"
+              style={{
+                marginLeft: '8px',
+                opacity: !shouldShowPublishedRows ? '0.2' : '1.0',
+              }}
+              label={`${publishedRowsCount}`}
+            />
           </Tooltip>
           <Tooltip
             content={`${
@@ -136,21 +132,16 @@ export function PreviewPageHeader({
                   )
             }`}
           >
-            <Label
+            <Chip
               onClick={draftRowsCount ? onDraftRowsCountClick : undefined}
-              variant="unknown"
-              size="medium"
-              style={{ marginLeft: '4px' }}
-            >
-              <span
-                style={{
-                  opacity:
-                    !shouldShowDraftRows || !draftRowsCount ? '0.2' : '1.0',
-                }}
-              >
-                {draftRowsCount}
-              </span>
-            </Label>
+              size="small"
+              style={{
+                marginLeft: '4px',
+                opacity:
+                  !shouldShowDraftRows || !draftRowsCount ? '0.2' : '1.0',
+              }}
+              label={`${draftRowsCount}`}
+            />
           </Tooltip>
         </>
       }

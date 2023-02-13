@@ -1,5 +1,4 @@
-import { Button, Flex } from '@cognite/cogs.js';
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
+import { Button, Flex, Modal } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { StyledEndpoint } from './elements';
@@ -24,15 +23,12 @@ export const EndpointModal: React.FC<EndpointModalProps> = (props) => {
   };
 
   return (
-    <ModalDialog
+    <Modal
       visible
       title={t('data_model_endpoint_modal_title', 'URL to GraphQl endpoint')}
       onOk={props.onRequestClose}
       onCancel={props.onRequestClose}
-      okButtonName={t('data_model_endpoint_modal_ok_button', 'Close')}
-      okType="primary"
-      width="620px"
-      cancelHidden
+      hideFooter
     >
       <Flex>
         <StyledEndpoint data-cy="endpoint-url">{props.endpoint}</StyledEndpoint>
@@ -40,6 +36,6 @@ export const EndpointModal: React.FC<EndpointModalProps> = (props) => {
           {t('data_model_endpoint_modal_copy_button_text', 'Copy')}
         </Button>
       </Flex>
-    </ModalDialog>
+    </Modal>
   );
 };

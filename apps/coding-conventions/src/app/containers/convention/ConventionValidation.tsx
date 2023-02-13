@@ -2,9 +2,9 @@ import {
   Body,
   Button,
   Collapse as CogsCollapse,
-  Graphic,
   Select,
 } from '@cognite/cogs.js';
+import { Graphic } from 'cogs-v7';
 
 import { useState } from 'react';
 import { Asset, DataSet, FileInfo, IdEither } from '@cognite/sdk';

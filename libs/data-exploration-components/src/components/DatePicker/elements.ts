@@ -42,7 +42,7 @@ export const DatePickerWrapper = styled.div<{
         width: 100%;
       }
       li.react-datepicker__time-list-item--selected {
-        background-color: ${Colors.midblue.hex()} !important;
+        background-color: ${Colors['decorative--blue--100']} !important;
       }
     }
 
@@ -58,27 +58,27 @@ export const DatePickerWrapper = styled.div<{
       }
     }
     .react-datepicker__day--in-selecting-range {
-      background-color: ${Colors['midblue-7'].hex()};
-      color: ${Colors.midblue.hex()};
+      background-color: ${Colors['decorative--blue--700']};
+      color: ${Colors['decorative--blue--100']};
     }
     .react-datepicker__day--outside-month {
-      color: ${Colors['greyscale-grey6'].hex()};
+      color: ${Colors['decorative--grayscale--600']};
     }
 
     .react-datepicker__day--selected,
     .react-datepicker__day--in-range {
-      background-color: ${Colors['midblue-6'].hex()};
-      color: ${Colors.midblue.hex()};
+      background-color: ${Colors['decorative--blue--600']};
+      color: ${Colors['decorative--blue--100']};
       margin: 0px;
     }
     .react-datepicker__day--selected:hover,
     .react-datepicker__day--in-selecting-range:hover,
     .react-datepicker__day--in-range:hover {
-      background-color: ${Colors['midblue-6'].hex()};
+      background-color: ${Colors['decorative--blue--600']};
     }
 
     .react-datepicker__day--in-range.react-datepicker__day--outside-month {
-      color: ${Colors['midblue-5'].hex()};
+      color: ${Colors['decorative--blue--500']};
     }
 
     .react-datepicker__day {
@@ -107,7 +107,7 @@ export const DatePickerWrapper = styled.div<{
       border-bottom-right-radius: 20px;
     }
     .react-datepicker__day--selected.react-datepicker__day--range-start.react-datepicker__day--range-end.react-datepicker__day--in-range {
-      background-color: ${Colors['midblue-5'].hex()};
+      background-color: ${Colors['decorative--blue--500']};
       font-weight: 800;
     }
     .react-datepicker__day-names {
@@ -118,14 +118,14 @@ export const DatePickerWrapper = styled.div<{
     ${props.mode === 'start' &&
     css`
       .react-datepicker__day--selecting-range-start {
-        background-color: ${Colors['midblue-5'].hex()};
+        background-color: ${Colors['decorative--blue--500']};
         font-weight: 800;
       }
     `}
     ${props.mode === 'end' &&
     css`
       .react-datepicker__day--selecting-range-end {
-        background-color: ${Colors['midblue-5'].hex()};
+        background-color: ${Colors['decorative--blue--500']};
         font-weight: 800;
       }
     `}

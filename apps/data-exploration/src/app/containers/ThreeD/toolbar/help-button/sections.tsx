@@ -1,5 +1,6 @@
-import { Body, Colors, Detail, Flex, Graphic, Title } from '@cognite/cogs.js';
+import { Body, Colors, Detail, Flex, Title, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { Graphic } from 'cogs-v7';
 
 interface HelpMenuSectionProps {
   children: React.ReactNode;

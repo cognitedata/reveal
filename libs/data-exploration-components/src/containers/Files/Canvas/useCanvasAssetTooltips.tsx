@@ -1,5 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
-import { Button } from '@cognite/cogs.js';
+import { Button, Link } from '@cognite/cogs.js';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import { TooltipContainer } from '@data-exploration-components/containers/Files/Canvas/TooltipContainer';
 import {
@@ -37,9 +37,7 @@ const useCanvasAssetTooltips = (
             <AssetLabel>
               {getExtendedAnnotationLabel(selectedAnnotation) ?? 'N/A'}
             </AssetLabel>
-            <Button
-              type="ghost"
-              icon="ExternalLink"
+            <Link
               href={createLink(
                 `/explore/search/asset/${getResourceIdFromExtendedAnnotation(
                   selectedAnnotation

@@ -1,4 +1,6 @@
-import { Detail, Flex, Label, Body } from '@cognite/cogs.js';
+import React from 'react';
+import { Detail, Flex, Chip, Body, BodyProps } from '@cognite/cogs.js';
+import type {} from './types';
 import styled, { css } from 'styled-components';
 import zIndex from '../../utils/zIndex';
 
@@ -189,6 +191,7 @@ export const TableDataBody = styled(Body)`
   justify-content: flex-start;
   align-items: center;
   gap: 4px;
+  font-size: inherit;
 `;
 
 export const ThWrapper = styled.div`
@@ -224,7 +227,7 @@ const ellipsistyles = css`
   white-space: nowrap;
 `;
 
-export const StyledLabel = styled(Label)`
+export const StyledLabel = styled(Chip)`
   display: block;
   ${ellipsistyles};
 `;
@@ -233,3 +236,18 @@ export const StyledButton = styled.div`
   ${ellipsistyles};
   max-width: 80px;
 `;
+
+interface EllipsisTextProps extends BodyProps<HTMLDivElement> {
+  lines?: number;
+}
+export const EllipsisText = styled.div<EllipsisTextProps>(
+  ({ lines = 1 }) => css`
+    display: block; /* Fallback for non-webkit */
+    display: -webkit-box;
+    -webkit-line-clamp: ${lines};
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-all;
+    text-overflow: ellipsis;
+  `
+);

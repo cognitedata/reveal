@@ -3,6 +3,7 @@ import {
   Button,
   Colors,
   Detail,
+  Divider,
   Flex,
   Icon,
   Menu,
@@ -39,8 +40,9 @@ const DetailsMenuItem = ({
   openDetails: (tab?: ResourceTabType) => void;
 }) => (
   <StyledDetailElement
-    type="ghost"
+    css={{}}
     key={details.detailTypeKey}
+    type="ghost"
     onClick={() => {
       openDetails(details.detailTypeKey);
     }}
@@ -120,7 +122,7 @@ export default function NodePreview({
           {assetInfo?.description || 'No description'}
         </StyledOverline>
       </StyledAssetInfo>
-      <Menu.Divider />
+      <Divider />
       <Flex alignItems="center" direction="column">
         {details.map((detail) => (
           <DetailsMenuItem
@@ -130,7 +132,7 @@ export default function NodePreview({
           />
         ))}
       </Flex>
-      <Menu.Divider />
+      <Divider />
       <Flex
         gap={10}
         justifyContent="flex-end"
@@ -187,14 +189,14 @@ const StyledOverline = styled(Overline)`
   font-size: 13px;
 `;
 
-const StyledDetailElement = styled(Menu.Item)`
+const StyledDetailElement = styled(Button)`
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   border-radius: 0px;
   padding-left: 8px;
-  padding-right: 0rem;
+  padding-right: 8px;
   :hover {
     cursor: pointer;
   }

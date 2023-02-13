@@ -1,4 +1,4 @@
-import { Body, Graphic, Icon, Input } from '@cognite/cogs.js';
+import { Body, Icon, Input } from '@cognite/cogs.js';
 
 import { useEffect, useState } from 'react';
 

@@ -67,7 +67,10 @@ export const DocumentUploaderModal = ({
                 {fileList.map((file) => (
                   <li>
                     File{' '}
-                    <Button type="link" onClick={() => onFileSelected(file)}>
+                    <Button
+                      type="ghost-accent"
+                      onClick={() => onFileSelected(file)}
+                    >
                       {file.name}
                     </Button>{' '}
                     successfully uploaded!

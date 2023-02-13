@@ -109,7 +109,10 @@ export const RangePicker = ({
           <span ref={spanRef}>{`${dayjs(initialRange[0]).format(
             'YYYY/MM/DD HH:mm'
           )}`}</span>
-          <Icon type="ArrowRight" style={{ marginLeft: 8, marginRight: 8 }} />
+          <Icon
+            type="ArrowRight"
+            // style={{ marginLeft: 8, marginRight: 8 }}
+          />
           <span>{`${dayjs(initialRange[1]).format('YYYY/MM/DD HH:mm')}`}</span>
         </Button>
       )}

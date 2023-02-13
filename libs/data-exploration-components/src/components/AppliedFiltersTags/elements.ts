@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro';
 
-import { Button, Label } from '@cognite/cogs.js';
+import { Button, Chip } from '@cognite/cogs.js';
 
-export const StyledChip = styled(Label)`
+export const StyledChip = styled(Chip)`
   && {
     width: fit-content;
     max-height: 28px;

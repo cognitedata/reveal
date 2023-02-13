@@ -142,60 +142,42 @@ function SearchPage() {
                 );
               }}
             >
-              <Tabs.TabPane key={ViewType.All} tab="All" />
-              <Tabs.TabPane
-                key={ViewType.Asset}
-                tab={
-                  <AssetsTab
-                    showCount
-                    query={debouncedQuery}
-                    filter={assetFilter}
-                  />
-                }
+              <Tabs.Tab tabKey={ViewType.All} label="All resources" />
+              <AssetsTab
+                tabKey={ViewType.Asset}
+                showCount
+                query={debouncedQuery}
+                filter={assetFilter}
               />
-              <Tabs.TabPane
-                key={ViewType.TimeSeries}
-                tab={
-                  <TimeseriesTab
-                    showCount
-                    query={debouncedQuery}
-                    filter={timeseriesFilter}
-                  />
-                }
+              <TimeseriesTab
+                tabKey={ViewType.TimeSeries}
+                showCount
+                query={debouncedQuery}
+                filter={timeseriesFilter}
               />
-              <Tabs.TabPane
-                key={ViewType.File}
-                tab={
-                  <DocumentsTab
-                    query={debouncedQuery}
-                    filter={documentFilter}
-                    showCount
-                  />
-                }
+
+              <DocumentsTab
+                tabKey={ViewType.File}
+                query={debouncedQuery}
+                filter={documentFilter}
+                showCount
               />
-              <Tabs.TabPane
-                key={ViewType.Event}
-                tab={
-                  <EventsTab
-                    showCount
-                    query={debouncedQuery}
-                    filter={eventFilter}
-                  />
-                }
+              <EventsTab
+                tabKey={ViewType.Event}
+                showCount
+                query={debouncedQuery}
+                filter={eventFilter}
               />
-              <Tabs.TabPane
-                key={ViewType.Sequence}
-                tab={
-                  <SequenceTab
-                    showCount
-                    query={debouncedQuery}
-                    filter={sequenceFilter}
-                  />
-                }
+              <SequenceTab
+                tabKey={ViewType.Sequence}
+                showCount
+                query={debouncedQuery}
+                filter={sequenceFilter}
               />
-              <Tabs.TabPane
-                key={ViewType.ThreeD}
-                tab={<ThreeDTab showCount query={debouncedQuery} />}
+              <ThreeDTab
+                tabKey={ViewType.ThreeD}
+                showCount
+                query={debouncedQuery}
               />
             </ResourceTypeTabsV2>
           ) : (
@@ -209,7 +191,7 @@ function SearchPage() {
                   tab === 'all' ? undefined : (tab as ResourceType)
                 );
               }}
-              additionalTabs={[<Tabs.TabPane tab="All" key="all" />]}
+              additionalTabs={[<Tabs.Tab label="All" tabKey={ViewType.All} />]}
             />
           )}
         </TabsContainer>

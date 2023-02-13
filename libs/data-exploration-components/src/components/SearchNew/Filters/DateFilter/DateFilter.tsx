@@ -10,6 +10,7 @@ import { FilterFacetTitle } from '../FilterFacetTitle';
 import { OptionType } from '@cognite/cogs.js';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { BaseSelect } from '@data-exploration-components/components/Select/BaseSelect';
 
 const determinePeriod = (value: DateRange | undefined | null) => {
   if (value === undefined) {
@@ -56,6 +57,7 @@ export const DateFilterV2 = ({
   ) {
     setPeriod(determinePeriod(value));
   }
+
   useEffect(() => {
     prevValueRef.current = determinePeriod(value);
   }, [value]);
@@ -133,12 +135,13 @@ export const DateFilterV2 = ({
   return (
     <>
       <FilterFacetTitle>{title}</FilterFacetTitle>
-      <Select
+      <BaseSelect
         value={options.find((el) => el.value === period)!}
         options={options}
         isSearchable={false}
         isClearable={false}
         blurInputOnSelect
+        menuPosition="fixed"
         isMulti={false}
         cogsTheme="grey"
         onChange={handleOnChange}

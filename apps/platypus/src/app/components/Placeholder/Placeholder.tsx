@@ -2,10 +2,10 @@ import {
   Body,
   Button,
   Detail,
-  Graphic,
-  Label,
+  Chip,
   Title,
   Tooltip,
+  Illustrations,
 } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useState } from 'react';
@@ -55,14 +55,13 @@ export const Placeholder = ({
                 arrow={false}
                 delay={250}
               >
-                <Label
+                <Chip
                   icon="Help"
                   iconPlacement="right"
                   size="medium"
-                  variant="unknown"
-                >
-                  {componentName}
-                </Label>
+                  label={componentName}
+                  style={{ marginRight: 12 }}
+                />
               </Tooltip>
               <Body level={1}>
                 {t(
@@ -97,7 +96,7 @@ export const Placeholder = ({
           </div>
           {showGraphic && (
             <div className="placeholder-graphic">
-              <Graphic type="Search" />
+              <Illustrations.Solo type="IdeaLightbulb" prominence="muted" />
             </div>
           )}
         </div>

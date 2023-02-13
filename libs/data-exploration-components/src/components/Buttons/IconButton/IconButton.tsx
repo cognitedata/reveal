@@ -1,9 +1,9 @@
 import { Button, ButtonProps, Tooltip } from '@cognite/cogs.js';
 import React from 'react';
 
-interface Props extends ButtonProps {
+type Props = ButtonProps & {
   tooltipContent: string;
-}
+};
 export const IconButton: React.FC<Props> = ({
   icon,
   tooltipContent,

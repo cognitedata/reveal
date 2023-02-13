@@ -1,4 +1,4 @@
-import { Flex, Icon, Label } from '@cognite/cogs.js';
+import { Flex, Icon, Chip } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
 export const FilterButtonText = styled.span`
@@ -55,7 +55,7 @@ export const OptionSecondaryLabel = styled.span`
   margin-top: 2px;
 `;
 
-export const AvailableResultsCount = styled(Label)`
+export const AvailableResultsCount = styled(Chip)`
   padding: 2px 6px;
   font-size: 12px;
   line-height: 16px;

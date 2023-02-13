@@ -16,6 +16,7 @@ import {
 } from '@data-exploration-components/types';
 import { SequenceDetails } from '@data-exploration-components/containers/Sequences';
 import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
+import noop from 'lodash/noop';
 
 export const SequenceSmallPreview = ({
   sequenceId,
@@ -25,7 +26,7 @@ export const SequenceSmallPreview = ({
   statusText,
   selectionMode = 'none',
   isSelected = false,
-  onSelect = () => {},
+  onSelect = noop,
   hideTitle = false,
 }: {
   sequenceId: number;
@@ -70,7 +71,7 @@ export const SequenceSmallPreview = ({
           containerStyles={{
             display: 'flex',
             alignItems: 'center',
-            color: Colors['greyscale-grey6'].hex(),
+            color: 'var(--cogs-text-icon--medium)',
           }}
         >
           <Body

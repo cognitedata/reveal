@@ -271,6 +271,7 @@ export const TimeseriesChart = ({
               <Button
                 key={shortcut}
                 type="secondary"
+                size="small"
                 toggled={timePeriod === shortcut}
                 onClick={() => setTimePeriod(shortcut)}
               >

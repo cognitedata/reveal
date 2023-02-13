@@ -49,7 +49,7 @@ export const useSuggestionsGridConfig = () => {
                   name="select-all"
                   data-testid="select-all"
                   checked={isAllSelected}
-                  onChange={(value) => onSelectAll(value)}
+                  onChange={(_, value) => onSelectAll(!!value)}
                 />
                 <Body
                   level={2}

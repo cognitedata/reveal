@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { FileInfo } from '@cognite/sdk';
 import { Modal } from 'antd';
-import { Button } from '@cognite/cogs.js';
+import { Button, Link } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
   searchBaseCacheKey,
@@ -67,7 +67,10 @@ export const FileUploaderModal = ({
                 {fileList.map((file) => (
                   <li>
                     File{' '}
-                    <Button type="link" onClick={() => onFileSelected(file)}>
+                    <Button
+                      type="ghost-accent"
+                      onClick={() => onFileSelected(file)}
+                    >
                       {file.name}
                     </Button>{' '}
                     successfully uploaded!

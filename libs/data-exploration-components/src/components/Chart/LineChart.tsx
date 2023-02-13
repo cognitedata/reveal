@@ -24,10 +24,10 @@ import {
 } from '@data-exploration-components/utils';
 import styled from 'styled-components';
 
-const pointColor = Colors['midblue-3'].hex();
-const primaryColor = Colors['midblue-4'].hex();
-const primaryColor2 = Colors['midblue-6'].hex();
-const areaColor = Colors['midblue-5'].hex();
+const pointColor = Colors['decorative--blue--300'];
+const primaryColor = Colors['decorative--blue--400'];
+const primaryColor2 = Colors['decorative--blue--600'];
+const areaColor = Colors['decorative--blue--500'];
 const tooltipStyles = {
   ...defaultStyles,
   background: 'white',
@@ -185,7 +185,7 @@ export const LineChart = ({
           tickLabelProps={() => ({
             fontFamily: 'Inter',
             fontSize: showSmallerTicks ? 10 : 12,
-            fill: Colors['greyscale-grey6'].hex(),
+            fill: Colors['decorative--grayscale--600'],
             textAnchor: 'middle',
           })}
           tickLength={showSmallerTicks ? 4 : 8}
@@ -206,7 +206,7 @@ export const LineChart = ({
             fontSize: 12,
             dy: 5,
             dx: 8,
-            fill: Colors['greyscale-grey6'].hex(),
+            fill: Colors['decorative--grayscale--600'],
             textAnchor: 'start',
           })}
         />

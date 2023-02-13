@@ -1,4 +1,4 @@
-import { Label, Title } from '@cognite/cogs.js';
+import { Chip, Title } from '@cognite/cogs.js';
 import { InterfaceTypeDefinitionNode, ObjectTypeDefinitionNode } from 'graphql';
 import { Header } from './Common';
 
@@ -13,9 +13,11 @@ export const SmallNode = ({
       <Title level={5} style={{ flex: 1 }}>
         {item.name.value}
       </Title>
-      <Label variant={isType ? 'normal' : 'warning'} size="small">
-        {isType ? 'Type' : 'Interface'}
-      </Label>
+      <Chip
+        label={isType ? 'Type' : 'Interface'}
+        type={isType ? 'default' : 'warning'}
+        size="small"
+      />
     </Header>
   );
 };

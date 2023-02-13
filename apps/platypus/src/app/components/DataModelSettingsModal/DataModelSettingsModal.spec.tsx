@@ -43,6 +43,7 @@ describe('DataModelSettingsModal', () => {
     const handleRequestClose = jest.fn();
     render(
       <DataModelSettingsModal
+        visible
         dataModel={dataModel}
         onRequestClose={handleRequestClose}
       />

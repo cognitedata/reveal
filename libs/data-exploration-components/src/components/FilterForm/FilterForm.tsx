@@ -36,9 +36,9 @@ const Tag = styled.div<TagProps>(
   (props) => css`
     display: inline-flex;
     align-items: center;
-    background: ${Colors['midblue-6'].hex()};
+    background: ${Colors['decorative--blue--600']};
     padding: 8px 16px;
-    color: ${Colors['midblue-2'].hex()};
+    color: ${Colors['decorative--blue--200']};
     font-weight: 600;
     border-radius: 30px;
     cursor: ${props.isLocked ? 'unset' : 'pointer'};
@@ -60,7 +60,7 @@ const Tag = styled.div<TagProps>(
       display: flex;
       opacity: 0.5;
       transition: 0.3s all;
-      color: ${Colors.danger.hex()};
+      color: ${Colors['text-icon--status-critical']};
       height: 16px;
       width: 16px;
     }
@@ -290,14 +290,14 @@ export const FilterTag = ({
       </span>
     </Tooltip>
     {!isLocked && onDeleteClicked && (
-      <Icon
-        type="Close"
-        className="delete"
-        onClick={(ev) => {
+      <div
+        onClick={(ev: any) => {
           ev.stopPropagation();
           onDeleteClicked();
         }}
-      />
+      >
+        <Icon type="Close" />
+      </div>
     )}
   </Tag>
 );

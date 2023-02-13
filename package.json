@@ -10,8 +10,8 @@
     "@cognite/cdf-i18n-utils": "^0.6.0",
     "@cognite/cdf-sdk-singleton": "^0.8.2",
     "@cognite/cdf-ui-cli": "^1.1.1",
-    "@cognite/cdf-utilities": "^1.11.0",
-    "@cognite/cogs.js": "^7.17.0",
+    "@cognite/cdf-utilities": "^3.0.1",
+    "@cognite/cogs.js": "9.2.5",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
     "@cognite/react-container": "^7.1.0",
     "@cognite/react-document-table": "^1.22.2",
@@ -68,6 +68,7 @@
     "chalk": "4.1.2",
     "chromatic": "^6.13.1",
     "cli-table": "^0.3.11",
+    "cogs-v7": "npm:@cognite/cogs.js@7",
     "conf": "^10.0.3",
     "configstore": "5.0.1",
     "copy-to-clipboard": "^3.3.3",
@@ -203,7 +204,7 @@
     "@nrwl/nx-plugin": "^15.5.3",
     "@nrwl/react": "15.4.4",
     "@nrwl/rollup": "15.4.4",
-    "@nrwl/storybook": "15.4.4",
+    "@nrwl/storybook": "^15.4.5",
     "@nrwl/web": "15.4.4",
     "@nrwl/workspace": "15.4.4",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
@@ -308,14 +309,12 @@
   },
   "resolutions": {
     "babel-loader": "8.2.3",
-    "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.6",
+
     "styled-components": "^5.3.3",
-    "@cognite/cogs.js": "^7.14.7",
+
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@cognite/react-container/react-router-dom": "5.3.4",
-    "@mui/joy": "5.0.0-alpha.56"
+    "@cognite/react-container/react-router-dom": "5.3.4"
   },
   "bin": {
     "platypus": "./dist/libs/platypus-cli/src/index.js"

@@ -6,7 +6,7 @@ describe('Data Model Page - Local Drafts', () => {
     cy.visit(getUrl(''));
     cy.getBySel('create-data-model-btn').click();
     cy.getBySel('input-data-model-name').type(name);
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
   }
 
   function typeShouldNotExist(typeName: string) {
@@ -38,7 +38,10 @@ describe('Data Model Page - Local Drafts', () => {
     cy.getBySel('type-list-item-Currency').should('be.visible');
 
     // Publish button is clickable
-    cy.getBySel('publish-schema-btn').should('not.have.attr', 'disabled');
+    cy.getBySel('publish-schema-btn').should(
+      'not.have.class',
+      'cogs-button--disabled'
+    );
   });
 
   it('clears the draft when user removes all types from a published data model', () => {
@@ -81,7 +84,9 @@ describe('Data Model Page - Local Drafts', () => {
     // Add and then remove a type
     cy.get('[aria-label="Add type"]').click();
     cy.getBySel('type-name-input').should('be.visible').type('Person');
-    cy.getBySel('modal-ok-button').should('be.visible').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary')
+      .should('be.visible')
+      .click();
     cy.getBySel('type-view-back-button').should('be.visible').click();
     cy.deleteDataModelType('Person');
 
@@ -115,7 +120,9 @@ describe('Data Model Page - Local Drafts', () => {
 
     cy.getBySel('no-types-add-type-btn').should('be.visible').click();
     cy.getBySel('type-name-input').should('be.visible').type('Person');
-    cy.getBySel('modal-ok-button').should('be.visible').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary')
+      .should('be.visible')
+      .click();
     cy.getBySel('type-view-back-button').should('be.visible').click();
 
     cy.reload();
@@ -146,7 +153,7 @@ describe('Data Model Page - Local Drafts', () => {
   it('publishes draft', () => {
     cy.addDataModelType('Currency');
     cy.getBySel('publish-schema-btn').click();
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
 
     // A toast message should notify user when schema has been published successfully
     cy.getBySel('toast-title').should('have.text', 'Data model updated');
@@ -157,10 +164,16 @@ describe('Data Model Page - Local Drafts', () => {
     cy.getBySel('edit-schema-btn').click();
 
     // Publish button should be disabled until we make a change
-    cy.getBySel('publish-schema-btn').should('have.attr', 'disabled');
+    cy.getBySel('publish-schema-btn').should(
+      'have.class',
+      'cogs-button--disabled'
+    );
     cy.getBySel(`type-list-item-Currency`).click();
     cy.addDataModelTypeField('Currency', 'foo', 'String');
-    cy.getBySel('publish-schema-btn').should('not.have.attr', 'disabled');
+    cy.getBySel('publish-schema-btn').should(
+      'not.have.class',
+      'cogs-button--disabled'
+    );
   });
 
   it('Loads only drafts owned by Data Model ', () => {

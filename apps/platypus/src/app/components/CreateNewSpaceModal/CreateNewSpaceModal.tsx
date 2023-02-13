@@ -1,5 +1,4 @@
-import { Input } from '@cognite/cogs.js';
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
+import { Input, Modal } from '@cognite/cogs.js';
 import { useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { NameWrapper } from './elements';
@@ -40,14 +39,13 @@ export const CreateNewSpaceModal = (props: CreateNewSpaceModalProps) => {
   };
 
   return (
-    <ModalDialog
+    <Modal
       visible={props.visible}
       title={t('create_space_modal_title', 'Create new space')}
       onCancel={() => props.onCancel()}
       onOk={handleSubmit}
       okDisabled={!!spaceNameError || !spaceName}
-      okButtonName={t('create', 'Create')}
-      okType="primary"
+      okText={t('create', 'Create')}
     >
       <div>
         <label>
@@ -76,6 +74,6 @@ export const CreateNewSpaceModal = (props: CreateNewSpaceModalProps) => {
           </NameWrapper>
         </label>
       </div>
-    </ModalDialog>
+    </Modal>
   );
 };

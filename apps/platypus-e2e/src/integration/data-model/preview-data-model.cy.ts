@@ -108,7 +108,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.getBySel('edit-schema-btn').click();
     cy.getBySel('add-type-btn').click();
     cy.getBySel('type-name-input').type('Dog');
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
 
     cy.get('#visualizer-wrapper')
       .contains('Unable to visualize')
@@ -132,7 +132,9 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.getBySel('edit-schema-btn').should('be.visible').click();
     cy.get('[aria-label="Additional actions for Post"]').click();
     cy.get('button').contains('Delete type').should('be.visible').click();
-    cy.getBySel('modal-ok-button').should('contain', 'Delete Type').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-destructive')
+      .should('contain', 'Delete Type')
+      .click();
     cy.contains('Comment').click();
     cy.get('h5').contains('Comment').should('be.visible');
     cy.getBySel('editor_panel')
@@ -191,7 +193,9 @@ describe('Data Model Page - Existing Solution Preview', () => {
         user: User!
       `);
 
-    cy.getBySel('publish-schema-btn').click();
+    cy.getBySel('publish-schema-btn')
+      .should('not.have.class', 'cogs-button--disabled')
+      .click();
 
     // breaking changes dialog should be displayed even before publishing
     cy.getBySelLike('toast-title').contains(

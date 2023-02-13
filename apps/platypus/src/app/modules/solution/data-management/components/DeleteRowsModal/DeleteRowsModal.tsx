@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Checkbox } from '@cognite/cogs.js';
+import { Checkbox, Modal } from '@cognite/cogs.js';
 import { useTranslation } from '../../../../../hooks/useTranslation';
-import { StyledModalDialog } from './elements';
 
 export const DeleteRowsModal = ({
   isVisible,
@@ -21,29 +20,35 @@ export const DeleteRowsModal = ({
 
   const descriptionText = singleRowExternalId ? (
     <>
-      {t(
-        'are_you_sure_to_delete_data_row_1',
-        'Are you sure you want to delete '
-      )}
-      <strong>{singleRowExternalId}</strong>
-      {t('are_you_sure_to_delete_data_row_2', '?')}
-      <br />
-      {t(
-        'are_you_sure_to_delete_data_row_3',
-        'Contents of this instance will be deleted.'
-      )}
+      <p>
+        {t(
+          'are_you_sure_to_delete_data_row_1',
+          'Are you sure you want to delete '
+        )}
+        <strong>{singleRowExternalId}</strong>
+        {t('are_you_sure_to_delete_data_row_2', '?')}
+      </p>
+      <p>
+        {t(
+          'are_you_sure_to_delete_data_row_3',
+          'Contents of this instance will be deleted.'
+        )}
+      </p>
     </>
   ) : (
     <>
-      {t(
-        'are_you_sure_to_delete_data_row_1',
-        'Are you sure you want to delete these instances?'
-      )}
-      <br />
-      {t(
-        'are_you_sure_to_delete_data_row_2',
-        'Contents of these instances will be deleted.'
-      )}
+      <p>
+        {t(
+          'are_you_sure_to_delete_data_row_1',
+          'Are you sure you want to delete these instances?'
+        )}
+      </p>
+      <p>
+        {t(
+          'are_you_sure_to_delete_data_row_2',
+          'Contents of these instances will be deleted.'
+        )}
+      </p>
     </>
   );
   const confirmationText = singleRowExternalId ? (
@@ -61,7 +66,7 @@ export const DeleteRowsModal = ({
   );
 
   return (
-    <StyledModalDialog
+    <Modal
       visible={isVisible}
       title={t('delete_data_rows', 'Delete?')}
       onCancel={() => {
@@ -69,10 +74,10 @@ export const DeleteRowsModal = ({
         onCancel();
       }}
       onOk={onDelete}
-      okDisabled={!confirmDelete}
-      okButtonName={t('delete', 'Delete')}
-      okProgress={isDeleting}
-      okType="danger"
+      okDisabled={!confirmDelete || isDeleting}
+      okText={t('delete', 'Delete')}
+      icon={isDeleting ? 'Loader' : undefined}
+      destructive
     >
       <div>
         {descriptionText}
@@ -87,6 +92,6 @@ export const DeleteRowsModal = ({
           </Checkbox>
         </div>
       </div>
-    </StyledModalDialog>
+    </Modal>
   );
 };

@@ -10,13 +10,15 @@ import {
   Loader,
   DocumentIcon,
   Title,
-  Graphic,
   Tooltip,
   Illustrations,
 } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { Model3D } from '@cognite/sdk';
 import { ResourceType } from '@cognite/data-exploration';
+import { Graphic } from 'cogs-v7';
+import { useCurrentResourceId } from '@data-exploration-app/hooks/hooks';
+import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { PartialBy } from './utils';
 
 export type Model3DWithType = PartialBy<

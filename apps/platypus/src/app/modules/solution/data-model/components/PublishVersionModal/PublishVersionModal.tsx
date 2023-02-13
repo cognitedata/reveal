@@ -1,5 +1,4 @@
-import { Body, Button, Flex, Input, Radio } from '@cognite/cogs.js';
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
+import { Body, Button, Flex, Input, Modal, Radio } from '@cognite/cogs.js';
 import { isFDMv3 } from '@platypus-app/flags';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useState, useEffect } from 'react';
@@ -85,7 +84,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
   }, [version, t, isFDMV3, props.publishedVersions]);
 
   return (
-    <ModalDialog
+    <Modal
       visible={true}
       title={t('publish_dm_modal_title', 'Publish data model')}
       onCancel={props.onCancel}
@@ -99,11 +98,9 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
             : finalizedVersion
         );
       }}
-      okButtonName={t('publish_new_version', 'Publish')}
-      okProgress={props.isUpdating || props.isSaving}
-      cancelHidden={props.isUpdating || props.isSaving}
-      okDisabled={!!error}
-      okType="primary"
+      okText={t('publish_new_version', 'Publish')}
+      okDisabled={props.isUpdating || props.isSaving || !!error}
+      icon={props.isUpdating || props.isSaving ? 'Loader' : undefined}
     >
       {props.breakingChanges && (
         <StyledBreakingChanges data-cy="breaking-changes-container">
@@ -116,7 +113,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
           <br />
           {breakingChangesLines.length > MINIMUM_CHANGES_VISIBLE && (
             <Button
-              variant="ghost"
+              type="ghost"
               iconPlacement="right"
               icon={showAllChanges ? 'ChevronUp' : 'ChevronDown'}
               style={{ marginLeft: '-8px' }}
@@ -156,13 +153,15 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
               checked={!props.breakingChanges && keepCurrentVersion}
               value={`${props.currentVersion}`}
               disabled={!!props.breakingChanges}
-              onClick={() =>
+              onChange={() =>
                 !props.breakingChanges && setKeepCurrentVersion(true)
               }
               data-cy={'keep-current-version-radio'}
-            >
-              {t('keep_version_text', 'Keep version')} {props.currentVersion}
-            </Radio>
+              name={'keep-current-version-radio'}
+              label={`${t('keep_version_text', 'Keep version')} ${
+                props.currentVersion
+              }`}
+            />
           </Flex>
           <Flex
             justifyContent="space-between"
@@ -173,13 +172,13 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
               checked={!keepCurrentVersion}
               value={`${version}`}
               style={{ flexShrink: 0, paddingRight: '16px', marginTop: '7px' }}
-              onClick={() =>
+              onChange={() =>
                 !props.breakingChanges && setKeepCurrentVersion(false)
               }
               data-cy={'create-new-version-radio'}
-            >
-              {t('create_new_version_text', 'Create new version')}
-            </Radio>
+              name={'create-new-version-radio'}
+              label={t('create_new_version_text', 'Create new version')}
+            />
             <Input
               type={'text'}
               fullWidth
@@ -200,6 +199,6 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
           </Flex>
         </>
       )}
-    </ModalDialog>
+    </Modal>
   );
 };

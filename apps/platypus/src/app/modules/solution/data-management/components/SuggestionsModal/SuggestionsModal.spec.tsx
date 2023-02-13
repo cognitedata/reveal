@@ -274,7 +274,7 @@ describe('SuggestionsModal', () => {
       await userEvent.click(screen.getAllByTestId('accept')[1]);
       await waitFor(() => {
         expect(screen.getAllByTestId('accept')[1]).toHaveClass(
-          'cogs-btn-primary'
+          'cogs-button--type-primary'
         );
       });
       await userEvent.click(screen.getByText('Confirm'));
@@ -294,7 +294,7 @@ describe('SuggestionsModal', () => {
       await userEvent.click(screen.getAllByTestId('reject')[0]);
       await waitFor(() => {
         expect(screen.getAllByTestId('reject')[0]).toHaveClass(
-          'cogs-btn-primary'
+          'cogs-button--type-primary'
         );
       });
       await userEvent.click(screen.getByText('Confirm'));

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ResourceType } from '@data-exploration-components/types';
-import { Colors, Label, TabPaneProps, Tabs } from '@cognite/cogs.js';
+import { Chip, Colors, TabProps, Tabs } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { useResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
 
@@ -29,7 +29,7 @@ type Props = {
   query?: string;
   globalFilters?: { [key in ResourceType]: any };
   showCount?: boolean;
-  additionalTabs?: React.ReactElement<TabPaneProps>[];
+  additionalTabs?: any;
 };
 
 const ResourceTypeTab = ({
@@ -54,15 +54,13 @@ const ResourceTypeTab = ({
         {resourceTypeMap[currentResourceType as ResourceType]}
       </ResourceTypeTitle>
       {showCount && (
-        <Label size="small" variant="unknown">
-          {result.count}
-        </Label>
+        <Chip size="small" type="default" label={String(result.count)} />
       )}
     </TabContainer>
   );
 };
 export const ResourceTypeTabs = ({
-  currentResourceType,
+  currentResourceType = 'all',
   setCurrentResourceType,
   resourceTypes = defaultResourceTypes,
   additionalTabs = [],
@@ -72,21 +70,18 @@ export const ResourceTypeTabs = ({
   return (
     <StyledTabs
       activeKey={currentResourceType}
-      onChange={(tab) => setCurrentResourceType(tab)}
+      onTabClick={(tab) => setCurrentResourceType(tab)}
     >
       {additionalTabs}
       {resourceTypes.map((resourceType) => {
         return (
-          <Tabs.TabPane
-            key={resourceType}
-            tab={
-              <ResourceTypeTab
-                currentResourceType={resourceType}
-                filter={globalFilters?.[resourceType] || {}}
-                {...rest}
-              />
-            }
-          />
+          <Tabs.Tab tabKey={resourceType} label={resourceType}>
+            <ResourceTypeTab
+              currentResourceType={resourceType}
+              filter={globalFilters?.[resourceType] || {}}
+              {...rest}
+            />
+          </Tabs.Tab>
         );
       })}
     </StyledTabs>
@@ -95,7 +90,7 @@ export const ResourceTypeTabs = ({
 
 const StyledTabs = styled(Tabs)`
   .rc-tabs-nav-wrap {
-    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+    border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
   }
 `;
 

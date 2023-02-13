@@ -113,7 +113,7 @@ const FileReview = ({
         </Flex>
         <Flex>
           <Body level={5}>{assetAnnotations.length}</Body>
-          <Icon type="ChevronRight" style={{ marginTop: '3px' }} />
+          <StyledIcon type="ChevronRight" />
         </Flex>
       </StyledTag>
       <StyledTag onClick={() => onTypeClick('files')}>
@@ -139,7 +139,7 @@ const FileReview = ({
         </Flex>
         <Flex>
           <Body level={5}>{fileAnnotations.length}</Body>
-          <Icon type="ChevronRight" style={{ marginTop: '3px' }} />
+          <StyledIcon type="ChevronRight" />
         </Flex>
       </StyledTag>
     </ReviewTagWrapper>
@@ -147,6 +147,10 @@ const FileReview = ({
 };
 
 export default FileReview;
+
+const StyledIcon = styled(Icon)`
+  margin-top: 3px;
+`;
 
 const ReviewTagWrapper = styled.div`
   display: flex;

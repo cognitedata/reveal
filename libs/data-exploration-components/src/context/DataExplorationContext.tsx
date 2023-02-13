@@ -48,16 +48,6 @@ export const DataExplorationProvider = ({
         document.getElementsByClassName(styleScopeId).item(0)!,
     };
 
-    // @ts-expect-error
-    CogsModal.defaultProps = {
-      // @ts-expect-error
-      ...CogsModal.defaultProps,
-      getContainer: () =>
-        document.getElementsByClassName(styleScopeId).item(0)!,
-      // todo: remove once cogs.js is updated to version 8.0
-      appElement: document.getElementsByClassName(styleScopeId).item(0)!,
-    };
-
     // create a custom portal for drag-drop
     const dragDropPortal: HTMLElement = document.createElement('div');
     dragDropPortal.classList.add(DRAG_DROP_PORTAL_CLASS);

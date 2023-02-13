@@ -23,7 +23,6 @@ export const ApplyButton: React.FC<ApplyButtonProps> = ({
           type="primary"
           disabled={disabled}
           onClick={onClick}
-          block
         >
           Apply
         </Button>

@@ -37,6 +37,7 @@ describe('DataModelDetailModal', () => {
         onDescriptionChange={noop}
         onSubmit={noop}
         title=""
+        visible
       />
     );
 
@@ -58,6 +59,7 @@ describe('DataModelDetailModal', () => {
         onDescriptionChange={noop}
         onSubmit={noop}
         title=""
+        visible
       />
     );
 
@@ -79,6 +81,7 @@ describe('DataModelDetailModal', () => {
         onDescriptionChange={noop}
         onSubmit={noop}
         title=""
+        visible
       />
     );
 
@@ -101,6 +104,7 @@ describe('DataModelDetailModal', () => {
         onDescriptionChange={noop}
         onSubmit={noop}
         title=""
+        visible
       />
     );
 
@@ -126,6 +130,7 @@ describe('DataModelDetailModal', () => {
         onSubmit={onSubmit}
         space="my_space"
         title=""
+        visible
       />
     );
 
@@ -156,6 +161,7 @@ describe('DataModelDetailModal', () => {
         onSubmit={onSubmit}
         space=""
         title=""
+        visible
       />
     );
 
@@ -186,6 +192,7 @@ describe('DataModelDetailModal', () => {
         onSubmit={onSubmit}
         space="my_space"
         title=""
+        visible
       />
     );
 
@@ -216,6 +223,7 @@ describe('DataModelDetailModal', () => {
         onSubmit={onSubmit}
         space="my_space"
         title=""
+        visible
       />
     );
 
@@ -241,6 +249,7 @@ describe('DataModelDetailModal', () => {
         onSubmit={onSubmit}
         space="my_space"
         title=""
+        visible
       />
     );
 

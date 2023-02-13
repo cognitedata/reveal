@@ -160,7 +160,7 @@ export const FilePreview = ({
         tab={activeTab}
         onTabChange={onTabChange}
         additionalTabs={[
-          <Tabs.TabPane tab={<TabTitle>Preview</TabTitle>} key="preview">
+          <Tabs.Tab label="Preview" tabKey="preview">
             <PreviewTabWrapper>
               {editMode && (
                 <Banner>
@@ -184,13 +184,13 @@ export const FilePreview = ({
                 }
               />
             </PreviewTabWrapper>
-          </Tabs.TabPane>,
-          <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="info">
+          </Tabs.Tab>,
+          <Tabs.Tab label="Details" tabKey="info">
             <DetailsTabWrapper>
               <FileDetails file={fileInfo} />
               <Metadata metadata={fileInfo.metadata} />
             </DetailsTabWrapper>
-          </Tabs.TabPane>,
+          </Tabs.Tab>,
         ]}
       />
     </>
@@ -203,13 +203,13 @@ const PreviewTabWrapper = styled.div`
 
 const Banner = styled.div`
   padding: 16px;
-  background: ${Colors['midblue-6'].hex()};
-  color: ${Colors.midblue.hex()};
+  background: ${Colors['decorative--blue--600']};
+  color: ${Colors['decorative--blue--100']};
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   .cogs-body-3 {
-    color: ${Colors.midblue.hex()};
+    color: ${Colors['decorative--blue--100']};
   }
 `;

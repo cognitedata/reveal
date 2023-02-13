@@ -1,4 +1,4 @@
-import { Tag } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 import { ICellRendererParams } from 'ag-grid-community';
 import React from 'react';
 
@@ -9,7 +9,7 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
 
   return (
     <div>
-      <Tag>{props.value}</Tag>
+      <Chip label={props.value} />
     </div>
   );
 });

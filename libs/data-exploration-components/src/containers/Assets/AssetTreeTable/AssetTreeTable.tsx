@@ -108,7 +108,7 @@ export const AssetTreeTable = ({
                 <Icon
                   type={row.getIsExpanded() ? 'ChevronUp' : 'ChevronDown'}
                   {...{
-                    onClick: (event) => {
+                    onClick: (event: any) => {
                       event.preventDefault();
                       event.stopPropagation();
                       row.toggleExpanded();

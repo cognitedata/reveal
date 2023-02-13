@@ -1,5 +1,5 @@
 import React from 'react';
-import { Label, Tooltip } from '@cognite/cogs.js';
+import { Chip, Tooltip } from '@cognite/cogs.js';
 import { ReactElement } from 'react';
 import * as S from './elements';
 
@@ -21,9 +21,7 @@ export const CellEditorWrapper: React.FC<CellEditorWrapperProps> = ({
         visible={visible}
         content={
           <S.ErrorLabel key="cell-editor-tooltip-error-label">
-            <Label icon="Error" variant="danger">
-              {errorMessage}
-            </Label>
+            <Chip icon="Error" label={errorMessage} type="danger" />
           </S.ErrorLabel>
         }
         elevated

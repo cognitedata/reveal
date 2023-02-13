@@ -1,4 +1,3 @@
-import { Colors } from '@cognite/cogs.js';
 import { AnnotationType } from '@cognite/unified-file-viewer';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
@@ -47,42 +46,42 @@ export const selectAnnotationColors = (
 ): { strokeColor: string; backgroundColor: string } => {
   if (isSelected)
     return {
-      strokeColor: Colors['lightblue-1'].hex(),
-      backgroundColor: `${Colors.lightblue.hex()}11`,
+      strokeColor: 'var(--cogs-border--status-neutral--muted)',
+      backgroundColor: 'var(--cogs-surface--action--strong--default)',
     };
   if (isPending)
     return {
-      strokeColor: Colors['yellow-1'].hex(),
-      backgroundColor: `${Colors['yellow-1'].hex()}33`,
+      strokeColor: 'var(--cogs-border--status-warning--muted)',
+      backgroundColor: `var(--cogs-surface--status-warning--strong--default)`,
     };
   if (resourceType === 'asset')
     return {
-      strokeColor: Colors['purple-3'].hex(),
-      backgroundColor: `${Colors['purple-3'].hex()}33`,
+      strokeColor: 'var(--cogs-border--status-neutral--muted)',
+      backgroundColor: 'var(--cogs-surface--status-neutral--strong--default)',
     };
   if (resourceType === 'file')
     return {
-      strokeColor: Colors['midorange-3'].hex(),
-      backgroundColor: `${Colors['midorange-3'].hex()}33`,
+      strokeColor: 'var(--cogs-border--status-warning--strong)',
+      backgroundColor: 'var(--cogs-surface--status-critical--muted--default)',
     };
   if (resourceType === 'timeSeries')
     return {
-      strokeColor: Colors['lightblue-3'].hex(),
-      backgroundColor: `${Colors['lightblue-3'].hex()}33`,
+      strokeColor: 'var(--cogs-border--status-neutral--muted)',
+      backgroundColor: 'var(--cogs-surface--action--strong--default)',
     };
   if (resourceType === 'sequence')
     return {
-      strokeColor: Colors['yellow-3'].hex(),
-      backgroundColor: `${Colors['yellow-3'].hex()}33`,
+      strokeColor: 'var(--cogs-border--status-warning--strong)',
+      backgroundColor: 'var(--cogs-surface--status-critical--muted--default)',
     };
   if (resourceType === 'event')
     return {
-      strokeColor: Colors['pink-3'].hex(),
-      backgroundColor: `${Colors['pink-3'].hex()}33`,
+      strokeColor: 'var(--cogs-border--status-neutral--muted)',
+      backgroundColor: 'var(--cogs-surface--status-neutral--strong--default)',
     };
   return {
-    strokeColor: Colors['text-color-secondary'].hex(),
-    backgroundColor: `${Colors['text-color-secondary'].hex()}33`,
+    strokeColor: 'var(--cogs-text-icon--medium)',
+    backgroundColor: 'var(--cogs-text-icon--muted)',
   };
 };
 

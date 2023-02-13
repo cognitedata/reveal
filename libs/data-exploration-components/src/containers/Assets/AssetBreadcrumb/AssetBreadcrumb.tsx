@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import noop from 'lodash/noop';
 
 const BreadCrumbItem = styled.li`
-  color: ${Colors['greyscale-grey6'].hex()};
+  color: ${Colors['decorative--grayscale--600']};
   font-size: 14px;
   cursor: pointer;
 `;
@@ -24,7 +25,7 @@ export function AssetBreadcrumbItems({
   assetId,
   maxLength = 3,
   parents = 0,
-  onBreadcrumbClick = () => {},
+  onBreadcrumbClick = noop,
 }: Props) {
   const { data: asset, isFetched } = useCdfItem<Asset>(
     'assets',

@@ -112,15 +112,15 @@ export const AssetPreview = ({
         tab={activeTab}
         onTabChange={onTabChange}
         additionalTabs={[
-          <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">
+          <Tabs.Tab label="Details" tabKey="details">
             <DetailsTabWrapper>
               <AssetDetails asset={asset} />
               <Metadata metadata={asset.metadata} />
             </DetailsTabWrapper>
-          </Tabs.TabPane>,
-          <Tabs.TabPane tab={<TabTitle>Hierarchy</TabTitle>} key="children">
+          </Tabs.Tab>,
+          <Tabs.Tab label="Hierarchy" tabKey="children">
             <AssetHierarchyTab asset={asset} />
-          </Tabs.TabPane>,
+          </Tabs.Tab>,
         ]}
       />
     </>

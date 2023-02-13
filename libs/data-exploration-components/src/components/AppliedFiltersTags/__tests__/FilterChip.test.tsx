@@ -46,7 +46,7 @@ describe('FilterChip', () => {
 
   it('should show close button', () => {
     testInit({ onClick: jest.fn() });
-    expect(screen.getByTestId('close-button')).toBeTruthy();
+    expect(screen.getByLabelText('Remove Test Name: test-value')).toBeTruthy();
   });
 
   it('should not show close button', () => {

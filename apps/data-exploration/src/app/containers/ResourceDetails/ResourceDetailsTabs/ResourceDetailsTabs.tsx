@@ -6,7 +6,7 @@ import {
   ResourceItem,
   getTitle,
 } from '@cognite/data-exploration';
-import { Colors, Tabs, TabPaneProps, Label } from '@cognite/cogs.js';
+import { Colors, Tabs, TabsProps, Chip } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
 import { RelatedResources } from '@data-exploration-app/containers/ResourceDetails/RelatedResources/RelatedResources';
@@ -18,7 +18,7 @@ import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };
   tab: string;
-  additionalTabs?: React.ReactElement<TabPaneProps>[];
+  additionalTabs?: React.ReactElement<TabsProps>[];
   excludedTypes?: ResourceType[];
   onTabChange: (tab: string) => void;
   style?: React.CSSProperties;
@@ -100,35 +100,27 @@ export const ResourceDetailsTabs = ({
   }
 
   const relationshipTabs = filteredTabs.map((key) => (
-    <Tabs.TabPane
-      key={key}
-      tab={
-        <>
-          <TabTitle>{getTitle(key)}</TabTitle>
-          <StyledLabel size="small" variant="unknown">
-            {addPlusSignToCount(
-              key === 'asset' ? assetCount : counts[key]!,
-              hasMoreRelationships[key]!
-            )}
-          </StyledLabel>
-        </>
-      }
+    <Tabs.Tab
+      tabKey={key}
+      label={getTitle(key)}
+      chipRight={{
+        label: addPlusSignToCount(
+          key === 'asset' ? assetCount : counts[key]!,
+          hasMoreRelationships[key]!
+        ),
+        size: 'x-small',
+      }}
     >
       <ResourceDetailTabContent
         resource={parentResource}
         type={key as ResourceType}
       />
-    </Tabs.TabPane>
+    </Tabs.Tab>
   ));
   const tabs = [...additionalTabs, ...relationshipTabs];
 
   return (
-    <StyledTabs
-      padding="default"
-      style={style}
-      activeKey={tab}
-      onChange={onTabChange}
-    >
+    <StyledTabs style={style} onTabClick={onTabChange}>
       {tabs}
     </StyledTabs>
   );
@@ -139,7 +131,7 @@ const StyledTabs = styled(Tabs)`
   height: 100%;
 
   .rc-tabs-nav-wrap {
-    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+    border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
   }
   .rc-tabs-content-holder {
     display: flex;
@@ -150,7 +142,3 @@ const StyledTabs = styled(Tabs)`
 `;
 
 export const TabTitle = styled.span``;
-
-const StyledLabel = styled(Label)`
-  margin-left: 8px;
-`;

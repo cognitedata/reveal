@@ -1,4 +1,4 @@
-import { Body, Icon, Label, Title, Tooltip } from '@cognite/cogs.js';
+import { Body, Icon, Chip, Title, Tooltip } from '@cognite/cogs.js';
 import {
   getFieldType,
   renderFieldType,
@@ -33,9 +33,11 @@ export const FullNode = ({
         <Title level={5} style={{ flex: 1 }}>
           {item.name.value}
         </Title>
-        <StyledLabel variant={isInterface ? 'warning' : 'normal'} size="small">
-          {capitalizeFirst(typeDirective)}
-        </StyledLabel>
+        <StyledLabel
+          type="default"
+          size="x-small"
+          label={capitalizeFirst(typeDirective)}
+        />
       </Header>
       {fullRender ? (
         item.fields?.map((el) => (
@@ -53,7 +55,7 @@ export const FullNode = ({
                   placement="bottom"
                   content={renderTooltip(el.arguments)}
                 >
-                  <Icon type="Filter" className="filter-details" />
+                  <Icon type="Filter" />
                 </Tooltip>
               )}
               <Body level={2}>{renderFieldType(el.type)}</Body>
@@ -94,10 +96,10 @@ const StyledMainID = styled.span`
   border-radius: 1px;
   background-color: var(--cogs-greyscale-grey7);
 `;
-const StyledLabel = styled(Label)`
+const StyledLabel = styled(Chip)`
   height: 20px;
   width: auto;
-  ${(props) => props.variant === 'normal' && 'color: var(--cogs-midblue-1);'}
+  ${(props) => props.type === 'default' && 'color: var(--cogs-midblue-1);'}
 `;
 
 const PropertyItem = styled.div`

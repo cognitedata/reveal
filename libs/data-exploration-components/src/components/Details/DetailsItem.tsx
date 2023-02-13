@@ -1,5 +1,5 @@
 import React from 'react';
-import { Body, A, toast, Label, Flex, Button } from '@cognite/cogs.js';
+import { Body, A, toast, Chip, Flex, Button, Link } from '@cognite/cogs.js';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import {
   convertResourceType,
@@ -17,6 +17,7 @@ import {
 } from '@data-exploration-components/containers/Assets/AssetTable/ThreeDModelCell';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { t } from 'graphql-extra';
 
 type DetailsItemProps = {
   name: string;
@@ -55,14 +56,14 @@ export const DetailsItem = ({
 
         {Boolean(value) &&
           (link ? (
-            <A
+            <Link
               href={link}
+              size="small"
               target="_blank"
-              rel="noopener"
               className="details-item-value"
             >
               {value}
-            </A>
+            </Link>
           ) : (
             <Body level={2} className="details-item-value">
               {value}
@@ -173,6 +174,11 @@ export const AssetsItem = ({
 };
 
 export const LabelsItem = ({ labels = [] }: { labels?: string[] }) => {
+  const { onCopy, hasCopied } = useClipboard();
+  const handleCopy = (value: string) => {
+    onCopy(value);
+    toast.success(COPIED_TEXT);
+  };
   if (labels.length > 0) {
     return (
       <DetailsItem
@@ -180,9 +186,13 @@ export const LabelsItem = ({ labels = [] }: { labels?: string[] }) => {
         value={
           <Flex wrap="wrap" gap={8} justifyContent="flex-end">
             {labels.map((label) => (
-              <Label variant="unknown" size="medium" key={label}>
-                {label}
-              </Label>
+              <Chip
+                type="default"
+                label={label}
+                action={{ onClick: () => handleCopy(label), icon: 'Copy' }}
+                size="small"
+                key={label}
+              />
             ))}
           </Flex>
         }
@@ -224,7 +234,7 @@ const DetailsItemContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex: 1;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   padding-top: 5px;
   align-items: flex-start;
 
@@ -248,5 +258,8 @@ const MutedBody = styled(Body)`
 const ButtonWrapper = styled.div<{ visible?: boolean }>`
   margin-left: 8px;
   margin-bottom: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   visibility: ${({ visible }) => (visible ? 'unset' : 'hidden')};
 `;

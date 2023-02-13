@@ -14,7 +14,9 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
       cy.selectSpace(SPACE);
     }
 
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary')
+      .should('be.visible')
+      .click();
 
     cy.getCogsToast('success').contains('Data Model successfully created');
   };

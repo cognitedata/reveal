@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { OptionType } from '@cognite/cogs.js';
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
+import { Modal, OptionType } from '@cognite/cogs.js';
 
 import {
   DataModelTypeDefsType,
@@ -104,16 +103,17 @@ export const CreateTransformationModal = ({
   };
 
   return (
-    <ModalDialog
+    <Modal
       visible
       title={t('create_transformation_modal_title', 'Create transformation')}
       onOk={handleSubmit}
       onCancel={onRequestClose}
-      okDisabled={!validationResult.valid}
-      okProgress={createTransformationMutation.isLoading}
-      okButtonName={t('create_transformation_modal_ok_button', 'Next')}
-      okType="primary"
-      width="620px"
+      okDisabled={
+        !validationResult.valid || createTransformationMutation.isLoading
+      }
+      icon={createTransformationMutation.isLoading ? 'Loader' : undefined}
+      okText={t('create_transformation_modal_ok_button', 'Next')}
+      size="large"
     >
       <CreateTransformationForm
         id={transformationExternalId}
@@ -124,6 +124,6 @@ export const CreateTransformationModal = ({
         selectedRelationship={selectedRelationship}
         transformationType={transformationType}
       />
-    </ModalDialog>
+    </Modal>
   );
 };

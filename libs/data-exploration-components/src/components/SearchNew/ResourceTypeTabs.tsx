@@ -1,30 +1,35 @@
-import React from 'react';
-import { Colors, Tabs } from '@cognite/cogs.js';
+import React, { JSXElementConstructor } from 'react';
+import { Colors, TabProps, Tabs } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
-type Props = {
+export interface Props {
   currentResourceType?: string;
   setCurrentResourceType: (tab?: string) => void;
-  children: React.ReactNode;
-};
+  children: React.ReactElement<TabProps, string | JSXElementConstructor<any>>[];
+}
 
 export const ResourceTypeTabsV2 = ({
-  currentResourceType,
+  currentResourceType = 'all',
   setCurrentResourceType,
-  children,
+  ...rest
 }: Props) => {
   return (
     <StyledTabs
+      hidePadding
       activeKey={currentResourceType}
-      onChange={(tab) => setCurrentResourceType(tab)}
-    >
-      {children}
-    </StyledTabs>
+      onTabClick={(tab) => {
+        setCurrentResourceType(tab);
+      }}
+      {...rest}
+    />
   );
 };
 
 const StyledTabs = styled(Tabs)`
   .rc-tabs-nav-wrap {
-    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+    border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
+  }
+  & > .cogs-tabs__list_tab {
+    margin-right: 8px;
   }
 `;

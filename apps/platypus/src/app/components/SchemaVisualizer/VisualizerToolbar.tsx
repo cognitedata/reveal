@@ -24,16 +24,13 @@ export const VisualizerToolbar = ({
 }) => {
   const filterDropdownMenu = (
     <ToolbarMenu>
-      <ToolbarMenu.Item onClick={() => setIsCollapsed(!isCollapsed)}>
-        Headers only{' '}
-        <Switch
-          checked={isCollapsed}
-          onClick={(e) => {
-            e.preventDefault();
-            setIsCollapsed(!isCollapsed);
-          }}
-          name="Collapse details"
-        ></Switch>
+      <ToolbarMenu.Item
+        css={{ display: 'flex' }}
+        onChange={() => setIsCollapsed(!isCollapsed)}
+        toggled={isCollapsed}
+        hasSwitch
+      >
+        Headers only
       </ToolbarMenu.Item>
     </ToolbarMenu>
   );

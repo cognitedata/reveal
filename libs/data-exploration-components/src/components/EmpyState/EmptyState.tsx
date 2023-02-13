@@ -1,4 +1,6 @@
-import { Body, Flex, Graphic, GraphicTypes, Title } from '@cognite/cogs.js';
+import { Body, Flex, Illustrations, Title } from '@cognite/cogs.js';
+import { Graphic, GraphicTypes } from 'cogs-v7';
+
 import React from 'react';
 import styled from 'styled-components';
 import Loading from './Loading';

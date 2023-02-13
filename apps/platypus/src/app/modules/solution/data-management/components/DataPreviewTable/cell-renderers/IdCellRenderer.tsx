@@ -1,4 +1,4 @@
-import { Button, Flex, Label } from '@cognite/cogs.js';
+import { Button, Flex, Chip } from '@cognite/cogs.js';
 import { KeyValueMap } from '@platypus/platypus-core';
 import { ICellRendererParams } from 'ag-grid-community';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -24,14 +24,15 @@ export const IdCellRenderer = React.memo((props: IdCellRendererProps) => {
     >
       <IdCellValueText>{props.value}</IdCellValueText>
       {isRowPinnedOnTop && !isDraftCompleted && (
-        <Label size="small" variant="unknown" data-cy="draft-row">
-          {t('draft_label', 'Draft')}
-        </Label>
+        <Chip
+          label={t('draft_label', 'Draft')}
+          size="small"
+          data-cy="draft-row"
+        />
       )}
       {isRowPinnedOnTop && isDraftCompleted && (
         <Button
           size="small"
-          variant="default"
           type="primary"
           data-cy="handle-add-row-button"
           onClick={handleAddClick}
@@ -47,4 +48,5 @@ const IdCellValueText = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 8px;
+  flex: 1;
 `;

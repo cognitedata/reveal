@@ -12,15 +12,14 @@ describe('Platypus Data Models Page - Create Data Model', () => {
 
   it('should create data model', () => {
     cy.getBySel('create-data-model-btn').click();
-    cy.getBySelLike('modal-title').contains('Create Data Model');
+    cy.get('.cogs-modal-title').contains('Create Data Model');
     cy.getBySel('input-data-model-name').type('cypress-test');
 
     // if V3, select space
     if (getFDMVersion() === 'V3') {
       cy.selectSpace('cypress-test-space');
     }
-
-    cy.getBySel('modal-ok-button').click();
+    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
 
     // we should be redirected to /dashboard
     cy.url().should(

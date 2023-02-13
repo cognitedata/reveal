@@ -195,68 +195,46 @@ function SearchPage() {
         <TabsContainer>
           {isAdvancedFiltersEnabled ? (
             <ResourceTypeTabsV2
-              currentResourceType={currentResourceType || 'all'}
+              currentResourceType={currentResourceType}
               setCurrentResourceType={(tab) => {
                 setCurrentResourceType(
                   tab === 'all' ? undefined : (tab as ResourceType)
                 );
               }}
             >
-              <Tabs.TabPane key="all" tab="All" />
-              <Tabs.TabPane
-                key="asset"
-                tab={
-                  <AssetsTab
-                    showCount
-                    query={debouncedQuery}
-                    filter={assetFilter}
-                  />
-                }
+              <Tabs.Tab tabKey="all" label="All resources" />
+              <AssetsTab
+                tabKey="asset"
+                showCount
+                query={debouncedQuery}
+                filter={assetFilter}
               />
-              <Tabs.TabPane
-                key="timeSeries"
-                tab={
-                  <TimeseriesTab
-                    showCount
-                    query={debouncedQuery}
-                    filter={timeseriesFilter}
-                  />
-                }
+              <TimeseriesTab
+                tabKey="timeSeries"
+                showCount
+                query={debouncedQuery}
+                filter={timeseriesFilter}
               />
-              <Tabs.TabPane
-                key="file"
-                tab={
-                  <DocumentsTab
-                    query={debouncedQuery}
-                    filter={documentFilter}
-                    showCount
-                  />
-                }
+
+              <DocumentsTab
+                tabKey="file"
+                query={debouncedQuery}
+                filter={documentFilter}
+                showCount
               />
-              <Tabs.TabPane
-                key="event"
-                tab={
-                  <EventsTab
-                    showCount
-                    query={debouncedQuery}
-                    filter={eventFilter}
-                  />
-                }
+              <EventsTab
+                tabKey="event"
+                showCount
+                query={debouncedQuery}
+                filter={eventFilter}
               />
-              <Tabs.TabPane
-                key="sequence"
-                tab={
-                  <SequenceTab
-                    showCount
-                    query={debouncedQuery}
-                    filter={sequenceFilter}
-                  />
-                }
+              <SequenceTab
+                tabKey="sequence"
+                showCount
+                query={debouncedQuery}
+                filter={sequenceFilter}
               />
-              <Tabs.TabPane
-                key="threeD"
-                tab={<ThreeDTab showCount query={debouncedQuery} />}
-              />
+              <ThreeDTab tabKey="threeD" showCount query={debouncedQuery} />
             </ResourceTypeTabsV2>
           ) : (
             <ResourceTypeTabs
@@ -269,7 +247,7 @@ function SearchPage() {
                   tab === 'all' ? undefined : (tab as ResourceType)
                 );
               }}
-              additionalTabs={[<Tabs.TabPane tab="All" key="all" />]}
+              additionalTabs={[<Tabs.Tab label="All" tabKey="all" />]}
             />
           )}
         </TabsContainer>
@@ -286,7 +264,7 @@ function SearchPage() {
                 direction="column"
                 style={{
                   borderRight: active
-                    ? `1px solid ${Colors['greyscale-grey3'].hex()}`
+                    ? `1px solid ${Colors['decorative--grayscale--300']}`
                     : 'unset',
                 }}
               >
@@ -457,6 +435,8 @@ const SearchInputContainer = styled(Flex)`
 
 const TabsContainer = styled.div`
   flex: 0 0 auto;
+  border-bottom: 1px solid var(--cogs-border--muted);
+  padding-left: 16px;
 `;
 
 const MainContainer = styled(Flex)<{ $isFilterFeatureEnabled?: boolean }>`

@@ -5,7 +5,7 @@ import {
 } from '@platypus/platypus-core';
 import { DiscardButton, DocLinkWrapper, ReturnButton } from './elements';
 import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
-import { Button, Flex, Label, Tooltip } from '@cognite/cogs.js';
+import { Button, Flex, Chip, Tooltip } from '@cognite/cogs.js';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
@@ -155,12 +155,14 @@ export const DataModelHeader = ({
                 position="bottom"
                 content={`Version v. ${latestDataModelVersion.version} has been published by another user, and this draft is currently based on an outdated version.`}
               >
-                <Label size="medium" variant="warning">
-                  {t(
+                <Chip
+                  size="medium"
+                  type="warning"
+                  label={t(
                     'outdated_draft_version_warning',
                     `Your draft is based on an outdated version`
                   )}
-                </Label>
+                />
               </Tooltip>
             </Flex>
           )}

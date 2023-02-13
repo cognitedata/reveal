@@ -240,7 +240,7 @@ const SecondaryModelDropdown = ({
         image360SiteData={mainImage360Data}
         revision={mainRevision}
       />
-      <Menu.Divider />
+
       <StyledSecondaryModelListContainer onScroll={handleImages360Scroll}>
         {viewer && filteredImages360SiteIds.length ? (
           <>

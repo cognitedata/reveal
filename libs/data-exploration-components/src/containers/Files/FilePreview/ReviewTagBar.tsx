@@ -56,10 +56,7 @@ const ReviewTagBar = ({
           target="_blank"
           rel="noopener"
         >
-          <Icon
-            type="ArrowUpRight"
-            style={{ marginBottom: '-4px', marginLeft: '4px' }}
-          />
+          <StyledIcon type="ArrowUpRight" />
         </A>
       ) : undefined}
     </StyledTag>
@@ -119,4 +116,9 @@ const StyledTag = styled.div`
 const ButtonWrapper = styled.div`
   margin: 6px 0px 6px;
   width: 100%;
+`;
+
+const StyledIcon = styled(Icon)`
+  margin-bottom: -4px;
+  margin-left: 4px;
 `;

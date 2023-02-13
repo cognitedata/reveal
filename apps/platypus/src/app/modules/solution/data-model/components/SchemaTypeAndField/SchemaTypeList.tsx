@@ -100,22 +100,20 @@ export const SchemaTypeList = ({
                 {el.directives?.map((directive) => (
                   <Tag key={directive.name}>{directive.name}</Tag>
                 ))}
-                <div style={{ padding: 2 }}>
-                  {!disabled && (
-                    <EllipsisMenu
-                      disabled={disabled}
-                      typeName={el.name}
-                      onRename={openRenameModal}
-                      onDelete={openDeleteModal}
-                    />
-                  )}
-                  <ChevronButton
-                    type="ghost"
-                    icon="ArrowRight"
-                    style={{ paddingLeft: '5px', paddingRight: '5px' }}
-                    aria-label="Forward"
+                {!disabled && (
+                  <EllipsisMenu
+                    disabled={disabled}
+                    typeName={el.name}
+                    onRename={openRenameModal}
+                    onDelete={openDeleteModal}
                   />
-                </div>
+                )}
+                <ChevronButton
+                  type="ghost"
+                  icon="ArrowRight"
+                  style={{ paddingLeft: '5px', paddingRight: '5px' }}
+                  aria-label="Forward"
+                />
               </Flex>
             </ListItem>
           ))}

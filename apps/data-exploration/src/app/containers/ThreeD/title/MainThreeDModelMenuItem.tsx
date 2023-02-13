@@ -9,13 +9,7 @@ import {
   Revision3DWithIndex,
   useRevisions,
 } from '@data-exploration-app/containers/ThreeD/hooks';
-import {
-  StyledSecondaryThreeDModelDetail,
-  StyledMenuItemContent,
-  StyledRevisionMenuItem,
-  StyledSecondaryThreeDModelBody,
-} from '@data-exploration-app/containers/ThreeD/title/SecondaryThreeDModelMenuItem';
-import ThreeDTimestamp from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
+
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import {
   getMainModelSubtitle,
@@ -23,6 +17,7 @@ import {
   getStateUrl,
 } from '@data-exploration-app/containers/ThreeD/utils';
 import { useNavigate } from 'react-router-dom';
+import { formatTime } from '@cognite/cdf-utilities';
 
 export const MainThreeDModelMenuItem = ({
   model,
@@ -60,7 +55,7 @@ export const MainThreeDModelMenuItem = ({
 
   if (!isFetched || revisions?.length === 0) {
     return (
-      <Menu.Item appendIcon={!isFetched ? 'Loader' : undefined}>
+      <Menu.Item css={{}} icon={!isFetched ? 'Loader' : undefined}>
         {menuItemContent}
       </Menu.Item>
     );
@@ -71,9 +66,13 @@ export const MainThreeDModelMenuItem = ({
       content={
         <Menu>
           {revisions?.map(({ createdTime, id, index, published }) => (
-            <StyledRevisionMenuItem
-              $isSelected={id === revision?.id}
-              appendIcon={id === revision?.id ? 'Checkmark' : undefined}
+            <Menu.Item
+              toggled={id === revision?.id}
+              description={
+                published
+                  ? 'Published'
+                  : `Created: ${formatTime(createdTime.getTime())}`
+              }
               key={id}
               onClick={() => {
                 if (id !== revision?.id) {
@@ -92,24 +91,8 @@ export const MainThreeDModelMenuItem = ({
                 }
               }}
             >
-              <StyledMenuItemContent alignItems="flex-start" direction="column">
-                <StyledSecondaryThreeDModelBody
-                  $isSelected={id === revision?.id}
-                >
-                  Revision {index}
-                </StyledSecondaryThreeDModelBody>
-                <StyledSecondaryThreeDModelDetail>
-                  {published ? (
-                    'Published'
-                  ) : (
-                    <>
-                      Created:{' '}
-                      <ThreeDTimestamp timestamp={createdTime.getTime()} />
-                    </>
-                  )}
-                </StyledSecondaryThreeDModelDetail>
-              </StyledMenuItemContent>
-            </StyledRevisionMenuItem>
+              Revision {index}
+            </Menu.Item>
           ))}
         </Menu>
       }

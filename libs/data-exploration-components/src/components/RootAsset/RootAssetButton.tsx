@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Button, Icon } from '@cognite/cogs.js';
+import { Flex, Icon } from '@cognite/cogs.js';
 
 import { RootAssetLabel, RootAssetButtonWrapper } from './elements';
 
@@ -17,14 +17,14 @@ export const RootAssetButton: React.FC<RootAssetButtonProps> = ({
 }) => {
   return (
     <RootAssetButtonWrapper
-      className="cogs-btn cogs-btn-link"
+      className="cogs cogs-button cogs-button--align-vertically-left cogs-button--type-ghost-accent cogs-button--size-medium cogs-button--icon-right cogs cogs-link"
       role="button"
       onClick={onClick}
     >
       <RootAssetLabel>{label}</RootAssetLabel>
-      <div>
+      <Flex justifyContent="center" alignItems="center">
         <Icon type={externalLink ? 'ArrowUpRight' : 'ArrowRight'} />
-      </div>
+      </Flex>
     </RootAssetButtonWrapper>
   );
 };

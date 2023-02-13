@@ -10,11 +10,14 @@ describe('Platypus Data Models Page - Create Data Model', () => {
     cy.visit(getUrl('/blog/blog/latest'));
 
     // edit button should be disabled
-    cy.getBySel('edit-schema-btn').should('be.disabled');
+    cy.getBySel('edit-schema-btn').should(
+      'have.class',
+      'cogs-button--disabled'
+    );
   });
   it('should not have access to creating a data model according to token', () => {
     cy.mockUserToken();
     cy.visit(getUrl(''));
-    cy.getBySel('create-data-model-btn').should('be.disabled');
+    cy.getBySel('create-data-model-btn').should('have.attr', 'aria-disabled');
   });
 });

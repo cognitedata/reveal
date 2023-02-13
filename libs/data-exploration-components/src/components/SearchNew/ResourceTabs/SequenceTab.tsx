@@ -1,16 +1,16 @@
 import React from 'react';
-import { Label } from '@cognite/cogs.js';
+import { Tabs } from '@cognite/cogs.js';
 import { useSequenceSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
-import { ResourceTypeTitle, TabContainer } from './elements';
+
 import { getTabCountLabel } from '@data-exploration-components/utils';
+import { ResourceTabProps } from './types';
 
-type Props = {
-  query?: string;
-  filter?: any;
-  showCount?: boolean;
-};
-
-export const SequenceTab = ({ query, filter, showCount = false }: Props) => {
+export const SequenceTab = ({
+  query,
+  filter,
+  showCount = false,
+  ...rest
+}: ResourceTabProps) => {
   const {
     data: { count },
   } = useSequenceSearchAggregateQuery({
@@ -18,14 +18,9 @@ export const SequenceTab = ({ query, filter, showCount = false }: Props) => {
     query,
   });
 
-  return (
-    <TabContainer>
-      <ResourceTypeTitle>{'Sequences'}</ResourceTypeTitle>
-      {showCount && (
-        <Label size="small" variant="unknown">
-          {getTabCountLabel(count)}
-        </Label>
-      )}
-    </TabContainer>
-  );
+  const chipRightProps = showCount
+    ? { chipRight: { label: getTabCountLabel(count), size: 'x-small' } }
+    : {};
+
+  return <Tabs.Tab label="Sequence" {...chipRightProps} {...rest} />;
 };

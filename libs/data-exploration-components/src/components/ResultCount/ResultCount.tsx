@@ -6,7 +6,7 @@ import {
   SdkResourceType,
 } from '@cognite/sdk-react-query-hooks';
 import { formatNumber } from '@data-exploration-components/utils';
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 import {
   getTitle,
   ResourceType,
@@ -39,9 +39,10 @@ export function ResultCount(props: ResultProps) {
   if (!result.count) return null;
 
   return (
-    <Label variant="normal">
-      {resultWithFilters.count} of {result.count} {result.label}
-    </Label>
+    <Chip
+      label={`${resultWithFilters.count} of ${result.count} ${result.label}`}
+      type="neutral"
+    />
   );
 }
 

@@ -7,7 +7,7 @@ import {
   Flex,
   Input,
   Menu,
-  Label,
+  Chip,
   SegmentedControl,
   Infobar,
   Detail,
@@ -94,17 +94,18 @@ export function ColumnToggle<T extends TableData = any>({
   const isSelectedCountLimitExceedingMaxValue =
     selectedColumnsCount >= columnSelectionLimit;
 
-  const handleColumnChange = (column: Column<T>) => (nextState: boolean) => {
-    if (nextState === true && selectedColumnsCount >= columnSelectionLimit) {
-      return;
-    }
+  const handleColumnChange =
+    (column: Column<T>) => (_: any, nextState?: boolean | string) => {
+      if (nextState === true && selectedColumnsCount >= columnSelectionLimit) {
+        return;
+      }
 
-    column.toggleVisibility();
-    trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.COLUMN_SELECTION, {
-      column: column?.id,
-      isSelected: !column.getIsVisible(),
-    });
-  };
+      column.toggleVisibility();
+      trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.COLUMN_SELECTION, {
+        column: column?.id,
+        isSelected: !column.getIsVisible(),
+      });
+    };
   const isSelectedItemsEmpty = tab === 'Selected' && selectedColumnsCount === 0;
 
   const shouldDisableUnselectedColumnOnMaxLimit = (column: Column<T>) =>
@@ -123,9 +124,10 @@ export function ColumnToggle<T extends TableData = any>({
               <StyledSegmentedButton key="All">All</StyledSegmentedButton>
               <StyledSegmentedButton key="Selected">
                 Selected
-                <StyledCountLabel size="small" variant="unknown">
-                  {selectedColumnsCount}
-                </StyledCountLabel>
+                <StyledCountLabel
+                  size="small"
+                  label={String(selectedColumnsCount)}
+                />
               </StyledSegmentedButton>
             </SegmentedControl>
 
@@ -245,17 +247,16 @@ const FlexWrapper = styled.div`
   min-height: 36px;
   align-items: center;
 `;
-
-export const StyledInput = styled(Input)`
+const StyledInput = styled(Input)`
   padding-top: 8px;
   padding-bottom: 8px;
 `;
 
-export const StyledCountLabel = styled(Label)`
+const StyledCountLabel = styled(Chip)`
   margin-left: 6px;
 `;
 
-export const Footer = styled(Menu.Footer)`
+const Footer = styled(Menu.Footer)`
   padding: 0 !important;
 `;
 

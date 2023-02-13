@@ -1,7 +1,6 @@
 import { getQueryParameter } from '@cognite/cdf-utilities';
-import { Flex } from '@cognite/cogs.js';
+import { Flex, Modal } from '@cognite/cogs.js';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import {
@@ -118,7 +117,7 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
   return (
     <div>
       {selectedType && (
-        <ModalDialog
+        <Modal
           visible={isTransformationModalOpen}
           title="Transformations"
           onOk={() => {
@@ -139,14 +138,12 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
           onCancel={() => {
             setIsTransformationModalOpen(false, null);
           }}
-          okType="primary"
-          width="90%"
-          height="86%"
+          size="full-screen"
         >
-          <div style={{ flex: 1 }}>
+          <div style={{ height: '100%' }}>
             <TransformationIframe transformationId={transformationId} />
           </div>
-        </ModalDialog>
+        </Modal>
       )}
       <SplitPanelLayout
         sidebarMinWidth={250}

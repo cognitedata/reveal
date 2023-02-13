@@ -1,4 +1,4 @@
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 import { ICellRendererParams } from 'ag-grid-community';
 import React from 'react';
 
@@ -8,24 +8,30 @@ export const DataModelNameCellRenderer = React.memo(
       params.data.id
     );
 
-    const renderLabel = () => {
+    const renderChip = () => {
       if (hasDraft) {
         return (
-          <Label size="small" variant="unknown" style={{ marginLeft: '15px' }}>
-            Draft
-          </Label>
+          <Chip
+            size="small"
+            style={{ marginLeft: '15px' }}
+            type="default"
+            label="Draft"
+          />
         );
       }
       return (
-        <Label size="small" style={{ marginLeft: '15px' }}>
-          V. {params.data.version}
-        </Label>
+        <Chip
+          size="small"
+          type="neutral"
+          style={{ marginLeft: '15px' }}
+          label={`V. ${params.data.version}`}
+        />
       );
     };
     return (
       <span>
         {params.value}
-        {params.data.version ? renderLabel() : null}
+        {params.data.version ? renderChip() : null}
       </span>
     );
   }

@@ -6,7 +6,7 @@ import {
   Button,
   Colors,
   Flex,
-  Graphic,
+  Illustrations,
   Icon,
   SegmentedControl,
 } from '@cognite/cogs.js';
@@ -22,6 +22,8 @@ import {
   isApprovedAnnotation,
   isSuggestedAnnotation,
 } from '../migration/utils';
+
+import { Annotation } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 interface AnnotationsListProps {
@@ -100,8 +102,8 @@ const AnnotationsList = ({
 
   const getColor = (annotation: ExtendedAnnotation) =>
     isSuggestedAnnotation(annotation)
-      ? Colors['border--interactive--toggled-hover'].hex()
-      : Colors['surface--misc-canvas--inverted'].hex();
+      ? Colors['border--interactive--toggled-hover']
+      : Colors['surface--misc-canvas--inverted'];
 
   const AnnotationItem = ({
     annotation,
@@ -131,13 +133,7 @@ const AnnotationsList = ({
           {getExtendedAnnotationLabel(annotation) || 'N/A'}
         </Body>
       </Flex>
-      <Icon
-        type="ChevronRight"
-        style={{
-          marginTop: '3px',
-          color: getColor(annotation),
-        }}
-      />
+      <Icon type="ChevronRight" />
     </ListItem>
   );
   return (
@@ -159,7 +155,6 @@ const AnnotationsList = ({
         <SegmentedControl
           style={{ marginRight: 24, flex: '0 0 auto' }}
           currentKey={filterType}
-          variant="default"
           fullWidth
           onButtonClicked={(key: string) =>
             setFilterType(key as AnnotationType)
@@ -218,6 +213,12 @@ const ListItem = styled.div<TagProps>`
       pending ? 'var(--cogs-bg-selected)' : 'var(--cogs-bg-hover)'};
   }
 `;
+interface IconProps {
+  annotation: Annotation;
+}
+const StyledIcon = styled(Icon)`
+  margin-top: 3px;
+`;
 
 const AnnotationListContainer = styled.div`
   min-width: 360px;
@@ -248,7 +249,7 @@ const EmptyState = ({ type }: { type: AnnotationType }) => (
       height: '100%',
     }}
   >
-    <Graphic type="Search" />
+    <Illustrations.Solo type="EmptyStateSearch" />
     <p>No {type !== 'all' ? type : ''} tags found.</p>
   </div>
 );

@@ -56,8 +56,7 @@ import noop from 'lodash/noop';
 import { CopyToClipboardIconButton } from './CopyToClipboardIconButton';
 import { getProject } from '@cognite/cdf-utilities';
 
-export interface TableProps<T extends Record<string, any>>
-  extends LoadMoreProps {
+export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   id: string;
   query?: string;
   data: T[];
@@ -88,7 +87,7 @@ export interface TableProps<T extends Record<string, any>>
   onRowExpanded?: OnChangeFn<ExpandedState>;
   enableCopying?: boolean;
   renderRowSubComponent?: (row: Row<T>) => React.ReactNode;
-}
+};
 
 export type TableData = Record<string, any>;
 

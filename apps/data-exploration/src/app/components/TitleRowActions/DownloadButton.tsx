@@ -52,6 +52,7 @@ function MetadataDownload({ item: { id, type } }: Props) {
   const menu = (
     <Menu>
       <Menu.Item
+        css={{}}
         onClick={() => {
           setDownloading(true);
         }}
@@ -114,6 +115,7 @@ function FileDownloadButton({ item }: Props) {
   const menu = (
     <Menu>
       <Menu.Item
+        css={{}}
         onClick={() => {
           setDownloading(true);
         }}
@@ -202,6 +204,7 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
   const menu = (
     <Menu>
       <Menu.Item
+        css={{}}
         onClick={() => {
           setIncludeDatpoints(false);
           setDownloading(true);
@@ -210,6 +213,7 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
         {DOWNLOAD_DATA_LABEL}
       </Menu.Item>
       <Menu.Item
+        css={{}}
         onClick={() => {
           setIncludeDatpoints(true);
           setDownloading(true);

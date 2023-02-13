@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   justify-content: center;
   display: flex;
   align-items: center;
-  color: ${Colors['greyscale-grey4'].hex()};
+  color: ${Colors['decorative--grayscale--400']};
 
   svg {
     width: 100%;

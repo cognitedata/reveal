@@ -62,6 +62,7 @@ export function MoreButton({ item: { type, id } }: Props) {
   const menu = (
     <Menu>
       <Menu.Item
+        css={{}}
         onClick={() => {
           copyIdsToClipboard(oData(id, type, tenant!, env), 'oData');
           trackUsage(EXPLORATION.COPY.O_DATA, { id, type, tenant });

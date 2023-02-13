@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { createLink } from '@cognite/cdf-utilities';
-import { Body, Colors, Flex, Graphic, Icon } from '@cognite/cogs.js';
+import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
+import { Graphic } from 'cogs-v7';
 import Highlighter from 'react-highlight-words';
 import { Link } from 'react-router-dom';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -146,11 +147,11 @@ export const AssetMappingsList = ({
                       >
                         <Icon
                           type="Assets"
-                          style={{
-                            position: 'absolute',
-                            marginTop: 2,
-                            marginLeft: '5px',
-                          }}
+                          // style={{
+                          //   position: 'absolute',
+                          //   marginTop: 2,
+                          //   marginLeft: '5px',
+                          // }}
                         />
                         <StyledFlex direction="column">
                           <StyledHighlighter

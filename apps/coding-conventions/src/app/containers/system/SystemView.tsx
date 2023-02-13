@@ -85,7 +85,7 @@ const CreateModal: React.FC<Props> = ({ toggleVisibility, onCreateClick }) => {
       modalHeight="490px"
       onCancel={toggleVisibility}
       title="Creating coding system"
-      footer={<ModalFooter onCancel={toggleVisibility} onOk={handleOkClick} />}
+      // footer={<ModalFooter onCancel={toggleVisibility} onOk={handleOkClick} />}
     >
       <Flex gap={8} direction="column">
         <Subtitle>Title *</Subtitle>

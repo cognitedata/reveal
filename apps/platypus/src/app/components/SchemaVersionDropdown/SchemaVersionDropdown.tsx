@@ -1,4 +1,4 @@
-import { Flex, Body, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Flex, Body, Dropdown, Icon, Menu, Chip } from '@cognite/cogs.js';
 import {
   DataModelVersion,
   DataModelVersionStatus,
@@ -26,10 +26,10 @@ const VersionType = ({
   return (
     <>
       {status === DataModelVersionStatus.PUBLISHED && isLatest && (
-        <VersionTag status={status}>Latest</VersionTag>
+        <Chip size="x-small" type="neutral" label="Latest" />
       )}
       {status === DataModelVersionStatus.DRAFT && (
-        <VersionTag status={status}>Local draft</VersionTag>
+        <Chip size="x-small" label="Local draft" />
       )}
     </>
   );
@@ -62,9 +62,10 @@ export function SchemaVersionDropdown({
             }}
           >
             {versions.map((schemaObj) => (
-              <MenuItem
+              <Menu.Item
+                css={{}}
                 key={`${schemaObj.version}-${schemaObj.status}`}
-                selected={
+                toggled={
                   schemaObj.version === selectedVersion.version &&
                   schemaObj.status === selectedVersion.status
                 }
@@ -90,7 +91,7 @@ export function SchemaVersionDropdown({
                   status={schemaObj.status}
                   isLatest={schemaObj.version === latest.version}
                 />
-              </MenuItem>
+              </Menu.Item>
             ))}
           </Menu>
         }

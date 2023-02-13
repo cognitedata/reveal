@@ -7,6 +7,7 @@ import { DataModelDetailModal } from '../DataModelDetailModal/DataModelDetailMod
 export type DataModelSettingsModalProps = {
   dataModel: DataModel;
   onRequestClose: () => void;
+  visible: boolean;
 };
 
 export const DataModelSettingsModal = (props: DataModelSettingsModalProps) => {
@@ -36,6 +37,7 @@ export const DataModelSettingsModal = (props: DataModelSettingsModalProps) => {
 
   return (
     <DataModelDetailModal
+      visible={props.visible}
       dataSets={[]}
       description={description || ''}
       externalId={props.dataModel.id}

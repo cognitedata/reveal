@@ -55,7 +55,7 @@ export const TitleRowWrapper = styled.div`
   align-items: center;
   flex-wrap: nowrap;
   padding: 16px;
-  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
 `;
 
 const NameWrapper = styled.div`

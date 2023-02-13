@@ -2,11 +2,11 @@ import {
   Button,
   Detail,
   Input,
+  Modal,
   OptionType,
   Select,
   Textarea,
 } from '@cognite/cogs.js';
-import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { InputDetail, NameWrapper, StyledEditableChip } from './elements';
@@ -41,6 +41,7 @@ export type DataModelDetailModalProps = {
   onExternalIdChange?: (value: string) => void;
   onNameChange: (value: string) => void;
   title: string;
+  visible?: boolean;
   space?: string;
   onSpaceChange?: (value: string) => void;
 };
@@ -92,15 +93,14 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
     !props.name.trim() || externalIdErrorMessage || (isFDMV3 && !props.space);
 
   return (
-    <ModalDialog
-      visible
+    <Modal
+      visible={props.visible}
       title={props.title}
       onCancel={props.onCancel}
       onOk={props.onSubmit}
       okDisabled={isSubmitDisabled}
-      okButtonName={props.okButtonName}
-      okProgress={props.isLoading}
-      okType="primary"
+      okText={props.okButtonName}
+      icon={props.isLoading ? 'Spinner' : undefined}
       data-cy="create-data-model-modal-content"
     >
       <div>
@@ -160,6 +160,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
               'modal_description_textarea_placeholder',
               'Add description'
             )}
+            fullWidth
           ></Textarea>
         </label>
 
@@ -221,6 +222,6 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
           </>
         )}
       </div>
-    </ModalDialog>
+    </Modal>
   );
 };

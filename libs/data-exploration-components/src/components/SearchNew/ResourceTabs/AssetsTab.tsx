@@ -1,16 +1,20 @@
-import React from 'react';
-import { Label } from '@cognite/cogs.js';
-import { useAssetsSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
-import { ResourceTypeTitle, TabContainer } from './elements';
-import { getTabCountLabel } from '@data-exploration-components/utils';
+import { TabProps, Tabs } from '@cognite/cogs.js';
 
-type Props = {
+import { getTabCountLabel } from '@data-exploration-components/utils';
+import { useAssetsSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
+
+interface Props extends TabProps {
   query?: string;
   filter?: any;
   showCount?: boolean;
-};
+}
 
-export const AssetsTab = ({ query, filter, showCount = false }: Props) => {
+export const AssetsTab = ({
+  query,
+  filter,
+  showCount = false,
+  ...rest
+}: Props) => {
   const {
     data: { count },
   } = useAssetsSearchAggregateQuery({
@@ -18,14 +22,9 @@ export const AssetsTab = ({ query, filter, showCount = false }: Props) => {
     query,
   });
 
-  return (
-    <TabContainer>
-      <ResourceTypeTitle>{'Assets'}</ResourceTypeTitle>
-      {showCount && (
-        <Label size="small" variant="unknown">
-          {getTabCountLabel(count)}
-        </Label>
-      )}
-    </TabContainer>
-  );
+  const chipRightProps = showCount
+    ? { chipRight: { label: getTabCountLabel(count), size: 'x-small' } }
+    : {};
+
+  return <Tabs.Tab label="Assets" {...chipRightProps} {...rest} />;
 };

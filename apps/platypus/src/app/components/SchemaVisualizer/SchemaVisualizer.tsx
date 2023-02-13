@@ -256,10 +256,10 @@ export const SchemaVisualizer = React.memo(
         const style: CSSProperties = {
           zIndex: zIndex.MAXIMUM,
           strokeWidth: 1,
-          stroke: Colors['greyscale-grey5'].hex(),
+          stroke: Colors['decorative--grayscale--500'],
         };
         if (highlightedIds.includes(id)) {
-          style.stroke = Colors['border-inverted'].hex();
+          style.stroke = Colors['border--muted--inverted'];
         }
         return (
           <path
@@ -404,12 +404,12 @@ export const SchemaVisualizer = React.memo(
       <div id="visualizer-wrapper" style={{ height: '100%' }}>
         {isVisualizerExpanded ? (
           <StyledModal
-            appElement={
+            getContainer={
               document.getElementById('visualizer-wrapper') || undefined
             }
             closable={false}
             visible={isVisualizerExpanded}
-            footer={null}
+            hideFooter
             onCancel={() => {
               setIsVisualizerExpanded(false);
             }}

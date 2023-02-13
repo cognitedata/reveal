@@ -98,18 +98,18 @@ const PreviewCell = styled.div<{ isActive: boolean; isPreviewing: boolean }>(
     ${!props.isPreviewing &&
     css`
       &&:hover {
-        background: ${Colors['greyscale-grey1'].hex()};
+        background: ${Colors['decorative--grayscale--100']};
       }
     `}
 
     ${props.isPreviewing &&
     css`
-      background: ${Colors['midblue-7'].hex()};
+      background: ${Colors['decorative--blue--700']};
     `}
 
     ${props.isActive &&
     css`
-      background: ${Colors['greyscale-grey1'].hex()};
+      background: ${Colors['decorative--grayscale--100']};
     `}
   `
 );

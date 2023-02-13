@@ -1,5 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
-import { Breadcrumb } from '@cognite/cogs.js';
+import { Breadcrumbs as Breadcrumb } from '@cognite/cogs.js';
 import {
   getSearchParams,
   removeProjectFromPath,
@@ -34,21 +34,20 @@ export const Breadcrumbs = ({ currentResource }: BreadcrumbsProps) => {
   return (
     <BreadcrumbWrapper>
       <Breadcrumb>
-        <Breadcrumb.Item title="Search" link={''} />
+        <Breadcrumb.Item label="Search" link={''} />
         {location.state?.history?.map(
           ({ path, resource }: any, index: number) => (
             <Breadcrumb.Item
               key={`${path}-${index}`}
-              title={resource.title}
-              onClick={(e) => {
-                e.preventDefault();
+              label={resource.title}
+              onClick={() => {
                 handleBreadcrumbClick(path, index);
               }}
               link=""
             />
           )
         )}
-        <Breadcrumb.Item title={currentResource.title} link={''} />
+        <Breadcrumb.Item label={currentResource.title} />
       </Breadcrumb>
     </BreadcrumbWrapper>
   );
@@ -58,14 +57,15 @@ const BreadcrumbWrapper = styled.div`
   border-bottom: 1px solid var(--cogs-border--muted);
   padding: 8px 16px;
 
-  .cogs-breadcrumb {
+  ol {
     margin: 0;
     padding: 0;
   }
 
   /* disable Search field */
-  li:first-child {
-    a {
+  li:first-child,
+  li:last-child {
+    button {
       pointer-events: none;
       color: var(--cogs-text-icon--strong);
     }

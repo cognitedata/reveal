@@ -49,7 +49,7 @@ const GeneralDetailsHeader = styled.div`
 const GeneralDetailsContent = styled.div<{ isPreview: boolean }>`
   padding: 12px;
   display: grid;
-  grid-gap: 16px;
+  grid-gap: 4px;
   --max-columns: ${(props) => (props.isPreview ? 1 : 2)};
   /* Adjusting for the 8px grid-gap as well */
   grid-template-columns: repeat(

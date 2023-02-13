@@ -86,6 +86,11 @@ export const getPivotRangeAsDates = ({
   ];
 };
 
+export interface DatePickerInputProps
+  extends Omit<ButtonProps, 'ref' | 'alignVertically'> {
+  date: Date;
+  onDateChange: (_date: Date) => void;
+}
 export const DatePickerInput = ({
   date,
   onDateChange,
@@ -93,7 +98,7 @@ export const DatePickerInput = ({
 }: {
   date: Date;
   onDateChange: (_date: Date) => void;
-} & Omit<ButtonProps, 'ref'>) => (
+} & Omit<ButtonProps, 'ref' | 'alignVertically'>) => (
   <DatePickerButtonWrapper icon="Calendar" type="tertiary" {...props}>
     <ReactDatePicker
       open={false}

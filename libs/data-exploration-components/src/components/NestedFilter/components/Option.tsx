@@ -45,7 +45,7 @@ export const Option: React.FC<OptionProps> = ({
           name={label || value}
           checked={checked}
           indeterminate={indeterminate}
-          onChange={onChange}
+          onChange={(_, nextState) => onChange(!!nextState)}
         >
           <OptionLabel>{label || value}</OptionLabel>
         </Checkbox>
@@ -58,9 +58,10 @@ export const Option: React.FC<OptionProps> = ({
       </LabelWrapper>
 
       {!isUndefined(count) && (
-        <AvailableResultsCount data-testid="count">
-          {formatBigNumbersWithSuffix(count)}
-        </AvailableResultsCount>
+        <AvailableResultsCount
+          data-testid="count"
+          label={`${formatBigNumbersWithSuffix(count)}`}
+        />
       )}
 
       {hasOptionWithChildOptions && (

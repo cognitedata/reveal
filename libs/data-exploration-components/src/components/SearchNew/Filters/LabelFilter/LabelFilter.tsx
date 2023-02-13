@@ -56,6 +56,7 @@ export const LabelFilterV2 = ({
             value: String(label.value),
           }))}
           cogsTheme="grey"
+          menuPosition="fixed"
           isDisabled={isError || !allowLabels}
           onChange={setLabel}
           value={value as OptionType<string>[]}

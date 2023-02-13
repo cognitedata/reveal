@@ -57,7 +57,7 @@ const SplitterWrapper = styled.div(
     position: relative;
 
     button.cogs-menu-item {
-      color: ${Colors.black.hex()};
+      color: ${Colors['decorative--grayscale--black']};
     }
 
     .splitter-layout {

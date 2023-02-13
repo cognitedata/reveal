@@ -1,16 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Graphic } from '@cognite/cogs.js';
+import { Button, Illustrations } from '@cognite/cogs.js';
 import { AssetSmallPreview } from '@data-exploration-components/containers/Assets';
 import { FileSmallPreview } from '@data-exploration-components/containers/Files';
 import { SequenceSmallPreview } from '@data-exploration-components/containers/Sequences';
 import { TimeseriesSmallPreview } from '@data-exploration-components/containers/Timeseries';
 import { EventSmallPreview } from '@data-exploration-components/containers/Events';
 import { Loader } from '@data-exploration-components/components';
+import noop from 'lodash/noop';
 import {
   ResourceItem,
   SelectableItemProps,
 } from '@data-exploration-components/types';
+import { Graphic } from 'cogs-v7';
 
 type Props = {
   item?: ResourceItem;
@@ -49,9 +51,9 @@ export const ResourcePreviewSidebar = ({
   actions,
   footer,
   content: propContent,
-  onClose = () => {},
+  onClose = noop,
   selectionMode = 'none',
-  onSelect = () => {},
+  onSelect = noop,
   isSelected = false,
   hideTitle = false,
   hideContent = false,

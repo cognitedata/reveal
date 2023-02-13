@@ -15,9 +15,9 @@ export const ResetFiltersButton = <T extends NewFiltersType>({
     <StyledButton
       onClick={handleResetFilters}
       type="tertiary"
-      variant="inverted"
+      inverted
       icon="Restore"
-      size="default"
+      size="medium"
     >
       Reset filters
     </StyledButton>

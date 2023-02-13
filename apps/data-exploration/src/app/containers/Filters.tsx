@@ -60,6 +60,7 @@ export const Filters: React.FC<Props> = ({
 const Container = styled.div`
   height: 100%;
   display: flex;
+  padding: 8px 0;
   flex-direction: column;
   overflow-y: auto;
 `;

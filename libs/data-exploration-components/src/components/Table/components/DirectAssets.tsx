@@ -1,5 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Link, Menu } from '@cognite/cogs.js';
 import { Asset, FileInfo, IdEither, Sequence, Timeseries } from '@cognite/sdk';
 import { CogniteEvent } from '@cognite/unified-file-viewer';
 import { RelationshipLabels } from '../../../types';
@@ -10,6 +10,8 @@ import {
   useAssetsByIdQuery,
 } from '@data-exploration-lib/domain-layer';
 import { EMPTY_ARRAY } from '@data-exploration-lib/core';
+import styled from 'styled-components';
+import { RootAssetButton } from '@data-exploration-components/components/RootAsset';
 
 interface DirectAssetsProps {
   data: Timeseries &
@@ -39,16 +41,11 @@ export const DirectAssets = ({
   if (items.length === 1) {
     const rootAsset = items[0];
     return (
-      <Button
-        onClick={(e) => e.stopPropagation()}
-        type="link"
-        target="_blank"
-        href={createLink(`/explore/asset/${rootAsset.id}`)}
-        icon="ArrowUpRight"
-        iconPlacement="right"
-      >
-        <StyledButton>{rootAsset.name}</StyledButton>
-      </Button>
+      <RootAssetButton
+        label={rootAsset.name}
+        onClick={() => createLink(`/explore/asset/${rootAsset.id}`)}
+        externalLink
+      />
     );
   }
 
@@ -56,18 +53,18 @@ export const DirectAssets = ({
     <Dropdown
       openOnHover
       content={
-        <Menu>
+        <StyledMenu>
           {items?.map((item) => (
-            <Menu.Item
-              onClick={(e) => e.stopPropagation()}
-              href={createLink(`/explore/asset/${item.id}`)}
-              target="_blank"
-              key={item.id}
-            >
-              {item.name}
+            <Menu.Item css={{}} key={item.id}>
+              <StyledLink
+                href={createLink(`/explore/asset/${item.id}`)}
+                target="_blank"
+              >
+                {item.name}
+              </StyledLink>
             </Menu.Item>
           ))}
-        </Menu>
+        </StyledMenu>
       }
     >
       <Button icon="ChevronDown" iconPlacement="right">
@@ -76,3 +73,15 @@ export const DirectAssets = ({
     </Dropdown>
   );
 };
+
+const StyledLink = styled(Link)`
+  width: 100%;
+  display: block;
+  text-align: left;
+  justify-content: unset;
+`;
+
+const StyledMenu = styled(Menu)`
+  max-height: 300px;
+  overflow: auto;
+`;

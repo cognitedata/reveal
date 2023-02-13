@@ -18,6 +18,7 @@ import {
   SelectableItemProps,
 } from '@data-exploration-components/types';
 import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
+import noop from 'lodash/noop';
 import { TimeOptions } from '../types';
 
 export const TimeseriesSmallPreview = ({
@@ -28,7 +29,7 @@ export const TimeseriesSmallPreview = ({
   statusText,
   selectionMode = 'none',
   isSelected = false,
-  onSelect = () => {},
+  onSelect = noop,
   hideTitle = false,
 }: {
   timeseriesId: number;
@@ -67,7 +68,7 @@ export const TimeseriesSmallPreview = ({
           containerStyles={{
             display: 'flex',
             alignItems: 'center',
-            color: Colors['greyscale-grey6'].hex(),
+            color: 'var(--cogs-text-icon--medium)',
           }}
         >
           <Body

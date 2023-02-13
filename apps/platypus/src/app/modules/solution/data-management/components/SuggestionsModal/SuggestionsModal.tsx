@@ -7,10 +7,10 @@ import {
   Select,
   Slider,
   Title,
+  Modal,
 } from '@cognite/cogs.js';
 import * as Sentry from '@sentry/react';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { KeyValueMap } from '@platypus/platypus-core';
@@ -225,15 +225,13 @@ export const SuggestionsModal = ({
   };
 
   return (
-    <ModalDialog
+    <Modal
       visible={true}
       title="Suggestions"
       onCancel={() => onCancel(selectedColumn?.name)}
       onOk={onApproved}
-      width={'98vw'}
-      height={'84vh'}
-      okButtonName="Confirm"
-      okType="primary"
+      size="full-screen"
+      okText={t('confirm_suggestions', 'Confirm')}
     >
       <Wrapper>
         <SplitPanelLayout
@@ -458,7 +456,7 @@ export const SuggestionsModal = ({
           }
         />
       </Wrapper>
-    </ModalDialog>
+    </Modal>
   );
 };
 

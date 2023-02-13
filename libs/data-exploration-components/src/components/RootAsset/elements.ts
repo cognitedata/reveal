@@ -1,4 +1,4 @@
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
 export const RootAssetLabel = styled.div`
@@ -11,7 +11,7 @@ export const RootAssetLabel = styled.div`
   white-space: nowrap;
 `;
 
-export const LoadingLabel = styled(Label)`
+export const LoadingLabel = styled(Chip)`
   background: none !important;
 `;
 
@@ -19,6 +19,7 @@ export const RootAssetButtonWrapper = styled.div`
   max-width: 100%;
   padding: 8px 12px 8px 12px;
   gap: 4px;
+  align-items: center;
 
   && {
     justify-content: unset;
