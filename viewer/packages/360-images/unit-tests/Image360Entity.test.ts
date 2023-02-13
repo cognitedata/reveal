@@ -8,7 +8,7 @@ import { Image360Descriptor, Image360Provider } from '@reveal/data-providers';
 import { Image360Entity } from '../src/entity/Image360Entity';
 import { It, Mock } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
-import { Image360Icon } from '../src/Image360Icon';
+import { Image360Icon } from '../src/entity/Image360Icon';
 
 describe(Image360Entity.name, () => {
   test('transformation should be respected', () => {
