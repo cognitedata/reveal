@@ -72,8 +72,11 @@ The `Image360Visualization` object has convenience functionality related to the 
 The `Image360Collection` exposes events `image360Entered` and `image360Exited` for subscribing to enter & exit from 360 image mode.
 Subscribing to the events can look like
 ```ts
-const image360Collection = viewer.add360ImageSet('events', { site_id: 'site-S01-area-a03' });
-image360Collection.on('image360Entered', (image360: Image360) => { alert('360 Image mode entered at Image: ', image360.transform); });
+const image360Collection = await viewer.add360ImageSet('events', { site_id: 'site-S01-area-a03' });
+image360Collection.on('image360Entered', (image360: Image360) => {
+    const position = new THREE.Vector3();
+    position.setFromMatrixPosition(image360.transform);
+    alert(`360 Image mode entered at Image position: ${JSON.stringify(position)}`);
+  });
 image360Collection.on('image360Exited', () => { alert('Exited from 360 Image mode'); });
 ```
-  
