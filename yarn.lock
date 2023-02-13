@@ -2707,18 +2707,6 @@
     "@types/react" "*"
     "@types/react-dom" "*"
 
-"@types/sinon@^9.0.10":
-  version "9.0.11"
-  resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-9.0.11.tgz#7af202dda5253a847b511c929d8b6dda170562eb"
-  integrity sha512-PwP4UY33SeeVKodNE37ZlOsR9cReypbMJOhZ7BVE0lB+Hix3efCOxiJWiE5Ia+yL9Cn2Ch72EjFTRze8RZsNtg==
-  dependencies:
-    "@types/sinonjs__fake-timers" "*"
-
-"@types/sinonjs__fake-timers@*":
-  version "8.1.2"
-  resolved "https://registry.yarnpkg.com/@types/sinonjs__fake-timers/-/sinonjs__fake-timers-8.1.2.tgz#bf2e02a3dbd4aecaf95942ecd99b7402e03fad5e"
-  integrity sha512-9GcLXF0/v3t80caGs5p2rRfkB+a8VBGLJZVih6CNFkx8IZ994wiKKLSRs9nuFwk1HevWs/1mnUmkApGrSGsShA==
-
 "@types/sockjs@^0.3.33":
   version "0.3.33"
   resolved "https://registry.yarnpkg.com/@types/sockjs/-/sockjs-0.3.33.tgz#570d3a0b99ac995360e3136fd6045113b1bd236f"
