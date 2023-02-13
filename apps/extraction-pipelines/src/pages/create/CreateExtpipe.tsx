@@ -32,8 +32,6 @@ import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages'
 import { ExtpipeRawTable } from 'model/Extpipe';
 import { User } from 'model/User';
 import { createAddExtpipeInfo } from 'utils/extpipeUtils';
-import { EXTPIPES_WRITES } from 'model/AclAction';
-import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { trackUsage } from 'utils/Metrics';
 import { getContainer } from 'utils/utils';
 import { styleScope } from 'styles/styleScope';
@@ -262,20 +260,18 @@ export default function CreateExtpipePage() {
 
   return (
     <RegisterExtpipeLayout>
-      <CapabilityCheck requiredPermissions={EXTPIPES_WRITES}>
-        <Modal
-          visible
-          width={600}
-          closable={false}
-          closeIcon={false}
-          appElement={document.getElementsByClassName(styleScope).item(0)!}
-          getContainer={getContainer}
-          footer={null}
-          title={t('create-ext-pipeline')}
-        >
-          <CreateExtpipe />
-        </Modal>
-      </CapabilityCheck>
+      <Modal
+        visible
+        width={600}
+        closable={false}
+        closeIcon={false}
+        appElement={document.getElementsByClassName(styleScope).item(0)!}
+        getContainer={getContainer}
+        footer={null}
+        title={t('create-ext-pipeline')}
+      >
+        <CreateExtpipe />
+      </Modal>
     </RegisterExtpipeLayout>
   );
 }

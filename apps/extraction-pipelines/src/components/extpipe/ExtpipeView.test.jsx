@@ -10,9 +10,6 @@ import { ExtpipeDetails } from 'components/extpipe/ExtpipeDetails';
 import { trackUsage } from 'utils/Metrics';
 import { useSDK } from '@cognite/sdk-provider';
 import { render } from 'utils/test';
-// 
-import { useCapabilities } from '@cognite/sdk-react-query-hooks';
-import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
 describe('ExtpipeView', () => {
   const mockExtpipe = getMockResponse()[0];
@@ -27,10 +24,6 @@ describe('ExtpipeView', () => {
       mockExtpipe,
       '/'
     );
-    useCapabilities.mockReturnValue({
-      isLoading: false,
-      data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: ['READ', 'WRITE'] }],
-    });
   });
   afterEach(() => {
     jest.resetAllMocks();

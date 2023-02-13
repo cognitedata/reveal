@@ -4,10 +4,7 @@ import NoExtpipes from 'components/error/NoExtpipes';
 import { Button, Flex, Loader, Modal, Title } from '@cognite/cogs.js';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import { StyledTooltip, PageWrapperColumn } from 'components/styled';
-import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
-import { EXTPIPES_READS, EXTPIPES_WRITES } from 'model/AclAction';
 import ExtpipesTable from 'components/table/ExtpipesTable';
-import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import styled from 'styled-components';
 import { getContainer } from 'utils/utils';
 import { styleScope } from 'styles/styleScope';
@@ -54,8 +51,7 @@ const Extpipes: FunctionComponent<Props> = () => {
 
   const { data, isLoading, error: errorExtpipes, refetch } = useExtpipes(20);
 
-  const permissions = useOneOfPermissions(EXTPIPES_WRITES);
-  const canEdit = permissions.data;
+  const canEdit = true;
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -159,12 +155,10 @@ export default function CombinedComponent() {
   return (
     <StyledPageContainer>
       <PageWrapperColumn>
-        <CapabilityCheck requiredPermissions={EXTPIPES_READS}>
-          <Title level={3}>{t('extraction-pipeline', { count: 0 })}</Title>
-          <Flex>
-            <Extpipes />
-          </Flex>
-        </CapabilityCheck>
+        <Title level={3}>{t('extraction-pipeline', { count: 0 })}</Title>
+        <Flex>
+          <Extpipes />
+        </Flex>
       </PageWrapperColumn>
     </StyledPageContainer>
   );

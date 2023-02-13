@@ -33,10 +33,5 @@ jest.mock('utils/Metrics', () => {
     trackUsage: jest.fn(),
   };
 });
-jest.mock('@cognite/sdk-react-query-hooks', () => {
-  return {
-    useCapabilities: jest.fn(),
-  };
-});
 
 window.URL.createObjectURL = noop as any;

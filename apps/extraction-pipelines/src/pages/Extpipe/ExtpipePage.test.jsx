@@ -24,9 +24,6 @@ import { RunTableHeading } from 'components/extpipe/RunLogsCols';
 import { useFilteredRuns, useRuns, useAllRuns } from 'hooks/useRuns';
 import ExtpipePage from 'pages/Extpipe/ExtpipePage';
 import { useDataSetsList } from 'hooks/useDataSetsList';
-//
-import { useCapabilities } from '@cognite/sdk-react-query-hooks';
-import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
 jest.mock('react-router-dom', () => {
   const r = jest.requireActual('react-router-dom');
@@ -74,10 +71,7 @@ describe('ExtpipePage', () => {
     useParams.mockReturnValue({ id: 1 });
     useDataSetsList.mockReturnValue({ data: mockDataSetResponse() });
     useAllRuns.mockReturnValue({ data: { pages: [] } });
-    useCapabilities.mockReturnValue({
-      isLoading: false,
-      data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: ['READ', 'WRITE'] }],
-    });
+
     const modalRoot = document.createElement('div');
     modalRoot.setAttribute('class', 'extpipes-ui-style-scope');
     document.body.appendChild(modalRoot);
