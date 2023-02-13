@@ -5,7 +5,10 @@ import {
 } from '@platypus/platypus-core';
 import { useQuery } from '@tanstack/react-query';
 import { useInjection } from '../../../../hooks/useInjection';
-import { Notification } from '@platypus-app/components/Notification/Notification';
+import {
+  formatValidationErrors,
+  Notification,
+} from '@platypus-app/components/Notification/Notification';
 import {
   useDataModel,
   useDataModelVersions,
@@ -59,7 +62,7 @@ export const usePublishedRowsCountMapByType = ({
         Notification({
           type: 'error',
           message: error.message,
-          validationErrors: error.errors,
+          extra: formatValidationErrors(error.errors),
         });
         throw errResponse;
       }

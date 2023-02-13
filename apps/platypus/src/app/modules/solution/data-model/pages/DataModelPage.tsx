@@ -5,7 +5,10 @@ import { Flex } from '@cognite/cogs.js';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import { Notification } from '@platypus-app/components/Notification/Notification';
+import {
+  formatValidationErrors,
+  Notification,
+} from '@platypus-app/components/Notification/Notification';
 import { TOKENS } from '@platypus-app/di';
 import {
   ErrorType,
@@ -13,6 +16,9 @@ import {
   Result,
   getDataModelEndpointUrl,
   PlatypusError,
+  PlatypusValidationError,
+  ValidationError,
+  PlatypusDmlError,
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
@@ -55,6 +61,36 @@ export interface DataModelPageProps {
   dataModelExternalId: string;
   space: string;
 }
+
+const formatDmlError = (error: PlatypusDmlError) => {
+  return (
+    <div
+      key="errors"
+      style={{
+        display: 'block',
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        maxHeight: '150px',
+      }}
+    >
+      <ul style={{ paddingLeft: '16px' }}>
+        {error.errors.map((err) => {
+          const prefix = `[Line: ${err.location.start.line}]`;
+          let message = `${prefix} ${err.message}`;
+          if (err.hint) {
+            message += `\n${' '.repeat(prefix.length + 1)}${err.hint}`;
+          }
+
+          return (
+            <li style={{ whiteSpace: 'pre-wrap' }} key={message}>
+              {message}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+};
 
 export const DataModelPage = ({
   dataModelExternalId,
@@ -175,12 +211,12 @@ export const DataModelPage = ({
         if ((error?.type as ErrorType) === 'BREAKING_CHANGE') {
           setBreakingChanges(error.message);
           setPublishModalVersionType(versionType);
-        } else if (error?.type as ErrorType) {
+        } else if (error instanceof PlatypusValidationError) {
           Notification({
             type: 'error',
             title: 'Error: could not validate data model',
             message: error.message,
-            validationErrors: error.errors || [],
+            extra: formatValidationErrors(error.errors),
           });
         }
       } else {
@@ -265,7 +301,12 @@ export const DataModelPage = ({
           type: 'error',
           title: 'Error: could not update data model',
           message: result.error.message,
-          validationErrors: result.error.errors || [],
+          extra:
+            result.error instanceof PlatypusDmlError
+              ? formatDmlError(result.error)
+              : formatValidationErrors(
+                  result.error.errors as ValidationError[]
+                ),
         });
       }
 

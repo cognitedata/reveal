@@ -10,7 +10,11 @@ import logout from './app/cmds/logout';
 import { DEBUG as _DEBUG } from './app/utils/logger';
 import { CONSTANTS } from './app/constants';
 import { getMixpanel } from '@cognite/platypus-cdf-cli/app/utils/mixpanel';
-import { PlatypusError } from '@platypus/platypus-core';
+import {
+  PlatypusDmlError,
+  PlatypusError,
+  PlatypusValidationError,
+} from '@platypus/platypus-core';
 import * as Sentry from '@sentry/node';
 import CONFIG from './app/config/config';
 
@@ -61,10 +65,30 @@ scriptName(CONSTANTS.APP_ID)
       err.message ||
       'Something went wrong, and we are unable to detect what please contact us for more info';
 
-    if (err instanceof PlatypusError && (err as PlatypusError).errors?.length) {
+    if (
+      err instanceof PlatypusValidationError &&
+      (err as PlatypusValidationError).errors?.length
+    ) {
       errorMessage +=
         '\n' +
-        (err as PlatypusError).errors.map((error) => error.message).join('\n');
+        (err as PlatypusValidationError).errors
+          .map((error) => error.message)
+          .join('\n');
+    }
+
+    if (err instanceof PlatypusDmlError) {
+      errorMessage +=
+        '\n' +
+        (err as PlatypusDmlError).errors
+          .map((error) => {
+            const prefix = `[Line: ${error.location.start.line}]:`;
+            let msg = `${prefix} ${error.message}`;
+            if (error.hint) {
+              msg += `\n${' '.repeat(prefix.length + 1)}${error.hint}`;
+            }
+            return msg;
+          })
+          .join('\n');
     }
 
     console.error(chalk.red(errorMessage));

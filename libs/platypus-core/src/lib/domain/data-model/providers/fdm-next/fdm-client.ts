@@ -39,7 +39,7 @@ import { DataModelDTO } from './dto/dms-data-model-dtos';
 import { DataModelDataMapper } from './data-mappers';
 import { DataUtils } from '../../../../boundaries/utils/data-utils';
 import { FdmMixerApiService } from './services/mixer-api';
-import { PlatypusError } from '../../../../boundaries/types';
+import { PlatypusDmlError, PlatypusError } from '../../../../boundaries/types';
 import { IGraphQlUtilsService } from '../../boundaries';
 import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
 import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
@@ -243,9 +243,9 @@ export class FdmClient implements FlexibleDataModelingClient {
       .then((upsertResult) => {
         if (upsertResult.errors?.length) {
           return Promise.reject(
-            new PlatypusError(
+            new PlatypusDmlError(
               `An error has occured. Data model was not published.`,
-              'SERVER_ERROR'
+              upsertResult.errors
             )
           );
         }

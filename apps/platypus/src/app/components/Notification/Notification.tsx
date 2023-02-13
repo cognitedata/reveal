@@ -5,7 +5,7 @@ export const Notification = ({
   type,
   title = '',
   message,
-  validationErrors = [],
+  extra = undefined,
   options = {
     autoClose: 5000,
     position: 'bottom-right',
@@ -14,7 +14,7 @@ export const Notification = ({
   type: 'info' | 'success' | 'error' | 'warning';
   message: string;
   title?: string;
-  validationErrors?: ValidationError[];
+  extra?: JSX.Element | null;
   options?: ToastProps;
 }) => {
   const toastBody: JSX.Element[] = [];
@@ -32,8 +32,34 @@ export const Notification = ({
     </p>
   );
 
+  if (extra) {
+    toastBody.push(extra);
+  }
+
+  if (type === 'info') {
+    toast.info(<div>{toastBody}</div>, options);
+  }
+
+  if (type === 'success') {
+    toast.success(<div>{toastBody}</div>, options);
+  }
+
+  if (type === 'error') {
+    // eslint-disable-next-line no-console
+    console.error(toastBody);
+    toast.error(<div>{toastBody}</div>, options);
+  }
+
+  if (type === 'warning') {
+    toast.warning(<div>{toastBody}</div>, options);
+  }
+};
+
+export const formatValidationErrors = (
+  validationErrors?: ValidationError[]
+) => {
   if (validationErrors && validationErrors.length) {
-    toastBody.push(
+    return (
       <div
         key="errors"
         style={{
@@ -50,23 +76,7 @@ export const Notification = ({
         </ul>
       </div>
     );
-  }
-
-  if (type === 'info') {
-    toast.info(<div>{toastBody}</div>, options);
-  }
-
-  if (type === 'success') {
-    toast.success(<div>{toastBody}</div>, options);
-  }
-
-  if (type === 'error') {
-    // eslint-disable-next-line no-console
-    console.error(toastBody, validationErrors);
-    toast.error(<div>{toastBody}</div>, options);
-  }
-
-  if (type === 'warning') {
-    toast.warning(<div>{toastBody}</div>, options);
+  } else {
+    return null;
   }
 };

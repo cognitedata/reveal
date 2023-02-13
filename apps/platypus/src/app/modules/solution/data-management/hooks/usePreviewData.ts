@@ -1,6 +1,7 @@
 import {
   DataModelTypeDefsType,
   PlatypusError,
+  PlatypusValidationError,
   QueryFilter,
 } from '@platypus/platypus-core';
 import { useQuery } from '@tanstack/react-query';
@@ -89,12 +90,12 @@ export const usePreviewData = (
           return response.getValue();
         })
         .catch((e) => {
-          throw new PlatypusError(
+          throw new PlatypusValidationError(
             'Unable to fetch preview data',
             'NOT_FOUND',
+            e,
             400,
-            null,
-            e
+            null
           );
         });
     },

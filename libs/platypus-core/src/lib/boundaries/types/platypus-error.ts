@@ -39,20 +39,19 @@ export type ErrorType =
   | 'SERVER_ERROR'
   | 'NOT_AUTHORIZED'
   | 'NOT_AUTHENTICATED'
-  | 'BREAKING_CHANGE';
+  | 'BREAKING_CHANGE'
+  | 'DML_ERROR';
 export class PlatypusError {
   message: string;
   code?: number;
   type: ErrorType;
   stack?: unknown;
-  errors?: ValidationError[];
 
   constructor(
     message: string,
     type: ErrorType,
     code?: number,
-    stack?: unknown,
-    errors?: ValidationError[]
+    stack?: unknown
   ) {
     this.message = message;
     this.type = type as ErrorType;
@@ -61,20 +60,23 @@ export class PlatypusError {
     if (stack) {
       this.stack = stack;
     }
-
-    if (errors) {
-      this.errors = errors;
-    }
   }
 
   static fromSdkError(err: SdkError): PlatypusError {
-    const platypusErrorMsg = new PlatypusError(
-      err.message as string,
-      'UNKNOWN',
-      err.status,
-      err.stack,
-      err.errors || []
-    );
+    const platypusErrorMsg = err.errors
+      ? new PlatypusValidationError(
+          err.message as string,
+          'UNKNOWN',
+          err.errors,
+          err.status,
+          err.stack
+        )
+      : new PlatypusError(
+          err.message as string,
+          'UNKNOWN',
+          err.status,
+          err.stack
+        );
 
     const scopedMsg =
       err.errors && err.errors.length === 1
@@ -102,7 +104,10 @@ export class PlatypusError {
         }
 
         // Handle breaking changes for mixer API
-        if (err.errors?.some((error: any) => error?.breakingChangeInfo)) {
+        if (
+          platypusErrorMsg instanceof PlatypusValidationError &&
+          err.errors?.some((error: any) => error?.breakingChangeInfo)
+        ) {
           platypusErrorMsg.errors = err.errors.map((err) => {
             return {
               ...err,
@@ -181,12 +186,11 @@ export class PlatypusError {
   static fromDataModelValidationError(
     errors: DataModelValidationError[]
   ): PlatypusError {
-    const errorResponse = new PlatypusError(
+    const errorResponse = new PlatypusValidationError(
       'Your Data Model GraphQL schema contains errors.',
       'VALIDATION',
-      400,
-      null,
-      errors
+      errors,
+      400
     );
     if (errors?.some((error) => error.extensions?.breakingChangeInfo)) {
       errorResponse.type = 'BREAKING_CHANGE';
@@ -201,5 +205,45 @@ export class PlatypusError {
 
   toString(): string {
     return this.message;
+  }
+}
+
+export class PlatypusValidationError extends PlatypusError {
+  errors: ValidationError[];
+  constructor(
+    message: string,
+    type: ErrorType,
+    errors: ValidationError[],
+    code?: number,
+    stack?: unknown
+  ) {
+    super(message, type, code, stack);
+    this.errors = errors;
+  }
+}
+
+export type DmlError = {
+  kind: string;
+  message: string;
+  hint: string;
+  location: SourceLocationRange;
+};
+
+export type SourceLocationRange = {
+  start: SourceLocation;
+  end?: SourceLocation;
+};
+
+export type SourceLocation = {
+  line: number;
+  column: number;
+  offset?: number;
+};
+
+export class PlatypusDmlError extends PlatypusError {
+  errors: DmlError[];
+  constructor(baseMessage: string, errors: DmlError[]) {
+    super(baseMessage, 'DML_ERROR');
+    this.errors = errors;
   }
 }
