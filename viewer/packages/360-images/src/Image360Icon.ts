@@ -2,9 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-import { AttributeDataAccessor, SceneHandler } from '@reveal/utilities';
+import { AttributeDataAccessor, EventTrigger, SceneHandler } from '@reveal/utilities';
 import * as THREE from 'three';
-import { Mesh, Ray, Sphere, Vector3 } from 'three';
+import { Ray, Sphere, Vector3 } from 'three';
 import { clamp } from 'three/src/math/MathUtils';
 
 export class Image360Icon {
@@ -13,9 +13,10 @@ export class Image360Icon {
   private readonly _position: THREE.Vector3;
   private readonly _sceneHandler: SceneHandler;
   private _adaptiveScale = 1;
-  private readonly _renderHook: THREE.Mesh;
   private readonly _minPixelSize: number;
   private readonly _maxPixelSize: number;
+  private readonly _setAdaptiveScale: (renderer: THREE.WebGLRenderer, camera: THREE.Camera) => void;
+  private readonly _onRenderTrigger: EventTrigger<(renderer: THREE.WebGLRenderer, camera: THREE.Camera) => void>;
 
   constructor(
     position: THREE.Vector3,
@@ -23,7 +24,8 @@ export class Image360Icon {
     sceneHandler: SceneHandler,
     alphaAttributeAccessor: AttributeDataAccessor<Uint8ClampedArray>,
     minPixelSize: number,
-    maxPixelSize: number
+    maxPixelSize: number,
+    onRenderTrigger: EventTrigger<(renderer: THREE.WebGLRenderer, camera: THREE.Camera) => void>
   ) {
     this._minPixelSize = minPixelSize;
     this._maxPixelSize = maxPixelSize;
@@ -33,16 +35,14 @@ export class Image360Icon {
     this._hoverSprite.position.copy(position);
     this._hoverSprite.visible = false;
 
-    const renderHook = new Mesh();
-    renderHook.frustumCulled = false;
-
-    this.setupAdaptiveScaling(position, sceneHandler, renderHook);
+    this._setAdaptiveScale = this.setupAdaptiveScaling(position);
+    onRenderTrigger.subscribe(this._setAdaptiveScale);
 
     sceneHandler.addCustomObject(this._hoverSprite);
 
     this._position = position;
     this._sceneHandler = sceneHandler;
-    this._renderHook = renderHook;
+    this._onRenderTrigger = onRenderTrigger;
   }
 
   set visible(visible: boolean) {
@@ -52,7 +52,6 @@ export class Image360Icon {
 
   get visible(): boolean {
     const alpha = this._alphaAttributeAccessor.at(0)!;
-    this._renderHook.visible = alpha > 0;
     return alpha > 0;
   }
 
@@ -66,25 +65,21 @@ export class Image360Icon {
   }
 
   public dispose(): void {
+    this._onRenderTrigger.unsubscribe(this._setAdaptiveScale);
     this._sceneHandler.removeCustomObject(this._hoverSprite);
     this._hoverSprite.material.dispose();
     this._hoverSprite.geometry.dispose();
 
     this._alphaAttributeAccessor.set([0]);
-    this._sceneHandler.removeCustomObject(this._renderHook);
-    this._renderHook.onBeforeRender = () => {};
   }
 
-  private setupAdaptiveScaling(position: THREE.Vector3, sceneHandler: SceneHandler, renderHook: Mesh): void {
+  private setupAdaptiveScaling(position: THREE.Vector3): (renderer: THREE.WebGLRenderer, camera: THREE.Camera) => void {
     const ndcPosition = new THREE.Vector4();
     const renderSize = new THREE.Vector2();
-    renderHook.onBeforeRender = (renderer: THREE.WebGLRenderer, _1: THREE.Scene, camera: THREE.Camera) => {
+    return (renderer: THREE.WebGLRenderer, camera: THREE.Camera) => {
       this._adaptiveScale = computeAdaptiveScaling(renderer, camera, this._maxPixelSize, this._minPixelSize);
       this._hoverSprite.scale.set(this._adaptiveScale, this._adaptiveScale, 1.0);
-      this._hoverSprite.updateMatrixWorld();
     };
-
-    sceneHandler.addCustomObject(renderHook);
 
     function computeAdaptiveScaling(
       renderer: THREE.WebGLRenderer,

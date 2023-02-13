@@ -8,6 +8,7 @@ import image360IconFrag from './image360Icon.frag';
 import {
   BufferAttribute,
   BufferGeometry,
+  Camera,
   CanvasTexture,
   Color,
   GLSL3,
@@ -15,10 +16,11 @@ import {
   Points,
   RawShaderMaterial,
   Vector2,
-  Vector3
+  Vector3,
+  WebGLRenderer
 } from 'three';
 import glsl from 'glslify';
-import { AttributeDataAccessor, SceneHandler } from '@reveal/utilities';
+import { AttributeDataAccessor, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { Image360Icon } from '../Image360Icon';
 
 export class Image360CollectionIcons {
@@ -29,6 +31,7 @@ export class Image360CollectionIcons {
   private readonly _material: RawShaderMaterial;
   private readonly _points: Points;
   private readonly _hoverIconTexture: CanvasTexture;
+  private readonly _onRenderTrigger: EventTrigger<(renderer: WebGLRenderer, camera: Camera) => void>;
 
   constructor(sceneHandler: SceneHandler) {
     const geometry = new BufferGeometry();
@@ -36,6 +39,7 @@ export class Image360CollectionIcons {
     const points = this.initializePoints(geometry, material);
     const hoverIconTexture = this.createHoverIconTexture();
 
+    this._onRenderTrigger = new EventTrigger();
     this._geometry = geometry;
     this._material = material;
     this._points = points;
@@ -62,12 +66,14 @@ export class Image360CollectionIcons {
         this._sceneHandler,
         alphaAttributeAccessor,
         this.MIN_PIXEL_SIZE,
-        this.MAX_PIXEL_SIZE
+        this.MAX_PIXEL_SIZE,
+        this._onRenderTrigger
       );
     });
   }
 
   public dispose(): void {
+    this._onRenderTrigger.unsubscribeAll();
     this._sceneHandler.removeCustomObject(this._points);
     this._geometry.dispose();
     this._material.uniforms.map.value.dispose();
@@ -94,9 +100,10 @@ export class Image360CollectionIcons {
   private initializePoints(geometry: BufferGeometry, material: RawShaderMaterial): Points {
     const points = new Points(geometry, material);
     points.renderOrder = 4;
-    points.onBeforeRender = renderer => {
+    points.onBeforeRender = (renderer, _, camera) => {
       renderer.getSize(material.uniforms.renderSize.value);
       material.uniforms.renderDownScale.value = material.uniforms.renderSize.value.x / renderer.domElement.clientWidth;
+      this._onRenderTrigger.fire(renderer, camera);
     };
     return points;
   }
