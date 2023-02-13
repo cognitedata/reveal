@@ -9,11 +9,11 @@ import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360Facade } from '../src/Image360Facade';
 import { pixelToNormalizedDeviceCoordinates, SceneHandler } from '@reveal/utilities';
 import { CogniteClient } from '@cognite/sdk';
-import { Image360Entity } from '../src/Image360Entity';
+import { Image360Entity } from '../src/entity/Image360Entity';
 import { degToRad } from 'three/src/math/MathUtils';
 import TWEEN from '@tweenjs/tween.js';
 import { OrbitControls } from 'three-stdlib';
-import { Image360CollectionFactory } from '../src/Image360CollectionFactory';
+import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
 
 type CdfImage360Facade = Image360Facade<{
   [key: string]: string;

@@ -5,9 +5,9 @@
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
 import { Image360Collection } from './Image360Collection';
-import { Image360Entity } from './Image360Entity';
-import { Image360EnteredDelegate, Image360ExitedDelegate } from './types';
-import { Image360CollectionIcons } from './visuals/Image360CollectionIcons';
+import { Image360Entity } from '../entity/Image360Entity';
+import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
+import { Image360CollectionIcons } from './Image360CollectionIcons';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 

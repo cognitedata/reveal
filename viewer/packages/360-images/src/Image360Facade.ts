@@ -4,10 +4,10 @@
 import * as THREE from 'three';
 import first from 'lodash/first';
 
-import { Image360Entity } from './Image360Entity';
-import { Image360LoadingCache } from './Image360LoadingCache';
-import { Image360CollectionFactory } from './Image360CollectionFactory';
-import { DefaultImage360Collection } from './DefaultImage360Collection';
+import { Image360Entity } from './entity/Image360Entity';
+import { Image360LoadingCache } from './cache/Image360LoadingCache';
+import { Image360CollectionFactory } from './collection/Image360CollectionFactory';
+import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
 import pullAll from 'lodash/pullAll';
 
 export class Image360Facade<T> {

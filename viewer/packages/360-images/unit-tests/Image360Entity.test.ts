@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { Image360Descriptor, Image360Provider } from '@reveal/data-providers';
-import { Image360Entity } from '../src/Image360Entity';
+import { Image360Entity } from '../src/entity/Image360Entity';
 import { It, Mock } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
 import { Image360Icon } from '../src/Image360Icon';

@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { Image360Provider } from '@reveal/data-providers';
 import { It, Mock } from 'moq.ts';
 import { SceneHandler } from '@reveal/utilities';
-import { Image360CollectionFactory } from '../src/Image360CollectionFactory';
+import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
 
 describe(Image360CollectionFactory.name, () => {
   test('Calling create should produce a valid image360Entity', async () => {

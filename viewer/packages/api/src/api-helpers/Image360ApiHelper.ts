@@ -5,11 +5,16 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 
 import { CogniteClient, Metadata } from '@cognite/sdk';
-import { Image360Collection, Image360Entity, Image360CollectionFactory, Image360Facade } from '@reveal/360-images';
+import {
+  Image360Collection,
+  Image360Entity,
+  Image360CollectionFactory,
+  Image360Facade,
+  Image360
+} from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import { InputHandler, pixelToNormalizedDeviceCoordinates, PointerEventData, SceneHandler } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
-import { Image360 } from '@reveal/360-images/src/Image360';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
