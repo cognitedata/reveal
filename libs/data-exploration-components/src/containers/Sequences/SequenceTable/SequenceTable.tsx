@@ -6,10 +6,13 @@ import {
 } from '@data-exploration-components/components/Table/Table';
 import { RelationshipLabels } from '@data-exploration-components/types';
 
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { ResourceTableColumns } from '../../../components';
-import { useSequencesMetadataKeys } from '@data-exploration-lib/domain-layer';
+import { ResourceTableColumns, SubRowMatchingLabel } from '../../../components';
+import {
+  InternalSequenceDataWithMatchingLabels,
+  useSequencesMetadataKeys,
+} from '@data-exploration-lib/domain-layer';
 
 export type SequenceWithRelationshipLabels = Sequence & RelationshipLabels;
 const visibleColumns = [
@@ -36,11 +39,11 @@ export const SequenceTable = ({
     () =>
       [
         {
-          ...Table.Columns.name(query),
+          ...Table.Columns.name(),
           enableHiding: false,
         },
-        Table.Columns.description(query),
-        Table.Columns.externalId(query),
+        Table.Columns.description(),
+        Table.Columns.externalId(),
         {
           ...Table.Columns.columns,
           enableSorting: false,
@@ -48,7 +51,7 @@ export const SequenceTable = ({
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         {
-          ...Table.Columns.id(query),
+          ...Table.Columns.id(),
           enableSorting: false,
         },
         Table.Columns.rootAsset(),
@@ -61,5 +64,12 @@ export const SequenceTable = ({
   );
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
-  return <Table columns={columns} hiddenColumns={hiddenColumns} {...rest} />;
+  return (
+    <Table<InternalSequenceDataWithMatchingLabels>
+      columns={columns}
+      hiddenColumns={hiddenColumns}
+      renderRowSubComponent={SubRowMatchingLabel}
+      {...rest}
+    />
+  );
 };

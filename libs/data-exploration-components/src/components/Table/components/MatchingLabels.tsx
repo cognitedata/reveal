@@ -1,4 +1,4 @@
-import { Label } from '@cognite/cogs.js';
+import { Flex, Label } from '@cognite/cogs.js';
 import { MatchingLabels } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
 import React from 'react';
@@ -10,7 +10,7 @@ export const MatchingLabelsComponent: React.FC<MatchingLabels> = ({
   partial,
 }) => {
   return (
-    <>
+    <Flex gap={4}>
       {!isEmpty(exact) && (
         <Label size="small" icon="MagicWand" variant={'success'}>
           {`Exact match: ${exact
@@ -34,6 +34,6 @@ export const MatchingLabelsComponent: React.FC<MatchingLabels> = ({
             .join(', ')}`}
         </Label>
       )}
-    </>
+    </Flex>
   );
 };

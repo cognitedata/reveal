@@ -14,14 +14,13 @@ import { Body } from '@cognite/cogs.js';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import isEmpty from 'lodash/isEmpty';
-import { ResourceTableColumns } from '../../../components';
+import { ResourceTableColumns, SubRowMatchingLabel } from '../../../components';
 import {
   InternalTimeseriesDataWithMatchingLabels,
   useTimeseriesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
-import { MatchingLabelsComponent } from '@data-exploration-components/components/Table/components/MatchingLabels';
-import styled from 'styled-components/macro';
+
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 
 export interface TimeseriesTableProps
@@ -159,36 +158,12 @@ export const TimeseriesTable = ({
   }, [data, emptyTimeseriesMap]);
 
   return (
-    <Table
+    <Table<InternalTimeseriesDataWithMatchingLabels>
       columns={columns}
       data={hideEmptyData ? timeseriesWithDatapoints : data}
       hiddenColumns={hiddenColumns}
-      renderRowSubComponent={SubRow}
+      renderRowSubComponent={SubRowMatchingLabel}
       {...rest}
     />
   );
 };
-
-// We should put this component in a common place.
-const SubRow = (row: Row<InternalTimeseriesDataWithMatchingLabels>) => {
-  if (isEmpty(row.original.matchingLabels)) {
-    return null;
-  }
-
-  return (
-    <LabelMatcherWrapper key={`matching-label-${row.id}`}>
-      {row.original.matchingLabels && (
-        <MatchingLabelsComponent
-          exact={row.original.matchingLabels.exact}
-          partial={row.original.matchingLabels.partial}
-          fuzzy={row.original.matchingLabels.fuzzy}
-        />
-      )}
-    </LabelMatcherWrapper>
-  );
-};
-
-const LabelMatcherWrapper = styled.div`
-  display: flex;
-  padding: 0 12px 8px;
-`;

@@ -9,13 +9,13 @@ import {
 import { RelationshipLabels } from '@data-exploration-components/types';
 
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import styled from 'styled-components';
-import { ResourceTableColumns } from '../../../components';
+
+import { ResourceTableColumns, SubRowMatchingLabel } from '../../../components';
 import {
   InternalAssetDataWithMatchingLabels,
   useAssetsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
-import { MatchingLabelsComponent } from '../../../components/Table/components/MatchingLabels';
+
 import { ThreeDModelCell } from './ThreeDModelCell';
 import noop from 'lodash/noop';
 
@@ -74,31 +74,8 @@ export const AssetTable = ({
       columns={columns}
       onRowClick={onRowClick}
       hiddenColumns={hiddenColumns}
-      renderRowSubComponent={SubRow}
+      renderRowSubComponent={SubRowMatchingLabel}
       {...rest}
     />
-  );
-};
-
-const LabelMatcherWrapper = styled.div`
-  display: flex;
-  padding: 0 12px 8px;
-`;
-
-const SubRow = (row: Row<InternalAssetDataWithMatchingLabels>) => {
-  if (isEmpty(row.original.matchingLabels)) {
-    return null;
-  }
-
-  return (
-    <LabelMatcherWrapper key={`matching-label-${row.id}`}>
-      {row.original.matchingLabels && (
-        <MatchingLabelsComponent
-          exact={row.original.matchingLabels.exact}
-          partial={row.original.matchingLabels.partial}
-          fuzzy={row.original.matchingLabels.fuzzy}
-        />
-      )}
-    </LabelMatcherWrapper>
   );
 };

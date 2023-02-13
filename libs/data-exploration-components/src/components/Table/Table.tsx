@@ -300,7 +300,7 @@ export function Table<T extends TableData>({
 
     return (
       <ContainerInside>
-        <StyledTable id={id} className="data-exploration-table">
+        <StyledTable id={id} key={id} className="data-exploration-table">
           <Thead isStickyHeader={stickyHeader}>
             {getHeaderGroups().map((headerGroup) => (
               <HeaderRow key={headerGroup.id}>
@@ -360,7 +360,7 @@ export function Table<T extends TableData>({
           <Tbody ref={tbodyRef}>
             {getRowModel().rows.map((row) => {
               return (
-                <>
+                <React.Fragment key={row.id}>
                   <Tr
                     key={row.id}
                     id={row.id}
@@ -400,7 +400,7 @@ export function Table<T extends TableData>({
                       </MainRowSubContainer>
                     )}
                   </Tr>
-                </>
+                </React.Fragment>
               );
             })}
           </Tbody>

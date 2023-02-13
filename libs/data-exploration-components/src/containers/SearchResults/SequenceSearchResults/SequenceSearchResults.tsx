@@ -15,7 +15,7 @@ import { useResourceResults } from '../SearchResultLoader';
 import {
   InternalSequenceFilters,
   useSequenceSearchAggregateQuery,
-  useSequenceSearchResultQuery,
+  useSequenceSearchResultWithMatchingLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { TableSortBy } from '@data-exploration-components/components/Table';
@@ -55,7 +55,7 @@ export const SequenceSearchResults = ({
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
-    useSequenceSearchResultQuery(
+    useSequenceSearchResultWithMatchingLabelsQuery(
       {
         query,
         filter,
