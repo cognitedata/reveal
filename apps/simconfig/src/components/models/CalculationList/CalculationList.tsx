@@ -38,6 +38,7 @@ import { CalculationDescriptionInfoDrawer } from 'pages/CalculationConfiguration
 import { selectCapabilities } from 'store/capabilities/selectors';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { isBHPApproxMethodWarning } from 'utils/common';
+import { createCdfLink } from 'utils/createCdfLink';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 import { isSuccessResponse } from 'utils/responseUtils';
@@ -436,7 +437,7 @@ export function CalculationList({
                         );
 
                         navigate({
-                          to: '/calculations/runs',
+                          to: createCdfLink('/calculations/runs'),
                           search: {
                             modelName,
                             simulator,
