@@ -11,6 +11,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
 
 import assert from 'assert';
+import { Log } from '@reveal/logger';
 
 export class GltfSectorLoader {
   private readonly _gltfSectorParser: GltfSectorParser;
@@ -91,9 +92,14 @@ export class GltfSectorLoader {
         modelIdentifier: sector.modelIdentifier,
         geometryBatchingQueue: geometryBatchingQueue
       };
-    } catch (error) {
-      MetricsLogger.trackError(error as Error, { moduleName: 'GltfSectorLoader', methodName: 'loadSector' });
-      throw error;
+    } catch (e) {
+      const error = e as Error;
+      if (error?.cause === 'InvalidModel') {
+        Log.info('Invalid Model:', error.message);
+      } else {
+        MetricsLogger.trackError(error, { moduleName: 'GltfSectorLoader', methodName: 'loadSector' });
+      }
+      throw e;
     }
   }
 
