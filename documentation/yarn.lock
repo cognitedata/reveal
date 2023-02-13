@@ -182,12 +182,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.32.2":
-  version: 2.32.2
-  resolution: "@azure/msal-browser@npm:2.32.2"
+"@azure/msal-browser@npm:2.33.0":
+  version: 2.33.0
+  resolution: "@azure/msal-browser@npm:2.33.0"
   dependencies:
-    "@azure/msal-common": ^9.0.2
-  checksum: a88608160bc7ed27137fc7325f804d9b807d1fb0b1708a263c49f62ef4bb8bd6fa231b078a7bed4a38e3ebd815f8395c915253d77872934b4ea603aee42fe9ad
+    "@azure/msal-common": ^10.0.0
+  checksum: 062b4d70dfefed19f4a16eebf4d6062ec000d18e27d708f4dfcb8b6a3560ce84d903280e690698d92c968f87127140f674062ea48574191aa664f6185427c9ca
   languageName: node
   linkType: hard
 
@@ -200,17 +200,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@azure/msal-common@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@azure/msal-common@npm:10.0.0"
+  checksum: 57ff5ed9fcf17f83137c0d0792229f4f4a8856d902502bd8c11879193fad700939bdc38104b48e545f7c6c095dd691c2a7e7a7793ae7a5e999ffa5493f6f3666
+  languageName: node
+  linkType: hard
+
 "@azure/msal-common@npm:^9.0.0":
   version: 9.0.0
   resolution: "@azure/msal-common@npm:9.0.0"
   checksum: e4b1fcff3a95a019761e62b6a3a7a8a5a67905826771ed262b8741efa719afb992db213b74b1000b1fee6faf8041189045fd32beb9d0e69961a7ee0980539546
-  languageName: node
-  linkType: hard
-
-"@azure/msal-common@npm:^9.0.2":
-  version: 9.0.2
-  resolution: "@azure/msal-common@npm:9.0.2"
-  checksum: 5a44d23b1d0f80d3e2221d157c1bd48bdfd19f5a4ac2fc58c73c52ffd25868c1760ea27ad0408931e07f552adc19764757bf91f7bec59258d9d931274df15657
   languageName: node
   linkType: hard
 
@@ -2126,7 +2126,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
-    "@azure/msal-browser": 2.32.2
+    "@azure/msal-browser": 2.33.0
     "@codemirror/lang-javascript": 6.1.3
     "@codemirror/language": 6.4.0
     "@codemirror/view": 6.7.3
