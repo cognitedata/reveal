@@ -17,8 +17,7 @@
     "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace cdf-integrations-ui",
     "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace cdf-integrations-ui",
     "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace cdf-integrations-ui",
-    "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace cdf-integrations-ui",
-    "storybook": "start-storybook -p 6006"
+    "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace cdf-integrations-ui"
   },
   "dependencies": {
     "@babel/runtime": "^7.18.9",
@@ -67,8 +66,6 @@
     "@cognite/cdf-ui-cli": "^1.1.1",
     "@hookform/devtools": "^3.1.0",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
-    "@storybook/preset-create-react-app": "^3.2.0",
-    "@storybook/react": "^6.1.21",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^6.0.0",
