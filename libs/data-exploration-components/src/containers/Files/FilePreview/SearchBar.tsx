@@ -3,36 +3,42 @@ import { Button, Input } from '@cognite/cogs.js';
 import { useDisclosure } from '../../../hooks/index';
 
 export const SearchBar = ({
-  searchQuery,
-  setSearchQuery,
+  isOpen,
+  value,
+  onChange,
+  onOpenPress,
+  onClosePress,
 }: {
-  searchQuery: string;
-  setSearchQuery: (page: string) => void;
+  isOpen: boolean;
+  value: string;
+  onChange: (value: string) => void;
+  onOpenPress: () => void;
+  onClosePress: () => void;
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure({
-    isOpen: Boolean(searchQuery),
-  });
+  if (isOpen) {
+    return (
+      <Input
+        postfix={
+          <Button
+            icon="Close"
+            type="ghost"
+            aria-label="Close"
+            onClick={onClosePress}
+          />
+        }
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoFocus
+      />
+    );
+  }
 
-  const handleCloseSearch = () => {
-    onClose();
-    setSearchQuery('');
-  };
-
-  return isOpen ? (
-    <Input
-      postfix={
-        <Button
-          icon="Close"
-          type="ghost"
-          aria-label="Close"
-          onClick={handleCloseSearch}
-        />
-      }
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      autoFocus
+  return (
+    <Button
+      icon="Search"
+      type="ghost"
+      aria-label="Search"
+      onClick={onOpenPress}
     />
-  ) : (
-    <Button icon="Search" type="ghost" aria-label="Search" onClick={onOpen} />
   );
 };

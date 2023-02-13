@@ -1,30 +1,36 @@
 import { useMemo } from 'react';
 import { FileInfo } from '@cognite/sdk';
-import { getAnnotationsFromContextApiOcrAnnotations } from '@cognite/unified-file-viewer';
+import {
+  Annotation,
+  getAnnotationsFromContextApiOcrAnnotations,
+} from '@cognite/unified-file-viewer';
 import { usePnIdRawOCRResultQuery } from '../../service/queries/usePnIdRawOCRResultQuery';
 
-export const usePnIdOCRResultFilterQuery = (
+export const useSearchInContainer = (
+  file: FileInfo | undefined,
+  page: number | undefined,
   query: string,
-  file?: FileInfo,
-  page?: number,
   enabled = true
-) => {
+): { searchResultAnnotations: Annotation[] } => {
   const { data } = usePnIdRawOCRResultQuery(file, enabled && !!file);
 
-  const annotationSearchResult = useMemo(() => {
+  const searchResultAnnotations = useMemo(() => {
     if (file === undefined) {
       return [];
     }
 
-    const containerId = String(file.id);
     if (data === undefined || data?.length === 0) {
       return [];
     }
     const currentPage = page ? page - 1 : 0;
 
-    const currentPageData = data[currentPage]?.annotations ?? [];
+    const currentPageData = data[currentPage];
+    if (currentPageData === undefined) {
+      return [];
+    }
 
-    const filteredOCRAnnotations = currentPageData?.filter(
+    const currentPageDataAnnotations = currentPageData.annotations;
+    const filteredOCRAnnotations = currentPageDataAnnotations.filter(
       (box) =>
         query.length !== 0 &&
         getSanitizedQueryPartials(query).some((partialQuery) =>
@@ -32,6 +38,7 @@ export const usePnIdOCRResultFilterQuery = (
         )
     );
 
+    const containerId = String(file.id);
     return getAnnotationsFromContextApiOcrAnnotations(
       filteredOCRAnnotations,
       containerId
@@ -39,8 +46,7 @@ export const usePnIdOCRResultFilterQuery = (
   }, [file, data, query, page]);
 
   return {
-    annotationSearchResult,
-    resultsAvailable: Boolean(data) && Boolean(data?.length),
+    searchResultAnnotations,
   };
 };
 

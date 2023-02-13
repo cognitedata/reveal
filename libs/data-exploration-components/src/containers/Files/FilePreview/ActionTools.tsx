@@ -1,13 +1,19 @@
+import { useDisclosure } from '@cognite/data-exploration';
 import React from 'react';
 import { FileInfo } from '@cognite/sdk';
 import styled from 'styled-components';
 import { Button, Dropdown, Flex, Menu, ToolBar } from '@cognite/cogs.js';
-import { UnifiedViewer } from '@cognite/unified-file-viewer';
+import {
+  getCanonicalMimeType,
+  UnifiedViewer,
+} from '@cognite/unified-file-viewer';
 import { SearchBar } from './SearchBar';
 import { useFileDownloadUrl } from './hooks';
 import { IconButton } from '../../../components/index';
 import noop from 'lodash/noop';
 import { HIDE_DETAILS, SHOW_DETAILS } from './constants';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
 export const ActionTools = ({
   file,
@@ -23,13 +29,43 @@ export const ActionTools = ({
   file: FileInfo;
   fileViewerRef?: UnifiedViewer;
   searchQuery: string;
-  setSearchQuery: (page: string) => void;
+  setSearchQuery: (value: string) => void;
   enableSearch?: boolean;
   enableDownload?: boolean;
   showSideBar?: boolean;
   showResourcePreviewSidebar?: boolean;
   setShowResourcePreviewSidebar?: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element | null => {
+  const trackUsage = useMetrics();
+
+  const {
+    isOpen: isSearchOpen,
+    onOpen: onSearchOpen,
+    onClose: onSearchClose,
+  } = useDisclosure({
+    isOpen: Boolean(searchQuery),
+  });
+
+  const handleSearchClose = () => {
+    onSearchClose();
+    setSearchQuery('');
+  };
+
+  const handleSearchOpen = () => {
+    const fileMimeType = file.mimeType;
+    trackUsage(
+      DATA_EXPLORATION_COMPONENT.FILE_PREVIEW.SEARCH_IN_CONTAINER_OPEN,
+      {
+        fileId: file.id,
+        mimeType:
+          fileMimeType === undefined
+            ? fileMimeType
+            : getCanonicalMimeType(fileMimeType),
+      }
+    );
+    onSearchOpen();
+  };
+
   const fileUrl = useFileDownloadUrl(file.id);
 
   if (!fileUrl) return null;
@@ -50,7 +86,13 @@ export const ActionTools = ({
   return (
     <ToolBarActions direction="horizontal">
       {enableSearch && (
-        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <SearchBar
+          isOpen={isSearchOpen}
+          value={searchQuery}
+          onChange={setSearchQuery}
+          onOpenPress={handleSearchOpen}
+          onClosePress={handleSearchClose}
+        />
       )}
       {showSideBar && (
         <IconButton

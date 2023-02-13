@@ -5,6 +5,7 @@ import ReactUnifiedViewer, {
   Annotation,
   AnnotationType,
   ContainerConfig,
+  getCanonicalMimeType,
   getContainerConfigFromFileInfo,
   isSupportedFileInfo,
   ToolType,
@@ -16,8 +17,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { ResourceItem } from '@data-exploration-components/types/index';
 import { lightGrey } from '@data-exploration-components/utils/index';
-
-import { usePnIdOCRResultFilterQuery } from '@data-exploration-lib/domain-layer';
+import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
+import { useSearchInContainer } from '@data-exploration-lib/domain-layer';
 import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import {
@@ -33,7 +34,7 @@ import {
   AnnotationSource,
   ExtendedAnnotation,
 } from '@data-exploration-lib/core';
-import { getContainerId } from './utils';
+import { getContainerId, useDebouncedMetrics } from './utils';
 import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
 import { Flex } from '@cognite/cogs.js';
 
@@ -88,6 +89,7 @@ export const FilePreview = ({
   enableZoomToAnnotation = true,
   enableToolTips = true,
 }: FilePreviewProps) => {
+  const trackUsage = useDebouncedMetrics();
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
   const [page, setPage] = useState(1);
   const [container, setContainer] = useState<FileContainerProps>();
@@ -181,18 +183,45 @@ export const FilePreview = ({
     onMouseOut: onAnnotationMouseOut,
   });
 
-  const { annotationSearchResult, resultsAvailable } =
-    usePnIdOCRResultFilterQuery(searchQuery, file, page, showControls);
+  const { searchResultAnnotations } = useSearchInContainer(
+    file,
+    page,
+    searchQuery,
+    showControls
+  );
+
+  useEffect(() => {
+    if (searchQuery === '') {
+      return;
+    }
+
+    const fileMimeType = file?.mimeType;
+    trackUsage(
+      DATA_EXPLORATION_COMPONENT.FILE_PREVIEW
+        .SEARCH_IN_PAGE_SEARCH_VALUE_CHANGE,
+      {
+        fileId,
+        // For privacy reasons not tracking actual search query or results
+        searchQueryLength: searchQuery.length,
+        searchResultLength: searchResultAnnotations.length,
+        mimeType:
+          fileMimeType === undefined
+            ? fileMimeType
+            : getCanonicalMimeType(fileMimeType),
+      }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trackUsage, searchResultAnnotations]);
 
   const displayedAnnotations = useMemo(() => {
     if (isAnnotationsShown) {
       return [
         ...getExtendedAnnotationsWithBadges(annotations),
-        ...annotationSearchResult,
+        ...searchResultAnnotations,
       ];
     }
-    return [...annotationSearchResult];
-  }, [isAnnotationsShown, annotations, annotationSearchResult]);
+    return [...searchResultAnnotations];
+  }, [isAnnotationsShown, annotations, searchResultAnnotations]);
 
   const tooltips = useTooltips({
     isTooltipsEnabled: enableToolTips,
@@ -297,7 +326,7 @@ export const FilePreview = ({
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           enableDownload={showDownload}
-          enableSearch={showControls && resultsAvailable}
+          enableSearch={showControls}
           showSideBar={showSideBar}
           showResourcePreviewSidebar={showResourcePreviewSidebar}
           setShowResourcePreviewSidebar={setShowResourcePreviewSidebar}

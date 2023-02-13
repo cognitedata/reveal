@@ -1,6 +1,9 @@
 import { Colors } from '@cognite/cogs.js';
 import { AnnotationType } from '@cognite/unified-file-viewer';
+import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import debounce from 'lodash/debounce';
+import { useCallback } from 'react';
 import { getResourceTypeFromExtendedAnnotation } from './migration/utils';
 
 export const getContainerId = (fileId: number) => {
@@ -81,4 +84,12 @@ export const selectAnnotationColors = (
     strokeColor: Colors['text-color-secondary'].hex(),
     backgroundColor: `${Colors['text-color-secondary'].hex()}33`,
   };
+};
+
+const DEFAULT_TRACK_USAGE_DEBOUNCE_MS = 300;
+export const useDebouncedMetrics = (
+  debounceMs = DEFAULT_TRACK_USAGE_DEBOUNCE_MS
+) => {
+  const trackUsage = useMetrics();
+  return useCallback(debounce(trackUsage, debounceMs), [trackUsage]);
 };

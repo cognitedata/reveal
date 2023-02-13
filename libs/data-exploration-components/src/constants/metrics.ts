@@ -45,6 +45,11 @@ const INPUT = {
   TEXT_FILTER: `${DATA_EXPLORATION}.Input.TextFilter`,
 };
 
+const FILE_PREVIEW = {
+  SEARCH_IN_CONTAINER_OPEN: `${DATA_EXPLORATION}.FilePreview.SearchInPageOpen`,
+  SEARCH_IN_PAGE_SEARCH_VALUE_CHANGE: `${DATA_EXPLORATION}.FilePreview.SearchInPageQueryValueChange`,
+};
+
 export const DATA_EXPLORATION_COMPONENT = {
   DOWNLOAD,
   OPEN,
@@ -52,4 +57,5 @@ export const DATA_EXPLORATION_COMPONENT = {
   SELECT,
   SEARCH,
   INPUT,
+  FILE_PREVIEW,
 };
