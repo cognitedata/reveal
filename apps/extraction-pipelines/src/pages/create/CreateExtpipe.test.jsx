@@ -20,10 +20,7 @@ import {
 import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
 import { databaseListMock, mockDataSetResponse } from 'utils/mockResponse';
 import { CREATE_EXTPIPE_PAGE_PATH } from 'routing/CreateRouteConfig';
-// 
 import sdk from '@cognite/cdf-sdk-singleton';
-// 
-import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
 jest.mock('hooks/useRawDBAndTables', () => {
@@ -43,13 +40,6 @@ describe('CreateExtpipe', () => {
     route: `${CREATE_EXTPIPE_PAGE_PATH}`,
     initRegisterExtpipe: {},
   };
-
-  beforeEach(() => {
-    useCapabilities.mockReturnValue({
-      isLoading: false,
-      data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: ['READ', 'WRITE'] }],
-    });
-  });
 
   test('Renders stored value', () => {
     const name = 'Preset name';

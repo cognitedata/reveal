@@ -8,9 +8,6 @@ import { QueryClient } from 'react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { useSDK } from '@cognite/sdk-provider';
 import { ExtpipeHeading } from 'components/extpipe/ExtpipeHeading';
-// 
-import { useCapabilities } from '@cognite/sdk-react-query-hooks';
-import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
 describe('ExtpipeHeading', () => {
   const mock = getMockResponse()[0];
@@ -25,10 +22,6 @@ describe('ExtpipeHeading', () => {
       mock,
       '/'
     );
-    useCapabilities.mockReturnValue({
-      isLoading: false,
-      data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: ['READ', 'WRITE'] }],
-    });
   });
   test.skip('Render with minimal info', async () => {
     const mockExtpipe = {

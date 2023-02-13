@@ -24,7 +24,7 @@ import {
   useRawDBAndTables,
 } from 'hooks/useRawDBAndTables';
 import styled from 'styled-components';
-import { MissingCapabilityBox } from 'components/accessCheck/CapabilityCheck';
+
 import { useTranslation } from 'common';
 
 interface RawEditModalProps {
@@ -42,7 +42,7 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
   close,
 }: PropsWithChildren<RawEditModalProps>) => {
   const { t } = useTranslation();
-  const { data: databases, isError } = useRawDBAndTables();
+  const { data: databases } = useRawDBAndTables();
   const { data: storedExtpipe } = useSelectedExtpipe();
   const { mutate } = useDetailsUpdate();
   const methods = useForm<ModalFormInput>({
@@ -102,14 +102,6 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
         </StyledTitle3>
         <p>{t('edit-raw-desc')}</p>
         <div css="height: 1rem" />
-        {isError &&
-          MissingCapabilityBox({
-            text: t('edit-raw-missing-capability'),
-            requiredPermissions: [
-              { acl: 'raw', action: 'READ' },
-              { acl: 'raw', action: 'LIST' },
-            ],
-          })}
 
         {databases != null && (
           <RawEditModalView

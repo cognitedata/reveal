@@ -11,8 +11,6 @@ import ExtpipeRunHistory from 'components/extpipe/ExtpipeRunHistory';
 
 import { RunFilterProvider } from 'hooks/runs/RunsFilterContext';
 import { ExtpipeBreadcrumbs } from 'components/navigation/breadcrumbs/ExtpipeBreadcrumbs';
-import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
-import { EXTPIPES_READS } from 'model/AclAction';
 
 import { ErrorBox } from 'components/error/ErrorBox';
 
@@ -59,15 +57,7 @@ const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
 };
 
 const ExtpipePage = () => {
-  const { t } = useTranslation();
-  return (
-    <CapabilityCheck
-      requiredPermissions={EXTPIPES_READS}
-      topLevelHeading={t('extraction-pipeline', { count: 1 })}
-    >
-      <ExtpipePageComponent />
-    </CapabilityCheck>
-  );
+  return <ExtpipePageComponent />;
 };
 
 export default ExtpipePage;
