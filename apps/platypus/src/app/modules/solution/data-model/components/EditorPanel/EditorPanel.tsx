@@ -55,7 +55,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
     externalId,
     space
   );
-  const { graphQlSchema, builtInTypes, currentTypeName, typeDefs } =
+  const { graphQlSchema, currentTypeName, typeDefs } =
     useSelector<DataModelState>((state) => state.dataModel);
 
   const isUIDisabled = editorMode === SchemaEditorMode.View || isPublishing;
@@ -95,7 +95,6 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
         <Suspense fallback={<Spinner />}>
           <GraphqlCodeEditor
             key={`graphql-code-editor-version-${dataModelVersionList?.length}`}
-            builtInTypes={builtInTypes}
             externalId={externalId}
             currentTypeName={currentTypeName}
             typeDefs={typeDefs}
@@ -107,7 +106,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
       ) : (
         <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
           <div style={{ flexGrow: 1, overflow: 'auto' }}>
-            <UIEditor builtInTypes={builtInTypes} disabled={isUIDisabled} />
+            <UIEditor disabled={isUIDisabled} />
           </div>
         </ErrorBoundary>
       )}

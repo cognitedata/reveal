@@ -170,7 +170,7 @@ export class DataModelTypeDefsBuilderService {
   }
 
   /** Clears the state */
-  validate(graphQlString: string, builtInTypes: BuiltInType[]) {
-    return this.graphqlService.validate(graphQlString, builtInTypes);
+  validate(graphQlString: string) {
+    return this.graphqlService.validate(graphQlString);
   }
 }

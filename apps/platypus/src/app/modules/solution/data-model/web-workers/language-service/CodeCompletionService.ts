@@ -1,7 +1,7 @@
 import {
+  ArgumentNodeProps,
   BuiltInType,
   DataModelTypeDefs,
-  DirectiveParameter,
 } from '@platypus/platypus-core';
 import {
   CompletionItem,
@@ -23,12 +23,16 @@ export class CodeCompletionService {
     [key: string]: CompletionItemKind;
   };
 
+  private dataModelTypeDefs: DataModelTypeDefs | null = null;
+
   getCompletions(
     textUntilPosition: string,
     builtInTypes: BuiltInType[],
     useExtendedSdl: boolean,
     dataModelTypeDefs: DataModelTypeDefs | null
   ): CompletionList {
+    this.dataModelTypeDefs = dataModelTypeDefs;
+
     try {
       const customTypes = [] as BuiltInType[];
       const objectAndInterfaceDirectives = builtInTypes.filter(
@@ -85,14 +89,20 @@ export class CodeCompletionService {
               .trim()
               .match(/(interface|type)\s{1,}[A-Z][a-zA-Z0-9_]+\s{1,}@[a-z]+[(]/)
           ) {
+            const directiveName = this.getDirectiveName(textUntilPosition);
+            const selectedTypeDirective = objectAndInterfaceDirectives.filter(
+              (type) => directiveName === type.name
+            );
+            const typeKindDirectiveArgument = this.getDirectiveArgumentByKind(
+              textUntilPosition,
+              'type'
+            );
+            const currentDirectiveArgument =
+              this.getCurrentDirectiveArgument(textUntilPosition);
+
             // suggest possible custom types for the directive parameter
-            if (textUntilPosition.trim().match(/:\s*"$/)) {
-              const { pattern: containerPattern } =
-                this.getParameterPatternAndName(
-                  objectAndInterfaceDirectives,
-                  'type'
-                );
-              if (textUntilPosition.trim().match(containerPattern)) {
+            if (typeKindDirectiveArgument?.name === currentDirectiveArgument) {
+              if (typeKindDirectiveArgument) {
                 return {
                   suggestions: this.getCodeCompletionItems(
                     textUntilPosition,
@@ -110,15 +120,10 @@ export class CodeCompletionService {
               textUntilPosition.trim().match(/"\s*,$/) ||
               textUntilPosition.trim().match(/\s*\($/)
             ) {
-              const directive = textUntilPosition.match(/@[a-zA-Z0-9_]+/)?.[0];
-              const directiveArguments = objectAndInterfaceDirectives.filter(
-                (type) => directive?.includes(type.name)
-              );
-
               return {
                 suggestions: this.getCodeCompletionItems(
                   textUntilPosition,
-                  directiveArguments,
+                  selectedTypeDirective,
                   'DIRECTIVE'
                 ),
               } as CompletionList;
@@ -136,13 +141,50 @@ export class CodeCompletionService {
             (type) => type.fieldDirective
           );
 
-          if (textUntilPosition.trim().match(/:\s*"$/)) {
-            const { pattern: containerPattern, name: containerName } =
-              this.getParameterPatternAndName(
+          if (textUntilPosition.trim().match(/\s*@$/)) {
+            return {
+              suggestions: this.getCodeCompletionItems(
+                textUntilPosition,
                 fieldDefinitionDirectives,
-                'type'
-              );
-            if (textUntilPosition.trim().match(containerPattern)) {
+                'DIRECTIVE'
+              ),
+            } as CompletionList;
+          }
+
+          const directiveName = this.getDirectiveName(textUntilPosition);
+
+          const selectedFieldDirective = fieldDefinitionDirectives.filter(
+            (type) => directiveName === type.name
+          );
+
+          if (textUntilPosition.trim().match(/:\s*"$/)) {
+            const typeKindDirectiveArgument = this.getDirectiveArgumentByKind(
+              textUntilPosition,
+              'type'
+            );
+
+            const fieldKindDirectiveArgument = this.getDirectiveArgumentByKind(
+              textUntilPosition,
+              'field'
+            );
+
+            const currentDirectiveArgument =
+              this.getCurrentDirectiveArgument(textUntilPosition);
+
+            if (fieldKindDirectiveArgument?.name === currentDirectiveArgument) {
+              return {
+                suggestions: this.getCompletionItemsFromFieldTypes(
+                  this.getTypeNameFromLine(
+                    textUntilPosition,
+                    typeKindDirectiveArgument?.name || ''
+                  ),
+                  dataModelTypeDefs,
+                  this.iconsMap['DIRECTIVE']
+                ) as CompletionItem[],
+              } as CompletionList;
+            }
+
+            if (typeKindDirectiveArgument?.name === currentDirectiveArgument) {
               return {
                 suggestions: this.getCodeCompletionItems(
                   textUntilPosition,
@@ -151,33 +193,16 @@ export class CodeCompletionService {
                 ),
               };
             }
-            const { pattern: fieldPattern } = this.getParameterPatternAndName(
-              fieldDefinitionDirectives,
-              'field'
-            );
-
-            if (textUntilPosition.trim().match(fieldPattern))
-              return {
-                suggestions: this.getCompletionItemsFromFieldTypes(
-                  this.getTypeNameFromLine(
-                    textUntilPosition,
-                    containerName || ''
-                  ),
-                  dataModelTypeDefs,
-                  this.iconsMap['DIRECTIVE']
-                ) as CompletionItem[],
-              } as CompletionList;
           }
 
           if (
             textUntilPosition.trim().match(/"\s*,$/) ||
-            textUntilPosition.trim().match(/\s*@$/) ||
             textUntilPosition.trim().match(/\s*\($/)
           ) {
             return {
               suggestions: this.getCodeCompletionItems(
                 textUntilPosition,
-                fieldDefinitionDirectives,
+                selectedFieldDirective,
                 'DIRECTIVE'
               ),
             } as CompletionList;
@@ -224,18 +249,26 @@ export class CodeCompletionService {
     }
   }
 
-  private getParameterPatternAndName(
-    directives: BuiltInType[],
-    parameterKind: DirectiveParameter['kind']
+  private getDirectiveName(textUntilPosition: string) {
+    return textUntilPosition.match(/@[a-zA-Z0-9_]+/)?.[0].replace(/@/g, '');
+  }
+
+  private getCurrentDirectiveArgument(textUntilPosition: string) {
+    return textUntilPosition
+      .trim()
+      .match(/[a-zA-Z]+:\s*"$/)?.[0]
+      .replace(/(:|")/g, '');
+  }
+
+  private getDirectiveArgumentByKind(
+    textUntilPosition: string,
+    kind: ArgumentNodeProps['kind']
   ) {
-    const directiveParameters = directives.flatMap(
-      (directive) => directive.directiveParameters
-    );
-    const name = directiveParameters.find(
-      (parameter) => parameter?.kind === parameterKind
-    )?.name;
-    const pattern = new RegExp(name + '\\s*:\\s*"$');
-    return { pattern, name };
+    const directiveName = this.getDirectiveName(textUntilPosition);
+
+    return this.dataModelTypeDefs?.directives
+      ?.find((directive) => directive.name === directiveName)
+      ?.arguments?.find((argument) => argument.kind === kind);
   }
 
   private getTypeNameFromLine(
@@ -309,11 +342,24 @@ export class CodeCompletionService {
       insertText = prefix + insertText;
     }
 
-    if (textUntilPosition.trim().match(/[(|,]/gm) && type.body) {
-      return this.getCompletionItemsFromTypeBody(
-        textUntilPosition,
-        type,
-        iconKind
+    const directive = this.dataModelTypeDefs?.directives?.find(
+      (directive) => directive.name === type.name
+    );
+
+    if (textUntilPosition.trim().match(/(\(|,)$/) && directive) {
+      const availableArgs =
+        directive?.arguments?.filter(
+          (argument) => !textUntilPosition.split('@')[1].includes(argument.name)
+        ) || [];
+
+      return availableArgs.map(
+        (arg) =>
+          ({
+            label: arg.name,
+            kind: iconKind,
+            insertText: `${arg.name}:`,
+            insertTextRules: CompletionItemInsertTextRule.InsertAsSnippet,
+          } as CompletionItem)
       );
     }
 
@@ -323,29 +369,6 @@ export class CodeCompletionService {
       insertText,
       insertTextRules: CompletionItemInsertTextRule.InsertAsSnippet,
     } as CompletionItem;
-  }
-
-  private getCompletionItemsFromTypeBody(
-    textUntilPosition: string,
-    type: BuiltInType,
-    iconKind: CompletionItemKind
-  ) {
-    return type.body
-      ? type.body
-          .replace(/[():\s]/g, '')
-          .replace(/String/g, '')
-          .split(',')
-          .filter((label) => !textUntilPosition.includes(label))
-          .map(
-            (label) =>
-              ({
-                label,
-                kind: iconKind,
-                insertText: `${label}:`,
-                insertTextRules: CompletionItemInsertTextRule.InsertAsSnippet,
-              } as CompletionItem)
-          )
-      : [];
   }
 
   private getCompletionItemsFromFieldTypes(

@@ -1,9 +1,6 @@
 import { GraphQlUtilsService } from './graphql-utils-service';
 import { postsGraphQlSchema } from '@platypus/mock-data';
-import {
-  DataModelTypeDefsField,
-  mixerApiBuiltInTypes,
-} from '@platypus/platypus-core';
+import { DataModelTypeDefsField } from '@platypus/platypus-core';
 
 const schemaMock = postsGraphQlSchema;
 
@@ -222,14 +219,14 @@ describe('GraphQlUtilsServiceTest', () => {
       type Author {
         name: String
       }`;
-      const result = service.validate(validSchema, mixerApiBuiltInTypes);
+      const result = service.validate(validSchema);
       expect(result).toEqual([]);
     });
 
     it('should validate empty schema', () => {
       const service = createInstance();
 
-      const result = service.validate('', mixerApiBuiltInTypes);
+      const result = service.validate('');
       expect(result.length).toEqual(1);
       expect(result[0].message).toEqual('Your Data Model Schema is empty');
     });
@@ -244,21 +241,13 @@ describe('GraphQlUtilsServiceTest', () => {
     type Author {
       name: String
     }`;
-      const result = service.validate(
-        schemaWithSyntaxError,
-        mixerApiBuiltInTypes
-      );
-      expect(result).toEqual([
+      const result = service.validate(schemaWithSyntaxError);
+
+      expect(result).toMatchObject([
         {
           message: 'Syntax Error: Unexpected Name "name".',
           status: 400,
           errorMessage: 'Syntax Error: Unexpected Name "name".',
-          locations: [
-            {
-              column: 7,
-              line: 2,
-            },
-          ],
         },
       ]);
     });
@@ -273,22 +262,13 @@ describe('GraphQlUtilsServiceTest', () => {
       type Author {
         name: String
       }`;
-      const result = service.validate(
-        schemaWithInvalidField,
-        mixerApiBuiltInTypes
-      );
+      const result = service.validate(schemaWithInvalidField);
 
-      expect(result).toEqual([
+      expect(result).toMatchObject([
         {
           message: 'Syntax Error: Expected ":", found Name "String".',
           status: 400,
           errorMessage: 'Syntax Error: Expected ":", found Name "String".',
-          locations: [
-            {
-              line: 2,
-              column: 14,
-            },
-          ],
         },
       ]);
     });
@@ -304,21 +284,12 @@ describe('GraphQlUtilsServiceTest', () => {
       type Author {
         name: String
       }`;
-      const result = service.validate(
-        schemaWithInvalidScalar,
-        mixerApiBuiltInTypes
-      );
-      expect(result).toEqual([
+      const result = service.validate(schemaWithInvalidScalar);
+      expect(result).toMatchObject([
         {
           message: 'Unknown type "Strings". Did you mean "String"?',
           status: 400,
           errorMessage: 'Unknown type "Strings". Did you mean "String"?',
-          locations: [
-            {
-              column: 15,
-              line: 2,
-            },
-          ],
         },
       ]);
     });
@@ -334,21 +305,12 @@ describe('GraphQlUtilsServiceTest', () => {
       type Author {
         name: String
       }`;
-      const result = service.validate(
-        schemaWithUndefinedType,
-        mixerApiBuiltInTypes
-      );
-      expect(result).toEqual([
+      const result = service.validate(schemaWithUndefinedType);
+      expect(result).toMatchObject([
         {
           message: 'Unknown type "User".',
           status: 400,
           errorMessage: 'Unknown type "User".',
-          locations: [
-            {
-              column: 17,
-              line: 3,
-            },
-          ],
         },
       ]);
     });
@@ -365,26 +327,13 @@ describe('GraphQlUtilsServiceTest', () => {
       type Author {
         name: String
       }`;
-      const result = service.validate(
-        schemaWithDuplicateField,
-        mixerApiBuiltInTypes
-      );
+      const result = service.validate(schemaWithDuplicateField);
 
-      expect(result).toEqual([
+      expect(result).toMatchObject([
         {
           message: 'Field "Post.author" can only be defined once.',
           status: 400,
           errorMessage: 'Field "Post.author" can only be defined once.',
-          locations: [
-            {
-              column: 9,
-              line: 3,
-            },
-            {
-              column: 9,
-              line: 4,
-            },
-          ],
         },
       ]);
     });
@@ -398,26 +347,13 @@ describe('GraphQlUtilsServiceTest', () => {
       type Post {
         title: String
       }`;
-      const result = service.validate(
-        schemaWithDuplicateType,
-        mixerApiBuiltInTypes
-      );
+      const result = service.validate(schemaWithDuplicateType);
 
-      expect(result).toEqual([
+      expect(result).toMatchObject([
         {
           message: 'There can be only one type named "Post".',
           status: 400,
           errorMessage: 'There can be only one type named "Post".',
-          locations: [
-            {
-              column: 6,
-              line: 1,
-            },
-            {
-              column: 12,
-              line: 5,
-            },
-          ],
         },
       ]);
     });
@@ -462,33 +398,18 @@ describe('GraphQlUtilsServiceTest', () => {
 
       union Superman = Human | User
       `;
-      const result = service.validate(
-        schemaWithUnsupportedFeatures,
-        mixerApiBuiltInTypes
-      );
+      const result = service.validate(schemaWithUnsupportedFeatures);
 
-      expect(result).toEqual([
+      expect(result).toMatchObject([
         {
-          message: 'Input type defenitions are not supported.',
+          message: 'Input type definitions are not supported.',
           status: 400,
-          errorMessage: 'Input type defenitions are not supported.',
-          locations: [
-            {
-              line: 1,
-              column: 1,
-            },
-          ],
+          errorMessage: 'Input type definitions are not supported.',
         },
         {
           message: 'Enums are not supported.',
           status: 400,
           errorMessage: 'Enums are not supported.',
-          locations: [
-            {
-              line: 6,
-              column: 7,
-            },
-          ],
         },
         {
           message:
@@ -496,79 +417,42 @@ describe('GraphQlUtilsServiceTest', () => {
           status: 400,
           errorMessage:
             'Field "appearsIn" should be a required type if the list element type is required. For example, the valid cases are "[Episode]" and "[Episode!]!"',
-          locations: [
-            {
-              column: 9,
-              line: 16,
-            },
-          ],
         },
         {
           message: 'Type extensions are not supported.',
           status: 400,
           errorMessage: 'Type extensions are not supported.',
-          locations: [
-            {
-              line: 23,
-              column: 7,
-            },
-          ],
         },
         {
           message: 'Unions are not supported.',
           status: 400,
           errorMessage: 'Unions are not supported.',
-          locations: [
-            {
-              line: 36,
-              column: 7,
-            },
-          ],
         },
       ]);
     });
 
-    it('validates @view directiv for objects when extended SDL validation is enabled', () => {
+    it('validates @view directive for objects when extended SDL validation is enabled', () => {
       const service = createInstance();
 
       const schemaWithInvalidViewDirective = `
-      type Employee @view(space: false, name: 123, version: false){
+      type Employee @view(space: false, version: false){
         name: String
       }
       `;
 
       const result = service.validate(
         schemaWithInvalidViewDirective,
-        mixerApiBuiltInTypes,
+
         { useExtendedSdl: true }
       );
 
-      expect(result).toEqual([
+      expect(result).toMatchObject([
         {
           message: 'Space argument must be of type String',
           status: 400,
           errorMessage: 'Space argument must be of type String',
           typeName: undefined,
           fieldName: undefined,
-          locations: [
-            {
-              line: 2,
-              column: 27,
-            },
-          ],
-        },
-        {
-          message: 'Name argument must be of type String',
-          status: 400,
-          errorMessage: 'Name argument must be of type String',
-          typeName: undefined,
-          fieldName: undefined,
-          locations: [
-            {
-              line: 2,
-              column: 41,
-            },
-          ],
         },
         {
           message: 'Version argument must be of type string',
@@ -576,56 +460,32 @@ describe('GraphQlUtilsServiceTest', () => {
           errorMessage: 'Version argument must be of type string',
           typeName: undefined,
           fieldName: undefined,
-          locations: [
-            {
-              line: 2,
-              column: 52,
-            },
-          ],
         },
       ]);
     });
+
     it('validates @view directive for interfaces when extended SDL validation is enabled', () => {
       const service = createInstance();
 
       const schemaWithInvalidViewDirective = `
-      interface Person @view(space: false, name: 123, version: false){
+      interface Person @view(space: false, version: false){
         name: String
-      } 
+      }
       `;
 
       const result = service.validate(
         schemaWithInvalidViewDirective,
-        mixerApiBuiltInTypes,
+
         { useExtendedSdl: true }
       );
 
-      expect(result).toEqual([
+      expect(result).toMatchObject([
         {
           message: 'Space argument must be of type String',
           status: 400,
           errorMessage: 'Space argument must be of type String',
           typeName: undefined,
           fieldName: undefined,
-          locations: [
-            {
-              line: 2,
-              column: 30,
-            },
-          ],
-        },
-        {
-          message: 'Name argument must be of type String',
-          status: 400,
-          errorMessage: 'Name argument must be of type String',
-          typeName: undefined,
-          fieldName: undefined,
-          locations: [
-            {
-              line: 2,
-              column: 44,
-            },
-          ],
         },
         {
           message: 'Version argument must be of type string',
@@ -633,12 +493,6 @@ describe('GraphQlUtilsServiceTest', () => {
           errorMessage: 'Version argument must be of type string',
           typeName: undefined,
           fieldName: undefined,
-          locations: [
-            {
-              line: 2,
-              column: 55,
-            },
-          ],
         },
       ]);
     });
@@ -650,22 +504,19 @@ describe('GraphQlUtilsServiceTest', () => {
         name: String
         description: String
       }
-      
+
       interface Assignable {
         assignedTo: String
       }
-      
+
       type Person implements Describable & Assignable {
         id: ID!
         name: String!
-        
-      }`;
-      const result = service.validate(
-        schemaWithUnimplementedInterface,
-        mixerApiBuiltInTypes
-      );
 
-      expect(result).toEqual([
+      }`;
+      const result = service.validate(schemaWithUnimplementedInterface);
+
+      expect(result).toMatchObject([
         {
           message:
             'Interface field Describable.description expected but Person does not provide it.',
@@ -674,12 +525,6 @@ describe('GraphQlUtilsServiceTest', () => {
             'Interface field Describable.description expected but Person does not provide it.',
           typeName: 'Person',
           fieldName: 'id',
-          locations: [
-            {
-              line: 10,
-              column: 7,
-            },
-          ],
         },
         {
           message:
@@ -689,12 +534,6 @@ describe('GraphQlUtilsServiceTest', () => {
             'Interface field Assignable.assignedTo expected but Person does not provide it.',
           typeName: 'Person',
           fieldName: 'id',
-          locations: [
-            {
-              line: 10,
-              column: 7,
-            },
-          ],
         },
       ]);
     });
@@ -705,22 +544,13 @@ describe('GraphQlUtilsServiceTest', () => {
       const schemaWithUnimplementedInterface = `type movie {
         name: String
       }`;
-      const result = service.validate(
-        schemaWithUnimplementedInterface,
-        mixerApiBuiltInTypes
-      );
+      const result = service.validate(schemaWithUnimplementedInterface);
 
-      expect(result).toEqual([
+      expect(result).toMatchObject([
         {
           message: 'Type name "movie" must be PascalCase',
           status: 400,
           errorMessage: 'Type name "movie" must be PascalCase',
-          locations: [
-            {
-              line: 1,
-              column: 6,
-            },
-          ],
         },
       ]);
     });

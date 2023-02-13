@@ -14,23 +14,67 @@ export const mixerApiBuiltInTypes = [
   {
     name: 'view',
     type: 'DIRECTIVE',
-    body: '(space: String, name: String, version: String)',
-    directiveParameters: [
-      { name: 'space', kind: 'space' },
-      { name: 'name', kind: 'type' },
-      { name: 'version', kind: 'version' },
-    ],
+    body: 'directive @view(space: String, version: String) on OBJECT | INTERFACE',
     fieldDirective: false,
   },
   {
     name: 'mapping',
     type: 'DIRECTIVE',
-    body: '(space: String, container: String, property: String)',
-    directiveParameters: [
-      { name: 'container', kind: 'type' },
-      { name: 'property', kind: 'field' },
-      { name: 'space', kind: 'space' },
-    ],
+    body: 'directive @mapping(space: String, container: String, property: String) on FIELD_DEFINITION',
     fieldDirective: true,
+  },
+  {
+    name: 'relation',
+    type: 'DIRECTIVE',
+    body: `
+    input _DirectRelationRef {
+      space: String!
+      externalId: String!
+    }
+
+    enum _RelationDirection {
+      INWARDS
+      OUTWARDS
+    }
+    
+    directive @relation(
+      type: _DirectRelationRef!,
+      direction: _RelationDirection
+    ) on FIELD_DEFINITION
+    `,
+    fieldDirective: true,
+  },
+  {
+    name: 'container',
+    type: 'DIRECTIVE',
+    body: `
+    input _ConstraintDefinition {
+      identifier: String!
+      constraintType: _ConstraintType
+      require: _DirectRelationRef
+      fields: [String!]
+    }
+
+    enum _ConstraintType {
+      UNIQUENESS
+      REQUIRES
+    }
+
+    enum _IndexType {
+      BTREE
+    }
+
+    input _IndexDefinition {
+      identifier: String!
+      indexType: _IndexType
+      fields: [String!]!
+    }
+
+    directive @container(
+      constraints: [_ConstraintDefinition!]!,
+      indexes: [_IndexDefinition!]!
+    ) on OBJECT | INTERFACE
+    `,
+    fieldDirective: false,
   },
 ] as BuiltInType[];

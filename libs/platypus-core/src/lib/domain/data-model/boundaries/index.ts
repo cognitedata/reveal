@@ -1,6 +1,5 @@
 import { UpdateDataModelFieldDTO } from '../dto';
 import {
-  BuiltInType,
   DataModelTypeDefs,
   DataModelTypeDefsField,
   DataModelTypeDefsType,
@@ -15,7 +14,10 @@ export interface IGraphQlUtilsService {
    * and converts into SolutonDataModel
    * @param graphQlSchema
    */
-  parseSchema(graphQlSchema: string): DataModelTypeDefs;
+  parseSchema(
+    graphQlSchema: string,
+    includeBuiltInTypes?: boolean
+  ): DataModelTypeDefs;
 
   /**
    * Converts SolutonDataModel back into graphql SDL string
@@ -91,7 +93,6 @@ export interface IGraphQlUtilsService {
    * an empty array if no errors were encountered and the document is valid. */
   validate(
     graphQlString: string,
-    builtInTypes: BuiltInType[],
     options?: {
       useExtendedSdl: boolean;
     }

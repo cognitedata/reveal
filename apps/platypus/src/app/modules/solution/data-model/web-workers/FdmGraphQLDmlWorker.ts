@@ -1,9 +1,5 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
-import {
-  BuiltInType,
-  DataModelTypeDefs,
-  mixerApiBuiltInTypes,
-} from '@platypus/platypus-core';
+import { BuiltInType, DataModelTypeDefs } from '@platypus/platypus-core';
 import type { Position, worker } from 'monaco-editor';
 import { IFdmGraphQLDmlWorkerOptions } from './types';
 import prettierStandalone from 'prettier/standalone';
@@ -53,7 +49,6 @@ export class FdmGraphQLDmlWorker {
       const graphQlUtils = new GraphQlUtilsService();
       const markers = graphQlUtils.validate(
         graphqlCode,
-        mixerApiBuiltInTypes,
         this.createData.options
       );
       return markers;
@@ -65,10 +60,12 @@ export class FdmGraphQLDmlWorker {
   }
 
   public async doComplete(
+    graphQlCode: string,
     textUntilPosition: string,
     builtInTypes: BuiltInType[]
   ) {
     try {
+      this.setGraphQlSchema(graphQlCode);
       return this.codeCompletionService.getCompletions(
         textUntilPosition,
         builtInTypes,
@@ -99,7 +96,8 @@ export class FdmGraphQLDmlWorker {
       this.lastValidGraphQlSchema = graphQlString;
       const graphQlUtils = new GraphQlUtilsService();
       this.dataModelTypeDefs = graphQlUtils.parseSchema(
-        this.lastValidGraphQlSchema
+        this.lastValidGraphQlSchema,
+        true
       );
 
       const parsedLocationTypeDefMap = {} as Record<
@@ -131,8 +129,6 @@ export class FdmGraphQLDmlWorker {
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
-      this.dataModelTypeDefs = null;
-      this.lastValidGraphQlSchema = null;
     }
   }
 

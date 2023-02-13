@@ -8,7 +8,7 @@ import {
   DataModelTypeDefsType,
   UpdateDataModelFieldDTO,
   DataModelValidationError,
-  BuiltInType,
+  ArgumentNodeProps,
 } from '@platypus/platypus-core';
 import {
   ObjectTypeDefinitionNode,
@@ -17,6 +17,8 @@ import {
   GraphQLError,
   DocumentNode,
   Kind,
+  NameNode,
+  DirectiveDefinitionNode,
 } from 'graphql';
 import {
   documentApi,
@@ -38,6 +40,23 @@ import { validateSDL } from 'graphql/validation/validate';
 import { MappingDirectiveValidator } from './validation/MappingDirectiveValidator';
 import { NotSupportedFeaturesRule } from './validation/NotSupportedFeaturesRule';
 import { ViewDirectiveValidator } from './validation/ViewDirectiveValidator';
+
+import { getBuiltInTypesString } from './utils';
+import { RelationDirectiveValidator } from './validation/RelationDirectiveValidator';
+
+const DIRECTIVE_ARGUMENTS_KIND_MAP: {
+  [key: DirectiveProps['name']]: {
+    [key: ArgumentNodeProps['name']]: ArgumentNodeProps['kind'];
+  };
+} = {
+  mapping: {
+    container: 'type',
+    property: 'field',
+  },
+  view: {
+    name: 'type',
+  },
+};
 
 export class GraphQlUtilsService implements IGraphQlUtilsService {
   private schemaAst: DocumentApi | null = null;
@@ -169,23 +188,47 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     this.schemaAst!.getObjectType(typeName).removeField(fieldName);
   }
 
-  parseSchema(graphQlSchema: string): DataModelTypeDefs {
+  parseSchema(
+    graphQlSchema: string,
+    includeBuiltInTypes?: boolean
+  ): DataModelTypeDefs {
+    const dataModelTypeDefs: DataModelTypeDefs = {
+      types: [],
+    };
     if (!graphQlSchema) {
       this.clear();
-      return {
-        types: [],
-      } as DataModelTypeDefs;
+      return dataModelTypeDefs;
     }
 
-    const schemaAst = parse(graphQlSchema);
+    const graphQlSchemaString = includeBuiltInTypes
+      ? [getBuiltInTypesString(), graphQlSchema].join('\n')
+      : graphQlSchema;
+
+    const schemaAst = parse(graphQlSchemaString);
     this.schemaAst = documentApi().addSDL(schemaAst);
+
+    if (includeBuiltInTypes) {
+      const directiveNames: NameNode[] = [
+        ...this.schemaAst!.directiveMap.keys(),
+      ]
+        .map((directive) => this.schemaAst!.directiveMap!.get(directive)!.name)
+        .filter((node) => !!node);
+
+      const directiveNodes = this.mapDirectivesFromDefinition(
+        directiveNames.map(
+          (directive) => this.schemaAst!.getDirective(directive.value).node
+        )
+      );
+
+      dataModelTypeDefs.directives = directiveNodes;
+    }
+
     const types = [...this.schemaAst.typeMap.keys()].map((type) =>
       this.schemaAst!.typeMap.get(type)
     );
-
     const typeNames = this.getTypeNames();
 
-    const mappedTypes: DataModelTypeDefsType[] = types
+    dataModelTypeDefs.types = types
       // We will only parse Objects types for now
       .filter(
         (type) =>
@@ -206,9 +249,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
         return mappedType;
       });
 
-    return {
-      types: mappedTypes,
-    } as DataModelTypeDefs;
+    return dataModelTypeDefs;
   }
 
   hasType(typeName: string): boolean {
@@ -299,9 +340,25 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   private mapDirectives(directives: DirectiveApi[]): DirectiveProps[] {
     return (directives || []).map((directive) => ({
       name: directive.getName(),
-      arguments: directive
-        .getArguments()
-        .map((arg) => ({ name: arg.getName(), value: arg.getValue() })),
+      arguments: directive.getArguments().map((arg) => ({
+        name: arg.getName(),
+        value: arg.getValue(),
+      })),
+    }));
+  }
+
+  private mapDirectivesFromDefinition(
+    directives: DirectiveDefinitionNode[]
+  ): DirectiveProps[] {
+    return (directives || []).map((directive) => ({
+      name: directive.name.value,
+      arguments: (directive.arguments || []).map((arg) => ({
+        name: arg.name.value,
+        value: undefined,
+        kind: DIRECTIVE_ARGUMENTS_KIND_MAP[directive.name.value]?.[
+          arg.name.value
+        ],
+      })),
     }));
   }
 
@@ -333,32 +390,10 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
   validate(
     graphQlString: string,
-    builtInTypes: BuiltInType[],
     options?: {
       useExtendedSdl: boolean;
     }
   ): DataModelValidationError[] {
-    const generateBuiltIntTypes = () => {
-      return builtInTypes.map((builtInType) => {
-        if (builtInType.type === 'DIRECTIVE' && !builtInType.fieldDirective) {
-          return `directive @${builtInType.name}${
-            builtInType.body ? builtInType.body : ''
-          } on OBJECT | INTERFACE`;
-        } else if (
-          builtInType.type === 'DIRECTIVE' &&
-          builtInType.fieldDirective
-        ) {
-          return `directive @${builtInType.name}${
-            builtInType.body ? builtInType.body : ''
-          } on FIELD_DEFINITION`;
-        } else if (builtInType.type === 'OBJECT') {
-          return `type ${builtInType.name} {}`;
-        } else {
-          return `scalar ${builtInType.name}`;
-        }
-      });
-    };
-
     if (graphQlString === '') {
       return [
         {
@@ -370,12 +405,12 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     }
 
     // we need this to be able to parse and validate the schema properly
-    const schemaToValidate = `${graphQlString}
-${generateBuiltIntTypes().join('\n')}
-type Query {
-  test: String
-}
-    `;
+    const queryType = `type Query {
+      test: String
+    }`;
+
+    const schemaToValidate =
+      graphQlString + getBuiltInTypesString() + queryType;
 
     const customValidationRules = [
       NotSupportedFeaturesRule,
@@ -384,6 +419,7 @@ type Query {
     if (options && options.useExtendedSdl) {
       customValidationRules.push(ViewDirectiveValidator);
       customValidationRules.push(MappingDirectiveValidator);
+      customValidationRules.push(RelationDirectiveValidator);
     }
 
     let errors = [];
@@ -396,7 +432,6 @@ type Query {
       if (errors.length) {
         return errors.map((err) => this.graphQlToValidationError(err));
       }
-
       errors = validateFromGql(
         buildSchema(schemaToValidate),
         doc,

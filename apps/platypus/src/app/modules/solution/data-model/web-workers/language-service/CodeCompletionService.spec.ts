@@ -5,7 +5,7 @@ import {
 } from '@platypus/platypus-core';
 import { CodeCompletionService } from './CodeCompletionService';
 
-const dataModelTypeDefs = {
+const dataModelTypeDefs: DataModelTypeDefs = {
   types: [
     {
       name: 'Person',
@@ -23,7 +23,7 @@ const dataModelTypeDefs = {
           directives: [],
           arguments: [],
           location: {
-            line: 2,
+            line: 57,
             column: 11,
           },
         },
@@ -40,7 +40,7 @@ const dataModelTypeDefs = {
           directives: [],
           arguments: [],
           location: {
-            line: 3,
+            line: 58,
             column: 10,
           },
         },
@@ -57,7 +57,7 @@ const dataModelTypeDefs = {
           directives: [],
           arguments: [],
           location: {
-            line: 4,
+            line: 59,
             column: 15,
           },
         },
@@ -74,7 +74,7 @@ const dataModelTypeDefs = {
           directives: [],
           arguments: [],
           location: {
-            line: 5,
+            line: 60,
             column: 12,
           },
         },
@@ -82,30 +82,13 @@ const dataModelTypeDefs = {
       interfaces: [],
       directives: [],
       location: {
-        line: 1,
+        line: 56,
         column: 1,
       },
     },
     {
       name: 'Name',
       fields: [
-        {
-          id: 'first',
-          name: 'first',
-          type: {
-            name: 'String',
-            list: false,
-            nonNull: true,
-            custom: false,
-          },
-          nonNull: true,
-          directives: [],
-          arguments: [],
-          location: {
-            line: 9,
-            column: 18,
-          },
-        },
         {
           id: 'last',
           name: 'last',
@@ -119,8 +102,25 @@ const dataModelTypeDefs = {
           directives: [],
           arguments: [],
           location: {
-            line: 10,
-            column: 17,
+            line: 64,
+            column: 14,
+          },
+        },
+        {
+          id: 'first',
+          name: 'first',
+          type: {
+            name: 'String',
+            list: false,
+            nonNull: true,
+            custom: false,
+          },
+          nonNull: true,
+          directives: [],
+          arguments: [],
+          location: {
+            line: 65,
+            column: 18,
           },
         },
         {
@@ -136,7 +136,7 @@ const dataModelTypeDefs = {
           directives: [],
           arguments: [],
           location: {
-            line: 11,
+            line: 66,
             column: 13,
           },
         },
@@ -161,8 +161,8 @@ const dataModelTypeDefs = {
                     value: 'demo',
                     block: false,
                     loc: {
-                      start: 207,
-                      end: 213,
+                      start: 1326,
+                      end: 1332,
                     },
                   },
                 },
@@ -173,8 +173,8 @@ const dataModelTypeDefs = {
                     value: 'Person',
                     block: false,
                     loc: {
-                      start: 226,
-                      end: 234,
+                      start: 1345,
+                      end: 1353,
                     },
                   },
                 },
@@ -185,8 +185,8 @@ const dataModelTypeDefs = {
                     value: 'title',
                     block: false,
                     loc: {
-                      start: 264,
-                      end: 271,
+                      start: 1364,
+                      end: 1371,
                     },
                   },
                 },
@@ -195,15 +195,15 @@ const dataModelTypeDefs = {
           ],
           arguments: [],
           location: {
-            line: 12,
-            column: 98,
+            line: 67,
+            column: 79,
           },
         },
       ],
       interfaces: ['FullName'],
       directives: [],
       location: {
-        line: 8,
+        line: 63,
         column: 1,
       },
     },
@@ -223,7 +223,7 @@ const dataModelTypeDefs = {
           directives: [],
           arguments: [],
           location: {
-            line: 16,
+            line: 71,
             column: 18,
           },
         },
@@ -240,7 +240,7 @@ const dataModelTypeDefs = {
           directives: [],
           arguments: [],
           location: {
-            line: 17,
+            line: 72,
             column: 17,
           },
         },
@@ -257,7 +257,7 @@ const dataModelTypeDefs = {
           directives: [],
           arguments: [],
           location: {
-            line: 18,
+            line: 73,
             column: 13,
           },
         },
@@ -265,7 +265,7 @@ const dataModelTypeDefs = {
       interfaces: [],
       directives: [],
       location: {
-        line: 15,
+        line: 70,
         column: 1,
       },
     },
@@ -285,17 +285,86 @@ const dataModelTypeDefs = {
           directives: [],
           arguments: [],
           location: {
-            line: 22,
-            column: 11,
+            line: 77,
+            column: 13,
           },
         },
       ],
       interfaces: [],
       directives: [],
       location: {
-        line: 21,
+        line: 76,
         column: 1,
       },
+    },
+  ],
+  directives: [
+    {
+      name: 'view',
+      arguments: [
+        {
+          name: 'space',
+          value: undefined,
+        },
+        {
+          name: 'name',
+          kind: 'type',
+          value: undefined,
+        },
+        {
+          name: 'version',
+          value: undefined,
+        },
+      ],
+    },
+    {
+      name: 'mapping',
+      arguments: [
+        {
+          name: 'space',
+          value: undefined,
+        },
+        {
+          name: 'container',
+          kind: 'type',
+          value: undefined,
+        },
+        {
+          name: 'property',
+          kind: 'field',
+          value: undefined,
+        },
+      ],
+    },
+    {
+      name: 'relation',
+      arguments: [
+        {
+          name: 'type',
+          value: undefined,
+        },
+        {
+          name: 'name',
+          value: undefined,
+        },
+        {
+          name: 'direction',
+          value: undefined,
+        },
+      ],
+    },
+    {
+      name: 'container',
+      arguments: [
+        {
+          name: 'constraints',
+          value: undefined,
+        },
+        {
+          name: 'indexes',
+          value: undefined,
+        },
+      ],
     },
   ],
 };
@@ -365,6 +434,12 @@ describe('CodeCompletionServiceTest', () => {
           insertText: 'view',
           insertTextRules: 4,
         },
+        {
+          insertText: 'container',
+          insertTextRules: 4,
+          kind: 7,
+          label: 'container',
+        },
       ],
     });
   });
@@ -379,6 +454,12 @@ describe('CodeCompletionServiceTest', () => {
           kind: 7,
           insertText: 'mapping',
           insertTextRules: 4,
+        },
+        {
+          insertText: 'relation',
+          insertTextRules: 4,
+          kind: 7,
+          label: 'relation',
         },
       ],
     });
@@ -417,15 +498,15 @@ describe('CodeCompletionServiceTest', () => {
     expect(completionList).toEqual({
       suggestions: [
         {
-          label: 'first',
-          kind: 7,
-          insertText: 'first',
-          insertTextRules: 4,
-        },
-        {
           label: 'last',
           kind: 7,
           insertText: 'last',
+          insertTextRules: 4,
+        },
+        {
+          label: 'first',
+          kind: 7,
+          insertText: 'first',
           insertTextRules: 4,
         },
         {

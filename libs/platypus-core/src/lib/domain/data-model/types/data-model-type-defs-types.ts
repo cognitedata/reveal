@@ -2,6 +2,7 @@
 export interface ArgumentNodeProps {
   name: string;
   value: any;
+  kind?: 'type' | 'field' | 'version' | 'space' | 'relationRef' | 'direction';
 }
 
 export interface DirectiveProps {
@@ -58,4 +59,5 @@ export type DataModelTypeDefsType = {
 };
 export type DataModelTypeDefs = {
   types: DataModelTypeDefsType[];
+  directives?: DirectiveProps[];
 };

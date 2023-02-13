@@ -13,6 +13,7 @@ import {
   ValidationContext,
 } from 'graphql';
 import { fieldDefinitionApi } from 'graphql-extra';
+import { getWhiteListedEnumsAndInputs } from '../utils';
 
 export function NotSupportedFeaturesRule(
   context: ValidationContext
@@ -34,9 +35,11 @@ export function NotSupportedFeaturesRule(
   }
 
   function checkForInputTypeDefs(node: InputObjectTypeDefinitionNode) {
-    context.reportError(
-      new GraphQLError(`Input type defenitions are not supported.`, node)
-    );
+    if (!getWhiteListedEnumsAndInputs().includes(node.name.value)) {
+      context.reportError(
+        new GraphQLError(`Input type definitions are not supported.`, node)
+      );
+    }
   }
 
   function checkForTypeExtension(node: ObjectTypeExtensionNode) {
@@ -46,7 +49,9 @@ export function NotSupportedFeaturesRule(
   }
 
   function checkForEnums(node: EnumTypeDefinitionNode) {
-    context.reportError(new GraphQLError(`Enums are not supported.`, node));
+    if (!getWhiteListedEnumsAndInputs().includes(node.name.value)) {
+      context.reportError(new GraphQLError(`Enums are not supported.`, node));
+    }
   }
 
   function checkObjectTypeDef(node: ObjectTypeDefinitionNode) {

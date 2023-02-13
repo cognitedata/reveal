@@ -1,7 +1,11 @@
 import Editor, { Monaco } from '@monaco-editor/react';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { BuiltInType, DataModelTypeDefs } from '@platypus/platypus-core';
+import {
+  BuiltInType,
+  DataModelTypeDefs,
+  mixerApiBuiltInTypes,
+} from '@platypus/platypus-core';
 import debounce from 'lodash/debounce';
 import {
   Environment as MonacoEditorEnvironment,
@@ -36,7 +40,6 @@ type Props = {
   code: string;
   currentTypeName: string | null;
   typeDefs: DataModelTypeDefs | null;
-  builtInTypes: BuiltInType[];
   externalId: string;
   disabled?: boolean;
   onChange: (code: string) => void;
@@ -47,7 +50,6 @@ export const GraphqlCodeEditor = React.memo(
     code,
     currentTypeName,
     typeDefs,
-    builtInTypes,
     externalId,
     disabled = false,
     onChange,
@@ -59,9 +61,13 @@ export const GraphqlCodeEditor = React.memo(
     const { track } = useMixpanel();
 
     const editorWillMount = (monacoInstance: Monaco) => {
-      langProviders.current = setupGraphql(monacoInstance, builtInTypes, {
-        useExtendedSdl: isFDMv3(),
-      });
+      langProviders.current = setupGraphql(
+        monacoInstance,
+        mixerApiBuiltInTypes,
+        {
+          useExtendedSdl: isFDMv3(),
+        }
+      );
     };
 
     const handleEditorDidMount = (

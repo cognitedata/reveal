@@ -298,11 +298,8 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @param graphql
    * @param builtInTypes
    */
-  validateGraphql(
-    graphql: string,
-    builtInTypes: BuiltInType[]
-  ): DataModelValidationError[] {
-    return this.graphqlService.validate(graphql, builtInTypes, {
+  validateGraphql(graphql: string): DataModelValidationError[] {
+    return this.graphqlService.validate(graphql, {
       useExtendedSdl: true,
     });
   }

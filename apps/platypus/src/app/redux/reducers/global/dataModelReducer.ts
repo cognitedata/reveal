@@ -2,7 +2,6 @@
 import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import {
-  BuiltInType,
   DataModelTypeDefs,
   DataModelTypeDefsType,
   DataModelVersion,
@@ -24,7 +23,6 @@ export interface DataModelReducerState {
   typeFieldErrors: { [key: string]: string };
   hasError: boolean;
   customTypesNames: string[];
-  builtInTypes: BuiltInType[];
 }
 const getTypeDefsBuilder = () =>
   rootInjector.get(TOKENS.dataModelTypeDefsBuilderService);
@@ -39,7 +37,6 @@ export const initialState = {
   typeFieldErrors: {} as { [key: string]: string },
   hasError: false,
   customTypesNames: [] as string[],
-  builtInTypes: getTypeDefsBuilder().getBuiltinTypes(),
 } as DataModelReducerState;
 
 const updateDataModelState = (
@@ -50,10 +47,7 @@ const updateDataModelState = (
   state.graphQlSchema = updatedGqlSchema;
   state.customTypesNames = typeDefsBuilder.getCustomTypesNames(state.typeDefs);
 
-  const validationErrors = typeDefsBuilder.validate(
-    updatedGqlSchema,
-    state.builtInTypes
-  );
+  const validationErrors = typeDefsBuilder.validate(updatedGqlSchema);
 
   state.hasError = validationErrors.length > 0;
 
@@ -70,7 +64,6 @@ const clearState = (state: DataModelReducerState): DataModelReducerState => {
   state.hasError = false;
   state.typeFieldErrors = {};
   state.customTypesNames = [];
-  state.builtInTypes = typeDefsBuilder.getBuiltinTypes();
   state.editorMode = SchemaEditorMode.View;
   delete state.selectedDataModelVersion;
   return state;
@@ -114,10 +107,7 @@ const dataModelSlice = createSlice({
     parseGraphQlSchema: (state, action: PayloadAction<string>) => {
       const graphQlSchemaString = action.payload;
       const typeDefsBuilder = getTypeDefsBuilder();
-      const validationErrors = typeDefsBuilder.validate(
-        graphQlSchemaString,
-        state.builtInTypes
-      );
+      const validationErrors = typeDefsBuilder.validate(graphQlSchemaString);
 
       const hasError = validationErrors.length > 0;
       state.hasError = hasError;
@@ -130,10 +120,6 @@ const dataModelSlice = createSlice({
       } catch (err) {
         state.hasError = !!err;
       }
-    },
-    // Remove action
-    setBuiltInTypes: (state, action: PayloadAction<BuiltInType[]>) => {
-      state.builtInTypes = action.payload;
     },
     createTypeDefsType: (state, action: PayloadAction<string>) => {
       const typeDefsBuilder = getTypeDefsBuilder();

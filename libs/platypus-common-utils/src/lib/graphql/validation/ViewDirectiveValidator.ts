@@ -41,17 +41,6 @@ export function ViewDirectiveValidator(context: ValidationContext): ASTVisitor {
             }
             break;
 
-          case 'name':
-            if (!argumentIsString(argument)) {
-              context.reportError(
-                new GraphQLError(
-                  `Name argument must be of type String`,
-                  argument
-                )
-              );
-            }
-            break;
-
           case 'version':
             if (!argumentIsString(argument)) {
               context.reportError(

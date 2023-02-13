@@ -5,6 +5,7 @@ import {
   BuiltInType,
   DataModelTypeDefsField,
   DataModelTypeDefsType,
+  mixerApiBuiltInTypes,
   UpdateDataModelFieldDTO,
 } from '@platypus/platypus-core';
 import {
@@ -21,7 +22,6 @@ import { DataModelFieldsGrid } from './elements';
 
 export interface TypeDefFieldsProps {
   currentType: DataModelTypeDefsType;
-  builtInTypes: BuiltInType[];
   customTypesNames: string[];
   disabled: boolean;
   onFieldCreated: (fieldName: string, fieldId: string) => void;
@@ -38,7 +38,6 @@ export interface TypeDefFieldsProps {
  */
 export const TypeDefFields = ({
   currentType,
-  builtInTypes,
   customTypesNames,
   disabled,
   onFieldCreated,
@@ -203,7 +202,7 @@ export const TypeDefFields = ({
   const typeDefsConfig = useMemo(
     () =>
       gridService.getGridConfig({
-        builtInTypes,
+        builtInTypes: mixerApiBuiltInTypes,
         customTypesNames,
         disabled,
         isRequiredDisabled,

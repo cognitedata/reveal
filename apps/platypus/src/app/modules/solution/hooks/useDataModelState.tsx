@@ -59,13 +59,6 @@ export const useDataModelState = () => {
     [dispatch]
   );
 
-  const setBuiltInTypes = useCallback(
-    (builtInTypes: BuiltInType[]) => {
-      dispatch(solutionActions.setBuiltInTypes(builtInTypes));
-    },
-    [dispatch]
-  );
-
   const clearState = useCallback(() => {
     dispatch(solutionActions.clearState());
   }, [dispatch]);
@@ -90,7 +83,6 @@ export const useDataModelState = () => {
     setIsDirty,
     setSelectedVersionNumber,
     setSelectedDataModelVersion,
-    setBuiltInTypes,
     clearState,
     parseGraphQLSchema,
     switchDataModelVersion,
