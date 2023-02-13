@@ -234,7 +234,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     },
   },
   assets: {
-    header: 'Direct Asset(s)',
+    header: 'Direct asset',
     accessorFn: (resourceData) => resourceData.assetId,
     id: 'directAsset',
     enableSorting: false,
