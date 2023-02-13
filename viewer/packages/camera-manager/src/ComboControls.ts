@@ -423,12 +423,12 @@ export class ComboControls extends EventDispatcher {
         this.onMouseUp();
         break;
       case 'touch':
-        remove(this._pointEventCache, (ev) => ev.pointerId === event.pointerId);
+        remove(this._pointEventCache, ev => ev.pointerId === event.pointerId);
         break;
       default:
         break;
     }
-  }
+  };
 
   private readonly onMouseUp = () => {
     this._accumulatedMouseMove.set(0, 0);
