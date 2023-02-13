@@ -16,6 +16,10 @@ const Routes = () => {
           element={<EditPage />}
         />
         <Route
+          path="/conventions/:systemId/edit/:conventionId/:dependsOnId"
+          element={<EditPage />}
+        />
+        <Route
           path="/conventions/:systemId/test"
           element={<ConventionsPage test />}
         />

@@ -21,7 +21,7 @@ const columns = [
 ];
 
 export const EditPage = () => {
-  const { conventionId } = useParams();
+  const { conventionId, dependsOnId } = useParams();
 
   const { data: system } = useSystemQuery();
   const { data: conventions } = useConventionListQuery();
@@ -33,19 +33,22 @@ export const EditPage = () => {
     return item.id === conventionId;
   });
 
-  const definitions = convention?.definitions;
+  const definitions = convention?.definitions?.filter((item) => {
+    return item.dependsOn === dependsOnId;
+  });
 
   const saveData = (data: TagAbbreviation[]) => {
     const filteredData = data.filter((item: TagAbbreviation) => {
       return item.key && item.description;
     });
 
-    const newData = filteredData.map((item: any) => {
+    const newData = filteredData.map((item) => {
       return {
         id: item.id.includes('idRow') ? generateId() : item.id,
         key: item.key,
         description: item.description,
         type: 'Abbreviation',
+        dependsOn: dependsOnId,
       };
     });
 
@@ -59,7 +62,9 @@ export const EditPage = () => {
   return (
     <div>
       <Header>
-        <Title level={2}>Edit {system?.title}</Title>
+        <Title level={2}>
+          Edit {system?.title} {dependsOnId && 'with dependency'}
+        </Title>
       </Header>
       <Container>
         <EditTable
