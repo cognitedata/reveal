@@ -42,6 +42,7 @@ type IntersectCadNodesResult = {
 export class PickingHandler {
   private readonly _clearColor: THREE.Color;
   private readonly _clearAlpha: number;
+  private readonly _raycaster: THREE.Raycaster;
 
   private readonly _pickPixelColorStorage: {
     renderTarget: THREE.WebGLRenderTarget;
@@ -63,6 +64,7 @@ export class PickingHandler {
   constructor(renderer: THREE.WebGLRenderer, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
     this._clearColor = new THREE.Color('black');
     this._clearAlpha = 0;
+    this._raycaster = new THREE.Raycaster();
 
     this._pickPixelColorStorage = {
       renderTarget: new THREE.WebGLRenderTarget(1, 1),
@@ -118,30 +120,42 @@ export class PickingHandler {
 
   private filterOutOfBoundCadNodes(cadNodes: CadNode[], input: IntersectInput) {
     // Ensure the ray overlaps any point on the given models bounding box.
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(input.normalizedCoords, input.camera);
-    const ray = raycaster.ray;
-
-    const getWorldSpaceNodeBounds = (node: CadNode) =>
-      node.cadModelMetadata.scene.root.subtreeBoundingBox.clone().applyMatrix4(node.cadModelMetadata.modelMatrix);
+    this._raycaster.setFromCamera(input.normalizedCoords, input.camera);
+    const ray = this._raycaster.ray;
+    const cameraPosition = input.camera.position.clone();
 
     // Remove all cadNodes that cannot be hit. Avoid a raycast against them
-    const candidateCadNodes = (
-      cadNodes
-        .map(cadNode => {
-          return {
-            cadNode: cadNode,
-            intersectPosition: ray.intersectBox(getWorldSpaceNodeBounds(cadNode), new THREE.Vector3())
-          };
-        })
-        .filter(x => x.intersectPosition !== null) as { cadNode: CadNode; intersectPosition: THREE.Vector3 }[]
-    ).sort(
-      (x, y) =>
-        x.intersectPosition.distanceToSquared(input.camera.position) -
-        y.intersectPosition.distanceToSquared(input.camera.position)
-    );
+    const candidateCadNodes = cadNodes
+      .map(cadNode => getIntersection(cadNode, ray))
+      .filter(hasIntersection)
+      .sort(byIntersectDistanceToCamera)
+      .map(data);
 
     return candidateCadNodes;
+
+    function getIntersection(cadNode: CadNode, ray: THREE.Ray): [CadNode, THREE.Vector3 | null] {
+      return [cadNode, ray.intersectBox(getWorldSpaceNodeBounds(cadNode), new THREE.Vector3())];
+    }
+
+    function getWorldSpaceNodeBounds(node: CadNode): THREE.Box3 {
+      const cadNodeBoundingBox = node.cadModelMetadata.scene.root.subtreeBoundingBox.clone();
+      return cadNodeBoundingBox.applyMatrix4(node.cadModelMetadata.modelMatrix);
+    }
+
+    function hasIntersection(
+      cadNodeIntersection: [CadNode, THREE.Vector3 | null]
+    ): cadNodeIntersection is [CadNode, THREE.Vector3] {
+      const intersectPosition = cadNodeIntersection[1];
+      return intersectPosition !== null;
+    }
+
+    function byIntersectDistanceToCamera([_0, a]: [CadNode, THREE.Vector3], [_1, b]: [CadNode, THREE.Vector3]): number {
+      return a.distanceToSquared(cameraPosition) - b.distanceToSquared(cameraPosition);
+    }
+
+    function data(cadNodeData: [CadNode, THREE.Vector3]): { cadNode: CadNode; intersectPosition: THREE.Vector3 } {
+      return { cadNode: cadNodeData[0], intersectPosition: cadNodeData[1] };
+    }
   }
 
   private async intersectCadNode(
