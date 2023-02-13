@@ -96,6 +96,7 @@ export class Image360ApiHelper {
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
+    this._interactionState.currentImage360Entered = image360Entity;
 
     if (lastEntered360ImageEntity === image360Entity) {
       this._requestRedraw();
@@ -103,6 +104,10 @@ export class Image360ApiHelper {
     }
 
     await this._image360Facade.preload(image360Entity);
+
+    if (this._interactionState.currentImage360Entered !== image360Entity) {
+      return;
+    }
 
     this.set360CameraManager();
 
@@ -124,7 +129,6 @@ export class Image360ApiHelper {
       ]);
     }
     this._transitionInProgress = false;
-    this._interactionState.currentImage360Entered = image360Entity;
     this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
 
     this._requestRedraw();
