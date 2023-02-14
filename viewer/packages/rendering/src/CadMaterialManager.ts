@@ -124,6 +124,20 @@ export class CadMaterialManager {
     this.updateClippingPlanesForModel(modelIdentifier);
   }
 
+  removeModelMaterials(modelIdentifier: string): void {
+    const modelData = this.materialsMap.get(modelIdentifier);
+
+    if (modelData === undefined) {
+      throw new Error(`Model identifier: ${modelIdentifier} not found`);
+    }
+
+    forEachMaterial(modelData.materials, mat => mat.dispose());
+
+    this.materialsMap.delete(modelIdentifier);
+    modelData.nodeTransformTextureBuilder.dispose();
+    modelData.nodeAppearanceTextureBuilder.dispose();
+  }
+
   addTexturedMeshMaterial(modelIdentifier: string, sectorId: number, texture: THREE.Texture): THREE.RawShaderMaterial {
     const modelData = this.materialsMap.get(modelIdentifier);
 
@@ -150,22 +164,6 @@ export class CadMaterialManager {
     if (modelData) {
       delete modelData.materials.texturedMaterials[toTextureMaterialName(sectorId)];
     }
-  }
-
-  removeModelMaterials(modelIdentifier: string): void {
-    const modelData = this.materialsMap.get(modelIdentifier);
-
-    if (modelData === undefined) {
-      throw new Error(`Model identifier: ${modelIdentifier} not found`);
-    }
-
-    for (const mat of Object.values(modelData.materials)) {
-      mat.dispose();
-    }
-
-    this.materialsMap.delete(modelIdentifier);
-    modelData.nodeTransformTextureBuilder.dispose();
-    modelData.nodeAppearanceTextureBuilder.dispose();
   }
 
   getModelMaterials(modelIdentifier: string): Materials {
