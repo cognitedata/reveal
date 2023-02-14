@@ -199,7 +199,7 @@ describe(GltfSectorParser.name, () => {
   });
 
   test('Parsing texture.glb should return a textured mesh and an untextured mesh', async () => {
-    const primitivesByteBuffer = fs.readFileSync(__dirname + '/combined_texture.glb');
+    const primitivesByteBuffer = fs.readFileSync(__dirname + '/combined-texture.glb');
 
     const parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer.buffer);
 
