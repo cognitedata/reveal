@@ -54,6 +54,7 @@ import {
 } from '../components/PublishVersionModal';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 import { getKeyForDataModel } from '@platypus-app/utils/local-storage-utils';
+import { ErrorsByGroup } from '../components/GraphqlCodeEditor/Model';
 
 const MAX_TYPES_VISUALIZABLE = 30;
 
@@ -145,6 +146,9 @@ export const DataModelPage = ({
   const [showEndpointModal, setShowEndpointModal] = useState(false);
   const [publishModalVersionType, setPublishModalVersionType] =
     useState<VersionType | null>(null);
+  const [errorsByGroup, setErrorsByGroup] = useState<ErrorsByGroup>({
+    DmlError: [],
+  });
 
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
@@ -257,6 +261,8 @@ export const DataModelPage = ({
 
   const handleSaveOrPublish = async (newVersion: string) => {
     try {
+      // Clear old errors
+      setErrorsByGroup({ DmlError: [] });
       const version = selectedDataModelVersion?.version;
       const draftVersion = version;
       let result: Result<DataModelVersion>;
@@ -297,6 +303,19 @@ export const DataModelPage = ({
       }
 
       if (result.error?.type as ErrorType) {
+        if (result.error instanceof PlatypusDmlError) {
+          setErrorsByGroup({
+            DmlError: result.error.errors.map((err) => ({
+              severity: 8,
+              message: err.message + (err.hint ? '\n' + err.hint : ''),
+              startLineNumber: err.location.start.line,
+              startColumn: err.location.start.column,
+              endColumn: err.location.end?.column || 1000,
+              endLineNumber: err.location.end?.line || err.location.start.line,
+            })),
+          });
+        }
+
         Notification({
           type: 'error',
           title: 'Error: could not update data model',
@@ -419,6 +438,7 @@ export const DataModelPage = ({
                   version={selectedDataModelVersion.version}
                   externalId={dataModelExternalId}
                   isPublishing={saving || updating}
+                  errorsByGroup={errorsByGroup}
                 />
               </ErrorBoundary>
             }

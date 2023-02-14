@@ -12,6 +12,7 @@ import {
   editor as MonacoEditor,
 } from 'monaco-editor';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { ErrorsByGroup } from './Model';
 
 // web workers stuff
 import { setupGraphql } from '../../web-workers';
@@ -42,6 +43,7 @@ type Props = {
   typeDefs: DataModelTypeDefs | null;
   externalId: string;
   disabled?: boolean;
+  errorsByGroup: ErrorsByGroup;
   onChange: (code: string) => void;
 };
 
@@ -52,11 +54,13 @@ export const GraphqlCodeEditor = React.memo(
     typeDefs,
     externalId,
     disabled = false,
+    errorsByGroup,
     onChange,
   }: Props) => {
     const [editorValue, setEditorValue] = useState(code);
     const langProviders = useRef<any>(null);
-    const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
+    const [editorRef, setEditorRef] =
+      useState<MonacoEditor.IStandaloneCodeEditor | null>(null);
 
     const { track } = useMixpanel();
 
@@ -73,7 +77,7 @@ export const GraphqlCodeEditor = React.memo(
     const handleEditorDidMount = (
       editor: MonacoEditor.IStandaloneCodeEditor
     ) => {
-      editorRef.current = editor;
+      setEditorRef(editor);
     };
 
     const debouncedOnChange = useMemo(
@@ -88,16 +92,16 @@ export const GraphqlCodeEditor = React.memo(
     }, [debouncedOnChange]);
 
     useEffect(() => {
-      if (currentTypeName && editorRef.current && typeDefs) {
+      if (currentTypeName && editorRef && typeDefs) {
         const selectedType = typeDefs?.types.find(
           (typeDef) => typeDef.name === currentTypeName
         );
 
         if (selectedType?.location) {
           // scroll the editor to this line
-          editorRef.current.revealLine(selectedType.location.line);
+          editorRef.revealLine(selectedType.location.line);
           // set the focus there
-          editorRef.current.setPosition({
+          editorRef.setPosition({
             column: selectedType?.location.column,
             lineNumber: selectedType?.location.line,
           });
@@ -105,7 +109,7 @@ export const GraphqlCodeEditor = React.memo(
       }
 
       // eslint-disable-next-line
-    }, [currentTypeName]);
+    }, [editorRef, currentTypeName]);
 
     useEffect(() => {
       setEditorValue(code);
@@ -123,6 +127,15 @@ export const GraphqlCodeEditor = React.memo(
         }
       };
     }, []);
+
+    useEffect(() => {
+      const editorModel = editorRef?.getModel();
+      if (editorModel != null) {
+        Object.entries(errorsByGroup).forEach(([group, markers]) =>
+          MonacoEditor.setModelMarkers(editorModel, group, markers)
+        );
+      }
+    }, [errorsByGroup, editorRef]);
 
     return (
       <StyledEditor>

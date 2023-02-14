@@ -17,6 +17,8 @@ import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelRed
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 import { isFDMv3, useUIEditorFeatureFlag } from '@platypus-app/flags';
+import { ErrorsByGroup } from '../GraphqlCodeEditor/Model';
+import type { editor as MonacoEditor } from 'monaco-editor';
 
 const GraphqlCodeEditor = React.lazy(() =>
   import('../GraphqlCodeEditor/GraphqlCodeEditor').then((module) => ({
@@ -30,6 +32,7 @@ export interface EditorPanelProps {
   version: string;
   editorMode: SchemaEditorMode;
   isPublishing: boolean;
+  errorsByGroup: ErrorsByGroup;
 }
 
 export const EditorPanel: React.FC<EditorPanelProps> = ({
@@ -38,6 +41,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
   version,
   editorMode,
   isPublishing,
+  errorsByGroup,
 }) => {
   const { t } = useTranslation('EditorPanel');
   const { isEnabled: isUIEditorFlagEnabled } = useUIEditorFeatureFlag();
@@ -101,6 +105,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             code={graphQlSchema}
             disabled={isUIDisabled}
             onChange={setGraphQlSchema}
+            errorsByGroup={errorsByGroup}
           />
         </Suspense>
       ) : (
