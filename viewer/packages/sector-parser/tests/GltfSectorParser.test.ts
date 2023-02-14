@@ -197,4 +197,21 @@ describe(GltfSectorParser.name, () => {
     // Quad geometry
     expect(trapeziums.attributes['position'].count).toBe(4);
   });
+
+  test('Parsing texture.glb should return a textured mesh and an untextured mesh', async () => {
+    const primitivesByteBuffer = fs.readFileSync(__dirname + '/combined_texture.glb');
+
+    const parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer.buffer);
+
+    const texturedMeshes = parsedPrimitivesResult
+      .filter(m => m.type === RevealGeometryCollectionType.TexturedTriangleMesh);
+    const untexturedMeshes = parsedPrimitivesResult
+      .filter(m => m.type === RevealGeometryCollectionType.TriangleMesh);
+
+    expect(texturedMeshes).toHaveLength(1);
+    expect(untexturedMeshes).toHaveLength(1);
+
+    expect(texturedMeshes[0].texture).toBeDefined();
+    expect(untexturedMeshes[0].texture).toBeUndefined();
+  });
 });
