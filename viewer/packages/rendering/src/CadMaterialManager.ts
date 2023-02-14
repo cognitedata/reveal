@@ -348,7 +348,6 @@ export class CadMaterialManager {
 }
 
 function applyToModelMaterials(materials: Materials, callback: (material: THREE.RawShaderMaterial) => void) {
-  console.log('Applying change to all materials: ', Object.keys(materials));
   for (const material of Object.values(materials)) {
     callback(material);
   }
