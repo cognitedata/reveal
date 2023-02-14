@@ -24,6 +24,7 @@ import { NativeScale } from './NativeScale';
 
 export interface ChartProps
   extends Pick<CommonChartProps, 'data' | 'axisNames'> {
+  id: string;
   scaleBlocks: number[];
   header?: string | JSX.Element;
   reverseYAxis?: boolean;
@@ -33,6 +34,7 @@ export interface ChartProps
 
 export const Chart: React.FC<ChartProps> = React.memo(
   ({
+    id,
     data,
     axisNames,
     scaleBlocks: scaleBlocksOriginal,
@@ -74,7 +76,7 @@ export const Chart: React.FC<ChartProps> = React.memo(
     );
 
     return (
-      <ChartWrapper>
+      <ChartWrapper data-testid={id}>
         <ChartHeader>{header}</ChartHeader>
         <DepthScaleLines scaleBlocks={scaleBlocks} />
 

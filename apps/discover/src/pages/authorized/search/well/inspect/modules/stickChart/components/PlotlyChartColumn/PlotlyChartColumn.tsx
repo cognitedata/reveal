@@ -114,6 +114,7 @@ export const PlotlyChartColumn: React.FC<
       if (showChart) {
         return (
           <Chart
+            id={`${id}-chart`}
             data={data}
             axisNames={axisNames}
             scaleBlocks={scaleBlocks}

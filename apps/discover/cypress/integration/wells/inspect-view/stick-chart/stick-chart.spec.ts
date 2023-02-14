@@ -8,7 +8,6 @@ import { WELLS_SEARCH_ALIAS } from '../../../../support/interceptions';
 const DATA_AVAILABILITY_CASINGS = 'Casings';
 const NO_COLUMNS_SELECTED_TEXT = 'No columns selected';
 const NO_OPTIONS_SELECTED_TEXT = 'No options selected';
-const FIT_LOT_CHART_TITLE = 'Depth vs Pressure';
 const SEE_GRAPH_BUTTON_TEXT = 'See graph';
 const DEFAULT_TRAJECTORY_CHART_TITLE = 'TVD vs ED';
 const DETAIL_PAGE_BUTTON_TEXT = 'Detail page';
@@ -159,11 +158,11 @@ describe('Wells: stick chart', () => {
     cy.get('@measurementsColumn').findByTestId('Expand').click();
 
     cy.log('FIT LOT graph should visible');
-    cy.findAllByText(FIT_LOT_CHART_TITLE).should('be.visible');
+    cy.findByTestId('measurements-column-chart').should('be.visible');
 
     cy.log('collapse FIT LOT graph');
     cy.get('@measurementsColumn').findByTestId('Collapse').click();
-    cy.findAllByText(FIT_LOT_CHART_TITLE).should('not.exist');
+    cy.findByTestId('measurements-column-chart').should('not.exist');
   });
 
   it('Should be able to expand & collapse trajectory chart', () => {
