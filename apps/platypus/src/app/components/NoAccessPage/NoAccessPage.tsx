@@ -26,13 +26,6 @@ const NoAccessPage = (): JSX.Element => {
           </li>
         </ul>
       </AccessInfo>
-      <p>
-        To grant this, make sure to contact your admin and link your account
-        with a Cognite Group that has these two {config.DATA_MODELS_GROUP_NAME}{' '}
-        ACLs. You can do this via the "manage access" tool in this UI under the
-        "manage" tab, or you can run the sample code belowto create a CDF group
-        with these ACLs and link it to your IdP group.
-      </p>
     </NoAccessContent>
   );
 };
@@ -69,7 +62,6 @@ const AccessInfo = styled.div`
   color: var(--cogs-text-color);
   padding: 14px;
   width: 100%;
-  margin-bottom: 14px;
   p:last-child {
     margin-bottom: 0;
   }
