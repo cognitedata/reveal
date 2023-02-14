@@ -11,7 +11,7 @@ async function doFunnyButtonThing(viewer: Cognite3DViewer) {
     viewer.addObject3D(ballMesh);
 
     const camState = viewer.cameraManager.getCameraState();
-    ballMesh.position.copy(camState.position)
+    ballMesh.position.copy(camState.position);
       
     const clock = new THREE.Clock(true);
     clock.start();
@@ -22,7 +22,7 @@ async function doFunnyButtonThing(viewer: Cognite3DViewer) {
       const movementVec = camState.target.clone().sub(camState.position).normalize();
       ballMesh.position.add(movementVec.multiplyScalar(speedFactor));
       
-      viewer.requestRedraw()
+      viewer.requestRedraw();
   
       if (clock.elapsedTime >= 7) {
         viewer.removeObject3D(ballMesh);
