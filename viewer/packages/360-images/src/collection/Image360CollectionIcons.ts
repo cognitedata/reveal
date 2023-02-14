@@ -130,24 +130,29 @@ export class Image360CollectionIcons {
     frontMaterial: ShaderMaterial,
     backMaterial: ShaderMaterial
   ): [Points, Points] {
-    const frontPoints = new Points(geometry, frontMaterial);
-    frontPoints.renderOrder = 4;
+    const frontPoints = createPoints(geometry, frontMaterial);
     frontPoints.onBeforeRender = (renderer, _, camera) => {
-      renderer.getSize(frontMaterial.uniforms.renderSize.value);
-      frontMaterial.uniforms.renderDownScale.value =
-        frontMaterial.uniforms.renderSize.value.x / renderer.domElement.clientWidth;
+      setUniforms(renderer, frontMaterial);
       this._onRenderTrigger.fire(renderer, camera);
     };
 
-    const backPoints = new Points(geometry, backMaterial);
-    backPoints.renderOrder = 4;
+    const backPoints = createPoints(geometry, backMaterial);
     backPoints.onBeforeRender = renderer => {
-      renderer.getSize(backMaterial.uniforms.renderSize.value);
-      backMaterial.uniforms.renderDownScale.value =
-        backMaterial.uniforms.renderSize.value.x / renderer.domElement.clientWidth;
+      setUniforms(renderer, backMaterial);
     };
 
     return [frontPoints, backPoints];
+
+    function createPoints(geometry: BufferGeometry, material: ShaderMaterial): Points {
+      const points = new Points(geometry, material);
+      points.renderOrder = 4;
+      return points;
+    }
+
+    function setUniforms(renderer: WebGLRenderer, material: ShaderMaterial): void {
+      renderer.getSize(material.uniforms.renderSize.value);
+      material.uniforms.renderDownScale.value = material.uniforms.renderSize.value.x / renderer.domElement.clientWidth;
+    }
   }
 
   private createOuterRingsTexture(): CanvasTexture {
