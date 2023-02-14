@@ -203,10 +203,10 @@ describe(GltfSectorParser.name, () => {
 
     const parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer.buffer);
 
-    const texturedMeshes = parsedPrimitivesResult
-      .filter(m => m.type === RevealGeometryCollectionType.TexturedTriangleMesh);
-    const untexturedMeshes = parsedPrimitivesResult
-      .filter(m => m.type === RevealGeometryCollectionType.TriangleMesh);
+    const texturedMeshes = parsedPrimitivesResult.filter(
+      m => m.type === RevealGeometryCollectionType.TexturedTriangleMesh
+    );
+    const untexturedMeshes = parsedPrimitivesResult.filter(m => m.type === RevealGeometryCollectionType.TriangleMesh);
 
     expect(texturedMeshes).toHaveLength(1);
     expect(untexturedMeshes).toHaveLength(1);
