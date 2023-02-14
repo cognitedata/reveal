@@ -29,7 +29,7 @@ import { FileInput } from 'components/forms/controls/FileInput';
 import { HEARTBEAT_POLL_INTERVAL } from 'components/simulator/constants';
 import { SimulatorStatusLabel } from 'components/simulator/SimulatorStatusLabel';
 import { useUserInfo } from 'hooks/useUserInfo';
-import { selectCapabilities } from 'store/capabilities/selectors';
+import { selectIsLabelsEnabled } from 'store/capabilities/selectors';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import {
   getFileExtensionFromFileName,
@@ -111,7 +111,6 @@ export function ModelForm({
   initialModelFormState,
   onUpload,
 }: React.PropsWithoutRef<ComponentProps>) {
-  const capabilities = useSelector(selectCapabilities);
   const inputFile = useRef<HTMLInputElement>(null);
   const [datasets, setDatasets] = useState<DataSet[]>();
   const client = useSDK();
@@ -120,12 +119,7 @@ export function ModelForm({
   // state to find which simulator was selected after uploading the model file
   const [selectedSimulator, setSelectedSimulator] = useState<Simulator>();
 
-  const labelsFeature = capabilities.capabilities?.find(
-    (feature) => feature.name === 'Labels'
-  );
-  const isLabelsEnabled = labelsFeature?.capabilities?.every(
-    (capability) => capability.enabled
-  );
+  const isLabelsEnabled = useSelector(selectIsLabelsEnabled);
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();

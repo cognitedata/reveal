@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { TopBar } from '@cognite/cogs.js';
 
 import { SimulatorStatus } from 'components/simulator/SimulatorStatus';
-import { selectCapabilities } from 'store/capabilities/selectors';
+import { selectIsLabelsEnabled } from 'store/capabilities/selectors';
 import { createCdfLink } from 'utils/createCdfLink';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
@@ -13,16 +13,10 @@ import { trackUsage } from 'utils/metrics/tracking';
 import { LabelsModal } from './LabelsModal';
 
 export function MenuBar() {
-  const capabilities = useSelector(selectCapabilities);
   const [isOpen, setOpen] = useState<boolean>(false);
   const matchRoute = useMatchRoute();
   const navigate = useNavigate();
-  const labelsFeature = capabilities.capabilities?.find(
-    (feature) => feature.name === 'Labels'
-  );
-  const isLabelsEnabled = labelsFeature?.capabilities?.every(
-    (capability) => capability.enabled
-  );
+  const isLabelsEnabled = useSelector(selectIsLabelsEnabled);
 
   return (
     <TopBar data-cy="top-bar">

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -35,7 +35,7 @@ import {
 import { GraphicContainer } from 'components/shared/elements';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { CalculationDescriptionInfoDrawer } from 'pages/CalculationConfiguration/steps/infoDrawers/CalculationDescriptionInfoDrawer';
-import { selectCapabilities } from 'store/capabilities/selectors';
+import { selectIsDeleteEnabled } from 'store/capabilities/selectors';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { isBHPApproxMethodWarning } from 'utils/common';
 import { createCdfLink } from 'utils/createCdfLink';
@@ -88,19 +88,7 @@ export function CalculationList({
   const [confirmDeleteCalucation, setConfirmDeleteCalucation] =
     useState<ModelCalculation | null>(null);
 
-  const capabilities = useSelector(selectCapabilities);
-
-  const isDeleteEnabled = useMemo(() => {
-    const deleteFeature = capabilities.capabilities?.find(
-      (feature) => feature.name === 'Delete'
-    );
-    if (deleteFeature?.capabilities) {
-      return deleteFeature.capabilities.every(
-        (capability) => capability.enabled
-      );
-    }
-    return false;
-  }, [capabilities]);
+  const isDeleteEnabled = useSelector(selectIsDeleteEnabled);
 
   const {
     data: { definitions },

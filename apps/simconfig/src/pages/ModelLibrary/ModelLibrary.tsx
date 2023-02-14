@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
@@ -10,6 +11,7 @@ import { useGetModelFileListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelDetails, ModelList } from 'components/models';
 import { capabilitiesSlice } from 'store/capabilities';
+import { selectIsLabelsEnabled } from 'store/capabilities/selectors';
 import { useAppDispatch } from 'store/hooks';
 import { createCdfLink } from 'utils/createCdfLink';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
@@ -32,12 +34,8 @@ export function ModelLibrary() {
   const [selectedLabels, setSelectedLabels] = useState<
     { label: string; value: string }[]
   >([]);
-  const labelsFeature = definitions?.features.find(
-    (feature) => feature.name === 'Labels'
-  );
-  const isLabelsEnabled = labelsFeature?.capabilities?.every(
-    (capability) => capability.enabled
-  );
+
+  const isLabelsEnabled = useSelector(selectIsLabelsEnabled);
 
   const [isModelFileDeleted, setIsModelFileDeleted] = useState<boolean>(false);
   const {

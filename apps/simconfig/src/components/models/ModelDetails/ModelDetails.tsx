@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
@@ -23,6 +24,10 @@ import {
 import { ModelForm } from 'components/forms/ModelForm';
 import { CalculationList, ModelVersionList } from 'components/models';
 import { useTitle } from 'hooks/useTitle';
+import {
+  selectIsDeleteEnabled,
+  selectIsLabelsEnabled,
+} from 'store/capabilities/selectors';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
@@ -51,21 +56,9 @@ export function ModelDetails({
     data: { definitions },
     params: { selectedTab = 'model-versions' },
   } = useMatch<AppLocationGenerics>();
-  const labelsFeature = definitions?.features.find(
-    (feature) => feature.name === 'Labels'
-  );
-  const isLabelsEnabled = labelsFeature?.capabilities?.every(
-    (capability) => capability.enabled
-  );
 
-  const isDeleteEnabled = useMemo(() => {
-    const deleteFeature = definitions?.features.find(
-      (feature) => feature.name === 'Delete'
-    );
-    return deleteFeature?.capabilities?.every(
-      (capability) => capability.enabled
-    );
-  }, [definitions]);
+  const isLabelsEnabled = useSelector(selectIsLabelsEnabled);
+  const isDeleteEnabled = useSelector(selectIsDeleteEnabled);
 
   const navigate = useNavigate();
   const [showCalculations, setShowCalculations] = useState('configured');
