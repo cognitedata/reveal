@@ -56,7 +56,7 @@ export const SequenceTable = ({
         },
         Table.Columns.rootAsset(),
         Table.Columns.assets,
-        Table.Columns.dataSet,
+        Table.Columns.dataset,
         ...metadataColumns,
       ] as ColumnDef<Sequence>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps

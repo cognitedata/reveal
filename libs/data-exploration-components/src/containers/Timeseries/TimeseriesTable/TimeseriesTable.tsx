@@ -142,7 +142,7 @@ export const TimeseriesTable = ({
         enableSorting: false,
       },
       {
-        ...Table.Columns.dataSet,
+        ...Table.Columns.dataset,
         enableSorting: false,
       },
       Table.Columns.rootAsset(),

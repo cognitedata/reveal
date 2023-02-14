@@ -42,7 +42,7 @@ export const EventTable = ({
           enableSorting: false,
         },
         {
-          ...Table.Columns.dataSet,
+          ...Table.Columns.dataset,
           enableSorting: false,
         },
         Table.Columns.startTime,

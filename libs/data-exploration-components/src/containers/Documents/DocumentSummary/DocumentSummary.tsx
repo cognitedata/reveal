@@ -122,6 +122,10 @@ export const DocumentSummary = ({
         },
         Table.Columns.externalId(query),
         Table.Columns.id(query),
+        {
+          ...Table.Columns.dataset,
+          accessorFn: (document) => document.sourceFile.datasetId,
+        },
         ...metadataColumns,
       ] as ColumnDef<DocumentWithRelationshipLabels>[],
     [query, metadataColumns]

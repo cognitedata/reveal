@@ -126,6 +126,11 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         Table.Columns.assets,
         Table.Columns.externalId(),
         Table.Columns.id(),
+        {
+          ...Table.Columns.dataset,
+          accessorFn: (document) => document.sourceFile.datasetId,
+        },
+
         ...metadataColumns,
       ] as ColumnDef<DocumentWithRelationshipLabels>[],
     [query, metadataColumns]

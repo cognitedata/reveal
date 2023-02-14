@@ -52,7 +52,7 @@ export const SequenceSummary = ({
         Table.Columns.created,
         Table.Columns.id(query),
         Table.Columns.rootAsset(),
-        Table.Columns.dataSet,
+        Table.Columns.dataset,
         ...metadataColumns,
       ] as ColumnDef<Sequence>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps

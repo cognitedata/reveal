@@ -154,6 +154,7 @@ export const AssetTreeTable = ({
           size: 300,
         },
         Table.Columns.source(),
+        Table.Columns.dataset,
         ...metadataColumns,
       ] as ColumnDef<InternalAssetTreeData>[],
     [query, startFromRoot, metadataColumns]

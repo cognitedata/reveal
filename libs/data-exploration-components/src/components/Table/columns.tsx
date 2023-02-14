@@ -216,9 +216,10 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       <Body level={2}>{capitalize(getValue<boolean>().toString())}</Body>
     ),
   },
-  dataSet: {
+  dataset: {
     header: 'Dataset',
-    accessorKey: 'dataSetId',
+    id: 'datasetId',
+    accessorFn: (resource) => resource.dataSetId,
     cell: ({ getValue }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const { data: ds } = useCdfItem<DataSet>(
