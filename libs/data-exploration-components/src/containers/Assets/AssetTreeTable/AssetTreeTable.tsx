@@ -134,7 +134,10 @@ export const AssetTreeTable = ({
         Table.Columns.externalId(),
         {
           id: 'childCount',
-          header: startFromRoot ? 'Direct children' : 'Results under asset',
+          header:
+            enableAdvancedFilters || startFromRoot
+              ? 'Direct children'
+              : 'Results under asset',
           accessorKey: 'aggregates',
           cell: ({ getValue }) => {
             return (

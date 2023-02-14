@@ -22,7 +22,6 @@ export const useSearchAssetTree = ({
   sortBy: TableSortBy[];
 }) => {
   const sdkClient = useSDK();
-
   const { data, ...rest } = useAssetsSearchResultWithLabelsQuery({
     query,
     assetFilter,
@@ -51,7 +50,10 @@ export const useSearchAssetTree = ({
     [queryKeys.assets(), 'parent-assets'],
     () => {
       return sdkClient.assets
-        .retrieve(parentIds.map((id) => ({ id })))
+        .retrieve(
+          parentIds.map((id) => ({ id })),
+          { aggregatedProperties: ['childCount'] }
+        )
         .then((response) => {
           return keyBy(response, 'id');
         });
