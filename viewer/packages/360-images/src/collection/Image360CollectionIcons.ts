@@ -87,6 +87,7 @@ export class Image360CollectionIcons {
   public dispose(): void {
     this._onRenderTrigger.unsubscribeAll();
     this._sceneHandler.removeCustomObject(this._frontPoints);
+    this._sceneHandler.removeCustomObject(this._backPoints);
     this._geometry.dispose();
     this._sharedTexture.dispose();
     this._backMaterial.dispose();
@@ -140,11 +141,10 @@ export class Image360CollectionIcons {
 
     const backPoints = new Points(geometry, backMaterial);
     backPoints.renderOrder = 4;
-    backPoints.onBeforeRender = (renderer, _, camera) => {
+    backPoints.onBeforeRender = renderer => {
       renderer.getSize(backMaterial.uniforms.renderSize.value);
       backMaterial.uniforms.renderDownScale.value =
         backMaterial.uniforms.renderSize.value.x / renderer.domElement.clientWidth;
-      this._onRenderTrigger.fire(renderer, camera);
     };
 
     return [frontPoints, backPoints];
