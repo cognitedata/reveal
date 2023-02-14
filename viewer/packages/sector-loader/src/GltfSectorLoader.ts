@@ -76,15 +76,14 @@ export class GltfSectorLoader {
             });
             break;
           case RevealGeometryCollectionType.TriangleMesh:
-            let material = materials.triangleMesh;
-            if (parsedGeometry.texture !== undefined && parsedGeometry.geometryBuffer.attributes['uv'] !== undefined) {
-              material = this._materialManager.addTexturedMeshMaterial(
-                sector.modelIdentifier,
-                sector.metadata.id,
-                parsedGeometry.texture
-              );
-            }
-
+            this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
+            break;
+          case RevealGeometryCollectionType.TexturedTriangleMesh:
+            const material = this._materialManager.addTexturedMeshMaterial(
+              sector.modelIdentifier,
+              sector.metadata.id,
+              parsedGeometry.texture!
+            );
             this.createMesh(group, parsedGeometry.geometryBuffer, material);
             break;
           default:

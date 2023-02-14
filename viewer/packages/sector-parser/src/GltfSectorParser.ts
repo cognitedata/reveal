@@ -80,6 +80,7 @@ export class GltfSectorParser {
         assert(payload.instancingExtension !== undefined);
         return this.processInstancedTriangleMesh(payload);
       case RevealGeometryCollectionType.TriangleMesh:
+      case RevealGeometryCollectionType.TexturedTriangleMesh:
         assert(payload.instancingExtension === undefined);
         await this.processTriangleMesh(payload);
         break;

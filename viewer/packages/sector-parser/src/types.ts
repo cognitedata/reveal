@@ -90,6 +90,7 @@ export enum RevealGeometryCollectionType {
   TrapeziumCollection,
   NutCollection,
   TriangleMesh,
+  TexturedTriangleMesh,
   InstanceMesh
 }
 

@@ -168,6 +168,7 @@ export function setPrimitiveTopology(
       break;
     case RevealGeometryCollectionType.InstanceMesh:
     case RevealGeometryCollectionType.TriangleMesh:
+    case RevealGeometryCollectionType.TexturedTriangleMesh:
       break;
     default:
       assertNever(primitiveCollectionName);
