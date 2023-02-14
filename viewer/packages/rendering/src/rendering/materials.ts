@@ -23,8 +23,26 @@ export interface Materials {
   instancedMesh: THREE.RawShaderMaterial;
   triangleMesh: THREE.RawShaderMaterial;
   simple: THREE.RawShaderMaterial;
-  // Textured materials
-  [key: string]: THREE.RawShaderMaterial;
+  texturedMaterials: { [key: string]: THREE.RawShaderMaterial };
+}
+
+export function forEachMaterial(materials: Materials, callback: (material: THREE.RawShaderMaterial) => void): void {
+  callback(materials.box);
+  callback(materials.circle);
+  callback(materials.generalRing);
+  callback(materials.nut);
+  callback(materials.quad);
+  callback(materials.cone);
+  callback(materials.eccentricCone);
+  callback(materials.sphericalSegment);
+  callback(materials.torusSegment);
+  callback(materials.generalCylinder);
+  callback(materials.trapezium);
+  callback(materials.ellipsoidSegment);
+  callback(materials.instancedMesh);
+  callback(materials.triangleMesh);
+  callback(materials.simple);
+  Object.values(materials.texturedMaterials).forEach(material => callback(material));
 }
 
 export function createMaterials(
@@ -272,10 +290,11 @@ export function createMaterials(
     ellipsoidSegment: ellipsoidSegmentMaterial,
     instancedMesh: instancedMeshMaterial,
     triangleMesh: triangleMeshMaterial,
-    simple: simpleMaterial
+    simple: simpleMaterial,
+    texturedMaterials: {}
   };
 
-  for (const material of Object.values(allMaterials)) {
+  forEachMaterial(allMaterials, material =>
     initializeDefinesAndUniforms(
       material,
       overrideColorPerTreeIndex,
@@ -283,8 +302,8 @@ export function createMaterials(
       transformOverrideLookupTexture,
       matCapTexture,
       renderMode
-    );
-  }
+    )
+  );
 
   return {
     ...allMaterials

@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { NodeAppearanceTextureBuilder } from './rendering/NodeAppearanceTextureBuilder';
 import { NodeTransformTextureBuilder } from './transform/NodeTransformTextureBuilder';
 import { NodeTransformProvider } from './transform/NodeTransformProvider';
-import { createMaterials, Materials, initializeDefinesAndUniforms } from './rendering/materials';
+import { createMaterials, Materials, initializeDefinesAndUniforms, forEachMaterial } from './rendering/materials';
 import { RenderMode } from './rendering/RenderMode';
 
 import { NodeAppearance, NodeAppearanceProvider } from '@reveal/cad-styling';
@@ -131,7 +131,7 @@ export class CadMaterialManager {
       throw new Error(`Model identifier: ${modelIdentifier} not found`);
     }
 
-    const newMaterial = modelData?.materials.triangleMesh.clone();
+    const newMaterial = modelData.materials.triangleMesh.clone();
     newMaterial.uniforms.tDiffuse = { value: texture };
     newMaterial.defines.IS_TEXTURED = true;
 
@@ -140,7 +140,7 @@ export class CadMaterialManager {
     newMaterial.needsUpdate = true;
 
     const materialName = toTextureMaterialName(sectorId);
-    modelData.materials[materialName] = newMaterial;
+    modelData.materials.texturedMaterials[materialName] = newMaterial;
 
     return newMaterial;
   }
@@ -148,7 +148,7 @@ export class CadMaterialManager {
   removeTexturedMeshMaterial(modelIdentifier: string, sectorId: number): void {
     const modelData = this.materialsMap.get(modelIdentifier);
     if (modelData) {
-      delete modelData.materials[toTextureMaterialName(sectorId)];
+      delete modelData.materials.texturedMaterials[toTextureMaterialName(sectorId)];
     }
   }
 
@@ -271,7 +271,7 @@ export class CadMaterialManager {
       p => new THREE.Vector4(p.normal.x, p.normal.y, p.normal.z, -p.constant)
     );
 
-    applyToModelMaterials(materialWrapper.materials, m => {
+    forEachMaterial(materialWrapper.materials, m => {
       m.clipping = clippingPlanes.length > 0;
       m.clipIntersection = false;
       m.clippingPlanes = clippingPlanes;
@@ -304,7 +304,7 @@ export class CadMaterialManager {
         transformsLookupTexture.image.width,
         transformsLookupTexture.image.height
       );
-      applyToModelMaterials(materials, material => {
+      forEachMaterial(materials, material => {
         material.uniforms.transformOverrideTexture.value = transformsLookupTexture;
         material.uniforms.transformOverrideTextureSize.value = transformsLookupTextureSize;
       });
@@ -323,7 +323,7 @@ export class CadMaterialManager {
   private applyToAllMaterials(callback: (material: THREE.RawShaderMaterial) => void) {
     for (const materialWrapper of this.materialsMap.values()) {
       const materials = materialWrapper.materials;
-      applyToModelMaterials(materials, callback);
+      forEachMaterial(materials, callback);
     }
   }
 
@@ -344,12 +344,6 @@ export class CadMaterialManager {
       materialData.matCapTexture,
       this._renderMode
     );
-  }
-}
-
-function applyToModelMaterials(materials: Materials, callback: (material: THREE.RawShaderMaterial) => void) {
-  for (const material of Object.values(materials)) {
-    callback(material);
   }
 }
 
