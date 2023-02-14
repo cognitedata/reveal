@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import assert from 'assert';
 
 import { ModelIdentifier } from '@reveal/data-providers';
 import { CadMaterialManager, Materials } from '@reveal/rendering';
@@ -145,6 +146,7 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
   }
 
   private getShaderMaterial(type: RevealGeometryCollectionType, materials: Materials): THREE.RawShaderMaterial {
+    assert(type !== RevealGeometryCollectionType.TexturedTriangleMesh);
     switch (type) {
       case RevealGeometryCollectionType.BoxCollection:
         return materials.box;
