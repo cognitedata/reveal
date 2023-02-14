@@ -44,7 +44,7 @@ describe(GltfSectorLoader.name, () => {
     }
 
     // Filter away numeric keys from enum, and subtract the two mesh types
-    const numberOfPrimitives = Object.keys(RevealGeometryCollectionType).filter(k => isNaN(Number(k))).length - 2;
+    const numberOfPrimitives = Object.keys(RevealGeometryCollectionType).filter(k => isNaN(Number(k))).length - 3;
 
     expect(typeSet.size).toBe(numberOfPrimitives);
   });
