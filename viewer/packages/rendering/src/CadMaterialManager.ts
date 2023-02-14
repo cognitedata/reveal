@@ -162,6 +162,7 @@ export class CadMaterialManager {
   removeTexturedMeshMaterial(modelIdentifier: string, sectorId: number): void {
     const modelData = this.materialsMap.get(modelIdentifier);
     if (modelData) {
+      modelData.materials.texturedMaterials[toTextureMaterialName(sectorId)].dispose();
       delete modelData.materials.texturedMaterials[toTextureMaterialName(sectorId)];
     }
   }
