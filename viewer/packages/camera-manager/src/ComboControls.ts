@@ -417,11 +417,21 @@ export class ComboControls extends EventDispatcher {
     }
   };
 
-  private readonly onMouseUp = (event: PointerEvent) => {
+  private readonly onPointerUp = (event: PointerEvent) => {
+    switch (event.pointerType) {
+      case 'mouse':
+        this.onMouseUp();
+        break;
+      case 'touch':
+        remove(this._pointEventCache, ev => ev.pointerId === event.pointerId);
+        break;
+      default:
+        break;
+    }
+  };
+
+  private readonly onMouseUp = () => {
     this._accumulatedMouseMove.set(0, 0);
-    remove(this._pointEventCache, cachedEvent => {
-      return cachedEvent.pointerId === event.pointerId;
-    });
   };
 
   private readonly onMouseWheel = (event: WheelEvent) => {
@@ -1004,7 +1014,7 @@ export class ComboControls extends EventDispatcher {
     domElement.addEventListener('focus', this.onFocusChanged);
     domElement.addEventListener('blur', this.onFocusChanged);
 
-    window.addEventListener('pointerup', this.onMouseUp);
+    window.addEventListener('pointerup', this.onPointerUp);
     window.addEventListener('pointerdown', this.onFocusChanged);
   }
 
@@ -1017,7 +1027,7 @@ export class ComboControls extends EventDispatcher {
     domElement.removeEventListener('focus', this.onFocusChanged);
     domElement.removeEventListener('blur', this.onFocusChanged);
 
-    window.removeEventListener('pointerup', this.onMouseUp);
+    window.removeEventListener('pointerup', this.onPointerUp);
     window.removeEventListener('pointerdown', this.onFocusChanged);
   }
 }
