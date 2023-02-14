@@ -298,7 +298,7 @@ export function initializeDefinesAndUniforms(
   transformOverrideTexture: THREE.DataTexture,
   matCapTexture: THREE.Texture,
   renderMode: RenderMode
-) {
+): void {
   const treeIndexTextureSize = new THREE.Vector2(
     overrideColorPerTreeIndex.image.width,
     overrideColorPerTreeIndex.image.height
