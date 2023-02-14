@@ -79,10 +79,11 @@ export class GltfSectorLoader {
             this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
             break;
           case RevealGeometryCollectionType.TexturedTriangleMesh:
+            assert(parsedGeometry.texture);
             const material = this._materialManager.addTexturedMeshMaterial(
               sector.modelIdentifier,
               sector.metadata.id,
-              parsedGeometry.texture!
+              parsedGeometry.texture
             );
             this.createMesh(group, parsedGeometry.geometryBuffer, material);
             break;
