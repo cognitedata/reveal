@@ -32,9 +32,12 @@ type TreeIndexPickingInput = PickingInput & {
   cadNode: CadNode;
 };
 
-type IntersectCadNodesResult = {
+type DepthData = {
   distance: number;
   point: THREE.Vector3;
+};
+
+type IntersectCadNodesResult = DepthData & {
   treeIndex: number;
   cadNode: CadNode;
   object: THREE.Object3D; // always CadNode
@@ -100,6 +103,9 @@ export class PickingHandler {
 
     // Calculate depth position and distance.
     const depthData = await this.intersectCadNodeDepth(depthInput, async);
+    if (!depthData) {
+      return results;
+    }
 
     // Identify the treeIndex associated with the position.
     // Get CadNodes which are visible.
@@ -181,8 +187,11 @@ export class PickingHandler {
     }
   }
 
-  private async intersectCadNodeDepth(input: PickingInput, async: boolean) {
+  private async intersectCadNodeDepth(input: PickingInput, async: boolean): Promise<DepthData | undefined> {
     const { camera, normalizedCoords, renderer, domElement, cadNodes, scene } = input;
+    if (cadNodes.length < 1) {
+      return;
+    }
     const pickInput = {
       normalizedCoords,
       camera,
