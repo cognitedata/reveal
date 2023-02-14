@@ -75,6 +75,9 @@ export default function AllModels() {
 
   const closeModal = () => {
     setIsModalVisible(false);
+    setNewModelName('');
+    setCreatedModel(undefined);
+    setCurrentUploadStep(0);
   };
 
   const nextStep = () => {
@@ -157,6 +160,7 @@ export default function AllModels() {
                 modelId: createdModel.id,
               });
             }
+            closeModal();
             modelsQuery.refetch();
           }}
           onUploadFailure={() => {

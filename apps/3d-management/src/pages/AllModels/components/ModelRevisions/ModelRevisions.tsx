@@ -182,7 +182,8 @@ export default function ModelRevisions({ model }: Props) {
         title="Upload New Revision"
         open={uploadModalVisible}
         footer={null}
-        onCancel={hideUploadModal}
+        closable={false}
+        maskClosable={false}
         width="800px"
         getContainer={getContainer}
       >
@@ -193,12 +194,14 @@ export default function ModelRevisions({ model }: Props) {
               modelId: model.id,
             });
             message.success('Revision created');
+            hideUploadModal();
             metrics.track('Revisions.New');
           }}
           onUploadFailure={() => {
             refresh();
           }}
           onCancel={hideUploadModal}
+          onDone={hideUploadModal}
         />
       </Modal>
       <Modal

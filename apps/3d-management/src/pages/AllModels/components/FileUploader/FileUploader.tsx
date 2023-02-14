@@ -50,7 +50,7 @@ type Props = {
   onUploadSuccess: (fileId: number) => void;
   onUploadFailure: () => void;
   onCancel: () => void;
-  onDone?: () => void;
+  onDone: () => void;
   beforeUploadStart?: () => Promise<void>;
 };
 
@@ -202,10 +202,8 @@ class FileUploader extends React.Component<Props, State> {
         throw new Error(`File with id=${id} is never marked as uploaded`);
       }
       this.props.onUploadSuccess(fileInfo.id);
-      this.setState((prev) => ({
-        ...prev,
-        uploadStatus: STATUS.SUCCEEDED,
-      }));
+      // not set the status to SUCCEEDED as the modal will automatically be closed after succeeded
+      this.setState(defaultState);
     } catch (e: any) {
       if (e.status === 401) {
         // eslint-disable-next-line no-alert
@@ -258,6 +256,11 @@ class FileUploader extends React.Component<Props, State> {
       this.props.onCancel();
       this.setState(defaultState);
     }
+  };
+
+  onDoneClicked = () => {
+    this.setState(defaultState);
+    this.props.onDone();
   };
 
   pauseUpload = () => {
@@ -327,7 +330,7 @@ class FileUploader extends React.Component<Props, State> {
       case STATUS.FAILED:
         uploaderButton = (
           // this button should close the modal
-          <Button type="primary" onClick={this.props.onDone}>
+          <Button type="primary" onClick={this.onDoneClicked}>
             Done
           </Button>
         );
