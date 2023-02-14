@@ -54,11 +54,14 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     return image360Descriptors;
   }
 
-  public async get360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]> {
+  public async get360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    init?: RequestInit
+  ): Promise<Image360Face[]> {
     const fileIds = image360FaceDescriptors.map(image360FaceDescriptor => {
       return { id: image360FaceDescriptor.fileId };
     });
-    const fileBuffers = await this.getFileBuffers(fileIds);
+    const fileBuffers = await this.getFileBuffers(fileIds, init);
 
     const faces = zipWith(image360FaceDescriptors, fileBuffers, (image360FaceDescriptor, fileBuffer) => {
       return {
@@ -145,11 +148,11 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     }
   }
 
-  private async getFileBuffers(fileIds: { id: number }[]) {
+  private async getFileBuffers(fileIds: { id: number }[], init?: RequestInit) {
     const fileLinks = await this._client.files.getDownloadUrls(fileIds);
     return Promise.all(
       fileLinks
-        .map(fileLink => fetch(fileLink.downloadUrl, { method: 'GET' }))
+        .map(fileLink => fetch(fileLink.downloadUrl, { method: 'GET', signal: init?.signal }))
         .map(async response => (await response).arrayBuffer())
     );
   }

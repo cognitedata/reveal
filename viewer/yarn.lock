@@ -1533,6 +1533,7 @@ __metadata:
   resolution: "@reveal/360-images@workspace:packages/360-images"
   dependencies:
     "@reveal/data-providers": "workspace:*"
+    "@reveal/logger": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft

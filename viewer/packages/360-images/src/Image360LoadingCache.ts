@@ -6,19 +6,24 @@ import { Image360Entity } from './Image360Entity';
 import pull from 'lodash/pull';
 import findLast from 'lodash/findLast';
 
+export type DownloadRequest = {
+  load360Image: Promise<void>;
+  abort: () => void;
+};
+
 export class Image360LoadingCache {
   private readonly _loaded360Images: Image360Entity[];
-  private readonly _inFlightEntities: Map<Image360Entity, Promise<void>>;
+  private readonly _inFlightEntities: Map<Image360Entity, DownloadRequest>;
 
   get cachedEntities(): Image360Entity[] {
     return this._loaded360Images;
   }
 
-  get currentlyLoadingEntities(): Map<Image360Entity, Promise<void>> {
+  get currentlyLoadingEntities(): Map<Image360Entity, DownloadRequest> {
     return this._inFlightEntities;
   }
 
-  constructor(private readonly _cacheSize = 10) {
+  constructor(private readonly _imageCacheSize = 10, private readonly _inFlightCacheSize = 2) {
     this._loaded360Images = [];
     this._inFlightEntities = new Map();
   }
@@ -30,20 +35,31 @@ export class Image360LoadingCache {
 
     const inflightEntity = this._inFlightEntities.get(entity);
     if (inflightEntity !== undefined) {
-      return inflightEntity;
+      return inflightEntity.load360Image;
     }
 
-    const load360Image = entity.load360Image();
-    this._inFlightEntities.set(entity, load360Image);
-
-    await load360Image;
-
-    if (this._loaded360Images.length === this._cacheSize) {
-      this.purgeLastRecentlyUsedInvisibleEntity();
+    if (this._inFlightEntities.size === this._inFlightCacheSize) {
+      this.abortLastRecentlyReqestedEntity();
     }
 
-    this._loaded360Images.unshift(entity);
-    this._inFlightEntities.delete(entity);
+    const abortController = new AbortController();
+    const abort = () => {
+      abortController.abort();
+    };
+    const { signal } = abortController;
+    const load360Image = entity.load360Image({ signal });
+    this._inFlightEntities.set(entity, { load360Image, abort });
+
+    try {
+      await load360Image;
+
+      if (this._loaded360Images.length === this._imageCacheSize) {
+        this.purgeLastRecentlyUsedInvisibleEntity();
+      }
+      this._loaded360Images.unshift(entity);
+    } finally {
+      this._inFlightEntities.delete(entity);
+    }
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
@@ -60,5 +76,14 @@ export class Image360LoadingCache {
     }
     pull(this._loaded360Images, entityToPurge);
     entityToPurge.unload360Image();
+  }
+
+  private abortLastRecentlyReqestedEntity() {
+    const entityToAbort = Array.from(this._inFlightEntities.keys())[0];
+    const request = this._inFlightEntities.get(entityToAbort);
+    if (request) {
+      this._inFlightEntities.delete(entityToAbort);
+      request.abort();
+    }
   }
 }

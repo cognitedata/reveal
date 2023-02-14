@@ -8,6 +8,7 @@ import { Image360Entity } from './Image360Entity';
 import { Image360EntityFactory } from './Image360EntityFactory';
 import { Image360Icon } from './Image360Icon';
 import { Image360LoadingCache } from './Image360LoadingCache';
+import { Log } from '@reveal/logger';
 
 export class Image360Facade<T> {
   private readonly _image360Entities: Image360Entity[];
@@ -45,7 +46,10 @@ export class Image360Facade<T> {
   }
 
   public preload(entity: Image360Entity): Promise<void> {
-    return this._image360Cache.cachedPreload(entity);
+    return this._image360Cache.cachedPreload(entity).catch(e => {
+      Log.info(e);
+      return Promise.resolve();
+    });
   }
 
   public intersect(

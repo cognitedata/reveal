@@ -16,7 +16,7 @@ export interface Image360DescriptorProvider<T> {
 }
 
 export interface Image360FileProvider {
-  get360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]>;
+  get360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[], init?: RequestInit): Promise<Image360Face[]>;
 }
 
 export type Image360Descriptor = Image360EventDescriptor & {
