@@ -179,7 +179,7 @@ export interface TimeseriesState {
   timeseries: Record<string, TimeseriesStateEntry | undefined>;
 }
 
-interface TimeseriesStateEntry {
+export interface TimeseriesStateEntry {
   externalId: CogniteExternalId;
   datapoints: DatapointAggregate[];
   axisLabel: string;

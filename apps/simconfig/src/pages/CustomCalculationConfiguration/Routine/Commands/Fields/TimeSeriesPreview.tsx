@@ -9,7 +9,10 @@ import type {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { TimeseriesChart } from 'components/charts/TimeseriesChart';
-import type { TimeseriesState } from 'pages/CalculationConfiguration/utils';
+import type {
+  TimeseriesState,
+  TimeseriesStateEntry,
+} from 'pages/CalculationConfiguration/utils';
 
 import { LoaderOverlay } from '../../../../CalculationConfiguration/elements';
 
@@ -20,44 +23,68 @@ interface TimeSeriesPreviewProps {
   aggregateType: AggregateType | undefined;
 }
 
+const getTimeSerieByType = (
+  inputTimeseries: TimeSeriesPreviewProps['inputTimeseries'],
+  type: string
+) => inputTimeseries.find((timeseries) => timeseries.type === type);
+
+const renderEmptyChart = (
+  datapoints: TimeseriesStateEntry['datapoints'] | undefined,
+  sensorExternalId: string | undefined
+) => {
+  if (!sensorExternalId) {
+    return <EmptyChart>No time series selected</EmptyChart>;
+  }
+  if (!datapoints?.length) {
+    return <EmptyChart>No datapoints in current window</EmptyChart>;
+  }
+  return null;
+};
+
 export function TimeSeriesPreview({
   timeseriesState,
   step,
   inputTimeseries,
   aggregateType,
 }: TimeSeriesPreviewProps) {
-  const getTimeSerieByType = (type: string) =>
-    inputTimeseries.find((timeserie) => timeserie.type === type);
+  const stepTimeseries = getTimeSerieByType(
+    inputTimeseries,
+    step.arguments.value ?? ''
+  );
 
-  const stepTimeSerie = getTimeSerieByType(step.arguments.value ?? '');
+  if (timeseriesState.isLoading) {
+    return (
+      <div>
+        <LoaderOverlay />
+      </div>
+    );
+  }
+
+  const datapoints =
+    timeseriesState.timeseries[stepTimeseries?.sensorExternalId ?? '']
+      ?.datapoints;
 
   return (
     <div>
-      {timeseriesState.isLoading && <LoaderOverlay />}
-      {!timeseriesState.isLoading &&
-      (timeseriesState.timeseries[stepTimeSerie?.sensorExternalId ?? '']
-        ?.datapoints.length ?? 0) >= 1 ? (
+      {datapoints?.length ? (
         <ParentSizeModern>
           {() => (
             <TimeseriesChart
               aggregateType={aggregateType}
-              data={
-                timeseriesState.timeseries[
-                  stepTimeSerie?.sensorExternalId ?? ''
-                ]?.datapoints
-              }
+              data={datapoints}
               height={200}
               tooltipEnabled={false}
               width={600}
               yAxisLabel={
-                getTimeSerieByType(step.arguments.value ?? '')?.unitType ?? ''
+                getTimeSerieByType(inputTimeseries, step.arguments.value ?? '')
+                  ?.unitType ?? ''
               }
               fullSize
             />
           )}
         </ParentSizeModern>
       ) : (
-        <EmptyChart>No datapoints in current window</EmptyChart>
+        renderEmptyChart(datapoints, stepTimeseries?.sensorExternalId)
       )}
     </div>
   );
