@@ -20,6 +20,7 @@ export { NumericRange } from './src/NumericRange';
 export { determinePowerOfTwoDimensions } from './src/determinePowerOfTwoDimensions';
 export { IndexSet } from './src/IndexSet';
 export { DynamicDefragmentedBuffer } from './src/datastructures/DynamicDefragmentedBuffer';
+export { AttributeDataAccessor } from './src/three/AttributeDataAccessor';
 export { AutoDisposeGroup } from './src/three/AutoDisposeGroup';
 export { BoundingBoxLOD } from './src/three/BoundingBoxLOD';
 export { toThreeBox3 } from './src/three/toThreeBox3';
