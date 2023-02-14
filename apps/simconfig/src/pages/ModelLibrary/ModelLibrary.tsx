@@ -5,6 +5,7 @@ import styled from 'styled-components/macro';
 
 import { getProject } from '@cognite/cdf-utilities';
 import { Button, Input, Skeleton } from '@cognite/cogs.js';
+import { useSDK } from '@cognite/sdk-provider';
 import { useGetModelFileListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ModelDetails, ModelList } from 'components/models';
@@ -20,6 +21,7 @@ import type { AppLocationGenerics } from 'routes';
 
 export function ModelLibrary() {
   const dispatch = useAppDispatch();
+  const client = useSDK();
   const project = getProject();
 
   const {
@@ -87,9 +89,9 @@ export function ModelLibrary() {
       to: createCdfLink(
         `/model-library/models/${encodeURIComponent(
           firstFile.source
-        )}/${encodeURIComponent(firstFile.metadata.modelName)}`
+        )}/${encodeURIComponent(firstFile.metadata.modelName)}`,
+        client.getBaseUrl()
       ),
-      replace: true,
     });
   }
 

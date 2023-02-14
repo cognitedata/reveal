@@ -19,7 +19,6 @@ import { useAppDispatch } from 'store/hooks';
 import { simconfigApiPropertiesSlice } from 'store/simconfigApiProperties';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { identifyUser } from 'utils/metrics/tracking';
-import sidecar from 'utils/sidecar';
 
 import { enhanceSimconfigApiEndpoints } from './enhanceSimconfigApiEndpoints';
 
@@ -33,7 +32,7 @@ export default function App() {
   const project = useSelector(selectProject);
 
   simconfigApiPropertiesSlice.actions.setProperties({
-    baseUrl: sidecar.cdfApiBaseUrl,
+    baseUrl: client.getBaseUrl(),
   });
   enhanceSimconfigApiEndpoints();
 
@@ -53,7 +52,7 @@ export default function App() {
     dispatch(
       simconfigApiPropertiesSlice.actions.setProperties({
         authHeaders: client.getDefaultRequestHeaders(),
-        baseUrl: sidecar.cdfApiBaseUrl,
+        baseUrl: client.getBaseUrl(),
         project: client.project,
       })
     );
