@@ -225,6 +225,8 @@ export class Cognite3DViewer {
     this.canvas.style.minHeight = '100%';
     this.canvas.style.maxWidth = '100%';
     this.canvas.style.maxHeight = '100%';
+    // Prevents scrolling for mobile devices.
+    this.canvas.style.touchAction = 'none';
 
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.tabIndex = 0;
