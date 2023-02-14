@@ -32,12 +32,9 @@ type TreeIndexPickingInput = PickingInput & {
   cadNode: CadNode;
 };
 
-type DepthData = {
+type IntersectCadNodesResult = {
   distance: number;
   point: THREE.Vector3;
-};
-
-type IntersectCadNodesResult = DepthData & {
   treeIndex: number;
   cadNode: CadNode;
   object: THREE.Object3D; // always CadNode
@@ -97,15 +94,17 @@ export class PickingHandler {
     async = true
   ): Promise<IntersectCadNodesResult[]> {
     const results: IntersectCadNodesResult[] = [];
+
+    // Exit when no cadNode exists
+    if (cadNodes.length < 1) {
+      return results;
+    }
     const release = await this._mutex.acquire();
     const scene = new THREE.Scene();
     const depthInput = { ...input, scene, cadNodes };
 
     // Calculate depth position and distance.
-    const depthData = await this.intersectCadNodeDepth(depthInput, async);
-    if (!depthData) {
-      return results;
-    }
+    const depthResult = await this.intersectCadNodeDepth(depthInput, async);
 
     // Identify the treeIndex associated with the position.
     // Get CadNodes which are visible.
@@ -128,8 +127,8 @@ export class PickingHandler {
         const treeIndex = await this.intersectCadNodeTreeIndex(cadNodeData.cadNode, input, async);
         if (treeIndex) {
           const result: IntersectCadNodesResult = {
-            distance: depthData.distance,
-            point: depthData.point,
+            distance: depthResult.distance,
+            point: depthResult.point,
             treeIndex,
             object: cadNodeData.cadNode,
             cadNode: cadNodeData.cadNode
@@ -187,11 +186,8 @@ export class PickingHandler {
     }
   }
 
-  private async intersectCadNodeDepth(input: PickingInput, async: boolean): Promise<DepthData | undefined> {
+  private async intersectCadNodeDepth(input: PickingInput, async: boolean) {
     const { camera, normalizedCoords, renderer, domElement, cadNodes, scene } = input;
-    if (cadNodes.length < 1) {
-      return;
-    }
     const pickInput = {
       normalizedCoords,
       camera,
