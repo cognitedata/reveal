@@ -3,11 +3,14 @@ import { AsyncBlockingQueue } from './async-blocking-queue';
 export class AutoTerminatingWorker {
   private timeoutId: number | undefined = undefined;
   private terminated: boolean = false;
+  private _wrappedWorker: Worker | undefined;
 
-  constructor(private readonly wrappedWorker: Worker, private readonly maxIdle: number) {}
+  constructor(wrappedWorker: Worker, private readonly maxIdle: number) {
+    this._wrappedWorker = wrappedWorker;
+  }
 
   public get worker(): Worker {
-    return this.wrappedWorker;
+    return this._wrappedWorker!;
   }
 
   get isTerminated(): boolean {
@@ -17,7 +20,8 @@ export class AutoTerminatingWorker {
   markIdle(): void {
     this.timeoutId = window.setTimeout(() => {
       this.terminated = true;
-      this.wrappedWorker.terminate();
+      this._wrappedWorker!.terminate();
+      this._wrappedWorker = undefined;
     }, this.maxIdle);
   }
 

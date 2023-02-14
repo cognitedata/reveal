@@ -35,6 +35,7 @@ import { CustomCameraManager } from '../utils/CustomCameraManager';
 import { MeasurementUi } from '../utils/MeasurementUi';
 import { Image360UI } from '../utils/Image360UI';
 import { LoadGltfUi } from '../utils/LoadGltfUi';
+import { createFunnyButton } from '../utils/PageVariationUtils';
 
 
 window.THREE = THREE;
@@ -174,6 +175,7 @@ export function Viewer() {
           hideAllNodes: false
         },
         viewerSize: 'fullScreen',
+        scrollableElements: false,
         showCameraTool: new DebugCameraTool(viewer),
         renderMode: 'Color',
         controls: {
@@ -264,8 +266,8 @@ export function Viewer() {
       debugStatsGui.add(guiState.debug.stats, 'textures').name('Textures');
       debugStatsGui.add(guiState.debug.stats, 'renderTime').name('Ms/frame');
 
-      const viewerSize = gui.addFolder('Viewer size');
-      viewerSize.add(guiState, 'viewerSize', ['fullScreen', 'halfScreen', 'quarterScreen']).name('Size').onFinishChange(value => {
+      const viewerSize = gui.addFolder('Page variation');
+      viewerSize.add(guiState, 'viewerSize', ['fullScreen', 'halfScreen', 'quarterScreen']).name('Reveal window size').onFinishChange(value => {
         switch (value) {
           case 'fullScreen':
             canvasWrapperRef.current!.style.position = 'relative';
@@ -291,6 +293,16 @@ export function Viewer() {
             canvasWrapperRef.current!.style.left = '25%';
             canvasWrapperRef.current!.style.top = '25%';
             break;
+        }
+      });
+
+      const funnyButton = createFunnyButton(viewer);
+
+      viewerSize.add(guiState, 'scrollableElements').name('Add scrollable elements').onChange((value: boolean) => {
+        if (value) {
+          document.body.appendChild(funnyButton);
+        } else {
+          document.body.removeChild(funnyButton);
         }
       });
 

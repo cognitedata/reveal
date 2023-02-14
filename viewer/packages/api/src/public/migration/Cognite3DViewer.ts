@@ -64,10 +64,9 @@ import {
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
-import { Image360Collection, Image360Entity } from '@reveal/360-images';
+import { Image360Collection, Image360Entity, Image360 } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
-import { Image360 } from '@reveal/360-images/src/Image360';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
@@ -225,6 +224,8 @@ export class Cognite3DViewer {
     this.canvas.style.minHeight = '100%';
     this.canvas.style.maxWidth = '100%';
     this.canvas.style.maxHeight = '100%';
+    // Prevents scrolling for mobile devices.
+    this.canvas.style.touchAction = 'none';
 
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.tabIndex = 0;
@@ -800,6 +801,7 @@ export class Cognite3DViewer {
         const pcModel = model as CognitePointCloudModel;
         this._sceneHandler.removePointCloudModel(pcModel.pointCloudNode);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
+        this._pointCloudPickingHandler.dispose();
         break;
 
       default:

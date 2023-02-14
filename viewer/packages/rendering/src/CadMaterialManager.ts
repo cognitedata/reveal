@@ -314,7 +314,11 @@ export class CadMaterialManager {
   private getModelMaterialsWrapper(modelIdentifier: string): MaterialsWrapper {
     const wrapper = this.materialsMap.get(modelIdentifier);
     if (wrapper === undefined) {
-      throw new Error(`Model ${modelIdentifier} has not been added to CadMaterialManager`);
+      const errorOptions: ErrorOptions = { cause: 'InvalidModel' };
+      throw new Error(
+        `Model ${modelIdentifier} has not been added to or no longer exists in CadMaterialManager`,
+        errorOptions
+      );
     }
     return wrapper;
   }
