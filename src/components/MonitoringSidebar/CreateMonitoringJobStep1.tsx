@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Button, Icon, Row, Col } from '@cognite/cogs.js';
@@ -15,7 +15,7 @@ import {
   FullWidthButton,
 } from './elements';
 import FormInputWithController from './FormInputWithController';
-import { CreateMonitoringTaskFormData } from './types';
+import { CreateMonitoringJobFormData } from './types';
 import CreateMonitoringJobFormError from './CreateMonitoringJobFormError';
 
 const defaultTranslations = makeDefaultTranslations(
@@ -46,7 +46,7 @@ type Props = {
   translations?: typeof defaultTranslations;
   onCancel: () => void;
   onNext: (data: any) => void;
-  existingFormData: CreateMonitoringTaskFormData;
+  existingFormData: CreateMonitoringJobFormData;
 };
 const CreateMonitoringJobStep1 = ({
   translations,
@@ -67,16 +67,22 @@ const CreateMonitoringJobStep1 = ({
 
   const [chart] = useChartAtom();
   const timeseries = (chart && chart?.timeSeriesCollection) || [];
-  const durationSelectOptions = [
-    {
-      label: 'minutes',
-      value: 'minutes',
-    },
-    {
-      label: 'hours',
-      value: 'hours',
-    },
-  ];
+
+  const [intervalsEvaluateEvery, setIntervalsEvaluateEvery] = useState<
+    { label: string; value: string }[]
+  >([]);
+  useEffect(() => {
+    const arr = [];
+    for (let index = 1; index <= 11; index++) {
+      const val = index * 5 * 1000 * 60;
+      arr.push({
+        label: `${index * 5}m`,
+        value: `${val}`,
+      });
+    }
+    setIntervalsEvaluateEvery(arr);
+  }, []);
+
   const userInfo = useUserInfo();
   const notificationEmail = userInfo.data?.mail;
   const formValues = watch();
@@ -146,10 +152,17 @@ const CreateMonitoringJobStep1 = ({
           <FormInputWithController
             control={control}
             type="number"
+            max={59}
             name="minimumDuration"
             placeholder="1"
             fullWidth
             required={t['Minimum duration is required']}
+            validate={{
+              minDuration: (value: string) =>
+                Number(value) > 59
+                  ? 'Minimum duration must be less than 60'
+                  : true,
+            }}
           />
         </Col>
         <Col span={1}>&nbsp;</Col>
@@ -164,10 +177,6 @@ const CreateMonitoringJobStep1 = ({
                 label: 'minutes',
                 value: 'm',
               },
-              {
-                label: 'seconds',
-                value: 's',
-              },
             ]}
           />
         </Col>
@@ -178,25 +187,17 @@ const CreateMonitoringJobStep1 = ({
 
       <FieldTitleRequired>{t['Evaluate every']} </FieldTitleRequired>
       <Row>
-        <Col span={13}>
+        <Col span={24}>
           <FormInputWithController
             control={control}
-            type="number"
+            type="select"
+            options={intervalsEvaluateEvery}
             name="evaluateEvery"
             placeholder="10"
             required={t['"Evaluate Every" is required']}
           />
         </Col>
-        <Col span={1}>&nbsp;</Col>
-        <Col span={10}>
-          <FormInputWithController
-            control={control}
-            type="select"
-            name="evaluateEveryType"
-            required={t['"Evaluate Every" is required']}
-            options={durationSelectOptions}
-          />
-        </Col>
+
         <FieldHelperText>
           {t['How often your alerts will be evaluated']}
         </FieldHelperText>

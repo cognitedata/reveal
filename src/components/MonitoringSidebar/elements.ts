@@ -29,9 +29,14 @@ export const SidebarCollapseWrapped = styled(Collapse)`
       margin: 0 0 1rem;
       border: 0;
       .rc-collapse-header {
+        position: relative;
         background-color: #f5f5f5;
         border-radius: 4px;
         font-weight: bold;
+        i.cogs-icon-ChevronDownLarge {
+          position: absolute;
+          right: 10px;
+        }
       }
     }
 
@@ -52,6 +57,7 @@ export const FormTitle = styled.h2`
   &&& {
     font-size: 18px;
     font-weight: 600;
+    margin-top: 1em;
   }
 `;
 
@@ -227,4 +233,10 @@ export const SuccessIconContainer = styled.div`
   text-align: center;
   width: 200px;
   height: 100px;
+`;
+
+export const SubscriptionLoader = styled(Icon)`
+  position: relative;
+  top: 4px;
+  left: 4px;
 `;

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Divider, Row } from 'antd';
 import { Controller } from 'react-hook-form';
 
-import { Button, Select, toast } from '@cognite/cogs.js';
+import { Button, Icon, Select, toast } from '@cognite/cogs.js';
 import { makeDefaultTranslations } from 'utils/translations';
 import { delay, head } from 'lodash';
 import styled from 'styled-components';
@@ -29,9 +29,11 @@ const MonitoringFolderSelect: React.FC<Props> = ({
     ...defaultTranslations,
     ...translations,
   };
-  const { data: folderList } = useMonitoringFolders();
+  const { data: folderList, isLoading: loadingFolders } =
+    useMonitoringFolders();
   const {
     mutate: createMonitoringJob,
+    isLoading: creatingMonitoringJob,
     isError: createMonitoringJobError,
     error: createMonitoringJobErrorMsg,
   } = useCreateMonitoringFolder();
@@ -130,6 +132,9 @@ const MonitoringFolderSelect: React.FC<Props> = ({
             dropdownRender={(menu) => (
               <>
                 {menu}
+                {(loadingFolders || creatingMonitoringJob) && (
+                  <Icon type="Loader" />
+                )}
                 {showCreateButton && (
                   <>
                     <DividerStyled />

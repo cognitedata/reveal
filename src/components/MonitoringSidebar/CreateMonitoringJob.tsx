@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { head } from 'lodash';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { CogniteError } from '@cognite/sdk';
+import { useSearchParam } from 'hooks/navigation';
+import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from 'utils/constants';
 import { FormTitle } from './elements';
 import CreateMonitoringJobStep1 from './CreateMonitoringJobStep1';
 import CreateMonitoringJobStep2 from './CreateMonitoringJobStep2';
@@ -16,9 +18,10 @@ import CreateMonitoringJobStep3 from './CreateMonitoringJobStep3';
 import { useCreateMonitoringJob, useCreateSessionNonce } from './hooks';
 import {
   CreateMonitoringJobStates,
-  CreateMonitoringTaskFormData,
-  CreateMonitoringTaskPayload,
+  CreateMonitoringJobFormData,
+  CreateMonitoringJobPayload,
 } from './types';
+import { validateEmail } from './utils';
 
 const defaultTranslations = makeDefaultTranslations(
   'New monitoring job',
@@ -28,20 +31,16 @@ const defaultTranslations = makeDefaultTranslations(
   'Back',
   'Unable to create Session Nonce',
   'Monitoring job created succesfully',
-  'Unable to create monitoring job'
+  'Unable to create monitoring job',
+  'Notification email not found. Please ask your AD administrator to set it up for you.',
+  'User ID not found'
 );
 
 type Props = {
   translations?: typeof defaultTranslations;
   onCancel: () => void;
-  onViewMonitoringJob: () => void;
 };
-const CreateMonitoringJob = ({
-  translations,
-  onCancel,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-  onViewMonitoringJob,
-}: Props) => {
+const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
   const t = {
     ...defaultTranslations,
     ...translations,
@@ -55,7 +54,7 @@ const CreateMonitoringJob = ({
 
   const {
     isSuccess: createMonitoringJobSuccess,
-    data: _createMonitoringJobData,
+    data: createMonitoringJobData,
     mutate: createMonitoringJob,
     isError: createMonitoringJobError,
     error: createMonitoringJobErrorData,
@@ -65,29 +64,43 @@ const CreateMonitoringJob = ({
   const [nonce, setNonce] = useState('');
   const [formStatus, setFormStatus] =
     useState<CreateMonitoringJobStates>('READY');
+  const [, setMonitoringJobIdParam] = useSearchParam(
+    MONITORING_SIDEBAR_HIGHLIGHTED_JOB
+  );
 
   const [steppedFormValues, setSteppedFormValues] =
-    useState<CreateMonitoringTaskFormData>({
+    useState<CreateMonitoringJobFormData>({
       name: '',
       source: undefined,
       alertThreshold: 1,
       alertThresholdType: { label: 'Is above', value: 'threshold' },
-      evaluateEveryType: { label: 'minutes', value: 'minutes' },
-      evaluateEvery: 10,
+      evaluateEvery: 5000,
       minimumDurationType: { label: 'minutes', value: 'm' },
       minimumDuration: 1,
       folder: undefined,
       clientId: '',
       clientSecret: '',
       useCdfCredentials: true,
-    } as CreateMonitoringTaskFormData);
+    } as CreateMonitoringJobFormData);
 
   const userInfo = useUserInfo();
-  const notificationEmail = userInfo.data?.mail;
+  let notificationEmail = userInfo.data?.mail;
+  if (notificationEmail === null) {
+    // some users have an email as their displayName or givenName
+    if (
+      userInfo.data?.displayName &&
+      validateEmail(userInfo.data.displayName)
+    ) {
+      notificationEmail = userInfo.data.displayName;
+    }
+    if (userInfo.data?.givenName && validateEmail(userInfo.data.givenName)) {
+      notificationEmail = userInfo.data.givenName;
+    }
+  }
   const userAuthId = userInfo.data?.id;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-  const onBack = (data: CreateMonitoringTaskFormData) => {
+  const onBack = (data: CreateMonitoringJobFormData) => {
     // Save the data from the corresponding step when the user goes back
     setSteppedFormValues(data);
     setStep(step - 1);
@@ -115,7 +128,7 @@ const CreateMonitoringJob = ({
     setFormStatus('NONCE_CREATING');
   };
 
-  const onNext = (data: CreateMonitoringTaskFormData) => {
+  const onNext = (data: CreateMonitoringJobFormData) => {
     const formData = { ...steppedFormValues, ...data };
     setSteppedFormValues(formData);
     if (step === 1) {
@@ -125,20 +138,18 @@ const CreateMonitoringJob = ({
     }
   };
 
-  const getTimeFactor = (from: string) => {
-    switch (from) {
-      case 'minutes':
-        return 60;
-      case 'hours':
-        return 3600;
-    }
-    return 1;
+  const onViewMonitoringJob = () => {
+    onCancel();
+  };
+
+  const transformName = (name: string) => {
+    const generated = name.split(' ').join('_');
+    return `${generated}`;
   };
 
   const sendDataToAPI = (createdNonce: string) => {
     const {
       evaluateEvery,
-      evaluateEveryType,
       source,
       name,
       alertThresholdType,
@@ -147,11 +158,10 @@ const CreateMonitoringJob = ({
       minimumDuration,
       minimumDurationType,
     } = steppedFormValues;
+    // @ts-ignore
+    const evaluateEveryCalc = Number(evaluateEvery.value);
 
-    const evaluateEveryCalc =
-      evaluateEvery * getTimeFactor(evaluateEveryType?.value || '') * 1000;
-
-    const granularity = `${minimumDuration}${minimumDurationType?.value}`;
+    const activationInterval = `${minimumDuration}${minimumDurationType?.value}`;
 
     if (
       source &&
@@ -160,21 +170,31 @@ const CreateMonitoringJob = ({
       folder &&
       userAuthId
     ) {
-      const dataToSend: CreateMonitoringTaskPayload = {
-        monitoringTaskExternalID: name,
+      const dataToSend: CreateMonitoringJobPayload = {
+        monitoringTaskExternalID: transformName(name),
         FolderId: folder.value,
         evaluateEvery: evaluateEveryCalc,
         modelExternalId: alertThresholdType?.value,
-        granularity,
+        activationInterval,
         nonce: createdNonce,
         threshold: alertThreshold,
-        timeseriesExternalId: source?.value,
+        timeSeriesExternalId: source?.value,
         userEmail: notificationEmail,
         subscriptionExternalId: uuidv4(),
         userAuthId,
       };
       createMonitoringJob(dataToSend);
       setFormStatus('NONCE_CREATED_DATA_SUBMITTED');
+    } else if (!notificationEmail) {
+      toast.error(
+        t[
+          'Notification email not found. Please ask your AD administrator to set it up for you.'
+        ]
+      );
+      setFormStatus('READY');
+    } else if (!userAuthId) {
+      toast.error(t['User ID not found']);
+      setFormStatus('READY');
     }
   };
 
@@ -203,17 +223,25 @@ const CreateMonitoringJob = ({
   useEffect(() => {
     if (createMonitoringJobSuccess) {
       toast.success(t['Monitoring job created succesfully']);
+      const job = head(createMonitoringJobData);
+      if (job) {
+        setMonitoringJobIdParam(`${job.id}`);
+      }
       setStep(step + 1);
     }
     if (createMonitoringJobError) {
-      const allErrors: CogniteError =
-        createMonitoringJobErrorData as CogniteError;
-      const messages = allErrors
-        .toJSON()
-        .message.errors.map((err: any) => err.message)
-        .join(',');
       const builtInMessage = t['Unable to create monitoring job'];
-      toast.error(`${builtInMessage} ${messages}`);
+      try {
+        const allErrors: CogniteError =
+          createMonitoringJobErrorData as CogniteError;
+        const messages = allErrors
+          .toJSON()
+          .message.errors.map((err: any) => err.message)
+          .join(',');
+        toast.error(`${builtInMessage} ${messages}`);
+      } catch (error) {
+        toast.error(`${builtInMessage}`);
+      }
       setFormStatus('READY');
     }
   }, [
@@ -257,8 +285,8 @@ const CreateMonitoringJob = ({
     <div style={{ position: 'relative', top: -20 }}>
       <FormTitle>
         <Row>
-          <Col span={21}>{t['New monitoring job']} </Col>
-          <Col span={3}>{`${step} / 2`}</Col>
+          <Col span={18}>{t['New monitoring job']} </Col>
+          <Col span={6} style={{ textAlign: 'right' }}>{`${step} / 2`}</Col>
         </Row>
       </FormTitle>
 

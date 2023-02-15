@@ -21,14 +21,14 @@ import {
 } from './elements';
 import FormInputWithController from './FormInputWithController';
 import { useCreateSessionNonce } from './hooks';
-import { CreateMonitoringTaskFormData } from './types';
+import { CreateMonitoringJobFormData } from './types';
 
 const defaultTranslations = makeDefaultTranslations(
   'Use client credentials',
   'Client ID',
   'Example: 2340-234-234-456-5332',
   'Client secret',
-  'Use CDF sign-in credentials instead',
+  'Use CDF sign-in credentials',
   'Note! This may affect the stability of the monitoring job.',
   'Checking credentials...',
   'Client credentials are correct',
@@ -43,8 +43,8 @@ type Props = {
   translations?: typeof defaultTranslations;
   isFormSubmitting: boolean;
   onNext: (data: any) => void;
-  onBack: (data: CreateMonitoringTaskFormData) => void;
-  existingFormData: CreateMonitoringTaskFormData;
+  onBack: (data: CreateMonitoringJobFormData) => void;
+  existingFormData: CreateMonitoringJobFormData;
 };
 
 type SessionCreationStatus = 'NONE' | 'CREATING' | 'CREATED' | 'ERROR';
@@ -131,7 +131,7 @@ const CreateMonitoringJobStep2 = ({
             />
           </Col>
           <Col span={22}>
-            <strong>{t['Use CDF sign-in credentials instead']}</strong>
+            <strong>{t['Use CDF sign-in credentials']}</strong>
             <div>
               {t['Note! This may affect the stability of the monitoring job.']}
             </div>

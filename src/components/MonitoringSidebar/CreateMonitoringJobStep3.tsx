@@ -21,6 +21,7 @@ const CreateMonitoringJobStep3 = ({
     ...defaultTranslations,
     ...translations,
   };
+
   return (
     <SuccessContainer>
       <SuccessIconContainer>

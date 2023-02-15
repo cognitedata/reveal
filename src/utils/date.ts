@@ -1,4 +1,5 @@
 import { Timestamp } from '@cognite/sdk';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import dayjs from 'dayjs';
 
 /**
@@ -34,4 +35,45 @@ export default function convertMSToDisplay(milliseconds: number) {
 export const formatDate = (date: Date | Timestamp | undefined) => {
   if (!date) return '';
   return dayjs(date).format('MM.DD.YYYY HH:mm');
+};
+
+/**
+ * Converts a duration string like 10m/10h to seconds
+ *
+ * @param from
+ * @returns a number for example if passed 10m, the output is 600
+ */
+export const getTimeFactor = (from: string) => {
+  switch (from) {
+    case 'minutes':
+    case 'm':
+      return 60;
+    case 'h':
+    case 'hours':
+      return 3600;
+  }
+  return 1;
+};
+
+/**
+ * Converts a duration of ms like 18000 to human readable like 18 seconds
+ *
+ * @param ms
+ * @returns a string for example 10seconds, 58m
+ */
+export const customFormatDuration = ({
+  start,
+  end,
+}: {
+  start: number;
+  end: number;
+}) => {
+  const durations = intervalToDuration({ start, end });
+
+  const regexMinutes = / minute(s)?/i;
+  const regexHours = / hour(s)?/i;
+
+  return formatDuration(durations)
+    .replace(regexMinutes, 'm')
+    .replace(regexHours, 'h');
 };

@@ -306,9 +306,15 @@ export const SmallSelect = styled(Select)`
   }
 `;
 
-export const LoadingRow = ({ lines = 2 }: { lines?: number }) => (
+export const LoadingRow = ({
+  lines = 2,
+  showCircle = true,
+}: {
+  lines?: number;
+  showCircle?: boolean;
+}) => (
   <LoadingWrap>
-    <Skeleton.Circle diameter="24px" />
+    {showCircle && <Skeleton.Circle diameter="24px" />}
     <Skeleton.Rectangle height="24px" width="16rem" />
     {lines % 2 === 0 ? (
       <>

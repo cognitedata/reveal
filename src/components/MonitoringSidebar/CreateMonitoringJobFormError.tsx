@@ -8,7 +8,7 @@ import {
 } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(
-  'Required fields missing',
+  'Error validating data',
   'Either the CDF credential option must be checked or the Client ID and Client secret need to be set'
 );
 
@@ -38,7 +38,7 @@ const CreateMonitoringJobFormError = ({ errors, translations }: Props) => {
     <StyledError>
       <InfoBoxHeadingContainer>
         <InfoBoxHeadingIconRed type="ExclamationMark" />
-        {t['Required fields missing']}
+        {t['Error validating data']}
       </InfoBoxHeadingContainer>
       <StyledErrorMessagesContainer>{messages}</StyledErrorMessagesContainer>
     </StyledError>

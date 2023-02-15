@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 
 import { makeDefaultTranslations } from 'utils/translations';
@@ -12,34 +12,62 @@ import {
   TopContainerAside,
   TopContainerTitle,
 } from 'components/Common/SidebarElements';
+import { useSearchParam } from 'hooks/navigation';
+import {
+  MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
+  MONITORING_SIDEBAR_SELECTED_FOLDER,
+  MONITORING_SIDEBAR_SHOW_ALERTS,
+} from 'utils/constants';
 import CreateMonitoringJob from './CreateMonitoringJob';
+import ListMonitoringJobs from './ListMonitoringJobs';
+import ListMonitoringJobAlerts from './ListMonitoringJobAlerts';
 // Commenting out temporarily since ListJobs is not part of this PR
 // import ListMonitoringJobs from './ListMonitoringJobs';
 
 type Props = {
-  visible: boolean;
   onClose: () => void;
 };
 
 const defaultTranslation = makeDefaultTranslations(
   'Monitoring',
   'Hide',
-  'Create'
+  'Create',
+  'Back'
 );
 
-const MonitoringSidebar = memo(({ visible, onClose }: Props) => {
+const MonitoringSidebar = memo(({ onClose }: Props) => {
   const [showMonitoringJobForm, setShowMonitoringJobForm] = useState(false);
+  const [, setShowAlerts] = useSearchParam(MONITORING_SIDEBAR_SHOW_ALERTS);
+  const [, setMonitoringJobIdParam] = useSearchParam(
+    MONITORING_SIDEBAR_HIGHLIGHTED_JOB
+  );
+  const [, setMonitoringFolder] = useSearchParam(
+    MONITORING_SIDEBAR_SELECTED_FOLDER
+  );
+
   const t = {
     ...defaultTranslation,
-    ...useTranslations(Object.keys(defaultTranslation), 'EventSidebar').t,
+    ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar').t,
   };
+  const [monitoringShowAlerts, setMonitoringShowAlerts] = useSearchParam(
+    MONITORING_SIDEBAR_SHOW_ALERTS
+  );
 
   const onCancel = () => {
     setShowMonitoringJobForm(false);
   };
 
+  useEffect(() => {
+    return () => {
+      setShowAlerts(undefined);
+      setMonitoringJobIdParam(undefined);
+      setMonitoringFolder(undefined);
+      setMonitoringShowAlerts(undefined);
+    };
+  }, []);
+
   return (
-    <Sidebar visible={visible}>
+    <Sidebar visible>
       <TopContainer>
         <TopContainerTitle>
           <Icon size={21} type="Alarm" />
@@ -58,32 +86,44 @@ const MonitoringSidebar = memo(({ visible, onClose }: Props) => {
       </TopContainer>
       <ContentOverflowWrapper>
         <ContentContainer>
-          <SidebarHeaderActions>
-            {!showMonitoringJobForm && (
-              <Button
-                icon="Plus"
-                type="primary"
-                size="small"
-                aria-label="Add monitoring task"
-                onClick={() => {
-                  setShowMonitoringJobForm(true);
-                }}
-              >
-                {t.Create}
-              </Button>
-            )}
-          </SidebarHeaderActions>
-          {showMonitoringJobForm && (
-            <CreateMonitoringJob
-              onCancel={onCancel}
-              onViewMonitoringJob={onCancel}
-            />
+          {showMonitoringJobForm && <CreateMonitoringJob onCancel={onCancel} />}
+          {!showMonitoringJobForm && monitoringShowAlerts !== 'true' && (
+            <>
+              <SidebarHeaderActions>
+                {!showMonitoringJobForm && (
+                  <Button
+                    icon="Plus"
+                    type="primary"
+                    size="small"
+                    aria-label="Add monitoring task"
+                    onClick={() => {
+                      setShowMonitoringJobForm(true);
+                    }}
+                  >
+                    {t.Create}
+                  </Button>
+                )}
+              </SidebarHeaderActions>
+              <ListMonitoringJobs />
+            </>
           )}
-          {!showMonitoringJobForm && (
-            /* 
-              Commenting out temporarily since ListJobs is not part of this PR
-              <ListMonitoringJobs /> */
-            <></>
+          {monitoringShowAlerts === 'true' && (
+            <>
+              <SidebarHeaderActions>
+                <Button
+                  icon="ArrowLeft"
+                  size="small"
+                  aria-label="Back"
+                  onClick={() => {
+                    setShowAlerts(undefined);
+                    setMonitoringJobIdParam(undefined);
+                  }}
+                >
+                  {t.Back}
+                </Button>
+              </SidebarHeaderActions>
+              <ListMonitoringJobAlerts />
+            </>
           )}
         </ContentContainer>
       </ContentOverflowWrapper>

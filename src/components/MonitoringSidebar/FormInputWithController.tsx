@@ -13,6 +13,7 @@ const FormInputWithController = ({
   minLength,
   validate,
   deps,
+  max,
 }: any) => (
   <Controller
     control={control}
@@ -28,6 +29,7 @@ const FormInputWithController = ({
         <>
           {(type === 'number' || type === 'text') && (
             <FormInput
+              max={max}
               type={type}
               ref={ref}
               fullWidth

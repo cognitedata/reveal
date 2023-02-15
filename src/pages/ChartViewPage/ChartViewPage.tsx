@@ -20,7 +20,13 @@ import {
   ChartWorkflowV2,
 } from 'models/chart/types';
 import { useSearchParam } from 'hooks/navigation';
-import { SEARCH_KEY, ACTIVE_SIDEBAR_KEY } from 'utils/constants';
+import {
+  SEARCH_KEY,
+  ACTIVE_SIDEBAR_KEY,
+  THRESHOLD_SIDEBAR_KEY,
+  EVENT_SIDEBAR_KEY,
+  MONITORING_SIDEBAR_KEY,
+} from 'utils/constants';
 import { startTimer, stopTimer, trackUsage } from 'services/metrics';
 import { Modes } from 'pages/types';
 import {
@@ -96,6 +102,7 @@ import {
 const defaultTranslations = makeDefaultTranslations(
   'Data Profiling',
   'Monitoring',
+  'Alerting',
   'Threshold',
   'Events',
   'Chart could not be saved!',
@@ -123,11 +130,15 @@ const ChartViewPage = () => {
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showDataProfilingSidebar, setShowDataProfilingSidebar] =
     useState(false);
-  const [showThresholdSidebar, setShowThresholdSidebar] = useState(false);
-  const [showMonitoringSidebar, setShowMonitoringSidebar] = useState(false);
+  const [showThresholdSidebar, setShowThresholdSidebar] = useState(
+    activeSidebar === THRESHOLD_SIDEBAR_KEY
+  );
+  const [showMonitoringSidebar, setShowMonitoringSidebar] = useState(
+    activeSidebar === MONITORING_SIDEBAR_KEY
+  );
   const [showErrorSidebar, setShowErrorSidebar] = useState(false);
   const [showEventSidebar, setShowEventSidebar] = useState(
-    activeSidebar === 'events'
+    activeSidebar === EVENT_SIDEBAR_KEY
   );
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY);
   const { chartId = '' } = useParams<{ chartId: string }>();
@@ -283,8 +294,16 @@ const ChartViewPage = () => {
    * Save events visibility on query param
    */
   useEffect(() => {
-    setActiveSidebarQuery(showEventSidebar ? 'events' : '');
-  }, [showEventSidebar]);
+    if (showEventSidebar) {
+      setActiveSidebarQuery(EVENT_SIDEBAR_KEY);
+    }
+    if (showThresholdSidebar) {
+      setActiveSidebarQuery(THRESHOLD_SIDEBAR_KEY);
+    }
+    if (showMonitoringSidebar) {
+      setActiveSidebarQuery(MONITORING_SIDEBAR_KEY);
+    }
+  }, [showEventSidebar, showThresholdSidebar, showMonitoringSidebar]);
 
   const openNodeEditor = useCallback(() => {
     setWorkspaceMode('editor');
@@ -387,6 +406,7 @@ const ChartViewPage = () => {
 
   const handleCloseThresholdMenu = useCallback(() => {
     setShowThresholdSidebar(false);
+    setActiveSidebarQuery('');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
 
@@ -402,6 +422,7 @@ const ChartViewPage = () => {
 
   const handleCloseMonitoringSidebar = useCallback(() => {
     setShowMonitoringSidebar(false);
+    setActiveSidebarQuery('');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
 
@@ -863,10 +884,7 @@ const ChartViewPage = () => {
         )}
 
         {showMonitoringSidebar && (
-          <MonitoringSidebar
-            visible={showMonitoringSidebar}
-            onClose={handleCloseMonitoringSidebar}
-          />
+          <MonitoringSidebar onClose={handleCloseMonitoringSidebar} />
         )}
 
         <Toolbar>

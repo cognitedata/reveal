@@ -1,3 +1,6 @@
+import { CogniteExternalId, CogniteInternalId, Metadata } from '@cognite/sdk';
+import { AlertResponse } from 'components/MonitoringAlert/types';
+
 export type MonitoringChannel = {
   name: string;
   id: string;
@@ -42,21 +45,21 @@ export type SessionAPIPayload = {
   items: SessionAPIPayloadCredentials[] | SessionAPIPayloadTokenExchange[];
 };
 
-export type CreateMonitoringTaskPayload = {
+export type CreateMonitoringJobPayload = {
   monitoringTaskExternalID: string;
   FolderId: string | undefined;
   evaluateEvery: number;
   modelExternalId: string;
-  granularity: string;
+  activationInterval: string; // not used by the middleware right now, but will use it in future
   threshold: number;
-  timeseriesExternalId: string;
+  timeSeriesExternalId: string;
   nonce: string;
   subscriptionExternalId: string;
   userAuthId: string;
   userEmail: string;
 };
 
-export type CreateMonitoringTaskFormData = {
+export type CreateMonitoringJobFormData = {
   name: string;
   source: undefined | { label: string; value: string };
   alertThreshold: number;
@@ -71,7 +74,7 @@ export type CreateMonitoringTaskFormData = {
   folder: undefined | { label: string; value: string };
 };
 
-export type MonitoringTask = {
+export type MonitoringJob = {
   id: number;
   externalId: string;
   channelId: number;
@@ -85,12 +88,38 @@ export type MonitoringTask = {
   };
 };
 
-export type MonitoringFolderTasks = {
+export type MonitoringFolderJobs = {
   folderExtID: string;
-  tasks: MonitoringTask[];
+  tasks: MonitoringJob[];
   count: number;
 };
 
-export type MonitoringFolderTasksListPayload = {
-  items: MonitoringFolderTasks[];
+export type MonitoringSubscriptionsListPayload = {
+  monitoringTaskIDs: number[];
+  userAuthId: string;
 };
+
+export type MonitoringSubscriptionResponse = {
+  externalId?: CogniteExternalId;
+  channelId: CogniteInternalId;
+  channelExternalId?: CogniteExternalId;
+  subscriberId: CogniteInternalId;
+  subscriberExternalId?: CogniteExternalId;
+  metadata?: Metadata;
+};
+
+export type MonitoringSubscriptionPayload = {
+  channelID: number;
+  userAuthId: string;
+  subscriptionExternalId?: string;
+};
+
+export type MonitoringSubscriptionsListResponse = { [key: string]: boolean };
+
+export type CreateMonitoringJobAPIResponse = MonitoringJob[];
+
+export type AlertResponsePayload = {
+  items: Array<AlertResponse>;
+};
+
+export type AlertPayload = {};
