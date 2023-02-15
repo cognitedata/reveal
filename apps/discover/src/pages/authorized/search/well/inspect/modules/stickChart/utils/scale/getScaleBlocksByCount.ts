@@ -45,11 +45,11 @@ export const getScaleBlocksByCount = ({
   normalize = false,
 }: ScaleConfig) => {
   /**
-   * If max value is 0,
+   * If both min and max values are 0,
    * no point of calculating scale blocks.
    * Hence, return an empty array.
    */
-  if (!max) {
+  if (min === 0 && max === 0) {
     return EMPTY_ARRAY;
   }
 
