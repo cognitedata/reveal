@@ -1,8 +1,8 @@
 @Library('jenkins-helpers') _
 
-static final String APP_ID = 'cdf-demo-app'
-static final String APPLICATION_REPO_ID = 'cdf-ui-demo-app'
-static final String NODE_VERSION = 'node:14'
+static final String APP_ID = 'cdf-ui-entity-matching'
+static final String APPLICATION_REPO_ID = 'cdf-ui-entity-matching-2'
+static final String NODE_VERSION = 'node:18'
 static final String VERSIONING_STRATEGY = 'single-branch'
 
 def pods = { body ->
@@ -56,7 +56,7 @@ def pods = { body ->
               hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
             ]) {
             properties([
-              
+
             ])
             node(POD_LABEL) {
               body()
@@ -99,7 +99,7 @@ pods {
       gitTitle = sh(returnStdout: true, script: "git show -s --format='%s' HEAD").trim()
       gitAuthor = sh(returnStdout: true, script: "git show -s --format='%ae' HEAD").trim()
     }
-  
+
     githubNotifyWrapper(context_install) {
         stage('Install dependencies') {
             yarn.setup()
@@ -128,7 +128,7 @@ pods {
         }
         container('fas') {
           stageWithNotify('Build and deploy PR') {
-            def package_name = "@cognite/cdf-demo-app";
+            def package_name = "@cognite/cdf-ui-entity-matching";
             def prefix = jenkinsHelpersUtil.determineRepoName();
             def domain = "fusion-preview";
             previewServer(
@@ -155,7 +155,7 @@ pods {
             buildCommand: 'yarn build',
             shouldPublishSourceMap: false
           )
-        }   
+        }
       }
     )
 
@@ -169,7 +169,7 @@ pods {
         }
       }
     }
-    
+
     if (isRelease) {
       stageWithNotify('Deploy to FAS') {
         fas.publish(
@@ -179,4 +179,3 @@ pods {
     }
   }
 }
-

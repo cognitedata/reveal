@@ -30,17 +30,17 @@ const project = getProject();
 const App = () => {
   return (
     <FlagProvider
-      appName="cdf-demo-app"
+      appName="cdf-ui-entity-matching"
       apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
       projectName={project}
     >
       <I18nWrapper
         translations={translations}
-        defaultNamespace="cdf-ui-demo-app"
+        defaultNamespace="entity-matching"
       >
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
-            <SubAppWrapper title="Fusion Demo App">
+            <SubAppWrapper title="Entity matching">
               <AuthWrapper
                 loadingScreen={<Loader />}
                 login={() => loginAndAuthIfNeeded(project, env)}

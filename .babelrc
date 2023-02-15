@@ -11,10 +11,9 @@
       [
         "@cognite/babel-plugin-styled-components",
         {
-          "namespace": "cdf-demo-app",
+          "namespace": "cdf-ui-entity-matching",
           "fileName": false
         }
       ]
     ]
   }
-  

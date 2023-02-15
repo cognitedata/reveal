@@ -1,20 +1,20 @@
 {
-  "name": "@cognite/cdf-demo-app",
-  "version": "0.4.0",
+  "name": "@cognite/cdf-ui-entity-matching",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost PORT=8000 react-app-rewired --max_old_space_size=2000 start",
     "build": "react-app-rewired --max_old_space_size=4096 build",
-    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-demo-app -o index.js -d ./build",
+    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-ui-entity-matching -o index.js -d ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "react-app-rewired test --passWithNoTests",
     "lint": "yarn prettier && yarn eslint",
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
-    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace cdf-ui-demo-app",
-    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace cdf-ui-demo-app",
-    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace cdf-ui-demo-app"
+    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace entity-matching",
+    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace entity-matching",
+    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace entity-matching"
   },
   "dependencies": {
     "@cognite/cdf-i18n-utils": "^0.6.0",
@@ -28,7 +28,6 @@
     "react-dom": "^18.2.0",
     "react-query": "^3.34.16",
     "react-router-dom": "^6.2.2",
-    "react-scripts": "^5.0.0",
     "single-spa-react": "^4.6.1",
     "styled-components": "^5.3.1",
     "systemjs-webpack-interop": "^2.1.2"
@@ -54,6 +53,7 @@
     "postcss-prefixwrap": "^1.29.0",
     "prettier": "^2.4.1",
     "react-app-rewired": "^2.2.1",
+    "react-scripts": "^5.0.1",
     "style-loader": "^3.3.1",
     "typescript": "^4.7.4"
   },
