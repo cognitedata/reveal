@@ -1,6 +1,5 @@
 module.exports = {
   title: 'Reveal docs',
-  trailingSlash: false,
   tagline: '@cognite/reveal documentation site',
   url: 'https://cognitedata.github.io',
   baseUrl: '/reveal-docs/',
