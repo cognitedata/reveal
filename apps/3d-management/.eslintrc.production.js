@@ -6,13 +6,21 @@ module.exports = {
     'plugin:lodash/recommended',
     'plugin:jest-dom/recommended',
     'plugin:react-hooks/recommended',
+    'plugin:storybook/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: 'tsconfig.json',
     tsconfigRootDir: __dirname,
   },
-  plugins: ['@cognite', 'testing-library', 'lodash', 'jest-dom', 'react-hooks'],
+  plugins: [
+    '@cognite',
+    'testing-library',
+    'lodash',
+    'jest-dom',
+    'react-hooks',
+    'storybook',
+  ],
   rules: {
     '@cognite/no-unissued-todos': [
       'off',

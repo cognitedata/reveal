@@ -6,7 +6,7 @@ import { Button } from '@cognite/cogs.js';
 
 import dayjs from 'dayjs';
 
-import EmptyState from 'pages/AllModels/components/EmptyState/index';
+import EmptyState from 'pages/AllModels/components/EmptyState';
 import { getContainer } from 'utils';
 import { TableOperations } from 'pages/AllModels/components/TableOperations';
 import Status from 'components/Status';

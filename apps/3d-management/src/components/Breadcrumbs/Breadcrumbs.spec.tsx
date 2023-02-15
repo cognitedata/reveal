@@ -7,7 +7,7 @@ describe('Breadcrumbs', () => {
   it('Renders without exploding', () => {
     const wrapper = mount(
       <Router>
-        <Breadcrumbs />
+        <Breadcrumbs breadcrumbs={[]} />
       </Router>
     );
     expect(wrapper).toHaveLength(1);
