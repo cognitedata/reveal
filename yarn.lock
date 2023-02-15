@@ -1299,14 +1299,14 @@
   resolved "https://registry.yarnpkg.com/@cognite/frontend-metrics-types/-/frontend-metrics-types-0.0.2.tgz#b6684a39222194e8a2a5f4e372d84404edd881f2"
   integrity sha512-i064sawWl1uKgfJ6QckXKutw3y+y8KpWuoerX3c/PlaEW/eC/gV6SHkK7q0ltxZcRxBZXhD8wlNMeh+vPxt1gA==
 
-"@cognite/metrics@^1.2.1":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-1.3.0.tgz#f9c4a062c37e57ef211eea9248c5f60681517ca7"
-  integrity sha512-3Gf0hCfIsBdhsuefBeL2AjmveItXca6PX1JcvOnLXO7rySierJ+w6o5xgobvsQLTBBbAxwx6dnmc4i8oesrPLQ==
+"@cognite/metrics@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-2.0.0.tgz#9c78512c5709b4a18cd5a197f61eec90fa092d0a"
+  integrity sha512-abPcEmEc8s6kGKehJjuOU0pWgfIkmYNuPdKl4etAA9H6MF5/hA7hlLDpJAFEK3IbW34ULGnmVyq1pueF0FmXUw==
   dependencies:
     "@cognite/frontend-metrics-types" "0.0.2"
     lodash "4.17.21"
-    mixpanel-browser "2.41.0"
+    mixpanel-browser "2.45.0"
 
 "@cognite/react-feature-flags@^1.0.0":
   version "1.0.1"
@@ -8202,10 +8202,10 @@ minimist@^1.2.0, minimist@^1.2.6:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
 
-mixpanel-browser@2.41.0:
-  version "2.41.0"
-  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.41.0.tgz#d49753b4e4a7e6ddd18c126be4a917fff4ce3039"
-  integrity sha512-IEuc9cH44hba9a3KEyulXINLn+gpFqluBDo7xiTk1h3j111dmmsctaE6tUzZYxgGLVqeNhTpsccdliOeX24Wlw==
+mixpanel-browser@2.45.0:
+  version "2.45.0"
+  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.45.0.tgz#a2973be5b66e6d2799ef95a1e55b8ad8eede57e8"
+  integrity sha512-PQ1DaTk68yyYtLA0iejmzPA9iNDhT4uIZpqZjRTw7HWpYfl123fydHb2laKanaKjm8YDmrGGz3+xZ4Q6joogyg==
 
 mixpanel@^0.13.0:
   version "0.13.0"
