@@ -1,0 +1,12 @@
+{
+  "current-language": "Language: English",
+  "current_language_text": "Language: English",
+  "english": "English",
+  "english_language": "English",
+  "japanese": "Japanese",
+  "japanese_language": "Japanese",
+  "test1": "test1",
+  "test2": "test2",
+  "welcome": "Welcome to {{appName}} {{userName}}",
+  "welcome_text": "Welcome to {{appName}} {{userName}} (locize)"
+}
