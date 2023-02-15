@@ -6,7 +6,7 @@ import { useInjection } from 'brandi-react';
 
 export const useSpaces = () => {
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
-  const listSpacesMaxLimit = 100; // <- change this to 1000 when dms supports it
+  const listSpacesMaxLimit = 1000;
 
   return useQuery<SpaceInstance[], string | any>(
     QueryKeys.SPACES_LIST,
