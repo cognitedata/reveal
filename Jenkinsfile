@@ -19,7 +19,7 @@ static final String MIXPANEL_TOKEN = '0837d632cca24291a0a1025d488d1a9a' // pragm
 
 // Specify your projects alerting slack channel here. If you do not have one of these, please
 // consider creating one for your projects alerts
-static final String SLACK_CHANNEL = 'devflow-charts'
+static final String SLACK_CHANNEL = 'alerts-charts-dev'
 
 static final String PR_COMMENT_MARKER = '[pr-server]\n'
 
@@ -55,7 +55,7 @@ def scmVars = { };
 // Usually the condition is branch name containing "release-",
 // but because the Fusion branch is called release/fusion we changed it.
 // Ideally should be changed back to "release-" after Fusion branch gets merged to master
-def isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains("release/fusion");
+def isRelease = env.BRANCH_NAME == 'main' || env.BRANCH_NAME.contains("release/fusion");
 
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
