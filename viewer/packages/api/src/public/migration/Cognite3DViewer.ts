@@ -736,6 +736,13 @@ export class Cognite3DViewer {
       preMultipliedRotation
     );
 
+    const numberOf360Images = image360Collection.image360Entities.length;
+
+    MetricsLogger.trackEvent('360ImageCollectionAdded', {
+      datasource,
+      numberOf360Images
+    });
+
     return image360Collection;
   }
 
