@@ -51,10 +51,7 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
         label: index.toString(),
         collectionId: 'local',
         collectionLabel: 'local',
-        transformations: {
-          translation,
-          rotation
-        },
+        transform: translation.multiply(rotation),
         faceDescriptors: localDescriptor.faces.map(p => {
           return { face: p.face, fileId: p.id, mimeType: 'image/png' } as Image360FileDescriptor;
         })

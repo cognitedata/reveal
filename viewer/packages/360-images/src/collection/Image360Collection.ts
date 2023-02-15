@@ -2,8 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Image360 } from './Image360';
-import { Image360EnteredDelegate, Image360ExitedDelegate } from './types';
+import { Image360 } from './../entity/Image360';
+import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 
 /**
  * A wrapper that represents a set of 360 images.

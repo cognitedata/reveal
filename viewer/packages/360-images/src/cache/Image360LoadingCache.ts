@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Image360Entity } from './Image360Entity';
+import { Image360Entity } from '../entity/Image360Entity';
 import pull from 'lodash/pull';
 import findLast from 'lodash/findLast';
 

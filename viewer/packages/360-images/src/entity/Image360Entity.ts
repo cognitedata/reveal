@@ -46,14 +46,14 @@ export class Image360Entity implements Image360 {
     image360Metadata: Image360Descriptor,
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
-    postTransform: THREE.Matrix4,
-    preComputedRotation: boolean
+    transform: THREE.Matrix4,
+    icon: Image360Icon
   ) {
     this._imageProvider = imageProvider;
     this._image360Metadata = image360Metadata;
 
-    this._transform = this.computeTransform(image360Metadata, preComputedRotation, postTransform);
-    this._image360Icon = new Image360Icon(this._transform, sceneHandler);
+    this._transform = transform;
+    this._image360Icon = icon;
     this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
     this._image360VisualzationBox.visible = false;
   }
@@ -80,23 +80,5 @@ export class Image360Entity implements Image360 {
   public dispose(): void {
     this.unload360Image();
     this._image360Icon.dispose();
-  }
-
-  private computeTransform(
-    image360Metadata: Image360Descriptor,
-    preComputedRotation: boolean,
-    postTransform: THREE.Matrix4
-  ): THREE.Matrix4 {
-    const { translation, rotation } = image360Metadata.transformations;
-
-    const entityTransform = translation.clone();
-
-    if (!preComputedRotation) {
-      entityTransform.multiply(rotation.clone().multiply(new THREE.Matrix4().makeRotationY(Math.PI / 2)));
-    } else {
-      entityTransform.multiply(new THREE.Matrix4().makeRotationY(Math.PI));
-    }
-
-    return postTransform.clone().multiply(entityTransform);
   }
 }

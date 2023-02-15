@@ -12,7 +12,7 @@ export interface BinaryFileProvider {
 }
 
 export interface Image360DescriptorProvider<T> {
-  get360ImageDescriptors(metadataFilter: T): Promise<Image360Descriptor[]>;
+  get360ImageDescriptors(metadataFilter: T, preMultipliedRotation: boolean): Promise<Image360Descriptor[]>;
 }
 
 export interface Image360FileProvider {
@@ -28,10 +28,7 @@ export type Image360EventDescriptor = {
   label: string;
   collectionId: string;
   collectionLabel: string;
-  transformations: {
-    translation: THREE.Matrix4;
-    rotation: THREE.Matrix4;
-  };
+  transform: THREE.Matrix4;
 };
 
 export type Image360Face = {

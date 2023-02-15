@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Image360 } from './Image360';
+import { Image360 } from './entity/Image360';
 
 /**
  * Delegate for 360 image mode entered events.

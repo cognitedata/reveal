@@ -36,13 +36,16 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     this._client = client;
   }
 
-  public async get360ImageDescriptors(metadataFilter: Metadata): Promise<Image360Descriptor[]> {
+  public async get360ImageDescriptors(
+    metadataFilter: Metadata,
+    preMultipliedRotation: boolean
+  ): Promise<Image360Descriptor[]> {
     const [events, files] = await Promise.all([
       this.listEvents({ metadata: metadataFilter }),
       this.listFiles({ metadata: metadataFilter, uploaded: true })
     ]);
 
-    const image360Descriptors = this.mergeDescriptors(files, events);
+    const image360Descriptors = this.mergeDescriptors(files, events, preMultipliedRotation);
 
     if (events.length !== image360Descriptors.length) {
       Log.warn(
@@ -74,11 +77,15 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     return faces;
   }
 
-  private mergeDescriptors(files: FileInfo[], events: CogniteEvent[]): Image360Descriptor[] {
+  private mergeDescriptors(
+    files: FileInfo[],
+    events: CogniteEvent[],
+    preMultipliedRotation: boolean
+  ): Image360Descriptor[] {
     const eventDescriptors = events
       .map(event => event.metadata)
       .filter((metadata): metadata is Event360Metadata => !!metadata)
-      .map(metadata => this.parseEventMetadata(metadata));
+      .map(metadata => this.parseEventMetadata(metadata, preMultipliedRotation));
 
     const uniqueEventDescriptors = uniqBy(eventDescriptors, eventDescriptor => eventDescriptor.id);
 
@@ -157,19 +164,16 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     );
   }
 
-  private parseEventMetadata(eventMetadata: Event360Metadata): Image360EventDescriptor {
+  private parseEventMetadata(eventMetadata: Event360Metadata, preMultipliedRotation: boolean): Image360EventDescriptor {
     return {
       collectionId: eventMetadata.site_id,
       collectionLabel: eventMetadata.site_name,
       id: eventMetadata.station_id,
       label: eventMetadata.station_name,
-      transformations: parseTransform(eventMetadata)
+      transform: parseTransform(eventMetadata)
     };
 
-    function parseTransform(transformationData: Event360TransformationData): {
-      translation: THREE.Matrix4;
-      rotation: THREE.Matrix4;
-    } {
+    function parseTransform(transformationData: Event360TransformationData): THREE.Matrix4 {
       const translationComponents = transformationData.translation.split(' ').map(parseFloat);
       const milimetersInMeters = 1000;
       const translation = new THREE.Vector3(
@@ -188,7 +192,19 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
 
       const translationMatrix = new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
 
-      return { translation: translationMatrix, rotation: rotationMatrix };
+      return adjustPreMultipliedTransform(translationMatrix, rotationMatrix);
+    }
+
+    function adjustPreMultipliedTransform(translation: THREE.Matrix4, rotation: THREE.Matrix4): THREE.Matrix4 {
+      const entityTransform = translation.clone();
+
+      if (!preMultipliedRotation) {
+        entityTransform.multiply(rotation.clone().multiply(new THREE.Matrix4().makeRotationY(Math.PI / 2)));
+      } else {
+        entityTransform.multiply(new THREE.Matrix4().makeRotationY(Math.PI));
+      }
+
+      return entityTransform;
     }
   }
 
