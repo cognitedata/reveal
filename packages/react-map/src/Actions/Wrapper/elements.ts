@@ -1,3 +1,4 @@
+import isUndefined from 'lodash/isUndefined';
 import styled from 'styled-components';
 
 import { sizes } from '../../elements';
@@ -6,7 +7,7 @@ export const Wrapper = styled.div`
   justify-content: flex-end;
   position: absolute;
   z-index: ${(props: { zIndex?: number; ref: any }) =>
-    props.zIndex === undefined ? 5 : props.zIndex};
+    isUndefined(props.zIndex) ? 3 : props.zIndex};
   display: flex;
   right: 0;
   width: 100%;
