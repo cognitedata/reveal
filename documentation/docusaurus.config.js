@@ -6,6 +6,7 @@ module.exports = {
   favicon: 'img/favicon.ico',
   organizationName: 'cognitedata',
   projectName: 'reveal',
+  clientModules: ['removeTrailingSlash.js'],
   themeConfig: {
     algolia: {
       appId: 'WK4NHSAX9S',
