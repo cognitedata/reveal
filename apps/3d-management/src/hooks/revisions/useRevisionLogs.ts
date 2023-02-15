@@ -4,7 +4,9 @@ import { RevisionLog3D } from 'utils/sdk/3dApiUtils';
 import { fireErrorNotification, QUERY_KEY } from 'utils';
 import { RevisionIds } from 'utils/types';
 import { HttpError } from '@cognite/sdk';
+import { useState } from 'react';
 import { getOrganizedRevisionLogs } from '../../utils/getOrganizedRevisionLogs';
+import { getReFetchInterval } from '../../utils/getReFetchInterval';
 
 const fetchLogs =
   ({ modelId, revisionId }: RevisionIds) =>
@@ -17,9 +19,9 @@ const fetchLogs =
     return items;
   };
 
-const QUERY_REFETCH_INTERVAL_MILLISECONDS = 7000;
-
 export function useRevisionLogs(args: RevisionIds) {
+  const [startTime, _] = useState(Date.now());
+
   return useQuery<RevisionLog3D[], HttpError>(
     [QUERY_KEY.REVISIONS, args],
     fetchLogs(args),
@@ -30,7 +32,9 @@ export function useRevisionLogs(args: RevisionIds) {
           message: 'Could not fetch revision logs',
         });
       },
-      enabled: !!args.revisionId && !!args.modelId,
+      enabled: !!args.revisionId && !!args.modelId && args.status !== 'Failed',
+      retryDelay: (attempt) =>
+        Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000), // exponential backoff if query fails
       refetchInterval: (data: RevisionLog3D[] | undefined) => {
         if (!data) {
           return false;
@@ -39,13 +43,15 @@ export function useRevisionLogs(args: RevisionIds) {
         const processCompleted = Object.values(organizedRevisionLogs).every(
           (revisionLogCategory) =>
             revisionLogCategory.some(
-              (revisionLog) => revisionLog.type.toLowerCase() === 'success'
+              (revisionLog) =>
+                revisionLog.type.toLowerCase() === 'success' ||
+                revisionLog.type.toLowerCase() === 'failed'
             )
         );
         if (data?.length && processCompleted) {
           return false;
         }
-        return QUERY_REFETCH_INTERVAL_MILLISECONDS;
+        return getReFetchInterval(startTime);
       },
     }
   );

@@ -1,11 +1,12 @@
 import { RevisionLog3D } from './sdk/3dApiUtils';
+import { OrganizedRevisionLog } from './types';
 
 /**
  * Organizes revision logs array by category
  */
 export const getOrganizedRevisionLogs = (
   logs: RevisionLog3D[]
-): { [key: string]: { timestamp: number; type: string; info: string }[] } => {
+): { [key: string]: OrganizedRevisionLog[] } => {
   return logs.reduce((prev, log) => {
     const { timestamp, type, info } = log;
     const [category, status] = type.split('/');
