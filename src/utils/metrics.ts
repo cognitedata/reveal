@@ -1,5 +1,5 @@
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import { getProject, isDevelopment } from '@cognite/cdf-utilities';
+import { getProject } from '@cognite/cdf-utilities';
 import { Metrics } from '@cognite/metrics';
 
 export const trackUsage = (
@@ -13,9 +13,10 @@ export const trackUsage = (
   }
 
   const pathWithoutProjectName = pathname.substring(pathname.indexOf('/', 1));
+  const customerDomain = window.location.host.split('.')[0];
 
   if (!host.includes('localhost')) {
-    trackEvent(`cdf-demo-app.${event}`, {
+    trackEvent(`entity-matching.${event}`, {
       ...metadata,
       project: getProject(),
       version: 1,
@@ -23,35 +24,14 @@ export const trackUsage = (
       location: pathname,
       user: username,
       pathname: pathWithoutProjectName,
+      customerDomain,
+      host,
     });
   }
 };
 
-export const handleUserIdentification = (email: string) => {
-  Metrics.identify(email || 'not-identified-yet');
-  Metrics.people({
-    email,
-    name: email,
-  });
-};
-
 export const setupMixpanel = () => {
   const mixpanelFusionToken = '5c4d853e7c3b77b1eb4468d5329b278c'; // pragma: allowlist secret
-  const mixpanelFusionDevToken = '643d35354aa468504d01f2dd33d8f726'; // pragma: allowlist secret
 
-  const mixpanelToken = isDevelopment()
-    ? mixpanelFusionDevToken
-    : mixpanelFusionToken;
-
-  Metrics.init({
-    mixpanelToken,
-    debug: isDevelopment(),
-  });
-
-  // We opt out of tracking if we are on development
-  if (isDevelopment()) {
-    Metrics.optOut();
-  } else {
-    Metrics.optIn();
-  }
+  Metrics.init({ mixpanelFusionToken });
 };
