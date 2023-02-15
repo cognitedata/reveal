@@ -27,7 +27,7 @@ export function MenuBar() {
             {
               name: 'Model library',
               isActive: !!matchRoute({
-                to: createCdfLink('/model-library'),
+                to: '/simint/model-library',
                 fuzzy: true,
               }),
               onClick: () => {
@@ -39,7 +39,7 @@ export function MenuBar() {
             {
               name: 'Run browser',
               isActive: !!matchRoute({
-                to: createCdfLink('/calculations/runs'),
+                to: '/simint/calculations/runs',
                 fuzzy: true,
               }),
               onClick: () => {
