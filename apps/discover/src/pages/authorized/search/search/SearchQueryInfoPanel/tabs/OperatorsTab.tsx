@@ -47,7 +47,7 @@ export const OperatorsTab: React.FC = () => {
       </p>
       <p>
         3.{' '}
-        <Copy text="Stuck - Pipe">
+        <Copy text="Stuck -Pipe">
           <strong>Stuck -Pipe</strong>
         </Copy>{' '}
         returns documents containing the word “Stuck” but <strong>NOT</strong>{' '}
