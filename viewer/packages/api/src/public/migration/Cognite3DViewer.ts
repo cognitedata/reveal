@@ -25,7 +25,7 @@ import {
   BeforeSceneRenderedDelegate
 } from '@reveal/utilities';
 
-import { MetricsLogger } from '@reveal/metrics';
+import { FpsLogger, MetricsLogger } from '@reveal/metrics';
 import { PickingHandler, CadModelSectorLoadStatistics, CogniteCadModel } from '@reveal/cad-model';
 import {
   PointCloudIntersection,
@@ -139,7 +139,14 @@ export class Cognite3DViewer {
   private isDisposed = false;
 
   private latestRequestId: number = -1;
-  private readonly clock = new THREE.Clock();
+  
+  private isPreviousAnimationFrameRendered = false;
+  private renderedFrames = 0;
+  private renderedFramesStartTime = 0;
+  
+  private fpsLogger = new FpsLogger();
+
+  private readonly cameraManagerClock = new THREE.Clock();
   private _clippingNeedsUpdate: boolean = false;
 
   private readonly spinner: Spinner;
@@ -1321,14 +1328,20 @@ export class Cognite3DViewer {
     const { display, visibility } = window.getComputedStyle(this.canvas);
     const isVisible = visibility === 'visible' && display !== 'none';
 
+    this.fpsLogger.trackCurrentAverageFps();
+
     if (isVisible) {
       const camera = this.cameraManager.getCamera();
       TWEEN.update(time);
       this.recalculateBoundingBox();
-      this._activeCameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
+      this._activeCameraManager.update(this.cameraManagerClock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
       this.revealManager.update(camera);
 
-      if (this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
+      const needsRedraw = this.revealManager.needsRedraw || this._clippingNeedsUpdate;
+
+      this.fpsLogger.tickCurrentAnimationFrame(needsRedraw)
+
+      if (needsRedraw) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
 
