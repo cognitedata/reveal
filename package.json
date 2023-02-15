@@ -7,7 +7,7 @@
     "@azure/msal-node": "^1.3.3",
     "@babel/helper-environment-visitor": "^7.16.5",
     "@cognite/annotations": "^1.1.0",
-    "@cognite/cdf-i18n-utils": "^0.6.0",
+    "@cognite/cdf-i18n-utils": "^0.6.3",
     "@cognite/cdf-sdk-singleton": "^0.8.2",
     "@cognite/cdf-ui-cli": "^1.1.1",
     "@cognite/cdf-utilities": "^3.0.1",
@@ -22,7 +22,7 @@
     "@cognite/sdk-provider": "^2.0.6",
     "@cognite/sdk-react-query-hooks": "^7.1.0",
     "@cognite/sidecar": "^0.4.1",
-    "@cognite/unified-file-viewer": "^8.8.1",
+    "@cognite/unified-file-viewer": "8.10.2",
     "@cognite/z-index": "^0.2.3",
     "@graphiql/plugin-explorer": "^0.1.12",
     "@graphql-codegen/core": "^2.4.0",
@@ -66,7 +66,7 @@
     "brandi": "^4.0.2",
     "brandi-react": "^4.0.2",
     "chalk": "4.1.2",
-    "chromatic": "^6.13.1",
+    "chromatic": "^6.17.0",
     "cli-table": "^0.3.11",
     "cogs-v7": "npm:@cognite/cogs.js@7",
     "conf": "^10.0.3",
@@ -222,7 +222,7 @@
     "@svgr/rollup": "^6.1.2",
     "@svgr/webpack": "^6.1.2",
     "@swc-node/register": "^1.4.2",
-    "@swc/cli": "~0.1.55",
+    "@swc/cli": "^0.1.61",
     "@swc/core": "^1.2.173",
     "@testing-library/react": "13.4.0",
     "@theunderscorer/nx-semantic-release": "^1.14.0",
@@ -311,12 +311,19 @@
   },
   "resolutions": {
     "babel-loader": "8.2.3",
-
     "styled-components": "^5.3.3",
-
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@cognite/react-container/react-router-dom": "5.3.4"
+    "@cognite/react-container/react-router-dom": "5.3.4",
+    "@mui/joy": "5.0.0-alpha.56",
+    "node-fetch": "^2.6.7",
+    "npm": "^8.11.0",
+    "glob-parent": "^5.1.2",
+    "trim-newlines": "^3.0.1",
+    "trim": "^0.0.3",
+    "nth-check": "^2.0.1",
+    "cacheable-request": "^10.2.7",
+    "http-cache-semantics": "^4.1.1"
   },
   "bin": {
     "platypus": "./dist/libs/platypus-cli/src/index.js"
