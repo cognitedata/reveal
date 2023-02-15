@@ -175,7 +175,7 @@ export class SectorDownloadScheduler {
     return `${sectorId}-${modelIdentifer}`;
   }
 
-  private createAbortSignal(): { abortSignal: AbortSignal; abort: () => void } {
+  private createAbortSignal() {
     const abortController = new AbortController();
     const abort = () => {
       abortController.abort();
