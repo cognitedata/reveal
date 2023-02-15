@@ -141,7 +141,6 @@ export class Cognite3DViewer {
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
   private _clippingNeedsUpdate: boolean = false;
-  private _pickingCadModels: boolean = false;
 
   private readonly spinner: Spinner;
 
@@ -1329,7 +1328,7 @@ export class Cognite3DViewer {
       this._activeCameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
       this.revealManager.update(camera);
 
-      if ((this.revealManager.needsRedraw || this._clippingNeedsUpdate) && !this._pickingCadModels) {
+      if (this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
 
@@ -1370,13 +1369,13 @@ export class Cognite3DViewer {
     };
 
     // Do not refresh renderer when CAD picking is active as it would create a bleed through during TreeIndex computing.
-    this._pickingCadModels = true;
+    cancelAnimationFrame(this.latestRequestId);
     const cadResults = await this._pickingHandler.intersectCadNodes(
       cadNodes,
       input,
       options?.asyncCADIntersection ?? true
     );
-    this._pickingCadModels = false;
+    this.latestRequestId = requestAnimationFrame(this._boundAnimate);
     const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
 
     const intersections: Intersection[] = [];
