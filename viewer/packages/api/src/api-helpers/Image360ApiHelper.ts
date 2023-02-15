@@ -15,6 +15,7 @@ import {
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import { InputHandler, pixelToNormalizedDeviceCoordinates, PointerEventData, SceneHandler } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
+import { MetricsLogger } from '@reveal/metrics';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
@@ -120,6 +121,7 @@ export class Image360ApiHelper {
     this._transitionInProgress = true;
     if (lastEntered360ImageEntity !== undefined) {
       await this.transition(lastEntered360ImageEntity, image360Entity);
+      MetricsLogger.trackEvent('360ImageEntered', {});
     } else {
       const transitionDuration = 1000;
       const position = new THREE.Vector3().setFromMatrixPosition(image360Entity.transform);
@@ -127,6 +129,7 @@ export class Image360ApiHelper {
         this._image360Navigation.moveTo(position, transitionDuration),
         this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
       ]);
+      MetricsLogger.trackEvent('360ImageTransitioned', {});
     }
     this._transitionInProgress = false;
     this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
@@ -256,6 +259,7 @@ export class Image360ApiHelper {
         .forEach(imageCollection => imageCollection.events.image360Exited.fire());
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
+      MetricsLogger.trackEvent('360ImageExited', {});
     }
     const { position, rotation } = this._image360Navigation.getCameraState();
     this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
@@ -343,7 +347,6 @@ export class Image360ApiHelper {
       await this.tweenVisualizationAlpha(lastEntered, currentOpacity, 0, transitionOutDuration);
       lastEntered.image360Visualization.opacity = currentOpacity;
     }
-
     this.exit360Image();
   }
 }
