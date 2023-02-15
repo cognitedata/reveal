@@ -9,6 +9,7 @@ import { Image360LoadingCache } from './cache/Image360LoadingCache';
 import { Image360CollectionFactory } from './collection/Image360CollectionFactory';
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
 import pullAll from 'lodash/pullAll';
+import { Log } from '@reveal/logger';
 
 export class Image360Facade<T> {
   private readonly _image360Collections: DefaultImage360Collection[];
@@ -59,7 +60,10 @@ export class Image360Facade<T> {
   }
 
   public preload(entity: Image360Entity): Promise<void> {
-    return this._image360Cache.cachedPreload(entity);
+    return this._image360Cache.cachedPreload(entity).catch(e => {
+      Log.info(e);
+      return Promise.resolve();
+    });
   }
 
   public intersect(
