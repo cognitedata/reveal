@@ -23,7 +23,7 @@ export class Image360LoadingCache {
     return this._inFlightEntities;
   }
 
-  constructor(private readonly _imageCacheSize = 10, private readonly _inFlightCacheSize = 2) {
+  constructor(private readonly _imageCacheSize = 10, private readonly _inFlightCacheSize = 10) {
     this._loaded360Images = [];
     this._inFlightEntities = new Map();
   }
@@ -42,11 +42,7 @@ export class Image360LoadingCache {
       this.abortLastRecentlyReqestedEntity();
     }
 
-    const abortController = new AbortController();
-    const abort = () => {
-      abortController.abort();
-    };
-    const { signal } = abortController;
+    const { signal, abort } = this.createAbortSignal();
     const load360Image = entity.load360Image({ signal });
     this._inFlightEntities.set(entity, { load360Image, abort });
 
@@ -85,5 +81,13 @@ export class Image360LoadingCache {
       this._inFlightEntities.delete(entityToAbort);
       request.abort();
     }
+  }
+
+  private createAbortSignal() {
+    const abortController = new AbortController();
+    const abort = () => {
+      abortController.abort();
+    };
+    return { signal: abortController.signal, abort };
   }
 }
