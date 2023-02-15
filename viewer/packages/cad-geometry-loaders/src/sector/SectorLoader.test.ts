@@ -58,10 +58,7 @@ describe('SectorLoader', () => {
       .returns(true)
       .setup(p => p.loadSector)
       .returns(value => {
-        return {
-          consumedSector: repository.loadSector(value),
-          abortDowload: () => {}
-        };
+        return repository.loadSector(value);
       })
       .setup(p => p.clippingPlanes)
       .returns([]);
@@ -145,7 +142,7 @@ describe('SectorLoader', () => {
       .returns(value => {
         const consumedSector = first ? Promise.reject('Could not load sector') : repository.loadSector(value);
         if (first) first = false;
-        return { consumedSector, abortDowload: () => {} };
+        return consumedSector;
       })
       .setup(p => p.clippingPlanes)
       .returns([]);

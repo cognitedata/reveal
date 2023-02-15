@@ -35,12 +35,7 @@ describe(SectorDownloadScheduler.name, () => {
     };
 
     const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
-      return {
-        sector,
-        downloadSector: (sector: WantedSector) => {
-          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
-        }
-      };
+      return { sector, downloadSector: downloadSectorMock };
     });
 
     // Act
@@ -62,20 +57,10 @@ describe(SectorDownloadScheduler.name, () => {
 
     // Act
     const firstBatch = sectorDownloadScheduler.queueSectorBatchForDownload([
-      {
-        sector: wantedSectors[0],
-        downloadSector: (sector: WantedSector) => {
-          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
-        }
-      }
+      { sector: wantedSectors[0], downloadSector: downloadSectorMock }
     ]);
     const secondBatch = sectorDownloadScheduler.queueSectorBatchForDownload([
-      {
-        sector: wantedSectors[0],
-        downloadSector: (sector: WantedSector) => {
-          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
-        }
-      }
+      { sector: wantedSectors[0], downloadSector: downloadSectorMock }
     ]);
 
     // Assert
@@ -104,12 +89,7 @@ describe(SectorDownloadScheduler.name, () => {
     };
 
     const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
-      return {
-        sector,
-        downloadSector: (sector: WantedSector) => {
-          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
-        }
-      };
+      return { sector, downloadSector: downloadSectorMock };
     });
 
     // Act
@@ -147,12 +127,7 @@ describe(SectorDownloadScheduler.name, () => {
     };
 
     const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
-      return {
-        sector,
-        downloadSector: (sector: WantedSector) => {
-          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
-        }
-      };
+      return { sector, downloadSector: downloadSectorMock };
     });
 
     // Act
@@ -194,12 +169,7 @@ describe(SectorDownloadScheduler.name, () => {
     };
 
     const sectorDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
-      return {
-        sector,
-        downloadSector: (sector: WantedSector) => {
-          return { consumedSector: downloadSectorMock(sector), abortDowload: () => {} };
-        }
-      };
+      return { sector, downloadSector: downloadSectorMock };
     });
 
     // Act
@@ -226,12 +196,14 @@ describe(SectorDownloadScheduler.name, () => {
 
   test('Discarded sectors should be aborted or removed from dowload queue', async () => {
     // Setup
+    const abortedCount = 11;
     const wantedSectors = createMockWantedSectors(21, 'TestModelIdentifier');
-    const discardedSectors = createMockWantedSectors(21, 'TestModelIdentifier', LevelOfDetail.Discarded);
-    let abortCount = 0;
+    const discardedSectors = createMockWantedSectors(abortedCount, 'TestModelIdentifier', LevelOfDetail.Discarded);
+    const abortSignals = new Array<AbortSignal>();
 
     const stalledDownload = new DeferredPromise<void>();
-    const dowloadSectorMock = async (sector: WantedSector, abortSignal?: AbortSignal) => {
+    const dowloadSectorMock = async (sector: WantedSector, abortSignal: AbortSignal) => {
+      abortSignals.push(abortSignal);
       await stalledDownload;
       if (abortSignal?.aborted) {
         // Simulate fetch failing due to abort
@@ -240,40 +212,37 @@ describe(SectorDownloadScheduler.name, () => {
       return createConsumedSectorMock(sector).object();
     };
 
-    const downloadSector = (sector: WantedSector) => {
-      const abortController = new AbortController();
-      return {
-        consumedSector: dowloadSectorMock(sector, abortController.signal),
-        abortDowload: () => {
-          abortController.abort();
-          abortCount++;
-        }
-      };
-    };
-
-    const wantedSectorsDownloadData: SectorDownloadData[] = wantedSectors.map(sector => {
-      return { sector, downloadSector };
-    });
-
-    const discardedSectorDownloadData: SectorDownloadData[] = discardedSectors.map(sector => {
-      return { sector, downloadSector };
-    });
-
     // Act
-    const firstLoadBatch = sectorDownloadScheduler.queueSectorBatchForDownload(wantedSectorsDownloadData);
-    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(20);
-    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(1);
+    const firstDownload = sectorDownloadScheduler.queueSectorBatchForDownload(
+      wantedSectors.map(sector => {
+        return { sector, downloadSector: dowloadSectorMock };
+      })
+    );
 
-    sectorDownloadScheduler.queueSectorBatchForDownload(discardedSectorDownloadData);
-    expect(sectorDownloadScheduler.numberOfPendingDownloads).toBe(20);
-    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
-    expect(abortCount).toBe(20);
+    sectorDownloadScheduler.queueSectorBatchForDownload(
+      discardedSectors.map(sector => {
+        return { sector, downloadSector: dowloadSectorMock };
+      })
+    );
 
     stalledDownload.resolve();
-    const resolvedSectors = await Promise.all(firstLoadBatch);
+    const resolvedSectors = await Promise.all(firstDownload);
+
+    // Assert
+    abortSignals.forEach((abortSignal, index) => {
+      if (index < abortedCount) {
+        expect(abortSignal.aborted).toBe(true);
+      } else {
+        expect(abortSignal.aborted).toBe(false);
+      }
+    });
 
     resolvedSectors.forEach(sector => {
-      expect(sector.levelOfDetail).toBe(LevelOfDetail.Discarded);
+      if (sector.metadata.id < abortedCount) {
+        expect(sector.levelOfDetail).toBe(LevelOfDetail.Discarded);
+      } else {
+        expect(sector.levelOfDetail).toBe(LevelOfDetail.Detailed);
+      }
     });
   });
 });
