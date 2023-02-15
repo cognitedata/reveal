@@ -1,11 +1,13 @@
 module.exports = {
   title: 'Reveal docs',
+  trailingSlash: false,
   tagline: '@cognite/reveal documentation site',
   url: 'https://cognitedata.github.io',
   baseUrl: '/reveal-docs/',
   favicon: 'img/favicon.ico',
   organizationName: 'cognitedata',
   projectName: 'reveal',
+  clientModules: ['removeTrailingSlash.js'],
   themeConfig: {
     algolia: {
       appId: 'WK4NHSAX9S',
