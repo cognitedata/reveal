@@ -1367,11 +1367,15 @@ export class Cognite3DViewer {
       clippingPlanes: this.getGlobalClippingPlanes(),
       domElement: this.renderer.domElement
     };
+
+    // Do not refresh renderer when CAD picking is active as it would create a bleed through during TreeIndex computing.
+    cancelAnimationFrame(this.latestRequestId);
     const cadResults = await this._pickingHandler.intersectCadNodes(
       cadNodes,
       input,
       options?.asyncCADIntersection ?? true
     );
+    this.latestRequestId = requestAnimationFrame(this._boundAnimate);
     const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
 
     const intersections: Intersection[] = [];
