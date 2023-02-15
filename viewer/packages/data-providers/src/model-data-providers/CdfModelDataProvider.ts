@@ -33,7 +33,6 @@ export class CdfModelDataProvider implements ModelDataProvider {
       }
       throw Error('Could not download binary file');
     });
-
     return response.arrayBuffer();
   }
 

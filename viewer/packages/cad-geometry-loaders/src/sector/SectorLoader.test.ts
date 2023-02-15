@@ -57,9 +57,7 @@ describe('SectorLoader', () => {
       .setup(p => p.visible)
       .returns(true)
       .setup(p => p.loadSector)
-      .returns(value => {
-        return repository.loadSector(value);
-      })
+      .returns(value => repository.loadSector(value))
       .setup(p => p.clippingPlanes)
       .returns([]);
 
@@ -140,9 +138,10 @@ describe('SectorLoader', () => {
       .returns(true)
       .setup(p => p.loadSector)
       .returns(value => {
-        const consumedSector = first ? Promise.reject('Could not load sector') : repository.loadSector(value);
-        if (first) first = false;
-        return consumedSector;
+        if (first) {
+          first = false;
+          return Promise.reject('Could not load sector');
+        } else return repository.loadSector(value);
       })
       .setup(p => p.clippingPlanes)
       .returns([]);
