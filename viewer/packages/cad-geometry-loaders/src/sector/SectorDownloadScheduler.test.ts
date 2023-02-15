@@ -194,16 +194,70 @@ describe(SectorDownloadScheduler.name, () => {
     });
   });
 
-  test('Discarded sectors should be aborted or removed from dowload queue', async () => {
+  test('Discarded sectors should be aborted if still pending', async () => {
     // Setup
     const abortedCount = 11;
-    const wantedSectors = createMockWantedSectors(21, 'TestModelIdentifier');
+    const initalDownloadCount = 21;
+    const wantedSectors = createMockWantedSectors(initalDownloadCount, 'TestModelIdentifier');
     const discardedSectors = createMockWantedSectors(abortedCount, 'TestModelIdentifier', LevelOfDetail.Discarded);
     const abortSignals = new Array<AbortSignal>();
 
     const stalledDownload = new DeferredPromise<void>();
-    const dowloadSectorMock = async (sector: WantedSector, abortSignal: AbortSignal) => {
-      abortSignals.push(abortSignal);
+    const dowloadSectorMock = async (sector: WantedSector, abortSignal?: AbortSignal) => {
+      if (abortSignal) abortSignals.push(abortSignal);
+      await stalledDownload;
+      if (abortSignal?.aborted) {
+        // Simulate fetch failing due to abort
+        return createDiscardedConsumedSectorMock(sector);
+      }
+      return createConsumedSectorMock(sector).object();
+    };
+
+    // Act
+    const download1 = sectorDownloadScheduler.queueSectorBatchForDownload(
+      wantedSectors.map(sector => {
+        return { sector, downloadSector: dowloadSectorMock };
+      })
+    );
+
+    const download2 = sectorDownloadScheduler.queueSectorBatchForDownload(
+      discardedSectors.map(sector => {
+        return { sector, downloadSector: dowloadSectorMock };
+      })
+    );
+
+    stalledDownload.resolve();
+
+    const resolvedSectors1 = await Promise.all(download1);
+    await Promise.all(download2);
+
+    // Assert
+    expect(abortSignals.length).toEqual(initalDownloadCount);
+
+    abortSignals.forEach((abortSignal, index) => {
+      if (index < abortedCount) {
+        expect(abortSignal.aborted).toBe(true);
+      } else {
+        expect(abortSignal.aborted).toBe(false);
+      }
+    });
+
+    resolvedSectors1.forEach(sector => {
+      if (sector.metadata.id < abortedCount) {
+        expect(sector.levelOfDetail).toBe(LevelOfDetail.Discarded);
+      } else {
+        expect(sector.levelOfDetail).toBe(LevelOfDetail.Detailed);
+      }
+    });
+  });
+
+  test('Discarded sectors should be removed from dowload queue', async () => {
+    // Setup
+    const wantedSectors = createMockWantedSectors(21, 'TestModelIdentifier');
+    const discardedSectors = createMockWantedSectors(21, 'TestModelIdentifier', LevelOfDetail.Discarded);
+
+    const stalledDownload = new DeferredPromise<void>();
+    const dowloadSectorMock = async (sector: WantedSector, abortSignal?: AbortSignal) => {
       await stalledDownload;
       if (abortSignal?.aborted) {
         // Simulate fetch failing due to abort
@@ -225,24 +279,14 @@ describe(SectorDownloadScheduler.name, () => {
       })
     );
 
+    // Assert
+    expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
+
     stalledDownload.resolve();
     const resolvedSectors = await Promise.all(firstDownload);
 
-    // Assert
-    abortSignals.forEach((abortSignal, index) => {
-      if (index < abortedCount) {
-        expect(abortSignal.aborted).toBe(true);
-      } else {
-        expect(abortSignal.aborted).toBe(false);
-      }
-    });
-
     resolvedSectors.forEach(sector => {
-      if (sector.metadata.id < abortedCount) {
-        expect(sector.levelOfDetail).toBe(LevelOfDetail.Discarded);
-      } else {
-        expect(sector.levelOfDetail).toBe(LevelOfDetail.Detailed);
-      }
+      expect(sector.levelOfDetail).toBe(LevelOfDetail.Discarded);
     });
   });
 });
