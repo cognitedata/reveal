@@ -19,25 +19,25 @@ export const routes = {
     path: '/',
   },
   searchRoot: {
-    path: '/search*',
+    path: '/search/*',
   },
   assetView: {
-    path: `/${ViewType.Asset}*`,
+    path: `/${ViewType.Asset}/*`,
   },
   timeseriesView: {
-    path: `/${ViewType.TimeSeries}*`,
+    path: `/${ViewType.TimeSeries}/*`,
   },
   fileView: {
-    path: `/${ViewType.File}*`,
+    path: `/${ViewType.File}/*`,
   },
   eventView: {
-    path: `/${ViewType.Event}*`,
+    path: `/${ViewType.Event}/*`,
   },
   sequenceView: {
-    path: `/${ViewType.Sequence}*`,
+    path: `/${ViewType.Sequence}/*`,
   },
   threeDView: {
-    path: `/${ViewType.ThreeD}*`,
+    path: `/${ViewType.ThreeD}/*`,
   },
   viewDetail: {
     path: `/${SELECTED_ID}`,
