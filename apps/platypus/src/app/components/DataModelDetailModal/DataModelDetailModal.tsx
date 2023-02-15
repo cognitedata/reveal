@@ -1,17 +1,8 @@
-import {
-  Button,
-  Detail,
-  Input,
-  Modal,
-  OptionType,
-  Select,
-  Textarea,
-} from '@cognite/cogs.js';
+import { Input, Modal, Textarea } from '@cognite/cogs.js';
 import { useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { InputDetail, NameWrapper, StyledEditableChip } from './elements';
+import { NameWrapper, StyledEditableChip } from './elements';
 import { DataSet } from '@cognite/sdk';
-import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import {
   DataModelExternalIdValidator,
   Validator,
@@ -52,18 +43,6 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
   const [externalIdErrorMessage, setExternalIdErrorMessage] = useState();
   const [nameErrorMessage, setNameErrorMessage] = useState();
 
-  const dataSetOptions = props.dataSets.map(
-    (item: DataSet) =>
-      ({
-        label: item.name,
-        value: item.id,
-      } as OptionType<typeof item.id>)
-  );
-
-  const [selectedDataSet, setSelectedDataSet] = useState<
-    OptionType<unknown> | undefined
-  >(undefined);
-
   const validateName = (value: string) => {
     const validator = new Validator({ name: value });
     const dataModelNameValidator = isFDMV3
@@ -94,13 +73,14 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
 
   return (
     <Modal
+      closable={!props.isLoading}
       visible={props.visible}
       title={props.title}
       onCancel={props.onCancel}
       onOk={props.onSubmit}
       okDisabled={isSubmitDisabled}
       okText={props.okButtonName}
-      icon={props.isLoading ? 'Spinner' : undefined}
+      icon={props.isLoading ? 'Loader' : undefined}
       data-cy="create-data-model-modal-content"
     >
       <div>
@@ -171,56 +151,6 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
           }
           preSelectedSpace={props.space}
         />
-
-        {/* Temporarily hidden until backend support is available */}
-        {false && (
-          <>
-            <Select
-              fullWidth
-              name="dataSet"
-              data-cy="input-data-set"
-              options={dataSetOptions}
-              isMulti={false}
-              value={selectedDataSet}
-              placeholder={t(
-                'modal_data_sets_input_placeholder',
-                'Select data set'
-              )}
-              onChange={setSelectedDataSet}
-              noOptionsMessage={() =>
-                props.isDataSetsLoading ? (
-                  <Spinner />
-                ) : props.isDataSetsFetchError ? (
-                  <span>
-                    {t(
-                      'data_sets_error',
-                      "Something went wrong! Couldn't fetch data sets."
-                    )}
-                  </span>
-                ) : (
-                  <span>
-                    {t('data_sets_empty', 'There are no data sets available')}
-                  </span>
-                )
-              }
-              menuFooter={
-                (
-                  <Button iconPlacement="right" icon="ExternalLink">
-                    {t('add_data_set_btn_text', 'Add data set')}
-                  </Button>
-                ) as unknown as HTMLButtonElement
-              }
-            />
-            <InputDetail>
-              <Detail>
-                {t(
-                  'detail_data_sets_unique',
-                  'You need to select a data set to define access control. This can also be done later in the Settings dialog. '
-                )}
-              </Detail>
-            </InputDetail>
-          </>
-        )}
       </div>
     </Modal>
   );
