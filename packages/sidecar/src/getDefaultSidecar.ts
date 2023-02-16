@@ -9,9 +9,7 @@ export type Service =
   | 'frontend-metrics'
   | 'infield-api'
   | 'infield-cache-api'
-  | 'power-ops-api'
   | 'simconfig-api'
-  | 'sniffer-service'
   | 'user-management-service';
 
 type LocalServices = Omit<ApiBaseUrls, 'appsApiBaseUrl' | 'cdfApiBaseUrl'>;
@@ -31,8 +29,6 @@ export const services: Record<
   },
   8700: { name: 'discover-api', key: 'discoverApiBaseUrl' },
   8800: { name: 'simconfig-api', key: 'simconfigApiBaseUrl' },
-  8805: { name: 'power-ops-api', key: 'powerOpsApiBaseUrl' },
-  8810: { name: 'sniffer-service', key: 'snifferServiceBaseUrl' },
   8900: { name: 'frontend-metrics', key: 'frontendMetricsBaseUrl' },
 };
 

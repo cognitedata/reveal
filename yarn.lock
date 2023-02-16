@@ -2292,11 +2292,6 @@
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.4.0.tgz#7cd83dfd68eb66d97d3fa3e312cbe31acf20ca30"
   integrity sha512-gPu5MSfVIWNa6qrQWf6d8k5/zNYgXSg8SWB9T8a9A+V6CBfGUoBf6rS5xkTBr9RbEb4f8isqdF67mAQnwJWKug==
 
-"@cognite/power-ops-api-types@5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@cognite/power-ops-api-types/-/power-ops-api-types-5.6.0.tgz#b6a0796cb5dae1483577f1fef38235e9efb151b3"
-  integrity sha512-8XKS2n6fOelHhuMd06bLPZvA8IkhCvCoIGwpqmX/2s7LGdVUcpT11GywtST2y1pZiSdWk5drax1XiAZE708pVw==
-
 "@cognite/react-feature-flags@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@cognite/react-feature-flags/-/react-feature-flags-1.0.1.tgz#5afe17038c52ac22564b8cb6e9c08a5ea8eb6cf6"
@@ -2418,11 +2413,6 @@
   version "1.5.4"
   resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.5.4.tgz#8aced1e519324eefb840ccda01fea1ba25bd934e"
   integrity sha512-6mehA5/ZDMTN0fD0GcFrI1FbApjgsOiCAPCVsEQCFKBxpQt8or9GUnOPR4QGmpktIZBOn3nat5J06v2MM6NnIw==
-
-"@cognite/sniffer-service-types@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sniffer-service-types/-/sniffer-service-types-1.0.1.tgz#905369e71e110d2574261e3139a81d91f1b09f2c"
-  integrity sha512-Z3enMziNvVjbM5lcZXgpO/cFBpsoyP4/DCkV8acF37Cj5IzDeozyp/G6IaRriyCUxt/2TIqxdn94uH8DH70Pmw==
 
 "@cognite/storage@^0.1.3":
   version "0.1.3"

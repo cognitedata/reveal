@@ -51,9 +51,7 @@ export type ApiBaseUrls = {
   frontendMetricsBaseUrl: string;
   infieldApiBaseUrl: string;
   infieldCacheApiBaseUrl: string;
-  powerOpsApiBaseUrl: string;
   simconfigApiBaseUrl: string;
-  snifferServiceBaseUrl: string;
   userManagementServiceBaseUrl: string;
 };
 

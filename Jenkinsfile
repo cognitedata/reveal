@@ -19,7 +19,6 @@ static final Map<String, String> CONTEXTS = [
 ]
 
 static final Map<String, String[]> PREVIEW_CLUSTERS = [
-  'power-ops': ['azure-dev', 'bluefield', 'az-power-no-northeurope'],
   'discover': ['bluefield', 'greenfield', 'bp-northeurope'],
 ]
 
@@ -111,7 +110,7 @@ def pods = { body ->
                 fakeIdpEnvVars: fakeIdpEnvVars,
               ) {
                 properties([
-                  
+
                 ])
 
                 node(POD_LABEL) {
@@ -334,7 +333,7 @@ pods {
       stageWithNotify('Publish chromatic', CONTEXTS.publishChromatic) {
         container('bazel') {
           changedPublishChromatic.each { change ->
-            change.run.each { cmd -> 
+            change.run.each { cmd ->
               if (isPullRequest) {
                 sh(script: "bazel run ${cmd}")
               } else {

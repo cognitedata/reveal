@@ -1,3 +1,7 @@
+## 0.5.1 Feb 16 2023
+
+- Remove PowerOps and Sniffer service URLs
+
 ## 0.5.0 Mar 24 2022
 
 - Bump version to release previously [unreleased changes](https://github.com/cognitedata/applications/pull/2355/files)
