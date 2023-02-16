@@ -5,6 +5,7 @@
 import { Image360Entity } from '../entity/Image360Entity';
 import pull from 'lodash/pull';
 import findLast from 'lodash/findLast';
+import { Log } from '@reveal/logger';
 
 export type DownloadRequest = {
   load360Image: Promise<void>;
@@ -43,7 +44,7 @@ export class Image360LoadingCache {
     }
 
     const { signal, abort } = this.createAbortSignal();
-    const load360Image = entity.load360Image({ signal });
+    const load360Image = entity.load360Image(signal);
     this._inFlightEntities.set(entity, { load360Image, abort });
 
     try {
@@ -53,6 +54,14 @@ export class Image360LoadingCache {
         this.purgeLastRecentlyUsedInvisibleEntity();
       }
       this._loaded360Images.unshift(entity);
+    } catch (e) {
+      const error = e as Error;
+      if (e === 'Aborted' || error?.name === 'AbortError') {
+        Log.info('Abort Error: ', error.message);
+        return Promise.resolve();
+      } else {
+        Log.warn('Failed to load 360 image: ', e);
+      }
     } finally {
       this._inFlightEntities.delete(entity);
     }

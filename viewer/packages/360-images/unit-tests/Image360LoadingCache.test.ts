@@ -3,7 +3,7 @@
  */
 
 import { DeferredPromise } from '@reveal/utilities';
-import { Mock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
 import { Image360Entity } from '../src/entity/Image360Entity';
 import { Image360LoadingCache } from '../src/cache/Image360LoadingCache';
 
@@ -14,7 +14,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise = new DeferredPromise<void>();
     const entityMock1 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image())
+      .setup(p => p.load360Image(It.IsAny()))
       .returns(deferredPromise)
       .object();
 
@@ -36,7 +36,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise1 = new DeferredPromise<void>();
     const entityMock1 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image())
+      .setup(p => p.load360Image(It.IsAny()))
       .returns(deferredPromise1)
       .setup(p => p.image360Visualization.visible)
       .returns(false)
@@ -48,7 +48,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise2 = new DeferredPromise<void>();
     const entityMock2 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image())
+      .setup(p => p.load360Image(It.IsAny()))
       .returns(deferredPromise2)
       .setup(p => p.image360Visualization.visible)
       .returns(false)
@@ -80,7 +80,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise1 = new DeferredPromise<void>();
     const entityMock1 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image())
+      .setup(p => p.load360Image(It.IsAny()))
       .returns(deferredPromise1)
       .setup(p => p.dispose())
       .returns()
@@ -92,7 +92,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise2 = new DeferredPromise<void>();
     const entityMock2 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image())
+      .setup(p => p.load360Image(It.IsAny()))
       .returns(deferredPromise2)
       .setup(p => p.dispose())
       .returns()
@@ -104,7 +104,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise3 = new DeferredPromise<void>();
     const entityMock3 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image())
+      .setup(p => p.load360Image(It.IsAny()))
       .returns(deferredPromise2)
       .setup(p => p.dispose())
       .returns()
@@ -127,45 +127,42 @@ describe(Image360LoadingCache.name, () => {
     expect(entityLoadingCache.cachedEntities.includes(entityMock3)).toBeTruthy();
   });
 
-  test('cache should reject loading image download if purged', async () => {
-    const cacheSize = 1;
+  test('cache should handle failed downloads', async () => {
+    const cacheSize = 3;
     const loadingCache = new Image360LoadingCache(cacheSize, cacheSize);
 
-    const deferredPromise1 = new DeferredPromise<void>();
-    const image360Mock = new Mock<Image360Entity>()
-      .setup(p => p.load360Image())
-      .returns(deferredPromise1)
-      .setup(p => p.image360Visualization.visible)
-      .returns(false)
-      .setup(p => p.unload360Image())
-      .returns()
+    const promiseToReject = new DeferredPromise<void>();
+    const image360MockToReject = new Mock<Image360Entity>()
+      .setup(p => p.load360Image(It.IsAny()))
+      .returns(promiseToReject)
       .object();
 
-    const deferredPromise2 = new DeferredPromise<void>();
-    const image360Mock2 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image())
-      .returns(deferredPromise2)
-      .setup(p => p.image360Visualization.visible)
-      .returns(true)
-      .setup(p => p.unload360Image())
-      .returns()
+    const promiseToResolve = new DeferredPromise<void>();
+    const image360MockToResolve = new Mock<Image360Entity>()
+      .setup(p => p.load360Image(It.IsAny()))
+      .returns(promiseToResolve)
       .object();
 
-    const loadOne = loadingCache.cachedPreload(image360Mock);
-    const loadTwo = loadingCache.cachedPreload(image360Mock2);
+    const image360MockToThrow = new Mock<Image360Entity>()
+      .setup(p => p.load360Image(It.IsAny()))
+      .throwsAsync('Aborted')
+      .object();
 
-    expect(loadingCache.currentlyLoadingEntities.size).toBe(1);
+    const downloadToReject = loadingCache.cachedPreload(image360MockToReject);
+    const downloadToResolve = loadingCache.cachedPreload(image360MockToResolve);
+    const downloadToThrow = loadingCache.cachedPreload(image360MockToThrow);
 
-    // deferredPromise1.reject('Aborted');
-    deferredPromise1.resolve();
-    deferredPromise2.resolve();
+    expect(loadingCache.currentlyLoadingEntities.size).toBe(3);
 
-    // await expect(loadOne).rejects.toThrow();
-    await expect(loadOne).resolves.not.toThrow();
-    await expect(loadTwo).resolves.not.toThrow();
+    promiseToReject.reject('Aborted');
+    promiseToResolve.resolve();
+
+    await expect(downloadToReject).resolves.not.toThrow();
+    await expect(downloadToResolve).resolves.not.toThrow();
+    await expect(downloadToThrow).resolves.not.toThrow();
 
     expect(loadingCache.cachedEntities.length).toBe(1);
-    expect(loadingCache.cachedEntities[0]).toBe(image360Mock2);
+    expect(loadingCache.cachedEntities[0]).toBe(image360MockToResolve);
     expect(loadingCache.currentlyLoadingEntities.size).toBe(0);
   });
 
@@ -175,7 +172,7 @@ describe(Image360LoadingCache.name, () => {
 
     const createMockEntity = (deferredPromise: DeferredPromise<void>) => {
       return new Mock<Image360Entity>()
-        .setup(p => p.load360Image())
+        .setup(p => p.load360Image(It.IsAny()))
         .returns(deferredPromise)
         .setup(p => p.image360Visualization.visible)
         .returns(false)

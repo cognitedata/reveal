@@ -61,12 +61,8 @@ export class Image360Entity implements Image360 {
   /**
    * Loads the 360 image (6 faces) into the visualization object.
    */
-  public async load360Image(init?: RequestInit): Promise<void> {
-    const faces = await this._imageProvider.get360ImageFiles(this._image360Metadata.faceDescriptors, init);
-    if (init?.signal?.aborted) {
-      throw new Error('Request to download 360 image was aborted');
-    }
-
+  public async load360Image(abortSignal?: AbortSignal): Promise<void> {
+    const faces = await this._imageProvider.get360ImageFiles(this._image360Metadata.faceDescriptors, abortSignal);
     await this._image360VisualzationBox.loadImages(faces);
   }
 

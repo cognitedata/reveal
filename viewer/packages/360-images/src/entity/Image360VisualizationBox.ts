@@ -122,9 +122,6 @@ export class Image360VisualizationBox implements Image360Visualization {
       faces.map(async image360Face => {
         const blob = new Blob([image360Face.data], { type: image360Face.mimeType });
         const url = window.URL.createObjectURL(blob);
-
-        if (!url) return { side: image360Face.face, faceTexture: new THREE.Texture() };
-
         const faceTexture = await this._textureLoader.loadAsync(url);
         // Need to horizontally flip the texture since it is being rendered inside a cube
         faceTexture.center.set(0.5, 0.5);
