@@ -779,7 +779,7 @@ __metadata:
     "@microsoft/api-extractor": ^7.33.6
     "@tweenjs/tween.js": 18.6.4
     "@types/dat.gui": 0.7.7
-    "@types/expect-puppeteer": 5.0.2
+    "@types/expect-puppeteer": 5.0.3
     "@types/gl": ^6.0.2
     "@types/glob": 8.0.0
     "@types/jest": 29.4.0
@@ -2021,13 +2021,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/expect-puppeteer@npm:5.0.2":
-  version: 5.0.2
-  resolution: "@types/expect-puppeteer@npm:5.0.2"
+"@types/expect-puppeteer@npm:5.0.3":
+  version: 5.0.3
+  resolution: "@types/expect-puppeteer@npm:5.0.3"
   dependencies:
     "@types/jest": "*"
     "@types/puppeteer": ^5.4.0
-  checksum: 38d761afd82e20f96d8bc1e73752e093bc9df5d4a4f8f6dfd4e7baf30b976bfa11560a38fe7d36956ac08a10fd90f25e038422c3500cd20c17bf9c082821c2e8
+  checksum: c9ee7c3c5bc7a2e427739b088bf9e5d7638ededb61d0d2a7368a58f190412e0539bb2a3fbbe1ddc8874b339be35f0455af16e3987662bdd34f6f2eae15497ecb
   languageName: node
   linkType: hard
 
