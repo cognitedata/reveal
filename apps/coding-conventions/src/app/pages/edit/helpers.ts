@@ -82,3 +82,40 @@ export const handleOnPasteEvent = (
     updateMyData(row.index, column.id, cellValue);
   });
 };
+
+export const pasteShiftV = (
+  pastedData: string,
+  textSplitter: string,
+  selectedCellIds: string[],
+  data: any[],
+  updateMyData: any
+) => {
+  let dataToPaste: string | string[] = pastedData;
+
+  const cells = selectedCellIds.map((cellId) => {
+    return getCellById(data, cellId);
+  });
+
+  const rowIds = cells.map((cell) => cell.row.id);
+  const uniqueRowLength = [...new Set(rowIds)].length;
+  const columnIds = cells.map((cell) => cell.column.id);
+  const uniqueColumnLength = [...new Set(columnIds)].length;
+
+  if (uniqueRowLength > 1 || uniqueColumnLength > 1) {
+    dataToPaste = splitIntoColumnAndRow(
+      pastedData,
+      uniqueRowLength,
+      uniqueColumnLength,
+      textSplitter
+    );
+  }
+
+  cells.forEach((cell) => {
+    const { row, column } = cell;
+    const cellIndex = cells.indexOf(cell);
+    const cellValue = Array.isArray(dataToPaste)
+      ? dataToPaste[cellIndex]
+      : dataToPaste;
+    updateMyData(row.index, column.id, cellValue);
+  });
+};

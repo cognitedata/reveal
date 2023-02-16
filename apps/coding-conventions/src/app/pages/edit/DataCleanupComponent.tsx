@@ -1,33 +1,46 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Button } from '@cognite/cogs.js';
+import { Button, Menu } from '@cognite/cogs.js';
 import { memoize } from 'lodash';
 import React, { useEffect } from 'react';
 import { useTable } from 'react-table';
 import styled from 'styled-components';
-import { getCellById, handleOnPasteEvent } from './helpers';
+import { getCellById, handleOnPasteEvent, pasteShiftV } from './helpers';
+import { PasteDelimiter, SelectPasteFormat } from './SelectPasteFormat';
 
 const MAX_COLUMNS = 8;
 const MIN_ROW_LENGTH = 50;
 const NEW_ROW_COUNT = 50;
 export const SPLITROWCOL = 'row-column-';
 
+const getCellId = (rowIndex: number, columnId: string) => {
+  return rowIndex + SPLITROWCOL + columnId;
+};
+
 const EditableCell = ({
   value: initialValue,
   row: { index },
   column: { id },
   updateMyData,
+  selectedProps,
+  setPasteFormat,
+  pasteFormat,
 }: any) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateMyData(index, id, e.target.value);
   };
-
   return (
-    <input
-      value={initialValue}
-      onChange={onChange}
-      id={index + SPLITROWCOL + id}
-    />
+    <div>
+      {pasteFormat === undefined &&
+        selectedProps[getCellId(index, id)] === true && (
+          <SelectPasteFormat onPasteFormatChange={setPasteFormat} />
+        )}
+      <input
+        value={initialValue}
+        onChange={onChange}
+        id={index + SPLITROWCOL + id}
+      />
+    </div>
   );
 };
 
@@ -53,6 +66,11 @@ export function Table({
 }: any) {
   const [data, setData] = React.useState(inputData);
   const [newColumns, setNewColumns] = React.useState(columns);
+
+  const [pasteFormat, setPasteFormat] = React.useState<PasteDelimiter>(' ');
+  const [selectedProps, setSelectedProps] = React.useState<
+    Record<string, boolean>
+  >({});
 
   useEffect(() => {
     const emptyColumns = MAX_COLUMNS - columns.length;
@@ -129,6 +147,9 @@ export function Table({
         selectedCellIds: {},
       },
       updateMyData,
+      selectedProps,
+      setPasteFormat,
+      pasteFormat,
     });
 
   const [selectedStartId, setSelectedStartId] = React.useState('');
@@ -214,7 +235,39 @@ export function Table({
 
       navigator.clipboard.writeText(text);
     }
+
+    // control shift v to paste
+    if (
+      (e.ctrlKey && e.shiftKey && e.key === 'v') ||
+      (e.metaKey && e.shiftKey && e.key === 'v')
+    ) {
+      e.preventDefault();
+      const lowRightCellId =
+        selectedCellIdsState[selectedCellIdsState.length - 1];
+
+      setSelectedProps({ [lowRightCellId]: true });
+      setPasteFormat(undefined);
+    }
   };
+
+  React.useEffect(() => {
+    if (pasteFormat === undefined || pasteFormat === null) {
+      // We just pasted something, wait for the user to input the format.
+    } else {
+      navigator.clipboard.readText().then((text) => {
+        pasteShiftV(
+          text,
+          pasteFormat,
+          selectedCellIdsState,
+          rows,
+          updateMyData
+        );
+        setPasteFormat(null);
+        setSelectedProps({});
+        setSelectedCellIdsState([]);
+      });
+    }
+  }, [pasteFormat]);
 
   React.useEffect(() => {
     document.addEventListener('paste', onPaste);
@@ -263,6 +316,9 @@ export function Table({
   };
 
   const handlePointerDown = (e: any) => {
+    if (!(e.target.id as string).includes(SPLITROWCOL)) {
+      return;
+    }
     setSelectedStartId(e.target.id);
     setSelectedCellIdsState([e.target.id]);
   };
