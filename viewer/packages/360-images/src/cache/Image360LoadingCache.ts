@@ -58,10 +58,10 @@ export class Image360LoadingCache {
       const error = e as Error;
       if (e === 'Aborted' || error?.name === 'AbortError') {
         Log.info('Abort Error: ', error.message);
-        return Promise.resolve();
       } else {
         Log.warn('Failed to load 360 image: ', e);
       }
+      return Promise.resolve();
     } finally {
       this._inFlightEntities.delete(entity);
     }

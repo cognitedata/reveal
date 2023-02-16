@@ -166,7 +166,7 @@ describe(Image360LoadingCache.name, () => {
     expect(loadingCache.currentlyLoadingEntities.size).toBe(0);
   });
 
-  test('cache should abort oldest fetch requests', async () => {
+  test('cache should abort oldest fetch requests when cacheSize is exceeded', async () => {
     const cacheSize = 2;
     const loadingCache = new Image360LoadingCache(cacheSize, cacheSize);
 
