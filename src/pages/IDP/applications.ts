@@ -82,11 +82,6 @@ export const COGNITE_APPLICATIONS: Application[] = [
   },
 
   {
-    name: 'File Explorer',
-    domains: ['files.cogniteapp.com'],
-  },
-
-  {
     name: 'Infield',
     domains: [
       'infield.cogniteapp.com',
