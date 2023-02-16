@@ -107,7 +107,7 @@ pods {
 
               if (packageName == null) {
                 print "No preview available for: ${project}"
-                continue
+                return
               }
 
               // Run the yarn install in the app in cases of local packages.json file
