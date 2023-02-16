@@ -185,13 +185,19 @@ function SearchPage() {
               showCount
               globalFilters={filterMap as any}
               query={query}
-              currentResourceType={currentResourceType || 'all'}
+              currentResourceType={currentResourceType || ViewType.All}
               setCurrentResourceType={(tab) => {
                 setCurrentResourceType(
-                  tab === 'all' ? undefined : (tab as ResourceType)
+                  tab === ViewType.All ? undefined : (tab as ResourceType)
                 );
               }}
-              additionalTabs={[<Tabs.Tab label="All" tabKey={ViewType.All} />]}
+              additionalTabs={[
+                <Tabs.Tab
+                  key={ViewType.All}
+                  label="All resources"
+                  tabKey={ViewType.All}
+                />,
+              ]}
             />
           )}
         </TabsContainer>
@@ -268,6 +274,8 @@ const SearchInputContainer = styled(Flex)`
 
 const TabsContainer = styled.div`
   flex: 0 0 auto;
+  margin-left: 16px;
+  border-bottom: 1px solid rgb(232, 232, 232);
 `;
 
 const MainContainer = styled(Flex)<{ $isFilterFeatureEnabled?: boolean }>`

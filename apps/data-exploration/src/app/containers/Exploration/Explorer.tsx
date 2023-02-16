@@ -43,10 +43,7 @@ const AppWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  /* The tabs in details for some reasons are hidding and this is the parent I could find to replace the styling to fix the issue */
-  .TabPanelUnstyled-root {
-    overflow: auto;
-  }
+
   .cogs-tabs__list__tab {
     padding: 12px 4px !important;
   }

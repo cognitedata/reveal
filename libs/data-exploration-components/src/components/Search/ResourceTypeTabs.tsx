@@ -1,8 +1,9 @@
 import React from 'react';
 import { ResourceType } from '@data-exploration-components/types';
-import { Chip, Colors, TabProps, Tabs } from '@cognite/cogs.js';
+import { Chip, Colors, TabProps, Tabs, TabsProps } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { useResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
+import { getTabCountLabel } from '@data-exploration-components/utils';
 
 const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',
@@ -29,7 +30,7 @@ type Props = {
   query?: string;
   globalFilters?: { [key in ResourceType]: any };
   showCount?: boolean;
-  additionalTabs?: any;
+  additionalTabs?: React.ReactElement<TabProps>[];
 };
 
 const ResourceTypeTab = ({
@@ -37,26 +38,28 @@ const ResourceTypeTab = ({
   query,
   filter,
   showCount = false,
+  ...rest
 }: { filter: any } & Omit<
   Props,
   'setCurrentResourceType' | 'isDocumentEnabled' | 'additionalTabs'
->) => {
+> &
+  TabProps) => {
   const result = useResultCount({
     filter,
     query,
     api: query && query.length > 0 ? 'search' : 'list',
     type: currentResourceType as ResourceType,
   });
+  const chipRightProps = showCount
+    ? { chipRight: { label: getTabCountLabel(result.count), size: 'x-small' } }
+    : {};
 
   return (
-    <TabContainer>
-      <ResourceTypeTitle>
-        {resourceTypeMap[currentResourceType as ResourceType]}
-      </ResourceTypeTitle>
-      {showCount && (
-        <Chip size="small" type="default" label={String(result.count)} />
-      )}
-    </TabContainer>
+    <Tabs.Tab
+      label={resourceTypeMap[currentResourceType as ResourceType]}
+      {...chipRightProps}
+      {...rest}
+    />
   );
 };
 export const ResourceTypeTabs = ({
@@ -67,23 +70,28 @@ export const ResourceTypeTabs = ({
   globalFilters,
   ...rest
 }: Props) => {
+  const resourceTabs = resourceTypes.map((resourceType) => {
+    return (
+      <ResourceTypeTab
+        key={resourceType}
+        tabKey={resourceType}
+        currentResourceType={resourceType}
+        filter={globalFilters?.[resourceType] || {}}
+        {...rest}
+      />
+    );
+  });
+  const tabs = [...additionalTabs, ...resourceTabs];
+
   return (
     <StyledTabs
-      activeKey={currentResourceType}
-      onTabClick={(tab) => setCurrentResourceType(tab)}
+      hidePadding
+      activeKey={currentResourceType || 'all'}
+      onTabClick={(tab) => {
+        setCurrentResourceType(tab);
+      }}
     >
-      {additionalTabs}
-      {resourceTypes.map((resourceType) => {
-        return (
-          <Tabs.Tab tabKey={resourceType} label={resourceType}>
-            <ResourceTypeTab
-              currentResourceType={resourceType}
-              filter={globalFilters?.[resourceType] || {}}
-              {...rest}
-            />
-          </Tabs.Tab>
-        );
-      })}
+      {tabs}
     </StyledTabs>
   );
 };

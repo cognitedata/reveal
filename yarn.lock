@@ -1697,10 +1697,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@9.2.5":
-  version "9.2.5"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.2.5.tgz#d08b9a8b654d3f7abc09c51ae0fdf8978108a5f2"
-  integrity sha512-mnl8cg5MtrmdwLAAU5bZU7Pae1zhaUkuMzju+1NAxX1EWGiLZxI0CokN7lf/28DN7KJ8m/5Wq5u3Rssq+Bttrw==
+"@cognite/cogs.js@9.5.2":
+  version "9.5.2"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.5.2.tgz#628700e342bac74abaace1c3e5abc5effec95c89"
+  integrity sha512-yjimas8KPTiYPKlc0TLe+ytBi8tXBsxmokVcv0wTCFuKZ2jZPkUfDKCAhoWkT5bujtVF6sj8JOFyf9EVY5X1RA==
   dependencies:
     "@emotion/react" "11.10.5"
     "@emotion/styled" "11.10.5"
@@ -1709,7 +1709,7 @@
     "@mui/material" "5.9.2"
     "@notionhq/client" "2.2.2"
     "@react-hook/resize-observer" "1.2.6"
-    "@tippyjs/react" "4.2.3"
+    "@tippyjs/react" "4.2.6"
     "@types/react-date-range" "1.4.4"
     axios "0.21.4"
     classnames "2.3.2"
@@ -1721,7 +1721,7 @@
     focus-visible "5.1.0"
     framer-motion "6.5.1"
     fuse.js "6.6.2"
-    match-sorter "6.3.0"
+    match-sorter "6.3.1"
     prompts "2.4.2"
     rc-collapse "1.11.8"
     rc-drawer "4.1.0"
@@ -7077,6 +7077,13 @@
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/@tippyjs/react/-/react-4.2.3.tgz#c2dbe9eb71bd9ffa3974f9ba8e3a4a6fc1538aed"
   integrity sha512-44vBapqROQI7Q5nDtX1MMAgcAV+3DsIi+m/45CxQ72C5LDNmNDq9h3f04x3NHMrUhWcfgfgjYA2EmeLSH/4eRg==
+  dependencies:
+    tippy.js "^6.3.1"
+
+"@tippyjs/react@4.2.6":
+  version "4.2.6"
+  resolved "https://registry.yarnpkg.com/@tippyjs/react/-/react-4.2.6.tgz#971677a599bf663f20bb1c60a62b9555b749cc71"
+  integrity sha512-91RicDR+H7oDSyPycI13q3b7o4O60wa2oRbjlz2fyRLmHImc4vyDwuUP8NtZaN0VARJY5hybvDYrFzhY9+Lbyw==
   dependencies:
     tippy.js "^6.3.1"
 
@@ -20603,15 +20610,7 @@ marked@^4.0.10:
   resolved "https://registry.yarnpkg.com/marked/-/marked-4.2.5.tgz#979813dfc1252cc123a79b71b095759a32f42a5d"
   integrity sha512-jPueVhumq7idETHkb203WDD4fMA3yV9emQ5vLwop58lu8bTclMghBWcYAavlDqIEMaisADinV1TooIFCfqOsYQ==
 
-match-sorter@6.3.0:
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-6.3.0.tgz#454a1b31ed218cddbce6231a0ecb5fdc549fed01"
-  integrity sha512-efYOf/wUpNb8FgNY+cOD2EIJI1S5I7YPKsw0LBp7wqPh5pmMS6i/wr3ZWwfwrAw1NvqTA2KUReVRWDX84lUcOQ==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    remove-accents "0.4.2"
-
-match-sorter@^6.0.2, match-sorter@^6.3.0:
+match-sorter@6.3.1, match-sorter@^6.0.2, match-sorter@^6.3.0:
   version "6.3.1"
   resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-6.3.1.tgz#98cc37fda756093424ddf3cbc62bfe9c75b92bda"
   integrity sha512-mxybbo3pPNuA+ZuCUhm5bwNkXrJTbsk5VWbR5wiwz/GC6LIiegBGn2w3O08UG/jdbYLinw51fSQ5xNU1U3MgBw==
