@@ -18,7 +18,6 @@ export const NewDataSource = () => {
   const [currentOption, setCurrentOption] = useState<DetectionType>();
   const [isManualFallback, setIsManualFallback] = useState(false);
   const { dataPanelState, dataPanelDispatch } = useDataPanelContext();
-
   const onButtonClick = () => {
     setIsMenuVisible((isMenuVisible) => !isMenuVisible);
   };

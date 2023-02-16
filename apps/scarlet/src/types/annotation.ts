@@ -8,5 +8,6 @@ export type AnnotationBoundingBox = {
 export type Annotation = {
   boundingBox: AnnotationBoundingBox;
   documentExternalId?: string;
+  documentId?: number;
   pageNumber: number;
 };

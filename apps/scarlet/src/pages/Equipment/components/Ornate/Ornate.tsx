@@ -3,13 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { CogniteOrnate, OrnatePDFDocument } from '@cognite/ornate';
 import { v4 as uuid } from 'uuid';
 import * as PDFJS from 'pdfjs-dist';
-import {
-  DataPanelActionType,
-  DocumentType,
-  EquipmentDocument,
-  OrnateTag,
-} from 'types';
+import { DataPanelActionType, EquipmentDocument, OrnateTag } from 'types';
 import { useDataPanelDispatch, useOrnateTags } from 'hooks';
+import { findU1Document } from 'utils';
 
 import { WorkspaceTools, DocumentScanTrigger } from '..';
 
@@ -36,7 +32,7 @@ const SLIDE_WIDTH = 2500;
 const SLIDE_COLUMN_GAP = 300;
 const SLIDE_ROW_GAP = 200;
 
-type OrnateDocument = {
+export type OrnateDocument = {
   ornateDocument: OrnatePDFDocument;
   id: number;
   externalId?: string;
@@ -54,7 +50,10 @@ export const Ornate = ({ documents, fullwidth = false }: OrnateProps) => {
   const destroyDocumentLoadCallbacks = useRef<(() => void)[]>([]);
   const dataPanelDispatch = useDataPanelDispatch();
   const { tags, activeTag } = useOrnateTags();
-  const U1doc = documents?.find((doc) => doc.type === DocumentType.U1);
+  const U1doc = findU1Document(documents);
+
+  // If document is found, store in state;
+  // if (U1doc) useState<EquipmentDocument>(U1doc);
 
   const openDataElementCard = (tag: OrnateTag) =>
     dataPanelDispatch({

@@ -15,3 +15,18 @@ export const callScarletScanner = async (
   );
   return resp.data;
 };
+
+export const callScarletScannerList = async (
+  client: CogniteClient,
+  documentIds: { documentId: number }[]
+): Promise<Scan> => {
+  const resp = await client.post(
+    `/api/playground/projects/${client.project}/context/forms/scan`,
+    {
+      data: {
+        items: documentIds,
+      },
+    }
+  );
+  return resp.data;
+};

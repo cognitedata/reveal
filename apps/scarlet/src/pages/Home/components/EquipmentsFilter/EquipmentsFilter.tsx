@@ -4,9 +4,11 @@ import { EquipmentStatus, EquipmentType } from 'types';
 import debounce from 'lodash/debounce';
 import queryString from 'query-string';
 import { useHistory, useLocation } from 'react-router-dom-v5';
+import { useHomePageContext } from 'hooks';
 
 import { transformSearchValue } from '../EquipmentList/utils';
 
+import { UnitScanTrigger } from './UnitScanTrigger';
 import * as Styled from './style';
 import {
   EquipmentStatusOption,
@@ -37,7 +39,8 @@ export const EquipmentsFilter = ({
   const { pathname, search } = useLocation();
   const searchQuery = queryString.parse(search);
   const [text, setText] = useState((searchQuery.s as string) || '');
-
+  const { homePageState } = useHomePageContext();
+  const { facility, unitId } = homePageState;
   const addQuery = (key: string, value: string) => {
     history.push({
       pathname,
@@ -127,6 +130,7 @@ export const EquipmentsFilter = ({
       <Styled.NumberEquipments className="cogs-body-2">
         Showing {loading ? <Icon type="Loader" /> : numberEquipments} equipment
       </Styled.NumberEquipments>
+      <UnitScanTrigger facility={facility} unitId={unitId} />
     </Styled.Container>
   );
 };

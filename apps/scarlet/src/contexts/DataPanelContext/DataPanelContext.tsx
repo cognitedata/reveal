@@ -80,7 +80,6 @@ function reducer(state: DataPanelState, action: DataPanelAction) {
       if (!state.visibleDataElement) return state;
 
       const detection = getDetection(action.detectionType, action.annotation);
-
       return {
         ...state,
         newDetection: detection,

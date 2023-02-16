@@ -12,9 +12,14 @@ import {
   DetectionState,
   DetectionType,
 } from 'types';
-import { useAppContext, useAppState, useDataPanelDispatch } from 'hooks';
+import {
+  useAppContext,
+  useAppState,
+  useDataPanelContext,
+  useDataPanelDispatch,
+} from 'hooks';
 import { getPrintedDataElementValue } from 'utils';
-import { deleteFieldRaw } from 'api';
+import { deleteFieldRaw, getDocumentOCRSelected } from 'api';
 
 import { DataSourceField, DataSourceOrigin } from '..';
 
@@ -62,8 +67,9 @@ export const DataSource = ({
   const [isPrimaryLoading, setIsPrimaryLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { appState, appDispatch } = useAppContext();
-  const dataPanelDispatch = useDataPanelDispatch();
+  const { dataPanelState, dataPanelDispatch } = useDataPanelContext();
   const isPCMS = detection?.type === DetectionType.PCMS;
+  const isManualDetection = detection?.type === DetectionType.MANUAL;
   const isExternalSource = detection?.type === DetectionType.MANUAL_EXTERNAL;
   const isActionsDisabled =
     isApproving || isRemoving || isSaving || isPrimaryLoading;
@@ -72,6 +78,47 @@ export const DataSource = ({
   const inputId = `data-field-input-${detection!.id}`;
   const isReadOnly = readOnlyDetectionTypes.includes(detection.type);
   const isLinkedSource = detection.type === DetectionType.LINKED;
+
+  if (isManualDetection && dataPanelState.newDetection) {
+    let detection = dataPanelState.newDetection;
+
+    const { documents } = appState;
+    const U1doc = documents.data?.find((doc) => doc.type === 'U1');
+    // const doc1 = useState<EquipmentDocument>();
+    if (U1doc) {
+      const boundingString = async () => {
+        const result = await getDocumentOCRSelected(
+          client,
+          U1doc.id,
+          detection.boundingBox
+        );
+        detection = {
+          ...detection!,
+          value: result,
+          isPrimary: true,
+        };
+        dataPanelDispatch({
+          type: DataPanelActionType.CLOSE_DATA_ELEMENT,
+        });
+        appDispatch({
+          type: AppActionType.REPLACE_DETECTION,
+          dataElement,
+          detection,
+        });
+        // dataPanelDispatch({
+        //   type: DataPanelActionType.SET_ACTIVE_DETECTION,
+        //   detection,
+        // });
+        dataPanelDispatch({
+          type: DataPanelActionType.OPEN_DATA_ELEMENT,
+          dataElement,
+          detection,
+        });
+      };
+
+      boundingString();
+    }
+  }
 
   const removeDetection = () => {
     if (isDraft) {

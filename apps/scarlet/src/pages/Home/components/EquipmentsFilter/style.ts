@@ -28,3 +28,12 @@ export const NumberEquipments = styled.div`
   align-items: center;
   gap: 4px;
 `;
+
+export const ScanUnitButton = styled.div`
+  margin-left: auto;
+  color: rgba(0, 0, 0, 0.7);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;

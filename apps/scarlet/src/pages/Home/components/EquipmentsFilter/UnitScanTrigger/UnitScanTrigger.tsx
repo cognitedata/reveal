@@ -2,33 +2,46 @@ import { useEffect, useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import {
-  callDiagramDetection,
   callScarletScanner,
+  callDiagramDetection,
   getScarletScannerStatus,
+  getUnitDocuments,
 } from 'api';
 import { useAppContext, usePolling } from 'hooks';
-import { AppActionType } from 'types';
+import { AppActionType, Facility } from 'types';
 
 import * as Styled from './style';
 
 const ONE_MIN = 20000;
 
-export const DocumentScanTrigger = ({ documentId }: { documentId: number }) => {
+export const UnitScanTrigger = ({
+  facility,
+  unitId,
+}: {
+  facility: Facility | undefined;
+  unitId: string | undefined;
+}) => {
   const { client } = useAuthContext();
-  const {
-    appState: { equipment },
-    appDispatch,
-  } = useAppContext();
+  const { appDispatch } = useAppContext();
   const [scanJobId, setScanJobId] = useState<number>();
 
   const triggerScan = async () => {
     if (!client) return;
-    const jobId = localStorage.getItem(`scarlet_scan_jobid_${documentId}`);
-    if (jobId) return;
-    callDiagramDetection(client, { documentId });
-    const res = await callScarletScanner(client, { documentId });
-    localStorage.setItem(`scarlet_scan_jobid_${documentId}`, `${res.jobId}`);
-    setScanJobId(res.jobId);
+    if (!facility) return;
+    if (!unitId) return;
+
+    const docs = await getUnitDocuments(client, {
+      facility,
+      unitId,
+    });
+    if (!docs) return;
+    docs.forEach(async (doc) => {
+      callDiagramDetection(client, {
+        documentId: doc.id,
+      });
+      const res = await callScarletScanner(client, { documentId: doc.id });
+      localStorage.setItem(`scarlet_scan_jobid_${doc.id}`, `${res.jobId}`);
+    });
   };
 
   const scanCheckCallback = async () => {
@@ -36,13 +49,13 @@ export const DocumentScanTrigger = ({ documentId }: { documentId: number }) => {
     const res = await getScarletScannerStatus(client, { jobId: scanJobId });
 
     if (res.status === 'Completed') {
-      localStorage.removeItem(`scarlet_scan_jobid_${documentId}`);
+      localStorage.removeItem(`scarlet_scan_jobid_${unitId}`);
       setScanJobId(undefined);
       appDispatch({ type: AppActionType.UPDATE_EQUIPMENT_SCANS });
     }
 
     if (['Failed', 'Timeout', 'Skipped'].includes(res.status)) {
-      localStorage.removeItem(`scarlet_scan_jobid_${documentId}`);
+      localStorage.removeItem(`scarlet_scan_jobid_${unitId}`);
       setScanJobId(undefined);
     }
   };
@@ -50,24 +63,20 @@ export const DocumentScanTrigger = ({ documentId }: { documentId: number }) => {
   usePolling(scanCheckCallback, scanJobId ? ONE_MIN : null);
 
   useEffect(() => {
-    const jobId = localStorage?.getItem(`scarlet_scan_jobid_${documentId}`);
+    const jobId = localStorage?.getItem(`scarlet_scan_jobid_${unitId}`);
     if (!jobId) return;
     setScanJobId(parseInt(jobId, 10));
   }, []);
 
-  // if (equipment.data?.latestAnnotations) return null;
-
   return (
-    <Styled.Container contained={!!scanJobId}>
-      {!!scanJobId && <Styled.Label>scan pending</Styled.Label>}
+    <Styled.Container>
       <Button
         type="tertiary"
         size="default"
-        aria-label="Scan Document"
+        aria-label="Scan All"
         onClick={triggerScan}
-        disabled={!!scanJobId}
       >
-        {equipment.data?.latestAnnotations ? 'Re-scan' : 'Scan'} Document
+        Scan All
       </Button>
     </Styled.Container>
   );
