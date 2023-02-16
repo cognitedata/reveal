@@ -102,7 +102,7 @@ export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
               )}
             </span>
           ) : (
-            <span>{t('data_sets_empty', 'There are no spaces available')}</span>
+            <span>{t('no_results_for_space_search', 'No spaces found')}</span>
           )
         }
         menuFooter={

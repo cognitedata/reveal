@@ -50,7 +50,7 @@ export const DataLayout = () => {
     {
       icon: 'Search',
       slug: 'query-explorer',
-      tooltip: t('query_explorer_title', 'Query Explorer'),
+      tooltip: t('query_explorer_title', 'Query explorer'),
       splitter: true,
     },
   ];
