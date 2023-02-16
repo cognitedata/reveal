@@ -170,7 +170,7 @@ describe(Image360LoadingCache.name, () => {
   });
 
   test('cache should abort oldest fetch requests', async () => {
-    const cacheSize = 1;
+    const cacheSize = 2;
     const loadingCache = new Image360LoadingCache(cacheSize, cacheSize);
 
     const createMockEntity = (deferredPromise: DeferredPromise<void>) => {
@@ -193,15 +193,14 @@ describe(Image360LoadingCache.name, () => {
     const image360Mock3 = createMockEntity(deferredPromise3).object();
 
     const download1 = loadingCache.cachedPreload(image360Mock1);
-    expect(loadingCache.currentlyLoadingEntities.size).toBe(1);
-    expect(loadingCache.currentlyLoadingEntities.has(image360Mock1)).toBe(true);
-
     const download2 = loadingCache.cachedPreload(image360Mock2);
-    expect(loadingCache.currentlyLoadingEntities.size).toBe(1);
+    expect(loadingCache.currentlyLoadingEntities.size).toBe(2);
+    expect(loadingCache.currentlyLoadingEntities.has(image360Mock1)).toBe(true);
     expect(loadingCache.currentlyLoadingEntities.has(image360Mock2)).toBe(true);
 
     const download3 = loadingCache.cachedPreload(image360Mock3);
-    expect(loadingCache.currentlyLoadingEntities.size).toBe(1);
+    expect(loadingCache.currentlyLoadingEntities.size).toBe(2);
+    expect(loadingCache.currentlyLoadingEntities.has(image360Mock2)).toBe(true);
     expect(loadingCache.currentlyLoadingEntities.has(image360Mock3)).toBe(true);
 
     deferredPromise1.resolve();
@@ -213,7 +212,8 @@ describe(Image360LoadingCache.name, () => {
     await download3;
 
     expect(loadingCache.currentlyLoadingEntities.size).toBe(0);
-    expect(loadingCache.cachedEntities.length).toBe(1);
+    expect(loadingCache.cachedEntities.length).toBe(2);
     expect(loadingCache.cachedEntities[0]).toBe(image360Mock3);
+    expect(loadingCache.cachedEntities[1]).toBe(image360Mock2);
   });
 });
