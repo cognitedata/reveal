@@ -3,18 +3,15 @@
 # All code reviews go through the Subsurface Data Liberation team.
 # Ping us on #subsurface or #subsurface-data-liberation if you have questions!
 apps/cognuit @cognitedata/subsurface-data
-apps/digital-cockpit @cognitedata/griff-team
 apps/react-demo-app @cognitedata/frontend-app-server
 apps/tenant-selector @cognitedata/frontend-tenant-selector-team
 apps/discover @cognitedata/discover
 apps/power-ops @cognitedata/power-ops
-apps/linewalk @cognitedata/phillips66-team
 apps/scarlet @cognitedata/phillips66-team
 # The Simulator Configuration app is owned by the Simulator Integration team
 apps/simconfig @cognitedata/simulator-integration
 
 packages/auth-utils                  @cognitedata/frontend-auth-team
-packages/griff-loader                @cognitedata/griff-team
 packages/intercom-helper             @cognitedata/frontend-app-server
 packages/metrics                     @cognitedata/frontend-react-container
 packages/react-azure-telemetry       @cognitedata/frontend-react-container
@@ -22,7 +19,6 @@ packages/react-comments              @cognitedata/frontend-comment-service
 packages/react-container             @cognitedata/frontend-react-container
 packages/react-errors                @cognitedata/frontend-react-container
 packages/react-feature-flags         @cognitedata/frontend-react-container
-packages/react-griff-provider        @cognitedata/griff-team
 packages/react-i18n                  @cognitedata/frontend-react-container
 packages/react-loop-detector         @cognitedata/frontend-react-container
 packages/react-sentry                @cognitedata/frontend-react-container
