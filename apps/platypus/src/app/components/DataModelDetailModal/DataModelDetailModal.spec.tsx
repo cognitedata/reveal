@@ -175,6 +175,38 @@ describe('DataModelDetailModal', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
+  it('disables submit button while loading', () => {
+    mockedIsFDMv3.mockReturnValueOnce(true);
+    const onSubmit = jest.fn();
+
+    render(
+      <DataModelDetailModal
+        dataSets={[]}
+        description=""
+        externalId=""
+        isLoading
+        name="My Data Model"
+        okButtonName="Create"
+        onCancel={noop}
+        onDescriptionChange={noop}
+        onNameChange={noop}
+        onSubmit={onSubmit}
+        space=""
+        title=""
+        visible
+      />
+    );
+
+    userEvent.click(
+      screen.getByRole('button', {
+        hidden: true,
+        name: 'Create',
+      })
+    );
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
   it("enables submit button if there's a name and a space", () => {
     mockedIsFDMv3.mockReturnValueOnce(true);
     const onSubmit = jest.fn();
