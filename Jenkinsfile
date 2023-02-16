@@ -14,6 +14,13 @@ final boolean isMaster = env.BRANCH_NAME == 'master'
 final boolean isRelease = env.BRANCH_NAME.startsWith('release-')
 final boolean isPullRequest = !!env.CHANGE_ID
 
+static final String LOCIZE_PROJECT_ID = ''
+static final String MIXPANEL_TOKEN = ''
+
+// Specify your projects alerting slack channel here. If you do not have one of these, please
+// consider creating one for your projects alerts
+static final String SLACK_CHANNEL = 'alerts-platypus'
+
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     previewServer.pod(nodeVersion: NODE_VERSION) {
