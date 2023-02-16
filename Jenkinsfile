@@ -46,7 +46,6 @@ def pods = { body ->
           )
         ]
       ) {
-        codecov.pod {
           testcafe.pod() {
             properties([
 
@@ -56,7 +55,6 @@ def pods = { body ->
               body()
             }
           }
-        }
       }
     }
   }
