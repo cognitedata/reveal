@@ -1,1 +1,0 @@
-export { SearchBarAndList } from './SearchBarAndList';

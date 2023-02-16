@@ -1,1 +1,0 @@
-export { RegularHeader } from './RegularHeader';
