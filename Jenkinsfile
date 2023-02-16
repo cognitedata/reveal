@@ -1,12 +1,13 @@
 @Library('jenkins-helpers') _
 
 static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
-static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
 static final String APP_ID = 'cdf-data-sets'
+
 static final String APPLICATION_REPO_ID = 'cdf-ui-data-sets'
 static final String FUSION_SUBAPP_NAME = '@cognite/cdf-data-sets'
 static final String NODE_VERSION = 'node:18'
 //static final String NODE_VERSION = 'node:14'
+
 static final String VERSIONING_STRATEGY = "single-branch"
 static final String STORYBOOK_COMMENT_MARKER = '[storybook-server]\n'
 
