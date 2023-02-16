@@ -61,8 +61,11 @@ export class Image360Facade<T> {
 
   public preload(entity: Image360Entity): Promise<void> {
     return this._image360Cache.cachedPreload(entity).catch(e => {
-      Log.info(e);
-      return Promise.resolve();
+      const error = e as Error;
+      if (error?.name === 'AbortError') {
+        Log.info('Abort Error:', error.message);
+        return Promise.resolve();
+      }
     });
   }
 
