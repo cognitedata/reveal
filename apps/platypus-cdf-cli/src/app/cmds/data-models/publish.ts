@@ -10,11 +10,9 @@ import Response, {
 import {
   CreateDataModelVersionDTO,
   DataModelVersionHandler,
-  ErrorType,
 } from '@platypus/platypus-core';
 import { readFileSync } from 'fs';
 import { Arguments, Argv } from 'yargs';
-import { promptQuestions, showConfirm } from '../../utils/enquirer-utils';
 
 import { getDataModelVersionsHandler } from './utils';
 
@@ -51,9 +49,11 @@ export const commandArgs = [
   {
     name: 'space',
     description:
-      'Space id to the space the data model should belong to. Defaults to same as external-id.',
+      'Space id of the space the data model should belong to. Defaults to same as external-id.',
     type: CommandArgumentType.STRING,
-    required: false,
+    required: true,
+    prompt: 'Enter data model space id',
+    promptDefaultValue: (commandArgs) => commandArgs['external-id'],
   },
   {
     name: 'dry-run',
@@ -63,6 +63,12 @@ export const commandArgs = [
     required: false,
     initial: false,
   },
+  {
+    name: 'version',
+    description: 'Data model version',
+    type: CommandArgumentType.STRING,
+    required: true,
+  },
 ] as CommandArgument[];
 
 type DataModelPublishCommandArgs = BaseArgs & {
@@ -71,6 +77,7 @@ type DataModelPublishCommandArgs = BaseArgs & {
   'allow-breaking-change': boolean;
   space: string;
   'dry-run': boolean;
+  version: string;
 };
 
 export class PublishCmd extends CLICommand {
@@ -91,15 +98,12 @@ export class PublishCmd extends CLICommand {
     DEBUG('dataModelVersionsHandler initialized');
 
     const graphqlSchema = await this.readGraphqlSchemaFile(args.file);
-    const latestSchema = await this.getLatestPublishedVersion(
-      args['external-id']
-    );
 
     const dto: CreateDataModelVersionDTO = {
       externalId: args['external-id'],
       schema: graphqlSchema,
-      version: latestSchema ? latestSchema.version : '1',
-      space: args['space'] ? args['space'] : args['external-id'],
+      version: args['version'],
+      space: args['space'],
     };
 
     if (args['dry-run']) {
@@ -115,72 +119,30 @@ export class PublishCmd extends CLICommand {
     }
 
     const response = await this.dataModelVersionsHandler.publish(dto, 'PATCH');
+
+    DEBUG(`Publish request result`, JSON.stringify(response, null, 2));
+
     if (!response.isSuccess) {
-      if ((response.error.type as ErrorType) === 'BREAKING_CHANGE') {
-        if (args['allow-breaking-change']) {
-          dto.version = (parseInt(dto.version) + 1).toString();
-          const publishResponse = await this.dataModelVersionsHandler.publish(
-            dto,
-            'NEW_VERSION'
-          );
-          return publishResponse.isSuccess
-            ? Response.success(
-                'Successfully published data model v' + dto.version
-              )
-            : Response.error(publishResponse.error);
-        }
-        if (args.interactive) {
-          console.error(
-            'There are breaking change(s) in your data model.' +
-              '\n' +
-              'A new version of the data model will be created when publishing.' +
-              '\n' +
-              response.error.message +
-              '\n'
-          );
-          const confirm = showConfirm(
-            commandArgs.find((arg) => arg.name === 'allow-breaking-change')
-          );
-          const prompt = await promptQuestions({
-            ...confirm,
-            message:
-              'Allow for a breaking change, resulting in a new version of the data model?',
-          });
-          if (prompt['allow-breaking-change']) {
-            dto.version = (parseInt(dto.version) + 1).toString();
-            const publishResponse = await this.dataModelVersionsHandler.publish(
-              dto,
-              'NEW_VERSION'
-            );
-            return publishResponse.isSuccess
-              ? Response.success(
-                  'Successfully published data model v' + dto.version
-                )
-              : Response.error(publishResponse.error);
+      response.error.errors.forEach((error) => {
+        if (error.kind === 'DIFF_ERROR') {
+          Response.error(error.message);
+          const lineWithError = graphqlSchema
+            .split('\n')
+            [error.location.start.line - 1].trim();
+
+          Response.error(`Line ${error.location.start.line}: ${lineWithError}`);
+          if (error.hint) {
+            Response.warn(`Hint: ${error.hint}`);
           }
+        } else {
+          Response.error(error.message);
         }
-      }
-      throw response.error;
+      });
+      return Response.error(response.error);
     }
 
-    const responseSchema = response.getValue();
-
-    const schemaPublishedOrUpdated =
-      latestSchema && latestSchema.version === responseSchema.version
-        ? 'updated'
-        : 'published';
-
-    DEBUG(
-      `Api version ${
-        response.getValue().version
-      } has been ${schemaPublishedOrUpdated}, %o`,
-      JSON.stringify(responseSchema, null, 2)
-    );
-
     Response.success(
-      `Api version ${
-        response.getValue().version
-      } has been ${schemaPublishedOrUpdated}`
+      `Successfully published changes to data model version ${dto.version}`
     );
   }
 
@@ -192,31 +154,6 @@ export class PublishCmd extends CLICommand {
     DEBUG('Schema contents %o', schema);
 
     return schema;
-  }
-
-  private async getLatestPublishedVersion(externalId: string) {
-    const publishedVersionsResponse =
-      await this.dataModelVersionsHandler.versions({
-        externalId,
-      });
-
-    if (!publishedVersionsResponse.isSuccess) {
-      throw publishedVersionsResponse.error;
-    }
-
-    DEBUG(
-      'Fetched published schemas from API, %o',
-      JSON.stringify(publishedVersionsResponse.getValue(), null, 2)
-    );
-
-    const publishedVersions = publishedVersionsResponse.getValue();
-    const latestVersion = publishedVersions.sort((a, b) =>
-      +a.version < +b.version ? 1 : -1
-    )[0];
-
-    DEBUG('Found latest schema, %o', JSON.stringify(latestVersion, null, 2));
-
-    return latestVersion;
   }
 }
 

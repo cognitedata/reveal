@@ -15,39 +15,9 @@ const getDatamodelNameTimeAppendix = () => {
 };
 
 describe('platpus-cli', () => {
-  beforeAll(() => {
-    return platypusCli.login();
+  beforeAll(async () => {
+    return await platypusCli.login();
   });
-
-  // describe('cdf data-models create', () => {
-  //   it('can create data models', async () => {
-  //     const dataModelName = `cdf-cli-create-e2e-test-${getDatamodelNameTimeAppendix()}`;
-  //     const dataModelExternalId = dataModelName;
-
-  //     const output = await platypusCli.dataModelsCreate(
-  //       dataModelName,
-  //       dataModelExternalId
-  //     );
-  //     // platypusCli.dataModelsDelete(dataModelExternalId);
-
-  //     expect(output).toMatch(
-  //       `Data model "${dataModelName}" has been created successfully`
-  //     );
-  //   });
-  // });
-
-  // describe('cdf data-models delete', () => {
-  //   it('can delete data models', async () => {
-  //     const dataModelName = `cdf-cli-delete-e2e-test-${Date.now()}`;
-  //     const dataModelExternalId = dataModelName;
-
-  //     await platypusCli.dataModelsCreate(dataModelName, dataModelExternalId);
-  //     const output = await platypusCli.dataModelsDelete(dataModelExternalId);
-  //     expect(output).toMatch(
-  //       `Data model "${dataModelExternalId}" has been deleted successfully`
-  //     );
-  //   });
-  // });
 
   describe('cdf data-models publish', () => {
     it('can publish data models and list', async () => {
@@ -56,6 +26,7 @@ describe('platpus-cli', () => {
 
       let output = await platypusCli.dataModelsCreate(
         dataModelName,
+        dataModelExternalId,
         dataModelExternalId
       );
 
@@ -65,12 +36,13 @@ describe('platpus-cli', () => {
 
       output = await platypusCli.dataModelsPublish(
         dataModelExternalId,
-        __dirname + '/graphql-schemas/valid_schema_v1.gql'
+        __dirname + '/graphql-schemas/valid_schema_v1.gql',
+        '1',
+        dataModelExternalId
       );
 
-      // platypusCli.dataModelsDelete(dataModelExternalId);
       expect(output).toMatch(
-        /(Api version 1 has been published|Api version 1 has been updated)/i
+        'Successfully published changes to data model version 1'
       );
 
       output = await platypusCli.dataModelsList();
@@ -78,20 +50,7 @@ describe('platpus-cli', () => {
     });
   });
 
-  // describe('cdf data-models list', () => {
-  //   it('can list data models', async () => {
-  //     const dataModelName = `cdf-cli-list-e2e-test-${getDatamodelNameTimeAppendix()}`;
-  //     const dataModelExternalId = dataModelName;
-
-  //     await platypusCli.dataModelsCreate(dataModelName, dataModelExternalId);
-
-  //     const output = await platypusCli.dataModelsList();
-  //     // platypusCli.dataModelsDelete(dataModelExternalId);
-  //     expect(output).toContain(dataModelExternalId);
-  //   });
-  // });
-
   afterAll(async () => {
-    return platypusCli.logout();
+    return await platypusCli.logout();
   });
 });

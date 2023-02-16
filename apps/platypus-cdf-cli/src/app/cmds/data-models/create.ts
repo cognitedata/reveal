@@ -42,10 +42,11 @@ export const commandArgs = [
   },
   {
     name: 'space',
-    description:
-      'Space id to the space the data model should belong to. Defaults to same as external-id.',
+    description: 'Space id of the space the data model should belong to.',
     type: CommandArgumentType.STRING,
-    required: false,
+    required: true,
+    prompt: 'Enter data model space id',
+    promptDefaultValue: (commandArgs) => commandArgs['external-id'],
   },
 ] as CommandArgument[];
 
