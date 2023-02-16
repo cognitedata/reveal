@@ -3,7 +3,6 @@
 # All code reviews go through the Subsurface Data Liberation team.
 # Ping us on #subsurface or #subsurface-data-liberation if you have questions!
 apps/cognuit @cognitedata/subsurface-data
-apps/cognite-ornate @cognitedata/griff-team
 apps/digital-cockpit @cognitedata/griff-team
 apps/react-demo-app @cognitedata/frontend-app-server
 apps/tenant-selector @cognitedata/frontend-tenant-selector-team
