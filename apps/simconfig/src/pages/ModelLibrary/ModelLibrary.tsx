@@ -87,7 +87,7 @@ export function ModelLibrary() {
       to: createCdfLink(
         `/model-library/models/${encodeURIComponent(
           firstFile.source
-        )}/${encodeURIComponent(firstFile.metadata.modelName)}`,
+        )}/${encodeURIComponent(firstFile.metadata.modelName)}/`,
         client.getBaseUrl()
       ),
     });
