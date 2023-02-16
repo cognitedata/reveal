@@ -64,10 +64,9 @@ import {
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
-import { Image360Collection, Image360Entity } from '@reveal/360-images';
+import { Image360Collection, Image360Entity, Image360 } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
-import { Image360 } from '@reveal/360-images/src/Image360';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
@@ -225,6 +224,8 @@ export class Cognite3DViewer {
     this.canvas.style.minHeight = '100%';
     this.canvas.style.maxWidth = '100%';
     this.canvas.style.maxHeight = '100%';
+    // Prevents scrolling for mobile devices.
+    this.canvas.style.touchAction = 'none';
 
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.tabIndex = 0;
@@ -734,6 +735,13 @@ export class Cognite3DViewer {
       collectionTransform,
       preMultipliedRotation
     );
+
+    const numberOf360Images = image360Collection.image360Entities.length;
+
+    MetricsLogger.trackEvent('360ImageCollectionAdded', {
+      datasource,
+      numberOf360Images
+    });
 
     return image360Collection;
   }
@@ -1366,11 +1374,15 @@ export class Cognite3DViewer {
       clippingPlanes: this.getGlobalClippingPlanes(),
       domElement: this.renderer.domElement
     };
+
+    // Do not refresh renderer when CAD picking is active as it would create a bleed through during TreeIndex computing.
+    cancelAnimationFrame(this.latestRequestId);
     const cadResults = await this._pickingHandler.intersectCadNodes(
       cadNodes,
       input,
       options?.asyncCADIntersection ?? true
     );
+    this.latestRequestId = requestAnimationFrame(this._boundAnimate);
     const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
 
     const intersections: Intersection[] = [];

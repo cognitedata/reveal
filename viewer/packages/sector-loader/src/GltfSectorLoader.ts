@@ -95,6 +95,8 @@ export class GltfSectorLoader {
       };
     } catch (e) {
       const error = e as Error;
+      if (error?.cause === 'InvalidModel') {
+        Log.info('Invalid Model:', error.message);
       if (error?.name === 'AbortError') {
         Log.info('Abort Error:', error.message);
       } else {
