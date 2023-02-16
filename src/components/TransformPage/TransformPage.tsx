@@ -2,7 +2,6 @@ import { Button, Input } from '@cognite/cogs.js';
 import Col from 'antd/lib/col';
 
 import Table from 'antd/lib/table';
-import sdk from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { JetfireApi } from 'jetfire/JetfireApi';
@@ -16,12 +15,14 @@ import {
   MiniInfoTitle,
   BlockedInformationWrapper,
 } from 'utils/styledComponents';
-import { trackEvent } from '@cognite/cdf-route-tracker';
 import jetfireIcon from 'assets/jetfireIcon.svg';
 import useInterval from 'hooks/useInterval';
 import { Key } from 'antd/lib/table/interface';
 import { notification } from 'antd';
+import { getCogniteSDKClient } from 'utils/cogniteSdk';
+import { trackEvent } from 'utils/routeTracker';
 
+const sdk = getCogniteSDKClient();
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
 const useTransformColumns = () => {

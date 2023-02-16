@@ -4,9 +4,7 @@ import { notification, Popconfirm, Upload } from 'antd';
 import List from 'antd/lib/list';
 import Spin from 'antd/lib/spin';
 import { Button, Icon } from '@cognite/cogs.js';
-import { trackEvent } from '@cognite/cdf-route-tracker';
 import isString from 'lodash/isString';
-import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -15,6 +13,8 @@ import { TranslationKeys } from 'common/i18n';
 import { FileInfo } from 'utils/types';
 import { getContainer, nameToAclTypeMap } from 'utils/shared';
 import { useTranslation } from 'common/i18n';
+import { getCogniteSDKClient, getFlow } from 'utils/cogniteSdk';
+import { trackEvent } from 'utils/routeTracker';
 
 interface UploadFileProps {
   setFileList: Dispatch<SetStateAction<FileInfo[]>>;
@@ -23,6 +23,7 @@ interface UploadFileProps {
 }
 
 const updateFileWithDataSet = (fileId: number, dataSetId: number) => {
+  const sdk = getCogniteSDKClient();
   sdk
     .post(`/api/v1/projects/${sdk.project}/files/update`, {
       data: {
@@ -49,6 +50,7 @@ const updateFileWithDataSet = (fileId: number, dataSetId: number) => {
 };
 
 const getDataSetId = async () => {
+  const sdk = getCogniteSDKClient();
   try {
     const [dataSet] = await sdk.datasets.retrieve([
       { externalId: 'COGNITE_GENERATED_SYSTEM_FILES' },
@@ -60,6 +62,7 @@ const getDataSetId = async () => {
 };
 
 const createDataSet = async (_t: (key: TranslationKeys) => string) => {
+  const sdk = getCogniteSDKClient();
   try {
     const [createdDataSet] = await sdk.datasets.create([
       {
@@ -110,6 +113,7 @@ const UploadFiles = ({
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const getDownloadUrl = async (fileId: number) => {
+    const sdk = getCogniteSDKClient();
     const links = await sdk.files.getDownloadUrls([{ id: fileId }]);
 
     if (links.length === 0) {
@@ -147,6 +151,8 @@ const UploadFiles = ({
         type: file.type ? file.type : '',
       });
       const fileName = 'name' in file ? file.name : 'Uploaded file';
+      const sdk = getCogniteSDKClient();
+
       sdk.files
         .upload({
           name: fileName,

@@ -11,13 +11,13 @@ import {
   ApprovedDot,
   FieldLabel,
 } from 'utils/styledComponents';
-import { trackEvent } from '@cognite/cdf-route-tracker';
 import documentationIcon from 'assets/documentationIcon.svg';
 import { isNotNilOrWhitespace } from 'utils/shared';
 import UploadFiles from '../UploadFiles';
 import LinksList from '../LinksList';
 import InfoTooltip from '../InfoTooltip';
 import { useTranslation } from 'common/i18n';
+import { trackEvent } from 'utils/routeTracker';
 
 interface DocumentationProps {
   dataSet?: DataSet;

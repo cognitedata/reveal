@@ -4,13 +4,11 @@ import { Table, TableNoResults } from '@cognite/cdf-utilities';
 import { Checkbox, notification } from 'antd';
 import DataSetEditor from 'pages/DataSetEditor';
 
-import { trackEvent } from '@cognite/cdf-route-tracker';
 import { useHandleFilters } from 'utils/filterUtils';
 import { setItemInStorage } from 'utils/localStorage';
 import { getContainer } from 'utils/shared';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import isArray from 'lodash/isArray';
 import { useTableColumns, DataSetRow, getLabelsList } from './TableColumns';
 import {
@@ -26,6 +24,8 @@ import RowActions from 'components/data-sets-list/row-actions';
 import TableFilter, { GovernanceStatus } from 'components/table-filters';
 import { useSearchParamState } from 'hooks/useSearchParamState';
 import { trackUsage } from 'utils';
+import { getFlow } from 'utils/cogniteSdk';
+import { trackEvent } from 'utils/routeTracker';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();

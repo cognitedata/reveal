@@ -1,6 +1,6 @@
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useFlag } from '@cognite/react-feature-flags';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { getFlow } from 'utils/cogniteSdk';
 
 export const useWithExtpipes = () => {
   const { isEnabled: isFlagExtpipe } = useFlag('EXTPIPES_allowlist', {

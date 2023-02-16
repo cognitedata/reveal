@@ -6,7 +6,6 @@ import {
   useState,
 } from 'react';
 import Tag from 'antd/lib/tag';
-import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import {
   FieldLabel,
   BlockedInformationWrapper,
@@ -26,6 +25,7 @@ import Spin from 'antd/lib/spin';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
 import { useTranslation } from 'common/i18n';
+import { getCogniteSDKClient, getFlow } from 'utils/cogniteSdk';
 
 interface RawSectionProps {
   selectedDb: string;
@@ -62,6 +62,7 @@ export const RawSection: FunctionComponent<RawSectionProps> = ({
   };
 
   const createItem = () => {
+    const sdk = getCogniteSDKClient();
     if (createModal === 'database') {
       sdk.raw
         .createDatabases([{ name: nameField }])

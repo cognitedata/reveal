@@ -1,12 +1,12 @@
 import { CSSProperties } from 'react';
 import { stringCompare, getStringCdfEnv } from 'utils/shared';
-import { trackEvent } from '@cognite/cdf-route-tracker';
-import sdk from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
 import { Button, Icon, Popconfirm } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import HiddenTransformation from './HiddenTranformation';
 import { useTranslation } from 'common/i18n';
+import { getCogniteSDKClient } from 'utils/cogniteSdk';
+import { trackEvent } from 'utils/routeTracker';
 
 export const useTransformationsColumns = () => {
   const { t } = useTranslation();
@@ -25,6 +25,8 @@ export const useTransformationsColumns = () => {
           );
         if (transform.hidden)
           return <HiddenTransformation transformation={transform.storedData} />;
+
+        const sdk = getCogniteSDKClient();
         const env = getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : '';
         const href = `/${sdk.project}/transformations/${transform.id}${env}`;
         return (

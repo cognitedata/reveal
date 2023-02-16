@@ -4,7 +4,6 @@ import Table from 'antd/lib/table';
 import { Button, Colors, Icon } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { getContainer } from 'utils/shared';
 import InfoTooltip from 'components/InfoTooltip';
 import { DataSetWithExtpipes } from 'actions';
@@ -19,6 +18,7 @@ import { useExtpipeTableColumns } from './ExtpipeTableColumns';
 import { ExtpipeSourceExtractorProps } from './ExtpipeSourceExtractor';
 import { getExtractionPipelineUIUrl } from '../../../utils/extpipeUtils';
 import { useTranslation } from 'common/i18n';
+import { getFlow } from 'utils/cogniteSdk';
 
 interface ExtpipeTableProps extends ExtpipeSourceExtractorProps {
   dataSetWithExtpipes: DataSetWithExtpipes;

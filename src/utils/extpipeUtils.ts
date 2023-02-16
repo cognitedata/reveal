@@ -1,5 +1,5 @@
 import { Extpipe, DataSet } from 'utils/types';
-import sdk from '@cognite/cdf-sdk-singleton';
+import { getCogniteSDKClient } from './cogniteSdk';
 
 const EXTRACTION_PIPELINE_PATH: Readonly<string> = 'extpipes';
 
@@ -21,6 +21,8 @@ export const getExtractionPipelineUIUrl = (path?: string) => {
 
 export const fetchExtpipesByDataSetId = async (id: number) => {
   let extpipes;
+  const sdk = getCogniteSDKClient();
+
   try {
     extpipes = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
       withCredentials: true,

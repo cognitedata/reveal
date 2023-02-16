@@ -1,15 +1,16 @@
 import moment from 'moment';
-import sdk from '@cognite/cdf-sdk-singleton';
 import { TranslationKeys } from 'common/i18n';
 import { RawExtpipeWithUpdateTime } from 'components/Lineage/Extpipe/ExtpipeRawTables';
 import { DataSet, Extpipe, RawTableWithExtpipes } from 'utils/types';
 import { DataSetWithExtpipes } from 'actions';
+import { getCogniteSDKClient } from 'utils/cogniteSdk';
 
 export const updateRawTableWithLastUpdate = async (
   value: RawTableWithExtpipes,
   _t: (key: TranslationKeys) => string
 ): Promise<RawExtpipeWithUpdateTime> => {
   const { databaseName, tableName, extpipes } = value;
+  const sdk = getCogniteSDKClient();
   try {
     const results = await sdk.raw.listRows(databaseName, tableName);
     const lastUpdate =

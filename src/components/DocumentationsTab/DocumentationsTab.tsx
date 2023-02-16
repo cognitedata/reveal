@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import { trackEvent } from '@cognite/cdf-route-tracker';
-import sdk from '@cognite/cdf-sdk-singleton';
 
 import {
   Body,
@@ -21,12 +19,15 @@ import {
   ContentWrapper,
 } from 'utils';
 import { useTranslation } from 'common/i18n';
+import { getCogniteSDKClient } from 'utils/cogniteSdk';
+import { trackEvent } from 'utils/routeTracker';
 
 interface DocumentationsTabProps {
   dataSet?: DataSet;
 }
 
 const getDownloadUrl = async (fileId: number) => {
+  const sdk = getCogniteSDKClient();
   const links = await sdk.files.getDownloadUrls([{ id: fileId }]);
   trackEvent('DataSets,LineageFlow.Downloaded documentation file');
   if (links.length === 0) {

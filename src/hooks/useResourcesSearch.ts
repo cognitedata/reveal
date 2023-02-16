@@ -1,7 +1,7 @@
-import sdk from '@cognite/cdf-sdk-singleton';
 import { useTranslation } from 'common/i18n';
 import { useQuery } from 'react-query';
 import { handleError } from 'utils';
+import { getCogniteSDKClient } from 'utils/cogniteSdk';
 
 type ResourceSearchParams = {
   filter: {
@@ -63,7 +63,12 @@ export const useResourcesSearch = ({
 
   const assets = useQuery(
     getResourceSearchQueryKey('assets', dataSetId, query, filters),
-    () => sdk.assets.search(getResourceSearchParams(dataSetId, query, filters)),
+    () => {
+      const sdk = getCogniteSDKClient();
+      return sdk.assets.search(
+        getResourceSearchParams(dataSetId, query, filters)
+      );
+    },
     {
       onError: (e: any) => {
         handleError({ message: t('assets-failed-to-fetch'), ...e });
@@ -73,10 +78,12 @@ export const useResourcesSearch = ({
 
   const events = useQuery(
     getResourceSearchQueryKey('events', dataSetId, query, filters),
-    () =>
-      sdk.events.search(
+    () => {
+      const sdk = getCogniteSDKClient();
+      return sdk.events.search(
         getResourceSearchParams(dataSetId, query, filters, 'description')
-      ),
+      );
+    },
     {
       onError: (e: any) => {
         handleError({ message: t('fetch-events-failed'), ...e });
@@ -86,10 +93,12 @@ export const useResourcesSearch = ({
 
   const files = useQuery(
     getResourceSearchQueryKey('files', dataSetId, query, filters),
-    () =>
-      sdk.files.search(
+    () => {
+      const sdk = getCogniteSDKClient();
+      return sdk.files.search(
         getResourceSearchParams(dataSetId, query, filters, 'name')
-      ),
+      );
+    },
     {
       onError: (e: any) => {
         handleError({ message: t('fetch-files-failed'), ...e });
@@ -99,8 +108,12 @@ export const useResourcesSearch = ({
 
   const sequences = useQuery(
     getResourceSearchQueryKey('sequences', dataSetId, query, filters),
-    () =>
-      sdk.sequences.search(getResourceSearchParams(dataSetId, query, filters)),
+    () => {
+      const sdk = getCogniteSDKClient();
+      return sdk.sequences.search(
+        getResourceSearchParams(dataSetId, query, filters)
+      );
+    },
     {
       onError: (e: any) => {
         handleError({ message: t('fetch-sequences-failed'), ...e });
@@ -110,8 +123,12 @@ export const useResourcesSearch = ({
 
   const timeseries = useQuery(
     getResourceSearchQueryKey('timeseries', dataSetId, query, filters),
-    () =>
-      sdk.timeseries.search(getResourceSearchParams(dataSetId, query, filters)),
+    () => {
+      const sdk = getCogniteSDKClient();
+      return sdk.timeseries.search(
+        getResourceSearchParams(dataSetId, query, filters)
+      );
+    },
     {
       onError: (e: any) => {
         handleError({ message: t('fetch-timeseries-failed'), ...e });
