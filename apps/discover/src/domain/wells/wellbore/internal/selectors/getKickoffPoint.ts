@@ -1,47 +1,43 @@
-import { scaleLinear } from 'd3-scale';
-import { toFixedNumberFromNumber } from 'utils/number';
-
 import { TrajectoryDataRow } from '@cognite/sdk-wells';
 
 import { KickoffDepth, KickoffPoint } from '../types';
+import { getTrajectoryScalers } from '../utils/getTrajectoryScalers';
 
-export const getKickoffPoint = (
-  trajectoryRows: TrajectoryDataRow[],
-  kickoffDepth: KickoffDepth
-): KickoffPoint | undefined => {
-  const rowData = trajectoryRows.reduce(
-    (data, { measuredDepth, trueVerticalDepth, equivalentDeparture }) => {
-      return {
-        measuredDepths: [...data.measuredDepths, measuredDepth],
-        trueVerticalDepths: [...data.trueVerticalDepths, trueVerticalDepth],
-        equivalentDepartures: [
-          ...data.equivalentDepartures,
-          equivalentDeparture,
-        ],
-      };
-    },
-    {
-      measuredDepths: [] as number[],
-      trueVerticalDepths: [] as number[],
-      equivalentDepartures: [] as number[],
+type Props =
+  | {
+      kickoffDepth: KickoffDepth;
+      trajectoryRows?: never;
+      scaleMDtoED: (value: number) => number;
+      scaleTVDtoED: (value: number) => number;
     }
-  );
+  | {
+      kickoffDepth: KickoffDepth;
+      trajectoryRows: TrajectoryDataRow[];
+      scaleMDtoED?: never;
+      scaleTVDtoED?: never;
+    };
 
-  const scaleMD = scaleLinear()
-    .domain(rowData.measuredDepths)
-    .range(rowData.equivalentDepartures);
+export const getKickoffPoint = ({
+  kickoffDepth,
+  trajectoryRows,
+  scaleMDtoED: scaleMDtoEDOriginal,
+  scaleTVDtoED: scaleTVDtoEDOriginal,
+}: Props): KickoffPoint | undefined => {
+  const getScalers = () => {
+    if (scaleMDtoEDOriginal && scaleTVDtoEDOriginal) {
+      return {
+        scaleMDtoED: scaleMDtoEDOriginal,
+        scaleTVDtoED: scaleTVDtoEDOriginal,
+      };
+    }
+    return getTrajectoryScalers(trajectoryRows);
+  };
 
-  const scaleTVD = scaleLinear()
-    .domain(rowData.trueVerticalDepths)
-    .range(rowData.equivalentDepartures);
+  const { scaleMDtoED, scaleTVDtoED } = getScalers();
 
   return {
     ...kickoffDepth,
-    equivalentDepartureMD: toFixedNumberFromNumber(
-      scaleMD(kickoffDepth.measuredDepth)
-    ),
-    equivalentDepartureTVD: toFixedNumberFromNumber(
-      scaleTVD(kickoffDepth.trueVerticalDepth)
-    ),
+    equivalentDepartureMD: scaleMDtoED(kickoffDepth.measuredDepth),
+    equivalentDepartureTVD: scaleTVDtoED(kickoffDepth.trueVerticalDepth),
   };
 };

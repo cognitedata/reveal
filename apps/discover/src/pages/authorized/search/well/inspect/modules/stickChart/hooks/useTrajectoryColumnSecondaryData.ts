@@ -1,11 +1,9 @@
-import { getKickoffPoint } from 'domain/wells/wellbore/internal/selectors/getKickoffPoint';
 import { KickoffDepth } from 'domain/wells/wellbore/internal/types';
+import { getTrajectoryScalers } from 'domain/wells/wellbore/internal/utils/getTrajectoryScalers';
 
-import { useMemo } from 'react';
+import { useCallback } from 'react';
 
-import isEmpty from 'lodash/isEmpty';
 import { PlotData } from 'plotly.js';
-import { shadeColor } from 'utils/shadeColor';
 
 import { TrajectoryDataRow } from '@cognite/sdk-wells';
 
@@ -13,11 +11,12 @@ import { EMPTY_ARRAY } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 
-import {
-  CURVES_TO_SHOW_KICKOFF_POINT,
-  KICK_OFF_POINT_MARKER_SIZE,
-} from '../WellboreStickChart/TrajectoryColumn/constants';
+import { AnnotationDepths } from '../types';
+import { CURVES_TO_SHOW_KICKOFF_POINT } from '../WellboreStickChart/TrajectoryColumn/constants';
 import { TrajectoryCurve } from '../WellboreStickChart/TrajectoryColumn/types';
+
+import { useInclinationPlot } from './useInclinationPlot';
+import { useKickOffPointPlot } from './useKickOffPointPlot';
 
 interface Props {
   trajectoryDataRows?: TrajectoryDataRow[];
@@ -26,64 +25,67 @@ interface Props {
   depthMeasurementType: DepthMeasurementUnit;
   curveColor: string;
   showKickoffPoint: boolean;
+  inclinationAnnotationDepths?: AnnotationDepths;
 }
 
 export const useTrajectoryColumnSecondaryData = ({
-  trajectoryDataRows,
+  trajectoryDataRows = EMPTY_ARRAY,
   kickoffDepth,
   selectedCurve,
   depthMeasurementType,
   curveColor,
   showKickoffPoint,
+  inclinationAnnotationDepths,
 }: Props): Partial<PlotData>[] => {
-  const isMdScale = depthMeasurementType === DepthMeasurementUnit.MD;
+  const {
+    scaleMDtoED,
+    scaleTVDtoED,
+    scaleMDtoInclination,
+    scaleTVDtoInclination,
+  } = useDeepMemo(() => {
+    return getTrajectoryScalers(trajectoryDataRows);
+  }, [trajectoryDataRows]);
 
-  const kickoffPoint = useDeepMemo(() => {
-    if (
-      !showKickoffPoint ||
-      !kickoffDepth ||
-      !trajectoryDataRows ||
-      isEmpty(trajectoryDataRows)
-    ) {
-      return undefined;
-    }
-    return getKickoffPoint(trajectoryDataRows, kickoffDepth);
-  }, [showKickoffPoint, trajectoryDataRows, kickoffDepth]);
+  const maxEquivalentDeparture = useDeepMemo(() => {
+    return Math.max(
+      ...trajectoryDataRows.map(
+        ({ equivalentDeparture }) => equivalentDeparture
+      )
+    );
+  }, [trajectoryDataRows]);
 
-  const kickOffPointPlot: Partial<PlotData>[] = useMemo(() => {
-    if (!kickoffPoint) {
-      return EMPTY_ARRAY;
-    }
+  const getTextPosition = useCallback(
+    (x: number): PlotData['textposition'] => {
+      if (x > maxEquivalentDeparture / 2) {
+        return 'middle left';
+      }
+      return 'middle right';
+    },
+    [maxEquivalentDeparture]
+  );
 
-    const {
-      equivalentDepartureMD,
-      equivalentDepartureTVD,
-      measuredDepth,
-      trueVerticalDepth,
-    } = kickoffPoint;
+  const kickOffPointPlot = useKickOffPointPlot({
+    kickoffDepth,
+    depthMeasurementType,
+    curveColor,
+    showKickoffPoint:
+      showKickoffPoint &&
+      !!selectedCurve &&
+      CURVES_TO_SHOW_KICKOFF_POINT.includes(selectedCurve),
+    scaleMDtoED,
+    scaleTVDtoED,
+    getTextPosition,
+  });
 
-    return [
-      {
-        name: '',
-        x: [isMdScale ? equivalentDepartureMD : equivalentDepartureTVD],
-        y: [isMdScale ? measuredDepth : trueVerticalDepth],
-        marker: {
-          color: shadeColor(curveColor, -25),
-          size: KICK_OFF_POINT_MARKER_SIZE,
-        },
-        hoverinfo: 'y',
-      },
-    ];
-  }, [kickoffPoint, depthMeasurementType]);
+  const inclinationPlot = useInclinationPlot({
+    inclinationAnnotationDepths,
+    depthMeasurementType,
+    scaleMDtoED,
+    scaleTVDtoED,
+    scaleMDtoInclination,
+    scaleTVDtoInclination,
+    getTextPosition,
+  });
 
-  return useMemo(() => {
-    if (
-      !selectedCurve ||
-      !CURVES_TO_SHOW_KICKOFF_POINT.includes(selectedCurve)
-    ) {
-      return EMPTY_ARRAY;
-    }
-
-    return kickOffPointPlot;
-  }, [kickOffPointPlot, selectedCurve]);
+  return [kickOffPointPlot, inclinationPlot];
 };

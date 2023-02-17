@@ -124,3 +124,8 @@ export interface MudWeightSummary {
 }
 
 export type EventType = typeof EVENT_TYPES[number];
+
+export interface AnnotationDepths {
+  measuredDepths: number[];
+  trueVerticalDepths: number[];
+}

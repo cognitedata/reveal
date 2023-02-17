@@ -17,6 +17,7 @@ import { useColumnHeight } from '../hooks/useColumnHeight';
 import { useScaleBlocks } from '../hooks/useScaleBlocks';
 import { useTrajectoryCurveConfigs } from '../hooks/useTrajectoryCurveConfigs';
 import { ChartColumn, WellboreStickChartData, WellboreData } from '../types';
+import { getAnnotationDepths } from '../utils/getAnnotationDepths';
 
 import { CasingsColumn } from './CasingsColumn';
 import { CasingsDetailView } from './CasingsDetailView';
@@ -116,6 +117,10 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
     setDepthMeasurementType(depthMeasurementTypeProp);
   }, [depthMeasurementTypeProp]);
 
+  const inclinationAnnotationDepths = useDeepMemo(() => {
+    return getAnnotationDepths(measurementsData?.data);
+  }, [measurementsData?.data]);
+
   const isAnyColumnVisible = useDeepMemo(() => {
     return Object.values(columnVisibility).some(Boolean);
   }, [columnVisibility]);
@@ -210,6 +215,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 curveColor={wellboreColor}
                 depthMeasurementType={depthMeasurementType}
                 trajectoryCurveConfigs={trajectoryCurveConfigs}
+                inclinationAnnotationDepths={inclinationAnnotationDepths}
                 isVisible={columnVisibility[ChartColumn.TRAJECTORY]}
               />
 

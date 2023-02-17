@@ -14,6 +14,7 @@ import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { PlotlyChartColumn } from '../../components/PlotlyChartColumn';
 import { useTrajectoryColumnSecondaryData } from '../../hooks/useTrajectoryColumnSecondaryData';
 import {
+  AnnotationDepths,
   ChartColumn,
   ColumnVisibilityProps,
   TrajectoryCurveConfig,
@@ -38,6 +39,7 @@ export interface TrajectoryColumnProps extends ColumnVisibilityProps {
   depthMeasurementType?: DepthMeasurementUnit;
   trajectoryCurveConfigs: TrajectoryCurveConfig[];
   showKickoffPoint?: boolean;
+  inclinationAnnotationDepths?: AnnotationDepths;
 }
 
 export const TrajectoryColumn: React.FC<
@@ -52,6 +54,7 @@ export const TrajectoryColumn: React.FC<
     depthMeasurementType = DepthMeasurementUnit.TVD,
     trajectoryCurveConfigs,
     showKickoffPoint = true,
+    inclinationAnnotationDepths,
     isVisible = true,
     ...dragHandleProps
   }) => {
@@ -66,6 +69,7 @@ export const TrajectoryColumn: React.FC<
       depthMeasurementType,
       curveColor,
       showKickoffPoint,
+      inclinationAnnotationDepths,
     });
 
     const trajectoryCurveDataProps = useDeepMemo(() => {
