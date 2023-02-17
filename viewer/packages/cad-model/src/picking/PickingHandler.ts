@@ -25,6 +25,7 @@ type PickingInput = {
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
   domElement: HTMLElement;
+  cadNodes: CadNode[];
 };
 
 type TreeIndexPickingInput = PickingInput & {
@@ -93,21 +94,48 @@ export class PickingHandler {
     async = true
   ): Promise<IntersectCadNodesResult[]> {
     const results: IntersectCadNodesResult[] = [];
+
+    // Exit when no cadNode exists
+    if (cadNodes.length < 1) {
+      return results;
+    }
     const release = await this._mutex.acquire();
-    // Get CadNodes which are visible
+    const scene = new THREE.Scene();
+    const depthInput = { ...input, scene, cadNodes };
+
+    // Calculate depth position and distance.
+    const depthResult = await this.intersectCadNodeDepth(depthInput, async);
+
+    // Identify the treeIndex associated with the position.
+    // Get CadNodes which are visible.
     const visibleCadNodes = cadNodes.filter(node => node.visible);
-    // Filter nodes which cannot hit pick point
+    // Filter nodes which cannot hit pick point.
     const filteredCadNodes = this.filterOutOfBoundCadNodes(visibleCadNodes, input);
 
     try {
       for (const cadNodeData of filteredCadNodes) {
+        // Skip cad node when hit distance is larger than already hit node.
+        const minIntersectCadNodeDistance = cadNodeData.intersectPosition.distanceTo(input.camera.position);
+        if (results.some(cadNodeResult => cadNodeResult.distance < minIntersectCadNodeDistance)) {
+          continue;
+        }
+
         // Make current CadNode visible & hide others
         visibleCadNodes.forEach(p => (p.visible = false));
         cadNodeData.cadNode.visible = true;
 
-        const result = await this.intersectCadNode(cadNodeData.cadNode, input, async);
-        if (result) {
-          results.push(result);
+        const treeIndex = await this.intersectCadNodeTreeIndex(cadNodeData.cadNode, input, async);
+        if (treeIndex) {
+          const result: IntersectCadNodesResult = {
+            distance: depthResult.distance,
+            point: depthResult.point,
+            treeIndex,
+            object: cadNodeData.cadNode,
+            cadNode: cadNodeData.cadNode
+          };
+          if (result) {
+            results.push(result);
+          }
         }
       }
       return results.sort((l, r) => l.distance - r.distance);
@@ -158,11 +186,32 @@ export class PickingHandler {
     }
   }
 
-  private async intersectCadNode(
+  private async intersectCadNodeDepth(input: PickingInput, async: boolean) {
+    const { camera, normalizedCoords, renderer, domElement, cadNodes, scene } = input;
+    const pickInput = {
+      normalizedCoords,
+      camera,
+      renderer,
+      domElement,
+      scene,
+      cadNodes
+    };
+    const depth = await this.pickDepth(pickInput, async);
+
+    const viewZ = this.perspectiveDepthToViewZ(depth, camera.near, camera.far);
+    const point = this.getPosition(pickInput, viewZ);
+    const distance = new THREE.Vector3().subVectors(point, camera.position).length();
+    return {
+      distance,
+      point
+    };
+  }
+
+  private async intersectCadNodeTreeIndex(
     cadNode: CadNode,
     input: IntersectInput,
     async: boolean
-  ): Promise<IntersectCadNodesResult | undefined> {
+  ): Promise<number | undefined> {
     const { camera, normalizedCoords, renderer, domElement } = input;
     const pickingScene = new THREE.Scene();
 
@@ -172,24 +221,14 @@ export class PickingHandler {
       renderer,
       domElement,
       scene: pickingScene,
+      cadNodes: [],
       cadNode
     };
     const treeIndex = await this.pickTreeIndex(pickInput, async);
     if (treeIndex === undefined) {
       return undefined;
     }
-    const depth = await this.pickDepth(pickInput, async);
-
-    const viewZ = this.perspectiveDepthToViewZ(depth, camera.near, camera.far);
-    const point = this.getPosition(pickInput, viewZ);
-    const distance = new THREE.Vector3().subVectors(point, camera.position).length();
-    return {
-      distance,
-      point,
-      treeIndex,
-      object: cadNode,
-      cadNode
-    };
+    return treeIndex;
   }
 
   private async pickTreeIndex(input: TreeIndexPickingInput, async: boolean): Promise<number | undefined> {
@@ -222,10 +261,10 @@ export class PickingHandler {
     return (near * far) / ((far - near) * invClipZ - far);
   }
 
-  private async pickDepth(input: TreeIndexPickingInput, async: boolean): Promise<number> {
-    const { cadNode } = input;
-    const previousRenderMode = cadNode.renderMode;
-    cadNode.renderMode = RenderMode.Depth;
+  private async pickDepth(input: PickingInput, async: boolean): Promise<number> {
+    const { cadNodes } = input;
+    const previousRenderMode = cadNodes[0].renderMode;
+    cadNodes.forEach(cadeNode => (cadeNode.renderMode = RenderMode.Depth));
     const pixelBuffer = await this.pickPixel(
       input,
       this._depthRenderPipeline,
@@ -233,13 +272,13 @@ export class PickingHandler {
       this._clearAlpha,
       async
     );
-    cadNode.renderMode = previousRenderMode;
+    cadNodes.forEach(cadeNode => (cadeNode.renderMode = previousRenderMode));
 
     const depth = this.unpackRGBAToDepth(pixelBuffer);
     return depth;
   }
 
-  private getPosition(input: TreeIndexPickingInput, viewZ: number): THREE.Vector3 {
+  private getPosition(input: PickingInput, viewZ: number): THREE.Vector3 {
     const { camera, normalizedCoords } = input;
     const position = new THREE.Vector3();
     position.set(normalizedCoords.x, normalizedCoords.y, 0.5).applyMatrix4(camera.projectionMatrixInverse);
