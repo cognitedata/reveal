@@ -12,8 +12,6 @@ final boolean isMaster = env.BRANCH_NAME == 'master'
 final boolean isRelease = env.BRANCH_NAME.startsWith('release-')
 final boolean isPullRequest = !!env.CHANGE_ID
 
-static final String LOCIZE_PROJECT_ID = ''
-static final String MIXPANEL_TOKEN = ''
 
 // Specify your projects alerting slack channel here. If you do not have one of these, please
 // consider creating one for your projects alerts
@@ -29,18 +27,8 @@ def pods = { body ->
       )
       appHosting.pod(
         nodeVersion: NODE_VERSION,
-        locizeProjectId: LOCIZE_PROJECT_ID,
-        mixpanelToken: MIXPANEL_TOKEN,
         envVars: [
-          locizeApiKey,
-          envVar(
-            key: 'REACT_APP_LOCIZE_PROJECT_ID',
-            value: LOCIZE_PROJECT_ID
-          ),
-          envVar(
-            key: 'REACT_APP_MIXPANEL_TOKEN',
-            value: MIXPANEL_TOKEN
-          )
+          locizeApiKey
         ]
       ) {
           testcafe.pod() {
@@ -119,7 +107,7 @@ pods {
               }
 
               stageWithNotify("Build and deploy PR for: ${project}") {
-                def prefix = "${jenkinsHelpersUtil.determineRepoName()}-${project}"
+                def prefix = jenkinsHelpersUtil.determineRepoName();
                 def domain = 'fusion-preview'
                 previewServer(
                   repo: domain,
@@ -137,10 +125,6 @@ pods {
 
         'Release': {
           container('apphosting') {
-            print "branch name: ${env.BRANCH_NAME}";
-            print "change id: ${env.CHANGE_ID}";
-            print "isMaster: ${isMaster}";
-            print "isRelease: ${isRelease}";
 
             if (isPullRequest) {
               print 'No deployment on PR branch'
