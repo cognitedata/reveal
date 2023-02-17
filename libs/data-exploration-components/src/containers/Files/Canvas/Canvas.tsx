@@ -158,7 +158,7 @@ export const Canvas = ({
       addFile(pagedFileReference);
       toast.success(
         <div>
-          <h4>Document added to your workspace</h4>
+          <h4>Document added to your canvas</h4>
         </div>,
         {
           toastId: `canvas-file-added-${pagedFileReference.id}`,
@@ -188,12 +188,12 @@ export const Canvas = ({
     () => [
       // TODO: Bug tracked by https://cognitedata.atlassian.net/browse/UFV-363
       // ...getClickedContainerOutlineAnnotation(clickedContainer),
-      ...annotations,
       ...getCanvasConnectionAnnotations({
         pagedFileReferences: files,
         hoverId,
         annotations,
       }),
+      ...annotations,
     ],
     [files, annotations, clickedContainer, hoverId]
   );

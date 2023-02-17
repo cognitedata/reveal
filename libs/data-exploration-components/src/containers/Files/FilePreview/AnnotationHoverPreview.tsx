@@ -29,13 +29,13 @@ const StyledBody = styled(Body)`
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
-  background-color: var(--cogs-decorative--grayscale--100);
+  background-color: var(--cogs-decorative--grayscale--1000);
   border-radius: 6px;
   padding: 6px;
 `;
 const NewLabel = styled(Detail)`
-  background-color: var(--cogs-decorative--blue--600);
-  color: var(--cogs-decorative--blue--200);
+  background-color: var(--cogs-decorative--blue--100);
+  color: var(--cogs-decorative--blue--600);
   border-radius: 4px;
   padding: 2px 6px;
   margin-right: 8px;

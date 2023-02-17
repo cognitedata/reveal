@@ -9,6 +9,7 @@ import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { AssetPage } from '@data-exploration-app/containers/Asset/AssetPage';
 import { TimeseriesPage } from '@data-exploration-app/containers/Timeseries/TimeseriesPage';
 import { FilePage } from '@data-exploration-app/containers/File/FilePage';
+import { CanvasPage } from "@data-exploration-app/containers/Canvas/CanvasPage";
 import { EventPage } from '@data-exploration-app/containers/Event/EventPage';
 import { SequencePage } from '@data-exploration-app/containers/Sequence/SequencePage';
 import { ThreeDPage } from '@data-exploration-app/containers/ThreeD/ThreeDPage';
@@ -40,6 +41,7 @@ export const Explorer = () => {
           />
           <Route path={routes.filePage.path} element={<FilePage />} />
           <Route path={routes.filePageTab.path} element={<FilePage />} />
+          <Route path={routes.canvas.path} element={<CanvasPage />} />
           <Route path={routes.eventPage.path} element={<EventPage />} />
           <Route path={routes.eventPageTab.path} element={<EventPage />} />
           <Route path={routes.sequencePage.path} element={<SequencePage />} />
@@ -49,7 +51,6 @@ export const Explorer = () => {
           />
           <Route path={routes.threeDPage.path} element={<ThreeDPage />} />
           <Route path={routes.threeDPageTab.path} element={<ThreeDPage />} />
-
           <Route path={routes.root.path} element={<SearchRedirect />} />
         </Routes>
       </ResourceSelectorProvider>

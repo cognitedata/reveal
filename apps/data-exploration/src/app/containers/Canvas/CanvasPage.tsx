@@ -1,5 +1,5 @@
 import { PageTitle } from '@cognite/cdf-utilities';
-import { Button, Title, Flex } from '@cognite/cogs.js';
+import { Button, Title, Flex, Tooltip } from '@cognite/cogs.js';
 import { ResourceIcons } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
@@ -23,21 +23,23 @@ export const CanvasPage = () => {
 
   return (
     <>
-      <PageTitle title="Multiple files" />
+      <PageTitle title="Canvas" />
       <TitleRowWrapper>
         <PreviewLinkWrapper>
           <Flex alignItems="center">
             <ResourceIcons type="file" style={{ marginRight: '10px' }} />
-            <Name level="3">Multiple files</Name>
+            <Name level="3">Canvas</Name>
           </Flex>
         </PreviewLinkWrapper>
 
         <StyledGoBackWrapper>
-          <Button
-            icon={'Download'}
-            aria-label="Download"
-            onClick={onDownloadPress}
-          />
+          <Tooltip content={'Download canvas as PDF'}>
+            <Button
+              icon={'Download'}
+              aria-label="Download"
+              onClick={onDownloadPress}
+            />
+          </Tooltip>
         </StyledGoBackWrapper>
       </TitleRowWrapper>
       <PreviewTabWrapper>

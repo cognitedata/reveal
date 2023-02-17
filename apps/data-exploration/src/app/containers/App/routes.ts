@@ -1,6 +1,7 @@
 export enum ViewType {
   All = 'all',
   Asset = 'asset',
+  Canvas = 'canvas',
   TimeSeries = 'timeSeries',
   File = 'file',
   Event = 'event',
@@ -60,6 +61,9 @@ export const routes = {
   },
   filePage: {
     path: `/${ViewType.File}/${SELECTED_ID}`,
+  },
+  canvas: {
+    path: `/${ViewType.Canvas}`,
   },
   filePageTab: {
     path: `/${ViewType.File}/${SELECTED_ID}/${SELECTED_DETAIL_TAB}`,
