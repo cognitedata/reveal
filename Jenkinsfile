@@ -107,7 +107,7 @@ pods {
                   repo: domain
                 )
                 deleteComments("[FUSION_PREVIEW_URL]")
-                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
                 pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
               }
             
