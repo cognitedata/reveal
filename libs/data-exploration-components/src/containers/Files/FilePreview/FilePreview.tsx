@@ -37,6 +37,7 @@ import {
 import { getContainerId, useDebouncedMetrics } from './utils';
 import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
 import { Flex } from '@cognite/cogs.js';
+import { useNumPages } from './hooks/useNumPages';
 
 type FilePreviewProps = {
   id: string;
@@ -106,6 +107,7 @@ export const FilePreview = ({
   const [selectedAnnotations, setSelectedAnnotations] = useState<
     ExtendedAnnotation[]
   >([]);
+  const numPages = useNumPages(container);
 
   const { data: file, isFetched: isFileFetched } = useCdfItem<FileInfo>(
     'files',
@@ -300,26 +302,42 @@ export const FilePreview = ({
 
   const toolProps = creatable ? RectangleToolProps : PanToolProps;
 
+  const handleOnKeyDown = (event: React.KeyboardEvent) => {
+    if (event.code === 'ArrowLeft') {
+      setPage((prevPage) => Math.max(prevPage - 1, 1));
+    }
+    if (event.code === 'ArrowRight') {
+      setPage((prevPage) => Math.min(prevPage + 1, numPages));
+    }
+  };
+
   return (
     <FullHeightWrapper justifyContent="flex-end">
       <UFVWrapper>
-        <ReactUnifiedViewer
-          applicationId={applicationId}
-          id={id}
-          setRef={(ref) => setUnifiedViewerRef(ref)}
-          container={container}
-          annotations={displayedAnnotations}
-          tooltips={enableToolTips ? tooltips : undefined}
-          onClick={onStageClick}
-          shouldShowZoomControls={showControls}
-          onUpdateRequest={handleUpdateRequest}
-          initialViewport={{
-            ...INITIAL_VIEWPORT_CENTER,
-            ...INITIAL_VIEWPORT_SIZE,
-          }}
-          {...toolProps}
+        {/* We only want the keyboard events when the viewer is focused and not when the pagination is focused */}
+        <UFVWrapper onKeyDown={handleOnKeyDown}>
+          <ReactUnifiedViewer
+            applicationId={applicationId}
+            id={id}
+            setRef={(ref) => setUnifiedViewerRef(ref)}
+            container={container}
+            annotations={displayedAnnotations}
+            tooltips={enableToolTips ? tooltips : undefined}
+            onClick={onStageClick}
+            shouldShowZoomControls={showControls}
+            onUpdateRequest={handleUpdateRequest}
+            initialViewport={{
+              ...INITIAL_VIEWPORT_CENTER,
+              ...INITIAL_VIEWPORT_SIZE,
+            }}
+            {...toolProps}
+          />
+        </UFVWrapper>
+        <Pagination
+          currentPage={page}
+          numPages={numPages}
+          onPageChange={handlePageChange}
         />
-        <Pagination container={container} onPageChange={handlePageChange} />
         <ActionTools
           file={file}
           fileViewerRef={unifiedViewerRef}
