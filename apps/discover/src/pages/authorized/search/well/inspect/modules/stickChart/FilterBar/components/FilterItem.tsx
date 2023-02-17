@@ -4,14 +4,13 @@ import { Checkbox } from '@cognite/cogs.js';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 
-import { ChartColumn } from '../types';
-
+import { ChartColumn } from '../../types';
 import {
   FilterItemWrapper,
   VertSeperator,
   DragHandler,
   ColumnName,
-} from './elements';
+} from '../elements';
 
 export interface FilterItemProps {
   id?: string;

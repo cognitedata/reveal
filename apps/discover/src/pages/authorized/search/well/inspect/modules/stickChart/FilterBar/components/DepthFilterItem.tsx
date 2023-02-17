@@ -6,19 +6,19 @@ import { WithDragHandleProps } from 'components/DragDropContainer';
 import { Dropdown } from 'components/Dropdown';
 import { DepthMeasurementUnit } from 'constants/units';
 
-import { Option } from '../components/Option';
-import { ChartColumn } from '../types';
+import { Option } from '../../components/Option';
+import { ChartColumn } from '../../types';
 import {
   DEPTH_MEASUREMENT_TYPES,
   UNIFY_SCALES_SWITCH_TEXT,
-} from '../WellboreStickChart/constants';
-
+} from '../../WellboreStickChart/constants';
 import {
   DropDownIconStyler,
   MultiSelectIconWrapper,
   UnifyScalesLabel,
   UnifyScalesSwitchWrapper,
-} from './elements';
+} from '../elements';
+
 import { FilterItem } from './FilterItem';
 
 export interface DepthFilterItemProps {

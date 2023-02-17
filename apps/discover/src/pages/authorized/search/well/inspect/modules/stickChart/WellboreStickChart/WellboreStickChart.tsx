@@ -21,6 +21,7 @@ import { getAnnotationDepths } from '../utils/getAnnotationDepths';
 
 import { CasingsColumn } from './CasingsColumn';
 import { CasingsDetailView } from './CasingsDetailView';
+import { DEFAULT_COLUMN_ORDER } from './constants';
 import { DepthColumn } from './DepthColumn';
 import { ContentWrapper, WellboreStickChartWrapper } from './elements';
 import { FormationColumn } from './FormationColumn';
@@ -125,6 +126,90 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
     return Object.values(columnVisibility).some(Boolean);
   }, [columnVisibility]);
 
+  const getCommonProps = (column: ChartColumn) => {
+    return {
+      key: column,
+      scaleBlocks,
+      depthMeasurementType,
+      isVisible: columnVisibility[column],
+    };
+  };
+
+  const columns: Record<ChartColumn, JSX.Element> = {
+    [ChartColumn.FORMATION]: (
+      <FormationColumn
+        key={ChartColumn.FORMATION}
+        {...formationsData}
+        scaleBlocks={scaleBlocks}
+        depthMeasurementType={depthMeasurementType}
+        isVisible={columnVisibility[ChartColumn.FORMATION]}
+      />
+    ),
+    [ChartColumn.DEPTH]: (
+      <DepthColumn
+        {...getCommonProps(ChartColumn.DEPTH)}
+        onChangeDepthMeasurementType={setDepthMeasurementType}
+      />
+    ),
+    [ChartColumn.CASINGS]: (
+      <CasingsColumn
+        {...casingsData}
+        {...getCommonProps(ChartColumn.CASINGS)}
+        holeSections={holeSectionsData.data}
+        mudWeightData={mudWeightData.data}
+        rkbLevel={rkbLevel}
+        wellWaterDepth={wellWaterDepth}
+        maxDepth={maxDepth}
+        onClickDetailsButton={() => setShowCasingsDetailView(true)}
+      />
+    ),
+    [ChartColumn.MEASUREMENTS]: (
+      <MeasurementsColumn
+        {...measurementsData}
+        {...getCommonProps(ChartColumn.MEASUREMENTS)}
+        measurementTypesSelection={measurementTypesSelection}
+        pressureUnit={pressureUnit}
+      />
+    ),
+    [ChartColumn.TRAJECTORY]: (
+      <TrajectoryColumn
+        {...trajectoryData}
+        {...getCommonProps(ChartColumn.TRAJECTORY)}
+        kickoffDepth={kickoffDepth.data}
+        curveColor={wellboreColor}
+        trajectoryCurveConfigs={trajectoryCurveConfigs}
+        inclinationAnnotationDepths={inclinationAnnotationDepths}
+      />
+    ),
+    [ChartColumn.NDS]: (
+      <NdsEventsColumn
+        {...ndsData}
+        {...getCommonProps(ChartColumn.NDS)}
+        ndsRiskTypesSelection={ndsRiskTypesSelection}
+        onClickDetailsButton={() => setShowNdsDetailView(true)}
+      />
+    ),
+    [ChartColumn.NPT]: (
+      <NptEventsColumn
+        {...nptData}
+        {...getCommonProps(ChartColumn.NPT)}
+        nptCodesSelecton={nptCodesSelecton}
+        onClickDetailsButton={() => setShowNptDetailView(true)}
+      />
+    ),
+    [ChartColumn.SUMMARY]: (
+      <SummaryColumn
+        {...getCommonProps(ChartColumn.SUMMARY)}
+        casingAssemblies={casingsData.data}
+        holeSections={holeSectionsData.data}
+        mudWeightData={mudWeightData.data}
+        nptEvents={nptData.data}
+        ndsEvents={ndsData.data}
+        summaryVisibility={summaryVisibility}
+      />
+    ),
+  };
+
   return (
     <>
       <NoUnmountShowHide show={isWellboreSelected}>
@@ -147,89 +232,9 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
               elementsOrder={columnOrderInternal}
               onRearranged={setColumnOrderInternal}
             >
-              <FormationColumn
-                key={ChartColumn.FORMATION}
-                {...formationsData}
-                scaleBlocks={scaleBlocks}
-                depthMeasurementType={depthMeasurementType}
-                isVisible={columnVisibility[ChartColumn.FORMATION]}
-              />
-
-              <DepthColumn
-                key={ChartColumn.DEPTH}
-                scaleBlocks={scaleBlocks}
-                depthMeasurementType={depthMeasurementType}
-                onChangeDepthMeasurementType={setDepthMeasurementType}
-                isVisible={isAnyColumnVisible}
-              />
-
-              <CasingsColumn
-                key={ChartColumn.CASINGS}
-                {...casingsData}
-                scaleBlocks={scaleBlocks}
-                holeSections={holeSectionsData.data}
-                mudWeightData={mudWeightData.data}
-                rkbLevel={rkbLevel}
-                wellWaterDepth={wellWaterDepth}
-                maxDepth={maxDepth}
-                depthMeasurementType={depthMeasurementType}
-                onClickDetailsButton={() => setShowCasingsDetailView(true)}
-                isVisible={columnVisibility[ChartColumn.CASINGS]}
-              />
-
-              <MeasurementsColumn
-                key={ChartColumn.MEASUREMENTS}
-                {...measurementsData}
-                scaleBlocks={scaleBlocks}
-                measurementTypesSelection={measurementTypesSelection}
-                depthMeasurementType={depthMeasurementType}
-                pressureUnit={pressureUnit}
-                isVisible={columnVisibility[ChartColumn.MEASUREMENTS]}
-              />
-
-              <TrajectoryColumn
-                key={ChartColumn.TRAJECTORY}
-                {...trajectoryData}
-                kickoffDepth={kickoffDepth.data}
-                scaleBlocks={scaleBlocks}
-                curveColor={wellboreColor}
-                depthMeasurementType={depthMeasurementType}
-                trajectoryCurveConfigs={trajectoryCurveConfigs}
-                inclinationAnnotationDepths={inclinationAnnotationDepths}
-                isVisible={columnVisibility[ChartColumn.TRAJECTORY]}
-              />
-
-              <NdsEventsColumn
-                key={ChartColumn.NDS}
-                {...ndsData}
-                scaleBlocks={scaleBlocks}
-                ndsRiskTypesSelection={ndsRiskTypesSelection}
-                depthMeasurementType={depthMeasurementType}
-                onClickDetailsButton={() => setShowNdsDetailView(true)}
-                isVisible={columnVisibility[ChartColumn.NDS]}
-              />
-
-              <NptEventsColumn
-                key={ChartColumn.NPT}
-                {...nptData}
-                scaleBlocks={scaleBlocks}
-                nptCodesSelecton={nptCodesSelecton}
-                depthMeasurementType={depthMeasurementType}
-                onClickDetailsButton={() => setShowNptDetailView(true)}
-                isVisible={columnVisibility[ChartColumn.NPT]}
-              />
-
-              <SummaryColumn
-                key={ChartColumn.SUMMARY}
-                casingAssemblies={casingsData.data}
-                holeSections={holeSectionsData.data}
-                mudWeightData={mudWeightData.data}
-                nptEvents={nptData.data}
-                ndsEvents={ndsData.data}
-                depthMeasurementType={depthMeasurementType}
-                summaryVisibility={summaryVisibility}
-                isVisible={columnVisibility[ChartColumn.SUMMARY]}
-              />
+              {DEFAULT_COLUMN_ORDER.map((column) => {
+                return columns[column];
+              })}
             </DragDropContainer>
           </ContentWrapper>
         </WellboreStickChartWrapper>

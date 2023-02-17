@@ -10,16 +10,16 @@ import { WithDragHandleProps } from 'components/DragDropContainer';
 import { MultiSelect } from 'components/Filters';
 import { PressureUnit } from 'constants/units';
 
-import { PRESSURE_UNITS } from '../../measurements/constants';
-import { FilterSubmenu } from '../components/FilterSubmenu';
-import { ChartColumn } from '../types';
-
+import { PRESSURE_UNITS } from '../../../measurements/constants';
+import { FilterSubmenu } from '../../components/FilterSubmenu';
+import { ChartColumn } from '../../types';
 import {
   DropDownIconStyler,
   FooterWrapper,
   MultiSelectIconWrapper,
   MultiSelectWrapper,
-} from './elements';
+} from '../elements';
+
 import { FilterItem } from './FilterItem';
 
 const MEASUREMENT_TYPES = [

@@ -1,34 +1,34 @@
-import { NdsRiskTypesSelection } from 'domain/wells/nds/internal/types';
+import { NptCodesSelection } from 'domain/wells/npt/internal/types';
 
 import React from 'react';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 
-import { NdsRiskTypesFilter } from '../../common/Events/NdsRiskTypesFilter';
-import { ChartColumn } from '../types';
+import { NptCodesFilter } from '../../../common/Events/NptCodesFilter';
+import { ChartColumn } from '../../types';
+import { DropDownIconStyler } from '../elements';
 
-import { DropDownIconStyler } from './elements';
 import { FilterItem } from './FilterItem';
 
-export interface NdsFilterProps {
+export interface NptFilterProps {
   options: MultiSelectCategorizedOptionMap;
-  onChange: (events: NdsRiskTypesSelection) => void;
+  onChange: (events: NptCodesSelection) => void;
   onFiterVisiblityChange: (column: ChartColumn, visibility: boolean) => void;
 }
 
-export const NdsFilterItem: React.FC<WithDragHandleProps<NdsFilterProps>> =
+export const NptFilterItem: React.FC<WithDragHandleProps<NptFilterProps>> =
   React.memo(
     ({ options, onChange, onFiterVisiblityChange, ...dragHandleProps }) => {
       return (
         <FilterItem
-          id="nds-filter"
-          column={ChartColumn.NDS}
+          id="npt-filter"
+          column={ChartColumn.NPT}
           onFiterVisiblityChange={onFiterVisiblityChange}
           {...dragHandleProps}
         >
           <DropDownIconStyler>
-            <NdsRiskTypesFilter
+            <NptCodesFilter
               options={options}
               onChange={onChange}
               iconInsteadText="Configure"

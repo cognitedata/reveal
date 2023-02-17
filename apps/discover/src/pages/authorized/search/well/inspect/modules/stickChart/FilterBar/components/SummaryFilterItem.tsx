@@ -8,13 +8,13 @@ import { WithDragHandleProps } from 'components/DragDropContainer';
 import { MultiSelect } from 'components/Filters';
 import { useDeepMemo } from 'hooks/useDeep';
 
-import { ChartColumn, SummarySection } from '../types';
-
+import { ChartColumn, SummarySection } from '../../types';
 import {
   DropDownIconStyler,
   MultiSelectIconWrapper,
   MultiSelectWrapper,
-} from './elements';
+} from '../elements';
+
 import { FilterItem } from './FilterItem';
 
 export interface SummaryFilterItemProps {

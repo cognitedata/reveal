@@ -18,7 +18,7 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 
 import { WellboreCasingsViewsWrapper } from './elements';
-import { FilterBar } from './filters';
+import { FilterBar } from './FilterBar';
 import { useMaxDepths } from './hooks/useMaxDepths';
 import { usePreserveHighlightedEvents } from './hooks/usePreserveHighlightedEvents';
 import { useUpdateHighlightedEventsUrlParams } from './hooks/useUpdateHighlightedEventsUrlParams';
