@@ -65,15 +65,6 @@ pods {
       }
 
       stage('Git setup') {
-          withCredentials([usernamePassword(credentialsId: 'githubapp', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
-            sh("git config --global credential.helper '!f() { sleep 1; echo \"username=${GH_USER}\"; echo \"password=${GITHUB_TOKEN}\"; }; f'")
-            if (isPullRequest) {
-              sh("git fetch origin ${env.CHANGE_TARGET}:refs/remotes/origin/${env.CHANGE_TARGET}")
-            } else {
-              // NOTE: I am suspecting that 'master' has to be changed with ${env.BRANCH_NAME} to work for release- branches
-              sh("git fetch origin master:refs/remotes/origin/master")
-            }
-          }
           // the apphosting container interacts with git when running npx commands.
           // since the git checkout is done in a different container,
           // the user permissions seem altered when git is executed from the node container,
@@ -108,16 +99,16 @@ pods {
 
               stageWithNotify("Build and deploy PR for: ${project}") {
                 def prefix = jenkinsHelpersUtil.determineRepoName();
-                def domain = 'fusion-preview'
+                def domain = "fusion-preview";
                 previewServer(
-                  repo: domain,
+                  buildCommand: 'yarn build',
+                  buildFolder: 'build',
                   prefix: prefix,
-                  buildCommand: "yarn build",
-                  buildFolder: "build",
+                  repo: domain
                 )
-                deleteComments(PR_COMMENT_MARKER)
-                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
-                pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${project}")
+                deleteComments("[FUSION_PREVIEW_URL]")
+                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+                pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
               }
             
           }
@@ -125,7 +116,6 @@ pods {
 
         'Release': {
           container('apphosting') {
-
             if (isPullRequest) {
               print 'No deployment on PR branch'
               return;
