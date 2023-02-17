@@ -31,11 +31,7 @@ export default function Cognite3DViewerDemo({
     return new Cognite3DViewer({
       sdk: client,
       domElement: canvasWrapperRef.current,
-      continuousModelStreaming: true,
-      loadingIndicatorStyle: {
-        placement: 'bottomRight',
-        opacity: 1,
-      },
+      antiAliasingHint: 'msaa4+fxaa'
     });
   }, [canvasWrapperRef, client]);
 
