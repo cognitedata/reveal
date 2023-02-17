@@ -55,9 +55,8 @@ export class Image360LoadingCache {
       }
       this._loaded360Images.unshift(entity);
     } catch (e) {
-      const error = e as Error;
-      if (e === 'Aborted' || error?.name === 'AbortError') {
-        Log.info('Abort Error: ', error.message);
+      if (signal.aborted) {
+        Log.warn('Abort warning: ', e);
       } else {
         Log.warn('Failed to load 360 image: ', e);
       }
