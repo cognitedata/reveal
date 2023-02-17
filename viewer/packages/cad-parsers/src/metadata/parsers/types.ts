@@ -39,6 +39,7 @@ export type SceneSectorMetadata = {
   readonly geometryBoundingBox?: BoundingBox;
 
   readonly sectorFileName: string | null;
+  readonly texturedFileName: string | null; // See Parsing README
   readonly maxDiagonalLength: number;
   readonly minDiagonalLength: number;
   readonly downloadSize: number;
