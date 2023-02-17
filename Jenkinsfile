@@ -2,15 +2,11 @@
 
 static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String APP_ID = 'cdf-data-sets'
-
-static final String APPLICATION_REPO_ID = 'cdf-ui-data-sets'
 static final String FIREBASE_APP_SITE = 'data-catalog'
 static final String FUSION_SUBAPP_NAME = '@cognite/cdf-data-sets'
 static final String NODE_VERSION = 'node:14'
-//static final String NODE_VERSION = 'node:14'
 
 static final String VERSIONING_STRATEGY = "single-branch"
-static final String STORYBOOK_COMMENT_MARKER = '[storybook-server]\n'
 
 final boolean isMaster = env.BRANCH_NAME == 'master'
 final boolean isRelease = env.BRANCH_NAME.startsWith('release-')
