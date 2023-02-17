@@ -4,6 +4,7 @@ static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String APP_ID = 'cdf-data-sets'
 
 static final String APPLICATION_REPO_ID = 'cdf-ui-data-sets'
+static final String FIREBASE_APP_SITE = 'data-catalog'
 static final String FUSION_SUBAPP_NAME = '@cognite/cdf-data-sets'
 static final String NODE_VERSION = 'node:14'
 //static final String NODE_VERSION = 'node:14'
@@ -135,6 +136,56 @@ pods {
                 pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${project}")
               }
             
+          }
+        },
+
+        'Release': {
+          container('apphosting') {
+            print "branch name: ${env.BRANCH_NAME}";
+            print "change id: ${env.CHANGE_ID}";
+            print "isMaster: ${isMaster}";
+            print "isRelease: ${isRelease}";
+
+            if (isPullRequest) {
+              print 'No deployment on PR branch'
+              return;
+            }
+
+            def project = APP_ID;
+            def firebaseSiteName = FIREBASE_APP_SITE;
+
+            // keeping for now, this is very common config that can be reused everywhere
+            final boolean isReleaseBranch = env.BRANCH_NAME.startsWith("release-${project}")
+            final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY == 'single-branch';
+            final boolean releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
+
+            // Run the yarn install in the app in cases of local packages.json file
+            if (fileExists("yarn.lock")) {
+              yarn.setup()
+            }
+
+            stageWithNotify("Publish production build: ${project}") {
+              appHosting(
+                appName: firebaseSiteName,
+                environment: releaseToProd ? 'production' : 'staging',
+                firebaseJson: 'build/firebase.json',
+                buildCommand: "yarn build",
+                buildFolder: 'build',
+              )
+
+              slack.send(
+                channel: SLACK_CHANNEL,
+                message: "Deployment of ${env.BRANCH_NAME} complete for: ${project}!"
+              )
+            }
+
+            stageWithNotify('Save missing keys to locize') {
+              sh("yarn save-missing")
+            }
+            stageWithNotify('Remove deleted keys from locize') {
+              sh("yarn remove-deleted")
+            }
+
           }
         }
        )

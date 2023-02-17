@@ -1,5 +1,6 @@
 const { override, useBabelRc } = require('customize-cra');
 const PrefixWrap = require('postcss-prefixwrap');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const { styleScope } = require('./src/styles/styleScope');
 
@@ -112,6 +113,10 @@ module.exports = {
     config.plugins = config.plugins.filter(
       (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
     );
+
+    config.plugins.push(new CopyPlugin({
+      patterns: ['./firebase.json'],
+    }));
 
     // Setting shared in-browser modules as webpack externals. This will
     // exclude these dependencies from the output bundle.
