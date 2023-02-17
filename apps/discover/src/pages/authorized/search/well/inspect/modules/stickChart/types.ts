@@ -1,6 +1,9 @@
 import { CasingAssemblyInternalWithTvd } from 'domain/wells/casings/internal/types';
 import { HoleSectionInternalWithTvd } from 'domain/wells/holeSections/internal/types';
-import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
+import {
+  DepthMeasurementWithData,
+  MeasurementTypeParent,
+} from 'domain/wells/measurements/internal/types';
 import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
 import { NptInternalWithTvd } from 'domain/wells/npt/internal/types';
 import { TrajectoryWithData } from 'domain/wells/trajectory/internal/types';
@@ -17,6 +20,8 @@ import {
 import { Distance } from 'convert-units';
 
 import { ProjectConfigWellsTrajectoryCharts } from '@cognite/discover-api-types';
+
+import { PressureUnit } from 'constants/units';
 
 import { EVENT_TYPES } from './WellboreStickChart/constants';
 
@@ -128,4 +133,12 @@ export type EventType = typeof EVENT_TYPES[number];
 export interface AnnotationDepths {
   measuredDepths: number[];
   trueVerticalDepths: number[];
+}
+export interface PressureData {
+  id: string;
+  depth: number;
+  value: number;
+  unit: PressureUnit;
+  measurementType: string;
+  measurementTypeParent: MeasurementTypeParent;
 }

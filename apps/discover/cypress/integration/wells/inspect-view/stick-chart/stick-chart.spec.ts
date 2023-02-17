@@ -151,18 +151,16 @@ describe('Wells: stick chart', () => {
     cy.findAllByText(SEE_GRAPH_BUTTON_TEXT).should('be.visible');
   });
 
-  it('Should be able to expand & collapse measurements chart', () => {
+  it('Should be able to see measurements chart', () => {
     cy.findAllByTestId('measurements-column').first().as('measurementsColumn');
 
-    cy.log('expand FIT LOT graph');
-    cy.get('@measurementsColumn').findByTestId('Expand').click();
-
-    cy.log('FIT LOT graph should visible');
-    cy.findByTestId('measurements-column-chart').should('be.visible');
-
-    cy.log('collapse FIT LOT graph');
-    cy.get('@measurementsColumn').findByTestId('Collapse').click();
-    cy.findByTestId('measurements-column-chart').should('not.exist');
+    ['FIT', 'LOT'].forEach((measurementTypeParent) => {
+      cy.log(`${measurementTypeParent} plots should be visible`);
+      cy.get('@measurementsColumn')
+        .findAllByTestId(`pressure-data-${measurementTypeParent}`)
+        .its('length')
+        .should('be.gte', 1);
+    });
   });
 
   it('Should be able to expand & collapse trajectory chart', () => {

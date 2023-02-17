@@ -187,6 +187,18 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 isVisible={columnVisibility[ChartColumn.MEASUREMENTS]}
               />
 
+              <TrajectoryColumn
+                key={ChartColumn.TRAJECTORY}
+                {...trajectoryData}
+                kickoffDepth={kickoffDepth.data}
+                scaleBlocks={scaleBlocks}
+                curveColor={wellboreColor}
+                depthMeasurementType={depthMeasurementType}
+                trajectoryCurveConfigs={trajectoryCurveConfigs}
+                inclinationAnnotationDepths={inclinationAnnotationDepths}
+                isVisible={columnVisibility[ChartColumn.TRAJECTORY]}
+              />
+
               <NdsEventsColumn
                 key={ChartColumn.NDS}
                 {...ndsData}
@@ -205,18 +217,6 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 depthMeasurementType={depthMeasurementType}
                 onClickDetailsButton={() => setShowNptDetailView(true)}
                 isVisible={columnVisibility[ChartColumn.NPT]}
-              />
-
-              <TrajectoryColumn
-                key={ChartColumn.TRAJECTORY}
-                {...trajectoryData}
-                kickoffDepth={kickoffDepth.data}
-                scaleBlocks={scaleBlocks}
-                curveColor={wellboreColor}
-                depthMeasurementType={depthMeasurementType}
-                trajectoryCurveConfigs={trajectoryCurveConfigs}
-                inclinationAnnotationDepths={inclinationAnnotationDepths}
-                isVisible={columnVisibility[ChartColumn.TRAJECTORY]}
               />
 
               <SummaryColumn

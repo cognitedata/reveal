@@ -1,4 +1,4 @@
-import { filterChartDataByMeasurementTypeParent } from 'domain/wells/measurements/internal/selectors/filterChartDataByMeasurementTypeParent';
+import { filterByMeasurementTypeParent } from 'domain/wells/measurements/internal/selectors/filterByMeasurementTypeParent';
 import { filterMdIndexedDepthMeasurements } from 'domain/wells/measurements/internal/selectors/filterMdIndexedDepthMeasurements';
 import { filterTvdIndexedDepthMeasurements } from 'domain/wells/measurements/internal/selectors/filterTvdIndexedDepthMeasurements';
 import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
@@ -13,16 +13,26 @@ import { WithDragHandleProps } from 'components/DragDropContainer';
 import { EMPTY_ARRAY } from 'constants/empty';
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
+import { FlexColumn } from 'styles/layout';
 
-import { PlotlyChartColumn } from '../../components/PlotlyChartColumn';
-import { ChartColumn, ColumnVisibilityProps } from '../../types';
-import { adaptMeasurementsDataToChart } from '../../utils/adaptMeasurementsDataToChart';
 import {
-  DEFAULT_CHART_WIDTH,
+  BodyColumnBody,
+  BodyColumnMainHeader,
+} from '../../../common/Events/elements';
+import { Column } from '../../components/Column';
+import { ColumnEmptyState } from '../../components/ColumnEmptyState';
+import { DepthScaleLines } from '../../components/DepthScaleLines';
+import { useScaledDepth } from '../../hooks/useScaledDepth';
+import { ChartColumn, ColumnVisibilityProps } from '../../types';
+import { adaptMeasurementDataToColumn } from '../../utils/adaptMeasurementDataToColumn';
+import {
   DEFAULT_PRESSURE_UNIT,
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
 } from '../constants';
+import { ColumnHeaderWrapper } from '../elements';
+
+import { PressureDataLabel } from './components/PressureDataLabel';
 
 export interface MeasurementsColumnProps extends ColumnVisibilityProps {
   data?: DepthMeasurementWithData[];
@@ -46,64 +56,94 @@ export const MeasurementsColumn: React.FC<
     isVisible = true,
     ...dragHandleProps
   }) => {
-    const chartDataMD = useDeepMemo(() => {
+    const isMdScale = depthMeasurementType === DepthMeasurementUnit.MD;
+
+    const getScaledDepth = useScaledDepth(scaleBlocks);
+
+    const dataMD = useDeepMemo(() => {
       const data = head(filterMdIndexedDepthMeasurements(allData));
 
       if (!data) {
         return EMPTY_ARRAY;
       }
 
-      return adaptMeasurementsDataToChart(data, pressureUnit);
+      return adaptMeasurementDataToColumn(data, pressureUnit);
     }, [allData, pressureUnit]);
 
-    const chartDataTVD = useDeepMemo(() => {
+    const dataTVD = useDeepMemo(() => {
       const data = head(filterTvdIndexedDepthMeasurements(allData));
 
       if (!data) {
         return EMPTY_ARRAY;
       }
 
-      return adaptMeasurementsDataToChart(data, pressureUnit);
+      return adaptMeasurementDataToColumn(data, pressureUnit);
     }, [allData, pressureUnit]);
 
-    const chartData =
-      depthMeasurementType === DepthMeasurementUnit.MD
-        ? chartDataMD
-        : chartDataTVD;
+    const data = isMdScale ? dataMD : dataTVD;
 
-    const filteredChartData = useDeepMemo(() => {
+    const filteredData = useDeepMemo(() => {
       if (!measurementTypesSelection) {
-        return chartData;
+        return data;
       }
-      return filterChartDataByMeasurementTypeParent(
-        chartData,
-        measurementTypesSelection
-      );
-    }, [chartData, measurementTypesSelection]);
+      return filterByMeasurementTypeParent(data, measurementTypesSelection);
+    }, [data, measurementTypesSelection]);
 
     const getEmptySubtitle = () => {
       if (measurementTypesSelection && isEmpty(measurementTypesSelection)) {
         return NO_OPTIONS_SELECTED_TEXT;
       }
-      if (!isEmpty(allData) && isEmpty(filteredChartData)) {
+      if (!isEmpty(allData) && isEmpty(filteredData)) {
         return NO_DATA_AMONG_SELECTED_OPTIONS_TEXT;
       }
       return undefined;
     };
 
+    const renderContent = () => {
+      if (isEmpty(filteredData) || isLoading) {
+        return (
+          <ColumnEmptyState
+            isLoading={isLoading}
+            emptySubtitle={getEmptySubtitle()}
+          />
+        );
+      }
+
+      return (
+        <BodyColumnBody>
+          <DepthScaleLines scaleBlocks={scaleBlocks} />
+
+          <FlexColumn>
+            {filteredData.map((pressureData) => {
+              const { id, depth } = pressureData;
+
+              return (
+                <PressureDataLabel
+                  key={id}
+                  data={pressureData}
+                  scaledDepth={getScaledDepth(depth)}
+                />
+              );
+            })}
+          </FlexColumn>
+        </BodyColumnBody>
+      );
+    };
+
     return (
-      <PlotlyChartColumn
+      <Column
         id="measurements-column"
         isVisible={isVisible}
-        data={filteredChartData}
-        isLoading={isLoading}
-        columnHeader={ChartColumn.MEASUREMENTS}
-        axisNames={{ x: pressureUnit }}
-        scaleBlocks={scaleBlocks}
-        emptySubtitle={getEmptySubtitle()}
-        chartWidth={DEFAULT_CHART_WIDTH / 2}
         {...dragHandleProps}
-      />
+      >
+        <ColumnHeaderWrapper>
+          <BodyColumnMainHeader>
+            {ChartColumn.MEASUREMENTS}
+          </BodyColumnMainHeader>
+        </ColumnHeaderWrapper>
+
+        {renderContent()}
+      </Column>
     );
   }
 );

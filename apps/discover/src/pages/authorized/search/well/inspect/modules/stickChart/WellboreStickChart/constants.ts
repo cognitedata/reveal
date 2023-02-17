@@ -50,9 +50,9 @@ export const DEFAULT_COLUMN_ORDER = [
   ChartColumn.DEPTH,
   ChartColumn.CASINGS,
   ChartColumn.MEASUREMENTS,
+  ChartColumn.TRAJECTORY,
   ChartColumn.NDS,
   ChartColumn.NPT,
-  ChartColumn.TRAJECTORY,
   ChartColumn.SUMMARY,
 ];
 

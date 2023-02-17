@@ -8,16 +8,15 @@ import isEmpty from 'lodash/isEmpty';
 import noop from 'lodash/noop';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
-import EmptyState from 'components/EmptyState';
 import { DepthMeasurementUnit } from 'constants/units';
 import { FullWidth } from 'styles/layout';
 
 import {
   BodyColumnBody,
   BodyColumnMainHeader,
-  EmptyStateWrapper,
 } from '../../../common/Events/elements';
 import { Column } from '../../components/Column';
+import { ColumnEmptyState } from '../../components/ColumnEmptyState';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { DepthScaleLines } from '../../components/DepthScaleLines';
 import { DetailPageOption } from '../../components/DetailPageOption';
@@ -27,7 +26,6 @@ import {
   ChartColumn,
   HoleSectionView,
 } from '../../types';
-import { LOADING_TEXT, NO_DATA_TEXT } from '../constants';
 import { ColumnHeaderWrapper } from '../elements';
 import { HoleSectionsColumn } from '../HoleSectionsColumn';
 
@@ -70,16 +68,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
     }) => {
       const renderCasingsColumnContent = () => {
         if (isLoading || !data || isEmpty(data)) {
-          return (
-            <EmptyStateWrapper>
-              <EmptyState
-                isLoading={isLoading}
-                loadingSubtitle={isLoading ? LOADING_TEXT : ''}
-                emptySubtitle={NO_DATA_TEXT}
-                hideHeading
-              />
-            </EmptyStateWrapper>
-          );
+          return <ColumnEmptyState isLoading={isLoading} />;
         }
 
         return (

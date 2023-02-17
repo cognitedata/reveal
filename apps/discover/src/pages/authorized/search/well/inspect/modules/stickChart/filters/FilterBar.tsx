@@ -98,6 +98,12 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
             onPressureUnitChange={onPressureUnitChange}
           />
 
+          <FilterItem
+            key={ChartColumn.TRAJECTORY}
+            column={ChartColumn.TRAJECTORY}
+            onFiterVisiblityChange={onColumnVisibilityChange}
+          />
+
           <NdsFilterItem
             key={ChartColumn.NDS}
             options={ndsFilterOptions}
@@ -109,12 +115,6 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
             key={ChartColumn.NPT}
             options={nptFilterOptions}
             onChange={onNptCodesChange}
-            onFiterVisiblityChange={onColumnVisibilityChange}
-          />
-
-          <FilterItem
-            key={ChartColumn.TRAJECTORY}
-            column={ChartColumn.TRAJECTORY}
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
 
