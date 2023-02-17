@@ -5,7 +5,7 @@ static final String APP_ID = 'cdf-data-sets'
 
 static final String APPLICATION_REPO_ID = 'cdf-ui-data-sets'
 static final String FUSION_SUBAPP_NAME = '@cognite/cdf-data-sets'
-static final String NODE_VERSION = 'node:18'
+static final String NODE_VERSION = 'node:14'
 //static final String NODE_VERSION = 'node:14'
 
 static final String VERSIONING_STRATEGY = "single-branch"
