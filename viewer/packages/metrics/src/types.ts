@@ -12,6 +12,10 @@ export type TrackedEvents =
   | 'toolCreated'
   | 'cadModelStyleAssigned'
   | 'cadNodeTransformOverridden'
+  | '360ImageCollectionAdded'
+  | '360ImageEntered'
+  | '360ImageTransitioned'
+  | '360ImageExited'
   | 'measurementAdded';
 
 export type EventProps = {
