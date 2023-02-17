@@ -44,10 +44,13 @@ export class Image360LoadingCache {
     }
 
     const { signal, abort } = this.createAbortSignal();
-    const load360Image = entity.load360Image(signal);
-    this._inFlightEntities.set(entity, { load360Image, abort });
-
     try {
+      const load360Image = entity.load360Image(signal).catch(e => {
+        Log.info('Request aborted prior to fetch initiation: ' + e);
+        return Promise.reject();
+      });
+      this._inFlightEntities.set(entity, { load360Image, abort });
+
       await load360Image;
 
       if (this._loaded360Images.length === this._imageCacheSize) {
@@ -56,9 +59,9 @@ export class Image360LoadingCache {
       this._loaded360Images.unshift(entity);
     } catch (e) {
       if (signal.aborted) {
-        Log.warn('Abort warning: ', e);
+        Log.info('Abort warning: ' + e);
       } else {
-        Log.warn('Failed to load 360 image: ', e);
+        Log.error('Failed to load 360 image: ' + e);
       }
       return Promise.resolve();
     } finally {
@@ -68,7 +71,7 @@ export class Image360LoadingCache {
 
   public async purge(entity: Image360Entity): Promise<void> {
     if (this._inFlightEntities.has(entity)) {
-      await this._inFlightEntities.get(entity);
+      await this._inFlightEntities.get(entity)?.load360Image;
     }
     pull(this._loaded360Images, entity);
   }

@@ -59,7 +59,7 @@ export class Image360Facade<T> {
   }
 
   public preload(entity: Image360Entity): Promise<void> {
-    return this._image360Cache.cachedPreload(entity);
+    return this._image360Cache.cachedPreload(entity).catch(() => Promise.resolve());
   }
 
   public intersect(
