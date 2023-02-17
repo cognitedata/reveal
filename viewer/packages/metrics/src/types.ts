@@ -8,6 +8,7 @@ export type TrackedEvents =
   | 'loadModel'
   | 'error'
   | 'cameraNavigated'
+  | 'averageFramerate'
   | 'toolCreated'
   | 'cadModelStyleAssigned'
   | 'cadNodeTransformOverridden'

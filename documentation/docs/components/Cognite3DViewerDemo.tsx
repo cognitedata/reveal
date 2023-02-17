@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   AddModelOptions,
   Cognite3DViewer,
@@ -23,31 +23,38 @@ export default function Cognite3DViewerDemo({
 }: DemoProps & OwnProps) {
   const canvasWrapperRef = useRef(null);
 
-  useEffect(() => {
-    if (!client || !canvasWrapperRef.current) {
+  const viewer = useMemo(() => {
+    if (!canvasWrapperRef.current) {
       return;
     }
 
-    // Prepare viewer
-    const viewer = new Cognite3DViewer({
+    return new Cognite3DViewer({
       sdk: client,
       domElement: canvasWrapperRef.current,
-      antiAliasingHint: 'msaa4+fxaa'
+      continuousModelStreaming: true,
+      loadingIndicatorStyle: {
+        placement: 'bottomRight',
+        opacity: 1,
+      },
     });
+  }, [canvasWrapperRef, client]);
 
-    async function addModel(options: AddModelOptions) {
-      const model = await viewer.addModel(options);
-      viewer.loadCameraFromModel(model);
-      window.model = model;
+  useEffect(() => {
+    if (!viewer) {
+      return;
     }
 
-    addModel({ modelId, revisionId });
+    viewer.addModel({ modelId, revisionId }).then((model) => {
+      viewer.loadCameraFromModel(model);
+    });
 
-    window.viewer = viewer;
+    (window as any).viewer = viewer;
+
     return () => {
-      viewer && viewer.dispose();
+      viewer.dispose();
+      (window as any).viewer = null;
     };
-  }, [client]);
+  }, [viewer]);
 
   return <CanvasWrapper ref={canvasWrapperRef} />;
 }
