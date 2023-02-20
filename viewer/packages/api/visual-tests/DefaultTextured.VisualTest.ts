@@ -7,7 +7,6 @@ import {
   ViewerVisualTestFixture
 } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
-// Sanity test for loading point cloud model
 export default class DefaultTexturedVisualTest extends ViewerVisualTestFixture {
   constructor() {
     super('textured');
