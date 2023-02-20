@@ -1,4 +1,12 @@
-import { Flex, Body, Dropdown, Icon, Menu, Chip } from '@cognite/cogs.js';
+import {
+  Flex,
+  Body,
+  Dropdown,
+  Icon,
+  Menu,
+  Chip,
+  Tooltip,
+} from '@cognite/cogs.js';
 import {
   DataModelVersion,
   DataModelVersionStatus,
@@ -56,7 +64,7 @@ export function SchemaVersionDropdown({
           <Menu
             style={{
               maxHeight: 192,
-              width: 300,
+              minWidth: 300,
               overflow: 'auto',
               display: 'block',
             }}
@@ -74,11 +82,24 @@ export function SchemaVersionDropdown({
                   setOpen(false);
                 }}
               >
-                <Flex alignItems="center" style={{ flex: '1 1 100px' }}>
-                  <Body
-                    level={2}
-                    style={{ marginRight: 16, textAlign: 'left' }}
-                  >{`v. ${schemaObj.version}`}</Body>
+                <Flex alignItems="center">
+                  <Tooltip
+                    disabled={schemaObj.version.length < 12}
+                    content={`v. ${schemaObj.version}`}
+                  >
+                    <Body
+                      level={2}
+                      style={{
+                        marginRight: 8,
+                        textAlign: 'left',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        maxWidth: 100,
+                      }}
+                    >
+                      {`v. ${schemaObj.version}`}
+                    </Body>
+                  </Tooltip>
                   {dateUtils.isValid(schemaObj.lastUpdatedTime as number) ? (
                     <LastTimeText level={2}>
                       {dateUtils.toTimeDiffString(
@@ -86,11 +107,11 @@ export function SchemaVersionDropdown({
                       )}
                     </LastTimeText>
                   ) : null}
+                  <VersionType
+                    status={schemaObj.status}
+                    isLatest={schemaObj.version === latest.version}
+                  />
                 </Flex>
-                <VersionType
-                  status={schemaObj.status}
-                  isLatest={schemaObj.version === latest.version}
-                />
               </Menu.Item>
             ))}
           </Menu>
@@ -106,14 +127,23 @@ export function SchemaVersionDropdown({
             alignItems="center"
             style={{ width: '100%' }}
           >
-            <Body level="2"> v. {selectedVersion.version}</Body>
+            <Body
+              level="2"
+              style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}
+            >
+              v. {selectedVersion.version}
+            </Body>
             <Flex alignItems="center" style={{ margin: '0 10px' }}>
               <VersionType
                 status={selectedVersion.status}
                 isLatest={selectedVersion.version === latest.version}
               />
             </Flex>
-            <Icon type="ChevronDown" />
+            {/* Ideally we would put the flexShrink style directly on the Icon but
+            typescript complains that Icon doesn't have a style prop. */}
+            <Flex alignItems="center" style={{ flexShrink: 0 }}>
+              <Icon type="ChevronDown" />
+            </Flex>
           </Flex>
         </DropdownButton>
       </Dropdown>

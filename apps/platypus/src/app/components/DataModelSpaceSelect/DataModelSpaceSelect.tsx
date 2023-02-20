@@ -119,6 +119,7 @@ export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
               ) as unknown as HTMLButtonElement)
             : undefined
         }
+        menuPortalTarget={document.body}
       />
       {!props.isDisabled && (
         <InputDetail>

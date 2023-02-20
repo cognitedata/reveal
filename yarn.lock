@@ -1715,44 +1715,6 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@9.5.2":
-  version "9.5.2"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.5.2.tgz#628700e342bac74abaace1c3e5abc5effec95c89"
-  integrity sha512-yjimas8KPTiYPKlc0TLe+ytBi8tXBsxmokVcv0wTCFuKZ2jZPkUfDKCAhoWkT5bujtVF6sj8JOFyf9EVY5X1RA==
-  dependencies:
-    "@emotion/react" "11.10.5"
-    "@emotion/styled" "11.10.5"
-    "@mui/base" "5.0.0-alpha.97"
-    "@mui/joy" "5.0.0-alpha.41"
-    "@mui/material" "5.9.2"
-    "@notionhq/client" "2.2.2"
-    "@react-hook/resize-observer" "1.2.6"
-    "@tippyjs/react" "4.2.6"
-    "@types/react-date-range" "1.4.4"
-    axios "0.21.4"
-    classnames "2.3.2"
-    color "3.1.2"
-    csstype "2.6.10"
-    dayjs "1.9.7"
-    deepdash "5.3.9"
-    dotenv-flow "3.2.0"
-    focus-visible "5.1.0"
-    framer-motion "6.5.1"
-    fuse.js "6.6.2"
-    match-sorter "6.3.1"
-    prompts "2.4.2"
-    rc-collapse "1.11.8"
-    rc-drawer "4.1.0"
-    rc-slider "9.5.4"
-    rc-tabs "11.16.1"
-    react-date-range "1.4.0"
-    react-select "3.2.0"
-    react-table "7.6.0"
-    react-toastify "6.0.9"
-    resize-observer-polyfill "1.5.1"
-    tippy.js "6.2.0"
-    ts-dedent "2.2.0"
-
 "@cognite/cogs.js@^7.14.7":
   version "7.19.1"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.19.1.tgz#32f1d2e0aabf6d95eb12dc22d66810f3995f36bf"
@@ -1785,6 +1747,44 @@
     resize-observer-polyfill "^1.5.1"
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
+
+"@cognite/cogs.js@^9.7.1":
+  version "9.7.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.7.1.tgz#1d50f5df47690c20db499069432a374c3073f377"
+  integrity sha512-iTOH8iDWUbiOVafMcZK/T3mNUGNnCdh2R3aPoUq3giEMtpeNLztL8y58KZjBtH5zhVPb6LW+lNXZmbeLaIOo5w==
+  dependencies:
+    "@emotion/react" "11.10.5"
+    "@emotion/styled" "11.10.5"
+    "@mui/base" "5.0.0-alpha.97"
+    "@mui/joy" "5.0.0-alpha.41"
+    "@mui/material" "5.9.2"
+    "@notionhq/client" "2.2.3"
+    "@react-hook/resize-observer" "1.2.6"
+    "@tippyjs/react" "4.2.6"
+    "@types/react-date-range" "1.4.4"
+    axios "0.21.4"
+    classnames "2.3.2"
+    color "3.1.2"
+    csstype "2.6.10"
+    dayjs "1.9.7"
+    deepdash "5.3.9"
+    dotenv-flow "3.2.0"
+    focus-visible "5.1.0"
+    framer-motion "6.5.1"
+    fuse.js "6.6.2"
+    match-sorter "6.3.1"
+    prompts "2.4.2"
+    rc-collapse "1.11.8"
+    rc-drawer "4.1.0"
+    rc-slider "9.5.4"
+    rc-tabs "11.16.1"
+    react-date-range "1.4.0"
+    react-select "3.2.0"
+    react-table "7.6.0"
+    react-toastify "6.0.9"
+    resize-observer-polyfill "1.5.1"
+    tippy.js "6.2.0"
+    ts-dedent "2.2.0"
 
 "@cognite/eslint-config@^3.2.0":
   version "3.2.0"
@@ -4021,10 +4021,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@notionhq/client@2.2.2":
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/@notionhq/client/-/client-2.2.2.tgz#621eab5788fd1aca67d53454871bbf4122e651ba"
-  integrity sha512-L7TB+UyhnWTSv1ek7xzGr9+mS9o76qMKnZ8Ag8H2q6QgvywAiPOFcE3ulWI/1AnMewGVRqwb30agPHMVRY/K/w==
+"@notionhq/client@2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@notionhq/client/-/client-2.2.3.tgz#b8563994fd116123b0b2e39fca43a593faaf8360"
+  integrity sha512-ZqUzY0iRg/LIrwS+wzz/6osSB2nxIpmqdAtdUwzpcimc9Jlu1j85FeYdaU26Shr193CFrl2TLFeKqpk/APRQ4g==
   dependencies:
     "@types/node-fetch" "^2.5.10"
     node-fetch "^2.6.1"
