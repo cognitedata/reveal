@@ -6,7 +6,7 @@ import {
   ResourceItem,
   getTitle,
 } from '@cognite/data-exploration';
-import { Colors, Tabs, TabsProps, Chip } from '@cognite/cogs.js';
+import { Colors, Tabs, TabProps } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
 import { RelatedResources } from '@data-exploration-app/containers/ResourceDetails/RelatedResources/RelatedResources';
@@ -18,7 +18,7 @@ import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };
   tab: string;
-  additionalTabs?: React.ReactElement<TabsProps>[];
+  additionalTabs?: React.ReactElement<TabProps>[];
   excludedTypes?: ResourceType[];
   onTabChange: (tab: string) => void;
   style?: React.CSSProperties;
@@ -102,6 +102,7 @@ export const ResourceDetailsTabs = ({
   const relationshipTabs = filteredTabs.map((key) => (
     <Tabs.Tab
       tabKey={key}
+      key={key}
       label={getTitle(key)}
       chipRight={{
         label: addPlusSignToCount(
@@ -129,16 +130,6 @@ export const ResourceDetailsTabs = ({
 const StyledTabs = styled(Tabs)`
   flex: 1;
   height: 100%;
-
-  .rc-tabs-nav-wrap {
-    border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
-  }
-  .rc-tabs-content-holder {
-    display: flex;
-    /* We need to consider the height of the tab switcher part at the top which is 48px in height */
-    height: calc(100% - 48px);
-    overflow: auto;
-  }
 `;
 
 export const TabTitle = styled.span``;

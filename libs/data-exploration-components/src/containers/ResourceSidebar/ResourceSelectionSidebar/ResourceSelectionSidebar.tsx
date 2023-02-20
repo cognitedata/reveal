@@ -132,13 +132,15 @@ export const ResourceSelectionSidebar = ({
               onClick={() => onClose(false)}
             />
             {header}
-            <ResourceTypeTabs
-              currentResourceType={activeKey}
-              setCurrentResourceType={(tab) =>
-                setActiveKey(tab as ResourceType)
-              }
-              resourceTypes={resourceTypes}
-            />
+            <div>
+              <ResourceTypeTabs
+                currentResourceType={activeKey}
+                setCurrentResourceType={(tab) =>
+                  setActiveKey(tab as ResourceType)
+                }
+                resourceTypes={resourceTypes}
+              />
+            </div>
             <Wrapper>
               <SearchFilters
                 assetFilter={assetFilter}

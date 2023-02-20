@@ -43,8 +43,4 @@ const AppWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-
-  .cogs-tabs__list__tab {
-    padding: 12px 4px !important;
-  }
 `;

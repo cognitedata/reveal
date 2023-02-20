@@ -160,7 +160,7 @@ export const FilePreview = ({
         tab={activeTab}
         onTabChange={onTabChange}
         additionalTabs={[
-          <Tabs.Tab label="Preview" tabKey="preview">
+          <Tabs.Tab label="Preview" key="preview" tabKey="preview">
             <PreviewTabWrapper>
               {editMode && (
                 <Banner>
@@ -185,7 +185,7 @@ export const FilePreview = ({
               />
             </PreviewTabWrapper>
           </Tabs.Tab>,
-          <Tabs.Tab label="Details" tabKey="info">
+          <Tabs.Tab label="Details" key="info" tabKey="info">
             <DetailsTabWrapper>
               <FileDetails file={fileInfo} />
               <Metadata metadata={fileInfo.metadata} />

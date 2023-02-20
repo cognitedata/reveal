@@ -1,4 +1,4 @@
-import { A, Body, Button, Icon } from '@cognite/cogs.js';
+import { Body, Button, Icon, Link } from '@cognite/cogs.js';
 import { ResourceIcons } from '@data-exploration-components/components/index';
 import { ResourceType } from '@cognite/data-exploration';
 import React from 'react';
@@ -47,17 +47,16 @@ const ReviewTagBar = ({
     <StyledTag>
       {getExtendedAnnotationLabel(annotation) || 'N/A'}{' '}
       {getResourceIdFromExtendedAnnotation(annotation) ? (
-        <A
+        <Link
           href={createLink(
             `/explore/${getResourceTypeFromExtendedAnnotation(
               annotation
             )}/${getResourceIdFromExtendedAnnotation(annotation)}`
           )}
           target="_blank"
-          rel="noopener"
         >
           <StyledIcon type="ArrowUpRight" />
-        </A>
+        </Link>
       ) : undefined}
     </StyledTag>
 

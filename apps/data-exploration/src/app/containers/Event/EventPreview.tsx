@@ -103,7 +103,7 @@ export const EventPreview = ({
         tab={activeTab}
         onTabChange={onTabChange}
         additionalTabs={[
-          <Tabs.Tab label="Details" tabKey="details">
+          <Tabs.Tab key="details" label="Details" tabKey="details">
             <DetailsTabWrapper>
               <EventDetails event={event} />
               <Metadata metadata={event.metadata} />

@@ -12,9 +12,9 @@ import {
   Chip,
   Colors,
   Body,
-  A,
   Flex,
   Collapse,
+  Link,
 } from '@cognite/cogs.js';
 
 import {
@@ -189,13 +189,12 @@ export const AssetSmallPreview = ({
         <InfoCell noPadding noBorders>
           <AssetTitle level={5}>
             <ResourceIcons.Asset />
-            <A
+            <Link
               href={createLink(`/explore/asset/${assetId}`)}
               target="_blank"
-              rel="noopener"
             >
               <AssetNameLabel>{asset.name}→</AssetNameLabel>
-            </A>
+            </Link>
           </AssetTitle>
         </InfoCell>
       )}

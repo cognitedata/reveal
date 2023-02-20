@@ -102,10 +102,10 @@ export const SequencePreview = ({
         tab={activeTab}
         onTabChange={onTabChange}
         additionalTabs={[
-          <Tabs.Tab label="Preview" tabKey="preview">
+          <Tabs.Tab label="Preview" tabKey="preview" key="preview">
             <SequenceTabPreview sequence={sequence} />
           </Tabs.Tab>,
-          <Tabs.Tab label="Details" tabKey="details">
+          <Tabs.Tab label="Details" tabKey="details" key="details">
             <DetailsTabWrapper>
               <SequenceDetails sequence={sequence} />
               <Metadata metadata={sequence.metadata} />
