@@ -6,22 +6,28 @@ import { ConsumedSector, LevelOfDetail, WantedSector } from '@reveal/cad-parsers
 import { Log } from '@reveal/logger';
 import { DeferredPromise } from '@reveal/utilities';
 import assert from 'assert';
+import remove from 'lodash/remove';
+
+type DownloadRequest = {
+  consumedSector: Promise<ConsumedSector>;
+  abort: () => void;
+};
 
 export type SectorDownloadData = {
   sector: WantedSector;
-  downloadSector: (sector: WantedSector) => Promise<ConsumedSector>;
+  downloadSector: (sector: WantedSector, abortSignal: AbortSignal) => Promise<ConsumedSector>;
 };
 
 type QueuedSectorData = {
   sector: WantedSector;
-  downloadSector: (sector: WantedSector) => Promise<ConsumedSector>;
+  downloadSector: (sector: WantedSector, abortSignal: AbortSignal) => Promise<ConsumedSector>;
   queuedDeferredPromise: DeferredPromise<ConsumedSector>;
 };
 
 export class SectorDownloadScheduler {
   private readonly _maxConcurrentSectorDownloads: number;
 
-  private readonly _pendingSectorDownloads: Map<string, Promise<ConsumedSector>>;
+  private readonly _pendingSectorDownloads: Map<string, DownloadRequest>;
   private readonly _queuedSectorDownloads: Map<string, QueuedSectorData>;
   private readonly _sectorDownloadQueue: string[];
 
@@ -44,10 +50,21 @@ export class SectorDownloadScheduler {
     return downloadData.map(sectorDownloadData => {
       const { sector, downloadSector } = sectorDownloadData;
       const sectorIdentifier = this.getSectorIdentifier(sector.modelIdentifier, sector.metadata.id);
-      const pendingSector = this._pendingSectorDownloads.get(sectorIdentifier);
 
+      if (sector.levelOfDetail === LevelOfDetail.Discarded) {
+        const abortedSector = this.abortPendingDownload(sectorIdentifier);
+        if (abortedSector) {
+          return abortedSector;
+        }
+        const deletedSector = this.removeDownloadFromQueue(sector, sectorIdentifier);
+        if (deletedSector) {
+          return deletedSector;
+        }
+      }
+
+      const pendingSector = this._pendingSectorDownloads.get(sectorIdentifier);
       if (pendingSector !== undefined) {
-        return pendingSector;
+        return pendingSector.consumedSector;
       }
 
       if (this._pendingSectorDownloads.size < this._maxConcurrentSectorDownloads) {
@@ -58,10 +75,43 @@ export class SectorDownloadScheduler {
     });
   }
 
+  private createDiscardedConsumedSector(sector: WantedSector): ConsumedSector {
+    return {
+      modelIdentifier: sector.modelIdentifier,
+      metadata: sector.metadata,
+      levelOfDetail: LevelOfDetail.Discarded,
+      group: undefined,
+      instancedMeshes: undefined
+    };
+  }
+
+  private abortPendingDownload(sectorIdentifier: string) {
+    const pendingSector = this._pendingSectorDownloads.get(sectorIdentifier);
+    if (pendingSector !== undefined) {
+      pendingSector.abort();
+      return pendingSector.consumedSector;
+    }
+    return undefined;
+  }
+
+  private removeDownloadFromQueue(sector: WantedSector, sectorIdentifier: string) {
+    const queuedSector = this._queuedSectorDownloads.get(sectorIdentifier);
+    if (queuedSector !== undefined) {
+      remove(this._sectorDownloadQueue, sectorQueueIdentifier => {
+        return sectorQueueIdentifier === sectorIdentifier;
+      });
+      this._queuedSectorDownloads.delete(sectorIdentifier);
+      queuedSector.queuedDeferredPromise.resolve(this.createDiscardedConsumedSector(sector));
+
+      return queuedSector.queuedDeferredPromise;
+    }
+    return undefined;
+  }
+
   private getOrAddToQueuedDownloads(
     sector: WantedSector,
     sectorIdentifier: string,
-    downloadSector: (sector: WantedSector) => Promise<ConsumedSector>
+    downloadSector: (sector: WantedSector, signal: AbortSignal) => Promise<ConsumedSector>
   ): Promise<ConsumedSector> {
     const queuedSector = this._queuedSectorDownloads.get(sectorIdentifier);
 
@@ -82,21 +132,16 @@ export class SectorDownloadScheduler {
   }
 
   private addSectorToPendingDownloads(
-    downloadSector: (sector: WantedSector) => Promise<ConsumedSector>,
+    downloadSector: (sector: WantedSector, signal: AbortSignal) => Promise<ConsumedSector>,
     sector: WantedSector,
     sectorIdentifier: string
-  ) {
-    const sectorDownload = downloadSector(sector).catch(error => {
+  ): Promise<ConsumedSector> {
+    const { abortSignal, abort } = this.createAbortSignal();
+    const sectorDownload = downloadSector(sector, abortSignal).catch(error => {
       Log.error('Failed to load sector', sector, 'error:', error);
-      return {
-        modelIdentifier: sector.modelIdentifier,
-        metadata: sector.metadata,
-        levelOfDetail: LevelOfDetail.Discarded,
-        group: undefined,
-        instancedMeshes: undefined
-      } as ConsumedSector;
+      return this.createDiscardedConsumedSector(sector);
     });
-    this._pendingSectorDownloads.set(sectorIdentifier, sectorDownload);
+    this._pendingSectorDownloads.set(sectorIdentifier, { consumedSector: sectorDownload, abort });
     this.processNextQueuedSectorDownload(sectorDownload, sectorIdentifier);
     return sectorDownload;
   }
@@ -118,8 +163,9 @@ export class SectorDownloadScheduler {
 
       const { sector, downloadSector, queuedDeferredPromise } = queuedSector;
 
-      const sectorDownload = downloadSector(sector);
-      this._pendingSectorDownloads.set(nextSectorIdentifier, sectorDownload);
+      const { abortSignal, abort } = this.createAbortSignal();
+      const sectorDownload = downloadSector(sector, abortSignal);
+      this._pendingSectorDownloads.set(nextSectorIdentifier, { consumedSector: sectorDownload, abort });
       sectorDownload.then(consumedSector => {
         queuedDeferredPromise.resolve(consumedSector);
       });
@@ -130,5 +176,13 @@ export class SectorDownloadScheduler {
 
   private getSectorIdentifier(modelIdentifer: string, sectorId: number): string {
     return `${sectorId}-${modelIdentifer}`;
+  }
+
+  private createAbortSignal() {
+    const abortController = new AbortController();
+    const abort = () => {
+      abortController.abort();
+    };
+    return { abortSignal: abortController.signal, abort };
   }
 }
