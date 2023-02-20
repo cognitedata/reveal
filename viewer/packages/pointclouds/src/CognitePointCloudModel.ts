@@ -258,8 +258,8 @@ export class CognitePointCloudModel {
   /**
    * Get the clipping planes for this model.
    */
-  getModelClippingPlanes(): Readonly<THREE.Plane[]> {
-    return this.pointCloudNode.clippingPlanes;
+  getModelClippingPlanes(): THREE.Plane[] {
+    return [...this.pointCloudNode.clippingPlanes];
   }
 
   /**

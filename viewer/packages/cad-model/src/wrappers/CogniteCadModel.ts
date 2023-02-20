@@ -346,8 +346,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   /**
    * Get the clipping planes for this model.
    */
-  getModelClippingPlanes(): Readonly<THREE.Plane[]> {
-    return this.cadNode.clippingPlanes;
+  getModelClippingPlanes(): THREE.Plane[] {
+    return [...this.cadNode.clippingPlanes];
   }
 
   /**
