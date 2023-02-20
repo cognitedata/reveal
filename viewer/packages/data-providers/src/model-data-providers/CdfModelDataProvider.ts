@@ -16,14 +16,21 @@ export class CdfModelDataProvider implements ModelDataProvider {
     this.authenticationPromise = client.authenticate();
   }
 
-  public async getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer> {
+  public async getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer> {
     const url = `${baseUrl}/${fileName}`;
     const headers = {
       ...this.client.getDefaultRequestHeaders(),
       Accept: '*/*'
     };
 
-    const response = await this.fetchWithRetry(url, { headers, method: 'GET' }).catch(_err => {
+    const response = await this.fetchWithRetry(url, {
+      headers,
+      signal: abortSignal,
+      method: 'GET'
+    }).catch(e => {
+      if (e?.name === 'AbortError') {
+        throw e;
+      }
       throw Error('Could not download binary file');
     });
     return response.arrayBuffer();
@@ -51,10 +58,15 @@ export class CdfModelDataProvider implements ModelDataProvider {
         }
 
         return response;
-      } catch (err) {
+      } catch (e) {
         // Keep first error only
-        if (error !== undefined) {
-          error = err as Error;
+        if (error === undefined) {
+          error = e as Error;
+
+          //Stop retries if the request has been aborted
+          if (error.name === 'AbortError') {
+            throw error;
+          }
         }
       }
     }

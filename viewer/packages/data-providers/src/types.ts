@@ -8,7 +8,7 @@ export interface JsonFileProvider {
 }
 
 export interface BinaryFileProvider {
-  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
+  getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
 export interface Image360DescriptorProvider<T> {
