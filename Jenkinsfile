@@ -6,10 +6,8 @@ static final String FIREBASE_APP_SITE = 'data-catalog'
 static final String FUSION_SUBAPP_NAME = '@cognite/cdf-data-sets'
 static final String NODE_VERSION = 'node:14'
 
-static final String VERSIONING_STRATEGY = "single-branch"
-
 final boolean isMaster = env.BRANCH_NAME == 'master'
-final boolean isRelease = env.BRANCH_NAME.startsWith('release-')
+final boolean isRelease = env.BRANCH_NAME == 'release-data-catalog'
 final boolean isPullRequest = !!env.CHANGE_ID
 
 
@@ -98,20 +96,12 @@ pods {
 
             deleteComments('[FUSION_PREVIEW_URL]')
 
-              def project = APP_ID;
-              def packageName = FUSION_SUBAPP_NAME;
-
-              if (packageName == null) {
-                print "No preview available for: ${project}"
-                return
-              }
-
               // Run the yarn install in the app in cases of local packages.json file
               if (fileExists("yarn.lock")) {
                 yarn.setup()
               }
 
-              stageWithNotify("Build and deploy PR for: ${project}") {
+              stageWithNotify("Build and deploy PR for: ${APP_ID}") {
                 def prefix = jenkinsHelpersUtil.determineRepoName();
                 def domain = "fusion-preview";
                 previewServer(
@@ -121,7 +111,7 @@ pods {
                   repo: domain
                 )
                 deleteComments("[FUSION_PREVIEW_URL]")
-                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${FUSION_SUBAPP_NAME}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
                 pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
               }
             
@@ -135,41 +125,15 @@ pods {
               return;
             }
 
-            def project = APP_ID;
-            def firebaseSiteName = FIREBASE_APP_SITE;
-
-            // keeping for now, this is very common config that can be reused everywhere
-            final boolean isReleaseBranch = env.BRANCH_NAME.startsWith("release-${project}")
-            final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY == 'single-branch';
-            final boolean releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
-
             // Run the yarn install in the app in cases of local packages.json file
             if (fileExists("yarn.lock")) {
               yarn.setup()
             }
 
-            // when using single branch strategy, we wil have to deploy the build on prod and staging
-            if(isUsingSingleBranchStrategy) {
-               stageWithNotify("Publish staging build: ${project}") {
-                appHosting(
-                  appName: firebaseSiteName,
-                  environment: 'staging',
-                  firebaseJson: 'build/firebase.json',
-                  buildCommand: "yarn build",
-                  buildFolder: 'build',
-                )
-
-                slack.send(
-                  channel: SLACK_CHANNEL,
-                  message: "Staging deployment of ${env.BRANCH_NAME} complete for: ${project}!"
-                )
-              }
-            }
-
-            stageWithNotify("Publish production build: ${project}") {
+            stageWithNotify("Publish production build: ${APP_ID}") {
               appHosting(
-                appName: firebaseSiteName,
-                environment: releaseToProd ? 'production' : 'staging',
+                appName: FIREBASE_APP_SITE,
+                environment: isRelease ? 'production' : 'staging',
                 firebaseJson: 'build/firebase.json',
                 buildCommand: "yarn build",
                 buildFolder: 'build',
@@ -177,7 +141,7 @@ pods {
 
               slack.send(
                 channel: SLACK_CHANNEL,
-                message: "Production deployment of ${env.BRANCH_NAME} complete for: ${project}!"
+                message: "Production deployment of ${env.BRANCH_NAME} complete for: ${APP_ID}!"
               )
             }
 
