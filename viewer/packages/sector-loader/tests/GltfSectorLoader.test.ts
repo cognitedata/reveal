@@ -43,7 +43,7 @@ describe(GltfSectorLoader.name, () => {
       typeSet.add(geometry.type);
     }
 
-    // Filter away numeric keys from enum, and subtract the two mesh types
+    // Filter away numeric keys from enum, and subtract the three mesh types
     const numberOfPrimitives = Object.keys(RevealGeometryCollectionType).filter(k => isNaN(Number(k))).length - 3;
 
     expect(typeSet.size).toBe(numberOfPrimitives);
