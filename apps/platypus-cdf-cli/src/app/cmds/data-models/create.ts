@@ -12,6 +12,8 @@ import {
   DataUtils,
   Validator,
 } from '@platypus/platypus-core';
+import { DataModelNameValidator } from '@platypus-core/domain/data-model/validators/data-model-name-validator';
+
 import { Arguments, Argv } from 'yargs';
 
 import { getDataModelsHandler } from './utils';
@@ -67,11 +69,13 @@ export class CreateCmd extends CLICommand {
 
   async execute(args: Arguments<DataModelCreateCommandArgs>) {
     const validator = new Validator(args);
+    if (args['name'] !== undefined) {
+      validator.addRule('name', new DataModelNameValidator());
+    }
     if (args['external-id'] !== undefined) {
       validator.addRule('external-id', new DataModelExternalIdValidator());
     }
     const validationResult = validator.validate();
-
     if (!validationResult.valid) {
       throw validationResult.errors;
     }
