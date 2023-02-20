@@ -194,7 +194,7 @@ describe(SectorDownloadScheduler.name, () => {
     });
   });
 
-  test('Discarded sectors should be aborted if still pending', async () => {
+  test('Sector downloads of downloading discarded sectors should abort', async () => {
     // Setup
     const abortedCount = 11;
     const initalDownloadCount = 21;
@@ -251,7 +251,7 @@ describe(SectorDownloadScheduler.name, () => {
     });
   });
 
-  test('Sector downloads of downloading discarded sectors should abort', async () => {
+  test('Queued sector downloads should be removed from the queue when discarded', async () => {
     // Setup
     const wantedSectors = createMockWantedSectors(21, 'TestModelIdentifier');
     const discardedSectors = createMockWantedSectors(21, 'TestModelIdentifier', LevelOfDetail.Discarded);
