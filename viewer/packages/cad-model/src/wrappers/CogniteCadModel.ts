@@ -344,6 +344,13 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   }
 
   /**
+   * Get the clipping planes for this model.
+   */
+  getModelClippingPlanes(): Readonly<THREE.Plane[]> {
+    return this.cadNode.clippingPlanes;
+  }
+
+  /**
    * Gets transformation from CDF space to ThreeJS space,
    * which includes any additional "default" transformations assigned to this model.
    * Does not include any custom transformations set by {@link CognitePointcloudmodel.setModelTransformation}
