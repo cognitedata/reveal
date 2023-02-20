@@ -179,7 +179,7 @@ pods {
             stageWithNotify("Publish production build: ${project}") {
               appHosting(
                 appName: firebaseSiteName,
-                environment:   ? 'production' : 'staging',
+                environment: releaseToProd ? 'production' : 'staging',
                 firebaseJson: 'build/firebase.json',
                 buildCommand: "yarn build",
                 buildFolder: 'build',
