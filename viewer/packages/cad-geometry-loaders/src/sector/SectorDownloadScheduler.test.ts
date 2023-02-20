@@ -251,7 +251,7 @@ describe(SectorDownloadScheduler.name, () => {
     });
   });
 
-  test('Discarded sectors should be removed from dowload queue', async () => {
+  test('Sector downloads of downloading discarded sectors should abort', async () => {
     // Setup
     const wantedSectors = createMockWantedSectors(21, 'TestModelIdentifier');
     const discardedSectors = createMockWantedSectors(21, 'TestModelIdentifier', LevelOfDetail.Discarded);

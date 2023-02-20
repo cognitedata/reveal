@@ -52,9 +52,13 @@ export class SectorDownloadScheduler {
       const sectorIdentifier = this.getSectorIdentifier(sector.modelIdentifier, sector.metadata.id);
 
       if (sector.levelOfDetail === LevelOfDetail.Discarded) {
-        const discardedSector = this.abortLoadOfDiscardedSector(sector, sectorIdentifier);
-        if (discardedSector) {
-          return discardedSector;
+        const abortedSector = this.abortPendingDownload(sectorIdentifier);
+        if (abortedSector) {
+          return abortedSector;
+        }
+        const deletedSector = this.removeDownloadFromQueue(sector, sectorIdentifier);
+        if (deletedSector) {
+          return deletedSector;
         }
       }
 
@@ -81,15 +85,16 @@ export class SectorDownloadScheduler {
     };
   }
 
-  private abortLoadOfDiscardedSector(sector: WantedSector, sectorIdentifier: string): Promise<ConsumedSector> | null {
-    // Abort pending downloads
+  private abortPendingDownload(sectorIdentifier: string) {
     const pendingSector = this._pendingSectorDownloads.get(sectorIdentifier);
     if (pendingSector !== undefined) {
       pendingSector.abort();
       return pendingSector.consumedSector;
     }
+    return undefined;
+  }
 
-    // Remove (and resolve) dowlowload request in queue
+  private removeDownloadFromQueue(sector: WantedSector, sectorIdentifier: string) {
     const queuedSector = this._queuedSectorDownloads.get(sectorIdentifier);
     if (queuedSector !== undefined) {
       remove(this._sectorDownloadQueue, sectorQueueIdentifier => {
@@ -100,8 +105,7 @@ export class SectorDownloadScheduler {
 
       return queuedSector.queuedDeferredPromise;
     }
-
-    return null;
+    return undefined;
   }
 
   private getOrAddToQueuedDownloads(
