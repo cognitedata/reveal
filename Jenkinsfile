@@ -84,6 +84,20 @@ pods {
       }
 
        parallel(
+        'Lint': {
+          container('apphosting') {
+            stageWithNotify('Lint') {
+              sh("yarn lint")
+            }
+          }
+        },
+        'Test': {
+          container('apphosting') {
+            stageWithNotify('Unit tests') {
+              sh("yarn test")
+            }
+          }
+        },
         'Preview': {
           container('apphosting') {
             if (!isPullRequest) {
@@ -144,10 +158,28 @@ pods {
               yarn.setup()
             }
 
+            // when using single branch strategy, we wil have to deploy the build on prod and staging
+            if(isUsingSingleBranchStrategy) {
+               stageWithNotify("Publish staging build: ${project}") {
+                appHosting(
+                  appName: firebaseSiteName,
+                  environment: 'staging',
+                  firebaseJson: 'build/firebase.json',
+                  buildCommand: "yarn build",
+                  buildFolder: 'build',
+                )
+
+                slack.send(
+                  channel: SLACK_CHANNEL,
+                  message: "Staging deployment of ${env.BRANCH_NAME} complete for: ${project}!"
+                )
+              }
+            }
+
             stageWithNotify("Publish production build: ${project}") {
               appHosting(
                 appName: firebaseSiteName,
-                environment: releaseToProd ? 'production' : 'staging',
+                environment:   ? 'production' : 'staging',
                 firebaseJson: 'build/firebase.json',
                 buildCommand: "yarn build",
                 buildFolder: 'build',
@@ -155,7 +187,7 @@ pods {
 
               slack.send(
                 channel: SLACK_CHANNEL,
-                message: "Deployment of ${env.BRANCH_NAME} complete for: ${project}!"
+                message: "Production deployment of ${env.BRANCH_NAME} complete for: ${project}!"
               )
             }
 
