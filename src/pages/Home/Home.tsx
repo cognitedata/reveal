@@ -1,39 +1,31 @@
-import { Icon } from '@cognite/cogs.js';
+import { createLink } from '@cognite/cdf-utilities';
+import { Title, Flex } from '@cognite/cogs.js';
+import { useTranslation } from 'common';
+
+import PipelineList from 'components/pipeline-list';
+import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import { useUserInformation } from 'hooks/useUserInformation';
-
-const Home = () => {
-  const { data, isLoading } = useUserInformation();
-  const { displayName } = data ?? {};
-
+export default function Home() {
   const { t } = useTranslation();
+  const { subAppPath } = useParams<{
+    subAppPath: string;
+  }>();
 
   return (
-    <>
-      <Container>
-        <p>
-          {isLoading ? (
-            <Icon type="Loader" />
-          ) : (
-            t('welcome', {
-              appName: 'Cognite Data Fusion',
-              userName: displayName,
-            })
-          )}
-        </p>
-        <p data-testid="current-language">{t('current-language')}</p>
-      </Container>
-    </>
+    <ListWrapper>
+      <Title level={3}>{t('entity-matching-pipelines')}</Title>
+      <Link to={createLink(`/${subAppPath}/quick-match`)}>
+        {t('quick-match')}
+      </Link>
+      <Link to={createLink(`/${subAppPath}/create`)}>
+        {t('create-pipeline')}
+      </Link>
+      <PipelineList />
+    </ListWrapper>
   );
-};
+}
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+const ListWrapper = styled(Flex).attrs({ direction: 'column' })`
+  padding: 24px 40px;
 `;
-
-export default Home;
