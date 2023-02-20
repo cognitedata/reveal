@@ -1,5 +1,5 @@
 import { Body, Flex, Illustrations, Title } from '@cognite/cogs.js';
-import { Graphic, GraphicTypes } from 'cogs-v7';
+import { SearchEmpty } from '@data-exploration-components/graphics';
 
 import React from 'react';
 import styled from 'styled-components';
@@ -8,21 +8,20 @@ import Loading from './Loading';
 export interface EmptyStateProps {
   title?: string;
   body?: string;
-  graphic?: GraphicTypes;
   isLoading?: boolean;
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   body,
-  graphic,
+
   isLoading = false,
 }) => {
   return (
     <EmptyStateWrapper justifyContent="center" alignItems="center">
       <Flex direction="column" gap={8} alignItems="center">
         <GraphicWrapper>
-          {isLoading ? <Loading /> : <Graphic type={graphic || 'Search'} />}
+          {isLoading ? <Loading /> : <SearchEmpty />}
         </GraphicWrapper>
         <Title level={5}>
           {title || isLoading ? 'Loading...' : 'No results available'}

@@ -1,6 +1,13 @@
 import { Body, Colors, Detail, Flex, Title, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Graphic } from 'cogs-v7';
+
+import {
+  ArrowsNavigation,
+  Rotate,
+  WASDNavigation,
+  PinchRight,
+  Mouse,
+} from '@data-exploration-components/graphics';
 
 interface HelpMenuSectionProps {
   children: React.ReactNode;
@@ -28,7 +35,7 @@ export const MouseNavigation = (): JSX.Element => (
         <br />
         <StyledInstructionDetail> click+drag</StyledInstructionDetail>
       </StyledInstructionText>
-      <StyledMouseGraphic type="Mouse" />
+      <StyledMouseGraphic />
       <StyledInstructionText>
         Pan
         <br />
@@ -45,13 +52,13 @@ export const TouchNavigation = (): JSX.Element => (
         <StyledInstructionText>
           Rotate <StyledInstructionDetail>click</StyledInstructionDetail>
         </StyledInstructionText>
-        <Graphic type="Rotate" style={{ width: 80 }} />
+        <Rotate />
       </Flex>
       <Flex direction="column" gap={4}>
         <StyledInstructionText>
           Zoom <StyledInstructionDetail>pinch</StyledInstructionDetail>
         </StyledInstructionText>
-        <Graphic type="PinchRight" style={{ width: 80 }} />
+        <PinchRight style={{ width: 80 }} />
       </Flex>
     </StyledTouchNavigationContainer>
   </HelpMenuSection>
@@ -60,8 +67,8 @@ export const TouchNavigation = (): JSX.Element => (
 export const KeyboardNavigation = (): JSX.Element => (
   <HelpMenuSection title="Keyboard">
     <Flex gap={16}>
-      <Graphic type="WASDNavigation" style={{ width: 150 }} />
-      <Graphic type="ArrowsNavigation" style={{ width: 135 }} />
+      <WASDNavigation style={{ width: 150 }} />
+      <ArrowsNavigation style={{ width: 135 }} />
     </Flex>
   </HelpMenuSection>
 );
@@ -111,7 +118,7 @@ export const StyledMouseNavigationGrid = styled.div`
   }
 `;
 
-export const StyledMouseGraphic = styled(Graphic)`
+export const StyledMouseGraphic = styled(Mouse)`
   display: flex;
   justify-content: center;
 

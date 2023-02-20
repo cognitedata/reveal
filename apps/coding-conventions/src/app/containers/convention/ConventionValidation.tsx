@@ -4,7 +4,6 @@ import {
   Collapse as CogsCollapse,
   Select,
 } from '@cognite/cogs.js';
-import { Graphic } from 'cogs-v7';
 
 import { useState } from 'react';
 import { Asset, DataSet, FileInfo, IdEither } from '@cognite/sdk';
@@ -14,6 +13,7 @@ import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';
 
 import styled from 'styled-components';
 import { useValidate } from '../../hooks/useValidate';
+import { SearchEmpty } from '@data-exploration-components/graphics';
 
 const ACCESSOR_FIELDS = {
   assets: [
@@ -115,7 +115,7 @@ export const ConventionValidation = () => {
         </Collapse>
       ) : (
         <EmptyResultContainer>
-          <Graphic type="Search" />
+          <SearchEmpty />
           <Body>Select the appropriate files and press the run button.</Body>
         </EmptyResultContainer>
       )}

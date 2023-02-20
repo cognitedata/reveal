@@ -1735,7 +1735,7 @@
     tippy.js "6.2.0"
     ts-dedent "2.2.0"
 
-"@cognite/cogs.js@^7.14.7", "cogs-v7@npm:@cognite/cogs.js@7":
+"@cognite/cogs.js@^7.14.7":
   version "7.19.1"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.19.1.tgz#32f1d2e0aabf6d95eb12dc22d66810f3995f36bf"
   integrity sha512-QsFpM1BxYT+x9WvaKI3C68hPULQPjrnr5tlng1NjGmlbpru+cz8MjLy30ieEXUqliOHAEELLaeaWdcj8mUWrLw==

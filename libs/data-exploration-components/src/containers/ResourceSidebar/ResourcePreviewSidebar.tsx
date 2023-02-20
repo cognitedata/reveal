@@ -12,7 +12,7 @@ import {
   ResourceItem,
   SelectableItemProps,
 } from '@data-exploration-components/types';
-import { Graphic } from 'cogs-v7';
+import { SearchEmpty } from '@data-exploration-components/graphics';
 
 type Props = {
   item?: ResourceItem;
@@ -37,7 +37,7 @@ const Centered = styled.div`
 const ResourcePreviewPlaceholder = () => {
   return (
     <Centered>
-      <Graphic type="Search" />
+      <SearchEmpty />
       <p>No resource to preview.</p>
     </Centered>
   );

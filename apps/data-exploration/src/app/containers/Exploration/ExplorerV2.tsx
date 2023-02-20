@@ -9,7 +9,7 @@ import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { AssetPage } from '@data-exploration-app/containers/Asset/AssetPage';
 import { TimeseriesPage } from '@data-exploration-app/containers/Timeseries/TimeseriesPage';
 import { FilePage } from '@data-exploration-app/containers/File/FilePage';
-import { CanvasPage } from "@data-exploration-app/containers/Canvas/CanvasPage";
+import { CanvasPage } from '@data-exploration-app/containers/Canvas/CanvasPage';
 import { EventPage } from '@data-exploration-app/containers/Event/EventPage';
 import { SequencePage } from '@data-exploration-app/containers/Sequence/SequencePage';
 import { ThreeDPage } from '@data-exploration-app/containers/ThreeD/ThreeDPage';

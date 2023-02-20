@@ -15,10 +15,8 @@ import {
 } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { Model3D } from '@cognite/sdk';
-import { ResourceType } from '@cognite/data-exploration';
-import { Graphic } from 'cogs-v7';
-import { useCurrentResourceId } from '@data-exploration-app/hooks/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { ResourceType, ThreeDModel } from '@cognite/data-exploration';
+
 import { PartialBy } from './utils';
 
 export type Model3DWithType = PartialBy<
@@ -103,7 +101,7 @@ export const ThreeDGridPreview = ({
           ) : revision?.thumbnailURL ? (
             image
           ) : (
-            <Graphic type="ThreeDModel" color="white" />
+            <ThreeDModel color="white" />
           )}
         </Thumbnail>
         <Tooltip content={name} arrow={false}>

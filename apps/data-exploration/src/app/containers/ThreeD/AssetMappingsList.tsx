@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
-import { Graphic } from 'cogs-v7';
+
 import Highlighter from 'react-highlight-words';
 import { Link } from 'react-router-dom';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -14,6 +14,7 @@ import { prepareSearchString, grepContains } from './utils';
 import { CogniteError } from '@cognite/sdk';
 import noop from 'lodash/noop';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+import { SearchEmpty } from '@data-exploration-components/graphics';
 
 const FeedbackFlex = styled(Flex)`
   padding-top: 30px;
@@ -27,7 +28,7 @@ const FeedbackContainer = ({ children }: { children?: React.ReactNode }) => (
 const EmptyAssetMappings = () => {
   return (
     <FeedbackContainer>
-      <Graphic type="Search" />
+      <SearchEmpty />
       No results
     </FeedbackContainer>
   );
@@ -36,7 +37,7 @@ const EmptyAssetMappings = () => {
 const MappingsMissing = () => {
   return (
     <FeedbackContainer>
-      <Graphic type="Search" />
+      <SearchEmpty />
       <Body>No asset mapping found</Body>
       <Link
         to={createLink('/entity_matching/3d_matching')}
@@ -51,7 +52,7 @@ const MappingsMissing = () => {
 const MappingsError = () => {
   return (
     <FeedbackContainer>
-      <Graphic type="Search" />
+      <SearchEmpty />
       <Body>An error occured retriving masset mappings</Body>
     </FeedbackContainer>
   );
