@@ -50,7 +50,7 @@ export class Image360LoadingCache {
         if (signal.aborted || e === 'Aborted') {
           Log.info('Abort warning: ' + e);
         } else {
-          Log.error('Failed to load 360 image: ' + e);
+          Log.warn('Failed to load 360 image: ' + e);
         }
         return Promise.reject();
       })
