@@ -5,7 +5,8 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
 import { getProject } from '@cognite/cdf-utilities';
-import { Button, Input, Skeleton } from '@cognite/cogs.js';
+import { Input, Skeleton } from '@cognite/cogs.js';
+import { Button, Illustrations } from '@cognite/cogs.js-v9';
 import { useSDK } from '@cognite/sdk-provider';
 import { useGetModelFileListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -81,7 +82,9 @@ export function ModelLibrary() {
     return <Skeleton.List lines={5} />;
   }
 
-  if (!modelName && modelFileList.length > 0) {
+  const isModalLibraryEmpty = modelFiles?.modelFileList.length === 0;
+
+  if (!modelName && !isModalLibraryEmpty) {
     const firstFile = modelFileList[0];
     navigate({
       to: createCdfLink(
@@ -96,20 +99,23 @@ export function ModelLibrary() {
   return (
     <ModelLibraryContainer data-cy="model-library-container">
       <ModelLibrarySidebar>
-        <div className="new-model">
-          <Link to={createCdfLink(`/model-library/new-model`)}>
-            <Button
-              icon="Add"
-              type="secondary"
-              block
-              onClick={() => {
-                trackUsage(TRACKING_EVENTS.NEW_MODEL, { simulator });
-              }}
-            >
-              Create model
-            </Button>
-          </Link>
-        </div>
+        {!isModalLibraryEmpty && (
+          <div className="new-model">
+            <Link to={createCdfLink(`/model-library/new-model`)}>
+              <Button
+                icon="GridAdd"
+                style={{ width: '100%' }}
+                type="secondary"
+                block
+                onClick={() => {
+                  trackUsage(TRACKING_EVENTS.NEW_MODEL, { simulator });
+                }}
+              >
+                Create model
+              </Button>
+            </Link>
+          </div>
+        )}
         <div className="header">
           <span className="header-title">Search models</span>
           <div className="form">
@@ -134,7 +140,10 @@ export function ModelLibrary() {
           </div>
         </div>
         <div className="model-list">
-          <ModelList modelFiles={modelFileList} />
+          <ModelList
+            isModalLibraryEmpty={isModalLibraryEmpty}
+            modelFiles={modelFileList}
+          />
         </div>
       </ModelLibrarySidebar>
       <ModelLibraryContent>
@@ -145,6 +154,18 @@ export function ModelLibrary() {
           refetchModelFiles={refetchModelFiles}
           simulator={simulator}
         />
+        {isModalLibraryEmpty && (
+          <NoModelsContainer>
+            <Illustrations.Solo type="Simulation" />
+            <h5>No simulator models found</h5>
+            <span>Create your first model to get started</span>
+            <Link to={createCdfLink(`/model-library/new-model`)}>
+              <Button icon="GridAdd" size="medium" type="primary">
+                Create model
+              </Button>
+            </Link>
+          </NoModelsContainer>
+        )}
       </ModelLibraryContent>
     </ModelLibraryContainer>
   );
@@ -154,6 +175,26 @@ const ModelLibraryContainer = styled.div`
   display: flex;
   flex: 1 1 0;
   overflow: auto;
+`;
+
+const NoModelsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  height: 100%;
+
+  h5 {
+    font-size: var(--cogs-t5-font-size);
+    margin: 0;
+  }
+
+  span {
+    font-size: 12px;
+    margin-bottom: 16px;
+    margin-top: 8px;
+  }
 `;
 
 const ModelLibrarySidebar = styled.aside`

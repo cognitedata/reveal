@@ -3,12 +3,13 @@ import { Link } from 'react-location';
 import format from 'date-fns/format';
 import styled from 'styled-components/macro';
 
-import { Graphic } from '@cognite/cogs.js';
+import { Illustrations } from '@cognite/cogs.js-v9';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 
 import { createCdfLink } from 'utils/createCdfLink';
 
 interface ModelListProps {
+  isModalLibraryEmpty: boolean;
   modelFiles: ModelFile[];
   className?: string;
 }
@@ -19,12 +20,19 @@ const isModelActive = (modelName: string) => {
   return path.split('/').includes(encodedModelName);
 };
 
-export function ModelList({ modelFiles, className }: ModelListProps) {
-  if (!modelFiles.length) {
+export function ModelList({
+  modelFiles,
+  className,
+  isModalLibraryEmpty,
+}: ModelListProps) {
+  if (!modelFiles.length && !isModalLibraryEmpty) {
     return (
       <EmptyState>
-        <Graphic type="Search" />
-        <span>No models found.</span>
+        <Illustrations.Solo type="EmptyStateSearch" />
+        <h5>No models found</h5>
+        <span>
+          Try adjusting your search and filter to improve your search.
+        </span>
       </EmptyState>
     );
   }
@@ -123,8 +131,14 @@ const EmptyState = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100%;
   flex-direction: column;
+  text-align: center;
+
+  h5 {
+    font-size: var(--cogs-t5-font-size);
+  }
   span {
-    margin-top: 1em;
+    width: 250px;
   }
 `;

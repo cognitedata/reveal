@@ -8,7 +8,8 @@ import { formatISO, parseISO, sub } from 'date-fns';
 import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
-import { AutoComplete, DateRange, Graphic, Skeleton } from '@cognite/cogs.js';
+import { AutoComplete, DateRange, Skeleton } from '@cognite/cogs.js';
+import { Illustrations } from '@cognite/cogs.js-v9';
 import {
   useGetCalculationRunListQuery,
   useGetModelFileListQuery,
@@ -19,7 +20,6 @@ import type {
   GetCalculationRunListApiArg,
 } from '@cognite/simconfig-api-sdk/rtk';
 
-import { GraphicContainer } from 'components/shared/elements';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { excludeUnknownSimulator } from 'utils/simulatorUtils';
 
@@ -234,10 +234,15 @@ export function CalculationRuns() {
       )}
 
       {!calculationRuns.length && !isFetchingCalculationsRunList ? (
-        <GraphicContainer>
-          <Graphic type="Search" />
-          Search returned no results matching the current search criteria
-        </GraphicContainer>
+        <NoResultsContainer>
+          <Illustrations.Solo type="EmptyStateSearch" />
+
+          <h5>No results</h5>
+          <span>
+            Try adjusting your search or filter to find what you are looking
+            for.
+          </span>
+        </NoResultsContainer>
       ) : null}
     </CalculationRunsContainer>
   );
@@ -247,6 +252,25 @@ const initialDateRange = {
   eventStartTime: formatISO(sub(new Date(), { days: 7 })),
   eventEndTime: formatISO(new Date()),
 };
+
+const NoResultsContainer = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  h5 {
+    font-size: var(--cogs-t5-font-size);
+    margin: 0;
+  }
+
+  span {
+    width: 250px;
+    text-align: center;
+    font-size: 12px;
+  }
+`;
 
 const CalculationRunsContainer = styled.div`
   display: flex;
