@@ -437,7 +437,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     getCdfToDefaultModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     getDefaultNodeAppearance(): NodeAppearance;
     getModelBoundingBox(outBbox?: THREE_2.Box3, restrictToMostGeometry?: boolean): THREE_2.Box3;
-    getModelClippingPlanes(): Readonly<THREE_2.Plane[]>;
+    getModelClippingPlanes(): THREE_2.Plane[];
     getModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange>;
     iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void>;
@@ -488,7 +488,7 @@ export class CognitePointCloudModel {
     getDefaultPointCloudAppearance(): PointCloudAppearance;
     // (undocumented)
     getModelBoundingBox(outBbox?: THREE_2.Box3): THREE_2.Box3;
-    getModelClippingPlanes(): Readonly<THREE_2.Plane[]>;
+    getModelClippingPlanes(): THREE_2.Plane[];
     getModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
     hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
     isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
