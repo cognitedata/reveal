@@ -140,7 +140,7 @@ export type BeforeSceneRenderedDelegate = (event: {
 // @public (undocumented)
 export interface BinaryFileProvider {
     // (undocumented)
-    getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
+    getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
 // @public (undocumented)
@@ -951,7 +951,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
 // @public
 export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider {
-    getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
+    getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
     getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
 
