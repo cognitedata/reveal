@@ -24,12 +24,13 @@ export class GltfSectorLoader {
     this._materialManager = materialManager;
   }
 
-  async loadSector(sector: WantedSector): Promise<ConsumedSector> {
+  async loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
     const { metadata } = sector;
     try {
       const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
         sector.modelBaseUrl,
-        metadata.sectorFileName!
+        metadata.sectorFileName!,
+        abortSignal
       );
 
       const group = new AutoDisposeGroup();
@@ -105,6 +106,8 @@ export class GltfSectorLoader {
       const error = e as Error;
       if (error?.cause === 'InvalidModel') {
         Log.info('Invalid Model:', error.message);
+      } else if (error?.name === 'AbortError') {
+        Log.info('Abort Error:', error.message);
       } else {
         MetricsLogger.trackError(error, { moduleName: 'GltfSectorLoader', methodName: 'loadSector' });
       }

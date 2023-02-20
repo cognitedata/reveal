@@ -47,7 +47,7 @@ export class GltfSectorRepository implements SectorRepository {
     return this.getEmptySectorWithLod(LevelOfDetail.Discarded, modelIdentifier, metadata);
   }
 
-  async loadSector(sector: WantedSector): Promise<ConsumedSector> {
+  async loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
     const metadata = sector.metadata as SectorMetadata;
 
     if (metadata.sectorFileName === undefined || metadata.downloadSize === 0) {
@@ -63,7 +63,7 @@ export class GltfSectorRepository implements SectorRepository {
       return this._gltfCache.get(cacheKey);
     }
 
-    const consumedSector = await this._gltfSectorLoader.loadSector(sector).catch(() => {
+    const consumedSector = await this._gltfSectorLoader.loadSector(sector, abortSignal).catch(() => {
       return undefined;
     });
 
