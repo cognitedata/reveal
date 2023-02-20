@@ -839,6 +839,7 @@ __metadata:
     rxjs: 7.8.0
     shx: 0.3.4
     skmeans: 0.11.3
+    sparse-octree: 7.1.6
     stats.js: 0.17.0
     three: 0.149.0
     three-stdlib: 2.21.1
@@ -11637,6 +11638,15 @@ resolve@~1.19.0:
   version: 0.6.1
   resolution: "source-map@npm:0.6.1"
   checksum: 59ce8640cf3f3124f64ac289012c2b8bd377c238e316fb323ea22fbfe83da07d81e000071d7242cad7a23cd91c7de98e4df8830ec3f133cb6133a5f6e9f67bc2
+  languageName: node
+  linkType: hard
+
+"sparse-octree@npm:7.1.6":
+  version: 7.1.6
+  resolution: "sparse-octree@npm:7.1.6"
+  peerDependencies:
+    three: 0.x.x
+  checksum: 310fa0472815a15a2b6f04baf108720a9a953fc6f3e54318a18bd31f613a333a922ca3240306f678e075612a3adab06f63dd4cca73edc974fde73eaac2689798
   languageName: node
   linkType: hard
 
