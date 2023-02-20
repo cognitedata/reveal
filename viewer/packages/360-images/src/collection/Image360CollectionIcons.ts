@@ -28,6 +28,7 @@ import glsl from 'glslify';
 import { AttributeDataAccessor, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { Image360Icon } from '../entity/Image360Icon';
 import { Image360CollectionIconsOctree } from './Image360CollectionIconsOctree';
+import zip from 'lodash/zip';
 
 export class Image360CollectionIcons {
   private readonly MIN_PIXEL_SIZE = 16;
@@ -71,11 +72,7 @@ export class Image360CollectionIcons {
     this._sceneHandler.addCustomObject(this._frontPoints);
     this._sceneHandler.addCustomObject(this._backPoints);
 
-    const octree = new Image360CollectionIconsOctree(positions, this._onRenderTrigger);
-    const octreeVizualization = octree.getVisualizationHelper();
-    this._sceneHandler.addCustomObject(octreeVizualization);
-
-    return positions.map((position, index) => {
+    const icons = positions.map((position, index) => {
       const instanceAlphaView = new Uint8ClampedArray(alphaBuffer.buffer, index, 1);
       const alphaAttributeAccessor = new AttributeDataAccessor(instanceAlphaView, alphaAttribute);
       return new Image360Icon(
@@ -88,6 +85,16 @@ export class Image360CollectionIcons {
         this._onRenderTrigger
       );
     });
+
+    const octree = new Image360CollectionIconsOctree(
+      zip(icons, positions) as [Image360Icon, Vector3][],
+      this._onRenderTrigger
+    );
+    const octreeVizualization = octree.getVisualizationHelper();
+
+    this._sceneHandler.addCustomObject(octreeVizualization);
+
+    return icons;
   }
 
   public dispose(): void {

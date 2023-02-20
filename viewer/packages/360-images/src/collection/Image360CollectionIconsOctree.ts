@@ -6,7 +6,7 @@ import { EventTrigger, getBox3CornerPoints } from '@reveal/utilities';
 import clamp from 'lodash/clamp';
 import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
-import { PointOctree, OctreeHelper, Node } from 'sparse-octree';
+import { PointOctree, Node, PointOctant } from 'sparse-octree';
 import {
   Vector3,
   Box3,
@@ -20,29 +20,42 @@ import {
   Mesh,
   MeshBasicMaterial
 } from 'three';
+import { Image360Icon } from '../entity/Image360Icon';
 
 export class Image360CollectionIconsOctree {
   private _camera: Camera | undefined;
   private readonly _group: Group;
-  private readonly _octree: PointOctree<void>;
-  constructor(points: Vector3[], onRender: EventTrigger<(renderer: WebGLRenderer, camera: Camera) => void>) {
-    this._octree = this.createOctreeFromPoints(points);
+  private readonly _octree: PointOctree<Image360Icon>;
+  constructor(
+    icons: [Image360Icon, Vector3][],
+    onRender: EventTrigger<(renderer: WebGLRenderer, camera: Camera) => void>
+  ) {
+    const [octree, sizes] = this.createOctreeFromPoints(icons);
+    this._octree = octree;
     const viewProjectionMatrix = new Matrix4();
     this._group = new Group();
-    this._group.add(new OctreeHelper(this._octree));
+    // this._group.add(new OctreeHelper(this._octree));
     const boxes = this.createVisualizationBoxes();
     this._group.add(boxes);
+    const viz = icons.map(p => p[0]);
     onRender.subscribe((_, camera) => {
+      viz.forEach(p => (p.visible = false));
       this._camera = camera;
       viewProjectionMatrix.copy(this._camera.projectionMatrix).multiply(this._camera.matrixWorldInverse);
       const root = this._octree.findNodesByLevel(0)[0];
-      const selectedLODs = this.selectGroupingLOD(root, 0.05, viewProjectionMatrix);
-      console.log(selectedLODs.size);
+      const selectedLODs = this.selectGroupingLOD(root, 0.025, viewProjectionMatrix);
       boxes.children.forEach(p => (p.visible = false));
       let c = 0;
       selectedLODs.forEach(node => {
+        if (node instanceof PointOctant<Image360Icon> && node.data !== null) {
+          const icons = node.data.data as Image360Icon[];
+          icons.forEach(p => (p.visible = true));
+          return;
+        }
+
         const box = boxes.children[c];
-        node.getCenter(box.position);
+        const nodeCenter = sizes.get(node)!;
+        box.position.copy(nodeCenter);
         box.visible = true;
         c++;
       });
@@ -97,16 +110,57 @@ export class Image360CollectionIconsOctree {
     return selectedNodes;
   }
 
-  private createOctreeFromPoints(points: Vector3[]): PointOctree<void> {
+  private createOctreeFromPoints(icons: [Image360Icon, Vector3][]): [PointOctree<Image360Icon>, Map<Node, Vector3>] {
+    const points = icons.map(p => p[1]);
     const [min, max] = getPointExtents(points);
-    const octree = new PointOctree<void>(min, max, 0, 16);
-    points.forEach(p => octree.set(p));
-    return octree;
+    const octree = new PointOctree<Image360Icon>(min, max, 0, 2);
+    icons.forEach(p => octree.set(p[1], p[0]));
+    const nodeSizes = this.filterEmpty(octree);
+    return [octree, nodeSizes];
 
     function getPointExtents(points: Vector3[]) {
       const box = new Box3().setFromPoints(points);
       return [box.min, box.max];
     }
+  }
+
+  private filterEmpty<T>(octree: PointOctree<T>) {
+    const treeDepth = octree.getDepth();
+    const purgeNodeSet = new Set<Node>();
+
+    const nodeCenters = new Map<Node, Vector3>();
+
+    for (let i = treeDepth; i >= 0; i--) {
+      const level = octree.findNodesByLevel(i);
+      level.forEach(node => {
+        if (node.children !== null && node.children !== undefined) {
+          const newChildren = node.children.filter(child => !purgeNodeSet.has(child));
+          node.children = newChildren.length > 0 ? newChildren : undefined;
+        }
+
+        if (node.children === null || node.children === undefined) {
+          if (node instanceof PointOctant) {
+            if (node.data === null) {
+              purgeNodeSet.add(node);
+            } else {
+              const points = node.data.points;
+              const center = points
+                .reduce((result, currentValue) => result.add(currentValue), new Vector3())
+                .divideScalar(points.length);
+              nodeCenters.set(node, center);
+            }
+          }
+        } else {
+          const points = node.children.map(node => nodeCenters.get(node)!);
+          const center = points
+            .reduce((result, currentValue) => result.add(currentValue), new Vector3())
+            .divideScalar(points.length);
+          nodeCenters.set(node, center);
+        }
+      });
+    }
+
+    return nodeCenters;
   }
 
   private getScreenArea(projectedBounds: Box2): number {
