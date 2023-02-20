@@ -157,7 +157,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
 
   private async getFileBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal) {
     const fileLinks = await this._client.files.getDownloadUrls(fileIds);
-    if (abortSignal?.aborted) return Promise.reject('Request aborted before fetch.');
+    if (abortSignal?.aborted) throw new Error('Request aborted before fetch.');
     return Promise.all(
       fileLinks
         .map(fileLink => fetch(fileLink.downloadUrl, { method: 'GET', signal: abortSignal }))
