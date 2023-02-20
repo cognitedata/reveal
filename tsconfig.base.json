@@ -24,6 +24,9 @@
       ],
       "@cognite/graph": ["libs/graph/src/index.ts"],
       "@cognite/platypus-cdf-cli/*": ["apps/platypus-cdf-cli/src/*"],
+      "@cognite/plotting-components": [
+        "libs/shared/plotting-components/src/index.ts"
+      ],
       "@data-exploration-app/*": ["apps/data-exploration/src/app/*"],
       "@data-exploration-components/*": [
         "libs/data-exploration-components/src/*"
