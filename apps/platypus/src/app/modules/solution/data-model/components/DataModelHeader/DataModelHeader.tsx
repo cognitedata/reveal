@@ -71,7 +71,7 @@ export const DataModelHeader = ({
   } = useDataModelState();
 
   const { getRemoteAndLocalSchemas, removeLocalDraft, setLocalDraft } =
-    useLocalDraft(dataModelExternalId, dataModelSpace);
+    useLocalDraft(dataModelExternalId, dataModelSpace, latestDataModelVersion);
 
   const getDataModelHeaderSchemas = () => {
     /*

@@ -122,11 +122,6 @@ export const DataModelPage = ({
   } = useDataModelState();
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
-  const { removeLocalDraft, getLocalDraft } = useLocalDraft(
-    dataModelExternalId,
-    dataModel?.space || ''
-  );
-
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
     dataModelVersions || [],
@@ -138,6 +133,11 @@ export const DataModelPage = ({
     dataModelVersions || [],
     dataModelExternalId,
     dataModel?.space || ''
+  );
+  const { removeLocalDraft, getLocalDraft } = useLocalDraft(
+    dataModelExternalId,
+    dataModel?.space || '',
+    latestDataModelVersion
   );
   const localDraft = getLocalDraft(selectedDataModelVersion.version);
   const [saving, setSaving] = useState(false);
