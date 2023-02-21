@@ -68,6 +68,8 @@ jobs:
 
       - name: Storybook Tests
         if: ${{matrix.test-type == 'storybook'}}
+        env:
+          NODE_OPTIONS: --max-old-space-size=16384
         run: yarn test-storybook:ci
 
       - name: Upload Coverage Results

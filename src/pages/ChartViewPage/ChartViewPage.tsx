@@ -917,6 +917,7 @@ const ChartViewPage = () => {
           {isMonitoringEnabled && (
             <Tooltip content={t.Monitoring} position="left">
               <Button
+                // @ts-ignore
                 icon="Alarm"
                 aria-label="Toggle monitoring sidebar"
                 toggled={showMonitoringSidebar}

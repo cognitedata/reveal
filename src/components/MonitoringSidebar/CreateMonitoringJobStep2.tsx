@@ -241,6 +241,7 @@ const CreateMonitoringJobStep2 = ({
   );
 };
 
+// @ts-ignore
 const AlarmIcon = () => <Icon type="Alarm" style={{ marginRight: 8 }} />;
 
 export default CreateMonitoringJobStep2;

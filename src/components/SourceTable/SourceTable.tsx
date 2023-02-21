@@ -77,11 +77,9 @@ const SourceTable = ({
 }: Props) => {
   const onDragEnd = useCallback(
     (result: any) => {
-      if (!result.destination) {
-        return;
+      if (result.destination) {
+        onMoveSource(result.source.index, result.destination.index);
       }
-
-      onMoveSource(result.source.index, result.destination.index);
     },
     [onMoveSource]
   );

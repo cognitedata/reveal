@@ -70,6 +70,7 @@ const MonitoringSidebar = memo(({ onClose }: Props) => {
     <Sidebar visible>
       <TopContainer>
         <TopContainerTitle>
+          {/* @ts-ignore */}
           <Icon size={21} type="Alarm" />
           {t.Monitoring}
         </TopContainerTitle>
