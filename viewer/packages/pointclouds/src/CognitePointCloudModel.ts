@@ -256,6 +256,13 @@ export class CognitePointCloudModel {
   }
 
   /**
+   * Get the clipping planes for this model.
+   */
+  getModelClippingPlanes(): THREE.Plane[] {
+    return [...this.pointCloudNode.clippingPlanes];
+  }
+
+  /**
    * Gets default point appearance
    */
   getDefaultPointCloudAppearance(): PointCloudAppearance {
