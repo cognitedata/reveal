@@ -3,7 +3,7 @@ name: Visual Testing
 on:
   push:
     branches:
-    - master
+    - main
   pull_request:
     types:
       - opened
@@ -33,9 +33,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
           NODE_OPTIONS: --max-old-space-size=16384
       
-      # 👇 Checks if the branch is master and accepts all changes in Chromatic
+      # 👇 Checks if the branch is main and accepts all changes in Chromatic
       - name: Publish to Chromatic and auto accept changes
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         uses: chromaui/action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -43,7 +43,7 @@ jobs:
           autoAcceptChanges: true
 
       - name: Publish to Chromatic
-        if: github.ref != 'refs/heads/master'
+        if: github.ref != 'refs/heads/main'
         uses: chromaui/action@v1
         env:
           NODE_OPTIONS: --max-old-space-size=16384
