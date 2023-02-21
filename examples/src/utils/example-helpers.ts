@@ -4,6 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
+import { Buffer } from 'buffer';
 import { EventType, PublicClientApplication } from '@azure/msal-browser';
 
 export function withBasePath(path: string) {
@@ -102,7 +103,7 @@ export function getCredentialEnvironment(): CredentialEnvironment | undefined {
 
 export function decodeToken(token: string) {
   const splitToken = token.split('.');
-  const payloadString = atob(splitToken[1]); //Use Buffer instead
+  const payloadString = Buffer.from(splitToken[1], 'base64').toString('binary');
   const payloadJSON = JSON.parse(payloadString);
   return payloadJSON.aud;
 }
