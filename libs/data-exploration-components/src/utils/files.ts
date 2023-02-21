@@ -169,4 +169,5 @@ export const fileIconMapper: FileIconMapper = {
   'application/txt': 'file.txt',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
     'file.xls',
+  'application/octet-stream': 'file.fbx',
 };

@@ -9,6 +9,7 @@ export * from './filters';
 export * from './getMetadataValueByKey';
 export * from './getTimeseriesFilterUnit';
 export * from './id';
+export * from './mapMimeTypeToDocumentType';
 export * from './numbers';
 export * from './relationships';
 export * from './string';

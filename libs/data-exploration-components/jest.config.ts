@@ -10,6 +10,7 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/libs/data-exploration-components',
+  setupFilesAfterEnv: ['./src/setupTests.js'],
   collectCoverage: true,
   collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
   coveragePathIgnorePatterns: ['^.*\\.stories\\.[jt]sx?$'],

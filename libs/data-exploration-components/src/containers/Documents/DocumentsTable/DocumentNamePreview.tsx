@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { InternalDocument } from '@data-exploration-lib/domain-layer';
 import styled from 'styled-components';
 import Highlighter from 'react-highlight-words';
@@ -8,10 +8,7 @@ import {
   FileThumbnail,
 } from '@data-exploration-components/components';
 import { Popover } from 'antd';
-import {
-  isFilePreviewable,
-  fileIconMapper,
-} from '@data-exploration-components/utils';
+import { mapMimeTypeToDocumentType, isFilePreviewable } from '../../../utils';
 import { DocumentIcon, Flex } from '@cognite/cogs.js';
 
 const DocumentIconWrapper = styled.div`
@@ -30,29 +27,34 @@ export const DocumentNamePreview = ({
   query: string | undefined;
 }) => {
   const isPreviewable = isFilePreviewable(file);
+  const name = fileName || '';
+
+  const getDocumentIcon = useCallback(() => {
+    return (
+      <DocumentIconWrapper>
+        {file?.mimeType && (
+          <DocumentIcon file={mapMimeTypeToDocumentType(file.mimeType)} />
+        )}
+      </DocumentIconWrapper>
+    );
+  }, [file.mimeType]);
 
   if (isPreviewable) {
     return (
       <Flex gap={4} alignItems="center">
         <Popover
           content={<FileThumbnail file={file} />}
-          title={fileName}
+          title={name}
           trigger="hover"
           placement="topLeft"
         >
-          <DocumentIconWrapper>
-            {file?.mimeType && (
-              <DocumentIcon
-                file={fileIconMapper[file.mimeType] || 'file.txt'}
-              />
-            )}
-          </DocumentIconWrapper>
+          {getDocumentIcon()}
         </Popover>
 
         <EllipsisText level={2} lines={2}>
           <Highlighter
             searchWords={(query || '').split(' ')}
-            textToHighlight={fileName || ''}
+            textToHighlight={name}
             autoEscape
           />
         </EllipsisText>
@@ -62,13 +64,9 @@ export const DocumentNamePreview = ({
 
   return (
     <Flex gap={4} alignItems="center">
-      <DocumentIconWrapper>
-        {file?.mimeType && (
-          <DocumentIcon file={fileIconMapper[file.mimeType]} />
-        )}
-      </DocumentIconWrapper>
+      {getDocumentIcon()}
       <EllipsisText level={2} lines={2}>
-        <HighlightCell text={fileName} query={query} />
+        <HighlightCell text={name} query={query} />
       </EllipsisText>
     </Flex>
   );
