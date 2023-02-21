@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { Button, Colors, Icon } from '@cognite/cogs.js';
+import { Button, Colors, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export type DocsLinkGridItemProps = {
