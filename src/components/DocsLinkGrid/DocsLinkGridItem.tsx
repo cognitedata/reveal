@@ -11,7 +11,7 @@ const DocsLinkGridItem = styled(
   (props: PropsWithChildren<DocsLinkGridItemProps>) => (
     <a target="_blank" href={props.href}>
       <StyledButton {...props}>
-        <span>{props.children}</span>
+        <Title level={6}>{props.children}</Title>
         <Icon type="ExternalLink" />
       </StyledButton>
     </a>
