@@ -26,7 +26,6 @@ def pods = { body ->
           locizeApiKey,
         ]
       ) {
-        codecov.pod {
           testcafe.pod() {
             properties([
 
@@ -37,7 +36,6 @@ def pods = { body ->
             }
           }
         }
-      }
     }
   }
 }
@@ -46,7 +44,7 @@ pods {
   def gitCommit
   def getTitle
   def gitAuthor
-  def context_install = "continuous-integration/jenkins/install"
+  // def context_install = "continuous-integration/jenkins/install"
 
   def project = APP_ID;
   def packageName = FUSION_SUBAPP_NAME;
@@ -68,10 +66,14 @@ pods {
         deleteComments(PR_COMMENT_MARKER)
       }
 
-      githubNotifyWrapper(context_install) {
-        stage('Install dependencies') {
-          yarn.setup()
-        }
+      // githubNotifyWrapper(context_install) {
+      //   stage('Install dependencies') {
+      //     yarn.setup()
+      //   }
+      // }
+
+      stage('Install dependencies') {
+        yarn.setup()
       }
 
       stage('Git setup') {
@@ -129,7 +131,6 @@ pods {
               return;
             }
 
-            // keeping for now, this is very common config that can be reused everywhere
             final boolean isReleaseBranch = env.BRANCH_NAME.startsWith("release-${project}")
             final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY == 'single-branch';
             final boolean releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
