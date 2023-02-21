@@ -1,1 +1,1 @@
-export * from './lib/data-exploration-components';
+export * from './Select';

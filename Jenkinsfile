@@ -33,7 +33,7 @@ static final Map<String, String> SENTRY_PROJECT_NAMES = [
 // Add apps/libs name to the list where you want the storybook preview to build.
 static final String[] PREVIEW_STORYBOOK = [
   'platypus',
-  'data-exploration-components',
+  'data-exploration-components-old',
 ]
 
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
