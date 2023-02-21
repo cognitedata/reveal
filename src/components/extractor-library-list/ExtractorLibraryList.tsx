@@ -100,6 +100,7 @@ const StyledExtractorContainer = styled(Link)`
 
 const StyledMutedDescription = styled(Body).attrs({ level: 3 })`
   color: ${Colors['text-icon--muted']};
+  overflow-wrap: break-word;
 `;
 
 const StyledExtractorImageContainer = styled.div`
