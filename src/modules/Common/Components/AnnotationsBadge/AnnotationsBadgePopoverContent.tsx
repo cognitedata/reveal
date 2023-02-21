@@ -4,7 +4,7 @@ import {
   AnnotationsBadgeStatuses,
 } from 'src/modules/Common/types';
 import styled from 'styled-components';
-import { Button, Body, Detail, Micro } from '@cognite/cogs.js';
+import { Button, Body, Detail, Micro } from '@cognite/cogs.js-old';
 import { Divider } from '@cognite/data-exploration';
 import { showBadge } from 'src/modules/Common/Components/AnnotationsBadge/utils';
 

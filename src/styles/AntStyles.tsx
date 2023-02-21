@@ -11,7 +11,7 @@ import {
   Dropdown,
   Spin,
 } from 'antd';
-import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js-old';
 
 // import affixStyle from 'antd/es/affix/style/index.less';
 import alertStyle from 'antd/es/alert/style/index.less';

@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import moment from 'moment';
 import { FileLink, IdEither } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { Title, Body, Radio, Select } from '@cognite/cogs.js';
+import { Title, Body, Radio, Select } from '@cognite/cogs.js-old';
 import { saveAs } from 'file-saver';
 import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
 import styled from 'styled-components';

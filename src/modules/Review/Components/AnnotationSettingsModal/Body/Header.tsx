@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Title, Tooltip } from '@cognite/cogs.js';
+import { Button, Title, Tooltip } from '@cognite/cogs.js-old';
 import styled from 'styled-components';
 
 export const Header = ({

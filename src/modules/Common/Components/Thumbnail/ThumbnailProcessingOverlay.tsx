@@ -1,5 +1,5 @@
 import React from 'react';
-import { Detail } from '@cognite/cogs.js';
+import { Detail } from '@cognite/cogs.js-old';
 import { Spin } from 'antd';
 import styled from 'styled-components';
 

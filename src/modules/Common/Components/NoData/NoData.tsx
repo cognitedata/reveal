@@ -1,4 +1,4 @@
-import { Graphic } from '@cognite/cogs.js';
+import { Graphic } from '@cognite/cogs.js-old';
 import React from 'react';
 
 export const NoData = () => (

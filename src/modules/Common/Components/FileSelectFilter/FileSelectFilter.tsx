@@ -4,7 +4,7 @@ import { useCdfItems, useSearch } from '@cognite/sdk-react-query-hooks';
 import { useDebounce } from 'use-debounce/lib';
 
 import { Props, OptionTypeBase } from 'react-select';
-import { Select } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js-old';
 
 type FileOption = { value: number; name: string };
 

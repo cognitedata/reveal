@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, message } from 'antd';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse, FileInfo, FileGeoLocation } from '@cognite/sdk';
-import { Checkbox, Title } from '@cognite/cogs.js';
+import { Checkbox, Title } from '@cognite/cogs.js-old';
 import { useSDK } from '@cognite/sdk-provider';
 import { sleep } from 'src/modules/Common/Components/FileUploader/utils';
 import { getMIMEType } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';

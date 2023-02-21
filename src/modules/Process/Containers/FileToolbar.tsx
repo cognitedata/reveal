@@ -1,5 +1,5 @@
 import React from 'react';
-import { SegmentedControl } from '@cognite/cogs.js';
+import { SegmentedControl } from '@cognite/cogs.js-old';
 import {
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,

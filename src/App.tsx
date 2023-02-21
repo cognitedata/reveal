@@ -13,7 +13,7 @@ import GlobalStyles from 'src/styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import AntStyles from 'src/styles/AntStyles';
 import theme from 'src/styles/theme';
-import { Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js-old';
 import { ThemeProvider } from 'styled-components';
 import { SDKProvider } from '@cognite/sdk-provider';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';

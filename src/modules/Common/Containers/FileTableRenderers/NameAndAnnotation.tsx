@@ -2,7 +2,7 @@ import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/sto
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js-old';
 import exifIcon from 'src/assets/exifIcon.svg';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';

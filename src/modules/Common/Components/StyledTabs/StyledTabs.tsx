@@ -1,4 +1,4 @@
-import { Tabs } from '@cognite/cogs.js';
+import { Tabs } from '@cognite/cogs.js-old';
 import styled from 'styled-components';
 
 export const StyledTabs = styled(Tabs)`

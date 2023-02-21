@@ -4,7 +4,7 @@ import {
   annotationTypeStyleMap,
 } from 'src/constants/annotationDetailPanel';
 import styled from 'styled-components';
-import { Icon, IconType } from '@cognite/cogs.js';
+import { Icon, IconType } from '@cognite/cogs.js-old';
 import {
   AnnotationDetailPanelAnnotationType,
   AnnotationDetailPanelRowDataBase,

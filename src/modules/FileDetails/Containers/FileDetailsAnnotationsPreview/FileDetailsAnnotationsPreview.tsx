@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-old';
 import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';

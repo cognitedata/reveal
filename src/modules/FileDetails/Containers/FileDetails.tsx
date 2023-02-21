@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Icon, Tabs, Title } from '@cognite/cogs.js';
+import { Button, Icon, Tabs, Title } from '@cognite/cogs.js-old';
 import { StyledTabs } from 'src/modules/Common/Components/StyledTabs/StyledTabs';
 import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
 import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';

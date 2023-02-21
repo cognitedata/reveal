@@ -14,7 +14,7 @@ import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js-old';
 import { lightGrey } from 'src/utils/Colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';

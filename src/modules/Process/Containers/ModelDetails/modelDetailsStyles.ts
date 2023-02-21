@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Col } from '@cognite/cogs.js';
+import { Col } from '@cognite/cogs.js-old';
 
 export const ModelDetailSettingContainer = styled.div`
   display: flex;

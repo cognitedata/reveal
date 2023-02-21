@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Body, Micro } from '@cognite/cogs.js';
+import { Body, Micro } from '@cognite/cogs.js-old';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { RangeSlider } from 'src/modules/Common/Components/Slider/rangeSlider';
 import { useSelector } from 'react-redux';

@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import { Body } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js-old';
 
 const dataKeyLabelMap = new Map<string, string>([
   ['precision', 'Precision'],

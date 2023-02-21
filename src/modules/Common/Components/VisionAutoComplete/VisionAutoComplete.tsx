@@ -1,4 +1,4 @@
-import { AutoComplete, Button, OptionType } from '@cognite/cogs.js';
+import { AutoComplete, Button, OptionType } from '@cognite/cogs.js-old';
 import React from 'react';
 import { OptionProps } from 'react-select';
 import { VisionSelectOption } from 'src/modules/Common/Components/SelectOption/VisionSelectOption';

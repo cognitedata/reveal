@@ -1,4 +1,4 @@
-import { Button, Dropdown, Icon, Menu, Popconfirm } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, Popconfirm } from '@cognite/cogs.js-old';
 import React from 'react';
 import styled from 'styled-components';
 

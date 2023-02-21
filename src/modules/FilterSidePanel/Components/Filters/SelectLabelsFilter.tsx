@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { LabelFilter as LabelFilterComp } from '@cognite/data-exploration';
 import { VisionFilterItemProps } from 'src/modules/FilterSidePanel/types';
 import styled from 'styled-components';
-import { Body } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js-old';
 import { Label } from '@cognite/sdk';
 import isEqual from 'lodash-es/isEqual';
 import { FilterAndOrOption } from 'src/modules/FilterSidePanel/Components/FilterAndOrOption';

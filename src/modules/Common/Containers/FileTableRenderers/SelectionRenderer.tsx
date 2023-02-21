@@ -1,6 +1,6 @@
 import { SelectableTableCellRenderer } from 'src/modules/Common/types';
 import React from 'react';
-import { Checkbox } from '@cognite/cogs.js';
+import { Checkbox } from '@cognite/cogs.js-old';
 
 export function SelectionRenderer(props: SelectableTableCellRenderer) {
   const { onChange, selectedIds } = props.column;

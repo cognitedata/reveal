@@ -1,5 +1,5 @@
 import React from 'react';
-import { Body } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js-old';
 import styled from 'styled-components';
 import { ClearButton } from 'src/modules/Explorer/Components/ClearButton';
 

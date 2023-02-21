@@ -7,7 +7,7 @@ import {
   Row,
   Select,
   Title,
-} from '@cognite/cogs.js';
+} from '@cognite/cogs.js-old';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsGaugeReader } from 'src/api/vision/detectionModels/types';
 import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';

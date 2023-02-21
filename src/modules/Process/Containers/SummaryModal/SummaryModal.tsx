@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from 'antd';
-import { Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-old';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';

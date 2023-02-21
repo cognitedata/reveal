@@ -1,4 +1,4 @@
-import { OptionType } from '@cognite/cogs.js';
+import { OptionType } from '@cognite/cogs.js-old';
 import { ReactText } from 'react';
 import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
 import {

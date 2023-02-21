@@ -6,7 +6,7 @@ import {
   Row,
   SegmentedControl,
   Title,
-} from '@cognite/cogs.js';
+} from '@cognite/cogs.js-old';
 import { InputNumber } from 'antd';
 import React from 'react';
 import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';

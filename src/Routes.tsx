@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js-old';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import NotFound from 'src/pages/NotFound';
 import { LazyWrapper } from 'src/modules/Common/Components/LazyWrapper';

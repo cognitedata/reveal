@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js-old';
 import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
 import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewButton';
 import { SelectionCheckbox } from 'src/modules/Common/Components/SelectionCheckbox/SelectionCheckbox';

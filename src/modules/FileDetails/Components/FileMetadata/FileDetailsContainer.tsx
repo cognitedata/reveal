@@ -12,7 +12,7 @@ import {
   VisionFileDetailKey,
   VisionFileDetails,
 } from 'src/modules/FileDetails/Components/FileMetadata/Types';
-import { Title } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js-old';
 
 export const FileDetailsContainer = (props: {
   info: VisionFileDetails;

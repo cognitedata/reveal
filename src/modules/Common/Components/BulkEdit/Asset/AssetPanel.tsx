@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Body, Select } from '@cognite/cogs.js';
+import { Body, Select } from '@cognite/cogs.js-old';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import styled from 'styled-components';
 import { AssetSelect } from '@cognite/data-exploration';

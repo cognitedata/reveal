@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Body, Button } from '@cognite/cogs.js';
+import { Body, Button } from '@cognite/cogs.js-old';
 import { Spin } from 'antd';
 import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
 import { cancelFetch } from 'src/api/file/fetchFiles/fetchFiles';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Body, Button, Graphic, Title } from '@cognite/cogs.js';
+import { Body, Button, Graphic, Title } from '@cognite/cogs.js-old';
 import { AccessPermission } from 'src/utils/types';
 import styled from 'styled-components';
 import * as NavLinks from 'src/constants/NavLinks';

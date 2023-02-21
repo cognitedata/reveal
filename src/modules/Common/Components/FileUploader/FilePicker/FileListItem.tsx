@@ -2,7 +2,7 @@ import React from 'react';
 import { CogsFileInfo } from 'src/modules/Common/Components/FileUploader/FilePicker/types';
 import { getHumanReadableFileSize } from 'src/modules/Common/Components/FileUploader/utils/getHumanReadableFileSize';
 import styled from 'styled-components';
-import { AllIconTypes, Detail, Icon } from '@cognite/cogs.js';
+import { AllIconTypes, Detail, Icon } from '@cognite/cogs.js-old';
 import { Progress } from 'antd';
 import { MimeTypes } from 'src/constants/validMimeTypes';
 

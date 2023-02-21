@@ -6,7 +6,7 @@ import {
   Popconfirm,
   Row,
   Title,
-} from '@cognite/cogs.js';
+} from '@cognite/cogs.js-old';
 import { clearTemporaryRegion } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';

@@ -7,7 +7,7 @@ import {
   OptionType,
   Title,
   Button,
-} from '@cognite/cogs.js';
+} from '@cognite/cogs.js-old';
 import { PopupUIElementContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/TitleContainer';
 import React from 'react';
 import styled from 'styled-components';

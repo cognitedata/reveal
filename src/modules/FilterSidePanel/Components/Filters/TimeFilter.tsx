@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Title } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js-old';
 import { TimePicker } from 'antd';
 import styled from 'styled-components';
 import moment from 'moment';

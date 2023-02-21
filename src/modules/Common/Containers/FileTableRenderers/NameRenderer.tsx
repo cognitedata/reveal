@@ -2,7 +2,7 @@ import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUt
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js-old';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import ImageIcon from 'src/assets/ImageIcon.svg';

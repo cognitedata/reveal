@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Button, Title, Graphic, Body, Tooltip } from '@cognite/cogs.js';
+import { Button, Title, Graphic, Body, Tooltip } from '@cognite/cogs.js-old';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
 import { AutoMLModelType } from 'src/api/vision/autoML/types';

@@ -1,6 +1,6 @@
 import { AssetSelect } from '@cognite/data-exploration';
 import styled from 'styled-components';
-import { Body } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js-old';
 import React from 'react';
 
 export const AssetSelector = (props: {

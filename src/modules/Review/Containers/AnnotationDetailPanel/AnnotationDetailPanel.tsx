@@ -48,7 +48,7 @@ import {
   AnnotationDetailPanelRowDataBase,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import { selectTempKeypointCollection } from 'src/modules/Review/store/annotatorWrapper/selectors';
-import { Detail, Icon, Tooltip } from '@cognite/cogs.js';
+import { Detail, Icon, Tooltip } from '@cognite/cogs.js-old';
 
 export const AnnotationDetailPanel = ({
   file,

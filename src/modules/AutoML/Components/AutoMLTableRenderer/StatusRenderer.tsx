@@ -1,7 +1,7 @@
 import React from 'react';
 import { AutoMLStatusBadge } from 'src/modules/AutoML/Components/AutoMLStatusBadge';
 import { AutoMLTableDataType } from 'src/modules/AutoML/Components/AutoMLModelList';
-import { Icon } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js-old';
 import styled from 'styled-components';
 
 export const StatusRenderer = ({

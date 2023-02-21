@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { FileToolbar } from 'src/modules/Process/Containers/FileToolbar';
-import { Title } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js-old';
 import styled from 'styled-components';
 import { pushMetric } from 'src/utils/pushMetric';
 import { ProcessResults } from 'src/modules/Process/Containers/ProcessResults';

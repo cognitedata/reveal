@@ -1,6 +1,6 @@
 import React, { ReactText, useState } from 'react';
 import styled from 'styled-components';
-import { Button, Colors, Icon } from '@cognite/cogs.js';
+import { Button, Colors, Icon } from '@cognite/cogs.js-old';
 
 const CopiedIconContainer = styled.div`
   color: ${Colors.success.hex()};

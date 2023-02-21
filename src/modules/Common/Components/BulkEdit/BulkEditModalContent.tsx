@@ -7,7 +7,7 @@ import {
   Select,
   Title,
   Tooltip,
-} from '@cognite/cogs.js';
+} from '@cognite/cogs.js-old';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';

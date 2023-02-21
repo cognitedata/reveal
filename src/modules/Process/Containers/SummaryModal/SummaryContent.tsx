@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { Title } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js-old';
 import styled from 'styled-components';
 import FileUploadedIcon from 'src/assets/FileUploadedIcon.svg';
 import FileBland from 'src/assets/FileBland.svg';

@@ -1,4 +1,4 @@
-import { Button, Icon, toast } from '@cognite/cogs.js';
+import { Button, Icon, toast } from '@cognite/cogs.js-old';
 import { notification } from 'antd';
 import React from 'react';
 import styled from 'styled-components';

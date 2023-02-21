@@ -1,4 +1,4 @@
-import { Radio } from '@cognite/cogs.js';
+import { Radio } from '@cognite/cogs.js-old';
 import React from 'react';
 import {
   MediaTypeOption,

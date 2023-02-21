@@ -8,7 +8,7 @@ import {
   Menu,
   Popconfirm,
   Title,
-} from '@cognite/cogs.js';
+} from '@cognite/cogs.js-old';
 import styled from 'styled-components';
 import {
   AutoMLExportFormat,

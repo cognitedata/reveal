@@ -7,7 +7,7 @@ import {
   PaginatedTableProps,
   PageSize,
 } from 'src/modules/Common/Components/FileTable/types';
-import { Pagination } from '@cognite/cogs.js';
+import { Pagination } from '@cognite/cogs.js-old';
 import { Footer } from './Footer';
 
 const getPage = (

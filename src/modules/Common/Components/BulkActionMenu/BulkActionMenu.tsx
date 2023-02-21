@@ -9,7 +9,7 @@ import {
   Popconfirm,
   Tooltip,
   Colors,
-} from '@cognite/cogs.js';
+} from '@cognite/cogs.js-old';
 import { pushMetric } from 'src/utils/pushMetric';
 import { useFlag } from '@cognite/react-feature-flags';
 

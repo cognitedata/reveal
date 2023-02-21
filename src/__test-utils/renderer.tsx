@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { RenderResult } from '@testing-library/react';
 import { Store } from 'redux';
 
-import { ToastContainer } from '@cognite/cogs.js';
+import { ToastContainer } from '@cognite/cogs.js-old';
 
 import { render } from 'src/__test-utils/custom-render';
 import { getMockedStore } from 'src/__test-utils/store.utils';

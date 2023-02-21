@@ -1,4 +1,11 @@
-import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
+import {
+  Button,
+  Detail,
+  Icon,
+  Tooltip,
+  Row,
+  Title,
+} from '@cognite/cogs.js-old';
 import { InputNumber } from 'antd';
 import React from 'react';
 

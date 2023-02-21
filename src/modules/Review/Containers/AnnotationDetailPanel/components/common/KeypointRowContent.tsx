@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Col, Row } from '@cognite/cogs.js';
+import { Col, Row } from '@cognite/cogs.js-old';
 
 export const KeypointRowContent = ({
   label,

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Body, Button } from '@cognite/cogs.js';
+import { Body, Button } from '@cognite/cogs.js-old';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { Input } from 'antd';
 

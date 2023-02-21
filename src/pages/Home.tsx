@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js-old';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonType, Dropdown } from '@cognite/cogs.js';
+import { Button, ButtonType, Dropdown } from '@cognite/cogs.js-old';
 import { MenuContent } from 'src/modules/Common/Components/ActionMenu/MenuContent';
 
 interface ActionMenuProps {

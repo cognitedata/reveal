@@ -1,4 +1,4 @@
-import { Button, Title } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js-old';
 import React from 'react';
 import styled from 'styled-components';
 import { Drawer } from 'antd';

@@ -1,4 +1,4 @@
-import { Detail } from '@cognite/cogs.js';
+import { Detail } from '@cognite/cogs.js-old';
 import React from 'react';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { VisionReviewAnnotation } from 'src/modules/Review/types';

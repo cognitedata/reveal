@@ -1,4 +1,4 @@
-import { Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js-old';
 import React, { ComponentType, lazy, Suspense, useMemo } from 'react';
 
 export function LazyWrapper(props: {

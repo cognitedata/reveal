@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Title } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js-old';
 import { margin } from 'src/cogs-variables';
 import { FilePickerHeadless } from './FilePickerHeadless';
 import { FileDropzone } from './FileDropzone';

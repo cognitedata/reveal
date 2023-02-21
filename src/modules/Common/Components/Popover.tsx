@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Tooltip, TooltipProps } from '@cognite/cogs.js';
+import { Tooltip, TooltipProps } from '@cognite/cogs.js-old';
 import { lightGrey } from 'src/utils/Colors';
 
 interface PopoverProps {

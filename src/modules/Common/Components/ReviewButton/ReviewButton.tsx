@@ -1,4 +1,4 @@
-import { Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-old';
 import React from 'react';
 import styled from 'styled-components';
 
