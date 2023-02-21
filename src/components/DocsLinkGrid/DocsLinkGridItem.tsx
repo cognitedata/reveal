@@ -38,7 +38,7 @@ const StyledButton = styled(Button)`
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding: 26px 24px;
+    padding: 24px;
   }
 `;
 
