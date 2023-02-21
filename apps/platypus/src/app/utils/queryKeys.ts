@@ -1,6 +1,7 @@
 import { QueryFilter } from '@platypus/platypus-core';
 
 export const QueryKeys = {
+  LIST_DMS_SPACES: ['LIST_DMS_SPACES'] as const,
   TOKEN: ['TOKEN'] as const,
   GROUPS: ['GROUPS'] as const,
   DATA_MODEL_LIST: ['DATA_MODEL_LIST'] as const,
