@@ -18,7 +18,6 @@ import {
 import useScreenshot from 'use-screenshot-hook';
 import CSVModal from 'components/CSVModal/CSVModal';
 import { createInternalLink } from 'utils/link';
-import { isProduction } from 'utils/environment';
 import { currentDateRangeLocale } from 'config/locale';
 import ConnectedSharingDropdown from 'components/SharingDropdown/ConnectedSharingDropdown';
 import {
@@ -184,9 +183,7 @@ export const ChartActions = () => {
               <DownloadDropdown
                 label={t['Download Chart']}
                 translations={dropdownTranslations}
-                onDownloadCalculations={
-                  isProduction ? undefined : handleDownloadCalculations
-                }
+                onDownloadCalculations={handleDownloadCalculations}
                 onDownloadImage={handleDownloadImage}
                 onCsvDownload={() => setIsCSVModalVisible(true)}
               />
