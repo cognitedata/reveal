@@ -3,7 +3,7 @@
  */
 
 import { Mock } from 'moq.ts';
-import { Box3, Vector3 } from 'three';
+import { Box3, Matrix4, Vector3 } from 'three';
 import { Image360Icon } from '../entity/Image360Icon';
 import { IconOctree } from './IconOctree';
 
@@ -74,5 +74,29 @@ describe(IconOctree.name, () => {
     expect(JSON.stringify(octree.getPointCenterOfNode(octree.findNodesByLevel(0)[0]))).toBe(
       JSON.stringify(new Vector3(0.5, 0.5, 0.5))
     );
+  });
+
+  test('getting LODs with threshold 0.05 should return both leaf nodes', () => {
+    const image360IconMock1 = new Mock<Image360Icon>()
+      .setup(icon => icon.position)
+      .returns(new Vector3(0.25, 0.25, 0.25))
+      .object();
+
+    const image360IconMock2 = new Mock<Image360Icon>()
+      .setup(icon => icon.position)
+      .returns(new Vector3(0.75, 0.75, 0.75))
+      .object();
+
+    const octree = new IconOctree([image360IconMock1, image360IconMock2], unitBounds, 1);
+
+    const unitOrthographicProjection = new Matrix4().makeOrthographic(-1, 1, 1, -1, -1, 1);
+    const set = octree.getLOD(0.05, unitOrthographicProjection);
+
+    expect(set.size).toBe(2);
+
+    const lods = [...set];
+
+    expect(lods.filter(p => p.data.data.includes(image360IconMock1)).length).toBe(1);
+    expect(lods.filter(p => p.data.data.includes(image360IconMock2)).length).toBe(1);
   });
 });
