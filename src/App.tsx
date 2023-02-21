@@ -12,7 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { translations } from 'common/i18n';
-import Home from 'pages/Home';
+import RootList from 'pages/Home';
 import GlobalStyles from 'styles/GlobalStyles';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -47,7 +47,7 @@ const App = () => {
                     <Routes>
                       <Route
                         path="/:projectName/:subAppPath"
-                        element={<Home />}
+                        element={<RootList />}
                       />
                       <Route
                         path="/:projectName/:subAppPath/quick-match"

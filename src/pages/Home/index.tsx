@@ -6,7 +6,7 @@ import PipelineList from 'components/pipeline-list';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-export default function Home() {
+export default function RootList() {
   const { t } = useTranslation();
   const { subAppPath } = useParams<{
     subAppPath: string;
