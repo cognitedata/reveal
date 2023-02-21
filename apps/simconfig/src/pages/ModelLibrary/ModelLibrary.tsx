@@ -5,8 +5,8 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
 import { getProject } from '@cognite/cdf-utilities';
-import { Input, Skeleton } from '@cognite/cogs.js';
-import { Button, Illustrations } from '@cognite/cogs.js-v9';
+import { Button, Input, Skeleton } from '@cognite/cogs.js';
+import { Illustrations } from '@cognite/cogs.js-v9';
 import { useSDK } from '@cognite/sdk-provider';
 import { useGetModelFileListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -103,7 +103,7 @@ export function ModelLibrary() {
           <div className="new-model">
             <Link to={createCdfLink(`/model-library/new-model`)}>
               <Button
-                icon="GridAdd"
+                icon="Add"
                 style={{ width: '100%' }}
                 type="secondary"
                 block
@@ -160,7 +160,7 @@ export function ModelLibrary() {
             <h5>No simulator models found</h5>
             <span>Create your first model to get started</span>
             <Link to={createCdfLink(`/model-library/new-model`)}>
-              <Button icon="GridAdd" size="medium" type="primary">
+              <Button icon="Add" type="primary">
                 Create model
               </Button>
             </Link>

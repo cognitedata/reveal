@@ -10,7 +10,7 @@ import {
   Loader,
   Modal,
 } from '@cognite/cogs.js';
-import cogs9Styles from '@cognite/cogs.js-v9/dist/cogs-without-fonts.css';
+// import cogs9Styles from '@cognite/cogs.js-v9/dist/cogs-without-fonts.css';
 import cogsStyles from '@cognite/cogs.js/dist/cogs-without-fonts.css';
 
 const STYLE_SCOPE = 'cdf-simint-ui-style-scope';
@@ -58,7 +58,7 @@ export default function GlobalStyles({
 }: {
   children: React.ReactNode;
 }) {
-  const didLoadStyles = useGlobalStyles([cogsStyles, cogs9Styles]);
+  const didLoadStyles = useGlobalStyles([cogsStyles]);
 
   if (!didLoadStyles) {
     return <Loader />;
