@@ -103,9 +103,13 @@ export function getCredentialEnvironment(): CredentialEnvironment | undefined {
 
 export function decodeToken(token: string) {
   const splitToken = token.split('.');
-  const payloadString = Buffer.from(splitToken[1], 'base64').toString('binary');
-  const payloadJSON = JSON.parse(payloadString);
-  return payloadJSON.aud;
+  try {
+    const payloadString = Buffer.from(splitToken[1], 'base64').toString('binary');
+    const payloadJSON = JSON.parse(payloadString);
+    return payloadJSON.aud;
+  } catch (e) {
+    throw new Error("Invalid override token: " + e);
+  }
 }
 
 export function createSDKFromToken(appId: string, project: string, token: string): CogniteClient {
