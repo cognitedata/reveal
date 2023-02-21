@@ -89,8 +89,8 @@ describe(IconOctree.name, () => {
 
     const octree = new IconOctree([image360IconMock1, image360IconMock2], unitBounds, 1);
 
-    const unitOrthographicProjection = new Matrix4().makeOrthographic(-1, 1, 1, -1, -1, 1);
-    const set = octree.getLOD(0.05, unitOrthographicProjection);
+    const unitOrthographicProjection = new Matrix4().makeOrthographic(1, -1, 1, -1, -1, 1);
+    const set = octree.getLODByScreenArea(0.05, unitOrthographicProjection);
 
     expect(set.size).toBe(2);
 

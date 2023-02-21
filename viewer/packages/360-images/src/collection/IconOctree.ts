@@ -26,7 +26,7 @@ export class IconOctree extends PointOctree<Image360Icon> {
     return this._nodeCenters.get(node);
   }
 
-  public getLOD(threshold: number, viewProjectionMatrix: Matrix4): Set<PointOctant<Image360Icon>> {
+  public getLODByScreenArea(areaThreshold: number, projection: Matrix4): Set<PointOctant<Image360Icon>> {
     const root = this.findNodesByLevel(0)[0];
     const selectedNodes = new Set<PointOctant<Image360Icon>>();
 
@@ -46,7 +46,7 @@ export class IconOctree extends PointOctree<Image360Icon> {
           return;
         }
         const projectedArea = computeNodeProjectedArea(child);
-        if (projectedArea > threshold) {
+        if (projectedArea > areaThreshold) {
           nodesToProcess.push(child);
         } else {
           selectedNodes.add(currentNode);
@@ -57,7 +57,7 @@ export class IconOctree extends PointOctree<Image360Icon> {
     return selectedNodes;
 
     function computeNodeProjectedArea(node: Node) {
-      const rootProjectedBounds = getApproximateProjectedBounds(new Box3(node.min, node.max), viewProjectionMatrix);
+      const rootProjectedBounds = getApproximateProjectedBounds(new Box3(node.min, node.max), projection);
       return getScreenArea(rootProjectedBounds);
     }
   }
