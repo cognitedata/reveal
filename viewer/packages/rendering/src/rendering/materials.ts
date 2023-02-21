@@ -27,22 +27,15 @@ export interface Materials {
 }
 
 export function forEachMaterial(materials: Materials, callback: (material: THREE.RawShaderMaterial) => void): void {
-  callback(materials.box);
-  callback(materials.circle);
-  callback(materials.generalRing);
-  callback(materials.nut);
-  callback(materials.quad);
-  callback(materials.cone);
-  callback(materials.eccentricCone);
-  callback(materials.sphericalSegment);
-  callback(materials.torusSegment);
-  callback(materials.generalCylinder);
-  callback(materials.trapezium);
-  callback(materials.ellipsoidSegment);
-  callback(materials.instancedMesh);
-  callback(materials.triangleMesh);
-  callback(materials.simple);
-  Object.values(materials.texturedMaterials).forEach(material => callback(material));
+  for (const materialOrMaterialSet of Object.values(materials)) {
+    if (materialOrMaterialSet.isMaterial === true) {
+      callback(materialOrMaterialSet as THREE.RawShaderMaterial);
+    } else {
+      const materialSet = (materialOrMaterialSet as { [key: string]: THREE.RawShaderMaterial });
+
+      Object.values(materialSet).forEach(material => callback(material));
+    }
+  }
 }
 
 export function createMaterials(
