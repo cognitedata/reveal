@@ -6,10 +6,7 @@ import {
   MultiSelect,
   MultiSelectProps,
 } from '@data-exploration-components/components';
-import {
-  NIL_FILTER_VALUE,
-  NIL_FILTER_LABEL,
-} from '@data-exploration-lib/domain-layer';
+import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
 
 import { FilterTitle } from './elements';
 import { OptionValue } from '../SearchNew/Filters/types';

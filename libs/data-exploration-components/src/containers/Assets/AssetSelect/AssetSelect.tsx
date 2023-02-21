@@ -55,7 +55,9 @@ export const AssetSelect = ({
   });
   const { data: selectedItems } = useCdfItems<Asset>(
     'assets',
-    selectedAssetIds ? selectedAssetIds.map((id) => ({ id })) : []
+    selectedAssetIds ? selectedAssetIds.map((id) => ({ id })) : [],
+    false,
+    { keepPreviousData: true }
   );
 
   const [data, rootData] = useMemo(() => {

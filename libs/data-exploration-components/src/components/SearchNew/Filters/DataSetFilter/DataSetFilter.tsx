@@ -39,6 +39,7 @@ export const DataSetFilterV2 = ({
     false,
     {
       enabled: value && value.length > 0,
+      keepPreviousData: true,
     }
   );
 
@@ -52,6 +53,10 @@ export const DataSetFilterV2 = ({
     })
   );
 
+  const options = React.useMemo(() => {
+    return datasetOptions?.map(formatOption);
+  }, [datasetOptions]);
+
   return (
     <Tooltip
       interactive
@@ -63,7 +68,7 @@ export const DataSetFilterV2 = ({
     >
       <MultiSelectFilter<number>
         title="Data set"
-        options={datasetOptions?.map(formatOption) || []}
+        options={options || []}
         isDisabled={isError}
         onChange={(_, newValues) => {
           if (newValues) {
