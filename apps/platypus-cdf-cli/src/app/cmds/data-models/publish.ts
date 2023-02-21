@@ -22,7 +22,7 @@ export const commandArgs = [
   {
     name: 'external-id',
     description: 'The external id of the data model',
-    prompt: 'Enter data model external id',
+    prompt: 'Enter data model external ID',
     type: CommandArgumentType.STRING,
     required: true,
   },
@@ -52,7 +52,7 @@ export const commandArgs = [
       'Space id of the space the data model should belong to. Defaults to same as external-id.',
     type: CommandArgumentType.STRING,
     required: true,
-    prompt: 'Enter data model space id',
+    prompt: 'Enter data model space ID',
     promptDefaultValue: (commandArgs) => commandArgs['external-id'],
   },
   {
@@ -67,6 +67,7 @@ export const commandArgs = [
     name: 'version',
     description: 'Data model version',
     type: CommandArgumentType.STRING,
+    prompt: 'Enter data model version',
     required: true,
   },
 ] as CommandArgument[];
@@ -142,7 +143,7 @@ export class PublishCmd extends CLICommand {
     }
 
     Response.success(
-      `Successfully published changes to data model version ${dto.version}`
+      `Successfully published changes to data model version ${dto.version}.`
     );
   }
 

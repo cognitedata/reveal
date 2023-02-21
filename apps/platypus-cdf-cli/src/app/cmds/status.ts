@@ -9,7 +9,7 @@ import { ROOT_CONFIG_KEY } from '../constants';
 const DEBUG = _DEBUG.extend('cmd:status');
 class LoginStatusCommand implements CommandModule {
   public readonly command = 'status';
-  public readonly describe = 'Check user login status (fails if not logged-in)';
+  public readonly describe = 'Check if current user is signed in.';
   handler(args: Arguments<BaseArgs>) {
     const globalConfig = getConfig();
     const authConfig = globalConfig.get(ROOT_CONFIG_KEY.AUTH);

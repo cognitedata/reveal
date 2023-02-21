@@ -51,7 +51,9 @@ export const getAccessTokenForDeviceCode = async (
       });
       return handleResponse(authResult);
     } catch {
-      throw new Error('Failed to authenticate, please sign in again!');
+      throw new Error(
+        'Failed to authenticate you, make sure you use correct credentials for the sign in.'
+      );
     }
   }
 
@@ -74,5 +76,7 @@ export const getAccessTokenForDeviceCode = async (
   if (authResult) {
     return handleResponse(authResult);
   }
-  throw new Error('Failed to authenticate');
+  throw new Error(
+    'Failed to authenticate you, make sure you use correct credentials for the sign in.'
+  );
 };

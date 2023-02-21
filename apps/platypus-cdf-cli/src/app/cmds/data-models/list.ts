@@ -38,4 +38,4 @@ export class ListCmd extends CLICommand {
   }
 }
 
-export default new ListCmd('list', 'List data models', []);
+export default new ListCmd('list', 'List data models.', []);

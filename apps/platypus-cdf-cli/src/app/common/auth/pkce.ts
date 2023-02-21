@@ -74,7 +74,7 @@ export const getAccessTokenForPKCE = async (request: PKAccessTokenRequest) => {
     codeChallengeMethod: 'S256',
   });
   request.logger.info(
-    `Opening browser for authentication (if your browser is not opened please copy + paste this link):`
+    `Opening browser for authentication. If your browser does not open automatically, copy and paste this link:`
   );
   request.logger.log(authCodeUrl);
   await open(authCodeUrl);
@@ -92,7 +92,9 @@ export const getAccessTokenForPKCE = async (request: PKAccessTokenRequest) => {
     if (authResult) {
       return handleResponse(authResult);
     }
-    throw new Error('Failed to authenticate');
+    throw new Error(
+      'Failed to authenticate you, make sure you use correct credentials for the sign in.'
+    );
   } finally {
     // close the server we opened
     server.close();

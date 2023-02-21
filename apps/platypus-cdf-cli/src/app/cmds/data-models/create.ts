@@ -28,7 +28,6 @@ export const commandArgs = [
     isPositional: true,
     type: CommandArgumentType.STRING,
     required: true,
-    example: 'cdf data-models create',
   },
   {
     name: 'external-id',
@@ -60,9 +59,7 @@ type DataModelCreateCommandArgs = BaseArgs & {
 
 export class CreateCmd extends CLICommand {
   builder<T>(yargs: Argv<T>): Argv {
-    yargs.usage(
-      'Creates a new data model in CDF that allows you to store and retrieve data to your needs.'
-    );
+    yargs.usage('Creates a new data model to store and retrieve data.');
 
     return super.builder(yargs);
   }
@@ -97,12 +94,14 @@ export class CreateCmd extends CLICommand {
       'Data model was created successfully, %o',
       JSON.stringify(response.getValue(), null, 2)
     );
-    Response.success(`Data model "${args.name}" has been created successfully`);
+    Response.success(
+      `Data model "${args.name}" has been created successfully.`
+    );
   }
 }
 
 export default new CreateCmd(
   'create [name]',
-  'Create a new data model',
+  'Create a new data model.',
   commandArgs
 );
