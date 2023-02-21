@@ -32,5 +32,4 @@ export const TooltipWrapper = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  width: 100%;
 `;
