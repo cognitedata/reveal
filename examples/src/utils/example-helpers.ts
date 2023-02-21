@@ -57,9 +57,9 @@ export function getParamsFromURL(
   const modelRevision =
     modelId !== null && revisionId !== null
       ? {
-          modelId: Number.parseInt(modelId, 10),
-          revisionId: Number.parseInt(revisionId, 10),
-        }
+        modelId: Number.parseInt(modelId, 10),
+        revisionId: Number.parseInt(revisionId, 10),
+      }
       : undefined;
   return {
     project: project ? project : defaults.project,
@@ -69,8 +69,8 @@ export function getParamsFromURL(
         modelUrl !== null
           ? withBasePath(modelUrl)
           : modelId === null && defaults.modelUrl
-          ? withBasePath(defaults.modelUrl)
-          : undefined,
+            ? withBasePath(defaults.modelUrl)
+            : undefined,
     },
     environmentParam
   };
@@ -83,7 +83,7 @@ type CredentialEnvironment = {
 }
 
 type CredentialEnvironmentList = {
-  environments: { [key:string]: CredentialEnvironment; };
+  environments: { [key: string]: CredentialEnvironment; };
 }
 
 export function getCredentialEnvironment(): CredentialEnvironment | undefined {
@@ -172,10 +172,12 @@ export async function createSDKFromEnvironment(
     return accessToken;
   }
 
-  const client = new CogniteClient({ appId,
-                                     project,
-                                     getToken,
-                                     baseUrl});
+  const client = new CogniteClient({
+    appId,
+    project,
+    getToken,
+    baseUrl
+  });
   await client.authenticate();
   return client;
 }
