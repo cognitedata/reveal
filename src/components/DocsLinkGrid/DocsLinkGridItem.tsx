@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { Button, Colors, Title, Link } from '@cognite/cogs.js';
+import { Button, Colors, Title, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export type DocsLinkGridItemProps = {
@@ -9,11 +9,12 @@ export type DocsLinkGridItemProps = {
 
 const DocsLinkGridItem = styled(
   (props: PropsWithChildren<DocsLinkGridItemProps>) => (
-    <Button {...props}>
-      <StyledLink target="_blank" href={props.href}>
-        <Title level="5">{props.children}</Title>
-      </StyledLink>
-    </Button>
+    <a target="_blank" href={props.href}>
+      <StyledButton {...props}>
+        <span>{props.children}</span>
+        <Icon type="ExternalLink" />
+      </StyledButton>
+    </a>
   )
 )`
   background-color: ${Colors['decorative--grayscale--200']};
@@ -32,20 +33,12 @@ const DocsLinkGridItem = styled(
   }
 `;
 
-const StyledLink = styled(Link)`
-  width: 100%;
-  padding: 26px 24px;
-
+const StyledButton = styled(Button)`
   && {
-    color: ${Colors['text-icon--medium']};
-
-    &:hover {
-      background-color: ${Colors['surface--strong']};
-
-      > * {
-        color: ${Colors['surface--action--strong--default']};
-      }
-    }
+    display: flex;
+    justify-content: space-between;
+    width: 401px;
+    height: 68px;
   }
 `;
 
