@@ -100,6 +100,22 @@ export function getCredentialEnvironment(): CredentialEnvironment | undefined {
   return credentialEnvironmentList.environments[environmentParam];
 }
 
+export function decodeToken(token: string) {
+  const splitToken = token.split('.');
+  const payloadString = atob(splitToken[1]); //Use Buffer instead
+  const payloadJSON = JSON.parse(payloadString);
+  return payloadJSON.aud;
+}
+
+export function createSDKFromToken(appId: string, project: string, token: string): CogniteClient {
+  return new CogniteClient({
+    appId,
+    project,
+    getToken: () => Promise.resolve(token),
+    baseUrl: decodeToken(token)
+  });
+}
+
 export async function createSDKFromEnvironment(
   appId: string,
   project: string,

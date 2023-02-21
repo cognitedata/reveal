@@ -28,7 +28,7 @@ import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
-import { createSDKFromEnvironment } from '../utils/example-helpers';
+import { createSDKFromEnvironment, createSDKFromToken } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
 import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
 import { CustomCameraManager } from '../utils/CustomCameraManager';
@@ -46,6 +46,7 @@ export function Viewer() {
   const url = new URL(window.location.href);
   const urlParams = url.searchParams;
   const environmentParam = urlParams.get('env');
+  const overrideToken = urlParams.get('token');
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -81,7 +82,10 @@ export function Viewer() {
       };
 
       let client: CogniteClient;
-      if (project && environmentParam) {
+      if (project && overrideToken) {
+        client = await createSDKFromToken('reveal.example.example', project, overrideToken);
+      }
+      else if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.example', project, environmentParam);
       } else {
         client = new CogniteClient({
