@@ -1,3 +1,3 @@
 module.exports = {
-  styleScope: 'cdf-data-sets-style-scope',
+  styleScope: 'cdf-data-catalog-style-scope',
 };

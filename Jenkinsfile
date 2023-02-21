@@ -1,9 +1,9 @@
 @Library('jenkins-helpers') _
 
 static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
-static final String APP_ID = 'cdf-data-sets'
+static final String APP_ID = 'cdf-data-catalog'
 static final String FIREBASE_APP_SITE = 'data-catalog'
-static final String FUSION_SUBAPP_NAME = '@cognite/cdf-data-sets'
+static final String FUSION_SUBAPP_NAME = '@cognite/cdf-data-catalog'
 static final String NODE_VERSION = 'node:14'
 
 final boolean isMaster = env.BRANCH_NAME == 'master'

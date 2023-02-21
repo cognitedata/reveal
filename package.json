@@ -1,5 +1,5 @@
 {
-  "name": "@cognite/cdf-data-sets",
+  "name": "@cognite/cdf-data-catalog",
   "version": "0.3.0",
   "private": true,
   "scripts": {

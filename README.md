@@ -1,4 +1,4 @@
-# Data sets UI
+# Data Catalog UI
 
 Read the documentation about how to get started and deploy the app [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3893461153/Fusion+Data+Catalog)
 
