@@ -8,22 +8,19 @@ import {
 } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { translations } from 'common/i18n';
-import Home from 'pages/Home';
+import RootList from 'pages/Home';
 import GlobalStyles from 'styles/GlobalStyles';
 import { FlagProvider } from '@cognite/react-feature-flags';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Details from 'pages/Details';
+import QuickMatch from 'pages/QuickMatch';
+import CreatePipeline from 'pages/CreatePipeline';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      staleTime: 10 * 60 * 1000, // Pretty long
-    },
-  },
-});
+const queryClient = new QueryClient();
 const env = getEnv();
 const project = getProject();
 
@@ -46,7 +43,26 @@ const App = () => {
                 login={() => loginAndAuthIfNeeded(project, env)}
               >
                 <SDKProvider sdk={sdk}>
-                  <Home />
+                  <BrowserRouter>
+                    <Routes>
+                      <Route
+                        path="/:projectName/:subAppPath"
+                        element={<RootList />}
+                      />
+                      <Route
+                        path="/:projectName/:subAppPath/quick-match"
+                        element={<QuickMatch />}
+                      />
+                      <Route
+                        path="/:projectName/:subAppPath/create"
+                        element={<CreatePipeline />}
+                      />
+                      <Route
+                        path="/:projectName/:subAppPath/:id"
+                        element={<Details />}
+                      />
+                    </Routes>
+                  </BrowserRouter>
                 </SDKProvider>
               </AuthWrapper>
             </SubAppWrapper>
