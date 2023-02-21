@@ -44,7 +44,6 @@ pods {
   def gitCommit
   def getTitle
   def gitAuthor
-  // def context_install = "continuous-integration/jenkins/install"
 
   def project = APP_ID;
   def packageName = FUSION_SUBAPP_NAME;
@@ -65,12 +64,6 @@ pods {
       stage('Delete comments') {
         deleteComments(PR_COMMENT_MARKER)
       }
-
-      // githubNotifyWrapper(context_install) {
-      //   stage('Install dependencies') {
-      //     yarn.setup()
-      //   }
-      // }
 
       stage('Install dependencies') {
         yarn.setup()
@@ -134,10 +127,6 @@ pods {
             final boolean isReleaseBranch = env.BRANCH_NAME.startsWith("release-${project}")
             final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY == 'single-branch';
             final boolean releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
-
-            print "isReleaseBranch: ${isReleaseBranch}";
-            print "isUsingSingleBranchStrategy: ${isUsingSingleBranchStrategy}";
-            print "releaseToProd: ${releaseToProd}";
 
             // Run the yarn install in the app in cases of local packages.json file
             if (fileExists("yarn.lock")) {
