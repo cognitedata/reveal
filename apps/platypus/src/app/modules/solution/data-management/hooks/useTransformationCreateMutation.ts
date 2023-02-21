@@ -14,12 +14,13 @@ import {
 } from '@platypus/platypus-core';
 
 type TransformationCreateMutationDTO = {
-  dataModelExternalId: string;
+  space: string;
   oneToManyFieldName?: string;
   transformationName: string;
   transformationExternalId: string;
   typeName: string;
   version: string;
+  destination: 'data_model_instances' | 'instances';
 };
 
 export default function useTransformationCreateMutation() {
@@ -35,24 +36,34 @@ export default function useTransformationCreateMutation() {
     TransformationCreateMutationDTO
   >(
     async ({
-      dataModelExternalId,
+      space,
       oneToManyFieldName,
       transformationName,
       transformationExternalId,
       typeName,
       version,
+      destination,
     }: TransformationCreateMutationDTO) => {
       const modelExternalId = oneToManyFieldName
         ? getOneToManyModelName(typeName, oneToManyFieldName, version)
         : getVersionedExternalId(typeName, version);
 
       const createTransformationDTO: CreateDataModelTransformationDTO = {
-        destination: {
-          instanceSpaceExternalId: dataModelExternalId,
-          modelExternalId,
-          spaceExternalId: dataModelExternalId,
-          type: 'data_model_instances',
-        },
+        destination:
+          destination === 'data_model_instances'
+            ? {
+                instanceSpaceExternalId: space,
+                modelExternalId,
+                spaceExternalId: space,
+                type: 'data_model_instances',
+              }
+            : {
+                viewSpaceExternalId: space,
+                viewExternalId: typeName,
+                viewVersion: version,
+                instanceSpaceExternalId: space,
+                type: 'instances',
+              },
         externalId: transformationExternalId,
         name: transformationName,
       };
@@ -62,15 +73,8 @@ export default function useTransformationCreateMutation() {
       );
     },
     {
-      onSuccess: (
-        transformation,
-        { dataModelExternalId, typeName, version }
-      ) => {
-        const queryKey = QueryKeys.TRANSFORMATION(
-          dataModelExternalId,
-          typeName,
-          version
-        );
+      onSuccess: (transformation, { space, typeName, version }) => {
+        const queryKey = QueryKeys.TRANSFORMATION(space, typeName, version);
 
         queryClient.cancelQueries(queryKey);
         queryClient.setQueryData<DataModelTransformation[]>(
@@ -84,7 +88,9 @@ export default function useTransformationCreateMutation() {
         queryClient.refetchQueries(queryKey);
 
         track('Transformations', {
-          dataModel: dataModelExternalId,
+          space,
+          typeName,
+          version,
         });
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

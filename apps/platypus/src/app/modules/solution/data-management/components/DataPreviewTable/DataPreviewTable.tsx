@@ -616,7 +616,7 @@ export const DataPreviewTable = forwardRef<
         )}
         {isTransformationModalVisible && (
           <CreateTransformationModal
-            dataModelExternalId={dataModelExternalId}
+            space={space}
             dataModelType={dataModelType}
             onRequestClose={() => setIsTransformationModalVisible(false)}
             version={version}
@@ -637,7 +637,7 @@ export const DataPreviewTable = forwardRef<
           />
         )}
         <PreviewPageHeader
-          dataModelExternalId={dataModelExternalId}
+          space={space}
           draftRowsCount={draftRowsData.length}
           isDeleteButtonDisabled={
             totalSelectedRowCount === 0 || deleteRowsMutation.isLoading
@@ -684,7 +684,7 @@ export const DataPreviewTable = forwardRef<
                 maxConcurrentDatasourceRequests: 1,
                 noRowsOverlayComponent: () => (
                   <NoRowsOverlay
-                    dataModelExternalId={dataModelExternalId}
+                    space={space}
                     onLoadDataClick={() =>
                       setIsTransformationModalVisible(true)
                     }

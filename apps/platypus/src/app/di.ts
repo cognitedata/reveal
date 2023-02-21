@@ -64,7 +64,8 @@ rootInjector
       return new FdmClient(
         new SpacesApiService(sdkClient),
         new FdmMixerApiService(sdkClient),
-        new GraphQlUtilsService()
+        new GraphQlUtilsService(),
+        new TransformationApiService(sdkClient)
       );
     } else {
       return new FdmV2Client(

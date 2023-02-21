@@ -15,7 +15,7 @@ import * as S from './elements';
 import { useRef } from 'react';
 
 type Props = {
-  dataModelExternalId: string;
+  space: string;
   draftRowsCount: number;
   isDeleteButtonDisabled: boolean;
   onAddTransformationClick: () => void;
@@ -35,7 +35,7 @@ type Props = {
 };
 
 export function PreviewPageHeader({
-  dataModelExternalId,
+  space,
   draftRowsCount,
   isDeleteButtonDisabled,
   onAddTransformationClick,
@@ -60,7 +60,7 @@ export function PreviewPageHeader({
   const { isEnabled: isDeleteEnabled } = useDataManagementDeletionFeatureFlag();
   const { isEnabled: isSuggestionsEnabled } = useSuggestionsFeatureFlag();
   const { data: transformations } = useTransformations({
-    dataModelExternalId,
+    space,
     isEnabled: isTransformationsEnabled,
     typeName,
     version,
@@ -79,7 +79,7 @@ export function PreviewPageHeader({
     return transformations && transformations.length > 0 ? (
       <TransformationDropdown
         onAddClick={onAddTransformationClick}
-        dataModelExternalId={dataModelExternalId}
+        space={space}
         typeName={typeName}
         version={version}
       />

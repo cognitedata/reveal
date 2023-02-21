@@ -42,7 +42,7 @@ describe('NoRowsOverlay', () => {
 
     render(
       <NoRowsOverlay
-        dataModelExternalId="abc"
+        space="abc"
         onLoadDataClick={noop}
         typeName="Person"
         version="2"
@@ -67,7 +67,7 @@ describe('NoRowsOverlay', () => {
 
     render(
       <NoRowsOverlay
-        dataModelExternalId="abc"
+        space="abc"
         onLoadDataClick={noop}
         typeName="Person"
         version="2"
@@ -92,7 +92,7 @@ describe('NoRowsOverlay', () => {
 
     render(
       <NoRowsOverlay
-        dataModelExternalId="abc"
+        space="abc"
         onLoadDataClick={noop}
         typeName="Person"
         version="2"
@@ -117,7 +117,7 @@ describe('NoRowsOverlay', () => {
 
     render(
       <NoRowsOverlay
-        dataModelExternalId="abc"
+        space="abc"
         onLoadDataClick={noop}
         typeName="Person"
         version="2"

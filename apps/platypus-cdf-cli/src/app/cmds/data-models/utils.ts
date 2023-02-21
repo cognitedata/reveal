@@ -38,11 +38,21 @@ export const getTransformationsApiService = () => {
 };
 
 export const getFlexibleDataModelingClient = () => {
-  return new FdmClient(
-    getFdmV3SpacesApiService(),
-    getFdmV3MixerApiService(),
-    new GraphQlUtilsService()
-  );
+  if (process.env.USE_FDM_V3) {
+    return new FdmClient(
+      getFdmV3SpacesApiService(),
+      getFdmV3MixerApiService(),
+      new GraphQlUtilsService(),
+      getTransformationsApiService()
+    );
+  } else {
+    return new FdmV2Client(
+      getMixerApiService(),
+      getDataModelStorageApiService(),
+      getTransformationsApiService(),
+      new GraphQlUtilsService()
+    );
+  }
 };
 
 export const getDataModelsHandler = () => {

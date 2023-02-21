@@ -9,12 +9,16 @@ export class TransformationApiService {
   }
 
   getTransformationsForType({
-    dataModelExternalId,
+    destination,
     typeName,
     version,
+    space,
+    instanceSpace,
   }: {
-    dataModelExternalId: string;
+    destination: 'instances' | 'data_model_instances';
     typeName: string;
+    space: string;
+    instanceSpace: string;
     version: string;
   }): Promise<DataModelTransformation[]> {
     return new Promise((resolve, reject) => {
@@ -22,7 +26,7 @@ export class TransformationApiService {
         .post(`${this.transformationsBaseUrl}/filter`, {
           data: {
             filter: {
-              destinationType: 'datamodelinstances',
+              destinationType: destination,
             },
             limit: 1000,
           },
@@ -33,13 +37,24 @@ export class TransformationApiService {
           } else {
             const items = (
               response.data.items as DataModelTransformation[]
-            ).filter(
-              ({ destination }) =>
-                destination.type === 'data_model_instances' &&
-                destination.modelExternalId.startsWith(typeName) &&
-                destination?.modelExternalId.endsWith(`_${version}`) &&
-                destination.spaceExternalId === dataModelExternalId
-            );
+            ).filter(({ destination: transformationDest }) => {
+              if (destination === 'data_model_instances') {
+                return (
+                  transformationDest.type === 'data_model_instances' &&
+                  transformationDest.modelExternalId.startsWith(typeName) &&
+                  transformationDest?.modelExternalId.endsWith(`_${version}`) &&
+                  transformationDest.spaceExternalId === space
+                );
+              } else {
+                return (
+                  transformationDest.type === 'instances' &&
+                  transformationDest.viewExternalId === typeName &&
+                  transformationDest.viewVersion === version &&
+                  transformationDest.viewSpaceExternalId === space &&
+                  transformationDest.instanceSpaceExternalId === instanceSpace
+                );
+              }
+            });
             resolve(items);
           }
         });

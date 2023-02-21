@@ -30,12 +30,12 @@ jest.mock(
 );
 
 type UseQuery = ({
-  dataModelExternalId,
+  space,
   isEnabled,
   typeName,
   version,
 }: {
-  dataModelExternalId: string;
+  space: string;
   isEnabled: boolean;
   typeName: string;
   version: string;
@@ -89,7 +89,7 @@ describe('PreviewPageHeader', () => {
 
     render(
       <PreviewPageHeader
-        dataModelExternalId="imdb"
+        space="imdb"
         draftRowsCount={0}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
@@ -120,7 +120,7 @@ describe('PreviewPageHeader', () => {
 
     render(
       <PreviewPageHeader
-        dataModelExternalId="imdb"
+        space="imdb"
         draftRowsCount={0}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
@@ -150,7 +150,7 @@ describe('PreviewPageHeader', () => {
 
     render(
       <PreviewPageHeader
-        dataModelExternalId="imdb"
+        space="imdb"
         draftRowsCount={1}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
@@ -180,7 +180,7 @@ describe('PreviewPageHeader', () => {
 
     render(
       <PreviewPageHeader
-        dataModelExternalId="imdb"
+        space="imdb"
         draftRowsCount={0}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
@@ -206,7 +206,7 @@ describe('PreviewPageHeader', () => {
   it('Shows search input if there are published rows', () => {
     render(
       <PreviewPageHeader
-        dataModelExternalId="imdb"
+        space="imdb"
         draftRowsCount={0}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
@@ -231,7 +231,7 @@ describe('PreviewPageHeader', () => {
   it('Does not show search input if there are draft rows but no published rows', () => {
     render(
       <PreviewPageHeader
-        dataModelExternalId="imdb"
+        space="imdb"
         draftRowsCount={10}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
@@ -263,7 +263,7 @@ describe('PreviewPageHeader', () => {
 
     render(
       <PreviewPageHeader
-        dataModelExternalId="imdb"
+        space="imdb"
         draftRowsCount={0}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}

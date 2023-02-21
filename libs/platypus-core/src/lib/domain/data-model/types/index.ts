@@ -58,12 +58,20 @@ export type DataModelTransformation = {
   id: number;
   name: string;
   externalId: string;
-  destination: {
-    type: string;
-    modelExternalId: string;
-    spaceExternalId: string;
-    instanceSpaceExternalId: string;
-  };
+  destination:
+    | {
+        type: 'data_model_instances';
+        modelExternalId: string;
+        spaceExternalId: string;
+        instanceSpaceExternalId: string;
+      }
+    | {
+        type: 'instances';
+        viewSpaceExternalId: string;
+        viewExternalId: string;
+        viewVersion: string;
+        instanceSpaceExternalId: string;
+      };
 };
 
 /* CdfResourceInstance represents a single row of published data */

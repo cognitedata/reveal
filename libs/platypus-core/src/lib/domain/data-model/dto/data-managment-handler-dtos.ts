@@ -1,5 +1,4 @@
 import {
-  DataModelTransformation,
   DataModelTypeDefs,
   DataModelTypeDefsType,
   DataModelVersion,
@@ -92,12 +91,27 @@ export interface DeleteInstancesDTO {
 }
 
 export interface FetchDataModelTransformationsDTO {
-  dataModelExternalId: string;
+  spaceExternalId: string;
+  instanceSpaceExternalId: string;
   typeName: string;
   version: string;
 }
 
-export type CreateDataModelTransformationDTO = Omit<
-  DataModelTransformation,
-  'id'
->;
+export type CreateDataModelTransformationDTO = {
+  name: string;
+  externalId: string;
+  destination:
+    | {
+        type: 'data_model_instances';
+        modelExternalId: string;
+        spaceExternalId: string;
+        instanceSpaceExternalId: string;
+      }
+    | {
+        type: 'instances';
+        viewSpaceExternalId: string;
+        viewExternalId: string;
+        viewVersion: string;
+        instanceSpaceExternalId: string;
+      };
+};

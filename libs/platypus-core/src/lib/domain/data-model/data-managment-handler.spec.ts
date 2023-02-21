@@ -208,7 +208,8 @@ describe('DataManagementHandlerTest', () => {
   it('should get transformation from list', async () => {
     const service = createInstance();
     const response = await service.getTransformations({
-      dataModelExternalId: 'Test',
+      spaceExternalId: 'Test',
+      instanceSpaceExternalId: 'Test',
       typeName: 'Type',
       version: '1',
     });

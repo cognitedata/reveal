@@ -543,7 +543,13 @@ export class FdmV2Client implements FlexibleDataModelingClient {
   getTransformations(
     dto: FetchDataModelTransformationsDTO
   ): Promise<DataModelTransformation[]> {
-    return this.transformationApiService.getTransformationsForType(dto);
+    return this.transformationApiService.getTransformationsForType({
+      destination: 'data_model_instances',
+      space: dto.spaceExternalId,
+      instanceSpace: dto.instanceSpaceExternalId,
+      typeName: dto.typeName,
+      version: dto.version,
+    });
   }
 
   createTransformation(

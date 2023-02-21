@@ -59,12 +59,16 @@ export const getVersionedExternalId = (
   return `${name}_${version}`;
 };
 
+const getDestinationId = (transformation: DataModelTransformation) => {
+  return transformation.destination.type === 'data_model_instances'
+    ? transformation.destination.modelExternalId
+    : `${transformation.destination.viewExternalId}_${transformation.destination.viewVersion}`;
+};
+
 export const groupTransformationsByTypes = (
   transformations: DataModelTransformation[]
 ) => {
-  const modelExternalIds = transformations.map(
-    (transformation) => transformation.destination.modelExternalId
-  );
+  const destinationIds = transformations.map(getDestinationId);
 
   const groups: {
     [key: string]: {
@@ -73,18 +77,18 @@ export const groupTransformationsByTypes = (
     };
   } = {};
 
-  modelExternalIds.forEach((model) => {
-    groups[model] = {
-      displayName: parseModelName(model),
+  destinationIds.forEach((id) => {
+    groups[id] = {
+      displayName: parseModelName(id),
       transformations: [],
     };
   });
 
   transformations.forEach((transformation) => {
-    const { modelExternalId } = transformation.destination;
+    const destinationId = getDestinationId(transformation);
 
-    if (groups[modelExternalId].transformations) {
-      groups[modelExternalId].transformations.push(transformation);
+    if (groups[destinationId].transformations) {
+      groups[destinationId].transformations.push(transformation);
     }
   });
 

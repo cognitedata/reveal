@@ -43,7 +43,11 @@ import { PlatypusDmlError, PlatypusError } from '../../../../boundaries/types';
 import { IGraphQlUtilsService } from '../../boundaries';
 import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
 import { DataModelVersionDataMapper } from './data-mappers/data-model-version-data-mapper';
-import { MixerQueryBuilder, OPERATION_TYPE } from '../../services';
+import {
+  MixerQueryBuilder,
+  OPERATION_TYPE,
+  TransformationApiService,
+} from '../../services';
 import { GraphQlDmlVersionDTO } from './dto/mixer-api-dtos';
 import { compareDataModelVersions } from '../../utils';
 
@@ -57,7 +61,8 @@ export class FdmClient implements FlexibleDataModelingClient {
   constructor(
     private spacesApi: SpacesApiService,
     private mixerApiService: FdmMixerApiService,
-    private graphqlService: IGraphQlUtilsService
+    private graphqlService: IGraphQlUtilsService,
+    private transformationApiService: TransformationApiService
   ) {
     this.spacesApi = spacesApi;
     this.mixerApiService = mixerApiService;
@@ -480,13 +485,19 @@ export class FdmClient implements FlexibleDataModelingClient {
   getTransformations(
     dto: FetchDataModelTransformationsDTO
   ): Promise<DataModelTransformation[]> {
-    throw 'Not implemented';
+    return this.transformationApiService.getTransformationsForType({
+      destination: 'instances',
+      space: dto.spaceExternalId,
+      instanceSpace: dto.instanceSpaceExternalId,
+      typeName: dto.typeName,
+      version: dto.version,
+    });
   }
 
   createTransformation(
     dto: CreateDataModelTransformationDTO
   ): Promise<DataModelTransformation> {
-    throw 'Not implemented';
+    return this.transformationApiService.createTransformation(dto);
   }
 
   /**

@@ -46,6 +46,17 @@ const mixerApiMock = {
   },
 } as any;
 
+const transformationApiMock = {
+  working: {
+    getTransformationsForType: jest.fn(() =>
+      Promise.resolve({
+        items: [],
+      })
+    ),
+    createTransformation: jest.fn(() => Promise.resolve([])),
+  },
+} as any;
+
 describe('FDM v3 Client', () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -56,7 +67,13 @@ describe('FDM v3 Client', () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
       const graphqlService = graphqlServiceMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+      const transformationsService = transformationApiMock.working;
+      const fdmClient = new FdmClient(
+        spacesApi,
+        mixerApi,
+        graphqlService,
+        transformationsService
+      );
 
       await fdmClient.createDataModel({
         name: 'Test',
@@ -79,7 +96,13 @@ describe('FDM v3 Client', () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
       const graphqlService = graphqlServiceMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+      const transformationsService = transformationApiMock.working;
+      const fdmClient = new FdmClient(
+        spacesApi,
+        mixerApi,
+        graphqlService,
+        transformationsService
+      );
 
       await fdmClient.listDataModels();
       expect(mixerApi.listDataModelVersions).toHaveBeenCalled();
@@ -91,7 +114,13 @@ describe('FDM v3 Client', () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
       const graphqlService = graphqlServiceMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+      const transformationsService = transformationApiMock.working;
+      const fdmClient = new FdmClient(
+        spacesApi,
+        mixerApi,
+        graphqlService,
+        transformationsService
+      );
 
       fdmClient.validateDataModel({
         externalId: '',
@@ -113,7 +142,13 @@ describe('FDM v3 Client', () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
       const graphqlService = graphqlServiceMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+      const transformationsService = transformationApiMock.working;
+      const fdmClient = new FdmClient(
+        spacesApi,
+        mixerApi,
+        graphqlService,
+        transformationsService
+      );
 
       const dto: PublishDataModelVersionDTO = {
         externalId: 'external-id',
@@ -140,7 +175,13 @@ describe('FDM v3 Client', () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
       const graphqlService = graphqlServiceMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+      const transformationsService = transformationApiMock.working;
+      const fdmClient = new FdmClient(
+        spacesApi,
+        mixerApi,
+        graphqlService,
+        transformationsService
+      );
 
       const dto: PublishDataModelVersionDTO = {
         externalId: 'external-id',
@@ -169,7 +210,13 @@ describe('FDM v3 Client', () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
       const graphqlService = graphqlServiceMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+      const transformationsService = transformationApiMock.working;
+      const fdmClient = new FdmClient(
+        spacesApi,
+        mixerApi,
+        graphqlService,
+        transformationsService
+      );
 
       const dto = {
         dataModelId: 'testExternalId',
@@ -191,7 +238,13 @@ describe('FDM v3 Client', () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
       const graphqlService = graphqlServiceMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+      const transformationsService = transformationApiMock.working;
+      const fdmClient = new FdmClient(
+        spacesApi,
+        mixerApi,
+        graphqlService,
+        transformationsService
+      );
 
       await fdmClient.fetchData({
         cursor: '',
@@ -228,7 +281,13 @@ describe('FDM v3 Client', () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
       const graphqlService = graphqlServiceMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+      const transformationsService = transformationApiMock.working;
+      const fdmClient = new FdmClient(
+        spacesApi,
+        mixerApi,
+        graphqlService,
+        transformationsService
+      );
 
       const spaces = await fdmClient.getSpaces({});
 
@@ -244,7 +303,13 @@ describe('FDM v3 Client', () => {
       const spacesApi = spacesApiMock.working;
       const mixerApi = mixerApiMock.working;
       const graphqlService = graphqlServiceMock.working;
-      const fdmClient = new FdmClient(spacesApi, mixerApi, graphqlService);
+      const transformationsService = transformationApiMock.working;
+      const fdmClient = new FdmClient(
+        spacesApi,
+        mixerApi,
+        graphqlService,
+        transformationsService
+      );
 
       const newSpace = await fdmClient.createSpace({
         space: 'testSpace',

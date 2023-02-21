@@ -20,22 +20,25 @@ import {
   getOneToManyModelName,
   getVersionedExternalId,
 } from '@platypus/platypus-core';
+import { isFDMv3 } from '@platypus-app/flags';
+import { createLink } from '@cognite/cdf-utilities';
 
 type Option = OptionType<any>;
 
 export interface CreateTransformationModalProps {
-  dataModelExternalId: string;
   dataModelType: DataModelTypeDefsType;
   onRequestClose: () => void;
   version: string;
+  space: string;
 }
 
 export const CreateTransformationModal = ({
-  dataModelExternalId,
+  space,
   dataModelType,
   onRequestClose,
   version,
 }: CreateTransformationModalProps) => {
+  const isFDMV3 = isFDMv3();
   const { t } = useTranslation('CreateTransformationModal');
 
   const [selectedRelationship, setSelectedRelationship] = useState<Option>();
@@ -84,7 +87,8 @@ export const CreateTransformationModal = ({
   const handleSubmit = () => {
     createTransformationMutation.mutate(
       {
-        dataModelExternalId,
+        destination: isFDMV3 ? 'instances' : 'data_model_instances',
+        space,
         oneToManyFieldName: selectedRelationship
           ? selectedRelationship.value
           : undefined,
@@ -96,7 +100,14 @@ export const CreateTransformationModal = ({
       {
         onSuccess: (transformation) => {
           onRequestClose();
-          setIsTransformationModalOpen(true, transformation.id);
+          if (isFDMV3) {
+            window.open(
+              createLink(`/transformations/${transformation.id}`),
+              '_blank'
+            );
+          } else {
+            setIsTransformationModalOpen(true, transformation.id);
+          }
         },
       }
     );

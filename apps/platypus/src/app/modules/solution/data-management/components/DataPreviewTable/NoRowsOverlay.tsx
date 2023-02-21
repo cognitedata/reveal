@@ -12,14 +12,14 @@ import { BulkPopulationButton } from '../BulkPopulationButton';
 import useTransformations from '../../hooks/useTransformations';
 
 export type NoRowsOverlayProps = {
-  dataModelExternalId: string;
+  space: string;
   onLoadDataClick: () => void;
   typeName: string;
   version: string;
 };
 
 export const NoRowsOverlay = ({
-  dataModelExternalId,
+  space,
   onLoadDataClick,
   typeName,
   version,
@@ -30,7 +30,7 @@ export const NoRowsOverlay = ({
     useManualPopulationFeatureFlag();
   const isTransformationsEnabled = useTransformationsFeatureFlag();
   const { data: transformations } = useTransformations({
-    dataModelExternalId,
+    space,
     isEnabled: isTransformationsEnabled,
     typeName,
     version,

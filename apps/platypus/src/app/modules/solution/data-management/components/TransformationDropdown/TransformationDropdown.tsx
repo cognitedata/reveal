@@ -5,16 +5,18 @@ import styled from 'styled-components';
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import useTransformations from '../../hooks/useTransformations';
 import { groupTransformationsByTypes } from '@platypus/platypus-core';
+import { isFDMv3 } from '@platypus-app/flags';
+import { createLink } from '@cognite/cdf-utilities';
 
 type Props = {
-  dataModelExternalId: string;
+  space: string;
   onAddClick: () => void;
   typeName: string;
   version: string;
 };
 
 export function TransformationDropdown({
-  dataModelExternalId,
+  space,
   onAddClick,
   typeName,
   version,
@@ -22,8 +24,10 @@ export function TransformationDropdown({
   const { t } = useTranslation('BulkPopulation');
   const { setIsTransformationModalOpen } = useDataManagementPageUI();
 
+  const isFDMV3 = isFDMv3();
+
   const { data: transformations } = useTransformations({
-    dataModelExternalId,
+    space,
     isEnabled: true,
     typeName,
     version,
@@ -53,9 +57,21 @@ export function TransformationDropdown({
                         css={{}}
                         key={transformation.id}
                         onClick={() => {
-                          setIsTransformationModalOpen(true, transformation.id);
+                          if (isFDMV3) {
+                            window.open(
+                              createLink(
+                                `/transformations/${transformation.id}`
+                              ),
+                              '_blank'
+                            );
+                          } else {
+                            setIsTransformationModalOpen(
+                              true,
+                              transformation.id
+                            );
+                          }
                         }}
-                        icon="ExternalLink"
+                        icon={isFDMV3 ? 'Link' : 'ExternalLink'}
                         iconPlacement="right"
                         style={{ width: 240 }}
                       >

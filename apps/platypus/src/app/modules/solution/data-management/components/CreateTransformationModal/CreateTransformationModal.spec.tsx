@@ -64,7 +64,7 @@ describe('CreateTransformationModal', () => {
   it('Passes correct relationships to transformation dropdown', () => {
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -83,7 +83,7 @@ describe('CreateTransformationModal', () => {
   it('Disables submit button if no relationship selected', () => {
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -103,7 +103,7 @@ describe('CreateTransformationModal', () => {
   it('Enables submit button if a relationship is selected', () => {
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -125,7 +125,7 @@ describe('CreateTransformationModal', () => {
   it('Sets transformation name for loading data', () => {
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -141,7 +141,7 @@ describe('CreateTransformationModal', () => {
   it('Sets transformation name for loading relationship', () => {
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -161,8 +161,10 @@ describe('CreateTransformationModal', () => {
   });
 
   it('Calls transformation create mutation on submit', () => {
+    window.open = jest.fn();
     const mockTransformation = {
-      dataModelExternalId: 'abc',
+      destination: 'instances',
+      space: 'abc',
       oneToManyFieldName: 'actors',
       transformationExternalId: '123',
       transformationName: 'Movie_actors_1',
@@ -172,7 +174,7 @@ describe('CreateTransformationModal', () => {
 
     render(
       <CreateTransformationModal
-        dataModelExternalId="abc"
+        space="abc"
         dataModelType={mockType}
         onRequestClose={noop}
         version="1"
@@ -188,6 +190,6 @@ describe('CreateTransformationModal', () => {
     userEvent.click(screen.getByRole('button', { name: 'Next', hidden: true }));
 
     expect(mockMutate.mock.calls[0][0]).toEqual(mockTransformation);
-    expect(mockSetIsTransformationModalOpen).toHaveBeenCalledWith(true, '123');
+    expect(window.open).toHaveBeenCalled();
   });
 });
