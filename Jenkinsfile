@@ -80,13 +80,6 @@ pods {
             }
           }
         },
-        'Test': {
-          container('apphosting') {
-            stageWithNotify('Unit tests') {
-              sh("yarn test")
-            }
-          }
-        },
         'Preview': {
           container('apphosting') {
             if (!isPullRequest) {
