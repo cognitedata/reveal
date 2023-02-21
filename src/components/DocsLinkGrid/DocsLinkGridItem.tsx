@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { Button, Colors, Title, Icon } from '@cognite/cogs.js';
+import { Button, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export type DocsLinkGridItemProps = {
@@ -37,8 +37,8 @@ const StyledButton = styled(Button)`
   && {
     display: flex;
     justify-content: space-between;
-    width: 401px;
-    height: 68px;
+    width: 100%;
+    padding: 26px 24px;
   }
 `;
 
