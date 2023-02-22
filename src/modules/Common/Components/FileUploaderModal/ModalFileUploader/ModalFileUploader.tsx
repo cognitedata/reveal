@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Modal, message } from 'antd';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse, FileInfo, FileGeoLocation } from '@cognite/sdk';
-import { Checkbox, Title } from '@cognite/cogs.js-old';
+import { Title } from '@cognite/cogs.js-old';
+import { Checkbox } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import { sleep } from 'src/modules/Common/Components/FileUploader/utils';
 import { getMIMEType } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
@@ -521,8 +522,8 @@ export const ModalFileUploader = ({
           <Checkbox
             name="example2"
             checked={processAfter}
-            onChange={(nextState: boolean) => {
-              setProcessAfter(nextState);
+            onChange={(_event, next) => {
+              setProcessAfter(next as boolean);
             }}
           >
             Contextualize images after upload

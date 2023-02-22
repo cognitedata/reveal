@@ -5,7 +5,7 @@ import {
   TableDataItem,
 } from 'src/modules/Common/types';
 import { GradientAnimateRow } from 'src/modules/Common/Components/LoadingRenderer/GradientAnimateRow';
-import { Checkbox } from '@cognite/cogs.js-old';
+import { Checkbox } from '@cognite/cogs.js';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { generateKeysArray } from 'src/utils/generateKeysArray';
 

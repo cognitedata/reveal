@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox } from '@cognite/cogs.js-old';
+import { Checkbox } from '@cognite/cogs.js';
 import { TableDataItem } from 'src/modules/Common/types';
 import styled from 'styled-components';
 
@@ -26,7 +26,7 @@ export const SelectionCheckbox = ({
     <Checkbox
       name="ckbGridItem"
       checked={selected}
-      onChange={(nextState) => handleItemSelect(dataItem, nextState)}
+      onChange={(_event, next) => handleItemSelect(dataItem, next as boolean)}
     />
   </CheckboxContainer>
 );

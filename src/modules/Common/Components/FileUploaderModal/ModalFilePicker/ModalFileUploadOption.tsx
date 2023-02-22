@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Body, Checkbox, Detail, Icon, Tooltip } from '@cognite/cogs.js-old';
+import { Body, Detail, Icon, Tooltip } from '@cognite/cogs.js-old';
+import { Checkbox } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -47,8 +48,8 @@ export function ModalFileUploadOption({
             name="exif-option"
             disabled={isDisabled}
             checked={extractExif}
-            onChange={(value) => {
-              dispatch(setExtractExif(value));
+            onChange={(_event, next) => {
+              dispatch(setExtractExif(next as boolean));
             }}
           >
             Extract Exif-data from files
