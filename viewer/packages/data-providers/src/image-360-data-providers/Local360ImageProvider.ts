@@ -60,10 +60,15 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
       return image360Descriptor;
     });
   }
-  get360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]> {
+  get360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]> {
     return Promise.all(
       image360FaceDescriptors.map(async image360FaceDescriptor => {
-        const binaryData = await (await fetch(`${this._modelUrl}/${image360FaceDescriptor.fileId}.png`)).arrayBuffer();
+        const binaryData = await (
+          await fetch(`${this._modelUrl}/${image360FaceDescriptor.fileId}.png`, { signal: abortSignal })
+        ).arrayBuffer();
         return {
           data: binaryData,
           face: image360FaceDescriptor.face

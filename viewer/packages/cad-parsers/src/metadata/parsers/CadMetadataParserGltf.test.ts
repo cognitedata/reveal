@@ -61,7 +61,7 @@ describe('CadMetadataParserGltf', () => {
       downloadSize: 1000,
       maxDiagonalLength: 10,
       minDiagonalLength: 5,
-      sectorFileName: `${sectorRoot.id}.glb`
+      sectorFileName: `${sectorRoot.id}_textured.glb`
     };
 
     // Act
