@@ -44,7 +44,7 @@ const App = () => {
   }, []);
 
   return (
-    <I18nWrapper translations={translations} defaultNamespace="data-sets">
+    <I18nWrapper translations={translations} defaultNamespace="data-catalog">
       <FlagProvider
         apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
         appName={appName}
