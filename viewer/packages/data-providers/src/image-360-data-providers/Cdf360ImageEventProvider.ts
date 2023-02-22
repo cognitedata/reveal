@@ -57,11 +57,14 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     return image360Descriptors;
   }
 
-  public async get360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]> {
+  public async get360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]> {
     const fileIds = image360FaceDescriptors.map(image360FaceDescriptor => {
       return { id: image360FaceDescriptor.fileId };
     });
-    const fileBuffers = await this.getFileBuffers(fileIds);
+    const fileBuffers = await this.getFileBuffers(fileIds, abortSignal);
 
     const faces = zipWith(image360FaceDescriptors, fileBuffers, (image360FaceDescriptor, fileBuffer) => {
       return {
@@ -152,11 +155,12 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     }
   }
 
-  private async getFileBuffers(fileIds: { id: number }[]) {
+  private async getFileBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal) {
     const fileLinks = await this._client.files.getDownloadUrls(fileIds);
+    if (abortSignal?.aborted) throw new Error('Request aborted before fetch.');
     return Promise.all(
       fileLinks
-        .map(fileLink => fetch(fileLink.downloadUrl, { method: 'GET' }))
+        .map(fileLink => fetch(fileLink.downloadUrl, { method: 'GET', signal: abortSignal }))
         .map(async response => (await response).arrayBuffer())
     );
   }
