@@ -227,7 +227,6 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   async load(): Promise<void> {
     if (this._loaded || this._loading) return;
     if (globalNumNodesLoading >= globalMaxNumNodesLoading) return;
-    if (this._numPoints === 0) return;
 
     this._loading = true;
     incrementGlobalNumNodesLoading();
