@@ -4,7 +4,7 @@ import {
   toggleMetaDataTableEditMode,
 } from 'src/modules/FileDetails/slice';
 import styled from 'styled-components';
-import { Button } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import { MetadataItem } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { useDispatch } from 'react-redux';
 

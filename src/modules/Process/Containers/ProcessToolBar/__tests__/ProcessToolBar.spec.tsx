@@ -52,7 +52,9 @@ describe('ProcessToolBar', () => {
     expect(screen.getByText('Add files')).toBeInTheDocument();
     expect(screen.getByText('Select ML model(s)')).toBeInTheDocument();
     expect(screen.queryByText('Files processed')).not.toBeInTheDocument();
-    expect(screen.getByTestId('Detect Button')).toBeDisabled();
+    expect(
+      screen.getByTestId('Detect Button').getAttribute('aria-disabled')
+    ).toBe('true');
   });
 
   it('Start detection job with ocr job', async () => {
@@ -74,7 +76,9 @@ describe('ProcessToolBar', () => {
 
     expect(screen.getByText('Add files')).toBeInTheDocument();
     expect(screen.getByText('Select ML model(s)')).toBeInTheDocument();
-    expect(screen.getByTestId('Detect Button')).not.toBeDisabled();
+    expect(
+      screen.getByTestId('Detect Button').getAttribute('aria-disabled')
+    ).not.toBe('true');
 
     const modelSelect = screen.getByRole('textbox');
     expect(modelSelect).toBeInTheDocument();

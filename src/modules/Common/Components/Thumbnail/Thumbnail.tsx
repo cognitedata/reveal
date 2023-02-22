@@ -1,5 +1,6 @@
 import { FileInfo } from '@cognite/sdk';
-import { Body, DocumentIcon, Button, Icon } from '@cognite/cogs.js-old';
+import { Body, DocumentIcon, Icon } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import { Loader, useFileIcon } from '@cognite/data-exploration';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { isFilePreviewable } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
@@ -45,15 +46,15 @@ export const Thumbnail = ({
   const iconOverlay = () => {
     return (
       <OverlayContainer className="overlay">
-        <Button
+        <ViewFileButton
           type="tertiary"
-          variant="inverted"
+          inverted
           onClick={onViewClicked}
-          style={{ padding: '4px 60px' }}
+          style={{ padding: '4px 60px;' }}
         >
           View file
           <Icon type="ArrowRight" style={{ marginLeft: '8px' }} />
-        </Button>
+        </ViewFileButton>
       </OverlayContainer>
     );
   };
@@ -153,3 +154,5 @@ const OverlayContainer = styled.div`
   transition: 0.5s ease;
   background: #262626;
 `;
+
+const ViewFileButton = styled(Button)``;

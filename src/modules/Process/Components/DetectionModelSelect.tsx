@@ -1,6 +1,7 @@
 /* eslint-disable array-callback-return */
 import React, { useState } from 'react';
-import { Select, Button } from '@cognite/cogs.js-old';
+import { Select } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import { Props as SelectProps } from 'react-select';
 import {
   ParamsCustomModel,
@@ -223,6 +224,6 @@ const StyledButton = styled(Button)`
   width: 100%;
   justify-content: start;
   &:hover {
-    background: none;
+    background: none !important;
   }
 `;

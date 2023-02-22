@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-import { Button } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
+
 import { createLink } from '@cognite/cdf-utilities';
 import { projectName } from 'src/utils';
 import worker13 from 'src/assets/worker13.svg';

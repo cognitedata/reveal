@@ -26,6 +26,11 @@ describe('AutoMLModelNameBadge', () => {
     };
     testRenderer(TestComponent, undefined, props);
     expect(screen.getByText('model name')).toBeInTheDocument();
-    expect(screen.getByText('model name').closest('button')).toBeDisabled();
+    expect(
+      screen
+        .getByText('model name')
+        .closest('button')
+        ?.getAttribute('aria-disabled')
+    ).toBe('true');
   });
 });

@@ -136,10 +136,13 @@ describe('ModelTrainingModalContent', () => {
       screen.getByText('Create computer vision model from files')
     ).toBeInTheDocument();
 
-    expect(screen.getByTestId('cancel-button')).not.toBeDisabled();
+    expect(
+      screen.getByTestId('cancel-button').getAttribute('aria-disabled')
+    ).not.toBe('true');
 
-    expect(screen.getByTestId('start-training-button')).not.toBeDisabled();
-
+    expect(
+      screen.getByTestId('start-training-button').getAttribute('aria-disabled')
+    ).not.toBe('true');
     // hover start training button
     fireEvent.mouseEnter(screen.getByTestId('start-training-button'), {
       bubbles: true,
@@ -190,9 +193,13 @@ describe('ModelTrainingModalContent', () => {
       screen.getByText('Create computer vision model from files')
     ).toBeInTheDocument();
 
-    expect(screen.getByTestId('cancel-button')).not.toBeDisabled();
+    expect(
+      screen.getByTestId('cancel-button').getAttribute('aria-disabled')
+    ).not.toBe('true');
 
-    expect(screen.getByTestId('start-training-button')).toBeDisabled();
+    expect(
+      screen.getByTestId('start-training-button').getAttribute('aria-disabled')
+    ).toBe('true');
     fireEvent.mouseEnter(screen.getByTestId('start-training-button'), {
       bubbles: true,
     });
@@ -231,9 +238,13 @@ describe('ModelTrainingModalContent', () => {
       screen.getByText('Create computer vision model from files')
     ).toBeInTheDocument();
 
-    expect(screen.getByTestId('cancel-button')).not.toBeDisabled();
+    expect(
+      screen.getByTestId('cancel-button').getAttribute('aria-disabled')
+    ).not.toBe('true');
 
-    expect(screen.getByTestId('start-training-button')).toBeDisabled();
+    expect(
+      screen.getByTestId('start-training-button').getAttribute('aria-disabled')
+    ).toBe('true');
     fireEvent.mouseEnter(screen.getByTestId('start-training-button'), {
       bubbles: true,
     });
@@ -272,9 +283,13 @@ describe('ModelTrainingModalContent', () => {
       screen.getByText('Create computer vision model from files')
     ).toBeInTheDocument();
 
-    expect(screen.getByTestId('cancel-button')).not.toBeDisabled();
+    expect(
+      screen.getByTestId('cancel-button').getAttribute('aria-disabled')
+    ).not.toBe('true');
 
-    expect(screen.getByTestId('start-training-button')).toBeDisabled();
+    expect(
+      screen.getByTestId('start-training-button').getAttribute('aria-disabled')
+    ).toBe('true');
     fireEvent.mouseEnter(screen.getByTestId('start-training-button'), {
       bubbles: true,
     });
@@ -315,9 +330,13 @@ describe('ModelTrainingModalContent', () => {
       screen.getByText('Create computer vision model from files')
     ).toBeInTheDocument();
 
-    expect(screen.getByTestId('cancel-button')).not.toBeDisabled();
+    expect(
+      screen.getByTestId('cancel-button').getAttribute('aria-disabled')
+    ).not.toBe('true');
 
-    expect(screen.getByTestId('start-training-button')).toBeDisabled();
+    expect(
+      screen.getByTestId('start-training-button').getAttribute('aria-disabled')
+    ).toBe('true');
     fireEvent.mouseEnter(screen.getByTestId('start-training-button'), {
       bubbles: true,
     });
@@ -359,9 +378,13 @@ describe('ModelTrainingModalContent', () => {
       screen.getByText('Create computer vision model from files')
     ).toBeInTheDocument();
 
-    expect(screen.getByTestId('cancel-button')).not.toBeDisabled();
+    expect(
+      screen.getByTestId('cancel-button').getAttribute('aria-disabled')
+    ).not.toBe('true');
 
-    expect(screen.getByTestId('start-training-button')).toBeDisabled();
+    expect(
+      screen.getByTestId('start-training-button').getAttribute('aria-disabled')
+    ).toBe('true');
     fireEvent.mouseEnter(screen.getByTestId('start-training-button'), {
       bubbles: true,
     });

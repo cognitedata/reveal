@@ -1,6 +1,7 @@
 import React, { ReactText, useState } from 'react';
 import styled from 'styled-components';
-import { Button, Colors, Icon } from '@cognite/cogs.js-old';
+import { Colors, Icon } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 
 const CopiedIconContainer = styled.div`
   color: ${Colors.success.hex()};
@@ -36,9 +37,7 @@ const CopyButtonContainer = (props: {
   return (
     <CopyButton
       onClick={props.onClick}
-      size="default"
-      variant="default"
-      type="link"
+      type="ghost-accent"
       icon="Copy"
       iconPlacement="right"
       aria-label="copy button"

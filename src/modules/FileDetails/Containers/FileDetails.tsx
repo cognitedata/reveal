@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Icon, Tabs, Title } from '@cognite/cogs.js-old';
+import { Icon, Tabs, Title } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
+
 import { StyledTabs } from 'src/modules/Common/Components/StyledTabs/StyledTabs';
 import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
 import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
@@ -83,7 +85,7 @@ export const FileDetails = ({
   return (
     <Container>
       <CloseButtonRow>
-        <CloseButton
+        <Button
           icon="Close"
           type="ghost"
           onClick={handleClose}
@@ -180,11 +182,6 @@ const CloseButtonRow = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
-
-const CloseButton = styled(Button)`
-  color: black;
-`;
-
 const IconContainer = styled.div`
   height: 100%;
   width: 100%;

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
 
 export const ClearButton = ({
@@ -13,8 +14,7 @@ export const ClearButton = ({
 }) => (
   <StyledButton
     size="small"
-    variant="default"
-    type="link"
+    type="ghost-accent"
     onClick={(evt: any) => {
       evt.stopPropagation();
       clear();
@@ -26,9 +26,5 @@ export const ClearButton = ({
 );
 
 const StyledButton = styled(Button)`
-  font-size: 13px;
-  background: none;
-  &:hover {
-    background: none;
-  }
+  margin-left: 5px;
 `;

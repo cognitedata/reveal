@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Tooltip } from '@cognite/cogs.js-old';
+import { Button, Tooltip } from '@cognite/cogs.js';
 import { ColorsObjectDetection } from 'src/constants/Colors';
 import styled from 'styled-components';
 
@@ -18,7 +18,7 @@ export const AutoMLModelNameBadge = (props: {
     >
       <Button
         icon="Scan"
-        size={props.small ? 'small' : 'default'}
+        size={props.small ? 'small' : undefined}
         style={{
           backgroundColor: ColorsObjectDetection.backgroundColor,
           color: ColorsObjectDetection.color,

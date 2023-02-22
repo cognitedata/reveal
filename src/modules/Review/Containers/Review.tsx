@@ -8,7 +8,8 @@ import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import styled from 'styled-components';
-import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js-old';
+import { Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { resetPreview } from 'src/modules/Review/store/review/slice';
@@ -33,7 +34,7 @@ const DeleteButton = (props: {
       content="Are you sure you want to permanently delete this file?"
     >
       <Button
-        type="ghost-danger"
+        type="ghost-destructive"
         loading={props.isDeleteInProgress}
         icon="Delete"
       >

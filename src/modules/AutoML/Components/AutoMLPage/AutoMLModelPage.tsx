@@ -1,7 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
 import {
-  Button,
   Detail,
   Dropdown,
   Icon,
@@ -9,6 +8,7 @@ import {
   Popconfirm,
   Title,
 } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
   AutoMLExportFormat,

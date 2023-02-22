@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Tooltip } from '@cognite/cogs.js-old';
+import { Tooltip } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export default function FilterToggleButton({
@@ -10,7 +11,7 @@ export default function FilterToggleButton({
   return (
     // TODO: add badge number if filer is not empty: https://github.com/cognitedata/data-exploration/blob/master/src/app/containers/Exploration/FilterToggleButton.tsx
     <HideFiltersTooltip content="Filter files">
-      <Button onClick={toggleOpen} type="ghost" size="large" icon="Filter" />
+      <Button onClick={toggleOpen} type="ghost" icon="Filter" />
     </HideFiltersTooltip>
   );
 }

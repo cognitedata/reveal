@@ -1,5 +1,6 @@
 import { FileInfo, InternalId } from '@cognite/sdk';
-import { Button, Tooltip } from '@cognite/cogs.js-old';
+import { Tooltip } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import { unwrapResult } from '@reduxjs/toolkit';
 import React, { ReactText, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

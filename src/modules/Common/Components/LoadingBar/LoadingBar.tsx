@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Body, Button } from '@cognite/cogs.js-old';
+import { Body } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import { Spin } from 'antd';
 import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
 import { cancelFetch } from 'src/api/file/fetchFiles/fetchFiles';
@@ -39,7 +40,7 @@ export const LoadingBar = ({
           {Math.ceil(percentageScanned)}% of files scanned{' '}
         </LoadingText>
         <Spin indicator={antIcon} style={{ alignSelf: 'center' }} />
-        <Button onClick={onStop} type="ghost-danger">
+        <Button onClick={onStop} type="ghost-destructive">
           Stop
         </Button>
       </Container>

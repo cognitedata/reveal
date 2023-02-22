@@ -1,13 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { notification } from 'antd';
-import {
-  Body,
-  Button,
-  Popconfirm,
-  Select,
-  Title,
-  Tooltip,
-} from '@cognite/cogs.js-old';
+import { Body, Popconfirm, Select, Title, Tooltip } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
@@ -244,7 +238,7 @@ export const BulkEditModalContent = ({
       </BodyContainer>
       <Footer>
         <RightFooter>
-          <Button type="ghost-danger" icon="CloseLarge" onClick={onCancel}>
+          <Button type="ghost-destructive" icon="CloseLarge" onClick={onCancel}>
             Cancel
           </Button>
           <Tooltip

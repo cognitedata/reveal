@@ -1,4 +1,5 @@
-import { Button, Title } from '@cognite/cogs.js-old';
+import { Title } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
 import { Drawer } from 'antd';
@@ -55,7 +56,7 @@ export const AnnotationDrawer = (props: {
                 Create
               </Button>
               <DrawerDeleteButton
-                type="danger"
+                type="destructive"
                 icon="Delete"
                 onClick={props.onDelete}
                 disabled={props.disableFooterButtons}

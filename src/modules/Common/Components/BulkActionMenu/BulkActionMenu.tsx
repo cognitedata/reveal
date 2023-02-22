@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Badge,
-  Button,
   Detail,
   Dropdown,
   Icon,
@@ -10,6 +9,7 @@ import {
   Tooltip,
   Colors,
 } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import { pushMetric } from 'src/utils/pushMetric';
 import { useFlag } from '@cognite/react-feature-flags';
 
@@ -166,7 +166,6 @@ export const BulkActionMenu = ({
         <Button
           type="primary"
           icon="ChevronDownSmall"
-          aria-label="dropdown button"
           disabled={!count || bulkActionInProgress}
           iconPlacement="right"
           style={{ marginLeft: 14 }}

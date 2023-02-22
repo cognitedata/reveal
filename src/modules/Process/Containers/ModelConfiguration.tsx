@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { Select, Body, Button, Detail } from '@cognite/cogs.js-old';
+import { Select, Body, Detail } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 
@@ -226,7 +227,7 @@ const StyledButton = styled(Button)`
   width: 100%;
   justify-content: start;
   &:hover {
-    background: none;
+    background: none !important;
   }
 `;
 

@@ -13,7 +13,8 @@ import {
 import { isSensitiveAnnotationLabel } from 'src/utils/textUtils';
 import styled from 'styled-components';
 import { CaretRightOutlined } from '@ant-design/icons';
-import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js-old';
+import { Body, Detail, Tooltip } from '@cognite/cogs.js-old';
+import { Button } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/annotationSettingsConstants';
 import isEmpty from 'lodash-es/isEmpty';
 import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';
@@ -219,7 +220,7 @@ export const Keypoints = ({
                           )
                         }
                         size="small"
-                        type="ghost-danger"
+                        type="ghost-destructive"
                         aria-label="deleteButton"
                       />
                     )}
@@ -288,7 +289,7 @@ export const Keypoints = ({
                       icon="Delete"
                       onClick={() => setNewKeypoints(undefined)}
                       size="small"
-                      type="ghost-danger"
+                      type="ghost-destructive"
                       aria-label="deleteButton"
                     />
                   </PanelHeaderActionContainer>
@@ -326,7 +327,7 @@ export const Keypoints = ({
                       icon="Delete"
                       onClick={() => onDeleteKeypoint(index)}
                       size="small"
-                      type="ghost-danger"
+                      type="ghost-destructive"
                       aria-label="deleteButton"
                     />
                   </Row>
