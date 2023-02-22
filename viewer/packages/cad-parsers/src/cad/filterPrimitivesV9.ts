@@ -20,7 +20,11 @@ export function filterGeometryOutsideClipBox(
 ): THREE.BufferGeometry | undefined {
   if (!clipBox) return geometryBuffer;
 
-  if (type === RevealGeometryCollectionType.InstanceMesh || type === RevealGeometryCollectionType.TriangleMesh) {
+  if (
+    type === RevealGeometryCollectionType.InstanceMesh ||
+    type === RevealGeometryCollectionType.TriangleMesh ||
+    type === RevealGeometryCollectionType.TexturedTriangleMesh
+  ) {
     const boundingBox = geometryBuffer.boundingBox;
     if (!boundingBox || boundingBox.intersectsBox(clipBox)) {
       return geometryBuffer;

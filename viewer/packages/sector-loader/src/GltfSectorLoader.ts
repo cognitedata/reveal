@@ -80,6 +80,14 @@ export class GltfSectorLoader {
           case RevealGeometryCollectionType.TriangleMesh:
             this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
             break;
+          case RevealGeometryCollectionType.TexturedTriangleMesh:
+            const material = this._materialManager.addTexturedMeshMaterial(
+              sector.modelIdentifier,
+              sector.metadata.id,
+              parsedGeometry.texture!
+            );
+            this.createMesh(group, parsedGeometry.geometryBuffer, material);
+            break;
           default:
             assertNever(type);
         }
