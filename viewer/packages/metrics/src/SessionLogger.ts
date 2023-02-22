@@ -2,23 +2,29 @@
  * Copyright 2023 Cognite AS
  */
 import { MetricsLogger } from './MetricsLogger';
-export class FpsLogger {
+export class SessionLogger {
   private _wasPreviousAnimationFrameRendered = false;
   private _renderedFramesPerCameraMovement = 0;
   private _renderedFramesStartTime = 0;
   private _averageFpsPerMovementSum = 0;
   private _movementsCount = 0;
   private _canvasVisibility = true;
+  private _sessionStartTime: number;
 
   private _isDisposed = false;
 
   constructor() {
-    document.addEventListener('visibilitychange', this.onRevealSessionEnd);
+    document.addEventListener('visibilitychange', this.onRevealPageVisibilityChange);
+    this._sessionStartTime = Date.now();
   }
 
   updateCanvasVisibility(isCanvasVisible: boolean): void {
     if (this._canvasVisibility && !isCanvasVisible && !this._isDisposed) {
-      this.trackAverageSessionFps();
+      this.trackSessionEnded();
+    }
+
+    if (!this._canvasVisibility && isCanvasVisible) {
+      this._sessionStartTime = Date.now();
     }
 
     this._canvasVisibility = isCanvasVisible;
@@ -29,14 +35,28 @@ export class FpsLogger {
       const movementFps = this.calculateAverageFpsForCurrentMovement();
 
       if (movementFps) {
-        this._averageFpsPerMovementSum += movementFps;
-        this._movementsCount++;
+        this.countCurrentCameraMovement(movementFps);
       }
 
-      this._renderedFramesPerCameraMovement = 0;
-      this._wasPreviousAnimationFrameRendered = false;
+      this.resetCurrentCameraMovement();
     }
 
+    this.countCurrentRenderedFrame();
+  }
+
+  dispose(): void {
+    document.removeEventListener('visibilitychange', this.onRevealPageVisibilityChange);
+    this.trackSessionEnded();
+
+    this._isDisposed = true;
+  }
+
+  private countCurrentCameraMovement(movementFps: number) {
+    this._averageFpsPerMovementSum += movementFps;
+    this._movementsCount++;
+  }
+
+  private countCurrentRenderedFrame() {
     if (this._wasPreviousAnimationFrameRendered) {
       this._renderedFramesPerCameraMovement++;
     } else {
@@ -45,11 +65,9 @@ export class FpsLogger {
     }
   }
 
-  dispose(): void {
-    this._isDisposed = true;
-    document.removeEventListener('visibilitychange', this.onRevealSessionEnd);
-
-    this.trackAverageSessionFps();
+  private resetCurrentCameraMovement() {
+    this._renderedFramesPerCameraMovement = 0;
+    this._wasPreviousAnimationFrameRendered = false;
   }
 
   private calculateAverageFpsForCurrentMovement(): number | undefined {
@@ -68,17 +86,30 @@ export class FpsLogger {
     return Number.isFinite(fps) ? fps : undefined;
   }
 
-  private trackAverageSessionFps(): void {
+  private trackSessionEnded(): void {
+    if (this._isDisposed) return;
+
+    const eventMetadata: { averageFramerate?: number; sessionTime: number } = {
+      sessionTime: Date.now() - this._sessionStartTime
+    };
     const fps = this.calculateAverageSessionFps();
 
     if (fps) {
-      MetricsLogger.trackEvent('averageFramerate', { averageSessionFramerate: fps });
+      eventMetadata.averageFramerate = fps;
     }
+
+    MetricsLogger.trackEvent('sessionEnded', eventMetadata);
   }
 
-  private readonly onRevealSessionEnd = () => {
-    if (document.visibilityState === 'hidden' && this._canvasVisibility) {
-      this.trackAverageSessionFps();
+  private readonly onRevealPageVisibilityChange = () => {
+    if (!this._canvasVisibility) return;
+
+    if (document.visibilityState === 'hidden') {
+      this.trackSessionEnded();
+    }
+
+    if (document.visibilityState === 'visible') {
+      this._sessionStartTime = Date.now();
     }
   };
 }

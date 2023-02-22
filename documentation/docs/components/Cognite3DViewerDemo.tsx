@@ -23,22 +23,17 @@ export default function Cognite3DViewerDemo({
 }: DemoProps & OwnProps) {
   const canvasWrapperRef = useRef(null);
 
-  const viewer = useMemo(() => {
-    if (!canvasWrapperRef.current) {
+  useEffect(() => {
+    if (!client || !canvasWrapperRef.current) {
       return;
     }
 
-    return new Cognite3DViewer({
+    // Prepare viewer
+    const viewer = new Cognite3DViewer({
       sdk: client,
       domElement: canvasWrapperRef.current,
       antiAliasingHint: 'msaa4+fxaa'
     });
-  }, [canvasWrapperRef, client]);
-
-  useEffect(() => {
-    if (!viewer) {
-      return;
-    }
 
     viewer.addModel({ modelId, revisionId }).then((model) => {
       viewer.loadCameraFromModel(model);
@@ -50,7 +45,7 @@ export default function Cognite3DViewerDemo({
       viewer.dispose();
       (window as any).viewer = null;
     };
-  }, [viewer]);
+  }, [client]);
 
   return <CanvasWrapper ref={canvasWrapperRef} />;
 }

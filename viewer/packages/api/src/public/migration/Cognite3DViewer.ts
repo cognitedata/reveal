@@ -25,7 +25,7 @@ import {
   BeforeSceneRenderedDelegate
 } from '@reveal/utilities';
 
-import { FpsLogger, MetricsLogger } from '@reveal/metrics';
+import { SessionLogger, MetricsLogger } from '@reveal/metrics';
 import { PickingHandler, CadModelSectorLoadStatistics, CogniteCadModel } from '@reveal/cad-model';
 import {
   PointCloudIntersection,
@@ -139,7 +139,7 @@ export class Cognite3DViewer {
   private isDisposed = false;
 
   private latestRequestId: number = -1;
-  private readonly fpsLogger: FpsLogger;
+  private readonly sessionLogger: SessionLogger;
 
   private readonly cameraManagerClock = new THREE.Clock();
   private _clippingNeedsUpdate: boolean = false;
@@ -234,7 +234,7 @@ export class Cognite3DViewer {
     this._domElement.appendChild(this.canvas);
     this._domElementResizeObserver = this.setupDomElementResizeListener(this._domElement);
 
-    this.fpsLogger = new FpsLogger();
+    this.sessionLogger = new SessionLogger();
 
     this.spinner = new Spinner(this.domElement);
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
@@ -411,7 +411,7 @@ export class Cognite3DViewer {
     }
 
     this.spinner.dispose();
-    this.fpsLogger.dispose();
+    this.sessionLogger.dispose();
 
     this._models.forEach(m => m.dispose());
     this._sceneHandler.dispose();
@@ -1333,7 +1333,7 @@ export class Cognite3DViewer {
     const { display, visibility } = window.getComputedStyle(this.canvas);
     const isVisible = visibility === 'visible' && display !== 'none';
 
-    this.fpsLogger.updateCanvasVisibility(isVisible);
+    this.sessionLogger.updateCanvasVisibility(isVisible);
 
     if (isVisible) {
       const camera = this.cameraManager.getCamera();
@@ -1347,7 +1347,7 @@ export class Cognite3DViewer {
 
       const needsRedraw = this.revealManager.needsRedraw || this._clippingNeedsUpdate;
 
-      this.fpsLogger.tickCurrentAnimationFrame(needsRedraw);
+      this.sessionLogger.tickCurrentAnimationFrame(needsRedraw);
 
       if (needsRedraw) {
         const frameNumber = this.renderer.info.render.frame;
