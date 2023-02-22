@@ -7,10 +7,13 @@ export type GltfJson = {
   bufferViews: BufferView[];
   buffers: Buffer[];
   extensionsUsed: string[];
+  images: Image[];
+  materials: Material[];
   meshes: Mesh[];
   nodes: Node[];
   scene: number;
   scenes: Scene[];
+  textures: Texture[];
 };
 
 export type Scene = {
@@ -57,6 +60,21 @@ export type Primitive = {
   attributes: { [key: string]: number };
   indices: number;
   extensions: { KHR_draco_mesh_compression: { attributes: { [key: string]: number }; bufferView: number } | undefined };
+  material: number | undefined;
+};
+
+export type Material = {
+  name: string;
+  pbrMetallicRoughness: { baseColorTexture: { index: number } };
+};
+
+export type Texture = {
+  source: number;
+};
+
+export type Image = {
+  bufferView: number;
+  mimeType: string;
 };
 
 export enum RevealGeometryCollectionType {
@@ -72,6 +90,7 @@ export enum RevealGeometryCollectionType {
   TrapeziumCollection,
   NutCollection,
   TriangleMesh,
+  TexturedTriangleMesh,
   InstanceMesh
 }
 
@@ -93,11 +112,13 @@ export type GeometryProcessingPayload = {
     | undefined;
   meshId: number | undefined;
   glbHeaderData: GlbHeaderData;
+  texture?: THREE.Texture;
   data: ArrayBuffer;
 };
 
 export type ParsedGeometry = {
   type: RevealGeometryCollectionType;
   geometryBuffer: THREE.BufferGeometry;
+  texture?: THREE.Texture;
   instanceId?: string;
 };

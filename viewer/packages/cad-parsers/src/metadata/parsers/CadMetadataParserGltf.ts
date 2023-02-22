@@ -89,7 +89,7 @@ function createSectorMetadata(metadata: SceneSectorMetadata): SectorMetadata {
     downloadSize: metadata.downloadSize || 0,
     maxDiagonalLength: metadata.maxDiagonalLength || 0,
     minDiagonalLength: metadata.minDiagonalLength || 0,
-    sectorFileName: metadata.sectorFileName,
+    sectorFileName: metadata.texturedFileName ?? metadata.sectorFileName,
 
     // Populated later
     children: []
