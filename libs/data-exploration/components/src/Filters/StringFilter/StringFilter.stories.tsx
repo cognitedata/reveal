@@ -7,7 +7,7 @@ export default {
   component: StringFilter,
   argTypes: {
     title: {
-      type: 'string',
+      label: 'string',
     },
   },
 };
