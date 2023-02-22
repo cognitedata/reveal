@@ -13,7 +13,7 @@ import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';
 
 import styled from 'styled-components';
 import { useValidate } from '../../hooks/useValidate';
-import { SearchEmpty } from '@data-exploration-components/graphics';
+import { SearchEmpty } from '../../components/SearchEmpty';
 
 const ACCESSOR_FIELDS = {
   assets: [
