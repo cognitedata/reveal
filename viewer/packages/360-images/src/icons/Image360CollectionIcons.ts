@@ -26,7 +26,7 @@ import {
 } from 'three';
 import glsl from 'glslify';
 import { AttributeDataAccessor, EventTrigger, SceneHandler } from '@reveal/utilities';
-import { Image360Icon } from '../entity/Image360Icon';
+import { Image360Icon } from './Image360Icon';
 
 export class Image360CollectionIcons {
   private readonly MIN_PIXEL_SIZE = 16;

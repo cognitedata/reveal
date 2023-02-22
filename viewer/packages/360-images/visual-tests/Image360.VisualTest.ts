@@ -14,9 +14,9 @@ import { degToRad } from 'three/src/math/MathUtils';
 import TWEEN from '@tweenjs/tween.js';
 import { OrbitControls } from 'three-stdlib';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
-import { IconOctree } from '../src/collection/IconOctree';
+import { IconOctree } from '../src/icons/IconOctree';
 import { OctreeHelper } from 'sparse-octree';
-import { Image360Icon } from '../src/entity/Image360Icon';
+import { Image360Icon } from '../src/icons/Image360Icon';
 
 type CdfImage360Facade = Image360Facade<{
   [key: string]: string;

@@ -7,8 +7,8 @@ import { SceneHandler } from '@reveal/utilities';
 import zip from 'lodash/zip';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
-import { Image360Icon } from '../entity/Image360Icon';
-import { Image360CollectionIcons } from './Image360CollectionIcons';
+import { Image360Icon } from '../icons/Image360Icon';
+import { Image360CollectionIcons } from '../icons/Image360CollectionIcons';
 
 export class Image360CollectionFactory<T> {
   private readonly _image360DataProvider: Image360Provider<T>;
