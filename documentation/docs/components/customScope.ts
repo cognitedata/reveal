@@ -16,7 +16,7 @@ export const customScope: Record<string, any> = {
   GLTFLoader,
   // you can't simply call useBaseUrl here because it's a react hook...
   urls: {
-    skyUrl: '/img/sky007.jpg',
-    gltfModelUrl: '/gltf/3d_industrial_tanker.glb'
+    skyUrl: '/reveal-docs/img/sky007.jpg',
+    gltfModelUrl: '/reveal-docs/gltf/3d_industrial_tanker.glb'
   },
 };
