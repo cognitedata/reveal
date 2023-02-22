@@ -489,18 +489,51 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     document: DocumentNode,
     errorMessage: string
   ): GraphQLError[] {
-    const interfaceUnimplmentedFieldsRegex =
+    const errors = [] as GraphQLError[];
+    const interfaceUnimplementedFieldsRegex =
       /^Interface field.*expected but.*does not provide it./gm;
-    if (errorMessage.match(interfaceUnimplmentedFieldsRegex)) {
+    const interfaceTransitiveRegex =
+      /^Type .* must implement .* because it is implemented by ./gm;
+    if (errorMessage.match(interfaceTransitiveRegex)) {
+      let matches;
+      while ((matches = interfaceTransitiveRegex.exec(errorMessage)) !== null) {
+        if (matches.index === interfaceTransitiveRegex.lastIndex) {
+          interfaceTransitiveRegex.lastIndex++;
+        }
+        matches.forEach((match) => {
+          const [missingInterface] = match
+            .replace(/^Type/g, '')
+            .replace(/must implement/g, '')
+            .replace(/because it is implemented.$/g, '')
+            .replace(/\s{2,}/g, ' ')
+            .trim()
+            .split(' ');
+          const typeNodeIndex = document.definitions.findIndex(
+            (node) =>
+              (node.kind === Kind.OBJECT_TYPE_DEFINITION ||
+                node.kind === Kind.INTERFACE_TYPE_DEFINITION) &&
+              node.name.value === missingInterface
+          );
+          if (typeNodeIndex !== -1) {
+            errors.push(
+              new GraphQLError(match, {
+                nodes: [document.definitions[typeNodeIndex]],
+              })
+            );
+          }
+        });
+        return errors;
+      }
+    }
+    if (errorMessage.match(interfaceUnimplementedFieldsRegex)) {
       let m;
-      const errors = [] as GraphQLError[];
 
       while (
-        (m = interfaceUnimplmentedFieldsRegex.exec(errorMessage)) !== null
+        (m = interfaceUnimplementedFieldsRegex.exec(errorMessage)) !== null
       ) {
         // This is necessary to avoid infinite loops with zero-width matches
-        if (m.index === interfaceUnimplmentedFieldsRegex.lastIndex) {
-          interfaceUnimplmentedFieldsRegex.lastIndex++;
+        if (m.index === interfaceUnimplementedFieldsRegex.lastIndex) {
+          interfaceUnimplementedFieldsRegex.lastIndex++;
         }
 
         // The result can be accessed through the `m`-variable.
@@ -531,7 +564,6 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
           }
         });
       }
-
       return errors;
     }
 

@@ -537,7 +537,35 @@ describe('GraphQlUtilsServiceTest', () => {
         },
       ]);
     });
+    it('should validate transitive interfaces', () => {
+      const service = createInstance();
 
+      const schema = `interface A {
+        a: String
+    }
+    
+    interface B {
+        b: String
+    }
+    
+    interface C implements A & B {
+        a: String
+        b: String
+        c: String
+    }
+    
+    type D implements C {
+        a: String
+        b: String
+        c: String
+    }`;
+      const result = service.validate(schema);
+      expect(result).toMatchObject([
+        {
+          message: 'Type D must implement A because it is implemented by C',
+        },
+      ]);
+    });
     it('should validate type name for pascal case', () => {
       const service = createInstance();
 
