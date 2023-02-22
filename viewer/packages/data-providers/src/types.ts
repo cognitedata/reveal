@@ -8,7 +8,7 @@ export interface JsonFileProvider {
 }
 
 export interface BinaryFileProvider {
-  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
+  getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
 export interface Image360DescriptorProvider<T> {
@@ -16,7 +16,10 @@ export interface Image360DescriptorProvider<T> {
 }
 
 export interface Image360FileProvider {
-  get360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]>;
+  get360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[],
+    abortSignal?: AbortSignal
+  ): Promise<Image360Face[]>;
 }
 
 export type Image360Descriptor = Image360EventDescriptor & {

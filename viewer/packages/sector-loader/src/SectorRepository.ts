@@ -8,7 +8,7 @@ import { ConsumedSector, WantedSector } from '@reveal/cad-parsers';
 export type SectorId = number;
 
 export interface SectorRepository {
-  loadSector(sector: WantedSector): Promise<ConsumedSector>;
+  loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector>;
   setCacheSize(sectorCount: number): void;
   clearCache(): void;
 }

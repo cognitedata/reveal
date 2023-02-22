@@ -64,16 +64,6 @@ import depthBlendVert from '../glsl/post-processing/unit-orthographic-passthroug
 import sectorCoverageFrag from '../glsl/sector/sectorCoverage.frag';
 import sectorCoverageVert from '../glsl/sector/sectorCoverage.vert';
 
-/**
- * Defines used to enable debugging features in shaders.
- */
-export const shaderDefines = {
-  defines: {
-    // Color geometry by tree index instead of model colors.
-    COGNITE_COLOR_BY_TREE_INDEX: false
-  }
-};
-
 export const sectorShaders = {
   // ----------------
   // "Regular" meshes

@@ -55,15 +55,15 @@ export class Image360Entity implements Image360 {
     this._transform = transform;
     this._image360Icon = icon;
     this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
+    this._image360VisualzationBox.visible = false;
   }
 
   /**
    * Loads the 360 image (6 faces) into the visualization object.
    */
-  public async load360Image(): Promise<void> {
-    const faces = await this._imageProvider.get360ImageFiles(this._image360Metadata.faceDescriptors);
+  public async load360Image(abortSignal?: AbortSignal): Promise<void> {
+    const faces = await this._imageProvider.get360ImageFiles(this._image360Metadata.faceDescriptors, abortSignal);
     await this._image360VisualzationBox.loadImages(faces);
-    this._image360VisualzationBox.visible = false;
   }
 
   /**

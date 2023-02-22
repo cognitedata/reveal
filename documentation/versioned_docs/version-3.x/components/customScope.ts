@@ -16,6 +16,6 @@ export const customScope: Record<string, any> = {
   DragControls,
   // you can't simply call useBaseUrl here because it's a react hook...
   urls: {
-    skyUrl: '/img/sky007.jpg'
+    skyUrl: '/reveal-docs/img/sky007.jpg'
   }
 };

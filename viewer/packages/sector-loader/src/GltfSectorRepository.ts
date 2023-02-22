@@ -15,7 +15,14 @@ export class GltfSectorRepository implements SectorRepository {
 
   constructor(sectorFileProvider: BinaryFileProvider, materialManager: CadMaterialManager) {
     this._gltfSectorLoader = new GltfSectorLoader(sectorFileProvider, materialManager);
-    this._gltfCache = new MemoryRequestCache(200, async consumedSector => consumedSector.group?.dereference(), 50);
+    this._gltfCache = new MemoryRequestCache(
+      200,
+      async consumedSector => {
+        consumedSector.group?.dereference();
+        materialManager.removeTexturedMeshMaterial(consumedSector.modelIdentifier, consumedSector.metadata.id);
+      },
+      50
+    );
   }
 
   private async getEmptySectorWithLod(
@@ -40,7 +47,7 @@ export class GltfSectorRepository implements SectorRepository {
     return this.getEmptySectorWithLod(LevelOfDetail.Discarded, modelIdentifier, metadata);
   }
 
-  async loadSector(sector: WantedSector): Promise<ConsumedSector> {
+  async loadSector(sector: WantedSector, abortSignal?: AbortSignal): Promise<ConsumedSector> {
     const metadata = sector.metadata as SectorMetadata;
 
     if (metadata.sectorFileName === undefined || metadata.downloadSize === 0) {
@@ -56,7 +63,7 @@ export class GltfSectorRepository implements SectorRepository {
       return this._gltfCache.get(cacheKey);
     }
 
-    const consumedSector = await this._gltfSectorLoader.loadSector(sector).catch(() => {
+    const consumedSector = await this._gltfSectorLoader.loadSector(sector, abortSignal).catch(() => {
       return undefined;
     });
 
