@@ -8,6 +8,7 @@
     "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-ui-entity-matching -o index.js -d ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "react-app-rewired test --passWithNoTests",
+    "test:key-order": "./scripts/check-locize-key-order.sh",
     "lint": "yarn prettier && yarn eslint",
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
