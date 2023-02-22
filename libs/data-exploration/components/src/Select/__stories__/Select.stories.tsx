@@ -4,7 +4,7 @@ import { ComponentStory } from '@storybook/react';
 import { Select } from '../Select';
 
 export default {
-  title: 'Component/Select',
+  title: 'Components/Select',
   component: Select,
   argTypes: {
     creatable: {

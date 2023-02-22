@@ -4,7 +4,7 @@ import { ComponentStory } from '@storybook/react';
 import { MultiSelect } from '../MultiSelect';
 
 export default {
-  title: 'Component/MultiSelect',
+  title: 'Components/MultiSelect',
   component: MultiSelect,
   argTypes: {
     isClearable: {
