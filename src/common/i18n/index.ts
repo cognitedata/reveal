@@ -1,9 +1,9 @@
 import { useTypedTranslation } from '@cognite/cdf-i18n-utils';
 
-import en from 'common/i18n/translations/en/data-sets.json';
+import en from 'common/i18n/translations/en/data-catalog.json';
 
 export const translations = {
-  en: { 'data-sets': en },
+  en: { 'data-catalog': en },
 };
 export type TranslationKeys = keyof typeof en;
 

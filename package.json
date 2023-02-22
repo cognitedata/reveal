@@ -1,5 +1,5 @@
 {
-  "name": "@cognite/cdf-data-sets",
+  "name": "@cognite/cdf-data-catalog",
   "version": "0.3.0",
   "private": true,
   "scripts": {
@@ -11,9 +11,9 @@
     "eslint:changed": "eslint --config .eslintrc.production.js",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
     "prettier:fix": "prettier --write .prettierrc -l \"src/**/*.{js,ts,tsx}\"",
-    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace data-sets",
-    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace data-sets",
-    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace data-sets"
+    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace data-catalog",
+    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace data-catalog",
+    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace data-catalog"
   },
   "dependencies": {
     "@cognite/cdf-i18n-utils": "0.6.1",
