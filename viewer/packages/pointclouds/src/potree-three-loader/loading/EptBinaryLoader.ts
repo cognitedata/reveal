@@ -44,7 +44,7 @@ export class EptBinaryLoader implements ILoader {
     if (node.loaded) return;
 
     let data: ArrayBuffer = new ArrayBuffer(0);
-    //Skip loading sectors if number of points is zero.
+    // Skip loading sectors if number of points is zero.
     if (node.getNumPoints() !== 0) {
       const fullFileName = node.fileName() + this.extension();
       data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
