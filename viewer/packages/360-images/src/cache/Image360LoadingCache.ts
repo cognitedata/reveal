@@ -5,22 +5,37 @@
 import { Image360Entity } from '../entity/Image360Entity';
 import pull from 'lodash/pull';
 import findLast from 'lodash/findLast';
+import { Log } from '@reveal/logger';
+import remove from 'lodash/remove';
+
+export type DownloadRequest = {
+  entity: Image360Entity;
+  load360Image: Promise<void>;
+  abort: () => void;
+};
 
 export class Image360LoadingCache {
   private readonly _loaded360Images: Image360Entity[];
-  private readonly _inFlightEntities: Map<Image360Entity, Promise<void>>;
+  private readonly _inProgressDownloads: DownloadRequest[];
 
   get cachedEntities(): Image360Entity[] {
     return this._loaded360Images;
   }
 
-  get currentlyLoadingEntities(): Map<Image360Entity, Promise<void>> {
-    return this._inFlightEntities;
+  get currentlyLoadingEntities(): DownloadRequest[] {
+    return this._inProgressDownloads;
   }
 
-  constructor(private readonly _cacheSize = 10) {
+  public getDownloadInProgress(entity: Image360Entity): DownloadRequest | undefined {
+    const inProgressDownload = this._inProgressDownloads.find(download => {
+      return download.entity === entity;
+    });
+    return inProgressDownload;
+  }
+
+  constructor(private readonly _imageCacheSize = 10, private readonly _downloadCacheSize = 10) {
     this._loaded360Images = [];
-    this._inFlightEntities = new Map();
+    this._inProgressDownloads = [];
   }
 
   public async cachedPreload(entity: Image360Entity): Promise<void> {
@@ -28,27 +43,49 @@ export class Image360LoadingCache {
       return;
     }
 
-    const inflightEntity = this._inFlightEntities.get(entity);
-    if (inflightEntity !== undefined) {
-      return inflightEntity;
+    const inProgressDownload = this.getDownloadInProgress(entity);
+    if (inProgressDownload !== undefined) {
+      return inProgressDownload.load360Image;
     }
 
-    const load360Image = entity.load360Image();
-    this._inFlightEntities.set(entity, load360Image);
+    if (this._inProgressDownloads.length === this._downloadCacheSize) {
+      this.abortLastRecentlyReqestedEntity();
+    }
 
+    const { signal, abort } = this.createAbortSignal();
+    const load360Image = entity
+      .load360Image(signal)
+      .catch(e => {
+        if (signal.aborted || e === 'Aborted') {
+          Log.info('Abort warning: ' + e);
+        } else {
+          Log.warn('Failed to load 360 image: ' + e);
+        }
+        return Promise.reject();
+      })
+      .then(
+        () => {
+          if (this._loaded360Images.length === this._imageCacheSize) {
+            this.purgeLastRecentlyUsedInvisibleEntity();
+          }
+          this._loaded360Images.unshift(entity);
+        },
+        () => {}
+      )
+      .finally(() => {
+        remove(this._inProgressDownloads, download => {
+          return download.entity === entity;
+        });
+      });
+
+    this._inProgressDownloads.push({ entity, load360Image, abort });
     await load360Image;
-
-    if (this._loaded360Images.length === this._cacheSize) {
-      this.purgeLastRecentlyUsedInvisibleEntity();
-    }
-
-    this._loaded360Images.unshift(entity);
-    this._inFlightEntities.delete(entity);
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
-    if (this._inFlightEntities.has(entity)) {
-      await this._inFlightEntities.get(entity);
+    const inFlightDownload = this.getDownloadInProgress(entity);
+    if (inFlightDownload) {
+      await inFlightDownload.load360Image;
     }
     pull(this._loaded360Images, entity);
   }
@@ -60,5 +97,19 @@ export class Image360LoadingCache {
     }
     pull(this._loaded360Images, entityToPurge);
     entityToPurge.unload360Image();
+  }
+
+  private abortLastRecentlyReqestedEntity() {
+    const download = this._inProgressDownloads[0];
+    this._inProgressDownloads.shift();
+    download.abort();
+  }
+
+  private createAbortSignal() {
+    const abortController = new AbortController();
+    const abort = () => {
+      abortController.abort();
+    };
+    return { signal: abortController.signal, abort };
   }
 }
