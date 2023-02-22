@@ -1,6 +1,7 @@
 {
   "entity-matching-pipelines": "Entity Matching pipelines",
   "quick-match": "Quick match",
-  "create-pipeline": "Create pipeline"
+  "create-pipeline": "Create pipeline",
+  "pipeline-list-empty-title": "No pipelines have been added."
 
 }

@@ -2,6 +2,7 @@ import { Icon } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { useEMPipelines } from 'hooks/contextualization-api';
 import { Link, useParams } from 'react-router-dom';
+import PipelineListEmpty from './PipelineListEmpty';
 
 export default function PipelineList() {
   const { data, isInitialLoading } = useEMPipelines();
@@ -16,13 +17,17 @@ export default function PipelineList() {
 
   return (
     <ul>
-      {data?.map(({ id, name }) => {
-        return (
-          <li key={id}>
-            <Link to={createLink(`/${subAppPath}/${id}`)}>{name || id}</Link>
-          </li>
-        );
-      })}
+      {data ? (
+        data?.map(({ id, name }) => {
+          return (
+            <li key={id}>
+              <Link to={createLink(`/${subAppPath}/${id}`)}>{name || id}</Link>
+            </li>
+          );
+        })
+      ) : (
+        <PipelineListEmpty />
+      )}
     </ul>
   );
 }
