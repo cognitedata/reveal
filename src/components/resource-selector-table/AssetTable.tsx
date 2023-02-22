@@ -30,21 +30,17 @@ export default function AssetTable({}: Props) {
         title: 'NAME',
         dataIndex: 'name',
         key: 'name',
-        render: (value, record) => <span key={record.id}>{value}</span>,
       },
       {
         title: 'DESCRIPTION',
         dataIndex: 'description',
         key: 'description',
-        render: (value, record) => <span key={record.id}>{value}</span>,
       },
       {
         title: 'LAST_UPDATED',
         dataIndex: 'lastUpdatedTime',
         key: 'lastUpdatedTime',
-        render: (value: Date, record) => (
-          <span key={record.id}>{value.toLocaleString()}</span>
-        ),
+        render: (value: Date) => value.toLocaleString(),
       },
     ],
     []
@@ -60,6 +56,6 @@ export default function AssetTable({}: Props) {
       emptyContent={undefined}
       appendTooltipTo={undefined}
       dataSource={dataSource}
-    ></Table>
+    />
   );
 }

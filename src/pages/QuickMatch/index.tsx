@@ -8,7 +8,7 @@ import styled from 'styled-components';
 export default function QuickMatch() {
   const { t } = useTranslation();
   return (
-    <Flex direction="column" id="42" style={{ height: '100%' }}>
+    <Flex direction="column" style={{ height: '100%' }}>
       <SecondaryTopbar title={t('quick-match')} />
       <Body>
         <ResourceSelectionTable />
