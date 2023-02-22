@@ -2,6 +2,8 @@ import { Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs-without-fonts.css';
 
+import antdTheme from './antd-theme.less';
+
 import { getContainer } from 'utils';
 import { styleScope } from 'styles/styleScope';
 
@@ -14,7 +16,7 @@ CogsTooltip.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  const didLoadStyles = useGlobalStyles([cogsStyles]);
+  const didLoadStyles = useGlobalStyles([cogsStyles, antdTheme]);
 
   if (!didLoadStyles) {
     return <Loader />;
