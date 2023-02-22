@@ -153,7 +153,7 @@ pods {
 
               slack.send(
                 channel: SLACK_ALERTS_CHANNEL,
-                message: "Production deployment of ${env.BRANCH_NAME} complete for: ${project}!"
+                message: "Deployment of ${env.BRANCH_NAME} complete for: ${project}!"
               )
             }
           }
