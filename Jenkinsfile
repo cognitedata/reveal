@@ -9,7 +9,7 @@ static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
 
 final boolean isMaster = env.BRANCH_NAME == 'master'
-final boolean isRelease = env.BRANCH_NAME.startsWith('release-')
+final boolean isRelease = env.BRANCH_NAME == 'release-access-management'
 final boolean isPullRequest = !!env.CHANGE_ID
 
 def pods = { body ->
@@ -44,10 +44,8 @@ pods {
   def gitCommit
   def getTitle
   def gitAuthor
-
   def project = APP_ID;
   def packageName = FUSION_SUBAPP_NAME;
-  def firebaseSiteName = FIREBASE_APP_SITE;
 
   app.safeRun(
     slackChannel: SLACK_ALERTS_CHANNEL,
@@ -80,6 +78,14 @@ pods {
       }
       
       parallel(
+        'Lint': {
+          container('apphosting') {
+            stageWithNotify('Lint') {
+              sh("yarn lint")
+            }
+          }
+        },
+
         'Preview': {
           container('apphosting') {
             if (!isPullRequest) {
@@ -113,7 +119,6 @@ pods {
               def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
               pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
             }
-            
           }
         },
 
@@ -123,10 +128,6 @@ pods {
               print 'No deployment on PR branch'
               return;
             }
-
-            final boolean isReleaseBranch = env.BRANCH_NAME.startsWith("release-${project}")
-            final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY == 'single-branch';
-            final boolean releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
 
             // Run the yarn install in the app in cases of local packages.json file
             if (fileExists("yarn.lock")) {
@@ -143,8 +144,8 @@ pods {
 
             stageWithNotify("Publish production build: ${project}") {
               appHosting(
-                appName: firebaseSiteName,
-                environment: releaseToProd ? 'production' : 'staging',
+                appName: FIREBASE_APP_SITE,
+                environment: isRelease ? 'production' : 'staging',
                 firebaseJson: 'build/firebase.json',
                 buildCommand: "yarn build",
                 buildFolder: 'build',
@@ -152,7 +153,7 @@ pods {
 
               slack.send(
                 channel: SLACK_ALERTS_CHANNEL,
-                message: "Deployment of ${env.BRANCH_NAME} complete for: ${project}!"
+                message: "Production deployment of ${env.BRANCH_NAME} complete for: ${project}!"
               )
             }
           }
