@@ -31,7 +31,7 @@ export function forEachMaterial(materials: Materials, callback: (material: THREE
     if (materialOrMaterialSet.isMaterial === true) {
       callback(materialOrMaterialSet as THREE.RawShaderMaterial);
     } else {
-      const materialSet = (materialOrMaterialSet as { [key: string]: THREE.RawShaderMaterial });
+      const materialSet = materialOrMaterialSet as { [key: string]: THREE.RawShaderMaterial };
 
       Object.values(materialSet).forEach(material => callback(material));
     }

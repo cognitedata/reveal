@@ -174,7 +174,6 @@ export class CadMaterialManager {
     modelData.materials.texturedMaterials[materialName].uniforms.tDiffuse.value.dispose();
     modelData.materials.texturedMaterials[materialName].dispose();
     delete modelData.materials.texturedMaterials[toTextureMaterialName(sectorId)];
-
   }
 
   getModelMaterials(modelIdentifier: string): Materials {
