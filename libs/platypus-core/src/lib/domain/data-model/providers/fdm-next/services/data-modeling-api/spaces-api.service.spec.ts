@@ -114,7 +114,7 @@ describe('DMS v3 - Spaces', () => {
         `${service.baseUrl}/spaces/byids`,
         {
           data: {
-            items: ids,
+            items: ids.map((space) => ({ space })),
           },
           headers: service.defaultHeaders,
         }

@@ -6,6 +6,7 @@ import {
   DataModel,
   DataModelVersion,
   DataModelVersionStatus,
+  PlatypusError,
   Result,
 } from '@platypus/platypus-core';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
@@ -53,7 +54,7 @@ export const useDataModelVersions = (
 ) => {
   const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
 
-  return useQuery(
+  return useQuery<DataModelVersion[], PlatypusError>(
     QueryKeys.DATA_MODEL_VERSION_LIST(dataModelExternalId),
     async () =>
       await dataModelHandlerFuncWrapper<DataModelVersion[]>(() =>

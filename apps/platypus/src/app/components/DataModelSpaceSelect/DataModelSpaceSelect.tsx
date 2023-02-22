@@ -64,11 +64,14 @@ export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
             <span key={'space_title_tooltip_content_ctr'}>
               {t(
                 'space_title_tooltip_text',
-                'A space is lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                'All data models and data must belong to a space. For each space, you can grant read and write access to the data, the data model only, or both.'
               )}{' '}
               <br />
               <br />
-              <StyledLink href="#/">
+              <StyledLink
+                href="https://docs.cognite.com/cdf/data_modeling/"
+                target="_blank"
+              >
                 {t('spaces_docs_link_text', 'Go to documentation')}
               </StyledLink>
             </span>

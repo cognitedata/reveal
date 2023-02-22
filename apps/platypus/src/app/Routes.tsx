@@ -27,10 +27,7 @@ const DataModelSubRoutes = () => (
               path="/*"
               element={
                 <React.Suspense fallback={<Spinner />}>
-                  <NavigationDataModel />
-                  <React.Suspense fallback={<Spinner />}>
-                    <DataModel />
-                  </React.Suspense>
+                  <DataModel />
                 </React.Suspense>
               }
             />

@@ -22,7 +22,6 @@ import {
 } from '../../dto';
 
 import {
-  BuiltInType,
   CdfResourceInstance,
   DataModel,
   DataModelTransformation,
@@ -96,12 +95,24 @@ export class FdmClient implements FlexibleDataModelingClient {
       .getDataModelVersionsById(dto.space!, dto.externalId)
       .then((results) => {
         if (!results || !results.length) {
-          return Promise.reject(
-            new PlatypusError(
-              `Specified version ${dto.externalId} does not exist!`,
-              'NOT_FOUND'
-            )
-          );
+          return this.spacesApi.getByIds([dto.space!]).then(({ items }) => {
+            if (items.length > 0) {
+              // space exist, but data model does not
+              return Promise.reject(
+                new PlatypusError(
+                  `Specified data model ${dto.externalId} does not exist!`,
+                  'NOT_FOUND'
+                )
+              );
+            } else {
+              return Promise.reject(
+                new PlatypusError(
+                  `Specified space ${dto.space} does not exist!`,
+                  'NOT_FOUND'
+                )
+              );
+            }
+          });
         }
 
         return (

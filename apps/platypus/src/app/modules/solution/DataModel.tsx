@@ -1,7 +1,8 @@
+import { Body } from '@cognite/cogs.js';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
+import { NavigationDataModel } from '@platypus-app/components/Navigations/NavigationDataModel';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import {
-  useDataModel,
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
@@ -31,16 +32,9 @@ export const DataModel = () => {
   const [isReady, setIsReady] = useState(false);
 
   const {
-    data: dataModel,
-    isLoading: isDataModelLoading,
-    isError: hasDataModelError,
-    isSuccess: isDataModelLoaded,
-  } = useDataModel(dataModelExternalId!, space!);
-
-  const {
     data: dataModelVersions,
     isLoading: areDataModelVersionsLoading,
-    isError: hasDataModelVersionError,
+    error: dataModelError,
     isSuccess: areDataModelVersionsLoaded,
   } = useDataModelVersions(dataModelExternalId!, space!);
 
@@ -51,7 +45,7 @@ export const DataModel = () => {
     version || '',
     dataModelVersions || [],
     dataModelExternalId || '',
-    dataModel?.space || ''
+    space || ''
   );
 
   const selectedDataModelVersionGraphQlSchema =
@@ -64,11 +58,7 @@ export const DataModel = () => {
   useEffect(
     () => {
       // wait for both requests to finish and update redux store
-      if (
-        isDataModelLoaded &&
-        areDataModelVersionsLoaded &&
-        selectedDataModelVersion
-      ) {
+      if (areDataModelVersionsLoaded && selectedDataModelVersion) {
         // Reset any previous state in redux
         // we don't want to deal with any dirty state from before
         clearState();
@@ -88,7 +78,6 @@ export const DataModel = () => {
     },
     // eslint-disable-next-line
     [
-      isDataModelLoaded,
       areDataModelVersionsLoaded,
       version, // run when version in url is changed
       selectedDataModelVersionGraphQlSchema, // run when selected schema is changed
@@ -96,21 +85,38 @@ export const DataModel = () => {
     ]
   );
 
-  if (hasDataModelError || hasDataModelVersionError) {
+  if (dataModelError || !selectedDataModelVersion) {
     return (
       <div data-testid="data_model_not_found">
         <BasicPlaceholder
           type="EmptyStateFolderSad"
           title={t(
             'data_model_not_found',
-            'Something went wrong, we were not able to load the Data Model!'
+            "Something went wrong. We couldn't load the data model."
           )}
-        />
+        >
+          <Body level={5}>
+            {dataModelError
+              ? dataModelError.message.includes('space')
+                ? t(
+                    'space_not_found_details',
+                    'Are you sure you have access to the space?'
+                  )
+                : t(
+                    'data_model_not_found_details',
+                    'Are you sure you have access to the data model?'
+                  )
+              : t(
+                  'version_not_found_details',
+                  'Are you sure this version of data model exists?'
+                )}
+          </Body>
+        </BasicPlaceholder>
       </div>
     );
   }
 
-  if (isDataModelLoading || areDataModelVersionsLoading || !isReady) {
+  if (areDataModelVersionsLoading || !isReady) {
     return (
       <div data-testid="data_model_loader">
         <Spinner />
@@ -119,8 +125,11 @@ export const DataModel = () => {
   }
 
   return (
-    <Routes>
-      <Route path="*" element={<DataPage />} />
-    </Routes>
+    <>
+      <NavigationDataModel />
+      <Routes>
+        <Route path="*" element={<DataPage />} />
+      </Routes>
+    </>
   );
 };

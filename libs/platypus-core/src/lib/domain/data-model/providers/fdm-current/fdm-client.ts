@@ -104,7 +104,7 @@ export class FdmV2Client implements FlexibleDataModelingClient {
     return this.mixerApiService
       .getApisByIds(dto.externalId, true)
       .then((results) => {
-        if (!results || !results.length || results.length > 1) {
+        if (!results || !results[0] || results.length > 1) {
           return Promise.reject(
             new PlatypusError(
               `Specified version ${dto.externalId} does not exist!`,

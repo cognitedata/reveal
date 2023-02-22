@@ -109,21 +109,15 @@ describe('DataModelPage Test', () => {
     expect(await screen.findByTestId('data_model_loader')).toBeInTheDocument();
   });
 
-  it('Should render no data model placeholder if it is not loaded', async () => {
-    (useDataModel as any).mockImplementation(() => {
-      return {
-        data: mockSolution,
-        isLoading: false,
-        isError: true,
-        isSuccess: true,
-      };
-    });
+  it('Should render no data model not found', async () => {
     (useDataModelVersions as any).mockImplementation(() => {
       return {
-        data: mockSchemas,
         isLoading: false,
         isError: true,
         isSuccess: false,
+        error: {
+          message: 'data model cant be found',
+        },
       };
     });
 
@@ -135,8 +129,33 @@ describe('DataModelPage Test', () => {
       },
     });
 
-    expect(
-      await screen.findByTestId('data_model_not_found')
-    ).toBeInTheDocument();
+    expect(await screen.findByTestId('data_model_not_found')).toHaveTextContent(
+      'data model'
+    );
+  });
+  it('Should render no data model placeholder if it is not loaded', async () => {
+    (useDataModelVersions as any).mockImplementation(() => {
+      return {
+        data: mockSchemas,
+        isLoading: false,
+        isError: true,
+        isSuccess: false,
+        error: {
+          message: 'space cant be found',
+        },
+      };
+    });
+
+    render(<DataModel />, {
+      redux: {
+        dataModel: {
+          ...solutionReduxMock,
+        },
+      },
+    });
+
+    expect(await screen.findByTestId('data_model_not_found')).toHaveTextContent(
+      'space'
+    );
   });
 });

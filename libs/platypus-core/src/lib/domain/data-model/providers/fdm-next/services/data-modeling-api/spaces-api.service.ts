@@ -20,7 +20,7 @@ export class SpacesApiService extends BaseApiService {
 
   getByIds(items: string[]): Promise<ItemList<SpaceInstanceDTO>> {
     return this.sendPostRequest('spaces/byids', {
-      items: items,
+      items: items.map((space) => ({ space })),
     });
   }
 
