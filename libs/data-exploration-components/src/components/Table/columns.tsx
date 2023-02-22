@@ -219,6 +219,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   dataset: {
     header: 'Dataset',
     id: 'datasetId',
+    enableSorting: false,
     accessorFn: (resource) => resource.dataSetId,
     cell: ({ getValue }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
