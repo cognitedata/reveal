@@ -1,15 +1,12 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
 import { ComponentStory } from '@storybook/react';
-import { Select } from './Select';
+import { MultiSelect } from '../MultiSelect';
 
 export default {
-  title: 'Component/Select',
-  component: Select,
+  title: 'Component/MultiSelect',
+  component: MultiSelect,
   argTypes: {
-    creatable: {
-      type: 'boolean',
-    },
     isClearable: {
       type: 'boolean',
     },
@@ -18,8 +15,8 @@ export default {
     },
   },
 };
-export const Example: ComponentStory<typeof Select> = (args) => (
-  <Select {...args} />
+export const Example: ComponentStory<typeof MultiSelect> = (args) => (
+  <MultiSelect {...args} />
 );
 Example.args = {
   creatable: false,
@@ -30,14 +27,10 @@ Example.args = {
       label: 'hello',
       value: 'hello',
     },
+    {
+      label: 'hello 2',
+      value: 'hello 2',
+    },
   ],
   onChange: action('onChange'),
-};
-
-export const WithNilOption: ComponentStory<typeof Select> = (args) => (
-  <Select {...args} />
-);
-WithNilOption.args = {
-  ...Example.args,
-  addNilOption: true,
 };
