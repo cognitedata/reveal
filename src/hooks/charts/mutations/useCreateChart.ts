@@ -16,7 +16,11 @@ const useCreateChart = () => {
     const newChart: Chart = {
       id: v4(),
       user: loginInfo.id,
-      userInfo: loginInfo,
+      userInfo: {
+        id: loginInfo.id,
+        displayName: loginInfo.displayName,
+        email: loginInfo.mail,
+      },
       name: 'New chart',
       updatedAt: Date.now(),
       createdAt: Date.now(),
