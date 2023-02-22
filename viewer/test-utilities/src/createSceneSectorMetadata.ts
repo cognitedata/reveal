@@ -46,7 +46,8 @@ export function createV9SceneSectorMetadata(
     downloadSize: 1000,
     maxDiagonalLength: 10,
     minDiagonalLength: 5,
-    sectorFileName: `${id}.glb`
+    sectorFileName: `${id}.glb`,
+    texturedFileName: `${id}_textured.glb`
   };
   return metadata;
 }

@@ -3,10 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { sectorShaders, shaderDefines } from './shaders';
+import { sectorShaders } from './shaders';
 import { RenderMode } from './RenderMode';
-
-import matCapTextureImage from './matCapTextureData';
 
 export interface Materials {
   // Materials
@@ -25,6 +23,19 @@ export interface Materials {
   instancedMesh: THREE.RawShaderMaterial;
   triangleMesh: THREE.RawShaderMaterial;
   simple: THREE.RawShaderMaterial;
+  texturedMaterials: { [key: string]: THREE.RawShaderMaterial };
+}
+
+export function forEachMaterial(materials: Materials, callback: (material: THREE.RawShaderMaterial) => void): void {
+  for (const materialOrMaterialSet of Object.values(materials)) {
+    if (materialOrMaterialSet.isMaterial === true) {
+      callback(materialOrMaterialSet as THREE.RawShaderMaterial);
+    } else {
+      const materialSet = materialOrMaterialSet as { [key: string]: THREE.RawShaderMaterial };
+
+      Object.values(materialSet).forEach(material => callback(material));
+    }
+  }
 }
 
 export function createMaterials(
@@ -32,11 +43,9 @@ export function createMaterials(
   clippingPlanes: THREE.Plane[],
   overrideColorPerTreeIndex: THREE.DataTexture,
   transformOverrideIndexTexture: THREE.DataTexture,
-  transformOverrideLookupTexture: THREE.DataTexture
+  transformOverrideLookupTexture: THREE.DataTexture,
+  matCapTexture: THREE.Texture
 ): Materials {
-  const matCapTexture = new THREE.Texture(matCapTextureImage);
-  matCapTexture.needsUpdate = true;
-
   const boxMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (Box)',
     clipping: true,
@@ -274,33 +283,34 @@ export function createMaterials(
     ellipsoidSegment: ellipsoidSegmentMaterial,
     instancedMesh: instancedMeshMaterial,
     triangleMesh: triangleMeshMaterial,
-    simple: simpleMaterial
+    simple: simpleMaterial,
+    texturedMaterials: {}
   };
 
-  for (const material of Object.values(allMaterials)) {
-    updateDefinesAndUniforms(
+  forEachMaterial(allMaterials, material =>
+    initializeDefinesAndUniforms(
       material,
       overrideColorPerTreeIndex,
       transformOverrideIndexTexture,
       transformOverrideLookupTexture,
       matCapTexture,
       renderMode
-    );
-  }
+    )
+  );
 
   return {
     ...allMaterials
   };
 }
 
-function updateDefinesAndUniforms(
+export function initializeDefinesAndUniforms(
   material: THREE.RawShaderMaterial,
   overrideColorPerTreeIndex: THREE.DataTexture,
   transformOverrideIndexTexture: THREE.DataTexture,
   transformOverrideTexture: THREE.DataTexture,
   matCapTexture: THREE.Texture,
   renderMode: RenderMode
-) {
+): void {
   const treeIndexTextureSize = new THREE.Vector2(
     overrideColorPerTreeIndex.image.width,
     overrideColorPerTreeIndex.image.height
@@ -311,7 +321,9 @@ function updateDefinesAndUniforms(
   );
   const oldUniforms = material.uniforms;
   material.setValues({
-    ...shaderDefines,
+    defines: {
+      ...material.defines
+    },
     uniforms: {
       ...oldUniforms,
       renderMode: {
