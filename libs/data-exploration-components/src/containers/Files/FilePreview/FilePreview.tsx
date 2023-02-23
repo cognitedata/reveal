@@ -154,7 +154,8 @@ export const FilePreview = ({
   }, [file, page, sdk]);
 
   const onClickAnnotation = useCallback(
-    (annotation: ExtendedAnnotation) =>
+    (annotation: ExtendedAnnotation) => {
+      setShowResourcePreviewSidebar(true);
       setSelectedAnnotations((prevSelectedAnnotations) =>
         prevSelectedAnnotations.some(
           (prevSelectedAnnotation) =>
@@ -162,7 +163,8 @@ export const FilePreview = ({
         )
           ? []
           : [annotation]
-      ),
+      );
+    },
     [setSelectedAnnotations]
   );
 
