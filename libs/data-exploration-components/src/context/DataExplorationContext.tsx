@@ -5,7 +5,7 @@ import { ResourceSelectorProvider } from '@data-exploration-components/context/R
 import { FileContextualizationContextProvider } from '@data-exploration-components/context/FileContextualization';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { Flow, AppContextProvider, OverrideURLMap } from './AppContext';
-import { Tooltip, Tabs, Modal as CogsModal } from '@cognite/cogs.js';
+import { Tooltip, Tabs, Modal as CogsModal, Select } from '@cognite/cogs.js';
 import { MetricsMetadata } from '@data-exploration-components/hooks/useMetrics';
 import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration-components/components/DragDropContainer/constants';
 
@@ -46,6 +46,13 @@ export const DataExplorationProvider = ({
       ...Tabs.defaultProps,
       getPopupContainer: () =>
         document.getElementsByClassName(styleScopeId).item(0)!,
+    };
+
+    // @ts-expect-error
+    Select.defaultProps = {
+      // @ts-expect-error
+      ...Select.defaultProps,
+      menuPortalTarget: document.getElementsByClassName(styleScopeId).item(0)!,
     };
 
     // create a custom portal for drag-drop
