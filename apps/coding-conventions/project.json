@@ -19,7 +19,8 @@
         "assets": ["apps/coding-conventions/src/favicon.ico"],
         "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/coding-conventions/webpack-config.js"
+        "webpackConfig": "apps/coding-conventions/webpack-config.js",
+        "isolatedConfig": true
       },
       "configurations": {
         "development": {

@@ -1,5 +1,6 @@
 {
   "name": "shared-plotting-components",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/plotting-components/src",
   "projectType": "library",
   "tags": [],
@@ -46,9 +47,7 @@
       "options": {
         "uiFramework": "@storybook/react",
         "port": 4400,
-        "config": {
-          "configFolder": "libs/shared/plotting-components/.storybook"
-        }
+        "configDir": "libs/shared/plotting-components/.storybook"
       },
       "configurations": {
         "ci": {
@@ -58,13 +57,11 @@
     },
     "build-storybook": {
       "executor": "@nrwl/storybook:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{options.outputDir}"],
       "options": {
         "uiFramework": "@storybook/react",
-        "outputPath": "dist/storybook/shared-plotting-components",
-        "config": {
-          "configFolder": "libs/shared/plotting-components/.storybook"
-        }
+        "configDir": "libs/shared/plotting-components/.storybook",
+        "outputDir": "dist/storybook/shared-plotting-components"
       },
       "configurations": {
         "ci": {

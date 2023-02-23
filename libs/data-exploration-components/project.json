@@ -1,5 +1,6 @@
 {
   "name": "data-exploration-components-old",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/data-exploration-components/src",
   "projectType": "library",
   "tags": [],
@@ -45,9 +46,7 @@
       "options": {
         "uiFramework": "@storybook/react",
         "port": 4400,
-        "config": {
-          "configFolder": "libs/data-exploration-components/.storybook"
-        }
+        "configDir": "libs/data-exploration-components/.storybook"
       },
       "configurations": {
         "ci": {
@@ -64,13 +63,11 @@
     },
     "build-storybook": {
       "executor": "@nrwl/storybook:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{options.outputDir}"],
       "options": {
         "uiFramework": "@storybook/react",
-        "outputPath": "storybook-static",
-        "config": {
-          "configFolder": "libs/data-exploration-components/.storybook"
-        }
+        "configDir": "libs/data-exploration-components/.storybook",
+        "outputDir": "storybook-static"
       },
       "configurations": {
         "ci": {

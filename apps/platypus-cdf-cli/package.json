@@ -18,7 +18,9 @@
   },
   "dependencies": {
     "@cognite/sdk": "5.4.0",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "locate-path": "^3.0.0",
+    "lowercase-keys": "^3.0.0"
   },
   "resolutions": {
     "graphql": "^15.6.1"

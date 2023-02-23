@@ -7,9 +7,15 @@ module.exports = {
     ...rootMain.stories,
     '../src/app/**/*.stories.mdx',
     '../src/app/**/*.stories.@(js|jsx|ts|tsx)',
-    // '../../../libs/cog–data-grid/**/*.stories.@(js|jsx|ts|tsx)',
   ],
-  addons: [...rootMain.addons, '@nrwl/react/plugins/storybook'],
+  addons: [
+    ...rootMain.addons,
+    '@storybook/addon-essentials',
+    '@nrwl/react/plugins/storybook',
+  ],
+  features: {
+    babelModeV7: true,
+  },
   webpackFinal: async (config, { configType }) => {
     // apply any global webpack configs that might have been specified in .storybook/main.js
     if (rootMain.webpackFinal) {

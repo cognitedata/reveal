@@ -1,4 +1,5 @@
 {
+  "name": "platypus-cdf-cli",
   "sourceRoot": "apps/platypus-cdf-cli/src",
   "projectType": "application",
   "targets": {
@@ -13,7 +14,7 @@
         "generatePackageJson": true,
         "extractLicenses": true,
         "sourceMap": true,
-        "webpackConfig": "tools/custom-webpack-configurations/platypus-cli-webpack-config.js",
+        "webpackConfig": "apps/platypus-cdf-cli/webpack-config.js",
         "target": "node",
         "compiler": "tsc"
       },

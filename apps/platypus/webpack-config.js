@@ -1,3 +1,6 @@
+const { composePlugins, withNx } = require('@nrwl/webpack');
+const { withReact } = require('@nrwl/react');
+
 const webpack = require('webpack');
 const { edit, remove, getPaths } = require('@rescripts/utilities');
 const PrefixWrap = require('postcss-prefixwrap');
@@ -86,91 +89,98 @@ const replaceStyleLoaders = (config) => {
   return config;
 };
 
-module.exports = (config) => {
-  const nodeEnv = process.env.NODE_ENV || 'production';
-  console.log(`Custom webpack config(${nodeEnv}) for Platypus was loaded...`);
+module.exports = composePlugins(
+  withNx(),
+  withReact(),
+  (config, { options, context }) => {
+    const nodeEnv = process.env.NODE_ENV || 'production';
+    console.log(`Custom webpack config(${nodeEnv}) for Platypus was loaded...`);
 
-  if (
-    nodeEnv === 'mock' ||
-    nodeEnv === 'development' ||
-    (process.env.NX_TASK_TARGET_PROJECT &&
-      process.env.NX_TASK_TARGET_PROJECT === 'platypus-e2e')
-  ) {
-    // add your own webpack tweaks if needed
-    config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
-      './src/environments/mock/cogniteSdkSingleton.ts'
-    );
-    return {
-      ...config,
-      plugins: [
-        ...config.plugins,
-        new MonacoWebpackPlugin({
-          publicPath: '/',
-          languages: ['graphql'],
-        }),
-        new CopyPlugin({
-          patterns: ['./firebase.json'],
-        }),
-      ],
+    if (
+      nodeEnv === 'mock' ||
+      nodeEnv === 'development' ||
+      (process.env.NX_TASK_TARGET_PROJECT &&
+        process.env.NX_TASK_TARGET_PROJECT === 'platypus-e2e')
+    ) {
+      // add your own webpack tweaks if needed
+      config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
+        './src/environments/mock/cogniteSdkSingleton.ts'
+      );
+      return {
+        ...config,
+        plugins: [
+          ...config.plugins,
+          new MonacoWebpackPlugin({
+            publicPath: '/',
+            languages: ['graphql'],
+          }),
+          new CopyPlugin({
+            patterns: ['./firebase.json'],
+          }),
+        ],
+        // react scripts are causing a lot of errors to be throw in console (Failed to parse source map from...)
+        // https://github.com/facebook/create-react-app/discussions/11767
+        ignoreWarnings: [/Failed to parse source map/],
+      };
+    }
+
+    config.entry = {
+      ...config.entry,
     };
+
+    config.output.libraryTarget = 'system';
+    config.output.chunkLoading = 'jsonp';
+    config.output.filename = ({ chunk: { name } }) => {
+      return name === 'main' ? 'index.js' : '[name].[contenthash:8].js';
+    };
+
+    config.plugins.push(
+      new webpack.ProvidePlugin({
+        React: 'react',
+      }),
+      new CopyPlugin({
+        patterns: ['./firebase.json'],
+      })
+    );
+
+    config.externals = {
+      'single-spa': 'single-spa',
+      '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
+    };
+
+    // If this is not set, you will get following error
+    // application '@cognite/cdf-solutions-ui' died in status LOADING_SOURCE_CODE: Automatic publicPath is not supported in this browser
+    config.output.publicPath = '';
+
+    if (config.optimization) {
+      // https://webpack.js.org/guides/code-splitting/#dynamic-imports
+      // If we keep the runtime chunk, we get this error
+      // application '@cognite/cdf-solutions-ui' died in status LOADING_SOURCE_CODE: "does not export a bootstrap function or array of functions"
+      // delete config.optimization['splitChunks'];
+      delete config.optimization['runtimeChunk'];
+    }
+
+    config = replaceStyleLoaders(config);
+    config.module.rules.push({
+      test: /\.(woff|woff2|eot|ttf|svg)$/,
+      loader: 'file-loader',
+    });
+
+    // Remove unneeded plugins
+    config.plugins = config.plugins
+      .filter((plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin')
+      .filter((plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin')
+      .filter((plugin) => plugin.constructor.name !== 'IndexHtmlWebpackPlugin');
+
+    // This ensures Monaco is able to load its web workers
+    config.plugins.push(
+      new MonacoWebpackPlugin({ publicPath: '/', languages: ['graphql'] })
+    );
+
+    // react scripts are causing a lot of errors to be throw in console (Failed to parse source map from...)
+    // https://github.com/facebook/create-react-app/discussions/11767
+    config.ignoreWarnings = [/Failed to parse source map/];
+
+    return config;
   }
-
-  config.entry = {
-    ...config.entry,
-    // 'monaco-editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
-    // 'graphql-lang.worker':
-    //   './src/app/modules/solution/data-model/components/GraphqlCodeEditor/utils/graphql.worker.ts',
-  };
-
-  config.output.libraryTarget = 'system';
-  config.output.chunkLoading = 'jsonp';
-  config.output.filename = ({ chunk: { name } }) => {
-    return name === 'main' ? 'index.js' : '[name].js';
-  };
-  // config.output.chunkFilename = 'static/js/[name].[contenthash:8].chunk.js';
-
-  config.plugins.push(
-    new webpack.ProvidePlugin({
-      React: 'react',
-    }),
-    new CopyPlugin({
-      patterns: ['./firebase.json'],
-    })
-  );
-
-  config.externals = {
-    'single-spa': 'single-spa',
-    '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
-  };
-
-  // If this is not set, you will get following error
-  // application '@cognite/cdf-solutions-ui' died in status LOADING_SOURCE_CODE: Automatic publicPath is not supported in this browser
-  config.output.publicPath = '';
-
-  if (config.optimization) {
-    // https://webpack.js.org/guides/code-splitting/#dynamic-imports
-    // If we keep the runtime chunk, we get this error
-    // application '@cognite/cdf-solutions-ui' died in status LOADING_SOURCE_CODE: "does not export a bootstrap function or array of functions"
-    // delete config.optimization['splitChunks'];
-    delete config.optimization['runtimeChunk'];
-  }
-
-  config = replaceStyleLoaders(config);
-  config.module.rules.push({
-    test: /\.(woff|woff2|eot|ttf|svg)$/,
-    loader: 'file-loader',
-  });
-
-  // Remove unneeded plugins
-  config.plugins = config.plugins
-    .filter((plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin')
-    .filter((plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin')
-    .filter((plugin) => plugin.constructor.name !== 'IndexHtmlWebpackPlugin');
-
-  // This ensures Monaco is able to load its web workers
-  config.plugins.push(
-    new MonacoWebpackPlugin({ publicPath: '/', languages: ['graphql'] })
-  );
-
-  return config;
-};
+);

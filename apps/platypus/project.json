@@ -1,4 +1,6 @@
 {
+  "name": "platypus",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/platypus/src",
   "projectType": "application",
   "targets": {
@@ -16,7 +18,8 @@
         "assets": ["apps/platypus/src/favicon.ico", "apps/platypus/src/assets"],
         "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/platypus/webpack-config.js"
+        "webpackConfig": "apps/platypus/webpack-config.js",
+        "isolatedConfig": true
       },
       "configurations": {
         "development": {
@@ -198,9 +201,7 @@
       "options": {
         "uiFramework": "@storybook/react",
         "port": 4400,
-        "config": {
-          "configFolder": "apps/platypus/.storybook"
-        }
+        "configDir": "apps/platypus/.storybook"
       },
       "configurations": {
         "ci": {
@@ -210,13 +211,11 @@
     },
     "build-storybook": {
       "executor": "@nrwl/storybook:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{options.outputDir}"],
       "options": {
         "uiFramework": "@storybook/react",
-        "outputPath": "storybook-static",
-        "config": {
-          "configFolder": "apps/platypus/.storybook"
-        }
+        "configDir": "apps/platypus/.storybook",
+        "outputDir": "storybook-static"
       },
       "configurations": {
         "ci": {

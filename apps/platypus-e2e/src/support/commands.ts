@@ -139,7 +139,7 @@ Cypress.Commands.add(
     if (isRequired) {
       cy.get(`[data-cy="schema-type-field"][data-cy-value="${fieldName}"]`)
         .closest('.ag-row')
-        .as('row');
+        .as('row', { type: 'static' });
 
       cy.get('@row').find(`[col-id="nonNull"]`).click();
     }
@@ -160,7 +160,7 @@ Cypress.Commands.add(
 
     cy.get(`[data-cy="schema-type-field"][data-cy-value="${fieldName}"]`)
       .closest('.ag-row')
-      .as('row');
+      .as('row', { type: 'static' });
 
     cy.get('@row').find(`[col-id="name"]`).click();
 
@@ -192,7 +192,9 @@ Cypress.Commands.add('addDataModelType', (typeName: string) => {
   // Find the row in the grid and click
   // initially the cell renderer is displayed
   // we need to click the cell to display the cell editor
-  cy.get(`.ag-row-last div[col-id="name"]`).closest('.ag-row').as('row');
+  cy.get(`.ag-row-last div[col-id="name"]`)
+    .closest('.ag-row')
+    .as('row', { type: 'static' });
 
   cy.get('@row').find(`div[col-id="name"]`).click();
   cy.get('@row').find(`[col-id="name"] input`).type('name').type('{enter}');
