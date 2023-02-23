@@ -13,7 +13,14 @@ import {
   Image360
 } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
-import { InputHandler, pixelToNormalizedDeviceCoordinates, PointerEventData, SceneHandler } from '@reveal/utilities';
+import {
+  BeforeSceneRenderedDelegate,
+  EventTrigger,
+  InputHandler,
+  pixelToNormalizedDeviceCoordinates,
+  PointerEventData,
+  SceneHandler
+} from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 
@@ -44,10 +51,15 @@ export class Image360ApiHelper {
     domElement: HTMLElement,
     activeCameraManager: ProxyCameraManager,
     inputHandler: InputHandler,
-    requestRedraw: () => void
+    requestRedraw: () => void,
+    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
   ) {
     const image360DataProvider = new Cdf360ImageEventProvider(cogniteClient);
-    const image360EntityFactory = new Image360CollectionFactory(image360DataProvider, sceneHandler);
+    const image360EntityFactory = new Image360CollectionFactory(
+      image360DataProvider,
+      sceneHandler,
+      onBeforeSceneRendered
+    );
     this._image360Facade = new Image360Facade(image360EntityFactory);
     this._image360Navigation = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
 

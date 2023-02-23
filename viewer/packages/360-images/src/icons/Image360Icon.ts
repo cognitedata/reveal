@@ -2,34 +2,32 @@
  * Copyright 2022 Cognite AS
  */
 
-import { AttributeDataAccessor, EventTrigger, SceneHandler } from '@reveal/utilities';
+import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import * as THREE from 'three';
 import { Ray, Sphere, Vector3 } from 'three';
 import { clamp } from 'three/src/math/MathUtils';
 
 export class Image360Icon {
   private readonly _hoverSprite: THREE.Sprite;
-  private readonly _alphaAttributeAccessor: AttributeDataAccessor<Uint8ClampedArray>;
   private readonly _position: THREE.Vector3;
   private readonly _sceneHandler: SceneHandler;
-  private _adaptiveScale = 1;
   private readonly _minPixelSize: number;
   private readonly _maxPixelSize: number;
-  private readonly _setAdaptiveScale: (renderer: THREE.WebGLRenderer, camera: THREE.Camera) => void;
-  private readonly _onRenderTrigger: EventTrigger<(renderer: THREE.WebGLRenderer, camera: THREE.Camera) => void>;
+  private readonly _setAdaptiveScale: BeforeSceneRenderedDelegate;
+  private readonly _onRenderTrigger: EventTrigger<BeforeSceneRenderedDelegate>;
+  private _adaptiveScale = 1;
+  private _visible = true;
 
   constructor(
     position: THREE.Vector3,
     hoverIconTexture: THREE.CanvasTexture,
     sceneHandler: SceneHandler,
-    alphaAttributeAccessor: AttributeDataAccessor<Uint8ClampedArray>,
     minPixelSize: number,
     maxPixelSize: number,
-    onRenderTrigger: EventTrigger<(renderer: THREE.WebGLRenderer, camera: THREE.Camera) => void>
+    onRenderTrigger: EventTrigger<BeforeSceneRenderedDelegate>
   ) {
     this._minPixelSize = minPixelSize;
     this._maxPixelSize = maxPixelSize;
-    this._alphaAttributeAccessor = alphaAttributeAccessor;
 
     this._hoverSprite = this.createHoverSprite(hoverIconTexture);
     this._hoverSprite.position.copy(position);
@@ -46,13 +44,11 @@ export class Image360Icon {
   }
 
   set visible(visible: boolean) {
-    const alpha = visible ? 255 : 0;
-    this._alphaAttributeAccessor.set([alpha]);
+    this._visible = visible;
   }
 
   get visible(): boolean {
-    const alpha = this._alphaAttributeAccessor.at(0)!;
-    return alpha > 0;
+    return this._visible;
   }
 
   get position(): Vector3 {
@@ -73,14 +69,12 @@ export class Image360Icon {
     this._sceneHandler.removeCustomObject(this._hoverSprite);
     this._hoverSprite.material.dispose();
     this._hoverSprite.geometry.dispose();
-
-    this._alphaAttributeAccessor.set([0]);
   }
 
-  private setupAdaptiveScaling(position: THREE.Vector3): (renderer: THREE.WebGLRenderer, camera: THREE.Camera) => void {
+  private setupAdaptiveScaling(position: THREE.Vector3): BeforeSceneRenderedDelegate {
     const ndcPosition = new THREE.Vector4();
     const renderSize = new THREE.Vector2();
-    return (renderer: THREE.WebGLRenderer, camera: THREE.Camera) => {
+    return ({ renderer, camera }) => {
       this._adaptiveScale = computeAdaptiveScaling(renderer, camera, this._maxPixelSize, this._minPixelSize);
       this._hoverSprite.scale.set(this._adaptiveScale, this._adaptiveScale, 1.0);
     };

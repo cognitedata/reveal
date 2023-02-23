@@ -2,162 +2,71 @@
  * Copyright 2023 Cognite AS
  */
 
-import image360IconVert from './image360Icon.vert';
-import image360IconFrag from './image360Icon.frag';
-
-import {
-  BufferAttribute,
-  BufferGeometry,
-  Camera,
-  CanvasTexture,
-  Color,
-  DepthModes,
-  GLSL3,
-  GreaterDepth,
-  LessEqualDepth,
-  Matrix4,
-  Points,
-  RawShaderMaterial,
-  ShaderMaterial,
-  Texture,
-  Vector2,
-  Vector3,
-  WebGLRenderer
-} from 'three';
-import glsl from 'glslify';
-import { AttributeDataAccessor, EventTrigger, SceneHandler } from '@reveal/utilities';
+import { Camera, CanvasTexture, Texture, Vector3, WebGLRenderer } from 'three';
+import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { Image360Icon } from './Image360Icon';
+import { InstancedIconSprite } from './InstancedIconSprite';
 
 export class Image360CollectionIcons {
   private readonly MIN_PIXEL_SIZE = 16;
   private readonly MAX_PIXEL_SIZE = 64;
   private readonly _sceneHandler: SceneHandler;
-  private readonly _geometry: BufferGeometry;
-  private readonly _backMaterial: ShaderMaterial;
-  private readonly _frontMaterial: ShaderMaterial;
-  private readonly _frontPoints: Points;
-  private readonly _backPoints: Points;
   private readonly _hoverIconTexture: CanvasTexture;
   private readonly _onRenderTrigger: EventTrigger<(renderer: WebGLRenderer, camera: Camera) => void>;
   private readonly _sharedTexture: Texture;
+  private readonly _icons: Image360Icon[];
+  private readonly _iconsSprite: InstancedIconSprite;
 
-  constructor(sceneHandler: SceneHandler) {
-    const geometry = new BufferGeometry();
-    const [sharedRingTexture, frontMaterial, backMaterial] = this.initializeIconsMaterials();
-    const [frontPoints, backPoints] = this.initializePoints(geometry, frontMaterial, backMaterial);
-    const hoverIconTexture = this.createHoverIconTexture();
-
-    this._onRenderTrigger = new EventTrigger();
-    this._geometry = geometry;
-    this._frontMaterial = frontMaterial;
-    this._backMaterial = backMaterial;
-    this._frontPoints = frontPoints;
-    this._backPoints = backPoints;
-    this._sharedTexture = sharedRingTexture;
-    this._sceneHandler = sceneHandler;
-    this._hoverIconTexture = hoverIconTexture;
+  get icons(): Image360Icon[] {
+    return this._icons;
   }
 
-  public initializeImage360Icons(transforms: Matrix4[]): Image360Icon[] {
-    const positions = transforms.map(transform => new Vector3().setFromMatrixPosition(transform));
-    const alphaBuffer = new Uint8ClampedArray(positions.map(_ => 255));
-    this._geometry.setFromPoints(positions);
+  constructor(
+    points: Vector3[],
+    sceneHandler: SceneHandler,
+    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
+  ) {
+    const sharedTexture = this.createOuterRingsTexture();
+    this._onRenderTrigger = new EventTrigger();
+    const iconsSprites = new InstancedIconSprite(points, sharedTexture, this.MIN_PIXEL_SIZE, this.MAX_PIXEL_SIZE);
 
-    const alphaAttribute = new BufferAttribute(alphaBuffer, 1, true);
-    this._geometry.setAttribute('alpha', alphaAttribute);
+    this._hoverIconTexture = this.createHoverIconTexture();
+    this._sharedTexture = sharedTexture;
+    this._icons = this.initializeImage360Icons(points, sceneHandler, onBeforeSceneRendered);
 
-    this._sceneHandler.addCustomObject(this._frontPoints);
-    this._sceneHandler.addCustomObject(this._backPoints);
+    this._sceneHandler = sceneHandler;
+    this._iconsSprite = iconsSprites;
 
-    return positions.map((position, index) => {
-      const instanceAlphaView = new Uint8ClampedArray(alphaBuffer.buffer, index, 1);
-      const alphaAttributeAccessor = new AttributeDataAccessor(instanceAlphaView, alphaAttribute);
-      return new Image360Icon(
-        position,
-        this._hoverIconTexture,
-        this._sceneHandler,
-        alphaAttributeAccessor,
-        this.MIN_PIXEL_SIZE,
-        this.MAX_PIXEL_SIZE,
-        this._onRenderTrigger
-      );
-    });
+    sceneHandler.addCustomObject(iconsSprites);
+  }
+
+  private initializeImage360Icons(
+    points: Vector3[],
+    sceneHandler: SceneHandler,
+    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
+  ): Image360Icon[] {
+    return points.map(
+      point =>
+        new Image360Icon(
+          point,
+          this._hoverIconTexture,
+          sceneHandler,
+          this.MIN_PIXEL_SIZE,
+          this.MAX_PIXEL_SIZE,
+          onBeforeSceneRendered
+        )
+    );
   }
 
   public dispose(): void {
+    this._sceneHandler.removeCustomObject(this._iconsSprite);
     this._onRenderTrigger.unsubscribeAll();
-    this._sceneHandler.removeCustomObject(this._frontPoints);
-    this._sceneHandler.removeCustomObject(this._backPoints);
-    this._geometry.dispose();
     this._sharedTexture.dispose();
-    this._backMaterial.dispose();
-    this._frontMaterial.dispose();
-  }
-
-  private initializeIconsMaterials(): [Texture, ShaderMaterial, ShaderMaterial] {
-    const ringTexture = this.createOuterRingsTexture();
-    const frontMaterial = this.createIconsMaterial(ringTexture, 1, LessEqualDepth);
-    const backMaterial = this.createIconsMaterial(ringTexture, 0.5, GreaterDepth);
-    return [ringTexture, frontMaterial, backMaterial];
-  }
-
-  private createIconsMaterial(
-    texture: Texture,
-    collectionOpacity: number,
-    depthFunction: DepthModes
-  ): RawShaderMaterial {
-    return new RawShaderMaterial({
-      uniforms: {
-        map: { value: texture },
-        colorTint: { value: new Color(1, 1, 1) },
-        renderSize: { value: new Vector2(1, 1) },
-        collectionOpacity: { value: collectionOpacity },
-        renderDownScale: { value: 1 },
-        pixelSizeRange: { value: new Vector2(this.MIN_PIXEL_SIZE, this.MAX_PIXEL_SIZE) }
-      },
-      vertexShader: glsl(image360IconVert),
-      fragmentShader: glsl(image360IconFrag),
-      depthTest: true,
-      depthWrite: false,
-      depthFunc: depthFunction,
-      glslVersion: GLSL3,
-      transparent: true
-    });
-  }
-
-  private initializePoints(
-    geometry: BufferGeometry,
-    frontMaterial: ShaderMaterial,
-    backMaterial: ShaderMaterial
-  ): [Points, Points] {
-    const frontPoints = createPoints(geometry, frontMaterial);
-    frontPoints.onBeforeRender = (renderer, _, camera) => {
-      setUniforms(renderer, frontMaterial);
-      this._onRenderTrigger.fire(renderer, camera);
-    };
-
-    const backPoints = createPoints(geometry, backMaterial);
-    backPoints.onBeforeRender = renderer => {
-      setUniforms(renderer, backMaterial);
-    };
-
-    return [frontPoints, backPoints];
-
-    function createPoints(geometry: BufferGeometry, material: ShaderMaterial): Points {
-      const points = new Points(geometry, material);
-      points.renderOrder = 4;
-      return points;
-    }
-
-    function setUniforms(renderer: WebGLRenderer, material: ShaderMaterial): void {
-      renderer.getSize(material.uniforms.renderSize.value);
-      material.uniforms.renderDownScale.value = material.uniforms.renderSize.value.x / renderer.domElement.clientWidth;
-    }
   }
 
   private createOuterRingsTexture(): CanvasTexture {
     const canvas = document.createElement('canvas');
-    const textureSize = 256;
+    const textureSize = this.MAX_PIXEL_SIZE;
     canvas.width = textureSize;
     canvas.height = textureSize;
 
