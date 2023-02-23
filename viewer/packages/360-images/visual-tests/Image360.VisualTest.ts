@@ -14,6 +14,9 @@ import { degToRad } from 'three/src/math/MathUtils';
 import TWEEN from '@tweenjs/tween.js';
 import { OrbitControls } from 'three-stdlib';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
+import { IconOctree } from '../src/collection/IconOctree';
+import { OctreeHelper } from 'sparse-octree';
+import { Image360Icon } from '../src/entity/Image360Icon';
 
 type CdfImage360Facade = Image360Facade<{
   [key: string]: string;
@@ -30,11 +33,37 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     const { facade, entities } = await this.setup360Images(cogniteClient, sceneHandler);
 
+    const icons = entities.map(entity => entity.icon);
+    sceneHandler.addCustomObject(this.getOctreeVisualizationObject(icons));
+
     this.setupGUI(entities);
 
     this.setupMouseMoveEventHandler(renderer, entities, facade, camera);
 
     this.setupMouseClickEvenetHandler(renderer, facade, camera, cameraControls);
+  }
+
+  private getOctreeVisualizationObject(icons: Image360Icon[]) {
+    const bounds = IconOctree.getMinimalOctreeBoundsFromIcons(icons);
+    bounds.min.y = bounds.min.y - 0.5;
+    bounds.max.y = bounds.max.y + 1;
+    const iconOctree = new IconOctree(icons, bounds, 1);
+    const octreeVisualization = new OctreeHelper(iconOctree);
+
+    let seed = 70;
+    octreeVisualization.traverse(obj => {
+      if (obj instanceof THREE.LineSegments) {
+        (obj.material as THREE.LineBasicMaterial).color = new THREE.Color(0xffffff * random(seed));
+      }
+      seed++;
+    });
+
+    return octreeVisualization;
+
+    function random(seed: number) {
+      seed = Math.sin(seed) * 10000;
+      return seed - Math.floor(seed);
+    }
   }
 
   private setupMouseClickEvenetHandler(
