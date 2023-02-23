@@ -16,7 +16,8 @@ export type TrackedEvents =
   | '360ImageEntered'
   | '360ImageTransitioned'
   | '360ImageExited'
-  | 'measurementAdded';
+  | 'measurementAdded'
+  | 'texturedModelLoaded';
 
 export type EventProps = {
   [key: string]: any;
