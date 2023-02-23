@@ -18,16 +18,30 @@ import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 import { SearchResultWrapper } from '@data-exploration-app/containers/elements';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { createLink } from '@cognite/cdf-utilities';
+import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
 export const AllTab = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const [commonFilters] = useCommonFilters();
   const [query] = useQueryString(SEARCH_KEY);
   const [_, setCurrentResourceType] = useCurrentResourceType();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const search = getSearchParams(location.search);
 
   const handleAllResultsClick = (type: ResourceType) => {
     trackUsage(EXPLORATION.CLICK.ALL_RESULTS, { resourceType: type });
     setCurrentResourceType(type);
+  };
+
+  const handleSummaryRowClick = (rowType: ResourceType, id: number) => {
+    navigate(createLink(`/explore/${rowType}/${id}`, search), {
+      state: {
+        history: location.state?.history,
+      },
+    });
   };
 
   return (
@@ -36,40 +50,40 @@ export const AllTab = () => {
         <AssetSummary
           filter={commonFilters}
           query={query}
-          onRowClick={(row) => setCurrentResourceType('asset', row.id)}
+          onRowClick={(row) => handleSummaryRowClick('asset', row.id)}
           onAllResultsClick={() => handleAllResultsClick('asset')}
         />
         <TimeseriesSummary
           filter={commonFilters}
           query={query}
-          onRowClick={(row) => setCurrentResourceType('timeSeries', row.id)}
+          onRowClick={(row) => handleSummaryRowClick('timeSeries', row.id)}
           onAllResultsClick={() => handleAllResultsClick('timeSeries')}
         />
         {isAdvancedFiltersEnabled ? (
           <DocumentSummary
             filter={commonFilters}
             query={query}
-            onRowClick={(row) => setCurrentResourceType('file', row.id)}
+            onRowClick={(row) => handleSummaryRowClick('file', row.id)}
             onAllResultsClick={() => handleAllResultsClick('file')}
           />
         ) : (
           <FileSummary
             filter={commonFilters}
             query={query}
-            onRowClick={(row) => setCurrentResourceType('file', row.id)}
+            onRowClick={(row) => handleSummaryRowClick('file', row.id)}
             onAllResultsClick={() => handleAllResultsClick('file')}
           />
         )}
         <EventSummary
           filter={commonFilters}
           query={query}
-          onRowClick={(row) => setCurrentResourceType('event', row.id)}
+          onRowClick={(row) => handleSummaryRowClick('event', row.id)}
           onAllResultsClick={() => handleAllResultsClick('event')}
         />
         <SequenceSummary
           filter={commonFilters}
           query={query}
-          onRowClick={(row) => setCurrentResourceType('sequence', row.id)}
+          onRowClick={(row) => handleSummaryRowClick('sequence', row.id)}
           onAllResultsClick={() => handleAllResultsClick('sequence')}
         />
       </AllTabContainer>
