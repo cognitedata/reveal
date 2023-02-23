@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Icons } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import { PageHeader } from 'components/PageHeader';
 import { APP_TITLE } from 'utils';
 
@@ -14,7 +14,7 @@ const NoAccessPage = (): JSX.Element => {
       />
       <NoAccessContent>
         <Warning>
-          <Icons.Warning />
+          <Icon type="Warning" />
           <div>You have insufficient access rights to access this feature</div>
         </Warning>
         <Instructions>

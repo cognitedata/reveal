@@ -1,38 +1,45 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Graphic } from '@cognite/cogs.js';
+import { Graphic } from '../../../../assets/Graphics/Graphic';
+
+export enum EmptyStateOptions {
+  SearchEmpty = 'SearchEmpty',
+  ThreeDModel = 'ThreeDModel',
+  Favorites = 'Favorites',
+}
 
 const propTypes = {
-  type: PropTypes.oneOf([
-    'DataKits',
-    'DataSets',
-    'Favorites',
-    'Recents',
-    'RuleCreating',
-    'RuleMonitoring',
-    'Search',
-    'ThreeDModel',
-  ]),
+  type: PropTypes.oneOf(Object.values(EmptyStateOptions)),
   text: PropTypes.string,
   extra: PropTypes.node,
 };
 
 const defaultProps = {
-  type: 'Search',
+  type: EmptyStateOptions.SearchEmpty,
   text: 'No data',
   extra: null,
 };
 
 const EmptyState = (props) => {
-  const { type, text, extra, ...rest } = props;
+  const { type, text, extra } = props;
   return (
     <div
       style={{
-        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        placeItems: 'center',
+        gap: '5px',
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Graphic type={type} {...rest} />
+      <div>
+        <div
+          style={{
+            width: '100px',
+            height: '100px',
+          }}
+        >
+          <Graphic type={type} />
+        </div>
       </div>
       <div>
         <p>{text}</p>

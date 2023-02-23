@@ -65,9 +65,6 @@ const ButtonRow = styled.div`
 const ViewLogsButton = styled(Button)`
   margin-left: 12px;
   font-size: 12px;
-  && > span {
-    margin-left: 6px;
-  }
 `;
 
 const DetailsRowFlex = styled(Flex)`
@@ -303,7 +300,7 @@ export default function RevisionDetails() {
               <Tooltip content="Delete revision">
                 <Button
                   aria-label="Delete revision"
-                  type="ghost-danger"
+                  type="destructive"
                   icon="Delete"
                   disabled={!hasDeleteCapabilities || deletionInProgress}
                   onClick={showDeletionModal}

@@ -1,18 +1,24 @@
 import React from 'react';
-import { Icon, IconProps } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Optional } from 'utils/types';
 
 const EyeIcon = styled(Icon)`
   line-height: 0;
-  cursor: pointer;
   transform: translateY(3px);
 `;
 
-// not sure what's wrong with ref type here...
-type IconPropsWithOptionalType = Optional<Omit<IconProps, 'ref'>, 'type'>;
-
-export const ThumbnailPreviewIcon = (props: IconPropsWithOptionalType) => {
-  const { type = 'EyeShow', ...rest } = props;
-  return <EyeIcon type={type} {...rest} />;
-};
+export const ThumbnailPreviewIcon = (
+  <div
+    role="button"
+    tabIndex={0}
+    onClick={(e) => e.stopPropagation()}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }}
+  >
+    <EyeIcon type="EyeShow" />
+  </div>
+);

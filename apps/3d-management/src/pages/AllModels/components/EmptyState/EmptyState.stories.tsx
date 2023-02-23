@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@cognite/cogs.js';
-import EmptyState from './EmptyState';
+import EmptyState, { EmptyStateOptions } from './EmptyState';
 
 const meta = {
   component: EmptyState,
@@ -17,12 +17,12 @@ export const Default: Story = {
 
 export const ThreeDModel: Story = {
   name: '3D Model',
-  render: () => <EmptyState type="ThreeDModel" />,
+  render: () => <EmptyState type={EmptyStateOptions.ThreeDModel} />,
 };
 
 export const Favourites: Story = {
   name: 'Favorites',
-  render: () => <EmptyState type="Favorites" />,
+  render: () => <EmptyState type={EmptyStateOptions.Favorites} />,
 };
 
 export const CustomText: Story = {

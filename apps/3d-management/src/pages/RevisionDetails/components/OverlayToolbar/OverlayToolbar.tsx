@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { ToolBarButton, ToolBar, Slider, Icon } from '@cognite/cogs.js';
+import { ToolBarButton, ToolBar, Slider, Icon, Menu } from '@cognite/cogs.js';
 import {
   CameraControlsOptions,
   CogniteCadModel,
@@ -13,15 +13,10 @@ import styled from 'styled-components';
 
 import * as THREE from 'three';
 
-const SliderContainer = styled.div`
-  display: flex;
+const SliderContainer = styled(Menu)`
   width: 230px;
-  border: 2px solid black;
-  border-radius: 4px;
-  > div {
-    margin: 8px;
-    text-align: center;
-  }
+  flex-direction: row;
+  gap: 10px;
 `;
 
 const PointSizeSlider = styled(Slider)`

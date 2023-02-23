@@ -38,7 +38,4 @@ export const FileLink = ({ fileId }: { fileId: number }) => {
 
 const ViewFileButton = styled(Button)`
   font-size: 12px;
-  && > span {
-    margin-left: 6px;
-  }
 `;

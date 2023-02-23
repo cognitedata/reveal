@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Tuple3 } from '@cognite/sdk';
 import { Button as ButtonAnt, message } from 'antd';
 
-import { Button, Dropdown, SegmentedControl } from '@cognite/cogs.js';
-import styled from 'styled-components';
+import { Button, Dropdown, SegmentedControl, Menu } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
   Cognite3DViewer,
@@ -179,7 +178,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   };
 
   return (
-    <RotationContainer>
+    <Menu>
       <>
         <SegmentedControl
           currentKey={rotationAxis}
@@ -216,26 +215,6 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
           Cancel
         </Button>
       </div>
-    </RotationContainer>
+    </Menu>
   );
 }
-
-const RotationContainer = styled.div`
-  min-width: 236px;
-  box-shadow: 0 8px 16px 4px rgba(0, 0, 0, 0.04), 0 2px 12px rgba(0, 0, 0, 0.08);
-  border: var(--cogs-border-default);
-  padding: 12px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  && .ant-btn-group {
-    display: flex;
-    width: 100%;
-  }
-
-  && .ant-btn-group > * {
-    flex: 1;
-  }
-`;

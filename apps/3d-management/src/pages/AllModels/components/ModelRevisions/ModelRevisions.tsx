@@ -87,7 +87,7 @@ export default function ModelRevisions({ model }: Props) {
         style={{
           height: 40,
           margin: DEFAULT_MARGIN_V,
-          color: Colors.primary.hex(),
+          color: Colors['text-icon--interactive--default'],
         }}
       >
         <Icon type="Loader" />
@@ -146,7 +146,7 @@ export default function ModelRevisions({ model }: Props) {
         </PermissioningHintWrapper>
         <PermissioningHintWrapper hasPermission={showDeleteModelButton}>
           <Button
-            type="danger"
+            type="destructive"
             className="right-button"
             disabled={!showDeleteModelButton}
             onClick={() => setDeletionModalVisible(true)}

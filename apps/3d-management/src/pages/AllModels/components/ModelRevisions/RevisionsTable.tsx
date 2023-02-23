@@ -13,6 +13,7 @@ import Status from 'components/Status';
 import Thumbnail from 'components/Thumbnail';
 import { Revision3D } from '@cognite/sdk';
 import { ThumbnailPreviewIcon } from 'components/ThumbnailPreviewIcon';
+import { EmptyStateOptions } from '../EmptyState/EmptyState';
 
 type Props = {
   revisions: Array<Revision3D>;
@@ -46,7 +47,7 @@ export function RevisionsTable(props: Props) {
               <Thumbnail fileId={val.thumbnailThreedFileId} width="400px" />
             }
           >
-            <ThumbnailPreviewIcon onClick={(e) => e.stopPropagation()} />
+            {ThumbnailPreviewIcon}
           </Popover>
         ),
     },
@@ -122,7 +123,10 @@ export function RevisionsTable(props: Props) {
       })}
       locale={{
         emptyText: (
-          <EmptyState type="ThreeDModel" text="No revisions available" />
+          <EmptyState
+            type={EmptyStateOptions.ThreeDModel}
+            text="No revisions available"
+          />
         ),
       }}
       getPopupContainer={getContainer}

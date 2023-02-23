@@ -61,9 +61,9 @@ function ThumbnailWithModelId(props: { modelId: number } & CommonProps) {
   if (!fileId) {
     return (
       <ThumbnailHint>
-        <span>This model has no thumbnail</span>
+        <span style={{ marginRight: '4px' }}>This model has no thumbnail</span>
         <Tooltip content="To create a thumbnail, open one of the revisions, and press the camera button.">
-          <Icon type="Help" style={{ marginLeft: '4px' }} />
+          <Icon type="Help" />
         </Tooltip>
       </ThumbnailHint>
     );

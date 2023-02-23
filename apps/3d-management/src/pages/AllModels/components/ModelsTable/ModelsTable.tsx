@@ -17,6 +17,7 @@ import { DEFAULT_MARGIN_V } from 'utils';
 import { AppState } from 'store/modules/App/types';
 import { ThumbnailPreviewIcon } from 'components/ThumbnailPreviewIcon';
 import { ColumnType } from 'antd/lib/table/interface';
+import { EmptyStateOptions } from '../EmptyState/EmptyState';
 
 const NestedTable = styled(Table)`
   && td:last-child {
@@ -100,7 +101,7 @@ class ModelsTable extends React.Component<Props> {
                 </div>
               }
             >
-              <ThumbnailPreviewIcon onClick={(e) => e.stopPropagation()} />
+              {ThumbnailPreviewIcon}
             </Popover>
           );
         },
@@ -192,7 +193,10 @@ class ModelsTable extends React.Component<Props> {
           onExpand={(expanded, record) => this.expandRow(record)}
           locale={{
             emptyText: (
-              <EmptyState type="ThreeDModel" text="No 3D models available" />
+              <EmptyState
+                type={EmptyStateOptions.ThreeDModel}
+                text="No 3D models available"
+              />
             ),
           }}
           footer={this.footer}

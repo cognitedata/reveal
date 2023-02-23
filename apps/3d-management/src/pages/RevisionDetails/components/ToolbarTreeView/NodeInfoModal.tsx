@@ -7,7 +7,6 @@ import { ModalProps } from 'antd/lib/modal';
 import { Modal, Table, Tabs } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import { Button, Tooltip } from '@cognite/cogs.js';
-
 import { getContainer } from 'utils';
 import styled from 'styled-components';
 import omit from 'lodash/omit';
@@ -144,7 +143,7 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
           <Tooltip content="Click to see 3D-nodes with the same value">
             <Button
               style={{ textAlign: 'left' }}
-              type="link"
+              type="ghost-accent"
               onClick={() => {
                 dispatch(
                   setNodePropertyFilter({ [tabKey]: { [key]: `${value}` } })

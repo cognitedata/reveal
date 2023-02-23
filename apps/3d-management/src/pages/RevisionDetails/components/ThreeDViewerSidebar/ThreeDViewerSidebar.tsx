@@ -132,20 +132,24 @@ export default function ThreeDViewerSidebar(props: Props) {
 
       {showTreeView && (
         <>
-          <MenuSection style={{ display: 'flex', flexWrap: 'nowrap' }}>
+          <MenuSection
+            style={{
+              display: 'flex',
+              flexWrap: 'nowrap',
+              gap: DEFAULT_MARGIN_H,
+              alignItems: 'center',
+            }}
+          >
             <Switch
-              style={{ flexShrink: 0 }}
               name="ghostMode"
-              size="small"
-              onChange={(nextState) => dispatch(toggleGhostMode(nextState))}
+              size="tiny"
+              onChange={(_evt, nextState) =>
+                dispatch(toggleGhostMode(nextState))
+              }
               checked={ghostModeEnabled}
-            >
-              Ghost mode
-            </Switch>
-
-            <NodePropertyFilterIndicatorContainer>
-              <NodePropertyFilterIndicator style={{ width: '100%' }} />
-            </NodePropertyFilterIndicatorContainer>
+              label="Ghost mode"
+            />
+            <NodePropertyFilterIndicator />
           </MenuSection>
 
           <Divider style={{ margin: `${DEFAULT_MARGIN_V}px 0` }} />
@@ -216,12 +220,4 @@ const ResizableStyled = styled(Resizable)`
   overflow: hidden;
   border: 1px solid var(--cogs-border-default);
   border-left-width: 2px;
-`;
-
-const NodePropertyFilterIndicatorContainer = styled.div`
-  margin-left: ${DEFAULT_MARGIN_H}px;
-  flex-shrink: 1;
-  flex-grow: 1;
-  width: 0;
-  height: 0;
 `;
