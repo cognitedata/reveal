@@ -26,7 +26,9 @@ export const prepareRows = (
     rows.slice(0, Number(expectedCount)).map((item) => {
       const escapedColumns: Record<string, string> = { key: '' };
       Object.keys(item.columns).forEach((columnName) => {
-        escapedColumns[columnName] = escapeCSVValue(item.columns[columnName]);
+        escapedColumns[columnName] = escapeCSVValue(
+          JSON.stringify(item.columns[columnName])
+        );
       });
       escapedColumns.key = escapeCSVValue(item.key);
       return escapedColumns;
