@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title } from '@cognite/cogs.js-old';
+import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { margin } from 'src/cogs-variables';
 import { FileListItem } from 'src/modules/Common/Components/FileUploader/FilePicker/FileListItem';

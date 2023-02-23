@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { Icon, Title, Body } from '@cognite/cogs.js-old';
+import { Icon, Body } from '@cognite/cogs.js-old';
+import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
   AutoMLModelCore,

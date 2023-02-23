@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { notification } from 'antd';
-import { Body, Popconfirm, Select, Title, Tooltip } from '@cognite/cogs.js-old';
-import { Button } from '@cognite/cogs.js';
+import { Body, Popconfirm, Select, Tooltip } from '@cognite/cogs.js-old';
+import { Button, Title } from '@cognite/cogs.js';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';

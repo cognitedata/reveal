@@ -1,5 +1,6 @@
 import { FileInfo } from '@cognite/sdk';
-import { Tabs, Title } from '@cognite/cogs.js-old';
+import { Tabs } from '@cognite/cogs.js-old';
+import { Title } from '@cognite/cogs.js';
 import { Spin, notification } from 'antd';
 import React, { ReactText, useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';

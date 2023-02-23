@@ -1,7 +1,7 @@
 // todo: unused component
 import React, { useMemo } from 'react';
-import { Icon, Title } from '@cognite/cogs.js-old';
-import { Button } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js-old';
+import { Button, Title } from '@cognite/cogs.js';
 import {
   CogsFile,
   CogsFileInfo,

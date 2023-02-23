@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { Body, Graphic, Title } from '@cognite/cogs.js-old';
-import { Button } from '@cognite/cogs.js';
+import { Body, Graphic } from '@cognite/cogs.js-old';
+import { Button, Title } from '@cognite/cogs.js';
 import { AccessPermission } from 'src/utils/types';
 import styled from 'styled-components';
 import * as NavLinks from 'src/constants/NavLinks';

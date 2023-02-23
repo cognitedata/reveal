@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
-import { Body, Icon, Tooltip, Slider, Title } from '@cognite/cogs.js-old';
+import { Body, Icon, Tooltip, Slider } from '@cognite/cogs.js-old';
+import { Title } from '@cognite/cogs.js';
 import React, { useState } from 'react';
 import {
   AutoMLMetrics,

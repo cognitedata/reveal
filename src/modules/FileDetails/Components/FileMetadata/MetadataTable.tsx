@@ -1,6 +1,6 @@
 import { fileMetaDataEdit } from 'src/modules/FileDetails/slice';
 import styled from 'styled-components';
-import { Title } from '@cognite/cogs.js-old';
+import { Title } from '@cognite/cogs.js';
 import React, { ChangeEvent, ReactText, useEffect } from 'react';
 import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
 import ReactBaseTable, {
