@@ -12,7 +12,7 @@ import PartitionSelector from './PartitionSelector';
 import ResourcesSelector from './ResourcesSelector';
 import RawSelector from './RawSelector';
 import { useTranslation } from 'common/i18n';
-import ExternalIdSelector from './ExternalIdSelector';
+import SpaceIdsSelector from './SpaceIdsSelector';
 
 const SelectorContainer = styled.div`
   margin-top: 10px;
@@ -55,11 +55,8 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
     case 'partition':
       selectedResources = value.partition.partitionIds;
       break;
-    case 'dataModelScope':
-      selectedResources = value.dataModelScope.externalIds;
-      break;
-    case 'spaceScope':
-      selectedResources = value.spaceScope.externalIds;
+    case 'spaceIdScope':
+      selectedResources = value.spaceIdScope.spaceIds;
       break;
     default:
       break;
@@ -67,9 +64,8 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
 
   selectedResources = Array.isArray(selectedResources)
     ? selectedResources.map((r) =>
-        selectedScope !== 'dataModelScope' &&
-        selectedScope !== 'spaceScope' &&
-        typeof r === 'string'
+        // for spaceIdScope, stick to string!
+        selectedScope !== 'spaceIdScope' && typeof r === 'string'
           ? parseInt(r, 10)
           : r
       )
@@ -109,11 +105,8 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       case 'partition':
         scope = { partition: { partitionIds: [] } };
         break;
-      case 'dataModelScope':
-        scope = { dataModelScope: { externalIds: [] } };
-        break;
-      case 'spaceScope':
-        scope = { spaceScope: { externalIds: [] } };
+      case 'spaceIdScope':
+        scope = { spaceIdScope: { spaceIds: [] } };
         break;
       default:
         break;
@@ -151,11 +144,8 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       case 'partition':
         scope = { partition: { partitionIds: newSelectedResources } };
         break;
-      case 'dataModelScope':
-        scope = { dataModelScope: { externalIds: newSelectedResources } };
-        break;
-      case 'spaceScope':
-        scope = { spaceScope: { externalIds: newSelectedResources } };
+      case 'spaceIdScope':
+        scope = { spaceIdScope: { spaceIds: newSelectedResources } };
         break;
       default:
         break;
@@ -185,10 +175,9 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
             downloadAll
           />
         );
-      case 'spaceScope':
-      case 'dataModelScope':
+      case 'spaceIdScope':
         return (
-          <ExternalIdSelector
+          <SpaceIdsSelector
             value={selectedResources}
             onChange={onChangeResource}
           />
