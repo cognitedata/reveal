@@ -11,7 +11,6 @@ import {
   getCapabilityDescription,
 } from './utils';
 import { TranslationKeys, useTranslation } from 'common/i18n';
-import { useFlag } from '@cognite/react-feature-flags';
 
 declare module 'antd/lib/select' {
   export interface OptionProps {
@@ -51,8 +50,7 @@ const CapabilityTypeSelector = (props: CapabilityTypeSelectorProps) => {
   const { t } = useTranslation();
 
   const capabilityTypeGroups = getCapabilityTypeGroups(
-    t as (key: TranslationKeys) => string,
-    useFlag('FDM_platypus_ui').isEnabled
+    t as (key: TranslationKeys) => string
   );
 
   const { OptGroup, Option } = Select;
