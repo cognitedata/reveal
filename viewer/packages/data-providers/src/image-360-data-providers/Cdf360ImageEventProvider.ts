@@ -78,7 +78,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   }
 
   private mergeDescriptors(
-    files: FileInfo[],
+    files: Map<string, FileInfo[]>,
     events: CogniteEvent[],
     preMultipliedRotation: boolean
   ): Image360Descriptor[] {
@@ -91,9 +91,9 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
 
     return uniqueEventDescriptors
       .map(eventDescriptor => {
-        const stationFileInfos = files.filter(fileInfo => fileInfo.metadata?.station_id === eventDescriptor.id);
+        const stationFileInfos = files.get(eventDescriptor.id);
 
-        if (stationFileInfos.length < 6) {
+        if (stationFileInfos === undefined || stationFileInfos.length < 6) {
           return { ...eventDescriptor, faceDescriptors: [] };
         }
 
@@ -123,14 +123,27 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     return result.flat();
   }
 
-  private async listFiles(filter: FileFilterProps): Promise<FileInfo[]> {
+  private async listFiles(filter: FileFilterProps): Promise<Map<string, FileInfo[]>> {
     const partitions = 10;
     const partitionedRequest = range(1, partitions + 1).flatMap(async index => {
       const req = { filter, limit: 1000, partition: `${index}/${partitions}` };
       return this._client.files.list(req).autoPagingToArray({ limit: Infinity });
     });
+
     const result = await Promise.all(partitionedRequest);
-    return result.flat();
+    const map = new Map<string, FileInfo[]>();
+    result.flat().forEach(fileInfo => {
+      const id = fileInfo.metadata?.station_id;
+      if (id) {
+        const existingEntry = map.get(id);
+        if (existingEntry) {
+          existingEntry.push(fileInfo);
+        } else {
+          map.set(id, [fileInfo]);
+        }
+      }
+    });
+    return map;
   }
 
   private getNewestFileInfoSet(fileInfos: FileInfo[]) {
