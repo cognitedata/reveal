@@ -8,6 +8,7 @@ import { SectorMetadata } from '../types';
 import { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
 import { BoundingBox, CadSceneRootMetadata, SceneSectorMetadata } from './types';
+import { MetricsLogger } from '@reveal/metrics';
 
 export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScene {
   if (!metadata.sectors || metadata.sectors.length === 0) {
@@ -17,6 +18,12 @@ export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScen
   // Create list of sectors and a map of child -> parent
   const sectorsById = new Map<number, SectorMetadata>();
   const parentIds: number[] = [];
+
+  const numTexturedSectors = metadata.sectors.filter(s => s.texturedFileName).length;
+  if (numTexturedSectors > 0) {
+    MetricsLogger.trackEvent('texturedModelLoaded', {});
+  }
+
   metadata.sectors.forEach(s => {
     const sector = createSectorMetadata(s);
     sectorsById.set(s.id, sector);
