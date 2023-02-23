@@ -11,7 +11,7 @@ export function withBasePath(path: string) {
   let basePath = (process.env.PUBLIC_URL || '').trim();
   console.log({ basePath, PUBLIC_URL: process.env.PUBLIC_URL });
   if (!basePath.endsWith('/')) {
-    basePath += "/";
+    basePath += '/';
   }
 
   // fixme: that must be fixed for reveal manager, not here
@@ -44,7 +44,7 @@ export function getParamsFromURL(
     revisionId: 'revisionId',
     modelUrl: 'modelUrl',
     environmentParam: 'env',
-    ...queryParameters,
+    ...queryParameters
   };
   const url = new URL(window.location.href);
   const searchParams = url.searchParams;
@@ -58,9 +58,9 @@ export function getParamsFromURL(
   const modelRevision =
     modelId !== null && revisionId !== null
       ? {
-        modelId: Number.parseInt(modelId, 10),
-        revisionId: Number.parseInt(revisionId, 10),
-      }
+          modelId: Number.parseInt(modelId, 10),
+          revisionId: Number.parseInt(revisionId, 10)
+        }
       : undefined;
   return {
     project: project ? project : defaults.project,
@@ -70,8 +70,8 @@ export function getParamsFromURL(
         modelUrl !== null
           ? withBasePath(modelUrl)
           : modelId === null && defaults.modelUrl
-            ? withBasePath(defaults.modelUrl)
-            : undefined,
+          ? withBasePath(defaults.modelUrl)
+          : undefined
     },
     environmentParam
   };
@@ -81,11 +81,11 @@ type CredentialEnvironment = {
   tenantId: string;
   clientId: string;
   cluster: string;
-}
+};
 
 type CredentialEnvironmentList = {
-  environments: { [key: string]: CredentialEnvironment; };
-}
+  environments: { [key: string]: CredentialEnvironment };
+};
 
 export function getCredentialEnvironment(): CredentialEnvironment | undefined {
   const url = new URL(window.location.href);
@@ -96,7 +96,9 @@ export function getCredentialEnvironment(): CredentialEnvironment | undefined {
     return undefined;
   }
 
-  const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
+  const credentialEnvironmentList = JSON.parse(
+    process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!
+  ) as CredentialEnvironmentList;
 
   return credentialEnvironmentList.environments[environmentParam];
 }
@@ -108,7 +110,7 @@ export function decodeToken(token: string) {
     const payloadJSON = JSON.parse(payloadString);
     return payloadJSON.aud;
   } catch (e) {
-    throw new Error("Invalid override token: " + e);
+    throw new Error('Invalid override token: ' + e);
   }
 }
 
@@ -124,16 +126,15 @@ export function createSDKFromToken(appId: string, project: string, token: string
 export async function createSDKFromEnvironment(
   appId: string,
   project: string,
-  environmentParam: string): Promise<CogniteClient> {
-
-  const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
+  environmentParam: string
+): Promise<CogniteClient> {
+  const credentialEnvironmentList = JSON.parse(
+    process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!
+  ) as CredentialEnvironmentList;
   const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
 
   const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;
-  const cdfScopes = [
-    `${baseUrl}/user_impersonation`,
-    `${baseUrl}/IDENTITY`
-  ];
+  const cdfScopes = [`${baseUrl}/user_impersonation`, `${baseUrl}/IDENTITY`];
 
   const userScopes = ['User.Read'];
 
@@ -142,12 +143,12 @@ export async function createSDKFromEnvironment(
       clientId: credentialEnvironment.clientId,
       authority: `https://login.microsoftonline.com/${credentialEnvironment.tenantId}`,
       redirectUri: `${window.location.origin}`,
-      navigateToLoginRequestUrl: true,
+      navigateToLoginRequestUrl: true
     },
     cache: {
       cacheLocation: 'localStorage',
       storeAuthStateInCookie: false
-    },
+    }
   };
 
   const redirectRequest = {
@@ -163,7 +164,7 @@ export async function createSDKFromEnvironment(
     msalObj.setActiveAccount(accountList[0]);
   }
 
-  msalObj.addEventCallback((event) => {
+  msalObj.addEventCallback(event => {
     if (event && event.eventType === EventType.LOGIN_SUCCESS && (event.payload as any).account) {
       const account = (event.payload as any).account;
       msalObj.setActiveAccount(account);
@@ -182,7 +183,7 @@ export async function createSDKFromEnvironment(
     const account = msalObj.getActiveAccount();
 
     if (!account) {
-      throw Error("No local account found");
+      throw Error('No local account found');
     }
 
     const { accessToken } = await msalObj.acquireTokenSilent({
@@ -191,7 +192,7 @@ export async function createSDKFromEnvironment(
     });
 
     return accessToken;
-  }
+  };
 
   const client = new CogniteClient({
     appId,

@@ -1,5 +1,5 @@
 const path = require('path');
-const HtmlWebPackPlugin = require("html-webpack-plugin");
+const HtmlWebPackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const logger = require('webpack-log')('example');
 require('dotenv').config({ path: './.env' });
@@ -10,7 +10,7 @@ module.exports = {
   entry: './src/index.tsx',
   devServer: {
     static: {
-      directory: path.join(__dirname, 'public'),
+      directory: path.join(__dirname, 'public')
     },
     compress: true,
     port: 3000,
@@ -25,26 +25,28 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        exclude: /node_modules/,
+        exclude: /node_modules/
       },
       {
         test: /\.css$/,
         use: 'css-loader',
-        exclude: /node_modules/,
+        exclude: /node_modules/
       },
       {
         test: /\.svg?/,
         use: 'svg-loader',
-        exclude: /node_modules/,
+        exclude: /node_modules/
       }
-    ],
+    ]
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: "./public/index.html",
+      template: './public/index.html'
     }),
     new webpack.DefinePlugin({
-      process: { env: { REACT_APP_CREDENTIAL_ENVIRONMENTS: JSON.stringify(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS) } }
+      process: {
+        env: { REACT_APP_CREDENTIAL_ENVIRONMENTS: JSON.stringify(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS) }
+      }
     })
   ],
   resolve: {
@@ -58,6 +60,6 @@ module.exports = {
     publicPath: '/'
   },
   watchOptions: {
-    aggregateTimeout: 2000,
+    aggregateTimeout: 2000
   }
 };

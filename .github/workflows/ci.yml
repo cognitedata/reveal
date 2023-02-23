@@ -225,6 +225,10 @@ jobs:
       working-directory: examples
       run: yarn install --immutable
 
+    - name: Lint examples
+      working-directory: examples
+      run: yarn lint:check
+
     - name: Build examples
       working-directory: examples
       run: yarn build

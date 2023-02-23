@@ -1,5 +1,12 @@
 import * as THREE from 'three';
-import { AddModelOptions, CogniteModel, CogniteCadModel, Cognite3DViewer, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
+import {
+  AddModelOptions,
+  CogniteModel,
+  CogniteCadModel,
+  Cognite3DViewer,
+  CognitePointCloudModel,
+  ViewerState
+} from '@cognite/reveal';
 
 import * as dat from 'dat.gui';
 import { isLocalUrlPointCloudModel } from './isLocalUrlPointCloudModel';
@@ -11,17 +18,15 @@ export class ModelUi {
   private readonly _cadModels = new Array<CogniteCadModel>();
   private readonly _pointCloudModels = new Array<CognitePointCloudModel>();
 
-
   private readonly _guiState: {
-    modelId: number,
-    revisionId: number,
-    geometryFilter: { center: THREE.Vector3, size: THREE.Vector3, enabled: boolean }
+    modelId: number;
+    revisionId: number;
+    geometryFilter: { center: THREE.Vector3; size: THREE.Vector3; enabled: boolean };
   };
 
   private readonly _geometryFilterGui: dat.GUI;
 
-  constructor(modelGui: dat.GUI, viewer: Cognite3DViewer,
-    onModelAdded: (model: CogniteModel) => void) {
+  constructor(modelGui: dat.GUI, viewer: Cognite3DViewer, onModelAdded: (model: CogniteModel) => void) {
     this._viewer = viewer;
     this._onModelAdded = onModelAdded;
 
@@ -36,7 +41,7 @@ export class ModelUi {
       geometryFilter:
         geometryFilter !== undefined
           ? { ...geometryFilter, enabled: true }
-          : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
+          : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false }
     };
     const guiActions = {
       removeLastModel: () => {
@@ -47,7 +52,9 @@ export class ModelUi {
         this.addModel({
           modelId: this._guiState.modelId,
           revisionId: this._guiState.revisionId,
-          geometryFilter: this._guiState.geometryFilter.enabled ? createGeometryFilterFromState(this._guiState.geometryFilter) : undefined
+          geometryFilter: this._guiState.geometryFilter.enabled
+            ? createGeometryFilterFromState(this._guiState.geometryFilter)
+            : undefined
         }),
       fitToModel: () => {
         const model = this._cadModels[0] || this._pointCloudModels[0];
@@ -112,15 +119,27 @@ export class ModelUi {
     if (modelIdStr && revisionIdStr) {
       const modelId = Number.parseInt(modelIdStr, 10);
       const revisionId = Number.parseInt(revisionIdStr, 10);
-      await this.addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter) });
+      await this.addModel({
+        modelId,
+        revisionId,
+        geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter)
+      });
     } else if (modelUrl) {
-      await this.addModel({ modelId: -1, revisionId: -1, localPath: modelUrl, geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter) });
+      await this.addModel({
+        modelId: -1,
+        revisionId: -1,
+        localPath: modelUrl,
+        geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter)
+      });
     }
   }
 
   async addModel(options: AddModelOptions) {
     try {
-      const model = options.localPath !== undefined ? await addLocalModel(this._viewer, options) : await this._viewer.addModel(options);
+      const model =
+        options.localPath !== undefined
+          ? await addLocalModel(this._viewer, options)
+          : await this._viewer.addModel(options);
       if (model instanceof CogniteCadModel) {
         this._cadModels.push(model);
       } else if (model instanceof CognitePointCloudModel) {
@@ -139,36 +158,45 @@ export class ModelUi {
       alert(`ModelID is invalid, is not supported or you are not authorized (${e})`);
     }
   }
-
 }
 
 async function addLocalModel(viewer: Cognite3DViewer, addModelOptions: AddModelOptions): Promise<CogniteModel> {
-  const isPointCloud = addModelOptions.localPath !== undefined && await isLocalUrlPointCloudModel(addModelOptions.localPath);
+  const isPointCloud =
+    addModelOptions.localPath !== undefined && (await isLocalUrlPointCloudModel(addModelOptions.localPath));
   return isPointCloud ? viewer.addPointCloudModel(addModelOptions) : viewer.addCadModel(addModelOptions);
 }
 
-function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: THREE.Vector3, size: THREE.Vector3 }) {
+function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: THREE.Vector3; size: THREE.Vector3 }) {
   bounds.getCenter(out.center);
   bounds.getSize(out.size);
   return out;
 }
 
-function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3 }): { boundingBox: THREE.Box3, isBoundingBoxInModelCoordinates: true } | undefined {
+function createGeometryFilterFromState(state: {
+  center: THREE.Vector3;
+  size: THREE.Vector3;
+}): { boundingBox: THREE.Box3; isBoundingBoxInModelCoordinates: true } | undefined {
   state.size.clamp(new THREE.Vector3(), new THREE.Vector3(Infinity, Infinity, Infinity));
   if (state.size.equals(new THREE.Vector3())) {
     return undefined;
   }
-  return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
+  return {
+    boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size),
+    isBoundingBoxInModelCoordinates: true
+  };
 }
 
-function createGeometryFilter(input: string | null): { center: THREE.Vector3, size: THREE.Vector3 } | undefined {
+function createGeometryFilter(input: string | null): { center: THREE.Vector3; size: THREE.Vector3 } | undefined {
   if (input === null) return undefined;
-  const parsed = JSON.parse(input) as { center: THREE.Vector3, size: THREE.Vector3 };
+  const parsed = JSON.parse(input) as { center: THREE.Vector3; size: THREE.Vector3 };
   return { center: new THREE.Vector3().copy(parsed.center), size: new THREE.Vector3().copy(parsed.size) };
 }
 
-function initializeGeometryFilterGui(uiFolder: dat.GUI,
-  viewer: Cognite3DViewer, geometryFilterState: { center: THREE.Vector3; size: THREE.Vector3; enabled: boolean; }): void {
+function initializeGeometryFilterGui(
+  uiFolder: dat.GUI,
+  viewer: Cognite3DViewer,
+  geometryFilterState: { center: THREE.Vector3; size: THREE.Vector3; enabled: boolean }
+): void {
   let geometryFilterPreview: THREE.Object3D | undefined = undefined;
   const updateGeometryFilterPreview = () => {
     if (geometryFilterPreview) {
