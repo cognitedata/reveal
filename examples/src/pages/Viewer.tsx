@@ -10,8 +10,7 @@ import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
   Cognite3DViewer,
-  Cognite3DViewerOptions,
-  CogniteCadModel,
+  Cognite3DViewerOptions, CogniteCadModel,
   CognitePointCloudModel,
   CameraControlsOptions,
   DefaultCameraManager,

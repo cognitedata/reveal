@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "start": "webpack serve --mode development",
-    "build": "webpack --mode development"
+    "build": "webpack --mode development",
+    "lint": "prettier -w .",
+    "lint:check": "prettier -l ."
   },
   "author": "Lars Moastuen <lars.moastuen@cognite.com>",
   "contributors": [
