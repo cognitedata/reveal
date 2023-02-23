@@ -1,6 +1,7 @@
 {
   "entity-matching-pipelines": "Entity Matching pipelines",
   "quick-match": "Quick match",
-  "create-pipeline": "Create pipeline"
-
+  "create-pipeline": "Create pipeline",
+  "pipeline-list-empty-description": "Use this section to create pipelines and tune entity matching models to match CDF resources with assets.",
+  "pipeline-list-empty-title": "No pipelines have been added."
 }
