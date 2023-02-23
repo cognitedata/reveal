@@ -1,15 +1,20 @@
-import { Flex, Title } from '@cognite/cogs.js';
+import { Body, Flex, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import graphics from 'common/assets/graphics';
-
+import { CreatePipelineButton } from 'components/create-pipeline-button/CreatePipelineButton';
+import { createLink } from '@cognite/cdf-utilities';
+import { useParams, Link } from 'react-router-dom';
 const PipelineListEmpty = (): JSX.Element => {
   const { t } = useTranslation();
+
   return (
-    <Container direction="row">
+    <Container direction="row" justifyContent="space-between">
       <Flex direction="column" alignItems="flex-start">
         <Title level={4}>{t('pipeline-list-empty-title')}</Title>
+        <Body level={1}>{t('pipeline-list-empty-description')}</Body>
+        <CreatePipelineButton />
       </Flex>
       <Graphic />
     </Container>

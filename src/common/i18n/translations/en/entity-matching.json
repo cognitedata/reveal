@@ -2,6 +2,6 @@
   "entity-matching-pipelines": "Entity Matching pipelines",
   "quick-match": "Quick match",
   "create-pipeline": "Create pipeline",
+  "pipeline-list-empty-description": "Use this section to create pipelines and tune entity matching models to match CDF resources, such as time series, with assets.",
   "pipeline-list-empty-title": "No pipelines have been added."
-
 }
