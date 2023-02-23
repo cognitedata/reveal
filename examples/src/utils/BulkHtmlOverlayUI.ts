@@ -1,5 +1,13 @@
 import * as THREE from 'three';
-import { CogniteCadModel, Cognite3DViewer, DefaultNodeAppearance, IndexSet, NodeAppearance, NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
+import {
+  CogniteCadModel,
+  Cognite3DViewer,
+  DefaultNodeAppearance,
+  IndexSet,
+  NodeAppearance,
+  NumericRange,
+  TreeIndexNodeCollection
+} from '@cognite/reveal';
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
 import { CogniteClient } from '@cognite/sdk/dist/src';
 import * as dat from 'dat.gui';
@@ -8,7 +16,7 @@ type OverlayUserdata = {
   treeIndex: number;
   subtreeSize: number;
   bounds: THREE.Box3;
-}
+};
 
 export class BulkHtmlOverlayUI {
   private readonly _activeElementsNodeAppearance: NodeAppearance = DefaultNodeAppearance.Highlighted;
@@ -28,16 +36,15 @@ export class BulkHtmlOverlayUI {
     this._viewer = viewer;
     this._model = model;
     this._sdk = sdk;
-    this._overlays = new HtmlOverlayTool(this._viewer,
-      {
-        clusteringOptions: {
-          mode: 'overlapInScreenSpace',
-          createClusterElementCallback: (elements) => {
-            const userData = elements.map(x => x.userData as OverlayUserdata);
-            return this.createCompositeOverlay(`${elements.length} tags`, userData);
-          }
+    this._overlays = new HtmlOverlayTool(this._viewer, {
+      clusteringOptions: {
+        mode: 'overlapInScreenSpace',
+        createClusterElementCallback: elements => {
+          const userData = elements.map(x => x.userData as OverlayUserdata);
+          return this.createCompositeOverlay(`${elements.length} tags`, userData);
         }
-      });
+      }
+    });
     this._activeElements = new TreeIndexNodeCollection();
 
     const actions = {
@@ -60,14 +67,20 @@ export class BulkHtmlOverlayUI {
     const { modelId, revisionId } = this._model;
     const { filterCategory, filterKey, filterValue } = this._uiState;
 
-    const matchedNodes = await this._sdk.revisions3D.list3DNodes(modelId, revisionId, { limit: 1000, properties: { [filterCategory]: { [filterKey]: filterValue } } }).autoPagingToArray();
+    const matchedNodes = await this._sdk.revisions3D
+      .list3DNodes(modelId, revisionId, { limit: 1000, properties: { [filterCategory]: { [filterKey]: filterValue } } })
+      .autoPagingToArray();
 
-    const cdfModelTransformation = this._model.getModelTransformation()
-      .clone().multiply(this._model.getCdfToDefaultModelTransformation());
+    const cdfModelTransformation = this._model
+      .getModelTransformation()
+      .clone()
+      .multiply(this._model.getCdfToDefaultModelTransformation());
 
     for (let i = 0; i < matchedNodes.length; ++i) {
       const { id } = matchedNodes[i];
-      const nodesToTag = await this._sdk.revisions3D.list3DNodes(modelId, revisionId, { depth: 1, nodeId: id, limit: 1000 }).autoPagingToArray();
+      const nodesToTag = await this._sdk.revisions3D
+        .list3DNodes(modelId, revisionId, { depth: 1, nodeId: id, limit: 1000 })
+        .autoPagingToArray();
       for (const nodeToTag of nodesToTag) {
         if (nodeToTag.boundingBox === undefined) {
           continue;
@@ -116,7 +129,6 @@ export class BulkHtmlOverlayUI {
     return htmlElement;
   }
 }
-
 
 function createOverlay(text: string): HTMLElement {
   const element = document.createElement('div');

@@ -1,7 +1,7 @@
-import dat from "dat.gui";
+import dat from 'dat.gui';
 import * as THREE from 'three';
-import { Cognite3DViewer } from "@cognite/reveal";
-import { MeasurementTool } from "@cognite/reveal/tools";
+import { Cognite3DViewer } from '@cognite/reveal';
+import { MeasurementTool } from '@cognite/reveal/tools';
 
 export class MeasurementUi {
   private readonly _viewer: Cognite3DViewer;
@@ -19,14 +19,16 @@ export class MeasurementUi {
 
   private measurement = {
     enable: false
-  }
+  };
 
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
     this._viewer = viewer;
-    this._measurementTool = new MeasurementTool(this._viewer, { distanceToLabelCallback: (distanceInMeters: number) => {
-      // 1 meters = 3.281 feet
-      return `${(distanceInMeters * 3.281).toFixed(2)} ft`;
-     }});
+    this._measurementTool = new MeasurementTool(this._viewer, {
+      distanceToLabelCallback: (distanceInMeters: number) => {
+        // 1 meters = 3.281 feet
+        return `${(distanceInMeters * 3.281).toFixed(2)} ft`;
+      }
+    });
     this._gui = ui.addFolder('Types');
     this._guiController = [];
     const addDistanceOptions = this.addDistanceOptions.bind(this);
@@ -39,28 +41,48 @@ export class MeasurementUi {
       //add the point to point measurement distance
       this._measurementTool.enterMeasurementMode();
       this.addGUI();
-    } else if(!enable && this._guiController.length > 0) {
+    } else if (!enable && this._guiController.length > 0) {
       this.removeGUI();
     }
   }
 
   private addGUI() {
-    this._guiController.push(this._gui.add(this.state, 'lineWidth', 0.001, 10, 0.001).name('Line width').onFinishChange(lineWidth => {
-      this.state.lineWidth = lineWidth;
-      this.setMeasurementLineOptions();
-    }));
-    this._guiController.push(this._gui.addColor(this.state, 'color').name('Line Color').onFinishChange(color => {
-      this.state.color = color;
-      this.setMeasurementLineOptions();
-    }));
-    this._guiController.push(this._gui.add(this.state, 'showAllMeasurementLabels').name('Show Measurement Labels').onChange(showAllMeasurementLabels => {
-      this.state.showAllMeasurementLabels = showAllMeasurementLabels;
-      this._measurementTool.setMeasurementLabelsVisible(showAllMeasurementLabels);
-    }));
-    this._guiController.push(this._gui.add(this.state, 'showAllMeasurements').name('Show Measurement').onChange(showAllMeasurements => {
-      this.state.showAllMeasurements = showAllMeasurements;
-      this._measurementTool.visible(showAllMeasurements);
-    }));
+    this._guiController.push(
+      this._gui
+        .add(this.state, 'lineWidth', 0.001, 10, 0.001)
+        .name('Line width')
+        .onFinishChange(lineWidth => {
+          this.state.lineWidth = lineWidth;
+          this.setMeasurementLineOptions();
+        })
+    );
+    this._guiController.push(
+      this._gui
+        .addColor(this.state, 'color')
+        .name('Line Color')
+        .onFinishChange(color => {
+          this.state.color = color;
+          this.setMeasurementLineOptions();
+        })
+    );
+    this._guiController.push(
+      this._gui
+        .add(this.state, 'showAllMeasurementLabels')
+        .name('Show Measurement Labels')
+        .onChange(showAllMeasurementLabels => {
+          this.state.showAllMeasurementLabels = showAllMeasurementLabels;
+          this._measurementTool.setMeasurementLabelsVisible(showAllMeasurementLabels);
+        })
+    );
+    this._guiController.push(
+      this._gui
+        .add(this.state, 'showAllMeasurements')
+        .name('Show Measurement')
+        .onChange(showAllMeasurements => {
+          this.state.showAllMeasurements = showAllMeasurements;
+          this._measurementTool.visible(showAllMeasurements);
+        })
+    );
   }
 
   private removeGUI() {
@@ -79,7 +101,7 @@ export class MeasurementUi {
       allMeasurement: this.state.allMeasurement,
       showAllMeasurementLabels: this.state.showAllMeasurementLabels,
       showAllMeasurments: this.state.showAllMeasurements
-    }
+    };
     this._measurementTool.setLineOptions(options);
   }
 }

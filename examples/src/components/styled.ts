@@ -14,7 +14,10 @@ export const CanvasWrapper = styled(Container)`
   overflow: hidden;
   & > canvas {
     position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     display: block;
   }
 `;
@@ -22,5 +25,5 @@ export const CanvasWrapper = styled(Container)`
 export const Loader = styled.div<{ isLoading: boolean }>`
   background: black;
   color: white;
-  display: ${(props) => (props.isLoading ? 'block' : 'none')};
+  display: ${props => (props.isLoading ? 'block' : 'none')};
 `;

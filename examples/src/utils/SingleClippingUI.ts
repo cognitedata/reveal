@@ -17,7 +17,7 @@ export class SingleClippingUI {
     x: 0,
     y: 0,
     z: 0,
-    showHelpers: false,
+    showHelpers: false
   };
 
   constructor(uiFolder: dat.GUI, updateSlicingPlanesCallback: (planes: THREE.Plane[]) => void) {
@@ -45,49 +45,19 @@ export class SingleClippingUI {
   private createGui(ui: dat.GUI) {
     const updateSlicingPlanes = this.updateSlicingPlanes.bind(this);
     // X
-    ui
-      .add(this._params, 'enabledX')
-      .name('X')
-      .onChange(updateSlicingPlanes);
-    ui
-      .add(this._params, 'flipX')
-      .name('Flip X')
-      .onChange(updateSlicingPlanes);
-    const xUi = ui
-      .add(this._params, 'x', -600, 600)
-      .step(0.1)
-      .name('X')
-      .onChange(updateSlicingPlanes);
+    ui.add(this._params, 'enabledX').name('X').onChange(updateSlicingPlanes);
+    ui.add(this._params, 'flipX').name('Flip X').onChange(updateSlicingPlanes);
+    const xUi = ui.add(this._params, 'x', -600, 600).step(0.1).name('X').onChange(updateSlicingPlanes);
 
     // Y
-    ui
-      .add(this._params, 'enabledY')
-      .name('Y')
-      .onChange(updateSlicingPlanes);
-    ui
-      .add(this._params, 'flipY')
-      .name('Flip Y')
-      .onChange(updateSlicingPlanes);
-    const yUi = ui
-      .add(this._params, 'y', -600, 600)
-      .step(0.1)
-      .name('y')
-      .onChange(updateSlicingPlanes);
+    ui.add(this._params, 'enabledY').name('Y').onChange(updateSlicingPlanes);
+    ui.add(this._params, 'flipY').name('Flip Y').onChange(updateSlicingPlanes);
+    const yUi = ui.add(this._params, 'y', -600, 600).step(0.1).name('y').onChange(updateSlicingPlanes);
 
     // Z
-    ui
-      .add(this._params, 'enabledZ')
-      .name('Z')
-      .onChange(updateSlicingPlanes);
-    ui
-      .add(this._params, 'flipZ')
-      .name('Flip Z')
-      .onChange(updateSlicingPlanes);
-    const zUi = ui
-      .add(this._params, 'z', -600, 600)
-      .step(0.1)
-      .name('z')
-      .onChange(updateSlicingPlanes);
+    ui.add(this._params, 'enabledZ').name('Z').onChange(updateSlicingPlanes);
+    ui.add(this._params, 'flipZ').name('Flip Z').onChange(updateSlicingPlanes);
+    const zUi = ui.add(this._params, 'z', -600, 600).step(0.1).name('z').onChange(updateSlicingPlanes);
 
     return { xUi, yUi, zUi };
   }
