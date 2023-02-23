@@ -28,7 +28,7 @@ import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
-import { createSDKFromEnvironment } from '../utils/example-helpers';
+import { createSDKFromEnvironment, createSDKFromToken } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
 import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
 import { CustomCameraManager } from '../utils/CustomCameraManager';
@@ -45,7 +45,6 @@ export function Viewer() {
 
   const url = new URL(window.location.href);
   const urlParams = url.searchParams;
-  const environmentParam = urlParams.get('env');
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,23 +65,23 @@ export function Viewer() {
 
     async function main() {
       const project = urlParams.get('project');
-      let modelUrl = urlParams.get('modelUrl');
+      const environment = urlParams.get('env');
+      const overrideToken = urlParams.get('token');
 
-      if (!modelUrl && !(environmentParam && project)) {
+      const cdfModel = urlParams.get('modelId') && urlParams.get('revisionId');
+      let modelUrl = urlParams.get('modelUrl');
+      if (!modelUrl && !cdfModel) {
         modelUrl = 'primitives';
-        url.searchParams.set('modelUrl', 'primitives');
+        url.searchParams.set('modelUrl', modelUrl);
         window.history.pushState({}, '', url.toString());
       }
 
-      const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
-        if (itemsLoaded === 0 || itemsLoaded === itemsRequested) {
-          console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
-        }
-      };
-
       let client: CogniteClient;
-      if (project && environmentParam) {
-        client = await createSDKFromEnvironment('reveal.example.example', project, environmentParam);
+      if (project && overrideToken) {
+        client = createSDKFromToken('reveal.example.example', project, overrideToken);
+      }
+      else if (project && environment) {
+        client = await createSDKFromEnvironment('reveal.example.example', project, environment);
       } else {
         client = new CogniteClient({
           appId: 'reveal.example.example',
@@ -92,6 +91,11 @@ export function Viewer() {
       }
 
       const edlEnabled = (urlParams.get('edl') ?? 'true') === 'true';
+      const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
+        if (itemsLoaded === 0 || itemsLoaded === itemsRequested) {
+          console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
+        }
+      };
 
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
@@ -115,10 +119,12 @@ export function Viewer() {
           // @ts-expect-error
           _localModels: true
         };
-      } else if (!(project && environmentParam)) {
-        throw new Error('Must either provide URL parameters "env", "project", ' +
-          '"modelId" and "revisionId" to load model from CDF ' +
-          '"or "modelUrl" to load model from URL.');
+      } else if (!project) {
+        throw new Error('A "project" URL parameter is needed to load models from CDF.' +
+          'Optionally, use "modelUrl" to load local models.');
+      } else if (!environment && !overrideToken) {
+        throw new Error('You must provide either "env" or "token" as URL parameters to load models from CDF.' +
+          'Optionally, use "modelUrl" to load local models.');
       }
 
       // Prepare viewer
