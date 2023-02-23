@@ -124,26 +124,28 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   }
 
   private async listFiles(filter: FileFilterProps): Promise<Map<string, FileInfo[]>> {
+    const map = new Map<string, FileInfo[]>();
     const partitions = 10;
     const partitionedRequest = range(1, partitions + 1).flatMap(async index => {
       const req = { filter, limit: 1000, partition: `${index}/${partitions}` };
-      return this._client.files.list(req).autoPagingToArray({ limit: Infinity });
+      return this._client.files.list(req).autoPagingEach(fileInfo => {
+        const id = fileInfo.metadata?.station_id;
+        if (!id) return;
+        addToMap(id, fileInfo);
+      });
     });
 
-    const result = await Promise.all(partitionedRequest);
-    const map = new Map<string, FileInfo[]>();
-    result.flat().forEach(fileInfo => {
-      const id = fileInfo.metadata?.station_id;
-      if (id) {
-        const existingEntry = map.get(id);
-        if (existingEntry) {
-          existingEntry.push(fileInfo);
-        } else {
-          map.set(id, [fileInfo]);
-        }
-      }
-    });
+    await Promise.all(partitionedRequest);
     return map;
+
+    function addToMap(id: string, fileInfo: FileInfo) {
+      const existingEntry = map.get(id);
+      if (existingEntry) {
+        existingEntry.push(fileInfo);
+      } else {
+        map.set(id, [fileInfo]);
+      }
+    }
   }
 
   private getNewestFileInfoSet(fileInfos: FileInfo[]) {
