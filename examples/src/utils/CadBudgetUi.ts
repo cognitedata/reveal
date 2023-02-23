@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Cognite3DViewer } from "@cognite/reveal";
+import { Cognite3DViewer } from '@cognite/reveal';
 import dat from 'dat.gui';
 
 /**
@@ -18,7 +18,7 @@ export function initialCadBudgetUi(viewer: Cognite3DViewer, uiFolder: dat.GUI) {
     const scale = state.factor / 100.0;
     viewer.cadBudget = {
       highDetailProximityThreshold: defaultCadBudget.highDetailProximityThreshold * scale,
-      maximumRenderCost: defaultCadBudget.maximumRenderCost * scale,
+      maximumRenderCost: defaultCadBudget.maximumRenderCost * scale
     };
   };
   uiFolder.add(state, 'factor', 1, 500, 1).name('Budget factor (%)').onChange(onCadBudgetSettingsChanged);

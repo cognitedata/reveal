@@ -2,24 +2,24 @@ import * as THREE from 'three';
 import { Cognite3DViewer } from '@cognite/reveal';
 import dat from 'dat.gui';
 
-import { CogniteCadModel, NodeAppearance, DefaultNodeAppearance, TreeIndexNodeCollection, NumericRange, NodeOutlineColor, PropertyFilterNodeCollection } from '@cognite/reveal';
+import {
+  CogniteCadModel,
+  NodeAppearance,
+  DefaultNodeAppearance,
+  TreeIndexNodeCollection,
+  NumericRange,
+  NodeOutlineColor,
+  PropertyFilterNodeCollection
+} from '@cognite/reveal';
 import { CogniteClient, Viewer3DAPI } from '@cognite/sdk';
 
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 interface DefaultNodeAppearanceByKeys {
-  [key: string]: NodeAppearance
-};
+  [key: string]: NodeAppearance;
+}
 
 // Names of keys in NodeOutlineColor where index corresponds to enum value
-const nodeOutlineColorValues = [
-  'NoOutline',
-  'White',
-  'Black',
-  'Cyan',
-  'Blue',
-  'Green',
-  'Red',
-  'Orange'];
+const nodeOutlineColorValues = ['NoOutline', 'White', 'Black', 'Cyan', 'Blue', 'Green', 'Red', 'Orange'];
 
 export class NodeStylingUI {
   private readonly _client: CogniteClient;
@@ -74,7 +74,7 @@ export class NodeStylingUI {
       apply: () => {
         const appearance = createAppearanceCb();
         const nodes = new TreeIndexNodeCollection(new NumericRange(state.from, state.count));
-        this._model.assignStyledNodeCollection(nodes, appearance)
+        this._model.assignStyledNodeCollection(nodes, appearance);
       }
     };
     ui.add(state, 'from', 0, this._model.nodeCount, 1).name('First tree index');
@@ -133,27 +133,33 @@ export class NodeStylingUI {
     updateState();
 
     const presets = ['Default', 'Hidden', 'Ghosted', 'Highlighted'];
-    ui.add(state, 'preset', presets).name('Apply preset').onFinishChange(() => {
-      applyPresetToAppearance(appearance, state.preset);
-      updateState();
-      ui.updateDisplay();
-    });
+    ui.add(state, 'preset', presets)
+      .name('Apply preset')
+      .onFinishChange(() => {
+        applyPresetToAppearance(appearance, state.preset);
+        updateState();
+        ui.updateDisplay();
+      });
 
     ui.add(appearance, 'visible').name('Visible');
     ui.add(appearance, 'renderGhosted').name('Ghosted');
     ui.add(appearance, 'renderInFront').name('In front');
-    ui.addColor(state, 'color').name('Node color').onFinishChange(color => {
-      appearance.color = new THREE.Color(color);
-    });
-    ui.add(state, 'outlineColor', nodeOutlineColorValues).name('Outline').onFinishChange(() => {
-      appearance.outlineColor = stringToNodeOutlineColor(state.outlineColor);
-    });
+    ui.addColor(state, 'color')
+      .name('Node color')
+      .onFinishChange(color => {
+        appearance.color = new THREE.Color(color);
+      });
+    ui.add(state, 'outlineColor', nodeOutlineColorValues)
+      .name('Outline')
+      .onFinishChange(() => {
+        appearance.outlineColor = stringToNodeOutlineColor(state.outlineColor);
+      });
     ui.add(appearance, 'prioritizedForLoadingHint', 0, 10).name('Loading priority');
 
     return () => {
       const clone: NodeAppearance = { ...appearance };
       return clone;
-    }
+    };
   }
 }
 

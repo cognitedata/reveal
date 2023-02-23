@@ -1,7 +1,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app)
 and extended with [react-app-rewired](https://github.com/timarney/react-app-rewired) to copy reveal/viewer workers and wasm files to output folder.
 
-## Getting started 
+## Getting started
 
 You need to build the viewer first and then the examples:
 
@@ -15,13 +15,13 @@ yarn install
 yarn start
 ```
 
-Because we have local dependency on reveal like `"@cognite/reveal": "link:../viewer/dist"`, 
+Because we have local dependency on reveal like `"@cognite/reveal": "link:../viewer/dist"`,
 examples are not bound to specific viewer release from npm. They just use whatever you have in local viewer build.
 
 ## [Environment files](https://create-react-app.dev/docs/adding-custom-environment-variables/)
 
 Create a copy of `.env.example` file and rename it to `.env`.
-This file can be used to set environment variables which provides defaults for things like project name or model ids used in examples. 
+This file can be used to set environment variables which provides defaults for things like project name or model ids used in examples.
 
 ## Available Scripts
 

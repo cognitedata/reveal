@@ -1,7 +1,7 @@
 import * as dat from 'dat.gui';
 import * as THREE from 'three';
-import { CogniteCadModel, Cognite3DViewer } from "@cognite/reveal";
-import { CogniteClient, Node3D } from "@cognite/sdk";
+import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
+import { CogniteClient, Node3D } from '@cognite/sdk';
 import { TreeIndexNodeCollection } from '@cognite/reveal';
 import { NumericRange } from '@cognite/reveal';
 import { DefaultNodeAppearance } from '@cognite/reveal';
@@ -24,7 +24,9 @@ export class InspectNodeUI {
     this.createLoadingIndicator();
 
     const nodeId = await model.mapTreeIndexToNodeId(treeIndex);
-    const nodes = await this._sdk.revisions3D.list3DNodeAncestors(model.modelId, model.revisionId, nodeId).autoPagingToArray();
+    const nodes = await this._sdk.revisions3D
+      .list3DNodeAncestors(model.modelId, model.revisionId, nodeId)
+      .autoPagingToArray();
 
     this.clearUi();
 
@@ -84,8 +86,7 @@ export class InspectNodeUI {
           const cameraManager = this._viewer.cameraManager;
           if (dragging) {
             cameraManager.deactivate();
-          }
-          else {
+          } else {
             cameraManager.activate();
           }
         });
