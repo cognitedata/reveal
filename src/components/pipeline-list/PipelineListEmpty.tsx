@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'common';
 import graphics from 'common/assets/graphics';
 import { CreatePipelineButton } from 'components/create-pipeline-button/CreatePipelineButton';
-import { createLink } from '@cognite/cdf-utilities';
-import { useParams, Link } from 'react-router-dom';
+
 const PipelineListEmpty = (): JSX.Element => {
   const { t } = useTranslation();
 
