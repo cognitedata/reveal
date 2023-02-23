@@ -1,4 +1,5 @@
-import { Detail, Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js-old';
+import { Detail, SegmentedControl, Tooltip } from '@cognite/cogs.js-old';
+import { Icon } from '@cognite/cogs.js';
 import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
 import React from 'react';
 import useColorForLabel from 'src/store/hooks/useColorForLabel';

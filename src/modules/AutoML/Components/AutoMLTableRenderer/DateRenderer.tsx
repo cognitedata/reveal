@@ -1,6 +1,6 @@
 import React from 'react';
 import { AutoMLTableDataType } from 'src/modules/AutoML/Components/AutoMLModelList';
-import { Icon } from '@cognite/cogs.js-old';
+import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { dateformat } from 'src/utils/DateUtils';
 

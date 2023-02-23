@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js-old';
+import { Icon } from '@cognite/cogs.js';
 import React from 'react';
 
 /**

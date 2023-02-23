@@ -1,5 +1,6 @@
 import { components, OptionProps } from 'react-select';
-import { Icon, Menu, OptionType } from '@cognite/cogs.js-old';
+import { Menu, OptionType } from '@cognite/cogs.js-old';
+import { Icon } from '@cognite/cogs.js';
 import { VisionOptionType } from 'src/modules/Review/types';
 import React from 'react';
 import styled from 'styled-components';

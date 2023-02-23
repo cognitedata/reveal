@@ -13,8 +13,7 @@ import SwiperCore, {
 import styled from 'styled-components';
 import { getIdFromUrl } from 'src/utils/tenancy';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
-import { Icon } from '@cognite/cogs.js-old';
-import { Button } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 // Import Swiper styles
 import swiperStyles from 'swiper/swiper-bundle.css';

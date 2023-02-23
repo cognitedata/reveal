@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { Body, Icon } from '@cognite/cogs.js-old';
+import { Body } from '@cognite/cogs.js-old';
+import { Icon } from '@cognite/cogs.js';
 import React, { ReactText } from 'react';
 import { CopyableText } from 'src/modules/FileDetails/Components/FileMetadata/CopyableText';
 import {

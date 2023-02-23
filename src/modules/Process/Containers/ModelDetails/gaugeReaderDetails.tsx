@@ -1,6 +1,6 @@
 import React from 'react';
-import { Detail, Icon, Tooltip, Row, Select } from '@cognite/cogs.js-old';
-import { Button, Title } from '@cognite/cogs.js';
+import { Detail, Tooltip, Row, Select } from '@cognite/cogs.js-old';
+import { Button, Title, Icon } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsGaugeReader } from 'src/api/vision/detectionModels/types';
 import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';

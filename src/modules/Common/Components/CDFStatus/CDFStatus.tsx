@@ -1,4 +1,4 @@
-import { Body, Icon } from '@cognite/cogs.js-old';
+import { Body, Icon } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';

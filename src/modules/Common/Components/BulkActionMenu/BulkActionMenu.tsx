@@ -3,13 +3,12 @@ import {
   Badge,
   Detail,
   Dropdown,
-  Icon,
   Menu,
   Popconfirm,
   Tooltip,
   Colors,
 } from '@cognite/cogs.js-old';
-import { Button } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import { pushMetric } from 'src/utils/pushMetric';
 import { useFlag } from '@cognite/react-feature-flags';
 

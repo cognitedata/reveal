@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import MapboxGl, { GeoJSONLayer } from 'react-mapbox-gl';
 import { FileGeoLocation } from '@cognite/sdk';
 import * as MapboxGL from 'mapbox-gl';
-import { Icon } from '@cognite/cogs.js-old';
+import { Icon } from '@cognite/cogs.js';
 import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
 
 const Map = MapboxGl({
