@@ -164,8 +164,8 @@ describe('FDM v3 Client', () => {
         externalId: dto.externalId,
         version: dto.version,
         graphQlDml: dto.schema,
-        name: dto.externalId,
-        description: dto.externalId,
+        name: dto.name,
+        description: dto.description,
       } as GraphQlDmlVersionDTO;
 
       expect(mixerApi.upsertVersion).toHaveBeenCalledWith(mixerApiDto);

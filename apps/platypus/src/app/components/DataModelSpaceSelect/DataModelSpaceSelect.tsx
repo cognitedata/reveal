@@ -123,6 +123,7 @@ export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
             : undefined
         }
         menuPortalTarget={document.body}
+        menuPlacement="top"
       />
       {!props.isDisabled && (
         <InputDetail>

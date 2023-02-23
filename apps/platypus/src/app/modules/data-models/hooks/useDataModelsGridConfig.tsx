@@ -52,6 +52,7 @@ export const useDataModelsGridConfig = () => {
         field: 'updatedTime',
         headerName: t('data_models_list_last_modified_column', 'Last Modified'),
         sortable: true,
+        sort: 'desc',
         valueFormatter: (params: ValueFormatterParams) =>
           dateUtils.format(params.value),
       },

@@ -252,10 +252,8 @@ export class MixerApiService {
 
   async runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
     const url = this.getDataModelEndpointUrl(
-      this.cdfClient.project,
       dto.dataModelId,
-      dto.schemaVersion,
-      this.cdfClient.getBaseUrl()
+      dto.schemaVersion
     );
     return (await this.runGraphQlQuery(url, dto.graphQlParams)).data;
   }
@@ -298,12 +296,9 @@ export class MixerApiService {
     } as SdkError;
   }
 
-  private getDataModelEndpointUrl = (
-    projectName: string,
-    dataModelName: string,
-    version: string,
-    baseUrl: string
-  ) => {
-    return `${baseUrl}/api/v1/projects/${projectName}/schema/api/${dataModelName}/${version}/graphql`;
+  public getDataModelEndpointUrl = (dataModelName: string, version: string) => {
+    return `${this.cdfClient.getBaseUrl()}/api/v1/projects/${
+      this.cdfClient.project
+    }/schema/api/${dataModelName}/${version}/graphql`;
   };
 }

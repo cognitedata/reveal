@@ -20,6 +20,8 @@ export enum DataModelVersionStatus {
 }
 
 export interface DataModelVersion {
+  name?: string;
+  description?: string;
   externalId: string;
   status: DataModelVersionStatus;
   version: string;

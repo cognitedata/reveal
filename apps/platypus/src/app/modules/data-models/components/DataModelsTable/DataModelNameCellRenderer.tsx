@@ -30,7 +30,7 @@ export const DataModelNameCellRenderer = React.memo(
     };
     return (
       <span>
-        {params.value}
+        {params.value || '<no name>'}
         {params.data.version ? renderChip() : null}
       </span>
     );

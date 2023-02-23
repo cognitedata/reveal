@@ -164,11 +164,9 @@ export class FdmMixerApiService {
 
   async runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
     const url = this.getDataModelEndpointUrl(
-      this.cdfClient.project,
       dto.space!,
       dto.dataModelId,
-      dto.schemaVersion,
-      this.cdfClient.getBaseUrl()
+      dto.schemaVersion
     );
     return (await this.runGraphQlQuery(url, dto.graphQlParams)).data;
   }
@@ -208,13 +206,13 @@ export class FdmMixerApiService {
     } as SdkError;
   }
 
-  private getDataModelEndpointUrl = (
-    projectName: string,
+  public getDataModelEndpointUrl = (
     space: string,
     dataModelExternalId: string,
-    version: string,
-    baseUrl: string
+    version: string
   ) => {
-    return `${baseUrl}/api/v1/projects/${projectName}/userapis/spaces/${space}/datamodels/${dataModelExternalId}/versions/${version}/graphql`;
+    return `${this.cdfClient.getBaseUrl()}/api/v1/projects/${
+      this.cdfClient.project
+    }/userapis/spaces/${space}/datamodels/${dataModelExternalId}/versions/${version}/graphql`;
   };
 }

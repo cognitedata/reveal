@@ -14,7 +14,6 @@ import {
   ErrorType,
   DataModelVersion,
   Result,
-  getDataModelEndpointUrl,
   PlatypusError,
   PlatypusValidationError,
   ValidationError,
@@ -154,6 +153,7 @@ export const DataModelPage = ({
     TOKENS.dataModelTypeDefsBuilderService
   );
   const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
+  const fdmClient = useInjection(TOKENS.fdmClient);
 
   /*
   If in view mode and there are no published versions, set to edit mode. This should
@@ -481,12 +481,7 @@ export const DataModelPage = ({
 
       {showEndpointModal && (
         <EndpointModal
-          endpoint={getDataModelEndpointUrl(
-            getProject(),
-            selectedDataModelVersion.externalId,
-            selectedDataModelVersion.version,
-            getCogniteSDKClient().getBaseUrl()
-          )}
+          endpoint={fdmClient.getQueryEndpointUrl(selectedDataModelVersion)}
           onRequestClose={() => setShowEndpointModal(false)}
         />
       )}

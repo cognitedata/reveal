@@ -251,8 +251,8 @@ export class FdmClient implements FlexibleDataModelingClient {
       externalId: dto.externalId,
       version: dto.version,
       graphQlDml: dto.schema,
-      name: dto.externalId,
-      description: dto.externalId,
+      name: dto.name,
+      description: dto.description,
     } as GraphQlDmlVersionDTO;
     return this.mixerApiService
       .upsertVersion(createDTO)
@@ -565,5 +565,21 @@ export class FdmClient implements FlexibleDataModelingClient {
         }
         return counts;
       });
+  }
+
+  getQueryEndpointUrl({
+    externalId,
+    space,
+    version,
+  }: {
+    externalId: string;
+    space: string;
+    version: string;
+  }) {
+    return this.mixerApiService.getDataModelEndpointUrl(
+      space,
+      externalId,
+      version
+    );
   }
 }

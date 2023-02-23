@@ -404,12 +404,14 @@ export const SchemaVisualizer = React.memo(
       <div id="visualizer-wrapper" style={{ height: '100%' }}>
         {isVisualizerExpanded ? (
           <StyledModal
+            title={t('full_screen_title', 'Data model preview')}
             getContainer={
               document.getElementById('visualizer-wrapper') || undefined
             }
             closable={false}
             visible={isVisualizerExpanded}
             hideFooter
+            size="full-screen"
             onCancel={() => {
               setIsVisualizerExpanded(false);
             }}
@@ -448,9 +450,6 @@ const Wrapper = styled(Flex)`
 `;
 
 const StyledModal = styled(Modal)`
-  top: -20px;
-  width: 95% !important;
-  height: 90%;
   overflow: hidden;
   padding: 0;
 

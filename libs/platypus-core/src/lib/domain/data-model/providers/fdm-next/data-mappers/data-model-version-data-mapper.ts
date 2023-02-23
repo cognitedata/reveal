@@ -6,6 +6,8 @@ import { GraphQlDmlVersionDTO } from '../dto/mixer-api-dtos';
 
 export class DataModelVersionDataMapper {
   deserialize({
+    name,
+    description,
     externalId,
     space,
     version,
@@ -14,6 +16,8 @@ export class DataModelVersionDataMapper {
     lastUpdatedTime,
   }: GraphQlDmlVersionDTO): DataModelVersion {
     return {
+      name,
+      description,
       externalId,
       space,
       version,

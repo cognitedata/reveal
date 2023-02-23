@@ -51,7 +51,7 @@ export const StyledExternalId = styled(Body)`
 `;
 
 export const StyledFlex = styled(Flex)`
-  padding: 10px;
+  padding: 0 10px;
 `;
 
 export const SideBarMenu = styled.div`

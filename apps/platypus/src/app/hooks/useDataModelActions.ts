@@ -77,15 +77,17 @@ export const useSelectedDataModelVersion = (
   dataModelExternalId: string,
   space: string
 ): DataModelVersion => {
+  const { data: dataModel } = useDataModel(dataModelExternalId, space);
   // if no published versions, return a default
   if (!dataModelVersions?.length) {
     return {
       schema: '',
       space,
-      // TODO do we really need dataModelExternalId here?
       externalId: dataModelExternalId,
       status: DataModelVersionStatus.DRAFT,
       version: '1',
+      name: dataModel?.name,
+      description: dataModel?.description,
       createdTime: Date.now(),
       lastUpdatedTime: Date.now(),
     };

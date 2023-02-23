@@ -611,6 +611,16 @@ export class FdmV2Client implements FlexibleDataModelingClient {
         return counts;
       });
   }
+
+  getQueryEndpointUrl({
+    externalId,
+    version,
+  }: {
+    externalId: string;
+    version: string;
+  }) {
+    return this.mixerApiService.getDataModelEndpointUrl(externalId, version);
+  }
 }
 /*
 Replace relationships with correct ingestion format.

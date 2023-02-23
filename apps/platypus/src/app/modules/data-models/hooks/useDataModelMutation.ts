@@ -43,6 +43,9 @@ export function useDataModelMutation() {
             QueryKeys.DATA_MODEL(dataModel.id),
             dataModel
           );
+
+          // invalidate space (in case a space was created)
+          queryClient.invalidateQueries(QueryKeys.SPACES_LIST);
         },
       }
     ),

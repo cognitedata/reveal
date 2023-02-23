@@ -3,6 +3,30 @@ import {
   DataModelVersionStatus,
 } from '@platypus/platypus-core';
 import { useSelectedDataModelVersion } from './useDataModelActions';
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: () => ({
+    data: {
+      createdTime: 123,
+      lastUpdatedTime: 123,
+      externalId: 'extId',
+      name: 'name',
+      description: 'desc',
+      schema: '',
+      status: 'published',
+      version: '3',
+      space: '3',
+    },
+  }),
+}));
+jest.mock('./useInjection', () => {
+  return {
+    useInjection: () => {
+      return {
+        fetch: jest.fn(),
+      };
+    },
+  };
+});
 
 describe('useDataModelActions', () => {
   describe('useSelectedDataModelVersion', () => {
@@ -16,6 +40,7 @@ describe('useDataModelActions', () => {
           status: DataModelVersionStatus.PUBLISHED,
           version: '3',
           space: '3',
+          description: 'd4',
         },
         {
           createdTime: 123,
@@ -45,6 +70,7 @@ describe('useDataModelActions', () => {
       );
 
       expect(selectedDataModelVersion.version).toBe('3');
+      expect(selectedDataModelVersion.description).toBe('d4');
     });
 
     it('returns a default if there are no published versions', () => {
@@ -59,6 +85,7 @@ describe('useDataModelActions', () => {
         expect.objectContaining({
           status: DataModelVersionStatus.DRAFT,
           version: '1',
+          description: 'desc',
         })
       );
     });

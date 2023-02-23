@@ -183,4 +183,14 @@ export interface FlexibleDataModelingClient {
   fetchPublishedRowsCount(
     dto: FetchPublishedRowsCountDTO
   ): Promise<PublishedRowsCountMap>;
+
+  /**
+   * Get the GraphQL endpoint for a given data model
+   * @param dto
+   */
+  getQueryEndpointUrl(dto: {
+    space: string;
+    externalId: string;
+    version: string;
+  }): string;
 }
