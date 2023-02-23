@@ -33,3 +33,16 @@ export function visitBox3CornerPoints(box: THREE.Box3, callback: (corner: THREE.
   tmpVector.set(box.max.x, box.max.y, box.max.z); // 111
   callback(tmpVector);
 }
+
+export function getBox3CornerPoints(box: THREE.Box3): THREE.Vector4[] {
+  return [
+    new THREE.Vector4(box.min.x, box.min.y, box.min.z),
+    new THREE.Vector4(box.min.x, box.min.y, box.max.z),
+    new THREE.Vector4(box.min.x, box.max.y, box.min.z),
+    new THREE.Vector4(box.min.x, box.max.y, box.max.z),
+    new THREE.Vector4(box.max.x, box.min.y, box.min.z),
+    new THREE.Vector4(box.max.x, box.min.y, box.max.z),
+    new THREE.Vector4(box.max.x, box.max.y, box.min.z),
+    new THREE.Vector4(box.max.x, box.max.y, box.max.z)
+  ];
+}
