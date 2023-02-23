@@ -1,17 +1,11 @@
-import React, { useEffect, useContext, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { Routes, Route } from 'react-router-dom';
+
 import {
-  ResourceItem,
-  AssetSearchResults,
-  FileSearchResults,
-  SequenceSearchResults,
-  TimeseriesSearchResults,
-  EventSearchResults,
-  DocumentSearchResults,
   ResourceTypeTabs,
   ResourceTypeTabsV2,
   getTitle,
   ResourceType,
-  AssetViewMode,
   AssetsTab,
   EventsTab,
   DocumentsTab,
@@ -28,27 +22,18 @@ import {
   useSequencesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 
-import { Colors, Flex, Tabs } from '@cognite/cogs.js';
+import { Flex, Tabs } from '@cognite/cogs.js';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import ResourceSelectionContext, {
-  useResourceFilter,
-  useResourceEditable,
-} from '@data-exploration-app/context/ResourceSelectionContext';
+import { useResourceFilter } from '@data-exploration-app/context/ResourceSelectionContext';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components/macro';
-import ResourcePreview from '@data-exploration-app/containers/Exploration/ResourcePreview';
 import {
   useQueryString,
-  useQueryStringArray,
   useCurrentResourceType,
-  useCurrentResourceId,
 } from '@data-exploration-app/hooks/hooks';
-import { SEARCH_KEY, CART_KEY } from '@data-exploration-app/utils/constants';
-import SelectedResults from '@data-exploration-app/components/SelectionResults/SelectionResults';
+import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { ExplorationSearchBar } from '@data-exploration-app/containers/Exploration/ExplorationSearchBar';
-import { useDateRange } from '@data-exploration-app/context/DateRangeContext';
-import { createLink, PageTitle } from '@cognite/cdf-utilities';
-import { ThreeDSearchResults } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResults';
+import { PageTitle } from '@cognite/cdf-utilities';
 import { ExplorationFilterToggle } from '@data-exploration-app/containers/Exploration/ExplorationFilterToggle';
 import { SearchFilters } from '@data-exploration-app/containers/SearchResults/SearchFilters';
 import {
@@ -58,17 +43,18 @@ import {
   useSequenceFilters,
   useTimeseriesFilters,
 } from '@data-exploration-app/store/filter/selectors';
-import { StyledSplitter } from '@data-exploration-app/containers/elements';
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
-import { useNavigate } from 'react-router-dom';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 import { AllTab } from '@data-exploration-app/containers/All';
-import {
-  useAssetViewState,
-  useFilterSidebarState,
-} from '@data-exploration-app/store';
+import { useFilterSidebarState } from '@data-exploration-app/store';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { Model3DWithType } from '../ThreeD/ThreeDGridPreview';
+import { AssetSearchResultView } from '@data-exploration-app/containers/Asset/AssetSearchResultView';
+import { TimeseriesSearchResultView } from '@data-exploration-app/containers/Timeseries/TimeseriesSearchResultView';
+import { FileSearchResultView } from '@data-exploration-app/containers/File/FileSearchResultView';
+import { EventSearchResultView } from '@data-exploration-app/containers/Event/EventSearchResultView';
+import { SequenceSearchResultView } from '@data-exploration-app/containers/Sequence/SequenceSearchResultView';
+import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
+import { routes, ViewType } from '@data-exploration-app/containers/App';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${
@@ -84,31 +70,21 @@ function SearchPage() {
   useEventsMetadataKeys();
   useSequencesMetadataKeys();
 
-  const navigate = useNavigate();
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const [currentResourceType, setCurrentResourceType] =
     useCurrentResourceType();
 
-  const [activeId, openPreview] = useCurrentResourceId();
   const [showFilter, setShowFilter] = useFilterSidebarState();
-  const [assetView, setAssetView] = useAssetViewState();
   const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
 
-  const editable = useResourceEditable();
-
-  const [rawCart, setCart] = useQueryStringArray(CART_KEY, false);
-  const cart = rawCart
-    .map((s) => parseInt(s, 10))
-    .filter((n) => Number.isFinite(n));
-
-  const [assetFilter, setAssetFilter] = useAssetFilters();
-  const [fileFilter, setFileFilter] = useFileFilters();
-  const [documentFilter, setDocumentFilter] = useDocumentFilters();
-  const [eventFilter, setEventFilter] = useEventsFilters();
-  const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
-  const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
+  const [assetFilter] = useAssetFilters();
+  const [fileFilter] = useFileFilters();
+  const [documentFilter] = useDocumentFilters();
+  const [eventFilter] = useEventsFilters();
+  const [timeseriesFilter] = useTimeseriesFilters();
+  const [sequenceFilter] = useSequenceFilters();
 
   const filterMap = useMemo(
     () => ({
@@ -121,33 +97,6 @@ function SearchPage() {
     [assetFilter, fileFilter, eventFilter, timeseriesFilter, sequenceFilter]
   );
 
-  const { mode } = useContext(ResourceSelectionContext);
-
-  const onSelect = (item: ResourceItem) => {
-    const newCart = cart.includes(item.id)
-      ? cart.filter((id) => id !== item.id)
-      : cart.concat([item.id]);
-    setCart(newCart);
-  };
-
-  const active = !!activeId || cart.length > 0;
-  const selectedRow = activeId ? { [activeId]: true } : {};
-
-  const isSelected = (item: ResourceItem) => cart.includes(item.id);
-
-  const [dateRange, setDateRange] = useDateRange();
-
-  const commonProps = {
-    query: debouncedQuery,
-    onSelect,
-    selectionMode: mode,
-    isSelected,
-    activeIds: activeId ? [activeId] : [],
-    disableScroll: !!activeId,
-    dateRange,
-    onDateRangeChange: setDateRange,
-  };
-
   const handleFilterToggleClick = React.useCallback(() => {
     setShowFilter((prevState) => {
       trackUsage(EXPLORATION.CLICK.TOGGLE_FILTERS_VIEW, {
@@ -157,15 +106,6 @@ function SearchPage() {
       return !prevState;
     }); // eslint-disable-next-line
   }, [setShowFilter]);
-
-  const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
-    openPreview(item.id !== activeId ? item.id : undefined);
-  };
-
-  const handleViewChange = (nextView: AssetViewMode) => {
-    setAssetView(nextView);
-    trackUsage(EXPLORATION.CLICK.TOGGLE_ASSET_TABLE_VIEW, { view: nextView });
-  };
 
   return (
     <RootHeightWrapper>
@@ -195,196 +135,102 @@ function SearchPage() {
         <TabsContainer>
           {isAdvancedFiltersEnabled ? (
             <ResourceTypeTabsV2
-              currentResourceType={currentResourceType}
+              currentResourceType={currentResourceType || ViewType.All}
               setCurrentResourceType={(tab) => {
                 setCurrentResourceType(
-                  tab === 'all' ? undefined : (tab as ResourceType)
+                  tab === ViewType.All ? undefined : (tab as ResourceType)
                 );
               }}
             >
-              <Tabs.Tab tabKey="all" label="All resources" />
+              <Tabs.Tab tabKey={ViewType.All} label="All resources" />
               <AssetsTab
-                tabKey="asset"
+                tabKey={ViewType.Asset}
                 showCount
                 query={debouncedQuery}
                 filter={assetFilter}
               />
               <TimeseriesTab
-                tabKey="timeSeries"
+                tabKey={ViewType.TimeSeries}
                 showCount
                 query={debouncedQuery}
                 filter={timeseriesFilter}
               />
 
               <DocumentsTab
-                tabKey="file"
+                tabKey={ViewType.File}
                 query={debouncedQuery}
                 filter={documentFilter}
                 showCount
               />
               <EventsTab
-                tabKey="event"
+                tabKey={ViewType.Event}
                 showCount
                 query={debouncedQuery}
                 filter={eventFilter}
               />
               <SequenceTab
-                tabKey="sequence"
+                tabKey={ViewType.Sequence}
                 showCount
                 query={debouncedQuery}
                 filter={sequenceFilter}
               />
-              <ThreeDTab tabKey="threeD" showCount query={debouncedQuery} />
+              <ThreeDTab
+                tabKey={ViewType.ThreeD}
+                showCount
+                query={debouncedQuery}
+              />
             </ResourceTypeTabsV2>
           ) : (
             <ResourceTypeTabs
               showCount
               globalFilters={filterMap as any}
               query={query}
-              currentResourceType={currentResourceType || 'all'}
+              currentResourceType={currentResourceType || ViewType.All}
               setCurrentResourceType={(tab) => {
                 setCurrentResourceType(
-                  tab === 'all' ? undefined : (tab as ResourceType)
+                  tab === ViewType.All ? undefined : (tab as ResourceType)
                 );
               }}
-              additionalTabs={[<Tabs.Tab label="All" tabKey="all" />]}
+              additionalTabs={[
+                <Tabs.Tab
+                  key={ViewType.All}
+                  label="All resources"
+                  tabKey={ViewType.All}
+                />,
+              ]}
             />
           )}
         </TabsContainer>
+
         <MainContainer $isFilterFeatureEnabled>
           <Wrapper>
-            <StyledSplitter
-              percentage
-              primaryMinSize={20}
-              secondaryMinSize={40}
-              secondaryInitialSize={50}
-              primaryIndex={0}
-            >
-              <Flex
-                direction="column"
-                style={{
-                  borderRight: active
-                    ? `1px solid ${Colors['decorative--grayscale--300']}`
-                    : 'unset',
-                }}
-              >
-                <SearchResultWrapper>
-                  {currentResourceType === undefined && <AllTab />}
-                  {currentResourceType === 'asset' && (
-                    <AssetSearchResults
-                      isTreeEnabled
-                      showCount
-                      view={assetView}
-                      onViewChange={handleViewChange}
-                      filter={assetFilter}
-                      enableAdvancedFilters={isAdvancedFiltersEnabled}
-                      onClick={handleRowClick}
-                      onFilterChange={(newValue: Record<string, unknown>) =>
-                        setAssetFilter(newValue)
-                      }
-                      {...commonProps}
-                    />
-                  )}
-                  {!isAdvancedFiltersEnabled &&
-                    currentResourceType === 'file' && (
-                      <FileSearchResults
-                        showCount
-                        selectedRow={selectedRow}
-                        filter={fileFilter}
-                        allowEdit={editable}
-                        onClick={handleRowClick}
-                        onFilterChange={(newValue: Record<string, unknown>) =>
-                          setFileFilter(newValue)
-                        }
-                        {...commonProps}
-                      />
-                    )}
-                  {isAdvancedFiltersEnabled &&
-                    currentResourceType === 'file' && (
-                      <DocumentSearchResults
-                        enableAdvancedFilters={isAdvancedFiltersEnabled}
-                        query={query}
-                        selectedRow={selectedRow}
-                        filter={documentFilter}
-                        onClick={handleRowClick}
-                        onFilterChange={(newValue: Record<string, unknown>) =>
-                          setDocumentFilter(newValue)
-                        }
-                      />
-                    )}
-                  {currentResourceType === 'sequence' && (
-                    <SequenceSearchResults
-                      showCount
-                      selectedRow={selectedRow}
-                      onClick={handleRowClick}
-                      enableAdvancedFilters={isAdvancedFiltersEnabled}
-                      onFilterChange={(newValue: Record<string, unknown>) =>
-                        setSequenceFilter(newValue)
-                      }
-                      filter={sequenceFilter}
-                      {...commonProps}
-                    />
-                  )}
-                  {currentResourceType === 'timeSeries' && (
-                    <TimeseriesSearchResults
-                      showCount
-                      selectedRow={selectedRow}
-                      enableAdvancedFilters={isAdvancedFiltersEnabled}
-                      onClick={handleRowClick}
-                      onFilterChange={(newValue: Record<string, unknown>) =>
-                        setTimeseriesFilter(newValue)
-                      }
-                      filter={timeseriesFilter}
-                      showDatePicker={!activeId}
-                      {...commonProps}
-                    />
-                  )}
-                  {currentResourceType === 'event' && (
-                    <EventSearchResults
-                      showCount
-                      selectedRow={selectedRow}
-                      enableAdvancedFilters={isAdvancedFiltersEnabled}
-                      onClick={handleRowClick}
-                      onFilterChange={(newValue: Record<string, unknown>) =>
-                        setEventFilter(newValue)
-                      }
-                      filter={eventFilter}
-                      {...commonProps}
-                    />
-                  )}
-                  {currentResourceType === 'threeD' && (
-                    <ThreeDSearchResults
-                      onClick={(item: Model3DWithType) => {
-                        navigate(
-                          createLink(
-                            `/explore/threeD/${
-                              item?.type === 'img360'
-                                ? item?.siteId + 'img360'
-                                : item.id
-                            }`
-                          )
-                        );
-                      }}
-                      query={query}
-                    />
-                  )}
-                </SearchResultWrapper>
-              </Flex>
-
-              {active && activeId && currentResourceType && (
-                <SearchResultWrapper>
-                  <ResourcePreview
-                    item={{ id: activeId, type: currentResourceType }}
-                  />
-                </SearchResultWrapper>
-              )}
-              {!activeId && currentResourceType && cart.length > 0 && (
-                <SelectedResults
-                  ids={cart.map((id) => ({ id }))}
-                  resourceType={currentResourceType}
-                />
-              )}
-            </StyledSplitter>
+            <Routes>
+              <Route path={routes.root.path} element={<AllTab />} />
+              <Route
+                path={routes.assetView.path}
+                element={<AssetSearchResultView />}
+              />
+              <Route
+                path={routes.timeseriesView.path}
+                element={<TimeseriesSearchResultView />}
+              />
+              <Route
+                path={routes.fileView.path}
+                element={<FileSearchResultView />}
+              />
+              <Route
+                path={routes.eventView.path}
+                element={<EventSearchResultView />}
+              />
+              <Route
+                path={routes.sequenceView.path}
+                element={<SequenceSearchResultView />}
+              />
+              <Route
+                path={routes.threeDView.path}
+                element={<ThreeDSearchResultView />}
+              />
+            </Routes>
           </Wrapper>
         </MainContainer>
       </MainSearchContainer>
@@ -420,13 +266,6 @@ export const SearchResultsPage = () => {
   );
 };
 
-const SearchResultWrapper = styled.div`
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
 const SearchInputContainer = styled(Flex)`
   padding: 16px;
   padding-bottom: 12px;
@@ -435,8 +274,8 @@ const SearchInputContainer = styled(Flex)`
 
 const TabsContainer = styled.div`
   flex: 0 0 auto;
-  border-bottom: 1px solid var(--cogs-border--muted);
-  padding-left: 16px;
+  margin-left: 16px;
+  border-bottom: 1px solid rgb(232, 232, 232);
 `;
 
 const MainContainer = styled(Flex)<{ $isFilterFeatureEnabled?: boolean }>`
