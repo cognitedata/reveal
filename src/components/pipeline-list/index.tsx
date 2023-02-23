@@ -17,7 +17,7 @@ export default function PipelineList() {
 
   return (
     <ul>
-      {data ? (
+      {data?.length ? (
         data?.map(({ id, name }) => {
           return (
             <li key={id}>
