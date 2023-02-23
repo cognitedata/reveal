@@ -55,6 +55,10 @@ export class Image360Icon {
     return alpha > 0;
   }
 
+  get position(): Vector3 {
+    return this._position;
+  }
+
   set hoverSpriteVisible(visible: boolean) {
     this._hoverSprite.visible = visible;
   }

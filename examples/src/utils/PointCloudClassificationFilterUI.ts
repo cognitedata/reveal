@@ -5,13 +5,15 @@ export class PointCloudClassificationFilterUI {
   constructor(ui: dat.GUI, model: CognitePointCloudModel) {
     const classes = model.getClasses();
     const visibility = classes.reduce((visibility, pointClass) => {
-      return {...visibility, [`${pointClass}`]: model.isClassVisible(pointClass.code) };
+      return { ...visibility, [`${pointClass}`]: model.isClassVisible(pointClass.code) };
     }, {});
 
     classes.forEach(pointClass => {
-      ui.add(visibility, `${pointClass}`).name(pointClass.name).onChange((visible: boolean) => {
-        model.setClassVisible(pointClass.code, visible);
-      });
+      ui.add(visibility, `${pointClass}`)
+        .name(pointClass.name)
+        .onChange((visible: boolean) => {
+          model.setClassVisible(pointClass.code, visible);
+        });
     });
   }
 }

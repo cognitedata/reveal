@@ -23,7 +23,7 @@ export class LoadGltfUi {
   private createGui(ui: dat.GUI): void {
     const actions = {
       loadGltf: () => this.loadGltf(this._params.url),
-      addHeadlight: () => this.addHeadlight(),
+      addHeadlight: () => this.addHeadlight()
     };
     ui.add(this._params, 'transformGizmosVisible', true)
       .name('Show gizmos?')
@@ -33,17 +33,17 @@ export class LoadGltfUi {
         });
         this._viewer.requestRedraw();
       });
-    ui.add(this._params, 'scaleStr').name('Scale models').onChange(scaleStr => {
-      try {
-        const scale = Number.parseFloat(scaleStr);
-        console.log(scale);
-        this._objects.forEach(object => object.scale.set(scale, scale, scale));
-        this._viewer.requestRedraw();
-        this._params.scale = scale;
-      }
-      catch  {
-      }
-    });
+    ui.add(this._params, 'scaleStr')
+      .name('Scale models')
+      .onChange(scaleStr => {
+        try {
+          const scale = Number.parseFloat(scaleStr);
+          console.log(scale);
+          this._objects.forEach(object => object.scale.set(scale, scale, scale));
+          this._viewer.requestRedraw();
+          this._params.scale = scale;
+        } catch {}
+      });
 
     ui.add(this._params, 'url').name('URL');
     ui.add(actions, 'loadGltf').name('Load GLTF');
@@ -54,8 +54,8 @@ export class LoadGltfUi {
     const loader = new GLTFLoader();
     loader.load(
       url,
-      (gltf) => this.addGltfToViewer(gltf),
-      (event) => console.log(`Loading GLTF: ${event.loaded}/${event.total}`)
+      gltf => this.addGltfToViewer(gltf),
+      event => console.log(`Loading GLTF: ${event.loaded}/${event.total}`)
     );
   }
 
@@ -70,7 +70,7 @@ export class LoadGltfUi {
       const camera = gltf.cameras[0];
       this._viewer.cameraManager.setCameraState({
         position: camera.getWorldPosition(new THREE.Vector3()),
-        rotation: camera.getWorldQuaternion(new THREE.Quaternion()),
+        rotation: camera.getWorldQuaternion(new THREE.Quaternion())
       });
     }
     if (gltf.animations.length > 0) {
@@ -91,10 +91,7 @@ export class LoadGltfUi {
   }
 
   private attachTransformControls(object: THREE.Object3D): void {
-    const gizmo = new TransformControls(
-      this._viewer.cameraManager.getCamera(),
-      this._viewer.canvas
-    );
+    const gizmo = new TransformControls(this._viewer.cameraManager.getCamera(), this._viewer.canvas);
     gizmo.visible = this._params.transformGizmosVisible;
     gizmo.attach(object);
     this._viewer.addObject3D(gizmo);
@@ -120,10 +117,9 @@ export class LoadGltfUi {
     const pointlight = new THREE.PointLight();
     pointlight.power *= 2.0;
     const updatePose = () => {
-      const { position, rotation } =
-        this._viewer.cameraManager.getCameraState();
-        pointlight.position.copy(position);
-        pointlight.setRotationFromQuaternion(rotation);
+      const { position, rotation } = this._viewer.cameraManager.getCameraState();
+      pointlight.position.copy(position);
+      pointlight.setRotationFromQuaternion(rotation);
     };
     this._viewer.on('cameraChange', updatePose);
 
