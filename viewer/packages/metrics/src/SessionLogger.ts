@@ -24,7 +24,7 @@ export class SessionLogger {
     }
 
     if (!this._canvasVisibility && isCanvasVisible) {
-      this._sessionStartTime = Date.now();
+      this.resetSessionState();
     }
 
     this._canvasVisibility = isCanvasVisible;
@@ -49,6 +49,12 @@ export class SessionLogger {
     this.trackSessionEnded();
 
     this._isDisposed = true;
+  }
+
+  private resetSessionState() {
+    this._sessionStartTime = Date.now();
+    this._averageFpsPerMovementSum = 0;
+    this._movementsCount = 0;
   }
 
   private countCurrentCameraMovement(movementFps: number) {
@@ -82,8 +88,9 @@ export class SessionLogger {
   }
 
   private calculateAverageSessionFps(): number | undefined {
-    const fps = this._averageFpsPerMovementSum / this._movementsCount;
-    return Number.isFinite(fps) ? fps : undefined;
+    if (this._movementsCount === 0) return undefined;
+
+    return this._averageFpsPerMovementSum / this._movementsCount;
   }
 
   private trackSessionEnded(): void {
@@ -109,7 +116,7 @@ export class SessionLogger {
     }
 
     if (document.visibilityState === 'visible') {
-      this._sessionStartTime = Date.now();
+      this.resetSessionState();
     }
   };
 }
