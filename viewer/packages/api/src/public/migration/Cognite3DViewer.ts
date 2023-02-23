@@ -25,7 +25,7 @@ import {
   BeforeSceneRenderedDelegate
 } from '@reveal/utilities';
 
-import { MetricsLogger } from '@reveal/metrics';
+import { SessionLogger, MetricsLogger } from '@reveal/metrics';
 import { PickingHandler, CadModelSectorLoadStatistics, CogniteCadModel } from '@reveal/cad-model';
 import {
   PointCloudIntersection,
@@ -139,7 +139,9 @@ export class Cognite3DViewer {
   private isDisposed = false;
 
   private latestRequestId: number = -1;
-  private readonly clock = new THREE.Clock();
+  private readonly sessionLogger: SessionLogger;
+
+  private readonly cameraManagerClock = new THREE.Clock();
   private _clippingNeedsUpdate: boolean = false;
 
   private readonly spinner: Spinner;
@@ -231,6 +233,8 @@ export class Cognite3DViewer {
     this._domElement.tabIndex = 0;
     this._domElement.appendChild(this.canvas);
     this._domElementResizeObserver = this.setupDomElementResizeListener(this._domElement);
+
+    this.sessionLogger = new SessionLogger();
 
     this.spinner = new Spinner(this.domElement);
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
@@ -407,6 +411,7 @@ export class Cognite3DViewer {
     }
 
     this.spinner.dispose();
+    this.sessionLogger.dispose();
 
     this._models.forEach(m => m.dispose());
     this._sceneHandler.dispose();
@@ -1328,14 +1333,23 @@ export class Cognite3DViewer {
     const { display, visibility } = window.getComputedStyle(this.canvas);
     const isVisible = visibility === 'visible' && display !== 'none';
 
+    this.sessionLogger.updateCanvasVisibility(isVisible);
+
     if (isVisible) {
       const camera = this.cameraManager.getCamera();
       TWEEN.update(time);
       this.recalculateBoundingBox();
-      this._activeCameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
+      this._activeCameraManager.update(
+        this.cameraManagerClock.getDelta(),
+        this._updateNearAndFarPlaneBuffers.combinedBbox
+      );
       this.revealManager.update(camera);
 
-      if (this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
+      const needsRedraw = this.revealManager.needsRedraw || this._clippingNeedsUpdate;
+
+      this.sessionLogger.tickCurrentAnimationFrame(needsRedraw);
+
+      if (needsRedraw) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
 
