@@ -28,7 +28,17 @@ export class Image360CollectionIcons {
   ) {
     const sharedTexture = this.createOuterRingsTexture();
     this._onRenderTrigger = new EventTrigger();
-    const iconsSprites = new InstancedIconSprite(points, sharedTexture, this.MIN_PIXEL_SIZE, this.MAX_PIXEL_SIZE);
+    const iconsSprites = new InstancedIconSprite(
+      points.length,
+      sharedTexture,
+      this.MIN_PIXEL_SIZE,
+      this.MAX_PIXEL_SIZE
+    );
+    iconsSprites.setPoints(points);
+    onBeforeSceneRendered.subscribe(() => {
+      const numPoints = Math.round(Math.random() * (points.length - 1)) + 1;
+      iconsSprites.setPoints(points.filter((_, index) => index < numPoints));
+    });
 
     this._hoverIconTexture = this.createHoverIconTexture();
     this._sharedTexture = sharedTexture;

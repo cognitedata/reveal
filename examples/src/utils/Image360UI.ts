@@ -30,7 +30,7 @@ export class Image360UI {
     };
 
     const params = {
-      siteId: '',
+      siteId: 'Hibernia_RS2',
       add: add360ImageSet,
       premultipliedRotation: false,
       remove: removeAll360Images

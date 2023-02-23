@@ -4,6 +4,7 @@
 
 import glsl from 'glslify';
 import {
+  BufferAttribute,
   BufferGeometry,
   Color,
   DepthModes,
@@ -26,10 +27,16 @@ export class InstancedIconSprite extends Group {
   private readonly _geometry: BufferGeometry;
   private readonly _frontMaterial: RawShaderMaterial;
   private readonly _backMaterial: RawShaderMaterial;
-  constructor(points: Vector3[], spriteTexture: Texture, minPixelSize: number, maxPixelSize: number) {
+  private readonly _positionBuffer: Float32Array;
+  private readonly _positionAttribute: BufferAttribute;
+  constructor(maxNumberOfPoints: number, spriteTexture: Texture, minPixelSize: number, maxPixelSize: number) {
     super();
     const geometry = new BufferGeometry();
-    geometry.setFromPoints(points);
+    this._positionBuffer = new Float32Array(maxNumberOfPoints * 3);
+    this._positionAttribute = new BufferAttribute(this._positionBuffer, 3);
+    geometry.setAttribute('position', this._positionAttribute);
+    geometry.setDrawRange(0, 0);
+
     const frontMaterial = this.createIconsMaterial(spriteTexture, 1, LessEqualDepth, minPixelSize, maxPixelSize);
     const backMaterial = this.createIconsMaterial(spriteTexture, 0.5, GreaterDepth, minPixelSize, maxPixelSize);
     const [frontPoints, backPoints] = this.initializePoints(geometry, frontMaterial, backMaterial);
@@ -39,6 +46,17 @@ export class InstancedIconSprite extends Group {
     this._geometry = geometry;
     this._frontMaterial = frontMaterial;
     this._backMaterial = backMaterial;
+  }
+
+  public setPoints(points: Vector3[]): void {
+    points.forEach((point, index) => {
+      this._positionBuffer[index * 3 + 0] = point.x;
+      this._positionBuffer[index * 3 + 1] = point.y;
+      this._positionBuffer[index * 3 + 2] = point.z;
+    });
+    this._positionAttribute.updateRange = { offset: 0, count: points.length * 3 };
+    this._positionAttribute.needsUpdate = true;
+    this._geometry.setDrawRange(0, points.length);
   }
 
   public dispose(): void {
