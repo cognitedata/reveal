@@ -46,6 +46,8 @@ export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUplo
 export { incrementOrInsertIndex, decrementOrDeleteIndex } from './src/counterMap';
 export { calculateVolumeOfMesh } from './src/calculateVolumeOfMesh';
 
+export { getApproximateProjectedBounds, getScreenArea } from './src/projectedBounds';
+
 export {
   worldToNormalizedViewportCoordinates,
   worldToViewportCoordinates,
