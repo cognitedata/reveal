@@ -37,6 +37,7 @@ export default function Cognite3DViewerDemo({
 
     viewer.addModel({ modelId, revisionId }).then((model) => {
       viewer.loadCameraFromModel(model);
+      (window as any).model = model;
     });
 
     (window as any).viewer = viewer;
@@ -44,6 +45,7 @@ export default function Cognite3DViewerDemo({
     return () => {
       viewer.dispose();
       (window as any).viewer = null;
+      (window as any).model = null;
     };
   }, [client]);
 
