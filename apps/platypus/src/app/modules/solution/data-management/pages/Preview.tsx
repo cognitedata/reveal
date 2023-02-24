@@ -12,9 +12,13 @@ import {
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { useEffect, useRef } from 'react';
-import { useLocation, Navigate, useSearchParams } from 'react-router-dom';
+import {
+  useLocation,
+  Navigate,
+  useSearchParams,
+  useParams,
+} from 'react-router-dom';
 import {
   DataPreviewTable,
   DataPreviewTableRef,
@@ -38,12 +42,9 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
   const location = useLocation();
   const queryClient = useQueryClient();
   const dataPreviewTableRef = useRef<DataPreviewTableRef>(null);
+  const { version } = useParams() as { version: string };
   const [, setSearchParams] = useSearchParams();
   const newQueryParameters: URLSearchParams = new URLSearchParams();
-
-  const { selectedVersionNumber } = useSelector<DataModelState>(
-    (state) => state.dataModel
-  );
 
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
@@ -52,14 +53,14 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
     space
   );
   const selectedDataModelVersion = useSelectedDataModelVersion(
-    selectedVersionNumber,
+    version,
     dataModelVersions || [],
     dataModelExternalId,
     space
   );
   const dataModelTypeDefs = useDataModelTypeDefs(
     dataModelExternalId,
-    selectedVersionNumber,
+    version,
     space
   );
   const selectedTypeNameFromQuery = getQueryParameter('type');
@@ -94,7 +95,7 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
     if (!typeFromQuery && dataModelTypeDefs.types.length > 0) {
       const firstAvailableType = dataModelTypeDefs.types[0];
       navigate(
-        `/${dataModel?.space}/${dataModelExternalId}/${selectedDataModelVersion.version}/data/data-management/preview?type=${firstAvailableType.name}`
+        `/${dataModel?.space}/${dataModelExternalId}/${selectedDataModelVersion.version}/data-management/preview?type=${firstAvailableType.name}`
       );
     }
   }

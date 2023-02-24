@@ -63,7 +63,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
     useSelector<DataModelState>((state) => state.dataModel);
 
   const isUIDisabled = editorMode === SchemaEditorMode.View || isPublishing;
-  const { setGraphQlSchema } = useDataModelState();
+  const { updateGraphQlSchema } = useDataModelState();
 
   return (
     <div
@@ -104,7 +104,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             typeDefs={typeDefs}
             code={graphQlSchema}
             disabled={isUIDisabled}
-            onChange={setGraphQlSchema}
+            onChange={updateGraphQlSchema}
             errorsByGroup={errorsByGroup}
           />
         </Suspense>

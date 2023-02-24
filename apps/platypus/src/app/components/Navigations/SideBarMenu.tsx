@@ -29,7 +29,7 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
   const baseNavigationRoute = `/${space}/${dataModelExternalId}/${version}`;
 
   const getNextRoute = (slug: string) => {
-    return `${baseNavigationRoute}/data/${slug}`;
+    return `${baseNavigationRoute}/${slug}`;
   };
 
   const onRoute = (slug: string) => {

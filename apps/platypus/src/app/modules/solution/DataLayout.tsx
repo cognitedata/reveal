@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 
-import { Outlet, Route, Routes, useParams } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes, useParams } from 'react-router-dom';
 
 import { PageLayout } from '@platypus-app/components/Layouts/PageLayout';
 import {
@@ -73,51 +73,27 @@ export const DataLayout = () => {
           </StyledPageWrapper>
         }
       >
+        <Route index element={<DataModelPage />} />
         <Route
-          index
+          path="data-management/:subSolutionPage"
           element={
-            <DataModelPage
+            <DataManagementPage
               dataModelExternalId={dataModelExternalId}
               space={space}
             />
           }
         />
         <Route
-          path="/data"
+          path="query-explorer"
           element={
-            <>
-              <Outlet />
-            </>
+            <QueryExplorerPage
+              dataModelExternalId={dataModelExternalId}
+              space={space}
+            />
           }
-        >
-          <Route
-            index
-            element={
-              <DataModelPage
-                dataModelExternalId={dataModelExternalId}
-                space={space}
-              />
-            }
-          />
-          <Route
-            path="data-management/:subSolutionPage"
-            element={
-              <DataManagementPage
-                dataModelExternalId={dataModelExternalId}
-                space={space}
-              />
-            }
-          />
-          <Route
-            path="query-explorer"
-            element={
-              <QueryExplorerPage
-                dataModelExternalId={dataModelExternalId}
-                space={space}
-              />
-            }
-          />
-        </Route>
+        />
+        {/* default redirect to parent route if user lands on unknown route */}
+        <Route path="*" element={<Navigate to="" replace />} />
       </Route>
     </Routes>
   );

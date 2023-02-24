@@ -10,14 +10,12 @@ import {
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
 import useSelector from '@platypus-app/hooks/useSelector';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { DataModelVersion } from '@platypus/platypus-core';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
 import { Flex } from '@cognite/cogs.js';
 import { DOCS_LINKS } from '@platypus-app/constants';
 import { useDraftRows } from './hooks/useDraftRows';
-import { useDataModelState } from '../hooks/useDataModelState';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';
@@ -39,9 +37,10 @@ export const DataManagementPage = ({
 }: DataManagementPageProps) => {
   const { t } = useTranslation('SolutionDataPreview');
 
-  const { subSolutionPage } = useParams<{
+  const { subSolutionPage, version } = useParams() as {
     subSolutionPage: string;
-  }>();
+    version: string;
+  };
 
   const initialPage: TabType = (subSolutionPage as TabType) || 'preview';
   const [tab] = useState<TabType>(initialPage);
@@ -53,20 +52,14 @@ export const DataManagementPage = ({
 
   const navigate = useNavigate();
 
-  const { selectedVersionNumber } = useSelector<DataModelState>(
-    (state) => state.dataModel
-  );
-
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
-    selectedVersionNumber,
+    version,
     dataModelVersions || [],
     dataModelExternalId,
     dataModel?.space || ''
   );
-
-  const { setSelectedVersionNumber } = useDataModelState();
 
   const selectedTypeName = useSelector<string>(
     (state) => state.dataManagement.selectedType?.name || ''
@@ -76,9 +69,8 @@ export const DataManagementPage = ({
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     navigate(
-      `/${dataModelVersion.space}/${dataModelExternalId}/${dataModelVersion.version}/data/data-management/preview?type=${selectedTypeName}`
+      `/${dataModelVersion.space}/${dataModelExternalId}/${dataModelVersion.version}/data-management/preview?type=${selectedTypeName}`
     );
-    setSelectedVersionNumber(dataModelVersion.version);
     clearState();
   };
 

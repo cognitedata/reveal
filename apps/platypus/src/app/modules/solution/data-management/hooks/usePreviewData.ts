@@ -9,14 +9,13 @@ import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
 import { KeyValueMap } from '@cognite/cog-data-grid';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import {
   useDataModel,
   useDataModelTypeDefs,
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
+import { useParams } from 'react-router-dom';
 
 export const usePreviewData = (
   params: {
@@ -41,13 +40,11 @@ export const usePreviewData = (
     limitFields,
     space,
   } = params;
+  const { version } = useParams() as { version: string };
 
-  const { selectedVersionNumber } = useSelector<DataModelState>(
-    (state) => state.dataModel
-  );
   const dataModelTypeDefs = useDataModelTypeDefs(
     dataModelExternalId,
-    selectedVersionNumber,
+    version,
     space
   );
 
@@ -58,7 +55,7 @@ export const usePreviewData = (
   );
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
-    selectedVersionNumber,
+    version,
     dataModelVersions || [],
     dataModelExternalId,
     dataModel?.space || ''

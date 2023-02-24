@@ -9,7 +9,6 @@ import { Button, Flex, Chip, Tooltip } from '@cognite/cogs.js';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
 import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
@@ -57,16 +56,15 @@ export const DataModelHeader = ({
 
   const { track } = useMixpanel();
 
-  const { editorMode, graphQlSchema, isDirty, typeFieldErrors } =
-    useSelector<DataModelState>((state) => state.dataModel);
+  const { editorMode, graphQlSchema, isDirty } = useSelector<DataModelState>(
+    (state) => state.dataModel
+  );
   const {
-    parseGraphQLSchema,
     setCurrentTypeName,
     setEditorMode,
-    setGraphQlSchema,
+    updateGraphQlSchema,
     setIsDirty,
     setSelectedDataModelVersion,
-    setSelectedVersionNumber,
     switchDataModelVersion,
   } = useDataModelState();
 
@@ -85,7 +83,7 @@ export const DataModelHeader = ({
     }
   };
 
-  const isDraftSaved = isDirty && Object.keys(typeFieldErrors).length === 0;
+  const isDraftSaved = isDirty;
   const isDraftOld =
     !!localDraft &&
     parseInt(latestDataModelVersion.version, 10) >
@@ -93,7 +91,7 @@ export const DataModelHeader = ({
 
   const handleEditClick = () => {
     if (localDraft) {
-      setGraphQlSchema(localDraft.schema);
+      updateGraphQlSchema(localDraft.schema);
     } else {
       setLocalDraft({
         ...selectedDataModelVersion,
@@ -114,7 +112,6 @@ export const DataModelHeader = ({
     }
     setIsDirty(false);
     setCurrentTypeName(null);
-    setSelectedVersionNumber(DEFAULT_VERSION_PATH);
     setSelectedDataModelVersion(latestDataModelVersion);
 
     track('Discard', {
@@ -130,7 +127,6 @@ export const DataModelHeader = ({
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     switchDataModelVersion(dataModelVersion);
-    parseGraphQLSchema(dataModelVersion.schema);
     track('SelectDM', {
       dataModel: dataModelExternalId,
       version: dataModelVersion.version,
@@ -185,8 +181,7 @@ export const DataModelHeader = ({
             disabled={
               !isDirty ||
               !graphQlSchema ||
-              selectedDataModelVersion.schema === graphQlSchema ||
-              Object.keys(typeFieldErrors).length !== 0
+              selectedDataModelVersion.schema === graphQlSchema
             }
             style={{ marginRight: '8px' }}
           >

@@ -14,9 +14,8 @@ import {
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import useSelector from '@platypus-app/hooks/useSelector';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { useParams } from 'react-router-dom';
 
 export const usePublishedRowsCountMapByType = ({
   dataModelExternalId,
@@ -27,9 +26,7 @@ export const usePublishedRowsCountMapByType = ({
   dataModelTypes: DataModelTypeDefsType[];
   space: string;
 }) => {
-  const { selectedVersionNumber } = useSelector<DataModelState>(
-    (state) => state.dataModel
-  );
+  const { version } = useParams() as { version: string };
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const { data: dataModelVersions } = useDataModelVersions(
@@ -37,7 +34,7 @@ export const usePublishedRowsCountMapByType = ({
     space
   );
   const selectedDataModelVersion = useSelectedDataModelVersion(
-    selectedVersionNumber,
+    version,
     dataModelVersions || [],
     dataModelExternalId,
     dataModel?.space || ''

@@ -18,6 +18,7 @@ import {
   PlatypusValidationError,
   ValidationError,
   PlatypusDmlError,
+  DataModelVersionStatus,
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
@@ -54,13 +55,9 @@ import {
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 import { getKeyForDataModel } from '@platypus-app/utils/local-storage-utils';
 import { ErrorsByGroup } from '../components/GraphqlCodeEditor/Model';
+import { useParams } from 'react-router-dom';
 
 const MAX_TYPES_VISUALIZABLE = 30;
-
-export interface DataModelPageProps {
-  dataModelExternalId: string;
-  space: string;
-}
 
 const formatDmlError = (error: PlatypusDmlError) => {
   return (
@@ -92,11 +89,13 @@ const formatDmlError = (error: PlatypusDmlError) => {
   );
 };
 
-export const DataModelPage = ({
-  dataModelExternalId,
-  space,
-}: DataModelPageProps) => {
+export const DataModelPage = () => {
   const navigate = useNavigate();
+  const { dataModelExternalId, space, version } = useParams() as {
+    dataModelExternalId: string;
+    space: string;
+    version: string;
+  };
 
   const { t } = useTranslation('SolutionDataModel');
 
@@ -105,39 +104,35 @@ export const DataModelPage = ({
   const { data: dataModelVersions, refetch: refetchDataModelVersions } =
     useDataModelVersions(dataModelExternalId, space);
   const queryClient = useQueryClient();
+  const { currentTypeName, editorMode, graphQlSchema, typeDefs } =
+    useSelector<DataModelState>((state) => state.dataModel);
   const {
-    currentTypeName,
-    editorMode,
-    graphQlSchema,
-    selectedVersionNumber,
-    typeDefs,
-  } = useSelector<DataModelState>((state) => state.dataModel);
-  const {
+    dataModelPublished,
     setEditorMode,
-    setGraphQlSchema,
-    setIsDirty,
-    parseGraphQLSchema,
+    updateGraphQlSchema,
     setCurrentTypeName,
+    switchDataModelVersion,
   } = useDataModelState();
   const { data: dataModel } = useDataModel(dataModelExternalId, space);
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
-    selectedVersionNumber,
+    version,
     dataModelVersions || [],
     dataModelExternalId,
-    dataModel?.space || ''
+    space
   );
   const latestDataModelVersion = useSelectedDataModelVersion(
     DEFAULT_VERSION_PATH,
     dataModelVersions || [],
     dataModelExternalId,
-    dataModel?.space || ''
+    space
   );
   const { removeLocalDraft, getLocalDraft } = useLocalDraft(
     dataModelExternalId,
-    dataModel?.space || '',
+    space,
     latestDataModelVersion
   );
+
   const localDraft = getLocalDraft(selectedDataModelVersion.version);
   const [saving, setSaving] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -167,7 +162,7 @@ export const DataModelPage = ({
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     dataModelTypeDefsBuilder.clear();
     navigate(
-      `/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}/data`,
+      `/${dataModel?.space}/${dataModelExternalId}/${dataModelVersion.version}`,
       { replace: true }
     );
   };
@@ -181,14 +176,9 @@ export const DataModelPage = ({
     )
   );
 
-  // Use this hook as init livecycle
+  // Use this effect as init lifecycle
   useEffect(() => {
-    if (localDraft) {
-      setGraphQlSchema(localDraft.schema);
-      parseGraphQLSchema(localDraft.schema);
-      setEditorMode(SchemaEditorMode.Edit);
-      setIsDirty(true);
-    }
+    switchDataModelVersion(localDraft || selectedDataModelVersion);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -263,8 +253,10 @@ export const DataModelPage = ({
     try {
       // Clear old errors
       setErrorsByGroup({ DmlError: [] });
-      const version = selectedDataModelVersion?.version;
-      const draftVersion = version;
+
+      // need to get draftVersion from selected data model;
+      // if we get it from the url params then it might be "latest"
+      const draftVersion = selectedDataModelVersion.version;
       let result: Result<DataModelVersion>;
       const publishNewVersion =
         breakingChanges ||
@@ -334,7 +326,7 @@ export const DataModelPage = ({
           dataModel: dataModelExternalId,
         });
         removeLocalDraft(draftVersion);
-        setIsDirty(false);
+        dataModelPublished();
 
         if (publishNewVersion) {
           // add new version to react-query cache and then refetch
@@ -347,7 +339,7 @@ export const DataModelPage = ({
 
           refetchDataModelVersions();
           navigate(
-            `/${dataModel?.space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}/data`,
+            `/${dataModel?.space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}`,
             { replace: true }
           );
         } else {
@@ -382,9 +374,6 @@ export const DataModelPage = ({
               : t('updated', 'updated')
           }.`,
         });
-        // Must be located here for fetching versions correctly and updating schema version selector.
-        //
-        setEditorMode(SchemaEditorMode.View);
       }
     } catch (error) {
       Notification({
@@ -405,7 +394,7 @@ export const DataModelPage = ({
 
   const handleDiscardClick = () => {
     dataModelTypeDefsBuilder.clear();
-    setGraphQlSchema(latestDataModelVersion.schema);
+    updateGraphQlSchema(latestDataModelVersion.schema);
   };
 
   return (

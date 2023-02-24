@@ -1,6 +1,6 @@
 export enum SchemaEditorMode {
-  View,
-  Edit,
+  View = 'VIEW',
+  Edit = 'EDIT',
 }
 
 export type TypeFieldValues = {

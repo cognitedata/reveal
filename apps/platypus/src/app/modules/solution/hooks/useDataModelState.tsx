@@ -1,5 +1,5 @@
 import { actions as solutionActions } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { BuiltInType, DataModelVersion } from '@platypus/platypus-core';
+import { DataModelVersion } from '@platypus/platypus-core';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { SchemaEditorMode } from '../data-model/types';
@@ -14,16 +14,7 @@ export const useDataModelState = () => {
     [dispatch]
   );
 
-  const setDataModelFieldErrors = useCallback(
-    (fieldName: string, message: string) => {
-      dispatch(
-        solutionActions.setTypeFieldErrors({ fieldName, error: message })
-      );
-    },
-    [dispatch]
-  );
-
-  const setGraphQlSchema = useCallback(
+  const updateGraphQlSchema = useCallback(
     (graphQlSchema: string) => {
       dispatch(solutionActions.setGraphQlSchema(graphQlSchema));
       dispatch(solutionActions.parseGraphQlSchema(graphQlSchema));
@@ -41,13 +32,6 @@ export const useDataModelState = () => {
   const setEditorMode = useCallback(
     (editorMode: SchemaEditorMode) => {
       dispatch(solutionActions.setEditorMode(editorMode));
-    },
-    [dispatch]
-  );
-
-  const setSelectedVersionNumber = useCallback(
-    (versionNumber: string) => {
-      dispatch(solutionActions.setSelectedVersionNumber(versionNumber));
     },
     [dispatch]
   );
@@ -75,16 +59,20 @@ export const useDataModelState = () => {
     [dispatch]
   );
 
+  const dataModelPublished = useCallback(
+    () => dispatch(solutionActions.dataModelPublished()),
+    [dispatch]
+  );
+
   return {
     setCurrentTypeName,
-    setDataModelFieldErrors,
     setEditorMode,
-    setGraphQlSchema,
+    updateGraphQlSchema,
     setIsDirty,
-    setSelectedVersionNumber,
     setSelectedDataModelVersion,
     clearState,
     parseGraphQLSchema,
     switchDataModelVersion,
+    dataModelPublished,
   };
 };
