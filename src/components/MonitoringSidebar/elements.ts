@@ -8,6 +8,8 @@ import {
   Label,
   Select,
 } from '@cognite/cogs.js';
+import { Input as AntdInput } from 'antd';
+
 import { SourceSelect } from 'components/Common/SidebarElements';
 
 export const SidebarChip = styled(Label)`
@@ -58,6 +60,37 @@ export const FormTitle = styled.h2`
     font-size: 18px;
     font-weight: 600;
     margin-top: 1em;
+  }
+`;
+
+export const FormInputNumber = styled(AntdInput)`
+  &&& {
+    margin-bottom: 1em;
+    border-radius: var(--cogs-border-radius--default);
+    color: var(--cogs-greyscale-grey10);
+    font-size: var(--cogs-font-size-sm);
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    --cogs-input-default-height: 36px;
+    --cogs-title-as-placeholder-height: 40px;
+    --cogs-title-as-placeholder-side-padding: 12px;
+    --cogs-title-as-placeholder-with-icon-side-padding: 34px;
+    --cogs-input-side-padding: 12px;
+    --cogs-input-with-icon-side-padding: 38px;
+    height: var(--cogs-input-default-height);
+    box-sizing: border-box;
+    padding: 0 var(--cogs-input-side-padding);
+    border: var(--cogs-input-border);
+    --cogs-input-default-border-color: var(--cogs-greyscale-grey4);
+    outline: none;
+    &&&.ant-input-affix-wrapper-focused {
+      box-shadow: none !important;
+      border-color: var(--cogs-midblue-4);
+      background: var(--cogs-white);
+      outline: 0;
+      box-shadow: var(--cogs-input-bordered-shadow);
+    }
   }
 `;
 

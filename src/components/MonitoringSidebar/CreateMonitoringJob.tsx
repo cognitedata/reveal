@@ -177,7 +177,7 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
         modelExternalId: alertThresholdType?.value,
         activationInterval,
         nonce: createdNonce,
-        threshold: alertThreshold,
+        threshold: +alertThreshold,
         timeSeriesExternalId: source?.value,
         userEmail: notificationEmail,
         subscriptionExternalId: uuidv4(),

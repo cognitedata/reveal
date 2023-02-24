@@ -1,7 +1,12 @@
 import { Checkbox } from '@cognite/cogs.js';
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { FormInput, FormSelect, FormSelectColor } from './elements';
+import {
+  FormInput,
+  FormInputNumber,
+  FormSelect,
+  FormSelectColor,
+} from './elements';
 
 const FormInputWithController = ({
   control,
@@ -14,6 +19,7 @@ const FormInputWithController = ({
   validate,
   deps,
   max,
+  suffix,
 }: any) => (
   <Controller
     control={control}
@@ -27,10 +33,20 @@ const FormInputWithController = ({
     render={({ field: { onChange, onBlur, value, ref } }) => {
       return (
         <>
-          {(type === 'number' || type === 'text') && (
-            <FormInput
-              max={max}
+          {type === 'number' && (
+            <FormInputNumber
+              onChange={onChange}
+              onBlur={onBlur}
+              suffix={suffix}
               type={type}
+              max={max}
+              ref={ref}
+              value={value}
+              placeholder={placeholder}
+            />
+          )}
+          {type === 'text' && (
+            <FormInput
               ref={ref}
               fullWidth
               onBlur={onBlur} // notify when input is touched

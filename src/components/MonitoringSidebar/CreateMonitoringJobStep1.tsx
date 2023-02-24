@@ -148,8 +148,9 @@ const CreateMonitoringJobStep1 = ({
 
       <FieldTitleRequired>{t['Minimum duration']} </FieldTitleRequired>
       <Row>
-        <Col span={13}>
+        <Col span={24}>
           <FormInputWithController
+            suffix="minutes"
             control={control}
             type="number"
             max={59}
@@ -163,21 +164,6 @@ const CreateMonitoringJobStep1 = ({
                   ? 'Minimum duration must be less than 60'
                   : true,
             }}
-          />
-        </Col>
-        <Col span={1}>&nbsp;</Col>
-        <Col span={10}>
-          <FormInputWithController
-            control={control}
-            type="select"
-            name="minimumDurationType"
-            required={t['Minimum duration is required']}
-            options={[
-              {
-                label: 'minutes',
-                value: 'm',
-              },
-            ]}
           />
         </Col>
         <FieldHelperText>
