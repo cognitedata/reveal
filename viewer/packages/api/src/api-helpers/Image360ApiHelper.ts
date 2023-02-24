@@ -60,7 +60,7 @@ export class Image360ApiHelper {
     this._cachedCameraManager = activeCameraManager.innerCameraManager;
     this._requestRedraw = requestRedraw;
     this._preLoadObservable = new Subject();
-    this._preLoadObservable.pipe(debounceTime(250)).subscribe(entity => this._image360Facade.preload(entity));
+    this._preLoadObservable.pipe(debounceTime(150)).subscribe(entity => this._image360Facade.preload(entity));
 
     const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event);
     domElement.addEventListener('mousemove', setHoverIconEventHandler);
