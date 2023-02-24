@@ -16,6 +16,7 @@ import { Cdf360ImageEventProvider } from '@reveal/data-providers';
 import { InputHandler, pixelToNormalizedDeviceCoordinates, PointerEventData, SceneHandler } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
+import { debounceTime, Subject } from 'rxjs';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
@@ -37,6 +38,7 @@ export class Image360ApiHelper {
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
   private _cachedCameraManager: CameraManager;
+  private readonly _preLoadObservable: Subject<Image360Entity>;
 
   constructor(
     cogniteClient: CogniteClient,
@@ -57,6 +59,8 @@ export class Image360ApiHelper {
     this._activeCameraManager = activeCameraManager;
     this._cachedCameraManager = activeCameraManager.innerCameraManager;
     this._requestRedraw = requestRedraw;
+    this._preLoadObservable = new Subject();
+    this._preLoadObservable.pipe(debounceTime(250)).subscribe(entity => this._image360Facade.preload(entity));
 
     const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event);
     domElement.addEventListener('mousemove', setHoverIconEventHandler);
@@ -274,6 +278,7 @@ export class Image360ApiHelper {
     this._domElement.removeEventListener('mousemove', this._domEventHandlers.setHoverIconEventHandler);
     this._domElement.addEventListener('pointerup', this._domEventHandlers.enter360Image);
     this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
+    this._preLoadObservable.unsubscribe();
 
     if (this._activeCameraManager.innerCameraManager === this._image360Navigation) {
       this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
@@ -328,7 +333,7 @@ export class Image360ApiHelper {
 
     if (entity !== undefined) {
       entity.icon.hoverSpriteVisible = true;
-      this._image360Facade.preload(entity);
+      this._preLoadObservable.next(entity);
     }
 
     this._requestRedraw();
