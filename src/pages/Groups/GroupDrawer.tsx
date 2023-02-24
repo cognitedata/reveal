@@ -73,8 +73,6 @@ export default function GroupDrawer({ group, onClose }: Props) {
           capabilities: group?.capabilities,
           sourceId: group?.sourceId,
           // @ts-ignore
-          source: group?.source,
-          // @ts-ignore
           metadata: group?.metadata,
         }}
       >
@@ -136,18 +134,6 @@ export default function GroupDrawer({ group, onClose }: Props) {
           <Input
             disabled={isLoading}
             placeholder={t('source-id-placeholder')}
-          />
-        </Form.Item>
-        <Form.Item
-          hasFeedback={isLoading}
-          validateStatus="validating"
-          name="source"
-          label={t('source-name')}
-          extra={t('source-name-info')}
-        >
-          <Input
-            disabled={isLoading}
-            placeholder={t('source-name-placeholder')}
           />
         </Form.Item>
         <Form.Item>
