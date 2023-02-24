@@ -60,6 +60,8 @@ export class Image360UI {
 
     gui.add(params, 'remove').name('Remove all 360 images');
 
+    add360ImageSet();
+
     async function add360ImageSet() {
       const rotationMatrix = new THREE.Matrix4().makeRotationAxis(
         new THREE.Vector3(rotation.x, rotation.y, rotation.z),

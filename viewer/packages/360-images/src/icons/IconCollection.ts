@@ -2,10 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Camera, CanvasTexture, Texture, Vector3, WebGLRenderer } from 'three';
+import { Camera, CanvasTexture, Matrix4, Texture, Vector3, WebGLRenderer } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
+import { IconOctree } from './IconOctree';
+import { OctreeHelper } from 'sparse-octree';
 
 export class Image360CollectionIcons {
   private readonly MIN_PIXEL_SIZE = 16;
@@ -35,19 +37,40 @@ export class Image360CollectionIcons {
       this.MAX_PIXEL_SIZE
     );
     iconsSprites.setPoints(points);
-    onBeforeSceneRendered.subscribe(() => {
-      const numPoints = Math.round(Math.random() * (points.length - 1)) + 1;
-      iconsSprites.setPoints(points.filter((_, index) => index < numPoints));
-    });
 
     this._hoverIconTexture = this.createHoverIconTexture();
     this._sharedTexture = sharedTexture;
     this._icons = this.initializeImage360Icons(points, sceneHandler, onBeforeSceneRendered);
 
+    const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
+    const octree = new IconOctree(this._icons, octreeBounds, 4);
+
+    const clusterSprites = new InstancedIconSprite(
+      points.length,
+      this.createClusterTexture(),
+      this.MIN_PIXEL_SIZE * 8,
+      this.MAX_PIXEL_SIZE * 8
+    );
+    const projection = new Matrix4();
+    onBeforeSceneRendered.subscribe(({ camera }) => {
+      const a = octree.getLODByScreenArea(
+        0.1,
+        projection.copy(camera.projectionMatrix).multiply(camera.matrixWorldInverse)
+      );
+
+      const nodes = [...a];
+      const clusterPoints = nodes.filter(p => p.data === null).map(p => octree.getPointCenterOfNode(p)!);
+      clusterSprites.setPoints(clusterPoints);
+      const leafData = nodes.filter(p => p.data !== null).flatMap(p => p.data.data.map(q => q.position));
+      iconsSprites.setPoints(leafData);
+    });
+
+    sceneHandler.addCustomObject(new OctreeHelper(octree));
     this._sceneHandler = sceneHandler;
     this._iconsSprite = iconsSprites;
 
     sceneHandler.addCustomObject(iconsSprites);
+    sceneHandler.addCustomObject(clusterSprites);
   }
 
   private initializeImage360Icons(
@@ -72,6 +95,59 @@ export class Image360CollectionIcons {
     this._sceneHandler.removeCustomObject(this._iconsSprite);
     this._onRenderTrigger.unsubscribeAll();
     this._sharedTexture.dispose();
+  }
+
+  private createClusterTexture(): CanvasTexture {
+    const canvas = document.createElement('canvas');
+    const textureSize = this.MAX_PIXEL_SIZE * 10;
+    canvas.width = textureSize;
+    canvas.height = textureSize;
+
+    const halfTextureSize = textureSize / 2;
+
+    const context = canvas.getContext('2d')!;
+    drawClusterRings();
+    drawInnerCircle();
+    drawOuterCircle();
+
+    return new CanvasTexture(canvas);
+
+    function drawClusterRings() {
+      context.beginPath();
+      context.lineWidth = textureSize / 88;
+      context.strokeStyle = '#FFFFFF';
+      context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 36) / 44, 0, 2 * Math.PI);
+      context.stroke();
+
+      context.beginPath();
+      context.lineWidth = textureSize / 88;
+      context.strokeStyle = '#FFFFFF';
+      context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 40) / 44, 0, 2 * Math.PI);
+      context.stroke();
+
+      context.beginPath();
+      context.lineWidth = textureSize / 88;
+      context.strokeStyle = '#FFFFFF';
+      context.arc(halfTextureSize, halfTextureSize, halfTextureSize - context.lineWidth / 2, 0, 2 * Math.PI);
+      context.stroke();
+    }
+
+    function drawOuterCircle() {
+      context.beginPath();
+      context.lineWidth = textureSize / 22;
+      context.strokeStyle = '#FFFFFF';
+      context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 30) / 44, 0, 2 * Math.PI);
+      context.stroke();
+    }
+
+    function drawInnerCircle() {
+      context.beginPath();
+      context.lineWidth = textureSize / 11;
+      context.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+      context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 24) / 44, 0, 2 * Math.PI);
+      context.shadowColor = 'red';
+      context.stroke();
+    }
   }
 
   private createOuterRingsTexture(): CanvasTexture {
