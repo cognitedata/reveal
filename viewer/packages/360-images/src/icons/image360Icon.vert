@@ -3,10 +3,9 @@ uniform mat4 projectionMatrix;
 uniform vec2 renderSize;
 uniform float renderDownScale;
 uniform vec2 pixelSizeRange;
+uniform float radius;
 
 in vec3 position;
-
-const float radius = 0.5;
 
 //adopted from https://stackoverflow.com/questions/25780145/gl-pointsize-corresponding-to-world-space-size
 void main() {

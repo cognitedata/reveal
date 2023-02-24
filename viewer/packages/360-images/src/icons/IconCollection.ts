@@ -7,7 +7,6 @@ import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal
 import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
 import { IconOctree } from './IconOctree';
-import { OctreeHelper } from 'sparse-octree';
 
 export class Image360CollectionIcons {
   private readonly MIN_PIXEL_SIZE = 16;
@@ -18,6 +17,7 @@ export class Image360CollectionIcons {
   private readonly _sharedTexture: Texture;
   private readonly _icons: Image360Icon[];
   private readonly _iconsSprite: InstancedIconSprite;
+  private readonly _clusterSprites: InstancedIconSprite;
 
   get icons(): Image360Icon[] {
     return this._icons;
@@ -34,7 +34,8 @@ export class Image360CollectionIcons {
       points.length,
       sharedTexture,
       this.MIN_PIXEL_SIZE,
-      this.MAX_PIXEL_SIZE
+      this.MAX_PIXEL_SIZE,
+      0.5
     );
     iconsSprites.setPoints(points);
 
@@ -48,26 +49,30 @@ export class Image360CollectionIcons {
     const clusterSprites = new InstancedIconSprite(
       points.length,
       this.createClusterTexture(),
-      this.MIN_PIXEL_SIZE * 8,
-      this.MAX_PIXEL_SIZE * 8
+      this.MIN_PIXEL_SIZE * 2,
+      this.MAX_PIXEL_SIZE,
+      2.0
     );
+
     const projection = new Matrix4();
     onBeforeSceneRendered.subscribe(({ camera }) => {
       const a = octree.getLODByScreenArea(
-        0.1,
+        0.005,
         projection.copy(camera.projectionMatrix).multiply(camera.matrixWorldInverse)
       );
 
       const nodes = [...a];
       const clusterPoints = nodes.filter(p => p.data === null).map(p => octree.getPointCenterOfNode(p)!);
       clusterSprites.setPoints(clusterPoints);
-      const leafData = nodes.filter(p => p.data !== null).flatMap(p => p.data.data.map(q => q.position));
-      iconsSprites.setPoints(leafData);
+      const leafData = nodes.filter(p => p.data !== null).flatMap(p => p.data.data);
+      this._icons.forEach(p => (p.visible = false));
+      leafData.forEach(p => (p.visible = true));
+      iconsSprites.setPoints(leafData.map(p => p.position));
     });
 
-    sceneHandler.addCustomObject(new OctreeHelper(octree));
     this._sceneHandler = sceneHandler;
     this._iconsSprite = iconsSprites;
+    this._clusterSprites = clusterSprites;
 
     sceneHandler.addCustomObject(iconsSprites);
     sceneHandler.addCustomObject(clusterSprites);
@@ -92,14 +97,17 @@ export class Image360CollectionIcons {
   }
 
   public dispose(): void {
+    this._sceneHandler.removeCustomObject(this._clusterSprites);
     this._sceneHandler.removeCustomObject(this._iconsSprite);
+    this._clusterSprites.dispose();
+    this._iconsSprite.dispose();
     this._onRenderTrigger.unsubscribeAll();
     this._sharedTexture.dispose();
   }
 
   private createClusterTexture(): CanvasTexture {
     const canvas = document.createElement('canvas');
-    const textureSize = this.MAX_PIXEL_SIZE * 10;
+    const textureSize = this.MAX_PIXEL_SIZE;
     canvas.width = textureSize;
     canvas.height = textureSize;
 
@@ -114,19 +122,13 @@ export class Image360CollectionIcons {
 
     function drawClusterRings() {
       context.beginPath();
-      context.lineWidth = textureSize / 88;
+      context.lineWidth = textureSize / 22;
       context.strokeStyle = '#FFFFFF';
       context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 36) / 44, 0, 2 * Math.PI);
       context.stroke();
 
       context.beginPath();
-      context.lineWidth = textureSize / 88;
-      context.strokeStyle = '#FFFFFF';
-      context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 40) / 44, 0, 2 * Math.PI);
-      context.stroke();
-
-      context.beginPath();
-      context.lineWidth = textureSize / 88;
+      context.lineWidth = textureSize / 22;
       context.strokeStyle = '#FFFFFF';
       context.arc(halfTextureSize, halfTextureSize, halfTextureSize - context.lineWidth / 2, 0, 2 * Math.PI);
       context.stroke();
