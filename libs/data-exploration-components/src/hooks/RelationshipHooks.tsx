@@ -179,6 +179,7 @@ export const useRelationships = (externalId?: string, type?: ResourceType) => {
     isFetching:
       sourceRelationships.isFetching || targetRelationships.isFetching,
     isFetched: sourceRelationships.isFetched && targetRelationships.isFetched,
+    isLoading: sourceRelationships.isLoading && targetRelationships.isLoading,
     isError: sourceRelationships.isError || targetRelationships.isError,
   };
 };
@@ -371,6 +372,7 @@ export const useTaggedAnnotationsByResourceType = (
   isFetched: boolean;
   isFetching: boolean;
   isError: boolean;
+  isLoading: boolean;
 } => {
   const { data: file = {} } = useCdfItem<{ externalId?: string }>(
     'files',
@@ -383,6 +385,7 @@ export const useTaggedAnnotationsByResourceType = (
     isFetching,
     isFetched,
     isError,
+    isLoading,
   } = useAnnotations(fileId);
 
   const annotations = useMemo(
@@ -419,6 +422,7 @@ export const useTaggedAnnotationsByResourceType = (
     isFetched,
     isFetching,
     isError,
+    isLoading,
   };
 };
 
@@ -479,17 +483,21 @@ export const useRelatedResourceCount = (
   const isFile = resource.type === 'file';
   const isAssetTab = tabType === 'asset';
 
-  const { data: linkedResourceCount, isFetched: isLinkedResourceFetched } =
-    useAggregate(
-      convertResourceType(tabType),
-      { assetSubtreeIds: [{ id: resource.id }] },
-      { enabled: isAsset && !!resource.id, staleTime: 60 * 1000 }
-    );
+  const {
+    data: linkedResourceCount,
+    isFetched: isLinkedResourceFetched,
+    isLoading: isLinkedResourceLoading,
+  } = useAggregate(
+    convertResourceType(tabType),
+    { assetSubtreeIds: [{ id: resource.id }] },
+    { enabled: isAsset && !!resource.id, staleTime: 60 * 1000 }
+  );
 
   const {
     data: relationships = [],
     hasMore,
     isFetched: isRelationshipFetched,
+    isLoading: isRelationshipLoading,
   } = useRelationships(resource.externalId, tabType);
 
   type Item = {
@@ -497,20 +505,33 @@ export const useRelatedResourceCount = (
     assetIds?: string[];
   };
 
-  const { data: item, isFetched: isResourceFetched } = useCdfItem<Item>(
+  const {
+    data: item,
+    isFetched: isResourceFetched,
+    isLoading: isResourceLoading,
+  } = useCdfItem<Item>(
     convertResourceType(resource.type),
     { id: resource.id },
     { enabled: isAssetTab }
   );
 
-  const { data: annotationCount, isFetched: isAnnotationFetched } =
-    useTaggedAnnotationCount(resource.id, tabType, isFile);
+  const {
+    data: annotationCount,
+    isFetched: isAnnotationFetched,
+    isLoading: isAnnotationLoading,
+  } = useTaggedAnnotationCount(resource.id, tabType, isFile);
 
   const isFetched =
     isLinkedResourceFetched &&
     isRelationshipFetched &&
     isResourceFetched &&
     isAnnotationFetched;
+
+  const isLoading =
+    isLinkedResourceLoading &&
+    isRelationshipLoading &&
+    isResourceLoading &&
+    isAnnotationLoading;
 
   let count = relationships.length;
 
@@ -542,6 +563,7 @@ export const useRelatedResourceCount = (
       : linkedResourceCount?.count,
     annotationCount,
     isFetched,
+    isLoading,
   };
 };
 
@@ -550,17 +572,33 @@ export const useRelatedResourceCounts = (
 ): {
   counts: { [key in ResourceType]?: string };
   hasMoreRelationships: { [key in ResourceType]?: boolean };
+  isLoading: { [key in ResourceType]?: boolean };
 } => {
-  const { count: asset, hasMoreRelationships: assetRelation } =
-    useRelatedResourceCount(resource, 'asset');
-  const { count: event, hasMoreRelationships: eventRelation } =
-    useRelatedResourceCount(resource, 'event');
-  const { count: file, hasMoreRelationships: fileRelation } =
-    useRelatedResourceCount(resource, 'file');
-  const { count: sequence, hasMoreRelationships: sequenceRelation } =
-    useRelatedResourceCount(resource, 'sequence');
-  const { count: timeSeries, hasMoreRelationships: timeSeriesRelation } =
-    useRelatedResourceCount(resource, 'timeSeries');
+  const {
+    count: asset,
+    hasMoreRelationships: assetRelation,
+    isLoading: isAssetCountLoading,
+  } = useRelatedResourceCount(resource, 'asset');
+  const {
+    count: event,
+    hasMoreRelationships: eventRelation,
+    isLoading: isEventCountLoading,
+  } = useRelatedResourceCount(resource, 'event');
+  const {
+    count: file,
+    hasMoreRelationships: fileRelation,
+    isLoading: isFileCountLoading,
+  } = useRelatedResourceCount(resource, 'file');
+  const {
+    count: sequence,
+    hasMoreRelationships: sequenceRelation,
+    isLoading: isSequenceCountLoading,
+  } = useRelatedResourceCount(resource, 'sequence');
+  const {
+    count: timeSeries,
+    hasMoreRelationships: timeSeriesRelation,
+    isLoading: isTimeseriesCountLoading,
+  } = useRelatedResourceCount(resource, 'timeSeries');
 
   return {
     counts: {
@@ -576,6 +614,13 @@ export const useRelatedResourceCounts = (
       file: fileRelation,
       sequence: sequenceRelation,
       timeSeries: timeSeriesRelation,
+    },
+    isLoading: {
+      asset: isAssetCountLoading,
+      event: isEventCountLoading,
+      file: isFileCountLoading,
+      sequence: isSequenceCountLoading,
+      timeSeries: isTimeseriesCountLoading,
     },
   };
 };

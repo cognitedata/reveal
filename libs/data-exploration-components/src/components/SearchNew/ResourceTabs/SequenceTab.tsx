@@ -1,8 +1,11 @@
-import React from 'react';
-import { Tabs } from '@cognite/cogs.js';
-import { useSequenceSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
+import { CounterTab } from './elements';
 
-import { getTabCountLabel } from '@data-exploration-components/utils';
+import { useSequenceSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
+import {
+  getChipRightPropsForResourceCounter,
+  getTabCountLabel,
+} from '../../../utils';
+
 import { ResourceTabProps } from './types';
 
 export const SequenceTab = ({
@@ -13,14 +16,17 @@ export const SequenceTab = ({
 }: ResourceTabProps) => {
   const {
     data: { count },
+    isLoading,
   } = useSequenceSearchAggregateQuery({
     filter,
     query,
   });
 
-  const chipRightProps = showCount
-    ? { chipRight: { label: getTabCountLabel(count), size: 'x-small' } }
-    : {};
+  const chipRightProps = getChipRightPropsForResourceCounter(
+    getTabCountLabel(count),
+    showCount,
+    isLoading
+  );
 
-  return <Tabs.Tab label="Sequence" {...chipRightProps} {...rest} />;
+  return <CounterTab label="Sequence" {...chipRightProps} {...rest} />;
 };

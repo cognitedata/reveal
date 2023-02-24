@@ -6,7 +6,7 @@ import {
   ResourceItem,
   getTitle,
 } from '@cognite/data-exploration';
-import { Colors, Tabs, TabProps } from '@cognite/cogs.js';
+import { Tabs, TabProps } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
 import { RelatedResources } from '@data-exploration-app/containers/ResourceDetails/RelatedResources/RelatedResources';
@@ -78,7 +78,7 @@ export const ResourceDetailsTabs = ({
   onTabChange,
   style = {},
 }: ResouceDetailsTabsProps) => {
-  const { counts, hasMoreRelationships } =
+  const { counts, hasMoreRelationships, isLoading } =
     useRelatedResourceCounts(parentResource);
 
   const filteredTabs = defaultRelationshipTabs.filter(

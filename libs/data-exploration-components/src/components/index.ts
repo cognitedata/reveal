@@ -29,7 +29,7 @@ export * from './CdfCount/CdfCount';
 export * from './DatePicker';
 export * from './LatestDatapoint/LatestDatapoint';
 export * from './ListItem/ListItem';
-export * from './Loader/Loader';
+export * from './Loader';
 export * from './ResultCount/ResultCount';
 export * from './Select/Select';
 export * from './Select/MultiSelect';

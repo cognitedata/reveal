@@ -58,7 +58,11 @@ export const useResultCount = ({
 
   filter = transformNewFilterToOldFilter(filter);
 
-  const { data: search, isFetched: searchDone } = useSearch(
+  const {
+    data: search,
+    isFetched: searchDone,
+    ...rest
+  } = useSearch(
     sdkType,
     query!,
     { limit: 1000, filter },
@@ -86,6 +90,7 @@ export const useResultCount = ({
   const result = {
     count: 0,
     label: label || getTitle(type, count !== 1).toLowerCase(),
+    ...rest,
   };
 
   if (type === 'threeD') {

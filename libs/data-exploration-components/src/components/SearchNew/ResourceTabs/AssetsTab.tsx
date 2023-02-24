@@ -1,7 +1,11 @@
-import { TabProps, Tabs } from '@cognite/cogs.js';
+import { TabProps } from '@cognite/cogs.js';
 
-import { getTabCountLabel } from '@data-exploration-components/utils';
+import {
+  getChipRightPropsForResourceCounter,
+  getTabCountLabel,
+} from '../../../utils';
 import { useAssetsSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
+import { CounterTab } from './elements';
 
 interface Props extends TabProps {
   query?: string;
@@ -17,14 +21,17 @@ export const AssetsTab = ({
 }: Props) => {
   const {
     data: { count },
+    isLoading,
   } = useAssetsSearchAggregateQuery({
     assetsFilters: filter,
     query,
   });
 
-  const chipRightProps = showCount
-    ? { chipRight: { label: getTabCountLabel(count), size: 'x-small' } }
-    : {};
+  const chipRightProps = getChipRightPropsForResourceCounter(
+    getTabCountLabel(count),
+    showCount,
+    isLoading
+  );
 
-  return <Tabs.Tab label="Assets" {...chipRightProps} {...rest} />;
+  return <CounterTab label="Assets" {...chipRightProps} {...rest} />;
 };

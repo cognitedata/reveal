@@ -32,6 +32,6 @@ export const useAssetsSearchAggregateQuery = (
       filter,
       advancedFilter,
     },
-    { ...options, keepPreviousData: true }
+    { ...options }
   );
 };

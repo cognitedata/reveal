@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Colors, Icon } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
+import { LoadingIcon } from './LoadingIcon';
 
 export const Loader = () => (
   <Wrapper>
-    <Icon type="Loader" />
+    <LoadingIcon />
   </Wrapper>
 );
 

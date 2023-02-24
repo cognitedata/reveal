@@ -1,9 +1,11 @@
-import React from 'react';
-import { Tabs } from '@cognite/cogs.js';
 import { useEventsAggregateCountQuery } from '@data-exploration-lib/domain-layer';
 
-import { getTabCountLabel } from '@data-exploration-components/utils';
 import { ResourceTabProps } from './types';
+import {
+  getChipRightPropsForResourceCounter,
+  getTabCountLabel,
+} from '../../../utils';
+import { CounterTab } from './elements';
 
 export const EventsTab = ({
   query,
@@ -11,19 +13,16 @@ export const EventsTab = ({
   showCount = false,
   ...rest
 }: ResourceTabProps) => {
-  const { data } = useEventsAggregateCountQuery(
+  const { data, isLoading } = useEventsAggregateCountQuery(
     { eventsFilters: filter, query },
     { keepPreviousData: true }
   );
 
-  const chipRightProps = showCount
-    ? {
-        chipRight: {
-          label: getTabCountLabel(data?.count || 0),
-          size: 'x-small',
-        },
-      }
-    : {};
+  const chipRightProps = getChipRightPropsForResourceCounter(
+    getTabCountLabel(data?.count || 0),
+    showCount,
+    isLoading
+  );
 
-  return <Tabs.Tab label="Events" {...chipRightProps} {...rest} />;
+  return <CounterTab label="Events" {...chipRightProps} {...rest} />;
 };

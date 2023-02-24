@@ -6,6 +6,7 @@ export * from './dateTime';
 export * from './events';
 export * from './files';
 export * from './filters';
+export * from './getChipRightPropsForResourceCounter';
 export * from './getMetadataValueByKey';
 export * from './getTimeseriesFilterUnit';
 export * from './id';

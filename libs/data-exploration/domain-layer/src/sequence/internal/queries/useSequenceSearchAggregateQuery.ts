@@ -34,7 +34,6 @@ export const useSequenceSearchAggregateQuery = (
     },
     {
       ...options,
-      keepPreviousData: true,
     }
   );
 };

@@ -1,6 +1,7 @@
-import { Tabs } from '@cognite/cogs.js';
-
-import { getTabCountLabel } from '@data-exploration-components/utils';
+import {
+  getChipRightPropsForResourceCounter,
+  getTabCountLabel,
+} from '../../../utils';
 
 import { ResourceTabProps } from './types';
 import {
@@ -8,6 +9,7 @@ import {
   MORE_THAN_MAX_RESULT_LIMIT,
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
 } from '@data-exploration-lib/domain-layer';
+import { CounterTab } from './elements';
 
 // This is FilesTab with counts when advanced filters are enabled!
 export const DocumentsTab = ({
@@ -16,17 +18,18 @@ export const DocumentsTab = ({
   showCount = false,
   ...rest
 }: ResourceTabProps) => {
-  const { data: filteredDocumentCount = 0 } = useDocumentFilteredAggregateCount(
-    { filters: filter, query }
-  );
+  const { data: filteredDocumentCount = 0, isLoading } =
+    useDocumentFilteredAggregateCount({ filters: filter, query });
 
   const count =
     filteredDocumentCount > DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT
       ? MORE_THAN_MAX_RESULT_LIMIT
       : filteredDocumentCount;
-  const chipRightProps = showCount
-    ? { chipRight: { label: getTabCountLabel(count), size: 'x-small' } }
-    : {};
+  const chipRightProps = getChipRightPropsForResourceCounter(
+    getTabCountLabel(count),
+    showCount,
+    isLoading
+  );
 
-  return <Tabs.Tab label="Files" {...chipRightProps} {...rest} />;
+  return <CounterTab label="Files" {...chipRightProps} {...rest} />;
 };
