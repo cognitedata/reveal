@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import { Tooltip } from '@cognite/cogs.js-old';
-import { Button } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';

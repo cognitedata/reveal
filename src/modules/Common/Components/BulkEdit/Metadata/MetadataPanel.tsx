@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Select, Tooltip } from '@cognite/cogs.js-old';
-import { Button, Body } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js-old';
+import { Button, Body, Tooltip } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';

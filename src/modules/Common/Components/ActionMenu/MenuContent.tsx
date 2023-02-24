@@ -1,6 +1,6 @@
 import React from 'react';
-import { Menu, Popconfirm, Tooltip } from '@cognite/cogs.js-old';
-import { Icon } from '@cognite/cogs.js';
+import { Menu, Popconfirm } from '@cognite/cogs.js-old';
+import { Icon, Tooltip } from '@cognite/cogs.js';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { SKIP_MENU_CLOSE_ID } from 'src/constants/ContextMenuConstants';

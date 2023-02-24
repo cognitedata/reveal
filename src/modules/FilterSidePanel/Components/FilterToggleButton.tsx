@@ -1,6 +1,5 @@
 import React from 'react';
-import { Tooltip } from '@cognite/cogs.js-old';
-import { Button } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export default function FilterToggleButton({

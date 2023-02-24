@@ -5,10 +5,9 @@ import {
   Dropdown,
   Menu,
   Popconfirm,
-  Tooltip,
   Colors,
 } from '@cognite/cogs.js-old';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 import { pushMetric } from 'src/utils/pushMetric';
 import { useFlag } from '@cognite/react-feature-flags';
 

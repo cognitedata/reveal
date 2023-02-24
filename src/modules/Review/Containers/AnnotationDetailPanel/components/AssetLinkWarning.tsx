@@ -1,7 +1,6 @@
 import React, { ReactElement, useEffect } from 'react';
 import { FileInfo } from '@cognite/sdk';
-import { Tooltip } from '@cognite/cogs.js-old';
-import { Icon } from '@cognite/cogs.js';
+import { Icon, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import useAssetLinkWarning, {
   AssetWarnTypes,
