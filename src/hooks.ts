@@ -49,8 +49,8 @@ export const usePermissions = (key: string, type?: string, scope?: any) => {
 const getUpdater =
   (sdk: CogniteClient, project: string) => async (g: Group) => {
     const projectData = await sdk.projects.retrieve(project);
-    // @ts-ignore sdk type not up to date wrt source
-    const { name, sourceId, source, capabilities, id, metadata } = g;
+    // @ts-ignore sdk type not up to date wrt metadata
+    const { name, sourceId, capabilities, id, metadata } = g;
     const defaultGroup = projectData?.defaultGroupId === id;
     let groupAccountIds: number[];
     try {
@@ -62,8 +62,8 @@ const getUpdater =
     }
 
     const [newGroup] = await sdk.groups.create([
-      // @ts-ignore
-      { name, sourceId, source, capabilities, metadata },
+      // @ts-ignore sdk type not up to date wrt metadata
+      { name, sourceId, capabilities, metadata },
     ]);
 
     if (groupAccountIds.length > 0) {
