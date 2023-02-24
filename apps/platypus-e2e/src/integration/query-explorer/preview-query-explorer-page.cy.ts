@@ -3,7 +3,7 @@ import { getUrl } from '../../utils/url';
 describe('Platypus Query Explorer Page - Preview', () => {
   beforeEach(() => {
     cy.request('http://localhost:4200/reset');
-    cy.visit(getUrl('/blog/blog/latest/data/query-explorer'));
+    cy.visit(getUrl('/blog/blog/latest/query-explorer'));
   });
 
   it('should be able to query', () => {

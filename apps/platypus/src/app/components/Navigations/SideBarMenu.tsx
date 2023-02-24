@@ -7,6 +7,7 @@ import uniqueId from 'lodash/uniqueId';
 export type SideBarItem = {
   icon: IconType;
   slug: string;
+  disabled?: boolean;
   tooltip?: string;
   splitter?: boolean;
 };
@@ -37,21 +38,17 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
   };
 
   const renderIcon = (item: SideBarItem) => {
+    const isActive =
+      pathname.endsWith(getNextRoute(item.slug)) ||
+      (pathname.endsWith(baseNavigationRoute) && !item.slug);
     return (
       <>
         {item.splitter && <S.Splitter />}
         <S.SideBarItem
-          type={
-            pathname === getNextRoute(item.slug) ||
-            (pathname === baseNavigationRoute && !item.slug)
-              ? 'secondary'
-              : 'ghost'
-          }
-          toggled={
-            pathname === getNextRoute(item.slug) ||
-            (pathname === baseNavigationRoute && !item.slug)
-          }
+          type={isActive ? 'secondary' : 'ghost'}
+          toggled={isActive}
           key={item.slug}
+          disabled={item.disabled}
           onClick={() => onRoute(item.slug)}
         >
           <Icon type={item.icon} />

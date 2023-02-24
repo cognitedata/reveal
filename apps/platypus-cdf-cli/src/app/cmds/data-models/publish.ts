@@ -9,12 +9,13 @@ import Response, {
 } from '@cognite/platypus-cdf-cli/app/utils/logger';
 import {
   CreateDataModelVersionDTO,
+  DataModelsHandler,
   DataModelVersionHandler,
 } from '@platypus/platypus-core';
 import { readFileSync } from 'fs';
 import { Arguments, Argv } from 'yargs';
 
-import { getDataModelVersionsHandler } from './utils';
+import { getDataModelsHandler, getDataModelVersionsHandler } from './utils';
 
 const DEBUG = _DEBUG.extend('data-models:publish');
 
@@ -83,6 +84,7 @@ type DataModelPublishCommandArgs = BaseArgs & {
 
 export class PublishCmd extends CLICommand {
   private dataModelVersionsHandler: DataModelVersionHandler;
+  private dataModelsHandler: DataModelsHandler;
 
   builder<T>(yargs: Argv<T>): Argv {
     yargs.usage(`
@@ -96,9 +98,15 @@ export class PublishCmd extends CLICommand {
 
   async execute(args: Arguments<DataModelPublishCommandArgs>) {
     this.dataModelVersionsHandler = getDataModelVersionsHandler();
+    this.dataModelsHandler = getDataModelsHandler();
     DEBUG('dataModelVersionsHandler initialized');
-
-    const graphqlSchema = await this.readGraphqlSchemaFile(args.file);
+    let graphqlSchema;
+    try {
+      graphqlSchema = await this.readGraphqlSchemaFile(args.file);
+    } catch (e) {
+      Response.error(`Unable to read specified GraphQL file: ${args.file}`);
+      return;
+    }
 
     const dto: CreateDataModelVersionDTO = {
       externalId: args['external-id'],
@@ -119,7 +127,26 @@ export class PublishCmd extends CLICommand {
       return;
     }
 
-    const response = await this.dataModelVersionsHandler.publish(dto, 'PATCH');
+    const dataModelResponse = await this.dataModelsHandler.fetch({
+      dataModelId: dto.externalId,
+      space: dto.space,
+    });
+    if (!dataModelResponse.isSuccess) {
+      Response.error(
+        'The data model specified does not exist. Create a data model first before publishing a new version.'
+      );
+      return;
+    }
+
+    const dataModelMetadata = dataModelResponse.getValue();
+    const response = await this.dataModelVersionsHandler.publish(
+      {
+        ...dto,
+        name: dataModelMetadata.name,
+        description: dataModelMetadata.description,
+      },
+      'PATCH'
+    );
 
     DEBUG(`Publish request result`, JSON.stringify(response, null, 2));
 

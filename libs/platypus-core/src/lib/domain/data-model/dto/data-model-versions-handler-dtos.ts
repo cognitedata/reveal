@@ -33,6 +33,11 @@ export interface CreateDataModelVersionDTO {
    */
   lastUpdatedTime?: number;
   status?: DataModelVersionStatus;
+  /**
+   * Carried over from data model (each one should follow the first one created)
+   */
+  name?: string;
+  description?: string;
 }
 
 export interface PublishDataModelVersionDTO extends DataModelVersion {

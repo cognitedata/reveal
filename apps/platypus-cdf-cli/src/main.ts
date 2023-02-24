@@ -63,7 +63,7 @@ scriptName(CONSTANTS.APP_ID)
     let errorMessage =
       msg ||
       err.message ||
-      'Something went wrong, and we are unable to detect what please contact us for more info';
+      'Something went wrong, please contact us for more info';
 
     if (
       err instanceof PlatypusValidationError &&

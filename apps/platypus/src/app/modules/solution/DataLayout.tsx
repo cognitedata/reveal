@@ -10,6 +10,7 @@ import {
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
+import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 
 const DataModelPage = lazy<any>(() =>
   import('./data-model/pages/DataModelPage').then((module) => ({
@@ -36,6 +37,17 @@ export const DataLayout = () => {
     space: string;
   }>();
 
+  const { data: versions = [] } = useDataModelVersions(
+    dataModelExternalId!,
+    space!
+  );
+
+  const hasNoPublishedVersion = versions.length === 0;
+
+  const disabledText = t(
+    'disabled_text',
+    ' (disabled until a data model is published)'
+  );
   const sideBarMenuItems: SideBarItem[] = [
     {
       icon: 'GraphTree',
@@ -45,13 +57,19 @@ export const DataLayout = () => {
     {
       icon: 'DataSource',
       slug: 'data-management/preview',
-      tooltip: t('data_management_title', 'Data management'),
+      tooltip: `${t('data_management_title', 'Data management')}${
+        hasNoPublishedVersion ? disabledText : ''
+      }`,
+      disabled: hasNoPublishedVersion,
     },
     {
       icon: 'Search',
       slug: 'query-explorer',
-      tooltip: t('query_explorer_title', 'Query explorer'),
+      tooltip: `${t('query_explorer_title', 'Query explorer')}${
+        hasNoPublishedVersion ? disabledText : ''
+      }`,
       splitter: true,
+      disabled: hasNoPublishedVersion,
     },
   ];
 

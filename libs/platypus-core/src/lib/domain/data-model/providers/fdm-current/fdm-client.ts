@@ -107,7 +107,7 @@ export class FdmV2Client implements FlexibleDataModelingClient {
         if (!results || !results[0] || results.length > 1) {
           return Promise.reject(
             new PlatypusError(
-              `Specified version ${dto.externalId} does not exist!`,
+              `Specified externalId ${dto.externalId} does not exist!`,
               'NOT_FOUND'
             )
           );
