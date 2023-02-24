@@ -54,7 +54,7 @@ export const TimeseriesSearchResultView = () => {
             setTimeseriesFilter(newValue)
           }
           filter={timeseriesFilter}
-          showDatePicker={!selectedTimeseriesId}
+          showDatePicker={true}
           query={debouncedQuery}
           dateRange={dateRange}
           onDateRangeChange={setDateRange}
