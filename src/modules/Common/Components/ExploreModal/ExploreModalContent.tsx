@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileFilterProps } from '@cognite/sdk';
-import { Body, Tooltip } from '@cognite/cogs.js-old';
-import { Button, Title } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js-old';
+import { Button, Title, Body } from '@cognite/cogs.js';
 import { TableDataItem } from 'src/modules/Common/types';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
 import styled from 'styled-components';

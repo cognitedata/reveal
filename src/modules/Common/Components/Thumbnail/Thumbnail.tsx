@@ -1,6 +1,5 @@
 import { FileInfo } from '@cognite/sdk';
-import { Body } from '@cognite/cogs.js-old';
-import { Button, Icon, DocumentIcon } from '@cognite/cogs.js';
+import { Button, Icon, DocumentIcon, Body } from '@cognite/cogs.js';
 import { Loader, useFileIcon } from '@cognite/data-exploration';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { isFilePreviewable } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';

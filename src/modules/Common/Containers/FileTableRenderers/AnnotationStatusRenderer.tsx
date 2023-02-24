@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { Tag } from 'antd';
 import styled from 'styled-components';
-import { Body } from '@cognite/cogs.js-old';
+import { Body } from '@cognite/cogs.js';
 import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
 import { filterAnnotationIdsByAnnotationStatus } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 

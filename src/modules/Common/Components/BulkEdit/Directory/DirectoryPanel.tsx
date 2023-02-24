@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Body, Tooltip } from '@cognite/cogs.js-old';
-import { Button } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js-old';
+import { Button, Body } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { validateDirectoryPrefix } from 'src/modules/Common/Components/BulkEdit/Directory/validateDirectoryPrefix';
 import { Input } from 'antd';

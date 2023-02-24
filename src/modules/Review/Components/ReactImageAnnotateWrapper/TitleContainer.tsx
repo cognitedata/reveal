@@ -1,4 +1,4 @@
-import { Body } from '@cognite/cogs.js-old';
+import { Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import React from 'react';
 

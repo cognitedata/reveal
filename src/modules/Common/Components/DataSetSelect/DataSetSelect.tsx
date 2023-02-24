@@ -6,7 +6,8 @@ import {
   usePermissions,
 } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
-import { A, Body, Colors } from '@cognite/cogs.js-old';
+import { A, Colors } from '@cognite/cogs.js-old';
+import { Body } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 

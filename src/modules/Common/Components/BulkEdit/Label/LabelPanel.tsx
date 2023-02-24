@@ -1,5 +1,5 @@
 import React from 'react';
-import { Body } from '@cognite/cogs.js-old';
+import { Body } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import styled from 'styled-components';
 import { LabelFilter } from '@cognite/data-exploration';

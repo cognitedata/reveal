@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
-import { Body, Col, Micro, Row } from '@cognite/cogs.js-old';
-import { Title, Icon, Button } from '@cognite/cogs.js';
+import { Col, Micro, Row } from '@cognite/cogs.js-old';
+import { Title, Icon, Body, Button } from '@cognite/cogs.js';
 import { Progress } from 'antd';
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

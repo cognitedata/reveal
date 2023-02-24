@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import styled from 'styled-components';
 import { DEFAULT_THRESHOLDS } from 'src/modules/Common/Components/BulkEdit/Annotation/AnnotationStatusPanel';
-import { Body } from '@cognite/cogs.js-old';
+import { Body } from '@cognite/cogs.js';
 import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
 import {
   filterAnnotationIdsByAnnotationStatus,

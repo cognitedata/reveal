@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Body, Detail, Select } from '@cognite/cogs.js-old';
+import { Detail, Select } from '@cognite/cogs.js-old';
+import { Body } from '@cognite/cogs.js';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';

@@ -8,8 +8,8 @@ import {
   toggleExplorerFilterView,
 } from 'src/modules/Explorer/store/slice';
 import styled from 'styled-components';
-import { Body, Tooltip } from '@cognite/cogs.js-old';
-import { Button, Title } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js-old';
+import { Button, Title, Body } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { FileFilterProps } from '@cognite/sdk';

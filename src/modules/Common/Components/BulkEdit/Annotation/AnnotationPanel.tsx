@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Body, Select } from '@cognite/cogs.js-old';
+import { Select } from '@cognite/cogs.js-old';
+import { Body } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
