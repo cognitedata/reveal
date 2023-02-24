@@ -10,6 +10,8 @@ data-explorer:
   - libs/data-exploration-components/*
   - libs/data-exploration-components/**/*
   - libs/data-exploration/**
+  - libs/shared/plotting-components/*
+  - libs/shared/plotting-components/**/*
 
 coding-conventions:
   - apps/coding-conventions/*

@@ -61,7 +61,7 @@
       "options": {
         "uiFramework": "@storybook/react",
         "configDir": "libs/shared/plotting-components/.storybook",
-        "outputDir": "dist/storybook/shared-plotting-components"
+        "outputDir": "storybook-static"
       },
       "configurations": {
         "ci": {

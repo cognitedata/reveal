@@ -28,6 +28,7 @@ apps/data-exploration             @cognitedata/explorers
 
 libs/data-exploration/            @cognitedata/explorers
 libs/data-exploration-components  @cognitedata/explorers
+libs/shared/plotting-components   @cognitedata/explorers
 
 # Coding conventions
 apps/coding-conventions           @deep-cognite @CimStordal
