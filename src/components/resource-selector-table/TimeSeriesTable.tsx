@@ -5,6 +5,7 @@ import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { InternalId, Timeseries } from '@cognite/sdk';
 import { useTimeseries, useTimeseriesSearch } from 'hooks/timeseries';
+import { Filter } from 'context/QuickMatchContext';
 
 type TimeseriesListTableRecord = { key: string } & Pick<
   Timeseries,
@@ -18,6 +19,7 @@ type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
 type Props = {
   query?: string | null;
   unmatchedOnly?: boolean;
+  filter: Filter;
   selected: InternalId[];
   setSelected: Dispatch<SetStateAction<InternalId[]>>;
 };
@@ -26,12 +28,13 @@ export default function TimeseriesTable({
   selected,
   setSelected,
   unmatchedOnly,
+  filter,
 }: Props) {
   const {
     data: listPages,
     isInitialLoading: listLoading,
     error,
-  } = useTimeseries({ unmatchedOnly }, { enabled: !query });
+  } = useTimeseries({ unmatchedOnly, filter }, { enabled: !query });
 
   const { data: searchResult, isInitialLoading: searchLoading } =
     useTimeseriesSearch(query!, {

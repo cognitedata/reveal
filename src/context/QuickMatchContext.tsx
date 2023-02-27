@@ -25,7 +25,7 @@ const QuickMatchStepsOrderIndex: Record<number, QuickMatchSteps> =
     {}
   );
 
-type SourceFilter = {
+export type Filter = {
   dataSetIds: InternalId[];
 };
 type SourceType = 'timeseries';
@@ -50,8 +50,11 @@ type QuickMatchContext = {
   sourcesList: InternalId[];
   setSourcesList: Dispatch<SetStateAction<InternalId[]>>;
 
-  sourceFilter: SourceFilter;
-  setSourceFilter: Dispatch<SetStateAction<SourceFilter>>;
+  sourceFilter: Filter;
+  setSourceFilter: Dispatch<SetStateAction<Filter>>;
+
+  targetFilter: Filter;
+  setTargetFilter: Dispatch<SetStateAction<Filter>>;
 
   allTargets: boolean;
   setAllTargets: Dispatch<SetStateAction<boolean>>;
@@ -98,7 +101,13 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   sourceFilter: {
     dataSetIds: [],
   },
-  setSourceFilter: function (_: SetStateAction<SourceFilter>): void {
+  setSourceFilter: function (_: SetStateAction<Filter>): void {
+    throw new Error('Function not implemented.');
+  },
+  targetFilter: {
+    dataSetIds: [],
+  },
+  setTargetFilter: function (_: SetStateAction<Filter>): void {
     throw new Error('Function not implemented.');
   },
   hasNextStep: function (): boolean {
@@ -249,6 +258,8 @@ export const QuickMatchContextProvider = ({
         setJobId,
         unmatchedOnly,
         setUnmatchedOnly,
+        targetFilter,
+        setTargetFilter,
       }}
     >
       {children}

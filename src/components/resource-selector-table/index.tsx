@@ -4,11 +4,16 @@ import { useTranslation } from 'common';
 import { SOURCE_TABLE_QUERY_KEY } from '../../constants';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
 import { useAllDataSets } from 'hooks/datasets';
-import { useMemo } from 'react';
+
 import { useSearchParams } from 'react-router-dom';
 import TimeseriesTable from './TimeSeriesTable';
 
 const { Option } = Select;
+
+type OptionType = {
+  value: number;
+  label: string;
+};
 
 type Props = {};
 
@@ -20,6 +25,8 @@ export default function ResourceSelectionTable({}: Props) {
     sourcesList,
     unmatchedOnly,
     setUnmatchedOnly,
+    sourceFilter,
+    setSourceFilter,
   } = useQuickMatchContext();
   const resourceTypeOptions = [
     { value: 'timeseries', label: t('resource-type-ts') },
@@ -45,12 +52,26 @@ export default function ResourceSelectionTable({}: Props) {
             </Option>
           ))}
         </Select>
-
         <Select
+          mode="multiple"
+          allowClear
           placeholder={t('resource-type-datasets')}
           style={{ width: 120 }}
           loading={isInitialLoading}
           options={datasets}
+          value={datasets
+            ?.filter(({ value }) =>
+              sourceFilter.dataSetIds.find(({ id }) => id === value)
+            )
+            .map((ds) => ds.value)}
+          onChange={(e: number[]) => {
+            setSourceFilter({
+              ...sourceFilter,
+              dataSetIds: e.map((id) => ({
+                id,
+              })),
+            });
+          }}
         />
         <Input.Search
           style={{ width: 120 }}
@@ -69,6 +90,7 @@ export default function ResourceSelectionTable({}: Props) {
       {sourceType === 'timeseries' && (
         <TimeseriesTable
           query={searchParams.get(SOURCE_TABLE_QUERY_KEY)}
+          filter={sourceFilter}
           selected={sourcesList}
           setSelected={setSourcesList}
           unmatchedOnly={unmatchedOnly}

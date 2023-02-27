@@ -4,7 +4,7 @@ import { useTranslation } from 'common';
 import { TARGET_TABLE_QUERY_KEY } from '../../constants';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
 import { useAllDataSets } from 'hooks/datasets';
-import { useMemo } from 'react';
+
 import { useSearchParams } from 'react-router-dom';
 import AssetTable from 'components/resource-selector-table/AssetTable';
 
