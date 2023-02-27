@@ -5,8 +5,8 @@ import {
   ReactNode,
   SetStateAction,
   useContext,
-  useState,
 } from 'react';
+import { useContextState } from 'utils';
 
 export type QuickMatchSteps =
   | 'sourceSelect'
@@ -144,22 +144,53 @@ export const QuickMatchContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [unmatchedOnly, setUnmatchedOnly] = useState(false);
-  const [allSources, setAllSources] = useState(false);
-  const [sourcesList, setSourcesList] = useState<InternalId[]>([]);
-  const [allTargets, setAllTargets] = useState(false);
-  const [targetsList, setTargetsList] = useState<InternalId[]>([]);
-  const [sourceFilter, setSourceFilter] = useState<SourceFilter>({
-    dataSetIds: [],
-  });
-  const [modelId, setModelId] = useState<number | undefined>();
-  const [jobId, setJobId] = useState<number | undefined>();
+  const [unmatchedOnly, setUnmatchedOnly] = useContextState(
+    false,
+    'unmatchedOnly'
+  );
+  const [allSources, setAllSources] = useContextState(false, 'allSources');
+  const [sourcesList, setSourcesList] = useContextState<InternalId[]>(
+    [],
+    'sourcesList'
+  );
+  const [allTargets, setAllTargets] = useContextState(false, 'allTargets');
+  const [targetsList, setTargetsList] = useContextState<InternalId[]>(
+    [],
+    'targetsList'
+  );
+  const [sourceFilter, setSourceFilter] = useContextState<Filter>(
+    {
+      dataSetIds: [],
+    },
+    'sourceFilter'
+  );
+  const [targetFilter, setTargetFilter] = useContextState<Filter>(
+    {
+      dataSetIds: [],
+    },
+    'targetFilter'
+  );
+  const [modelId, setModelId] = useContextState<number | undefined>(
+    undefined,
+    'modelId'
+  );
+  const [jobId, setJobId] = useContextState<number | undefined>(
+    undefined,
+    'jobId'
+  );
 
-  const [modelFieldMapping, setModelFieldMapping] = useState<ModelMapping>({
-    name: 'name',
-  });
-  const [sourceType, setSourceType] = useState<SourceType>('timeseries');
-  const [step, setStep] = useState<QuickMatchSteps>('sourceSelect');
+  const [modelFieldMapping, setModelFieldMapping] =
+    useContextState<ModelMapping>({
+      name: 'name',
+    });
+  const [sourceType, setSourceType] = useContextState<SourceType>(
+    'timeseries',
+    'sourceType'
+  );
+  const [step, setStep] = useContextState<QuickMatchSteps>(
+    'sourceSelect',
+    'step'
+  );
 
   const hasNextStep = () => {
     const stepIndex = Object.values(QuickMatchStepsOrder);
