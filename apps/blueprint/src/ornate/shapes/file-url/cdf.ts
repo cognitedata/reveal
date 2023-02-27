@@ -41,6 +41,38 @@ export const getAnnotationsFromCDF =
       return [];
     }
 
+    const annotations = await sdk.annotations
+      .list({
+        limit: 1000,
+        filter: {
+          annotatedResourceIds: id ? [{ id: Number(id) }] : [{ externalId }],
+          annotatedResourceType: 'file',
+        },
+      })
+      .autoPagingToArray({ limit: -1 });
+
+    if (annotations.length > 0) {
+      return annotations.map((annotation) => {
+        const data = annotation.data as { textRegion: any; assetRef: any };
+        const rawBox = data.textRegion;
+        return {
+          id: `${config.id}-${annotation.id}`,
+          x: Number(rawBox.xMin),
+          y: Number(rawBox.yMin),
+          width: Number(rawBox.xMax) - Number(rawBox.xMin),
+          height: Number(rawBox.yMax) - Number(rawBox.yMin),
+          resourceType:
+            annotation.annotationType === 'diagrams.AssetLink'
+              ? 'Asset'
+              : 'File',
+          metadata: {
+            assetId: data.assetRef.id,
+            assetExternalId: data.assetRef?.externalId,
+          },
+        };
+      });
+    }
+
     return sdk.events
       .list({
         filter: {
