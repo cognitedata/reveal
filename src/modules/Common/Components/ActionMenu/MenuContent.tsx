@@ -1,6 +1,6 @@
 import React from 'react';
-import { Menu, Popconfirm } from '@cognite/cogs.js-old';
-import { Icon, Tooltip } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs.js-old';
+import { Icon, Tooltip, Popconfirm } from '@cognite/cogs.js';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { SKIP_MENU_CLOSE_ID } from 'src/constants/ContextMenuConstants';
@@ -51,7 +51,8 @@ export const MenuContent = ({
       icon="WarningFilled"
       placement="left"
       onConfirm={handleFileDelete}
-      content="Are you sure you want to permanently delete this file?"
+      content="Are you sure you want to permanently delete this filexx?"
+      style={{ backgroundColor: 'red !important' }}
     >
       <Menu.Item id={SKIP_MENU_CLOSE_ID} disabled={reviewDisabled}>
         <Icon type="Delete" style={{ marginRight: '17px' }} />

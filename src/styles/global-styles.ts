@@ -67,6 +67,14 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   .cogs-popconfirm--content{
     white-space: pre !important
   }
+
+  // This code resolves conflicts in styles that may arise when a popconfirm is opened from a dropdown menu.
+  // And invert colors
+  .cogs-tooltip.tippy-box {
+    background-color: var(--cogs-text-icon--strong--inverted) !important;
+    color: var(--cogs-surface--muted--inverted) !important;
+    box-shadow: var(--cogs-elevation--overlay);
+  }
 `;
 
 export default GlobalStyle;
