@@ -15698,10 +15698,10 @@ jest@^28.0.0:
     import-local "^3.0.2"
     jest-cli "^28.1.3"
 
-jira-prepare-commit-msg@1.6.2:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/jira-prepare-commit-msg/-/jira-prepare-commit-msg-1.6.2.tgz#c8759ef147e10beae91cd4a0f672a6b6370ea0a9"
-  integrity sha512-U9nuFs8JEH4mIkb9Q0jDdbPzC5MDz1mCaD5H5Uq2IPm4gTYutB+i+Ubnp5dIjrtY1URjySK3V/ZHF0EzKcuRTg==
+jira-prepare-commit-msg@1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/jira-prepare-commit-msg/-/jira-prepare-commit-msg-1.7.1.tgz#baeb6853395d84f664931df372093723fab93d3e"
+  integrity sha512-DXqtr++9q2n3OXOrB/iKfjomOvYElbBnuJz72IAev1oLJACUBhsRp+2ZpqZP0o37FZ0RLwA8NjdE2cJyyOOnLQ==
   dependencies:
     cosmiconfig "^7.0.1"
 
