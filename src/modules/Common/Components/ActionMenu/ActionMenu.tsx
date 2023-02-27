@@ -1,6 +1,5 @@
 import React from 'react';
-import { Dropdown } from '@cognite/cogs.js-old';
-import { Button } from '@cognite/cogs.js';
+import { Button, Dropdown } from '@cognite/cogs.js';
 import { MenuContent } from 'src/modules/Common/Components/ActionMenu/MenuContent';
 import styled from 'styled-components';
 
