@@ -1,17 +1,12 @@
-import { CogniteClient, CursorResponse } from '@cognite/sdk';
-import { AggregateResponse } from '@cognite/sdk/dist/src/types';
+import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
 import { DocumentsAggregateRequestPayload } from '../types';
 
-export const getDocumentsAggregate = async <ResponseType = AggregateResponse>(
+export const getDocumentsAggregate = <ResponseType = AggregateResponse>(
   sdk: CogniteClient,
   payload?: DocumentsAggregateRequestPayload
 ) => {
-  let cursor = null;
-  const aggregates: any[] = [];
-
-  while (cursor !== undefined) {
-    // @ts-ignore // don't know why the type here is wrong, should be fixed when we migrate to sdk usage
-    const { data } = await sdk.post<CursorResponse<ResponseType[]>>(
+  return sdk
+    .post<CursorResponse<ResponseType[]>>(
       `/api/v1/projects/${sdk.project}/documents/aggregate`,
       {
         headers: {
@@ -19,15 +14,13 @@ export const getDocumentsAggregate = async <ResponseType = AggregateResponse>(
         },
         data: {
           ...payload,
-          cursor,
-          limit: 10000,
+          limit: 1000,
         },
       }
-    );
-
-    aggregates.concat(data.items);
-    cursor = data.nextCursor;
-  }
-
-  return Promise.resolve({ items: aggregates });
+    )
+    .then(({ data }) => {
+      return {
+        items: data.items,
+      };
+    });
 };
