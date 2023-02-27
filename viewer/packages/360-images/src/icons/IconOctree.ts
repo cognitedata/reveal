@@ -3,13 +3,15 @@
  */
 
 import { getApproximateProjectedBounds, getScreenArea } from '@reveal/utilities';
+import assert from 'assert';
+import minBy from 'lodash/minBy';
 import pullAll from 'lodash/pullAll';
 import { Node, PointOctant, PointOctree } from 'sparse-octree';
 import { Box3, Matrix4, Vector3 } from 'three';
 import { Image360Icon } from '../icons/Image360Icon';
 
 export class IconOctree extends PointOctree<Image360Icon> {
-  private readonly _nodeCenters: Map<Node, Vector3>;
+  private readonly _nodeCenters: Map<Node, Image360Icon>;
 
   public static getMinimalOctreeBoundsFromIcons(icons: Image360Icon[]): Box3 {
     return new Box3().setFromPoints(icons.map(icon => icon.position));
@@ -22,7 +24,7 @@ export class IconOctree extends PointOctree<Image360Icon> {
     this._nodeCenters = this.populateNodeCenters();
   }
 
-  public getPointCenterOfNode(node: Node): Vector3 | undefined {
+  public getNodeMedianIcon(node: Node): Image360Icon | undefined {
     return this._nodeCenters.get(node);
   }
 
@@ -62,16 +64,16 @@ export class IconOctree extends PointOctree<Image360Icon> {
     }
   }
 
-  private populateNodeCenters(): Map<Node, Vector3> {
-    const nodeCenters = new Map<Node, Vector3>();
+  private populateNodeCenters(): Map<Node, Image360Icon> {
+    const nodeCenters = new Map<Node, Image360Icon>();
 
     this.traverseLevelsBottomUp(nodes => {
       nodes.forEach(node => {
         if (this.hasData(node)) {
-          nodeCenters.set(node, this.centerOfPoints(node.data.points));
+          nodeCenters.set(node, this.getMedianIcon(node.data.data));
         } else if (this.hasChildren(node)) {
-          const points = node.children!.map(child => nodeCenters.get(child)!);
-          nodeCenters.set(node, this.centerOfPoints(points));
+          const icons = node.children!.map(child => nodeCenters.get(child)!);
+          nodeCenters.set(node, this.getMedianIcon(icons));
         }
       });
     });
@@ -110,11 +112,19 @@ export class IconOctree extends PointOctree<Image360Icon> {
     return node instanceof PointOctant;
   }
 
-  private centerOfPoints(points: Vector3[]): Vector3 {
-    return points.reduce((result, currentValue) => result.add(currentValue), new Vector3()).divideScalar(points.length);
+  private getMedianIcon(icons: Image360Icon[]): Image360Icon {
+    const center = icons
+      .reduce((result, currentValue) => result.add(currentValue.position), new Vector3())
+      .divideScalar(icons.length);
+
+    const minDistanceIcon = minBy(icons, icon => icon.position.distanceToSquared(center));
+
+    assert(minDistanceIcon !== undefined);
+
+    return minDistanceIcon;
   }
 
-  private traverseLevelsBottomUp(func: (nodes: Node[]) => void) {
+  public traverseLevelsBottomUp(func: (nodes: Node[]) => void): void {
     const octreeDepth = this.getDepth();
     for (let i = octreeDepth; i >= 0; i--) {
       const level = this.findNodesByLevel(i);

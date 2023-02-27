@@ -71,7 +71,7 @@ describe(IconOctree.name, () => {
 
     const octree = new IconOctree([image360IconMock1, image360IconMock2], unitBounds, 1);
 
-    expect(JSON.stringify(octree.getPointCenterOfNode(octree.findNodesByLevel(0)[0]))).toBe(
+    expect(JSON.stringify(octree.getNodeMedianIcon(octree.findNodesByLevel(0)[0]))).toBe(
       JSON.stringify(new Vector3(0.5, 0.5, 0.5))
     );
   });

@@ -34,7 +34,8 @@ export class InstancedIconSprite extends Group {
     spriteTexture: Texture,
     minPixelSize: number,
     maxPixelSize: number,
-    radius: number
+    radius: number,
+    colorTint = new Color(1, 1, 1)
   ) {
     super();
     const geometry = new BufferGeometry();
@@ -49,9 +50,18 @@ export class InstancedIconSprite extends Group {
       LessEqualDepth,
       minPixelSize,
       maxPixelSize,
-      radius
+      radius,
+      colorTint
     );
-    const backMaterial = this.createIconsMaterial(spriteTexture, 0.5, GreaterDepth, minPixelSize, maxPixelSize, radius);
+    const backMaterial = this.createIconsMaterial(
+      spriteTexture,
+      0.5,
+      GreaterDepth,
+      minPixelSize,
+      maxPixelSize,
+      radius,
+      colorTint
+    );
     const [frontPoints, backPoints] = this.initializePoints(geometry, frontMaterial, backMaterial);
     this.add(frontPoints);
     this.add(backPoints);
@@ -97,6 +107,7 @@ export class InstancedIconSprite extends Group {
 
     function createPoints(geometry: BufferGeometry, material: ShaderMaterial): Points {
       const points = new Points(geometry, material);
+      points.frustumCulled = false;
       points.renderOrder = 4;
       return points;
     }
@@ -113,13 +124,14 @@ export class InstancedIconSprite extends Group {
     depthFunction: DepthModes,
     minPixelSize: number,
     maxPixelSize: number,
-    radius: number
+    radius: number,
+    colorTint: Color
   ): RawShaderMaterial {
     return new RawShaderMaterial({
       uniforms: {
         map: { value: texture },
         radius: { value: radius },
-        colorTint: { value: new Color(1, 1, 1) },
+        colorTint: { value: colorTint },
         renderSize: { value: new Vector2(1, 1) },
         collectionOpacity: { value: collectionOpacity },
         renderDownScale: { value: 1 },

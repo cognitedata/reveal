@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CanvasTexture, Matrix4, Texture, Vector3 } from 'three';
+import { CanvasTexture, Frustum, Matrix4, Texture, Vector3 } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
@@ -16,7 +16,6 @@ export class IconCollection {
   private readonly _sharedTexture: Texture;
   private readonly _icons: Image360Icon[];
   private readonly _iconsSprite: InstancedIconSprite;
-  private readonly _clusterSprites: InstancedIconSprite;
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
 
@@ -32,7 +31,7 @@ export class IconCollection {
     const sharedTexture = this.createOuterRingsTexture();
     const iconSpriteRadius = 0.5;
     const iconsSprites = new InstancedIconSprite(
-      points.length,
+      points.length * 2,
       sharedTexture,
       this.MIN_PIXEL_SIZE,
       this.MAX_PIXEL_SIZE,
@@ -45,48 +44,46 @@ export class IconCollection {
     this._icons = this.initializeImage360Icons(points, sceneHandler, onBeforeSceneRendered);
 
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
-    const octree = new IconOctree(this._icons, octreeBounds, 4);
+    const octree = new IconOctree(this._icons, octreeBounds, 2);
 
-    const clusterSpriteRadius = 2.0;
-    const clusterSprites = new InstancedIconSprite(
-      points.length,
-      this.createClusterTexture(),
-      this.MIN_PIXEL_SIZE * 2,
-      this.MAX_PIXEL_SIZE,
-      clusterSpriteRadius
-    );
-
-    this._computeClustersEventHandler = this.computeClusters(octree, iconsSprites, clusterSprites);
+    this._computeClustersEventHandler = this.computeClusters(octree, iconsSprites);
     onBeforeSceneRendered.subscribe(this._computeClustersEventHandler);
 
     this._sceneHandler = sceneHandler;
     this._iconsSprite = iconsSprites;
-    this._clusterSprites = clusterSprites;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
 
     sceneHandler.addCustomObject(iconsSprites);
-    sceneHandler.addCustomObject(clusterSprites);
   }
 
-  private computeClusters(
-    octree: IconOctree,
-    iconSprites: InstancedIconSprite,
-    clusterSprites: InstancedIconSprite
-  ): BeforeSceneRenderedDelegate {
+  private computeClusters(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
+    const frustum = new Frustum();
     return ({ camera }) => {
-      const nodesLOD = octree.getLODByScreenArea(
-        0.005,
-        projection.copy(camera.projectionMatrix).multiply(camera.matrixWorldInverse)
-      );
+      projection.copy(camera.projectionMatrix).multiply(camera.matrixWorldInverse);
+      const nodesLOD = octree.getLODByScreenArea(0.04, projection);
+
+      frustum.setFromProjectionMatrix(projection);
 
       const nodes = [...nodesLOD];
-      const clusterPoints = nodes.filter(p => p.data === null).map(p => octree.getPointCenterOfNode(p)!);
-      clusterSprites.setPoints(clusterPoints);
-      const leafData = nodes.filter(p => p.data !== null).flatMap(p => p.data.data);
-      this._icons.forEach(p => (p.visible = false));
-      leafData.forEach(p => (p.visible = true));
-      iconSprites.setPoints(leafData.map(p => p.position));
+      const selectedIcons = nodes
+        .flatMap(node => {
+          if (node.data === null) {
+            return octree.getNodeMedianIcon(node)!;
+          }
+
+          return node.data.data;
+        })
+        .filter(point => frustum.containsPoint(point.position));
+
+      //fix minimum
+      // if(selectedIcons.length < 5){
+      //   while()
+      // }
+
+      this._icons.forEach(icon => (icon.visible = false));
+      selectedIcons.forEach(icon => (icon.visible = true));
+      iconSprites.setPoints(selectedIcons.map(icon => icon.position));
     };
   }
 
@@ -110,59 +107,9 @@ export class IconCollection {
 
   public dispose(): void {
     this._onBeforeSceneRenderedEvent.unsubscribe(this._computeClustersEventHandler);
-    this._sceneHandler.removeCustomObject(this._clusterSprites);
     this._sceneHandler.removeCustomObject(this._iconsSprite);
-    this._clusterSprites.dispose();
     this._iconsSprite.dispose();
     this._sharedTexture.dispose();
-  }
-
-  private createClusterTexture(): CanvasTexture {
-    const canvas = document.createElement('canvas');
-    const textureSize = this.MAX_PIXEL_SIZE;
-    canvas.width = textureSize;
-    canvas.height = textureSize;
-
-    const lineWidth = textureSize / 22;
-    const halfTextureSize = textureSize * 0.5;
-
-    const context = canvas.getContext('2d')!;
-    drawClusterRings();
-    drawInnerCircle();
-    drawOuterCircle();
-
-    return new CanvasTexture(canvas);
-
-    function drawClusterRings() {
-      context.beginPath();
-      context.lineWidth = lineWidth;
-      context.strokeStyle = '#FFFFFF';
-      context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 36) / 44, 0, 2 * Math.PI);
-      context.stroke();
-
-      context.beginPath();
-      context.lineWidth = lineWidth;
-      context.strokeStyle = '#FFFFFF';
-      context.arc(halfTextureSize, halfTextureSize, halfTextureSize - context.lineWidth / 2, 0, 2 * Math.PI);
-      context.stroke();
-    }
-
-    function drawOuterCircle() {
-      context.beginPath();
-      context.lineWidth = lineWidth;
-      context.strokeStyle = '#FFFFFF';
-      context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 30) / 44, 0, 2 * Math.PI);
-      context.stroke();
-    }
-
-    function drawInnerCircle() {
-      context.beginPath();
-      context.lineWidth = lineWidth * 2;
-      context.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-      context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 24) / 44, 0, 2 * Math.PI);
-      context.shadowColor = 'red';
-      context.stroke();
-    }
   }
 
   private createOuterRingsTexture(): CanvasTexture {
