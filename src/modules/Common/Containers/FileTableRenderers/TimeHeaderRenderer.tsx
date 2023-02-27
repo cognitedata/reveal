@@ -1,7 +1,6 @@
 import React from 'react';
 import { SelectableTableCellRendererProps } from 'src/modules/Common/types';
-import { Menu } from '@cognite/cogs.js-old';
-import { Button, Icon, Dropdown } from '@cognite/cogs.js';
+import { Button, Icon, Dropdown, Menu } from '@cognite/cogs.js';
 import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';

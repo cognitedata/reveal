@@ -1,7 +1,14 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
-import { Detail, Menu } from '@cognite/cogs.js-old';
-import { Button, Title, Icon, Dropdown, Popconfirm } from '@cognite/cogs.js';
+import { Detail } from '@cognite/cogs.js-old';
+import {
+  Button,
+  Title,
+  Icon,
+  Dropdown,
+  Popconfirm,
+  Menu,
+} from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
   AutoMLExportFormat,
