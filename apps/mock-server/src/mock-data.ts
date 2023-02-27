@@ -15,7 +15,7 @@ import {
   fdmViewsMockData,
   fdmInstancesMockData,
   fdmDataModelsMockData,
-} from '@platypus/mock-data';
+} from '@fusion/mock-data';
 
 export const mockDataSample = {
   assets: assetsMockData,

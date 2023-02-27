@@ -1,4 +1,4 @@
-import { fdmViewsMockData } from '@platypus/mock-data';
+import { fdmViewsMockData } from '@fusion/mock-data';
 import * as request from 'supertest';
 import { mockDataSample } from '../mock-data';
 import { createServer } from './tests-setup';

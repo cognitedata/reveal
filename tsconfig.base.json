@@ -17,8 +17,8 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@cognite/cog-data-grid": ["libs/cog-data-grid/src/index.ts"],
-      "@cognite/cog-data-grid-root/*": ["libs/cog-data-grid/src/*"],
+      "@cognite/cog-data-grid": ["libs/data-modeling/cog-data-grid/src/index.ts"],
+      "@cognite/cog-data-grid-root/*": ["libs/data-modeling/cog-data-grid/src/*"],
       "@cognite/data-exploration": [
         "libs/data-exploration-components/src/index.ts"
       ],
@@ -42,16 +42,14 @@
         "libs/data-exploration/containers/src/index.ts"
       ],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
+      "@fusion/mock-data": ["libs/shared/mock-data/src/index.ts"],
       "@platypus-app/*": [
         "apps/platypus/src/app/*",
         "apps/platypus/src/environments/environment.ts"
       ],
-      "@platypus-core/*": ["libs/platypus-core/src/lib/*"],
-      "@platypus/mock-data": ["libs/mock-data/src/index.ts"],
-      "@platypus/platypus-common-utils": [
-        "libs/platypus-common-utils/src/index.ts"
-      ],
-      "@platypus/platypus-core": ["libs/platypus-core/src/index.ts"]
+      "@platypus-core/*": ["libs/data-modeling/platypus-core/src/lib/*"],
+      "@platypus/platypus-core": ["libs/data-modeling/platypus-core/src/index.ts"],
+      "@platypus/platypus-common-utils": ["libs/data-modeling/platypus-common-utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

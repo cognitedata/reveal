@@ -1,0 +1,45 @@
+{
+  "name": "data-modeling-cog-data-grid",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/data-modeling/cog-data-grid/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/data-modeling/cog-data-grid",
+        "tsConfig": "libs/data-modeling/cog-data-grid/tsconfig.lib.json",
+        "project": "libs/data-modeling/cog-data-grid/package.json",
+        "entryFile": "libs/data-modeling/cog-data-grid/src/index.ts",
+        "external": ["react/jsx-runtime"],
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "assets": [
+          {
+            "glob": "libs/data-modeling/cog-data-grid/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/data-modeling/cog-data-grid/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/data-modeling/cog-data-grid"],
+      "options": {
+        "jestConfig": "libs/data-modeling/cog-data-grid/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
