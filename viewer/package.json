@@ -160,6 +160,9 @@
       "glslify-import"
     ]
   },
+  "resolutions": {
+    "loader-utils": "^2.0.4"
+  },
   "files": [
     "./dist/*"
   ],
