@@ -8,12 +8,12 @@ Previously known as [console/glados](https://github.com/cognitedata/console) sub
 
 ### Local desktop
 
-To set up a full local development environment on your machine, please read setup 
-instructions for frontend development here: https://cognitedata.atlassian.net/wiki/spaces/AD/pages/147424318/The+Definitive+Onboarding+Guide+for+Application+Developers
+To set up a full local development environment on your machine, please read setup instructions for frontend development here: <https://cognitedata.atlassian.net/wiki/spaces/AD/pages/147424318/The+Definitive+Onboarding+Guide+for+Application+Developers>
 
 ### Devcontainer
 
-An alternative is to use a devcontainer environment for this repo in VSCode. This can be loaded either locally in Docker (https://code.visualstudio.com/docs/devcontainers/containers), or in Github Codespaces (https://docs.github.com/en/codespaces/overview).
+An alternative is to use a devcontainer environment for this repo in VSCode. This can be loaded either locally in Docker (<https://code.visualstudio.com/docs/devcontainers/containers>), or in Github Codespaces (<https://docs.github.com/en/codespaces/overview>).
+On Codespaces the machine configuration should be 4 cores and 8 GB of memory, or more.
 
 ## npm setup
 
@@ -22,6 +22,7 @@ Regardless of what dev environment setup you choose above, you need a NPM accoun
 ## Local development
 
 1. Clone repo.
+1. Run "npm login" and enter credentials, email and two factor code.
 1. Install dependencies with `yarn`.
 1. Run dev server with `yarn start`. Take a note of the local address.
 1. Open the local address from above in a browser and accept the unsafe certificate.
@@ -37,7 +38,7 @@ Production ([fusion.cognite.com](fusion.cognite.com/)), staging ([next-release.f
 1. Update the `cdf-3d-management`-entry of the respective configuration under [packages/sub-apps/config](https://github.com/cognitedata/cdf-ui-hub/tree/master/packages/sub-apps/config) to match version.
 1. Create PR, merge - after merge the change should be automatically deployed to the respective environment(s).
 1. For production release only:
-   1. Manually verify that the build works at https://staging.fusion.cognite.com/
+   1. Manually verify that the build works at <https://staging.fusion.cognite.com/>
    1. Manually promote release in [Spinnaker](https://spinnaker.cognite.ai/#/applications/fusion-app/executions?pipeline=deploy-fusion-app-prod) (for the relevant build, hover the orange indicator and select Continue)
 
 Note! The configuration uses Semver ranges, so if you deploy new versions of the cdf-3d-management applications they should automatically be released to the respective environment if updated versions is within the supported range. See [Semver calculator](https://jubianchi.github.io/semver-check/#/) to test if versions are compatible.
