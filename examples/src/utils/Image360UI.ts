@@ -30,7 +30,7 @@ export class Image360UI {
     };
 
     const params = {
-      siteId: 'c_RC_2',
+      siteId: '',
       add: add360ImageSet,
       premultipliedRotation: false,
       remove: removeAll360Images
@@ -59,8 +59,6 @@ export class Image360UI {
     });
 
     gui.add(params, 'remove').name('Remove all 360 images');
-
-    add360ImageSet();
 
     async function add360ImageSet() {
       const rotationMatrix = new THREE.Matrix4().makeRotationAxis(
