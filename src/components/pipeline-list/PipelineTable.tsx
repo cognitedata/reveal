@@ -17,9 +17,7 @@ type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
   key: 'id' | 'name' | 'description' | 'owner';
 };
 
-type PipelineTableProps = {};
-
-const PipelineTable = ({}: PipelineTableProps): JSX.Element => {
+const PipelineTable = (): JSX.Element => {
   const { data, isInitialLoading } = useEMPipelines();
   const { t } = useTranslation();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
