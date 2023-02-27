@@ -477,7 +477,8 @@ export const useTaggedAnnotationCount = (
 
 export const useRelatedResourceCount = (
   resource: ResourceItem,
-  tabType: ResourceType
+  tabType: ResourceType,
+  isAdvancedFiltersEnabled = false
 ) => {
   const isAsset = resource.type === 'asset';
   const isFile = resource.type === 'file';
@@ -554,7 +555,7 @@ export const useRelatedResourceCount = (
   }
 
   return {
-    count: formatNumber(count),
+    count: isAdvancedFiltersEnabled ? String(count) : formatNumber(count),
     relationshipCount: relationships.length,
     hasMoreRelationships: hasMore,
     assetIdCount,
@@ -568,7 +569,8 @@ export const useRelatedResourceCount = (
 };
 
 export const useRelatedResourceCounts = (
-  resource: ResourceItem
+  resource: ResourceItem,
+  isAdvancedFiltersEnabled = false
 ): {
   counts: { [key in ResourceType]?: string };
   hasMoreRelationships: { [key in ResourceType]?: boolean };

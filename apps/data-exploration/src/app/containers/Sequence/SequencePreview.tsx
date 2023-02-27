@@ -13,10 +13,7 @@ import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow'
 import { CogniteError, Sequence } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
-import {
-  ResourceDetailsTabs,
-  TabTitle,
-} from '@data-exploration-app/containers/ResourceDetails';
+import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 import {
   useCurrentResourceId,
   useOnPreviewTabChange,
@@ -99,8 +96,8 @@ export const SequencePreview = ({
           externalId: sequence.externalId,
           title: sequence.name || sequence.externalId || String(sequence.id),
         }}
-        tab={activeTab}
         onTabChange={onTabChange}
+        tab={activeTab}
         additionalTabs={[
           <Tabs.Tab label="Preview" tabKey="preview" key="preview">
             <SequenceTabPreview sequence={sequence} />

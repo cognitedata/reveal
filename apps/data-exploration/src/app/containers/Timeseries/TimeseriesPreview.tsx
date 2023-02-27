@@ -13,12 +13,8 @@ import {
   TimeseriesDetails,
   TIME_SELECT,
 } from '@cognite/data-exploration';
-import {
-  ResourceDetailsTabs,
-  TabTitle,
-} from '@data-exploration-app/containers/ResourceDetails';
+import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 
-import { useDateRange } from '@data-exploration-app/context/DateRangeContext';
 import {
   useCurrentResourceId,
   useOnPreviewTabChange,
@@ -119,8 +115,8 @@ export const TimeseriesPreview = ({
                 timeseries.externalId ||
                 String(timeseries.id),
             }}
-            tab={activeTab}
             onTabChange={tabChange}
+            tab={activeTab}
             additionalTabs={[
               <Tabs.Tab label="Details" key="details" tabKey="details">
                 <DetailsTabWrapper>

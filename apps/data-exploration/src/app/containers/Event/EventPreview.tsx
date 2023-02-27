@@ -14,10 +14,7 @@ import { renderTitle } from '@data-exploration-app/utils/EventsUtils';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, CogniteEvent } from '@cognite/sdk';
 
-import {
-  ResourceDetailsTabs,
-  TabTitle,
-} from '@data-exploration-app/containers/ResourceDetails';
+import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 import {
   useCurrentResourceId,
   useOnPreviewTabChange,
@@ -100,8 +97,8 @@ export const EventPreview = ({
           externalId: event.externalId,
           title: renderTitle(event),
         }}
-        tab={activeTab}
         onTabChange={onTabChange}
+        tab={activeTab}
         additionalTabs={[
           <Tabs.Tab key="details" label="Details" tabKey="details">
             <DetailsTabWrapper>

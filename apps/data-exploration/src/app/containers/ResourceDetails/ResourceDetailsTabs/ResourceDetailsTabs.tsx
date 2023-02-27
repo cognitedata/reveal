@@ -14,6 +14,8 @@ import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
 import { useLocation } from 'react-router-dom';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
+import { getTabCountLabel } from '@data-exploration-components/utils';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };
@@ -78,26 +80,21 @@ export const ResourceDetailsTabs = ({
   onTabChange,
   style = {},
 }: ResouceDetailsTabsProps) => {
-  const { counts, hasMoreRelationships, isLoading } =
-    useRelatedResourceCounts(parentResource);
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
+  const { counts, hasMoreRelationships } = useRelatedResourceCounts(
+    parentResource,
+    isAdvancedFiltersEnabled
+  );
 
   const filteredTabs = defaultRelationshipTabs.filter(
     (type) => !excludedTypes.includes(type)
   );
 
-  let assetCount = counts.asset || '0';
-  if (parentResource.type === 'asset') {
-    const assetCountWithoutSeparator = assetCount.split(',').join('');
-    let parsedAssetCount = parseInt(assetCountWithoutSeparator, 10);
-    parsedAssetCount = Number.isNaN(parsedAssetCount) ? 0 : parsedAssetCount;
-    parsedAssetCount =
-      parentResource.type === 'asset'
-        ? Math.max(parsedAssetCount - 1, 0)
-        : parsedAssetCount;
-    assetCount = parsedAssetCount
-      .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  }
+  const getCountLabel = (count: string, key: ResourceType) => {
+    return isAdvancedFiltersEnabled
+      ? getTabCountLabel(+count)
+      : addPlusSignToCount(count, hasMoreRelationships[key]!);
+  };
 
   const relationshipTabs = filteredTabs.map((key) => (
     <Tabs.Tab
@@ -105,10 +102,7 @@ export const ResourceDetailsTabs = ({
       key={key}
       label={getTitle(key)}
       chipRight={{
-        label: addPlusSignToCount(
-          key === 'asset' ? assetCount : counts[key]!,
-          hasMoreRelationships[key]!
-        ),
+        label: getCountLabel(counts[key] || '0', key),
         size: 'x-small',
       }}
     >

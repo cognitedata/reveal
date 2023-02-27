@@ -107,8 +107,8 @@ export const AssetPreview = ({
           externalId: asset.externalId,
           title: asset.name,
         }}
-        tab={activeTab}
         onTabChange={onTabChange}
+        tab={activeTab}
         additionalTabs={[
           <Tabs.Tab label="Details" key="details" tabKey="details">
             <DetailsTabWrapper>

@@ -17,10 +17,7 @@ import { EditFileButton } from '@data-exploration-app/components/TitleRowActions
 import styled from 'styled-components';
 import { Colors, Body, Tabs } from '@cognite/cogs.js';
 import qs from 'query-string';
-import {
-  ResourceDetailsTabs,
-  TabTitle,
-} from '@data-exploration-app/containers/ResourceDetails';
+import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -157,8 +154,8 @@ export const FilePreview = ({
           externalId: fileInfo.externalId,
           title: fileInfo.name,
         }}
-        tab={activeTab}
         onTabChange={onTabChange}
+        tab={activeTab}
         additionalTabs={[
           <Tabs.Tab label="Preview" key="preview" tabKey="preview">
             <PreviewTabWrapper>
