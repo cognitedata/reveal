@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Row, Col, Dropdown, Menu, Icon, Modal, Title } from '@cognite/cogs.js';
 import { makeDefaultTranslations } from 'utils/translations';
-import { format } from 'date-fns';
+import { format, formatDistance } from 'date-fns';
 import styled from 'styled-components';
 import { AlertResponse } from './types';
 import { useAlertsResolveCreate } from './hooks';
@@ -51,14 +51,26 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
       },
     ],
   };
-  const date = format(new Date(Number(alert.lastTriggeredTime)), 'dd/MM/yyyy');
+  const date = format(new Date(Number(alert.startTime)), 'dd/MM/yyyy HH:MM');
+  const duration =
+    alert.startTime &&
+    alert.lastTriggeredTime &&
+    `- ${formatDistance(
+      new Date(alert.startTime),
+      new Date(alert.lastTriggeredTime)
+    )
+      .replace(/ minute[s]?/i, 'M')
+      .replace(/ hour[s]?/i, 'H')
+      .replace(/about /i, '~')}`;
 
   return (
     <Row>
-      <AlertText span={15}>{date} </AlertText>
+      <AlertText span={15}>
+        {date} {duration}
+      </AlertText>
       <Col span={9}>
         <ResolverContainer>
-          {alert.closed ? (
+          {!alert.closed ? (
             <Dropdown
               popperOptions={popperOptions}
               visible={isMenuOpen}
@@ -129,6 +141,7 @@ const ResolvedText = styled.div`
   top: 8px;
   margin-right: 7px;
   letter-spacing: 0.1rem;
+  margin-bottom: 1em;
 `;
 
 const ResolverContainer = styled.div`

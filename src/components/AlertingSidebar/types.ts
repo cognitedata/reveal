@@ -1,9 +1,10 @@
 import {
   CogniteExternalId,
-  Timestamp,
   CogniteInternalId,
   Metadata,
+  Timestamp,
 } from '@cognite/sdk';
+import { MonitoringJob } from 'components/MonitoringSidebar/types';
 
 export type AlertResponse = {
   id: number;
@@ -18,16 +19,17 @@ export type AlertResponse = {
   acknowledged: false;
   closed: false;
   createdTime: Timestamp;
-  startTime?: Timestamp;
   lastTriggeredTime?: Timestamp;
   lastUpdatedTime?: Timestamp;
   status: string;
 };
 
-export type AlertResolve = {
-  id: number;
+export type AlertResponsePayload = {
+  items: Array<AlertResponse>;
 };
 
-export type AlertResolvePayload = {
-  items: AlertResolve[];
+export type MonitoringJobsAlertsResponsePayload = {
+  items: Array<MonitoringJob>;
 };
+
+export type AlertPayload = {};

@@ -13,3 +13,4 @@ export const ALERTING_SIDEBAR_KEY = 'alerting';
 export const MONITORING_SIDEBAR_SHOW_ALERTS = 'monitoringShowAlerts';
 export const MONITORING_SIDEBAR_SELECTED_FOLDER = 'monitoringFolder';
 export const MONITORING_SIDEBAR_HIGHLIGHTED_JOB = 'monitoringJobId';
+export const MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR = 'navFromAlertSidebar';

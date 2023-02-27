@@ -23,9 +23,10 @@ import { useSearchParam } from 'hooks/navigation';
 import {
   SEARCH_KEY,
   ACTIVE_SIDEBAR_KEY,
-  THRESHOLD_SIDEBAR_KEY,
   EVENT_SIDEBAR_KEY,
   MONITORING_SIDEBAR_KEY,
+  ALERTING_SIDEBAR_KEY,
+  THRESHOLD_SIDEBAR_KEY,
 } from 'utils/constants';
 import { startTimer, stopTimer, trackUsage } from 'services/metrics';
 import { Modes } from 'pages/types';
@@ -83,6 +84,7 @@ import EventSidebar from 'components/EventSidebar/EventSidebar';
 import { eventResultsAtom } from 'models/event-results/atom';
 import { EventResultEffects } from 'effects/events';
 import MonitoringSidebar from 'components/MonitoringSidebar/MonitoringSidebar';
+import AlertingSidebar from 'components/AlertingSidebar/AlertingSidebar';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -136,13 +138,15 @@ const ChartViewPage = () => {
   const [showMonitoringSidebar, setShowMonitoringSidebar] = useState(
     activeSidebar === MONITORING_SIDEBAR_KEY
   );
+  const [showAlertingSidebar, setShowAlertingSidebar] = useState(
+    activeSidebar === ALERTING_SIDEBAR_KEY
+  );
   const [showErrorSidebar, setShowErrorSidebar] = useState(false);
   const [showEventSidebar, setShowEventSidebar] = useState(
     activeSidebar === EVENT_SIDEBAR_KEY
   );
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY);
   const { chartId = '' } = useParams<{ chartId: string }>();
-
   /**
    * Get local initialized chart
    */
@@ -300,10 +304,18 @@ const ChartViewPage = () => {
     if (showThresholdSidebar) {
       setActiveSidebarQuery(THRESHOLD_SIDEBAR_KEY);
     }
+    if (showAlertingSidebar) {
+      setActiveSidebarQuery(ALERTING_SIDEBAR_KEY);
+    }
     if (showMonitoringSidebar) {
       setActiveSidebarQuery(MONITORING_SIDEBAR_KEY);
     }
-  }, [showEventSidebar, showThresholdSidebar, showMonitoringSidebar]);
+  }, [
+    showEventSidebar,
+    showThresholdSidebar,
+    showMonitoringSidebar,
+    showAlertingSidebar,
+  ]);
 
   const openNodeEditor = useCallback(() => {
     setWorkspaceMode('editor');
@@ -339,6 +351,7 @@ const ChartViewPage = () => {
       setShowErrorSidebar(false);
       setShowEventSidebar(false);
       setShowMonitoringSidebar(false);
+      setShowAlertingSidebar(false);
       setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
     },
     [selectedSourceId, showContextMenu]
@@ -350,6 +363,7 @@ const ChartViewPage = () => {
     setShowEventSidebar(false);
     setShowThresholdSidebar(false);
     setShowMonitoringSidebar(false);
+    setShowAlertingSidebar(false);
     setShowDataProfilingSidebar((prevState) => !prevState);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   }, []);
@@ -360,6 +374,7 @@ const ChartViewPage = () => {
     setShowDataProfilingSidebar(false);
     setShowEventSidebar(false);
     setShowMonitoringSidebar(false);
+    setShowAlertingSidebar(false);
     setShowThresholdSidebar((prevState) => !prevState);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   }, []);
@@ -370,7 +385,19 @@ const ChartViewPage = () => {
     setShowEventSidebar(false);
     setShowThresholdSidebar(false);
     setShowDataProfilingSidebar(false);
+    setShowAlertingSidebar(false);
     setShowMonitoringSidebar((prevState) => !prevState);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+  }, []);
+
+  const handleAlertingSidebarToggle = useCallback(() => {
+    setShowContextMenu(false);
+    setShowErrorSidebar(false);
+    setShowEventSidebar(false);
+    setShowThresholdSidebar(false);
+    setShowDataProfilingSidebar(false);
+    setShowMonitoringSidebar(false);
+    setShowAlertingSidebar((prevState) => !prevState);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   }, []);
 
@@ -395,6 +422,7 @@ const ChartViewPage = () => {
     setShowDataProfilingSidebar(false);
     setShowThresholdSidebar(false);
     setShowMonitoringSidebar(false);
+    setShowAlertingSidebar(false);
     setShowEventSidebar((prevState) => !prevState);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   }, []);
@@ -422,6 +450,12 @@ const ChartViewPage = () => {
 
   const handleCloseMonitoringSidebar = useCallback(() => {
     setShowMonitoringSidebar(false);
+    setActiveSidebarQuery('');
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, []);
+
+  const handleCloseAlertingSidebar = useCallback(() => {
+    setShowAlertingSidebar(false);
     setActiveSidebarQuery('');
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
@@ -884,10 +918,36 @@ const ChartViewPage = () => {
         )}
 
         {showMonitoringSidebar && (
-          <MonitoringSidebar onClose={handleCloseMonitoringSidebar} />
+          <MonitoringSidebar
+            onClose={handleCloseMonitoringSidebar}
+            onViewAlertingSidebar={() => {
+              handleMonitoringSidebarToggle();
+              handleAlertingSidebarToggle();
+            }}
+          />
+        )}
+
+        {showAlertingSidebar && (
+          <AlertingSidebar
+            onClose={handleCloseAlertingSidebar}
+            onViewMonitoringJobs={() => {
+              handleAlertingSidebarToggle();
+              handleMonitoringSidebarToggle();
+            }}
+          />
         )}
 
         <Toolbar>
+          {isMonitoringEnabled && (
+            <Tooltip content={t.Alerting} position="left">
+              <Button
+                icon="Bell"
+                aria-label="Toggle alerting sidebar"
+                toggled={showAlertingSidebar}
+                onClick={() => handleAlertingSidebarToggle()}
+              />
+            </Tooltip>
+          )}
           {isDataProfilingEnabled && (
             <Tooltip content={t['Data Profiling']} position="left">
               <Button

@@ -1,16 +1,21 @@
 import { useSearchParam } from 'hooks/navigation';
 import { useTranslations } from 'hooks/translations';
-import React from 'react';
+import React, { useState } from 'react';
 import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from 'utils/constants';
 import { makeDefaultTranslations } from 'utils/translations';
 import MonitoringAlertRow from 'components/MonitoringAlert/MonitoringAlert';
 import styled from 'styled-components';
+import { MonitoringSidebarBlueButton } from 'components/AlertingSidebar/elements';
 import { useListAlerts, useMonitoringFoldersWithJobs } from './hooks';
 import ListMonitoringJobPreview from './ListMonitoringJobPreview';
 // import ListMonitoringJobPreview from './ListMonitoringJobPreview';
 import { MonitoringFolderJobs, MonitoringJob } from './types';
 
-const defaultTranslation = makeDefaultTranslations('Alert history for: ');
+const defaultTranslation = makeDefaultTranslations(
+  'Alert history for: ',
+  'Show more'
+);
+const MINIMUM_ALERTS_TO_SHOW = 20;
 const ListMonitoringJobAlerts = () => {
   const [monitoringJobIdParam] = useSearchParam(
     MONITORING_SIDEBAR_HIGHLIGHTED_JOB
@@ -21,6 +26,10 @@ const ListMonitoringJobAlerts = () => {
     // isFetching,
   } = useMonitoringFoldersWithJobs();
 
+  const [showAll, setShowAll] = useState(false);
+  const onShowAllAlerts = () => {
+    setShowAll(true);
+  };
   const { data: alerts } = useListAlerts(monitoringJobIdParam || '');
   const t = {
     ...defaultTranslation,
@@ -41,6 +50,8 @@ const ListMonitoringJobAlerts = () => {
       return acc;
     }, undefined);
 
+  const limit = showAll === false ? MINIMUM_ALERTS_TO_SHOW : alerts?.length;
+
   return (
     <>
       {t['Alert history for: ']}
@@ -51,7 +62,7 @@ const ListMonitoringJobAlerts = () => {
           showLastAlert={false}
         />
       )}
-      {alerts?.map((alert) => (
+      {alerts?.slice(0, limit).map((alert) => (
         <WrappedAlert key={alert.id}>
           <MonitoringAlertRow
             alert={alert}
@@ -59,6 +70,13 @@ const ListMonitoringJobAlerts = () => {
           />
         </WrappedAlert>
       ))}
+
+      {showAll === false && (alerts?.length || 0) > MINIMUM_ALERTS_TO_SHOW && (
+        <MonitoringSidebarBlueButton onClick={onShowAllAlerts}>
+          {t['Show more']}{' '}
+          {alerts && `(${alerts.length - MINIMUM_ALERTS_TO_SHOW})`}
+        </MonitoringSidebarBlueButton>
+      )}
     </>
   );
 };

@@ -15,6 +15,7 @@ import {
 import { useSearchParam } from 'hooks/navigation';
 import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
+  MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR,
   MONITORING_SIDEBAR_SELECTED_FOLDER,
   MONITORING_SIDEBAR_SHOW_ALERTS,
 } from 'utils/constants';
@@ -26,6 +27,7 @@ import ListMonitoringJobAlerts from './ListMonitoringJobAlerts';
 
 type Props = {
   onClose: () => void;
+  onViewAlertingSidebar: () => void;
 };
 
 const defaultTranslation = makeDefaultTranslations(
@@ -35,7 +37,7 @@ const defaultTranslation = makeDefaultTranslations(
   'Back'
 );
 
-const MonitoringSidebar = memo(({ onClose }: Props) => {
+const MonitoringSidebar = memo(({ onClose, onViewAlertingSidebar }: Props) => {
   const [showMonitoringJobForm, setShowMonitoringJobForm] = useState(false);
   const [, setShowAlerts] = useSearchParam(MONITORING_SIDEBAR_SHOW_ALERTS);
   const [, setMonitoringJobIdParam] = useSearchParam(
@@ -43,6 +45,10 @@ const MonitoringSidebar = memo(({ onClose }: Props) => {
   );
   const [, setMonitoringFolder] = useSearchParam(
     MONITORING_SIDEBAR_SELECTED_FOLDER
+  );
+
+  const [navFromAlerts, setNavFromAlerts] = useSearchParam(
+    MONITORING_SIDEBAR_NAV_FROM_ALERT_SIDEBAR
   );
 
   const t = {
@@ -116,6 +122,10 @@ const MonitoringSidebar = memo(({ onClose }: Props) => {
                   size="small"
                   aria-label="Back"
                   onClick={() => {
+                    if (navFromAlerts === 'true') {
+                      onViewAlertingSidebar();
+                      setNavFromAlerts(undefined);
+                    }
                     setShowAlerts(undefined);
                     setMonitoringJobIdParam(undefined);
                   }}
@@ -123,6 +133,7 @@ const MonitoringSidebar = memo(({ onClose }: Props) => {
                   {t.Back}
                 </Button>
               </SidebarHeaderActions>
+
               <ListMonitoringJobAlerts />
             </>
           )}
