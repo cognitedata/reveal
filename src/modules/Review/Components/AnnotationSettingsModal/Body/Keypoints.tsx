@@ -13,8 +13,7 @@ import {
 import { isSensitiveAnnotationLabel } from 'src/utils/textUtils';
 import styled from 'styled-components';
 import { CaretRightOutlined } from '@ant-design/icons';
-import { Detail } from '@cognite/cogs.js-old';
-import { Button, Body, Tooltip } from '@cognite/cogs.js';
+import { Button, Body, Tooltip, Detail } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/annotationSettingsConstants';
 import isEmpty from 'lodash-es/isEmpty';
 import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';

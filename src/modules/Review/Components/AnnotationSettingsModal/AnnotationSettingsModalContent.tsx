@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Detail, Tabs } from '@cognite/cogs.js-old';
-import { Button, Title } from '@cognite/cogs.js';
+import { Tabs } from '@cognite/cogs.js-old';
+import { Button, Title, Detail } from '@cognite/cogs.js';
 import {
   PredefinedVisionAnnotations,
   PredefinedKeypointCollection,

@@ -6,8 +6,7 @@ import {
   CogsFileInfo,
 } from 'src/modules/Common/Components/FileUploader/FilePicker/types';
 import styled from 'styled-components';
-import { Detail } from '@cognite/cogs.js-old';
-import { Button, Title } from '@cognite/cogs.js';
+import { Button, Title, Detail } from '@cognite/cogs.js';
 import { margin } from 'src/cogs-variables';
 import * as UPLODER_CONST from 'src/constants/UploderConstants';
 import { VALID_MIME_TYPES } from 'src/constants/validMimeTypes';

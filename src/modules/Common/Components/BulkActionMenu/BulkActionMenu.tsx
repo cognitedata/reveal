@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Badge, Detail, Colors } from '@cognite/cogs.js-old';
+import { Badge, Colors } from '@cognite/cogs.js-old';
 import {
   Button,
   Icon,
@@ -7,6 +7,7 @@ import {
   Dropdown,
   Popconfirm,
   Menu,
+  Detail,
 } from '@cognite/cogs.js';
 import { pushMetric } from 'src/utils/pushMetric';
 import { useFlag } from '@cognite/react-feature-flags';

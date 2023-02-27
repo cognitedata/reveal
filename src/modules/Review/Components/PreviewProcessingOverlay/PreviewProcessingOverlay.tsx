@@ -1,6 +1,5 @@
 import React from 'react';
-import { Detail } from '@cognite/cogs.js-old';
-import { Body } from '@cognite/cogs.js';
+import { Body, Detail } from '@cognite/cogs.js';
 import { Spin } from 'antd';
 import styled from 'styled-components';
 

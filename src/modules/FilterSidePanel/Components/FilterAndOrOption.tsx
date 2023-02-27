@@ -1,5 +1,5 @@
 import { Radio } from 'antd';
-import { Detail } from '@cognite/cogs.js-old';
+import { Detail } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
 

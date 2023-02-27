@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
-import { Detail } from '@cognite/cogs.js-old';
-import { Button, Body } from '@cognite/cogs.js';
+import { Button, Body, Detail } from '@cognite/cogs.js';
 import { StringFilter } from '@cognite/data-exploration';
 import {
   VisionFileFilterProps,

@@ -44,7 +44,7 @@ import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
-import { Detail } from '@cognite/cogs.js-old';
+import { Detail } from '@cognite/cogs.js';
 import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { FileInfo } from '@cognite/sdk';
