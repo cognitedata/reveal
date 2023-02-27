@@ -38,8 +38,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     const { facade, entities } = await this.setup360Images(cogniteClient, sceneHandler, onBeforeRender);
 
-    // const icons = entities.map(entity => entity.icon);
-    // sceneHandler.addCustomObject(this.getOctreeVisualizationObject(icons));
+    const icons = entities.map(entity => entity.icon);
+    sceneHandler.addCustomObject(this.getOctreeVisualizationObject(icons));
 
     this.setupGUI(entities);
 
