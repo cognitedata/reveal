@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Select } from '@cognite/cogs.js-old';
-import { Body } from '@cognite/cogs.js';
+import { Body, Select } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
@@ -61,8 +60,8 @@ export const AnnotationPanel = ({
 
   return (
     <PanelContainer>
+      <Body level={2}>Annotation status</Body>
       <SelectContainer>
-        <Body level={2}>Annotation status</Body>
         <Select
           value={selectedAnnotationEditOption}
           onChange={setSelectedAnnotationEditOption}
@@ -75,13 +74,10 @@ export const AnnotationPanel = ({
 };
 const PanelContainer = styled.div`
   display: grid;
-  grid-auto-flow: column;
-  justify-content: left;
-  align-items: end;
-  grid-gap: 8px;
-`;
-const SelectContainer = styled.div`
-  display: grid;
   grid-gap: 6px;
+  height: 62px;
+`;
+
+const SelectContainer = styled.div`
   width: 255px;
 `;

@@ -1,7 +1,6 @@
 /* eslint-disable array-callback-return */
 import React, { useState } from 'react';
-import { Select } from '@cognite/cogs.js-old';
-import { Button } from '@cognite/cogs.js';
+import { Button, Select } from '@cognite/cogs.js';
 import { Props as SelectProps } from 'react-select';
 import {
   ParamsCustomModel,
@@ -195,28 +194,30 @@ export function DetectionModelSelect({
   };
 
   return (
-    <Select
-      isMulti
-      value={enabledSelectedModels
-        .filter(
-          (modelType) =>
-            !!detectionModelOptions.find(
-              (item) => item.isSelectable && item.value === modelType
-            )
-        )
-        .map(toOption)}
-      onChange={(selectedOptions?: Array<SelectOption>) => {
-        // Only consider the selectable options
-        const filteredOptions = selectedOptions?.filter(
-          (option) => option.isSelectable
-        );
-        setSelectedOptionsCount(filteredOptions?.length || 1);
-        onChange(filteredOptions?.map(fromOption) || []);
-      }}
-      options={options}
-      {...props}
-      styles={colorStyles}
-    />
+    <SelectContainer>
+      <Select
+        isMulti
+        value={enabledSelectedModels
+          .filter(
+            (modelType) =>
+              !!detectionModelOptions.find(
+                (item) => item.isSelectable && item.value === modelType
+              )
+          )
+          .map(toOption)}
+        onChange={(selectedOptions?: Array<SelectOption>) => {
+          // Only consider the selectable options
+          const filteredOptions = selectedOptions?.filter(
+            (option) => option.isSelectable
+          );
+          setSelectedOptionsCount(filteredOptions?.length || 1);
+          onChange(filteredOptions?.map(fromOption) || []);
+        }}
+        options={options}
+        {...props}
+        styles={colorStyles}
+      />
+    </SelectContainer>
   );
 }
 
@@ -226,4 +227,8 @@ const StyledButton = styled(Button)`
   &:hover {
     background: none !important;
   }
+`;
+
+const SelectContainer = styled.div`
+  height: 36px;
 `;

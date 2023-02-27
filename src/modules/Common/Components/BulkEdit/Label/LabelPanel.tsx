@@ -37,10 +37,11 @@ const PanelContainer = styled.div`
 const SelectContainer = styled.div`
   display: grid;
   grid-gap: 6px;
-  width: 630px;
+  height: 62px;
 `;
 
 const LabelFilterContainer = styled.div`
+  width: 255px;
   span {
     .title {
       display: none;

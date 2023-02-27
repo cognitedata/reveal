@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Select } from '@cognite/cogs.js-old';
-import { Body, Detail } from '@cognite/cogs.js';
+import { Body, Detail, Select } from '@cognite/cogs.js';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
@@ -93,19 +92,21 @@ export const AnnotationFilter = ({
 
   return (
     <Container>
-      <OptionContainer>
+      <SearchContainer>
         <Body level={3}>Search annotations</Body>
         {/* using Multi select to enable un-select option and logically accept last option */}
-        <Select
-          value={getValue(annotation?.annotationLabelOrText)}
-          onChange={setAnnotationText}
-          options={annotationLabels}
-          isClearable
-          closeMenuOnSelect
-          isMulti={false}
-        />
-      </OptionContainer>
-      <OptionContainer>
+        <div>
+          <Select
+            value={getValue(annotation?.annotationLabelOrText)}
+            onChange={setAnnotationText}
+            options={annotationLabels}
+            isClearable
+            closeMenuOnSelect
+            isMulti={false}
+          />
+        </div>
+      </SearchContainer>
+      <StatusContainer>
         <HeaderContainer>
           <Body level={3}>Annotation status</Body>
           <ClearButton
@@ -129,7 +130,7 @@ export const AnnotationFilter = ({
             </Radio>
           ))}
         </RadioContainer>
-      </OptionContainer>
+      </StatusContainer>
     </Container>
   );
 };
@@ -147,7 +148,13 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
 `;
 
-const OptionContainer = styled.div`
+const SearchContainer = styled.div`
+  display: grid;
+  grid-gap: 6px;
+  height: 62px;
+`;
+
+const StatusContainer = styled.div`
   display: flex;
   gap: 8px;
   flex-direction: column;

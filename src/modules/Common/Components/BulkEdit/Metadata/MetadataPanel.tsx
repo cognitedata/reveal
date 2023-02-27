@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Select } from '@cognite/cogs.js-old';
-import { Button, Body, Tooltip } from '@cognite/cogs.js';
+import { Button, Body, Tooltip, Select } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
@@ -152,15 +151,17 @@ export const MetadataPanel = ({
     </PanelContainer>
   ) : (
     <PanelContainer>
-      <SelectContainer>
+      <KeyContainer>
         <Body level={2}>Key</Body>
-        <Select
-          value={activeKey}
-          onChange={setActiveKey}
-          options={metadataSelectOptions}
-          closeMenuOnSelect
-        />
-      </SelectContainer>
+        <SelectContainer>
+          <Select
+            value={activeKey}
+            onChange={setActiveKey}
+            options={metadataSelectOptions}
+            closeMenuOnSelect
+          />
+        </SelectContainer>
+      </KeyContainer>
       <InputContainer>
         <Body level={2}>Input updated shared value</Body>
         <Input
@@ -210,9 +211,13 @@ const PanelContainer = styled.div`
   align-items: end;
   grid-gap: 8px;
 `;
-const SelectContainer = styled.div`
+const KeyContainer = styled.div`
   display: grid;
   grid-gap: 6px;
+  width: 255px;
+  height: 62px;
+`;
+const SelectContainer = styled.div`
   width: 255px;
 `;
 const InputContainer = styled.div`

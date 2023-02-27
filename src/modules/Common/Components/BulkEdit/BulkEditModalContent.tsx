@@ -1,7 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { notification } from 'antd';
-import { Select } from '@cognite/cogs.js-old';
-import { Button, Title, Body, Tooltip, Popconfirm } from '@cognite/cogs.js';
+import {
+  Button,
+  Title,
+  Body,
+  Tooltip,
+  Popconfirm,
+  Select,
+} from '@cognite/cogs.js';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
@@ -202,7 +208,7 @@ export const BulkEditModalContent = ({
       <BodyContainer>
         <EditType>
           <Body level={2}>Select bulk action</Body>
-          <div style={{ width: '255px' }}>
+          <SelectContainer>
             <Select
               value={{
                 label: selectedBulkEditOption.label,
@@ -215,7 +221,7 @@ export const BulkEditModalContent = ({
               }))}
               closeMenuOnSelect
             />
-          </div>
+          </SelectContainer>
         </EditType>
         <EditPanel
           selectedFiles={selectedFiles}
@@ -272,6 +278,11 @@ const BodyContainer = styled.div`
 const EditType = styled.div`
   display: grid;
   grid-gap: 6px;
+  height: 62px;
+`;
+
+const SelectContainer = styled.div`
+  width: 255px;
 `;
 
 const Footer = styled.div`

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { Select } from '@cognite/cogs.js-old';
-import { Button, Body, Detail } from '@cognite/cogs.js';
+import { Button, Body, Detail, Select } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 

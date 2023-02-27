@@ -1,6 +1,5 @@
 import React from 'react';
-import { Select } from '@cognite/cogs.js-old';
-import { Title, Body } from '@cognite/cogs.js';
+import { Title, Body, Select } from '@cognite/cogs.js';
 import { AutoMLModelType } from 'src/api/vision/autoML/types';
 import { MAX_AUTOML_MODEL_NAME_LENGTH } from 'src/api/vision/autoML/constants';
 
