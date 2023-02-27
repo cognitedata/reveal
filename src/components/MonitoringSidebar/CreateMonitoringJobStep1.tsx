@@ -8,6 +8,13 @@ import { useForm } from 'react-hook-form';
 import { delay } from 'lodash';
 import PortalWait from 'components/PortalWait/PortalWait';
 import {
+  addChartThreshold,
+  removeChartThreshold,
+  updateChartThresholdSelectedSource,
+  updateChartThresholdUpperLimit,
+} from 'models/chart/updates-threshold';
+import { ChartThreshold } from 'models/chart/types';
+import {
   FieldHelperText,
   NotificationBox,
   NotificationEmail,
@@ -42,6 +49,8 @@ const defaultTranslations = makeDefaultTranslations(
   'Next'
 );
 
+const MONITORING_THRESHOLD_ID = 'monitoring-threshold';
+
 type Props = {
   translations?: typeof defaultTranslations;
   onCancel: () => void;
@@ -65,7 +74,7 @@ const CreateMonitoringJobStep1 = ({
 
   const { isDirty, isValid, errors } = formState;
 
-  const [chart] = useChartAtom();
+  const [chart, setChart] = useChartAtom();
   const timeseries = (chart && chart?.timeSeriesCollection) || [];
 
   const [intervalsEvaluateEvery, setIntervalsEvaluateEvery] = useState<
@@ -90,6 +99,62 @@ const CreateMonitoringJobStep1 = ({
   useEffect(() => {
     delay(trigger, 1000);
   }, [JSON.stringify(formValues)]);
+
+  const hasMonitoringThreshold = Boolean(
+    chart?.thresholdCollection?.find(
+      (threshold) => threshold.id === MONITORING_THRESHOLD_ID
+    )
+  );
+
+  useEffect(() => {
+    const thresholdData = {
+      id: MONITORING_THRESHOLD_ID,
+      name: `monitoring-threshold`,
+      visible: true,
+      upperLimit: 0,
+      type: 'under',
+      filter: {},
+    } as ChartThreshold;
+
+    if (!hasMonitoringThreshold) {
+      setChart((oldChart) => addChartThreshold(oldChart!, thresholdData));
+    }
+  }, [hasMonitoringThreshold]);
+
+  useEffect(() => {
+    return () => {
+      setTimeout(() => {
+        setChart((oldChart) =>
+          removeChartThreshold(oldChart!, MONITORING_THRESHOLD_ID)
+        );
+      }, 200);
+    };
+  }, []);
+
+  useEffect(() => {
+    setChart((oldChart) =>
+      updateChartThresholdUpperLimit(
+        oldChart!,
+        MONITORING_THRESHOLD_ID,
+        +formValues.alertThreshold
+      )
+    );
+  }, [formValues.alertThreshold]);
+
+  useEffect(() => {
+    const tsSource = timeseries.find((ts) => {
+      return ts.tsExternalId === formValues.source?.value;
+    });
+    if (tsSource) {
+      setChart((oldChart) =>
+        updateChartThresholdSelectedSource(
+          oldChart!,
+          MONITORING_THRESHOLD_ID,
+          tsSource?.id || ''
+        )
+      );
+    }
+  }, [formValues.source?.value, timeseries]);
 
   return (
     <form>
@@ -148,9 +213,8 @@ const CreateMonitoringJobStep1 = ({
 
       <FieldTitleRequired>{t['Minimum duration']} </FieldTitleRequired>
       <Row>
-        <Col span={24}>
+        <Col span={13}>
           <FormInputWithController
-            suffix="minutes"
             control={control}
             type="number"
             max={59}
@@ -164,6 +228,21 @@ const CreateMonitoringJobStep1 = ({
                   ? 'Minimum duration must be less than 60'
                   : true,
             }}
+          />
+        </Col>
+        <Col span={1}>&nbsp;</Col>
+        <Col span={10}>
+          <FormInputWithController
+            control={control}
+            type="select"
+            name="minimumDurationType"
+            required={t['Minimum duration is required']}
+            options={[
+              {
+                label: 'minutes',
+                value: 'm',
+              },
+            ]}
           />
         </Col>
         <FieldHelperText>
