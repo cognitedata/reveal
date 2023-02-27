@@ -34,6 +34,7 @@ type TypeOption = {
 export const RelatedResources = ({
   parentResource,
   type,
+  onItemClicked: onItemClickedProp,
   ...props
 }: RelationshipTableProps & SelectableItemsProps) => {
   const [selectedType, setSelectedType] = useState<TypeOption>();
@@ -97,13 +98,20 @@ export const RelatedResources = ({
     return types;
   };
 
+  const onItemClicked = (id: number) => {
+    trackUsage('Exploration.Preview.OpenedFrom', selectedType);
+    onItemClickedProp(id);
+  };
+
   const relatedResourceTypes = getRelatedResourceType();
 
   useEffect(
-    () =>
+    () => {
       setSelectedType(
         relatedResourceTypes.find((t) => t.count > 0) || relatedResourceTypes[0]
-      ),
+      );
+    },
+
     // Should NOT set state when relatedResourceTypes changes!
     // eslint-disable-next-line
     [isFetched, linkedResourceCount]
@@ -152,6 +160,7 @@ export const RelatedResources = ({
               parentResource={parentResource}
               type={type}
               isGroupingFilesEnabled={isGroupingFilesEnabled}
+              onItemClicked={onItemClicked}
               {...props}
             />
           </>
@@ -163,18 +172,24 @@ export const RelatedResources = ({
             enableAdvancedFilter={isAdvancedFiltersEnabled}
             parentResource={parentResource}
             type={type}
+            onItemClicked={onItemClicked}
             {...props}
           />
         )}
 
         {selectedType?.value === 'assetId' && (
-          <AssetIdTable resource={parentResource} {...props} />
+          <AssetIdTable
+            resource={parentResource}
+            onItemClicked={onItemClicked}
+            {...props}
+          />
         )}
 
         {selectedType?.value === 'annotation' && (
           <AnnotationTable
             fileId={parentResource.id}
             resourceType={type}
+            onItemClicked={onItemClicked}
             {...props}
           />
         )}
@@ -183,6 +198,7 @@ export const RelatedResources = ({
           <AnnotatedWithTable
             resource={parentResource}
             isGroupingFilesEnabled={isGroupingFilesEnabled}
+            onItemClicked={onItemClicked}
             {...props}
           />
         )}
