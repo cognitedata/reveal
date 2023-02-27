@@ -5981,7 +5981,7 @@
     eslint-scope "^5.1.1"
     eslint-utils "^3.0.0"
 
-"@typescript-eslint/experimental-utils@^5.0.0", "@typescript-eslint/experimental-utils@^5.3.0":
+"@typescript-eslint/experimental-utils@^5.0.0":
   version "5.42.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/experimental-utils/-/experimental-utils-5.42.0.tgz#a2b6b24c75bf41ce22501f8669082efdac689909"
   integrity sha512-B51HySW9wWIwLantEMqJi0FXVp1IMKRAyNASrYhJV3/nl4r6aEz6FJTJtscgu7YrGWigs7OypQExmcVqGQoDFQ==
@@ -6090,7 +6090,7 @@
     eslint-utils "^3.0.0"
     semver "^7.3.7"
 
-"@typescript-eslint/utils@^5.10.0", "@typescript-eslint/utils@^5.43.0":
+"@typescript-eslint/utils@^5.10.0", "@typescript-eslint/utils@^5.43.0", "@typescript-eslint/utils@^5.45.0":
   version "5.53.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/utils/-/utils-5.53.0.tgz#e55eaad9d6fffa120575ffaa530c7e802f13bce8"
   integrity sha512-VUOOtPv27UNWLxFwQK/8+7kvxVC+hPHNsJjzlJyotlaHjLSIgOCKj9I0DBUjwOOA64qjBwx5afAPjksqOxMO0g==
@@ -11496,14 +11496,15 @@ eslint-plugin-sort-requires@^2.1.0:
   resolved "https://registry.yarnpkg.com/eslint-plugin-sort-requires/-/eslint-plugin-sort-requires-2.1.0.tgz#3efad948dc83798219e809f54067c40e55444861"
   integrity sha512-kU24IuceSOEMfASJF0Blmy3mcsLWfUaUNSaEAz3v80TXBi9HbvTBLA0iISlmLZvvxRlegNTRxFYVgsvcAkz6PA==
 
-eslint-plugin-storybook@0.5.12:
-  version "0.5.12"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-storybook/-/eslint-plugin-storybook-0.5.12.tgz#b84d38400b91a9abdf15cd2c81644bff27861a96"
-  integrity sha512-ojuNKnrZFrQpm5N5Lp8UR0VEn4HtLjlNn6nxQAYlmTsEXNigtId1XPuMbXAsvFcEmv3RTb5l+9tZgkhSURfACg==
+eslint-plugin-storybook@0.6.10:
+  version "0.6.10"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-storybook/-/eslint-plugin-storybook-0.6.10.tgz#a5844b15bb8dd864896b0b023e710218d9d0f274"
+  integrity sha512-3DKXRey06EhwnTKaG6fgMqGTy4C3z6Ikyv6VVixO5BvaExWQe3yGWIAufrC2Et0OaAMIaMwx9KWjqb/Wq+JxPg==
   dependencies:
     "@storybook/csf" "^0.0.1"
-    "@typescript-eslint/experimental-utils" "^5.3.0"
+    "@typescript-eslint/utils" "^5.45.0"
     requireindex "^1.1.0"
+    ts-dedent "^2.2.0"
 
 eslint-plugin-testing-library@5.10.0, eslint-plugin-testing-library@^5.0.1:
   version "5.10.0"
