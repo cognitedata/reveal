@@ -16,21 +16,15 @@ export default function TargetSelectionTable({}: Props) {
 
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
-  const { data, isInitialLoading } = useAllDataSets();
-  const datasets = useMemo(
-    () =>
-      data?.pages?.reduce(
-        (accl, p) => [
-          ...accl,
-          ...p.items.map(({ id, name }) => ({
-            value: id,
-            label: name || id.toString(),
-          })),
-        ],
-        [] as { label: string; value: string | number }[]
-      ) || [],
-    [data?.pages]
-  );
+  const { data: datasets, isInitialLoading } = useAllDataSets({
+    select(items) {
+      return items.map(({ id, name }) => ({
+        value: id,
+        label: name || id.toString(),
+      }));
+    },
+  });
+
   return (
     <Flex direction="column">
       <Flex direction="row" gap={12}>

@@ -1,38 +1,19 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteError, DataSet } from '@cognite/sdk';
-import {
-  QueryKey,
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-} from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { QueryKey, UseQueryOptions, useQuery } from '@tanstack/react-query';
 
 const useDataSetKey = (): QueryKey => ['datasets'];
-export const useAllDataSets = (
-  options?: UseInfiniteQueryOptions<
-    { items: DataSet[]; nextCursor?: string },
-    CogniteError
-  >
+export const useAllDataSets = <T>(
+  options?: UseQueryOptions<DataSet[], CogniteError, T>
 ) => {
   const sdk = useSDK();
 
-  const q = useInfiniteQuery(
+  return useQuery(
     useDataSetKey(),
-    ({ pageParam }) => sdk.datasets.list({ limit: 1000, cursor: pageParam }),
+    () => sdk.datasets.list({ limit: 1000 }).autoPagingToArray({ limit: -1 }),
     {
-      getNextPageParam(page) {
-        return page.nextCursor;
-      },
-
       staleTime: 60000,
       ...options,
     }
   );
-  useEffect(() => {
-    if (q.hasNextPage && !q.isFetchingNextPage) {
-      q.fetchNextPage();
-    }
-  }, [q]);
-
-  return q;
 };

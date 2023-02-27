@@ -26,21 +26,15 @@ export default function ResourceSelectionTable({}: Props) {
   ];
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
-  const { data, isInitialLoading } = useAllDataSets();
-  const datasets = useMemo(
-    () =>
-      data?.pages?.reduce(
-        (accl, p) => [
-          ...accl,
-          ...p.items.map(({ id, name }) => ({
-            value: id,
-            label: name || id.toString(),
-          })),
-        ],
-        [] as { label: string; value: string | number }[]
-      ) || [],
-    [data?.pages]
-  );
+  const { data: datasets, isInitialLoading } = useAllDataSets<OptionType[]>({
+    select(items) {
+      return items.map((ds) => ({
+        label: ds.name || ds.id.toString(),
+        value: ds.id,
+      }));
+    },
+  });
+
   return (
     <Flex direction="column">
       <Flex direction="row" gap={12}>
