@@ -23,6 +23,7 @@ import {
 } from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
+import debounce from 'lodash/debounce';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
@@ -40,6 +41,7 @@ export class Image360ApiHelper {
     exit360ImageOnEscapeKey: (event: KeyboardEvent) => void;
   };
 
+  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity), 300, { leading: true });
   private readonly _requestRedraw: () => void;
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
@@ -340,7 +342,7 @@ export class Image360ApiHelper {
 
     if (entity !== undefined) {
       entity.icon.hoverSpriteVisible = true;
-      this._image360Facade.preload(entity);
+      this._debouncePreLoad(entity);
     }
 
     this._requestRedraw();
