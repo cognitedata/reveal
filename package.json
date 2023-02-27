@@ -132,7 +132,7 @@
     "@types/uuid": "8.3.4",
     "babel-eslint": "^10.1.0",
     "babel-plugin-istanbul": "^6.1.1",
-    "chromatic": "6.5.4",
+    "chromatic": "6.15.0",
     "concurrently": "^7.2.2",
     "customize-cra": "1.0.0",
     "cypress": "9.7.0",
