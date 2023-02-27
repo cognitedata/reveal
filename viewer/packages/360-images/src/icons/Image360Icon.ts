@@ -75,6 +75,9 @@ export class Image360Icon {
     const ndcPosition = new THREE.Vector4();
     const renderSize = new THREE.Vector2();
     return ({ renderer, camera }) => {
+      if (!this.visible) {
+        return;
+      }
       this._adaptiveScale = computeAdaptiveScaling(renderer, camera, this._maxPixelSize, this._minPixelSize);
       this._hoverSprite.scale.set(this._adaptiveScale, this._adaptiveScale, 1.0);
     };
