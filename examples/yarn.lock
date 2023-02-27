@@ -3655,6 +3655,11 @@ source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.0, source-map@~0.6.1:
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
   integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
 
+sparse-octree@7.1.6:
+  version "7.1.6"
+  resolved "https://registry.yarnpkg.com/sparse-octree/-/sparse-octree-7.1.6.tgz#bad013c12b14ec78a514fc713d844bfae02e360e"
+  integrity sha512-2fnurm+xGOkhQLoPDqv2kbVXN+xLdTArIt3SCyU47GGVJaUf9AQbKl13KNKYKRxivGLEcscNJtqfvxY2zCGT6Q==
+
 spdy-transport@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/spdy-transport/-/spdy-transport-3.0.0.tgz#00d4863a6400ad75df93361a1608605e5dcdcf31"

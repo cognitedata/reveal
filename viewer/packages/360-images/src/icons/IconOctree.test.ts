@@ -4,7 +4,7 @@
 
 import { Mock } from 'moq.ts';
 import { Box3, Matrix4, Vector3 } from 'three';
-import { Image360Icon } from '../entity/Image360Icon';
+import { Image360Icon } from '../icons/Image360Icon';
 import { IconOctree } from './IconOctree';
 
 describe(IconOctree.name, () => {
