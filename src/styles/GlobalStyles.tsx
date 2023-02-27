@@ -6,6 +6,7 @@ import antdTheme from './antd-theme.less';
 
 import { getContainer } from 'utils';
 import { styleScope } from 'styles/styleScope';
+import { ConfigProvider } from 'antd';
 
 // This will override the appendTo prop on all Tooltips used from cogs
 // @ts-ignore
@@ -22,5 +23,9 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
     return <Loader />;
   }
 
-  return <div className={styleScope}>{props.children}</div>;
+  return (
+    <ConfigProvider getPopupContainer={getContainer}>
+      <div className={styleScope}>{props.children}</div>
+    </ConfigProvider>
+  );
 }

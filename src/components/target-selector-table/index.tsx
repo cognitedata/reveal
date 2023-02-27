@@ -1,23 +1,19 @@
 import { Flex } from '@cognite/cogs.js';
 import { Select, Input } from 'antd';
 import { useTranslation } from 'common';
-import { SOURCE_TABLE_QUERY_KEY } from '../../constants';
+import { TARGET_TABLE_QUERY_KEY } from '../../constants';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
 import { useAllDataSets } from 'hooks/datasets';
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import TimeseriesTable from './TimeSeriesTable';
-
-const { Option } = Select;
+import AssetTable from 'components/resource-selector-table/AssetTable';
 
 type Props = {};
 
-export default function ResourceSelectionTable({}: Props) {
+export default function TargetSelectionTable({}: Props) {
   const { t } = useTranslation();
-  const { sourceType, setSourcesList, sourcesList } = useQuickMatchContext();
-  const resourceTypeOptions = [
-    { value: 'timeseries', label: t('resource-type-ts') },
-  ];
+  const { targetsList, setTargetsList } = useQuickMatchContext();
+
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
   const { data, isInitialLoading } = useAllDataSets();
@@ -38,14 +34,6 @@ export default function ResourceSelectionTable({}: Props) {
   return (
     <Flex direction="column">
       <Flex direction="row" gap={12}>
-        <Select style={{ width: 120 }} defaultValue="timeseries">
-          {resourceTypeOptions.map(({ value, label }) => (
-            <Option key={value} value={value}>
-              {label}
-            </Option>
-          ))}
-        </Select>
-
         <Select
           placeholder={t('resource-type-datasets')}
           style={{ width: 120 }}
@@ -54,20 +42,18 @@ export default function ResourceSelectionTable({}: Props) {
         />
         <Input.Search
           style={{ width: 120 }}
-          value={searchParams.get(SOURCE_TABLE_QUERY_KEY) || ''}
+          value={searchParams.get(TARGET_TABLE_QUERY_KEY) || ''}
           onChange={(e) => {
-            searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
+            searchParams.set(TARGET_TABLE_QUERY_KEY, e.target.value);
             setSearchParams(searchParams);
           }}
         />
       </Flex>
-      {sourceType === 'timeseries' && (
-        <TimeseriesTable
-          query={searchParams.get(SOURCE_TABLE_QUERY_KEY)}
-          selected={sourcesList}
-          setSelected={setSourcesList}
-        />
-      )}
+      <AssetTable
+        query={searchParams.get(TARGET_TABLE_QUERY_KEY)}
+        selected={targetsList}
+        setSelected={setTargetsList}
+      />
     </Flex>
   );
 }
