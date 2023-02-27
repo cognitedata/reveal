@@ -36,7 +36,7 @@ def pods = { body ->
             containers: [
               containerTemplate(
                 name: 'cloudsdk',
-                image: 'google/cloud-sdk:418.0.0',
+                image: 'google/cloud-sdk:419.0.0',
                 resourceRequestCpu: '500m',
                 resourceRequestMemory: '500Mi',
                 resourceLimitCpu: '500m',
