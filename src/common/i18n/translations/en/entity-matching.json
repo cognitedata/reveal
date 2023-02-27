@@ -1,6 +1,8 @@
 {
   "entity-matching-pipelines": "Entity Matching pipelines",
   "quick-match": "Quick match",
-  "create-pipeline": "Create pipeline"
-
+  "create-pipeline": "Create pipeline",
+  "pipeline-list-table-column-title-description": "Description",
+  "pipeline-list-table-column-title-name": "Name",
+  "pipeline-list-table-column-title-owner": "Owner"
 }

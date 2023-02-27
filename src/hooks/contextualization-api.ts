@@ -36,6 +36,7 @@ export type Pipeline = {
   id: number;
   name: string;
   description: string;
+  owner: string;
 };
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
 export const useEMPipelines = (
