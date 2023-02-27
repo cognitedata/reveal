@@ -1,4 +1,4 @@
-import { CogniteEvent } from '@cognite/sdk';
+import { Asset, CogniteEvent } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 import {
   SequenceWithRelationshipLabels,
@@ -26,8 +26,7 @@ type TableColumnDef = ColumnDef<
 type ColumnWithQuery = (query?: string) => TableColumnDef;
 
 type RootAssetColumn = (
-  externalLink?: boolean,
-  onClick?: (evt?: any) => void
+  onClick?: (rootAsset: Asset, resourceId?: number) => void
 ) => TableColumnDef;
 type MetadataColumn = (
   key: string,

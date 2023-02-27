@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Timeseries } from '@cognite/sdk';
+import { Asset, Timeseries } from '@cognite/sdk';
 import {
   DateRangeProps,
   RelationshipLabels,
@@ -28,12 +28,13 @@ export interface TimeseriesTableProps
     RelationshipLabels,
     DateRangeProps {
   hideEmptyData?: boolean;
+  onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
 }
 const visibleColumns = ['name', 'description', 'data', 'lastUpdatedTime'];
 export const TimeseriesTable = ({
   dateRange: dateRangeProp,
   hideEmptyData = false,
-
+  onRootAssetClick,
   query,
   ...props
 }: TimeseriesTableProps) => {
@@ -145,7 +146,7 @@ export const TimeseriesTable = ({
         ...Table.Columns.dataset,
         enableSorting: false,
       },
-      Table.Columns.rootAsset(),
+      Table.Columns.rootAsset(onRootAssetClick),
       Table.Columns.assets,
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];

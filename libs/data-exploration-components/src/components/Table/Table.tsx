@@ -54,7 +54,6 @@ import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import noop from 'lodash/noop';
 
 import { CopyToClipboardIconButton } from './CopyToClipboardIconButton';
-import { getProject } from '@cognite/cdf-utilities';
 
 export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   id: string;

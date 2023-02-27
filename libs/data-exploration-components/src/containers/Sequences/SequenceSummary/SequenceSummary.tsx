@@ -1,4 +1,4 @@
-import { Sequence } from '@cognite/sdk/dist/src';
+import { Asset, Sequence } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 import { useResourceResults } from '@data-exploration-components/containers';
 import {
@@ -23,6 +23,7 @@ export const SequenceSummary = ({
   filter = EMPTY_OBJECT,
   onAllResultsClick,
   onRowClick,
+  onRootAssetClick,
 }: {
   query?: string;
   filter: InternalSequenceFilters;
@@ -30,6 +31,7 @@ export const SequenceSummary = ({
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   onRowClick?: (row: Sequence) => void;
+  onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
 }) => {
   const api = convertResourceType('sequence');
 
@@ -51,7 +53,7 @@ export const SequenceSummary = ({
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         Table.Columns.id(query),
-        Table.Columns.rootAsset(),
+        Table.Columns.rootAsset(onRootAssetClick),
         Table.Columns.dataset,
         ...metadataColumns,
       ] as ColumnDef<Sequence>[],

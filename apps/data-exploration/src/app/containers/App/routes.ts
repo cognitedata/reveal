@@ -13,6 +13,7 @@ export enum ViewType {
 // and later we can have separate id for each view type.
 // e.g. SELECTED_ASSET_ID = ':assetId'
 const SELECTED_ID = ':id';
+const SELECTED_BASE_ID = ':baseResourceId';
 const SELECTED_DETAIL_TAB = ':tabType';
 
 export const routes = {
@@ -40,12 +41,21 @@ export const routes = {
   threeDView: {
     path: `/${ViewType.ThreeD}/*`,
   },
+
+  // Paths for details splitted over the right side of the screen
   viewDetail: {
     path: `/${SELECTED_ID}`,
   },
   viewDetailTab: {
     path: `/${SELECTED_ID}/${SELECTED_DETAIL_TAB}`,
   },
+  viewAssetDetail: {
+    path: `/${SELECTED_BASE_ID}/${ViewType.Asset}/${SELECTED_ID}`,
+  },
+  viewAssetDetailTab: {
+    path: `/${SELECTED_BASE_ID}/${ViewType.Asset}/${SELECTED_ID}/${SELECTED_DETAIL_TAB}`,
+  },
+
   // Paths for full page details below;
   assetPage: {
     path: `/${ViewType.Asset}/${SELECTED_ID}`,

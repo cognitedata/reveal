@@ -87,18 +87,23 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       },
     };
   },
-  rootAsset: (externalLink = true, onClick) => {
+  rootAsset: (onClick) => {
     return {
       accessorFn: (resourceData) => resourceData.assetId || resourceData.rootId,
       header: 'Root asset',
       id: 'rootAsset',
-      cell: ({ getValue }) => {
+      cell: ({ row, getValue }) => {
         const value = getValue<number | undefined>();
+        const handleOnRootAssetClick = (rootAsset: Asset) => {
+          if (onClick) {
+            onClick(rootAsset, row.original.id);
+          }
+        };
 
         return (
           <RootAsset
-            externalLink={externalLink}
-            onClick={onClick}
+            externalLink={false}
+            onClick={handleOnRootAssetClick}
             assetId={value}
           />
         );

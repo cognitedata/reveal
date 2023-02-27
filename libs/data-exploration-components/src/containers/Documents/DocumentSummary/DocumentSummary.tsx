@@ -27,12 +27,14 @@ import {
 import { Body } from '@cognite/cogs.js';
 import { TimeDisplay } from '@data-exploration-components/components';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
+import { Asset } from '@cognite/sdk';
 
 export const DocumentSummary = ({
   query = '',
   filter = {},
   onAllResultsClick,
   onRowClick,
+  onRootAssetClick,
 }: {
   query?: string;
   filter?: InternalDocumentFilter;
@@ -40,6 +42,7 @@ export const DocumentSummary = ({
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   onRowClick?: (row: InternalDocument) => void;
+  onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
 }) => {
   const { results, isLoading } = useDocumentSearchResultQuery({
     query,
@@ -117,7 +120,7 @@ export const DocumentSummary = ({
         },
         Table.Columns.created,
         {
-          ...Table.Columns.rootAsset(),
+          ...Table.Columns.rootAsset(onRootAssetClick),
           accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
         Table.Columns.externalId(query),
@@ -128,7 +131,7 @@ export const DocumentSummary = ({
         },
         ...metadataColumns,
       ] as ColumnDef<DocumentWithRelationshipLabels>[],
-    [query, metadataColumns]
+    [query, metadataColumns, onRootAssetClick]
   );
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'content']);
   return (

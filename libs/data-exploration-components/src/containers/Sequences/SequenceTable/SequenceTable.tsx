@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Sequence } from '@cognite/sdk';
+import { Asset, Sequence } from '@cognite/sdk';
 import {
   Table,
   TableProps,
@@ -22,12 +22,21 @@ const visibleColumns = [
   'lastUpdatedTime',
   'createdTime',
 ];
+
+export interface SequenceTableProps
+  extends Omit<
+      TableProps<SequenceWithRelationshipLabels | Sequence>,
+      'columns'
+    >,
+    RelationshipLabels {
+  onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
+}
+
 export const SequenceTable = ({
   query,
-
+  onRootAssetClick,
   ...rest
-}: Omit<TableProps<SequenceWithRelationshipLabels | Sequence>, 'columns'> &
-  RelationshipLabels) => {
+}: SequenceTableProps) => {
   const { data: metadataKeys = [] } = useSequencesMetadataKeys();
 
   const metadataColumns = useMemo(() => {
@@ -54,7 +63,7 @@ export const SequenceTable = ({
           ...Table.Columns.id(),
           enableSorting: false,
         },
-        Table.Columns.rootAsset(),
+        Table.Columns.rootAsset(onRootAssetClick),
         Table.Columns.assets,
         Table.Columns.dataset,
         ...metadataColumns,

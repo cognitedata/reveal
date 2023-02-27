@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import { Asset } from '@cognite/sdk';
 import { useRootAssetQuery } from '@data-exploration-lib/domain-layer';
 import { LoadingState } from './LoadingState';
-import { openAssetInNewTab } from '@data-exploration-components/utils/assets';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { DASH } from '@data-exploration-components/utils';
@@ -18,7 +17,7 @@ export interface RootAssetProps {
 
 export const RootAsset: React.FC<RootAssetProps> = ({
   assetId,
-  onClick = openAssetInNewTab,
+  onClick,
   externalLink,
 }) => {
   const { data: rootAsset, isLoading } = useRootAssetQuery(assetId);
@@ -28,7 +27,7 @@ export const RootAsset: React.FC<RootAssetProps> = ({
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       event.stopPropagation();
 
-      if (rootAsset) {
+      if (rootAsset && onClick) {
         trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.ROOT_ASSET, {
           name: rootAsset.name,
         });

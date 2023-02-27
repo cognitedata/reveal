@@ -15,7 +15,7 @@ import {
   InternalDocumentWithMatchingLabels,
   useDocumentSearchResultWithMatchingLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
-import { FileInfo } from '@cognite/sdk';
+import { Asset, FileInfo } from '@cognite/sdk';
 import { AppliedFiltersTags } from '@data-exploration-components/components/AppliedFiltersTags/AppliedFiltersTags';
 import { UploadButton } from '@data-exploration-components/components/Buttons/UploadButton/UploadButton';
 import { v4 as uuid } from 'uuid';
@@ -34,6 +34,7 @@ export interface DocumentSearchResultsProps {
   query?: string;
   filter: InternalDocumentFilter;
   onClick: (item: InternalDocument) => void;
+  onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   onFileClicked?: (file: FileInfo) => boolean;
   selectedRow?: Record<string | number, boolean>;
@@ -45,6 +46,7 @@ export const DocumentSearchResults = ({
   query = '',
   filter = {},
   onClick,
+  onRootAssetClick,
   selectedRow,
   onFilterChange,
   onFileClicked,
@@ -125,6 +127,7 @@ export const DocumentSearchResults = ({
             onClick(document);
           }
         }}
+        onRootAssetClick={onRootAssetClick}
         showLoadButton
         fetchMore={() => {
           fetchNextPage();

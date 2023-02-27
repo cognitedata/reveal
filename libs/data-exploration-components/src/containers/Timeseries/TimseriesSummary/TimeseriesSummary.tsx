@@ -1,4 +1,4 @@
-import { Timeseries, TimeseriesFilter } from '@cognite/sdk';
+import { Asset, Timeseries } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 import { useResourceResults } from '@data-exploration-components/containers';
 
@@ -24,6 +24,7 @@ export const TimeseriesSummary = ({
   filter = {},
   onAllResultsClick,
   onRowClick,
+  onRootAssetClick,
 }: {
   query?: string;
   filter: InternalTimeseriesFilters;
@@ -31,6 +32,7 @@ export const TimeseriesSummary = ({
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   onRowClick?: (row: Timeseries) => void;
+  onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
 }) => {
   const api = convertResourceType('timeSeries');
 
@@ -66,10 +68,10 @@ export const TimeseriesSummary = ({
       Table.Columns.isString,
       Table.Columns.isStep,
       Table.Columns.dataset,
-      Table.Columns.rootAsset(),
+      Table.Columns.rootAsset(onRootAssetClick),
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];
-  }, [query, metadataColumns]);
+  }, [query, metadataColumns, onRootAssetClick]);
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'description']);
 
   return (

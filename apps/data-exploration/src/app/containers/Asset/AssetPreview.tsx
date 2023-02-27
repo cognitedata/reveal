@@ -13,10 +13,7 @@ import { Tabs } from '@cognite/cogs.js';
 import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { Asset, CogniteError } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import {
-  ResourceDetailsTabs,
-  TabTitle,
-} from '@data-exploration-app/containers/ResourceDetails';
+import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 import {
   useCurrentResourceId,
   useOnPreviewTabChange,
@@ -50,6 +47,7 @@ export const AssetPreview = ({
   const { tabType } = useParams<{
     tabType: ResourceTabType;
   }>();
+
   const activeTab = tabType || tab || 'details';
 
   const onTabChange = useOnPreviewTabChange(tabType, 'details');

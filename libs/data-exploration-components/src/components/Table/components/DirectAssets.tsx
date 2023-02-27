@@ -3,12 +3,7 @@ import { Button, Dropdown, Link, Menu } from '@cognite/cogs.js';
 import { Asset, FileInfo, IdEither, Sequence, Timeseries } from '@cognite/sdk';
 import { CogniteEvent } from '@cognite/unified-file-viewer';
 import { RelationshipLabels } from '../../../types';
-import { StyledButton } from '../elements';
-import React from 'react';
-import {
-  InternalAssetData,
-  useAssetsByIdQuery,
-} from '@data-exploration-lib/domain-layer';
+import { useAssetsByIdQuery } from '@data-exploration-lib/domain-layer';
 import { EMPTY_ARRAY } from '@data-exploration-lib/core';
 import styled from 'styled-components';
 import { RootAssetButton } from '@data-exploration-components/components/RootAsset';
@@ -38,12 +33,16 @@ export const DirectAssets = ({
     return null;
   }
 
+  // TODO?
   if (items.length === 1) {
     const rootAsset = items[0];
     return (
       <RootAssetButton
         label={rootAsset.name}
-        onClick={() => createLink(`/explore/asset/${rootAsset.id}`)}
+        onClick={(evt) => {
+          evt.stopPropagation();
+          window.open(createLink(`/explore/asset/${rootAsset.id}`), '_blank');
+        }}
         externalLink
       />
     );

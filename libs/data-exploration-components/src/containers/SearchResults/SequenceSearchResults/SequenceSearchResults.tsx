@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sequence } from '@cognite/sdk';
+import { Asset, Sequence } from '@cognite/sdk';
 import {
   SearchResultCountLabel,
   SearchResultToolbar,
@@ -27,6 +27,7 @@ export const SequenceSearchResults = ({
   relatedResourceType,
   onFilterChange,
   onClick,
+  onRootAssetClick,
   showCount = false,
   enableAdvancedFilters,
   selectedRow,
@@ -40,6 +41,7 @@ export const SequenceSearchResults = ({
   showCount?: boolean;
   enableAdvancedFilters?: boolean;
   onClick: (item: Sequence) => void;
+  onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
   selectedRow?: Record<string | number, boolean>;
 }) => {
@@ -110,6 +112,7 @@ export const SequenceSearchResults = ({
       }
       showLoadButton
       onRowClick={(sequence) => onClick(sequence)}
+      onRootAssetClick={onRootAssetClick}
       enableSorting={enableAdvancedFilters}
       onSort={setSortBy}
       relatedResourceType={relatedResourceType}

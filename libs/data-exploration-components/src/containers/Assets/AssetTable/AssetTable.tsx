@@ -44,7 +44,7 @@ export const AssetTable = ({
         },
         Table.Columns.description(),
         Table.Columns.externalId(),
-        Table.Columns.rootAsset(false, onRowClick),
+        Table.Columns.rootAsset((rootAsset) => onRowClick(rootAsset)),
         {
           accessorKey: 'id',
           header: '3D availability',

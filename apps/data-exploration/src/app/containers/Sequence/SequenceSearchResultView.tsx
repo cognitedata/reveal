@@ -16,6 +16,8 @@ import { useDebounce } from 'use-debounce';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { SequencePreview } from '@data-exploration-app/containers/Sequence/SequencePreview';
 import { routes } from '@data-exploration-app/containers/App';
+import { Asset } from '@cognite/sdk';
+import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 
 export const SequenceSearchResultView = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
@@ -26,11 +28,16 @@ export const SequenceSearchResultView = () => {
 
   // Here we need to parse params to find selected sequence's id.
   const selectedSequenceId = useSelectedResourceId();
+  const selectedRootAssetId = useSelectedResourceId(true);
 
   const selectedRow = selectedSequenceId ? { [selectedSequenceId]: true } : {};
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
-    openPreview(item.id !== selectedSequenceId ? item.id : undefined);
+    openPreview(item.id);
+  };
+
+  const handleRootAssetClick = (rootAsset: Asset, resourceId?: number) => {
+    openPreview(resourceId, false, 'asset', rootAsset.id);
   };
 
   return (
@@ -44,6 +51,7 @@ export const SequenceSearchResultView = () => {
           showCount
           selectedRow={selectedRow}
           onClick={handleRowClick}
+          onRootAssetClick={handleRootAssetClick}
           enableAdvancedFilters={isAdvancedFiltersEnabled}
           onFilterChange={(newValue: Record<string, unknown>) =>
             setSequenceFilter(newValue)
@@ -63,6 +71,14 @@ export const SequenceSearchResultView = () => {
             <Route
               path={routes.viewDetailTab.path}
               element={<SequencePreview sequenceId={selectedSequenceId!} />}
+            />
+            <Route
+              path={routes.viewAssetDetail.path}
+              element={<AssetPreview assetId={selectedRootAssetId!} />}
+            />
+            <Route
+              path={routes.viewAssetDetailTab.path}
+              element={<AssetPreview assetId={selectedRootAssetId!} />}
             />
           </Routes>
         </SearchResultWrapper>

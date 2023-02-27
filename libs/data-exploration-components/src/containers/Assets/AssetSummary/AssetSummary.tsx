@@ -52,7 +52,7 @@ export const AssetSummary = ({
         Table.Columns.name(query),
         Table.Columns.description(query),
         Table.Columns.externalId(query),
-        Table.Columns.rootAsset(false, onRowClick),
+        Table.Columns.rootAsset(onRowClick),
         {
           accessorKey: 'id',
           header: '3D availability',

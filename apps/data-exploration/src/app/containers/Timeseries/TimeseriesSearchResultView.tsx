@@ -17,6 +17,8 @@ import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { useDateRange } from '@data-exploration-app/context/DateRangeContext';
 import { TimeseriesPreview } from '@data-exploration-app/containers/Timeseries/TimeseriesPreview';
 import { routes } from '@data-exploration-app/containers/App';
+import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
+import { Asset } from '@cognite/sdk/dist/src/types';
 
 export const TimeseriesSearchResultView = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
@@ -27,13 +29,18 @@ export const TimeseriesSearchResultView = () => {
 
   // Here we need to parse params to find selected timeseries' id.
   const selectedTimeseriesId = useSelectedResourceId();
+  const selectedRootAssetId = useSelectedResourceId(true);
 
   const selectedRow = selectedTimeseriesId
     ? { [selectedTimeseriesId]: true }
     : {};
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
-    openPreview(item.id !== selectedTimeseriesId ? item.id : undefined);
+    openPreview(item.id);
+  };
+
+  const handleRootAssetClick = (rootAsset: Asset, resourceId?: number) => {
+    openPreview(resourceId, false, 'asset', rootAsset.id);
   };
 
   const [dateRange, setDateRange] = useDateRange();
@@ -50,6 +57,7 @@ export const TimeseriesSearchResultView = () => {
           selectedRow={selectedRow}
           enableAdvancedFilters={isAdvancedFiltersEnabled}
           onClick={handleRowClick}
+          onRootAssetClick={handleRootAssetClick}
           onFilterChange={(newValue: Record<string, unknown>) =>
             setTimeseriesFilter(newValue)
           }
@@ -75,6 +83,14 @@ export const TimeseriesSearchResultView = () => {
               element={
                 <TimeseriesPreview timeseriesId={selectedTimeseriesId!} />
               }
+            />
+            <Route
+              path={routes.viewAssetDetail.path}
+              element={<AssetPreview assetId={selectedRootAssetId!} />}
+            />
+            <Route
+              path={routes.viewAssetDetailTab.path}
+              element={<AssetPreview assetId={selectedRootAssetId!} />}
             />
           </Routes>
         </SearchResultWrapper>

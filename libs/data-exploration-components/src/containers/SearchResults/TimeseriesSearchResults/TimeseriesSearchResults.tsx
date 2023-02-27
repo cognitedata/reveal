@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Timeseries } from '@cognite/sdk';
+import { Asset, Timeseries } from '@cognite/sdk';
 import {
   ResourceItem,
   convertResourceType,
@@ -36,6 +36,7 @@ export const TimeseriesSearchResults = ({
   filter = {},
   showCount = false,
   onClick,
+  onRootAssetClick,
   dateRange,
   onDateRangeChange,
   onFilterChange,
@@ -57,6 +58,7 @@ export const TimeseriesSearchResults = ({
   selectedRow?: Record<string | number, boolean>;
   showDatePicker?: boolean;
   onClick: (item: Timeseries) => void;
+  onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & DateRangeProps) => {
   const api = convertResourceType('timeSeries');
@@ -147,7 +149,8 @@ export const TimeseriesSearchResults = ({
           />
         }
         showLoadButton
-        onRowClick={(timseries) => onClick(timseries)}
+        onRowClick={(timeseries) => onClick(timeseries)}
+        onRootAssetClick={onRootAssetClick}
         enableSorting={enableAdvancedFilters}
         sorting={sortBy}
         onSort={setSortBy}

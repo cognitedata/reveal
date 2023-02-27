@@ -21,6 +21,8 @@ import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import { useResourceEditable } from '@data-exploration-app/context/ResourceSelectionContext';
 import { routes } from '@data-exploration-app/containers/App';
+import { Asset } from '@cognite/sdk';
+import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 
 export const FileSearchResultView = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
@@ -33,11 +35,16 @@ export const FileSearchResultView = () => {
 
   // Here we need to parse params to find selected file's id.
   const selectedFileId = useSelectedResourceId();
+  const selectedRootAssetId = useSelectedResourceId(true);
 
   const selectedRow = selectedFileId ? { [selectedFileId]: true } : {};
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
-    openPreview(item.id !== selectedFileId ? item.id : undefined);
+    openPreview(item.id);
+  };
+
+  const handleRootAssetClick = (rootAsset: Asset, resourceId?: number) => {
+    openPreview(resourceId, false, 'asset', rootAsset.id);
   };
 
   return (
@@ -66,6 +73,7 @@ export const FileSearchResultView = () => {
             selectedRow={selectedRow}
             filter={documentFilter}
             onClick={handleRowClick}
+            onRootAssetClick={handleRootAssetClick}
             onFilterChange={(newValue: Record<string, unknown>) =>
               setDocumentFilter(newValue)
             }
@@ -83,6 +91,14 @@ export const FileSearchResultView = () => {
             <Route
               path={routes.viewDetailTab.path}
               element={<FilePreview fileId={selectedFileId!} />}
+            />
+            <Route
+              path={routes.viewAssetDetail.path}
+              element={<AssetPreview assetId={selectedRootAssetId!} />}
+            />
+            <Route
+              path={routes.viewAssetDetailTab.path}
+              element={<AssetPreview assetId={selectedRootAssetId!} />}
             />
           </Routes>
         </SearchResultWrapper>

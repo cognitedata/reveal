@@ -24,7 +24,7 @@ export function RelationshipAssetTable({
     relationshipLabels,
     relation,
     externalId(),
-    rootAsset(),
+    rootAsset((row) => onItemClicked(row.id)),
   ] as ColumnDef<AssetWithRelationshipLabels>[];
 
   const { hasNextPage, fetchNextPage, isLoading, items } =

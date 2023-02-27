@@ -23,6 +23,7 @@ import {
   TimeDisplay,
   ResourceTableColumns,
 } from '@data-exploration-components/components';
+import { Asset } from '@cognite/sdk';
 
 export type DocumentWithRelationshipLabels = InternalDocument;
 
@@ -32,6 +33,7 @@ export type DocumentTableProps = Omit<
   'columns'
 > & {
   query?: string;
+  onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
 };
 
 const visibleColumns = [
@@ -44,7 +46,7 @@ const visibleColumns = [
 ];
 
 export const DocumentsTable = (props: DocumentTableProps) => {
-  const { query } = props;
+  const { query, onRootAssetClick } = props;
   const { data: metadataKeys } = useDocumentsMetadataKeys();
 
   const metadataColumns = useMemo(() => {
@@ -120,7 +122,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         },
         Table.Columns.created,
         {
-          ...Table.Columns.rootAsset(),
+          ...Table.Columns.rootAsset(onRootAssetClick),
           accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
         Table.Columns.assets,
@@ -133,7 +135,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
 
         ...metadataColumns,
       ] as ColumnDef<DocumentWithRelationshipLabels>[],
-    [query, metadataColumns]
+    [query, metadataColumns, onRootAssetClick]
   );
 
   // const updatedColumns =

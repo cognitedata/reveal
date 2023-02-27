@@ -84,7 +84,10 @@ export function useQueryStringArray(
 
 export const useCurrentSearchResourceTypeFromLocation = () => {
   const location = useLocation();
-  // sample path: "/dss-dev/explore/search/asset"
+  // sample path1: "/dss-dev/explore/search/asset"
+  // sample path2: "/dss-dev/explore/search/asset/:asset-id"
+  // sample path3: "/dss-dev/explore/search/asset/:asset-id/asset"
+  // sample path4: "/dss-dev/explore/search/timeSeries/:timerseries-id/asset/:asset-id/asset"
   const path = location.pathname;
 
   const splittedPath = path.split('/');
@@ -93,6 +96,7 @@ export const useCurrentSearchResourceTypeFromLocation = () => {
     return splittedPath[4] as ResourceType;
   }
 
+  // sample path: "/dss-dev/explore/asset/123123123/asset"
   if (!splittedPath.includes('search') && splittedPath.length >= 4) {
     return splittedPath[3] as ResourceType;
   }
@@ -136,23 +140,32 @@ export const useCurrentResourceType = (): [
   return [resourceType, setCurrentResourceType];
 };
 
-export const useSelectedResourceId = (): number | undefined => {
+export const useSelectedResourceId = (
+  isRootAsset = false
+): number | undefined => {
   const params = useParams();
   const selectedRoute = params['*'];
   const splittedParams = selectedRoute?.split('/');
+  // :id -> index 0 for resource's own detail
+  // :baseResourceId/asset/:id -> index 2 for resource's root asset detail
+  const resourceIdIndex = isRootAsset ? 2 : 0;
 
-  return splittedParams &&
-    splittedParams?.length > 0 &&
-    Number.isFinite(parseInt(splittedParams[0], 10))
-    ? parseInt(splittedParams[0], 10)
-    : undefined;
+  if (splittedParams && splittedParams.length > 0) {
+    return Number.isFinite(parseInt(splittedParams[resourceIdIndex], 10))
+      ? parseInt(splittedParams[resourceIdIndex], 10)
+      : undefined;
+  }
+
+  return undefined;
 };
 
 export const useCurrentResourceId = (): [
   number | undefined,
   (
-    resourceId: number | undefined,
+    resourceId?: number,
     replace?: boolean,
+    extraResourceType?: ResourceType,
+    extraResourceId?: number,
     resourceType?: ResourceType
   ) => void
 ] => {
@@ -168,22 +181,25 @@ export const useCurrentResourceId = (): [
     !!id && Number.isFinite(parseInt(id, 10)) ? parseInt(id, 10) : undefined;
 
   const setCurrentResourceId = (
-    newResourceId?: number,
+    resourceId?: number,
     replaceHistory = false,
-    newResourceType?: ResourceType
+    extraResourceType?: ResourceType,
+    extraResourceId?: number,
+    resourceType?: ResourceType
   ) => {
+    const currentResourceType = type || resourceType;
     const search = getSearchParams(location.search);
 
-    if (!newResourceId) {
+    if (!resourceId) {
       navigate(createLink(`/explore/search/${type}`, search, opts), {
         replace: replaceHistory,
       });
     } else {
-      // Use this when we want to navigate to a different resource type than the current resource type.
-      if (newResourceType && newResourceType !== type) {
+      // Use this to navigate to a different resource type details on the preview than the current resource type.
+      if (extraResourceType && currentResourceType && extraResourceId) {
         navigate(
           createLink(
-            `/explore/search/${newResourceType}/${newResourceId}`,
+            `/explore/search/${currentResourceType}/${resourceId}/${extraResourceType}/${extraResourceId}`,
             search,
             opts
           ),
@@ -192,7 +208,7 @@ export const useCurrentResourceId = (): [
       } else {
         navigate(
           createLink(
-            `/explore/search/${type}/${newResourceId}${
+            `/explore/search/${currentResourceType}/${resourceId}${
               tabType ? `/${tabType}` : ''
             }`,
             search,
