@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Camera, CanvasTexture, Matrix4, Texture, Vector3, WebGLRenderer } from 'three';
+import { CanvasTexture, Matrix4, Texture, Vector3 } from 'three';
 import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
@@ -13,11 +13,12 @@ export class IconCollection {
   private readonly MAX_PIXEL_SIZE = 64;
   private readonly _sceneHandler: SceneHandler;
   private readonly _hoverIconTexture: CanvasTexture;
-  private readonly _onRenderTrigger: EventTrigger<(renderer: WebGLRenderer, camera: Camera) => void>;
   private readonly _sharedTexture: Texture;
   private readonly _icons: Image360Icon[];
   private readonly _iconsSprite: InstancedIconSprite;
   private readonly _clusterSprites: InstancedIconSprite;
+  private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
+  private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
 
   get icons(): Image360Icon[] {
     return this._icons;
@@ -29,7 +30,6 @@ export class IconCollection {
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
   ) {
     const sharedTexture = this.createOuterRingsTexture();
-    this._onRenderTrigger = new EventTrigger();
     const iconSpriteRadius = 0.5;
     const iconsSprites = new InstancedIconSprite(
       points.length,
@@ -56,28 +56,38 @@ export class IconCollection {
       clusterSpriteRadius
     );
 
+    this._computeClustersEventHandler = this.computeClusters(octree, iconsSprites, clusterSprites);
+    onBeforeSceneRendered.subscribe(this._computeClustersEventHandler);
+
+    this._sceneHandler = sceneHandler;
+    this._iconsSprite = iconsSprites;
+    this._clusterSprites = clusterSprites;
+    this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
+
+    sceneHandler.addCustomObject(iconsSprites);
+    sceneHandler.addCustomObject(clusterSprites);
+  }
+
+  private computeClusters(
+    octree: IconOctree,
+    iconSprites: InstancedIconSprite,
+    clusterSprites: InstancedIconSprite
+  ): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
-    onBeforeSceneRendered.subscribe(({ camera }) => {
-      const a = octree.getLODByScreenArea(
+    return ({ camera }) => {
+      const nodesLOD = octree.getLODByScreenArea(
         0.005,
         projection.copy(camera.projectionMatrix).multiply(camera.matrixWorldInverse)
       );
 
-      const nodes = [...a];
+      const nodes = [...nodesLOD];
       const clusterPoints = nodes.filter(p => p.data === null).map(p => octree.getPointCenterOfNode(p)!);
       clusterSprites.setPoints(clusterPoints);
       const leafData = nodes.filter(p => p.data !== null).flatMap(p => p.data.data);
       this._icons.forEach(p => (p.visible = false));
       leafData.forEach(p => (p.visible = true));
-      iconsSprites.setPoints(leafData.map(p => p.position));
-    });
-
-    this._sceneHandler = sceneHandler;
-    this._iconsSprite = iconsSprites;
-    this._clusterSprites = clusterSprites;
-
-    sceneHandler.addCustomObject(iconsSprites);
-    sceneHandler.addCustomObject(clusterSprites);
+      iconSprites.setPoints(leafData.map(p => p.position));
+    };
   }
 
   private initializeImage360Icons(
@@ -99,11 +109,11 @@ export class IconCollection {
   }
 
   public dispose(): void {
+    this._onBeforeSceneRenderedEvent.unsubscribe(this._computeClustersEventHandler);
     this._sceneHandler.removeCustomObject(this._clusterSprites);
     this._sceneHandler.removeCustomObject(this._iconsSprite);
     this._clusterSprites.dispose();
     this._iconsSprite.dispose();
-    this._onRenderTrigger.unsubscribeAll();
     this._sharedTexture.dispose();
   }
 
@@ -193,6 +203,8 @@ export class IconCollection {
     canvas.width = textureSize;
     canvas.height = textureSize;
 
+    const halfTextureSize = textureSize * 0.5;
+
     const context = canvas.getContext('2d')!;
     drawHoverSelector();
 
@@ -204,9 +216,9 @@ export class IconCollection {
       context.beginPath();
       context.fillStyle = '#FC2574';
       context.arc(
-        textureSize / 2,
-        textureSize / 2,
-        textureSize / 2 - outerCircleLineWidth - 2 * innerCircleLineWidth,
+        halfTextureSize,
+        halfTextureSize,
+        halfTextureSize - outerCircleLineWidth - 2 * innerCircleLineWidth,
         0,
         2 * Math.PI
       );
