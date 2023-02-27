@@ -14,29 +14,69 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query';
+import { TABLE_ITEMS_PER_PAGE } from '../constants';
 
-const useTimeseriesKey = (
-  limit: number,
-  filter?: TimeseriesFilter
-): QueryKey => ['timeseries', 'list', { limit, filter }];
-const useTimeseriesSearhKey = (
+type TSParams = {
+  limit?: number;
+  unmatchedOnly?: boolean;
+  filter?: TimeseriesFilter;
+};
+const useTimeseriesKey = (opts: TSParams): QueryKey => [
+  'timeseries',
+  'list',
+  opts,
+];
+const useTimeseriesSearchKey = (
   q: string,
   filter?: TimeseriesFilter
 ): QueryKey => ['timeseries', 'search', q, { filter }];
 
+type RawTimeseries = Timeseries & {
+  lastUpdatedTime: number;
+  createdTime: number;
+};
+
 export const useTimeseries = (
-  limit: number,
-  filter?: TimeseriesFilter,
+  { limit = TABLE_ITEMS_PER_PAGE, unmatchedOnly: unmatched, filter }: TSParams,
   opts?: UseInfiniteQueryOptions<
-    { items: Timeseries[]; nextPage?: string },
+    { items: RawTimeseries[]; nextPage?: string },
     CogniteError
   >
 ) => {
   const sdk = useSDK();
   return useInfiniteQuery(
-    useTimeseriesKey(limit, filter),
+    useTimeseriesKey({ limit, filter, unmatchedOnly: unmatched }),
     ({ pageParam }) =>
-      sdk.timeseries.list({ cursor: pageParam, filter, limit }),
+      sdk
+        .post<{ items: RawTimeseries[]; nextPage?: string }>(
+          `/api/v1/projects/${sdk.project}/timeseries/list`,
+          {
+            headers: {
+              'cdf-version': 'alpha',
+            },
+            data: {
+              cursor: pageParam,
+              filter,
+              advancedFilter: unmatched
+                ? {
+                    not: {
+                      exists: {
+                        property: ['assetId'],
+                      },
+                    },
+                  }
+                : undefined,
+              limit,
+            },
+          }
+        )
+        .then((r) => {
+          if (r.status === 200) {
+            return r.data;
+          } else {
+            return Promise.reject(r);
+          }
+        }),
     {
       getNextPageParam(lastPage) {
         return lastPage.nextPage;
@@ -52,7 +92,7 @@ export const useTimeseriesSearch = <T>(
 ) => {
   const sdk = useSDK();
   return useQuery(
-    useTimeseriesSearhKey(query),
+    useTimeseriesSearchKey(query),
     () => sdk.timeseries.search({ search: { query }, limit: 1000 }),
 
     opts

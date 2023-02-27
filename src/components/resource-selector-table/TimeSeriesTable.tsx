@@ -5,7 +5,6 @@ import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { InternalId, Timeseries } from '@cognite/sdk';
 import { useTimeseries, useTimeseriesSearch } from 'hooks/timeseries';
-import { TABLE_ITEMS_PER_PAGE } from '../../constants';
 
 type TimeseriesListTableRecord = { key: string } & Pick<
   Timeseries,
@@ -18,6 +17,7 @@ type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
 
 type Props = {
   query?: string | null;
+  unmatchedOnly?: boolean;
   selected: InternalId[];
   setSelected: Dispatch<SetStateAction<InternalId[]>>;
 };
@@ -25,12 +25,13 @@ export default function TimeseriesTable({
   query,
   selected,
   setSelected,
+  unmatchedOnly,
 }: Props) {
   const {
     data: listPages,
     isInitialLoading: listLoading,
     error,
-  } = useTimeseries(TABLE_ITEMS_PER_PAGE, undefined, { enabled: !query });
+  } = useTimeseries({ unmatchedOnly }, { enabled: !query });
 
   const { data: searchResult, isInitialLoading: searchLoading } =
     useTimeseriesSearch(query!, {
@@ -68,7 +69,7 @@ export default function TimeseriesTable({
         title: t('resource-table-column-lastUpdated'),
         dataIndex: 'lastUpdatedTime',
         key: 'lastUpdatedTime',
-        render: (value: Date) => value.toLocaleString(),
+        render: (value: number) => new Date(value).toLocaleString(),
       },
     ],
     [t]

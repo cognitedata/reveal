@@ -2,6 +2,7 @@
   "entity-matching-pipelines": "Entity Matching pipelines",
   "error-403-description": "No do not have access to the selected resource type.",
   "error-403-title": "Permission denied",
+  "filter-only-unmatched-items": "Only unmatched resources",
   "model-configuration-description-body": "By default, the model uses the similarity between name and description when it searches for matches. Create new connections between name, description, and available metadata fields with Add fields. Note: You can rerun the model later.",
   "model-configuration-description-header": "Select the fields for matching entities",
   "model-configuration-header": "Configure model",

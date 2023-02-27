@@ -1,4 +1,4 @@
-import { Flex } from '@cognite/cogs.js';
+import { Checkbox, Flex } from '@cognite/cogs.js';
 import { Select, Input } from 'antd';
 import { useTranslation } from 'common';
 import { SOURCE_TABLE_QUERY_KEY } from '../../constants';
@@ -14,7 +14,13 @@ type Props = {};
 
 export default function ResourceSelectionTable({}: Props) {
   const { t } = useTranslation();
-  const { sourceType, setSourcesList, sourcesList } = useQuickMatchContext();
+  const {
+    sourceType,
+    setSourcesList,
+    sourcesList,
+    unmatchedOnly,
+    setUnmatchedOnly,
+  } = useQuickMatchContext();
   const resourceTypeOptions = [
     { value: 'timeseries', label: t('resource-type-ts') },
   ];
@@ -60,12 +66,18 @@ export default function ResourceSelectionTable({}: Props) {
             setSearchParams(searchParams);
           }}
         />
+        <Checkbox
+          onChange={(e) => setUnmatchedOnly(e.target.checked)}
+          checked={unmatchedOnly}
+          label={t('filter-only-unmatched-items')}
+        />
       </Flex>
       {sourceType === 'timeseries' && (
         <TimeseriesTable
           query={searchParams.get(SOURCE_TABLE_QUERY_KEY)}
           selected={sourcesList}
           setSelected={setSourcesList}
+          unmatchedOnly={unmatchedOnly}
         />
       )}
     </Flex>

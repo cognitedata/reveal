@@ -38,6 +38,9 @@ type ModelMapping = {
 };
 
 type QuickMatchContext = {
+  unmatchedOnly: boolean;
+  setUnmatchedOnly: Dispatch<SetStateAction<boolean>>;
+
   sourceType: SourceType;
   setSourceType: Dispatch<SetStateAction<SourceType>>;
 
@@ -127,6 +130,11 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   setJobId: function (_: SetStateAction<number | undefined>): void {
     throw new Error('Function not implemented.');
   },
+
+  setUnmatchedOnly: function (_: SetStateAction<boolean>): void {
+    throw new Error('Function not implemented.');
+  },
+  unmatchedOnly: false,
 });
 
 export const useQuickMatchContext = () => useContext(QuickMatchContext);
@@ -136,6 +144,7 @@ export const QuickMatchContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  const [unmatchedOnly, setUnmatchedOnly] = useState(false);
   const [allSources, setAllSources] = useState(false);
   const [sourcesList, setSourcesList] = useState<InternalId[]>([]);
   const [allTargets, setAllTargets] = useState(false);
@@ -207,6 +216,8 @@ export const QuickMatchContextProvider = ({
         setModelId,
         jobId,
         setJobId,
+        unmatchedOnly,
+        setUnmatchedOnly,
       }}
     >
       {children}
