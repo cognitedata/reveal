@@ -7,7 +7,7 @@ import {
   ToolbarTreeViewProps,
 } from 'pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
 
-import { Cognite3DViewer, Cognite3DModel } from '@cognite/reveal';
+import { Cognite3DViewer, CogniteCadModel } from '@cognite/reveal';
 import { Provider } from 'react-redux';
 import configureStore from 'store';
 import { createBrowserHistory } from 'history';
@@ -39,7 +39,7 @@ const viewerMock = {} as Cognite3DViewer;
 const modelMock = {
   modelId: fixtureModelId,
   revisionId: fixtureRevisionId,
-} as Cognite3DModel;
+} as CogniteCadModel;
 
 function ToolbarTreeViewWrapper(
   props: Omit<ToolbarTreeViewProps, 'width' | 'model' | 'viewer'>
@@ -69,7 +69,7 @@ describe('ToolbarTreeView expand into node test', () => {
   // alternative: write test component that will dispatch that expandArbitraryNode action
   // currently there is no test isolation (store is outside which is too bad)
   it('loads ancestors of the specified nodeId and adds them into the tree', async () => {
-    renderWithProviders(<ToolbarTreeViewWrapper />);
+    renderWithProviders(<ToolbarTreeViewWrapper nodesClickable />);
 
     expect(await screen.findByText('Cube')).toBeInTheDocument();
     expect(screen.queryByText('Cube (1)')).not.toBeInTheDocument();

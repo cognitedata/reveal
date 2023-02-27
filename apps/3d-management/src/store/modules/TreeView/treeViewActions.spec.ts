@@ -44,12 +44,12 @@ describe('treeViewActions test cases', () => {
   test('Nodes must be sorted by title', async () => {
     const store = mockStore(getState());
 
-    const expectedActionTypes: [
-      InitialFetch['type'],
-      InitialFetchOk['type']
-    ] = ['treeView/initialFetch', 'treeView/initialFetchOk'];
+    const expectedActionTypes: [InitialFetch['type'], InitialFetchOk['type']] =
+      ['treeView/initialFetch', 'treeView/initialFetchOk'];
 
-    await store.dispatch(fetchInitialNodes(fixtureModelId, fixtureRevisionId));
+    await store.dispatch(
+      fetchInitialNodes(fixtureModelId, fixtureRevisionId) as any
+    );
     const actualActions = store.getActions() as [InitialFetch, InitialFetchOk];
 
     expect(actualActions.map(({ type }) => type)).toEqual(expectedActionTypes);

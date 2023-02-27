@@ -9,8 +9,7 @@ import EmptyState from './EmptyState';
 storiesOf('watchtower|EmptyState', module)
   .addDecorator((story) => <Provider story={story} />)
   .add('Default', () => <EmptyState />)
-  .add('3D Model', () => <EmptyState type="ThreeDModel" />)
-  .add('Favorites', () => <EmptyState type="Favorites" />)
+  .add('3D Model', () => <EmptyState type="Model3d" />)
   .add('Custom text', () => <EmptyState text="Custom text" />)
   .add('Extra', () => (
     <EmptyState

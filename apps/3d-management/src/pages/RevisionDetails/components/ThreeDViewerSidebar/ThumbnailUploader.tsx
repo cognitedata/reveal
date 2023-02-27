@@ -31,7 +31,8 @@ export function ThumbnailUploader({ style, viewer, model, ...props }: Props) {
     try {
       const base64 = await viewer.getScreenshot(
         screenshotWidth,
-        screenshotHeight
+        screenshotHeight,
+        false
       );
       setThumbnailUri(base64);
       const blob = base64ToBlob(base64);
@@ -109,7 +110,7 @@ export function ThumbnailUploader({ style, viewer, model, ...props }: Props) {
       </Button>
       <Modal
         title="Screenshot Preview: Confirm Upload"
-        visible={isOpenModal}
+        open={isOpenModal}
         onOk={uploadScreenshot}
         okText="Upload"
         onCancel={() => setIsOpenModal(false)}

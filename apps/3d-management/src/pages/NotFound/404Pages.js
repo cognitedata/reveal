@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { withRouter } from 'react-router-dom';
 import { Button } from '@cognite/cogs.js';
 import { createLink } from 'utils/cdf-utilities';
 import { projectName } from 'utils';
@@ -76,4 +75,4 @@ const NotFound = (props) => {
   return <WorkerPage props={props} />;
 };
 
-export default withRouter(NotFound);
+export default NotFound;

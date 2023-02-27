@@ -68,18 +68,13 @@ import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
 
-import { Modal, message, notification, Dropdown, Spin } from 'antd';
-import { Icon, Tooltip } from '@cognite/cogs.js';
+import { Modal, message, notification, Spin } from 'antd';
+import { Tooltip, Icon } from '@cognite/cogs.js';
 import { getContainer } from 'utils';
 
 notification.config({ getContainer });
 
 message.config({ getContainer });
-
-Dropdown.defaultProp = {
-  ...Dropdown.defaultProps,
-  getPopupContainer: getContainer,
-};
 
 Modal.defaultProps = {
   ...Modal.defaultProps,

@@ -123,7 +123,7 @@ export const PageHeader = ({
                   aria-label="Help"
                   size="small"
                   icon="Help"
-                  style={{ color: theme.breadcrumbsText, cursor: 'pointer' }}
+                  style={{ color: theme.breadcrumbsText }}
                 />
               </Tooltip>
             )}

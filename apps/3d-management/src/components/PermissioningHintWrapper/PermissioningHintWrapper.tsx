@@ -7,7 +7,7 @@ export default ({
   hasPermission = false,
 }: PropsWithChildren<{ hasPermission?: boolean }>) => {
   if (hasPermission) {
-    return <>{children}</>;
+    return <>{children} </>;
   }
   return (
     <Tooltip

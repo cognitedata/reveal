@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { Card, message, Modal } from 'antd';
 import { Tooltip, Button, Flex, Icon } from '@cognite/cogs.js';
-import { RouteComponentProps } from 'react-router-dom';
 import { APP_TITLE, getContainer, DEFAULT_MARGIN_V } from 'utils';
 import { useMetrics } from 'hooks/useMetrics';
 import React, { useState } from 'react';
@@ -28,7 +27,9 @@ import { useModels } from 'hooks/models/useModels';
 import { Revision3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { useNavigate, useParams } from 'react-router-dom';
 import ThreeDViewerErrorBoundary from './components/ThreeDViewer/ThreeDViewerErrorFallback';
+import { FileLink } from './components/FileLink/FileLink';
 
 export const PUBLISH_STATUS_HINT = `
   Publishing a Revision makes this version of
@@ -64,9 +65,6 @@ const ButtonRow = styled.div`
 const ViewLogsButton = styled(Button)`
   margin-left: 12px;
   font-size: 12px;
-  && > span {
-    margin-left: 6px;
-  }
 `;
 
 const DetailsRowFlex = styled(Flex)`
@@ -79,13 +77,14 @@ const DetailsRowFlex = styled(Flex)`
   }
 `;
 
-type Props = RouteComponentProps<{
+type RevisionDetailsParams = {
   modelId: string;
   revisionId: string;
-}>;
-
-export default function RevisionDetails(props: Props) {
+};
+export default function RevisionDetails() {
   const metrics = useMetrics('3D.Revisions');
+  const params = useParams<RevisionDetailsParams>();
+  const navigate = useNavigate();
 
   const { flow } = getFlow();
 
@@ -98,32 +97,30 @@ export default function RevisionDetails(props: Props) {
     isFetched: isFetchedDeleteCapabilities,
   } = usePermissions(flow, 'threedAcl', 'DELETE');
 
-  const revisionId: number = Number(props.match.params.revisionId);
-  const modelId: number = Number(props.match.params.modelId);
+  const revisionId: number = Number(params.revisionId);
+  const modelId: number = Number(params.modelId);
 
   const [showLogs, setShowLogs] = useState(false);
   const [deletionModalVisible, setDeletionModalVisible] = useState(false);
 
   const modelsQuery = useModels();
   const revisionsQuery = useRevisions(modelId);
-  const revisionLogsQuery = useRevisionLogs({
-    modelId,
-    revisionId,
-  });
-
-  const {
-    mutate: updateRevisionMutation,
-    isLoading: updateInProgress,
-  } = useUpdateRevisionMutation();
-
-  const {
-    mutate: deleteRevisionMutation,
-    isLoading: deletionInProgress,
-  } = useDeleteRevisionMutation();
-
   const revision = (revisionsQuery.data || []).find(
     (el) => el.id === revisionId
   );
+
+  const revisionLogsQuery = useRevisionLogs({
+    modelId,
+    revisionId,
+    status: revision?.status,
+  });
+
+  const { mutate: updateRevisionMutation, isLoading: updateInProgress } =
+    useUpdateRevisionMutation();
+
+  const { mutate: deleteRevisionMutation, isLoading: deletionInProgress } =
+    useDeleteRevisionMutation();
+
   const model = (modelsQuery.data || []).find(
     (el) => el.id === Number(modelId)
   );
@@ -178,7 +175,7 @@ export default function RevisionDetails(props: Props) {
 
   const deleteRevision = async () => {
     // navigate out before it's deleted, otherwise 404 component will be flashed for a moment
-    props.history.push(createLink(`/3d-models`));
+    navigate(createLink(`/3d-models`));
     await deleteRevisionMutation({ revisionId, modelId });
     message.success('Revision successfully deleted');
     metrics.track('Delete');
@@ -239,6 +236,14 @@ export default function RevisionDetails(props: Props) {
         </DetailsRowFlex>
         <DetailsRowFlex>
           <div>
+            <b>Source File: </b>
+          </div>
+          <div>
+            <FileLink fileId={revision.fileId} />
+          </div>
+        </DetailsRowFlex>
+        <DetailsRowFlex>
+          <div>
             <b>Date Created: </b>
           </div>
           <div>{dayjs(revision.createdTime).format('MMM D, YYYY h:mm A')}</div>
@@ -295,7 +300,7 @@ export default function RevisionDetails(props: Props) {
               <Tooltip content="Delete revision">
                 <Button
                   aria-label="Delete revision"
-                  type="ghost-danger"
+                  type="destructive"
                   icon="Delete"
                   disabled={!hasDeleteCapabilities || deletionInProgress}
                   onClick={showDeletionModal}
@@ -320,7 +325,7 @@ export default function RevisionDetails(props: Props) {
 
       <Modal
         title="Confirm Deletion"
-        visible={deletionModalVisible}
+        open={deletionModalVisible}
         onOk={deleteRevision}
         onCancel={() => setDeletionModalVisible(false)}
         width="400px"

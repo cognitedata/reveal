@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "es6",
+    "lib": [
+      "es2017",
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -19,5 +24,11 @@
     "noFallthroughCasesInSwitch": true,
     "downlevelIteration": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    ".eslintrc.production.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

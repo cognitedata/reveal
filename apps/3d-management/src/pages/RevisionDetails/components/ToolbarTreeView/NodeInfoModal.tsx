@@ -7,7 +7,6 @@ import { ModalProps } from 'antd/lib/modal';
 import { Modal, Table, Tabs } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import { Button, Tooltip } from '@cognite/cogs.js';
-
 import { getContainer } from 'utils';
 import styled from 'styled-components';
 import omit from 'lodash/omit';
@@ -44,6 +43,9 @@ const azSortByKey = (key) => (a, b) => {
   }
   return 0;
 };
+
+const Property = () => <b>Property</b>;
+const Value = () => <b>Value</b>;
 
 export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
   const defaultCdfMetaTabKey = 'cdfMetaTabKey';
@@ -141,7 +143,7 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
           <Tooltip content="Click to see 3D-nodes with the same value">
             <Button
               style={{ textAlign: 'left' }}
-              type="link"
+              type="ghost-accent"
               onClick={() => {
                 dispatch(
                   setNodePropertyFilter({ [tabKey]: { [key]: `${value}` } })
@@ -180,6 +182,18 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
     }));
   };
 
+  const columns = getColumns([
+    {
+      title: Property,
+      key: 'key',
+      defaultSortOrder: 'ascend',
+    },
+    {
+      title: Value,
+      key: 'value',
+    },
+  ]);
+
   return (
     <Modal
       width={800}
@@ -209,17 +223,7 @@ export const NodeInfoModal = ({ treeIndex, onClose, ...restProps }: Props) => {
         <Table
           dataSource={getTableDataSource(activeTabKey || defaultCdfMetaTabKey)}
           rowKey={(item) => item.key}
-          columns={getColumns([
-            {
-              title: () => <b>Property</b>,
-              key: 'key',
-              defaultSortOrder: 'ascend',
-            },
-            {
-              title: () => <b>Value</b>,
-              key: 'value',
-            },
-          ])}
+          columns={columns}
           pagination={false}
         />
       </TableWrapper>

@@ -15,24 +15,23 @@ export function ClassPicker(props: Props) {
   const ALL_CLASSES = -Infinity;
 
   let userDefinedNameCounter = 0;
-  const keyValueMapping: Record<
-    string,
-    number
-  > = props.model.getClasses().reduce((acc, classValue) => {
-    const key =
-      WellKnownAsprsPointClassCodes[classValue.code] ||
-      // eslint-disable-next-line no-plusplus
-      `User defined (${userDefinedNameCounter++})`;
+  const keyValueMapping: Record<string, number> = props.model
+    .getClasses()
+    .reduce((acc, classValue) => {
+      const key =
+        WellKnownAsprsPointClassCodes[classValue.code] ||
+        // eslint-disable-next-line no-plusplus
+        `User defined (${userDefinedNameCounter++})`;
 
-    if (key.startsWith('ReservedOr')) {
-      const betterKey = key.slice('ReservedOr'.length);
-      acc[`${betterKey} (legacy)`] = classValue.code;
-    } else {
-      acc[key] = classValue.code;
-    }
+      if (key.startsWith('ReservedOr')) {
+        const betterKey = key.slice('ReservedOr'.length);
+        acc[`${betterKey} (legacy)`] = classValue.code;
+      } else {
+        acc[key] = classValue.code;
+      }
 
-    return acc;
-  }, {});
+      return acc;
+    }, {});
 
   const [selectedValues, setSelectedValues] = React.useState(
     [ALL_CLASSES].concat(Object.values(keyValueMapping))
@@ -45,9 +44,11 @@ export function ClassPicker(props: Props) {
       ? Object.values(keyValueMapping)
       : selectedValues;
 
-    (Object.values(keyValueMapping) as Array<
-      number | WellKnownAsprsPointClassCodes
-    >).forEach((classValue) => {
+    (
+      Object.values(keyValueMapping) as Array<
+        number | WellKnownAsprsPointClassCodes
+      >
+    ).forEach((classValue) => {
       props.model.setClassVisible(
         classValue,
         classesToDisplayInModel.includes(classValue)

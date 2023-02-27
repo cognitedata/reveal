@@ -6,7 +6,7 @@ export const rootNodeObjRes: { items: [Node3D] } = {
     {
       id: fixtureRootNodeId,
       treeIndex: 0,
-      parentId: (undefined as never) as number,
+      parentId: undefined as unknown as number,
       depth: 0,
       name: 'RootNode',
       subtreeSize: modifiedRootSubtreeSize,

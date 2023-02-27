@@ -13,16 +13,14 @@ import PermissioningHintWrapper from 'components/PermissioningHintWrapper';
 import ModelsTable from 'pages/AllModels/components/ModelsTable/ModelsTable';
 
 import styled from 'styled-components';
-import { RouteComponentProps } from 'react-router';
 import { useCreateModelMutation } from 'hooks/models';
 import { useModels } from 'hooks/models/useModels';
 import { useCreateRevisionMutation } from 'hooks/revisions';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { useParams } from 'react-router-dom';
 
 const { Step } = Steps;
-
-type Props = RouteComponentProps;
 
 const TableOperations = styled.div`
   margin: 20px 0 16px 0;
@@ -54,9 +52,11 @@ const ButtonRow = styled.div`
   }
 `;
 
-export default function AllModels(props: Props) {
+export default function AllModels() {
   const metrics = useMetrics('3D');
   const modelsQuery = useModels();
+  const props = useParams();
+
   const { data: models } = modelsQuery;
 
   const { mutate: createModel } = useCreateModelMutation();
@@ -69,12 +69,15 @@ export default function AllModels(props: Props) {
 
   const isFormFilled = newModelName.length > 0;
 
-  const expandedRowRender = (model) => (
+  const expandedRowRender = (model: Model3D) => (
     <ModelRevisions model={model} {...props} />
   );
 
   const closeModal = () => {
     setIsModalVisible(false);
+    setNewModelName('');
+    setCreatedModel(undefined);
+    setCurrentUploadStep(0);
   };
 
   const nextStep = () => {
@@ -88,14 +91,10 @@ export default function AllModels(props: Props) {
   };
 
   const { flow } = getFlow();
-  const {
-    data: hasThreedCreateCapability,
-    isFetched: isFetchedThreedCreate,
-  } = usePermissions(flow, 'threedAcl', 'CREATE');
-  const {
-    data: hasFilesWriteCapability,
-    isFetched: isFetchedFilesWrite,
-  } = usePermissions(flow, 'filesAcl', 'WRITE');
+  const { data: hasThreedCreateCapability, isFetched: isFetchedThreedCreate } =
+    usePermissions(flow, 'threedAcl', 'CREATE');
+  const { data: hasFilesWriteCapability, isFetched: isFetchedFilesWrite } =
+    usePermissions(flow, 'filesAcl', 'WRITE');
 
   const showAddModelButton =
     hasThreedCreateCapability && hasFilesWriteCapability;
@@ -150,7 +149,7 @@ export default function AllModels(props: Props) {
             );
           }}
           onUploadSuccess={async (fileId) => {
-            message.info(
+            message.success(
               'Upload complete, starting processing job to render 3d model'
             );
             metrics.track('Revisions.New');
@@ -161,18 +160,14 @@ export default function AllModels(props: Props) {
                 modelId: createdModel.id,
               });
             }
-
-            setNewModelName('');
-            setIsModalVisible(false);
-            setCreatedModel(undefined);
-            setCurrentUploadStep(0);
+            closeModal();
             modelsQuery.refetch();
           }}
           onUploadFailure={() => {
-            closeModal();
-            setCreatedModel(undefined);
+            modelsQuery.refetch();
           }}
           onCancel={previousStep}
+          onDone={closeModal}
         />
       ),
     },
@@ -210,9 +205,10 @@ export default function AllModels(props: Props) {
       />
       <Modal
         title="Insert New Model"
-        visible={isModalVisible}
-        onCancel={closeModal}
+        open={isModalVisible}
         footer={null}
+        closable={false}
+        maskClosable={false}
         width={currentUploadStep ? '800px' : undefined}
         getContainer={getContainer}
       >

@@ -17,6 +17,7 @@ import { DEFAULT_MARGIN_V } from 'utils';
 import { AppState } from 'store/modules/App/types';
 import { ThumbnailPreviewIcon } from 'components/ThumbnailPreviewIcon';
 import { ColumnType } from 'antd/lib/table/interface';
+import { EmptyStateOptions } from '../EmptyState/EmptyState';
 
 const NestedTable = styled(Table)`
   && td:last-child {
@@ -100,7 +101,7 @@ class ModelsTable extends React.Component<Props> {
                 </div>
               }
             >
-              <ThumbnailPreviewIcon onClick={(e) => e.stopPropagation()} />
+              {ThumbnailPreviewIcon}
             </Popover>
           );
         },
@@ -130,6 +131,7 @@ class ModelsTable extends React.Component<Props> {
     });
   };
 
+  // eslint-disable-next-line react/no-unused-class-component-methods
   handleReset = (clearFilters) => () => {
     clearFilters();
   };
@@ -154,6 +156,13 @@ class ModelsTable extends React.Component<Props> {
   clearSorting = () => {
     this.props.setModelTableState({ sorter: undefined });
   };
+
+  footer = () => (
+    <TableOperations>
+      <Button onClick={this.clearSorting}>Clear Sorting</Button>
+      <Button onClick={this.props.refresh}>Refresh</Button>
+    </TableOperations>
+  );
 
   render() {
     return (
@@ -184,15 +193,13 @@ class ModelsTable extends React.Component<Props> {
           onExpand={(expanded, record) => this.expandRow(record)}
           locale={{
             emptyText: (
-              <EmptyState type="ThreeDModel" text="No 3D models available" />
+              <EmptyState
+                type={EmptyStateOptions.ThreeDModel}
+                text="No 3D models available"
+              />
             ),
           }}
-          footer={() => (
-            <TableOperations>
-              <Button onClick={this.clearSorting}>Clear Sorting</Button>
-              <Button onClick={this.props.refresh}>Refresh</Button>
-            </TableOperations>
-          )}
+          footer={this.footer}
         />
       </>
     );

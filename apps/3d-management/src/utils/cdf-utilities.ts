@@ -24,6 +24,7 @@ export const getEnv = () => {
 
 export const createLink = (
   path: string,
+  // eslint-disable-next-line default-param-last
   queries: any = {},
   opts?: queryString.StringifyOptions
 ): string => {

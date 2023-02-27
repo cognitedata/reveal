@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Tuple3 } from '@cognite/sdk';
 import { Button as ButtonAnt, message } from 'antd';
 
-import { Button, Dropdown, SegmentedControl } from '@cognite/cogs.js';
-import styled from 'styled-components';
+import { Button, Dropdown, SegmentedControl, Menu } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
   Cognite3DViewer,
@@ -59,11 +58,8 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     Tuple3<number>
   >([0, 0, 0]);
 
-  const getTotalModelTransformation = React.useCallback(() => {
-    return props.model
-      .getModelTransformation()
-      .clone()
-      .multiply(props.model.getCdfToDefaultModelTransformation());
+  const getLocalModelTransformation = React.useCallback(() => {
+    return props.model.getModelTransformation();
   }, [props.model]);
 
   const setModelTransformation = (matrix: THREE.Matrix4) => {
@@ -73,8 +69,8 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   };
 
   useEffect(() => {
-    setInitialRotation(getTotalModelTransformation);
-  }, [getTotalModelTransformation]);
+    setInitialRotation(getLocalModelTransformation);
+  }, [getLocalModelTransformation]);
 
   const hasChanges = rotationAnglePiMultiplier.some((r) => r);
 
@@ -129,7 +125,9 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   const onCancelClicked = () => {
     setModelTransformation(initialRotation!);
 
-    props.viewer.fitCameraToModel(props.model, 0);
+    if (!rotationAnglePiMultiplier.every((c) => c === 0)) {
+      props.viewer.fitCameraToModel(props.model, 0);
+    }
 
     setRotationAnglePiMultiplier([0, 0, 0]);
     props.onClose();
@@ -143,7 +141,7 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
     if (rotationX || rotationY || rotationZ) {
       const progressMessage = message.loading('Uploading model rotation...');
       const rotationEuler = new THREE.Euler();
-      const tmpMatrix = getTotalModelTransformation();
+      const tmpMatrix = getLocalModelTransformation();
 
       // Undo the default 90 degrees on X axis shift
       tmpMatrix.premultiply(
@@ -173,14 +171,14 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
         });
         Sentry.captureException(e);
       } finally {
-        setInitialRotation(getTotalModelTransformation());
+        setInitialRotation(getLocalModelTransformation());
         setRotationAnglePiMultiplier([0, 0, 0]);
       }
     }
   };
 
   return (
-    <RotationContainer>
+    <Menu>
       <>
         <SegmentedControl
           currentKey={rotationAxis}
@@ -217,27 +215,6 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
           Cancel
         </Button>
       </div>
-    </RotationContainer>
+    </Menu>
   );
 }
-
-const RotationContainer = styled.div`
-  min-width: 236px;
-  box-shadow: 0px 8px 16px 4px rgba(0, 0, 0, 0.04),
-    0px 2px 12px rgba(0, 0, 0, 0.08);
-  border: var(--cogs-border-default);
-  padding: 12px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  && .ant-btn-group {
-    display: flex;
-    width: 100%;
-  }
-
-  && .ant-btn-group > * {
-    flex: 1;
-  }
-`;

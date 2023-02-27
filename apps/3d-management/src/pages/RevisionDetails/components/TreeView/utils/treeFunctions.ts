@@ -189,7 +189,7 @@ export function getAncestors(
 export function traverseTree(
   treeData: TreeDataNode[] | CustomDataNode[],
   callback: (
-    key: typeof node['key'],
+    key: (typeof node)['key'],
     node: ArrayElement<typeof treeData>
   ) => boolean | void
 ) {

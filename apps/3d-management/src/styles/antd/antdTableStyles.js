@@ -1,6 +1,5 @@
 // import buttonStyle from 'antd/es/button/style/index.less';
 // import checkboxStyle from 'antd/es/checkbox/style/index.less';
-import dropdownStyle from 'antd/es/dropdown/style/index.less';
 import paginationStyle from 'antd/es/pagination/style/index.less';
 import selectStyle from 'antd/es/select/style/index.less';
 import tableStyle from 'antd/es/table/style/index.less';
@@ -18,7 +17,6 @@ export default [
 
   // buttonStyle,
   // checkboxStyle,
-  dropdownStyle,
   paginationStyle,
   selectStyle,
   tableStyle,

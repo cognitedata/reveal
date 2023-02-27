@@ -10,9 +10,8 @@ import {
 import GlobalStyles from 'styles/GlobalStyles';
 import { Provider } from 'react-redux';
 import configureStore from 'store';
-import { ConnectedRouter } from 'connected-react-router';
 import theme from 'styles/theme';
-import { Routes } from 'Routes';
+import { ModelRoutes } from 'ModelRoutes';
 import { Loader } from '@cognite/cogs.js';
 import { createBrowserHistory } from 'history';
 import { APP_TITLE, projectName } from 'utils';
@@ -21,6 +20,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
+import { BrowserRouter } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
 
 export const App = () => {
@@ -49,7 +49,7 @@ export const App = () => {
           <SDKProvider sdk={sdk}>
             <Provider store={store}>
               <ThemeProvider theme={theme}>
-                <ConnectedRouter history={history}>
+                <BrowserRouter>
                   <FlagProvider
                     appName={subAppName}
                     apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
@@ -59,11 +59,11 @@ export const App = () => {
                       <ErrorBoundary>
                         <PageTitle title={APP_TITLE} />
                         <ReactQueryDevtools initialIsOpen={false} />
-                        <Routes />
+                        <ModelRoutes />
                       </ErrorBoundary>
                     </SubAppWrapper>
                   </FlagProvider>
-                </ConnectedRouter>
+                </BrowserRouter>
               </ThemeProvider>
             </Provider>
           </SDKProvider>

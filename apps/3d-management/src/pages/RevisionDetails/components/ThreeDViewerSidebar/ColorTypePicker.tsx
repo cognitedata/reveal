@@ -24,11 +24,11 @@ export function ColorTypePicker({ onChange }: Props) {
         style={{ width: '100%' }}
         onChange={onChange}
       >
-        {(Object.values(PointColorType) as Array<PointColorType>)
-          .filter((type) => options[type])
-          .map((type) => (
-            <Option key={type} value={type}>
-              {options[type]}
+        {Object.keys(options)
+          .map((x) => +x as PointColorType) // Convert keys from string to PointColorType
+          .map((key) => (
+            <Option key={key} value={key}>
+              {options[key]}
             </Option>
           ))}
       </Select>

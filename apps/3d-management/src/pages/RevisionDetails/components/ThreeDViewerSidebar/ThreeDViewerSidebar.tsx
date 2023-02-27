@@ -64,26 +64,15 @@ export default function ThreeDViewerSidebar(props: Props) {
     const { viewer } = props;
     const { position, target } = viewer.cameraManager.getCameraState();
 
-    // Get camera position and target for upload
-    if (props.model instanceof CogniteCadModel) {
-      const cdfTransformation = props.model
-        .getModelTransformation()
-        .clone()
-        .multiply(props.model.getCdfToDefaultModelTransformation());
-      position.applyMatrix4(cdfTransformation);
-      target.applyMatrix4(cdfTransformation);
-    } else {
-      // TODO 2022-09-21 larsmoa: Replace with map-functions in Reveal 4.0
+    // Get inverse transformation matrix to compute camera position and target in model space
+    const inverseModelMatrix = props.model
+      .getModelTransformation()
+      .clone()
+      .multiply(props.model.getCdfToDefaultModelTransformation())
+      .invert();
 
-      // Get inverse transformation matrix to compute camera position and target in model space
-      const inverseModelMatrix = props.model
-        .getModelTransformation()
-        .clone()
-        .multiply(props.model.getCdfToDefaultModelTransformation())
-        .invert();
-      position.applyMatrix4(inverseModelMatrix);
-      target.applyMatrix4(inverseModelMatrix);
-    }
+    position.applyMatrix4(inverseModelMatrix);
+    target.applyMatrix4(inverseModelMatrix);
 
     await updateRevisionMutation({
       modelId: props.model.modelId,
@@ -143,20 +132,24 @@ export default function ThreeDViewerSidebar(props: Props) {
 
       {showTreeView && (
         <>
-          <MenuSection style={{ display: 'flex', flexWrap: 'nowrap' }}>
+          <MenuSection
+            style={{
+              display: 'flex',
+              flexWrap: 'nowrap',
+              gap: DEFAULT_MARGIN_H,
+              alignItems: 'center',
+            }}
+          >
             <Switch
-              style={{ flexShrink: 0 }}
               name="ghostMode"
-              size="small"
-              onChange={(nextState) => dispatch(toggleGhostMode(nextState))}
-              value={ghostModeEnabled}
-            >
-              Ghost mode
-            </Switch>
-
-            <NodePropertyFilterIndicatorContainer>
-              <NodePropertyFilterIndicator style={{ width: '100%' }} />
-            </NodePropertyFilterIndicatorContainer>
+              size="tiny"
+              onChange={(_evt, nextState) =>
+                dispatch(toggleGhostMode(nextState))
+              }
+              checked={ghostModeEnabled}
+              label="Ghost mode"
+            />
+            <NodePropertyFilterIndicator />
           </MenuSection>
 
           <Divider style={{ margin: `${DEFAULT_MARGIN_V}px 0` }} />
@@ -227,12 +220,4 @@ const ResizableStyled = styled(Resizable)`
   overflow: hidden;
   border: 1px solid var(--cogs-border-default);
   border-left-width: 2px;
-`;
-
-const NodePropertyFilterIndicatorContainer = styled.div`
-  margin-left: ${DEFAULT_MARGIN_H}px;
-  flex-shrink: 1;
-  flex-grow: 1;
-  width: 0;
-  height: 0;
 `;

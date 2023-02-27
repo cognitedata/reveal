@@ -6,13 +6,14 @@ import { Button } from '@cognite/cogs.js';
 
 import dayjs from 'dayjs';
 
-import EmptyState from 'pages/AllModels/components/EmptyState/index';
+import EmptyState from 'pages/AllModels/components/EmptyState';
 import { getContainer } from 'utils';
 import { TableOperations } from 'pages/AllModels/components/TableOperations';
-import Status from 'components/Status/index';
+import Status from 'components/Status';
 import Thumbnail from 'components/Thumbnail';
 import { Revision3D } from '@cognite/sdk';
 import { ThumbnailPreviewIcon } from 'components/ThumbnailPreviewIcon';
+import { EmptyStateOptions } from '../EmptyState/EmptyState';
 
 type Props = {
   revisions: Array<Revision3D>;
@@ -46,7 +47,7 @@ export function RevisionsTable(props: Props) {
               <Thumbnail fileId={val.thumbnailThreedFileId} width="400px" />
             }
           >
-            <ThumbnailPreviewIcon onClick={(e) => e.stopPropagation()} />
+            {ThumbnailPreviewIcon}
           </Popover>
         ),
     },
@@ -100,6 +101,13 @@ export function RevisionsTable(props: Props) {
     });
   };
 
+  const footer = () => (
+    <TableOperations>
+      <Button onClick={clearAll}>Clear Sorting and Filters</Button>
+      {props.refresh ? <Button onClick={props.refresh}>Refresh</Button> : null}
+    </TableOperations>
+  );
+
   return (
     <Table
       loading={!props.revisions}
@@ -115,18 +123,14 @@ export function RevisionsTable(props: Props) {
       })}
       locale={{
         emptyText: (
-          <EmptyState type="ThreeDModel" text="No revisions available" />
+          <EmptyState
+            type={EmptyStateOptions.ThreeDModel}
+            text="No revisions available"
+          />
         ),
       }}
       getPopupContainer={getContainer}
-      footer={() => (
-        <TableOperations>
-          <Button onClick={clearAll}>Clear Sorting and Filters</Button>
-          {props.refresh ? (
-            <Button onClick={props.refresh}>Refresh</Button>
-          ) : null}
-        </TableOperations>
-      )}
+      footer={footer}
     />
   );
 }

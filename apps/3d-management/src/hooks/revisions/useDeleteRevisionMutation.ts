@@ -22,9 +22,8 @@ export function useDeleteRevisionMutation() {
         queryClient.cancelQueries(queryKey);
 
         // Snapshot the previous value
-        const previousRevisions = queryClient.getQueryData<Revision3D[]>(
-          queryKey
-        );
+        const previousRevisions =
+          queryClient.getQueryData<Revision3D[]>(queryKey);
 
         // Optimistically update to the new value
         queryClient.setQueryData<Revision3D[]>(queryKey, (old) =>
