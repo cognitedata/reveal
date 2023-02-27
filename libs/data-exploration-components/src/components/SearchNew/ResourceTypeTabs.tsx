@@ -15,7 +15,6 @@ export const ResourceTypeTabsV2 = ({
 }: Props) => {
   return (
     <StyledTabs
-      hidePadding
       activeKey={currentResourceType}
       onTabClick={(tab) => {
         setCurrentResourceType(tab);

@@ -121,11 +121,21 @@ export const ResourceDetailsTabs = ({
   const tabs = [...additionalTabs, ...relationshipTabs];
 
   return (
-    <StyledTabs style={style} onTabClick={onTabChange}>
-      {tabs}
-    </StyledTabs>
+    <DetailsTabWrapper>
+      <StyledTabs activeKey={tab} style={style} onTabClick={onTabChange}>
+        {tabs}
+      </StyledTabs>
+    </DetailsTabWrapper>
   );
 };
+
+const DetailsTabWrapper = styled.div`
+  /* This workaround is need to fix the file preview in file details tab */
+  height: 100%;
+  & > div {
+    height: 100%;
+  }
+`;
 
 const StyledTabs = styled(Tabs)`
   flex: 1;

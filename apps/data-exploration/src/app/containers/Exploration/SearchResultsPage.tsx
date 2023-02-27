@@ -302,6 +302,9 @@ const RootHeightWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: row;
+  .cogs-tabs__list__tab {
+    margin-right: 0 !important;
+  }
 `;
 
 const VerticalDivider = styled.div`
