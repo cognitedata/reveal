@@ -10,6 +10,7 @@ import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import './set-public-path';
 import App from './app/App';
 import GlobalStyles from './GlobalStyles';
+import { useEffect } from 'react';
 
 <% if (internationalization) { %>
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
