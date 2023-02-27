@@ -2,8 +2,7 @@ import React, { useMemo, useState } from 'react';
 import moment from 'moment';
 import { FileLink, IdEither } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { Radio } from '@cognite/cogs.js-old';
-import { Title, Body, Select } from '@cognite/cogs.js';
+import { Title, Body, Select, Radio } from '@cognite/cogs.js';
 import { saveAs } from 'file-saver';
 import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
 import styled from 'styled-components';
@@ -248,44 +247,37 @@ export const FileDownloaderModalContent = ({
     return (
       <RadioContainer>
         <Radio
-          id="1"
-          name="annotationSelection"
           value={AnnotationChoice.VerifiedAndUnreviewed}
+          label={AnnotationChoice.VerifiedAndUnreviewed}
           checked={
             currentAnnotationChoice === AnnotationChoice.VerifiedAndUnreviewed
           }
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(isChecked: any, e: string) =>
-            handleAnnotationRadioButton(e)
-          }
-          style={{ paddingTop: '10px' }}
-        >
-          {AnnotationChoice.VerifiedAndUnreviewed}
-        </Radio>
+          onChange={(
+            event: React.ChangeEvent<HTMLInputElement>,
+            next?: string | boolean | undefined
+          ) => handleAnnotationRadioButton(next as string)}
+        />
         <Radio
-          id="2"
-          name="annotationSelection"
           value={AnnotationChoice.OnlyRejected}
+          label={AnnotationChoice.OnlyRejected}
           checked={currentAnnotationChoice === AnnotationChoice.OnlyRejected}
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(isChecked: any, e: string) =>
-            handleAnnotationRadioButton(e)
-          }
-        >
-          {AnnotationChoice.OnlyRejected}
-        </Radio>
+          onChange={(
+            event: React.ChangeEvent<HTMLInputElement>,
+            next?: string | boolean | undefined
+          ) => handleAnnotationRadioButton(next as string)}
+        />
         <Radio
-          id="3"
-          name="annotationSelection"
           value={AnnotationChoice.All}
+          label={AnnotationChoice.All}
           checked={currentAnnotationChoice === AnnotationChoice.All}
           disabled={currentFileChoice === DownloadChoice.Files}
-          onChange={(isChecked: any, e: string) =>
-            handleAnnotationRadioButton(e)
-          }
-        >
-          {AnnotationChoice.All}
-        </Radio>
+          onChange={(
+            event: React.ChangeEvent<HTMLInputElement>,
+            next?: string | boolean | undefined
+          ) => handleAnnotationRadioButton(next as string)}
+        />
       </RadioContainer>
     );
   };
@@ -362,8 +354,11 @@ const SelectContainer = styled.div`
   width: 400px;
 `;
 
-// styles for radio will be fixed in later commit
-const RadioContainer = styled.div``;
+const RadioContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`;
 
 const Footer = styled.div`
   display: flex;
