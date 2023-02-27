@@ -8,7 +8,7 @@ import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
 import { IconOctree } from './IconOctree';
 
-export class Image360CollectionIcons {
+export class IconCollection {
   private readonly MIN_PIXEL_SIZE = 16;
   private readonly MAX_PIXEL_SIZE = 64;
   private readonly _sceneHandler: SceneHandler;
@@ -30,12 +30,13 @@ export class Image360CollectionIcons {
   ) {
     const sharedTexture = this.createOuterRingsTexture();
     this._onRenderTrigger = new EventTrigger();
+    const iconSpriteRadius = 0.5;
     const iconsSprites = new InstancedIconSprite(
       points.length,
       sharedTexture,
       this.MIN_PIXEL_SIZE,
       this.MAX_PIXEL_SIZE,
-      0.5
+      iconSpriteRadius
     );
     iconsSprites.setPoints(points);
 
@@ -46,12 +47,13 @@ export class Image360CollectionIcons {
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
     const octree = new IconOctree(this._icons, octreeBounds, 4);
 
+    const clusterSpriteRadius = 2.0;
     const clusterSprites = new InstancedIconSprite(
       points.length,
       this.createClusterTexture(),
       this.MIN_PIXEL_SIZE * 2,
       this.MAX_PIXEL_SIZE,
-      2.0
+      clusterSpriteRadius
     );
 
     const projection = new Matrix4();
@@ -111,7 +113,8 @@ export class Image360CollectionIcons {
     canvas.width = textureSize;
     canvas.height = textureSize;
 
-    const halfTextureSize = textureSize / 2;
+    const lineWidth = textureSize / 22;
+    const halfTextureSize = textureSize * 0.5;
 
     const context = canvas.getContext('2d')!;
     drawClusterRings();
@@ -122,13 +125,13 @@ export class Image360CollectionIcons {
 
     function drawClusterRings() {
       context.beginPath();
-      context.lineWidth = textureSize / 22;
+      context.lineWidth = lineWidth;
       context.strokeStyle = '#FFFFFF';
       context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 36) / 44, 0, 2 * Math.PI);
       context.stroke();
 
       context.beginPath();
-      context.lineWidth = textureSize / 22;
+      context.lineWidth = lineWidth;
       context.strokeStyle = '#FFFFFF';
       context.arc(halfTextureSize, halfTextureSize, halfTextureSize - context.lineWidth / 2, 0, 2 * Math.PI);
       context.stroke();
@@ -136,7 +139,7 @@ export class Image360CollectionIcons {
 
     function drawOuterCircle() {
       context.beginPath();
-      context.lineWidth = textureSize / 22;
+      context.lineWidth = lineWidth;
       context.strokeStyle = '#FFFFFF';
       context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 30) / 44, 0, 2 * Math.PI);
       context.stroke();
@@ -144,7 +147,7 @@ export class Image360CollectionIcons {
 
     function drawInnerCircle() {
       context.beginPath();
-      context.lineWidth = textureSize / 11;
+      context.lineWidth = lineWidth * 2;
       context.strokeStyle = 'rgba(255, 255, 255, 0.75)';
       context.arc(halfTextureSize, halfTextureSize, (halfTextureSize * 24) / 44, 0, 2 * Math.PI);
       context.shadowColor = 'red';
@@ -158,6 +161,8 @@ export class Image360CollectionIcons {
     canvas.width = textureSize;
     canvas.height = textureSize;
 
+    const halfTextureSize = textureSize * 0.5;
+
     const context = canvas.getContext('2d')!;
     drawInnerCircle();
     drawOuterCircle();
@@ -168,7 +173,7 @@ export class Image360CollectionIcons {
       context.beginPath();
       context.lineWidth = textureSize / 16;
       context.strokeStyle = '#FFFFFF';
-      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth / 2 - 2, 0, 2 * Math.PI);
+      context.arc(halfTextureSize, halfTextureSize, halfTextureSize - context.lineWidth / 2 - 2, 0, 2 * Math.PI);
       context.stroke();
     }
 
@@ -176,7 +181,7 @@ export class Image360CollectionIcons {
       context.beginPath();
       context.lineWidth = textureSize / 8;
       context.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
+      context.arc(halfTextureSize, halfTextureSize, halfTextureSize - context.lineWidth, 0, 2 * Math.PI);
       context.shadowColor = 'red';
       context.stroke();
     }

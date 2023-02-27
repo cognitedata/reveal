@@ -8,7 +8,7 @@ import zip from 'lodash/zip';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { Image360Icon } from '../icons/Image360Icon';
-import { Image360CollectionIcons } from '../icons/IconCollection';
+import { IconCollection } from '../icons/IconCollection';
 import { Vector3 } from 'three';
 
 export class Image360CollectionFactory<T> {
@@ -37,7 +37,7 @@ export class Image360CollectionFactory<T> {
     event360Descriptors.forEach(image360Descriptor => image360Descriptor.transform.premultiply(postTransform));
 
     const points = event360Descriptors.map(descriptor => new Vector3().setFromMatrixPosition(descriptor.transform));
-    const collectionIcons = new Image360CollectionIcons(points, this._sceneHandler, this._onBeforeSceneRendered);
+    const collectionIcons = new IconCollection(points, this._sceneHandler, this._onBeforeSceneRendered);
     const icons = collectionIcons.icons;
 
     const entities = zip(event360Descriptors, icons)

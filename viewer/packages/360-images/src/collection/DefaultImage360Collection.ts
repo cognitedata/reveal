@@ -7,7 +7,7 @@ import pull from 'lodash/pull';
 import { Image360Collection } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
-import { Image360CollectionIcons } from '../icons/IconCollection';
+import { IconCollection } from '../icons/IconCollection';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -25,7 +25,7 @@ export class DefaultImage360Collection implements Image360Collection {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
     image360Exited: new EventTrigger<Image360ExitedDelegate>()
   };
-  private readonly _icons: Image360CollectionIcons;
+  private readonly _icons: IconCollection;
 
   /**
    * The events from the image collection.
@@ -37,7 +37,7 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._events;
   }
 
-  constructor(entities: Image360Entity[], icons: Image360CollectionIcons) {
+  constructor(entities: Image360Entity[], icons: IconCollection) {
     this.image360Entities = entities;
     this._icons = icons;
   }
