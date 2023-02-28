@@ -9,11 +9,12 @@ import {
 import { RelationshipLabels } from '@data-exploration-components/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { ResourceTableColumns, SubRowMatchingLabel } from '../../../components';
+import { ResourceTableColumns } from '../../../components';
 import {
   InternalEventDataWithMatchingLabels,
   useEventsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
+import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 
 export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 
@@ -64,7 +65,7 @@ export const EventTable = ({
     <Table<InternalEventDataWithMatchingLabels>
       columns={columns}
       hiddenColumns={hiddenColumns}
-      renderRowSubComponent={SubRowMatchingLabel}
+      renderCellSubComponent={SubCellMatchingLabels}
       {...rest}
     />
   );

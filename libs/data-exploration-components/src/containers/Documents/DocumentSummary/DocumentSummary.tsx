@@ -15,7 +15,6 @@ import React, { useMemo } from 'react';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import {
-  DocumentWithRelationshipLabels,
   DocumentNamePreview,
   DocumentContentPreview,
 } from '@data-exploration-components/containers';
@@ -63,7 +62,7 @@ export const DocumentSummary = ({
       [
         {
           ...Table.Columns.name(),
-          cell: ({ row }: { row: Row<DocumentWithRelationshipLabels> }) => {
+          cell: ({ row }: { row: Row<InternalDocument> }) => {
             const fileNamePreviewProps = {
               fileName: row.original.name || '',
               file: row.original,
@@ -130,7 +129,7 @@ export const DocumentSummary = ({
           accessorFn: (document) => document.sourceFile.datasetId,
         },
         ...metadataColumns,
-      ] as ColumnDef<DocumentWithRelationshipLabels>[],
+      ] as ColumnDef<InternalDocument>[],
     [query, metadataColumns, onRootAssetClick]
   );
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'content']);

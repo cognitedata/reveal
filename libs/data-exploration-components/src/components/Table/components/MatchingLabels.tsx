@@ -10,7 +10,7 @@ export const MatchingLabelsComponent: React.FC<MatchingLabels> = ({
   partial,
 }) => {
   return (
-    <Flex gap={4}>
+    <Flex gap={4} style={{ width: '100%' }}>
       {!isEmpty(exact) && (
         <Chip
           label={`Exact match: ${exact

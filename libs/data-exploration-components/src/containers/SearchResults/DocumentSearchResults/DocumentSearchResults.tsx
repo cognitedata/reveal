@@ -29,6 +29,7 @@ import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { ResourceTypes } from '@data-exploration-components/types';
 import { MatchingLabelsComponent } from '../../../components/Table/components/MatchingLabels';
+import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 
 export interface DocumentSearchResultsProps {
   query?: string;
@@ -134,7 +135,6 @@ export const DocumentSearchResults = ({
         }}
         hasNextPage={hasNextPage}
         isLoadingMore={isLoading}
-        renderRowSubComponent={SubRow}
       />
       {modalVisible && (
         <DocumentUploaderModal
@@ -159,26 +159,3 @@ export const DocumentSearchResults = ({
 const DocumentSearchResultWrapper = styled.div`
   height: 100%;
 `;
-
-const LabelMatcherWrapper = styled.div`
-  display: flex;
-  padding: 0 12px 8px;
-`;
-
-const SubRow = (row: Row<InternalDocumentWithMatchingLabels>) => {
-  if (isEmpty(row.original.matchingLabels)) {
-    return null;
-  }
-
-  return (
-    <LabelMatcherWrapper key={`matching-label-${row.id}`}>
-      {row.original.matchingLabels && (
-        <MatchingLabelsComponent
-          exact={row.original.matchingLabels.exact}
-          partial={row.original.matchingLabels.partial}
-          fuzzy={row.original.matchingLabels.fuzzy}
-        />
-      )}
-    </LabelMatcherWrapper>
-  );
-};

@@ -1,6 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 import React, { useEffect, useMemo, useRef } from 'react';
 import merge from 'lodash/merge';
+import has from 'lodash/has';
 
 import {
   Row,
@@ -16,6 +17,7 @@ import {
   ColumnOrderState,
   ColumnSizingState,
   VisibilityState,
+  Cell,
 } from '@tanstack/react-table';
 import useLocalStorageState from 'use-local-storage-state';
 import { isElementHorizontallyInViewport } from '../../utils/isElementHorizontallyInViewport';
@@ -86,6 +88,7 @@ export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   onRowExpanded?: OnChangeFn<ExpandedState>;
   enableCopying?: boolean;
   renderRowSubComponent?: (row: Row<T>) => React.ReactNode;
+  renderCellSubComponent?: (cell: Cell<T, unknown>) => React.ReactNode;
 };
 
 export type TableData = Record<string, any>;
@@ -122,6 +125,7 @@ export function Table<T extends TableData>({
   enableExpanding,
   onRowExpanded,
   renderRowSubComponent,
+  renderCellSubComponent,
 }: TableProps<T>) {
   const defaultColumn: Partial<ColumnDef<T, unknown>> = useMemo(
     () => ({
@@ -314,7 +318,7 @@ export function Table<T extends TableData>({
                   >
                     <ThWrapper>
                       <Flex direction="column" gap={2}>
-                        {header.column.columnDef.meta && (
+                        {has(header.column.columnDef?.meta, 'isMetadata') && (
                           <MetadataHeaderText>Metadata</MetadataHeaderText>
                         )}
                         {flexRender(
@@ -388,6 +392,8 @@ export function Table<T extends TableData>({
                                 <CopyToClipboardIconButton value={dataValue} />
                               )}
                             </TableDataBody>
+                            {renderCellSubComponent &&
+                              renderCellSubComponent(cell)}
                           </Td>
                         );
                       })}

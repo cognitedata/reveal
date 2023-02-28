@@ -10,15 +10,12 @@ import {
   SelectableItemsProps,
   TableStateProps,
 } from '@data-exploration-components/types';
-import {
-  HighlightCell,
-  ResourceTableColumns,
-  SubRowMatchingLabel,
-} from '../../../components';
+import { HighlightCell, ResourceTableColumns } from '../../../components';
 import { Table } from '../../../components';
 import { EmptyState } from '../../../components/EmpyState/EmptyState';
 import { useSearchAssetTree } from '@data-exploration-lib/domain-layer';
 import { useRootAssetsQuery } from '@data-exploration-lib/domain-layer';
+import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 
 import { DASH } from '../../../utils';
 import { useRootTree, useSearchTree, useRootPath } from './hooks';
@@ -129,6 +126,9 @@ export const AssetTreeTable = ({
               />
             </div>
           ),
+          meta: {
+            isExpandable: true,
+          },
         },
         Table.Columns.description(),
         Table.Columns.externalId(),
@@ -302,7 +302,7 @@ export const AssetTreeTable = ({
             setSearchExpanded(expanded);
           }
         }}
-        renderRowSubComponent={SubRowMatchingLabel}
+        renderCellSubComponent={SubCellMatchingLabels}
       />
     </Suspense>
   );

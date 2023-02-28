@@ -13,6 +13,7 @@ import {
   InternalSequenceDataWithMatchingLabels,
   useSequencesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
+import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 
 export type SequenceWithRelationshipLabels = Sequence & RelationshipLabels;
 const visibleColumns = [
@@ -77,7 +78,7 @@ export const SequenceTable = ({
     <Table<InternalSequenceDataWithMatchingLabels>
       columns={columns}
       hiddenColumns={hiddenColumns}
-      renderRowSubComponent={SubRowMatchingLabel}
+      renderCellSubComponent={SubCellMatchingLabels}
       {...rest}
     />
   );

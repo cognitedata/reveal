@@ -19,6 +19,7 @@ import {
   InternalTimeseriesDataWithMatchingLabels,
   useTimeseriesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
+import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
@@ -163,7 +164,7 @@ export const TimeseriesTable = ({
       columns={columns}
       data={hideEmptyData ? timeseriesWithDatapoints : data}
       hiddenColumns={hiddenColumns}
-      renderRowSubComponent={SubRowMatchingLabel}
+      renderCellSubComponent={SubCellMatchingLabels}
       {...rest}
     />
   );

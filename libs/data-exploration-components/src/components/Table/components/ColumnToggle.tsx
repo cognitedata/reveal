@@ -171,7 +171,9 @@ export function ColumnToggle<T extends TableData = any>({
                           <StyledHeader
                             text={column.columnDef.header?.toString()}
                           />
-                          {column.columnDef.meta && (
+                          {column.columnDef?.meta?.hasOwnProperty(
+                            'isMetadata'
+                          ) && (
                             <MetadataHeaderText>Metadata</MetadataHeaderText>
                           )}
                         </Flex>

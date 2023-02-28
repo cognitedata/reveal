@@ -4,12 +4,14 @@ import {
   Table,
   TableProps,
 } from '@data-exploration-components/components/Table/Table';
+import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 
 import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentContentPreview } from './DocumentContentPreview';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import {
   InternalDocument,
+  InternalDocumentWithMatchingLabels,
   useDocumentsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 import {
@@ -25,11 +27,9 @@ import {
 } from '@data-exploration-components/components';
 import { Asset } from '@cognite/sdk';
 
-export type DocumentWithRelationshipLabels = InternalDocument;
-
 // TODO: Might need to add RelationshipLabels at some point.
 export type DocumentTableProps = Omit<
-  TableProps<DocumentWithRelationshipLabels>,
+  TableProps<InternalDocumentWithMatchingLabels>,
   'columns'
 > & {
   query?: string;
@@ -63,7 +63,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         {
           ...Table.Columns.name(),
           enableHiding: false,
-          cell: ({ row }: { row: Row<DocumentWithRelationshipLabels> }) => {
+          cell: ({ row }: { row: Row<InternalDocumentWithMatchingLabels> }) => {
             const fileNamePreviewProps = {
               fileName: row.original.name || '',
               file: row.original,
@@ -134,7 +134,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         },
 
         ...metadataColumns,
-      ] as ColumnDef<DocumentWithRelationshipLabels>[],
+      ] as ColumnDef<InternalDocumentWithMatchingLabels>[],
     [query, metadataColumns, onRootAssetClick]
   );
 
@@ -152,6 +152,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
       columns={columns}
       hiddenColumns={hiddenColumns}
       data={props.data}
+      renderCellSubComponent={SubCellMatchingLabels}
     />
   );
 };

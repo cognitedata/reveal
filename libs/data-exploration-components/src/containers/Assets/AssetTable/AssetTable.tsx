@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
-import { ColumnDef, Row } from '@tanstack/react-table';
-import isEmpty from 'lodash/isEmpty';
+import { ColumnDef } from '@tanstack/react-table';
 
 import {
   Table,
@@ -10,11 +9,12 @@ import { RelationshipLabels } from '@data-exploration-components/types';
 
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 
-import { ResourceTableColumns, SubRowMatchingLabel } from '../../../components';
+import { ResourceTableColumns } from '../../../components';
 import {
   InternalAssetDataWithMatchingLabels,
   useAssetsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
+import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 
 import { ThreeDModelCell } from './ThreeDModelCell';
 import noop from 'lodash/noop';
@@ -75,7 +75,7 @@ export const AssetTable = ({
       columns={columns}
       onRowClick={onRowClick}
       hiddenColumns={hiddenColumns}
-      renderRowSubComponent={SubRowMatchingLabel}
+      renderCellSubComponent={SubCellMatchingLabels}
       {...rest}
     />
   );
