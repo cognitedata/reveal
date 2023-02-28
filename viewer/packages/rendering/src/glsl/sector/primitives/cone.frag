@@ -48,8 +48,8 @@ void main()
   float R2 = v_centerA.w;
   float dR = R2 - R1;
 
-  mat3 basis = mat3(U.xyz, V.xyz, v_W.xyz);
-  vec3 surfacePoint = vec3(U.w, V.w, v_W.w);
+  mat3 basis = mat3(U.xyz, V.xyz, W.xyz);
+  vec3 surfacePoint = vec3(U.w, V.w, W.w);
   vec3 rayTarget = surfacePoint;
   float rayTargetDist = length(rayTarget);
 
@@ -134,7 +134,7 @@ void main()
       if (R1 != R2)
       {
         // Find normal vector
-        vec3 n = -normalize(v_W.xyz);
+        vec3 n = -normalize(W.xyz);
         vec3 P1 = v_centerB.xyz;
         vec3 P2 = v_centerA.xyz;
         vec3 A = cross(P1 - p, P2 - p);
@@ -149,7 +149,7 @@ void main()
       {
         // Regular cylinder has simpler normal vector in camera space
         vec3 p_local = p - v_centerB.xyz;
-        normal = normalize(p_local - v_W.xyz * dot(p_local, v_W.xyz)) * normalFactor;
+        normal = normalize(p_local - W.xyz * dot(p_local, W.xyz)) * normalFactor;
       }
   #endif
 
