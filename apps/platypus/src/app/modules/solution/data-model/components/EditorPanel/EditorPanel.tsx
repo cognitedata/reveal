@@ -85,11 +85,13 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
               key="code"
               icon="Code"
               aria-label="Code editor"
+              data-cy="code-editor-tab-btn"
             />
             <SegmentedControl.Button
               key="ui"
               icon="TableViewSmall"
               aria-label="UI editor"
+              data-cy="ui-editor-tab-btn"
             />
           </SegmentedControl>
         )}

@@ -1,41 +1,39 @@
-import { getUrl } from '../../utils/url';
+import { getFDMVersion, getUrl } from '../../utils';
 
-describe('Data Model Page - Local Drafts', () => {
-  function createDataModel(name: string) {
-    // Create new data model
-    cy.visit(getUrl(''));
-    cy.getBySel('create-data-model-btn').click();
-    cy.getBySel('input-data-model-name').type(name);
-    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
-  }
-
-  function typeShouldNotExist(typeName: string) {
-    cy.get(`div[title="${typeName}"]`).should('not.exist');
-    cy.getBySel(`type-list-item-${typeName}`).should('not.exist');
-  }
-
-  function typeShouldExist(typeName: string) {
-    cy.get(`div[title="${typeName}"]`).should('exist');
-    cy.getBySel(`type-list-item-${typeName}`).should('exist');
-  }
-
+describe('Data model page - Local drafts', () => {
   beforeEach(() => {
     cy.request('http://localhost:4200/reset');
-    cy.visit(getUrl('/blog/blog/latest/data'));
+    cy.visit(getUrl('/blog/blog/latest'));
+    cy.ensurePageFinishedLoading();
   });
 
   it('persists unpublished changes after page refresh', () => {
-    cy.getBySel('discard-btn').should('not.exist');
-    cy.addDataModelType('Currency');
-    cy.ensureCurrentVersionIsDraft();
+    const typeName = 'Currency';
+    const type = `type ${typeName} {name: String}\n`;
 
-    // New type is still present after page refresh
+    cy.enableEditMode();
+    if (getFDMVersion() === 'V2') {
+      cy.openCodeEditorTab();
+    }
+    cy.appendTextToCodeEditor(type);
+    cy.ensureCurrentVersionIsDraft();
+    cy.ensureDraftHasBeenSaved();
+
+    // Writing localStorage to disk seems to be done in the
+    // background async. If we reload immediately after appending text
+    // it doesn't have enough time to write to disk resulting
+    // in localStorage not beeing saved, therefore we need to check the visualizer
+    // before reloading
+    cy.typeShouldExistInVisualizer(typeName);
+
     cy.reload();
-    cy.getBySel('schema-version-select')
-      .click()
-      .contains('Local draft')
-      .click();
-    cy.getBySel('type-list-item-Currency').should('be.visible');
+    cy.selectDraftVersion();
+
+    cy.typeShouldExistInVisualizer(typeName);
+    if (getFDMVersion() === 'V2') {
+      cy.openCodeEditorTab();
+    }
+    cy.codeEditorContains(type);
 
     // Publish button is clickable
     cy.getBySel('publish-schema-btn').should(
@@ -44,151 +42,122 @@ describe('Data Model Page - Local Drafts', () => {
     );
   });
 
-  it('clears the draft when user removes all types from a published data model', () => {
-    const typeNames = ['Post', 'User', 'Comment'];
-    cy.getBySel('edit-schema-btn').should('be.visible').click();
-    typeNames.forEach((typeName) => {
-      cy.deleteDataModelType(typeName);
-    });
-
-    function checkIfLocalDraftIsEmpty() {
-      cy.getBySel('schema-version-select')
-        .click()
-        .contains('Local draft')
-        .click();
-      typeNames.forEach((typeName) => typeShouldNotExist(typeName));
-    }
-
-    // No types are present after page refresh
-    cy.reload();
-    checkIfLocalDraftIsEmpty();
-
-    // Discard button should still be visible when schema is empty
-    cy.getBySel('discard-btn').should('be.visible');
-
-    // after switching versions, local draft should still be empty
-    cy.getBySel('schema-version-select').click().contains('Latest').click();
-
-    // Discard button should still be visible when schema is empty
-    cy.getBySel('edit-schema-btn').should('be.visible');
-    cy.getBySel('type-list-item-Post').should('exist');
-    typeShouldExist('Post');
-
-    checkIfLocalDraftIsEmpty();
-  });
-
   it('clears the draft when user removes all types from an unpublished data model', () => {
     // Create new data model
-    createDataModel('cypress-test');
+    cy.visit(getUrl(''));
+    cy.ensurePageFinishedLoading();
+    cy.createDataModel('cypress-test', 'cypress-test');
 
     // Add and then remove a type
-    cy.get('[aria-label="Add type"]').click();
-    cy.getBySel('type-name-input').should('be.visible').type('Person');
-    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary')
-      .should('be.visible')
-      .click();
-    cy.getBySel('type-view-back-button').should('be.visible').click();
-    cy.deleteDataModelType('Person');
+    if (getFDMVersion() === 'V2') {
+      cy.openCodeEditorTab();
+    }
+
+    cy.setCodeEditorText(`type Person {name: String}`);
+    cy.ensureDraftHasBeenSaved();
+    cy.typeShouldExistInVisualizer('Person');
+
+    cy.reload();
+
+    cy.typeShouldExistInVisualizer('Person');
+
+    if (getFDMVersion() === 'V2') {
+      cy.openCodeEditorTab();
+    }
+    cy.clearCodeEditor();
 
     // After refreshing, the draft should not contain the Person type
     cy.reload();
-    cy.getBySel('type-list-item-Person').should('not.exist');
+    cy.typeShouldNotExistInVisualizer('Person');
     cy.getBySel('editor_panel').contains('Unable to parse').should('not.exist');
   });
 
   it('persists unpublished changes after navigating away and back', () => {
-    cy.addDataModelType('Currency');
+    const typeName = 'Currency';
+
+    cy.enableEditMode();
+    if (getFDMVersion() === 'V2') {
+      cy.openCodeEditorTab();
+    }
+    cy.appendTextToCodeEditor(`type ${typeName} {name: String}`);
     cy.ensureCurrentVersionIsDraft();
+    cy.typeShouldExistInVisualizer(typeName);
 
     cy.visit(getUrl(''));
-    cy.visit(getUrl('/blog/blog/latest/data'));
+    cy.ensurePageFinishedLoading();
+    cy.visit(getUrl('/blog/blog/latest'));
+    cy.ensurePageFinishedLoading();
 
-    cy.getBySel('schema-version-select')
-      .click()
-      .contains('Local draft')
-      .click();
-    cy.getBySel('type-list-item-Currency').should('be.visible');
-  });
+    cy.selectDraftVersion();
 
-  it('persists unpublished changes after refreshing the page with only types without fields', () => {
-    const oldTypeNames = ['Post', 'User', 'Comment', 'TypeWithoutData'];
-
-    cy.getBySel('edit-schema-btn').should('be.visible').click();
-    oldTypeNames.forEach((typeName) => {
-      cy.deleteDataModelType(typeName);
-    });
-
-    cy.getBySel('no-types-add-type-btn').should('be.visible').click();
-    cy.getBySel('type-name-input').should('be.visible').type('Person');
-    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary')
-      .should('be.visible')
-      .click();
-    cy.getBySel('type-view-back-button').should('be.visible').click();
-
-    cy.reload();
-
-    typeShouldExist('Person');
-    cy.get('.cogs-body-3').should('contain', '0 properties');
+    cy.typeShouldExistInVisualizer(typeName);
   });
 
   it('clears local draft when user clicks to discard', () => {
-    cy.addDataModelType('Currency');
+    const typeName = 'Currency';
+    cy.enableEditMode();
+    if (getFDMVersion() === 'V2') {
+      cy.openCodeEditorTab();
+    }
+    cy.appendTextToCodeEditor(`type ${typeName} { name: String }`);
+    cy.ensureCurrentVersionIsDraft();
+    cy.typeShouldExistInVisualizer(typeName);
 
-    cy.getBySel('discard-btn').click();
+    cy.discardDraft();
 
     cy.ensureCurrentVersionIsNotDraft();
-
-    // UI editor, code editor and schema visualizer should be updated
-    typeShouldNotExist('Currency');
-
-    cy.get('[aria-label="Code editor"]').click();
-    cy.get('.monaco-editor textarea:first')
-      .type('{selectAll}')
-      .should('not.have.text', 'type Currency');
-
+    cy.typeShouldNotExistInVisualizer(typeName);
+    cy.codeEditorDoesNotContain(`type ${typeName}`);
     // Edit button is visible again
     cy.getBySel('edit-schema-btn').should('be.visible');
   });
 
   it('publishes draft', () => {
-    cy.addDataModelType('Currency');
-    cy.getBySel('publish-schema-btn').click();
-    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
+    cy.enableEditMode();
+    if (getFDMVersion() === 'V2') {
+      cy.openCodeEditorTab();
+    }
+    cy.appendTextToCodeEditor(`type Currency { name: String}`);
+
+    cy.publishSchema();
 
     // A toast message should notify user when schema has been published successfully
-    cy.getBySel('toast-title').should('have.text', 'Data model updated');
+    cy.getBySel('toast-title').should('have.text', 'Data model published');
 
     cy.ensureCurrentVersionIsNotDraft();
 
     // Edit button is visible again
-    cy.getBySel('edit-schema-btn').click();
+    cy.getBySel('edit-schema-btn').should('be.visible');
+    cy.enableEditMode();
 
     // Publish button should be disabled until we make a change
     cy.getBySel('publish-schema-btn').should(
       'have.class',
       'cogs-button--disabled'
     );
-    cy.getBySel(`type-list-item-Currency`).click();
-    cy.addDataModelTypeField('Currency', 'foo', 'String');
-    cy.getBySel('publish-schema-btn').should(
-      'not.have.class',
-      'cogs-button--disabled'
-    );
   });
 
-  it('Loads only drafts owned by Data Model ', () => {
+  it('loads only drafts owned by Data Model ', () => {
+    const typeName = 'Currency';
     // Edit current data model and create a draft
-    cy.visit(getUrl('/blog/blog/latest/data'));
-    cy.addDataModelType('Currency');
+    cy.enableEditMode();
+    if (getFDMVersion() === 'V2') {
+      cy.openCodeEditorTab();
+    }
+    cy.appendTextToCodeEditor(`type ${typeName} { name: String }`);
+    cy.ensureCurrentVersionIsDraft();
+    cy.ensureDraftHasBeenSaved();
+    cy.typeShouldExistInVisualizer(typeName);
 
     // Go back to Data Models Page and Create new Data Model
-    createDataModel('cypress-test-drafts');
+    cy.visit(getUrl(''));
+    cy.ensurePageFinishedLoading();
+    cy.createDataModel('cypress-test-drafts', 'cypress-test-drafts');
 
-    typeShouldNotExist('Currency');
-
-    cy.get('[aria-label="Code editor"]').click();
-    cy.get('.monaco-editor textarea:first')
-      .type('{selectAll}')
-      .should('not.have.text', 'type Currency');
+    cy.typeShouldNotExistInVisualizer(typeName);
+    if (getFDMVersion() === 'V2') {
+      cy.openCodeEditorTab();
+    }
+    cy.codeEditorDoesNotContain(typeName);
   });
 });

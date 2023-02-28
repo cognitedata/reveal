@@ -1,17 +1,18 @@
 import { getUrl } from '../../utils/url';
 
-describe('Platypus Data Models Page - List Data Models', () => {
+describe('Data models list - List data models', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
     cy.request('http://localhost:4200/reset');
     cy.visit(getUrl(''));
+    cy.ensurePageFinishedLoading();
   });
 
-  it('should display title', () => {
+  it('displays title', () => {
     cy.getBySel('data-models-title').contains('Data Models');
   });
 
-  it('should display data models', () => {
+  it('displays data models', () => {
     cy.get('.cog-data-grid').should('be.visible');
 
     // wait for rows to render
@@ -24,7 +25,7 @@ describe('Platypus Data Models Page - List Data Models', () => {
     ).should('contains.text', 'blog');
   });
 
-  it('should search data models', () => {
+  it('can search for data models', () => {
     cy.get('.cog-data-grid').should('be.visible');
     cy.getBySel('search-data-models').should('be.visible');
 

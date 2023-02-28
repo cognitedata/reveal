@@ -76,7 +76,11 @@ export const SchemaTypeList = ({
         onOk={deleteSchemaType}
       />
       <Header>
-        <Title level={5} style={{ paddingLeft: 16, marginTop: 24 }}>
+        <Title
+          data-cy="ui-editor-list-title"
+          level={5}
+          style={{ paddingLeft: 16, marginTop: 24 }}
+        >
           {t('type_title', 'Types')}
         </Title>
       </Header>

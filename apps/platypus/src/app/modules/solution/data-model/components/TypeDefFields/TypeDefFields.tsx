@@ -266,6 +266,7 @@ export const TypeDefFields = ({
           iconPlacement="left"
           aria-label={t('add_field', 'Add field')}
           type="ghost"
+          data-cy="add-field-btn"
           disabled={
             disabled || currentType?.fields.some((field) => !field.name)
           }

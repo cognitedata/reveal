@@ -48,6 +48,7 @@ export const EllipsisMenu = ({
           <Menu.Item
             css={{}}
             onClick={onDeleteClick}
+            data-cy="delete-type-btn"
             icon="Delete"
             iconPlacement="left"
           >

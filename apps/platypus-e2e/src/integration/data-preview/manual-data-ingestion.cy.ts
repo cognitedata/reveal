@@ -4,7 +4,8 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
     cy.request('http://localhost:4200/reset');
-    cy.visit(getUrl('/blog/blog/latest/data/data-management/preview'));
+    cy.visit(getUrl('/blog/blog/latest/data-management/preview'));
+    cy.ensurePageFinishedLoading();
   });
 
   it('should create draft row in table and publish it', () => {
@@ -192,21 +193,20 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
 
   it('should add 0 as an input to numeric cells in data preview table', () => {
     cy.visit(getUrl('/blog/blog/latest'));
+    cy.ensurePageFinishedLoading();
 
-    cy.getBySel('edit-schema-btn').should('be.visible').click();
-    cy.getBySel('type-list-item-Post').should('be.visible').click();
+    cy.enableEditMode();
+    cy.goToUIEditorType('Post');
 
-    cy.addDataModelTypeField('Post', 'intField', 'Int');
-    cy.addDataModelTypeField('Post', 'floatField', 'Float');
+    cy.addFieldViaUIEditor('intField', 'Int');
+    cy.addFieldViaUIEditor('floatField', 'Float');
 
-    cy.getBySel('publish-schema-btn').click();
-    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
+    cy.publishSchema();
 
-    cy.getBySel('toast-title').should('have.text', 'Data model updated');
+    cy.getBySel('toast-title').should('have.text', 'Data model published');
 
-    cy.visit(
-      getUrl('/blog/blog/latest/data/data-management/preview?type=Post')
-    );
+    cy.visit(getUrl('/blog/blog/latest/data-management/preview?type=Post'));
+    cy.ensurePageFinishedLoading();
 
     cy.getBySel('create-new-row-btn').click({ force: true });
 
@@ -232,22 +232,21 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
 
   it('should clear non-required cells in data preview table', () => {
     cy.visit(getUrl('/blog/blog/latest'));
+    cy.ensurePageFinishedLoading();
 
-    cy.getBySel('edit-schema-btn').should('be.visible').click();
-    cy.getBySel('type-list-item-Post').should('be.visible').click();
+    cy.enableEditMode();
+    cy.goToUIEditorType('Post');
 
-    cy.addDataModelTypeField('Post', 'strField', 'String');
-    cy.addDataModelTypeField('Post', 'intField', 'Int');
-    cy.addDataModelTypeField('Post', 'floatField', 'Float');
+    cy.addFieldViaUIEditor('strField', 'String');
+    cy.addFieldViaUIEditor('intField', 'Int');
+    cy.addFieldViaUIEditor('floatField', 'Float');
 
-    cy.getBySel('publish-schema-btn').click();
-    cy.get('.cogs-modal-footer-buttons > .cogs-button--type-primary').click();
+    cy.publishSchema();
 
-    cy.getBySel('toast-title').should('have.text', 'Data model updated');
+    cy.getBySel('toast-title').should('have.text', 'Data model published');
 
-    cy.visit(
-      getUrl('/blog/blog/latest/data/data-management/preview?type=Post')
-    );
+    cy.visit(getUrl('/blog/blog/latest/data-management/preview?type=Post'));
+    cy.ensurePageFinishedLoading();
 
     cy.getBySel('create-new-row-btn').click({ force: true });
 

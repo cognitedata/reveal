@@ -9,7 +9,11 @@ export const Spinner = ({
   style?: CSSProperties;
   size?: number;
 }) => (
-  <StyledLoaderContainer className="spinner" style={style}>
+  <StyledLoaderContainer
+    className="spinner"
+    data-cy="loader-container"
+    style={style}
+  >
     <Icon type="Loader" size={size} />
   </StyledLoaderContainer>
 );

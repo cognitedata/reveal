@@ -20,7 +20,7 @@
           "env": {
             "FDM_VERSION": "3"
           },
-          "ignoreTestFiles": "**/@(suggestions.cy.ts|data-preview-page.cy.ts|publish-new-schema.cy.ts|preview-data-model.cy.ts|local-drafts.cy.ts|manual-data-ingestion.cy.ts)"
+          "ignoreTestFiles": "**/@(ui-editor.cy.ts|manual-data-ingestion.cy.ts|suggestions.cy.ts)"
         }
       }
     },

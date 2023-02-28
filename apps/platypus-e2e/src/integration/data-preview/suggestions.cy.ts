@@ -4,7 +4,8 @@ describe('Platypus Data Preview Page - Suggestions', () => {
   beforeEach(() => {
     window.sessionStorage.setItem('agGridVirtualizationModeDisabled', 'true');
     cy.request('http://localhost:4200/reset');
-    cy.visit(getUrl('/blog/blog/latest/data/data-management/preview'));
+    cy.visit(getUrl('/blog/blog/latest/data-management/preview'));
+    cy.ensurePageFinishedLoading();
   });
 
   it('should be able to open and close modal', () => {

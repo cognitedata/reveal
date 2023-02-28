@@ -23,6 +23,7 @@ export const FieldActionsCellRenderer = React.memo(
         icon="Delete"
         aria-label="Delete field"
         type="ghost"
+        data-cy="delete-field-btn"
         style={{ paddingLeft: 0, paddingRight: 0, width: '34px' }}
         onClick={(e) => {
           e.preventDefault();

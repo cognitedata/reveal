@@ -4,6 +4,7 @@ describe('Platypus Query Explorer Page - Preview', () => {
   beforeEach(() => {
     cy.request('http://localhost:4200/reset');
     cy.visit(getUrl('/blog/blog/latest/query-explorer'));
+    cy.ensurePageFinishedLoading();
   });
 
   it('should be able to query', () => {

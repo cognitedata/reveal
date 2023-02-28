@@ -115,7 +115,7 @@ export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
                   iconPlacement="left"
                   icon="Add"
                   onClick={() => setShowCreateSpaceModal(true)}
-                  data-cy="create-space-btn"
+                  data-cy="open-create-space-modal-btn"
                 >
                   {t('create_new_space_btn_text', 'Create new space')}
                 </Button>

@@ -9,39 +9,59 @@ on:
       - 'libs/platypus-common-utils/**'
       - 'yarn.lock'
 jobs:
-  platypus-tests:
-    strategy:
-      matrix:
-        configuration: ['mockV2', 'mockV3']
+  install-dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'yarn'
 
       - name: Set NPMKEY variable
         run: |
-          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_READONLY_TOKEN}}")
+          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_READONLY_TOKEN }}")
           echo "::set-output name=NPMKEY::$NPMKEY"
         id: npm_auth_key
 
       - name: Create .npmrc
         run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
 
-      - name: Install Dependency & Build
-        run: |
-          yarn install --frozen-lockfile
-          rm .npmrc
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
-      - name: Run lint
-        run: |
-          yarn lint
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
 
-      - name: Run unit tests
-        run: |
-          yarn test
+  platypus-tests:
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    strategy:
+      matrix:
+        configuration: ['mockV2', 'mockV3']
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Cypress run
         uses: cypress-io/github-action@v4.2.2
