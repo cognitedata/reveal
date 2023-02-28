@@ -18,7 +18,7 @@ type VisualizationState = {
 export class Image360VisualizationBox implements Image360Visualization {
   private readonly _worldTransform: THREE.Matrix4;
   private _visualizationMesh: THREE.Mesh | undefined;
-  private _faceMaterials: THREE.MeshBasicMaterial[] | undefined;
+  private _faceMaterials: THREE.MeshBasicMaterial[] = [];
   private readonly _sceneHandler: SceneHandler;
   private readonly _visualizationState: VisualizationState;
   private readonly _textureLoader: THREE.TextureLoader;
@@ -29,10 +29,6 @@ export class Image360VisualizationBox implements Image360Visualization {
 
   set opacity(alpha: number) {
     this._visualizationState.opacity = alpha;
-
-    if (this._faceMaterials === undefined) {
-      return;
-    }
 
     this._faceMaterials.forEach(material => {
       material.opacity = alpha;
@@ -85,22 +81,10 @@ export class Image360VisualizationBox implements Image360Visualization {
   }
 
   public async loadImages(faces: Image360Face[]): Promise<void> {
-    const faceTextures = await this.loadFaceTextures(faces);
-
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 
-    const faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
+    await this.setFaceMaterials(faces);
 
-    this._faceMaterials = faceMaterialOrder.map(
-      face =>
-        new THREE.MeshBasicMaterial({
-          side: THREE.BackSide,
-          map: getFaceTexture(face),
-          depthTest: false,
-          opacity: this._visualizationState.opacity,
-          transparent: true
-        })
-    );
     this._visualizationMesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
     this._visualizationMesh.renderOrder = this._visualizationState.renderOrder;
     this._visualizationMesh.applyMatrix4(this._worldTransform);
@@ -109,6 +93,29 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._sceneHandler.addCustomObject(this._visualizationMesh);
 
     return Promise.resolve();
+  }
+
+  public async setFaceMaterials(faces: Image360Face[]): Promise<void> {
+    const faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
+    const faceTextures = await this.loadFaceTextures(faces);
+
+    if (this._faceMaterials.length === 0) {
+      this._faceMaterials = faceMaterialOrder.map(
+        face =>
+          new THREE.MeshBasicMaterial({
+            side: THREE.BackSide,
+            map: getFaceTexture(face),
+            depthTest: false,
+            opacity: this._visualizationState.opacity,
+            transparent: true
+          })
+      );
+    } else {
+      faceMaterialOrder.map((face, index) => {
+        this._faceMaterials[index].map = getFaceTexture(face);
+        this._faceMaterials[index].needsUpdate = true;
+      });
+    }
 
     function getFaceTexture(side: Image360Face['face']) {
       const face = faceTextures.find(p => p.side === side);
@@ -149,6 +156,6 @@ export class Image360VisualizationBox implements Image360Visualization {
 
     this._visualizationMesh.geometry.dispose();
     this._visualizationMesh = undefined;
-    this._faceMaterials = undefined;
+    this._faceMaterials = [];
   }
 }

@@ -22,6 +22,10 @@ export interface Image360FileProvider {
   ): Promise<Image360Face[]>;
 }
 
+export interface Image360FileProvider {
+  getLowResolution360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]>;
+}
+
 export type Image360Descriptor = Image360EventDescriptor & {
   faceDescriptors: Image360FileDescriptor[];
 };

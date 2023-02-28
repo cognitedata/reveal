@@ -60,6 +60,7 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
       return image360Descriptor;
     });
   }
+
   get360ImageFiles(
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
@@ -74,6 +75,13 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
           face: image360FaceDescriptor.face
         } as Image360Face;
       })
+    );
+  }
+
+  getLowResolution360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]> {
+    throw new Error(
+      'Local 360 Image Provider does not support loading of low resolution images. Use get360ImageFiles instead.' +
+        image360FaceDescriptors
     );
   }
 }

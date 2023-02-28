@@ -10,7 +10,16 @@ import range from 'lodash/range';
 import uniqBy from 'lodash/uniqBy';
 import head from 'lodash/head';
 
-import { CogniteClient, CogniteEvent, EventFilter, FileFilterProps, FileInfo, Metadata } from '@cognite/sdk';
+import {
+  CogniteClient,
+  CogniteEvent,
+  EventFilter,
+  FileFilterProps,
+  FileInfo,
+  HttpError,
+  HttpResponseType,
+  Metadata
+} from '@cognite/sdk';
 import { Image360Descriptor, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
@@ -61,20 +70,31 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
   ): Promise<Image360Face[]> {
-    const fileIds = image360FaceDescriptors.map(image360FaceDescriptor => {
+    const fullResFileBuffers = await this.getFileBuffers(this.getFileIds(image360FaceDescriptors), abortSignal);
+    return this.createFaces(image360FaceDescriptors, fullResFileBuffers);
+  }
+
+  public async getLowResolution360ImageFiles(
+    image360FaceDescriptors: Image360FileDescriptor[]
+  ): Promise<Image360Face[]> {
+    const lowResFileBuffers = await this.getIconBuffers(this.getFileIds(image360FaceDescriptors));
+    return this.createFaces(image360FaceDescriptors, lowResFileBuffers);
+  }
+
+  private getFileIds(image360FaceDescriptors: Image360FileDescriptor[]) {
+    return image360FaceDescriptors.map(image360FaceDescriptor => {
       return { id: image360FaceDescriptor.fileId };
     });
-    const fileBuffers = await this.getFileBuffers(fileIds, abortSignal);
+  }
 
-    const faces = zipWith(image360FaceDescriptors, fileBuffers, (image360FaceDescriptor, fileBuffer) => {
+  private createFaces(image360FaceDescriptors: Image360FileDescriptor[], fileBuffer: ArrayBuffer[]): Image360Face[] {
+    return zipWith(image360FaceDescriptors, fileBuffer, (image360FaceDescriptor, fileBuffer) => {
       return {
         face: image360FaceDescriptor.face,
         mimeType: image360FaceDescriptor.mimeType,
         data: fileBuffer
       } as Image360Face;
     });
-
-    return faces;
   }
 
   private mergeDescriptors(
@@ -177,6 +197,30 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
       fileLinks
         .map(fileLink => fetch(fileLink.downloadUrl, { method: 'GET', signal: abortSignal }))
         .map(async response => (await response).arrayBuffer())
+    );
+  }
+
+  public async getIconBuffers(fileIds: { id: number }[]): Promise<ArrayBuffer[]> {
+    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/icon`;
+    const headers = {
+      ...this._client.getDefaultRequestHeaders(),
+      Accept: '*/*'
+    };
+
+    return Promise.resolve(
+      fileIds.map(async fileId => {
+        const response = await this._client.get<ArrayBuffer>(url, {
+          params: fileId,
+          headers,
+          responseType: HttpResponseType.ArrayBuffer
+        });
+
+        if (response.status === 200) {
+          return response.data;
+        } else {
+          throw new HttpError(response.status, response.data, response.headers);
+        }
+      })
     );
   }
 

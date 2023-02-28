@@ -15,6 +15,7 @@ export class Image360Entity implements Image360 {
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
+  private _requestRedraw: () => void;
 
   /**
    * Get a copy of the model-to-world transformation matrix
@@ -42,6 +43,10 @@ export class Image360Entity implements Image360 {
     return this._image360VisualzationBox;
   }
 
+  public allowRedrawCalls(redrawFunc: () => void): void {
+    this._requestRedraw = redrawFunc;
+  }
+
   constructor(
     image360Metadata: Image360Descriptor,
     sceneHandler: SceneHandler,
@@ -56,14 +61,33 @@ export class Image360Entity implements Image360 {
     this._image360Icon = icon;
     this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
     this._image360VisualzationBox.visible = false;
+    this._requestRedraw = () => {};
   }
 
   /**
    * Loads the 360 image (6 faces) into the visualization object.
    */
   public async load360Image(abortSignal?: AbortSignal): Promise<void> {
-    const faces = await this._imageProvider.get360ImageFiles(this._image360Metadata.faceDescriptors, abortSignal);
-    await this._image360VisualzationBox.loadImages(faces);
+    const lowResolutionFaces = await this._imageProvider
+      .getLowResolution360ImageFiles(this._image360Metadata.faceDescriptors)
+      .catch(() => {
+        return undefined;
+      });
+
+    const fullResolutionFaces = this._imageProvider.get360ImageFiles(
+      this._image360Metadata.faceDescriptors,
+      abortSignal
+    );
+
+    if (!lowResolutionFaces) {
+      await this._image360VisualzationBox.loadImages(await fullResolutionFaces);
+    } else {
+      await this._image360VisualzationBox.loadImages(lowResolutionFaces);
+
+      fullResolutionFaces.then(faces => {
+        this._image360VisualzationBox.setFaceMaterials(faces).then(() => this._requestRedraw());
+      });
+    }
   }
 
   /**
