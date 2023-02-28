@@ -38,14 +38,14 @@ export default function FieldMapping({
           <ResourceTypei18n t={targetType} />
         </div>
       </Flex>
-      {modelFieldMapping.map(({ from, to }, i) => (
+      {modelFieldMapping.map(({ source: from, target: to }, i) => (
         <Flex key={`${i}`} gap={12} alignItems="center">
           <Select
             loading={sourcesLoading}
             style={{ width: 400 }}
             value={from}
             onChange={(e) => {
-              modelFieldMapping[i].from = e;
+              modelFieldMapping[i].source = e;
               setModelFieldMapping(modelFieldMapping);
             }}
           >
@@ -64,7 +64,7 @@ export default function FieldMapping({
             loading={targetsLoading}
             value={to}
             onChange={(e) => {
-              modelFieldMapping[i].to = e;
+              modelFieldMapping[i].target = e;
               setModelFieldMapping(modelFieldMapping);
             }}
           >
@@ -93,7 +93,7 @@ export default function FieldMapping({
         onClick={() => {
           setModelFieldMapping([
             ...modelFieldMapping,
-            { from: undefined, to: undefined },
+            { source: undefined, target: undefined },
           ]);
         }}
       />

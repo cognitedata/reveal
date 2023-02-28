@@ -17,7 +17,7 @@ export default function QuickMatchTitle() {
   };
 
   return (
-    <Title level={4}>
+    <Title level={2} style={{ marginBottom: 20 }}>
       {titles[step]}
       <Tooltip content={t('select-data-tooltip')} placement="bottom">
         <Icon type="Info" />

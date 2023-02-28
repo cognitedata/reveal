@@ -15,6 +15,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
+import { ModelMapping, EMFeatureType } from 'context/QuickMatchContext';
 
 export const IN_PROGRESS_EM_STATES = ['queued', 'running'];
 
@@ -143,7 +144,7 @@ export const useEMModelPredictResults = (
     () =>
       sdk
         .get<EntityMatchingPredictions>(
-          `/api/playground/projects/${sdk.project}/context/entitymatching/jobs/${id}`
+          `/api/v1/projects/${sdk.project}/context/entitymatching/jobs/${id}`
         )
         .then((r) => {
           if (r.status === 200) {
@@ -174,9 +175,13 @@ export const useCreateEMModel = () => {
     async ({
       sourcesList,
       targetsList,
+      matchFields,
+      featureType,
     }: {
       sourcesList: InternalId[];
       targetsList: InternalId[];
+      matchFields: ModelMapping;
+      featureType: EMFeatureType;
     }) => {
       const [sources, targets] = await Promise.all([
         queryClient.fetchQuery(getQMSourceDownloadKey(), async () => {
@@ -197,7 +202,28 @@ export const useCreateEMModel = () => {
         }),
       ]);
 
-      return sdk.entityMatching.create({ sources, targets });
+      return sdk
+        .post<EntityMatchingModel>(
+          `/api/v1/projects/${sdk.project}/context/entitymatching`,
+          {
+            data: {
+              ignoreMissingFields: true,
+              featureType,
+              sources,
+              targets,
+              matchFields: matchFields.filter(
+                ({ source, target }) => !!source && !!target
+              ),
+            },
+          }
+        )
+        .then((r) => {
+          if (r.status === 200) {
+            return r.data;
+          } else {
+            return Promise.reject(r);
+          }
+        });
     }
   );
 };
