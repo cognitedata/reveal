@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Col, Row } from '@cognite/cogs.js-old';
-import { Title, Button, Popconfirm, OptionType } from '@cognite/cogs.js';
+import { Col } from '@cognite/cogs.js-old';
+import { Title, Button, Popconfirm, OptionType, Row } from '@cognite/cogs.js';
 import { clearTemporaryRegion } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
