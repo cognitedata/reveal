@@ -2,9 +2,10 @@ import { Asset } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
+  InternalAssetDataWithMatchingLabels,
   InternalSequenceFilters,
   useAssetsMetadataKeys,
-  useAssetsSearchResultQuery,
+  useAssetsSearchResultWithLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import {
   ResourceTableColumns,
@@ -12,6 +13,7 @@ import {
   Table,
 } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 
@@ -22,6 +24,7 @@ import { AssetWithRelationshipLabels } from '../AssetTable/AssetTable';
 import { RootAsset } from '@data-exploration-components/components';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
+import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 
 export const AssetSummary = ({
   query = '',
@@ -36,7 +39,7 @@ export const AssetSummary = ({
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
 }) => {
-  const { data, isLoading } = useAssetsSearchResultQuery({
+  const { data, isLoading } = useAssetsSearchResultWithLabelsQuery({
     query,
     assetFilter: filter,
   });
@@ -45,6 +48,7 @@ export const AssetSummary = ({
   const metadataColumns = useMemo(() => {
     return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
   }, [metadataKeys]);
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const columns = useMemo(
     () =>
@@ -67,19 +71,19 @@ export const AssetSummary = ({
           ...Table.Columns.labels,
           enableSorting: false,
         },
-        Table.Columns.source(query),
+        Table.Columns.source(),
         Table.Columns.dataset,
         ...metadataColumns,
       ] as ColumnDef<AssetWithRelationshipLabels>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [metadataColumns, query]
+    [metadataColumns]
   );
 
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'description']);
 
   return (
     <SummaryCardWrapper>
-      <Table
+      <Table<InternalAssetDataWithMatchingLabels>
         id="asset-summary-table"
         columns={columns}
         query={query}
@@ -96,6 +100,9 @@ export const AssetSummary = ({
         }
         enableColumnResizing={false}
         onRowClick={onRowClick}
+        renderCellSubComponent={
+          isAdvancedFiltersEnabled ? SubCellMatchingLabels : undefined
+        }
       />
     </SummaryCardWrapper>
   );

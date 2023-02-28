@@ -1,22 +1,26 @@
 import { Asset, Sequence } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
-import { useResourceResults } from '@data-exploration-components/containers';
+
 import {
   InternalSequenceFilters,
+  useSequenceSearchResultWithMatchingLabelsQuery,
+  InternalSequenceDataWithMatchingLabels,
   useSequencesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 import {
   ResourceTableColumns,
+  SubRowMatchingLabel,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
-import { convertResourceType } from '@data-exploration-components/types';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 
 export const SequenceSummary = ({
   query = '',
@@ -33,9 +37,10 @@ export const SequenceSummary = ({
   onRowClick?: (row: Sequence) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
 }) => {
-  const api = convertResourceType('sequence');
-
-  const { isLoading, items } = useResourceResults<Sequence>(api, query, filter);
+  const { isLoading, data } = useSequenceSearchResultWithMatchingLabelsQuery({
+    filter,
+    query,
+  });
   const { data: metadataKeys = [] } = useSequencesMetadataKeys();
 
   const metadataColumns = useMemo(() => {
@@ -46,9 +51,9 @@ export const SequenceSummary = ({
   const columns = useMemo(
     () =>
       [
-        Table.Columns.name(query),
-        Table.Columns.description(query),
-        Table.Columns.externalId(query),
+        Table.Columns.name(),
+        Table.Columns.description(),
+        Table.Columns.externalId(),
         Table.Columns.columns,
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
@@ -58,17 +63,18 @@ export const SequenceSummary = ({
         ...metadataColumns,
       ] as ColumnDef<Sequence>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query, metadataColumns]
+    [metadataColumns]
   );
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'description']);
 
   return (
     <SummaryCardWrapper>
-      <Table
+      <Table<InternalSequenceDataWithMatchingLabels>
         columns={columns}
         hiddenColumns={hiddenColumns}
-        data={getSummaryCardItems(items)}
+        data={getSummaryCardItems(data)}
         columnSelectionLimit={2}
         id="sequence-summary-table"
         isDataLoading={isLoading}
@@ -81,6 +87,9 @@ export const SequenceSummary = ({
         }
         enableColumnResizing={false}
         onRowClick={onRowClick}
+        renderCellSubComponent={
+          isAdvancedFiltersEnabled ? SubCellMatchingLabels : undefined
+        }
         query={query}
       />
     </SummaryCardWrapper>

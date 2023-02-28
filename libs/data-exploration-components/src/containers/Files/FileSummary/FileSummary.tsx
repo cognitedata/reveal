@@ -62,18 +62,18 @@ export const FileSummary = ({
           },
         },
         Table.Columns.mimeType,
-        Table.Columns.externalId(query),
-        Table.Columns.id(query),
+        Table.Columns.externalId(),
+        Table.Columns.id(),
         Table.Columns.uploadedTime,
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         Table.Columns.dataset,
-        Table.Columns.source(query),
+        Table.Columns.source(),
         Table.Columns.assets,
         Table.Columns.labels,
         ...metadataColumns,
       ] as ColumnDef<FileInfo>[],
-    [query, metadataColumns]
+    [metadataColumns, query]
   );
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'content']);
 

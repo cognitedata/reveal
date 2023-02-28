@@ -141,7 +141,7 @@ const AllTabContainer = styled.div`
   grid-template-columns: 1fr 1fr;
 
   & > * {
-    height: 404px;
+    min-height: 404px;
     min-width: 300px;
     width: 100%;
   }

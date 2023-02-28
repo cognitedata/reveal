@@ -17,7 +17,11 @@ import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import {
   useTimeseriesMetadataKeys,
   InternalTimeseriesFilters,
+  useTimeseriesSearchResultWithLabelsQuery,
+  InternalTimeseriesDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
+import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 
 export const TimeseriesSummary = ({
   query = '',
@@ -36,11 +40,10 @@ export const TimeseriesSummary = ({
 }) => {
   const api = convertResourceType('timeSeries');
 
-  const { isLoading, items } = useResourceResults<Timeseries>(
-    api,
+  const { isLoading, data } = useTimeseriesSearchResultWithLabelsQuery({
     query,
-    filter
-  );
+    filter,
+  });
 
   const { data: metadataKeys = [] } = useTimeseriesMetadataKeys();
 
@@ -49,12 +52,13 @@ export const TimeseriesSummary = ({
       ResourceTableColumns.metadata(String(key))
     );
   }, [metadataKeys]);
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const columns = useMemo(() => {
     return [
-      Table.Columns.name(query),
-      Table.Columns.description(query),
-      Table.Columns.unit(query),
+      Table.Columns.name(),
+      Table.Columns.description(),
+      Table.Columns.unit(),
       Table.Columns.lastUpdatedTime,
       {
         header: 'Last reading',
@@ -64,24 +68,24 @@ export const TimeseriesSummary = ({
         },
       },
       Table.Columns.created,
-      Table.Columns.id(query),
+      Table.Columns.id(),
       Table.Columns.isString,
       Table.Columns.isStep,
       Table.Columns.dataset,
       Table.Columns.rootAsset(onRootAssetClick),
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];
-  }, [query, metadataColumns, onRootAssetClick]);
+  }, [metadataColumns, onRootAssetClick]);
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'description']);
 
   return (
     <SummaryCardWrapper>
-      <Table
+      <Table<InternalTimeseriesDataWithMatchingLabels>
         id="timeseries-summary-table"
         columns={columns}
         hiddenColumns={hiddenColumns}
         columnSelectionLimit={2}
-        data={getSummaryCardItems(items)}
+        data={getSummaryCardItems(data)}
         isDataLoading={isLoading}
         tableHeaders={
           <SummaryHeader
@@ -89,6 +93,9 @@ export const TimeseriesSummary = ({
             title="Time series"
             onAllResultsClick={onAllResultsClick}
           />
+        }
+        renderCellSubComponent={
+          isAdvancedFiltersEnabled ? SubCellMatchingLabels : undefined
         }
         enableColumnResizing={false}
         onRowClick={onRowClick}

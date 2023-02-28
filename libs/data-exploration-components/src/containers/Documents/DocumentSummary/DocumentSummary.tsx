@@ -2,12 +2,15 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import {
   InternalDocument,
   InternalDocumentFilter,
+  InternalDocumentWithMatchingLabels,
   useDocumentSearchResultQuery,
+  useDocumentSearchResultWithMatchingLabelsQuery,
   useDocumentsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 
 import {
   ResourceTableColumns,
+  SubRowMatchingLabel,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration-components/components/Table';
@@ -43,10 +46,12 @@ export const DocumentSummary = ({
   onRowClick?: (row: InternalDocument) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
 }) => {
-  const { results, isLoading } = useDocumentSearchResultQuery({
-    query,
-    filter,
-  });
+  const { results, isLoading } = useDocumentSearchResultWithMatchingLabelsQuery(
+    {
+      query,
+      filter,
+    }
+  );
   const { data: metadataKeys } = useDocumentsMetadataKeys();
 
   const metadataColumns = useMemo(() => {
@@ -122,8 +127,8 @@ export const DocumentSummary = ({
           ...Table.Columns.rootAsset(onRootAssetClick),
           accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
-        Table.Columns.externalId(query),
-        Table.Columns.id(query),
+        Table.Columns.externalId(),
+        Table.Columns.id(),
         {
           ...Table.Columns.dataset,
           accessorFn: (document) => document.sourceFile.datasetId,
@@ -135,7 +140,7 @@ export const DocumentSummary = ({
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'content']);
   return (
     <SummaryCardWrapper>
-      <Table
+      <Table<InternalDocumentWithMatchingLabels>
         id="document-summary-table"
         columns={columns}
         hiddenColumns={hiddenColumns}
@@ -149,6 +154,7 @@ export const DocumentSummary = ({
             onAllResultsClick={onAllResultsClick}
           />
         }
+        renderRowSubComponent={SubRowMatchingLabel}
         enableColumnResizing={false}
         onRowClick={onRowClick}
       />
