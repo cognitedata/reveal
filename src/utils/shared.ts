@@ -1,5 +1,4 @@
 import { createLink } from '@cognite/cdf-utilities';
-
 import { styleScope } from 'styles/styleScope';
 
 export const getContainer = () => {
