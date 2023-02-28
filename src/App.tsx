@@ -19,8 +19,21 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Details from 'pages/Details';
 import QuickMatch from 'pages/QuickMatch';
 import CreatePipeline from 'pages/CreatePipeline';
+import { CogniteError } from '@cognite/sdk/dist/src';
+import { QuickMatchContextProvider } from 'context/QuickMatchContext';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry(count, error) {
+        if ((error as CogniteError).status === 403) {
+          return false;
+        }
+        return count <= 3;
+      },
+    },
+  },
+});
 const env = getEnv();
 const project = getProject();
 
@@ -51,7 +64,11 @@ const App = () => {
                       />
                       <Route
                         path="/:projectName/:subAppPath/quick-match"
-                        element={<QuickMatch />}
+                        element={
+                          <QuickMatchContextProvider>
+                            <QuickMatch />
+                          </QuickMatchContextProvider>
+                        }
                       />
                       <Route
                         path="/:projectName/:subAppPath/create"
