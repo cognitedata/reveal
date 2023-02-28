@@ -29,7 +29,9 @@ export default function EntityMatchingResult({ predictions }: Props) {
           <div>{matches[0]?.score.toFixed(1)}s</div>
           <div>{formatPredictionObject(source)}</div>
           <Icon type="ArrowRight" />
-          <div>{formatPredictionObject(matches[0]?.target)}</div>
+          {matches.length > 0 && (
+            <div>{formatPredictionObject(matches[0]?.target)}</div>
+          )}
         </Flex>
       ))}
     </Flex>
