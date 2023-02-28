@@ -201,7 +201,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     }
 
     const graphQlSchemaString = includeBuiltInTypes
-      ? [getBuiltInTypesString(), graphQlSchema].join('\n')
+      ? // order has to be this way for correct monaco errors
+        [graphQlSchema, getBuiltInTypesString()].join('\n')
       : graphQlSchema;
 
     const schemaAst = parse(graphQlSchemaString);

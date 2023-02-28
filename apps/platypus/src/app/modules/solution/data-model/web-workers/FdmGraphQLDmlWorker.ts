@@ -41,6 +41,12 @@ export class FdmGraphQLDmlWorker {
     this.codeActionsService = new CodeActionsService();
   }
 
+  /**
+   * Be careful when adding new parameters here, as this function
+   * provide validation
+   *
+   * @param graphqlCode the current graphQL code
+   */
   public async doValidation(graphqlCode: string) {
     try {
       if (!graphqlCode) {
@@ -59,13 +65,18 @@ export class FdmGraphQLDmlWorker {
     }
   }
 
+  /**
+   * Be careful when adding new parameters here, as this function
+   * provide code completion for the current line
+   *
+   * @param textUntilPosition the text until this point
+   * @param builtInTypes all of the types of the most recent correct data model
+   */
   public async doComplete(
-    graphQlCode: string,
     textUntilPosition: string,
     builtInTypes: BuiltInType[]
   ) {
     try {
-      this.setGraphQlSchema(graphQlCode);
       return this.codeCompletionService.getCompletions(
         textUntilPosition,
         builtInTypes,
@@ -79,6 +90,12 @@ export class FdmGraphQLDmlWorker {
     }
   }
 
+  /**
+   * Be careful when adding new parameters here, as this function
+   * provide formatting (prettier) on the code
+   *
+   * @param graphqlCode the current graphQL code
+   */
   public async doFormat(graphqlCode: string): Promise<string | null> {
     if (!graphqlCode) {
       return null;
@@ -91,6 +108,11 @@ export class FdmGraphQLDmlWorker {
     });
   }
 
+  /**
+   * This function sets a VALID as the internal graphql code
+   *
+   * @param graphQlString the current graphQL code
+   */
   public async setGraphQlSchema(graphQlString: string) {
     try {
       this.lastValidGraphQlSchema = graphQlString;
@@ -132,6 +154,12 @@ export class FdmGraphQLDmlWorker {
     }
   }
 
+  /**
+   * Be careful when adding new parameters here, as this function
+   * provide details based on what's been hovered above
+   *
+   * @param position the position of the hover
+   */
   public async doHover(position: Position) {
     try {
       if (!this.dataModelTypeDefs || !Object.keys(this.locationTypeDefMap)) {
@@ -159,6 +187,15 @@ export class FdmGraphQLDmlWorker {
     }
   }
 
+  /**
+   * Be careful when adding new parameters here, as this function
+   * provide code action based on current range of code
+   *
+   * @param graphQlCode the current graphQL code
+   * @param range the range of code to provide code actions
+   * @param diagnostics markers (for monaco)
+   * @param options additonal options (for monaco)
+   */
   public getCodeAction(
     graphQlCode: string,
     range: CodeEditorRange,

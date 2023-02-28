@@ -53,10 +53,12 @@ export const setupGraphql = (
   function registerProviders(): void {
     disposeAll(providers);
 
+    // Provides details around validation
     providers.push(
       new DiagnosticsAdapter(config.languageId, editorInstance, worker)
     );
 
+    // Provides autocomplete around where the current line is
     providers.push(
       monaco.languages.registerCompletionItemProvider(
         config.languageId,
@@ -64,6 +66,7 @@ export const setupGraphql = (
       )
     );
 
+    // Provides formatting (prettier) around where the current line is
     providers.push(
       monaco.languages.registerDocumentFormattingEditProvider(
         config.languageId,
@@ -72,12 +75,14 @@ export const setupGraphql = (
     );
 
     if (options.useExtendedSdl) {
+      // Provides hover details when it is triggered
       providers.push(
         monaco.languages.registerHoverProvider(
           config.languageId,
           new HoverAdapter(worker)
         )
       );
+      // Provides actions when there is an error
       providers.push(
         monaco.languages.registerCodeActionProvider(
           config.languageId,

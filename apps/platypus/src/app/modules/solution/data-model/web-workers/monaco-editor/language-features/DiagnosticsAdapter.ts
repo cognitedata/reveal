@@ -18,12 +18,21 @@ export interface WorkerAccessor {
 /**
  * Class that handles code editor changes and do validation
  * And disposes unused resources
+ *
  */
 export class DiagnosticsAdapter {
   protected readonly _disposables: IDisposable[] = [];
   private readonly _listener: { [uri: string]: IDisposable } =
     Object.create(null);
 
+  /**
+   * think 2 times about adding additional input here, as this adaptor only should
+   * provide validation and errors, which means it should only need
+   *
+   * @param _languageId the lanugage to check for
+   * @param editorInstance the editor instance to check upon (mostly for current content within editor)
+   * @param _worker how to access worker
+   */
   constructor(
     private readonly _languageId: string,
     protected readonly editorInstance: EditorInstance,

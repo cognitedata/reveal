@@ -36,7 +36,6 @@ export class CodeCompletionProvider implements CompletionItemProvider {
 
     const worker = await this._worker(resource);
     const suggestions = await worker.doComplete(
-      model.getValue(),
       textUntilPosition,
       this.builtInTypes
     );
