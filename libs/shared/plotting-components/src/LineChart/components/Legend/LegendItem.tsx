@@ -1,9 +1,6 @@
 import * as React from 'react';
-import {
-  LegendItemWrapper,
-  LegendItemLabel,
-  LegendItemIcon,
-} from '../elements';
+
+import { LegendItemWrapper, LegendItemLabel, LegendItemIcon } from './elements';
 
 export interface LegendItemProps {
   color: string;

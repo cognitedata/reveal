@@ -1,9 +1,12 @@
 import * as React from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
-import { PlotMarker } from '../elements';
-import { getMarkerPosition } from '../utils/getMarkerPosition';
-import { getHoveredLineColor } from '../utils/getHoveredLineColor';
+
+import { getMarkerPosition } from '../../utils/getMarkerPosition';
+import { getHoveredLineColor } from '../../utils/getHoveredLineColor';
+
+import { PlotMarker } from './elements';
+import { HOVER_MARKER_BORDER_WIDTH } from '../../constants';
 
 export interface HoverMarkerProps {
   plotHoverEvent?: PlotHoverEvent;
@@ -27,7 +30,7 @@ export const HoverMarker: React.FC<HoverMarkerProps> = ({
         left: x,
         backgroundColor: getHoveredLineColor(plotHoverEvent),
         visibility: plotHoverEvent ? 'visible' : 'hidden',
-        border: `2px solid ${backgroundColor}`,
+        border: `${HOVER_MARKER_BORDER_WIDTH}px solid ${backgroundColor}`,
       }}
       onMouseEnter={onHover}
       onMouseLeave={onUnhover}

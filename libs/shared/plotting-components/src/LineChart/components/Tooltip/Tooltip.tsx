@@ -4,10 +4,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import head from 'lodash/head';
 import { PlotHoverEvent } from 'plotly.js';
 
-import { TooltipContainer, TooltipWrapper } from '../elements';
-import { TooltipRendererProps } from '../types';
-import { getTooltipPosition } from '../utils/getTooltipPosition';
+import { TooltipRendererProps } from '../../types';
+import { getTooltipPosition } from '../../utils/getTooltipPosition';
+
 import { TooltipDetail } from './TooltipDetail';
+import { TooltipContainer, TooltipWrapper } from './elements';
 
 export interface TooltipProps {
   plotHoverEvent?: PlotHoverEvent;

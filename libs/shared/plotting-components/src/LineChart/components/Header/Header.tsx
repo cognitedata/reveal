@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { ChartSubtitle, ChartTitle, HeaderWrapper } from '../elements';
+import { ChartSubtitle, ChartTitle, HeaderWrapper } from './elements';
 
 export interface HeaderProps {
   title?: string;

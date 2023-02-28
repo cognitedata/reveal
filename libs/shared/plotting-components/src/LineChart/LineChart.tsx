@@ -6,9 +6,9 @@ import { Header } from './components/Header';
 import { Tooltip } from './components/Tooltip';
 import { HoverMarker } from './components/HoverMarker';
 import { Legend } from './components/Legend';
+import { Plot } from './components/Plot';
 import { getLayout } from './utils/getLayout';
 import { usePlotHoverEvent } from './hooks/usePlotHoverEvent';
-import { Plot } from './components/Plot';
 
 export const LineChart: React.FC<LineChartProps> = ({
   data,

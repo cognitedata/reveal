@@ -7,14 +7,15 @@ import {
   PlotMouseEvent,
 } from 'plotly.js';
 
-import { PlotWrapper } from '../elements';
-import { getCommonAxisLayoutProps } from '../utils/getCommonAxisLayoutProps';
-import { Data, Layout, LineChartProps } from '../types';
-import { getMarginLayout } from '../utils/getMarginLayout';
+import { getCommonAxisLayoutProps } from '../../utils/getCommonAxisLayoutProps';
+import { Data, Layout, LineChartProps } from '../../types';
+import { getMarginLayout } from '../../utils/getMarginLayout';
 import { useMemo } from 'react';
-import { getRangeMode } from '../utils/getRangeMode';
-import { useAxisTickCount } from '../hooks/useAxisTickCount';
-import { adaptToPlotlyPlotData } from '../utils/adaptToPlotlyPlotData';
+import { getRangeMode } from '../../utils/getRangeMode';
+import { useAxisTickCount } from '../../hooks/useAxisTickCount';
+import { adaptToPlotlyPlotData } from '../../utils/adaptToPlotlyPlotData';
+
+import { PlotWrapper } from './elements';
 
 export interface PlotProps extends Pick<LineChartProps, 'xAxis' | 'yAxis'> {
   data: Data | Data[];

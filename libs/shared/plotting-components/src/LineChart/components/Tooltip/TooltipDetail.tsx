@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { DEFAULT_BACKGROUND_COLOR } from '../constants';
+
+import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
+import { ValueType } from '../../types';
 
 import {
   TooltipDetailLabel,
   TooltipDetailValue,
   TooltipDetailWrapper,
-} from '../elements';
-import { ValueType } from '../types';
+} from './elements';
 
 export interface TooltipDetailProps {
   label: string;

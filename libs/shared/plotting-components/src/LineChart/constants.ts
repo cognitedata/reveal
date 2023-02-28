@@ -15,6 +15,7 @@ export const DEFAULT_LINE_COLOR = '#4A67FB';
 export const DEFAULT_LINE_NAME = 'Line';
 
 export const HOVER_MARKER_SIZE = 12;
+export const HOVER_MARKER_BORDER_WIDTH = 2;
 
 export const DEAULT_LAYOUT: Required<Layout> = {
   backgroundColor: DEFAULT_BACKGROUND_COLOR,

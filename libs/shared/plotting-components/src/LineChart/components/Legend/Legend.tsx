@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { DEFAULT_LINE_COLOR } from '../constants';
-import { LegendWrapper } from '../elements';
-import { Data, HorizontalPlacement } from '../types';
-import { getDataAsArray } from '../utils/getDataAsArray';
-import { getLineName } from '../utils/getLineName';
+
+import { DEFAULT_LINE_COLOR } from '../../constants';
+import { Data, HorizontalPlacement } from '../../types';
+import { getDataAsArray } from '../../utils/getDataAsArray';
+import { getLineName } from '../../utils/getLineName';
+
+import { LegendWrapper } from './elements';
 import { LegendItem } from './LegendItem';
 
 export interface LegendProps {
