@@ -1,2 +1,2 @@
-export * from './lib/data-exploration-containers';
+export * from './Filters';
 export * from './SearchResults';

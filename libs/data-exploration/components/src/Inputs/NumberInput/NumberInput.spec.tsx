@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { NumberFilter } from './NumberFilter';
+import { NumberInput } from './NumberInput';
 
 describe('NumberFilter', () => {
   test('Number input without props renders correctly', () => {
-    render(<NumberFilter />);
+    render(<NumberInput />);
 
     const inputElement = screen.getByRole('spinbutton');
 
@@ -15,7 +15,7 @@ describe('NumberFilter', () => {
 
   test('Checks if label is being rendered correctly', () => {
     const label = 'Test label';
-    render(<NumberFilter label={label} />);
+    render(<NumberInput label={label} />);
 
     expect(screen.getByTestId('filter-label')).toBeInTheDocument();
     expect(screen.getByText(label)).toBeInTheDocument();
@@ -23,7 +23,7 @@ describe('NumberFilter', () => {
 
   test('Type number string and get valid result back', () => {
     const onChange = jest.fn();
-    render(<NumberFilter onChange={onChange} />);
+    render(<NumberInput onChange={onChange} />);
 
     const inputElement = screen.getByRole('spinbutton');
 
@@ -34,7 +34,7 @@ describe('NumberFilter', () => {
 
   test('Type a string and expect no response', () => {
     const onChange = jest.fn();
-    render(<NumberFilter onChange={onChange} />);
+    render(<NumberInput onChange={onChange} />);
 
     const inputElement = screen.getByRole('spinbutton');
 
@@ -44,7 +44,7 @@ describe('NumberFilter', () => {
   });
 
   test('Default value', () => {
-    render(<NumberFilter value={123} />);
+    render(<NumberInput value={123} />);
 
     const inputElement = screen.getByRole('spinbutton');
 

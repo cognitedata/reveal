@@ -1,10 +1,10 @@
-import { BooleanFilter } from './BooleanFilter';
+import { BooleanInput } from './BooleanInput';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 describe('BooleanFilter', () => {
   test('The "all" button should be default selected', () => {
-    render(<BooleanFilter />);
+    render(<BooleanInput />);
 
     const allButton = screen.getByTestId('unset');
     const trueButton = screen.getByTestId('true');
@@ -16,7 +16,7 @@ describe('BooleanFilter', () => {
   });
 
   test('The "true" button should be selected', () => {
-    render(<BooleanFilter value={true} />);
+    render(<BooleanInput value={true} />);
 
     const allButton = screen.getByTestId('unset');
     const trueButton = screen.getByTestId('true');
@@ -28,7 +28,7 @@ describe('BooleanFilter', () => {
   });
 
   test('The "false" button should be selected', () => {
-    render(<BooleanFilter value={false} />);
+    render(<BooleanInput value={false} />);
 
     const allButton = screen.getByTestId('unset');
     const trueButton = screen.getByTestId('true');
@@ -42,7 +42,7 @@ describe('BooleanFilter', () => {
   test('The callback of the onchange upon clicking "unset" should be "undefined"', () => {
     const onChange = jest.fn();
 
-    render(<BooleanFilter onChange={(newValue) => onChange(newValue)} />);
+    render(<BooleanInput onChange={(newValue) => onChange(newValue)} />);
 
     const allButton = screen.getByTestId('unset');
     userEvent.click(allButton);
@@ -52,7 +52,7 @@ describe('BooleanFilter', () => {
   test('The callback of the onchange upon clicking "true" should be "true"', () => {
     const onChange = jest.fn();
 
-    render(<BooleanFilter onChange={(newValue) => onChange(newValue)} />);
+    render(<BooleanInput onChange={(newValue) => onChange(newValue)} />);
 
     const trueButton = screen.getByTestId('true');
     userEvent.click(trueButton);
@@ -62,7 +62,7 @@ describe('BooleanFilter', () => {
   test('The callback of the onchange upon clicking "false" should be "false"', () => {
     const onChange = jest.fn();
 
-    render(<BooleanFilter onChange={(newValue) => onChange(newValue)} />);
+    render(<BooleanInput onChange={(newValue) => onChange(newValue)} />);
 
     const falseButton = screen.getByTestId('false');
     userEvent.click(falseButton);

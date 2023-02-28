@@ -1,19 +1,19 @@
 import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
-import { BooleanFilter } from './BooleanFilter';
+import { BooleanInput } from './BooleanInput';
 
 export default {
   title: 'Components/Filters/BooleanFilter',
-  component: BooleanFilter,
+  component: BooleanInput,
   argTypes: {
     label: {
       type: 'string',
     },
   },
 };
-export const Example: ComponentStory<typeof BooleanFilter> = (args) => {
+export const Example: ComponentStory<typeof BooleanInput> = (args) => {
   const [value, setValue] = useState<boolean | undefined>(false);
-  return <BooleanFilter {...args} value={value} onChange={setValue} />;
+  return <BooleanInput {...args} value={value} onChange={setValue} />;
 };
 Example.args = {
   label: 'Title',

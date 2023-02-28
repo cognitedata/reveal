@@ -1,8 +1,8 @@
 import { Input } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { FilterLabel } from '../FilterLabel';
+import { FilterLabel } from '../../Labels/FilterLabel';
 
-export const NumberFilter = ({
+export const NumberInput = ({
   value,
   onChange,
   label,

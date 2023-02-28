@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
-import { FilterLabel } from '../FilterLabel';
+import { FilterLabel } from '../../Labels/FilterLabel';
 
-export const BooleanFilter = ({
+export const BooleanInput = ({
   label,
   value,
   onChange,

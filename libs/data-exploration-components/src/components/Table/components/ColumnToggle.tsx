@@ -1,4 +1,5 @@
 import { Column, Updater, ColumnOrderState } from '@tanstack/table-core';
+import has from 'lodash/has';
 import React, { useState, Suspense, useMemo } from 'react';
 import {
   Button,
@@ -171,9 +172,7 @@ export function ColumnToggle<T extends TableData = any>({
                           <StyledHeader
                             text={column.columnDef.header?.toString()}
                           />
-                          {column.columnDef?.meta?.hasOwnProperty(
-                            'isMetadata'
-                          ) && (
+                          {has(column.columnDef?.meta, 'isMetadata') && (
                             <MetadataHeaderText>Metadata</MetadataHeaderText>
                           )}
                         </Flex>

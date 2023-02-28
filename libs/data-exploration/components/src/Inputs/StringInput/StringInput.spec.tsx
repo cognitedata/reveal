@@ -1,4 +1,4 @@
-import { StringFilter } from './StringFilter';
+import { StringInput } from './StringInput';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -7,7 +7,7 @@ describe('StringFilter', () => {
     const onChange = jest.fn();
 
     render(
-      <StringFilter
+      <StringInput
         onChange={(nextString) => {
           onChange(nextString);
         }}
@@ -30,7 +30,7 @@ describe('StringFilter', () => {
 
   test('Check if label appears in the document', () => {
     const label = 'Test label';
-    render(<StringFilter label={label} />);
+    render(<StringInput label={label} />);
 
     const labelElement = screen.getByTestId('filter-label');
 

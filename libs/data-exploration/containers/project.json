@@ -1,5 +1,6 @@
 {
   "name": "data-exploration-containers",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/data-exploration/containers/src",
   "projectType": "library",
   "tags": [],
@@ -39,6 +40,33 @@
       "options": {
         "jestConfig": "libs/data-exploration/containers/jest.config.ts",
         "passWithNoTests": true
+      }
+    },
+    "storybook": {
+      "executor": "@nrwl/storybook:storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "libs/data-exploration/containers/.storybook",
+        "uiFramework": "@storybook/react"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@nrwl/storybook:build",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/data-exploration-containers",
+        "configDir": "libs/data-exploration/containers/.storybook",
+        "uiFramework": "@storybook/react"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
       }
     }
   }
