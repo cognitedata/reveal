@@ -72,7 +72,17 @@ export const useTimeseries = (
         )
         .then((r) => {
           if (r.status === 200) {
-            return r.data;
+            return {
+              nextPage: r.data.nextPage,
+              items: r.data.items.map((ts) => {
+                return {
+                  ...ts,
+                  // this will downcase all metadata keys. this is done since metadata aggreagates
+                  // are downcased server side and metadata fitlers are case insensitive
+                  metadata: downcaseMetadata(ts.metadata),
+                };
+              }),
+            };
           } else {
             return Promise.reject(r);
           }
