@@ -1,26 +1,14 @@
 import * as React from 'react';
 
-import { Layout, PlotHoverEvent, PlotMouseEvent } from 'plotly.js';
-import Plot from 'react-plotly.js';
-import { LineChartWrapper, PlotWrapper } from './elements';
+import { LineChartWrapper } from './elements';
 import { LineChartProps } from './types';
-import { useMemo, useState } from 'react';
 import { Header } from './components/Header';
-import isEmpty from 'lodash/isEmpty';
 import { Tooltip } from './components/Tooltip';
-import { getChartData } from './utils/getChartData';
 import { HoverMarker } from './components/HoverMarker';
-import { getMarkerPosition } from './utils/getMarkerPosition';
-import {
-  DEFAULT_BACKGROUND_COLOR,
-  DEFAULT_MARGIN,
-  HOVER_MARKER_SIZE,
-} from './constants';
 import { Legend } from './components/Legend';
-import { getRangeMode } from './utils/getRangeMode';
-import { getCommonAxisLayoutProps } from './utils/getCommonAxisLayoutProps';
-import { getMarginValue } from './utils/getMarginValue';
 import { getLayout } from './utils/getLayout';
+import { usePlotHoverEvent } from './hooks/usePlotHoverEvent';
+import { Plot } from './components/Plot';
 
 export const LineChart: React.FC<LineChartProps> = ({
   data,
@@ -29,72 +17,21 @@ export const LineChart: React.FC<LineChartProps> = ({
   title,
   subtitle,
   variant,
-  layout,
-  backgroundColor = DEFAULT_BACKGROUND_COLOR,
-  responsive = true,
+  layout: layoutProp,
   disableTooltip,
   renderTooltipContent,
 }) => {
-  const [plotHoverEvent, setPlotHoverEvent] = useState<PlotHoverEvent>();
+  const { plotHoverEvent, plotHoverEventHandler } = usePlotHoverEvent();
 
-  const chartData = useMemo(() => getChartData(data), [data]);
-
-  const xAxisRangeMode = useMemo(() => getRangeMode(data, 'x'), [data]);
-  const yAxisRangeMode = useMemo(() => getRangeMode(data, 'y'), [data]);
+  const layout = getLayout(variant, layoutProp);
 
   const {
+    backgroundColor,
+    legendPlacement,
     showTitle,
     showSubtitle,
     showLegend,
-    showAxisNames,
-    showTicks,
-    showTickLabels,
-  } = getLayout(variant, layout);
-
-  const showXAxisName = showAxisNames && !isEmpty(xAxis?.name);
-  const showYAxisName = showAxisNames && !isEmpty(yAxis?.name);
-
-  const plotlyLayout: Partial<Layout> = useMemo(() => {
-    return {
-      xaxis: {
-        ...getCommonAxisLayoutProps(xAxis, showXAxisName),
-        rangemode: xAxisRangeMode,
-        showticklabels: showTickLabels,
-      },
-      yaxis: {
-        ...getCommonAxisLayoutProps(yAxis, showYAxisName),
-        rangemode: yAxisRangeMode,
-        showticklabels: showTickLabels,
-      },
-      dragmode: false,
-      margin: {
-        t: DEFAULT_MARGIN,
-        r: DEFAULT_MARGIN,
-        l: getMarginValue(showYAxisName, showTickLabels),
-        b: getMarginValue(showXAxisName, showTickLabels),
-      },
-    };
-  }, [
-    xAxis,
-    yAxis,
-    xAxisRangeMode,
-    yAxisRangeMode,
-    showXAxisName,
-    showYAxisName,
-    showTickLabels,
-  ]);
-
-  const handleUnhover = (plotMouseEvent: PlotMouseEvent) => {
-    const { x = 0, y = 0 } = getMarkerPosition(plotMouseEvent);
-    const { clientX, clientY } = plotMouseEvent.event;
-
-    if (
-      Math.abs(x - clientX) > HOVER_MARKER_SIZE ||
-      Math.abs(y - clientY) > HOVER_MARKER_SIZE
-    ) {
-      setPlotHoverEvent(undefined);
-    }
-  };
+  } = layout;
 
   return (
     <LineChartWrapper style={{ backgroundColor }}>
@@ -105,19 +42,20 @@ export const LineChart: React.FC<LineChartProps> = ({
         showSubtitle={showSubtitle}
       />
 
-      <PlotWrapper showticks={showTicks}>
-        <Plot
-          data={chartData}
-          layout={plotlyLayout}
-          onHover={setPlotHoverEvent}
-          onUnhover={handleUnhover}
-          useResizeHandler={responsive}
-        />
-      </PlotWrapper>
+      <Plot
+        data={data}
+        xAxis={xAxis}
+        yAxis={yAxis}
+        layout={layout}
+        onHover={plotHoverEventHandler.onHoverPlot}
+        onUnhover={plotHoverEventHandler.onUnhoverPlot}
+      />
 
       <HoverMarker
         plotHoverEvent={plotHoverEvent}
         backgroundColor={backgroundColor}
+        onHover={plotHoverEventHandler.onHoverMarker}
+        onUnhover={plotHoverEventHandler.onUnhoverMarker}
       />
 
       <Tooltip
@@ -129,7 +67,11 @@ export const LineChart: React.FC<LineChartProps> = ({
         renderTooltipContent={renderTooltipContent}
       />
 
-      <Legend data={chartData} showLegend={showLegend} />
+      <Legend
+        data={data}
+        showLegend={showLegend}
+        legendPlacement={legendPlacement}
+      />
     </LineChartWrapper>
   );
 };

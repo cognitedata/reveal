@@ -27,7 +27,7 @@ const Template: Story<LineChartProps> = (args) => <LineChart {...args} />;
 export const Basic = Template.bind({});
 Basic.args = {
   data,
-  xAxis: { name: 'Date', tickDistance: 2 },
+  xAxis: { name: 'Date' },
   yAxis: { name: 'Value' },
   title: 'Main title',
   subtitle: 'Subtitle or description',

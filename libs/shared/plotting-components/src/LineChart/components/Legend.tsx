@@ -1,26 +1,32 @@
 import * as React from 'react';
 import { DEFAULT_LINE_COLOR } from '../constants';
 import { LegendWrapper } from '../elements';
-import { Data } from '../types';
+import { Data, HorizontalPlacement } from '../types';
+import { getDataAsArray } from '../utils/getDataAsArray';
 import { getLineName } from '../utils/getLineName';
 import { LegendItem } from './LegendItem';
 
 export interface LegendProps {
-  data: Data[];
+  data: Data | Data[];
   showLegend: boolean;
-  marginLeft?: number;
+  legendPlacement?: HorizontalPlacement;
 }
 
-export const Legend: React.FC<LegendProps> = ({ data, showLegend }) => {
-  if (!showLegend) {
-    return null;
-  }
+export const Legend: React.FC<LegendProps> = React.memo(
+  ({ data, showLegend, legendPlacement }) => {
+    if (!showLegend) {
+      return null;
+    }
 
-  return (
-    <LegendWrapper>
-      {data.map(({ color = DEFAULT_LINE_COLOR, name }, index) => {
-        return <LegendItem color={color} label={getLineName(name, index)} />;
-      })}
-    </LegendWrapper>
-  );
-};
+    return (
+      <LegendWrapper style={{ justifyContent: legendPlacement }}>
+        {getDataAsArray(data).map(
+          ({ color = DEFAULT_LINE_COLOR, name }, index) => {
+            const lineName = getLineName(name, index);
+            return <LegendItem key={lineName} color={color} label={lineName} />;
+          }
+        )}
+      </LegendWrapper>
+    );
+  }
+);

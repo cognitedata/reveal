@@ -8,6 +8,7 @@ import {
 } from './constants';
 
 export const LineChartWrapper = styled.div`
+  position: relative;
   font-family: Inter;
   padding: 8px;
   border-radius: 8px;
@@ -159,8 +160,7 @@ export const LegendWrapper = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: center;
-  margin-top: 6px;
+  padding: 8px;
   gap: 16px;
   flex-wrap: wrap;
 `;
@@ -170,7 +170,6 @@ export const LegendItemWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding-top: 3px;
 
   border-right: 2px solid #d9d9d9;
   padding-right: 16px;
@@ -184,11 +183,11 @@ export const LegendItemIcon = styled.div`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  margin-top: -4px;
   margin-right: 8px;
 `;
 
 export const LegendItemLabel = styled.div`
   font-weight: 500;
   font-size: 12px;
+  margin-top: 4px;
 `;

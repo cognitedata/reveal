@@ -29,17 +29,23 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const [tooltipWidth, setTooltipWidth] = useState<number>();
+  const [tooltipHeight, setTooltipHeight] = useState<number>();
 
   const { x, y } = useMemo(() => {
-    return getTooltipPosition(plotHoverEvent, tooltipWidth);
-  }, [plotHoverEvent, tooltipWidth]);
+    return getTooltipPosition(plotHoverEvent, tooltipWidth, tooltipHeight);
+  }, [plotHoverEvent, tooltipWidth, tooltipHeight]);
 
   const point = head(plotHoverEvent?.points);
 
   const updateTooltipWidth = useCallback(() => {
     setTooltipWidth(tooltipRef.current?.clientWidth);
+    setTooltipHeight(tooltipRef.current?.clientHeight);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plotHoverEvent, tooltipRef.current?.clientWidth]);
+  }, [
+    plotHoverEvent,
+    tooltipRef.current?.clientWidth,
+    tooltipRef.current?.clientHeight,
+  ]);
 
   useEffect(() => {
     updateTooltipWidth();
@@ -54,6 +60,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
       return renderTooltipContent({
         x: point.x,
         y: point.y,
+        name: point.data.name,
+        color: String(point.data.line.color),
       });
     }
 

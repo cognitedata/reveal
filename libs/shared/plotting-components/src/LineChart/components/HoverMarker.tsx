@@ -8,11 +8,15 @@ import { getHoveredLineColor } from '../utils/getHoveredLineColor';
 export interface HoverMarkerProps {
   plotHoverEvent?: PlotHoverEvent;
   backgroundColor: string;
+  onHover?: () => void;
+  onUnhover?: () => void;
 }
 
 export const HoverMarker: React.FC<HoverMarkerProps> = ({
   plotHoverEvent,
   backgroundColor,
+  onHover,
+  onUnhover,
 }) => {
   const { x, y } = getMarkerPosition(plotHoverEvent);
 
@@ -25,6 +29,8 @@ export const HoverMarker: React.FC<HoverMarkerProps> = ({
         visibility: plotHoverEvent ? 'visible' : 'hidden',
         border: `2px solid ${backgroundColor}`,
       }}
+      onMouseEnter={onHover}
+      onMouseLeave={onUnhover}
     />
   );
 };

@@ -1,8 +1,8 @@
 import { DEFAULT_MARGIN } from '../constants';
 
 export const getMarginValue = (
-  showAxisName: boolean,
-  showTickLabels: boolean
+  showAxisName?: boolean,
+  showTickLabels?: boolean
 ) => {
   if (showAxisName && showTickLabels) {
     return 50;
