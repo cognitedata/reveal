@@ -1,5 +1,13 @@
-import { Col, Label } from '@cognite/cogs.js-old';
-import { Button, Title, Icon, Body, OptionType, Row } from '@cognite/cogs.js';
+import { Label } from '@cognite/cogs.js-old';
+import {
+  Button,
+  Title,
+  Icon,
+  Body,
+  OptionType,
+  Row,
+  Col,
+} from '@cognite/cogs.js';
 import { PopupUIElementContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/TitleContainer';
 import React from 'react';
 import styled from 'styled-components';

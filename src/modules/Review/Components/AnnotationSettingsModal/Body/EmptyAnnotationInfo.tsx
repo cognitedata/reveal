@@ -1,6 +1,5 @@
 import React from 'react';
-import { Col } from '@cognite/cogs.js-old';
-import { Title, Icon, Body, Row } from '@cognite/cogs.js';
+import { Title, Icon, Body, Row, Col } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export const renderEmptyAnnotationMessage = (shape: string) => {
