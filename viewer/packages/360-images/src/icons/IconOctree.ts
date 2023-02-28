@@ -10,8 +10,13 @@ import { Node, PointOctant, PointOctree } from 'sparse-octree';
 import { Box3, Matrix4, Vector3 } from 'three';
 import { Image360Icon } from '../icons/Image360Icon';
 
+type NodeMetadata = {
+  medianIcon: Image360Icon;
+  level: number;
+};
+
 export class IconOctree extends PointOctree<Image360Icon> {
-  private readonly _nodeCenters: Map<Node, Image360Icon>;
+  private readonly _nodeCenters: Map<Node, NodeMetadata>;
 
   public static getMinimalOctreeBoundsFromIcons(icons: Image360Icon[]): Box3 {
     return new Box3().setFromPoints(icons.map(icon => icon.position));
@@ -25,10 +30,16 @@ export class IconOctree extends PointOctree<Image360Icon> {
   }
 
   public getNodeMedianIcon(node: Node): Image360Icon | undefined {
-    return this._nodeCenters.get(node);
+    const nodeMetadata = this._nodeCenters.get(node);
+    assert(nodeMetadata !== undefined);
+    return nodeMetadata.medianIcon;
   }
 
-  public getLODByScreenArea(areaThreshold: number, projection: Matrix4): Set<PointOctant<Image360Icon>> {
+  public getLODByScreenArea(
+    areaThreshold: number,
+    projection: Matrix4,
+    minimumLevel = 0
+  ): Set<PointOctant<Image360Icon>> {
     const root = this.findNodesByLevel(0)[0];
     const selectedNodes = new Set<PointOctant<Image360Icon>>();
 
@@ -36,6 +47,7 @@ export class IconOctree extends PointOctree<Image360Icon> {
 
     while (nodesToProcess.length > 0) {
       const currentNode = nodesToProcess.shift()!;
+      const currentNodeLevel = this._nodeCenters.get(currentNode)!.level;
       if (!this.isPointOctant(currentNode)) {
         continue;
       }
@@ -45,6 +57,10 @@ export class IconOctree extends PointOctree<Image360Icon> {
       }
       currentNode.children?.forEach(child => {
         if (!this.isPointOctant(child)) {
+          return;
+        }
+        if (currentNodeLevel <= minimumLevel) {
+          nodesToProcess.push(child);
           return;
         }
         const projectedArea = computeNodeProjectedArea(child);
@@ -64,18 +80,20 @@ export class IconOctree extends PointOctree<Image360Icon> {
     }
   }
 
-  private populateNodeCenters(): Map<Node, Image360Icon> {
-    const nodeCenters = new Map<Node, Image360Icon>();
+  private populateNodeCenters(): Map<Node, NodeMetadata> {
+    const nodeCenters = new Map<Node, NodeMetadata>();
 
+    let level = this.getDepth();
     this.traverseLevelsBottomUp(nodes => {
       nodes.forEach(node => {
         if (this.hasData(node)) {
-          nodeCenters.set(node, this.getMedianIcon(node.data.data));
+          nodeCenters.set(node, { medianIcon: this.getMedianIcon(node.data.data), level });
         } else if (this.hasChildren(node)) {
-          const icons = node.children!.map(child => nodeCenters.get(child)!);
-          nodeCenters.set(node, this.getMedianIcon(icons));
+          const icons = node.children!.map(child => nodeCenters.get(child)!.medianIcon);
+          nodeCenters.set(node, { medianIcon: this.getMedianIcon(icons), level });
         }
       });
+      level--;
     });
 
     return nodeCenters;

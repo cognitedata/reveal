@@ -59,13 +59,16 @@ export class IconCollection {
   private computeClusters(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
     const frustum = new Frustum();
+    const screenSpaceAreaThreshold = 0.04;
+    const minimumLevel = 3;
     return ({ camera }) => {
       projection.copy(camera.projectionMatrix).multiply(camera.matrixWorldInverse);
-      const nodesLOD = octree.getLODByScreenArea(0.04, projection);
+      const nodesLOD = octree.getLODByScreenArea(screenSpaceAreaThreshold, projection, minimumLevel);
 
       frustum.setFromProjectionMatrix(projection);
 
       const nodes = [...nodesLOD];
+
       const selectedIcons = nodes
         .flatMap(node => {
           if (node.data === null) {
@@ -75,11 +78,6 @@ export class IconCollection {
           return node.data.data;
         })
         .filter(point => frustum.containsPoint(point.position));
-
-      //fix minimum
-      // if(selectedIcons.length < 5){
-      //   while()
-      // }
 
       this._icons.forEach(icon => (icon.visible = false));
       selectedIcons.forEach(icon => (icon.visible = true));

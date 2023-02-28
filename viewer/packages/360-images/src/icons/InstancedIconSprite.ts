@@ -113,7 +113,7 @@ export class InstancedIconSprite extends Group {
     }
 
     function setUniforms(renderer: WebGLRenderer, material: ShaderMaterial): void {
-      renderer.getSize(material.uniforms.renderSize.value);
+      renderer.getDrawingBufferSize(material.uniforms.renderSize.value);
       material.uniforms.renderDownScale.value = material.uniforms.renderSize.value.x / renderer.domElement.clientWidth;
     }
   }
