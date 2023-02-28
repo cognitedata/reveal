@@ -1,5 +1,6 @@
 const { override, useBabelRc } = require('customize-cra');
 const PrefixWrap = require('postcss-prefixwrap');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const { styleScope } = require('./src/styles/styleScope');
 

@@ -11,7 +11,7 @@
       [
         "@cognite/babel-plugin-styled-components",
         {
-          "namespace": "data-sets",
+          "namespace": "data-catalog",
           "fileName": false
         }
       ]
