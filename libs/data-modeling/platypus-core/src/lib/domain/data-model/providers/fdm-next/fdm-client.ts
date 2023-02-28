@@ -419,6 +419,7 @@ export class FdmClient implements FlexibleDataModelingClient {
           query,
           variables: nestedFilters,
         },
+        space,
         dataModelId,
         schemaVersion: version,
       })
@@ -433,7 +434,7 @@ export class FdmClient implements FlexibleDataModelingClient {
    * @param dto
    */
   searchData({
-    dataModelVersion: { externalId, version },
+    dataModelVersion: { externalId, version, space },
     dataModelType,
     dataModelTypeDefs,
     limit,
@@ -456,6 +457,7 @@ export class FdmClient implements FlexibleDataModelingClient {
             ...(filter ? { filter } : {}),
           },
         },
+        space,
         dataModelId: externalId,
         schemaVersion: version,
       })

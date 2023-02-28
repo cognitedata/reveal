@@ -435,7 +435,7 @@ user { name }
     // const filter = { externalId: { eq: '123' } };
 
     const expected = `query getPersonById {
-      getPersonById(instance:{spaceExternalId:"a", externalId:"b"}) {
+      getPersonById(instance:{space:"a", externalId:"b"}) {
         items {
           externalId
           name
@@ -472,7 +472,7 @@ user { name }
     const filter = { externalId: { eq: '123' } };
 
     const expected = `query getPersonById ($posts: _ListPostFilter){
-      getPersonById(instance:{spaceExternalId:"a", externalId:"b"}) {
+      getPersonById(instance:{space:"a", externalId:"b"}) {
         items {
           externalId
           name
@@ -511,7 +511,7 @@ user { name }
     const filter = { externalId: { eq: '123' } };
 
     const expected = `query getComplexTypeById ($c1: _ListComplexTypeFilter){
-      getComplexTypeById(instance:{spaceExternalId:"a", externalId:"b"}) {
+      getComplexTypeById(instance:{space:"a", externalId:"b"}) {
         items {
           externalId
           c1 (filter:$c1, first: 2) { 

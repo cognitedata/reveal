@@ -70,6 +70,8 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
 
   const isSubmitDisabled =
     !props.name.trim() ||
+    props.hasInputError ||
+    nameErrorMessage ||
     externalIdErrorMessage ||
     (isFDMV3 && !props.space) ||
     props.isLoading;

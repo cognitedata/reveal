@@ -84,7 +84,10 @@ export class MixerQueryBuilder {
   }`;
   }
 
-  buildGetByExternalIdQuery(dto: BuildGetByExternalIdQueryDTO): string {
+  buildGetByExternalIdQuery(
+    dto: BuildGetByExternalIdQueryDTO,
+    isFDMv2 = false
+  ): string {
     const {
       spaceId,
       externalId,
@@ -119,7 +122,9 @@ export class MixerQueryBuilder {
     ${this.getOperationName(
       dataModelType.name,
       OPERATION_TYPE.GET
-    )} (instance: { spaceExternalId: "${spaceId}", externalId: "${externalId}" }) {
+    )} (instance: { ${
+      isFDMv2 ? 'spaceExternalId' : 'space'
+    }: "${spaceId}", externalId: "${externalId}" }) {
       items {
         externalId
         ${dataModelType.fields

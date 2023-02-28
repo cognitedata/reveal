@@ -458,16 +458,19 @@ export class FdmV2Client implements FlexibleDataModelingClient {
       dataModelType.name,
       OPERATION_TYPE.GET
     );
-    const query = this.queryBuilder.buildGetByExternalIdQuery({
-      spaceId: dataModelExternalId,
-      externalId,
-      nestedCursors,
-      dataModelType,
-      dataModelTypeDefs,
-      nestedLimit,
-      nestedFilters,
-      limitFields,
-    });
+    const query = this.queryBuilder.buildGetByExternalIdQuery(
+      {
+        spaceId: dataModelExternalId,
+        externalId,
+        nestedCursors,
+        dataModelType,
+        dataModelTypeDefs,
+        nestedLimit,
+        nestedFilters,
+        limitFields,
+      },
+      true
+    );
     return this.mixerApiService
       .runQuery({
         graphQlParams: {

@@ -10,6 +10,7 @@ import {
   useDataManagementDeletionFeatureFlag,
   useSuggestionsFeatureFlag,
   useTransformationsFeatureFlag,
+  isFDMv3,
 } from '@platypus-app/flags';
 import * as S from './elements';
 import { useRef } from 'react';
@@ -71,6 +72,8 @@ export function PreviewPageHeader({
   const shouldShowActions =
     (transformations && transformations.length > 0) || tableHasRows;
 
+  const isFDMV3 = isFDMv3();
+
   const renderTransformations = () => {
     if (!isTransformationsEnabled) {
       return false;
@@ -96,6 +99,7 @@ export function PreviewPageHeader({
       behindTitle={
         <>
           <Tooltip
+            disabled={!isManualPopulationEnabled}
             content={`${
               shouldShowPublishedRows
                 ? t(
@@ -109,7 +113,11 @@ export function PreviewPageHeader({
             }`}
           >
             <Chip
-              onClick={onPublishedRowsCountClick}
+              onClick={
+                isManualPopulationEnabled
+                  ? onPublishedRowsCountClick
+                  : undefined
+              }
               size="small"
               type="neutral"
               style={{
@@ -119,30 +127,32 @@ export function PreviewPageHeader({
               label={`${publishedRowsCount}`}
             />
           </Tooltip>
-          <Tooltip
-            content={`${
-              shouldShowDraftRows
-                ? t(
-                    'toggle-draft-rows-tooltip-msg',
-                    'Click to hide draft instances'
-                  )
-                : t(
-                    'toggle-draft-rows-tooltip-msg',
-                    'Click to show draft instances'
-                  )
-            }`}
-          >
-            <Chip
-              onClick={draftRowsCount ? onDraftRowsCountClick : undefined}
-              size="small"
-              style={{
-                marginLeft: '4px',
-                opacity:
-                  !shouldShowDraftRows || !draftRowsCount ? '0.2' : '1.0',
-              }}
-              label={`${draftRowsCount}`}
-            />
-          </Tooltip>
+          {isManualPopulationEnabled && (
+            <Tooltip
+              content={`${
+                shouldShowDraftRows
+                  ? t(
+                      'toggle-draft-rows-tooltip-msg',
+                      'Click to hide draft instances'
+                    )
+                  : t(
+                      'toggle-draft-rows-tooltip-msg',
+                      'Click to show draft instances'
+                    )
+              }`}
+            >
+              <Chip
+                onClick={draftRowsCount ? onDraftRowsCountClick : undefined}
+                size="small"
+                style={{
+                  marginLeft: '4px',
+                  opacity:
+                    !shouldShowDraftRows || !draftRowsCount ? '0.2' : '1.0',
+                }}
+                label={`${draftRowsCount}`}
+              />
+            </Tooltip>
+          )}
         </>
       }
     >
@@ -151,17 +161,22 @@ export function PreviewPageHeader({
           {publishedRowsCount > 0 && (
             <>
               <S.SearchInput
-                clearable={{
-                  callback: () => {
-                    // input is not controlled to make debouncing easier, but that means
-                    // we need to clear it manually
-                    if (searchInputRef.current) {
-                      searchInputRef.current.value = '';
-                    }
+                clearable={
+                  // cogs bug workaround
+                  searchInputRef.current?.value
+                    ? {
+                        callback: () => {
+                          // input is not controlled to make debouncing easier, but that means
+                          // we need to clear it manually
+                          if (searchInputRef.current) {
+                            searchInputRef.current.value = '';
+                          }
 
-                    onSearchInputValueChange('');
-                  },
-                }}
+                          onSearchInputValueChange('');
+                        },
+                      }
+                    : undefined
+                }
                 iconPlacement="left"
                 icon="Search"
                 onChange={(e) => onSearchInputValueChange(e.target.value)}
