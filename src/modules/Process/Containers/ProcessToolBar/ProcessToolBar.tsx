@@ -19,8 +19,7 @@ import {
 } from 'src/modules/Process/store/selectors';
 import { message, notification } from 'antd';
 import React, { useState, useEffect } from 'react';
-import { Modal } from '@cognite/cogs.js-old';
-import { Button, Title } from '@cognite/cogs.js';
+import { Button, Title, Modal } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
