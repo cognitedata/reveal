@@ -1,12 +1,11 @@
 import { FileInfo } from '@cognite/sdk';
-import { Tabs } from '@cognite/cogs.js-old';
+import { Tabs } from '@cognite/cogs.js';
 import { Title } from '@cognite/cogs.js';
 import { Spin, notification } from 'antd';
 import React, { ReactText, useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { StyledTabs } from 'src/modules/Common/Components/StyledTabs/StyledTabs';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
 import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
@@ -131,21 +130,21 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
         <RightPanelContainer>
           <StyledTitle level={4}>{file?.name}</StyledTitle>
           <TabsContainer>
-            <StyledTabs
-              activeKey={isVideo(file) ? '2' : currentTab}
-              onChange={tabChange}
+            <Tabs
+              defaultActiveKey={isVideo(file) ? '2' : currentTab}
+              onTabClick={tabChange}
             >
-              <Tabs.TabPane tab="Annotations" key="1" disabled={isVideo(file)}>
+              <Tabs.Tab label="Annotations" tabKey="1" disabled={isVideo(file)}>
                 <AnnotationDetailPanel file={file} showEditOptions />
-              </Tabs.TabPane>
-              <Tabs.TabPane tab="File details" key="2">
+              </Tabs.Tab>
+              <Tabs.Tab label="File details" tabKey="2">
                 {file && (
                   <QueryClientProvider client={queryClient}>
                     <FileDetailsReview fileObj={file} />
                   </QueryClientProvider>
                 )}
-              </Tabs.TabPane>
-            </StyledTabs>
+              </Tabs.Tab>
+            </Tabs>
           </TabsContainer>
         </RightPanelContainer>
         <div aria-hidden="true" className="confirm-delete-modal-anchor" />

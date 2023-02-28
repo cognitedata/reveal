@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Tabs } from '@cognite/cogs.js-old';
+import React from 'react';
+import { Tabs } from '@cognite/cogs.js';
 import { Button, Title, Icon } from '@cognite/cogs.js';
 
-import { StyledTabs } from 'src/modules/Common/Components/StyledTabs/StyledTabs';
 import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
 import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
 import { MetaDataTable } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTable';
@@ -30,7 +29,6 @@ export const FileDetails = ({
   onReview: () => void;
 }) => {
   const dispatch = useDispatch();
-  const [activeTab, setActiveTab] = useState('1');
 
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, fileId)
@@ -99,14 +97,14 @@ export const FileDetails = ({
           </Title>
         </TitleRow>
         <DetailsContainer>
-          <StyledTabs activeKey={activeTab} onChange={setActiveTab}>
-            <Tabs.TabPane tab="Annotations" key="1">
+          <Tabs>
+            <Tabs.Tab tabKey="1" label="Annotations">
               <FileDetailsAnnotationsPreview
                 fileInfo={fileDetails}
                 onReviewClick={onReview}
               />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="File Details" key="2">
+            </Tabs.Tab>
+            <Tabs.Tab tabKey="2" label="File">
               <FileDetailsContent>
                 <FileDetailsContainer
                   info={fileDetails}
@@ -129,8 +127,8 @@ export const FileDetails = ({
                   }
                 />
               </FileDetailsContent>
-            </Tabs.TabPane>
-          </StyledTabs>
+            </Tabs.Tab>
+          </Tabs>
         </DetailsContainer>
       </Content>
     </Container>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs } from '@cognite/cogs.js-old';
-import { Button, Title, Detail } from '@cognite/cogs.js';
+import { Button, Title, Detail, Tabs } from '@cognite/cogs.js';
 import {
   PredefinedVisionAnnotations,
   PredefinedKeypointCollection,
@@ -87,10 +86,13 @@ export const AnnotationSettingsModalContent = ({
       </Detail>
       <Tabs
         style={{ overflow: 'visible' }}
-        activeKey={activeView}
-        onChange={(activeKey) => setActiveView(activeKey)}
+        defaultActiveKey={activeView}
+        onTabClick={(activeKey) => setActiveView(activeKey)}
       >
-        <Tabs.TabPane tab="Pre-defined shapes" key="shape">
+        <Tabs.Tab
+          label="Pre-defined shapes"
+          tabKey={AnnotationSettingsOption.SHAPE}
+        >
           <Body>
             <Shapes
               predefinedShapes={predefinedAnnotations.predefinedShapes}
@@ -104,8 +106,11 @@ export const AnnotationSettingsModalContent = ({
               creationInProgress={setShapesInProgressState}
             />
           </Body>
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="Pre-defined keypoint collections" key="keypoint">
+        </Tabs.Tab>
+        <Tabs.Tab
+          label="Pre-defined keypoint collections"
+          tabKey={AnnotationSettingsOption.KEYPOINT}
+        >
           <Body>
             <Keypoints
               predefinedKeypointCollections={
@@ -119,7 +124,7 @@ export const AnnotationSettingsModalContent = ({
               creationInProgress={setKeypointsInProgressState}
             />
           </Body>
-        </Tabs.TabPane>
+        </Tabs.Tab>
       </Tabs>
       <Footer>
         <LeftFooter />
