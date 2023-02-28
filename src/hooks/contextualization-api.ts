@@ -126,7 +126,7 @@ export const useEMModel = (
   );
 };
 
-const getEMModelPredicitonKey = (id: number): QueryKey => [
+const getEMModelPredictionKey = (id: number): QueryKey => [
   'em',
   'models',
   'prediction',
@@ -138,7 +138,7 @@ export const useEMModelPredictResults = (
 ) => {
   const sdk = useSDK();
   return useQuery(
-    getEMModelPredicitonKey(id),
+    getEMModelPredictionKey(id),
     () =>
       sdk
         .get<EntityMatchingPredictions>(

@@ -1,7 +1,7 @@
 import { Icon, Title, Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import {
-  QuickMatchSteps,
+  QuickMatchStep,
   useQuickMatchContext,
 } from 'context/QuickMatchContext';
 
@@ -9,7 +9,7 @@ export default function QuickMatchTitle() {
   const { t } = useTranslation();
   const { step } = useQuickMatchContext();
 
-  const titles: Record<QuickMatchSteps, string> = {
+  const titles: Record<QuickMatchStep, string> = {
     sourceSelect: t('title-select-entities'),
     targetSelect: t('title-select-assets'),
     modelParams: t('title-configure-model'),

@@ -8,18 +8,18 @@ import {
 } from 'react';
 import { useContextState } from 'utils';
 
-export type QuickMatchSteps =
+export type QuickMatchStep =
   | 'sourceSelect'
   | 'targetSelect'
   | 'modelParams'
   | 'viewModel';
-export const QuickMatchStepsOrder: Record<QuickMatchSteps, number> = {
+export const QuickMatchStepsOrder: Record<QuickMatchStep, number> = {
   sourceSelect: 0,
   targetSelect: 1,
   modelParams: 2,
   viewModel: 3,
 };
-const QuickMatchStepsOrderIndex: Record<number, QuickMatchSteps> =
+const QuickMatchStepsOrderIndex: Record<number, QuickMatchStep> =
   Object.entries(QuickMatchStepsOrder).reduce(
     (accl, [k, v]) => ({ ...accl, [v]: k }),
     {}
@@ -62,8 +62,8 @@ type QuickMatchContext = {
   targetsList: InternalId[];
   setTargetsList: Dispatch<SetStateAction<InternalId[]>>;
 
-  step: QuickMatchSteps;
-  setStep: Dispatch<SetStateAction<QuickMatchSteps>>;
+  step: QuickMatchStep;
+  setStep: Dispatch<SetStateAction<QuickMatchStep>>;
   hasNextStep: () => boolean;
   hasPrevStep: () => boolean;
   pushStep: () => void;
@@ -122,7 +122,7 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   popStep: function (): void {
     throw new Error('Function not implemented.');
   },
-  setStep: function (_: SetStateAction<QuickMatchSteps>): void {
+  setStep: function (_: SetStateAction<QuickMatchStep>): void {
     throw new Error('Function not implemented.');
   },
   sourceType: 'timeseries',
@@ -196,7 +196,7 @@ export const QuickMatchContextProvider = ({
     'timeseries',
     'sourceType'
   );
-  const [step, setStep] = useContextState<QuickMatchSteps>(
+  const [step, setStep] = useContextState<QuickMatchStep>(
     'sourceSelect',
     'step'
   );
