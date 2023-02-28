@@ -6,7 +6,7 @@ import PipelineName from 'components/pipeline-name/PipelineName';
 import { stringSorter } from 'common/utils';
 import { useTranslation } from 'common';
 import { Pipeline, useEMPipelines } from 'hooks/contextualization-api';
-import { PipelineTableTypes } from 'types';
+import { PipelineTableTypes } from 'types/types';
 
 type PipelineListTableRecord = { key: string } & Pick<
   Pipeline,
