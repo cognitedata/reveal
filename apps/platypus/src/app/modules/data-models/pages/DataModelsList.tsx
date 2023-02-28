@@ -1,9 +1,6 @@
-import { Button, Flex, Input, Title, Tooltip } from '@cognite/cogs.js';
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import config from '@platypus-app/config/config';
-import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataModel } from '@platypus/platypus-core';
@@ -24,6 +21,11 @@ export const DataModelsList = () => {
   >(undefined);
 
   const gridRef = useRef<AgGridReact>(null);
+  // this state is needed to keep re-rendering if quickFilter changes
+  // since grid api lives under ref, and ref cannot force re-render
+  // this is intermediate state for keeping grid api -> getDisplayedRowCount and state in sync
+
+  const [filterCount, setFilterCount] = useState(0);
 
   const {
     data: dataModels,
@@ -71,19 +73,23 @@ export const DataModelsList = () => {
       </div>
     );
   };
-
   return (
     <StyledDataModelListWrapper>
       <DataModelsListHeader
-        dataModelsCount={dataModels.length}
+        dataModelsCount={filterCount || dataModels.length}
         onCreateDataModelClick={() => setIsCreateModalVisible(true)}
-        onSearchChange={(newSearchText) =>
-          gridRef.current?.api.setQuickFilter(newSearchText)
-        }
+        onSearchChange={(newSearchText) => {
+          gridRef.current?.api.setQuickFilter(newSearchText);
+          setFilterCount(gridRef.current?.api.getDisplayedRowCount() as number);
+        }}
       />
 
       {dataModels && dataModels.length ? (
-        <DataModelsTable dataModels={dataModels} ref={gridRef} />
+        <DataModelsTable
+          filteredRowCount={filterCount || dataModels.length}
+          dataModels={dataModels}
+          ref={gridRef}
+        />
       ) : (
         renderEmptyList()
       )}
