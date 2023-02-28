@@ -1,5 +1,12 @@
-import { Row, SegmentedControl } from '@cognite/cogs.js-old';
-import { Button, Title, Icon, Tooltip, Detail } from '@cognite/cogs.js';
+import { Row } from '@cognite/cogs.js-old';
+import {
+  Button,
+  Title,
+  Icon,
+  Tooltip,
+  Detail,
+  SegmentedControl,
+} from '@cognite/cogs.js';
 import { InputNumber } from 'antd';
 import React from 'react';
 import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
