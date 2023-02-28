@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import {
@@ -13,6 +13,9 @@ import {
   SequenceTab,
   ThreeDTab,
 } from '@cognite/data-exploration';
+
+import { SearchConfigButton } from '@data-exploration/components';
+import { SearchConfig } from '@data-exploration/containers';
 
 import {
   useAssetsMetadataKeys,
@@ -78,6 +81,7 @@ function SearchPage() {
   const [showFilter, setShowFilter] = useFilterSidebarState();
   const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
+  const [showSearchConfig, setShowSearchConfig] = useState<boolean>(false);
 
   const [assetFilter] = useAssetFilters();
   const [fileFilter] = useFileFilters();
@@ -128,6 +132,12 @@ function SearchPage() {
               <VerticalDivider />
             </>
           )}
+          <SearchConfigButton
+            style={{ width: '36px', marginRight: '2px' }}
+            onClick={() => {
+              setShowSearchConfig(true);
+            }}
+          />
 
           <ExplorationSearchBar />
         </SearchInputContainer>
@@ -201,6 +211,13 @@ function SearchPage() {
             />
           )}
         </TabsContainer>
+        <SearchConfig
+          visible={showSearchConfig}
+          onCancel={() => setShowSearchConfig(false)}
+          onOk={(data) => {
+            setShowSearchConfig(false);
+          }}
+        />
 
         <MainContainer $isFilterFeatureEnabled>
           <Wrapper>
