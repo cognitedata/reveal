@@ -46,7 +46,8 @@ const AlertingSidebar = ({
 
   const allJobs = taskData
     ?.map((item) => item.tasks)
-    .reduce((items, acc) => [...acc, ...items], []);
+    .reduce((items, acc) => [...acc, ...items], [])
+    .filter((job) => job.alertCount > 0);
 
   useEffect(() => {
     if (isError) {

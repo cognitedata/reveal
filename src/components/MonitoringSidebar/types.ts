@@ -86,6 +86,7 @@ export type MonitoringJob = {
     threshold: number;
     timeseriesId: number;
   };
+  alertCount: number;
 };
 
 export type MonitoringFolderJobs = {
