@@ -1,5 +1,6 @@
-import { toast, ToastProps } from '@cognite/cogs.js';
+import { Button, toast, ToastProps } from '@cognite/cogs.js';
 import { ValidationError } from '@platypus/platypus-core';
+import styled from 'styled-components';
 
 export const Notification = ({
   type,
@@ -9,6 +10,10 @@ export const Notification = ({
   options = {
     autoClose: 5000,
     position: 'bottom-right',
+    style: {
+      userSelect: 'all',
+      wordBreak: 'break-all',
+    },
   },
 }: {
   type: 'info' | 'success' | 'error' | 'warning';
@@ -18,6 +23,7 @@ export const Notification = ({
   options?: ToastProps;
 }) => {
   const toastBody: JSX.Element[] = [];
+
   if (title) {
     toastBody.push(
       <h3 key="title" data-cy="toast-title">
@@ -27,7 +33,13 @@ export const Notification = ({
   }
 
   toastBody.push(
-    <p key="message" data-cy="toast-body">
+    <p
+      key="message"
+      data-cy="toast-body"
+      style={{
+        whiteSpace: 'pre-line',
+      }}
+    >
       {message}
     </p>
   );
@@ -47,7 +59,26 @@ export const Notification = ({
   if (type === 'error') {
     // eslint-disable-next-line no-console
     console.error(toastBody);
-    toast.error(<div>{toastBody}</div>, options);
+    toast.error(
+      <ErrorWrapper>
+        {toastBody}
+        <Button
+          id="error-copy"
+          icon="Copy"
+          aria-label="Copy error"
+          size="small"
+          type="secondary"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            navigator.clipboard.writeText(
+              JSON.stringify({ title, message, extra }, null, 2)
+            );
+          }}
+        />
+      </ErrorWrapper>,
+      { autoClose: 7000, closeOnClick: false, ...options }
+    );
   }
 
   if (type === 'warning') {
@@ -80,3 +111,13 @@ export const formatValidationErrors = (
     return null;
   }
 };
+
+const ErrorWrapper = styled.div`
+  && #error-copy i {
+    margin: initial;
+  }
+  && #error-copy svg {
+    width: initial;
+    height: initial;
+  }
+`;
