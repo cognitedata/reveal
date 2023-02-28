@@ -28,14 +28,13 @@ const QuickMatchStepsOrderIndex: Record<number, QuickMatchStep> =
 export type Filter = {
   dataSetIds: InternalId[];
 };
-type SourceType = 'timeseries';
+export type SourceType = 'timeseries';
+export type TargetType = 'assets';
 
 type TimeseriesKeys = keyof Pick<Timeseries, 'unit' | 'name' | 'description'>;
 type AssetKeys = keyof Pick<Asset, 'name' | 'description'>;
 
-type ModelMapping = {
-  [K in TimeseriesKeys]?: AssetKeys;
-};
+export type ModelMapping = { from?: TimeseriesKeys; to?: AssetKeys }[];
 
 type QuickMatchContext = {
   unmatchedOnly: boolean;
@@ -129,7 +128,7 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   setSourceType: function (_: SetStateAction<'timeseries'>): void {
     throw new Error('Function not implemented.');
   },
-  modelFieldMapping: {},
+  modelFieldMapping: [{ from: 'name', to: 'name' }],
   setModelFieldMapping: function (_: SetStateAction<ModelMapping>): void {
     throw new Error('Function not implemented.');
   },
@@ -189,9 +188,7 @@ export const QuickMatchContextProvider = ({
   );
 
   const [modelFieldMapping, setModelFieldMapping] =
-    useContextState<ModelMapping>({
-      name: 'name',
-    });
+    useContextState<ModelMapping>([{ from: 'name', to: 'name' }]);
   const [sourceType, setSourceType] = useContextState<SourceType>(
     'timeseries',
     'sourceType'
