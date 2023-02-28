@@ -1,5 +1,10 @@
 {
   "entity-matching-pipelines": "Entity Matching pipelines",
+  "quick-match": "Quick match",
+  "create-pipeline": "Create pipeline",
+  "pipeline-list-table-column-title-description": "Description",
+  "pipeline-list-table-column-title-name": "Name",
+  "pipeline-list-table-column-title-owner": "Owner",
   "error-403-description": "No do not have access to the selected resource type.",
   "error-403-title": "Permission denied",
   "filter-only-unmatched-items": "Only unmatched resources",

@@ -1,3 +1,4 @@
+import { createLink } from '@cognite/cdf-utilities';
 import { PredictionObject } from 'hooks/contextualization-api';
 import {
   Dispatch,
@@ -12,6 +13,26 @@ export const getContainer = () => {
   const el = els.item(0)! as HTMLElement;
   return el;
 };
+
+export const createInternalLink = (path?: string | number) => {
+  const mountPoint = window.location.pathname.split('/')[2];
+  return createLink(`/${mountPoint}/${path || ''}`);
+};
+
+export function stringSorter<T extends Record<string, any>>(
+  strA: T,
+  strB: T,
+  columnKey: keyof T
+) {
+  const a = strA[columnKey];
+  const b = strB[columnKey];
+
+  if (a.toLowerCase() < b.toLowerCase()) {
+    return -1;
+  } else if (b.toLowerCase() > a.toLowerCase()) {
+    return 1;
+  } else return 0;
+}
 
 export const sleep = async (ms: number) =>
   new Promise<void>((resolve) => setTimeout(() => resolve(), ms));
