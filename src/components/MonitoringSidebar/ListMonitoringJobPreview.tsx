@@ -25,6 +25,7 @@ import {
   useMonitoringSubscriptionDelete,
 } from './hooks';
 import { SubscriptionLoader } from './elements';
+import { validateEmail } from './utils';
 
 const defaultTranslations = makeDefaultTranslations(
   'Delete',
@@ -34,7 +35,9 @@ const defaultTranslations = makeDefaultTranslations(
   'Unable to unsubscribe',
   'History',
   'Last alert:',
-  'None'
+  'None',
+  'Email not found',
+  'User ID not found'
 );
 
 type Props = {
@@ -69,6 +72,23 @@ const ListMonitoringJobPreview = ({
 
   const userInfo = useUserInfo();
   const userAuthId = userInfo.data?.id;
+
+  let notificationEmail =
+    userInfo.data?.mail && validateEmail(userInfo.data.mail)
+      ? userInfo.data?.mail
+      : null;
+  if (notificationEmail === null) {
+    // some users have an email as their displayName or givenName
+    if (
+      userInfo.data?.displayName &&
+      validateEmail(userInfo.data.displayName)
+    ) {
+      notificationEmail = userInfo.data.displayName;
+    }
+    if (userInfo.data?.givenName && validateEmail(userInfo.data.givenName)) {
+      notificationEmail = userInfo.data.givenName;
+    }
+  }
 
   const {
     data: alerts,
@@ -137,18 +157,32 @@ const ListMonitoringJobPreview = ({
   const name = timeseriesName || (timeseriesDef && head(timeseriesDef)?.name);
 
   const onSubscribe = () => {
-    createSubscription({
-      channelID: monitoringJob.channelId,
-      userAuthId: userAuthId || '',
-      subscriptionExternalId: nanoid(15),
-    });
+    if (!notificationEmail) {
+      toast.error(t['Email not found']);
+    } else if (!userAuthId) {
+      toast.error(t['User ID not found']);
+    } else {
+      createSubscription({
+        channelID: monitoringJob.channelId,
+        userAuthId: userAuthId || '',
+        userEmail: notificationEmail,
+        subscriptionExternalId: nanoid(15),
+      });
+    }
   };
 
   const onUnsubscribe = () => {
-    deleteSubscription({
-      userAuthId: userAuthId || '',
-      channelID: monitoringJob.channelId,
-    });
+    if (!notificationEmail) {
+      toast.error(t['Email not found']);
+    } else if (!userAuthId) {
+      toast.error(t['User ID not found']);
+    } else {
+      deleteSubscription({
+        userAuthId: userAuthId || '',
+        channelID: monitoringJob.channelId,
+        userEmail: notificationEmail || '',
+      });
+    }
   };
 
   const { id, externalId, model, interval } = monitoringJob;

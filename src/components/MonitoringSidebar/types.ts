@@ -111,6 +111,7 @@ export type MonitoringSubscriptionResponse = {
 export type MonitoringSubscriptionPayload = {
   channelID: number;
   userAuthId: string;
+  userEmail: string;
   subscriptionExternalId?: string;
 };
 
