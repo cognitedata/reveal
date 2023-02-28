@@ -32,6 +32,7 @@ in highp vec2 v_treeIndexPacked;
 void main()
 {
   highp float v_treeIndex = unpackTreeIndex(v_treeIndexPacked);
+  float normalFactor = 1.0;
 
   // Redo appearance texture lookup from vertex shader due to limit in transferable attributes
   NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
@@ -47,9 +48,10 @@ void main()
   float R2 = v_centerA.w;
   float dR = R2 - R1;
 
-  mat3 basis = mat3(U.xyz, V.xyz, W.xyz);
-  vec3 surfacePoint = vec3(U.w, V.w, W.w);
+  mat3 basis = mat3(U.xyz, V.xyz, v_W.xyz);
+  vec3 surfacePoint = vec3(U.w, V.w, v_W.w);
   vec3 rayTarget = surfacePoint;
+  float rayTargetDist = length(rayTarget);
 
   #if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
     vec3 rayDirection = vec3(0.0, 0.0, -1.0);
@@ -106,30 +108,33 @@ void main()
   if (intersectionPoint.z <= 0.0 ||
       intersectionPoint.z > height ||
       theta > v_angle + v_arcAngle ||
-      isClipped(appearance, p)
+      isClipped(appearance, p) ||
+      rayTargetDist + dist < 0.0
     ) {
       // Missed the first point, check the other point
       isInner = true;
       dist = dist2;
       intersectionPoint = E + dist * D;
       theta = atan(intersectionPoint.y, intersectionPoint.x);
-      p = rayTarget + dist*rayDirection;
+      p = rayTarget + dist * rayDirection;
       if (theta < v_angle) theta += 2.0 * PI;
       if (intersectionPoint.z <= 0.0 ||
         intersectionPoint.z > height ||
         theta > v_angle + v_arcAngle ||
-        isClipped(appearance, p)
+        isClipped(appearance, p) ||
+        rayTargetDist + dist < 0.0
       ) {
         // Missed the other point too
         discard;
       }
+      normalFactor = -1.0;
     }
 
   #if !defined(COGNITE_RENDER_COLOR_ID) && !defined(COGNITE_RENDER_DEPTH)
       if (R1 != R2)
       {
         // Find normal vector
-        vec3 n = -normalize(W.xyz);
+        vec3 n = -normalize(v_W.xyz);
         vec3 P1 = v_centerB.xyz;
         vec3 P2 = v_centerA.xyz;
         vec3 A = cross(P1 - p, P2 - p);
@@ -138,13 +143,13 @@ void main()
         vec3 o1 = P1 + R1 * t;
         vec3 o2 = P2 + R2 * t;
         vec3 B = o2-o1;
-        normal = normalize(cross(A, B));
+        normal = normalize(cross(A, B)) * normalFactor;
       }
       else
       {
         // Regular cylinder has simpler normal vector in camera space
         vec3 p_local = p - v_centerB.xyz;
-        normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
+        normal = normalize(p_local - v_W.xyz * dot(p_local, v_W.xyz)) * normalFactor;
       }
   #endif
 
