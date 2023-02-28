@@ -58,6 +58,7 @@ export default function ResourceSelectionTable({}: Props) {
           placeholder={t('resource-type-datasets')}
           style={{ width: 120 }}
           loading={isInitialLoading}
+          optionFilterProp="label"
           options={datasets}
           value={datasets
             ?.filter(({ value }) =>
