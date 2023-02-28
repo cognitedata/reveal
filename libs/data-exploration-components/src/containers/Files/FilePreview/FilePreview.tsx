@@ -38,6 +38,7 @@ import { getContainerId, useDebouncedMetrics } from './utils';
 import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
 import { Flex } from '@cognite/cogs.js';
 import { useNumPages } from './hooks/useNumPages';
+import noop from 'lodash/noop';
 
 type FilePreviewProps = {
   id: string;
@@ -52,6 +53,9 @@ type FilePreviewProps = {
   showSideBar?: boolean;
   enableZoomToAnnotation?: boolean;
   enableToolTips?: boolean;
+  filesAcl?: boolean;
+  eventsAcl?: boolean;
+  setEditMode?: () => void;
 };
 
 const RectangleToolProps = {
@@ -89,6 +93,9 @@ export const FilePreview = ({
   showSideBar = true,
   enableZoomToAnnotation = true,
   enableToolTips = true,
+  filesAcl = false,
+  eventsAcl = false,
+  setEditMode = noop,
 }: FilePreviewProps) => {
   const trackUsage = useDebouncedMetrics();
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
@@ -350,6 +357,10 @@ export const FilePreview = ({
           showSideBar={showSideBar}
           showResourcePreviewSidebar={showResourcePreviewSidebar}
           setShowResourcePreviewSidebar={setShowResourcePreviewSidebar}
+          editMode={creatable}
+          setEditMode={setEditMode}
+          filesAcl={filesAcl}
+          eventsAcl={eventsAcl}
         />
       </UFVWrapper>
       {showSideBar && showResourcePreviewSidebar && (

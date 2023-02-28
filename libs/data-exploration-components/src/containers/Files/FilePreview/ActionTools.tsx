@@ -2,16 +2,15 @@ import { useDisclosure } from '@cognite/data-exploration';
 import React from 'react';
 import { FileInfo } from '@cognite/sdk';
 import styled from 'styled-components';
-import { Button, Dropdown, Flex, Menu, ToolBar } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, ToolBar } from '@cognite/cogs.js';
 import {
   getCanonicalMimeType,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
 import { SearchBar } from './SearchBar';
 import { useFileDownloadUrl } from './hooks';
-import { IconButton } from '../../../components/index';
+import { EditFileButton, ShowHideDetailsButton } from '../../../components';
 import noop from 'lodash/noop';
-import { HIDE_DETAILS, SHOW_DETAILS } from './constants';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 
@@ -24,7 +23,11 @@ export const ActionTools = ({
   enableDownload = true,
   showSideBar = true,
   showResourcePreviewSidebar = false,
+  editMode = false,
   setShowResourcePreviewSidebar = noop,
+  setEditMode = noop,
+  filesAcl = false,
+  eventsAcl = false,
 }: {
   file: FileInfo;
   fileViewerRef?: UnifiedViewer;
@@ -34,7 +37,11 @@ export const ActionTools = ({
   enableDownload?: boolean;
   showSideBar?: boolean;
   showResourcePreviewSidebar?: boolean;
+  editMode?: boolean;
   setShowResourcePreviewSidebar?: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditMode?: () => void;
+  filesAcl: boolean;
+  eventsAcl: boolean;
 }): JSX.Element | null => {
   const trackUsage = useMetrics();
 
@@ -94,17 +101,19 @@ export const ActionTools = ({
           onClosePress={handleSearchClose}
         />
       )}
+      <EditFileButton
+        item={{ type: 'file', id: file.id! }}
+        isActive={editMode}
+        onClick={setEditMode}
+        filesAcl={filesAcl}
+        eventsAcl={eventsAcl}
+      />
       {showSideBar && (
-        <IconButton
-          icon={showResourcePreviewSidebar ? 'PanelRight' : 'PanelLeft'}
-          tooltipContent={
-            showResourcePreviewSidebar ? HIDE_DETAILS : SHOW_DETAILS
+        <ShowHideDetailsButton
+          showSideBar={showResourcePreviewSidebar}
+          onClick={() =>
+            setShowResourcePreviewSidebar((prevState) => !prevState)
           }
-          aria-label="Toggle file preview sidebar view"
-          onClick={() => {
-            setShowResourcePreviewSidebar((prevState) => !prevState);
-          }}
-          type="ghost"
         />
       )}
       {enableDownload && (

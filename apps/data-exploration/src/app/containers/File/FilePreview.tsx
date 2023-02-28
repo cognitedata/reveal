@@ -13,7 +13,6 @@ import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow'
 import { useSDK } from '@cognite/sdk-provider';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, FileInfo } from '@cognite/sdk';
-import { EditFileButton } from '@data-exploration-app/components/TitleRowActions/EditFileButton';
 import styled from 'styled-components';
 import { Colors, Body, Tabs } from '@cognite/cogs.js';
 import qs from 'query-string';
@@ -134,17 +133,6 @@ export const FilePreview = ({
       <ResourceTitleRow
         item={{ id: fileId!, type: resourceType || 'file' }}
         title={fileInfo.name}
-        beforeDefaultActions={
-          <>
-            <EditFileButton
-              item={{ type: 'file', id: fileId! }}
-              isActive={editMode}
-              onClick={() => {
-                setEditMode((mode) => !mode);
-              }}
-            />
-          </>
-        }
         afterDefaultActions={actions}
       />
       <ResourceDetailsTabs
@@ -179,6 +167,9 @@ export const FilePreview = ({
                     )
                   )
                 }
+                setEditMode={() => setEditMode((mode) => !mode)}
+                filesAcl={filesAcl}
+                eventsAcl={eventsAcl}
               />
             </PreviewTabWrapper>
           </Tabs.Tab>,
