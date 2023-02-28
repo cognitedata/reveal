@@ -8,7 +8,7 @@ type PipelineNameProps = {
   name: string;
 };
 
-const TransformationName = ({ id, name }: PipelineNameProps): JSX.Element => {
+const PipelineName = ({ id, name }: PipelineNameProps): JSX.Element => {
   return (
     <Body level={2} strong>
       <Link to={createInternalLink(id)}>{name || id}</Link>
@@ -16,4 +16,4 @@ const TransformationName = ({ id, name }: PipelineNameProps): JSX.Element => {
   );
 };
 
-export default TransformationName;
+export default PipelineName;

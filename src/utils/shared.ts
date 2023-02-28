@@ -13,8 +13,17 @@ export const createInternalLink = (path?: string | number) => {
   return createLink(`/${mountPoint}/${path || ''}`);
 };
 
-export const stringCompare = (a = '', b = '') => {
-  const al = a.replace(/\s+/g, '');
-  const bl = b.replace(/\s+/g, '');
-  return al.localeCompare(bl, 'nb');
-};
+export function stringSorter<T extends Record<string, any>>(
+  strA: T,
+  strB: T,
+  columnKey: keyof T
+) {
+  const a = strA[columnKey];
+  const b = strB[columnKey];
+
+  if (a.toLowerCase() < b.toLowerCase()) {
+    return -1;
+  } else if (b.toLowerCase() > a.toLowerCase()) {
+    return 1;
+  } else return 0;
+}

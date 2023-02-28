@@ -5,16 +5,16 @@ import { Loader } from '@cognite/cogs.js';
 import PipelineName from 'components/pipeline-name/PipelineName';
 import { stringSorter } from 'common/utils';
 import { useTranslation } from 'common';
-import { stringCompare } from 'utils/shared';
 import { Pipeline, useEMPipelines } from 'hooks/contextualization-api';
+import { PipelineTableTypes } from 'types';
 
 type PipelineListTableRecord = { key: string } & Pick<
   Pipeline,
-  'id' | 'name' | 'description' | 'owner'
+  PipelineTableTypes
 >;
 type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
   title: string;
-  key: 'id' | 'name' | 'description' | 'owner';
+  key: PipelineTableTypes;
 };
 
 const PipelineTable = (): JSX.Element => {
@@ -55,14 +55,13 @@ const PipelineTable = (): JSX.Element => {
         key: 'description',
         render: (description: string) => description || '—',
         sorter: (a: any, b: any) =>
-          stringCompare(a?.description, b?.description),
+          stringSorter(a?.description, b?.description, 'description'),
       },
       {
         title: t('pipeline-list-table-column-title-owner'),
         dataIndex: 'owner',
         key: 'owner',
-        render: (owner: string) => owner,
-        sorter: (a: any, b: any) => stringCompare(a?.owner, b?.owner),
+        sorter: (a: any, b: any) => stringSorter(a?.owner, b?.owner, 'owner'),
       },
     ],
     [t]
