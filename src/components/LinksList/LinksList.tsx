@@ -61,7 +61,11 @@ const LinksList = (props: UrlInputProps) => {
         style={{ width: '65%', marginBottom: '10px' }}
         onPressEnter={() => props.add()}
         addonAfter={
-          <Icon type="Close" onClick={() => props.remove(props.index)} />
+          <Icon
+            type="Close"
+            // @ts-ignore ts types are missing the event
+            onClick={() => props.remove(props.index)}
+          />
         }
       />
     </Input.Group>

@@ -1,4 +1,4 @@
-import { Flex, Label } from '@cognite/cogs.js';
+import { Flex, Chip } from '@cognite/cogs.js';
 import { useTranslation } from 'common/i18n';
 
 type AppliedFilterItem = {
@@ -25,20 +25,22 @@ const AppliedFilters = ({
   return (
     <Flex gap={8}>
       {items.map(({ key, label, onClick }) => (
-        <Label
+        <Chip
           size="medium"
           icon="Close"
           iconPlacement="right"
           key={key}
           onClick={onClick}
-        >
-          {label}
-        </Label>
+          label={label}
+        />
       ))}
       {!!onClear && (
-        <Label size="medium" variant="unknown" onClick={onClear}>
-          {t('clear-all')}
-        </Label>
+        <Chip
+          size="medium"
+          type="default"
+          onClick={onClear}
+          label={t('clear-all')}
+        />
       )}
     </Flex>
   );

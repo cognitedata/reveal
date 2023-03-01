@@ -13,7 +13,7 @@ const RowActions = ({ actions }: RowActionsProps): JSX.Element => {
       content={
         <Menu>
           {actions.map((buttonProps) => (
-            <Dropdown.Button type="ghost" {...buttonProps} />
+            <Menu.Item iconPlacement="left" {...buttonProps} />
           ))}
         </Menu>
       }
@@ -33,11 +33,11 @@ export default RowActions;
 const StyledButton = styled(Button)`
   &:hover {
     background-color: ${Colors['surface--interactive--toggled-hover']};
-    color: ${Colors['primary']};
+    color: ${Colors['decorative--blue--300']};
   }
 
   &:active {
     background-color: ${Colors['surface--interactive--toggled-pressed']};
-    color: ${Colors['primary']};
+    color: ${Colors['decorative--blue--300']};
   }
 `;

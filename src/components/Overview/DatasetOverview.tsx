@@ -135,7 +135,7 @@ const DatasetOverview = ({
                 >
                   <Title level={5}>{t('description')}</Title>
                   <Button
-                    type="link"
+                    type="ghost-accent"
                     onClick={() => {
                       setEdit(!isEditEnabled);
                     }}
@@ -195,7 +195,10 @@ const DatasetOverview = ({
                   alignItems="center"
                 >
                   <Title level={5}>{t('tab-overview')}</Title>
-                  <Button type="link" onClick={() => onActiveTabChange('data')}>
+                  <Button
+                    type="ghost-accent"
+                    onClick={() => onActiveTabChange('data')}
+                  >
                     {t('view')}
                   </Button>
                 </StyledActionTitle>

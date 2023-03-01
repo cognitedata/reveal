@@ -164,10 +164,10 @@ const TableFilter = ({
                                 governanceStatus
                               )}
                               name={governanceStatus}
-                              onChange={(nextState) =>
+                              onChange={(e, nextState) =>
                                 handleGovernanceStatusChange(
                                   governanceStatus,
-                                  nextState
+                                  nextState as boolean
                                 )
                               }
                             >
@@ -194,7 +194,7 @@ const TableFilter = ({
                           value={tempSelectedLabels}
                           menuItemSelectedIcon={
                             <Icon
-                              style={{ verticalAlign: 'middle' }}
+                              css={{ verticalAlign: 'middle' }}
                               type="Checkmark"
                             />
                           }

@@ -48,7 +48,7 @@ const StyledTitle2 = styled((props) => (
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  border-bottom: 2px solid ${Colors['greyscale-grey6'].hex()};
+  border-bottom: 2px solid ${Colors['decorative--grayscale--600']};
   padding-bottom: 1rem;
   margin-bottom: 1rem;
   &:last-child {
@@ -256,7 +256,7 @@ const ConsumerPage = (props: ConsumerProps): JSX.Element => {
               </Wrapper>
             );
           })}
-        <Button type="primary" variant="outline" onClick={addConsumer}>
+        <Button type="primary" onClick={addConsumer}>
           {t('add-consumer')}
         </Button>
       </form>

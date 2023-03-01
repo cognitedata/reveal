@@ -94,7 +94,7 @@ export const useTransformationsColumns = () => {
           content={t('lineage-transformation-remove-confirmation')}
           onConfirm={() => onDeleteTransformationClick(transform)}
         >
-          <Button icon="Delete" size="small" type="ghost-danger" />
+          <Button icon="Delete" size="small" type="ghost-destructive" />
         </Popconfirm>
       ),
     },

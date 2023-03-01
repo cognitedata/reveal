@@ -5,7 +5,7 @@ import { createLink, getProject, SubAppWrapper } from '@cognite/cdf-utilities';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter, Route, Navigate, Routes } from 'react-router-dom';
-import { Loader } from '@cognite/cogs.js';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
 import AccessCheck from 'AccessCheck';
 import { translations } from 'common/i18n';
@@ -49,6 +49,7 @@ const App = () => {
       >
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
+            <ToastContainer />
             <SubAppWrapper title="Data Catalog">
               <AuthContainerWrapper>
                 <DataSetsContextProvider>

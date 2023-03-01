@@ -50,5 +50,5 @@ const ErrorWrapper = styled.div`
 
 const StyledIcon = styled(Icon)`
   margin-right: 1rem;
-  color: ${Colors.warning.hex()};
+  color: ${Colors['text-icon--status-warning']};
 `;

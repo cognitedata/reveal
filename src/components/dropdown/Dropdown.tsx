@@ -28,7 +28,7 @@ const StyledDropdownMenuButton = styled(Button)`
 
 const StyledDropdownDivider = styled.div`
   :not(:last-child):not(:first-child) {
-    background-color: ${Colors['border-default']};
+    background-color: ${Colors['border--muted']};
     height: 1px;
     margin: 8px -8px;
     width: calc(100% + 16px);

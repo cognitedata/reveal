@@ -1,4 +1,4 @@
-import { Flex, Icon, IconType, Label, Tooltip } from '@cognite/cogs.js';
+import { Flex, Icon, IconType, Chip, Tooltip } from '@cognite/cogs.js';
 import Typography from 'antd/lib/typography';
 import { useTranslation } from 'common/i18n';
 import styled from 'styled-components';
@@ -29,11 +29,7 @@ const TabTitle = ({
       <Flex direction="row" alignItems="center" gap={6}>
         {iconType && <Icon type={iconType}></Icon>}
         <StyledTitle disabled={disabled}>{title}</StyledTitle>
-        {label && (
-          <Label variant="unknown" size="small">
-            {label}
-          </Label>
-        )}
+        {label && <Chip type="default" size="small" label={label as string} />}
       </Flex>
     );
   };

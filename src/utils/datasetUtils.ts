@@ -1,9 +1,9 @@
-import { Colors, LabelVariants } from '@cognite/cogs.js';
+import { Colors, ChipType } from '@cognite/cogs.js';
 import { TranslationKeys } from 'common/i18n';
 
 export const getGovernedStatus = (isGoverned: Boolean | undefined) => {
   let statusColor: string;
-  let statusVariant: LabelVariants;
+  let statusVariant: keyof typeof ChipType;
   let statusI18nKey: TranslationKeys;
 
   if (isGoverned) {

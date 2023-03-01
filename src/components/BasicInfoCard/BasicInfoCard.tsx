@@ -1,5 +1,5 @@
 import Typography from 'antd/lib/typography';
-import { Body, Flex, Icon, Label } from '@cognite/cogs.js';
+import { Body, Flex, Icon, Chip } from '@cognite/cogs.js';
 import { CopyButton } from '@cognite/cdf-utilities';
 import {
   BasicInfoPane,
@@ -150,9 +150,11 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
             }
             value={
               <div>
-                <Label size="medium" variant={statusVariant}>
-                  {t(statusI18nKey)}
-                </Label>
+                <Chip
+                  size="medium"
+                  type={statusVariant}
+                  label={t(statusI18nKey)}
+                />
               </div>
             }
           />
@@ -196,9 +198,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
               consoleLabels?.length ? (
                 <Flex gap={6} alignItems="center" direction="row" wrap="wrap">
                   {consoleLabels.map((tag) => (
-                    <Label size="medium" variant="default">
-                      {tag}
-                    </Label>
+                    <Chip size="medium" type="default" label={tag} />
                   ))}
                 </Flex>
               ) : (
@@ -249,9 +249,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
                 urlTitle={t('learn-more-in-our-docs')}
                 showIcon={false}
               >
-                <Label size="medium" variant="danger">
-                  {t('archived')}
-                </Label>
+                <Chip size="medium" type="danger" label={t('archived')} />
               </InfoTooltip>
             </Flex>
           }

@@ -96,44 +96,44 @@ module.exports = {
     // // behavior of SystemJS for import maps and in-browser modules.
     // // https://single-spa.js.org/docs/recommended-setup/#systemjs
     // // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
-    // config.output.libraryTarget = 'system';
+    config.output.libraryTarget = 'system';
 
     // // Using a single entry point.
     // // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
-    // config.output.filename = 'index.js';
+    config.output.filename = 'index.js';
 
     // // Replacing create-react-app style loaders (only for css files matching
     // // the regex).
     config = replaceStyleLoaders(config);
-    return config;
+    // return config;
 
     // // Disabling webpack's optimization configuration, as that makes it harder
     // // to load JS output as a single in-browser JS module.
     // // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
-    // delete config.optimization;
+    delete config.optimization;
 
-    // if (!isMock) {
-    //   // Removing html-webpack-plugin.
-    //   // https://single-spa.js.org/docs/faq/#create-react-app
-    //   config.plugins = config.plugins.filter(
-    //     (plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin'
-    //   );
+    if (!isMock) {
+      // Removing html-webpack-plugin.
+      // https://single-spa.js.org/docs/faq/#create-react-app
+      config.plugins = config.plugins.filter(
+        (plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin'
+      );
 
-    //   config.plugins = config.plugins.filter(
-    //     (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
-    //   );
+      config.plugins = config.plugins.filter(
+        (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
+      );
 
-    //   // Setting shared in-browser modules as webpack externals. This will
-    //   // exclude these dependencies from the output bundle.
-    //   // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
-    //   config.externals = {
-    //     'single-spa': 'single-spa',
-    //     '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
-    //     '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
-    //   };
-    // }
+      // Setting shared in-browser modules as webpack externals. This will
+      // exclude these dependencies from the output bundle.
+      // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
+      config.externals = {
+        'single-spa': 'single-spa',
+        '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
+        '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
+      };
+    }
 
-    // return config;
+    return config;
   }),
   devServer(configFunction) {
     return function (proxy, allowedHost) {

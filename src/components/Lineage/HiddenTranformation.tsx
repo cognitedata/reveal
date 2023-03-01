@@ -27,7 +27,7 @@ const HiddenTransformation = ({
       >
         <Icon
           type="WarningTriangle"
-          style={{ cursor: 'help', marginRight: '4px' }}
+          css={{ cursor: 'help', marginRight: '4px' }}
         />
       </Popover>
       {transformation?.name}

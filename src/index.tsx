@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-// import './set-public-path';
+import './set-public-path';
 import singleSpaReact from 'single-spa-react';
 
 import App from './App';

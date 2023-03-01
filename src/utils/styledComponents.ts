@@ -409,7 +409,7 @@ export const RequiredFieldLabel = styled(FieldLabel)`
 `;
 
 export const Divider = styled.div`
-  background-color: ${Colors['bg-control--disabled']};
+  background-color: ${Colors['surface--interactive--disabled']};
   height: 1px;
   width: 100%;
 `;

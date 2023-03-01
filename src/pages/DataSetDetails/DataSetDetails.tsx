@@ -12,7 +12,7 @@ import {
   Button,
   Flex,
   Icon,
-  Label,
+  Chip,
   Title,
   Tooltip,
   Menu,
@@ -112,7 +112,7 @@ const DataSetDetails = (): JSX.Element => {
   const discardChangesButton = (
     <div style={{ display: 'block', textAlign: 'right', marginTop: '20px' }}>
       <Button
-        type="danger"
+        type="destructive"
         size="small"
         onClick={() => {
           setEditDrawerVisible(false);
@@ -286,18 +286,24 @@ const DataSetDetails = (): JSX.Element => {
             <Flex alignItems="center" gap={8}>
               {dataSet?.writeProtected ? <Icon type="Lock" /> : <></>}
               <Title level="4">{dataSet?.name || dataSet?.externalId}</Title>
-              <Label size="medium" variant={statusVariant}>
-                {t(statusI18nKey)}
-              </Label>
+              <Chip
+                size="medium"
+                type={statusVariant}
+                label={t(statusI18nKey)}
+              />
               {consoleLabels?.length ? (
                 <Flex gap={4} alignItems="center" direction="row">
-                  <Label size="medium" variant="default">
-                    {consoleLabels?.[0]}
-                  </Label>
+                  <Chip
+                    size="medium"
+                    type="default"
+                    label={consoleLabels?.[0]}
+                  />
                   {consoleLabels?.length > 1 && (
-                    <Label size="medium" variant="default">
-                      {`+${consoleLabels?.length - 1}`}
-                    </Label>
+                    <Chip
+                      size="medium"
+                      type="default"
+                      label={`+${consoleLabels?.length - 1}`}
+                    />
                   )}
                 </Flex>
               ) : (

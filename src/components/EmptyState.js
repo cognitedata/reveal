@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Graphic } from '@cognite/cogs.js';
+import { Illustrations } from '@cognite/cogs.js';
 
 const propTypes = {
   type: PropTypes.oneOf([
@@ -31,7 +31,7 @@ const EmptyState = (props) => {
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Graphic type={type} {...rest} />
+        <Illustrations.Solo type={type} {...rest} />
       </div>
       <div>
         <p>{text}</p>

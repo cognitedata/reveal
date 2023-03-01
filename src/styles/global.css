@@ -55,3 +55,10 @@ a:hover {
 .clickableBox:hover {
   box-shadow: 0 2px 7px grey;
 }
+
+
+.ant-table-cell button.cogs-btn.cogs-btn-icon-only {
+  background: transparent;
+  border: 0;
+  padding-top: 6px;
+}
