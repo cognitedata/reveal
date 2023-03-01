@@ -5,8 +5,9 @@
 import { Image360Entity } from '../entity/Image360Entity';
 import pull from 'lodash/pull';
 import findLast from 'lodash/findLast';
-import { Log } from '@reveal/logger';
+import find from 'lodash/find';
 import remove from 'lodash/remove';
+import { Log } from '@reveal/logger';
 
 export type DownloadRequest = {
   entity: Image360Entity;
@@ -100,9 +101,11 @@ export class Image360LoadingCache {
   }
 
   private abortLastRecentlyReqestedEntity() {
-    const download = this._inProgressDownloads[0];
-    this._inProgressDownloads.shift();
-    download.abort();
+    const download = find(this._inProgressDownloads, download => !download.entity.isEntered);
+    if (download !== undefined) {
+      pull(this._inProgressDownloads, download);
+      download.abort();
+    }
   }
 
   private createAbortSignal() {

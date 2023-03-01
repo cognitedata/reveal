@@ -97,16 +97,22 @@ export class Image360ApiHelper {
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
+    if (lastEntered360ImageEntity) {
+      lastEntered360ImageEntity.isEntered = false;
+    }
     this._interactionState.currentImage360Entered = image360Entity;
+    image360Entity.isEntered = true;
 
     if (lastEntered360ImageEntity === image360Entity) {
       this._requestRedraw();
       return;
     }
 
-    await this._image360Facade.preload(image360Entity);
+    const error = await this._image360Facade.preload(image360Entity).catch(e => {
+      return e;
+    });
 
-    if (this._interactionState.currentImage360Entered !== image360Entity) {
+    if (error || this._interactionState.currentImage360Entered !== image360Entity) {
       return;
     }
 
@@ -258,6 +264,7 @@ export class Image360ApiHelper {
         )
         .forEach(imageCollection => imageCollection.events.image360Exited.fire());
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
+      this._interactionState.currentImage360Entered.isEntered = false;
       this._interactionState.currentImage360Entered = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
