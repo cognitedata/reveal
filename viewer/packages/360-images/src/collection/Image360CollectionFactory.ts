@@ -3,19 +3,26 @@
  */
 
 import { Image360Descriptor, Image360Provider } from '@reveal/data-providers';
-import { SceneHandler } from '@reveal/utilities';
+import { BeforeSceneRenderedDelegate, EventTrigger, SceneHandler } from '@reveal/utilities';
 import zip from 'lodash/zip';
 import { DefaultImage360Collection } from './DefaultImage360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
-import { Image360Icon } from '../entity/Image360Icon';
-import { Image360CollectionIcons } from './Image360CollectionIcons';
+import { Image360Icon } from '../icons/Image360Icon';
+import { IconCollection } from '../icons/IconCollection';
+import { Vector3 } from 'three';
 
 export class Image360CollectionFactory<T> {
   private readonly _image360DataProvider: Image360Provider<T>;
   private readonly _sceneHandler: SceneHandler;
-  constructor(image360DataProvider: Image360Provider<T>, sceneHandler: SceneHandler) {
+  private readonly _onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>;
+  constructor(
+    image360DataProvider: Image360Provider<T>,
+    sceneHandler: SceneHandler,
+    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
+  ) {
     this._image360DataProvider = image360DataProvider;
     this._sceneHandler = sceneHandler;
+    this._onBeforeSceneRendered = onBeforeSceneRendered;
   }
 
   public async create(
@@ -29,8 +36,9 @@ export class Image360CollectionFactory<T> {
     );
     event360Descriptors.forEach(image360Descriptor => image360Descriptor.transform.premultiply(postTransform));
 
-    const collectionIcons = new Image360CollectionIcons(this._sceneHandler);
-    const icons = collectionIcons.initializeImage360Icons(event360Descriptors.map(descriptor => descriptor.transform));
+    const points = event360Descriptors.map(descriptor => new Vector3().setFromMatrixPosition(descriptor.transform));
+    const collectionIcons = new IconCollection(points, this._sceneHandler, this._onBeforeSceneRendered);
+    const icons = collectionIcons.icons;
 
     const entities = zip(event360Descriptors, icons)
       .filter(isDefined)

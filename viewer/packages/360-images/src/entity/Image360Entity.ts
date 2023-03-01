@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { SceneHandler } from '@reveal/utilities';
 import { Image360Descriptor, Image360FileProvider } from '@reveal/data-providers';
-import { Image360Icon } from './Image360Icon';
+import { Image360Icon } from '../icons/Image360Icon';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
 import { Image360 } from './Image360';
 

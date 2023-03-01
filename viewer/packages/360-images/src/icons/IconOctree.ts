@@ -6,7 +6,7 @@ import { getApproximateProjectedBounds, getScreenArea } from '@reveal/utilities'
 import pullAll from 'lodash/pullAll';
 import { Node, PointOctant, PointOctree } from 'sparse-octree';
 import { Box3, Matrix4, Vector3 } from 'three';
-import { Image360Icon } from '../entity/Image360Icon';
+import { Image360Icon } from '../icons/Image360Icon';
 
 export class IconOctree extends PointOctree<Image360Icon> {
   private readonly _nodeCenters: Map<Node, Vector3>;

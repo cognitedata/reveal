@@ -20,7 +20,13 @@ import {
 } from '../../packages/rendering';
 import { createDataProviders } from './utilities/createDataProviders';
 import { VisualTestFixture } from './VisualTestFixture';
-import { DeferredPromise, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
+import {
+  BeforeSceneRenderedDelegate,
+  DeferredPromise,
+  EventTrigger,
+  fitCameraToBoundingBox,
+  SceneHandler
+} from '../../packages/utilities';
 
 import {
   ModelIdentifier,
@@ -56,6 +62,7 @@ export type StreamingTestFixtureComponents = {
   cadModelUpdateHandler: CadModelUpdateHandler;
   cadManager: CadManager;
   cogniteClient?: CogniteClient;
+  onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>;
 };
 
 export abstract class StreamingVisualTestFixture implements VisualTestFixture {
@@ -85,6 +92,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _resizeObserver: ResizeObserver;
+  private readonly _onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>;
 
   get gui(): dat.GUI {
     return this._gui;
@@ -177,6 +185,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     );
 
     this._resizeObserver = new ResizeObserver(() => this.render());
+    this._onBeforeRender = new EventTrigger<BeforeSceneRenderedDelegate>();
 
     this._statsJs = new Stats();
     this._statsJs.dom.style.position = 'absolute';
@@ -249,7 +258,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       pcMaterialManager: this._pcMaterialManager,
       cadModelUpdateHandler,
       cadManager: this._cadManager,
-      cogniteClient
+      cogniteClient,
+      onBeforeRender: this._onBeforeRender
     });
 
     this._gui.close();
@@ -283,6 +293,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
   public render(): void {
     TWEEN.update(TWEEN.now());
+    this._onBeforeRender.fire({ frameNumber: 0, renderer: this._renderer, camera: this._perspectiveCamera });
     this._statsJs.begin();
     this._pipelineExecutor.render(this._renderPipelineProvider, this._perspectiveCamera);
     this._statsJs.end();
