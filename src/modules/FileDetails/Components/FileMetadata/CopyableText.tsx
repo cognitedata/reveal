@@ -1,10 +1,9 @@
 import React, { ReactText, useState } from 'react';
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js-old';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button, Icon, Colors } from '@cognite/cogs.js';
 
 const CopiedIconContainer = styled.div`
-  color: ${Colors.success.hex()};
+  color: ${Colors['text-icon--status-success']};
   margin-left: 9px;
   padding: 2px 0;
   height: 22px;
@@ -41,7 +40,9 @@ const CopyButtonContainer = (props: {
       icon="Copy"
       iconPlacement="right"
       aria-label="copy button"
-      style={{ color: props.copyIconColor || Colors['midblue-3'].hex() }}
+      style={{
+        color: props.copyIconColor || Colors['text-icon--interactive--default'],
+      }}
     />
   );
 };
