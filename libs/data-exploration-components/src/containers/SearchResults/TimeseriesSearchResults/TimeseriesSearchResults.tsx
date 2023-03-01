@@ -128,7 +128,9 @@ export const TimeseriesSearchResults = ({
                   initialRange={dateRange}
                   onRangeChanged={onDateRangeChange}
                 >
-                  <Button icon="XAxis">Chart preview </Button>
+                  <Button icon="XAxis" aria-label="Chart Preview logo">
+                    Chart preview{' '}
+                  </Button>
                 </RangePicker>
               )}
               <VerticalDivider />
