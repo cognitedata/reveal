@@ -352,7 +352,7 @@ const FooterContainer = styled.div`
   display: grid;
   grid-template-columns: auto auto;
   grid-template-rows: 100%;
-  padding-top: 30px;
+  padding-top: 10px;
 `;
 
 const FooterRightButtonContainer = styled.div`

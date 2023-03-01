@@ -16,7 +16,7 @@ export const PopupUIElementContainer = ({
           {title}
         </Body>
       </div>
-      <div style={{ width: '100%' }}>{children}</div>
+      <div style={{ width: '100%', marginLeft: '12px' }}>{children}</div>
     </Container>
   );
 };
