@@ -1,5 +1,4 @@
-import { Tooltip } from '@cognite/cogs.js-old';
-import { Title, Button, Icon, Detail, Row } from '@cognite/cogs.js';
+import { Title, Button, Icon, Detail, Row, Tooltip } from '@cognite/cogs.js';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -45,7 +44,7 @@ export const badge = ({
   hideText?: boolean;
   disabled?: boolean;
 }) => {
-  return disabled ? (
+  return !disabled ? (
     <>
       <Tooltip placement="bottom" content="Model is not configured correctly">
         <Button icon="Scan" size="small" aria-label="ScanIconDisabled" disabled>
