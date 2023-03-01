@@ -26,21 +26,24 @@ const {
   assets,
 } = ResourceTableColumns;
 
-const columns = [
-  name(),
-  relationshipLabels,
-  relation,
-  externalId(),
-  description(),
-  lastUpdatedTime,
-  created,
-  assets,
-] as ColumnDef<TimeseriesWithRelationshipLabels>[];
-
 export function RelationshipTimeseriesTable({
   parentResource,
   onItemClicked,
-}: Omit<RelationshipTableProps, 'type'>) {
+  onParentAssetClick,
+}: Omit<RelationshipTableProps, 'type'> & {
+  onParentAssetClick: (assetId: number) => void;
+}) {
+  const columns = [
+    name(),
+    relationshipLabels,
+    relation,
+    externalId(),
+    description(),
+    lastUpdatedTime,
+    created,
+    assets((directAsset) => onParentAssetClick(directAsset.id)),
+  ] as ColumnDef<TimeseriesWithRelationshipLabels>[];
+
   const { data: count } = useRelationshipCount(parentResource, 'timeSeries');
 
   const { hasNextPage, fetchNextPage, isLoading, items } =

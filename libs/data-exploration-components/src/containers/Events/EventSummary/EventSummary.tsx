@@ -1,9 +1,8 @@
-import { CogniteEvent, EventFilter } from '@cognite/sdk';
+import { Asset, CogniteEvent } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
 
 import {
   ResourceTableColumns,
-  SubRowMatchingLabel,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration-components/components/Table';
@@ -11,7 +10,6 @@ import React, { useMemo } from 'react';
 
 import {
   useEventsMetadataKeys,
-  useEventsSearchResultQuery,
   InternalEventsFilters,
   useEventsSearchResultWithLabelsQuery,
   InternalEventDataWithMatchingLabels,
@@ -27,6 +25,7 @@ export const EventSummary = ({
   filter = {},
   onAllResultsClick,
   onRowClick = noop,
+  onDirectAssetClick = noop,
   isAdvancedFiltersEnabled = false,
 }: {
   query?: string;
@@ -35,6 +34,7 @@ export const EventSummary = ({
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   onRowClick?: (row: CogniteEvent) => void;
+  onDirectAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   isAdvancedFiltersEnabled?: boolean;
 }) => {
   const { data, isLoading } = useEventsSearchResultWithLabelsQuery({
@@ -61,7 +61,7 @@ export const EventSummary = ({
         Table.Columns.startTime,
         Table.Columns.endTime,
         Table.Columns.source(),
-        Table.Columns.assets,
+        Table.Columns.assets(onDirectAssetClick),
         ...metadataColumns,
       ] as ColumnDef<CogniteEvent>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CogniteEvent } from '@cognite/sdk';
+import { Asset, CogniteEvent } from '@cognite/sdk';
 import {
   SearchResultCountLabel,
   SearchResultToolbar,
@@ -21,6 +21,7 @@ export const EventSearchResults = ({
   query = '',
   filter = {},
   onClick,
+  onDirectAssetClick,
   showCount = false,
   selectedRow,
   enableAdvancedFilters,
@@ -31,6 +32,7 @@ export const EventSearchResults = ({
   showCount?: boolean;
   enableAdvancedFilters?: boolean;
   onClick: (item: CogniteEvent) => void;
+  onDirectAssetClick?: (directAsset: Asset, resourceId?: number) => void;
   selectedRow?: Record<string | number, boolean>;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 }) => {
@@ -103,6 +105,7 @@ export const EventSearchResults = ({
         enableAdvancedFilters ? !isPreviousData && hasNextPage : canFetchMore
       }
       onRowClick={(event: CogniteEvent) => onClick(event)}
+      onDirectAssetClick={onDirectAssetClick}
     />
   );
 };

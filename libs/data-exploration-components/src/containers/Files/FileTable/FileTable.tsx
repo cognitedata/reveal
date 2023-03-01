@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { FileInfo } from '@cognite/sdk';
+import { Asset, FileInfo } from '@cognite/sdk';
 import {
   Table,
   TableProps,
@@ -19,12 +19,17 @@ export type FileTableProps = Omit<
   RelationshipLabels & {
     query?: string;
     visibleColumns?: string[];
+    onDirectAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   };
 
 const defaultVisibleColumns = ['name', 'mimeType', 'uploadedTime'];
 export type FileWithRelationshipLabels = RelationshipLabels & FileInfo;
 export const FileTable = (props: FileTableProps) => {
-  const { query, visibleColumns = defaultVisibleColumns } = props;
+  const {
+    query,
+    visibleColumns = defaultVisibleColumns,
+    onDirectAssetClick,
+  } = props;
   const { data: metadataKeys } = useDocumentsMetadataKeys();
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -61,10 +66,11 @@ export const FileTable = (props: FileTableProps) => {
         Table.Columns.created,
         Table.Columns.dataset,
         Table.Columns.source(query),
-        Table.Columns.assets,
+        Table.Columns.assets(onDirectAssetClick),
         Table.Columns.labels,
         ...metadataColumns,
       ] as ColumnDef<FileInfo>[],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [query, metadataColumns]
   );
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);

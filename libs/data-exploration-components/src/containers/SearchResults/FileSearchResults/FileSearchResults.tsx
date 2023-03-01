@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileInfo } from '@cognite/sdk';
+import { Asset, FileInfo } from '@cognite/sdk';
 import { FileTable } from '@data-exploration-components/containers/Files';
 import {
   ResourceItem,
@@ -25,6 +25,7 @@ export const FileSearchResults = ({
   showCount = false,
   allowEdit = false,
   onClick,
+  onDirectAssetClick,
   selectedRow,
   onFilterChange,
   ...rest
@@ -40,6 +41,7 @@ export const FileSearchResults = ({
   allowEdit?: boolean;
   isGroupingFilesEnabled?: boolean;
   onClick: (item: FileInfo) => void;
+  onDirectAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 }) => {
   const api = convertResourceType('file');
@@ -89,6 +91,7 @@ export const FileSearchResults = ({
       }
       data={items}
       onRowClick={(file) => onClick(file)}
+      onDirectAssetClick={onDirectAssetClick}
       fetchMore={fetchMore}
       showLoadButton
       hasNextPage={canFetchMore}

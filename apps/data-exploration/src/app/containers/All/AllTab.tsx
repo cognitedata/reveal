@@ -40,7 +40,8 @@ export const AllTab = () => {
     setCurrentResourceType(type);
   };
 
-  const handleRootAssetClick = (
+  // We use the same function for both root asset and direct asset click.
+  const handleParentAssetClick = (
     rootAsset: Asset,
     resourceId?: number,
     type?: ResourceType
@@ -79,7 +80,7 @@ export const AllTab = () => {
             handleAllResultsClick(ResourceTypes.TimeSeries)
           }
           onRootAssetClick={(rootAsset, resourceId) =>
-            handleRootAssetClick(
+            handleParentAssetClick(
               rootAsset,
               resourceId,
               ResourceTypes.TimeSeries
@@ -95,7 +96,7 @@ export const AllTab = () => {
             }
             onAllResultsClick={() => handleAllResultsClick(ResourceTypes.File)}
             onRootAssetClick={(rootAsset, resourceId) =>
-              handleRootAssetClick(rootAsset, resourceId, ResourceTypes.File)
+              handleParentAssetClick(rootAsset, resourceId, ResourceTypes.File)
             }
           />
         ) : (
@@ -106,6 +107,13 @@ export const AllTab = () => {
               handleSummaryRowClick(ResourceTypes.File, row.id)
             }
             onAllResultsClick={() => handleAllResultsClick(ResourceTypes.File)}
+            onDirectAssetClick={(directAsset, resourceId) =>
+              handleParentAssetClick(
+                directAsset,
+                resourceId,
+                ResourceTypes.File
+              )
+            }
           />
         )}
         <EventSummary
@@ -116,6 +124,9 @@ export const AllTab = () => {
             handleSummaryRowClick(ResourceTypes.Event, row.id)
           }
           onAllResultsClick={() => handleAllResultsClick(ResourceTypes.Event)}
+          onDirectAssetClick={(directAsset, resourceId) =>
+            handleParentAssetClick(directAsset, resourceId, ResourceTypes.Event)
+          }
         />
         <SequenceSummary
           filter={commonFilters}
@@ -128,7 +139,11 @@ export const AllTab = () => {
             handleAllResultsClick(ResourceTypes.Sequence)
           }
           onRootAssetClick={(rootAsset, resourceId) =>
-            handleRootAssetClick(rootAsset, resourceId, ResourceTypes.Sequence)
+            handleParentAssetClick(
+              rootAsset,
+              resourceId,
+              ResourceTypes.Sequence
+            )
           }
         />
       </AllTabContainer>

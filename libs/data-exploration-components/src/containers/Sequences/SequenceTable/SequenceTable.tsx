@@ -65,7 +65,7 @@ export const SequenceTable = ({
           enableSorting: false,
         },
         Table.Columns.rootAsset(onRootAssetClick),
-        Table.Columns.assets,
+        Table.Columns.assets(onRootAssetClick),
         Table.Columns.dataset,
         ...metadataColumns,
       ] as ColumnDef<Sequence>[],

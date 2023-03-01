@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { CogniteEvent } from '@cognite/sdk';
+import { Asset, CogniteEvent } from '@cognite/sdk';
 
 import {
   Table,
@@ -21,8 +21,11 @@ export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 const visibleColumns = ['type', 'description'];
 export const EventTable = ({
   query,
+  onDirectAssetClick,
   ...rest
-}: Omit<TableProps<EventWithRelationshipLabels>, 'columns'>) => {
+}: Omit<TableProps<EventWithRelationshipLabels>, 'columns'> & {
+  onDirectAssetClick?: (directAsset: Asset, resourceId?: number) => void;
+}) => {
   const { data: metadataKeys = [] } = useEventsMetadataKeys();
 
   const metadataColumns = useMemo(() => {
@@ -49,10 +52,7 @@ export const EventTable = ({
         Table.Columns.startTime,
         Table.Columns.endTime,
         Table.Columns.source(),
-        {
-          ...Table.Columns.assets,
-          enableSorting: false,
-        },
+        Table.Columns.assets(onDirectAssetClick),
         ...metadataColumns,
       ] as ColumnDef<CogniteEvent>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps

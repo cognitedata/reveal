@@ -92,6 +92,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       accessorFn: (resourceData) => resourceData.assetId || resourceData.rootId,
       header: 'Root asset',
       id: 'rootAsset',
+      enableSorting: false,
       cell: ({ row, getValue }) => {
         const value = getValue<number | undefined>();
         const handleOnRootAssetClick = (rootAsset: Asset) => {
@@ -100,15 +101,37 @@ export const ResourceTableColumns: ResourceTableHashMap = {
           }
         };
 
+        return <RootAsset onClick={handleOnRootAssetClick} assetId={value} />;
+      },
+    };
+  },
+  assets: (onClick) => {
+    return {
+      accessorFn: (resourceData) => resourceData.assetId,
+      header: 'Direct asset',
+      id: 'directAsset',
+      enableSorting: false,
+      cell: ({ getValue, row }) => {
+        const data = row.original;
+        const assetIdValue = getValue<number>();
+        const ids = assetIdValue
+          ? [{ id: assetIdValue }]
+          : data.assetIds?.map((val) => ({ id: val }));
+
+        const handleOnDirectAssetClick = (directAsset: Asset) => {
+          if (onClick) {
+            onClick(directAsset, data.id);
+          }
+        };
+
         return (
-          <RootAsset
-            externalLink={false}
-            onClick={handleOnRootAssetClick}
-            assetId={value}
+          <DirectAssets
+            ids={ids}
+            data={data}
+            onClick={handleOnDirectAssetClick}
           />
         );
       },
-      enableSorting: false,
     };
   },
   id: (query?: string) => {
@@ -236,21 +259,6 @@ export const ResourceTableColumns: ResourceTableHashMap = {
         }
       );
       return <Body level={2}>{(ds && ds?.name) || DASH}</Body>;
-    },
-  },
-  assets: {
-    header: 'Direct asset',
-    accessorFn: (resourceData) => resourceData.assetId,
-    id: 'directAsset',
-    enableSorting: false,
-    cell: ({ getValue, row }) => {
-      const data = row.original;
-      const assetIdValue = getValue<number>();
-      const ids = assetIdValue
-        ? [{ id: assetIdValue }]
-        : data.assetIds?.map((val) => ({ id: val }));
-
-      return <DirectAssets ids={ids} data={data} />;
     },
   },
   startTime: {

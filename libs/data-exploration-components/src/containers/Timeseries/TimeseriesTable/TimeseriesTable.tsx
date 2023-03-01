@@ -36,7 +36,6 @@ export const TimeseriesTable = ({
   dateRange: dateRangeProp,
   hideEmptyData = false,
   onRootAssetClick,
-  query,
   ...props
 }: TimeseriesTableProps) => {
   const { data, ...rest } = props;
@@ -148,10 +147,11 @@ export const TimeseriesTable = ({
         enableSorting: false,
       },
       Table.Columns.rootAsset(onRootAssetClick),
-      Table.Columns.assets,
+      Table.Columns.assets(onRootAssetClick),
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];
-  }, [query, metadataColumns, dateRange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metadataColumns, dateRange]);
 
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 

@@ -27,6 +27,7 @@ interface Props {
   enableAdvancedFilter?: boolean;
   defaultFilter: InternalCommonFilters;
   onClick: (item: Sequence | SequenceWithRelationshipLabels) => void;
+  onParentAssetClick: (assetId: number) => void;
 }
 
 const LinkedSequenceFilter = ({
@@ -56,6 +57,7 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
   enableAdvancedFilter,
   defaultFilter,
   onClick,
+  onParentAssetClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
   const [debouncedQuery] = useDebounce(query, 300);
@@ -96,6 +98,9 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
       id="sequence-linked-search-results"
       query={debouncedQuery}
       onRowClick={(sequence) => onClick(sequence)}
+      onRootAssetClick={(directAsset) => {
+        onParentAssetClick(directAsset.id);
+      }}
       data={enableAdvancedFilter ? data : items}
       sorting={sortBy}
       enableSorting={enableAdvancedFilter}

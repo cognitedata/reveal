@@ -12,14 +12,9 @@ import { DASH } from '@data-exploration-components/utils';
 export interface RootAssetProps {
   assetId?: number;
   onClick?: (rootAsset: Asset) => void;
-  externalLink?: boolean;
 }
 
-export const RootAsset: React.FC<RootAssetProps> = ({
-  assetId,
-  onClick,
-  externalLink,
-}) => {
+export const RootAsset: React.FC<RootAssetProps> = ({ assetId, onClick }) => {
   const { data: rootAsset, isLoading } = useRootAssetQuery(assetId);
   const trackUsage = useMetrics();
 
@@ -46,11 +41,5 @@ export const RootAsset: React.FC<RootAssetProps> = ({
     return <>{DASH}</>;
   }
 
-  return (
-    <RootAssetButton
-      label={rootAsset.name}
-      onClick={handleClick}
-      externalLink={externalLink}
-    />
-  );
+  return <RootAssetButton label={rootAsset.name} onClick={handleClick} />;
 };

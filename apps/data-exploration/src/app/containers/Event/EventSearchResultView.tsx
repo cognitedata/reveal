@@ -6,7 +6,7 @@ import {
 import { EventSearchResults } from '@data-exploration-components/containers';
 import { useEventsFilters } from '@data-exploration-app/store';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
-import { ResourceItem } from '@cognite/data-exploration';
+import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
   useQueryString,
@@ -16,6 +16,8 @@ import { useDebounce } from 'use-debounce';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { EventPreview } from '@data-exploration-app/containers/Event/EventPreview';
 import { routes } from '@data-exploration-app/containers/App';
+import { Asset } from '@cognite/sdk';
+import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 
 export const EventSearchResultView = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
@@ -26,11 +28,16 @@ export const EventSearchResultView = () => {
 
   // Here we need to parse params to find selected event's id.
   const selectedEventId = useSelectedResourceId();
+  const selectedDirectAssetId = useSelectedResourceId(true);
 
   const selectedRow = selectedEventId ? { [selectedEventId]: true } : {};
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
-    openPreview(item.id !== selectedEventId ? item.id : undefined);
+    openPreview(item.id);
+  };
+
+  const handleDirectAssetClick = (directAsset: Asset, resourceId?: number) => {
+    openPreview(resourceId, false, ResourceTypes.Asset, directAsset.id);
   };
 
   return (
@@ -45,6 +52,7 @@ export const EventSearchResultView = () => {
           selectedRow={selectedRow}
           enableAdvancedFilters={isAdvancedFiltersEnabled}
           onClick={handleRowClick}
+          onDirectAssetClick={handleDirectAssetClick}
           onFilterChange={(newValue: Record<string, unknown>) =>
             setEventFilter(newValue)
           }
@@ -63,6 +71,14 @@ export const EventSearchResultView = () => {
             <Route
               path={routes.viewDetailTab.path}
               element={<EventPreview eventId={selectedEventId!} />}
+            />
+            <Route
+              path={routes.viewAssetDetail.path}
+              element={<AssetPreview assetId={selectedDirectAssetId!} />}
+            />
+            <Route
+              path={routes.viewAssetDetailTab.path}
+              element={<AssetPreview assetId={selectedDirectAssetId!} />}
             />
           </Routes>
         </SearchResultWrapper>

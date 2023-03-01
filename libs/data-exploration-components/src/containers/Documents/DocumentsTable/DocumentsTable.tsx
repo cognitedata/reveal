@@ -125,7 +125,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           ...Table.Columns.rootAsset(onRootAssetClick),
           accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
-        Table.Columns.assets,
+        Table.Columns.assets(onRootAssetClick),
         Table.Columns.externalId(),
         Table.Columns.id(),
         {
@@ -135,7 +135,8 @@ export const DocumentsTable = (props: DocumentTableProps) => {
 
         ...metadataColumns,
       ] as ColumnDef<InternalDocumentWithMatchingLabels>[],
-    [query, metadataColumns, onRootAssetClick]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [query, metadataColumns]
   );
 
   // const updatedColumns =

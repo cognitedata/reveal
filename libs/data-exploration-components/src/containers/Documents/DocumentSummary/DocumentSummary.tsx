@@ -135,7 +135,8 @@ export const DocumentSummary = ({
         },
         ...metadataColumns,
       ] as ColumnDef<InternalDocument>[],
-    [query, metadataColumns, onRootAssetClick]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [query, metadataColumns]
   );
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'content']);
   return (

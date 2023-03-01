@@ -7,12 +7,9 @@ import {
 } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
-import {
-  useResourceResults,
-  FileTable,
-} from '@data-exploration-components/containers';
+import { useResourceResults } from '@data-exploration-components/containers';
 import { convertResourceType } from '@data-exploration-components/types';
-import { FileInfo } from '@cognite/sdk';
+import { Asset, FileInfo } from '@cognite/sdk';
 import {
   InternalFilesFilters,
   useDocumentsMetadataKeys,
@@ -26,6 +23,7 @@ export const FileSummary = ({
   filter = {},
   onAllResultsClick,
   onRowClick,
+  onDirectAssetClick,
 }: {
   query?: string;
   filter?: InternalFilesFilters;
@@ -33,6 +31,7 @@ export const FileSummary = ({
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   onRowClick?: (row: FileInfo) => void;
+  onDirectAssetClick?: (directAsset: Asset, resourceId?: number) => void;
 }) => {
   const api = convertResourceType('file');
   const { items: results, isFetching: isLoading } =
@@ -69,11 +68,12 @@ export const FileSummary = ({
         Table.Columns.created,
         Table.Columns.dataset,
         Table.Columns.source(),
-        Table.Columns.assets,
+        Table.Columns.assets(onDirectAssetClick),
         Table.Columns.labels,
         ...metadataColumns,
       ] as ColumnDef<FileInfo>[],
-    [metadataColumns, query]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [query, metadataColumns]
   );
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'content']);
 

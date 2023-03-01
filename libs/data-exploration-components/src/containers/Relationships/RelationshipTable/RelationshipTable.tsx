@@ -21,6 +21,7 @@ export type RelationshipTableProps = {
   type: ResourceType;
   parentResource: ResourceItem;
   onItemClicked: (id: number) => void;
+  onParentAssetClick: (assetId: number) => void;
   isGroupingFilesEnabled?: boolean;
 };
 const relationshipMapper = {
@@ -35,6 +36,7 @@ export const RelationshipTable = ({
   type,
   parentResource,
   onItemClicked,
+  onParentAssetClick,
   isGroupingFilesEnabled,
 }: RelationshipTableProps & SelectableItemsProps) => {
   const context = useContext(AppContext);
@@ -76,6 +78,7 @@ export const RelationshipTable = ({
     <RelationshipMappedTable
       parentResource={parentResource}
       onItemClicked={onItemClicked}
+      onParentAssetClick={onParentAssetClick}
       isGroupingFilesEnabled={isGroupingFilesEnabled}
     />
   );

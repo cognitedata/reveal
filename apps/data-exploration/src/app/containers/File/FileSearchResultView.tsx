@@ -10,7 +10,7 @@ import {
 import { FilePreview } from '@data-exploration-app/containers/File/FilePreview';
 import { useFileFilters } from '@data-exploration-app/store';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
-import { ResourceItem } from '@cognite/data-exploration';
+import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
   useQueryString,
@@ -43,8 +43,8 @@ export const FileSearchResultView = () => {
     openPreview(item.id);
   };
 
-  const handleRootAssetClick = (rootAsset: Asset, resourceId?: number) => {
-    openPreview(resourceId, false, 'asset', rootAsset.id);
+  const handleParentAssetClick = (rootAsset: Asset, resourceId?: number) => {
+    openPreview(resourceId, false, ResourceTypes.Asset, rootAsset.id);
   };
 
   return (
@@ -61,6 +61,7 @@ export const FileSearchResultView = () => {
             filter={fileFilter}
             allowEdit={editable} // ??
             onClick={handleRowClick}
+            onDirectAssetClick={handleParentAssetClick}
             onFilterChange={(newValue: Record<string, unknown>) =>
               setFileFilter(newValue)
             }
@@ -73,7 +74,7 @@ export const FileSearchResultView = () => {
             selectedRow={selectedRow}
             filter={documentFilter}
             onClick={handleRowClick}
-            onRootAssetClick={handleRootAssetClick}
+            onRootAssetClick={handleParentAssetClick}
             onFilterChange={(newValue: Record<string, unknown>) =>
               setDocumentFilter(newValue)
             }

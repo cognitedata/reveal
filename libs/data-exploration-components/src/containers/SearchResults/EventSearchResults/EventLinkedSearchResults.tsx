@@ -26,6 +26,7 @@ interface Props {
   enableAdvancedFilter?: boolean;
   defaultFilter: InternalCommonFilters;
   onClick: (item: CogniteEvent) => void;
+  onParentAssetClick: (assetId: number) => void;
 }
 
 const LinkedEventFilter = ({
@@ -73,6 +74,7 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
   enableAdvancedFilter,
   defaultFilter,
   onClick,
+  onParentAssetClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
   const [debouncedQuery] = useDebounce(query, 300);
@@ -112,6 +114,9 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
       id="event-linked-search-results"
       query={debouncedQuery}
       onRowClick={(event) => onClick(event)}
+      onDirectAssetClick={(directAsset) => {
+        onParentAssetClick(directAsset.id);
+      }}
       data={enableAdvancedFilter ? data : items}
       sorting={sortBy}
       enableSorting={enableAdvancedFilter}

@@ -76,7 +76,8 @@ export const TimeseriesSummary = ({
       Table.Columns.rootAsset(onRootAssetClick),
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];
-  }, [metadataColumns, onRootAssetClick]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metadataColumns]);
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'description']);
 
   return (

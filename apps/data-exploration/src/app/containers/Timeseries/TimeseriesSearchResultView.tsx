@@ -6,7 +6,7 @@ import {
 import { TimeseriesSearchResults } from '@data-exploration-components/containers';
 import { useTimeseriesFilters } from '@data-exploration-app/store';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
-import { ResourceItem } from '@cognite/data-exploration';
+import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
   useQueryString,
@@ -40,7 +40,7 @@ export const TimeseriesSearchResultView = () => {
   };
 
   const handleRootAssetClick = (rootAsset: Asset, resourceId?: number) => {
-    openPreview(resourceId, false, 'asset', rootAsset.id);
+    openPreview(resourceId, false, ResourceTypes.Asset, rootAsset.id);
   };
 
   const [dateRange, setDateRange] = useDateRange();

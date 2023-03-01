@@ -15,12 +15,14 @@ interface DirectAssetsProps {
     CogniteEvent &
     FileInfo &
     Sequence;
+  onClick: (directAsset: Asset) => void;
   ids?: IdEither[];
 }
 
 export const DirectAssets = ({
   ids = EMPTY_ARRAY,
   data,
+  onClick,
 }: DirectAssetsProps) => {
   const { data: items, isLoading } = useAssetsByIdQuery(ids, {
     enabled:
@@ -33,17 +35,15 @@ export const DirectAssets = ({
     return null;
   }
 
-  // TODO?
   if (items.length === 1) {
-    const rootAsset = items[0];
+    const directAsset = items[0];
     return (
       <RootAssetButton
-        label={rootAsset.name}
+        label={directAsset.name}
         onClick={(evt) => {
           evt.stopPropagation();
-          window.open(createLink(`/explore/asset/${rootAsset.id}`), '_blank');
+          onClick(directAsset);
         }}
-        externalLink
       />
     );
   }
@@ -55,12 +55,13 @@ export const DirectAssets = ({
         <StyledMenu>
           {items?.map((item) => (
             <Menu.Item css={{}} key={item.id}>
-              <StyledLink
-                href={createLink(`/explore/asset/${item.id}`)}
-                target="_blank"
-              >
-                {item.name}
-              </StyledLink>
+              <RootAssetButton
+                label={item.name}
+                onClick={(evt) => {
+                  evt.stopPropagation();
+                  onClick(item);
+                }}
+              />
             </Menu.Item>
           ))}
         </StyledMenu>
@@ -72,13 +73,6 @@ export const DirectAssets = ({
     </Dropdown>
   );
 };
-
-const StyledLink = styled(Link)`
-  width: 100%;
-  display: block;
-  text-align: left;
-  justify-content: unset;
-`;
 
 const StyledMenu = styled(Menu)`
   max-height: 300px;

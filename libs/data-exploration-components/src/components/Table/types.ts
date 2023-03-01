@@ -28,6 +28,11 @@ type ColumnWithQuery = (query?: string) => TableColumnDef;
 type RootAssetColumn = (
   onClick?: (rootAsset: Asset, resourceId?: number) => void
 ) => TableColumnDef;
+
+type DirectAssetColumn = (
+  onClick?: (directAsset: Asset, resourceId?: number) => void
+) => TableColumnDef;
+
 type MetadataColumn = (
   key: string,
   accessorFn?: (row: any) => string
@@ -43,6 +48,7 @@ export type ResourceTableHashMap = {
   unit: ColumnWithQuery;
   source: ColumnWithQuery;
   rootAsset: RootAssetColumn;
+  assets: DirectAssetColumn;
   metadata: MetadataColumn;
 } & {
   [key in (typeof ColumnKeys)[number]]: TableColumnDef;

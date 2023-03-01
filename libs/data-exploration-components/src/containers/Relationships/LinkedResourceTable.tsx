@@ -17,6 +17,7 @@ export const LinkedResourceTable = ({
   type,
   parentResource,
   onItemClicked,
+  onParentAssetClick,
   enableAdvancedFilter,
 }: // ...selectionMode
 {
@@ -25,6 +26,7 @@ export const LinkedResourceTable = ({
   enableAdvancedFilter?: boolean;
   parentResource: ResourceItem;
   onItemClicked: (id: number) => void;
+  onParentAssetClick: (assetId: number) => void;
 } & SelectableItemsProps) => {
   const filter = { assetSubtreeIds: [{ value: parentResource.id }] };
 
@@ -43,6 +45,7 @@ export const LinkedResourceTable = ({
           enableAdvancedFilter={enableAdvancedFilter}
           defaultFilter={filter}
           onClick={(el) => onItemClicked(el.id)}
+          onParentAssetClick={onParentAssetClick}
         />
       );
     case 'file':
@@ -51,6 +54,7 @@ export const LinkedResourceTable = ({
           defaultFilter={filter}
           isGroupingFilesEnabled={isGroupingFilesEnabled}
           onClick={(el) => onItemClicked(el.id)}
+          onParentAssetClick={onParentAssetClick}
         />
       );
     case 'sequence':
@@ -59,6 +63,7 @@ export const LinkedResourceTable = ({
           enableAdvancedFilter={enableAdvancedFilter}
           defaultFilter={filter}
           onClick={(el) => onItemClicked(el.id)}
+          onParentAssetClick={onParentAssetClick}
         />
       );
 
@@ -68,6 +73,7 @@ export const LinkedResourceTable = ({
           enableAdvancedFilter={enableAdvancedFilter}
           defaultFilter={filter}
           onClick={(el) => onItemClicked(el.id)}
+          onParentAssetClick={onParentAssetClick}
         />
       );
     default:

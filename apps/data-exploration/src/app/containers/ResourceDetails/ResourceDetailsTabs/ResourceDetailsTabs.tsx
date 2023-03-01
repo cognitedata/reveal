@@ -58,6 +58,10 @@ const ResourceDetailTabContent = ({
 
   const search = getSearchParams(location.search);
 
+  const handleParentAssetClicked = (assetId: number) => {
+    navigateWithHistory(createLink(`/explore/asset/${assetId}`, search));
+  };
+
   return (
     <RelatedResources
       type={type}
@@ -65,6 +69,7 @@ const ResourceDetailTabContent = ({
       onItemClicked={(id: number) => {
         navigateWithHistory(createLink(`/explore/${type}/${id}`, search));
       }}
+      onParentAssetClick={handleParentAssetClicked}
       selectionMode={mode}
       onSelect={onSelect}
       isSelected={isSelected}
@@ -92,7 +97,7 @@ export const ResourceDetailsTabs = ({
 
   const getCountLabel = (count: string, key: ResourceType) => {
     return isAdvancedFiltersEnabled
-      ? getTabCountLabel(+count)
+      ? getTabCountLabel(Number(count.replace(',', '')))
       : addPlusSignToCount(count, hasMoreRelationships[key]!);
   };
 

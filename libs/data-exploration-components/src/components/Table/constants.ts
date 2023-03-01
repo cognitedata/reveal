@@ -7,7 +7,6 @@ export const ColumnKeys = [
   'isString',
   'isStep',
   'dataset',
-  'assets',
   'startTime',
   'endTime',
   'mimeType',

@@ -19,7 +19,6 @@ import { getSummaryCardItems } from '@data-exploration-components/components/Sum
 import noop from 'lodash/noop';
 
 import { AssetWithRelationshipLabels } from '../AssetTable/AssetTable';
-import { RootAsset } from '@data-exploration-components/components';
 import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';

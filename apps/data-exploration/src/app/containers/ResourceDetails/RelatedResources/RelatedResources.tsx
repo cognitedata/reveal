@@ -35,6 +35,7 @@ export const RelatedResources = ({
   parentResource,
   type,
   onItemClicked: onItemClickedProp,
+  onParentAssetClick,
   ...props
 }: RelationshipTableProps & SelectableItemsProps) => {
   const [selectedType, setSelectedType] = useState<TypeOption>();
@@ -161,6 +162,7 @@ export const RelatedResources = ({
               type={type}
               isGroupingFilesEnabled={isGroupingFilesEnabled}
               onItemClicked={onItemClicked}
+              onParentAssetClick={onParentAssetClick}
               {...props}
             />
           </>
@@ -173,6 +175,7 @@ export const RelatedResources = ({
             parentResource={parentResource}
             type={type}
             onItemClicked={onItemClicked}
+            onParentAssetClick={onParentAssetClick}
             {...props}
           />
         )}
