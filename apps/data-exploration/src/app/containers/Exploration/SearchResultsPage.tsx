@@ -291,8 +291,6 @@ const SearchInputContainer = styled(Flex)`
 
 const TabsContainer = styled.div`
   flex: 0 0 auto;
-  margin-left: 16px;
-  border-bottom: 1px solid rgb(232, 232, 232);
 `;
 
 const MainContainer = styled(Flex)<{ $isFilterFeatureEnabled?: boolean }>`

@@ -89,6 +89,7 @@ export const ResourceTypeTabs = ({
 
   return (
     <StyledTabs
+      showTrack
       activeKey={currentResourceType || 'all'}
       onTabClick={(tab) => {
         setCurrentResourceType(tab);

@@ -19,7 +19,7 @@ export const DocumentContentPreview = ({
     <Body level={2}>
       <Flex alignItems="center">
         <StyledContentHighlight>
-          <HighlightCell text={content} query={query} />
+          <HighlightCell text={content} query={query} lines={1} />
         </StyledContentHighlight>
       </Flex>
     </Body>

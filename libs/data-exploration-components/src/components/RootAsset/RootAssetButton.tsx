@@ -15,7 +15,7 @@ export const RootAssetButton: React.FC<RootAssetButtonProps> = ({
 }) => {
   return (
     <RootAssetButtonWrapper
-      className="cogs cogs-button cogs-button--type-ghost-accent cogs-button--size-medium cogs-button--icon-right cogs cogs-link"
+      className="cogs cogs-button cogs-button--size-small cogs-button--align-vertically-left cogs-button--type-ghost-accent cogs-button--size-medium cogs-button--icon-right cogs cogs-link"
       role="button"
       onClick={onClick}
     >

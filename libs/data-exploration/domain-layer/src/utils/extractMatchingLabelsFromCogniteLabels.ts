@@ -9,7 +9,7 @@ export const extractMatchingLabelsFromCogniteLabels = (
 ) => {
   value.forEach((childValue) => {
     if (isExactMatch(childValue.externalId, query)) {
-      matchers.exact.push(`Label ${childValue.externalId}`);
+      matchers.exact.push(`Label`);
     }
   });
 };

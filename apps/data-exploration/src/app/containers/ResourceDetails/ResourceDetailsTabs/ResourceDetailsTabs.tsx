@@ -121,7 +121,12 @@ export const ResourceDetailsTabs = ({
 
   return (
     <DetailsTabWrapper>
-      <StyledTabs activeKey={tab} style={style} onTabClick={onTabChange}>
+      <StyledTabs
+        showTrack
+        activeKey={tab}
+        style={style}
+        onTabClick={onTabChange}
+      >
         {tabs}
       </StyledTabs>
     </DetailsTabWrapper>

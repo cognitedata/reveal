@@ -15,6 +15,7 @@ export const SearchResultCountLabel = ({
   return (
     <Chip
       type="neutral"
+      hideTooltip
       label={getSearchResultCountLabel(loadedCount, totalCount, resourceType)}
     />
   );

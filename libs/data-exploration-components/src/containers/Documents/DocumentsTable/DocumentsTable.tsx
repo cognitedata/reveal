@@ -24,6 +24,7 @@ import { Body } from '@cognite/cogs.js';
 import {
   TimeDisplay,
   ResourceTableColumns,
+  SubRowMatchingLabel,
 } from '@data-exploration-components/components';
 import { Asset } from '@cognite/sdk';
 
@@ -68,9 +69,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
               fileName: row.original.name || '',
               file: row.original,
             };
-            return (
-              <DocumentNamePreview {...fileNamePreviewProps} query={query} />
-            );
+            return <DocumentNamePreview {...fileNamePreviewProps} query="" />;
           },
         },
         {
@@ -148,7 +147,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
   const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
-    <Table
+    <Table<InternalDocumentWithMatchingLabels>
       {...props}
       columns={columns}
       hiddenColumns={hiddenColumns}

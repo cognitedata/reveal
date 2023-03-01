@@ -67,7 +67,7 @@ export const DirectAssets = ({
         </StyledMenu>
       }
     >
-      <Button icon="ChevronDown" iconPlacement="right">
+      <Button size="small" icon="ChevronDown" iconPlacement="right">
         {items?.length} Asset(s)
       </Button>
     </Dropdown>

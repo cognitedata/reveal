@@ -1,5 +1,5 @@
 import React from 'react';
-import { A, Body, Button, Dropdown, Flex, Menu } from '@cognite/cogs.js';
+import { A, Body, Button, Dropdown, Flex, Link, Menu } from '@cognite/cogs.js';
 import groupBy from 'lodash/groupBy';
 
 import {
@@ -18,16 +18,16 @@ export const ThreeDModelCellLink = ({
   mapping: DetailedMapping;
 }) => {
   return (
-    <A
+    <Link
+      size="small"
       href={createLink(`/explore/threeD/${mapping.model.id}`, {
         selectedAssetId: assetId,
         revisionId: mapping.revisionId,
       })}
-      onClick={(e) => e.stopPropagation()}
-      as="a"
+      alignVertically="left"
     >
       {mapping.model.name}
-    </A>
+    </Link>
   );
 };
 

@@ -72,11 +72,11 @@ export const extractMatchingLabels = (
                 console.warn('Unsupported nested value type');
                 return;
               }
-
+              const matchedProperty = `${getKey(property)} "${childKey}"`;
               if (isExactMatch(childValue, query)) {
-                matchers.exact.push(`${getKey(property)} ${childKey}`);
+                matchers.exact.push(matchedProperty);
               } else if (isPartialMatch(childValue, query, useSubstringMatch)) {
-                matchers.partial.push(`${getKey(property)} ${childKey}`);
+                matchers.partial.push(matchedProperty);
               }
             });
           } else {
@@ -85,10 +85,11 @@ export const extractMatchingLabels = (
                 console.warn('Unsupported nested value type');
                 return;
               }
+              const matchedProperty = `${getKey(property)} ${childValue}`;
               if (isExactMatch(childValue, query)) {
-                matchers.exact.push(`${getKey(property)} ${childValue}`);
+                matchers.exact.push(matchedProperty);
               } else if (isPartialMatch(childValue, query, useSubstringMatch)) {
-                matchers.partial.push(`${getKey(property)} ${childValue}`);
+                matchers.partial.push(matchedProperty);
               }
             });
           }

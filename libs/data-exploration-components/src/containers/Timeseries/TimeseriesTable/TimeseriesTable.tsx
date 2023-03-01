@@ -84,7 +84,7 @@ export const TimeseriesTable = ({
         }
         return (
           <TimeseriesChart
-            height={100}
+            height={50}
             showSmallerTicks
             timeseriesId={timeseries.id}
             numberOfPoints={100}
@@ -97,6 +97,7 @@ export const TimeseriesTable = ({
             minRowTicks={2}
             enableTooltipPreview
             dateRange={dateRange}
+            margin={{ top: 0, right: 0, bottom: 25, left: 0 }}
             onDateRangeChange={() => {}}
             onDataFetched={(data) =>
               setEmptyTimeseriesMap((emptyTimeseriesMap) => ({

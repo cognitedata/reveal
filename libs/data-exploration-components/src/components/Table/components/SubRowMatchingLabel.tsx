@@ -30,5 +30,5 @@ export const SubRowMatchingLabel = <
 
 const LabelMatcherWrapper = styled.div`
   display: flex;
-  padding: 0 12px 8px;
+  margin-top: 4px;
 `;

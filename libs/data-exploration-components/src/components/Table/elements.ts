@@ -174,8 +174,9 @@ export const MainRowContainer = styled.div`
   align-items: center;
 `;
 
-export const MainRowSubContainer = styled.div`
+export const MainRowSubContainer = styled.div<{ depth?: number }>`
   width: 100%;
+  padding-left: ${({ depth = 0 }) => `${depth * 2}rem`};
 `;
 
 export const Tbody = styled.div`
@@ -189,7 +190,11 @@ export const Tbody = styled.div`
 export const Td = styled.div`
   word-wrap: break-word;
   padding: 8px 12px;
+
   font-size: 14px;
+  &:first-of-type {
+    font-weight: 500;
+  }
 `;
 
 export const TableDataBody = styled(Body)`

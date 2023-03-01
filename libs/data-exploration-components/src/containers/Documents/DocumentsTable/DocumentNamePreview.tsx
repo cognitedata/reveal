@@ -8,12 +8,16 @@ import {
   FileThumbnail,
 } from '@data-exploration-components/components';
 import { Popover } from 'antd';
-import { mapMimeTypeToDocumentType, isFilePreviewable } from '../../../utils';
+import {
+  mapMimeTypeToDocumentType,
+  isFilePreviewable,
+  DASH,
+} from '../../../utils';
 import { DocumentIcon, Flex } from '@cognite/cogs.js';
 
 const DocumentIconWrapper = styled.div`
-  height: 32px;
-  width: 32px;
+  height: 28px;
+  width: 28px;
   display: flex;
   align-items: center;
 `;
@@ -51,13 +55,7 @@ export const DocumentNamePreview = ({
           {getDocumentIcon()}
         </Popover>
 
-        <EllipsisText level={2} lines={2}>
-          <Highlighter
-            searchWords={(query || '').split(' ')}
-            textToHighlight={name}
-            autoEscape
-          />
-        </EllipsisText>
+        <HighlightCell query={query} text={fileName || DASH} lines={1} />
       </Flex>
     );
   }
