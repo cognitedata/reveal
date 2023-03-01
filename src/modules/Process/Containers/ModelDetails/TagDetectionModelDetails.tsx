@@ -27,6 +27,7 @@ import {
   StyledCol,
   TableContainer,
 } from './modelDetailsStyles';
+import styled from 'styled-components';
 
 export const description = () => {
   return (
@@ -182,7 +183,7 @@ const Content = (modelIndex: number) => {
                     </SegmentedControl>
                   </th>
                 </tr>
-                <tr>
+                <tr style={{ verticalAlign: 'top' }}>
                   <td>
                     <Detail>Search within asset subtree</Detail>
                     <Tooltip
@@ -193,13 +194,17 @@ const Content = (modelIndex: number) => {
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
                     </Tooltip>
                   </td>
-                  <th style={{ maxWidth: '200px' }}>
-                    <AssetSelector
-                      assets={params.assetSubtreeIds}
-                      onSelectAssets={onAssetSubtreeIdsChange}
-                      hideTitle
-                      maxMenuHeight={100}
-                    />
+                  <th>
+                    <SelectContainer>
+                      <>
+                        <AssetSelector
+                          assets={params.assetSubtreeIds}
+                          onSelectAssets={onAssetSubtreeIdsChange}
+                          hideTitle
+                          maxMenuHeight={100}
+                        />
+                      </>
+                    </SelectContainer>
                   </th>
                 </tr>
                 <tr>
@@ -234,3 +239,8 @@ const Content = (modelIndex: number) => {
 };
 
 export const content = Content;
+
+const SelectContainer = styled.div`
+  width: 200px;
+  height: 62px;
+`;

@@ -166,7 +166,7 @@ export const ModelConfiguration = (props: {
         <Container>
           <ModelSelectContainer>
             <Body> Annotation Model</Body>
-            <div style={{ width: '255px', marginTop: '6px' }}>
+            <SelectContainer>
               <Select
                 closeMenuOnSelect
                 value={options.filter(
@@ -182,7 +182,7 @@ export const ModelConfiguration = (props: {
                 options={options}
                 disableTyping
               />
-            </div>
+            </SelectContainer>
           </ModelSelectContainer>
           <ModelSettingsContainer>
             {
@@ -207,10 +207,14 @@ const Container = styled.div`
 `;
 
 const ModelSelectContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-gap: 6px;
   margin-top: 22px;
   margin-left: 22px;
+  height: 62px;
+`;
+const SelectContainer = styled.div`
+  width: 255px;
 `;
 
 const ModelSettingsContainer = styled.div`

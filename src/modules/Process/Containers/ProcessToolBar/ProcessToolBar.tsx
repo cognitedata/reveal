@@ -8,7 +8,6 @@ import {
   setProcessViewFileUploadModalVisibility,
   setSelectedDetectionModels,
   setSelectFromExploreModalVisibility,
-  revertDetectionModelParameters,
   resetDetectionModelParameters,
   addToAvailableDetectionModels,
 } from 'src/modules/Process/store/slice';
@@ -106,14 +105,6 @@ export const ProcessToolBar = () => {
     return (
       <ConfigurationModelFooter>
         <Button
-          type="tertiary"
-          onClick={() => {
-            dispatch(resetDetectionModelParameters());
-          }}
-        >
-          Reset to default
-        </Button>
-        <Button
           type="primary"
           onClick={() => {
             setModalOpen(false);
@@ -121,6 +112,14 @@ export const ProcessToolBar = () => {
           }}
         >
           Save & close
+        </Button>
+        <Button
+          type="tertiary"
+          onClick={() => {
+            dispatch(resetDetectionModelParameters());
+          }}
+        >
+          Reset to default
         </Button>
       </ConfigurationModelFooter>
     );
@@ -137,35 +136,23 @@ export const ProcessToolBar = () => {
   return (
     <Container>
       <StyledModal
-        getContainer={getContainer}
-        title={<Title level={3}>Processing and annotation settings</Title>}
-        footer={detectionModelConfiguration()}
+        title="Processing and annotation settings"
         visible={isModalOpen}
-        width={967}
         closable={false}
-        closeIcon={
-          <div style={{ paddingTop: '12px' }}>
-            <Button icon="Close" iconPlacement="right" type="ghost">
-              Close
-            </Button>
-          </div>
-        }
-        onCancel={() => {
-          setModalOpen(false);
-          dispatch(revertDetectionModelParameters());
-        }}
-        style={{
-          background: '#fafafa',
-          borderRadius: '10px',
-        }}
+        getContainer={getContainer}
+        hideFooter={true}
       >
-        <ModelConfiguration
-          disabledModelTypes={disabledModelTypes}
-          customModels={customModels}
-          handleCustomModelCreate={() => {
-            dispatch(addToAvailableDetectionModels());
-          }}
-        />
+        <ModalContentWrapper>
+          <ModelConfiguration
+            disabledModelTypes={disabledModelTypes}
+            customModels={customModels}
+            handleCustomModelCreate={() => {
+              dispatch(addToAvailableDetectionModels());
+            }}
+          />
+          {/* Adding a customer footer as Cogs Ok and Cancel buttons are not working */}
+          {detectionModelConfiguration()}
+        </ModalContentWrapper>
       </StyledModal>
       <ToolContainer>
         <ProcessToolBarElement
@@ -258,13 +245,13 @@ const Container = styled.div`
   grid-template-columns: max-content max-content 1fr;
 `;
 
+const ModalContentWrapper = styled.div`
+  display: grid;
+  gap: 20px;
+`;
+
 const StyledModal = styled(Modal)`
-  .cogs-modal-footer {
-    border-top: 0;
-  }
-  .cogs-modal-header {
-    border-bottom: 0;
-  }
+  width: 850px;
 `;
 
 type ToolBarElemProps = {
@@ -321,5 +308,6 @@ const ModelOptions = styled.div`
 const ConfigurationModelFooter = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  gap: 10px;
+  justify-content: flex-start;
 `;

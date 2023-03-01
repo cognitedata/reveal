@@ -166,14 +166,18 @@ const Content = (modelIndex: number, customModels?: AutoMLModelCore[]) => {
                   </td>
                   <th>
                     <>
-                      <AutoMLModelSelectFilter
-                        closeMenuOnSelect
-                        isMulti={false}
-                        placeholder="Search model job"
-                        onJobSelected={onModelJobChange}
-                        models={customModels}
-                        selectedModelId={params.modelJobId}
-                      />
+                      <SelectContainer>
+                        <>
+                          <AutoMLModelSelectFilter
+                            closeMenuOnSelect
+                            isMulti={false}
+                            placeholder="Search model job"
+                            onJobSelected={onModelJobChange}
+                            models={customModels}
+                            selectedModelId={params.modelJobId}
+                          />
+                        </>
+                      </SelectContainer>
                       {showLoadingMessage && (
                         <ModelSelectContainer>
                           <Icon
@@ -263,4 +267,9 @@ const ModelSelectContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+`;
+
+const SelectContainer = styled.div`
+  width: 200px;
+  height: 62px;
 `;
