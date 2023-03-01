@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import {
   StyledSplitter,
   SearchResultWrapper,
@@ -27,6 +27,9 @@ import { CART_KEY, SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
 import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import { routes } from '@data-exploration-app/containers/App';
+import { createLink } from '@cognite/cdf-utilities';
+import { Asset } from '@cognite/sdk';
+import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
 export const AssetSearchResultView = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
@@ -35,6 +38,8 @@ export const AssetSearchResultView = () => {
   const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
   const [assetFilter, setAssetFilter] = useAssetFilters();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Here we need to parse params to find selected asset's id.
   const selectedAssetId = useSelectedResourceId();
@@ -46,6 +51,15 @@ export const AssetSearchResultView = () => {
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
     openPreview(item.id !== selectedAssetId ? item.id : undefined);
+  };
+
+  const handleShowAllAssetsClick = (item: Asset) => {
+    if (item.parentId) {
+      const search = getSearchParams(location.search);
+      navigate(
+        createLink(`/explore/search/asset/${item.parentId}/children`, search)
+      );
+    }
   };
 
   // TODO: Do we need cart and onSelect and selection context?
@@ -79,6 +93,7 @@ export const AssetSearchResultView = () => {
           filter={assetFilter}
           enableAdvancedFilters={isAdvancedFiltersEnabled}
           onClick={handleRowClick}
+          onShowAllAssetsClick={handleShowAllAssetsClick}
           onFilterChange={(newValue: Record<string, unknown>) =>
             setAssetFilter(newValue)
           }

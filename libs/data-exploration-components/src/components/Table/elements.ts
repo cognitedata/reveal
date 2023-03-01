@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 import zIndex from '../../utils/zIndex';
 
 const defaultRowHeight = '48px';
+const defaultExtraRowHeight = '24px';
 
 export const SummaryCardWrapper = styled.div`
   border-radius: 8px;
@@ -116,6 +117,11 @@ export const Tr = styled.div`
   padding: 0 8px;
 
   background: inherit;
+
+  &.extra-row {
+    background-color: var(--cogs-surface--medium);
+    min-height: ${defaultExtraRowHeight};
+  }
 
   &.selected {
     background-color: var(--cogs-surface--interactive--toggled-pressed);

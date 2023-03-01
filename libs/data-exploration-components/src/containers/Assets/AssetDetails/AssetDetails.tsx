@@ -18,16 +18,21 @@ export const AssetDetails = ({ asset }: Props) => {
   return (
     <GeneralDetails>
       <GeneralDetails.Item
-        key={asset.name}
+        key={`name-${asset.name}`}
         name="Name"
         value={asset.name}
         copyable
       />
       <GeneralDetails.Item name="Description" value={asset.description} />
-      <GeneralDetails.Item key={asset.id} name="ID" value={asset.id} copyable />
+      <GeneralDetails.Item
+        key={`id-${asset.id}`}
+        name="ID"
+        value={asset.id}
+        copyable
+      />
       <GeneralDetails.Item
         name="External ID"
-        key={asset.externalId}
+        key={`externalId-${asset.externalId}`}
         value={asset.externalId}
         copyable
       />
@@ -51,7 +56,7 @@ export const AssetDetails = ({ asset }: Props) => {
       />
       <GeneralDetails.Item
         name="Source"
-        key={asset.source}
+        key={`source-${asset.source}`}
         value={asset.source}
         copyable
       />

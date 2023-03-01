@@ -87,7 +87,11 @@ export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
   getSubrowData?: (originalRow: T, index: number) => undefined | T[];
   onRowExpanded?: OnChangeFn<ExpandedState>;
   enableCopying?: boolean;
+  // This is to render a sub component inside the row
   renderRowSubComponent?: (row: Row<T>) => React.ReactNode;
+  // This is to render an additional row after, depending on the row's value
+  renderSubRowComponent?: (row: Row<T>) => React.ReactNode;
+  // This is to render a sub component inside a cell of a row
   renderCellSubComponent?: (cell: Cell<T, unknown>) => React.ReactNode;
 };
 
@@ -125,6 +129,7 @@ export function Table<T extends TableData>({
   enableExpanding,
   onRowExpanded,
   renderRowSubComponent,
+  renderSubRowComponent,
   renderCellSubComponent,
 }: TableProps<T>) {
   const defaultColumn: Partial<ColumnDef<T, unknown>> = useMemo(
@@ -404,6 +409,7 @@ export function Table<T extends TableData>({
                       </MainRowSubContainer>
                     )}
                   </Tr>
+                  {renderSubRowComponent && renderSubRowComponent(row)}
                 </React.Fragment>
               );
             })}

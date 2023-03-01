@@ -32,6 +32,7 @@ export const AssetSearchResults = ({
   filter = {},
   showCount = false,
   onClick,
+  onShowAllAssetsClick,
   view,
   onViewChange,
   isTreeEnabled,
@@ -48,6 +49,7 @@ export const AssetSearchResults = ({
   showCount?: boolean;
   filter: InternalAssetFilters;
   onClick: (item: Asset) => void;
+  onShowAllAssetsClick: (item: Asset) => void;
   activeIds?: (string | number)[];
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & SelectableItemsProps) => {
@@ -186,6 +188,9 @@ export const AssetSearchResults = ({
           filter={filter}
           query={query}
           onAssetClicked={(asset) => onClick(asset)}
+          onAssetSeeMoreClicked={(asset) => {
+            onShowAllAssetsClick(asset);
+          }}
           tableHeaders={currentView !== 'list' ? tableHeaders : undefined}
           enableAdvancedFilters={enableAdvancedFilters}
           selectedRows={selectedRows}

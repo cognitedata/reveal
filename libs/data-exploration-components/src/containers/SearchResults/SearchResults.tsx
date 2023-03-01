@@ -44,6 +44,12 @@ export const SearchResults = ({
           view={assetView}
           onViewChange={setAssetView}
           onClick={(item) => onClick({ id: item.id, type: 'asset' })}
+          onShowAllAssetsClick={(item) =>
+            onClick({
+              id: item.parentId ? item.parentId : item.id,
+              type: 'asset',
+            })
+          }
           filter={{
             ...assetFilter,
             metadata: Object.entries(assetFilter?.metadata || {}).map(

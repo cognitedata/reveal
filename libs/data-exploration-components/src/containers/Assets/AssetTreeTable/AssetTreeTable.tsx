@@ -10,7 +10,12 @@ import {
   SelectableItemsProps,
   TableStateProps,
 } from '@data-exploration-components/types';
-import { HighlightCell, ResourceTableColumns } from '../../../components';
+import {
+  HighlightCell,
+  ResourceTableColumns,
+  SubRowMatchingLabel,
+  HierarchyExtraRow,
+} from '../../../components';
 import { Table } from '../../../components';
 import { EmptyState } from '../../../components/EmpyState/EmptyState';
 import { useSearchAssetTree } from '@data-exploration-lib/domain-layer';
@@ -34,6 +39,7 @@ export const AssetTreeTable = ({
   filter = {},
   query,
   onAssetClicked,
+  onAssetSeeMoreClicked,
   selectedRows,
   hierachyRootId,
   tableHeaders,
@@ -44,6 +50,7 @@ export const AssetTreeTable = ({
   filter: InternalAssetFilters;
   query?: string;
   onAssetClicked: (item: Asset) => void;
+  onAssetSeeMoreClicked: (item: Asset) => void;
   hierachyRootId?: number;
   disableScroll?: boolean;
   tableHeaders?: React.ReactElement;
@@ -302,6 +309,10 @@ export const AssetTreeTable = ({
             setSearchExpanded(expanded);
           }
         }}
+        renderRowSubComponent={SubRowMatchingLabel}
+        renderSubRowComponent={(row) =>
+          HierarchyExtraRow(row, onAssetSeeMoreClicked)
+        }
         renderCellSubComponent={SubCellMatchingLabels}
       />
     </Suspense>

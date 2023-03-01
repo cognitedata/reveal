@@ -25,6 +25,7 @@ export interface InternalAssetDataWithMatchingLabels extends InternalAssetData {
 export interface InternalAssetTreeData
   extends InternalAssetDataWithMatchingLabels {
   children?: InternalAssetTreeData[];
+  shouldShowMoreAssetsRow?: boolean;
 }
 
 export interface InternalAssetFilters extends InternalCommonFilters {

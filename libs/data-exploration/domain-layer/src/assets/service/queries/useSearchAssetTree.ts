@@ -74,9 +74,36 @@ export const useSearchAssetTree = ({
         return [...previousValue, buildTree(currentValue, parentAssets)];
       }, [] as InternalAssetTreeData[]);
 
-      return { data: concatParents(tree), ...rest };
+      const concattedParentsTree = concatParents(tree);
+      const flaggedTreeForMore = setIsLastFetched(concattedParentsTree[0]);
+
+      return { data: [flaggedTreeForMore], ...rest };
     }
 
     return { data, ...rest };
   }, [parentAssets, data, rest]);
+};
+
+// Compare childCount and children.length for each asset in the tree,
+// if not equal set shouldShowMoreAssetsRow flag true to the last child in the children array.
+const setIsLastFetched = (
+  rootAsset: InternalAssetTreeData
+): InternalAssetTreeData => {
+  const aggregateChildCount = rootAsset.aggregates?.childCount || 0;
+  let childrenArr = rootAsset.children || [];
+  if (aggregateChildCount > childrenArr.length) {
+    childrenArr = childrenArr.map((asset, index, arr) => {
+      return {
+        ...asset,
+        // Flag for last fetched child of an asset's parent in hierarchy view.
+        // Means that parent still have some children that are not fetched to be shown in the table.
+        shouldShowMoreAssetsRow: index === arr.length - 1,
+      };
+    });
+  }
+
+  return {
+    ...rootAsset,
+    children: [...childrenArr.map((asset) => setIsLastFetched(asset))],
+  };
 };

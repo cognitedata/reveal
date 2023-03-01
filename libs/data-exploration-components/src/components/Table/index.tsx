@@ -9,3 +9,4 @@ export * from './elements';
 export * from './types';
 export * from './components/DirectAssets';
 export * from './components/SubRowMatchingLabel';
+export * from './components/HierarchyExtraRow';
