@@ -33,6 +33,7 @@ export class Image360ApiHelper {
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
     currentImage360Entered?: Image360Entity;
+    currentImage360Visible?: Image360Entity;
     lastMousePosition?: { offsetX: number; offsetY: number };
   };
 
@@ -114,8 +115,8 @@ export class Image360ApiHelper {
 
   public async remove360Images(entities: Image360[]): Promise<void> {
     if (
-      this._interactionState.currentImage360Entered !== undefined &&
-      entities.includes(this._interactionState.currentImage360Entered)
+      this._interactionState.currentImage360Visible !== undefined &&
+      entities.includes(this._interactionState.currentImage360Visible)
     ) {
       this.exit360Image();
     }
@@ -126,24 +127,25 @@ export class Image360ApiHelper {
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
-    if (lastEntered360ImageEntity) {
-      lastEntered360ImageEntity.isEntered = false;
-    }
-    this._interactionState.currentImage360Entered = image360Entity;
-    image360Entity.isEntered = true;
-
     if (lastEntered360ImageEntity === image360Entity) {
       this._requestRedraw();
       return;
     }
+    this._interactionState.currentImage360Entered = image360Entity;
 
-    const error = await this._image360Facade.preload(image360Entity).catch(e => {
-      return e;
-    });
+    if (lastEntered360ImageEntity) {
+      lastEntered360ImageEntity.isEntered = false;
+    }
+    image360Entity.isEntered = true;
 
-    if (error || this._interactionState.currentImage360Entered !== image360Entity) {
+    await this._image360Facade.preload(image360Entity);
+
+    if (this._interactionState.currentImage360Entered !== image360Entity) {
       return;
     }
+
+    const lastVisible360ImageEntity = this._interactionState.currentImage360Visible;
+    this._interactionState.currentImage360Visible = image360Entity;
 
     this.set360CameraManager();
 
@@ -154,8 +156,8 @@ export class Image360ApiHelper {
     image360Entity.icon.visible = false;
 
     this._transitionInProgress = true;
-    if (lastEntered360ImageEntity !== undefined) {
-      await this.transition(lastEntered360ImageEntity, image360Entity);
+    if (lastVisible360ImageEntity !== undefined) {
+      await this.transition(lastVisible360ImageEntity, image360Entity);
       MetricsLogger.trackEvent('360ImageEntered', {});
     } else {
       const transitionDuration = 1000;
@@ -286,15 +288,15 @@ export class Image360ApiHelper {
 
   public exit360Image(): void {
     this._image360Facade.allIconsVisibility = true;
-    if (this._interactionState.currentImage360Entered !== undefined) {
+    if (this._interactionState.currentImage360Visible !== undefined) {
       this._image360Facade.collections
         .filter(imageCollection =>
-          imageCollection.image360Entities.includes(this._interactionState.currentImage360Entered!)
+          imageCollection.image360Entities.includes(this._interactionState.currentImage360Visible!)
         )
         .forEach(imageCollection => imageCollection.events.image360Exited.fire());
-      this._interactionState.currentImage360Entered.image360Visualization.visible = false;
-      this._interactionState.currentImage360Entered.isEntered = false;
-      this._interactionState.currentImage360Entered = undefined;
+      this._interactionState.currentImage360Visible.image360Visualization.visible = false;
+      this._interactionState.currentImage360Visible.isEntered = false;
+      this._interactionState.currentImage360Visible = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
     const { position, rotation } = this._image360Navigation.getCameraState();
@@ -377,7 +379,7 @@ export class Image360ApiHelper {
       return;
     }
 
-    const lastEntered = this._interactionState.currentImage360Entered;
+    const lastEntered = this._interactionState.currentImage360Visible;
     if (lastEntered !== undefined) {
       const transitionOutDuration = 600;
       const currentOpacity = lastEntered.image360Visualization.opacity;
