@@ -16,6 +16,7 @@ def _publish_fas(ctx):
         "@@VERSIONING_STRATEGY@@": ctx.attr.versioning_strategy,
         "@@PACKAGE_JSON_PATH@@": ctx.file.package_json.path,
         "@@SHOULD_PUBLISH_SOURCE_MAP@@": "true" if ctx.attr.sentry_project_name else "false",
+        "@@FUSION_PREVIEW@@": "true" if ctx.attr.fusion_preview else "false",
     }
     ctx.actions.expand_template(
         template = ctx.file._runner,
@@ -81,6 +82,11 @@ publish_fas = rule(
             allow_files = True,
             doc = "Dependencies for tracker",
             mandatory = True,
+        ),
+        "fusion_preview": attr.bool(
+            doc = "Fusion Preview Link",
+            mandatory = False,
+            default = False,
         ),
         "_runner": attr.label(
             default = "//rules/publish:publish_fas.template.bash",

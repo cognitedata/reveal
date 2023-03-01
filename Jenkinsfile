@@ -354,6 +354,7 @@ pods {
             def fasJsonString = sh(script: "bazel run --stamp ${cmd}", returnStdout: true)
             def params = readJSON text: fasJsonString
             print(params)
+            def isFusionPreview = params.fusion_preview == 'true'
             def target = cmd.split(':')[0].split('//')[1]
 
             def publish = { args ->
@@ -367,6 +368,13 @@ pods {
                   )
                   def fasBuildJson = readJSON text: fasBuildJsonString
                   def fasBuildEnv = fasBuildJson.build.env
+                  if(isFusionPreview){
+                    def publicURL = fasBuildEnv.get('PUBLIC_URL');
+                    def package_name = "@cognite/${params.repo_id}";
+                    def overrideUrl = "${publicURL}/index.js";
+                    def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=${overrideUrl}";
+                    pullRequest.comment("Fusion Preview URL: [$url]($url)");
+                  }
                   // Iterate over generated env vars and replace placeholder values defined in BUILD.bazel
                   for (key in fasBuildEnv.keySet()) {
                     def value = fasBuildEnv.get(key)

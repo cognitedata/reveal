@@ -14,7 +14,7 @@ const lifecycles = singleSpaReact({
   errorBoundary() {
     // eslint-disable-line
     // Customize the root error boundary for your microfrontend here.
-    return <span>An error occured in your app</span>;
+    return <span>An error occured in your app.</span>;
   },
 });
 
