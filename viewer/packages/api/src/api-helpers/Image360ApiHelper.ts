@@ -36,6 +36,7 @@ export class Image360ApiHelper {
 
   private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity), 300, { leading: true });
   private readonly _requestRedraw: () => void;
+  private readonly _requestImageUpdate: () => void;
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
   private _cachedCameraManager: CameraManager;
@@ -59,6 +60,11 @@ export class Image360ApiHelper {
     this._activeCameraManager = activeCameraManager;
     this._cachedCameraManager = activeCameraManager.innerCameraManager;
     this._requestRedraw = requestRedraw;
+    this._requestImageUpdate = () => {
+      if (!this._transitionInProgress) {
+        this._requestRedraw();
+      }
+    };
 
     const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event);
     domElement.addEventListener('mousemove', setHoverIconEventHandler);
@@ -99,8 +105,11 @@ export class Image360ApiHelper {
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
+    if (lastEntered360ImageEntity) {
+      lastEntered360ImageEntity.allowRedrawCalls(() => {});
+    }
     this._interactionState.currentImage360Entered = image360Entity;
-    this._interactionState.currentImage360Entered.allowRedrawCalls(this._requestRedraw);
+    this._interactionState.currentImage360Entered.allowRedrawCalls(this._requestImageUpdate);
 
     if (lastEntered360ImageEntity === image360Entity) {
       this._requestRedraw();
