@@ -19,6 +19,7 @@ import {
   SearchDataDTO,
   UpdateDataModelDTO,
   GetByExternalIdDTO,
+  DeleteDataModelOutput,
 } from '../dto';
 import { ListSpacesDTO } from '../providers/fdm-next/dto/dms-space-dtos';
 
@@ -93,7 +94,7 @@ export interface FlexibleDataModelingClient {
    * Deletes the specified Data Model including all versions
    * And the data related with it.
    */
-  deleteDataModel(dto: DeleteDataModelDTO): Promise<unknown>;
+  deleteDataModel(dto: DeleteDataModelDTO): Promise<DeleteDataModelOutput>;
 
   /**
    * Validates Data Model GraphQL.

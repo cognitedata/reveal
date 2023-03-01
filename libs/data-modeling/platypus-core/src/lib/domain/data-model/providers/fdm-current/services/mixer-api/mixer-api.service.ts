@@ -15,6 +15,7 @@ import {
   RunQueryDTO,
   ConflictMode,
   ValidateDataModelDTO,
+  DeleteDataModelOutput,
 } from '../../../../dto';
 
 export class MixerApiService {
@@ -132,7 +133,7 @@ export class MixerApiService {
     return this.upsertApiVersion(dto, conflictMode);
   }
 
-  deleteApi(externalId: string): Promise<unknown> {
+  deleteApi(externalId: string): Promise<DeleteDataModelOutput> {
     const deleteDTO = {
       query: `mutation deleteApi($externalId: ID!) {
         deleteApis(externalIds: [$externalId]) {
@@ -145,7 +146,7 @@ export class MixerApiService {
     } as GraphQlQueryParams;
     return this.runGraphQlQuery(this.schemaServiceBaseUrl, deleteDTO)
       .then((response) => {
-        return response.data.data.deleteApis[0];
+        return { success: true, data: response.data.data.deleteApis[0] };
       })
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }

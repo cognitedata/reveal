@@ -8,6 +8,9 @@ import {
   FdmClient,
   FdmMixerApiService,
   SpacesApiService,
+  ContainersApiService,
+  ViewsApiService,
+  DataModelsApiService,
 } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
@@ -39,6 +42,9 @@ export const getTransformationsApiService = () => {
 export const getFlexibleDataModelingClient = () => {
   return new FdmClient(
     getFdmV3SpacesApiService(),
+    new ContainersApiService(getCogniteSDKClient()),
+    new ViewsApiService(getCogniteSDKClient()),
+    new DataModelsApiService(getCogniteSDKClient()),
     getFdmV3MixerApiService(),
     new GraphQlUtilsService(),
     getTransformationsApiService()

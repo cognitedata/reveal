@@ -1,4 +1,5 @@
 import { Chip } from '@cognite/cogs.js';
+import { NoNameDisplayName } from '@platypus-app/constants';
 import { ICellRendererParams } from 'ag-grid-community';
 import React from 'react';
 
@@ -30,7 +31,7 @@ export const DataModelNameCellRenderer = React.memo(
     };
     return (
       <span>
-        {params.value || '<no name>'}
+        {params.value || NoNameDisplayName}
         {params.data.version ? renderChip() : null}
       </span>
     );

@@ -22,6 +22,7 @@ export const builder = (yargs: Argv) => {
     .command(createCmd)
     .command(publishCmd)
     .command(listCmd)
+    .command(deleteCmd)
     .command(generateCmd)
     .demandCommand(1)
     .version(false);

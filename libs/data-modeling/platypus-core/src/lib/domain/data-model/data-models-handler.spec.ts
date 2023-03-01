@@ -65,7 +65,8 @@ describe('DataModelsHandlerTest', () => {
   it('should delete data model', async () => {
     const service = createInstance();
     const reqDto = {
-      id: 'test group',
+      externalId: 'test group',
+      space: 'space',
     };
     await service.delete(reqDto);
     expect(fdmClientMock.deleteDataModel).toBeCalledWith(reqDto);

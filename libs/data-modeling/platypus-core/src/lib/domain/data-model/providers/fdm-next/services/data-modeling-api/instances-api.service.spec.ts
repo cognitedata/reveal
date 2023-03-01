@@ -43,7 +43,6 @@ describe('DMS v3 - Instances', () => {
           views: [
             {
               view: {
-                type: 'view',
                 space: 'space-id',
                 externalId: 'external-id-1',
                 version: '1',

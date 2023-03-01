@@ -22,6 +22,7 @@ const RESULTS_PER_PAGE = 25;
 
 export interface DataModelsTableProps {
   dataModels: DataModel[];
+  onDelete: (dataModel: DataModel) => void;
   filteredRowCount: number;
 }
 
@@ -81,6 +82,7 @@ export const DataModelsTable = React.forwardRef(
           {...gridOptions}
           context={{
             dataModelsWithDrafts: dataModelsWithDrafts || [],
+            onDelete: props.onDelete,
           }}
           wrapperStyle={{ height: 'calc(100% - 100px)' }}
           theme={'basic-striped'}

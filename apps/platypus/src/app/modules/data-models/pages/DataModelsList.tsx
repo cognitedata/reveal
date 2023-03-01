@@ -89,6 +89,7 @@ export const DataModelsList = () => {
           filteredRowCount={filterCount || dataModels.length}
           dataModels={dataModels}
           ref={gridRef}
+          onDelete={(dataModel) => setDataModelToDelete(dataModel)}
         />
       ) : (
         renderEmptyList()

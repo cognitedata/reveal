@@ -1,3 +1,6 @@
+import { DataModelDTO } from '../providers/fdm-next/dto/dms-data-model-dtos';
+import { ViewReference } from '../providers/fdm-next/dto/dms-view-dtos';
+
 export interface FetchDataModelDTO {
   dataModelId: string;
   space: string;
@@ -19,5 +22,11 @@ export interface UpdateDataModelDTO extends CreateDataModelDTO {
 }
 
 export interface DeleteDataModelDTO {
-  id: string;
+  space: string;
+  externalId: string;
 }
+
+export type DeleteDataModelOutput = {
+  success: boolean;
+  referencedViews?: (ViewReference & { dataModels: DataModelDTO[] })[];
+};

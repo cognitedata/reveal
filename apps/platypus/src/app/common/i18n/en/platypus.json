@@ -9,7 +9,7 @@
   "add_type": "Add type",
   "all_changes_saved": "All changes saved",
   "are_you_sure_to_delete_data_model_1": "Are you sure you want to delete «",
-  "are_you_sure_to_delete_data_model_2": "»? You will lose all the data and cannot restore it later.",
+  "are_you_sure_to_delete_data_model_2": "»? This is an irreversible action. We will delete all unreferenced and unused data types within the data model. This may take a few minutes.",
   "are_you_sure_to_delete_data_row_1": "Are you sure you want to delete ",
   "are_you_sure_to_delete_data_row_2": "?",
   "are_you_sure_to_delete_data_row_3": "This will delete the content of the instance.",

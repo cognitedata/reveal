@@ -24,6 +24,123 @@ const spacesApiMock = {
   },
 } as any;
 
+const dataModels = [
+  {
+    space: 'ABC',
+    externalId: 'DM1',
+    version: '1',
+    createdTime: 1677323010547,
+    lastUpdatedTime: 1677323060528,
+    name: 'DM1',
+    description: '',
+    graphqlSchema:
+      'type A {\n    name: String\n}\ntype B {\n    name: String\n}',
+    views: [
+      {
+        type: 'view',
+        space: 'ABC',
+        externalId: 'A',
+        version: '1',
+      },
+      {
+        type: 'view',
+        space: 'ABC',
+        externalId: 'B',
+        version: '1',
+      },
+    ],
+  },
+  {
+    space: 'ABC',
+    externalId: 'DM2',
+    version: '1',
+    createdTime: 1677323083652,
+    lastUpdatedTime: 1677323108130,
+    name: 'DM2',
+    description: '',
+    graphqlSchema:
+      'type A {\n    name: String\n}\ntype B {\n    name: String\n}\ntype C {\n    name: String\n}',
+    views: [
+      {
+        type: 'view',
+        space: 'ABC',
+        externalId: 'A',
+        version: '1',
+      },
+      {
+        type: 'view',
+        space: 'ABC',
+        externalId: 'B',
+        version: '1',
+      },
+      {
+        type: 'view',
+        space: 'ABC',
+        externalId: 'C',
+        version: '1',
+      },
+    ],
+  },
+  {
+    space: 'ABCD',
+    externalId: 'DM3',
+    version: '1',
+    createdTime: 1677323123565,
+    lastUpdatedTime: 1677323181388,
+    name: 'DM3',
+    description: '',
+    graphqlSchema:
+      'type A @view(space:"ABC") {\n    name: String\n}\n\ntype D {\n    name: String\n}',
+    views: [
+      {
+        type: 'view',
+        space: 'ABC',
+        externalId: 'A',
+        version: '1',
+      },
+      {
+        type: 'view',
+        space: 'ABCD',
+        externalId: 'D',
+        version: '1',
+      },
+    ],
+  },
+];
+
+const dataModelsApiMock = {
+  working: {
+    getByIds: jest.fn(
+      (params: { items: { space: string; externalId: string }[] }) =>
+        Promise.resolve({
+          items: dataModels.filter((dm) =>
+            params.items.some(
+              (el) => el.externalId === dm.externalId && el.space === dm.space
+            )
+          ),
+        })
+    ),
+    list: jest.fn(() =>
+      Promise.resolve({
+        items: dataModels,
+      })
+    ),
+    delete: jest.fn((dto: SpaceDTO[]) => Promise.resolve({ items: dto })),
+  },
+} as any;
+
+const viewsApiMock = {
+  working: {
+    delete: jest.fn((dto: SpaceDTO[]) => Promise.resolve({ items: dto })),
+  },
+} as any;
+
+const containersApiMock = {
+  working: {
+    delete: jest.fn((dto: SpaceDTO[]) => Promise.resolve({ items: dto })),
+  },
+} as any;
+
 const mixerApiMock = {
   working: {
     validateVersion: jest.fn(() => Promise.resolve([])),
@@ -70,6 +187,9 @@ describe('FDM v3 Client', () => {
       const transformationsService = transformationApiMock.working;
       const fdmClient = new FdmClient(
         spacesApi,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
         mixerApi,
         graphqlService,
         transformationsService
@@ -99,6 +219,9 @@ describe('FDM v3 Client', () => {
       const transformationsService = transformationApiMock.working;
       const fdmClient = new FdmClient(
         spacesApi,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
         mixerApi,
         graphqlService,
         transformationsService
@@ -117,6 +240,9 @@ describe('FDM v3 Client', () => {
       const transformationsService = transformationApiMock.working;
       const fdmClient = new FdmClient(
         spacesApi,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
         mixerApi,
         graphqlService,
         transformationsService
@@ -145,6 +271,9 @@ describe('FDM v3 Client', () => {
       const transformationsService = transformationApiMock.working;
       const fdmClient = new FdmClient(
         spacesApi,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
         mixerApi,
         graphqlService,
         transformationsService
@@ -178,6 +307,9 @@ describe('FDM v3 Client', () => {
       const transformationsService = transformationApiMock.working;
       const fdmClient = new FdmClient(
         spacesApi,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
         mixerApi,
         graphqlService,
         transformationsService
@@ -213,6 +345,9 @@ describe('FDM v3 Client', () => {
       const transformationsService = transformationApiMock.working;
       const fdmClient = new FdmClient(
         spacesApi,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
         mixerApi,
         graphqlService,
         transformationsService
@@ -241,6 +376,9 @@ describe('FDM v3 Client', () => {
       const transformationsService = transformationApiMock.working;
       const fdmClient = new FdmClient(
         spacesApi,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
         mixerApi,
         graphqlService,
         transformationsService
@@ -284,6 +422,9 @@ describe('FDM v3 Client', () => {
       const transformationsService = transformationApiMock.working;
       const fdmClient = new FdmClient(
         spacesApi,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
         mixerApi,
         graphqlService,
         transformationsService
@@ -306,6 +447,9 @@ describe('FDM v3 Client', () => {
       const transformationsService = transformationApiMock.working;
       const fdmClient = new FdmClient(
         spacesApi,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
         mixerApi,
         graphqlService,
         transformationsService
@@ -326,6 +470,138 @@ describe('FDM v3 Client', () => {
         space: 'testSpace',
         name: 'testSpaceName',
       });
+    });
+  });
+  describe('should delete data model', () => {
+    test('delete data model - simple', async () => {
+      const fdmClient = new FdmClient(
+        spacesApiMock.working,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
+        mixerApiMock.working,
+        graphqlServiceMock.working,
+        transformationApiMock.working
+      );
+
+      const response = await fdmClient.deleteDataModel({
+        space: 'ABCD',
+        externalId: 'DM3',
+      });
+      // A and B are kept because they are imported in DM 1 and DM2
+      expect(response.referencedViews).toEqual([
+        {
+          externalId: 'A',
+          space: 'ABC',
+          version: '1',
+          dataModels: [
+            expect.objectContaining({
+              name: 'DM1',
+            }),
+            expect.objectContaining({
+              name: 'DM2',
+            }),
+          ],
+        },
+      ]);
+      expect(response.success).toBe(true);
+    });
+    test('delete data model - complex', async () => {
+      const fdmClient = new FdmClient(
+        spacesApiMock.working,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
+        mixerApiMock.working,
+        graphqlServiceMock.working,
+        transformationApiMock.working
+      );
+
+      const response = await fdmClient.deleteDataModel({
+        space: 'ABC',
+        externalId: 'DM2',
+      });
+      // A and B are kept because they are imported in DM 1 and DM3
+      expect(response.referencedViews).toEqual([
+        {
+          externalId: 'A',
+          space: 'ABC',
+          version: '1',
+          dataModels: [
+            expect.objectContaining({
+              name: 'DM1',
+            }),
+            expect.objectContaining({
+              name: 'DM3',
+            }),
+          ],
+        },
+        {
+          externalId: 'B',
+          space: 'ABC',
+          version: '1',
+          dataModels: [
+            expect.objectContaining({
+              name: 'DM1',
+            }),
+          ],
+        },
+      ]);
+      expect(response.success).toBe(true);
+    });
+    test('delete data model - complex - views check', async () => {
+      const fdmClient = new FdmClient(
+        spacesApiMock.working,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
+        mixerApiMock.working,
+        graphqlServiceMock.working,
+        transformationApiMock.working
+      );
+
+      dataModelsApiMock.working.list.mockImplementation(async () =>
+        Promise.resolve({
+          items: dataModels.filter((el) => el.externalId !== 'DM1'),
+        })
+      );
+
+      const responseA = await fdmClient.deleteDataModel({
+        space: 'ABC',
+        externalId: 'DM2',
+      });
+      // A is kept because they are imported in DM3
+      expect(responseA.referencedViews).toEqual(
+        expect.objectContaining([
+          {
+            externalId: 'A',
+            space: 'ABC',
+            version: '1',
+            dataModels: [
+              expect.objectContaining({
+                name: 'DM3',
+              }),
+            ],
+          },
+        ])
+      );
+      expect(responseA.success).toBe(true);
+
+      dataModelsApiMock.working.list.mockImplementation(async () =>
+        Promise.resolve({
+          items: dataModels.filter(
+            (el) => el.externalId !== 'DM1' && el.externalId !== 'DM3'
+          ),
+        })
+      );
+
+      const responseB = await fdmClient.deleteDataModel({
+        space: 'ABC',
+        externalId: 'DM2',
+      });
+      // all views are deleted
+      expect(responseB.referencedViews).toEqual([]);
+      expect(responseB.success).toBe(true);
     });
   });
 });

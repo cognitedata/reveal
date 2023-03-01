@@ -7,6 +7,7 @@ import { FlexibleDataModelingClient } from './boundaries';
 import {
   CreateDataModelDTO,
   DeleteDataModelDTO,
+  DeleteDataModelOutput,
   FetchDataModelDTO,
   UpdateDataModelDTO,
 } from './dto';
@@ -92,7 +93,7 @@ export class DataModelsHandler {
    * Deletes the specified Data Model including all versions
    * And the data related with it.
    */
-  delete(dto: DeleteDataModelDTO): Promise<Result<unknown>> {
+  delete(dto: DeleteDataModelDTO): Promise<Result<DeleteDataModelOutput>> {
     return this.fdmClient
       .deleteDataModel(dto)
       .then((res) => Result.ok(res))

@@ -16,6 +16,9 @@ import {
   FlexibleDataModelingClient,
   SpacesApiService,
   FdmMixerApiService,
+  ContainersApiService,
+  ViewsApiService,
+  DataModelsApiService,
 } from '@platypus/platypus-core';
 
 import { DateUtilsImpl, TimeUtilsImpl } from '@platypus-app/utils/data';
@@ -63,6 +66,9 @@ rootInjector
     if (isFDMv3()) {
       return new FdmClient(
         new SpacesApiService(sdkClient),
+        new ContainersApiService(sdkClient),
+        new ViewsApiService(sdkClient),
+        new DataModelsApiService(sdkClient),
         new FdmMixerApiService(sdkClient),
         new GraphQlUtilsService(),
         new TransformationApiService(sdkClient)

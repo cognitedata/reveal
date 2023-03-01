@@ -1,16 +1,21 @@
 import { gridConfigService } from '@cognite/cog-data-grid';
 import { Icon } from '@cognite/cogs.js';
 import { TOKENS } from '@platypus-app/di';
+import { isFDMv3 } from '@platypus-app/flags';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { DataModel } from '@platypus/platypus-core';
 import { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import { useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
+import { DataModelActionsCellRenderer } from '../components/DataModelsTable/DataModelActionsCellRenderer';
 import { DataModelNameCellRenderer } from '../components/DataModelsTable/DataModelNameCellRenderer';
 
 export const useDataModelsGridConfig = () => {
   const { t } = useTranslation('DataModelsTable');
   const dateUtils = useInjection(TOKENS.dateUtils);
+
+  const isFDMV3 = isFDMv3();
 
   const getGridOptions = useCallback(() => {
     return Object.assign(gridConfigService.getGridConfig('basic-striped'), {
@@ -66,6 +71,16 @@ export const useDataModelsGridConfig = () => {
         headerName: t('data_models_list_description_column', 'Description'),
         type: 'textColType',
       },
+      ...(isFDMV3
+        ? [
+            {
+              headerName: '',
+              type: 'customColType',
+              sortable: false,
+              cellRenderer: DataModelActionsCellRenderer,
+            },
+          ]
+        : []),
     ];
   }, [dateUtils, t]);
 

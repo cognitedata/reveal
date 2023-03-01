@@ -292,6 +292,8 @@ export const mockDataSample = {
 
   // dms v3 stuff
   dmsV3Spaces: fdmSpacesMockData,
+  dmsV3Views: fdmViewsMockData,
+  dmsV3Containers: fdmContainersMockData,
   containers: fdmContainersMockData,
   views: fdmViewsMockData,
   instances: fdmInstancesMockData,

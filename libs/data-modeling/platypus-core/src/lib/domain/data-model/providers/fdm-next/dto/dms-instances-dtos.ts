@@ -16,7 +16,7 @@ export interface NodeContainerWrite {
   space: string;
   externalId: string;
   containers: Array<{
-    container: ContainerReference;
+    container: ContainerReference & { type: 'container' };
     properties: any;
   }>;
 }

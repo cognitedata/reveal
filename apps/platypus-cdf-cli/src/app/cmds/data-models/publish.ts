@@ -138,6 +138,10 @@ export class PublishCmd extends CLICommand {
       return;
     }
 
+    Response.info(
+      `Publishing to data model version ${dto.version}. This can take a few minutes...`
+    );
+
     const dataModelMetadata = dataModelResponse.getValue();
     const response = await this.dataModelVersionsHandler.publish(
       {

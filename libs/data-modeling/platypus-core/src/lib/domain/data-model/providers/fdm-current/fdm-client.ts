@@ -24,6 +24,7 @@ import {
   IngestInstanceDTO,
   SearchDataDTO,
   GetByExternalIdDTO,
+  DeleteDataModelOutput,
 } from '../../dto';
 import { TransformationApiService } from '../../services';
 import { DataModelValidationErrorDataMapper } from '../../services/data-mappers/data-model-validation-error-data-mapper';
@@ -294,8 +295,8 @@ export class FdmV2Client implements FlexibleDataModelingClient {
    * Deletes the specified Data Model including all versions
    * And the data related with it.
    */
-  deleteDataModel(dto: DeleteDataModelDTO): Promise<unknown> {
-    return this.mixerApiService.deleteApi(dto.id);
+  deleteDataModel(dto: DeleteDataModelDTO): Promise<DeleteDataModelOutput> {
+    return this.mixerApiService.deleteApi(dto.externalId);
   }
 
   /**
