@@ -13,8 +13,6 @@ import {
   Table,
 } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
-
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
@@ -31,6 +29,7 @@ export const AssetSummary = ({
   filter = {},
   onAllResultsClick,
   onRowClick = noop,
+  isAdvancedFiltersEnabled = false,
 }: {
   query?: string;
   onRowClick?: (row: Asset) => void;
@@ -38,6 +37,7 @@ export const AssetSummary = ({
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
+  isAdvancedFiltersEnabled?: boolean;
 }) => {
   const { data, isLoading } = useAssetsSearchResultWithLabelsQuery({
     query,
@@ -48,7 +48,6 @@ export const AssetSummary = ({
   const metadataColumns = useMemo(() => {
     return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
   }, [metadataKeys]);
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const columns = useMemo(
     () =>

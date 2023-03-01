@@ -20,7 +20,7 @@ import {
   useTimeseriesSearchResultWithLabelsQuery,
   InternalTimeseriesDataWithMatchingLabels,
 } from '@data-exploration-lib/domain-layer';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 
 export const TimeseriesSummary = ({
@@ -29,6 +29,7 @@ export const TimeseriesSummary = ({
   onAllResultsClick,
   onRowClick,
   onRootAssetClick,
+  isAdvancedFiltersEnabled = false,
 }: {
   query?: string;
   filter: InternalTimeseriesFilters;
@@ -37,6 +38,7 @@ export const TimeseriesSummary = ({
   ) => void;
   onRowClick?: (row: Timeseries) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
+  isAdvancedFiltersEnabled?: boolean;
 }) => {
   const api = convertResourceType('timeSeries');
 
@@ -52,7 +54,6 @@ export const TimeseriesSummary = ({
       ResourceTableColumns.metadata(String(key))
     );
   }, [metadataKeys]);
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const columns = useMemo(() => {
     return [

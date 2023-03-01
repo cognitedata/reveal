@@ -19,7 +19,7 @@ import { getSummaryCardItems } from '@data-exploration-components/components/Sum
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { EMPTY_OBJECT } from '@data-exploration-lib/core';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 
 export const SequenceSummary = ({
@@ -28,6 +28,7 @@ export const SequenceSummary = ({
   onAllResultsClick,
   onRowClick,
   onRootAssetClick,
+  isAdvancedFiltersEnabled = false,
 }: {
   query?: string;
   filter: InternalSequenceFilters;
@@ -36,6 +37,7 @@ export const SequenceSummary = ({
   ) => void;
   onRowClick?: (row: Sequence) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
+  isAdvancedFiltersEnabled?: boolean;
 }) => {
   const { isLoading, data } = useSequenceSearchResultWithMatchingLabelsQuery({
     filter,
@@ -65,7 +67,6 @@ export const SequenceSummary = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [metadataColumns]
   );
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const hiddenColumns = useGetHiddenColumns(columns, ['name', 'description']);
 

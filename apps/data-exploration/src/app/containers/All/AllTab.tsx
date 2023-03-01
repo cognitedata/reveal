@@ -60,6 +60,7 @@ export const AllTab = () => {
     <SearchResultWrapper>
       <AllTabContainer>
         <AssetSummary
+          isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
           filter={commonFilters}
           query={query}
           onRowClick={(row) =>
@@ -68,6 +69,7 @@ export const AllTab = () => {
           onAllResultsClick={() => handleAllResultsClick(ResourceTypes.Asset)}
         />
         <TimeseriesSummary
+          isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
           filter={commonFilters}
           query={query}
           onRowClick={(row) =>
@@ -107,6 +109,7 @@ export const AllTab = () => {
           />
         )}
         <EventSummary
+          isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
           filter={commonFilters}
           query={query}
           onRowClick={(row) =>
@@ -117,6 +120,7 @@ export const AllTab = () => {
         <SequenceSummary
           filter={commonFilters}
           query={query}
+          isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
           onRowClick={(row) =>
             handleSummaryRowClick(ResourceTypes.Sequence, row.id)
           }

@@ -20,7 +20,6 @@ import { getSummaryCardItems } from '@data-exploration-components/components/Sum
 import noop from 'lodash/noop';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 
 export const EventSummary = ({
@@ -28,6 +27,7 @@ export const EventSummary = ({
   filter = {},
   onAllResultsClick,
   onRowClick = noop,
+  isAdvancedFiltersEnabled = false,
 }: {
   query?: string;
   filter: InternalEventsFilters;
@@ -35,6 +35,7 @@ export const EventSummary = ({
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   onRowClick?: (row: CogniteEvent) => void;
+  isAdvancedFiltersEnabled?: boolean;
 }) => {
   const { data, isLoading } = useEventsSearchResultWithLabelsQuery({
     query,
@@ -45,7 +46,6 @@ export const EventSummary = ({
   const metadataColumns = useMemo(() => {
     return metadataKeys.map((key) => ResourceTableColumns.metadata(key));
   }, [metadataKeys]);
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const columns = useMemo(
     () =>
