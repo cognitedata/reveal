@@ -84,8 +84,9 @@ export class Image360Entity implements Image360 {
     } else {
       await this._image360VisualzationBox.loadImages(lowResolutionFaces);
 
-      fullResolutionFaces.then(faces => {
-        this._image360VisualzationBox.setFaceMaterials(faces).then(() => this._requestRedraw());
+      fullResolutionFaces.then(async faces => {
+        await this._image360VisualzationBox.setFaceMaterials(faces);
+        this._requestRedraw();
       });
     }
   }
