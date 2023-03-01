@@ -15,7 +15,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { ModelMapping, EMFeatureType } from 'context/QuickMatchContext';
+import { ModelMapping, EMFeatureType, Scope } from 'context/QuickMatchContext';
 
 export const IN_PROGRESS_EM_STATES = ['queued', 'running'];
 
@@ -166,6 +166,11 @@ export const getQMTargetDownloadKey = (): QueryKey => [
   'target-download',
 ];
 
+type ConfirmedMatch = {
+  sourceId: number;
+  targetId: number;
+};
+
 export const useCreateEMModel = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
@@ -177,20 +182,22 @@ export const useCreateEMModel = () => {
       targetsList,
       matchFields,
       featureType,
+      supervisedMode,
+      scope,
     }: {
       sourcesList: InternalId[];
       targetsList: InternalId[];
       matchFields: ModelMapping;
       featureType: EMFeatureType;
+      supervisedMode?: boolean;
+      scope: Scope;
     }) => {
       const [sources, targets] = await Promise.all([
         queryClient.fetchQuery(getQMSourceDownloadKey(), async () => {
           const timeseries = await sdk.timeseries.retrieve(sourcesList);
-          return timeseries.map(({ id, externalId, name }) => ({
-            id,
-            externalId,
-            name,
-          }));
+          return scope === 'all'
+            ? timeseries
+            : timeseries.filter((ts) => !ts.assetId);
         }),
         queryClient.fetchQuery(getQMTargetDownloadKey(), async () => {
           const assets = await sdk.assets.retrieve(targetsList);
@@ -202,6 +209,22 @@ export const useCreateEMModel = () => {
         }),
       ]);
 
+      const trueMatches = supervisedMode
+        ? sources.reduce(
+            (accl: ConfirmedMatch[], ts) =>
+              ts.assetId
+                ? [
+                    ...accl,
+                    {
+                      sourceId: ts.id,
+                      targetId: ts.assetId,
+                    },
+                  ]
+                : accl,
+            []
+          )
+        : undefined;
+
       return sdk
         .post<EntityMatchingModel>(
           `/api/v1/projects/${sdk.project}/context/entitymatching`,
@@ -211,6 +234,7 @@ export const useCreateEMModel = () => {
               featureType,
               sources,
               targets,
+              trueMatches,
               matchFields: matchFields.filter(
                 ({ source, target }) => !!source && !!target
               ),

@@ -25,6 +25,8 @@ export default function QuickMatch() {
     sourcesList,
     targetsList,
     matchFields,
+    supervisedMode,
+    scope,
   } = useQuickMatchContext();
   const { mutateAsync: buildModel } = useCreateEMModel();
   return (
@@ -51,6 +53,8 @@ export default function QuickMatch() {
                 targetsList,
                 featureType,
                 matchFields,
+                supervisedMode,
+                scope,
               }).then((model) => {
                 setModelId(model.id);
                 pushStep();

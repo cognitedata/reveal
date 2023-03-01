@@ -44,12 +44,17 @@ type AssetKeys = keyof Pick<Asset, 'name' | 'description'>;
 
 export type ModelMapping = { source?: TimeseriesKeys; target?: AssetKeys }[];
 
+export type Scope = 'all' | 'unmatched';
+
 type QuickMatchContext = {
   featureType: EMFeatureType;
   setFeatureType: Dispatch<SetStateAction<EMFeatureType>>;
 
   supervisedMode: boolean;
   setSupervisedMode: Dispatch<SetStateAction<boolean>>;
+
+  scope: Scope;
+  setScope: Dispatch<SetStateAction<Scope>>;
 
   unmatchedOnly: boolean;
   setUnmatchedOnly: Dispatch<SetStateAction<boolean>>;
@@ -165,6 +170,10 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   setFeatureType: function (_: SetStateAction<EMFeatureType>): void {
     throw new Error('Function not implemented.');
   },
+  scope: 'all',
+  setScope: function (_: SetStateAction<Scope>): void {
+    throw new Error('Function not implemented.');
+  },
 });
 
 export const useQuickMatchContext = () => useContext(QuickMatchContext);
@@ -178,6 +187,8 @@ export const QuickMatchContextProvider = ({
     'simple',
     'featureType'
   );
+
+  const [scope, setScope] = useContextState<Scope>('all', 'scope');
 
   const [supervisedMode, setSupervisedMode] = useContextState(
     false,
@@ -293,6 +304,8 @@ export const QuickMatchContextProvider = ({
         setSupervisedMode,
         featureType,
         setFeatureType,
+        scope,
+        setScope,
       }}
     >
       {children}

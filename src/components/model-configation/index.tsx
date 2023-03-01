@@ -8,7 +8,11 @@ import {
 } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import FieldMapping from 'components/field-mapping';
-import { EMFeatureType, useQuickMatchContext } from 'context/QuickMatchContext';
+import {
+  EMFeatureType,
+  Scope,
+  useQuickMatchContext,
+} from 'context/QuickMatchContext';
 
 export default function ModelConfiguration() {
   const { t } = useTranslation();
@@ -20,6 +24,8 @@ export default function ModelConfiguration() {
     setSupervisedMode,
     featureType,
     setFeatureType,
+    scope,
+    setScope,
   } = useQuickMatchContext();
   return (
     <Flex direction="column" gap={12}>
@@ -94,6 +100,28 @@ export default function ModelConfiguration() {
           label={t('model-configuration-model-score-combined-header')}
         />
         <span>{t('model-configuration-model-score-combined-desc')}</span>
+      </RadioGroup>
+
+      <Title level={4}>{t('model-configuration-scope-header')}</Title>
+      <Body>
+        <p>{t('model-configuration-scope-desc')}</p>
+      </Body>
+      <RadioGroup
+        name="scope"
+        value={scope}
+        onChange={(e) => setScope(e.target.value as Scope)}
+      >
+        <Radio
+          value="all"
+          name="all"
+          label={t('model-configuration-scope-all')}
+        />
+
+        <Radio
+          value="unmatched"
+          name="unmatched"
+          label={t('model-configuration-scope-unmatched-only')}
+        />
       </RadioGroup>
     </Flex>
   );
