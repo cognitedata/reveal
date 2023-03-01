@@ -43,8 +43,8 @@ export class Image360Entity implements Image360 {
     return this._image360VisualzationBox;
   }
 
-  public allowRedrawCalls(redrawFunc: () => void): void {
-    this._requestRedraw = redrawFunc;
+  public setRequestRedraw(redrawRequestFunc: () => void): void {
+    this._requestRedraw = redrawRequestFunc;
   }
 
   constructor(

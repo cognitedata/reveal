@@ -45,7 +45,7 @@ export class Image360ApiHelper {
 
   private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity), 300, { leading: true });
   private readonly _requestRedraw: () => void;
-  private readonly _requestImageUpdate: () => void;
+  private readonly _requestTransitionSafeRedraw: () => void;
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
@@ -76,7 +76,7 @@ export class Image360ApiHelper {
     this._cachedCameraManager = activeCameraManager.innerCameraManager;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
     this._requestRedraw = requestRedraw;
-    this._requestImageUpdate = () => {
+    this._requestTransitionSafeRedraw = () => {
       if (!this._transitionInProgress) {
         this._requestRedraw();
       }
@@ -133,10 +133,10 @@ export class Image360ApiHelper {
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
     if (lastEntered360ImageEntity) {
-      lastEntered360ImageEntity.allowRedrawCalls(() => {});
+      lastEntered360ImageEntity.setRequestRedraw(() => {});
     }
     this._interactionState.currentImage360Entered = image360Entity;
-    this._interactionState.currentImage360Entered.allowRedrawCalls(this._requestImageUpdate);
+    this._interactionState.currentImage360Entered.setRequestRedraw(this._requestTransitionSafeRedraw);
 
     if (lastEntered360ImageEntity === image360Entity) {
       this._requestRedraw();
@@ -297,7 +297,7 @@ export class Image360ApiHelper {
         )
         .forEach(imageCollection => imageCollection.events.image360Exited.fire());
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
-      this._interactionState.currentImage360Entered.allowRedrawCalls(() => {});
+      this._interactionState.currentImage360Entered.setRequestRedraw(() => {});
       this._interactionState.currentImage360Entered = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
