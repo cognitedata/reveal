@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
-import { Graphic } from '@cognite/cogs.js-old';
 import { Button, Title, Body } from '@cognite/cogs.js';
 import { AccessPermission } from 'src/utils/types';
 import styled from 'styled-components';
 import * as NavLinks from 'src/constants/NavLinks';
 import { useHistory } from 'react-router-dom';
+import { Graphic, GraphicOptions } from 'src/assets/Graphics/Graphic';
 
 type Props = {
   capabilities: Array<AccessPermission>;
@@ -95,7 +95,7 @@ export default function NoAccessPage({
           </BodyContainer>
         </div>
         <GraphicContainer>
-          <Graphic type="Search" style={{ width: '100%' }} />
+          <Graphic type={GraphicOptions.Search} />
         </GraphicContainer>
       </Frame>
     </>
