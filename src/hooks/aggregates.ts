@@ -13,7 +13,7 @@ import { fetchProperties as fetchAssetProperties } from './assets';
 
 type T = SourceType | TargetType;
 
-export const getAggreateKey = (t: T): QueryKey => ['aggregate', t];
+export const getAggregateKey = (t: T): QueryKey => ['aggregate', t];
 export const useAggregateProperties = (
   t: T,
   options?: UseQueryOptions<PropertyAggregate[], CogniteError>
@@ -21,7 +21,7 @@ export const useAggregateProperties = (
   const sdk = useSDK();
   const queryClient = useQueryClient();
   return useQuery(
-    getAggreateKey(t),
+    getAggregateKey(t),
     () => {
       switch (t) {
         case 'timeseries': {
