@@ -1,4 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
+import { Metadata } from '@cognite/sdk';
 import { PredictionObject } from 'hooks/contextualization-api';
 import {
   Dispatch,
@@ -59,3 +60,17 @@ function useVanillaState<S>(
 
 export const useContextState =
   process.env.NODE_ENV === 'production' ? useVanillaState : useDebugState;
+
+/**
+ * Transform all metadata keys to lowercase. This is convenient since metadata filters/aggregate are
+ * case insensitive/down cased and this will make picking values out of metadata objects based on
+ * aggregates a non-issue.
+ */
+export const downcaseMetadata = (md?: Metadata) => {
+  return md
+    ? Object.entries(md).reduce(
+        (accl, [k, v]) => ({ ...accl, [k.toLowerCase()]: v }),
+        {} as Metadata
+      )
+    : undefined;
+};

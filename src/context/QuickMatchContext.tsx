@@ -28,16 +28,34 @@ const QuickMatchStepsOrderIndex: Record<number, QuickMatchStep> =
 export type Filter = {
   dataSetIds: InternalId[];
 };
-type SourceType = 'timeseries';
+export type SourceType = 'timeseries';
+export type TargetType = 'assets';
+
+export type EMFeatureType =
+  | 'simple'
+  | 'insensitive'
+  | 'bigram'
+  | 'frequencyweightedbigram'
+  | 'bigramextratokenizers'
+  | 'bigramcombo';
 
 type TimeseriesKeys = keyof Pick<Timeseries, 'unit' | 'name' | 'description'>;
 type AssetKeys = keyof Pick<Asset, 'name' | 'description'>;
 
-type ModelMapping = {
-  [K in TimeseriesKeys]?: AssetKeys;
-};
+export type ModelMapping = { source?: TimeseriesKeys; target?: AssetKeys }[];
+
+export type Scope = 'all' | 'unmatched';
 
 type QuickMatchContext = {
+  featureType: EMFeatureType;
+  setFeatureType: Dispatch<SetStateAction<EMFeatureType>>;
+
+  supervisedMode: boolean;
+  setSupervisedMode: Dispatch<SetStateAction<boolean>>;
+
+  scope: Scope;
+  setScope: Dispatch<SetStateAction<Scope>>;
+
   unmatchedOnly: boolean;
   setUnmatchedOnly: Dispatch<SetStateAction<boolean>>;
 
@@ -69,7 +87,7 @@ type QuickMatchContext = {
   pushStep: () => void;
   popStep: () => void;
 
-  modelFieldMapping: ModelMapping;
+  matchFields: ModelMapping;
   setModelFieldMapping: Dispatch<SetStateAction<ModelMapping>>;
 
   modelId?: number;
@@ -129,7 +147,7 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   setSourceType: function (_: SetStateAction<'timeseries'>): void {
     throw new Error('Function not implemented.');
   },
-  modelFieldMapping: {},
+  matchFields: [{ source: 'name', target: 'name' }],
   setModelFieldMapping: function (_: SetStateAction<ModelMapping>): void {
     throw new Error('Function not implemented.');
   },
@@ -144,6 +162,18 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
     throw new Error('Function not implemented.');
   },
   unmatchedOnly: false,
+  supervisedMode: false,
+  setSupervisedMode: function (_: SetStateAction<boolean>): void {
+    throw new Error('Function not implemented.');
+  },
+  featureType: 'simple',
+  setFeatureType: function (_: SetStateAction<EMFeatureType>): void {
+    throw new Error('Function not implemented.');
+  },
+  scope: 'all',
+  setScope: function (_: SetStateAction<Scope>): void {
+    throw new Error('Function not implemented.');
+  },
 });
 
 export const useQuickMatchContext = () => useContext(QuickMatchContext);
@@ -153,6 +183,18 @@ export const QuickMatchContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  const [featureType, setFeatureType] = useContextState<EMFeatureType>(
+    'simple',
+    'featureType'
+  );
+
+  const [scope, setScope] = useContextState<Scope>('all', 'scope');
+
+  const [supervisedMode, setSupervisedMode] = useContextState(
+    false,
+    'supervisedMode'
+  );
+
   const [unmatchedOnly, setUnmatchedOnly] = useContextState(
     false,
     'unmatchedOnly'
@@ -189,9 +231,7 @@ export const QuickMatchContextProvider = ({
   );
 
   const [modelFieldMapping, setModelFieldMapping] =
-    useContextState<ModelMapping>({
-      name: 'name',
-    });
+    useContextState<ModelMapping>([{ source: 'name', target: 'name' }]);
   const [sourceType, setSourceType] = useContextState<SourceType>(
     'timeseries',
     'sourceType'
@@ -250,7 +290,7 @@ export const QuickMatchContextProvider = ({
         setSourceFilter,
         sourceType,
         setSourceType,
-        modelFieldMapping,
+        matchFields: modelFieldMapping,
         setModelFieldMapping,
         modelId,
         setModelId,
@@ -260,6 +300,12 @@ export const QuickMatchContextProvider = ({
         setUnmatchedOnly,
         targetFilter,
         setTargetFilter,
+        supervisedMode,
+        setSupervisedMode,
+        featureType,
+        setFeatureType,
+        scope,
+        setScope,
       }}
     >
       {children}

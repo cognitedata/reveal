@@ -20,10 +20,13 @@ export default function QuickMatch() {
     hasPrevStep,
     popStep,
     pushStep,
-
+    featureType,
     setModelId,
     sourcesList,
     targetsList,
+    matchFields,
+    supervisedMode,
+    scope,
   } = useQuickMatchContext();
   const { mutateAsync: buildModel } = useCreateEMModel();
   return (
@@ -45,7 +48,14 @@ export default function QuickMatch() {
           disabled={!hasNextStep()}
           onClick={() => {
             if (step === 'modelParams') {
-              buildModel({ sourcesList, targetsList }).then((model) => {
+              buildModel({
+                sourcesList,
+                targetsList,
+                featureType,
+                matchFields,
+                supervisedMode,
+                scope,
+              }).then((model) => {
                 setModelId(model.id);
                 pushStep();
               });
