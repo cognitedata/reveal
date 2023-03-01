@@ -207,7 +207,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
       Accept: '*/*'
     };
 
-    return Promise.resolve(
+    return Promise.all(
       fileIds.map(async fileId => {
         const response = await this._client.get<ArrayBuffer>(url, {
           params: fileId,
