@@ -290,7 +290,8 @@ export class Cognite3DViewer {
         this._domElement,
         this._activeCameraManager,
         this._mouseHandler,
-        () => this.requestRedraw()
+        () => this.requestRedraw(),
+        this._events.beforeSceneRendered
       );
     }
 

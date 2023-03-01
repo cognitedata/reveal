@@ -13,7 +13,14 @@ import {
   Image360
 } from '@reveal/360-images';
 import { Cdf360ImageEventProvider } from '@reveal/data-providers';
-import { InputHandler, pixelToNormalizedDeviceCoordinates, PointerEventData, SceneHandler } from '@reveal/utilities';
+import {
+  BeforeSceneRenderedDelegate,
+  EventTrigger,
+  InputHandler,
+  pixelToNormalizedDeviceCoordinates,
+  PointerEventData,
+  SceneHandler
+} from '@reveal/utilities';
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
@@ -26,12 +33,14 @@ export class Image360ApiHelper {
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
     currentImage360Entered?: Image360Entity;
+    lastMousePosition?: { offsetX: number; offsetY: number };
   };
 
-  private readonly _domEventHandlers: {
+  private readonly _eventHandlers: {
     setHoverIconEventHandler: (event: MouseEvent) => void;
     enter360Image: (event: PointerEvent) => Promise<void>;
     exit360ImageOnEscapeKey: (event: KeyboardEvent) => void;
+    updateHoverStateOnRender: () => void;
   };
 
   private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity), 300, { leading: true });
@@ -39,6 +48,7 @@ export class Image360ApiHelper {
   private readonly _requestImageUpdate: () => void;
   private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _image360Navigation: StationaryCameraManager;
+  private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
   private _cachedCameraManager: CameraManager;
 
   constructor(
@@ -47,10 +57,15 @@ export class Image360ApiHelper {
     domElement: HTMLElement,
     activeCameraManager: ProxyCameraManager,
     inputHandler: InputHandler,
-    requestRedraw: () => void
+    requestRedraw: () => void,
+    onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>
   ) {
     const image360DataProvider = new Cdf360ImageEventProvider(cogniteClient);
-    const image360EntityFactory = new Image360CollectionFactory(image360DataProvider, sceneHandler);
+    const image360EntityFactory = new Image360CollectionFactory(
+      image360DataProvider,
+      sceneHandler,
+      onBeforeSceneRendered
+    );
     this._image360Facade = new Image360Facade(image360EntityFactory);
     this._image360Navigation = new StationaryCameraManager(domElement, activeCameraManager.getCamera().clone());
 
@@ -59,6 +74,7 @@ export class Image360ApiHelper {
 
     this._activeCameraManager = activeCameraManager;
     this._cachedCameraManager = activeCameraManager.innerCameraManager;
+    this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
     this._requestRedraw = requestRedraw;
     this._requestImageUpdate = () => {
       if (!this._transitionInProgress) {
@@ -66,7 +82,7 @@ export class Image360ApiHelper {
       }
     };
 
-    const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event);
+    const setHoverIconEventHandler = (event: MouseEvent) => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
     domElement.addEventListener('mousemove', setHoverIconEventHandler);
 
     const enter360Image = (event: PointerEventData) => this.enter360ImageOnIntersect(event);
@@ -74,10 +90,21 @@ export class Image360ApiHelper {
 
     const exit360ImageOnEscapeKey = (event: KeyboardEvent) => this.exit360ImageOnEscape(event);
 
-    this._domEventHandlers = {
+    const updateHoverStateOnRender = () => {
+      const lastOffset = this._interactionState.lastMousePosition;
+      if (lastOffset === undefined) {
+        return;
+      }
+      this.setHoverIconOnIntersect(lastOffset.offsetX, lastOffset.offsetY);
+    };
+
+    onBeforeSceneRendered.subscribe(updateHoverStateOnRender);
+
+    this._eventHandlers = {
       setHoverIconEventHandler,
       enter360Image,
-      exit360ImageOnEscapeKey
+      exit360ImageOnEscapeKey,
+      updateHoverStateOnRender
     };
   }
 
@@ -144,7 +171,7 @@ export class Image360ApiHelper {
       MetricsLogger.trackEvent('360ImageTransitioned', {});
     }
     this._transitionInProgress = false;
-    this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
+    this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
 
     this._requestRedraw();
     this._image360Facade.collections
@@ -280,13 +307,14 @@ export class Image360ApiHelper {
       position,
       target: new THREE.Vector3(0, 0, -1).applyQuaternion(rotation).add(position)
     });
-    this._domElement.removeEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
+    this._domElement.removeEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
   }
 
   public dispose(): void {
-    this._domElement.removeEventListener('mousemove', this._domEventHandlers.setHoverIconEventHandler);
-    this._domElement.addEventListener('pointerup', this._domEventHandlers.enter360Image);
-    this._domElement.addEventListener('keydown', this._domEventHandlers.exit360ImageOnEscapeKey);
+    this._onBeforeSceneRenderedEvent.unsubscribe(this._eventHandlers.updateHoverStateOnRender);
+    this._domElement.removeEventListener('mousemove', this._eventHandlers.setHoverIconEventHandler);
+    this._domElement.addEventListener('pointerup', this._eventHandlers.enter360Image);
+    this._domElement.addEventListener('keydown', this._eventHandlers.exit360ImageOnEscapeKey);
 
     if (this._activeCameraManager.innerCameraManager === this._image360Navigation) {
       this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
@@ -319,11 +347,11 @@ export class Image360ApiHelper {
     return entity;
   }
 
-  private setHoverIconOnIntersect(event: MouseEvent) {
+  private setHoverIconOnIntersect(offsetX: number, offsetY: number) {
+    this._interactionState.lastMousePosition = { offsetX, offsetY };
     this._image360Facade.allHoverIconsVisibility = false;
     const size = new THREE.Vector2(this._domElement.clientWidth, this._domElement.clientHeight);
 
-    const { offsetX, offsetY } = event;
     const { x: width, y: height } = size;
     const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
     const entity = this._image360Facade.intersect(
