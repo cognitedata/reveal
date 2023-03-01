@@ -152,7 +152,9 @@ const DatasetOverview = ({
                       alignItems="stretch"
                     >
                       <Textarea
-                        style={{ width: '100%', minHeight: 100 }}
+                        appearance="outline"
+                        style={{ minHeight: 100 }}
+                        fullWidth
                         placeholder={t('add-description')}
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}

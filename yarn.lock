@@ -2009,6 +2009,26 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
+"@cognite/cdf-utilities@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-3.2.0.tgz#0016af77a6ade3d469bf7d10194afe9e6eadcf34"
+  integrity sha512-rMZHdQiwPZi7qR5isKiMciC6MHotbyTme8EnjxZEZ5vPwrPu/GFiP4A3NSBrA1FI+Vqsik/ikQg2u+cAVPHECA==
+  dependencies:
+    "@codemirror/autocomplete" "^6.0.0"
+    "@codemirror/commands" "^6.0.0"
+    "@codemirror/lang-sql" "^6.3.0"
+    "@codemirror/language" "^6.0.0"
+    "@codemirror/lint" "^6.0.0"
+    "@codemirror/search" "^6.0.0"
+    "@codemirror/state" "^6.0.0"
+    "@codemirror/view" "^6.0.0"
+    "@uiw/codemirror-themes" "^4.11.4"
+    "@uiw/react-codemirror" "^4.11.4"
+    antd "^4.22.4"
+    copy-to-clipboard "^3.3.2"
+    query-string "^7.0.1"
+    styled-components "^5.3.3"
+
 "@cognite/cogs.js@9.8.0":
   version "9.8.0"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.8.0.tgz#6843ee9da397bbc2a365772ba6db85fe91014140"
