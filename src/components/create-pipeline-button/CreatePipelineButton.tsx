@@ -15,7 +15,7 @@ export const CreatePipelineButton = (): JSX.Element => {
     <>
       <Link to={createLink(`/${subAppPath}/create`)}>
         <StyledButton type="primary" icon="AddLarge">
-          {t('create-pipeline')}
+          {t('title-create-pipeline')}
         </StyledButton>
       </Link>
     </>

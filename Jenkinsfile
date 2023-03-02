@@ -119,6 +119,9 @@ pods {
           stageWithNotify('Unit tests') {
             sh("yarn test")
           }
+          stageWithNotify('Locize key order') {
+            sh("yarn test:key-order")
+          }
         }
       },
       'Preview': {
