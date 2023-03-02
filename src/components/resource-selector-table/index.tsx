@@ -11,7 +11,8 @@ import {
 } from 'context/QuickMatchContext';
 import { useAllDataSets } from 'hooks/datasets';
 
-import TimeseriesTable from './TimeSeriesTable';
+import TimeseriesTable from './TimeseriesTable';
+import EventTable from './EventTable';
 
 const { Option } = Select;
 
@@ -107,6 +108,15 @@ export default function ResourceSelectionTable({}: Props) {
       </Flex>
       {sourceType === 'timeseries' && (
         <TimeseriesTable
+          query={searchParams.get(SOURCE_TABLE_QUERY_KEY)}
+          filter={sourceFilter}
+          selected={sourcesList}
+          setSelected={setSourcesList}
+          unmatchedOnly={unmatchedOnly}
+        />
+      )}
+      {sourceType === 'events' && (
+        <EventTable
           query={searchParams.get(SOURCE_TABLE_QUERY_KEY)}
           filter={sourceFilter}
           selected={sourcesList}

@@ -3,15 +3,15 @@ import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
-import { InternalId, Timeseries } from '@cognite/sdk';
-import { useTimeseries, useTimeseriesSearch } from 'hooks/timeseries';
+import { CogniteEvent, InternalId } from '@cognite/sdk';
+import { useEvents, useEventsSearch } from 'hooks/events';
 import { Filter } from 'context/QuickMatchContext';
 
-type TimeseriesListTableRecord = { key: string } & Pick<
-  Timeseries,
-  'name' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
+type EventListTableRecord = { key: string } & Pick<
+  CogniteEvent,
+  'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
 >;
-type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
+type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
   title: string;
   key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
 };
@@ -23,7 +23,7 @@ type Props = {
   selected: InternalId[];
   setSelected: Dispatch<SetStateAction<InternalId[]>>;
 };
-export default function TimeseriesTable({
+export default function EventTable({
   query,
   selected,
   setSelected,
@@ -34,10 +34,10 @@ export default function TimeseriesTable({
     data: listPages,
     isInitialLoading: listLoading,
     error,
-  } = useTimeseries({ unmatchedOnly, filter }, { enabled: !query });
+  } = useEvents({ unmatchedOnly, filter }, { enabled: !query });
 
   const { data: searchResult, isInitialLoading: searchLoading } =
-    useTimeseriesSearch(query!, {
+    useEventsSearch(query!, {
       enabled: !!query,
       select: (items) => items?.map((i) => ({ ...i, key: i.id.toString() })),
     });
@@ -56,13 +56,8 @@ export default function TimeseriesTable({
 
   const dataSource = !!query ? searchResult : collapsedListPages;
 
-  const columns: TimeseriesListTableRecordCT[] = useMemo(
+  const columns: EventListTableRecordCT[] = useMemo(
     () => [
-      {
-        title: t('resource-table-column-name'),
-        dataIndex: 'name',
-        key: 'name',
-      },
       {
         title: t('resource-table-column-description'),
         dataIndex: 'description',
@@ -81,7 +76,7 @@ export default function TimeseriesTable({
   const rowSelection = {
     selectedRowKeys: selected.map((s) => s.id.toString()),
     type: 'checkbox' as RowSelectionType,
-    onChange(_: (string | number)[], rows: TimeseriesListTableRecord[]) {
+    onChange(_: (string | number)[], rows: EventListTableRecord[]) {
       setSelected(rows.map((r) => ({ id: r.id })));
     },
     hideSelectAll: true,
@@ -102,13 +97,12 @@ export default function TimeseriesTable({
   }
 
   return (
-    <Table<TimeseriesListTableRecord>
+    <Table<EventListTableRecord>
       loading={loading}
       columns={columns}
       emptyContent={loading ? <Icon type="Loader" /> : undefined}
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
-      pagination={false}
       dataSource={dataSource || []}
     />
   );
