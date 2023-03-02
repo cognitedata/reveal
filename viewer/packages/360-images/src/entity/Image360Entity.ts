@@ -15,7 +15,6 @@ export class Image360Entity implements Image360 {
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
-  private _isEntered: boolean;
 
   /**
    * Get a copy of the model-to-world transformation matrix
@@ -43,19 +42,6 @@ export class Image360Entity implements Image360 {
     return this._image360VisualzationBox;
   }
 
-  /**
-   * True if this is the image we are entering/have entered.
-   * Differs from this._image360VisualzationBox.visible in that
-   * isEntered can be true before the image is made visible.
-   */
-  get isEntered(): boolean {
-    return this._isEntered;
-  }
-
-  set isEntered(isEntered: boolean) {
-    this._isEntered = isEntered;
-  }
-
   constructor(
     image360Metadata: Image360Descriptor,
     sceneHandler: SceneHandler,
@@ -70,7 +56,6 @@ export class Image360Entity implements Image360 {
     this._image360Icon = icon;
     this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
     this._image360VisualzationBox.visible = false;
-    this._isEntered = false;
   }
 
   /**
