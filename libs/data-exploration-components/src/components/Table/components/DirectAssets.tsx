@@ -1,5 +1,4 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Button, Dropdown, Link, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { Asset, FileInfo, IdEither, Sequence, Timeseries } from '@cognite/sdk';
 import { CogniteEvent } from '@cognite/unified-file-viewer';
 import { RelationshipLabels } from '../../../types';
@@ -54,20 +53,28 @@ export const DirectAssets = ({
       content={
         <StyledMenu>
           {items?.map((item) => (
-            <Menu.Item css={{}} key={item.id}>
-              <RootAssetButton
-                label={item.name}
-                onClick={(evt) => {
-                  evt.stopPropagation();
-                  onClick(item);
-                }}
-              />
+            <Menu.Item
+              key={item.id}
+              action={{
+                icon: 'ArrowRight',
+              }}
+              onClick={(evt) => {
+                evt.stopPropagation();
+                onClick(item);
+              }}
+            >
+              {item.name}
             </Menu.Item>
           ))}
         </StyledMenu>
       }
     >
-      <Button size="small" icon="ChevronDown" iconPlacement="right">
+      <Button
+        icon="ChevronDown"
+        iconPlacement="right"
+        size="small"
+        type="ghost"
+      >
         {items?.length} Asset(s)
       </Button>
     </Dropdown>
