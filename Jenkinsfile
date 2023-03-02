@@ -368,7 +368,7 @@ pods {
                   )
                   def fasBuildJson = readJSON text: fasBuildJsonString
                   def fasBuildEnv = fasBuildJson.build.env
-                  if(isFusionPreview){
+                  if(isFusionPreview && isPullRequest){
                     def publicURL = fasBuildEnv.get('PUBLIC_URL');
                     def package_name = "@cognite/${params.repo_id}";
                     def overrideUrl = "${publicURL}/index.js";
