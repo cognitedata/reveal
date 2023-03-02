@@ -30,5 +30,8 @@ libs/data-exploration/            @cognitedata/explorers
 libs/data-exploration-components  @cognitedata/explorers
 libs/shared/plotting-components   @cognitedata/explorers
 
+# Team UFV
+libs/industry-canvas              @cognitedata/unified-file-viewer
+
 # Coding conventions
 apps/coding-conventions           @deep-cognite @CimStordal

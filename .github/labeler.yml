@@ -16,3 +16,7 @@ data-explorer:
 coding-conventions:
   - apps/coding-conventions/*
   - apps/coding-conventions/**/*
+
+unified-file-viewer:
+  - libs/industry-canvas/*
+  - libs/industry-canvas/**/*

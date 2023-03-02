@@ -1,3 +1,4 @@
+import { IndustryCanvasPage } from '@fusion/industry-canvas';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ResourceSelectorProvider } from '@cognite/data-exploration';
@@ -42,6 +43,10 @@ export const Explorer = () => {
           <Route path={routes.filePage.path} element={<FilePage />} />
           <Route path={routes.filePageTab.path} element={<FilePage />} />
           <Route path={routes.canvas.path} element={<CanvasPage />} />
+          <Route
+            path={routes.industryCanvas.path}
+            element={<IndustryCanvasPage />}
+          />
           <Route path={routes.eventPage.path} element={<EventPage />} />
           <Route path={routes.eventPageTab.path} element={<EventPage />} />
           <Route path={routes.sequencePage.path} element={<SequencePage />} />
