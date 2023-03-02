@@ -2,6 +2,7 @@
 import queryString from 'query-string';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import isUrl from 'is-url';
 
 enum PARAMS {
   ENV = 'env',
@@ -114,10 +115,5 @@ export const useSearchParamNumber = (
 };
 
 export const isValidUrl = (value: string) => {
-  try {
-    new URL(value);
-    return true;
-  } catch (error) {
-    return false;
-  }
+  return isUrl(value);
 };
