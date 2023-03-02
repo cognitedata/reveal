@@ -40,7 +40,7 @@ import { validateSDL } from 'graphql/validation/validate';
 import { MappingDirectiveValidator } from './validation/MappingDirectiveValidator';
 import { NotSupportedFeaturesRule } from './validation/NotSupportedFeaturesRule';
 import { ViewDirectiveValidator } from './validation/ViewDirectiveValidator';
-
+import { ContainerDirectiveValidator } from './validation/ContainerDirectiveValidator';
 import { getBuiltInTypesString } from './utils';
 import { RelationDirectiveValidator } from './validation/RelationDirectiveValidator';
 
@@ -421,6 +421,7 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       customValidationRules.push(ViewDirectiveValidator);
       customValidationRules.push(MappingDirectiveValidator);
       customValidationRules.push(RelationDirectiveValidator);
+      customValidationRules.push(ContainerDirectiveValidator);
     }
 
     let errors = [];

@@ -90,6 +90,7 @@
     "graphiql": "^2.2.0",
     "graphql": "^16.6.0",
     "graphql-extra": "^0.2.2",
+    "graphql-language-service": "^5.1.1",
     "graphql-tools": "^8.2.0",
     "http-proxy-middleware": "^2.0.1",
     "is-url": "^1.2.4",

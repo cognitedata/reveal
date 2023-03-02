@@ -74,8 +74,8 @@ export const mixerApiBuiltInTypes = [
     }
 
     directive @container(
-      constraints: [_ConstraintDefinition!]!,
-      indexes: [_IndexDefinition!]!
+      constraints: [_ConstraintDefinition!],
+      indexes: [_IndexDefinition!]
     ) on OBJECT | INTERFACE
     `,
     fieldDirective: false,

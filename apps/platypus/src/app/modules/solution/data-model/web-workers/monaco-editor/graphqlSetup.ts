@@ -1,4 +1,3 @@
-import { BuiltInType } from '@platypus/platypus-core';
 import { Monaco } from '@monaco-editor/react';
 import { IDisposable, Uri } from 'monaco-editor';
 import { config } from '../config';
@@ -15,7 +14,6 @@ import { HoverAdapter } from './language-features/HoverAdapter';
  */
 export const setupGraphql = (
   monaco: Monaco,
-  builtInTypes: BuiltInType[],
   options: { useExtendedSdl: boolean }
 ) => {
   const editorInstance: EditorInstance = monaco.editor;
@@ -62,7 +60,7 @@ export const setupGraphql = (
     providers.push(
       monaco.languages.registerCompletionItemProvider(
         config.languageId,
-        new CodeCompletionProvider(worker, builtInTypes)
+        new CodeCompletionProvider(worker)
       )
     );
 

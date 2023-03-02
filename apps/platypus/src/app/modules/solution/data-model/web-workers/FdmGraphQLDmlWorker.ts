@@ -1,5 +1,5 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
-import { BuiltInType, DataModelTypeDefs } from '@platypus/platypus-core';
+import { DataModelTypeDefs } from '@platypus/platypus-core';
 import type { Position, worker } from 'monaco-editor';
 import { IFdmGraphQLDmlWorkerOptions } from './types';
 import prettierStandalone from 'prettier/standalone';
@@ -12,6 +12,7 @@ import {
 import {
   CodeActionsOptions,
   CodeEditorRange,
+  CompletionList,
   DiagnosticItem,
 } from './language-service/types';
 
@@ -57,6 +58,7 @@ export class FdmGraphQLDmlWorker {
         graphqlCode,
         this.createData.options
       );
+      this.setGraphQlSchema(graphqlCode);
       return markers;
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -73,20 +75,20 @@ export class FdmGraphQLDmlWorker {
    * @param builtInTypes all of the types of the most recent correct data model
    */
   public async doComplete(
-    textUntilPosition: string,
-    builtInTypes: BuiltInType[]
-  ) {
+    graphqlCode: string,
+    position: Position
+  ): Promise<CompletionList> {
     try {
       return this.codeCompletionService.getCompletions(
-        textUntilPosition,
-        builtInTypes,
-        !!this.createData.options?.useExtendedSdl,
-        this.dataModelTypeDefs
+        graphqlCode,
+        this.lastValidGraphQlSchema || '',
+        position,
+        !!this.createData.options?.useExtendedSdl
       );
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
-      return [];
+      return { suggestions: [] };
     }
   }
 
@@ -109,18 +111,15 @@ export class FdmGraphQLDmlWorker {
   }
 
   /**
-   * This function sets a VALID as the internal graphql code
+   * This function sets a VALID graphql data model as the internal graphql code
+   * SHOULD ONLY RUN THIS IF GRAPHQL IS VALID
    *
    * @param graphQlString the current graphQL code
    */
   public async setGraphQlSchema(graphQlString: string) {
     try {
-      this.lastValidGraphQlSchema = graphQlString;
       const graphQlUtils = new GraphQlUtilsService();
-      this.dataModelTypeDefs = graphQlUtils.parseSchema(
-        this.lastValidGraphQlSchema,
-        true
-      );
+      this.dataModelTypeDefs = graphQlUtils.parseSchema(graphQlString, true);
 
       const parsedLocationTypeDefMap = {} as Record<
         string,
@@ -148,6 +147,7 @@ export class FdmGraphQLDmlWorker {
       });
 
       this.locationTypeDefMap = parsedLocationTypeDefMap;
+      this.lastValidGraphQlSchema = graphQlString;
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
@@ -202,7 +202,6 @@ export class FdmGraphQLDmlWorker {
     diagnostics: DiagnosticItem[],
     options: CodeActionsOptions
   ) {
-    this.setGraphQlSchema(graphQlCode);
     return this.codeActionsService.getCodeActions(
       graphQlCode,
       range,

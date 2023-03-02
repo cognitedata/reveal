@@ -34,7 +34,9 @@ jobs:
         id: cache-node-modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Install dependencies
@@ -60,7 +62,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Cypress run

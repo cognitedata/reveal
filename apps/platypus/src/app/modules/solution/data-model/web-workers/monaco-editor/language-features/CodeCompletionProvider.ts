@@ -1,4 +1,3 @@
-import { BuiltInType } from '@platypus/platypus-core';
 import { editor, languages, Position } from 'monaco-editor';
 import { WorkerAccessor } from '../../types';
 
@@ -15,31 +14,16 @@ export class CodeCompletionProvider implements CompletionItemProvider {
   // Run this function when the period or open parenthesis is typed
   triggerCharacters = [':', '[', ']', '@', '(', ',', '"', ' '];
 
-  constructor(
-    private readonly _worker: WorkerAccessor,
-    private builtInTypes: BuiltInType[]
-  ) {}
+  constructor(private readonly _worker: WorkerAccessor) {}
 
   async provideCompletionItems(
     model: editor.ITextModel,
     position: Position
   ): Promise<CompletionList> {
     const resource = model.uri;
-
-    // get the text from current line
-    const textUntilPosition = model.getValueInRange({
-      startLineNumber: position.lineNumber,
-      startColumn: 1,
-      endLineNumber: position.lineNumber,
-      endColumn: position.column,
-    });
-
     const worker = await this._worker(resource);
-    const suggestions = await worker.doComplete(
-      textUntilPosition,
-      this.builtInTypes
-    );
 
+    const suggestions = await worker.doComplete(model.getValue(), position);
     return suggestions as CompletionList;
   }
 }
