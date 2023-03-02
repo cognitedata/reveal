@@ -44,7 +44,7 @@ export function FileDownloadAnchor({
       : 'Nothing to download. You must upload a file first.';
 
     return (
-      <Menu.Item css={{}} disabled>
+      <Menu.Item disabled>
         <Tooltip content={tooltipText}>
           <StyledError>
             <span>Download original file</span>
@@ -59,14 +59,14 @@ export function FileDownloadAnchor({
       return loadingFeedback;
     }
     return (
-      <Menu.Item css={{}}>
+      <Menu.Item>
         <Icon type="Loader" />
       </Menu.Item>
     );
   }
   if (infoFetched && linkFetched) {
     return (
-      <Menu.Item css={{}}>
+      <Menu.Item>
         <a
           target="_blank"
           rel="noopener noreferrer"

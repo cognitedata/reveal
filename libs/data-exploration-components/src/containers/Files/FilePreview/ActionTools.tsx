@@ -120,10 +120,10 @@ export const ActionTools = ({
         <Dropdown
           content={
             <Menu>
-              <Menu.Item css={{}} href={fileUrl} style={{ color: 'unset' }}>
+              <Menu.Item href={fileUrl} style={{ color: 'unset' }}>
                 Original File
               </Menu.Item>
-              <Menu.Item css={{}} onClick={handleDownloadFileWithAnnotations}>
+              <Menu.Item onClick={handleDownloadFileWithAnnotations}>
                 File with Annotations
               </Menu.Item>
             </Menu>

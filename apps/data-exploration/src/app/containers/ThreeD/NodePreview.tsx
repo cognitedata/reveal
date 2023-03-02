@@ -40,7 +40,6 @@ const DetailsMenuItem = ({
   openDetails: (tab?: ResourceTabType) => void;
 }) => (
   <StyledDetailElement
-    css={{}}
     key={details.detailTypeKey}
     type="ghost"
     onClick={() => {

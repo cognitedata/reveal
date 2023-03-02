@@ -333,11 +333,8 @@ const AnnotationPreviewSidebar = ({
   }) => {
     const menuOptions = () => (
       <Menu>
-        <Menu.Item css={{}} onClick={() => setEditing(true)}>
-          {' '}
-          Edit
-        </Menu.Item>
-        <Menu.Item css={{}} onClick={() => onDeleteAnnotation(annotation)}>
+        <Menu.Item onClick={() => setEditing(true)}> Edit</Menu.Item>
+        <Menu.Item onClick={() => onDeleteAnnotation(annotation)}>
           Delete
         </Menu.Item>
       </Menu>

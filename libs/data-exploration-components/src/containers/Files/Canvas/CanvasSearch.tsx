@@ -86,7 +86,6 @@ const CanvasSearch: React.FC<CanvasSearchProps> = ({
           <Menu>
             {files.map((file) => (
               <Menu.Item
-                css={{}}
                 key={file.id}
                 onClick={() => {
                   onItemClick({ id: file.id, page: 1 });

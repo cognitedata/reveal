@@ -84,7 +84,7 @@ export const SecondaryThreeDModelMenuItem = ({
 
   if (!isFetched || revisions?.length === 0) {
     return (
-      <Menu.Item css={{}} icon={!isFetched ? 'Loader' : undefined}>
+      <Menu.Item icon={!isFetched ? 'Loader' : undefined}>
         {menuItemContent}
       </Menu.Item>
     );

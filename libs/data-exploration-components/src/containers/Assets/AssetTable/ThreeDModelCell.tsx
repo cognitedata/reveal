@@ -51,7 +51,6 @@ export const ThreeDModelCellDropdown = ({
           {Object.entries(mappingGroups).map(([id, mappings]) =>
             mappings.map((mapping) => (
               <Menu.Item
-                css={{}}
                 key={id}
                 href={createLink(`/explore/threeD/${id}`, {
                   selectedAssetId: assetId,

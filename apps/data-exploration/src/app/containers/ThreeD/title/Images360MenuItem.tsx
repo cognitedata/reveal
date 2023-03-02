@@ -48,7 +48,7 @@ export const Images360MenuItem = ({
     </StyledMenuItemContent>
   );
 
-  return <Menu.Item css={{}}>{menuItemContent}</Menu.Item>;
+  return <Menu.Item>{menuItemContent}</Menu.Item>;
 };
 
 export const StyledMenuItemContent = styled(Flex)`
