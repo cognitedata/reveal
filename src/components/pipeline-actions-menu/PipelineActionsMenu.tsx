@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import styled from 'styled-components';
-import { Menu, Colors, Modal, Divider } from '@cognite/cogs.js';
+import { Menu, Modal, Divider } from '@cognite/cogs.js';
 import { getContainer } from 'utils';
 
 type PipelineActionsMenuProps = {
