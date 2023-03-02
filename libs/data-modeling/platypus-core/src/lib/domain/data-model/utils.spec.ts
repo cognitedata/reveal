@@ -92,16 +92,18 @@ describe('Data model services utils', () => {
   describe('getTypesMap', () => {
     it('should only return scalar and object types', () => {
       const typesMap = utils.getTypesMap();
-
       expect(typesMap).toEqual({
-        Boolean: 'boolean',
-        Float: 'float64',
+        String: 'text',
         Int: 'int32',
         Int64: 'int64',
-        JSONObject: 'json',
-        String: 'text',
-        TimeSeries: 'text',
+        Float: 'float64',
+        Float32: 'float32',
+        Float64: 'float64',
         Timestamp: 'timestamp',
+        JSONObject: 'json',
+        Date: 'date',
+        Boolean: 'boolean',
+        TimeSeries: 'text',
       });
     });
   });
