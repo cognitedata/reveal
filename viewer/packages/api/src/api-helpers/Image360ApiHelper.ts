@@ -113,12 +113,7 @@ export class Image360ApiHelper {
     collectionTransform: THREE.Matrix4,
     preMultipliedRotation: boolean
   ): Promise<Image360Collection> {
-    const imageCollection = await this._image360Facade.create(
-      eventFilter,
-      collectionTransform,
-      preMultipliedRotation,
-      this._requestTransitionSafeRedraw
-    );
+    const imageCollection = await this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
     this._requestRedraw();
     return imageCollection;
   }
@@ -137,7 +132,11 @@ export class Image360ApiHelper {
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
+    if (lastEntered360ImageEntity) {
+      lastEntered360ImageEntity.setRequestRedraw(() => {});
+    }
     this._interactionState.currentImage360Entered = image360Entity;
+    this._interactionState.currentImage360Entered.setRequestRedraw(this._requestTransitionSafeRedraw);
 
     if (lastEntered360ImageEntity === image360Entity) {
       this._requestRedraw();
@@ -298,6 +297,7 @@ export class Image360ApiHelper {
         )
         .forEach(imageCollection => imageCollection.events.image360Exited.fire());
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
+      this._interactionState.currentImage360Entered.setRequestRedraw(() => {});
       this._interactionState.currentImage360Entered = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
