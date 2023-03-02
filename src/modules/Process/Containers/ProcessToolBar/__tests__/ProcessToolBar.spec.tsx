@@ -96,6 +96,6 @@ describe('ProcessToolBar', () => {
       });
 
     fireEvent.click(screen.getByRole('button', { name: 'Detect' }));
-    expect(await screen.findByText('Processing files')).toBeInTheDocument();
+    expect(screen.getByText('Processing files')).toBeInTheDocument();
   });
 });

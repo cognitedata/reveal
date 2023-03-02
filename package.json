@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@cognite/cdf-utilities": "^0.11.1",
-    "@cognite/cogs.js-old": "yarn:@cognite/cogs.js@7.13.3",
     "@cognite/cogs.js": "^9.5.1",
     "@cognite/data-exploration": "4.2.0",
     "@cognite/react-feature-flags": "^0.2.2-rc.0",
