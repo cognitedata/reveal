@@ -152,6 +152,7 @@ const PipelineTable = (): JSX.Element => {
         },
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dataSource, t]
   );
 
