@@ -15,7 +15,7 @@ export class Image360Entity implements Image360 {
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
   private readonly _image360VisualzationBox: Image360VisualizationBox;
-  private _requestRedraw: () => void;
+  private readonly _requestTransitionSafeRedraw: () => void;
 
   /**
    * Get a copy of the model-to-world transformation matrix
@@ -43,16 +43,13 @@ export class Image360Entity implements Image360 {
     return this._image360VisualzationBox;
   }
 
-  public setRequestRedraw(redrawRequestFunc: () => void): void {
-    this._requestRedraw = redrawRequestFunc;
-  }
-
   constructor(
     image360Metadata: Image360Descriptor,
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
     transform: THREE.Matrix4,
-    icon: Image360Icon
+    icon: Image360Icon,
+    requestTransitionSafeRedraw: () => void
   ) {
     this._imageProvider = imageProvider;
     this._image360Metadata = image360Metadata;
@@ -61,7 +58,7 @@ export class Image360Entity implements Image360 {
     this._image360Icon = icon;
     this._image360VisualzationBox = new Image360VisualizationBox(this._transform, sceneHandler);
     this._image360VisualzationBox.visible = false;
-    this._requestRedraw = () => {};
+    this._requestTransitionSafeRedraw = requestTransitionSafeRedraw;
   }
 
   /**
@@ -86,7 +83,7 @@ export class Image360Entity implements Image360 {
 
       fullResolutionFaces.then(async faces => {
         await this._image360VisualzationBox.setFaceMaterials(faces);
-        this._requestRedraw();
+        this._requestTransitionSafeRedraw();
       });
     }
   }

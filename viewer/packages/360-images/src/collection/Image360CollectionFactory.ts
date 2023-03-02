@@ -28,7 +28,8 @@ export class Image360CollectionFactory<T> {
   public async create(
     dataProviderFilter: T,
     postTransform: THREE.Matrix4,
-    preMultipliedRotation: boolean
+    preMultipliedRotation: boolean,
+    requestTransitionSafeRedraw: () => void
   ): Promise<DefaultImage360Collection> {
     const event360Descriptors = await this._image360DataProvider.get360ImageDescriptors(
       dataProviderFilter,

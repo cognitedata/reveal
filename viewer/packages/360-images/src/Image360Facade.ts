@@ -36,9 +36,15 @@ export class Image360Facade<T> {
   public async create(
     dataProviderFilter: T,
     postTransform = new THREE.Matrix4(),
-    preComputedRotation = true
+    preComputedRotation = true,
+    requestTransitionSafeRedraw: () => void
   ): Promise<DefaultImage360Collection> {
-    const image360Collection = await this._entityFactory.create(dataProviderFilter, postTransform, preComputedRotation);
+    const image360Collection = await this._entityFactory.create(
+      dataProviderFilter,
+      postTransform,
+      preComputedRotation,
+      requestTransitionSafeRedraw
+    );
     this._image360Collections.push(image360Collection);
     return image360Collection;
   }
