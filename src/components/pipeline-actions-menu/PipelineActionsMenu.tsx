@@ -33,7 +33,7 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
           }}
           destructive
         >
-          <Red>Delete</Red>
+          Delete
         </Menu.Item>
       </Menu>
       <PipelineDeleteModal
@@ -65,9 +65,5 @@ function PipelineDeleteModal(props: PipelineDeleteModalProps) {
     </Modal>
   );
 }
-
-const Red = styled.span`
-  color: ${Colors['text-icon--status-critical']};
-`;
 
 export default PipelineActionsMenu;
