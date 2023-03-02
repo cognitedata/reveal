@@ -163,6 +163,7 @@ const TableFilter = ({
                               checked={tempGovernanceStatus?.includes(
                                 governanceStatus
                               )}
+                              key={governanceStatus}
                               name={governanceStatus}
                               onChange={(e, nextState) =>
                                 handleGovernanceStatusChange(
@@ -216,7 +217,12 @@ const TableFilter = ({
           visible={isVisible}
           onVisibleChange={setIsVisible}
         >
-          <Button icon="Filter" type="secondary" toggled={isVisible}>
+          <Button
+            icon="Filter"
+            aria-label="Filter"
+            type="secondary"
+            toggled={isVisible}
+          >
             {t('filter')}
           </Button>
         </Dropdown>

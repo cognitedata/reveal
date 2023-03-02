@@ -1,5 +1,5 @@
+import sdk from '@cognite/cdf-sdk-singleton';
 import { useQueries } from 'react-query';
-import { getCogniteSDKClient } from 'utils/cogniteSdk';
 
 const getDataSetFilter = (id: number) => ({
   filter: { dataSetIds: [{ id }] },
@@ -11,38 +11,23 @@ export function useResourceAggregates(dataSetId: number) {
   return useQueries([
     {
       queryKey: getQueryKey('assets'),
-      queryFn: () => {
-        const sdk = getCogniteSDKClient();
-        return sdk.assets.aggregate(getDataSetFilter(dataSetId));
-      },
+      queryFn: () => sdk.assets.aggregate(getDataSetFilter(dataSetId)),
     },
     {
       queryKey: getQueryKey('timeseries'),
-      queryFn: () => {
-        const sdk = getCogniteSDKClient();
-        return sdk.timeseries.aggregate(getDataSetFilter(dataSetId));
-      },
+      queryFn: () => sdk.timeseries.aggregate(getDataSetFilter(dataSetId)),
     },
     {
       queryKey: getQueryKey('files'),
-      queryFn: () => {
-        const sdk = getCogniteSDKClient();
-        return sdk.files.aggregate(getDataSetFilter(dataSetId));
-      },
+      queryFn: () => sdk.files.aggregate(getDataSetFilter(dataSetId)),
     },
     {
       queryKey: getQueryKey('events'),
-      queryFn: () => {
-        const sdk = getCogniteSDKClient();
-        return sdk.events.aggregate.count(getDataSetFilter(dataSetId));
-      },
+      queryFn: () => sdk.events.aggregate.count(getDataSetFilter(dataSetId)),
     },
     {
       queryKey: getQueryKey('sequences'),
-      queryFn: () => {
-        const sdk = getCogniteSDKClient();
-        return sdk.sequences.aggregate(getDataSetFilter(dataSetId));
-      },
+      queryFn: () => sdk.sequences.aggregate(getDataSetFilter(dataSetId)),
     },
   ]);
 }

@@ -2,9 +2,9 @@ import { ReactNode } from 'react';
 
 import { Icon, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { useTranslation } from 'common/i18n';
-import { getFlow } from 'utils/cogniteSdk';
 
 type AccessCheckProps = {
   children: ReactNode;

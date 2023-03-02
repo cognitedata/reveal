@@ -85,53 +85,47 @@ const replaceStyleLoaders = (config) => {
 
 module.exports = {
   webpack: override(useBabelRc(), (config) => {
-    const isMock = process.env.NODE_ENV === 'mock';
-    console.log('NODE_ENV', process.env.NODE_ENV);
-    // if(isMock){
-
-    // }
-   
-
-    // // Compiling our code to System.register format to use polyfill-like
-    // // behavior of SystemJS for import maps and in-browser modules.
-    // // https://single-spa.js.org/docs/recommended-setup/#systemjs
-    // // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
+    // Compiling our code to System.register format to use polyfill-like
+    // behavior of SystemJS for import maps and in-browser modules.
+    // https://single-spa.js.org/docs/recommended-setup/#systemjs
+    // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
     config.output.libraryTarget = 'system';
 
-    // // Using a single entry point.
-    // // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
+    // Using a single entry point.
+    // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
     config.output.filename = 'index.js';
 
-    // // Replacing create-react-app style loaders (only for css files matching
-    // // the regex).
+    // Replacing create-react-app style loaders (only for css files matching
+    // the regex).
     config = replaceStyleLoaders(config);
-    // return config;
 
-    // // Disabling webpack's optimization configuration, as that makes it harder
-    // // to load JS output as a single in-browser JS module.
-    // // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
+    // Disabling webpack's optimization configuration, as that makes it harder
+    // to load JS output as a single in-browser JS module.
+    // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
     delete config.optimization;
 
-    if (!isMock) {
-      // Removing html-webpack-plugin.
-      // https://single-spa.js.org/docs/faq/#create-react-app
-      config.plugins = config.plugins.filter(
-        (plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin'
-      );
+    // Removing html-webpack-plugin.
+    // https://single-spa.js.org/docs/faq/#create-react-app
+    config.plugins = config.plugins.filter(
+      (plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin'
+    );
 
-      config.plugins = config.plugins.filter(
-        (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
-      );
+    config.plugins = config.plugins.filter(
+      (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
+    );
 
-      // Setting shared in-browser modules as webpack externals. This will
-      // exclude these dependencies from the output bundle.
-      // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
-      config.externals = {
-        'single-spa': 'single-spa',
-        '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
-        '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
-      };
-    }
+    config.plugins.push(new CopyPlugin({
+      patterns: ['./firebase.json'],
+    }));
+
+    // Setting shared in-browser modules as webpack externals. This will
+    // exclude these dependencies from the output bundle.
+    // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
+    config.externals = {
+      'single-spa': 'single-spa',
+      '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
+      '@cognite/cdf-route-tracker': '@cognite/cdf-route-tracker',
+    };
 
     return config;
   }),

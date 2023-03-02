@@ -4,6 +4,7 @@ import Table from 'antd/lib/table';
 import Spin from 'antd/lib/spin';
 import Typography from 'antd/lib/typography';
 
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Flex } from '@cognite/cogs.js';
 import { getJetfireUrl, getContainer } from 'utils/shared';
 import { JetfireApi } from 'jetfire/JetfireApi';
@@ -15,6 +16,7 @@ import {
   LineageSection,
   ContentWrapper,
 } from 'utils/styledComponents';
+import { trackEvent } from '@cognite/cdf-route-tracker';
 import { useFlag } from '@cognite/react-feature-flags';
 import { ExtpipeRawTables } from 'components/Lineage/Extpipe/ExtpipeRawTables';
 
@@ -26,10 +28,7 @@ import { Source } from 'components/Lineage/Source/Source';
 import { Extractor } from 'components/Lineage/Extractor/Extractor';
 import { DataSetWithExtpipes, useUpdateDataSetTransformations } from 'actions';
 import { useTranslation } from 'common/i18n';
-import { getCogniteSDKClient } from '../../utils/cogniteSdk';
-import { trackEvent } from 'utils/routeTracker';
 
-const sdk = getCogniteSDKClient();
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
 interface LineageProps {

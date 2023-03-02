@@ -11,6 +11,7 @@ import {
   SaveButton,
 } from 'utils/styledComponents';
 import { Group } from '@cognite/sdk';
+import { trackEvent } from '@cognite/cdf-route-tracker';
 import jetfireIcon from 'assets/jetfireIcon.svg';
 import getDataInIcon from 'assets/getDataInIcon.svg';
 import documentationIcon from 'assets/documentationIcon.svg';
@@ -28,7 +29,6 @@ import DataSetInfo from '../DataSetInfo';
 import CreationFlowSection from '../CreationFlowSection';
 import ConsumerPage from '../ConsumerPage';
 import { useTranslation } from 'common/i18n';
-import { trackEvent } from 'utils/routeTracker';
 
 interface DataSetCreationProps {
   loading: boolean;

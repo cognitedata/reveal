@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { DrawerHeader, ItemLabel } from 'utils/styledComponents';
 import Drawer from 'components/Drawer';
 import theme from 'styles/theme';
+import sdk from '@cognite/cdf-sdk-singleton';
 import Table from 'antd/lib/table';
 import handleError from 'utils/handleError';
 import { getContainer } from 'utils/shared';
 import { useTranslation } from 'common/i18n';
-import { getCogniteSDKClient } from 'utils/cogniteSdk';
 
 interface EventsProfileProps {
   dataSetId: string | number;
@@ -19,7 +19,6 @@ interface AggregateObject {
   value: string;
 }
 
-const sdk = getCogniteSDKClient();
 const AGGREGATE_EVENTS_PATH = `/api/v1/projects/${sdk.project}/events/aggregate`;
 
 const EventsProfile = (props: EventsProfileProps) => {

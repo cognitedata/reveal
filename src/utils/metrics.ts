@@ -1,10 +1,6 @@
-// import { trackEvent } from '@cognite/cdf-route-tracker';
+import { trackEvent } from '@cognite/cdf-route-tracker';
 import { getProject, isDevelopment } from '@cognite/cdf-utilities';
 import { Metrics } from '@cognite/metrics';
-
-function trackEvent(name: string, data: any) {
-  // mock
-}
 
 export type DataCatalogEvent =
   | { e: 'data.sets.navigate' }

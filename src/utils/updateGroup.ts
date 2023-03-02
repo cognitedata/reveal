@@ -1,10 +1,10 @@
 import { Group, ServiceAccount, GroupSpec } from '@cognite/sdk';
 import omit from 'lodash/omit';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { TranslationKeys } from 'common/i18n';
 import { isOidcEnv } from 'utils/shared';
 import { UpdateGroupData } from './types';
 import { retry } from './retry';
-import { getCogniteSDKClient } from './cogniteSdk';
 
 const NUMBER_OF_RETRIES = 6;
 
@@ -49,7 +49,6 @@ export const updateGroup = async (
   update: UpdateGroupData['update'],
   _t: (key: TranslationKeys) => string
 ): Promise<Group> => {
-  const sdk = getCogniteSDKClient();
   const allGroups: Group[] = await sdk.groups.list({ all: true });
   const originalGroup: Group | undefined = allGroups.find((g) => g.id === id);
 

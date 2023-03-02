@@ -1,3 +1,4 @@
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
 import { TranslationKeys } from 'common/i18n';
 import { updateGroup } from 'utils/updateGroup';
@@ -10,7 +11,6 @@ import isObject from 'lodash/isObject';
 import { APIDataSet, DataSet } from './types';
 import { styleScope } from 'styles/styleScope';
 import { createLink } from '@cognite/cdf-utilities';
-import { getCogniteSDKClient, getFlow } from './cogniteSdk';
 
 export const stringifyMetaData = (dataSet: { metadata: {} }) => {
   const newDataset = JSON.parse(JSON.stringify(dataSet));
@@ -51,7 +51,6 @@ export const parseDataSetsList = (dataSets: APIDataSet[]): Array<DataSet> => {
 };
 
 export const getJetfireUrl = () => {
-  const sdk = getCogniteSDKClient();
   return `https://${
     getStringCdfEnv() || 'api'
   }.cognitedata.com/api/v1/projects/${sdk.project}/transformations`;
@@ -195,7 +194,6 @@ export const getAllSetOwnersFromGroups = (dataSetId: any, groups: any[]) => {
 };
 
 export const getAllSetOwners = async (dataSetId: any) => {
-  const sdk = getCogniteSDKClient();
   try {
     const groups = await sdk.groups.list({ all: true });
     return getAllSetOwnersFromGroups(dataSetId, groups);
@@ -290,30 +288,20 @@ export const countServiceAccountsInGroup = (
   );
 };
 
-export const timeSeriesCounter = (id: any) => {
-  const sdk = getCogniteSDKClient();
-  return sdk.timeseries.aggregate({ filter: { dataSetIds: [{ id }] } });
-};
+export const timeSeriesCounter = (id: any) =>
+  sdk.timeseries.aggregate({ filter: { dataSetIds: [{ id }] } });
 
-export const assetsCounter = (id: any) => {
-  const sdk = getCogniteSDKClient();
-  return sdk.assets.aggregate({ filter: { dataSetIds: [{ id }] } });
-};
+export const assetsCounter = (id: any) =>
+  sdk.assets.aggregate({ filter: { dataSetIds: [{ id }] } });
 
-export const eventsCounter = async (id: any) => {
-  const sdk = getCogniteSDKClient();
-  return sdk.events.aggregate.count({ filter: { dataSetIds: [{ id }] } });
-};
+export const eventsCounter = async (id: any) =>
+  sdk.events.aggregate.count({ filter: { dataSetIds: [{ id }] } });
 
-export const sequenceCounter = (id: any) => {
-  const sdk = getCogniteSDKClient();
-  return sdk.sequences.aggregate({ filter: { dataSetIds: [{ id }] } });
-};
+export const sequenceCounter = (id: any) =>
+  sdk.sequences.aggregate({ filter: { dataSetIds: [{ id }] } });
 
-export const filesCounter = (id: any) => {
-  const sdk = getCogniteSDKClient();
-  return sdk.files.aggregate({ filter: { dataSetIds: [{ id }] } });
-};
+export const filesCounter = (id: any) =>
+  sdk.files.aggregate({ filter: { dataSetIds: [{ id }] } });
 
 export const isNotNilOrWhitespace = (input: string) =>
   ((input && input.trim().length) || 0) > 0 ?? false;

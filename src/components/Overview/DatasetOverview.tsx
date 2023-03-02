@@ -249,7 +249,7 @@ const DatasetOverview = ({
                             resource as keyof typeof resourceAggregates
                           ];
                         return (
-                          <Row style={{ padding: 12 }}>
+                          <Row style={{ padding: 12 }} key={resource}>
                             <Col span={7}>
                               <Flex
                                 direction="row"

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 import copy from 'copy-to-clipboard';
 
@@ -46,8 +47,6 @@ import TabTitle from './TabTitle';
 import DatasetOverview from 'components/Overview/DatasetOverview';
 import styled from 'styled-components';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
-import { getFlow } from 'utils/cogniteSdk';
-// import { useFlag } from '@cognite/react-feature-flags';
 
 const { TabPane } = Tabs;
 
@@ -365,6 +364,7 @@ const DataSetDetails = (): JSX.Element => {
                 <Menu.Item
                   iconPlacement="left"
                   icon="Copy"
+                  aria-label="Copy"
                   disabled={!dataSet?.id}
                   onClick={() => handleDatasetIdCopy(dataSet?.id)}
                 >

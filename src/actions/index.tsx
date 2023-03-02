@@ -3,6 +3,7 @@ import handleError from 'utils/handleError';
 import omit from 'lodash/omit';
 import { CreationDataSet, DataSet, DataSetV3, Extpipe } from 'utils/types';
 import { DataSetPatch, Group } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   QueryClient,
   useMutation,
@@ -32,7 +33,6 @@ import {
   getListExtpipesKey,
 } from './keys';
 import { useTranslation } from 'common/i18n';
-import { getCogniteSDKClient } from 'utils/cogniteSdk';
 
 export const invalidateDataSetQueries = (
   client: QueryClient,
@@ -70,7 +70,6 @@ export const useCreateDataSetMutation = () => {
   } = useMutation(
     'data-set-creation',
     async (dataset: CreationDataSet) => {
-      const sdk = getCogniteSDKClient();
       const res = await sdk.datasets.create([stringifyMetaData(dataset)]);
       return res[0].id as number;
     },
@@ -116,7 +115,6 @@ export const useUpdateDataSetMutation = () => {
         updateObj[key] = { set: stringifyMetaData(dataset)[key] };
       });
 
-      const sdk = getCogniteSDKClient();
       const [updateResponse] = await sdk.datasets.update([
         { update: updateObj, id: dataset.id },
       ]);
@@ -200,7 +198,6 @@ export const useExtpipes = () => {
   return useQuery(getListExtpipesKey(), async () => {
     let list: Extpipe[] = [];
     try {
-      const sdk = getCogniteSDKClient();
       const res = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
         withCredentials: true,
       });
@@ -239,10 +236,7 @@ export const useDataSetsList = (): {
 
   const { data: dataSets, ...dataSetsQuery } = useQuery(
     getListDatasetsKey(),
-    () => {
-      const sdk = getCogniteSDKClient();
-      return sdk.datasets.list().autoPagingToArray({ limit: -1 });
-    },
+    () => sdk.datasets.list().autoPagingToArray({ limit: -1 }),
     { onError }
   );
 
@@ -265,7 +259,6 @@ export const useDataSetWithExtpipes = (id?: number) => {
     // eslint-disable-next-line consistent-return
     async () => {
       if (id) {
-        const sdk = getCogniteSDKClient();
         const [resDataSet] = await sdk.datasets.retrieve([{ id }]);
         return parseDataSet(resDataSet);
       }
@@ -299,10 +292,9 @@ export const useRawList = () => {
     data: databases,
     isLoading: isLoadingDatabases,
     error: errorDatabases,
-  } = useQuery(listRawDatabasesKey, () => {
-    const sdk = getCogniteSDKClient();
-    return sdk.raw.listDatabases().autoPagingToArray({ limit: -1 });
-  });
+  } = useQuery(listRawDatabasesKey, () =>
+    sdk.raw.listDatabases().autoPagingToArray({ limit: -1 })
+  );
   const {
     data: tables = [],
     isLoading: isLoadingTables,
@@ -311,7 +303,6 @@ export const useRawList = () => {
     listRawTablesKey,
     // eslint-disable-next-line consistent-return
     () => {
-      const sdk = getCogniteSDKClient();
       if (databases) {
         const tablePromises = databases.map((database) =>
           sdk.raw
@@ -359,9 +350,8 @@ export const useLabelSuggestions = () => {
 };
 
 export const useCdfGroups = () => {
-  const { data: groups, ...rest } = useQuery(listGroupsKey, () => {
-    const sdk = getCogniteSDKClient();
-    return sdk.groups.list({ all: true });
-  });
+  const { data: groups, ...rest } = useQuery(listGroupsKey, () =>
+    sdk.groups.list({ all: true })
+  );
   return { groups, ...rest };
 };

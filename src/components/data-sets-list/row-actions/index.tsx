@@ -12,8 +12,8 @@ const RowActions = ({ actions }: RowActionsProps): JSX.Element => {
     <Dropdown
       content={
         <Menu>
-          {actions.map((buttonProps) => (
-            <Menu.Item iconPlacement="left" {...buttonProps} />
+          {actions.map((buttonProps, idx) => (
+            <Menu.Item key={idx} iconPlacement="left" {...buttonProps} />
           ))}
         </Menu>
       }

@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=3080 WDS_SOCKET_HOST=localhost PORT=3080 react-app-rewired --max_old_space_size=2000 start",
-    "start-mock": "NODE_ENV=mock HTTPS=true REACT_APP_IS_MOCK=true PORT=3080 react-app-rewired --max_old_space_size=2000 start",
     "build": "react-app-rewired --max_old_space_size=4096 build",
     "test": "react-app-rewired test",
     "lint": "yarn prettier && yarn eslint",
@@ -63,7 +62,6 @@
     "customize-cra": "^1.0.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "http-proxy-middleware": "^2.0.6",
     "less-loader": "^6.2.0",
     "postcss-prefixwrap": "^1.29.0",
     "prettier": "^2.4.1",

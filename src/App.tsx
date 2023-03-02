@@ -12,7 +12,6 @@ import { translations } from 'common/i18n';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { trackUsage } from 'utils';
 import { AuthContainer } from './AuthContainer';
-import { AuthContainerMock } from './AuthContainerMock';
 
 const DataSetsList = lazy(() => import('pages/DataSetsList/DataSetsList'));
 const DataSetDetails = lazy(
@@ -36,10 +35,6 @@ const App = () => {
     trackUsage({ e: 'data.sets.navigate' });
   }, []);
 
-  const AuthContainerWrapper = process.env.REACT_APP_IS_MOCK
-    ? AuthContainerMock
-    : AuthContainer;
-
   return (
     <I18nWrapper translations={translations} defaultNamespace="data-catalog">
       <FlagProvider
@@ -51,7 +46,7 @@ const App = () => {
           <GlobalStyles>
             <ToastContainer />
             <SubAppWrapper title="Data Catalog">
-              <AuthContainerWrapper>
+              <AuthContainer>
                 <DataSetsContextProvider>
                   <BrowserRouter>
                     <Suspense fallback={<Loader />}>
@@ -81,7 +76,7 @@ const App = () => {
                     </Suspense>
                   </BrowserRouter>
                 </DataSetsContextProvider>
-              </AuthContainerWrapper>
+              </AuthContainer>
             </SubAppWrapper>
           </GlobalStyles>
           <ReactQueryDevtools initialIsOpen={false} />
