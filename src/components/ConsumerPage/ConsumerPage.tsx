@@ -48,7 +48,7 @@ const StyledTitle2 = styled((props) => (
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  border-bottom: 2px solid ${Colors['decorative--grayscale--600']};
+  border-bottom: 2px solid ${Colors['border--interactive--default']};
   padding-bottom: 1rem;
   margin-bottom: 1rem;
   &:last-child {

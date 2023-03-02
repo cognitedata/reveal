@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Body, Flex, Icon, Chip, Tooltip } from '@cognite/cogs.js';
+import { Body, Flex, Icon, Chip, Tooltip, Colors } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/shared';
 import { getItemFromStorage } from 'utils/localStorage';
 import { DataSet, DataSetV3, Extpipe } from 'utils/types';
@@ -136,16 +136,11 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
 const StyledEmptyText = styled(Body)`
   color: rgba(0, 0, 0, 0.55);
 `;
-const StyledLabelCount = styled(Chip)`
-  background: #fff;
+const StyledLabelCount = styled(Chip).attrs({ hideTooltip: true })`
+  background: ${Colors['surface--muted']} !important;
   border: 1px solid #bfbfbf;
   border-radius: 4px;
 `;
-
-StyledLabelCount.defaultProps = {
-  style: { backgroundColor: 'white' },
-  hideTooltip: true,
-};
 
 export const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
   const labels: string[] = [];

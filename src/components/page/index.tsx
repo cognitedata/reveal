@@ -18,16 +18,19 @@ const Page = ({ children, className, title }: PageProps): JSX.Element => {
     <StyledPage className={className}>
       <StyledTitleContainer justifyContent="space-between" alignItems="center">
         <Title level={3}>{title}</Title>
-        <Link
-          href={createLink('/explore')}
-          target="_blank"
-          // @ts-ignore Click should be exposed everywhere, ts types are missing the defs
+        <span
+          role="button"
           onClick={() => trackUsage({ e: 'data.explore.navigate' })}
-          icon="ExternalLink"
-          iconPlacement="right"
         >
-          {t('explore-data')}
-        </Link>
+          <Link
+            href={createLink('/explore')}
+            target="_blank"
+            // icon="ExternalLink"
+            // iconPlacement="right"
+          >
+            {t('explore-data')}
+          </Link>
+        </span>
       </StyledTitleContainer>
       <StyledPageContent>{children}</StyledPageContent>
     </StyledPage>

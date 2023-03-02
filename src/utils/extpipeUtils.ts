@@ -21,7 +21,6 @@ export const getExtractionPipelineUIUrl = (path?: string) => {
 
 export const fetchExtpipesByDataSetId = async (id: number) => {
   let extpipes;
-
   try {
     extpipes = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
       withCredentials: true,

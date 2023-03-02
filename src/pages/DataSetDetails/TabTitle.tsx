@@ -29,7 +29,7 @@ const TabTitle = ({
       <Flex direction="row" alignItems="center" gap={6}>
         {iconType && <Icon type={iconType}></Icon>}
         <StyledTitle disabled={disabled}>{title}</StyledTitle>
-        {label && <Chip type="default" size="small" label={label as string} />}
+        {label && <Chip type="default" size="small" label={`${label}`} />}
       </Flex>
     );
   };

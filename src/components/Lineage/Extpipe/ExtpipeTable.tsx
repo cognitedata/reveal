@@ -1,7 +1,7 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import Table from 'antd/lib/table';
-import { Button, Icon, Link } from '@cognite/cogs.js';
+import { Button, Colors, Icon, Link } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -29,7 +29,7 @@ const StyledButton = styled(Link)`
   margin-top: 8px;
 
   &:focus {
-    color: #fff;
+    color: ${Colors['surface--muted']};
   }
 `;
 

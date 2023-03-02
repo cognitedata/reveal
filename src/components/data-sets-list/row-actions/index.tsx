@@ -1,7 +1,6 @@
-import { Button, ButtonProps, Colors, Menu } from '@cognite/cogs.js';
+import { Button, ButtonProps, Menu } from '@cognite/cogs.js';
 
 import Dropdown from 'components/dropdown/Dropdown';
-import styled from 'styled-components';
 
 type RowActionsProps = {
   actions: Omit<ButtonProps, 'type'>[];
@@ -19,25 +18,14 @@ const RowActions = ({ actions }: RowActionsProps): JSX.Element => {
       }
       placement="bottom-end"
     >
-      <StyledButton
-        aria-label="Options"
-        icon="EllipsisHorizontal"
+      <Button
         type="ghost"
+        size="small"
+        icon="EllipsisHorizontal"
+        aria-label="Options"
       />
     </Dropdown>
   );
 };
 
 export default RowActions;
-
-const StyledButton = styled(Button)`
-  &:hover {
-    background-color: ${Colors['surface--interactive--toggled-hover']};
-    color: ${Colors['decorative--blue--300']};
-  }
-
-  &:active {
-    background-color: ${Colors['surface--interactive--toggled-pressed']};
-    color: ${Colors['decorative--blue--300']};
-  }
-`;
