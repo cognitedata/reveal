@@ -23,7 +23,7 @@ export type ResourceTabType = 'details' | ResourceType;
 type Details = {
   detailTypeKey: ResourceTabType;
   detailType: string;
-  count: string | undefined;
+  count: number | undefined;
 };
 
 type Props = {
@@ -80,20 +80,11 @@ export default function NodePreview({
 
   const { counts } = useRelatedResourceCounts(parentResource as any);
 
-  let assetCount = counts.asset || '0';
-  const assetCountWithoutSeparator = assetCount.split(',').join('');
-  let parsedAssetCount = parseInt(assetCountWithoutSeparator, 10);
-  parsedAssetCount = Number.isNaN(parsedAssetCount) ? 0 : parsedAssetCount;
-  parsedAssetCount = Math.max(parsedAssetCount - 1, 0);
-  assetCount = parsedAssetCount
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
   const details: Array<Details> = [
     {
       detailTypeKey: 'asset',
       detailType: 'Assets',
-      count: assetCount,
+      count: counts.asset,
     },
     {
       detailTypeKey: 'timeSeries',

@@ -555,7 +555,7 @@ export const useRelatedResourceCount = (
   }
 
   return {
-    count: isAdvancedFiltersEnabled ? String(count) : formatNumber(count),
+    count: count,
     relationshipCount: relationships.length,
     hasMoreRelationships: hasMore,
     assetIdCount,
@@ -572,7 +572,7 @@ export const useRelatedResourceCounts = (
   resource: ResourceItem,
   isAdvancedFiltersEnabled = false
 ): {
-  counts: { [key in ResourceType]?: string };
+  counts: { [key in ResourceType]?: number };
   hasMoreRelationships: { [key in ResourceType]?: boolean };
   isLoading: { [key in ResourceType]?: boolean };
 } => {

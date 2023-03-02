@@ -14,7 +14,10 @@ import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
 import { useLocation } from 'react-router-dom';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
-import { getTabCountLabel } from '@data-exploration-components/utils';
+import {
+  formatNumber,
+  getTabCountLabel,
+} from '@data-exploration-components/utils';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
 
 type ResouceDetailsTabsProps = {
@@ -95,10 +98,10 @@ export const ResourceDetailsTabs = ({
     (type) => !excludedTypes.includes(type)
   );
 
-  const getCountLabel = (count: string, key: ResourceType) => {
+  const getCountLabel = (count: number, key: ResourceType) => {
     return isAdvancedFiltersEnabled
-      ? getTabCountLabel(Number(count.replace(',', '')))
-      : addPlusSignToCount(count, hasMoreRelationships[key]!);
+      ? getTabCountLabel(count)
+      : addPlusSignToCount(formatNumber(count), hasMoreRelationships[key]!);
   };
 
   const relationshipTabs = filteredTabs.map((key) => (
@@ -107,7 +110,7 @@ export const ResourceDetailsTabs = ({
       key={key}
       label={getTitle(key)}
       chipRight={{
-        label: getCountLabel(counts[key] || '0', key),
+        label: getCountLabel(counts[key] || 0, key),
         size: 'x-small',
       }}
     >
