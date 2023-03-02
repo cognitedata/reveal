@@ -33,8 +33,8 @@ describe('extractMatchingLabels', function () {
         ['test', 'test2']
       )
     ).toEqual({
-      exact: ['test bar', 'test2 123'],
-      partial: ['test foo', 'test2 1234'],
+      exact: ['test "bar"', 'test2 123'],
+      partial: ['test "foo"', 'test2 1234'],
       fuzzy: [],
     });
 
