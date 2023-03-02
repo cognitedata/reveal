@@ -1,54 +1,62 @@
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
-import { Asset, InternalId } from '@cognite/sdk';
-
-import { useAssets, useAssetSearch } from 'hooks/assets';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
-import { TABLE_ITEMS_PER_PAGE } from '../../constants';
+import { InternalId, Timeseries } from '@cognite/sdk';
+import { useTimeseries, useTimeseriesSearch } from 'hooks/timeseries';
+import { Filter } from 'context/QuickMatchContext';
 
-type AssetListTableRecord = { key: string } & Pick<
-  Asset,
-  'name' | 'rootId' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
+type TimeseriesListTableRecord = { key: string } & Pick<
+  Timeseries,
+  'name' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
 >;
-type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {
+type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
   title: string;
   key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
 };
 
 type Props = {
   query?: string | null;
+  unmatchedOnly?: boolean;
+  filter: Filter;
   selected: InternalId[];
   setSelected: Dispatch<SetStateAction<InternalId[]>>;
 };
-export default function AssetTable({ query, selected, setSelected }: Props) {
-  const { t } = useTranslation();
-  const { data, isInitialLoading, error } = useAssets(
-    TABLE_ITEMS_PER_PAGE,
-    undefined,
-    {
-      enabled: !query,
-    }
-  );
+export default function TimeseriesTable({
+  query,
+  selected,
+  setSelected,
+  unmatchedOnly,
+  filter,
+}: Props) {
+  const {
+    data: listPages,
+    isInitialLoading: listLoading,
+    error,
+  } = useTimeseries({ unmatchedOnly, filter }, { enabled: !query });
 
   const { data: searchResult, isInitialLoading: searchLoading } =
-    useAssetSearch(query!, {
+    useTimeseriesSearch(query!, {
       enabled: !!query,
       select: (items) => items?.map((i) => ({ ...i, key: i.id.toString() })),
     });
 
-  const listPages = useMemo(
+  const loading = listLoading || searchLoading;
+  const { t } = useTranslation();
+
+  const collapsedListPages = useMemo(
     () =>
-      data?.pages[0]?.items?.map((a) => ({ ...a, key: a.id.toString() })) || [],
-    [data]
+      listPages?.pages[0]?.items?.map((a) => ({
+        ...a,
+        key: a.id.toString(),
+      })) || [],
+    [listPages]
   );
 
-  const dataSource = query ? searchResult : listPages;
+  const dataSource = !!query ? searchResult : collapsedListPages;
 
-  const loading = isInitialLoading || searchLoading;
-
-  const columns: AssetListTableRecordCT[] = useMemo(
+  const columns: TimeseriesListTableRecordCT[] = useMemo(
     () => [
       {
         title: t('resource-table-column-name'),
@@ -64,7 +72,7 @@ export default function AssetTable({ query, selected, setSelected }: Props) {
         title: t('resource-table-column-lastUpdated'),
         dataIndex: 'lastUpdatedTime',
         key: 'lastUpdatedTime',
-        render: (value: Date) => value.toLocaleString(),
+        render: (value: number) => new Date(value).toLocaleString(),
       },
     ],
     [t]
@@ -73,7 +81,7 @@ export default function AssetTable({ query, selected, setSelected }: Props) {
   const rowSelection = {
     selectedRowKeys: selected.map((s) => s.id.toString()),
     type: 'checkbox' as RowSelectionType,
-    onChange(_: (string | number)[], rows: AssetListTableRecord[]) {
+    onChange(_: (string | number)[], rows: TimeseriesListTableRecord[]) {
       setSelected(rows.map((r) => ({ id: r.id })));
     },
     hideSelectAll: true,
@@ -89,18 +97,19 @@ export default function AssetTable({ query, selected, setSelected }: Props) {
     );
   }
 
-  if (isInitialLoading) {
+  if (listLoading) {
     return <Loader />;
   }
 
   return (
-    <Table<AssetListTableRecord>
+    <Table<TimeseriesListTableRecord>
       loading={loading}
       columns={columns}
       emptyContent={loading ? <Icon type="Loader" /> : undefined}
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
-      dataSource={dataSource}
+      pagination={false}
+      dataSource={dataSource || []}
     />
   );
 }

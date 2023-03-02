@@ -19,7 +19,7 @@ export default function RootList() {
         {t('quick-match')}
       </Link>
       <Link to={createLink(`/${subAppPath}/create`)}>
-        {t('create-pipeline')}
+        {t('title-create-pipeline')}
       </Link>
       <PipelineList />
     </ListWrapper>
