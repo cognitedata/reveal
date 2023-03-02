@@ -12,11 +12,7 @@ import {
 
 import { ResourceTabProps } from './types';
 
-export const ThreeDTab = ({
-  query,
-  showCount = false,
-  ...rest
-}: ResourceTabProps) => {
+export const ThreeDTab = ({ query, ...rest }: ResourceTabProps) => {
   const {
     data: modelData = { pages: [] as ThreeDModelsResponse[] },
     isLoading,
@@ -40,7 +36,6 @@ export const ThreeDTab = ({
 
   const chipRightProps = getChipRightPropsForResourceCounter(
     getTabCountLabel(count),
-    showCount,
     isLoading
   );
 

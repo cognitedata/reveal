@@ -155,13 +155,11 @@ function SearchPage() {
               <Tabs.Tab tabKey={ViewType.All} label="All resources" />
               <AssetsTab
                 tabKey={ViewType.Asset}
-                showCount
                 query={debouncedQuery}
                 filter={assetFilter}
               />
               <TimeseriesTab
                 tabKey={ViewType.TimeSeries}
-                showCount
                 query={debouncedQuery}
                 filter={timeseriesFilter}
               />
@@ -170,29 +168,21 @@ function SearchPage() {
                 tabKey={ViewType.File}
                 query={debouncedQuery}
                 filter={documentFilter}
-                showCount
               />
               <EventsTab
                 tabKey={ViewType.Event}
-                showCount
                 query={debouncedQuery}
                 filter={eventFilter}
               />
               <SequenceTab
                 tabKey={ViewType.Sequence}
-                showCount
                 query={debouncedQuery}
                 filter={sequenceFilter}
               />
-              <ThreeDTab
-                tabKey={ViewType.ThreeD}
-                showCount
-                query={debouncedQuery}
-              />
+              <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />
             </ResourceTypeTabsV2>
           ) : (
             <ResourceTypeTabs
-              showCount
               globalFilters={filterMap as any}
               query={query}
               currentResourceType={currentResourceType || ViewType.All}

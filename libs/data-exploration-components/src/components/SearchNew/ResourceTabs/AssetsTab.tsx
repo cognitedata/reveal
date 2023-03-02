@@ -10,15 +10,9 @@ import { CounterTab } from './elements';
 interface Props extends TabProps {
   query?: string;
   filter?: any;
-  showCount?: boolean;
 }
 
-export const AssetsTab = ({
-  query,
-  filter,
-  showCount = false,
-  ...rest
-}: Props) => {
+export const AssetsTab = ({ query, filter, ...rest }: Props) => {
   const {
     data: { count },
     isLoading,
@@ -29,7 +23,6 @@ export const AssetsTab = ({
 
   const chipRightProps = getChipRightPropsForResourceCounter(
     getTabCountLabel(count),
-    showCount,
     isLoading
   );
 

@@ -31,7 +31,6 @@ type Props = {
   setCurrentResourceType: (tab?: string) => void;
   query?: string;
   globalFilters?: { [key in ResourceType]: any };
-  showCount?: boolean;
   additionalTabs?: React.ReactElement<TabProps>[];
 };
 
@@ -39,7 +38,6 @@ const ResourceTypeTab = ({
   currentResourceType,
   query,
   filter,
-  showCount = false,
   ...rest
 }: { filter: any } & Omit<
   Props,
@@ -54,7 +52,6 @@ const ResourceTypeTab = ({
   });
   const chipRightProps = getChipRightPropsForResourceCounter(
     getTabCountLabel(result.count),
-    showCount,
     result.isLoading
   );
 

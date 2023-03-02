@@ -8,12 +8,7 @@ import {
 
 import { ResourceTabProps } from './types';
 
-export const SequenceTab = ({
-  query,
-  filter,
-  showCount = false,
-  ...rest
-}: ResourceTabProps) => {
+export const SequenceTab = ({ query, filter, ...rest }: ResourceTabProps) => {
   const {
     data: { count },
     isLoading,
@@ -24,7 +19,6 @@ export const SequenceTab = ({
 
   const chipRightProps = getChipRightPropsForResourceCounter(
     getTabCountLabel(count),
-    showCount,
     isLoading
   );
 

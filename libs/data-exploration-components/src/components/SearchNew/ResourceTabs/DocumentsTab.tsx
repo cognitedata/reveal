@@ -15,7 +15,7 @@ import { CounterTab } from './elements';
 export const DocumentsTab = ({
   query,
   filter,
-  showCount = false,
+
   ...rest
 }: ResourceTabProps) => {
   const { data: filteredDocumentCount = 0, isLoading } =
@@ -27,7 +27,6 @@ export const DocumentsTab = ({
       : filteredDocumentCount;
   const chipRightProps = getChipRightPropsForResourceCounter(
     getTabCountLabel(count),
-    showCount,
     isLoading
   );
 

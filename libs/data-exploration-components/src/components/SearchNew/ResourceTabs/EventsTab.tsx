@@ -7,12 +7,7 @@ import {
 } from '../../../utils';
 import { CounterTab } from './elements';
 
-export const EventsTab = ({
-  query,
-  filter,
-  showCount = false,
-  ...rest
-}: ResourceTabProps) => {
+export const EventsTab = ({ query, filter, ...rest }: ResourceTabProps) => {
   const { data, isLoading } = useEventsAggregateCountQuery(
     { eventsFilters: filter, query },
     { keepPreviousData: true }
@@ -20,7 +15,6 @@ export const EventsTab = ({
 
   const chipRightProps = getChipRightPropsForResourceCounter(
     getTabCountLabel(data?.count || 0),
-    showCount,
     isLoading
   );
 
