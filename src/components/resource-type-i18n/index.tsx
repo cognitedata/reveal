@@ -4,16 +4,25 @@ import { SourceType, TargetType } from 'context/QuickMatchContext';
 type Props = {
   t: SourceType | TargetType;
   count?: number;
+  downcase?: boolean;
 };
 
-export default function ResourceTypei18n({ t, count = 42 }: Props) {
+export default function ResourceTypei18n({ t, count = 42, downcase }: Props) {
   const { t: translate } = useTranslation();
   switch (t) {
     case 'timeseries': {
-      return <>{translate('resource-timeseries')}</>;
+      let s = translate('resource-timeseries');
+      if (downcase) {
+        s = s.toLowerCase();
+      }
+      return <>{s}</>;
     }
     case 'assets': {
-      return <>{translate('resource-asset', { count })}</>;
+      let s = translate('resource-asset', { count });
+      if (downcase) {
+        s = s.toLowerCase();
+      }
+      return <>{s}</>;
     }
     default: {
       return null;

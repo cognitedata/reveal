@@ -74,3 +74,21 @@ export const downcaseMetadata = (md?: Metadata) => {
       )
     : undefined;
 };
+
+export const bulkDownloadStatus = ({
+  hasNextPage,
+  isFetching,
+  isError,
+}: {
+  isFetching?: boolean;
+  isError?: boolean;
+  hasNextPage?: boolean;
+}): 'loading' | 'error' | 'success' | 'idle' | undefined => {
+  if (isError) {
+    return isFetching ? 'loading' : 'error';
+  } else if (hasNextPage) {
+    return isFetching ? 'loading' : 'idle';
+  } else {
+    return isFetching ? 'loading' : 'success';
+  }
+};

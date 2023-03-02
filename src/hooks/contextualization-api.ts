@@ -15,7 +15,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { ModelMapping, EMFeatureType, Scope } from 'context/QuickMatchContext';
+import { ModelMapping, EMFeatureType } from 'context/QuickMatchContext';
 
 export const IN_PROGRESS_EM_STATES = ['queued', 'running'];
 
@@ -178,36 +178,34 @@ export const useCreateEMModel = () => {
   return useMutation(
     ['create-em-model'],
     async ({
-      sourcesList,
+      sources,
       targetsList,
       matchFields,
       featureType,
       supervisedMode,
-      scope,
     }: {
-      sourcesList: InternalId[];
+      sources: any[];
       targetsList: InternalId[];
       matchFields: ModelMapping;
       featureType: EMFeatureType;
       supervisedMode?: boolean;
-      scope: Scope;
     }) => {
-      const [sources, targets] = await Promise.all([
-        queryClient.fetchQuery(getQMSourceDownloadKey(), async () => {
-          const timeseries = await sdk.timeseries.retrieve(sourcesList);
-          return scope === 'all'
-            ? timeseries
-            : timeseries.filter((ts) => !ts.assetId);
-        }),
-        queryClient.fetchQuery(getQMTargetDownloadKey(), async () => {
+      // const sources = (
+      //   await queryClient.fetchQuery(getQMSourceDownloadKey(), () =>
+      //     fetchTimeseriesForEM(sdk, queryClient, sourcesList)
+      //   )
+      // ).filter((ts) => scope === 'all' || !ts.assetId);
+      const targets = await queryClient.fetchQuery(
+        getQMTargetDownloadKey(),
+        async () => {
           const assets = await sdk.assets.retrieve(targetsList);
           return assets.map(({ id, externalId, name }) => ({
             id,
             externalId,
             name,
           }));
-        }),
-      ]);
+        }
+      );
 
       const trueMatches = supervisedMode
         ? sources.reduce(
