@@ -16,10 +16,10 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query';
+
+import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
 import { PropertyAggregate, PropertyAggregateResponse } from 'common/types';
 import { downcaseMetadata } from 'utils';
-
-import { TABLE_ITEMS_PER_PAGE } from '../constants';
 
 type TSParams = {
   limit?: number;
