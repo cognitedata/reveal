@@ -12,6 +12,7 @@ const columnToSortMap = new Map<string, DocumentFilterProperty>([
   ['createdTime', ['createdTime']],
   ['externalId', ['externalId']],
   ['id', ['id']],
+  ['dataSetId', ['sourceFile', 'datasetId']],
 ]);
 
 export const mapTableSortByToDocumentSortFields = (

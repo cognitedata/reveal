@@ -72,7 +72,7 @@ export const TimeseriesSummary = ({
       Table.Columns.id(),
       Table.Columns.isString,
       Table.Columns.isStep,
-      Table.Columns.dataset,
+      Table.Columns.dataSet,
       Table.Columns.rootAsset(onRootAssetClick),
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];

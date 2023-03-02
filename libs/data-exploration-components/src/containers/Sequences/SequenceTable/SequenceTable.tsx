@@ -66,7 +66,10 @@ export const SequenceTable = ({
         },
         Table.Columns.rootAsset(onRootAssetClick),
         Table.Columns.assets(onRootAssetClick),
-        Table.Columns.dataset,
+        {
+          ...Table.Columns.dataSet,
+          enableSorting: true,
+        },
         ...metadataColumns,
       ] as ColumnDef<Sequence>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps

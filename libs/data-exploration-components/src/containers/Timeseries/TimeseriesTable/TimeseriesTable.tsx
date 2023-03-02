@@ -144,8 +144,8 @@ export const TimeseriesTable = ({
         enableSorting: false,
       },
       {
-        ...Table.Columns.dataset,
-        enableSorting: false,
+        ...Table.Columns.dataSet,
+        enableSorting: true,
       },
       Table.Columns.rootAsset(onRootAssetClick),
       Table.Columns.assets(onRootAssetClick),

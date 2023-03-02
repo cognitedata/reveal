@@ -130,7 +130,7 @@ export const DocumentSummary = ({
         Table.Columns.externalId(),
         Table.Columns.id(),
         {
-          ...Table.Columns.dataset,
+          ...Table.Columns.dataSet,
           accessorFn: (document) => document.sourceFile.datasetId,
         },
         ...metadataColumns,

@@ -128,8 +128,9 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         Table.Columns.externalId(),
         Table.Columns.id(),
         {
-          ...Table.Columns.dataset,
+          ...Table.Columns.dataSet,
           accessorFn: (document) => document.sourceFile.datasetId,
+          enableSorting: true,
         },
 
         ...metadataColumns,

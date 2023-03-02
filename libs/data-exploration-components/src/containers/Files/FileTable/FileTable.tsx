@@ -64,7 +64,7 @@ export const FileTable = (props: FileTableProps) => {
         Table.Columns.uploadedTime,
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
-        Table.Columns.dataset,
+        Table.Columns.dataSet,
         Table.Columns.source(query),
         Table.Columns.assets(onDirectAssetClick),
         Table.Columns.labels,

@@ -57,7 +57,7 @@ export const EventSummary = ({
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
         Table.Columns.id(),
-        Table.Columns.dataset,
+        Table.Columns.dataSet,
         Table.Columns.startTime,
         Table.Columns.endTime,
         Table.Columns.source(),

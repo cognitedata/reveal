@@ -244,9 +244,9 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       <Body level={2}>{capitalize(getValue<boolean>().toString())}</Body>
     ),
   },
-  dataset: {
+  dataSet: {
     header: 'Dataset',
-    id: 'datasetId',
+    id: 'dataSetId',
     enableSorting: false,
     accessorFn: (resource) => resource.dataSetId,
     cell: ({ getValue }) => {

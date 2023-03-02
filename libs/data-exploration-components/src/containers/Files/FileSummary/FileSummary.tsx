@@ -66,7 +66,7 @@ export const FileSummary = ({
         Table.Columns.uploadedTime,
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
-        Table.Columns.dataset,
+        Table.Columns.dataSet,
         Table.Columns.source(),
         Table.Columns.assets(onDirectAssetClick),
         Table.Columns.labels,

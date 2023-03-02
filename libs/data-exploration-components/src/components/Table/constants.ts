@@ -6,7 +6,7 @@ export const ColumnKeys = [
   'parentExternalId',
   'isString',
   'isStep',
-  'dataset',
+  'dataSet',
   'startTime',
   'endTime',
   'mimeType',
