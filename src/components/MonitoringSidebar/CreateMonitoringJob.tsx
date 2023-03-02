@@ -171,7 +171,7 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
       userAuthId
     ) {
       const dataToSend: CreateMonitoringJobPayload = {
-        monitoringTaskExternalID: transformName(name),
+        monitoringTaskName: transformName(name),
         FolderId: folder.value,
         evaluateEvery: evaluateEveryCalc,
         modelExternalId: alertThresholdType?.value,

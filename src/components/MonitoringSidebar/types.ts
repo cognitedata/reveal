@@ -46,7 +46,7 @@ export type SessionAPIPayload = {
 };
 
 export type CreateMonitoringJobPayload = {
-  monitoringTaskExternalID: string;
+  monitoringTaskName: string;
   FolderId: string | undefined;
   evaluateEvery: number;
   modelExternalId: string;
