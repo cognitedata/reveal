@@ -58,8 +58,8 @@ export class Image360Facade<T> {
     pullAll(this._image360Collections, disposeableCollections);
   }
 
-  public preload(entity: Image360Entity, lockdownload?: boolean): Promise<void> {
-    return this._image360Cache.cachedPreload(entity, lockdownload);
+  public preload(entity: Image360Entity, lockDownload?: boolean): Promise<void> {
+    return this._image360Cache.cachedPreload(entity, lockDownload);
   }
 
   public intersect(
