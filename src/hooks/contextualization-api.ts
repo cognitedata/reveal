@@ -7,6 +7,8 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
+  useMutation,
+  UseMutationOptions,
 } from '@tanstack/react-query';
 
 const getEMModelsKey = (): QueryKey => ['em', 'models'];
@@ -37,6 +39,15 @@ export type Pipeline = {
   name: string;
   description: string;
   owner: string;
+  run: string;
+  sources: {
+    dataSetIds: [{ id: number }];
+    resource: string;
+  };
+  targets: {
+    dataSetIds: [{ id: number }];
+    resource: string;
+  };
 };
 const getEMPipelinesKey = (): QueryKey => ['em', 'pipelines'];
 export const useEMPipelines = (
@@ -78,5 +89,55 @@ export const useEMPipeline = (
         )
         .then((r) => r.data.items[0]),
     opts
+  );
+};
+
+export const useDeleteEMPipeline = (
+  opts?: UseMutationOptions<unknown, CogniteError, { id: number }>
+) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+  return useMutation(
+    ({ id }: { id: number }) =>
+      sdk.post<{ items: Pipeline[]; nextCursor?: string }>(
+        `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines/delete`,
+        { data: { items: [{ id }] } }
+      ),
+    {
+      ...opts,
+      onSuccess: (...params) => {
+        queryClient.invalidateQueries(getEMPipelinesKey());
+        opts?.onSuccess?.(...params);
+      },
+    }
+  );
+};
+
+export const useDuplicateEMPipeline = () => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (
+      pipeline: Pick<
+        Pipeline,
+        'id' | 'name' | 'description' | 'sources' | 'targets'
+      >
+    ) =>
+      sdk.post<Pipeline>(
+        `/api/playground/projects/${sdk.project}/context/entitymatching/pipelines`,
+        {
+          data: {
+            name: `${pipeline.name ?? pipeline.id} copy`,
+            description: pipeline.description,
+            sources: pipeline.sources,
+            targets: pipeline.targets,
+          },
+        }
+      ),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(getEMPipelinesKey());
+      },
+    }
   );
 };

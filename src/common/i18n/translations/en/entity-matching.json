@@ -2,9 +2,13 @@
   "entity-matching-pipelines": "Entity Matching pipelines",
   "quick-match": "Quick match",
   "create-pipeline": "Create pipeline",
+  "error": "Error",
+  "notification-success": "Success",
   "pipeline-list-table-column-title-description": "Description",
   "pipeline-list-table-column-title-name": "Name",
   "pipeline-list-table-column-title-owner": "Owner",
   "pipeline-list-empty-description": "Use this section to create pipelines and tune entity matching models to match CDF resources with assets.",
-  "pipeline-list-empty-title": "No pipelines have been added."
+  "pipeline-list-empty-title": "No pipelines have been added.",
+  "pipeline-notification-duplicate-error": "Something went wrong. Failed to duplicate pipeline.",
+  "pipeline-notification-duplicate-success": "The pipeline {{name}} was duplicated."
 }

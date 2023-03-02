@@ -1,1 +1,6 @@
-export type PipelineTableTypes = 'id' | 'name' | 'description' | 'owner';
+export type PipelineTableTypes =
+  | 'id'
+  | 'name'
+  | 'description'
+  | 'owner'
+  | 'run';

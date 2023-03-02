@@ -1,5 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
-
+import { message } from 'antd';
 import { styleScope } from 'styles/styleScope';
 
 export const getContainer = () => {
@@ -27,3 +27,15 @@ export function stringSorter<T extends Record<string, any>>(
     return 1;
   } else return 0;
 }
+
+export const stringContains = (value?: string, searchText?: string) => {
+  if (!searchText) {
+    return true;
+  }
+  try {
+    return value && value.toUpperCase().search(searchText.toUpperCase()) >= 0;
+  } catch (e) {
+    message.error('Invalid search term');
+    return 'Invalid search term';
+  }
+};
