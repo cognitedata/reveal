@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Body, Tooltip, Select } from '@cognite/cogs.js';
+import { Body, Button, Select, Tooltip } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';

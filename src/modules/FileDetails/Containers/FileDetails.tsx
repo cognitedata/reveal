@@ -1,7 +1,5 @@
 import React from 'react';
-import { Tabs } from '@cognite/cogs.js';
-import { Button, Title, Icon } from '@cognite/cogs.js';
-
+import { Button, Icon, Tabs, Title } from '@cognite/cogs.js';
 import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
 import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
 import { MetaDataTable } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTable';

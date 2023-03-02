@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { notification } from 'antd';
 import {
-  Button,
-  Title,
   Body,
-  Tooltip,
+  Button,
   Popconfirm,
   Select,
+  Title,
+  Tooltip,
 } from '@cognite/cogs.js';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';

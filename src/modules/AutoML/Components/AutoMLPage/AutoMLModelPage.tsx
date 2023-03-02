@@ -2,12 +2,12 @@
 import React, { useState } from 'react';
 import {
   Button,
-  Title,
-  Icon,
-  Dropdown,
-  Popconfirm,
-  Menu,
   Detail,
+  Dropdown,
+  Icon,
+  Menu,
+  Popconfirm,
+  Title,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {

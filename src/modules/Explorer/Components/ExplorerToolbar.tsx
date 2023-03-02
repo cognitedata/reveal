@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Title, SegmentedControl } from '@cognite/cogs.js';
+import { Button, SegmentedControl, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
 import { LoadingBar } from 'src/modules/Common/Components/LoadingBar/LoadingBar';

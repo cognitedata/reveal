@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title, Body } from '@cognite/cogs.js';
+import { Body, Title } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 import { getContainer } from 'src/utils';

@@ -1,11 +1,11 @@
 import {
-  Button,
-  Title,
-  Icon,
   Body,
-  OptionType,
-  Row,
   Col,
+  Row,
+  Icon,
+  OptionType,
+  Title,
+  Button,
 } from '@cognite/cogs.js';
 import { PopupUIElementContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/TitleContainer';
 import React from 'react';

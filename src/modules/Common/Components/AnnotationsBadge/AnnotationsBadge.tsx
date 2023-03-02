@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Body, Icon, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Icon, Tooltip } from '@cognite/cogs.js';
 import {
   AnnotationsBadgeCounts,
   AnnotationsBadgeStatuses,

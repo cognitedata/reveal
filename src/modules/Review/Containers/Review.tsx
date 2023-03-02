@@ -8,7 +8,7 @@ import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import styled from 'styled-components';
-import { Button, ToastContainer, Icon, Popconfirm } from '@cognite/cogs.js';
+import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { resetPreview } from 'src/modules/Review/store/review/slice';

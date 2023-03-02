@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Props, OptionTypeBase } from 'react-select';
-import { Tooltip, Select } from '@cognite/cogs.js';
+import { Select, Tooltip } from '@cognite/cogs.js';
 import { AutoMLModelCore } from 'src/api/vision/autoML/types';
 
 type ModelOption = { id: number; value: number; name: string };

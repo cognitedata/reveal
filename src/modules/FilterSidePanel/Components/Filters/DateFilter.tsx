@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Title, SegmentedControl } from '@cognite/cogs.js';
+import { SegmentedControl, Title } from '@cognite/cogs.js';
 import { DatePicker } from 'antd';
 import styled from 'styled-components';
 import moment from 'moment';

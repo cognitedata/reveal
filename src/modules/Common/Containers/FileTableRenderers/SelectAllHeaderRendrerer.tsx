@@ -1,7 +1,6 @@
 import { SelectableTableCellRenderer } from 'src/modules/Common/types';
 import React from 'react';
-import { Checkbox, Dropdown, Menu } from '@cognite/cogs.js';
-import { Button } from '@cognite/cogs.js';
+import { Button, Checkbox, Dropdown, Menu } from '@cognite/cogs.js';
 import { keyGenerator } from 'src/utils/keyGenerator/keyGenerator';
 
 export function SelectAllHeaderRenderer({

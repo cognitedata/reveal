@@ -1,12 +1,12 @@
 import React from 'react';
 import {
   Button,
-  Title,
+  Detail,
   Icon,
   Tooltip,
-  Detail,
-  Select,
   Row,
+  Select,
+  Title,
 } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsGaugeReader } from 'src/api/vision/detectionModels/types';

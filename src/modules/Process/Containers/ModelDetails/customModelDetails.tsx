@@ -1,4 +1,4 @@
-import { Title, Button, Icon, Detail, Row, Tooltip } from '@cognite/cogs.js';
+import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {

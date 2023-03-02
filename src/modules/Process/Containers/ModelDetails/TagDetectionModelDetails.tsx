@@ -1,11 +1,11 @@
 import {
   Button,
-  Title,
+  Detail,
   Icon,
   Tooltip,
-  Detail,
-  SegmentedControl,
   Row,
+  SegmentedControl,
+  Title,
 } from '@cognite/cogs.js';
 import { InputNumber } from 'antd';
 import React from 'react';

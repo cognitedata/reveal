@@ -1,6 +1,6 @@
 /* eslint-disable array-callback-return */
 import React, { useState } from 'react';
-import { Button, Select } from '@cognite/cogs.js';
+import { Select, Button } from '@cognite/cogs.js';
 import { Props as SelectProps } from 'react-select';
 import {
   ParamsCustomModel,

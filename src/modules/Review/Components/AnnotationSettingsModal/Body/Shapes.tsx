@@ -8,7 +8,7 @@ import {
 } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
 import { isSensitiveAnnotationLabel } from 'src/utils/textUtils';
 import styled from 'styled-components';
-import { Button, Body, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/annotationSettingsConstants';
 import { renderEmptyAnnotationMessage } from 'src/modules/Review/Components/AnnotationSettingsModal/Body/EmptyAnnotationInfo';
 import isEmpty from 'lodash-es/isEmpty';

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Checkbox, Icon, Body, Tooltip, Detail } from '@cognite/cogs.js';
+import { Body, Checkbox, Detail, Icon, Tooltip } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';

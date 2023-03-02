@@ -1,4 +1,4 @@
-import { Icon, Button, Dropdown, Popconfirm, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, Popconfirm } from '@cognite/cogs.js';
 import React from 'react';
 
 interface AnnotationActionMenuExtendedProps {
