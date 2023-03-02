@@ -145,6 +145,7 @@ const ExtractorDetails = () => {
                             e: 'Download.Extractor.Click',
                             name: extractor?.name,
                             artifact: artifact.displayName,
+                            version: latestRelease?.version,
                           });
                           handleDownload(artifact);
                         }}

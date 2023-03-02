@@ -6,32 +6,33 @@ type Event =
   | { e: 'View.Extractor.Click'; name: string }
   | {
       e: 'Download.Extractor.Click';
-      name?: string | undefined;
-      artifact?: string | undefined;
+      name?: string;
+      version?: string;
+      artifact?: string;
     }
   | {
       e: 'Documentation.Click';
-      name?: string | undefined;
-      document?: string | undefined;
-      url?: string | undefined;
+      name?: string;
+      document?: string;
+      url?: string;
     }
   | {
       e: 'Versions.ViewAll.Click';
-      name?: string | undefined;
+      name?: string;
     }
   | {
       e: 'Versions.Download.Click';
-      name?: string | undefined;
-      version?: string | undefined;
-      artifact?: string | undefined;
+      name?: string;
+      version?: string;
+      artifact?: string;
     }
   | {
       e: 'Create.Extractor.Click';
     }
   | {
       e: 'Create.Extractor.Documentation.Click';
-      document?: string | undefined;
-      url?: string | undefined;
+      document?: string;
+      url?: string;
     }
   | {
       e: 'Search.Extractor';
