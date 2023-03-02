@@ -22,12 +22,7 @@ const Page = ({ children, className, title }: PageProps): JSX.Element => {
           role="button"
           onClick={() => trackUsage({ e: 'data.explore.navigate' })}
         >
-          <Link
-            href={createLink('/explore')}
-            target="_blank"
-            // icon="ExternalLink"
-            // iconPlacement="right"
-          >
+          <Link href={createLink('/explore')} target="_blank">
             {t('explore-data')}
           </Link>
         </span>
