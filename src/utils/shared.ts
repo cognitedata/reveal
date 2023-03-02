@@ -1,5 +1,6 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Metadata } from '@cognite/sdk';
+import { message } from 'antd';
 import { PredictionObject } from 'hooks/contextualization-api';
 import {
   Dispatch,
@@ -34,6 +35,18 @@ export function stringSorter<T extends Record<string, any>>(
     return 1;
   } else return 0;
 }
+
+export const stringContains = (value?: string, searchText?: string) => {
+  if (!searchText) {
+    return true;
+  }
+  try {
+    return value && value.toUpperCase().search(searchText.toUpperCase()) >= 0;
+  } catch (e) {
+    message.error('Invalid search term');
+    return 'Invalid search term';
+  }
+};
 
 export const sleep = async (ms: number) =>
   new Promise<void>((resolve) => setTimeout(() => resolve(), ms));

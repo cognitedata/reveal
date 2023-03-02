@@ -1,4 +1,4 @@
-import { Key, useMemo, useState } from 'react';
+import { Key, useEffect, useMemo, useState } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 
@@ -7,6 +7,9 @@ import { stringSorter } from 'common/utils';
 import { useTranslation } from 'common';
 import { Pipeline, useEMPipelines } from 'hooks/contextualization-api';
 import { PipelineTableTypes } from 'types/types';
+
+import { stringContains } from 'utils/shared';
+import EntityMatchingFilter from 'components/em-filter/EntityMatchingFilter';
 
 type PipelineListTableRecord = { key: string } & Pick<
   Pipeline,
@@ -18,9 +21,11 @@ type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
 };
 
 const PipelineTable = (): JSX.Element => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
+  const [pipelinesList, setPipelinesList] = useState<any[]>([]);
+  const [query, setQuery] = useState('');
   const { data, isInitialLoading } = useEMPipelines();
   const { t } = useTranslation();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const handleToggleCheckbox = (
     _: Key[],
@@ -67,18 +72,28 @@ const PipelineTable = (): JSX.Element => {
     [t]
   );
 
+  useEffect(() => {
+    const newPipelines = dataSource?.filter((pipeline) =>
+      stringContains(pipeline?.name, query)
+    );
+    setPipelinesList(newPipelines);
+  }, [dataSource, query]);
+
   if (isInitialLoading) {
     return <Loader />;
   }
 
   return (
-    <Table<PipelineListTableRecord>
-      columns={columns}
-      emptyContent={undefined}
-      appendTooltipTo={undefined}
-      dataSource={dataSource}
-      rowSelection={rowSelection}
-    />
+    <>
+      <EntityMatchingFilter query={query} setQuery={setQuery} />
+      <Table<PipelineListTableRecord>
+        columns={columns}
+        emptyContent={undefined}
+        appendTooltipTo={undefined}
+        dataSource={pipelinesList}
+        rowSelection={rowSelection}
+      />
+    </>
   );
 };
 
