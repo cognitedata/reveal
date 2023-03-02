@@ -3,7 +3,7 @@
 static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
 static final String APP_ID = 'cdf-vision-subapp'
-static final String FIREBASE_APP_SITE = 'cdf-ui-vision'
+static final String FIREBASE_APP_SITE = 'vision'
 static final String FUSION_SUBAPP_NAME = '@cognite/cdf-vision-subapp'
 static final String NODE_VERSION = 'node:14'
 
