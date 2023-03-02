@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import fileDownload from 'js-file-download';
 import {
   Body,
   Button,
@@ -50,9 +49,11 @@ const ExtractorDetails = () => {
 
   const handleDownload = async (artifact: Artifact) => {
     const url = await getDownloadUrl(artifact);
-    const response = await fetch(url);
-    const data = await response.blob();
-    fileDownload(data, artifact.name);
+    const a = document.createElement('a');
+    a.href = url;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const tags = extractor?.tags ?? [];
