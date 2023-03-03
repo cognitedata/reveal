@@ -58,7 +58,7 @@ describe(IconOctree.name, () => {
     expect(octree.findNodesByLevel(1).length).toBe(2);
   });
 
-  test('Root node should have a center as an average of its children', () => {
+  test('Root node should have a center as the closest of its children', () => {
     const image360IconMock1 = new Mock<Image360Icon>()
       .setup(icon => icon.position)
       .returns(new Vector3(0.25, 0.25, 0.25))
@@ -66,13 +66,13 @@ describe(IconOctree.name, () => {
 
     const image360IconMock2 = new Mock<Image360Icon>()
       .setup(icon => icon.position)
-      .returns(new Vector3(0.75, 0.75, 0.75))
+      .returns(new Vector3(0.8, 0.8, 0.8))
       .object();
 
     const octree = new IconOctree([image360IconMock1, image360IconMock2], unitBounds, 1);
 
-    expect(JSON.stringify(octree.getPointCenterOfNode(octree.findNodesByLevel(0)[0]))).toBe(
-      JSON.stringify(new Vector3(0.5, 0.5, 0.5))
+    expect(JSON.stringify(octree.getNodeIcon(octree.findNodesByLevel(0)[0])!.position)).toBe(
+      JSON.stringify(new Vector3(0.25, 0.25, 0.25))
     );
   });
 
