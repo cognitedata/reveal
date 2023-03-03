@@ -56,17 +56,6 @@ export const PlotWrapper = styled.div`
     cursor: auto !important;
   }
 
-  > * .xy {
-    .cursor-w-resize,
-    .cursor-e-resize,
-    .cursor-ew-resize,
-    .cursor-ns-resize,
-    .cursor-n-resize,
-    .cursor-s-resize {
-      display: none;
-    }
-  }
-
   > * .xtitle,
   .ytitle {
     fill: ${LABEL_COLOR} !important;

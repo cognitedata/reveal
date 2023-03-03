@@ -14,7 +14,6 @@ export const getCommonAxisLayoutProps = (
     dtick: axis?.tickDistance,
     tickangle: isUndefined(axis?.tickCount) ? 0 : undefined,
     showticklabels: showTickLabels,
-    automargin: true,
     zeroline: false,
     showline: true,
     mirror: true,

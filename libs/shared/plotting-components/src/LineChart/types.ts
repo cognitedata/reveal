@@ -6,8 +6,10 @@ export type LineChartProps = {
   yAxis?: Axis;
   title?: string;
   subtitle?: string;
+  backgroundColor?: string;
   variant?: Variant;
   layout?: Layout;
+  config?: Config;
   disableTooltip?: boolean;
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
 };
@@ -20,8 +22,6 @@ export interface Data {
 }
 
 export interface Layout {
-  backgroundColor?: string;
-  responsive?: boolean;
   showTitle?: boolean;
   showSubtitle?: boolean;
   showLegend?: boolean;
@@ -29,6 +29,12 @@ export interface Layout {
   showAxisNames?: boolean;
   showTicks?: boolean;
   showTickLabels?: boolean;
+}
+
+export interface Config {
+  responsive?: boolean;
+  scrollZoom?: boolean;
+  dragZoom?: boolean;
 }
 
 export interface Axis {

@@ -9,6 +9,8 @@ import { Legend } from './components/Legend';
 import { Plot } from './components/Plot';
 import { getLayout } from './utils/getLayout';
 import { usePlotHoverEvent } from './hooks/usePlotHoverEvent';
+import { getConfig } from './utils/getConfig';
+import { DEFAULT_BACKGROUND_COLOR } from './constants';
 
 export const LineChart: React.FC<LineChartProps> = ({
   data,
@@ -17,21 +19,18 @@ export const LineChart: React.FC<LineChartProps> = ({
   title,
   subtitle,
   variant,
+  backgroundColor = DEFAULT_BACKGROUND_COLOR,
   layout: layoutProp,
+  config: configProp,
   disableTooltip,
   renderTooltipContent,
 }) => {
   const { plotHoverEvent, plotHoverEventHandler } = usePlotHoverEvent();
 
   const layout = getLayout(variant, layoutProp);
+  const config = getConfig(configProp);
 
-  const {
-    backgroundColor,
-    legendPlacement,
-    showTitle,
-    showSubtitle,
-    showLegend,
-  } = layout;
+  const { legendPlacement, showTitle, showSubtitle, showLegend } = layout;
 
   return (
     <LineChartWrapper style={{ backgroundColor }}>
@@ -47,6 +46,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         xAxis={xAxis}
         yAxis={yAxis}
         layout={layout}
+        config={config}
         onHover={plotHoverEventHandler.onHoverPlot}
         onUnhover={plotHoverEventHandler.onUnhoverPlot}
       />

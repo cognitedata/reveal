@@ -12,7 +12,11 @@ export const useAxisTickCount = ({
   const [xAxisTickCount, setXAxisTickCount] = useState<number>();
   const [yAxisTickCount, setYAxisTickCount] = useState<number>();
 
-  const updateAxisTickCount = (graph: HTMLElement) => {
+  const updateAxisTickCount = (graph: HTMLElement | null) => {
+    if (!graph) {
+      return;
+    }
+
     const xAxisTickCountProp = xAxis?.tickCount;
     const yAxisTickCountProp = yAxis?.tickCount;
 

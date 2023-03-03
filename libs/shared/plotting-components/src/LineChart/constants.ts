@@ -1,4 +1,4 @@
-import { Layout, Variant } from './types';
+import { Config, Layout, Variant } from './types';
 
 export const DEFAULT_BACKGROUND_COLOR = '#fafafa';
 
@@ -18,8 +18,6 @@ export const HOVER_MARKER_SIZE = 12;
 export const HOVER_MARKER_BORDER_WIDTH = 2;
 
 export const DEAULT_LAYOUT: Required<Layout> = {
-  backgroundColor: DEFAULT_BACKGROUND_COLOR,
-  responsive: true,
   legendPlacement: 'left',
   showTitle: true,
   showSubtitle: true,
@@ -57,4 +55,10 @@ export const LAYOUT_BY_VARIANT: Record<Variant, Required<Layout>> = {
     showTicks: true,
     showTickLabels: true,
   },
+};
+
+export const DEAULT_CONFIG: Required<Config> = {
+  responsive: true,
+  scrollZoom: true,
+  dragZoom: true,
 };
