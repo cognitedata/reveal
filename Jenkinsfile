@@ -81,10 +81,6 @@ pods {
           container('apphosting') {
             stageWithNotify('Unit tests') {
               sh("yarn test")
-              junit(allowEmptyResults: true, testResults: '**/junit.xml')
-              if (isPullRequest) {
-                  summarizeTestResults()
-              }
             }
           }
         },
