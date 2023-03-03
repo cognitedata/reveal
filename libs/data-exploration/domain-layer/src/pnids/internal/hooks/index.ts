@@ -1,1 +1,1 @@
-export * from './useSearchInContainer';
+export * from './useSearchResults';

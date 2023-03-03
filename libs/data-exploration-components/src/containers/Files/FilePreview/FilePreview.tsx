@@ -18,7 +18,10 @@ import styled from 'styled-components';
 import { ResourceItem } from '@data-exploration-components/types/index';
 import { lightGrey } from '@data-exploration-components/utils/index';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
-import { useSearchInContainer } from '@data-exploration-lib/domain-layer';
+import {
+  useSearchResults,
+  SearchResult,
+} from '@data-exploration-lib/domain-layer';
 import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import {
@@ -34,10 +37,16 @@ import {
   AnnotationSource,
   ExtendedAnnotation,
 } from '@data-exploration-lib/core';
-import { getContainerId, useDebouncedMetrics } from './utils';
+import {
+  getContainerId,
+  getSearchResultAnnotationStyle,
+  useDebouncedMetrics,
+} from './utils';
 import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
 import { Flex } from '@cognite/cogs.js';
 import { useNumPages } from './hooks/useNumPages';
+import { useCurrentSearchResult } from './hooks/useCurrentSearchResult';
+import { useSearchBarState } from './hooks/useSearchBarState';
 import noop from 'lodash/noop';
 
 type FilePreviewProps = {
@@ -102,7 +111,6 @@ export const FilePreview = ({
   const [page, setPage] = useState(1);
   const [container, setContainer] = useState<FileContainerProps>();
   const [hoverId, setHoverId] = useState<string | undefined>(undefined);
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [pendingAnnotations, setPendingAnnotations] = useState<
     ExtendedAnnotation[]
   >([]);
@@ -122,6 +130,16 @@ export const FilePreview = ({
       id: fileId,
     }
   );
+
+  const {
+    fileUrl,
+    searchQuery,
+    setSearchQuery,
+    isSearchOpen,
+    onSearchOpen,
+    onSearchClose,
+    setSearchBarInputRef,
+  } = useSearchBarState({ file });
 
   useEffect(() => {
     if (selectedAnnotations.length === 1) {
@@ -194,12 +212,14 @@ export const FilePreview = ({
     onMouseOut: onAnnotationMouseOut,
   });
 
-  const { searchResultAnnotations } = useSearchInContainer(
+  const { searchResults } = useSearchResults({
     file,
-    page,
-    searchQuery,
-    showControls
-  );
+    query: searchQuery,
+    enabled: showControls,
+  });
+
+  const { currentSearchResultIndex, onNextResult, onPreviousResult } =
+    useCurrentSearchResult({ searchResults, page, setPage, unifiedViewerRef });
 
   useEffect(() => {
     if (searchQuery === '') {
@@ -214,7 +234,7 @@ export const FilePreview = ({
         fileId,
         // For privacy reasons not tracking actual search query or results
         searchQueryLength: searchQuery.length,
-        searchResultLength: searchResultAnnotations.length,
+        searchResultLength: searchResults.length,
         mimeType:
           fileMimeType === undefined
             ? fileMimeType
@@ -222,17 +242,40 @@ export const FilePreview = ({
       }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trackUsage, searchResultAnnotations]);
+  }, [trackUsage, searchResults]);
 
-  const displayedAnnotations = useMemo(() => {
+  const displayedAnnotations = useMemo((): Annotation[] => {
+    // We first highlight the current search result and then filter the annotations by page
+    const filteredAnnotations = searchResults
+      .map((searchResult, index): SearchResult => {
+        // NOTE: The currentSearchResultIndex is 1-based, while the index is 0-based
+        const isHighlighted = currentSearchResultIndex - 1 === index;
+
+        return {
+          page: searchResult.page,
+          annotation: {
+            ...searchResult.annotation,
+            style: getSearchResultAnnotationStyle(isHighlighted),
+          },
+        };
+      })
+      .filter((searchResult) => searchResult.page === page)
+      .map(({ annotation }) => annotation);
+
     if (isAnnotationsShown) {
       return [
         ...getExtendedAnnotationsWithBadges(annotations),
-        ...searchResultAnnotations,
+        ...filteredAnnotations,
       ];
     }
-    return [...searchResultAnnotations];
-  }, [isAnnotationsShown, annotations, searchResultAnnotations]);
+    return [...filteredAnnotations];
+  }, [
+    isAnnotationsShown,
+    annotations,
+    searchResults,
+    currentSearchResultIndex,
+    page,
+  ]);
 
   const tooltips = useTooltips({
     isTooltipsEnabled: enableToolTips,
@@ -318,6 +361,26 @@ export const FilePreview = ({
     if (event.code === 'ArrowRight') {
       setPage((prevPage) => Math.min(prevPage + 1, numPages));
     }
+
+    if (event.key === 'f' && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      onSearchOpen();
+    }
+
+    if (isSearchOpen) {
+      if (event.key === 'Escape') {
+        onSearchClose();
+        return;
+      }
+
+      if (event.key === 'Enter') {
+        if (event.shiftKey) {
+          onPreviousResult();
+          return;
+        }
+        onNextResult();
+      }
+    }
   };
 
   return (
@@ -349,9 +412,18 @@ export const FilePreview = ({
         />
         <ActionTools
           file={file}
+          fileUrl={fileUrl}
           fileViewerRef={unifiedViewerRef}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          isSearchOpen={isSearchOpen}
+          onSearchOpen={onSearchOpen}
+          onSearchClose={onSearchClose}
+          setSearchBarInputRef={setSearchBarInputRef}
+          currentSearchResultIndex={currentSearchResultIndex}
+          numberOfSearchResults={searchResults.length}
+          onNextResult={onNextResult}
+          onPreviousResult={onPreviousResult}
           enableDownload={showDownload}
           enableSearch={showControls}
           showSideBar={showSideBar}
