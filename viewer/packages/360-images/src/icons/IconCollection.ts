@@ -8,6 +8,12 @@ import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
 import { IconOctree } from './IconOctree';
 
+export enum IconVisualizationMode {
+  Clustered,
+  Proximity,
+  FromCamera
+}
+
 export class IconCollection {
   private readonly MIN_PIXEL_SIZE = 16;
   private readonly MAX_PIXEL_SIZE = 64;
@@ -17,10 +23,42 @@ export class IconCollection {
   private readonly _icons: Image360Icon[];
   private readonly _iconsSprite: InstancedIconSprite;
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
+  private readonly _computeProximityPointsEventHandler: BeforeSceneRenderedDelegate;
+  private readonly _computePointsInCameraViewEventHandler: BeforeSceneRenderedDelegate;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
+  private _activeIconVisualizationEventHandeler: BeforeSceneRenderedDelegate;
+  private _iconVisualizationMode: IconVisualizationMode;
 
   get icons(): Image360Icon[] {
     return this._icons;
+  }
+
+  public setVisualizationMode(mode: IconVisualizationMode): void {
+    if (this._iconVisualizationMode !== mode) {
+      this._iconVisualizationMode = mode;
+      this._onBeforeSceneRenderedEvent.unsubscribe(this._activeIconVisualizationEventHandeler);
+
+      switch (this._iconVisualizationMode) {
+        case IconVisualizationMode.Clustered: {
+          this._activeIconVisualizationEventHandeler = this._computeClustersEventHandler;
+          break;
+        }
+        case IconVisualizationMode.Proximity: {
+          this._activeIconVisualizationEventHandeler = this._computeProximityPointsEventHandler;
+          break;
+        }
+        case IconVisualizationMode.FromCamera: {
+          this._activeIconVisualizationEventHandeler = this._computePointsInCameraViewEventHandler;
+          break;
+        }
+        default: {
+          //error?
+          break;
+        }
+      }
+
+      this._onBeforeSceneRenderedEvent.subscribe(this._activeIconVisualizationEventHandeler);
+    }
   }
 
   constructor(
@@ -47,6 +85,9 @@ export class IconCollection {
     const octree = new IconOctree(this._icons, octreeBounds, 2);
 
     this._computeClustersEventHandler = this.computeClusters(octree, iconsSprites);
+    this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, iconsSprites);
+    this._computePointsInCameraViewEventHandler = this.computePointsInCameraView(iconsSprites);
+
     onBeforeSceneRendered.subscribe(this._computeClustersEventHandler);
 
     this._sceneHandler = sceneHandler;
@@ -85,6 +126,46 @@ export class IconCollection {
     };
   }
 
+  private computeProximityPoints(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
+    const radius = 20;
+    return ({ camera }) => {
+      const points = octree.findPoints(camera.position, radius);
+
+      this._icons.forEach(p => (p.visible = false));
+      points.forEach(p => (p.data.visible = true));
+      iconSprites.setPoints(points.map(p => p.data.position));
+    };
+  }
+
+  private computePointsInCameraView(iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
+    const closestPointLimit = 20;
+    const frustum = new Frustum();
+    return ({ camera }) => {
+      const startTime = performance.now();
+      const matrix = new Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+      frustum.setFromProjectionMatrix(matrix);
+
+      const visiblePoints = this._icons
+        .reduce((result, icon) => {
+          if (frustum.containsPoint(icon.position)) {
+            result.push(icon);
+          }
+          return result;
+        }, new Array<Image360Icon>())
+        .sort((a, b) => {
+          return a.position.distanceTo(camera.position) - b.position.distanceTo(camera.position);
+        })
+        .slice(0, closestPointLimit);
+
+      this._icons.forEach(p => (p.visible = false));
+      visiblePoints.forEach(p => (p.visible = true));
+      iconSprites.setPoints(visiblePoints.map(p => p.position));
+
+      const endTime = performance.now();
+      console.warn('Time: ' + (endTime - startTime));
+    };
+  }
+
   private initializeImage360Icons(
     points: Vector3[],
     sceneHandler: SceneHandler,
@@ -104,7 +185,7 @@ export class IconCollection {
   }
 
   public dispose(): void {
-    this._onBeforeSceneRenderedEvent.unsubscribe(this._computeClustersEventHandler);
+    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeIconVisualizationEventHandeler);
     this._sceneHandler.removeCustomObject(this._iconsSprite);
     this._iconsSprite.dispose();
     this._sharedTexture.dispose();

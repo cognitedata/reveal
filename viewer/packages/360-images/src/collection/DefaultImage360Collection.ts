@@ -7,7 +7,7 @@ import pull from 'lodash/pull';
 import { Image360Collection } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
-import { IconCollection } from '../icons/IconCollection';
+import { IconCollection, IconVisualizationMode } from '../icons/IconCollection';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -99,6 +99,10 @@ export class DefaultImage360Collection implements Image360Collection {
 
   public setSelectedVisibility(visible: boolean): void {
     this.image360Entities.forEach(entity => (entity.icon.hoverSpriteVisible = visible));
+  }
+
+  public setVisualizationMode(mode: IconVisualizationMode): void {
+    this._icons.setVisualizationMode(mode);
   }
 
   public remove(entity: Image360Entity): void {
