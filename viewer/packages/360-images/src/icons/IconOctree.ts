@@ -3,13 +3,20 @@
  */
 
 import { getApproximateProjectedBounds, getScreenArea } from '@reveal/utilities';
+import assert from 'assert';
+import minBy from 'lodash/minBy';
 import pullAll from 'lodash/pullAll';
 import { Node, PointOctant, PointOctree } from 'sparse-octree';
 import { Box3, Matrix4, Vector3 } from 'three';
 import { Image360Icon } from '../icons/Image360Icon';
 
+type NodeMetadata = {
+  icon: Image360Icon;
+  level: number;
+};
+
 export class IconOctree extends PointOctree<Image360Icon> {
-  private readonly _nodeCenters: Map<Node, Vector3>;
+  private readonly _nodeCenters: Map<Node, NodeMetadata>;
 
   public static getMinimalOctreeBoundsFromIcons(icons: Image360Icon[]): Box3 {
     return new Box3().setFromPoints(icons.map(icon => icon.position));
@@ -22,11 +29,17 @@ export class IconOctree extends PointOctree<Image360Icon> {
     this._nodeCenters = this.populateNodeCenters();
   }
 
-  public getPointCenterOfNode(node: Node): Vector3 | undefined {
-    return this._nodeCenters.get(node);
+  public getNodeIcon(node: Node): Image360Icon | undefined {
+    const nodeMetadata = this._nodeCenters.get(node);
+    assert(nodeMetadata !== undefined);
+    return nodeMetadata.icon;
   }
 
-  public getLODByScreenArea(areaThreshold: number, projection: Matrix4): Set<PointOctant<Image360Icon>> {
+  public getLODByScreenArea(
+    areaThreshold: number,
+    projection: Matrix4,
+    minimumLevel = 0
+  ): Set<PointOctant<Image360Icon>> {
     const root = this.findNodesByLevel(0)[0];
     const selectedNodes = new Set<PointOctant<Image360Icon>>();
 
@@ -34,6 +47,7 @@ export class IconOctree extends PointOctree<Image360Icon> {
 
     while (nodesToProcess.length > 0) {
       const currentNode = nodesToProcess.shift()!;
+      const currentNodeLevel = this._nodeCenters.get(currentNode)!.level;
       if (!this.isPointOctant(currentNode)) {
         continue;
       }
@@ -43,6 +57,10 @@ export class IconOctree extends PointOctree<Image360Icon> {
       }
       currentNode.children?.forEach(child => {
         if (!this.isPointOctant(child)) {
+          return;
+        }
+        if (currentNodeLevel <= minimumLevel) {
+          nodesToProcess.push(child);
           return;
         }
         const projectedArea = computeNodeProjectedArea(child);
@@ -62,18 +80,20 @@ export class IconOctree extends PointOctree<Image360Icon> {
     }
   }
 
-  private populateNodeCenters(): Map<Node, Vector3> {
-    const nodeCenters = new Map<Node, Vector3>();
+  private populateNodeCenters(): Map<Node, NodeMetadata> {
+    const nodeCenters = new Map<Node, NodeMetadata>();
 
+    let level = this.getDepth();
     this.traverseLevelsBottomUp(nodes => {
       nodes.forEach(node => {
         if (this.hasData(node)) {
-          nodeCenters.set(node, this.centerOfPoints(node.data.points));
+          nodeCenters.set(node, { icon: this.getClosestToAverageIcon(node.data.data), level });
         } else if (this.hasChildren(node)) {
-          const points = node.children!.map(child => nodeCenters.get(child)!);
-          nodeCenters.set(node, this.centerOfPoints(points));
+          const icons = node.children!.map(child => nodeCenters.get(child)!.icon);
+          nodeCenters.set(node, { icon: this.getClosestToAverageIcon(icons), level });
         }
       });
+      level--;
     });
 
     return nodeCenters;
@@ -110,11 +130,19 @@ export class IconOctree extends PointOctree<Image360Icon> {
     return node instanceof PointOctant;
   }
 
-  private centerOfPoints(points: Vector3[]): Vector3 {
-    return points.reduce((result, currentValue) => result.add(currentValue), new Vector3()).divideScalar(points.length);
+  private getClosestToAverageIcon(icons: Image360Icon[]): Image360Icon {
+    const center = icons
+      .reduce((result, currentValue) => result.add(currentValue.position), new Vector3())
+      .divideScalar(icons.length);
+
+    const minDistanceIcon = minBy(icons, icon => icon.position.distanceToSquared(center));
+
+    assert(minDistanceIcon !== undefined);
+
+    return minDistanceIcon;
   }
 
-  private traverseLevelsBottomUp(func: (nodes: Node[]) => void) {
+  public traverseLevelsBottomUp(func: (nodes: Node[]) => void): void {
     const octreeDepth = this.getDepth();
     for (let i = octreeDepth; i >= 0; i--) {
       const level = this.findNodesByLevel(i);
