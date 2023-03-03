@@ -208,25 +208,27 @@ export const useInfinite360Images = () => {
   });
 
   const images360Data = useMemo(() => {
-    const results: { siteId: string; siteName: string }[] = [];
     if (images360Datasets.length > 0) {
-      images360Datasets.reduce((previous, current) => {
-        if (previous.metadata?.site_id !== current.metadata!.site_id) {
-          if (
-            !results.some(
-              (siteDetails) => siteDetails.siteId === current.metadata!.site_id
-            )
-          ) {
-            results.push({
+      const results = images360Datasets.reduce(
+        (accum, current) => {
+          if (!Object.hasOwn(accum, current.metadata!.site_id)) {
+            accum[current.metadata!.site_id] = {
               siteId: current.metadata!.site_id,
               siteName: current.metadata!.site_name,
-            });
+            };
           }
+
+          return accum;
+        },
+        {} as {
+          [key: string]: { siteId: string; siteName: string };
         }
-        return current;
-      });
+      );
+
+      return Object.values(results);
     }
-    return results;
+
+    return [];
   }, [images360Datasets]);
 
   return {
