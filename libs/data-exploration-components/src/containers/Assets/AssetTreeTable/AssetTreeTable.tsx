@@ -309,7 +309,6 @@ export const AssetTreeTable = ({
             setSearchExpanded(expanded);
           }
         }}
-        renderRowSubComponent={SubRowMatchingLabel}
         renderSubRowComponent={(row) =>
           HierarchyExtraRow(row, onAssetSeeMoreClicked)
         }
