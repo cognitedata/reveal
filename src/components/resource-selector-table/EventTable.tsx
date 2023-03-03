@@ -9,11 +9,10 @@ import { Filter } from 'context/QuickMatchContext';
 
 type EventListTableRecord = { key: string } & Pick<
   CogniteEvent,
-  'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
+  'dataSetId' | 'id' | 'description' | 'lastUpdatedTime' | 'type' | 'subtype'
 >;
 type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
   title: string;
-  key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
 };
 
 type Props = {
@@ -62,6 +61,16 @@ export default function EventTable({
         title: t('resource-table-column-description'),
         dataIndex: 'description',
         key: 'description',
+      },
+      {
+        title: t('resource-table-column-type'),
+        dataIndex: 'type',
+        key: 'type',
+      },
+      {
+        title: t('resource-table-column-subtype'),
+        dataIndex: 'subtype',
+        key: 'subtype',
       },
       {
         title: t('resource-table-column-lastUpdated'),

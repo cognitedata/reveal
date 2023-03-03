@@ -44,6 +44,8 @@
   "resource-table-column-description": "Description",
   "resource-table-column-lastUpdated": "Last updated",
   "resource-table-column-name": "Name",
+  "resource-table-column-subtype": "Subtype",
+  "resource-table-column-type": "Type",
   "resource-timeseries": "Time series",
   "resource-type-assets": "Assets",
   "resource-type-datasets": "Datasets",
