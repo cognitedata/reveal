@@ -18711,10 +18711,10 @@ playwright@^1.14.0:
   dependencies:
     playwright-core "1.27.1"
 
-plotly.js-basic-dist@2.12.1:
-  version "2.12.1"
-  resolved "https://registry.yarnpkg.com/plotly.js-basic-dist/-/plotly.js-basic-dist-2.12.1.tgz#adca4d3087dc12eba0907aa2ea1a8718af3d44e4"
-  integrity sha512-iF3Zt5onAgRpIYNy9DEo3jpAW9bGyR/Al5XPQtBv/W2e9oB8tZ3kLQh9LVqx367wZzJ6loIUV8XfXcFSZM+Wcw==
+plotly.js-basic-dist@2.18.0:
+  version "2.18.0"
+  resolved "https://registry.yarnpkg.com/plotly.js-basic-dist/-/plotly.js-basic-dist-2.18.0.tgz#fbc574376719b4b72f23c01c9ed7b3349e25d370"
+  integrity sha512-LnIcc6TBK25VdW605Njp2wNL9PVkFS6IRIWR0gCLx49GeOJYv6E+i/lr7KqKQj1MVBo4f/qNDKL5q/xWlpkzGQ==
 
 plotly.js@2.16.5:
   version "2.16.5"
