@@ -41,7 +41,7 @@ export const ActiveModelContainer: React.FC<Props> = ({
     return (
       <Container>
         <FlexWrapper direction="column">
-          <Title level={5}>No active model</Title>
+          <Title level={5}>No deployed model</Title>
 
           <Body>
             Train a new model and deploy a finished classifier to the pipeline
@@ -54,10 +54,7 @@ export const ActiveModelContainer: React.FC<Props> = ({
   return (
     <Container $fullWidth={fullWidth}>
       <FlexWrapper alignItems="center" justifyContent="space-between">
-        <Title level={5}>Active model</Title>
-        <Label size="medium" variant={classifier.active ? 'normal' : 'success'}>
-          {classifier.active ? 'Currently running' : 'Finished'}
-        </Label>
+        <Title level={5}>Deployed model</Title>
       </FlexWrapper>
 
       <FlexWrapper alignItems="center" gap={8}>

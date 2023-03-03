@@ -14,7 +14,7 @@ describe('component:ActiveModelContainer', () => {
   it('Renders the empty container when classifier is undefined', () => {
     testRender(<ActiveModelContainer />);
 
-    expect(screen.getByRole('heading')).toHaveTextContent('No active model');
+    expect(screen.getByRole('heading')).toHaveTextContent('No deployed model');
   });
 
   it('Renders the container with classifier information', () => {
@@ -31,7 +31,7 @@ describe('component:ActiveModelContainer', () => {
       screen.getByRole('button', { name: /View confusion matrix/i })
     );
 
-    expect(screen.getByRole('heading')).toHaveTextContent('Active model');
+    expect(screen.getByRole('heading')).toHaveTextContent('Deployed model');
     expect(mockClick).toBeCalled();
   });
 });
