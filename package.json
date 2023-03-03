@@ -57,7 +57,7 @@
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "1.0.1",
     "@rescripts/rescript-use-babel-config": "0.0.12",
     "@storybook/preset-create-react-app": "3.2.0",
-    "@storybook/react": "6.5.13",
+    "@storybook/react": "6.5.16",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "12.1.5",
     "@testing-library/react-hooks": "7.0.2",
@@ -85,7 +85,11 @@
     "typescript": "4.6.2"
   },
   "resolutions": {
-    "@rescripts/cli/react-dev-utils": "^12.0.1"
+    "@rescripts/cli/react-dev-utils": "^12.0.1",
+    "**/@storybook/core-server/cpy": "^9.0.1",
+    "**/watchpack-chokidar2/chokidar": "^3.0.0",
+    "**/rc-editor-core/draft-js": "^0.11.7",
+    "**/rc-editor-mention/draft-js": "^0.11.7"
   },
   "eslintConfig": {
     "extends": "react-app"
