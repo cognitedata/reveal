@@ -30,29 +30,15 @@ export const getEnvironment = () => {
   return 'production';
 };
 
-export const createLink = (
-  path: string,
-  queries: any = {},
-  opts?: queryString.StringifyOptions
-): string => {
-  const project = getProject() || '';
-  const env = getEnv();
-  const query = queryString.stringify({ ...queries, env }, opts);
-  if (query.length > 0) {
-    return `/${project}${path}?${query}`;
-  }
-  if (path.length > 0 && path !== '/') {
-    return `/${project}${path}`;
-  }
-  return `/${project}`;
-};
-
 export const removeProjectFromPath = (path: string) => {
   return `/${path.split('/').slice(2).join('/')}`;
 };
 
-export const getSearchParams = (searchParams: string) => {
-  const params = new URLSearchParams(searchParams);
-  const entries = params.entries();
-  return Object.fromEntries(entries);
+// Parsed object is not stringified back correctly when `opts` is given as `arrayFormat: 'comma'`,
+// so be very careful while using with `opts` here!
+export const getSearchParams = (
+  searchParams: string,
+  opts?: queryString.StringifyOptions
+) => {
+  return queryString.parse(searchParams, opts);
 };
