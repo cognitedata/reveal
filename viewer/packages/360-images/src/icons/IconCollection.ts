@@ -31,7 +31,7 @@ export class IconCollection {
     const sharedTexture = this.createOuterRingsTexture();
     const iconSpriteRadius = 0.5;
     const iconsSprites = new InstancedIconSprite(
-      points.length * 2,
+      points.length,
       sharedTexture,
       this.MIN_PIXEL_SIZE,
       this.MAX_PIXEL_SIZE,
@@ -46,7 +46,7 @@ export class IconCollection {
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(this._icons);
     const octree = new IconOctree(this._icons, octreeBounds, 2);
 
-    this._computeClustersEventHandler = this.computeClusters(octree, iconsSprites);
+    this._computeClustersEventHandler = this.setIconClustersByLOD(octree, iconsSprites);
     onBeforeSceneRendered.subscribe(this._computeClustersEventHandler);
 
     this._sceneHandler = sceneHandler;
@@ -56,7 +56,7 @@ export class IconCollection {
     sceneHandler.addCustomObject(iconsSprites);
   }
 
-  private computeClusters(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
+  private setIconClustersByLOD(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
     const frustum = new Frustum();
     const screenSpaceAreaThreshold = 0.04;
@@ -72,7 +72,7 @@ export class IconCollection {
       const selectedIcons = nodes
         .flatMap(node => {
           if (node.data === null) {
-            return octree.getNodeMedianIcon(node)!;
+            return octree.getNodeIcon(node)!;
           }
 
           return node.data.data;
