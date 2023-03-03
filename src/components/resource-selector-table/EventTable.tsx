@@ -1,71 +1,82 @@
 import { Dispatch, SetStateAction, useMemo } from 'react';
-
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
-import { Asset, InternalId } from '@cognite/sdk';
 import { Alert } from 'antd';
-
 import { useTranslation } from 'common';
-import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
-import { useAssets, useAssetSearch } from 'hooks/assets';
+import { CogniteEvent, InternalId } from '@cognite/sdk';
+import { useEvents, useEventsSearch } from 'hooks/events';
+import { Filter } from 'context/QuickMatchContext';
 
-type AssetListTableRecord = { key: string } & Pick<
-  Asset,
-  'name' | 'rootId' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
+type EventListTableRecord = { key: string } & Pick<
+  CogniteEvent,
+  'dataSetId' | 'id' | 'description' | 'lastUpdatedTime' | 'type' | 'subtype'
 >;
-type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {
+type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
   title: string;
-  key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
 };
 
 type Props = {
   query?: string | null;
+  unmatchedOnly?: boolean;
+  filter: Filter;
   selected: InternalId[];
   setSelected: Dispatch<SetStateAction<InternalId[]>>;
 };
-export default function AssetTable({ query, selected, setSelected }: Props) {
-  const { t } = useTranslation();
-  const { data, isInitialLoading, error } = useAssets(
-    TABLE_ITEMS_PER_PAGE,
-    undefined,
-    {
-      enabled: !query,
-    }
-  );
+export default function EventTable({
+  query,
+  selected,
+  setSelected,
+  unmatchedOnly,
+  filter,
+}: Props) {
+  const {
+    data: listPages,
+    isInitialLoading: listLoading,
+    error,
+  } = useEvents({ unmatchedOnly, filter }, { enabled: !query });
 
   const { data: searchResult, isInitialLoading: searchLoading } =
-    useAssetSearch(query!, {
+    useEventsSearch(query!, {
       enabled: !!query,
       select: (items) => items?.map((i) => ({ ...i, key: i.id.toString() })),
     });
 
-  const listPages = useMemo(
+  const loading = listLoading || searchLoading;
+  const { t } = useTranslation();
+
+  const collapsedListPages = useMemo(
     () =>
-      data?.pages[0]?.items?.map((a) => ({ ...a, key: a.id.toString() })) || [],
-    [data]
+      listPages?.pages[0]?.items?.map((a) => ({
+        ...a,
+        key: a.id.toString(),
+      })) || [],
+    [listPages]
   );
 
-  const dataSource = query ? searchResult : listPages;
+  const dataSource = !!query ? searchResult : collapsedListPages;
 
-  const loading = isInitialLoading || searchLoading;
-
-  const columns: AssetListTableRecordCT[] = useMemo(
+  const columns: EventListTableRecordCT[] = useMemo(
     () => [
-      {
-        title: t('resource-table-column-name'),
-        dataIndex: 'name',
-        key: 'name',
-      },
       {
         title: t('resource-table-column-description'),
         dataIndex: 'description',
         key: 'description',
       },
       {
+        title: t('resource-table-column-type'),
+        dataIndex: 'type',
+        key: 'type',
+      },
+      {
+        title: t('resource-table-column-subtype'),
+        dataIndex: 'subtype',
+        key: 'subtype',
+      },
+      {
         title: t('resource-table-column-lastUpdated'),
         dataIndex: 'lastUpdatedTime',
         key: 'lastUpdatedTime',
-        render: (value: Date) => value.toLocaleString(),
+        render: (value: number) => new Date(value).toLocaleString(),
       },
     ],
     [t]
@@ -74,7 +85,7 @@ export default function AssetTable({ query, selected, setSelected }: Props) {
   const rowSelection = {
     selectedRowKeys: selected.map((s) => s.id.toString()),
     type: 'checkbox' as RowSelectionType,
-    onChange(_: (string | number)[], rows: AssetListTableRecord[]) {
+    onChange(_: (string | number)[], rows: EventListTableRecord[]) {
       setSelected(rows.map((r) => ({ id: r.id })));
     },
     hideSelectAll: true,
@@ -90,18 +101,18 @@ export default function AssetTable({ query, selected, setSelected }: Props) {
     );
   }
 
-  if (isInitialLoading) {
+  if (listLoading) {
     return <Loader />;
   }
 
   return (
-    <Table<AssetListTableRecord>
+    <Table<EventListTableRecord>
       loading={loading}
       columns={columns}
       emptyContent={loading ? <Icon type="Loader" /> : undefined}
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
-      dataSource={dataSource}
+      dataSource={dataSource || []}
     />
   );
 }

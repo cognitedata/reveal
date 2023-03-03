@@ -1,12 +1,18 @@
 import { Checkbox, Flex } from '@cognite/cogs.js';
 import { Select, Input } from 'antd';
+import { useSearchParams } from 'react-router-dom';
+
 import { useTranslation } from 'common';
-import { SOURCE_TABLE_QUERY_KEY } from '../../constants';
-import { useQuickMatchContext } from 'context/QuickMatchContext';
+import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
+import {
+  SourceType,
+  SOURCE_TYPES,
+  useQuickMatchContext,
+} from 'context/QuickMatchContext';
 import { useAllDataSets } from 'hooks/datasets';
 
-import { useSearchParams } from 'react-router-dom';
-import TimeseriesTable from './TimeSeriesTable';
+import TimeseriesTable from './TimeseriesTable';
+import EventTable from './EventTable';
 
 const { Option } = Select;
 
@@ -20,6 +26,7 @@ type Props = {};
 export default function ResourceSelectionTable({}: Props) {
   const { t } = useTranslation();
   const {
+    setSourceType,
     sourceType,
     setSourcesList,
     sourcesList,
@@ -28,8 +35,9 @@ export default function ResourceSelectionTable({}: Props) {
     sourceFilter,
     setSourceFilter,
   } = useQuickMatchContext();
-  const resourceTypeOptions = [
+  const sourceTypeOptions: { value: SourceType; label: string }[] = [
     { value: 'timeseries', label: t('resource-type-ts') },
+    { value: 'events', label: t('resource-type-events') },
   ];
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
@@ -42,11 +50,21 @@ export default function ResourceSelectionTable({}: Props) {
     },
   });
 
+  const handleSelectResourceType = (selectedResourceType: string) => {
+    if (SOURCE_TYPES.some((type) => type === selectedResourceType)) {
+      setSourceType(selectedResourceType as SourceType);
+    }
+  };
+
   return (
     <Flex direction="column">
       <Flex direction="row" gap={12}>
-        <Select style={{ width: 120 }} defaultValue="timeseries">
-          {resourceTypeOptions.map(({ value, label }) => (
+        <Select
+          style={{ width: 120 }}
+          defaultValue="timeseries"
+          onChange={handleSelectResourceType}
+        >
+          {sourceTypeOptions.map(({ value, label }) => (
             <Option key={value} value={value}>
               {label}
             </Option>
@@ -90,6 +108,15 @@ export default function ResourceSelectionTable({}: Props) {
       </Flex>
       {sourceType === 'timeseries' && (
         <TimeseriesTable
+          query={searchParams.get(SOURCE_TABLE_QUERY_KEY)}
+          filter={sourceFilter}
+          selected={sourcesList}
+          setSelected={setSourcesList}
+          unmatchedOnly={unmatchedOnly}
+        />
+      )}
+      {sourceType === 'events' && (
+        <EventTable
           query={searchParams.get(SOURCE_TABLE_QUERY_KEY)}
           filter={sourceFilter}
           selected={sourcesList}
