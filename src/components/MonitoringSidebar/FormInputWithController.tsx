@@ -1,4 +1,4 @@
-import { Checkbox } from '@cognite/cogs.js';
+import { Checkbox, Radio } from '@cognite/cogs.js';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import {
@@ -20,7 +20,10 @@ const FormInputWithController = ({
   deps,
   max,
   suffix,
-}: any) => (
+  defaultValue,
+  id,
+}: // defaultValue,
+any) => (
   <Controller
     control={control}
     name={name}
@@ -85,6 +88,21 @@ const FormInputWithController = ({
               checked={value === true}
               name={name}
             />
+          )}
+          {type === 'radio' && (
+            <>
+              <Radio
+                id={id}
+                ref={ref}
+                onBlur={onBlur} // notify when input is touched
+                onClick={() => {
+                  onChange(defaultValue);
+                }}
+                // send value to hook form
+                checked={value === defaultValue}
+                name={name}
+              />
+            </>
           )}
         </>
       );

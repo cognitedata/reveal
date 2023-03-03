@@ -242,6 +242,8 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
       } catch (error) {
         toast.error(`${builtInMessage}`);
       }
+      setStep(step + 1);
+
       setFormStatus('READY');
     }
   }, [
@@ -275,7 +277,13 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
           />
         )}
         {step === 3 && (
-          <CreateMonitoringJobStep3 onViewMonitoringJob={onViewMonitoringJob} />
+          <CreateMonitoringJobStep3
+            onViewMonitoringJob={onViewMonitoringJob}
+            hasError={createMonitoringJobError}
+            onBack={() => {
+              setStep(step - 1);
+            }}
+          />
         )}
       </>
     );

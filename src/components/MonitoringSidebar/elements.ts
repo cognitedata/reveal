@@ -253,7 +253,7 @@ export const Line = styled.div`
   }
 `;
 
-export const SuccessContainer = styled.div`
+export const Step3Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -262,7 +262,7 @@ export const SuccessContainer = styled.div`
   top: -3em;
   background: white;
 `;
-export const SuccessIconContainer = styled.div`
+export const Step3IconContainer = styled.div`
   text-align: center;
   width: 200px;
   height: 100px;
@@ -272,4 +272,12 @@ export const SubscriptionLoader = styled(Icon)`
   position: relative;
   top: 4px;
   left: 4px;
+`;
+
+export const ClientCredentialsDetails = styled.div`
+  margin-top: 1em;
+`;
+
+export const ClientCredentialsOptionMessage = styled.div`
+  margin: 0.5em 0em;
 `;
