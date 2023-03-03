@@ -8,6 +8,7 @@ import {
   Title,
 } from '@cognite/cogs.js';
 import { useMemo } from 'react';
+import debounce from 'lodash/debounce';
 import styled from 'styled-components';
 
 import { useExtractorsList } from 'hooks/useExtractorsList';
@@ -16,7 +17,7 @@ import { Layout } from 'components/Layout';
 import { CreateExtractor } from 'components/CreateExtractor';
 import { ContentContainer } from 'components/ContentContainer';
 import CategorySidebar from 'components/category-sidebar/CategorySidebar';
-import { trackUsage } from 'utils';
+import { MixpanelEvent, trackUsage } from 'utils';
 import { useTranslation } from 'common';
 import { useSearchParams } from 'react-router-dom';
 import SearchHelper from 'components/search-helper/SearchHelper';
@@ -24,6 +25,10 @@ import { useSourceSystems } from 'hooks/useSourceSystems';
 import ExtractorLibraryList from 'components/extractor-library-list/ExtractorLibraryList';
 import { ExtractorLibraryCategory } from 'components/category-sidebar/CategorySidebarItem';
 import { grepContains, prepareSearchString } from 'utils/utils';
+
+const debouncedTrackUsage = debounce((mixpanelEvent: MixpanelEvent) => {
+  trackUsage(mixpanelEvent);
+}, 1000);
 
 const Extractors = () => {
   const { t } = useTranslation();
@@ -111,7 +116,10 @@ const Extractors = () => {
               placeholder={t('search-for-source-systems')}
               value={searchQuery}
               onChange={(e) => {
-                trackUsage({ e: 'Search.Extractor' });
+                debouncedTrackUsage({
+                  e: 'Search.Extractor',
+                  query: e.currentTarget.value,
+                });
                 handleSearchQueryUpdate(e.currentTarget.value);
               }}
             />
