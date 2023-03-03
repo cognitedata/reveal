@@ -2,42 +2,44 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 import { getProject, isDevelopment } from '@cognite/cdf-utilities';
 import { Metrics } from '@cognite/metrics';
 
-type Event =
+export type MixpanelEvent =
   | { e: 'View.Extractor.Click'; name: string }
   | {
       e: 'Download.Extractor.Click';
-      name?: string | undefined;
-      artifact?: string | undefined;
+      name?: string;
+      version?: string;
+      artifact?: string;
     }
   | {
       e: 'Documentation.Click';
-      name?: string | undefined;
-      document?: string | undefined;
-      url?: string | undefined;
+      name?: string;
+      document?: string;
+      url?: string;
     }
   | {
       e: 'Versions.ViewAll.Click';
-      name?: string | undefined;
+      name?: string;
     }
   | {
       e: 'Versions.Download.Click';
-      name?: string | undefined;
-      version?: string | undefined;
-      artifact?: string | undefined;
+      name?: string;
+      version?: string;
+      artifact?: string;
     }
   | {
       e: 'Create.Extractor.Click';
     }
   | {
       e: 'Create.Extractor.Documentation.Click';
-      document?: string | undefined;
-      url?: string | undefined;
+      document?: string;
+      url?: string;
     }
   | {
       e: 'Search.Extractor';
+      query?: string;
     };
 
-export const trackUsage = (event: Event) => {
+export const trackUsage = (event: MixpanelEvent) => {
   const { e, ...metadata } = event;
   const { host, pathname } = window?.location;
   if (!host || !pathname) {
