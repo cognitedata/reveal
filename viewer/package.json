@@ -75,7 +75,7 @@
     "rxjs": "7.8.0",
     "skmeans": "0.11.3",
     "sparse-octree": "7.1.6",
-    "three-stdlib": "2.21.1"
+    "three-stdlib": "2.21.8"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.33.0",
