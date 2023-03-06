@@ -14,6 +14,7 @@ import ResourceCount from 'components/resource-count';
 import { useMemo } from 'react';
 import TimeseriesTable from './TimeseriesTable';
 import EventTable from './EventTable';
+import { getUnmatchedFilter } from 'utils';
 
 const { Option } = Select;
 
@@ -60,17 +61,8 @@ export default function ResourceSelectionTable({}: Props) {
   };
 
   const advancedFilter = useMemo(
-    () =>
-      unmatchedOnly
-        ? {
-            not: {
-              exists: {
-                property: ['assetId'],
-              },
-            },
-          }
-        : undefined,
-    [unmatchedOnly]
+    () => (unmatchedOnly ? getUnmatchedFilter(sourceType) : undefined),
+    [unmatchedOnly, sourceType]
   );
 
   return (
@@ -154,7 +146,7 @@ export default function ResourceSelectionTable({}: Props) {
           filter={sourceFilter}
           selected={sourcesList}
           setSelected={setSourcesList}
-          unmatchedOnly={unmatchedOnly}
+          advancedFilter={advancedFilter}
         />
       )}
     </Flex>
