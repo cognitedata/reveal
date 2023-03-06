@@ -38,9 +38,10 @@ void main()
     float dist = dot(v_xy, v_xy);
     float theta = atan(v_xy.y, v_xy.x);
     vec3 normal = normalize( v_normal );
-    if (theta < v_angle) {
-        theta += 2.0 * PI;
-    }
+
+    theta += theta < 0 ? 2.0 * PI : 0.0;
+    theta += theta < v_angle ? 2.0 * PI : 0.0;
+
     if (dist > 0.25 || dist < 0.25 * v_oneMinusThicknessSqr || theta >= v_angle + v_arcAngle) {
         discard;
     }

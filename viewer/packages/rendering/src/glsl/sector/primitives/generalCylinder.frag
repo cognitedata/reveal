@@ -72,6 +72,7 @@ void main()
     vec3 intersectionPoint = E + dist * D;
 
     float theta = atan(intersectionPoint.y, intersectionPoint.x);
+    theta += theta < 0.0 ? 2.0 * PI : 0.0;
     theta += theta < v_angles[0] ? 2.0 * PI : 0.0;
 
     // Intersection point in camera space
@@ -94,6 +95,7 @@ void main()
         dist = max(dist1, dist2);
         intersectionPoint = E + dist * D;
         theta = atan(intersectionPoint.y, intersectionPoint.x);
+        theta += theta < 0.0 ? 2.0 * PI : 0.0;
         theta += theta < v_angles[0] ? 2.0 * PI : 0.0;
         p = rayTarget + dist*rayDirection;
         if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
