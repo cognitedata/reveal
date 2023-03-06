@@ -1085,7 +1085,7 @@ export class Cognite3DViewer {
 
   /**
    * Convert a point in world space to its coordinates in the canvas. This can be used to place HTML objects near 3D objects on top of the 3D viewer.
-   * @see {@link https://www.w3schools.com/graphics/canvas_coordinates.asp https://www.w3schools.com/graphics/canvas_coordinates.asp}.
+   * @see {@link https://www.w3schools.com/graphics/canvas_coordinates.asp https://www.w3schools.com/graphics/canvas_coordinates.asp}
    * @param point World space coordinate.
    * @param normalize Optional. If true, coordinates are normalized into [0,1]. If false, the values are in the range [0, <canvas_size>).
    * @returns Returns 2D coordinates if the point is visible on screen, or `null` if object is outside screen.
@@ -1267,7 +1267,7 @@ export class Cognite3DViewer {
    * @param offsetY Y coordinate in pixels (relative to the domElement).
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
-   * @see {@link https://en.wikipedia.org/wiki/Ray_casting}.
+   * @see {@link https://en.wikipedia.org/wiki/Ray_casting}
    *
    * @example For CAD model
    * ```js
