@@ -78,7 +78,7 @@
     "react-infinite-scroll-component": "6.1.0",
     "react-markdown": "8.0.3",
     "react-plotly.js": "2.6.0",
-    "react-query": "3.34.16",
+    "react-query": "3.39.3",
     "react-router-dom": "^6.0.0",
     "react-scripts": "^5.0.1",
     "react-split-pane": "0.1.92",
