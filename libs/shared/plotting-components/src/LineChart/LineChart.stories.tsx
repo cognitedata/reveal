@@ -31,4 +31,11 @@ Basic.args = {
   yAxis: { name: 'Value' },
   title: 'Main title',
   subtitle: 'Subtitle or description',
+  config: {
+    scrollZoom: 'x',
+    selectionZoom: [
+      { trigger: 'default', direction: 'x+y' },
+      { trigger: 'Shift', direction: 'x' },
+    ],
+  },
 };

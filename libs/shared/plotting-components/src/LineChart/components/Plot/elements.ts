@@ -2,6 +2,11 @@ import styled from 'styled-components';
 
 import { LABEL_COLOR, TICK_COLOR } from '../../constants';
 
+interface PlotWrapperProps {
+  showticks: boolean;
+  cursor: string;
+}
+
 export const PlotWrapper = styled.div`
   > * .main-svg {
     background: transparent !important;
@@ -35,7 +40,7 @@ export const PlotWrapper = styled.div`
 
   > * .crisp {
     stroke: ${TICK_COLOR} !important;
-    ${(props: { showticks: boolean }) =>
+    ${(props: PlotWrapperProps) =>
       !props.showticks &&
       `
       display: none;
@@ -54,6 +59,10 @@ export const PlotWrapper = styled.div`
 
   > * .draglayer {
     cursor: auto !important;
+  }
+
+  > * .nsewdrag {
+    cursor: ${(props: PlotWrapperProps) => props.cursor} !important;
   }
 
   > * .xtitle,

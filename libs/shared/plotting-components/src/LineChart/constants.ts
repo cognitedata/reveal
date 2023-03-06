@@ -59,6 +59,7 @@ export const LAYOUT_BY_VARIANT: Record<Variant, Required<Layout>> = {
 
 export const DEAULT_CONFIG: Required<Config> = {
   responsive: true,
-  scrollZoom: true,
-  dragZoom: true,
+  scrollZoom: 'x+y',
+  selectionZoom: 'x+y',
+  pan: 'x+y',
 };

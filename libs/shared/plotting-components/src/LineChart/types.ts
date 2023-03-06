@@ -33,8 +33,9 @@ export interface Layout {
 
 export interface Config {
   responsive?: boolean;
-  scrollZoom?: boolean;
-  dragZoom?: boolean;
+  scrollZoom?: AxisDirectionConfig;
+  selectionZoom?: AxisDirectionConfig;
+  pan?: AxisDirectionConfig;
 }
 
 export interface Axis {
@@ -55,3 +56,17 @@ export type ValueType = Datum;
 export type Variant = 'small' | 'medium' | 'large';
 
 export type HorizontalPlacement = 'left' | 'center' | 'right';
+
+export type AxisRange = [number, number];
+
+export type AxisDirection = 'x' | 'y' | 'x+y';
+
+export interface KeyTriggeredAxisDirection {
+  trigger: 'default' | 'Shift';
+  direction: AxisDirection;
+}
+
+export type AxisDirectionConfig =
+  | false
+  | AxisDirection
+  | [KeyTriggeredAxisDirection, ...KeyTriggeredAxisDirection[]];
