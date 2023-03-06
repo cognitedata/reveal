@@ -16,7 +16,6 @@ export type RawTimeseries = Omit<
 
 export const TS_BASE_QUERY_KEY = ['timeseries'];
 
-// export * from './list';
 export * from './search';
 export * from './aggregate';
 export * from './update';

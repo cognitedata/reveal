@@ -190,11 +190,6 @@ export const useCreateEMModel = () => {
       featureType: EMFeatureType;
       supervisedMode?: boolean;
     }) => {
-      // const sources = (
-      //   await queryClient.fetchQuery(getQMSourceDownloadKey(), () =>
-      //     fetchTimeseriesForEM(sdk, queryClient, sourcesList)
-      //   )
-      // ).filter((ts) => scope === 'all' || !ts.assetId);
       const targets = await queryClient.fetchQuery(
         getQMTargetDownloadKey(),
         async () => {
