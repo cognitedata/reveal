@@ -28,7 +28,9 @@ const QuickMatchStepsOrderIndex: Record<number, QuickMatchStep> =
 export type Filter = {
   dataSetIds: InternalId[];
 };
-export type SourceType = 'timeseries';
+
+export const SOURCE_TYPES = ['timeseries', 'events'] as const;
+export type SourceType = (typeof SOURCE_TYPES)[number];
 export type TargetType = 'assets';
 
 export type EMFeatureType =
@@ -144,7 +146,7 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
     throw new Error('Function not implemented.');
   },
   sourceType: 'timeseries',
-  setSourceType: function (_: SetStateAction<'timeseries'>): void {
+  setSourceType: function (_: SetStateAction<SourceType>): void {
     throw new Error('Function not implemented.');
   },
   matchFields: [{ source: 'name', target: 'name' }],
