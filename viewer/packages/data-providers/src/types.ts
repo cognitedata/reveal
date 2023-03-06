@@ -20,9 +20,7 @@ export interface Image360FileProvider {
     image360FaceDescriptors: Image360FileDescriptor[],
     abortSignal?: AbortSignal
   ): Promise<Image360Face[]>;
-}
 
-export interface Image360FileProvider {
   getLowResolution360ImageFiles(image360FaceDescriptors: Image360FileDescriptor[]): Promise<Image360Face[]>;
 }
 
