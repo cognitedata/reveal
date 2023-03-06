@@ -24,6 +24,13 @@ export default function ResourceTypei18n({ t, count = 42, downcase }: Props) {
       }
       return <>{s}</>;
     }
+    case 'events': {
+      let s = translate('resource-type-events', { count });
+      if (downcase) {
+        s = s.toLowerCase();
+      }
+      return <>{s}</>;
+    }
     default: {
       return null;
     }
