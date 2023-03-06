@@ -138,7 +138,6 @@ export default function TimeseriesTable({
       columns={columns}
       emptyContent={loading ? <Icon type="Loader" /> : undefined}
       rowSelection={rowSelection}
-      pagination={undefined}
       dataSource={dataSource || []}
       appendTooltipTo={undefined}
     />

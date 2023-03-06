@@ -1,12 +1,12 @@
 import { Flex } from '@cognite/cogs.js';
 import { Select, Input } from 'antd';
+import { useSearchParams } from 'react-router-dom';
+
 import { useTranslation } from 'common';
-import { TARGET_TABLE_QUERY_KEY } from '../../constants';
+import { TARGET_TABLE_QUERY_KEY } from 'common/constants';
+import AssetTable from 'components/resource-selector-table/AssetTable';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
 import { useAllDataSets } from 'hooks/datasets';
-
-import { useSearchParams } from 'react-router-dom';
-import AssetTable from 'components/resource-selector-table/AssetTable';
 
 type Props = {};
 

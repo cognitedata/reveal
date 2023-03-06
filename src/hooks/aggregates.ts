@@ -12,6 +12,7 @@ import {
   fetchProperties as fetchTSProperties,
   fetchTimeseriesAggregate,
 } from './timeseries';
+import { fetchProperties as fetchEventProperties } from './events';
 import { fetchProperties as fetchAssetProperties } from './assets';
 
 type T = SourceType | TargetType;
@@ -39,6 +40,8 @@ export const useAggregateProperties = (
         case 'assets': {
           return fetchAssetProperties(sdk, queryClient);
         }
+        case 'events':
+          return fetchEventProperties(sdk, queryClient);
         default: {
           return Promise.reject(`type: ${t} not implemented`);
         }

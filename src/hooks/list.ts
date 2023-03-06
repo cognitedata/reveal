@@ -1,5 +1,5 @@
 import { CogniteClient, CogniteError, TimeseriesFilter } from '@cognite/sdk';
-import { TABLE_ITEMS_PER_PAGE } from '../constants';
+import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
 import { downcaseMetadata } from 'utils';
 
 import {
