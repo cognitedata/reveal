@@ -830,7 +830,7 @@ __metadata:
     path-browserify: 1.0.1
     prettier: 2.8.2
     process: 0.11.10
-    puppeteer: 19.7.1
+    puppeteer: 19.7.2
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -3756,6 +3756,17 @@ __metadata:
   version: 1.0.3
   resolution: "chrome-trace-event@npm:1.0.3"
   checksum: cb8b1fc7e881aaef973bd0c4a43cd353c2ad8323fb471a041e64f7c2dd849cde4aad15f8b753331a32dda45c973f032c8a03b8177fc85d60eaa75e91e08bfb97
+  languageName: node
+  linkType: hard
+
+"chromium-bidi@npm:0.4.4":
+  version: 0.4.4
+  resolution: "chromium-bidi@npm:0.4.4"
+  dependencies:
+    mitt: 3.0.0
+  peerDependencies:
+    devtools-protocol: "*"
+  checksum: 153a276fcce8eb934c9e6a6f8bde5bc37c454d76e82994ce3eca16ab32415a44c553cba3e2ab7ab48ef65f7423f4be35e0ff5b57c7eb378f65fd9b2042df7d03
   languageName: node
   linkType: hard
 
@@ -8464,6 +8475,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mitt@npm:3.0.0":
+  version: 3.0.0
+  resolution: "mitt@npm:3.0.0"
+  checksum: f7be5049d27d18b1dbe9408452d66376fa60ae4a79fe9319869d1b90ae8cbaedadc7e9dab30b32d781411256d468be5538996bb7368941c09009ef6bbfa6bfc7
+  languageName: node
+  linkType: hard
+
 "mixin-object@npm:^2.0.1":
   version: 2.0.1
   resolution: "mixin-object@npm:2.0.1"
@@ -9572,10 +9590,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:19.7.1":
-  version: 19.7.1
-  resolution: "puppeteer-core@npm:19.7.1"
+"puppeteer-core@npm:19.7.2":
+  version: 19.7.2
+  resolution: "puppeteer-core@npm:19.7.2"
   dependencies:
+    chromium-bidi: 0.4.4
     cross-fetch: 3.1.5
     debug: 4.3.4
     devtools-protocol: 0.0.1094867
@@ -9587,27 +9606,24 @@ __metadata:
     unbzip2-stream: 1.4.3
     ws: 8.11.0
   peerDependencies:
-    chromium-bidi: 0.4.3
     typescript: ">= 4.7.4"
   peerDependenciesMeta:
-    chromium-bidi:
-      optional: true
     typescript:
       optional: true
-  checksum: 5910357f691d6437e7a80aab08b07003ef3362d30ff030fce4cfceec71e425ba0acb111409040f21c3f620e079cfe5a31bc0fa2a9b2dde414e9b92d63fc9dbee
+  checksum: dafb2f63b74e3270426011ddcd1f4a06e74ca44322137d4240bfaf6090d8450fbf3607336109286861aa96e1f4f2ab9c13cef66c2fc4ec1a690d92d48e8fe773
   languageName: node
   linkType: hard
 
-"puppeteer@npm:19.7.1":
-  version: 19.7.1
-  resolution: "puppeteer@npm:19.7.1"
+"puppeteer@npm:19.7.2":
+  version: 19.7.2
+  resolution: "puppeteer@npm:19.7.2"
   dependencies:
     cosmiconfig: 8.0.0
     https-proxy-agent: 5.0.1
     progress: 2.0.3
     proxy-from-env: 1.1.0
-    puppeteer-core: 19.7.1
-  checksum: 4ea02c6f436fe02c393fd617cc4d7f349a0e0b8b707893f4a068ae05fffd37a8e3cca6e0aeaf2f530de1649e9592050784bfdbf44a4d85cffd1f457e731caec1
+    puppeteer-core: 19.7.2
+  checksum: 10a77ee40173e56ddce605c07296b7e538a7e18b0a517e55d570fb2944c7d983d1b19581e31e0f3626e21544c63d20bbac1583307a7a3afbfc80f83fa695f1ae
   languageName: node
   linkType: hard
 
