@@ -33,6 +33,7 @@ export interface EditorPanelProps {
   editorMode: SchemaEditorMode;
   isPublishing: boolean;
   errorsByGroup: ErrorsByGroup;
+  setErrorsByGroup: (errors: ErrorsByGroup) => void;
 }
 
 export const EditorPanel: React.FC<EditorPanelProps> = ({
@@ -42,6 +43,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
   editorMode,
   isPublishing,
   errorsByGroup,
+  setErrorsByGroup,
 }) => {
   const { t } = useTranslation('EditorPanel');
   const { isEnabled: isUIEditorFlagEnabled } = useUIEditorFeatureFlag();
@@ -108,6 +110,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             disabled={isUIDisabled}
             onChange={updateGraphQlSchema}
             errorsByGroup={errorsByGroup}
+            setErrorsByGroup={setErrorsByGroup}
           />
         </Suspense>
       ) : (

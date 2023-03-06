@@ -428,6 +428,7 @@ export const DataModelPage = () => {
                   externalId={dataModelExternalId}
                   isPublishing={saving || updating}
                   errorsByGroup={errorsByGroup}
+                  setErrorsByGroup={setErrorsByGroup}
                 />
               </ErrorBoundary>
             }

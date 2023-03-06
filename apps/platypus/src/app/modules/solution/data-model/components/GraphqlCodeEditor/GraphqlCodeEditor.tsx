@@ -40,6 +40,7 @@ type Props = {
   externalId: string;
   disabled?: boolean;
   errorsByGroup: ErrorsByGroup;
+  setErrorsByGroup: (errors: ErrorsByGroup) => void;
   onChange: (code: string) => void;
 };
 
@@ -51,6 +52,7 @@ export const GraphqlCodeEditor = React.memo(
     externalId,
     disabled = false,
     errorsByGroup,
+    setErrorsByGroup,
     onChange,
   }: Props) => {
     const [editorValue, setEditorValue] = useState(code);
@@ -152,6 +154,7 @@ export const GraphqlCodeEditor = React.memo(
           onChange={(value) => {
             const editCode = value || '';
             debouncedOnChange(editCode);
+            setErrorsByGroup({ DmlError: [] });
             setEditorValue(editCode);
           }}
         />
