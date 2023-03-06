@@ -19,7 +19,7 @@ import useCanvasTooltips from '@data-exploration-components/containers/Files/Can
 import { useFileInfos } from '@data-exploration-components/containers/Files/Canvas/useFileInfos';
 import { getPagedContainerId } from '@data-exploration-components/containers/Files/Canvas/utils';
 import { EMPTY_ARRAY, ExtendedAnnotation } from '@data-exploration-lib/core';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import zip from 'lodash/zip';
 import { toast, Flex } from '@cognite/cogs.js';
@@ -39,6 +39,17 @@ export type MultiFileViewerProps = {
 };
 
 const CONTAINER_MARGIN = 100;
+
+// Since we always load two documents side-by-side, we multiply by 2 and add some extra because of the spacing between the documents.
+const expectedViewportWidth = 2.1 * MAX_CONTAINER_WIDTH;
+const INITIAL_VIEWPORT_CENTER = {
+  x: 0.48 * expectedViewportWidth,
+  y: 0.5 * MAX_CONTAINER_HEIGHT,
+};
+const INITIAL_VIEWPORT_SIZE = {
+  width: expectedViewportWidth,
+  height: MAX_CONTAINER_HEIGHT,
+};
 
 export const Canvas = ({
   id,
@@ -195,7 +206,7 @@ export const Canvas = ({
       }),
       ...annotations,
     ],
-    [files, annotations, clickedContainer, hoverId]
+    [files, annotations, hoverId]
   );
 
   // TOOD: How to handle unsupported files
@@ -223,6 +234,10 @@ export const Canvas = ({
           tooltips={tooltips}
           onClick={onStageClick}
           shouldShowZoomControls
+          initialViewport={{
+            ...INITIAL_VIEWPORT_CENTER,
+            ...INITIAL_VIEWPORT_SIZE,
+          }}
           setRef={onRef}
         />
         <CanvasSearch onItemClick={onAddFile} />
