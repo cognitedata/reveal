@@ -24,7 +24,7 @@ import {
 import { validateEmail } from './utils';
 
 const defaultTranslations = makeDefaultTranslations(
-  'New monitoring job',
+  'Create monitoring job',
   'Start monitoring',
   'Cancel',
   'Next',
@@ -73,9 +73,9 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
       name: '',
       source: undefined,
       alertThreshold: 1,
-      alertThresholdType: { label: 'Is above', value: 'threshold' },
-      evaluateEvery: 5000,
-      minimumDurationType: { label: 'minutes', value: 'm' },
+      alertThresholdType: { label: 'Above', value: 'threshold' },
+      schedule: undefined,
+      scheduleDurationType: { label: 'minutes', value: 'm' },
       minimumDuration: 1,
       folder: undefined,
       clientId: '',
@@ -149,19 +149,18 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
 
   const sendDataToAPI = (createdNonce: string) => {
     const {
-      evaluateEvery,
+      schedule,
       source,
       name,
       alertThresholdType,
       folder,
       alertThreshold,
       minimumDuration,
-      minimumDurationType,
     } = steppedFormValues;
     // @ts-ignore
-    const evaluateEveryCalc = Number(evaluateEvery.value);
+    const scheduleCalc = Number(schedule.value);
 
-    const activationInterval = `${minimumDuration}${minimumDurationType?.value}`;
+    const activationInterval = `${minimumDuration}m`;
 
     if (
       source &&
@@ -173,7 +172,7 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
       const dataToSend: CreateMonitoringJobPayload = {
         monitoringTaskName: transformName(name),
         FolderId: folder.value,
-        evaluateEvery: evaluateEveryCalc,
+        evaluateEvery: scheduleCalc,
         modelExternalId: alertThresholdType?.value,
         activationInterval,
         nonce: createdNonce,
@@ -293,7 +292,7 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
     <div style={{ position: 'relative', top: -20 }}>
       <FormTitle>
         <Row>
-          <Col span={18}>{t['New monitoring job']} </Col>
+          <Col span={18}>{t['Create monitoring job']} </Col>
           <Col span={6} style={{ textAlign: 'right' }}>{`${step} / 2`}</Col>
         </Row>
       </FormTitle>

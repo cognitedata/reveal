@@ -64,9 +64,8 @@ export type CreateMonitoringJobFormData = {
   source: undefined | { label: string; value: string };
   alertThreshold: number;
   alertThresholdType: undefined | { label: string; value: string };
-  evaluateEveryType: undefined | { label: string; value: string };
-  evaluateEvery: number;
-  minimumDurationType: { label: string; value: string };
+  schedule: undefined | { label: string; value: number };
+  scheduleDurationType: { label: string; value: string };
   minimumDuration: number;
   useCdfCredentials: boolean;
   clientSecret: string;

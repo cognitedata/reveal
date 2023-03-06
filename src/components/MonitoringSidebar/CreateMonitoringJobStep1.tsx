@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useUserInfo } from 'hooks/useUserInfo';
-import { Button, Icon, Row, Col } from '@cognite/cogs.js';
+import { Button, Icon, Row, Col, Label } from '@cognite/cogs.js';
 import MonitoringFolderSelect from 'components/MonitoringFolderSelect/MonitoringFolderSelect';
 import { useChartAtom } from 'models/chart/atom';
 import { useForm } from 'react-hook-form';
@@ -26,30 +26,55 @@ import { CreateMonitoringJobFormData } from './types';
 import CreateMonitoringJobFormError from './CreateMonitoringJobFormError';
 
 const defaultTranslations = makeDefaultTranslations(
-  'Name your monitoring job',
-  'Name of the job',
+  'Name',
   'Source',
-  'Alert when threshold',
-  'Is above',
-  'Is below',
+  'Describe monitoring job',
+  'Alert when threshold is',
+  'Above',
+  'Below',
   'Minimum duration',
-  'Avoid alert flooding by setting a minimum period e.g. 5min',
-  'Evaluate every',
-  'How often your alerts will be evaluated',
+  'Set a minimum duration to avoid alert flooding',
+  'Schedule',
+  'How often the monitoring job runs',
   'Save to',
   'Notifications will be sent to :',
   'Cancel',
   'Next',
   'Alert threshold is required',
-  'Name of the job is required',
+  'Name is required',
   'Source is required',
   'Minimum duration is required',
-  '"Evaluate Every" is required',
+  'Schedule is required',
   'Cancel',
   'Next'
 );
 
 const MONITORING_THRESHOLD_ID = 'monitoring-threshold';
+const MINIMUM_DURATION_LIMIT = 60;
+const ONE_MINUTE = 60 * 1000;
+const ONE_HOUR = 60 * ONE_MINUTE;
+
+const SCHEDULE_MINUTE_OPTIONS_MAP = {
+  1: 1 * ONE_MINUTE,
+  5: 5 * ONE_MINUTE,
+  20: 20 * ONE_MINUTE,
+  30: 30 * ONE_MINUTE,
+  45: 45 * ONE_MINUTE,
+};
+
+const SCHEDULE_HOUR_OPTIONS_MAP = {
+  1: ONE_HOUR,
+  12: 12 * ONE_HOUR,
+  24: 24 * ONE_HOUR,
+};
+
+const SCHEDULE_MINUTE_OPTIONS = Object.entries(SCHEDULE_MINUTE_OPTIONS_MAP).map(
+  (entry) => ({ label: entry[0], value: entry[1] })
+);
+
+const SCHEDULE_HOUR_OPTIONS = Object.entries(SCHEDULE_HOUR_OPTIONS_MAP).map(
+  (entry) => ({ label: entry[0], value: entry[1] })
+);
 
 type Props = {
   translations?: typeof defaultTranslations;
@@ -67,7 +92,7 @@ const CreateMonitoringJobStep1 = ({
     ...defaultTranslations,
     ...translations,
   };
-  const { control, watch, formState, trigger } = useForm({
+  const { control, watch, formState, trigger, setValue } = useForm({
     mode: 'all',
     defaultValues: existingFormData,
   });
@@ -77,24 +102,10 @@ const CreateMonitoringJobStep1 = ({
   const [chart, setChart] = useChartAtom();
   const timeseries = (chart && chart?.timeSeriesCollection) || [];
 
-  const [intervalsEvaluateEvery, setIntervalsEvaluateEvery] = useState<
-    { label: string; value: string }[]
-  >([]);
-  useEffect(() => {
-    const arr = [];
-    for (let index = 1; index <= 11; index++) {
-      const val = index * 5 * 1000 * 60;
-      arr.push({
-        label: `${index * 5}m`,
-        value: `${val}`,
-      });
-    }
-    setIntervalsEvaluateEvery(arr);
-  }, []);
-
   const userInfo = useUserInfo();
   const notificationEmail = userInfo.data?.mail;
   const formValues = watch();
+  const scheduleDurationType = watch('scheduleDurationType');
 
   useEffect(() => {
     delay(trigger, 1000);
@@ -156,14 +167,24 @@ const CreateMonitoringJobStep1 = ({
     }
   }, [formValues.source?.value, timeseries]);
 
+  useEffect(() => {
+    if (scheduleDurationType?.value === 'm') {
+      setValue('schedule', SCHEDULE_MINUTE_OPTIONS[1]);
+    }
+    if (scheduleDurationType?.value === 'h') {
+      setValue('schedule', SCHEDULE_HOUR_OPTIONS[0]);
+    }
+  }, [scheduleDurationType]);
+
   return (
     <form>
-      <FieldTitleRequired>{t['Name of the job']} </FieldTitleRequired>
+      <FieldTitleRequired>{t.Name} </FieldTitleRequired>
       <FormInputWithController
         control={control}
         type="text"
         name="name"
-        required={t['Name of the job is required']}
+        required={t['Name is required']}
+        placeholder={t['Describe monitoring job']}
       />
 
       <FieldTitleRequired>{t.Source}</FieldTitleRequired>
@@ -179,7 +200,7 @@ const CreateMonitoringJobStep1 = ({
         required={t['Source is required']}
       />
 
-      <FieldTitleRequired>{t['Alert when threshold']} </FieldTitleRequired>
+      <FieldTitleRequired>{t['Alert when threshold is']} </FieldTitleRequired>
       <Row>
         <Col span={13}>
           <FormInputWithController
@@ -189,11 +210,11 @@ const CreateMonitoringJobStep1 = ({
             required={`"Alert when" is required`}
             options={[
               {
-                label: t['Is above'],
+                label: t.Above,
                 value: 'threshold',
               },
               {
-                label: t['Is below'],
+                label: t.Below,
                 value: 'lower-threshold',
               },
             ]}
@@ -213,21 +234,53 @@ const CreateMonitoringJobStep1 = ({
 
       <FieldTitleRequired>{t['Minimum duration']} </FieldTitleRequired>
       <Row>
-        <Col span={13}>
+        <Col span={24}>
           <FormInputWithController
             control={control}
             type="number"
-            max={59}
+            max={MINIMUM_DURATION_LIMIT}
             name="minimumDuration"
             placeholder="1"
+            suffix={
+              <Label size="small" variant="unknown">
+                Minutes
+              </Label>
+            }
             fullWidth
             required={t['Minimum duration is required']}
             validate={{
               minDuration: (value: string) =>
-                Number(value) > 59
+                Number(value) > MINIMUM_DURATION_LIMIT
                   ? 'Minimum duration must be less than 60'
                   : true,
             }}
+          />
+        </Col>
+
+        <FieldHelperText>
+          {t['Set a minimum duration to avoid alert flooding']}
+        </FieldHelperText>
+      </Row>
+
+      <FieldTitleRequired>{t.Schedule} </FieldTitleRequired>
+      <Row>
+        <Col span={13}>
+          <FormInputWithController
+            control={control}
+            type="select"
+            options={
+              scheduleDurationType?.value === 'm'
+                ? SCHEDULE_MINUTE_OPTIONS
+                : SCHEDULE_HOUR_OPTIONS
+            }
+            name="schedule"
+            placeholder="10"
+            required={t['Schedule is required']}
+            suffix={
+              <Label size="small" variant="unknown">
+                Minutes
+              </Label>
+            }
           />
         </Col>
         <Col span={1}>&nbsp;</Col>
@@ -235,36 +288,20 @@ const CreateMonitoringJobStep1 = ({
           <FormInputWithController
             control={control}
             type="select"
-            name="minimumDurationType"
+            name="scheduleDurationType"
             required={t['Minimum duration is required']}
             options={[
               {
                 label: 'minutes',
                 value: 'm',
               },
+              { label: 'hours', value: 'h' },
             ]}
           />
         </Col>
-        <FieldHelperText>
-          {t['Avoid alert flooding by setting a minimum period e.g. 5min']}
-        </FieldHelperText>
-      </Row>
-
-      <FieldTitleRequired>{t['Evaluate every']} </FieldTitleRequired>
-      <Row>
-        <Col span={24}>
-          <FormInputWithController
-            control={control}
-            type="select"
-            options={intervalsEvaluateEvery}
-            name="evaluateEvery"
-            placeholder="10"
-            required={t['"Evaluate Every" is required']}
-          />
-        </Col>
 
         <FieldHelperText>
-          {t['How often your alerts will be evaluated']}
+          {t['How often the monitoring job runs']}
         </FieldHelperText>
       </Row>
 
