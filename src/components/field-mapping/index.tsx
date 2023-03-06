@@ -53,8 +53,11 @@ export default function FieldMapping({
               style={{ flex: 1 }}
               value={from}
               onChange={(e) => {
-                modelFieldMapping[i].source = e;
-                setModelFieldMapping(modelFieldMapping);
+                setModelFieldMapping((prevState) => {
+                  const nextState = [...prevState];
+                  nextState[i].source = e;
+                  return nextState;
+                });
               }}
             >
               {sourceProps?.map((s) => (
@@ -74,8 +77,11 @@ export default function FieldMapping({
               loading={targetsLoading}
               value={to}
               onChange={(e) => {
-                modelFieldMapping[i].target = e;
-                setModelFieldMapping(modelFieldMapping);
+                setModelFieldMapping((prevState) => {
+                  const nextState = [...prevState];
+                  nextState[i].target = e;
+                  return nextState;
+                });
               }}
             >
               {targetProps?.map((s) => (
