@@ -1,7 +1,7 @@
 import { Body, Button, Flex, Input, Modal, Radio } from '@cognite/cogs.js';
 import { isFDMv3 } from '@platypus-app/flags';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { StyledBreakingChanges } from './elements';
 
 export type VersionType = 'FIRST' | 'SUBSEQUENT';
@@ -65,7 +65,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
     }
 
     const matchingPattern = isFDMV3
-      ? /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,41}[a-zA-Z0-9]?$/
+      ? /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,41}[a-zA-Z0-9]?$/
       : /^[1-9][0-9]{0,41}[0-9]?$/;
     if (!version.match(matchingPattern)) {
       setError(
