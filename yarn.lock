@@ -9466,7 +9466,7 @@ cosmiconfig@^6.0.0:
     path-type "^4.0.0"
     yaml "^1.7.2"
 
-cosmiconfig@^7.0.0, cosmiconfig@^7.0.1:
+cosmiconfig@^7.0.0:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-7.0.1.tgz#714d756522cace867867ccb4474c5d01bbae5d6d"
   integrity sha512-a1YWNUV2HwGimB7dU2s1wUMurNKjpx60HxBB6xUM8Re+2s1g1IIfJvFR0/iCF+XHdE0GMTKTuLR32UQff4TEyQ==
@@ -9476,6 +9476,16 @@ cosmiconfig@^7.0.0, cosmiconfig@^7.0.1:
     parse-json "^5.0.0"
     path-type "^4.0.0"
     yaml "^1.10.0"
+
+cosmiconfig@^8.0.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-8.1.0.tgz#947e174c796483ccf0a48476c24e4fefb7e1aea8"
+  integrity sha512-0tLZ9URlPGU7JsKq0DQOQ3FoRsYX8xDZ7xMiATQfaiGMz7EHowNkbU9u1coAOmnh9p/1ySpm0RB3JNWRXM5GCg==
+  dependencies:
+    import-fresh "^3.2.1"
+    js-yaml "^4.1.0"
+    parse-json "^5.0.0"
+    path-type "^4.0.0"
 
 country-regex@^1.1.0:
   version "1.1.0"
@@ -15745,12 +15755,12 @@ jest@^28.0.0:
     import-local "^3.0.2"
     jest-cli "^28.1.3"
 
-jira-prepare-commit-msg@1.7.1:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/jira-prepare-commit-msg/-/jira-prepare-commit-msg-1.7.1.tgz#baeb6853395d84f664931df372093723fab93d3e"
-  integrity sha512-DXqtr++9q2n3OXOrB/iKfjomOvYElbBnuJz72IAev1oLJACUBhsRp+2ZpqZP0o37FZ0RLwA8NjdE2cJyyOOnLQ==
+jira-prepare-commit-msg@1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/jira-prepare-commit-msg/-/jira-prepare-commit-msg-1.7.2.tgz#a8eacf23b758ac6ad8bfed04c0d802fb7c9b38fb"
+  integrity sha512-vPmwqPoi5TfMF1rXh9XN6u7TiSG+FwdcbeL01nMBUbRRxTMXvIqQZoJSRoNoprgY1JUpYXplc3HGRSVsV22rLg==
   dependencies:
-    cosmiconfig "^7.0.1"
+    cosmiconfig "^8.0.0"
 
 joi@17.7.0, joi@^17.3.0, joi@^17.6.0:
   version "17.7.0"
