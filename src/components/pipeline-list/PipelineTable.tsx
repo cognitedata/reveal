@@ -1,4 +1,4 @@
-import { Key, useMemo, useState } from 'react';
+import { Key, useCallback, useMemo, useState } from 'react';
 import {
   ColumnType,
   notification,
@@ -52,55 +52,61 @@ const PipelineTable = (): JSX.Element => {
     [data]
   );
 
-  const handleDuplicate = (pipeline: Pipeline) => {
-    duplicatePipeline(
-      {
-        id: pipeline.id,
-        name: pipeline.name,
-        description: pipeline.description,
-        sources: pipeline.sources,
-        targets: pipeline.targets,
-      },
-      {
-        onSuccess: (_: unknown, pipeline) => {
-          notification.success({
-            message: t('notification-success'),
-            description: t('pipeline-notification-duplicate-success', {
-              name: pipeline?.name,
-            }),
-          });
+  const handleDuplicate = useCallback(
+    (pipeline: Pipeline) => {
+      duplicatePipeline(
+        {
+          id: pipeline.id,
+          name: pipeline.name,
+          description: pipeline.description,
+          sources: pipeline.sources,
+          targets: pipeline.targets,
         },
-        onError: () => {
-          notification.error({
-            message: t('error'),
-            description: t('pipeline-notification-duplicate-error'),
-          });
-        },
-      }
-    );
-  };
+        {
+          onSuccess: (_: unknown, pipeline) => {
+            notification.success({
+              message: t('notification-success'),
+              description: t('pipeline-notification-duplicate-success', {
+                name: pipeline?.name,
+              }),
+            });
+          },
+          onError: () => {
+            notification.error({
+              message: t('error'),
+              description: t('pipeline-notification-duplicate-error'),
+            });
+          },
+        }
+      );
+    },
+    [duplicatePipeline, t]
+  );
 
-  const handleDeletePipeline = (id: number) => {
-    deletePipeline(
-      { id },
-      {
-        onSuccess: () => {
-          notification.success({
-            message: t('notification-success'),
-            description: t('pipeline-notification-duplicate-success', {
-              name: id,
-            }),
-          });
-        },
-        onError: () => {
-          notification.error({
-            message: t('error'),
-            description: t('pipeline-notification-duplicate-error'),
-          });
-        },
-      }
-    );
-  };
+  const handleDeletePipeline = useCallback(
+    (id: number) => {
+      deletePipeline(
+        { id },
+        {
+          onSuccess: () => {
+            notification.success({
+              message: t('notification-success'),
+              description: t('pipeline-notification-duplicate-success', {
+                name: id,
+              }),
+            });
+          },
+          onError: () => {
+            notification.error({
+              message: t('error'),
+              description: t('pipeline-notification-duplicate-error'),
+            });
+          },
+        }
+      );
+    },
+    [deletePipeline, t]
+  );
 
   const columns: PipelineListTableRecordCT[] = useMemo(
     () => [
@@ -152,8 +158,7 @@ const PipelineTable = (): JSX.Element => {
         },
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataSource, t]
+    [handleDeletePipeline, handleDuplicate, t]
   );
 
   if (isInitialLoading) {
