@@ -820,7 +820,7 @@ __metadata:
     jest-environment-jsdom: 29.4.3
     jest-extended: 3.2.3
     jest-image-snapshot: 6.1.0
-    jest-puppeteer: 7.0.0
+    jest-puppeteer: 7.0.1
     jsdom: 21.1.0
     lodash: 4.17.21
     loglevel: 1.8.1
@@ -5162,10 +5162,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expect-puppeteer@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "expect-puppeteer@npm:7.0.0"
-  checksum: f5c5feab0fea3056ec61cd5f0b15db65613f4e96fdd9698bb0f8bfdb01a3fe91b022ff25c4302aac04798991e96c5ecf532f74408589ee9ce41d122db0f97975
+"expect-puppeteer@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "expect-puppeteer@npm:7.0.1"
+  checksum: 998c22980753a8f86f80cb57da5cdf5c83a3ca301585149a2a7350666d6fc4db80e129aab86138892b8813639cb32cfb371575f441dc0c6690beccf970f09fb1
   languageName: node
   linkType: hard
 
@@ -7098,9 +7098,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-dev-server@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "jest-dev-server@npm:7.0.0"
+"jest-dev-server@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "jest-dev-server@npm:7.0.1"
   dependencies:
     chalk: ^4.1.2
     cwd: ^0.10.0
@@ -7109,7 +7109,7 @@ __metadata:
     spawnd: ^7.0.0
     tree-kill: ^1.2.2
     wait-on: ^7.0.1
-  checksum: d2fa847f8f356f017933a4039706fab502b0dd36b37102be1d1e1b8c750c135b5fe48c75c06161e48b0e3a53127e921a4d310e1b868271cf71b8240d9d201cda
+  checksum: 3474af6aac3c339dbe6adf195d2a394dc0bbef74b276694f09cec8883bfe2b966c7baa9e9c99bad74292b617fb693afc0620b4f9663b42d76e9c0d039ef26d12
   languageName: node
   linkType: hard
 
@@ -7220,16 +7220,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-puppeteer@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "jest-environment-puppeteer@npm:7.0.0"
+"jest-environment-puppeteer@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "jest-environment-puppeteer@npm:7.0.1"
   dependencies:
     chalk: ^4.1.2
     cwd: ^0.10.0
-    jest-dev-server: ^7.0.0
+    jest-dev-server: ^7.0.1
     jest-environment-node: ^29.4.1
     merge-deep: ^3.0.3
-  checksum: 51d0cdd7ccebc2aa2e01f351979c1964b837ab61f1646546ad45e713da8538ee456f02dd077efdb698768e788c25954100603bb28c8f7371611bed1078b5f588
+  checksum: 4091455816c2dc32d00991be0358c093694d07c9d369a2483c16282bca49daa4bc0873ceb5d3d5eeba1b177b284a98aabdc8276e9ac46230d00c2e5c7187cf7c
   languageName: node
   linkType: hard
 
@@ -7441,15 +7441,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-puppeteer@npm:7.0.0":
-  version: 7.0.0
-  resolution: "jest-puppeteer@npm:7.0.0"
+"jest-puppeteer@npm:7.0.1":
+  version: 7.0.1
+  resolution: "jest-puppeteer@npm:7.0.1"
   dependencies:
-    expect-puppeteer: ^7.0.0
-    jest-environment-puppeteer: ^7.0.0
+    expect-puppeteer: ^7.0.1
+    jest-environment-puppeteer: ^7.0.1
   peerDependencies:
     puppeteer: ">=19"
-  checksum: b939bfd9cab2edbd95a76e183bcece9452436fc1ae08786f62e3892dcc6ee83745372694402fc249ea4c716b2e0d4b54b1b203e00159349e439ef42ec141b54c
+  checksum: 141181811c902f869ba3b33747f5b300fd124fb6ecec6b26c560143cb01f92cbf8ad3ad34c0d13d41d86b390e1065e568e5800eafaa06d9560d2c62cf11f901a
   languageName: node
   linkType: hard
 
