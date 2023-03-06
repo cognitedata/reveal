@@ -32,7 +32,6 @@ in highp vec2 v_treeIndexPacked;
 void main()
 {
   highp float v_treeIndex = unpackTreeIndex(v_treeIndexPacked);
-  float normalFactor = 1.0;
 
   // Redo appearance texture lookup from vertex shader due to limit in transferable attributes
   NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
@@ -127,7 +126,6 @@ void main()
         // Missed the other point too
         discard;
       }
-      normalFactor = -1.0;
     }
 
   #if !defined(COGNITE_RENDER_COLOR_ID) && !defined(COGNITE_RENDER_DEPTH)
@@ -143,13 +141,18 @@ void main()
         vec3 o1 = P1 + R1 * t;
         vec3 o2 = P2 + R2 * t;
         vec3 B = o2-o1;
-        normal = normalize(cross(A, B)) * normalFactor;
+        normal = normalize(cross(A, B));
       }
       else
       {
         // Regular cylinder has simpler normal vector in camera space
         vec3 p_local = p - v_centerB.xyz;
-        normal = normalize(p_local - W.xyz * dot(p_local, W.xyz)) * normalFactor;
+        normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
+      }
+
+
+      if (dot(normal, vec3(0.0, 0.0, 1.0)) < 0.0) {
+              normal *= -1.0;
       }
   #endif
 
