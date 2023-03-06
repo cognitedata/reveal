@@ -1,5 +1,6 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Metadata } from '@cognite/sdk';
+import { SourceType } from 'context/QuickMatchContext';
 import { PredictionObject } from 'hooks/contextualization-api';
 import {
   Dispatch,
@@ -90,5 +91,28 @@ export const bulkDownloadStatus = ({
     return isFetching ? 'loading' : 'idle';
   } else {
     return isFetching ? 'loading' : 'success';
+  }
+};
+
+export const getUnmatchedFilter = (sourceType: SourceType) => {
+  switch (sourceType) {
+    case 'events': {
+      return {
+        not: {
+          exists: {
+            property: ['assetIds'],
+          },
+        },
+      };
+    }
+    default: {
+      return {
+        not: {
+          exists: {
+            property: ['assetId'],
+          },
+        },
+      };
+    }
   }
 };

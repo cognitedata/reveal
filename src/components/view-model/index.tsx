@@ -12,13 +12,14 @@ import {
   useEMModelPredictResults,
 } from 'hooks/contextualization-api';
 import { useList } from 'hooks/list';
-import { RawTimeseries } from 'hooks/timeseries';
+
 import { useEffect, useMemo, useState } from 'react';
-import { bulkDownloadStatus } from 'utils';
+import { bulkDownloadStatus, getUnmatchedFilter } from 'utils';
 
 export default function ViewModel({}: {}) {
   const queryClient = useQueryClient();
   const {
+    sourceType,
     modelId,
     setModelId,
     jobId,
@@ -42,19 +43,11 @@ export default function ViewModel({}: {}) {
 
   const targetState = queryClient.getQueryState(getQMTargetDownloadKey());
 
-  const advancedFilter = useMemo(
-    () =>
-      unmatchedOnly
-        ? {
-            not: {
-              exists: {
-                property: ['assetId'],
-              },
-            },
-          }
-        : undefined,
-    [unmatchedOnly]
-  );
+  const advancedFilter = useMemo(() => {
+    if (unmatchedOnly) {
+      return getUnmatchedFilter(sourceType);
+    }
+  }, [unmatchedOnly, sourceType]);
 
   const {
     data: sourcePages,
@@ -63,8 +56,9 @@ export default function ViewModel({}: {}) {
     hasNextPage,
     isFetching: sourceFetching,
     isError: sourceError,
+    isFetched,
   } = useList(
-    'timeseries',
+    sourceType,
     10,
     { advancedFilter, filter: sourceFilter, limit: 10000 },
     {
@@ -87,16 +81,16 @@ export default function ViewModel({}: {}) {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const sources = useMemo((): RawTimeseries[] => {
-    const start: RawTimeseries[] = [];
-    const foo = sourcePages?.pages.reduce((accl, p): RawTimeseries[] => {
-      return [...accl, ...p.items];
-    }, start);
-    return foo || start;
-  }, [sourcePages]);
+  const sources = useMemo((): any[] => {
+    let stuff: any[] = [];
+    sourcePages?.pages?.forEach((i) => {
+      stuff = stuff.concat(i.items);
+    });
+    return stuff;
+  }, [sourcePages?.pages]);
 
   useEffect(() => {
-    if (!modelId && !isLoading) {
+    if (!modelId && !isLoading && !hasNextPage && isFetched) {
       buildModel({
         sources,
         targetsList,
@@ -121,6 +115,8 @@ export default function ViewModel({}: {}) {
     sourcesList,
     supervisedMode,
     targetsList,
+    hasNextPage,
+    isFetched,
   ]);
 
   const { data: model, status: createModelStatus } = useEMModel(modelId!, {
