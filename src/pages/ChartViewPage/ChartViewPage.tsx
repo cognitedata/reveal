@@ -100,6 +100,7 @@ import {
   useStatistics,
   useUploadCalculations,
 } from './hooks';
+import { useExperimentalCapabilitiesCheck } from '../../hooks/useCapabilities';
 
 const defaultTranslations = makeDefaultTranslations(
   'Data Profiling',
@@ -110,7 +111,9 @@ const defaultTranslations = makeDefaultTranslations(
   'Chart could not be saved!',
   'Could not load chart',
   'This chart does not seem to exist. You might not have access',
-  'All charts'
+  'All charts',
+  'Enable "alertsApiExperiment" & "dataPipelinesApiExperiment" capabilities to access Alerting',
+  'Enable "monitoringTaskApiExperiment" & "dataPipelinesApiExperiment" capabilities to access Monitoring'
 );
 
 const keys = translationKeys(defaultTranslations);
@@ -120,6 +123,14 @@ const ChartViewPage = () => {
     fallback: false,
     forceRerender: true,
   });
+  const isMonitoringAccessible = useExperimentalCapabilitiesCheck([
+    'monitoringTaskApiExperiment',
+    'dataPipelinesApiExperiment',
+  ]);
+  const isAlertingAccessible = useExperimentalCapabilitiesCheck([
+    'alertsApiExperiment',
+    'dataPipelinesApiExperiment',
+  ]);
   const { isEnabled: isDataProfilingEnabled } = useFlag(
     'CHARTS_UI_DATAPROFILING',
     {
@@ -939,12 +950,22 @@ const ChartViewPage = () => {
 
         <Toolbar>
           {isMonitoringEnabled && (
-            <Tooltip content={t.Alerting} position="left">
+            <Tooltip
+              content={
+                isAlertingAccessible
+                  ? t.Alerting
+                  : t[
+                      'Enable "alertsApiExperiment" & "dataPipelinesApiExperiment" capabilities to access Alerting'
+                    ]
+              }
+              position="left"
+            >
               <Button
                 icon="Bell"
                 aria-label="Toggle alerting sidebar"
                 toggled={showAlertingSidebar}
                 onClick={() => handleAlertingSidebarToggle()}
+                disabled={!isAlertingAccessible}
               />
             </Tooltip>
           )}
@@ -975,13 +996,23 @@ const ChartViewPage = () => {
             />
           </Tooltip>
           {isMonitoringEnabled && (
-            <Tooltip content={t.Monitoring} position="left">
+            <Tooltip
+              content={
+                isMonitoringAccessible
+                  ? t.Monitoring
+                  : t[
+                      'Enable "monitoringTaskApiExperiment" & "dataPipelinesApiExperiment" capabilities to access Monitoring'
+                    ]
+              }
+              position="left"
+            >
               <Button
                 // @ts-ignore
                 icon="Alarm"
                 aria-label="Toggle monitoring sidebar"
                 toggled={showMonitoringSidebar}
                 onClick={() => handleMonitoringSidebarToggle()}
+                disabled={!isMonitoringAccessible}
               />
             </Tooltip>
           )}
