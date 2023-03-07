@@ -33,7 +33,7 @@ export class Image360ApiHelper {
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
     currentImage360Entered?: Image360Entity;
-    currentImage360Clicked?: Image360Entity;
+    image360SelectedForEntry?: Image360Entity;
     lastMousePosition?: { offsetX: number; offsetY: number };
   };
 
@@ -126,16 +126,16 @@ export class Image360ApiHelper {
   }
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
-    const lastClicked360ImageEntity = this._interactionState.currentImage360Clicked;
+    const lastClicked360ImageEntity = this._interactionState.image360SelectedForEntry;
     if (lastClicked360ImageEntity === image360Entity) {
       this._requestRedraw();
       return;
     }
-    this._interactionState.currentImage360Clicked = image360Entity;
+    this._interactionState.image360SelectedForEntry = image360Entity;
 
     await this._image360Facade.preload(image360Entity, true);
 
-    if (this._interactionState.currentImage360Clicked !== image360Entity) {
+    if (this._interactionState.image360SelectedForEntry !== image360Entity) {
       return;
     }
 
