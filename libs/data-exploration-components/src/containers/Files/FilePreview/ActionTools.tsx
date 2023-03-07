@@ -85,15 +85,17 @@ export const ActionTools = ({
             onPreviousResult={onPreviousResult}
           />
         )}
-        <ToolBar>
-          <EditFileButton
-            item={{ type: 'file', id: file.id! }}
-            isActive={editMode}
-            onClick={setEditMode}
-            filesAcl={filesAcl}
-            eventsAcl={eventsAcl}
-          />
-        </ToolBar>
+        {!editMode && (
+          <ToolBar>
+            <EditFileButton
+              item={{ type: 'file', id: file.id! }}
+              isActive={editMode}
+              onClick={setEditMode}
+              filesAcl={filesAcl}
+              eventsAcl={eventsAcl}
+            />
+          </ToolBar>
+        )}
         {showSideBar && (
           <ToolBar>
             <ShowHideDetailsButton

@@ -299,6 +299,7 @@ export const FilePreview = ({
     if (annotation.type !== AnnotationType.RECTANGLE) {
       throw new Error('Only expecting rectangle annotations from this flow');
     }
+    setShowResourcePreviewSidebar(true);
 
     const pendingAnnotation: ExtendedAnnotation = {
       ...annotation,

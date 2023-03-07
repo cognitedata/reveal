@@ -14,7 +14,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, FileInfo } from '@cognite/sdk';
 import styled from 'styled-components';
-import { Colors, Body, Tabs } from '@cognite/cogs.js';
+import { Colors, Tabs, Infobar } from '@cognite/cogs.js';
 import qs from 'query-string';
 import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -148,9 +148,13 @@ export const FilePreview = ({
           <Tabs.Tab label="Preview" key="preview" tabKey="preview">
             <PreviewTabWrapper>
               {editMode && (
-                <Banner>
-                  <Body level={3}>You have entered editing mode.</Body>
-                </Banner>
+                <Infobar
+                  type="neutral"
+                  buttonText="Done editing"
+                  onButtonClick={() => setEditMode(false)}
+                >
+                  You are in editing mode.
+                </Infobar>
               )}
               <CogniteFilePreview
                 key={fileId}

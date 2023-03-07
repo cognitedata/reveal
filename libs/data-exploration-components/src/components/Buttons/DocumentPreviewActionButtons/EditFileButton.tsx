@@ -28,19 +28,8 @@ export const EditFileButton = ({
   }
 
   if (isActive) {
-    return (
-      <Button
-        type="primary"
-        icon="Edit"
-        key={id}
-        onClick={onClick}
-        style={{ whiteSpace: 'nowrap' }}
-      >
-        Done editing
-      </Button>
-    );
+    return null;
   }
-
   const tooltipContent = writeAccess ? (
     'Edit'
   ) : (
