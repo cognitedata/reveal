@@ -1,14 +1,15 @@
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { Dispatch, SetStateAction, useMemo, useEffect } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
-import { InternalId, Timeseries } from '@cognite/sdk';
-import { useTimeseries, useTimeseriesSearch } from 'hooks/timeseries';
+import { InternalId } from '@cognite/sdk';
+import { RawTimeseries, useTimeseriesSearch } from 'hooks/timeseries';
 import { Filter } from 'context/QuickMatchContext';
+import { useList } from 'hooks/list';
 
-type TimeseriesListTableRecord = { key: string } & Pick<
-  Timeseries,
+type TimeseriesListTableRecord = { key: string; disabled?: boolean } & Pick<
+  RawTimeseries,
   'name' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
 >;
 type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
@@ -18,23 +19,44 @@ type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
 
 type Props = {
   query?: string | null;
-  unmatchedOnly?: boolean;
+  advancedFilter?: any;
   filter: Filter;
   selected: InternalId[];
   setSelected: Dispatch<SetStateAction<InternalId[]>>;
+  allSources: boolean;
 };
 export default function TimeseriesTable({
   query,
   selected,
   setSelected,
-  unmatchedOnly,
+  advancedFilter,
   filter,
+  allSources,
 }: Props) {
   const {
     data: listPages,
     isInitialLoading: listLoading,
     error,
-  } = useTimeseries({ unmatchedOnly, filter }, { enabled: !query });
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useList(
+    'timeseries',
+    1,
+    { limit: 100, advancedFilter, filter },
+    { enabled: !query }
+  );
+
+  useEffect(() => {
+    if (
+      hasNextPage &&
+      !isFetchingNextPage &&
+      listPages?.pages &&
+      listPages.pages.length <= 2
+    ) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, listPages, fetchNextPage]);
 
   const { data: searchResult, isInitialLoading: searchLoading } =
     useTimeseriesSearch(query!, {
@@ -47,14 +69,16 @@ export default function TimeseriesTable({
 
   const collapsedListPages = useMemo(
     () =>
-      listPages?.pages[0]?.items?.map((a) => ({
+      listPages?.pages[0]?.items.map((a) => ({
         ...a,
         key: a.id.toString(),
       })) || [],
     [listPages]
   );
 
-  const dataSource = !!query ? searchResult : collapsedListPages;
+  const dataSource = (!!query ? searchResult : collapsedListPages)?.map(
+    (ts) => ({ ...ts, disabled: allSources })
+  );
 
   const columns: TimeseriesListTableRecordCT[] = useMemo(
     () => [
@@ -79,12 +103,19 @@ export default function TimeseriesTable({
   );
 
   const rowSelection = {
-    selectedRowKeys: selected.map((s) => s.id.toString()),
+    selectedRowKeys: allSources
+      ? dataSource?.map((d) => d.id.toString())
+      : selected.map((s) => s.id.toString()),
     type: 'checkbox' as RowSelectionType,
+    hideSelectAll: true,
     onChange(_: (string | number)[], rows: TimeseriesListTableRecord[]) {
       setSelected(rows.map((r) => ({ id: r.id })));
     },
-    hideSelectAll: true,
+    getCheckboxProps(_: TimeseriesListTableRecord) {
+      return {
+        disabled: allSources,
+      };
+    },
   };
 
   if (error?.status === 403) {
@@ -106,10 +137,9 @@ export default function TimeseriesTable({
       loading={loading}
       columns={columns}
       emptyContent={loading ? <Icon type="Loader" /> : undefined}
-      appendTooltipTo={undefined}
       rowSelection={rowSelection}
-      pagination={false}
       dataSource={dataSource || []}
+      appendTooltipTo={undefined}
     />
   );
 }

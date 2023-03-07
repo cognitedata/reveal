@@ -1,12 +1,13 @@
 import { Dispatch, SetStateAction, useMemo } from 'react';
+
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
 import { Asset, InternalId } from '@cognite/sdk';
-
-import { useAssets, useAssetSearch } from 'hooks/assets';
 import { Alert } from 'antd';
+
 import { useTranslation } from 'common';
-import { TABLE_ITEMS_PER_PAGE } from '../../constants';
+import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
+import { useAssets, useAssetSearch } from 'hooks/assets';
 
 type AssetListTableRecord = { key: string } & Pick<
   Asset,

@@ -1,8 +1,8 @@
 import {
-  Timeseries,
   CogniteError,
-  TimeseriesFilter,
-  TimeSeriesUpdate,
+  CogniteEvent,
+  EventChange,
+  EventFilter,
   CogniteClient,
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
@@ -16,45 +16,47 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query';
+
+import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
 import { PropertyAggregate, PropertyAggregateResponse } from 'common/types';
+import { RawCogniteEvent } from 'types/api';
 import { downcaseMetadata } from 'utils';
 
-import { TABLE_ITEMS_PER_PAGE } from '../constants';
-
-type TSParams = {
+type EventsParams = {
   limit?: number;
   unmatchedOnly?: boolean;
-  filter?: TimeseriesFilter;
+  filter?: EventFilter;
 };
-const useTimeseriesKey = (opts: TSParams): QueryKey => [
-  'timeseries',
-  'list',
-  opts,
-];
-const useTimeseriesSearchKey = (
-  q: string,
-  filter?: TimeseriesFilter
-): QueryKey => ['timeseries', 'search', q, { filter }];
+const useEventsKey = (opts: EventsParams): QueryKey => ['events', 'list', opts];
+const useEventsSearchKey = (
+  description: string,
+  filter?: EventFilter
+): QueryKey => ['events', 'search', description, { filter }];
 
-type RawTimeseries = Timeseries & {
+type RawEvent = CogniteEvent & {
   lastUpdatedTime: number;
   createdTime: number;
 };
 
-export const useTimeseries = (
-  { limit = TABLE_ITEMS_PER_PAGE, unmatchedOnly: unmatched, filter }: TSParams,
+export const useEvents = (
+  {
+    limit = TABLE_ITEMS_PER_PAGE,
+    unmatchedOnly: unmatched,
+    filter,
+  }: EventsParams,
   opts?: UseInfiniteQueryOptions<
-    { items: RawTimeseries[]; nextPage?: string },
+    { items: RawEvent[]; nextPage?: string },
     CogniteError
   >
 ) => {
   const sdk = useSDK();
+  sdk.events.list();
   return useInfiniteQuery(
-    useTimeseriesKey({ limit, filter, unmatchedOnly: unmatched }),
+    useEventsKey({ limit, filter, unmatchedOnly: unmatched }),
     ({ pageParam }) =>
       sdk
-        .post<{ items: RawTimeseries[]; nextPage?: string }>(
-          `/api/v1/projects/${sdk.project}/timeseries/list`,
+        .post<{ items: RawEvent[]; nextPage?: string }>(
+          `/api/v1/projects/${sdk.project}/events/list`,
           {
             headers: {
               'cdf-version': 'alpha',
@@ -101,35 +103,47 @@ export const useTimeseries = (
   );
 };
 
-export const useTimeseriesSearch = <T>(
-  query: string,
-  opts?: UseQueryOptions<Timeseries[], CogniteError, T>
+export const useEventsSearch = <T>(
+  description: string,
+  opts?: UseQueryOptions<RawCogniteEvent[], CogniteError, T>
 ) => {
   const sdk = useSDK();
   return useQuery(
-    useTimeseriesSearchKey(query),
-    () => sdk.timeseries.search({ search: { query }, limit: 1000 }),
+    useEventsSearchKey(description),
+    () =>
+      sdk
+        .post<{ items: RawCogniteEvent[] }>(
+          `/api/v1/projects/${sdk.project}/events/search`,
+          { data: { search: { description }, limit: 1000 } }
+        )
+        .then((r) => {
+          if (r.status === 200) {
+            return r.data.items;
+          } else {
+            return Promise.reject(r);
+          }
+        }),
 
     opts
   );
 };
 
-export const useUpdateTimeseries = (
-  options?: UseMutationOptions<Timeseries[], CogniteError, TimeSeriesUpdate[]>
+export const useUpdateEvents = (
+  options?: UseMutationOptions<CogniteEvent[], CogniteError, EventChange[]>
 ) => {
   const sdk = useSDK();
 
   return useMutation(
-    ['update', 'ts'],
+    ['update', 'events'],
     (changes) => {
-      return sdk.timeseries.update(changes);
+      return sdk.events.update(changes);
     },
     options
   );
 };
 
 export const getPropertiesAggregateKey = (): QueryKey => [
-  'timeseries',
+  'events',
   'properties-aggregate',
 ];
 
@@ -144,7 +158,7 @@ export const getPropertiesAggregate = async (sdk: CogniteClient) => {
   ];
   return sdk
     .post<PropertyAggregateResponse>(
-      `/api/v1/projects/${sdk.project}/timeseries/aggregate`,
+      `/api/v1/projects/${sdk.project}/events/aggregate`,
       {
         headers: {
           'cdf-version': 'alpha',
