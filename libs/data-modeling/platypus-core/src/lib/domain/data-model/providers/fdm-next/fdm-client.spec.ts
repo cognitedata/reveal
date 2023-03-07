@@ -1,3 +1,4 @@
+import { PlatypusError } from '@platypus-core/boundaries/types';
 import { PublishDataModelVersionDTO } from '../../dto';
 import {
   DataModelTypeDefsType,
@@ -158,6 +159,32 @@ const mixerApiMock = {
         },
       })
     ),
+    getDataModelVersionsById: jest.fn(
+      (space, dataModelId): Promise<GraphQlDmlVersionDTO[]> => {
+        if (dataModelId === 'existingDataModel') {
+          return Promise.resolve([
+            {
+              space: space,
+              externalId: 'existingDataModel',
+              version: '1',
+              name: 'name',
+              description: undefined,
+              graphQlDml: undefined,
+              createdTime: undefined,
+              lastUpdatedTime: undefined,
+            },
+          ]);
+        } else {
+          return Promise.reject(
+            new PlatypusError(
+              `Data model with external-id ${dataModelId} does not exist.`,
+              'NOT_FOUND',
+              404
+            )
+          );
+        }
+      }
+    ),
     listDataModelVersions: jest.fn(() => Promise.resolve([])),
     runQuery: jest.fn(() => Promise.resolve({ data: { listPerson: [] } })),
   },
@@ -207,6 +234,40 @@ describe('FDM v3 Client', () => {
         name: 'Test',
         description: 'Test',
         version: '1',
+      });
+    });
+
+    test('throws error if data model with external-id already exists', async () => {
+      const spacesApi = spacesApiMock.working;
+      const mixerApi = mixerApiMock.working;
+      const graphqlService = graphqlServiceMock.working;
+      const transformationsService = transformationApiMock.working;
+      const fdmClient = new FdmClient(
+        spacesApi,
+        containersApiMock.working,
+        viewsApiMock.working,
+        dataModelsApiMock.working,
+        mixerApi,
+        graphqlService,
+        transformationsService
+      );
+
+      const dto = {
+        name: 'name',
+        externalId: 'existingDataModel',
+        space: 'space',
+      };
+
+      //Taken from https://stackoverflow.com/a/72004768/8504149
+      const throwingFunction = () => fdmClient.createDataModel(dto);
+
+      // This is what prevents the test to succeed when the promise is resolved and not rejected
+      expect.assertions(2);
+      await throwingFunction().catch((error) => {
+        expect(error).toBeInstanceOf(PlatypusError);
+        expect(error.message).toMatch(
+          'Could not create data model. Data model with external-id existingDataModel already exists in space space'
+        );
       });
     });
   });
@@ -472,6 +533,7 @@ describe('FDM v3 Client', () => {
       });
     });
   });
+
   describe('should delete data model', () => {
     test('delete data model - simple', async () => {
       const fdmClient = new FdmClient(

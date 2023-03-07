@@ -154,6 +154,15 @@ export class FdmClient implements FlexibleDataModelingClient {
     return this.mixerApiService
       .getDataModelVersionsById(dto.space, dto.dataModelId)
       .then((dataModels) => {
+        if (!dataModels.length) {
+          return Promise.reject(
+            new PlatypusError(
+              `Data model with external-id ${dto.dataModelId} does not exist.`,
+              'NOT_FOUND',
+              404
+            )
+          );
+        }
         return this.dataModelDataMapper.deserialize(dataModels[0]);
       });
   }
@@ -197,9 +206,29 @@ export class FdmClient implements FlexibleDataModelingClient {
       version: '1',
     };
 
-    return this.createSpace({
+    return this.fetchDataModel({
       space: dataModelDto.space,
+      dataModelId: dataModelDto.externalId,
     })
+      .then(() =>
+        Promise.reject(
+          new PlatypusError(
+            `Could not create data model. Data model with external-id ${dataModelDto.externalId} already exists in space ${dataModelDto.space}`,
+            'UNKNOWN'
+          )
+        )
+      )
+      .catch((error: PlatypusError) => {
+        if (error.type == 'NOT_FOUND') {
+          return;
+        }
+        throw error;
+      })
+      .then(() =>
+        this.createSpace({
+          space: dataModelDto.space,
+        })
+      )
       .then(() => this.mixerApiService.upsertVersion(dataModelDto))
       .then((dataModelResponse) => {
         if (dataModelResponse.errors?.length) {
@@ -410,23 +439,6 @@ export class FdmClient implements FlexibleDataModelingClient {
     // TODO skipping validation while we integrate with V3 Mixer API
     // test needs updating too when this is fixed
     return [];
-
-    const typeDefs = this.graphqlService.parseSchema(dto.schema);
-
-    const validationErrors = await this.mixerApiService.validateVersion({
-      space: dto.space,
-      externalId: dto.externalId,
-      version: dto.version,
-      graphQlDml: dto.schema,
-      createdTime: dto.createdTime,
-      lastUpdatedTime: dto.lastUpdatedTime,
-    });
-
-    const dataModelValidationErrors = validationErrors.map((err) =>
-      this.validationErrorDataMapper.deserialize(err, typeDefs)
-    );
-
-    return dataModelValidationErrors;
   }
 
   /**
