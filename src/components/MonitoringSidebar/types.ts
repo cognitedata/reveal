@@ -63,7 +63,10 @@ export type CreateMonitoringJobFormData = {
   name: string;
   source: undefined | { label: string; value: string };
   alertThreshold: number;
-  alertThresholdType: undefined | { label: string; value: string };
+  alertThresholdType:
+    | undefined
+    | { label: 'Above'; value: 'upper_threshold' }
+    | { label: 'Below'; value: 'lower_threshold' };
   schedule: undefined | { label: string; value: number };
   scheduleDurationType: { label: string; value: string };
   minimumDuration: number;

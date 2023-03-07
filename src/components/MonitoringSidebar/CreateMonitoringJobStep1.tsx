@@ -211,11 +211,11 @@ const CreateMonitoringJobStep1 = ({
             options={[
               {
                 label: t.Above,
-                value: 'threshold',
+                value: 'upper_threshold',
               },
               {
                 label: t.Below,
-                value: 'lower-threshold',
+                value: 'lower_threshold',
               },
             ]}
           />

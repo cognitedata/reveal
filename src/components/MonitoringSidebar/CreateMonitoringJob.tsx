@@ -73,7 +73,7 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
       name: '',
       source: undefined,
       alertThreshold: 1,
-      alertThresholdType: { label: 'Above', value: 'threshold' },
+      alertThresholdType: { label: 'Above', value: 'upper_threshold' },
       schedule: undefined,
       scheduleDurationType: { label: 'minutes', value: 'm' },
       minimumDuration: 1,
