@@ -127,14 +127,14 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
       translation: THREE.Matrix4;
       rotation: THREE.Matrix4;
     } {
-      const translationComponents = transformationData.translation.split(' ').map(parseFloat);
+      const translationComponents = transformationData.translation.split(',').map(parseFloat);
       const milimetersInMeters = 1000;
       const translation = new THREE.Vector3(
         translationComponents[0],
         translationComponents[2],
         -translationComponents[1]
       ).divideScalar(milimetersInMeters);
-      const rotationAxisComponents = transformationData.rotation_axis.split(' ').map(parseFloat);
+      const rotationAxisComponents = transformationData.rotation_axis.split(',').map(parseFloat);
       const rotationAxis = new THREE.Vector3(
         rotationAxisComponents[0],
         rotationAxisComponents[2],
