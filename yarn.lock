@@ -1978,10 +1978,10 @@
     "@types/history" "4.7.9"
     rrweb "1.0.6"
 
-"@cognite/reveal@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.1.1.tgz#20a8bf4b45b6813c0f758986895a668eabea13ff"
-  integrity sha512-RL4YlLXQV6t2m9z5DcJgSr65ybuOKjswe387O+77ORnUYD7E7NOz+YPHVZ7nJxjw4dR+ac+jE6pwWBoSv4bQXA==
+"@cognite/reveal@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.1.2.tgz#eb8bb9bd5ea90ffbb973f6886c5783dc1a80728f"
+  integrity sha512-ccHnHUpRyVEiB3eHYU9Up40LuMP1vWlgaChpuBH0+xcF2crCPsf19JNu4RfLzhiATcMPtWzhAciJ0Kq/tFff/w==
   dependencies:
     "@tweenjs/tween.js" "18.6.4"
     assert "2.0.0"
