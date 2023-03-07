@@ -11,7 +11,7 @@ import { PipelineTableTypes } from 'types/types';
 import { stringContains } from 'utils/shared';
 import EntityMatchingFilter from 'components/em-filter/EntityMatchingFilter';
 import { useSearchParams } from 'react-router-dom';
-import { SOURCE_TABLE_QUERY_KEY } from '../../constants';
+import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
 
 type PipelineListTableRecord = { key: string } & Pick<
   Pipeline,
