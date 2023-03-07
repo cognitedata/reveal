@@ -8,27 +8,14 @@ import QuickMatchTitle from 'components/quick-match-title';
 import ResourceSelectionTable from 'components/resource-selector-table';
 import TargetSelectionTable from 'components/target-selector-table';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
-import { useCreateEMModel } from 'hooks/contextualization-api';
 
 import styled from 'styled-components';
 
 export default function QuickMatch() {
   const { t } = useTranslation();
-  const {
-    step,
-    hasNextStep,
-    hasPrevStep,
-    popStep,
-    pushStep,
-    featureType,
-    setModelId,
-    sourcesList,
-    targetsList,
-    matchFields,
-    supervisedMode,
-    scope,
-  } = useQuickMatchContext();
-  const { mutateAsync: buildModel } = useCreateEMModel();
+  const { step, hasNextStep, hasPrevStep, popStep, pushStep } =
+    useQuickMatchContext();
+
   return (
     <Flex direction="column" style={{ height: '100%' }}>
       <SecondaryTopbar title={t('quick-match')} />
@@ -47,21 +34,7 @@ export default function QuickMatch() {
         <Button
           disabled={!hasNextStep()}
           onClick={() => {
-            if (step === 'modelParams') {
-              buildModel({
-                sourcesList,
-                targetsList,
-                featureType,
-                matchFields,
-                supervisedMode,
-                scope,
-              }).then((model) => {
-                setModelId(model.id);
-                pushStep();
-              });
-            } else {
-              pushStep();
-            }
+            pushStep();
           }}
           type="primary"
         >
