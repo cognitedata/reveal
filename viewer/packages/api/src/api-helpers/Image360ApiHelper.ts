@@ -132,8 +132,7 @@ export class Image360ApiHelper {
   }
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
-    const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
-    if (lastEntered360ImageEntity === image360Entity) {
+    if (this._interactionState.currentImage360Entered === image360Entity) {
       this._requestRedraw();
       return;
     }
