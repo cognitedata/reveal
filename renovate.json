@@ -1,14 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "local>cognitedata/renovate-config"
-  ],
+  "extends": ["local>cognitedata/renovate-config"],
   "stabilityDays": 31,
-  "postUpdateOptions": [
-    "yarnDedupeFewer"
+  "postUpdateOptions": ["yarnDedupeFewer"],
+  "labels": ["dependencies", "auto-merge"],
+  "schedule": [
+    "after 10pm every weekday",
+    "before 5am every weekday",
+    "every weekend"
   ],
-  "labels": [
-    "dependencies",
-    "auto-merge"
-  ]
+  "prConcurrentLimit": 3
 }
