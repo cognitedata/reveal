@@ -5,8 +5,9 @@
 import { Image360Entity } from '../entity/Image360Entity';
 import pull from 'lodash/pull';
 import findLast from 'lodash/findLast';
-import { Log } from '@reveal/logger';
+import find from 'lodash/find';
 import remove from 'lodash/remove';
+import { Log } from '@reveal/logger';
 
 export type DownloadRequest = {
   entity: Image360Entity;
@@ -17,6 +18,7 @@ export type DownloadRequest = {
 export class Image360LoadingCache {
   private readonly _loaded360Images: Image360Entity[];
   private readonly _inProgressDownloads: DownloadRequest[];
+  private _lockedDownload: Image360Entity | undefined;
 
   get cachedEntities(): Image360Entity[] {
     return this._loaded360Images;
@@ -38,9 +40,13 @@ export class Image360LoadingCache {
     this._inProgressDownloads = [];
   }
 
-  public async cachedPreload(entity: Image360Entity): Promise<void> {
+  public async cachedPreload(entity: Image360Entity, lockDownload = false): Promise<void> {
     if (this._loaded360Images.includes(entity)) {
       return;
+    }
+
+    if (lockDownload) {
+      this._lockedDownload = entity;
     }
 
     const inProgressDownload = this.getDownloadInProgress(entity);
@@ -73,6 +79,9 @@ export class Image360LoadingCache {
         () => {}
       )
       .finally(() => {
+        if (this._lockedDownload === entity) {
+          this._lockedDownload = undefined;
+        }
         remove(this._inProgressDownloads, download => {
           return download.entity === entity;
         });
@@ -100,9 +109,14 @@ export class Image360LoadingCache {
   }
 
   private abortLastRecentlyReqestedEntity() {
-    const download = this._inProgressDownloads[0];
-    this._inProgressDownloads.shift();
-    download.abort();
+    const download = find(
+      this._inProgressDownloads,
+      download => download.entity !== this._lockedDownload && !download.entity.image360Visualization.visible
+    );
+    if (download) {
+      pull(this._inProgressDownloads, download);
+      download.abort();
+    }
   }
 
   private createAbortSignal() {
