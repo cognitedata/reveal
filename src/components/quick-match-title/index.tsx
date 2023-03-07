@@ -1,4 +1,5 @@
-import { Icon, Title, Tooltip } from '@cognite/cogs.js';
+import { Flex, Icon, Title, Tooltip } from '@cognite/cogs.js';
+
 import { useTranslation } from 'common';
 import {
   QuickMatchStep,
@@ -17,11 +18,11 @@ export default function QuickMatchTitle() {
   };
 
   return (
-    <Title level={2} style={{ marginBottom: 20 }}>
-      {titles[step]}
+    <Flex alignItems="center" gap={8}>
+      <Title level={3}>{titles[step]}</Title>
       <Tooltip content={t('select-data-tooltip')} placement="bottom">
-        <Icon type="Info" />
+        <Icon type="InfoFilled" />
       </Tooltip>
-    </Title>
+    </Flex>
   );
 }

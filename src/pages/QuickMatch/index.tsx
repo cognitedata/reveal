@@ -46,10 +46,13 @@ export default function QuickMatch() {
 }
 
 const Body = styled(_Body)`
-  padding: 12px 24px;
+  padding: 12px;
   flex-grow: 1;
   border-top: 1px solid ${Colors['border--muted']};
   border-bottom: 1px solid ${Colors['border--muted']};
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `;
 
 const BottomRow = styled(Flex)`
