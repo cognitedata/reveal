@@ -8,7 +8,7 @@ static final String FUSION_SUBAPP_NAME = '@cognite/cdf-3d-management'
 static final String NODE_VERSION = 'node:16'
 
 final boolean isMaster = env.BRANCH_NAME == 'master'
-final boolean isRelease = env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'release-staging'
+final boolean isRelease = env.BRANCH_NAME == 'release-3d-management'
 final boolean isPullRequest = !!env.CHANGE_ID
 
 def pods = { body ->
