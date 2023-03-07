@@ -1,3 +1,5 @@
+import { CSSProperties } from 'react';
+
 import { Datum } from 'plotly.js';
 
 export type LineChartProps = {
@@ -10,8 +12,11 @@ export type LineChartProps = {
   variant?: Variant;
   layout?: Layout;
   config?: Config;
+  style?: CSSProperties;
   disableTooltip?: boolean;
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
+  renderFilters?: () => [JSX.Element, ...JSX.Element[]];
+  renderActions?: () => [JSX.Element, ...JSX.Element[]];
 };
 
 export interface Data {
@@ -22,19 +27,22 @@ export interface Data {
 }
 
 export interface Layout {
+  legendPlacement?: HorizontalPlacement;
   showTitle?: boolean;
   showSubtitle?: boolean;
   showLegend?: boolean;
-  legendPlacement?: HorizontalPlacement;
   showAxisNames?: boolean;
   showTicks?: boolean;
   showTickLabels?: boolean;
+  showFilters?: boolean;
+  showActions?: boolean;
 }
 
 export interface Config {
   responsive?: boolean;
   scrollZoom?: AxisDirectionConfig;
   selectionZoom?: AxisDirectionConfig;
+  buttonZoom?: AxisDirectionConfig;
   pan?: AxisDirectionConfig;
 }
 
@@ -70,3 +78,8 @@ export type AxisDirectionConfig =
   | false
   | AxisDirection
   | [KeyTriggeredAxisDirection, ...KeyTriggeredAxisDirection[]];
+
+export interface PlotRange {
+  x?: AxisRange;
+  y?: AxisRange;
+}

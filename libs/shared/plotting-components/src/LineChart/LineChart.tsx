@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useRef } from 'react';
 
 import { LineChartWrapper } from './elements';
 import { LineChartProps } from './types';
@@ -6,11 +7,13 @@ import { Header } from './components/Header';
 import { Tooltip } from './components/Tooltip';
 import { HoverMarker } from './components/HoverMarker';
 import { Legend } from './components/Legend';
-import { Plot } from './components/Plot';
+import { Plot, PlotElement } from './components/Plot';
+import { Toolbar } from './components/Toolbar';
+
 import { getLayout } from './utils/getLayout';
 import { usePlotHoverEvent } from './hooks/usePlotHoverEvent';
 import { getConfig } from './utils/getConfig';
-import { DEFAULT_BACKGROUND_COLOR } from './constants';
+import { getStyleProperties } from './utils/getStyleProperties';
 
 export const LineChart: React.FC<LineChartProps> = ({
   data,
@@ -19,21 +22,36 @@ export const LineChart: React.FC<LineChartProps> = ({
   title,
   subtitle,
   variant,
-  backgroundColor = DEFAULT_BACKGROUND_COLOR,
   layout: layoutProp,
   config: configProp,
+  style: styleProp,
   disableTooltip,
   renderTooltipContent,
+  renderFilters,
+  renderActions,
 }) => {
+  const plotRef = useRef<PlotElement>(null);
+
   const { plotHoverEvent, plotHoverEventHandler } = usePlotHoverEvent();
 
   const layout = getLayout(variant, layoutProp);
   const config = getConfig(configProp);
+  const style = getStyleProperties(styleProp);
 
   const { legendPlacement, showTitle, showSubtitle, showLegend } = layout;
+  const { backgroundColor, padding } = style;
 
   return (
-    <LineChartWrapper style={{ backgroundColor }}>
+    <LineChartWrapper style={{ backgroundColor, padding }}>
+      <Toolbar
+        plotRef={plotRef}
+        zoomDirectionConfig={config.buttonZoom}
+        showFilters={layout.showFilters}
+        showActions={layout.showActions}
+        renderFilters={renderFilters}
+        renderActions={renderActions}
+      />
+
       <Header
         title={title}
         subtitle={subtitle}
@@ -42,6 +60,7 @@ export const LineChart: React.FC<LineChartProps> = ({
       />
 
       <Plot
+        ref={plotRef}
         data={data}
         xAxis={xAxis}
         yAxis={yAxis}

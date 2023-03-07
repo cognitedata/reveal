@@ -9,7 +9,7 @@ export const getMarginValue = (
   }
 
   if (!showAxisName && showTickLabels) {
-    return 0;
+    return 1;
   }
 
   return DEFAULT_MARGIN;

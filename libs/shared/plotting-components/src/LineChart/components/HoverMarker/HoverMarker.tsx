@@ -6,18 +6,21 @@ import { getMarkerPosition } from '../../utils/getMarkerPosition';
 import { getHoveredLineColor } from '../../utils/getHoveredLineColor';
 
 import { PlotMarker } from './elements';
-import { HOVER_MARKER_BORDER_WIDTH } from '../../constants';
+import {
+  DEFAULT_BACKGROUND_COLOR,
+  HOVER_MARKER_BORDER_WIDTH,
+} from '../../constants';
 
 export interface HoverMarkerProps {
   plotHoverEvent?: PlotHoverEvent;
-  backgroundColor: string;
+  backgroundColor?: string;
   onHover?: () => void;
   onUnhover?: () => void;
 }
 
 export const HoverMarker: React.FC<HoverMarkerProps> = ({
   plotHoverEvent,
-  backgroundColor,
+  backgroundColor = DEFAULT_BACKGROUND_COLOR,
   onHover,
   onUnhover,
 }) => {

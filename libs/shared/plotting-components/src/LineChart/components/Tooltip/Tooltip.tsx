@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import head from 'lodash/head';
 import { PlotHoverEvent } from 'plotly.js';
 
+import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
 import { TooltipRendererProps } from '../../types';
 import { getTooltipPosition } from '../../utils/getTooltipPosition';
 
@@ -14,7 +15,7 @@ export interface TooltipProps {
   plotHoverEvent?: PlotHoverEvent;
   xAxisName?: string;
   yAxisName?: string;
-  backgroundColor: string;
+  backgroundColor?: string;
   disableTooltip?: boolean;
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
 }
@@ -23,7 +24,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   plotHoverEvent,
   xAxisName = 'X',
   yAxisName = 'Y',
-  backgroundColor,
+  backgroundColor = DEFAULT_BACKGROUND_COLOR,
   disableTooltip,
   renderTooltipContent,
 }) => {

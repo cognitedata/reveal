@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = ({
   showTitle,
   showSubtitle,
 }) => {
-  if (isEmpty(title) && isEmpty(subtitle)) {
+  if (!showTitle || !showSubtitle || (isEmpty(title) && isEmpty(subtitle))) {
     return null;
   }
 

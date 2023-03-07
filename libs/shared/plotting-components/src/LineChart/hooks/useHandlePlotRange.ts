@@ -1,38 +1,37 @@
+import { useCallback, useState } from 'react';
+
+import isEqual from 'lodash/isEqual';
 import isUndefined from 'lodash/isUndefined';
-import { useState } from 'react';
 
-import { AxisRange } from '../types';
-
-type Range = {
-  x?: AxisRange;
-  y?: AxisRange;
-};
+import { PlotRange } from '../types';
 
 export const useHandlePlotRange = () => {
-  const [range, setRange] = useState<Range>({
+  const [range, setRange] = useState<PlotRange>({
     x: undefined,
     y: undefined,
   });
 
-  const setPlotRange = (newRange: Range) => {
-    if (
-      isUndefined(newRange.x) ||
-      isUndefined(newRange.y) ||
-      range.x === newRange.x ||
-      range.y === newRange.y
-    ) {
-      return;
-    }
+  const setPlotRange = useCallback(
+    (newRange: PlotRange) => {
+      if (
+        isUndefined(newRange.x) ||
+        isUndefined(newRange.y) ||
+        isEqual(range, newRange)
+      ) {
+        return;
+      }
 
-    setRange(newRange);
-  };
+      setRange(newRange);
+    },
+    [range]
+  );
 
-  const resetPlotRange = () => {
+  const resetPlotRange = useCallback(() => {
     setRange({
       x: undefined,
       y: undefined,
     });
-  };
+  }, []);
 
   return {
     range,

@@ -4,7 +4,7 @@ export const LegendWrapper = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  padding: 8px;
+  margin-top: 8px;
   gap: 16px;
   flex-wrap: wrap;
 `;

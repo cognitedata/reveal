@@ -1,5 +1,7 @@
 import { Story } from '@storybook/react';
 
+import { Button, Select } from '@cognite/cogs.js';
+
 import { LineChart } from './LineChart';
 import { LineChartProps } from './types';
 import { data as mockData } from './__mocks/data';
@@ -37,5 +39,20 @@ Basic.args = {
       { trigger: 'default', direction: 'x+y' },
       { trigger: 'Shift', direction: 'x' },
     ],
+    buttonZoom: 'x',
   },
+  renderFilters: () => [
+    <Select key="test-select" options={[]} width={200} theme="filled" />,
+  ],
+  renderActions: () => [
+    <Button
+      key="test-link"
+      role="link"
+      size="small"
+      type="ghost-accent"
+      icon="LineChart"
+    >
+      Open in Charts
+    </Button>,
+  ],
 };
