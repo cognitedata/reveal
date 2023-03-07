@@ -3,12 +3,14 @@ import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
-import { CogniteEvent, InternalId } from '@cognite/sdk';
-import { useEvents, useEventsSearch } from 'hooks/events';
+import { InternalId } from '@cognite/sdk';
+import { useEventsSearch } from 'hooks/events';
 import { Filter } from 'context/QuickMatchContext';
+import { useList } from 'hooks/list';
+import { RawCogniteEvent } from 'types/api';
 
 type EventListTableRecord = { key: string } & Pick<
-  CogniteEvent,
+  RawCogniteEvent,
   'dataSetId' | 'id' | 'description' | 'lastUpdatedTime' | 'type' | 'subtype'
 >;
 type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
@@ -17,7 +19,7 @@ type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
 
 type Props = {
   query?: string | null;
-  unmatchedOnly?: boolean;
+  advancedFilter?: any;
   filter: Filter;
   selected: InternalId[];
   setSelected: Dispatch<SetStateAction<InternalId[]>>;
@@ -26,14 +28,19 @@ export default function EventTable({
   query,
   selected,
   setSelected,
-  unmatchedOnly,
+  advancedFilter,
   filter,
 }: Props) {
   const {
     data: listPages,
     isInitialLoading: listLoading,
     error,
-  } = useEvents({ unmatchedOnly, filter }, { enabled: !query });
+  } = useList(
+    'events',
+    1,
+    { filter, advancedFilter, limit: 100 },
+    { enabled: !query }
+  );
 
   const { data: searchResult, isInitialLoading: searchLoading } =
     useEventsSearch(query!, {

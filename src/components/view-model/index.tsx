@@ -1,28 +1,125 @@
 import { Flex } from '@cognite/cogs.js';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'common';
 import EntityMatchingResult from 'components/em-result';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
 import {
-  getQMSourceDownloadKey,
   getQMTargetDownloadKey,
   IN_PROGRESS_EM_STATES,
+  useCreateEMModel,
   useCreateEMPredictionJob,
   useEMModel,
   useEMModelPredictResults,
 } from 'hooks/contextualization-api';
-import { useEffect, useState } from 'react';
+import { useList } from 'hooks/list';
+
+import { useEffect, useMemo, useState } from 'react';
+import { bulkDownloadStatus, getUnmatchedFilter } from 'utils';
 
 export default function ViewModel({}: {}) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const { modelId, jobId, setJobId } = useQuickMatchContext();
+  const {
+    sourceType,
+    modelId,
+    setModelId,
+    jobId,
+    setJobId,
+    allSources,
+    sourceFilter,
+    sourcesList,
+    targetsList,
+    matchFields,
+    supervisedMode,
+    featureType,
+    scope,
+    unmatchedOnly,
+  } = useQuickMatchContext();
   const [modelRefetchInt, setModelRefetchInt] = useState<number | undefined>();
   const [predictionRefetchInt, setPredictionRefetchInt] = useState<
     number | undefined
   >();
 
-  const sourceState = queryClient.getQueryState(getQMSourceDownloadKey());
+  const { mutateAsync: buildModel, isLoading } = useCreateEMModel();
+
   const targetState = queryClient.getQueryState(getQMTargetDownloadKey());
+
+  const advancedFilter = useMemo(() => {
+    if (unmatchedOnly) {
+      return getUnmatchedFilter(sourceType);
+    }
+  }, [unmatchedOnly, sourceType]);
+
+  const {
+    data: sourcePages,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+    isFetching: sourceFetching,
+    isError: sourceError,
+    isFetched,
+  } = useList(
+    sourceType,
+    10,
+    { advancedFilter, filter: sourceFilter, limit: 10000 },
+    {
+      enabled: allSources,
+      staleTime: Infinity,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  const sourceStatus = bulkDownloadStatus({
+    isError: sourceError,
+    isFetching: sourceFetching,
+    hasNextPage,
+  });
+
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const sources = useMemo((): any[] => {
+    let stuff: any[] = [];
+    sourcePages?.pages?.forEach((i) => {
+      stuff = stuff.concat(i.items);
+    });
+    return stuff;
+  }, [sourcePages?.pages]);
+
+  useEffect(() => {
+    if (!modelId && !isLoading && !hasNextPage && isFetched) {
+      buildModel({
+        sources,
+        targetsList,
+        featureType,
+        matchFields,
+        supervisedMode,
+      }).then((model) => {
+        setModelId(model.id);
+      });
+    }
+  }, [
+    sources,
+    modelId,
+    isLoading,
+    allSources,
+    buildModel,
+    featureType,
+    matchFields,
+    scope,
+    setModelId,
+    sourceFilter,
+    sourcesList,
+    supervisedMode,
+    targetsList,
+    hasNextPage,
+    isFetched,
+  ]);
 
   const { data: model, status: createModelStatus } = useEMModel(modelId!, {
     enabled: !!modelId,
@@ -80,7 +177,8 @@ export default function ViewModel({}: {}) {
   return (
     <Flex direction="column">
       <Flex gap={12}>
-        <QueryStatusIcon status={sourceState?.status} />
+        <>{t('sources', { count: sources?.length || 0 })}</>
+        <QueryStatusIcon status={sourceStatus} />)
         <QueryStatusIcon status={targetState?.status} />
         <QueryStatusIcon status={createModelStatus} />
         <QueryStatusIcon status={createPredictStatus} />

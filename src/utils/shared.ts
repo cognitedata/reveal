@@ -1,5 +1,6 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Metadata } from '@cognite/sdk';
+import { SourceType } from 'context/QuickMatchContext';
 import { PredictionObject } from 'hooks/contextualization-api';
 import {
   Dispatch,
@@ -73,4 +74,45 @@ export const downcaseMetadata = (md?: Metadata) => {
         {} as Metadata
       )
     : undefined;
+};
+
+export const bulkDownloadStatus = ({
+  hasNextPage,
+  isFetching,
+  isError,
+}: {
+  isFetching?: boolean;
+  isError?: boolean;
+  hasNextPage?: boolean;
+}): 'loading' | 'error' | 'success' | 'idle' | undefined => {
+  if (isError) {
+    return isFetching ? 'loading' : 'error';
+  } else if (hasNextPage) {
+    return isFetching ? 'loading' : 'idle';
+  } else {
+    return isFetching ? 'loading' : 'success';
+  }
+};
+
+export const getUnmatchedFilter = (sourceType: SourceType) => {
+  switch (sourceType) {
+    case 'events': {
+      return {
+        not: {
+          exists: {
+            property: ['assetIds'],
+          },
+        },
+      };
+    }
+    default: {
+      return {
+        not: {
+          exists: {
+            property: ['assetId'],
+          },
+        },
+      };
+    }
+  }
 };

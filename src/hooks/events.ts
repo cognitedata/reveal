@@ -19,6 +19,7 @@ import {
 
 import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
 import { PropertyAggregate, PropertyAggregateResponse } from 'common/types';
+import { RawCogniteEvent } from 'types/api';
 import { downcaseMetadata } from 'utils';
 
 type EventsParams = {
@@ -104,12 +105,24 @@ export const useEvents = (
 
 export const useEventsSearch = <T>(
   description: string,
-  opts?: UseQueryOptions<CogniteEvent[], CogniteError, T>
+  opts?: UseQueryOptions<RawCogniteEvent[], CogniteError, T>
 ) => {
   const sdk = useSDK();
   return useQuery(
     useEventsSearchKey(description),
-    () => sdk.events.search({ search: { description }, limit: 1000 }),
+    () =>
+      sdk
+        .post<{ items: RawCogniteEvent[] }>(
+          `/api/v1/projects/${sdk.project}/events/search`,
+          { data: { search: { description }, limit: 1000 } }
+        )
+        .then((r) => {
+          if (r.status === 200) {
+            return r.data.items;
+          } else {
+            return Promise.reject(r);
+          }
+        }),
 
     opts
   );
