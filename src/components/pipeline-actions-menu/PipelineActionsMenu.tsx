@@ -23,7 +23,7 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
           iconPlacement="left"
           onClick={onDuplicatePipeline}
         >
-          {t('pipelines-actions-menu-duplicate')}
+          {t('pipeline-actions-menu-duplicate')}
         </Menu.Item>
         <Divider />
         <Menu.Item
@@ -34,7 +34,7 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
           }}
           destructive
         >
-          {t('pipelines-actions-menu-delete')}
+          {t('pipeline-actions-menu-delete')}
         </Menu.Item>
       </Menu>
       <PipelineDeleteModal
@@ -61,7 +61,7 @@ function PipelineDeleteModal(props: PipelineDeleteModalProps) {
       onCancel={onCancel}
       onOk={onOk}
       title={t('pipeline-delete-modal-title')}
-      okText={t('pipelines-actions-menu-delete')}
+      okText={t('pipeline-actions-menu-delete')}
     >
       {t('pipeline-delete-modal-warning-message')}
     </Modal>
