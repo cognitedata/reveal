@@ -37,17 +37,6 @@ export const commandArgs = [
        Update a data model with the name (external id) "Testing-DM" with local file "dm.gql"`,
   },
   {
-    name: 'allow-breaking-change',
-    description:
-      'Allow for a breaking change, resulting in a new version of the data model',
-    prompt: 'Allow for breaking change?',
-    type: CommandArgumentType.BOOLEAN,
-    required: false,
-    initial: false,
-    example: `cdf data-models publish --externalId="Testing-DM" --file="./dm.gql" --allow-breaking-change
-      Update a data model with the name (external id) "Testing-DM" with local file "dm.gql", where in a breaking change, simply create a new version`,
-  },
-  {
     name: 'space',
     description:
       'Space id of the space the data model should belong to. Defaults to same as external-id.',
@@ -76,7 +65,6 @@ export const commandArgs = [
 type DataModelPublishCommandArgs = BaseArgs & {
   'external-id': string;
   file: string;
-  'allow-breaking-change': boolean;
   space: string;
   'dry-run': boolean;
   version: string;
