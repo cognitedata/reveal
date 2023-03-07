@@ -33,7 +33,6 @@ export class Image360ApiHelper {
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
     currentImage360Entered?: Image360Entity;
-    currentImage360Clicked?: Image360Entity;
     lastMousePosition?: { offsetX: number; offsetY: number };
   };
 
@@ -44,7 +43,7 @@ export class Image360ApiHelper {
     updateHoverStateOnRender: () => void;
   };
 
-  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity), 300, { leading: true });
+  private readonly _debouncePreLoad = debounce(entity => this.startPreload(entity), 300, { leading: true });
   private readonly _requestRedraw: () => void;
   private readonly _requestTransitionSafeRedraw: () => void;
   private readonly _activeCameraManager: ProxyCameraManager;
@@ -131,27 +130,24 @@ export class Image360ApiHelper {
     this._requestRedraw();
   }
 
+  private async startPreload(image360Entity: Image360Entity): Promise<void> {
+    const onFullResDownloadDone = await this._image360Facade.preload(image360Entity);
+    if (onFullResDownloadDone) onFullResDownloadDone().then(() => this._requestTransitionSafeRedraw());
+  }
+
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
-    const lastClicked360ImageEntity = this._interactionState.currentImage360Clicked;
-    if (lastClicked360ImageEntity === image360Entity) {
+    const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
+    if (lastEntered360ImageEntity === image360Entity) {
       this._requestRedraw();
       return;
     }
-    this._interactionState.currentImage360Clicked = image360Entity;
-
-    await this._image360Facade.preload(image360Entity);
-
-    if (this._interactionState.currentImage360Clicked !== image360Entity) {
-      return;
-    }
-
-    const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
     this._interactionState.currentImage360Entered = image360Entity;
 
-    if (lastEntered360ImageEntity) {
-      lastEntered360ImageEntity.setRequestRedraw(() => {});
+    await this.startPreload(image360Entity);
+
+    if (this._interactionState.currentImage360Entered !== image360Entity) {
+      return;
     }
-    image360Entity.setRequestRedraw(this._requestTransitionSafeRedraw);
 
     this.set360CameraManager();
 
@@ -303,7 +299,6 @@ export class Image360ApiHelper {
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered.setRequestRedraw(() => {});
       this._interactionState.currentImage360Entered = undefined;
-      this._interactionState.currentImage360Clicked = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
     const { position, rotation } = this._image360Navigation.getCameraState();
