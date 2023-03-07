@@ -291,7 +291,7 @@ export class Image360ApiHelper {
         .forEach(imageCollection => imageCollection.events.image360Exited.fire());
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
-      this._interactionState.currentImage360Clicked = undefined;
+      this._interactionState.image360SelectedForEntry = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
     const { position, rotation } = this._image360Navigation.getCameraState();
