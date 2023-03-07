@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { Input } from '@cognite/cogs.js';
 import { useTranslation } from 'common/i18n';
-import { SOURCE_TABLE_QUERY_KEY } from '../../constants';
 import { NavigateOptions, URLSearchParamsInit } from 'react-router-dom';
+import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
 
 declare type SetURLSearchParams = (
   nextInit?:
