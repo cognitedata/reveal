@@ -99,6 +99,7 @@ describe('Data Model Page - UI editor', () => {
     cy.enableEditMode();
     cy.addTypeViaUIEditor('Cypress');
     cy.reload();
+    cy.ensurePageFinishedLoading();
     cy.typeShouldExistInUIEditor('Cypress');
   });
 

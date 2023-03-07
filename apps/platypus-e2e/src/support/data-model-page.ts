@@ -17,7 +17,6 @@ declare namespace Cypress {
     enableEditMode(): void;
     ensureCurrentVersionIsDraft(): void;
     ensureCurrentVersionIsNotDraft(): void;
-    ensureDraftHasBeenSaved(): void;
     ensureLatestVersionIs(version: string): void;
     openUIEditor(): void;
     publishSchema(version?: string, confirmModal?: boolean): void;
@@ -40,23 +39,14 @@ Cypress.Commands.add('ensureCurrentVersionIsDraft', () => {
 
   // Discard draft button should become visible next to publish button
   cy.getBySel('discard-btn').should('be.visible');
-
-  // All changes saved status text should display next to version selector
-  cy.getBySel('changes-saved-status-text').should('be.visible');
 });
 
 Cypress.Commands.add('ensureCurrentVersionIsNotDraft', () => {
   // Discard draft button should be hidden
   cy.getBySel('discard-btn').should('not.exist');
 
-  // "All changes saved" status text should be hidden
-  cy.getBySel('changes-saved-status-text').should('not.exist');
   // Version selector should not display "Local draft"
   cy.getBySel('schema-version-select').should('not.have.text', 'Local draft');
-});
-
-Cypress.Commands.add('ensureDraftHasBeenSaved', () => {
-  cy.getBySel('changes-saved-status-text').should('be.visible');
 });
 
 Cypress.Commands.add('ensureLatestVersionIs', (version: string) => {

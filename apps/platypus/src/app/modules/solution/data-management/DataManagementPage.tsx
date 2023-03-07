@@ -88,7 +88,6 @@ export const DataManagementPage = ({
         <VersionSelectorToolbar
           title={t('data_management_title', 'Data management')}
           schemas={dataModelVersions || []}
-          draftSaved={false}
           onDataModelVersionSelect={handleDataModelVersionSelect}
           selectedDataModelVersion={selectedDataModelVersion}
         >

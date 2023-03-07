@@ -18,7 +18,6 @@ describe('Data model page - Publishing', () => {
     cy.enableEditMode();
 
     cy.appendTextToCodeEditor('type Author {name: String}');
-    cy.ensureDraftHasBeenSaved();
 
     cy.publishSchema(version);
     cy.typeShouldExistInVisualizer('Author');

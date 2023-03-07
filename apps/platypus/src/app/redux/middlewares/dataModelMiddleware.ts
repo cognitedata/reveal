@@ -59,9 +59,5 @@ export const graphQlSchemaLocalStorageMiddleware =
       store.dispatch(actions.setIsDirty(true));
     }
 
-    if (actions.switchDataModelVersion.match(action)) {
-      store.dispatch(actions.setIsDirty(true));
-    }
-
     return result;
   };

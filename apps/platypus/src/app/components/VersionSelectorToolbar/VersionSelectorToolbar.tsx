@@ -10,7 +10,6 @@ export interface VersionSelectorToolbarProps {
   onDataModelVersionSelect: (schema: DataModelVersion) => void;
   schemas: DataModelVersion[];
   children?: React.ReactNode;
-  draftSaved: boolean;
 }
 
 export const VersionSelectorToolbar = (props: VersionSelectorToolbarProps) => {
@@ -30,14 +29,6 @@ export const VersionSelectorToolbar = (props: VersionSelectorToolbarProps) => {
                 selectedVersion={props.selectedDataModelVersion}
                 versions={props.schemas}
               />
-            ) : null}
-            {props.draftSaved ? (
-              <span
-                data-cy="changes-saved-status-text"
-                style={{ marginLeft: 15 }}
-              >
-                {t('all_changes_saved', 'All changes saved')}
-              </span>
             ) : null}
           </SelectorWrapper>
         }

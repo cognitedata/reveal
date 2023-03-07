@@ -24,6 +24,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
       .should('be.visible')
       .and('contain', 'Instance added');
     cy.reload();
+    cy.ensurePageFinishedLoading();
     cy.get('[data-testid="User"]').click();
     cy.getBySel('data-preview-table').should('be.visible');
     cy.getBySel('create-new-row-btn').should('be.visible');

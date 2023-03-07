@@ -18,7 +18,6 @@ import {
   PlatypusValidationError,
   ValidationError,
   PlatypusDmlError,
-  DataModelVersionStatus,
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';

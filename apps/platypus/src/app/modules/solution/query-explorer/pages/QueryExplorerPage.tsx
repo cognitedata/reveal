@@ -56,7 +56,6 @@ export const QueryExplorerPage = ({
         <VersionSelectorToolbar
           title={t('query_explorer_title', 'Query explorer')}
           schemas={dataModelVersions || []}
-          draftSaved={false}
           onDataModelVersionSelect={handleDataModelVersionSelect}
           selectedDataModelVersion={selectedDataModelVersion}
         >

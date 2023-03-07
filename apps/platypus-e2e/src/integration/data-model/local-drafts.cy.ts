@@ -17,7 +17,6 @@ describe('Data model page - Local drafts', () => {
     }
     cy.appendTextToCodeEditor(type);
     cy.ensureCurrentVersionIsDraft();
-    cy.ensureDraftHasBeenSaved();
 
     // Writing localStorage to disk seems to be done in the
     // background async. If we reload immediately after appending text
@@ -27,6 +26,8 @@ describe('Data model page - Local drafts', () => {
     cy.typeShouldExistInVisualizer(typeName);
 
     cy.reload();
+    cy.ensurePageFinishedLoading();
+
     cy.selectDraftVersion();
 
     cy.typeShouldExistInVisualizer(typeName);
@@ -54,10 +55,10 @@ describe('Data model page - Local drafts', () => {
     }
 
     cy.setCodeEditorText(`type Person {name: String}`);
-    cy.ensureDraftHasBeenSaved();
     cy.typeShouldExistInVisualizer('Person');
 
     cy.reload();
+    cy.ensurePageFinishedLoading();
 
     cy.typeShouldExistInVisualizer('Person');
 
@@ -65,9 +66,11 @@ describe('Data model page - Local drafts', () => {
       cy.openCodeEditorTab();
     }
     cy.clearCodeEditor();
+    cy.typeShouldNotExistInVisualizer('Person');
 
     // After refreshing, the draft should not contain the Person type
     cy.reload();
+    cy.ensurePageFinishedLoading();
     cy.typeShouldNotExistInVisualizer('Person');
     cy.getBySel('editor_panel').contains('Unable to parse').should('not.exist');
   });
@@ -146,7 +149,6 @@ describe('Data model page - Local drafts', () => {
     }
     cy.appendTextToCodeEditor(`type ${typeName} { name: String }`);
     cy.ensureCurrentVersionIsDraft();
-    cy.ensureDraftHasBeenSaved();
     cy.typeShouldExistInVisualizer(typeName);
 
     // Go back to Data Models Page and Create new Data Model

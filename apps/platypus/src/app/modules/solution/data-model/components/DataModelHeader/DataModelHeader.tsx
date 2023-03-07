@@ -83,7 +83,6 @@ export const DataModelHeader = ({
     }
   };
 
-  const isDraftSaved = isDirty;
   const isDraftOld =
     !!localDraft &&
     parseInt(latestDataModelVersion.version, 10) >
@@ -265,7 +264,6 @@ export const DataModelHeader = ({
     <VersionSelectorToolbar
       title={title || ''}
       schemas={getDataModelHeaderSchemas()}
-      draftSaved={isDraftSaved}
       onDataModelVersionSelect={handleDataModelVersionSelect}
       selectedDataModelVersion={
         editorMode === SchemaEditorMode.Edit && localDraft
