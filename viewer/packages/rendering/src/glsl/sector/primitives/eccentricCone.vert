@@ -1,4 +1,5 @@
 #pragma glslify: import('../../math/mul3.glsl')
+#pragma glslify: import('../../math/quadToViewSpace.glsl')
 #pragma glslify: import('../../base/determineMatrixOverride.glsl');
 #pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 #pragma glslify: import('../../base/renderModes.glsl')
@@ -121,10 +122,23 @@ void main() {
     v_centerB.w = radiusB;
 
     float radiusIncludedDisplacement = 0.5 * (2.0 * max(a_radiusA, a_radiusB) + distanceBetweenProjectedCenters);
-    vec3 surfacePoint = center + mat3(0.5 * height * lDir * (1.0 / uniformScaleFactor), radiusIncludedDisplacement * left, radiusIncludedDisplacement * up) * newPosition;
-    vec3 transformed = surfacePoint;
+    mat3 billboardWorldRotation = mat3(lDir, left, up);
+    vec3 cylinderAxisScales = vec3(height, radiusIncludedDisplacement, radiusIncludedDisplacement);
+    mat3 inverseBillboardWorldRotation = transpose(billboardWorldRotation);
+    vec3 cameraPosInCylinderSpace = inverseBillboardWorldRotation * (rayOrigin - center);
 
-    surfacePoint = mul3(modelViewMatrix, surfacePoint);
+    mat3 billboardWorldScaleRotation = mat3(0.5 * height * lDir * (1.0 / uniformScaleFactor), radiusIncludedDisplacement * left, radiusIncludedDisplacement * up);
+    vec3 localBillboardPosition = center + billboardWorldScaleRotation * newPosition;
+    vec3 surfacePoint = mul3(modelViewMatrix, localBillboardPosition);
+
+    // Due to numeric instability when near and far planes are relatively close to each other,
+    // we just clamp near to a relatively low constant when checking whether we're inside the cylinder
+    float near = min(1.0, projectionMatrix[3][2] / (projectionMatrix[2][2] - 1.0));
+
+    // Check whether we are inside the primitive, in which case the quad must cover the entire screen
+    if (isWithinSpan(cameraPosInCylinderSpace, cylinderAxisScales + vec3(near))) {
+        surfacePoint = transformQuadToCoverScreenInViewSpace(newPosition, projectionMatrix, near);
+    }
 
     // We pack surfacePoint as w-components of U, V and axis
     U.w = surfacePoint.x;
@@ -134,6 +148,5 @@ void main() {
     v_color = a_color;
     v_normal = normalMatrix * normal;
 
-    vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
-    gl_Position = projectionMatrix * mvPosition;
+    gl_Position = projectionMatrix * vec4( surfacePoint, 1.0 );
 }
