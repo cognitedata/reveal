@@ -8,10 +8,9 @@ import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
 import { IconOctree } from './IconOctree';
 
-export enum IconVisualizationMode {
+export enum IconCullingStrategy {
   Clustered,
   Proximity
-  // ProximityFromCamera
 }
 
 export class IconCollection {
@@ -26,7 +25,7 @@ export class IconCollection {
   private readonly _computeProximityPointsEventHandler: BeforeSceneRenderedDelegate;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
   private _activeIconVisualizationEventHandeler: BeforeSceneRenderedDelegate;
-  private _iconVisualizationMode: IconVisualizationMode;
+  private _iconCullingStrategy: IconCullingStrategy;
   private _proximityRadius = 30;
   private _proximityLimit = 20;
 
@@ -34,17 +33,17 @@ export class IconCollection {
     return this._icons;
   }
 
-  public setVisualizationMode(mode: IconVisualizationMode): void {
-    if (this._iconVisualizationMode !== mode) {
-      this._iconVisualizationMode = mode;
+  public setCullingStrategy(mode: IconCullingStrategy): void {
+    if (this._iconCullingStrategy !== mode) {
+      this._iconCullingStrategy = mode;
       this._onBeforeSceneRenderedEvent.unsubscribe(this._activeIconVisualizationEventHandeler);
 
-      switch (this._iconVisualizationMode) {
-        case IconVisualizationMode.Clustered: {
+      switch (this._iconCullingStrategy) {
+        case IconCullingStrategy.Clustered: {
           this._activeIconVisualizationEventHandeler = this._computeClustersEventHandler;
           break;
         }
-        case IconVisualizationMode.Proximity: {
+        case IconCullingStrategy.Proximity: {
           this._activeIconVisualizationEventHandeler = this._computeProximityPointsEventHandler;
           break;
         }
@@ -89,7 +88,7 @@ export class IconCollection {
     this._computeClustersEventHandler = this.setIconClustersByLOD(octree, iconsSprites);
     this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, iconsSprites);
 
-    this._iconVisualizationMode = IconVisualizationMode.Clustered;
+    this._iconCullingStrategy = IconCullingStrategy.Clustered;
     this._activeIconVisualizationEventHandeler = this._computeClustersEventHandler;
 
     onBeforeSceneRendered.subscribe(this._computeClustersEventHandler);

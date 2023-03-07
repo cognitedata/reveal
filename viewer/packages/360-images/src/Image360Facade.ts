@@ -8,7 +8,7 @@ import { Image360Entity } from './entity/Image360Entity';
 import { Image360LoadingCache } from './cache/Image360LoadingCache';
 import { Image360CollectionFactory } from './collection/Image360CollectionFactory';
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
-import { IconVisualizationMode } from './icons/IconCollection';
+import { IconCullingStrategy } from './icons/IconCollection';
 import pullAll from 'lodash/pullAll';
 
 export class Image360Facade<T> {
@@ -28,8 +28,8 @@ export class Image360Facade<T> {
     this._image360Collections.forEach(collection => collection.setSelectedVisibility(visible));
   }
 
-  set allIconVisualizationMode(mode: IconVisualizationMode) {
-    this._image360Collections.forEach(collection => collection.setVisualizationMode(mode));
+  set allIconCullingStrategy(mode: IconCullingStrategy) {
+    this._image360Collections.forEach(collection => collection.setCullingStrategy(mode));
   }
 
   public set360ProximityLimits(radius: number, limit: number): void {

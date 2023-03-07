@@ -7,7 +7,7 @@ import pull from 'lodash/pull';
 import { Image360Collection } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
-import { IconCollection, IconVisualizationMode } from '../icons/IconCollection';
+import { IconCollection, IconCullingStrategy } from '../icons/IconCollection';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -101,8 +101,8 @@ export class DefaultImage360Collection implements Image360Collection {
     this.image360Entities.forEach(entity => (entity.icon.hoverSpriteVisible = visible));
   }
 
-  public setVisualizationMode(mode: IconVisualizationMode): void {
-    this._icons.setVisualizationMode(mode);
+  public setCullingStrategy(mode: IconCullingStrategy): void {
+    this._icons.setCullingStrategy(mode);
   }
 
   public set360ProximityLimits(radius: number, limit: number): void {
