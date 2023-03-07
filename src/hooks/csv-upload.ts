@@ -92,7 +92,7 @@ export const useCSVUpload = ({
           notification.error({
             message: t('file-upload-error', { name: file.name }),
             key: 'file-upload',
-            description: e,
+            description: e.message,
           });
           setUploadStatus('error');
         },
