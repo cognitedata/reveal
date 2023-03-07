@@ -1,4 +1,5 @@
 #pragma glslify: import('../../math/mul3.glsl')
+#pragma glslify: import('../../math/quadToViewSpace.glsl')
 #pragma glslify: import('../../base/determineMatrixOverride.glsl');
 #pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 #pragma glslify: import('../../base/renderModes.glsl')
@@ -43,21 +44,6 @@ out vec3 v_color;
 out float v_radius;
 
 out highp vec2 v_treeIndexPacked;
-
-
-bool isWithinSpan(vec3 point, vec3 span) {
-    return all(lessThan(abs(point), span));
-}
-
-vec3 transformQuadToCoverScreenInViewSpace(vec3 position, mat4 projectionMatrix, float near) {
-    float tanFov = 1.0 / projectionMatrix[1][1];
-
-    float aspect = projectionMatrix[1][1] / projectionMatrix[0][0];
-    float maxAspect = max(aspect, 1.0 / aspect);
-
-    vec3 fullScreenQuadCorner = vec3(position.xy * maxAspect * tanFov * near, - near - 1e-6);
-    return fullScreenQuadCorner;
-}
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, a_treeIndex);
