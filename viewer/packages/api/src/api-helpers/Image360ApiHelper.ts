@@ -130,11 +130,6 @@ export class Image360ApiHelper {
     this._requestRedraw();
   }
 
-  private async startPreload(image360Entity: Image360Entity): Promise<void> {
-    const onFullResDownloadDone = await this._image360Facade.preload(image360Entity);
-    if (onFullResDownloadDone) onFullResDownloadDone().then(() => this._requestTransitionSafeRedraw());
-  }
-
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
     if (lastEntered360ImageEntity === image360Entity) {
@@ -177,6 +172,11 @@ export class Image360ApiHelper {
     this._image360Facade.collections
       .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
       .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
+  }
+
+  private async startPreload(image360Entity: Image360Entity): Promise<void> {
+    const onFullResDownloadDone = await this._image360Facade.preload(image360Entity);
+    if (onFullResDownloadDone) onFullResDownloadDone().then(() => this._requestTransitionSafeRedraw());
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
