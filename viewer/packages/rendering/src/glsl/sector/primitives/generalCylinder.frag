@@ -72,7 +72,9 @@ void main()
     vec3 intersectionPoint = E + dist * D;
 
     float theta = atan(intersectionPoint.y, intersectionPoint.x);
-    theta += theta < 0.0 ? 2.0 * PI : 0.0;
+
+    // Add a full arc to theta until it's larger than the base angle (a maximum of two iterations needed)
+    theta += theta < v_angles[0] ? 2.0 * PI : 0.0;
     theta += theta < v_angles[0] ? 2.0 * PI : 0.0;
 
     // Intersection point in camera space
