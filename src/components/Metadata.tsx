@@ -42,8 +42,8 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
           />
           <Checkbox
             name="hideEmpty"
-            value={hideEmpty}
-            onChange={(nextState: boolean) => setHideEmpty(nextState)}
+            checked={hideEmpty}
+            onChange={(e, nextState) => setHideEmpty(nextState as boolean)}
           >
             {t('hide-empty')}
           </Checkbox>

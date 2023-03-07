@@ -1,7 +1,7 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import Table from 'antd/lib/table';
-import { Button, Colors, Icon } from '@cognite/cogs.js';
+import { Button, Colors, Icon, Link } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -25,11 +25,11 @@ interface ExtpipeTableProps extends ExtpipeSourceExtractorProps {
   isExtpipesFetched?: boolean;
 }
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Link)`
   margin-top: 8px;
 
   &:focus {
-    color: ${Colors.white};
+    color: ${Colors['surface--muted']};
   }
 `;
 
@@ -57,8 +57,8 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
   };
 
   const createExtpipeButton = canEditExtractionPipelines ? (
-    <StyledButton href={addExtpipeLink()} type="primary" icon="Plus">
-      {t('extpipe-create-extpipe')}
+    <StyledButton href={addExtpipeLink()}>
+      <Icon type="Plus" /> {t('extpipe-create-extpipe')}
     </StyledButton>
   ) : (
     <InfoTooltip showIcon={false} tooltipText={t('extpipe-permissions-write')}>

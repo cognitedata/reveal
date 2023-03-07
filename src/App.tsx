@@ -1,24 +1,17 @@
 import GlobalStyles from 'styles/GlobalStyles';
 import { lazy, Suspense, useEffect } from 'react';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import {
-  AuthWrapper,
-  createLink,
-  getEnv,
-  getProject,
-  SubAppWrapper,
-} from '@cognite/cdf-utilities';
+import { createLink, getProject, SubAppWrapper } from '@cognite/cdf-utilities';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter, Route, Navigate, Routes } from 'react-router-dom';
-import { SDKProvider } from '@cognite/sdk-provider';
-import { Loader } from '@cognite/cogs.js';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
 import AccessCheck from 'AccessCheck';
 import { translations } from 'common/i18n';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { trackUsage } from 'utils';
+import { AuthContainer } from './AuthContainer';
 
 const DataSetsList = lazy(() => import('pages/DataSetsList/DataSetsList'));
 const DataSetDetails = lazy(
@@ -37,7 +30,6 @@ const queryClient = new QueryClient({
 const App = () => {
   const appName = 'cdf-data-catalog';
   const projectName = getProject();
-  const env = getEnv();
 
   useEffect(() => {
     trackUsage({ e: 'data.sets.navigate' });
@@ -52,43 +44,39 @@ const App = () => {
       >
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
+            <ToastContainer />
             <SubAppWrapper title="Data Catalog">
-              <AuthWrapper
-                loadingScreen={<Loader />}
-                login={() => loginAndAuthIfNeeded(projectName, env)}
-              >
-                <SDKProvider sdk={sdk}>
-                  <DataSetsContextProvider>
-                    <BrowserRouter>
-                      <Suspense fallback={<Loader />}>
-                        <AccessCheck>
-                          <Routes>
-                            <Route
-                              path="/:tenant/:appPath"
-                              element={<DataSetsList />}
-                            />
-                            <Route
-                              path="/:tenant/:appPath/data-set/:dataSetId"
-                              element={<DataSetDetails />}
-                            />
-                            {/* We used to use the /data-sets route, now we're redirecting */}
-                            {/* to /data-catalog instead, this basically sets up a redirect. */}
-                            <Route
-                              path="/:tenant/data-sets"
-                              element={
-                                <Navigate
-                                  replace
-                                  to={createLink('/data-catalog')}
-                                />
-                              }
-                            />
-                          </Routes>
-                        </AccessCheck>
-                      </Suspense>
-                    </BrowserRouter>
-                  </DataSetsContextProvider>
-                </SDKProvider>
-              </AuthWrapper>
+              <AuthContainer>
+                <DataSetsContextProvider>
+                  <BrowserRouter>
+                    <Suspense fallback={<Loader />}>
+                      <AccessCheck>
+                        <Routes>
+                          <Route
+                            path="/:tenant/:appPath"
+                            element={<DataSetsList />}
+                          />
+                          <Route
+                            path="/:tenant/:appPath/data-set/:dataSetId"
+                            element={<DataSetDetails />}
+                          />
+                          {/* We used to use the /data-sets route, now we're redirecting */}
+                          {/* to /data-catalog instead, this basically sets up a redirect. */}
+                          <Route
+                            path="/:tenant/data-sets"
+                            element={
+                              <Navigate
+                                replace
+                                to={createLink('/data-catalog')}
+                              />
+                            }
+                          />
+                        </Routes>
+                      </AccessCheck>
+                    </Suspense>
+                  </BrowserRouter>
+                </DataSetsContextProvider>
+              </AuthContainer>
             </SubAppWrapper>
           </GlobalStyles>
           <ReactQueryDevtools initialIsOpen={false} />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Input from 'antd/lib/input';
-import { Icon } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import useDebounce from 'hooks/useDebounce';
 import { useTranslation } from 'common/i18n';
 
@@ -61,7 +61,13 @@ const LinksList = (props: UrlInputProps) => {
         style={{ width: '65%', marginBottom: '10px' }}
         onPressEnter={() => props.add()}
         addonAfter={
-          <Icon type="Close" onClick={() => props.remove(props.index)} />
+          <Button
+            size="small"
+            type="ghost"
+            icon="Close"
+            aria-label="Close"
+            onClick={() => props.remove(props.index)}
+          />
         }
       />
     </Input.Group>

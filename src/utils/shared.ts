@@ -77,6 +77,7 @@ export const isOwnerOfAllDataSets = (group: any) => {
     group.capabilities &&
     group.capabilities.some((cap: any) => {
       if (cap?.datasetsAcl && cap?.datasetsAcl.actions.includes('OWNER')) {
+        // @ts-ignore
         return cap?.datasetsAcl.scope.all === {};
       }
       return false;

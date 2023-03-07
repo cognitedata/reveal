@@ -43,7 +43,7 @@ const InfoTooltip = ({
       {showIcon && (
         <Icon
           type="InfoFilled"
-          style={{
+          css={{
             marginLeft: '5px',
           }}
         />

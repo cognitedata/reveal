@@ -135,7 +135,7 @@ const DatasetOverview = ({
                 >
                   <Title level={5}>{t('description')}</Title>
                   <Button
-                    type="link"
+                    type="ghost-accent"
                     onClick={() => {
                       setEdit(!isEditEnabled);
                     }}
@@ -152,7 +152,9 @@ const DatasetOverview = ({
                       alignItems="stretch"
                     >
                       <Textarea
-                        style={{ width: '100%', minHeight: 100 }}
+                        appearance="outline"
+                        style={{ minHeight: 100 }}
+                        fullWidth
                         placeholder={t('add-description')}
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
@@ -195,7 +197,10 @@ const DatasetOverview = ({
                   alignItems="center"
                 >
                   <Title level={5}>{t('tab-overview')}</Title>
-                  <Button type="link" onClick={() => onActiveTabChange('data')}>
+                  <Button
+                    type="ghost-accent"
+                    onClick={() => onActiveTabChange('data')}
+                  >
                     {t('view')}
                   </Button>
                 </StyledActionTitle>
@@ -244,7 +249,7 @@ const DatasetOverview = ({
                             resource as keyof typeof resourceAggregates
                           ];
                         return (
-                          <Row style={{ padding: 12 }}>
+                          <Row style={{ padding: 12 }} key={resource}>
                             <Col span={7}>
                               <Flex
                                 direction="row"

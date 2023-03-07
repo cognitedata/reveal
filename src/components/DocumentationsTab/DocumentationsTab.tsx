@@ -7,7 +7,7 @@ import {
   Colors,
   Elevations,
   Flex,
-  Graphic,
+  DocumentIcon,
   Icon,
   Title,
 } from '@cognite/cogs.js';
@@ -47,16 +47,16 @@ const fileIcon = (fileName: string) => {
   const { extention } = getFileAttr(fileName);
   switch (extention) {
     case '.png' || '.jpg' || '.jpeg': {
-      return <Graphic type="Image" />;
+      return <DocumentIcon file="png" />;
     }
     case '.7z' || '.zip' || '.rpm' || '.tar.gz' || '.z': {
-      return <Graphic type="Archive" />;
+      return <DocumentIcon file="zip" />;
     }
     case '.csv': {
-      return <Graphic type="CSV" />;
+      return <DocumentIcon file="csv" />;
     }
     case '.pdf': {
-      return <Graphic type="PDF" />;
+      return <DocumentIcon file="pdf" />;
     }
     case '.exe' ||
       '.py' ||
@@ -66,10 +66,10 @@ const fileIcon = (fileName: string) => {
       '.cgi' ||
       '.json' ||
       '.js': {
-      return <Graphic type="Code" />;
+      return <DocumentIcon file="code" />;
     }
     default: {
-      return <Graphic type="XSN" />;
+      return <DocumentIcon file="xsn" />;
     }
   }
 };

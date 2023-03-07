@@ -13,7 +13,7 @@ import {
   Button,
   Flex,
   Icon,
-  Label,
+  Chip,
   Title,
   Tooltip,
   Menu,
@@ -47,7 +47,6 @@ import TabTitle from './TabTitle';
 import DatasetOverview from 'components/Overview/DatasetOverview';
 import styled from 'styled-components';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
-// import { useFlag } from '@cognite/react-feature-flags';
 
 const { TabPane } = Tabs;
 
@@ -112,7 +111,7 @@ const DataSetDetails = (): JSX.Element => {
   const discardChangesButton = (
     <div style={{ display: 'block', textAlign: 'right', marginTop: '20px' }}>
       <Button
-        type="danger"
+        type="destructive"
         size="small"
         onClick={() => {
           setEditDrawerVisible(false);
@@ -286,18 +285,24 @@ const DataSetDetails = (): JSX.Element => {
             <Flex alignItems="center" gap={8}>
               {dataSet?.writeProtected ? <Icon type="Lock" /> : <></>}
               <Title level="4">{dataSet?.name || dataSet?.externalId}</Title>
-              <Label size="medium" variant={statusVariant}>
-                {t(statusI18nKey)}
-              </Label>
+              <Chip
+                size="medium"
+                type={statusVariant}
+                label={t(statusI18nKey)}
+              />
               {consoleLabels?.length ? (
                 <Flex gap={4} alignItems="center" direction="row">
-                  <Label size="medium" variant="default">
-                    {consoleLabels?.[0]}
-                  </Label>
+                  <Chip
+                    size="medium"
+                    type="default"
+                    label={consoleLabels?.[0]}
+                  />
                   {consoleLabels?.length > 1 && (
-                    <Label size="medium" variant="default">
-                      {`+${consoleLabels?.length - 1}`}
-                    </Label>
+                    <Chip
+                      size="medium"
+                      type="default"
+                      label={`+${consoleLabels?.length - 1}`}
+                    />
                   )}
                 </Flex>
               ) : (
@@ -357,19 +362,17 @@ const DataSetDetails = (): JSX.Element => {
             content: (
               <Menu>
                 <Menu.Item
+                  iconPlacement="left"
+                  icon="Copy"
+                  aria-label="Copy"
                   disabled={!dataSet?.id}
                   onClick={() => handleDatasetIdCopy(dataSet?.id)}
                 >
-                  <Flex
-                    gap={4}
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Icon type="Copy" />
-                    {t('copy-id')}
-                  </Flex>
+                  {t('copy-id')}
                 </Menu.Item>
                 <Menu.Item
+                  iconPlacement="left"
+                  icon="Edit"
                   disabled={!hasWritePermissions}
                   onClick={() => {
                     trackUsage({ e: 'data.sets.detail.edit.click', dataSetId });
@@ -377,14 +380,7 @@ const DataSetDetails = (): JSX.Element => {
                     setEditDrawerVisible(true);
                   }}
                 >
-                  <Flex
-                    gap={4}
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Icon type="Edit" />
-                    {t('edit')}
-                  </Flex>
+                  {t('edit')}
                 </Menu.Item>
                 <Tooltip
                   content={t(
@@ -395,40 +391,32 @@ const DataSetDetails = (): JSX.Element => {
                 >
                   {dataSet.metadata.archived ? (
                     <Menu.Item
+                      iconPlacement="left"
+                      icon="Restore"
                       disabled={!hasWritePermissions}
                       onClick={() => restoreDataSet()}
                       // TODO: add this when we upgrade Cogs version
                       // loading={isUpdatingDataSetVisibility}
                     >
-                      <Flex
-                        gap={4}
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <Icon type="Restore" />
-                        {t('restore')}
-                      </Flex>
+                      {t('restore')}
                     </Menu.Item>
                   ) : (
                     <Menu.Item
+                      iconPlacement="left"
+                      icon="Archive"
                       disabled={!hasWritePermissions}
                       onClick={() => archiveDataSet()}
                       // TODO: add this when we upgrade Cogs version
                       // loading={isUpdatingDataSetVisibility}
                     >
-                      <Flex
-                        gap={4}
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <Icon type="Archive" />
-                        {t('archive')}
-                      </Flex>
+                      {t('archive')}
                     </Menu.Item>
                   )}
                 </Tooltip>
                 <Menu.Divider />
                 <Menu.Item
+                  iconPlacement="left"
+                  icon="Documentation"
                   onClick={() => {
                     trackUsage({
                       e: 'data.sets.detail.help.documentation.click',
@@ -437,14 +425,7 @@ const DataSetDetails = (): JSX.Element => {
                     window.open(DATASET_HELP_DOC, '_blank');
                   }}
                 >
-                  <Flex
-                    gap={4}
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Icon type="Documentation" />
-                    {t('docs')}
-                  </Flex>
+                  {t('docs')}
                 </Menu.Item>
               </Menu>
             ),

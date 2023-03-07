@@ -163,11 +163,12 @@ const TableFilter = ({
                               checked={tempGovernanceStatus?.includes(
                                 governanceStatus
                               )}
+                              key={governanceStatus}
                               name={governanceStatus}
-                              onChange={(nextState) =>
+                              onChange={(e, nextState) =>
                                 handleGovernanceStatusChange(
                                   governanceStatus,
-                                  nextState
+                                  nextState as boolean
                                 )
                               }
                             >
@@ -194,7 +195,7 @@ const TableFilter = ({
                           value={tempSelectedLabels}
                           menuItemSelectedIcon={
                             <Icon
-                              style={{ verticalAlign: 'middle' }}
+                              css={{ verticalAlign: 'middle' }}
                               type="Checkmark"
                             />
                           }
@@ -216,7 +217,12 @@ const TableFilter = ({
           visible={isVisible}
           onVisibleChange={setIsVisible}
         >
-          <Button icon="Filter" type="secondary" toggled={isVisible}>
+          <Button
+            icon="Filter"
+            aria-label="Filter"
+            type="secondary"
+            toggled={isVisible}
+          >
             {t('filter')}
           </Button>
         </Dropdown>

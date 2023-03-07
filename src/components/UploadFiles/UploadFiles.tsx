@@ -147,6 +147,7 @@ const UploadFiles = ({
         type: file.type ? file.type : '',
       });
       const fileName = 'name' in file ? file.name : 'Uploaded file';
+
       sdk.files
         .upload({
           name: fileName,
@@ -222,7 +223,7 @@ const UploadFiles = ({
         {fileList.map((file) => (
           <List.Item key={file.id}>
             <Button
-              type="link"
+              type="ghost-accent"
               disabled={isMissingReadAccess}
               onClick={async () => {
                 const url = await getDownloadUrl(file.id);

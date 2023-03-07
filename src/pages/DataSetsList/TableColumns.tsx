@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Body, Colors, Flex, Icon, Label, Tooltip } from '@cognite/cogs.js';
+import { Body, Flex, Icon, Chip, Tooltip, Colors } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/shared';
 import { getItemFromStorage } from 'utils/localStorage';
 import { DataSet, DataSetV3, Extpipe } from 'utils/types';
@@ -47,11 +47,15 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
             postProcess: 'lowercase',
           })}`}
         >
-          <StyledLabelCount size="small" icon="Assets" variant="unknown">
-            <Body level={2} strong>
-              {assetCount.toLocaleString()}
-            </Body>
-          </StyledLabelCount>
+          <Body level={2} strong>
+            <StyledLabelCount
+              size="small"
+              icon="Assets"
+              type="default"
+              hideTooltip
+              label={assetCount.toLocaleString()}
+            />
+          </Body>
         </Tooltip>
       )}
       {timeseriesCount > 0 && (
@@ -60,11 +64,14 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
             postProcess: 'lowercase',
           })}`}
         >
-          <StyledLabelCount size="small" icon="Timeseries" variant="unknown">
-            <Body level={2} strong>
-              {timeseriesCount.toLocaleString()}
-            </Body>
-          </StyledLabelCount>
+          <Body level={2} strong>
+            <StyledLabelCount
+              size="small"
+              icon="Timeseries"
+              type="default"
+              label={timeseriesCount.toLocaleString()}
+            />
+          </Body>
         </Tooltip>
       )}
       {filesCount > 0 && (
@@ -73,11 +80,14 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
             postProcess: 'lowercase',
           })}`}
         >
-          <StyledLabelCount size="small" icon="Document" variant="unknown">
-            <Body level={2} strong>
-              {filesCount.toLocaleString()}
-            </Body>
-          </StyledLabelCount>
+          <Body level={2} strong>
+            <StyledLabelCount
+              size="small"
+              icon="Document"
+              type="default"
+              label={filesCount.toLocaleString()}
+            />
+          </Body>
         </Tooltip>
       )}
       {eventsCount > 0 && (
@@ -86,11 +96,14 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
             postProcess: 'lowercase',
           })}`}
         >
-          <StyledLabelCount size="small" icon="Events" variant="unknown">
-            <Body level={2} strong>
-              {eventsCount.toLocaleString()}
-            </Body>
-          </StyledLabelCount>
+          <Body level={2} strong>
+            <StyledLabelCount
+              size="small"
+              icon="Events"
+              type="default"
+              label={eventsCount.toLocaleString()}
+            />
+          </Body>
         </Tooltip>
       )}
       {sequencesCount > 0 && (
@@ -99,11 +112,14 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
             postProcess: 'lowercase',
           })}`}
         >
-          <StyledLabelCount size="small" icon="Sequences" variant="unknown">
-            <Body level={2} strong>
-              {sequencesCount.toLocaleString()}
-            </Body>
-          </StyledLabelCount>
+          <Body level={2} strong>
+            <StyledLabelCount
+              size="small"
+              icon="Sequences"
+              type="default"
+              label={sequencesCount.toLocaleString()}
+            />
+          </Body>
         </Tooltip>
       )}
       {assetCount === 0 &&
@@ -120,8 +136,8 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
 const StyledEmptyText = styled(Body)`
   color: rgba(0, 0, 0, 0.55);
 `;
-const StyledLabelCount = styled(Label)`
-  background: ${Colors['surface--muted']};
+const StyledLabelCount = styled(Chip).attrs({ hideTooltip: true })`
+  background: ${Colors['surface--muted']} !important;
   border: 1px solid #bfbfbf;
   border-radius: 4px;
 `;
@@ -197,7 +213,7 @@ export const useTableColumns = () => {
       render: (field: []) => (
         <Flex gap={8} wrap="wrap">
           {field?.length ? (
-            field.map((label: string) => <Label size="medium">{label}</Label>)
+            field.map((label: string) => <Chip size="medium" label={label} />)
           ) : (
             <></>
           )}

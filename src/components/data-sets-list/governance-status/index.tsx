@@ -16,7 +16,7 @@ const GovernanceStatus = ({
 
   return (
     <Flex alignItems="center" gap={8}>
-      <Icon type="DotLarge" style={{ color: statusColor }} />
+      <Icon type="DotLarge" css={{ color: statusColor }} />
       <Body level={2}>{t(statusI18nKey)}</Body>
     </Flex>
   );

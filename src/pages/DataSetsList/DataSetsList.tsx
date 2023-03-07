@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Button, Flex, Icon, Label } from '@cognite/cogs.js';
+import { Button, Flex, Icon, Chip, Checkbox, toast } from '@cognite/cogs.js';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
-import { Checkbox, notification } from 'antd';
 import DataSetEditor from 'pages/DataSetEditor';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
@@ -153,9 +152,7 @@ const DataSetsList = (): JSX.Element => {
     width: '5%',
     render: (row: DataSetRow) =>
       row.archived && (
-        <Label size="medium" variant="danger">
-          {t('archived')}
-        </Label>
+        <Chip size="medium" type="danger" label={t('archived')} />
       ),
   };
 
@@ -235,13 +232,13 @@ const DataSetsList = (): JSX.Element => {
   const discardChangesButton = (
     <div style={{ display: 'block', textAlign: 'right', marginTop: '20px' }}>
       <Button
-        type="danger"
+        type="destructive"
         size="small"
         onClick={() => {
           setCreationDrawerVisible(false);
           setMode('create');
           setSelectedDataSet(undefined);
-          notification.close('navigateAway');
+          toast.dismiss('navigateAway');
         }}
       >
         {t('discard-changes')}
@@ -270,19 +267,21 @@ const DataSetsList = (): JSX.Element => {
       setMode('create');
       setSelectedDataSet(undefined);
     } else {
-      notification.warn({
-        message: 'Warning',
-        description: (
-          <div>
-            {t(
-              'you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away'
-            )}
-            {discardChangesButton}
-          </div>
-        ),
-        key: 'navigateAway',
-        getContainer,
-      });
+      toast.warning(
+        <div>
+          <h3>Warning</h3>
+          {t('you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away')}
+          {discardChangesButton}
+        </div>,
+        {
+          toastId: 'navigateAway',
+          position: 'top-right',
+          autoClose: false,
+          closeOnClick: false,
+          closeButton: true,
+          type: 'warning',
+        }
+      );
     }
   };
 
@@ -304,6 +303,7 @@ const DataSetsList = (): JSX.Element => {
         alignItems="center"
         justifyContent="space-between"
         style={{ marginBottom: 16 }}
+        key="table-filters-wrapper"
       >
         <TableFilter
           filteredCount={filteredTableData.length}
@@ -312,8 +312,8 @@ const DataSetsList = (): JSX.Element => {
         />
         <Flex alignItems="center" gap={8}>
           <Checkbox
-            onChange={(e) => {
-              setShowArchived(e.target.checked);
+            onChange={(e, isChecked) => {
+              setShowArchived(isChecked);
               trackUsage({ e: 'data.sets.view.archive.click' });
             }}
             checked={showArchived}
@@ -325,6 +325,7 @@ const DataSetsList = (): JSX.Element => {
       </Flex>
       <Table<DataSetRow>
         rowKey="key"
+        key="data-sets-table"
         loading={loading}
         columns={[
           ...getTableColumns(
