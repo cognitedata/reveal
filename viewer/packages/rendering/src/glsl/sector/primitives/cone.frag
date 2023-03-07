@@ -152,7 +152,7 @@ void main()
 
 
       if (dot(normal, vec3(0.0, 0.0, 1.0)) < 0.0) {
-              normal *= -1.0;
+        normal *= -1.0;
       }
   #endif
 
