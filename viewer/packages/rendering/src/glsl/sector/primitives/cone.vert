@@ -1,4 +1,5 @@
 #pragma glslify: import('../../math/mul3.glsl')
+#pragma glslify: import('../../math/quadToViewSpace.glsl')
 #pragma glslify: import('../../base/determineMatrixOverride.glsl');
 #pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 #pragma glslify: import('../../base/renderModes.glsl')
@@ -93,9 +94,26 @@ void main() {
     // make sure the billboard will not overlap with cap geometry (flickering effect), not important if we write to depth buffer
     newPosition.x *= 1.0 - (maxRadius * (position.x + 1.0) * 0.0025 / halfHeight);
 
-    vec3 surfacePoint = center + mat3(halfHeight * lDir, leftUpScale * left, leftUpScale * up) * newPosition;
-    vec3 transformed = surfacePoint;
-    surfacePoint = mul3(modelViewMatrix, surfacePoint);
+    mat3 billboardWorldRotation = mat3(lDir, left, up);
+    vec3 cylinderAxisScales = vec3(halfHeight, maxRadius, maxRadius);
+    mat3 inverseBillboardWorldRotation = transpose(billboardWorldRotation);
+    vec3 cameraPosInCylinderSpace = inverseBillboardWorldRotation * (rayOrigin - center);
+
+    mat3 billboardWorldScaleRotation = mat3(halfHeight * lDir, maxRadius * left, maxRadius * up);
+    vec3 localBillboardPosition = center + billboardWorldScaleRotation * newPosition;
+    vec3 surfacePoint = mul3(modelViewMatrix, localBillboardPosition);
+
+    // Due to numeric instability when near and far planes are relatively close to each other,
+    // we just clamp near to a relatively low constant when checking whether we're inside the cylinder
+    float near = min(1.0, projectionMatrix[3][2] / (projectionMatrix[2][2] - 1.0));
+
+    // Check whether we are inside the primitive, in which case the quad must cover the entire screen
+    if (isWithinSpan(cameraPosInCylinderSpace, cylinderAxisScales + vec3(near))) {
+        surfacePoint = transformQuadToCoverScreenInViewSpace(newPosition, projectionMatrix, near);
+    }
+
+    gl_Position = projectionMatrix * vec4( surfacePoint, 1.0 );
+
 
     // out data
     v_angle = a_angle;
@@ -127,8 +145,4 @@ void main() {
 
     v_color = a_color;
     v_normal = normalMatrix * normal;
-
-    vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
-
-    gl_Position = projectionMatrix * mvPosition;
 }
