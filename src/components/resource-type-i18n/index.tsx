@@ -7,29 +7,38 @@ type Props = {
   downcase?: boolean;
 };
 
-export default function ResourceTypei18n({ t, count = 42, downcase }: Props) {
+export default function ResourceTypei18n({ t, count = 0, downcase }: Props) {
   const { t: translate } = useTranslation();
   switch (t) {
     case 'timeseries': {
-      let s = translate('resource-timeseries');
-      if (downcase) {
-        s = s.toLowerCase();
-      }
-      return <>{s}</>;
+      return (
+        <>
+          {translate('resource-timeseries', {
+            postProcess: downcase ? 'lowercase' : undefined,
+            count,
+          })}
+        </>
+      );
     }
     case 'assets': {
-      let s = translate('resource-asset', { count });
-      if (downcase) {
-        s = s.toLowerCase();
-      }
-      return <>{s}</>;
+      return (
+        <>
+          {translate('resource-asset', {
+            postProcess: downcase ? 'lowercase' : undefined,
+            count,
+          })}
+        </>
+      );
     }
     case 'events': {
-      let s = translate('resource-type-events', { count });
-      if (downcase) {
-        s = s.toLowerCase();
-      }
-      return <>{s}</>;
+      return (
+        <>
+          {translate('resource-type-events', {
+            postProcess: downcase ? 'lowercase' : undefined,
+            count,
+          })}
+        </>
+      );
     }
     default: {
       return null;

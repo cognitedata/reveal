@@ -1,5 +1,6 @@
 import { Flex } from '@cognite/cogs.js';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'common';
 import EntityMatchingResult from 'components/em-result';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
@@ -17,6 +18,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { bulkDownloadStatus, getUnmatchedFilter } from 'utils';
 
 export default function ViewModel({}: {}) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const {
     sourceType,
@@ -175,7 +177,7 @@ export default function ViewModel({}: {}) {
   return (
     <Flex direction="column">
       <Flex gap={12}>
-        <>(Sources: {sources?.length}</>
+        <>{t('sources', { count: sources?.length || 0 })}</>
         <QueryStatusIcon status={sourceStatus} />)
         <QueryStatusIcon status={targetState?.status} />
         <QueryStatusIcon status={createModelStatus} />

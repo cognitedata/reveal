@@ -96,7 +96,7 @@ export default function TimeseriesTable({
         title: t('resource-table-column-lastUpdated'),
         dataIndex: 'lastUpdatedTime',
         key: 'lastUpdatedTime',
-        // render: (value: number) => new Date(value).toLocaleString(),
+        render: (value: number) => new Date(value).toLocaleString(),
       },
     ],
     [t]

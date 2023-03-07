@@ -94,25 +94,3 @@ export const useAggregate = (
     options
   );
 };
-
-// export const useAggregate = (
-//   params: AggregateParams,
-//   options?: UseQueryOptions<number | undefined, CogniteError>
-// ) => {
-//   const sdk = useSDK();
-//   const queryClient = useQueryClient();
-//   return useQuery(
-//     aggregateQueryKey(params),
-//     () => {
-//       switch (params.type) {
-//         case 'timeseries': {
-//           return fetchTimeseriesAggregate(params, sdk, queryClient);
-//         }
-//         default: {
-//           return Promise.reject(`type: ${params.type} not implemented`);
-//         }
-//       }
-//     },
-//     options
-//   );
-// };
