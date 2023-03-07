@@ -14,7 +14,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise = new DeferredPromise<void>();
     const entityMock1 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image(It.IsAny()))
+      .setup(p => p.load360Image(It.IsAny(), It.IsAny()))
       .returns(deferredPromise)
       .object();
 
@@ -36,7 +36,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise1 = new DeferredPromise<void>();
     const entityMock1 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image(It.IsAny()))
+      .setup(p => p.load360Image(It.IsAny(), It.IsAny()))
       .returns(deferredPromise1)
       .setup(p => p.image360Visualization.visible)
       .returns(false)
@@ -48,7 +48,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise2 = new DeferredPromise<void>();
     const entityMock2 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image(It.IsAny()))
+      .setup(p => p.load360Image(It.IsAny(), It.IsAny()))
       .returns(deferredPromise2)
       .setup(p => p.image360Visualization.visible)
       .returns(false)
@@ -80,7 +80,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise1 = new DeferredPromise<void>();
     const entityMock1 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image(It.IsAny()))
+      .setup(p => p.load360Image(It.IsAny(), It.IsAny()))
       .returns(deferredPromise1)
       .setup(p => p.dispose())
       .returns()
@@ -92,7 +92,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise2 = new DeferredPromise<void>();
     const entityMock2 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image(It.IsAny()))
+      .setup(p => p.load360Image(It.IsAny(), It.IsAny()))
       .returns(deferredPromise2)
       .setup(p => p.dispose())
       .returns()
@@ -104,7 +104,7 @@ describe(Image360LoadingCache.name, () => {
 
     const deferredPromise3 = new DeferredPromise<void>();
     const entityMock3 = new Mock<Image360Entity>()
-      .setup(p => p.load360Image(It.IsAny()))
+      .setup(p => p.load360Image(It.IsAny(), It.IsAny()))
       .returns(deferredPromise2)
       .setup(p => p.dispose())
       .returns()
@@ -133,18 +133,18 @@ describe(Image360LoadingCache.name, () => {
 
     const promiseToReject = new DeferredPromise<void>();
     const image360MockToReject = new Mock<Image360Entity>()
-      .setup(p => p.load360Image(It.IsAny()))
+      .setup(p => p.load360Image(It.IsAny(), It.IsAny()))
       .returns(promiseToReject)
       .object();
 
     const promiseToResolve = new DeferredPromise<void>();
     const image360MockToResolve = new Mock<Image360Entity>()
-      .setup(p => p.load360Image(It.IsAny()))
+      .setup(p => p.load360Image(It.IsAny(), It.IsAny()))
       .returns(promiseToResolve)
       .object();
 
     const image360MockToThrow = new Mock<Image360Entity>()
-      .setup(p => p.load360Image(It.IsAny()))
+      .setup(p => p.load360Image(It.IsAny(), It.IsAny()))
       .throwsAsync('Aborted')
       .object();
 
@@ -172,7 +172,7 @@ describe(Image360LoadingCache.name, () => {
 
     const createMockEntity = (deferredPromise: DeferredPromise<void>) => {
       return new Mock<Image360Entity>()
-        .setup(p => p.load360Image(It.IsAny()))
+        .setup(p => p.load360Image(It.IsAny(), It.IsAny()))
         .returns(deferredPromise)
         .setup(p => p.image360Visualization.visible)
         .returns(false)
