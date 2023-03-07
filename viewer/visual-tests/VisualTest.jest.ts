@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as glob from 'glob';
+import { globSync } from 'glob';
 import path, { ParsedPath } from 'path';
 import { Page } from 'puppeteer';
 
@@ -22,7 +22,7 @@ describe('Visual tests', () => {
     });
   });
 
-  test.each(glob.sync('**/*.VisualTest.ts').map(filePath => path.parse(filePath)))('%p', async testFilePath => {
+  test.each(globSync('**/*.VisualTest.ts').map(filePath => path.parse(filePath)))('%p', async testFilePath => {
     const start = Date.now();
     await runTest(testFilePath);
     console.log(green, testFilePath.name, red, `${(Date.now() - start) / 1000}s`); // eslint-disable-line
