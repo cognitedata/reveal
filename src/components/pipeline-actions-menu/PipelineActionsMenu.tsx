@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Menu, Modal, Divider } from '@cognite/cogs.js';
 import { getContainer } from 'utils';
+import { useTranslation } from 'common/i18n';
 
 type PipelineActionsMenuProps = {
   id: number;
@@ -10,6 +11,7 @@ type PipelineActionsMenuProps = {
 const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
   const { onDuplicatePipeline, onDeletePipeline } = props;
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const { t } = useTranslation();
 
   const onCancelDeletePipeline = () => setDeleteModalVisible(false);
 
@@ -21,7 +23,7 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
           iconPlacement="left"
           onClick={onDuplicatePipeline}
         >
-          Duplicate
+          {t('pipelines-actions-menu-duplicate')}
         </Menu.Item>
         <Divider />
         <Menu.Item
@@ -32,7 +34,7 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
           }}
           destructive
         >
-          Delete
+          {t('pipelines-actions-menu-delete')}
         </Menu.Item>
       </Menu>
       <PipelineDeleteModal
@@ -51,16 +53,17 @@ type PipelineDeleteModalProps = {
 };
 function PipelineDeleteModal(props: PipelineDeleteModalProps) {
   const { visible, onOk, onCancel } = props;
+  const { t } = useTranslation();
   return (
     <Modal
       getContainer={getContainer()}
       visible={visible}
       onCancel={onCancel}
       onOk={onOk}
-      title="Delete pipeline"
-      okText="Delete"
+      title={t('pipeline-delete-modal-title')}
+      okText={t('pipelines-actions-menu-delete')}
     >
-      Are you sure you want to delete this pipeline?
+      {t('pipeline-delete-modal-warning-message')}
     </Modal>
   );
 }

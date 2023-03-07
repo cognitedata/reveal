@@ -91,7 +91,7 @@ const PipelineTable = (): JSX.Element => {
           onSuccess: () => {
             notification.success({
               message: t('notification-success'),
-              description: t('pipeline-notification-duplicate-success', {
+              description: t('pipeline-notification-delete-success', {
                 name: id,
               }),
             });
@@ -99,7 +99,7 @@ const PipelineTable = (): JSX.Element => {
           onError: () => {
             notification.error({
               message: t('error'),
-              description: t('pipeline-notification-duplicate-error'),
+              description: t('pipeline-notification-delete-error'),
             });
           },
         }
@@ -135,6 +135,7 @@ const PipelineTable = (): JSX.Element => {
         title: '',
         dataIndex: '',
         key: 'run',
+        width: '52px',
         render: (record) => {
           return (
             <Dropdown
@@ -150,7 +151,6 @@ const PipelineTable = (): JSX.Element => {
               <Button
                 aria-label="Options"
                 icon="EllipsisHorizontal"
-                size="small"
                 type="ghost"
               />
             </Dropdown>
