@@ -376,6 +376,7 @@ export class Cognite3DViewer {
     removeModel(model: CogniteModel): void;
     removeObject3D(object: THREE_2.Object3D): void;
     requestRedraw(): void;
+    set360ProximityLimits(radius: number, limit: number): void;
     setBackgroundColor(backgroundColor: {
         color?: THREE_2.Color;
         alpha?: number;
