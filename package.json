@@ -19,7 +19,7 @@
     "@cognite/cogs.js": "7.13.3",
     "@cognite/data-exploration": "4.2.0",
     "@cognite/react-feature-flags": "^0.2.2-rc.0",
-    "@cognite/react-image-annotate": "^1.8.0-v4-17",
+    "@cognite/react-image-annotate": "^1.8.2",
     "@cognite/sdk": "^7.18.0",
     "@cognite/sdk-provider": "^2.0.6",
     "@cognite/sdk-react-query-hooks": "^6.0.2",
