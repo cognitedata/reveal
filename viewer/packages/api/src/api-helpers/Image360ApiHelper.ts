@@ -297,7 +297,6 @@ export class Image360ApiHelper {
         )
         .forEach(imageCollection => imageCollection.events.image360Exited.fire());
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
-      this._interactionState.currentImage360Entered.setRequestRedraw(() => {});
       this._interactionState.currentImage360Entered = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
