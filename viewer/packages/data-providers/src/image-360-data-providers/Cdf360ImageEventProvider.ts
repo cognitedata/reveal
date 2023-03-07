@@ -87,7 +87,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
       const validFormats = ['image/jpeg', 'image/png'];
       image360FaceDescriptors.forEach(descriptor => {
         if (!validFormats.includes(descriptor.mimeType)) {
-          throw new Error('File format not supported');
+          throw new Error(`File format {${descriptor.mimeType}} not supported. Use image/jpeg or image/png instead`);
         }
       });
     }
