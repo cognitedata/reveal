@@ -1,4 +1,4 @@
-import { Key, useEffect, useMemo, useState } from 'react';
+import { Key, useMemo, useState } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 
@@ -10,6 +10,8 @@ import { PipelineTableTypes } from 'types/types';
 
 import { stringContains } from 'utils/shared';
 import EntityMatchingFilter from 'components/em-filter/EntityMatchingFilter';
+import { useSearchParams } from 'react-router-dom';
+import { SOURCE_TABLE_QUERY_KEY } from '../../constants';
 
 type PipelineListTableRecord = { key: string } & Pick<
   Pipeline,
@@ -22,10 +24,10 @@ type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
 
 const PipelineTable = (): JSX.Element => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
-  const [pipelinesList, setPipelinesList] = useState<any[]>([]);
-  const [query, setQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams('');
   const { data, isInitialLoading } = useEMPipelines();
   const { t } = useTranslation();
+  const getSearchParams = searchParams.get(SOURCE_TABLE_QUERY_KEY) || '';
 
   const handleToggleCheckbox = (
     _: Key[],
@@ -72,12 +74,15 @@ const PipelineTable = (): JSX.Element => {
     [t]
   );
 
-  useEffect(() => {
-    const newPipelines = dataSource?.filter((pipeline) =>
-      stringContains(pipeline?.name, query)
-    );
-    setPipelinesList(newPipelines);
-  }, [dataSource, query]);
+  const pipelinesList = useMemo(() => {
+    const filteredData = dataSource?.filter((pipeline) => {
+      const pipelineNameOrId = pipeline?.name
+        ? pipeline?.name
+        : pipeline?.id.toString();
+      return stringContains(pipelineNameOrId, getSearchParams);
+    });
+    return getSearchParams ? filteredData : dataSource;
+  }, [dataSource, getSearchParams]);
 
   if (isInitialLoading) {
     return <Loader />;
@@ -85,7 +90,10 @@ const PipelineTable = (): JSX.Element => {
 
   return (
     <>
-      <EntityMatchingFilter query={query} setQuery={setQuery} />
+      <EntityMatchingFilter
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
+      />
       <Table<PipelineListTableRecord>
         columns={columns}
         emptyContent={undefined}

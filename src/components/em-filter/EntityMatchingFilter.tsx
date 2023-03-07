@@ -1,18 +1,33 @@
 import styled from 'styled-components';
 import { Input } from '@cognite/cogs.js';
 import { useTranslation } from 'common/i18n';
+import { SOURCE_TABLE_QUERY_KEY } from '../../constants';
+import { NavigateOptions, URLSearchParamsInit } from 'react-router-dom';
+
+declare type SetURLSearchParams = (
+  nextInit?:
+    | URLSearchParamsInit
+    | ((prev: URLSearchParams) => URLSearchParamsInit),
+  navigateOpts?: NavigateOptions
+) => void;
 
 type EMFilterProps = {
-  query: string;
-  setQuery: (value: string) => void;
+  searchParams: URLSearchParams;
+  setSearchParams: SetURLSearchParams;
 };
-const EntityMatchingFilter = ({ query, setQuery }: EMFilterProps) => {
+const EntityMatchingFilter = ({
+  searchParams,
+  setSearchParams,
+}: EMFilterProps) => {
   const { t } = useTranslation();
   return (
     <StyledInput
       placeholder={t('filter-placeholder')}
-      onChange={(e) => setQuery(e.currentTarget.value)}
-      value={query}
+      onChange={(e) => {
+        searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
+        setSearchParams(searchParams);
+      }}
+      value={searchParams.get(SOURCE_TABLE_QUERY_KEY) || ''}
     />
   );
 };
