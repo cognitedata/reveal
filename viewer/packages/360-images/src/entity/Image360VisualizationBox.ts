@@ -111,7 +111,7 @@ export class Image360VisualizationBox implements Image360Visualization {
           })
       );
     } else {
-      faceMaterialOrder.map((face, index) => {
+      faceMaterialOrder.forEach((face, index) => {
         this._faceMaterials[index].map = getFaceTexture(face);
       });
     }
