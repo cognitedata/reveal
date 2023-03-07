@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { RevealGeometryCollectionType } from '../../../../packages/sector-parser';
+import { RevealGeometryCollectionType } from '../../../../packages/sector-parser/src/types';
 
 export enum PrimitiveName {
   Box,
