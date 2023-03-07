@@ -105,6 +105,10 @@ export class DefaultImage360Collection implements Image360Collection {
     this._icons.setVisualizationMode(mode);
   }
 
+  public set360ProximityLimits(radius: number, limit: number): void {
+    this._icons.set360ProximityLimits(radius, limit);
+  }
+
   public remove(entity: Image360Entity): void {
     pull(this.image360Entities, entity);
     entity.dispose();

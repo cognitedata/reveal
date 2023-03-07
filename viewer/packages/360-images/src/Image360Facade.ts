@@ -32,6 +32,10 @@ export class Image360Facade<T> {
     this._image360Collections.forEach(collection => collection.setVisualizationMode(mode));
   }
 
+  public set360ProximityLimits(radius: number, limit: number): void {
+    this._image360Collections.forEach(collection => collection.set360ProximityLimits(radius, limit));
+  }
+
   constructor(private readonly _entityFactory: Image360CollectionFactory<T>) {
     this._image360Collections = [];
     this._rayCaster = new THREE.Raycaster();

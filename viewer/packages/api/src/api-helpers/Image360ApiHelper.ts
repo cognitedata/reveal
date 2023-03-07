@@ -125,6 +125,10 @@ export class Image360ApiHelper {
     this._requestRedraw();
   }
 
+  public set360ProximityLimits(radius: number, limit: number): void {
+    this._image360Facade.set360ProximityLimits(radius, limit);
+  }
+
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
     this._interactionState.currentImage360Entered = image360Entity;
@@ -144,7 +148,7 @@ export class Image360ApiHelper {
 
     const image360Visualization = image360Entity.image360Visualization;
     image360Visualization.visible = true;
-    this._image360Facade.allIconVisualizationMode = IconVisualizationMode.FromCamera;
+    this._image360Facade.allIconVisualizationMode = IconVisualizationMode.Proximity;
     this._image360Facade.allIconsVisibility = true;
     this._image360Facade.allHoverIconsVisibility = false;
     image360Entity.icon.visible = false;

@@ -785,6 +785,18 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Debug icon radius and range.
+   * @param radius
+   * @param limit
+   */
+  set360ProximityLimits(radius: number, limit: number): void {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+    }
+    this._image360ApiHelper.set360ProximityLimits(radius, limit);
+  }
+
+  /**
    * Removes a model that was previously added using {@link Cognite3DViewer.addModel},
    * {@link Cognite3DViewer.addCadModel} or {@link Cognite3DViewer.addPointCloudModel}
    * .
