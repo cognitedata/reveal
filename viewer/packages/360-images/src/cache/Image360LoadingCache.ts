@@ -113,7 +113,7 @@ export class Image360LoadingCache {
       this._inProgressDownloads,
       download => download.entity !== this._lockedDownload && !download.entity.image360Visualization.visible
     );
-    if (download !== undefined) {
+    if (download) {
       pull(this._inProgressDownloads, download);
       download.abort();
     }
