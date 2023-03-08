@@ -3,7 +3,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { Button, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
 import noop from 'lodash/noop';
-import { SummaryCardWrapper } from '@data-exploration-components/components/Table/elements';
 import { VerticalDivider } from '../Divider';
 
 interface SummaryHeaderProps {

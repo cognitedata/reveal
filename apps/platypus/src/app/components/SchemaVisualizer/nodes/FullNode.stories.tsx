@@ -79,9 +79,9 @@ export const Default = ({
           <NodeWrapper
             isActive={false}
             width={240}
-            id={'id'}
-            key={'key'}
-            title={'title'}
+            id="id"
+            key="key"
+            title="title"
             style={{}}
           >
             <FullNode item={item} />

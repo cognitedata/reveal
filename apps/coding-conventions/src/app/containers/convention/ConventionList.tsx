@@ -16,7 +16,6 @@ export const ConventionList: React.FC<Props> = ({
   activeKeys,
   onKeysChange,
   onConventionChange,
-  onConventionDeleteClick,
   editMode,
 }) => {
   return (

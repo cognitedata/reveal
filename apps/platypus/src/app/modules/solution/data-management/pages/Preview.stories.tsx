@@ -311,7 +311,6 @@ export const DataPreviewInfiniteModel = () => {
     }),
     []
   );
-  const [data, setData] = useState(responseMock);
 
   const defaultColDef = useMemo<ColDef>(() => {
     return {
@@ -377,8 +376,8 @@ export const DataPreviewInfiniteModel = () => {
               data={responseMock}
               config={colsConfig}
               defaultColDef={defaultColDef}
-              rowSelection={'multiple'}
-              rowModelType={'infinite'}
+              rowSelection="multiple"
+              rowModelType="infinite"
               cacheBlockSize={100}
               cacheOverflowSize={2}
               maxConcurrentDatasourceRequests={2}

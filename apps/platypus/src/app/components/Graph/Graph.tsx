@@ -103,7 +103,6 @@ export const Graph = <T,>({
   nodes: propsNodes = [],
   links: propsLinks = [],
   useCurve = false,
-  initialZoom = 5,
   autoLayout = true,
   getLinkEndOffset = defaultGetOffset,
   onLinkEvent,

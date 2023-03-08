@@ -18,10 +18,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 // NOTE: This component is entirely temporary - will be replaced with the "real" search component
 // when it's done. This is just done to showcase some potential features and be able to test
 // user flows
-const CanvasSearch: React.FC<CanvasSearchProps> = ({
-  onItemClick,
-  ...props
-}) => {
+const CanvasSearch: React.FC<CanvasSearchProps> = ({ onItemClick }) => {
   const sdk = useSDK();
   const [value, setValue] = useState('');
   const [files, setFiles] = useState<FileInfo[]>([]);

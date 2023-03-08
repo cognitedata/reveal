@@ -1,5 +1,5 @@
 import { createLink } from '@cognite/cdf-utilities';
-import { Button, Link } from '@cognite/cogs.js';
+import { Link } from '@cognite/cogs.js';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import { TooltipContainer } from '@data-exploration-components/containers/Files/Canvas/TooltipContainer';
 import {
@@ -43,7 +43,7 @@ const useCanvasAssetTooltips = (
                   selectedAnnotation
                 )}`
               )}
-              target={'_blank'}
+              target="_blank"
             />
           </TooltipContainer>
         ),

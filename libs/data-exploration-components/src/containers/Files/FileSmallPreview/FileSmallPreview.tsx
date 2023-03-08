@@ -160,7 +160,7 @@ export const FileSmallPreview = ({
         <InfoCell noBorders>
           <Preview>
             <FilePreview
-              applicationId={'FileSmallPreview'}
+              applicationId="FileSmallPreview"
               id={`file-small-preview-${file.id}`}
               fileId={file.id}
               creatable={false}

@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import isFunction from 'lodash/isFunction';
-
 import { ActionsWrapper, ActionWrapper } from './elements';
 import { ToolbarProps } from './Toolbar';
 import { ZoomActions } from '../ZoomActions';

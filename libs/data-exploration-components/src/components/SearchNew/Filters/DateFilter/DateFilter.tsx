@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   DatePicker,
-  Select,
   RangePicker,
 } from '@data-exploration-components/components';
 import { TIME_SELECT } from '@data-exploration-components/containers';

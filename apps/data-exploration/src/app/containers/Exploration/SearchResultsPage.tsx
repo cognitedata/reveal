@@ -204,7 +204,7 @@ function SearchPage() {
         <SearchConfig
           visible={showSearchConfig}
           onCancel={() => setShowSearchConfig(false)}
-          onOk={(data) => {
+          onOk={(_data) => {
             setShowSearchConfig(false);
           }}
         />

@@ -1,4 +1,3 @@
-import styled from 'styled-components/macro';
 import { ResourceType } from '@data-exploration-components/types';
 import { Chip } from '@cognite/cogs.js';
 import { getSearchResultCountLabel } from '@data-exploration-components/utils/string';

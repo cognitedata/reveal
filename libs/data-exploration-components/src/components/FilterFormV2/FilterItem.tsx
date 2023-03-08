@@ -4,7 +4,6 @@ import { reactSelectCogsStylingProps } from '@data-exploration-components/compon
 import { DISABLE_VALUE_TOOLTIP } from './constants';
 import { Tooltip } from '@cognite/cogs.js';
 import { FilterItemWrapper } from './elements';
-import { useAssetsMetadataValuesAggregateQuery } from '@data-exploration-lib/domain-layer';
 
 export const FilterItem = ({
   metadata,

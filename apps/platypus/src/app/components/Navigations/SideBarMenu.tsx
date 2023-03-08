@@ -60,7 +60,7 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
   return (
     <S.SideBarMenu>
       <div>
-        {items.map((item, index) => {
+        {items.map((item) => {
           if (item.tooltip) {
             return (
               <Tooltip

@@ -8,7 +8,7 @@ import { ConventionHeader } from './ConventionHeader';
 import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';
 import { useConventionListQuery } from '../../service/hooks/query/useConventionListQuery';
 import { useConventionCreateMutate } from '../../service/hooks/mutate/useConventionCreateMutate';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useConventionUpdateMutate } from '../../service/hooks/mutate/useConventionUpdateMutate';
 
 interface Props {
@@ -125,8 +125,8 @@ export const ConventionView: React.FC<Props> = () => {
             <VerticalDivider />
             <Button
               onClick={() => handleDoneClick()}
-              icon={'Edit'}
-              type={'secondary'}
+              icon="Edit"
+              type="secondary"
               aria-label="Edit mode"
             />
             <Button

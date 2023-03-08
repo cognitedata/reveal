@@ -34,7 +34,7 @@ export const Breadcrumbs = ({ currentResource }: BreadcrumbsProps) => {
   return (
     <BreadcrumbWrapper>
       <Breadcrumb>
-        <Breadcrumb.Item label="Search" link={''} />
+        <Breadcrumb.Item label="Search" link="" />
         {location.state?.history?.map(
           ({ path, resource }: any, index: number) => (
             <Breadcrumb.Item

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonProps } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 
 export type LoadMoreProps = {
   hasNextPage?: boolean;

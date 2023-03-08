@@ -145,7 +145,7 @@ export const DataModelHeader = ({
       return (
         <div data-cy="data-model-toolbar-actions" style={{ display: 'flex' }}>
           {isDraftOld && (
-            <Flex alignItems={'center'} style={{ marginRight: '8px' }}>
+            <Flex alignItems="center" style={{ marginRight: '8px' }}>
               <Tooltip
                 position="bottom"
                 content={`Version v. ${latestDataModelVersion.version} has been published by another user, and this draft is currently based on an outdated version.`}

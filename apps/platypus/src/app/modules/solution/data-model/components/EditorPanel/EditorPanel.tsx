@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import React, { Suspense, useState } from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
@@ -28,19 +29,18 @@ const GraphqlCodeEditor = React.lazy(() =>
 
 export interface EditorPanelProps {
   externalId: string;
-  space: string;
-  version: string;
   editorMode: SchemaEditorMode;
   isPublishing: boolean;
   errorsByGroup: ErrorsByGroup;
   setErrorsByGroup: (errors: ErrorsByGroup) => void;
+  space: string;
+  version: string;
 }
 
 export const EditorPanel: React.FC<EditorPanelProps> = ({
   externalId,
-  space,
-  version,
   editorMode,
+  space,
   isPublishing,
   errorsByGroup,
   setErrorsByGroup,

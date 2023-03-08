@@ -6,9 +6,9 @@ import {
 } from '@data-exploration-components/components/Table/Table';
 import { RelationshipLabels } from '@data-exploration-components/types';
 
-import { ColumnDef, Row } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
-import { ResourceTableColumns, SubRowMatchingLabel } from '../../../components';
+import { ResourceTableColumns } from '../../../components';
 import {
   InternalSequenceDataWithMatchingLabels,
   useSequencesMetadataKeys,

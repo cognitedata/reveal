@@ -1,4 +1,4 @@
-import { Body, Flex, Illustrations, Title } from '@cognite/cogs.js';
+import { Body, Flex, Title } from '@cognite/cogs.js';
 import { SearchEmpty } from '@data-exploration-components/graphics';
 
 import React from 'react';

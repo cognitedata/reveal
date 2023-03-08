@@ -13,8 +13,6 @@ export interface VersionSelectorToolbarProps {
 }
 
 export const VersionSelectorToolbar = (props: VersionSelectorToolbarProps) => {
-  const { t } = useTranslation('VersionSelectorToolbar');
-
   return (
     <div>
       <PageToolbar

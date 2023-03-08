@@ -1,7 +1,6 @@
 import { PageTitle } from '@cognite/cdf-utilities';
 import { Button, Title, Flex, Tooltip } from '@cognite/cogs.js';
 import { ResourceIcons } from '@cognite/data-exploration';
-import { useSDK } from '@cognite/sdk-provider';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { TitleRowWrapper } from '@data-exploration-app/components/ResourceTitleRow';
 
@@ -12,7 +11,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 export const CanvasPage = () => {
-  const sdk = useSDK();
   const { files } = useCanvasFilesFromUrl();
   const [unifiedViewerRef, setUnifiedViewerRef] =
     React.useState<UnifiedViewer | null>(null);
@@ -33,9 +31,9 @@ export const CanvasPage = () => {
         </PreviewLinkWrapper>
 
         <StyledGoBackWrapper>
-          <Tooltip content={'Download canvas as PDF'}>
+          <Tooltip content="Download canvas as PDF">
             <Button
-              icon={'Download'}
+              icon="Download"
               aria-label="Download"
               onClick={onDownloadPress}
             />

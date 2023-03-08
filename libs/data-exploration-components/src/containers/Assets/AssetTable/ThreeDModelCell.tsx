@@ -1,5 +1,5 @@
 import React from 'react';
-import { A, Body, Button, Dropdown, Flex, Link, Menu } from '@cognite/cogs.js';
+import { Body, Button, Dropdown, Flex, Link, Menu } from '@cognite/cogs.js';
 import groupBy from 'lodash/groupBy';
 
 import {

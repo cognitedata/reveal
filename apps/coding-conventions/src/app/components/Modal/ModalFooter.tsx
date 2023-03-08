@@ -1,5 +1,5 @@
 import React from 'react';
-import { Body, Button, Flex } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
 
 interface Props {
   okText?: string;

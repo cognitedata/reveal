@@ -24,7 +24,6 @@ import { Body } from '@cognite/cogs.js';
 import {
   TimeDisplay,
   ResourceTableColumns,
-  SubRowMatchingLabel,
 } from '@data-exploration-components/components';
 import { Asset } from '@cognite/sdk';
 
@@ -76,9 +75,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           accessorKey: 'content',
           header: 'Content',
           cell: ({ row }: { row: Row<InternalDocument> }) => {
-            return (
-              <DocumentContentPreview document={row.original} query={''} />
-            );
+            return <DocumentContentPreview document={row.original} query="" />;
           },
           enableSorting: false,
         },

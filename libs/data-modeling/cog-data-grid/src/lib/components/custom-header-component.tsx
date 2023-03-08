@@ -61,7 +61,7 @@ export class CustomHeader extends PureComponent<
               this.menuButton = menuButton;
             }}
             onClick={this.onMenuClicked}
-            className={'ag-header-icon ag-header-cell-menu-button '}
+            className="ag-header-icon ag-header-cell-menu-button "
             aria-hidden="true"
           >
             <Button

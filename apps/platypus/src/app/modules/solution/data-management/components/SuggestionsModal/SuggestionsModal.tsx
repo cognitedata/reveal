@@ -347,7 +347,7 @@ export const SuggestionsModal = ({
               )}
             </Flex>
           }
-          sidebarWidth={'40%'}
+          sidebarWidth="40%"
           sidebarMinWidth={320}
           content={
             tableData && targetTypeDef && tableData && tableData.length > 0 ? (

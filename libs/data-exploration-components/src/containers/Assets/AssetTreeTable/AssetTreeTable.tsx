@@ -1,4 +1,4 @@
-import { ColumnDef, Row } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
 import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import { Asset } from '@cognite/sdk';
@@ -13,7 +13,6 @@ import {
 import {
   HighlightCell,
   ResourceTableColumns,
-  SubRowMatchingLabel,
   HierarchyExtraRow,
 } from '../../../components';
 import { Table } from '../../../components';
@@ -129,7 +128,7 @@ export const AssetTreeTable = ({
               <HighlightCell
                 text={getValue<string>() || DASH}
                 lines={1}
-                query={''}
+                query=""
               />
             </div>
           ),
@@ -278,7 +277,7 @@ export const AssetTreeTable = ({
   return (
     <Suspense fallback={<EmptyState isLoading={true} />}>
       <Table<InternalAssetTreeData>
-        id={'asset-tree-table'}
+        id="asset-tree-table"
         data={getData()}
         columns={columns}
         tableHeaders={tableHeaders}

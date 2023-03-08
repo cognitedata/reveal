@@ -102,12 +102,3 @@ const StyledTabs = styled(Tabs)`
     border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
   }
 `;
-
-const TabContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const ResourceTypeTitle = styled.div`
-  margin-right: 8px;
-`;

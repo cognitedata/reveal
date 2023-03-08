@@ -1,4 +1,4 @@
-import { Flex, Icon } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 interface Props {

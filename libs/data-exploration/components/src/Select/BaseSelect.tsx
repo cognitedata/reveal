@@ -33,7 +33,6 @@ const Option = ({ data, isSelected, ...props }: any) => {
 };
 
 export const BaseSelect = <ValueType,>({
-  creatable = false,
   cogsTheme,
   addNilOption = false,
   options: optionsOriginal,

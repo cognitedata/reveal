@@ -1,7 +1,6 @@
 import render from '../../../../../testUtils/render';
 import { fireEvent, screen } from '@testing-library/react';
 import { BaseFilterHeader } from '../BaseFilterHeader';
-import { RESET } from '../../../Buttons/constants';
 
 describe('BaseFilterHeader', () => {
   it('should render filter header', () => {

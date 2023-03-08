@@ -18,7 +18,7 @@ const CollapseIcon: React.FC<{ isActive?: boolean }> = ({ isActive }) => {
   );
 };
 
-const TrashIcon: React.FC<{ isActive?: boolean }> = ({ isActive }) => {
+const TrashIcon: React.FC<{ isActive?: boolean }> = () => {
   return (
     <StyledTrashIcon type="Delete" /> // note: active is string?!?!
   );
@@ -79,7 +79,6 @@ export const BaseFilterPanel = ({
   conventions,
   convention,
   onChange,
-  onResetClick,
   ...rest
 }: BaseFilterPanelProps) => {
   return (

@@ -2,7 +2,6 @@ import { CogDataGrid } from '@cognite/cog-data-grid';
 import { Button } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
-  BuiltInType,
   DataModelTypeDefsField,
   DataModelTypeDefsType,
   mixerApiBuiltInTypes,
@@ -217,7 +216,7 @@ export const TypeDefFields = ({
   return (
     <DataModelFieldsGrid>
       <CogDataGrid
-        theme={'compact'}
+        theme="compact"
         ref={gridRef}
         columnTypes={{
           // just a placeholder for type since we are creating new column here
@@ -244,7 +243,7 @@ export const TypeDefFields = ({
           })),
         }}
         // this prop instruct the grid to autosize and set the height=contents
-        domLayout={'autoHeight'}
+        domLayout="autoHeight"
         singleClickEdit={true}
         suppressCellFocus={false}
         stopEditingWhenCellsLoseFocus={true}

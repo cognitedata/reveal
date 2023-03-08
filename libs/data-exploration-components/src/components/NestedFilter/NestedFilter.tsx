@@ -25,7 +25,6 @@ export const NestedFilter: React.FC<NestedFilterProps> = ({
   onClickApply,
   enableSorting = false,
   width,
-  fullWidth,
 }) => {
   const [selection, setSelection] =
     React.useState<NestedFilterSelection>(EMPTY_OBJECT);

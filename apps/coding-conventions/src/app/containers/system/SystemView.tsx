@@ -1,17 +1,9 @@
-import {
-  Body,
-  Flex,
-  Icon,
-  Infobar,
-  Input,
-  Select,
-  Textarea,
-} from '@cognite/cogs.js';
+import { Body, Flex, Infobar, Input, Select, Textarea } from '@cognite/cogs.js';
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { InfoTooltip } from '../../components/Info/InfoTooltip';
 import { Modal } from '../../components/Modal/Modal';
-import ModalFooter from '../../components/Modal/ModalFooter';
+
 import { useSystemMutate } from '../../service/hooks/mutate/useSystemMutate';
 import { Resource } from '../../types';
 import { SystemList } from './SystemList';
@@ -55,7 +47,7 @@ interface Props {
     structured: string
   ) => void;
 }
-const CreateModal: React.FC<Props> = ({ toggleVisibility, onCreateClick }) => {
+const CreateModal: React.FC<Props> = ({ toggleVisibility }) => {
   const [title, setTitle] = useState('');
   const [resource, setResource] = useState<{
     label: string;
@@ -66,17 +58,6 @@ const CreateModal: React.FC<Props> = ({ toggleVisibility, onCreateClick }) => {
   });
   const [description, setDescription] = useState('');
   const [structure, setStructure] = useState('');
-
-  const handleOkClick = () => {
-    if (!(title && structure && resource.value)) {
-      alert('Title, resource and structure is required');
-      return;
-    }
-
-    onCreateClick(title, resource.value, description, structure);
-
-    toggleVisibility();
-  };
 
   return (
     <Modal

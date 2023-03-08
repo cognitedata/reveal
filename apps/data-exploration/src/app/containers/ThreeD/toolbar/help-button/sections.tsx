@@ -1,4 +1,4 @@
-import { Body, Colors, Detail, Flex, Title, Icon } from '@cognite/cogs.js';
+import { Body, Colors, Detail, Flex, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import {

@@ -85,7 +85,7 @@ export const DataModelsTable = React.forwardRef(
             onDelete: props.onDelete,
           }}
           wrapperStyle={{ height: 'calc(100% - 100px)' }}
-          theme={'basic-striped'}
+          theme="basic-striped"
           pagination={true}
           paginationPageSize={RESULTS_PER_PAGE}
           suppressPaginationPanel={true}
@@ -97,7 +97,7 @@ export const DataModelsTable = React.forwardRef(
             <Pagination
               totalPages={totalPages}
               itemsPerPage={RESULTS_PER_PAGE}
-              size={'small'}
+              size="small"
               hideItemsPerPage
               onPageChange={(pageNumber) => {
                 if (gridRef && gridRef.current) {

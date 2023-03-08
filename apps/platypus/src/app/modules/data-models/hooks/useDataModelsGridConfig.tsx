@@ -4,7 +4,6 @@ import { TOKENS } from '@platypus-app/di';
 import { isFDMv3 } from '@platypus-app/flags';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DataModel } from '@platypus/platypus-core';
 import { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import { useCallback } from 'react';
 import { createRoot } from 'react-dom/client';

@@ -1,4 +1,4 @@
-import { Dropdown, Menu, Icon, Button } from '@cognite/cogs.js';
+import { Dropdown, Menu, Button } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Fragment } from 'react';
 import styled from 'styled-components';

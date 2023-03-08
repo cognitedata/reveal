@@ -1,6 +1,6 @@
 import React from 'react';
 import { CogniteError, Timeseries } from '@cognite/sdk';
-import { Title, Body, Colors } from '@cognite/cogs.js';
+import { Title, Body } from '@cognite/cogs.js';
 import {
   ErrorFeedback,
   Loader,

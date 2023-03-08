@@ -1,6 +1,6 @@
-import { Body, Flex, Tooltip, Link } from '@cognite/cogs.js';
+import { Body, Flex, Tooltip } from '@cognite/cogs.js';
 import { DataSet, Asset } from '@cognite/sdk';
-import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import capitalize from 'lodash/capitalize';
 import uniqueId from 'lodash/uniqueId';
 import React from 'react';

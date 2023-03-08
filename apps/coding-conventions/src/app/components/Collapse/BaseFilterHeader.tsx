@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import {
   Title as DefaultTitle,
   Detail,
-  Tooltip,
-  Icon,
   Input,
   Body,
   Flex,

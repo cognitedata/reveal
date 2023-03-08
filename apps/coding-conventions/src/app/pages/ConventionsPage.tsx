@@ -52,7 +52,7 @@ export const ConventionsPage: React.FC<Props> = ({ validate, test }) => {
 
       <Drawer
         title="Coding conventions for 'file name'"
-        width={'50%'}
+        width="50%"
         visible={!!systemId}
         onCancel={() => navigate('/')}
       >

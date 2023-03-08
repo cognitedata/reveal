@@ -1,10 +1,7 @@
 import { Button, Tooltip, toast } from '@cognite/cogs.js';
-import { ViewerState } from '@cognite/reveal';
+
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import {
-  SecondaryModelOptions,
-  ThreeDContext,
-} from '@data-exploration-app/containers/ThreeD/ThreeDContext';
+import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 import { getStateUrl } from '@data-exploration-app/containers/ThreeD/utils';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useContext } from 'react';

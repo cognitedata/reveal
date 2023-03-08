@@ -33,8 +33,6 @@ export const GroupingEnabled: ComponentStory<typeof FileSearchResults> = (
 
 GroupingEnabled.args = {
   isGroupingFilesEnabled: true,
-  parentResource: { externalId: 'dsd', id: 123, type: 'file' },
-  relatedResourceType: 'linkedResource',
   showCount: true,
 };
 

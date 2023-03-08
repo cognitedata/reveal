@@ -151,7 +151,7 @@
         "jest/expect-expect": ["off"],
         "jest/no-test-callback": ["off"],
         "jest/no-export": ["off"],
-        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "error",
         "prettier/prettier": [
           "error",
           {
@@ -165,8 +165,11 @@
         "@typescript-eslint/no-shadow": "error",
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-explicit-any": "off",
+        //
+
+        // "react/function-component-definition": ["off"],<- Will come back to this one latee
+        "react/jsx-curly-brace-presence": ["warn"],
         "react/function-component-definition": ["off"],
-        "react/jsx-curly-brace-presence": ["off"],
         "react/jsx-key": ["off"],
         "react/jsx-no-constructed-context-values": ["off"],
         "react/jsx-no-useless-fragment": ["off"],

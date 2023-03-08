@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { IdEither } from '@cognite/sdk';
 import { ComponentStory } from '@storybook/react';
-import { within, userEvent, waitFor } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
-import { datasets } from '@data-exploration-components/stubs/datasets';
 import { DataSetFilter } from './DataSetFilter';
 
 export default {

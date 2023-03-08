@@ -10,7 +10,6 @@ import {
   useDataManagementDeletionFeatureFlag,
   useSuggestionsFeatureFlag,
   useTransformationsFeatureFlag,
-  isFDMv3,
 } from '@platypus-app/flags';
 import * as S from './elements';
 import { useRef } from 'react';
@@ -71,8 +70,6 @@ export function PreviewPageHeader({
   const tableHasRows = draftRowsCount > 0 || publishedRowsCount > 0;
   const shouldShowActions =
     (transformations && transformations.length > 0) || tableHasRows;
-
-  const isFDMV3 = isFDMv3();
 
   const renderTransformations = () => {
     if (!isTransformationsEnabled) {
@@ -157,7 +154,7 @@ export function PreviewPageHeader({
       }
     >
       {shouldShowActions && (
-        <Flex justifyContent={'flex-end'} gap={8}>
+        <Flex justifyContent="flex-end" gap={8}>
           {publishedRowsCount > 0 && (
             <>
               <S.SearchInput

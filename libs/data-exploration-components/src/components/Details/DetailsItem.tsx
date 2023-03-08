@@ -1,5 +1,5 @@
 import React from 'react';
-import { Body, A, toast, Chip, Flex, Button, Link } from '@cognite/cogs.js';
+import { Body, toast, Chip, Flex, Button, Link } from '@cognite/cogs.js';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import {
   convertResourceType,
@@ -17,7 +17,6 @@ import {
 } from '@data-exploration-components/containers/Assets/AssetTable/ThreeDModelCell';
 import { useMetrics } from '@data-exploration-components/hooks/useMetrics';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
-import { t } from 'graphql-extra';
 
 type DetailsItemProps = {
   name: string;
@@ -174,7 +173,7 @@ export const AssetsItem = ({
 };
 
 export const LabelsItem = ({ labels = [] }: { labels?: string[] }) => {
-  const { onCopy, hasCopied } = useClipboard();
+  const { onCopy } = useClipboard();
   const handleCopy = (value: string) => {
     onCopy(value);
     toast.success(COPIED_TEXT);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileInfo } from '@cognite/sdk';
 import styled from 'styled-components';
-import { Button, Dropdown, Flex, Menu, ToolBar } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, ToolBar } from '@cognite/cogs.js';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 import { EditFileButton, ShowHideDetailsButton } from '../../../components';
 import { SearchBar, SearchBarProps } from './SearchBar';

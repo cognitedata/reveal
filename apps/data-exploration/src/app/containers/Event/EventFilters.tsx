@@ -9,7 +9,6 @@ import {
 } from '@data-exploration-app/store/filter';
 import {
   AggregatedEventFilterV2,
-  AggregatedFilterV2,
   DateFilterV2,
   MetadataFilterV2,
   SourceFilter,

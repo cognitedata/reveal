@@ -152,7 +152,7 @@ export class FieldNameCellEditor
         <div className={classNames}>
           <input
             ref={this.inputRef}
-            type={'text'}
+            type="text"
             data-cy="schema-type-field"
             value={this.state.value}
             onChange={this.onValueChanged}

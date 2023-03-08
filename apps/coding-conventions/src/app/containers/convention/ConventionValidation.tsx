@@ -6,7 +6,7 @@ import {
 } from '@cognite/cogs.js';
 
 import { useState } from 'react';
-import { Asset, DataSet, FileInfo, IdEither } from '@cognite/sdk';
+import { DataSet, IdEither } from '@cognite/sdk';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { useSystemQuery } from '../../service/hooks/query/useSystemQuery';

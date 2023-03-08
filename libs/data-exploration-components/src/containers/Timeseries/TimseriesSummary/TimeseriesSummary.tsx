@@ -1,6 +1,5 @@
 import { Asset, Timeseries } from '@cognite/sdk';
 import { ColumnDef } from '@tanstack/react-table';
-import { useResourceResults } from '@data-exploration-components/containers';
 
 import {
   ResourceTableColumns,
@@ -8,7 +7,6 @@ import {
   Table,
 } from '@data-exploration-components/components/Table';
 import React, { useMemo } from 'react';
-import { convertResourceType } from '@data-exploration-components/types';
 
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
@@ -40,8 +38,6 @@ export const TimeseriesSummary = ({
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   isAdvancedFiltersEnabled?: boolean;
 }) => {
-  const api = convertResourceType('timeSeries');
-
   const { isLoading, data } = useTimeseriesSearchResultWithLabelsQuery({
     query,
     filter,

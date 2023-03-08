@@ -1,12 +1,8 @@
 import React from 'react';
 import { Asset, FileInfo } from '@cognite/sdk';
 import { FileTable } from '@data-exploration-components/containers/Files';
-import {
-  ResourceItem,
-  convertResourceType,
-} from '@data-exploration-components/types';
+import { convertResourceType } from '@data-exploration-components/types';
 
-import { RelatedResourceType } from '@data-exploration-components/hooks/RelatedResourcesHooks';
 import { FileToolbar } from './FileToolbar';
 import { useResourceResults } from '..';
 import { EmptyState } from '@data-exploration-components/components/EmpyState/EmptyState';
@@ -20,8 +16,6 @@ import { useResultCount } from '@data-exploration-components/components';
 export const FileSearchResults = ({
   query = '',
   filter = {},
-  relatedResourceType,
-  parentResource,
   showCount = false,
   allowEdit = false,
   onClick,
@@ -35,8 +29,6 @@ export const FileSearchResults = ({
   showCount?: boolean;
   filter?: InternalFilesFilters;
   showRelatedResources?: boolean;
-  relatedResourceType?: RelatedResourceType;
-  parentResource?: ResourceItem;
   selectedRow?: Record<string | number, boolean>;
   allowEdit?: boolean;
   isGroupingFilesEnabled?: boolean;

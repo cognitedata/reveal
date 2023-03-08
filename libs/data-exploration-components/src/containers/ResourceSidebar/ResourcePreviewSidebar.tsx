@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Illustrations } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { AssetSmallPreview } from '@data-exploration-components/containers/Assets';
 import { FileSmallPreview } from '@data-exploration-components/containers/Files';
 import { SequenceSmallPreview } from '@data-exploration-components/containers/Sequences';

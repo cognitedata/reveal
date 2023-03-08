@@ -268,17 +268,6 @@ export function Table<T extends TableData>({
     }
   }, [id, scrollIntoViewRow]);
 
-  const handleToggleAllVisibility = (visible: boolean) => {
-    setColumnVisibility(
-      getAllLeafColumns().reduce((previousValue, currentValue) => {
-        if (currentValue.getCanHide()) {
-          return { ...previousValue, [currentValue.id]: visible };
-        }
-        return previousValue;
-      }, {})
-    );
-  };
-
   const handleClickLoadMore = () => {
     if (!fetchMore) return;
     fetchMore();

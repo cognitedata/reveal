@@ -21,7 +21,7 @@ export const RootAssetButton: React.FC<RootAssetButtonProps> = ({
     >
       <RootAssetLabel>{label}</RootAssetLabel>
       <Flex justifyContent="center" alignItems="center">
-        <Icon type={'ArrowRight'} />
+        <Icon type="ArrowRight" />
       </Flex>
     </RootAssetButtonWrapper>
   );

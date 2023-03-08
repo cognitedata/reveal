@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, Colors, Tooltip, Menu } from '@cognite/cogs.js';
+import { Icon, Tooltip, Menu } from '@cognite/cogs.js';
 import { IdEither, FileInfo } from '@cognite/sdk';
 import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import { useQuery } from 'react-query';

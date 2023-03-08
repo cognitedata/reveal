@@ -1,7 +1,7 @@
-import { Chip, ChipType, Flex, IconType, Tooltip } from '@cognite/cogs.js';
+import { Chip, Flex, Tooltip } from '@cognite/cogs.js';
 import { MatchingLabels } from '@data-exploration-lib/domain-layer';
 import isEmpty from 'lodash/isEmpty';
-import React, { useMemo } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { capitalizeFirstLetter } from '../../../utils';
 

@@ -19,7 +19,6 @@ import { Header } from './Common';
 export const FullNode = ({
   item,
   fullRender = true,
-  isInterface = false,
 }: {
   item: ObjectTypeDefinitionNode | InterfaceTypeDefinitionNode;
   fullRender?: boolean;

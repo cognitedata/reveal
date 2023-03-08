@@ -9,7 +9,6 @@ import {
 } from '@data-exploration-lib/domain-layer';
 import {
   ResourceTableColumns,
-  SubRowMatchingLabel,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration-components/components/Table';

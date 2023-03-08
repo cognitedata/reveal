@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import styled, { CSSProperties } from 'styled-components/macro';
 import { Body, Button, Colors, Flex, Modal, Title } from '@cognite/cogs.js';
-import { Kind, parse } from 'graphql';
+import { parse } from 'graphql';
 import { useDebounce } from '../../hooks/useDebounce';
 import {
   Node,

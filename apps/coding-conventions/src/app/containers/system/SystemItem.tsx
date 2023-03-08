@@ -1,12 +1,4 @@
-import {
-  Body,
-  Button,
-  Detail,
-  Flex,
-  Icon,
-  IconType,
-  Title as CogsTitle,
-} from '@cognite/cogs.js';
+import { Body, Detail, Icon, Title as CogsTitle } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Card } from '../../components/Card';
 import { Resource } from '../../types';
@@ -53,14 +45,6 @@ const Title = styled(CogsTitle).attrs({ level: 5 })`
 
 const Subtitle = styled(Body).attrs((args) => ({ level: args.level || 3 }))`
   margin-top: 8px;
-`;
-
-const Divider = styled.div`
-  height: 1px;
-  margin-top: 16px;
-  margin-bottom: 8px;
-  width: 100%;
-  background-color: #d9d9d9;
 `;
 
 const FooterText = styled(Detail)`

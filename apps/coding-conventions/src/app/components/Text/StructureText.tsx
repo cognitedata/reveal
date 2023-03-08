@@ -49,7 +49,7 @@ export const StructureText: React.FC<Props> = ({
     return (
       <>
         <div style={{ position: 'relative' }}>
-          <Text id={'textElement'}>{text}</Text>
+          <Text id="textElement">{text}</Text>
           {editMode &&
             boundingBoxes.map((box) => {
               box.rect.x -= 2;

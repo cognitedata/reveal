@@ -23,7 +23,6 @@ import {
   isSuggestedAnnotation,
 } from '../migration/utils';
 
-import { Annotation } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 interface AnnotationsListProps {
@@ -212,12 +211,6 @@ const ListItem = styled.div<TagProps>`
     background: ${({ pending }) =>
       pending ? 'var(--cogs-bg-selected)' : 'var(--cogs-bg-hover)'};
   }
-`;
-interface IconProps {
-  annotation: Annotation;
-}
-const StyledIcon = styled(Icon)`
-  margin-top: 3px;
 `;
 
 const AnnotationListContainer = styled.div`

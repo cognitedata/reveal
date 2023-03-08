@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ComponentStory } from '@storybook/react';
-import { userEvent, waitFor, within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+
 import { assets } from '@data-exploration-components/stubs/assets';
 import { AggregatedFilterV2 } from './AggregatedFilter';
 

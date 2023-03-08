@@ -3,7 +3,7 @@ import {
   SelectableItemsProps,
   ResourceItem,
 } from '@data-exploration-components/types';
-import { FileInfo, IdEither } from '@cognite/sdk';
+import { FileInfo } from '@cognite/sdk';
 import { FileTable } from '@data-exploration-components/containers';
 import {
   FileSwitcherWrapper,

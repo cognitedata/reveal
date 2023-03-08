@@ -1,4 +1,4 @@
-import { Title, toast } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js';
 import { HintText } from '../../components/Info/HintText';
 import { StructureText } from '../../components/Text/StructureText';
 import { Convention } from '../../types';

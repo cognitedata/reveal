@@ -2,7 +2,6 @@ import {
   DataModelSpaceSelect,
   DataModelSpaceSelectProps,
 } from './DataModelSpaceSelect';
-import noop from 'lodash/noop';
 import { Story } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 

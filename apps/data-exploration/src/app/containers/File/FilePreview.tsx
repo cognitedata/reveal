@@ -10,7 +10,6 @@ import {
 } from '@cognite/data-exploration';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { useSDK } from '@cognite/sdk-provider';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, FileInfo } from '@cognite/sdk';
 import styled from 'styled-components';
@@ -44,7 +43,6 @@ export const FilePreview = ({
   fileId: number;
   actions?: React.ReactNode;
 }) => {
-  const sdk = useSDK();
   const [editMode, setEditMode] = useState<boolean>(false);
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
@@ -191,17 +189,4 @@ export const FilePreview = ({
 
 const PreviewTabWrapper = styled.div`
   height: 100%;
-`;
-
-const Banner = styled.div`
-  padding: 16px;
-  background: ${Colors['decorative--blue--600']};
-  color: ${Colors['decorative--blue--100']};
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  .cogs-body-3 {
-    color: ${Colors['decorative--blue--100']};
-  }
 `;

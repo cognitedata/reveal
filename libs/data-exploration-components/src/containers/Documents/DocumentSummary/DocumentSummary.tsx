@@ -3,7 +3,6 @@ import {
   InternalDocument,
   InternalDocumentFilter,
   InternalDocumentWithMatchingLabels,
-  useDocumentSearchResultQuery,
   useDocumentSearchResultWithMatchingLabelsQuery,
   useDocumentsMetadataKeys,
 } from '@data-exploration-lib/domain-layer';

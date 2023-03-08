@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   Outlet,
   Routes as ReactRoutes,
@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom';
 import { DataModelsPage } from './modules/data-models/DataModelsPage';
 import { DataModel } from './modules/solution/DataModel';
-import { NavigationDataModel } from './components/Navigations/NavigationDataModel';
 import { Spinner } from './components/Spinner/Spinner';
 import { useFusionQuery } from './hooks/useFusionQuery';
 import { useMixpanelPathTracking } from './hooks/useMixpanel';

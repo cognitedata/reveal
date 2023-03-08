@@ -72,20 +72,20 @@ export const Base = (props: BaseProps) => {
 };
 
 export const DefaultTheme = () => {
-  return <Base theme={'default'} />;
+  return <Base theme="default" />;
 };
 
 export const BasicTheme = () => {
-  return <Base theme={'basic-striped'} />;
+  return <Base theme="basic-striped" />;
 };
 
 export const SuggestionsTheme = () => {
-  return <Base theme={'suggestions'} />;
+  return <Base theme="suggestions" />;
 };
 
 /** For some reason, we have different designs for each table, so I needed to create new theme
  * This one is used in the table for Data Model UI
  */
 export const CompactTheme = () => {
-  return <Base theme={'compact'} />;
+  return <Base theme="compact" />;
 };

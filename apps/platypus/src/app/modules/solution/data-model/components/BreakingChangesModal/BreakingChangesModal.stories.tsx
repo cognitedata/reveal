@@ -12,7 +12,7 @@ export const Base = () => (
     <BreakingChangesModal
       onCancel={() => action('cancel')}
       onUpdate={() => action('update')}
-      breakingChanges={'There are breaking changes!'}
+      breakingChanges="There are breaking changes!"
       isUpdating={false}
     />
   </Wrapper>

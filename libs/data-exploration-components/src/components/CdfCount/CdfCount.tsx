@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAggregate, SdkResourceType } from '@cognite/sdk-react-query-hooks';
 import { Chip } from '@cognite/cogs.js';
-import { formatNumber, lightGrey } from '@data-exploration-components/utils';
+import { formatNumber } from '@data-exploration-components/utils';
 
 type Props = {
   type: SdkResourceType;

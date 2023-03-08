@@ -1,5 +1,3 @@
-import { Row } from '@tanstack/react-table';
-import isEmpty from 'lodash/isEmpty';
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components/macro';
 
@@ -12,7 +10,6 @@ import { TableSortBy } from '@data-exploration-components/components/Table';
 import {
   InternalDocument,
   InternalDocumentFilter,
-  InternalDocumentWithMatchingLabels,
   useDocumentSearchResultWithMatchingLabelsQuery,
 } from '@data-exploration-lib/domain-layer';
 import { Asset, FileInfo } from '@cognite/sdk';

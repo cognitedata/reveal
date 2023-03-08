@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { InternalDocument } from '@data-exploration-lib/domain-layer';
 import styled from 'styled-components';
-import Highlighter from 'react-highlight-words';
+
 import {
   HighlightCell,
   EllipsisText,

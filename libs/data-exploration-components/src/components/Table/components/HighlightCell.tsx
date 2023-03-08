@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Body, Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
 import { useIsOverflow } from '../../../hooks';
 import { EllipsisText } from '..';

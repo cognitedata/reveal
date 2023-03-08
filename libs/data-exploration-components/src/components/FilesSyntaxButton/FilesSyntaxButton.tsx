@@ -17,7 +17,7 @@ export const FilesSyntaxButton: React.FC = () => {
       placement="right-start"
     >
       <Button
-        icon={'Code'}
+        icon="Code"
         aria-label="Open document search info popup"
         onClick={() => {
           onOpen();

@@ -25,7 +25,6 @@ export const AssetSelect = ({
   onAssetSelected = noop,
   selectedAssetIds,
   rootOnly,
-  cogsTheme,
   ...extraProps
 }: AssetSelectProps) => {
   const [query, setQuery] = useState('');

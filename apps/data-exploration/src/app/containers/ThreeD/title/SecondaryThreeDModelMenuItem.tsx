@@ -4,9 +4,7 @@ import { Body, Checkbox, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 import styled from 'styled-components';
 
-import ThreeDTimestamp, {
-  formatTime,
-} from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
+import { formatTime } from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
 import { useRevisions } from '@data-exploration-app/containers/ThreeD/hooks';
 import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 

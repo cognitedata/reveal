@@ -133,7 +133,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
             {t('publish_version_title', 'Version to be published')}
           </Body>
           <Input
-            type={'text'}
+            type="text"
             fullWidth
             autoFocus
             value={version}
@@ -156,8 +156,8 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
               onChange={() =>
                 !props.breakingChanges && setKeepCurrentVersion(true)
               }
-              data-cy={'keep-current-version-radio'}
-              name={'keep-current-version-radio'}
+              data-cy="keep-current-version-radio"
+              name="keep-current-version-radio"
               label={`${t('keep_version_text', 'Keep version')} ${
                 props.currentVersion
               }`}
@@ -175,12 +175,12 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
               onChange={() =>
                 !props.breakingChanges && setKeepCurrentVersion(false)
               }
-              data-cy={'create-new-version-radio'}
-              name={'create-new-version-radio'}
+              data-cy="create-new-version-radio"
+              name="create-new-version-radio"
               label={t('create_new_version_text', 'Create new version')}
             />
             <Input
-              type={'text'}
+              type="text"
               fullWidth
               autoFocus
               value={version}
@@ -194,7 +194,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
                   : 'default'
               }
               error={error || false}
-              data-cy={'publish-new-version-input'}
+              data-cy="publish-new-version-input"
             />
           </Flex>
         </>

@@ -18,7 +18,7 @@ const baseColumns = [
 
 const defaultColumns = (onConventionAddClick: () => void) => [
   {
-    Header: ({ row }: any) => (
+    Header: () => (
       <Button onClick={onConventionAddClick} icon="ListAdd" size="small" />
     ),
     id: 'extra',
@@ -53,9 +53,6 @@ const RenderSubTable = ({
   row: Row<any>;
   selectedConvention: Convention;
 }) => {
-  const navigate = useNavigate();
-  const { systemId } = useParams();
-
   const memoTable = useMemo(() => {
     const data = selectedConvention.definitions?.filter(
       (item) => item.dependsOn === row.original.id

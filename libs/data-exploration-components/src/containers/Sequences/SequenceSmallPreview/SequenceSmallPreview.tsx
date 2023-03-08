@@ -9,7 +9,7 @@ import {
   SpacedRow,
   ResourceIcons,
 } from '@data-exploration-components/components';
-import { Title, Body, Colors } from '@cognite/cogs.js';
+import { Title, Body } from '@cognite/cogs.js';
 import {
   SmallPreviewProps,
   SelectableItemProps,

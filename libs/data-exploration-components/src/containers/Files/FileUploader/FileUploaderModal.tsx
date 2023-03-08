@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { FileInfo } from '@cognite/sdk';
 import { Modal } from 'antd';
-import { Button, Link } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import {
   searchBaseCacheKey,

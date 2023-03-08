@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import render from '@platypus-app/tests/render';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
-import noop from 'lodash/noop';
+
 import { isFDMv3 } from '@platypus-app/flags/isFDMv3';
 import { useBetaDataModels } from './hooks/useBetaDataModels';
 

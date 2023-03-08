@@ -43,8 +43,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { EndpointModal } from '../components/EndpointModal';
-import { getProject } from '@cognite/cdf-utilities';
-import { getCogniteSDKClient } from '../../../../../environments/cogniteSdk';
 import { ToggleVisualizer } from '../components/ToggleVisualizer/ToggleVisualizer';
 import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
 import {

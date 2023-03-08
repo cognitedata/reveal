@@ -38,7 +38,7 @@ export function UIEditor({ disabled }: UIEditorProps) {
           <Flex direction="column" gap={16}>
             {currentType && (
               <TypeDefFields
-                key={'TypeDefFields'}
+                key="TypeDefFields"
                 currentType={currentType}
                 disabled={disabled}
                 customTypesNames={customTypesNames.filter((name) => name)}

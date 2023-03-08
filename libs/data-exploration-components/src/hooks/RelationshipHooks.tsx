@@ -10,7 +10,7 @@ import {
   ResourceItem,
   convertResourceType,
 } from '@data-exploration-components/types';
-import { formatNumber } from '@data-exploration-components/utils';
+
 import { useEffect, useContext, useMemo, useState } from 'react';
 import {
   ExternalId,
@@ -374,7 +374,7 @@ export const useTaggedAnnotationsByResourceType = (
   isError: boolean;
   isLoading: boolean;
 } => {
-  const { data: file = {} } = useCdfItem<{ externalId?: string }>(
+  const { data: _file = {} } = useCdfItem<{ externalId?: string }>(
     'files',
     { id: fileId },
     { enabled }
@@ -478,6 +478,7 @@ export const useTaggedAnnotationCount = (
 export const useRelatedResourceCount = (
   resource: ResourceItem,
   tabType: ResourceType,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isAdvancedFiltersEnabled = false
 ) => {
   const isAsset = resource.type === 'asset';
@@ -570,6 +571,7 @@ export const useRelatedResourceCount = (
 
 export const useRelatedResourceCounts = (
   resource: ResourceItem,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isAdvancedFiltersEnabled = false
 ): {
   counts: { [key in ResourceType]?: number };

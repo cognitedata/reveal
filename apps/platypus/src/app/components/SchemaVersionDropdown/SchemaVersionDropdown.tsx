@@ -13,7 +13,7 @@ import {
 } from '@platypus/platypus-core';
 import { useState } from 'react';
 
-import { MenuItem, DropdownButton, LastTimeText, VersionTag } from './elements';
+import { DropdownButton, LastTimeText } from './elements';
 
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';

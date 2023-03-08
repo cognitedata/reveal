@@ -26,7 +26,7 @@ export const DefaultPreviewFilter: React.FC<React.PropsWithChildren<Props>> = ({
       <StyledInput
         variant="default"
         value={query || ''}
-        placeholder={'Search for name, description, etc...'}
+        placeholder="Search for name, description, etc..."
         onChange={handleOnChange}
       />
       <FlexGrow />

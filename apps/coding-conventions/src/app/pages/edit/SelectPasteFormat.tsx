@@ -1,5 +1,4 @@
 import { Menu } from '@cognite/cogs.js';
-import { Modal } from '../../components/Modal/Modal';
 
 export type PasteDelimiter = ' ' | '\t' | '\n' | undefined | null;
 
@@ -17,7 +16,7 @@ export const SelectPasteFormat = ({
     >
       <Menu>
         <Menu.Item
-          icon={'Close'}
+          icon="Close"
           onClick={() => {
             onPasteFormatChange(null);
           }}

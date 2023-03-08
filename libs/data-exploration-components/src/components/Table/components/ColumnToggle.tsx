@@ -115,7 +115,7 @@ export function ColumnToggle<T extends TableData = any>({
   return (
     <Dropdown
       content={
-        <Suspense fallback={'...loading'}>
+        <Suspense fallback="...loading">
           <StyledMenu>
             <SegmentedControl
               fullWidth

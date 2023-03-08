@@ -2,7 +2,7 @@ import { getQueryParameter } from '@cognite/cdf-utilities';
 import { Flex, Modal } from '@cognite/cogs.js';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
-import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
+
 import {
   useDataModel,
   useDataModelTypeDefs,
@@ -77,9 +77,6 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
   }, [clearState]);
 
   const { t } = useTranslation('DataPreview');
-  const doesSupportRead = useCapabilities('transformationsAcl', [
-    'READ',
-  ]).isAclSupported;
 
   if (selectedTypeNameFromQuery && !selectedType) {
     const typeFromQuery = dataModelTypeDefs.types.find(

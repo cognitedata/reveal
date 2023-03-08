@@ -11,10 +11,10 @@ import {
 import { TIME_SELECT } from '@data-exploration-components/containers';
 import { TimeseriesChart } from '..';
 import { Body } from '@cognite/cogs.js';
-import { ColumnDef, Row } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import isEmpty from 'lodash/isEmpty';
-import { ResourceTableColumns, SubRowMatchingLabel } from '../../../components';
+import { ResourceTableColumns } from '../../../components';
 import {
   InternalTimeseriesDataWithMatchingLabels,
   useTimeseriesMetadataKeys,

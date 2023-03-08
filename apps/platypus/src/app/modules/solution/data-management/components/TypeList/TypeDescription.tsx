@@ -1,8 +1,6 @@
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import useSelector from '@platypus-app/hooks/useSelector';
 
-import { usePublishedRowsCountMapByType } from '../../hooks/usePublishedRowsCountMapByType';
-
 import { Detail } from '@cognite/cogs.js';
 import * as S from './elements';
 import { useManualPopulationFeatureFlag } from '@platypus-app/flags';

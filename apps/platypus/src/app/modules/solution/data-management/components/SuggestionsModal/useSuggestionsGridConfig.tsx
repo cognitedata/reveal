@@ -25,7 +25,7 @@ const CELL_STYLE = {
 };
 
 export const useSuggestionsGridConfig = () => {
-  const { t } = useTranslation('SuggestionsTable');
+  useTranslation('SuggestionsTable');
 
   const getGridConfig = useCallback(
     ({

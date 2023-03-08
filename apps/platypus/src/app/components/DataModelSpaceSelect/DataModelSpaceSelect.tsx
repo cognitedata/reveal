@@ -23,7 +23,7 @@ export type DataModelSpaceSelectProps = {
 export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
   const { t } = useTranslation('DataModelSpaceSelect');
   const isFDMV3 = isFDMv3();
-  const [userCanCreateSpace, setUserCanCreateSpace] = useState(true);
+  const [userCanCreateSpace] = useState(true);
 
   const { data: spaces, isFetching: isSpacesLoading, error } = useSpaces();
 
@@ -61,7 +61,7 @@ export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
           wrapped
           position="bottom"
           content={
-            <span key={'space_title_tooltip_content_ctr'}>
+            <span key="space_title_tooltip_content_ctr">
               {t(
                 'space_title_tooltip_text',
                 'All data models and data must belong to a space. For each space, you can grant read and write access to the data, the data model only, or both.'

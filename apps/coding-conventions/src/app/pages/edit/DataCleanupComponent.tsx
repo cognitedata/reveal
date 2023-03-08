@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Button, Menu } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { memoize } from 'lodash';
 import React, { useEffect } from 'react';
 import { useTable } from 'react-table';
@@ -331,7 +331,7 @@ export function Table({
     }
   }, [selectedStartId]);
 
-  const handlePointerUp = (e: any) => {
+  const handlePointerUp = (_e: any) => {
     setSelectedStartId('');
   };
 
@@ -350,7 +350,7 @@ export function Table({
     setLastVisitedCellId(e.target.id);
   };
 
-  const handlePointerLeave = (e: any) => {
+  const handlePointerLeave = (_e: any) => {
     if (selectedStartId === '') {
       return;
     }
@@ -390,7 +390,7 @@ export function Table({
             )}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {rows.map((row, i: any) => {
+            {rows.map((row, _i: any) => {
               prepareRow(row);
               return (
                 <tr {...row.getRowProps()}>

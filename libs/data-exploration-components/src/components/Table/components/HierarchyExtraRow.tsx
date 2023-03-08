@@ -22,12 +22,12 @@ export const HierarchyExtraRow = <
       key={`${row.id}-extra`}
       id={`${row.id}-extra`}
       onClick={() => onAssetSeeMoreClicked(row.original)}
-      className={'extra-row'}
+      className="extra-row"
     >
       <SeeMoreWrapper depth={row.depth} canExpand={row.getCanExpand()}>
         <SpanWrapper>
-          <StyledSpan>{`View full hierarchy`}</StyledSpan>
-          <Icon size={12} type={'ArrowRight'} />
+          <StyledSpan>View full hierarchy</StyledSpan>
+          <Icon size={12} type="ArrowRight" />
         </SpanWrapper>
       </SeeMoreWrapper>
     </Tr>

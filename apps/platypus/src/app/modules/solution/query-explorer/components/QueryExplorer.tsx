@@ -1,9 +1,7 @@
 import { useExplorerPlugin } from '@graphiql/plugin-explorer';
-import { Notification } from '@platypus-app/components/Notification/Notification';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { StorageProviderType } from '@platypus/platypus-core';
 import GraphiQL from 'graphiql';
 import {
@@ -30,7 +28,6 @@ export const QueryExplorer = ({
   space,
   defaultQuery,
 }: QueryExplorerType) => {
-  const { t } = useTranslation('SolutionQueryExplorer');
   const localStorageProvider = useInjection(
     TOKENS.storageProviderFactory
   ).getProvider(StorageProviderType.localStorage);

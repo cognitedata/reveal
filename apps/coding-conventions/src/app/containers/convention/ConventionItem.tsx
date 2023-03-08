@@ -1,6 +1,6 @@
-import { Button, Flex, SegmentedControl } from '@cognite/cogs.js';
+import { Flex, SegmentedControl } from '@cognite/cogs.js';
 import { useState } from 'react';
-import styled from 'styled-components';
+
 import { AbbreviationTable } from '../../components/Table/AbbreviationTable';
 import { Convention, TagTypes } from '../../types';
 
@@ -38,9 +38,3 @@ export const ConventionItem: React.FC<Props> = ({
     </Flex>
   );
 };
-
-const SaveButton = styled(Button)`
-  width: 100px;
-  display: flex;
-  align-self: flex-end;
-`;

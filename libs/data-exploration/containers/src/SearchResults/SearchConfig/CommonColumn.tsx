@@ -36,7 +36,7 @@ export const CommonColumn = ({
   return (
     <CommonColumnWrapper>
       <CommonWrapper direction="column">
-        <ColumnHeader>{'Common'}</ColumnHeader>
+        <ColumnHeader>Common</ColumnHeader>
         {commonColumns.map((column) => {
           const checkedColumnsLength = data.filter(
             (item) =>
