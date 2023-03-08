@@ -23,3 +23,5 @@ export type Filter = {
 export const SOURCE_TYPES = ['timeseries', 'events'] as const;
 export type SourceType = (typeof SOURCE_TYPES)[number];
 export type TargetType = 'assets';
+
+export type API = SourceType | TargetType;

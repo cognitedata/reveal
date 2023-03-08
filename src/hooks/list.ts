@@ -3,14 +3,14 @@ import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
 
 import { useQuery, UseQueryResult, QueryKey } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { RawCogniteEvent, RawTimeseries, SourceType } from 'types/api';
+import { API, RawAsset, RawCogniteEvent, RawTimeseries } from 'types/api';
 import { getList, ListParams } from './api';
 
 type UseQParam = Pick<ListParams, 'advancedFilter' | 'filter' | 'limit'>;
 
 type PartitionCount = number;
 const getUseListKey = (
-  api: SourceType,
+  api: API,
   partitions: PartitionCount,
   opts: UseQParam
 ): QueryKey => [api, partitions, 'list', opts];
@@ -36,7 +36,7 @@ export function useList(
   opts?: Opts
 ): UseQueryResult<RawTimeseries[], CogniteError>;
 export function useList(
-  api: SourceType,
+  api: API,
   partitions: PartitionCount,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
@@ -45,7 +45,7 @@ export function useList(
   | UseQueryResult<RawCogniteEvent[], CogniteError>;
 
 export function useList(
-  api: SourceType,
+  api: API,
   partitions: PartitionCount,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
