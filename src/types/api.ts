@@ -1,4 +1,4 @@
-import { CogniteEvent, InternalId, Timeseries } from '@cognite/sdk';
+import { Asset, CogniteEvent, InternalId, Timeseries } from '@cognite/sdk';
 
 export type RawTimeseries = Omit<
   Timeseries,
@@ -12,6 +12,11 @@ export type RawCogniteEvent = Omit<
   CogniteEvent,
   'lastUpdatedTime' | 'createdTime'
 > & {
+  lastUpdatedTime: number;
+  createdTime: number;
+};
+
+export type RawAsset = Omit<Asset, 'lastUpdatedTime' | 'createdTime'> & {
   lastUpdatedTime: number;
   createdTime: number;
 };

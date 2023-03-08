@@ -30,19 +30,18 @@ export function useList(
 ): UseQueryResult<RawCogniteEvent[], CogniteError>;
 
 export function useList(
+  api: 'assets',
+  partitions: PartitionCount,
+  { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
+  opts?: Opts
+): UseQueryResult<RawAsset[], CogniteError>;
+
+export function useList(
   api: 'timeseries',
   partitions: PartitionCount,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawTimeseries[], CogniteError>;
-export function useList(
-  api: API,
-  partitions: PartitionCount,
-  { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
-  opts?: Opts
-):
-  | UseQueryResult<RawTimeseries[], CogniteError>
-  | UseQueryResult<RawCogniteEvent[], CogniteError>;
 
 export function useList(
   api: API,
@@ -51,7 +50,18 @@ export function useList(
   opts?: Opts
 ):
   | UseQueryResult<RawTimeseries[], CogniteError>
-  | UseQueryResult<RawCogniteEvent[], CogniteError> {
+  | UseQueryResult<RawCogniteEvent[], CogniteError>
+  | UseQueryResult<RawAsset[], CogniteError>;
+
+export function useList(
+  api: API,
+  partitions: PartitionCount,
+  { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
+  opts?: Opts
+):
+  | UseQueryResult<RawTimeseries[], CogniteError>
+  | UseQueryResult<RawCogniteEvent[], CogniteError>
+  | UseQueryResult<RawAsset[], CogniteError> {
   const sdk = useSDK();
   return useQuery(
     getUseListKey(api, partitions, { limit, filter, advancedFilter }),
