@@ -15,7 +15,7 @@ export default function RootList() {
   return (
     <ListWrapper>
       <Title level={3}>{t('entity-matching-pipelines')}</Title>
-      <Link to={createLink(`/${subAppPath}/quick-match`)}>
+      <Link to={createLink(`/${subAppPath}/quick-match/create/select-sources`)}>
         {t('quick-match')}
       </Link>
       <Link to={createLink(`/${subAppPath}/create`)}>

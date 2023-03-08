@@ -1,25 +1,18 @@
 import { Flex, Icon, Title, Tooltip } from '@cognite/cogs.js';
 
 import { useTranslation } from 'common';
-import {
-  QuickMatchStep,
-  useQuickMatchContext,
-} from 'context/QuickMatchContext';
+import { QuickMatchStep } from 'context/QuickMatchContext';
 
-export default function QuickMatchTitle() {
+type QuickMatchTitleProps = {
+  step: QuickMatchStep;
+};
+
+export default function QuickMatchTitle({ step }: QuickMatchTitleProps) {
   const { t } = useTranslation();
-  const { step } = useQuickMatchContext();
-
-  const titles: Record<QuickMatchStep, string> = {
-    sourceSelect: t('title-select-entities'),
-    targetSelect: t('title-select-assets'),
-    modelParams: t('title-configure-model'),
-    viewModel: t('title-view-model-result'),
-  };
 
   return (
     <Flex alignItems="center" gap={8}>
-      <Title level={3}>{titles[step]}</Title>
+      <Title level={3}>{t(`title-${step}`)}</Title>
       <Tooltip content={t('select-data-tooltip')} placement="bottom">
         <Icon type="InfoFilled" />
       </Tooltip>

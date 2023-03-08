@@ -1,12 +1,22 @@
-import { Key, useMemo, useState } from 'react';
-import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
-
+import { Key, useCallback, useMemo, useState } from 'react';
+import {
+  ColumnType,
+  notification,
+  RowSelectionType,
+  Table,
+} from '@cognite/cdf-utilities';
+import { Button, Dropdown, Loader } from '@cognite/cogs.js';
 import PipelineName from 'components/pipeline-name/PipelineName';
 import { stringSorter } from 'common/utils';
 import { useTranslation } from 'common';
-import { Pipeline, useEMPipelines } from 'hooks/contextualization-api';
+import {
+  Pipeline,
+  useDeleteEMPipeline,
+  useDuplicateEMPipeline,
+  useEMPipelines,
+} from 'hooks/contextualization-api';
 import { PipelineTableTypes } from 'types/types';
+import PipelineActionsMenu from 'components/pipeline-actions-menu/PipelineActionsMenu';
 
 type PipelineListTableRecord = { key: string } & Pick<
   Pipeline,
@@ -18,9 +28,11 @@ type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
 };
 
 const PipelineTable = (): JSX.Element => {
-  const { data, isInitialLoading } = useEMPipelines();
-  const { t } = useTranslation();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
+  const { data, isInitialLoading } = useEMPipelines();
+  const { mutate: deletePipeline } = useDeleteEMPipeline();
+  const { mutate: duplicatePipeline } = useDuplicateEMPipeline();
+  const { t } = useTranslation();
 
   const handleToggleCheckbox = (
     _: Key[],
@@ -38,6 +50,62 @@ const PipelineTable = (): JSX.Element => {
   const dataSource = useMemo(
     () => data?.map((a) => ({ ...a, key: a.id.toString() })) || [],
     [data]
+  );
+
+  const handleDuplicate = useCallback(
+    (pipeline: Pipeline) => {
+      duplicatePipeline(
+        {
+          id: pipeline.id,
+          name: pipeline.name,
+          description: pipeline.description,
+          sources: pipeline.sources,
+          targets: pipeline.targets,
+        },
+        {
+          onSuccess: (_: unknown, pipeline) => {
+            notification.success({
+              message: t('notification-success'),
+              description: t('pipeline-notification-duplicate-success', {
+                name: pipeline?.name,
+              }),
+            });
+          },
+          onError: () => {
+            notification.error({
+              message: t('error'),
+              description: t('pipeline-notification-duplicate-error'),
+            });
+          },
+        }
+      );
+    },
+    [duplicatePipeline, t]
+  );
+
+  const handleDeletePipeline = useCallback(
+    (id: number) => {
+      deletePipeline(
+        { id },
+        {
+          onSuccess: () => {
+            notification.success({
+              message: t('notification-success'),
+              description: t('pipeline-notification-delete-success', {
+                name: id,
+              }),
+            });
+          },
+          onError: () => {
+            notification.error({
+              message: t('error'),
+              description: t('pipeline-notification-delete-error'),
+            });
+          },
+        }
+      );
+    },
+    [deletePipeline, t]
   );
 
   const columns: PipelineListTableRecordCT[] = useMemo(
@@ -63,8 +131,34 @@ const PipelineTable = (): JSX.Element => {
         key: 'owner',
         sorter: (a: any, b: any) => stringSorter(a?.owner, b?.owner, 'owner'),
       },
+      {
+        title: '',
+        dataIndex: '',
+        key: 'run',
+        width: '52px',
+        render: (record) => {
+          return (
+            <Dropdown
+              content={
+                <PipelineActionsMenu
+                  onDuplicatePipeline={() => handleDuplicate(record)}
+                  id={record.id}
+                  onDeletePipeline={() => handleDeletePipeline(record.id)}
+                />
+              }
+              key={`dropdown-${record.id}`}
+            >
+              <Button
+                aria-label="Options"
+                icon="EllipsisHorizontal"
+                type="ghost"
+              />
+            </Dropdown>
+          );
+        },
+      },
     ],
-    [t]
+    [handleDeletePipeline, handleDuplicate, t]
   );
 
   if (isInitialLoading) {
