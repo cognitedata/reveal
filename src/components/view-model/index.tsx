@@ -26,10 +26,6 @@ export default function ViewModel() {
   const queryClient = useQueryClient();
   const {
     sourceType,
-    modelId,
-    setModelId,
-    jobId,
-    setJobId,
     allSources,
     sourceFilter,
     sourcesList,
@@ -41,6 +37,9 @@ export default function ViewModel() {
     unmatchedOnly,
   } = useQuickMatchContext();
   const [modelRefetchInt, setModelRefetchInt] = useState<number | undefined>();
+
+  const [modelId, setModelId] = useState<number>();
+  const [jobId, setJobId] = useState<number>();
 
   const { mutateAsync: buildModel, isLoading } = useCreateEMModel();
 

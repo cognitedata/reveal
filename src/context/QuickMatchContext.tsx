@@ -86,12 +86,6 @@ type QuickMatchContext = {
 
   matchFields: ModelMapping;
   setModelFieldMapping: Dispatch<SetStateAction<ModelMapping>>;
-
-  modelId?: number;
-  setModelId: Dispatch<SetStateAction<number | undefined>>;
-
-  jobId?: number;
-  setJobId: Dispatch<SetStateAction<number | undefined>>;
 };
 
 export const QuickMatchContext = createContext<QuickMatchContext>({
@@ -146,12 +140,6 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   },
   matchFields: [{ source: 'name', target: 'name' }],
   setModelFieldMapping: function (_: SetStateAction<ModelMapping>): void {
-    throw new Error('Function not implemented.');
-  },
-  setModelId: function (_: SetStateAction<number | undefined>): void {
-    throw new Error('Function not implemented.');
-  },
-  setJobId: function (_: SetStateAction<number | undefined>): void {
     throw new Error('Function not implemented.');
   },
 
@@ -224,14 +212,6 @@ export const QuickMatchContextProvider = ({
     },
     'targetFilter'
   );
-  const [modelId, setModelId] = useContextState<number | undefined>(
-    undefined,
-    'modelId'
-  );
-  const [jobId, setJobId] = useContextState<number | undefined>(
-    undefined,
-    'jobId'
-  );
 
   const [modelFieldMapping, setModelFieldMapping] =
     useContextState<ModelMapping>([{ source: 'name', target: 'name' }]);
@@ -297,10 +277,6 @@ export const QuickMatchContextProvider = ({
         setSourceType,
         matchFields: modelFieldMapping,
         setModelFieldMapping,
-        modelId,
-        setModelId,
-        jobId,
-        setJobId,
         unmatchedOnly,
         setUnmatchedOnly,
         targetFilter,
