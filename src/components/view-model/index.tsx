@@ -46,7 +46,7 @@ export default function ViewModel({}: {}) {
   const targetState = queryClient.getQueryState(getQMTargetDownloadKey());
 
   const advancedFilter = useMemo(
-    () => getAdvancedFilter({ sourceType, excludeMatched: unmatchedOnly }),
+    () => getAdvancedFilter({ api: sourceType, excludeMatched: unmatchedOnly }),
     [unmatchedOnly, sourceType]
   );
 

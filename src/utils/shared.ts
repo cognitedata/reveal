@@ -9,7 +9,7 @@ import {
   useState as reactUseState,
 } from 'react';
 import { styleScope } from 'styles/styleScope';
-import { SourceType } from 'types/api';
+import { API } from 'types/api';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope);
@@ -96,17 +96,17 @@ export const bulkDownloadStatus = ({
 };
 
 const searchFields: Record<string, string[]> = {
-  defaultFields: ['query'],
+  defaultFields: ['name', 'description'],
   events: ['description'],
   files: ['name'],
 };
 
 export const getAdvancedFilter = ({
-  sourceType,
+  api: sourceType,
   excludeMatched,
   query,
 }: {
-  sourceType: SourceType;
+  api: API;
   excludeMatched?: boolean;
   query?: string | null;
 }) => {

@@ -62,7 +62,7 @@ export default function ResourceSelectionTable({}: Props) {
   const advancedFilter = useMemo(
     () =>
       getAdvancedFilter({
-        sourceType,
+        api: sourceType,
         excludeMatched: unmatchedOnly,
         query,
       }),
