@@ -27,7 +27,7 @@ const PipelineTable = (): JSX.Element => {
   const [searchParams, setSearchParams] = useSearchParams('');
   const { data, isInitialLoading } = useEMPipelines();
   const { t } = useTranslation();
-  const getSearchParams = searchParams.get(SOURCE_TABLE_QUERY_KEY) || '';
+  const searchParam = searchParams.get(SOURCE_TABLE_QUERY_KEY) || '';
 
   const handleToggleCheckbox = (
     _: Key[],
@@ -74,15 +74,15 @@ const PipelineTable = (): JSX.Element => {
     [t]
   );
 
-  const pipelinesList = useMemo(() => {
-    const filteredData = dataSource?.filter((pipeline) => {
-      const pipelineNameOrId = pipeline?.name
-        ? pipeline?.name
-        : pipeline?.id.toString();
-      return stringContains(pipelineNameOrId, getSearchParams);
-    });
-    return getSearchParams ? filteredData : dataSource;
-  }, [dataSource, getSearchParams]);
+  const pipelinesList = useMemo(
+    () =>
+      !!searchParam
+        ? dataSource?.filter((pipeline) =>
+            stringContains(pipeline.name || pipeline.id.toString(), searchParam)
+          )
+        : dataSource,
+    [dataSource, searchParam]
+  );
 
   if (isInitialLoading) {
     return <Loader />;
