@@ -1,5 +1,6 @@
 import { SecondaryTopbar } from '@cognite/cdf-utilities';
 import { Body as _Body, Button, Colors, Flex } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import ViewModel from 'components/view-model';
@@ -9,9 +10,7 @@ import ResourceSelectionTable from 'components/resource-selector-table';
 import TargetSelectionTable from 'components/target-selector-table';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
 
-import styled from 'styled-components';
-
-export default function QuickMatch() {
+const QuickMatchCreate = (): JSX.Element => {
   const { t } = useTranslation();
   const { step, hasNextStep, hasPrevStep, popStep, pushStep } =
     useQuickMatchContext();
@@ -43,7 +42,7 @@ export default function QuickMatch() {
       </BottomRow>
     </Flex>
   );
-}
+};
 
 const Body = styled(_Body)`
   padding: 12px;
@@ -58,3 +57,5 @@ const Body = styled(_Body)`
 const BottomRow = styled(Flex)`
   padding: 8px;
 `;
+
+export default QuickMatchCreate;

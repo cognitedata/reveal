@@ -1,7 +1,11 @@
-import { Flex } from '@cognite/cogs.js';
+import { useEffect, useMemo, useState } from 'react';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Body, Flex, Infobox } from '@cognite/cogs.js';
 import { useQueryClient } from '@tanstack/react-query';
+import { Navigate, useParams } from 'react-router-dom';
+
 import { useTranslation } from 'common';
-import EntityMatchingResult from 'components/em-result';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
 import {
@@ -10,14 +14,14 @@ import {
   useCreateEMModel,
   useCreateEMPredictionJob,
   useEMModel,
-  useEMModelPredictResults,
 } from 'hooks/contextualization-api';
 import { useInfiniteList } from 'hooks/infiniteList';
-
-import { useEffect, useMemo, useState } from 'react';
 import { bulkDownloadStatus, getAdvancedFilter } from 'utils';
 
-export default function ViewModel({}: {}) {
+export default function ViewModel() {
+  const { subAppPath } = useParams<{
+    subAppPath: string;
+  }>();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const {
@@ -37,9 +41,6 @@ export default function ViewModel({}: {}) {
     unmatchedOnly,
   } = useQuickMatchContext();
   const [modelRefetchInt, setModelRefetchInt] = useState<number | undefined>();
-  const [predictionRefetchInt, setPredictionRefetchInt] = useState<
-    number | undefined
-  >();
 
   const { mutateAsync: buildModel, isLoading } = useCreateEMModel();
 
@@ -134,14 +135,6 @@ export default function ViewModel({}: {}) {
 
   const modelStatus = model?.status.toLowerCase();
 
-  const { data: predictions, status: predictResultStatus } =
-    useEMModelPredictResults(jobId!, {
-      enabled: !!jobId,
-      refetchInterval: predictionRefetchInt,
-    });
-
-  const predictStatus = predictions?.status.toLowerCase();
-
   useEffect(() => {
     if (!modelStatus) {
       return;
@@ -162,30 +155,43 @@ export default function ViewModel({}: {}) {
     }
   }, [createPredictJob, model?.id, modelStatus]);
 
-  useEffect(() => {
-    if (!predictStatus) {
-      return;
-    }
-    if (IN_PROGRESS_EM_STATES.includes(predictStatus)) {
-      setPredictionRefetchInt(1000);
-    } else {
-      setPredictionRefetchInt(undefined);
-    }
-  }, [predictStatus, predictionRefetchInt]);
+  if (createPredictStatus === 'success') {
+    return (
+      <Navigate
+        replace
+        to={createLink(`/${subAppPath}/quick-match/results/${jobId}`)}
+      />
+    );
+  }
 
   return (
     <Flex direction="column">
-      <Flex gap={12}>
-        <>{t('sources', { count: sources?.length || 0 })}</>
-        <QueryStatusIcon status={sourceStatus} />)
-        <QueryStatusIcon status={targetState?.status} />
-        <QueryStatusIcon status={createModelStatus} />
-        <QueryStatusIcon status={createPredictStatus} />
-        <QueryStatusIcon status={predictResultStatus} />
-      </Flex>
-      {predictions?.status === 'Completed' && !!predictions?.items && (
-        <EntityMatchingResult predictions={predictions.items} />
-      )}
+      <Infobox type="neutral" title={t('do-not-leave-the-page-quick-match')}>
+        {sourceStatus && (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={sourceStatus} />
+            <Body level={2}>{t(`source-data-fetch-${sourceStatus}`)}</Body>
+          </Flex>
+        )}
+        {targetState?.status && (
+          <Flex alignItems="center" gap={8}>
+            <QueryStatusIcon status={targetState?.status} />
+            <Body level={2}>
+              {t(`target-data-fetch-${targetState?.status}`)}
+            </Body>
+          </Flex>
+        )}
+        <Flex alignItems="center" gap={8}>
+          <QueryStatusIcon status={createModelStatus} />
+          <Body level={2}>{t(`create-model-${createModelStatus}`)}</Body>
+        </Flex>
+        <Flex alignItems="center" gap={8}>
+          <QueryStatusIcon status={createPredictStatus} />
+          <Body level={2}>
+            {t(`create-prediction-job-${createPredictStatus}`)}
+          </Body>
+        </Flex>
+      </Infobox>
     </Flex>
   );
 }
