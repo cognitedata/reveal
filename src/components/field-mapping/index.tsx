@@ -7,12 +7,9 @@ import styled from 'styled-components';
 import { useTranslation } from 'common';
 import { QUICK_MATCH_CONFIGURE_MODEL_PAGE_WIDTH } from 'common/constants';
 import ResourceTypei18n from 'components/resource-type-i18n';
-import {
-  ModelMapping,
-  SourceType,
-  TargetType,
-} from 'context/QuickMatchContext';
+import { ModelMapping } from 'context/QuickMatchContext';
 import { useAggregateProperties } from 'hooks/aggregates';
+import { SourceType, TargetType } from 'types/api';
 
 const { Option } = Select;
 

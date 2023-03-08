@@ -12,10 +12,10 @@ import {
   useEMModel,
   useEMModelPredictResults,
 } from 'hooks/contextualization-api';
-import { useList } from 'hooks/list';
+import { useInfiniteList } from 'hooks/infiniteList';
 
 import { useEffect, useMemo, useState } from 'react';
-import { bulkDownloadStatus, getUnmatchedFilter } from 'utils';
+import { bulkDownloadStatus, getAdvancedFilter } from 'utils';
 
 export default function ViewModel({}: {}) {
   const { t } = useTranslation();
@@ -45,11 +45,10 @@ export default function ViewModel({}: {}) {
 
   const targetState = queryClient.getQueryState(getQMTargetDownloadKey());
 
-  const advancedFilter = useMemo(() => {
-    if (unmatchedOnly) {
-      return getUnmatchedFilter(sourceType);
-    }
-  }, [unmatchedOnly, sourceType]);
+  const advancedFilter = useMemo(
+    () => getAdvancedFilter({ sourceType, excludeMatched: unmatchedOnly }),
+    [unmatchedOnly, sourceType]
+  );
 
   const {
     data: sourcePages,
@@ -59,7 +58,7 @@ export default function ViewModel({}: {}) {
     isFetching: sourceFetching,
     isError: sourceError,
     isFetched,
-  } = useList(
+  } = useInfiniteList(
     sourceType,
     10,
     { advancedFilter, filter: sourceFilter, limit: 10000 },

@@ -6,6 +6,7 @@ import {
   SetStateAction,
   useContext,
 } from 'react';
+import { Filter, SourceType } from 'types/api';
 import { useContextState } from 'utils';
 
 export type QuickMatchStep =
@@ -24,14 +25,6 @@ const QuickMatchStepsOrderIndex: Record<number, QuickMatchStep> =
     (accl, [k, v]) => ({ ...accl, [v]: k }),
     {}
   );
-
-export type Filter = {
-  dataSetIds: InternalId[];
-};
-
-export const SOURCE_TYPES = ['timeseries', 'events'] as const;
-export type SourceType = (typeof SOURCE_TYPES)[number];
-export type TargetType = 'assets';
 
 export type EMFeatureType =
   | 'simple'

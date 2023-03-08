@@ -7,10 +7,11 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query';
 import { PropertyAggregate } from 'common/types';
-import { Filter, SourceType, TargetType } from 'context/QuickMatchContext';
+
 import { fetchProperties as fetchTSProperties } from './timeseries';
 import { fetchProperties as fetchEventProperties } from './events';
 import { fetchProperties as fetchAssetProperties } from './assets';
+import { Filter, SourceType, TargetType } from 'types/api';
 
 type T = SourceType | TargetType;
 
@@ -77,6 +78,9 @@ export const useAggregate = (
         .post<{ items: { count: number }[] }>(
           `/api/v1/projects/${sdk.project}/${params.type}/aggregate`,
           {
+            headers: {
+              'cdf-version': 'alpha',
+            },
             data: {
               filter: params.filter,
               advancedFilter: params.advancedFilter,
