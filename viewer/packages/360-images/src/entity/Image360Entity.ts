@@ -61,7 +61,7 @@ export class Image360Entity implements Image360 {
   /**
    * Loads the 360 image (6 faces) into the visualization object.
    */
-  public async load360Image(abortSignal?: AbortSignal, requestRedraw?: () => void): Promise<void> {
+  public async load360Image(abortSignal?: AbortSignal): Promise<void | (() => Promise<void>)> {
     const lowResolutionFaces = await this._imageProvider
       .getLowResolution360ImageFiles(this._image360Metadata.faceDescriptors)
       .catch(() => {
@@ -78,10 +78,10 @@ export class Image360Entity implements Image360 {
     } else {
       await this._image360VisualzationBox.loadImages(lowResolutionFaces);
 
-      fullResolutionFaces.then(async faces => {
+      return async () => {
+        const faces = await fullResolutionFaces;
         await this._image360VisualzationBox.setFaceMaterials(faces);
-        if (requestRedraw) requestRedraw();
-      });
+      };
     }
   }
 

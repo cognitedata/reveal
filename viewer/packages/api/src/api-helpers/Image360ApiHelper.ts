@@ -44,7 +44,7 @@ export class Image360ApiHelper {
     updateHoverStateOnRender: () => void;
   };
 
-  private readonly _debouncePreLoad = debounce(entity => this._image360Facade.preload(entity), 300, { leading: true });
+  private readonly _debouncePreLoad = debounce(entity => this.startPreload(entity), 300, { leading: true });
   private readonly _requestRedraw: () => void;
   private readonly _requestTransitionSafeRedraw: () => void;
   private readonly _activeCameraManager: ProxyCameraManager;
@@ -132,13 +132,13 @@ export class Image360ApiHelper {
   }
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
-    if (this._interactionState.currentImage360Entered === image360Entity) {
+    if (this._interactionState.image360SelectedForEntry === image360Entity) {
       this._requestRedraw();
       return;
     }
     this._interactionState.image360SelectedForEntry = image360Entity;
 
-    await this._image360Facade.preload(image360Entity, true);
+    await this.startPreload(image360Entity, true);
 
     if (this._interactionState.image360SelectedForEntry !== image360Entity) {
       return;
@@ -175,6 +175,14 @@ export class Image360ApiHelper {
     this._image360Facade.collections
       .filter(imageCollection => imageCollection.image360Entities.includes(image360Entity))
       .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
+  }
+
+  private async startPreload(image360Entity: Image360Entity, lockDownload = false): Promise<void> {
+    const onFullResDownloadComplete = await this._image360Facade.preload(image360Entity, lockDownload);
+    if (onFullResDownloadComplete)
+      onFullResDownloadComplete()
+        .catch(() => {})
+        .then(() => this._requestTransitionSafeRedraw());
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {

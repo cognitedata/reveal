@@ -11,7 +11,7 @@ import { Log } from '@reveal/logger';
 
 export type DownloadRequest = {
   entity: Image360Entity;
-  load360Image: Promise<void>;
+  load360Image: Promise<void | (() => Promise<void>)>;
   abort: () => void;
 };
 
@@ -40,7 +40,7 @@ export class Image360LoadingCache {
     this._inProgressDownloads = [];
   }
 
-  public async cachedPreload(entity: Image360Entity, lockDownload = false): Promise<void> {
+  public async cachedPreload(entity: Image360Entity, lockDownload = false): Promise<void | (() => Promise<void>)> {
     if (this._loaded360Images.includes(entity)) {
       return;
     }
@@ -51,7 +51,8 @@ export class Image360LoadingCache {
 
     const inProgressDownload = this.getDownloadInProgress(entity);
     if (inProgressDownload !== undefined) {
-      return inProgressDownload.load360Image;
+      await inProgressDownload.load360Image;
+      return;
     }
 
     if (this._inProgressDownloads.length === this._downloadCacheSize) {
@@ -70,11 +71,12 @@ export class Image360LoadingCache {
         return Promise.reject();
       })
       .then(
-        () => {
+        onFullResDownloadComplete => {
           if (this._loaded360Images.length === this._imageCacheSize) {
             this.purgeLastRecentlyUsedInvisibleEntity();
           }
           this._loaded360Images.unshift(entity);
+          return onFullResDownloadComplete;
         },
         () => {}
       )
@@ -88,7 +90,8 @@ export class Image360LoadingCache {
       });
 
     this._inProgressDownloads.push({ entity, load360Image, abort });
-    await load360Image;
+    const onFullResDownloadComplete = await load360Image;
+    return onFullResDownloadComplete;
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
