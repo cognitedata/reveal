@@ -158,9 +158,11 @@ const AllTabContainer = styled.div`
   height: 100%;
   overflow-y: auto;
   grid-template-columns: 1fr 1fr;
+  grid-auto-rows: max-content;
 
   & > * {
-    min-height: 404px;
+    min-height: 365px;
+    height: 100%;
     min-width: 300px;
     width: 100%;
   }

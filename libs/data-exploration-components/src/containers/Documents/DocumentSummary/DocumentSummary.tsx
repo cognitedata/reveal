@@ -10,7 +10,6 @@ import {
 
 import {
   ResourceTableColumns,
-  SubRowMatchingLabel,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration-components/components/Table';
@@ -30,6 +29,7 @@ import { Body } from '@cognite/cogs.js';
 import { TimeDisplay } from '@data-exploration-components/components';
 import { useGetHiddenColumns } from '@data-exploration-components/hooks';
 import { Asset } from '@cognite/sdk';
+import { SubCellMatchingLabels } from '@data-exploration-components/components/Table/components/SubCellMatchingLabel';
 
 export const DocumentSummary = ({
   query = '',
@@ -72,18 +72,14 @@ export const DocumentSummary = ({
               fileName: row.original.name || '',
               file: row.original,
             };
-            return (
-              <DocumentNamePreview {...fileNamePreviewProps} query={query} />
-            );
+            return <DocumentNamePreview {...fileNamePreviewProps} query="" />;
           },
         },
         {
           accessorKey: 'content',
           header: 'Content',
           cell: ({ row }: { row: Row<InternalDocument> }) => {
-            return (
-              <DocumentContentPreview document={row.original} query={query} />
-            );
+            return <DocumentContentPreview document={row.original} query="" />;
           },
         },
         {
@@ -155,7 +151,7 @@ export const DocumentSummary = ({
             onAllResultsClick={onAllResultsClick}
           />
         }
-        renderRowSubComponent={SubRowMatchingLabel}
+        renderCellSubComponent={SubCellMatchingLabels}
         enableColumnResizing={false}
         onRowClick={onRowClick}
       />

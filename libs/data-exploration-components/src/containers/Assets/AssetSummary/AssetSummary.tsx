@@ -51,9 +51,9 @@ export const AssetSummary = ({
   const columns = useMemo(
     () =>
       [
-        Table.Columns.name(query),
-        Table.Columns.description(query),
-        Table.Columns.externalId(query),
+        Table.Columns.name(),
+        Table.Columns.description(),
+        Table.Columns.externalId(),
         Table.Columns.rootAsset(onRowClick),
         {
           accessorKey: 'id',
@@ -84,7 +84,6 @@ export const AssetSummary = ({
       <Table<InternalAssetDataWithMatchingLabels>
         id="asset-summary-table"
         columns={columns}
-        query={query}
         hiddenColumns={hiddenColumns}
         data={getSummaryCardItems(data)}
         columnSelectionLimit={2}

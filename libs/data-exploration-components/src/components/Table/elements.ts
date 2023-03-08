@@ -14,6 +14,7 @@ export const SummaryCardWrapper = styled.div`
   border: 1px solid var(--cogs-border--muted);
   display: flex;
   flex-direction: column;
+  padding-bottom: 16px;
 
   background-color: var(--cogs-surface--medium);
 `;

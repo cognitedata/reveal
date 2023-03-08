@@ -28,8 +28,6 @@ import { VerticalDivider } from '@data-exploration-components/components/Divider
 import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
 import { DATA_EXPLORATION_COMPONENT } from '@data-exploration-components/constants/metrics';
 import { ResourceTypes } from '@data-exploration-components/types';
-import { MatchingLabelsComponent } from '../../../components/Table/components/MatchingLabels';
-import { SubCellMatchingLabels } from '../../../components/Table/components/SubCellMatchingLabel';
 
 export interface DocumentSearchResultsProps {
   query?: string;
