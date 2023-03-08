@@ -820,7 +820,7 @@ __metadata:
     jest-environment-jsdom: 29.4.3
     jest-extended: 3.2.4
     jest-image-snapshot: 6.1.0
-    jest-puppeteer: 7.0.1
+    jest-puppeteer: 8.0.4
     jsdom: 21.1.0
     lodash: 4.17.21
     loglevel: 1.8.1
@@ -3133,13 +3133,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arr-union@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "arr-union@npm:3.1.0"
-  checksum: b5b0408c6eb7591143c394f3be082fee690ddd21f0fdde0a0a01106799e847f67fcae1b7e56b0a0c173290e29c6aca9562e82b300708a268bc8f88f3d6613cb9
-  languageName: node
-  linkType: hard
-
 "array-flatten@npm:1.1.1":
   version: 1.1.1
   resolution: "array-flatten@npm:1.1.1"
@@ -3818,19 +3811,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clone-deep@npm:^0.2.4":
-  version: 0.2.4
-  resolution: "clone-deep@npm:0.2.4"
-  dependencies:
-    for-own: ^0.1.3
-    is-plain-object: ^2.0.1
-    kind-of: ^3.0.2
-    lazy-cache: ^1.0.3
-    shallow-clone: ^0.1.2
-  checksum: bcf9752052130c270c47d3e1c357497354b91d682f507e0079bec5950975b3293b619d9e100d70874606d716f2376e84956b045759a09af703e1038ecad6c438
-  languageName: node
-  linkType: hard
-
 "clone-deep@npm:^4.0.1":
   version: 4.0.1
   resolution: "clone-deep@npm:4.0.1"
@@ -4111,6 +4091,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cosmiconfig@npm:^8.0.0":
+  version: 8.1.0
+  resolution: "cosmiconfig@npm:8.1.0"
+  dependencies:
+    import-fresh: ^3.2.1
+    js-yaml: ^4.1.0
+    parse-json: ^5.0.0
+    path-type: ^4.0.0
+  checksum: 78a1846acc4935ab4d928e3f768ee2ad2fddbec96377935462749206568423ff4757140ac7f2ccd1f547f86309b8448c04b26588848b5a1520f2e9741cdeecf0
+  languageName: node
+  linkType: hard
+
 "cross-env@npm:7.0.3":
   version: 7.0.3
   resolution: "cross-env@npm:7.0.3"
@@ -4325,6 +4317,13 @@ __metadata:
   version: 4.2.2
   resolution: "deepmerge@npm:4.2.2"
   checksum: a8c43a1ed8d6d1ed2b5bf569fa4c8eb9f0924034baf75d5d406e47e157a451075c4db353efea7b6bcc56ec48116a8ce72fccf867b6e078e7c561904b5897530b
+  languageName: node
+  linkType: hard
+
+"deepmerge@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "deepmerge@npm:4.3.0"
+  checksum: c7980eb5c5be040b371f1df0d566473875cfabed9f672ccc177b81ba8eee5686ce2478de2f1d0076391621cbe729e5eacda397179a59ef0f68901849647db126
   languageName: node
   linkType: hard
 
@@ -5162,10 +5161,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expect-puppeteer@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "expect-puppeteer@npm:7.0.1"
-  checksum: 998c22980753a8f86f80cb57da5cdf5c83a3ca301585149a2a7350666d6fc4db80e129aab86138892b8813639cb32cfb371575f441dc0c6690beccf970f09fb1
+"expect-puppeteer@npm:^8.0.3":
+  version: 8.0.3
+  resolution: "expect-puppeteer@npm:8.0.3"
+  checksum: 0f38e6c8683391d135327df5c355725c44bf465231a2bc71e52da01a93ce3a7c5e85fa1eaa3c4efd752572f4f5b85a7f29f8f674269567bf28b7324004a09a96
   languageName: node
   linkType: hard
 
@@ -5482,29 +5481,6 @@ __metadata:
     debug:
       optional: true
   checksum: faa66059b66358ba65c234c2f2a37fcec029dc22775f35d9ad6abac56003268baf41e55f9ee645957b32c7d9f62baf1f0b906e68267276f54ec4b4c597c2b190
-  languageName: node
-  linkType: hard
-
-"for-in@npm:^0.1.3":
-  version: 0.1.8
-  resolution: "for-in@npm:0.1.8"
-  checksum: f5bdad7811700ee6a0f96b33d72a1db966aea75a1f03c7245d147f8369305e709f53a55ee7ae8eaddcfa85c7c89bca78472be8f1bc605475ce5bb2c70f77f8da
-  languageName: node
-  linkType: hard
-
-"for-in@npm:^1.0.1":
-  version: 1.0.2
-  resolution: "for-in@npm:1.0.2"
-  checksum: 09f4ae93ce785d253ac963d94c7f3432d89398bf25ac7a24ed034ca393bf74380bdeccc40e0f2d721a895e54211b07c8fad7132e8157827f6f7f059b70b4043d
-  languageName: node
-  linkType: hard
-
-"for-own@npm:^0.1.3":
-  version: 0.1.5
-  resolution: "for-own@npm:0.1.5"
-  dependencies:
-    for-in: ^1.0.1
-  checksum: 07eb0a2e98eb55ce13b56dd11ef4fb5e619ba7380aaec388b9eec1946153d74fa734ce409e8434020557e9489a50c34bc004d55754f5863bf7d77b441d8dee8c
   languageName: node
   linkType: hard
 
@@ -6611,13 +6587,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-buffer@npm:^1.0.2, is-buffer@npm:^1.1.5":
-  version: 1.1.6
-  resolution: "is-buffer@npm:1.1.6"
-  checksum: 4a186d995d8bbf9153b4bd9ff9fd04ae75068fe695d29025d25e592d9488911eeece84eefbd8fa41b8ddcc0711058a71d4c466dcf6f1f6e1d83830052d8ca707
-  languageName: node
-  linkType: hard
-
 "is-buffer@npm:^2.0.5":
   version: 2.0.5
   resolution: "is-buffer@npm:2.0.5"
@@ -6683,13 +6652,6 @@ __metadata:
   bin:
     is-docker: cli.js
   checksum: 3fef7ddbf0be25958e8991ad941901bf5922ab2753c46980b60b05c1bf9c9c2402d35e6dc32e4380b980ef5e1970a5d9d5e5aa2e02d77727c3b6b5e918474c56
-  languageName: node
-  linkType: hard
-
-"is-extendable@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "is-extendable@npm:0.1.1"
-  checksum: 3875571d20a7563772ecc7a5f36cb03167e9be31ad259041b4a8f73f33f885441f778cee1f1fe0085eb4bc71679b9d8c923690003a36a6a5fdf8023e6e3f0672
   languageName: node
   linkType: hard
 
@@ -6811,7 +6773,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-plain-object@npm:^2.0.1, is-plain-object@npm:^2.0.4":
+"is-plain-object@npm:^2.0.4":
   version: 2.0.4
   resolution: "is-plain-object@npm:2.0.4"
   dependencies:
@@ -7097,18 +7059,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-dev-server@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "jest-dev-server@npm:7.0.1"
+"jest-dev-server@npm:^8.0.3":
+  version: 8.0.3
+  resolution: "jest-dev-server@npm:8.0.3"
   dependencies:
     chalk: ^4.1.2
     cwd: ^0.10.0
     find-process: ^1.4.7
     prompts: ^2.4.2
-    spawnd: ^7.0.0
+    spawnd: ^8.0.0
     tree-kill: ^1.2.2
     wait-on: ^7.0.1
-  checksum: 3474af6aac3c339dbe6adf195d2a394dc0bbef74b276694f09cec8883bfe2b966c7baa9e9c99bad74292b617fb693afc0620b4f9663b42d76e9c0d039ef26d12
+  checksum: 2bb4725f51fd337c26abcccc39657d595685ccfbd3f7a2d2b39ef49e779508d33d2281e35c56f7928df89783b74d4da20f4d132449b191dc89b749cd058278ce
   languageName: node
   linkType: hard
 
@@ -7205,7 +7167,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-node@npm:^29.4.1, jest-environment-node@npm:^29.4.3":
+"jest-environment-node@npm:^29.4.3":
   version: 29.4.3
   resolution: "jest-environment-node@npm:29.4.3"
   dependencies:
@@ -7219,16 +7181,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-puppeteer@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "jest-environment-puppeteer@npm:7.0.1"
+"jest-environment-puppeteer@npm:^8.0.3":
+  version: 8.0.3
+  resolution: "jest-environment-puppeteer@npm:8.0.3"
   dependencies:
     chalk: ^4.1.2
-    cwd: ^0.10.0
-    jest-dev-server: ^7.0.1
-    jest-environment-node: ^29.4.1
-    merge-deep: ^3.0.3
-  checksum: 4091455816c2dc32d00991be0358c093694d07c9d369a2483c16282bca49daa4bc0873ceb5d3d5eeba1b177b284a98aabdc8276e9ac46230d00c2e5c7187cf7c
+    cosmiconfig: ^8.0.0
+    deepmerge: ^4.3.0
+    jest-dev-server: ^8.0.3
+    jest-environment-node: ^29.4.3
+  checksum: 1fde0abdc7f9a74f9160ad6dfe3e12256c41ceeb71fb440539237e70813af8d17d1c55fe957ce03db01e90799b242058bebc3902aeca9041d38af6fba282bea4
   languageName: node
   linkType: hard
 
@@ -7440,15 +7402,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-puppeteer@npm:7.0.1":
-  version: 7.0.1
-  resolution: "jest-puppeteer@npm:7.0.1"
+"jest-puppeteer@npm:8.0.4":
+  version: 8.0.4
+  resolution: "jest-puppeteer@npm:8.0.4"
   dependencies:
-    expect-puppeteer: ^7.0.1
-    jest-environment-puppeteer: ^7.0.1
+    expect-puppeteer: ^8.0.3
+    jest-environment-puppeteer: ^8.0.3
   peerDependencies:
     puppeteer: ">=19"
-  checksum: 141181811c902f869ba3b33747f5b300fd124fb6ecec6b26c560143cb01f92cbf8ad3ad34c0d13d41d86b390e1065e568e5800eafaa06d9560d2c62cf11f901a
+  checksum: 23895a8aae937d0a255f2112adb07d7bd420539cc92ce2807cd3f2089e1299e071e5a648882cd93bd8933101404dbb86c0ccb738574788c1ad5e530309e6ea54
   languageName: node
   linkType: hard
 
@@ -7924,24 +7886,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kind-of@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "kind-of@npm:2.0.1"
-  dependencies:
-    is-buffer: ^1.0.2
-  checksum: 043df2943e113bca612d26224947395e9673bb3808d94aed30e47fbf0bafd618e2a29ff0ca2d5498f64332c320fff07f0aa9d6edfc20906a93c1b8792f11759c
-  languageName: node
-  linkType: hard
-
-"kind-of@npm:^3.0.2":
-  version: 3.2.2
-  resolution: "kind-of@npm:3.2.2"
-  dependencies:
-    is-buffer: ^1.1.5
-  checksum: e898df8ca2f31038f27d24f0b8080da7be274f986bc6ed176f37c77c454d76627619e1681f6f9d2e8d2fd7557a18ecc419a6bb54e422abcbb8da8f1a75e4b386
-  languageName: node
-  linkType: hard
-
 "kind-of@npm:^6.0.2":
   version: 6.0.3
   resolution: "kind-of@npm:6.0.3"
@@ -7960,20 +7904,6 @@ __metadata:
   version: 0.4.5
   resolution: "ktx-parse@npm:0.4.5"
   checksum: f82d8b5dfd0ede05d5e4a2d90ad5114c83d8f708431e3fce2c3e6e0a0e1fe1b1649cb6f3de35b429ef636ce9a92a3897295198e94b46bba24bc3268c6ae9cc42
-  languageName: node
-  linkType: hard
-
-"lazy-cache@npm:^0.2.3":
-  version: 0.2.7
-  resolution: "lazy-cache@npm:0.2.7"
-  checksum: b4538aff20db586c354f31de3ed59ea2c8d5dc4f01141bf49f07601e7ca0d7ed43a3f49362ade49b1e18ab1f3d121df0f2c9ea9b599b44dd54fb0c0db253c8b9
-  languageName: node
-  linkType: hard
-
-"lazy-cache@npm:^1.0.3":
-  version: 1.0.4
-  resolution: "lazy-cache@npm:1.0.4"
-  checksum: e6650c22e5de1cc3f4a0c25d2b35fe9cd400473c1b3562be9fceadf8f368d708b54d24f5aa51b321b090da65b36426823a8f706b8dbdd68270db0daba812c5d3
   languageName: node
   linkType: hard
 
@@ -8226,17 +8156,6 @@ __metadata:
   dependencies:
     fs-monkey: ^1.0.3
   checksum: 0164d79c5da42809d9590125ee713aac59b1c1e16c61d4b264460366514342da2867ac64874f098af348e13eadde4c6d8fb8188b16e766029d67adf8ec153b4c
-  languageName: node
-  linkType: hard
-
-"merge-deep@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "merge-deep@npm:3.0.3"
-  dependencies:
-    arr-union: ^3.1.0
-    clone-deep: ^0.2.4
-    kind-of: ^3.0.2
-  checksum: d2eb367b8300327c66a3e1e01eb06251f51b440bf5bfa5f0f8065ae95bf3af620d21fcd0ab2eb50e74f5119aac40ffd26c85e3bf82f79082e8757675f5885d3d
   languageName: node
   linkType: hard
 
@@ -8496,16 +8415,6 @@ __metadata:
   version: 3.0.0
   resolution: "mitt@npm:3.0.0"
   checksum: f7be5049d27d18b1dbe9408452d66376fa60ae4a79fe9319869d1b90ae8cbaedadc7e9dab30b32d781411256d468be5538996bb7368941c09009ef6bbfa6bfc7
-  languageName: node
-  linkType: hard
-
-"mixin-object@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "mixin-object@npm:2.0.1"
-  dependencies:
-    for-in: ^0.1.3
-    is-extendable: ^0.1.1
-  checksum: 7d0eb7c2f06435fcc01d132824b4c973a0df689a117d8199d79911b506363b6f4f86a84458a63f3acfa7388f3052612cfe27105400b4932678452925a9739a4c
   languageName: node
   linkType: hard
 
@@ -10338,18 +10247,6 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"shallow-clone@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "shallow-clone@npm:0.1.2"
-  dependencies:
-    is-extendable: ^0.1.1
-    kind-of: ^2.0.1
-    lazy-cache: ^0.2.3
-    mixin-object: ^2.0.1
-  checksum: cc4c85c6e42186fec33a81a85622c48dbcfdf280f3a7bd0800b4de57df8e365a8760aa2e31dd79df365b317dddb2fd0bbd92be0aab14dbd2de6a65992eab2177
-  languageName: node
-  linkType: hard
-
 "shallow-clone@npm:^3.0.0":
   version: 3.0.1
   resolution: "shallow-clone@npm:3.0.1"
@@ -10602,14 +10499,13 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"spawnd@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "spawnd@npm:7.0.0"
+"spawnd@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "spawnd@npm:8.0.0"
   dependencies:
-    exit: ^0.1.2
     signal-exit: ^3.0.7
     tree-kill: ^1.2.2
-  checksum: b6ef029fb78e3d100a65e101ed02c9755be36a84ba86e38d5a7a51c12dff08123c06462aabff8a3f9d6308bf179de1bbea4438307ab199a104b0bbd6c4ff1a10
+  checksum: 04f2e61218750172aef14addc381312496eae25d79d4945194a3a3ec07dff0f6f58f94270424958dbe47fbbbce97b48d855d988785d596b945b7babaea33335c
   languageName: node
   linkType: hard
 
