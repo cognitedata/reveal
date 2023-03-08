@@ -1,4 +1,4 @@
-import { Button, Input, ToolBar } from '@cognite/cogs.js';
+import { Button, Input, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { UseCurrentSearchResultState } from './hooks/useCurrentSearchResult';
 import { UseSearchBarState } from './hooks/useSearchBarState';
 
@@ -69,7 +69,7 @@ export const SearchBar = ({
             ref={setSearchBarInputRef}
             iconPlacement="left"
             icon="Search"
-            placeholder="Search in document..."
+            placeholder="Find in document..."
             postfix={`${currentSearchResultIndex}/${numberOfSearchResults}`}
             value={value}
             onChange={(e) => onChange(e.target.value)}
@@ -91,12 +91,14 @@ export const SearchBar = ({
 
   return (
     <ToolBar>
-      <Button
-        icon="Search"
-        aria-label="Search"
-        type="ghost"
-        onClick={onSearchOpen}
-      />
+      <Tooltip content="Find in document">
+        <Button
+          icon="Search"
+          aria-label="Find in document"
+          type="ghost"
+          onClick={onSearchOpen}
+        />
+      </Tooltip>
     </ToolBar>
   );
 };
