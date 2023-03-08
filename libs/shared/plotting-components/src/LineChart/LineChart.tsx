@@ -5,7 +5,7 @@ import { LineChartWrapper } from './elements';
 import { LineChartProps } from './types';
 import { Header } from './components/Header';
 import { Tooltip } from './components/Tooltip';
-import { HoverMarker } from './components/HoverMarker';
+import { HoverLayer } from './components/HoverLayer';
 import { Legend } from './components/Legend';
 import { Plot, PlotElement } from './components/Plot';
 import { Toolbar } from './components/Toolbar';
@@ -29,6 +29,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   renderTooltipContent,
   renderFilters,
   renderActions,
+  formatHoverLineText,
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<PlotElement>(null);
@@ -71,11 +72,14 @@ export const LineChart: React.FC<LineChartProps> = ({
         onUnhover={plotHoverEventHandler.onUnhoverPlot}
       />
 
-      <HoverMarker
+      <HoverLayer
+        chartRef={chartRef}
+        layout={layout}
         plotHoverEvent={plotHoverEvent}
         backgroundColor={backgroundColor}
-        onHover={plotHoverEventHandler.onHoverMarker}
-        onUnhover={plotHoverEventHandler.onUnhoverMarker}
+        onHover={plotHoverEventHandler.hoverPlot}
+        onUnhover={plotHoverEventHandler.unhoverPlot}
+        formatHoverLineText={formatHoverLineText}
       />
 
       <Tooltip
@@ -86,6 +90,8 @@ export const LineChart: React.FC<LineChartProps> = ({
         backgroundColor={backgroundColor}
         disableTooltip={disableTooltip}
         renderTooltipContent={renderTooltipContent}
+        onHover={plotHoverEventHandler.hoverPlot}
+        onUnhover={plotHoverEventHandler.unhoverPlot}
       />
 
       <Legend

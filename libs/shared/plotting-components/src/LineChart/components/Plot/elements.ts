@@ -18,10 +18,6 @@ export const PlotWrapper = styled.div`
     display: inline-block;
   }
 
-  > * .modebar-container {
-    display: none;
-  }
-
   > * .xtick,
   .ytick {
     text {

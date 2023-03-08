@@ -21,8 +21,8 @@ export const usePlotHoverEvent = () => {
   const plotHoverEventHandler = {
     onHoverPlot,
     onUnhoverPlot: () => setPlotHovered(false),
-    onHoverMarker: () => setMarkerHovered(true),
-    onUnhoverMarker: () => setMarkerHovered(false),
+    hoverPlot: () => setMarkerHovered(true),
+    unhoverPlot: () => setMarkerHovered(false),
   };
 
   return {

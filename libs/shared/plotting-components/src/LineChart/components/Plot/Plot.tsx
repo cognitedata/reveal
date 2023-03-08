@@ -108,11 +108,12 @@ export const Plot = React.memo(
       const plotConfig: Partial<PlotlyConfig> = {
         scrollZoom: Boolean(config.scrollZoom) && isCursorOnPlotArea,
         showAxisDragHandles: true,
+        displayModeBar: false,
       };
 
       const handleInitialized = (_figure: Figure, graph: HTMLElement) => {
         initializePlotAreaCursorDetector(graph);
-        setPlotRange(initialRange);
+        resetPlotRange();
       };
 
       const handleUpdate = (figure: Figure, _graph: HTMLElement) => {

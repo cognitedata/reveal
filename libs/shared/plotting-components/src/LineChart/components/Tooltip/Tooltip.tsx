@@ -19,6 +19,8 @@ export interface TooltipProps {
   backgroundColor?: string;
   disableTooltip?: boolean;
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
+  onHover?: () => void;
+  onUnhover?: () => void;
 }
 
 export const Tooltip: React.FC<TooltipProps> = ({
@@ -29,6 +31,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
   backgroundColor = DEFAULT_BACKGROUND_COLOR,
   disableTooltip,
   renderTooltipContent,
+  onHover,
+  onUnhover,
 }) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
 
@@ -105,6 +109,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
         visibility: isTooltipVisible ? 'visible' : 'hidden',
         opacity: isTooltipVisible ? 1 : 0,
       }}
+      onMouseEnter={onHover}
+      onMouseLeave={onUnhover}
     >
       {getTooltipContent()}
     </TooltipWrapper>

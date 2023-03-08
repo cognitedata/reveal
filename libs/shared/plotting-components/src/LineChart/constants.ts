@@ -35,6 +35,9 @@ export const DEAULT_LAYOUT: Layout = {
   showFilters: true,
   showActions: true,
   showMarkers: true,
+  showHoverMarker: true,
+  showHoverLine: true,
+  showHoverLineText: true,
 };
 
 export const LAYOUT_BY_VARIANT: Record<Variant, Layout> = {
@@ -56,23 +59,11 @@ export const LAYOUT_BY_VARIANT: Record<Variant, Layout> = {
     showSubtitle: false,
     showLegend: false,
     showAxisNames: false,
-    showTicks: true,
-    showTickLabels: true,
     showFilters: false,
     showActions: false,
-    showMarkers: true,
   },
   large: {
     ...DEAULT_LAYOUT,
-    showTitle: true,
-    showSubtitle: true,
-    showLegend: true,
-    showAxisNames: true,
-    showTicks: true,
-    showTickLabels: true,
-    showFilters: true,
-    showActions: true,
-    showMarkers: true,
   },
 };
 

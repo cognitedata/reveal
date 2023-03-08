@@ -24,7 +24,10 @@ export const useHandlePlotRange = (initialRange: Required<PlotRange>) => {
   );
 
   const resetPlotRange = useCallback(() => {
-    setRange(initialRange);
+    setRange({
+      x: [...initialRange.x],
+      y: [...initialRange.y],
+    });
   }, [initialRange]);
 
   return {

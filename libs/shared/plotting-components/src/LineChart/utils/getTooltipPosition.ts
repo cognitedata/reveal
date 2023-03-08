@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 import { PlotMouseEvent } from 'plotly.js';
 import { getMarkerPosition } from './getMarkerPosition';
+import { getPlotStyleData } from './getPlotStyleData';
 
 const TOOLTIP_HORIZONTAL_MARGIN = 16;
 
@@ -23,14 +24,7 @@ export const getTooltipPosition = (
     0
   );
 
-  const plot = chartRef.current?.getElementsByClassName('js-plotly-plot')[0];
-  const plotOffsetTop = get(plot, 'offsetTop', 0);
-
-  const grid = plot?.getElementsByClassName('nsewdrag drag')[0];
-  const gridStyle = grid && window.getComputedStyle(grid);
-  const gridHeight = gridStyle
-    ? parseInt(gridStyle.getPropertyValue('height'))
-    : 0;
+  const { plotOffsetTop, gridHeight } = getPlotStyleData(chartRef.current);
 
   const { x = 0, y = 0 } = getMarkerPosition(plotMouseEvent);
 

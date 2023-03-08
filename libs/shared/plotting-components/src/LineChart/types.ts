@@ -17,6 +17,7 @@ export type LineChartProps = {
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
   renderFilters?: () => [JSX.Element, ...JSX.Element[]];
   renderActions?: () => [JSX.Element, ...JSX.Element[]];
+  formatHoverLineText?: (props: HoverCursorInfoProps) => string;
 };
 
 export interface Data {
@@ -37,6 +38,9 @@ export interface Layout {
   showFilters: boolean;
   showActions: boolean;
   showMarkers: boolean;
+  showHoverMarker: boolean;
+  showHoverLine: boolean;
+  showHoverLineText: boolean;
 }
 
 export interface Config {
@@ -58,6 +62,12 @@ export interface TooltipRendererProps {
   y: ValueType;
   name: string;
   color: string;
+}
+
+export interface HoverCursorInfoProps {
+  x: ValueType;
+  y: ValueType;
+  name: string;
 }
 
 export type ValueType = Datum;
