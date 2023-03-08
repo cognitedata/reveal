@@ -258,7 +258,9 @@ const ListMonitoringJobPreview = ({
       </Row>
       <ConditionRow>
         <Col>Condition</Col>
-        <Col>{`[is > ${model.threshold}]`}</Col>
+        <Col>{`[is ${model.externalId.includes('lower') ? '<' : '>'} ${
+          model.threshold
+        }]`}</Col>
         <Col>{`[for > ${customFormatDuration({
           start: 0,
           end: interval,

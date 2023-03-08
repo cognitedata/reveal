@@ -127,7 +127,10 @@ const MonitoringJobWithAlerts = ({
         onMarkAllAlertsResolved={onMarkAllAlertsResolved}
       />
       <ConditionContainer key={job.id}>
-        {t.Condition} : {`[is > ${job.model.granularity}]`}
+        {t.Condition} :
+        {`[is ${job.model.externalId.includes('lower') ? '<' : '>'} ${
+          job.model.granularity
+        }]`}
         {`[for > ${alertFor}]`}
       </ConditionContainer>
       <TimeseriesContainer>
