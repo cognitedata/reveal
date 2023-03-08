@@ -6,3 +6,5 @@ import noop from 'lodash/noop';
 window.URL.createObjectURL = noop;
 
 jestPreviewConfigure({ autoPreview: true });
+
+jest.mock('@cognite/unified-file-viewer', () => ({}));

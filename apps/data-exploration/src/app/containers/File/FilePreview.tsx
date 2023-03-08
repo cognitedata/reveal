@@ -13,7 +13,7 @@ import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow'
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { CogniteError, FileInfo } from '@cognite/sdk';
 import styled from 'styled-components';
-import { Colors, Tabs, Infobar } from '@cognite/cogs.js';
+import { Tabs, Infobar } from '@cognite/cogs.js';
 import qs from 'query-string';
 import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';

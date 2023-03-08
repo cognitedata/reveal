@@ -10,3 +10,5 @@ jestPreviewConfigure({ autoPreview: true });
 jest.mock('@cognite/cdf-sdk-singleton', () => ({
   getUserInformation: jest.fn().mockResolvedValue({ displayName: 'test-user' }),
 }));
+
+jest.mock('@cognite/unified-file-viewer', () => ({}));
