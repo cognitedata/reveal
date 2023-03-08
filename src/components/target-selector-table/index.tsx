@@ -12,7 +12,8 @@ type Props = {};
 
 export default function TargetSelectionTable({}: Props) {
   const { t } = useTranslation();
-  const { targetsList, setTargetsList } = useQuickMatchContext();
+  const { targetsList, setTargetsList, targetFilter, setTargetFilter } =
+    useQuickMatchContext();
 
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
@@ -29,10 +30,18 @@ export default function TargetSelectionTable({}: Props) {
     <Flex direction="column">
       <Flex direction="row" gap={12}>
         <Select
-          placeholder={t('resource-type-datasets')}
+          placeholder={t('resource-type-datasets_other')}
           style={{ width: 120 }}
           loading={isInitialLoading}
+          onChange={(selectedOptions) => {
+            setTargetFilter((prevFilter) => ({
+              ...prevFilter,
+              dataSetIds: selectedOptions,
+            }));
+          }}
           options={datasets}
+          mode="multiple"
+          value={targetFilter.dataSetIds}
         />
         <Input.Search
           style={{ width: 120 }}
