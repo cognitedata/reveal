@@ -1,3 +1,4 @@
+import { createLink } from '@cognite/cdf-utilities';
 import { Asset, InternalId, Timeseries } from '@cognite/sdk';
 import {
   createContext,
@@ -6,19 +7,20 @@ import {
   SetStateAction,
   useContext,
 } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Filter, SourceType } from 'types/api';
 import { useContextState } from 'utils';
 
 export type QuickMatchStep =
-  | 'sourceSelect'
-  | 'targetSelect'
-  | 'modelParams'
-  | 'viewModel';
+  | 'select-sources'
+  | 'select-targets'
+  | 'configure-model'
+  | 'create-model';
 export const QuickMatchStepsOrder: Record<QuickMatchStep, number> = {
-  sourceSelect: 0,
-  targetSelect: 1,
-  modelParams: 2,
-  viewModel: 3,
+  'select-sources': 0,
+  'select-targets': 1,
+  'configure-model': 2,
+  'create-model': 3,
 };
 const QuickMatchStepsOrderIndex: Record<number, QuickMatchStep> =
   Object.entries(QuickMatchStepsOrder).reduce(
@@ -106,7 +108,7 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   setTargetsList: function (_: SetStateAction<InternalId[]>): void {
     throw new Error('Function not implemented.');
   },
-  step: 'sourceSelect',
+  step: 'select-sources',
 
   setAllSources: function (_: SetStateAction<boolean>): void {
     throw new Error('Function not implemented.');
@@ -178,6 +180,12 @@ export const QuickMatchContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  const { subAppPath } = useParams<{
+    subAppPath: string;
+  }>();
+
+  const navigate = useNavigate();
+
   const [featureType, setFeatureType] = useContextState<EMFeatureType>(
     'simple',
     'featureType'
@@ -232,7 +240,7 @@ export const QuickMatchContextProvider = ({
     'sourceType'
   );
   const [step, setStep] = useContextState<QuickMatchStep>(
-    'sourceSelect',
+    'select-sources',
     'step'
   );
 
@@ -254,6 +262,7 @@ export const QuickMatchContextProvider = ({
     }
     const i = QuickMatchStepsOrder[step];
     const next = QuickMatchStepsOrderIndex[i + 1];
+    navigate(createLink(`/${subAppPath}/quick-match/create/${next}`));
     setStep(next);
   };
   const popStep = () => {
@@ -261,8 +270,9 @@ export const QuickMatchContextProvider = ({
       throw new Error('No steps before this');
     }
     const i = QuickMatchStepsOrder[step];
-    const next = QuickMatchStepsOrderIndex[i - 1];
-    setStep(next);
+    const prev = QuickMatchStepsOrderIndex[i - 1];
+    navigate(createLink(`/${subAppPath}/quick-match/create/${prev}`));
+    setStep(prev);
   };
   return (
     <QuickMatchContext.Provider
