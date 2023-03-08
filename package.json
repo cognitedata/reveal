@@ -19,7 +19,7 @@
     "@cognite/cogs.js": "7.13.3",
     "@cognite/data-exploration": "4.2.0",
     "@cognite/react-feature-flags": "^0.2.2-rc.0",
-    "@cognite/react-image-annotate": "^1.8.2",
+    "@cognite/react-image-annotate": "^1.8.3",
     "@cognite/sdk": "^7.18.0",
     "@cognite/sdk-provider": "^2.0.6",
     "@cognite/sdk-react-query-hooks": "^6.0.2",
@@ -99,7 +99,6 @@
     "concurrently": "^7.6.0",
     "copy-webpack-plugin": "^11.0.0",
     "cross-env": "^7.0.3",
-    "cross-var": "^1.1.0",
     "customize-cra": "^1.0.0",
     "eslint": "^8.33.0",
     "eslint-config-prettier": "^8.6.0",
@@ -147,7 +146,8 @@
   },
   "resolutions": {
     "@types/react": "^17.0.2",
-    "@types/react-dom": "^17.0.2"
+    "@types/react-dom": "^17.0.2",
+    "d3-interpolate": "^3.0.1"
   },
   "jest": {
     "moduleNameMapper": {
