@@ -42,7 +42,7 @@ export const getExtpipeConfigRevisions = async (
     `?externalId=${externalId}&limit=${limit}${
       cursor ? `&cursor=${cursor}` : ''
     }`,
-    'playground'
+    'v1'
   ).then((r) => r.data.items);
 
 export type CreateConfigRevisionArguments = {
@@ -61,7 +61,7 @@ export const createExtpipeConfigRevision = async (
       config: string;
       description?: string;
     }
-  >(sdk, `/config`, opts, '', 'playground').then((r) => r.data);
+  >(sdk, `/config`, opts, '', 'v1').then((r) => r.data);
 
 export const getExtpipeConfig = async (
   sdk: CogniteClient,
@@ -80,7 +80,7 @@ export const getExtpipeConfig = async (
     `?externalId=${externalId}${
       Number.isFinite(revision) ? `&revision=${revision}` : ''
     }${Number.isFinite(activeAtTime) ? `&activeAtTime=${activeAtTime}` : ''}`,
-    'playground'
+    'v1'
   ).then((r) => r.data);
 };
 
