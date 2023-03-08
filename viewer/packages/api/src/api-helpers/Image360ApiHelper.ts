@@ -178,11 +178,12 @@ export class Image360ApiHelper {
   }
 
   private async startPreload(image360Entity: Image360Entity, lockDownload = false): Promise<void> {
-    const onFullResDownloadComplete = await this._image360Facade.preload(image360Entity, lockDownload);
-    if (onFullResDownloadComplete)
-      onFullResDownloadComplete()
-        .catch(() => {})
-        .then(() => this._requestTransitionSafeRedraw());
+    return this._image360Facade.preload(image360Entity, lockDownload).then(onFullResDownloadComplete => {
+      if (onFullResDownloadComplete)
+        onFullResDownloadComplete()
+          .catch(() => {})
+          .then(() => this._requestTransitionSafeRedraw());
+    });
   }
 
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
