@@ -85,8 +85,10 @@ export type MonitoringJob = {
   model: {
     externalId: string;
     granularity: string;
-    threshold: number;
+    threshold?: number;
     timeseriesId: number;
+    upperThreshold?: number;
+    lowerThreshold?: number;
   };
   alertCount: number;
   subscribed: boolean;

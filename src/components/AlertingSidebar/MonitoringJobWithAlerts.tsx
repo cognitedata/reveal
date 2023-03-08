@@ -16,9 +16,9 @@ import {
 } from 'utils/constants';
 import { useSearchParam } from 'hooks/navigation';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
-import { customFormatDuration } from 'utils/date';
 import { useAlertsResolveCreate } from 'components/MonitoringAlert/hooks';
 import { useChartAtom } from 'models/chart/atom';
+import JobCondition from 'components/MonitoringSidebar/JobCondition';
 import {
   AlertContainer,
   JobContainer,
@@ -109,8 +109,6 @@ const MonitoringJobWithAlerts = ({
     }
   };
 
-  const alertFor = customFormatDuration({ start: 0, end: job.interval });
-
   const chartHasTimeseries = Boolean(
     timeseriesDef &&
       timeseries.find((ts) => {
@@ -127,11 +125,7 @@ const MonitoringJobWithAlerts = ({
         onMarkAllAlertsResolved={onMarkAllAlertsResolved}
       />
       <ConditionContainer key={job.id}>
-        {t.Condition} :
-        {`[is ${job.model.externalId.includes('lower') ? '<' : '>'} ${
-          job.model.granularity
-        }]`}
-        {`[for > ${alertFor}]`}
+        <JobCondition job={job} />
       </ConditionContainer>
       <TimeseriesContainer>
         <Row>

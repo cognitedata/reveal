@@ -79,7 +79,7 @@ export const useCreateMonitoringJob = () => {
     },
     {
       onSuccess: () => {
-        cache.invalidateQueries(['monitoring-folders-jobs']);
+        cache.invalidateQueries(['monitoring-folders-jobs-monitoring-sidebar']);
       },
     }
   );
@@ -101,6 +101,12 @@ export const useMonitoringFoldersWithJobs = (
   userAuthId?: string
 ) => {
   const sdk = useSDK();
+  const hookConfig: any = {
+    enabled: userAuthId !== undefined,
+  };
+  if (hookId === 'indicator') {
+    hookConfig.refetchInterval = 10000;
+  }
 
   return useQuery(
     `monitoring-folders-jobs-${hookId}`,
@@ -126,10 +132,7 @@ export const useMonitoringFoldersWithJobs = (
             })),
           }));
         }),
-    {
-      refetchInterval: 10000,
-      enabled: userAuthId !== undefined,
-    }
+    hookConfig
   );
 };
 
@@ -163,7 +166,7 @@ export const useMonitoringJobsDelete = () => {
     },
     {
       onSuccess: () => {
-        cache.invalidateQueries(['monitoring-folders-jobs']);
+        cache.invalidateQueries(['monitoring-folders-jobs-monitoring-sidebar']);
         cache.invalidateQueries(['monitoring-folders']);
       },
     }
@@ -205,6 +208,7 @@ export const useMonitoringSubscriptionCreate = () => {
       onSuccess: (_data, payload) => {
         const ids = [payload.channelID].join(',');
         cache.invalidateQueries([`monitoring-subscriptions-list-${ids}`]);
+        cache.invalidateQueries([`monitoring-folders-jobs-indicator`]);
       },
     }
   );
@@ -246,6 +250,7 @@ export const useMonitoringSubscriptionDelete = () => {
         const ids = [payload.channelID].join(',');
         const queryToInvalidate = `monitoring-subscriptions-list-${ids}`;
         cache.invalidateQueries([queryToInvalidate]);
+        cache.invalidateQueries([`monitoring-folders-jobs-indicator`]);
       },
     }
   );

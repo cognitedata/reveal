@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Dropdown from 'components/Dropdown/Dropdown';
 import { Button, Icon, toast } from '@cognite/cogs.js';
 import { makeDefaultTranslations } from 'utils/translations';
-import { customFormatDuration } from 'utils/date';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { nanoid } from 'nanoid';
 import { useSearchParam } from 'hooks/navigation';
@@ -26,6 +25,7 @@ import {
 } from './hooks';
 import { SubscriptionLoader } from './elements';
 import { validateEmail } from './utils';
+import JobCondition from './JobCondition';
 
 const defaultTranslations = makeDefaultTranslations(
   'Delete',
@@ -185,7 +185,7 @@ const ListMonitoringJobPreview = ({
     }
   };
 
-  const { id, externalId, model, interval } = monitoringJob;
+  const { id, externalId } = monitoringJob;
   const [isOpen, setIsOpen] = useState(false);
   const [, setShowAlerts] = useSearchParam(MONITORING_SIDEBAR_SHOW_ALERTS);
   const isHighlighted =
@@ -257,14 +257,7 @@ const ListMonitoringJobPreview = ({
         <MonitoringJobTitle>{externalId}</MonitoringJobTitle>
       </Row>
       <ConditionRow>
-        <Col>Condition</Col>
-        <Col>{`[is ${model.externalId.includes('lower') ? '<' : '>'} ${
-          model.threshold
-        }]`}</Col>
-        <Col>{`[for > ${customFormatDuration({
-          start: 0,
-          end: interval,
-        })}]`}</Col>
+        <JobCondition job={monitoringJob} />
       </ConditionRow>
       {showLastAlert && (
         <FooterRow>
