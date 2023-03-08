@@ -65,6 +65,7 @@ export const BulkActionMenu = ({
         label="alpha"
         size="x-small"
         style={{ marginLeft: '5px' }}
+        hideTooltip
       />
     </Tooltip>
   );

@@ -26,4 +26,5 @@ export const ClearButton = ({
 
 const StyledButton = styled(Button)`
   margin-left: 5px;
+  background: none;
 `;
