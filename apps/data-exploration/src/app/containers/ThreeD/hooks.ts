@@ -211,10 +211,13 @@ export const useInfinite360Images = () => {
     if (images360Datasets.length > 0) {
       const results = images360Datasets.reduce(
         (accum, current) => {
-          if (!Object.hasOwn(accum, current.metadata!.site_id)) {
-            accum[current.metadata!.site_id] = {
-              siteId: current.metadata!.site_id,
-              siteName: current.metadata!.site_name,
+          if (
+            current.metadata?.site_id &&
+            !Object.hasOwn(accum, current.metadata.site_id)
+          ) {
+            accum[current.metadata.site_id] = {
+              siteId: current.metadata.site_id,
+              siteName: current.metadata?.site_name ?? current.metadata.site_id,
             };
           }
 
