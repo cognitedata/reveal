@@ -105,8 +105,8 @@ export class DefaultImage360Collection implements Image360Collection {
     this._icons.setCullingStrategy(mode);
   }
 
-  public set360ProximityLimits(radius: number, limit: number): void {
-    this._icons.set360ProximityLimits(radius, limit);
+  public set360IconProximityLimits(radius: number, pointLimit: number): void {
+    this._icons.set360IconProximityLimits(radius, pointLimit);
   }
 
   public remove(entity: Image360Entity): void {

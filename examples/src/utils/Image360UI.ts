@@ -29,6 +29,11 @@ export class Image360UI {
       alpha: 1
     };
 
+    const proximity = {
+      radius: 50,
+      limit: 20
+    };
+
     const params = {
       siteId: '',
       add: add360ImageSet,
@@ -58,6 +63,14 @@ export class Image360UI {
       viewer.requestRedraw();
     });
 
+    gui.add(proximity, 'radius', 1, 100, 1).name('Proximty radius').onChange(() => {
+      set360ProximityLimits();
+    });
+
+    gui.add(proximity, 'limit', 0, 100, 1).name('Number of points').onChange(() => {
+      set360ProximityLimits();
+    });
+
     gui.add(params, 'remove').name('Remove all 360 images');
 
     async function add360ImageSet() {
@@ -74,6 +87,10 @@ export class Image360UI {
       );
       entities = entities.concat(set.image360Entities);
       viewer.requestRedraw();
+    }
+
+    async function set360ProximityLimits() {
+      viewer.set360IconProximityLimits(proximity.radius, proximity.limit);
     }
 
     async function removeAll360Images() {

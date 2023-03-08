@@ -125,8 +125,9 @@ export class Image360ApiHelper {
     this._requestRedraw();
   }
 
-  public set360ProximityLimits(radius: number, limit: number): void {
-    this._image360Facade.set360ProximityLimits(radius, limit);
+  public set360IconProximityLimits(radius: number, pointLimit: number): void {
+    this._image360Facade.set360IconProximityLimits(radius, pointLimit);
+    this._requestRedraw();
   }
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {

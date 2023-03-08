@@ -24,42 +24,41 @@ export class IconCollection {
   private readonly _computeClustersEventHandler: BeforeSceneRenderedDelegate;
   private readonly _computeProximityPointsEventHandler: BeforeSceneRenderedDelegate;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
-  private _activeIconVisualizationEventHandeler: BeforeSceneRenderedDelegate;
+
+  private _activeCullingStrategyEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingStrategy: IconCullingStrategy;
-  private _proximityRadius = 30;
-  private _proximityLimit = 20;
+  private _proximityRadius = 50;
+  private _proximityPointLimit = 20;
 
   get icons(): Image360Icon[] {
     return this._icons;
   }
 
   public setCullingStrategy(mode: IconCullingStrategy): void {
-    if (this._iconCullingStrategy !== mode) {
-      this._iconCullingStrategy = mode;
-      this._onBeforeSceneRenderedEvent.unsubscribe(this._activeIconVisualizationEventHandeler);
+    if (this._iconCullingStrategy === mode) return;
 
-      switch (this._iconCullingStrategy) {
-        case IconCullingStrategy.Clustered: {
-          this._activeIconVisualizationEventHandeler = this._computeClustersEventHandler;
-          break;
-        }
-        case IconCullingStrategy.Proximity: {
-          this._activeIconVisualizationEventHandeler = this._computeProximityPointsEventHandler;
-          break;
-        }
-        default: {
-          //error?
-          break;
-        }
+    this._iconCullingStrategy = mode;
+    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingStrategyEventHandeler);
+
+    switch (this._iconCullingStrategy) {
+      case IconCullingStrategy.Clustered: {
+        this._activeCullingStrategyEventHandeler = this._computeClustersEventHandler;
+        break;
       }
-
-      this._onBeforeSceneRenderedEvent.subscribe(this._activeIconVisualizationEventHandeler);
+      case IconCullingStrategy.Proximity: {
+        this._activeCullingStrategyEventHandeler = this._computeProximityPointsEventHandler;
+        break;
+      }
+      default:
+        break;
     }
+
+    this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingStrategyEventHandeler);
   }
 
-  public set360ProximityLimits(radius: number, limit: number): void {
-    this._proximityRadius = radius;
-    this._proximityLimit = limit;
+  public set360IconProximityLimits(radius: number, pointLimit: number): void {
+    this._proximityRadius = Math.max(1, radius);
+    this._proximityPointLimit = pointLimit;
   }
 
   constructor(
@@ -89,7 +88,7 @@ export class IconCollection {
     this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, iconsSprites);
 
     this._iconCullingStrategy = IconCullingStrategy.Clustered;
-    this._activeIconVisualizationEventHandeler = this._computeClustersEventHandler;
+    this._activeCullingStrategyEventHandeler = this._computeClustersEventHandler;
 
     onBeforeSceneRendered.subscribe(this._computeClustersEventHandler);
 
@@ -134,13 +133,38 @@ export class IconCollection {
       const points = octree
         .findPoints(camera.position, this._proximityRadius)
         .sort((a, b) => {
-          return a.data.position.distanceTo(camera.position) - b.data.position.distanceTo(camera.position);
+          return b.data.position.distanceTo(camera.position) - a.data.position.distanceTo(camera.position);
         })
-        .slice(0, this._proximityLimit);
+        .slice(-this._proximityPointLimit);
 
       this._icons.forEach(p => (p.visible = false));
       points.forEach(p => (p.data.visible = true));
-      iconSprites.setPoints(points.reverse().map(p => p.data.position));
+      iconSprites.setPoints(points.map(p => p.data.position));
+    };
+  }
+
+  private computePointsInCameraView(iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
+    return ({ camera }) => {
+      const closestPointLimit = 20;
+      const frustum = new Frustum();
+      const matrix = new Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+      frustum.setFromProjectionMatrix(matrix);
+
+      const visiblePoints = this._icons
+        .reduce((result, icon) => {
+          if (frustum.containsPoint(icon.position)) {
+            result.push(icon);
+          }
+          return result;
+        }, new Array<Image360Icon>())
+        .sort((a, b) => {
+          return a.position.distanceTo(camera.position) - b.position.distanceTo(camera.position);
+        })
+        .slice(0, closestPointLimit);
+
+      this._icons.forEach(p => (p.visible = false));
+      visiblePoints.forEach(p => (p.visible = true));
+      iconSprites.setPoints(visiblePoints.map(p => p.position));
     };
   }
 
@@ -163,7 +187,7 @@ export class IconCollection {
   }
 
   public dispose(): void {
-    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeIconVisualizationEventHandeler);
+    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingStrategyEventHandeler);
     this._sceneHandler.removeCustomObject(this._iconsSprite);
     this._iconsSprite.dispose();
     this._sharedTexture.dispose();
