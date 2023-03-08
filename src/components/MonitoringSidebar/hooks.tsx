@@ -96,31 +96,40 @@ export const useCreateMonitoringJob = () => {
  * -----------------------------------------------------------------------------
  * @returns UseQueryResult                             - Returns UseQueryResult
  */
-export const useMonitoringFoldersWithJobs = () => {
+export const useMonitoringFoldersWithJobs = (
+  hookId?: string,
+  userAuthId?: string
+) => {
   const sdk = useSDK();
 
-  return useQuery(`monitoring-folders-jobs`, () =>
-    sdk
-      .get<MonitoringFolderJobs[]>(
-        `apps/v1/projects/${sdk.project}/charts/monitoring/folders?listJobs=true`
-      )
-      .then(({ data }) => {
-        /**
-         * This adapts the responses by removing the first 11 characters
-         * which is the id from the externalId field, the rest of the characters
-         * represents the name
-         */
-        return data.map((folder) => ({
-          ...folder,
-          tasks: folder.tasks.map((task) => ({
-            ...task,
-            externalId: task.externalId.substring(
-              0,
-              task.externalId.length - 21
-            ),
-          })),
-        }));
-      })
+  return useQuery(
+    `monitoring-folders-jobs-${hookId}`,
+    () =>
+      sdk
+        .get<MonitoringFolderJobs[]>(
+          `apps/v1/projects/${sdk.project}/charts/monitoring/folders?listJobs=true&userAuthId=${userAuthId}`
+        )
+        .then(({ data }) => {
+          /**
+           * This adapts the responses by removing the first 11 characters
+           * which is the id from the externalId field, the rest of the characters
+           * represents the name
+           */
+          return data.map((folder) => ({
+            ...folder,
+            tasks: folder.tasks.map((task) => ({
+              ...task,
+              externalId: task.externalId.substring(
+                0,
+                task.externalId.length - 21
+              ),
+            })),
+          }));
+        }),
+    {
+      refetchInterval: 10000,
+      enabled: userAuthId !== undefined,
+    }
   );
 };
 
@@ -195,8 +204,7 @@ export const useMonitoringSubscriptionCreate = () => {
     {
       onSuccess: (_data, payload) => {
         const ids = [payload.channelID].join(',');
-        const queryToInvalidate = `monitoring-subscriptions-list-${ids}`;
-        cache.invalidateQueries([queryToInvalidate]);
+        cache.invalidateQueries([`monitoring-subscriptions-list-${ids}`]);
       },
     }
   );

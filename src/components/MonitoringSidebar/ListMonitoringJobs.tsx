@@ -12,12 +12,16 @@ import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
   MONITORING_SIDEBAR_SELECTED_FOLDER,
 } from 'utils/constants';
+import { useUserInfo } from 'hooks/useUserInfo';
 import { SidebarChip, SidebarCollapseWrapped } from './elements';
 import { MonitoringFolderJobs, MonitoringJob } from './types';
 import { useMonitoringFoldersWithJobs } from './hooks';
 import ListMonitoringJobPreview from './ListMonitoringJobPreview';
 
 const ListMonitoringJobs = memo(() => {
+  const userInfo = useUserInfo();
+
+  const userAuthId = userInfo.data?.id;
   const [monitoringFolderParam, setMonitoringFolderParam] = useSearchParam(
     MONITORING_SIDEBAR_SELECTED_FOLDER
   );
@@ -36,7 +40,10 @@ const ListMonitoringJobs = memo(() => {
     setMonitoringFolderParam(head(activeKeys));
   }, [activeKeys]);
 
-  const { data: folders, isFetching } = useMonitoringFoldersWithJobs();
+  const { data: folders, isFetching } = useMonitoringFoldersWithJobs(
+    'monitoring-sidebar',
+    userAuthId
+  );
 
   useEffect(() => {
     const foundFolder = folders?.find((folder: MonitoringFolderJobs) => {
@@ -52,7 +59,7 @@ const ListMonitoringJobs = memo(() => {
     }
   }, [folders, monitoringJobIdParam]);
 
-  if (isFetching) {
+  if (isFetching && activeKeys.length === 0) {
     return <LoadingRow lines={9} showCircle={false} />;
   }
   return (

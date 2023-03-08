@@ -89,6 +89,7 @@ export type MonitoringJob = {
     timeseriesId: number;
   };
   alertCount: number;
+  subscribed: boolean;
 };
 
 export type MonitoringFolderJobs = {

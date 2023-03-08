@@ -15,6 +15,11 @@ import { MonitoringJob } from 'components/MonitoringSidebar/types';
 import { Col, Row } from 'antd';
 import { useMonitoringFoldersWithJobs } from 'components/MonitoringSidebar/hooks';
 import styled from 'styled-components';
+import { saveToLocalStorage } from '@cognite/storage';
+import { jobsToAlerts } from 'pages/ChartViewPage/NotificationIndicator';
+import { useUserInfo } from 'hooks/useUserInfo';
+import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from 'utils/constants';
+import { useQueryClient } from 'react-query';
 import { JobsWithAlertsContainer, SidebarCollapseAlert } from './elements';
 import MonitoringJobWithAlerts from './MonitoringJobWithAlerts';
 
@@ -38,16 +43,33 @@ const AlertingSidebar = ({
     ...defaultTranslations,
     ...translations,
   };
+  const userInfo = useUserInfo();
+
+  const userAuthId = userInfo.data?.id;
+
   const {
     isError,
     isFetching,
     data: taskData,
-  } = useMonitoringFoldersWithJobs();
+  } = useMonitoringFoldersWithJobs('sidebar', userAuthId);
+
+  const cache = useQueryClient();
 
   const allJobs = taskData
     ?.map((item) => item.tasks)
     .reduce((items, acc) => [...acc, ...items], [])
     .filter((job) => job.alertCount > 0);
+
+  useEffect(() => {
+    cache.invalidateQueries(['monitoring-folders-jobs-sidebar']);
+  }, []);
+
+  useEffect(() => {
+    saveToLocalStorage(
+      MONITORING_SIDEBAR_ALERT_COUNT_KEY,
+      jobsToAlerts(taskData)
+    );
+  }, [taskData]);
 
   useEffect(() => {
     if (isError) {
@@ -102,39 +124,41 @@ const DisplayAlerts = ({
   const handleToggleAccordian = (key: any) => {
     setActiveKeys(key);
   };
-  if (isFetching) {
+  if (activeKeys.length === 0 && isFetching) {
     return <LoadingRow lines={30} />;
   }
   if (isError === true || jobs?.length === 0) {
     return <EmptyState onViewMonitoringJobs={onViewMonitoringJobs} />;
   }
   return (
-    <SidebarCollapseAlert
-      activeKey={activeKeys}
-      onChange={handleToggleAccordian}
-      expandIcon={({ isActive }) => (
-        <ExpandIcon $active={Boolean(isActive)} type="ChevronDownLarge" />
-      )}
-    >
-      {jobs?.map((job: MonitoringJob) => (
-        <Collapse.Panel
-          key={job.externalId}
-          header={
-            <CollapsePanelTitle>
-              <Row align="middle" wrap={false}>
-                <Col>{job.externalId}</Col>
-              </Row>
-            </CollapsePanelTitle>
-          }
-        >
-          <MonitoringJobWithAlerts
-            job={job}
-            key={job.id}
-            onViewMonitoringJobs={onViewMonitoringJobs}
-          />
-        </Collapse.Panel>
-      ))}
-    </SidebarCollapseAlert>
+    <>
+      <SidebarCollapseAlert
+        activeKey={activeKeys}
+        onChange={handleToggleAccordian}
+        expandIcon={({ isActive }) => (
+          <ExpandIcon $active={Boolean(isActive)} type="ChevronDownLarge" />
+        )}
+      >
+        {jobs?.map((job: MonitoringJob) => (
+          <Collapse.Panel
+            key={job.externalId}
+            header={
+              <CollapsePanelTitle>
+                <Row align="middle" wrap={false}>
+                  <Col>{job.externalId}</Col>
+                </Row>
+              </CollapsePanelTitle>
+            }
+          >
+            <MonitoringJobWithAlerts
+              job={job}
+              key={job.id}
+              onViewMonitoringJobs={onViewMonitoringJobs}
+            />
+          </Collapse.Panel>
+        ))}
+      </SidebarCollapseAlert>
+    </>
   );
 };
 

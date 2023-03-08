@@ -85,6 +85,7 @@ import { eventResultsAtom } from 'models/event-results/atom';
 import { EventResultEffects } from 'effects/events';
 import MonitoringSidebar from 'components/MonitoringSidebar/MonitoringSidebar';
 import AlertingSidebar from 'components/AlertingSidebar/AlertingSidebar';
+import NotificationIndicator from './NotificationIndicator';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -960,13 +961,16 @@ const ChartViewPage = () => {
               }
               position="left"
             >
-              <Button
-                icon="Bell"
-                aria-label="Toggle alerting sidebar"
-                toggled={showAlertingSidebar}
-                onClick={() => handleAlertingSidebarToggle()}
-                disabled={!isAlertingAccessible}
-              />
+              <>
+                <Button
+                  icon="Bell"
+                  aria-label="Toggle alerting sidebar"
+                  toggled={showAlertingSidebar}
+                  onClick={() => handleAlertingSidebarToggle()}
+                  disabled={!isAlertingAccessible}
+                />
+                <NotificationIndicator />
+              </>
             </Tooltip>
           )}
           {isDataProfilingEnabled && (
