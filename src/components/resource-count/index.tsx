@@ -1,6 +1,7 @@
 import ResourceTypei18n from 'components/resource-type-i18n';
-import { Filter, SourceType, TargetType } from 'context/QuickMatchContext';
+
 import { useAggregate } from 'hooks/aggregates';
+import { Filter, SourceType, TargetType } from 'types/api';
 
 type Props = {
   type: SourceType | TargetType;

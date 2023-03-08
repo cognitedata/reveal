@@ -1,12 +1,13 @@
-import { Dispatch, SetStateAction, useMemo, useEffect } from 'react';
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { InternalId } from '@cognite/sdk';
-import { RawTimeseries, useTimeseriesSearch } from 'hooks/timeseries';
-import { Filter } from 'context/QuickMatchContext';
+import { RawTimeseries } from 'hooks/timeseries';
+
 import { useList } from 'hooks/list';
+import { Filter } from 'types/api';
 
 type TimeseriesListTableRecord = { key: string; disabled?: boolean } & Pick<
   RawTimeseries,
@@ -18,7 +19,6 @@ type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
 };
 
 type Props = {
-  query?: string | null;
   advancedFilter?: any;
   filter: Filter;
   selected: InternalId[];
@@ -26,7 +26,6 @@ type Props = {
   allSources: boolean;
 };
 export default function TimeseriesTable({
-  query,
   selected,
   setSelected,
   advancedFilter,
@@ -34,51 +33,27 @@ export default function TimeseriesTable({
   allSources,
 }: Props) {
   const {
-    data: listPages,
+    data,
     isInitialLoading: listLoading,
     error,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-  } = useList(
-    'timeseries',
-    1,
-    { limit: 100, advancedFilter, filter },
-    { enabled: !query }
-  );
+  } = useList('timeseries', 1, { limit: 1000, advancedFilter, filter });
 
-  useEffect(() => {
-    if (
-      hasNextPage &&
-      !isFetchingNextPage &&
-      listPages?.pages &&
-      listPages.pages.length <= 2
-    ) {
-      fetchNextPage();
-    }
-  }, [hasNextPage, isFetchingNextPage, listPages, fetchNextPage]);
-
-  const { data: searchResult, isInitialLoading: searchLoading } =
-    useTimeseriesSearch(query!, {
-      enabled: !!query,
-      select: (items) => items?.map((i) => ({ ...i, key: i.id.toString() })),
-    });
-
-  const loading = listLoading || searchLoading;
+  const loading = listLoading;
   const { t } = useTranslation();
 
-  const collapsedListPages = useMemo(
+  const items = useMemo(
     () =>
-      listPages?.pages[0]?.items.map((a) => ({
+      data?.map((a) => ({
         ...a,
         key: a.id.toString(),
       })) || [],
-    [listPages]
+    [data]
   );
 
-  const dataSource = (!!query ? searchResult : collapsedListPages)?.map(
-    (ts) => ({ ...ts, disabled: allSources })
-  );
+  const dataSource = items?.map((ts) => ({
+    ...ts,
+    disabled: allSources,
+  }));
 
   const columns: TimeseriesListTableRecordCT[] = useMemo(
     () => [

@@ -1,5 +1,5 @@
 import { useTranslation } from 'common';
-import { SourceType, TargetType } from 'context/QuickMatchContext';
+import { SourceType, TargetType } from 'types/api';
 
 type Props = {
   t: SourceType | TargetType;

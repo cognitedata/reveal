@@ -4,10 +4,8 @@ import { Icon, Loader } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { InternalId } from '@cognite/sdk';
-import { useEventsSearch } from 'hooks/events';
-import { Filter } from 'context/QuickMatchContext';
 import { useList } from 'hooks/list';
-import { RawCogniteEvent } from 'types/api';
+import { Filter, RawCogniteEvent } from 'types/api';
 
 type EventListTableRecord = { key: string } & Pick<
   RawCogniteEvent,
@@ -18,49 +16,41 @@ type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
 };
 
 type Props = {
-  query?: string | null;
   advancedFilter?: any;
   filter: Filter;
   selected: InternalId[];
   setSelected: Dispatch<SetStateAction<InternalId[]>>;
+  allSources: boolean;
 };
 export default function EventTable({
-  query,
   selected,
   setSelected,
   advancedFilter,
   filter,
+  allSources,
 }: Props) {
   const {
-    data: listPages,
+    data,
     isInitialLoading: listLoading,
     error,
-  } = useList(
-    'events',
-    1,
-    { filter, advancedFilter, limit: 100 },
-    { enabled: !query }
-  );
+  } = useList('events', 1, { filter, advancedFilter, limit: 100 });
 
-  const { data: searchResult, isInitialLoading: searchLoading } =
-    useEventsSearch(query!, {
-      enabled: !!query,
-      select: (items) => items?.map((i) => ({ ...i, key: i.id.toString() })),
-    });
-
-  const loading = listLoading || searchLoading;
+  const loading = listLoading;
   const { t } = useTranslation();
 
-  const collapsedListPages = useMemo(
+  const items = useMemo(
     () =>
-      listPages?.pages[0]?.items?.map((a) => ({
+      data?.map((a) => ({
         ...a,
         key: a.id.toString(),
       })) || [],
-    [listPages]
+    [data]
   );
 
-  const dataSource = !!query ? searchResult : collapsedListPages;
+  const dataSource = items?.map((event) => ({
+    ...event,
+    disabled: allSources,
+  }));
 
   const columns: EventListTableRecordCT[] = useMemo(
     () => [
@@ -90,12 +80,20 @@ export default function EventTable({
   );
 
   const rowSelection = {
-    selectedRowKeys: selected.map((s) => s.id.toString()),
+    selectedRowKeys: allSources
+      ? dataSource?.map((d) => d.id.toString())
+      : selected.map((s) => s.id.toString()),
+
     type: 'checkbox' as RowSelectionType,
     onChange(_: (string | number)[], rows: EventListTableRecord[]) {
       setSelected(rows.map((r) => ({ id: r.id })));
     },
     hideSelectAll: true,
+    getCheckboxProps(_: any) {
+      return {
+        disabled: allSources,
+      };
+    },
   };
 
   if (error?.status === 403) {
