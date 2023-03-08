@@ -1,19 +1,19 @@
 import { SecondaryTopbar } from '@cognite/cdf-utilities';
 import { Body as _Body, Button, Colors, Flex } from '@cognite/cogs.js';
-
-import { useTranslation } from 'common';
-import ViewModel from 'components/view-model';
-import ModelConfiguration from 'components/model-configation';
-import QuickMatchTitle from 'components/quick-match-title';
-import ResourceSelectionTable from 'components/resource-selector-table';
-import TargetSelectionTable from 'components/target-selector-table';
-import { useQuickMatchContext } from 'context/QuickMatchContext';
-
 import styled from 'styled-components';
 
-export default function QuickMatch() {
+import { useTranslation } from 'common';
+import QuickMatchTitle from 'components/quick-match-title';
+import { useQuickMatchContext } from 'context/QuickMatchContext';
+import { Route, Routes } from 'react-router-dom';
+import SelectSources from './select-sources';
+import CreateModel from './create-model';
+import ConfigureModel from './configure-model';
+import SelectTargets from './select-targets';
+
+const QuickMatchCreate = (): JSX.Element => {
   const { t } = useTranslation();
-  const { step, hasNextStep, hasPrevStep, popStep, pushStep } =
+  const { hasNextStep, hasPrevStep, popStep, pushStep } =
     useQuickMatchContext();
 
   return (
@@ -22,10 +22,12 @@ export default function QuickMatch() {
 
       <Body>
         <QuickMatchTitle />
-        {step === 'sourceSelect' && <ResourceSelectionTable />}
-        {step === 'targetSelect' && <TargetSelectionTable />}
-        {step === 'modelParams' && <ModelConfiguration />}
-        {step === 'viewModel' && <ViewModel />}
+        <Routes>
+          <Route path="/select-sources" element={<SelectSources />} />
+          <Route path="/select-targets" element={<SelectTargets />} />
+          <Route path="/configure-model" element={<ConfigureModel />} />
+          <Route path="/create-model" element={<CreateModel />} />
+        </Routes>
       </Body>
       <BottomRow justifyContent="space-between">
         <Button disabled={!hasPrevStep()} onClick={() => popStep()}>
@@ -43,7 +45,7 @@ export default function QuickMatch() {
       </BottomRow>
     </Flex>
   );
-}
+};
 
 const Body = styled(_Body)`
   padding: 12px;
@@ -58,3 +60,5 @@ const Body = styled(_Body)`
 const BottomRow = styled(Flex)`
   padding: 8px;
 `;
+
+export default QuickMatchCreate;

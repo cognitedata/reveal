@@ -1,4 +1,4 @@
-import { Icon } from '@cognite/cogs.js';
+import { Colors, Icon } from '@cognite/cogs.js';
 import { MutationStatus } from '@tanstack/react-query';
 
 export default function QueryStatusIcon({
@@ -8,16 +8,36 @@ export default function QueryStatusIcon({
 }) {
   switch (status) {
     case 'loading': {
-      return <Icon type="Loader" />;
+      return (
+        <Icon
+          css={{ color: Colors['text-icon--status-neutral'] }}
+          type="Loader"
+        />
+      );
     }
     case 'success': {
-      return <Icon type="Checkmark" />;
+      return (
+        <Icon
+          css={{ color: Colors['text-icon--status-success'] }}
+          type="Checkmark"
+        />
+      );
     }
     case 'error': {
-      return <Icon type="Error" />;
+      return (
+        <Icon
+          css={{ color: Colors['text-icon--status-critical'] }}
+          type="Error"
+        />
+      );
     }
     case 'idle': {
-      return <Icon type="Pause" />;
+      return (
+        <Icon
+          css={{ color: Colors['text-icon--status-undefined'] }}
+          type="Pause"
+        />
+      );
     }
     default: {
       return null;
