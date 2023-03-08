@@ -177,15 +177,6 @@ export class Image360ApiHelper {
       .forEach(imageCollection => imageCollection.events.image360Entered.fire(image360Entity));
   }
 
-  private async startPreload(image360Entity: Image360Entity, lockDownload = false): Promise<void> {
-    return this._image360Facade.preload(image360Entity, lockDownload).then(onFullResDownloadComplete => {
-      if (onFullResDownloadComplete)
-        onFullResDownloadComplete()
-          .catch(() => {})
-          .then(() => this._requestTransitionSafeRedraw());
-    });
-  }
-
   private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
     const cameraTransitionDuration = 1000;
     const alphaTweenDuration = 800;
@@ -329,6 +320,15 @@ export class Image360ApiHelper {
 
     this._image360Facade.dispose();
     this._image360Navigation.dispose();
+  }
+
+  private async startPreload(image360Entity: Image360Entity, lockDownload = false): Promise<void> {
+    return this._image360Facade.preload(image360Entity, lockDownload).then(async callback => {
+      if (callback) {
+        await callback.fullResolutionLoadedPromise.catch(() => {});
+        this._requestTransitionSafeRedraw();
+      }
+    });
   }
 
   private enter360ImageOnIntersect(event: PointerEventData): Promise<void> {

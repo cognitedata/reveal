@@ -60,29 +60,36 @@ export class Image360Entity implements Image360 {
 
   /**
    * Loads the 360 image (6 faces) into the visualization object.
+   * This will start the download of both low and full resolution images, and return once the first of these are completed.
+   * If the low resolution images are completed first the function will return a promise for when the full resolutions images are ready.
+   *
+   * @returns A promise for when the full resolution images are ready. void if full resolution has already been applied.
    */
-  public async load360Image(abortSignal?: AbortSignal): Promise<void | (() => Promise<void>)> {
-    const lowResolutionFaces = await this._imageProvider
+  public async load360Image(abortSignal?: AbortSignal): Promise<void | { fullResolutionLoadedPromise: Promise<void> }> {
+    const lowResolutionFaces = this._imageProvider
       .getLowResolution360ImageFiles(this._image360Metadata.faceDescriptors)
-      .catch(() => {
-        return undefined;
+      .then(faces => {
+        return { faces, isFullResolution: false };
       });
 
-    const fullResolutionFaces = this._imageProvider.get360ImageFiles(
-      this._image360Metadata.faceDescriptors,
-      abortSignal
-    );
+    const fullResolutionFaces = this._imageProvider
+      .get360ImageFiles(this._image360Metadata.faceDescriptors, abortSignal)
+      .then(faces => {
+        return { faces, isFullResolution: true };
+      });
 
-    if (!lowResolutionFaces) {
-      await this._image360VisualzationBox.loadImages(await fullResolutionFaces);
-    } else {
-      await this._image360VisualzationBox.loadImages(lowResolutionFaces);
+    const { faces, isFullResolution } = await Promise.any([lowResolutionFaces, fullResolutionFaces]);
+    await this._image360VisualzationBox.loadImages(faces);
 
-      return async () => {
-        const faces = await fullResolutionFaces;
-        await this._image360VisualzationBox.setFaceMaterials(faces);
-      };
+    if (isFullResolution) {
+      return;
     }
+
+    return {
+      fullResolutionLoadedPromise: fullResolutionFaces.then(async ({ faces }) => {
+        await this._image360VisualzationBox.setFaceMaterials(faces);
+      })
+    };
   }
 
   /**

@@ -11,7 +11,7 @@ import { Log } from '@reveal/logger';
 
 export type DownloadRequest = {
   entity: Image360Entity;
-  load360Image: Promise<void | (() => Promise<void>)>;
+  load360Image: Promise<void | { fullResolutionLoadedPromise: Promise<void> }>;
   abort: () => void;
 };
 
@@ -40,7 +40,10 @@ export class Image360LoadingCache {
     this._inProgressDownloads = [];
   }
 
-  public async cachedPreload(entity: Image360Entity, lockDownload = false): Promise<void | (() => Promise<void>)> {
+  public async cachedPreload(
+    entity: Image360Entity,
+    lockDownload = false
+  ): Promise<void | { fullResolutionLoadedPromise: Promise<void> }> {
     if (this._loaded360Images.includes(entity)) {
       return;
     }
@@ -71,12 +74,12 @@ export class Image360LoadingCache {
         return Promise.reject();
       })
       .then(
-        onFullResDownloadComplete => {
+        result => {
           if (this._loaded360Images.length === this._imageCacheSize) {
             this.purgeLastRecentlyUsedInvisibleEntity();
           }
           this._loaded360Images.unshift(entity);
-          return onFullResDownloadComplete;
+          return result;
         },
         () => {}
       )
