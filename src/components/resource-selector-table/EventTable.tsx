@@ -6,6 +6,7 @@ import { useTranslation } from 'common';
 import { InternalId } from '@cognite/sdk';
 import { useList } from 'hooks/list';
 import { Filter, RawCogniteEvent } from 'types/api';
+import { ResourceTableProps } from 'types/types';
 
 type EventListTableRecord = { key: string } & Pick<
   RawCogniteEvent,
@@ -15,20 +16,13 @@ type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
   title: string;
 };
 
-type Props = {
-  advancedFilter?: any;
-  filter: Filter;
-  selected: InternalId[];
-  setSelected: Dispatch<SetStateAction<InternalId[]>>;
-  allSources: boolean;
-};
 export default function EventTable({
   selected,
   setSelected,
   advancedFilter,
   filter,
   allSources,
-}: Props) {
+}: ResourceTableProps) {
   const {
     data,
     isInitialLoading: listLoading,
