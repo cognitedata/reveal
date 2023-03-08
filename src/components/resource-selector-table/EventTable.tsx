@@ -27,7 +27,7 @@ export default function EventTable({
     data,
     isInitialLoading: listLoading,
     error,
-  } = useList('events', 1, { filter, advancedFilter, limit: 100 });
+  } = useList('events', { filter, advancedFilter, limit: 100 });
 
   const loading = listLoading;
   const { t } = useTranslation();

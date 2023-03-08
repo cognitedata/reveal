@@ -25,7 +25,7 @@ export default function AssetTable({
   allSources,
 }: ResourceTableProps) {
   const { t } = useTranslation();
-  const { data, isInitialLoading, error } = useList('assets', 1, {
+  const { data, isInitialLoading, error } = useList('assets', {
     filter,
     advancedFilter,
   });

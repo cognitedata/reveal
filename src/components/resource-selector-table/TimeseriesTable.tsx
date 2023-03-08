@@ -28,7 +28,7 @@ export default function TimeseriesTable({
     data,
     isInitialLoading: listLoading,
     error,
-  } = useList('timeseries', 1, { limit: 1000, advancedFilter, filter });
+  } = useList('timeseries', { limit: 1000, advancedFilter, filter });
 
   const loading = listLoading;
   const { t } = useTranslation();

@@ -11,9 +11,9 @@ type UseQParam = Pick<ListParams, 'advancedFilter' | 'filter' | 'limit'>;
 type PartitionCount = number;
 const getUseListKey = (
   api: API,
-  partitions: PartitionCount,
+
   opts: UseQParam
-): QueryKey => [api, partitions, 'list', opts];
+): QueryKey => [api, 'list', opts];
 
 type Opts = {
   enabled?: boolean;
@@ -24,28 +24,28 @@ type Opts = {
 
 export function useList(
   api: 'events',
-  partitions: PartitionCount,
+
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawCogniteEvent[], CogniteError>;
 
 export function useList(
   api: 'assets',
-  partitions: PartitionCount,
+
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawAsset[], CogniteError>;
 
 export function useList(
   api: 'timeseries',
-  partitions: PartitionCount,
+
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawTimeseries[], CogniteError>;
 
 export function useList(
   api: API,
-  partitions: PartitionCount,
+
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ):
@@ -55,7 +55,7 @@ export function useList(
 
 export function useList(
   api: API,
-  partitions: PartitionCount,
+
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ):
@@ -64,7 +64,7 @@ export function useList(
   | UseQueryResult<RawAsset[], CogniteError> {
   const sdk = useSDK();
   return useQuery(
-    getUseListKey(api, partitions, { limit, filter, advancedFilter }),
+    getUseListKey(api, { limit, filter, advancedFilter }),
     async () => {
       return getList(sdk, api, {
         filter,
