@@ -10,7 +10,10 @@ export const LABEL_COLOR = '#00000075';
 export const TITLE_COLOR = '#000000';
 export const SUBTITLE_COLOR = '#00000075';
 
-export const DEFAULT_MARGIN = 5;
+export const DEFAULT_PADDING = 16;
+export const SMALL_VARIANT_PADDING = 8;
+
+export const DEFAULT_MARGIN = 1;
 
 export const LINE_WIDTH = 1.4;
 export const DEFAULT_LINE_COLOR = '#4A67FB';
@@ -21,7 +24,7 @@ export const BUTTON_ZOOM_STEP_SIZE = 5; // percentage
 export const HOVER_MARKER_SIZE = 12;
 export const HOVER_MARKER_BORDER_WIDTH = 2;
 
-export const DEAULT_LAYOUT: Required<Layout> = {
+export const DEAULT_LAYOUT: Layout = {
   legendPlacement: 'left',
   showTitle: true,
   showSubtitle: true,
@@ -31,9 +34,10 @@ export const DEAULT_LAYOUT: Required<Layout> = {
   showTickLabels: true,
   showFilters: true,
   showActions: true,
+  showMarkers: true,
 };
 
-export const LAYOUT_BY_VARIANT: Record<Variant, Required<Layout>> = {
+export const LAYOUT_BY_VARIANT: Record<Variant, Layout> = {
   small: {
     ...DEAULT_LAYOUT,
     showTitle: false,
@@ -44,6 +48,7 @@ export const LAYOUT_BY_VARIANT: Record<Variant, Required<Layout>> = {
     showTickLabels: false,
     showFilters: false,
     showActions: false,
+    showMarkers: false,
   },
   medium: {
     ...DEAULT_LAYOUT,
@@ -55,6 +60,7 @@ export const LAYOUT_BY_VARIANT: Record<Variant, Required<Layout>> = {
     showTickLabels: true,
     showFilters: false,
     showActions: false,
+    showMarkers: true,
   },
   large: {
     ...DEAULT_LAYOUT,
@@ -66,12 +72,13 @@ export const LAYOUT_BY_VARIANT: Record<Variant, Required<Layout>> = {
     showTickLabels: true,
     showFilters: true,
     showActions: true,
+    showMarkers: true,
   },
 };
 
 export const DEFAULT_AXIS_DIRECTION_CONFIG: AxisDirectionConfig = 'x+y';
 
-export const DEAULT_CONFIG: Required<Config> = {
+export const DEAULT_CONFIG: Config = {
   responsive: true,
   scrollZoom: DEFAULT_AXIS_DIRECTION_CONFIG,
   selectionZoom: DEFAULT_AXIS_DIRECTION_CONFIG,
@@ -81,5 +88,5 @@ export const DEAULT_CONFIG: Required<Config> = {
 
 export const DEFAULT_STYLE_PROPERTIES: CSSProperties = {
   backgroundColor: DEFAULT_BACKGROUND_COLOR,
-  padding: 16,
+  padding: DEFAULT_PADDING,
 };

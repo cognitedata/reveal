@@ -5,11 +5,8 @@ import isUndefined from 'lodash/isUndefined';
 
 import { PlotRange } from '../types';
 
-export const useHandlePlotRange = () => {
-  const [range, setRange] = useState<PlotRange>({
-    x: undefined,
-    y: undefined,
-  });
+export const useHandlePlotRange = (initialRange: Required<PlotRange>) => {
+  const [range, setRange] = useState<PlotRange>(initialRange);
 
   const setPlotRange = useCallback(
     (newRange: PlotRange) => {
@@ -27,11 +24,8 @@ export const useHandlePlotRange = () => {
   );
 
   const resetPlotRange = useCallback(() => {
-    setRange({
-      x: undefined,
-      y: undefined,
-    });
-  }, []);
+    setRange(initialRange);
+  }, [initialRange]);
 
   return {
     range,

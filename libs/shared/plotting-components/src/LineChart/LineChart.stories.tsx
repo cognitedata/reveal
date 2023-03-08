@@ -41,17 +41,9 @@ Basic.args = {
     ],
     buttonZoom: 'x',
   },
-  renderFilters: () => [
-    <Select key="test-select" options={[]} width={200} theme="filled" />,
-  ],
+  renderFilters: () => [<Select options={[]} width={200} theme="filled" />],
   renderActions: () => [
-    <Button
-      key="test-link"
-      role="link"
-      size="small"
-      type="ghost-accent"
-      icon="LineChart"
-    >
+    <Button role="link" size="small" type="ghost-accent" icon="LineChart">
       Open in Charts
     </Button>,
   ],

@@ -20,18 +20,15 @@ import {
   LineChartProps,
   PlotRange,
 } from '../../types';
-import { getMarginLayout } from '../../utils/getMarginLayout';
 import { useAxisTickCount } from '../../hooks/useAxisTickCount';
+import { useHandlePlotRange } from '../../hooks/useHandlePlotRange';
+import { useLayoutMargin } from '../../hooks/useLayoutMargin';
+import { useLayoutFixedRangeConfig } from '../../hooks/useLayoutFixedRangeConfig';
+import { useIsCursorOnPlotArea } from '../../hooks/useIsCursorOnPlotArea';
+import { usePlotDataRange } from '../../hooks/usePlotDataRange';
 import { adaptToPlotlyPlotData } from '../../utils/adaptToPlotlyPlotData';
 
 import { PlotWrapper } from './elements';
-import { useAxisRangeMode } from '../../hooks/useAxisRangeMode';
-import { useHandlePlotRange } from '../../hooks/useHandlePlotRange';
-import { getFixedRangeConfig } from '../../utils/getFixedRangeConfig';
-import { getSelectDirection } from '../../utils/getSelectDirection';
-import { useAxisDirection } from '../../hooks/useAxisDirection';
-import { getPlotAreaCursor } from '../../utils/getPlotAreaCursor';
-import { useIsCursorOnPlotArea } from '../../hooks/useIsCursorOnPlotArea';
 
 export interface PlotElement {
   getPlotRange: () => PlotRange;
@@ -41,8 +38,8 @@ export interface PlotElement {
 
 export interface PlotProps extends Pick<LineChartProps, 'xAxis' | 'yAxis'> {
   data: Data | Data[];
-  layout: Required<Layout>;
-  config: Required<Config>;
+  layout: Layout;
+  config: Config;
   onHover?: (event: PlotHoverEvent) => void;
   onUnhover?: (event: PlotMouseEvent) => void;
 }
@@ -50,28 +47,34 @@ export interface PlotProps extends Pick<LineChartProps, 'xAxis' | 'yAxis'> {
 export const Plot = React.memo(
   React.forwardRef<PlotElement, PlotProps>(
     ({ data, xAxis, yAxis, layout, config, onHover, onUnhover }, ref) => {
-      const { showTicks } = layout;
-      const { responsive, scrollZoom, selectionZoom, pan } = config;
+      const { showTicks, showMarkers } = layout;
+      const { responsive } = config;
 
       const plotRef = useRef<HTMLDivElement>(
         (ref as React.RefObject<HTMLDivElement>).current
       );
 
-      const adaptedData = useMemo(() => adaptToPlotlyPlotData(data), [data]);
+      const adaptedData = useMemo(() => {
+        return adaptToPlotlyPlotData(data, showMarkers);
+      }, [data, showMarkers]);
 
       const { tickCount, updateAxisTickCount } = useAxisTickCount({
         x: xAxis?.tickCount,
         y: yAxis?.tickCount,
       });
-      const { range, setPlotRange, resetPlotRange } = useHandlePlotRange();
-      const { xAxisRangeMode, yAxisRangeMode } = useAxisRangeMode(data);
+
+      const { margin, updateLayoutMargin } = useLayoutMargin(layout);
 
       const { isCursorOnPlotArea, initializePlotAreaCursorDetector } =
         useIsCursorOnPlotArea();
 
-      const scrollZoomDirection = useAxisDirection(scrollZoom);
-      const selectionZoomDirection = useAxisDirection(selectionZoom);
-      const panDirection = useAxisDirection(pan);
+      const initialRange = usePlotDataRange(data, showMarkers);
+
+      const { range, setPlotRange, resetPlotRange } =
+        useHandlePlotRange(initialRange);
+
+      const { fixedRange, fixedRangeLayoutConfig, cursor } =
+        useLayoutFixedRangeConfig(config, isCursorOnPlotArea);
 
       useImperativeHandle(
         ref,
@@ -85,44 +88,31 @@ export const Plot = React.memo(
         [range, setPlotRange, resetPlotRange]
       );
 
-      const getAxisFixedRange = (axis: 'x' | 'y') => {
-        if (scrollZoomDirection && isCursorOnPlotArea) {
-          return getFixedRangeConfig(scrollZoomDirection, axis);
-        }
-        if (panDirection) {
-          return getFixedRangeConfig(panDirection, axis);
-        }
-        return false;
-      };
-
       const plotLayout: Partial<PlotlyLayout> = {
         xaxis: {
           ...getCommonAxisLayoutProps(xAxis, layout),
           nticks: tickCount.x,
           range: range.x,
-          rangemode: xAxisRangeMode,
-          fixedrange: getAxisFixedRange('x'),
+          fixedrange: fixedRange.x,
         },
         yaxis: {
           ...getCommonAxisLayoutProps(yAxis, layout),
           nticks: tickCount.y,
           range: range.y,
-          rangemode: yAxisRangeMode,
-          fixedrange: getAxisFixedRange('y'),
+          fixedrange: fixedRange.y,
         },
-        margin: getMarginLayout(layout),
-        dragmode: selectionZoomDirection ? 'select' : false,
-        selectdirection: getSelectDirection(selectionZoomDirection),
+        ...fixedRangeLayoutConfig,
+        margin,
       };
 
       const plotConfig: Partial<PlotlyConfig> = {
-        scrollZoom: isCursorOnPlotArea && Boolean(scrollZoomDirection),
+        scrollZoom: Boolean(config.scrollZoom) && isCursorOnPlotArea,
         showAxisDragHandles: true,
       };
 
-      const handleInitialized = (figure: Figure, graph: HTMLElement) => {
+      const handleInitialized = (_figure: Figure, graph: HTMLElement) => {
         initializePlotAreaCursorDetector(graph);
-        handleUpdate(figure, graph);
+        setPlotRange(initialRange);
       };
 
       const handleUpdate = (figure: Figure, _graph: HTMLElement) => {
@@ -134,7 +124,9 @@ export const Plot = React.memo(
       };
 
       const handleRelayout = (_event: PlotRelayoutEvent) => {
-        updateAxisTickCount(plotRef.current);
+        const graph = plotRef.current;
+        updateAxisTickCount(graph);
+        updateLayoutMargin(graph);
       };
 
       const handleSelected = (event?: PlotSelectionEvent) => {
@@ -153,11 +145,7 @@ export const Plot = React.memo(
       };
 
       return (
-        <PlotWrapper
-          ref={plotRef}
-          showticks={showTicks}
-          cursor={getPlotAreaCursor(selectionZoomDirection)}
-        >
+        <PlotWrapper ref={plotRef} showticks={showTicks} cursor={cursor}>
           <PlotlyPlot
             data={adaptedData}
             layout={plotLayout}

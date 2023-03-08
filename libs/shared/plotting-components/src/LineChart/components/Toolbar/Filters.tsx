@@ -17,8 +17,10 @@ export const Filters: React.FC<FiltersProps> = ({
 
   return (
     <FiltersWrapper>
-      {renderFilters?.().map((Filter) => {
-        return <>{Filter}</>;
+      {renderFilters?.().map((Filter, index) => {
+        return (
+          <React.Fragment key={`filter-${index + 1}`}>{Filter}</React.Fragment>
+        );
       })}
     </FiltersWrapper>
   );

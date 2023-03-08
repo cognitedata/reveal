@@ -5,7 +5,7 @@ import { Axis, Layout } from '../types';
 
 export const getCommonAxisLayoutProps = (
   axis: Axis | undefined,
-  layout: Layout = {}
+  layout: Layout
 ): Partial<LayoutAxis> => {
   const { showAxisNames, showTickLabels } = layout;
 

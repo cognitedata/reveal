@@ -1,8 +1,8 @@
-import { AxisDirection } from '../types';
+import { AxisDirection, AxisIdentifier } from '../types';
 
 export const getFixedRangeConfig = (
   axisDirection: AxisDirection | undefined,
-  axis: 'x' | 'y'
+  axis: AxisIdentifier
 ): boolean => {
   if (axisDirection?.includes(axis)) {
     return false;

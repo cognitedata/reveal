@@ -47,16 +47,6 @@ export const PlotWrapper = styled.div`
     `}
   }
 
-  > * .hovertext {
-    display: none;
-  }
-
-  > * .hoverlayer {
-    .legend {
-      display: none;
-    }
-  }
-
   > * .draglayer {
     cursor: auto !important;
   }

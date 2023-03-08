@@ -12,6 +12,7 @@ import { TooltipDetail } from './TooltipDetail';
 import { TooltipContainer, TooltipWrapper } from './elements';
 
 export interface TooltipProps {
+  chartRef: React.RefObject<HTMLDivElement>;
   plotHoverEvent?: PlotHoverEvent;
   xAxisName?: string;
   yAxisName?: string;
@@ -21,6 +22,7 @@ export interface TooltipProps {
 }
 
 export const Tooltip: React.FC<TooltipProps> = ({
+  chartRef,
   plotHoverEvent,
   xAxisName = 'X',
   yAxisName = 'Y',
@@ -34,8 +36,13 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const [tooltipHeight, setTooltipHeight] = useState<number>();
 
   const { x, y } = useMemo(() => {
-    return getTooltipPosition(plotHoverEvent, tooltipWidth, tooltipHeight);
-  }, [plotHoverEvent, tooltipWidth, tooltipHeight]);
+    return getTooltipPosition(
+      chartRef,
+      plotHoverEvent,
+      tooltipWidth,
+      tooltipHeight
+    );
+  }, [chartRef, plotHoverEvent, tooltipWidth, tooltipHeight]);
 
   const point = head(plotHoverEvent?.points);
 

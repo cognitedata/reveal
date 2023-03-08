@@ -1,4 +1,4 @@
-export const getTickTextWidth = (text: string | null) => {
+export const getTickTextWidth = (text: string | null | undefined) => {
   if (!text) {
     return 0;
   }

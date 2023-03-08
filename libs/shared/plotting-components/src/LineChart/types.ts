@@ -10,8 +10,8 @@ export type LineChartProps = {
   subtitle?: string;
   backgroundColor?: string;
   variant?: Variant;
-  layout?: Layout;
-  config?: Config;
+  layout?: Partial<Layout>;
+  config?: Partial<Config>;
   style?: CSSProperties;
   disableTooltip?: boolean;
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
@@ -27,23 +27,24 @@ export interface Data {
 }
 
 export interface Layout {
-  legendPlacement?: HorizontalPlacement;
-  showTitle?: boolean;
-  showSubtitle?: boolean;
-  showLegend?: boolean;
-  showAxisNames?: boolean;
-  showTicks?: boolean;
-  showTickLabels?: boolean;
-  showFilters?: boolean;
-  showActions?: boolean;
+  legendPlacement: HorizontalPlacement;
+  showTitle: boolean;
+  showSubtitle: boolean;
+  showLegend: boolean;
+  showAxisNames: boolean;
+  showTicks: boolean;
+  showTickLabels: boolean;
+  showFilters: boolean;
+  showActions: boolean;
+  showMarkers: boolean;
 }
 
 export interface Config {
-  responsive?: boolean;
-  scrollZoom?: AxisDirectionConfig;
-  selectionZoom?: AxisDirectionConfig;
-  buttonZoom?: AxisDirectionConfig;
-  pan?: AxisDirectionConfig;
+  responsive: boolean;
+  scrollZoom: AxisDirectionConfig;
+  selectionZoom: AxisDirectionConfig;
+  buttonZoom: AxisDirectionConfig;
+  pan: AxisDirectionConfig;
 }
 
 export interface Axis {
@@ -68,6 +69,8 @@ export type HorizontalPlacement = 'left' | 'center' | 'right';
 export type AxisRange = [number, number];
 
 export type AxisDirection = 'x' | 'y' | 'x+y';
+
+export type AxisIdentifier = 'x' | 'y';
 
 export interface KeyTriggeredAxisDirection {
   trigger: 'default' | 'Shift';

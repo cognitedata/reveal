@@ -34,8 +34,10 @@ export const Actions: React.FC<ActionsProps> = ({
         />
       </ActionWrapper>
 
-      {renderActions?.().map((Action) => {
-        return <ActionWrapper>{Action}</ActionWrapper>;
+      {renderActions?.().map((Action, index) => {
+        return (
+          <ActionWrapper key={`action-${index + 1}`}>{Action}</ActionWrapper>
+        );
       })}
     </ActionsWrapper>
   );

@@ -22,27 +22,28 @@ export const LineChart: React.FC<LineChartProps> = ({
   title,
   subtitle,
   variant,
-  layout: layoutProp,
-  config: configProp,
-  style: styleProp,
+  layout: layoutProp = {},
+  config: configProp = {},
+  style: styleProp = {},
   disableTooltip,
   renderTooltipContent,
   renderFilters,
   renderActions,
 }) => {
+  const chartRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<PlotElement>(null);
 
   const { plotHoverEvent, plotHoverEventHandler } = usePlotHoverEvent();
 
-  const layout = getLayout(variant, layoutProp);
+  const layout = getLayout(layoutProp, variant);
   const config = getConfig(configProp);
-  const style = getStyleProperties(styleProp);
+  const style = getStyleProperties(styleProp, variant);
 
   const { legendPlacement, showTitle, showSubtitle, showLegend } = layout;
   const { backgroundColor, padding } = style;
 
   return (
-    <LineChartWrapper style={{ backgroundColor, padding }}>
+    <LineChartWrapper ref={chartRef} style={{ backgroundColor, padding }}>
       <Toolbar
         plotRef={plotRef}
         zoomDirectionConfig={config.buttonZoom}
@@ -78,6 +79,7 @@ export const LineChart: React.FC<LineChartProps> = ({
       />
 
       <Tooltip
+        chartRef={chartRef}
         plotHoverEvent={plotHoverEvent}
         xAxisName={xAxis?.name}
         yAxisName={yAxis?.name}

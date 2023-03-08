@@ -5,6 +5,7 @@ import { getMarkerPosition } from './getMarkerPosition';
 const TOOLTIP_HORIZONTAL_MARGIN = 16;
 
 export const getTooltipPosition = (
+  chartRef: React.RefObject<HTMLDivElement>,
   plotMouseEvent?: PlotMouseEvent,
   tooltipWidth?: number,
   tooltipHeight?: number
@@ -22,17 +23,20 @@ export const getTooltipPosition = (
     0
   );
 
-  const chartHeight = get(
-    plotMouseEvent.event.target,
-    'viewportElement.clientHeight',
-    0
-  );
+  const plot = chartRef.current?.getElementsByClassName('js-plotly-plot')[0];
+  const plotOffsetTop = get(plot, 'offsetTop', 0);
+
+  const grid = plot?.getElementsByClassName('nsewdrag drag')[0];
+  const gridStyle = grid && window.getComputedStyle(grid);
+  const gridHeight = gridStyle
+    ? parseInt(gridStyle.getPropertyValue('height'))
+    : 0;
 
   const { x = 0, y = 0 } = getMarkerPosition(plotMouseEvent);
 
   return {
     x: calculateTooltipPositionX(x, tooltipWidth, chartWidth),
-    y: calculateTooltipPositionY(y, tooltipHeight, chartHeight),
+    y: calculateTooltipPositionY(y, tooltipHeight, plotOffsetTop, gridHeight),
   };
 };
 
@@ -53,15 +57,18 @@ export const calculateTooltipPositionX = (
 export const calculateTooltipPositionY = (
   markerY: number,
   tooltipHeight: number,
-  chartHeight: number
+  plotOffsetTop: number,
+  gridHeight: number
 ) => {
   const tooltipHeightHalf = tooltipHeight / 2;
+  const referenceMin = plotOffsetTop + tooltipHeightHalf;
+  const referenceMax = plotOffsetTop + gridHeight;
 
-  if (markerY < tooltipHeightHalf) {
-    return tooltipHeightHalf;
+  if (markerY < referenceMin) {
+    return referenceMin;
   }
 
-  const offsetBottom = chartHeight - markerY;
+  const offsetBottom = referenceMax - markerY;
 
   if (offsetBottom < tooltipHeightHalf) {
     return markerY - (tooltipHeightHalf - offsetBottom);
