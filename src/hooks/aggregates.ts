@@ -1,16 +1,8 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteError } from '@cognite/sdk';
-import {
-  QueryKey,
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from '@tanstack/react-query';
+import { QueryKey, useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { PropertyAggregate } from 'common/types';
 
-import { fetchProperties as fetchTSProperties } from './timeseries';
-import { fetchProperties as fetchEventProperties } from './events';
-import { fetchProperties as fetchAssetProperties } from './assets';
 import { Filter, SourceType, TargetType } from 'types/api';
 
 type T = SourceType | TargetType;
@@ -23,28 +15,41 @@ export const aggregatePropertyQueryKey = (t: T): QueryKey => [
   'properties',
 ];
 
+const topLevelProperties: Record<T, string[]> = {
+  assets: ['name', 'description', 'source'],
+  timeseries: ['name', 'description', 'unit'],
+  events: ['type', 'subtype', 'description', 'source'],
+};
+
 export const useAggregateProperties = (
-  t: T,
+  api: T,
   options?: UseQueryOptions<PropertyAggregate[], CogniteError>
 ) => {
   const sdk = useSDK();
-  const queryClient = useQueryClient();
   return useQuery(
-    aggregatePropertyQueryKey(t),
+    aggregatePropertyQueryKey(api),
     () => {
-      switch (t) {
-        case 'timeseries': {
-          return fetchTSProperties(sdk, queryClient);
-        }
-        case 'assets': {
-          return fetchAssetProperties(sdk, queryClient);
-        }
-        case 'events':
-          return fetchEventProperties(sdk, queryClient);
-        default: {
-          return Promise.reject(`type: ${t} not implemented`);
-        }
-      }
+      return sdk
+        .post<{
+          items: PropertyAggregate[];
+        }>(`/api/v1/projects/${sdk.project}/${api}/aggregate`, {
+          headers: {
+            'cdf-version': 'alpha',
+          },
+          data: { aggregate: 'uniqueProperties', path: ['metadata'] },
+        })
+        .then((r) => {
+          if (r.status === 200) {
+            return [
+              ...topLevelProperties[api].map((v) => ({
+                values: [{ property: [v] }],
+              })),
+              ...r.data.items,
+            ];
+          } else {
+            return Promise.reject(r);
+          }
+        });
     },
     options
   );
