@@ -54,8 +54,7 @@ export class Image360LoadingCache {
 
     const inProgressDownload = this.getDownloadInProgress(entity);
     if (inProgressDownload !== undefined) {
-      await inProgressDownload.load360Image;
-      return;
+      return inProgressDownload.load360Image;
     }
 
     if (this._inProgressDownloads.length === this._downloadCacheSize) {
@@ -93,8 +92,8 @@ export class Image360LoadingCache {
       });
 
     this._inProgressDownloads.push({ entity, load360Image, abort });
-    const onFullResDownloadComplete = await load360Image;
-    return onFullResDownloadComplete;
+    const callback = await load360Image;
+    return callback;
   }
 
   public async purge(entity: Image360Entity): Promise<void> {
