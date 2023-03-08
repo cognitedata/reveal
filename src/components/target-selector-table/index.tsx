@@ -41,7 +41,6 @@ export default function TargetSelectionTable({}: Props) {
     () =>
       getAdvancedFilter({
         api: 'assets',
-        excludeMatched: unmatchedOnly,
         query,
       }),
     [unmatchedOnly, query]

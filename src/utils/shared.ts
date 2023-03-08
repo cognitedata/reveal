@@ -112,6 +112,15 @@ export const getAdvancedFilter = ({
 }) => {
   const nonMatched = (() => {
     switch (sourceType) {
+      case 'assets': {
+        return {
+          not: {
+            exists: {
+              property: ['parentId'],
+            },
+          },
+        };
+      }
       case 'events': {
         return {
           not: {
