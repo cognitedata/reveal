@@ -13,7 +13,8 @@ final boolean isPullRequest = !!env.CHANGE_ID
 
 // Specify your projects alerting slack channel here. If you do not have one of these, please
 // consider creating one for your projects alerts
-static final String SLACK_CHANNEL = 'alerts-platypus'
+// fusion sub-apps/projects alerting slack channel
+static final String SLACK_CHANNEL = '#cdf-ui-devs-alerts'
 
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
