@@ -50,7 +50,7 @@ export const MenuContent = ({
       icon="WarningFilled"
       placement="left"
       onConfirm={handleFileDelete}
-      content="Are you sure you want to permanently delete this filexx?"
+      content="Are you sure you want to permanently delete this file?"
       style={{ backgroundColor: 'red !important' }}
     >
       <Menu.Item id={SKIP_MENU_CLOSE_ID} disabled={reviewDisabled}>
