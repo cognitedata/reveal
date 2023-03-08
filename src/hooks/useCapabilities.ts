@@ -49,7 +49,7 @@ export const useExperimentalCapabilitiesCheck = (
   );
   return capabilitiesToCheck
     .reduce<Boolean[]>((acc, checkName) => {
-      const foundCapability = experimentCapabilities.find(
+      const foundCapability = experimentCapabilities?.find(
         (capability) =>
           capability.experimentAcl.scope?.experimentscope?.experiments?.[0] ===
             checkName && capability.experimentAcl.actions.includes('USE')
