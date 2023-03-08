@@ -295,14 +295,13 @@ const ModelSettingsButton = styled(Button)`
 `;
 const ModelSelector = styled.div`
   padding-right: 15px;
-  max-width: 340px;
   min-width: 340px;
+  max-width: 550px;
 `;
 
 const ModelOptions = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
 `;
 
 const ConfigurationModelFooter = styled.div`

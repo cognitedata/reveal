@@ -30,16 +30,19 @@ export const MenuContent = ({
     onClick={handleClick}
   >
     <Menu.Item onClick={handleFileDetails}>
-      <Icon type="Document" style={{ marginRight: '17px' }} />
-      File details
-      {showExifIcon && (
-        <Tooltip content="Geolocated">
-          <ExifIcon>
-            <img src={exifIcon} alt="exifIcon" />
-          </ExifIcon>
-        </Tooltip>
-      )}
+      <div style={{ display: 'flex', height: '21px' }}>
+        <Icon type="Document" style={{ marginRight: '17px' }} />
+        File details
+        {showExifIcon && (
+          <Tooltip content="Geolocated">
+            <ExifIcon>
+              <img src={exifIcon} alt="exifIcon" />
+            </ExifIcon>
+          </Tooltip>
+        )}
+      </div>
     </Menu.Item>
+
     {handleReview && (
       <Menu.Item onClick={handleReview} disabled={reviewDisabled}>
         <Icon type="Edit" style={{ marginRight: '17px' }} />
