@@ -134,12 +134,16 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
               onTabClick={tabChange}
             >
               <Tabs.Tab label="Annotations" tabKey="1" disabled={isVideo(file)}>
-                <AnnotationDetailPanel file={file} showEditOptions />
+                <FileDetailsContent>
+                  <AnnotationDetailPanel file={file} showEditOptions />
+                </FileDetailsContent>
               </Tabs.Tab>
               <Tabs.Tab label="File details" tabKey="2">
                 {file && (
                   <QueryClientProvider client={queryClient}>
-                    <FileDetailsReview fileObj={file} />
+                    <FileDetailsContent>
+                      <FileDetailsReview fileObj={file} />
+                    </FileDetailsContent>
                   </QueryClientProvider>
                 )}
               </Tabs.Tab>
@@ -223,4 +227,13 @@ const PreviewWrapper = styled.div<{ isFileProcessing: boolean }>`
   height: 100%;
   width: 100%;
   pointer-events: ${(props) => (props.isFileProcessing ? 'none' : 'all')};
+`;
+
+const FileDetailsContent = styled.div`
+  height: calc(100vh - 210px);
+  width: 100%;
+  padding-right: 10px;
+  padding-left: 2px;
+  padding-bottom: 10px;
+  overflow-y: auto;
 `;
