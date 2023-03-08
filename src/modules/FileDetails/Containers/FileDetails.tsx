@@ -97,12 +97,14 @@ export const FileDetails = ({
         <DetailsContainer>
           <Tabs>
             <Tabs.Tab tabKey="1" label="Annotations">
-              <FileDetailsAnnotationsPreview
-                fileInfo={fileDetails}
-                onReviewClick={onReview}
-              />
+              <FileDetailsContent>
+                <FileDetailsAnnotationsPreview
+                  fileInfo={fileDetails}
+                  onReviewClick={onReview}
+                />
+              </FileDetailsContent>
             </Tabs.Tab>
-            <Tabs.Tab tabKey="2" label="File">
+            <Tabs.Tab tabKey="2" label="File Details">
               <FileDetailsContent>
                 <FileDetailsContainer
                   info={fileDetails}
@@ -153,7 +155,7 @@ const Content = styled.div`
 `;
 
 const FileDetailsContent = styled.div`
-  height: 100%;
+  height: calc(100vh - 230px);
   width: 100%;
   padding-right: 10px;
   padding-left: 2px;
