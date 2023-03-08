@@ -1,16 +1,15 @@
-import { Dispatch, SetStateAction, useMemo } from 'react';
-
+import { useMemo } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
-import { Asset, InternalId } from '@cognite/sdk';
 import { Alert } from 'antd';
-
 import { useTranslation } from 'common';
-import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
-import { useAssets, useAssetSearch } from 'hooks/assets';
+import { useList } from 'hooks/list';
+import { RawAsset } from 'types/api';
+import { ResourceTableProps } from 'types/types';
+import { useInfiniteList } from 'hooks/infiniteList';
 
 type AssetListTableRecord = { key: string } & Pick<
-  Asset,
+  RawAsset,
   'name' | 'rootId' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
 >;
 type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {
@@ -18,36 +17,35 @@ type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {
   key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
 };
 
-type Props = {
-  query?: string | null;
-  selected: InternalId[];
-  setSelected: Dispatch<SetStateAction<InternalId[]>>;
-};
-export default function AssetTable({ query, selected, setSelected }: Props) {
+export default function AssetTable({
+  selected,
+  setSelected,
+  advancedFilter,
+  filter,
+  allSources,
+}: ResourceTableProps) {
   const { t } = useTranslation();
-  const { data, isInitialLoading, error } = useAssets(
-    TABLE_ITEMS_PER_PAGE,
-    undefined,
-    {
-      enabled: !query,
-    }
-  );
+  const { data, isInitialLoading, error } = useList('assets', 1, {
+    filter,
+    advancedFilter,
+  });
 
-  const { data: searchResult, isInitialLoading: searchLoading } =
-    useAssetSearch(query!, {
-      enabled: !!query,
-      select: (items) => items?.map((i) => ({ ...i, key: i.id.toString() })),
-    });
+  const { data: infData } = useInfiniteList('assets', 1, {
+    filter,
+    advancedFilter,
+  });
 
-  const listPages = useMemo(
+  const dataSource = useMemo(
     () =>
-      data?.pages[0]?.items?.map((a) => ({ ...a, key: a.id.toString() })) || [],
-    [data]
+      data?.map((a) => ({
+        ...a,
+        key: a.id.toString(),
+        disabled: allSources,
+      })) || [],
+    [data, allSources]
   );
 
-  const dataSource = query ? searchResult : listPages;
-
-  const loading = isInitialLoading || searchLoading;
+  console.log('dataSource', dataSource);
 
   const columns: AssetListTableRecordCT[] = useMemo(
     () => [
@@ -65,19 +63,26 @@ export default function AssetTable({ query, selected, setSelected }: Props) {
         title: t('resource-table-column-lastUpdated'),
         dataIndex: 'lastUpdatedTime',
         key: 'lastUpdatedTime',
-        render: (value: Date) => value.toLocaleString(),
+        render: (value: number) => new Date(value).toLocaleString(),
       },
     ],
     [t]
   );
 
   const rowSelection = {
-    selectedRowKeys: selected.map((s) => s.id.toString()),
+    selectedRowKeys: allSources
+      ? dataSource?.map((d) => d.id.toString())
+      : selected.map((s) => s.id.toString()),
     type: 'checkbox' as RowSelectionType,
     onChange(_: (string | number)[], rows: AssetListTableRecord[]) {
       setSelected(rows.map((r) => ({ id: r.id })));
     },
     hideSelectAll: true,
+    getCheckboxProps(_: AssetListTableRecord) {
+      return {
+        disabled: allSources,
+      };
+    },
   };
 
   if (error?.status === 403) {
@@ -90,15 +95,11 @@ export default function AssetTable({ query, selected, setSelected }: Props) {
     );
   }
 
-  if (isInitialLoading) {
-    return <Loader />;
-  }
-
   return (
     <Table<AssetListTableRecord>
-      loading={loading}
+      loading={isInitialLoading}
       columns={columns}
-      emptyContent={loading ? <Icon type="Loader" /> : undefined}
+      emptyContent={isInitialLoading ? <Icon type="Loader" /> : undefined}
       appendTooltipTo={undefined}
       rowSelection={rowSelection}
       dataSource={dataSource}
