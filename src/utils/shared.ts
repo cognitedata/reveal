@@ -1,6 +1,6 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Metadata } from '@cognite/sdk';
-import { SourceType } from 'context/QuickMatchContext';
+
 import { PredictionObject } from 'hooks/contextualization-api';
 import {
   Dispatch,
@@ -9,6 +9,7 @@ import {
   useState as reactUseState,
 } from 'react';
 import { styleScope } from 'styles/styleScope';
+import { SourceType } from 'types/api';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope);
@@ -104,25 +105,64 @@ export const bulkDownloadStatus = ({
   }
 };
 
-export const getUnmatchedFilter = (sourceType: SourceType) => {
-  switch (sourceType) {
-    case 'events': {
-      return {
-        not: {
-          exists: {
-            property: ['assetIds'],
+const searchFields: Record<string, string[]> = {
+  defaultFields: ['query'],
+  events: ['description'],
+  files: ['name'],
+};
+
+export const getAdvancedFilter = ({
+  sourceType,
+  excludeMatched,
+  query,
+}: {
+  sourceType: SourceType;
+  excludeMatched?: boolean;
+  query?: string | null;
+}) => {
+  const nonMatched = (() => {
+    switch (sourceType) {
+      case 'events': {
+        return {
+          not: {
+            exists: {
+              property: ['assetIds'],
+            },
           },
-        },
-      };
-    }
-    default: {
-      return {
-        not: {
-          exists: {
-            property: ['assetId'],
+        };
+      }
+      default: {
+        return {
+          not: {
+            exists: {
+              property: ['assetId'],
+            },
           },
-        },
-      };
+        };
+      }
     }
-  }
+  })();
+
+  const fields: string[] =
+    searchFields[sourceType] || searchFields.defaultFields;
+  const searchNodes = fields.map((f) => ({
+    search: {
+      property: [f],
+      value: query,
+    },
+  }));
+  const searchFilter = {
+    or: searchNodes,
+  };
+
+  const filters = [
+    excludeMatched ? nonMatched : undefined,
+    query ? searchFilter : undefined,
+  ].filter(Boolean);
+
+  return filters.length > 0
+    ? {
+        and: filters,
+      }
+    : undefined;
 };

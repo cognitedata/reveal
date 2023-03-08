@@ -4,17 +4,14 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useTranslation } from 'common';
 import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
-import {
-  SourceType,
-  SOURCE_TYPES,
-  useQuickMatchContext,
-} from 'context/QuickMatchContext';
+import { useQuickMatchContext } from 'context/QuickMatchContext';
 import { useAllDataSets } from 'hooks/datasets';
 import ResourceCount from 'components/resource-count';
 import { useMemo } from 'react';
 import TimeseriesTable from './TimeseriesTable';
 import EventTable from './EventTable';
-import { getUnmatchedFilter } from 'utils';
+import { getAdvancedFilter } from 'utils';
+import { SourceType, SOURCE_TYPES } from 'types/api';
 
 const { Option } = Select;
 
@@ -41,7 +38,7 @@ export default function ResourceSelectionTable({}: Props) {
   } = useQuickMatchContext();
   const sourceTypeOptions: { value: SourceType; label: string }[] = [
     { value: 'timeseries', label: t('resource-type-ts') },
-    { value: 'events', label: t('resource-type-events') },
+    { value: 'events', label: t('resource-type-events', { count: 0 }) },
   ];
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
@@ -60,9 +57,16 @@ export default function ResourceSelectionTable({}: Props) {
     }
   };
 
+  const query = searchParams.get(SOURCE_TABLE_QUERY_KEY);
+
   const advancedFilter = useMemo(
-    () => (unmatchedOnly ? getUnmatchedFilter(sourceType) : undefined),
-    [unmatchedOnly, sourceType]
+    () =>
+      getAdvancedFilter({
+        sourceType,
+        excludeMatched: unmatchedOnly,
+        query,
+      }),
+    [unmatchedOnly, sourceType, query]
   );
 
   return (
@@ -83,7 +87,9 @@ export default function ResourceSelectionTable({}: Props) {
           <Select
             mode="multiple"
             allowClear
-            placeholder={t('resource-type-datasets')}
+            placeholder={t('resource-type-datasets', {
+              count: 0,
+            })}
             style={{ width: 120 }}
             loading={isInitialLoading}
             optionFilterProp="label"
@@ -104,7 +110,7 @@ export default function ResourceSelectionTable({}: Props) {
           />
           <Input.Search
             style={{ width: 120 }}
-            value={searchParams.get(SOURCE_TABLE_QUERY_KEY) || ''}
+            value={query || ''}
             onChange={(e) => {
               searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
               setSearchParams(searchParams);
@@ -123,7 +129,8 @@ export default function ResourceSelectionTable({}: Props) {
             advancedFilter={advancedFilter}
           />
           <Checkbox
-            checked={allSources}
+            checked={!query && allSources}
+            disabled={!!query}
             onChange={(e) => setAllSources(e.target.checked)}
             label="Select all"
           />
@@ -132,7 +139,6 @@ export default function ResourceSelectionTable({}: Props) {
 
       {sourceType === 'timeseries' && (
         <TimeseriesTable
-          query={searchParams.get(SOURCE_TABLE_QUERY_KEY)}
           filter={sourceFilter}
           selected={sourcesList}
           setSelected={setSourcesList}
@@ -142,11 +148,11 @@ export default function ResourceSelectionTable({}: Props) {
       )}
       {sourceType === 'events' && (
         <EventTable
-          query={searchParams.get(SOURCE_TABLE_QUERY_KEY)}
           filter={sourceFilter}
           selected={sourcesList}
           setSelected={setSourcesList}
           advancedFilter={advancedFilter}
+          allSources={allSources}
         />
       )}
     </Flex>
