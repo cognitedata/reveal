@@ -11,22 +11,18 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Filter, SourceType } from 'types/api';
 import { useContextState } from 'utils';
 
-export type QuickMatchStep =
-  | 'select-sources'
-  | 'select-targets'
-  | 'configure-model'
-  | 'create-model';
-export const QuickMatchStepsOrder: Record<QuickMatchStep, number> = {
-  'select-sources': 0,
-  'select-targets': 1,
-  'configure-model': 2,
-  'create-model': 3,
+const QUICK_MATCH_STEPS = [
+  'select-sources',
+  'select-targets',
+  'configure-model',
+  'create-model',
+] as const;
+export type QuickMatchStep = (typeof QUICK_MATCH_STEPS)[number];
+
+const getQuickMatchStepOrder = (step?: string): number => {
+  const index = QUICK_MATCH_STEPS.findIndex((value) => value === step);
+  return index;
 };
-const QuickMatchStepsOrderIndex: Record<number, QuickMatchStep> =
-  Object.entries(QuickMatchStepsOrder).reduce(
-    (accl, [k, v]) => ({ ...accl, [v]: k }),
-    {}
-  );
 
 export type EMFeatureType =
   | 'simple'
@@ -77,8 +73,6 @@ type QuickMatchContext = {
   targetsList: InternalId[];
   setTargetsList: Dispatch<SetStateAction<InternalId[]>>;
 
-  step: QuickMatchStep;
-  setStep: Dispatch<SetStateAction<QuickMatchStep>>;
   hasNextStep: () => boolean;
   hasPrevStep: () => boolean;
   pushStep: () => void;
@@ -102,8 +96,6 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   setTargetsList: function (_: SetStateAction<InternalId[]>): void {
     throw new Error('Function not implemented.');
   },
-  step: 'select-sources',
-
   setAllSources: function (_: SetStateAction<boolean>): void {
     throw new Error('Function not implemented.');
   },
@@ -129,9 +121,6 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
     throw new Error('Function not implemented.');
   },
   popStep: function (): void {
-    throw new Error('Function not implemented.');
-  },
-  setStep: function (_: SetStateAction<QuickMatchStep>): void {
     throw new Error('Function not implemented.');
   },
   sourceType: 'timeseries',
@@ -168,9 +157,12 @@ export const QuickMatchContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const { subAppPath } = useParams<{
+  const params = useParams<{
+    '*': string;
     subAppPath: string;
   }>();
+
+  const { '*': step, subAppPath } = params;
 
   const navigate = useNavigate();
 
@@ -219,40 +211,32 @@ export const QuickMatchContextProvider = ({
     'timeseries',
     'sourceType'
   );
-  const [step, setStep] = useContextState<QuickMatchStep>(
-    'select-sources',
-    'step'
-  );
 
   const hasNextStep = () => {
-    const stepIndex = Object.values(QuickMatchStepsOrder);
-    const nextStep = QuickMatchStepsOrder[step] + 1;
-    return stepIndex.includes(nextStep);
+    const order = getQuickMatchStepOrder(step);
+    return order >= 0 && order < QUICK_MATCH_STEPS.length - 1;
   };
 
   const hasPrevStep = () => {
-    const stepIndex = Object.values(QuickMatchStepsOrder);
-    const nextStep = QuickMatchStepsOrder[step] - 1;
-    return stepIndex.includes(nextStep);
+    const order = getQuickMatchStepOrder(step);
+    return order > 0 && order < QUICK_MATCH_STEPS.length;
   };
 
   const pushStep = () => {
     if (!hasNextStep()) {
       throw new Error('No futher steps');
     }
-    const i = QuickMatchStepsOrder[step];
-    const next = QuickMatchStepsOrderIndex[i + 1];
+    const order = getQuickMatchStepOrder(step);
+    const next = QUICK_MATCH_STEPS[order + 1];
     navigate(createLink(`/${subAppPath}/quick-match/create/${next}`));
-    setStep(next);
   };
   const popStep = () => {
     if (!hasPrevStep()) {
       throw new Error('No steps before this');
     }
-    const i = QuickMatchStepsOrder[step];
-    const prev = QuickMatchStepsOrderIndex[i - 1];
-    navigate(createLink(`/${subAppPath}/quick-match/create/${prev}`));
-    setStep(prev);
+    const order = getQuickMatchStepOrder(step);
+    const next = QUICK_MATCH_STEPS[order - 1];
+    navigate(createLink(`/${subAppPath}/quick-match/create/${next}`));
   };
   return (
     <QuickMatchContext.Provider
@@ -265,8 +249,6 @@ export const QuickMatchContextProvider = ({
         setAllTargets,
         targetsList,
         setTargetsList,
-        step,
-        setStep,
         hasNextStep,
         hasPrevStep,
         pushStep,
