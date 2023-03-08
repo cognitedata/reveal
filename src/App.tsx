@@ -17,10 +17,9 @@ import GlobalStyles from 'styles/GlobalStyles';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Details from 'pages/Details';
-import QuickMatch from 'pages/QuickMatch';
+import QuickMatch from 'pages/quick-match';
 import CreatePipeline from 'pages/CreatePipeline';
 import { CogniteError } from '@cognite/sdk/dist/src';
-import { QuickMatchContextProvider } from 'context/QuickMatchContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,12 +62,8 @@ const App = () => {
                         element={<RootList />}
                       />
                       <Route
-                        path="/:projectName/:subAppPath/quick-match"
-                        element={
-                          <QuickMatchContextProvider>
-                            <QuickMatch />
-                          </QuickMatchContextProvider>
-                        }
+                        path="/:projectName/:subAppPath/quick-match*"
+                        element={<QuickMatch />}
                       />
                       <Route
                         path="/:projectName/:subAppPath/create"
