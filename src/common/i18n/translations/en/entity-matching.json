@@ -84,5 +84,7 @@
   "create-prediction-job-idle": "Waiting to create the prediction job",
   "create-prediction-job-success": "Created the prediction job",
   "create-prediction-job-loading": "Creating the prediction job",
-  "do-not-leave-the-page-quick-match": "Creating the job, please do not leave the page"
+  "do-not-leave-the-page-quick-match": "Creating the job, please do not leave the page",
+  "results": "Results",
+  "create": "Create"
 }

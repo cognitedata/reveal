@@ -1,6 +1,6 @@
-import { SecondaryTopbar } from '@cognite/cdf-utilities';
-import { Colors } from '@cognite/cogs.js';
+import { useTranslation } from 'common';
 import EntityMatchingResult from 'components/em-result';
+import Page from 'components/page';
 import {
   IN_PROGRESS_EM_STATES,
   useEMModelPredictResults,
@@ -8,12 +8,12 @@ import {
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import styled from 'styled-components';
-
 const QuickMatchResults = (): JSX.Element => {
   const { jobId } = useParams<{
     jobId: string;
   }>();
+
+  const { t } = useTranslation();
 
   const [predictionRefetchInt, setPredictionRefetchInt] = useState<
     number | undefined
@@ -41,26 +41,12 @@ const QuickMatchResults = (): JSX.Element => {
   }, [predictStatus, predictionRefetchInt]);
 
   return (
-    <Container>
-      <SecondaryTopbar title="Quick match results" />
-      <Content>
-        {predictions?.status === 'Completed' && !!predictions?.items && (
-          <EntityMatchingResult predictions={predictions.items} />
-        )}
-      </Content>
-    </Container>
+    <Page subtitle={t('results')} title={t('quick-match')}>
+      {predictions?.status === 'Completed' && !!predictions?.items && (
+        <EntityMatchingResult predictions={predictions.items} />
+      )}
+    </Page>
   );
 };
-
-const Container = styled.div`
-  height: 100%;
-`;
-
-const Content = styled.div`
-  border-top: 1px solid ${Colors['border--interactive--default']};
-  height: calc(100% - 56px);
-  padding: 12px;
-  overflow-y: auto;
-`;
 
 export default QuickMatchResults;
