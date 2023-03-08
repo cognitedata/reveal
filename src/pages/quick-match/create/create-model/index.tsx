@@ -17,6 +17,7 @@ import {
 } from 'hooks/contextualization-api';
 import { useInfiniteList } from 'hooks/infiniteList';
 import { bulkDownloadStatus, getAdvancedFilter } from 'utils';
+import QuickMatchTitle from 'components/quick-match-title';
 
 const CreateModel = (): JSX.Element => {
   const { subAppPath } = useParams<{
@@ -164,7 +165,8 @@ const CreateModel = (): JSX.Element => {
   }
 
   return (
-    <Flex direction="column">
+    <Flex direction="column" gap={8}>
+      <QuickMatchTitle step="create-model" />
       <Infobox type="neutral" title={t('do-not-leave-the-page-quick-match')}>
         {sourceStatus && (
           <Flex alignItems="center" gap={8}>

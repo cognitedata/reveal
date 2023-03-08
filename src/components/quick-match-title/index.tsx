@@ -1,11 +1,14 @@
 import { Flex, Icon, Title, Tooltip } from '@cognite/cogs.js';
 
 import { useTranslation } from 'common';
-import { useQuickMatchContext } from 'context/QuickMatchContext';
+import { QuickMatchStep } from 'context/QuickMatchContext';
 
-export default function QuickMatchTitle() {
+type QuickMatchTitleProps = {
+  step: QuickMatchStep;
+};
+
+export default function QuickMatchTitle({ step }: QuickMatchTitleProps) {
   const { t } = useTranslation();
-  const { step } = useQuickMatchContext();
 
   return (
     <Flex alignItems="center" gap={8}>
