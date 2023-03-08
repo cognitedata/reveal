@@ -110,6 +110,7 @@ export default function ResourceSelectionTable({}: Props) {
           />
           <Input.Search
             style={{ width: 120 }}
+            disabled={allSources}
             value={query || ''}
             onChange={(e) => {
               searchParams.set(SOURCE_TABLE_QUERY_KEY, e.target.value);
