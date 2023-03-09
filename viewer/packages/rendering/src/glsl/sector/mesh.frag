@@ -36,11 +36,14 @@ void main()
     }
 
 #if defined(IS_TEXTURED)
-    vec3 baseColor = texture(tDiffuse, v_uv).rgb;
+    vec3 diffuseColor = texture(tDiffuse, v_uv).rgb;
+    vec4 color = determineColor(diffuseColor, appearance);
+
+    color = vec4(mix(diffuseColor, vec3(color), 0.6), color.a);
 #else
-    vec3 baseColor = v_color;
+    vec4 color = determineColor(v_color, appearance);
 #endif
-    vec4 color = determineColor(baseColor, appearance);
+
     vec3 normal = derivateNormal(v_viewPosition);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.TriangleMesh);
 }
