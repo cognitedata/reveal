@@ -1,4 +1,5 @@
-import { Button, Colors, Flex } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
+import { useTranslation } from 'common';
 import QueryStatusIcon from 'components/QueryStatusIcon';
 import { Prediction } from 'hooks/contextualization-api';
 import { useUpdateTimeseries } from 'hooks/timeseries';
@@ -10,6 +11,7 @@ type Props = {
 };
 export default function EntityMatchingResult({ predictions }: Props) {
   const { mutate, isLoading, status } = useUpdateTimeseries();
+  const { t } = useTranslation();
   const applyAll = () => {
     mutate(
       predictions.map(({ source, matches }) => ({
@@ -28,7 +30,7 @@ export default function EntityMatchingResult({ predictions }: Props) {
           disabled={isLoading}
           onClick={() => applyAll()}
         >
-          Apply all <QueryStatusIcon status={status} />
+          {t('qm-results-apply-all')} <QueryStatusIcon status={status} />
         </StyledButton>
       </Flex>
       <QuickMatchResultsTable predictions={predictions} />
