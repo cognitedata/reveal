@@ -30,7 +30,7 @@ export class Image360UI {
     };
 
     const iconCulling = {
-      radius: -1,
+      radius: 0,
       limit: 50
     };
 
