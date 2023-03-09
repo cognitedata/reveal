@@ -4,3 +4,5 @@ export type PipelineTableTypes =
   | 'description'
   | 'owner'
   | 'run';
+
+export type PredictionsTableTypes = 'source' | 'matches';
