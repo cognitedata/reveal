@@ -11,7 +11,8 @@ import { useMemo } from 'react';
 import TimeseriesTable from './TimeseriesTable';
 import EventTable from './EventTable';
 import { getAdvancedFilter } from 'utils';
-import { SourceType, SOURCE_TYPES } from 'types/api';
+import { API, SourceType, SOURCE_TYPES } from 'types/api';
+import FileInfoTable from './FilesTable';
 
 const { Option } = Select;
 
@@ -21,6 +22,13 @@ type OptionType = {
 };
 
 type Props = {};
+
+const supportsAdvancedFilter: Record<API, boolean> = {
+  files: false,
+  timeseries: true,
+  assets: true,
+  events: true,
+};
 
 export default function ResourceSelectionTable({}: Props) {
   const { t } = useTranslation();
@@ -39,6 +47,7 @@ export default function ResourceSelectionTable({}: Props) {
   const sourceTypeOptions: { value: SourceType; label: string }[] = [
     { value: 'timeseries', label: t('resource-type-ts') },
     { value: 'events', label: t('resource-type-events', { count: 0 }) },
+    { value: 'files', label: t('resource-type-files', { count: 0 }) },
   ];
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
@@ -120,11 +129,13 @@ export default function ResourceSelectionTable({}: Props) {
               setSearchParams(searchParams);
             }}
           />
-          <Checkbox
-            onChange={(e) => setUnmatchedOnly(e.target.checked)}
-            checked={unmatchedOnly}
-            label={t('filter-only-unmatched-items')}
-          />
+          {supportsAdvancedFilter[sourceType] && (
+            <Checkbox
+              onChange={(e) => setUnmatchedOnly(e.target.checked)}
+              checked={unmatchedOnly}
+              label={t('filter-only-unmatched-items')}
+            />
+          )}
         </Flex>
         <Flex alignItems="center" gap={12}>
           <ResourceCount
@@ -132,6 +143,7 @@ export default function ResourceSelectionTable({}: Props) {
             filter={sourceFilter}
             advancedFilter={advancedFilter}
           />
+
           <Checkbox
             checked={!query && allSources}
             disabled={!!query}
@@ -157,6 +169,16 @@ export default function ResourceSelectionTable({}: Props) {
           setSelected={setSourcesList}
           advancedFilter={advancedFilter}
           allSources={allSources}
+        />
+      )}
+      {sourceType === 'files' && (
+        <FileInfoTable
+          filter={sourceFilter}
+          selected={sourcesList}
+          setSelected={setSourcesList}
+          advancedFilter={advancedFilter}
+          allSources={allSources}
+          query={query}
         />
       )}
     </Flex>

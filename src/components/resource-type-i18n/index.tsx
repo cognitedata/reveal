@@ -40,6 +40,16 @@ export default function ResourceTypei18n({ t, count = 0, downcase }: Props) {
         </>
       );
     }
+    case 'files': {
+      return (
+        <>
+          {translate('resource-type-files', {
+            postProcess: downcase ? 'lowercase' : undefined,
+            count,
+          })}
+        </>
+      );
+    }
     default: {
       return null;
     }

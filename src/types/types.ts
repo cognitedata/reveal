@@ -10,6 +10,7 @@ export type PipelineTableTypes =
   | 'run';
 
 export type ResourceTableProps = {
+  query?: string | null;
   advancedFilter?: any;
   filter: Filter;
   selected: InternalId[];
