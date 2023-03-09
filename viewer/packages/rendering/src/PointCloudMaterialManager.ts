@@ -14,6 +14,10 @@ export class PointCloudMaterialManager {
   }
 
   removeModelMaterial(modelIdentifier: symbol): void {
+    // Return when no point cloud material to remove.
+    if (this._modelsMaterialsMap.size < 1) {
+      return;
+    }
     const material = this._modelsMaterialsMap.get(modelIdentifier);
 
     if (material) {

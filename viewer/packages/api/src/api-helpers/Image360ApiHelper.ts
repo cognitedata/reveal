@@ -34,6 +34,7 @@ export class Image360ApiHelper {
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
     currentImage360Entered?: Image360Entity;
+    image360SelectedForEntry?: Image360Entity;
     lastMousePosition?: { offsetX: number; offsetY: number };
   };
 
@@ -131,19 +132,20 @@ export class Image360ApiHelper {
   }
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
-    const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
-    this._interactionState.currentImage360Entered = image360Entity;
-
-    if (lastEntered360ImageEntity === image360Entity) {
+    if (this._interactionState.image360SelectedForEntry === image360Entity) {
       this._requestRedraw();
       return;
     }
+    this._interactionState.image360SelectedForEntry = image360Entity;
 
-    await this._image360Facade.preload(image360Entity);
+    await this._image360Facade.preload(image360Entity, true);
 
-    if (this._interactionState.currentImage360Entered !== image360Entity) {
+    if (this._interactionState.image360SelectedForEntry !== image360Entity) {
       return;
     }
+
+    const lastEntered360ImageEntity = this._interactionState.currentImage360Entered;
+    this._interactionState.currentImage360Entered = image360Entity;
 
     this.set360CameraManager();
 
@@ -296,6 +298,7 @@ export class Image360ApiHelper {
         .forEach(imageCollection => imageCollection.events.image360Exited.fire());
       this._interactionState.currentImage360Entered.image360Visualization.visible = false;
       this._interactionState.currentImage360Entered = undefined;
+      this._interactionState.image360SelectedForEntry = undefined;
       MetricsLogger.trackEvent('360ImageExited', {});
     }
     const { position, rotation } = this._image360Navigation.getCameraState();

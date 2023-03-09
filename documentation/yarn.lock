@@ -2155,9 +2155,9 @@ __metadata:
     react: 18.2.0
     react-dom: 18.2.0
     replace: 1.2.2
-    rimraf: 4.1.1
-    styled-components: 5.3.6
-    typedoc: 0.23.25
+    rimraf: 4.3.0
+    styled-components: 5.3.8
+    typedoc: 0.23.26
     typedoc-plugin-markdown: 3.14.0
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 4.9.5
@@ -7056,6 +7056,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"glob@npm:^9.2.0":
+  version: 9.2.1
+  resolution: "glob@npm:9.2.1"
+  dependencies:
+    fs.realpath: ^1.0.0
+    minimatch: ^7.4.1
+    minipass: ^4.2.4
+    path-scurry: ^1.6.1
+  checksum: ef9b1c32491e6b532bdd0d2abcc3c9f48e83446609e11285869156982fc5a756dfbaa6f59f797712343bd1e22500ac15708692806633653fde4ef67c85e2aab7
+  languageName: node
+  linkType: hard
+
 "global-dirs@npm:^3.0.0":
   version: 3.0.0
   resolution: "global-dirs@npm:3.0.0"
@@ -8542,9 +8554,9 @@ __metadata:
   linkType: hard
 
 "loader-utils@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "loader-utils@npm:3.2.0"
-  checksum: c7b9a8dc4b3bc19e9ef563c48e3a18ea9f8bb2da1ad38a12e4b88358cfba5f148a7baf12d78fe78ffcb718ce1e062ab31fcf5c148459f1247a672a4213471e80
+  version: 3.2.1
+  resolution: "loader-utils@npm:3.2.1"
+  checksum: 4e3ea054cdc8be1ab1f1238f49f42fdf0483039eff920fb1d442039f3f0ad4ebd11fb8e584ccdf2cb7e3c56b3d40c1832416e6408a55651b843da288960cc792
   languageName: node
   linkType: hard
 
@@ -8679,6 +8691,13 @@ __metadata:
   dependencies:
     yallist: ^4.0.0
   checksum: f97f499f898f23e4585742138a22f22526254fdba6d75d41a1c2526b3b6cc5747ef59c5612ba7375f42aca4f8461950e925ba08c991ead0651b4918b7c978297
+  languageName: node
+  linkType: hard
+
+"lru-cache@npm:^7.14.1":
+  version: 7.18.3
+  resolution: "lru-cache@npm:7.18.3"
+  checksum: e550d772384709deea3f141af34b6d4fa392e2e418c1498c078de0ee63670f1f46f5eee746e8ef7e69e1c895af0d4224e62ee33e66a543a14763b0f2e74c1356
   languageName: node
   linkType: hard
 
@@ -8992,12 +9011,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^6.1.6":
-  version: 6.2.0
-  resolution: "minimatch@npm:6.2.0"
+"minimatch@npm:^7.1.3, minimatch@npm:^7.4.1":
+  version: 7.4.2
+  resolution: "minimatch@npm:7.4.2"
   dependencies:
     brace-expansion: ^2.0.1
-  checksum: 0ffb77d05bd483fcc344ba3e64a501d569e658fa6c592d94e9716ffc7925de7a8c2ac294cafa822b160bd8b2cbf7e01012917e06ffb9a85cfa9604629b3f2c04
+  checksum: 9e341b04e69d5ab03e4206dcb61c8a158e3b8709628bf5e1a4eaa9f3b72c0ba925e24ad959b1f6ce6835caa5a927131d5087fae6836b69e7d99d7d5e63ef0bd8
   languageName: node
   linkType: hard
 
@@ -9065,6 +9084,13 @@ __metadata:
   dependencies:
     yallist: ^4.0.0
   checksum: f89f02bcaa0e0e4bb4c44ec796008e69fbca62db0aba6ead1bc57d25bdaefdf42102130f4f9ecb7d9c6b6cd35ff7b0c7b97d001d3435da8e629fb68af3aea57e
+  languageName: node
+  linkType: hard
+
+"minipass@npm:^4.0.2, minipass@npm:^4.2.4":
+  version: 4.2.4
+  resolution: "minipass@npm:4.2.4"
+  checksum: c664f2ae4401408d1e7a6e4f50aca45f87b1b0634bc9261136df5c378e313e77355765f73f59c4a5abcadcdf43d83fcd3eb14e4a7cdcce8e36508e2290345753
   languageName: node
   linkType: hard
 
@@ -9714,6 +9740,16 @@ __metadata:
   version: 1.0.7
   resolution: "path-parse@npm:1.0.7"
   checksum: 49abf3d81115642938a8700ec580da6e830dde670be21893c62f4e10bd7dd4c3742ddc603fe24f898cba7eb0c6bc1777f8d9ac14185d34540c6d4d80cd9cae8a
+  languageName: node
+  linkType: hard
+
+"path-scurry@npm:^1.6.1":
+  version: 1.6.1
+  resolution: "path-scurry@npm:1.6.1"
+  dependencies:
+    lru-cache: ^7.14.1
+    minipass: ^4.0.2
+  checksum: 7ba57e823cb7bb879669a4e5e05a283cde1bb9e81b6d806b2609f8d8026d0aef08f4b655b17fc86b21c9c32807851bba95ca715db5ab0605fb13c7a3e9172e42
   languageName: node
   linkType: hard
 
@@ -11150,12 +11186,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:4.1.1":
-  version: 4.1.1
-  resolution: "rimraf@npm:4.1.1"
+"rimraf@npm:4.3.0":
+  version: 4.3.0
+  resolution: "rimraf@npm:4.3.0"
+  dependencies:
+    glob: ^9.2.0
   bin:
     rimraf: dist/cjs/src/bin.js
-  checksum: f52d46f59c1a532b3d0f73cb5228ff8f7df4ee87b9df95cf655788ea186c935b5c6ab4c45b66f8de5ed1e3690f58ff83f9a5b0ba1ae2e76a9bf36415f37732f7
+  checksum: 48498f1eeb9b6b848605d93fa79e7bf3c57bb47807500ee636848dc0fd3b69b6b532f1ce9d4e46c4feeb4c3ff0e8ab85cd177cbbbd65f635f8bc8cb88aee151c
   languageName: node
   linkType: hard
 
@@ -11982,9 +12020,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:5.3.6":
-  version: 5.3.6
-  resolution: "styled-components@npm:5.3.6"
+"styled-components@npm:5.3.8":
+  version: 5.3.8
+  resolution: "styled-components@npm:5.3.8"
   dependencies:
     "@babel/helper-module-imports": ^7.0.0
     "@babel/traverse": ^7.4.5
@@ -12000,7 +12038,7 @@ __metadata:
     react: ">= 16.8.0"
     react-dom: ">= 16.8.0"
     react-is: ">= 16.8.0"
-  checksum: 68eac1e451be81d66739cf86de8ec9e72f46e7584aa359271761a2437468210bd7cf0a864281fc97dab08c32b35e6bf7513dc8b4104ed6b196cf8d65674dd289
+  checksum: 60148083f4057cd0dd4ad555e82800ec4ec4b8822fd81645f084e9beebf91420f4c9c75875b44933755d32ec97c46be6b79ca0c23578e5a731e3399e6ea0d901
   languageName: node
   linkType: hard
 
@@ -12426,19 +12464,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.23.25":
-  version: 0.23.25
-  resolution: "typedoc@npm:0.23.25"
+"typedoc@npm:0.23.26":
+  version: 0.23.26
+  resolution: "typedoc@npm:0.23.26"
   dependencies:
     lunr: ^2.3.9
     marked: ^4.2.12
-    minimatch: ^6.1.6
+    minimatch: ^7.1.3
     shiki: ^0.14.1
   peerDependencies:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x
   bin:
     typedoc: bin/typedoc
-  checksum: 2089d6da0293e63f6d3fac9460e9427fb6bfd56ddf669f2f13bef9435aa69ca7e72a8754e8951788db69432356e419c48b811105c8a74a47cab1f92a0bdad75b
+  checksum: 09dbd221b5bd27a7f6c593a6aa7e4efc3c46f20761e109a76bf0ed7239011cca1261357094710c01472582060d75a7558aab5bf5b78db3aff7c52188d146ee65
   languageName: node
   linkType: hard
 

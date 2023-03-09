@@ -40,6 +40,7 @@ void main()
     mat3 basis = mat3(U.xyz, V.xyz, axis.xyz);
     vec3 surfacePoint = vec3(U.w, V.w, axis.w);
     vec3 rayTarget = surfacePoint;
+    float rayTargetDist = length(rayTarget);
 
 #if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
       vec3 rayDirection = vec3(0.0, 0.0, -1.0);
@@ -100,22 +101,22 @@ void main()
     float intersectionPointZ = E.z + dist * D.z;
     // Intersection point in camera space
     vec3 p = rayTarget + dist * rayDirection;
-    bool isInner = false;
 
     if (intersectionPointZ <= 0.0 ||
       intersectionPointZ >= L ||
-      isClipped(appearance, p)
+      isClipped(appearance, p) ||
+      rayTargetDist + dist < 0.0
       ) {
       // Either intersection point is behind starting point (happens inside the cone),
       // or the intersection point is outside the end caps. This is not a valid solution.
-      isInner = true;
       dist = dist2;
       intersectionPointZ = E.z + dist * D.z;
       p = rayTarget + dist * rayDirection;
 
       if (intersectionPointZ <= 0.0 ||
         intersectionPointZ >= L ||
-        isClipped(appearance, p)
+        isClipped(appearance, p) ||
+        rayTargetDist + dist < 0.0
       ) {
         // Missed the other point too
         discard;
@@ -135,6 +136,10 @@ void main()
     vec3 B = o2 - o1;
     normal = normalize(cross(A, B));
 #endif
+
+    if (dot(normal, vec3(0.0, 0.0, 1.0)) < 0.0) {
+      normal *= -1.0;
+    }
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);
