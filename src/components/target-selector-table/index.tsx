@@ -20,7 +20,7 @@ export default function TargetSelectionTable({}: Props) {
     setTargetsList,
     targetFilter,
     setTargetFilter,
-    unmatchedOnly,
+
     allTargets,
     setAllTargets,
   } = useQuickMatchContext();
@@ -38,12 +38,8 @@ export default function TargetSelectionTable({}: Props) {
 
   const query = searchParams.get(TARGET_TABLE_QUERY_KEY);
   const advancedFilter = useMemo(
-    () =>
-      getAdvancedFilter({
-        api: 'assets',
-        query,
-      }),
-    [unmatchedOnly, query]
+    () => getAdvancedFilter({ api: 'assets', query }),
+    [query]
   );
 
   return (

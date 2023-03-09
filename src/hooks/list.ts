@@ -8,7 +8,6 @@ import { getList, ListParams } from './api';
 
 type UseQParam = Pick<ListParams, 'advancedFilter' | 'filter' | 'limit'>;
 
-type PartitionCount = number;
 const getUseListKey = (
   api: API,
 

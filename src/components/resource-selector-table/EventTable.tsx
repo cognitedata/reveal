@@ -1,11 +1,10 @@
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { useMemo } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
-import { InternalId } from '@cognite/sdk';
 import { useList } from 'hooks/list';
-import { Filter, RawCogniteEvent } from 'types/api';
+import { RawCogniteEvent } from 'types/api';
 import { ResourceTableProps } from 'types/types';
 
 type EventListTableRecord = { key: string } & Pick<

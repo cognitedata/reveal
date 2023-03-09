@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
-import { Icon, Loader } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { RawAsset } from 'types/api';
 import { ResourceTableProps } from 'types/types';
-import { useInfiniteList } from 'hooks/infiniteList';
 
 type AssetListTableRecord = { key: string } & Pick<
   RawAsset,
@@ -30,11 +29,6 @@ export default function AssetTable({
     advancedFilter,
   });
 
-  const { data: infData } = useInfiniteList('assets', 1, {
-    filter,
-    advancedFilter,
-  });
-
   const dataSource = useMemo(
     () =>
       data?.map((a) => ({
@@ -44,8 +38,6 @@ export default function AssetTable({
       })) || [],
     [data, allSources]
   );
-
-  console.log('dataSource', dataSource);
 
   const columns: AssetListTableRecordCT[] = useMemo(
     () => [
