@@ -8,7 +8,13 @@ import {
 } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { range } from 'lodash-es';
-import { API, RawAsset, RawCogniteEvent, RawTimeseries } from 'types/api';
+import {
+  API,
+  RawAsset,
+  RawCogniteEvent,
+  RawFileInfo,
+  RawTimeseries,
+} from 'types/api';
 import { getList, ListParams } from './api';
 
 type UseQParam = Pick<ListParams, 'advancedFilter' | 'filter' | 'limit'>;
@@ -56,6 +62,17 @@ export function useInfiniteList(
   { items: RawTimeseries[]; cursors?: (string | undefined)[] },
   CogniteError
 >;
+
+export function useInfiniteList(
+  api: 'files',
+  partitions: PartitionCount,
+  { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
+  opts?: Opts
+): UseInfiniteQueryResult<
+  { items: RawFileInfo[]; cursors?: (string | undefined)[] },
+  CogniteError
+>;
+
 export function useInfiniteList(
   api: API,
   partitions: PartitionCount,
@@ -68,6 +85,10 @@ export function useInfiniteList(
     >
   | UseInfiniteQueryResult<
       { items: RawCogniteEvent[]; cursors?: (string | undefined)[] },
+      CogniteError
+    >
+  | UseInfiniteQueryResult<
+      { items: RawFileInfo[]; cursors?: (string | undefined)[] },
       CogniteError
     >;
 
@@ -83,6 +104,10 @@ export function useInfiniteList(
     >
   | UseInfiniteQueryResult<
       { items: RawCogniteEvent[]; cursors?: (string | undefined)[] },
+      CogniteError
+    >
+  | UseInfiniteQueryResult<
+      { items: RawFileInfo[]; cursors?: (string | undefined)[] },
       CogniteError
     > {
   const sdk = useSDK();

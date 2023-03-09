@@ -58,15 +58,18 @@ export default function TargetSelectionTable({}: Props) {
             options={datasets}
             value={datasets
               ?.filter(({ value }) =>
-                targetFilter.dataSetIds.find(({ id }) => id === value)
+                targetFilter.dataSetIds?.find(({ id }) => id === value)
               )
               .map((ds) => ds.value)}
             onChange={(e: number[]) => {
               setTargetFilter({
                 ...targetFilter,
-                dataSetIds: e.map((id) => ({
-                  id,
-                })),
+                dataSetIds:
+                  e.length > 0
+                    ? e.map((id) => ({
+                        id,
+                      }))
+                    : undefined,
               });
             }}
           />
