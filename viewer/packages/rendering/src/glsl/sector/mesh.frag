@@ -1,5 +1,6 @@
 precision highp float;
 
+#pragma glslify: import('../math/colorSpaceConversion.glsl')
 #pragma glslify: import('../math/derivateNormal.glsl')
 #pragma glslify: import('../base/updateFragmentColor.glsl')
 #pragma glslify: import('../base/nodeAppearance.glsl')
@@ -36,7 +37,10 @@ void main()
     }
 
 #if defined(IS_TEXTURED)
-    vec3 baseColor = texture(tDiffuse, v_uv).rgb;
+    float gamma = 2.2;
+    // vec3 baseColor = texture(tDiffuse, v_uv).rgb;
+    vec3 baseColor = pow(texture(tDiffuse, v_uv).rgb, vec3(1.3));
+    baseColor = LinearTosRGB(vec4(baseColor, 1.0)).xyz;
 #else
     vec3 baseColor = v_color;
 #endif

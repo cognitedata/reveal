@@ -145,6 +145,8 @@ export class CadMaterialManager {
       throw new Error(`Model identifier: ${modelIdentifier} not found`);
     }
 
+    texture.encoding = THREE.sRGBEncoding;
+
     const newMaterial = modelData.materials.triangleMesh.clone();
     newMaterial.uniforms.tDiffuse = { value: texture };
     newMaterial.defines.IS_TEXTURED = true;
