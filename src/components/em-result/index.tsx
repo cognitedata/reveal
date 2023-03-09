@@ -21,7 +21,7 @@ export default function EntityMatchingResult({ predictions }: Props) {
     );
   };
   return (
-    <Flex
+    <StyledFlex
       direction="column"
       justifyContent="flex-end"
       style={{ padding: '20px' }}
@@ -30,20 +30,19 @@ export default function EntityMatchingResult({ predictions }: Props) {
         type="primary"
         disabled={isLoading}
         onClick={() => applyAll()}
-        $status={status}
       >
         Apply all <QueryStatusIcon status={status} />
       </StyledButton>
       <QuickMatchResultsTable predictions={predictions} />
-    </Flex>
+    </StyledFlex>
   );
 }
 
-const StyledButton = styled(Button)<{ $status?: string }>`
+const StyledButton = styled(Button)`
   width: 150px;
   padding: 10px;
+`;
 
-  background-color: ${({ $status }) =>
-    $status === 'success' &&
-    Colors['surface--status-success--strong--default']};
+const StyledFlex = styled(Flex)`
+  padding: 20px;
 `;
