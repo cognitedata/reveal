@@ -30,7 +30,7 @@ const supportsAdvancedFilter: Record<API, boolean> = {
   events: true,
 };
 
-export default function ResourceSelectionTable({}: Props) {
+export default function SourceSelectionTable({}: Props) {
   const { t } = useTranslation();
   const {
     setSourceType,
@@ -60,9 +60,9 @@ export default function ResourceSelectionTable({}: Props) {
     },
   });
 
-  const handleSelectResourceType = (selectedResourceType: string) => {
-    if (SOURCE_TYPES.some((type) => type === selectedResourceType)) {
-      setSourceType(selectedResourceType as SourceType);
+  const handleSelectSourceType = (selectedSourceType: string) => {
+    if (SOURCE_TYPES.some((type) => type === selectedSourceType)) {
+      setSourceType(selectedSourceType as SourceType);
     }
   };
 
@@ -85,7 +85,7 @@ export default function ResourceSelectionTable({}: Props) {
           <Select
             style={{ width: 120 }}
             defaultValue="timeseries"
-            onChange={handleSelectResourceType}
+            onChange={handleSelectSourceType}
           >
             {sourceTypeOptions.map(({ value, label }) => (
               <Option key={value} value={value}>
