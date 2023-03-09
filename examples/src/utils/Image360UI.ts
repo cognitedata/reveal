@@ -30,8 +30,8 @@ export class Image360UI {
     };
 
     const proximity = {
-      radius: 50,
-      limit: 20
+      radius: -1,
+      limit: 50
     };
 
     const params = {
@@ -63,7 +63,7 @@ export class Image360UI {
       viewer.requestRedraw();
     });
 
-    gui.add(proximity, 'radius', 1, 100, 1).name('Proximty radius').onChange(() => {
+    gui.add(proximity, 'radius', -1, 100, 1).name('Proximty radius').onChange(() => {
       set360ProximityLimits();
     });
 

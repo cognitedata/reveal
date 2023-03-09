@@ -15,7 +15,7 @@ export enum IconCullingStrategy {
 
 export class IconCollection {
   private readonly MIN_PIXEL_SIZE = 16;
-  private readonly MAX_PIXEL_SIZE = 256;
+  private readonly MAX_PIXEL_SIZE = 64;
   private readonly _sceneHandler: SceneHandler;
   private readonly _hoverIconTexture: CanvasTexture;
   private readonly _sharedTexture: Texture;
@@ -27,8 +27,8 @@ export class IconCollection {
 
   private _activeCullingStrategyEventHandeler: BeforeSceneRenderedDelegate;
   private _iconCullingStrategy: IconCullingStrategy;
-  private _proximityRadius = 50;
-  private _proximityPointLimit = 20;
+  private _proximityRadius = Number.POSITIVE_INFINITY;
+  private _proximityPointLimit = 50;
 
   get icons(): Image360Icon[] {
     return this._icons;
@@ -57,7 +57,7 @@ export class IconCollection {
   }
 
   public set360IconProximityLimits(radius: number, pointLimit: number): void {
-    this._proximityRadius = Math.max(1, radius);
+    this._proximityRadius = radius > 0 ? radius : Number.POSITIVE_INFINITY;
     this._proximityPointLimit = pointLimit;
   }
 
@@ -131,7 +131,7 @@ export class IconCollection {
   private computeProximityPoints(octree: IconOctree, iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
     return ({ camera }) => {
       const points = octree
-        .findPoints(camera.position, this._proximityRadius)
+        .findPoints(camera.position, this._proximityRadius, true)
         .sort((a, b) => {
           return b.data.position.distanceTo(camera.position) - a.data.position.distanceTo(camera.position);
         })
