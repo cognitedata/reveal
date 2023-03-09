@@ -29,7 +29,7 @@ export class Image360UI {
       alpha: 1
     };
 
-    const proximity = {
+    const iconCulling = {
       radius: -1,
       limit: 50
     };
@@ -63,11 +63,11 @@ export class Image360UI {
       viewer.requestRedraw();
     });
 
-    gui.add(proximity, 'radius', -1, 100, 1).name('Proximty radius').onChange(() => {
+    gui.add(iconCulling, 'radius', -1, 100, 1).name('Culling radius').onChange(() => {
       set360ProximityLimits();
     });
 
-    gui.add(proximity, 'limit', 0, 100, 1).name('Number of points').onChange(() => {
+    gui.add(iconCulling, 'limit', 0, 100, 1).name('Number of points').onChange(() => {
       set360ProximityLimits();
     });
 
@@ -90,7 +90,7 @@ export class Image360UI {
     }
 
     async function set360ProximityLimits() {
-      viewer.set360IconProximityLimits(proximity.radius, proximity.limit);
+      viewer.set360IconProximityLimits(iconCulling.radius, iconCulling.limit);
     }
 
     async function removeAll360Images() {
