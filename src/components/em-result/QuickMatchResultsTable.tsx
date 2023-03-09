@@ -4,7 +4,6 @@ import { useTranslation } from 'common';
 import { Prediction, PredictionObject } from 'hooks/contextualization-api';
 import { PredictionsTableTypes } from 'types/types';
 import { formatPredictionObject } from 'utils';
-import { Body } from '@cognite/cogs.js';
 
 type Predictions = {
   predictions: Prediction[];
