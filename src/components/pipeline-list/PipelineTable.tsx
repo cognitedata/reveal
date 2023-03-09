@@ -18,6 +18,11 @@ import {
 import { PipelineTableTypes } from 'types/types';
 import PipelineActionsMenu from 'components/pipeline-actions-menu/PipelineActionsMenu';
 
+import { stringContains } from 'utils/shared';
+import EntityMatchingFilter from 'components/em-filter/EntityMatchingFilter';
+import { useSearchParams } from 'react-router-dom';
+import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
+
 type PipelineListTableRecord = { key: string } & Pick<
   Pipeline,
   PipelineTableTypes
@@ -29,10 +34,12 @@ type PipelineListTableRecordCT = ColumnType<PipelineListTableRecord> & {
 
 const PipelineTable = (): JSX.Element => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams('');
   const { data, isInitialLoading } = useEMPipelines();
   const { mutate: deletePipeline } = useDeleteEMPipeline();
   const { mutate: duplicatePipeline } = useDuplicateEMPipeline();
   const { t } = useTranslation();
+  const searchParam = searchParams.get(SOURCE_TABLE_QUERY_KEY) || '';
 
   const handleToggleCheckbox = (
     _: Key[],
@@ -161,18 +168,34 @@ const PipelineTable = (): JSX.Element => {
     [handleDeletePipeline, handleDuplicate, t]
   );
 
+  const pipelinesList = useMemo(
+    () =>
+      !!searchParam
+        ? dataSource?.filter((pipeline) =>
+            stringContains(pipeline.name || pipeline.id.toString(), searchParam)
+          )
+        : dataSource,
+    [dataSource, searchParam]
+  );
+
   if (isInitialLoading) {
     return <Loader />;
   }
 
   return (
-    <Table<PipelineListTableRecord>
-      columns={columns}
-      emptyContent={undefined}
-      appendTooltipTo={undefined}
-      dataSource={dataSource}
-      rowSelection={rowSelection}
-    />
+    <>
+      <EntityMatchingFilter
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
+      />
+      <Table<PipelineListTableRecord>
+        columns={columns}
+        emptyContent={undefined}
+        appendTooltipTo={undefined}
+        dataSource={pipelinesList}
+        rowSelection={rowSelection}
+      />
+    </>
   );
 };
 
