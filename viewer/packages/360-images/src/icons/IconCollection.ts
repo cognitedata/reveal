@@ -8,7 +8,7 @@ import { Image360Icon } from './Image360Icon';
 import { InstancedIconSprite } from './InstancedIconSprite';
 import { IconOctree } from './IconOctree';
 
-export enum IconCullingStrategy {
+export enum IconCullingScheme {
   Clustered,
   Proximity
 }
@@ -25,8 +25,8 @@ export class IconCollection {
   private readonly _computeProximityPointsEventHandler: BeforeSceneRenderedDelegate;
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
 
-  private _activeCullingStrategyEventHandeler: BeforeSceneRenderedDelegate;
-  private _iconCullingStrategy: IconCullingStrategy;
+  private _activeCullingSchemeEventHandeler: BeforeSceneRenderedDelegate;
+  private _iconCullingScheme: IconCullingScheme;
   private _proximityRadius = Number.POSITIVE_INFINITY;
   private _proximityPointLimit = 50;
 
@@ -34,26 +34,26 @@ export class IconCollection {
     return this._icons;
   }
 
-  public setCullingStrategy(mode: IconCullingStrategy): void {
-    if (this._iconCullingStrategy === mode) return;
+  public setCullingScheme(scheme: IconCullingScheme): void {
+    if (this._iconCullingScheme === scheme) return;
 
-    this._iconCullingStrategy = mode;
-    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingStrategyEventHandeler);
+    this._iconCullingScheme = scheme;
+    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
 
-    switch (this._iconCullingStrategy) {
-      case IconCullingStrategy.Clustered: {
-        this._activeCullingStrategyEventHandeler = this._computeClustersEventHandler;
+    switch (this._iconCullingScheme) {
+      case IconCullingScheme.Clustered: {
+        this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
         break;
       }
-      case IconCullingStrategy.Proximity: {
-        this._activeCullingStrategyEventHandeler = this._computeProximityPointsEventHandler;
+      case IconCullingScheme.Proximity: {
+        this._activeCullingSchemeEventHandeler = this._computeProximityPointsEventHandler;
         break;
       }
       default:
         break;
     }
 
-    this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingStrategyEventHandeler);
+    this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingSchemeEventHandeler);
   }
 
   public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
@@ -87,8 +87,8 @@ export class IconCollection {
     this._computeClustersEventHandler = this.setIconClustersByLOD(octree, iconsSprites);
     this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, iconsSprites);
 
-    this._iconCullingStrategy = IconCullingStrategy.Clustered;
-    this._activeCullingStrategyEventHandeler = this._computeClustersEventHandler;
+    this._iconCullingScheme = IconCullingScheme.Clustered;
+    this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
 
     onBeforeSceneRendered.subscribe(this._computeClustersEventHandler);
 
@@ -162,7 +162,7 @@ export class IconCollection {
   }
 
   public dispose(): void {
-    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingStrategyEventHandeler);
+    this._onBeforeSceneRenderedEvent.unsubscribe(this._activeCullingSchemeEventHandeler);
     this._sceneHandler.removeCustomObject(this._iconsSprite);
     this._iconsSprite.dispose();
     this._sharedTexture.dispose();
