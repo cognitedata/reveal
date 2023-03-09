@@ -9,7 +9,7 @@ import {
   useState as reactUseState,
 } from 'react';
 import { styleScope } from 'styles/styleScope';
-import { SourceType } from 'types/api';
+import { API } from 'types/api';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope);
@@ -36,6 +36,16 @@ export function stringSorter<T extends Record<string, any>>(
     return 1;
   } else return 0;
 }
+
+export const stringContains = (
+  value?: string | null,
+  searchText?: string | null
+) => {
+  if (!searchText) {
+    return true;
+  }
+  return value && value.includes(searchText && searchText);
+};
 
 export const sleep = async (ms: number) =>
   new Promise<void>((resolve) => setTimeout(() => resolve(), ms));
@@ -96,22 +106,31 @@ export const bulkDownloadStatus = ({
 };
 
 const searchFields: Record<string, string[]> = {
-  defaultFields: ['query'],
+  defaultFields: ['name', 'description'],
   events: ['description'],
   files: ['name'],
 };
 
 export const getAdvancedFilter = ({
-  sourceType,
+  api: sourceType,
   excludeMatched,
   query,
 }: {
-  sourceType: SourceType;
+  api: API;
   excludeMatched?: boolean;
   query?: string | null;
 }) => {
   const nonMatched = (() => {
     switch (sourceType) {
+      case 'assets': {
+        return {
+          not: {
+            exists: {
+              property: ['parentId'],
+            },
+          },
+        };
+      }
       case 'events': {
         return {
           not: {

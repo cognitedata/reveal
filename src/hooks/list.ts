@@ -3,17 +3,16 @@ import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
 
 import { useQuery, UseQueryResult, QueryKey } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { RawCogniteEvent, RawTimeseries, SourceType } from 'types/api';
+import { API, RawAsset, RawCogniteEvent, RawTimeseries } from 'types/api';
 import { getList, ListParams } from './api';
 
 type UseQParam = Pick<ListParams, 'advancedFilter' | 'filter' | 'limit'>;
 
-type PartitionCount = number;
 const getUseListKey = (
-  api: SourceType,
-  partitions: PartitionCount,
+  api: API,
+
   opts: UseQParam
-): QueryKey => [api, partitions, 'list', opts];
+): QueryKey => [api, 'list', opts];
 
 type Opts = {
   enabled?: boolean;
@@ -24,37 +23,47 @@ type Opts = {
 
 export function useList(
   api: 'events',
-  partitions: PartitionCount,
+
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawCogniteEvent[], CogniteError>;
 
 export function useList(
+  api: 'assets',
+
+  { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
+  opts?: Opts
+): UseQueryResult<RawAsset[], CogniteError>;
+
+export function useList(
   api: 'timeseries',
-  partitions: PartitionCount,
+
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawTimeseries[], CogniteError>;
-export function useList(
-  api: SourceType,
-  partitions: PartitionCount,
-  { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
-  opts?: Opts
-):
-  | UseQueryResult<RawTimeseries[], CogniteError>
-  | UseQueryResult<RawCogniteEvent[], CogniteError>;
 
 export function useList(
-  api: SourceType,
-  partitions: PartitionCount,
+  api: API,
+
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ):
   | UseQueryResult<RawTimeseries[], CogniteError>
-  | UseQueryResult<RawCogniteEvent[], CogniteError> {
+  | UseQueryResult<RawCogniteEvent[], CogniteError>
+  | UseQueryResult<RawAsset[], CogniteError>;
+
+export function useList(
+  api: API,
+
+  { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
+  opts?: Opts
+):
+  | UseQueryResult<RawTimeseries[], CogniteError>
+  | UseQueryResult<RawCogniteEvent[], CogniteError>
+  | UseQueryResult<RawAsset[], CogniteError> {
   const sdk = useSDK();
   return useQuery(
-    getUseListKey(api, partitions, { limit, filter, advancedFilter }),
+    getUseListKey(api, { limit, filter, advancedFilter }),
     async () => {
       return getList(sdk, api, {
         filter,

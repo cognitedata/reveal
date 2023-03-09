@@ -1,4 +1,4 @@
-import { CogniteEvent, InternalId, Timeseries } from '@cognite/sdk';
+import { Asset, CogniteEvent, InternalId, Timeseries } from '@cognite/sdk';
 
 export type RawTimeseries = Omit<
   Timeseries,
@@ -16,6 +16,11 @@ export type RawCogniteEvent = Omit<
   createdTime: number;
 };
 
+export type RawAsset = Omit<Asset, 'lastUpdatedTime' | 'createdTime'> & {
+  lastUpdatedTime: number;
+  createdTime: number;
+};
+
 export type Filter = {
   dataSetIds: InternalId[];
 };
@@ -23,3 +28,5 @@ export type Filter = {
 export const SOURCE_TYPES = ['timeseries', 'events'] as const;
 export type SourceType = (typeof SOURCE_TYPES)[number];
 export type TargetType = 'assets';
+
+export type API = SourceType | TargetType;

@@ -1,13 +1,12 @@
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { useMemo } from 'react';
 import { ColumnType, RowSelectionType, Table } from '@cognite/cdf-utilities';
 import { Icon, Loader } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useTranslation } from 'common';
-import { InternalId } from '@cognite/sdk';
 import { RawTimeseries } from 'hooks/timeseries';
 
 import { useList } from 'hooks/list';
-import { Filter } from 'types/api';
+import { ResourceTableProps } from 'types/types';
 
 type TimeseriesListTableRecord = { key: string; disabled?: boolean } & Pick<
   RawTimeseries,
@@ -18,25 +17,18 @@ type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
   key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
 };
 
-type Props = {
-  advancedFilter?: any;
-  filter: Filter;
-  selected: InternalId[];
-  setSelected: Dispatch<SetStateAction<InternalId[]>>;
-  allSources: boolean;
-};
 export default function TimeseriesTable({
   selected,
   setSelected,
   advancedFilter,
   filter,
   allSources,
-}: Props) {
+}: ResourceTableProps) {
   const {
     data,
     isInitialLoading: listLoading,
     error,
-  } = useList('timeseries', 1, { limit: 1000, advancedFilter, filter });
+  } = useList('timeseries', { limit: 1000, advancedFilter, filter });
 
   const loading = listLoading;
   const { t } = useTranslation();
