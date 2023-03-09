@@ -21,14 +21,16 @@ export default function EntityMatchingResult({ predictions }: Props) {
     );
   };
   return (
-    <StyledFlex direction="column" justifyContent="flex-end">
-      <StyledButton
-        type="primary"
-        disabled={isLoading}
-        onClick={() => applyAll()}
-      >
-        Apply all <QueryStatusIcon status={status} />
-      </StyledButton>
+    <StyledFlex direction="column">
+      <Flex justifyContent="flex-end">
+        <StyledButton
+          type="primary"
+          disabled={isLoading}
+          onClick={() => applyAll()}
+        >
+          Apply all <QueryStatusIcon status={status} />
+        </StyledButton>
+      </Flex>
       <QuickMatchResultsTable predictions={predictions} />
     </StyledFlex>
   );
