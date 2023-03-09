@@ -1,5 +1,11 @@
 import { CogniteClient } from '@cognite/sdk';
-import { API, Filter, RawCogniteEvent, RawTimeseries } from 'types/api';
+import {
+  API,
+  Filter,
+  RawCogniteEvent,
+  RawFileInfo,
+  RawTimeseries,
+} from 'types/api';
 import { downcaseMetadata } from 'utils';
 
 export type ListParams = {
@@ -17,7 +23,7 @@ export function getList(
 ) {
   return sdk
     .post<{
-      items: RawTimeseries[] | RawCogniteEvent[];
+      items: RawTimeseries[] | RawCogniteEvent[] | RawFileInfo[];
       nextCursor?: string;
     }>(`/api/v1/projects/${sdk.project}/${api}/list`, {
       headers: {

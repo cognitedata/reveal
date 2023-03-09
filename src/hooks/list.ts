@@ -3,16 +3,22 @@ import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
 
 import { useQuery, UseQueryResult, QueryKey } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { API, RawAsset, RawCogniteEvent, RawTimeseries } from 'types/api';
+import {
+  API,
+  RawAsset,
+  RawCogniteEvent,
+  RawFileInfo,
+  RawTimeseries,
+} from 'types/api';
 import { getList, ListParams } from './api';
 
 type UseQParam = Pick<ListParams, 'advancedFilter' | 'filter' | 'limit'>;
 
-const getUseListKey = (
-  api: API,
-
-  opts: UseQParam
-): QueryKey => [api, 'list', opts];
+const getUseListKey = (api: API, opts: UseQParam): QueryKey => [
+  api,
+  'list',
+  opts,
+];
 
 type Opts = {
   enabled?: boolean;
@@ -23,34 +29,37 @@ type Opts = {
 
 export function useList(
   api: 'events',
-
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawCogniteEvent[], CogniteError>;
 
 export function useList(
   api: 'assets',
-
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawAsset[], CogniteError>;
 
 export function useList(
   api: 'timeseries',
-
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawTimeseries[], CogniteError>;
 
 export function useList(
-  api: API,
+  api: 'files',
+  { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
+  opts?: Opts
+): UseQueryResult<RawFileInfo[], CogniteError>;
 
+export function useList(
+  api: API,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ):
   | UseQueryResult<RawTimeseries[], CogniteError>
   | UseQueryResult<RawCogniteEvent[], CogniteError>
-  | UseQueryResult<RawAsset[], CogniteError>;
+  | UseQueryResult<RawAsset[], CogniteError>
+  | UseQueryResult<RawFileInfo[], CogniteError>;
 
 export function useList(
   api: API,
@@ -60,7 +69,8 @@ export function useList(
 ):
   | UseQueryResult<RawTimeseries[], CogniteError>
   | UseQueryResult<RawCogniteEvent[], CogniteError>
-  | UseQueryResult<RawAsset[], CogniteError> {
+  | UseQueryResult<RawAsset[], CogniteError>
+  | UseQueryResult<RawFileInfo[], CogniteError> {
   const sdk = useSDK();
   return useQuery(
     getUseListKey(api, { limit, filter, advancedFilter }),
