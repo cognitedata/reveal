@@ -76,12 +76,12 @@ export default function FileInfoTable({
         key: 'name',
       },
       {
-        title: 'resource-table-column-mimeType',
+        title: t('resource-table-column-mimeType'),
         dataIndex: 'mimeType',
         key: 'mimeType',
       },
       {
-        title: 'resource-table-column-directory',
+        title: t('resource-table-column-directory'),
         dataIndex: 'directory',
         key: 'directory',
       },
