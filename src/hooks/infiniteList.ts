@@ -8,14 +8,14 @@ import {
 } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { range } from 'lodash-es';
-import { RawCogniteEvent, RawTimeseries, SourceType } from 'types/api';
+import { API, RawAsset, RawCogniteEvent, RawTimeseries } from 'types/api';
 import { getList, ListParams } from './api';
 
 type UseQParam = Pick<ListParams, 'advancedFilter' | 'filter' | 'limit'>;
 
 type PartitionCount = number;
 const getUseListKey = (
-  api: SourceType,
+  api: API,
   partitions: PartitionCount,
   opts: UseQParam
 ): QueryKey => [api, partitions, 'infinite-list', opts];
@@ -38,6 +38,16 @@ export function useInfiniteList(
 >;
 
 export function useInfiniteList(
+  api: 'assets',
+  partitions: PartitionCount,
+  { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
+  opts?: Opts
+): UseInfiniteQueryResult<
+  { items: RawAsset[]; cursors?: (string | undefined)[] },
+  CogniteError
+>;
+
+export function useInfiniteList(
   api: 'timeseries',
   partitions: PartitionCount,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
@@ -47,7 +57,7 @@ export function useInfiniteList(
   CogniteError
 >;
 export function useInfiniteList(
-  api: SourceType,
+  api: API,
   partitions: PartitionCount,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
@@ -62,7 +72,7 @@ export function useInfiniteList(
     >;
 
 export function useInfiniteList(
-  api: SourceType,
+  api: API,
   partitions: PartitionCount,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
