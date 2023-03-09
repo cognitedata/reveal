@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import head from 'lodash/head';
 import { PlotHoverEvent } from 'plotly.js';
+
+import head from 'lodash/head';
+import get from 'lodash/get';
 
 import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
 import { TooltipRendererProps } from '../../types';
@@ -75,6 +77,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
         y: point.y,
         name: point.data.name,
         color: String(point.data.line.color),
+        customData: get(point.data, 'customData'),
       });
     }
 

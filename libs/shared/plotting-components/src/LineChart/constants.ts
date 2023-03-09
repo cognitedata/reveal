@@ -37,7 +37,7 @@ export const DEAULT_LAYOUT: Layout = {
   showMarkers: true,
   showHoverMarker: true,
   showHoverLine: true,
-  showHoverLineText: true,
+  showHoverLineInfo: true,
 };
 
 export const LAYOUT_BY_VARIANT: Record<Variant, Layout> = {

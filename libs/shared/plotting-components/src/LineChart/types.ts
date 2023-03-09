@@ -2,7 +2,7 @@ import { CSSProperties } from 'react';
 
 import { Datum } from 'plotly.js';
 
-export type LineChartProps = {
+export interface LineChartProps {
   data: Data | Data[];
   xAxis?: Axis;
   yAxis?: Axis;
@@ -17,14 +17,15 @@ export type LineChartProps = {
   renderTooltipContent?: (props: TooltipRendererProps) => JSX.Element;
   renderFilters?: () => [JSX.Element, ...JSX.Element[]];
   renderActions?: () => [JSX.Element, ...JSX.Element[]];
-  formatHoverLineText?: (props: HoverCursorInfoProps) => string;
-};
+  formatHoverLineInfo?: (props: HoverLineData) => string;
+}
 
 export interface Data {
   x: ValueType[];
   y: ValueType[];
   name?: string;
   color?: string;
+  customData?: CustomDataType;
 }
 
 export interface Layout {
@@ -40,7 +41,7 @@ export interface Layout {
   showMarkers: boolean;
   showHoverMarker: boolean;
   showHoverLine: boolean;
-  showHoverLineText: boolean;
+  showHoverLineInfo: boolean;
 }
 
 export interface Config {
@@ -62,15 +63,19 @@ export interface TooltipRendererProps {
   y: ValueType;
   name: string;
   color: string;
+  customData?: CustomDataType;
 }
 
-export interface HoverCursorInfoProps {
+export interface HoverLineData {
   x: ValueType;
   y: ValueType;
   name: string;
+  customData?: CustomDataType;
 }
 
 export type ValueType = Datum;
+
+export type CustomDataType = Record<string, unknown>;
 
 export type Variant = 'small' | 'medium' | 'large';
 
@@ -95,4 +100,9 @@ export type AxisDirectionConfig =
 export interface PlotRange {
   x?: AxisRange;
   y?: AxisRange;
+}
+
+export interface Coordinate {
+  x?: number;
+  y?: number;
 }

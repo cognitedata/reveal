@@ -14,6 +14,7 @@ export const LineInfo = styled.div`
   display: flex;
   align-items: center;
   position: absolute;
+  white-space: nowrap;
   color: #ffffff;
   background: #262626;
   border-radius: 6px;
@@ -27,11 +28,11 @@ export const LineInfo = styled.div`
     content: '';
     position: absolute;
     bottom: 100%;
-    left: 50%;
+    left: ${(props: { offset: number }) => `calc(50% + ${props.offset}px)`};
     margin-left: -6px;
     border-width: 6px;
     border-style: solid;
-    border-color: transparent transparent black transparent;
+    border-color: transparent transparent #262626 transparent;
   }
 `;
 

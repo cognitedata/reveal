@@ -2,18 +2,16 @@ import * as React from 'react';
 
 import { PlotHoverEvent } from 'plotly.js';
 
-import head from 'lodash/head';
-
 import { getMarkerPosition } from '../../utils/getMarkerPosition';
-import { getHoveredLineColor } from '../../utils/getHoveredLineColor';
 
-import { Marker, Line, HoverLayerWrapper, LineInfo } from './elements';
-import {
-  DEFAULT_BACKGROUND_COLOR,
-  HOVER_MARKER_BORDER_WIDTH,
-} from '../../constants';
+import { HoverLayerWrapper } from './elements';
+import { DEFAULT_BACKGROUND_COLOR } from '../../constants';
+import { HoverLineData, Layout } from '../../types';
+
+import { HoverLine } from './HoverLine';
+import { HoverLineInfo } from './HoverLineInfo';
+import { HoverMarker } from './HoverMarker';
 import { getPlotStyleData } from '../../utils/getPlotStyleData';
-import { HoverCursorInfoProps, Layout } from '../../types';
 
 export interface HoverLayerProps {
   chartRef: React.RefObject<HTMLDivElement>;
@@ -22,7 +20,7 @@ export interface HoverLayerProps {
   backgroundColor?: string;
   onHover?: () => void;
   onUnhover?: () => void;
-  formatHoverLineText?: (props: HoverCursorInfoProps) => string;
+  formatHoverLineInfo?: (props: HoverLineData) => string;
 }
 
 export const HoverLayer: React.FC<HoverLayerProps> = ({
@@ -32,75 +30,47 @@ export const HoverLayer: React.FC<HoverLayerProps> = ({
   backgroundColor = DEFAULT_BACKGROUND_COLOR,
   onHover,
   onUnhover,
-  formatHoverLineText,
+  formatHoverLineInfo,
 }) => {
-  const { showHoverLine, showHoverLineText, showHoverMarker } = layout;
+  const { showHoverLine, showHoverLineInfo, showHoverMarker } = layout;
 
-  const { x, y } = getMarkerPosition(plotHoverEvent);
-  const { plotOffsetTop, gridHeight } = getPlotStyleData(chartRef.current);
+  const markerPosition = getMarkerPosition(plotHoverEvent);
+  const plotStyleData = getPlotStyleData(chartRef.current);
 
-  const point = head(plotHoverEvent?.points);
-
-  const getLineInfoText = () => {
-    if (!point) {
-      return null;
+  const getHoverLayerComponentVisibility = (showConfig: boolean) => {
+    if (!plotHoverEvent) {
+      return false;
     }
-
-    if (formatHoverLineText) {
-      return formatHoverLineText({
-        x: point.x,
-        y: point.y,
-        name: point.data.name,
-      });
-    }
-
-    return String(point.x);
+    return showConfig;
   };
-
-  const lineInfoText = getLineInfoText();
-  const visibility = plotHoverEvent ? 'visible' : 'hidden';
-  const opacity = plotHoverEvent ? 1 : 0;
 
   return (
     <HoverLayerWrapper
-      style={{ visibility }}
+      style={{ visibility: plotHoverEvent ? 'visible' : 'hidden' }}
       onMouseEnter={onHover}
       onMouseLeave={onUnhover}
     >
-      {showHoverLine && (
-        <Line
-          style={{
-            left: x,
-            top: plotOffsetTop,
-            height: gridHeight,
-            opacity,
-          }}
-        />
-      )}
+      <HoverLine
+        isVisible={getHoverLayerComponentVisibility(showHoverLine)}
+        markerPosition={markerPosition}
+        plotStyleData={plotStyleData}
+      />
 
-      {showHoverLine && showHoverLineText && (
-        <LineInfo
-          style={{
-            left: x,
-            top: plotOffsetTop + gridHeight,
-            opacity,
-          }}
-        >
-          {lineInfoText}
-        </LineInfo>
-      )}
+      <HoverLineInfo
+        chartRef={chartRef}
+        isVisible={getHoverLayerComponentVisibility(showHoverLineInfo)}
+        markerPosition={markerPosition}
+        plotStyleData={plotStyleData}
+        plotHoverEvent={plotHoverEvent}
+        formatHoverLineInfo={formatHoverLineInfo}
+      />
 
-      {showHoverMarker && (
-        <Marker
-          style={{
-            top: y,
-            left: x,
-            opacity,
-            backgroundColor: getHoveredLineColor(plotHoverEvent),
-            border: `${HOVER_MARKER_BORDER_WIDTH}px solid ${backgroundColor}`,
-          }}
-        />
-      )}
+      <HoverMarker
+        isVisible={getHoverLayerComponentVisibility(showHoverMarker)}
+        markerPosition={markerPosition}
+        plotHoverEvent={plotHoverEvent}
+        backgroundColor={backgroundColor}
+      />
     </HoverLayerWrapper>
   );
 };

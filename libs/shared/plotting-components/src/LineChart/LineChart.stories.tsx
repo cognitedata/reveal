@@ -28,7 +28,12 @@ const Template: Story<LineChartProps> = (args) => <LineChart {...args} />;
 
 export const Basic = Template.bind({});
 Basic.args = {
-  data,
+  data: {
+    ...data,
+    customData: {
+      timezone: '02:00 GMT(+02:00)',
+    },
+  },
   xAxis: { name: 'Date' },
   yAxis: { name: 'Value' },
   title: 'Main title',
@@ -47,4 +52,6 @@ Basic.args = {
       Open in Charts
     </Button>,
   ],
+  formatHoverLineInfo: ({ x, customData }) =>
+    `${String(x)}, ${customData?.timezone}`,
 };

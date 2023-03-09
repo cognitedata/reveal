@@ -24,13 +24,13 @@ export const getTooltipPosition = (
     0
   );
 
-  const { plotOffsetTop, gridHeight } = getPlotStyleData(chartRef.current);
+  const { offsetTop, height } = getPlotStyleData(chartRef.current);
 
   const { x = 0, y = 0 } = getMarkerPosition(plotMouseEvent);
 
   return {
     x: calculateTooltipPositionX(x, tooltipWidth, chartWidth),
-    y: calculateTooltipPositionY(y, tooltipHeight, plotOffsetTop, gridHeight),
+    y: calculateTooltipPositionY(y, tooltipHeight, offsetTop, height),
   };
 };
 

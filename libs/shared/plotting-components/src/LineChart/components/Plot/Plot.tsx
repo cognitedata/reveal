@@ -50,9 +50,7 @@ export const Plot = React.memo(
       const { showTicks, showMarkers } = layout;
       const { responsive } = config;
 
-      const plotRef = useRef<HTMLDivElement>(
-        (ref as React.RefObject<HTMLDivElement>).current
-      );
+      const plotRef = useRef<HTMLDivElement>(null);
 
       const adaptedData = useMemo(() => {
         return adaptToPlotlyPlotData(data, showMarkers);

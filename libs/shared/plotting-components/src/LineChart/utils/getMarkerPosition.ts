@@ -2,13 +2,13 @@ import { PlotMouseEvent } from 'plotly.js';
 
 import head from 'lodash/head';
 import get from 'lodash/get';
+import { Coordinate } from '../types';
 
-export const getMarkerPosition = (plotMouseEvent?: PlotMouseEvent) => {
+export const getMarkerPosition = (
+  plotMouseEvent?: PlotMouseEvent
+): Coordinate => {
   if (!plotMouseEvent) {
-    return {
-      x: 0,
-      y: 0,
-    };
+    return {};
   }
 
   const bbox = get(head(plotMouseEvent.points), 'bbox') as

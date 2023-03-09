@@ -29,7 +29,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   renderTooltipContent,
   renderFilters,
   renderActions,
-  formatHoverLineText,
+  formatHoverLineInfo,
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<PlotElement>(null);
@@ -79,7 +79,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         backgroundColor={backgroundColor}
         onHover={plotHoverEventHandler.hoverPlot}
         onUnhover={plotHoverEventHandler.unhoverPlot}
-        formatHoverLineText={formatHoverLineText}
+        formatHoverLineInfo={formatHoverLineInfo}
       />
 
       <Tooltip
