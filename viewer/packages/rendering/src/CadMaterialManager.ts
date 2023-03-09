@@ -145,6 +145,7 @@ export class CadMaterialManager {
       throw new Error(`Model identifier: ${modelIdentifier} not found`);
     }
 
+    // Refer https://threejs.org/docs/#examples/en/loaders/GLTFLoader under Textures for details on GLTF model texture color information.
     texture.encoding = THREE.sRGBEncoding;
 
     const newMaterial = modelData.materials.triangleMesh.clone();
