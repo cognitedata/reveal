@@ -37,12 +37,7 @@ const QuickMatchResultsTable = ({ predictions }: Predictions): JSX.Element => {
         title: t('qm-result-score'),
         dataIndex: 'matches',
         key: 'matches',
-        render: (matches: any[]) =>
-          (
-            <Body level={2} strong>
-              {matches[0]?.score.toFixed(1)}
-            </Body>
-          ) || '—',
+        render: (matches: any[]) => matches[0]?.score.toFixed(1) || '—',
       },
       {
         title: t('qm-result-source'),
