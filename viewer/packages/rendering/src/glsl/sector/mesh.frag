@@ -38,12 +38,15 @@ void main()
 
 #if defined(IS_TEXTURED)
     // Gamma correction of 1.3 times to match GLTFViewer (Magic number determined based on visual comparison).
-    vec3 baseColor = pow(texture(tDiffuse, v_uv).rgb, vec3(1.3));
-    baseColor = LinearTosRGB(vec4(baseColor, 1.0)).xyz;
+    vec3 diffuseColor = pow(texture(tDiffuse, v_uv).rgb, vec3(1.3));
+    diffuseColor = LinearTosRGB(vec4(diffuseColor, 1.0)).xyz;
+    vec4 color = determineColor(diffuseColor, appearance);
+
+    color = vec4(mix(diffuseColor, vec3(color), 0.6), color.a);
 #else
-    vec3 baseColor = v_color;
+    vec4 color = determineColor(v_color, appearance);
 #endif
-    vec4 color = determineColor(baseColor, appearance);
+
     vec3 normal = derivateNormal(v_viewPosition);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.TriangleMesh);
 }
