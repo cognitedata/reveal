@@ -1,5 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
-import { Filter, RawCogniteEvent, RawTimeseries, SourceType } from 'types/api';
+import { API, Filter, RawCogniteEvent, RawTimeseries } from 'types/api';
 import { downcaseMetadata } from 'utils';
 
 export type ListParams = {
@@ -12,7 +12,7 @@ export type ListParams = {
 
 export function getList(
   sdk: CogniteClient,
-  api: SourceType,
+  api: API,
   { cursor, filter, advancedFilter, partition, limit }: ListParams
 ) {
   return sdk
