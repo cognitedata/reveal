@@ -786,7 +786,7 @@ export class Cognite3DViewer {
 
   /**
    * Specify parameters used to determine the number of icons that are visible when entering 360 Images.
-   * @param radius Only icons within the given radius will be made visible. Use -1 to to show all.
+   * @param radius Only icons within the given radius will be made visible. Use 0 to to show all.
    * @param pointLimit Limit the number of points within the given radius. Points closer to the camera will be prioritized. Use 0 to show all.
    */
   set360IconCullingRestrictions(radius: number, pointLimit: number): void {

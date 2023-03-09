@@ -64,7 +64,7 @@ export class Image360UI {
     });
 
     gui
-      .add(iconCulling, 'radius', -1, 100, 1)
+      .add(iconCulling, 'radius', 0, 100, 1)
       .name('Culling radius')
       .onChange(() => {
         set360IconCullingRestrictions();
