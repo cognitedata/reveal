@@ -99,15 +99,11 @@ export const QuickMatchContext = createContext<QuickMatchContext>({
   setAllSources: function (_: SetStateAction<boolean>): void {
     throw new Error('Function not implemented.');
   },
-  sourceFilter: {
-    dataSetIds: [],
-  },
+  sourceFilter: {},
   setSourceFilter: function (_: SetStateAction<Filter>): void {
     throw new Error('Function not implemented.');
   },
-  targetFilter: {
-    dataSetIds: [],
-  },
+  targetFilter: {},
   setTargetFilter: function (_: SetStateAction<Filter>): void {
     throw new Error('Function not implemented.');
   },
@@ -193,15 +189,11 @@ export const QuickMatchContextProvider = ({
     'targetsList'
   );
   const [sourceFilter, setSourceFilter] = useContextState<Filter>(
-    {
-      dataSetIds: [],
-    },
+    {},
     'sourceFilter'
   );
   const [targetFilter, setTargetFilter] = useContextState<Filter>(
-    {
-      dataSetIds: [],
-    },
+    {},
     'targetFilter'
   );
 

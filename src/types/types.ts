@@ -12,6 +12,7 @@ export type PipelineTableTypes =
 export type PredictionsTableTypes = 'source' | 'matches';
 
 export type ResourceTableProps = {
+  query?: string | null;
   advancedFilter?: any;
   filter: Filter;
   selected: InternalId[];

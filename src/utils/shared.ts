@@ -105,10 +105,10 @@ export const bulkDownloadStatus = ({
   }
 };
 
-const searchFields: Record<string, string[]> = {
+const searchFields: Record<string, string[] | undefined> = {
   defaultFields: ['name', 'description'],
   events: ['description'],
-  files: ['name'],
+  files: undefined,
 };
 
 export const getAdvancedFilter = ({
@@ -152,15 +152,16 @@ export const getAdvancedFilter = ({
     }
   })();
 
-  const fields: string[] =
-    searchFields[sourceType] || searchFields.defaultFields;
-  const searchNodes = fields.map((f) => ({
+  const fields = Object.keys(searchFields).includes(sourceType)
+    ? searchFields[sourceType]
+    : searchFields.defaultFields;
+  const searchNodes = fields?.map((f) => ({
     search: {
       property: [f],
       value: query,
     },
   }));
-  const searchFilter = {
+  const searchFilter = searchNodes && {
     or: searchNodes,
   };
 

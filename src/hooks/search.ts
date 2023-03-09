@@ -10,13 +10,14 @@ import {
   RawFileInfo,
   RawTimeseries,
 } from 'types/api';
-import { getList, ListParams } from './api';
+import { getSearch, ListParams } from './api';
 
 type UseQParam = Pick<ListParams, 'advancedFilter' | 'filter' | 'limit'>;
 
-const getUseListKey = (api: API, opts: UseQParam): QueryKey => [
+const getUseSearchKey = (api: API, q: any, opts: UseQParam): QueryKey => [
   api,
-  'list',
+  'search',
+  q,
   opts,
 ];
 
@@ -27,32 +28,37 @@ type Opts = {
   staleTime?: number;
 };
 
-export function useList(
+export function useSearch(
   api: 'events',
+  query: any,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawCogniteEvent[], CogniteError>;
 
-export function useList(
+export function useSearch(
   api: 'assets',
+  query: any,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawAsset[], CogniteError>;
 
-export function useList(
+export function useSearch(
   api: 'timeseries',
+  query: any,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawTimeseries[], CogniteError>;
 
-export function useList(
+export function useSearch(
   api: 'files',
+  query: any,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ): UseQueryResult<RawFileInfo[], CogniteError>;
 
-export function useList(
+export function useSearch(
   api: API,
+  query: any,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ):
@@ -61,9 +67,9 @@ export function useList(
   | UseQueryResult<RawAsset[], CogniteError>
   | UseQueryResult<RawFileInfo[], CogniteError>;
 
-export function useList(
+export function useSearch(
   api: API,
-
+  query: any,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
 ):
@@ -73,13 +79,9 @@ export function useList(
   | UseQueryResult<RawFileInfo[], CogniteError> {
   const sdk = useSDK();
   return useQuery(
-    getUseListKey(api, { limit, filter, advancedFilter }),
+    getUseSearchKey(api, query, { limit, filter, advancedFilter }),
     async () => {
-      return getList(sdk, api, {
-        filter,
-        advancedFilter,
-        limit,
-      }).then((r) => r.items);
+      return getSearch(sdk, api, query, { filter, limit }).then((r) => r.items);
     },
     opts
   );

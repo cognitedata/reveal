@@ -19,6 +19,7 @@ const topLevelProperties: Record<T, string[]> = {
   assets: ['name', 'description', 'source'],
   timeseries: ['name', 'description', 'unit'],
   events: ['type', 'subtype', 'description', 'source'],
+  files: ['name', 'directory', 'source', 'mimeType'],
 };
 
 export const useAggregateProperties = (
