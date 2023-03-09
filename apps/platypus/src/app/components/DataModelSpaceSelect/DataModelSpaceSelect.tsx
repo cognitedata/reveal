@@ -1,5 +1,4 @@
 import { Button, Flex, OptionType, Select, Tooltip } from '@cognite/cogs.js';
-import { useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
   HorizontalDivider,
@@ -9,43 +8,27 @@ import {
   StyledLink,
 } from './elements';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { isFDMv3 } from '@platypus-app/flags';
-import { CreateNewSpaceModal } from '../CreateNewSpaceModal/CreateNewSpaceModal';
 import { FormLabel } from '../FormLabel/FormLabel';
 import { useSpaces } from '@platypus-app/hooks/useSpaces';
 
+export { OptionType };
+
 export type DataModelSpaceSelectProps = {
   isDisabled?: boolean;
-  onSpaceSelect: (selectedSpace: string) => void;
-  preSelectedSpace?: string;
+  onChange: (selectedSpace: OptionType<string>) => void;
+  onRequestCreateSpace: () => void;
+  value?: OptionType<string>;
 };
 
 export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
   const { t } = useTranslation('DataModelSpaceSelect');
-  const isFDMV3 = isFDMv3();
-  const [userCanCreateSpace] = useState(true);
 
   const { data: spaces, isFetching: isSpacesLoading, error } = useSpaces();
 
-  const spaceOptions = (spaces || []).map(
-    (item) =>
-      ({
-        label: item.name || item.space,
-        value: item.space,
-      } as OptionType<string>)
-  );
-
-  const [selectedSpace, setSelectedSpace] = useState<
-    OptionType<string> | undefined
-  >(
-    props.preSelectedSpace
-      ? { label: props.preSelectedSpace, value: props.preSelectedSpace }
-      : undefined
-  );
-
-  const [showCreateSpaceModal, setShowCreateSpaceModal] = useState(false);
-
-  if (!isFDMV3) return null;
+  const spaceOptions = (spaces || []).map((item) => ({
+    label: item.name || item.space,
+    value: item.space,
+  }));
 
   return (
     <>
@@ -88,11 +71,10 @@ export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
         data-cy="select-space-dropdown"
         options={spaceOptions}
         isMulti={false}
-        value={selectedSpace}
+        value={props.value}
         placeholder={t('modal_space_input_placeholder', 'Select space')}
         onChange={(spaceOption: OptionType<string>) => {
-          setSelectedSpace(spaceOption);
-          props.onSpaceSelect(spaceOption.value || '');
+          props.onChange(spaceOption);
         }}
         noOptionsMessage={() =>
           isSpacesLoading ? (
@@ -109,18 +91,16 @@ export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
           )
         }
         menuFooter={
-          userCanCreateSpace
-            ? ((
-                <Button
-                  iconPlacement="left"
-                  icon="Add"
-                  onClick={() => setShowCreateSpaceModal(true)}
-                  data-cy="open-create-space-modal-btn"
-                >
-                  {t('create_new_space_btn_text', 'Create new space')}
-                </Button>
-              ) as unknown as HTMLButtonElement)
-            : undefined
+          (
+            <Button
+              iconPlacement="left"
+              icon="Add"
+              onClick={props.onRequestCreateSpace}
+              data-cy="open-create-space-modal-btn"
+            >
+              {t('create_new_space_btn_text', 'Create new space')}
+            </Button>
+          ) as unknown as HTMLButtonElement
         }
         menuPortalTarget={document.body}
         menuPlacement="top"
@@ -135,19 +115,6 @@ export const DataModelSpaceSelect = (props: DataModelSpaceSelectProps) => {
           </StyledDetail>
         </InputDetail>
       )}
-
-      <CreateNewSpaceModal
-        visible={showCreateSpaceModal}
-        onCancel={() => setShowCreateSpaceModal(false)}
-        onSpaceCreated={(newSpace) => {
-          setSelectedSpace({
-            label: newSpace,
-            value: newSpace,
-          });
-          props.onSpaceSelect(newSpace || '');
-          setShowCreateSpaceModal(false);
-        }}
-      />
     </>
   );
 };

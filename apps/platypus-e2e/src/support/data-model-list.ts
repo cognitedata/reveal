@@ -33,7 +33,7 @@ Cypress.Commands.add('createDataModel', (name: string, space: string) => {
       .parent()
       .siblings('.cogs-modal-footer')
       .find('.cogs-modal-footer-buttons')
-      .contains('Create')
+      .contains('Confirm')
       .click();
   }
   cy.get('.cogs-modal-footer-buttons').contains('Create').click();

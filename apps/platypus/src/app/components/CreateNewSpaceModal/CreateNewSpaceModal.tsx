@@ -7,9 +7,9 @@ import { DataModelNameValidator } from '@platypus-core/domain/data-model/validat
 import { FormLabel } from '../FormLabel/FormLabel';
 
 export type CreateNewSpaceModalProps = {
-  visible: boolean;
   onCancel: () => void;
-  onSpaceCreated: (newSpace: string) => void;
+  onSubmit: (newSpace: string) => void;
+  visible: boolean;
 };
 
 export const CreateNewSpaceModal = (props: CreateNewSpaceModalProps) => {
@@ -18,7 +18,7 @@ export const CreateNewSpaceModal = (props: CreateNewSpaceModalProps) => {
   const [spaceNameError, setSpaceNameError] = useState('');
 
   const handleSubmit = () => {
-    props.onSpaceCreated(spaceName);
+    props.onSubmit(spaceName);
   };
 
   const validateName = (value: string) => {
@@ -45,12 +45,12 @@ export const CreateNewSpaceModal = (props: CreateNewSpaceModalProps) => {
       onCancel={() => props.onCancel()}
       onOk={handleSubmit}
       okDisabled={!!spaceNameError || !spaceName}
-      okText={t('create', 'Create')}
+      okText={t('create_space_modal_confirm_button', 'Confirm')}
     >
       <div>
         <label>
           <FormLabel level={2} strong required>
-            {t('modal_space_title', 'Space Name')}
+            {t('modal_space_title', 'Space name')}
           </FormLabel>
           <NameWrapper>
             <Input

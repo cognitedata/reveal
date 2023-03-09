@@ -5,7 +5,10 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { useDataSets } from '@platypus-app/hooks/useDataSets';
 import { useDataModelMutation } from './hooks/useDataModelMutation';
 import { DataUtils } from '@platypus/platypus-core';
-import { DataModelDetailModal } from '../../components/DataModelDetailModal/DataModelDetailModal';
+import {
+  DataModelDetailModal,
+  OptionType,
+} from '../../components/DataModelDetailModal/DataModelDetailModal';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 
 export const CreateDataModel = ({
@@ -16,7 +19,7 @@ export const CreateDataModel = ({
   visible: boolean;
 }) => {
   const [dataModelName, setDataModelName] = useState('');
-  const [space, setSpace] = useState('');
+  const [space, setSpace] = useState<OptionType<string>>();
   const [dataModelDescription, setDataModelDescription] = useState('');
   const [externalId, setExternalId] = useState('');
   const [isExternalIdDirty, setIsExternalIdDirty] = useState(false);
@@ -46,7 +49,7 @@ export const CreateDataModel = ({
   const handleSubmit = () => {
     create.mutate(
       {
-        space,
+        space: space?.value,
         externalId,
         name: dataModelName.trim(),
         description: dataModelDescription,

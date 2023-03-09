@@ -650,9 +650,13 @@ export class FdmClient implements FlexibleDataModelingClient {
    * Fetch all spaces.
    */
   getSpaces(dto?: ListSpacesDTO): Promise<SpaceInstance[]> {
-    return this.spacesApi
-      .list(dto)
-      .then((response) => Promise.resolve(response.items));
+    return this.spacesApi.list(dto).then((response) => {
+      const sortedSpaces = response.items.sort((a, b) =>
+        a.space.localeCompare(b.space)
+      );
+
+      return sortedSpaces;
+    });
   }
 
   /**
