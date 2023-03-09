@@ -67,14 +67,14 @@ export class Image360UI {
       .add(iconCulling, 'radius', -1, 100, 1)
       .name('Culling radius')
       .onChange(() => {
-        set360ProximityLimits();
+        set360IconCullingRestrictions();
       });
 
     gui
       .add(iconCulling, 'limit', 0, 100, 1)
       .name('Number of points')
       .onChange(() => {
-        set360ProximityLimits();
+        set360IconCullingRestrictions();
       });
 
     gui.add(params, 'remove').name('Remove all 360 images');
@@ -95,8 +95,8 @@ export class Image360UI {
       viewer.requestRedraw();
     }
 
-    async function set360ProximityLimits() {
-      viewer.set360IconProximityLimits(iconCulling.radius, iconCulling.limit);
+    async function set360IconCullingRestrictions() {
+      viewer.set360IconCullingRestrictions(iconCulling.radius, iconCulling.limit);
     }
 
     async function removeAll360Images() {
