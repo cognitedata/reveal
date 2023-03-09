@@ -143,31 +143,6 @@ export class IconCollection {
     };
   }
 
-  private computePointsInCameraView(iconSprites: InstancedIconSprite): BeforeSceneRenderedDelegate {
-    return ({ camera }) => {
-      const closestPointLimit = 20;
-      const frustum = new Frustum();
-      const matrix = new Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
-      frustum.setFromProjectionMatrix(matrix);
-
-      const visiblePoints = this._icons
-        .reduce((result, icon) => {
-          if (frustum.containsPoint(icon.position)) {
-            result.push(icon);
-          }
-          return result;
-        }, new Array<Image360Icon>())
-        .sort((a, b) => {
-          return a.position.distanceTo(camera.position) - b.position.distanceTo(camera.position);
-        })
-        .slice(0, closestPointLimit);
-
-      this._icons.forEach(p => (p.visible = false));
-      visiblePoints.forEach(p => (p.visible = true));
-      iconSprites.setPoints(visiblePoints.map(p => p.position));
-    };
-  }
-
   private initializeImage360Icons(
     points: Vector3[],
     sceneHandler: SceneHandler,
