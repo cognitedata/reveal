@@ -30466,6 +30466,11 @@ use-memo-one@^1.1.1:
   resolved "https://registry.yarnpkg.com/use-memo-one/-/use-memo-one-1.1.3.tgz#2fd2e43a2169eabc7496960ace8c79efef975e99"
   integrity sha512-g66/K7ZQGYrI6dy8GLpVcMsBp4s17xNkYJVSMvTEevGy3nDxHOfE6z8BVE22+5G5x7t3+bhzrlTDB7ObrEE0cQ==
 
+use-session-storage-state@^18.1.1:
+  version "18.1.1"
+  resolved "https://registry.yarnpkg.com/use-session-storage-state/-/use-session-storage-state-18.1.1.tgz#6c0927072232501e5b835720991aab8d0db04ab9"
+  integrity sha512-smeznwdz+7ClDng/9eDLt4Dh8Af8jRR1BqW0Ps6E998S/GZ8INoL73Qf0vb6UbvAAIs60FGstnyLmGz2AKEeWQ==
+
 use-sidecar@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/use-sidecar/-/use-sidecar-1.1.2.tgz#2f43126ba2d7d7e117aa5855e5d8f0276dfe73c2"

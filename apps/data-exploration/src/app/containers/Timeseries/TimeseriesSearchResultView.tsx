@@ -5,7 +5,10 @@ import {
 } from '@data-exploration-app/containers/elements';
 import { TimeseriesSearchResults } from '@data-exploration-components/containers';
 import { useTimeseriesFilters } from '@data-exploration-app/store';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
+import {
+  useDateRange,
+  useFlagAdvancedFilters,
+} from '@data-exploration-app/hooks';
 import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import {
   useCurrentResourceId,
@@ -14,7 +17,6 @@ import {
 } from '@data-exploration-app/hooks/hooks';
 import { useDebounce } from 'use-debounce';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import { useDateRange } from '@data-exploration-app/context/DateRangeContext';
 import { TimeseriesPreview } from '@data-exploration-app/containers/Timeseries/TimeseriesPreview';
 import { routes } from '@data-exploration-app/containers/App';
 import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';

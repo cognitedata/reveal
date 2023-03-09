@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  FilesSyntaxButton,
-  SpacedRow,
-} from '@data-exploration-components/components';
+import { FilesSyntaxButton, SpacedRow } from '../../components';
 import { ResourceType } from '@data-exploration-components/types';
 import styled from 'styled-components/macro';
 

@@ -9,7 +9,6 @@ import {
 import { ResourceActionsProvider } from '@data-exploration-app/context/ResourceActionsContext';
 import { ResourceSelectionProvider } from '@data-exploration-app/context/ResourceSelectionContext';
 
-import { DateRangeProvider } from '@data-exploration-app/context/DateRangeContext';
 import { useSDK } from '@cognite/sdk-provider';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useUserInformation } from '@data-exploration-app/hooks/hooks';
@@ -36,24 +35,22 @@ export default function App() {
       <FileContextualizationContextProvider>
         <ResourceSelectionProvider allowEdit mode="none">
           <ResourceActionsProvider>
-            <DateRangeProvider>
-              <DataExplorationProvider
-                flow={flow}
-                sdk={sdk}
-                userInfo={userInfo}
-                styleScopeId={ids.styleScope}
-                overrideURLMap={{
-                  pdfjsWorkerSrc:
-                    '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
-                }}
-                trackUsage={trackUsage}
-                isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
-              >
-                <Routes>
-                  <Route path="/explore/*" element={<Exploration />} />
-                </Routes>
-              </DataExplorationProvider>
-            </DateRangeProvider>
+            <DataExplorationProvider
+              flow={flow}
+              sdk={sdk}
+              userInfo={userInfo}
+              styleScopeId={ids.styleScope}
+              overrideURLMap={{
+                pdfjsWorkerSrc:
+                  '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+              }}
+              trackUsage={trackUsage}
+              isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
+            >
+              <Routes>
+                <Route path="/explore/*" element={<Exploration />} />
+              </Routes>
+            </DataExplorationProvider>
           </ResourceActionsProvider>
         </ResourceSelectionProvider>
       </FileContextualizationContextProvider>

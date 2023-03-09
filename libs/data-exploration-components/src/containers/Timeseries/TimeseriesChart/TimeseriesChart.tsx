@@ -266,7 +266,7 @@ export const TimeseriesChart = ({
 
       <SpacedRow>
         {!disableStep && timeOptions.length > 0 && (
-          <>
+          <StyledRangePickerWrapper>
             {(timeOptionShortcut || []).map((shortcut: TimeOptions) => (
               <Button
                 key={shortcut}
@@ -290,7 +290,7 @@ export const TimeseriesChart = ({
               onChange={handleSelectOnChange}
               width={250}
             />
-          </>
+          </StyledRangePickerWrapper>
         )}
         {showCustomRangePicker && (
           <RangePicker
@@ -316,5 +316,15 @@ export const TimeseriesChart = ({
 const StyledSelect = styled(Select)`
   .cogs-select__menu {
     height: 200px;
+  }
+`;
+
+const StyledRangePickerWrapper = styled.div`
+  display: flex;
+  margin-top: auto;
+  margin-bottom: auto;
+
+  * {
+    margin-right: 6px;
   }
 `;

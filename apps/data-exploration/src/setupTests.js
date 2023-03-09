@@ -17,6 +17,22 @@ jest.mock('mixpanel-browser', () => {
 jest.mock('@data-exploration-app/utils/Metrics', () => ({
   trackUsage: jest.fn(),
 }));
+
+jest.mock('@cognite/unified-file-viewer', () => {
+  return {
+    ToolType: {
+      RECTANGLE: 'rectangle',
+      SELECT: 'select',
+      ELLIPSE: 'ellipse',
+      POLYLINE: 'polyline',
+      LINE: 'line',
+      TEXT: 'text',
+      IMAGE: 'image',
+      PAN: 'pan',
+    },
+  };
+});
+
 jest.mock('@cognite/cdf-utilities', () => ({
   createLink: jest.fn(),
 }));
