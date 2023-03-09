@@ -21,11 +21,7 @@ export default function EntityMatchingResult({ predictions }: Props) {
     );
   };
   return (
-    <StyledFlex
-      direction="column"
-      justifyContent="flex-end"
-      style={{ padding: '20px' }}
-    >
+    <StyledFlex direction="column" justifyContent="flex-end">
       <StyledButton
         type="primary"
         disabled={isLoading}
