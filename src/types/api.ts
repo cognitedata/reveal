@@ -33,7 +33,7 @@ export type RawFileInfo = Omit<FileInfo, 'lastUpdatedTime' | 'createdTime'> & {
 };
 
 export type Filter = {
-  dataSetIds: InternalId[];
+  dataSetIds?: InternalId[];
 };
 
 export const SOURCE_TYPES = ['timeseries', 'events', 'files'] as const;

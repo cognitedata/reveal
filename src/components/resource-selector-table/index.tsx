@@ -96,15 +96,18 @@ export default function ResourceSelectionTable({}: Props) {
             options={datasets}
             value={datasets
               ?.filter(({ value }) =>
-                sourceFilter.dataSetIds.find(({ id }) => id === value)
+                sourceFilter.dataSetIds?.find(({ id }) => id === value)
               )
               .map((ds) => ds.value)}
             onChange={(e: number[]) => {
               setSourceFilter({
                 ...sourceFilter,
-                dataSetIds: e.map((id) => ({
-                  id,
-                })),
+                dataSetIds:
+                  e.length > 0
+                    ? e.map((id) => ({
+                        id,
+                      }))
+                    : undefined,
               });
             }}
           />
