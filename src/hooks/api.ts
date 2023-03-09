@@ -4,6 +4,7 @@ import {
   Filter,
   RawCogniteEvent,
   RawFileInfo,
+  RawSequence,
   RawTimeseries,
 } from 'types/api';
 import { downcaseMetadata } from 'utils';
@@ -23,7 +24,11 @@ export function getList(
 ) {
   return sdk
     .post<{
-      items: RawTimeseries[] | RawCogniteEvent[] | RawFileInfo[];
+      items:
+        | RawTimeseries[]
+        | RawCogniteEvent[]
+        | RawFileInfo[]
+        | RawSequence[];
       nextCursor?: string;
     }>(`/api/v1/projects/${sdk.project}/${api}/list`, {
       headers: {

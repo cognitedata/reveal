@@ -40,10 +40,21 @@ export default function ResourceTypei18n({ t, count = 0, downcase }: Props) {
         </>
       );
     }
+
     case 'files': {
       return (
         <>
           {translate('resource-type-files', {
+            postProcess: downcase ? 'lowercase' : undefined,
+            count,
+          })}
+        </>
+      );
+    }
+    case 'sequences': {
+      return (
+        <>
+          {translate('resource-type-sequences', {
             postProcess: downcase ? 'lowercase' : undefined,
             count,
           })}

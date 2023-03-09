@@ -14,6 +14,7 @@ import {
   RawCogniteEvent,
   RawFileInfo,
   RawTimeseries,
+  RawSequence,
 } from 'types/api';
 import { getList, ListParams } from './api';
 
@@ -40,6 +41,16 @@ export function useInfiniteList(
   opts?: Opts
 ): UseInfiniteQueryResult<
   { items: RawCogniteEvent[]; cursors?: (string | undefined)[] },
+  CogniteError
+>;
+
+export function useInfiniteList(
+  api: 'sequences',
+  partitions: PartitionCount,
+  { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
+  opts?: Opts
+): UseInfiniteQueryResult<
+  { items: RawSequence[]; cursors?: (string | undefined)[] },
   CogniteError
 >;
 
@@ -90,6 +101,10 @@ export function useInfiniteList(
   | UseInfiniteQueryResult<
       { items: RawFileInfo[]; cursors?: (string | undefined)[] },
       CogniteError
+    >
+  | UseInfiniteQueryResult<
+      { items: RawSequence[]; cursors?: (string | undefined)[] },
+      CogniteError
     >;
 
 export function useInfiniteList(
@@ -108,6 +123,10 @@ export function useInfiniteList(
     >
   | UseInfiniteQueryResult<
       { items: RawFileInfo[]; cursors?: (string | undefined)[] },
+      CogniteError
+    >
+  | UseInfiniteQueryResult<
+      { items: RawSequence[]; cursors?: (string | undefined)[] },
       CogniteError
     > {
   const sdk = useSDK();

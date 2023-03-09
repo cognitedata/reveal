@@ -10,6 +10,7 @@ import ResourceCount from 'components/resource-count';
 import { useMemo } from 'react';
 import TimeseriesTable from './TimeseriesTable';
 import EventTable from './EventTable';
+import SequenceTable from './SequenceTable';
 import { getAdvancedFilter } from 'utils';
 import { API, SourceType, SOURCE_TYPES } from 'types/api';
 import FileInfoTable from './FilesTable';
@@ -28,6 +29,7 @@ const supportsAdvancedFilter: Record<API, boolean> = {
   timeseries: true,
   assets: true,
   events: true,
+  sequences: true,
 };
 
 export default function ResourceSelectionTable({}: Props) {
@@ -48,6 +50,7 @@ export default function ResourceSelectionTable({}: Props) {
     { value: 'timeseries', label: t('resource-type-ts') },
     { value: 'events', label: t('resource-type-events', { count: 0 }) },
     { value: 'files', label: t('resource-type-files', { count: 0 }) },
+    { value: 'sequences', label: t('resource-type-sequences', { count: 0 }) },
   ];
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
@@ -179,6 +182,15 @@ export default function ResourceSelectionTable({}: Props) {
           advancedFilter={advancedFilter}
           allSources={allSources}
           query={query}
+        />
+      )}
+      {sourceType === 'sequences' && (
+        <SequenceTable
+          filter={sourceFilter}
+          selected={sourcesList}
+          setSelected={setSourcesList}
+          advancedFilter={advancedFilter}
+          allSources={allSources}
         />
       )}
     </Flex>
