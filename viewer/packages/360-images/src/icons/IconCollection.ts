@@ -56,7 +56,7 @@ export class IconCollection {
     this._onBeforeSceneRenderedEvent.subscribe(this._activeCullingStrategyEventHandeler);
   }
 
-  public set360IconProximityLimits(radius: number, pointLimit: number): void {
+  public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
     this._proximityRadius = radius > 0 ? radius : Number.POSITIVE_INFINITY;
     this._proximityPointLimit = pointLimit;
   }

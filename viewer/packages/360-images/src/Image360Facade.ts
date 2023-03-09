@@ -32,8 +32,8 @@ export class Image360Facade<T> {
     this._image360Collections.forEach(collection => collection.setCullingStrategy(mode));
   }
 
-  public set360IconProximityLimits(radius: number, pointLimit: number): void {
-    this._image360Collections.forEach(collection => collection.set360IconProximityLimits(radius, pointLimit));
+  public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
+    this._image360Collections.forEach(collection => collection.set360IconCullingRestrictions(radius, pointLimit));
   }
 
   constructor(private readonly _entityFactory: Image360CollectionFactory<T>) {
