@@ -77,7 +77,7 @@ export const DataManagementPage = ({
   const Preview = (
     <StyledPage style={tab !== 'preview' ? { display: 'none' } : {}}>
       <Suspense fallback={<Spinner />}>
-        <PreviewPage dataModelExternalId={dataModelExternalId} />
+        <PreviewPage dataModelExternalId={dataModelExternalId} space={space} />
       </Suspense>
     </StyledPage>
   );

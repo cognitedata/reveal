@@ -95,9 +95,6 @@ export const buildGridConfig = (
         cellRendererParams: {
           onRowAdd,
         },
-        cellStyle: {
-          padding: '0 var(--ag-cell-horizontal-padding)',
-        },
       },
     },
     ...dataModelType.fields.map((field) => {

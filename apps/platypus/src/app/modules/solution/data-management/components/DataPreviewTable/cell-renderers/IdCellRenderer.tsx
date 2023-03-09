@@ -17,11 +17,7 @@ export const IdCellRenderer = React.memo((props: IdCellRendererProps) => {
     props.onRowAdd(props.data);
   };
   return (
-    <Flex
-      justifyContent="space-between"
-      alignItems="center"
-      style={{ height: '100%', userSelect: 'text' }}
-    >
+    <Flex justifyContent="space-between" alignItems="center">
       <IdCellValueText>{props.value}</IdCellValueText>
       {isRowPinnedOnTop && !isDraftCompleted && (
         <Chip

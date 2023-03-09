@@ -1,5 +1,4 @@
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { SchemaVersionDropdown } from '@platypus-app/components/SchemaVersionDropdown/SchemaVersionDropdown';
 import { DataModelVersion } from '@platypus/platypus-core';
 import { SelectorWrapper } from './elements';

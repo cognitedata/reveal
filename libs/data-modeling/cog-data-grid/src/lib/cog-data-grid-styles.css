@@ -499,7 +499,7 @@
     .ag-header-active
   )
   .filter-button {
-  display: block;
+  display: inline-flex;
   opacity: 1;
 }
 
@@ -509,7 +509,7 @@
 .cog-data-grid.cog-data-grid-default
   .ag-header-cell.ag-column-menu-visible
   .menu-button {
-  display: block;
+  display: inline-flex;
   opacity: 1;
 }
 

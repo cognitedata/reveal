@@ -377,7 +377,11 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       );
 
       for (const type of types) {
-        if (type && type.kind === Kind.OBJECT_TYPE_DEFINITION) {
+        if (
+          type &&
+          (type.kind === Kind.OBJECT_TYPE_DEFINITION ||
+            type.kind === Kind.INTERFACE_TYPE_DEFINITION)
+        ) {
           dataTypeNames.add(type.name.value);
         }
       }

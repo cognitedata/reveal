@@ -676,6 +676,7 @@ export const DataPreviewTable = forwardRef<
                 alwaysMultiSort: false,
                 readOnlyEdit: !isManualPopulationEnabled,
                 enableCellChangeFlash: true,
+                enableCellTextSelection: true,
                 rowModelType: 'infinite',
                 rowBuffer: pageSizeLimit / 2,
                 // how big each page in our page cache will be, default is 100
@@ -698,6 +699,9 @@ export const DataPreviewTable = forwardRef<
                   dataModelTypeDefs,
                   searchTerm,
                   space,
+                  // passing the useTranslate method in case any class components need it,
+                  // such as custom-column-filter
+                  t,
                   version,
                 },
                 onCellEditingStarted: handleCellEditingStarted,

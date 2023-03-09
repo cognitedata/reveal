@@ -1,5 +1,5 @@
 import { ColumnDataType } from '@cognite/cog-data-grid';
-import { DataModelTypeDefsField, KeyValueMap } from '@platypus/platypus-core';
+import { DataModelTypeDefsField } from '@platypus/platypus-core';
 
 export const INSTANCE_TYPE_DEFS_FIELD: DataModelTypeDefsField = {
   name: 'externalId',
@@ -10,7 +10,7 @@ export const INSTANCE_TYPE_DEFS_FIELD: DataModelTypeDefsField = {
   },
 };
 
-export const COL_TYPES_MAP: KeyValueMap = {
+export const COL_TYPES_MAP: { [key: string]: string } = {
   Boolean: ColumnDataType.Boolean,
   Float: ColumnDataType.Decimal,
   Int: ColumnDataType.Number,

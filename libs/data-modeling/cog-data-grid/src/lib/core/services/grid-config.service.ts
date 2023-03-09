@@ -195,7 +195,6 @@ export class GridConfigService {
             valueFormatter: (params: ValueFormatterParams) =>
               decimalValueFormatter({
                 value: params.value,
-                maximumFractionDigits: 2,
                 isFloat: true,
               }),
           },

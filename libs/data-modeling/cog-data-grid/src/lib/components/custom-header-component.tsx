@@ -65,16 +65,18 @@ export class CustomHeader extends PureComponent<
             aria-hidden="true"
           >
             <Button
+              aria-label="Filter"
               size="small"
               className="menu-button"
-              onClick={this.onMenuClicked}
-            >
-              <Icon type="EllipsisVertical" />
-            </Button>
+              icon="EllipsisVertical"
+            />
 
-            <Button size="small" className="filter-button">
-              <Icon type="Filter" />
-            </Button>
+            <Button
+              aria-label="Filter"
+              icon="Filter"
+              size="small"
+              className="filter-button"
+            />
           </span>
         )}
 
