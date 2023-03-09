@@ -28,8 +28,8 @@ export class Image360Facade<T> {
     this._image360Collections.forEach(collection => collection.setSelectedVisibility(visible));
   }
 
-  set allIconCullingScheme(mode: IconCullingScheme) {
-    this._image360Collections.forEach(collection => collection.setCullingScheme(mode));
+  set allIconCullingScheme(scheme: IconCullingScheme) {
+    this._image360Collections.forEach(collection => collection.setCullingScheme(scheme));
   }
 
   public set360IconCullingRestrictions(radius: number, pointLimit: number): void {
