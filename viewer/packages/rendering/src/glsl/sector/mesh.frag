@@ -37,8 +37,7 @@ void main()
     }
 
 #if defined(IS_TEXTURED)
-    float gamma = 2.2;
-    // vec3 baseColor = texture(tDiffuse, v_uv).rgb;
+    // Gamma correction of 1.3 times to match GLTFViewer (Magic number determined based on visual comparison).
     vec3 baseColor = pow(texture(tDiffuse, v_uv).rgb, vec3(1.3));
     baseColor = LinearTosRGB(vec4(baseColor, 1.0)).xyz;
 #else
