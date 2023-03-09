@@ -17,7 +17,6 @@ import {
  * -----------------------------------------------------------------------------
  * @param MonitoringFolderCreatePayload                   - Param Object with properties of new Folder
  * @returns UseMutationResult                             - Returns UseMutationResult
- * @returns
  */
 export const useCreateMonitoringFolder = () => {
   const cache = useQueryClient();

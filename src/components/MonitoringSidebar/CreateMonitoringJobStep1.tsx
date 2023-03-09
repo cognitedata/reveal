@@ -306,7 +306,11 @@ const CreateMonitoringJobStep1 = ({
       </Row>
 
       <FieldTitleRequired>{t['Save to']} </FieldTitleRequired>
-      <MonitoringFolderSelect control={control} inputName="folder" />
+      <MonitoringFolderSelect
+        control={control}
+        setValue={setValue}
+        inputName="folder"
+      />
 
       <NotificationBox>
         {t['Notifications will be sent to :']}

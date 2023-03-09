@@ -28,7 +28,11 @@ const Template: Story<Props> = (args) => {
   });
   return (
     <div style={{ width: '400px' }}>
-      <MonitoringFolderSelect control={control} inputName={args.inputName} />
+      <MonitoringFolderSelect
+        control={control}
+        inputName={args.inputName}
+        setValue={args.setValue}
+      />
     </div>
   );
 };
@@ -37,4 +41,5 @@ export const Basic = Template.bind({});
 
 Basic.args = {
   inputName: 'name',
+  setValue: () => {},
 };

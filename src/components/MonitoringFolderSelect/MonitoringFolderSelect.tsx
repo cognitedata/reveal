@@ -19,11 +19,13 @@ type Props = {
   translations?: typeof defaultTranslations;
   control: any;
   inputName: string;
+  setValue: any;
 };
 const MonitoringFolderSelect: React.FC<Props> = ({
   translations,
   control,
   inputName,
+  setValue,
 }) => {
   const t = {
     ...defaultTranslations,
@@ -32,6 +34,8 @@ const MonitoringFolderSelect: React.FC<Props> = ({
   const { data: folderList, isLoading: loadingFolders } =
     useMonitoringFolders();
   const {
+    data: newFolderData,
+    isSuccess: folderCreatedSuccess,
     mutate: createMonitoringJob,
     isLoading: creatingMonitoringJob,
     isError: createMonitoringJobError,
@@ -57,6 +61,15 @@ const MonitoringFolderSelect: React.FC<Props> = ({
     createMonitoringJobErrorText,
   ]);
 
+  useEffect(() => {
+    if (folderCreatedSuccess && newFolderData?.length) {
+      setValue(inputName, {
+        value: newFolderData[0].id,
+        label: newFolderData[0].name,
+      });
+    }
+  }, [newFolderData, folderCreatedSuccess]);
+
   const onNameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setName(event.target.value);
@@ -64,7 +77,7 @@ const MonitoringFolderSelect: React.FC<Props> = ({
     []
   );
 
-  const addItem = (
+  const handleCreateFolder = (
     e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
   ) => {
     if (name !== '') {
@@ -133,13 +146,18 @@ const MonitoringFolderSelect: React.FC<Props> = ({
               <>
                 {menu}
                 {(loadingFolders || creatingMonitoringJob) && (
-                  <Icon type="Loader" />
+                  <div
+                    className="cogs-select__option"
+                    style={{ justifyContent: 'center' }}
+                  >
+                    <Icon type="Loader" />
+                  </div>
                 )}
                 {showCreateButton && (
                   <>
                     <DividerStyled />
                     <Row>
-                      <ButtonStyled type="primary" onClick={addItem}>
+                      <ButtonStyled type="primary" onClick={handleCreateFolder}>
                         {t['Create folder:']} {name}
                       </ButtonStyled>
                     </Row>
