@@ -6,12 +6,12 @@ import { useTranslation } from 'common';
 import { RawTimeseries } from 'hooks/timeseries';
 
 import { useList } from 'hooks/list';
-import { ResourceTableProps } from 'types/types';
+import { SourceTableProps } from 'types/types';
 
-type TimeseriesListTableRecord = { key: string; disabled?: boolean } & Pick<
-  RawTimeseries,
-  'name' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
->;
+type TimeseriesListTableRecord = {
+  key: string;
+  disabled?: boolean;
+} & RawTimeseries;
 type TimeseriesListTableRecordCT = ColumnType<TimeseriesListTableRecord> & {
   title: string;
   key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
@@ -23,7 +23,7 @@ export default function TimeseriesTable({
   advancedFilter,
   filter,
   allSources,
-}: ResourceTableProps) {
+}: SourceTableProps) {
   const {
     data,
     isInitialLoading: listLoading,
@@ -76,7 +76,7 @@ export default function TimeseriesTable({
     type: 'checkbox' as RowSelectionType,
     hideSelectAll: true,
     onChange(_: (string | number)[], rows: TimeseriesListTableRecord[]) {
-      setSelected(rows.map((r) => ({ id: r.id })));
+      setSelected(rows);
     },
     getCheckboxProps(_: TimeseriesListTableRecord) {
       return {

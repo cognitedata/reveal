@@ -32,6 +32,10 @@ export type RawFileInfo = Omit<FileInfo, 'lastUpdatedTime' | 'createdTime'> & {
   createdTime: number;
 };
 
+export type RawSource = RawTimeseries | RawCogniteEvent | RawFileInfo;
+
+export type RawTarget = RawAsset;
+
 export type Filter = {
   dataSetIds?: InternalId[];
 };

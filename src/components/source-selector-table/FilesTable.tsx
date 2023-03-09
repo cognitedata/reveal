@@ -5,13 +5,10 @@ import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { RawFileInfo } from 'types/api';
-import { ResourceTableProps } from 'types/types';
+import { SourceTableProps } from 'types/types';
 import { useSearch } from 'hooks/search';
 
-type FileInfoListTableRecord = { key: string } & Pick<
-  RawFileInfo,
-  'dataSetId' | 'id' | 'lastUpdatedTime' | 'mimeType' | 'directory'
->;
+type FileInfoListTableRecord = { key: string } & RawFileInfo;
 type FileInfoListTableRecordCT = ColumnType<FileInfoListTableRecord> & {
   title: string;
 };
@@ -23,7 +20,7 @@ export default function FileInfoTable({
   filter,
   allSources,
   query,
-}: ResourceTableProps) {
+}: SourceTableProps) {
   const { t } = useTranslation();
 
   const {
@@ -102,7 +99,7 @@ export default function FileInfoTable({
 
     type: 'checkbox' as RowSelectionType,
     onChange(_: (string | number)[], rows: FileInfoListTableRecord[]) {
-      setSelected(rows.map((r) => ({ id: r.id })));
+      setSelected(rows);
     },
     hideSelectAll: true,
     getCheckboxProps(_: any) {

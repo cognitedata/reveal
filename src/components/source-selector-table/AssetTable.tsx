@@ -5,12 +5,9 @@ import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { RawAsset } from 'types/api';
-import { ResourceTableProps } from 'types/types';
+import { TargetTableProps } from 'types/types';
 
-type AssetListTableRecord = { key: string } & Pick<
-  RawAsset,
-  'name' | 'rootId' | 'dataSetId' | 'id' | 'description' | 'lastUpdatedTime'
->;
+type AssetListTableRecord = { key: string } & RawAsset;
 type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {
   title: string;
   key: 'name' | 'id' | 'description' | 'lastUpdatedTime';
@@ -22,7 +19,7 @@ export default function AssetTable({
   advancedFilter,
   filter,
   allSources,
-}: ResourceTableProps) {
+}: TargetTableProps) {
   const { t } = useTranslation();
   const { data, isInitialLoading, error } = useList('assets', {
     filter,
@@ -67,7 +64,7 @@ export default function AssetTable({
       : selected.map((s) => s.id.toString()),
     type: 'checkbox' as RowSelectionType,
     onChange(_: (string | number)[], rows: AssetListTableRecord[]) {
-      setSelected(rows.map((r) => ({ id: r.id })));
+      setSelected(rows);
     },
     hideSelectAll: true,
     getCheckboxProps(_: AssetListTableRecord) {

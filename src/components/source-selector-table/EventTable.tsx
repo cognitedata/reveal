@@ -5,12 +5,9 @@ import { Alert } from 'antd';
 import { useTranslation } from 'common';
 import { useList } from 'hooks/list';
 import { RawCogniteEvent } from 'types/api';
-import { ResourceTableProps } from 'types/types';
+import { SourceTableProps } from 'types/types';
 
-type EventListTableRecord = { key: string } & Pick<
-  RawCogniteEvent,
-  'dataSetId' | 'id' | 'description' | 'lastUpdatedTime' | 'type' | 'subtype'
->;
+type EventListTableRecord = { key: string } & RawCogniteEvent;
 type EventListTableRecordCT = ColumnType<EventListTableRecord> & {
   title: string;
 };
@@ -21,7 +18,7 @@ export default function EventTable({
   advancedFilter,
   filter,
   allSources,
-}: ResourceTableProps) {
+}: SourceTableProps) {
   const {
     data,
     isInitialLoading: listLoading,
@@ -79,7 +76,7 @@ export default function EventTable({
 
     type: 'checkbox' as RowSelectionType,
     onChange(_: (string | number)[], rows: EventListTableRecord[]) {
-      setSelected(rows.map((r) => ({ id: r.id })));
+      setSelected(rows);
     },
     hideSelectAll: true,
     getCheckboxProps(_: any) {
