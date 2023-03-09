@@ -90,7 +90,7 @@ export class IconCollection {
     this._iconCullingScheme = IconCullingScheme.Clustered;
     this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
 
-    onBeforeSceneRendered.subscribe(this._computeClustersEventHandler);
+    onBeforeSceneRendered.subscribe(this._activeCullingSchemeEventHandeler);
 
     this._sceneHandler = sceneHandler;
     this._iconsSprite = iconsSprites;
