@@ -63,13 +63,19 @@ export class Image360UI {
       viewer.requestRedraw();
     });
 
-    gui.add(iconCulling, 'radius', -1, 100, 1).name('Culling radius').onChange(() => {
-      set360ProximityLimits();
-    });
+    gui
+      .add(iconCulling, 'radius', -1, 100, 1)
+      .name('Culling radius')
+      .onChange(() => {
+        set360ProximityLimits();
+      });
 
-    gui.add(iconCulling, 'limit', 0, 100, 1).name('Number of points').onChange(() => {
-      set360ProximityLimits();
-    });
+    gui
+      .add(iconCulling, 'limit', 0, 100, 1)
+      .name('Number of points')
+      .onChange(() => {
+        set360ProximityLimits();
+      });
 
     gui.add(params, 'remove').name('Remove all 360 images');
 
