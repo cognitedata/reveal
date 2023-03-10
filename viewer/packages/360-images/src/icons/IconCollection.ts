@@ -133,15 +133,17 @@ export class IconCollection {
       const points =
         this._proximityRadius < 1
           ? this._icons
-          : octree.findPoints(camera.position, this._proximityRadius, true).map(pointContainer => {
+          : octree.findPoints(camera.position, this._proximityRadius).map(pointContainer => {
               return pointContainer.data;
             });
 
-      const closestPoints = points
-        .sort((a, b) => {
-          return b.position.distanceTo(camera.position) - a.position.distanceTo(camera.position);
-        })
-        .slice(-this._proximityPointLimit);
+      let closestPoints = points.sort((a, b) => {
+        return b.position.distanceTo(camera.position) - a.position.distanceTo(camera.position);
+      });
+
+      if (this._proximityPointLimit > 0) {
+        closestPoints = closestPoints.slice(-(this._proximityPointLimit + 1)); //Add 1 to "skipSelf"..
+      }
 
       this._icons.forEach(p => (p.visible = false));
       closestPoints.forEach(p => (p.visible = true));
