@@ -5,7 +5,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'common';
 import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
 import { useQuickMatchContext } from 'context/QuickMatchContext';
-import { useAllDataSets } from 'hooks/datasets';
 import ResourceCount from 'components/resource-count';
 import { useMemo } from 'react';
 import TimeseriesTable from './TimeseriesTable';
@@ -14,16 +13,11 @@ import SequenceTable from './SequenceTable';
 import { getAdvancedFilter } from 'utils';
 import { API, SourceType, SOURCE_TYPES } from 'types/api';
 import FileInfoTable from './FilesTable';
+import { DataSetSelect } from 'components/data-set-select';
 
 const { Option } = Select;
 
-type OptionType = {
-  value: number;
-  label: string;
-};
-
 type Props = {};
-
 const supportsAdvancedFilter: Record<API, boolean> = {
   files: false,
   timeseries: true,
@@ -54,14 +48,6 @@ export default function SourceSelectionTable({}: Props) {
   ];
   const [searchParams, _setSearchParams] = useSearchParams();
   const setSearchParams = _setSearchParams;
-  const { data: datasets, isInitialLoading } = useAllDataSets<OptionType[]>({
-    select(items) {
-      return items.map((ds) => ({
-        label: ds.name || ds.id.toString(),
-        value: ds.id,
-      }));
-    },
-  });
 
   const handleSelectSourceType = (selectedSourceType: string) => {
     if (SOURCE_TYPES.some((type) => type === selectedSourceType)) {
@@ -96,21 +82,8 @@ export default function SourceSelectionTable({}: Props) {
               </Option>
             ))}
           </Select>
-          <Select
-            mode="multiple"
-            allowClear
-            placeholder={t('resource-type-datasets', {
-              count: 0,
-            })}
-            style={{ width: 120 }}
-            loading={isInitialLoading}
-            optionFilterProp="label"
-            options={datasets}
-            value={datasets
-              ?.filter(({ value }) =>
-                sourceFilter.dataSetIds?.find(({ id }) => id === value)
-              )
-              .map((ds) => ds.value)}
+          <DataSetSelect
+            api={sourceType}
             onChange={(e: number[]) => {
               setSourceFilter({
                 ...sourceFilter,
@@ -122,6 +95,7 @@ export default function SourceSelectionTable({}: Props) {
                     : undefined,
               });
             }}
+            selected={sourceFilter.dataSetIds?.map((ds) => ds.id) || []}
           />
           <Input.Search
             style={{ width: 120 }}
