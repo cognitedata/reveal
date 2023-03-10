@@ -8,6 +8,7 @@ import {
   RawAsset,
   RawCogniteEvent,
   RawFileInfo,
+  RawSequence,
   RawTimeseries,
 } from 'types/api';
 import { getList, ListParams } from './api';
@@ -52,6 +53,12 @@ export function useList(
 ): UseQueryResult<RawFileInfo[], CogniteError>;
 
 export function useList(
+  api: 'sequences',
+  { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
+  opts?: Opts
+): UseQueryResult<RawSequence[], CogniteError>;
+
+export function useList(
   api: API,
   { limit = TABLE_ITEMS_PER_PAGE, advancedFilter, filter }: UseQParam,
   opts?: Opts
@@ -59,7 +66,8 @@ export function useList(
   | UseQueryResult<RawTimeseries[], CogniteError>
   | UseQueryResult<RawCogniteEvent[], CogniteError>
   | UseQueryResult<RawAsset[], CogniteError>
-  | UseQueryResult<RawFileInfo[], CogniteError>;
+  | UseQueryResult<RawFileInfo[], CogniteError>
+  | UseQueryResult<RawSequence[], CogniteError>;
 
 export function useList(
   api: API,
@@ -70,7 +78,8 @@ export function useList(
   | UseQueryResult<RawTimeseries[], CogniteError>
   | UseQueryResult<RawCogniteEvent[], CogniteError>
   | UseQueryResult<RawAsset[], CogniteError>
-  | UseQueryResult<RawFileInfo[], CogniteError> {
+  | UseQueryResult<RawFileInfo[], CogniteError>
+  | UseQueryResult<RawSequence[], CogniteError> {
   const sdk = useSDK();
   return useQuery(
     getUseListKey(api, { limit, filter, advancedFilter }),
