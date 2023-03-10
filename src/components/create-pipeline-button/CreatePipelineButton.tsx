@@ -1,23 +1,29 @@
-import styled from 'styled-components';
+import { useState } from 'react';
+
 import { Button } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
 import { useTranslation } from 'common';
-import { Link, useParams } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
+import CreatePipelineModal from 'components/create-pipeline-modal';
 
 export const CreatePipelineButton = (): JSX.Element => {
   const { t } = useTranslation();
-  const { subAppPath } = useParams<{
-    subAppPath: string;
-  }>();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
-      <Link to={createLink(`/${subAppPath}/create`)}>
-        <StyledButton type="primary" icon="AddLarge">
-          {t('title-create-pipeline')}
-        </StyledButton>
-      </Link>
+      <CreatePipelineModal
+        onCancel={() => setIsModalOpen(false)}
+        visible={isModalOpen}
+      />
+      <StyledButton
+        onClick={() => setIsModalOpen(true)}
+        type="primary"
+        icon="AddLarge"
+      >
+        {t('title-create-pipeline')}
+      </StyledButton>
     </>
   );
 };

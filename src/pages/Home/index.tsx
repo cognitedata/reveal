@@ -1,10 +1,11 @@
 import { createLink } from '@cognite/cdf-utilities';
 import { Title, Flex } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-
-import PipelineList from 'components/pipeline-list';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { useTranslation } from 'common';
+import { CreatePipelineButton } from 'components/create-pipeline-button/CreatePipelineButton';
+import PipelineList from 'components/pipeline-list';
 
 export default function RootList() {
   const { t } = useTranslation();
@@ -18,9 +19,7 @@ export default function RootList() {
       <Link to={createLink(`/${subAppPath}/quick-match/create/select-sources`)}>
         {t('quick-match')}
       </Link>
-      <Link to={createLink(`/${subAppPath}/create`)}>
-        {t('title-create-pipeline')}
-      </Link>
+      <CreatePipelineButton />
       <PipelineList />
     </ListWrapper>
   );
