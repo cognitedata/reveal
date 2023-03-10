@@ -6,6 +6,7 @@ export const Notification = ({
   type,
   title = '',
   message,
+  errors,
   extra = undefined,
   options = {
     autoClose: 5000,
@@ -20,6 +21,7 @@ export const Notification = ({
   message: string;
   title?: string;
   extra?: JSX.Element | null;
+  errors?: string | string[];
   options?: ToastProps;
 }) => {
   const toastBody: JSX.Element[] = [];
@@ -72,7 +74,7 @@ export const Notification = ({
             e.preventDefault();
             e.stopPropagation();
             navigator.clipboard.writeText(
-              JSON.stringify({ title, message, extra }, null, 2)
+              JSON.stringify({ title, message, extra, errors }, null, 2)
             );
           }}
         />

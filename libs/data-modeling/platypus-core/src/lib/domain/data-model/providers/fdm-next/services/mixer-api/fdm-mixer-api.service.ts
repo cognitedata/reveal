@@ -183,6 +183,10 @@ export class FdmMixerApiService {
         .then((response) => {
           if (response.data.errors) {
             const errorMsg =
+              response.data.errors
+                .map((el: { message: string }) => el.message)
+                .join('\n')
+                .trim() ||
               'Something went wrong, we were not able to run your query.';
             reject(this.toSdkError(400, errorMsg, response.data));
           } else {

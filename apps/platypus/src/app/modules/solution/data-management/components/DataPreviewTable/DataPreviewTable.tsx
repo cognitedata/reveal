@@ -1,7 +1,6 @@
 import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { Notification } from '@platypus-app/components/Notification/Notification';
-import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
@@ -94,7 +93,6 @@ export const DataPreviewTable = forwardRef<
     // This property is used to trigger a rerender when a selection occurs in the grid
     const [, setSelectedPublishedRowsCount] = useState(0);
     const gridRef = useRef<AgGridReact>(null);
-    const [fetchError, setFetchError] = useState(null);
     const { isEnabled: isManualPopulationEnabled } =
       useManualPopulationFeatureFlag();
     const { isEnabled: isSuggestionsEnabled } = useSuggestionsFeatureFlag();
@@ -252,11 +250,10 @@ export const DataPreviewTable = forwardRef<
       dataModelVersion: selectedDataModelVersion,
       limit: pageSizeLimit,
       onError: (error) => {
-        setFetchError(error);
-
         Notification({
           type: 'error',
           message: error.message,
+          errors: JSON.stringify(error.errors),
         });
       },
       onSuccess: (items) => {
@@ -588,19 +585,6 @@ export const DataPreviewTable = forwardRef<
 
     if (!isPublishedRowsCountMapFetched) {
       return <Spinner />;
-    }
-
-    if (fetchError) {
-      return (
-        <FlexPlaceholder
-          data-cy="data-preview-error"
-          title={t('error-loading-data-title', 'Unable to load the preview')}
-          description={t(
-            'error-loading-data-body',
-            'Something went wrong and we were notified about it. The data preview can not be created for this type. Please try to refresh the page or select another type.'
-          )}
-        />
-      );
     }
 
     return (
